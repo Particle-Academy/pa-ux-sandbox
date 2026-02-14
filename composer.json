@@ -13,7 +13,7 @@
         "particle-academy/laravel-catalog": "@dev",
         "particle-academy/laravel-fms": "@dev",
         "wishborn/fancy-flux": "@dev",
-        "livewire/livewire": "^3.7",
+        "livewire/livewire": "^4.0",
         "stripe/stripe-php": "^16.0"
     },
     "require-dev": {

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1e370e37a6e605516bc454b9aa70a792",
+    "content-hash": "6f30db5fe3f85750fffef6da952c46dd",
     "packages": [
         {
             "name": "brick/math",
@@ -2108,17 +2108,83 @@
             "time": "2026-01-15T06:54:53+00:00"
         },
         {
-            "name": "livewire/livewire",
-            "version": "v3.7.4",
+            "name": "livewire/flux",
+            "version": "v2.12.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/livewire/livewire.git",
-                "reference": "5a8dffd4c0ab357ff7ed5b39e7c2453d962a68e0"
+                "url": "https://github.com/livewire/flux.git",
+                "reference": "78bc26f54a29c28ff916751b9f796f4ce1592003"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/livewire/livewire/zipball/5a8dffd4c0ab357ff7ed5b39e7c2453d962a68e0",
-                "reference": "5a8dffd4c0ab357ff7ed5b39e7c2453d962a68e0",
+                "url": "https://api.github.com/repos/livewire/flux/zipball/78bc26f54a29c28ff916751b9f796f4ce1592003",
+                "reference": "78bc26f54a29c28ff916751b9f796f4ce1592003",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/console": "^10.0|^11.0|^12.0",
+                "illuminate/support": "^10.0|^11.0|^12.0",
+                "illuminate/view": "^10.0|^11.0|^12.0",
+                "laravel/prompts": "^0.1|^0.2|^0.3",
+                "livewire/livewire": "^3.7.4|^4.0",
+                "php": "^8.1",
+                "symfony/console": "^6.0|^7.0"
+            },
+            "conflict": {
+                "livewire/blaze": "<1.0.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "Flux": "Flux\\Flux"
+                    },
+                    "providers": [
+                        "Flux\\FluxServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Flux\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "proprietary"
+            ],
+            "authors": [
+                {
+                    "name": "Caleb Porzio",
+                    "email": "calebporzio@gmail.com"
+                }
+            ],
+            "description": "The official UI component library for Livewire.",
+            "keywords": [
+                "components",
+                "flux",
+                "laravel",
+                "livewire",
+                "ui"
+            ],
+            "support": {
+                "issues": "https://github.com/livewire/flux/issues",
+                "source": "https://github.com/livewire/flux/tree/v2.12.0"
+            },
+            "time": "2026-02-09T23:35:27+00:00"
+        },
+        {
+            "name": "livewire/livewire",
+            "version": "v4.1.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/livewire/livewire.git",
+                "reference": "4697085e02a1f5f11410a1b5962400e3539f8843"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/livewire/livewire/zipball/4697085e02a1f5f11410a1b5962400e3539f8843",
+                "reference": "4697085e02a1f5f11410a1b5962400e3539f8843",
                 "shasum": ""
             },
             "require": {
@@ -2173,7 +2239,7 @@
             "description": "A front-end framework for Laravel.",
             "support": {
                 "issues": "https://github.com/livewire/livewire/issues",
-                "source": "https://github.com/livewire/livewire/tree/v3.7.4"
+                "source": "https://github.com/livewire/livewire/tree/v4.1.4"
             },
             "funding": [
                 {
@@ -2181,7 +2247,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-01-13T09:37:21+00:00"
+            "time": "2026-02-09T22:59:54+00:00"
         },
         {
             "name": "moneyphp/money",
@@ -2791,7 +2857,7 @@
             "require": {
                 "laravel/cashier": "^15.0",
                 "laravel/framework": "^11.0|^12.0",
-                "livewire/livewire": "^3.0",
+                "livewire/livewire": "^3.0|^4.0",
                 "php": "^8.2",
                 "stripe/stripe-php": "^13.0|^16.0"
             },
@@ -6486,6 +6552,59 @@
                 }
             ],
             "time": "2024-11-21T01:49:47+00:00"
+        },
+        {
+            "name": "wishborn/fancy-flux",
+            "version": "1.0.12",
+            "dist": {
+                "type": "path",
+                "url": "./packages/fancy-flux",
+                "reference": "2d1a12bc4baffeceba4634458320c538a86e7cf2"
+            },
+            "require": {
+                "illuminate/support": "^10.0|^11.0|^12.0",
+                "illuminate/view": "^10.0|^11.0|^12.0",
+                "livewire/flux": "^2.0",
+                "livewire/livewire": "^3.7.3|^4.0",
+                "php": "^8.2"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "FancyFlux\\FancyFluxServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "FancyFlux\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Wish Born",
+                    "email": "wish@impact.do"
+                }
+            ],
+            "description": "Custom Flux UI components - carousel, color-picker, and emoji-select",
+            "keywords": [
+                "carousel",
+                "color-picker",
+                "components",
+                "emoji-select",
+                "flux",
+                "laravel",
+                "livewire",
+                "ui"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
         }
     ],
     "packages-dev": [
@@ -10450,7 +10569,8 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "particle-academy/laravel-catalog": 20,
-        "particle-academy/laravel-fms": 20
+        "particle-academy/laravel-fms": 20,
+        "wishborn/fancy-flux": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,

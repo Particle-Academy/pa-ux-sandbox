@@ -1,0 +1,625 @@
+/* Laravel Catalog Admin Stylesheet
+ * Custom CSS for admin components with Tailwind-compatible dark mode support
+ */
+
+/* Card Component */
+.catalog-card {
+    background-color: rgb(255 255 255);
+    border: 1px solid rgb(229 231 235);
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    margin-top: 1rem;
+}
+
+.dark .catalog-card {
+    background-color: rgb(31 41 55);
+    border-color: rgb(55 65 81);
+}
+
+/* Table Components */
+.catalog-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.catalog-table thead {
+    background-color: rgb(249 250 251);
+    border-bottom: 2px solid rgb(229 231 235);
+}
+
+.dark .catalog-table thead {
+    background-color: rgb(17 24 39);
+    border-color: rgb(55 65 81);
+}
+
+.catalog-table th {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.75rem;
+    color: rgb(17 24 39);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.dark .catalog-table th {
+    color: rgb(243 244 246);
+}
+
+.catalog-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid rgb(229 231 235);
+    color: rgb(17 24 39);
+}
+
+.dark .catalog-table td {
+    border-color: rgb(55 65 81);
+    color: rgb(243 244 246);
+}
+
+.catalog-table tbody tr:hover {
+    background-color: rgb(249 250 251);
+}
+
+.dark .catalog-table tbody tr:hover {
+    background-color: rgba(17 24 39 / 0.5);
+}
+
+.catalog-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Button Components */
+.catalog-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-radius: 0.375rem;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+}
+
+.catalog-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.catalog-btn-primary {
+    background-color: rgb(37 99 235);
+    color: white;
+    border-color: rgb(37 99 235);
+}
+
+.catalog-btn-primary:hover:not(:disabled) {
+    background-color: rgb(29 78 216);
+    border-color: rgb(29 78 216);
+}
+
+.catalog-btn-ghost {
+    background-color: transparent;
+    color: rgb(17 24 39);
+    border-color: rgb(209 213 219);
+}
+
+.dark .catalog-btn-ghost {
+    color: rgb(243 244 246);
+    border-color: rgb(75 85 99);
+}
+
+.catalog-btn-ghost:hover:not(:disabled) {
+    background-color: rgb(243 244 246);
+}
+
+.dark .catalog-btn-ghost:hover:not(:disabled) {
+    background-color: rgb(31 41 55);
+}
+
+.catalog-btn-danger {
+    background-color: rgb(220 38 38);
+    color: white;
+    border-color: rgb(220 38 38);
+}
+
+.catalog-btn-danger:hover:not(:disabled) {
+    background-color: rgb(185 28 28);
+    border-color: rgb(185 28 28);
+}
+
+.catalog-btn-sm {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.8125rem;
+}
+
+.catalog-btn-xs {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+}
+
+/* Badge Components */
+.catalog-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.125rem 0.625rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    border-radius: 0.375rem;
+}
+
+.catalog-badge-green {
+    background-color: rgb(209 250 229);
+    color: rgb(6 95 70);
+}
+
+.dark .catalog-badge-green {
+    background-color: rgba(6 95 70 / 0.3);
+    color: rgb(167 243 208);
+}
+
+.catalog-badge-gray {
+    background-color: rgb(243 244 246);
+    color: rgb(31 41 55);
+}
+
+.dark .catalog-badge-gray {
+    background-color: rgb(31 41 55);
+    color: rgb(209 213 219);
+}
+
+.catalog-badge-blue {
+    background-color: rgb(219 234 254);
+    color: rgb(30 64 175);
+}
+
+.dark .catalog-badge-blue {
+    background-color: rgba(30 64 175 / 0.3);
+    color: rgb(147 197 253);
+}
+
+.catalog-badge-amber {
+    background-color: rgb(254 243 199);
+    color: rgb(146 64 14);
+}
+
+.dark .catalog-badge-amber {
+    background-color: rgba(146 64 14 / 0.3);
+    color: rgb(253 230 138);
+}
+
+.catalog-badge-xs {
+    padding: 0.125rem 0.375rem;
+    font-size: 0.6875rem;
+}
+
+/* Form Components */
+.catalog-field {
+    margin-bottom: 1.5rem;
+}
+
+.catalog-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: rgb(17 24 39);
+    margin-bottom: 0.5rem;
+}
+
+.dark .catalog-label {
+    color: rgb(243 244 246);
+}
+
+.catalog-input,
+.catalog-textarea,
+.catalog-select {
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    border: 1px solid rgb(209 213 219);
+    border-radius: 0.375rem;
+    background-color: rgb(255 255 255);
+    color: rgb(17 24 39);
+    transition: border-color 0.2s;
+}
+
+.dark .catalog-input,
+.dark .catalog-textarea,
+.dark .catalog-select {
+    border-color: rgb(75 85 99);
+    background-color: rgb(31 41 55);
+    color: rgb(243 244 246);
+}
+
+.catalog-input-sm {
+    padding: 0.375rem 0.5rem;
+    font-size: 0.8125rem;
+}
+
+.catalog-input:focus,
+.catalog-textarea:focus,
+.catalog-select:focus {
+    outline: none;
+    border-color: rgb(59 130 246);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.dark .catalog-input:focus,
+.dark .catalog-textarea:focus,
+.dark .catalog-select:focus {
+    border-color: rgb(96 165 250);
+    box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.2);
+}
+
+.catalog-textarea {
+    min-height: 4rem;
+    resize: vertical;
+}
+
+.catalog-error {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    color: rgb(220 38 38);
+}
+
+.dark .catalog-error {
+    color: rgb(248 113 113);
+}
+
+.catalog-description {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.8125rem;
+    color: rgb(107 114 128);
+}
+
+.dark .catalog-description {
+    color: rgb(156 163 175);
+}
+
+/* Switch/Toggle Component */
+.catalog-switch {
+    position: relative;
+    display: inline-block;
+    width: 2.75rem;
+    height: 1.5rem;
+}
+
+.catalog-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.catalog-switch-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgb(203 213 225);
+    transition: 0.3s;
+    border-radius: 1.5rem;
+}
+
+.dark .catalog-switch-slider {
+    background-color: rgb(75 85 99);
+}
+
+.catalog-switch-slider:before {
+    position: absolute;
+    content: "";
+    height: 1.125rem;
+    width: 1.125rem;
+    left: 0.1875rem;
+    bottom: 0.1875rem;
+    background-color: white;
+    transition: 0.3s;
+    border-radius: 50%;
+}
+
+.catalog-switch input:checked+.catalog-switch-slider {
+    background-color: rgb(37 99 235);
+}
+
+.dark .catalog-switch input:checked+.catalog-switch-slider {
+    background-color: rgb(59 130 246);
+}
+
+.catalog-switch input:checked+.catalog-switch-slider:before {
+    transform: translateX(1.25rem);
+}
+
+/* Modal Components */
+.catalog-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.catalog-modal {
+    background-color: rgb(255 255 255);
+    border-radius: 0.5rem;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    max-width: 42rem;
+    width: 95vw;
+    max-height: 90vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.dark .catalog-modal {
+    background-color: rgb(31 41 55);
+}
+
+.catalog-modal-flyout {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    width: 56.25rem;
+    max-width: 95vw;
+    background-color: rgb(255 255 255);
+    box-shadow: -4px 0 6px -1px rgba(0, 0, 0, 0.1);
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+}
+
+.dark .catalog-modal-flyout {
+    background-color: rgb(31 41 55);
+}
+
+.catalog-modal-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid rgb(229 231 235);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.dark .catalog-modal-header {
+    border-color: rgb(55 65 81);
+}
+
+.catalog-modal-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.5rem;
+}
+
+.catalog-modal-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid rgb(229 231 235);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.5rem;
+}
+
+.dark .catalog-modal-footer {
+    border-color: rgb(55 65 81);
+}
+
+/* Heading Components */
+.catalog-heading {
+    font-weight: 600;
+    color: rgb(17 24 39);
+    margin: 0;
+}
+
+.dark .catalog-heading {
+    color: rgb(243 244 246);
+}
+
+.catalog-heading-lg {
+    font-size: 1.5rem;
+    line-height: 2rem;
+}
+
+.catalog-heading-md {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+}
+
+.catalog-heading-sm {
+    font-size: 1rem;
+    line-height: 1.5rem;
+}
+
+/* Text Components */
+.catalog-text {
+    color: rgb(17 24 39);
+    margin: 0;
+}
+
+.dark .catalog-text {
+    color: rgb(243 244 246);
+}
+
+.catalog-text-sm {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+}
+
+.catalog-text-xs {
+    font-size: 0.75rem;
+    line-height: 1rem;
+}
+
+.catalog-text-muted {
+    color: rgb(107 114 128);
+}
+
+.dark .catalog-text-muted {
+    color: rgb(156 163 175);
+}
+
+/* Callout/Alert Components */
+.catalog-callout {
+    padding: 0.75rem 1rem;
+    border-radius: 0.375rem;
+    margin-bottom: 1rem;
+}
+
+.catalog-callout-red {
+    background-color: rgb(254 226 226);
+    color: rgb(153 27 27);
+    border: 1px solid rgb(254 202 202);
+}
+
+.dark .catalog-callout-red {
+    background-color: rgba(153 27 27 / 0.2);
+    color: rgb(252 165 165);
+    border-color: rgb(127 29 29);
+}
+
+.catalog-callout-green {
+    background-color: rgb(209 250 229);
+    color: rgb(6 95 70);
+    border: 1px solid rgb(167 243 208);
+}
+
+.dark .catalog-callout-green {
+    background-color: rgba(6 95 70 / 0.2);
+    color: rgb(110 231 183);
+    border-color: rgb(5 150 105);
+}
+
+/* Tab Components */
+.catalog-tabs {
+    display: flex;
+    border-bottom: 1px solid rgb(229 231 235);
+    gap: 0.5rem;
+}
+
+.dark .catalog-tabs {
+    border-color: rgb(55 65 81);
+}
+
+.catalog-tab {
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: rgb(107 114 128);
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+}
+
+.dark .catalog-tab {
+    color: rgb(156 163 175);
+}
+
+.catalog-tab:hover {
+    color: rgb(17 24 39);
+}
+
+.dark .catalog-tab:hover {
+    color: rgb(243 244 246);
+}
+
+.catalog-tab-active {
+    color: rgb(37 99 235);
+    border-bottom-color: rgb(37 99 235);
+}
+
+.dark .catalog-tab-active {
+    color: rgb(96 165 250);
+    border-bottom-color: rgb(96 165 250);
+}
+
+.catalog-tab-panel {
+    display: none;
+    padding-top: 1rem;
+}
+
+.catalog-tab-panel-active {
+    display: block;
+}
+
+/* Input Group */
+.catalog-input-group {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.catalog-input-group .catalog-select {
+    max-width: fit-content;
+}
+
+/* Utility Classes */
+.catalog-flex {
+    display: flex;
+}
+
+.catalog-items-center {
+    align-items: center;
+}
+
+.catalog-justify-between {
+    justify-content: space-between;
+}
+
+.catalog-gap-2 {
+    gap: 0.5rem;
+}
+
+.catalog-gap-3 {
+    gap: 0.75rem;
+}
+
+.catalog-text-right {
+    text-align: right;
+}
+
+.catalog-text-center {
+    text-align: center;
+}
+
+.catalog-mt-4 {
+    margin-top: 1rem;
+}
+
+.catalog-mb-4 {
+    margin-bottom: 1rem;
+}
+
+.catalog-space-y-4>*+* {
+    margin-top: 1rem;
+}
+
+.catalog-space-y-6>*+* {
+    margin-top: 1.5rem;
+}
+
+/* Loading Spinner */
+.catalog-spinner {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: catalog-spin 0.75s linear infinite;
+}
+
+@keyframes catalog-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}

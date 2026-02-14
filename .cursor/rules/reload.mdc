@@ -1,0 +1,4 @@
+---
+alwaysApply: true
+---
+Use the `reload` command to reload the application. This command is a short cut for clearing the cache and running npm run build. Use this command after completing an update and ready to test the changes.

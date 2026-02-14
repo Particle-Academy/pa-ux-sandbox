@@ -1,0 +1,873 @@
+---
+alwaysApply: true
+---
+<laravel-boost-guidelines>
+=== foundation rules ===
+
+# Laravel Boost Guidelines
+
+The Laravel Boost guidelines are specifically curated by Laravel maintainers for this application. These guidelines should be followed closely to enhance the user's satisfaction building Laravel applications.
+
+## Foundational Context
+This application is a Laravel application and its main Laravel ecosystems package & versions are below. You are an expert with them all. Ensure you abide by these specific packages & versions.
+
+- php - 8.4.16
+- laravel/cashier (CASHIER) - v15
+- laravel/framework (LARAVEL) - v12
+- laravel/prompts (PROMPTS) - v0
+- livewire/livewire (LIVEWIRE) - v3
+- laravel/mcp (MCP) - v0
+- laravel/pint (PINT) - v1
+- laravel/sail (SAIL) - v1
+- pestphp/pest (PEST) - v4
+- phpunit/phpunit (PHPUNIT) - v12
+- tailwindcss (TAILWINDCSS) - v4
+
+## Conventions
+- You must follow all existing code conventions used in this application. When creating or editing a file, check sibling files for the correct structure, approach, and naming.
+- Use descriptive names for variables and methods. For example, `isRegisteredForDiscounts`, not `discount()`.
+- Check for existing components to reuse before writing a new one.
+
+## Verification Scripts
+- Do not create verification scripts or tinker when tests cover that functionality and prove it works. Unit and feature tests are more important.
+
+## Application Structure & Architecture
+- Stick to existing directory structure; don't create new base folders without approval.
+- Do not change the application's dependencies without approval.
+
+## Frontend Bundling
+- If the user doesn't see a frontend change reflected in the UI, it could mean they need to run `npm run build`, `npm run dev`, or `composer run dev`. Ask them.
+
+## Replies
+- Be concise in your explanations - focus on what's important rather than explaining obvious details.
+
+## Documentation Files
+- You must only create documentation files if explicitly requested by the user.
+
+=== boost rules ===
+
+## Laravel Boost
+- Laravel Boost is an MCP server that comes with powerful tools designed specifically for this application. Use them.
+
+## Artisan
+- Use the `list-artisan-commands` tool when you need to call an Artisan command to double-check the available parameters.
+
+## URLs
+- Whenever you share a project URL with the user, you should use the `get-absolute-url` tool to ensure you're using the correct scheme, domain/IP, and port.
+
+## Tinker / Debugging
+- You should use the `tinker` tool when you need to execute PHP to debug code or query Eloquent models directly.
+- Use the `database-query` tool when you only need to read from the database.
+
+## Reading Browser Logs With the `browser-logs` Tool
+- You can read browser logs, errors, and exceptions using the `browser-logs` tool from Boost.
+- Only recent browser logs will be useful - ignore old logs.
+
+## Searching Documentation (Critically Important)
+- Boost comes with a powerful `search-docs` tool you should use before any other approaches when dealing with Laravel or Laravel ecosystem packages. This tool automatically passes a list of installed packages and their versions to the remote Boost API, so it returns only version-specific documentation for the user's circumstance. You should pass an array of packages to filter on if you know you need docs for particular packages.
+- The `search-docs` tool is perfect for all Laravel-related packages, including Laravel, Inertia, Livewire, Filament, Tailwind, Pest, Nova, Nightwatch, etc.
+- You must use this tool to search for Laravel ecosystem documentation before falling back to other approaches.
+- Search the documentation before making code changes to ensure we are taking the correct approach.
+- Use multiple, broad, simple, topic-based queries to start. For example: `['rate limiting', 'routing rate limiting', 'routing']`.
+- Do not add package names to queries; package information is already shared. For example, use `test resource table`, not `filament 4 test resource table`.
+
+### Available Search Syntax
+- You can and should pass multiple queries at once. The most relevant results will be returned first.
+
+1. Simple Word Searches with auto-stemming - query=authentication - finds 'authenticate' and 'auth'.
+2. Multiple Words (AND Logic) - query=rate limit - finds knowledge containing both "rate" AND "limit".
+3. Quoted Phrases (Exact Position) - query="infinite scroll" - words must be adjacent and in that order.
+4. Mixed Queries - query=middleware "rate limit" - "middleware" AND exact phrase "rate limit".
+5. Multiple Queries - queries=["authentication", "middleware"] - ANY of these terms.
+
+=== php rules ===
+
+## PHP
+
+- Always use curly braces for control structures, even if it has one line.
+
+### Constructors
+- Use PHP 8 constructor property promotion in `__construct()`.
+    - <code-snippet>public function __construct(public GitHub $github) { }</code-snippet>
+- Do not allow empty `__construct()` methods with zero parameters unless the constructor is private.
+
+### Type Declarations
+- Always use explicit return type declarations for methods and functions.
+- Use appropriate PHP type hints for method parameters.
+
+<code-snippet name="Explicit Return Types and Method Params" lang="php">
+protected function isAccessible(User $user, ?string $path = null): bool
+{
+    ...
+}
+</code-snippet>
+
+## Comments
+- Prefer PHPDoc blocks over inline comments. Never use comments within the code itself unless there is something very complex going on.
+
+## PHPDoc Blocks
+- Add useful array shape type definitions for arrays when appropriate.
+
+## Enums
+- Typically, keys in an Enum should be TitleCase. For example: `FavoritePerson`, `BestLake`, `Monthly`.
+
+=== tests rules ===
+
+## Test Enforcement
+
+- Every change must be programmatically tested. Write a new test or update an existing test, then run the affected tests to make sure they pass.
+- Run the minimum number of tests needed to ensure code quality and speed. Use `php artisan test --compact` with a specific filename or filter.
+
+=== laravel/core rules ===
+
+## Do Things the Laravel Way
+
+- Use `php artisan make:` commands to create new files (i.e. migrations, controllers, models, etc.). You can list available Artisan commands using the `list-artisan-commands` tool.
+- If you're creating a generic PHP class, use `php artisan make:class`.
+- Pass `--no-interaction` to all Artisan commands to ensure they work without user input. You should also pass the correct `--options` to ensure correct behavior.
+
+### Database
+- Always use proper Eloquent relationship methods with return type hints. Prefer relationship methods over raw queries or manual joins.
+- Use Eloquent models and relationships before suggesting raw database queries.
+- Avoid `DB::`; prefer `Model::query()`. Generate code that leverages Laravel's ORM capabilities rather than bypassing them.
+- Generate code that prevents N+1 query problems by using eager loading.
+- Use Laravel's query builder for very complex database operations.
+
+### Model Creation
+- When creating new models, create useful factories and seeders for them too. Ask the user if they need any other things, using `list-artisan-commands` to check the available options to `php artisan make:model`.
+
+### APIs & Eloquent Resources
+- For APIs, default to using Eloquent API Resources and API versioning unless existing API routes do not, then you should follow existing application convention.
+
+### Controllers & Validation
+- Always create Form Request classes for validation rather than inline validation in controllers. Include both validation rules and custom error messages.
+- Check sibling Form Requests to see if the application uses array or string based validation rules.
+
+### Queues
+- Use queued jobs for time-consuming operations with the `ShouldQueue` interface.
+
+### Authentication & Authorization
+- Use Laravel's built-in authentication and authorization features (gates, policies, Sanctum, etc.).
+
+### URL Generation
+- When generating links to other pages, prefer named routes and the `route()` function.
+
+### Configuration
+- Use environment variables only in configuration files - never use the `env()` function directly outside of config files. Always use `config('app.name')`, not `env('APP_NAME')`.
+
+### Testing
+- When creating models for tests, use the factories for the models. Check if the factory has custom states that can be used before manually setting up the model.
+- Faker: Use methods such as `$this->faker->word()` or `fake()->randomDigit()`. Follow existing conventions whether to use `$this->faker` or `fake()`.
+- When creating tests, make use of `php artisan make:test [options] {name}` to create a feature test, and pass `--unit` to create a unit test. Most tests should be feature tests.
+
+### Vite Error
+- If you receive an "Illuminate\Foundation\ViteException: Unable to locate file in Vite manifest" error, you can run `npm run build` or ask the user to run `npm run dev` or `composer run dev`.
+
+=== laravel/v12 rules ===
+
+## Laravel 12
+
+- Use the `search-docs` tool to get version-specific documentation.
+- Since Laravel 11, Laravel has a new streamlined file structure which this project uses.
+
+### Laravel 12 Structure
+- In Laravel 12, middleware are no longer registered in `app/Http/Kernel.php`.
+- Middleware are configured declaratively in `bootstrap/app.php` using `Application::configure()->withMiddleware()`.
+- `bootstrap/app.php` is the file to register middleware, exceptions, and routing files.
+- `bootstrap/providers.php` contains application specific service providers.
+- The `app\Console\Kernel.php` file no longer exists; use `bootstrap/app.php` or `routes/console.php` for console configuration.
+- Console commands in `app/Console/Commands/` are automatically available and do not require manual registration.
+
+### Database
+- When modifying a column, the migration must include all of the attributes that were previously defined on the column. Otherwise, they will be dropped and lost.
+- Laravel 12 allows limiting eagerly loaded records natively, without external packages: `$query->latest()->limit(10);`.
+
+### Models
+- Casts can and likely should be set in a `casts()` method on a model rather than the `$casts` property. Follow existing conventions from other models.
+
+=== livewire/core rules ===
+
+## Livewire
+
+- Use the `search-docs` tool to find exact version-specific documentation for how to write Livewire and Livewire tests.
+- Use the `php artisan make:livewire [Posts\CreatePost]` Artisan command to create new components.
+- State should live on the server, with the UI reflecting it.
+- All Livewire requests hit the Laravel backend; they're like regular HTTP requests. Always validate form data and run authorization checks in Livewire actions.
+
+## Livewire Best Practices
+- Livewire components require a single root element.
+- Use `wire:loading` and `wire:dirty` for delightful loading states.
+- Add `wire:key` in loops:
+
+    ```blade
+    @foreach ($items as $item)
+        <div wire:key="item-{{ $item->id }}">
+            {{ $item->name }}
+        </div>
+    @endforeach
+    ```
+
+- Prefer lifecycle hooks like `mount()`, `updatedFoo()` for initialization and reactive side effects:
+
+<code-snippet name="Lifecycle Hook Examples" lang="php">
+    public function mount(User $user) { $this->user = $user; }
+    public function updatedSearch() { $this->resetPage(); }
+</code-snippet>
+
+## Testing Livewire
+
+<code-snippet name="Example Livewire Component Test" lang="php">
+    Livewire::test(Counter::class)
+        ->assertSet('count', 0)
+        ->call('increment')
+        ->assertSet('count', 1)
+        ->assertSee(1)
+        ->assertStatus(200);
+</code-snippet>
+
+<code-snippet name="Testing Livewire Component Exists on Page" lang="php">
+    $this->get('/posts/create')
+    ->assertSeeLivewire(CreatePost::class);
+</code-snippet>
+
+=== livewire/v3 rules ===
+
+## Livewire 3
+
+### Key Changes From Livewire 2
+- These things changed in Livewire 3, but may not have been updated in this application. Verify this application's setup to ensure you conform with application conventions.
+    - Use `wire:model.live` for real-time updates, `wire:model` is now deferred by default.
+    - Components now use the `App\Livewire` namespace (not `App\Http\Livewire`).
+    - Use `$this->dispatch()` to dispatch events (not `emit` or `dispatchBrowserEvent`).
+    - Use the `components.layouts.app` view as the typical layout path (not `layouts.app`).
+
+### New Directives
+- `wire:show`, `wire:transition`, `wire:cloak`, `wire:offline`, `wire:target` are available for use. Use the documentation to find usage examples.
+
+### Alpine
+- Alpine is now included with Livewire; don't manually include Alpine.js.
+- Plugins included with Alpine: persist, intersect, collapse, and focus.
+
+### Lifecycle Hooks
+- You can listen for `livewire:init` to hook into Livewire initialization, and `fail.status === 419` for the page expiring:
+
+<code-snippet name="Livewire Init Hook Example" lang="js">
+document.addEventListener('livewire:init', function () {
+    Livewire.hook('request', ({ fail }) => {
+        if (fail && fail.status === 419) {
+            alert('Your session expired');
+        }
+    });
+
+    Livewire.hook('message.failed', (message, component) => {
+        console.error(message);
+    });
+});
+</code-snippet>
+
+=== pint/core rules ===
+
+## Laravel Pint Code Formatter
+
+- You must run `vendor/bin/pint --dirty` before finalizing changes to ensure your code matches the project's expected style.
+- Do not run `vendor/bin/pint --test`, simply run `vendor/bin/pint` to fix any formatting issues.
+
+=== pest/core rules ===
+
+## Pest
+### Testing
+- If you need to verify a feature is working, write or update a Unit / Feature test.
+
+### Pest Tests
+- All tests must be written using Pest. Use `php artisan make:test --pest {name}`.
+- You must not remove any tests or test files from the tests directory without approval. These are not temporary or helper files - these are core to the application.
+- Tests should test all of the happy paths, failure paths, and weird paths.
+- Tests live in the `tests/Feature` and `tests/Unit` directories.
+- Pest tests look and behave like this:
+<code-snippet name="Basic Pest Test Example" lang="php">
+it('is true', function () {
+    expect(true)->toBeTrue();
+});
+</code-snippet>
+
+### Running Tests
+- Run the minimal number of tests using an appropriate filter before finalizing code edits.
+- To run all tests: `php artisan test --compact`.
+- To run all tests in a file: `php artisan test --compact tests/Feature/ExampleTest.php`.
+- To filter on a particular test name: `php artisan test --compact --filter=testName` (recommended after making a change to a related file).
+- When the tests relating to your changes are passing, ask the user if they would like to run the entire test suite to ensure everything is still passing.
+
+### Pest Assertions
+- When asserting status codes on a response, use the specific method like `assertForbidden` and `assertNotFound` instead of using `assertStatus(403)` or similar, e.g.:
+<code-snippet name="Pest Example Asserting postJson Response" lang="php">
+it('returns all', function () {
+    $response = $this->postJson('/api/docs', []);
+
+    $response->assertSuccessful();
+});
+</code-snippet>
+
+### Mocking
+- Mocking can be very helpful when appropriate.
+- When mocking, you can use the `Pest\Laravel\mock` Pest function, but always import it via `use function Pest\Laravel\mock;` before using it. Alternatively, you can use `$this->mock()` if existing tests do.
+- You can also create partial mocks using the same import or self method.
+
+### Datasets
+- Use datasets in Pest to simplify tests that have a lot of duplicated data. This is often the case when testing validation rules, so consider this solution when writing tests for validation rules.
+
+<code-snippet name="Pest Dataset Example" lang="php">
+it('has emails', function (string $email) {
+    expect($email)->not->toBeEmpty();
+})->with([
+    'james' => 'james@laravel.com',
+    'taylor' => 'taylor@laravel.com',
+]);
+</code-snippet>
+
+=== pest/v4 rules ===
+
+## Pest 4
+
+- Pest 4 is a huge upgrade to Pest and offers: browser testing, smoke testing, visual regression testing, test sharding, and faster type coverage.
+- Browser testing is incredibly powerful and useful for this project.
+- Browser tests should live in `tests/Browser/`.
+- Use the `search-docs` tool for detailed guidance on utilizing these features.
+
+### Browser Testing
+- You can use Laravel features like `Event::fake()`, `assertAuthenticated()`, and model factories within Pest 4 browser tests, as well as `RefreshDatabase` (when needed) to ensure a clean state for each test.
+- Interact with the page (click, type, scroll, select, submit, drag-and-drop, touch gestures, etc.) when appropriate to complete the test.
+- If requested, test on multiple browsers (Chrome, Firefox, Safari).
+- If requested, test on different devices and viewports (like iPhone 14 Pro, tablets, or custom breakpoints).
+- Switch color schemes (light/dark mode) when appropriate.
+- Take screenshots or pause tests for debugging when appropriate.
+
+### Example Tests
+
+<code-snippet name="Pest Browser Test Example" lang="php">
+it('may reset the password', function () {
+    Notification::fake();
+
+    $this->actingAs(User::factory()->create());
+
+    $page = visit('/sign-in'); // Visit on a real browser...
+
+    $page->assertSee('Sign In')
+        ->assertNoJavascriptErrors() // or ->assertNoConsoleLogs()
+        ->click('Forgot Password?')
+        ->fill('email', 'nuno@laravel.com')
+        ->click('Send Reset Link')
+        ->assertSee('We have emailed your password reset link!')
+
+    Notification::assertSent(ResetPassword::class);
+});
+</code-snippet>
+
+<code-snippet name="Pest Smoke Testing Example" lang="php">
+$pages = visit(['/', '/about', '/contact']);
+
+$pages->assertNoJavascriptErrors()->assertNoConsoleLogs();
+</code-snippet>
+
+=== tailwindcss/core rules ===
+
+## Tailwind CSS
+
+- Use Tailwind CSS classes to style HTML; check and use existing Tailwind conventions within the project before writing your own.
+- Offer to extract repeated patterns into components that match the project's conventions (i.e. Blade, JSX, Vue, etc.).
+- Think through class placement, order, priority, and defaults. Remove redundant classes, add classes to parent or child carefully to limit repetition, and group elements logically.
+- You can use the `search-docs` tool to get exact examples from the official documentation when needed.
+
+### Spacing
+- When listing items, use gap utilities for spacing; don't use margins.
+
+<code-snippet name="Valid Flex Gap Spacing Example" lang="html">
+    <div class="flex gap-8">
+        <div>Superior</div>
+        <div>Michigan</div>
+        <div>Erie</div>
+    </div>
+</code-snippet>
+
+### Dark Mode
+- If existing pages and components support dark mode, new pages and components must support dark mode in a similar way, typically using `dark:`.
+
+=== tailwindcss/v4 rules ===
+
+## Tailwind CSS 4
+
+- Always use Tailwind CSS v4; do not use the deprecated utilities.
+- `corePlugins` is not supported in Tailwind v4.
+- In Tailwind v4, configuration is CSS-first using the `@theme` directive — no separate `tailwind.config.js` file is needed.
+
+<code-snippet name="Extending Theme in CSS" lang="css">
+@theme {
+  --color-brand: oklch(0.72 0.11 178);
+}
+</code-snippet>
+
+- In Tailwind v4, you import Tailwind using a regular CSS `@import` statement, not using the `@tailwind` directives used in v3:
+
+<code-snippet name="Tailwind v4 Import Tailwind Diff" lang="diff">
+   - @tailwind base;
+   - @tailwind components;
+   - @tailwind utilities;
+   + @import "tailwindcss";
+</code-snippet>
+
+### Replaced Utilities
+- Tailwind v4 removed deprecated utilities. Do not use the deprecated option; use the replacement.
+- Opacity values are still numeric.
+
+| Deprecated |	Replacement |
+|------------+--------------|
+| bg-opacity-* | bg-black/* |
+| text-opacity-* | text-black/* |
+| border-opacity-* | border-black/* |
+| divide-opacity-* | divide-black/* |
+| ring-opacity-* | ring-black/* |
+| placeholder-opacity-* | placeholder-black/* |
+| flex-shrink-* | shrink-* |
+| flex-grow-* | grow-* |
+| overflow-ellipsis | text-ellipsis |
+| decoration-slice | box-decoration-slice |
+| decoration-clone | box-decoration-clone |
+
+=== particle-academy/laravel-catalog rules ===
+
+## Laravel Catalog Package
+
+This package provides Stripe catalog (Products and Prices) management with an optional admin UI. All functionality is accessible via a facade, making it perfect for apps using their own UX. Plans are Products with recurring Prices - there is no separate Plan model.
+
+### Features
+
+- **Product Management**: Create, edit, and manage Stripe products with full CRUD operations
+- **Price Management**: Manage recurring (subscription) and one-time prices for products
+- **Plans Support**: Plans are simply Products with recurring Prices - no separate model needed
+- **Stripe Sync**: Automatic or manual synchronization with Stripe's catalog
+- **Facade API**: Complete programmatic access via `Catalog` facade - no UI required
+- **Optional Admin UI**: Complete Livewire-based admin interface (optional, requires publishing)
+- **Product Features**: Support for product features and feature configurations via FMS integration
+- **Checkout Integration**: Ready-to-use Stripe Checkout session creation for subscriptions and one-time payments
+
+### File Structure
+
+- `src/CatalogManager.php` - Main facade implementation providing unified interface
+- `src/Services/StripeCatalogService.php` - Handles Stripe product/price synchronization
+- `src/Services/StripeCheckoutService.php` - Handles Stripe Checkout session creation
+- `src/Models/Product.php` - Product model with Stripe sync fields
+- `src/Models/Price.php` - Price model for recurring and one-time pricing
+- `src/Models/ProductFeature.php` - Product features model for FMS integration
+- `src/Facades/Catalog.php` - Facade for accessing catalog functionality
+- `src/Livewire/Admin/Products/Index.php` - Admin UI component (optional)
+
+### Core Concepts
+
+**Important**: Every Product must have at least one Price before it can be synced to Stripe. Plans are Products with recurring Prices - there is no separate Plan model.
+
+### Configuration
+
+Publish the configuration file:
+
+
+<code-snippet name="Publish Catalog config" lang="bash">
+php artisan vendor:publish --tag=catalog-config
+</code-snippet>
+
+
+Configure in `config/catalog.php`:
+
+
+<code-snippet name="Catalog Configuration" lang="php">
+return [
+    'auto_sync' => env('CATALOG_AUTO_SYNC', false),
+    'queue_connection' => env('CATALOG_QUEUE_CONNECTION', 'default'),
+    'enable_ui' => env('CATALOG_ENABLE_UI', false),
+    'admin_route_prefix' => env('CATALOG_ADMIN_PREFIX', 'admin/catalog'),
+    'admin_middleware' => ['web', 'auth'],
+    'broadcasting_channel' => env('CATALOG_BROADCASTING_CHANNEL', 'catalog-sync'),
+];
+</code-snippet>
+
+
+### Using the Catalog Facade
+
+
+<code-snippet name="Catalog Facade Usage" lang="php">
+use LaravelCatalog\Facades\Catalog;
+
+// Create a product
+$product = Catalog::createProduct([
+    'name' => 'Pro Plan',
+    'description' => 'Professional features',
+    'metadata' => ['key' => 'value'],
+]);
+
+// Create a price
+$price = Catalog::createPrice($product, [
+    'amount' => 2999, // in cents
+    'currency' => 'usd',
+    'recurring' => [
+        'interval' => 'month',
+    ],
+]);
+
+// Sync product to Stripe
+Catalog::syncProductAndPrices($product);
+
+// Create checkout session
+$checkout = Catalog::createCheckoutSession($user, [
+    'price' => $price->stripe_price_id,
+    'success_url' => route('checkout.success'),
+    'cancel_url' => route('checkout.cancel'),
+]);
+</code-snippet>
+
+
+### Creating Products
+
+
+<code-snippet name="Create Product" lang="php">
+use LaravelCatalog\Models\Product;
+use LaravelCatalog\Facades\Catalog;
+
+// Using facade
+$product = Catalog::createProduct([
+    'name' => 'Basic Plan',
+    'description' => 'Basic features',
+    'active' => true,
+    'metadata' => ['plan_type' => 'basic'],
+]);
+
+// Using model directly
+$product = Product::create([
+    'name' => 'Pro Plan',
+    'description' => 'Professional features',
+    'active' => true,
+]);
+</code-snippet>
+
+
+### Creating Prices
+
+
+<code-snippet name="Create Price" lang="php">
+use LaravelCatalog\Models\Price;
+use LaravelCatalog\Facades\Catalog;
+
+// Recurring price (subscription)
+$recurringPrice = Catalog::createPrice($product, [
+    'amount' => 2999, // .99 in cents
+    'currency' => 'usd',
+    'recurring' => [
+        'interval' => 'month',
+        'interval_count' => 1,
+    ],
+]);
+
+// One-time price
+$oneTimePrice = Catalog::createPrice($product, [
+    'amount' => 9999, // .99 in cents
+    'currency' => 'usd',
+    'type' => 'one_time',
+]);
+</code-snippet>
+
+
+### Syncing to Stripe
+
+
+<code-snippet name="Sync to Stripe" lang="php">
+use LaravelCatalog\Facades\Catalog;
+
+// Sync single product and its prices
+Catalog::syncProductAndPrices($product);
+
+// Sync all products (if auto_sync is disabled)
+Catalog::syncAllProducts();
+
+// Queue sync job
+Catalog::queueSyncProduct($product);
+</code-snippet>
+
+
+### Creating Checkout Sessions
+
+
+<code-snippet name="Create Checkout Session" lang="php">
+use LaravelCatalog\Facades\Catalog;
+
+// Subscription checkout
+$checkout = Catalog::createCheckoutSession($user, [
+    'price' => $price->stripe_price_id,
+    'success_url' => route('checkout.success'),
+    'cancel_url' => route('checkout.cancel'),
+    'mode' => 'subscription',
+]);
+
+// One-time payment checkout
+$checkout = Catalog::createCheckoutSession($user, [
+    'price' => $oneTimePrice->stripe_price_id,
+    'success_url' => route('checkout.success'),
+    'cancel_url' => route('checkout.cancel'),
+    'mode' => 'payment',
+]);
+
+// Redirect to checkout
+return redirect($checkout->url);
+</code-snippet>
+
+
+### Working with Product Features
+
+
+<code-snippet name="Product Features" lang="php">
+use LaravelCatalog\Models\Product;
+use LaravelCatalog\Models\ProductFeature;
+
+// Attach feature to product
+$product = Product::find($productId);
+$feature = ProductFeature::where('key', 'advanced-editing')->first();
+
+$product->productFeatures()->attach($feature->id, [
+    'enabled' => true,
+    'included_quantity' => 100,
+]);
+
+// Check if product has feature
+if ($product->productFeatures()->where('key', 'advanced-editing')->exists()) {
+    // Product has feature
+}
+</code-snippet>
+
+
+### Integration with FMS
+
+When FMS is installed, Catalog automatically configures FMS to use Catalog's `ProductFeature` model:
+
+
+<code-snippet name="FMS Integration" lang="php">
+use ParticleAcademy\Fms\Facades\FMS;
+use LaravelCatalog\Models\Product;
+
+// Check feature access for user's subscription
+$user = auth()->user();
+$subscription = $user->subscriptions()->active()->first();
+
+if ($subscription) {
+    $product = $subscription->product();
+    
+    foreach ($product->productFeatures as $feature) {
+        if (FMS::canAccess($feature->key, $user)) {
+            // Feature is available
+        }
+    }
+}
+</code-snippet>
+
+
+### Best Practices
+
+- Always create at least one Price before syncing a Product to Stripe
+- Use the Catalog facade for all operations to maintain consistency
+- Queue sync operations for better performance in production
+- Use metadata fields for custom product configurations
+- Enable UI only when needed - the package works without UI
+- Use Product Features with FMS for feature-based access control
+- Always handle Stripe API errors gracefully
+
+=== particle-academy/laravel-fms rules ===
+
+## Laravel Feature Management System (FMS)
+
+This package provides flexible feature access control and management for Laravel applications. FMS supports multiple access control strategies: Gates/Policies, config-based, registry-based, and database lookups. It supports both boolean (on/off) and resource (metered) features.
+
+### Features
+
+- **Multiple Access Control Strategies**: Gates/Policies, config files, feature registry, or database lookups
+- **Boolean & Resource Features**: Support for simple on/off features and metered resource features
+- **Middleware Protection**: Protect routes based on feature access
+- **Facade & Helpers**: Clean API via facade and global helper functions
+- **Standalone Package**: Zero dependencies on other packages
+
+### File Structure
+
+- `src/Services/FeatureManager.php` - Core feature access checking logic
+- `src/Services/FmsFeatureRegistry.php` - Registry for programmatically registered features
+- `src/Facades/FMS.php` - Facade for accessing FMS functionality
+- `src/Http/Middleware/RequireFeature.php` - Middleware for route protection
+- `src/Models/FeatureUsage.php` - Model for database-based feature tracking
+- `src/helpers.php` - Global helper functions
+- `config/fms.php` - Configuration file for feature definitions
+
+### Configuration
+
+Features are defined in `config/fms.php`. Publish the config file:
+
+
+<code-snippet name="Publish FMS config" lang="bash">
+php artisan vendor:publish --tag=fms-config
+</code-snippet>
+
+
+Define features in the config:
+
+
+<code-snippet name="FMS Feature Configuration" lang="php">
+return [
+    'features' => [
+        // Boolean feature
+        'use-mcp' => [
+            'name' => 'Use MCP',
+            'description' => 'Access to MCP-powered assistants and tools.',
+            'type' => 'boolean',
+            'enabled' => true, // or callable: fn($user) => $user->isPremium()
+        ],
+
+        // Resource feature with limit
+        'ai-tokens' => [
+            'name' => 'AI Tokens',
+            'description' => 'Metered AI token usage per billing period.',
+            'type' => 'resource',
+            'limit' => 10000, // or callable
+            'usage' => fn($user) => $user->getTokenUsage(), // optional
+        ],
+    ],
+];
+</code-snippet>
+
+
+### Using the Facade
+
+
+<code-snippet name="FMS Facade Usage" lang="php">
+use ParticleAcademy\Fms\Facades\FMS;
+
+// Check if feature is accessible
+if (FMS::canAccess('use-mcp')) {
+    // Feature is enabled
+}
+
+// Check if user has feature
+if (FMS::hasFeature('use-mcp', $user)) {
+    // User has access
+}
+
+// Get remaining quantity for resource features
+$remaining = FMS::remaining('ai-tokens', $user);
+if ($remaining > 0) {
+    // Allow action
+}
+
+// Get all enabled features
+$enabled = FMS::enabled($user);
+</code-snippet>
+
+
+### Using Helper Functions
+
+
+<code-snippet name="FMS Helper Functions" lang="php">
+// Get feature manager or check feature
+if (feature('use-mcp')) {
+    // Feature is enabled
+}
+
+// Check feature access
+if (can_access_feature('use-mcp', $user)) {
+    // User has access
+}
+
+// Get remaining quantity
+$remaining = feature_remaining('ai-tokens', $user);
+
+// Get all enabled features
+$enabled = enabled_features($user);
+</code-snippet>
+
+
+### Using Middleware
+
+Protect routes with feature requirements:
+
+
+<code-snippet name="FMS Middleware Protection" lang="php">
+use ParticleAcademy\Fms\Http\Middleware\RequireFeature;
+
+Route::middleware(['auth', RequireFeature::class . ':use-mcp'])->group(function () {
+    Route::get('/mcp', [McpController::class, 'index']);
+});
+
+// Multiple features (OR logic - user needs at least one)
+Route::middleware(['auth', RequireFeature::class . ':feature1,feature2'])->group(function () {
+    // Route protected by feature1 OR feature2
+});
+</code-snippet>
+
+
+### Using Gates/Policies
+
+FMS automatically checks Laravel Gates if they exist:
+
+
+<code-snippet name="FMS Gate Integration" lang="php">
+// In AuthServiceProvider
+Gate::define('use-mcp', function ($user) {
+    return $user->subscription->plan === 'pro';
+});
+
+// FMS will automatically use this gate
+if (FMS::canAccess('use-mcp')) {
+    // Gate check passed
+}
+</code-snippet>
+
+
+### Feature Registry
+
+Register features programmatically:
+
+
+<code-snippet name="FMS Feature Registry" lang="php">
+use ParticleAcademy\Fms\Services\FmsFeatureRegistry;
+
+app(FmsFeatureRegistry::class)->register('custom-feature', [
+    'name' => 'Custom Feature',
+    'type' => 'boolean',
+    'enabled' => fn($user) => $user->hasPermission('custom'),
+]);
+</code-snippet>
+
+
+### Access Control Strategy Order
+
+FMS checks features in this order:
+
+1. **Gates/Policies** - If a Gate exists with the feature name, it's checked first
+2. **Feature Registry** - Checks registered features via `FmsFeatureRegistry`
+3. **Config File** - Checks `config/fms.features.{feature}`
+4. **Database** - If `FeatureUsage` model exists, checks database (extensible)
+
+### Resource Features
+
+Resource features support metered usage:
+
+
+<code-snippet name="FMS Resource Features" lang="php">
+'api-calls' => [
+    'type' => 'resource',
+    'limit' => 1000,
+    'usage' => fn($user) => $user->apiCalls()->thisMonth()->count(),
+    'remaining' => fn($user) => 1000 - $user->apiCalls()->thisMonth()->count(), // optional
+],
+</code-snippet>
+
+
+### Best Practices
+
+- Always check feature access before allowing actions that require features
+- Use middleware for route-level protection
+- Use Gates/Policies for complex authorization logic
+- Use resource features for metered/usage-based features
+- Register features programmatically when they need to be dynamic
+- Keep feature definitions in config for static features
+</laravel-boost-guidelines>

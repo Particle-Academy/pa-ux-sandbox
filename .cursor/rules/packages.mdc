@@ -1,0 +1,10 @@
+---
+alwaysApply: true
+---
+# Run commands in a package directory under packages/
+# Usage: 
+#   pkg <command>              - auto-detects single package
+#   pkg <package-name> <cmd>   - runs in specific package
+# Examples:
+#   pkg php vendor/bin/pest
+#   pkg laravel-fun-lab php vendor/bin/pest

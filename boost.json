@@ -1,0 +1,12 @@
+{
+    "agents": [
+        "cursor"
+    ],
+    "editors": [
+        "cursor"
+    ],
+    "guidelines": [
+        "particle-academy/laravel-fms",
+        "particle-academy/laravel-catalog"
+    ]
+}

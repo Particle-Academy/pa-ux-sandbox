@@ -1,0 +1,9 @@
+[submodule "packages/laravel-catalog"]
+	path = packages/laravel-catalog
+	url = https://github.com/Particle-Academy/laravel-catalog.git
+[submodule "packages/laravel-fms"]
+	path = packages/laravel-fms
+	url = https://github.com/Particle-Academy/laravel-feature-management-system.git
+[submodule "packages/fancy-flux"]
+	path = packages/fancy-flux
+	url = https://github.com/wishborn/fancy-flux.git

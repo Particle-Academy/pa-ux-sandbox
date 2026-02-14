@@ -9,8 +9,10 @@
 /.idea
 /.nova
 /.phpunit.cache
+/.cursor
 /.vscode
 /.zed
+/.rnd
 /auth.json
 /node_modules
 /public/build
@@ -19,6 +21,7 @@
 /storage/*.key
 /storage/pail
 /vendor
+packages/*/vendor
 Homestead.json
 Homestead.yaml
 Thumbs.db

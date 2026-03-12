@@ -7,3 +7,6 @@
 [submodule "packages/fancy-flux"]
 	path = packages/fancy-flux
 	url = https://github.com/wishborn/fancy-flux.git
+[submodule "packages/react-fancy"]
+	path = packages/react-fancy
+	url = https://github.com/Particle-Academy/react-fancy.git

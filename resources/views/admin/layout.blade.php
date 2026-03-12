@@ -36,6 +36,9 @@
                                 Catalog UI
                             </a>
                         @endif
+                        <a href="{{ route('ux-demos') }}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                            UX Demos
+                        </a>
                     </div>
                 </div>
                 <div class="flex items-center space-x-4">

@@ -1,0 +1,4 @@
+@import "tailwindcss";
+@import "@fancy/react/styles.css";
+
+@source '../js/react-demos/**/*.tsx';

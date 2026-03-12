@@ -46,6 +46,12 @@ Route::prefix('admin')->name('admin.')->middleware(['web', 'auth'])->group(funct
     Route::post('features/test', [\App\Http\Controllers\Admin\AdminFeaturesController::class, 'test'])->name('features.test');
 });
 
+// UX Demo Hub
+Route::get('/ux-demos', fn () => view('ux-demos'))->name('ux-demos');
+
+// React demos (SPA catch-all)
+Route::get('/react-demos/{any?}', fn () => view('react-demos'))->where('any', '.*')->name('react-demos');
+
 // Published Catalog UI routes (only if UI is enabled)
 if (config('catalog.enable_ui', false) || file_exists(resource_path('views/vendor/catalog'))) {
     Route::prefix('ctrl')->name('ctrl.')->middleware(['web', 'auth'])->group(function () {

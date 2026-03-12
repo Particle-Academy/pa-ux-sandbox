@@ -93,7 +93,10 @@
             "type": "path",
             "url": "./packages/laravel-fms",
             "options": {
-                "symlink": true
+                "symlink": true,
+                "versions": {
+                    "particle-academy/laravel-fms": "0.2.0"
+                }
             }
         },
         {

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6f30db5fe3f85750fffef6da952c46dd",
+    "content-hash": "b5c08bffd82eaefe44d00ed54d612ad3",
     "packages": [
         {
             "name": "brick/math",
@@ -2852,12 +2852,13 @@
             "dist": {
                 "type": "path",
                 "url": "./packages/laravel-catalog",
-                "reference": "572743a86f906becc6b95ac6b7eb5152a00402e1"
+                "reference": "14beb1a43fe861e02130e312dfbc011bb13010d9"
             },
             "require": {
                 "laravel/cashier": "^15.0",
                 "laravel/framework": "^11.0|^12.0",
                 "livewire/livewire": "^3.0|^4.0",
+                "particle-academy/laravel-fms": "^0.2",
                 "php": "^8.2",
                 "stripe/stripe-php": "^13.0|^16.0"
             },
@@ -2885,7 +2886,7 @@
         },
         {
             "name": "particle-academy/laravel-fms",
-            "version": "dev-main",
+            "version": "0.2.0",
             "dist": {
                 "type": "path",
                 "url": "./packages/laravel-fms",

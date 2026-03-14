@@ -1,4 +1,4 @@
-import { Emoji } from "@fancy/react";
+import { Emoji } from "@particle-academy/react-fancy";
 import { DemoSection } from "../components/DemoSection";
 
 export function EmojiDemo() {

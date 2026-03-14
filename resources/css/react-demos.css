@@ -1,4 +1,4 @@
 @import "tailwindcss";
-@import "@fancy/react/styles.css";
+@import "@particle-academy/react-fancy/styles.css";
 
 @source '../js/react-demos/**/*.tsx';

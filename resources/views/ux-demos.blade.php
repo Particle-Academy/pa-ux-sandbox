@@ -9,10 +9,10 @@
         Interactive demos for two component libraries — same design language, different frameworks.
     </p>
 
-    {{-- @fancy/react --}}
+    {{-- @particle-academy/react-fancy --}}
     <section class="mb-10">
         <div class="flex items-center gap-3 mb-4">
-            <h2 class="text-xl font-semibold text-gray-900 dark:text-white">@fancy/react</h2>
+            <h2 class="text-xl font-semibold text-gray-900 dark:text-white">@particle-academy/react-fancy</h2>
             <span class="inline-block rounded-full bg-blue-100 dark:bg-blue-900/40 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-blue-700 dark:text-blue-300">React</span>
         </div>
         <div class="grid grid-cols-2 gap-4 lg:grid-cols-3">

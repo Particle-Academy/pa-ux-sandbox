@@ -50,7 +50,7 @@ export function Sidebar() {
   return (
     <aside className="fixed top-0 left-0 h-screen w-56 border-r border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
       <div className="mb-6">
-        <h1 className="text-lg font-bold text-zinc-900 dark:text-zinc-100">@fancy/react</h1>
+        <h1 className="text-lg font-bold text-zinc-900 dark:text-zinc-100">@particle-academy/react-fancy</h1>
         <a href="/ux-demos" className="text-xs text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300">
           &larr; Back to UX Demo Hub
         </a>

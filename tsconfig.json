@@ -8,7 +8,7 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "paths": {
-      "@fancy/react": ["./packages/react-fancy/src"]
+      "@particle-academy/react-fancy": ["./packages/react-fancy/src"]
     }
   },
   "include": ["resources/js/**/*.ts", "resources/js/**/*.tsx"]

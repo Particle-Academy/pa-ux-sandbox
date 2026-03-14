@@ -1,4 +1,4 @@
-import { Action } from "@fancy/react";
+import { Action } from "@particle-academy/react-fancy";
 import { DemoSection } from "../components/DemoSection";
 
 // Simple inline SVG icons for demos (no icon library dependency)

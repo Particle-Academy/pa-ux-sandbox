@@ -6,7 +6,7 @@
         "build": "vite build",
         "dev": "vite",
         "dev:react": "pnpm --filter react-demo dev",
-        "build:react-fancy": "pnpm --filter @fancy/react build"
+        "build:react-fancy": "pnpm --filter @particle-academy/react-fancy build"
     },
     "devDependencies": {
         "@tailwindcss/vite": "^4.0.0",

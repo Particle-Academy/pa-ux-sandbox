@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Carousel, useCarousel } from "@fancy/react";
+import { Carousel, useCarousel } from "@particle-academy/react-fancy";
 import { DemoSection } from "../components/DemoSection";
 
 const steps = ["Account", "Profile", "Review"] as const;

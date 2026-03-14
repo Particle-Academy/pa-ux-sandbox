@@ -1,4 +1,4 @@
-import { Table } from "@fancy/react";
+import { Table } from "@particle-academy/react-fancy";
 import { DemoSection } from "../components/DemoSection";
 
 const users = [

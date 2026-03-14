@@ -20,7 +20,7 @@ export default defineConfig({
     ],
     resolve: {
         alias: {
-            '@fancy/react': path.resolve(__dirname, 'packages/react-fancy/src'),
+            '@particle-academy/react-fancy': path.resolve(__dirname, 'packages/react-fancy/src'),
         },
     },
     server: {

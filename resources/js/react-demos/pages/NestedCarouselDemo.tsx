@@ -1,4 +1,4 @@
-import { Carousel } from "@fancy/react";
+import { Carousel } from "@particle-academy/react-fancy";
 import { DemoSection } from "../components/DemoSection";
 
 export function NestedCarouselDemo() {

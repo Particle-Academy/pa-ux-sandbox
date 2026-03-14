@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { EmojiSelect } from "@fancy/react";
+import { EmojiSelect } from "@particle-academy/react-fancy";
 import { DemoSection } from "../components/DemoSection";
 
 export function EmojiSelectDemo() {

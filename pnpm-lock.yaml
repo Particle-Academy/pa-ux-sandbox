@@ -82,7 +82,7 @@ importers:
 
   react-demo:
     dependencies:
-      '@fancy/react':
+      '@particle-academy/react-fancy':
         specifier: workspace:*
         version: link:../packages/react-fancy
       react:

@@ -10,7 +10,7 @@ import {
   Slider,
   DatePicker,
   Field,
-} from "@fancy/react";
+} from "@particle-academy/react-fancy";
 import { DemoSection } from "../components/DemoSection";
 
 export function InputsDemo() {

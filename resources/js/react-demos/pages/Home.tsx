@@ -16,7 +16,7 @@ function DemoCard({ demo }: { demo: DemoEntry }) {
 export function Home() {
   return (
     <div>
-      <h1 className="mb-2 text-3xl font-bold text-zinc-900 dark:text-zinc-100">@fancy/react</h1>
+      <h1 className="mb-2 text-3xl font-bold text-zinc-900 dark:text-zinc-100">@particle-academy/react-fancy</h1>
       <p className="mb-6 text-zinc-500">
         A Tailwind-first React component library. Browse the components using
         the sidebar.

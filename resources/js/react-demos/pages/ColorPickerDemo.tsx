@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ColorPicker, type Color } from "@fancy/react";
+import { ColorPicker, type Color } from "@particle-academy/react-fancy";
 import { DemoSection } from "../components/DemoSection";
 
 export function ColorPickerDemo() {

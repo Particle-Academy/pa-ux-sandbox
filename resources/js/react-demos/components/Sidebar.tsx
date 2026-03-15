@@ -1,4 +1,4 @@
-import { NavLink } from "react-router";
+import { NavLink, useLocation } from "react-router";
 
 const componentLinks = [
   { to: "/action", label: "Action" },
@@ -47,14 +47,25 @@ const navigationLinks = [
   { to: "/mobile-menu", label: "MobileMenu" },
 ];
 
-const inputLinks = [
+const basicInputLinks = [
+  { to: "/input", label: "Input" },
+  { to: "/select", label: "Select" },
+  { to: "/textarea", label: "Textarea" },
+  { to: "/checkbox", label: "Checkbox" },
+  { to: "/radio-group", label: "RadioGroup" },
+  { to: "/switch", label: "Switch" },
+  { to: "/slider", label: "Slider" },
+  { to: "/date-picker", label: "DatePicker" },
+  { to: "/multi-switch", label: "MultiSwitch" },
+];
+
+const advancedInputLinks = [
   { to: "/autocomplete", label: "Autocomplete" },
   { to: "/pillbox", label: "Pillbox" },
   { to: "/otp-input", label: "OtpInput" },
   { to: "/file-upload", label: "FileUpload" },
   { to: "/time-picker", label: "TimePicker" },
   { to: "/calendar", label: "Calendar" },
-  { to: "/multi-switch", label: "MultiSwitch" },
 ];
 
 const richContentLinks = [
@@ -71,6 +82,37 @@ const patternLinks = [
   { to: "/nested-carousel", label: "Nested Carousel" },
   { to: "/dynamic-carousel", label: "Dynamic Carousel" },
   { to: "/kitchen-sink", label: "Kitchen Sink" },
+];
+
+const echartsLinks = [
+  { to: "/echarts-line", label: "Line" },
+  { to: "/echarts-bar", label: "Bar" },
+  { to: "/echarts-pie", label: "Pie" },
+  { to: "/echarts-scatter", label: "Scatter" },
+  { to: "/echarts-radar", label: "Radar" },
+  { to: "/echarts-heatmap", label: "Heatmap" },
+  { to: "/echarts-candlestick", label: "Candlestick" },
+  { to: "/echarts-boxplot", label: "Boxplot" },
+  { to: "/echarts-treemap", label: "Treemap" },
+  { to: "/echarts-sunburst", label: "Sunburst" },
+  { to: "/echarts-funnel", label: "Funnel" },
+  { to: "/echarts-gauge", label: "Gauge" },
+  { to: "/echarts-sankey", label: "Sankey" },
+  { to: "/echarts-graph", label: "Graph" },
+  { to: "/echarts-parallel", label: "Parallel" },
+  { to: "/echarts-theme-river", label: "Theme River" },
+  { to: "/echarts-calendar", label: "Calendar" },
+  { to: "/echarts-pictorial-bar", label: "Pictorial Bar" },
+  { to: "/echarts-map", label: "Map" },
+  { to: "/echarts-custom", label: "Custom" },
+];
+
+const echarts3DLinks = [
+  { to: "/echarts-bar-3d", label: "Bar 3D" },
+  { to: "/echarts-scatter-3d", label: "Scatter 3D" },
+  { to: "/echarts-surface", label: "Surface 3D" },
+  { to: "/echarts-globe", label: "Globe 3D" },
+  { to: "/echarts-graphic", label: "Graphic" },
 ];
 
 function SectionHeader({ label }: { label: string }) {
@@ -113,38 +155,99 @@ function LinkGroup({ links }: { links: { to: string; label: string }[] }) {
   );
 }
 
+function ReactFancyNav() {
+  return (
+    <>
+      <SectionHeader label="Components" />
+      <LinkGroup links={componentLinks} />
+
+      <SectionHeader label="Display" />
+      <LinkGroup links={displayLinks} />
+
+      <SectionHeader label="Overlay" />
+      <LinkGroup links={overlayLinks} />
+
+      <SectionHeader label="Navigation" />
+      <LinkGroup links={navigationLinks} />
+
+      <SectionHeader label="Inputs" />
+      <LinkGroup links={basicInputLinks} />
+
+      <SectionHeader label="Advanced Inputs" />
+      <LinkGroup links={advancedInputLinks} />
+
+      <SectionHeader label="Rich Content" />
+      <LinkGroup links={richContentLinks} />
+
+      <SectionHeader label="Patterns" />
+      <LinkGroup links={patternLinks} />
+    </>
+  );
+}
+
+function EChartsNav() {
+  return (
+    <>
+      <SectionHeader label="2D Charts" />
+      <LinkGroup links={echartsLinks} />
+
+      <SectionHeader label="3D & Graphic" />
+      <LinkGroup links={echarts3DLinks} />
+    </>
+  );
+}
+
+type Package = "react-fancy" | "react-echarts";
+
+function useCurrentPackage(): Package {
+  const { pathname } = useLocation();
+  if (pathname.startsWith("/echarts-")) return "react-echarts";
+  return "react-fancy";
+}
+
+function PackageSwitcher({ current }: { current: Package }) {
+  return (
+    <div className="flex gap-1 rounded-lg bg-zinc-100 p-0.5 dark:bg-zinc-800">
+      <NavLink
+        to="/"
+        className={`flex-1 rounded-md px-2 py-1 text-center text-[11px] font-medium transition-colors ${
+          current === "react-fancy"
+            ? "bg-white text-zinc-900 shadow-sm dark:bg-zinc-700 dark:text-zinc-100"
+            : "text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200"
+        }`}
+      >
+        react-fancy
+      </NavLink>
+      <NavLink
+        to="/echarts-line"
+        className={`flex-1 rounded-md px-2 py-1 text-center text-[11px] font-medium transition-colors ${
+          current === "react-echarts"
+            ? "bg-white text-zinc-900 shadow-sm dark:bg-zinc-700 dark:text-zinc-100"
+            : "text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200"
+        }`}
+      >
+        react-echarts
+      </NavLink>
+    </div>
+  );
+}
+
 export function Sidebar() {
+  const currentPackage = useCurrentPackage();
+
   return (
     <aside className="fixed top-0 left-0 h-screen w-56 overflow-y-auto border-r border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
-      <div className="mb-4">
-        <h1 className="text-lg font-bold text-zinc-900 dark:text-zinc-100">@particle-academy/react-fancy</h1>
+      <div className="mb-3">
         <a href="/ux-demos" className="text-xs text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300">
-          &larr; Back to UX Demo Hub
+          &larr; UX Demo Hub
         </a>
       </div>
-      <nav className="flex flex-col gap-0.5 pb-6">
+
+      <PackageSwitcher current={currentPackage} />
+
+      <nav className="mt-2 flex flex-col gap-0.5 pb-6">
         <NavItem to="/" label="Home" end />
-
-        <SectionHeader label="Components" />
-        <LinkGroup links={componentLinks} />
-
-        <SectionHeader label="Display" />
-        <LinkGroup links={displayLinks} />
-
-        <SectionHeader label="Overlay" />
-        <LinkGroup links={overlayLinks} />
-
-        <SectionHeader label="Navigation" />
-        <LinkGroup links={navigationLinks} />
-
-        <SectionHeader label="Inputs" />
-        <LinkGroup links={inputLinks} />
-
-        <SectionHeader label="Rich Content" />
-        <LinkGroup links={richContentLinks} />
-
-        <SectionHeader label="Patterns" />
-        <LinkGroup links={patternLinks} />
+        {currentPackage === "react-fancy" ? <ReactFancyNav /> : <EChartsNav />}
       </nav>
     </aside>
   );

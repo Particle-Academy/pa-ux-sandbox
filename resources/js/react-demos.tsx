@@ -61,6 +61,44 @@ import { MenuDemo } from "./react-demos/pages/MenuDemo";
 import { SidebarDemo } from "./react-demos/pages/SidebarDemo";
 import { MobileMenuDemo } from "./react-demos/pages/MobileMenuDemo";
 import { KitchenSinkDemo } from "./react-demos/pages/KitchenSinkDemo";
+// Basic Inputs
+import { InputDemo } from "./react-demos/pages/InputDemo";
+import { SelectDemo } from "./react-demos/pages/SelectDemo";
+import { TextareaDemo } from "./react-demos/pages/TextareaDemo";
+import { CheckboxDemo } from "./react-demos/pages/CheckboxDemo";
+import { RadioGroupDemo } from "./react-demos/pages/RadioGroupDemo";
+import { SwitchDemo } from "./react-demos/pages/SwitchDemo";
+import { SliderDemo } from "./react-demos/pages/SliderDemo";
+import { DatePickerDemo } from "./react-demos/pages/DatePickerDemo";
+// ECharts
+import { registerAll } from "@particle-academy/react-echarts";
+import { LineDemo } from "./react-demos/pages/echarts/LineDemo";
+import { BarDemo } from "./react-demos/pages/echarts/BarDemo";
+import { PieDemo } from "./react-demos/pages/echarts/PieDemo";
+import { ScatterDemo } from "./react-demos/pages/echarts/ScatterDemo";
+import { RadarDemo } from "./react-demos/pages/echarts/RadarDemo";
+import { HeatmapDemo } from "./react-demos/pages/echarts/HeatmapDemo";
+import { CandlestickDemo } from "./react-demos/pages/echarts/CandlestickDemo";
+import { BoxplotDemo } from "./react-demos/pages/echarts/BoxplotDemo";
+import { TreemapDemo } from "./react-demos/pages/echarts/TreemapDemo";
+import { SunburstDemo } from "./react-demos/pages/echarts/SunburstDemo";
+import { FunnelDemo } from "./react-demos/pages/echarts/FunnelDemo";
+import { GaugeDemo } from "./react-demos/pages/echarts/GaugeDemo";
+import { SankeyDemo } from "./react-demos/pages/echarts/SankeyDemo";
+import { GraphDemo } from "./react-demos/pages/echarts/GraphDemo";
+import { ParallelDemo } from "./react-demos/pages/echarts/ParallelDemo";
+import { ThemeRiverDemo } from "./react-demos/pages/echarts/ThemeRiverDemo";
+import { CalendarDemo as EChartsCalendarDemo } from "./react-demos/pages/echarts/CalendarDemo";
+import { PictorialBarDemo } from "./react-demos/pages/echarts/PictorialBarDemo";
+import { MapDemo } from "./react-demos/pages/echarts/MapDemo";
+import { CustomDemo } from "./react-demos/pages/echarts/CustomDemo";
+import { Bar3DDemo } from "./react-demos/pages/echarts/Bar3DDemo";
+import { Scatter3DDemo } from "./react-demos/pages/echarts/Scatter3DDemo";
+import { SurfaceDemo } from "./react-demos/pages/echarts/SurfaceDemo";
+import { GlobeDemo } from "./react-demos/pages/echarts/GlobeDemo";
+import { GraphicDemo } from "./react-demos/pages/echarts/GraphicDemo";
+
+registerAll();
 
 const root = document.getElementById("react-demos");
 if (root) {
@@ -127,6 +165,41 @@ if (root) {
             <Route path="menu" element={<MenuDemo />} />
             <Route path="sidebar" element={<SidebarDemo />} />
             <Route path="mobile-menu" element={<MobileMenuDemo />} />
+            {/* Basic Inputs */}
+            <Route path="input" element={<InputDemo />} />
+            <Route path="select" element={<SelectDemo />} />
+            <Route path="textarea" element={<TextareaDemo />} />
+            <Route path="checkbox" element={<CheckboxDemo />} />
+            <Route path="radio-group" element={<RadioGroupDemo />} />
+            <Route path="switch" element={<SwitchDemo />} />
+            <Route path="slider" element={<SliderDemo />} />
+            <Route path="date-picker" element={<DatePickerDemo />} />
+            {/* ECharts */}
+            <Route path="echarts-line" element={<LineDemo />} />
+            <Route path="echarts-bar" element={<BarDemo />} />
+            <Route path="echarts-pie" element={<PieDemo />} />
+            <Route path="echarts-scatter" element={<ScatterDemo />} />
+            <Route path="echarts-radar" element={<RadarDemo />} />
+            <Route path="echarts-heatmap" element={<HeatmapDemo />} />
+            <Route path="echarts-candlestick" element={<CandlestickDemo />} />
+            <Route path="echarts-boxplot" element={<BoxplotDemo />} />
+            <Route path="echarts-treemap" element={<TreemapDemo />} />
+            <Route path="echarts-sunburst" element={<SunburstDemo />} />
+            <Route path="echarts-funnel" element={<FunnelDemo />} />
+            <Route path="echarts-gauge" element={<GaugeDemo />} />
+            <Route path="echarts-sankey" element={<SankeyDemo />} />
+            <Route path="echarts-graph" element={<GraphDemo />} />
+            <Route path="echarts-parallel" element={<ParallelDemo />} />
+            <Route path="echarts-theme-river" element={<ThemeRiverDemo />} />
+            <Route path="echarts-calendar" element={<EChartsCalendarDemo />} />
+            <Route path="echarts-pictorial-bar" element={<PictorialBarDemo />} />
+            <Route path="echarts-map" element={<MapDemo />} />
+            <Route path="echarts-custom" element={<CustomDemo />} />
+            <Route path="echarts-bar-3d" element={<Bar3DDemo />} />
+            <Route path="echarts-scatter-3d" element={<Scatter3DDemo />} />
+            <Route path="echarts-surface" element={<SurfaceDemo />} />
+            <Route path="echarts-globe" element={<GlobeDemo />} />
+            <Route path="echarts-graphic" element={<GraphicDemo />} />
             {/* Kitchen Sink */}
             <Route path="kitchen-sink" element={<KitchenSinkDemo />} />
           </Route>

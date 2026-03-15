@@ -77,7 +77,8 @@ function reducer(state: KitchenSinkState, action: KitchenSinkAction): KitchenSin
       return { ...state, chaosMode: !state.chaosMode };
     case "CHAOS_TICK": {
       const roll = Math.random();
-      if (roll < 0.3 && state.nodes.length > 0) {
+      // Randomize node statuses (Canvas tab)
+      if (roll < 0.15 && state.nodes.length > 0) {
         const idx = Math.floor(Math.random() * state.nodes.length);
         const statuses: AgentNode["status"][] = ["idle", "running", "complete", "error"];
         const newStatus = statuses[Math.floor(Math.random() * statuses.length)];
@@ -85,19 +86,89 @@ function reducer(state: KitchenSinkState, action: KitchenSinkAction): KitchenSin
         nodes[idx] = { ...nodes[idx], status: newStatus };
         return { ...state, nodes };
       }
-      if (roll < 0.5) {
+      // Jitter node positions (Canvas tab)
+      if (roll < 0.25 && state.nodes.length > 0) {
+        const idx = Math.floor(Math.random() * state.nodes.length);
+        const nodes = [...state.nodes];
+        nodes[idx] = {
+          ...nodes[idx],
+          x: Math.max(20, nodes[idx].x + (Math.random() - 0.5) * 80),
+          y: Math.max(20, nodes[idx].y + (Math.random() - 0.5) * 60),
+        };
+        return { ...state, nodes };
+      }
+      // Toggle config booleans (Settings tab)
+      if (roll < 0.35) {
         const toggles: (keyof Pick<typeof state.config, "streaming" | "memory" | "logging">)[] = [
           "streaming", "memory", "logging",
         ];
         const key = toggles[Math.floor(Math.random() * toggles.length)];
         return { ...state, config: { ...state.config, [key]: !state.config[key] } };
       }
-      if (roll < 0.7) {
+      // Randomize environment (Settings tab)
+      if (roll < 0.45) {
         const envs = ["Dev", "Staging", "Prod"];
         return {
           ...state,
           config: { ...state.config, environment: envs[Math.floor(Math.random() * envs.length)] },
         };
+      }
+      // Randomize temperature and maxTokens (Settings tab)
+      if (roll < 0.55) {
+        return {
+          ...state,
+          config: {
+            ...state.config,
+            temperature: Math.round(Math.random() * 20) / 10,
+            maxTokens: [1024, 2048, 4096, 8192, 16384][Math.floor(Math.random() * 5)],
+          },
+        };
+      }
+      // Add a random execution (Monitor tab)
+      if (roll < 0.65) {
+        const statuses: ("success" | "error" | "timeout")[] = ["success", "error", "timeout"];
+        const exec = {
+          id: `exec-chaos-${Date.now()}`,
+          timestamp: Date.now(),
+          duration: Math.floor(Math.random() * 8000) + 500,
+          tokens: Math.floor(Math.random() * 5000) + 100,
+          status: statuses[Math.floor(Math.random() * statuses.length)],
+          nodeResults: state.nodes.slice(0, Math.floor(Math.random() * state.nodes.length) + 1).map((n) => ({
+            nodeId: n.id,
+            output: ["Processing...", "Error: timeout", "Done", "Retrying..."][Math.floor(Math.random() * 4)],
+            latency: Math.floor(Math.random() * 3000) + 10,
+          })),
+        };
+        return { ...state, executions: [...state.executions, exec] };
+      }
+      // Inject a chat message (Monitor tab)
+      if (roll < 0.75) {
+        const chaosMessages = [
+          "Help, the chaos is spreading!",
+          "Why is everything on fire?",
+          "I didn't authorize this deployment.",
+          "The nodes are moving on their own...",
+          "Temperature is out of control!",
+        ];
+        const msg = {
+          id: `msg-chaos-${Date.now()}`,
+          role: Math.random() < 0.5 ? "user" as const : "assistant" as const,
+          content: chaosMessages[Math.floor(Math.random() * chaosMessages.length)],
+        };
+        return { ...state, chatMessages: [...state.chatMessages, msg] };
+      }
+      // Change agent name (Settings tab / Navbar)
+      if (roll < 0.85) {
+        const names = ["Chaos Agent", "Research Assistant", "Rogue Bot", "SKYNET v0.1", "Confused Helper", "Agent Smith"];
+        return {
+          ...state,
+          config: { ...state.config, name: names[Math.floor(Math.random() * names.length)] },
+        };
+      }
+      // Switch active tab randomly
+      if (roll < 0.92) {
+        const tabs = ["canvas", "monitor", "settings"];
+        return { ...state, activeTab: tabs[Math.floor(Math.random() * tabs.length)] };
       }
       return state;
     }
@@ -232,7 +303,7 @@ function KitchenSinkInner() {
 
         {/* Main Content with Tabs */}
         <div className="flex-1 overflow-y-auto p-4">
-          <Tabs defaultTab="canvas" variant="underline">
+          <Tabs activeTab={state.activeTab} defaultTab="canvas" variant="underline" onTabChange={handleTabChange}>
             <Tabs.List>
               <Tabs.Tab value="canvas">Canvas</Tabs.Tab>
               <Tabs.Tab value="monitor">Monitor</Tabs.Tab>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   Chart,
   Badge,
@@ -11,7 +11,6 @@ import {
   Separator,
 } from "@particle-academy/react-fancy";
 import type { KitchenSinkState, KitchenSinkAction } from "./types";
-import { LATENCY_DATA, TOKEN_BAR_DATA, STATUS_DONUT_DATA } from "./data";
 
 interface MonitorTabProps {
   state: KitchenSinkState;
@@ -25,6 +24,39 @@ function formatTime(ts: number): string {
 export function MonitorTab({ state, dispatch }: MonitorTabProps) {
   const [execPage, setExecPage] = useState(1);
   const latestExec = state.executions[state.executions.length - 1];
+
+  // Derive chart data from execution state so Chaos Mode mutations are visible
+  const latencyData = useMemo(() => {
+    const recent = state.executions.slice(-6);
+    return {
+      labels: recent.map((e) => formatTime(e.timestamp)),
+      series: [{ label: "Latency (ms)", data: recent.map((e) => e.duration), color: "#6366f1" }],
+    };
+  }, [state.executions]);
+
+  const tokenBarData = useMemo(() => {
+    const totals: Record<string, number> = {};
+    for (const exec of state.executions) {
+      for (const r of exec.nodeResults) {
+        const node = state.nodes.find((n) => n.id === r.nodeId);
+        const label = node?.type ?? r.nodeId;
+        totals[label] = (totals[label] ?? 0) + r.latency;
+      }
+    }
+    return Object.entries(totals).map(([label, value]) => ({ label, value }));
+  }, [state.executions, state.nodes]);
+
+  const statusDonutData = useMemo(() => {
+    const counts = { success: 0, error: 0, timeout: 0 };
+    for (const exec of state.executions) {
+      counts[exec.status]++;
+    }
+    return [
+      { label: "Success", value: counts.success, color: "#22c55e" },
+      { label: "Error", value: counts.error, color: "#ef4444" },
+      { label: "Timeout", value: counts.timeout, color: "#f59e0b" },
+    ];
+  }, [state.executions]);
 
   const handleChatSubmit = (content: string) => {
     dispatch({
@@ -51,17 +83,17 @@ export function MonitorTab({ state, dispatch }: MonitorTabProps) {
 
       {/* Charts Row */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-        <div className="rounded-lg border border-zinc-200 p-4 dark:border-zinc-700">
+        <div className="overflow-hidden rounded-lg border border-zinc-200 p-4 dark:border-zinc-700">
           <Text size="sm" weight="semibold" className="mb-2">Latency Trend</Text>
-          <Chart.Line labels={LATENCY_DATA.labels} series={LATENCY_DATA.series} height={160} />
+          <Chart.Line labels={latencyData.labels} series={latencyData.series} height={160} responsive />
         </div>
-        <div className="rounded-lg border border-zinc-200 p-4 dark:border-zinc-700">
+        <div className="overflow-hidden rounded-lg border border-zinc-200 p-4 dark:border-zinc-700">
           <Text size="sm" weight="semibold" className="mb-2">Tokens by Node</Text>
-          <Chart.Bar data={TOKEN_BAR_DATA} height={160} showValues />
+          <Chart.Bar data={tokenBarData} height={160} showValues />
         </div>
-        <div className="rounded-lg border border-zinc-200 p-4 dark:border-zinc-700">
+        <div className="overflow-hidden rounded-lg border border-zinc-200 p-4 dark:border-zinc-700">
           <Text size="sm" weight="semibold" className="mb-2">Status Distribution</Text>
-          <Chart.Donut data={STATUS_DONUT_DATA} />
+          <Chart.Donut data={statusDonutData} />
         </div>
       </div>
 

@@ -9,6 +9,24 @@ export function NestedCarouselDemo() {
       <DemoSection
         title="Independent Nested Carousels"
         description="Each Carousel provides its own context, so nested carousels operate independently."
+        code={`<Carousel>
+  <Carousel.Panels>
+    <Carousel.Slide>Outer Slide 1</Carousel.Slide>
+    <Carousel.Slide>
+      {/* Nested carousel */}
+      <Carousel>
+        <Carousel.Panels>
+          <Carousel.Slide>Inner A</Carousel.Slide>
+          <Carousel.Slide>Inner B</Carousel.Slide>
+        </Carousel.Panels>
+        <Carousel.Steps />
+        <Carousel.Controls />
+      </Carousel>
+    </Carousel.Slide>
+  </Carousel.Panels>
+  <Carousel.Steps />
+  <Carousel.Controls />
+</Carousel>`}
       >
         <Carousel className="max-w-2xl">
           <Carousel.Panels>

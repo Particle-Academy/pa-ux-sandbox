@@ -212,6 +212,19 @@ export function WizardDemo() {
       <DemoSection
         title="Multi-Step Wizard"
         description="A form wizard built on the Carousel component using useCarousel() for step navigation."
+        code={`<Carousel>
+  {/* Access step state with useCarousel() */}
+  const { activeIndex, next, prev } = useCarousel();
+
+  <Carousel.Panels>
+    <Carousel.Slide>Step 1 content</Carousel.Slide>
+    <Carousel.Slide>Step 2 content</Carousel.Slide>
+    <Carousel.Slide>Step 3 content</Carousel.Slide>
+  </Carousel.Panels>
+
+  <button onClick={prev}>Back</button>
+  <button onClick={next}>Next</button>
+</Carousel>`}
       >
         {completed ? (
           <div className="py-8 text-center">

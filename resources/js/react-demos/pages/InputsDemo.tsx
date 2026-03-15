@@ -42,7 +42,10 @@ export function InputsDemo() {
         />
       </div>
 
-      <DemoSection title="Input" description="Text-like inputs with type variants, leading/trailing slots.">
+      <DemoSection title="Input" description="Text-like inputs with type variants, leading/trailing slots." code={`<Input label="Full name" placeholder="John Doe" value={value} onValueChange={setValue} />
+<Input label="Email" type="email" placeholder="john@example.com" />
+<Input label="Password" type="password" placeholder="••••••••" />
+<Input label="Search" type="search" placeholder="Search..." leading={<SearchIcon />} />`}>
         <div className="grid gap-4 sm:grid-cols-2">
           <Input
             label="Full name"
@@ -73,7 +76,8 @@ export function InputsDemo() {
         </div>
       </DemoSection>
 
-      <DemoSection title="Input — Error State" description="Inputs with validation errors.">
+      <DemoSection title="Input — Error State" description="Inputs with validation errors." code={`<Input label="Email" type="email" value="not-an-email" error="Please enter a valid email address" />
+<Input label="Username" value="ab" error="Username must be at least 3 characters" required />`}>
         <div className="grid gap-4 sm:grid-cols-2">
           <Input
             label="Email"
@@ -90,7 +94,11 @@ export function InputsDemo() {
         </div>
       </DemoSection>
 
-      <DemoSection title="Input — Sizes" description="Inputs in all size variants.">
+      <DemoSection title="Input — Sizes" description="Inputs in all size variants." code={`<Input size="xs" placeholder="Extra small" />
+<Input size="sm" placeholder="Small" />
+<Input size="md" placeholder="Medium (default)" />
+<Input size="lg" placeholder="Large" />
+<Input size="xl" placeholder="Extra large" />`}>
         <div className="flex flex-col gap-3">
           <Input size="xs" placeholder="Extra small" />
           <Input size="sm" placeholder="Small" />
@@ -100,7 +108,8 @@ export function InputsDemo() {
         </div>
       </DemoSection>
 
-      <DemoSection title="Textarea" description="Multi-line text input with auto-resize.">
+      <DemoSection title="Textarea" description="Multi-line text input with auto-resize." code={`<Textarea label="Bio" placeholder="Tell us about yourself..." minRows={3} />
+<Textarea label="Auto-resize" placeholder="Type more lines..." autoResize minRows={3} maxRows={8} />`}>
         <div className="grid gap-4 sm:grid-cols-2">
           <Textarea
             label="Bio"
@@ -121,7 +130,11 @@ export function InputsDemo() {
         </div>
       </DemoSection>
 
-      <DemoSection title="Select" description="Native select with simple and grouped lists.">
+      <DemoSection title="Select" description="Native select with simple and grouped lists." code={`<Select label="Framework" value={value} onValueChange={setValue} list={["react", "vue", "svelte"]} />
+<Select label="Language" placeholder="Choose..." list={[
+  { label: "Frontend", options: [{ value: "ts", label: "TypeScript" }] },
+  { label: "Backend", options: [{ value: "php", label: "PHP" }] },
+]} />`}>
         <div className="grid gap-4 sm:grid-cols-2">
           <Select
             label="Framework"
@@ -155,7 +168,9 @@ export function InputsDemo() {
         </div>
       </DemoSection>
 
-      <DemoSection title="Checkbox" description="Single checkbox toggle with label and description.">
+      <DemoSection title="Checkbox" description="Single checkbox toggle with label and description." code={`<Checkbox label="Accept terms" description="You agree to our terms." checked={checked} onCheckedChange={setChecked} />
+<Checkbox label="Indeterminate" indeterminate />
+<Checkbox label="Disabled" disabled defaultChecked />`}>
         <div className="flex flex-col gap-4">
           <Checkbox
             label="Accept terms and conditions"
@@ -177,7 +192,15 @@ export function InputsDemo() {
         </div>
       </DemoSection>
 
-      <DemoSection title="CheckboxGroup" description="Multi-select from a list of options.">
+      <DemoSection title="CheckboxGroup" description="Multi-select from a list of options." code={`<CheckboxGroup
+  label="Technologies"
+  value={value}
+  onValueChange={setValue}
+  list={[
+    { value: "typescript", label: "TypeScript" },
+    { value: "react", label: "React" },
+  ]}
+/>`}>
         <div className="grid gap-4 sm:grid-cols-2">
           <CheckboxGroup
             label="Technologies"
@@ -201,7 +224,15 @@ export function InputsDemo() {
         </div>
       </DemoSection>
 
-      <DemoSection title="RadioGroup" description="Single-select from a list of options.">
+      <DemoSection title="RadioGroup" description="Single-select from a list of options." code={`<RadioGroup
+  label="Billing cycle"
+  value={value}
+  onValueChange={setValue}
+  list={[
+    { value: "monthly", label: "Monthly", description: "$10/mo" },
+    { value: "yearly", label: "Yearly", description: "$100/yr" },
+  ]}
+/>`}>
         <div className="grid gap-4 sm:grid-cols-2">
           <RadioGroup
             label="Billing cycle"
@@ -223,7 +254,9 @@ export function InputsDemo() {
         </div>
       </DemoSection>
 
-      <DemoSection title="Switch" description="Toggle switches with color variants.">
+      <DemoSection title="Switch" description="Toggle switches with color variants." code={`<Switch label="Notifications" checked={checked} onCheckedChange={setChecked} />
+<Switch label="Blue" color="blue" defaultChecked />
+<Switch size="sm" label="SM" defaultChecked />`}>
         <div className="flex flex-col gap-4">
           <Switch
             label="Email notifications"
@@ -249,7 +282,9 @@ export function InputsDemo() {
         </div>
       </DemoSection>
 
-      <DemoSection title="Slider" description="Single value and range sliders.">
+      <DemoSection title="Slider" description="Single value and range sliders." code={`<Slider label="Volume" value={value} onValueChange={setValue} showValue />
+<Slider label="With marks" min={0} max={100} step={25} defaultValue={50} marks={[...]} />
+<Slider label="Price range" range min={0} max={1000} value={range} onValueChange={setRange} />`}>
         <div className="grid gap-6 sm:grid-cols-2">
           <Slider
             label="Volume"
@@ -288,7 +323,9 @@ export function InputsDemo() {
         </div>
       </DemoSection>
 
-      <DemoSection title="DatePicker" description="Date and date-time pickers with range mode.">
+      <DemoSection title="DatePicker" description="Date and date-time pickers with range mode." code={`<DatePicker label="Start date" value={date} onValueChange={setDate} />
+<DatePicker label="With time" includeTime />
+<DatePicker label="Date range" range value={range} onValueChange={setRange} />`}>
         <div className="grid gap-4 sm:grid-cols-2">
           <DatePicker
             label="Start date"
@@ -313,7 +350,9 @@ export function InputsDemo() {
         </div>
       </DemoSection>
 
-      <DemoSection title="Field (standalone)" description="Field wrapper used standalone for custom layouts.">
+      <DemoSection title="Field (standalone)" description="Field wrapper used standalone for custom layouts." code={`<Field label="Custom field" description="You can wrap any content." required>
+  <div>Custom content goes here</div>
+</Field>`}>
         <Field label="Custom field" description="You can wrap any content in a Field." required>
           <div className="rounded-lg border border-dashed border-zinc-300 p-4 text-center text-sm text-zinc-500 dark:border-zinc-600 dark:text-zinc-400">
             Custom content goes here

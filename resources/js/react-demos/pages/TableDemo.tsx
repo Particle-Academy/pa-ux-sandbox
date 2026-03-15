@@ -17,6 +17,28 @@ export function TableDemo() {
       <DemoSection
         title="Compound Table"
         description="Table with sortable columns, search, and pagination."
+        code={`<Table>
+  <Table.Tray>
+    <Table.Search placeholder="Search..." />
+  </Table.Tray>
+  <table className="w-full">
+    <Table.Head>
+      <Table.Row>
+        <Table.Column label="Name" sortKey="name" />
+        <Table.Column label="Email" sortKey="email" />
+      </Table.Row>
+    </Table.Head>
+    <Table.Body>
+      {users.map((u) => (
+        <Table.Row key={u.id}>
+          <Table.Cell>{u.name}</Table.Cell>
+          <Table.Cell>{u.email}</Table.Cell>
+        </Table.Row>
+      ))}
+    </Table.Body>
+  </table>
+  <Table.Pagination total={users.length} pageSize={10} />
+</Table>`}
       >
         <Table>
           <Table.Tray>

@@ -6,7 +6,7 @@ export function EmojiDemo() {
     <div>
       <h1 className="mb-6 text-2xl font-bold">Emoji</h1>
 
-      <DemoSection title="By Name" description="Resolve emoji by name.">
+      <DemoSection title="By Name" description="Resolve emoji by name." code={`<Emoji name="rocket" size="xl" />`}>
         <div className="flex items-center gap-4">
           <Emoji name="grinning face" size="xl" />
           <Emoji name="thumbs up" size="xl" />
@@ -15,7 +15,7 @@ export function EmojiDemo() {
         </div>
       </DemoSection>
 
-      <DemoSection title="Direct Emoji" description="Pass emoji character directly.">
+      <DemoSection title="Direct Emoji" description="Pass emoji character directly." code={`<Emoji emoji="🎉" size="lg" />`}>
         <div className="flex items-center gap-4">
           <Emoji emoji="🎉" size="sm" />
           <Emoji emoji="🎉" size="md" />

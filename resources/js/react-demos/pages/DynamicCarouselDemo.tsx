@@ -67,6 +67,17 @@ export function DynamicCarouselDemo() {
       <DemoSection
         title="Dynamic Slides"
         description="Add and remove slides at runtime. The carousel automatically adjusts its state."
+        code={`<Carousel>
+  <Carousel.Panels>
+    {slides.map((slide) => (
+      <Carousel.Slide key={slide.id}>
+        <div>{slide.label}</div>
+      </Carousel.Slide>
+    ))}
+  </Carousel.Panels>
+  <Carousel.Steps />
+  <Carousel.Controls />
+</Carousel>`}
       >
         {/* Controls */}
         <div className="mb-4 flex flex-wrap items-center gap-2">

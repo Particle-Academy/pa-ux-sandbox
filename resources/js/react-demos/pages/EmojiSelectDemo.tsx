@@ -12,6 +12,7 @@ export function EmojiSelectDemo() {
       <DemoSection
         title="Searchable Picker"
         description="Dropdown emoji picker with category browsing and search."
+        code={`<EmojiSelect value={emoji} onChange={setEmoji} />`}
       >
         <EmojiSelect value={emoji} onChange={setEmoji} />
         {emoji && (

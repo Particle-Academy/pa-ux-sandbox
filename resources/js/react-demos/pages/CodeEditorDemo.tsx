@@ -52,7 +52,8 @@ export interface CodeEditorProps {
   wordWrap?: boolean;
   tabSize?: number;
   placeholder?: string;
-  extensions?: Extension[];
+  minHeight?: number;
+  maxHeight?: number;
 }
 
 export function useCodeEditor(): CodeEditorContextValue {

@@ -1,5 +1,6 @@
 packages:
   - packages/react-*
+  - packages/fancy-code
   - react-demo
 
 onlyBuiltDependencies: esbuild

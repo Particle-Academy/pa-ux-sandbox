@@ -84,6 +84,10 @@ const patternLinks = [
   { to: "/kitchen-sink", label: "Kitchen Sink" },
 ];
 
+const fancyCodeLinks = [
+  { to: "/code-editor", label: "CodeEditor" },
+];
+
 const echartsLinks = [
   { to: "/echarts-line", label: "Line" },
   { to: "/echarts-bar", label: "Bar" },
@@ -181,6 +185,9 @@ function ReactFancyNav() {
 
       <SectionHeader label="Patterns" />
       <LinkGroup links={patternLinks} />
+
+      <SectionHeader label="Fancy Code" />
+      <LinkGroup links={fancyCodeLinks} />
     </>
   );
 }

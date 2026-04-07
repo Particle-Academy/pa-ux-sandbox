@@ -13,3 +13,6 @@
 [submodule "packages/react-echarts"]
 	path = packages/react-echarts
 	url = https://github.com/Particle-Academy/react-echarts.git
+[submodule "packages/fancy-code"]
+	path = packages/fancy-code
+	url = git@github.com:Particle-Academy/fancy-code.git

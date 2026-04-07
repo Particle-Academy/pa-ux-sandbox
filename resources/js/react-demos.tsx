@@ -67,6 +67,8 @@ const MenuDemo = l(() => import("./react-demos/pages/MenuDemo"), "MenuDemo");
 const SidebarDemo = l(() => import("./react-demos/pages/SidebarDemo"), "SidebarDemo");
 const MobileMenuDemo = l(() => import("./react-demos/pages/MobileMenuDemo"), "MobileMenuDemo");
 const KitchenSinkDemo = l(() => import("./react-demos/pages/KitchenSinkDemo"), "KitchenSinkDemo");
+const TreeNavDemo = l(() => import("./react-demos/pages/TreeNavDemo"), "TreeNavDemo");
+const IdeDemo = l(() => import("./react-demos/pages/IdeDemo"), "IdeDemo");
 // Basic Inputs
 const InputDemo = l(() => import("./react-demos/pages/InputDemo"), "InputDemo");
 const SelectDemo = l(() => import("./react-demos/pages/SelectDemo"), "SelectDemo");
@@ -187,6 +189,10 @@ if (root) {
               <Route path="switch" element={<SwitchDemo />} />
               <Route path="slider" element={<SliderDemo />} />
               <Route path="date-picker" element={<DatePickerDemo />} />
+              {/* Spatial */}
+              <Route path="tree-nav" element={<TreeNavDemo />} />
+              {/* Patterns */}
+              <Route path="ide" element={<IdeDemo />} />
               {/* Fancy Code */}
               <Route path="code-editor" element={<CodeEditorDemo />} />
               {/* ECharts (lazy-loaded layout registers echarts) */}

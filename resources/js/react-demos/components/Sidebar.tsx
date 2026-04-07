@@ -73,8 +73,12 @@ const richContentLinks = [
   { to: "/chart", label: "Chart" },
   { to: "/editor", label: "Editor" },
   { to: "/kanban", label: "Kanban" },
+];
+
+const spatialLinks = [
   { to: "/canvas", label: "Canvas" },
   { to: "/diagram", label: "Diagram" },
+  { to: "/tree-nav", label: "TreeNav" },
 ];
 
 const patternLinks = [
@@ -82,6 +86,7 @@ const patternLinks = [
   { to: "/nested-carousel", label: "Nested Carousel" },
   { to: "/dynamic-carousel", label: "Dynamic Carousel" },
   { to: "/kitchen-sink", label: "Kitchen Sink" },
+  { to: "/ide", label: "IDE" },
 ];
 
 const fancyCodeLinks = [
@@ -182,6 +187,9 @@ function ReactFancyNav() {
 
       <SectionHeader label="Rich Content" />
       <LinkGroup links={richContentLinks} />
+
+      <SectionHeader label="Spatial" />
+      <LinkGroup links={spatialLinks} />
 
       <SectionHeader label="Patterns" />
       <LinkGroup links={patternLinks} />

@@ -45,6 +45,7 @@ const navigationLinks = [
   { to: "/menu", label: "Menu" },
   { to: "/sidebar", label: "Sidebar" },
   { to: "/mobile-menu", label: "MobileMenu" },
+  { to: "/tree-nav", label: "TreeNav" },
 ];
 
 const basicInputLinks = [
@@ -73,12 +74,8 @@ const richContentLinks = [
   { to: "/chart", label: "Chart" },
   { to: "/editor", label: "Editor" },
   { to: "/kanban", label: "Kanban" },
-];
-
-const spatialLinks = [
   { to: "/canvas", label: "Canvas" },
   { to: "/diagram", label: "Diagram" },
-  { to: "/tree-nav", label: "TreeNav" },
 ];
 
 const patternLinks = [
@@ -187,9 +184,6 @@ function ReactFancyNav() {
 
       <SectionHeader label="Rich Content" />
       <LinkGroup links={richContentLinks} />
-
-      <SectionHeader label="Spatial" />
-      <LinkGroup links={spatialLinks} />
 
       <SectionHeader label="Patterns" />
       <LinkGroup links={patternLinks} />

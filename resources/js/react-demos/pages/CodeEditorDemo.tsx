@@ -160,6 +160,8 @@ function FormatButton() {
   );
 }
 
+const editorClass = "rounded-xl border border-zinc-200 dark:border-zinc-700";
+
 // ---------------------------------------------------------------------------
 // Demo page
 // ---------------------------------------------------------------------------
@@ -195,7 +197,7 @@ export function CodeEditorDemo() {
 </CodeEditor>`}
       >
         <div className="max-w-3xl">
-          <CodeEditor value={basicValue} onChange={setBasicValue} language="JavaScript" maxHeight={350}>
+          <CodeEditor value={basicValue} onChange={setBasicValue} language="JavaScript" maxHeight={350} className={editorClass}>
             <CodeEditor.Toolbar />
             <CodeEditor.Panel />
             <CodeEditor.StatusBar />
@@ -211,7 +213,7 @@ export function CodeEditorDemo() {
 </CodeEditor>`}
       >
         <div className="max-w-3xl">
-          <CodeEditor value={SAMPLE_PHP} language="PHP" readOnly maxHeight={300}>
+          <CodeEditor value={SAMPLE_PHP} language="PHP" readOnly maxHeight={300} className={editorClass}>
             <CodeEditor.Panel />
           </CodeEditor>
         </div>
@@ -236,7 +238,7 @@ export function CodeEditorDemo() {
 </CodeEditor>`}
       >
         <div className="max-w-3xl">
-          <CodeEditor value={langValue} onChange={setLangValue} language="TypeScript" maxHeight={300}>
+          <CodeEditor value={langValue} onChange={setLangValue} language="TypeScript" maxHeight={300} className={editorClass}>
             <CodeEditor.Toolbar>
               <RunButton />
               <CodeEditor.Toolbar.Separator />
@@ -283,6 +285,7 @@ export function CodeEditorDemo() {
             language={selectedLang}
             onLanguageChange={handleLangSwitch}
             maxHeight={300}
+            className={editorClass}
           >
             <CodeEditor.Toolbar />
             <CodeEditor.Panel />
@@ -305,13 +308,13 @@ export function CodeEditorDemo() {
         <div className="grid max-w-5xl grid-cols-2 gap-4">
           <div>
             <p className="mb-2 text-xs font-medium text-zinc-500">theme=&quot;light&quot;</p>
-            <CodeEditor value={SAMPLE_TS.slice(0, 400)} language="TypeScript" theme="light" readOnly>
+            <CodeEditor value={SAMPLE_TS.slice(0, 400)} language="TypeScript" theme="light" readOnly className={editorClass}>
               <CodeEditor.Panel />
             </CodeEditor>
           </div>
           <div>
             <p className="mb-2 text-xs font-medium text-zinc-500">theme=&quot;dark&quot;</p>
-            <CodeEditor value={SAMPLE_TS.slice(0, 400)} language="TypeScript" theme="dark" readOnly>
+            <CodeEditor value={SAMPLE_TS.slice(0, 400)} language="TypeScript" theme="dark" readOnly className={editorClass}>
               <CodeEditor.Panel />
             </CodeEditor>
           </div>
@@ -333,7 +336,7 @@ export function CodeEditorDemo() {
 </CodeEditor>`}
       >
         <div className="max-w-3xl">
-          <CodeEditor value={SAMPLE_HTML} language="HTML" wordWrap tabSize={4} maxHeight={300}>
+          <CodeEditor value={SAMPLE_HTML} language="HTML" wordWrap tabSize={4} maxHeight={300} className={editorClass}>
             <CodeEditor.Toolbar />
             <CodeEditor.Panel />
             <CodeEditor.StatusBar />
@@ -354,6 +357,7 @@ export function CodeEditorDemo() {
             language="JavaScript"
             readOnly
             lineNumbers={false}
+            className={editorClass}
           >
             <CodeEditor.Panel />
           </CodeEditor>

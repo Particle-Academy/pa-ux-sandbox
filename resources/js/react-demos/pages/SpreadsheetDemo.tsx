@@ -9,6 +9,7 @@ import { DemoSection } from "../components/DemoSection";
 
 function productsSheet(): SheetData {
   const s = createEmptySheet("products", "Products");
+  s.frozenRows = 1; // Freeze header row
   s.cells = {
     A1: { value: "Product", format: { bold: true } },
     B1: { value: "Category", format: { bold: true } },
@@ -146,19 +147,19 @@ function dateSheet(): SheetData {
   s.cells = {
     A1: { value: "Date & Time Functions", format: { bold: true } },
     A3: { value: "Formula", format: { bold: true } },          B3: { value: "Result", format: { bold: true } },
-    A4: { value: "=TODAY()" },          B4: { value: null, formula: "TODAY()" },
-    A5: { value: "=NOW()" },           B5: { value: null, formula: "NOW()" },
-    A6: { value: "=DATE(2024,6,15)" }, B6: { value: null, formula: "DATE(2024,6,15)" },
+    A4: { value: "=TODAY()" },          B4: { value: null, formula: "TODAY()", format: { displayFormat: "date" } },
+    A5: { value: "=NOW()" },           B5: { value: null, formula: "NOW()", format: { displayFormat: "datetime" } },
+    A6: { value: "=DATE(2024,6,15)" }, B6: { value: null, formula: "DATE(2024,6,15)", format: { displayFormat: "date" } },
     A7: { value: "=YEAR(DATE(2024,6,15))" },  B7: { value: null, formula: "YEAR(DATE(2024,6,15))" },
     A8: { value: "=MONTH(DATE(2024,6,15))" }, B8: { value: null, formula: "MONTH(DATE(2024,6,15))" },
     A9: { value: "=DAY(DATE(2024,6,15))" },   B9: { value: null, formula: "DAY(DATE(2024,6,15))" },
     A10: { value: "=WEEKDAY(DATE(2024,6,15))" }, B10: { value: null, formula: "WEEKDAY(DATE(2024,6,15))" },
     A12: { value: "Date Math", format: { bold: true } },
-    A13: { value: "Start date" },    B13: { value: null, formula: "DATE(2024,1,1)" },
-    A14: { value: "End date" },      B14: { value: null, formula: "DATE(2024,12,31)" },
+    A13: { value: "Start date" },    B13: { value: null, formula: "DATE(2024,1,1)", format: { displayFormat: "date" } },
+    A14: { value: "End date" },      B14: { value: null, formula: "DATE(2024,12,31)", format: { displayFormat: "date" } },
     A15: { value: "Days between" },  B15: { value: null, formula: 'DATEDIF(B13,B14,"D")' },
     A16: { value: "Months between" },B16: { value: null, formula: 'DATEDIF(B13,B14,"M")' },
-    A17: { value: "+3 months" },     B17: { value: null, formula: "EDATE(B13,3)" },
+    A17: { value: "+3 months" },     B17: { value: null, formula: "EDATE(B13,3)", format: { displayFormat: "date" } },
   };
   return s;
 }

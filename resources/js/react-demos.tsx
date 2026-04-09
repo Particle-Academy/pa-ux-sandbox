@@ -78,8 +78,9 @@ const RadioGroupDemo = l(() => import("./react-demos/pages/RadioGroupDemo"), "Ra
 const SwitchDemo = l(() => import("./react-demos/pages/SwitchDemo"), "SwitchDemo");
 const SliderDemo = l(() => import("./react-demos/pages/SliderDemo"), "SliderDemo");
 const DatePickerDemo = l(() => import("./react-demos/pages/DatePickerDemo"), "DatePickerDemo");
-// Fancy Code
+// Fancy Code + Fancy Sheets
 const CodeEditorDemo = l(() => import("./react-demos/pages/CodeEditorDemo"), "CodeEditorDemo");
+const SpreadsheetDemo = l(() => import("./react-demos/pages/SpreadsheetDemo"), "SpreadsheetDemo");
 // ECharts (lazy layout registers echarts on first visit)
 const EChartsLayout = lazy(() => import("./react-demos/echarts-loader"));
 const LineDemo = l(() => import("./react-demos/pages/echarts/LineDemo"), "LineDemo");
@@ -195,6 +196,7 @@ if (root) {
               <Route path="ide" element={<IdeDemo />} />
               {/* Fancy Code */}
               <Route path="code-editor" element={<CodeEditorDemo />} />
+              <Route path="spreadsheet" element={<SpreadsheetDemo />} />
               {/* ECharts (lazy-loaded layout registers echarts) */}
               <Route element={<EChartsLayout />}>
                 <Route path="echarts-line" element={<LineDemo />} />

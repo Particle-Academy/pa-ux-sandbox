@@ -23,6 +23,7 @@ export default defineConfig({
             '@particle-academy/react-fancy': path.resolve(__dirname, 'packages/react-fancy/src'),
             '@particle-academy/react-echarts': path.resolve(__dirname, 'packages/react-echarts/src'),
             '@particle-academy/fancy-code': path.resolve(__dirname, 'packages/fancy-code/src'),
+            '@particle-academy/fancy-sheets': path.resolve(__dirname, 'packages/fancy-sheets/src'),
         },
     },
     build: {

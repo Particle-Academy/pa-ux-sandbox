@@ -86,8 +86,9 @@ const patternLinks = [
   { to: "/ide", label: "IDE" },
 ];
 
-const fancyCodeLinks = [
+const fancyPackageLinks = [
   { to: "/code-editor", label: "CodeEditor" },
+  { to: "/spreadsheet", label: "Spreadsheet" },
 ];
 
 const echartsLinks = [
@@ -188,8 +189,8 @@ function ReactFancyNav() {
       <SectionHeader label="Patterns" />
       <LinkGroup links={patternLinks} />
 
-      <SectionHeader label="Fancy Code" />
-      <LinkGroup links={fancyCodeLinks} />
+      <SectionHeader label="Fancy Packages" />
+      <LinkGroup links={fancyPackageLinks} />
     </>
   );
 }

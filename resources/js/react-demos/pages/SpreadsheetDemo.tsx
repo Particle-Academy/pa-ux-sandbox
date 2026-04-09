@@ -165,6 +165,44 @@ function dateSheet(): SheetData {
 }
 
 // ---------------------------------------------------------------------------
+// Sheet 6: Cross-Sheet References — reference data from other sheets
+// ---------------------------------------------------------------------------
+
+function crossSheetSheet(): SheetData {
+  const s = createEmptySheet("cross-sheet", "Cross-Sheet");
+  s.cells = {
+    A1: { value: "Cross-Sheet References", format: { bold: true } },
+    A2: { value: "Reference data from the Products sheet using SheetName!CellRef syntax." },
+    A4: { value: "Reference", format: { bold: true } },
+    B4: { value: "Formula", format: { bold: true, italic: true } },
+    C4: { value: "Result", format: { bold: true } },
+    A5: { value: "First product name" },
+    B5: { value: "=Products!A2", format: { italic: true } },
+    C5: { value: null, formula: "Products!A2" },
+    A6: { value: "First product price" },
+    B6: { value: "=Products!C2", format: { italic: true } },
+    C6: { value: null, formula: "Products!C2" },
+    A7: { value: "Total revenue" },
+    B7: { value: "=Products!E10", format: { italic: true } },
+    C7: { value: null, formula: "Products!E10" },
+    A8: { value: "Product count" },
+    B8: { value: "=Products!E13", format: { italic: true } },
+    C8: { value: null, formula: "Products!E13" },
+    A10: { value: "Cross-sheet range SUM", format: { bold: true } },
+    A11: { value: "Sum of all prices" },
+    B11: { value: "=SUM(Products!C2:C7)", format: { italic: true } },
+    C11: { value: null, formula: "SUM(Products!C2:C7)" },
+    A12: { value: "Average price" },
+    B12: { value: "=AVERAGE(Products!C2:C7)", format: { italic: true } },
+    C12: { value: null, formula: "AVERAGE(Products!C2:C7)" },
+    A14: { value: "Conditional cross-ref" },
+    B14: { value: "=North total from Conditionals", format: { italic: true } },
+    C14: { value: null, formula: "Conditionals!F4" },
+  };
+  return s;
+}
+
+// ---------------------------------------------------------------------------
 // Build the workbook
 // ---------------------------------------------------------------------------
 
@@ -176,6 +214,7 @@ function createSampleWorkbook(): WorkbookData {
       textSheet(),
       mathSheet(),
       dateSheet(),
+      crossSheetSheet(),
     ],
     activeSheetId: "products",
   };
@@ -194,7 +233,7 @@ export function SpreadsheetDemo() {
 
       <DemoSection
         title="Full Spreadsheet"
-        description="Multi-sheet workbook with 80+ formula functions. Switch tabs to see: Products (math aggregates), Conditionals (SUMIF/COUNTIF), Text Functions (string manipulation), Math & Logic (advanced formulas), and Dates (date math). Click cells to select, double-click or type to edit, use arrow keys to navigate."
+        description="Multi-sheet workbook with 80+ formula functions. Switch tabs: Products (aggregates + frozen header), Conditionals (SUMIF/COUNTIF), Text Functions, Math & Logic, Dates (formatted dates), Cross-Sheet (references between sheets). Drag to select, right-click for context menu, click row/column headers to select entire rows/columns."
         code={`<Spreadsheet data={workbook} onChange={setWorkbook}>
   <Spreadsheet.Toolbar />
   <Spreadsheet.Grid />

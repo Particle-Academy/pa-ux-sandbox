@@ -163,13 +163,15 @@
         <div class="grid grid-cols-2 gap-4 lg:grid-cols-3">
             @php
                 $livewireDemos = [
-                    ['name' => 'Action', 'route' => 'fancy-flux-demos.action-examples', 'desc' => 'Buttons, links, and interactive action elements', 'counterpart' => true],
-                    ['name' => 'Carousel', 'route' => 'fancy-flux-demos.basic-carousel', 'desc' => 'Flux carousel with variants and autoplay', 'counterpart' => true],
-                    ['name' => 'ColorPicker', 'route' => 'fancy-flux-demos.color-picker-examples', 'desc' => 'HSL color picker with Livewire binding', 'counterpart' => true],
-                    ['name' => 'EmojiSelect', 'route' => 'fancy-flux-demos.emoji-select-examples', 'desc' => 'Searchable emoji picker component', 'counterpart' => true],
-                    ['name' => 'Wizard Form', 'route' => 'fancy-flux-demos.wizard-form', 'desc' => 'Multi-step wizard with validation and modals', 'counterpart' => true],
-                    ['name' => 'Nested Carousel', 'route' => 'fancy-flux-demos.nested-carousel', 'desc' => 'Parent-child carousels with advancement', 'counterpart' => true],
-                    ['name' => 'Dynamic Carousel', 'route' => 'fancy-flux-demos.dynamic-carousel', 'desc' => 'Dynamic slides and headless agent workflow', 'counterpart' => true],
+                    ['name' => 'Action', 'route' => 'ux-demos.action', 'desc' => 'Buttons, links, and interactive action elements', 'counterpart' => true],
+                    ['name' => 'Carousel', 'route' => 'ux-demos.carousel', 'desc' => 'Flux carousel with variants and autoplay', 'counterpart' => true],
+                    ['name' => 'ColorPicker', 'route' => 'ux-demos.color-picker', 'desc' => 'HSL color picker with Livewire binding', 'counterpart' => true],
+                    ['name' => 'Drawer', 'route' => 'ux-demos.drawer', 'desc' => 'Sliding drawer with panel navigation', 'counterpart' => false],
+                    ['name' => 'EmojiSelect', 'route' => 'ux-demos.emoji-select', 'desc' => 'Searchable emoji picker component', 'counterpart' => true],
+                    ['name' => 'Timeline', 'route' => 'ux-demos.timeline', 'desc' => 'Timeline with stacked, alternating, and horizontal layouts', 'counterpart' => false],
+                    ['name' => 'Wizard Form', 'route' => 'ux-demos.wizard-form', 'desc' => 'Multi-step wizard with validation and modals', 'counterpart' => true],
+                    ['name' => 'Nested Carousel', 'route' => 'ux-demos.nested-carousel', 'desc' => 'Parent-child carousels with advancement', 'counterpart' => true],
+                    ['name' => 'Dynamic Carousel', 'route' => 'ux-demos.dynamic-carousel', 'desc' => 'Dynamic slides and headless agent workflow', 'counterpart' => true],
                 ];
             @endphp
             @foreach($livewireDemos as $demo)

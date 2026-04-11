@@ -49,6 +49,19 @@ Route::prefix('admin')->name('admin.')->middleware(['web', 'auth'])->group(funct
 // UX Demo Hub
 Route::get('/ux-demos', fn () => view('ux-demos'))->name('ux-demos');
 
+// Fancy Flux Demos
+Route::prefix('ux-demos')->name('ux-demos.')->group(function () {
+    Route::get('/action', \App\Livewire\ActionExamples::class)->name('action');
+    Route::get('/carousel', \App\Livewire\BasicCarousel::class)->name('carousel');
+    Route::get('/color-picker', \App\Livewire\ColorPickerExamples::class)->name('color-picker');
+    Route::get('/drawer', \App\Livewire\DrawerExamples::class)->name('drawer');
+    Route::get('/dynamic-carousel', \App\Livewire\DynamicCarousel::class)->name('dynamic-carousel');
+    Route::get('/emoji-select', \App\Livewire\EmojiSelectExamples::class)->name('emoji-select');
+    Route::get('/nested-carousel', \App\Livewire\NestedCarousel::class)->name('nested-carousel');
+    Route::get('/wizard-form', \App\Livewire\WizardForm::class)->name('wizard-form');
+    Route::get('/timeline', \App\Livewire\TimelineExamples::class)->name('timeline');
+});
+
 // React demos (SPA catch-all)
 Route::get('/react-demos/{any?}', fn () => view('react-demos'))->where('any', '.*')->name('react-demos');
 

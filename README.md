@@ -1,59 +1,77 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Particle Academy — Package Sandbox
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A Laravel 12 monorepo for developing and prototyping Particle Academy packages. The root app consumes local packages via Composer path repositories and git submodules, providing a live environment to build, test, and demo everything together.
 
-## About Laravel
+## Packages
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+| Package | Type | Path | Registry |
+|---------|------|------|----------|
+| **laravel-catalog** | PHP (Composer) | `packages/laravel-catalog/` | [Packagist](https://packagist.org/packages/particle-academy/laravel-catalog) |
+| **laravel-fms** | PHP (Composer) | `packages/laravel-fms/` | [Packagist](https://packagist.org/packages/particle-academy/laravel-fms) |
+| **fancy-flux** | PHP (Composer) | `packages/fancy-flux/` | [Packagist](https://packagist.org/packages/wishborn/fancy-flux) |
+| **react-fancy** | React (npm) | `packages/react-fancy/` | [npm](https://www.npmjs.com/package/@particle-academy/react-fancy) |
+| **react-echarts** | React (npm) | `packages/react-echarts/` | [npm](https://www.npmjs.com/package/@particle-academy/react-echarts) |
+| **fancy-code** | React (npm) | `packages/fancy-code/` | [npm](https://www.npmjs.com/package/@particle-academy/fancy-code) |
+| **fancy-sheets** | React (npm) | `packages/fancy-sheets/` | [npm](https://www.npmjs.com/package/@particle-academy/fancy-sheets) |
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+All packages are git submodules with their own repositories.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Setup
 
-## Learning Laravel
+```bash
+git clone --recurse-submodules <repo-url>
+composer run setup    # install, env, key, migrate, npm install
+```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+If you already cloned without `--recurse-submodules`:
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+```bash
+git submodule update --init --recursive
+```
 
-## Laravel Sponsors
+## Development
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```bash
+composer run dev      # Starts server, queue, logs (pail), and Vite concurrently
+```
 
-### Premium Partners
+The app includes two demo surfaces:
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+- **Livewire demos** at `/ux-demos` — Blade/Livewire components from `fancy-flux`
+- **React demos** at `/react-demos` — React components from `react-fancy`, `react-echarts`, `fancy-code`, and `fancy-sheets`
 
-## Contributing
+## Testing
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+php artisan test --compact                            # All tests
+php artisan test --compact tests/Feature/Catalog/     # Catalog tests
+php artisan test --compact --filter=testName           # Single test
+```
 
-## Code of Conduct
+Tests use Pest with SQLite in-memory and `RefreshDatabase`.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Code Formatting
 
-## Security Vulnerabilities
+```bash
+vendor/bin/pint --dirty   # Format changed files
+vendor/bin/pint           # Format all
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Submodule Workflow
 
-## License
+Each package is an independent repo. To work on a package:
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```bash
+cd packages/<package-name>
+# make changes, commit, push, tag
+git tag v1.x.x
+git push origin main --tags
+```
+
+After committing inside a submodule, update the pointer in the root repo:
+
+```bash
+cd ../..
+git add packages/<package-name>
+git commit -m "Update <package-name> to v1.x.x"
+```

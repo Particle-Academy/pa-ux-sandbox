@@ -13,7 +13,10 @@
 /.vscode
 /.zed
 /.rnd
+/.claude
+/.mcp.json
 /auth.json
+/react-demo
 /node_modules
 /public/build
 /public/hot

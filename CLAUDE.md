@@ -6,10 +6,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a **monorepo demo app** for developing the `particle-academy/laravel-catalog` Laravel package. The root is a Laravel 12 application that consumes local packages via Composer path repositories. The primary package under development lives at `packages/laravel-catalog/`.
 
-There are three local packages symlinked via Composer path repos:
+There are four local packages symlinked via Composer path repos:
 - `packages/laravel-catalog/` - **Primary**: Stripe catalog management (Products, Prices) with optional Livewire admin UI
 - `packages/laravel-fms/` - Feature Management System (FMS) - dependency of Catalog
-- `packages/fancy-flux/` - UI component library (git submodule)
+- `packages/fancy-flux/` - Livewire/Blade UI component library (git submodule, repo: wishborn/fancy)
+- `packages/react-fancy/` - React UI component library (git submodule, repo: Particle-Academy/react-fancy)
 
 ## Common Commands
 
@@ -76,3 +77,11 @@ The root Laravel app has controllers in `app/Http/Controllers/Admin/` and `app/H
 - **Database**: Prefer `Model::query()` over `DB::`. Use eager loading to prevent N+1. Use Eloquent relationships over raw queries.
 - **Config access**: Always `config('key')`, never `env()` outside config files.
 - **Validation**: Use Form Request classes, not inline validation.
+
+## Git Rules
+
+- **NEVER use `git add -A` or `git add .`**. Always stage specific files by name. This monorepo has submodules, untracked experiments, and files that must not be blindly committed.
+- Before every commit, review changes with `git diff --stat` or `git status`, then `git add <specific files>`.
+- Always tag releases for packages (`git tag v1.x.x`) and push tags with `git push origin main --tags`.
+- For `react-fancy`, publish to npm with `npm publish --access public` after tagging.
+- For `fancy-flux`, pushing the tag to GitHub is sufficient (Composer resolves from git).

@@ -9,7 +9,7 @@ This is a **monorepo sandbox** for developing and prototyping Particle Academy p
 Packages symlinked via Composer path repos:
 - `packages/laravel-catalog/` - **Primary**: Stripe catalog management (Products, Prices) with optional admin UI
 - `packages/laravel-fms/` - Feature Management System (FMS) - dependency of Catalog
-- `packages/fancy-flux/` - Blade UI component library extending Flux (git submodule, repo: wishborn/fancy)
+- `packages/fancy-flux/` - Blade UI component library (git submodule, repo: wishborn/fancy)
 - `packages/react-fancy/` - React UI component library (git submodule)
 - `packages/react-echarts/` - React ECharts component library (git submodule)
 - `packages/fancy-code/` - React code editor (git submodule)

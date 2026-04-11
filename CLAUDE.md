@@ -4,13 +4,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a **monorepo demo app** for developing the `particle-academy/laravel-catalog` Laravel package. The root is a Laravel 12 application that consumes local packages via Composer path repositories. The primary package under development lives at `packages/laravel-catalog/`.
+This is a **monorepo sandbox** for developing and prototyping Particle Academy packages. The root is a Laravel 12 application that consumes local packages via Composer path repositories and git submodules, providing a live environment to build, test, and demo everything together.
 
-There are four local packages symlinked via Composer path repos:
-- `packages/laravel-catalog/` - **Primary**: Stripe catalog management (Products, Prices) with optional Livewire admin UI
+Packages symlinked via Composer path repos:
+- `packages/laravel-catalog/` - **Primary**: Stripe catalog management (Products, Prices) with optional admin UI
 - `packages/laravel-fms/` - Feature Management System (FMS) - dependency of Catalog
-- `packages/fancy-flux/` - Livewire/Blade UI component library (git submodule, repo: wishborn/fancy)
-- `packages/react-fancy/` - React UI component library (git submodule, repo: Particle-Academy/react-fancy)
+- `packages/fancy-flux/` - Blade UI component library extending Flux (git submodule, repo: wishborn/fancy)
+- `packages/react-fancy/` - React UI component library (git submodule)
+- `packages/react-echarts/` - React ECharts component library (git submodule)
+- `packages/fancy-code/` - React code editor (git submodule)
+- `packages/fancy-sheets/` - React spreadsheet (git submodule)
 
 ## Common Commands
 
@@ -51,9 +54,9 @@ Namespace: `LaravelCatalog\`
 
 **Models**: `Product`, `Price`, `ProductFeature` (for FMS integration)
 
-**Optional UI**: The Livewire admin UI (`Livewire\Admin\Products\Index`) only loads when `catalog.enable_ui` config is true or views have been published. The UI uses custom CSS (not Flux/Tailwind component library).
+**Optional UI**: The admin UI (`Admin\Products\Index`) only loads when `catalog.enable_ui` config is true or views have been published.
 
-**Service Provider** (`CatalogServiceProvider`): Auto-loads Cashier migrations, registers Livewire components conditionally, configures FMS to use Catalog's `ProductFeature` model.
+**Service Provider** (`CatalogServiceProvider`): Auto-loads Cashier migrations, registers UI components conditionally, configures FMS to use Catalog's `ProductFeature` model.
 
 **Config**: `config/catalog.php` controls auto-sync, queue connection, admin routes/middleware, broadcasting channel.
 
@@ -70,7 +73,6 @@ The root Laravel app has controllers in `app/Http/Controllers/Admin/` and `app/H
 ## Conventions
 
 - **PHP**: Always use curly braces for control structures. Use constructor property promotion. Explicit return types and type hints on all methods. PHPDoc blocks over inline comments.
-- **Livewire**: Components use `App\Livewire` namespace (Livewire 3+ convention). `wire:model` is deferred by default; use `wire:model.live` for real-time. Always add `wire:key` in loops.
 - **Tailwind v4**: CSS-first config via `@theme` directive. Use `@import "tailwindcss"` not `@tailwind` directives. No deprecated opacity utilities.
 - **Tests**: All Pest. Feature tests preferred over unit tests. Use factories and their states. Use datasets for validation testing.
 - **Enums**: TitleCase keys (e.g., `Monthly`, `FavoritePerson`).

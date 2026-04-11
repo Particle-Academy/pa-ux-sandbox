@@ -37,8 +37,8 @@ composer run dev      # Starts server, queue, logs (pail), and Vite concurrently
 
 The app includes two demo surfaces:
 
-- **Livewire demos** at `/ux-demos` — Blade/Livewire components from `fancy-flux`
-- **React demos** at `/react-demos` — React components from `react-fancy`, `react-echarts`, `fancy-code`, and `fancy-sheets`
+- **UX Demos** at `/ux-demos` — Blade components from `fancy-flux`
+- **React Demos** at `/react-demos` — React components from `react-fancy`, `react-echarts`, `fancy-code`, and `fancy-sheets`
 
 ## Testing
 

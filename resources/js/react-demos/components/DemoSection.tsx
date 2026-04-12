@@ -5,10 +5,12 @@ interface DemoSectionProps {
   title: string;
   description?: string;
   code?: string;
+  /** Render children directly without the padded container wrapper */
+  flush?: boolean;
   children: ReactNode;
 }
 
-export function DemoSection({ title, description, code, children }: DemoSectionProps) {
+export function DemoSection({ title, description, code, flush, children }: DemoSectionProps) {
   const [showCode, setShowCode] = useState(false);
 
   return (
@@ -27,9 +29,11 @@ export function DemoSection({ title, description, code, children }: DemoSectionP
       {description && (
         <p className="mb-4 text-sm text-zinc-500">{description}</p>
       )}
-      <div className="rounded-xl border border-zinc-200 bg-white p-6 dark:border-zinc-700 dark:bg-zinc-900">
-        {children}
-      </div>
+      {flush ? children : (
+        <div className="rounded-xl border border-zinc-200 bg-white p-6 dark:border-zinc-700 dark:bg-zinc-900">
+          {children}
+        </div>
+      )}
       {code && showCode && (
         <div className="mt-2">
           <CodeBlock code={code} />

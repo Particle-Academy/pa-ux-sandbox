@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { TreeNav, ContextMenu } from "@particle-academy/react-fancy";
-import type { TreeNodeData } from "@particle-academy/react-fancy";
+import type { TreeNodeData, DropPosition } from "@particle-academy/react-fancy";
 import { CodeEditor } from "@particle-academy/fancy-code";
 import { DemoSection } from "../components/DemoSection";
 
@@ -789,6 +789,64 @@ interface OpenTab {
 // IDE Demo
 // ---------------------------------------------------------------------------
 
+// ---------------------------------------------------------------------------
+// Tree mutation helper for drag-and-drop
+// ---------------------------------------------------------------------------
+
+function removeNode(nodes: TreeNodeData[], id: string): { nodes: TreeNodeData[]; removed: TreeNodeData | null } {
+  let removed: TreeNodeData | null = null;
+  const filtered = nodes.reduce<TreeNodeData[]>((acc, node) => {
+    if (node.id === id) {
+      removed = node;
+      return acc;
+    }
+    if (node.children) {
+      const result = removeNode(node.children, id);
+      if (result.removed) removed = result.removed;
+      acc.push({ ...node, children: result.nodes });
+    } else {
+      acc.push(node);
+    }
+    return acc;
+  }, []);
+  return { nodes: filtered, removed };
+}
+
+function insertNode(
+  nodes: TreeNodeData[],
+  targetId: string,
+  position: DropPosition,
+  nodeToInsert: TreeNodeData,
+): TreeNodeData[] {
+  if (position === "inside") {
+    return nodes.map((n) => {
+      if (n.id === targetId) {
+        return { ...n, children: [...(n.children ?? []), nodeToInsert] };
+      }
+      if (n.children) {
+        return { ...n, children: insertNode(n.children, targetId, position, nodeToInsert) };
+      }
+      return n;
+    });
+  }
+
+  const result: TreeNodeData[] = [];
+  for (const n of nodes) {
+    if (n.id === targetId && position === "before") result.push(nodeToInsert);
+    if (n.children) {
+      result.push({ ...n, children: insertNode(n.children, targetId, position, nodeToInsert) });
+    } else {
+      result.push(n);
+    }
+    if (n.id === targetId && position === "after") result.push(nodeToInsert);
+  }
+  return result;
+}
+
+// ---------------------------------------------------------------------------
+// Component
+// ---------------------------------------------------------------------------
+
 export function IdeDemo() {
   const [selectedFile, setSelectedFile] = useState(DEFAULT_FILE);
   const [openTabs, setOpenTabs] = useState<OpenTab[]>([
@@ -801,12 +859,21 @@ export function IdeDemo() {
     }
     return initial;
   });
+  const [fileTree, setFileTree] = useState<TreeNodeData[]>(FILE_TREE);
 
   // Context menu state — tracks which node was right-clicked
   const [ctxNode, setCtxNode] = useState<TreeNodeData | null>(null);
 
   const handleNodeContextMenu = useCallback((e: React.MouseEvent, node: TreeNodeData) => {
     setCtxNode(node);
+  }, []);
+
+  const handleNodeMove = useCallback((sourceId: string, targetId: string, position: DropPosition) => {
+    setFileTree((prev) => {
+      const { nodes, removed } = removeNode(prev, sourceId);
+      if (!removed) return prev;
+      return insertNode(nodes, targetId, position, removed);
+    });
   }, []);
 
   const handleFileSelect = useCallback((id: string, node: TreeNodeData) => {
@@ -846,43 +913,40 @@ export function IdeDemo() {
 
       <DemoSection
         title="Full IDE Layout"
-        description="TreeNav + ContextMenu + Tabs + CodeEditor. Click files to open, right-click for context menu."
+        description="TreeNav with drag-and-drop, context menus, tabs, and code editor. Drag files to reorder, right-click for context menu."
+        flush
         code={`import { TreeNav, ContextMenu } from "@particle-academy/react-fancy";
-import { CodeEditor } from "@particle-academy/fancy-code";
+import type { TreeNodeData, DropPosition } from "@particle-academy/react-fancy";
 
+const [fileTree, setFileTree] = useState(initialTree);
 const [ctxNode, setCtxNode] = useState(null);
+
+function handleNodeMove(sourceId, targetId, position) {
+  setFileTree((prev) => {
+    const { nodes, removed } = removeNode(prev, sourceId);
+    if (!removed) return prev;
+    return insertNode(nodes, targetId, position, removed);
+  });
+}
 
 <ContextMenu>
   <ContextMenu.Trigger>
     <TreeNav
       nodes={fileTree}
-      selectedId={selectedFile}
+      draggable
+      onNodeMove={handleNodeMove}
       onSelect={handleFileSelect}
       onNodeContextMenu={(e, node) => setCtxNode(node)}
     />
   </ContextMenu.Trigger>
   <ContextMenu.Content>
     {ctxNode?.type === "folder" ? (
-      <>
-        <ContextMenu.Item onClick={() => copyName(ctxNode)}>
-          Copy Folder Name
-        </ContextMenu.Item>
-        <ContextMenu.Separator />
-        <ContextMenu.Item>New File</ContextMenu.Item>
-      </>
+      <ContextMenu.Item>New File</ContextMenu.Item>
     ) : (
       <>
         <ContextMenu.Item onClick={() => openFile(ctxNode)}>
           Open File
         </ContextMenu.Item>
-        <ContextMenu.Item onClick={() => copyName(ctxNode)}>
-          Copy File Name
-        </ContextMenu.Item>
-        <ContextMenu.Separator />
-        <ContextMenu.Item onClick={() => closeTab(ctxNode)}>
-          Close Tab
-        </ContextMenu.Item>
-        <ContextMenu.Separator />
         <ContextMenu.Item danger>Delete File</ContextMenu.Item>
       </>
     )}
@@ -901,10 +965,12 @@ const [ctxNode, setCtxNode] = useState(null);
             <ContextMenu>
               <ContextMenu.Trigger>
                 <TreeNav
-                  nodes={FILE_TREE}
+                  nodes={fileTree}
                   selectedId={selectedFile}
                   onSelect={handleFileSelect}
                   onNodeContextMenu={handleNodeContextMenu}
+                  draggable
+                  onNodeMove={handleNodeMove}
                   defaultExpandedIds={["packages", "fancy-code", "fc-src", "fc-engine"]}
                   indentSize={12}
                 />

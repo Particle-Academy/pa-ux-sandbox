@@ -2,6 +2,7 @@ import { useState, useCallback } from "react";
 import { TreeNav, ContextMenu } from "@particle-academy/react-fancy";
 import type { TreeNodeData } from "@particle-academy/react-fancy";
 import { CodeEditor } from "@particle-academy/fancy-code";
+import { DemoSection } from "../components/DemoSection";
 
 // ---------------------------------------------------------------------------
 // Monorepo file tree
@@ -823,12 +824,14 @@ export function IdeDemo() {
   const handleCloseTab = useCallback((tabId: string) => {
     setOpenTabs((prev) => {
       const next = prev.filter((t) => t.id !== tabId);
-      if (tabId === selectedFile && next.length > 0) {
-        setSelectedFile(next[next.length - 1].id);
-      }
+      // Switch to another tab when closing the active file
+      setSelectedFile((current) => {
+        if (current !== tabId) return current;
+        return next.length > 0 ? next[next.length - 1].id : "";
+      });
       return next;
     });
-  }, [selectedFile]);
+  }, []);
 
   const currentContent = fileContents[selectedFile] ?? `// ${selectedFile}\n// File not loaded`;
   const currentLang = FILE_CONTENTS[selectedFile]?.lang ?? "JavaScript";
@@ -840,109 +843,152 @@ export function IdeDemo() {
   return (
     <div>
       <h1 className="mb-6 text-2xl font-bold">IDE</h1>
-      <p className="mb-4 text-sm text-zinc-500">
-        Full IDE layout combining TreeNav, Tabs, and CodeEditor with real files from this monorepo. Click files in the tree to open them.
-      </p>
 
-      <div
-        className="flex overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-700"
-        style={{ height: 600 }}
+      <DemoSection
+        title="Full IDE Layout"
+        description="TreeNav + ContextMenu + Tabs + CodeEditor. Click files to open, right-click for context menu."
+        code={`import { TreeNav, ContextMenu } from "@particle-academy/react-fancy";
+import { CodeEditor } from "@particle-academy/fancy-code";
+
+const [ctxNode, setCtxNode] = useState(null);
+
+<ContextMenu>
+  <ContextMenu.Trigger>
+    <TreeNav
+      nodes={fileTree}
+      selectedId={selectedFile}
+      onSelect={handleFileSelect}
+      onNodeContextMenu={(e, node) => setCtxNode(node)}
+    />
+  </ContextMenu.Trigger>
+  <ContextMenu.Content>
+    {ctxNode?.type === "folder" ? (
+      <>
+        <ContextMenu.Item onClick={() => copyName(ctxNode)}>
+          Copy Folder Name
+        </ContextMenu.Item>
+        <ContextMenu.Separator />
+        <ContextMenu.Item>New File</ContextMenu.Item>
+      </>
+    ) : (
+      <>
+        <ContextMenu.Item onClick={() => openFile(ctxNode)}>
+          Open File
+        </ContextMenu.Item>
+        <ContextMenu.Item onClick={() => copyName(ctxNode)}>
+          Copy File Name
+        </ContextMenu.Item>
+        <ContextMenu.Separator />
+        <ContextMenu.Item onClick={() => closeTab(ctxNode)}>
+          Close Tab
+        </ContextMenu.Item>
+        <ContextMenu.Separator />
+        <ContextMenu.Item danger>Delete File</ContextMenu.Item>
+      </>
+    )}
+  </ContextMenu.Content>
+</ContextMenu>`}
       >
-        {/* File tree sidebar */}
-        <div className="w-56 shrink-0 overflow-y-auto border-r border-zinc-200 bg-zinc-50 p-2 dark:border-zinc-700 dark:bg-zinc-900/50">
-          <p className="mb-1 px-1 text-[10px] font-semibold uppercase tracking-wider text-zinc-400">
-            Explorer
-          </p>
-          <ContextMenu>
-            <ContextMenu.Trigger>
-              <TreeNav
-                nodes={FILE_TREE}
-                selectedId={selectedFile}
-                onSelect={handleFileSelect}
-                onNodeContextMenu={handleNodeContextMenu}
-                defaultExpandedIds={["packages", "fancy-code", "fc-src", "fc-engine"]}
-                indentSize={12}
-              />
-            </ContextMenu.Trigger>
-            <ContextMenu.Content>
-              {ctxNode && (ctxNode.type === "folder" || (ctxNode.children && ctxNode.children.length > 0)) ? (
-                <>
-                  <ContextMenu.Item onClick={() => navigator.clipboard.writeText(ctxNode.label)}>
-                    Copy Folder Name
-                  </ContextMenu.Item>
-                  <ContextMenu.Separator />
-                  <ContextMenu.Item disabled>New File</ContextMenu.Item>
-                  <ContextMenu.Item disabled>New Folder</ContextMenu.Item>
-                </>
-              ) : ctxNode ? (
-                <>
-                  <ContextMenu.Item onClick={() => handleFileSelect(ctxNode.id, ctxNode)}>
-                    Open File
-                  </ContextMenu.Item>
-                  <ContextMenu.Item onClick={() => navigator.clipboard.writeText(ctxNode.label)}>
-                    Copy File Name
-                  </ContextMenu.Item>
-                  <ContextMenu.Separator />
-                  <ContextMenu.Item
-                    onClick={() => handleCloseTab(ctxNode.id)}
-                    disabled={!openTabs.some((t) => t.id === ctxNode.id)}
-                  >
-                    Close Tab
-                  </ContextMenu.Item>
-                  <ContextMenu.Separator />
-                  <ContextMenu.Item danger disabled>Delete File</ContextMenu.Item>
-                </>
-              ) : null}
-            </ContextMenu.Content>
-          </ContextMenu>
-        </div>
+        <div
+          className="flex overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-700"
+          style={{ height: 600 }}
+        >
+          {/* File tree sidebar */}
+          <div className="w-56 shrink-0 overflow-y-auto border-r border-zinc-200 bg-zinc-50 p-2 dark:border-zinc-700 dark:bg-zinc-900/50">
+            <p className="mb-1 px-1 text-[10px] font-semibold uppercase tracking-wider text-zinc-400">
+              Explorer
+            </p>
+            <ContextMenu>
+              <ContextMenu.Trigger>
+                <TreeNav
+                  nodes={FILE_TREE}
+                  selectedId={selectedFile}
+                  onSelect={handleFileSelect}
+                  onNodeContextMenu={handleNodeContextMenu}
+                  defaultExpandedIds={["packages", "fancy-code", "fc-src", "fc-engine"]}
+                  indentSize={12}
+                />
+              </ContextMenu.Trigger>
+              <ContextMenu.Content>
+                {ctxNode && (ctxNode.type === "folder" || (ctxNode.children && ctxNode.children.length > 0)) ? (
+                  <>
+                    <ContextMenu.Item onClick={() => navigator.clipboard.writeText(ctxNode.label)}>
+                      Copy Folder Name
+                    </ContextMenu.Item>
+                    <ContextMenu.Separator />
+                    <ContextMenu.Item disabled>New File</ContextMenu.Item>
+                    <ContextMenu.Item disabled>New Folder</ContextMenu.Item>
+                  </>
+                ) : ctxNode ? (
+                  <>
+                    <ContextMenu.Item onClick={() => handleFileSelect(ctxNode.id, ctxNode)}>
+                      Open File
+                    </ContextMenu.Item>
+                    <ContextMenu.Item onClick={() => navigator.clipboard.writeText(ctxNode.label)}>
+                      Copy File Name
+                    </ContextMenu.Item>
+                    <ContextMenu.Separator />
+                    <ContextMenu.Item
+                      onClick={() => handleCloseTab(ctxNode.id)}
+                      disabled={!openTabs.some((t) => t.id === ctxNode.id)}
+                    >
+                      Close Tab
+                    </ContextMenu.Item>
+                    <ContextMenu.Separator />
+                    <ContextMenu.Item danger disabled>Delete File</ContextMenu.Item>
+                  </>
+                ) : null}
+              </ContextMenu.Content>
+            </ContextMenu>
+          </div>
 
-        {/* Editor area */}
-        <div className="flex min-w-0 flex-1 flex-col">
-          {/* Tabs */}
-          {openTabs.length > 0 && (
-            <div className="flex items-center gap-0 border-b border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900/50">
-              {openTabs.map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setSelectedFile(tab.id)}
-                  className={`group flex items-center gap-1.5 border-r border-zinc-200 px-3 py-1.5 text-[12px] transition-colors dark:border-zinc-700 ${
-                    tab.id === selectedFile
-                      ? "bg-white text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100"
-                      : "text-zinc-500 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800/50"
-                  }`}
-                >
-                  <span className="truncate">{tab.label}</span>
-                  <span
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleCloseTab(tab.id);
-                    }}
-                    className="ml-1 rounded p-0.5 opacity-0 transition-opacity hover:bg-zinc-200 group-hover:opacity-100 dark:hover:bg-zinc-700"
+          {/* Editor area */}
+          <div className="flex min-w-0 flex-1 flex-col">
+            {/* Tabs */}
+            {openTabs.length > 0 && (
+              <div className="flex items-center gap-0 border-b border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900/50">
+                {openTabs.map((tab) => (
+                  <button
+                    key={tab.id}
+                    onClick={() => setSelectedFile(tab.id)}
+                    className={`group flex items-center gap-1.5 border-r border-zinc-200 px-3 py-1.5 text-[12px] transition-colors dark:border-zinc-700 ${
+                      tab.id === selectedFile
+                        ? "bg-white text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100"
+                        : "text-zinc-500 hover:bg-zinc-100 dark:text-zinc-400 dark:hover:bg-zinc-800/50"
+                    }`}
                   >
-                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
-                  </span>
-                </button>
-              ))}
+                    <span className="truncate">{tab.label}</span>
+                    <span
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleCloseTab(tab.id);
+                      }}
+                      className="ml-1 rounded p-0.5 opacity-0 transition-opacity hover:bg-zinc-200 group-hover:opacity-100 dark:hover:bg-zinc-700"
+                    >
+                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+                    </span>
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {/* Code editor */}
+            <div className="flex min-h-0 flex-1 flex-col">
+              <CodeEditor
+                value={currentContent}
+                onChange={handleCodeChange}
+                language={currentLang}
+                theme="dark"
+                className="flex flex-1 flex-col"
+              >
+                <CodeEditor.Toolbar />
+                <CodeEditor.Panel className="flex-1" />
+                <CodeEditor.StatusBar />
+              </CodeEditor>
             </div>
-          )}
-
-          {/* Code editor */}
-          <div className="flex min-h-0 flex-1 flex-col">
-            <CodeEditor
-              value={currentContent}
-              onChange={handleCodeChange}
-              language={currentLang}
-              theme="dark"
-              className="flex flex-1 flex-col"
-            >
-              <CodeEditor.Toolbar />
-              <CodeEditor.Panel className="flex-1" />
-              <CodeEditor.StatusBar />
-            </CodeEditor>
           </div>
         </div>
-      </div>
+      </DemoSection>
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { TreeNav, Tabs, Badge } from "@particle-academy/react-fancy";
+import { TreeNav, ContextMenu } from "@particle-academy/react-fancy";
 import type { TreeNodeData } from "@particle-academy/react-fancy";
 import { CodeEditor } from "@particle-academy/fancy-code";
 
@@ -801,6 +801,13 @@ export function IdeDemo() {
     return initial;
   });
 
+  // Context menu state — tracks which node was right-clicked
+  const [ctxNode, setCtxNode] = useState<TreeNodeData | null>(null);
+
+  const handleNodeContextMenu = useCallback((e: React.MouseEvent, node: TreeNodeData) => {
+    setCtxNode(node);
+  }, []);
+
   const handleFileSelect = useCallback((id: string, node: TreeNodeData) => {
     if (node.type === "folder" || (node.children && node.children.length > 0)) return;
     setSelectedFile(id);
@@ -846,13 +853,48 @@ export function IdeDemo() {
           <p className="mb-1 px-1 text-[10px] font-semibold uppercase tracking-wider text-zinc-400">
             Explorer
           </p>
-          <TreeNav
-            nodes={FILE_TREE}
-            selectedId={selectedFile}
-            onSelect={handleFileSelect}
-            defaultExpandedIds={["packages", "fancy-code", "fc-src", "fc-engine"]}
-            indentSize={12}
-          />
+          <ContextMenu>
+            <ContextMenu.Trigger>
+              <TreeNav
+                nodes={FILE_TREE}
+                selectedId={selectedFile}
+                onSelect={handleFileSelect}
+                onNodeContextMenu={handleNodeContextMenu}
+                defaultExpandedIds={["packages", "fancy-code", "fc-src", "fc-engine"]}
+                indentSize={12}
+              />
+            </ContextMenu.Trigger>
+            <ContextMenu.Content>
+              {ctxNode && (ctxNode.type === "folder" || (ctxNode.children && ctxNode.children.length > 0)) ? (
+                <>
+                  <ContextMenu.Item onClick={() => navigator.clipboard.writeText(ctxNode.label)}>
+                    Copy Folder Name
+                  </ContextMenu.Item>
+                  <ContextMenu.Separator />
+                  <ContextMenu.Item disabled>New File</ContextMenu.Item>
+                  <ContextMenu.Item disabled>New Folder</ContextMenu.Item>
+                </>
+              ) : ctxNode ? (
+                <>
+                  <ContextMenu.Item onClick={() => handleFileSelect(ctxNode.id, ctxNode)}>
+                    Open File
+                  </ContextMenu.Item>
+                  <ContextMenu.Item onClick={() => navigator.clipboard.writeText(ctxNode.label)}>
+                    Copy File Name
+                  </ContextMenu.Item>
+                  <ContextMenu.Separator />
+                  <ContextMenu.Item
+                    onClick={() => handleCloseTab(ctxNode.id)}
+                    disabled={!openTabs.some((t) => t.id === ctxNode.id)}
+                  >
+                    Close Tab
+                  </ContextMenu.Item>
+                  <ContextMenu.Separator />
+                  <ContextMenu.Item danger disabled>Delete File</ContextMenu.Item>
+                </>
+              ) : null}
+            </ContextMenu.Content>
+          </ContextMenu>
         </div>
 
         {/* Editor area */}

@@ -84,16 +84,12 @@
     "repositories": [
         {
             "type": "path",
-            "url": "./packages/laravel-catalog",
-            "options": {
-                "symlink": true
-            }
+            "url": "./packages/laravel-catalog"
         },
         {
             "type": "path",
             "url": "./packages/laravel-fms",
             "options": {
-                "symlink": true,
                 "versions": {
                     "particle-academy/laravel-fms": "0.2.0"
                 }
@@ -101,10 +97,7 @@
         },
         {
             "type": "path",
-            "url": "./packages/fancy-flux",
-            "options": {
-                "symlink": true
-            }
+            "url": "./packages/fancy-flux"
         }
     ],
     "config": {

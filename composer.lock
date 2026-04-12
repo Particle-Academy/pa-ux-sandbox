@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b5c08bffd82eaefe44d00ed54d612ad3",
+    "content-hash": "efb35420b35df807a22547b2410e33f4",
     "packages": [
         {
             "name": "brick/math",
@@ -2852,7 +2852,7 @@
             "dist": {
                 "type": "path",
                 "url": "./packages/laravel-catalog",
-                "reference": "14beb1a43fe861e02130e312dfbc011bb13010d9"
+                "reference": "fe26b6a33aed1611ed67c2180bb2838d3707b8bd"
             },
             "require": {
                 "laravel/cashier": "^15.0",
@@ -2880,7 +2880,6 @@
             ],
             "description": "Laravel package for managing Stripe catalog (Products, Prices) with admin UI",
             "transport-options": {
-                "symlink": true,
                 "relative": true
             }
         },
@@ -2934,7 +2933,6 @@
                 "laravel"
             ],
             "transport-options": {
-                "symlink": true,
                 "relative": true
             }
         },
@@ -6556,11 +6554,11 @@
         },
         {
             "name": "wishborn/fancy-flux",
-            "version": "1.0.12",
+            "version": "1.0.22",
             "dist": {
                 "type": "path",
                 "url": "./packages/fancy-flux",
-                "reference": "2d1a12bc4baffeceba4634458320c538a86e7cf2"
+                "reference": "fa24f4a128f304e1c9499737de9afa244454d97f"
             },
             "require": {
                 "illuminate/support": "^10.0|^11.0|^12.0",
@@ -6603,7 +6601,6 @@
                 "ui"
             ],
             "transport-options": {
-                "symlink": true,
                 "relative": true
             }
         }

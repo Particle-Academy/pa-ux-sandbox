@@ -2,21 +2,8 @@ import { useState } from "react";
 import {
   Sidebar,
   Badge,
+  Icon,
 } from "@particle-academy/react-fancy";
-import {
-  Home,
-  FileText,
-  Settings,
-  Users,
-  BarChart3,
-  Mail,
-  Bell,
-  Shield,
-  Database,
-  CreditCard,
-  HelpCircle,
-  LogOut,
-} from "lucide-react";
 import { DemoSection } from "../components/DemoSection";
 
 function SidebarExample({
@@ -40,43 +27,43 @@ function SidebarExample({
 
           <div className="flex-1 overflow-y-auto p-1.5">
             <Sidebar.Group label="Main">
-              <Sidebar.Item icon={<Home className="h-4 w-4" />} active={active === "dashboard"} onClick={() => setActive("dashboard")}>
+              <Sidebar.Item icon={<Icon name="home" size="sm" />} active={active === "dashboard"} onClick={() => setActive("dashboard")}>
                 Dashboard
               </Sidebar.Item>
               <Sidebar.Item
-                icon={<Mail className="h-4 w-4" />}
+                icon={<Icon name="mail" size="sm" />}
                 active={active === "inbox"}
                 onClick={() => setActive("inbox")}
                 badge={<Badge size="xs" color="blue">5</Badge>}
               >
                 Inbox
               </Sidebar.Item>
-              <Sidebar.Item icon={<Users className="h-4 w-4" />} active={active === "users"} onClick={() => setActive("users")}>
+              <Sidebar.Item icon={<Icon name="users" size="sm" />} active={active === "users"} onClick={() => setActive("users")}>
                 Users
               </Sidebar.Item>
-              <Sidebar.Item icon={<BarChart3 className="h-4 w-4" />} active={active === "analytics"} onClick={() => setActive("analytics")}>
+              <Sidebar.Item icon={<Icon name="bar-chart-3" size="sm" />} active={active === "analytics"} onClick={() => setActive("analytics")}>
                 Analytics
               </Sidebar.Item>
             </Sidebar.Group>
 
             <Sidebar.Group label="Admin">
-              <Sidebar.Submenu label="Settings" icon={<Settings className="h-4 w-4" />} defaultOpen>
+              <Sidebar.Submenu label="Settings" icon={<Icon name="settings" size="sm" />} defaultOpen>
                 <Sidebar.Item active={active === "general"} onClick={() => setActive("general")}>General</Sidebar.Item>
                 <Sidebar.Item active={active === "security"} onClick={() => setActive("security")}>Security</Sidebar.Item>
                 <Sidebar.Item active={active === "database"} onClick={() => setActive("database")}>Database</Sidebar.Item>
               </Sidebar.Submenu>
-              <Sidebar.Item icon={<CreditCard className="h-4 w-4" />} active={active === "billing"} onClick={() => setActive("billing")}>
+              <Sidebar.Item icon={<Icon name="credit-card" size="sm" />} active={active === "billing"} onClick={() => setActive("billing")}>
                 Billing
               </Sidebar.Item>
-              <Sidebar.Item icon={<Bell className="h-4 w-4" />} active={active === "notifications"} onClick={() => setActive("notifications")}>
+              <Sidebar.Item icon={<Icon name="bell" size="sm" />} active={active === "notifications"} onClick={() => setActive("notifications")}>
                 Notifications
               </Sidebar.Item>
             </Sidebar.Group>
           </div>
 
           <div className="border-t border-zinc-200 p-1.5 dark:border-zinc-700">
-            <Sidebar.Item icon={<HelpCircle className="h-4 w-4" />}>Help</Sidebar.Item>
-            <Sidebar.Item icon={<LogOut className="h-4 w-4" />}>Sign out</Sidebar.Item>
+            <Sidebar.Item icon={<Icon name="help-circle" size="sm" />}>Help</Sidebar.Item>
+            <Sidebar.Item icon={<Icon name="log-out" size="sm" />}>Sign out</Sidebar.Item>
           </div>
         </Sidebar>
       </div>
@@ -98,10 +85,10 @@ export function SidebarDemo() {
         code={`<Sidebar collapseMode="icons">
   <Sidebar.Toggle />
   <Sidebar.Group label="Main">
-    <Sidebar.Item icon={<Home />} active>Dashboard</Sidebar.Item>
-    <Sidebar.Item icon={<Mail />} badge={<Badge>5</Badge>}>Inbox</Sidebar.Item>
+    <Sidebar.Item icon={<Icon name="home" size="sm" />} active>Dashboard</Sidebar.Item>
+    <Sidebar.Item icon={<Icon name="mail" size="sm" />} badge={<Badge>5</Badge>}>Inbox</Sidebar.Item>
   </Sidebar.Group>
-  <Sidebar.Submenu label="Settings" icon={<Settings />} defaultOpen>
+  <Sidebar.Submenu label="Settings" icon={<Icon name="settings" size="sm" />} defaultOpen>
     <Sidebar.Item>General</Sidebar.Item>
     <Sidebar.Item>Security</Sidebar.Item>
   </Sidebar.Submenu>
@@ -133,19 +120,19 @@ export function SidebarDemo() {
           <div className="overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-700">
             <Sidebar collapsed={collapsed} onCollapsedChange={setCollapsed} className="h-[300px]">
               <div className="flex-1 overflow-y-auto p-1.5">
-                <Sidebar.Item icon={<Home className="h-4 w-4" />} active={active === "dashboard"} onClick={() => setActive("dashboard")}>
+                <Sidebar.Item icon={<Icon name="home" size="sm" />} active={active === "dashboard"} onClick={() => setActive("dashboard")}>
                   Dashboard
                 </Sidebar.Item>
-                <Sidebar.Item icon={<Mail className="h-4 w-4" />} active={active === "inbox"} onClick={() => setActive("inbox")}>
+                <Sidebar.Item icon={<Icon name="mail" size="sm" />} active={active === "inbox"} onClick={() => setActive("inbox")}>
                   Inbox
                 </Sidebar.Item>
-                <Sidebar.Item icon={<Users className="h-4 w-4" />} active={active === "users"} onClick={() => setActive("users")}>
+                <Sidebar.Item icon={<Icon name="users" size="sm" />} active={active === "users"} onClick={() => setActive("users")}>
                   Users
                 </Sidebar.Item>
-                <Sidebar.Item icon={<Shield className="h-4 w-4" />} active={active === "security"} onClick={() => setActive("security")}>
+                <Sidebar.Item icon={<Icon name="shield" size="sm" />} active={active === "security"} onClick={() => setActive("security")}>
                   Security
                 </Sidebar.Item>
-                <Sidebar.Item icon={<Database className="h-4 w-4" />} active={active === "database"} onClick={() => setActive("database")}>
+                <Sidebar.Item icon={<Icon name="database" size="sm" />} active={active === "database"} onClick={() => setActive("database")}>
                   Database
                 </Sidebar.Item>
               </div>

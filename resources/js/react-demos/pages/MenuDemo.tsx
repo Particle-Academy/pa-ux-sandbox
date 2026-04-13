@@ -2,19 +2,8 @@ import { useState } from "react";
 import {
   Menu,
   Badge,
+  Icon,
 } from "@particle-academy/react-fancy";
-import {
-  Home,
-  FileText,
-  Settings,
-  Users,
-  BarChart3,
-  Mail,
-  Bell,
-  Shield,
-  Database,
-  Palette,
-} from "lucide-react";
 import { DemoSection } from "../components/DemoSection";
 
 export function MenuDemo() {
@@ -29,30 +18,30 @@ export function MenuDemo() {
         title="Horizontal Menu"
         description="Horizontal menu with items and submenus. Submenus appear on hover."
         code={`<Menu orientation="horizontal">
-  <Menu.Item icon={<Home />} active>Home</Menu.Item>
-  <Menu.Item icon={<FileText />}>Pages</Menu.Item>
-  <Menu.Submenu label="Settings" icon={<Settings />}>
+  <Menu.Item icon={<Icon name="home" size="sm" />} active>Home</Menu.Item>
+  <Menu.Item icon={<Icon name="file-text" size="sm" />}>Pages</Menu.Item>
+  <Menu.Submenu label="Settings" icon={<Icon name="settings" size="sm" />}>
     <Menu.Item>General</Menu.Item>
     <Menu.Item>Security</Menu.Item>
   </Menu.Submenu>
 </Menu>`}
       >
         <Menu orientation="horizontal">
-          <Menu.Item icon={<Home className="h-4 w-4" />} active={activeH === "home"} onClick={() => setActiveH("home")}>
+          <Menu.Item icon={<Icon name="home" size="sm" />} active={activeH === "home"} onClick={() => setActiveH("home")}>
             Home
           </Menu.Item>
-          <Menu.Item icon={<FileText className="h-4 w-4" />} active={activeH === "pages"} onClick={() => setActiveH("pages")}>
+          <Menu.Item icon={<Icon name="file-text" size="sm" />} active={activeH === "pages"} onClick={() => setActiveH("pages")}>
             Pages
           </Menu.Item>
-          <Menu.Item icon={<Users className="h-4 w-4" />} active={activeH === "users"} onClick={() => setActiveH("users")}>
+          <Menu.Item icon={<Icon name="users" size="sm" />} active={activeH === "users"} onClick={() => setActiveH("users")}>
             Users
           </Menu.Item>
-          <Menu.Submenu label="Settings" icon={<Settings className="h-4 w-4" />}>
-            <Menu.Item icon={<Shield className="h-4 w-4" />} onClick={() => setActiveH("security")}>Security</Menu.Item>
-            <Menu.Item icon={<Database className="h-4 w-4" />} onClick={() => setActiveH("database")}>Database</Menu.Item>
-            <Menu.Item icon={<Palette className="h-4 w-4" />} onClick={() => setActiveH("theme")}>Theme</Menu.Item>
+          <Menu.Submenu label="Settings" icon={<Icon name="settings" size="sm" />}>
+            <Menu.Item icon={<Icon name="shield" size="sm" />} onClick={() => setActiveH("security")}>Security</Menu.Item>
+            <Menu.Item icon={<Icon name="database" size="sm" />} onClick={() => setActiveH("database")}>Database</Menu.Item>
+            <Menu.Item icon={<Icon name="palette" size="sm" />} onClick={() => setActiveH("theme")}>Theme</Menu.Item>
           </Menu.Submenu>
-          <Menu.Item icon={<BarChart3 className="h-4 w-4" />} active={activeH === "analytics"} onClick={() => setActiveH("analytics")}>
+          <Menu.Item icon={<Icon name="bar-chart-3" size="sm" />} active={activeH === "analytics"} onClick={() => setActiveH("analytics")}>
             Analytics
           </Menu.Item>
         </Menu>
@@ -63,10 +52,10 @@ export function MenuDemo() {
         description="Vertical menu with groups, submenus (accordion-style), badges, and disabled items."
         code={`<Menu orientation="vertical">
   <Menu.Group label="Main">
-    <Menu.Item icon={<Home />} active>Dashboard</Menu.Item>
-    <Menu.Item icon={<Mail />} badge={<Badge size="xs">3</Badge>}>Inbox</Menu.Item>
+    <Menu.Item icon={<Icon name="home" size="sm" />} active>Dashboard</Menu.Item>
+    <Menu.Item icon={<Icon name="mail" size="sm" />} badge={<Badge size="xs">3</Badge>}>Inbox</Menu.Item>
   </Menu.Group>
-  <Menu.Submenu label="Settings" icon={<Settings />} defaultOpen>
+  <Menu.Submenu label="Settings" icon={<Icon name="settings" size="sm" />} defaultOpen>
     <Menu.Item>General</Menu.Item>
     <Menu.Item>Security</Menu.Item>
   </Menu.Submenu>
@@ -75,35 +64,35 @@ export function MenuDemo() {
         <div className="max-w-xs">
           <Menu orientation="vertical">
             <Menu.Group label="Main">
-              <Menu.Item icon={<Home className="h-4 w-4" />} active={activeV === "dashboard"} onClick={() => setActiveV("dashboard")}>
+              <Menu.Item icon={<Icon name="home" size="sm" />} active={activeV === "dashboard"} onClick={() => setActiveV("dashboard")}>
                 Dashboard
               </Menu.Item>
               <Menu.Item
-                icon={<Mail className="h-4 w-4" />}
+                icon={<Icon name="mail" size="sm" />}
                 active={activeV === "inbox"}
                 onClick={() => setActiveV("inbox")}
                 badge={<Badge size="xs" color="blue">3</Badge>}
               >
                 Inbox
               </Menu.Item>
-              <Menu.Item icon={<Users className="h-4 w-4" />} active={activeV === "users"} onClick={() => setActiveV("users")}>
+              <Menu.Item icon={<Icon name="users" size="sm" />} active={activeV === "users"} onClick={() => setActiveV("users")}>
                 Users
               </Menu.Item>
-              <Menu.Item icon={<BarChart3 className="h-4 w-4" />} active={activeV === "analytics"} onClick={() => setActiveV("analytics")}>
+              <Menu.Item icon={<Icon name="bar-chart-3" size="sm" />} active={activeV === "analytics"} onClick={() => setActiveV("analytics")}>
                 Analytics
               </Menu.Item>
             </Menu.Group>
 
             <Menu.Group label="Settings">
-              <Menu.Submenu label="Configuration" icon={<Settings className="h-4 w-4" />} defaultOpen>
+              <Menu.Submenu label="Configuration" icon={<Icon name="settings" size="sm" />} defaultOpen>
                 <Menu.Item active={activeV === "general"} onClick={() => setActiveV("general")}>General</Menu.Item>
                 <Menu.Item active={activeV === "security"} onClick={() => setActiveV("security")}>Security</Menu.Item>
                 <Menu.Item active={activeV === "database"} onClick={() => setActiveV("database")}>Database</Menu.Item>
               </Menu.Submenu>
-              <Menu.Item icon={<Bell className="h-4 w-4" />} active={activeV === "notifications"} onClick={() => setActiveV("notifications")}>
+              <Menu.Item icon={<Icon name="bell" size="sm" />} active={activeV === "notifications"} onClick={() => setActiveV("notifications")}>
                 Notifications
               </Menu.Item>
-              <Menu.Item icon={<Palette className="h-4 w-4" />} disabled>
+              <Menu.Item icon={<Icon name="palette" size="sm" />} disabled>
                 Theme (coming soon)
               </Menu.Item>
             </Menu.Group>

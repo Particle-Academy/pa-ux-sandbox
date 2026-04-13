@@ -1,6 +1,7 @@
 import { StrictMode, lazy, Suspense } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router";
+import "./react-demos/setup-icons";
 import { DemoLayout } from "./react-demos/layouts/DemoLayout";
 import { Home } from "./react-demos/pages/Home";
 

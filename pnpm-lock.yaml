@@ -11,12 +11,6 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^4.7.0
         version: 4.7.0(vite@7.3.1(jiti@2.6.1)(lightningcss@1.31.1))
-      echarts:
-        specifier: ^5.6.0
-        version: 5.6.0
-      echarts-gl:
-        specifier: ^2.0.9
-        version: 2.0.9(echarts@5.6.0)
       react:
         specifier: ^19.2.4
         version: 19.2.4
@@ -104,6 +98,13 @@ importers:
         version: 5.9.3
 
   packages/react-echarts:
+    dependencies:
+      echarts:
+        specifier: ^5.6.0
+        version: 5.6.0
+      echarts-gl:
+        specifier: ^2.0.9
+        version: 2.0.9(echarts@5.6.0)
     devDependencies:
       '@types/react':
         specifier: ^19.0.0
@@ -111,9 +112,6 @@ importers:
       '@types/react-dom':
         specifier: ^19.0.0
         version: 19.2.3(@types/react@19.2.14)
-      echarts:
-        specifier: ^5.6.0
-        version: 5.6.0
       react:
         specifier: ^19.0.0
         version: 19.2.4
@@ -126,10 +124,6 @@ importers:
       typescript:
         specifier: ^5.8.0
         version: 5.9.3
-    optionalDependencies:
-      echarts-gl:
-        specifier: ^2.0.0
-        version: 2.0.9(echarts@5.6.0)
 
   packages/react-fancy:
     dependencies:

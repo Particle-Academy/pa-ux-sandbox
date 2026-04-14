@@ -24,6 +24,12 @@ composer run setup        # Full setup: install, env, key, migrate, npm
 reload                    # Clear cache + npm run build (custom shortcut)
 ```
 
+### Building
+
+**Just run `npm run build`. Never run per-package builds.**
+
+The sandbox handles everything — `vite.config.js` aliases `@particle-academy/*` to each package's `src/` directory, so `npm run build` compiles package source alongside the app in one pass. Package `dist/` output only matters for external npm consumers, and `npm publish` regenerates it automatically.
+
 ### Testing
 ```bash
 php artisan test --compact                                    # Run all tests

@@ -127,6 +127,26 @@ export function ActionDemo() {
         </div>
       </DemoSection>
 
+      {/* Ghost Variant */}
+      <DemoSection title="Ghost Variant" description="Transparent background with subtle hover — pairs with any color." code={`<Action variant="ghost">Default</Action>
+<Action variant="ghost" color="blue">Blue</Action>
+<Action variant="ghost" color="red" icon="trash-2">Delete</Action>
+<Action variant="ghost" active icon="star">Active</Action>`}>
+        <div className="flex flex-wrap items-center gap-3">
+          <Action variant="ghost">Default</Action>
+          <Action variant="ghost" color="blue">Blue</Action>
+          <Action variant="ghost" color="emerald" icon="check">Save</Action>
+          <Action variant="ghost" color="red" icon="trash-2">Delete</Action>
+          <Action variant="ghost" color="violet" icon="sparkles">Magic</Action>
+          <Action variant="ghost" icon="download">Export</Action>
+          <Action variant="ghost" active icon="star">Active</Action>
+          <Action variant="ghost" checked icon="check">Checked</Action>
+          <Action variant="ghost" warn icon="alert-triangle">Warn</Action>
+          <Action variant="ghost" icon="bell" badge="3">Alerts</Action>
+          <Action variant="ghost" disabled>Disabled</Action>
+        </div>
+      </DemoSection>
+
       {/* Sort Control */}
       <DemoSection title="Sort Control" description="Custom element ordering with sort prop." code={`<Action emoji="star" icon="pencil" avatar="/img.jpg" badge="3">
   Default (eiab)

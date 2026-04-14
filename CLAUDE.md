@@ -90,6 +90,38 @@ The root Laravel app has controllers in `app/Http/Controllers/Admin/` and `app/H
 
 - **NEVER use `git add -A` or `git add .`**. Always stage specific files by name. This monorepo has submodules, untracked experiments, and files that must not be blindly committed.
 - Before every commit, review changes with `git diff --stat` or `git status`, then `git add <specific files>`.
-- Always tag releases for packages (`git tag v1.x.x`) and push tags with `git push origin main --tags`.
-- For `react-fancy`, publish to npm with `npm publish --access public` after tagging.
+- Each package under `packages/*` is its own git submodule with its own remote on `Particle-Academy/<repo>`. Doc/code changes inside a submodule require: commit in the submodule → push the submodule → then a separate commit in the root repo bumping the submodule pointer.
+
+## Publishing Releases
+
+### React packages (all 4 — `react-fancy`, `react-echarts`, `fancy-code`, `fancy-sheets`)
+
+Each React package publishes to npm via **GitHub Actions Trusted Publishing (OIDC)**. No tokens, no manual `npm publish`. The workflow lives at `.github/workflows/publish.yml` inside each submodule and fires on tag push `v*.*.*` (or manual `workflow_dispatch`).
+
+To ship a new version of a React package:
+
+1. `cd packages/<name>`
+2. Bump `version` in `package.json`
+3. Commit the bump
+4. Tag and push: `git tag vX.Y.Z && git push origin main --tags`
+5. CI builds, signs provenance via OIDC, and publishes to npm — usually under 1 minute
+6. After CI succeeds, `cd` to root and bump the submodule pointer: `git add packages/<name> && git commit && git push`
+
+Verify with: `npm view @particle-academy/<name> version`
+
+**Hard requirements for the publish to succeed** (don't remove these from `package.json`):
+- `repository.url` set to `git+https://github.com/Particle-Academy/<name>.git` — npm's provenance check rejects publish if this is empty or doesn't match the OIDC source
+- `homepage` and `bugs` URLs (recommended for the npmjs page)
+- `files` array includes `dist`, `docs`, `README.md` (so the published tarball ships docs)
+
+**Workflow gotchas already solved (don't re-introduce)**:
+- The bundled npm in `actions/setup-node@v4 (node 22)` is npm 10 — Trusted Publishing OIDC requires npm 11.5+. The workflow uses `npx -y npm@latest publish --provenance --access public` instead of `npm install -g npm@latest` (which fails with `MODULE_NOT_FOUND: promise-retry` due to a self-replacement bug)
+- `fancy-code` and `fancy-sheets` declare `@particle-academy/react-fancy` as `workspace:*` in `devDependencies`. Standalone CI has no workspace, so the workflow runs a small `node -e` step that rewrites `workspace:*` → its plain version range before `npm install`
+
+If a tag was pushed before the workflow file existed on that commit (or you need to re-trigger), move the tag forward and force-push: `git tag -d vX.Y.Z && git tag vX.Y.Z && git push origin vX.Y.Z --force`. (Safe because the tag hasn't been consumed by npm yet.)
+
+If the trusted publisher config on npmjs.com is wrong or missing, publish fails with `404 Not Found - PUT .../<package> - Not found`. Fix at `https://www.npmjs.com/package/@particle-academy/<name>/access` — Repository owner = `Particle-Academy`, Repository name = `<name>`, Workflow filename = `publish.yml`, Environment = empty.
+
+### Blade / PHP packages
+
 - For `fancy-flux`, pushing the tag to GitHub is sufficient (Composer resolves from git).

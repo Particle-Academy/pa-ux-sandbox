@@ -93,7 +93,7 @@ export function TreeNavDemo() {
   nodes={treeData}
   selectedId={selectedId}
   onSelect={(id) => setSelectedId(id)}
-  defaultExpandAll
+  defaultExpandedIds={["packages", "fancy-code", "fc-src"]}
 />`}
       >
         <div className="max-w-sm">

@@ -96,6 +96,7 @@ const echartsLinks = [
   { to: "/echarts-bar", label: "Bar" },
   { to: "/echarts-pie", label: "Pie" },
   { to: "/echarts-scatter", label: "Scatter" },
+  { to: "/echarts-effect-scatter", label: "Effect Scatter" },
   { to: "/echarts-radar", label: "Radar" },
   { to: "/echarts-heatmap", label: "Heatmap" },
   { to: "/echarts-candlestick", label: "Candlestick" },

@@ -22,6 +22,7 @@ export function BreadcrumbsDemo() {
   <Breadcrumbs.Item href="#">Dashboard</Breadcrumbs.Item>
   <Breadcrumbs.Item href="#">Settings</Breadcrumbs.Item>
   <Breadcrumbs.Item href="#">Team</Breadcrumbs.Item>
+  <Breadcrumbs.Item href="#">Members</Breadcrumbs.Item>
   <Breadcrumbs.Item active>John Doe</Breadcrumbs.Item>
 </Breadcrumbs>`}>
         <Breadcrumbs>
@@ -49,6 +50,7 @@ export function BreadcrumbsDemo() {
   <Breadcrumbs.Item href="#">Home</Breadcrumbs.Item>
   <Breadcrumbs.Item href="#">Category</Breadcrumbs.Item>
   <Breadcrumbs.Item href="#">Subcategory</Breadcrumbs.Item>
+  <Breadcrumbs.Item href="#">Products</Breadcrumbs.Item>
   <Breadcrumbs.Item active>Current Page</Breadcrumbs.Item>
 </Breadcrumbs>`}>
         <Breadcrumbs shrink>

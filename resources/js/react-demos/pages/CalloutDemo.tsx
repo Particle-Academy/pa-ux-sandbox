@@ -34,13 +34,20 @@ export function CalloutDemo() {
       <h1 className="mb-6 text-2xl font-bold">Callout</h1>
 
       <DemoSection title="Colors" description="Semantic color variants for different message types." code={`<Callout color="blue" icon={<InfoIcon />}>
-  Informational message.
+  This is an informational callout with helpful context.
 </Callout>
 <Callout color="green" icon={<CheckIcon />}>
-  Success message.
+  Operation completed successfully. All changes have been saved.
 </Callout>
-<Callout color="amber">Warning.</Callout>
-<Callout color="red">Error.</Callout>`}>
+<Callout color="amber" icon={<AlertIcon />}>
+  Please review your changes before submitting.
+</Callout>
+<Callout color="red" icon={<AlertIcon />}>
+  An error occurred while processing your request.
+</Callout>
+<Callout color="zinc">
+  A neutral callout without an icon.
+</Callout>`}>
         <div className="space-y-3">
           <Callout color="blue" icon={<InfoIcon />}>
             This is an informational callout with helpful context.

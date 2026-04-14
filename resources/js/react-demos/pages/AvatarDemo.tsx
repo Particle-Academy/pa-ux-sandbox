@@ -20,7 +20,9 @@ export function AvatarDemo() {
         </div>
       </DemoSection>
 
-      <DemoSection title="With Image" description="Avatar displaying an image." code={`<Avatar size="lg" src="/avatar.jpg" alt="Alice" />`}>
+      <DemoSection title="With Image" description="Avatar displaying an image." code={`<Avatar size="lg" src="https://i.pravatar.cc/150?u=alice" alt="Alice" />
+<Avatar size="lg" src="https://i.pravatar.cc/150?u=bob" alt="Bob" />
+<Avatar size="lg" src="https://i.pravatar.cc/150?u=carol" alt="Carol" />`}>
         <div className="flex items-center gap-3">
           <Avatar
             size="lg"

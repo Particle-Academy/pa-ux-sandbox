@@ -11,9 +11,13 @@ export function DropdownDemo() {
     <Action>Options</Action>
   </Dropdown.Trigger>
   <Dropdown.Items>
-    <Dropdown.Item onClick={() => {}}>Edit</Dropdown.Item>
+    <Dropdown.Item onClick={() => alert("Edit")}>Edit</Dropdown.Item>
+    <Dropdown.Item onClick={() => alert("Duplicate")}>Duplicate</Dropdown.Item>
     <Dropdown.Separator />
-    <Dropdown.Item danger>Delete</Dropdown.Item>
+    <Dropdown.Item onClick={() => alert("Archive")}>Archive</Dropdown.Item>
+    <Dropdown.Item onClick={() => alert("Delete")} danger>
+      Delete
+    </Dropdown.Item>
   </Dropdown.Items>
 </Dropdown>`}>
         <Dropdown>
@@ -38,7 +42,9 @@ export function DropdownDemo() {
   </Dropdown.Trigger>
   <Dropdown.Items>
     <Dropdown.Item onClick={() => {}}>Save</Dropdown.Item>
-    <Dropdown.Item disabled>Save As</Dropdown.Item>
+    <Dropdown.Item onClick={() => {}} disabled>Save As (disabled)</Dropdown.Item>
+    <Dropdown.Separator />
+    <Dropdown.Item onClick={() => {}}>Export</Dropdown.Item>
   </Dropdown.Items>
 </Dropdown>`}>
         <Dropdown>

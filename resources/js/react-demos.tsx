@@ -109,6 +109,7 @@ const Scatter3DDemo = l(() => import("./react-demos/pages/echarts/Scatter3DDemo"
 const SurfaceDemo = l(() => import("./react-demos/pages/echarts/SurfaceDemo"), "SurfaceDemo");
 const GlobeDemo = l(() => import("./react-demos/pages/echarts/GlobeDemo"), "GlobeDemo");
 const GraphicDemo = l(() => import("./react-demos/pages/echarts/GraphicDemo"), "GraphicDemo");
+const EffectScatterDemo = l(() => import("./react-demos/pages/echarts/EffectScatterDemo"), "EffectScatterDemo");
 
 const Loading = () => (
   <div className="flex items-center justify-center py-20">
@@ -204,6 +205,7 @@ if (root) {
                 <Route path="echarts-bar" element={<BarDemo />} />
                 <Route path="echarts-pie" element={<PieDemo />} />
                 <Route path="echarts-scatter" element={<ScatterDemo />} />
+                <Route path="echarts-effect-scatter" element={<EffectScatterDemo />} />
                 <Route path="echarts-radar" element={<RadarDemo />} />
                 <Route path="echarts-heatmap" element={<HeatmapDemo />} />
                 <Route path="echarts-candlestick" element={<CandlestickDemo />} />

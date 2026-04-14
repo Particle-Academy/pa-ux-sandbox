@@ -39,7 +39,8 @@ export function BadgeDemo() {
 
       <DemoSection title="With Dot" description="Status indicator dot." code={`<Badge dot color="green">Active</Badge>
 <Badge dot color="amber">Pending</Badge>
-<Badge dot color="red">Error</Badge>`}>
+<Badge dot color="red">Error</Badge>
+<Badge dot color="zinc">Inactive</Badge>`}>
         <div className="flex flex-wrap gap-2">
           <Badge dot color="green">Active</Badge>
           <Badge dot color="amber">Pending</Badge>

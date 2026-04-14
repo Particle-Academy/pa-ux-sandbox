@@ -67,10 +67,10 @@ export function IconDemo() {
 
       <DemoSection
         title="Sizes"
-        description="Five size presets from xs (12px) to xl (32px)."
+        description="Five size presets from xs (12px) to xl (32px). `md` is the default."
         code={`<Icon name="rocket" size="xs" />
 <Icon name="rocket" size="sm" />
-<Icon name="rocket" size="md" />  {/* default */}
+<Icon name="rocket" size="md" />
 <Icon name="rocket" size="lg" />
 <Icon name="rocket" size="xl" />`}
       >
@@ -87,10 +87,12 @@ export function IconDemo() {
       <DemoSection
         title="Colors"
         description="Icons inherit currentColor. Use Tailwind text color classes to style them."
-        code={`<Icon name="heart" className="text-rose-500" />
-<Icon name="star" className="text-amber-500" />
-<Icon name="shield" className="text-emerald-500" />
-<Icon name="zap" className="text-purple-500" />`}
+        code={`<Icon name="heart" size="lg" className="text-rose-500" />
+<Icon name="star" size="lg" className="text-amber-500" />
+<Icon name="shield" size="lg" className="text-emerald-500" />
+<Icon name="zap" size="lg" className="text-purple-500" />
+<Icon name="flame" size="lg" className="text-orange-500" />
+<Icon name="droplets" size="lg" className="text-cyan-500" />`}
       >
         <div className="flex items-center gap-5">
           <Icon name="heart" size="lg" className="text-rose-500" />
@@ -143,16 +145,17 @@ registerIconSet("my-set", myIcons);
         title="Inside Action Buttons"
         description="Actions accept an icon slug to place icons alongside text."
         code={`<Action icon="pencil">Edit</Action>
-<Action icon="trash-2" color="danger">Delete</Action>
-<Action icon="plus" color="accent">New Item</Action>
-<Action icon="download" variant="ghost">Export</Action>`}
+<Action icon="trash-2" color="red">Delete</Action>
+<Action icon="plus" color="blue">New Item</Action>
+<Action icon="download" variant="ghost">Export</Action>
+<Action icon="share-2" variant="ghost">Share</Action>`}
       >
         <div className="flex flex-wrap items-center gap-3">
           <Action icon="pencil">Edit</Action>
-          <Action icon="trash-2" color="danger">Delete</Action>
-          <Action icon="plus" color="accent">New Item</Action>
+          <Action icon="trash-2" color="red">Delete</Action>
+          <Action icon="plus" color="blue">New Item</Action>
           <Action icon="download" variant="ghost">Export</Action>
-          <Action icon="share-2" variant="outline">Share</Action>
+          <Action icon="share-2" variant="ghost">Share</Action>
         </div>
       </DemoSection>
 
@@ -193,13 +196,16 @@ registerIconSet("my-set", myIcons);
         title="Inside Callouts"
         description="Callouts display an icon alongside a message to reinforce intent."
         code={`<Callout color="blue" icon={<Icon name="info" />}>
-  New features are available.
+  New features are available. Check the changelog for details.
 </Callout>
 <Callout color="green" icon={<Icon name="check-circle" />}>
-  Your changes have been saved.
+  Your changes have been saved successfully.
 </Callout>
 <Callout color="red" icon={<Icon name="alert-triangle" />}>
-  Something went wrong.
+  Something went wrong. Please try again.
+</Callout>
+<Callout color="amber" icon={<Icon name="alert-circle" />}>
+  Your trial expires in 3 days.
 </Callout>`}
       >
         <div className="flex flex-col gap-3">
@@ -221,19 +227,18 @@ registerIconSet("my-set", myIcons);
       <DemoSection
         title="Inside Badges"
         description="Pair small icons with Badge for labelled status indicators."
-        code={`<Badge color="green">
-  <Icon name="check" size="xs" /> Active
-</Badge>
-<Badge color="red">
-  <Icon name="x" size="xs" /> Offline
-</Badge>`}
+        code={`<Badge color="green"><Icon name="check" size="xs" /> Active</Badge>
+<Badge color="red"><Icon name="x" size="xs" /> Offline</Badge>
+<Badge color="blue"><Icon name="clock" size="xs" /> Pending</Badge>
+<Badge color="amber"><Icon name="alert-triangle" size="xs" /> Warning</Badge>
+<Badge color="violet"><Icon name="sparkles" size="xs" /> New</Badge>`}
       >
         <div className="flex flex-wrap items-center gap-3">
           <Badge color="green"><Icon name="check" size="xs" /> Active</Badge>
           <Badge color="red"><Icon name="x" size="xs" /> Offline</Badge>
           <Badge color="blue"><Icon name="clock" size="xs" /> Pending</Badge>
           <Badge color="amber"><Icon name="alert-triangle" size="xs" /> Warning</Badge>
-          <Badge color="purple"><Icon name="sparkles" size="xs" /> New</Badge>
+          <Badge color="violet"><Icon name="sparkles" size="xs" /> New</Badge>
         </div>
       </DemoSection>
 
@@ -246,6 +251,9 @@ registerIconSet("my-set", myIcons);
   </Timeline.Item>
   <Timeline.Item icon={<Icon name="git-branch" />} color="purple">
     Feature branch created
+  </Timeline.Item>
+  <Timeline.Item icon={<Icon name="message-square" />} color="amber">
+    Code review requested
   </Timeline.Item>
   <Timeline.Item icon={<Icon name="check-circle" />} color="green">
     Merged to main

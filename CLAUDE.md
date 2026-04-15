@@ -122,6 +122,27 @@ If a tag was pushed before the workflow file existed on that commit (or you need
 
 If the trusted publisher config on npmjs.com is wrong or missing, publish fails with `404 Not Found - PUT .../<package> - Not found`. Fix at `https://www.npmjs.com/package/@particle-academy/<name>/access` — Repository owner = `Particle-Academy`, Repository name = `<name>`, Workflow filename = `publish.yml`, Environment = empty.
 
-### Blade / PHP packages
+### Blade / PHP packages (`fancy-flux`)
 
-- For `fancy-flux`, pushing the tag to GitHub is sufficient (Composer resolves from git).
+`fancy-flux` is consumed by Composer resolving a git tag — no Packagist registry push, no CI workflow. Submodule remote: `wishborn/fancy` (not `Particle-Academy/*`).
+
+To ship a new version:
+
+1. `cd packages/fancy-flux`
+2. Bump `"version"` in `composer.json`
+3. Commit the bump (`git add composer.json && git commit -m "chore: release vX.Y.Z"`)
+4. Tag and push: `git tag vX.Y.Z && git push origin main --tags`
+5. `cd` to root and bump the submodule pointer: `git add packages/fancy-flux && git commit && git push`
+
+No verification step — the moment the tag is on GitHub, consumers doing `composer update wishborn/fancy-flux` pick it up.
+
+### "Ship it" = full publish flow, not just a branch push
+
+When the user says **ship** for any package, the flow is always: bump version → commit → tag → push tag → wait for CI (React) or none (Blade) → bump submodule pointer in root → push root. Pushing `main` alone is _not_ shipping — consumers installing via npm/composer see nothing until the tag+publish step runs.
+
+Confirm npm publish succeeded before bumping the submodule pointer. For React packages:
+
+```bash
+gh run list --limit 1                              # CI status
+npm view @particle-academy/<name> version          # live on npm
+```

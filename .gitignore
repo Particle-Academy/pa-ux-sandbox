@@ -28,3 +28,5 @@ packages/*/vendor
 Homestead.json
 Homestead.yaml
 Thumbs.db
+/emoji-test.txt
+/scripts/

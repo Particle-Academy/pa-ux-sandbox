@@ -21,22 +21,20 @@ export function TableDemo() {
   <Table.Tray>
     <Table.Search placeholder="Search..." />
   </Table.Tray>
-  <table className="w-full">
-    <Table.Head>
-      <Table.Row>
-        <Table.Column label="Name" sortKey="name" />
-        <Table.Column label="Email" sortKey="email" />
+  <Table.Head>
+    <Table.Row>
+      <Table.Column label="Name" sortKey="name" />
+      <Table.Column label="Email" sortKey="email" />
+    </Table.Row>
+  </Table.Head>
+  <Table.Body>
+    {users.map((u) => (
+      <Table.Row key={u.id}>
+        <Table.Cell>{u.name}</Table.Cell>
+        <Table.Cell>{u.email}</Table.Cell>
       </Table.Row>
-    </Table.Head>
-    <Table.Body>
-      {users.map((u) => (
-        <Table.Row key={u.id}>
-          <Table.Cell>{u.name}</Table.Cell>
-          <Table.Cell>{u.email}</Table.Cell>
-        </Table.Row>
-      ))}
-    </Table.Body>
-  </table>
+    ))}
+  </Table.Body>
   <Table.Pagination total={users.length} pageSize={10} />
 </Table>`}
       >
@@ -44,24 +42,22 @@ export function TableDemo() {
           <Table.Tray>
             <Table.Search placeholder="Search users..." />
           </Table.Tray>
-          <table className="w-full">
-            <Table.Head>
-              <Table.Row>
-                <Table.Column label="Name" sortKey="name" />
-                <Table.Column label="Email" sortKey="email" />
-                <Table.Column label="Role" />
+          <Table.Head>
+            <Table.Row>
+              <Table.Column label="Name" sortKey="name" />
+              <Table.Column label="Email" sortKey="email" />
+              <Table.Column label="Role" />
+            </Table.Row>
+          </Table.Head>
+          <Table.Body>
+            {users.map((user) => (
+              <Table.Row key={user.id}>
+                <Table.Cell>{user.name}</Table.Cell>
+                <Table.Cell>{user.email}</Table.Cell>
+                <Table.Cell>{user.role}</Table.Cell>
               </Table.Row>
-            </Table.Head>
-            <Table.Body>
-              {users.map((user) => (
-                <Table.Row key={user.id}>
-                  <Table.Cell>{user.name}</Table.Cell>
-                  <Table.Cell>{user.email}</Table.Cell>
-                  <Table.Cell>{user.role}</Table.Cell>
-                </Table.Row>
-              ))}
-            </Table.Body>
-          </table>
+            ))}
+          </Table.Body>
           <Table.Pagination total={users.length} pageSize={10} />
         </Table>
       </DemoSection>

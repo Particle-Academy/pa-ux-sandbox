@@ -26,11 +26,11 @@ const HEADER = { bold: true, backgroundColor: "#1e293b", color: "#ffffff" } as c
 const TOTAL_BORDER = { borderTop: "#475569", bold: true } as const;
 
 const CATEGORIES = [
-  { name: "Housing",        budget: 1500, color: "#dbeafe" },
-  { name: "Food",           budget: 600,  color: "#dcfce7" },
-  { name: "Transport",      budget: 400,  color: "#fef9c3" },
-  { name: "Entertainment",  budget: 200,  color: "#fce7f3" },
-  { name: "Utilities",      budget: 250,  color: "#e0e7ff" },
+  { name: "Housing",        budget: 1500, color: "#93c5fd", textColor: "#1e3a5f" },
+  { name: "Food",           budget: 600,  color: "#86efac", textColor: "#14532d" },
+  { name: "Transport",      budget: 400,  color: "#fde047", textColor: "#713f12" },
+  { name: "Entertainment",  budget: 200,  color: "#f9a8d4", textColor: "#831843" },
+  { name: "Utilities",      budget: 250,  color: "#a5b4fc", textColor: "#312e81" },
 ];
 
 const TRANSACTIONS = [
@@ -64,7 +64,7 @@ function transactionsSheet(): SheetData {
     const cat = CATEGORIES.find((c) => c.name === t.category);
     s.cells[`A${row}`] = { value: t.date };
     s.cells[`B${row}`] = { value: t.desc };
-    s.cells[`C${row}`] = { value: t.category, format: cat ? { backgroundColor: cat.color } : undefined };
+    s.cells[`C${row}`] = { value: t.category, format: cat ? { backgroundColor: cat.color, color: cat.textColor } : undefined };
     s.cells[`D${row}`] = { value: t.amount, format: t.amount < 0 ? { color: "#dc2626" } : { color: "#16a34a" } };
     s.cells[`E${row}`] = { value: t.paid ? "Yes" : "No" };
     s.cells[`F${row}`] = { value: null, formula: row === 2 ? `D${row}` : `F${row - 1}+D${row}` };
@@ -89,7 +89,7 @@ function summarySheet(): SheetData {
   };
   CATEGORIES.forEach((cat, i) => {
     const row = i + 4;
-    s.cells[`A${row}`] = { value: cat.name, format: { backgroundColor: cat.color } };
+    s.cells[`A${row}`] = { value: cat.name, format: { backgroundColor: cat.color, color: cat.textColor } };
     s.cells[`B${row}`] = { value: cat.budget, format: { displayFormat: "currency" } };
     s.cells[`C${row}`] = { value: null, formula: `ABS(SUMIF(Transactions!C2:C${TRANSACTIONS.length + 1},"${cat.name}",Transactions!D2:D${TRANSACTIONS.length + 1}))`, format: { displayFormat: "currency" } };
     s.cells[`D${row}`] = { value: null, formula: `BUDGET_STATUS(C${row},B${row})` };

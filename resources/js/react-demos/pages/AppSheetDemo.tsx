@@ -365,20 +365,17 @@ export function AppSheetDemo() {
       <DemoSection
         title="Budget Tracker"
         description="Right-click any cell to Add Comment (or Edit/Delete if one exists). Comments are persisted via mock API. Hover the triangle indicators to read existing comments."
-        code={`// Mock API
-const commentApi = {
-  add: (sheet, addr, text) => fetch('/api/comments', { method: 'POST', body: ... }),
-  update: (sheet, addr, text) => fetch(\`/api/comments/\${addr}\`, { method: 'PATCH', body: ... }),
-  remove: (sheet, addr) => fetch(\`/api/comments/\${addr}\`, { method: 'DELETE' }),
-};
-
-// Context menu wires API to cell data
-contextMenuItems={(addr) => {
-  const hasComment = !!sheet.cells[addr]?.comment;
-  return hasComment
-    ? [{ label: "Edit Comment", onClick: ... }, { label: "Delete Comment", danger: true, onClick: ... }]
-    : [{ label: "Add Comment", onClick: ... }];
-}}`}
+        code={`<SheetWorkbook
+  data={data}
+  onChange={setData}
+  toolbarButtons={["undo", "bold", "format", "formulaBar"]}
+  toolbarExtra={<><button>+ Income</button><button>+ Expense</button></>}
+  contextMenuItems={(addr) => [
+    { label: "Add Comment", onClick: ... },
+    { label: "Mark as Paid", onClick: ... },
+    { label: "Delete row", danger: true, onClick: ... },
+  ]}
+/>`}
       >
         <div className="relative rounded-lg border border-zinc-200 dark:border-zinc-700" style={{ height: 600 }}>
           <SheetWorkbook
@@ -386,6 +383,7 @@ contextMenuItems={(addr) => {
             onChange={setData}
             columnCount={7}
             rowCount={25}
+            toolbarButtons={["undo", "bold", "format", "formulaBar"]}
             toolbarExtra={toolbarExtra}
             contextMenuItems={contextItems}
           />

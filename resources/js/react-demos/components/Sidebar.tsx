@@ -84,6 +84,7 @@ const patternLinks = [
   { to: "/dynamic-carousel", label: "Dynamic Carousel" },
   { to: "/kitchen-sink", label: "Kitchen Sink" },
   { to: "/ide", label: "IDE" },
+  { to: "/app-sheet", label: "AppSheet" },
 ];
 
 const fancyPackageLinks = [

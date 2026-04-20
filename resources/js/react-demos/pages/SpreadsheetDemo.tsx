@@ -1,223 +1,90 @@
 import { useState } from "react";
-import { Spreadsheet, createEmptySheet } from "@particle-academy/fancy-sheets";
-import type { WorkbookData, SheetData } from "@particle-academy/fancy-sheets";
+import {
+  Spreadsheet, Sheet, SheetWorkbook,
+  createEmptySheet, useSpreadsheet,
+} from "@particle-academy/fancy-sheets";
+import type { WorkbookData, SheetData, SpreadsheetContextMenuItem } from "@particle-academy/fancy-sheets";
 import { DemoSection } from "../components/DemoSection";
 
 // ---------------------------------------------------------------------------
-// Sheet 1: Product Catalog — basic formulas, formatting, totals
+// Sheet builders for the full workbook demo
 // ---------------------------------------------------------------------------
 
 function productsSheet(): SheetData {
   const s = createEmptySheet("products", "Products");
-  s.frozenRows = 1; // Freeze header row
+  s.frozenRows = 1;
   s.cells = {
-    A1: { value: "Product", format: { bold: true } },
-    B1: { value: "Category", format: { bold: true } },
-    C1: { value: "Price", format: { bold: true } },
-    D1: { value: "Qty", format: { bold: true } },
-    E1: { value: "Total", format: { bold: true } },
+    A1: { value: "Product",  format: { bold: true, backgroundColor: "#1e3a5f", color: "#ffffff", borderBottom: "#0f172a" } },
+    B1: { value: "Category", format: { bold: true, backgroundColor: "#1e3a5f", color: "#ffffff", borderBottom: "#0f172a" } },
+    C1: { value: "Price",    format: { bold: true, backgroundColor: "#1e3a5f", color: "#ffffff", borderBottom: "#0f172a" } },
+    D1: { value: "Qty",      format: { bold: true, backgroundColor: "#1e3a5f", color: "#ffffff", borderBottom: "#0f172a" } },
+    E1: { value: "Total",    format: { bold: true, backgroundColor: "#1e3a5f", color: "#ffffff", borderBottom: "#0f172a" } },
     A2: { value: "Widget Pro" },     B2: { value: "Hardware" },     C2: { value: 29.99 },  D2: { value: 100 }, E2: { value: null, formula: "C2*D2" },
     A3: { value: "Gadget X" },       B3: { value: "Electronics" },  C3: { value: 49.99 },  D3: { value: 50 },  E3: { value: null, formula: "C3*D3" },
     A4: { value: "Doohickey" },      B4: { value: "Hardware" },     C4: { value: 9.99 },   D4: { value: 200 }, E4: { value: null, formula: "C4*D4" },
     A5: { value: "Thingamajig" },    B5: { value: "Accessories" },  C5: { value: 14.99 },  D5: { value: 75 },  E5: { value: null, formula: "C5*D5" },
     A6: { value: "Gizmo Lite" },     B6: { value: "Electronics" },  C6: { value: 19.99 },  D6: { value: 150 }, E6: { value: null, formula: "C6*D6" },
     A7: { value: "Sprocket XL" },    B7: { value: "Hardware" },     C7: { value: 5.49 },   D7: { value: 500 }, E7: { value: null, formula: "C7*D7" },
-    A9:  { value: "Summary", format: { bold: true } },
+    A9:  { value: "Summary", format: { bold: true, borderBottom: "#334155" } },
     A10: { value: "Total Revenue" }, E10: { value: null, formula: "SUM(E2:E7)" },
     A11: { value: "Avg Price" },     E11: { value: null, formula: "AVERAGE(C2:C7)" },
     A12: { value: "Total Units" },   E12: { value: null, formula: "SUM(D2:D7)" },
     A13: { value: "Product Count" }, E13: { value: null, formula: "COUNT(C2:C7)" },
-    A14: { value: "Min Price" },     E14: { value: null, formula: "MIN(C2:C7)" },
-    A15: { value: "Max Price" },     E15: { value: null, formula: "MAX(C2:C7)" },
-    A16: { value: "Median Price" },  E16: { value: null, formula: "MEDIAN(C2:C7)" },
   };
   return s;
 }
-
-// ---------------------------------------------------------------------------
-// Sheet 2: Conditional Formulas — SUMIF, COUNTIF, AVERAGEIF, etc.
-// ---------------------------------------------------------------------------
 
 function conditionalsSheet(): SheetData {
   const s = createEmptySheet("conditionals", "Conditionals");
   s.cells = {
     A1: { value: "Conditional Formulas", format: { bold: true } },
-    A3: { value: "Region", format: { bold: true } },
-    B3: { value: "Sales", format: { bold: true } },
-    C3: { value: "Status", format: { bold: true } },
+    A3: { value: "Region", format: { bold: true } }, B3: { value: "Sales", format: { bold: true } }, C3: { value: "Status", format: { bold: true } },
     A4: { value: "North" }, B4: { value: 1200 }, C4: { value: "Active" },
     A5: { value: "South" }, B5: { value: 850 },  C5: { value: "Active" },
     A6: { value: "East" },  B6: { value: 2100 }, C6: { value: "Inactive" },
     A7: { value: "West" },  B7: { value: 950 },  C7: { value: "Active" },
     A8: { value: "North" }, B8: { value: 1800 }, C8: { value: "Active" },
-    A9: { value: "South" }, B9: { value: 600 },  C9: { value: "Inactive" },
-    A10: { value: "East" }, B10: { value: 1500 }, C10: { value: "Active" },
-    A11: { value: "West" }, B11: { value: 700 },  C11: { value: "Active" },
     E3: { value: "Analysis", format: { bold: true } },
-    E4: { value: "North total sales:" },       F4: { value: null, formula: 'SUMIF(A4:A11,"North",B4:B11)' },
-    E5: { value: "Active regions count:" },    F5: { value: null, formula: 'COUNTIF(C4:C11,"Active")' },
-    E6: { value: "Avg sales (Active):" },      F6: { value: null, formula: 'AVERAGEIF(C4:C11,"Active",B4:B11)' },
-    E7: { value: "Sales > 1000 count:" },      F7: { value: null, formula: 'COUNTIF(B4:B11,">1000")' },
-    E8: { value: "Sum sales > 1000:" },        F8: { value: null, formula: 'SUMIF(B4:B11,">1000")' },
-    E9: { value: "Min (Active):" },            F9: { value: null, formula: 'MINIFS(B4:B11,C4:C11,"Active")' },
-    E10: { value: "Max (Active):" },           F10: { value: null, formula: 'MAXIFS(B4:B11,C4:C11,"Active")' },
+    E4: { value: "North total:" },  F4: { value: null, formula: 'SUMIF(A4:A8,"North",B4:B8)' },
+    E5: { value: "Active count:" }, F5: { value: null, formula: 'COUNTIF(C4:C8,"Active")' },
+    E6: { value: "Avg (Active):" }, F6: { value: null, formula: 'AVERAGEIF(C4:C8,"Active",B4:B8)' },
   };
   return s;
 }
 
+function createFullWorkbook(): WorkbookData {
+  return { sheets: [productsSheet(), conditionalsSheet()], activeSheetId: "products" };
+}
+
 // ---------------------------------------------------------------------------
-// Sheet 3: Text Functions — string manipulation showcase
+// Small sheet builders for individual feature demos
 // ---------------------------------------------------------------------------
 
-function textSheet(): SheetData {
-  const s = createEmptySheet("text", "Text Functions");
+function styledSheet(): SheetData {
+  const s = createEmptySheet("styled", "Styled");
   s.cells = {
-    A1: { value: "Text Function Showcase", format: { bold: true } },
-    A3: { value: "Input", format: { bold: true } },
-    B3: { value: "Formula", format: { bold: true } },
-    C3: { value: "Result", format: { bold: true } },
-    A4: { value: "hello world" },     B4: { value: '=UPPER(A4)', format: { italic: true } },   C4: { value: null, formula: "UPPER(A4)" },
-    A5: { value: "HELLO WORLD" },     B5: { value: '=LOWER(A5)', format: { italic: true } },   C5: { value: null, formula: "LOWER(A5)" },
-    A6: { value: "hello world" },     B6: { value: '=PROPER(A6)', format: { italic: true } },  C6: { value: null, formula: "PROPER(A6)" },
-    A7: { value: "hello world" },     B7: { value: '=LEN(A7)', format: { italic: true } },     C7: { value: null, formula: "LEN(A7)" },
-    A8: { value: "hello world" },     B8: { value: '=LEFT(A8,5)', format: { italic: true } },  C8: { value: null, formula: "LEFT(A8,5)" },
-    A9: { value: "hello world" },     B9: { value: '=RIGHT(A9,5)', format: { italic: true } }, C9: { value: null, formula: "RIGHT(A9,5)" },
-    A10: { value: "hello world" },    B10: { value: '=MID(A10,7,5)', format: { italic: true } }, C10: { value: null, formula: "MID(A10,7,5)" },
-    A11: { value: "hello world" },    B11: { value: '=FIND("world",A11)', format: { italic: true } }, C11: { value: null, formula: 'FIND("world",A11)' },
-    A12: { value: "foo-bar-baz" },    B12: { value: '=SUBSTITUTE(A12,"-","_")', format: { italic: true } }, C12: { value: null, formula: 'SUBSTITUTE(A12,"-","_")' },
-    A13: { value: "*" },              B13: { value: '=REPT(A13,10)', format: { italic: true } },  C13: { value: null, formula: "REPT(A13,10)" },
-    A14: { value: "42" },             B14: { value: '=VALUE(A14)*2', format: { italic: true } },  C14: { value: null, formula: "VALUE(A14)*2" },
-    A15: { value: 65 },               B15: { value: '=CHAR(A15)', format: { italic: true } },     C15: { value: null, formula: "CHAR(A15)" },
-    A16: { value: "A" },              B16: { value: '=CODE(A16)', format: { italic: true } },     C16: { value: null, formula: "CODE(A16)" },
-    A18: { value: "String Building", format: { bold: true } },
-    A19: { value: "John" },  B19: { value: "Doe" },
-    C19: { value: null, formula: 'CONCAT(A19," ",B19)' },
-    A20: { value: "Full name:" },
-    C20: { value: null, formula: 'PROPER(CONCAT(A19," ",B19))' },
+    A1: { value: "Revenue", format: { bold: true, backgroundColor: "#059669", color: "#ffffff" } },
+    B1: { value: "Expense", format: { bold: true, backgroundColor: "#dc2626", color: "#ffffff" } },
+    C1: { value: "Profit",  format: { bold: true, backgroundColor: "#2563eb", color: "#ffffff" } },
+    A2: { value: 12000 }, B2: { value: 8500 },  C2: { value: null, formula: "A2-B2" },
+    A3: { value: 15000 }, B3: { value: 9200 },  C3: { value: null, formula: "A3-B3" },
+    A4: { value: 11000 }, B4: { value: 11500 }, C4: { value: null, formula: "A4-B4", format: { color: "#dc2626" } },
+    A5: { value: "Total", format: { bold: true, borderTop: "#334155" } },
+    B5: { value: null, formula: "SUM(B2:B4)", format: { borderTop: "#334155" } },
+    C5: { value: null, formula: "SUM(C2:C4)", format: { borderTop: "#334155" } },
   };
   return s;
 }
 
-// ---------------------------------------------------------------------------
-// Sheet 4: Math & Logic — advanced math, conditional logic
-// ---------------------------------------------------------------------------
-
-function mathSheet(): SheetData {
-  const s = createEmptySheet("math", "Math & Logic");
+function contextMenuSheet(): SheetData {
+  const s = createEmptySheet("ctx", "Context Menu");
   s.cells = {
-    A1: { value: "Math Functions", format: { bold: true } },
-    A3: { value: "Function", format: { bold: true } },   B3: { value: "Result", format: { bold: true } },
-    A4: { value: "=SQRT(144)" },      B4: { value: null, formula: "SQRT(144)" },
-    A5: { value: "=POWER(2,10)" },    B5: { value: null, formula: "POWER(2,10)" },
-    A6: { value: "=MOD(17,5)" },      B6: { value: null, formula: "MOD(17,5)" },
-    A7: { value: "=FACT(6)" },        B7: { value: null, formula: "FACT(6)" },
-    A8: { value: "=PI()" },           B8: { value: null, formula: "PI()" },
-    A9: { value: "=ROUND(PI(),4)" },  B9: { value: null, formula: "ROUND(PI(),4)" },
-    A10: { value: "=EXP(1)" },       B10: { value: null, formula: "EXP(1)" },
-    A11: { value: "=LN(EXP(1))" },   B11: { value: null, formula: "LN(EXP(1))" },
-    A12: { value: "=LOG(1000)" },     B12: { value: null, formula: "LOG(1000)" },
-    A13: { value: "=FLOOR(7.8,1)" },  B13: { value: null, formula: "FLOOR(7.8,1)" },
-    A14: { value: "=CEILING(7.2,1)" },B14: { value: null, formula: "CEILING(7.2,1)" },
-    A15: { value: "=SIGN(-42)" },     B15: { value: null, formula: "SIGN(-42)" },
-    A16: { value: "=INT(9.99)" },     B16: { value: null, formula: "INT(9.99)" },
-    D1: { value: "Logic Functions", format: { bold: true } },
-    D3: { value: "Formula", format: { bold: true } },     E3: { value: "Result", format: { bold: true } },
-    D4: { value: '=IF(10>5,"Yes","No")' },    E4: { value: null, formula: 'IF(10>5,"Yes","No")' },
-    D5: { value: "=AND(TRUE,TRUE)" },          E5: { value: null, formula: "AND(TRUE,TRUE)" },
-    D6: { value: "=OR(FALSE,TRUE)" },          E6: { value: null, formula: "OR(FALSE,TRUE)" },
-    D7: { value: "=NOT(FALSE)" },              E7: { value: null, formula: "NOT(FALSE)" },
-    D8: { value: "=IFERROR(1/0,0)" },         E8: { value: null, formula: "IFERROR(1/0,0)" },
-    D9: { value: '=CHOOSE(2,"a","b","c")' },  E9: { value: null, formula: 'CHOOSE(2,"a","b","c")' },
-    D10: { value: '=SWITCH(1,1,"One",2,"Two")' }, E10: { value: null, formula: 'SWITCH(1,1,"One",2,"Two")' },
-    D12: { value: "Info Functions", format: { bold: true } },
-    D13: { value: "=ISBLANK(A20)" },  E13: { value: null, formula: "ISBLANK(A20)" },
-    D14: { value: "=ISNUMBER(42)" },  E14: { value: null, formula: "ISNUMBER(42)" },
-    D15: { value: '=ISTEXT("hi")' },  E15: { value: null, formula: 'ISTEXT("hi")' },
-    D16: { value: "=TYPE(42)" },      E16: { value: null, formula: "TYPE(42)" },
+    A1: { value: "Name", format: { bold: true } }, B1: { value: "Status", format: { bold: true } },
+    A2: { value: "Alice" }, B2: { value: "Active" },
+    A3: { value: "Bob" },   B3: { value: "Pending" },
+    A4: { value: "Carol" }, B4: { value: "Active" },
   };
   return s;
-}
-
-// ---------------------------------------------------------------------------
-// Sheet 5: Date & Time — date functions showcase
-// ---------------------------------------------------------------------------
-
-function dateSheet(): SheetData {
-  const s = createEmptySheet("dates", "Dates");
-  s.cells = {
-    A1: { value: "Date & Time Functions", format: { bold: true } },
-    A3: { value: "Formula", format: { bold: true } },          B3: { value: "Result", format: { bold: true } },
-    A4: { value: "=TODAY()" },          B4: { value: null, formula: "TODAY()", format: { displayFormat: "date" } },
-    A5: { value: "=NOW()" },           B5: { value: null, formula: "NOW()", format: { displayFormat: "datetime" } },
-    A6: { value: "=DATE(2024,6,15)" }, B6: { value: null, formula: "DATE(2024,6,15)", format: { displayFormat: "date" } },
-    A7: { value: "=YEAR(DATE(2024,6,15))" },  B7: { value: null, formula: "YEAR(DATE(2024,6,15))" },
-    A8: { value: "=MONTH(DATE(2024,6,15))" }, B8: { value: null, formula: "MONTH(DATE(2024,6,15))" },
-    A9: { value: "=DAY(DATE(2024,6,15))" },   B9: { value: null, formula: "DAY(DATE(2024,6,15))" },
-    A10: { value: "=WEEKDAY(DATE(2024,6,15))" }, B10: { value: null, formula: "WEEKDAY(DATE(2024,6,15))" },
-    A12: { value: "Date Math", format: { bold: true } },
-    A13: { value: "Start date" },    B13: { value: null, formula: "DATE(2024,1,1)", format: { displayFormat: "date" } },
-    A14: { value: "End date" },      B14: { value: null, formula: "DATE(2024,12,31)", format: { displayFormat: "date" } },
-    A15: { value: "Days between" },  B15: { value: null, formula: 'DATEDIF(B13,B14,"D")' },
-    A16: { value: "Months between" },B16: { value: null, formula: 'DATEDIF(B13,B14,"M")' },
-    A17: { value: "+3 months" },     B17: { value: null, formula: "EDATE(B13,3)", format: { displayFormat: "date" } },
-  };
-  return s;
-}
-
-// ---------------------------------------------------------------------------
-// Sheet 6: Cross-Sheet References — reference data from other sheets
-// ---------------------------------------------------------------------------
-
-function crossSheetSheet(): SheetData {
-  const s = createEmptySheet("cross-sheet", "Cross-Sheet");
-  s.cells = {
-    A1: { value: "Cross-Sheet References", format: { bold: true } },
-    A2: { value: "Reference data from the Products sheet using SheetName!CellRef syntax." },
-    A4: { value: "Reference", format: { bold: true } },
-    B4: { value: "Formula", format: { bold: true, italic: true } },
-    C4: { value: "Result", format: { bold: true } },
-    A5: { value: "First product name" },
-    B5: { value: "=Products!A2", format: { italic: true } },
-    C5: { value: null, formula: "Products!A2" },
-    A6: { value: "First product price" },
-    B6: { value: "=Products!C2", format: { italic: true } },
-    C6: { value: null, formula: "Products!C2" },
-    A7: { value: "Total revenue" },
-    B7: { value: "=Products!E10", format: { italic: true } },
-    C7: { value: null, formula: "Products!E10" },
-    A8: { value: "Product count" },
-    B8: { value: "=Products!E13", format: { italic: true } },
-    C8: { value: null, formula: "Products!E13" },
-    A10: { value: "Cross-sheet range SUM", format: { bold: true } },
-    A11: { value: "Sum of all prices" },
-    B11: { value: "=SUM(Products!C2:C7)", format: { italic: true } },
-    C11: { value: null, formula: "SUM(Products!C2:C7)" },
-    A12: { value: "Average price" },
-    B12: { value: "=AVERAGE(Products!C2:C7)", format: { italic: true } },
-    C12: { value: null, formula: "AVERAGE(Products!C2:C7)" },
-    A14: { value: "Conditional cross-ref" },
-    B14: { value: "=North total from Conditionals", format: { italic: true } },
-    C14: { value: null, formula: "Conditionals!F4" },
-  };
-  return s;
-}
-
-// ---------------------------------------------------------------------------
-// Build the workbook
-// ---------------------------------------------------------------------------
-
-function createSampleWorkbook(): WorkbookData {
-  return {
-    sheets: [
-      productsSheet(),
-      conditionalsSheet(),
-      textSheet(),
-      mathSheet(),
-      dateSheet(),
-      crossSheetSheet(),
-    ],
-    activeSheetId: "products",
-  };
 }
 
 // ---------------------------------------------------------------------------
@@ -225,32 +92,143 @@ function createSampleWorkbook(): WorkbookData {
 // ---------------------------------------------------------------------------
 
 export function SpreadsheetDemo() {
-  const [data, setData] = useState(createSampleWorkbook);
+  const [workbook, setWorkbook] = useState(createFullWorkbook);
+  const [styled, setStyled] = useState(styledSheet);
+  const [ctxData, setCtxData] = useState(contextMenuSheet);
+  const [wbData, setWbData] = useState(createFullWorkbook);
+  const [hideToolbar, setHideToolbar] = useState(false);
+  const [hideTabs, setHideTabs] = useState(false);
+  const [singleSheet, setSingleSheet] = useState(() => createEmptySheet("single", "Sheet1"));
+
+  const contextItems: SpreadsheetContextMenuItem[] = [
+    {
+      label: "Highlight yellow",
+      onClick: (addr) => {
+        setCtxData((prev) => ({
+          ...prev,
+          cells: { ...prev.cells, [addr]: { ...prev.cells[addr], format: { ...prev.cells[addr]?.format, backgroundColor: "#fef08a" } } },
+        }));
+      },
+    },
+    {
+      label: "Clear formatting",
+      onClick: (addr) => {
+        setCtxData((prev) => {
+          const cell = prev.cells[addr];
+          if (!cell) return prev;
+          const { format: _, ...rest } = cell;
+          return { ...prev, cells: { ...prev.cells, [addr]: rest } };
+        });
+      },
+    },
+  ];
 
   return (
     <div>
       <h1 className="mb-6 text-2xl font-bold">Spreadsheet</h1>
 
+      {/* Full Workbook */}
       <DemoSection
-        title="Full Spreadsheet"
-        description="Multi-sheet workbook with 80+ formula functions. Switch tabs: Products (aggregates + frozen header), Conditionals (SUMIF/COUNTIF), Text Functions, Math & Logic, Dates (formatted dates), Cross-Sheet (references between sheets). Drag to select, right-click for context menu, click row/column headers to select entire rows/columns."
+        title="Full Workbook"
+        description="Multi-sheet workbook with styled headers, formulas, frozen rows. Switch tabs to see Conditionals sheet."
         code={`<Spreadsheet data={workbook} onChange={setWorkbook}>
   <Spreadsheet.Toolbar />
   <Spreadsheet.Grid />
   <Spreadsheet.SheetTabs />
 </Spreadsheet>`}
       >
-        <div className="rounded-lg border border-zinc-200 dark:border-zinc-700" style={{ height: 550 }}>
-          <Spreadsheet
-            data={data}
-            onChange={setData}
-            columnCount={10}
-            rowCount={25}
-          >
+        <div className="rounded-lg border border-zinc-200 dark:border-zinc-700" style={{ height: 480 }}>
+          <Spreadsheet data={workbook} onChange={setWorkbook} columnCount={10} rowCount={20}>
             <Spreadsheet.Toolbar />
             <Spreadsheet.Grid />
             <Spreadsheet.SheetTabs />
           </Spreadsheet>
+        </div>
+      </DemoSection>
+
+      {/* Custom Cell Styling */}
+      <DemoSection
+        title="Custom Cell Styling"
+        description="Cells support backgroundColor, color, fontSize, and per-side borders. Negative profit is red; total row has a top border."
+        code={`{ value: 12000, format: { backgroundColor: "#059669", color: "#fff" } }
+{ value: null, formula: "SUM(C2:C4)", format: { borderTop: "#334155" } }`}
+      >
+        <div className="rounded-lg border border-zinc-200 dark:border-zinc-700" style={{ height: 220 }}>
+          <Sheet data={styled} onChange={setStyled} columnCount={4} rowCount={8} />
+        </div>
+      </DemoSection>
+
+      {/* Custom Context Menu */}
+      <DemoSection
+        title="Custom Context Menu"
+        description="Right-click any cell to see custom items (Highlight yellow, Clear formatting) below the built-in items."
+        code={`<Sheet data={data} onChange={setData}
+  contextMenuItems={[
+    { label: "Highlight yellow", onClick: (addr) => ... },
+    { label: "Clear formatting", onClick: (addr) => ... },
+  ]}
+/>`}
+      >
+        <div className="rounded-lg border border-zinc-200 dark:border-zinc-700" style={{ height: 200 }}>
+          <Sheet data={ctxData} onChange={setCtxData} columnCount={4} rowCount={6} contextMenuItems={contextItems} />
+        </div>
+      </DemoSection>
+
+      {/* Toolbar Extra */}
+      <DemoSection
+        title="Toolbar Extra Buttons"
+        description="The extra prop injects content after the default toolbar buttons."
+        code={`<Spreadsheet data={data} onChange={setData}>
+  <Spreadsheet.Toolbar extra={<button>Custom</button>} />
+  <Spreadsheet.Grid />
+</Spreadsheet>`}
+      >
+        <div className="rounded-lg border border-zinc-200 dark:border-zinc-700" style={{ height: 280 }}>
+          <Spreadsheet data={workbook} onChange={setWorkbook} columnCount={10} rowCount={10}>
+            <Spreadsheet.Toolbar extra={
+              <button
+                className="inline-flex items-center rounded bg-blue-500 px-2 py-0.5 text-[11px] font-medium text-white hover:bg-blue-600"
+                onClick={() => alert("Custom toolbar action")}
+              >
+                Custom Action
+              </button>
+            } />
+            <Spreadsheet.Grid />
+          </Spreadsheet>
+        </div>
+      </DemoSection>
+
+      {/* SheetWorkbook */}
+      <DemoSection
+        title="SheetWorkbook (Convenience)"
+        description="Single component with hideToolbar and hideTabs props. Toggle below:"
+        code={`<SheetWorkbook data={data} onChange={setData}
+  hideToolbar={false} hideTabs={false} />`}
+      >
+        <div className="mb-3 flex gap-4">
+          <label className="flex items-center gap-2 text-sm">
+            <input type="checkbox" checked={hideToolbar} onChange={(e) => setHideToolbar(e.target.checked)} />
+            Hide toolbar
+          </label>
+          <label className="flex items-center gap-2 text-sm">
+            <input type="checkbox" checked={hideTabs} onChange={(e) => setHideTabs(e.target.checked)} />
+            Hide tabs
+          </label>
+        </div>
+        <div className="rounded-lg border border-zinc-200 dark:border-zinc-700" style={{ height: 350 }}>
+          <SheetWorkbook data={wbData} onChange={setWbData} columnCount={10} rowCount={15} hideToolbar={hideToolbar} hideTabs={hideTabs} />
+        </div>
+      </DemoSection>
+
+      {/* Single Sheet */}
+      <DemoSection
+        title="Single Sheet (Lean API)"
+        description="The Sheet component takes SheetData directly — no workbook wrapper, no tabs, no toolbar. Just a grid."
+        code={`<Sheet data={sheetData} onChange={setSheetData}
+  columnCount={6} rowCount={10} />`}
+      >
+        <div className="rounded-lg border border-zinc-200 dark:border-zinc-700" style={{ height: 280 }}>
+          <Sheet data={singleSheet} onChange={setSingleSheet} columnCount={6} rowCount={10} />
         </div>
       </DemoSection>
     </div>

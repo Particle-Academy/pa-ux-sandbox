@@ -82,6 +82,7 @@ const DatePickerDemo = l(() => import("./react-demos/pages/DatePickerDemo"), "Da
 // Fancy Code + Fancy Sheets
 const CodeEditorDemo = l(() => import("./react-demos/pages/CodeEditorDemo"), "CodeEditorDemo");
 const SpreadsheetDemo = l(() => import("./react-demos/pages/SpreadsheetDemo"), "SpreadsheetDemo");
+const AppSheetDemo = l(() => import("./react-demos/pages/AppSheetDemo"), "AppSheetDemo");
 // ECharts (lazy layout registers echarts on first visit)
 const EChartsLayout = lazy(() => import("./react-demos/echarts-loader"));
 const LineDemo = l(() => import("./react-demos/pages/echarts/LineDemo"), "LineDemo");
@@ -196,6 +197,7 @@ if (root) {
               <Route path="tree-nav" element={<TreeNavDemo />} />
               {/* Patterns */}
               <Route path="ide" element={<IdeDemo />} />
+              <Route path="app-sheet" element={<AppSheetDemo />} />
               {/* Fancy Code */}
               <Route path="code-editor" element={<CodeEditorDemo />} />
               <Route path="spreadsheet" element={<SpreadsheetDemo />} />

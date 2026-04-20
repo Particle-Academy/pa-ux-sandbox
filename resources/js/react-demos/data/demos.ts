@@ -20,6 +20,7 @@ export const reactDemos: DemoEntry[] = [
   { name: "Wizard Form", slug: "wizard", description: "Multi-step form wizard built on Carousel", package: "react", category: "pattern", counterpart: true },
   { name: "Nested Carousel", slug: "nested-carousel", description: "Independent carousels nested inside each other", package: "react", category: "pattern", counterpart: true },
   { name: "Dynamic Carousel", slug: "dynamic-carousel", description: "Add and remove slides dynamically at runtime", package: "react", category: "pattern", counterpart: true },
+  { name: "AppSheet", slug: "app-sheet", description: "Budget tracker micro-app built with Spreadsheet components", package: "react", category: "pattern" },
 ];
 
 export const livewireDemos: DemoEntry[] = [

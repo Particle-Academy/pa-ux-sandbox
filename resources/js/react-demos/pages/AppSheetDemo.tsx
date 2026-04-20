@@ -288,47 +288,64 @@ export function AppSheetDemo() {
 
     const items: SpreadsheetContextMenuItem[] = [];
 
-    if (hasComment) {
-      items.push({
-        label: "Edit Comment",
-        onClick: (addr) => setCommentEditor({ address: addr, sheetId: activeSheetId, existing: cell!.comment }),
-      });
-      items.push({
-        label: "Delete Comment",
-        danger: true,
-        onClick: async (addr) => {
-          await commentApi.remove(activeSheetId, addr);
-          setData((prev) => removeCellKey(prev, activeSheetId, addr, "comment"));
-        },
-      });
-    } else {
-      items.push({
-        label: "Add Comment",
-        onClick: (addr) => setCommentEditor({ address: addr, sheetId: activeSheetId }),
-      });
-    }
+    // Comments submenu
+    const commentItems: SpreadsheetContextMenuItem[] = hasComment
+      ? [
+          { label: "Edit Comment", onClick: (addr) => setCommentEditor({ address: addr, sheetId: activeSheetId, existing: cell!.comment }) },
+          { label: "Delete Comment", danger: true, onClick: async (addr) => {
+            await commentApi.remove(activeSheetId, addr);
+            setData((prev) => removeCellKey(prev, activeSheetId, addr, "comment"));
+          }},
+        ]
+      : [
+          { label: "Add Comment", onClick: (addr) => setCommentEditor({ address: addr, sheetId: activeSheetId }) },
+        ];
+    items.push({ label: "Comments", items: commentItems });
 
     if (row >= 2) {
+      // Row actions submenu
       items.push({
-        label: "Mark as Paid",
-        onClick: (addr) => {
-          const r = addr.replace(/[A-Z]+/, "");
-          setData((prev) => updateCell(prev, "transactions", `E${r}`, { value: "Yes", comment: undefined }));
-        },
-      });
-      items.push({
-        label: "Delete row",
-        danger: true,
-        onClick: (addr) => {
-          const r = parseInt(addr.replace(/[A-Z]+/, ""), 10);
-          setData((prev) => {
-            const sheet = prev.sheets.find((s) => s.id === "transactions");
-            if (!sheet) return prev;
-            const newCells = { ...sheet.cells };
-            ["A", "B", "C", "D", "E", "F"].forEach((c) => delete newCells[`${c}${r}`]);
-            return { ...prev, sheets: prev.sheets.map((s) => s.id === "transactions" ? { ...s, cells: newCells } : s) };
-          });
-        },
+        label: "Row Actions",
+        items: [
+          {
+            label: "Mark as Paid",
+            onClick: (addr) => {
+              const r = addr.replace(/[A-Z]+/, "");
+              setData((prev) => updateCell(prev, "transactions", `E${r}`, { value: "Yes", comment: undefined }));
+            },
+          },
+          {
+            label: "Duplicate Row",
+            onClick: (addr) => {
+              const r = parseInt(addr.replace(/[A-Z]+/, ""), 10);
+              setData((prev) => {
+                const sheet = prev.sheets.find((s) => s.id === "transactions");
+                if (!sheet) return prev;
+                const existingRows = Object.keys(sheet.cells).map((k) => parseInt(k.replace(/[A-Z]+/, ""), 10)).filter((n) => !isNaN(n));
+                const nextRow = Math.max(...existingRows) + 2;
+                const newCells = { ...sheet.cells };
+                ["A", "B", "C", "D", "E", "F"].forEach((c) => {
+                  if (sheet.cells[`${c}${r}`]) newCells[`${c}${nextRow}`] = { ...sheet.cells[`${c}${r}`] };
+                });
+                return { ...prev, sheets: prev.sheets.map((s) => s.id === "transactions" ? { ...s, cells: newCells } : s) };
+              });
+            },
+          },
+          {
+            label: "Delete Row",
+            danger: true,
+            onClick: (addr) => {
+              const r = parseInt(addr.replace(/[A-Z]+/, ""), 10);
+              setData((prev) => {
+                const sheet = prev.sheets.find((s) => s.id === "transactions");
+                if (!sheet) return prev;
+                const newCells = { ...sheet.cells };
+                ["A", "B", "C", "D", "E", "F"].forEach((c) => delete newCells[`${c}${r}`]);
+                return { ...prev, sheets: prev.sheets.map((s) => s.id === "transactions" ? { ...s, cells: newCells } : s) };
+              });
+            },
+          },
+        ],
       });
     }
 

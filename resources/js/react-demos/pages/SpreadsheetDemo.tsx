@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useState, useCallback, useMemo } from "react";
 import {
   Spreadsheet, Sheet, SheetWorkbook,
   createEmptySheet, useSpreadsheet,
 } from "@particle-academy/fancy-sheets";
-import type { WorkbookData, SheetData, SpreadsheetContextMenuItem } from "@particle-academy/fancy-sheets";
+import type { WorkbookData, SheetData, CellHighlightMap, SpreadsheetContextMenuItem } from "@particle-academy/fancy-sheets";
 import { DemoSection } from "../components/DemoSection";
 
 // ---------------------------------------------------------------------------
@@ -231,6 +231,113 @@ export function SpreadsheetDemo() {
           <Sheet data={singleSheet} onChange={setSingleSheet} columnCount={6} rowCount={10} />
         </div>
       </DemoSection>
+
+      {/* Cell Grouping */}
+      <CellGroupingDemo />
     </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Cell Grouping Demo — variable + label linking via meta + highlights
+// ---------------------------------------------------------------------------
+
+const GROUP_COLORS = ["#8b5cf6", "#06b6d4", "#f97316", "#ec4899"];
+
+function groupingSheet(): SheetData {
+  const s = createEmptySheet("grouping", "Variables");
+  s.cells = {
+    A1: { value: "Label",    format: { bold: true, backgroundColor: "#1e293b", color: "#ffffff" } },
+    B1: { value: "Value",    format: { bold: true, backgroundColor: "#1e293b", color: "#ffffff" } },
+    C1: { value: "Formula",  format: { bold: true, backgroundColor: "#1e293b", color: "#ffffff" } },
+    A2: { value: "Revenue",  meta: { group: "rev", role: "label" },    format: { className: "font-semibold" } },
+    B2: { value: 50000,      meta: { group: "rev", role: "variable" }, format: { className: "tabular-nums" } },
+    A3: { value: "Expenses", meta: { group: "exp", role: "label" },    format: { className: "font-semibold" } },
+    B3: { value: 32000,      meta: { group: "exp", role: "variable" }, format: { className: "tabular-nums" } },
+    A4: { value: "Tax Rate",  meta: { group: "tax", role: "label" },   format: { className: "font-semibold" } },
+    B4: { value: 0.21,        meta: { group: "tax", role: "variable" }, format: { displayFormat: "percentage" } },
+    A5: { value: "Headcount", meta: { group: "hc", role: "label" },    format: { className: "font-semibold" } },
+    B5: { value: 12,          meta: { group: "hc", role: "variable" } },
+    A7: { value: "Profit",      format: { bold: true } },
+    B7: { value: null, formula: "B2-B3" },
+    A8: { value: "Tax",         format: { bold: true } },
+    B8: { value: null, formula: "B7*B4" },
+    A9: { value: "Net Profit",  format: { bold: true, borderTop: "#334155" } },
+    B9: { value: null, formula: "B7-B8", format: { borderTop: "#334155" } },
+    A10: { value: "Per Head" },
+    B10: { value: null, formula: "B9/B5" },
+  };
+  return s;
+}
+
+function CellGroupingDemo() {
+  const [sheet, setSheet] = useState(groupingSheet);
+  const [activeAddr, setActiveAddr] = useState("A1");
+
+  const highlights = useMemo<CellHighlightMap>(() => {
+    const map: CellHighlightMap = {};
+    const activeMeta = sheet.cells[activeAddr]?.meta as { group?: string; role?: string } | undefined;
+    if (!activeMeta?.group) return map;
+
+    // Find all cells sharing the same group
+    let colorIdx = 0;
+    const groupNames = [...new Set(
+      Object.values(sheet.cells)
+        .map((c) => (c.meta as any)?.group)
+        .filter(Boolean),
+    )];
+    colorIdx = groupNames.indexOf(activeMeta.group);
+    const color = GROUP_COLORS[colorIdx % GROUP_COLORS.length];
+
+    for (const [addr, cell] of Object.entries(sheet.cells)) {
+      const m = cell.meta as { group?: string; role?: string } | undefined;
+      if (m?.group === activeMeta.group) {
+        map[addr] = { color, label: m?.role === "variable" ? "var" : "lbl" };
+      }
+    }
+    return map;
+  }, [activeAddr, sheet.cells]);
+
+  return (
+    <DemoSection
+      title="Cell Grouping (meta + highlights)"
+      description="Click any labeled cell (Revenue, Expenses, Tax Rate, Headcount) to highlight both the label and its value. Uses meta for tagging, onActiveCellChange for reactivity, highlights for visual feedback, and className for custom Tailwind classes."
+      code={`// Tag cells with metadata
+s.cells = {
+  A2: { value: "Revenue",  meta: { group: "rev", role: "label" },    format: { className: "font-semibold" } },
+  B2: { value: 50000,      meta: { group: "rev", role: "variable" }, format: { className: "tabular-nums" } },
+};
+
+// Compute highlights when active cell changes
+const highlights = useMemo<CellHighlightMap>(() => {
+  const activeGroup = (sheet.cells[activeAddr]?.meta as any)?.group;
+  if (!activeGroup) return {};
+  const map: CellHighlightMap = {};
+  for (const [addr, cell] of Object.entries(sheet.cells)) {
+    if ((cell.meta as any)?.group === activeGroup) {
+      map[addr] = { color: "#8b5cf6", label: (cell.meta as any)?.role };
+    }
+  }
+  return map;
+}, [activeAddr, sheet.cells]);
+
+<Sheet
+  data={sheet}
+  onChange={setSheet}
+  highlights={highlights}
+  onActiveCellChange={(addr) => setActiveAddr(addr)}
+/>`}
+    >
+      <div className="rounded-lg border border-zinc-200 dark:border-zinc-700" style={{ height: 340 }}>
+        <Sheet
+          data={sheet}
+          onChange={setSheet}
+          columnCount={4}
+          rowCount={12}
+          highlights={highlights}
+          onActiveCellChange={(addr) => setActiveAddr(addr)}
+        />
+      </div>
+    </DemoSection>
   );
 }

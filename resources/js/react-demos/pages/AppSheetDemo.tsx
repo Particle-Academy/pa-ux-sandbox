@@ -34,10 +34,10 @@ const CATEGORIES = [
 ];
 
 const TRANSACTIONS = [
-  { date: "2026-04-01", desc: "Rent",             category: "Housing",       amount: -1200, paid: true },
+  { date: "2026-04-01", desc: "Rent",             category: "Housing",       amount: -1200, paid: true, note: "Auto-pay via bank" },
   { date: "2026-04-02", desc: "Grocery Store",    category: "Food",          amount: -85,   paid: true },
   { date: "2026-04-03", desc: "Gas Station",      category: "Transport",     amount: -45,   paid: true },
-  { date: "2026-04-05", desc: "Salary Deposit",   category: "",              amount: 4200,  paid: true },
+  { date: "2026-04-05", desc: "Salary Deposit",   category: "",              amount: 4200,  paid: true, note: "Monthly direct deposit" },
   { date: "2026-04-06", desc: "Electric Bill",    category: "Utilities",     amount: -120,  paid: true },
   { date: "2026-04-08", desc: "Movie Tickets",    category: "Entertainment", amount: -32,   paid: false },
   { date: "2026-04-10", desc: "Restaurant",       category: "Food",          amount: -65,   paid: true },
@@ -62,11 +62,15 @@ function transactionsSheet(): SheetData {
   TRANSACTIONS.forEach((t, i) => {
     const row = i + 2;
     const cat = CATEGORIES.find((c) => c.name === t.category);
-    s.cells[`A${row}`] = { value: t.date };
+    s.cells[`A${row}`] = { value: t.date,
+      ...((t as any).note ? { comment: { text: (t as any).note, author: "System" } } : {}),
+    };
     s.cells[`B${row}`] = { value: t.desc };
     s.cells[`C${row}`] = { value: t.category, format: cat ? { backgroundColor: cat.color, color: cat.textColor } : undefined };
     s.cells[`D${row}`] = { value: t.amount, format: t.amount < 0 ? { color: "#dc2626" } : { color: "#16a34a" } };
-    s.cells[`E${row}`] = { value: t.paid ? "Yes" : "No" };
+    s.cells[`E${row}`] = { value: t.paid ? "Yes" : "No",
+      ...(!t.paid ? { comment: { text: "Payment pending — follow up this week", author: "Budget Bot", color: "#ef4444" } } : {}),
+    };
     s.cells[`F${row}`] = { value: null, formula: row === 2 ? `D${row}` : `F${row - 1}+D${row}` };
   });
   const totalRow = TRANSACTIONS.length + 3;

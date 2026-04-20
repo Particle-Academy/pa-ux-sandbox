@@ -382,17 +382,110 @@ export function AppSheetDemo() {
       <DemoSection
         title="Budget Tracker"
         description="Right-click any cell to Add Comment (or Edit/Delete if one exists). Comments are persisted via mock API. Hover the triangle indicators to read existing comments."
-        code={`<SheetWorkbook
-  data={data}
-  onChange={setData}
-  toolbarButtons={["undo", "bold", "format", "formulaBar"]}
-  toolbarExtra={<><button>+ Income</button><button>+ Expense</button></>}
-  contextMenuItems={(addr) => [
-    { label: "Add Comment", onClick: ... },
-    { label: "Mark as Paid", onClick: ... },
-    { label: "Delete row", danger: true, onClick: ... },
-  ]}
-/>`}
+        code={`import { useState, useCallback } from "react";
+import {
+  SheetWorkbook, createEmptySheet, registerFunction,
+} from "@particle-academy/fancy-sheets";
+import type {
+  WorkbookData, SheetData, CellValue, CellComment,
+  SpreadsheetContextMenuItem,
+} from "@particle-academy/fancy-sheets";
+
+// --- Custom formula ---
+registerFunction("BUDGET_STATUS", (args: CellValue[][]): CellValue => {
+  const spent = Number(args[0]?.[0] ?? 0);
+  const budget = Number(args[1]?.[0] ?? 0);
+  if (!budget) return "N/A";
+  const ratio = spent / budget;
+  if (ratio > 1) return "Over Budget";
+  if (ratio > 0.9) return "Near Limit";
+  return "On Track";
+});
+
+// --- Mock comment API ---
+const commentApi = {
+  async add(sheetId: string, addr: string, text: string): Promise<CellComment> {
+    await new Promise((r) => setTimeout(r, 300));
+    return { text, author: "You", color: "#3b82f6" };
+  },
+  async remove(sheetId: string, addr: string): Promise<void> {
+    await new Promise((r) => setTimeout(r, 300));
+  },
+};
+
+// --- Build styled sheet data ---
+function transactionsSheet(): SheetData {
+  const s = createEmptySheet("transactions", "Transactions");
+  s.frozenRows = 1;
+  s.cells = {
+    A1: { value: "Date",   format: { bold: true, backgroundColor: "#1e293b", color: "#fff" } },
+    B1: { value: "Desc",   format: { bold: true, backgroundColor: "#1e293b", color: "#fff" } },
+    C1: { value: "Amount", format: { bold: true, backgroundColor: "#1e293b", color: "#fff" } },
+    A2: { value: "2026-04-01" },
+    B2: { value: "Rent" },
+    C2: { value: -1200, format: { color: "#dc2626" } },
+    A3: { value: "2026-04-05" },
+    B3: { value: "Salary", comment: { text: "Monthly deposit", author: "System" } },
+    C3: { value: 4200, format: { color: "#16a34a" } },
+  };
+  return s;
+}
+
+// --- App ---
+export function BudgetTracker() {
+  const [data, setData] = useState<WorkbookData>({
+    sheets: [transactionsSheet()],
+    activeSheetId: "transactions",
+  });
+  const [editor, setEditor] = useState<{ addr: string } | null>(null);
+
+  const contextItems = useCallback(
+    (addr: string): SpreadsheetContextMenuItem[] => {
+      const sheet = data.sheets.find((s) => s.id === data.activeSheetId);
+      const cell = sheet?.cells[addr];
+      return [
+        {
+          label: "Comments",
+          items: cell?.comment
+            ? [
+                { label: "Edit Comment", onClick: (a) => setEditor({ addr: a }) },
+                { label: "Delete Comment", danger: true, onClick: async (a) => {
+                    await commentApi.remove(data.activeSheetId, a);
+                    // remove comment from cell data...
+                  },
+                },
+              ]
+            : [{ label: "Add Comment", onClick: (a) => setEditor({ addr: a }) }],
+        },
+        {
+          label: "Row Actions",
+          items: [
+            { label: "Mark as Paid", onClick: (a) => { /* update cell */ } },
+            { label: "Delete Row", danger: true, onClick: (a) => { /* delete cells */ } },
+          ],
+        },
+      ];
+    },
+    [data],
+  );
+
+  return (
+    <SheetWorkbook
+      data={data}
+      onChange={setData}
+      columnCount={7}
+      rowCount={25}
+      toolbarButtons={["undo", "bold", "format", "formulaBar"]}
+      toolbarExtra={
+        <>
+          <button onClick={() => { /* add income row */ }}>+ Income</button>
+          <button onClick={() => { /* add expense row */ }}>+ Expense</button>
+        </>
+      }
+      contextMenuItems={contextItems}
+    />
+  );
+}`}
       >
         <div className="relative rounded-lg border border-zinc-200 dark:border-zinc-700" style={{ height: 600 }}>
           <SheetWorkbook

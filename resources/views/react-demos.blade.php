@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>React Demos - {{ config('app.name', 'Laravel') }}</title>
 
+    @viteReactRefresh
     @vite(['resources/css/react-demos.css', 'resources/js/react-demos.tsx'])
 </head>
 <body>

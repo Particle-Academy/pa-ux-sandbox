@@ -47,10 +47,18 @@ const languages = [
   { value: "hi", label: "Hindi" },
 ];
 
+const initialTags = [
+  { value: "frontend", label: "Frontend" },
+  { value: "backend", label: "Backend" },
+  { value: "design", label: "Design" },
+];
+
 export function SelectDemo() {
   const [val, setVal] = useState("");
   const [multi, setMulti] = useState<string[]>(["editor", "viewer"]);
   const [langs, setLangs] = useState<string[]>([]);
+  const [tag, setTag] = useState<string>("");
+  const [tags, setTags] = useState<string[]>(["frontend"]);
 
   return (
     <div>
@@ -123,6 +131,33 @@ export function SelectDemo() {
         <p className="mt-2 text-sm text-zinc-500">
           Selected: {langs.length > 0 ? langs.join(", ") : "(none)"}
         </p>
+      </DemoSection>
+
+      <DemoSection title="Creatable (Single)" description="Type to add a new value when none of the existing options match. Press Enter or click the Create row." code={`<Select variant="listbox" creatable list={initialTags} value={tag} onValueChange={setTag} />`}>
+        <Select
+          variant="listbox"
+          creatable
+          label="Category"
+          list={initialTags}
+          value={tag}
+          onValueChange={setTag}
+          placeholder="Pick or add a category..."
+        />
+        <p className="mt-2 text-sm text-zinc-500">Selected: {tag || "(none)"}</p>
+      </DemoSection>
+
+      <DemoSection title="Creatable Multi-Select" description="Tag-input pattern: pick from existing options or add new tags inline." code={`<Select multiple creatable list={initialTags} values={tags} onValuesChange={setTags} />`}>
+        <Select
+          multiple
+          creatable
+          label="Tags"
+          list={initialTags}
+          values={tags}
+          onValuesChange={setTags}
+          placeholder="Add tags..."
+          selectedSuffix="tags"
+        />
+        <p className="mt-2 text-sm text-zinc-500">Selected: {tags.length > 0 ? tags.join(", ") : "(none)"}</p>
       </DemoSection>
 
       <DemoSection title="Listbox States" description="Error, dirty, and disabled states on listbox variant.">

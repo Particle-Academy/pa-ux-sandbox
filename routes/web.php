@@ -8,7 +8,7 @@ use App\Http\Controllers\AuthController;
 // Authentication routes
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:login');
 });
 
 Route::middleware('auth')->group(function () {
@@ -29,7 +29,7 @@ Route::middleware(['auth'])->group(function () {
 });
 
 // Custom Admin routes using facades
-Route::prefix('admin')->name('admin.')->middleware(['web', 'auth'])->group(function () {
+Route::prefix('admin')->name('admin.')->middleware(['web', 'auth', 'can:admin'])->group(function () {
     Route::get('/', [\App\Http\Controllers\Admin\AdminDashboardController::class, 'index'])->name('dashboard');
     
     // Custom Plans Management (recurring products using Catalog facade)
@@ -67,9 +67,11 @@ Route::prefix('ux-demos')->name('ux-demos.')->group(function () {
 // React demos (SPA catch-all)
 Route::get('/react-demos/{any?}', fn () => view('react-demos'))->where('any', '.*')->name('react-demos');
 
-// Published Catalog UI routes (only if UI is enabled)
-if (config('catalog.enable_ui', false) || file_exists(resource_path('views/vendor/catalog'))) {
-    Route::prefix('ctrl')->name('ctrl.')->middleware(['web', 'auth'])->group(function () {
+// Published Catalog UI routes — opt-in via CATALOG_ENABLE_UI=true. The
+// admin gate is enforced both at the route level (can:admin) and inside
+// the Livewire component (Gate::authorize on every request).
+if (config('catalog.enable_ui', false)) {
+    Route::prefix('ctrl')->name('ctrl.')->middleware(['web', 'auth', 'can:admin'])->group(function () {
         Route::get('/products', \LaravelCatalog\Livewire\Admin\Products\Index::class)->name('products.index');
     });
 }

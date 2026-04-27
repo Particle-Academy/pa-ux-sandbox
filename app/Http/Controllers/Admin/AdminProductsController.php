@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use LaravelCatalog\Facades\Catalog;
 use LaravelCatalog\Models\Product;
 use LaravelCatalog\Models\Price;
@@ -118,31 +120,30 @@ class AdminProductsController extends Controller
     }
 
     /**
-     * Sync all products to Stripe.
+     * Queue every synced product for re-sync to Stripe.
+     *
+     * Why queue? Synchronous syncing of N products against the Stripe API
+     * blocks the request thread for the duration of N HTTP calls and surfaces
+     * partial-failure state only via flash messages. Dispatching jobs lets
+     * the queue retry, gives operators a real audit trail, and keeps the
+     * admin response fast.
      */
     public function syncAll(): \Illuminate\Http\RedirectResponse
     {
         $products = Product::whereNotNull('external_id')->get();
-        $synced = 0;
-        $errors = [];
+        $count = $products->count();
 
         foreach ($products as $product) {
-            try {
-                Catalog::syncProductAndPrices($product);
-                $synced++;
-            } catch (\Exception $e) {
-                $errors[] = $product->name.': '.$e->getMessage();
-            }
+            SyncProductToStripe::dispatch($product);
         }
 
-        if (empty($errors)) {
-            return redirect()->back()
-                ->with('success', "Successfully synced {$synced} products to Stripe.");
-        }
+        Log::info('admin.products.sync_all', [
+            'user_id' => Auth::id(),
+            'count' => $count,
+        ]);
 
         return redirect()->back()
-            ->with('success', "Synced {$synced} products.")
-            ->with('error', 'Some products failed to sync: '.implode(', ', $errors));
+            ->with('success', "Queued {$count} products for sync to Stripe.");
     }
 
     /**

@@ -22,18 +22,33 @@ class DatabaseSeeder extends Seeder
         $this->command->newLine();
 
         // Create Users
+        // Outside the local sandbox, require explicit env-supplied passwords.
+        // Otherwise an accidental seed against a real environment would
+        // create two known-credential accounts that exist forever.
+        $isLocal = app()->environment('local');
+        $adminPassword = (string) env('SEED_ADMIN_PASSWORD', $isLocal ? 'password' : '');
+        $userPassword = (string) env('SEED_USER_PASSWORD', $isLocal ? 'password' : '');
+
+        if (! $isLocal && ($adminPassword === '' || $userPassword === '')) {
+            throw new \RuntimeException(
+                'SEED_ADMIN_PASSWORD and SEED_USER_PASSWORD must be set when seeding outside local.'
+            );
+        }
+
         $this->command->info('Creating users...');
         $admin = User::factory()->create([
             'name' => 'Admin User',
             'email' => 'admin@example.com',
-            'password' => Hash::make('password'),
+            'password' => Hash::make($adminPassword),
+            'is_admin' => true,
         ]);
         $this->command->info("  ✓ Created Admin User: {$admin->email}");
 
         $user = User::factory()->create([
             'name' => 'Test User',
             'email' => 'user@example.com',
-            'password' => Hash::make('password'),
+            'password' => Hash::make($userPassword),
+            'is_admin' => false,
         ]);
         $this->command->info("  ✓ Created Test User: {$user->email}");
         $this->command->newLine();

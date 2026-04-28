@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   AccordionPanel,
   Action,
@@ -8,6 +8,7 @@ import {
   Input,
   useAccordionSection,
 } from "@particle-academy/react-fancy";
+import { EChart } from "@particle-academy/fancy-echarts";
 
 // ─────────────────────────────────────────────────────────────────────────
 // Right-anchored flyout: a single horizontal AccordionPanel pinned to the
@@ -29,11 +30,32 @@ interface ChatMessage {
   timestamp: number;
 }
 
-interface CanvasNode {
+// ── AI Brain memory model ────────────────────────────────────────────────
+
+interface MemoryFile {
   id: string;
-  title: string;
-  kind: "screen" | "section" | "asset";
+  /** Cluster this memory belongs to */
+  cluster: string;
+  /** Short label rendered on the node */
+  label: string;
+  /** Long-form memory body shown in the popover */
   body: string;
+  /** When the memory was saved (ISO date string) */
+  savedAt: string;
+  /** Where the memory came from */
+  source: "chat" | "code-edit" | "manual" | "auto";
+  /** Importance / recency weight; drives node size */
+  weight: number;
+}
+
+interface MemoryCluster {
+  id: string;
+  label: string;
+  /** Tailwind-style hex shipped to ECharts as itemStyle.color */
+  color: string;
+  /** A short description shown in the popover when the cluster is the
+   * subject (overview node click). */
+  summary: string;
 }
 
 const SEED_MESSAGES: ChatMessage[] = [
@@ -65,30 +87,314 @@ const SEED_MESSAGES: ChatMessage[] = [
   },
 ];
 
-const SEED_CANVAS: CanvasNode[] = [
+const CLUSTERS: MemoryCluster[] = [
   {
-    id: "n1",
-    title: "Welcome",
-    kind: "screen",
-    body: "Hero illustration · sign-in button · privacy note",
+    id: "preferences",
+    label: "Preferences",
+    color: "#3b82f6",
+    summary:
+      "Long-term user preferences — communication style, tooling defaults, formatting rules. Persists across sessions.",
   },
   {
-    id: "n2",
-    title: "Connect data source",
-    kind: "screen",
-    body: "Provider grid · OAuth modal · validation toast",
+    id: "project",
+    label: "Project context",
+    color: "#10b981",
+    summary:
+      "Active repository structure, package metadata, build pipeline, current submodule pointers.",
   },
   {
-    id: "n3",
-    title: "Pick metrics",
-    kind: "screen",
-    body: "Multi-select chips · live preview chart",
+    id: "decisions",
+    label: "Decisions",
+    color: "#f59e0b",
+    summary:
+      "Architecture and product decisions made in chat — captured with date and rationale so future replies stay coherent.",
   },
   {
-    id: "n4",
-    title: "Invite team",
-    kind: "screen",
-    body: "Email pillbox · skip link (soft outline) · CTA",
+    id: "patterns",
+    label: "Code patterns",
+    color: "#8b5cf6",
+    summary:
+      "Recurring abstractions, naming conventions, idiomatic shape of components. Sourced from repo grep + chat.",
+  },
+  {
+    id: "integrations",
+    label: "Integrations",
+    color: "#ec4899",
+    summary:
+      "External services: Stripe Catalog/Tax, npm trusted publishing, GitHub Actions OIDC, Herd local TLS.",
+  },
+  {
+    id: "session",
+    label: "Session",
+    color: "#06b6d4",
+    summary:
+      "Short-term episodic memory of the current chat. Flushed when the conversation is archived.",
+  },
+  {
+    id: "bugs",
+    label: "Bugs & fixes",
+    color: "#ef4444",
+    summary:
+      "Tracked issues, root-cause notes, fix references. Linked to commits and PRs where available.",
+  },
+];
+
+const MEMORY_FILES: MemoryFile[] = [
+  // Preferences
+  {
+    id: "pref.types",
+    cluster: "preferences",
+    label: "TypeScript over JavaScript",
+    body: "User opts for TS in every greenfield project. Never propose JS unless the existing repo is JS-only and tests would have to be rewritten.",
+    savedAt: "2026-02-04",
+    source: "chat",
+    weight: 18,
+  },
+  {
+    id: "pref.tone",
+    cluster: "preferences",
+    label: "Terse responses",
+    body: "Lead with the answer, no preamble. No 'Great question!' Drop the trailing 'Let me know if you want…'.",
+    savedAt: "2026-02-11",
+    source: "chat",
+    weight: 22,
+  },
+  {
+    id: "pref.docs",
+    cluster: "preferences",
+    label: "Update docs with code",
+    body: "Always update docs/*.md when shipping component changes; don't wait to be asked.",
+    savedAt: "2026-04-21",
+    source: "chat",
+    weight: 16,
+  },
+  {
+    id: "pref.git",
+    cluster: "preferences",
+    label: "No `git add -A`",
+    body: "Stage specific files by name. Monorepo has submodules and untracked experiments that must not be blindly committed.",
+    savedAt: "2026-03-02",
+    source: "chat",
+    weight: 14,
+  },
+  {
+    id: "pref.theme",
+    cluster: "preferences",
+    label: "Dark UI default",
+    body: "Demos and screenshots default to dark mode unless the topic is light-mode-specific.",
+    savedAt: "2026-02-04",
+    source: "manual",
+    weight: 10,
+  },
+
+  // Project context
+  {
+    id: "proj.repo",
+    cluster: "project",
+    label: "pa-ux-sandbox",
+    body: "Folder name is laravel-catalog but the repo / project is pa-ux-sandbox. It's a sandbox for the Particle Academy UI packages, not a production target.",
+    savedAt: "2026-04-24",
+    source: "chat",
+    weight: 24,
+  },
+  {
+    id: "proj.alias",
+    cluster: "project",
+    label: "vite path alias",
+    body: "vite.config.js aliases @particle-academy/* to each package's src/. Edits to package source hot-reload through the sandbox dev server.",
+    savedAt: "2026-04-22",
+    source: "code-edit",
+    weight: 18,
+  },
+  {
+    id: "proj.publish",
+    cluster: "project",
+    label: "Trusted publishing flow",
+    body: "Each React package publishes to npm via GitHub Actions OIDC on tag push v*.*.*. fancy-echarts publishes from the react-echarts repo (only the npm name was renamed).",
+    savedAt: "2026-04-27",
+    source: "manual",
+    weight: 20,
+  },
+  {
+    id: "proj.workspace",
+    cluster: "project",
+    label: "workspace:* rewrite",
+    body: "fancy-code and fancy-sheets declare react-fancy as workspace:*. Standalone CI rewrites that to a plain version range before npm install.",
+    savedAt: "2026-04-22",
+    source: "code-edit",
+    weight: 12,
+  },
+  {
+    id: "proj.reload",
+    cluster: "project",
+    label: "`reload` shortcut",
+    body: "`reload` = `php artisan optimize && npm run build`. Used to refresh prebuilt sandbox assets without bringing up the vite dev server.",
+    savedAt: "2026-04-28",
+    source: "chat",
+    weight: 14,
+  },
+
+  // Decisions
+  {
+    id: "dec.flyout",
+    cluster: "decisions",
+    label: "Right-anchored flyout",
+    body: "AICanvasChatDemo uses a horizontal AccordionPanel pinned to the right edge with two sections (Canvas, Chat) that expand leftward. Subtle full-height trigger bars; no rounded boxes.",
+    savedAt: "2026-04-27",
+    source: "chat",
+    weight: 22,
+  },
+  {
+    id: "dec.unstyled",
+    cluster: "decisions",
+    label: "`unstyled` opt-out",
+    body: "Components ship with sensible default visuals. Consumers wanting full-bleed layouts pass `unstyled` to skip the layout opinions but keep behavior wiring (drag handlers, drop targets, context).",
+    savedAt: "2026-04-26",
+    source: "chat",
+    weight: 18,
+  },
+  {
+    id: "dec.kanban-toindex",
+    cluster: "decisions",
+    label: "onCardMove(toIndex)",
+    body: "Within-column reorder is supported by adding a 4th `toIndex` argument to the move callback. Backwards-compatible because TS covariant fn types let 3-arg callers stay valid.",
+    savedAt: "2026-04-28",
+    source: "chat",
+    weight: 16,
+  },
+  {
+    id: "dec.sandbox-only",
+    cluster: "decisions",
+    label: "Sandbox vs production",
+    body: "Sandbox security findings re-rated; the sandbox isn't a deploy target. Findings inside packages stay at full severity since those ship.",
+    savedAt: "2026-04-26",
+    source: "chat",
+    weight: 14,
+  },
+
+  // Code patterns
+  {
+    id: "pat.compound",
+    cluster: "patterns",
+    label: "Compound components",
+    body: "Use Object.assign(Root, { Child1, Child2 }) so consumers can write <Foo.Trigger> alongside <Foo>. Matches Carousel, Editor, Kanban, AccordionPanel.",
+    savedAt: "2026-04-25",
+    source: "code-edit",
+    weight: 18,
+  },
+  {
+    id: "pat.sanitize",
+    cluster: "patterns",
+    label: "DOMParser sanitization",
+    body: "When sanitizing HTML, use the browser-native DOMParser (no third-party deps) — strip script/iframe/etc., remove on* attrs, filter href/src to a safe-protocol allow-list.",
+    savedAt: "2026-04-24",
+    source: "code-edit",
+    weight: 14,
+  },
+  {
+    id: "pat.cn",
+    cluster: "patterns",
+    label: "cn() class merging",
+    body: "All components route className through cn() so consumer overrides win deterministically. Tailwind-merge handles conflict resolution.",
+    savedAt: "2026-02-19",
+    source: "code-edit",
+    weight: 12,
+  },
+  {
+    id: "pat.cb-types",
+    cluster: "patterns",
+    label: "Covariant callbacks",
+    body: "When adding parameters to existing callbacks, append at the end. TS lets shorter callable types satisfy a wider one, so existing consumers stay valid.",
+    savedAt: "2026-04-28",
+    source: "chat",
+    weight: 10,
+  },
+
+  // Integrations
+  {
+    id: "int.npm-oidc",
+    cluster: "integrations",
+    label: "npm OIDC publishing",
+    body: "publish.yml uses `npx -y npm@latest publish --provenance --access public` because the runner's bundled npm 10 doesn't support OIDC trusted publishing (needs 11.5+).",
+    savedAt: "2026-04-22",
+    source: "code-edit",
+    weight: 16,
+  },
+  {
+    id: "int.stripe",
+    cluster: "integrations",
+    label: "Stripe Catalog",
+    body: "Plans are Products with recurring Prices. Every Product must have a Price before sync. Tax handled via Stripe Tax for EU customers (in flight).",
+    savedAt: "2026-04-15",
+    source: "manual",
+    weight: 14,
+  },
+  {
+    id: "int.herd",
+    cluster: "integrations",
+    label: "Herd local TLS",
+    body: "Sandbox runs at https://laravel-catalog.test with Herd-managed self-signed cert. Vite dev shares the cert via @vite-plugin's HTTPS support.",
+    savedAt: "2026-04-22",
+    source: "manual",
+    weight: 10,
+  },
+  {
+    id: "int.gh",
+    cluster: "integrations",
+    label: "GitHub repo per submodule",
+    body: "Every packages/* submodule has its own remote on Particle-Academy/<name>. CI lives at .github/workflows/{ci,publish}.yml inside the submodule.",
+    savedAt: "2026-04-28",
+    source: "code-edit",
+    weight: 14,
+  },
+
+  // Session
+  {
+    id: "sess.kanban",
+    cluster: "session",
+    label: "Shipping Kanban v2.8.0",
+    body: "Just shipped within-column reorder, drop indicator, column reorder, WIP limits, hideWhenEmpty. Patched the indicator placement bug in v2.8.1.",
+    savedAt: "2026-04-28",
+    source: "chat",
+    weight: 22,
+  },
+  {
+    id: "sess.brain",
+    cluster: "session",
+    label: "Building AI Brain",
+    body: "Replacing the AICanvas mock onboarding flow with a force-graph view of memory clusters. Click a cluster → drill in to file-level nodes. Click a file → popover with the saved memory.",
+    savedAt: "2026-04-28",
+    source: "chat",
+    weight: 18,
+  },
+
+  // Bugs & fixes
+  {
+    id: "bug.indicator",
+    cluster: "bugs",
+    label: "Drop indicator stuck at bottom",
+    body: "Caused by walking React tree for child.type === KanbanCard, which fails when cards are wrapped in ContextMenu. Fixed in v2.8.1 by switching to absolute-positioned overlay driven by DOM querySelector.",
+    savedAt: "2026-04-28",
+    source: "chat",
+    weight: 18,
+  },
+  {
+    id: "bug.singleaxis",
+    cluster: "bugs",
+    label: "ThemeRiver crash",
+    body: "react-echarts registerAll() didn't include SingleAxisComponent → ThemeRiver charts crashed with `Cannot read properties of undefined (reading 'get')`. Fixed in fancy-echarts v1.1.3 (then renamed).",
+    savedAt: "2026-04-26",
+    source: "code-edit",
+    weight: 12,
+  },
+  {
+    id: "bug.timeline-xss",
+    cluster: "bugs",
+    label: "Timeline {!! !!} XSS",
+    body: "fancy-flux/Timeline rendered event['description'] with raw output. Stored XSS for any consumer feeding user input. Patched in v1.2.1 (escaped-by-default).",
+    savedAt: "2026-04-26",
+    source: "code-edit",
+    weight: 14,
   },
 ];
 
@@ -205,57 +511,389 @@ function ProjectWorkspace({
 }
 
 // ─────────────────────────────────────────────────────────────────────────
-// Canvas (mock AI render area)
+// Canvas — AI Brain (force-graph view of memory clusters and files)
 // ─────────────────────────────────────────────────────────────────────────
 
-function AICanvas({ nodes }: { nodes: CanvasNode[] }) {
+interface BrainSelection {
+  /** What was clicked — a cluster overview node or a file memory node */
+  kind: "cluster" | "file";
+  cluster: MemoryCluster;
+  file?: MemoryFile;
+  /** Click pixel position in the chart container's coord space */
+  x: number;
+  y: number;
+}
+
+function AIBrain() {
+  // Drill-state: when null, show all clusters; when set, show that
+  // cluster's individual file memories. Mouse-wheel zoom still works
+  // freely inside either view (ECharts roam: true).
+  const [activeCluster, setActiveCluster] = useState<string | null>(null);
+  const [selection, setSelection] = useState<BrainSelection | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const filesByCluster = useMemo(() => {
+    const m = new Map<string, MemoryFile[]>();
+    for (const f of MEMORY_FILES) {
+      if (!m.has(f.cluster)) m.set(f.cluster, []);
+      m.get(f.cluster)!.push(f);
+    }
+    return m;
+  }, []);
+
+  // Build the ECharts option for the current view.
+  const option = useMemo(() => {
+    if (activeCluster === null) {
+      // Overview: each cluster is one fat node, sized by # of files.
+      // Loosely connect adjacent clusters so the force layout spreads
+      // them in a brain-like blob.
+      const nodes = CLUSTERS.map((c) => {
+        const count = filesByCluster.get(c.id)?.length ?? 0;
+        return {
+          id: c.id,
+          name: c.label,
+          symbolSize: 36 + count * 6,
+          itemStyle: { color: c.color, borderColor: "#fff", borderWidth: 1 },
+          label: {
+            show: true,
+            position: "right",
+            color: "#e4e4e7",
+            fontSize: 12,
+            fontWeight: 600,
+          },
+          // payload for click handler
+          _kind: "cluster",
+          _clusterId: c.id,
+        } as const;
+      });
+
+      // Soft ring connectivity so layout doesn't shoot clusters apart.
+      const links = CLUSTERS.map((c, i) => ({
+        source: c.id,
+        target: CLUSTERS[(i + 1) % CLUSTERS.length]!.id,
+        lineStyle: { opacity: 0.15, width: 1 },
+      }));
+
+      return {
+        backgroundColor: "transparent",
+        animation: true,
+        animationDuration: 600,
+        tooltip: { show: false },
+        series: [
+          {
+            type: "graph",
+            layout: "force",
+            roam: true,
+            draggable: true,
+            zoom: 1,
+            force: {
+              repulsion: 320,
+              edgeLength: 140,
+              gravity: 0.05,
+              friction: 0.5,
+            },
+            data: nodes,
+            links,
+            lineStyle: { color: "source", curveness: 0.15 },
+            emphasis: {
+              focus: "adjacency",
+              scale: 1.05,
+              lineStyle: { width: 3 },
+            },
+          },
+        ],
+      };
+    }
+
+    // Drill-in view: chosen cluster at center, its files as satellites.
+    const cluster = CLUSTERS.find((c) => c.id === activeCluster)!;
+    const files = filesByCluster.get(cluster.id) ?? [];
+
+    const center = {
+      id: cluster.id,
+      name: cluster.label,
+      symbolSize: 70,
+      x: 0,
+      y: 0,
+      fixed: true,
+      itemStyle: { color: cluster.color, borderColor: "#fff", borderWidth: 2 },
+      label: {
+        show: true,
+        color: "#fff",
+        fontSize: 13,
+        fontWeight: 700,
+      },
+      _kind: "cluster" as const,
+      _clusterId: cluster.id,
+    };
+
+    const fileNodes = files.map((f) => ({
+      id: f.id,
+      name: f.label,
+      symbolSize: 18 + f.weight,
+      itemStyle: {
+        color: cluster.color + "cc",
+        borderColor: cluster.color,
+        borderWidth: 1,
+      },
+      label: {
+        show: true,
+        position: "right",
+        color: "#d4d4d8",
+        fontSize: 11,
+        formatter: (p: { name: string }) =>
+          p.name.length > 22 ? p.name.slice(0, 21) + "…" : p.name,
+      },
+      _kind: "file" as const,
+      _fileId: f.id,
+      _clusterId: cluster.id,
+    }));
+
+    const links = files.map((f) => ({
+      source: cluster.id,
+      target: f.id,
+      lineStyle: { color: cluster.color, opacity: 0.45, width: 1 },
+    }));
+
+    return {
+      backgroundColor: "transparent",
+      animation: true,
+      animationDuration: 600,
+      animationDurationUpdate: 600,
+      tooltip: { show: false },
+      series: [
+        {
+          type: "graph",
+          layout: "force",
+          roam: true,
+          draggable: true,
+          zoom: 1,
+          force: {
+            repulsion: 220,
+            edgeLength: 110,
+            gravity: 0.1,
+            friction: 0.5,
+          },
+          data: [center, ...fileNodes],
+          links,
+          lineStyle: { curveness: 0.1 },
+          emphasis: {
+            focus: "adjacency",
+            scale: 1.1,
+            lineStyle: { width: 3 },
+          },
+        },
+      ],
+    };
+  }, [activeCluster, filesByCluster]);
+
+  // ECharts click handler — dispatches based on whether the clicked node
+  // is a cluster (drill in) or a file (show memory popover).
+  const handleEvents = useMemo(
+    () => ({
+      click: (params: {
+        dataType?: string;
+        data?: {
+          _kind?: "cluster" | "file";
+          _clusterId?: string;
+          _fileId?: string;
+        };
+        event?: { event?: { clientX: number; clientY: number } };
+      }) => {
+        if (params.dataType !== "node" || !params.data?._kind) return;
+        const rect = containerRef.current?.getBoundingClientRect();
+        const px = (params.event?.event?.clientX ?? 0) - (rect?.left ?? 0);
+        const py = (params.event?.event?.clientY ?? 0) - (rect?.top ?? 0);
+
+        const cluster = CLUSTERS.find(
+          (c) => c.id === params.data!._clusterId,
+        )!;
+
+        if (params.data._kind === "cluster") {
+          // Overview cluster click → drill in. Don't open popover yet —
+          // user can re-click the center cluster to see its summary.
+          if (activeCluster === null) {
+            setActiveCluster(cluster.id);
+            setSelection(null);
+            return;
+          }
+          // Already drilled-in; clicking the center → cluster summary popover.
+          setSelection({ kind: "cluster", cluster, x: px, y: py });
+          return;
+        }
+
+        const file = MEMORY_FILES.find((f) => f.id === params.data!._fileId);
+        if (!file) return;
+        setSelection({ kind: "file", cluster, file, x: px, y: py });
+      },
+    }),
+    [activeCluster],
+  );
+
+  const closePopover = () => setSelection(null);
+
+  const goBack = () => {
+    setActiveCluster(null);
+    setSelection(null);
+  };
+
   return (
-    <div className="flex h-full flex-col bg-zinc-950">
+    <div className="flex h-full flex-col bg-zinc-950" ref={containerRef}>
+      {/* Header */}
       <div className="flex items-center gap-2 border-b border-zinc-800 px-4 py-2">
+        {activeCluster !== null && (
+          <Action
+            variant="ghost"
+            size="xs"
+            icon="arrow-left"
+            onClick={goBack}
+          />
+        )}
         <h3 className="text-sm font-medium text-zinc-200">
-          Canvas — Analytics onboarding
+          AI Brain
+          {activeCluster !== null && (
+            <span className="text-zinc-500">
+              {" "}
+              ·{" "}
+              {CLUSTERS.find((c) => c.id === activeCluster)?.label ?? ""}
+            </span>
+          )}
         </h3>
         <Badge color="zinc" size="sm">
-          v3
+          {activeCluster === null
+            ? `${CLUSTERS.length} clusters`
+            : `${filesByCluster.get(activeCluster)?.length ?? 0} memories`}
         </Badge>
-        <div className="ml-auto flex items-center gap-1">
-          <Action variant="ghost" size="xs" icon="zoom-in" />
-          <Action variant="ghost" size="xs" icon="zoom-out" />
-          <Action variant="ghost" size="xs" icon="rotate-cw" />
-          <Action variant="ghost" size="xs" icon="download" />
+        <div className="ml-auto flex items-center gap-1 text-[10px] text-zinc-500">
+          <span>scroll to zoom · drag to pan</span>
         </div>
       </div>
 
-      <div className="flex-1 overflow-auto p-6">
-        <div className="grid grid-cols-2 gap-6">
-          {nodes.map((n, i) => (
-            <Card
-              key={n.id}
-              variant="elevated"
-              padding="none"
-              className="overflow-hidden border-zinc-700 bg-zinc-900"
-            >
-              <div className="border-b border-zinc-800 bg-zinc-950/50 px-3 py-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-semibold uppercase tracking-wider text-zinc-500">
-                    Step {i + 1} · {n.kind}
-                  </span>
-                  <Badge color="zinc" size="sm">
-                    auto
-                  </Badge>
-                </div>
-                <p className="mt-1 text-sm font-medium text-zinc-100">
-                  {n.title}
-                </p>
-              </div>
-              <div className="space-y-2 p-3">
-                <div className="aspect-[4/3] rounded-md bg-gradient-to-br from-zinc-800 to-zinc-900 ring-1 ring-zinc-800" />
-                <p className="text-xs text-zinc-400">{n.body}</p>
-              </div>
-            </Card>
-          ))}
-        </div>
+      {/* Graph — cast to ECharts' broad option type; the typed option
+          builder isn't worth the ceremony for a demo */}
+      <div className="relative flex-1">
+        <EChart
+          option={option as Parameters<typeof EChart>[0]["option"]}
+          style={{ height: "100%", width: "100%" }}
+          onEvents={handleEvents as Parameters<typeof EChart>[0]["onEvents"]}
+          theme="dark"
+        />
+
+        {/* Click-anywhere-else overlay to dismiss popover */}
+        {selection && (
+          <div
+            className="absolute inset-0"
+            onClick={closePopover}
+            aria-hidden
+          />
+        )}
+
+        {/* Memory popover */}
+        {selection && (
+          <MemoryPopover selection={selection} onClose={closePopover} />
+        )}
       </div>
+    </div>
+  );
+}
+
+function MemoryPopover({
+  selection,
+  onClose,
+}: {
+  selection: BrainSelection;
+  onClose: () => void;
+}) {
+  // Position the popover near the click; clamp inside the container.
+  const style: React.CSSProperties = {
+    left: Math.max(12, Math.min(selection.x + 16, 9999)),
+    top: Math.max(12, selection.y - 12),
+    maxWidth: 320,
+  };
+
+  if (selection.kind === "cluster") {
+    const c = selection.cluster;
+    return (
+      <div
+        className="pointer-events-auto absolute z-10"
+        style={style}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <Card
+          variant="elevated"
+          padding="md"
+          className="border border-zinc-700 bg-zinc-900 shadow-2xl"
+        >
+          <div className="flex items-start gap-2">
+            <span
+              className="mt-1 inline-block h-2.5 w-2.5 shrink-0 rounded-full"
+              style={{ background: c.color }}
+            />
+            <div className="flex-1">
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-zinc-500">
+                Cluster
+              </p>
+              <p className="text-sm font-semibold text-zinc-100">{c.label}</p>
+              <p className="mt-2 text-xs leading-relaxed text-zinc-300">
+                {c.summary}
+              </p>
+            </div>
+            <Action
+              variant="ghost"
+              size="xs"
+              icon="x"
+              onClick={onClose}
+              aria-label="Close"
+            />
+          </div>
+        </Card>
+      </div>
+    );
+  }
+
+  const f = selection.file!;
+  const c = selection.cluster;
+  return (
+    <div
+      className="pointer-events-auto absolute z-10"
+      style={style}
+      onClick={(e) => e.stopPropagation()}
+    >
+      <Card
+        variant="elevated"
+        padding="md"
+        className="border border-zinc-700 bg-zinc-900 shadow-2xl"
+      >
+        <div className="flex items-start gap-2">
+          <span
+            className="mt-1 inline-block h-2.5 w-2.5 shrink-0 rounded-full"
+            style={{ background: c.color }}
+          />
+          <div className="flex-1">
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-zinc-500">
+              {c.label} · memory
+            </p>
+            <p className="text-sm font-semibold text-zinc-100">{f.label}</p>
+            <p className="mt-2 text-xs leading-relaxed text-zinc-300">
+              {f.body}
+            </p>
+            <div className="mt-3 flex items-center gap-2 text-[10px] text-zinc-500">
+              <Badge color="zinc" size="sm">
+                {f.source}
+              </Badge>
+              <span>saved {f.savedAt}</span>
+              <span>· weight {f.weight}</span>
+            </div>
+          </div>
+          <Action
+            variant="ghost"
+            size="xs"
+            icon="x"
+            onClick={onClose}
+            aria-label="Close"
+          />
+        </div>
+      </Card>
     </div>
   );
 }
@@ -403,13 +1041,11 @@ function RightFlyout({
   open,
   setOpen,
   messages,
-  canvasNodes,
   onSendMessage,
 }: {
   open: string[];
   setOpen: (next: string[]) => void;
   messages: ChatMessage[];
-  canvasNodes: CanvasNode[];
   onSendMessage: (text: string) => void;
 }) {
   const showCanvas = () => {
@@ -438,7 +1074,7 @@ function RightFlyout({
           openClassName="w-[min(720px,60vw)]"
         >
           <AccordionPanel.Content unstyled className="h-full w-full">
-            <AICanvas nodes={canvasNodes} />
+            <AIBrain />
           </AccordionPanel.Content>
           <AccordionPanel.Trigger>
             <FlyoutTriggerBar label="Canvas" />
@@ -475,7 +1111,6 @@ function RightFlyout({
 export function AICanvasChatDemo() {
   const [openSections, setOpenSections] = useState<string[]>([]);
   const [messages, setMessages] = useState<ChatMessage[]>(SEED_MESSAGES);
-  const [canvasNodes] = useState<CanvasNode[]>(SEED_CANVAS);
 
   const handleSend = (text: string) => {
     const userMsg: ChatMessage = {
@@ -518,7 +1153,6 @@ export function AICanvasChatDemo() {
         open={openSections}
         setOpen={setOpenSections}
         messages={messages}
-        canvasNodes={canvasNodes}
         onSendMessage={handleSend}
       />
     </div>

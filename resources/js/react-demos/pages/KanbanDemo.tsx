@@ -12,6 +12,8 @@ import {
   Kanban,
   MultiSwitch,
   Progress,
+  Select,
+  Switch,
   Tooltip,
 } from "@particle-academy/react-fancy";
 import { DemoSection } from "../components/DemoSection";
@@ -496,6 +498,16 @@ function FancyColumnHeader({
 
 type Mode = "simple" | "fancy";
 
+type SubtaskFilter = "any" | "with" | "without";
+
+function FilterLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="text-[10px] font-semibold uppercase tracking-wider text-zinc-500">
+      {children}
+    </span>
+  );
+}
+
 function FullKanbanBoard() {
   const [mode, setMode] = useState<Mode>("fancy");
   const [board, setBoard] = useState<BoardState>(SPRINT_BOARD);
@@ -503,6 +515,11 @@ function FullKanbanBoard() {
     COLUMNS.map((c) => c.id),
   );
   const [query, setQuery] = useState("");
+  const [priorities, setPriorities] = useState<string[]>([]);
+  const [assignees, setAssignees] = useState<string[]>([]);
+  const [labels, setLabels] = useState<string[]>([]);
+  const [subtaskFilter, setSubtaskFilter] = useState<SubtaskFilter>("any");
+  const [overdueOnly, setOverdueOnly] = useState(false);
   const [recent, setRecent] = useState<string | null>(null);
 
   const handleMove = useCallback(
@@ -567,23 +584,111 @@ function FullKanbanBoard() {
     [],
   );
 
+  // Derive Select option lists from the live board so the dropdowns always
+  // match the data the user actually has.
+  const { allAssignees, allLabels } = useMemo(() => {
+    const assigneeSet = new Set<string>();
+    const labelSet = new Set<string>();
+    for (const col of COLUMNS) {
+      for (const c of board[col.id] ?? []) {
+        for (const a of c.assignees ?? []) assigneeSet.add(a);
+        for (const l of c.labels ?? []) labelSet.add(l);
+      }
+    }
+    return {
+      allAssignees: [...assigneeSet].sort(),
+      allLabels: [...labelSet].sort(),
+    };
+  }, [board]);
+
   const filtered = useMemo<BoardState>(() => {
-    if (!query.trim()) return board;
-    const q = query.toLowerCase();
+    const q = query.trim().toLowerCase();
+    const hasQuery = q.length > 0;
+    const hasPriority = priorities.length > 0;
+    const hasAssignee = assignees.length > 0;
+    const hasLabel = labels.length > 0;
+
     const out: BoardState = {};
     for (const col of COLUMNS) {
-      out[col.id] = (board[col.id] ?? []).filter((c) =>
-        [c.title, c.description, ...(c.assignees ?? []), ...(c.labels ?? [])]
-          .filter(Boolean)
-          .some((s) => s!.toLowerCase().includes(q)),
-      );
+      out[col.id] = (board[col.id] ?? []).filter((c) => {
+        // Text search across title / description / assignees / labels.
+        if (hasQuery) {
+          const haystack = [
+            c.title,
+            c.description,
+            ...(c.assignees ?? []),
+            ...(c.labels ?? []),
+          ]
+            .filter(Boolean)
+            .map((s) => s!.toLowerCase());
+          if (!haystack.some((s) => s.includes(q))) return false;
+        }
+
+        // Priority — match ANY selected level
+        if (hasPriority && (!c.priority || !priorities.includes(c.priority))) {
+          return false;
+        }
+
+        // Assignee — card must have AT LEAST one of the selected assignees
+        if (hasAssignee) {
+          const cardAssignees = c.assignees ?? [];
+          if (!cardAssignees.some((a) => assignees.includes(a))) return false;
+        }
+
+        // Label — same intersect-any rule
+        if (hasLabel) {
+          const cardLabels = c.labels ?? [];
+          if (!cardLabels.some((l) => labels.includes(l))) return false;
+        }
+
+        // Subtask state
+        if (subtaskFilter === "with" && (!c.subtasks || c.subtasks.length === 0)) {
+          return false;
+        }
+        if (subtaskFilter === "without" && c.subtasks && c.subtasks.length > 0) {
+          return false;
+        }
+
+        // Overdue toggle
+        if (overdueOnly && c.dueState !== "overdue") return false;
+
+        return true;
+      });
     }
     return out;
-  }, [board, query]);
+  }, [board, query, priorities, assignees, labels, subtaskFilter, overdueOnly]);
+
+  const visibleCount = useMemo(
+    () => COLUMNS.reduce((n, c) => n + (filtered[c.id]?.length ?? 0), 0),
+    [filtered],
+  );
+
+  const totalCount = useMemo(
+    () => COLUMNS.reduce((n, c) => n + (board[c.id]?.length ?? 0), 0),
+    [board],
+  );
+
+  const filtersActive =
+    query.trim().length > 0 ||
+    priorities.length > 0 ||
+    assignees.length > 0 ||
+    labels.length > 0 ||
+    subtaskFilter !== "any" ||
+    overdueOnly;
+
+  const clearFilters = () => {
+    setQuery("");
+    setPriorities([]);
+    setAssignees([]);
+    setLabels([]);
+    setSubtaskFilter("any");
+    setOverdueOnly(false);
+  };
 
   return (
     <div className="space-y-4">
-      {/* Toolbar */}
+      {/* Toolbar — top row is mode + free-text + recent action; second row is
+          structured filters that AND together with the text query. */}
       <div className="flex flex-wrap items-center gap-3">
         <MultiSwitch
           value={mode}
@@ -595,14 +700,90 @@ function FullKanbanBoard() {
           size="sm"
         />
         <Input
-          placeholder="Filter…"
+          placeholder="Search title / description / assignee / label…"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          className="max-w-xs"
+          className="min-w-[280px] max-w-md flex-1"
         />
-        {recent && (
-          <span className="text-xs text-zinc-500">last: {recent}</span>
+        <span className="text-xs text-zinc-500">
+          {filtersActive ? `${visibleCount} of ${totalCount} cards` : `${totalCount} cards`}
+        </span>
+        {filtersActive && (
+          <Action variant="ghost" size="xs" icon="x" onClick={clearFilters}>
+            Clear
+          </Action>
         )}
+        {recent && (
+          <span className="ml-auto text-xs text-zinc-500">last: {recent}</span>
+        )}
+      </div>
+
+      <div className="flex flex-wrap items-center gap-3 rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-2 dark:border-zinc-800 dark:bg-zinc-900/40">
+        <FilterLabel>Priority</FilterLabel>
+        <Select
+          variant="listbox"
+          multiple
+          size="sm"
+          values={priorities}
+          onValuesChange={setPriorities}
+          placeholder="Any priority"
+          indicator="checkbox"
+          selectedSuffix="priorities"
+          list={[
+            { value: "low", label: "Low" },
+            { value: "med", label: "Medium" },
+            { value: "high", label: "High" },
+            { value: "urgent", label: "Urgent" },
+          ]}
+          className="min-w-[140px]"
+        />
+
+        <FilterLabel>Assignee</FilterLabel>
+        <Select
+          variant="listbox"
+          multiple
+          searchable
+          size="sm"
+          values={assignees}
+          onValuesChange={setAssignees}
+          placeholder="Anyone"
+          indicator="checkbox"
+          selectedSuffix="people"
+          list={allAssignees.map((a) => ({ value: a, label: a }))}
+          className="min-w-[140px]"
+        />
+
+        <FilterLabel>Label</FilterLabel>
+        <Select
+          variant="listbox"
+          multiple
+          searchable
+          size="sm"
+          values={labels}
+          onValuesChange={setLabels}
+          placeholder="Any label"
+          indicator="checkbox"
+          selectedSuffix="labels"
+          list={allLabels.map((l) => ({ value: l, label: l }))}
+          className="min-w-[140px]"
+        />
+
+        <FilterLabel>Subtasks</FilterLabel>
+        <MultiSwitch
+          size="sm"
+          value={subtaskFilter}
+          onValueChange={(v) => setSubtaskFilter(v as SubtaskFilter)}
+          list={[
+            { value: "any", label: "Any" },
+            { value: "with", label: "With" },
+            { value: "without", label: "Without" },
+          ]}
+        />
+
+        <label className="ml-auto flex items-center gap-2 text-xs text-zinc-600 dark:text-zinc-400">
+          <Switch checked={overdueOnly} onCheckedChange={setOverdueOnly} size="sm" />
+          Overdue only
+        </label>
       </div>
 
       {/* Board — column order is consumer-controlled state, fed back via onColumnMove */}

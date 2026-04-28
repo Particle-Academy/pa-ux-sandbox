@@ -39,6 +39,7 @@ const overlayLinks = [
 const navigationLinks = [
   { to: "/tabs", label: "Tabs" },
   { to: "/accordion", label: "Accordion" },
+  { to: "/accordion-panel", label: "AccordionPanel" },
   { to: "/breadcrumbs", label: "Breadcrumbs" },
   { to: "/navbar", label: "Navbar" },
   { to: "/pagination", label: "Pagination" },
@@ -85,6 +86,7 @@ const patternLinks = [
   { to: "/kitchen-sink", label: "Kitchen Sink" },
   { to: "/ide", label: "IDE" },
   { to: "/app-sheet", label: "AppSheet" },
+  { to: "/ai-canvas-chat", label: "AI Canvas Chat" },
 ];
 
 const fancyPackageLinks = [

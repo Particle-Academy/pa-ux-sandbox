@@ -45,6 +45,8 @@ const CommandDemo = l(() => import("./react-demos/pages/CommandDemo"), "CommandD
 // Phase 4: Navigation
 const TabsDemo = l(() => import("./react-demos/pages/TabsDemo"), "TabsDemo");
 const AccordionDemo = l(() => import("./react-demos/pages/AccordionDemo"), "AccordionDemo");
+const AccordionPanelDemo = l(() => import("./react-demos/pages/AccordionPanelDemo"), "AccordionPanelDemo");
+const AICanvasChatDemo = l(() => import("./react-demos/pages/AICanvasChatDemo"), "AICanvasChatDemo");
 const BreadcrumbsDemo = l(() => import("./react-demos/pages/BreadcrumbsDemo"), "BreadcrumbsDemo");
 const NavbarDemo = l(() => import("./react-demos/pages/NavbarDemo"), "NavbarDemo");
 const PaginationDemo = l(() => import("./react-demos/pages/PaginationDemo"), "PaginationDemo");
@@ -162,6 +164,7 @@ if (root) {
               {/* Navigation */}
               <Route path="tabs" element={<TabsDemo />} />
               <Route path="accordion" element={<AccordionDemo />} />
+              <Route path="accordion-panel" element={<AccordionPanelDemo />} />
               <Route path="breadcrumbs" element={<BreadcrumbsDemo />} />
               <Route path="navbar" element={<NavbarDemo />} />
               <Route path="pagination" element={<PaginationDemo />} />
@@ -198,6 +201,7 @@ if (root) {
               {/* Patterns */}
               <Route path="ide" element={<IdeDemo />} />
               <Route path="app-sheet" element={<AppSheetDemo />} />
+              <Route path="ai-canvas-chat" element={<AICanvasChatDemo />} />
               {/* Fancy Code */}
               <Route path="code-editor" element={<CodeEditorDemo />} />
               <Route path="spreadsheet" element={<SpreadsheetDemo />} />

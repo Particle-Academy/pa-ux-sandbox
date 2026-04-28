@@ -770,13 +770,16 @@ function AIBrain() {
       </div>
 
       {/* Graph — cast to ECharts' broad option type; the typed option
-          builder isn't worth the ceremony for a demo */}
+          builder isn't worth the ceremony for a demo. We rely on the
+          option's `backgroundColor: "transparent"` (let the parent's
+          bg-zinc-950 show through) instead of a named theme — the dark
+          theme isn't registered in registerAll, only via the optional
+          registerBuiltinThemes() call. */}
       <div className="relative flex-1">
         <EChart
           option={option as Parameters<typeof EChart>[0]["option"]}
           style={{ height: "100%", width: "100%" }}
           onEvents={handleEvents as Parameters<typeof EChart>[0]["onEvents"]}
-          theme="dark"
         />
 
         {/* Click-anywhere-else overlay to dismiss popover */}

@@ -1,5 +1,5 @@
 import React from "react";
-import { EChart3D } from "@particle-academy/react-echarts";
+import { EChart3D } from "@particle-academy/fancy-echarts";
 import { DemoSection } from "../../components/DemoSection";
 
 function generateScatter3DData(count: number): number[][] {

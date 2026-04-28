@@ -8,7 +8,10 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "paths": {
-      "@particle-academy/react-fancy": ["./packages/react-fancy/src"]
+      "@particle-academy/react-fancy": ["./packages/react-fancy/src"],
+      "@particle-academy/fancy-echarts": ["./packages/react-echarts/src"],
+      "@particle-academy/fancy-code": ["./packages/fancy-code/src"],
+      "@particle-academy/fancy-sheets": ["./packages/fancy-sheets/src"]
     }
   },
   "include": ["resources/js/**/*.ts", "resources/js/**/*.tsx"]

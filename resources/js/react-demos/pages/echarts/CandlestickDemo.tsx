@@ -1,5 +1,5 @@
 import React from "react";
-import { EChart } from "@particle-academy/react-echarts";
+import { EChart } from "@particle-academy/fancy-echarts";
 import { DemoSection } from "../../components/DemoSection";
 
 const dates = ["2024-01", "2024-02", "2024-03", "2024-04", "2024-05", "2024-06", "2024-07", "2024-08"];

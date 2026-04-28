@@ -1,5 +1,5 @@
 import React from "react";
-import { EChart } from "@particle-academy/react-echarts";
+import { EChart } from "@particle-academy/fancy-echarts";
 import { DemoSection } from "../../components/DemoSection";
 
 const indicators = [

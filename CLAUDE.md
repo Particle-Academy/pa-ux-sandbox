@@ -11,7 +11,7 @@ Packages symlinked via Composer path repos:
 - `packages/laravel-fms/` - Feature Management System (FMS) - dependency of Catalog
 - `packages/fancy-flux/` - Blade UI component library (git submodule, repo: wishborn/fancy)
 - `packages/react-fancy/` - React UI component library (git submodule)
-- `packages/react-echarts/` - React ECharts component library (git submodule)
+- `packages/react-echarts/` - React ECharts component library (git submodule, npm: `@particle-academy/fancy-echarts`)
 - `packages/fancy-code/` - React code editor (git submodule)
 - `packages/fancy-sheets/` - React spreadsheet (git submodule)
 
@@ -94,7 +94,9 @@ The root Laravel app has controllers in `app/Http/Controllers/Admin/` and `app/H
 
 ## Publishing Releases
 
-### React packages (all 4 — `react-fancy`, `react-echarts`, `fancy-code`, `fancy-sheets`)
+### React packages (all 4 — `react-fancy`, `fancy-echarts`, `fancy-code`, `fancy-sheets`)
+
+The `fancy-echarts` package is published from the `Particle-Academy/react-echarts` git repo (folder/repo name unchanged; only the npm package was renamed). The npm trusted-publisher config on npmjs.com must be set up under `@particle-academy/fancy-echarts` pointing to `Particle-Academy/react-echarts` + `publish.yml`.
 
 Each React package publishes to npm via **GitHub Actions Trusted Publishing (OIDC)**. No tokens, no manual `npm publish`. The workflow lives at `.github/workflows/publish.yml` inside each submodule and fires on tag push `v*.*.*` (or manual `workflow_dispatch`).
 

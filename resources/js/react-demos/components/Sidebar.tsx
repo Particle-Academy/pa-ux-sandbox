@@ -211,13 +211,15 @@ function EChartsNav() {
   );
 }
 
-type Package = "react-fancy" | "react-echarts";
+type Package = "react-fancy" | "fancy-echarts";
 
 function useCurrentPackage(): Package {
   const { pathname } = useLocation();
-  if (pathname.startsWith("/echarts-")) return "react-echarts";
+  if (pathname.startsWith("/echarts-")) return "fancy-echarts";
   return "react-fancy";
 }
+
+
 
 function PackageSwitcher({ current }: { current: Package }) {
   return (
@@ -235,12 +237,12 @@ function PackageSwitcher({ current }: { current: Package }) {
       <NavLink
         to="/echarts-line"
         className={`flex-1 rounded-md px-2 py-1 text-center text-[11px] font-medium transition-colors ${
-          current === "react-echarts"
+          current === "fancy-echarts"
             ? "bg-white text-zinc-900 shadow-sm dark:bg-zinc-700 dark:text-zinc-100"
             : "text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200"
         }`}
       >
-        react-echarts
+        fancy-echarts
       </NavLink>
     </div>
   );

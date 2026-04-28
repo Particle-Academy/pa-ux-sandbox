@@ -104,7 +104,7 @@ export default defineConfig({
         alias: {
             '@particle-academy/react-fancy':
                 path.resolve(__dirname, 'packages/react-fancy/src'),
-            '@particle-academy/react-echarts':
+            '@particle-academy/fancy-echarts':
                 path.resolve(__dirname, 'packages/react-echarts/src'),
             '@particle-academy/fancy-code':
                 path.resolve(__dirname, 'packages/fancy-code/src'),

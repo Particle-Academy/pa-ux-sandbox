@@ -201,14 +201,32 @@ function moveCard(
   cardId: string,
   fromColumn: string,
   toColumn: string,
+  toIndex: number,
 ): BoardState {
   const from = [...(state[fromColumn] ?? [])];
-  const to = [...(state[toColumn] ?? [])];
   const idx = from.findIndex((c) => c.id === cardId);
   if (idx === -1) return state;
   const [card] = from.splice(idx, 1);
-  to.push(card!);
+  if (fromColumn === toColumn) {
+    from.splice(Math.min(toIndex, from.length), 0, card!);
+    return { ...state, [fromColumn]: from };
+  }
+  const to = [...(state[toColumn] ?? [])];
+  to.splice(Math.min(toIndex, to.length), 0, card!);
   return { ...state, [fromColumn]: from, [toColumn]: to };
+}
+
+function moveColumn<T extends string>(
+  order: T[],
+  columnId: T,
+  toIndex: number,
+): T[] {
+  const next = [...order];
+  const from = next.indexOf(columnId);
+  if (from === -1) return order;
+  next.splice(from, 1);
+  next.splice(Math.min(toIndex, next.length), 0, columnId);
+  return next;
 }
 
 function subtaskProgress(card: KCard): { done: number; total: number } | null {
@@ -481,17 +499,34 @@ type Mode = "simple" | "fancy";
 function FullKanbanBoard() {
   const [mode, setMode] = useState<Mode>("fancy");
   const [board, setBoard] = useState<BoardState>(SPRINT_BOARD);
+  const [columnOrder, setColumnOrder] = useState<readonly string[]>(
+    COLUMNS.map((c) => c.id),
+  );
   const [query, setQuery] = useState("");
   const [recent, setRecent] = useState<string | null>(null);
 
   const handleMove = useCallback(
-    (id: string, from: string, to: string) => {
+    (id: string, from: string, to: string, toIndex: number) => {
       setBoard((prev) => {
-        const next = moveCard(prev, id, from, to);
+        const next = moveCard(prev, id, from, to, toIndex);
         const card = prev[from]?.find((c) => c.id === id);
-        if (card) setRecent(`${card.title} → ${to}`);
+        if (card) {
+          setRecent(
+            from === to
+              ? `${card.title} reordered to #${toIndex + 1}`
+              : `${card.title} → ${to} #${toIndex + 1}`,
+          );
+        }
         return next;
       });
+    },
+    [],
+  );
+
+  const handleColumnMove = useCallback(
+    (columnId: string, toIndex: number) => {
+      setColumnOrder((prev) => moveColumn([...prev], columnId, toIndex));
+      setRecent(`column ${columnId} → #${toIndex + 1}`);
     },
     [],
   );
@@ -570,32 +605,45 @@ function FullKanbanBoard() {
         )}
       </div>
 
-      {/* Board */}
-      <Kanban onCardMove={handleMove} className="!p-0">
-        {COLUMNS.map((col) => {
+      {/* Board — column order is consumer-controlled state, fed back via onColumnMove */}
+      <Kanban
+        onCardMove={handleMove}
+        onColumnMove={handleColumnMove}
+        className="!p-0"
+      >
+        {columnOrder
+          .map((id) => COLUMNS.find((c) => c.id === id))
+          .filter((c): c is (typeof COLUMNS)[number] => Boolean(c))
+          .map((col) => {
           const cards = filtered[col.id] ?? [];
           const totalPts = pointsFor(cards);
+          const header =
+            mode === "simple" ? (
+              <SimpleColumnHeader title={col.title} count={cards.length} />
+            ) : (
+              <FancyColumnHeader
+                emoji={col.emoji}
+                title={col.title}
+                count={cards.length}
+                wipLimit={col.wipLimit}
+                accent={col.accent}
+                totalPoints={totalPts}
+                onAdd={() => handleAdd(col.id)}
+                onClear={() => handleClear(col.id)}
+              />
+            );
           return (
             <Kanban.Column
               key={col.id}
               id={col.id}
               unstyled
+              wipLimit={col.wipLimit}
               className="w-80 rounded-xl bg-zinc-50 p-3 ring-1 ring-zinc-200 dark:bg-zinc-900/60 dark:ring-zinc-800"
             >
-              {mode === "simple" ? (
-                <SimpleColumnHeader title={col.title} count={cards.length} />
-              ) : (
-                <FancyColumnHeader
-                  emoji={col.emoji}
-                  title={col.title}
-                  count={cards.length}
-                  wipLimit={col.wipLimit}
-                  accent={col.accent}
-                  totalPoints={totalPts}
-                  onAdd={() => handleAdd(col.id)}
-                  onClear={() => handleClear(col.id)}
-                />
-              )}
+              {/* Column drag handle wraps the header so users grab the
+                  title to reorder. Using ColumnHandle pulls in the
+                  column-reorder DnD wiring at the root. */}
+              <Kanban.ColumnHandle>{header}</Kanban.ColumnHandle>
 
               {cards.length === 0 ? (
                 <div className="rounded-lg border border-dashed border-zinc-300 px-3 py-6 text-center text-xs text-zinc-400 dark:border-zinc-700">
@@ -653,9 +701,9 @@ function AsyncBoard() {
   const [status, setStatus] = useState<string | null>(null);
 
   const handleMove = useCallback(
-    async (id: string, from: string, to: string) => {
+    async (id: string, from: string, to: string, toIndex: number) => {
       const prev = board;
-      setBoard((s) => moveCard(s, id, from, to));
+      setBoard((s) => moveCard(s, id, from, to, toIndex));
       setStatus("Saving…");
       await new Promise((r) => setTimeout(r, 700));
       const failed = Math.random() < 0.3;
@@ -721,11 +769,11 @@ export function KanbanDemo() {
       <DemoSection
         title="Async move with rollback"
         description="onCardMove can be async. Apply the move optimistically; on failure, restore prior state. ~30 % of moves fail to demo the rollback path."
-        code={`const handleMove = async (id, from, to) => {
+        code={`const handleMove = async (id, from, to, toIndex) => {
   const prev = board;
-  setBoard(s => moveCard(s, id, from, to));
+  setBoard(s => moveCard(s, id, from, to, toIndex));
   try {
-    await api.move(id, to);
+    await api.move(id, to, toIndex);
   } catch {
     setBoard(prev);
     toast.error("Move failed");
@@ -735,31 +783,48 @@ export function KanbanDemo() {
         <AsyncBoard />
       </DemoSection>
 
-      <Callout color="amber" icon={<Icon name="alert-triangle" size="sm" />}>
+      <Callout color="green" icon={<Icon name="check-circle" size="sm" />}>
         <div className="space-y-1">
-          <p className="text-sm font-semibold">
-            What this component cannot do today
-          </p>
-          <p className="text-xs text-zinc-600 dark:text-zinc-300">
-            The current implementation handles move-between-columns only. The
-            following are open extension candidates — most are user-visible
-            gaps, not nice-to-haves.
-          </p>
+          <p className="text-sm font-semibold">Shipped in v2.8.0</p>
           <ul className="mt-2 space-y-1 list-disc pl-5 text-xs text-zinc-700 dark:text-zinc-200">
             <li>
-              Reorder <em>within</em> a column — drops always go to the end.
-              Needs a per-card drop zone and a <code>toIndex</code> arg on
-              <code className="mx-1">onCardMove</code>.
+              Within-column reorder — <code>onCardMove</code> now receives a{" "}
+              <code className="mx-1">toIndex</code> argument; drop position
+              tracks the mouse Y.
             </li>
-            <li>Drop position indicator (no visual line).</li>
-            <li>Column reordering (columns are static today).</li>
-            <li>Keyboard accessibility — no role/arrow-key move.</li>
+            <li>Drop-position indicator — a blue line shows where the card lands.</li>
+            <li>
+              Column reordering — drag a <code>{"<Kanban.ColumnHandle>"}</code>{" "}
+              to reorder; new <code className="mx-1">onColumnMove</code>{" "}
+              callback fires with the new index.
+            </li>
+            <li>
+              First-class WIP limits — <code>wipLimit</code> on{" "}
+              <code className="mx-1">Kanban.Column</code>; header pill turns red
+              over capacity.
+            </li>
+            <li>
+              <code>hideWhenEmpty</code> on <code>Kanban.Column</code> — clean
+              column collapse for filter UIs.
+            </li>
+            <li>
+              ARIA roles — <code>role="application"</code> on board,{" "}
+              <code>role="group"</code> on columns. (Full keyboard nav still
+              pending.)
+            </li>
+          </ul>
+        </div>
+      </Callout>
+
+      <Callout color="amber" icon={<Icon name="alert-triangle" size="sm" />}>
+        <div className="space-y-1">
+          <p className="text-sm font-semibold">Still pending</p>
+          <ul className="mt-2 space-y-1 list-disc pl-5 text-xs text-zinc-700 dark:text-zinc-200">
             <li>Touch / mobile — HTML5 DnD is desktop-only.</li>
-            <li>WIP limits as first-class column config.</li>
-            <li>Custom drag preview.</li>
+            <li>Full keyboard navigation — arrow-key / space-to-lift move.</li>
+            <li>Custom drag preview (browser default ghost).</li>
             <li>Multi-select drag.</li>
             <li>Swimlanes / row grouping.</li>
-            <li>Built-in filter / hide-when-empty.</li>
           </ul>
         </div>
       </Callout>

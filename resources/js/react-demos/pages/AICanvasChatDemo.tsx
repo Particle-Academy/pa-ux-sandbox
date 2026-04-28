@@ -8,7 +8,13 @@ import {
   Input,
   useAccordionSection,
 } from "@particle-academy/react-fancy";
-import { EChart } from "@particle-academy/fancy-echarts";
+import { EChart, registerAll } from "@particle-academy/fancy-echarts";
+
+// EChart renderers/components/series only exist after registerAll() runs.
+// The /echarts-* routes get this via the EChartsLayout wrapper; this demo
+// lives outside that layout, so register here at module scope. registerAll
+// is internally guarded against double-calls.
+registerAll();
 
 // ─────────────────────────────────────────────────────────────────────────
 // Right-anchored flyout: a single horizontal AccordionPanel pinned to the

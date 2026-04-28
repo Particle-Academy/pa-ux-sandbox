@@ -10,9 +10,9 @@
 [submodule "packages/react-fancy"]
 	path = packages/react-fancy
 	url = https://github.com/Particle-Academy/react-fancy.git
-[submodule "packages/react-echarts"]
-	path = packages/react-echarts
-	url = https://github.com/Particle-Academy/react-echarts.git
+[submodule "packages/fancy-echarts"]
+	path = packages/fancy-echarts
+	url = https://github.com/Particle-Academy/fancy-echarts.git
 [submodule "packages/fancy-code"]
 	path = packages/fancy-code
 	url = git@github.com:Particle-Academy/fancy-code.git

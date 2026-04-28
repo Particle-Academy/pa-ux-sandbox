@@ -11,7 +11,7 @@ Packages symlinked via Composer path repos:
 - `packages/laravel-fms/` - Feature Management System (FMS) - dependency of Catalog
 - `packages/fancy-flux/` - Blade UI component library (git submodule, repo: wishborn/fancy)
 - `packages/react-fancy/` - React UI component library (git submodule)
-- `packages/react-echarts/` - React ECharts component library (git submodule, npm: `@particle-academy/fancy-echarts`)
+- `packages/fancy-echarts/` - React ECharts component library (git submodule, npm: `@particle-academy/fancy-echarts`)
 - `packages/fancy-code/` - React code editor (git submodule)
 - `packages/fancy-sheets/` - React spreadsheet (git submodule)
 

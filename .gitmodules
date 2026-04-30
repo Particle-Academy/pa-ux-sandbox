@@ -19,3 +19,6 @@
 [submodule "packages/fancy-sheets"]
 	path = packages/fancy-sheets
 	url = git@github.com:Particle-Academy/fancy-sheets.git
+[submodule "packages/fancy-3d"]
+	path = packages/fancy-3d
+	url = git@github.com:Particle-Academy/fancy-3d.git

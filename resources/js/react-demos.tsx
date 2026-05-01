@@ -64,6 +64,16 @@ const ChartDemo = l(() => import("./react-demos/pages/ChartDemo"), "ChartDemo");
 const EditorDemo = l(() => import("./react-demos/pages/EditorDemo"), "EditorDemo");
 const KanbanDemo = l(() => import("./react-demos/pages/KanbanDemo"), "KanbanDemo");
 const CanvasDemo = l(() => import("./react-demos/pages/CanvasDemo"), "CanvasDemo");
+const CanvasStudioDemo = l(() => import("./react-demos/pages/CanvasStudioDemo"), "CanvasStudioDemo");
+const BabylonCityDemo = l(() => import("./react-demos/pages/BabylonCityDemo"), "BabylonCityDemo");
+const TsrxPilotDemo = l(() => import("./react-demos/pages/TsrxPilotDemo"), "TsrxPilotDemo");
+const ScreenStageDemo = l(() => import("./react-demos/pages/ScreenStageDemo"), "ScreenStageDemo");
+const Fancy3DHome = l(() => import("./react-demos/pages/Fancy3DHome"), "Fancy3DHome");
+const Fancy3DPrimitivesDemo = l(() => import("./react-demos/pages/Fancy3DPrimitivesDemo"), "Fancy3DPrimitivesDemo");
+const Fancy3DLayoutsDemo = l(() => import("./react-demos/pages/Fancy3DLayoutsDemo"), "Fancy3DLayoutsDemo");
+const Fancy3DDecalDemo = l(() => import("./react-demos/pages/Fancy3DDecalDemo"), "Fancy3DDecalDemo");
+const Fancy3DMonitorDemo = l(() => import("./react-demos/pages/Fancy3DMonitorDemo"), "Fancy3DMonitorDemo");
+const Fancy3DCard3DDemo = l(() => import("./react-demos/pages/Fancy3DCard3DDemo"), "Fancy3DCard3DDemo");
 const DiagramDemo = l(() => import("./react-demos/pages/DiagramDemo"), "DiagramDemo");
 // Phase 7: Menus & Navigation
 const MenuDemo = l(() => import("./react-demos/pages/MenuDemo"), "MenuDemo");
@@ -202,6 +212,17 @@ if (root) {
               <Route path="ide" element={<IdeDemo />} />
               <Route path="app-sheet" element={<AppSheetDemo />} />
               <Route path="ai-canvas-chat" element={<AICanvasChatDemo />} />
+              <Route path="canvas-studio" element={<CanvasStudioDemo />} />
+              <Route path="babylon-city" element={<BabylonCityDemo />} />
+              <Route path="tsrx-pilot" element={<TsrxPilotDemo />} />
+              <Route path="screen-stage" element={<ScreenStageDemo />} />
+              {/* fancy-3d package demos */}
+              <Route path="3d" element={<Fancy3DHome />} />
+              <Route path="3d-primitives" element={<Fancy3DPrimitivesDemo />} />
+              <Route path="3d-layouts" element={<Fancy3DLayoutsDemo />} />
+              <Route path="3d-decal" element={<Fancy3DDecalDemo />} />
+              <Route path="3d-monitor" element={<Fancy3DMonitorDemo />} />
+              <Route path="3d-card3d" element={<Fancy3DCard3DDemo />} />
               {/* Fancy Code */}
               <Route path="code-editor" element={<CodeEditorDemo />} />
               <Route path="spreadsheet" element={<SpreadsheetDemo />} />

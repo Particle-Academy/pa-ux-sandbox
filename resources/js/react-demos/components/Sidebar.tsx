@@ -87,6 +87,27 @@ const patternLinks = [
   { to: "/ide", label: "IDE" },
   { to: "/app-sheet", label: "AppSheet" },
   { to: "/ai-canvas-chat", label: "AI Canvas Chat" },
+  { to: "/tsrx-pilot", label: "TSRX Pilot" },
+];
+
+const fancy3dPrimitivesLinks = [
+  { to: "/3d-primitives", label: "Primitives" },
+  { to: "/3d-decal", label: "Decals" },
+  { to: "/3d-monitor", label: "Monitor" },
+  { to: "/3d-card3d", label: "Card3D" },
+];
+
+const fancy3dLayoutLinks = [
+  { to: "/3d-layouts", label: "Layout helpers" },
+];
+
+const fancy3dReactLinks = [
+  { to: "/screen-stage", label: "Stage + Screen" },
+];
+
+const fancy3dShowcaseLinks = [
+  { to: "/canvas-studio", label: "Canvas Studio" },
+  { to: "/babylon-city", label: "Babylon City" },
 ];
 
 const fancyPackageLinks = [
@@ -211,39 +232,52 @@ function EChartsNav() {
   );
 }
 
-type Package = "react-fancy" | "fancy-echarts";
+function Fancy3DNav() {
+  return (
+    <>
+      <SectionHeader label="Primitives" />
+      <LinkGroup links={fancy3dPrimitivesLinks} />
+
+      <SectionHeader label="Layouts" />
+      <LinkGroup links={fancy3dLayoutLinks} />
+
+      <SectionHeader label="React API" />
+      <LinkGroup links={fancy3dReactLinks} />
+
+      <SectionHeader label="Showcase" />
+      <LinkGroup links={fancy3dShowcaseLinks} />
+    </>
+  );
+}
+
+type Package = "react-fancy" | "fancy-echarts" | "fancy-3d";
+
+const FANCY_3D_PATHS = new Set([
+  "/3d", "/3d-primitives", "/3d-decal", "/3d-monitor", "/3d-card3d", "/3d-layouts",
+  "/screen-stage", "/canvas-studio", "/babylon-city",
+]);
 
 function useCurrentPackage(): Package {
   const { pathname } = useLocation();
   if (pathname.startsWith("/echarts-")) return "fancy-echarts";
+  if (pathname.startsWith("/3d") || FANCY_3D_PATHS.has(pathname)) return "fancy-3d";
   return "react-fancy";
 }
 
 
 
 function PackageSwitcher({ current }: { current: Package }) {
+  const tabClass = (active: boolean) =>
+    `flex-1 rounded-md px-2 py-1 text-center text-[11px] font-medium transition-colors ${
+      active
+        ? "bg-white text-zinc-900 shadow-sm dark:bg-zinc-700 dark:text-zinc-100"
+        : "text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200"
+    }`;
   return (
     <div className="flex gap-1 rounded-lg bg-zinc-100 p-0.5 dark:bg-zinc-800">
-      <NavLink
-        to="/"
-        className={`flex-1 rounded-md px-2 py-1 text-center text-[11px] font-medium transition-colors ${
-          current === "react-fancy"
-            ? "bg-white text-zinc-900 shadow-sm dark:bg-zinc-700 dark:text-zinc-100"
-            : "text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200"
-        }`}
-      >
-        react-fancy
-      </NavLink>
-      <NavLink
-        to="/echarts-line"
-        className={`flex-1 rounded-md px-2 py-1 text-center text-[11px] font-medium transition-colors ${
-          current === "fancy-echarts"
-            ? "bg-white text-zinc-900 shadow-sm dark:bg-zinc-700 dark:text-zinc-100"
-            : "text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200"
-        }`}
-      >
-        fancy-echarts
-      </NavLink>
+      <NavLink to="/" className={tabClass(current === "react-fancy")}>react-fancy</NavLink>
+      <NavLink to="/echarts-line" className={tabClass(current === "fancy-echarts")}>fancy-echarts</NavLink>
+      <NavLink to="/3d" className={tabClass(current === "fancy-3d")}>fancy-3d</NavLink>
     </div>
   );
 }
@@ -263,7 +297,9 @@ export function Sidebar() {
 
       <nav className="mt-2 flex flex-col gap-0.5 pb-6">
         <NavItem to="/" label="Home" end />
-        {currentPackage === "react-fancy" ? <ReactFancyNav /> : <EChartsNav />}
+        {currentPackage === "react-fancy" && <ReactFancyNav />}
+        {currentPackage === "fancy-echarts" && <EChartsNav />}
+        {currentPackage === "fancy-3d" && <Fancy3DNav />}
       </nav>
     </aside>
   );

@@ -1,4 +1,5 @@
 import { Diagram } from "@particle-academy/react-fancy";
+import type { DiagramSchema } from "@particle-academy/react-fancy";
 import { DemoSection } from "../components/DemoSection";
 
 const erdSchema = {
@@ -197,6 +198,101 @@ export function DiagramDemo() {
           <Diagram schema={relationsSchema} />
         </div>
       </DemoSection>
+
+      <DemoSection
+        title="Connector markers"
+        description="Mix and match endpoint markers per relation. Use one of the typed shorthands (one-to-many, association, aggregation, composition, inheritance, implementation, dependency) or set fromMarker / toMarker explicitly. Emoji markers via the `emoji:` prefix."
+        code={`<Diagram>
+  <Diagram.Entity name="A" />
+  <Diagram.Entity name="B" />
+  <Diagram.Relation from="A" to="B" type="aggregation" />     {/* diamond-open → none */}
+  <Diagram.Relation from="A" to="B" type="composition" />     {/* diamond → none */}
+  <Diagram.Relation from="A" to="B" type="inheritance" />     {/* none → triangle-open */}
+  <Diagram.Relation from="A" to="B" type="dependency" />      {/* none → arrow, dashed */}
+  <Diagram.Relation from="A" to="B" fromMarker="circle" toMarker="square" />
+  <Diagram.Relation from="A" to="B" fromMarker="emoji:🚀" toMarker="emoji:🎯" />
+</Diagram>`}
+      >
+        <div style={{ height: 460 }}>
+          <Diagram schema={markerShowcaseSchema} />
+        </div>
+      </DemoSection>
+
+      <DemoSection
+        title="Routing modes"
+        description="Manhattan (default — right-angle elbows that dodge other entities), Bezier (smooth curves), or Straight (direct line). Manhattan is the cleanest look for ERD/UML; Bezier feels more sketchy/organic."
+        code={`<Diagram.Relation from="A" to="C" routing="manhattan" />
+<Diagram.Relation from="A" to="C" routing="bezier" />
+<Diagram.Relation from="A" to="C" routing="straight" />`}
+      >
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+          {(["manhattan", "bezier", "straight"] as const).map((routing) => (
+            <div key={routing}>
+              <div className="mb-1 font-mono text-xs text-zinc-500">routing="{routing}"</div>
+              <div style={{ height: 280 }}>
+                <Diagram schema={routingDemoSchema(routing)} />
+              </div>
+            </div>
+          ))}
+        </div>
+      </DemoSection>
+
+      <DemoSection
+        title="Obstacle avoidance"
+        description="Manhattan routing dodges around entities that would otherwise cross the line. Drag a node to see the relation re-route on the fly."
+        code={`<Diagram schema={...}> {/* relations route AROUND any node not on the from/to */}`}
+      >
+        <div style={{ height: 460 }}>
+          <Diagram schema={obstacleSchema} />
+        </div>
+      </DemoSection>
     </div>
   );
 }
+
+const markerShowcaseSchema: DiagramSchema = {
+  entities: [
+    { name: "A", x: 80, y: 60, fields: [{ name: "id", type: "bigint", primary: true }] },
+    { name: "B", x: 480, y: 60, fields: [{ name: "id", type: "bigint", primary: true }, { name: "a_id", type: "bigint", foreign: true }] },
+  ],
+  relations: [
+    { from: "A", to: "B", type: "aggregation", label: "aggregation" },
+    { from: "A", to: "B", type: "composition", label: "composition" },
+    { from: "A", to: "B", type: "inheritance", label: "inheritance" },
+    { from: "A", to: "B", type: "dependency", label: "dependency" },
+    { from: "A", to: "B", fromMarker: "circle", toMarker: "square", label: "circle ↔ square" },
+    { from: "A", to: "B", fromMarker: "emoji:🚀", toMarker: "emoji:🎯", label: "emoji" },
+  ],
+};
+
+function routingDemoSchema(routing: "manhattan" | "bezier" | "straight"): DiagramSchema {
+  return {
+    entities: [
+      { name: "A", x: 40, y: 40, fields: [{ name: "id", type: "bigint", primary: true }] },
+      { name: "B", x: 220, y: 140, fields: [{ name: "id", type: "bigint", primary: true }, { name: "a_id", type: "bigint", foreign: true }] },
+    ],
+    relations: [
+      { from: "A", to: "B", type: "one-to-many", routing },
+    ],
+  };
+}
+
+const obstacleSchema: DiagramSchema = {
+  entities: [
+    { name: "Source", x: 60, y: 80, fields: [{ name: "id", type: "bigint", primary: true }] },
+    // Big obstacle right between Source and Target
+    { name: "Obstacle", x: 360, y: 60, fields: [
+      { name: "id", type: "bigint", primary: true },
+      { name: "kind", type: "varchar(100)" },
+      { name: "value", type: "text" },
+      { name: "tags", type: "json" },
+    ] },
+    { name: "Target", x: 720, y: 80, fields: [
+      { name: "id", type: "bigint", primary: true },
+      { name: "source_id", type: "bigint", foreign: true },
+    ] },
+  ],
+  relations: [
+    { from: "Source", to: "Target", type: "one-to-many", label: "routes around Obstacle" },
+  ],
+};

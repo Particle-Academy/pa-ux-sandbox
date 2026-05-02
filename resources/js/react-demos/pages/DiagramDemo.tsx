@@ -1,5 +1,5 @@
-import { Diagram } from "@particle-academy/react-fancy";
-import type { DiagramSchema } from "@particle-academy/react-fancy";
+import { Diagram } from "@particle-academy/fancy-echarts";
+import type { DiagramSchema } from "@particle-academy/fancy-echarts";
 import { DemoSection } from "../components/DemoSection";
 
 const erdSchema = {

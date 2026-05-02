@@ -75,8 +75,6 @@ const richContentLinks = [
   { to: "/chart", label: "Chart" },
   { to: "/editor", label: "Editor" },
   { to: "/kanban", label: "Kanban" },
-  { to: "/canvas", label: "Canvas" },
-  { to: "/diagram", label: "Diagram" },
 ];
 
 const patternLinks = [
@@ -95,6 +93,7 @@ const fancy3dPrimitivesLinks = [
   { to: "/3d-decal", label: "Decals" },
   { to: "/3d-monitor", label: "Monitor" },
   { to: "/3d-card3d", label: "Card3D" },
+  { to: "/canvas", label: "Canvas (engine-pluggable)" },
 ];
 
 const fancy3dLayoutLinks = [
@@ -108,6 +107,7 @@ const fancy3dReactLinks = [
 const fancy3dShowcaseLinks = [
   { to: "/canvas-studio", label: "Canvas Studio" },
   { to: "/babylon-city", label: "Babylon City" },
+  { to: "/babylon-smoke", label: "Babylon — 60s smoke test" },
 ];
 
 const fancyPackageLinks = [
@@ -115,7 +115,15 @@ const fancyPackageLinks = [
   { to: "/spreadsheet", label: "Spreadsheet" },
 ];
 
+const echartsDiagramLinks = [
+  { to: "/echarts-data-diagram", label: "Data Diagram" },
+  { to: "/echarts-flowchart", label: "Flowchart" },
+  { to: "/echarts-mindmap", label: "Mindmap" },
+  { to: "/echarts-orgchart", label: "OrgChart" },
+];
+
 const echartsLinks = [
+  { to: "/echarts-showcase", label: "★ Dashboard Showcase" },
   { to: "/echarts-line", label: "Line" },
   { to: "/echarts-bar", label: "Bar" },
   { to: "/echarts-pie", label: "Pie" },
@@ -223,6 +231,9 @@ function ReactFancyNav() {
 function EChartsNav() {
   return (
     <>
+      <SectionHeader label="Diagrams" />
+      <LinkGroup links={echartsDiagramLinks} />
+
       <SectionHeader label="2D Charts" />
       <LinkGroup links={echartsLinks} />
 
@@ -254,7 +265,7 @@ type Package = "react-fancy" | "fancy-echarts" | "fancy-3d";
 
 const FANCY_3D_PATHS = new Set([
   "/3d", "/3d-primitives", "/3d-decal", "/3d-monitor", "/3d-card3d", "/3d-layouts",
-  "/screen-stage", "/canvas-studio", "/babylon-city",
+  "/screen-stage", "/canvas", "/canvas-studio", "/babylon-city", "/babylon-smoke",
 ]);
 
 function useCurrentPackage(): Package {

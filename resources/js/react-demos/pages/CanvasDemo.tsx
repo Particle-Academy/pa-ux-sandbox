@@ -1,4 +1,5 @@
-import { Canvas, Card } from "@particle-academy/react-fancy";
+import { Canvas } from "@particle-academy/fancy-3d/canvas";
+import { Card } from "@particle-academy/react-fancy";
 import { DemoSection } from "../components/DemoSection";
 
 export function CanvasDemo() {

@@ -74,6 +74,7 @@ const Fancy3DLayoutsDemo = l(() => import("./react-demos/pages/Fancy3DLayoutsDem
 const Fancy3DDecalDemo = l(() => import("./react-demos/pages/Fancy3DDecalDemo"), "Fancy3DDecalDemo");
 const Fancy3DMonitorDemo = l(() => import("./react-demos/pages/Fancy3DMonitorDemo"), "Fancy3DMonitorDemo");
 const Fancy3DCard3DDemo = l(() => import("./react-demos/pages/Fancy3DCard3DDemo"), "Fancy3DCard3DDemo");
+const BabylonSmokeTestDemo = l(() => import("./react-demos/pages/BabylonSmokeTestDemo"), "BabylonSmokeTestDemo");
 const DiagramDemo = l(() => import("./react-demos/pages/DiagramDemo"), "DiagramDemo");
 // Phase 7: Menus & Navigation
 const MenuDemo = l(() => import("./react-demos/pages/MenuDemo"), "MenuDemo");
@@ -123,6 +124,10 @@ const SurfaceDemo = l(() => import("./react-demos/pages/echarts/SurfaceDemo"), "
 const GlobeDemo = l(() => import("./react-demos/pages/echarts/GlobeDemo"), "GlobeDemo");
 const GraphicDemo = l(() => import("./react-demos/pages/echarts/GraphicDemo"), "GraphicDemo");
 const EffectScatterDemo = l(() => import("./react-demos/pages/echarts/EffectScatterDemo"), "EffectScatterDemo");
+const EChartsShowcase = l(() => import("./react-demos/pages/echarts/EChartsShowcase"), "EChartsShowcase");
+const FlowchartDemo = l(() => import("./react-demos/pages/echarts/FlowchartDemo"), "FlowchartDemo");
+const MindmapDemo = l(() => import("./react-demos/pages/echarts/MindmapDemo"), "MindmapDemo");
+const OrgChartDemo = l(() => import("./react-demos/pages/echarts/OrgChartDemo"), "OrgChartDemo");
 
 const Loading = () => (
   <div className="flex items-center justify-center py-20">
@@ -192,7 +197,6 @@ if (root) {
               <Route path="editor" element={<EditorDemo />} />
               <Route path="kanban" element={<KanbanDemo />} />
               <Route path="canvas" element={<CanvasDemo />} />
-              <Route path="diagram" element={<DiagramDemo />} />
               {/* Menus & Navigation */}
               <Route path="menu" element={<MenuDemo />} />
               <Route path="sidebar" element={<SidebarDemo />} />
@@ -223,11 +227,17 @@ if (root) {
               <Route path="3d-decal" element={<Fancy3DDecalDemo />} />
               <Route path="3d-monitor" element={<Fancy3DMonitorDemo />} />
               <Route path="3d-card3d" element={<Fancy3DCard3DDemo />} />
+              <Route path="babylon-smoke" element={<BabylonSmokeTestDemo />} />
               {/* Fancy Code */}
               <Route path="code-editor" element={<CodeEditorDemo />} />
               <Route path="spreadsheet" element={<SpreadsheetDemo />} />
               {/* ECharts (lazy-loaded layout registers echarts) */}
               <Route element={<EChartsLayout />}>
+                <Route path="echarts-showcase" element={<EChartsShowcase />} />
+                <Route path="echarts-data-diagram" element={<DiagramDemo />} />
+                <Route path="echarts-flowchart" element={<FlowchartDemo />} />
+                <Route path="echarts-mindmap" element={<MindmapDemo />} />
+                <Route path="echarts-orgchart" element={<OrgChartDemo />} />
                 <Route path="echarts-line" element={<LineDemo />} />
                 <Route path="echarts-bar" element={<BarDemo />} />
                 <Route path="echarts-pie" element={<PieDemo />} />

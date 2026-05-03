@@ -261,17 +261,25 @@ function Fancy3DNav() {
   );
 }
 
-type Package = "react-fancy" | "fancy-echarts" | "fancy-3d";
+type Package = "react-fancy" | "fancy-echarts" | "fancy-3d" | "fancy-screens";
 
 const FANCY_3D_PATHS = new Set([
   "/3d", "/3d-primitives", "/3d-decal", "/3d-monitor", "/3d-card3d", "/3d-layouts",
   "/screen-stage", "/canvas", "/canvas-studio", "/babylon-city", "/babylon-smoke",
 ]);
 
+const FANCY_SCREENS_PATHS = new Set(["/screens-intro", "/screens-showcase"]);
+
+const fancyScreensIntroLinks = [
+  { to: "/screens-intro", label: "Intro · Ports + Registry" },
+  { to: "/screens-showcase", label: "★ Full demos as Screens" },
+];
+
 function useCurrentPackage(): Package {
   const { pathname } = useLocation();
   if (pathname.startsWith("/echarts-")) return "fancy-echarts";
   if (pathname.startsWith("/3d") || FANCY_3D_PATHS.has(pathname)) return "fancy-3d";
+  if (pathname.startsWith("/screens-") || FANCY_SCREENS_PATHS.has(pathname)) return "fancy-screens";
   return "react-fancy";
 }
 
@@ -279,7 +287,7 @@ function useCurrentPackage(): Package {
 
 function PackageSwitcher({ current }: { current: Package }) {
   const tabClass = (active: boolean) =>
-    `flex-1 rounded-md px-2 py-1 text-center text-[11px] font-medium transition-colors ${
+    `flex-1 rounded-md px-1.5 py-1 text-center text-[10px] font-medium transition-colors ${
       active
         ? "bg-white text-zinc-900 shadow-sm dark:bg-zinc-700 dark:text-zinc-100"
         : "text-zinc-500 hover:text-zinc-700 dark:text-zinc-400 dark:hover:text-zinc-200"
@@ -287,9 +295,19 @@ function PackageSwitcher({ current }: { current: Package }) {
   return (
     <div className="flex gap-1 rounded-lg bg-zinc-100 p-0.5 dark:bg-zinc-800">
       <NavLink to="/" className={tabClass(current === "react-fancy")}>react-fancy</NavLink>
-      <NavLink to="/echarts-line" className={tabClass(current === "fancy-echarts")}>fancy-echarts</NavLink>
-      <NavLink to="/3d" className={tabClass(current === "fancy-3d")}>fancy-3d</NavLink>
+      <NavLink to="/echarts-line" className={tabClass(current === "fancy-echarts")}>echarts</NavLink>
+      <NavLink to="/3d" className={tabClass(current === "fancy-3d")}>3d</NavLink>
+      <NavLink to="/screens-intro" className={tabClass(current === "fancy-screens")}>screens</NavLink>
     </div>
+  );
+}
+
+function FancyScreensNav() {
+  return (
+    <>
+      <SectionHeader label="Screens" />
+      <LinkGroup links={fancyScreensIntroLinks} />
+    </>
   );
 }
 
@@ -311,6 +329,7 @@ export function Sidebar() {
         {currentPackage === "react-fancy" && <ReactFancyNav />}
         {currentPackage === "fancy-echarts" && <EChartsNav />}
         {currentPackage === "fancy-3d" && <Fancy3DNav />}
+        {currentPackage === "fancy-screens" && <FancyScreensNav />}
       </nav>
     </aside>
   );

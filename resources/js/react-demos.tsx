@@ -128,6 +128,9 @@ const EChartsShowcase = l(() => import("./react-demos/pages/echarts/EChartsShowc
 const FlowchartDemo = l(() => import("./react-demos/pages/echarts/FlowchartDemo"), "FlowchartDemo");
 const MindmapDemo = l(() => import("./react-demos/pages/echarts/MindmapDemo"), "MindmapDemo");
 const OrgChartDemo = l(() => import("./react-demos/pages/echarts/OrgChartDemo"), "OrgChartDemo");
+// fancy-screens
+const ScreensIntroDemo = l(() => import("./react-demos/pages/screens/ScreensIntroDemo"), "ScreensIntroDemo");
+const ScreensShowcaseDemo = l(() => import("./react-demos/pages/screens/ScreensShowcaseDemo"), "ScreensShowcaseDemo");
 
 const Loading = () => (
   <div className="flex items-center justify-center py-20">
@@ -265,6 +268,9 @@ if (root) {
                 <Route path="echarts-globe" element={<GlobeDemo />} />
                 <Route path="echarts-graphic" element={<GraphicDemo />} />
               </Route>
+              {/* fancy-screens */}
+              <Route path="screens-intro" element={<ScreensIntroDemo />} />
+              <Route path="screens-showcase" element={<ScreensShowcaseDemo />} />
               {/* Kitchen Sink */}
               <Route path="kitchen-sink" element={<KitchenSinkDemo />} />
             </Route>

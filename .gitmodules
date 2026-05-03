@@ -22,3 +22,6 @@
 [submodule "packages/fancy-3d"]
 	path = packages/fancy-3d
 	url = git@github.com:Particle-Academy/fancy-3d.git
+[submodule "packages/fancy-screens"]
+	path = packages/fancy-screens
+	url = git@github.com:Particle-Academy/fancy-screens.git

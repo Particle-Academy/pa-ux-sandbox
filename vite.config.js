@@ -38,6 +38,7 @@ export default defineConfig({
             '@particle-academy/fancy-3d': path.resolve(__dirname, 'packages/fancy-3d/src'),
             '@particle-academy/fancy-tsrx': path.resolve(__dirname, 'packages/fancy-tsrx/src'),
             '@particle-academy/fancy-screens': path.resolve(__dirname, 'packages/fancy-screens/src'),
+            '@particle-academy/fancy-inertia': path.resolve(__dirname, 'packages/fancy-inertia/src'),
         },
     },
     build: {

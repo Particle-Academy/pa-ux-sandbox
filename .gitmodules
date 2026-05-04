@@ -25,3 +25,6 @@
 [submodule "packages/fancy-screens"]
 	path = packages/fancy-screens
 	url = git@github.com:Particle-Academy/fancy-screens.git
+[submodule "packages/fancy-inertia"]
+	path = packages/fancy-inertia
+	url = git@github.com:Particle-Academy/fancy-inertia.git

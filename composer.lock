@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "efb35420b35df807a22547b2410e33f4",
+    "content-hash": "8b0fea4b8c0371f1e523b6d55ec9a007",
     "packages": [
         {
             "name": "brick/math",
@@ -2847,12 +2847,91 @@
             "time": "2025-11-20T02:34:59+00:00"
         },
         {
+            "name": "particle-academy/holy-sheet",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "./packages/holy-sheet",
+                "reference": "4d454fa76bbaa282d51a3dd2a22487f2d8d15936"
+            },
+            "require": {
+                "php": "^8.2"
+            },
+            "require-dev": {
+                "illuminate/support": "^10.0|^11.0|^12.0|^13.0",
+                "orchestra/testbench": "^8.0|^9.0|^10.0|^11.0",
+                "pestphp/pest": "^3.0|^4.0",
+                "phpunit/phpunit": "^10.0|^11.0|^12.0"
+            },
+            "suggest": {
+                "ext-zip": "Required for native xlsx writing (avoids third-party deps).",
+                "illuminate/support": "Required only when using the Laravel service provider. Compatible with 10.x through 13.x."
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "HolySheet\\Laravel\\HolySheetServiceProvider"
+                    ],
+                    "aliases": {
+                        "HolySheet": "HolySheet\\Laravel\\Facades\\HolySheet"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "HolySheet\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "HolySheet\\Tests\\": "tests/"
+                }
+            },
+            "scripts": {
+                "test": [
+                    "pest"
+                ],
+                "test-coverage": [
+                    "pest --coverage"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Particle Academy",
+                    "homepage": "https://github.com/Particle-Academy"
+                }
+            ],
+            "description": "Standalone spreadsheet writing tool for agentic document creation. Framework-agnostic core with optional Laravel 10-13 integration.",
+            "homepage": "https://github.com/Particle-Academy/holy-sheet",
+            "keywords": [
+                "agentic",
+                "ai",
+                "csv",
+                "document-creation",
+                "excel",
+                "particle-academy",
+                "spreadsheet",
+                "xlsx"
+            ],
+            "support": {
+                "issues": "https://github.com/Particle-Academy/holy-sheet/issues",
+                "source": "https://github.com/Particle-Academy/holy-sheet"
+            },
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
             "name": "particle-academy/laravel-catalog",
             "version": "dev-main",
             "dist": {
                 "type": "path",
                 "url": "./packages/laravel-catalog",
-                "reference": "fe26b6a33aed1611ed67c2180bb2838d3707b8bd"
+                "reference": "f9f152d2e1609b003e37cfcd83aef7583f84aa07"
             },
             "require": {
                 "laravel/cashier": "^15.0",
@@ -2889,7 +2968,7 @@
             "dist": {
                 "type": "path",
                 "url": "./packages/laravel-fms",
-                "reference": "6c5d93056208329d5b5758ba57d63715e2ba7777"
+                "reference": "8e987051a93753b8cc02d2d5792f4efb53d67875"
             },
             "require": {
                 "laravel/framework": "^11.0|^12.0",
@@ -6554,15 +6633,15 @@
         },
         {
             "name": "wishborn/fancy-flux",
-            "version": "1.0.22",
+            "version": "1.2.1",
             "dist": {
                 "type": "path",
                 "url": "./packages/fancy-flux",
-                "reference": "fa24f4a128f304e1c9499737de9afa244454d97f"
+                "reference": "ce030d1ecbfa34f1e3ab968b7cd48d7aff4bb51d"
             },
             "require": {
-                "illuminate/support": "^10.0|^11.0|^12.0",
-                "illuminate/view": "^10.0|^11.0|^12.0",
+                "illuminate/support": "^10.0|^11.0|^12.0|^13.0",
+                "illuminate/view": "^10.0|^11.0|^12.0|^13.0",
                 "livewire/flux": "^2.0",
                 "livewire/livewire": "^3.7.3|^4.0",
                 "php": "^8.2"
@@ -10566,6 +10645,7 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
+        "particle-academy/holy-sheet": 20,
         "particle-academy/laravel-catalog": 20,
         "particle-academy/laravel-fms": 20,
         "wishborn/fancy-flux": 20

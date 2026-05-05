@@ -28,3 +28,6 @@
 [submodule "packages/fancy-inertia"]
 	path = packages/fancy-inertia
 	url = git@github.com:Particle-Academy/fancy-inertia.git
+[submodule "packages/holy-sheet"]
+	path = packages/holy-sheet
+	url = git@github.com:Particle-Academy/holy-sheet.git

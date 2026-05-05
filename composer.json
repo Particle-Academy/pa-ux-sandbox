@@ -10,6 +10,7 @@
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
         "laravel/cashier": "^15.0",
+        "particle-academy/holy-sheet": "@dev",
         "particle-academy/laravel-catalog": "@dev",
         "particle-academy/laravel-fms": "@dev",
         "wishborn/fancy-flux": "@dev",
@@ -98,6 +99,10 @@
         {
             "type": "path",
             "url": "./packages/fancy-flux"
+        },
+        {
+            "type": "path",
+            "url": "./packages/holy-sheet"
         }
     ],
     "config": {

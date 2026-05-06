@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\AuthController;
-use HolySheet\Laravel\Http\HolySheetController;
+use App\Http\Controllers\HolySheetExportController;
 
 // Authentication routes
 Route::middleware('guest')->group(function () {
@@ -16,8 +16,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
 
-// Holy Sheet xlsx export endpoint (used by fancy-sheets demo Export button + agent tools)
-Route::post('/holy-sheet/export', HolySheetController::class)
+// xlsx export endpoint for the fancy-sheets demo. The controller is owned
+// by the sandbox app — Holy Sheet ships only the writer + facade. Apps
+// build their own routes (see app/Http/Controllers/HolySheetExportController).
+Route::post('/holy-sheet/export', HolySheetExportController::class)
     ->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class])
     ->name('holy-sheet.export');
 

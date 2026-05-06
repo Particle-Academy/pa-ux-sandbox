@@ -137,6 +137,9 @@ export function SpreadsheetDemo() {
   <Spreadsheet.SheetTabs />
 </Spreadsheet>`}
       >
+        <div className="mb-3">
+          <ExportToXlsxButton workbook={workbook} filename="full-workbook.xlsx" />
+        </div>
         <div className="rounded-lg border border-zinc-200 dark:border-zinc-700" style={{ height: 480 }}>
           <Spreadsheet data={workbook} onChange={setWorkbook} columnCount={10} rowCount={20}>
             <Spreadsheet.Toolbar />
@@ -236,6 +239,91 @@ export function SpreadsheetDemo() {
       <CellGroupingDemo />
     </div>
   );
+}
+
+// ---------------------------------------------------------------------------
+// holy-sheet xlsx export — POSTs the WorkbookData to /holy-sheet/export
+// and triggers a browser download of the returned xlsx.
+// ---------------------------------------------------------------------------
+
+function ExportToXlsxButton({ workbook, filename }: { workbook: WorkbookData; filename: string }) {
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleExport = useCallback(async () => {
+    setBusy(true);
+    setError(null);
+    try {
+      const schema = workbookToSchema(workbook);
+      const res = await fetch("/holy-sheet/export", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({ schema, filename }),
+      });
+      if (!res.ok) {
+        const detail = await res.json().catch(() => null);
+        throw new Error(detail?.message ?? `Export failed (${res.status})`);
+      }
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Export failed");
+    } finally {
+      setBusy(false);
+    }
+  }, [workbook, filename]);
+
+  return (
+    <div className="flex items-center gap-3">
+      <button
+        type="button"
+        onClick={handleExport}
+        disabled={busy}
+        className="rounded-md bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-emerald-700 disabled:opacity-50"
+      >
+        {busy ? "Exporting…" : "Export to xlsx"}
+      </button>
+      <span className="text-xs text-zinc-500">via holy-sheet</span>
+      {error && <span className="text-xs text-rose-600">{error}</span>}
+    </div>
+  );
+}
+
+/**
+ * Translates fancy-sheets WorkbookData into the holy-sheet schema. The
+ * sparse `cells` shape passes through directly — every fancy-sheets
+ * field maps 1:1 except `meta` and `className` (consumer-only).
+ */
+function workbookToSchema(workbook: WorkbookData): Record<string, unknown> {
+  return {
+    sheets: workbook.sheets.map((sheet) => ({
+      name: sheet.name,
+      cells: Object.fromEntries(
+        Object.entries(sheet.cells).map(([addr, cell]) => [
+          addr,
+          {
+            value: cell.value,
+            ...(cell.formula !== undefined ? { formula: cell.formula } : {}),
+            ...(cell.computedValue !== undefined ? { computedValue: cell.computedValue } : {}),
+            ...(cell.format ? { format: cell.format } : {}),
+            ...(cell.comment ? { comment: cell.comment } : {}),
+          },
+        ]),
+      ),
+      mergedRegions: sheet.mergedRegions ?? [],
+      columnWidths: sheet.columnWidths ?? {},
+      frozenRows: sheet.frozenRows ?? 0,
+      frozenCols: sheet.frozenCols ?? 0,
+    })),
+    meta: { creator: "fancy-sheets demo" },
+  };
 }
 
 // ---------------------------------------------------------------------------

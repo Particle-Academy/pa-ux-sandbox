@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\AuthController;
+use HolySheet\Laravel\Http\HolySheetController;
 
 // Authentication routes
 Route::middleware('guest')->group(function () {
@@ -14,6 +15,11 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
+
+// Holy Sheet xlsx export endpoint (used by fancy-sheets demo Export button + agent tools)
+Route::post('/holy-sheet/export', HolySheetController::class)
+    ->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class])
+    ->name('holy-sheet.export');
 
 // Storefront routes
 Route::get('/', [ProductController::class, 'index'])->name('home');

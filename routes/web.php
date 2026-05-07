@@ -20,7 +20,7 @@ Route::middleware('auth')->group(function () {
 // by the sandbox app — Holy Sheet ships only the writer + facade. Apps
 // build their own routes (see app/Http/Controllers/HolySheetExportController).
 Route::post('/holy-sheet/export', HolySheetExportController::class)
-    ->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class])
+    ->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\PreventRequestForgery::class])
     ->name('holy-sheet.export');
 
 // Storefront routes

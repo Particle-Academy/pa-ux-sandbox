@@ -77,6 +77,15 @@ Feature access control with multiple strategies checked in order: Gates/Policies
 
 The root Laravel app has controllers in `app/Http/Controllers/Admin/` and `app/Http/Controllers/` that exercise both packages. Tests live in `tests/Feature/Catalog/` and `tests/Feature/Integration/`.
 
+### Holy Sheet AI agent demo (`/ai-sheets`)
+
+Live demo of holy-sheet's tool-use surface driven by the Laravel AI SDK (`laravel/ai`). Lives at:
+- `app/Ai/Agents/HolySheetAgent.php` — Anthropic-backed agent with system prompt + 3 tools
+- `app/Ai/Tools/{BuildSpreadsheetSchema, WriteSpreadsheet, DescribeSpreadsheet}.php` — wrap `HolySheet\Agent::fromArray`, `validateAndRepair`, `write`, `describe`
+- `resources/views/components/⚡ai-sheets.blade.php` — Livewire SFC at `Route::livewire('/ai-sheets', 'ai-sheets')`
+
+Generated xlsx artifacts land in `storage/app/public/ai-sheets/` and are served via the public disk (`php artisan storage:link` is required, run during setup). Requires `ANTHROPIC_API_KEY` in `.env`. The default AI provider is configured via `AI_DEFAULT_PROVIDER` (defaults to `anthropic`).
+
 ## Conventions
 
 - **PHP**: Always use curly braces for control structures. Use constructor property promotion. Explicit return types and type hints on all methods. PHPDoc blocks over inline comments.

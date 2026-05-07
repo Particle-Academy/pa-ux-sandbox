@@ -75,6 +75,9 @@ Route::prefix('ux-demos')->name('ux-demos.')->group(function () {
 // React demos (SPA catch-all)
 Route::get('/react-demos/{any?}', fn () => view('react-demos'))->where('any', '.*')->name('react-demos');
 
+// Holy Sheet AI agent demo — natural language → xlsx via Laravel AI SDK + Holy Sheet tools.
+Route::livewire('/ai-sheets', 'ai-sheets')->name('ai-sheets');
+
 // Published Catalog UI routes — opt-in via CATALOG_ENABLE_UI=true. The
 // admin gate is enforced both at the route level (can:admin) and inside
 // the Livewire component (Gate::authorize on every request).

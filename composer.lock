@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8b0fea4b8c0371f1e523b6d55ec9a007",
+    "content-hash": "de918cf21340f0237f86d31e0155de49",
     "packages": [
         {
             "name": "brick/math",
@@ -2848,24 +2848,23 @@
         },
         {
             "name": "particle-academy/holy-sheet",
-            "version": "dev-main",
+            "version": "1.0.99",
             "dist": {
                 "type": "path",
                 "url": "./packages/holy-sheet",
-                "reference": "4d454fa76bbaa282d51a3dd2a22487f2d8d15936"
+                "reference": "508d32fd30b5b9f2162c9fc8314b1d3fdee05592"
             },
             "require": {
+                "ext-zip": "*",
                 "php": "^8.2"
             },
             "require-dev": {
-                "illuminate/support": "^10.0|^11.0|^12.0|^13.0",
                 "orchestra/testbench": "^8.0|^9.0|^10.0|^11.0",
                 "pestphp/pest": "^3.0|^4.0",
                 "phpunit/phpunit": "^10.0|^11.0|^12.0"
             },
             "suggest": {
-                "ext-zip": "Required for native xlsx writing (avoids third-party deps).",
-                "illuminate/support": "Required only when using the Laravel service provider. Compatible with 10.x through 13.x."
+                "illuminate/support": "Only needed when using the optional Laravel service provider, facade, or artisan command. Compatible with 10.x through 13.x. The core HolySheet\\Agent + writer require zero framework."
             },
             "type": "library",
             "extra": {
@@ -2922,6 +2921,7 @@
                 "source": "https://github.com/Particle-Academy/holy-sheet"
             },
             "transport-options": {
+                "symlink": true,
                 "relative": true
             }
         },
@@ -10645,7 +10645,6 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "particle-academy/holy-sheet": 20,
         "particle-academy/laravel-catalog": 20,
         "particle-academy/laravel-fms": 20,
         "wishborn/fancy-flux": 20

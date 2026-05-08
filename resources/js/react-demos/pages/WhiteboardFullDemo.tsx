@@ -94,17 +94,21 @@ export function WhiteboardFullDemo() {
   };
 
   const [draftShape, setDraftShape] = useState<ShapeItem | null>(null);
+  const boardWrapRef = useRef<HTMLDivElement>(null);
 
-  const screenToWorld = (clientX: number, clientY: number, rect: DOMRect) => ({
-    x: (clientX - rect.left - viewport.x) / viewport.zoom,
-    y: (clientY - rect.top - viewport.y) / viewport.zoom,
-  });
+  const screenToWorld = (clientX: number, clientY: number) => {
+    const rect = boardWrapRef.current?.getBoundingClientRect();
+    if (!rect) return { x: 0, y: 0 };
+    return {
+      x: (clientX - rect.left - viewport.x) / viewport.zoom,
+      y: (clientY - rect.top - viewport.y) / viewport.zoom,
+    };
+  };
 
   const handleOverlayPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     if (e.button !== 0 || e.altKey) return;
     if (e.target !== e.currentTarget) return;
-    const rect = e.currentTarget.getBoundingClientRect();
-    const start = screenToWorld(e.clientX, e.clientY, rect);
+    const start = screenToWorld(e.clientX, e.clientY);
 
     if (tool === "sticky") {
       const id = `n_${Date.now().toString(36)}`;
@@ -126,12 +130,16 @@ export function WhiteboardFullDemo() {
     let moved = false;
     const move = (ev: PointerEvent) => {
       moved = true;
-      const cur = screenToWorld(ev.clientX, ev.clientY, rect);
+      const cur = screenToWorld(ev.clientX, ev.clientY);
       const x = Math.min(start.x, cur.x);
       const y = Math.min(start.y, cur.y);
       const width = Math.abs(cur.x - start.x);
       const height = Math.abs(cur.y - start.y);
-      setDraftShape({ id, kind: "shape", shape, x, y, width, height });
+      // For line/arrow, capture which diagonal the user drew so the shape
+      // doesn't snap to whichever corner the bbox normalization picks.
+      const flipX = cur.x < start.x;
+      const flipY = cur.y < start.y;
+      setDraftShape({ id, kind: "shape", shape, x, y, width, height, flipX, flipY });
     };
     const up = () => {
       window.removeEventListener("pointermove", move);
@@ -212,6 +220,7 @@ export function WhiteboardFullDemo() {
 
       <div className="mt-3 grid grid-cols-[1fr_240px] gap-4">
         <div
+          ref={boardWrapRef}
           className="relative overflow-hidden rounded-xl border border-zinc-200 bg-[radial-gradient(circle_at_1px_1px,_#d4d4d8_1px,_transparent_0)] [background-size:20px_20px] dark:border-zinc-700 dark:bg-[radial-gradient(circle_at_1px_1px,_#3f3f46_1px,_transparent_0)]"
           style={{ height: 640 }}
         >

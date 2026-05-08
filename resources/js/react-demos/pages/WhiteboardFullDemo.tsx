@@ -16,7 +16,11 @@ import {
 import "@particle-academy/fancy-whiteboard/styles.css";
 import { Action, Badge, Card } from "@particle-academy/react-fancy";
 
-type Tool = "select" | "sticky" | "pen" | "rect" | "ellipse" | "connector";
+type ShapeTool = "rect" | "rounded-rect" | "ellipse" | "diamond" | "triangle" | "line" | "arrow";
+type Tool = "select" | "sticky" | "pen" | ShapeTool | "connector";
+
+const SHAPE_TOOLS: ShapeTool[] = ["rect", "rounded-rect", "ellipse", "diamond", "triangle", "line", "arrow"];
+const isShapeTool = (t: Tool): t is ShapeTool => (SHAPE_TOOLS as Tool[]).includes(t);
 
 const STICKY_COLORS = ["#fde68a", "#bbf7d0", "#bfdbfe", "#fbcfe8", "#fed7aa", "#e9d5ff"];
 
@@ -89,24 +93,66 @@ export function WhiteboardFullDemo() {
     return null;
   };
 
-  const handleBoardClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (tool === "select" || tool === "pen" || tool === "connector") return;
+  const [draftShape, setDraftShape] = useState<ShapeItem | null>(null);
+
+  const screenToWorld = (clientX: number, clientY: number, rect: DOMRect) => ({
+    x: (clientX - rect.left - viewport.x) / viewport.zoom,
+    y: (clientY - rect.top - viewport.y) / viewport.zoom,
+  });
+
+  const handleOverlayPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.button !== 0 || e.altKey) return;
     if (e.target !== e.currentTarget) return;
     const rect = e.currentTarget.getBoundingClientRect();
-    const wx = (e.clientX - rect.left - viewport.x) / viewport.zoom;
-    const wy = (e.clientY - rect.top - viewport.y) / viewport.zoom;
-    const id = `it_${Date.now().toString(36)}`;
+    const start = screenToWorld(e.clientX, e.clientY, rect);
+
     if (tool === "sticky") {
+      const id = `n_${Date.now().toString(36)}`;
       setNotes((all) => [
         ...all,
-        { id, kind: "sticky", x: wx - 90, y: wy - 70, width: 180, height: 140, text: "", color: STICKY_COLORS[colorIdx] },
+        { id, kind: "sticky", x: start.x - 90, y: start.y - 70, width: 180, height: 140, text: "", color: STICKY_COLORS[colorIdx] },
       ]);
-    } else if (tool === "rect" || tool === "ellipse") {
-      setShapes((all) => [
-        ...all,
-        { id, kind: "shape", shape: tool, x: wx - 80, y: wy - 40, width: 160, height: 80 },
-      ]);
+      return;
     }
+
+    if (!isShapeTool(tool)) return;
+
+    // Drag-to-size shape creation.
+    e.preventDefault();
+    const id = `s_${Date.now().toString(36)}`;
+    const shape = tool;
+    const target = e.currentTarget;
+    target.setPointerCapture(e.pointerId);
+    let moved = false;
+    const move = (ev: PointerEvent) => {
+      moved = true;
+      const cur = screenToWorld(ev.clientX, ev.clientY, rect);
+      const x = Math.min(start.x, cur.x);
+      const y = Math.min(start.y, cur.y);
+      const width = Math.abs(cur.x - start.x);
+      const height = Math.abs(cur.y - start.y);
+      setDraftShape({ id, kind: "shape", shape, x, y, width, height });
+    };
+    const up = () => {
+      window.removeEventListener("pointermove", move);
+      window.removeEventListener("pointerup", up);
+      if (!moved) {
+        // Click without drag → drop a default-sized shape centered on click.
+        const dropped: ShapeItem = { id, kind: "shape", shape, x: start.x - 80, y: start.y - 40, width: 160, height: 80 };
+        setShapes((all) => [...all, dropped]);
+        setDraftShape(null);
+      } else {
+        // Commit the dragged-out draft if it's big enough to see.
+        setDraftShape((draft) => {
+          if (draft && draft.width >= 6 && draft.height >= 6) {
+            setShapes((all) => [...all, draft]);
+          }
+          return null;
+        });
+      }
+    };
+    window.addEventListener("pointermove", move);
+    window.addEventListener("pointerup", up);
   };
 
   const handleSelect = (id: string) => {
@@ -174,7 +220,19 @@ export function WhiteboardFullDemo() {
             onViewportChange={setViewport}
             style={{ width: "100%", height: "100%" }}
           >
-            <div onClick={handleBoardClick} style={{ position: "absolute", inset: -10000, cursor: cursorForTool(tool) }} />
+            {/* Pointer overlay for sticky / shape tools. Click drops a default-size
+                item; drag sizes it out. Hidden for select/pen/connector so those
+                layers receive their own pointer events. */}
+            {(tool === "sticky" || isShapeTool(tool)) && (
+              <div
+                onPointerDown={handleOverlayPointerDown}
+                style={{ position: "absolute", inset: -10000, cursor: cursorForTool(tool) }}
+              />
+            )}
+
+            {draftShape && (
+              <Shape item={draftShape} className="fw-shape--draft" />
+            )}
 
             {edges.map((e) => {
               const a = itemCenter(e.fromId);
@@ -207,20 +265,26 @@ export function WhiteboardFullDemo() {
               />
             ))}
 
-            {tool === "pen" && (
-              <Drawing
-                strokes={strokes}
-                onStrokeEnd={(s) => setStrokes((all) => [...all, s])}
-                color="#0f172a"
-                size={2.5}
-                width={4000}
-                height={4000}
-                style={{ position: "absolute", left: -2000, top: -2000 }}
-              />
-            )}
-
             <CursorLayer cursors={cursors} />
           </Board>
+
+          {/* Pen layer is always rendered so strokes persist when switching
+              tools — only enabled for input when pen is active. */}
+          <Drawing
+            strokes={strokes}
+            enabled={tool === "pen"}
+            onStrokeEnd={(s) => setStrokes((all) => [...all, s])}
+            color="#0f172a"
+            size={2.5}
+            style={{
+              position: "absolute",
+              inset: 0,
+              width: "100%",
+              height: "100%",
+              cursor: tool === "pen" ? "crosshair" : "default",
+              pointerEvents: tool === "pen" ? "auto" : "none",
+            }}
+          />
         </div>
 
         <SidePanel
@@ -248,7 +312,8 @@ function cursorForTool(tool: Tool): string {
     case "select": return "default";
     case "pen": return "crosshair";
     case "connector": return "alias";
-    default: return "copy";
+    case "sticky": return "copy";
+    default: return "crosshair";
   }
 }
 
@@ -263,24 +328,32 @@ function Toolbar({
   colorIdx: number;
   setColorIdx: (i: number) => void;
 }) {
-  const Tool = ({ id, icon, label }: { id: Tool; icon: string; label: string }) => (
-    <Action
-      icon={icon}
-      active={tool === id}
-      onClick={() => setTool(id)}
-      title={label}
-    >
-      {label}
-    </Action>
-  );
+  const tools: Array<{ id: Tool; icon: string; label: string }> = [
+    { id: "select", icon: "mouse-pointer-2", label: "Select" },
+    { id: "sticky", icon: "sticky-note", label: "Sticky" },
+    { id: "pen", icon: "pencil", label: "Pen" },
+    { id: "rect", icon: "square", label: "Rect" },
+    { id: "rounded-rect", icon: "square-rounded-corner", label: "Rounded" },
+    { id: "ellipse", icon: "circle", label: "Ellipse" },
+    { id: "diamond", icon: "diamond", label: "Diamond" },
+    { id: "triangle", icon: "triangle", label: "Triangle" },
+    { id: "line", icon: "minus", label: "Line" },
+    { id: "arrow", icon: "arrow-right", label: "Arrow" },
+    { id: "connector", icon: "git-branch", label: "Connect" },
+  ];
   return (
     <div className="flex flex-wrap items-center gap-2 rounded-xl border border-zinc-200 bg-white p-2 dark:border-zinc-700 dark:bg-zinc-900">
-      <Tool id="select" icon="mouse-pointer-2" label="Select" />
-      <Tool id="sticky" icon="sticky-note" label="Sticky" />
-      <Tool id="pen" icon="pencil" label="Pen" />
-      <Tool id="rect" icon="square" label="Rect" />
-      <Tool id="ellipse" icon="circle" label="Ellipse" />
-      <Tool id="connector" icon="git-branch" label="Connect" />
+      {tools.map((t) => (
+        <Action
+          key={t.id}
+          icon={t.icon}
+          active={tool === t.id}
+          onClick={() => setTool(t.id)}
+          title={t.label}
+        >
+          {t.label}
+        </Action>
+      ))}
       <span className="mx-2 h-6 w-px bg-zinc-200 dark:bg-zinc-700" />
       <span className="text-xs text-zinc-500">Sticky color:</span>
       <div className="flex items-center gap-1">

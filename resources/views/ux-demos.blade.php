@@ -9,6 +9,26 @@
         Interactive demos for two component libraries — same design language, different frameworks.
     </p>
 
+    {{-- Featured: agentic Holy Sheet demo --}}
+    <a href="{{ route('ai-sheets') }}" class="mb-10 block rounded-xl border border-emerald-300 dark:border-emerald-700 bg-gradient-to-br from-emerald-50 to-white dark:from-emerald-950 dark:to-gray-900 p-6 transition hover:border-emerald-500 hover:shadow-md">
+        <div class="flex items-start justify-between gap-4">
+            <div>
+                <div class="flex items-center gap-2 mb-2">
+                    <h2 class="text-xl font-semibold text-gray-900 dark:text-white">AI Sheets</h2>
+                    <span class="inline-block rounded-full bg-emerald-100 dark:bg-emerald-900/60 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-emerald-700 dark:text-emerald-300">Agent</span>
+                    <span class="inline-block rounded-full bg-gray-100 dark:bg-gray-800 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-gray-600 dark:text-gray-400">Holy Sheet · Laravel AI SDK</span>
+                </div>
+                <p class="text-sm text-gray-600 dark:text-gray-300">
+                    Type a request in plain English — the agent generates a real .xlsx file with inferred column types, totals, and styling. Powered by Holy Sheet's tool-use surface (build / validate-and-repair / write / describe) running through the Laravel AI SDK.
+                </p>
+            </div>
+            <span class="shrink-0 inline-flex items-center gap-1 rounded-lg bg-emerald-600 px-3 py-2 text-sm font-medium text-white">
+                Try it
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+            </span>
+        </div>
+    </a>
+
     {{-- @particle-academy/react-fancy --}}
     <section class="mb-10">
         <div class="flex items-center gap-3 mb-4">
@@ -87,6 +107,9 @@
                     ['name' => 'Dynamic Carousel', 'slug' => 'dynamic-carousel', 'desc' => 'Add and remove slides dynamically at runtime', 'counterpart' => true],
                     // Kitchen Sink
                     ['name' => 'Kitchen Sink', 'slug' => 'kitchen-sink', 'desc' => 'All components on a single page', 'counterpart' => false],
+                    // Whiteboard (fancy-whiteboard)
+                    ['name' => 'Whiteboard', 'slug' => 'whiteboard', 'desc' => 'fancy-whiteboard primitives — Board, sticky notes, drawing, connectors, shapes, cursors', 'counterpart' => false],
+                    ['name' => 'Whiteboard — Full Demo', 'slug' => 'whiteboard-full', 'desc' => 'Design-sprint board: fancy-whiteboard + react-fancy toolbar, presence, JSON export', 'counterpart' => false],
                 ];
             @endphp
             @foreach($reactDemos as $demo)

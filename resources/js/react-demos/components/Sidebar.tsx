@@ -86,6 +86,8 @@ const patternLinks = [
   { to: "/app-sheet", label: "AppSheet" },
   { to: "/ai-canvas-chat", label: "AI Canvas Chat" },
   { to: "/tsrx-pilot", label: "TSRX Pilot" },
+  { to: "/whiteboard", label: "Whiteboard" },
+  { to: "/whiteboard-full", label: "Whiteboard — Full Demo" },
 ];
 
 const fancy3dPrimitivesLinks = [

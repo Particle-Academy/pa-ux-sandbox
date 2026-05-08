@@ -31,3 +31,6 @@
 [submodule "packages/holy-sheet"]
 	path = packages/holy-sheet
 	url = git@github.com:Particle-Academy/holy-sheet.git
+[submodule "packages/fancy-whiteboard"]
+	path = packages/fancy-whiteboard
+	url = git@github.com:Particle-Academy/fancy-whiteboard.git

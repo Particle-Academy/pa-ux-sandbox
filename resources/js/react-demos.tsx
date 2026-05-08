@@ -68,6 +68,8 @@ const CanvasStudioDemo = l(() => import("./react-demos/pages/CanvasStudioDemo"),
 const BabylonCityDemo = l(() => import("./react-demos/pages/BabylonCityDemo"), "BabylonCityDemo");
 const TsrxPilotDemo = l(() => import("./react-demos/pages/TsrxPilotDemo"), "TsrxPilotDemo");
 const ScreenStageDemo = l(() => import("./react-demos/pages/ScreenStageDemo"), "ScreenStageDemo");
+const WhiteboardDemo = l(() => import("./react-demos/pages/WhiteboardDemo"), "WhiteboardDemo");
+const WhiteboardFullDemo = l(() => import("./react-demos/pages/WhiteboardFullDemo"), "WhiteboardFullDemo");
 const Fancy3DHome = l(() => import("./react-demos/pages/Fancy3DHome"), "Fancy3DHome");
 const Fancy3DPrimitivesDemo = l(() => import("./react-demos/pages/Fancy3DPrimitivesDemo"), "Fancy3DPrimitivesDemo");
 const Fancy3DLayoutsDemo = l(() => import("./react-demos/pages/Fancy3DLayoutsDemo"), "Fancy3DLayoutsDemo");
@@ -223,6 +225,8 @@ if (root) {
               <Route path="babylon-city" element={<BabylonCityDemo />} />
               <Route path="tsrx-pilot" element={<TsrxPilotDemo />} />
               <Route path="screen-stage" element={<ScreenStageDemo />} />
+              <Route path="whiteboard" element={<WhiteboardDemo />} />
+              <Route path="whiteboard-full" element={<WhiteboardFullDemo />} />
               {/* fancy-3d package demos */}
               <Route path="3d" element={<Fancy3DHome />} />
               <Route path="3d-primitives" element={<Fancy3DPrimitivesDemo />} />

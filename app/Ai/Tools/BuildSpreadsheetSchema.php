@@ -23,8 +23,18 @@ class BuildSpreadsheetSchema implements Tool
 
     public function handle(Request $request): Stringable|string
     {
-        $rows = $request['rows'];
-        $headers = $request['headers'] ?? null;
+        $rows = $this->decodeJson($request['rows'] ?? null);
+        if (! is_array($rows)) {
+            return json_encode(['error' => 'rows must be a JSON-encoded array of arrays']);
+        }
+
+        $headers = null;
+        if (! empty($request['headers'])) {
+            $headers = is_array($request['headers'])
+                ? $request['headers']
+                : $this->decodeJson($request['headers']);
+        }
+
         $sheetName = $request['sheet_name'] ?? 'Sheet 1';
 
         $options = [];
@@ -37,8 +47,13 @@ class BuildSpreadsheetSchema implements Tool
         if (isset($request['frozen_rows'])) {
             $options['frozenRows'] = (int) $request['frozen_rows'];
         }
-        if (! empty($request['totals']) && is_array($request['totals'])) {
-            $options['totals'] = $request['totals'];
+        if (! empty($request['totals'])) {
+            $totals = is_array($request['totals'])
+                ? $request['totals']
+                : $this->decodeJson($request['totals']);
+            if (is_array($totals)) {
+                $options['totals'] = $totals;
+            }
         }
 
         $schema = HolySheet::fromArray($rows, $headers, $sheetName, $options);
@@ -49,14 +64,13 @@ class BuildSpreadsheetSchema implements Tool
     public function schema(JsonSchema $schema): array
     {
         return [
-            'rows' => $schema->array()
-                ->items($schema->array()->items($schema->any()))
-                ->description('Row data — array of arrays. Each inner array is one row in column order.')
+            'rows' => $schema->string()
+                ->description('Row data as a JSON-encoded array of arrays — e.g. `[["NA",4820000,0.124],["EU",3210000,0.081]]`. Each inner array is one row in column order. Numbers must be raw numbers, not strings.')
                 ->required(),
 
             'headers' => $schema->array()
                 ->items($schema->string())
-                ->description('Optional column headers. If omitted, the first row of `rows` is treated as the header row.'),
+                ->description('Column headers. If omitted, the first row of `rows` is treated as the header row.'),
 
             'sheet_name' => $schema->string()
                 ->description('Sheet name (≤31 chars, no /\\?*[]:). Defaults to "Sheet 1".'),
@@ -72,8 +86,20 @@ class BuildSpreadsheetSchema implements Tool
                 ->min(0)
                 ->description('Lock the first N rows on scroll. Use 1 to keep the header visible.'),
 
-            'totals' => $schema->object()
-                ->description('Optional totals row. Map of {ColumnHeader: aggregation}. Aggregations: sum | avg | count | min | max.'),
+            'totals' => $schema->string()
+                ->description('Optional totals row as JSON object — e.g. `{"Revenue":"sum","YoY":"avg"}`. Aggregations: sum | avg | count | min | max.'),
         ];
+    }
+
+    private function decodeJson(mixed $value): mixed
+    {
+        if (is_array($value)) {
+            return $value;
+        }
+        if (! is_string($value) || $value === '') {
+            return null;
+        }
+        $decoded = json_decode($value, true);
+        return is_array($decoded) ? $decoded : null;
     }
 }

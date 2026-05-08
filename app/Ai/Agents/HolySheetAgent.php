@@ -52,6 +52,20 @@ class HolySheetAgent implements Agent, HasTools
         5. Add `frozen_rows: 1` so the header stays visible.
         6. Add a `totals` object when it makes sense (numeric columns that
            sum or average meaningfully).
+        6a. **Formulas are supported** — write any cell as a string starting
+           with `=` and write_spreadsheet auto-promotes it to a real formula.
+           Examples: `"=C2*D2"`, `"=SUM(B2:B6)"`, `"=B7-B6"`,
+           `"=Detail!A2"`. Reference column letters (A, B, C…) and 1-based
+           rows; **row 1 is the header — your data starts at row 2**. For
+           totals you can either use the `totals` shortcut OR add an
+           explicit row with formula cells.
+        6b. **Formulas are linted before writing.** Every formula is
+           evaluated against the actual cell data. If any produce
+           `#VALUE!` / `#REF!` / `#DIV/0!` / `#NAME?` / `#CIRC!`, the
+           write tool returns the issues instead of writing the file. Fix
+           the formulas (the hint usually tells you exactly which row to
+           reference) and call write_spreadsheet again. Don't apologize —
+           just fix and retry.
         7. Pick a `theme` ("default" for most cases, "business" for formal
            reports, "minimal" for data-heavy tables, "plain" when explicitly
            requested).

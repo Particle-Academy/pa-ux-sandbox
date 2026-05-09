@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\User;
+use Illuminate\Support\Facades\Gate;
 use LaravelCatalog\Livewire\Admin\Products\Index;
 use LaravelCatalog\Models\Product;
 use LaravelCatalog\Models\Price;
@@ -11,8 +12,10 @@ use Tests\TestCase;
 uses(TestCase::class);
 
 beforeEach(function () {
-    // Enable UI for admin tests
     config(['catalog.enable_ui' => true]);
+    // The Index component requires the manageCatalog ability — host apps
+    // wire this up; tests authorize all users.
+    Gate::define('manageCatalog', fn ($user) => true);
 });
 
 it('can render the admin products index page', function () {

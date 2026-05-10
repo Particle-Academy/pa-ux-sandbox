@@ -40,6 +40,11 @@ export default defineConfig({
             '@particle-academy/fancy-screens': path.resolve(__dirname, 'packages/fancy-screens/src'),
             '@particle-academy/fancy-inertia': path.resolve(__dirname, 'packages/fancy-inertia/src'),
             '@particle-academy/fancy-whiteboard': path.resolve(__dirname, 'packages/fancy-whiteboard/src'),
+            '@particle-academy/agent-integrations/mcp': path.resolve(__dirname, 'packages/agent-integrations/src/mcp'),
+            '@particle-academy/agent-integrations/bridges/whiteboard': path.resolve(__dirname, 'packages/agent-integrations/src/bridges/whiteboard.ts'),
+            '@particle-academy/agent-integrations': path.resolve(__dirname, 'packages/agent-integrations/src'),
+            '@particle-academy/fancy-flow/runtime': path.resolve(__dirname, 'packages/fancy-flow/src/runtime'),
+            '@particle-academy/fancy-flow': path.resolve(__dirname, 'packages/fancy-flow/src'),
         },
     },
     build: {

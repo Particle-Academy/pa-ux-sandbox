@@ -34,3 +34,9 @@
 [submodule "packages/fancy-whiteboard"]
 	path = packages/fancy-whiteboard
 	url = git@github.com:Particle-Academy/fancy-whiteboard.git
+[submodule "packages/agent-integrations"]
+	path = packages/agent-integrations
+	url = git@github.com:Particle-Academy/agent-integrations.git
+[submodule "packages/fancy-flow"]
+	path = packages/fancy-flow
+	url = git@github.com:Particle-Academy/fancy-flow.git

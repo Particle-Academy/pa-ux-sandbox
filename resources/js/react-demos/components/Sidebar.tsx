@@ -88,6 +88,9 @@ const patternLinks = [
   { to: "/tsrx-pilot", label: "TSRX Pilot" },
   { to: "/whiteboard", label: "Whiteboard" },
   { to: "/whiteboard-full", label: "Whiteboard — Full Demo" },
+  { to: "/whiteboard-agent", label: "Whiteboard — You & Claude" },
+  { to: "/whiteboard-shared", label: "Whiteboard — Shared (MCP relay)" },
+  { to: "/workflow-agent", label: "Workflow — Agent Editor" },
 ];
 
 const fancy3dPrimitivesLinks = [

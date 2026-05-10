@@ -11,7 +11,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        // External MCP clients hit these routes with bearer tokens, not
+        // session cookies — exempt them from CSRF.
+        $middleware->validateCsrfTokens(except: [
+            'whiteboard-share/*',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

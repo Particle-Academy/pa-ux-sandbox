@@ -28,13 +28,14 @@
     "@tsrx/react": "^0.1.13",
     "@tsrx/vite-plugin-react": "^0.0.21",
     "@vitejs/plugin-react": "^6.0.1",
+    "@xyflow/react": "^12.10.2",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-router": "^7.13.1"
   },
   "peerDependencies": {
-    "@particle-academy/react-fancy": "^3.0.0",
     "@particle-academy/fancy-echarts": "^3.0.1",
+    "@particle-academy/react-fancy": "^3.0.0",
     "echarts": "^5.6.0",
     "echarts-gl": "^2.0.9"
   }

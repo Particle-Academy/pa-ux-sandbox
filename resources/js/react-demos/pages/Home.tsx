@@ -121,6 +121,9 @@ const reactFancySections: Section[] = [
       { name: "Stage + Screen", slug: "screen-stage", description: "fancy-3d Stage hosting interactive Screens — each surface is a live react-fancy tree" },
       { name: "Whiteboard", slug: "whiteboard", description: "fancy-whiteboard primitives — Board, sticky notes, drawing, connectors, shapes, cursors" },
       { name: "Whiteboard — Full Demo", slug: "whiteboard-full", description: "Design-sprint board: fancy-whiteboard + react-fancy toolbar, presence, JSON export" },
+      { name: "Whiteboard — You & Claude", slug: "whiteboard-agent", description: "Live agent collab: Claude drives the whiteboard via in-process MCP + agent-integrations bridge" },
+      { name: "Whiteboard — Shared (MCP relay)", slug: "whiteboard-shared", description: "Token-gated relay: any external MCP client can drive a live whiteboard via /whiteboard-share endpoints" },
+      { name: "Workflow — Agent Editor", slug: "workflow-agent", description: "fancy-flow editor + topological runner; agents add nodes, connect ports, and trigger runs via flow_* MCP tools" },
     ],
   },
   {

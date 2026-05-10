@@ -77,6 +77,22 @@ Route::get('/react-demos/{any?}', fn () => view('react-demos'))->where('any', '.
 
 // Holy Sheet AI agent demo — natural language → xlsx via Laravel AI SDK + Holy Sheet tools.
 Route::livewire('/ai-sheets', 'ai-sheets')->name('ai-sheets');
+Route::post('/ai-sheets/stream', \App\Http\Controllers\AiSheetStreamController::class)
+    ->name('ai-sheets.stream');
+
+// Shared whiteboard agent — proxies Anthropic messages so the browser
+// can drive an MCP-style tool-use loop against the local board state.
+Route::post('/whiteboard-agent/turn', \App\Http\Controllers\WhiteboardAgentController::class)
+    ->name('whiteboard-agent.turn');
+
+// Whiteboard share relay — token-gated SSE + POST broker that lets external
+// MCP clients reach a browser-side MicroMcpServer. See
+// app/Http/Controllers/WhiteboardShareController.php for the wire model.
+Route::post('/whiteboard-share/register', [\App\Http\Controllers\WhiteboardShareController::class, 'register']);
+Route::post('/whiteboard-share/{session}/unregister', [\App\Http\Controllers\WhiteboardShareController::class, 'unregister']);
+Route::post('/whiteboard-share/{session}/inbox', [\App\Http\Controllers\WhiteboardShareController::class, 'inbox']);
+Route::post('/whiteboard-share/{session}/outbox', [\App\Http\Controllers\WhiteboardShareController::class, 'outbox']);
+Route::get('/whiteboard-share/{session}/events', [\App\Http\Controllers\WhiteboardShareController::class, 'events']);
 
 // Published Catalog UI routes — opt-in via CATALOG_ENABLE_UI=true. The
 // admin gate is enforced both at the route level (can:admin) and inside

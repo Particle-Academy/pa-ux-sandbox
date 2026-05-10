@@ -110,6 +110,7 @@
                     // Whiteboard (fancy-whiteboard)
                     ['name' => 'Whiteboard', 'slug' => 'whiteboard', 'desc' => 'fancy-whiteboard primitives — Board, sticky notes, drawing, connectors, shapes, cursors', 'counterpart' => false],
                     ['name' => 'Whiteboard — Full Demo', 'slug' => 'whiteboard-full', 'desc' => 'Design-sprint board: fancy-whiteboard + react-fancy toolbar, presence, JSON export', 'counterpart' => false],
+                    ['name' => 'Whiteboard — You & Claude', 'slug' => 'whiteboard-agent', 'desc' => 'Live agent collab: Claude drives the whiteboard via in-process MCP + agent-integrations bridge', 'counterpart' => false],
                 ];
             @endphp
             @foreach($reactDemos as $demo)

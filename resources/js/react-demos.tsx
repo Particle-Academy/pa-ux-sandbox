@@ -70,6 +70,9 @@ const TsrxPilotDemo = l(() => import("./react-demos/pages/TsrxPilotDemo"), "Tsrx
 const ScreenStageDemo = l(() => import("./react-demos/pages/ScreenStageDemo"), "ScreenStageDemo");
 const WhiteboardDemo = l(() => import("./react-demos/pages/WhiteboardDemo"), "WhiteboardDemo");
 const WhiteboardFullDemo = l(() => import("./react-demos/pages/WhiteboardFullDemo"), "WhiteboardFullDemo");
+const WhiteboardAgentDemo = l(() => import("./react-demos/pages/WhiteboardAgentDemo"), "WhiteboardAgentDemo");
+const WhiteboardSharedDemo = l(() => import("./react-demos/pages/WhiteboardSharedDemo"), "WhiteboardSharedDemo");
+const WorkflowAgentDemo = l(() => import("./react-demos/pages/WorkflowAgentDemo"), "WorkflowAgentDemo");
 const Fancy3DHome = l(() => import("./react-demos/pages/Fancy3DHome"), "Fancy3DHome");
 const Fancy3DPrimitivesDemo = l(() => import("./react-demos/pages/Fancy3DPrimitivesDemo"), "Fancy3DPrimitivesDemo");
 const Fancy3DLayoutsDemo = l(() => import("./react-demos/pages/Fancy3DLayoutsDemo"), "Fancy3DLayoutsDemo");
@@ -227,6 +230,9 @@ if (root) {
               <Route path="screen-stage" element={<ScreenStageDemo />} />
               <Route path="whiteboard" element={<WhiteboardDemo />} />
               <Route path="whiteboard-full" element={<WhiteboardFullDemo />} />
+              <Route path="whiteboard-agent" element={<WhiteboardAgentDemo />} />
+              <Route path="whiteboard-shared" element={<WhiteboardSharedDemo />} />
+              <Route path="workflow-agent" element={<WorkflowAgentDemo />} />
               {/* fancy-3d package demos */}
               <Route path="3d" element={<Fancy3DHome />} />
               <Route path="3d-primitives" element={<Fancy3DPrimitivesDemo />} />

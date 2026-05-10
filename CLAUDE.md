@@ -86,6 +86,44 @@ Live demo of holy-sheet's tool-use surface driven by the Laravel AI SDK (`larave
 
 Generated xlsx artifacts land in `storage/app/public/ai-sheets/` and are served via the public disk (`php artisan storage:link` is required, run during setup). Requires `ANTHROPIC_API_KEY` in `.env`. The default AI provider is configured via `AI_DEFAULT_PROVIDER` (defaults to `anthropic`).
 
+## Building agent-driveable surfaces (Human+ UX)
+
+The Fancy UI strategic goal is **complete app surfaces where agents drive the UI and humans ride shotgun, trading control fluidly**. Two packages are the top-level entry points:
+
+- **`@particle-academy/agent-integrations`** — MCP server, presence layer, share relay, and per-package bridges (`registerWhiteboardBridge`, `registerFlowBridge`, `registerFormBridge`, `registerSheetsBridge`, `registerCodeBridge`, `registerChartsBridge`, `registerSceneBridge`).
+- **`@particle-academy/fancy-screens`** — `<Screen>` containers + global `<ScreenSystem>` + ports + `ScreenMeta.agentActivity` field for cross-screen presence.
+
+**Pattern for adding a new surface to the Human+ UX vocabulary:**
+
+1. **Make the underlying component controlled** (`value` + `onChange` props). Most fancy-* packages already are.
+2. **Write a bridge** in `agent-integrations/src/bridges/<surface>.ts` following the existing pattern:
+   - `XBridgeAdapter` type — host-provided getters + setters for the surface's state
+   - `registerXBridge(server, { adapter, agent })` — registers MCP tools
+   - Inside, use `wrapToolWithActivity` so every mutation broadcasts an `AgentActivity` event
+   - Read tools (no mutation): pass `false`/no resolver to `reg`. Mutation tools: pass a `resolveTarget` so the presence layer knows which element was touched.
+   - Push undo entries via `pushUndoEntry(agentId, { ... })` after the mutation lands. Reverse-action closures should call the inverse bridge tool.
+   - Call `ensureUndoToolsRegistered(server)` at the top of `register*Bridge` so `agent_undo` / `agent_redo` / `agent_history` are installed.
+3. **Wire screen presence** — set `screenId` on the bridge adapter; mount `<ScreensActivityBridge system={system} />` once near the root so events flow into `ScreenMeta.agentActivity` and the screen's `<Screen>` div picks up the `.agent-focused-element` class automatically.
+4. **Register bridge tools' deep import** in `agent-integrations/src/index.ts` and `tsup.config.ts` (one new entry per bridge file).
+5. **Add a sandbox demo page** under `resources/js/react-demos/pages/` mounting the surface + bridge + share controls. Reuse `WhiteboardSharedDemo.tsx` / `WorkflowAgentDemo.tsx` / `HumanPlusDemo.tsx` as templates.
+
+**Existing surfaces / tool prefixes:**
+
+| Bridge | Tool prefix | Surface |
+|---|---|---|
+| `whiteboard` | `whiteboard_*` | fancy-whiteboard `<Board>` + items |
+| `flow` | `flow_*` | fancy-flow `<FlowEditor>` |
+| `form` | `form_*` | any controlled react-fancy form (use `<BridgedForm>`) |
+| `sheets` | `sheet_*` | fancy-sheets `<SheetWorkbook>` |
+| `code` | `code_*` | fancy-code `<CodeEditor>` |
+| `charts` | `chart_*` | fancy-echarts `<EChart>` |
+| `scene` | `scene_*` | fancy-3d Scene primitives |
+| (cross-cutting) | `agent_undo` / `agent_redo` / `agent_history` | per-agent undo stack |
+
+**Relay infrastructure** lives at `app/Http/Controllers/WhiteboardShareController.php` (the name is historical — it carries any MCP frames now, not just whiteboard). Routes in `routes/web.php` under `/whiteboard-share/*`. CSRF-exempt for external clients via `bootstrap/app.php`.
+
+**Demos:** `/react-demos/whiteboard-shared` (whiteboard only), `/react-demos/workflow-agent` (fancy-flow), `/react-demos/human-plus` (full Human+ UX with all bridges).
+
 ## Conventions
 
 - **PHP**: Always use curly braces for control structures. Use constructor property promotion. Explicit return types and type hints on all methods. PHPDoc blocks over inline comments.

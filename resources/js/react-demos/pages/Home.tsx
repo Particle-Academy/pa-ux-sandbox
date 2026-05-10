@@ -124,6 +124,7 @@ const reactFancySections: Section[] = [
       { name: "Whiteboard — You & Claude", slug: "whiteboard-agent", description: "Live agent collab: Claude drives the whiteboard via in-process MCP + agent-integrations bridge" },
       { name: "Whiteboard — Shared (MCP relay)", slug: "whiteboard-shared", description: "Token-gated relay: any external MCP client can drive a live whiteboard via /whiteboard-share endpoints" },
       { name: "Workflow — Agent Editor", slug: "workflow-agent", description: "fancy-flow editor + topological runner; agents add nodes, connect ports, and trigger runs via flow_* MCP tools" },
+      { name: "Human+ UX (full surface)", slug: "human-plus", description: "Whiteboard + form + sheet + chart on one screen — every surface bridged, presence indicators across all of them" },
     ],
   },
   {

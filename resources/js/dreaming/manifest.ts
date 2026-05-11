@@ -54,6 +54,14 @@ export const DREAMS: Dream[] = [
     dreamedAt: "2026-05-11",
   },
   {
+    slug: "agent-roster-dock",
+    title: "Agent Roster Dock",
+    blurb:
+      "A persistent edge dock listing every active agent with live status (thinking, working on X, idle, blocked) — click to summon, mute, pause, or hand off the baton.",
+    pkg: "agent-integrations",
+    dreamedAt: "2026-05-11",
+  },
+  {
     slug: "veto-ribbon",
     title: "Veto Ribbon",
     blurb:

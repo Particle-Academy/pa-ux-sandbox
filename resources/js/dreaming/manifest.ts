@@ -182,6 +182,14 @@ export const DREAMS: Dream[] = [
     dreamedAt: "2026-05-11",
   },
   {
+    slug: "annotated-field",
+    title: "AnnotatedField",
+    blurb:
+      "Wraps any form input with a margin annotation slot that holds a threaded conversation pinned to the field — agents drop 'set X because Y' notes, humans reply, resolve, or convert a note into the next value.",
+    pkg: "react-fancy",
+    dreamedAt: "2026-05-11",
+  },
+  {
     slug: "veto-ribbon",
     title: "Veto Ribbon",
     blurb:

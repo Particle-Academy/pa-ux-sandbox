@@ -62,6 +62,14 @@ export const DREAMS: Dream[] = [
     dreamedAt: "2026-05-11",
   },
   {
+    slug: "briefing-card",
+    title: "Briefing Card",
+    blurb:
+      "Before a multi-step plan executes, the agent posts a card listing every step — the human can ack the whole plan, edit individual steps, or reject, then watch each step land in turn.",
+    pkg: "agent-integrations",
+    dreamedAt: "2026-05-11",
+  },
+  {
     slug: "veto-ribbon",
     title: "Veto Ribbon",
     blurb:

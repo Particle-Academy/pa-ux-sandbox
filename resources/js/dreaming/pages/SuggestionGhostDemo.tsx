@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Select, Slider } from "@particle-academy/react-fancy";
 
 /**
  * SuggestionGhost — react-fancy primitive for inline AI completion.
@@ -46,34 +47,27 @@ export function SuggestionGhostDemo() {
         </p>
       </header>
 
-      <section className="flex flex-wrap items-center gap-3 rounded-lg border border-zinc-200 bg-white p-3 dark:border-zinc-800 dark:bg-zinc-900">
-        <label className="text-xs">
-          <span className="mr-1 text-zinc-500">Predictor</span>
-          <select
-            value={predictorKey}
-            onChange={(e) => setPredictorKey(e.target.value as keyof typeof PREDICTORS)}
-            className="rounded border border-zinc-300 bg-transparent px-1.5 py-0.5 text-xs dark:border-zinc-700"
-          >
-            <option value="notes">meeting notes</option>
-            <option value="email">email reply</option>
-            <option value="commit">git commit</option>
-          </select>
-        </label>
-        <label className="text-xs">
-          <span className="mr-1 text-zinc-500">Debounce</span>
-          <input
-            type="range"
-            min={0}
-            max={500}
-            step={25}
-            value={debounceMs}
-            onChange={(e) => setDebounceMs(parseInt(e.target.value, 10))}
-            className="align-middle accent-violet-600"
-          />
-          <span className="ml-1 font-mono text-[11px] text-zinc-500">
-            {debounceMs}ms
-          </span>
-        </label>
+      <section className="grid grid-cols-1 gap-4 rounded-lg border border-zinc-200 bg-white p-4 sm:grid-cols-2 dark:border-zinc-800 dark:bg-zinc-900">
+        <Select
+          label="Predictor"
+          list={[
+            { value: "notes", label: "meeting notes" },
+            { value: "email", label: "email reply" },
+            { value: "commit", label: "git commit" },
+          ]}
+          value={predictorKey}
+          onValueChange={(v) => setPredictorKey(v as keyof typeof PREDICTORS)}
+        />
+        <Slider
+          label="Debounce"
+          min={0}
+          max={500}
+          step={25}
+          value={debounceMs}
+          onValueChange={(v) => setDebounceMs(typeof v === "number" ? v : v[0])}
+          showValue
+          suffix="ms"
+        />
       </section>
 
       <section className="rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">

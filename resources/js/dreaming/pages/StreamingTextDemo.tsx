@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Select, Slider } from "@particle-academy/react-fancy";
 
 /**
  * StreamingText — react-fancy primitive for rendering text that
@@ -67,59 +68,54 @@ export function StreamingTextDemo() {
         </p>
       </header>
 
-      <section className="flex flex-wrap items-center gap-3 rounded-lg border border-zinc-200 bg-white p-3 dark:border-zinc-800 dark:bg-zinc-900">
-        <label className="text-xs">
-          <span className="mr-1 text-zinc-500">Mode</span>
-          <select
+      <section className="rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <Select
+            label="Mode"
+            list={[
+              { value: "typewriter", label: "typewriter" },
+              { value: "chunked", label: "chunked" },
+              { value: "word-fade", label: "word-fade" },
+              { value: "instant", label: "instant" },
+            ]}
             value={mode}
-            onChange={(e) => {
-              setMode(e.target.value as Mode);
+            onValueChange={(v) => {
+              setMode(v as Mode);
               setToken((t) => t + 1);
             }}
-            className="rounded border border-zinc-300 bg-transparent px-1.5 py-0.5 text-xs dark:border-zinc-700"
-          >
-            <option value="typewriter">typewriter</option>
-            <option value="chunked">chunked</option>
-            <option value="word-fade">word-fade</option>
-            <option value="instant">instant</option>
-          </select>
-        </label>
-        <label className="text-xs">
-          <span className="mr-1 text-zinc-500">Speed</span>
-          <input
-            type="range"
+          />
+          <Slider
+            label="Speed"
             min={10}
             max={200}
             step={5}
             value={cps}
-            onChange={(e) => setCps(parseInt(e.target.value, 10))}
-            className="align-middle accent-violet-600"
+            onValueChange={(v) => setCps(typeof v === "number" ? v : v[0])}
+            showValue
+            suffix=" cps"
           />
-          <span className="ml-1 font-mono text-[11px] text-zinc-500">
-            {cps} cps
-          </span>
-        </label>
-        <label className="text-xs">
-          <span className="mr-1 text-zinc-500">Sample</span>
-          <select
+          <Select
+            label="Sample"
+            list={[
+              { value: "brief", label: "brief (citations)" },
+              { value: "code", label: "code (no citations)" },
+              { value: "long", label: "long (one citation)" },
+            ]}
             value={sampleKey}
-            onChange={(e) => {
-              setSampleKey(e.target.value as keyof typeof SAMPLES);
+            onValueChange={(v) => {
+              setSampleKey(v as keyof typeof SAMPLES);
               setToken((t) => t + 1);
             }}
-            className="rounded border border-zinc-300 bg-transparent px-1.5 py-0.5 text-xs dark:border-zinc-700"
+          />
+        </div>
+        <div className="mt-3 flex justify-end">
+          <button
+            onClick={() => setToken((t) => t + 1)}
+            className="rounded-md bg-violet-600 px-2.5 py-1 text-xs font-medium text-white hover:bg-violet-700"
           >
-            <option value="brief">brief (citations)</option>
-            <option value="code">code (no citations)</option>
-            <option value="long">long (one citation)</option>
-          </select>
-        </label>
-        <button
-          onClick={() => setToken((t) => t + 1)}
-          className="ml-auto rounded-md bg-violet-600 px-2.5 py-1 text-xs font-medium text-white hover:bg-violet-700"
-        >
-          replay
-        </button>
+            replay
+          </button>
+        </div>
       </section>
 
       <section className="rounded-lg border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-900">

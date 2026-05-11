@@ -30,6 +30,14 @@ export const DREAMS: Dream[] = [
     dreamedAt: "2026-05-11",
   },
   {
+    slug: "intent-trail",
+    title: "Intent Trail",
+    blurb:
+      "A fading cross-surface breadcrumb of agent activity — each tool call drops a colored dot on the surface it touched, hover to inspect, watch the shape of where the agent has been.",
+    pkg: "agent-integrations",
+    dreamedAt: "2026-05-11",
+  },
+  {
     slug: "veto-ribbon",
     title: "Veto Ribbon",
     blurb:

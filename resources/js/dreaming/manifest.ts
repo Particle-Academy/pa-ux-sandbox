@@ -142,6 +142,14 @@ export const DREAMS: Dream[] = [
     dreamedAt: "2026-05-11",
   },
   {
+    slug: "evidence-pane",
+    title: "EvidencePane",
+    blurb:
+      "Collapsible drawer docked below an AI answer listing every retrieved snippet, citation, and tool call that produced it — click a snippet to highlight its referencing span in the answer.",
+    pkg: "react-fancy",
+    dreamedAt: "2026-05-11",
+  },
+  {
     slug: "veto-ribbon",
     title: "Veto Ribbon",
     blurb:

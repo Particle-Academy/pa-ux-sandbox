@@ -46,6 +46,14 @@ export const DREAMS: Dream[] = [
     dreamedAt: "2026-05-11",
   },
   {
+    slug: "margin-chat",
+    title: "Margin Chat",
+    blurb:
+      "A slim chat thread docked beside any screen — messages can @-reference elements on that surface, hover to highlight, click to scroll, so conversation stays anchored to the work.",
+    pkg: "agent-integrations",
+    dreamedAt: "2026-05-11",
+  },
+  {
     slug: "veto-ribbon",
     title: "Veto Ribbon",
     blurb:

@@ -20,4 +20,13 @@ export type Dream = {
   dreamedAt?: string;
 };
 
-export const DREAMS: Dream[] = [];
+export const DREAMS: Dream[] = [
+  {
+    slug: "control-baton",
+    title: "Control Baton",
+    blurb:
+      "A passable write-lock pill: humans and agents request, hold, grant, or yank exclusive control of a surface, with auto-pass on activity and a transfer timeline.",
+    pkg: "agent-integrations",
+    dreamedAt: "2026-05-11",
+  },
+];

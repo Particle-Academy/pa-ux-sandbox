@@ -190,6 +190,14 @@ export const DREAMS: Dream[] = [
     dreamedAt: "2026-05-11",
   },
   {
+    slug: "beadcrumb",
+    title: "Beadcrumb",
+    blurb:
+      "Horizontal scrollable session history — every step is a labeled bead with a miniature thumbnail and timestamp; click a bead to rewind, branch off into a side trail, or compare two beads.",
+    pkg: "react-fancy",
+    dreamedAt: "2026-05-11",
+  },
+  {
     slug: "veto-ribbon",
     title: "Veto Ribbon",
     blurb:

@@ -134,6 +134,14 @@ export const DREAMS: Dream[] = [
     dreamedAt: "2026-05-11",
   },
   {
+    slug: "tracked-textarea",
+    title: "TrackedTextarea",
+    blurb:
+      "A textarea that renders multi-author edits as inline insertions and strike-through deletions colored by author, with per-change accept/reject, an author legend, and a clean export of the resolved text.",
+    pkg: "react-fancy",
+    dreamedAt: "2026-05-11",
+  },
+  {
     slug: "veto-ribbon",
     title: "Veto Ribbon",
     blurb:

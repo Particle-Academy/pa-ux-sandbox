@@ -166,6 +166,14 @@ export const DREAMS: Dream[] = [
     dreamedAt: "2026-05-11",
   },
   {
+    slug: "smart-list",
+    title: "SmartList",
+    blurb:
+      "A list of AI-generated items where every row exposes hover-revealed regenerate / explain / edit / pin / drop affordances, plus a sweep regenerate for the whole list and a pinned-items pin board.",
+    pkg: "react-fancy",
+    dreamedAt: "2026-05-11",
+  },
+  {
     slug: "veto-ribbon",
     title: "Veto Ribbon",
     blurb:

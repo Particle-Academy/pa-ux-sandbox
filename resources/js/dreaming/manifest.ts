@@ -38,6 +38,14 @@ export const DREAMS: Dream[] = [
     dreamedAt: "2026-05-11",
   },
   {
+    slug: "time-scrubber",
+    title: "Time Scrubber",
+    blurb:
+      "A scrubbable timeline that rewinds a surface's state to any prior moment — see what the agent did, branch off, or fork a new screen from a past frame.",
+    pkg: "fancy-screens",
+    dreamedAt: "2026-05-11",
+  },
+  {
     slug: "veto-ribbon",
     title: "Veto Ribbon",
     blurb:

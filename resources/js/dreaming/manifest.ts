@@ -158,6 +158,14 @@ export const DREAMS: Dream[] = [
     dreamedAt: "2026-05-11",
   },
   {
+    slug: "whats-new",
+    title: "WhatsNew",
+    blurb:
+      "A while-you-were-away tray that catalogs every agent-introduced change since the user's last visit, grouped by surface, with jump-to and dismiss-all — the inbox for asynchronous AI work.",
+    pkg: "react-fancy",
+    dreamedAt: "2026-05-11",
+  },
+  {
     slug: "veto-ribbon",
     title: "Veto Ribbon",
     blurb:

@@ -118,6 +118,14 @@ export const DREAMS: Dream[] = [
     dreamedAt: "2026-05-11",
   },
   {
+    slug: "prompt-input",
+    title: "PromptInput",
+    blurb:
+      "Multi-line prompt field with /command autocomplete, @-mention picker, attachment chips, submit-on-⌘Enter, and a token-budget meter — the chat composer every AI app rebuilds from scratch.",
+    pkg: "react-fancy",
+    dreamedAt: "2026-05-11",
+  },
+  {
     slug: "veto-ribbon",
     title: "Veto Ribbon",
     blurb:

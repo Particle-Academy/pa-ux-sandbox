@@ -13,6 +13,7 @@ export default defineConfig({
                 'resources/js/app.js',
                 'resources/css/react-demos.css',
                 'resources/js/react-demos.tsx',
+                'resources/js/dreaming.tsx',
             ],
             refresh: true,
         }),

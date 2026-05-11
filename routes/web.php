@@ -75,6 +75,9 @@ Route::prefix('ux-demos')->name('ux-demos.')->group(function () {
 // React demos (SPA catch-all)
 Route::get('/react-demos/{any?}', fn () => view('react-demos'))->where('any', '.*')->name('react-demos');
 
+// Dreaming — agent playground + speculative components on the `dreaming` branch.
+Route::get('/dreaming/{any?}', fn () => view('dreaming'))->where('any', '.*')->name('dreaming');
+
 // Holy Sheet AI agent demo — natural language → xlsx via Laravel AI SDK + Holy Sheet tools.
 Route::livewire('/ai-sheets', 'ai-sheets')->name('ai-sheets');
 Route::post('/ai-sheets/stream', \App\Http\Controllers\AiSheetStreamController::class)

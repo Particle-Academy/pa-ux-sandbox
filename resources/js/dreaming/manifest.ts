@@ -174,6 +174,14 @@ export const DREAMS: Dream[] = [
     dreamedAt: "2026-05-11",
   },
   {
+    slug: "mood-meter",
+    title: "MoodMeter",
+    blurb:
+      "A 2D value+confidence input on a single pad — x is the value, y is how sure you are, the halo radius shrinks as confidence rises; perfect for AI-suggested numeric settings where uncertainty matters.",
+    pkg: "react-fancy",
+    dreamedAt: "2026-05-11",
+  },
+  {
     slug: "veto-ribbon",
     title: "Veto Ribbon",
     blurb:

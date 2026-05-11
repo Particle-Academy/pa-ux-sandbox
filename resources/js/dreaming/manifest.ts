@@ -102,6 +102,14 @@ export const DREAMS: Dream[] = [
     dreamedAt: "2026-05-11",
   },
   {
+    slug: "reason-tag",
+    title: "ReasonTag",
+    blurb:
+      "Wrap any value with a small ? affordance — on hover or click reveals the source, the agent's reasoning, a confidence band, and citations, so explainability is one keystroke away.",
+    pkg: "react-fancy",
+    dreamedAt: "2026-05-11",
+  },
+  {
     slug: "veto-ribbon",
     title: "Veto Ribbon",
     blurb:

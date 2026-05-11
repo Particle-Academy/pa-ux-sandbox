@@ -198,6 +198,14 @@ export const DREAMS: Dream[] = [
     dreamedAt: "2026-05-11",
   },
   {
+    slug: "hot-zone",
+    title: "HotZone",
+    blurb:
+      "Wraps any element so it pulses once when its content changes — a self-contained 'look here' effect tuned by tone (info/change/risky), intensity, and decay; designed to fade quietly after one breath.",
+    pkg: "react-fancy",
+    dreamedAt: "2026-05-11",
+  },
+  {
     slug: "veto-ribbon",
     title: "Veto Ribbon",
     blurb:

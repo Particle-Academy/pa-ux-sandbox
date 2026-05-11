@@ -110,6 +110,14 @@ export const DREAMS: Dream[] = [
     dreamedAt: "2026-05-11",
   },
   {
+    slug: "draft-stack",
+    title: "DraftStack",
+    blurb:
+      "Swipeable stack of competing AI-generated drafts with a word-level diff between adjacent drafts, side-by-side compare mode, and a one-click accept that promotes a draft to the live field.",
+    pkg: "react-fancy",
+    dreamedAt: "2026-05-11",
+  },
+  {
     slug: "veto-ribbon",
     title: "Veto Ribbon",
     blurb:

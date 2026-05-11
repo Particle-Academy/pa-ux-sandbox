@@ -78,6 +78,14 @@ export const DREAMS: Dream[] = [
     dreamedAt: "2026-05-11",
   },
   {
+    slug: "surface-ghost",
+    title: "Surface Ghost",
+    blurb:
+      "Translucent in-place preview of an agent's pending writes overlaid on the surface — hover to see who/why, accept individual ghosts, or sweep-accept everything.",
+    pkg: "agent-integrations",
+    dreamedAt: "2026-05-11",
+  },
+  {
     slug: "veto-ribbon",
     title: "Veto Ribbon",
     blurb:

@@ -29,4 +29,12 @@ export const DREAMS: Dream[] = [
     pkg: "agent-integrations",
     dreamedAt: "2026-05-11",
   },
+  {
+    slug: "veto-ribbon",
+    title: "Veto Ribbon",
+    blurb:
+      "A thin ribbon surfaces a pending agent action with a countdown so humans can approve early, edit the payload, or veto — trust-but-verify without modal interruptions.",
+    pkg: "agent-integrations",
+    dreamedAt: "2026-05-11",
+  },
 ];

@@ -86,6 +86,14 @@ export const DREAMS: Dream[] = [
     dreamedAt: "2026-05-11",
   },
   {
+    slug: "streaming-text",
+    title: "StreamingText",
+    blurb:
+      "A primitive that renders streamed-in agent output with typewriter/chunked-reveal/word-fade variants, inline citations, pause/skip controls, and a finished signal.",
+    pkg: "react-fancy",
+    dreamedAt: "2026-05-11",
+  },
+  {
     slug: "veto-ribbon",
     title: "Veto Ribbon",
     blurb:

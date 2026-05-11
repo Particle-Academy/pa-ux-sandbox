@@ -94,6 +94,14 @@ export const DREAMS: Dream[] = [
     dreamedAt: "2026-05-11",
   },
   {
+    slug: "suggestion-ghost",
+    title: "SuggestionGhost",
+    blurb:
+      "An input with inline grey ghost-text completion past the caret — Tab to accept, Cmd+→ to accept one word, Esc to dismiss; debounced predictor with manual override.",
+    pkg: "react-fancy",
+    dreamedAt: "2026-05-11",
+  },
+  {
     slug: "veto-ribbon",
     title: "Veto Ribbon",
     blurb:

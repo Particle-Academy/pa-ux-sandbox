@@ -150,6 +150,14 @@ export const DREAMS: Dream[] = [
     dreamedAt: "2026-05-11",
   },
   {
+    slug: "progress-beam",
+    title: "ProgressBeam",
+    blurb:
+      "Slim ambient progress bar pinned to a container's top edge that segments by parallel background jobs — each colored slice carries one agent's task, hover for detail, click to expand the roster.",
+    pkg: "react-fancy",
+    dreamedAt: "2026-05-11",
+  },
+  {
     slug: "veto-ribbon",
     title: "Veto Ribbon",
     blurb:

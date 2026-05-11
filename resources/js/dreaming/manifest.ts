@@ -126,6 +126,14 @@ export const DREAMS: Dream[] = [
     dreamedAt: "2026-05-11",
   },
   {
+    slug: "magic-wand",
+    title: "MagicWand",
+    blurb:
+      "Selection-anchored floating toolbar that pops over highlighted text with AI-flavored quick actions (rephrase, shorten, expand, explain, translate) — each invokes a host callback with the selection.",
+    pkg: "react-fancy",
+    dreamedAt: "2026-05-11",
+  },
+  {
     slug: "veto-ribbon",
     title: "Veto Ribbon",
     blurb:

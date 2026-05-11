@@ -70,6 +70,14 @@ export const DREAMS: Dream[] = [
     dreamedAt: "2026-05-11",
   },
   {
+    slug: "pulse-beacon",
+    title: "Pulse Beacon",
+    blurb:
+      "Directional attention pulse: when an agent needs the human to look at something off-focus or off-screen, a ripple travels from the element toward the cursor with an inline reason chip.",
+    pkg: "agent-integrations",
+    dreamedAt: "2026-05-11",
+  },
+  {
     slug: "veto-ribbon",
     title: "Veto Ribbon",
     blurb:

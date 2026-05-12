@@ -18,6 +18,15 @@ export type Dream = {
   pkg?: string;
   /** ISO date the dream was added. */
   dreamedAt?: string;
+  /**
+   * Marked ACCEPTED once the dream has been promoted into its target
+   * package. Acceptance moves the implementation into `packages/<pkg>/`
+   * and adds a real sandbox demo under `react-demos/pages/`. The
+   * dreaming page stays so the lineage is visible.
+   */
+  accepted?: boolean;
+  /** ISO date the dream was accepted into production. */
+  acceptedAt?: string;
 };
 
 export const DREAMS: Dream[] = [
@@ -108,6 +117,8 @@ export const DREAMS: Dream[] = [
       "Wrap any value with a small ? affordance — on hover or click reveals the source, the agent's reasoning, a confidence band, and citations, so explainability is one keystroke away.",
     pkg: "react-fancy",
     dreamedAt: "2026-05-11",
+    accepted: true,
+    acceptedAt: "2026-05-12",
   },
   {
     slug: "draft-stack",
@@ -124,6 +135,8 @@ export const DREAMS: Dream[] = [
       "Multi-line prompt field with /command autocomplete, @-mention picker, attachment chips, submit-on-⌘Enter, and a token-budget meter — the chat composer every AI app rebuilds from scratch.",
     pkg: "react-fancy",
     dreamedAt: "2026-05-11",
+    accepted: true,
+    acceptedAt: "2026-05-12",
   },
   {
     slug: "magic-wand",
@@ -132,6 +145,8 @@ export const DREAMS: Dream[] = [
       "Selection-anchored floating toolbar that pops over highlighted text with AI-flavored quick actions (rephrase, shorten, expand, explain, translate) — each invokes a host callback with the selection.",
     pkg: "react-fancy",
     dreamedAt: "2026-05-11",
+    accepted: true,
+    acceptedAt: "2026-05-12",
   },
   {
     slug: "tracked-textarea",
@@ -180,6 +195,8 @@ export const DREAMS: Dream[] = [
       "A 2D value+confidence input on a single pad — x is the value, y is how sure you are, the halo radius shrinks as confidence rises; perfect for AI-suggested numeric settings where uncertainty matters.",
     pkg: "react-fancy",
     dreamedAt: "2026-05-11",
+    accepted: true,
+    acceptedAt: "2026-05-12",
   },
   {
     slug: "annotated-field",

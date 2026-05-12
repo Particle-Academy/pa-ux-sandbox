@@ -121,6 +121,13 @@ const fancyPackageLinks = [
   { to: "/spreadsheet", label: "Spreadsheet" },
 ];
 
+const humanPlusLinks = [
+  { to: "/reason-tag", label: "ReasonTag" },
+  { to: "/mood-meter", label: "MoodMeter" },
+  { to: "/prompt-input", label: "PromptInput" },
+  { to: "/magic-wand", label: "MagicWand" },
+];
+
 const echartsDiagramLinks = [
   { to: "/echarts-data-diagram", label: "Data Diagram" },
   { to: "/echarts-flowchart", label: "Flowchart" },
@@ -230,6 +237,9 @@ function ReactFancyNav() {
 
       <SectionHeader label="Fancy Packages" />
       <LinkGroup links={fancyPackageLinks} />
+
+      <SectionHeader label="Human+ Primitives" />
+      <LinkGroup links={humanPlusLinks} />
     </>
   );
 }

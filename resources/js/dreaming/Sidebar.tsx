@@ -18,6 +18,19 @@ export function DreamingSidebar() {
         <SidebarLink to="lobby" label="Component Lobby" />
       </nav>
 
+      {DREAMS.some((d) => d.accepted) && (
+        <>
+          <div className="mt-5 px-2 text-[10px] font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+            Accepted
+          </div>
+          <nav className="mt-1 space-y-0.5">
+            {DREAMS.filter((d) => d.accepted).map((d) => (
+              <SidebarLink key={d.slug} to={d.slug} label={d.title} pkg={d.pkg} accepted />
+            ))}
+          </nav>
+        </>
+      )}
+
       <div className="mt-5 px-2 text-[10px] font-semibold uppercase tracking-wider text-zinc-400">
         Dreamt up
       </div>
@@ -27,7 +40,7 @@ export function DreamingSidebar() {
             Nothing dreamt yet — the loop will fill this in.
           </div>
         )}
-        {DREAMS.map((d) => (
+        {DREAMS.filter((d) => !d.accepted).map((d) => (
           <SidebarLink key={d.slug} to={d.slug} label={d.title} pkg={d.pkg} />
         ))}
       </nav>
@@ -41,7 +54,17 @@ export function DreamingSidebar() {
   );
 }
 
-function SidebarLink({ to, label, pkg }: { to: string; label: string; pkg?: string }) {
+function SidebarLink({
+  to,
+  label,
+  pkg,
+  accepted,
+}: {
+  to: string;
+  label: string;
+  pkg?: string;
+  accepted?: boolean;
+}) {
   return (
     <NavLink
       to={to}
@@ -55,6 +78,11 @@ function SidebarLink({ to, label, pkg }: { to: string; label: string; pkg?: stri
       }
     >
       <span>{label}</span>
+      {accepted && (
+        <span className="ml-1 rounded-sm bg-emerald-100 px-1 text-[9px] font-semibold uppercase tracking-wider text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-300">
+          ✓
+        </span>
+      )}
       {pkg && (
         <span className="ml-1 text-[9px] uppercase tracking-wider text-zinc-400">
           {pkg}

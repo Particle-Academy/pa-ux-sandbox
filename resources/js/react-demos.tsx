@@ -101,6 +101,11 @@ const DatePickerDemo = l(() => import("./react-demos/pages/DatePickerDemo"), "Da
 // Fancy Code + Fancy Sheets
 const CodeEditorDemo = l(() => import("./react-demos/pages/CodeEditorDemo"), "CodeEditorDemo");
 const SpreadsheetDemo = l(() => import("./react-demos/pages/SpreadsheetDemo"), "SpreadsheetDemo");
+// Human+ primitives — promoted from /dreaming 2026-05-12
+const ReasonTagPageDemo = l(() => import("./react-demos/pages/ReasonTagDemo"), "ReasonTagDemo");
+const MoodMeterPageDemo = l(() => import("./react-demos/pages/MoodMeterDemo"), "MoodMeterDemo");
+const PromptInputPageDemo = l(() => import("./react-demos/pages/PromptInputDemo"), "PromptInputDemo");
+const MagicWandPageDemo = l(() => import("./react-demos/pages/MagicWandDemo"), "MagicWandDemo");
 const AppSheetDemo = l(() => import("./react-demos/pages/AppSheetDemo"), "AppSheetDemo");
 // ECharts (lazy layout registers echarts on first visit)
 const EChartsLayout = lazy(() => import("./react-demos/echarts-loader"));
@@ -246,6 +251,11 @@ if (root) {
               {/* Fancy Code */}
               <Route path="code-editor" element={<CodeEditorDemo />} />
               <Route path="spreadsheet" element={<SpreadsheetDemo />} />
+              {/* Human+ primitives */}
+              <Route path="reason-tag" element={<ReasonTagPageDemo />} />
+              <Route path="mood-meter" element={<MoodMeterPageDemo />} />
+              <Route path="prompt-input" element={<PromptInputPageDemo />} />
+              <Route path="magic-wand" element={<MagicWandPageDemo />} />
               {/* ECharts (lazy-loaded layout registers echarts) */}
               <Route element={<EChartsLayout />}>
                 <Route path="echarts-showcase" element={<EChartsShowcase />} />

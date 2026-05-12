@@ -28,28 +28,43 @@ export function Lobby() {
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {DREAMS.map((d) => (
-            <Link
-              key={d.slug}
-              to={d.slug}
-              className="block rounded-lg border border-zinc-200 bg-white p-4 transition hover:border-violet-400 hover:shadow-sm dark:border-zinc-800 dark:bg-zinc-900 dark:hover:border-violet-600"
-            >
-              <div className="flex items-start justify-between gap-2">
-                <div className="font-medium">{d.title}</div>
-                {d.pkg && (
-                  <span className="rounded-full bg-violet-100 px-2 py-0.5 text-[10px] uppercase tracking-wider text-violet-700 dark:bg-violet-500/15 dark:text-violet-300">
-                    {d.pkg}
-                  </span>
-                )}
-              </div>
-              <p className="mt-1.5 text-xs text-zinc-500">{d.blurb}</p>
-              {d.dreamedAt && (
-                <div className="mt-2 text-[10px] uppercase tracking-wider text-zinc-400">
-                  dreamt {d.dreamedAt}
+          {[...DREAMS]
+            .sort((a, b) => Number(!!b.accepted) - Number(!!a.accepted))
+            .map((d) => (
+              <Link
+                key={d.slug}
+                to={d.slug}
+                className={`block rounded-lg border bg-white p-4 transition hover:shadow-sm dark:bg-zinc-900 ${
+                  d.accepted
+                    ? "border-emerald-300 hover:border-emerald-500 dark:border-emerald-800 dark:hover:border-emerald-600"
+                    : "border-zinc-200 hover:border-violet-400 dark:border-zinc-800 dark:hover:border-violet-600"
+                }`}
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div className="font-medium">{d.title}</div>
+                  <div className="flex shrink-0 items-center gap-1">
+                    {d.accepted && (
+                      <span className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300">
+                        ✓ accepted
+                      </span>
+                    )}
+                    {d.pkg && (
+                      <span className="rounded-full bg-violet-100 px-2 py-0.5 text-[10px] uppercase tracking-wider text-violet-700 dark:bg-violet-500/15 dark:text-violet-300">
+                        {d.pkg}
+                      </span>
+                    )}
+                  </div>
                 </div>
-              )}
-            </Link>
-          ))}
+                <p className="mt-1.5 text-xs text-zinc-500">{d.blurb}</p>
+                {(d.dreamedAt || d.acceptedAt) && (
+                  <div className="mt-2 text-[10px] uppercase tracking-wider text-zinc-400">
+                    {d.acceptedAt
+                      ? `dreamt ${d.dreamedAt} · accepted ${d.acceptedAt}`
+                      : `dreamt ${d.dreamedAt}`}
+                  </div>
+                )}
+              </Link>
+            ))}
         </div>
       )}
     </div>

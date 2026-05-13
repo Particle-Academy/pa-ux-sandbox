@@ -40,3 +40,6 @@
 [submodule "packages/fancy-flow"]
 	path = packages/fancy-flow
 	url = git@github.com:Particle-Academy/fancy-flow.git
+[submodule "packages/docs-mcp"]
+	path = packages/docs-mcp
+	url = git@github.com:Particle-Academy/docs-mcp.git

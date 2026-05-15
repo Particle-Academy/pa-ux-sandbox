@@ -225,6 +225,51 @@ export const DREAMS: Dream[] = [
     dreamedAt: "2026-05-11",
   },
   {
+    slug: "infinite-scroll",
+    title: "InfiniteScroll",
+    blurb:
+      "Virtualized fetch-on-scroll list generic over item shape — render-prop rows, dedupe-by-id, sentinel-based IntersectionObserver paging, stalled/error/exhausted states. Bridge: scroll_visible_range / scroll_to(id) / scroll_load_next.",
+    pkg: "react-fancy",
+    theme: "Search & Navigation",
+    dreamedAt: "2026-05-15",
+  },
+  {
+    slug: "saved-queries",
+    title: "SavedQueries",
+    blurb:
+      "Pinned + recent named searches with one-click rerun, rename, and delete. Persists across sessions; supports nested query objects (not just strings). Bridge: query_list / query_save({name, payload}) / query_run(id) — agents can save their own successful queries.",
+    pkg: "react-fancy",
+    theme: "Search & Navigation",
+    dreamedAt: "2026-05-15",
+  },
+  {
+    slug: "keymap-explorer",
+    title: "KeymapExplorer",
+    blurb:
+      "Press ? to summon a searchable, context-grouped overlay of every keyboard shortcut active in the current scope. Generic registry; consumers register shortcuts via a hook. Bridge: keymap_list — agents discover what they can drive without screen-scraping menus.",
+    pkg: "react-fancy",
+    theme: "Search & Navigation",
+    dreamedAt: "2026-05-15",
+  },
+  {
+    slug: "waypoint-dots",
+    title: "WaypointDots",
+    blurb:
+      "Minimap-style colored dots floating in the page margin marking sections, errors, comments, and agent-activity. Click to jump; hover to peek. Bridge: waypoint_list / waypoint_jump(id) / waypoint_pin(at) — agents can mark where they were working.",
+    pkg: "react-fancy",
+    theme: "Search & Navigation",
+    dreamedAt: "2026-05-15",
+  },
+  {
+    slug: "jump-history",
+    title: "JumpHistory",
+    blurb:
+      "Back/forward navigation stack with screen thumbnails — the alt-tab for in-app screens. Render-prop history entries; controlled cursor; agent bridge can read history and jump_to(entryId) to retrace its own (or the user's) prior state.",
+    pkg: "react-fancy",
+    theme: "Search & Navigation",
+    dreamedAt: "2026-05-15",
+  },
+  {
     slug: "result-stream",
     title: "ResultStream",
     blurb:

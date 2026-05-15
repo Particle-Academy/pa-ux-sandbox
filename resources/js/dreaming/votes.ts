@@ -47,6 +47,9 @@ export function useVote(slug: string): [VoteState, (next: VoteState) => void] {
   const [state, setState] = useState<VoteState>(() => getVote(slug));
 
   useEffect(() => {
+    // Re-sync whenever the slug changes (route navigation keeps the same
+    // DemoFrame instance) or another tab/event updates the store.
+    setState(getVote(slug));
     const sync = () => setState(getVote(slug));
     window.addEventListener(EVENT_NAME, sync);
     window.addEventListener("storage", sync);

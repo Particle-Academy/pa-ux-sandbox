@@ -2,6 +2,28 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Human+ UX — the architectural framework
+
+**This is the architectural baseline for the entire sandbox and every package it contains** — react-fancy, fancy-whiteboard, fancy-flow, fancy-sheets, fancy-code, fancy-echarts, fancy-screens, fancy-3d, agent-integrations, plus anything new. It is not a feature, a goal, or a roadmap item; it is the prerequisite that decides whether a component, demo, or package belongs here at all. Speculative work on the `dreaming` branch must satisfy it too.
+
+**Every Fancy UI component must satisfy two design constraints, not one:**
+
+1. **Authoring surface.** Humans and agents can rapidly compose beautiful, well-functioning applications using the component. Terse props, JSON-friendly inputs, sensible defaults, good types.
+
+2. **Inhabited surface.** The running app embeds agents as first-class environment participants. Agents read and write component state via MCP bridges and stable handles — *not* via DOM screen-scraping, Playwright, or other puppeting tools. The component itself is the agent's affordance, not a target to be operated externally.
+
+This is **Human+ UX**: applications where humans and agents share the same UI, trading control fluidly. The whitepaper is at [`docs/human-plus-ux.md`](./docs/human-plus-ux.md).
+
+**The component contract** (every Fancy UI component must meet all of these):
+- **Controlled state.** `value` + `onChange`. No internal-only state for anything an agent might want to read or write.
+- **Stable handles.** Each interactive element gets a stable identity (`id`, `data-*`, or a selector function in props). Agents should never have to guess DOM structure.
+- **JSON-friendly inputs.** Props that are agent-emittable: arrays of objects, primitives, simple discriminated unions. Avoid forcing React children for things the agent needs to populate.
+- **Bridgeable surface.** For non-trivial components, a `register<Surface>Bridge(server, { adapter })` exists or could be sketched in one sitting. The bridge exposes MCP tools (`grid_paint`, `chip_reclassify`, `tray_dismiss`) so agents can drive it. If you can't sketch this, the component isn't done.
+- **Observable activity.** Mutations broadcast `AgentActivity` events so presence, undo, and coaching layers compose without each component re-implementing them.
+- **Trust-but-verify hooks.** Destructive or human-visible actions support a `pendingMode` / staged-write affordance — agents propose, humans confirm.
+
+If a component is purely visual (a static label, a divider, a layout shell), only constraint #1 applies. Anything stateful or interactive owes both.
+
 ## Project Overview
 
 This is a **monorepo sandbox** for developing and prototyping Particle Academy packages. The root is a Laravel 13 application that consumes local packages via Composer path repositories and git submodules, providing a live environment to build, test, and demo everything together.

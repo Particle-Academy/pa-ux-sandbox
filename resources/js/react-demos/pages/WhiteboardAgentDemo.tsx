@@ -17,13 +17,13 @@ import "@particle-academy/fancy-whiteboard/styles.css";
 import {
   MicroMcpServer,
   attachInProcess,
-  registerWhiteboardBridge,
   AgentPanel,
   AgentCursor,
   AgentActivityHighlight,
   type AgentActivity,
   type InProcessTransport,
 } from "@particle-academy/agent-integrations";
+import { registerWhiteboardBridge } from "@particle-academy/agent-integrations/bridges/whiteboard";
 import "@particle-academy/agent-integrations/styles.css";
 
 const AGENT = { id: "claude", name: "Claude", color: "#a855f7" };

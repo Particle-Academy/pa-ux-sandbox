@@ -225,6 +225,51 @@ export const DREAMS: Dream[] = [
     dreamedAt: "2026-05-11",
   },
   {
+    slug: "notify-tray",
+    title: "NotifyTray",
+    blurb:
+      "Edge-docked slide-in tray that groups notifications by source with collapse/expand per group, per-item snooze/mute/dismiss, and bulk 'mark group read' — keyboard-navigable.",
+    pkg: "react-fancy",
+    theme: "Notifications",
+    dreamedAt: "2026-05-15",
+  },
+  {
+    slug: "inbox-zero",
+    title: "InboxZero",
+    blurb:
+      "Celebratory empty-state card that appears the moment the user clears their inbox — shows time-to-zero stats, next digest ETA, and a single 'tune what notifies me' link.",
+    pkg: "react-fancy",
+    theme: "Notifications",
+    dreamedAt: "2026-05-15",
+  },
+  {
+    slug: "quiet-hours",
+    title: "QuietHours",
+    blurb:
+      "Day-of-week × hour-of-day grid for setting do-not-disturb bands — drag to paint, click a column header to toggle a whole day, timezone-aware live preview of the next quiet window.",
+    pkg: "react-fancy",
+    theme: "Notifications",
+    dreamedAt: "2026-05-15",
+  },
+  {
+    slug: "priority-chip",
+    title: "PriorityChip",
+    blurb:
+      "Auto-classified priority badge (now / soon / whenever / never) that shows the agent's reasoning on hover — click to reclassify and the chip trains itself for similar items.",
+    pkg: "agent-integrations",
+    theme: "Notifications",
+    dreamedAt: "2026-05-15",
+  },
+  {
+    slug: "digest-preview",
+    title: "DigestPreview",
+    blurb:
+      "Preview of the next outgoing digest before it sends, with a per-item include/exclude toggle, drag-to-reorder, and 'send now' override — pairs with QuietHours to give users full control.",
+    pkg: "react-fancy",
+    theme: "Notifications",
+    dreamedAt: "2026-05-15",
+  },
+  {
     slug: "checklist-rail",
     title: "ChecklistRail",
     blurb:

@@ -225,15 +225,6 @@ export const DREAMS: Dream[] = [
     dreamedAt: "2026-05-11",
   },
   {
-    slug: "command-palette",
-    title: "CommandPalette",
-    blurb:
-      "Cmd-K palette: sectioned + fuzzy-filtered command picker with hotkey hints, kbd-navigable, recent boost. Controlled value/onSelect; commands are plain JSON; bridge exposes palette_open / palette_filter / palette_execute so agents drive it without DOM scraping.",
-    pkg: "react-fancy",
-    theme: "Search & Navigation",
-    dreamedAt: "2026-05-15",
-  },
-  {
     slug: "result-stream",
     title: "ResultStream",
     blurb:
@@ -247,24 +238,6 @@ export const DREAMS: Dream[] = [
     title: "FacetRail",
     blurb:
       "Faceted-filter sidebar from a JSON facet schema — checkbox groups, range sliders, search-within-facet, selected chips with clear-all. value is a plain {[facetKey]: any} bag agents can read and patch via facet_set / facet_clear.",
-    pkg: "react-fancy",
-    theme: "Search & Navigation",
-    dreamedAt: "2026-05-15",
-  },
-  {
-    slug: "crumb-drop",
-    title: "CrumbDrop",
-    blurb:
-      "Breadcrumb where every crumb is also a dropdown of its siblings — navigate up AND sideways. Tree shape is JSON; current path is value/onChange; bridge exposes crumb_navigate(path) for agent traversal at the data layer.",
-    pkg: "react-fancy",
-    theme: "Search & Navigation",
-    dreamedAt: "2026-05-15",
-  },
-  {
-    slug: "recent-deck",
-    title: "RecentDeck",
-    blurb:
-      "Persistent pinned + recent jump list — the always-visible counterpart to Cmd-K. Pin/unpin, drag-to-reorder pins, MRU auto-trim. State is JSON; bridge exposes deck_pin / deck_unpin / deck_jump for agents and humans alike.",
     pkg: "react-fancy",
     theme: "Search & Navigation",
     dreamedAt: "2026-05-15",

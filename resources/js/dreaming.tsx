@@ -6,6 +6,7 @@ import { DreamingLayout } from "./dreaming/Layout";
 import { Playground } from "./dreaming/pages/Playground";
 import { Lobby } from "./dreaming/pages/Lobby";
 import { DREAMS } from "./dreaming/manifest";
+import { DemoFrame } from "./dreaming/DemoFrame";
 
 const Loading = () => (
   <div className="flex items-center justify-center py-20">
@@ -47,7 +48,15 @@ if (root) {
               <Route index element={<Playground />} />
               <Route path="lobby" element={<Lobby />} />
               {dreamRoutes.map(({ slug, Comp }) => (
-                <Route key={slug} path={slug} element={<Comp />} />
+                <Route
+                  key={slug}
+                  path={slug}
+                  element={
+                    <DemoFrame slug={slug}>
+                      <Comp />
+                    </DemoFrame>
+                  }
+                />
               ))}
             </Route>
           </Routes>

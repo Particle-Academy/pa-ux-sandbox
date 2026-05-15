@@ -16,6 +16,8 @@ export type Dream = {
   blurb: string;
   /** Which existing package this dream extends. Free-form, used as a tag. */
   pkg?: string;
+  /** Thematic batch this dream belongs to (e.g. "Support Services"). */
+  theme?: string;
   /** ISO date the dream was added. */
   dreamedAt?: string;
   /**
@@ -221,6 +223,51 @@ export const DREAMS: Dream[] = [
       "Wraps any element so it pulses once when its content changes — a self-contained 'look here' effect tuned by tone (info/change/risky), intensity, and decay; designed to fade quietly after one breath.",
     pkg: "react-fancy",
     dreamedAt: "2026-05-11",
+  },
+  {
+    slug: "ticket-spine",
+    title: "TicketSpine",
+    blurb:
+      "Vertical lifecycle indicator for a support ticket — open → triaged → in-progress → waiting-customer → resolved, with SLA color states, branch-off escalation rails, and per-stage timestamps revealed on hover.",
+    pkg: "react-fancy",
+    theme: "Support Services",
+    dreamedAt: "2026-05-14",
+  },
+  {
+    slug: "sla-pulse",
+    title: "SlaPulse",
+    blurb:
+      "Live SLA countdown pill bound to a target wall-clock — green while comfortable, amber as the breach window approaches, red-pulse when breached; resilient to tab-sleep with a single rAF heartbeat.",
+    pkg: "react-fancy",
+    theme: "Support Services",
+    dreamedAt: "2026-05-14",
+  },
+  {
+    slug: "canned-composer",
+    title: "CannedComposer",
+    blurb:
+      "Reply composer with one-keystroke macro insertion and {{variable}} placeholders — unresolved variables render as warning chips so reps never accidentally send '{{customer_name}}'.",
+    pkg: "react-fancy",
+    theme: "Support Services",
+    dreamedAt: "2026-05-14",
+  },
+  {
+    slug: "triage-stack",
+    title: "TriageStack",
+    blurb:
+      "Stack of agent-recommended ticket actions (refund, escalate, draft-reply, close), each as a card with confidence + reason — swipe right to accept, left to reject, tap to edit before committing.",
+    pkg: "agent-integrations",
+    theme: "Support Services",
+    dreamedAt: "2026-05-14",
+  },
+  {
+    slug: "assist-overlay",
+    title: "AssistOverlay",
+    blurb:
+      "Floating sidekick that hovers near any focused input and surfaces the agent's top-3 next-actions (quote KB, insert link, escalate) — keyboard-driven, dismissable, never steals the caret.",
+    pkg: "agent-integrations",
+    theme: "Support Services",
+    dreamedAt: "2026-05-14",
   },
   {
     slug: "veto-ribbon",

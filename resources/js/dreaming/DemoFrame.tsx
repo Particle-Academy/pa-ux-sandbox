@@ -1,13 +1,13 @@
 import { ReactNode, useState } from "react";
 import { DREAMS } from "./manifest";
-import { getSource } from "./sources";
+import { getUsage } from "./sources";
 import { useVote, VoteState } from "./votes";
 
 export function DemoFrame({ slug, children }: { slug: string; children: ReactNode }) {
   const dream = DREAMS.find((d) => d.slug === slug);
-  const source = getSource(slug);
+  const usage = getUsage(slug);
   const [vote, setVote] = useVote(slug);
-  const [showSource, setShowSource] = useState(false);
+  const [showUsage, setShowUsage] = useState(false);
   const [copied, setCopied] = useState(false);
 
   return (
@@ -39,40 +39,46 @@ export function DemoFrame({ slug, children }: { slug: string; children: ReactNod
 
         <div className="flex shrink-0 items-center gap-2">
           <VoteButtons vote={vote} onChange={setVote} />
-          {source && (
-            <button
-              onClick={() => setShowSource((s) => !s)}
-              className="rounded-md border border-zinc-300 px-2.5 py-1 text-xs font-medium text-zinc-700 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-900"
-            >
-              {showSource ? "Hide source" : "Show source"}
-            </button>
-          )}
+          <button
+            onClick={() => setShowUsage((s) => !s)}
+            className="rounded-md border border-zinc-300 px-2.5 py-1 text-xs font-medium text-zinc-700 hover:bg-zinc-100 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-900"
+          >
+            {showUsage ? "Hide usage" : "Show usage"}
+          </button>
         </div>
       </header>
 
       <div>{children}</div>
 
-      {showSource && source && (
+      {showUsage && (
         <section className="rounded-lg border border-zinc-200 bg-zinc-950 text-zinc-100 dark:border-zinc-800">
           <div className="flex items-center justify-between border-b border-zinc-800 px-3 py-1.5 text-[11px]">
             <span className="font-mono text-zinc-400">
-              dreaming/pages/{pascal(slug)}Demo.tsx
+              Usage in your project
             </span>
-            <button
-              onClick={() => {
-                navigator.clipboard.writeText(source).then(() => {
-                  setCopied(true);
-                  window.setTimeout(() => setCopied(false), 1200);
-                });
-              }}
-              className="rounded border border-zinc-700 px-2 py-0.5 text-[10px] font-medium text-zinc-300 hover:bg-zinc-800"
-            >
-              {copied ? "copied" : "copy"}
-            </button>
+            {usage && (
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(usage).then(() => {
+                    setCopied(true);
+                    window.setTimeout(() => setCopied(false), 1200);
+                  });
+                }}
+                className="rounded border border-zinc-700 px-2 py-0.5 text-[10px] font-medium text-zinc-300 hover:bg-zinc-800"
+              >
+                {copied ? "copied" : "copy"}
+              </button>
+            )}
           </div>
-          <pre className="overflow-x-auto p-3 text-[11px] leading-relaxed">
-            <code>{source}</code>
-          </pre>
+          {usage ? (
+            <pre className="overflow-x-auto p-3 text-[12px] leading-relaxed">
+              <code>{usage}</code>
+            </pre>
+          ) : (
+            <div className="p-3 text-[11px] italic text-zinc-500">
+              No usage example written for this dream yet.
+            </div>
+          )}
         </section>
       )}
     </div>
@@ -108,9 +114,3 @@ function VoteButtons({ vote, onChange }: { vote: VoteState; onChange: (v: VoteSt
   );
 }
 
-function pascal(slug: string): string {
-  return slug
-    .split("-")
-    .map((p) => (p[0]?.toUpperCase() ?? "") + p.slice(1))
-    .join("");
-}

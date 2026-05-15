@@ -1,5 +1,20 @@
 import { useState } from "react";
 
+export const USAGE = `import { TicketSpine } from "@particle-academy/react-fancy";
+
+<TicketSpine
+  stages={[
+    { key: "open",        label: "Opened",                at: "9:02 AM" },
+    { key: "triaged",     label: "Triaged",               at: "9:14 AM" },
+    { key: "in_progress", label: "In progress",           at: "9:31 AM" },
+    { key: "waiting",     label: "Waiting on customer" },
+    { key: "resolved",    label: "Resolved" },
+  ]}
+  active={ticket.stageIndex}
+  tone={ticket.slaTone}           // "ok" | "warn" | "breach"
+  escalatedAt={ticket.escalatedAt}
+/>`;
+
 /**
  * TicketSpine — vertical lifecycle indicator for a support ticket.
  * Stages are dots on a colored rail; the active stage glows, past stages

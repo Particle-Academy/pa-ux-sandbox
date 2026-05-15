@@ -1,5 +1,13 @@
 import { useEffect, useState } from "react";
 
+export const USAGE = `import { SlaPulse } from "@particle-academy/react-fancy";
+
+// Deadline is a wall-clock ms; the component owns its own rAF heartbeat.
+<SlaPulse
+  deadline={ticket.slaDeadlineMs}
+  warnMs={5 * 60_000}              // turn amber under 5m remaining
+/>`;
+
 /**
  * SlaPulse — countdown pill bound to a deadline. Green while comfortable,
  * amber inside the warn window, red-pulse when breached. One rAF heartbeat

@@ -1,5 +1,19 @@
 import { useMemo, useRef, useState } from "react";
 
+export const USAGE = `import { CannedComposer } from "@particle-academy/react-fancy";
+
+<CannedComposer
+  value={draft}
+  onChange={setDraft}
+  variables={{ customer_name: ticket.customer, agent_name: me.name }}
+  macros={[
+    { name: "/refund-confirmed", body: "Hi {{customer_name}}, your refund of {{amount}} is on the way…" },
+    { name: "/ack",              body: "Thanks {{customer_name}} — I've got your ticket and I'm digging in." },
+    { name: "/ask-logs",         body: "Could you paste the UTC timestamp + error message?" },
+  ]}
+  onSend={(text) => sendReply(ticket.id, text)}
+/>`;
+
 /**
  * CannedComposer — reply textarea with macro shortcuts and {{variable}}
  * placeholders. Slash-prefix opens a canned-response palette; unresolved

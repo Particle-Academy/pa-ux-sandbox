@@ -1,5 +1,14 @@
 import { useState } from "react";
 
+export const USAGE = `import { TriageStack } from "@particle-academy/agent-integrations";
+
+<TriageStack
+  actions={agentRecommendations}    // [{ id, verb, ticket, reason, confidence, payload }]
+  onAccept={(action) => commit(action)}
+  onReject={(action) => log("rejected", action)}
+  onEdit={(action, payload) => commit({ ...action, payload })}
+/>`;
+
 /**
  * TriageStack — stack of agent-recommended ticket actions. Each card
  * shows the action, a confidence band, and the agent's reason. Swipe

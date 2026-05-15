@@ -1,5 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 
+export const USAGE = `import { AssistOverlay } from "@particle-academy/agent-integrations";
+
+<AssistOverlay
+  targetRef={textareaRef}               // anchors to this input
+  suggestions={agent.suggestions}       // [{ id, kind, label, detail, insertText? }]
+  onApply={(s) => insertAtCaret(s.insertText)}
+  keymap={{ next: "Alt+ArrowDown", prev: "Alt+ArrowUp", apply: "Alt+Enter" }}
+/>`;
+
 /**
  * AssistOverlay — floating sidekick that hovers near a focused input.
  * Surfaces the agent's top-3 next-actions (quote KB, insert link,

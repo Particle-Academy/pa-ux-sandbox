@@ -225,6 +225,51 @@ export const DREAMS: Dream[] = [
     dreamedAt: "2026-05-11",
   },
   {
+    slug: "checklist-rail",
+    title: "ChecklistRail",
+    blurb:
+      "Vertical onboarding checklist with collapsible per-step detail, progress ring, and a single 'next' CTA that always points at the user's most-actionable remaining step.",
+    pkg: "react-fancy",
+    theme: "Onboarding",
+    dreamedAt: "2026-05-15",
+  },
+  {
+    slug: "tour-beacon",
+    title: "TourBeacon",
+    blurb:
+      "Pulsing dot that anchors to any selector on the page and pops a coachmark on click — keyboard-navigable across a sequence, auto-scrolls into view, and remembers dismissed steps.",
+    pkg: "react-fancy",
+    theme: "Onboarding",
+    dreamedAt: "2026-05-15",
+  },
+  {
+    slug: "empty-canvas",
+    title: "EmptyCanvas",
+    blurb:
+      "Illustrated empty-state container with a small grid of first-action CTAs — most-tried action floats to the top across sessions so power moves stay one click away.",
+    pkg: "react-fancy",
+    theme: "Onboarding",
+    dreamedAt: "2026-05-15",
+  },
+  {
+    slug: "profile-blanks",
+    title: "ProfileBlanks",
+    blurb:
+      "Slim profile-completion bar that always surfaces the single next missing field as a one-tap inline mini-form — fills, validates, advances, with no detour to a settings page.",
+    pkg: "react-fancy",
+    theme: "Onboarding",
+    dreamedAt: "2026-05-15",
+  },
+  {
+    slug: "sample-data-toggle",
+    title: "SampleDataToggle",
+    blurb:
+      "Persistent strip offering to seed a fresh workspace with sample data, with a single revert button — the 'try-before-you-commit' affordance for empty-state hesitation.",
+    pkg: "react-fancy",
+    theme: "Onboarding",
+    dreamedAt: "2026-05-15",
+  },
+  {
     slug: "ticket-spine",
     title: "TicketSpine",
     blurb:

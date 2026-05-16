@@ -1,32 +1,38 @@
 @extends('layouts.showcase', ['title' => $package['name']])
 
 @section('content')
-    <div class="flex items-center gap-2 text-sm">
-        <a href="{{ route('packages.index') }}" style="color: var(--fg-3);">Packages</a>
-        <span style="color: var(--fg-4);">/</span>
-        <span style="color: var(--fg-1);">{{ $package['name'] }}</span>
-    </div>
-    <h1 class="mt-3 text-3xl font-semibold tracking-tight">{{ $package['name'] }}</h1>
-    <p class="mt-2 max-w-3xl text-base" style="color: var(--fg-2);">{{ $package['tagline'] }}</p>
+    <flux:breadcrumbs>
+        <flux:breadcrumbs.item href="{{ route('packages.index') }}">Packages</flux:breadcrumbs.item>
+        <flux:breadcrumbs.item>{{ $package['name'] }}</flux:breadcrumbs.item>
+    </flux:breadcrumbs>
 
-    <div class="mt-2 flex flex-wrap gap-3 text-[11px]" style="color: var(--fg-3);">
+    <flux:heading size="xl" level="1" class="mt-3">{{ $package['name'] }}</flux:heading>
+    <flux:text class="mt-2 max-w-3xl">{{ $package['tagline'] }}</flux:text>
+
+    <div class="mt-3 flex flex-wrap items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400">
         @if(!empty($package['npm']))
-            <span class="fancy-mono">npm: {{ $package['npm'] }}</span>
+            <flux:badge color="indigo" size="sm" class="font-mono">npm: {{ $package['npm'] }}</flux:badge>
         @endif
         @if(!empty($package['composer']))
-            <span class="fancy-mono">composer: {{ $package['composer'] }}</span>
+            <flux:badge color="violet" size="sm" class="font-mono">composer: {{ $package['composer'] }}</flux:badge>
         @endif
-        <a href="https://github.com/{{ $package['repo'] }}" target="_blank" rel="noopener" class="underline-offset-2 hover:underline">github.com/{{ $package['repo'] }}</a>
+        <flux:link href="https://github.com/{{ $package['repo'] }}" target="_blank">
+            github.com/{{ $package['repo'] }}
+        </flux:link>
     </div>
 
-    <h2 class="mt-10 text-xl font-semibold tracking-tight">Components</h2>
+    <flux:heading size="lg" level="2" class="mt-10">Components</flux:heading>
     <div class="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
         @foreach ($package['components'] ?? [] as $c)
-            <a href="{{ route('packages.component', [$package['slug'], $c['slug']]) }}" class="fancy-card p-3 transition hover:bg-[color:var(--bg-2)]">
-                <div class="font-mono text-sm">{{ $c['name'] }}</div>
-                @if(!empty($c['blurb']))
-                    <div class="mt-0.5 text-[11px]" style="color: var(--fg-3);">{{ $c['blurb'] }}</div>
-                @endif
+            <a href="{{ route('packages.component', [$package['slug'], $c['slug']]) }}">
+                <flux:card class="transition hover:bg-zinc-50 dark:hover:bg-zinc-900">
+                    <flux:card.body>
+                        <flux:text class="font-mono font-medium">{{ $c['name'] }}</flux:text>
+                        @if(!empty($c['blurb']))
+                            <flux:text size="xs" class="mt-0.5">{{ $c['blurb'] }}</flux:text>
+                        @endif
+                    </flux:card.body>
+                </flux:card>
             </a>
         @endforeach
     </div>

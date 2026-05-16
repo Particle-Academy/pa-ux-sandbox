@@ -1,18 +1,18 @@
 @extends('layouts.showcase', ['title' => $kit['name'].' · Starter Kit'])
 
 @section('content')
-    <div class="flex items-center gap-2 text-sm">
-        <a href="{{ route('starter-kits.index') }}" style="color: var(--fg-3);">Starter Kits</a>
-        <span style="color: var(--fg-4);">/</span>
-        <span style="color: var(--fg-1);">{{ $kit['name'] }}</span>
-    </div>
-    <h1 class="mt-3 text-3xl font-semibold tracking-tight">{{ $kit['name'] }}</h1>
-    <p class="mt-2 max-w-3xl text-base" style="color: var(--fg-2);">{{ $kit['blurb'] }}</p>
+    <flux:breadcrumbs>
+        <flux:breadcrumbs.item href="{{ route('starter-kits.index') }}">Starter Kits</flux:breadcrumbs.item>
+        <flux:breadcrumbs.item>{{ $kit['name'] }}</flux:breadcrumbs.item>
+    </flux:breadcrumbs>
 
-    <div class="mt-6 fancy-card p-2">
-        <div class="grid place-items-center rounded-md p-16 text-sm" style="background: var(--bg-1); border: 1px dashed var(--border-2); color: var(--fg-3);">
+    <flux:heading size="xl" level="1" class="mt-3">{{ $kit['name'] }}</flux:heading>
+    <flux:text class="mt-2 max-w-3xl">{{ $kit['blurb'] }}</flux:text>
+
+    <flux:card class="mt-6">
+        <div class="grid place-items-center rounded-md border border-dashed border-zinc-300 bg-zinc-50 p-16 text-sm text-zinc-500 dark:border-zinc-700 dark:bg-zinc-900">
             Phase 2 — the running starter kit embeds here (iframe or React mount).<br>
-            Built from <code class="fancy-mono">{{ $kit['pkg'] }}</code> + the rest of the Fancy UI kit.
+            Built from <code class="font-mono">{{ $kit['pkg'] }}</code> + the rest of the Fancy UI kit.
         </div>
-    </div>
+    </flux:card>
 @endsection

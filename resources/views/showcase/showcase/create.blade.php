@@ -1,54 +1,55 @@
 @extends('layouts.showcase', ['title' => 'Submit · Designer Showcase'])
 
 @section('content')
-    <h1 class="text-3xl font-semibold tracking-tight">Submit a site or repo</h1>
-    <p class="mt-2 max-w-2xl text-sm" style="color: var(--fg-2);">
+    <flux:breadcrumbs>
+        <flux:breadcrumbs.item href="{{ route('showcase.showcase.index') }}">Showcase</flux:breadcrumbs.item>
+        <flux:breadcrumbs.item>Submit</flux:breadcrumbs.item>
+    </flux:breadcrumbs>
+
+    <flux:heading size="xl" level="1" class="mt-3">Submit a site or repo</flux:heading>
+    <flux:text class="mt-2 max-w-2xl">
         We'll fetch your URL and check for Fancy UI usage before listing it on the showcase.
-    </p>
+    </flux:text>
 
-    <form method="POST" action="{{ route('showcase.showcase.store') }}" class="mt-6 max-w-xl space-y-4 fancy-card p-6">
-        @csrf
+    <flux:card class="mt-6 max-w-xl">
+        <flux:card.body>
+            <form method="POST" action="{{ route('showcase.showcase.store') }}" class="space-y-4">
+                @csrf
+                <flux:field>
+                    <flux:label>Kind</flux:label>
+                    <flux:radio.group name="kind" value="website">
+                        <flux:radio value="website" label="Website" />
+                        <flux:radio value="repo" label="Repo" />
+                    </flux:radio.group>
+                </flux:field>
 
-        <div>
-            <label class="block text-xs font-semibold uppercase tracking-wider" style="color: var(--fg-3);">Kind</label>
-            <div class="mt-1 inline-flex overflow-hidden rounded-md border" style="border-color: var(--border-1);">
-                <label class="cursor-pointer px-3 py-1.5 text-xs">
-                    <input type="radio" name="kind" value="website" checked class="mr-1 accent-violet-600"> Website
-                </label>
-                <label class="cursor-pointer border-l px-3 py-1.5 text-xs" style="border-color: var(--border-1);">
-                    <input type="radio" name="kind" value="repo" class="mr-1 accent-violet-600"> Repo
-                </label>
-            </div>
-        </div>
+                <flux:field>
+                    <flux:label>URL</flux:label>
+                    <flux:input
+                        name="url"
+                        type="url"
+                        required
+                        maxlength="255"
+                        placeholder="https://your-site.com or https://github.com/you/your-app"
+                    />
+                    <flux:error name="url" />
+                </flux:field>
 
-        <div>
-            <label class="block text-xs font-semibold uppercase tracking-wider" style="color: var(--fg-3);">URL</label>
-            <input type="url" name="url" required maxlength="255"
-                   placeholder="https://your-site.com or https://github.com/you/your-app"
-                   class="mt-1 w-full rounded-md border bg-transparent px-3 py-2 text-sm outline-none focus:border-[color:var(--violet-500)]"
-                   style="border-color: var(--border-1); color: var(--fg-1);">
-            @error('url')<div class="mt-1 text-xs" style="color: var(--red-600);">{{ $message }}</div>@enderror
-        </div>
+                <flux:field>
+                    <flux:label>Title <flux:badge size="sm" color="zinc">optional</flux:badge></flux:label>
+                    <flux:input name="title" maxlength="120" />
+                </flux:field>
 
-        <div>
-            <label class="block text-xs font-semibold uppercase tracking-wider" style="color: var(--fg-3);">Title <span class="font-normal" style="color: var(--fg-4);">(optional)</span></label>
-            <input type="text" name="title" maxlength="120"
-                   class="mt-1 w-full rounded-md border bg-transparent px-3 py-2 text-sm outline-none focus:border-[color:var(--violet-500)]"
-                   style="border-color: var(--border-1); color: var(--fg-1);">
-        </div>
+                <flux:field>
+                    <flux:label>Description <flux:badge size="sm" color="zinc">optional</flux:badge></flux:label>
+                    <flux:textarea name="description" rows="3" maxlength="600" />
+                </flux:field>
 
-        <div>
-            <label class="block text-xs font-semibold uppercase tracking-wider" style="color: var(--fg-3);">Description <span class="font-normal" style="color: var(--fg-4);">(optional)</span></label>
-            <textarea name="description" rows="3" maxlength="600"
-                      class="mt-1 w-full rounded-md border bg-transparent px-3 py-2 text-sm outline-none focus:border-[color:var(--violet-500)]"
-                      style="border-color: var(--border-1); color: var(--fg-1);"></textarea>
-        </div>
-
-        <div class="flex items-center justify-end gap-2">
-            <a href="{{ route('showcase.showcase.index') }}" class="rounded-md px-3 py-2 text-sm" style="color: var(--fg-3);">Cancel</a>
-            <button type="submit" class="rounded-md px-3 py-2 text-sm font-medium text-white" style="background: var(--violet-600);">
-                Submit for review
-            </button>
-        </div>
-    </form>
+                <div class="flex items-center justify-end gap-2 pt-2">
+                    <flux:action href="{{ route('showcase.showcase.index') }}" variant="default">Cancel</flux:action>
+                    <flux:action type="submit" color="violet">Submit for review</flux:action>
+                </div>
+            </form>
+        </flux:card.body>
+    </flux:card>
 @endsection

@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Showcase;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Contracts\View\View;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class StarterKitController extends Controller
 {
@@ -21,15 +22,15 @@ class StarterKitController extends Controller
         ];
     }
 
-    public function index(): View
+    public function index(): Response
     {
-        return view('showcase.starter-kits.index', ['kits' => self::kits()]);
+        return Inertia::render('StarterKits/Index', ['kits' => self::kits()]);
     }
 
-    public function show(string $slug): View
+    public function show(string $slug): Response
     {
         $kit = collect(self::kits())->firstWhere('slug', $slug);
         abort_if($kit === null, 404);
-        return view('showcase.starter-kits.show', ['kit' => $kit]);
+        return Inertia::render('StarterKits/Show', ['kit' => $kit]);
     }
 }

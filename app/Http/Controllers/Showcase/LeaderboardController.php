@@ -4,12 +4,13 @@ namespace App\Http\Controllers\Showcase;
 
 use App\Http\Controllers\Controller;
 use App\Models\LeaderboardSnapshot;
-use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class LeaderboardController extends Controller
 {
-    public function __invoke(Request $request): View
+    public function __invoke(Request $request): Response
     {
         $scope = $request->query('scope', 'all_time');
         if (!in_array($scope, ['all_time', 'last_30_days'], true)) {
@@ -21,9 +22,11 @@ class LeaderboardController extends Controller
             ->orderByDesc('generated_at')
             ->first();
 
-        return view('showcase.leaderboard', [
+        return Inertia::render('Leaderboard', [
             'scope' => $scope,
-            'snapshot' => $snapshot,
+            'snapshot' => $snapshot ? [
+                'generated_at' => $snapshot->generated_at->toIso8601String(),
+            ] : null,
             'rows' => $snapshot?->rows ?? [],
         ]);
     }

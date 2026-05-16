@@ -4,26 +4,33 @@ namespace App\Http\Controllers\Showcase;
 
 use App\Http\Controllers\Controller;
 use App\Support\PackageRegistry;
-use Illuminate\Contracts\View\View;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class PackagesController extends Controller
 {
-    public function index(): View
+    public function index(): Response
     {
-        return view('showcase.packages.index', [
-            'packages' => PackageRegistry::all(),
-        ]);
+        $packages = collect(PackageRegistry::all())->map(fn (array $p) => [
+            'slug' => $p['slug'],
+            'name' => $p['name'],
+            'tagline' => $p['tagline'],
+            'language' => $p['language'],
+            'components_count' => count($p['components'] ?? []),
+        ])->all();
+
+        return Inertia::render('Packages/Index', ['packages' => $packages]);
     }
 
-    public function show(string $package): View
+    public function show(string $package): Response
     {
         $pkg = PackageRegistry::find($package);
         abort_if($pkg === null, 404);
 
-        return view('showcase.packages.show', ['package' => $pkg]);
+        return Inertia::render('Packages/Show', ['package' => $pkg]);
     }
 
-    public function component(string $package, string $component): View
+    public function component(string $package, string $component): Response
     {
         $pkg = PackageRegistry::find($package);
         abort_if($pkg === null, 404);
@@ -31,9 +38,15 @@ class PackagesController extends Controller
         $comp = collect($pkg['components'] ?? [])->firstWhere('slug', $component);
         abort_if($comp === null, 404);
 
-        return view('showcase.packages.component', [
-            'package' => $pkg,
+        return Inertia::render('Packages/Component', [
+            'package' => [
+                'slug' => $pkg['slug'],
+                'name' => $pkg['name'],
+                'npm' => $pkg['npm'] ?? null,
+                'composer' => $pkg['composer'] ?? null,
+            ],
             'component' => $comp,
+            'usage' => null,
         ]);
     }
 }

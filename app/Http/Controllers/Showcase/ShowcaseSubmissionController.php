@@ -5,25 +5,35 @@ namespace App\Http\Controllers\Showcase;
 use App\Http\Controllers\Controller;
 use App\Jobs\ScanShowcaseSubmission;
 use App\Models\ShowcaseSubmission;
-use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class ShowcaseSubmissionController extends Controller
 {
-    public function index(): View
+    public function index(): Response
     {
-        return view('showcase.showcase.index', [
-            'submissions' => ShowcaseSubmission::query()
-                ->where('status', 'verified')
-                ->orderByDesc('id')
-                ->get(),
-        ]);
+        $submissions = ShowcaseSubmission::query()
+            ->where('status', 'verified')
+            ->orderByDesc('id')
+            ->get()
+            ->map(fn ($s) => [
+                'id' => $s->id,
+                'kind' => $s->kind,
+                'url' => $s->url,
+                'title' => $s->title,
+                'description' => $s->description,
+                'thumbnail_url' => $s->thumbnail_url,
+            ])
+            ->all();
+
+        return Inertia::render('Showcase/Index', ['submissions' => $submissions]);
     }
 
-    public function create(): View
+    public function create(): Response
     {
-        return view('showcase.showcase.create');
+        return Inertia::render('Showcase/Create');
     }
 
     public function store(Request $request): RedirectResponse

@@ -1,0 +1,357 @@
+{
+    "dreams": [
+        {
+            "slug": "control-baton",
+            "title": "Control Baton",
+            "blurb": "A passable write-lock pill: humans and agents request, hold, grant, or yank exclusive control of a surface, with auto-pass on activity and a transfer timeline.",
+            "pkg": "agent-integrations",
+            "dreamedAt": "2026-05-11"
+        },
+        {
+            "slug": "intent-trail",
+            "title": "Intent Trail",
+            "blurb": "A fading cross-surface breadcrumb of agent activity \u2014 each tool call drops a colored dot on the surface it touched, hover to inspect, watch the shape of where the agent has been.",
+            "pkg": "agent-integrations",
+            "dreamedAt": "2026-05-11"
+        },
+        {
+            "slug": "time-scrubber",
+            "title": "Time Scrubber",
+            "blurb": "A scrubbable timeline that rewinds a surface's state to any prior moment \u2014 see what the agent did, branch off, or fork a new screen from a past frame.",
+            "pkg": "fancy-screens",
+            "dreamedAt": "2026-05-11"
+        },
+        {
+            "slug": "margin-chat",
+            "title": "Margin Chat",
+            "blurb": "A slim chat thread docked beside any screen \u2014 messages can @-reference elements on that surface, hover to highlight, click to scroll, so conversation stays anchored to the work.",
+            "pkg": "agent-integrations",
+            "dreamedAt": "2026-05-11"
+        },
+        {
+            "slug": "agent-roster-dock",
+            "title": "Agent Roster Dock",
+            "blurb": "A persistent edge dock listing every active agent with live status (thinking, working on X, idle, blocked) \u2014 click to summon, mute, pause, or hand off the baton.",
+            "pkg": "agent-integrations",
+            "dreamedAt": "2026-05-11"
+        },
+        {
+            "slug": "briefing-card",
+            "title": "Briefing Card",
+            "blurb": "Before a multi-step plan executes, the agent posts a card listing every step \u2014 the human can ack the whole plan, edit individual steps, or reject, then watch each step land in turn.",
+            "pkg": "agent-integrations",
+            "dreamedAt": "2026-05-11"
+        },
+        {
+            "slug": "pulse-beacon",
+            "title": "Pulse Beacon",
+            "blurb": "Directional attention pulse: when an agent needs the human to look at something off-focus or off-screen, a ripple travels from the element toward the cursor with an inline reason chip.",
+            "pkg": "agent-integrations",
+            "dreamedAt": "2026-05-11"
+        },
+        {
+            "slug": "surface-ghost",
+            "title": "Surface Ghost",
+            "blurb": "Translucent in-place preview of an agent's pending writes overlaid on the surface \u2014 hover to see who/why, accept individual ghosts, or sweep-accept everything.",
+            "pkg": "agent-integrations",
+            "dreamedAt": "2026-05-11"
+        },
+        {
+            "slug": "streaming-text",
+            "title": "StreamingText",
+            "blurb": "A primitive that renders streamed-in agent output with typewriter/chunked-reveal/word-fade variants, inline citations, pause/skip controls, and a finished signal.",
+            "pkg": "react-fancy",
+            "dreamedAt": "2026-05-11"
+        },
+        {
+            "slug": "suggestion-ghost",
+            "title": "SuggestionGhost",
+            "blurb": "An input with inline grey ghost-text completion past the caret \u2014 Tab to accept, Cmd+\u2192 to accept one word, Esc to dismiss; debounced predictor with manual override.",
+            "pkg": "react-fancy",
+            "dreamedAt": "2026-05-11"
+        },
+        {
+            "slug": "reason-tag",
+            "title": "ReasonTag",
+            "blurb": "Wrap any value with a small ? affordance \u2014 on hover or click reveals the source, the agent's reasoning, a confidence band, and citations, so explainability is one keystroke away.",
+            "pkg": "react-fancy",
+            "dreamedAt": "2026-05-11",
+            "accepted": true,
+            "acceptedAt": "2026-05-12"
+        },
+        {
+            "slug": "draft-stack",
+            "title": "DraftStack",
+            "blurb": "Swipeable stack of competing AI-generated drafts with a word-level diff between adjacent drafts, side-by-side compare mode, and a one-click accept that promotes a draft to the live field.",
+            "pkg": "react-fancy",
+            "dreamedAt": "2026-05-11"
+        },
+        {
+            "slug": "prompt-input",
+            "title": "PromptInput",
+            "blurb": "Multi-line prompt field with /command autocomplete, @-mention picker, attachment chips, submit-on-\u2318Enter, and a token-budget meter \u2014 the chat composer every AI app rebuilds from scratch.",
+            "pkg": "react-fancy",
+            "dreamedAt": "2026-05-11",
+            "accepted": true,
+            "acceptedAt": "2026-05-12"
+        },
+        {
+            "slug": "magic-wand",
+            "title": "MagicWand",
+            "blurb": "Selection-anchored floating toolbar that pops over highlighted text with AI-flavored quick actions (rephrase, shorten, expand, explain, translate) \u2014 each invokes a host callback with the selection.",
+            "pkg": "react-fancy",
+            "dreamedAt": "2026-05-11",
+            "accepted": true,
+            "acceptedAt": "2026-05-12"
+        },
+        {
+            "slug": "tracked-textarea",
+            "title": "TrackedTextarea",
+            "blurb": "A textarea that renders multi-author edits as inline insertions and strike-through deletions colored by author, with per-change accept/reject, an author legend, and a clean export of the resolved text.",
+            "pkg": "react-fancy",
+            "dreamedAt": "2026-05-11"
+        },
+        {
+            "slug": "evidence-pane",
+            "title": "EvidencePane",
+            "blurb": "Collapsible drawer docked below an AI answer listing every retrieved snippet, citation, and tool call that produced it \u2014 click a snippet to highlight its referencing span in the answer.",
+            "pkg": "react-fancy",
+            "dreamedAt": "2026-05-11"
+        },
+        {
+            "slug": "progress-beam",
+            "title": "ProgressBeam",
+            "blurb": "Slim ambient progress bar pinned to a container's top edge that segments by parallel background jobs \u2014 each colored slice carries one agent's task, hover for detail, click to expand the roster.",
+            "pkg": "react-fancy",
+            "dreamedAt": "2026-05-11"
+        },
+        {
+            "slug": "whats-new",
+            "title": "WhatsNew",
+            "blurb": "A while-you-were-away tray that catalogs every agent-introduced change since the user's last visit, grouped by surface, with jump-to and dismiss-all \u2014 the inbox for asynchronous AI work.",
+            "pkg": "react-fancy",
+            "dreamedAt": "2026-05-11"
+        },
+        {
+            "slug": "smart-list",
+            "title": "SmartList",
+            "blurb": "A list of AI-generated items where every row exposes hover-revealed regenerate / explain / edit / pin / drop affordances, plus a sweep regenerate for the whole list and a pinned-items pin board.",
+            "pkg": "react-fancy",
+            "dreamedAt": "2026-05-11"
+        },
+        {
+            "slug": "mood-meter",
+            "title": "MoodMeter",
+            "blurb": "A 2D value+confidence input on a single pad \u2014 x is the value, y is how sure you are, the halo radius shrinks as confidence rises; perfect for AI-suggested numeric settings where uncertainty matters.",
+            "pkg": "react-fancy",
+            "dreamedAt": "2026-05-11",
+            "accepted": true,
+            "acceptedAt": "2026-05-12"
+        },
+        {
+            "slug": "annotated-field",
+            "title": "AnnotatedField",
+            "blurb": "Wraps any form input with a margin annotation slot that holds a threaded conversation pinned to the field \u2014 agents drop 'set X because Y' notes, humans reply, resolve, or convert a note into the next value.",
+            "pkg": "react-fancy",
+            "dreamedAt": "2026-05-11"
+        },
+        {
+            "slug": "beadcrumb",
+            "title": "Beadcrumb",
+            "blurb": "Horizontal scrollable session history \u2014 every step is a labeled bead with a miniature thumbnail and timestamp; click a bead to rewind, branch off into a side trail, or compare two beads.",
+            "pkg": "react-fancy",
+            "dreamedAt": "2026-05-11"
+        },
+        {
+            "slug": "hot-zone",
+            "title": "HotZone",
+            "blurb": "Wraps any element so it pulses once when its content changes \u2014 a self-contained 'look here' effect tuned by tone (info/change/risky), intensity, and decay; designed to fade quietly after one breath.",
+            "pkg": "react-fancy",
+            "dreamedAt": "2026-05-11"
+        },
+        {
+            "slug": "infinite-scroll",
+            "title": "InfiniteScroll",
+            "blurb": "Virtualized fetch-on-scroll list generic over item shape \u2014 render-prop rows, dedupe-by-id, sentinel-based IntersectionObserver paging, stalled/error/exhausted states. Bridge: scroll_visible_range / scroll_to(id) / scroll_load_next.",
+            "pkg": "react-fancy",
+            "theme": "Search & Navigation",
+            "dreamedAt": "2026-05-15"
+        },
+        {
+            "slug": "saved-queries",
+            "title": "SavedQueries",
+            "blurb": "Pinned + recent named searches with one-click rerun, rename, and delete. Persists across sessions; supports nested query objects (not just strings). Bridge: query_list / query_save({name, payload}) / query_run(id) \u2014 agents can save their own successful queries.",
+            "pkg": "react-fancy",
+            "theme": "Search & Navigation",
+            "dreamedAt": "2026-05-15"
+        },
+        {
+            "slug": "keymap-explorer",
+            "title": "KeymapExplorer",
+            "blurb": "Press ? to summon a searchable, context-grouped overlay of every keyboard shortcut active in the current scope. Generic registry; consumers register shortcuts via a hook. Bridge: keymap_list \u2014 agents discover what they can drive without screen-scraping menus.",
+            "pkg": "react-fancy",
+            "theme": "Search & Navigation",
+            "dreamedAt": "2026-05-15"
+        },
+        {
+            "slug": "waypoint-dots",
+            "title": "WaypointDots",
+            "blurb": "Minimap-style colored dots floating in the page margin marking sections, errors, comments, and agent-activity. Click to jump; hover to peek. Bridge: waypoint_list / waypoint_jump(id) / waypoint_pin(at) \u2014 agents can mark where they were working.",
+            "pkg": "react-fancy",
+            "theme": "Search & Navigation",
+            "dreamedAt": "2026-05-15"
+        },
+        {
+            "slug": "jump-history",
+            "title": "JumpHistory",
+            "blurb": "Back/forward navigation stack with screen thumbnails \u2014 the alt-tab for in-app screens. Render-prop history entries; controlled cursor; agent bridge can read history and jump_to(entryId) to retrace its own (or the user's) prior state.",
+            "pkg": "react-fancy",
+            "theme": "Search & Navigation",
+            "dreamedAt": "2026-05-15"
+        },
+        {
+            "slug": "result-stream",
+            "title": "ResultStream",
+            "blurb": "Virtualized result list that streams in async results with per-row skeletons, group dividers, and a 'more available' tail. Controlled list + loadState prop; ids are stable; bridge exposes stream_top / stream_pick(id) for agent traversal.",
+            "pkg": "react-fancy",
+            "theme": "Search & Navigation",
+            "dreamedAt": "2026-05-15"
+        },
+        {
+            "slug": "facet-rail",
+            "title": "FacetRail",
+            "blurb": "Faceted-filter sidebar from a JSON facet schema \u2014 checkbox groups, range sliders, search-within-facet, selected chips with clear-all. value is a plain {[facetKey]: any} bag agents can read and patch via facet_set / facet_clear.",
+            "pkg": "react-fancy",
+            "theme": "Search & Navigation",
+            "dreamedAt": "2026-05-15"
+        },
+        {
+            "slug": "grouped-tray",
+            "title": "GroupedTray",
+            "blurb": "Edge-docked slide-in tray for any list of items grouped by a key. Per-group collapse, per-item action menu, bulk 'mark group read' \u2014 keyboard-navigable. Works for notifications, files-by-folder, tickets-by-source, builds-by-pipeline, anything groupable.",
+            "pkg": "react-fancy",
+            "theme": "Notifications",
+            "dreamedAt": "2026-05-15"
+        },
+        {
+            "slug": "milestone-empty",
+            "title": "MilestoneEmpty",
+            "blurb": "Celebratory empty-state card for any milestone moment \u2014 inbox zero, all tests passing, queue drained, onboarding complete. Slot for stat tiles + one primary CTA + gradient hero, fades when the underlying state changes.",
+            "pkg": "react-fancy",
+            "theme": "Notifications",
+            "dreamedAt": "2026-05-15"
+        },
+        {
+            "slug": "time-grid",
+            "title": "TimeGrid",
+            "blurb": "7\u00d724 (or any N\u00d7M) boolean-cell painter \u2014 drag to paint, click axis labels to toggle whole row/column. Powers quiet hours, working hours, availability matrices, room booking, meeting heatmaps; anywhere a recurring time selection lives.",
+            "pkg": "react-fancy",
+            "theme": "Notifications",
+            "dreamedAt": "2026-05-15"
+        },
+        {
+            "slug": "classifier-chip",
+            "title": "ClassifierChip",
+            "blurb": "Auto-classified badge with hover-revealed reasoning and click-to-override. Sends the override back to the host's classifier so it trains itself. Generic across priority, sentiment, severity, category, risk \u2014 anywhere an AI label needs human-correctable trust.",
+            "pkg": "agent-integrations",
+            "theme": "Notifications",
+            "dreamedAt": "2026-05-15"
+        },
+        {
+            "slug": "batch-preview",
+            "title": "BatchPreview",
+            "blurb": "Preview-before-commit list with per-item include toggle, drag-to-reorder, and a 'send/run/apply now' override. Works for digests, scheduled posts, batch operations, AI write queues \u2014 anywhere a pending batch deserves a last look.",
+            "pkg": "react-fancy",
+            "theme": "Notifications",
+            "dreamedAt": "2026-05-15"
+        },
+        {
+            "slug": "checklist-rail",
+            "title": "ChecklistRail",
+            "blurb": "Vertical onboarding checklist with collapsible per-step detail, progress ring, and a single 'next' CTA that always points at the user's most-actionable remaining step.",
+            "pkg": "react-fancy",
+            "theme": "Onboarding",
+            "dreamedAt": "2026-05-15"
+        },
+        {
+            "slug": "tour-beacon",
+            "title": "TourBeacon",
+            "blurb": "Pulsing dot that anchors to any selector on the page and pops a coachmark on click \u2014 keyboard-navigable across a sequence, auto-scrolls into view, and remembers dismissed steps.",
+            "pkg": "react-fancy",
+            "theme": "Onboarding",
+            "dreamedAt": "2026-05-15"
+        },
+        {
+            "slug": "empty-canvas",
+            "title": "EmptyCanvas",
+            "blurb": "Illustrated empty-state container with a small grid of first-action CTAs \u2014 most-tried action floats to the top across sessions so power moves stay one click away.",
+            "pkg": "react-fancy",
+            "theme": "Onboarding",
+            "dreamedAt": "2026-05-15"
+        },
+        {
+            "slug": "profile-blanks",
+            "title": "ProfileBlanks",
+            "blurb": "Slim profile-completion bar that always surfaces the single next missing field as a one-tap inline mini-form \u2014 fills, validates, advances, with no detour to a settings page.",
+            "pkg": "react-fancy",
+            "theme": "Onboarding",
+            "dreamedAt": "2026-05-15"
+        },
+        {
+            "slug": "sample-data-toggle",
+            "title": "SampleDataToggle",
+            "blurb": "Persistent strip offering to seed a fresh workspace with sample data, with a single revert button \u2014 the 'try-before-you-commit' affordance for empty-state hesitation.",
+            "pkg": "react-fancy",
+            "theme": "Onboarding",
+            "dreamedAt": "2026-05-15"
+        },
+        {
+            "slug": "ticket-spine",
+            "title": "TicketSpine",
+            "blurb": "Vertical lifecycle indicator for a support ticket \u2014 open \u2192 triaged \u2192 in-progress \u2192 waiting-customer \u2192 resolved, with SLA color states, branch-off escalation rails, and per-stage timestamps revealed on hover.",
+            "pkg": "react-fancy",
+            "theme": "Support Services",
+            "dreamedAt": "2026-05-14"
+        },
+        {
+            "slug": "sla-pulse",
+            "title": "SlaPulse",
+            "blurb": "Live SLA countdown pill bound to a target wall-clock \u2014 green while comfortable, amber as the breach window approaches, red-pulse when breached; resilient to tab-sleep with a single rAF heartbeat.",
+            "pkg": "react-fancy",
+            "theme": "Support Services",
+            "dreamedAt": "2026-05-14"
+        },
+        {
+            "slug": "canned-composer",
+            "title": "CannedComposer",
+            "blurb": "Reply composer with one-keystroke macro insertion and {{variable}} placeholders \u2014 unresolved variables render as warning chips so reps never accidentally send '{{customer_name}}'.",
+            "pkg": "react-fancy",
+            "theme": "Support Services",
+            "dreamedAt": "2026-05-14"
+        },
+        {
+            "slug": "triage-stack",
+            "title": "TriageStack",
+            "blurb": "Stack of agent-recommended ticket actions (refund, escalate, draft-reply, close), each as a card with confidence + reason \u2014 swipe right to accept, left to reject, tap to edit before committing.",
+            "pkg": "agent-integrations",
+            "theme": "Support Services",
+            "dreamedAt": "2026-05-14"
+        },
+        {
+            "slug": "assist-overlay",
+            "title": "AssistOverlay",
+            "blurb": "Floating sidekick that hovers near any focused input and surfaces the agent's top-3 next-actions (quote KB, insert link, escalate) \u2014 keyboard-driven, dismissable, never steals the caret.",
+            "pkg": "agent-integrations",
+            "theme": "Support Services",
+            "dreamedAt": "2026-05-14"
+        },
+        {
+            "slug": "veto-ribbon",
+            "title": "Veto Ribbon",
+            "blurb": "A thin ribbon surfaces a pending agent action with a countdown so humans can approve early, edit the payload, or veto \u2014 trust-but-verify without modal interruptions.",
+            "pkg": "agent-integrations",
+            "dreamedAt": "2026-05-11"
+        }
+    ],
+    "exportedAt": "2026-05-16T03:50:49+00:00"
+}

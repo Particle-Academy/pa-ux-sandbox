@@ -30,3 +30,9 @@ Homestead.yaml
 Thumbs.db
 /emoji-test.txt
 /scripts/
+.bots/state/
+.ai/handoff/
+.ai/checkpoints/
+.ai/bots/
+.worktrees/
+/storage/app/manifest.ts

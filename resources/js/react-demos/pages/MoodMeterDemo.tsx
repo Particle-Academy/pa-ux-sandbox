@@ -46,7 +46,7 @@ export function MoodMeterDemo() {
             />
             <div className="flex items-end justify-end gap-2">
               <Action
-                variant="outline"
+                variant="ghost"
                 size="sm"
                 onClick={() => {
                   setValue(scale.postedValue);

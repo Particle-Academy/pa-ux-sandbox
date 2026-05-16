@@ -16,10 +16,6 @@ import {
   MicroMcpServer,
   attachInProcess,
   attachSseRelay,
-  registerWhiteboardBridge,
-  registerFormBridge,
-  registerSheetsBridge,
-  registerChartsBridge,
   ShareControls,
   ScreensActivityBridge,
   BridgedForm,
@@ -33,6 +29,10 @@ import {
   type FormFieldDescriptor,
   type AgentActivityEvent,
 } from "@particle-academy/agent-integrations";
+import { registerWhiteboardBridge } from "@particle-academy/agent-integrations/bridges/whiteboard";
+import { registerFormBridge } from "@particle-academy/agent-integrations/bridges/forms";
+import { registerSheetsBridge } from "@particle-academy/agent-integrations/bridges/sheets";
+import { registerChartsBridge } from "@particle-academy/agent-integrations/bridges/charts";
 import "@particle-academy/agent-integrations/styles.css";
 
 const AGENT = { id: "claude", name: "Claude", color: "#a855f7" };

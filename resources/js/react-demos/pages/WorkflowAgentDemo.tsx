@@ -12,7 +12,6 @@ import {
   MicroMcpServer,
   attachInProcess,
   attachSseRelay,
-  registerFlowBridge,
   ShareControls,
   createSessionDescriptor,
   type SessionDescriptor,
@@ -20,6 +19,7 @@ import {
   type SseRelayTransport,
   type InProcessTransport,
 } from "@particle-academy/agent-integrations";
+import { registerFlowBridge } from "@particle-academy/agent-integrations/bridges/flow";
 import "@particle-academy/agent-integrations/styles.css";
 
 const AGENT = { id: "agent", name: "Claude", color: "#a855f7" };

@@ -1,4 +1,4 @@
-import { SharedWhiteboard } from "@particle-academy/agent-integrations";
+import { SharedWhiteboard } from "@particle-academy/agent-integrations/components/shared-whiteboard";
 import "@particle-academy/agent-integrations/styles.css";
 import "@particle-academy/fancy-whiteboard/styles.css";
 import type { StickyNoteItem } from "@particle-academy/fancy-whiteboard";

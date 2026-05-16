@@ -23,8 +23,38 @@ Route::post('/holy-sheet/export', HolySheetExportController::class)
     ->withoutMiddleware([\Illuminate\Foundation\Http\Middleware\PreventRequestForgery::class])
     ->name('holy-sheet.export');
 
-// Storefront routes
-Route::get('/', [ProductController::class, 'index'])->name('home');
+// ─── Fancy UI Showcase ─────────────────────────────────────────────────
+Route::get('/', \App\Http\Controllers\Showcase\HomeController::class)->name('home');
+
+Route::get('/packages', [\App\Http\Controllers\Showcase\PackagesController::class, 'index'])->name('packages.index');
+Route::get('/packages/{package}', [\App\Http\Controllers\Showcase\PackagesController::class, 'show'])->name('packages.show');
+Route::get('/packages/{package}/{component}', [\App\Http\Controllers\Showcase\PackagesController::class, 'component'])->name('packages.component');
+
+Route::get('/starter-kits', [\App\Http\Controllers\Showcase\StarterKitController::class, 'index'])->name('starter-kits.index');
+Route::get('/starter-kits/{slug}', [\App\Http\Controllers\Showcase\StarterKitController::class, 'show'])->name('starter-kits.show');
+
+Route::get('/dreaming', [\App\Http\Controllers\Showcase\DreamingController::class, 'index'])->name('dreaming.index');
+Route::get('/dreaming/archived', [\App\Http\Controllers\Showcase\DreamingController::class, 'archived'])->name('dreaming.archived');
+
+Route::get('/leaderboard', \App\Http\Controllers\Showcase\LeaderboardController::class)->name('leaderboard');
+
+Route::get('/showcase', [\App\Http\Controllers\Showcase\ShowcaseSubmissionController::class, 'index'])->name('showcase.showcase.index');
+Route::middleware('auth')->group(function () {
+    Route::get('/showcase/submit', [\App\Http\Controllers\Showcase\ShowcaseSubmissionController::class, 'create'])->name('showcase.showcase.create');
+    Route::post('/showcase/submit', [\App\Http\Controllers\Showcase\ShowcaseSubmissionController::class, 'store'])->name('showcase.showcase.store');
+});
+
+// Vote endpoints (auth required for cast; tallies are public).
+Route::get('/api/votes', [\App\Http\Controllers\Showcase\VoteController::class, 'tallies'])->name('votes.tallies');
+Route::middleware('auth')->post('/api/votes', [\App\Http\Controllers\Showcase\VoteController::class, 'cast'])->name('votes.cast');
+
+// GitHub auth.
+Route::get('/auth/github', [\App\Http\Controllers\Auth\GitHubLoginController::class, 'redirect'])->name('auth.github');
+Route::get('/auth/github/callback', [\App\Http\Controllers\Auth\GitHubLoginController::class, 'callback'])->name('auth.github.callback');
+Route::post('/auth/logout', [\App\Http\Controllers\Auth\GitHubLoginController::class, 'logout'])->name('auth.logout');
+
+// ─── laravel-catalog package demo storefront (preserved at /catalog-demo) ──
+Route::get('/catalog-demo', [ProductController::class, 'index'])->name('catalog-demo.home');
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
 

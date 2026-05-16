@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Showcase;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\ScanShowcaseSubmission;
 use App\Models\ShowcaseSubmission;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -43,7 +44,8 @@ class ShowcaseSubmissionController extends Controller
             'status' => 'pending',
         ]);
 
-        // Phase 5 will dispatch a scan job here; for now mark pending.
+        ScanShowcaseSubmission::dispatch($submission);
+
         return redirect()
             ->route('showcase.showcase.index')
             ->with('submitted', "Submission #{$submission->id} queued for verification.");

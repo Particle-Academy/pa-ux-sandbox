@@ -12,23 +12,12 @@
         <flux:text class="mt-2 max-w-3xl">{{ $component['blurb'] }}</flux:text>
     @endif
 
-    <flux:card class="mt-6">
-        <flux:card.header>
-            <flux:text size="xs" class="uppercase tracking-wider font-semibold text-zinc-500">Live demo</flux:text>
-        </flux:card.header>
-        <flux:card.body>
-            <div class="grid place-items-center rounded-md border border-dashed border-zinc-300 bg-zinc-50 p-10 text-sm text-zinc-500 dark:border-zinc-700 dark:bg-zinc-900">
-                Phase 2 — per-component live demo mounts here.
-            </div>
-        </flux:card.body>
-    </flux:card>
+    <div class="mt-6"
+         data-component-demo
+         data-package="{{ $package['slug'] }}"
+         data-component="{{ $component['slug'] }}">
+        {{-- React island; ./resources/js/component-demo.tsx mounts here --}}
+    </div>
 
-    <flux:card class="mt-6">
-        <flux:card.header>
-            <flux:text size="xs" class="uppercase tracking-wider font-semibold text-zinc-500">Usage in your project</flux:text>
-        </flux:card.header>
-        <flux:card.body>
-            <pre class="overflow-x-auto rounded-md bg-zinc-950 p-3 text-xs text-zinc-100">{{ "import { {$component['name']} } from \"{$package['npm']}\";" }}</pre>
-        </flux:card.body>
-    </flux:card>
+    @vite(['resources/js/component-demo.tsx'])
 @endsection

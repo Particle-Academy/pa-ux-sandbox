@@ -15,6 +15,8 @@ export default defineConfig({
                 'resources/js/react-demos.tsx',
                 'resources/css/showcase.css',
                 'resources/js/showcase.ts',
+                'resources/js/component-demo.tsx',
+                'resources/js/dreaming-public.tsx',
             ],
             refresh: true,
         }),

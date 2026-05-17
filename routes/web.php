@@ -20,8 +20,10 @@ use App\Http\Controllers\Showcase\VoteController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\WhiteboardAgentController;
 use App\Http\Controllers\WhiteboardShareController;
+use App\Mcp\Servers\FancyUiRegistry;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Support\Facades\Route;
+use Laravel\Mcp\Facades\Mcp;
 
 // Authentication routes
 Route::middleware('guest')->group(function () {
@@ -62,6 +64,12 @@ Route::get('/r/index.json', [RegistryController::class, 'index'])->name('registr
 Route::get('/r/{slug}', [RegistryController::class, 'show'])
     ->where('slug', '[a-z0-9\-\.]+')
     ->name('registry.show');
+
+// ─── Install-MCP server ──────────────────────────────────────────────
+// Hosted MCP endpoint so any MCP-capable IDE (Claude Code, Cursor, VS Code,
+// Codex) can browse, search, and install Fancy UI components conversationally.
+// Tools: list_components, search_components, get_component, install_instructions.
+Mcp::web('/mcp', FancyUiRegistry::class);
 
 // ─── Docs hub ────────────────────────────────────────────────────────
 Route::get('/docs', [DocsController::class, 'show'])->name('docs.index');

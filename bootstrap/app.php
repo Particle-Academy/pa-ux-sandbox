@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\HandleInertiaRequests;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -15,11 +16,12 @@ return Application::configure(basePath: dirname(__DIR__))
         // session cookies — exempt them from CSRF.
         $middleware->validateCsrfTokens(except: [
             'whiteboard-share/*',
+            'mcp', // public install-MCP for IDE agents
         ]);
 
         // Inertia shared props + root view for the Showcase SPA.
         $middleware->web(append: [
-            \App\Http\Middleware\HandleInertiaRequests::class,
+            HandleInertiaRequests::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

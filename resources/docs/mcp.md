@@ -18,7 +18,7 @@ The Install-MCP server is a hosted streamable-HTTP MCP endpoint that any MCP-cap
 | `get_component` | `{ name: string }` | The full registry-item bundle for that component. |
 | `install_instructions` | `{ name: string }` | A short text recipe: the npm command + CLI command + import line. |
 
-> **Status:** The Install-MCP is part of the Phase 5 roadmap. This page documents the planned interface. Track progress on the [GitHub project board](https://github.com/Particle-Academy/pa-ux-sandbox).
+> **Status:** Live at [`https://ui.particle.academy/mcp`](https://ui.particle.academy/mcp) — streamable HTTP MCP. Add it to your IDE today using the config snippets below.
 
 ### Configuring your IDE
 

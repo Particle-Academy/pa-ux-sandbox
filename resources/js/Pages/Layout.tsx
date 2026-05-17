@@ -12,6 +12,7 @@ import {
 } from "@particle-academy/react-fancy";
 import { Moon, Sun } from "lucide-react";
 import { currentTheme, toggleTheme } from "../showcase-theme";
+import { CommandPalette } from "./CommandPalette";
 
 type Flash = { auth_error?: string | null; submitted?: string | null };
 type AuthUser = {
@@ -75,6 +76,21 @@ export function Layout({ children }: { children: ReactNode }) {
                 </Navbar.Items>
 
                 <div className="flex items-center gap-2">
+                    <button
+                        onClick={() =>
+                            window.dispatchEvent(
+                                new KeyboardEvent("keydown", { key: "k", metaKey: true, ctrlKey: true }),
+                            )
+                        }
+                        className="hidden h-8 items-center gap-2 rounded-md border border-zinc-200 bg-zinc-50 px-2.5 text-xs text-zinc-500 hover:border-zinc-300 hover:text-zinc-700 md:flex dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400 dark:hover:border-zinc-700 dark:hover:text-zinc-200"
+                        aria-label="Search"
+                    >
+                        <span>Search…</span>
+                        <kbd className="rounded border border-zinc-300 bg-white px-1 font-mono text-[10px] text-zinc-500 dark:border-zinc-700 dark:bg-zinc-950">
+                            ⌘K
+                        </kbd>
+                    </button>
+
                     <Tooltip content={theme === "dark" ? "Light mode" : "Dark mode"}>
                         <Action
                             variant="ghost"
@@ -134,6 +150,8 @@ export function Layout({ children }: { children: ReactNode }) {
             )}
 
             <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 md:py-14">{children}</main>
+
+            <CommandPalette />
 
             <footer className="border-t border-zinc-200 dark:border-zinc-800">
                 <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 px-4 py-5 text-xs text-zinc-500 dark:text-zinc-400">

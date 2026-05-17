@@ -10,6 +10,7 @@ import {
     Text,
 } from "@particle-academy/react-fancy";
 import { Layout } from "../Layout";
+import { ComponentDemo } from "./ComponentDemo";
 
 type Props = {
     package: { slug: string; name: string; npm?: string; composer?: string };
@@ -45,9 +46,7 @@ export default function PackagesComponent({ package: pkg, component, usage }: Pr
                     </Text>
                 </Card.Header>
                 <Card.Body>
-                    <div className="grid place-items-center rounded-md border border-dashed border-zinc-300 bg-zinc-50 p-10 text-sm text-zinc-500 dark:border-zinc-700 dark:bg-zinc-900">
-                        Interactive demo for <code className="font-mono">{component.name}</code> coming soon.
-                    </div>
+                    <ComponentDemo slug={component.slug} name={component.name} pkg={pkg.slug} />
                 </Card.Body>
             </Card>
 

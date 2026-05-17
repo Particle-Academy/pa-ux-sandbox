@@ -1,7 +1,6 @@
 import { createInertiaApp } from "@inertiajs/react";
 import { createRoot } from "react-dom/client";
 import { FancyAppRoot } from "@particle-academy/fancy-inertia";
-import { Toast } from "@particle-academy/react-fancy";
 import "./showcase-theme";
 import "@particle-academy/react-fancy/styles.css";
 
@@ -19,7 +18,6 @@ createInertiaApp({
         createRoot(el).render(
             <FancyAppRoot>
                 <App {...props} />
-                <Toast.Provider />
             </FancyAppRoot>,
         );
     },

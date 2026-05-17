@@ -54,15 +54,15 @@ export default function Leaderboard({ scope, snapshot, rows }: Props) {
             ) : (
                 <Card className="mt-6 overflow-hidden">
                     <Table>
-                        <Table.Header>
+                        <Table.Head>
                             <Table.Row>
-                                <Table.Head>#</Table.Head>
-                                <Table.Head>Contributor</Table.Head>
-                                <Table.Head className="text-right">Merged PRs</Table.Head>
-                                <Table.Head className="text-right">Votes cast</Table.Head>
-                                <Table.Head className="text-right">Score</Table.Head>
+                                <Table.Column label="#" />
+                                <Table.Column label="Contributor" />
+                                <Table.Column label="Merged PRs" className="!text-right" />
+                                <Table.Column label="Votes cast" className="!text-right" />
+                                <Table.Column label="Score" className="!text-right" />
                             </Table.Row>
-                        </Table.Header>
+                        </Table.Head>
                         <Table.Body>
                             {rows.map((row, i) => (
                                 <Table.Row key={row.github_username}>

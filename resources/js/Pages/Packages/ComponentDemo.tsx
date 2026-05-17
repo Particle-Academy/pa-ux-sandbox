@@ -115,6 +115,8 @@ const REGISTRY: Record<string, DemoFn> = {
     "react-fancy/carousel": CarouselDemo,
     "react-fancy/chart": ChartDemo,
     "react-fancy/kanban": KanbanDemo,
+    "react-fancy/content-renderer": ContentRendererDemo,
+    "react-fancy/editor": EditorDemo,
 
     // ── fancy-whiteboard
     "fancy-whiteboard/board": WhiteboardBoardDemo,
@@ -904,14 +906,24 @@ function TableDemo() {
         { name: "Lumen Cycles", mrr: 0, seats: 5 },
     ];
     return (
-        <Table
-            columns={[
-                { key: "name", label: "Customer", sortable: true },
-                { key: "mrr", label: "MRR", sortable: true, render: (v) => `$${(v as number).toLocaleString()}` },
-                { key: "seats", label: "Seats", sortable: true },
-            ]}
-            data={rows}
-        />
+        <Table>
+            <Table.Head>
+                <Table.Row>
+                    <Table.Column label="Customer" sortKey="name" />
+                    <Table.Column label="MRR" sortKey="mrr" className="!text-right" />
+                    <Table.Column label="Seats" sortKey="seats" className="!text-right" />
+                </Table.Row>
+            </Table.Head>
+            <Table.Body>
+                {rows.map((r) => (
+                    <Table.Row key={r.name}>
+                        <Table.Cell>{r.name}</Table.Cell>
+                        <Table.Cell className="text-right font-mono">${r.mrr.toLocaleString()}</Table.Cell>
+                        <Table.Cell className="text-right font-mono">{r.seats}</Table.Cell>
+                    </Table.Row>
+                ))}
+            </Table.Body>
+        </Table>
     );
 }
 
@@ -1426,6 +1438,40 @@ function FancyAppRootDemo() {
                 "withScreens={false} skips fancy-screens registration (saves a context layer if you don't use it).",
                 "withECharts={false} disables echarts module auto-registration for tree-shaking control.",
                 "toastPosition prop changes where toasts dock.",
+            ]}
+        />
+    );
+}
+
+function ContentRendererDemo() {
+    return (
+        <Explainer
+            summary="Renders structured content (markdown-ish blocks: headings, paragraphs, code, lists, images, tables) from a JSON document. Extensions register custom block types and inline marks."
+            code={'import { ContentRenderer, registerExtension } from "@particle-academy/react-fancy";\n\nconst doc = {\n  type: "doc",\n  content: [\n    { type: "heading", level: 2, text: "Hello" },\n    { type: "paragraph", content: [{ type: "text", text: "Body text with a " }, { type: "text", marks: ["bold"], text: "bold" }, { type: "text", text: " span." }] },\n    { type: "code_block", lang: "ts", text: "const greet = (n) => \'hi \' + n;" },\n  ],\n};\n\n<ContentRenderer document={doc} />'}
+            bullets={[
+                "Document shape is plain JSON — easy for agents to author.",
+                "Extensions plug in via registerExtension({ type, render }).",
+                "Pairs with <Editor> — same document shape, round-trip safe.",
+            ]}
+        />
+    );
+}
+
+function EditorDemo() {
+    const [v, setV] = useState({
+        type: "doc",
+        content: [
+            { type: "paragraph", content: [{ type: "text", text: "Type here. Try bold, italic, lists." }] },
+        ],
+    });
+    return (
+        <Explainer
+            summary="Rich-text editor producing the same JSON document shape ContentRenderer reads. Toolbar slot is composable; built-in commands cover bold/italic/headings/lists/code blocks."
+            code={'import { Editor } from "@particle-academy/react-fancy";\n\nconst [doc, setDoc] = useState(EMPTY_DOC);\n\n<Editor\n  value={doc}\n  onChange={setDoc}\n  toolbar={[\n    { command: "bold",      label: "B" },\n    { command: "italic",    label: "I" },\n    { command: "heading",   commandArg: "2", label: "H2" },\n    { command: "bulletList",label: "•" },\n    { command: "codeBlock", label: "</>" },\n  ]}\n/>'}
+            bullets={[
+                "Editor.value is the same JSON shape ContentRenderer accepts.",
+                "Toolbar is data-driven; you can add custom commands.",
+                "Use with useFancyForm() and useEditor() for richer integrations.",
             ]}
         />
     );

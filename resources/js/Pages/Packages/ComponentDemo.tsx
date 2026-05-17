@@ -115,6 +115,57 @@ const REGISTRY: Record<string, DemoFn> = {
     "react-fancy/carousel": CarouselDemo,
     "react-fancy/chart": ChartDemo,
     "react-fancy/kanban": KanbanDemo,
+
+    // ── fancy-whiteboard
+    "fancy-whiteboard/board": WhiteboardBoardDemo,
+    "fancy-whiteboard/sticky-note": WhiteboardStickyDemo,
+    "fancy-whiteboard/cursor-layer": WhiteboardCursorDemo,
+    "fancy-whiteboard/connector": WhiteboardConnectorDemo,
+    "fancy-whiteboard/shape": WhiteboardShapeDemo,
+    "fancy-whiteboard/drawing": WhiteboardDrawingDemo,
+
+    // ── fancy-flow
+    "fancy-flow/flow-editor": FlowEditorDemo,
+    "fancy-flow/use-flow-state": FlowStateHookDemo,
+    "fancy-flow/use-flow-run": FlowRunHookDemo,
+
+    // ── fancy-sheets
+    "fancy-sheets/sheet-workbook": SheetWorkbookDemo,
+    "fancy-sheets/create-empty-workbook": EmptyWorkbookDemo,
+
+    // ── fancy-code
+    "fancy-code/code-editor": CodeEditorDemo,
+
+    // ── fancy-echarts
+    "fancy-echarts/echart": EChartDemo,
+    "fancy-echarts/data-diagram": EChartsDataDiagramDemo,
+    "fancy-echarts/flowchart": EChartsFlowchartDemo,
+    "fancy-echarts/mindmap": EChartsMindmapDemo,
+    "fancy-echarts/org-chart": EChartsOrgChartDemo,
+
+    // ── fancy-screens
+    "fancy-screens/screen-system": ScreenSystemDemo,
+    "fancy-screens/screen": ScreenDemo,
+
+    // ── fancy-3d
+    "fancy-3d/canvas": Fancy3DCanvasDemo,
+    "fancy-3d/stage": Fancy3DStageDemo,
+    "fancy-3d/monitor": Fancy3DMonitorDemo,
+    "fancy-3d/card-3d": Fancy3DCard3DDemo,
+
+    // ── agent-integrations
+    "agent-integrations/micro-mcp-server": MicroMcpServerDemo,
+    "agent-integrations/agent-panel": AgentPanelDemo,
+    "agent-integrations/agent-cursor": AgentCursorDemo,
+    "agent-integrations/shared-whiteboard": SharedWhiteboardDemo,
+    "agent-integrations/share-controls": ShareControlsDemo,
+
+    // ── holy-sheet (PHP — code-snippet only)
+    "holy-sheet/agent": HolySheetAgentDemo,
+
+    // ── fancy-inertia
+    "fancy-inertia/fancy-app-root": FancyAppRootDemo,
+    "fancy-inertia/use-fancy-form": UseFancyFormDemo,
 };
 
 export function ComponentDemo({ slug, name, pkg }: { slug: string; name: string; pkg: string }) {
@@ -943,5 +994,448 @@ function KanbanDemo() {
                 </Kanban.Column>
             ))}
         </Kanban>
+    );
+}
+
+// ─── Helpers for non-mountable components ──────────────────────────────────
+
+function Explainer({
+    summary,
+    code,
+    bullets,
+}: {
+    summary: string;
+    code?: string;
+    bullets?: string[];
+}) {
+    return (
+        <div className="space-y-3">
+            <Text size="sm" className="!text-zinc-600 dark:!text-zinc-300">{summary}</Text>
+            {bullets && (
+                <ul className="ml-4 list-disc space-y-1 text-sm text-zinc-600 dark:text-zinc-300">
+                    {bullets.map((b, i) => <li key={i}>{b}</li>)}
+                </ul>
+            )}
+            {code && (
+                <pre className="overflow-x-auto rounded-md bg-zinc-950 p-3 text-[12px] leading-relaxed text-zinc-100">
+                    <code>{code}</code>
+                </pre>
+            )}
+        </div>
+    );
+}
+
+// ─── fancy-whiteboard ──────────────────────────────────────────────────────
+
+function WhiteboardBoardDemo() {
+    return (
+        <Explainer
+            summary="Root canvas — owns viewport pan/zoom and renders all items (sticky notes, drawings, connectors, shapes) plus an optional cursor layer."
+            code={`import { Board, StickyNote, CursorLayer } from "@particle-academy/fancy-whiteboard";
+import "@particle-academy/fancy-whiteboard/styles.css";
+
+<Board
+  notes={notes} onNotesChange={setNotes}
+  viewport={viewport} onViewportChange={setViewport}
+>
+  <StickyNote />
+  <CursorLayer cursors={cursors} />
+</Board>`}
+        />
+    );
+}
+
+function WhiteboardStickyDemo() {
+    const [notes, setNotes] = useState([
+        { id: "n1", text: "Onboarding feels heavy at step 3", color: "#fde68a" },
+        { id: "n2", text: "Try one-click templates", color: "#a5b4fc" },
+        { id: "n3", text: "Track time-to-first-board", color: "#bef264" },
+    ]);
+    return (
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+            {notes.map((n) => (
+                <div key={n.id} className="rounded-md p-3 text-sm text-zinc-900 shadow-sm" style={{ background: n.color }}>
+                    <input
+                        value={n.text}
+                        onChange={(e) => setNotes((arr) => arr.map((x) => x.id === n.id ? { ...x, text: e.target.value } : x))}
+                        className="w-full bg-transparent outline-none"
+                    />
+                </div>
+            ))}
+        </div>
+    );
+}
+
+function WhiteboardCursorDemo() {
+    return (
+        <div className="relative h-32 overflow-hidden rounded-md border border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950">
+            {[
+                { name: "Glenn", color: "#a855f7", x: "20%", y: "30%" },
+                { name: "Rita", color: "#10b981", x: "55%", y: "60%" },
+                { name: "Claude", color: "#3b82f6", x: "75%", y: "25%" },
+            ].map((c) => (
+                <div key={c.name} className="absolute -translate-x-1/2 -translate-y-1/2" style={{ left: c.x, top: c.y }}>
+                    <span className="block h-3 w-3 rounded-full" style={{ background: c.color, boxShadow: `0 0 0 4px ${c.color}33` }} />
+                    <span className="absolute left-3 top-3 whitespace-nowrap rounded px-1.5 py-0.5 text-[10px] text-white" style={{ background: c.color }}>{c.name}</span>
+                </div>
+            ))}
+        </div>
+    );
+}
+
+function WhiteboardConnectorDemo() {
+    return (
+        <svg viewBox="0 0 400 160" className="h-40 w-full rounded-md border border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950">
+            <rect x="20" y="60" width="80" height="40" rx="6" className="fill-violet-100 stroke-violet-400 dark:fill-violet-500/15" />
+            <rect x="160" y="20" width="80" height="40" rx="6" className="fill-sky-100 stroke-sky-400 dark:fill-sky-500/15" />
+            <rect x="160" y="100" width="80" height="40" rx="6" className="fill-emerald-100 stroke-emerald-400 dark:fill-emerald-500/15" />
+            <rect x="300" y="60" width="80" height="40" rx="6" className="fill-amber-100 stroke-amber-400 dark:fill-amber-500/15" />
+            <path d="M100 80 C130 80, 130 40, 160 40" className="fill-none stroke-zinc-400" strokeWidth={1.5} />
+            <path d="M100 80 C130 80, 130 120, 160 120" className="fill-none stroke-zinc-400" strokeWidth={1.5} />
+            <path d="M240 40 C270 40, 270 80, 300 80" className="fill-none stroke-zinc-400" strokeWidth={1.5} />
+            <path d="M240 120 C270 120, 270 80, 300 80" className="fill-none stroke-zinc-400" strokeWidth={1.5} />
+        </svg>
+    );
+}
+
+function WhiteboardShapeDemo() {
+    return (
+        <svg viewBox="0 0 400 160" className="h-40 w-full rounded-md border border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950">
+            <rect x="30" y="40" width="70" height="80" rx="4" className="fill-violet-200 stroke-violet-500 dark:fill-violet-500/30" />
+            <circle cx="170" cy="80" r="40" className="fill-sky-200 stroke-sky-500 dark:fill-sky-500/30" />
+            <polygon points="260,40 300,120 220,120" className="fill-emerald-200 stroke-emerald-500 dark:fill-emerald-500/30" />
+            <polygon points="350,40 380,80 350,120 320,80" className="fill-amber-200 stroke-amber-500 dark:fill-amber-500/30" />
+        </svg>
+    );
+}
+
+function WhiteboardDrawingDemo() {
+    return (
+        <svg viewBox="0 0 400 160" className="h-40 w-full rounded-md border border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950">
+            <path d="M20 80 C 60 40, 100 120, 140 80 S 220 40, 260 80 S 340 120, 380 80" stroke="rgb(168, 85, 247)" strokeWidth={3} fill="none" strokeLinecap="round" />
+            <path d="M40 130 Q 80 110, 120 130 T 200 130" stroke="rgb(16, 185, 129)" strokeWidth={2} fill="none" strokeLinecap="round" />
+            <path d="M260 30 L 290 50 L 270 70 L 300 90" stroke="rgb(239, 68, 68)" strokeWidth={2} fill="none" strokeLinecap="round" />
+        </svg>
+    );
+}
+
+// ─── fancy-flow ────────────────────────────────────────────────────────────
+
+function FlowEditorDemo() {
+    return (
+        <Explainer
+            summary="Workflow editor on top of React Flow. Renders nodes from a JSON graph, lets users wire edges, and runs the graph through a pluggable executor that emits per-node status events."
+            code={'import { FlowEditor } from "@particle-academy/fancy-flow";\nimport "@particle-academy/fancy-flow/styles.css";\n\n<FlowEditor\n  initialNodes={nodes}\n  initialEdges={edges}\n  nodeKinds={[\n    { kind: "manual_trigger", label: "Manual run" },\n    { kind: "llm_call",       label: "LLM call" },\n    { kind: "tool_call",      label: "Tool" },\n    { kind: "output",         label: "Output" },\n  ]}\n  executors={DEMO_EXECUTORS}\n  onChange={({ nodes, edges }) => setGraph({ nodes, edges })}\n/>'}
+        />
+    );
+}
+
+function FlowStateHookDemo() {
+    return (
+        <Explainer
+            summary="Controlled-state hook for FlowEditor. Owns nodes + edges + selection + per-node status; returns setters and the change handler you pass into <FlowEditor>."
+            code={'import { useFlowState } from "@particle-academy/fancy-flow";\n\nconst flow = useFlowState(SEED_GRAPH);\n\n<FlowEditor\n  initialNodes={flow.nodes}\n  initialEdges={flow.edges}\n  onChange={flow.onChange}\n/>\n\nflow.setNodes(...)\nflow.setNodeStatus("llm-1", "running");'}
+        />
+    );
+}
+
+function FlowRunHookDemo() {
+    return (
+        <Explainer
+            summary="Topological executor hook. Runs a graph through your executors map, emits a stream of typed events (log, status, output), and gives you a cancel handle."
+            code={'import { useFlowRun } from "@particle-academy/fancy-flow";\n\nconst runner = useFlowRun();\n\nawait runner.run(graph, executors);\nrunner.cancel();\n\nrunner.onEvent((e) => {\n  // { type: "status" | "log" | "output", nodeId, ... }\n});'}
+        />
+    );
+}
+
+// ─── fancy-sheets ──────────────────────────────────────────────────────────
+
+function SheetWorkbookDemo() {
+    return (
+        <Explainer
+            summary="Multi-sheet spreadsheet workbook with formulas, clipboard, CSV import/export, and bridgeable cell-level state. Zero third-party deps."
+            code={'import { SheetWorkbook, createEmptyWorkbook } from "@particle-academy/fancy-sheets";\nimport "@particle-academy/fancy-sheets/styles.css";\n\nconst [wb, setWb] = useState(createEmptyWorkbook());\n\n<SheetWorkbook\n  value={wb}\n  onChange={setWb}\n/>'}
+        />
+    );
+}
+
+function EmptyWorkbookDemo() {
+    return (
+        <Explainer
+            summary="Factory that returns a blank single-sheet workbook with default column widths + row heights. Cheap to call; the workbook is plain JSON."
+            code={'import { createEmptyWorkbook } from "@particle-academy/fancy-sheets";\n\nconst wb = createEmptyWorkbook({\n  sheets: [{ name: "Q1", rows: 100, cols: 26 }],\n});\n\n// shape:\n// { sheets: [{ id, name, cells: {}, columnWidths, rowHeights }] }'}
+        />
+    );
+}
+
+// ─── fancy-code ────────────────────────────────────────────────────────────
+
+function CodeEditorDemo() {
+    return (
+        <Explainer
+            summary="Lightweight embedded code editor — custom engine, no Monaco / CodeMirror / Shiki. Tiny bundle, controlled value, pluggable languages and themes."
+            code={'import { CodeEditor } from "@particle-academy/fancy-code";\nimport "@particle-academy/fancy-code/styles.css";\n\nconst [code, setCode] = useState("const greet = (n) => \'hi \' + n;");\n\n<CodeEditor\n  value={code}\n  onChange={setCode}\n  language="typescript"\n  theme="github-dark"\n/>'}
+        />
+    );
+}
+
+// ─── fancy-echarts ─────────────────────────────────────────────────────────
+
+function EChartDemo() {
+    return (
+        <Explainer
+            summary="Typed React wrapper around Apache ECharts. Pass an ECharts option JSON object; the wrapper handles mount, resize, and SSR boundaries."
+            code={'import { EChart } from "@particle-academy/fancy-echarts";\n\n<EChart\n  option={{\n    xAxis: { type: "category", data: ["Q1", "Q2", "Q3", "Q4"] },\n    yAxis: { type: "value" },\n    series: [{ type: "bar", data: [12000, 18500, 22000, 26500] }],\n  }}\n  style={{ height: 320 }}\n/>'}
+        />
+    );
+}
+
+function EChartsDataDiagramDemo() {
+    return (
+        <Explainer
+            summary="Preset: schema-driven entity-relationship diagram. Tables become nodes, foreign keys become edges. Renders through ECharts' graph series."
+            code={'import { DataDiagram } from "@particle-academy/fancy-echarts";\n\n<DataDiagram\n  tables={[\n    { name: "users", columns: ["id", "email", "name"] },\n    { name: "orgs",  columns: ["id", "slug", "plan"] },\n    { name: "memberships", columns: ["user_id", "org_id", "role"] },\n  ]}\n  relations={[\n    { from: "memberships.user_id", to: "users.id" },\n    { from: "memberships.org_id",  to: "orgs.id" },\n  ]}\n/>'}
+        />
+    );
+}
+
+function EChartsFlowchartDemo() {
+    return (
+        <Explainer
+            summary="Preset: hierarchical flowchart with kind-tinted nodes. Same JSON shape as DataDiagram but rendered with directional layout."
+            code={'import { Flowchart } from "@particle-academy/fancy-echarts";\n\n<Flowchart\n  nodes={[\n    { id: "a", label: "Customer asks", kind: "input" },\n    { id: "b", label: "Classify intent", kind: "agent" },\n    { id: "c", label: "Fetch records",   kind: "tool" },\n    { id: "d", label: "Reply",           kind: "output" },\n  ]}\n  edges={[\n    { from: "a", to: "b" },\n    { from: "b", to: "c" },\n    { from: "c", to: "d" },\n  ]}\n/>'}
+        />
+    );
+}
+
+function EChartsMindmapDemo() {
+    return (
+        <Explainer
+            summary="Preset: radial mindmap centered on a root node. Auto-arcs children outward by depth."
+            code={'import { Mindmap } from "@particle-academy/fancy-echarts";\n\n<Mindmap\n  root={{\n    label: "Human+ UX",\n    children: [\n      { label: "Authorable", children: [{ label: "JSON-shaped" }, { label: "Tiny APIs" }] },\n      { label: "Inhabitable", children: [{ label: "MCP bridges" }, { label: "Stable handles" }] },\n    ],\n  }}\n/>'}
+        />
+    );
+}
+
+function EChartsOrgChartDemo() {
+    return (
+        <Explainer
+            summary="Preset: top-down hierarchical org chart. Each node renders a card with title + subtitle + avatar."
+            code={'import { OrgChart } from "@particle-academy/fancy-echarts";\n\n<OrgChart\n  root={{\n    name: "Founder",\n    children: [\n      { name: "Design", children: [{ name: "Visual" }, { name: "Product" }] },\n      { name: "Engineering" },\n      { name: "GTM" },\n    ],\n  }}\n/>'}
+        />
+    );
+}
+
+// ─── fancy-screens ─────────────────────────────────────────────────────────
+
+function ScreenSystemDemo() {
+    return (
+        <Explainer
+            summary="Top-level provider that owns the screen registry, port store, and cross-screen agent presence. Mount once near the app root."
+            code={'import { ScreenSystem } from "@particle-academy/fancy-screens";\n\n<ScreenSystem>\n  <App />          {/* Screens registered inside the tree become addressable */}\n</ScreenSystem>'}
+            bullets={[
+                "Acts as the single source of truth for which screens exist.",
+                "Ports = named extension points that other screens can mount into.",
+                "Used by agent-integrations to broadcast cross-screen agent activity.",
+            ]}
+        />
+    );
+}
+
+function ScreenDemo() {
+    return (
+        <Explainer
+            summary="A registered screen container. Owns a stable id, an optional schema, and a meta channel that surfaces agent activity to the system."
+            code={'import { Screen } from "@particle-academy/fancy-screens";\n\n<Screen id="onboarding" title="Onboarding overhaul">\n  {/* page content */}\n</Screen>'}
+            bullets={[
+                "id is the stable handle agents address.",
+                "meta.agentActivity is wired automatically when bridges are mounted.",
+                "Renders a CSS class .agent-focused-element on active focus.",
+            ]}
+        />
+    );
+}
+
+// ─── fancy-3d ──────────────────────────────────────────────────────────────
+
+function Fancy3DCanvasDemo() {
+    return (
+        <Explainer
+            summary={`Engine-pluggable 3D canvas. Set engine="dom" for a CSS-3D mode that has no Babylon dep, or engine="babylon" for a full WebGL scene. Same JSX inside.`}
+            code={'import { Canvas, Stage, Card3D } from "@particle-academy/fancy-3d/dom";\n\n<Canvas engine="dom" style={{ height: 360 }}>\n  <Stage>\n    <Card3D position={[0, 0, 0]} rotation={[0, 30, 0]}>\n      <YourReactCard />   {/* any React node */}\n    </Card3D>\n  </Stage>\n</Canvas>'}
+        />
+    );
+}
+
+function Fancy3DStageDemo() {
+    return (
+        <Explainer
+            summary="Scene root. Owns camera, lighting, and the JSON scene graph. Same shape whether you're rendering through the DOM or Babylon adapter."
+            code={'import { Stage } from "@particle-academy/fancy-3d";\n\n<Stage camera={{ position: [0, 2, 5], target: [0, 0, 0] }}>\n  {/* primitives + Card3D / Monitor / Screen go here */}\n</Stage>'}
+        />
+    );
+}
+
+function Fancy3DMonitorDemo() {
+    return (
+        <Explainer
+            summary="A 3D plane that renders a DOM (HTML/React) surface as a texture. Lets you put a working react-fancy <Card> or <Table> on a monitor in the scene."
+            code={'import { Monitor } from "@particle-academy/fancy-3d/babylon";\nimport { Card } from "@particle-academy/react-fancy";\n\n<Monitor width={2} height={1.2} position={[0, 1, 0]}>\n  <Card>\n    <Card.Body>Renders as a live texture in WebGL.</Card.Body>\n  </Card>\n</Monitor>'}
+        />
+    );
+}
+
+function Fancy3DCard3DDemo() {
+    return (
+        <Explainer
+            summary="3D-native card primitive. Like react-fancy <Card> but positioned + rotated in scene space. Children are regular React nodes."
+            code={'import { Card3D } from "@particle-academy/fancy-3d";\n\n<Card3D position={[0, 0, 0]} rotation={[0, 30, 0]} size={[2, 1.2]}>\n  <h3>Hello from 3D</h3>\n  <p>Children are normal React.</p>\n</Card3D>'}
+        />
+    );
+}
+
+// ─── agent-integrations ────────────────────────────────────────────────────
+
+function MicroMcpServerDemo() {
+    return (
+        <Explainer
+            summary="The Human+ UX core: a tiny MCP server that runs inside the browser tab. Bridges register typed tools against it; transports (in-process, SSE-relay) let local and remote agents call them."
+            code={'import { MicroMcpServer, attachInProcess } from "@particle-academy/agent-integrations";\n\nconst server = new MicroMcpServer({\n  info: { name: "my-app-session", version: "0.1.0" },\n});\n\nattachInProcess(server);  // for an agent rendered in the same React tree\n// or attachSseRelay(server, { baseUrl, sessionId, token }) for remote agents'}
+            bullets={[
+                "Owns the tool registry — bridges call server.registerTool(...).",
+                "Transports are pluggable — in-process, SSE relay, or your own.",
+                "One server per session; persists across Inertia navigations when mounted in FancyAppRoot.",
+            ]}
+        />
+    );
+}
+
+function AgentPanelDemo() {
+    return (
+        <Explainer
+            summary="Per-agent control panel. Lists active agents, their last activity, presence color, and exposes pause/resume/dismiss controls."
+            code={'import { AgentPanel } from "@particle-academy/agent-integrations";\n\n<AgentPanel agents={[{ id: "claude", name: "Claude", color: "#a855f7" }]} />'}
+        />
+    );
+}
+
+function AgentCursorDemo() {
+    return (
+        <div className="space-y-3">
+            <div className="relative h-32 overflow-hidden rounded-md border border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950">
+                <div className="absolute -translate-x-1/2 -translate-y-1/2" style={{ left: "30%", top: "40%" }}>
+                    <span className="block h-3 w-3 animate-pulse rounded-full bg-violet-500" style={{ boxShadow: "0 0 0 4px rgba(168,85,247,0.2)" }} />
+                    <span className="absolute left-3 top-3 whitespace-nowrap rounded bg-violet-500 px-1.5 py-0.5 text-[10px] text-white">Claude · drawing</span>
+                </div>
+                <div className="absolute -translate-x-1/2 -translate-y-1/2" style={{ left: "70%", top: "65%" }}>
+                    <span className="block h-3 w-3 animate-pulse rounded-full bg-emerald-500" style={{ boxShadow: "0 0 0 4px rgba(16,185,129,0.2)" }} />
+                    <span className="absolute left-3 top-3 whitespace-nowrap rounded bg-emerald-500 px-1.5 py-0.5 text-[10px] text-white">Scribe · idle</span>
+                </div>
+            </div>
+            <Text size="xs" className="!text-zinc-500">
+                Real <code className="font-mono">&lt;AgentCursor&gt;</code> takes id, color, position, label, intent.
+                Hook into a CursorLayer (whiteboard) or place loose over any container.
+            </Text>
+        </div>
+    );
+}
+
+function SharedWhiteboardDemo() {
+    return (
+        <Explainer
+            summary="One-line composite: renders fancy-whiteboard's Board, mounts the MCP server, registers the whiteboard bridge, and wires the SSE share relay. Copy the share URL, paste into Claude Code, and the agent joins live."
+            code={'import { SharedWhiteboard } from "@particle-academy/agent-integrations/components/shared-whiteboard";\nimport "@particle-academy/agent-integrations/styles.css";\nimport "@particle-academy/fancy-whiteboard/styles.css";\n\n<SharedWhiteboard\n  agent={{ id: "claude", name: "Claude", color: "#a855f7" }}\n  relayBaseUrl="https://relay.particle.academy"\n/>'}
+        />
+    );
+}
+
+function ShareControlsDemo() {
+    const [sharing, setSharing] = useState(false);
+    return (
+        <div className="max-w-md space-y-3">
+            <div className="flex items-center gap-2 rounded-md border border-zinc-200 bg-white p-3 dark:border-zinc-800 dark:bg-zinc-900">
+                <span className={`inline-block h-2 w-2 rounded-full ${sharing ? "animate-pulse bg-emerald-500" : "bg-zinc-300 dark:bg-zinc-700"}`} />
+                <span className="text-sm">{sharing ? "Sharing · session active" : "Not shared"}</span>
+                <div className="ml-auto">
+                    {sharing ? (
+                        <Action size="sm" color="red" variant="ghost" onClick={() => setSharing(false)}>Stop</Action>
+                    ) : (
+                        <Action size="sm" color="violet" onClick={() => setSharing(true)}>Start sharing</Action>
+                    )}
+                </div>
+            </div>
+            {sharing && (
+                <pre className="overflow-x-auto rounded-md bg-zinc-950 p-3 text-[11px] text-zinc-100">
+                    https://relay.particle.academy/sess-7f3a/events?token=…
+                </pre>
+            )}
+            <Text size="xs" className="!text-zinc-500">
+                Real <code className="font-mono">&lt;ShareControls&gt;</code> registers a session against the relay broker, copies the share URL to the clipboard, and emits state for the agent panel.
+            </Text>
+        </div>
+    );
+}
+
+// ─── holy-sheet (PHP) ──────────────────────────────────────────────────────
+
+function HolySheetAgentDemo() {
+    return (
+        <Explainer
+            summary="PHP 8.2+ xlsx writer for agentic document creation — framework-agnostic core with an optional Laravel adapter. The Agent class is the top-level write / describe / validateAndRepair / lint entry point."
+            code={`<?php
+
+use HolySheet\\Agent;
+
+$schema = [
+  'sheets' => [[
+    'name' => 'Q1',
+    'columns' => [
+      ['header' => 'Region',  'type' => 'string'],
+      ['header' => 'Revenue', 'type' => 'currency', 'currency' => 'USD'],
+    ],
+    'rows' => [
+      ['NA', 12000],
+      ['EU', 18500],
+      ['APAC', 9400],
+    ],
+  ]],
+];
+
+Agent::write($schema, storage_path('app/q1.xlsx'));
+
+// Round-trip:
+$back = Agent::describe(storage_path('app/q1.xlsx'));
+// $back === $schema (modulo formatting metadata)`}
+            bullets={[
+                "Zero third-party deps; only requires ext-zip.",
+                "Round-trip safe — describe() returns the same schema write() consumed.",
+                "Optional FMS integration via the Laravel adapter.",
+            ]}
+        />
+    );
+}
+
+// ─── fancy-inertia ─────────────────────────────────────────────────────────
+
+function FancyAppRootDemo() {
+    return (
+        <Explainer
+            summary="App-shell provider for Inertia apps using Fancy UI. Mounts Toast.Provider, fancy-screens' ScreenSystem, and registers echarts modules — all above the Inertia outlet so providers survive page swaps."
+            code={'import { createInertiaApp } from "@inertiajs/react";\nimport { createRoot } from "react-dom/client";\nimport { FancyAppRoot } from "@particle-academy/fancy-inertia";\n\ncreateInertiaApp({\n  resolve: (name) => import(`./Pages/${name}.tsx`),\n  setup({ App, props, el }) {\n    createRoot(el).render(\n      <FancyAppRoot>\n        <App {...props} />\n      </FancyAppRoot>,\n    );\n  },\n});'}
+            bullets={[
+                "withScreens={false} skips fancy-screens registration (saves a context layer if you don't use it).",
+                "withECharts={false} disables echarts module auto-registration for tree-shaking control.",
+                "toastPosition prop changes where toasts dock.",
+            ]}
+        />
+    );
+}
+
+function UseFancyFormDemo() {
+    return (
+        <Explainer
+            summary="Inertia useForm() wrapper with a .field(name) helper that drops directly into react-fancy <Input> / <Select> / <Switch>. No more rewiring value + onChange + error props by hand."
+            code={'import { useFancyForm } from "@particle-academy/fancy-inertia";\n\nconst form = useFancyForm({ url: "", title: "", description: "" });\n\n<form onSubmit={(e) => { e.preventDefault(); form.post("/submit"); }}>\n  <Input  {...form.field("url")}         label="URL" />\n  <Input  {...form.field("title")}       label="Title (optional)" />\n  <Textarea {...form.field("description")} label="Description" />\n\n  <Action type="submit" disabled={form.processing}>Submit</Action>\n</form>'}
+        />
     );
 }

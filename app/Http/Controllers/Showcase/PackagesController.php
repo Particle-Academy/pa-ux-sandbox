@@ -3,12 +3,16 @@
 namespace App\Http\Controllers\Showcase;
 
 use App\Http\Controllers\Controller;
+use App\Support\ComponentContext;
 use App\Support\PackageRegistry;
+use App\Support\Registry\RegistrySource;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class PackagesController extends Controller
 {
+    public function __construct(private readonly RegistrySource $registry) {}
+
     public function index(): Response
     {
         $packages = collect(PackageRegistry::all())->map(fn (array $p) => [
@@ -38,6 +42,11 @@ class PackagesController extends Controller
         $comp = collect($pkg['components'] ?? [])->firstWhere('slug', $component);
         abort_if($comp === null, 404);
 
+        // Pull the matching registry-item (source files + deps) if we can
+        // scan it from disk. Falls through to null for packages we don't yet
+        // read (e.g. composer-only PHP packages).
+        $item = $this->registry->find($comp['slug']);
+
         return Inertia::render('Packages/Component', [
             'package' => [
                 'slug' => $pkg['slug'],
@@ -47,6 +56,18 @@ class PackagesController extends Controller
             ],
             'component' => $comp,
             'usage' => null,
+            'context' => ComponentContext::find($pkg['slug'], $comp['slug']),
+            'source' => $item ? [
+                'files' => array_map(fn ($f) => [
+                    'path' => $f['path'],
+                    'name' => basename($f['path']),
+                    'content' => $f['content'],
+                    'language' => str_ends_with($f['path'], '.tsx') ? 'tsx' : 'ts',
+                ], $item->files),
+                'dependencies' => $item->dependencies,
+                'registryDependencies' => $item->registryDependencies,
+                'registryUrl' => "/r/{$item->name}.json",
+            ] : null,
         ]);
     }
 }

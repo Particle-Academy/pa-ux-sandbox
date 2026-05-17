@@ -97,6 +97,42 @@ export default function Home({ packages, total_components }: HomeProps) {
             <section className="mt-16">
                 <div className="flex items-end justify-between gap-3">
                     <div>
+                        <Heading level={2} size="lg">Starter kits</Heading>
+                        <Text size="sm" className="mt-1 !text-zinc-500">
+                            6 vertical demos · clone, study, adapt.
+                        </Text>
+                    </div>
+                    <Action as={Link} href="/starter-kits" variant="ghost" size="sm" iconTrailing="arrow-right">
+                        See all
+                    </Action>
+                </div>
+                <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                    {[
+                        { slug: "react-fancy", name: "React Dashboard", pkg: "react-fancy", icon: "▦", tone: "from-violet-400/30 to-sky-400/30" },
+                        { slug: "fancy-flow", name: "Workflow Studio", pkg: "fancy-flow", icon: "⟿", tone: "from-emerald-400/30 to-sky-400/30" },
+                        { slug: "fancy-whiteboard", name: "Collaborative Board", pkg: "fancy-whiteboard", icon: "✦", tone: "from-amber-400/30 to-rose-400/30" },
+                        { slug: "fancy-sheets", name: "Spreadsheet Studio", pkg: "fancy-sheets", icon: "▥", tone: "from-emerald-400/30 to-violet-400/30" },
+                        { slug: "fancy-code", name: "Embedded IDE", pkg: "fancy-code", icon: "{ }", tone: "from-indigo-400/30 to-violet-400/30" },
+                        { slug: "fancy-echarts", name: "Diagram Studio", pkg: "fancy-echarts", icon: "◊", tone: "from-sky-400/30 to-indigo-400/30" },
+                    ].map((k) => (
+                        <Link key={k.slug} href={`/starter-kits/${k.slug}`} className="block">
+                            <Card className="group relative h-full overflow-hidden transition hover:-translate-y-0.5 hover:shadow-md">
+                                <div className={`grid h-24 place-items-center bg-gradient-to-br ${k.tone} text-3xl text-zinc-900 dark:text-zinc-100`}>
+                                    <span>{k.icon}</span>
+                                </div>
+                                <Card.Body>
+                                    <Heading level={3} size="sm">{k.name}</Heading>
+                                    <Text size="xs" className="mt-1 !text-zinc-500 font-mono">{k.pkg}</Text>
+                                </Card.Body>
+                            </Card>
+                        </Link>
+                    ))}
+                </div>
+            </section>
+
+            <section className="mt-16">
+                <div className="flex items-end justify-between gap-3">
+                    <div>
                         <Heading level={2} size="lg">Packages</Heading>
                         <Text size="sm" className="mt-1 !text-zinc-500">
                             {packages.length} packages · {total_components} components — every one with a live demo.

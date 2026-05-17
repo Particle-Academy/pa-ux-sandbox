@@ -23,6 +23,7 @@ import {
     FileUpload,
     Heading,
     Icon,
+    InputTag,
     Kanban,
     MagicWand,
     Menu,
@@ -687,12 +688,12 @@ function MobileMenuDemo() {
     return (
         <>
             <Action onClick={() => setOpen(true)}>Open mobile menu</Action>
-            <MobileMenu open={open} onClose={() => setOpen(false)}>
+            <MobileMenu.Flyout open={open} onClose={() => setOpen(false)}>
                 <MobileMenu.Item href="#" onClick={() => setOpen(false)}>Inbox</MobileMenu.Item>
                 <MobileMenu.Item href="#" onClick={() => setOpen(false)}>Projects</MobileMenu.Item>
                 <MobileMenu.Item href="#" onClick={() => setOpen(false)}>Team</MobileMenu.Item>
                 <MobileMenu.Item href="#" onClick={() => setOpen(false)}>Settings</MobileMenu.Item>
-            </MobileMenu>
+            </MobileMenu.Flyout>
         </>
     );
 }
@@ -806,21 +807,19 @@ function InputTagDemo() {
                 triggers={{
                     "/": {
                         items: [
-                            { id: "summarize", label: "Summarize thread" },
-                            { id: "tldr", label: "TL;DR" },
-                            { id: "actions", label: "Pull action items" },
+                            { id: "summarize", name: "Summarize thread" },
+                            { id: "tldr", name: "TL;DR" },
+                            { id: "actions", name: "Pull action items" },
                         ],
-                        renderItem: (i: any) => i.label,
-                        toReplacement: (i: any) => "/" + i.id + " ",
+                        insert: (item: any) => "/" + item.id + " ",
                     },
                     "@": {
                         items: [
-                            { id: "glenn", label: "Glenn Wagner" },
-                            { id: "rita", label: "Rita Kumar" },
-                            { id: "sam", label: "Sam Lin" },
+                            { id: "glenn", name: "Glenn Wagner" },
+                            { id: "rita", name: "Rita Kumar" },
+                            { id: "sam", name: "Sam Lin" },
                         ],
-                        renderItem: (i: any) => i.label,
-                        toReplacement: (i: any) => "@" + i.id + " ",
+                        insert: (item: any) => "@" + item.id + " ",
                     },
                 }}
             />
@@ -853,9 +852,15 @@ function MagicWandDemo() {
             value={v}
             onValueChange={setV}
             actions={[
-                { id: "shorten", label: "Shorten", run: (sel) => sel.text.split(/\s+/).slice(0, Math.ceil(sel.text.split(/\s+/).length / 2)).join(" ") },
-                { id: "upper", label: "Uppercase", run: (sel) => sel.text.toUpperCase() },
+                { id: "shorten", label: "Shorten" },
+                { id: "upper", label: "Uppercase" },
             ]}
+            onAction={(action, selection, _replacement) => {
+                const transform = action.id === "upper"
+                    ? selection.text.toUpperCase()
+                    : selection.text.split(/\s+/).slice(0, Math.ceil(selection.text.split(/\s+/).length / 2)).join(" ");
+                setV((cur) => cur.slice(0, selection.start) + transform + cur.slice(selection.end));
+            }}
         />
     );
 }

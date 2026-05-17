@@ -8,6 +8,7 @@ use App\Http\Controllers\Auth\GitHubLoginController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HolySheetExportController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\Showcase\DocsController;
 use App\Http\Controllers\Showcase\DreamingController;
 use App\Http\Controllers\Showcase\HomeController;
 use App\Http\Controllers\Showcase\LeaderboardController;
@@ -61,6 +62,12 @@ Route::get('/r/index.json', [RegistryController::class, 'index'])->name('registr
 Route::get('/r/{slug}', [RegistryController::class, 'show'])
     ->where('slug', '[a-z0-9\-\.]+')
     ->name('registry.show');
+
+// ─── Docs hub ────────────────────────────────────────────────────────
+Route::get('/docs', [DocsController::class, 'show'])->name('docs.index');
+Route::get('/docs/{slug}', [DocsController::class, 'show'])
+    ->where('slug', '[a-z0-9\-]+')
+    ->name('docs.show');
 
 Route::get('/showcase', [ShowcaseSubmissionController::class, 'index'])->name('showcase.showcase.index');
 Route::middleware('auth')->group(function () {

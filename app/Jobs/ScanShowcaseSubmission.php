@@ -54,7 +54,7 @@ class ScanShowcaseSubmission implements ShouldQueue
 
             foreach (['dependencies', 'devDependencies', 'peerDependencies', 'require', 'require-dev'] as $section) {
                 foreach (($json[$section] ?? []) as $name => $_version) {
-                    if (str_starts_with($name, '@particle-academy/') || str_starts_with($name, 'particle-academy/') || $name === 'wishborn/fancy-flux') {
+                    if (str_starts_with($name, '@particle-academy/') || str_starts_with($name, 'particle-academy/')) {
                         $matches[$name] = $section;
                     }
                 }
@@ -114,9 +114,9 @@ class ScanShowcaseSubmission implements ShouldQueue
                 $hits['particle-academy/'.$pkg] = $hits['particle-academy/'.$pkg] ?? 'inline reference';
             }
         }
-        // Crude check for fancy-flux usage in compiled Blade output.
-        if (str_contains($html, 'data-flux-') || str_contains($html, 'data-fancy-')) {
-            $hits['flux/fancy data-attributes'] = 'rendered DOM';
+        // Crude check for compiled react-fancy data-attributes.
+        if (str_contains($html, 'data-react-fancy-')) {
+            $hits['react-fancy data-attributes'] = 'rendered DOM';
         }
 
         if (empty($hits)) {

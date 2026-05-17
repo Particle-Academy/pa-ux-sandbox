@@ -84,31 +84,8 @@ Route::prefix('admin')->name('admin.')->middleware(['web', 'auth', 'can:admin'])
     Route::post('features/test', [\App\Http\Controllers\Admin\AdminFeaturesController::class, 'test'])->name('features.test');
 });
 
-// UX Demo Hub
-Route::get('/ux-demos', fn () => view('ux-demos'))->name('ux-demos');
-
-// Fancy Flux Demos — classes ship inside the package; the package also registers
-// /fancy-flux-demos/* routes when FANCY_FLUX_ENABLE_DEMO_ROUTES=true.
-// These /ux-demos/* aliases keep the existing sandbox URLs working.
-Route::prefix('ux-demos')->name('ux-demos.')->group(function () {
-    Route::get('/action',            \FancyFlux\Demos\ActionExamples::class)->name('action');
-    Route::get('/carousel',          \FancyFlux\Demos\BasicCarousel::class)->name('carousel');
-    Route::get('/color-picker',      \FancyFlux\Demos\ColorPickerExamples::class)->name('color-picker');
-    Route::get('/drawer',            \FancyFlux\Demos\DrawerExamples::class)->name('drawer');
-    Route::get('/dynamic-carousel',  \FancyFlux\Demos\DynamicCarousel::class)->name('dynamic-carousel');
-    Route::get('/emoji-select',      \FancyFlux\Demos\EmojiSelectExamples::class)->name('emoji-select');
-    Route::get('/nested-carousel',   \FancyFlux\Demos\NestedCarousel::class)->name('nested-carousel');
-    Route::get('/wizard-form',       \FancyFlux\Demos\WizardForm::class)->name('wizard-form');
-    Route::get('/timeline',          \FancyFlux\Demos\TimelineExamples::class)->name('timeline');
-});
-
 // React demos (SPA catch-all)
 Route::get('/react-demos/{any?}', fn () => view('react-demos'))->where('any', '.*')->name('react-demos');
-
-// Holy Sheet AI agent demo — natural language → xlsx via Laravel AI SDK + Holy Sheet tools.
-Route::livewire('/ai-sheets', 'ai-sheets')->name('ai-sheets');
-Route::post('/ai-sheets/stream', \App\Http\Controllers\AiSheetStreamController::class)
-    ->name('ai-sheets.stream');
 
 // Shared whiteboard agent — proxies Anthropic messages so the browser
 // can drive an MCP-style tool-use loop against the local board state.
@@ -124,11 +101,3 @@ Route::post('/whiteboard-share/{session}/inbox', [\App\Http\Controllers\Whiteboa
 Route::post('/whiteboard-share/{session}/outbox', [\App\Http\Controllers\WhiteboardShareController::class, 'outbox']);
 Route::get('/whiteboard-share/{session}/events', [\App\Http\Controllers\WhiteboardShareController::class, 'events']);
 
-// Published Catalog UI routes — opt-in via CATALOG_ENABLE_UI=true. The
-// admin gate is enforced both at the route level (can:admin) and inside
-// the Livewire component (Gate::authorize on every request).
-if (config('catalog.enable_ui', false)) {
-    Route::prefix('ctrl')->name('ctrl.')->middleware(['web', 'auth', 'can:admin'])->group(function () {
-        Route::get('/products', \LaravelCatalog\Livewire\Admin\Products\Index::class)->name('products.index');
-    });
-}

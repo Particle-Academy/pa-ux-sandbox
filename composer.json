@@ -13,12 +13,10 @@
         "laravel/framework": "^13.0",
         "laravel/socialite": "^5.27",
         "laravel/tinker": "^3.0",
-        "livewire/livewire": "^4.0",
         "particle-academy/holy-sheet": "^1.0",
         "particle-academy/laravel-catalog": "@dev",
         "particle-academy/laravel-fms": "@dev",
-        "stripe/stripe-php": "^17.3",
-        "wishborn/fancy-flux": "@dev"
+        "stripe/stripe-php": "^17.3"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
@@ -99,10 +97,6 @@
                     "particle-academy/laravel-fms": "0.2.0"
                 }
             }
-        },
-        {
-            "type": "path",
-            "url": "./packages/fancy-flux"
         },
         {
             "type": "path",

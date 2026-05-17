@@ -25,7 +25,6 @@ class PackageRegistry
             self::fancy3d(),
             self::agentIntegrations(),
             self::holySheet(),
-            self::fancyFlux(),
             self::fancyInertia(),
         ];
     }
@@ -276,26 +275,6 @@ class PackageRegistry
             'language' => 'PHP',
             'components' => [
                 ['slug' => 'agent', 'name' => 'Agent', 'blurb' => 'Top-level write/describe/lint API.'],
-            ],
-        ];
-    }
-
-    /** @return array<string, mixed> */
-    private static function fancyFlux(): array
-    {
-        return [
-            'slug' => 'fancy-flux',
-            'name' => 'fancy-flux',
-            'tagline' => 'Blade/Livewire Flux UI components — Action, Carousel, ColorPicker, EmojiSelect, Timeline, D3.',
-            'composer' => 'wishborn/fancy-flux',
-            'repo' => 'wishborn/fancy',
-            'language' => 'PHP/Blade',
-            'components' => [
-                ['slug' => 'action', 'name' => 'flux:action', 'blurb' => 'The flagship button primitive.'],
-                ['slug' => 'carousel', 'name' => 'flux:carousel', 'blurb' => 'Multi-variant carousel.'],
-                ['slug' => 'color-picker', 'name' => 'flux:color-picker', 'blurb' => 'Color picker input.'],
-                ['slug' => 'emoji-select', 'name' => 'flux:emoji-select', 'blurb' => 'Composable emoji picker.'],
-                ['slug' => 'timeline', 'name' => 'flux:timeline', 'blurb' => 'Vertical timeline.'],
             ],
         ];
     }

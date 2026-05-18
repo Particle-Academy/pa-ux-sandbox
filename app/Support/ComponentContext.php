@@ -102,9 +102,9 @@ class ComponentContext
         ],
 
         'fancy-inertia/fancy-app-root' => [
-            'why' => 'Inertia + React + Fancy UI needs the same boilerplate at every app root — Toast.Provider, fancy-screens&apos; ScreenSystem, ECharts module registration, dark-mode initialization. <code>FancyAppRoot</code> bundles it so a new app is two lines, not twenty.',
-            'what' => 'A single wrapper component that mounts every cross-cutting provider Fancy UI expects, in the right order, with sensible defaults. Flags (<code>withScreens</code>, <code>withECharts</code>) let you opt out of pieces you don&apos;t need.',
-            'how' => 'In your Inertia bootstrap, wrap <code>&lt;App ...&gt;</code> with <code>&lt;FancyAppRoot&gt;</code> inside <code>createRoot().render()</code>. That&apos;s the whole integration — every other Fancy UI primitive now works without further wiring.',
+            'why' => 'Inertia + React + Fancy UI needs the same boilerplate at every app root — Toast.Provider, fancy-screens&apos; ScreenSystem, ECharts module registration. <code>FancyAppRoot</code> bundles it so a new app is two lines, not twenty.',
+            'what' => 'A single wrapper component that mounts every cross-cutting provider Fancy UI expects, in the right order, with sensible defaults. Flags (<code>withScreens</code>, <code>withECharts</code>) let you opt out of pieces you don&apos;t need. Providers mount synchronously on first render &mdash; no lazy-import dance.',
+            'how' => 'In your Inertia bootstrap, wrap <code>&lt;App ...&gt;</code> with <code>&lt;FancyAppRoot&gt;</code> inside <code>createRoot().render()</code>. That&apos;s the whole integration &mdash; every other Fancy UI primitive now works without further wiring.',
         ],
     ];
 

@@ -1248,11 +1248,11 @@ function EChartsOrgChartDemo() {
 function ScreenSystemDemo() {
     return (
         <Explainer
-            summary="Top-level provider that owns the screen registry, port store, and cross-screen agent presence. Mount once near the app root."
+            summary="Top-level provider that owns the screen registry, the map of registered Zustand stores, and cross-screen agent presence. Mount once near the app root."
             code={'import { ScreenSystem } from "@particle-academy/fancy-screens";\n\n<ScreenSystem>\n  <App />          {/* Screens registered inside the tree become addressable */}\n</ScreenSystem>'}
             bullets={[
-                "Acts as the single source of truth for which screens exist.",
-                "Ports = named extension points that other screens can mount into.",
+                "Single source of truth for which screens exist.",
+                "Tracks Zustand stores registered via useRegisterStore() so agents can enumerate per-screen state.",
                 "Used by agent-integrations to broadcast cross-screen agent activity.",
             ]}
         />

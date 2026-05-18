@@ -1,8 +1,17 @@
 import { createInertiaApp } from "@inertiajs/react";
 import { createRoot } from "react-dom/client";
 import { FancyAppRoot } from "@particle-academy/fancy-inertia";
+import { registerAll as registerEChartsAll, registerBuiltinThemes } from "@particle-academy/fancy-echarts";
 import "./showcase-theme";
 import "@particle-academy/react-fancy/styles.css";
+
+// Register echarts modules synchronously before any component can render.
+// FancyAppRoot does this in useEffect, but useEffect runs AFTER first render
+// — so EChart components in the first paint would otherwise throw. We need
+// this synchronous boot because the home page + every package detail page
+// contains EChart-based previews that render in the first frame.
+registerEChartsAll();
+registerBuiltinThemes();
 
 createInertiaApp({
     resolve: (name) => {

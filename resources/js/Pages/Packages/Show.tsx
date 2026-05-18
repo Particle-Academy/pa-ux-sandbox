@@ -2,6 +2,7 @@ import { Head, Link } from "@inertiajs/react";
 import { useState } from "react";
 import { Action, Badge, Breadcrumbs, Card, Heading, Tabs, Text } from "@particle-academy/react-fancy";
 import { Layout } from "../Layout";
+import { getComponentPreview, GenericPlaceholder } from "./ComponentPreviews";
 
 type Pkg = {
     slug: string;
@@ -101,24 +102,32 @@ export default function PackagesShow({ package: pkg }: { package: Pkg }) {
 
             <Heading level={2} size="lg" className="mt-10">Components</Heading>
             <Text size="sm" className="mt-1 !text-zinc-500">
-                {pkg.components.length} component{pkg.components.length === 1 ? "" : "s"} · click any for a live demo + usage snippet.
+                {pkg.components.length} component{pkg.components.length === 1 ? "" : "s"} · click any tile for a full demo, source, and install snippet.
             </Text>
-            <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-                {pkg.components.map((c) => (
-                    <Link key={c.slug} href={`/packages/${pkg.slug}/${c.slug}`} className="block">
-                        <Card className="group transition hover:border-violet-300 hover:bg-zinc-50 dark:hover:border-violet-700 dark:hover:bg-zinc-900">
-                            <Card.Body>
-                                <div className="flex items-center justify-between">
-                                    <Text className="!font-mono !font-medium">{c.name}</Text>
+            <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {pkg.components.map((c) => {
+                    const Preview = getComponentPreview(pkg.slug, c.slug);
+                    return (
+                        <Link key={c.slug} href={`/packages/${pkg.slug}/${c.slug}`} className="block">
+                            <Card className="group h-full overflow-hidden transition hover:-translate-y-0.5 hover:border-violet-300 hover:shadow-md dark:hover:border-violet-700">
+                                <div className="flex items-center justify-between border-b border-zinc-100 px-3 py-2 dark:border-zinc-800">
+                                    <Text className="!font-mono !text-xs !font-semibold !text-zinc-700 dark:!text-zinc-200">{c.name}</Text>
                                     <Text size="xs" className="!text-violet-600 opacity-0 transition group-hover:opacity-100 dark:!text-violet-300">
                                         Open →
                                     </Text>
                                 </div>
-                                {c.blurb && <Text size="xs" className="mt-1">{c.blurb}</Text>}
-                            </Card.Body>
-                        </Card>
-                    </Link>
-                ))}
+                                <div className="flex min-h-[10rem] items-center justify-center overflow-hidden p-4">
+                                    {Preview ? <Preview /> : <GenericPlaceholder name={c.name} />}
+                                </div>
+                                {c.blurb && (
+                                    <div className="border-t border-zinc-100 px-3 py-2 dark:border-zinc-800">
+                                        <Text size="xs" className="!text-zinc-500">{c.blurb}</Text>
+                                    </div>
+                                )}
+                            </Card>
+                        </Link>
+                    );
+                })}
             </div>
         </Layout>
     );

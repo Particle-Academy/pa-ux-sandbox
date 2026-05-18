@@ -1,14 +1,22 @@
 import { Head, Link } from "@inertiajs/react";
+import { useState } from "react";
 import {
     Action,
+    Avatar,
     Badge,
+    Calendar,
+    Callout,
     Card,
     Heading,
+    Pillbox,
     Separator,
+    Switch,
+    Tabs,
     Text,
+    Timeline,
 } from "@particle-academy/react-fancy";
-import { Sparkles, Cpu, Boxes, Paperclip, Smile, Send, Bot } from "lucide-react";
-import { Avatar, Pillbox, Tabs } from "@particle-academy/react-fancy";
+import { EChart } from "@particle-academy/fancy-echarts";
+import { Sparkles, Cpu, Boxes, Paperclip, Smile, Send, Bot, Bell, Check, X } from "lucide-react";
 import { Layout } from "./Layout";
 
 type PackageRow = {
@@ -176,6 +184,31 @@ export default function Home({ packages, total_components }: HomeProps) {
                 </div>
             </section>
 
+            <section className="mt-16">
+                <div className="flex items-end justify-between gap-3">
+                    <div>
+                        <Heading level={2} size="lg" className="!text-zinc-900 dark:!text-zinc-100">Components, live</Heading>
+                        <Text size="sm" className="mt-1 !text-zinc-500">
+                            Real renders. Hover, click, type. No screenshots, no marketing-ware.
+                        </Text>
+                    </div>
+                    <Action as={Link} href="/packages/react-fancy" variant="ghost" size="sm" iconTrailing="arrow-right">
+                        All ~110
+                    </Action>
+                </div>
+                <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                    <ShowcaseTile name="Action" slug="react-fancy/action"><ActionTile /></ShowcaseTile>
+                    <ShowcaseTile name="Badge" slug="react-fancy/badge"><BadgeTile /></ShowcaseTile>
+                    <ShowcaseTile name="Avatar" slug="react-fancy/avatar"><AvatarTile /></ShowcaseTile>
+                    <ShowcaseTile name="Switch" slug="react-fancy/inputs"><SwitchTile /></ShowcaseTile>
+                    <ShowcaseTile name="Pillbox" slug="react-fancy/pillbox"><PillboxTile /></ShowcaseTile>
+                    <ShowcaseTile name="Callout" slug="react-fancy/callout"><CalloutTile /></ShowcaseTile>
+                    <ShowcaseTile name="Timeline" slug="react-fancy/timeline"><TimelineTile /></ShowcaseTile>
+                    <ShowcaseTile name="EChart" slug="fancy-echarts/echart"><ChartTile /></ShowcaseTile>
+                    <ShowcaseTile name="Calendar" slug="react-fancy/calendar"><CalendarTile /></ShowcaseTile>
+                </div>
+            </section>
+
             <Separator className="my-14" />
 
             <section className="grid gap-4 sm:grid-cols-3">
@@ -184,36 +217,41 @@ export default function Home({ packages, total_components }: HomeProps) {
                         href: "/dreaming",
                         title: "Dreaming",
                         body: "Speculative components you can vote on. Sign in with GitHub to participate.",
-                        tone: "violet",
+                        accent: "from-violet-400 via-fuchsia-400 to-sky-400",
+                        chip: "bg-violet-100 text-violet-800 dark:bg-violet-500/20 dark:text-violet-200",
+                        chipLabel: "speculative",
                     },
                     {
                         href: "/showcase",
                         title: "Designer Showcase",
                         body: "Sites and repos built with Fancy UI. Submit yours.",
-                        tone: "sky",
+                        accent: "from-sky-400 via-indigo-400 to-violet-400",
+                        chip: "bg-sky-100 text-sky-800 dark:bg-sky-500/20 dark:text-sky-200",
+                        chipLabel: "community",
                     },
                     {
                         href: "/leaderboard",
                         title: "Leaderboard",
                         body: "Top contributors by merged PRs and votes cast.",
-                        tone: "emerald",
+                        accent: "from-emerald-400 via-teal-400 to-sky-400",
+                        chip: "bg-emerald-100 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-200",
+                        chipLabel: "live",
                     },
                 ].map((tile) => (
                     <Link key={tile.href} href={tile.href} className="block">
                         <Card className="group relative h-full overflow-hidden transition hover:-translate-y-0.5 hover:shadow-md">
-                            <div
-                                className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${
-                                    tile.tone === "violet"
-                                        ? "from-violet-400 to-sky-400"
-                                        : tile.tone === "sky"
-                                            ? "from-sky-400 to-indigo-400"
-                                            : "from-emerald-400 to-sky-400"
-                                }`}
-                            />
-                            <Card.Body>
-                                <Heading level={3} size="sm">{tile.title}</Heading>
-                                <Text size="sm" className="mt-1 !text-zinc-600 dark:!text-zinc-400">{tile.body}</Text>
-                                <Text size="xs" className="mt-3 inline-flex items-center gap-1 !text-violet-600 opacity-0 transition group-hover:opacity-100 dark:!text-violet-300">
+                            <div className={`h-1.5 w-full bg-gradient-to-r ${tile.accent}`} />
+                            <Card.Body className="!pt-5">
+                                <div className="flex items-start justify-between gap-2">
+                                    <Heading level={3} size="sm" className="!text-zinc-900 dark:!text-zinc-100">
+                                        {tile.title}
+                                    </Heading>
+                                    <span className={`inline-flex shrink-0 rounded-md px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${tile.chip}`}>
+                                        {tile.chipLabel}
+                                    </span>
+                                </div>
+                                <Text size="sm" className="mt-2 !text-zinc-600 dark:!text-zinc-300">{tile.body}</Text>
+                                <Text size="xs" className="mt-4 inline-flex items-center gap-1 !text-violet-600 opacity-0 transition group-hover:opacity-100 dark:!text-violet-300">
                                     Open →
                                 </Text>
                             </Card.Body>
@@ -324,3 +362,161 @@ const INBOX: Array<{
     { initials: "SL", name: "Sam Lin", preview: "Spec for the new compose surface is in Figma.", time: "1h" },
     { initials: "MA", name: "Maya Chen", preview: "Calendar a11y audit — three nits. See thread.", time: "3h", badge: { color: "amber", label: "review" } },
 ];
+
+// ─── Live component tiles ───────────────────────────────────────────────────
+
+function ShowcaseTile({ name, slug, children }: { name: string; slug: string; children: React.ReactNode }) {
+    return (
+        <Link href={`/packages/${slug}`} className="block">
+            <Card className="group relative h-full overflow-hidden transition hover:-translate-y-0.5 hover:border-violet-300 hover:shadow-md dark:hover:border-violet-700">
+                <div className="flex items-center justify-between border-b border-zinc-100 px-3 py-2 dark:border-zinc-800">
+                    <Text size="xs" className="!font-mono !font-semibold !text-zinc-700 dark:!text-zinc-200">
+                        {name}
+                    </Text>
+                    <Text size="xs" className="!text-zinc-400 opacity-0 transition group-hover:opacity-100">
+                        Open →
+                    </Text>
+                </div>
+                <div className="flex min-h-[10rem] items-center justify-center p-4">
+                    {children}
+                </div>
+            </Card>
+        </Link>
+    );
+}
+
+function ActionTile() {
+    return (
+        <div className="flex flex-wrap items-center justify-center gap-2">
+            <Action color="violet" size="sm">Primary</Action>
+            <Action variant="ghost" size="sm">Ghost</Action>
+            <Action color="emerald" size="sm" icon="check">Save</Action>
+            <Action color="red" variant="ghost" size="sm" icon="trash">Delete</Action>
+        </div>
+    );
+}
+
+function BadgeTile() {
+    return (
+        <div className="flex flex-wrap items-center justify-center gap-1.5">
+            <Badge color="violet">new</Badge>
+            <Badge color="emerald">live</Badge>
+            <Badge color="amber">beta</Badge>
+            <Badge color="red">urgent</Badge>
+            <Badge color="zinc">draft</Badge>
+            <Badge color="indigo">v0.4</Badge>
+        </div>
+    );
+}
+
+function AvatarTile() {
+    return (
+        <div className="flex items-center -space-x-2">
+            {["RK", "SL", "MC", "AY", "+3"].map((label, i) => (
+                <span
+                    key={label}
+                    className={`inline-flex size-9 items-center justify-center rounded-full border-2 border-white bg-gradient-to-br text-xs font-semibold text-white dark:border-zinc-900 ${
+                        i === 0 ? "from-violet-400 to-sky-500"
+                        : i === 1 ? "from-emerald-400 to-teal-500"
+                        : i === 2 ? "from-amber-400 to-orange-500"
+                        : i === 3 ? "from-rose-400 to-pink-500"
+                        : "from-zinc-400 to-zinc-600"
+                    }`}
+                >
+                    {label}
+                </span>
+            ))}
+        </div>
+    );
+}
+
+function SwitchTile() {
+    const [a, setA] = useState(true);
+    const [b, setB] = useState(false);
+    const [c, setC] = useState(true);
+    return (
+        <div className="w-full max-w-[16rem] space-y-2.5 text-sm">
+            <label className="flex items-center justify-between text-zinc-700 dark:text-zinc-300">
+                Notifications <Switch checked={a} onChange={setA} />
+            </label>
+            <label className="flex items-center justify-between text-zinc-700 dark:text-zinc-300">
+                Auto-save drafts <Switch checked={b} onChange={setB} />
+            </label>
+            <label className="flex items-center justify-between text-zinc-700 dark:text-zinc-300">
+                MCP bridges <Switch checked={c} onChange={setC} />
+            </label>
+        </div>
+    );
+}
+
+function PillboxTile() {
+    const [tags, setTags] = useState(["agent", "human+ux", "fancy-ui"]);
+    return (
+        <div className="w-full max-w-[18rem]">
+            <Pillbox value={tags} onChange={setTags} color="violet" size="sm" />
+            <Text size="xs" className="mt-2 text-center !text-zinc-500">Add or remove tags ↑</Text>
+        </div>
+    );
+}
+
+function CalloutTile() {
+    return (
+        <div className="w-full max-w-[18rem] space-y-2">
+            <Callout color="green">
+                <Check size={14} className="inline mr-1" /> Deploy succeeded
+            </Callout>
+            <Callout color="amber">
+                <Bell size={14} className="inline mr-1" /> Rate limit at 80%
+            </Callout>
+        </div>
+    );
+}
+
+function TimelineTile() {
+    return (
+        <div className="w-full max-w-[18rem]">
+            <Timeline
+                events={[
+                    { date: "Jun 14", title: "Released v0.4", color: "violet" },
+                    { date: "Jun 12", title: "Ports → Zustand", color: "sky" },
+                    { date: "Jun 10", title: "Audit complete", color: "emerald" },
+                ]}
+                variant="stacked"
+                animated={false}
+            />
+        </div>
+    );
+}
+
+function ChartTile() {
+    return (
+        <div className="size-full min-h-[8rem]">
+            <EChart
+                style={{ width: "100%", height: "100%" }}
+                option={{
+                    grid: { left: 4, right: 4, top: 4, bottom: 4 },
+                    xAxis: { type: "category", show: false, data: ["M", "T", "W", "T", "F", "S", "S"] },
+                    yAxis: { type: "value", show: false },
+                    series: [
+                        {
+                            type: "bar",
+                            data: [12, 19, 15, 22, 18, 9, 14],
+                            itemStyle: { color: "#8b5cf6", borderRadius: [3, 3, 0, 0] },
+                            barWidth: "55%",
+                        },
+                    ],
+                    tooltip: { trigger: "axis", confine: true },
+                }}
+            />
+        </div>
+    );
+}
+
+function CalendarTile() {
+    const [value, setValue] = useState<Date | null>(new Date());
+    return (
+        <div className="scale-[0.85]">
+            <Calendar value={value} onChange={setValue} />
+        </div>
+    );
+}

@@ -1,41 +1,69 @@
-import { Screen, useScreens, useScreenPort } from "@particle-academy/fancy-screens";
+import { Screen, useScreens, useRegisterStore } from "@particle-academy/fancy-screens";
 import { Action, Card, Badge, Input } from "@particle-academy/react-fancy";
+import { create } from "zustand";
 import { DemoSection } from "../../components/DemoSection";
 
+type UserState = {
+  name: string;
+  email: string;
+  setName: (name: string) => void;
+  setEmail: (email: string) => void;
+};
+
+const useUserStore = create<UserState>((set) => ({
+  name: "",
+  email: "",
+  setName: (name) => set({ name }),
+  setEmail: (email) => set({ email }),
+}));
+
+type FilterState = {
+  filter: "all" | "active" | "archived";
+  setFilter: (f: FilterState["filter"]) => void;
+};
+
+const useFilterStore = create<FilterState>((set) => ({
+  filter: "all",
+  setFilter: (filter) => set({ filter }),
+}));
+
 function UserPanel() {
-  const [user, setUser] = useScreenPort<{ name: string; email: string }>("user");
-  const [filter, setFilter] = useScreenPort<string>("filter");
+  useRegisterStore("user", useUserStore);
+  useRegisterStore("filter", useFilterStore);
+
+  const { name, email, setName, setEmail } = useUserStore();
+  const { filter, setFilter } = useFilterStore();
 
   return (
     <div className="grid gap-4 md:grid-cols-2">
       <Card>
         <Card.Header>
-          <h3 className="font-semibold">user (in port)</h3>
+          <h3 className="font-semibold">user store</h3>
         </Card.Header>
         <Card.Body className="space-y-2">
           <Input
             placeholder="Name"
-            value={user?.name ?? ""}
-            onChange={(e) => setUser({ name: e.target.value, email: user?.email ?? "" })}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
           />
           <Input
             placeholder="Email"
-            value={user?.email ?? ""}
-            onChange={(e) => setUser({ name: user?.name ?? "", email: e.target.value })}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
           <pre className="rounded bg-zinc-100 p-2 text-xs dark:bg-zinc-800">
-            {JSON.stringify(user, null, 2)}
+            {JSON.stringify({ name, email }, null, 2)}
           </pre>
         </Card.Body>
       </Card>
 
       <Card>
         <Card.Header>
-          <h3 className="font-semibold">filter (out port)</h3>
+          <h3 className="font-semibold">filter store</h3>
         </Card.Header>
         <Card.Body className="space-y-2">
           <div className="flex gap-2">
-            {["all", "active", "archived"].map((f) => (
+            {(["all", "active", "archived"] as const).map((f) => (
               <Action
                 key={f}
                 size="sm"
@@ -47,7 +75,7 @@ function UserPanel() {
             ))}
           </div>
           <div className="text-sm text-zinc-500">
-            Current: <code className="rounded bg-zinc-100 px-1 py-0.5 dark:bg-zinc-800">{filter ?? "(none)"}</code>
+            Current: <code className="rounded bg-zinc-100 px-1 py-0.5 dark:bg-zinc-800">{filter}</code>
           </div>
         </Card.Body>
       </Card>
@@ -80,41 +108,45 @@ export function ScreensIntroDemo() {
       <div>
         <h1 className="mb-2 text-2xl font-bold">Screens — intro</h1>
         <p className="mb-6 max-w-3xl text-sm text-zinc-500">
-          A single <code>&lt;Screen&gt;</code> with two declared ports. Children
-          read and write port state via <code>useScreenPort()</code>; the global
-          registry is queryable from anywhere via <code>useScreens()</code> —
-          including from outside any screen.
+          A single <code>&lt;Screen&gt;</code> with two Zustand stores registered to it. Children
+          read and write state directly via the store hooks; <code>useRegisterStore</code> makes
+          each store discoverable from <code>useScreens()</code> — including from outside any screen.
         </p>
 
         <DemoSection
-          title="Single screen, two ports"
-          description="Edit the user fields and pick a filter — both are scoped to this screen by design. The registry panel below shows the live state from useScreens()."
-          code={`<Screen.System>
+          title="Single screen, two stores"
+          description="Edit the user fields and pick a filter — both stores are registered under the 'profile' screen. The registry panel below shows the live snapshot from useScreens()."
+          code={`import { create } from "zustand";
+import { Screen, useRegisterStore } from "@particle-academy/fancy-screens";
+
+const useUserStore = create((set) => ({
+  name: "", email: "",
+  setName: (name) => set({ name }),
+  setEmail: (email) => set({ email }),
+}));
+
+const useFilterStore = create((set) => ({
+  filter: "all",
+  setFilter: (filter) => set({ filter }),
+}));
+
+<Screen.System>
   <Screen id="profile" title="Profile">
-    <Screen.Port name="user" direction="in"
-      schema={{ kind: "object", shape: { name: "string", email: "string" } }} />
-    <Screen.Port name="filter" direction="out" defaultValue="all" />
     <Screen.Body>
       <UserPanel />
     </Screen.Body>
   </Screen>
 </Screen.System>
 
-// inside UserPanel:
-const [user, setUser] = useScreenPort("user");
-const [filter, setFilter] = useScreenPort("filter");`}
+function UserPanel() {
+  useRegisterStore("user", useUserStore);
+  useRegisterStore("filter", useFilterStore);
+  const { name, setName } = useUserStore();
+  const { filter, setFilter } = useFilterStore();
+  // ...
+}`}
         >
           <Screen id="profile" title="Profile">
-            <Screen.Port
-              name="user"
-              direction="in"
-              schema={{
-                kind: "object",
-                shape: { name: "string", email: "string" },
-              }}
-              defaultValue={{ name: "", email: "" }}
-            />
-            <Screen.Port name="filter" direction="out" defaultValue="all" />
             <Screen.Body>
               <UserPanel />
             </Screen.Body>
@@ -123,7 +155,7 @@ const [filter, setFilter] = useScreenPort("filter");`}
 
         <DemoSection
           title="Registry hook"
-          description="useScreens() returns a typed, live snapshot of every mounted screen — its id, title, lifecycle, declared port names, and current port values. This is the agent's window into the running app."
+          description="useScreens() returns a typed, live snapshot of every mounted screen — its id, title, lifecycle, registered store names, and current store values. This is the agent's window into the running app."
         >
           <RegistryPanel />
         </DemoSection>

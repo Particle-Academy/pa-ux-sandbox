@@ -1,7 +1,8 @@
-import { lazy, Suspense, useEffect, useState } from "react";
-import { Screen, useScreens, useScreenPort } from "@particle-academy/fancy-screens";
+import { lazy, Suspense, useEffect, useRef, useState } from "react";
+import { Screen, useScreens, useRegisterStore } from "@particle-academy/fancy-screens";
 import { Action, Card, Badge } from "@particle-academy/react-fancy";
 import { registerAll } from "@particle-academy/fancy-echarts";
+import { create, type StoreApi, type UseBoundStore } from "zustand";
 
 // EChartsShowcase relies on echarts modules being registered. The
 // /echarts-* routes do this via EChartsLayout, but we lazy-import a
@@ -56,36 +57,54 @@ const DEMOS: DemoEntry[] = [
   },
 ];
 
+type LifecycleState = {
+  summary: string;
+  mountedAt: number | null;
+  renders: number;
+  setMountedAt: (t: number) => void;
+  bumpRenders: () => void;
+};
+
+const lifecycleStoreFactory = (summary: string) =>
+  create<LifecycleState>((set) => ({
+    summary,
+    mountedAt: null,
+    renders: 0,
+    setMountedAt: (mountedAt) => set({ mountedAt }),
+    bumpRenders: () => set((s) => ({ renders: s.renders + 1 })),
+  }));
+
 /**
- * Wraps an embedded full-page demo in a `<Screen>`. Declares ports the
- * demo doesn't itself touch — the wrapper writes lifecycle/identity data
- * so `useScreens()` has interesting payload to show. In 0.4.x this gets
- * superseded by data-aware loading; in 0.5.x the manual tab switcher
- * here becomes `<Screen.Stack>` and the conditional remount becomes
- * proper hibernation.
+ * Wraps an embedded full-page demo in a `<Screen>`. Each demo gets its
+ * own per-instance Zustand store with lifecycle telemetry so the
+ * registry panel has interesting payload to render.
  */
 function DemoScreen({ entry }: { entry: DemoEntry }) {
   return (
     <Screen id={entry.id} title={entry.title}>
-      <Screen.Port name="summary" direction="out" defaultValue={entry.summary} />
-      <Screen.Port name="mountedAt" direction="out" />
-      <Screen.Port name="renders" direction="out" defaultValue={0} />
-      <DemoBody Component={entry.Component} />
+      <DemoBody entry={entry} />
     </Screen>
   );
 }
 
-function DemoBody({ Component }: { Component: React.ComponentType }) {
-  const [, setMountedAt] = useScreenPort<number>("mountedAt");
-  const [renders, setRenders] = useScreenPort<number>("renders");
+function DemoBody({ entry }: { entry: DemoEntry }) {
+  // Per-instance store — created once per demo mount; the ref keeps the
+  // same store stable across re-renders.
+  const storeRef = useRef<UseBoundStore<StoreApi<LifecycleState>> | null>(null);
+  if (storeRef.current === null) {
+    storeRef.current = lifecycleStoreFactory(entry.summary);
+  }
+  const store = storeRef.current;
 
-  // Stamp mount time once.
+  useRegisterStore("lifecycle", store);
+
   useEffect(() => {
-    setMountedAt(Date.now());
-    setRenders((renders ?? 0) + 1);
+    store.getState().setMountedAt(Date.now());
+    store.getState().bumpRenders();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const Component = entry.Component;
   return (
     <Screen.Body>
       <Suspense
@@ -126,10 +145,10 @@ function RegistryPanel() {
                 </div>
                 <div className="mt-1 text-sm font-semibold">{s.title}</div>
                 <div className="mt-1 text-xs text-zinc-500">
-                  ports: <code>{s.ports.join(", ") || "(none)"}</code>
+                  stores: <code>{s.storeKeys.join(", ") || "(none)"}</code>
                 </div>
                 <pre className="mt-2 overflow-auto rounded bg-zinc-100 p-1.5 text-[11px] dark:bg-zinc-800">
-                  {JSON.stringify(s.portValues, null, 2)}
+                  {JSON.stringify(s.storeValues, null, 2)}
                 </pre>
               </div>
             ))}
@@ -149,12 +168,9 @@ export function ScreensShowcaseDemo() {
       <div>
         <h1 className="mb-2 text-2xl font-bold">Screens — full demos as Screens</h1>
         <p className="mb-4 max-w-3xl text-sm text-zinc-500">
-          Each of our full demos is wrapped in a <code>&lt;Screen&gt;</code>. The
-          tab strip swaps which one is mounted, so the registry below always
-          shows the currently-active screen. In 0.3.x's hibernation +
-          0.5.x's <code>&lt;Screen.Stack&gt;</code> this becomes automatic
-          (all stay registered, only one is mounted, snapshots persist
-          across switches).
+          Each demo is wrapped in a <code>&lt;Screen&gt;</code> with its own Zustand store
+          for lifecycle telemetry. The tab strip swaps which one is mounted, so the
+          registry below always shows the currently-active screen.
         </p>
 
         <div className="mb-4 flex flex-wrap gap-2">

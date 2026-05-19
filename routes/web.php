@@ -16,6 +16,7 @@ use App\Http\Controllers\Showcase\PackagesController;
 use App\Http\Controllers\Showcase\RegistryController;
 use App\Http\Controllers\Showcase\ShowcaseSubmissionController;
 use App\Http\Controllers\Showcase\StarterKitController;
+use App\Http\Controllers\Showcase\StarterKitDownloadController;
 use App\Http\Controllers\Showcase\VoteController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\WhiteboardAgentController;
@@ -51,6 +52,9 @@ Route::get('/packages/{package}/{component}', [PackagesController::class, 'compo
 
 Route::get('/starter-kits', [StarterKitController::class, 'index'])->name('starter-kits.index');
 Route::get('/starter-kits/{slug}', [StarterKitController::class, 'show'])->name('starter-kits.show');
+Route::get('/starter-kits/{slug}/download.zip', StarterKitDownloadController::class)
+    ->where('slug', '[a-z0-9\-]+')
+    ->name('starter-kits.download');
 
 Route::get('/dreaming', [DreamingController::class, 'index'])->name('dreaming.index');
 Route::get('/dreaming/archived', [DreamingController::class, 'archived'])->name('dreaming.archived');

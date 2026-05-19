@@ -1,5 +1,6 @@
 import { Head } from "@inertiajs/react";
-import { Breadcrumbs, Card, Heading, Text } from "@particle-academy/react-fancy";
+import { useState } from "react";
+import { Action, Badge, Breadcrumbs, Card, Heading, Text } from "@particle-academy/react-fancy";
 import { Layout } from "../Layout";
 import { ReactDashboardKit } from "./kits/ReactDashboardKit";
 import { WorkflowStudioKit } from "./kits/WorkflowStudioKit";
@@ -21,6 +22,8 @@ const KITS: Record<string, () => JSX.Element> = {
 
 export default function StarterKitsShow({ kit }: { kit: Kit }) {
     const KitDemo = KITS[kit.slug];
+    const downloadUrl = `/starter-kits/${kit.slug}/download.zip`;
+    const [copied, setCopied] = useState(false);
 
     return (
         <Layout>
@@ -31,13 +34,53 @@ export default function StarterKitsShow({ kit }: { kit: Kit }) {
                 <Breadcrumbs.Item>{kit.name}</Breadcrumbs.Item>
             </Breadcrumbs>
 
-            <div className="mt-3 mb-6">
-                <Heading level={1} size="xl">{kit.name}</Heading>
-                <Text className="mt-2 max-w-3xl">{kit.blurb}</Text>
-                <Text size="xs" className="mt-2 !text-zinc-400 font-mono">
-                    headline package: {kit.pkg}
-                </Text>
+            <div className="mt-3 mb-6 flex flex-wrap items-start justify-between gap-4">
+                <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
+                        <Heading level={1} size="xl" className="!text-zinc-900 dark:!text-zinc-100">{kit.name}</Heading>
+                        <Badge color="violet" size="sm">starter kit</Badge>
+                    </div>
+                    <Text className="mt-2 max-w-3xl !text-zinc-600 dark:!text-zinc-300">{kit.blurb}</Text>
+                    <Text size="xs" className="mt-2 !font-mono !text-zinc-500">
+                        headline package: @particle-academy/{kit.pkg}
+                    </Text>
+                </div>
+                <div className="flex flex-wrap items-stretch gap-2">
+                    <Action as="a" href={downloadUrl} color="violet" icon="arrow-down-tray">
+                        Download zip
+                    </Action>
+                </div>
             </div>
+
+            <Card className="mb-6">
+                <Card.Body className="!py-3">
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                        <div className="min-w-0">
+                            <Text size="xs" className="!font-semibold !uppercase !tracking-wider !text-zinc-500">Get it locally</Text>
+                            <div className="mt-1 flex items-center gap-3 rounded-md bg-zinc-950 px-3 py-2 font-mono text-xs text-zinc-100">
+                                <span className="text-zinc-500">$</span>
+                                <code className="truncate">curl -L https://ui.particle.academy/starter-kits/{kit.slug}/download.zip -o {kit.slug}.zip &amp;&amp; unzip {kit.slug}.zip &amp;&amp; cd {kit.slug}-starter &amp;&amp; npm install &amp;&amp; npm run dev</code>
+                                <button
+                                    onClick={() => {
+                                        navigator.clipboard.writeText(`curl -L https://ui.particle.academy/starter-kits/${kit.slug}/download.zip -o ${kit.slug}.zip && unzip ${kit.slug}.zip && cd ${kit.slug}-starter && npm install && npm run dev`).then(() => {
+                                            setCopied(true);
+                                            window.setTimeout(() => setCopied(false), 1200);
+                                        });
+                                    }}
+                                    className="shrink-0 rounded border border-zinc-700 px-2 py-0.5 text-[10px] font-medium text-zinc-300 hover:bg-zinc-800"
+                                >
+                                    {copied ? "copied" : "copy"}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <Text size="xs" className="mt-2 !text-zinc-500">
+                        Self-contained Vite + React 19 + Tailwind v4 project. ~12 KB. Edit{" "}
+                        <code className="rounded bg-zinc-100 px-1 font-mono text-[10px] dark:bg-zinc-800">src/Kit.tsx</code>{" "}
+                        to make it yours. MIT.
+                    </Text>
+                </Card.Body>
+            </Card>
 
             {KitDemo ? (
                 <KitDemo />

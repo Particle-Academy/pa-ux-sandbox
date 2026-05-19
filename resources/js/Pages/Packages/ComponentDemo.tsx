@@ -431,7 +431,13 @@ function AutocompleteDemo() {
         <Autocomplete
             value={v}
             onChange={setV}
-            options={["Glenn Wagner", "Rita Kumar", "Sam Lin", "Ayodeji Adekola", "Priya Patel"]}
+            options={[
+                { value: "glenn", label: "Glenn Wagner" },
+                { value: "rita", label: "Rita Kumar" },
+                { value: "sam", label: "Sam Lin" },
+                { value: "ayodeji", label: "Ayodeji Adekola" },
+                { value: "priya", label: "Priya Patel" },
+            ]}
             placeholder="Search teammates…"
         />
     );
@@ -936,21 +942,21 @@ function CarouselDemo() {
     return (
         <div className="rounded-md border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
             <Carousel variant="directional" loop>
-                <Carousel.Slides>
+                <Carousel.Panels>
                     {[
                         { tone: "from-violet-400 to-sky-400", title: "Authorable" },
                         { tone: "from-emerald-400 to-sky-400", title: "Inhabitable" },
                         { tone: "from-amber-400 to-rose-400", title: "Composable" },
                     ].map((s, i) => (
-                        <Carousel.Slide key={i}>
+                        <Carousel.Slide key={i} name={`slide-${i}`}>
                             <div className={`grid h-40 place-items-center bg-gradient-to-br ${s.tone}`}>
                                 <span className="text-2xl font-semibold text-white">{s.title}</span>
                             </div>
                         </Carousel.Slide>
                     ))}
-                </Carousel.Slides>
+                </Carousel.Panels>
                 <Carousel.Controls />
-                <Carousel.Indicators />
+                <Carousel.Steps />
             </Carousel>
         </div>
     );

@@ -1,9 +1,19 @@
 import { StrictMode, lazy, Suspense } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router";
+import { registerAll as registerEChartsAll, registerBuiltinThemes } from "@particle-academy/fancy-echarts";
 import "./react-demos/setup-icons";
 import { DemoLayout } from "./react-demos/layouts/DemoLayout";
 import { Home } from "./react-demos/pages/Home";
+
+// Register echarts modules synchronously before any chart-bearing demo
+// can render. Without this the canvas renderer throws
+// `TypeError: va[o] is not a constructor` on the first <EChart> mount,
+// killing the whole SPA. See `showcase-app.tsx` for the matching fix on
+// the Inertia entry. (Both will become redundant once fancy-inertia
+// 0.2.x moves registerAll from useEffect to module-load.)
+registerEChartsAll();
+registerBuiltinThemes();
 
 // Lazy-load helper for named exports
 const l = (loader: () => Promise<any>, name: string) =>

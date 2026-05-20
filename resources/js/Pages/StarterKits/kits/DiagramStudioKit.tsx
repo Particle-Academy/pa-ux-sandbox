@@ -1,169 +1,278 @@
 import { useState } from "react";
-import { Action, Card, Heading, Tabs, Text } from "@particle-academy/react-fancy";
+import { Action, Badge, Card, Tabs, Text } from "@particle-academy/react-fancy";
+import {
+    DataDiagram,
+    Flowchart,
+    Mindmap,
+    OrgChart,
+    type FlowchartNode,
+    type FlowchartEdge,
+    type MindmapNode,
+    type OrgChartNode,
+} from "@particle-academy/fancy-echarts";
+import { Download, Maximize2 } from "lucide-react";
 
 type Diagram = "flowchart" | "mindmap" | "orgchart" | "datadiagram";
 
 export function DiagramStudioKit() {
-    const [diagram, setDiagram] = useState<Diagram>("flowchart");
+    const [diagram, setDiagram] = useState<Diagram>("datadiagram");
 
     return (
-        <div className="space-y-3">
-            <Card>
-                <Card.Body className="p-0">
-                    <Tabs activeTab={diagram} onTabChange={(v) => setDiagram(v as Diagram)}>
-                        <Tabs.List className="border-b border-zinc-200 px-4 dark:border-zinc-800">
+        <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
+            <Card.Body className="!p-0">
+                <Tabs activeTab={diagram} onTabChange={(v) => setDiagram(v as Diagram)}>
+                    <div className="flex flex-wrap items-center justify-between gap-3 border-b border-zinc-100 px-4 pt-3 dark:border-zinc-800">
+                        <Tabs.List>
+                            <Tabs.Tab value="datadiagram">Data diagram</Tabs.Tab>
+                            <Tabs.Tab value="orgchart">Org chart</Tabs.Tab>
                             <Tabs.Tab value="flowchart">Flowchart</Tabs.Tab>
                             <Tabs.Tab value="mindmap">Mindmap</Tabs.Tab>
-                            <Tabs.Tab value="orgchart">Org chart</Tabs.Tab>
-                            <Tabs.Tab value="datadiagram">Data diagram</Tabs.Tab>
                         </Tabs.List>
-                        <Tabs.Panels>
-                            <Tabs.Panel value="flowchart"><Flowchart /></Tabs.Panel>
-                            <Tabs.Panel value="mindmap"><Mindmap /></Tabs.Panel>
-                            <Tabs.Panel value="orgchart"><OrgChart /></Tabs.Panel>
-                            <Tabs.Panel value="datadiagram"><DataDiagram /></Tabs.Panel>
-                        </Tabs.Panels>
-                    </Tabs>
-                </Card.Body>
-            </Card>
-            <Text size="xs" className="!text-zinc-500">
-                Each tab mirrors a preset from <code className="font-mono">@particle-academy/fancy-echarts</code> — schema-driven, all rendered through the same routing engine.
-            </Text>
+                        <div className="flex items-center gap-2 pb-3">
+                            <Badge color="violet" size="sm">{KITS[diagram].label}</Badge>
+                            <Text size="xs" className="!font-mono !text-zinc-500">{KITS[diagram].component}</Text>
+                            <Action variant="ghost" size="sm" aria-label="Fullscreen">
+                                <Maximize2 size={14} />
+                            </Action>
+                            <Action variant="ghost" size="sm" aria-label="Download">
+                                <Download size={14} />
+                            </Action>
+                        </div>
+                    </div>
+                    <Tabs.Panels>
+                        <Tabs.Panel value="datadiagram"><DataDiagramDemo /></Tabs.Panel>
+                        <Tabs.Panel value="orgchart"><OrgChartDemo /></Tabs.Panel>
+                        <Tabs.Panel value="flowchart"><FlowchartDemo /></Tabs.Panel>
+                        <Tabs.Panel value="mindmap"><MindmapDemo /></Tabs.Panel>
+                    </Tabs.Panels>
+                </Tabs>
+                <div className="flex flex-wrap items-center justify-between gap-2 border-t border-zinc-100 bg-zinc-50/60 px-4 py-2.5 dark:border-zinc-800 dark:bg-zinc-900/40">
+                    <Text size="xs" className="!text-zinc-500">
+                        {KITS[diagram].caption}
+                    </Text>
+                    <Text size="xs" className="!font-mono !text-zinc-500">
+                        @particle-academy/fancy-echarts
+                    </Text>
+                </div>
+            </Card.Body>
         </div>
     );
 }
 
-function Frame({ children }: { children: React.ReactNode }) {
+const KITS: Record<Diagram, { label: string; component: string; caption: string }> = {
+    datadiagram: {
+        label: "ERD preset",
+        component: "<DataDiagram>",
+        caption: "Entity-Relationship diagram with manhattan-routed connectors, primary + foreign key markers, multiplicity labels.",
+    },
+    orgchart: {
+        label: "Top-down hierarchy",
+        component: "<OrgChart>",
+        caption: "Auto-laid-out org tree. Children centered under parents; UML-style open triangle on the child end.",
+    },
+    flowchart: {
+        label: "Workflow graph",
+        component: "<Flowchart>",
+        caption: "Process flow with manhattan routing, arrowheads, and optional edge labels. Positions are explicit per node.",
+    },
+    mindmap: {
+        label: "Radial layout",
+        component: "<Mindmap>",
+        caption: "Radial mindmap. Root at center; children fan outward on concentric rings; angular wedges sized by subtree leaf count.",
+    },
+};
+
+// ─── Data diagram (ERD) ───────────────────────────────────────────────────
+
+const erdSchema = {
+    entities: [
+        {
+            name: "Users",
+            fields: [
+                { name: "id", type: "bigint", primary: true },
+                { name: "email", type: "varchar(255)" },
+                { name: "name", type: "varchar(255)" },
+                { name: "created_at", type: "timestamp" },
+            ],
+        },
+        {
+            name: "Orgs",
+            fields: [
+                { name: "id", type: "bigint", primary: true },
+                { name: "slug", type: "varchar(64)" },
+                { name: "plan", type: "varchar(32)" },
+            ],
+        },
+        {
+            name: "Memberships",
+            fields: [
+                { name: "id", type: "bigint", primary: true },
+                { name: "user_id", type: "bigint", foreign: true },
+                { name: "org_id", type: "bigint", foreign: true },
+                { name: "role", type: "varchar(32)" },
+            ],
+        },
+        {
+            name: "Audits",
+            fields: [
+                { name: "id", type: "bigint", primary: true },
+                { name: "org_id", type: "bigint", foreign: true },
+                { name: "event", type: "varchar(64)" },
+                { name: "at", type: "timestamp" },
+            ],
+        },
+    ],
+    relations: [
+        { from: "Users", to: "Memberships", type: "one-to-many" as const },
+        { from: "Orgs", to: "Memberships", type: "one-to-many" as const },
+        { from: "Orgs", to: "Audits", type: "one-to-many" as const },
+    ],
+};
+
+function DataDiagramDemo() {
     return (
-        <div className="relative h-[320px] bg-zinc-50 dark:bg-zinc-950">
-            <div
-                className="absolute inset-0"
-                style={{
-                    backgroundImage:
-                        "radial-gradient(circle, rgba(120,120,120,0.18) 1px, transparent 1px)",
-                    backgroundSize: "20px 20px",
-                }}
-            />
-            {children}
+        <div className="h-[440px]">
+            <DataDiagram schema={erdSchema} />
         </div>
     );
 }
 
-function Box({ x, y, w = 130, label, tone = "violet" }: { x: number; y: number; w?: number; label: string; tone?: "violet" | "sky" | "emerald" | "amber" }) {
-    const tones = {
-        violet: "border-violet-400 bg-violet-50 text-violet-900 dark:bg-violet-500/15 dark:text-violet-100",
-        sky: "border-sky-400 bg-sky-50 text-sky-900 dark:bg-sky-500/15 dark:text-sky-100",
-        emerald: "border-emerald-400 bg-emerald-50 text-emerald-900 dark:bg-emerald-500/15 dark:text-emerald-100",
-        amber: "border-amber-400 bg-amber-50 text-amber-900 dark:bg-amber-500/15 dark:text-amber-100",
-    };
+// ─── Org chart ────────────────────────────────────────────────────────────
+
+const orgRoot: OrgChartNode = {
+    id: "founder",
+    label: "Founder",
+    color: "#8b5cf6",
+    children: [
+        {
+            id: "design",
+            label: "Design",
+            color: "#6366f1",
+            children: [
+                { id: "visual", label: "Visual", color: "#f59e0b" },
+                { id: "product", label: "Product", color: "#f59e0b" },
+                { id: "research", label: "Research", color: "#f59e0b" },
+            ],
+        },
+        {
+            id: "engineering",
+            label: "Engineering",
+            color: "#6366f1",
+            children: [
+                { id: "platform", label: "Platform", color: "#10b981" },
+                { id: "fullstack", label: "Full-stack", color: "#10b981" },
+                { id: "infra", label: "Infrastructure", color: "#10b981" },
+                { id: "qa", label: "QA", color: "#10b981" },
+            ],
+        },
+        {
+            id: "gtm",
+            label: "GTM",
+            color: "#6366f1",
+            children: [
+                { id: "sales", label: "Sales", color: "#06b6d4" },
+                { id: "marketing", label: "Marketing", color: "#06b6d4" },
+                { id: "success", label: "Customer Success", color: "#06b6d4" },
+            ],
+        },
+    ],
+};
+
+function OrgChartDemo() {
     return (
-        <div
-            className={`absolute rounded-md border px-3 py-1.5 text-center text-xs font-medium shadow-sm ${tones[tone]}`}
-            style={{ left: x, top: y, width: w }}
-        >
-            {label}
+        <div className="h-[440px]">
+            <OrgChart root={orgRoot} />
         </div>
     );
 }
 
-function Line({ x1, y1, x2, y2 }: { x1: number; y1: number; x2: number; y2: number }) {
-    const mx = (x1 + x2) / 2;
+// ─── Flowchart ────────────────────────────────────────────────────────────
+
+const flowNodes: FlowchartNode[] = [
+    { id: "intake", label: "Customer asks", x: 40, y: 60, color: "#0ea5e9" },
+    { id: "classify", label: "Classify intent", x: 280, y: 60, color: "#8b5cf6" },
+    { id: "fetch", label: "Fetch records", x: 520, y: 60 },
+    { id: "draft", label: "LLM draft reply", x: 520, y: 200, color: "#10b981" },
+    { id: "approve", label: "Human approves", x: 520, y: 340, color: "#f59e0b" },
+    { id: "send", label: "Send response", x: 760, y: 270, color: "#8b5cf6" },
+    { id: "log", label: "Log to CRM", x: 760, y: 60 },
+];
+
+const flowEdges: FlowchartEdge[] = [
+    { from: "intake", to: "classify" },
+    { from: "classify", to: "fetch" },
+    { from: "fetch", to: "draft", label: "context" },
+    { from: "draft", to: "approve" },
+    { from: "approve", to: "send", label: "✓" },
+    { from: "send", to: "log" },
+    { from: "fetch", to: "log", label: "tag" },
+];
+
+function FlowchartDemo() {
     return (
-        <path
-            d={`M${x1} ${y1} C${mx} ${y1}, ${mx} ${y2}, ${x2} ${y2}`}
-            stroke="rgba(124,58,237,0.55)"
-            strokeWidth={1.5}
-            fill="none"
-        />
+        <div className="h-[440px]">
+            <Flowchart nodes={flowNodes} edges={flowEdges} routing="manhattan" />
+        </div>
     );
 }
 
-function Flowchart() {
-    return (
-        <Frame>
-            <svg className="absolute inset-0 h-full w-full pointer-events-none">
-                <Line x1={130} y1={75} x2={210} y2={75} />
-                <Line x1={340} y1={75} x2={420} y2={75} />
-                <Line x1={485} y1={105} x2={485} y2={155} />
-                <Line x1={485} y1={195} x2={485} y2={245} />
-                <Line x1={550} y1={185} x2={620} y2={185} />
-            </svg>
-            <Box x={20}  y={60}  label="Customer asks" tone="sky" />
-            <Box x={210} y={60}  label="Classify intent" tone="violet" />
-            <Box x={420} y={60}  label="Fetch records" />
-            <Box x={420} y={155} label="LLM draft reply" tone="emerald" />
-            <Box x={420} y={240} label="Human approves" tone="amber" />
-            <Box x={620} y={170} label="Send" tone="violet" />
-        </Frame>
-    );
-}
+// ─── Mindmap ──────────────────────────────────────────────────────────────
 
-function Mindmap() {
-    return (
-        <Frame>
-            <svg className="absolute inset-0 h-full w-full pointer-events-none">
-                <Line x1={355} y1={155} x2={130} y2={70} />
-                <Line x1={355} y1={155} x2={130} y2={170} />
-                <Line x1={355} y1={155} x2={130} y2={250} />
-                <Line x1={485} y1={155} x2={680} y2={70} />
-                <Line x1={485} y1={155} x2={680} y2={170} />
-                <Line x1={485} y1={155} x2={680} y2={250} />
-            </svg>
-            <Box x={345} y={140} w={130} label="Human+ UX" tone="violet" />
-            <Box x={20}  y={55}  label="Authorable" tone="emerald" />
-            <Box x={20}  y={155} label="Inhabitable" tone="emerald" />
-            <Box x={20}  y={235} label="Composable" tone="emerald" />
-            <Box x={680} y={55}  label="Bridges" tone="sky" />
-            <Box x={680} y={155} label="Presence" tone="sky" />
-            <Box x={680} y={235} label="Undo" tone="sky" />
-        </Frame>
-    );
-}
+const mindRoot: MindmapNode = {
+    id: "humanplus",
+    label: "Human+ UX",
+    color: "#8b5cf6",
+    children: [
+        {
+            id: "authorable",
+            label: "Authorable",
+            color: "#10b981",
+            children: [
+                { id: "terse", label: "Terse props", color: "#10b981" },
+                { id: "typed", label: "Typed", color: "#10b981" },
+                { id: "json", label: "JSON-friendly", color: "#10b981" },
+            ],
+        },
+        {
+            id: "inhabitable",
+            label: "Inhabitable",
+            color: "#10b981",
+            children: [
+                { id: "controlled", label: "Controlled state", color: "#10b981" },
+                { id: "handles", label: "Stable handles", color: "#10b981" },
+            ],
+        },
+        {
+            id: "bridges",
+            label: "MCP bridges",
+            color: "#06b6d4",
+            children: [
+                { id: "whiteboard", label: "whiteboard_*", color: "#06b6d4" },
+                { id: "flow", label: "flow_*", color: "#06b6d4" },
+                { id: "sheets", label: "sheet_*", color: "#06b6d4" },
+            ],
+        },
+        {
+            id: "presence",
+            label: "Presence",
+            color: "#06b6d4",
+            children: [
+                { id: "cursors", label: "Agent cursors", color: "#06b6d4" },
+                { id: "activity", label: "Activity feed", color: "#06b6d4" },
+            ],
+        },
+        {
+            id: "undo",
+            label: "Undo",
+            color: "#06b6d4",
+        },
+    ],
+};
 
-function OrgChart() {
+function MindmapDemo() {
     return (
-        <Frame>
-            <svg className="absolute inset-0 h-full w-full pointer-events-none">
-                <Line x1={420} y1={75}  x2={140} y2={175} />
-                <Line x1={420} y1={75}  x2={420} y2={175} />
-                <Line x1={420} y1={75}  x2={700} y2={175} />
-                <Line x1={140} y1={205} x2={60}  y2={265} />
-                <Line x1={140} y1={205} x2={220} y2={265} />
-            </svg>
-            <Box x={355} y={60}  label="Founder" tone="violet" />
-            <Box x={75}  y={160} label="Design" />
-            <Box x={355} y={160} label="Engineering" />
-            <Box x={635} y={160} label="GTM" />
-            <Box x={-15} y={250} w={150} label="Visual" tone="amber" />
-            <Box x={155} y={250} w={150} label="Product" tone="amber" />
-        </Frame>
-    );
-}
-
-function DataDiagram() {
-    return (
-        <Frame>
-            <svg className="absolute inset-0 h-full w-full pointer-events-none">
-                <Line x1={170} y1={100} x2={310} y2={100} />
-                <Line x1={170} y1={210} x2={310} y2={210} />
-                <Line x1={460} y1={155} x2={600} y2={155} />
-            </svg>
-            <div className="absolute left-[20px] top-[80px] w-[150px] rounded-md border border-sky-400 bg-sky-50 p-2 text-xs dark:bg-sky-500/15">
-                <div className="mb-1 font-mono text-[10px] uppercase text-sky-700 dark:text-sky-300">users</div>
-                <div className="font-mono text-[10px] text-sky-900 dark:text-sky-100">id · email · name</div>
-            </div>
-            <div className="absolute left-[20px] top-[190px] w-[150px] rounded-md border border-sky-400 bg-sky-50 p-2 text-xs dark:bg-sky-500/15">
-                <div className="mb-1 font-mono text-[10px] uppercase text-sky-700 dark:text-sky-300">orgs</div>
-                <div className="font-mono text-[10px] text-sky-900 dark:text-sky-100">id · slug · plan</div>
-            </div>
-            <div className="absolute left-[310px] top-[125px] w-[150px] rounded-md border border-violet-400 bg-violet-50 p-2 text-xs dark:bg-violet-500/15">
-                <div className="mb-1 font-mono text-[10px] uppercase text-violet-700 dark:text-violet-300">memberships</div>
-                <div className="font-mono text-[10px] text-violet-900 dark:text-violet-100">user_id · org_id · role</div>
-            </div>
-            <div className="absolute left-[600px] top-[135px] w-[150px] rounded-md border border-emerald-400 bg-emerald-50 p-2 text-xs dark:bg-emerald-500/15">
-                <div className="mb-1 font-mono text-[10px] uppercase text-emerald-700 dark:text-emerald-300">audits</div>
-                <div className="font-mono text-[10px] text-emerald-900 dark:text-emerald-100">org_id · event · at</div>
-            </div>
-        </Frame>
+        <div className="h-[440px]">
+            <Mindmap root={mindRoot} />
+        </div>
     );
 }

@@ -9,6 +9,7 @@ import {
     Tabs,
     Text,
 } from "@particle-academy/react-fancy";
+import { CodeEditor } from "@particle-academy/fancy-code";
 import { Layout } from "../Layout";
 import { ComponentDemo } from "./ComponentDemo";
 import { getComponentDoc, type ComponentDoc, type ComponentDocExample, type ComponentDocProp } from "./ComponentDocs";
@@ -230,9 +231,9 @@ function ExampleSection({ index, example }: { index: number; example: ComponentD
                         >
                             {copied ? "copied" : "copy"}
                         </button>
-                        <pre className="overflow-x-auto bg-zinc-950 p-4 text-xs leading-relaxed text-zinc-100">
-                            <code>{example.code}</code>
-                        </pre>
+                        <CodeEditor value={example.code} language="tsx" theme="dark" readOnly minHeight={80} maxHeight={500}>
+                            <CodeEditor.Panel />
+                        </CodeEditor>
                     </div>
                 )}
             </Card.Body>
@@ -437,7 +438,11 @@ function InstallPanel({
                         <Text size="xs" className="mt-3 !text-zinc-500">
                             Then import in your code:
                         </Text>
-                        <pre className="mt-1 overflow-x-auto rounded-md bg-zinc-950 p-3 text-xs text-zinc-100">{importLine}</pre>
+                        <div className="mt-1 overflow-hidden rounded-md">
+                            <CodeEditor value={importLine} language="typescript" theme="dark" readOnly lineNumbers={false} minHeight={36} maxHeight={36}>
+                                <CodeEditor.Panel />
+                            </CodeEditor>
+                        </div>
                     </Card.Body>
                 </Card>
             )}
@@ -530,9 +535,9 @@ function FileView({ file }: { file: SourceFile }) {
                     {copied ? "copied" : "copy"}
                 </button>
             </div>
-            <pre className="max-h-[36rem] overflow-auto bg-zinc-950 p-4 text-xs leading-relaxed text-zinc-100">
-                <code>{file.content}</code>
-            </pre>
+            <CodeEditor value={file.content} language={file.language || "tsx"} theme="dark" readOnly minHeight={200} maxHeight={576}>
+                <CodeEditor.Panel />
+            </CodeEditor>
         </div>
     );
 }

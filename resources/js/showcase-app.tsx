@@ -4,6 +4,7 @@ import { FancyAppRoot } from "@particle-academy/fancy-inertia";
 import { registerAll as registerEChartsAll, registerBuiltinThemes } from "@particle-academy/fancy-echarts";
 import "./showcase-theme";
 import "@particle-academy/react-fancy/styles.css";
+import "@particle-academy/fancy-code/styles.css";
 
 // Register echarts modules synchronously before any component can render.
 // FancyAppRoot does this in useEffect, but useEffect runs AFTER first render

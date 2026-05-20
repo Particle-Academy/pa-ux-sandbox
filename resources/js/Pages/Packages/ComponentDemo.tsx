@@ -53,6 +53,7 @@ import {
     TreeNav,
     useToast,
 } from "@particle-academy/react-fancy";
+import { CodeEditor } from "@particle-academy/fancy-code";
 
 type DemoFn = () => JSX.Element;
 
@@ -1036,9 +1037,11 @@ function Explainer({
                 </ul>
             )}
             {code && (
-                <pre className="overflow-x-auto rounded-md bg-zinc-950 p-3 text-[12px] leading-relaxed text-zinc-100">
-                    <code>{code}</code>
-                </pre>
+                <div className="overflow-hidden rounded-md">
+                    <CodeEditor value={code} language="tsx" theme="dark" readOnly minHeight={60} maxHeight={400}>
+                        <CodeEditor.Panel />
+                    </CodeEditor>
+                </div>
             )}
         </div>
     );

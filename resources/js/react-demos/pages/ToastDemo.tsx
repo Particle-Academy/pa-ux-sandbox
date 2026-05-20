@@ -63,22 +63,16 @@ toast({ title: "Info", variant: "info" });`}>
           <ToastButtons />
         </DemoSection>
 
-        <DemoSection title="Usage" description="Wrap your app with Toast.Provider and use the useToast hook." code={`<Toast.Provider position="bottom-right">
+        <DemoSection title="Usage" description="Wrap your app with Toast.Provider and use the useToast hook. Click 'Show Code' above for the snippet." code={`<Toast.Provider position="bottom-right">
   <App />
 </Toast.Provider>
 
 // In a component:
 const { toast } = useToast();
 toast({ title: "Hello!", variant: "success" });`}>
-          <pre className="rounded-lg bg-zinc-100 p-4 text-sm dark:bg-zinc-800">
-{`<Toast.Provider position="bottom-right">
-  <App />
-</Toast.Provider>
-
-// In a component:
-const { toast } = useToast();
-toast({ title: "Hello!", variant: "success" });`}
-          </pre>
+          <div className="text-sm text-zinc-500">
+            Toast.Provider lives at the root; `useToast()` returns `{`{ toast, dismiss }`}` to any descendant.
+          </div>
         </DemoSection>
       </div>
     </Toast.Provider>

@@ -7,6 +7,7 @@ import {
   type RenderExtension,
   type RenderExtensionProps,
 } from "@particle-academy/react-fancy";
+import { CodeEditor } from "@particle-academy/fancy-code";
 import { DemoSection } from "../components/DemoSection";
 
 // ---------------------------------------------------------------------------
@@ -261,9 +262,11 @@ export function EditorDemo() {
             <Editor.Content />
           </Editor>
           {basicValue && (
-            <pre className="mt-3 max-h-40 overflow-auto rounded-lg bg-zinc-100 p-3 text-xs text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
-              {basicValue}
-            </pre>
+            <div className="mt-3 overflow-hidden rounded-lg">
+              <CodeEditor value={basicValue} language="html" theme="auto" readOnly lineNumbers={false} minHeight={60} maxHeight={160}>
+                <CodeEditor.Panel />
+              </CodeEditor>
+            </div>
           )}
         </div>
       </DemoSection>
@@ -326,9 +329,11 @@ export function EditorDemo() {
             <Editor.Content />
           </Editor>
           {mdValue && (
-            <pre className="mt-3 max-h-40 overflow-auto rounded-lg bg-zinc-100 p-3 text-xs text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
-              {mdValue}
-            </pre>
+            <div className="mt-3 overflow-hidden rounded-lg">
+              <CodeEditor value={mdValue} language="markdown" theme="auto" readOnly lineNumbers={false} minHeight={60} maxHeight={160}>
+                <CodeEditor.Panel />
+              </CodeEditor>
+            </div>
           )}
         </div>
       </DemoSection>

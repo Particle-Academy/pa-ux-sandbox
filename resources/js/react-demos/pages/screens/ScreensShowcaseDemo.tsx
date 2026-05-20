@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { Screen, useScreens, useRegisterStore } from "@particle-academy/fancy-screens";
 import { Action, Card, Badge } from "@particle-academy/react-fancy";
+import { CodeEditor } from "@particle-academy/fancy-code";
 import { registerAll } from "@particle-academy/fancy-echarts";
 import { create, type StoreApi, type UseBoundStore } from "zustand";
 
@@ -138,9 +139,19 @@ function RegistryPanel() {
                 <div className="mt-1 text-xs text-zinc-500">
                   stores: <code>{s.storeKeys.join(", ") || "(none)"}</code>
                 </div>
-                <pre className="mt-2 overflow-auto rounded bg-zinc-100 p-1.5 text-[11px] dark:bg-zinc-800">
-                  {JSON.stringify(s.storeValues, null, 2)}
-                </pre>
+                <div className="mt-2 overflow-hidden rounded">
+                  <CodeEditor
+                    value={JSON.stringify(s.storeValues, null, 2)}
+                    language="json"
+                    theme="auto"
+                    readOnly
+                    lineNumbers={false}
+                    minHeight={50}
+                    maxHeight={200}
+                  >
+                    <CodeEditor.Panel />
+                  </CodeEditor>
+                </div>
               </div>
             ))}
           </div>

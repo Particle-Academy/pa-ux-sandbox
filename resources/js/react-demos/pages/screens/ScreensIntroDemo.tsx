@@ -1,5 +1,6 @@
 import { Screen, useScreens, useRegisterStore } from "@particle-academy/fancy-screens";
 import { Action, Card, Badge, Input } from "@particle-academy/react-fancy";
+import { CodeEditor } from "@particle-academy/fancy-code";
 import { create } from "zustand";
 import { DemoSection } from "../../components/DemoSection";
 
@@ -51,9 +52,19 @@ function UserPanel() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
-          <pre className="rounded bg-zinc-100 p-2 text-xs dark:bg-zinc-800">
-            {JSON.stringify({ name, email }, null, 2)}
-          </pre>
+          <div className="overflow-hidden rounded">
+            <CodeEditor
+              value={JSON.stringify({ name, email }, null, 2)}
+              language="json"
+              theme="auto"
+              readOnly
+              lineNumbers={false}
+              minHeight={50}
+              maxHeight={140}
+            >
+              <CodeEditor.Panel />
+            </CodeEditor>
+          </div>
         </Card.Body>
       </Card>
 
@@ -94,9 +105,19 @@ function RegistryPanel() {
         </div>
       </Card.Header>
       <Card.Body>
-        <pre className="overflow-auto rounded bg-zinc-100 p-3 text-xs dark:bg-zinc-800">
-          {JSON.stringify(screens, null, 2)}
-        </pre>
+        <div className="overflow-hidden rounded">
+          <CodeEditor
+            value={JSON.stringify(screens, null, 2)}
+            language="json"
+            theme="auto"
+            readOnly
+            lineNumbers={false}
+            minHeight={80}
+            maxHeight={360}
+          >
+            <CodeEditor.Panel />
+          </CodeEditor>
+        </div>
       </Card.Body>
     </Card>
   );

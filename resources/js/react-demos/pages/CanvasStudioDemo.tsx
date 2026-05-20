@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { Action, Badge, Callout, Card } from "@particle-academy/react-fancy";
+import { CodeEditor } from "@particle-academy/fancy-code";
 import { Canvas } from "@particle-academy/fancy-3d/canvas";
 import { domAdapter } from "@particle-academy/fancy-3d/dom";
 import {
@@ -119,9 +120,19 @@ function Inspector({ node, onChange, onDelete }: { node: SceneNode | null; onCha
       </div>
       <div>
         <div className="text-[10px] font-semibold tracking-wider text-zinc-500 uppercase">Widget JSON</div>
-        <pre className="mt-1 max-h-72 overflow-auto rounded bg-zinc-900 p-2 font-mono text-[10px] leading-relaxed text-zinc-100">
-          {JSON.stringify(node.widget, null, 2)}
-        </pre>
+        <div className="mt-1 overflow-hidden rounded">
+          <CodeEditor
+            value={JSON.stringify(node.widget, null, 2)}
+            language="json"
+            theme="dark"
+            readOnly
+            lineNumbers={false}
+            minHeight={80}
+            maxHeight={288}
+          >
+            <CodeEditor.Panel />
+          </CodeEditor>
+        </div>
       </div>
       <Action variant="default" color="red" size="sm" onClick={onDelete}>
         Delete node

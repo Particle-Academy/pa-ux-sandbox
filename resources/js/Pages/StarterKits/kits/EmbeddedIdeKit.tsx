@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Action, Badge, Card, Heading, Text } from "@particle-academy/react-fancy";
+import { CodeEditor } from "@particle-academy/fancy-code";
 
 type Node = { id: string; label: string; kind: "folder" | "file"; lang?: string; children?: Node[]; content?: string };
 
@@ -53,9 +54,18 @@ export function EmbeddedIdeKit() {
                     <span className="font-mono">{active}</span>
                     {file?.lang && <Badge color="zinc" size="sm">{file.lang}</Badge>}
                 </div>
-                <pre className="flex-1 overflow-auto p-4 text-[12px] leading-relaxed text-zinc-100">
-                    <code>{file?.content ?? "(empty)"}</code>
-                </pre>
+                <div className="flex-1 overflow-hidden">
+                    <CodeEditor
+                        value={file?.content ?? "(empty)"}
+                        language={file?.lang ?? "tsx"}
+                        theme="dark"
+                        readOnly
+                        minHeight={240}
+                        maxHeight={480}
+                    >
+                        <CodeEditor.Panel />
+                    </CodeEditor>
+                </div>
                 <div className="flex items-center justify-between border-t border-zinc-800 px-3 py-1.5 text-[10px] text-zinc-500">
                     <span>{file?.content?.split("\n").length ?? 0} lines</span>
                     <span>{file?.lang ?? "—"} · LF · UTF-8</span>

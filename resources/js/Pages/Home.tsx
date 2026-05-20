@@ -126,7 +126,7 @@ export default function Home({ packages, total_components }: HomeProps) {
                         { slug: "fancy-whiteboard", name: "Collaborative Board", pkg: "fancy-whiteboard", icon: "✦", tone: "from-amber-400/30 to-rose-400/30" },
                         { slug: "fancy-sheets", name: "Spreadsheet Studio", pkg: "fancy-sheets", icon: "▥", tone: "from-emerald-400/30 to-violet-400/30" },
                         { slug: "fancy-code", name: "Embedded IDE", pkg: "fancy-code", icon: "{ }", tone: "from-indigo-400/30 to-violet-400/30" },
-                        { slug: "fancy-echarts", name: "Diagram Studio", pkg: "fancy-echarts", icon: "◊", tone: "from-sky-400/30 to-indigo-400/30" },
+                        { slug: "fancy-echarts", name: "Charts Studio", pkg: "fancy-echarts", icon: "◊", tone: "from-sky-400/30 to-indigo-400/30" },
                     ].map((k) => (
                         <Link key={k.slug} href={`/starter-kits/${k.slug}`} className="block">
                             <Card className="group relative h-full overflow-hidden transition hover:-translate-y-0.5 hover:shadow-md">

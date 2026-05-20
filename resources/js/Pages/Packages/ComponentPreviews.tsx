@@ -835,49 +835,9 @@ const PREVIEWS: Record<string, PreviewFn> = {
         </div>
     ),
 
-    "fancy-echarts/data-diagram": () => (
-        <div className="grid grid-cols-3 gap-3 text-xs">
-            {["users", "orders", "items"].map((label) => (
-                <div key={label} className="rounded-md border border-zinc-200 bg-white px-2 py-1.5 text-center font-mono dark:border-zinc-700 dark:bg-zinc-900">
-                    <div className="font-semibold text-zinc-700 dark:text-zinc-200">{label}</div>
-                    <div className="text-[10px] text-zinc-500">id · pk</div>
-                </div>
-            ))}
-            <div className="col-span-3 text-center text-[10px] text-zinc-500">ERD ⟶ relations rendered</div>
-        </div>
-    ),
-
-    "fancy-echarts/flowchart": () => (
-        <div className="flex items-center gap-2 text-xs">
-            <div className="rounded-full border-2 border-violet-500 bg-violet-50 px-3 py-1.5 text-violet-900 dark:bg-violet-500/15 dark:text-violet-100">Start</div>
-            <ChevronRight size={14} className="text-zinc-400" />
-            <div className="rounded border border-zinc-200 bg-white px-3 py-1.5 text-zinc-700 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-200">Process</div>
-            <ChevronRight size={14} className="text-zinc-400" />
-            <div className="rounded-full border-2 border-emerald-500 bg-emerald-50 px-3 py-1.5 text-emerald-900 dark:bg-emerald-500/15 dark:text-emerald-100">End</div>
-        </div>
-    ),
-
-    "fancy-echarts/mindmap": () => (
-        <div className="text-center text-xs">
-            <div className="inline-block rounded-md bg-violet-500 px-3 py-1 font-semibold text-white">Idea</div>
-            <div className="mt-2 flex justify-center gap-3">
-                <div className="rounded border border-zinc-200 px-2 py-0.5 text-zinc-600 dark:border-zinc-700 dark:text-zinc-300">Branch A</div>
-                <div className="rounded border border-zinc-200 px-2 py-0.5 text-zinc-600 dark:border-zinc-700 dark:text-zinc-300">Branch B</div>
-                <div className="rounded border border-zinc-200 px-2 py-0.5 text-zinc-600 dark:border-zinc-700 dark:text-zinc-300">Branch C</div>
-            </div>
-        </div>
-    ),
-
-    "fancy-echarts/org-chart": () => (
-        <div className="text-center text-xs">
-            <div className="inline-block rounded border border-violet-500 bg-violet-50 px-3 py-1.5 font-semibold text-violet-900 dark:bg-violet-500/15 dark:text-violet-100">CEO</div>
-            <div className="mt-3 flex justify-center gap-2">
-                <div className="rounded border border-zinc-200 bg-white px-2.5 py-1 text-zinc-700 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-200">CTO</div>
-                <div className="rounded border border-zinc-200 bg-white px-2.5 py-1 text-zinc-700 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-200">CFO</div>
-                <div className="rounded border border-zinc-200 bg-white px-2.5 py-1 text-zinc-700 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-200">CMO</div>
-            </div>
-        </div>
-    ),
+    // (data-diagram / flowchart / mindmap / org-chart previews removed
+    //  alongside the fancy-echarts 4.0.0 deletion of the hand-rolled
+    //  diagram subsystem. Node-edge graphs live in fancy-flow now.)
 
     // ─── fancy-screens ────────────────────────────────────────────────────
 

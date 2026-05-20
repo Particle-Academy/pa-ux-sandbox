@@ -129,13 +129,6 @@ const humanPlusLinks = [
   { to: "/magic-wand", label: "MagicWand" },
 ];
 
-const echartsDiagramLinks = [
-  { to: "/echarts-data-diagram", label: "Data Diagram" },
-  { to: "/echarts-flowchart", label: "Flowchart" },
-  { to: "/echarts-mindmap", label: "Mindmap" },
-  { to: "/echarts-orgchart", label: "OrgChart" },
-];
-
 const echartsLinks = [
   { to: "/echarts-showcase", label: "★ Dashboard Showcase" },
   { to: "/echarts-line", label: "Line" },
@@ -248,9 +241,6 @@ function ReactFancyNav() {
 function EChartsNav() {
   return (
     <>
-      <SectionHeader label="Diagrams" />
-      <LinkGroup links={echartsDiagramLinks} />
-
       <SectionHeader label="2D Charts" />
       <LinkGroup links={echartsLinks} />
 

@@ -36,6 +36,7 @@ class PackageRegistry
                 return $pkg;
             }
         }
+
         return null;
     }
 
@@ -193,16 +194,14 @@ class PackageRegistry
         return [
             'slug' => 'fancy-echarts',
             'name' => 'fancy-echarts',
-            'tagline' => 'Typed React wrapper around Apache ECharts plus four diagram presets.',
+            'tagline' => 'Typed React wrapper around Apache ECharts — every chart type from a single <EChart> component, lazy module registration, four built-in themes.',
             'npm' => '@particle-academy/fancy-echarts',
             'repo' => 'Particle-Academy/fancy-echarts',
             'language' => 'TypeScript',
             'components' => [
                 ['slug' => 'echart', 'name' => 'EChart', 'blurb' => 'Generic chart wrapper.'],
-                ['slug' => 'data-diagram', 'name' => 'DataDiagram', 'blurb' => 'Diagram preset.'],
-                ['slug' => 'flowchart', 'name' => 'Flowchart', 'blurb' => 'Flowchart preset.'],
-                ['slug' => 'mindmap', 'name' => 'Mindmap', 'blurb' => 'Mindmap preset.'],
-                ['slug' => 'org-chart', 'name' => 'OrgChart', 'blurb' => 'Org-chart preset.'],
+                ['slug' => 'echart-3d', 'name' => 'EChart3D', 'blurb' => '3D chart wrapper (globe / surface / scatter3D).'],
+                ['slug' => 'echart-graphic', 'name' => 'EChartGraphic', 'blurb' => 'Imperative graphic layer for annotations.'],
             ],
         ];
     }

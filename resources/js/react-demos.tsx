@@ -91,7 +91,6 @@ const Fancy3DDecalDemo = l(() => import("./react-demos/pages/Fancy3DDecalDemo"),
 const Fancy3DMonitorDemo = l(() => import("./react-demos/pages/Fancy3DMonitorDemo"), "Fancy3DMonitorDemo");
 const Fancy3DCard3DDemo = l(() => import("./react-demos/pages/Fancy3DCard3DDemo"), "Fancy3DCard3DDemo");
 const BabylonSmokeTestDemo = l(() => import("./react-demos/pages/BabylonSmokeTestDemo"), "BabylonSmokeTestDemo");
-const DiagramDemo = l(() => import("./react-demos/pages/DiagramDemo"), "DiagramDemo");
 // Phase 7: Menus & Navigation
 const MenuDemo = l(() => import("./react-demos/pages/MenuDemo"), "MenuDemo");
 const SidebarDemo = l(() => import("./react-demos/pages/SidebarDemo"), "SidebarDemo");
@@ -147,9 +146,6 @@ const GlobeDemo = l(() => import("./react-demos/pages/echarts/GlobeDemo"), "Glob
 const GraphicDemo = l(() => import("./react-demos/pages/echarts/GraphicDemo"), "GraphicDemo");
 const EffectScatterDemo = l(() => import("./react-demos/pages/echarts/EffectScatterDemo"), "EffectScatterDemo");
 const EChartsShowcase = l(() => import("./react-demos/pages/echarts/EChartsShowcase"), "EChartsShowcase");
-const FlowchartDemo = l(() => import("./react-demos/pages/echarts/FlowchartDemo"), "FlowchartDemo");
-const MindmapDemo = l(() => import("./react-demos/pages/echarts/MindmapDemo"), "MindmapDemo");
-const OrgChartDemo = l(() => import("./react-demos/pages/echarts/OrgChartDemo"), "OrgChartDemo");
 // fancy-screens
 const ScreensIntroDemo = l(() => import("./react-demos/pages/screens/ScreensIntroDemo"), "ScreensIntroDemo");
 const ScreensShowcaseDemo = l(() => import("./react-demos/pages/screens/ScreensShowcaseDemo"), "ScreensShowcaseDemo");
@@ -271,10 +267,6 @@ if (root) {
               {/* ECharts (lazy-loaded layout registers echarts) */}
               <Route element={<EChartsLayout />}>
                 <Route path="echarts-showcase" element={<EChartsShowcase />} />
-                <Route path="echarts-data-diagram" element={<DiagramDemo />} />
-                <Route path="echarts-flowchart" element={<FlowchartDemo />} />
-                <Route path="echarts-mindmap" element={<MindmapDemo />} />
-                <Route path="echarts-orgchart" element={<OrgChartDemo />} />
                 <Route path="echarts-line" element={<LineDemo />} />
                 <Route path="echarts-bar" element={<BarDemo />} />
                 <Route path="echarts-pie" element={<PieDemo />} />

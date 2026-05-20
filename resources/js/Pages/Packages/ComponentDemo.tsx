@@ -141,10 +141,6 @@ const REGISTRY: Record<string, DemoFn> = {
 
     // ── fancy-echarts
     "fancy-echarts/echart": EChartDemo,
-    "fancy-echarts/data-diagram": EChartsDataDiagramDemo,
-    "fancy-echarts/flowchart": EChartsFlowchartDemo,
-    "fancy-echarts/mindmap": EChartsMindmapDemo,
-    "fancy-echarts/org-chart": EChartsOrgChartDemo,
 
     // ── fancy-screens
     "fancy-screens/screen-system": ScreenSystemDemo,
@@ -1213,41 +1209,9 @@ function EChartDemo() {
     );
 }
 
-function EChartsDataDiagramDemo() {
-    return (
-        <Explainer
-            summary="Preset: schema-driven entity-relationship diagram. Tables become nodes, foreign keys become edges. Renders through ECharts' graph series."
-            code={'import { DataDiagram } from "@particle-academy/fancy-echarts";\n\n<DataDiagram\n  tables={[\n    { name: "users", columns: ["id", "email", "name"] },\n    { name: "orgs",  columns: ["id", "slug", "plan"] },\n    { name: "memberships", columns: ["user_id", "org_id", "role"] },\n  ]}\n  relations={[\n    { from: "memberships.user_id", to: "users.id" },\n    { from: "memberships.org_id",  to: "orgs.id" },\n  ]}\n/>'}
-        />
-    );
-}
-
-function EChartsFlowchartDemo() {
-    return (
-        <Explainer
-            summary="Preset: hierarchical flowchart with kind-tinted nodes. Same JSON shape as DataDiagram but rendered with directional layout."
-            code={'import { Flowchart } from "@particle-academy/fancy-echarts";\n\n<Flowchart\n  nodes={[\n    { id: "a", label: "Customer asks", kind: "input" },\n    { id: "b", label: "Classify intent", kind: "agent" },\n    { id: "c", label: "Fetch records",   kind: "tool" },\n    { id: "d", label: "Reply",           kind: "output" },\n  ]}\n  edges={[\n    { from: "a", to: "b" },\n    { from: "b", to: "c" },\n    { from: "c", to: "d" },\n  ]}\n/>'}
-        />
-    );
-}
-
-function EChartsMindmapDemo() {
-    return (
-        <Explainer
-            summary="Preset: radial mindmap centered on a root node. Auto-arcs children outward by depth."
-            code={'import { Mindmap } from "@particle-academy/fancy-echarts";\n\n<Mindmap\n  root={{\n    label: "Human+ UX",\n    children: [\n      { label: "Authorable", children: [{ label: "JSON-shaped" }, { label: "Tiny APIs" }] },\n      { label: "Inhabitable", children: [{ label: "MCP bridges" }, { label: "Stable handles" }] },\n    ],\n  }}\n/>'}
-        />
-    );
-}
-
-function EChartsOrgChartDemo() {
-    return (
-        <Explainer
-            summary="Preset: top-down hierarchical org chart. Each node renders a card with title + subtitle + avatar."
-            code={'import { OrgChart } from "@particle-academy/fancy-echarts";\n\n<OrgChart\n  root={{\n    name: "Founder",\n    children: [\n      { name: "Design", children: [{ name: "Visual" }, { name: "Product" }] },\n      { name: "Engineering" },\n      { name: "GTM" },\n    ],\n  }}\n/>'}
-        />
-    );
-}
+// (DataDiagram / Flowchart / Mindmap / OrgChart demos removed alongside the
+//  fancy-echarts 4.0.0 deletion of the hand-rolled diagram subsystem. Use
+//  @particle-academy/fancy-flow for node-edge graphs now.)
 
 // ─── fancy-screens ─────────────────────────────────────────────────────────
 

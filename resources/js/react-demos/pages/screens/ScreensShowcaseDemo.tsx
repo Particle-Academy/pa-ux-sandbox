@@ -13,9 +13,6 @@ registerAll();
 const EChartsShowcase = lazy(() =>
   import("../echarts/EChartsShowcase").then((m) => ({ default: m.EChartsShowcase })),
 );
-const DiagramDemo = lazy(() =>
-  import("../DiagramDemo").then((m) => ({ default: m.DiagramDemo })),
-);
 const AppSheetDemo = lazy(() =>
   import("../AppSheetDemo").then((m) => ({ default: m.AppSheetDemo })),
 );
@@ -36,12 +33,6 @@ const DEMOS: DemoEntry[] = [
     title: "Sales Dashboard",
     summary: "Six chart types + KPIs + ContextMenus + drill-down modal",
     Component: EChartsShowcase,
-  },
-  {
-    id: "diagrams",
-    title: "Data Diagrams",
-    summary: "ERD, flowchart, mindmap routing — all on the shared diagram engine",
-    Component: DiagramDemo,
   },
   {
     id: "appsheet",

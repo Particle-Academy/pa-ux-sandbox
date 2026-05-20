@@ -18,7 +18,7 @@ class StarterKitController extends Controller
             ['slug' => 'fancy-whiteboard', 'name' => 'Collaborative Board', 'pkg' => 'fancy-whiteboard', 'blurb' => 'Sticky notes with agent cursor + activity panel.'],
             ['slug' => 'fancy-code', 'name' => 'Embedded IDE', 'pkg' => 'fancy-code', 'blurb' => 'CodeEditor + TreeNav IDE layout.'],
             ['slug' => 'fancy-sheets', 'name' => 'Spreadsheet Studio', 'pkg' => 'fancy-sheets', 'blurb' => 'Multi-sheet workbook with formulas.'],
-            ['slug' => 'fancy-echarts', 'name' => 'Diagram Studio', 'pkg' => 'fancy-echarts', 'blurb' => 'DataDiagram, Flowchart, Mindmap, OrgChart presets.'],
+            ['slug' => 'fancy-echarts', 'name' => 'Charts Studio', 'pkg' => 'fancy-echarts', 'blurb' => 'Real ECharts in four cuts: trends, composition, hierarchy, flow. Stacked area, donut + bar, sunburst, sankey.'],
         ];
     }
 
@@ -31,6 +31,7 @@ class StarterKitController extends Controller
     {
         $kit = collect(self::kits())->firstWhere('slug', $slug);
         abort_if($kit === null, 404);
+
         return Inertia::render('StarterKits/Show', ['kit' => $kit]);
     }
 }

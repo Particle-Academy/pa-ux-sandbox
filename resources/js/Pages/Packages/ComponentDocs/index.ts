@@ -2,6 +2,8 @@ import type { ComponentDoc } from "./types";
 import { accordionDoc } from "./Accordion";
 import { accordionPanelDoc } from "./AccordionPanel";
 import { actionDoc } from "./Action";
+import { agentCursorDoc } from "./AgentCursor";
+import { agentPanelDoc } from "./AgentPanel";
 import { autocompleteDoc } from "./Autocomplete";
 import { avatarDoc } from "./Avatar";
 import { badgeDoc } from "./Badge";
@@ -13,23 +15,36 @@ import { cardDoc } from "./Card";
 import { carouselDoc } from "./Carousel";
 import { chartDoc } from "./Chart";
 import { chatDrawerDoc } from "./ChatDrawer";
+import { codeEditorDoc } from "./CodeEditor";
 import { colorPickerDoc } from "./ColorPicker";
 import { commandDoc } from "./Command";
 import { composerDoc } from "./Composer";
 import { contentRendererDoc } from "./ContentRenderer";
 import { contextMenuDoc } from "./ContextMenu";
+import { createEmptyWorkbookDoc } from "./CreateEmptyWorkbook";
 import { dropdownDoc } from "./Dropdown";
+import { echart3dDoc } from "./EChart3D";
+import { echartDoc } from "./EChart";
+import { echartGraphicDoc } from "./EChartGraphic";
 import { editorDoc } from "./Editor";
 import { emojiDoc } from "./Emoji";
 import { emojiSelectDoc } from "./EmojiSelect";
+import { fancy3dCanvasDoc } from "./Fancy3DCanvas";
+import { fancy3dCard3DDoc } from "./Fancy3DCard3D";
+import { fancy3dMonitorDoc } from "./Fancy3DMonitor";
+import { fancy3dStageDoc } from "./Fancy3DStage";
+import { fancyAppRootDoc } from "./FancyAppRoot";
 import { fileUploadDoc } from "./FileUpload";
+import { flowEditorDoc } from "./FlowEditor";
 import { headingDoc } from "./Heading";
+import { holySheetAgentDoc } from "./HolySheetAgent";
 import { iconDoc } from "./Icon";
 import { inputTagDoc } from "./InputTag";
 import { inputsDoc } from "./Inputs";
 import { kanbanDoc } from "./Kanban";
 import { magicWandDoc } from "./MagicWand";
 import { menuDoc } from "./Menu";
+import { microMcpServerDoc } from "./MicroMcpServer";
 import { mobileMenuDoc } from "./MobileMenu";
 import { modalDoc } from "./Modal";
 import { moodMeterDoc } from "./MoodMeter";
@@ -43,7 +58,12 @@ import { profileDoc } from "./Profile";
 import { progressDoc } from "./Progress";
 import { promptInputDoc } from "./PromptInput";
 import { reasonTagDoc } from "./ReasonTag";
+import { screenDoc } from "./Screen";
+import { screenSystemDoc } from "./ScreenSystem";
 import { separatorDoc } from "./Separator";
+import { shareControlsDoc } from "./ShareControls";
+import { sharedWhiteboardDoc } from "./SharedWhiteboard";
+import { sheetWorkbookDoc } from "./SheetWorkbook";
 import { sidebarDoc } from "./Sidebar";
 import { skeletonDoc } from "./Skeleton";
 import { tableDoc } from "./Table";
@@ -54,6 +74,15 @@ import { timelineDoc } from "./Timeline";
 import { toastDoc } from "./Toast";
 import { tooltipDoc } from "./Tooltip";
 import { treeNavDoc } from "./TreeNav";
+import { useFancyFormDoc } from "./UseFancyForm";
+import { useFlowRunDoc } from "./UseFlowRun";
+import { useFlowStateDoc } from "./UseFlowState";
+import { whiteboardBoardDoc } from "./WhiteboardBoard";
+import { whiteboardConnectorDoc } from "./WhiteboardConnector";
+import { whiteboardCursorLayerDoc } from "./WhiteboardCursorLayer";
+import { whiteboardDrawingDoc } from "./WhiteboardDrawing";
+import { whiteboardShapeDoc } from "./WhiteboardShape";
+import { whiteboardStickyNoteDoc } from "./WhiteboardStickyNote";
 
 /**
  * Per-component documentation registry. When a `pkg/slug` is in here,
@@ -65,6 +94,7 @@ import { treeNavDoc } from "./TreeNav";
  * for that component automatically.
  */
 const DOCS: Record<string, ComponentDoc> = {
+    // react-fancy
     "react-fancy/accordion": accordionDoc,
     "react-fancy/accordion-panel": accordionPanelDoc,
     "react-fancy/action": actionDoc,
@@ -120,6 +150,55 @@ const DOCS: Record<string, ComponentDoc> = {
     "react-fancy/toast": toastDoc,
     "react-fancy/tooltip": tooltipDoc,
     "react-fancy/tree-nav": treeNavDoc,
+
+    // fancy-whiteboard
+    "fancy-whiteboard/board": whiteboardBoardDoc,
+    "fancy-whiteboard/sticky-note": whiteboardStickyNoteDoc,
+    "fancy-whiteboard/cursor-layer": whiteboardCursorLayerDoc,
+    "fancy-whiteboard/connector": whiteboardConnectorDoc,
+    "fancy-whiteboard/shape": whiteboardShapeDoc,
+    "fancy-whiteboard/drawing": whiteboardDrawingDoc,
+
+    // fancy-flow
+    "fancy-flow/flow-editor": flowEditorDoc,
+    "fancy-flow/use-flow-state": useFlowStateDoc,
+    "fancy-flow/use-flow-run": useFlowRunDoc,
+
+    // fancy-sheets
+    "fancy-sheets/sheet-workbook": sheetWorkbookDoc,
+    "fancy-sheets/create-empty-workbook": createEmptyWorkbookDoc,
+
+    // fancy-code
+    "fancy-code/code-editor": codeEditorDoc,
+
+    // fancy-echarts
+    "fancy-echarts/echart": echartDoc,
+    "fancy-echarts/echart-3d": echart3dDoc,
+    "fancy-echarts/echart-graphic": echartGraphicDoc,
+
+    // fancy-screens
+    "fancy-screens/screen-system": screenSystemDoc,
+    "fancy-screens/screen": screenDoc,
+
+    // fancy-3d
+    "fancy-3d/canvas": fancy3dCanvasDoc,
+    "fancy-3d/stage": fancy3dStageDoc,
+    "fancy-3d/monitor": fancy3dMonitorDoc,
+    "fancy-3d/card-3d": fancy3dCard3DDoc,
+
+    // agent-integrations
+    "agent-integrations/micro-mcp-server": microMcpServerDoc,
+    "agent-integrations/agent-panel": agentPanelDoc,
+    "agent-integrations/agent-cursor": agentCursorDoc,
+    "agent-integrations/shared-whiteboard": sharedWhiteboardDoc,
+    "agent-integrations/share-controls": shareControlsDoc,
+
+    // holy-sheet
+    "holy-sheet/agent": holySheetAgentDoc,
+
+    // fancy-inertia
+    "fancy-inertia/fancy-app-root": fancyAppRootDoc,
+    "fancy-inertia/use-fancy-form": useFancyFormDoc,
 };
 
 export function getComponentDoc(pkg: string, slug: string): ComponentDoc | null {

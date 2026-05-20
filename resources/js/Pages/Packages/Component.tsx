@@ -1,5 +1,5 @@
 import { Head } from "@inertiajs/react";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import {
     Action,
     Badge,
@@ -11,6 +11,7 @@ import {
 } from "@particle-academy/react-fancy";
 import { Layout } from "../Layout";
 import { ComponentDemo } from "./ComponentDemo";
+import { getComponentDoc, type ComponentDoc, type ComponentDocExample, type ComponentDocProp } from "./ComponentDocs";
 
 type SourceFile = {
     path: string;
@@ -46,6 +47,8 @@ export default function PackagesComponent({ package: pkg, component, usage, cont
         : `// ${component.name} ships in ${pkg.composer ?? pkg.slug}`;
 
     const hasSource = source !== null && source.files.length > 0;
+    const doc = getComponentDoc(pkg.slug, component.slug);
+    const hasDocs = doc !== null;
 
     return (
         <Layout>
@@ -86,6 +89,8 @@ export default function PackagesComponent({ package: pkg, component, usage, cont
                 <Tabs defaultTab="preview">
                     <Tabs.List>
                         <Tabs.Tab value="preview">Preview</Tabs.Tab>
+                        {hasDocs && <Tabs.Tab value="examples">Examples</Tabs.Tab>}
+                        {hasDocs && <Tabs.Tab value="props">Props</Tabs.Tab>}
                         <Tabs.Tab value="install">Install</Tabs.Tab>
                         {hasSource && <Tabs.Tab value="source">Source</Tabs.Tab>}
                         {hasSource && (source!.dependencies.length > 0 || source!.registryDependencies.length > 0) && (
@@ -101,6 +106,18 @@ export default function PackagesComponent({ package: pkg, component, usage, cont
                                 </Card.Body>
                             </Card>
                         </Tabs.Panel>
+
+                        {hasDocs && (
+                            <Tabs.Panel value="examples">
+                                <ExamplesPanel doc={doc!} />
+                            </Tabs.Panel>
+                        )}
+
+                        {hasDocs && (
+                            <Tabs.Panel value="props">
+                                <PropsPanel doc={doc!} component={component} />
+                            </Tabs.Panel>
+                        )}
 
                         <Tabs.Panel value="install">
                             <InstallPanel pkg={pkg} component={component} importLine={importLine} hasSource={hasSource} />
@@ -124,6 +141,184 @@ export default function PackagesComponent({ package: pkg, component, usage, cont
                 </Tabs>
             </div>
         </Layout>
+    );
+}
+
+// ─── Examples gallery (Examples tab) ──────────────────────────────────────
+
+function ExamplesPanel({ doc }: { doc: ComponentDoc }) {
+    return (
+        <div className="mt-4 space-y-5">
+            {doc.intro && (
+                <Card>
+                    <Card.Body>
+                        <Text size="sm" className="!text-zinc-700 dark:!text-zinc-200 [&_code]:rounded [&_code]:bg-zinc-100 [&_code]:px-1 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-xs dark:[&_code]:bg-zinc-800">
+                            {doc.intro}
+                        </Text>
+                    </Card.Body>
+                </Card>
+            )}
+            {doc.examples.map((ex, i) => (
+                <ExampleSection key={ex.name} index={i + 1} example={ex} />
+            ))}
+        </div>
+    );
+}
+
+function renderMarkdownInline(text: string): ReactNode[] {
+    // Splits "use `Foo` for X" into ["use ", <code>Foo</code>, " for X"].
+    const parts: ReactNode[] = [];
+    let last = 0;
+    const re = /`([^`]+)`/g;
+    let m: RegExpExecArray | null;
+    let key = 0;
+    while ((m = re.exec(text)) !== null) {
+        if (m.index > last) parts.push(text.slice(last, m.index));
+        parts.push(<code key={key++}>{m[1]}</code>);
+        last = m.index + m[0].length;
+    }
+    if (last < text.length) parts.push(text.slice(last));
+    return parts;
+}
+
+function ExampleSection({ index, example }: { index: number; example: ComponentDocExample }) {
+    const [showCode, setShowCode] = useState(false);
+    const [copied, setCopied] = useState(false);
+
+    return (
+        <Card>
+            <Card.Body className="!p-0">
+                <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-zinc-100 px-5 py-3 dark:border-zinc-800">
+                    <div className="min-w-0">
+                        <div className="flex items-baseline gap-2">
+                            <Text size="xs" className="!font-mono !text-zinc-400">{String(index).padStart(2, "0")}</Text>
+                            <Heading level={3} size="sm" className="!text-zinc-900 dark:!text-zinc-100">{example.name}</Heading>
+                        </div>
+                        {example.description && (
+                            <Text
+                                size="sm"
+                                className="mt-1 max-w-3xl !text-zinc-600 dark:!text-zinc-300 [&_code]:rounded [&_code]:bg-zinc-100 [&_code]:px-1 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-[11px] dark:[&_code]:bg-zinc-800"
+                            >
+                                {typeof example.description === "string"
+                                    ? renderMarkdownInline(example.description)
+                                    : example.description}
+                            </Text>
+                        )}
+                    </div>
+                    <button
+                        onClick={() => setShowCode((s) => !s)}
+                        className="shrink-0 rounded-md border border-zinc-200 px-2.5 py-1 text-[11px] font-medium text-zinc-600 hover:border-violet-300 hover:bg-zinc-50 hover:text-zinc-900 dark:border-zinc-700 dark:text-zinc-300 dark:hover:border-violet-700 dark:hover:bg-zinc-900 dark:hover:text-zinc-100"
+                    >
+                        {showCode ? "Hide code" : "Show code"}
+                    </button>
+                </div>
+
+                <div className="grid place-items-center bg-gradient-to-b from-zinc-50/50 to-transparent px-5 py-8 dark:from-zinc-900/30">
+                    {example.render()}
+                </div>
+
+                {showCode && (
+                    <div className="relative border-t border-zinc-100 dark:border-zinc-800">
+                        <button
+                            onClick={() =>
+                                navigator.clipboard.writeText(example.code).then(() => {
+                                    setCopied(true);
+                                    window.setTimeout(() => setCopied(false), 1200);
+                                })
+                            }
+                            className="absolute right-3 top-3 z-10 rounded-md border border-zinc-700 bg-zinc-900/80 px-2 py-0.5 text-[10px] font-medium text-zinc-300 backdrop-blur hover:bg-zinc-800"
+                        >
+                            {copied ? "copied" : "copy"}
+                        </button>
+                        <pre className="overflow-x-auto bg-zinc-950 p-4 text-xs leading-relaxed text-zinc-100">
+                            <code>{example.code}</code>
+                        </pre>
+                    </div>
+                )}
+            </Card.Body>
+        </Card>
+    );
+}
+
+// ─── Props table (Props tab) ──────────────────────────────────────────────
+
+function PropsPanel({ doc, component }: { doc: ComponentDoc; component: { name: string } }) {
+    return (
+        <div className="mt-4 space-y-4">
+            <Card>
+                <Card.Body className="!p-0">
+                    <div className="border-b border-zinc-100 px-5 py-3 dark:border-zinc-800">
+                        <Heading level={3} size="sm" className="!text-zinc-900 dark:!text-zinc-100">
+                            <code className="!font-mono">{component.name}</code> props
+                        </Heading>
+                        <Text size="xs" className="mt-0.5 !text-zinc-500">
+                            {doc.props.length} prop{doc.props.length === 1 ? "" : "s"}. Required props are marked.
+                        </Text>
+                    </div>
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                            <thead className="bg-zinc-50/60 text-left text-[10px] uppercase tracking-wider text-zinc-500 dark:bg-zinc-900/50">
+                                <tr>
+                                    <th className="px-5 py-2 font-semibold">Prop</th>
+                                    <th className="px-5 py-2 font-semibold">Type</th>
+                                    <th className="px-5 py-2 font-semibold">Default</th>
+                                    <th className="px-5 py-2 font-semibold">Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {doc.props.map((p) => (
+                                    <PropRow key={p.name} prop={p} />
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </Card.Body>
+            </Card>
+
+            {doc.notes && (
+                <Card>
+                    <Card.Body>
+                        <Text size="xs" className="!font-semibold !uppercase !tracking-wider !text-zinc-500">Notes</Text>
+                        <Text
+                            size="sm"
+                            className="mt-2 !text-zinc-700 dark:!text-zinc-200 [&_code]:rounded [&_code]:bg-zinc-100 [&_code]:px-1 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-xs dark:[&_code]:bg-zinc-800"
+                        >
+                            {doc.notes}
+                        </Text>
+                    </Card.Body>
+                </Card>
+            )}
+        </div>
+    );
+}
+
+function PropRow({ prop }: { prop: ComponentDocProp }) {
+    return (
+        <tr className="border-t border-zinc-100 align-top dark:border-zinc-800">
+            <td className="px-5 py-3">
+                <div className="flex items-baseline gap-2">
+                    <code className="font-mono text-xs font-semibold text-zinc-900 dark:text-zinc-100">{prop.name}</code>
+                    {prop.required && (
+                        <span className="rounded bg-rose-50 px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wider text-rose-700 dark:bg-rose-500/15 dark:text-rose-300">
+                            required
+                        </span>
+                    )}
+                </div>
+            </td>
+            <td className="px-5 py-3">
+                <code className="break-all font-mono text-xs text-violet-700 dark:text-violet-300">{prop.type}</code>
+            </td>
+            <td className="px-5 py-3">
+                {prop.default ? (
+                    <code className="font-mono text-xs text-zinc-600 dark:text-zinc-400">{prop.default}</code>
+                ) : (
+                    <span className="text-xs text-zinc-400">—</span>
+                )}
+            </td>
+            <td className="px-5 py-3 text-xs text-zinc-600 dark:text-zinc-300 [&_code]:rounded [&_code]:bg-zinc-100 [&_code]:px-1 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-[10px] dark:[&_code]:bg-zinc-800">
+                {renderMarkdownInline(prop.description)}
+            </td>
+        </tr>
     );
 }
 

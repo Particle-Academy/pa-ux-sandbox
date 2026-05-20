@@ -131,7 +131,7 @@ const erdSchema = {
 
 function DataDiagramDemo() {
     return (
-        <div className="h-[440px]">
+        <div className="mx-auto h-[460px] max-w-[1100px] overflow-auto">
             <DataDiagram schema={erdSchema} />
         </div>
     );
@@ -139,6 +139,9 @@ function DataDiagramDemo() {
 
 // ─── Org chart ────────────────────────────────────────────────────────────
 
+// Trimmed to ~5 total leaves so the natural width (~750px) fits within
+// the container width. The OrgChart layout fans children out
+// horizontally — past 6 leaves it overflows badly.
 const orgRoot: OrgChartNode = {
     id: "founder",
     label: "Founder",
@@ -151,7 +154,6 @@ const orgRoot: OrgChartNode = {
             children: [
                 { id: "visual", label: "Visual", color: "#f59e0b" },
                 { id: "product", label: "Product", color: "#f59e0b" },
-                { id: "research", label: "Research", color: "#f59e0b" },
             ],
         },
         {
@@ -161,26 +163,19 @@ const orgRoot: OrgChartNode = {
             children: [
                 { id: "platform", label: "Platform", color: "#10b981" },
                 { id: "fullstack", label: "Full-stack", color: "#10b981" },
-                { id: "infra", label: "Infrastructure", color: "#10b981" },
-                { id: "qa", label: "QA", color: "#10b981" },
             ],
         },
         {
             id: "gtm",
             label: "GTM",
             color: "#6366f1",
-            children: [
-                { id: "sales", label: "Sales", color: "#06b6d4" },
-                { id: "marketing", label: "Marketing", color: "#06b6d4" },
-                { id: "success", label: "Customer Success", color: "#06b6d4" },
-            ],
         },
     ],
 };
 
 function OrgChartDemo() {
     return (
-        <div className="h-[440px]">
+        <div className="mx-auto h-[480px] max-w-[1100px] overflow-auto">
             <OrgChart root={orgRoot} />
         </div>
     );
@@ -210,7 +205,7 @@ const flowEdges: FlowchartEdge[] = [
 
 function FlowchartDemo() {
     return (
-        <div className="h-[440px]">
+        <div className="mx-auto h-[480px] max-w-[1100px] overflow-auto">
             <Flowchart nodes={flowNodes} edges={flowEdges} routing="manhattan" />
         </div>
     );
@@ -218,61 +213,29 @@ function FlowchartDemo() {
 
 // ─── Mindmap ──────────────────────────────────────────────────────────────
 
+// Flat brainstorm shape — root + 7 branches, no grandchildren — so the
+// natural radial layout fits in a single ring. With 3-level trees the
+// label widths (~218px) crowd together on the inner ring and force the
+// outer ring past any reasonable container height.
 const mindRoot: MindmapNode = {
     id: "humanplus",
     label: "Human+ UX",
     color: "#8b5cf6",
     children: [
-        {
-            id: "authorable",
-            label: "Authorable",
-            color: "#10b981",
-            children: [
-                { id: "terse", label: "Terse props", color: "#10b981" },
-                { id: "typed", label: "Typed", color: "#10b981" },
-                { id: "json", label: "JSON-friendly", color: "#10b981" },
-            ],
-        },
-        {
-            id: "inhabitable",
-            label: "Inhabitable",
-            color: "#10b981",
-            children: [
-                { id: "controlled", label: "Controlled state", color: "#10b981" },
-                { id: "handles", label: "Stable handles", color: "#10b981" },
-            ],
-        },
-        {
-            id: "bridges",
-            label: "MCP bridges",
-            color: "#06b6d4",
-            children: [
-                { id: "whiteboard", label: "whiteboard_*", color: "#06b6d4" },
-                { id: "flow", label: "flow_*", color: "#06b6d4" },
-                { id: "sheets", label: "sheet_*", color: "#06b6d4" },
-            ],
-        },
-        {
-            id: "presence",
-            label: "Presence",
-            color: "#06b6d4",
-            children: [
-                { id: "cursors", label: "Agent cursors", color: "#06b6d4" },
-                { id: "activity", label: "Activity feed", color: "#06b6d4" },
-            ],
-        },
-        {
-            id: "undo",
-            label: "Undo",
-            color: "#06b6d4",
-        },
+        { id: "authorable", label: "Authorable", color: "#10b981" },
+        { id: "inhabitable", label: "Inhabitable", color: "#10b981" },
+        { id: "composable", label: "Composable", color: "#10b981" },
+        { id: "bridges", label: "MCP bridges", color: "#06b6d4" },
+        { id: "presence", label: "Presence", color: "#06b6d4" },
+        { id: "undo", label: "Undo / Redo", color: "#06b6d4" },
+        { id: "schema", label: "Schema-driven", color: "#06b6d4" },
     ],
 };
 
 function MindmapDemo() {
     return (
-        <div className="h-[440px]">
-            <Mindmap root={mindRoot} />
+        <div className="mx-auto h-[520px] max-w-[1100px] overflow-auto">
+            <Mindmap root={mindRoot} radii={[0, 220]} />
         </div>
     );
 }

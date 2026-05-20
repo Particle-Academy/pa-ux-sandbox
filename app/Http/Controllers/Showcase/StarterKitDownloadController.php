@@ -136,11 +136,14 @@ MD;
                 'preview' => 'vite preview',
                 'typecheck' => 'tsc -b',
             ],
-            'dependencies' => [
-                '@particle-academy/react-fancy' => '^3.0.0',
-                'react' => '^19.0.0',
-                'react-dom' => '^19.0.0',
-            ],
+            'dependencies' => array_merge(
+                [
+                    '@particle-academy/react-fancy' => '^3.0.0',
+                    'react' => '^19.0.0',
+                    'react-dom' => '^19.0.0',
+                ],
+                $this->extraDependencies($kit['slug']),
+            ),
             'devDependencies' => [
                 '@tailwindcss/vite' => '^4.0.0',
                 '@types/react' => '^19.0.0',
@@ -153,6 +156,23 @@ MD;
         ];
 
         return json_encode($pkg, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)."\n";
+    }
+
+    /**
+     * Some kits import their headline package directly (e.g. the
+     * Diagram Studio kit uses `<DataDiagram>` / `<OrgChart>` from
+     * fancy-echarts). Those need the package in dependencies on top of
+     * the always-on react-fancy. Kits that are visual mocks of their
+     * package (and only import react-fancy) get nothing extra.
+     *
+     * @return array<string, string>
+     */
+    private function extraDependencies(string $slug): array
+    {
+        return match ($slug) {
+            'fancy-echarts' => ['@particle-academy/fancy-echarts' => '^3.0.0'],
+            default => [],
+        };
     }
 
     private function viteConfig(): string

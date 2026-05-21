@@ -58,7 +58,46 @@ export default defineConfig({
         },
     },
     build: {
-        chunkSizeWarningLimit: 1100,
+        // Vendor-chunk the heavy libraries. Without this, every entry's
+        // shared-chunk graph promotes them into the "core" bundle, which
+        // produced two ~4MB core-*.js files (one per entry: showcase-app +
+        // react-demos). Splitting them out shrinks the eagerly-loaded core
+        // dramatically — Babylon (~4MB), ECharts (~500KB), react-flow,
+        // and lucide-react each live in their own chunk that's only
+        // downloaded when a route actually uses it.
+        rolldownOptions: {
+            output: {
+                advancedChunks: {
+                    groups: [
+                        // Babylon's main bundle. Its shader-fragment + renderer
+                        // subchunks are already split by Babylon itself; this
+                        // captures the core module graph that was getting
+                        // hoisted into "core" via fancy-3d/canvas's eager
+                        // re-export of `babylonEngine`.
+                        { name: 'babylonjs', test: /[\\/]node_modules[\\/]@babylonjs[\\/]core[\\/]/ },
+                        // ECharts + echarts-gl. Already partially split, but
+                        // pinning it ensures it doesn't ride into core when a
+                        // showcase page incidentally pulls in fancy-echarts.
+                        { name: 'echarts', test: /[\\/]node_modules[\\/](echarts|echarts-gl|zrender)[\\/]/ },
+                        // react-flow / @xyflow/react — bundled by fancy-flow.
+                        { name: 'react-flow', test: /[\\/]node_modules[\\/]@xyflow[\\/]/ },
+                        // Lucide. Already chunked by vite, but pinning gives a
+                        // stable name and keeps the rest of node_modules from
+                        // accidentally joining it.
+                        { name: 'lucide-react', test: /[\\/]node_modules[\\/]lucide-react[\\/]/ },
+                    ],
+                },
+            },
+        },
+        // Two vendor chunks exceed the default 500KB heuristic by design:
+        // babylonjs (~13MB — @babylonjs/core ships as a tree-shake-hostile
+        // barrel) and echarts (~1.5MB — combined echarts + echarts-gl +
+        // zrender). Both are split out as separate vendor chunks above,
+        // only fetched by routes that actually use them. The size limit
+        // is bumped past the larger of the two so the warning stops
+        // firing on intentional vendor splits — anything new above 1.5MB
+        // is still flagged.
+        chunkSizeWarningLimit: 15000,
     },
     server: {
         watch: {

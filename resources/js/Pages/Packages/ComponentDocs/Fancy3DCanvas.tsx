@@ -1,6 +1,30 @@
+import { lazy, Suspense } from "react";
 import type { ComponentDoc } from "./types";
-import { Canvas } from "@particle-academy/fancy-3d/canvas";
-import { Card, Heading } from "@particle-academy/react-fancy";
+import type { Fancy3DCanvasExample } from "./Fancy3DCanvas.demo";
+
+// Lazy-load the live Canvas demos. The Canvas component re-exports
+// `babylonEngine`, which transitively pulls @babylonjs/core (~13MB).
+// Keeping the import dynamic means Babylon only loads when a user
+// actually visits this docs page — not when they hit any other
+// /packages/* component page in the showcase.
+const Fancy3DCanvasDemo = lazy(() => import("./Fancy3DCanvas.demo"));
+
+function DemoFrame({ example, height }: { example: Fancy3DCanvasExample; height: number }) {
+    return (
+        <Suspense
+            fallback={
+                <div
+                    className="grid w-full place-items-center rounded-lg border border-dashed border-zinc-300 bg-zinc-50 text-xs text-zinc-500 dark:border-zinc-700 dark:bg-zinc-900"
+                    style={{ height }}
+                >
+                    Loading Babylon engine…
+                </div>
+            }
+        >
+            <Fancy3DCanvasDemo example={example} />
+        </Suspense>
+    );
+}
 
 export const fancy3dCanvasDoc: ComponentDoc = {
     intro: (
@@ -17,28 +41,8 @@ export const fancy3dCanvasDoc: ComponentDoc = {
         {
             name: "DOM canvas",
             description: "Pan + zoom + drag nodes. No 3D engine — just a pan-zoom DOM canvas.",
-            render: () => (
-                <div className="h-72 w-full overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-800">
-                    <Canvas defaultViewport={{ x: 0, y: 0, zoom: 1 }} showGrid gridStyle="dots">
-                        <Canvas.Node id="a" x={80} y={60} draggable>
-                            <Card padding="sm"><Heading size="xs">Node A</Heading></Card>
-                        </Canvas.Node>
-                        <Canvas.Node id="b" x={320} y={120} draggable>
-                            <Card padding="sm"><Heading size="xs">Node B</Heading></Card>
-                        </Canvas.Node>
-                        <Canvas.Edge from="a" to="b" curve="bezier" />
-                        <Canvas.Controls />
-                        <Canvas.Minimap />
-                    </Canvas>
-                </div>
-            ),
-            code: `import {
-    Canvas,
-    CanvasNode,
-    CanvasEdge,
-    CanvasControls,
-    CanvasMinimap,
-} from "@particle-academy/fancy-3d/canvas";
+            render: () => <DemoFrame example="dom" height={288} />,
+            code: `import { Canvas } from "@particle-academy/fancy-3d/canvas";
 
 <Canvas defaultViewport={{ x: 0, y: 0, zoom: 1 }} showGrid gridStyle="dots">
     <Canvas.Node id="a" x={80} y={60} draggable>
@@ -48,22 +52,14 @@ export const fancy3dCanvasDoc: ComponentDoc = {
         <Card>Node B</Card>
     </Canvas.Node>
     <Canvas.Edge from="a" to="b" curve="bezier" />
-    <CanvasControls />
-    <CanvasMinimap />
+    <Canvas.Controls />
+    <Canvas.Minimap />
 </Canvas>`,
         },
         {
             name: "Babylon engine",
             description: "Same canvas + a live Babylon `Scene` mounted alongside. Access via `useCanvas().engine`.",
-            render: () => (
-                <div className="h-64 w-full overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-800">
-                    <Canvas engine="babylon" defaultViewport={{ x: 0, y: 0, zoom: 1 }}>
-                        <Canvas.Node id="overlay" x={40} y={40}>
-                            <Card padding="sm"><Heading size="xs">DOM node over Babylon</Heading></Card>
-                        </Canvas.Node>
-                    </Canvas>
-                </div>
-            ),
+            render: () => <DemoFrame example="babylon" height={256} />,
             code: `import { Canvas, useCanvas } from "@particle-academy/fancy-3d/canvas";
 
 <Canvas engine="babylon">
@@ -82,15 +78,7 @@ function MyScene() {
         {
             name: "Grid + snap",
             description: "Snap dragged nodes to a configurable grid.",
-            render: () => (
-                <div className="h-56 w-full overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-800">
-                    <Canvas defaultViewport={{ x: 0, y: 0, zoom: 1 }} showGrid gridSize={32} snapToGrid>
-                        <Canvas.Node id="a" x={64} y={64} draggable>
-                            <Card padding="sm">snap me</Card>
-                        </Canvas.Node>
-                    </Canvas>
-                </div>
-            ),
+            render: () => <DemoFrame example="grid" height={224} />,
             code: `<Canvas showGrid gridSize={32} snapToGrid>
     <Canvas.Node id="a" x={64} y={64} draggable>
         <Card>snap me</Card>
@@ -99,7 +87,7 @@ function MyScene() {
         },
     ],
     props: [
-        { name: "children", type: `ReactNode`, default: "—", description: "`CanvasNode`, `CanvasEdge`, `CanvasControls`, `CanvasMinimap`, or any positioned content." },
+        { name: "children", type: `ReactNode`, default: "—", description: "`Canvas.Node`, `Canvas.Edge`, `Canvas.Controls`, `Canvas.Minimap`, or any positioned content." },
         { name: "viewport", type: `ViewportState`, default: "—", description: "Controlled `{ x, y, zoom }`. Use with `onViewportChange`." },
         { name: "defaultViewport", type: `ViewportState`, default: "—", description: "Initial viewport (uncontrolled)." },
         { name: "onViewportChange", type: `(viewport) => void`, default: "—", description: "Called on every pan / zoom." },

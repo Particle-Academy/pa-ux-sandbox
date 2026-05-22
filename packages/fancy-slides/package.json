@@ -17,6 +17,10 @@
       "import": { "types": "./dist/index.d.ts", "default": "./dist/index.js" },
       "require": { "types": "./dist/index.d.cts", "default": "./dist/index.cjs" }
     },
+    "./registry": {
+      "import": { "types": "./dist/registry.d.ts", "default": "./dist/registry.js" },
+      "require": { "types": "./dist/registry.d.cts", "default": "./dist/registry.cjs" }
+    },
     "./styles.css": "./dist/styles.css"
   },
   "files": ["dist", "docs", "README.md"],

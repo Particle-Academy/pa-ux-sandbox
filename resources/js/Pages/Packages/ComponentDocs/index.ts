@@ -33,6 +33,12 @@ import { fancy3dCanvasDoc } from "./Fancy3DCanvas";
 import { fancy3dCard3DDoc } from "./Fancy3DCard3D";
 import { fancy3dMonitorDoc } from "./Fancy3DMonitor";
 import { fancy3dStageDoc } from "./Fancy3DStage";
+import { deckEditorDoc } from "./DeckEditor";
+import { fancySlidesSlideDoc } from "./FancySlidesSlide";
+import { fancySlidesTextElementDoc } from "./FancySlidesTextElement";
+import { fancySlidesImageElementDoc } from "./FancySlidesImageElement";
+import { fancySlidesShapeElementDoc } from "./FancySlidesShapeElement";
+import { slideViewerDoc } from "./SlideViewer";
 import { fancyAppRootDoc } from "./FancyAppRoot";
 import { fileUploadDoc } from "./FileUpload";
 import { flowEditorDoc } from "./FlowEditor";
@@ -175,6 +181,14 @@ const DOCS: Record<string, ComponentDoc> = {
     "fancy-echarts/echart": echartDoc,
     "fancy-echarts/echart-3d": echart3dDoc,
     "fancy-echarts/echart-graphic": echartGraphicDoc,
+
+    // fancy-slides
+    "fancy-slides/slide": fancySlidesSlideDoc,
+    "fancy-slides/slide-viewer": slideViewerDoc,
+    "fancy-slides/deck-editor": deckEditorDoc,
+    "fancy-slides/text-element": fancySlidesTextElementDoc,
+    "fancy-slides/image-element": fancySlidesImageElementDoc,
+    "fancy-slides/shape-element": fancySlidesShapeElementDoc,
 
     // fancy-screens
     "fancy-screens/screen-system": screenSystemDoc,

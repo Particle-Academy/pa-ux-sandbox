@@ -5,6 +5,24 @@ export type { SlideProps } from "./components/Slide";
 export { SlideViewer } from "./components/SlideViewer";
 export type { SlideViewerProps } from "./components/SlideViewer";
 
+export { SlideThumbnail } from "./components/SlideThumbnail";
+export type { SlideThumbnailProps } from "./components/SlideThumbnail";
+
+export { DeckEditor } from "./components/DeckEditor";
+export type { DeckEditorProps } from "./components/DeckEditor";
+
+export { SlideRail } from "./components/SlideRail";
+export type { SlideRailProps } from "./components/SlideRail";
+
+export { EditorToolbar } from "./components/EditorToolbar";
+export type { EditorToolbarProps } from "./components/EditorToolbar";
+
+export { ElementInspector } from "./components/ElementInspector";
+export type { ElementInspectorProps } from "./components/ElementInspector";
+
+export { SpeakerNotes } from "./components/SpeakerNotes";
+export type { SpeakerNotesProps } from "./components/SpeakerNotes";
+
 export { TextElementRenderer } from "./components/elements/TextElement";
 export type { TextElementRendererProps } from "./components/elements/TextElement";
 
@@ -18,6 +36,9 @@ export type { ShapeElementRendererProps } from "./components/elements/ShapeEleme
 export { useSlideKeyboard } from "./hooks/use-slide-keyboard";
 export type { SlideKeyboardOptions } from "./hooks/use-slide-keyboard";
 
+export { useDeckState, reduce as reduceDeck } from "./hooks/use-deck-state";
+export type { UseDeckStateOptions, DeckStateApi } from "./hooks/use-deck-state";
+
 // Theme
 export { defaultTheme, darkTheme, vividTheme, builtinThemes } from "./theme/default-theme";
 export { defineTheme, resolveTheme } from "./theme/theme-utils";
@@ -27,7 +48,6 @@ export { nextId, slideId, elementId, deckId } from "./utils/ids";
 
 // Types
 export type {
-    // Core
     Deck,
     Slide as SlideData,
     SlideLayout,
@@ -35,7 +55,6 @@ export type {
     SlideBackground,
     SlideTransition,
     TransitionKind,
-    // Elements
     ElementBase,
     TextElement,
     TextStyle,
@@ -46,11 +65,9 @@ export type {
     ShapeElement,
     ShapeKind,
     EmbedElement,
-    // Theme
     Theme,
     ThemeColors,
     ThemeFonts,
-    // Agent / Human+
     DeckActivity,
     DeckOp,
 } from "./types";

@@ -3,10 +3,11 @@ import { defineConfig } from "tsup";
 export default defineConfig({
   entry: {
     index: "src/index.ts",
+    registry: "src/registry/index.ts",
     styles: "src/styles.css",
   },
   format: ["esm", "cjs"],
-  dts: { entry: ["src/index.ts"] },
+  dts: { entry: ["src/index.ts", "src/registry/index.ts"] },
   sourcemap: true,
   clean: true,
   external: [

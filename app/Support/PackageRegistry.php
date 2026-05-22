@@ -19,6 +19,7 @@ class PackageRegistry
             self::fancyWhiteboard(),
             self::fancyFlow(),
             self::fancySheets(),
+            self::fancySlides(),
             self::fancyCode(),
             self::fancyEcharts(),
             self::fancyScreens(),
@@ -168,6 +169,27 @@ class PackageRegistry
             'components' => [
                 ['slug' => 'sheet-workbook', 'name' => 'SheetWorkbook', 'blurb' => 'Root workbook component.'],
                 ['slug' => 'create-empty-workbook', 'name' => 'createEmptyWorkbook', 'blurb' => 'Workbook factory.'],
+            ],
+        ];
+    }
+
+    /** @return array<string, mixed> */
+    private static function fancySlides(): array
+    {
+        return [
+            'slug' => 'fancy-slides',
+            'name' => 'fancy-slides',
+            'tagline' => 'Presentation editor + web viewer — Google-Slides-style deck authoring with JSON-friendly schema, full keyboard viewer, and an agent bridge.',
+            'npm' => '@particle-academy/fancy-slides',
+            'repo' => 'Particle-Academy/fancy-slides',
+            'language' => 'TypeScript',
+            'components' => [
+                ['slug' => 'slide-viewer', 'name' => 'SlideViewer', 'blurb' => 'Read-only full-screen viewer with keyboard nav.'],
+                ['slug' => 'slide', 'name' => 'Slide', 'blurb' => 'Single-slide renderer — shared by viewer + editor + thumbnails.'],
+                ['slug' => 'deck-editor', 'name' => 'DeckEditor', 'blurb' => 'Full editor — rail + canvas + inspector + toolbar.'],
+                ['slug' => 'text-element', 'name' => 'TextElement', 'blurb' => 'Slide text element renderer.'],
+                ['slug' => 'image-element', 'name' => 'ImageElement', 'blurb' => 'Slide image element renderer.'],
+                ['slug' => 'shape-element', 'name' => 'ShapeElement', 'blurb' => 'SVG shape primitives — rect / ellipse / line / arrow / triangle.'],
             ],
         ];
     }

@@ -55,6 +55,7 @@ export default defineConfig({
             '@particle-academy/agent-integrations': path.resolve(__dirname, 'packages/agent-integrations/src'),
             '@particle-academy/fancy-flow/runtime': path.resolve(__dirname, 'packages/fancy-flow/src/runtime'),
             '@particle-academy/fancy-flow': path.resolve(__dirname, 'packages/fancy-flow/src'),
+            '@particle-academy/fancy-slides': path.resolve(__dirname, 'packages/fancy-slides/src'),
         },
     },
     build: {

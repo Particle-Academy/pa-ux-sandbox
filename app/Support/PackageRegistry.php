@@ -26,6 +26,7 @@ class PackageRegistry
             self::fancy3d(),
             self::agentIntegrations(),
             self::holySheet(),
+            self::darkSlide(),
             self::fancyInertia(),
         ];
     }
@@ -297,6 +298,24 @@ class PackageRegistry
             'language' => 'PHP',
             'components' => [
                 ['slug' => 'agent', 'name' => 'Agent', 'blurb' => 'Top-level write/describe/lint API.'],
+            ],
+        ];
+    }
+
+    /** @return array<string, mixed> */
+    private static function darkSlide(): array
+    {
+        return [
+            'slug' => 'dark-slide',
+            'name' => 'dark-slide',
+            'tagline' => 'PHP 8.2+ pptx writer/reader for agentic deck creation. Framework-agnostic; optional Laravel adapter. Sister to holy-sheet — round-trips fancy-slides decks to real Office Open XML files.',
+            'composer' => 'particle-academy/dark-slide',
+            'repo' => 'Particle-Academy/dark-slide',
+            'language' => 'PHP',
+            'components' => [
+                ['slug' => 'agent', 'name' => 'Agent', 'blurb' => 'Top-level static surface: validate / write / toBytes / read / describe / validateAndRepair.'],
+                ['slug' => 'pptx-writer', 'name' => 'PptxWriter', 'blurb' => 'Office Open XML writer — text, image, shape, notes, multi-slide.'],
+                ['slug' => 'pptx-reader', 'name' => 'PptxReader', 'blurb' => 'Best-effort PPTX → Deck schema extractor.'],
             ],
         ];
     }

@@ -1,0 +1,72 @@
+{
+    "name": "particle-academy/dark-slide",
+    "description": "Standalone presentation read/write tool for agentic deck creation. Framework-agnostic PHP core that writes .pptx (Office Open XML), with optional Laravel 10-13 integration. Designed to round-trip with the @particle-academy/fancy-slides JS package's Deck schema.",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "presentation",
+        "slides",
+        "pptx",
+        "powerpoint",
+        "office",
+        "agentic",
+        "ai",
+        "document-creation",
+        "particle-academy"
+    ],
+    "homepage": "https://github.com/Particle-Academy/dark-slide",
+    "support": {
+        "issues": "https://github.com/Particle-Academy/dark-slide/issues",
+        "source": "https://github.com/Particle-Academy/dark-slide"
+    },
+    "authors": [
+        {
+            "name": "Particle Academy",
+            "homepage": "https://github.com/Particle-Academy"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "ext-zip": "*",
+        "ext-dom": "*",
+        "ext-libxml": "*"
+    },
+    "require-dev": {
+        "pestphp/pest": "^3.0|^4.0",
+        "phpunit/phpunit": "^10.0|^11.0|^12.0",
+        "orchestra/testbench": "^8.0|^9.0|^10.0|^11.0"
+    },
+    "suggest": {
+        "illuminate/support": "Only needed when using the optional Laravel service provider, facade, or artisan command. Compatible with 10.x through 13.x. The core DarkSlide\\Agent + writer require zero framework."
+    },
+    "autoload": {
+        "psr-4": {
+            "DarkSlide\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "DarkSlide\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "pest"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "DarkSlide\\Laravel\\DarkSlideServiceProvider"
+            ],
+            "aliases": {
+                "DarkSlide": "DarkSlide\\Laravel\\Facades\\DarkSlide"
+            }
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    }
+}

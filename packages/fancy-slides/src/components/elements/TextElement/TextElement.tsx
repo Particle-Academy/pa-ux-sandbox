@@ -1,4 +1,5 @@
-import type { CSSProperties } from "react";
+import { useId, type CSSProperties } from "react";
+import { ContentRenderer } from "@particle-academy/react-fancy";
 import type { TextElement, Theme } from "../../../types";
 import { resolveTheme } from "../../../theme/theme-utils";
 
@@ -21,6 +22,18 @@ export interface TextElementRendererProps {
     onContentChange?: (content: string) => void;
 }
 
+/**
+ * Renderer for `text` elements. Three formats:
+ *
+ *   - `"markdown"` (default) — parsed via react-fancy's ContentRenderer.
+ *     Bullets, bold/italic, code spans, links, headings.
+ *   - `"html"` — parsed sanitized HTML via ContentRenderer's html path.
+ *   - `"plain"` — raw text rendered into a single block; preserves newlines
+ *     via `white-space: pre-wrap`.
+ *
+ * In editing mode + when the element is selected, the renderer swaps to a
+ * textarea showing the raw source. Edits flow back via `onContentChange`.
+ */
 export function TextElementRenderer({
     element,
     theme,
@@ -33,6 +46,8 @@ export function TextElementRenderer({
     const style = element.style ?? {};
     const designWidth = t.slideWidth ?? 1920;
     const scale = slideWidthPx / designWidth;
+    const format = element.format ?? "markdown";
+    const scopeId = useId();
 
     const css: CSSProperties = {
         fontFamily: style.fontFamily ?? t.fonts?.body,
@@ -53,35 +68,57 @@ export function TextElementRenderer({
         margin: 0,
         outline: "none",
         background: "transparent",
-        whiteSpace: "pre-wrap",
+        whiteSpace: format === "plain" ? "pre-wrap" : "normal",
         wordBreak: "break-word",
         overflow: "hidden",
     };
 
-    if (editing) {
-        // Textarea stays out of the way until the element is selected. The
-        // wrapping Slide div handles the first click (which selects); once
-        // selected, the textarea becomes interactive and the next click /
-        // double-click focuses it for editing.
+    // Edit mode is gated by selection: an unselected element in the editor
+    // still shows the parsed markdown so the user sees the real layout.
+    // Clicking selects → textarea appears with the raw source, ready to edit.
+    if (editing && selected) {
         return (
             <textarea
                 value={element.content}
                 onChange={(e) => onContentChange?.(e.target.value)}
                 style={{
                     ...css,
+                    whiteSpace: "pre-wrap",
                     resize: "none",
                     border: "none",
-                    pointerEvents: selected ? "auto" : "none",
-                    cursor: selected ? "text" : "inherit",
+                    pointerEvents: "auto",
+                    cursor: "text",
                 }}
             />
         );
     }
 
-    if (element.format === "html") {
-        return <div style={css} dangerouslySetInnerHTML={{ __html: element.content }} />;
+    if (format === "plain") {
+        return <div style={css}>{element.content}</div>;
     }
-    return <div style={css}>{element.content}</div>;
+
+    // Scope the ContentRenderer's prose styles so element-level typography
+    // (fontSize, weight, align) wins over the global prose CSS. We render a
+    // tiny inline style block that targets only this instance via the
+    // generated useId scope.
+    const proseScope = `[data-fs-text-scope="${scopeId}"]`;
+    return (
+        <div data-fs-text-scope={scopeId} style={css}>
+            <style>{`
+                ${proseScope} > div { width: 100%; height: 100%; }
+                ${proseScope} :where(p, ul, ol, h1, h2, h3, h4, h5, h6, pre, blockquote) {
+                    margin: 0;
+                    padding: 0;
+                }
+                ${proseScope} :where(p, li) + :where(p, li, ul, ol) { margin-top: 0.4em; }
+                ${proseScope} :where(ul, ol) { padding-left: 1.4em; }
+                ${proseScope} :where(strong) { font-weight: ${Math.max(700, weight(style.weight) ?? 400 + 200)}; }
+                ${proseScope} :where(a) { color: inherit; text-decoration: underline; }
+                ${proseScope} :where(code) { font-family: ${t.fonts?.mono ?? "monospace"}; }
+            `}</style>
+            <ContentRenderer value={element.content} format={format === "html" ? "html" : "markdown"} />
+        </div>
+    );
 }
 
 function weight(w: "normal" | "medium" | "semibold" | "bold" | number | undefined): number | undefined {

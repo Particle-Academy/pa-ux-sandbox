@@ -13,13 +13,48 @@ export const fancySlidesTextElementDoc: ComponentDoc = {
     ),
     examples: [
         {
-            name: "Read mode",
-            description: "Default — content renders with the configured style.",
+            name: "Markdown (default)",
+            description: "`format: \"markdown\"` parses bullets, bold/italic, code spans, links via react-fancy's ContentRenderer.",
+            render: () => (
+                <div className="h-44 w-full max-w-lg rounded-lg border border-zinc-200 p-4 dark:border-zinc-800">
+                    <TextElementRenderer
+                        element={{
+                            id: "demo-md",
+                            type: "text",
+                            x: 0,
+                            y: 0,
+                            w: 1,
+                            h: 1,
+                            content: "**Markdown** renders here.\n\n- Bullets work\n- `inline code` works\n- *emphasis* too",
+                            format: "markdown",
+                            style: { fontSize: 22, lineHeight: 1.5 },
+                        }}
+                        theme={defaultTheme}
+                        slideWidthPx={1920}
+                    />
+                </div>
+            ),
+            code: `<TextElementRenderer
+    element={{
+        id: "t",
+        type: "text",
+        x: 0.1, y: 0.2, w: 0.8, h: 0.6,
+        content: "**Markdown** renders here.\\n\\n- Bullets work\\n- \\\`inline code\\\` works\\n- *emphasis* too",
+        format: "markdown",  // default
+        style: { fontSize: 22, lineHeight: 1.5 },
+    }}
+    theme={theme}
+    slideWidthPx={slideWidthPx}
+/>`,
+        },
+        {
+            name: "Plain text",
+            description: "`format: \"plain\"` skips parsing — newlines preserved via `white-space: pre-wrap`.",
             render: () => (
                 <div className="h-24 w-full max-w-lg rounded-lg border border-zinc-200 p-4 dark:border-zinc-800">
                     <TextElementRenderer
                         element={{
-                            id: "demo",
+                            id: "demo-plain",
                             type: "text",
                             x: 0,
                             y: 0,
@@ -125,9 +160,10 @@ export const fancySlidesTextElementDoc: ComponentDoc = {
     ],
     notes: (
         <p className="text-xs text-zinc-600 dark:text-zinc-300">
-            <strong>v0.2 plan:</strong> swap the read-mode renderer for react-fancy's{" "}
-            <code>ContentRenderer</code> so markdown + HTML elements get the same sanitized
-            rendering as the rest of the Fancy stack.
+            <strong>Format detection:</strong> the default is <code>"markdown"</code>;
+            <code>"html"</code> goes through ContentRenderer's sanitized HTML path
+            (scripts / iframes / event handlers stripped); <code>"plain"</code> bypasses
+            parsing entirely and just renders the raw string with newlines preserved.
         </p>
     ),
 };

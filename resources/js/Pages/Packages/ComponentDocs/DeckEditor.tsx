@@ -41,16 +41,17 @@ export const deckEditorDoc: ComponentDoc = {
     intro: (
         <p>
             Full presentation editor. Composes a top toolbar, a left slide rail with
-            drag-to-reorder + context menu, a center canvas with click-to-select, a
-            right inspector with per-element-type controls, and a bottom speaker-notes
-            panel. Fully controlled — pass a <code>Deck</code> in, get one back via
+            drag-to-reorder + context menu, a center canvas with click-to-select +
+            <strong> drag-to-move</strong> + <strong>8 resize handles</strong>, a right
+            inspector with per-element-type controls, and a bottom speaker-notes panel.
+            Fully controlled — pass a <code>Deck</code> in, get one back via
             <code>onChange</code>.
         </p>
     ),
     examples: [
         {
             name: "Mini editor",
-            description: "Click the slide to add elements via the toolbar; right-click the slide in the rail for actions.",
+            description: "Click an element to select it (8 resize handles appear); drag the body to move; right-click a slide in the rail for actions.",
             render: () => <MiniEditor />,
             code: `import { useState } from "react";
 import { DeckEditor, defaultTheme } from "@particle-academy/fancy-slides";
@@ -141,8 +142,9 @@ const [deck, setDeck] = useState({
     ],
     notes: (
         <div className="space-y-1 text-xs text-zinc-600 dark:text-zinc-300">
+            <p><strong>Canvas interactions:</strong> single click selects, drag the element body moves it (slide-relative 0..1 coords clamped to fit), 8 handles (4 corners + 4 edges) resize. Locked elements skip drag/resize. Text elements get an interactive textarea only after selection — first click selects, subsequent click focuses the textarea.</p>
             <p><strong>Dogfooded react-fancy:</strong> Sidebar, Card, Tabs, Action, Dropdown, ContextMenu, Tooltip, Separator, Badge, Heading, Text, Input, Textarea, Select, Slider, ColorPicker.</p>
-            <p><strong>Mutation funnel:</strong> every change — humans editing, agents calling MCP tools, undo — flows through the same `reduce(deck, op)` pure function. One source of truth.</p>
+            <p><strong>Mutation funnel:</strong> every change — humans dragging, agents calling MCP tools, undo — flows through the same `reduce(deck, op)` pure function. One source of truth.</p>
         </div>
     ),
 };

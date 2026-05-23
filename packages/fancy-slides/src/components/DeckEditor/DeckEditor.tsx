@@ -279,6 +279,8 @@ export function DeckEditor({
                                     onElementContentChange={(eid, content) => ops.updateElement(slide.id, eid, { content } as Partial<TextElement>)}
                                     onElementSelect={setElementIdSelected}
                                     selectedElementId={elementIdSelected}
+                                    onElementMove={(eid, x, y) => ops.moveElement(slide.id, eid, x, y)}
+                                    onElementResize={(eid, patch) => ops.updateElement(slide.id, eid, patch as Partial<SlideElement>)}
                                     renderElement={renderElement}
                                 />
                             </div>

@@ -7,9 +7,17 @@ export interface TextElementRendererProps {
     theme?: Theme;
     /** Rendered slide width in px (for font-size scaling). */
     slideWidthPx: number;
-    /** Edit mode — when true, the textarea is focusable. */
+    /**
+     * Edit mode — when true, the element is potentially editable.
+     * The textarea actually becomes pointer-interactive only when both
+     * `editing` and `selected` are true, so the first click on an
+     * unselected text element selects it (handled by the parent Slide)
+     * rather than landing on the textarea.
+     */
     editing?: boolean;
-    /** Called when the user edits the content (only when `editing`). */
+    /** Element is selected — gates whether the textarea grabs pointer events. */
+    selected?: boolean;
+    /** Called when the user edits the content (only fires when the textarea is focusable). */
     onContentChange?: (content: string) => void;
 }
 
@@ -18,6 +26,7 @@ export function TextElementRenderer({
     theme,
     slideWidthPx,
     editing = false,
+    selected = false,
     onContentChange,
 }: TextElementRendererProps) {
     const t = resolveTheme(theme);
@@ -50,19 +59,25 @@ export function TextElementRenderer({
     };
 
     if (editing) {
+        // Textarea stays out of the way until the element is selected. The
+        // wrapping Slide div handles the first click (which selects); once
+        // selected, the textarea becomes interactive and the next click /
+        // double-click focuses it for editing.
         return (
             <textarea
                 value={element.content}
                 onChange={(e) => onContentChange?.(e.target.value)}
-                style={{ ...css, resize: "none", border: "none" }}
+                style={{
+                    ...css,
+                    resize: "none",
+                    border: "none",
+                    pointerEvents: selected ? "auto" : "none",
+                    cursor: selected ? "text" : "inherit",
+                }}
             />
         );
     }
 
-    // Read-only mode: render markdown / plain. Format-aware rendering can plug
-    // in via consumer's ContentRenderer down the road; for v0.1 we render the
-    // raw content with the right typography. Markdown / HTML rendering will
-    // come in v0.2 once we wire up the ContentRenderer integration.
     if (element.format === "html") {
         return <div style={css} dangerouslySetInnerHTML={{ __html: element.content }} />;
     }

@@ -38,6 +38,7 @@ import { fancySlidesSlideDoc } from "./FancySlidesSlide";
 import { fancySlidesTextElementDoc } from "./FancySlidesTextElement";
 import { fancySlidesImageElementDoc } from "./FancySlidesImageElement";
 import { fancySlidesShapeElementDoc } from "./FancySlidesShapeElement";
+import { presenterViewDoc } from "./PresenterView";
 import { slideViewerDoc } from "./SlideViewer";
 import { fancyAppRootDoc } from "./FancyAppRoot";
 import { fileUploadDoc } from "./FileUpload";
@@ -185,6 +186,7 @@ const DOCS: Record<string, ComponentDoc> = {
     // fancy-slides
     "fancy-slides/slide": fancySlidesSlideDoc,
     "fancy-slides/slide-viewer": slideViewerDoc,
+    "fancy-slides/presenter-view": presenterViewDoc,
     "fancy-slides/deck-editor": deckEditorDoc,
     "fancy-slides/text-element": fancySlidesTextElementDoc,
     "fancy-slides/image-element": fancySlidesImageElementDoc,

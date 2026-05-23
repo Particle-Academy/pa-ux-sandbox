@@ -5,6 +5,9 @@ export type { SlideProps } from "./components/Slide";
 export { SlideViewer } from "./components/SlideViewer";
 export type { SlideViewerProps } from "./components/SlideViewer";
 
+export { PresenterView } from "./components/PresenterView";
+export type { PresenterViewProps } from "./components/PresenterView";
+
 export { SlideThumbnail } from "./components/SlideThumbnail";
 export type { SlideThumbnailProps } from "./components/SlideThumbnail";
 

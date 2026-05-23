@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { Action, Badge, Card, Heading, Tabs, Text, Toast, useToast } from "@particle-academy/react-fancy";
 import {
     DeckEditor,
+    PresenterView,
     SlideViewer,
     defaultTheme,
     type Deck,
@@ -276,6 +277,7 @@ import { defaultElementRegistry } from "@particle-academy/fancy-slides/registry"
 function SlidesDemoBody() {
     const [deck, setDeck] = useState<Deck>(sampleDeck);
     const [presenting, setPresenting] = useState(false);
+    const [presenterView, setPresenterView] = useState(false);
     const [activity, setActivity] = useState<Array<{ at: number; op: DeckOp }>>([]);
     const { toast } = useToast();
 
@@ -310,6 +312,14 @@ function SlidesDemoBody() {
                         }}
                     >
                         Reset deck
+                    </Action>
+                    <Action
+                        size="sm"
+                        variant="ghost"
+                        icon="presentation"
+                        onClick={() => setPresenterView(true)}
+                    >
+                        Presenter view
                     </Action>
                     <Action
                         size="sm"
@@ -383,12 +393,23 @@ function SlidesDemoBody() {
                 </div>
             </div>
 
-            {/* Presenter overlay */}
+            {/* SlideViewer overlay — the audience view */}
             {presenting && (
                 <div className="fixed inset-0 z-50 bg-black">
                     <SlideViewer
                         deck={deck}
                         onExit={() => setPresenting(false)}
+                        renderElement={defaultElementRegistry}
+                    />
+                </div>
+            )}
+
+            {/* PresenterView overlay — the speaker's monitor */}
+            {presenterView && (
+                <div className="fixed inset-0 z-50">
+                    <PresenterView
+                        deck={deck}
+                        onExit={() => setPresenterView(false)}
                         renderElement={defaultElementRegistry}
                     />
                 </div>

@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\AdminPlansController;
 use App\Http\Controllers\Admin\AdminProductsController;
 use App\Http\Controllers\Auth\GitHubLoginController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DarkSlideExportController;
 use App\Http\Controllers\HolySheetExportController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\Showcase\DocsController;
@@ -42,6 +43,13 @@ Route::middleware('auth')->group(function () {
 Route::post('/holy-sheet/export', HolySheetExportController::class)
     ->withoutMiddleware([PreventRequestForgery::class])
     ->name('holy-sheet.export');
+
+// pptx export endpoint for the fancy-slides demo. Same shape as
+// holy-sheet/export — sandbox owns the controller; dark-slide ships
+// only the writer + facade.
+Route::post('/dark-slide/export', DarkSlideExportController::class)
+    ->withoutMiddleware([PreventRequestForgery::class])
+    ->name('dark-slide.export');
 
 // ─── Fancy UI Showcase ─────────────────────────────────────────────────
 Route::get('/', HomeController::class)->name('home');

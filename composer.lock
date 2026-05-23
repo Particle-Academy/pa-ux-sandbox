@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "33961471941bee145d98fd5dfa6e8fcb",
+    "content-hash": "7cf9fde4e5ef4b3653a15f0311a83631",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -3479,6 +3479,85 @@
                 "source": "https://github.com/paragonie/random_compat"
             },
             "time": "2020-10-15T08:29:30+00:00"
+        },
+        {
+            "name": "particle-academy/dark-slide",
+            "version": "0.1.0",
+            "dist": {
+                "type": "path",
+                "url": "./packages/dark-slide",
+                "reference": "0f42e55ba3bbf4acfce9ffd2aec1d38b2736002d"
+            },
+            "require": {
+                "ext-dom": "*",
+                "ext-libxml": "*",
+                "ext-zip": "*",
+                "php": "^8.2"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^8.0|^9.0|^10.0|^11.0",
+                "pestphp/pest": "^3.0|^4.0",
+                "phpunit/phpunit": "^10.0|^11.0|^12.0"
+            },
+            "suggest": {
+                "illuminate/support": "Only needed when using the optional Laravel service provider, facade, or artisan command. Compatible with 10.x through 13.x. The core DarkSlide\\Agent + writer require zero framework."
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "DarkSlide\\Laravel\\DarkSlideServiceProvider"
+                    ],
+                    "aliases": {
+                        "DarkSlide": "DarkSlide\\Laravel\\Facades\\DarkSlide"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "DarkSlide\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "DarkSlide\\Tests\\": "tests/"
+                }
+            },
+            "scripts": {
+                "test": [
+                    "pest"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Particle Academy",
+                    "homepage": "https://github.com/Particle-Academy"
+                }
+            ],
+            "description": "Standalone presentation read/write tool for agentic deck creation. Framework-agnostic PHP core that writes .pptx (Office Open XML), with optional Laravel 10-13 integration. Designed to round-trip with the @particle-academy/fancy-slides JS package's Deck schema.",
+            "homepage": "https://github.com/Particle-Academy/dark-slide",
+            "keywords": [
+                "agentic",
+                "ai",
+                "document-creation",
+                "office",
+                "particle-academy",
+                "powerpoint",
+                "pptx",
+                "presentation",
+                "slides"
+            ],
+            "support": {
+                "issues": "https://github.com/Particle-Academy/dark-slide/issues",
+                "source": "https://github.com/Particle-Academy/dark-slide"
+            },
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
         },
         {
             "name": "particle-academy/holy-sheet",
@@ -11592,6 +11671,7 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
+        "particle-academy/dark-slide": 20,
         "particle-academy/laravel-catalog": 20,
         "particle-academy/laravel-fms": 20
     },

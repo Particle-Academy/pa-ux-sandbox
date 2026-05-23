@@ -316,6 +316,39 @@ function SlidesDemoBody() {
                     <Action
                         size="sm"
                         variant="ghost"
+                        icon="download"
+                        onClick={async () => {
+                            try {
+                                const res = await fetch("/dark-slide/export", {
+                                    method: "POST",
+                                    headers: { "Content-Type": "application/json" },
+                                    body: JSON.stringify({ deck, filename: (deck.title || "deck") + ".pptx" }),
+                                });
+                                if (!res.ok) {
+                                    const err = await res.json().catch(() => ({}));
+                                    toast({ title: "Export failed", description: err.message || res.statusText, variant: "error" });
+                                    return;
+                                }
+                                const blob = await res.blob();
+                                const url = URL.createObjectURL(blob);
+                                const a = document.createElement("a");
+                                a.href = url;
+                                a.download = (deck.title || "deck").replace(/[^\w-]+/g, "_") + ".pptx";
+                                document.body.appendChild(a);
+                                a.click();
+                                a.remove();
+                                URL.revokeObjectURL(url);
+                                toast({ title: "PPTX downloaded", description: "Open in PowerPoint, Keynote, or Google Slides.", variant: "success" });
+                            } catch (e) {
+                                toast({ title: "Export failed", description: e instanceof Error ? e.message : String(e), variant: "error" });
+                            }
+                        }}
+                    >
+                        Download .pptx
+                    </Action>
+                    <Action
+                        size="sm"
+                        variant="ghost"
                         icon="presentation"
                         onClick={() => setPresenterView(true)}
                     >

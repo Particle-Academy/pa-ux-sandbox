@@ -47,10 +47,9 @@ final class PptxReader
      */
     public function fromBytes(string $bytes): array
     {
-        $tmp = tempnam(sys_get_temp_dir(), 'dark-slide-read-');
-        if ($tmp === false) {
-            throw new RuntimeException('Could not allocate temp file.');
-        }
+        $tmp = rtrim(sys_get_temp_dir(), DIRECTORY_SEPARATOR)
+            . DIRECTORY_SEPARATOR
+            . 'dark-slide-read-' . bin2hex(random_bytes(8));
         file_put_contents($tmp, $bytes);
 
         $zip = new ZipArchive();

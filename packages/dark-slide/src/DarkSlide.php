@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace DarkSlide;
 
+use DarkSlide\Exceptions\SchemaException;
+use DarkSlide\Schema\Validator;
+use DarkSlide\Writer\PptxWriter;
+use RuntimeException;
+
 /**
  * Top-level instance API for the Laravel facade + DI consumers. Static
  * methods on {@see Agent} are the preferred surface for agent-emitted
@@ -13,6 +18,20 @@ namespace DarkSlide;
 final class DarkSlide
 {
     public const VERSION = '0.1.0';
+
+    /**
+     * @param  string|null  $tempDir  Optional override for the temp directory used while
+     *                                assembling the PPTX archive. Defaults to
+     *                                {@see sys_get_temp_dir()}. The Laravel
+     *                                ServiceProvider passes a writable
+     *                                `storage_path()` path so hosts where the
+     *                                system temp isn't writable (e.g. PHP's
+     *                                built-in dev server on some Windows
+     *                                profiles) still work.
+     */
+    public function __construct(private ?string $tempDir = null)
+    {
+    }
 
     /**
      * Validate a deck. See {@see Agent::validate()}.
@@ -44,7 +63,9 @@ final class DarkSlide
      */
     public function write(array $deck, string $path): array
     {
-        return Agent::write($deck, $path);
+        $this->throwIfInvalid($deck);
+
+        return (new PptxWriter($this->tempDir))->write($deck, $path);
     }
 
     /**
@@ -54,7 +75,23 @@ final class DarkSlide
      */
     public function toBytes(array $deck): string
     {
-        return Agent::toBytes($deck);
+        $this->throwIfInvalid($deck);
+
+        return (new PptxWriter($this->tempDir))->toBytes($deck);
+    }
+
+    /**
+     * @param  array<string, mixed>  $deck
+     */
+    private function throwIfInvalid(array $deck): void
+    {
+        $errors = (new Validator())->validate($deck);
+        if (!empty($errors)) {
+            throw new SchemaException(
+                'Deck failed schema validation. Call validateAndRepair() for a recoverable form.',
+                $errors,
+            );
+        }
     }
 
     /**

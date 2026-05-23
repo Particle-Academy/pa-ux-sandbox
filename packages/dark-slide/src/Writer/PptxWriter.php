@@ -12,6 +12,8 @@ use RuntimeException;
 use ZipArchive;
 
 /**
+ * @phpstan-consistent-constructor
+ *
  * PPTX (Office Open XML) writer. Takes a Deck schema and produces a
  * `.pptx` file PowerPoint / Keynote / Google Slides / LibreOffice
  * Impress can open.
@@ -55,6 +57,23 @@ final class PptxWriter
     private array $mediaFiles = [];
 
     /**
+     * Override the temp directory used while assembling the archive.
+     * Defaults to {@see sys_get_temp_dir()}; callers running in
+     * sandboxes / containers where that path isn't writable can pass
+     * their own (e.g. `storage_path('app/tmp')` in Laravel).
+     */
+    public function __construct(private ?string $tempDir = null)
+    {
+    }
+
+    private function resolveTempDir(): string
+    {
+        $dir = $this->tempDir ?? sys_get_temp_dir();
+
+        return rtrim($dir, DIRECTORY_SEPARATOR);
+    }
+
+    /**
      * Write a deck to disk.
      *
      * @param  array<string, mixed>  $deck
@@ -92,10 +111,20 @@ final class PptxWriter
         $slides = $deck['slides'] ?? [];
         $slideCount = count($slides);
 
-        $tmp = tempnam(sys_get_temp_dir(), 'dark-slide-');
-        if ($tmp === false) {
-            throw new RuntimeException('Could not allocate temp file for PPTX archive.');
+        // Build the zip in a dedicated per-call subdirectory so ZipArchive's
+        // internal scratch file (which it creates next to the target during
+        // close()) has a clean place to live. We can't rely on tempnam()
+        // because it raises a PHP notice on some platforms that Laravel's
+        // HandleExceptions promotes to a fatal ErrorException — even when
+        // wrapped with `@`. The temp dir defaults to sys_get_temp_dir()
+        // but is overridable via the constructor for hosts where that
+        // path isn't writable.
+        $base = $this->resolveTempDir();
+        $tmpDir = $base . DIRECTORY_SEPARATOR . 'dark-slide-' . bin2hex(random_bytes(8));
+        if (!is_dir($tmpDir) && !@mkdir($tmpDir, 0700, true) && !is_dir($tmpDir)) {
+            throw new RuntimeException("Could not allocate temp dir for PPTX archive at: {$tmpDir}. Override the temp directory by passing it to the PptxWriter constructor.");
         }
+        $tmp = $tmpDir . DIRECTORY_SEPARATOR . 'deck.pptx';
 
         try {
             $zip = new ZipArchive();
@@ -157,6 +186,7 @@ final class PptxWriter
             return $contents;
         } finally {
             @unlink($tmp);
+            @rmdir($tmpDir);
         }
     }
 

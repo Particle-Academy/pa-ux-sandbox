@@ -308,14 +308,15 @@ class PackageRegistry
         return [
             'slug' => 'dark-slide',
             'name' => 'dark-slide',
-            'tagline' => 'PHP 8.2+ pptx writer/reader for agentic deck creation. Framework-agnostic; optional Laravel adapter. Sister to holy-sheet — round-trips fancy-slides decks to real Office Open XML files.',
+            'tagline' => 'PHP 8.2+ pptx writer/reader for agentic deck creation. v0.3 ships markdown headings, syntax-highlighted code blocks, real tables, gradient backgrounds, and a high-fidelity reader. Framework-agnostic; optional Laravel adapter. Sister to holy-sheet.',
             'composer' => 'particle-academy/dark-slide',
             'repo' => 'Particle-Academy/dark-slide',
             'language' => 'PHP',
             'components' => [
                 ['slug' => 'agent', 'name' => 'Agent', 'blurb' => 'Top-level static surface: validate / write / toBytes / read / describe / validateAndRepair.'],
-                ['slug' => 'pptx-writer', 'name' => 'PptxWriter', 'blurb' => 'Office Open XML writer — text, image, shape, notes, multi-slide.'],
-                ['slug' => 'pptx-reader', 'name' => 'PptxReader', 'blurb' => 'Best-effort PPTX → Deck schema extractor.'],
+                ['slug' => 'pptx-writer', 'name' => 'PptxWriter', 'blurb' => 'Office Open XML writer — text, image, shape, notes, multi-slide, real tables, gradient backgrounds, syntax-highlighted code.'],
+                ['slug' => 'pptx-reader', 'name' => 'PptxReader', 'blurb' => 'PPTX → Deck schema extractor. Round-trips tables, gradients, embedded images (as data URIs), and inline markdown spans.'],
+                ['slug' => 'syntax-highlighter', 'name' => 'SyntaxHighlighter', 'blurb' => 'Pure-PHP tokenizer used by the writer to color code blocks. JS/TS, PHP, JSON, bash, CSS, Python, HTML.'],
             ],
         ];
     }

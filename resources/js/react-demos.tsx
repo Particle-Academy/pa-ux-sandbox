@@ -112,6 +112,13 @@ const CodeEditorDemo = l(() => import("./react-demos/pages/CodeEditorDemo"), "Co
 const SpreadsheetDemo = l(() => import("./react-demos/pages/SpreadsheetDemo"), "SpreadsheetDemo");
 const SheetsAgentDemo = l(() => import("./react-demos/pages/SheetsAgentDemo"), "SheetsAgentDemo");
 const SlidesDemo = l(() => import("./react-demos/pages/SlidesDemo"), "SlidesDemo");
+const SlideDemo = l(() => import("./react-demos/pages/SlideDemo"), "SlideDemo");
+const SlideViewerDemo = l(() => import("./react-demos/pages/SlideViewerDemo"), "SlideViewerDemo");
+const PresenterViewDemo = l(() => import("./react-demos/pages/PresenterViewDemo"), "PresenterViewDemo");
+const TextElementDemo = l(() => import("./react-demos/pages/TextElementDemo"), "TextElementDemo");
+const ImageElementDemo = l(() => import("./react-demos/pages/ImageElementDemo"), "ImageElementDemo");
+const ShapeElementDemo = l(() => import("./react-demos/pages/ShapeElementDemo"), "ShapeElementDemo");
+const DarkSlideDemo = l(() => import("./react-demos/pages/DarkSlideDemo"), "DarkSlideDemo");
 // Human+ primitives — promoted from /dreaming 2026-05-12
 const ReasonTagPageDemo = l(() => import("./react-demos/pages/ReasonTagDemo"), "ReasonTagDemo");
 const MoodMeterPageDemo = l(() => import("./react-demos/pages/MoodMeterDemo"), "MoodMeterDemo");
@@ -261,6 +268,17 @@ if (root) {
               <Route path="spreadsheet" element={<SpreadsheetDemo />} />
               <Route path="sheets-agent" element={<SheetsAgentDemo />} />
               <Route path="slides" element={<SlidesDemo />} />
+              {/* Fancy Slides — per-component demos */}
+              <Route path="slide" element={<SlideDemo />} />
+              <Route path="slide-viewer" element={<SlideViewerDemo />} />
+              <Route path="presenter-view" element={<PresenterViewDemo />} />
+              {/* DeckEditor lives at /slides; alias here so the registry's deck-editor slug resolves. */}
+              <Route path="deck-editor" element={<SlidesDemo />} />
+              <Route path="text-element" element={<TextElementDemo />} />
+              <Route path="image-element" element={<ImageElementDemo />} />
+              <Route path="shape-element" element={<ShapeElementDemo />} />
+              {/* Dark Slide — PHP PPTX writer */}
+              <Route path="dark-slide" element={<DarkSlideDemo />} />
               {/* Human+ primitives */}
               <Route path="reason-tag" element={<ReasonTagPageDemo />} />
               <Route path="mood-meter" element={<MoodMeterPageDemo />} />

@@ -84,17 +84,24 @@ write.
 
 See [`docs/schema.md`](./docs/schema.md) for the full reference.
 
-## Element coverage (v0.1)
+## Element coverage (v0.3)
 
 | Element | Writer | Reader |
 |---|:-:|:-:|
-| text   | ✅ | ✅ |
-| image  | ✅ | ✅ |
+| text   | ✅ markdown spans + headings (`# / ## / ###`) | ✅ markdown spans reconstructed |
+| image  | ✅ (data URI + local path) | ✅ as data URI |
 | shape  | ✅ (rect, rounded-rect, ellipse, triangle, line, arrow) | ✅ |
-| chart  | placeholder (renders as text fallback) | ⚠ skipped |
-| code   | as monospaced text (no syntax highlighting in pptx) | ✅ as text |
-| table  | v0.2 | v0.2 |
+| code   | ✅ syntax-highlighted runs (JS/TS, PHP, JSON, bash, CSS, Python, HTML) | ✅ as text |
+| table  | ✅ real `<a:tbl>` (header + striped body rows) | ✅ round-trips columns + rows |
+| background | ✅ solid color, gradient (`linear-gradient(…)`), image | ✅ solid, gradient, image-as-data-URI |
+| chart  | placeholder (renders as text fallback) — real chart parts on the v0.4 roadmap | ⚠ skipped |
 | embed  | not representable in pptx | n/a |
+
+### What's new in v0.3
+
+- **Markdown headings**. `# / ## / ###` paragraph prefixes in `format: "markdown"` text elements emit larger bold runs in the pptx.
+- **Syntax-highlighted code blocks**. The `code` element now ships one `<a:r>` per token, colored by kind (keyword / string / comment / number / builtin / punctuation). Pure-PHP tokenizer, zero third-party deps. Languages: `javascript`, `typescript`, `jsx`, `tsx`, `php`, `json`, `bash`, `css`, `python`, `html`.
+- **Reader fidelity for v0.2 features**. Tables, gradients, embedded images, and inline bold/italic/code spans now round-trip back to the Deck schema.
 
 ## Agent tool-use surface
 

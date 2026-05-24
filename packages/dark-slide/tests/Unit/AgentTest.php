@@ -335,3 +335,175 @@ it('keeps solid colour bg working alongside gradient support', function () {
         @unlink($tmp);
     }
 });
+
+// ─── v0.3 features ─────────────────────────────────────────────────────────
+
+it('renders markdown headings at larger sizes with bold runs', function () {
+    $deck = dsFixture();
+    $deck['slides'][0]['elements'][0]['content'] = "# Big heading\n## Medium\n### Small\nbody copy";
+    $deck['slides'][0]['elements'][0]['format'] = 'markdown';
+    // Use a body size big enough that the heading multipliers land above
+    // PPTX's 8pt floor on h3.
+    $deck['slides'][0]['elements'][0]['style'] = ['fontSize' => 40];
+
+    $bytes = Agent::toBytes($deck);
+    $tmp = tempnam(sys_get_temp_dir(), 'darkslide-test-');
+    file_put_contents($tmp, $bytes);
+
+    try {
+        $zip = new ZipArchive();
+        $zip->open($tmp);
+        $slideXml = $zip->getFromName('ppt/slides/slide1.xml');
+        // Heading text should appear (without the # prefix)
+        expect($slideXml)->toContain('<a:t>Big heading</a:t>');
+        expect($slideXml)->toContain('<a:t>Medium</a:t>');
+        expect($slideXml)->toContain('<a:t>Small</a:t>');
+        expect($slideXml)->not->toContain('<a:t># Big heading</a:t>');
+        // The first heading run should be bold + larger than the body run.
+        // Body font is 40 → sz=2000 in PPTX; h1 uses 1.8× → sz=3600.
+        expect($slideXml)->toMatch('/<a:rPr[^>]*sz="3600"[^>]*b="1"[^>]*>.{0,200}?Big heading/s');
+        expect($slideXml)->toMatch('/<a:rPr[^>]*sz="2000"[^>]*>.{0,200}?body copy/s');
+        $zip->close();
+    } finally {
+        @unlink($tmp);
+    }
+});
+
+it('highlights code blocks with colored token runs', function () {
+    $deck = dsFixture();
+    $deck['slides'][1]['elements'][] = [
+        'id' => 'snippet',
+        'type' => 'code',
+        'x' => 0.05, 'y' => 0.05, 'w' => 0.9, 'h' => 0.4,
+        'code' => "const greet = (name) => `Hello, ${name}`;\n// comment",
+        'language' => 'typescript',
+    ];
+
+    $bytes = Agent::toBytes($deck);
+    $tmp = tempnam(sys_get_temp_dir(), 'darkslide-test-');
+    file_put_contents($tmp, $bytes);
+
+    try {
+        $zip = new ZipArchive();
+        $zip->open($tmp);
+        $slideXml = $zip->getFromName('ppt/slides/slide2.xml');
+        // The `const` keyword should be its own colored run (violet C084FC).
+        expect($slideXml)->toMatch('/<a:srgbClr val="C084FC"\/>.{0,200}?<a:t>const<\/a:t>/s');
+        // The comment should be slate grey.
+        expect($slideXml)->toMatch('/<a:srgbClr val="64748B"\/>.{0,200}?<a:t>\/\/ comment<\/a:t>/s');
+        // String literal should be green.
+        expect($slideXml)->toContain('86EFAC');
+        // All code runs should use Consolas.
+        expect($slideXml)->toContain('Consolas');
+        $zip->close();
+    } finally {
+        @unlink($tmp);
+    }
+});
+
+it('round-trips a table through write → read', function () {
+    $deck = dsFixture();
+    $deck['slides'][1]['elements'][] = [
+        'id' => 'tbl-rt',
+        'type' => 'table',
+        'x' => 0.1, 'y' => 0.7, 'w' => 0.8, 'h' => 0.2,
+        'columns' => [
+            ['key' => 'name', 'label' => 'Name'],
+            ['key' => 'qty', 'label' => 'Qty'],
+        ],
+        'rows' => [
+            ['name' => 'Widget', 'qty' => 12],
+            ['name' => 'Sprocket', 'qty' => 4],
+        ],
+    ];
+
+    $path = tempnam(sys_get_temp_dir(), 'darkslide-rt-') . '.pptx';
+    try {
+        Agent::write($deck, $path);
+        $read = Agent::read($path);
+        $tables = collect($read['slides'][1]['elements'])->where('type', 'table')->values();
+        expect($tables->count())->toBe(1);
+        $t = $tables->first();
+        expect(collect($t['columns'])->pluck('label')->all())->toBe(['Name', 'Qty']);
+        expect(count($t['rows']))->toBe(2);
+        // Column keys are normalized to col1, col2 on read (we don't carry
+        // the source schema). Verify by position-of-value instead.
+        $firstRow = array_values($t['rows'][0]);
+        expect($firstRow)->toBe(['Widget', '12']);
+    } finally {
+        @unlink($path);
+    }
+});
+
+it('round-trips a gradient background through write → read', function () {
+    $deck = dsFixture();
+    $deck['slides'][0]['background'] = [
+        'gradient' => 'linear-gradient(135deg, #fef3c7 0%, #fce7f3 100%)',
+    ];
+
+    $path = tempnam(sys_get_temp_dir(), 'darkslide-rt-') . '.pptx';
+    try {
+        Agent::write($deck, $path);
+        $read = Agent::read($path);
+        $bg = $read['slides'][0]['background'] ?? null;
+        expect($bg)->toBeArray();
+        expect($bg)->toHaveKey('gradient');
+        expect($bg['gradient'])->toContain('linear-gradient(');
+        // Stop colors should survive — we accept both #hex casings.
+        expect(strtolower($bg['gradient']))->toContain('#fef3c7');
+        expect(strtolower($bg['gradient']))->toContain('#fce7f3');
+    } finally {
+        @unlink($path);
+    }
+});
+
+it('round-trips an embedded image as a data URI', function () {
+    // 1x1 PNG — tiniest valid PNG to keep the test cheap.
+    $png = base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=');
+    $imageDataUri = 'data:image/png;base64,' . base64_encode($png);
+
+    $deck = dsFixture();
+    $deck['slides'][0]['elements'][] = [
+        'id' => 'img',
+        'type' => 'image',
+        'x' => 0.1, 'y' => 0.1, 'w' => 0.3, 'h' => 0.3,
+        'src' => $imageDataUri,
+        'fit' => 'cover',
+    ];
+
+    $path = tempnam(sys_get_temp_dir(), 'darkslide-rt-') . '.pptx';
+    try {
+        Agent::write($deck, $path);
+        $read = Agent::read($path);
+        $images = collect($read['slides'][0]['elements'])->where('type', 'image')->values();
+        expect($images->count())->toBe(1);
+        $src = $images->first()['src'];
+        expect($src)->toStartWith('data:image/png;base64,');
+        expect(strlen($src))->toBeGreaterThan(100);
+    } finally {
+        @unlink($path);
+    }
+});
+
+it('round-trips inline markdown spans through write → read', function () {
+    $deck = dsFixture();
+    $deck['slides'][0]['elements'][0]['content'] = 'This is **bold** and *italic* and `code`.';
+    $deck['slides'][0]['elements'][0]['format'] = 'markdown';
+    // Round-trip works when the base style is NOT all-bold; otherwise the
+    // reader correctly collapses the uniform bold into the paragraph
+    // default (see paragraphToMarkdown for the heuristic).
+    $deck['slides'][0]['elements'][0]['style'] = ['fontSize' => 24, 'align' => 'left'];
+
+    $path = tempnam(sys_get_temp_dir(), 'darkslide-rt-') . '.pptx';
+    try {
+        Agent::write($deck, $path);
+        $read = Agent::read($path);
+        $first = collect($read['slides'][0]['elements'])->where('type', 'text')->first();
+        expect($first['format'])->toBe('markdown');
+        expect($first['content'])->toContain('**bold**');
+        expect($first['content'])->toContain('*italic*');
+        expect($first['content'])->toContain('`code`');
+    } finally {
+        @unlink($path);
+    }
+});

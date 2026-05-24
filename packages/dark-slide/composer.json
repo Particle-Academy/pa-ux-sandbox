@@ -1,6 +1,6 @@
 {
     "name": "particle-academy/dark-slide",
-    "description": "Standalone presentation read/write tool for agentic deck creation. Framework-agnostic PHP core that writes .pptx (Office Open XML) with inline markdown formatting, real tables, gradient backgrounds, and embedded media. Optional Laravel 10-13 integration. Designed to round-trip with the @particle-academy/fancy-slides JS package's Deck schema.",
+    "description": "Standalone presentation read/write tool for agentic deck creation. Framework-agnostic PHP core that writes .pptx (Office Open XML) with inline markdown formatting + headings, real tables, gradient backgrounds, syntax-highlighted code, and embedded media — and reads them back with high fidelity. Optional Laravel 10-13 integration. Designed to round-trip with the @particle-academy/fancy-slides JS package's Deck schema.",
     "type": "library",
     "license": "MIT",
     "keywords": [

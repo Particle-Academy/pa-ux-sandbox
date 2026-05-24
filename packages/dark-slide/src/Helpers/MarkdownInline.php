@@ -136,4 +136,23 @@ final class MarkdownInline
 
         return [false, $line];
     }
+
+    /**
+     * Detect whether a paragraph starts with a markdown ATX heading marker
+     * (`# `, `## `, `### `, …). Returns `[level, contentWithoutMarker]`
+     * where level is 1..6, or `[0, $line]` if no heading was found.
+     *
+     * Only paragraph-leading markers count — `# `s mid-line are passed
+     * through as plain text.
+     *
+     * @return array{0: int, 1: string}
+     */
+    public static function headingPrefix(string $line): array
+    {
+        if (preg_match('/^(#{1,6})\s+(.*)$/', $line, $m) === 1) {
+            return [strlen($m[1]), $m[2]];
+        }
+
+        return [0, $line];
+    }
 }

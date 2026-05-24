@@ -7,6 +7,7 @@ namespace DarkSlide\Writer;
 use DarkSlide\Helpers\Color;
 use DarkSlide\Helpers\Emu;
 use DarkSlide\Helpers\MarkdownInline;
+use DarkSlide\Helpers\SyntaxHighlighter;
 use DarkSlide\Helpers\Xml;
 use DarkSlide\Schema\Schema;
 use RuntimeException;
@@ -262,7 +263,7 @@ final class PptxWriter
         return Xml::declaration()
             . '<Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties" xmlns:vt="http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes">'
             . '<Application>DarkSlide</Application>'
-            . '<AppVersion>0.1.0</AppVersion>'
+            . '<AppVersion>0.3.0</AppVersion>'
             . "<Slides>{$slideCount}</Slides>"
             . '</Properties>';
     }
@@ -777,16 +778,11 @@ final class PptxWriter
     /** @param array<string, mixed> $element */
     private function buildCodeShape(array $element, int $shapeId): string
     {
-        // Render code as a text shape with monospace font + dark fill.
-        // Real syntax highlighting via Pygments is a v0.2 task.
         $xfrm = $this->xfrmFromFractions($element);
         $code = (string) ($element['code'] ?? '');
         $id = $element['id'] ?? "code-{$shapeId}";
-        $body = $this->buildTextBody($code, [
-            'fontFamily' => 'Consolas',
-            'fontSize' => 14,
-            'color' => '#F8FAFC',
-        ], 'plain');
+        $language = isset($element['language']) ? (string) $element['language'] : null;
+        $body = $this->buildHighlightedCodeBody($code, $language);
 
         return '<p:sp>'
             . '<p:nvSpPr>'
@@ -801,6 +797,46 @@ final class PptxWriter
             . '</p:spPr>'
             . $body
             . '</p:sp>';
+    }
+
+    /**
+     * Build a `<p:txBody>` for a code block: monospace, dark fill, one
+     * `<a:r>` per highlighted token so keywords / strings / comments /
+     * numbers render in distinct colors.
+     */
+    private function buildHighlightedCodeBody(string $code, ?string $language): string
+    {
+        $sz = Emu::hundredthsOfPoint(12);
+        $paragraphs = '';
+        $lines = explode("\n", $code);
+        foreach ($lines as $line) {
+            $tokens = SyntaxHighlighter::tokenize($line, $language);
+            $runs = '';
+            foreach ($tokens as $token) {
+                if ($token['text'] === '') {
+                    continue;
+                }
+                $color = SyntaxHighlighter::colorFor($token['kind']);
+                $runs .= '<a:r>'
+                    . '<a:rPr lang="en-US" sz="' . $sz . '">'
+                    . '<a:solidFill><a:srgbClr val="' . $color . '"/></a:solidFill>'
+                    . '<a:latin typeface="Consolas"/>'
+                    . '</a:rPr>'
+                    . '<a:t>' . Xml::text($token['text']) . '</a:t>'
+                    . '</a:r>';
+            }
+            if ($runs === '') {
+                // Preserve blank lines so the rendered layout matches the source.
+                $runs = '<a:endParaRPr lang="en-US" sz="' . $sz . '"/>';
+            }
+            $paragraphs .= '<a:p><a:pPr algn="l"/>' . $runs . '</a:p>';
+        }
+
+        return '<p:txBody>'
+            . '<a:bodyPr wrap="square" anchor="t" rtlCol="0" lIns="91440" tIns="45720" rIns="91440" bIns="45720"/>'
+            . '<a:lstStyle/>'
+            . $paragraphs
+            . '</p:txBody>';
     }
 
     /**
@@ -964,11 +1000,33 @@ final class PptxWriter
         $paragraphs = '';
         $lines = explode("\n", $content);
         foreach ($lines as $line) {
-            // Bullet detection happens at the paragraph level. Inline
-            // formatting then runs on the content after the marker.
-            [$isBullet, $body] = $renderRuns
-                ? MarkdownInline::bulletPrefix($line)
-                : [false, $line];
+            // Paragraph-level markers: heading first (it disqualifies
+            // bullets), then bullet. Heading content drops the `# ` prefix
+            // and gets an inflated, bold-by-default size.
+            $headingLevel = 0;
+            $isBullet = false;
+            $body = $line;
+            if ($renderRuns) {
+                [$headingLevel, $body] = MarkdownInline::headingPrefix($line);
+                if ($headingLevel === 0) {
+                    [$isBullet, $body] = MarkdownInline::bulletPrefix($line);
+                }
+            }
+
+            // Heading lines get a bigger font + bold base; level 1 is
+            // largest, falling toward the base body size at level 4+.
+            $paragraphSz = $sz;
+            $paragraphBold = $baseBold;
+            if ($headingLevel > 0) {
+                $multiplier = match ($headingLevel) {
+                    1 => 1.8,
+                    2 => 1.45,
+                    3 => 1.2,
+                    default => 1.0,
+                };
+                $paragraphSz = Emu::hundredthsOfPoint($pt * $multiplier);
+                $paragraphBold = ' b="1"';
+            }
 
             $pPr = '<a:pPr algn="' . $align . '"';
             if ($isBullet) {
@@ -982,10 +1040,10 @@ final class PptxWriter
             if ($renderRuns) {
                 $tokens = MarkdownInline::tokenize($body);
                 foreach ($tokens as $token) {
-                    $runs .= $this->buildRun($token['text'], $sz, $baseBold, $baseItalic, $baseUnderline, $colorHex, $fontFamily, $token['b'], $token['i'], $token['code']);
+                    $runs .= $this->buildRun($token['text'], $paragraphSz, $paragraphBold, $baseItalic, $baseUnderline, $colorHex, $fontFamily, $token['b'], $token['i'], $token['code']);
                 }
             } else {
-                $runs = $this->buildRun($body, $sz, $baseBold, $baseItalic, $baseUnderline, $colorHex, $fontFamily, false, false, false);
+                $runs = $this->buildRun($body, $paragraphSz, $paragraphBold, $baseItalic, $baseUnderline, $colorHex, $fontFamily, false, false, false);
             }
 
             $paragraphs .= '<a:p>' . $pPr . $runs . '</a:p>';

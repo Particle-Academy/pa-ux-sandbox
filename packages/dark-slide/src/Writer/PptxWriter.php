@@ -6,6 +6,7 @@ namespace DarkSlide\Writer;
 
 use DarkSlide\Helpers\Color;
 use DarkSlide\Helpers\Emu;
+use DarkSlide\Helpers\MarkdownInline;
 use DarkSlide\Helpers\Xml;
 use DarkSlide\Schema\Schema;
 use RuntimeException;
@@ -420,7 +421,7 @@ final class PptxWriter
         $shapeTreeXml = '';
         $slideRels = []; // collected for the slide's _rels file
 
-        $bg = $this->buildBackground($slide['background'] ?? null);
+        $bg = $this->buildBackground($slide['background'] ?? null, $slideNumber, $slideRels);
 
         foreach ($elements as $element) {
             if (!is_array($element) || !isset($element['type'])) {
@@ -460,24 +461,192 @@ final class PptxWriter
     private array $pendingSlideRels = [];
 
     /**
+     * Build the slide background XML. Three shapes are supported:
+     *
+     *   `image`    — CSS `url()` or path; embeds the binary as a media
+     *                relationship + `<p:blipFill>`.
+     *   `gradient` — CSS-style `linear-gradient(...)` parsed into PPTX
+     *                `<a:gradFill>` with stops; angles converted to
+     *                drawingML's 60,000ths-of-a-degree units.
+     *   `color`    — solid fill (fallback when nothing else matches).
+     *
      * @param  array<string, mixed>  $bg
+     * @param  int  $slideNumber  used to keep media rel ids unique
+     * @param  list<array{id: string, type: string, target: string}>  $rels  populated when a background image is embedded
      */
-    private function buildBackground(mixed $bg): string
+    private function buildBackground(mixed $bg, int $slideNumber, array &$rels): string
     {
         if (!is_array($bg)) {
             return '';
         }
+
+        if (isset($bg['image']) && is_string($bg['image']) && $bg['image'] !== '') {
+            $embed = $this->stageMedia($bg['image'], $slideNumber);
+            if ($embed !== null) {
+                $rels[] = [
+                    'id' => $embed['relId'],
+                    'type' => 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/image',
+                    'target' => $embed['target'],
+                ];
+
+                return '<p:bg><p:bgPr>'
+                    . '<a:blipFill dpi="0" rotWithShape="1"><a:blip r:embed="' . $embed['relId'] . '"/><a:srcRect/><a:stretch><a:fillRect/></a:stretch></a:blipFill>'
+                    . '<a:effectLst/></p:bgPr></p:bg>';
+            }
+            // Fall through to gradient / color when the image couldn't be staged.
+        }
+
+        if (isset($bg['gradient']) && is_string($bg['gradient'])) {
+            $grad = $this->parseGradient($bg['gradient']);
+            if ($grad !== null) {
+                return '<p:bg><p:bgPr>' . $grad . '<a:effectLst/></p:bgPr></p:bg>';
+            }
+        }
+
         if (isset($bg['color']) && is_string($bg['color'])) {
             [$hex, $alpha] = Color::parse($bg['color']);
 
             return '<p:bg><p:bgPr><a:solidFill><a:srgbClr val="' . $hex . '"><a:alpha val="' . $alpha . '"/></a:srgbClr></a:solidFill><a:effectLst/></p:bgPr></p:bg>';
         }
 
-        // Gradient and image backgrounds are documented but not yet emitted
-        // — PPTX gradient syntax differs from CSS, and image embedding for
-        // backgrounds adds another relationship. v0.2.
-
         return '';
+    }
+
+    /**
+     * Parse a CSS-style `linear-gradient(...)` string into a PPTX
+     * `<a:gradFill>` block. Supports angle-or-direction + 2+ stops; falls
+     * back to null when the input doesn't look like a CSS gradient.
+     *
+     * Examples that parse:
+     *   linear-gradient(135deg, #fef3c7 0%, #fce7f3 100%)
+     *   linear-gradient(to right, #ff0000, #00ff00)
+     *   linear-gradient(#000, #fff)
+     */
+    private function parseGradient(string $css): ?string
+    {
+        $css = trim($css);
+        if (!preg_match('/^linear-gradient\((.+)\)\s*;?\s*$/i', $css, $m)) {
+            return null;
+        }
+        $args = $m[1];
+
+        // Split top-level commas (rgba() inside stops contains commas too).
+        $parts = $this->splitTopLevelCommas($args);
+        if (count($parts) < 2) {
+            return null;
+        }
+
+        // Direction is optional. It's the first part iff it doesn't look
+        // like a color stop.
+        $angleDeg = 90.0; // CSS default — top to bottom
+        $first = trim($parts[0]);
+        $directionLike = preg_match('/^(?:to\s+|[-+]?[0-9.]+(?:deg|rad|turn|grad)?\s*$)/i', $first) === 1;
+        if ($directionLike) {
+            $angleDeg = $this->parseGradientDirection($first);
+            array_shift($parts);
+        }
+
+        // Remaining parts are stops: "color [position]"
+        $stops = [];
+        $count = count($parts);
+        foreach ($parts as $i => $part) {
+            $part = trim($part);
+            // Pull off the trailing position (e.g. "50%" or "0.5"); the rest is the color.
+            if (preg_match('/^(.+?)\s+([0-9.]+%?)\s*$/', $part, $sm)) {
+                $colorStr = $sm[1];
+                $posStr = $sm[2];
+                if (str_ends_with($posStr, '%')) {
+                    $pos = (float) rtrim($posStr, '%') / 100;
+                } else {
+                    $pos = (float) $posStr;
+                }
+            } else {
+                $colorStr = $part;
+                $pos = $count <= 1 ? 0.0 : $i / ($count - 1);
+            }
+            [$hex, ] = Color::parse($colorStr);
+            $stops[] = ['hex' => $hex, 'pos' => max(0.0, min(1.0, $pos))];
+        }
+
+        $gsList = '';
+        foreach ($stops as $stop) {
+            $pos1000 = (int) round($stop['pos'] * 100000);
+            $gsList .= '<a:gs pos="' . $pos1000 . '"><a:srgbClr val="' . $stop['hex'] . '"/></a:gs>';
+        }
+
+        // PPTX angles are in 60000ths of a degree, measured clockwise from
+        // east (so CSS 0deg=top becomes PPTX 270deg). CSS is clockwise from
+        // north → PPTX is clockwise from east; subtract 90 + clamp.
+        $pptxAngle = (int) round(($angleDeg - 90) * 60000);
+        $pptxAngle = (($pptxAngle % (360 * 60000)) + (360 * 60000)) % (360 * 60000);
+
+        return '<a:gradFill flip="none" rotWithShape="1">'
+            . '<a:gsLst>' . $gsList . '</a:gsLst>'
+            . '<a:lin ang="' . $pptxAngle . '" scaled="0"/>'
+            . '</a:gradFill>';
+    }
+
+    /**
+     * Split a comma-separated argument list while respecting parentheses.
+     * Used so `rgb(255, 0, 0)` inside a gradient stop doesn't get cut up.
+     *
+     * @return list<string>
+     */
+    private function splitTopLevelCommas(string $s): array
+    {
+        $out = [];
+        $depth = 0;
+        $buf = '';
+        $len = strlen($s);
+        for ($i = 0; $i < $len; $i++) {
+            $c = $s[$i];
+            if ($c === '(') {
+                $depth++;
+                $buf .= $c;
+            } elseif ($c === ')') {
+                $depth = max(0, $depth - 1);
+                $buf .= $c;
+            } elseif ($c === ',' && $depth === 0) {
+                $out[] = $buf;
+                $buf = '';
+            } else {
+                $buf .= $c;
+            }
+        }
+        if ($buf !== '') {
+            $out[] = $buf;
+        }
+
+        return $out;
+    }
+
+    /**
+     * Convert a CSS gradient direction (`135deg`, `to right`, `to top left`)
+     * into a CSS-clockwise angle in degrees, 0 = up.
+     */
+    private function parseGradientDirection(string $dir): float
+    {
+        $dir = trim($dir);
+        if (preg_match('/^([-+]?[0-9.]+)deg$/i', $dir, $m)) {
+            return (float) $m[1];
+        }
+        if (preg_match('/^([-+]?[0-9.]+)rad$/i', $dir, $m)) {
+            return ((float) $m[1]) * 180 / M_PI;
+        }
+        if (preg_match('/^([-+]?[0-9.]+)turn$/i', $dir, $m)) {
+            return ((float) $m[1]) * 360;
+        }
+        return match (strtolower($dir)) {
+            'to top' => 0,
+            'to top right' => 45,
+            'to right' => 90,
+            'to bottom right' => 135,
+            'to bottom' => 180,
+            'to bottom left' => 225,
+            'to left' => 270,
+            'to top left' => 315,
+            default => 180, // top→bottom (CSS default)
+        };
     }
 
     /**
@@ -495,7 +664,7 @@ final class PptxWriter
             'shape' => $this->buildShape($element, $shapeId),
             'code' => $this->buildCodeShape($element, $shapeId),
             'chart' => $this->buildPlaceholder('[chart]', $element, $shapeId),
-            'table' => $this->buildPlaceholder('[table]', $element, $shapeId),
+            'table' => $this->buildTable($element, $shapeId),
             'embed' => $this->buildPlaceholder('[embed: ' . (string) ($element['src'] ?? '') . ']', $element, $shapeId),
             default => '',
         };
@@ -634,6 +803,112 @@ final class PptxWriter
             . '</p:sp>';
     }
 
+    /**
+     * Build a real PPTX table — `<p:graphicFrame>` wrapping `<a:tbl>`.
+     * Header row gets the accent color background + white bold text;
+     * body rows alternate between transparent and a tinted "surface" fill
+     * for readability.
+     *
+     * @param  array<string, mixed>  $element
+     */
+    private function buildTable(array $element, int $shapeId): string
+    {
+        $columns = is_array($element['columns'] ?? null) ? $element['columns'] : [];
+        $rows = is_array($element['rows'] ?? null) ? $element['rows'] : [];
+        if (empty($columns)) {
+            return $this->buildPlaceholder('[table: no columns]', $element, $shapeId);
+        }
+
+        $totalWidthEmu = Emu::fromFracX((float) ($element['w'] ?? 0.5));
+        $colCount = count($columns);
+        $colWidthEmu = (int) round($totalWidthEmu / max(1, $colCount));
+
+        // Approximate row height — 40pt header, 30pt body. Could be tighter.
+        $headerRowH = Emu::fromPt(40);
+        $bodyRowH = Emu::fromPt(30);
+
+        $gridCols = '';
+        foreach ($columns as $i => $_) {
+            $gridCols .= '<a:gridCol w="' . $colWidthEmu . '"/>';
+        }
+
+        // Header row
+        $headerCells = '';
+        foreach ($columns as $col) {
+            $label = (string) ($col['label'] ?? $col['key'] ?? '');
+            $headerCells .= $this->buildTableCell($label, true);
+        }
+        $headerRow = '<a:tr h="' . $headerRowH . '">' . $headerCells . '</a:tr>';
+
+        // Body rows
+        $bodyRows = '';
+        $rowIndex = 0;
+        foreach ($rows as $row) {
+            if (!is_array($row)) {
+                continue;
+            }
+            $cells = '';
+            foreach ($columns as $col) {
+                $key = (string) ($col['key'] ?? '');
+                $value = $row[$key] ?? '';
+                $text = is_scalar($value) ? (string) $value : json_encode($value);
+                $cells .= $this->buildTableCell((string) $text, false, $rowIndex % 2 === 1);
+            }
+            $bodyRows .= '<a:tr h="' . $bodyRowH . '">' . $cells . '</a:tr>';
+            $rowIndex++;
+        }
+
+        $xfrm = $this->xfrmFromFractions($element);
+        $id = $element['id'] ?? "table-{$shapeId}";
+
+        return '<p:graphicFrame>'
+            . '<p:nvGraphicFramePr>'
+            . '<p:cNvPr id="' . $shapeId . '" name="' . Xml::attr((string) $id) . '"/>'
+            . '<p:cNvGraphicFramePr><a:graphicFrameLocks noGrp="1"/></p:cNvGraphicFramePr>'
+            . '<p:nvPr/>'
+            . '</p:nvGraphicFramePr>'
+            . '<p:xfrm>' . substr($xfrm, strlen('<a:xfrm>'), -strlen('</a:xfrm>')) . '</p:xfrm>'
+            . '<a:graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">'
+            . '<a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/table">'
+            . '<a:tbl>'
+            . '<a:tblPr firstRow="1" bandRow="1"><a:tableStyleId>{5C22544A-7EE6-4342-B048-85BDC9FD1C3A}</a:tableStyleId></a:tblPr>'
+            . '<a:tblGrid>' . $gridCols . '</a:tblGrid>'
+            . $headerRow
+            . $bodyRows
+            . '</a:tbl>'
+            . '</a:graphicData>'
+            . '</a:graphic>'
+            . '</p:graphicFrame>';
+    }
+
+    /**
+     * Build a single `<a:tc>` table cell. Header cells get a violet fill +
+     * white bold text; striped body rows get a subtle tint.
+     */
+    private function buildTableCell(string $text, bool $header, bool $striped = false): string
+    {
+        if ($header) {
+            $fill = '<a:solidFill><a:srgbClr val="8B5CF6"/></a:solidFill>';
+            $textColor = 'FFFFFF';
+            $bold = ' b="1"';
+        } else {
+            $fill = $striped
+                ? '<a:solidFill><a:srgbClr val="F8FAFC"/></a:solidFill>'
+                : '<a:noFill/>';
+            $textColor = '0F172A';
+            $bold = '';
+        }
+
+        return '<a:tc>'
+            . '<a:txBody>'
+            . '<a:bodyPr wrap="square" anchor="ctr" lIns="91440" tIns="45720" rIns="91440" bIns="45720"/>'
+            . '<a:lstStyle/>'
+            . '<a:p><a:pPr algn="l"/><a:r><a:rPr lang="en-US" sz="1400"' . $bold . '><a:solidFill><a:srgbClr val="' . $textColor . '"/></a:solidFill></a:rPr><a:t>' . Xml::text($text) . '</a:t></a:r></a:p>'
+            . '</a:txBody>'
+            . '<a:tcPr>' . $fill . '</a:tcPr>'
+            . '</a:tc>';
+    }
+
     /** @param array<string, mixed> $element */
     private function buildPlaceholder(string $label, array $element, int $shapeId): string
     {
@@ -653,10 +928,13 @@ final class PptxWriter
     // ─── Text body / paragraphs / runs ────────────────────────────────────
 
     /**
-     * Build the `<p:txBody>` for a text shape. Splits content into
-     * paragraphs by `\n`. Markdown / HTML formatting beyond newlines is
-     * not yet honored — v0.2 will run inputs through a markdown→runs
-     * normaliser so bullets and bold spans get real drawingML.
+     * Build the `<p:txBody>` for a text shape.
+     *
+     * In "markdown" mode each paragraph is tokenized with
+     * {@see MarkdownInline::tokenize()} so bold / italic / code spans
+     * become real per-`<a:r>` `<a:rPr>` decorations rather than
+     * flattening to plain text. Bulleted lines (`- ` / `* ` prefix)
+     * become paragraphs with bullet point markup.
      *
      * @param  array<string, mixed>  $style
      */
@@ -669,9 +947,9 @@ final class PptxWriter
         // land in PPTX-sensible territory.
         $pt = max(8.0, $fontPt / 2);
         $sz = Emu::hundredthsOfPoint($pt);
-        $w = $this->weightToBold($style['weight'] ?? null);
-        $i = !empty($style['italic']) ? ' i="1"' : '';
-        $u = !empty($style['underline']) ? ' u="sng"' : '';
+        $baseBold = $this->weightToBold($style['weight'] ?? null);
+        $baseItalic = !empty($style['italic']) ? ' i="1"' : '';
+        $baseUnderline = !empty($style['underline']) ? ' u="sng"' : '';
         $align = $this->alignToAlgn($style['align'] ?? 'left');
         [$colorHex, ] = Color::parse((string) ($style['color'] ?? '#0F172A'), '0F172A');
         $fontFamily = isset($style['fontFamily']) ? '<a:latin typeface="' . Xml::attr((string) $style['fontFamily']) . '"/>' : '';
@@ -681,13 +959,17 @@ final class PptxWriter
             default => 't="t"',
         };
 
-        $bullet = $format === 'markdown';
+        $renderRuns = $format === 'markdown';
 
         $paragraphs = '';
         $lines = explode("\n", $content);
         foreach ($lines as $line) {
-            $isBullet = $bullet && (str_starts_with($line, '- ') || str_starts_with($line, '* '));
-            $text = $isBullet ? substr($line, 2) : $line;
+            // Bullet detection happens at the paragraph level. Inline
+            // formatting then runs on the content after the marker.
+            [$isBullet, $body] = $renderRuns
+                ? MarkdownInline::bulletPrefix($line)
+                : [false, $line];
+
             $pPr = '<a:pPr algn="' . $align . '"';
             if ($isBullet) {
                 $pPr .= ' indent="-228600" marL="228600"><a:buFont typeface="Arial"/><a:buChar char="•"/>';
@@ -696,11 +978,17 @@ final class PptxWriter
             }
             $pPr .= '</a:pPr>';
 
-            $runProps = '<a:rPr lang="en-US" sz="' . $sz . '"' . $w . $i . $u . '><a:solidFill><a:srgbClr val="' . $colorHex . '"/></a:solidFill>' . $fontFamily . '</a:rPr>';
-            $paragraphs .= '<a:p>'
-                . $pPr
-                . '<a:r>' . $runProps . '<a:t>' . Xml::text($text) . '</a:t></a:r>'
-                . '</a:p>';
+            $runs = '';
+            if ($renderRuns) {
+                $tokens = MarkdownInline::tokenize($body);
+                foreach ($tokens as $token) {
+                    $runs .= $this->buildRun($token['text'], $sz, $baseBold, $baseItalic, $baseUnderline, $colorHex, $fontFamily, $token['b'], $token['i'], $token['code']);
+                }
+            } else {
+                $runs = $this->buildRun($body, $sz, $baseBold, $baseItalic, $baseUnderline, $colorHex, $fontFamily, false, false, false);
+            }
+
+            $paragraphs .= '<a:p>' . $pPr . $runs . '</a:p>';
         }
 
         return '<p:txBody>'
@@ -708,6 +996,34 @@ final class PptxWriter
             . '<a:lstStyle/>'
             . $paragraphs
             . '</p:txBody>';
+    }
+
+    /**
+     * Build a single `<a:r>` (drawingML text run) with the supplied base
+     * formatting layered on top of inline markdown flags from the tokenizer.
+     *
+     * `code` spans switch to the theme's mono font + a darker fill so
+     * they read as code on every theme. Inline `**bold**` overrides the
+     * base weight even when the surrounding text was non-bold; inline
+     * `*italic*` is additive.
+     */
+    private function buildRun(string $text, int $sz, string $baseBold, string $baseItalic, string $baseUnderline, string $colorHex, string $fontFamily, bool $bold, bool $italic, bool $code): string
+    {
+        $b = $bold ? ' b="1"' : $baseBold;
+        $i = ($italic ? ' i="1"' : '') ?: $baseItalic;
+        $u = $baseUnderline;
+        $color = $colorHex;
+        $family = $fontFamily;
+
+        if ($code) {
+            // Inline code: keep the run inline but switch font + tint.
+            $color = '8B5CF6';
+            $family = '<a:latin typeface="Consolas"/>';
+        }
+
+        $rPr = '<a:rPr lang="en-US" sz="' . $sz . '"' . $b . $i . $u . '><a:solidFill><a:srgbClr val="' . $color . '"/></a:solidFill>' . $family . '</a:rPr>';
+
+        return '<a:r>' . $rPr . '<a:t>' . Xml::text($text) . '</a:t></a:r>';
     }
 
     /** @param mixed $weight */

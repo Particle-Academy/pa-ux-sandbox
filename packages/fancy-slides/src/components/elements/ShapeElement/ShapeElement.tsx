@@ -42,11 +42,17 @@ interface ShapeStyle {
 }
 
 function renderShape(el: ShapeElement, s: ShapeStyle) {
+    // vectorEffect="non-scaling-stroke" keeps the visible stroke at the
+    // pixel width we asked for, regardless of how the parent SVG's
+    // `preserveAspectRatio="none"` stretches the viewBox. Without this,
+    // narrow arrow / line boxes shrink the stroke into invisibility because
+    // the y-axis is squashed.
     const common = {
         fill: s.fill,
         stroke: s.stroke,
         strokeWidth: s.strokeWidth,
         strokeDasharray: s.dasharray,
+        vectorEffect: "non-scaling-stroke" as const,
     };
     switch (el.shape) {
         case "rect":
@@ -62,14 +68,14 @@ function renderShape(el: ShapeElement, s: ShapeStyle) {
         case "line":
             return <line x1="0" y1="50" x2="100" y2="50" {...common} fill="none" />;
         case "arrow":
+            // Render the arrow as a polyline shaft + an inline triangular
+            // head built from the same SVG geometry. Avoids SVG markers,
+            // which scale with stroke-width and turn into specks at tile
+            // sizes.
             return (
                 <g>
-                    <defs>
-                        <marker id={`arrow-${el.id}`} viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
-                            <path d="M 0 0 L 10 5 L 0 10 z" fill={s.stroke} />
-                        </marker>
-                    </defs>
-                    <line x1="0" y1="50" x2="100" y2="50" {...common} fill="none" markerEnd={`url(#arrow-${el.id})`} />
+                    <line x1="0" y1="50" x2="85" y2="50" {...common} fill="none" />
+                    <polygon points="100,50 80,30 80,70" fill={s.stroke} stroke="none" />
                 </g>
             );
         default:

@@ -60,10 +60,20 @@ import {
     SlideViewer as FsSlideViewer,
     defaultTheme as fsDefaultTheme,
     darkTheme as fsDarkTheme,
-    type Deck as FsDeck,
-    type SlideData as FsSlideData,
 } from "@particle-academy/fancy-slides";
 import "@particle-academy/fancy-slides/styles.css";
+import {
+    CANONICAL_SLIDE,
+    CANONICAL_DECK,
+    CANONICAL_TEXT_SLIDE,
+    CANONICAL_IMAGE_SRC,
+    CANONICAL_SHAPES_SLIDE,
+    CANONICAL_HIGHLIGHTED_CODE,
+    CANONICAL_HIGHLIGHTED_TOKENS,
+    HIGHLIGHT_KIND_COLOR,
+    PPTX_WRITER_COVERAGE,
+    PPTX_READER_ROUNDTRIP,
+} from "./showcase-fixtures";
 
 type DemoFn = () => JSX.Element;
 
@@ -1490,112 +1500,44 @@ function UseFancyFormDemo() {
 }
 
 // ─── fancy-slides ──────────────────────────────────────────────────────────
-
-const FANCY_SLIDES_SAMPLE_SLIDE: FsSlideData = {
-    id: "showcase",
-    layout: "title-content",
-    elements: [
-        {
-            id: "h",
-            type: "text",
-            x: 0.08, y: 0.08, w: 0.84, h: 0.16,
-            content: "Composable slide schema",
-            format: "plain",
-            style: { fontSize: 44, weight: "semibold" },
-        },
-        {
-            id: "body",
-            type: "text",
-            x: 0.08, y: 0.3, w: 0.55, h: 0.55,
-            content: "- Coords are **0..1** fractions\n- Themes swap fonts + colors\n- One renderer powers viewer, editor, thumbnails",
-            format: "markdown",
-            style: { fontSize: 22, lineHeight: 1.6 },
-        },
-        {
-            id: "accent",
-            type: "shape",
-            shape: "rounded-rect",
-            x: 0.68, y: 0.32, w: 0.24, h: 0.48,
-            fill: "rgba(139,92,246,0.12)",
-            stroke: "#8B5CF6",
-            strokeWidth: 3,
-            radius: 16,
-        },
-        {
-            id: "accent-label",
-            type: "text",
-            x: 0.68, y: 0.5, w: 0.24, h: 0.12,
-            content: "JSON",
-            format: "plain",
-            style: { fontSize: 48, weight: "bold", align: "center", color: "#581c87" },
-        },
-    ],
-    background: { gradient: "linear-gradient(135deg, #faf5ff 0%, #ffffff 60%)" },
-};
-
-const FANCY_SLIDES_SAMPLE_DECK: FsDeck = {
-    id: "showcase-deck",
-    title: "Showcase deck",
-    theme: fsDefaultTheme,
-    slides: [
-        FANCY_SLIDES_SAMPLE_SLIDE,
-        {
-            id: "s2",
-            layout: "title",
-            elements: [
-                {
-                    id: "title",
-                    type: "text",
-                    x: 0.1, y: 0.4, w: 0.8, h: 0.2,
-                    content: "Slide 2",
-                    format: "plain",
-                    style: { fontSize: 80, weight: "bold", align: "center" },
-                },
-            ],
-            background: { color: "#0f172a" },
-            notes: "This is a speaker note for slide 2.",
-        },
-        {
-            id: "s3",
-            layout: "title",
-            elements: [
-                {
-                    id: "thanks",
-                    type: "text",
-                    x: 0.1, y: 0.4, w: 0.8, h: 0.2,
-                    content: "Thanks",
-                    format: "plain",
-                    style: { fontSize: 80, weight: "bold", align: "center" },
-                },
-            ],
-            background: { gradient: "linear-gradient(135deg, #fef3c7 0%, #fce7f3 100%)" },
-        },
-    ],
-};
+//
+// Every detail demo here renders the SAME canonical slide/deck the tile
+// renders (see showcase-fixtures.tsx). The detail page just shows it bigger
+// + adds interactive controls (fullscreen toggle, fit-mode grid, etc.) so
+// the click-through transition feels continuous.
 
 function FsSlideRegistryDemo() {
     return (
         <div className="space-y-4">
             <Text size="sm" className="!text-zinc-600 dark:!text-zinc-300">
-                The shared single-slide renderer — same slide JSON, three container sizes. Resolution independence comes from 0..1 fractional coords; theme swaps fonts + colors.
+                The shared single-slide renderer — same slide JSON, multiple container sizes. Resolution independence comes from 0..1 fractional coords; theme swaps fonts + colors.
             </Text>
+            <div className="overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
+                <FsSlide slide={CANONICAL_SLIDE} theme={fsDefaultTheme} />
+            </div>
             <div className="grid gap-4 lg:grid-cols-2">
-                <div className="overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
-                    <FsSlide slide={FANCY_SLIDES_SAMPLE_SLIDE} theme={fsDefaultTheme} />
+                <div>
+                    <Text size="xs" className="mb-1 !font-mono !text-zinc-500">theme=&quot;default&quot;</Text>
+                    <div className="overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
+                        <FsSlide slide={CANONICAL_SLIDE} theme={fsDefaultTheme} width={420} />
+                    </div>
                 </div>
-                <div className="overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
-                    <FsSlide slide={FANCY_SLIDES_SAMPLE_SLIDE} theme={fsDarkTheme} />
+                <div>
+                    <Text size="xs" className="mb-1 !font-mono !text-zinc-500">theme=&quot;dark&quot;</Text>
+                    <div className="overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
+                        <FsSlide slide={CANONICAL_SLIDE} theme={fsDarkTheme} width={420} />
+                    </div>
                 </div>
             </div>
             <div className="flex flex-wrap gap-3">
                 <div className="overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
-                    <FsSlide slide={FANCY_SLIDES_SAMPLE_SLIDE} theme={fsDefaultTheme} width={280} />
+                    <FsSlide slide={CANONICAL_SLIDE} theme={fsDefaultTheme} width={240} />
                 </div>
                 <div className="overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
-                    <FsSlide slide={FANCY_SLIDES_SAMPLE_SLIDE} theme={fsDarkTheme} width={200} />
+                    <FsSlide slide={CANONICAL_SLIDE} theme={fsDefaultTheme} width={160} />
                 </div>
                 <div className="overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
-                    <FsSlide slide={FANCY_SLIDES_SAMPLE_SLIDE} theme={fsDefaultTheme} width={140} />
+                    <FsSlide slide={CANONICAL_SLIDE} theme={fsDefaultTheme} width={100} />
                 </div>
             </div>
         </div>
@@ -1607,19 +1549,19 @@ function FsSlideViewerRegistryDemo() {
     return (
         <div className="space-y-3">
             <Text size="sm" className="!text-zinc-600 dark:!text-zinc-300">
-                Read-only deck player. Click the viewer below, then try ←/→ / Space / Home / End / 1-3 / B / F / Esc.
+                Read-only deck player. Same {CANONICAL_DECK.slides.length}-slide deck as the package tile, mounted full-size. Click into the viewer below, then try ←/→ / Space / Home / End / 1-{CANONICAL_DECK.slides.length} / B / F / Esc.
             </Text>
             <Action color="violet" size="sm" icon="play" onClick={() => setFullscreen(true)}>
                 Open fullscreen
             </Action>
             <div className="overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
                 <div className="h-[420px] w-full bg-black">
-                    <FsSlideViewer deck={FANCY_SLIDES_SAMPLE_DECK} />
+                    <FsSlideViewer deck={CANONICAL_DECK} />
                 </div>
             </div>
             {fullscreen && (
                 <div className="fixed inset-0 z-50 bg-black">
-                    <FsSlideViewer deck={FANCY_SLIDES_SAMPLE_DECK} onExit={() => setFullscreen(false)} />
+                    <FsSlideViewer deck={CANONICAL_DECK} onExit={() => setFullscreen(false)} />
                 </div>
             )}
         </div>
@@ -1631,19 +1573,19 @@ function FsPresenterViewRegistryDemo() {
     return (
         <div className="space-y-3">
             <Text size="sm" className="!text-zinc-600 dark:!text-zinc-300">
-                Speaker-only second-monitor view. Current slide + next slide preview + notes + wall clock + elapsed timer.
+                Speaker-only second-monitor view of the same canonical deck. Current slide + next slide preview + speaker notes + wall clock + elapsed timer.
             </Text>
             <Action color="violet" size="sm" icon="presentation" onClick={() => setPopout(true)}>
                 Pop out
             </Action>
             <div className="overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
                 <div className="h-[520px] w-full">
-                    <FsPresenterView deck={FANCY_SLIDES_SAMPLE_DECK} />
+                    <FsPresenterView deck={CANONICAL_DECK} />
                 </div>
             </div>
             {popout && (
                 <div className="fixed inset-0 z-50 bg-black">
-                    <FsPresenterView deck={FANCY_SLIDES_SAMPLE_DECK} onExit={() => setPopout(false)} />
+                    <FsPresenterView deck={CANONICAL_DECK} onExit={() => setPopout(false)} />
                 </div>
             )}
         </div>
@@ -1652,71 +1594,107 @@ function FsPresenterViewRegistryDemo() {
 
 function FsDeckEditorRegistryDemo() {
     return (
-        <Explainer
-            summary={"Full slide editor — left rail (thumbnails + reorder), center canvas (selectable + draggable elements), right inspector (per-element styling), top toolbar (add element / undo / redo / play). Same Slide renderer drives the canvas, viewer, and rail."}
-            code={'import { DeckEditor, useDeckState, defaultTheme } from "@particle-academy/fancy-slides";\nimport "@particle-academy/fancy-slides/styles.css";\n\nconst [deck, setDeck] = useState({\n  id: "doc-1",\n  title: "My deck",\n  theme: defaultTheme,\n  slides: [/* … */],\n});\n\n<DeckEditor deck={deck} onChange={setDeck} />'}
-            bullets={[
-                "Composable: import the rail, canvas, inspector, toolbar separately when you need a custom layout.",
-                "Agent-bridgeable — all state is controlled (value + onChange), every element gets a stable id, schema is JSON.",
-                "Live demo: see /react-demos/slides for the kitchen-sink version with activity panel + pptx export.",
-            ]}
-        />
+        <div className="space-y-4">
+            <Text size="sm" className="!text-zinc-600 dark:!text-zinc-300">
+                Full slide editor — left rail (thumbnails + reorder), center canvas (selectable + draggable elements), right inspector (per-element styling), top toolbar. Visualized below with the same canonical deck.
+            </Text>
+            <div className="overflow-hidden rounded-md border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
+                <div className="flex items-center gap-2 border-b border-zinc-200 px-3 py-1.5 text-xs dark:border-zinc-800">
+                    <span className="font-mono text-zinc-500">deck.json</span>
+                    <span className="ml-auto flex gap-2 text-zinc-400">
+                        <span>↶</span><span>↷</span><span>▶</span><span>+</span>
+                    </span>
+                </div>
+                <div className="grid grid-cols-[80px_1fr_140px] gap-2 p-2">
+                    <div className="space-y-1">
+                        {CANONICAL_DECK.slides.map((slide, i) => (
+                            <div
+                                key={slide.id}
+                                className={`overflow-hidden rounded border ${
+                                    i === 0
+                                        ? "border-violet-400 ring-1 ring-violet-300 dark:border-violet-600"
+                                        : "border-zinc-200 dark:border-zinc-700"
+                                }`}
+                            >
+                                <FsSlide slide={slide} theme={fsDefaultTheme} />
+                            </div>
+                        ))}
+                    </div>
+                    <div className="overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-700">
+                        <FsSlide slide={CANONICAL_DECK.slides[0]} theme={fsDefaultTheme} />
+                    </div>
+                    <div className="space-y-1 text-[10px]">
+                        <div className="rounded bg-zinc-100 px-1.5 py-1 font-semibold text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
+                            Inspector
+                        </div>
+                        {[
+                            ["element", "body"],
+                            ["type", "text"],
+                            ["x", "0.08"],
+                            ["y", "0.30"],
+                            ["w", "0.55"],
+                            ["h", "0.55"],
+                            ["fontSize", "22"],
+                        ].map(([k, v]) => (
+                            <div key={k} className="flex justify-between rounded bg-zinc-50 px-1.5 py-0.5 font-mono text-zinc-500 dark:bg-zinc-950">
+                                <span>{k}</span>
+                                <span>{v}</span>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+            <Explainer
+                summary="Live editor on this page would balloon the SPA chunk; the kitchen-sink demo is mounted at /react-demos/slides instead. Code snippet shows the import + minimal usage."
+                code={'import { DeckEditor, defaultTheme } from "@particle-academy/fancy-slides";\nimport "@particle-academy/fancy-slides/styles.css";\n\nconst [deck, setDeck] = useState({\n  id: "doc-1",\n  title: "My deck",\n  theme: defaultTheme,\n  slides: [/* … */],\n});\n\n<DeckEditor deck={deck} onChange={setDeck} />'}
+            />
+        </div>
     );
 }
 
 function FsTextElementRegistryDemo() {
-    const examples: Array<{ label: string; slide: FsSlideData }> = [
-        {
-            label: 'format="plain"',
-            slide: {
-                id: "p",
-                elements: [{
-                    id: "t", type: "text", x: 0.06, y: 0.2, w: 0.88, h: 0.6,
-                    content: "A simple line of text.",
-                    format: "plain",
-                    style: { fontSize: 36, align: "center", verticalAlign: "middle" },
-                }],
-            },
-        },
-        {
-            label: 'format="markdown"',
-            slide: {
-                id: "m",
-                elements: [{
-                    id: "t", type: "text", x: 0.06, y: 0.18, w: 0.88, h: 0.7,
-                    content: "Inline **bold** + *italic* + `code`.\n\n- bullet one\n- bullet **two**",
-                    format: "markdown",
-                    style: { fontSize: 22, lineHeight: 1.6 },
-                }],
-            },
-        },
-    ];
     return (
         <div className="space-y-3">
             <Text size="sm" className="!text-zinc-600 dark:!text-zinc-300">
-                Text elements render through react-fancy's ContentRenderer in markdown mode — bold / italic / code spans and lists work, plus `# / ## / ###` headings.
+                Text elements render through react-fancy&apos;s ContentRenderer in markdown mode — `## headings`, **bold**, *italic*, and bulleted lists. The tile shows this exact slide; the detail page shows it at full size plus a `plain` variant.
             </Text>
             <div className="grid gap-4 lg:grid-cols-2">
-                {examples.map((ex) => (
-                    <div key={ex.label}>
-                        <Text size="xs" className="mb-1 !font-mono !text-zinc-500">{ex.label}</Text>
-                        <div className="overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
-                            <FsSlide slide={ex.slide} theme={fsDefaultTheme} />
-                        </div>
+                <div>
+                    <Text size="xs" className="mb-1 !font-mono !text-zinc-500">format=&quot;markdown&quot;</Text>
+                    <div className="overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
+                        <FsSlide slide={CANONICAL_TEXT_SLIDE} theme={fsDefaultTheme} />
                     </div>
-                ))}
+                </div>
+                <div>
+                    <Text size="xs" className="mb-1 !font-mono !text-zinc-500">format=&quot;plain&quot;</Text>
+                    <div className="overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
+                        <FsSlide
+                            slide={{
+                                id: "plain",
+                                elements: [{
+                                    id: "t", type: "text",
+                                    x: 0.06, y: 0.2, w: 0.88, h: 0.6,
+                                    content: "A simple line of text — newlines preserved.\nNo markdown.",
+                                    format: "plain",
+                                    style: { fontSize: 28, align: "center", verticalAlign: "middle" },
+                                }],
+                                background: { color: "#ffffff" },
+                            }}
+                            theme={fsDefaultTheme}
+                        />
+                    </div>
+                </div>
             </div>
         </div>
     );
 }
 
 function FsImageElementRegistryDemo() {
-    const src = "https://placehold.co/600x400/8b5cf6/ffffff?text=600x400";
     const fits: Array<"contain" | "cover" | "fill" | "scale-down"> = ["contain", "cover", "fill", "scale-down"];
     return (
         <div className="space-y-3">
             <Text size="sm" className="!text-zinc-600 dark:!text-zinc-300">
-                Image elements use object-fit. A 600×400 source rendered inside a wide-aspect slide box, four fit modes.
+                Image elements use object-fit. The package tile shows `fit=&quot;cover&quot;` — below are all four fit modes side-by-side with the same source image.
             </Text>
             <div className="grid gap-3 sm:grid-cols-2">
                 {fits.map((fit) => (
@@ -1729,8 +1707,9 @@ function FsImageElementRegistryDemo() {
                                     elements: [{
                                         id: "img", type: "image",
                                         x: 0.06, y: 0.06, w: 0.88, h: 0.88,
-                                        src, fit,
+                                        src: CANONICAL_IMAGE_SRC, fit,
                                     }],
+                                    background: { color: "#ffffff" },
                                 }}
                                 theme={fsDefaultTheme}
                             />
@@ -1747,10 +1726,13 @@ function FsShapeElementRegistryDemo() {
         "rect", "rounded-rect", "ellipse", "triangle", "line", "arrow",
     ];
     return (
-        <div className="space-y-3">
+        <div className="space-y-4">
             <Text size="sm" className="!text-zinc-600 dark:!text-zinc-300">
-                Pure SVG primitives — six shape kinds, no third-party deps. Stroke widths scale with the rendered slide width.
+                The package tile shows three shapes wired as an input → process → output composition. Below: the canonical composition at full size, then every supported shape kind in its own slide.
             </Text>
+            <div className="overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
+                <FsSlide slide={CANONICAL_SHAPES_SLIDE} theme={fsDefaultTheme} />
+            </div>
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 {kinds.map((kind) => (
                     <div key={kind}>
@@ -1762,10 +1744,11 @@ function FsShapeElementRegistryDemo() {
                                     elements: [{
                                         id: "s", type: "shape", shape: kind,
                                         x: 0.15, y: 0.15, w: 0.7, h: 0.7,
-                                        fill: kind === "line" || kind === "arrow" ? "none" : "rgba(139,92,246,0.15)",
+                                        fill: kind === "line" ? "none" : "rgba(139,92,246,0.18)",
                                         stroke: "#8B5CF6",
                                         strokeWidth: 2,
                                     }],
+                                    background: { color: "#ffffff" },
                                 }}
                                 theme={fsDefaultTheme}
                             />
@@ -1782,8 +1765,8 @@ function FsShapeElementRegistryDemo() {
 function DarkSlideAgentRegistryDemo() {
     return (
         <Explainer
-            summary={'Top-level static surface for the PPTX writer. Mirrors holy-sheet\'s Agent pattern — single class with validate / write / toBytes / read / describe / validateAndRepair / jsonSchema. Framework-agnostic; optional Laravel facade.'}
-            code={'<?php\n\nuse DarkSlide\\Agent;\n\n$deck = [\n  \'id\' => \'q4-review\',\n  \'title\' => \'Q4 review\',\n  \'theme\' => [\'name\' => \'default\'],\n  \'slides\' => [[\n    \'id\' => \'s1\',\n    \'layout\' => \'title-content\',\n    \'elements\' => [[\n      \'id\' => \'h\',\n      \'type\' => \'text\',\n      \'x\' => 0.08, \'y\' => 0.08, \'w\' => 0.84, \'h\' => 0.14,\n      \'content\' => \'# Q4 highlights\',\n      \'format\' => \'markdown\',\n      \'style\' => [\'fontSize\' => 40],\n    ]],\n    \'background\' => [\'gradient\' => \'linear-gradient(135deg, #faf5ff 0%, #fff 60%)\'],\n  ]],\n];\n\n$result = Agent::write($deck, storage_path(\'app/q4.pptx\'));\n// => [\'path\' => \'…\', \'bytes\' => 6291, \'slides\' => 1]\n\n// Round-trip back to JSON:\n$back = Agent::read(storage_path(\'app/q4.pptx\'));\n\n// Plain-text summary for an agent:\necho Agent::describe($deck);\n\n// LLM tool registration:\n$schema = Agent::jsonSchema();'}
+            summary={'Top-level static surface for the PPTX writer. Same Agent::write call the package tile illustrates — single class with validate / write / toBytes / read / describe / validateAndRepair / jsonSchema. Framework-agnostic; optional Laravel facade.'}
+            code={'<?php\n\nuse DarkSlide\\Agent;\n\n$deck = [\n  \'id\' => \'' + CANONICAL_DECK.id + '\',\n  \'title\' => \'' + CANONICAL_DECK.title + '\',\n  \'theme\' => [\'name\' => \'default\'],\n  \'slides\' => [/* ' + CANONICAL_DECK.slides.length + ' slides matching the canonical Deck */],\n];\n\n$result = Agent::write($deck, storage_path(\'app/' + CANONICAL_DECK.id + '.pptx\'));\n// => [\'path\' => \'…\', \'bytes\' => 6291, \'slides\' => ' + CANONICAL_DECK.slides.length + ']\n\n// Round-trip back to JSON:\n$back = Agent::read(storage_path(\'app/' + CANONICAL_DECK.id + '.pptx\'));\n\n// Plain-text summary for an agent:\necho Agent::describe($deck);\n\n// LLM tool registration:\n$schema = Agent::jsonSchema();'}
             bullets={[
                 "Zero third-party deps. ext-zip + ext-dom only.",
                 "validateAndRepair() returns recoverable feedback for LLM tool loops.",
@@ -1795,44 +1778,101 @@ function DarkSlideAgentRegistryDemo() {
 
 function DarkSlidePptxWriterRegistryDemo() {
     return (
-        <Explainer
-            summary={'Office Open XML writer. Produces a real .pptx that opens cleanly in PowerPoint / Keynote / Google Slides / LibreOffice Impress. Writes text (with markdown headings + inline spans), images (data URI or local path), SVG shape primitives, real <a:tbl> tables, gradient backgrounds, and syntax-highlighted code blocks.'}
-            code={'use DarkSlide\\Writer\\PptxWriter;\n\n$writer = new PptxWriter();\n\n$bytes = $writer->toBytes($deck);\n// or:\n$writer->write($deck, $path);  // writes to disk + returns size'}
-            bullets={[
-                "Coords convert from 0..1 fractions to PPTX EMU (914,400 per inch).",
-                "Themes drive theme1.xml (font scheme + color scheme).",
-                "Speaker notes ship as ppt/notesSlides/notesSlideN.xml.",
-                "v0.3 ships markdown headings + syntax-highlighted code (JS/TS, PHP, JSON, bash, CSS, Python, HTML).",
-            ]}
-        />
+        <div className="space-y-3">
+            <Text size="sm" className="!text-zinc-600 dark:!text-zinc-300">
+                Office Open XML writer. Produces a real .pptx that opens cleanly in PowerPoint / Keynote / Google Slides / LibreOffice Impress. Coverage matrix matches the tile.
+            </Text>
+            <div className="grid grid-cols-3 gap-2 sm:grid-cols-6">
+                {PPTX_WRITER_COVERAGE.map((c) => (
+                    <div
+                        key={c.label}
+                        className={`rounded border px-2 py-3 text-center ${
+                            c.check
+                                ? "border-emerald-300 bg-emerald-50 text-emerald-800 dark:border-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-200"
+                                : "border-zinc-200 bg-zinc-50 text-zinc-400 dark:border-zinc-700 dark:bg-zinc-900"
+                        }`}
+                    >
+                        <div className="font-mono text-xs">{c.label}</div>
+                        <div className="text-base font-semibold">{c.check ? "✓" : c.note ?? "—"}</div>
+                    </div>
+                ))}
+            </div>
+            <Explainer
+                summary={'Element types map to drawingML shapes: text → <p:sp>+<p:txBody>, image → <p:pic>+blipFill, shape → <p:sp>+<a:prstGeom>, table → <p:graphicFrame>+<a:tbl>, code → colored runs inside a dark-filled <p:sp>.'}
+                code={'use DarkSlide\\Writer\\PptxWriter;\n\n$writer = new PptxWriter();\n\n$bytes = $writer->toBytes($deck);\n// or:\n$writer->write($deck, $path);  // writes to disk + returns size'}
+                bullets={[
+                    "Coords convert from 0..1 fractions to PPTX EMU (914,400 per inch).",
+                    "Themes drive theme1.xml (font scheme + color scheme).",
+                    "Speaker notes ship as ppt/notesSlides/notesSlideN.xml.",
+                    "v0.3 ships markdown headings + syntax-highlighted code (JS/TS, PHP, JSON, bash, CSS, Python, HTML).",
+                ]}
+            />
+        </div>
     );
 }
 
 function DarkSlidePptxReaderRegistryDemo() {
     return (
-        <Explainer
-            summary={'PPTX → Deck schema extractor. Agent-emitted decks round-trip with high fidelity; hand-authored PowerPoint files drop styling the schema can\'t represent.'}
-            code={'use DarkSlide\\Reader\\PptxReader;\n\n$reader = new PptxReader();\n\n$deck = $reader->read($path);\n// or:\n$deck = $reader->fromBytes($bytes);\n\n// $deck shape matches the writer\'s input exactly:\n// [ \'id\', \'title\', \'theme\', \'slides\' => […] ]'}
-            bullets={[
-                "Round-trips tables: real <a:tbl> → columns + rows on the Deck schema.",
-                "Round-trips gradient backgrounds: <a:gradFill> → CSS linear-gradient() strings.",
-                "Embedded images come back as data: URIs (resolved through the slide's rels file).",
-                "Inline bold / italic / `code` spans reconstruct from drawingML rPr decoration.",
-            ]}
-        />
+        <div className="space-y-3">
+            <Text size="sm" className="!text-zinc-600 dark:!text-zinc-300">
+                PPTX → Deck schema extractor. Agent-emitted decks round-trip with high fidelity; hand-authored PowerPoint files drop styling the schema can&apos;t represent. The tile&apos;s &quot;deck.pptx → Deck JSON&quot; flow expands here.
+            </Text>
+            <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 rounded-md border border-zinc-200 p-4 text-sm dark:border-zinc-800">
+                <div className="rounded border border-zinc-200 bg-zinc-50 p-3 text-center font-mono dark:border-zinc-700 dark:bg-zinc-900">
+                    deck.pptx
+                </div>
+                <span className="text-zinc-400">→</span>
+                <div className="rounded border border-violet-300 bg-violet-50 p-3 text-center font-mono text-violet-700 dark:border-violet-700 dark:bg-violet-500/15 dark:text-violet-200">
+                    Deck JSON
+                </div>
+            </div>
+            <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                {PPTX_READER_ROUNDTRIP.map((line) => (
+                    <li key={line} className="flex items-start gap-2 rounded border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-900 dark:border-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-100">
+                        <span>✓</span>
+                        <span className="font-mono">{line}</span>
+                    </li>
+                ))}
+            </ul>
+            <Explainer
+                summary={'fromBytes() lets you read uploaded PPTX bytes directly without a temp file. read() is the convenience for path-based reads.'}
+                code={'use DarkSlide\\Reader\\PptxReader;\n\n$reader = new PptxReader();\n\n$deck = $reader->read($path);\n// or:\n$deck = $reader->fromBytes($bytes);\n\n// $deck shape matches the writer\'s input exactly:\n// [ \'id\', \'title\', \'theme\', \'slides\' => […] ]'}
+            />
+        </div>
     );
 }
 
 function DarkSlideSyntaxHighlighterRegistryDemo() {
     return (
-        <Explainer
-            summary={'Pure-PHP code tokenizer used by the writer to ship per-token colored <a:r> runs inside code blocks. Zero third-party deps; covers the most common languages.'}
-            code={'use DarkSlide\\Helpers\\SyntaxHighlighter;\n\n$tokens = SyntaxHighlighter::tokenize(\n    "const greet = (name) => `Hello, ${name}`;",\n    "typescript",\n);\n\n// $tokens = [\n//   [\'text\' => \'const\',  \'kind\' => \'keyword\'],\n//   [\'text\' => \' greet = (name) =\',  \'kind\' => \'plain\'],\n//   [\'text\' => \'> \', \'kind\' => \'plain\'],\n//   [\'text\' => \'`Hello, ${name}`\', \'kind\' => \'string\'],\n//   [\'text\' => \';\', \'kind\' => \'punctuation\'],\n// ];\n\n// Map kind → hex for drawingML:\n$hex = SyntaxHighlighter::colorFor($tokens[0][\'kind\']);\n// => \'C084FC\' (keyword violet)'}
-            bullets={[
-                "Languages: javascript, typescript, jsx, tsx, php, json, bash, css, python, html.",
-                "Kinds: keyword / string / comment / number / builtin / punctuation / plain.",
-                "Palette is tuned for the writer's dark code-block fill (#0F172A).",
-            ]}
-        />
+        <div className="space-y-3">
+            <Text size="sm" className="!text-zinc-600 dark:!text-zinc-300">
+                Pure-PHP code tokenizer used by the writer to ship per-token colored `&lt;a:r&gt;` runs inside code blocks. The package tile shows this exact code; the detail page shows the tokenized result the writer would emit.
+            </Text>
+            <pre className="overflow-x-auto rounded-md bg-zinc-950 p-4 font-mono text-sm leading-relaxed">
+                <code>
+                    {CANONICAL_HIGHLIGHTED_TOKENS.map((tok, i) => (
+                        <span key={i} className={HIGHLIGHT_KIND_COLOR[tok.kind] ?? "text-slate-100"}>
+                            {tok.text}
+                        </span>
+                    ))}
+                </code>
+            </pre>
+            <div className="flex flex-wrap gap-2 text-xs">
+                {Object.entries(HIGHLIGHT_KIND_COLOR).map(([kind, cls]) => (
+                    <span key={kind} className="rounded border border-zinc-200 bg-white px-2 py-0.5 dark:border-zinc-700 dark:bg-zinc-900">
+                        <span className={cls + " font-mono"}>{kind}</span>
+                    </span>
+                ))}
+            </div>
+            <Explainer
+                summary={'tokenize($code, $language) returns [{ text, kind }, …]. colorFor($kind) returns a 6-digit hex string to drop into <a:srgbClr val="…"/>.'}
+                code={'use DarkSlide\\Helpers\\SyntaxHighlighter;\n\n$tokens = SyntaxHighlighter::tokenize(\n    "' + CANONICAL_HIGHLIGHTED_CODE.replace(/\n/g, '\\n').replace(/"/g, '\\"') + '",\n    "typescript",\n);\n\n// $tokens contains one entry per token:\n//   [\'text\' => \'const\', \'kind\' => \'keyword\'],\n//   [\'text\' => \' greet \', \'kind\' => \'plain\'],\n//   …\n\n// Map kind → hex for drawingML:\n$hex = SyntaxHighlighter::colorFor(\'keyword\');\n// => \'C084FC\''}
+                bullets={[
+                    "Languages: javascript, typescript, jsx, tsx, php, json, bash, css, python, html.",
+                    "Kinds: keyword / string / comment / number / builtin / punctuation / plain.",
+                    "Palette is tuned for the writer's dark code-block fill (#0F172A).",
+                ]}
+            />
+        </div>
     );
 }

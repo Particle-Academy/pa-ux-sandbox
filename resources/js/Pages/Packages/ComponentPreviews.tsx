@@ -25,12 +25,19 @@ import {
     Tooltip,
 } from "@particle-academy/react-fancy";
 import { EChart } from "@particle-academy/fancy-echarts";
-import {
-    Slide as FsSlide,
-    defaultTheme as fsDefaultTheme,
-    type SlideData as FsSlideData,
-} from "@particle-academy/fancy-slides";
+import { Slide as FsSlide, defaultTheme as fsDefaultTheme } from "@particle-academy/fancy-slides";
 import "@particle-academy/fancy-slides/styles.css";
+import {
+    CANONICAL_SLIDE,
+    CANONICAL_DECK,
+    CANONICAL_TEXT_SLIDE,
+    CANONICAL_IMAGE_SLIDE,
+    CANONICAL_SHAPES_SLIDE,
+    CANONICAL_HIGHLIGHTED_TOKENS,
+    HIGHLIGHT_KIND_COLOR,
+    PPTX_WRITER_COVERAGE,
+    PPTX_READER_ROUNDTRIP,
+} from "./showcase-fixtures";
 import {
     Bell,
     Check,
@@ -64,26 +71,6 @@ export function getComponentPreview(pkg: string, slug: string): PreviewFn | null
     return PREVIEWS[`${pkg}/${slug}`] ?? null;
 }
 
-// Shared tile slide used by the fancy-slides presenter-view + deck-editor
-// tiles so all three render the same identifiable layout.
-const FANCY_SLIDES_TILE_SLIDE: FsSlideData = {
-    id: "tile",
-    elements: [
-        {
-            id: "h", type: "text",
-            x: 0.08, y: 0.18, w: 0.84, h: 0.2,
-            content: "Slide",
-            format: "plain",
-            style: { fontSize: 56, weight: "semibold", align: "center" },
-        },
-        {
-            id: "accent", type: "shape", shape: "rounded-rect",
-            x: 0.3, y: 0.7, w: 0.4, h: 0.14,
-            fill: "rgba(139,92,246,0.18)", stroke: "#8B5CF6", strokeWidth: 2, radius: 8,
-        },
-    ],
-    background: { gradient: "linear-gradient(135deg, #faf5ff 0%, #ffffff 70%)" },
-};
 
 // ─── react-fancy ──────────────────────────────────────────────────────────
 
@@ -954,91 +941,47 @@ const PREVIEWS: Record<string, PreviewFn> = {
     ),
 
     // ─── fancy-slides ─────────────────────────────────────────────────────
+    //
+    // Every fancy-slides tile renders the same canonical slide / deck (see
+    // showcase-fixtures.tsx) so the user sees the exact same content when
+    // they click through to the detail page — the tile is just a miniature.
 
-    "fancy-slides/slide": () => {
-        const slide: FsSlideData = {
-            id: "tile-slide",
-            elements: [
-                {
-                    id: "h", type: "text",
-                    x: 0.08, y: 0.16, w: 0.84, h: 0.22,
-                    content: "Slide",
-                    format: "plain",
-                    style: { fontSize: 56, weight: "semibold", align: "center" },
-                },
-                {
-                    id: "sub", type: "text",
-                    x: 0.08, y: 0.46, w: 0.84, h: 0.14,
-                    content: "0..1 coords • theme-driven",
-                    format: "plain",
-                    style: { fontSize: 18, align: "center", color: "#64748b" },
-                },
-                {
-                    id: "accent", type: "shape", shape: "rounded-rect",
-                    x: 0.3, y: 0.7, w: 0.4, h: 0.16,
-                    fill: "rgba(139,92,246,0.15)", stroke: "#8B5CF6", strokeWidth: 2, radius: 8,
-                },
-            ],
-            background: { gradient: "linear-gradient(135deg, #faf5ff 0%, #ffffff 70%)" },
-        };
-        return (
-            <div className="w-full max-w-[20rem] overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-700">
-                <FsSlide slide={slide} theme={fsDefaultTheme} width={280} />
-            </div>
-        );
-    },
+    "fancy-slides/slide": () => (
+        <div className="w-full max-w-[20rem] overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-700">
+            <FsSlide slide={CANONICAL_SLIDE} theme={fsDefaultTheme} width={280} />
+        </div>
+    ),
 
     "fancy-slides/slide-viewer": () => (
         <div className="relative w-full max-w-[20rem] overflow-hidden rounded-md border border-zinc-200 bg-black dark:border-zinc-700">
-            <div className="aspect-[16/9] w-full">
-                <FsSlide
-                    slide={{
-                        id: "tile-viewer",
-                        elements: [{
-                            id: "t", type: "text",
-                            x: 0.08, y: 0.4, w: 0.84, h: 0.2,
-                            content: "Welcome",
-                            format: "plain",
-                            style: { fontSize: 56, weight: "bold", align: "center", color: "#fafafa" },
-                        }],
-                        background: { color: "#0f172a" },
-                    }}
-                    theme={fsDefaultTheme}
-                />
-            </div>
-            <div className="absolute right-2 top-2 flex gap-1">
-                <span className="rounded bg-black/40 px-1.5 py-0.5 font-mono text-[9px] text-white">1 / 4</span>
+            <FsSlide slide={CANONICAL_DECK.slides[0]} theme={fsDefaultTheme} width={320} />
+            <div className="absolute right-2 top-2">
+                <span className="rounded bg-black/40 px-1.5 py-0.5 font-mono text-[9px] text-white">1 / {CANONICAL_DECK.slides.length}</span>
             </div>
             <div className="absolute bottom-2 left-1/2 flex -translate-x-1/2 gap-1">
-                {[0, 1, 2, 3].map((i) => (
-                    <span key={i} className={`h-1 w-3 rounded-full ${i === 0 ? "bg-white" : "bg-white/30"}`} />
+                {CANONICAL_DECK.slides.map((_, i) => (
+                    <span key={i} className={`h-1 w-3 rounded-full ${i === 0 ? "bg-violet-500" : "bg-white/40"}`} />
                 ))}
             </div>
         </div>
     ),
 
     "fancy-slides/presenter-view": () => (
-        <div className="w-full max-w-[20rem] space-y-2 rounded-md border border-zinc-200 bg-zinc-50 p-2 text-[10px] dark:border-zinc-700 dark:bg-zinc-900">
+        <div className="w-full max-w-[20rem] space-y-1.5 rounded-md border border-zinc-200 bg-zinc-50 p-2 text-[10px] dark:border-zinc-700 dark:bg-zinc-900">
             <div className="flex items-center justify-between text-zinc-500">
                 <span className="font-mono">03:42 elapsed</span>
                 <span className="font-mono">14:21:09</span>
             </div>
             <div className="grid grid-cols-[3fr_2fr] gap-1.5">
                 <div className="overflow-hidden rounded border border-zinc-300 dark:border-zinc-700">
-                    <FsSlide
-                        slide={FANCY_SLIDES_TILE_SLIDE}
-                        theme={fsDefaultTheme}
-                    />
+                    <FsSlide slide={CANONICAL_DECK.slides[0]} theme={fsDefaultTheme} />
                 </div>
-                <div className="grid place-items-center overflow-hidden rounded border border-dashed border-zinc-300 bg-white text-[8px] text-zinc-400 dark:border-zinc-700 dark:bg-zinc-950">
-                    <div className="text-center">
-                        <div className="font-semibold">Up next</div>
-                        <div>Slide 2 of 5</div>
-                    </div>
+                <div className="overflow-hidden rounded border border-dashed border-zinc-300 dark:border-zinc-700">
+                    <FsSlide slide={CANONICAL_DECK.slides[1]} theme={fsDefaultTheme} />
                 </div>
             </div>
             <div className="rounded border border-zinc-200 bg-white p-1.5 text-[9px] text-zinc-600 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-300">
-                <span className="font-semibold">Notes:</span> Walk through the bullets. Press → after the third.
+                <span className="font-semibold">Notes:</span> {String(CANONICAL_DECK.slides[0].notes ?? "").slice(0, 70)}…
             </div>
         </div>
     ),
@@ -1053,7 +996,7 @@ const PREVIEWS: Record<string, PreviewFn> = {
             </div>
             <div className="grid grid-cols-[36px_1fr_60px] gap-1 p-1.5">
                 <div className="space-y-1">
-                    {[0, 1, 2, 3].map((i) => (
+                    {CANONICAL_DECK.slides.map((_, i) => (
                         <div
                             key={i}
                             className={`grid h-6 place-items-center rounded text-[8px] ${
@@ -1066,16 +1009,16 @@ const PREVIEWS: Record<string, PreviewFn> = {
                         </div>
                     ))}
                 </div>
-                <div className="overflow-hidden rounded">
-                    <FsSlide slide={FANCY_SLIDES_TILE_SLIDE} theme={fsDefaultTheme} />
+                <div className="overflow-hidden rounded border border-zinc-200 dark:border-zinc-700">
+                    <FsSlide slide={CANONICAL_DECK.slides[0]} theme={fsDefaultTheme} />
                 </div>
                 <div className="space-y-1 text-[8px]">
                     <div className="rounded bg-zinc-100 px-1 py-0.5 font-semibold text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
                         Inspector
                     </div>
                     <div className="rounded bg-zinc-50 px-1 py-0.5 text-zinc-500 dark:bg-zinc-950">x: 0.08</div>
-                    <div className="rounded bg-zinc-50 px-1 py-0.5 text-zinc-500 dark:bg-zinc-950">y: 0.16</div>
-                    <div className="rounded bg-zinc-50 px-1 py-0.5 text-zinc-500 dark:bg-zinc-950">font: 56</div>
+                    <div className="rounded bg-zinc-50 px-1 py-0.5 text-zinc-500 dark:bg-zinc-950">y: 0.30</div>
+                    <div className="rounded bg-zinc-50 px-1 py-0.5 text-zinc-500 dark:bg-zinc-950">font: 22</div>
                 </div>
             </div>
         </div>
@@ -1083,52 +1026,19 @@ const PREVIEWS: Record<string, PreviewFn> = {
 
     "fancy-slides/text-element": () => (
         <div className="w-full max-w-[18rem] overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-700">
-            <FsSlide
-                slide={{
-                    id: "tile-text",
-                    elements: [{
-                        id: "t", type: "text",
-                        x: 0.06, y: 0.16, w: 0.88, h: 0.7,
-                        content: "## Markdown headings\n\nInline **bold**, *italic*, `code`.\n\n- list item one\n- list item **two**",
-                        format: "markdown",
-                        style: { fontSize: 22, lineHeight: 1.5 },
-                    }],
-                }}
-                theme={fsDefaultTheme}
-            />
+            <FsSlide slide={CANONICAL_TEXT_SLIDE} theme={fsDefaultTheme} />
         </div>
     ),
 
     "fancy-slides/image-element": () => (
         <div className="w-full max-w-[18rem] overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-700">
-            <FsSlide
-                slide={{
-                    id: "tile-image",
-                    elements: [{
-                        id: "i", type: "image",
-                        x: 0.06, y: 0.06, w: 0.88, h: 0.88,
-                        src: "https://placehold.co/600x400/8b5cf6/ffffff?text=image",
-                        fit: "cover",
-                    }],
-                }}
-                theme={fsDefaultTheme}
-            />
+            <FsSlide slide={CANONICAL_IMAGE_SLIDE} theme={fsDefaultTheme} />
         </div>
     ),
 
     "fancy-slides/shape-element": () => (
         <div className="w-full max-w-[18rem] overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-700">
-            <FsSlide
-                slide={{
-                    id: "tile-shape",
-                    elements: [
-                        { id: "a", type: "shape", shape: "rect", x: 0.1, y: 0.2, w: 0.3, h: 0.6, fill: "rgba(139,92,246,0.18)", stroke: "#8B5CF6", strokeWidth: 2 },
-                        { id: "b", type: "shape", shape: "arrow", x: 0.42, y: 0.45, w: 0.16, h: 0.1, stroke: "#8B5CF6", strokeWidth: 3 },
-                        { id: "c", type: "shape", shape: "ellipse", x: 0.6, y: 0.2, w: 0.3, h: 0.6, fill: "rgba(34,197,94,0.18)", stroke: "#22c55e", strokeWidth: 2 },
-                    ],
-                }}
-                theme={fsDefaultTheme}
-            />
+            <FsSlide slide={CANONICAL_SHAPES_SLIDE} theme={fsDefaultTheme} />
         </div>
     ),
 
@@ -1137,14 +1047,14 @@ const PREVIEWS: Record<string, PreviewFn> = {
     "dark-slide/agent": () => (
         <div className="w-full max-w-[20rem] overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-700">
             <div className="flex items-center justify-between border-b border-zinc-100 bg-indigo-50 px-2 py-1 text-[10px] dark:border-zinc-800 dark:bg-indigo-500/10">
-                <span className="font-mono text-indigo-700 dark:text-indigo-200">q4.pptx</span>
+                <span className="font-mono text-indigo-700 dark:text-indigo-200">{CANONICAL_DECK.id}.pptx</span>
                 <span className="text-indigo-700 dark:text-indigo-200">✓ written</span>
             </div>
             <div className="px-2 py-1.5 font-mono text-[10px]">
                 <div className="text-zinc-500">Agent::write($deck)</div>
-                <div className="text-zinc-700 dark:text-zinc-300">  ↳ 6 slides, 6.3 KB</div>
+                <div className="text-zinc-700 dark:text-zinc-300">  ↳ {CANONICAL_DECK.slides.length} slides, 6.3 KB</div>
                 <div className="mt-1 text-zinc-500">Agent::describe($deck)</div>
-                <div className="text-zinc-700 dark:text-zinc-300">  ↳ &quot;Q4 review · 6 slides…&quot;</div>
+                <div className="text-zinc-700 dark:text-zinc-300">  ↳ &quot;{CANONICAL_DECK.title} · {CANONICAL_DECK.slides.length} slides…&quot;</div>
             </div>
         </div>
     ),
@@ -1152,14 +1062,7 @@ const PREVIEWS: Record<string, PreviewFn> = {
     "dark-slide/pptx-writer": () => (
         <div className="w-full max-w-[20rem] space-y-1.5 text-[10px]">
             <div className="grid grid-cols-3 gap-1 text-center">
-                {[
-                    { label: "text", check: true },
-                    { label: "image", check: true },
-                    { label: "shape", check: true },
-                    { label: "table", check: true },
-                    { label: "code", check: true },
-                    { label: "chart", check: false },
-                ].map((c) => (
+                {PPTX_WRITER_COVERAGE.map((c) => (
                     <div
                         key={c.label}
                         className={`rounded border px-1.5 py-1 ${
@@ -1169,7 +1072,7 @@ const PREVIEWS: Record<string, PreviewFn> = {
                         }`}
                     >
                         <div className="font-mono">{c.label}</div>
-                        <div>{c.check ? "✓" : "v0.4"}</div>
+                        <div>{c.check ? "✓" : c.note ?? "—"}</div>
                     </div>
                 ))}
             </div>
@@ -1191,31 +1094,20 @@ const PREVIEWS: Record<string, PreviewFn> = {
                 </div>
             </div>
             <ul className="mt-2 space-y-0.5 text-zinc-500">
-                <li>✓ tables → columns + rows</li>
-                <li>✓ gradients → linear-gradient()</li>
-                <li>✓ images → data: URIs</li>
-                <li>✓ inline **bold** / `code`</li>
+                {PPTX_READER_ROUNDTRIP.map((line) => <li key={line}>✓ {line}</li>)}
             </ul>
         </div>
     ),
 
     "dark-slide/syntax-highlighter": () => (
         <div className="w-full max-w-[20rem] overflow-hidden rounded-md bg-zinc-950 p-2 font-mono text-[10px] leading-tight">
-            <div className="text-zinc-500">// dark-slide/SyntaxHighlighter</div>
-            <div>
-                <span className="text-violet-400">const</span>
-                <span className="text-slate-100"> greet </span>
-                <span className="text-slate-300">=</span>
-                <span className="text-slate-100"> (</span>
-                <span className="text-slate-100">name</span>
-                <span className="text-slate-300">)</span>
-                <span className="text-slate-100"> </span>
-                <span className="text-slate-300">=&gt;</span>
-                <span className="text-slate-100"> </span>
-                <span className="text-emerald-300">`Hello, ${"${"}name{"}"}`</span>
-                <span className="text-slate-300">;</span>
+            <div className="text-slate-500">// dark-slide/SyntaxHighlighter</div>
+            <div className="whitespace-pre-wrap">
+                {CANONICAL_HIGHLIGHTED_TOKENS.map((tok, i) => (
+                    <span key={i} className={HIGHLIGHT_KIND_COLOR[tok.kind] ?? "text-slate-100"}>{tok.text}</span>
+                ))}
             </div>
-            <div className="mt-1 flex gap-1.5 text-[8px]">
+            <div className="mt-1 flex flex-wrap gap-1 text-[8px]">
                 <span className="rounded bg-violet-500/20 px-1 text-violet-200">keyword</span>
                 <span className="rounded bg-emerald-500/20 px-1 text-emerald-200">string</span>
                 <span className="rounded bg-amber-500/20 px-1 text-amber-200">number</span>

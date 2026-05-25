@@ -26,6 +26,12 @@ import {
 } from "@particle-academy/react-fancy";
 import { EChart } from "@particle-academy/fancy-echarts";
 import {
+    Slide as FsSlide,
+    defaultTheme as fsDefaultTheme,
+    type SlideData as FsSlideData,
+} from "@particle-academy/fancy-slides";
+import "@particle-academy/fancy-slides/styles.css";
+import {
     Bell,
     Check,
     ChevronRight,
@@ -57,6 +63,27 @@ type PreviewFn = () => ReactNode;
 export function getComponentPreview(pkg: string, slug: string): PreviewFn | null {
     return PREVIEWS[`${pkg}/${slug}`] ?? null;
 }
+
+// Shared tile slide used by the fancy-slides presenter-view + deck-editor
+// tiles so all three render the same identifiable layout.
+const FANCY_SLIDES_TILE_SLIDE: FsSlideData = {
+    id: "tile",
+    elements: [
+        {
+            id: "h", type: "text",
+            x: 0.08, y: 0.18, w: 0.84, h: 0.2,
+            content: "Slide",
+            format: "plain",
+            style: { fontSize: 56, weight: "semibold", align: "center" },
+        },
+        {
+            id: "accent", type: "shape", shape: "rounded-rect",
+            x: 0.3, y: 0.7, w: 0.4, h: 0.14,
+            fill: "rgba(139,92,246,0.18)", stroke: "#8B5CF6", strokeWidth: 2, radius: 8,
+        },
+    ],
+    background: { gradient: "linear-gradient(135deg, #faf5ff 0%, #ffffff 70%)" },
+};
 
 // ─── react-fancy ──────────────────────────────────────────────────────────
 
@@ -922,6 +949,277 @@ const PREVIEWS: Record<string, PreviewFn> = {
             <div className="px-2 py-1.5 text-[10px] font-mono">
                 <div className="text-zinc-500">Agent::write($schema)</div>
                 <div className="text-zinc-700 dark:text-zinc-300">  ↳ 3 sheets, 142 rows</div>
+            </div>
+        </div>
+    ),
+
+    // ─── fancy-slides ─────────────────────────────────────────────────────
+
+    "fancy-slides/slide": () => {
+        const slide: FsSlideData = {
+            id: "tile-slide",
+            elements: [
+                {
+                    id: "h", type: "text",
+                    x: 0.08, y: 0.16, w: 0.84, h: 0.22,
+                    content: "Slide",
+                    format: "plain",
+                    style: { fontSize: 56, weight: "semibold", align: "center" },
+                },
+                {
+                    id: "sub", type: "text",
+                    x: 0.08, y: 0.46, w: 0.84, h: 0.14,
+                    content: "0..1 coords • theme-driven",
+                    format: "plain",
+                    style: { fontSize: 18, align: "center", color: "#64748b" },
+                },
+                {
+                    id: "accent", type: "shape", shape: "rounded-rect",
+                    x: 0.3, y: 0.7, w: 0.4, h: 0.16,
+                    fill: "rgba(139,92,246,0.15)", stroke: "#8B5CF6", strokeWidth: 2, radius: 8,
+                },
+            ],
+            background: { gradient: "linear-gradient(135deg, #faf5ff 0%, #ffffff 70%)" },
+        };
+        return (
+            <div className="w-full max-w-[20rem] overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-700">
+                <FsSlide slide={slide} theme={fsDefaultTheme} width={280} />
+            </div>
+        );
+    },
+
+    "fancy-slides/slide-viewer": () => (
+        <div className="relative w-full max-w-[20rem] overflow-hidden rounded-md border border-zinc-200 bg-black dark:border-zinc-700">
+            <div className="aspect-[16/9] w-full">
+                <FsSlide
+                    slide={{
+                        id: "tile-viewer",
+                        elements: [{
+                            id: "t", type: "text",
+                            x: 0.08, y: 0.4, w: 0.84, h: 0.2,
+                            content: "Welcome",
+                            format: "plain",
+                            style: { fontSize: 56, weight: "bold", align: "center", color: "#fafafa" },
+                        }],
+                        background: { color: "#0f172a" },
+                    }}
+                    theme={fsDefaultTheme}
+                />
+            </div>
+            <div className="absolute right-2 top-2 flex gap-1">
+                <span className="rounded bg-black/40 px-1.5 py-0.5 font-mono text-[9px] text-white">1 / 4</span>
+            </div>
+            <div className="absolute bottom-2 left-1/2 flex -translate-x-1/2 gap-1">
+                {[0, 1, 2, 3].map((i) => (
+                    <span key={i} className={`h-1 w-3 rounded-full ${i === 0 ? "bg-white" : "bg-white/30"}`} />
+                ))}
+            </div>
+        </div>
+    ),
+
+    "fancy-slides/presenter-view": () => (
+        <div className="w-full max-w-[20rem] space-y-2 rounded-md border border-zinc-200 bg-zinc-50 p-2 text-[10px] dark:border-zinc-700 dark:bg-zinc-900">
+            <div className="flex items-center justify-between text-zinc-500">
+                <span className="font-mono">03:42 elapsed</span>
+                <span className="font-mono">14:21:09</span>
+            </div>
+            <div className="grid grid-cols-[3fr_2fr] gap-1.5">
+                <div className="overflow-hidden rounded border border-zinc-300 dark:border-zinc-700">
+                    <FsSlide
+                        slide={FANCY_SLIDES_TILE_SLIDE}
+                        theme={fsDefaultTheme}
+                    />
+                </div>
+                <div className="grid place-items-center overflow-hidden rounded border border-dashed border-zinc-300 bg-white text-[8px] text-zinc-400 dark:border-zinc-700 dark:bg-zinc-950">
+                    <div className="text-center">
+                        <div className="font-semibold">Up next</div>
+                        <div>Slide 2 of 5</div>
+                    </div>
+                </div>
+            </div>
+            <div className="rounded border border-zinc-200 bg-white p-1.5 text-[9px] text-zinc-600 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-300">
+                <span className="font-semibold">Notes:</span> Walk through the bullets. Press → after the third.
+            </div>
+        </div>
+    ),
+
+    "fancy-slides/deck-editor": () => (
+        <div className="w-full max-w-[20rem] overflow-hidden rounded-md border border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-900">
+            <div className="flex items-center gap-1 border-b border-zinc-200 px-2 py-1 dark:border-zinc-800">
+                <span className="font-mono text-[9px] text-zinc-500">deck.json</span>
+                <span className="ml-auto flex gap-1 text-[10px] text-zinc-400">
+                    <span>↶</span><span>↷</span><span>▶</span>
+                </span>
+            </div>
+            <div className="grid grid-cols-[36px_1fr_60px] gap-1 p-1.5">
+                <div className="space-y-1">
+                    {[0, 1, 2, 3].map((i) => (
+                        <div
+                            key={i}
+                            className={`grid h-6 place-items-center rounded text-[8px] ${
+                                i === 0
+                                    ? "bg-violet-100 text-violet-700 ring-1 ring-violet-300 dark:bg-violet-500/15 dark:text-violet-100 dark:ring-violet-700"
+                                    : "bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400"
+                            }`}
+                        >
+                            {i + 1}
+                        </div>
+                    ))}
+                </div>
+                <div className="overflow-hidden rounded">
+                    <FsSlide slide={FANCY_SLIDES_TILE_SLIDE} theme={fsDefaultTheme} />
+                </div>
+                <div className="space-y-1 text-[8px]">
+                    <div className="rounded bg-zinc-100 px-1 py-0.5 font-semibold text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
+                        Inspector
+                    </div>
+                    <div className="rounded bg-zinc-50 px-1 py-0.5 text-zinc-500 dark:bg-zinc-950">x: 0.08</div>
+                    <div className="rounded bg-zinc-50 px-1 py-0.5 text-zinc-500 dark:bg-zinc-950">y: 0.16</div>
+                    <div className="rounded bg-zinc-50 px-1 py-0.5 text-zinc-500 dark:bg-zinc-950">font: 56</div>
+                </div>
+            </div>
+        </div>
+    ),
+
+    "fancy-slides/text-element": () => (
+        <div className="w-full max-w-[18rem] overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-700">
+            <FsSlide
+                slide={{
+                    id: "tile-text",
+                    elements: [{
+                        id: "t", type: "text",
+                        x: 0.06, y: 0.16, w: 0.88, h: 0.7,
+                        content: "## Markdown headings\n\nInline **bold**, *italic*, `code`.\n\n- list item one\n- list item **two**",
+                        format: "markdown",
+                        style: { fontSize: 22, lineHeight: 1.5 },
+                    }],
+                }}
+                theme={fsDefaultTheme}
+            />
+        </div>
+    ),
+
+    "fancy-slides/image-element": () => (
+        <div className="w-full max-w-[18rem] overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-700">
+            <FsSlide
+                slide={{
+                    id: "tile-image",
+                    elements: [{
+                        id: "i", type: "image",
+                        x: 0.06, y: 0.06, w: 0.88, h: 0.88,
+                        src: "https://placehold.co/600x400/8b5cf6/ffffff?text=image",
+                        fit: "cover",
+                    }],
+                }}
+                theme={fsDefaultTheme}
+            />
+        </div>
+    ),
+
+    "fancy-slides/shape-element": () => (
+        <div className="w-full max-w-[18rem] overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-700">
+            <FsSlide
+                slide={{
+                    id: "tile-shape",
+                    elements: [
+                        { id: "a", type: "shape", shape: "rect", x: 0.1, y: 0.2, w: 0.3, h: 0.6, fill: "rgba(139,92,246,0.18)", stroke: "#8B5CF6", strokeWidth: 2 },
+                        { id: "b", type: "shape", shape: "arrow", x: 0.42, y: 0.45, w: 0.16, h: 0.1, stroke: "#8B5CF6", strokeWidth: 3 },
+                        { id: "c", type: "shape", shape: "ellipse", x: 0.6, y: 0.2, w: 0.3, h: 0.6, fill: "rgba(34,197,94,0.18)", stroke: "#22c55e", strokeWidth: 2 },
+                    ],
+                }}
+                theme={fsDefaultTheme}
+            />
+        </div>
+    ),
+
+    // ─── dark-slide (PHP) ─────────────────────────────────────────────────
+
+    "dark-slide/agent": () => (
+        <div className="w-full max-w-[20rem] overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-700">
+            <div className="flex items-center justify-between border-b border-zinc-100 bg-indigo-50 px-2 py-1 text-[10px] dark:border-zinc-800 dark:bg-indigo-500/10">
+                <span className="font-mono text-indigo-700 dark:text-indigo-200">q4.pptx</span>
+                <span className="text-indigo-700 dark:text-indigo-200">✓ written</span>
+            </div>
+            <div className="px-2 py-1.5 font-mono text-[10px]">
+                <div className="text-zinc-500">Agent::write($deck)</div>
+                <div className="text-zinc-700 dark:text-zinc-300">  ↳ 6 slides, 6.3 KB</div>
+                <div className="mt-1 text-zinc-500">Agent::describe($deck)</div>
+                <div className="text-zinc-700 dark:text-zinc-300">  ↳ &quot;Q4 review · 6 slides…&quot;</div>
+            </div>
+        </div>
+    ),
+
+    "dark-slide/pptx-writer": () => (
+        <div className="w-full max-w-[20rem] space-y-1.5 text-[10px]">
+            <div className="grid grid-cols-3 gap-1 text-center">
+                {[
+                    { label: "text", check: true },
+                    { label: "image", check: true },
+                    { label: "shape", check: true },
+                    { label: "table", check: true },
+                    { label: "code", check: true },
+                    { label: "chart", check: false },
+                ].map((c) => (
+                    <div
+                        key={c.label}
+                        className={`rounded border px-1.5 py-1 ${
+                            c.check
+                                ? "border-emerald-300 bg-emerald-50 text-emerald-800 dark:border-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-200"
+                                : "border-zinc-200 bg-zinc-50 text-zinc-400 dark:border-zinc-700 dark:bg-zinc-900"
+                        }`}
+                    >
+                        <div className="font-mono">{c.label}</div>
+                        <div>{c.check ? "✓" : "v0.4"}</div>
+                    </div>
+                ))}
+            </div>
+            <div className="rounded border border-zinc-200 bg-zinc-950 px-1.5 py-1 font-mono text-[9px] text-zinc-300">
+                ppt/slides/slide1.xml · 1.8 KB
+            </div>
+        </div>
+    ),
+
+    "dark-slide/pptx-reader": () => (
+        <div className="w-full max-w-[20rem] text-[10px]">
+            <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-1.5">
+                <div className="rounded border border-zinc-200 bg-zinc-50 p-1.5 text-center font-mono dark:border-zinc-700 dark:bg-zinc-900">
+                    deck.pptx
+                </div>
+                <span className="text-zinc-400">→</span>
+                <div className="rounded border border-violet-300 bg-violet-50 p-1.5 text-center font-mono text-violet-700 dark:border-violet-700 dark:bg-violet-500/15 dark:text-violet-200">
+                    Deck JSON
+                </div>
+            </div>
+            <ul className="mt-2 space-y-0.5 text-zinc-500">
+                <li>✓ tables → columns + rows</li>
+                <li>✓ gradients → linear-gradient()</li>
+                <li>✓ images → data: URIs</li>
+                <li>✓ inline **bold** / `code`</li>
+            </ul>
+        </div>
+    ),
+
+    "dark-slide/syntax-highlighter": () => (
+        <div className="w-full max-w-[20rem] overflow-hidden rounded-md bg-zinc-950 p-2 font-mono text-[10px] leading-tight">
+            <div className="text-zinc-500">// dark-slide/SyntaxHighlighter</div>
+            <div>
+                <span className="text-violet-400">const</span>
+                <span className="text-slate-100"> greet </span>
+                <span className="text-slate-300">=</span>
+                <span className="text-slate-100"> (</span>
+                <span className="text-slate-100">name</span>
+                <span className="text-slate-300">)</span>
+                <span className="text-slate-100"> </span>
+                <span className="text-slate-300">=&gt;</span>
+                <span className="text-slate-100"> </span>
+                <span className="text-emerald-300">`Hello, ${"${"}name{"}"}`</span>
+                <span className="text-slate-300">;</span>
+            </div>
+            <div className="mt-1 flex gap-1.5 text-[8px]">
+                <span className="rounded bg-violet-500/20 px-1 text-violet-200">keyword</span>
+                <span className="rounded bg-emerald-500/20 px-1 text-emerald-200">string</span>
+                <span className="rounded bg-amber-500/20 px-1 text-amber-200">number</span>
+                <span className="rounded bg-slate-500/20 px-1 text-slate-300">comment</span>
             </div>
         </div>
     ),

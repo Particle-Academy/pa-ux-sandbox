@@ -55,12 +55,15 @@ import {
 } from "@particle-academy/react-fancy";
 import { CodeEditor } from "@particle-academy/fancy-code";
 import {
+    DeckEditor as FsDeckEditor,
     PresenterView as FsPresenterView,
     Slide as FsSlide,
     SlideViewer as FsSlideViewer,
     defaultTheme as fsDefaultTheme,
     darkTheme as fsDarkTheme,
+    type Deck as FsDeck,
 } from "@particle-academy/fancy-slides";
+import { defaultElementRegistry as fsDefaultElementRegistry } from "@particle-academy/fancy-slides/registry";
 import "@particle-academy/fancy-slides/styles.css";
 import {
     CANONICAL_SLIDE,
@@ -1593,60 +1596,51 @@ function FsPresenterViewRegistryDemo() {
 }
 
 function FsDeckEditorRegistryDemo() {
+    // Real, live editor. Same canonical deck as the rest of the showcase —
+    // edit the slide, drag elements, add new ones from the toolbar, reorder
+    // in the rail. Mutations are op-based; the local state below is the
+    // canonical "consumer owns the deck" pattern.
+    const [deck, setDeck] = useState<FsDeck>(CANONICAL_DECK);
+    const [opCount, setOpCount] = useState(0);
+
     return (
-        <div className="space-y-4">
+        <div className="space-y-3">
             <Text size="sm" className="!text-zinc-600 dark:!text-zinc-300">
-                Full slide editor — left rail (thumbnails + reorder), center canvas (selectable + draggable elements), right inspector (per-element styling), top toolbar. Visualized below with the same canonical deck.
+                Full live editor — toolbar / slide rail / canvas / inspector / speaker notes. Drag elements, edit text inline, reorder slides in the rail, add new elements from the toolbar. Every mutation flows through the same `DeckOp` enum the agent bridge speaks, so humans and agents drive identical operations.
             </Text>
-            <div className="overflow-hidden rounded-md border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-900">
-                <div className="flex items-center gap-2 border-b border-zinc-200 px-3 py-1.5 text-xs dark:border-zinc-800">
-                    <span className="font-mono text-zinc-500">deck.json</span>
-                    <span className="ml-auto flex gap-2 text-zinc-400">
-                        <span>↶</span><span>↷</span><span>▶</span><span>+</span>
-                    </span>
-                </div>
-                <div className="grid grid-cols-[80px_1fr_140px] gap-2 p-2">
-                    <div className="space-y-1">
-                        {CANONICAL_DECK.slides.map((slide, i) => (
-                            <div
-                                key={slide.id}
-                                className={`overflow-hidden rounded border ${
-                                    i === 0
-                                        ? "border-violet-400 ring-1 ring-violet-300 dark:border-violet-600"
-                                        : "border-zinc-200 dark:border-zinc-700"
-                                }`}
-                            >
-                                <FsSlide slide={slide} theme={fsDefaultTheme} />
-                            </div>
-                        ))}
-                    </div>
-                    <div className="overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-700">
-                        <FsSlide slide={CANONICAL_DECK.slides[0]} theme={fsDefaultTheme} />
-                    </div>
-                    <div className="space-y-1 text-[10px]">
-                        <div className="rounded bg-zinc-100 px-1.5 py-1 font-semibold text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
-                            Inspector
-                        </div>
-                        {[
-                            ["element", "body"],
-                            ["type", "text"],
-                            ["x", "0.08"],
-                            ["y", "0.30"],
-                            ["w", "0.55"],
-                            ["h", "0.55"],
-                            ["fontSize", "22"],
-                        ].map(([k, v]) => (
-                            <div key={k} className="flex justify-between rounded bg-zinc-50 px-1.5 py-0.5 font-mono text-zinc-500 dark:bg-zinc-950">
-                                <span>{k}</span>
-                                <span>{v}</span>
-                            </div>
-                        ))}
-                    </div>
-                </div>
+            <div className="flex items-center gap-2 text-xs">
+                <Badge color="violet">{deck.slides.length} slides</Badge>
+                <Badge color="zinc">{opCount} ops applied</Badge>
+                <Action
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => {
+                        setDeck(CANONICAL_DECK);
+                        setOpCount(0);
+                    }}
+                >
+                    Reset
+                </Action>
+            </div>
+            <div className="h-[640px] overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
+                <FsDeckEditor
+                    value={deck}
+                    onChange={setDeck}
+                    onOp={() => setOpCount((n) => n + 1)}
+                    renderElement={(element, slideWidthPx) => {
+                        const Renderer = fsDefaultElementRegistry[element.type as keyof typeof fsDefaultElementRegistry];
+                        return Renderer ? <Renderer element={element as any} slideWidthPx={slideWidthPx} /> : undefined;
+                    }}
+                />
             </div>
             <Explainer
-                summary="Live editor on this page would balloon the SPA chunk; the kitchen-sink demo is mounted at /react-demos/slides instead. Code snippet shows the import + minimal usage."
-                code={'import { DeckEditor, defaultTheme } from "@particle-academy/fancy-slides";\nimport "@particle-academy/fancy-slides/styles.css";\n\nconst [deck, setDeck] = useState({\n  id: "doc-1",\n  title: "My deck",\n  theme: defaultTheme,\n  slides: [/* … */],\n});\n\n<DeckEditor deck={deck} onChange={setDeck} />'}
+                summary="DeckEditor is controlled (value + onChange). The host owns the deck; the editor renders a view and dispatches ops. `defaultElementRegistry` plugs in renderers for the optional element types (chart, code, table, embed) that the package doesn't render natively."
+                code={'import { DeckEditor, defaultTheme } from "@particle-academy/fancy-slides";\nimport { defaultElementRegistry } from "@particle-academy/fancy-slides/registry";\nimport "@particle-academy/fancy-slides/styles.css";\n\nconst [deck, setDeck] = useState({\n  id: "doc-1",\n  title: "My deck",\n  theme: defaultTheme,\n  slides: [/* … */],\n});\n\n<DeckEditor\n  value={deck}\n  onChange={setDeck}\n  onOp={(op) => activityLog.push(op)}\n  renderElement={(el, w) => {\n    const R = defaultElementRegistry[el.type];\n    return R ? <R element={el} slideWidthPx={w} /> : undefined;\n  }}\n/>'}
+                bullets={[
+                    "Compose your own layout by importing SlideRail / EditorToolbar / ElementInspector / SpeakerNotes individually.",
+                    "Agent-bridgeable — the same DeckOp stream powers human + agent mutations.",
+                    "Hide any panel via hideRail / hideToolbar / hideInspector / hideNotes for embedded contexts.",
+                ]}
             />
         </div>
     );

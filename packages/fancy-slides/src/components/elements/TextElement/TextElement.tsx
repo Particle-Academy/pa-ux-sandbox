@@ -101,11 +101,29 @@ export function TextElementRenderer({
     // (fontSize, weight, align) wins over the global prose CSS. We render a
     // tiny inline style block that targets only this instance via the
     // generated useId scope.
+    //
+    // CRITICAL: ContentRenderer wraps its content in `text-sm` plus per-tag
+    // Tailwind utilities (`[&_h1]:text-2xl`, etc). Those have higher
+    // specificity than the inline `fontSize` we set on the wrapper, so
+    // without forced overrides the slide text ignores `style.fontSize` AND
+    // ignores the slide's resolution scaling — that's why thumbnails were
+    // rendering text at ~14px instead of (fontSize × scale)px.
+    //
+    // We double the attribute-selector to outrank Tailwind's
+    // `[&_h2]:text-xl`-style utilities, and re-express heading sizes in
+    // `em` so they remain proportional as the slide scales.
     const proseScope = `[data-fs-text-scope="${scopeId}"]`;
+    const doubleScope = `${proseScope}${proseScope}`;
     return (
         <div data-fs-text-scope={scopeId} style={css}>
             <style>{`
-                ${proseScope} > div { width: 100%; height: 100%; }
+                ${proseScope} > div { width: 100%; height: 100%; font-size: inherit; }
+                ${doubleScope} :is(p, ul, ol, li, blockquote, h1, h2, h3, h4, h5, h6, pre, code, strong, em, a) {
+                    font-size: inherit;
+                }
+                ${doubleScope} h1 { font-size: 1.6em; font-weight: 700; }
+                ${doubleScope} h2 { font-size: 1.35em; font-weight: 700; }
+                ${doubleScope} h3 { font-size: 1.15em; font-weight: 600; }
                 ${proseScope} :where(p, ul, ol, h1, h2, h3, h4, h5, h6, pre, blockquote) {
                     margin: 0;
                     padding: 0;

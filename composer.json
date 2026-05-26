@@ -13,7 +13,7 @@
         "laravel/framework": "^13.0",
         "laravel/socialite": "^5.27",
         "laravel/tinker": "^3.0",
-        "particle-academy/dark-slide": "@dev",
+        "particle-academy/dark-slide": "^0.3",
         "particle-academy/holy-sheet": "^1.0",
         "particle-academy/laravel-catalog": "@dev",
         "particle-academy/laravel-fms": "@dev",
@@ -115,7 +115,7 @@
             "options": {
                 "symlink": true,
                 "versions": {
-                    "particle-academy/dark-slide": "0.1.0"
+                    "particle-academy/dark-slide": "0.3.0"
                 }
             }
         }

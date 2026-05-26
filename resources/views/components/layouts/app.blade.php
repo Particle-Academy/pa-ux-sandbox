@@ -6,7 +6,6 @@
     <title>{{ $title ?? config('app.name', 'Laravel') }}</title>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    @fluxAppearance
     @stack('styles')
 </head>
 <body class="bg-gray-50 dark:bg-gray-900">
@@ -67,7 +66,6 @@
         {{ $slot }}
     </main>
 
-    @fluxScripts
     @stack('scripts')
 </body>
 </html>

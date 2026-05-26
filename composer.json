@@ -15,7 +15,7 @@
         "laravel/tinker": "^3.0",
         "particle-academy/dark-slide": "^0.3",
         "particle-academy/holy-sheet": "^1.2",
-        "particle-academy/laravel-catalog": "^0.7",
+        "particle-academy/laravel-catalog": "^0.8",
         "particle-academy/laravel-fms": "^0.5",
         "stripe/stripe-php": "^17.3"
     },

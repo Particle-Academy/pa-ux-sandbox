@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "241c71a58433c64a9da511a28694d388",
+    "content-hash": "df06f8afe962ac813a15cf1a25109326",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -2619,82 +2619,6 @@
             "time": "2026-03-08T20:05:35+00:00"
         },
         {
-            "name": "livewire/livewire",
-            "version": "v4.3.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/livewire/livewire.git",
-                "reference": "19ebb1ee4d057debceccf70ff01950e6a6114edc"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/livewire/livewire/zipball/19ebb1ee4d057debceccf70ff01950e6a6114edc",
-                "reference": "19ebb1ee4d057debceccf70ff01950e6a6114edc",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/database": "^10.0|^11.0|^12.0|^13.0",
-                "illuminate/routing": "^10.0|^11.0|^12.0|^13.0",
-                "illuminate/support": "^10.0|^11.0|^12.0|^13.0",
-                "illuminate/validation": "^10.0|^11.0|^12.0|^13.0",
-                "laravel/prompts": "^0.1.24|^0.2|^0.3",
-                "league/mime-type-detection": "^1.9",
-                "php": "^8.1",
-                "symfony/console": "^6.0|^7.0|^8.0",
-                "symfony/http-kernel": "^6.2|^7.0|^8.0"
-            },
-            "require-dev": {
-                "calebporzio/sushi": "^2.1",
-                "laravel/framework": "^10.15.0|^11.0|^12.0|^13.0",
-                "mockery/mockery": "^1.3.1",
-                "orchestra/testbench": "^8.21.0|^9.0|^10.0|^11.0",
-                "orchestra/testbench-dusk": "^8.24|^9.1|^10.0|^11.0",
-                "phpunit/phpunit": "^10.4|^11.5|^12.5",
-                "psy/psysh": "^0.11.22|^0.12"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "aliases": {
-                        "Livewire": "Livewire\\Livewire"
-                    },
-                    "providers": [
-                        "Livewire\\LivewireServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "files": [
-                    "src/helpers.php"
-                ],
-                "psr-4": {
-                    "Livewire\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Caleb Porzio",
-                    "email": "calebporzio@gmail.com"
-                }
-            ],
-            "description": "A front-end framework for Laravel.",
-            "support": {
-                "issues": "https://github.com/livewire/livewire/issues",
-                "source": "https://github.com/livewire/livewire/tree/v4.3.0"
-            },
-            "funding": [
-                {
-                    "url": "https://github.com/livewire",
-                    "type": "github"
-                }
-            ],
-            "time": "2026-05-01T00:46:07+00:00"
-        },
-        {
             "name": "moneyphp/money",
             "version": "v4.9.0",
             "source": {
@@ -3625,22 +3549,21 @@
         },
         {
             "name": "particle-academy/laravel-catalog",
-            "version": "v0.7.1",
+            "version": "v0.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/laravel-catalog.git",
-                "reference": "0476fa0565ddc212fe92f4789ebf199e3ebc6476"
+                "reference": "b51dfb75b830e70bac6de43989bd221d02489de0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/laravel-catalog/zipball/0476fa0565ddc212fe92f4789ebf199e3ebc6476",
-                "reference": "0476fa0565ddc212fe92f4789ebf199e3ebc6476",
+                "url": "https://api.github.com/repos/Particle-Academy/laravel-catalog/zipball/b51dfb75b830e70bac6de43989bd221d02489de0",
+                "reference": "b51dfb75b830e70bac6de43989bd221d02489de0",
                 "shasum": ""
             },
             "require": {
                 "laravel/cashier": "^15.0|^16.0",
                 "laravel/framework": "^11.0|^12.0|^13.0",
-                "livewire/livewire": "^3.0|^4.0",
                 "particle-academy/laravel-fms": "^0.2|^0.3|^0.4|^0.5",
                 "php": "^8.2",
                 "stripe/stripe-php": "^13.0|^16.0|^17.0"
@@ -3662,12 +3585,12 @@
             "license": [
                 "MIT"
             ],
-            "description": "Laravel package for managing Stripe catalog (Products, Prices) with admin UI",
+            "description": "Laravel package for managing Stripe catalog (Products, Prices) via a facade API",
             "support": {
                 "issues": "https://github.com/Particle-Academy/laravel-catalog/issues",
-                "source": "https://github.com/Particle-Academy/laravel-catalog/tree/v0.7.1"
+                "source": "https://github.com/Particle-Academy/laravel-catalog/tree/v0.8.0"
             },
-            "time": "2026-05-09T01:08:09+00:00"
+            "time": "2026-05-26T21:53:09+00:00"
         },
         {
             "name": "particle-academy/laravel-fms",

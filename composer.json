@@ -108,16 +108,6 @@
                     "particle-academy/holy-sheet": "1.0.99"
                 }
             }
-        },
-        {
-            "type": "path",
-            "url": "./packages/dark-slide",
-            "options": {
-                "symlink": true,
-                "versions": {
-                    "particle-academy/dark-slide": "0.3.0"
-                }
-            }
         }
     ],
     "config": {

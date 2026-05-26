@@ -14,9 +14,9 @@
         "laravel/socialite": "^5.27",
         "laravel/tinker": "^3.0",
         "particle-academy/dark-slide": "^0.3",
-        "particle-academy/holy-sheet": "^1.0",
-        "particle-academy/laravel-catalog": "@dev",
-        "particle-academy/laravel-fms": "@dev",
+        "particle-academy/holy-sheet": "^1.2",
+        "particle-academy/laravel-catalog": "^0.7",
+        "particle-academy/laravel-fms": "^0.5",
         "stripe/stripe-php": "^17.3"
     },
     "require-dev": {
@@ -40,8 +40,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Tests\\": "tests/",
-            "ParticleAcademy\\Fms\\Tests\\": "packages/laravel-fms/tests/"
+            "Tests\\": "tests/"
         }
     },
     "scripts": {
@@ -85,31 +84,7 @@
             "dont-discover": []
         }
     },
-    "repositories": [
-        {
-            "type": "path",
-            "url": "./packages/laravel-catalog"
-        },
-        {
-            "type": "path",
-            "url": "./packages/laravel-fms",
-            "options": {
-                "versions": {
-                    "particle-academy/laravel-fms": "0.2.0"
-                }
-            }
-        },
-        {
-            "type": "path",
-            "url": "./packages/holy-sheet",
-            "options": {
-                "symlink": true,
-                "versions": {
-                    "particle-academy/holy-sheet": "1.0.99"
-                }
-            }
-        }
-    ],
+    "repositories": [],
     "config": {
         "optimize-autoloader": true,
         "preferred-install": "dist",

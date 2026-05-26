@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from "react";
-import { Action, ContextMenu, Sidebar, Text } from "@particle-academy/react-fancy";
+import { Action, ContextMenu, Text } from "@particle-academy/react-fancy";
 import type { Slide, SlideElement, Theme } from "../../types";
 import { SlideThumbnail } from "../SlideThumbnail";
 
@@ -45,9 +45,15 @@ export function SlideRail({
 }: SlideRailProps) {
     const [dragOver, setDragOver] = useState<string | null>(null);
 
+    // Plain <aside> instead of react-fancy <Sidebar> because Sidebar hardcodes
+    // `w-60` (240px), which overflows any rail container narrower than that.
+    // The rail should fill whatever width the host gives it.
     return (
-        <Sidebar className="fs-rail" collapseMode="letters">
-            <div className="flex items-center justify-between px-3 py-2">
+        <aside
+            data-react-fancy-slide-rail=""
+            className="fs-rail flex h-full w-full min-w-0 flex-col gap-0.5"
+        >
+            <div className="flex items-center justify-between gap-2 px-3 py-2">
                 <Text size="xs" weight="semibold" className="!uppercase !tracking-wider !text-zinc-500">
                     Slides · {slides.length}
                 </Text>
@@ -120,6 +126,6 @@ export function SlideRail({
                     </div>
                 )}
             </div>
-        </Sidebar>
+        </aside>
     );
 }

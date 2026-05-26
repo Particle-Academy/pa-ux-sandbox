@@ -1603,11 +1603,12 @@ function FsDeckEditorRegistryDemo() {
     // canonical "consumer owns the deck" pattern.
     const [deck, setDeck] = useState<FsDeck>(CANONICAL_DECK);
     const [opCount, setOpCount] = useState(0);
+    const [presenting, setPresenting] = useState(false);
 
     return (
         <div className="space-y-3">
             <Text size="sm" className="!text-zinc-600 dark:!text-zinc-300">
-                Full live editor — toolbar / slide rail / canvas / inspector / speaker notes. Drag elements, edit text inline, reorder slides in the rail, add new elements from the toolbar. Every mutation flows through the same `DeckOp` enum the agent bridge speaks, so humans and agents drive identical operations.
+                Full live editor — toolbar / slide rail / canvas / inspector / speaker notes. Drag elements, edit text inline, reorder slides in the rail, add new elements from the toolbar, hit ▶ Present to launch the SlideViewer fullscreen. Every mutation flows through the same `DeckOp` enum the agent bridge speaks, so humans and agents drive identical operations.
             </Text>
             <div className="flex items-center gap-2 text-xs">
                 <Badge color="violet">{deck.slides.length} slides</Badge>
@@ -1628,12 +1629,18 @@ function FsDeckEditorRegistryDemo() {
                     value={deck}
                     onChange={setDeck}
                     onOp={() => setOpCount((n) => n + 1)}
+                    onPresent={() => setPresenting(true)}
                     renderElement={(element, slideWidthPx) => {
                         const Renderer = fsDefaultElementRegistry[element.type as keyof typeof fsDefaultElementRegistry];
                         return Renderer ? <Renderer element={element as any} slideWidthPx={slideWidthPx} /> : undefined;
                     }}
                 />
             </div>
+            {presenting && (
+                <div className="fixed inset-0 z-50 bg-black">
+                    <FsSlideViewer deck={deck} onExit={() => setPresenting(false)} />
+                </div>
+            )}
             <Explainer
                 summary="DeckEditor is controlled (value + onChange). The host owns the deck; the editor renders a view and dispatches ops. `defaultElementRegistry` plugs in renderers for the optional element types (chart, code, table, embed) that the package doesn't render natively."
                 code={'import { DeckEditor, defaultTheme } from "@particle-academy/fancy-slides";\nimport { defaultElementRegistry } from "@particle-academy/fancy-slides/registry";\nimport "@particle-academy/fancy-slides/styles.css";\n\nconst [deck, setDeck] = useState({\n  id: "doc-1",\n  title: "My deck",\n  theme: defaultTheme,\n  slides: [/* … */],\n});\n\n<DeckEditor\n  value={deck}\n  onChange={setDeck}\n  onOp={(op) => activityLog.push(op)}\n  renderElement={(el, w) => {\n    const R = defaultElementRegistry[el.type];\n    return R ? <R element={el} slideWidthPx={w} /> : undefined;\n  }}\n/>'}

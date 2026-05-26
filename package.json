@@ -5,7 +5,6 @@
     "scripts": {
         "build": "vite build",
         "dev": "vite",
-        "build:react-fancy": "pnpm --filter @particle-academy/react-fancy build",
         "tm": "npx tsx .bots/lib/cli.ts",
         "tm:status": "npx tsx .bots/lib/cli.ts status",
         "tm:jobs": "npx tsx .bots/lib/cli.ts jobs"

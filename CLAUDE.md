@@ -26,17 +26,31 @@ If a component is purely visual (a static label, a divider, a layout shell), onl
 
 ## Project Overview
 
-This is a **monorepo sandbox** for developing and prototyping Particle Academy packages. The root is a Laravel 13 application that consumes local packages via Composer path repositories and git submodules, providing a live environment to build, test, and demo everything together.
+This is the **Fancy UI showcase site** — a Laravel 13 + Vite + React 19 + Inertia + Tailwind v4 app that consumes the Fancy UI package suite. It lives in the flat `fancy-ui/` workspace alongside each package as an independent sibling. See `../CLAUDE.md` for workspace-wide rules; this file covers sandbox-specific guidance.
 
-Packages symlinked via Composer path repos:
-- `packages/laravel-catalog/` - **Primary**: Stripe catalog management (Products, Prices) with optional admin UI
-- `packages/laravel-fms/` - Feature Management System (FMS) - dependency of Catalog
-- `packages/fancy-flux/` - Blade UI component library (git submodule, repo: wishborn/fancy)
-- `packages/react-fancy/` - React UI component library (git submodule)
-- `packages/fancy-echarts/` - React ECharts component library (git submodule, npm: `@particle-academy/fancy-echarts`)
-- `packages/fancy-code/` - React code editor (git submodule)
-- `packages/fancy-sheets/` - React spreadsheet (git submodule)
-- `packages/fancy-3d/` - UI kit for humans and agents to author rich, data-driven 3D apps: engine-agnostic `Scene` types + adapters (`/dom`, `/babylon`) + shape primitives + 3D-native components like `Screen`. Local-only, not yet a submodule. `react-fancy` stays raw React; the bridge to 3D engines lives here.
+**No submodules. No Composer path repos. No Flux.**
+
+**PHP packages** come from Packagist (declared in `composer.json`):
+- `particle-academy/laravel-catalog` — Stripe catalog (Products, Prices) with optional admin UI
+- `particle-academy/laravel-fms` — Feature Management System; dependency of Catalog
+- `particle-academy/holy-sheet` — xlsx writer used by the AI sheets demo
+- `particle-academy/dark-slide` — pptx writer/reader
+
+**JS/TS packages** are aliased by Vite to sibling source folders (`../<pkg>/src`) — see `vite.config.js`. The dev server reloads on any package source change; no `npm link`, no rebuild between iterations. Published npm versions only matter for external consumers.
+
+The aliased packages:
+- `@particle-academy/react-fancy` — core React component library (stays raw React)
+- `@particle-academy/fancy-3d` (+ `/dom`, `/babylon`, `/react`) — UI kit for humans + agents to author data-driven 3D apps: engine-agnostic `Scene` types + adapters + shape primitives + 3D-native components like `Screen`. The bridge to 3D engines lives here, not in react-fancy.
+- `@particle-academy/fancy-echarts` — ECharts wrapper
+- `@particle-academy/fancy-code` — embedded code editor
+- `@particle-academy/fancy-sheets` — spreadsheet workbook
+- `@particle-academy/fancy-flow` (+ `/runtime`) — React Flow workflow editor
+- `@particle-academy/fancy-slides` (+ `/registry`) — presentation editor + viewer
+- `@particle-academy/fancy-screens` — screen registry + cross-screen presence (consumers bring their own Zustand store)
+- `@particle-academy/fancy-whiteboard` — collaborative whiteboard canvas
+- `@particle-academy/fancy-inertia` — Inertia.js bridge for Laravel hosts (showcase chrome)
+- `@particle-academy/fancy-tsrx` — typed-result React spike (pilot only, 3 components)
+- `@particle-academy/agent-integrations` (+ `/mcp`, `/bridges/*`, `/components/*`) — MCP server + per-package bridges
 
 ## Common Commands
 
@@ -71,7 +85,7 @@ vendor/bin/pint           # Format all files
 
 ## Architecture
 
-### Package: laravel-catalog (`packages/laravel-catalog/`)
+### Package: laravel-catalog (Packagist)
 
 Namespace: `LaravelCatalog\`
 
@@ -89,7 +103,7 @@ Namespace: `LaravelCatalog\`
 
 **Config**: `config/catalog.php` controls auto-sync, queue connection, admin routes/middleware, broadcasting channel.
 
-### Package: laravel-fms (`packages/laravel-fms/`)
+### Package: laravel-fms (Packagist)
 
 Namespace: `ParticleAcademy\Fms\`
 
@@ -158,9 +172,10 @@ The Fancy UI strategic goal is **complete app surfaces where agents drive the UI
 
 ## Git Rules
 
-- **NEVER use `git add -A` or `git add .`**. Always stage specific files by name. This monorepo has submodules, untracked experiments, and files that must not be blindly committed.
+- **No submodules anywhere in the workspace.** Each sibling package (`../react-fancy`, `../fancy-3d`, …) is its own independent git repo with its own remote. Edit packages in their own folders; the sandbox sees changes immediately via Vite aliases.
+- **NEVER use `git add -A` or `git add .`**. Always stage specific files by name. This workspace has untracked experiments, secrets, and files that must not be blindly committed.
+- **NEVER `git push` unless the user explicitly asks.** Commit locally is fine.
 - Before every commit, review changes with `git diff --stat` or `git status`, then `git add <specific files>`.
-- Each package under `packages/*` is its own git submodule with its own remote on `Particle-Academy/<repo>`. Doc/code changes inside a submodule require: commit in the submodule → push the submodule → then a separate commit in the root repo bumping the submodule pointer.
 
 ## Publishing Releases
 
@@ -185,22 +200,23 @@ A new package needs three things wired up before its first publish:
 
 Once a package has been bootstrapped this way, every subsequent release uses the standard "React packages" flow below — no tokens, no special config.
 
-### React packages (all 4 — `react-fancy`, `fancy-echarts`, `fancy-code`, `fancy-sheets`)
+### React / TS packages
 
 The `fancy-echarts` package is published from the `Particle-Academy/react-echarts` git repo (folder/repo name unchanged; only the npm package was renamed). The npm trusted-publisher config on npmjs.com must be set up under `@particle-academy/fancy-echarts` pointing to `Particle-Academy/react-echarts` + `publish.yml`.
 
-Each React package publishes to npm via **GitHub Actions Trusted Publishing (OIDC)**. No tokens, no manual `npm publish`. The workflow lives at `.github/workflows/publish.yml` inside each submodule and fires on tag push `v*.*.*` (or manual `workflow_dispatch`).
+Each TS package publishes to npm via **GitHub Actions Trusted Publishing (OIDC)**. No tokens, no manual `npm publish`. The workflow lives at `.github/workflows/publish.yml` inside each repo and fires on tag push `v*.*.*` (or manual `workflow_dispatch`).
 
-To ship a new version of a React package:
+To ship a new version of a TS package:
 
-1. `cd packages/<name>`
+1. `cd ../<name>`
 2. Bump `version` in `package.json`
 3. Commit the bump
 4. Tag and push: `git tag vX.Y.Z && git push origin main --tags`
 5. CI builds, signs provenance via OIDC, and publishes to npm — usually under 1 minute
-6. After CI succeeds, `cd` to root and bump the submodule pointer: `git add packages/<name> && git commit && git push`
 
 Verify with: `npm view @particle-academy/<name> version`
+
+**No submodule-pointer bump anywhere.** The sandbox aliases packages at dev time and pulls them from npm at install time. To force the sandbox to pick up a freshly published version, `cd px-ui-sandbox && npm update @particle-academy/<name>` (rare during dev — usually only when freezing a deploy).
 
 **Hard requirements for the publish to succeed** (don't remove these from `package.json`):
 - `repository.url` set to `git+https://github.com/Particle-Academy/<name>.git` — npm's provenance check rejects publish if this is empty or doesn't match the OIDC source
@@ -208,36 +224,34 @@ Verify with: `npm view @particle-academy/<name> version`
 - `files` array includes `dist`, `docs`, `README.md` (so the published tarball ships docs)
 
 **Workflow gotchas already solved (don't re-introduce)**:
-- The bundled npm in `actions/setup-node@v4 (node 22)` is npm 10 — Trusted Publishing OIDC requires npm 11.5+. The workflow uses `npx -y npm@latest publish --provenance --access public` instead of `npm install -g npm@latest` (which fails with `MODULE_NOT_FOUND: promise-retry` due to a self-replacement bug)
-- `fancy-code` and `fancy-sheets` declare `@particle-academy/react-fancy` as `workspace:*` in `devDependencies`. Standalone CI has no workspace, so the workflow runs a small `node -e` step that rewrites `workspace:*` → its plain version range before `npm install`
+- The bundled npm in `actions/setup-node@v4 (node 22)` is npm 10 — Trusted Publishing OIDC requires npm 11.5+. The workflow uses `npx -y npm@latest publish --provenance --access public` instead of `npm install -g npm@latest` (which fails with `MODULE_NOT_FOUND: promise-retry` due to a self-replacement bug).
+- `fancy-code` and `fancy-sheets` declare `@particle-academy/react-fancy` as a peer dep. If any `workspace:*` ranges sneak back into a package, the workflow rewrites them to plain version ranges before `npm install`.
 
 If a tag was pushed before the workflow file existed on that commit (or you need to re-trigger), move the tag forward and force-push: `git tag -d vX.Y.Z && git tag vX.Y.Z && git push origin vX.Y.Z --force`. (Safe because the tag hasn't been consumed by npm yet.)
 
-If the trusted publisher config on npmjs.com is wrong or missing, publish fails with `404 Not Found - PUT .../<package> - Not found`. Fix at `https://www.npmjs.com/package/@particle-academy/<name>/access` — Repository owner = `Particle-Academy`, Repository name = `<name>`, Workflow filename = `publish.yml`, Environment = empty.
+If the Trusted Publisher config on npmjs.com is wrong or missing, publish fails with `404 Not Found - PUT .../<package> - Not found`. Fix at `https://www.npmjs.com/package/@particle-academy/<name>/access`.
 
-### Blade / PHP packages (`fancy-flux`)
+### PHP packages (`laravel-catalog`, `laravel-fms`, `holy-sheet`, `dark-slide`)
 
-`fancy-flux` is consumed by Composer resolving a git tag — no Packagist registry push, no CI workflow. Submodule remote: `wishborn/fancy` (not `Particle-Academy/*`).
+PHP packages publish via Packagist auto-sync from GitHub. To ship:
 
-To ship a new version:
-
-1. `cd packages/fancy-flux`
+1. `cd ../<name>`
 2. Bump `"version"` in `composer.json`
 3. Commit the bump (`git add composer.json && git commit -m "chore: release vX.Y.Z"`)
 4. Tag and push: `git tag vX.Y.Z && git push origin main --tags`
-5. `cd` to root and bump the submodule pointer: `git add packages/fancy-flux && git commit && git push`
-
-No verification step — the moment the tag is on GitHub, consumers doing `composer update wishborn/fancy-flux` pick it up.
+5. Packagist auto-syncs (manual trigger available at `https://packagist.org/packages/particle-academy/<name>`)
+6. To pull into the sandbox: `composer update particle-academy/<name>`
 
 ### "Ship it" = full publish flow, not just a branch push
 
-When the user says **ship** for any package, the flow is always: bump version → commit → tag → push tag → wait for CI (React) or none (Blade) → bump submodule pointer in root → push root. Pushing `main` alone is _not_ shipping — consumers installing via npm/composer see nothing until the tag+publish step runs.
+When the user says **ship** for any package, the flow is always: bump version → commit → tag → push tag → wait for CI (React) or Packagist (PHP) → update the consumer dep in `px-ui-sandbox` if needed. Pushing `main` alone is _not_ shipping — consumers installing via npm/composer see nothing until the tag+publish step runs.
 
-Confirm npm publish succeeded before bumping the submodule pointer. For React packages:
+Confirm the publish landed before updating the sandbox:
 
 ```bash
-gh run list --limit 1                              # CI status
+gh run list --limit 1                              # CI status (React)
 npm view @particle-academy/<name> version          # live on npm
+composer show particle-academy/<name>              # for PHP packages
 ```
 
 ===

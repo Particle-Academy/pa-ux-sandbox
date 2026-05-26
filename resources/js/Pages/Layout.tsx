@@ -10,7 +10,7 @@ import {
     Text,
     Tooltip,
 } from "@particle-academy/react-fancy";
-import { Moon, Sun } from "lucide-react";
+import { Moon, Sun } from "@particle-academy/react-fancy/icons";
 import { currentTheme, toggleTheme } from "../showcase-theme";
 import { CommandPalette } from "./CommandPalette";
 

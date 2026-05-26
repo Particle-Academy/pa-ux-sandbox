@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Action, Badge, Card, Tabs, Text } from "@particle-academy/react-fancy";
 import { EChart } from "@particle-academy/fancy-echarts";
-import { Download, Maximize2 } from "lucide-react";
+import { Download, Maximize2 } from "@particle-academy/react-fancy/icons";
 
 type View = "trends" | "composition" | "hierarchy" | "flow";
 

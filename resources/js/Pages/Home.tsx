@@ -16,7 +16,7 @@ import {
     Timeline,
 } from "@particle-academy/react-fancy";
 import { EChart } from "@particle-academy/fancy-echarts";
-import { Sparkles, Cpu, Boxes, Paperclip, Smile, Send, Bot, Bell, Check, X } from "lucide-react";
+import { Sparkles, Cpu, Boxes, Paperclip, Smile, Send, Bot, Bell, Check, X } from "@particle-academy/react-fancy/icons";
 import { Layout } from "./Layout";
 
 type PackageRow = {

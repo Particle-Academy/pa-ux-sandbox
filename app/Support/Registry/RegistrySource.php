@@ -51,12 +51,25 @@ class RegistrySource
      */
     private function itemsForPackage(array $pkg): array
     {
-        $packagesRoot = base_path('packages');
-        $pkgDir = "$packagesRoot/{$pkg['slug']}";
+        // In the flat fancy-ui workspace, each package lives as a sibling of
+        // px-ui-sandbox/ — base_path('../X'). Falls back to the legacy nested
+        // layout (base_path('packages/X')) so this code keeps working if
+        // someone runs the sandbox from inside the old laravel-catalog tree.
+        $candidates = [
+            dirname(base_path()) . '/' . $pkg['slug'],
+            base_path('packages/' . $pkg['slug']),
+        ];
+        $pkgDir = null;
+        foreach ($candidates as $candidate) {
+            if (is_dir($candidate)) {
+                $pkgDir = $candidate;
+                break;
+            }
+        }
 
         // We can only build registry items for packages we can read on disk.
         // Skip cleanly otherwise — the package still appears in /packages.
-        if (! is_dir($pkgDir)) {
+        if ($pkgDir === null) {
             return [];
         }
 

@@ -40,3 +40,9 @@
 [submodule "packages/docs-mcp"]
 	path = packages/docs-mcp
 	url = git@github.com:Particle-Academy/docs-mcp.git
+[submodule "packages/dark-slide"]
+	path = packages/dark-slide
+	url = git@github.com:Particle-Academy/dark-slide.git
+[submodule "packages/fancy-slides"]
+	path = packages/fancy-slides
+	url = git@github.com:Particle-Academy/fancy-slides.git

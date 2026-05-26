@@ -592,8 +592,6 @@ export type { Token, TokenType, Tokenizer } from "./engine/tokenizer";`,
 namespace LaravelCatalog;
 
 use Illuminate\\Support\\ServiceProvider;
-use LaravelCatalog\\Livewire\\Admin\\Products\\Index;
-use Livewire\\Livewire;
 
 class CatalogServiceProvider extends ServiceProvider
 {
@@ -616,7 +614,6 @@ class CatalogServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
 
         if (config('catalog.enable_ui')) {
-            Livewire::component('catalog-products', Index::class);
             $this->loadRoutesFrom(__DIR__ . '/../routes/catalog.php');
             $this->loadViewsFrom(__DIR__ . '/../resources/views', 'catalog');
         }
@@ -736,20 +733,16 @@ if (root) {
   "composer.json": {
     lang: "JavaScript",
     code: `{
-  "name": "particle-academy/laravel-catalog-sandbox",
+  "name": "particle-academy/fancy-ui-sandbox",
   "type": "project",
   "require": {
     "php": "^8.2",
-    "laravel/framework": "^12.0",
-    "particle-academy/laravel-catalog": "@dev",
-    "particle-academy/laravel-fms": "@dev",
-    "wishborn/fancy-flux": "@dev"
-  },
-  "repositories": [
-    { "type": "path", "url": "./packages/laravel-catalog", "options": { "symlink": true } },
-    { "type": "path", "url": "./packages/laravel-fms", "options": { "symlink": true } },
-    { "type": "path", "url": "./packages/fancy-flux", "options": { "symlink": true } }
-  ]
+    "laravel/framework": "^13.0",
+    "particle-academy/laravel-catalog": "^0.7",
+    "particle-academy/laravel-fms": "^0.5",
+    "particle-academy/holy-sheet": "^1.2",
+    "particle-academy/dark-slide": "^0.3"
+  }
 }`,
   },
   "package.json": {
@@ -759,11 +752,10 @@ if (root) {
   "type": "module",
   "scripts": {
     "build": "vite build",
-    "dev": "vite",
-    "dev:react": "pnpm --filter react-demo dev"
+    "dev": "vite"
   },
   "dependencies": {
-    "@vitejs/plugin-react": "^4.7.0",
+    "@vitejs/plugin-react": "^6.0.1",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-router": "^7.13.1"

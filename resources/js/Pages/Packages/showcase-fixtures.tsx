@@ -286,7 +286,7 @@ export const CANONICAL_TEXT_SLIDE: SlideData = {
             type: "text",
             x: 0.06, y: 0.1, w: 0.88, h: 0.8,
             content:
-                "## What ships in v0.6.1\n\n- Showcase chrome moved off Flux onto **react-fancy** + Inertia\n- *fancy-slides* DeckEditor live in this preview\n- **dark-slide v0.3** — markdown headings + syntax-highlighted code\n- Per-package bridges for every interactive surface",
+                "## What ships in v0.6.1\n\n- Showcase chrome on **react-fancy** + Inertia\n- *fancy-slides* DeckEditor live in this preview\n- **dark-slide v0.3** — markdown headings + syntax-highlighted code\n- Per-package bridges for every interactive surface",
             format: "markdown",
             style: { fontSize: 22, lineHeight: 1.6, color: "#1e293b" },
         },

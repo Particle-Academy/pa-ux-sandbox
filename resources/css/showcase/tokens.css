@@ -50,9 +50,9 @@
   --zinc-800:#27272a; --zinc-900:#18181b; --zinc-950:#09090b;
 
   /* ─── Semantic tokens — LIGHT ──────────────────────────────────────────
-     fancy-flux/react-fancy resolves colors per-component via Tailwind utility
-     classes; these semantic vars exist for app-shell + non-component surfaces
-     (page backgrounds, custom overlays, hand-rolled cards). */
+     react-fancy resolves colors per-component via Tailwind utility classes;
+     these semantic vars exist for app-shell + non-component surfaces (page
+     backgrounds, custom overlays, hand-rolled cards). */
   --fg-1: var(--zinc-900);   /* primary text — headings, body emphasis */
   --fg-2: var(--zinc-700);   /* secondary text — body, captions */
   --fg-3: var(--zinc-500);   /* tertiary / muted — placeholders, helpers */

@@ -396,8 +396,8 @@ const MEMORY_FILES: MemoryFile[] = [
   {
     id: "bug.timeline-xss",
     cluster: "bugs",
-    label: "Timeline {!! !!} XSS",
-    body: "fancy-flux/Timeline rendered event['description'] with raw output. Stored XSS for any consumer feeding user input. Patched in v1.2.1 (escaped-by-default).",
+    label: "Timeline dangerouslySetInnerHTML XSS",
+    body: "react-fancy Timeline rendered event.description through dangerouslySetInnerHTML. Stored XSS for any consumer feeding user input. Patched in v1.2.1 (escaped-by-default).",
     savedAt: "2026-04-26",
     source: "code-edit",
     weight: 14,

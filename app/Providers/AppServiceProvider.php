@@ -27,8 +27,8 @@ class AppServiceProvider extends ServiceProvider
         }
 
         // Gate definitions — both 'admin' (sandbox routes) and 'manageCatalog'
-        // (the laravel-catalog Livewire admin's configured ability) resolve
-        // to the User::is_admin flag.
+        // (the laravel-catalog admin's configured ability) resolve to the
+        // User::is_admin flag.
         Gate::define('admin', fn (User $user): bool => (bool) $user->is_admin);
         Gate::define('manageCatalog', fn (User $user): bool => (bool) $user->is_admin);
 

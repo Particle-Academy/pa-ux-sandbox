@@ -1,32 +1,40 @@
-# Particle Academy — Package Sandbox
+# Fancy UI — Showcase
 
-A Laravel 12 monorepo for developing and prototyping Particle Academy packages. The root app consumes local packages via Composer path repositories and git submodules, providing a live environment to build, test, and demo everything together.
+A Laravel 13 + Vite + React 19 + Inertia + Tailwind v4 app that consumes the Fancy UI package suite. Lives in the flat `fancy-ui/` workspace alongside each package as an independent sibling.
 
 ## Packages
 
-| Package | Type | Path | Registry |
-|---------|------|------|----------|
-| **laravel-catalog** | PHP (Composer) | `packages/laravel-catalog/` | [Packagist](https://packagist.org/packages/particle-academy/laravel-catalog) |
-| **laravel-fms** | PHP (Composer) | `packages/laravel-fms/` | [Packagist](https://packagist.org/packages/particle-academy/laravel-fms) |
-| **fancy-flux** | PHP (Composer) | `packages/fancy-flux/` | [Packagist](https://packagist.org/packages/wishborn/fancy-flux) |
-| **react-fancy** | React (npm) | `packages/react-fancy/` | [npm](https://www.npmjs.com/package/@particle-academy/react-fancy) |
-| **react-echarts** | React (npm) | `packages/react-echarts/` | [npm](https://www.npmjs.com/package/@particle-academy/react-echarts) |
-| **fancy-code** | React (npm) | `packages/fancy-code/` | [npm](https://www.npmjs.com/package/@particle-academy/fancy-code) |
-| **fancy-sheets** | React (npm) | `packages/fancy-sheets/` | [npm](https://www.npmjs.com/package/@particle-academy/fancy-sheets) |
+PHP packages (Packagist):
 
-All packages are git submodules with their own repositories.
+| Package | Registry |
+|---------|----------|
+| **laravel-catalog** | [Packagist](https://packagist.org/packages/particle-academy/laravel-catalog) |
+| **laravel-fms** | [Packagist](https://packagist.org/packages/particle-academy/laravel-fms) |
+| **holy-sheet** | [Packagist](https://packagist.org/packages/particle-academy/holy-sheet) |
+| **dark-slide** | [Packagist](https://packagist.org/packages/particle-academy/dark-slide) |
+
+JS/TS packages (npm; sources aliased at dev time via `vite.config.js`):
+
+| Package | Registry |
+|---------|----------|
+| **react-fancy** | [npm](https://www.npmjs.com/package/@particle-academy/react-fancy) |
+| **fancy-3d** | [npm](https://www.npmjs.com/package/@particle-academy/fancy-3d) |
+| **fancy-echarts** | [npm](https://www.npmjs.com/package/@particle-academy/fancy-echarts) |
+| **fancy-code** | [npm](https://www.npmjs.com/package/@particle-academy/fancy-code) |
+| **fancy-sheets** | [npm](https://www.npmjs.com/package/@particle-academy/fancy-sheets) |
+| **fancy-flow** | [npm](https://www.npmjs.com/package/@particle-academy/fancy-flow) |
+| **fancy-slides** | [npm](https://www.npmjs.com/package/@particle-academy/fancy-slides) |
+| **fancy-screens** | [npm](https://www.npmjs.com/package/@particle-academy/fancy-screens) |
+| **fancy-whiteboard** | [npm](https://www.npmjs.com/package/@particle-academy/fancy-whiteboard) |
+| **fancy-inertia** | [npm](https://www.npmjs.com/package/@particle-academy/fancy-inertia) |
+| **agent-integrations** | [npm](https://www.npmjs.com/package/@particle-academy/agent-integrations) |
+
+No submodules. No Composer path repos. The sandbox sees package source changes immediately via Vite aliases; published versions only matter for external consumers.
 
 ## Setup
 
 ```bash
-git clone --recurse-submodules <repo-url>
 composer run setup    # install, env, key, migrate, npm install
-```
-
-If you already cloned without `--recurse-submodules`:
-
-```bash
-git submodule update --init --recursive
 ```
 
 ## Development
@@ -35,17 +43,14 @@ git submodule update --init --recursive
 composer run dev      # Starts server, queue, logs (pail), and Vite concurrently
 ```
 
-The app includes two demo surfaces:
-
-- **UX Demos** at `/ux-demos` — Blade components from `fancy-flux`
-- **React Demos** at `/react-demos` — React components from `react-fancy`, `react-echarts`, `fancy-code`, and `fancy-sheets`
+Showcase routes are served by Inertia + React from `resources/js/`. The `/react-demos` page exercises every fancy-* package's components.
 
 ## Testing
 
 ```bash
 php artisan test --compact                            # All tests
 php artisan test --compact tests/Feature/Catalog/     # Catalog tests
-php artisan test --compact --filter=testName           # Single test
+php artisan test --compact --filter=testName         # Single test
 ```
 
 Tests use Pest with SQLite in-memory and `RefreshDatabase`.
@@ -57,21 +62,6 @@ vendor/bin/pint --dirty   # Format changed files
 vendor/bin/pint           # Format all
 ```
 
-## Submodule Workflow
+## Working on a sibling package
 
-Each package is an independent repo. To work on a package:
-
-```bash
-cd packages/<package-name>
-# make changes, commit, push, tag
-git tag v1.x.x
-git push origin main --tags
-```
-
-After committing inside a submodule, update the pointer in the root repo:
-
-```bash
-cd ../..
-git add packages/<package-name>
-git commit -m "Update <package-name> to v1.x.x"
-```
+Edit files in `../<package-name>/src/` — the sandbox reloads on save. To ship a release, follow the per-package CLAUDE.md flow (bump → commit → tag → push → CI publishes via OIDC).

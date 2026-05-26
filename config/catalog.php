@@ -6,8 +6,8 @@ return [
     | Enable UI
     |--------------------------------------------------------------------------
     |
-    | When enabled, the package will load Livewire components, views, and routes
-    | for the admin interface. Set to false to use only the facade/API.
+    | When enabled, the package will load views and routes for the admin
+    | interface. Set to false to use only the facade/API.
     | UI will also be enabled automatically if views are published.
     |
     */

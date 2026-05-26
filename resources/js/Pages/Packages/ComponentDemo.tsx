@@ -410,7 +410,7 @@ function TimelineDemo() {
     return (
         <Timeline>
             <Timeline.Item date="May 16" title="v0.6.1 released" color="emerald">
-                Flux removed, Inertia + react-fancy chrome live.
+                Inertia + react-fancy chrome live across the showcase.
             </Timeline.Item>
             <Timeline.Item date="May 15" title="v0.6.0 released" color="violet">
                 Showcase site Phase 1 → Phase 6 shipped.
@@ -1019,7 +1019,7 @@ function KanbanDemo() {
         { id: "c1", column: "todo", title: "Wire showcase scanner" },
         { id: "c2", column: "todo", title: "Backfill leaderboard data" },
         { id: "c3", column: "doing", title: "Component demos pass 2" },
-        { id: "c4", column: "done", title: "Flux → Inertia chrome" },
+        { id: "c4", column: "done", title: "Inertia + react-fancy chrome" },
         { id: "c5", column: "done", title: "Starter kits live" },
     ]);
 

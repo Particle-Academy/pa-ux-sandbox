@@ -69,6 +69,7 @@ import {
     CANONICAL_SLIDE,
     CANONICAL_DECK,
     CANONICAL_TEXT_SLIDE,
+    CANONICAL_IMAGE_BOX,
     CANONICAL_IMAGE_SRC,
     CANONICAL_SHAPES_SLIDE,
     CANONICAL_HIGHLIGHTED_CODE,
@@ -1684,26 +1685,39 @@ function FsTextElementRegistryDemo() {
 }
 
 function FsImageElementRegistryDemo() {
-    const fits: Array<"contain" | "cover" | "fill" | "scale-down"> = ["contain", "cover", "fill", "scale-down"];
+    const fits: Array<{
+        fit: "contain" | "cover" | "fill" | "scale-down";
+        explainer: string;
+    }> = [
+        { fit: "contain", explainer: "Preserves source aspect; letterboxes top + bottom." },
+        { fit: "cover", explainer: "Preserves source aspect; crops left + right to fill." },
+        { fit: "fill", explainer: "Stretches to fill the box — distorts the image." },
+        { fit: "scale-down", explainer: "Same as contain when source is larger than the box." },
+    ];
     return (
         <div className="space-y-3">
             <Text size="sm" className="!text-zinc-600 dark:!text-zinc-300">
-                Image elements use object-fit. The package tile shows `fit=&quot;cover&quot;` — below are all four fit modes side-by-side with the same source image.
+                Image elements use object-fit. The source below is a wide 1400×900 screenshot of react-fancy; each box is intentionally tall + narrow so the four fit modes show dramatically different results.
             </Text>
             <div className="grid gap-3 sm:grid-cols-2">
-                {fits.map((fit) => (
+                {fits.map(({ fit, explainer }) => (
                     <div key={fit}>
-                        <Text size="xs" className="mb-1 !font-mono !text-zinc-500">fit=&quot;{fit}&quot;</Text>
+                        <div className="mb-1 flex items-baseline gap-2">
+                            <Text size="xs" className="!font-mono !text-zinc-500">fit=&quot;{fit}&quot;</Text>
+                            <Text size="xs" className="!text-zinc-400">{explainer}</Text>
+                        </div>
                         <div className="overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
                             <FsSlide
                                 slide={{
                                     id: `img-${fit}`,
                                     elements: [{
-                                        id: "img", type: "image",
-                                        x: 0.06, y: 0.06, w: 0.88, h: 0.88,
-                                        src: CANONICAL_IMAGE_SRC, fit,
+                                        id: "img",
+                                        type: "image",
+                                        ...CANONICAL_IMAGE_BOX,
+                                        src: CANONICAL_IMAGE_SRC,
+                                        fit,
                                     }],
-                                    background: { color: "#ffffff" },
+                                    background: { color: "#f8fafc" },
                                 }}
                                 theme={fsDefaultTheme}
                             />

@@ -1,6 +1,28 @@
 @import "tailwindcss";
+
+/* Hand-authored CSS overrides shipped by each package. */
 @import "@particle-academy/react-fancy/styles.css";
 @import "@particle-academy/fancy-code/styles.css";
+@import "@particle-academy/fancy-flow/styles.css";
 @import "@particle-academy/fancy-sheets/styles.css";
+@import "@particle-academy/fancy-slides/styles.css";
+@import "@particle-academy/fancy-whiteboard/styles.css";
+@import "@particle-academy/agent-integrations/styles.css";
 
 @source '../js/react-demos/**/*.tsx';
+
+/* Tailwind v4 skips node_modules by default; tell it to scan our package
+   bundles too so the utility classes used inside react-fancy / fancy-3d /
+   etc. show up in the final CSS. We point at the compiled dist files (not
+   src/) so this matches how a real consumer installs them. */
+@source '../../node_modules/@particle-academy/react-fancy/dist/**/*.{js,cjs,mjs}';
+@source '../../node_modules/@particle-academy/fancy-3d/dist/**/*.{js,cjs,mjs}';
+@source '../../node_modules/@particle-academy/fancy-code/dist/**/*.{js,cjs,mjs}';
+@source '../../node_modules/@particle-academy/fancy-echarts/dist/**/*.{js,cjs,mjs}';
+@source '../../node_modules/@particle-academy/fancy-flow/dist/**/*.{js,cjs,mjs}';
+@source '../../node_modules/@particle-academy/fancy-inertia/dist/**/*.{js,cjs,mjs}';
+@source '../../node_modules/@particle-academy/fancy-screens/dist/**/*.{js,cjs,mjs}';
+@source '../../node_modules/@particle-academy/fancy-sheets/dist/**/*.{js,cjs,mjs}';
+@source '../../node_modules/@particle-academy/fancy-slides/dist/**/*.{js,cjs,mjs}';
+@source '../../node_modules/@particle-academy/fancy-whiteboard/dist/**/*.{js,cjs,mjs}';
+@source '../../node_modules/@particle-academy/agent-integrations/dist/**/*.{js,cjs,mjs}';

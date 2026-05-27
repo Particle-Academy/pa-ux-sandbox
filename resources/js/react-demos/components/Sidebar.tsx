@@ -85,7 +85,6 @@ const patternLinks = [
   { to: "/ide", label: "IDE" },
   { to: "/app-sheet", label: "AppSheet" },
   { to: "/ai-canvas-chat", label: "AI Canvas Chat" },
-  { to: "/tsrx-pilot", label: "TSRX Pilot" },
   { to: "/whiteboard", label: "Whiteboard" },
   { to: "/whiteboard-full", label: "Whiteboard — Full Demo" },
   { to: "/whiteboard-agent", label: "Whiteboard — You & Claude" },

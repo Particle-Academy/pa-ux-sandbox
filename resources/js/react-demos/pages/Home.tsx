@@ -117,7 +117,6 @@ const reactFancySections: Section[] = [
       { name: "AI Canvas Chat", slug: "ai-canvas-chat", description: "Chat flyout with full canvas + AI Brain force-graph" },
       { name: "Canvas Studio", slug: "canvas-studio", description: "Interactive widgets on a pannable canvas with portable scene-data (DOM + Babylon adapter)" },
       { name: "Babylon City", slug: "babylon-city", description: "A city street built from fancy-3d primitives — demos as billboards on each building" },
-      { name: "TSRX Pilot", slug: "tsrx-pilot", description: "Pilot of .tsrx single-file components compiled by @tsrx/vite-plugin-react" },
       { name: "Stage + Screen", slug: "screen-stage", description: "fancy-3d Stage hosting interactive Screens — each surface is a live react-fancy tree" },
       { name: "Whiteboard", slug: "whiteboard", description: "fancy-whiteboard primitives — Board, sticky notes, drawing, connectors, shapes, cursors" },
       { name: "Whiteboard — Full Demo", slug: "whiteboard-full", description: "Design-sprint board: fancy-whiteboard + react-fancy toolbar, presence, JSON export" },

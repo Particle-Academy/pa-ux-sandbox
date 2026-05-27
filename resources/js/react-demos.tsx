@@ -76,7 +76,6 @@ const KanbanDemo = l(() => import("./react-demos/pages/KanbanDemo"), "KanbanDemo
 const CanvasDemo = l(() => import("./react-demos/pages/CanvasDemo"), "CanvasDemo");
 const CanvasStudioDemo = l(() => import("./react-demos/pages/CanvasStudioDemo"), "CanvasStudioDemo");
 const BabylonCityDemo = l(() => import("./react-demos/pages/BabylonCityDemo"), "BabylonCityDemo");
-const TsrxPilotDemo = l(() => import("./react-demos/pages/TsrxPilotDemo"), "TsrxPilotDemo");
 const ScreenStageDemo = l(() => import("./react-demos/pages/ScreenStageDemo"), "ScreenStageDemo");
 const WhiteboardDemo = l(() => import("./react-demos/pages/WhiteboardDemo"), "WhiteboardDemo");
 const WhiteboardFullDemo = l(() => import("./react-demos/pages/WhiteboardFullDemo"), "WhiteboardFullDemo");
@@ -247,7 +246,6 @@ if (root) {
               <Route path="ai-canvas-chat" element={<AICanvasChatDemo />} />
               <Route path="canvas-studio" element={<CanvasStudioDemo />} />
               <Route path="babylon-city" element={<BabylonCityDemo />} />
-              <Route path="tsrx-pilot" element={<TsrxPilotDemo />} />
               <Route path="screen-stage" element={<ScreenStageDemo />} />
               <Route path="whiteboard" element={<WhiteboardDemo />} />
               <Route path="whiteboard-full" element={<WhiteboardFullDemo />} />

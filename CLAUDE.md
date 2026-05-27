@@ -36,9 +36,9 @@ This is the **Fancy UI showcase site** — a Laravel 13 + Vite + React 19 + Iner
 - `particle-academy/holy-sheet` — xlsx writer used by the AI sheets demo
 - `particle-academy/dark-slide` — pptx writer/reader
 
-**JS/TS packages** are aliased by Vite to sibling source folders (`../<pkg>/src`) — see `vite.config.js`. The dev server reloads on any package source change; no `npm link`, no rebuild between iterations. Published npm versions only matter for external consumers.
+**JS/TS packages** are installed from npm like in any other consumer app. There are **no Vite aliases pointing at sibling source** — that means the local build is byte-for-byte the same as Forge's, but it also means a package change isn't visible in the showcase until the package is shipped (bump → tag → push → wait for CI publish → `npm update @particle-academy/<pkg>`). For tight iteration on a single package, `cd ../<pkg> && npm run dev` (or `tsup --watch`) drives that package's own demos in isolation.
 
-The aliased packages:
+The installed packages:
 - `@particle-academy/react-fancy` — core React component library (stays raw React)
 - `@particle-academy/fancy-3d` (+ `/dom`, `/babylon`, `/react`) — UI kit for humans + agents to author data-driven 3D apps: engine-agnostic `Scene` types + adapters + shape primitives + 3D-native components like `Screen`. The bridge to 3D engines lives here, not in react-fancy.
 - `@particle-academy/fancy-echarts` — ECharts wrapper
@@ -63,9 +63,7 @@ reload                    # Clear cache + npm run build (custom shortcut)
 
 ### Building
 
-**Just run `npm run build`. Never run per-package builds.**
-
-The sandbox handles everything — `vite.config.js` aliases `@particle-academy/*` to each package's `src/` directory, so `npm run build` compiles package source alongside the app in one pass. Package `dist/` output only matters for external npm consumers, and `npm publish` regenerates it automatically.
+**`npm run build` is just `vite build`** — there are no special workspace tricks. Vite resolves every `@particle-academy/*` import from `node_modules` against the versions pinned in `package.json` + `package-lock.json`. Same shape locally and on Forge. To pick up a package release, `npm update @particle-academy/<pkg>` first.
 
 ### Testing
 ```bash
@@ -172,7 +170,7 @@ The Fancy UI strategic goal is **complete app surfaces where agents drive the UI
 
 ## Git Rules
 
-- **No submodules anywhere in the workspace.** Each sibling package (`../react-fancy`, `../fancy-3d`, …) is its own independent git repo with its own remote. Edit packages in their own folders; the sandbox sees changes immediately via Vite aliases.
+- **No submodules anywhere in the workspace.** Each sibling package (`../react-fancy`, `../fancy-3d`, …) is its own independent git repo with its own remote. Edit packages in their own folders; the sandbox sees changes only after they're shipped to npm.
 - **NEVER use `git add -A` or `git add .`**. Always stage specific files by name. This workspace has untracked experiments, secrets, and files that must not be blindly committed.
 - **NEVER `git push` unless the user explicitly asks.** Commit locally is fine.
 - Before every commit, review changes with `git diff --stat` or `git status`, then `git add <specific files>`.

@@ -124,7 +124,7 @@ Generated xlsx artifacts land in `storage/app/public/ai-sheets/` and are served 
 
 The Fancy UI strategic goal is **complete app surfaces where agents drive the UI and humans ride shotgun, trading control fluidly**. Two packages are the top-level entry points:
 
-- **`@particle-academy/agent-integrations`** — MCP server, presence layer, share relay, and per-package bridges (`registerWhiteboardBridge`, `registerFlowBridge`, `registerFormBridge`, `registerSheetsBridge`, `registerCodeBridge`, `registerChartsBridge`, `registerSceneBridge`).
+- **`@particle-academy/agent-integrations`** — MCP server, presence layer, share relay, and per-package bridges (`registerWhiteboardBridge`, `registerFlowBridge`, `registerFormBridge`, `registerSheetsBridge`, `registerCodeBridge`, `registerChartsBridge`, `registerSceneBridge`, `registerScreensBridge`, `registerSlidesBridge`).
 - **`@particle-academy/fancy-screens`** — `<Screen>` containers + global `<ScreenSystem>` + ports + `ScreenMeta.agentActivity` field for cross-screen presence.
 
 **Pattern for adding a new surface to the Human+ UX vocabulary:**
@@ -138,7 +138,11 @@ The Fancy UI strategic goal is **complete app surfaces where agents drive the UI
    - Push undo entries via `pushUndoEntry(agentId, { ... })` after the mutation lands. Reverse-action closures should call the inverse bridge tool.
    - Call `ensureUndoToolsRegistered(server)` at the top of `register*Bridge` so `agent_undo` / `agent_redo` / `agent_history` are installed.
 3. **Wire screen presence** — set `screenId` on the bridge adapter; mount `<ScreensActivityBridge system={system} />` once near the root so events flow into `ScreenMeta.agentActivity` and the screen's `<Screen>` div picks up the `.agent-focused-element` class automatically.
-4. **Register bridge tools' deep import** in `agent-integrations/src/index.ts` and `tsup.config.ts` (one new entry per bridge file).
+4. **Wire the bridge through the build in four places** so consumers can actually import it:
+   - `agent-integrations/src/index.ts` — re-export `registerXBridge` + the adapter/options types from the root barrel
+   - `agent-integrations/tsup.config.ts` — add `"bridges-X": "src/bridges/X.ts"` to both `entry` and the DTS `entry` array; add the package to `external` if it's an optional peer
+   - `agent-integrations/package.json` — add `./bridges/X` to `exports` + add the peer to `peerDependencies` (optional) + to `devDependencies` for build-time type resolution
+   - Bump the version (additive → minor or patch) and ship. Skipping any of these four lands the bridge in source but invisible to consumers — exactly how `registerSlidesBridge` sat un-shipped until v0.6.3.
 5. **Add a sandbox demo page** under `resources/js/react-demos/pages/` mounting the surface + bridge + share controls. Reuse `WhiteboardSharedDemo.tsx` / `WorkflowAgentDemo.tsx` / `HumanPlusDemo.tsx` as templates.
 
 **Existing surfaces / tool prefixes:**
@@ -151,7 +155,9 @@ The Fancy UI strategic goal is **complete app surfaces where agents drive the UI
 | `sheets` | `sheet_*` | fancy-sheets `<SheetWorkbook>` |
 | `code` | `code_*` | fancy-code `<CodeEditor>` |
 | `charts` | `chart_*` | fancy-echarts `<EChart>` |
-| `scene` | `scene_*` | fancy-3d Scene primitives |
+| `scene` | `scene_*` | fancy-3d `Scene` types (engine-agnostic) |
+| `screens` | `screen_*` | fancy-screens `<Screen>` registry |
+| `slides` | `deck_*` / `slide_*` / `element_*` | fancy-slides `<DeckEditor>` / `<SlideViewer>` (since `agent-integrations@0.6.3`) |
 | (cross-cutting) | `agent_undo` / `agent_redo` / `agent_history` | per-agent undo stack |
 
 **Relay infrastructure** lives at `app/Http/Controllers/WhiteboardShareController.php` (the name is historical — it carries any MCP frames now, not just whiteboard). Routes in `routes/web.php` under `/whiteboard-share/*`. CSRF-exempt for external clients via `bootstrap/app.php`.

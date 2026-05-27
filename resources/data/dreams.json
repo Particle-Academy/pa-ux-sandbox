@@ -247,7 +247,10 @@
             "blurb": "7\u00d724 (or any N\u00d7M) boolean-cell painter \u2014 drag to paint, click axis labels to toggle whole row/column. Powers quiet hours, working hours, availability matrices, room booking, meeting heatmaps; anywhere a recurring time selection lives.",
             "pkg": "react-fancy",
             "theme": "Notifications",
-            "dreamedAt": "2026-05-15"
+            "dreamedAt": "2026-05-15",
+            "accepted": true,
+            "acceptedAt": "2026-05-27",
+            "acceptedInto": "@particle-academy/react-fancy@3.3.0"
         },
         {
             "slug": "classifier-chip",

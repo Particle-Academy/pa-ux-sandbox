@@ -44,7 +44,10 @@ const PKG_HAS_SHOT = new Set([
     "fancy-screens",
     "fancy-3d",
     "fancy-inertia",
+    "fancy-slides",
     "agent-integrations",
+    "holy-sheet",
+    "dark-slide",
 ]);
 
 const PILLARS = [

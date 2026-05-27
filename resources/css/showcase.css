@@ -15,6 +15,14 @@
 @import "@particle-academy/fancy-whiteboard/styles.css";
 @import "@particle-academy/agent-integrations/styles.css";
 
+/* Belt-and-braces: be explicit about which local source files Tailwind
+   should scan. The auto-content-scan handles most things, but is finicky
+   with Inertia pages loaded via import.meta.glob. */
+@source '../js/Pages/**/*.tsx';
+@source '../js/Pages/**/*.ts';
+@source '../js/showcase/**/*.tsx';
+@source '../js/showcase/**/*.ts';
+
 /* Tailwind v4 skips node_modules by default; tell it to scan our package
    bundles too so the utility classes used inside react-fancy / fancy-3d /
    etc. show up in the final CSS. We point at the compiled dist files (not

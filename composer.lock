@@ -3668,16 +3668,16 @@
         },
         {
             "name": "particle-academy/laravel-fms",
-            "version": "v0.5.0",
+            "version": "v0.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/laravel-feature-management-system.git",
-                "reference": "9bbb2429000e0d5a704039793fa4a4a32e3139cf"
+                "reference": "25b8b5382e660b71410cf26f0fb7150598c09e44"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/laravel-feature-management-system/zipball/9bbb2429000e0d5a704039793fa4a4a32e3139cf",
-                "reference": "9bbb2429000e0d5a704039793fa4a4a32e3139cf",
+                "url": "https://api.github.com/repos/Particle-Academy/laravel-feature-management-system/zipball/25b8b5382e660b71410cf26f0fb7150598c09e44",
+                "reference": "25b8b5382e660b71410cf26f0fb7150598c09e44",
                 "shasum": ""
             },
             "require": {
@@ -3719,9 +3719,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Particle-Academy/laravel-feature-management-system/issues",
-                "source": "https://github.com/Particle-Academy/laravel-feature-management-system/tree/v0.5.0"
+                "source": "https://github.com/Particle-Academy/laravel-feature-management-system/tree/v0.5.1"
             },
-            "time": "2026-05-09T00:13:14+00:00"
+            "time": "2026-05-27T00:46:34+00:00"
         },
         {
             "name": "phpoption/phpoption",

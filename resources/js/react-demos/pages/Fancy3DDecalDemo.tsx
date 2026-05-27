@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { MeshBuilder, StandardMaterial, Color3, Vector3, type Mesh, PointerEventTypes } from "@babylonjs/core";
-import { createDecal, createPanel } from "@particle-academy/fancy-3d/babylon";
-import { Stage, useStage } from "@particle-academy/fancy-3d/react";
+import { createDecal, createPanel } from "@particle-academy/fancy-3d-babylon";
+import { Stage, useStage } from "@particle-academy/fancy-3d-babylon/react";
 import { Badge, Card } from "@particle-academy/react-fancy";
 
 function paintLogo(ctx: CanvasRenderingContext2D, w: number, h: number) {

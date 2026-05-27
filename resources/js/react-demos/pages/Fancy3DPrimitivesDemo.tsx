@@ -10,8 +10,8 @@ import {
   createPanel,
   createPillar,
   createSphere,
-} from "@particle-academy/fancy-3d/babylon";
-import { Stage, useStage } from "@particle-academy/fancy-3d/react";
+} from "@particle-academy/fancy-3d-babylon";
+import { Stage, useStage } from "@particle-academy/fancy-3d-babylon/react";
 import { Card } from "@particle-academy/react-fancy";
 
 function PrimitivesScene() {

@@ -24,6 +24,7 @@ class PackageRegistry
             self::fancyEcharts(),
             self::fancyScreens(),
             self::fancy3d(),
+            self::fancy3dBabylon(),
             self::agentIntegrations(),
             self::holySheet(),
             self::darkSlide(),
@@ -253,15 +254,32 @@ class PackageRegistry
         return [
             'slug' => 'fancy-3d',
             'name' => 'fancy-3d',
-            'tagline' => 'Engine-pluggable 3D bridge — Canvas, Stage, Monitor, Card3D across DOM and Babylon.',
+            'tagline' => 'Engine-agnostic 3D core — Scene types, the <Canvas> surface, and a DOM/CSS-3D renderer. WebGL engines (Babylon, three.js, …) ship as sibling fancy-3d-* packages.',
             'npm' => '@particle-academy/fancy-3d',
             'repo' => 'Particle-Academy/fancy-3d',
             'language' => 'TypeScript',
             'components' => [
-                ['slug' => 'canvas', 'name' => 'Canvas', 'blurb' => 'Engine-pluggable root.'],
-                ['slug' => 'stage', 'name' => 'Stage', 'blurb' => 'Scene root.'],
-                ['slug' => 'monitor', 'name' => 'Monitor', 'blurb' => 'In-scene screen surface.'],
-                ['slug' => 'card-3d', 'name' => 'Card3D', 'blurb' => 'In-scene Card.'],
+                ['slug' => 'canvas', 'name' => 'Canvas', 'blurb' => 'Engine-pluggable pan/zoom surface; DOM renderer built in.'],
+                ['slug' => 'scene', 'name' => 'Scene types', 'blurb' => 'Engine-agnostic JSON shape (nodes, edges, widget specs).'],
+            ],
+        ];
+    }
+
+    /** @return array<string, mixed> */
+    private static function fancy3dBabylon(): array
+    {
+        return [
+            'slug' => 'fancy-3d-babylon',
+            'name' => 'fancy-3d-babylon',
+            'tagline' => 'Babylon.js adapter for fancy-3d — WebGL renderer + the React components (Stage, Monitor, Card3D, Screen) that mount onto a Babylon Scene.',
+            'npm' => '@particle-academy/fancy-3d-babylon',
+            'repo' => 'Particle-Academy/fancy-3d-babylon',
+            'language' => 'TypeScript',
+            'components' => [
+                ['slug' => 'engine', 'name' => 'babylonEngine', 'blurb' => 'CanvasEngine adapter — pass to <Canvas engine={babylonEngine}/>.'],
+                ['slug' => 'stage', 'name' => 'Stage', 'blurb' => 'Babylon scene root (camera + lighting + JSON scene graph).'],
+                ['slug' => 'monitor', 'name' => 'Monitor', 'blurb' => 'In-scene HTML overlay rendered as a WebGL texture.'],
+                ['slug' => 'card-3d', 'name' => 'Card3D', 'blurb' => '3D-native Card primitive positioned in scene space.'],
             ],
         ];
     }

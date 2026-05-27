@@ -19,8 +19,8 @@ export const fancy3dCard3DDoc: ComponentDoc = {
                     The mesh is just a shape — pair with a <code>Monitor</code> to put React UI on top.
                 </Text>
             ),
-            code: `import { Stage, Monitor } from "@particle-academy/fancy-3d/babylon";
-import { createCard3D } from "@particle-academy/fancy-3d/babylon";
+            code: `import { Stage, Monitor } from "@particle-academy/fancy-3d-babylon";
+import { createCard3D } from "@particle-academy/fancy-3d-babylon";
 
 <Stage
     onReady={(scene) => {
@@ -51,7 +51,7 @@ import { createCard3D } from "@particle-academy/fancy-3d/babylon";
     createPanel,
     createBuilding,
     createCard3D,
-} from "@particle-academy/fancy-3d/babylon";
+} from "@particle-academy/fancy-3d-babylon";
 
 // Inside Stage.onReady(scene):
 const panel = createPanel({ scene, width: 2, height: 1.2 });

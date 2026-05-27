@@ -7,7 +7,7 @@ export const fancy3dStageDoc: ComponentDoc = {
             A Babylon-backed 3D root. Sets up the scene, an ArcRotateCamera, a default light
             rig, and renders an HTML overlay layer over the canvas — ready for{" "}
             <code>Monitor</code> children that mount React UI inside the 3D scene. Lives
-            behind the <code>@particle-academy/fancy-3d/babylon</code> subpath since it
+            behind the <code>@particle-academy/fancy-3d-babylon</code> subpath since it
             depends on <code>@babylonjs/core</code>.
         </p>
     ),
@@ -20,7 +20,7 @@ export const fancy3dStageDoc: ComponentDoc = {
                     Stage needs <code>@babylonjs/core</code> installed. See the fancy-3d demos for a complete setup.
                 </Text>
             ),
-            code: `import { Stage, Monitor } from "@particle-academy/fancy-3d/babylon";
+            code: `import { Stage, Monitor } from "@particle-academy/fancy-3d-babylon";
 import { Card } from "@particle-academy/react-fancy";
 
 <Stage cameraRadius={10} cameraTarget={[0, 1.5, 0]} clearColor="#0b1220">

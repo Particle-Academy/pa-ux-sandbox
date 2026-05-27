@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Vector3 } from "@babylonjs/core";
-import { createCard3D, createPanel } from "@particle-academy/fancy-3d/babylon";
-import { Stage, useStage } from "@particle-academy/fancy-3d/react";
+import { createCard3D, createPanel } from "@particle-academy/fancy-3d-babylon";
+import { Stage, useStage } from "@particle-academy/fancy-3d-babylon/react";
 
 function Card3DScene() {
   const { scene } = useStage();

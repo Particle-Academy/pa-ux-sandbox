@@ -20,7 +20,7 @@ export const fancy3dMonitorDoc: ComponentDoc = {
                     Drop a real fancy primitive (Card, Chart, Composer, …) as children — the same components that work in plain DOM render here too.
                 </Text>
             ),
-            code: `import { Stage, Monitor } from "@particle-academy/fancy-3d/babylon";
+            code: `import { Stage, Monitor } from "@particle-academy/fancy-3d-babylon";
 import { Card, Heading, Chart } from "@particle-academy/react-fancy";
 
 <Stage>

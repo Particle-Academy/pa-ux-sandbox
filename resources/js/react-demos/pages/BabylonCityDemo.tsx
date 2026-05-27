@@ -21,7 +21,7 @@ import {
   createBuilding,
   createPanel,
   type SurfaceContent,
-} from "@particle-academy/fancy-3d/babylon";
+} from "@particle-academy/fancy-3d-babylon";
 import { demosScene } from "../canvas-studio/demosScene";
 import type { DemoPageSpec } from "@particle-academy/fancy-3d";
 
@@ -354,7 +354,7 @@ export function BabylonCityDemo() {
             <div className="text-sm font-semibold">Primitives + scene = 3D UI</div>
             <div className="mt-1 text-xs leading-relaxed">
               The buildings, billboards, sidewalks, and posts are all built
-              from <code>@particle-academy/fancy-3d/babylon</code> primitives.
+              from <code>@particle-academy/fancy-3d-babylon</code> primitives.
               Each accepts a <code>SurfaceContent</code> — a color, a 2D paint
               callback, or a fancy-3d <code>WidgetSpec</code>. Same painters
               power Canvas Studio in DOM mode and these billboards in 3D.

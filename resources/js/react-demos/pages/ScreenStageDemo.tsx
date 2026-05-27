@@ -6,7 +6,7 @@ import {
   Switch,
   Timeline,
 } from "@particle-academy/react-fancy";
-import { Stage, Monitor } from "@particle-academy/fancy-3d/react";
+import { Stage, Monitor } from "@particle-academy/fancy-3d-babylon/react";
 
 function DashboardScreenContents() {
   const [count, setCount] = useState(0);

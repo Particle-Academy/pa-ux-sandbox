@@ -8,8 +8,8 @@ import {
   placeOnPath,
   placeOnSphere,
   placeOnWall,
-} from "@particle-academy/fancy-3d/babylon";
-import { Stage, useStage } from "@particle-academy/fancy-3d/react";
+} from "@particle-academy/fancy-3d-babylon";
+import { Stage, useStage } from "@particle-academy/fancy-3d-babylon/react";
 import { Action, Badge } from "@particle-academy/react-fancy";
 import type { Scene as SceneSpec } from "@particle-academy/fancy-3d";
 

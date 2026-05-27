@@ -8,7 +8,7 @@ import {
   type Mesh,
   type Scene as BJScene,
 } from "@babylonjs/core";
-import { Stage, useStage } from "@particle-academy/fancy-3d/react";
+import { Stage, useStage } from "@particle-academy/fancy-3d-babylon/react";
 import { Action, Badge, Card } from "@particle-academy/react-fancy";
 
 /* ------------------------------------------------------------------ */
@@ -228,7 +228,7 @@ function CubeCrusher() {
         )}
       </div>
       <Card.Body className="text-xs text-zinc-500">
-        Built with <code>@particle-academy/fancy-3d/react</code>'s{" "}
+        Built with <code>@particle-academy/fancy-3d-babylon/react</code>'s{" "}
         <code>&lt;Stage&gt;</code> + <code>useStage()</code>: spawn loop, pick
         handler, score state, all in ~150 lines. Drag to orbit, scroll to
         zoom while playing.
@@ -275,7 +275,7 @@ export function BabylonSmokeTestDemo() {
       <div className="mb-6">
         <h1 className="mb-1 text-2xl font-bold">Babylon — 60-second smoke test</h1>
         <p className="max-w-3xl text-sm text-zinc-500">
-          A real playable demo built on <code className="text-xs">@particle-academy/fancy-3d/react</code>{" "}
+          A real playable demo built on <code className="text-xs">@particle-academy/fancy-3d-babylon/react</code>{" "}
           first, then the official Babylon Playground embedded inline, then a
           curated set of browser-playable Babylon games and showcases.
         </p>

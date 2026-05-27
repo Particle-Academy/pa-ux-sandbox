@@ -1415,7 +1415,7 @@ function Fancy3DMonitorDemo() {
     return (
         <Explainer
             summary="A 3D plane that renders a DOM (HTML/React) surface as a texture. Lets you put a working react-fancy <Card> or <Table> on a monitor in the scene."
-            code={'import { Monitor } from "@particle-academy/fancy-3d/babylon";\nimport { Card } from "@particle-academy/react-fancy";\n\n<Monitor width={2} height={1.2} position={[0, 1, 0]}>\n  <Card>\n    <Card.Body>Renders as a live texture in WebGL.</Card.Body>\n  </Card>\n</Monitor>'}
+            code={'import { Monitor } from "@particle-academy/fancy-3d-babylon";\nimport { Card } from "@particle-academy/react-fancy";\n\n<Monitor width={2} height={1.2} position={[0, 1, 0]}>\n  <Card>\n    <Card.Body>Renders as a live texture in WebGL.</Card.Body>\n  </Card>\n</Monitor>'}
         />
     );
 }

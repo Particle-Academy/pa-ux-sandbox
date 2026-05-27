@@ -85,7 +85,7 @@ export default function Home({ packages, total_components }: HomeProps) {
                             share the same UI.
                         </Heading>
                         <Text className="mt-5 text-base !text-zinc-600 dark:!text-zinc-300">
-                            Fancy UI is a constellation of React, PHP, and Babylon packages built for{" "}
+                            Fancy UI is a constellation of React and PHP packages built for{" "}
                             <strong className="text-zinc-900 dark:text-zinc-100">Human+ UX</strong> —
                             interfaces designed from the ground up for humans and AI agents collaborating in the
                             same surface. Every component is bridgeable, not just paintable.

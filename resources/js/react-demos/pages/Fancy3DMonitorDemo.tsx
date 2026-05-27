@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Vector3 } from "@babylonjs/core";
-import { createMonitor, createPanel } from "@particle-academy/fancy-3d/babylon";
-import { Stage, useStage } from "@particle-academy/fancy-3d/react";
+import { createMonitor, createPanel } from "@particle-academy/fancy-3d-babylon";
+import { Stage, useStage } from "@particle-academy/fancy-3d-babylon/react";
 
 function MonitorScene() {
   const { scene } = useStage();

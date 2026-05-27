@@ -156,7 +156,7 @@ const GALLERY_SLIDE: SlideData = {
         {
             id: "f3-tag", type: "text",
             x: 0.66, y: 0.82, w: 0.3, h: 0.06,
-            content: "DOM + Babylon engines",
+            content: "Engine-pluggable — DOM built in",
             format: "plain",
             style: { fontSize: 16, align: "center", color: "#64748b" },
         },

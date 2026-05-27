@@ -23,7 +23,26 @@ class PackagesController extends Controller
             'components_count' => count($p['components'] ?? []),
         ])->all();
 
-        return Inertia::render('Packages/Index', ['packages' => $packages]);
+        // Companion packages — composer deps the sandbox develops against
+        // but aren't part of the Fancy UI showcase narrative. Rendered as
+        // a footnote on /packages, not as cards in the main grid.
+        $companions = collect(PackageRegistry::companions())->map(fn (array $p) => [
+            'slug' => $p['slug'],
+            'name' => $p['name'],
+            'tagline' => $p['tagline'],
+            'language' => $p['language'],
+            'composer' => $p['composer'],
+            'repo' => $p['repo'],
+            'packagist' => $p['packagist'],
+            'repoUrl' => "https://github.com/{$p['repo']}",
+            'packagistUrl' => "https://packagist.org/packages/{$p['packagist']}",
+            'issuesUrl' => "https://github.com/{$p['repo']}/issues",
+        ])->all();
+
+        return Inertia::render('Packages/Index', [
+            'packages' => $packages,
+            'companions' => $companions,
+        ]);
     }
 
     public function show(string $package): Response

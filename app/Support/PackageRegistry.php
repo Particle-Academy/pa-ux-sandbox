@@ -32,6 +32,39 @@ class PackageRegistry
         ];
     }
 
+    /**
+     * Companion PHP packages — composer deps that ship inside this sandbox
+     * monorepo (the sandbox doubles as their development host) but aren't
+     * part of the Fancy UI showcase narrative. Rendered as a footnote
+     * section on /packages, not in the main grid; no per-package detail
+     * page generated.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public static function companions(): array
+    {
+        return [
+            [
+                'slug' => 'laravel-catalog',
+                'name' => 'particle-academy/laravel-catalog',
+                'tagline' => 'Stripe catalog (Products + Prices) via a facade API. Used by the sandbox for the demo storefront.',
+                'composer' => 'particle-academy/laravel-catalog',
+                'repo' => 'Particle-Academy/laravel-catalog',
+                'packagist' => 'particle-academy/laravel-catalog',
+                'language' => 'PHP',
+            ],
+            [
+                'slug' => 'laravel-fms',
+                'name' => 'particle-academy/laravel-fms',
+                'tagline' => 'Feature Management System — gate/policy/config/registry-driven feature access. Pairs with laravel-catalog for entitlement-based UI.',
+                'composer' => 'particle-academy/laravel-fms',
+                'repo' => 'Particle-Academy/laravel-feature-management-system',
+                'packagist' => 'particle-academy/laravel-fms',
+                'language' => 'PHP',
+            ],
+        ];
+    }
+
     public static function find(string $slug): ?array
     {
         foreach (self::all() as $pkg) {

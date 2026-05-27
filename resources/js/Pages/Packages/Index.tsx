@@ -10,6 +10,22 @@ type Pkg = {
     components_count: number;
 };
 
+/**
+ * Companion packages — composer deps the sandbox monorepo develops against
+ * (laravel-catalog, laravel-fms, etc.) but aren't part of the Fancy UI
+ * showcase narrative. Rendered as a compact footnote below the main grid.
+ */
+type Companion = {
+    slug: string;
+    name: string;
+    tagline: string;
+    language: string;
+    composer: string;
+    repoUrl: string;
+    packagistUrl: string;
+    issuesUrl: string;
+};
+
 // Packages we have hand-curated screenshots for. The rest fall back to a
 // tasteful logo-style tile rendered from the package slug.
 const HAS_SHOT = new Set([
@@ -28,7 +44,7 @@ const HAS_SHOT = new Set([
     "dark-slide",
 ]);
 
-export default function PackagesIndex({ packages }: { packages: Pkg[] }) {
+export default function PackagesIndex({ packages, companions = [] }: { packages: Pkg[]; companions?: Companion[] }) {
     const totalComponents = packages.reduce((s, p) => s + p.components_count, 0);
     return (
         <Layout>
@@ -73,7 +89,62 @@ export default function PackagesIndex({ packages }: { packages: Pkg[] }) {
                     </Link>
                 ))}
             </div>
+
+            {companions.length > 0 && <CompanionPackages companions={companions} />}
         </Layout>
+    );
+}
+
+function CompanionPackages({ companions }: { companions: Companion[] }) {
+    return (
+        <section className="mt-16 border-t border-zinc-200 pt-8 dark:border-zinc-800">
+            <div className="flex flex-wrap items-end justify-between gap-3">
+                <div>
+                    <Heading level={2} size="sm" className="!text-zinc-700 dark:!text-zinc-300">
+                        Companion packages
+                    </Heading>
+                    <Text size="sm" className="mt-2 max-w-2xl !text-zinc-500">
+                        Composer deps the sandbox monorepo develops alongside the Fancy UI kit. Not part of the showcase narrative — listed here so the development surface stays visible. Open issues are tracked on GitHub.
+                    </Text>
+                </div>
+            </div>
+
+            <ul className="mt-5 divide-y divide-zinc-100 rounded-lg border border-zinc-200 bg-white dark:divide-zinc-800 dark:border-zinc-800 dark:bg-zinc-950">
+                {companions.map((c) => (
+                    <li key={c.slug} className="flex flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3">
+                        <code className="font-mono text-sm text-zinc-900 dark:text-zinc-100">{c.name}</code>
+                        <Badge color="indigo" size="sm">{c.language}</Badge>
+                        <span className="min-w-[14rem] flex-1 text-xs text-zinc-500">{c.tagline}</span>
+                        <div className="flex items-center gap-3 text-xs">
+                            <a
+                                href={c.repoUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="text-zinc-600 hover:text-violet-600 dark:text-zinc-400 dark:hover:text-violet-300"
+                            >
+                                GitHub →
+                            </a>
+                            <a
+                                href={c.issuesUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="text-zinc-600 hover:text-violet-600 dark:text-zinc-400 dark:hover:text-violet-300"
+                            >
+                                Issues →
+                            </a>
+                            <a
+                                href={c.packagistUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="text-zinc-600 hover:text-violet-600 dark:text-zinc-400 dark:hover:text-violet-300"
+                            >
+                                Packagist →
+                            </a>
+                        </div>
+                    </li>
+                ))}
+            </ul>
+        </section>
     );
 }
 

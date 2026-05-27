@@ -1,15 +1,15 @@
 import { Head, Link, usePage } from "@inertiajs/react";
-import { useMemo, useState } from "react";
+import { Component, ErrorInfo, ReactNode, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import {
     Action,
     Badge,
     Card,
-    
     Heading,
     Separator,
     Text,
 } from "@particle-academy/react-fancy";
 import { Layout } from "../Layout";
+import { dreamDemos } from "./demos";
 
 type Dream = {
     slug: string;
@@ -26,6 +26,86 @@ type Props = {
     tallies: Record<string, Tally>;
     themes: string[];
 };
+
+// ── Speculative-demo preview ────────────────────────────────────────────────
+// Each dream card hosts a small, scrollable live preview of the dreamed
+// component so voters can actually try it. Demos are lazy-loaded on first
+// intersection so we don't mount 46 React trees on page open.
+
+class DemoErrorBoundary extends Component<{ children: ReactNode }, { error: Error | null }> {
+    state = { error: null as Error | null };
+    static getDerivedStateFromError(error: Error) {
+        return { error };
+    }
+    componentDidCatch(error: Error, info: ErrorInfo) {
+        // eslint-disable-next-line no-console
+        console.error("[dream demo crash]", error, info);
+    }
+    render() {
+        if (this.state.error) {
+            return (
+                <div className="flex h-full items-center justify-center px-3 text-center text-[11px] text-rose-500">
+                    Demo crashed: {String(this.state.error.message || this.state.error)}
+                </div>
+            );
+        }
+        return this.props.children;
+    }
+}
+
+function DemoPreview({ slug }: { slug: string }) {
+    const Demo = dreamDemos[slug];
+    const ref = useRef<HTMLDivElement>(null);
+    const [seen, setSeen] = useState(false);
+
+    useEffect(() => {
+        const el = ref.current;
+        if (!el) return;
+        if (typeof IntersectionObserver === "undefined") {
+            setSeen(true);
+            return;
+        }
+        const io = new IntersectionObserver(
+            (entries) => entries.forEach((e) => e.isIntersecting && setSeen(true)),
+            { rootMargin: "400px" },
+        );
+        io.observe(el);
+        return () => io.disconnect();
+    }, []);
+
+    return (
+        <div
+            ref={ref}
+            className="mb-3 h-56 overflow-hidden rounded-md border border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950"
+        >
+            {Demo ? (
+                seen ? (
+                    <Suspense
+                        fallback={
+                            <div className="flex h-full items-center justify-center text-[11px] text-zinc-400">
+                                Loading…
+                            </div>
+                        }
+                    >
+                        <DemoErrorBoundary>
+                            <div className="h-full overflow-auto p-3 text-zinc-700 dark:text-zinc-200">
+                                <Demo />
+                            </div>
+                        </DemoErrorBoundary>
+                    </Suspense>
+                ) : (
+                    <div className="flex h-full items-center justify-center text-[11px] text-zinc-400">
+                        Scroll into view to preview
+                    </div>
+                )
+            ) : (
+                <div className="flex h-full items-center justify-center text-[11px] text-zinc-400">
+                    No preview yet
+                </div>
+            )}
+        </div>
+    );
+}
 
 export default function DreamingIndex({ dreams, tallies: initialTallies, themes }: Props) {
     const { props } = usePage<{ auth: { user: unknown }; csrfToken: string }>();
@@ -140,6 +220,7 @@ export default function DreamingIndex({ dreams, tallies: initialTallies, themes 
                     return (
                         <Card key={d.slug} className="flex h-full flex-col">
                             <Card.Body>
+                                <DemoPreview slug={d.slug} />
                                 <div className="flex items-start justify-between gap-2">
                                     <Heading level={3} size="sm">{d.title}</Heading>
                                     {d.theme && <Badge color="sky" size="sm">{d.theme}</Badge>}

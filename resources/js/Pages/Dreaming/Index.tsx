@@ -73,10 +73,16 @@ function DemoPreview({ slug }: { slug: string }) {
         return () => io.disconnect();
     }, []);
 
+    // Demos were authored for the dreaming-branch sandbox, which mounted
+    // them on a full-page route — most assume ~800px of horizontal canvas.
+    // Cramming them into a card means a lot of scroll and clipped layout.
+    // We use CSS `zoom` so the demo *thinks* it has its native viewport
+    // while we render at 60% scale, plus an inner scroll container as a
+    // safety net for the few demos that still overflow.
     return (
         <div
             ref={ref}
-            className="mb-3 h-56 overflow-hidden rounded-md border border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950"
+            className="mb-3 h-[28rem] overflow-hidden rounded-md border border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950"
         >
             {Demo ? (
                 seen ? (
@@ -88,7 +94,10 @@ function DemoPreview({ slug }: { slug: string }) {
                         }
                     >
                         <DemoErrorBoundary>
-                            <div className="h-full overflow-auto p-3 text-zinc-700 dark:text-zinc-200">
+                            <div
+                                className="h-full w-full overflow-auto p-3 text-zinc-700 dark:text-zinc-200"
+                                style={{ zoom: 0.6 }}
+                            >
                                 <Demo />
                             </div>
                         </DemoErrorBoundary>
@@ -212,7 +221,7 @@ export default function DreamingIndex({ dreams, tallies: initialTallies, themes 
                 <Text size="xs" className="ml-auto text-zinc-500">{visible.length} dreams</Text>
             </div>
 
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
                 {visible.map((d) => {
                     const tally = tallies[d.slug] ?? { up: 0, down: 0, mine: null };
                     const score = tally.up - tally.down;

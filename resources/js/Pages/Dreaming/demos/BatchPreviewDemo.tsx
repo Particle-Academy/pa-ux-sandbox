@@ -144,7 +144,7 @@ const SEED: Item[] = [
   { id: "d1", source: "GitHub", title: "3 PRs merged", body: "by @rita and @sam in api-gateway.", included: true },
   { id: "d2", source: "Linear", title: "5 issues closed", body: "in 'Onboarding overhaul' project.", included: true },
   { id: "d3", source: "Stripe", title: "$2,431 MRR added", body: "across 4 new subscriptions this week.", included: true },
-  { id: "d4", source: "Slack", title: "2 mentions in #design", body: "from @glenn — quick async questions.", included: false },
+  { id: "d4", source: "Slack", title: "2 mentions in #design", body: "from @sam — quick async questions.", included: false },
   { id: "d5", source: "Sentry", title: "1 new error type", body: "TypeError in /api/v2/upload (3 events).", included: true },
 ];
 

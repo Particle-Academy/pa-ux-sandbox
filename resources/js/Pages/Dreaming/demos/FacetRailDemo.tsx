@@ -216,7 +216,7 @@ const SCHEMA: Facet[] = [
     type: "checkbox",
     searchable: true,
     options: [
-      { value: "glenn", label: "Glenn" },
+      { value: "ada", label: "Ada" },
       { value: "sam", label: "Sam" },
       { value: "rita", label: "Rita" },
       { value: "ayo", label: "Ayo" },

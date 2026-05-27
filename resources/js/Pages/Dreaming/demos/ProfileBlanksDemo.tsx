@@ -4,7 +4,7 @@ export const USAGE = `import { ProfileBlanks } from "@particle-academy/react-fan
 
 <ProfileBlanks
   fields={[
-    { key: "name",      label: "Display name", placeholder: "Glenn Wagner" },
+    { key: "name",      label: "Display name", placeholder: "Ada Lovelace" },
     { key: "email",     label: "Work email",   placeholder: "you@co.com", type: "email",
       validate: (v) => /^\\S+@\\S+\\.\\S+$/.test(v) ? null : "Looks malformed." },
     { key: "role",      label: "Your role",    placeholder: "Founder, designer, …" },
@@ -29,7 +29,7 @@ type Field = {
 };
 
 const FIELDS: Field[] = [
-  { key: "name", label: "Display name", placeholder: "Glenn Wagner" },
+  { key: "name", label: "Display name", placeholder: "Ada Lovelace" },
   {
     key: "email",
     label: "Work email",
@@ -44,8 +44,8 @@ const FIELDS: Field[] = [
 
 export function ProfileBlanksDemo() {
   const [values, setValues] = useState<Record<string, string>>({
-    name: "Glenn Wagner",
-    email: "glenn@impactivism.net",
+    name: "Ada Lovelace",
+    email: "ada@example.com",
   });
   const [draft, setDraft] = useState("");
   const [error, setError] = useState<string | null>(null);

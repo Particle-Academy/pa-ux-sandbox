@@ -17,6 +17,10 @@ type Dream = {
     blurb?: string;
     pkg?: string;
     theme?: string;
+    accepted?: boolean;
+    acceptedAt?: string;
+    /** Package + version the dream was promoted into, e.g. `@particle-academy/react-fancy@3.3.0`. */
+    acceptedInto?: string;
 };
 
 type Tally = { up: number; down: number; mine: number | null };
@@ -232,7 +236,12 @@ export default function DreamingIndex({ dreams, tallies: initialTallies, themes 
                                 <DemoPreview slug={d.slug} />
                                 <div className="flex items-start justify-between gap-2">
                                     <Heading level={3} size="sm">{d.title}</Heading>
-                                    {d.theme && <Badge color="sky" size="sm">{d.theme}</Badge>}
+                                    <div className="flex flex-wrap items-center gap-1">
+                                        {d.accepted && (
+                                            <Badge color="emerald" size="sm">Shipped</Badge>
+                                        )}
+                                        {d.theme && <Badge color="sky" size="sm">{d.theme}</Badge>}
+                                    </div>
                                 </div>
                                 {d.pkg && (
                                     <Text size="xs" className="mt-0.5 uppercase tracking-wider text-zinc-400">
@@ -240,37 +249,51 @@ export default function DreamingIndex({ dreams, tallies: initialTallies, themes 
                                     </Text>
                                 )}
                                 {d.blurb && <Text size="xs" className="mt-2">{d.blurb}</Text>}
-                                <div className="mt-3 flex items-center justify-between">
-                                    <div className="flex items-center gap-1 text-xs">
-                                        <Action
-                                            variant={mine === 1 ? "filled" : "ghost"}
-                                            color={mine === 1 ? "emerald" : "zinc"}
-                                            size="sm"
-                                            onClick={() => handleVote(d.slug, 1)}
-                                        >
-                                            👍 {tally.up}
-                                        </Action>
-                                        <Action
-                                            variant={mine === -1 ? "filled" : "ghost"}
-                                            color={mine === -1 ? "rose" : "zinc"}
-                                            size="sm"
-                                            onClick={() => handleVote(d.slug, -1)}
-                                        >
-                                            👎 {tally.down}
-                                        </Action>
-                                    </div>
-                                    <Text
-                                        size="xs"
-                                        className={`font-mono ${
-                                            score > 0
-                                                ? "text-emerald-600"
-                                                : score < 0
-                                                    ? "text-rose-600"
-                                                    : "text-zinc-500"
-                                        }`}
-                                    >
-                                        {score > 0 ? `+${score}` : score}
+                                {d.accepted && d.acceptedInto && (
+                                    <Text size="xs" className="mt-2 font-mono text-emerald-600 dark:text-emerald-400">
+                                        ✓ shipped in {d.acceptedInto}
+                                        {d.acceptedAt && ` · ${d.acceptedAt}`}
                                     </Text>
+                                )}
+                                <div className="mt-3 flex items-center justify-between">
+                                    {d.accepted ? (
+                                        <Text size="xs" className="text-zinc-500">
+                                            Voting closed — accepted into the kit.
+                                        </Text>
+                                    ) : (
+                                        <div className="flex items-center gap-1 text-xs">
+                                            <Action
+                                                variant={mine === 1 ? "filled" : "ghost"}
+                                                color={mine === 1 ? "emerald" : "zinc"}
+                                                size="sm"
+                                                onClick={() => handleVote(d.slug, 1)}
+                                            >
+                                                👍 {tally.up}
+                                            </Action>
+                                            <Action
+                                                variant={mine === -1 ? "filled" : "ghost"}
+                                                color={mine === -1 ? "rose" : "zinc"}
+                                                size="sm"
+                                                onClick={() => handleVote(d.slug, -1)}
+                                            >
+                                                👎 {tally.down}
+                                            </Action>
+                                        </div>
+                                    )}
+                                    {!d.accepted && (
+                                        <Text
+                                            size="xs"
+                                            className={`font-mono ${
+                                                score > 0
+                                                    ? "text-emerald-600"
+                                                    : score < 0
+                                                        ? "text-rose-600"
+                                                        : "text-zinc-500"
+                                            }`}
+                                        >
+                                            {score > 0 ? `+${score}` : score}
+                                        </Text>
+                                    )}
                                 </div>
                             </Card.Body>
                         </Card>

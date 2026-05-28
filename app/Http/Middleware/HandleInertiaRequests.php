@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Services\PlayerProfile;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -34,11 +35,16 @@ class HandleInertiaRequests extends Middleware
                     'name' => $user->name,
                     'github_username' => $user->github_username,
                     'avatar_url' => $user->avatar_url,
+                    // Gamification summary for the chrome chip. Lazy so it
+                    // only resolves on full page loads / when requested.
+                    'player' => fn () => app(PlayerProfile::class)->summary($user),
                 ] : null,
             ],
             'flash' => [
                 'auth_error' => fn () => $request->session()->get('auth_error'),
                 'submitted' => fn () => $request->session()->get('submitted'),
+                'success' => fn () => $request->session()->get('success'),
+                'error' => fn () => $request->session()->get('error'),
             ],
         ];
     }

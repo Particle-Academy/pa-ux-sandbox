@@ -45,6 +45,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/api/xp/bridge', [\App\Http\Controllers\Api\XpController::class, 'bridge'])
         ->middleware('throttle:120,1')
         ->name('xp.bridge');
+
+    // Player profile + gamification opt-out.
+    Route::get('/profile', [\App\Http\Controllers\Showcase\ProfileController::class, 'show'])->name('profile');
+    Route::post('/profile/opt-out', [\App\Http\Controllers\Showcase\ProfileController::class, 'toggleOptOut'])->name('profile.opt-out');
 });
 
 // xlsx export endpoint for the fancy-sheets demo. The controller is owned

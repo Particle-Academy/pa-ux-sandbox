@@ -1,5 +1,5 @@
 import { Head } from "@inertiajs/react";
-import { useState, type ReactNode } from "react";
+import { useRef, useState, type ReactNode } from "react";
 import {
     Action,
     Badge,
@@ -12,6 +12,7 @@ import {
 import { CodeEditor } from "@particle-academy/fancy-code";
 import { Layout } from "../Layout";
 import { ComponentDemo } from "./ComponentDemo";
+import { useXp } from "../../lib/useXp";
 import { getComponentDoc, type ComponentDoc, type ComponentDocExample, type ComponentDocProp } from "./ComponentDocs";
 
 type SourceFile = {
@@ -41,6 +42,33 @@ type Props = {
     context: Context | null;
     source: Source | null;
 };
+
+/**
+ * Awards tinkerer-xp the first time the user actually interacts with a
+ * live demo (pointer or keyboard inside the preview), then a lighter
+ * "interaction" credit on subsequent interactions. Server-throttled, so
+ * this just listens and fires — no debounce needed. Signed-in only
+ * (useXp no-ops for guests).
+ */
+function DemoInteractionTracker({ demo, children }: { demo: string; children: ReactNode }) {
+    const xp = useXp();
+    const firedFirstUse = useRef(false);
+
+    const onInteract = () => {
+        if (!firedFirstUse.current) {
+            firedFirstUse.current = true;
+            xp.demo(demo, "first-use");
+        } else {
+            xp.demo(demo, "interaction");
+        }
+    };
+
+    return (
+        <div onPointerDownCapture={onInteract} onKeyDownCapture={onInteract}>
+            {children}
+        </div>
+    );
+}
 
 export default function PackagesComponent({ package: pkg, component, usage, context, source }: Props) {
     const importLine = pkg.npm
@@ -103,7 +131,9 @@ export default function PackagesComponent({ package: pkg, component, usage, cont
                         <Tabs.Panel value="preview">
                             <Card className="mt-4">
                                 <Card.Body>
-                                    <ComponentDemo slug={component.slug} name={component.name} pkg={pkg.slug} />
+                                    <DemoInteractionTracker demo={`${pkg.slug}/${component.slug}`}>
+                                        <ComponentDemo slug={component.slug} name={component.name} pkg={pkg.slug} />
+                                    </DemoInteractionTracker>
                                 </Card.Body>
                             </Card>
                         </Tabs.Panel>

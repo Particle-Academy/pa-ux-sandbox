@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Support\XpAwarder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -62,6 +63,27 @@ class WhiteboardAgentController extends Controller
             ], 502);
         }
 
-        return response()->json($response->json());
+        $json = $response->json();
+
+        // Credit bridge-xp when the agent actually drove the whiteboard
+        // bridge: each tool_use block the model returned is one tool the
+        // browser will execute against the in-page MicroMcpServer. Throttled
+        // per (user, tool) inside XpAwarder; guests/opted-out no-op.
+        if ($user = $request->user()) {
+            foreach ($json['content'] ?? [] as $block) {
+                if (($block['type'] ?? null) === 'tool_use' && is_string($block['name'] ?? null)) {
+                    XpAwarder::award(
+                        user: $user,
+                        metric: 'bridge-xp',
+                        amount: 5,
+                        reason: "whiteboard agent invoked {$block['name']}",
+                        throttleKey: "tool:{$block['name']}",
+                        throttleSeconds: 3600,
+                    );
+                }
+            }
+        }
+
+        return response()->json($json);
     }
 }

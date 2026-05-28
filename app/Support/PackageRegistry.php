@@ -62,6 +62,15 @@ class PackageRegistry
                 'packagist' => 'particle-academy/laravel-fms',
                 'language' => 'PHP',
             ],
+            [
+                'slug' => 'laravel-fun-lab',
+                'name' => 'particle-academy/laravel-fun-lab',
+                'tagline' => 'Analytics-driven gamification — XP, achievements, prizes, and leaderboards. Powers the sandbox\'s engagement economy.',
+                'composer' => 'particle-academy/laravel-fun-lab',
+                'repo' => 'Particle-Academy/laravel-fun-lab',
+                'packagist' => 'particle-academy/laravel-fun-lab',
+                'language' => 'PHP',
+            ],
         ];
     }
 

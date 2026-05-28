@@ -36,6 +36,17 @@ class VoteController extends Controller
                 ],
                 ['value' => $data['value']],
             );
+
+            // dreamer-xp for engaging with the dreaming gallery. Throttled
+            // per (user, subject) so toggling a vote can't farm.
+            \App\Support\XpAwarder::award(
+                user: $request->user(),
+                metric: 'dreamer-xp',
+                amount: 5,
+                reason: "voted on {$data['type']}:{$data['slug']}",
+                throttleKey: "vote:{$data['type']}:{$data['slug']}",
+                throttleSeconds: 86400,
+            );
         }
 
         return response()->json([

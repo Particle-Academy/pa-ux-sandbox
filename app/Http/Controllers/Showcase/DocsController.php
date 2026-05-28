@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Showcase;
 
 use App\Http\Controllers\Controller;
 use App\Support\Docs\DocsRegistry;
+use App\Support\XpAwarder;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -11,7 +13,7 @@ use League\CommonMark\GithubFlavoredMarkdownConverter;
 
 class DocsController extends Controller
 {
-    public function show(?string $slug = null): Response
+    public function show(Request $request, ?string $slug = null): Response
     {
         $slug = $slug ?: 'introduction';
 
@@ -20,6 +22,16 @@ class DocsController extends Controller
 
         $path = base_path("resources/docs/$slug.md");
         $markdown = File::exists($path) ? File::get($path) : $this->placeholder($page['title']);
+
+        // reader-xp for reading a docs page, once per page per day per user.
+        XpAwarder::award(
+            user: $request->user(),
+            metric: 'reader-xp',
+            amount: 3,
+            reason: "read docs/{$slug}",
+            throttleKey: "docs:{$slug}",
+            throttleSeconds: 86400,
+        );
 
         return Inertia::render('Docs/Show', [
             'page' => $page,

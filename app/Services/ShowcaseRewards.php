@@ -21,6 +21,9 @@ class ShowcaseRewards
     // A verified public project is high-signal off-site engagement.
     private const PROJECT_XP = 200;
 
+    // Displaying the badge is the strongest growth signal — free distribution.
+    private const PROMOTION_XP = 300;
+
     public function onVerified(ShowcaseSubmission $submission): void
     {
         if ($submission->rewarded_at !== null) {
@@ -45,5 +48,34 @@ class ShowcaseRewards
         }
 
         $submission->forceFill(['rewarded_at' => now()])->save();
+    }
+
+    /**
+     * Awards promotion-xp (+ badge-bearer) when a "Powered by Fancy" badge
+     * is detected on the submission's URL. Idempotent on
+     * promotion_rewarded_at so repeated scans pay out once.
+     */
+    public function onBadgeDetected(ShowcaseSubmission $submission): void
+    {
+        if ($submission->promotion_rewarded_at !== null) {
+            return;
+        }
+
+        $user = $submission->user;
+        if (! $user instanceof User) {
+            return;
+        }
+
+        LFL::award('promotion-xp')
+            ->to($user)
+            ->amount(self::PROMOTION_XP)
+            ->because("Powered by Fancy badge on submission #{$submission->id}")
+            ->save();
+
+        if (! $user->hasAchievement('badge-bearer')) {
+            LFL::grant('badge-bearer')->to($user)->because('first verified Fancy badge')->save();
+        }
+
+        $submission->forceFill(['promotion_rewarded_at' => now()])->save();
     }
 }

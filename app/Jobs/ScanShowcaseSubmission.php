@@ -32,10 +32,18 @@ class ScanShowcaseSubmission implements ShouldQueue
             'scanned_at' => now(),
         ]);
 
+        $rewards = app(\App\Services\ShowcaseRewards::class);
+
         // Auto-verified submissions earn projects-xp for the submitter
         // (idempotent — see ShowcaseRewards).
         if ($result['verified']) {
-            app(\App\Services\ShowcaseRewards::class)->onVerified($this->submission);
+            $rewards->onVerified($this->submission);
+        }
+
+        // A detected "Powered by Fancy" badge earns promotion-xp,
+        // independent of verification status.
+        if (! empty($result['badge'])) {
+            $rewards->onBadgeDetected($this->submission);
         }
     }
 
@@ -125,13 +133,30 @@ class ScanShowcaseSubmission implements ShouldQueue
             $hits['react-fancy data-attributes'] = 'rendered DOM';
         }
 
+        // "Powered by Fancy" badge — the promotion signal. Detected
+        // independently of package usage so it can earn promotion-xp even
+        // on an SSR'd site whose HTML doesn't expose our package strings.
+        $badge = $this->detectBadge($html);
+
         if (empty($hits)) {
-            return ['verified' => false, 'reason' => 'no Fancy UI references in homepage HTML'];
+            return ['verified' => false, 'reason' => 'no Fancy UI references in homepage HTML', 'badge' => $badge];
         }
         return [
             'verified' => true,
             'kind' => 'website',
             'matches' => $hits,
+            'badge' => $badge,
         ];
+    }
+
+    /**
+     * Detect a "Powered by Fancy" badge in the page HTML. Looks for the
+     * stable `data-fancy-badge` marker (what our official badge embed
+     * carries) or the literal "Powered by Fancy UI" text.
+     */
+    private function detectBadge(string $html): bool
+    {
+        return str_contains($html, 'data-fancy-badge')
+            || preg_match('/powered\s+by\s+fancy\s+ui/i', $html) === 1;
     }
 }

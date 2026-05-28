@@ -154,6 +154,16 @@ Route::prefix('admin')->name('admin.')->middleware(['web', 'auth', 'can:admin'])
     // Coin Shop Management
     Route::resource('shop', \App\Http\Controllers\Admin\AdminShopController::class)->except(['show']);
     Route::post('shop/{shop}/toggle', [\App\Http\Controllers\Admin\AdminShopController::class, 'toggle'])->name('shop.toggle');
+
+    // User Management + manual grants
+    Route::get('users', [\App\Http\Controllers\Admin\AdminUsersController::class, 'index'])->name('users.index');
+    Route::get('users/{user}', [\App\Http\Controllers\Admin\AdminUsersController::class, 'show'])->name('users.show');
+    Route::post('users/{user}/grant-xp', [\App\Http\Controllers\Admin\AdminUsersController::class, 'grantXp'])->name('users.grant-xp');
+    Route::post('users/{user}/grant-coins', [\App\Http\Controllers\Admin\AdminUsersController::class, 'grantCoins'])->name('users.grant-coins');
+    Route::post('users/{user}/grant-achievement', [\App\Http\Controllers\Admin\AdminUsersController::class, 'grantAchievement'])->name('users.grant-achievement');
+    Route::post('users/{user}/grant-prize', [\App\Http\Controllers\Admin\AdminUsersController::class, 'grantPrize'])->name('users.grant-prize');
+    Route::post('users/{user}/toggle-opt-out', [\App\Http\Controllers\Admin\AdminUsersController::class, 'toggleOptOut'])->name('users.toggle-opt-out');
+    Route::post('users/{user}/toggle-admin', [\App\Http\Controllers\Admin\AdminUsersController::class, 'toggleAdmin'])->name('users.toggle-admin');
 });
 
 // React demos (SPA catch-all)

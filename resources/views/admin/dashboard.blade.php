@@ -140,6 +140,88 @@
     </div>
     @endif
 
+    <!-- Gamification Overview -->
+    <div>
+        <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Gamification</h2>
+        <div class="mt-3 grid grid-cols-2 gap-4 sm:grid-cols-4">
+            <div class="rounded-lg bg-white p-4 shadow dark:bg-gray-800">
+                <div class="text-xs uppercase tracking-wide text-gray-500">Coins in circulation</div>
+                <div class="mt-1 text-2xl font-bold text-amber-600 dark:text-amber-400">{{ number_format($gamification['coins']['in_circulation']) }}</div>
+                <div class="mt-1 text-xs text-gray-400">{{ number_format($gamification['coins']['lifetime_minted']) }} minted all-time</div>
+            </div>
+            <div class="rounded-lg bg-white p-4 shadow dark:bg-gray-800">
+                <div class="text-xs uppercase tracking-wide text-gray-500">Coins today</div>
+                <div class="mt-1 text-2xl font-bold text-gray-900 dark:text-white">
+                    +{{ number_format($gamification['coins']['earned_today']) }}
+                    <span class="text-sm font-normal text-gray-400">/ −{{ number_format($gamification['coins']['spent_today']) }}</span>
+                </div>
+                <div class="mt-1 text-xs text-gray-400">earned / spent</div>
+            </div>
+            <div class="rounded-lg bg-white p-4 shadow dark:bg-gray-800">
+                <div class="text-xs uppercase tracking-wide text-gray-500">Total XP awarded</div>
+                <div class="mt-1 text-2xl font-bold text-gray-900 dark:text-white">{{ number_format($gamification['engagement']['total_xp']) }}</div>
+                <div class="mt-1 text-xs text-gray-400">{{ $gamification['engagement']['active_profiles'] }} active profiles</div>
+            </div>
+            <div class="rounded-lg bg-white p-4 shadow dark:bg-gray-800">
+                <div class="text-xs uppercase tracking-wide text-gray-500">New users (7d)</div>
+                <div class="mt-1 text-2xl font-bold text-gray-900 dark:text-white">{{ $gamification['engagement']['new_users_7d'] }}</div>
+                <div class="mt-1 text-xs text-gray-400">{{ $gamification['engagement']['achievements_unlocked'] }} achievements unlocked</div>
+            </div>
+        </div>
+
+        <div class="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-3">
+            <!-- Top earners -->
+            <div class="rounded-lg bg-white p-5 shadow dark:bg-gray-800">
+                <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Top earners — all time</h3>
+                <ol class="mt-3 space-y-1 text-sm">
+                    @forelse($gamification['topEarners']['all_time'] as $i => $row)
+                        <li class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-300">{{ $i + 1 }}. {{ $row['name'] }}</span>
+                            <span class="font-medium text-amber-600 dark:text-amber-400">{{ number_format($row['value']) }}</span>
+                        </li>
+                    @empty
+                        <li class="text-gray-400">No earners yet.</li>
+                    @endforelse
+                </ol>
+            </div>
+            <!-- This week -->
+            <div class="rounded-lg bg-white p-5 shadow dark:bg-gray-800">
+                <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Top earners — this week</h3>
+                <ol class="mt-3 space-y-1 text-sm">
+                    @forelse($gamification['topEarners']['this_week'] as $i => $row)
+                        <li class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-300">{{ $i + 1 }}. {{ $row['name'] }}</span>
+                            <span class="font-medium text-amber-600 dark:text-amber-400">{{ number_format($row['value']) }}</span>
+                        </li>
+                    @empty
+                        <li class="text-gray-400">No activity this week.</li>
+                    @endforelse
+                </ol>
+            </div>
+            <!-- Featured + pending -->
+            <div class="rounded-lg bg-white p-5 shadow dark:bg-gray-800">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-sm font-semibold text-gray-900 dark:text-white">Featured ({{ $gamification['featured']['count'] }})</h3>
+                    @if($gamification['pendingSubmissions'] > 0)
+                        <a href="{{ route('admin.submissions.index', ['status' => 'pending']) }}" class="rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-semibold text-yellow-800 dark:bg-yellow-900/40 dark:text-yellow-200">
+                            {{ $gamification['pendingSubmissions'] }} pending
+                        </a>
+                    @endif
+                </div>
+                <ul class="mt-3 space-y-1 text-sm">
+                    @forelse($gamification['featured']['items'] as $item)
+                        <li class="flex justify-between gap-2">
+                            <span class="truncate text-gray-600 dark:text-gray-300">{{ $item['title'] }}</span>
+                            <span class="shrink-0 text-xs text-gray-400">{{ $item['until'] }}</span>
+                        </li>
+                    @empty
+                        <li class="text-gray-400">Nothing featured.</li>
+                    @endforelse
+                </ul>
+            </div>
+        </div>
+    </div>
+
     <!-- Quick Actions -->
     <div class="bg-white dark:bg-gray-800 shadow rounded-lg">
         <div class="px-4 py-5 sm:p-6">
@@ -156,6 +238,15 @@
                 </a>
                 <a href="{{ route('admin.features.index') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
                     View Features
+                </a>
+                <a href="{{ route('admin.shop.index') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                    Manage Shop
+                </a>
+                <a href="{{ route('admin.users.index') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                    Manage Users
+                </a>
+                <a href="{{ route('admin.submissions.index') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+                    Moderate Submissions
                 </a>
                 @if(Route::has('ctrl.products.index'))
                     <a href="{{ route('ctrl.products.index') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">

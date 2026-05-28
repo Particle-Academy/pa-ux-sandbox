@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Services\GamificationStats;
 use Illuminate\Http\Request;
 use LaravelCatalog\Facades\Catalog;
 use ParticleAcademy\Fms\Facades\FMS;
@@ -17,7 +18,7 @@ class AdminDashboardController extends Controller
     /**
      * Display the admin dashboard with overview statistics.
      */
-    public function index(): \Illuminate\Contracts\View\View
+    public function index(GamificationStats $gamificationStats): \Illuminate\Contracts\View\View
     {
         $stats = [
             'products' => \LaravelCatalog\Models\Product::count(),
@@ -42,6 +43,7 @@ class AdminDashboardController extends Controller
         return view('admin.dashboard', [
             'stats' => $stats,
             'enabledFeatures' => $enabledFeatures,
+            'gamification' => $gamificationStats->dashboard(),
         ]);
     }
 }

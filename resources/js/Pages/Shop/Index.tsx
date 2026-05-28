@@ -1,5 +1,5 @@
 import { Head, Link, useForm, usePage } from "@inertiajs/react";
-import { Badge, Button, Card, Heading, Text } from "@particle-academy/react-fancy";
+import { Action, Badge, Card, Heading, Text } from "@particle-academy/react-fancy";
 import { useState } from "react";
 import { Layout } from "../Layout";
 
@@ -121,17 +121,17 @@ function CosmeticCard({ item, balance, owned }: { item: Item; balance: number | 
         <Card className="flex flex-col p-5">
             <div className="flex items-center justify-between">
                 <Heading level={3} size="sm">{item.name}</Heading>
-                {owned && <Badge tone="success">Owned</Badge>}
+                {owned && <Badge color="emerald">Owned</Badge>}
             </div>
             {item.description && <Text className="mt-2 flex-1 text-sm">{item.description}</Text>}
             <div className="mt-4 flex items-center justify-between">
                 <span className="text-sm font-semibold">{item.price.toLocaleString()} coins</span>
-                <Button
+                <Action
                     disabled={!canBuy || processing}
                     onClick={() => post(`/shop/${item.slug}/purchase`)}
                 >
                     {owned ? "Owned" : "Buy"}
-                </Button>
+                </Action>
             </div>
         </Card>
     );
@@ -157,7 +157,7 @@ function ServiceCard({
         <Card className="flex flex-col p-5">
             <div className="flex items-center justify-between">
                 <Heading level={3} size="sm">{item.name}</Heading>
-                <Badge tone="info">Service</Badge>
+                <Badge color="violet">Service</Badge>
             </div>
             {item.description && <Text className="mt-2 text-sm">{item.description}</Text>}
 
@@ -188,7 +188,7 @@ function ServiceCard({
 
             <div className="mt-4 flex items-center justify-between">
                 <span className="text-sm font-semibold">{item.price.toLocaleString()} coins</span>
-                <Button
+                <Action
                     disabled={!canBuy || processing}
                     onClick={() => {
                         post(`/shop/${item.slug}/purchase`, {
@@ -197,7 +197,7 @@ function ServiceCard({
                     }}
                 >
                     Buy
-                </Button>
+                </Action>
             </div>
         </Card>
     );

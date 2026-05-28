@@ -150,6 +150,10 @@ Route::prefix('admin')->name('admin.')->middleware(['web', 'auth', 'can:admin'])
     // Features Management (using FMS facade)
     Route::get('features', [AdminFeaturesController::class, 'index'])->name('features.index');
     Route::post('features/test', [AdminFeaturesController::class, 'test'])->name('features.test');
+
+    // Coin Shop Management
+    Route::resource('shop', \App\Http\Controllers\Admin\AdminShopController::class)->except(['show']);
+    Route::post('shop/{shop}/toggle', [\App\Http\Controllers\Admin\AdminShopController::class, 'toggle'])->name('shop.toggle');
 });
 
 // React demos (SPA catch-all)

@@ -31,14 +31,19 @@
                         <a href="{{ route('admin.features.index') }}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium {{ request()->routeIs('admin.features.*') ? 'border-indigo-500 text-gray-900 dark:text-white' : '' }}">
                             Features
                         </a>
+                        <a href="{{ route('admin.shop.index') }}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium {{ request()->routeIs('admin.shop.*') ? 'border-indigo-500 text-gray-900 dark:text-white' : '' }}">
+                            Shop
+                        </a>
                         @if(Route::has('ctrl.products.index'))
                             <a href="{{ route('ctrl.products.index') }}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                                 Catalog UI
                             </a>
                         @endif
-                        <a href="{{ route('ux-demos') }}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
-                            UX Demos
-                        </a>
+                        @if(Route::has('react-demos'))
+                            <a href="{{ route('react-demos') }}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                                React Demos
+                            </a>
+                        @endif
                     </div>
                 </div>
                 <div class="flex items-center space-x-4">

@@ -8,17 +8,25 @@ use LaravelFunLab\Facades\LFL;
 /**
  * Seeds the Fancy UI showcase's gamification taxonomy.
  *
- * Five XP buckets reflect the surfaces visitors actually engage with:
- *   - explorer-xp   : browsing packages / components
- *   - tinkerer-xp   : actually using interactive demos
- *   - bridge-xp     : invoking MCP bridge tools from chat
- *   - reader-xp     : viewing docs / source
- *   - dreamer-xp    : interacting with the dreaming branch (votes, theme filter)
+ * Nine XP buckets split into two tiers of engagement:
+ *
+ *   on-site (visitor activity, mostly automated triggers)
+ *     - explorer-xp   : browsing packages / components
+ *     - tinkerer-xp   : actually using interactive demos
+ *     - bridge-xp     : invoking MCP bridge tools from chat
+ *     - reader-xp     : viewing docs / source
+ *     - dreamer-xp    : engaging with dreaming branch (votes, theme filter)
+ *
+ *   off-site (creator / promoter activity, admin-mediated or crawler-verified)
+ *     - bug-hunter-xp : filing or triaging bugs against particle-academy repos
+ *     - contributor-xp: submitting new components for inclusion
+ *     - projects-xp   : registering public projects built with Fancy UI
+ *     - promotion-xp  : displaying a "Powered by Fancy" badge on a public URL
  *
  * They roll up via the `overall-engagement` group with weights tuned so
- * "doing things" outranks "looking at things." That group's levels drive
- * the chrome chip and act as the milestone for prize-based feature
- * unlocks (see laravel-fms pre-strategy wiring in v0.6.0+).
+ * creator/promoter signal (1.5–2.0x) outranks on-site activity (0.5–1.5x).
+ * That group's levels drive the chrome chip and the prize-unlock
+ * milestone for feature gating (see laravel-fms pre-strategy in v0.6.0+).
  *
  * Idempotent — LFL::setup() upserts on slug, so this is safe to re-run.
  */
@@ -40,11 +48,18 @@ class FunLabSeeder extends Seeder
     protected function seedGamedMetrics(): void
     {
         $metrics = [
+            // on-site engagement
             ['slug' => 'explorer-xp', 'name' => 'Explorer XP', 'description' => 'Earned by browsing packages and component pages.', 'icon' => 'compass'],
             ['slug' => 'tinkerer-xp', 'name' => 'Tinkerer XP', 'description' => 'Earned by actually using interactive demos.', 'icon' => 'wrench'],
             ['slug' => 'bridge-xp', 'name' => 'Bridge XP', 'description' => 'Earned by invoking MCP bridge tools from an agent surface.', 'icon' => 'plug'],
             ['slug' => 'reader-xp', 'name' => 'Reader XP', 'description' => 'Earned by viewing docs and source files.', 'icon' => 'book-open'],
             ['slug' => 'dreamer-xp', 'name' => 'Dreamer XP', 'description' => 'Earned by exploring the dreaming branch and voting on speculative components.', 'icon' => 'sparkles'],
+
+            // off-site / creator engagement
+            ['slug' => 'bug-hunter-xp', 'name' => 'Bug Hunter XP', 'description' => 'Earned by filing or triaging confirmed bugs on particle-academy repos.', 'icon' => 'bug'],
+            ['slug' => 'contributor-xp', 'name' => 'Contributor XP', 'description' => 'Earned by submitting new components that get accepted into the library.', 'icon' => 'git-merge'],
+            ['slug' => 'projects-xp', 'name' => 'Projects XP', 'description' => 'Earned by registering public projects built with Fancy UI.', 'icon' => 'rocket'],
+            ['slug' => 'promotion-xp', 'name' => 'Promotion XP', 'description' => 'Earned when a "Powered by Fancy" badge is detected on your public URLs.', 'icon' => 'megaphone'],
         ];
 
         foreach ($metrics as $m) {
@@ -65,7 +80,11 @@ class FunLabSeeder extends Seeder
             ['level' => 5, 'xp' => 1000, 'name' => 'Master'],
         ];
 
-        foreach (['explorer-xp', 'tinkerer-xp', 'bridge-xp', 'reader-xp', 'dreamer-xp'] as $metric) {
+        $allMetrics = [
+            'explorer-xp', 'tinkerer-xp', 'bridge-xp', 'reader-xp', 'dreamer-xp',
+            'bug-hunter-xp', 'contributor-xp', 'projects-xp', 'promotion-xp',
+        ];
+        foreach ($allMetrics as $metric) {
             foreach ($tiers as $tier) {
                 LFL::setup(a: 'metric-level', with: array_merge($tier, ['metric' => $metric]));
             }
@@ -81,16 +100,23 @@ class FunLabSeeder extends Seeder
         ]);
 
         // Weights tune the "what we care about" signal:
-        //   doing > using > exploring > reading
-        // Bridge use is the strongest signal that someone is actually
-        // composing with agents (the Human+ UX thesis), so it gets the
-        // highest weight.
+        //   creating/promoting > composing > tinkering > exploring > reading
+        // Off-site engagement (creator/promoter signals) outweighs on-site
+        // activity because those are the actions that grow the ecosystem.
+        // Promotion sits at the top — every detected badge is free
+        // distribution for us.
         $weights = [
-            'bridge-xp'   => 1.5,
-            'tinkerer-xp' => 1.2,
-            'dreamer-xp'  => 1.0,
-            'explorer-xp' => 0.6,
-            'reader-xp'   => 0.5,
+            // off-site (1.5–2.0)
+            'promotion-xp'   => 2.0,
+            'contributor-xp' => 1.8,
+            'bug-hunter-xp'  => 1.7,
+            'projects-xp'    => 1.5,
+            // on-site (0.5–1.5)
+            'bridge-xp'      => 1.5,
+            'tinkerer-xp'    => 1.2,
+            'dreamer-xp'     => 1.0,
+            'explorer-xp'    => 0.6,
+            'reader-xp'      => 0.5,
         ];
 
         foreach ($weights as $metric => $weight) {
@@ -134,6 +160,18 @@ class FunLabSeeder extends Seeder
             ['slug' => 'critic', 'name' => 'Critic', 'description' => 'Voted on at least 5 dreaming components.', 'icon' => 'thumbs-up'],
             ['slug' => 'first-pr', 'name' => 'First PR', 'description' => 'Opened your first pull request on a particle-academy repo.', 'icon' => 'git-pull-request'],
             ['slug' => 'maintainer', 'name' => 'Maintainer', 'description' => 'Merged 25+ PRs across the Fancy UI suite.', 'icon' => 'shield-check'],
+
+            // off-site engagement
+            ['slug' => 'first-bug', 'name' => 'First Bug', 'description' => 'Filed your first confirmed bug.', 'icon' => 'bug'],
+            ['slug' => 'bug-slayer', 'name' => 'Bug Slayer', 'description' => 'Filed 10+ confirmed bugs.', 'icon' => 'bug-off'],
+            ['slug' => 'exterminator', 'name' => 'Exterminator', 'description' => 'Filed 25+ confirmed bugs.', 'icon' => 'shield-alert'],
+            ['slug' => 'first-contribution', 'name' => 'First Contribution', 'description' => 'Submitted a new component that was accepted.', 'icon' => 'git-commit'],
+            ['slug' => 'component-author', 'name' => 'Component Author', 'description' => 'Authored 3+ accepted components.', 'icon' => 'pen-tool'],
+            ['slug' => 'library-builder', 'name' => 'Library Builder', 'description' => 'Authored 10+ accepted components.', 'icon' => 'library'],
+            ['slug' => 'first-project', 'name' => 'First Project', 'description' => 'Registered your first public project built with Fancy UI.', 'icon' => 'rocket'],
+            ['slug' => 'project-veteran', 'name' => 'Project Veteran', 'description' => 'Registered 5+ public projects built with Fancy UI.', 'icon' => 'medal'],
+            ['slug' => 'badge-bearer', 'name' => 'Badge Bearer', 'description' => 'Verified "Powered by Fancy" badge spotted on your project.', 'icon' => 'badge-check'],
+            ['slug' => 'brand-ambassador', 'name' => 'Brand Ambassador', 'description' => '5+ active projects displaying the Fancy badge.', 'icon' => 'megaphone'],
         ];
 
         foreach ($achievements as $a) {

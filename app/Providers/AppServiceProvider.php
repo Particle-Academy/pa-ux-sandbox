@@ -39,5 +39,9 @@ class AppServiceProvider extends ServiceProvider
 
             return Limit::perMinute(5)->by($key);
         });
+
+        // Coin minting listeners are auto-discovered via their handle()
+        // typehints in app/Listeners/MintCoinsFrom{Xp,Achievement,Prize}.
+        // See config/coins.php for the per-metric and per-slug rates.
     }
 }

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d7250ac86bed714140adf6bc415a9de4",
+    "content-hash": "0261b866aac6b0bd279807ffe99c1476",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -3623,22 +3623,22 @@
         },
         {
             "name": "particle-academy/laravel-catalog",
-            "version": "v0.8.1",
+            "version": "v0.8.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/laravel-catalog.git",
-                "reference": "9d0052bf105af6cd5c8a0dcee6c8c68ffebe6f1d"
+                "reference": "68f8752a1765cfb37657f9e424a4350b9e2395e8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/laravel-catalog/zipball/9d0052bf105af6cd5c8a0dcee6c8c68ffebe6f1d",
-                "reference": "9d0052bf105af6cd5c8a0dcee6c8c68ffebe6f1d",
+                "url": "https://api.github.com/repos/Particle-Academy/laravel-catalog/zipball/68f8752a1765cfb37657f9e424a4350b9e2395e8",
+                "reference": "68f8752a1765cfb37657f9e424a4350b9e2395e8",
                 "shasum": ""
             },
             "require": {
                 "laravel/cashier": "^15.0|^16.0",
                 "laravel/framework": "^11.0|^12.0|^13.0",
-                "particle-academy/laravel-fms": "^0.2|^0.3|^0.4|^0.5|^0.6",
+                "particle-academy/laravel-fms": "^0.2|^0.3|^0.4|^0.5|^0.6|^0.7",
                 "php": "^8.2",
                 "stripe/stripe-php": "^13.0|^16.0|^17.0"
             },
@@ -3662,22 +3662,22 @@
             "description": "Laravel package for managing Stripe catalog (Products, Prices) via a facade API",
             "support": {
                 "issues": "https://github.com/Particle-Academy/laravel-catalog/issues",
-                "source": "https://github.com/Particle-Academy/laravel-catalog/tree/v0.8.1"
+                "source": "https://github.com/Particle-Academy/laravel-catalog/tree/v0.8.2"
             },
-            "time": "2026-05-27T23:45:26+00:00"
+            "time": "2026-05-28T03:41:22+00:00"
         },
         {
             "name": "particle-academy/laravel-fms",
-            "version": "v0.6.0",
+            "version": "v0.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/laravel-feature-management-system.git",
-                "reference": "575ff06139f30945fa0b363af2b2bb4e343b667e"
+                "reference": "5efacf9b68fa2172a7d9033327d220860e29c988"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/laravel-feature-management-system/zipball/575ff06139f30945fa0b363af2b2bb4e343b667e",
-                "reference": "575ff06139f30945fa0b363af2b2bb4e343b667e",
+                "url": "https://api.github.com/repos/Particle-Academy/laravel-feature-management-system/zipball/5efacf9b68fa2172a7d9033327d220860e29c988",
+                "reference": "5efacf9b68fa2172a7d9033327d220860e29c988",
                 "shasum": ""
             },
             "require": {
@@ -3719,9 +3719,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Particle-Academy/laravel-feature-management-system/issues",
-                "source": "https://github.com/Particle-Academy/laravel-feature-management-system/tree/v0.6.0"
+                "source": "https://github.com/Particle-Academy/laravel-feature-management-system/tree/v0.7.0"
             },
-            "time": "2026-05-27T23:39:44+00:00"
+            "time": "2026-05-28T02:44:26+00:00"
         },
         {
             "name": "particle-academy/laravel-fun-lab",

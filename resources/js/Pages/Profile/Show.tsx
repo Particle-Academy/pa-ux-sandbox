@@ -24,6 +24,8 @@ type ProfileData = {
     progress: number;
     cosmetics: CosmeticSlots;
     optedOut: boolean;
+    pro: boolean;
+    proSource: "subscription" | "prize" | null;
     metrics: Metric[];
     achievements: Achievement[];
     prizes: Prize[];
@@ -53,9 +55,16 @@ export default function ProfileShow({ profile }: { profile: ProfileData }) {
                         className={`-mt-10 h-20 w-20 rounded-full bg-white object-cover ${avatarFrameClass(profile.cosmetics)}`}
                     />
                     <div className="flex-1">
-                        <Heading level={1} size="lg" className={nameColorClass(profile.cosmetics)}>
-                            {displayName}
-                        </Heading>
+                        <div className="flex items-center gap-2">
+                            <Heading level={1} size="lg" className={nameColorClass(profile.cosmetics)}>
+                                {displayName}
+                            </Heading>
+                            {profile.pro && (
+                                <span className="rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
+                                    Pro
+                                </span>
+                            )}
+                        </div>
                         <Text className="text-sm text-zinc-500">
                             {profile.levelName ? `${profile.levelName} · ` : ""}Level {profile.level} · {profile.totalXp.toLocaleString()} XP
                         </Text>
@@ -130,6 +139,25 @@ export default function ProfileShow({ profile }: { profile: ProfileData }) {
                     </div>
                 </Card>
             </div>
+
+            {/* Pro status */}
+            <Card className="mt-6 p-5">
+                <div className="flex items-center justify-between">
+                    <Heading level={2} size="sm">Pro access</Heading>
+                    {profile.pro ? (
+                        <Badge color="violet">Unlocked</Badge>
+                    ) : (
+                        <Badge color="zinc">Locked</Badge>
+                    )}
+                </div>
+                <Text className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+                    {profile.pro
+                        ? profile.proSource === "subscription"
+                            ? "Unlocked via your active subscription. Pro features (extra themes, source export, advanced bridge tools) are on."
+                            : "Earned via the Sandbox Pro prize at the Ambassador tier — no subscription needed. Pro features are on."
+                        : "Pro features unlock two ways: subscribe to a paid plan, or reach the Ambassador tier (Level 10 overall engagement) to earn the Sandbox Pro prize."}
+                </Text>
+            </Card>
 
             {/* Prizes + cosmetics */}
             <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">

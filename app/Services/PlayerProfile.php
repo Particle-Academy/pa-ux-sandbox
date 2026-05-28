@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\User;
+use App\Services\Entitlements;
 use LaravelFunLab\Models\MetricLevelGroup;
 use LaravelFunLab\Models\MetricLevelGroupLevel;
 use LaravelFunLab\Services\MetricLevelGroupService;
@@ -22,7 +23,10 @@ class PlayerProfile
 {
     public const GROUP = 'overall-engagement';
 
-    public function __construct(private readonly MetricLevelGroupService $groups) {}
+    public function __construct(
+        private readonly MetricLevelGroupService $groups,
+        private readonly Entitlements $entitlements,
+    ) {}
 
     /**
      * @return array<string, mixed>
@@ -30,6 +34,7 @@ class PlayerProfile
     public function summary(User $user): array
     {
         $info = $this->groups->getLevelInfo($user, self::GROUP);
+        $proSource = $this->entitlements->proSource($user);
 
         return [
             'coins' => $user->coinBalance(),
@@ -40,6 +45,8 @@ class PlayerProfile
             'progress' => round((float) $info['progress_percentage'], 1),
             'cosmetics' => $user->cosmetic_slots ?? [],
             'optedOut' => $user->isOptedOut(),
+            'pro' => $proSource !== null,
+            'proSource' => $proSource, // 'subscription' | 'prize' | null
         ];
     }
 

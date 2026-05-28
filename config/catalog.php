@@ -28,6 +28,21 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Load Cashier Migrations
+    |--------------------------------------------------------------------------
+    |
+    | Catalog v0.9.1+ no longer auto-loads Cashier's migrations by default
+    | (fatal for apps with their own `subscriptions` table). The sandbox is a
+    | greenfield Cashier app with no subscription table of its own, so we opt
+    | back in here — otherwise migrate:fresh (incl. the test suite) would drop
+    | Cashier's subscriptions / subscription_items tables.
+    |
+    */
+
+    'load_cashier_migrations' => env('CATALOG_LOAD_CASHIER_MIGRATIONS', true),
+
+    /*
+    |--------------------------------------------------------------------------
     | Queue Connection
     |--------------------------------------------------------------------------
     |

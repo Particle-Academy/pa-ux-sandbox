@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4ae85bc988c9a22a3f58881c59d81f8e",
+    "content-hash": "ac2e70e217894370bad31939aa6c304c",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -3623,16 +3623,16 @@
         },
         {
             "name": "particle-academy/laravel-catalog",
-            "version": "v0.9.0",
+            "version": "v0.9.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/laravel-catalog.git",
-                "reference": "d3fe65c9675ab74f31f69b476a8b4fb7c941c2b6"
+                "reference": "2dadf97ddc92bad01ca80ca0909e072152a28141"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/laravel-catalog/zipball/d3fe65c9675ab74f31f69b476a8b4fb7c941c2b6",
-                "reference": "d3fe65c9675ab74f31f69b476a8b4fb7c941c2b6",
+                "url": "https://api.github.com/repos/Particle-Academy/laravel-catalog/zipball/2dadf97ddc92bad01ca80ca0909e072152a28141",
+                "reference": "2dadf97ddc92bad01ca80ca0909e072152a28141",
                 "shasum": ""
             },
             "require": {
@@ -3662,9 +3662,9 @@
             "description": "Laravel package for managing Stripe catalog (Products, Prices) via a facade API",
             "support": {
                 "issues": "https://github.com/Particle-Academy/laravel-catalog/issues",
-                "source": "https://github.com/Particle-Academy/laravel-catalog/tree/v0.9.0"
+                "source": "https://github.com/Particle-Academy/laravel-catalog/tree/v0.9.1"
             },
-            "time": "2026-05-28T06:06:46+00:00"
+            "time": "2026-05-28T07:18:48+00:00"
         },
         {
             "name": "particle-academy/laravel-fms",

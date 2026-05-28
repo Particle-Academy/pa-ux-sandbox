@@ -6,23 +6,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **This is the architectural baseline for the entire sandbox and every package it contains** — react-fancy, fancy-whiteboard, fancy-flow, fancy-sheets, fancy-code, fancy-echarts, fancy-screens, fancy-3d, agent-integrations, plus anything new. It is not a feature, a goal, or a roadmap item; it is the prerequisite that decides whether a component, demo, or package belongs here at all. Speculative work on the `dreaming` branch must satisfy it too.
 
-**Every Fancy UI component must satisfy two design constraints, not one:**
+**Human+ UX** = applications where humans and agents share the same UI, trading control fluidly: every component must be both an *authoring surface* (terse, JSON-friendly, agents compose it) and an *inhabited surface* (agents drive it via MCP bridges + stable handles, never DOM scraping or Playwright).
 
-1. **Authoring surface.** Humans and agents can rapidly compose beautiful, well-functioning applications using the component. Terse props, JSON-friendly inputs, sensible defaults, good types.
-
-2. **Inhabited surface.** The running app embeds agents as first-class environment participants. Agents read and write component state via MCP bridges and stable handles — *not* via DOM screen-scraping, Playwright, or other puppeting tools. The component itself is the agent's affordance, not a target to be operated externally.
-
-This is **Human+ UX**: applications where humans and agents share the same UI, trading control fluidly. The whitepaper is at [`docs/human-plus-ux.md`](./docs/human-plus-ux.md).
-
-**The component contract** (every Fancy UI component must meet all of these):
-- **Controlled state.** `value` + `onChange`. No internal-only state for anything an agent might want to read or write.
-- **Stable handles.** Each interactive element gets a stable identity (`id`, `data-*`, or a selector function in props). Agents should never have to guess DOM structure.
-- **JSON-friendly inputs.** Props that are agent-emittable: arrays of objects, primitives, simple discriminated unions. Avoid forcing React children for things the agent needs to populate.
-- **Bridgeable surface.** For non-trivial components, a `register<Surface>Bridge(server, { adapter })` exists or could be sketched in one sitting. The bridge exposes MCP tools (`grid_paint`, `chip_reclassify`, `tray_dismiss`) so agents can drive it. If you can't sketch this, the component isn't done.
-- **Observable activity.** Mutations broadcast `AgentActivity` events so presence, undo, and coaching layers compose without each component re-implementing them.
-- **Trust-but-verify hooks.** Destructive or human-visible actions support a `pendingMode` / staged-write affordance — agents propose, humans confirm.
-
-If a component is purely visual (a static label, a divider, a layout shell), only constraint #1 applies. Anything stateful or interactive owes both.
+The full **component contract** — the bullet checklist every stateful component must meet — is the single source in [`../CLAUDE.md`](../CLAUDE.md#component-contract). Don't restate it here; follow it there. Whitepaper: [`docs/human-plus-ux.md`](./docs/human-plus-ux.md).
 
 ## Project Overview
 
@@ -183,80 +169,11 @@ The Fancy UI strategic goal is **complete app surfaces where agents drive the UI
 
 ## Publishing Releases
 
-### Bootstrapping a brand-new package (one-time)
-
-**Claude can't fill the npm Trusted Publisher form** — modifying npm account access controls is outside what I can do for you, even with explicit permission. This is a one-time manual step per package. The process below is the path-of-least-friction; follow it once and every subsequent release ships via OIDC with zero token handling.
-
-A new package needs three things wired up before its first publish:
-
-1. **GitHub repo** — `gh repo create Particle-Academy/<name> --public --description "..."` (Claude can do).
-2. **Bootstrap path for the very first publish** — npm won't let you configure a Trusted Publisher for a package that doesn't exist yet. Two options:
-   - **Token bootstrap** (recommended): create a 7-day granular npm token at `https://www.npmjs.com/settings/<your-user>/tokens`, scoped to `@particle-academy` with read+write. Set it as the GitHub repo secret `NPM_TOKEN` via `gh secret set NPM_TOKEN --repo Particle-Academy/<name>` (paste at the prompt — never echoes to chat or shell history). Use a token-based `publish.yml` step (`env: NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}` + `npm publish --provenance --access public`).
-   - **Manual `npm publish`**: run `npm publish` locally. Same token requirement. Less repeatable.
-3. **Trusted Publisher (after first publish lands)** — go to `https://www.npmjs.com/package/@particle-academy/<name>/access`, click **Trusted Publishers** → **Add Trusted Publisher**, fill:
-   - Publisher: `GitHub Actions`
-   - Organization or user: `Particle-Academy`
-   - Repository: `<name>`
-   - Workflow filename: `publish.yml`
-   - Environment: *(empty)*
-
-   Then **revoke the bootstrap token** at `https://www.npmjs.com/settings/<your-user>/tokens` and **edit `publish.yml`** to drop the `NODE_AUTH_TOKEN` env line — leaving just `npx -y npm@latest publish --provenance --access public` with `id-token: write` permission. Tag and ship the next version; CI publishes via OIDC.
-
-Once a package has been bootstrapped this way, every subsequent release uses the standard "React packages" flow below — no tokens, no special config.
-
-### React / TS packages
-
-The `fancy-echarts` package is published from the `Particle-Academy/react-echarts` git repo (folder/repo name unchanged; only the npm package was renamed). The npm trusted-publisher config on npmjs.com must be set up under `@particle-academy/fancy-echarts` pointing to `Particle-Academy/react-echarts` + `publish.yml`.
-
-Each TS package publishes to npm via **GitHub Actions Trusted Publishing (OIDC)**. No tokens, no manual `npm publish`. The workflow lives at `.github/workflows/publish.yml` inside each repo and fires on tag push `v*.*.*` (or manual `workflow_dispatch`).
-
-To ship a new version of a TS package:
-
-1. `cd ../<name>`
-2. Bump `version` in `package.json`
-3. Commit the bump
-4. Tag and push: `git tag vX.Y.Z && git push origin main --tags`
-5. CI builds, signs provenance via OIDC, and publishes to npm — usually under 1 minute
-
-Verify with: `npm view @particle-academy/<name> version`
-
-**No submodule-pointer bump anywhere.** The sandbox aliases packages at dev time and pulls them from npm at install time. To force the sandbox to pick up a freshly published version, `cd px-ui-sandbox && npm update @particle-academy/<name>` (rare during dev — usually only when freezing a deploy).
-
-**Hard requirements for the publish to succeed** (don't remove these from `package.json`):
-- `repository.url` set to `git+https://github.com/Particle-Academy/<name>.git` — npm's provenance check rejects publish if this is empty or doesn't match the OIDC source
-- `homepage` and `bugs` URLs (recommended for the npmjs page)
-- `files` array includes `dist`, `docs`, `README.md` (so the published tarball ships docs)
-
-**Workflow gotchas already solved (don't re-introduce)**:
-- The bundled npm in `actions/setup-node@v4 (node 22)` is npm 10 — Trusted Publishing OIDC requires npm 11.5+. The workflow uses `npx -y npm@latest publish --provenance --access public` instead of `npm install -g npm@latest` (which fails with `MODULE_NOT_FOUND: promise-retry` due to a self-replacement bug).
-- `fancy-code` and `fancy-sheets` declare `@particle-academy/react-fancy` as a peer dep. If any `workspace:*` ranges sneak back into a package, the workflow rewrites them to plain version ranges before `npm install`.
-
-If a tag was pushed before the workflow file existed on that commit (or you need to re-trigger), move the tag forward and force-push: `git tag -d vX.Y.Z && git tag vX.Y.Z && git push origin vX.Y.Z --force`. (Safe because the tag hasn't been consumed by npm yet.)
-
-If the Trusted Publisher config on npmjs.com is wrong or missing, publish fails with `404 Not Found - PUT .../<package> - Not found`. Fix at `https://www.npmjs.com/package/@particle-academy/<name>/access`.
-
-### PHP packages (`laravel-catalog`, `laravel-fms`, `holy-sheet`, `dark-slide`)
-
-PHP packages publish via Packagist auto-sync from GitHub. To ship:
-
-1. `cd ../<name>`
-2. Bump `"version"` in `composer.json`
-3. Commit the bump (`git add composer.json && git commit -m "chore: release vX.Y.Z"`)
-4. Tag and push: `git tag vX.Y.Z && git push origin main --tags`
-5. Packagist auto-syncs (manual trigger available at `https://packagist.org/packages/particle-academy/<name>`)
-6. To pull into the sandbox: `composer update particle-academy/<name>`
-
-### "Ship it" = full publish flow, not just a branch push
-
-When the user says **ship** for any package, the flow is always: bump version → commit → tag → push tag → wait for CI (React) or Packagist (PHP) → update the consumer dep in `px-ui-sandbox` if needed. Pushing `main` alone is _not_ shipping — consumers installing via npm/composer see nothing until the tag+publish step runs.
-
-Confirm the publish landed before updating the sandbox:
-
-```bash
-gh run list --limit 1                              # CI status (React)
-npm view @particle-academy/<name> version          # live on npm
-composer show particle-academy/<name>              # for PHP packages
-```
+**"Ship" = full publish flow** (bump → commit → tag → push tag → wait
+for CI/Packagist → update consumer dep), never just a branch push. The
+complete runbook — new-package bootstrap, OIDC Trusted Publishing,
+workflow gotchas, PHP vs TS flows — lives in
+[`docs/publishing.md`](./docs/publishing.md). Read it before shipping.
 
 ===
 

@@ -1,10 +1,9 @@
 import { ReactNode, useEffect, useState } from "react";
-import { Link, usePage } from "@inertiajs/react";
+import { Link, router, usePage } from "@inertiajs/react";
 import {
     Action,
     Callout,
     Dropdown,
-    Menu,
     Navbar,
     Profile,
     Text,
@@ -134,29 +133,27 @@ export function Layout({ children }: { children: ReactNode }) {
                                         />
                                     </button>
                                 </Dropdown.Trigger>
-                                <Dropdown.Content>
-                                    <Menu>
-                                        <Menu.Item asChild>
-                                            <Link href="/profile">Your profile</Link>
-                                        </Menu.Item>
-                                        <Menu.Item asChild>
-                                            <Link href="/shop">Coin shop</Link>
-                                        </Menu.Item>
-                                        <Menu.Item asChild>
-                                            <a
-                                                href={`https://github.com/${auth.github_username}`}
-                                                target="_blank"
-                                                rel="noopener"
-                                            >
-                                                View GitHub profile
-                                            </a>
-                                        </Menu.Item>
-                                        <Menu.Separator />
-                                        <Menu.Item asChild>
-                                            <SignOutForm csrf={props.csrfToken} />
-                                        </Menu.Item>
-                                    </Menu>
-                                </Dropdown.Content>
+                                <Dropdown.Items>
+                                    <Dropdown.Item onClick={() => router.visit("/profile")}>
+                                        Your profile
+                                    </Dropdown.Item>
+                                    <Dropdown.Item onClick={() => router.visit("/shop")}>
+                                        Coin shop
+                                    </Dropdown.Item>
+                                    {auth.github_username && (
+                                        <Dropdown.Item
+                                            onClick={() =>
+                                                window.open(`https://github.com/${auth.github_username}`, "_blank", "noopener")
+                                            }
+                                        >
+                                            View GitHub profile
+                                        </Dropdown.Item>
+                                    )}
+                                    <Dropdown.Separator />
+                                    <Dropdown.Item danger onClick={() => router.post("/auth/logout")}>
+                                        Sign out
+                                    </Dropdown.Item>
+                                </Dropdown.Items>
                             </Dropdown>
                         </>
                     ) : (
@@ -226,14 +223,5 @@ function PlayerChip({ player }: { player: PlayerSummary }) {
                 {player.coins.toLocaleString()} ◈
             </span>
         </Link>
-    );
-}
-
-function SignOutForm({ csrf }: { csrf: string }) {
-    return (
-        <form method="POST" action="/auth/logout" className="block w-full">
-            <input type="hidden" name="_token" value={csrf} />
-            <button type="submit" className="w-full text-left">Sign out</button>
-        </form>
     );
 }

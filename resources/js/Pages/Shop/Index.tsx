@@ -1,4 +1,4 @@
-import { Head, Link, useForm, usePage } from "@inertiajs/react";
+import { Head, Link, useForm } from "@inertiajs/react";
 import { Action, Badge, Card, Heading, Text } from "@particle-academy/react-fancy";
 import { useState } from "react";
 import { Layout } from "../Layout";
@@ -27,10 +27,7 @@ type Props = {
     cosmeticSlots: Record<string, string>;
 };
 
-type FlashShape = { success?: string; error?: string };
-
 export default function ShopIndex({ items, balance, submissions, cosmeticSlots }: Props) {
-    const { flash } = usePage<{ flash: FlashShape }>().props;
     const cosmetics = items.filter((i) => i.kind === "cosmetic");
     const services = items.filter((i) => i.kind === "service");
 
@@ -49,16 +46,7 @@ export default function ShopIndex({ items, balance, submissions, cosmeticSlots }
                 <BalanceBadge balance={balance} />
             </div>
 
-            {flash?.success && (
-                <Card className="mt-6 border-green-500/50 bg-green-50/50 dark:bg-green-900/20">
-                    <div className="p-4 text-sm text-green-800 dark:text-green-200">{flash.success}</div>
-                </Card>
-            )}
-            {flash?.error && (
-                <Card className="mt-6 border-red-500/50 bg-red-50/50 dark:bg-red-900/20">
-                    <div className="p-4 text-sm text-red-800 dark:text-red-200">{flash.error}</div>
-                </Card>
-            )}
+            {/* Flash success/error render globally in Layout. */}
 
             <section className="mt-8">
                 <Heading level={2} size="lg">Cosmetics</Heading>

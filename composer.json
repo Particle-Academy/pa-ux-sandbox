@@ -18,6 +18,7 @@
         "particle-academy/holy-sheet": "^1.2",
         "particle-academy/laravel-catalog": "^0.8",
         "particle-academy/laravel-fms": "^0.6",
+        "particle-academy/laravel-fun-lab": "0.4.2",
         "stripe/stripe-php": "^17.3"
     },
     "require-dev": {

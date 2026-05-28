@@ -2,11 +2,9 @@
     "agents": [
         "cursor"
     ],
+    "cloud": false,
     "editors": [
         "cursor"
     ],
-    "guidelines": [
-        "particle-academy/laravel-fms",
-        "particle-academy/laravel-catalog"
-    ]
+    "guidelines": true
 }

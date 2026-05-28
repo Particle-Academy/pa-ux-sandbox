@@ -65,6 +65,10 @@ class DatabaseSeeder extends Seeder
         $this->command->info("  ✓ Created {$addons['products']} add-on products with {$addons['prices']} pricing options");
         $this->command->newLine();
 
+        // Gamification taxonomy (metrics, levels, achievements, prizes).
+        $this->call(FunLabSeeder::class);
+        $this->command->newLine();
+
         // Summary
         $this->command->info('Database seeding completed!');
         $this->command->newLine();

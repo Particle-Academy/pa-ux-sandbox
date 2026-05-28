@@ -65,6 +65,11 @@ Route::post('/dark-slide/export', DarkSlideExportController::class)
     ->withoutMiddleware([PreventRequestForgery::class])
     ->name('dark-slide.export');
 
+// GitHub issues webhook → bug-hunter-xp. HMAC-verified in the controller;
+// CSRF-exempt (see bootstrap/app.php). No auth — GitHub posts server-to-server.
+Route::post('/webhooks/github', \App\Http\Controllers\Webhooks\GitHubWebhookController::class)
+    ->name('webhooks.github');
+
 // ─── Fancy UI Showcase ─────────────────────────────────────────────────
 Route::get('/', HomeController::class)->name('home');
 
@@ -168,6 +173,19 @@ Route::prefix('admin')->name('admin.')->middleware(['web', 'auth', 'can:admin'])
     Route::post('users/{user}/grant-prize', [\App\Http\Controllers\Admin\AdminUsersController::class, 'grantPrize'])->name('users.grant-prize');
     Route::post('users/{user}/toggle-opt-out', [\App\Http\Controllers\Admin\AdminUsersController::class, 'toggleOptOut'])->name('users.toggle-opt-out');
     Route::post('users/{user}/toggle-admin', [\App\Http\Controllers\Admin\AdminUsersController::class, 'toggleAdmin'])->name('users.toggle-admin');
+
+    // Gamification taxonomy (achievements + prizes)
+    Route::get('gamification', [\App\Http\Controllers\Admin\AdminGamificationController::class, 'index'])->name('gamification.index');
+    Route::get('gamification/achievements/create', [\App\Http\Controllers\Admin\AdminGamificationController::class, 'editAchievement'])->name('gamification.achievements.create');
+    Route::post('gamification/achievements', [\App\Http\Controllers\Admin\AdminGamificationController::class, 'saveAchievement'])->name('gamification.achievements.store');
+    Route::get('gamification/achievements/{achievement}/edit', [\App\Http\Controllers\Admin\AdminGamificationController::class, 'editAchievement'])->name('gamification.achievements.edit');
+    Route::put('gamification/achievements/{achievement}', [\App\Http\Controllers\Admin\AdminGamificationController::class, 'saveAchievement'])->name('gamification.achievements.update');
+    Route::post('gamification/achievements/{achievement}/toggle', [\App\Http\Controllers\Admin\AdminGamificationController::class, 'toggleAchievement'])->name('gamification.achievements.toggle');
+    Route::get('gamification/prizes/create', [\App\Http\Controllers\Admin\AdminGamificationController::class, 'editPrize'])->name('gamification.prizes.create');
+    Route::post('gamification/prizes', [\App\Http\Controllers\Admin\AdminGamificationController::class, 'savePrize'])->name('gamification.prizes.store');
+    Route::get('gamification/prizes/{prize}/edit', [\App\Http\Controllers\Admin\AdminGamificationController::class, 'editPrize'])->name('gamification.prizes.edit');
+    Route::put('gamification/prizes/{prize}', [\App\Http\Controllers\Admin\AdminGamificationController::class, 'savePrize'])->name('gamification.prizes.update');
+    Route::post('gamification/prizes/{prize}/toggle', [\App\Http\Controllers\Admin\AdminGamificationController::class, 'togglePrize'])->name('gamification.prizes.toggle');
 
     // Showcase Submissions moderation
     Route::get('submissions', [\App\Http\Controllers\Admin\AdminShowcaseSubmissionsController::class, 'index'])->name('submissions.index');

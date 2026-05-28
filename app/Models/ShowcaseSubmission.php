@@ -17,12 +17,19 @@ class ShowcaseSubmission extends Model
         'scan_result',
         'thumbnail_url',
         'scanned_at',
+        'featured_until',
     ];
 
     protected $casts = [
         'scan_result' => 'array',
         'scanned_at' => 'datetime',
+        'featured_until' => 'datetime',
     ];
+
+    public function isFeatured(): bool
+    {
+        return $this->featured_until !== null && $this->featured_until->isFuture();
+    }
 
     public function user(): BelongsTo
     {

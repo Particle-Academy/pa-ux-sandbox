@@ -28,6 +28,7 @@ class User extends Authenticatable
         'github_id',
         'github_username',
         'avatar_url',
+        'cosmetic_slots',
     ];
 
     /**
@@ -51,6 +52,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_admin' => 'boolean',
+            'cosmetic_slots' => 'array',
         ];
     }
 }

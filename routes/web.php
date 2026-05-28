@@ -81,6 +81,11 @@ Route::get('/dreaming/archived', [DreamingController::class, 'archived'])->name(
 
 Route::get('/leaderboard', LeaderboardController::class)->name('leaderboard');
 
+Route::get('/shop', [\App\Http\Controllers\Showcase\ShopController::class, 'index'])->name('shop.index');
+Route::post('/shop/{item:slug}/purchase', [\App\Http\Controllers\Showcase\ShopController::class, 'purchase'])
+    ->middleware('auth')
+    ->name('shop.purchase');
+
 // ─── Public registry (shadcn-compatible) ──────────────────────────────
 // /r/index.json — list of all installable components.
 // /r/{slug}.json — full source bundle for one component.

@@ -69,6 +69,11 @@ class DatabaseSeeder extends Seeder
         $this->call(FunLabSeeder::class);
         $this->command->newLine();
 
+        // Coin shop catalog (cosmetics + services).
+        $this->command->info('Seeding coin shop...');
+        $this->call(ShopSeeder::class);
+        $this->command->newLine();
+
         // Summary
         $this->command->info('Database seeding completed!');
         $this->command->newLine();

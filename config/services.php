@@ -58,6 +58,13 @@ return [
         'client_secret' => env('GITHUB_CLIENT_SECRET'),
         'redirect' => env('GITHUB_REDIRECT_URI', env('APP_URL').'/auth/github/callback'),
         'api_token' => env('GITHUB_API_TOKEN'),
+
+        // Webhook receiver (bug-hunter-xp). Set the same secret on the
+        // org/repo webhook in GitHub. The org whose issues count, and the
+        // labels that mark a bug as confirmed.
+        'webhook_secret' => env('GITHUB_WEBHOOK_SECRET'),
+        'org' => env('GITHUB_ORG', 'Particle-Academy'),
+        'bug_labels' => ['bug', 'confirmed', 'confirmed-bug'],
     ],
 
 ];

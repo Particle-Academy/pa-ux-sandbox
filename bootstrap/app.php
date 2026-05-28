@@ -17,6 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->validateCsrfTokens(except: [
             'whiteboard-share/*',
             'mcp', // public install-MCP for IDE agents
+            'webhooks/github', // server-to-server; verified via HMAC signature
         ]);
 
         // Inertia shared props + root view for the Showcase SPA.

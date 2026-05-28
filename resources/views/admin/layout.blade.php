@@ -37,6 +37,9 @@
                         <a href="{{ route('admin.users.index') }}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium {{ request()->routeIs('admin.users.*') ? 'border-indigo-500 text-gray-900 dark:text-white' : '' }}">
                             Users
                         </a>
+                        <a href="{{ route('admin.submissions.index') }}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium {{ request()->routeIs('admin.submissions.*') ? 'border-indigo-500 text-gray-900 dark:text-white' : '' }}">
+                            Submissions
+                        </a>
                         @if(Route::has('ctrl.products.index'))
                             <a href="{{ route('ctrl.products.index') }}" class="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                                 Catalog UI

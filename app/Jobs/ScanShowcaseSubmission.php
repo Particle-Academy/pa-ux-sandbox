@@ -31,6 +31,12 @@ class ScanShowcaseSubmission implements ShouldQueue
             'scan_result' => $result,
             'scanned_at' => now(),
         ]);
+
+        // Auto-verified submissions earn projects-xp for the submitter
+        // (idempotent — see ShowcaseRewards).
+        if ($result['verified']) {
+            app(\App\Services\ShowcaseRewards::class)->onVerified($this->submission);
+        }
     }
 
     /** @return array<string, mixed> */

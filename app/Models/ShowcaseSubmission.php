@@ -18,12 +18,14 @@ class ShowcaseSubmission extends Model
         'thumbnail_url',
         'scanned_at',
         'featured_until',
+        'rewarded_at',
     ];
 
     protected $casts = [
         'scan_result' => 'array',
         'scanned_at' => 'datetime',
         'featured_until' => 'datetime',
+        'rewarded_at' => 'datetime',
     ];
 
     public function isFeatured(): bool

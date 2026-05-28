@@ -164,6 +164,15 @@ Route::prefix('admin')->name('admin.')->middleware(['web', 'auth', 'can:admin'])
     Route::post('users/{user}/grant-prize', [\App\Http\Controllers\Admin\AdminUsersController::class, 'grantPrize'])->name('users.grant-prize');
     Route::post('users/{user}/toggle-opt-out', [\App\Http\Controllers\Admin\AdminUsersController::class, 'toggleOptOut'])->name('users.toggle-opt-out');
     Route::post('users/{user}/toggle-admin', [\App\Http\Controllers\Admin\AdminUsersController::class, 'toggleAdmin'])->name('users.toggle-admin');
+
+    // Showcase Submissions moderation
+    Route::get('submissions', [\App\Http\Controllers\Admin\AdminShowcaseSubmissionsController::class, 'index'])->name('submissions.index');
+    Route::get('submissions/{submission}', [\App\Http\Controllers\Admin\AdminShowcaseSubmissionsController::class, 'show'])->name('submissions.show');
+    Route::post('submissions/{submission}/verify', [\App\Http\Controllers\Admin\AdminShowcaseSubmissionsController::class, 'verify'])->name('submissions.verify');
+    Route::post('submissions/{submission}/reject', [\App\Http\Controllers\Admin\AdminShowcaseSubmissionsController::class, 'reject'])->name('submissions.reject');
+    Route::post('submissions/{submission}/feature', [\App\Http\Controllers\Admin\AdminShowcaseSubmissionsController::class, 'feature'])->name('submissions.feature');
+    Route::post('submissions/{submission}/unfeature', [\App\Http\Controllers\Admin\AdminShowcaseSubmissionsController::class, 'unfeature'])->name('submissions.unfeature');
+    Route::post('submissions/{submission}/rescan', [\App\Http\Controllers\Admin\AdminShowcaseSubmissionsController::class, 'rescan'])->name('submissions.rescan');
 });
 
 // React demos (SPA catch-all)

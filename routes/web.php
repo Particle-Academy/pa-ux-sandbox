@@ -35,6 +35,16 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+    // XP analytics endpoints — JS demos + bridge hosts post here to credit
+    // the signed-in user. Throttled inside XpAwarder so reload-farm and
+    // agentic loops can't inflate scores.
+    Route::post('/api/xp/demo', [\App\Http\Controllers\Api\XpController::class, 'demo'])
+        ->middleware('throttle:60,1')
+        ->name('xp.demo');
+    Route::post('/api/xp/bridge', [\App\Http\Controllers\Api\XpController::class, 'bridge'])
+        ->middleware('throttle:120,1')
+        ->name('xp.bridge');
 });
 
 // xlsx export endpoint for the fancy-sheets demo. The controller is owned
@@ -54,9 +64,11 @@ Route::post('/dark-slide/export', DarkSlideExportController::class)
 // ─── Fancy UI Showcase ─────────────────────────────────────────────────
 Route::get('/', HomeController::class)->name('home');
 
-Route::get('/packages', [PackagesController::class, 'index'])->name('packages.index');
-Route::get('/packages/{package}', [PackagesController::class, 'show'])->name('packages.show');
-Route::get('/packages/{package}/{component}', [PackagesController::class, 'component'])->name('packages.component');
+Route::middleware(\App\Http\Middleware\TrackPackageBrowsing::class)->group(function () {
+    Route::get('/packages', [PackagesController::class, 'index'])->name('packages.index');
+    Route::get('/packages/{package}', [PackagesController::class, 'show'])->name('packages.show');
+    Route::get('/packages/{package}/{component}', [PackagesController::class, 'component'])->name('packages.component');
+});
 
 Route::get('/starter-kits', [StarterKitController::class, 'index'])->name('starter-kits.index');
 Route::get('/starter-kits/{slug}', [StarterKitController::class, 'show'])->name('starter-kits.show');

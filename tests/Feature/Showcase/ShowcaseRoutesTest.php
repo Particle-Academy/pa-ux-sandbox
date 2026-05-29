@@ -12,6 +12,12 @@ it('renders the showcase home', function () {
     $response->assertSee('"component":"Home"', escape: false);
 });
 
+it('renders the agent playground', function () {
+    $response = $this->get('/agent-playground');
+    $response->assertOk();
+    $response->assertSee('"component":"AgentPlayground"', escape: false);
+});
+
 it('renders the packages index', function () {
     $this->get('/packages')->assertOk();
 });

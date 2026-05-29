@@ -199,6 +199,7 @@ import { defaultElementRegistry } from "@particle-academy/fancy-slides/registry"
                 {
                     id: "e-shape-bg",
                     type: "shape",
+                    animation: { effect: "fade", trigger: "on-click", order: 1, duration: 500 },
                     shape: "rounded-rect",
                     x: 0.1,
                     y: 0.15,
@@ -212,6 +213,7 @@ import { defaultElementRegistry } from "@particle-academy/fancy-slides/registry"
                 {
                     id: "e-shape-arrow",
                     type: "shape",
+                    animation: { effect: "fly-in", trigger: "on-click", direction: "left", order: 2, duration: 500 },
                     shape: "arrow",
                     x: 0.2,
                     y: 0.5,
@@ -234,6 +236,7 @@ import { defaultElementRegistry } from "@particle-academy/fancy-slides/registry"
                 {
                     id: "e-shape-sub",
                     type: "text",
+                    animation: { effect: "zoom", trigger: "on-click", order: 3, duration: 500 },
                     x: 0.1,
                     y: 0.62,
                     w: 0.8,

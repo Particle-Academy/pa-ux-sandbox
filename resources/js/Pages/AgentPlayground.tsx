@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { Component, useMemo, useState, type ErrorInfo, type ReactNode } from "react";
 import { Head } from "@inertiajs/react";
 import { ScreenSystem, Screen, useScreenSystem } from "@particle-academy/fancy-screens";
 import { ShareControls, ScreensActivityBridge, useAgentActivity, type AgentActivityEvent } from "@particle-academy/agent-integrations";
@@ -43,7 +43,7 @@ function PlaygroundInner() {
         <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">Agent Playground</h1>
         <p className="max-w-3xl text-sm text-zinc-500">
           Start a session, connect your own agent, and watch it author Fancy UI screens + data live over MCP. The
-          agent calls <code className="rounded bg-zinc-100 px-1 dark:bg-zinc-800">screens_create_screen</code> to spin
+          agent calls <code className="rounded bg-zinc-100 px-1 dark:bg-zinc-800">screens_create</code> to spin
           up surfaces, then drives each one with its per-kind tools. No external agent? Use the in-page console below.
         </p>
       </header>
@@ -74,12 +74,17 @@ function PlaygroundInner() {
                   title={entry.title}
                   className={isActive ? "" : "hidden"}
                 >
-                  <mod.Surface
-                    screenId={entry.id}
-                    state={entry.state}
-                    active={isActive}
-                    onChange={(next) => pg.setScreenState(entry.id, next)}
-                  />
+                  <ScreenErrorBoundary
+                    resetKey={entry.state}
+                    onError={(msg) => pg.setScreenError(entry.id, msg)}
+                  >
+                    <mod.Surface
+                      screenId={entry.id}
+                      state={entry.state}
+                      active={isActive}
+                      onChange={(next) => pg.setScreenState(entry.id, next)}
+                    />
+                  </ScreenErrorBoundary>
                 </Screen>
               );
             })}
@@ -146,6 +151,51 @@ function EmptyState() {
       <p className="max-w-sm text-sm text-zinc-500">
         Connect your agent (Share above) and ask it to create a screen, or use the console on the right to add one
         yourself.
+      </p>
+    </div>
+  );
+}
+
+/**
+ * Isolates a single screen's render. A surface that throws — a bad agent-emitted
+ * schema, a buggy kind, an upstream bug like marked() on undefined — shows an
+ * error card instead of blanking the whole playground, and reports the failure
+ * via onError so screens_list tells the agent its attempt failed (rather than
+ * the agent believing it succeeded).
+ */
+class ScreenErrorBoundary extends Component<
+  { resetKey: unknown; onError: (message: string) => void; children: ReactNode },
+  { message: string | null }
+> {
+  state = { message: null as string | null };
+  static getDerivedStateFromError(err: unknown) {
+    return { message: err instanceof Error ? err.message : String(err) };
+  }
+  componentDidCatch(err: unknown, _info: ErrorInfo) {
+    this.props.onError(err instanceof Error ? err.message : String(err));
+  }
+  componentDidUpdate(prev: { resetKey: unknown }) {
+    // New content reference (agent updated the screen) → clear and retry.
+    if (prev.resetKey !== this.props.resetKey && this.state.message) {
+      this.setState({ message: null });
+    }
+  }
+  render() {
+    if (this.state.message) return <SurfaceError message={this.state.message} />;
+    return this.props.children;
+  }
+}
+
+function SurfaceError({ message }: { message: string }) {
+  return (
+    <div className="flex h-[480px] flex-col items-center justify-center gap-3 p-6 text-center">
+      <div className="text-3xl">⚠️</div>
+      <div className="font-semibold text-rose-600 dark:text-rose-400">This screen failed to render</div>
+      <pre className="max-w-lg overflow-auto whitespace-pre-wrap break-words rounded-md bg-rose-50 p-3 text-left text-xs text-rose-700 dark:bg-rose-950/40 dark:text-rose-300">
+        {message}
+      </pre>
+      <p className="max-w-sm text-xs text-zinc-500">
+        Isolated to this screen — others are unaffected. Update its content or remove it and try again.
       </p>
     </div>
   );

@@ -40,6 +40,12 @@ export type ScreenEntry = {
   title: string;
   /** Opaque per-kind state slice. */
   state: unknown;
+  /**
+   * Set when the surface threw while rendering. Isolated by an error boundary
+   * (so one bad screen never blanks the page) and surfaced to the agent via
+   * screens_list so a failed attempt reads as a failure, not a silent no-op.
+   */
+  error?: string | null;
 };
 
 type PlaygroundStore = {
@@ -49,6 +55,7 @@ type PlaygroundStore = {
   removeScreen: (id: string) => void;
   setActive: (id: string) => void;
   setScreenState: (id: string, next: unknown) => void;
+  setScreenError: (id: string, error: string | null) => void;
 };
 
 let counter = 0;
@@ -81,7 +88,11 @@ function createPlaygroundStore() {
       if (get().screens.some((x) => x.id === id)) set({ activeId: id });
     },
     setScreenState: (id, next) =>
-      set((s) => ({ screens: s.screens.map((x) => (x.id === id ? { ...x, state: next } : x)) })),
+      // A content update clears any prior render error so the surface gets a
+      // fresh attempt (the boundary resets on the new state reference).
+      set((s) => ({ screens: s.screens.map((x) => (x.id === id ? { ...x, state: next, error: null } : x)) })),
+    setScreenError: (id, error) =>
+      set((s) => ({ screens: s.screens.map((x) => (x.id === id ? { ...x, error } : x)) })),
   }));
 }
 
@@ -111,7 +122,7 @@ export function usePlaygroundServer() {
       instructions:
         "Fancy UI Agent Playground. Start by calling screens_list_kinds to see the surface catalog " +
         "(composition / artboard / whiteboard / chart / form / sheet / flow / slides / code / scene). " +
-        "Create screens with screens_create_screen { kind }, switch with screens_navigate, then drive each " +
+        "Create screens with screens_create { id, kind }, switch with screens_navigate, then drive each " +
         "screen with its per-kind tools (artboard_*, whiteboard_*, chart_*, form_*, sheet_*, flow_*, deck_*, " +
         "code_*, scene_*). A 'composition' screen renders agent-emitted Fancy UI JSON: call screens_update_content " +
         "with { schema: { type, props, children } } to populate it. Undo with agent_undo / agent_redo / agent_history.",
@@ -124,7 +135,15 @@ export function usePlaygroundServer() {
       adapter: {
         listScreens: () => {
           const s = store.getState();
-          return s.screens.map((x) => ({ id: x.id, title: x.title, kind: x.kind, active: x.id === s.activeId }));
+          return s.screens.map((x) => ({
+            id: x.id,
+            title: x.title,
+            kind: x.kind,
+            active: x.id === s.activeId,
+            // Tells the agent a screen it created failed to render.
+            status: x.error ? "error" : "ok",
+            error: x.error ?? undefined,
+          }));
         },
         getActive: () => store.getState().activeId,
         setActive: (id) => store.getState().setActive(id),
@@ -258,6 +277,7 @@ export function usePlaygroundServer() {
     removeScreen: (id: string) => store.getState().removeScreen(id),
     setActive: (id: string) => store.getState().setActive(id),
     setScreenState: (id: string, next: unknown) => store.getState().setScreenState(id, next),
+    setScreenError: (id: string, error: string | null) => store.getState().setScreenError(id, error),
     // in-process tool invocation
     callTool,
   };

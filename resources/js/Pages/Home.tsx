@@ -2,22 +2,40 @@ import { Head, Link } from "@inertiajs/react";
 import { useState } from "react";
 import {
     Action,
-    Avatar,
     Badge,
-    Calendar,
-    Callout,
     Card,
-    Heading,
-    Pillbox,
-    Separator,
-    Switch,
+    Field,
+    Input,
     Tabs,
-    Text,
-    Timeline,
+    Toast,
+    useToast,
 } from "@particle-academy/react-fancy";
-import { EChart } from "@particle-academy/fancy-echarts";
-import { Sparkles, Cpu, Boxes, Paperclip, Smile, Send, Bot, Bell, Check, X } from "@particle-academy/react-fancy/icons";
+import {
+    Terminal,
+    ArrowRight,
+    Package,
+    Zap,
+    Layers,
+    BookOpen,
+    Github,
+    MousePointerClick,
+    TextCursorInput,
+    Tag,
+    RectangleHorizontal,
+    Bell,
+    LayoutPanelTop,
+    Check,
+    Sparkles,
+    Link as LinkIcon,
+    Info,
+    Search,
+    Boxes,
+    Cpu,
+    Radio,
+} from "@particle-academy/react-fancy/icons";
 import { Layout } from "./Layout";
+
+// ─── Props ───────────────────────────────────────────────────────────────────
 
 type PackageRow = {
     slug: string;
@@ -25,547 +43,852 @@ type PackageRow = {
     tagline: string;
     language: string;
     components_count: number;
+    glyph: string;
+    install: string;
+    kind: "npm" | "composer";
+};
+
+type CompanionRow = {
+    slug: string;
+    name: string;
+    tagline: string;
+    composer: string;
+    language: string;
 };
 
 type HomeProps = {
     packages: PackageRow[];
+    companions: CompanionRow[];
     total_components: number;
 };
 
-// Packages with a hand-curated screenshot in /showcase-shots/. Others fall
-// back to a tasteful install-snippet tile.
-const PKG_HAS_SHOT = new Set([
-    "react-fancy",
-    "fancy-flow",
-    "fancy-whiteboard",
-    "fancy-code",
-    "fancy-sheets",
-    "fancy-echarts",
-    "fancy-screens",
-    "fancy-3d",
-    "fancy-inertia",
-    "fancy-slides",
-    "agent-integrations",
-    "holy-sheet",
-    "dark-slide",
-]);
+// Spell small counts for the editorial section title; fall back to the digits.
+const NUMBER_WORDS: Record<number, string> = {
+    10: "Ten",
+    11: "Eleven",
+    12: "Twelve",
+    13: "Thirteen",
+    14: "Fourteen",
+    15: "Fifteen",
+    16: "Sixteen",
+    17: "Seventeen",
+    18: "Eighteen",
+};
 
-const PILLARS = [
-    {
-        icon: Sparkles,
-        title: "Authorable",
-        body: "Tailwind-first; tiny, typed APIs. An LLM that reads a prop signature once can use it correctly.",
-    },
-    {
-        icon: Cpu,
-        title: "Inhabitable",
-        body: "Every interactive surface ships an MCP bridge so embedded agents drive it via JSON-RPC — no Playwright, no vision pass.",
-    },
-    {
-        icon: Boxes,
-        title: "Composable",
-        body: "Small npm/PHP packages. Take one, take them all.",
-    },
-];
+// react-fancy Badge supports a narrower palette than ActionColor; map tags.
+type BadgeColor = "zinc" | "red" | "blue" | "green" | "amber" | "violet" | "rose";
 
-export default function Home({ packages, total_components }: HomeProps) {
+function langTag(language: string): { label: string; color: BadgeColor } {
+    if (language === "PHP" || language === "PHP/Blade") {
+        return { label: "php", color: "violet" };
+    }
+    return { label: "typescript", color: "blue" };
+}
+
+export default function Home({ packages, companions, total_components }: HomeProps) {
     return (
-        <Layout>
-            <Head title="Fancy UI Kit · Particle Academy" />
+        <Toast.Provider position="bottom-right">
+            <Layout>
+                <Head title="Fancy UI · Components for Human+ UX" />
+                <Hero packages={packages} />
+                <Packages packages={packages} companions={companions} />
+                <HumanPlus />
+                <ComponentsShowcase total={total_components} />
+                <Philosophy />
+                <Install />
+                <Explore />
+            </Layout>
+        </Toast.Provider>
+    );
+}
 
-            <section className="relative isolate overflow-hidden rounded-2xl border border-zinc-200 bg-white px-6 py-12 dark:border-zinc-800 dark:bg-zinc-900 sm:px-12 sm:py-16">
-                <div className="pointer-events-none absolute inset-x-0 -top-32 h-64 bg-[radial-gradient(60%_60%_at_50%_0%,rgba(167,139,250,0.18),transparent)]" />
-                <div className="pointer-events-none absolute -right-10 -top-10 hidden h-72 w-72 rounded-full bg-gradient-to-br from-sky-300/40 via-indigo-400/30 to-violet-300/40 blur-3xl md:block dark:from-sky-500/20 dark:via-indigo-500/15 dark:to-violet-500/20" />
-                <div className="relative grid gap-10 md:grid-cols-[1.05fr_1fr] md:items-center">
-                    <div>
-                        <Badge color="violet" size="sm" className="mb-4">Particle Academy</Badge>
-                        <Heading level={1} size="xl" className="!text-4xl !leading-[1.1] tracking-tight sm:!text-5xl">
-                            Build apps where{" "}
-                            <span className="brand-gradient-text">humans and agents</span>{" "}
-                            share the same UI.
-                        </Heading>
-                        <Text className="mt-5 text-base !text-zinc-600 dark:!text-zinc-300">
-                            Fancy UI is a constellation of React and PHP packages built for{" "}
-                            <strong className="text-zinc-900 dark:text-zinc-100">Human+ UX</strong> —
-                            interfaces designed from the ground up for humans and AI agents collaborating in the
-                            same surface. Every component is bridgeable, not just paintable.
-                        </Text>
-                        <div className="mt-7 flex flex-wrap items-center gap-3">
-                            <Action as={Link} href="/packages" color="violet" size="lg" iconTrailing="arrow-right">
-                                Browse {packages.length} packages
-                            </Action>
-                            <Action as={Link} href="/docs/installation" size="lg" variant="ghost">
-                                Get started
-                            </Action>
-                            <a
-                                href="/docs/human-plus-ux"
-                                className="text-sm text-zinc-500 underline-offset-4 hover:underline dark:text-zinc-400"
-                            >
-                                Read the whitepaper →
-                            </a>
-                        </div>
+// ─── Hero ──────────────────────────────────────────────────────────────────
+
+function Hero({ packages }: { packages: PackageRow[] }) {
+    return (
+        <section className="hero">
+            <div className="container hero-grid">
+                <div>
+                    <div className="eyebrow-row">
+                        <span className="dot" />
+                        <span>v0.x · Particle Academy</span>
                     </div>
-
-                    <HeroMock />
-                </div>
-            </section>
-
-            <section className="mt-10 grid gap-4 sm:grid-cols-3">
-                {PILLARS.map(({ icon: Icon, title, body }) => (
-                    <Card key={title} className="group relative overflow-hidden transition hover:-translate-y-0.5 hover:shadow-md">
-                        <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-gradient-to-br from-violet-200/40 to-sky-200/40 blur-2xl transition group-hover:from-violet-300/60 group-hover:to-sky-300/60 dark:from-violet-700/20 dark:to-sky-700/20" />
-                        <Card.Body className="relative">
-                            <div className="mb-3 inline-flex h-9 w-9 items-center justify-center rounded-lg bg-violet-50 text-violet-700 dark:bg-violet-500/15 dark:text-violet-300">
-                                <Icon size={18} strokeWidth={1.75} />
-                            </div>
-                            <Heading level={3} size="sm">{title}</Heading>
-                            <Text size="sm" className="mt-1 !text-zinc-600 dark:!text-zinc-400">{body}</Text>
-                        </Card.Body>
-                    </Card>
-                ))}
-            </section>
-
-            <section className="mt-16">
-                <div className="flex items-end justify-between gap-3">
-                    <div>
-                        <Heading level={2} size="lg">Starter kits</Heading>
-                        <Text size="sm" className="mt-1 !text-zinc-500">
-                            6 vertical demos · clone, study, adapt.
-                        </Text>
-                    </div>
-                    <Action as={Link} href="/starter-kits" variant="ghost" size="sm" iconTrailing="arrow-right">
-                        See all
-                    </Action>
-                </div>
-                <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                    {[
-                        { slug: "react-fancy", name: "React Dashboard", pkg: "react-fancy" },
-                        { slug: "fancy-flow", name: "Workflow Studio", pkg: "fancy-flow" },
-                        { slug: "fancy-whiteboard", name: "Collaborative Board", pkg: "fancy-whiteboard" },
-                        { slug: "fancy-sheets", name: "Spreadsheet Studio", pkg: "fancy-sheets" },
-                        { slug: "fancy-code", name: "Embedded IDE", pkg: "fancy-code" },
-                        { slug: "fancy-echarts", name: "Charts Studio", pkg: "fancy-echarts" },
-                    ].map((k) => (
-                        <Link key={k.slug} href={`/starter-kits/${k.slug}`} className="block">
-                            <Card className="group relative h-full overflow-hidden transition hover:-translate-y-0.5 hover:border-violet-300 hover:shadow-lg dark:hover:border-violet-700">
-                                <div className="relative aspect-[16/10] overflow-hidden border-b border-zinc-100 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950">
-                                    <img
-                                        src={`/showcase-shots/${k.slug}.png`}
-                                        alt={`${k.name} preview`}
-                                        className="absolute inset-0 size-full object-cover object-top transition duration-500 group-hover:scale-[1.02]"
-                                        loading="lazy"
-                                    />
-                                </div>
-                                <Card.Body>
-                                    <div className="flex items-start justify-between gap-2">
-                                        <Heading level={3} size="sm" className="!text-zinc-900 dark:!text-zinc-100">{k.name}</Heading>
-                                        <Text size="xs" className="!font-mono !text-zinc-400 shrink-0 mt-0.5">{k.pkg}</Text>
-                                    </div>
-                                </Card.Body>
-                            </Card>
+                    <h1 className="display">
+                        Components for the surfaces where{" "}
+                        <span className="gradient-text">humans and agents work together</span>.
+                    </h1>
+                    <p className="lede">
+                        Fancy UI is a constellation of small React and PHP packages built on one
+                        premise: agents are first-class participants in the products they help
+                        build. Every interactive surface ships an MCP bridge, so an embedded agent
+                        drives it through stable handles — never DOM scraping, never Playwright.
+                    </p>
+                    <div className="hero-cta">
+                        <Link className="btn btn-primary" href="/docs">
+                            <Terminal size={15} />
+                            Install the kit
                         </Link>
-                    ))}
-                </div>
-            </section>
-
-            <section className="mt-16">
-                <div className="flex items-end justify-between gap-3">
-                    <div>
-                        <Heading level={2} size="lg">Packages</Heading>
-                        <Text size="sm" className="mt-1 !text-zinc-500">
-                            {packages.length} packages · {total_components} components — every one with a live demo.
-                        </Text>
+                        <Link className="btn btn-ghost" href="/agent-playground">
+                            See Human+ in action
+                            <ArrowRight size={15} />
+                        </Link>
                     </div>
-                    <Action as={Link} href="/packages" variant="ghost" size="sm" iconTrailing="arrow-right">
-                        See all
-                    </Action>
+                    <div className="hero-meta">
+                        <span className="meta-item">
+                            <Package size={13} /> {packages.length} packages
+                        </span>
+                        <span className="meta-item">
+                            <Github size={13} /> MIT licensed
+                        </span>
+                        <span className="meta-item">
+                            <Zap size={13} /> <code>tailwindcss &gt;= 4</code>
+                        </span>
+                        <span className="meta-item">
+                            <Layers size={13} /> React 19 · PHP 8.4
+                        </span>
+                    </div>
                 </div>
-                <div className="mt-5 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                    {packages.map((pkg) => {
-                        const hasShot = PKG_HAS_SHOT.has(pkg.slug);
-                        const isPhp = pkg.language === "PHP" || pkg.language === "PHP/Blade";
+
+                <HeroCard />
+            </div>
+        </section>
+    );
+}
+
+function HeroCard() {
+    return (
+        <div className="hero-card">
+            <div className="hero-card-bar">
+                <div className="dotrow">
+                    <i />
+                    <i />
+                    <i />
+                </div>
+                <span style={{ flex: 1 }}>resources/js/Pages/DesignReview.tsx</span>
+                <span>UTF-8 · TSX</span>
+            </div>
+            <div
+                className="codeblock"
+                dangerouslySetInnerHTML={{
+                    __html: `<span class="tok-c">// One surface. Two participants.</span>
+<span class="tok-k">import</span> { ArtBoard, ArtPiece } <span class="tok-k">from</span> <span class="tok-s">"@particle-academy/fancy-artboard"</span>;
+<span class="tok-k">import</span> { registerArtboardBridge } <span class="tok-k">from</span> <span class="tok-s">"@particle-academy/agent-integrations"</span>;
+
+<span class="tok-k">export default function</span> <span class="tok-t">DesignReview</span>() {
+  <span class="tok-k">const</span> [board, setBoard] = <span class="tok-n">useState</span>(initialBoard);
+  <span class="tok-k">return</span> (
+    &lt;<span class="tok-t">ArtBoard</span> <span class="tok-a">value</span>={board} <span class="tok-a">onChange</span>={setBoard}&gt;
+      &lt;<span class="tok-t">ArtPiece</span> <span class="tok-a">id</span>=<span class="tok-s">"hero-v3"</span> <span class="tok-a">kind</span>=<span class="tok-s">"jsx"</span> /&gt;
+    &lt;/<span class="tok-t">ArtBoard</span>&gt;
+  );
+}`,
+                }}
+            />
+            <div
+                style={{
+                    padding: "12px 14px",
+                    borderTop: "1px solid var(--border-1)",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 10,
+                    fontSize: 12,
+                    background: "var(--bg-1)",
+                }}
+            >
+                <span
+                    style={{
+                        width: 6,
+                        height: 6,
+                        borderRadius: 999,
+                        background: "var(--emerald-500)",
+                        boxShadow: "0 0 0 3px color-mix(in oklch, var(--emerald-500) 22%, transparent)",
+                    }}
+                />
+                <span style={{ fontFamily: "var(--font-mono)", color: "var(--fg-3)" }}>agent · fancy-ui.mcp</span>
+                <span style={{ color: "var(--fg-2)", flex: 1, textAlign: "right", fontFamily: "var(--font-mono)" }}>
+                    artboard_add_piece ✓
+                </span>
+            </div>
+        </div>
+    );
+}
+
+// ─── Packages ────────────────────────────────────────────────────────────────
+
+function Packages({ packages, companions }: { packages: PackageRow[]; companions: CompanionRow[] }) {
+    const count = NUMBER_WORDS[packages.length] ?? String(packages.length);
+    return (
+        <section className="section">
+            <div className="container">
+                <div className="eyebrow-row">
+                    <span>The family</span>
+                </div>
+                <h2 className="section-title">{count} small packages. Lift any one out.</h2>
+                <p className="section-sub">
+                    Fancy UI is not a monolith. Each layer ships independently to npm or Packagist
+                    and composes with the rest. Pick the ones you need — most apps reach for two or
+                    three.
+                </p>
+                <div className="pkg-grid">
+                    {packages.map((p) => {
+                        const tag = langTag(p.language);
                         return (
-                            <Link key={pkg.slug} href={`/packages/${pkg.slug}`} className="block">
-                                <Card className="group relative h-full overflow-hidden transition hover:-translate-y-0.5 hover:border-violet-300 hover:shadow-lg dark:hover:border-violet-700">
-                                    {hasShot ? (
-                                        <div className="relative aspect-[16/10] overflow-hidden border-b border-zinc-100 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950">
-                                            <img
-                                                src={`/showcase-shots/${pkg.slug}.png`}
-                                                alt={`${pkg.name} preview`}
-                                                className="absolute inset-0 size-full object-cover object-top transition duration-500 group-hover:scale-[1.02]"
-                                                loading="lazy"
-                                            />
-                                        </div>
-                                    ) : (
-                                        <div className={`grid aspect-[16/10] place-items-center border-b border-zinc-100 ${
-                                            isPhp
-                                                ? "bg-gradient-to-br from-indigo-500/15 via-violet-500/10 to-sky-500/15"
-                                                : "bg-gradient-to-br from-violet-500/15 via-sky-500/10 to-emerald-500/15"
-                                        } dark:border-zinc-800`}>
-                                            <div className="inline-flex items-center gap-1 rounded-md border border-white/20 bg-zinc-950/90 px-3 py-1.5 font-mono text-xs text-zinc-100 shadow-lg backdrop-blur">
-                                                <span className="text-zinc-500">$</span>
-                                                <span>{isPhp ? "composer require" : "npm install"}</span>
-                                                <span className="text-violet-300">{pkg.name}</span>
-                                            </div>
-                                        </div>
-                                    )}
-                                    <Card.Body>
-                                        <div className="flex items-start justify-between gap-2">
-                                            <Heading level={3} size="sm" className="!font-mono !text-zinc-900 dark:!text-zinc-100">{pkg.name}</Heading>
-                                            <Badge color={isPhp ? "indigo" : "sky"} size="sm">{pkg.language}</Badge>
-                                        </div>
-                                        <Text size="sm" className="mt-2 line-clamp-2 !text-zinc-600 dark:!text-zinc-300">
-                                            {pkg.tagline}
-                                        </Text>
-                                        <div className="mt-4 flex items-center justify-between border-t border-zinc-100 pt-3 dark:border-zinc-800">
-                                            <Text size="xs" className="!text-zinc-500 !font-mono">
-                                                {pkg.components_count} component{pkg.components_count === 1 ? "" : "s"}
-                                            </Text>
-                                            <Text size="xs" className="!text-violet-600 opacity-0 transition group-hover:opacity-100 dark:!text-violet-300">
-                                                Explore →
-                                            </Text>
-                                        </div>
-                                    </Card.Body>
-                                </Card>
+                            <Link key={p.slug} href={`/packages/${p.slug}`} className="pkg-card">
+                                <div className="pkg-head">
+                                    <span className="pkg-glyph">{p.glyph}</span>
+                                    <span className="pkg-name">{p.name}</span>
+                                    <span className="pkg-ver">
+                                        {p.components_count} comp{p.components_count === 1 ? "" : "s"}
+                                    </span>
+                                </div>
+                                <div className="pkg-desc">{p.tagline}</div>
+                                <div className="pkg-tags">
+                                    <span className="pkg-tag">{tag.label}</span>
+                                    <span className="pkg-tag">{p.kind}</span>
+                                </div>
                             </Link>
                         );
                     })}
                 </div>
-            </section>
 
-            <section className="mt-16">
-                <div className="flex items-end justify-between gap-3">
-                    <div>
-                        <Heading level={2} size="lg" className="!text-zinc-900 dark:!text-zinc-100">Components, live</Heading>
-                        <Text size="sm" className="mt-1 !text-zinc-500">
-                            Real renders. Hover, click, type. No screenshots, no marketing-ware.
-                        </Text>
-                    </div>
-                    <Action as={Link} href="/packages/react-fancy" variant="ghost" size="sm" iconTrailing="arrow-right">
-                        All ~110
-                    </Action>
+                <div
+                    style={{
+                        marginTop: 22,
+                        paddingTop: 18,
+                        borderTop: "1px dashed var(--border-1)",
+                        display: "flex",
+                        flexWrap: "wrap",
+                        alignItems: "baseline",
+                        gap: 12,
+                        fontSize: 12.5,
+                        color: "var(--fg-3)",
+                    }}
+                >
+                    <span style={{ fontFamily: "var(--font-mono)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
+                        + Composer companions
+                    </span>
+                    {companions.map((c, i) => (
+                        <span key={c.slug} style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+                            <a
+                                href={`https://packagist.org/packages/${c.composer}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{ fontFamily: "var(--font-mono)", color: "var(--fg-2)", textDecoration: "none" }}
+                                title={c.tagline}
+                            >
+                                {c.composer}
+                            </a>
+                            {i < companions.length - 1 && <span style={{ color: "var(--fg-4)" }}>·</span>}
+                        </span>
+                    ))}
                 </div>
-                <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                    <ShowcaseTile name="Action" slug="react-fancy/action"><ActionTile /></ShowcaseTile>
-                    <ShowcaseTile name="Badge" slug="react-fancy/badge"><BadgeTile /></ShowcaseTile>
-                    <ShowcaseTile name="Avatar" slug="react-fancy/avatar"><AvatarTile /></ShowcaseTile>
-                    <ShowcaseTile name="Switch" slug="react-fancy/inputs"><SwitchTile /></ShowcaseTile>
-                    <ShowcaseTile name="Pillbox" slug="react-fancy/pillbox"><PillboxTile /></ShowcaseTile>
-                    <ShowcaseTile name="Callout" slug="react-fancy/callout"><CalloutTile /></ShowcaseTile>
-                    <ShowcaseTile name="Timeline" slug="react-fancy/timeline"><TimelineTile /></ShowcaseTile>
-                    <ShowcaseTile name="EChart" slug="fancy-echarts/echart"><ChartTile /></ShowcaseTile>
-                    <ShowcaseTile name="Calendar" slug="react-fancy/calendar"><CalendarTile /></ShowcaseTile>
-                </div>
-            </section>
-
-            <Separator className="my-14" />
-
-            <section className="grid gap-4 sm:grid-cols-3">
-                {[
-                    {
-                        href: "/dreaming",
-                        title: "Dreaming",
-                        body: "Speculative components you can vote on. Sign in with GitHub to participate.",
-                        accent: "from-violet-400 via-fuchsia-400 to-sky-400",
-                        chip: "bg-violet-100 text-violet-800 dark:bg-violet-500/20 dark:text-violet-200",
-                        chipLabel: "speculative",
-                    },
-                    {
-                        href: "/showcase",
-                        title: "Designer Showcase",
-                        body: "Sites and repos built with Fancy UI. Submit yours.",
-                        accent: "from-sky-400 via-indigo-400 to-violet-400",
-                        chip: "bg-sky-100 text-sky-800 dark:bg-sky-500/20 dark:text-sky-200",
-                        chipLabel: "community",
-                    },
-                    {
-                        href: "/leaderboard",
-                        title: "Leaderboard",
-                        body: "Top contributors by merged PRs and votes cast.",
-                        accent: "from-emerald-400 via-teal-400 to-sky-400",
-                        chip: "bg-emerald-100 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-200",
-                        chipLabel: "live",
-                    },
-                ].map((tile) => (
-                    <Link key={tile.href} href={tile.href} className="block">
-                        <Card className="group relative h-full overflow-hidden transition hover:-translate-y-0.5 hover:shadow-md">
-                            <div className={`h-1.5 w-full bg-gradient-to-r ${tile.accent}`} />
-                            <Card.Body className="!pt-5">
-                                <div className="flex items-start justify-between gap-2">
-                                    <Heading level={3} size="sm" className="!text-zinc-900 dark:!text-zinc-100">
-                                        {tile.title}
-                                    </Heading>
-                                    <span className={`inline-flex shrink-0 rounded-md px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${tile.chip}`}>
-                                        {tile.chipLabel}
-                                    </span>
-                                </div>
-                                <Text size="sm" className="mt-2 !text-zinc-600 dark:!text-zinc-300">{tile.body}</Text>
-                                <Text size="xs" className="mt-4 inline-flex items-center gap-1 !text-violet-600 opacity-0 transition group-hover:opacity-100 dark:!text-violet-300">
-                                    Open →
-                                </Text>
-                            </Card.Body>
-                        </Card>
-                    </Link>
-                ))}
-            </section>
-        </Layout>
+            </div>
+        </section>
     );
 }
 
-function HeroMock() {
+// ─── Human+ teaser ─────────────────────────────────────────────────────────
+
+function HumanPlus() {
     return (
-        <div className="relative">
-            <div className="pointer-events-none absolute -inset-6 -z-10 rounded-3xl bg-gradient-to-br from-violet-200/40 via-sky-200/30 to-emerald-200/30 blur-2xl dark:from-violet-500/20 dark:via-sky-500/15 dark:to-emerald-500/15" />
-            <Card className="overflow-hidden shadow-xl ring-1 ring-zinc-200/80 dark:ring-zinc-800">
-                <div className="flex items-center justify-between border-b border-zinc-200 bg-zinc-50/60 px-3 py-2 dark:border-zinc-800 dark:bg-zinc-950/40">
-                    <div className="flex items-center gap-1.5">
-                        <span className="size-2.5 rounded-full bg-rose-400/70" />
-                        <span className="size-2.5 rounded-full bg-amber-400/70" />
-                        <span className="size-2.5 rounded-full bg-emerald-400/70" />
+        <section className="section" id="human-plus">
+            <div className="container">
+                <div className="eyebrow-row">
+                    <span className="dot" />
+                    <span>Human+ · live</span>
+                </div>
+                <h2 className="section-title">Watch an agent work in the surface, not behind it.</h2>
+                <p className="section-sub">
+                    The Human+ thesis is sharpest across agent-integrations, fancy-whiteboard, and
+                    fancy-artboard. When an agent moves a sticky, you see the cursor, the label, and
+                    the activity row — three signals that something real happened.
+                </p>
+
+                <div className="demo-shell">
+                    <div className="demo-board">
+                        <div className="demo-toolbar">
+                            <button className="tool-btn active" aria-label="Select">
+                                <MousePointerClick size={15} />
+                            </button>
+                            <span className="tool-sep" />
+                            <button className="tool-btn" aria-label="Sticky">
+                                <RectangleHorizontal size={15} />
+                            </button>
+                            <button className="tool-btn" aria-label="Connect">
+                                <LinkIcon size={15} />
+                            </button>
+                            <div className="tool-presence">
+                                <span className="presence-chip">
+                                    <span className="av" style={{ background: "linear-gradient(135deg,#a78bfa,#38bdf8)" }}>
+                                        GB
+                                    </span>
+                                    you
+                                </span>
+                                <span className="presence-chip">
+                                    <span
+                                        className="av"
+                                        style={{ background: "linear-gradient(135deg,#7c3aed,#c026d3)", fontFamily: "var(--font-mono)" }}
+                                    >
+                                        AI
+                                    </span>
+                                    claude
+                                </span>
+                            </div>
+                        </div>
+
+                        <div className="sticky color-amber" style={{ top: 86, left: 36 }}>
+                            Cut the second CTA — it competes with the primary.
+                            <div className="who">
+                                <span className="pin" /> you · 12:04
+                            </div>
+                        </div>
+                        <div className="sticky color-violet highlight" style={{ top: 150, left: 230 }}>
+                            Proposing a tighter hero grid. Confirm to apply?
+                            <div className="who">
+                                <span className="pin" /> claude · now
+                            </div>
+                        </div>
+                        <div className="sticky color-sky" style={{ top: 286, left: 96 }}>
+                            Brand gradient reads well in dark mode.
+                            <div className="who">
+                                <span className="pin" /> you · 12:01
+                            </div>
+                        </div>
+
+                        <div className="agent-cursor" style={{ top: 138, left: 214 }}>
+                            <svg viewBox="0 0 24 24">
+                                <path
+                                    d="M4 2l7 18 2.5-7.5L21 10z"
+                                    fill="var(--violet-500)"
+                                    stroke="#fff"
+                                    strokeWidth="1.2"
+                                />
+                            </svg>
+                            <span className="label">
+                                <span className="dot" /> claude
+                            </span>
+                        </div>
                     </div>
-                    <Text size="xs" className="!text-zinc-500 !font-mono">demo.fancy-ui.app</Text>
-                    <span className="w-12" />
+
+                    <div className="activity">
+                        <div className="activity-head">
+                            <div className="title">
+                                <span className="av">AI</span> Agent activity
+                            </div>
+                            <div className="sub">fancy-artboard · 7 tool calls this session</div>
+                        </div>
+                        <div className="activity-list">
+                            <div className="activity-row fresh">
+                                <span className="ico tool">
+                                    <Sparkles size={11} />
+                                </span>
+                                <span>
+                                    Proposed <strong>hero grid</strong> rework — awaiting confirm
+                                </span>
+                                <span className="when">now</span>
+                            </div>
+                            <div className="activity-row">
+                                <span className="ico write">
+                                    <Check size={11} />
+                                </span>
+                                <span>
+                                    Added note <strong>tighter hero grid</strong>
+                                </span>
+                                <span className="when">0:03</span>
+                            </div>
+                            <div className="activity-row">
+                                <span className="ico move">
+                                    <ArrowRight size={11} />
+                                </span>
+                                <span>Moved 2 pieces into the Hero section</span>
+                                <span className="when">0:11</span>
+                            </div>
+                            <div className="activity-row">
+                                <span className="ico read">
+                                    <Search size={11} />
+                                </span>
+                                <span>
+                                    Read board <strong>state</strong> (3 sections)
+                                </span>
+                                <span className="when">0:18</span>
+                            </div>
+                        </div>
+                        <div className="activity-foot">
+                            <span className="mcp">artboard_*</span>
+                            via micro-MCP server
+                        </div>
+                    </div>
                 </div>
 
-                <Tabs defaultTab="inbox">
-                    <div className="px-4 pt-3">
-                        <Tabs.List>
-                            <Tabs.Tab value="inbox">Inbox</Tabs.Tab>
-                            <Tabs.Tab value="compose">Compose</Tabs.Tab>
-                            <Tabs.Tab value="agent">Agent</Tabs.Tab>
-                        </Tabs.List>
+                <div style={{ marginTop: 28, display: "flex", gap: 10, flexWrap: "wrap" }}>
+                    <Link className="btn btn-primary" href="/agent-playground">
+                        <Radio size={15} />
+                        Open the Agent Playground
+                    </Link>
+                    <a className="btn btn-ghost" href="/docs/human-plus-ux">
+                        Read the whitepaper
+                        <ArrowRight size={15} />
+                    </a>
+                </div>
+            </div>
+        </section>
+    );
+}
+
+// ─── Components showcase ──────────────────────────────────────────────────────
+
+const SHOWCASE = [
+    { id: "action", label: "Action", icon: MousePointerClick, num: 1, blurb: "The workhorse button. Ten Tailwind colors, ghost / circle variants, loading + disabled states, optional icon and badge." },
+    { id: "field", label: "Field", icon: TextCursorInput, num: 2, blurb: "Form field stack — label, description, error, and a focus-ringed Input. Controlled with value + onChange." },
+    { id: "badge", label: "Badge", icon: Tag, num: 3, blurb: "Soft / solid / outline pill with an optional status dot. Signal, not decoration." },
+    { id: "card", label: "Card", icon: RectangleHorizontal, num: 4, blurb: "Border + surface with compound Header / Body / Footer slots separated by inner borders." },
+    { id: "tabs", label: "Tabs", icon: LayoutPanelTop, num: 5, blurb: "Underlined tabs with controlled active state. The active tint matches the accent." },
+    { id: "toast", label: "Toast", icon: Bell, num: 6, blurb: "Portal-mounted toasts fired imperatively via useToast(). Four intents." },
+] as const;
+
+type ShowcaseId = (typeof SHOWCASE)[number]["id"];
+
+function ComponentsShowcase({ total }: { total: number }) {
+    const [tab, setTab] = useState<ShowcaseId>("action");
+    const current = SHOWCASE.find((s) => s.id === tab)!;
+
+    return (
+        <section className="section" id="components">
+            <div className="container">
+                <div className="eyebrow-row">
+                    <span>Components</span>
+                </div>
+                <h2 className="section-title">Real renders. Hover, click, type.</h2>
+                <p className="section-sub">
+                    A live subset of{" "}
+                    <code style={{ fontFamily: "var(--font-mono)" }}>@particle-academy/react-fancy</code>, running
+                    here in your browser — {total}+ components across the suite. Click a name on the
+                    left to switch.
+                </p>
+
+                <div className="showcase">
+                    <div className="showcase-nav">
+                        <div className="head">Primitives</div>
+                        {SHOWCASE.map((s) => {
+                            const Ico = s.icon;
+                            return (
+                                <div
+                                    key={s.id}
+                                    className={`item ${tab === s.id ? "active" : ""}`}
+                                    onClick={() => setTab(s.id)}
+                                >
+                                    <Ico size={15} />
+                                    <span>{s.label}</span>
+                                    <span className="num">{String(s.num).padStart(2, "0")}</span>
+                                </div>
+                            );
+                        })}
                     </div>
+                    <div className="showcase-stage">
+                        <div className="top">
+                            <div>
+                                <h3>{current.label}</h3>
+                                <p className="blurb">{current.blurb}</p>
+                            </div>
+                            <div className="meta">{`<${current.label} />`}</div>
+                        </div>
+                        <div className="stage-body">
+                            <ShowcaseStage tab={tab} />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    );
+}
+
+function ShowcaseStage({ tab }: { tab: ShowcaseId }) {
+    const [name, setName] = useState("");
+    const [hook, setHook] = useState("");
+    const { toast } = useToast();
+
+    if (tab === "action") {
+        return (
+            <>
+                <div className="stage-row">
+                    <span className="row-label">Color</span>
+                    <Action color="blue" icon="plus">Create</Action>
+                    <Action color="emerald" icon="check">Approve</Action>
+                    <Action color="amber" icon="triangle-alert">Warning</Action>
+                    <Action color="red" icon="trash-2">Delete</Action>
+                    <Action color="violet" icon="sparkles">Generate</Action>
+                    <Action color="indigo" icon="link">Connect</Action>
+                </div>
+                <div className="stage-row">
+                    <span className="row-label">Ghost · circle · sizes</span>
+                    <Action variant="ghost" icon="search">Search</Action>
+                    <Action variant="ghost" color="blue" icon="filter">Filter</Action>
+                    <Action variant="circle" icon="bell" aria-label="Notifications" />
+                    <Action variant="circle" color="violet" icon="sparkles" aria-label="Generate" />
+                    <Action size="sm" color="blue">Small</Action>
+                    <Action size="lg" color="blue" icon="play">Large</Action>
+                </div>
+                <div className="stage-row">
+                    <span className="row-label">State · loading · disabled · badge</span>
+                    <Action color="blue" loading>Saving…</Action>
+                    <Action color="blue" disabled>Disabled</Action>
+                    <Action color="blue" icon="inbox" badge="12">Inbox</Action>
+                    <Action active icon="check-check">Active</Action>
+                    <Action checked icon="check">Checked</Action>
+                </div>
+            </>
+        );
+    }
+
+    if (tab === "field") {
+        return (
+            <div className="stage-row col" style={{ maxWidth: 480 }}>
+                <Field label="Project name" description="Lowercase, no spaces.">
+                    <Input
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        placeholder="onboarding-refresh"
+                        leading={<Search size={15} />}
+                    />
+                </Field>
+                <Field label="Webhook URL" error={hook === "fail" ? "Not reachable from our agents." : undefined}>
+                    <Input
+                        value={hook}
+                        onChange={(e) => setHook(e.target.value)}
+                        placeholder="https://"
+                        leading={<LinkIcon size={15} />}
+                    />
+                </Field>
+            </div>
+        );
+    }
+
+    if (tab === "badge") {
+        return (
+            <>
+                <div className="stage-row">
+                    <span className="row-label">Soft · dot</span>
+                    <Badge color="green" dot>Running</Badge>
+                    <Badge color="amber" dot>Queued</Badge>
+                    <Badge color="blue" dot>Done</Badge>
+                    <Badge color="rose" dot>Error</Badge>
+                    <Badge color="violet">Beta</Badge>
+                    <Badge color="zinc">Draft</Badge>
+                </div>
+                <div className="stage-row">
+                    <span className="row-label">Solid · outline</span>
+                    <Badge color="blue" variant="solid">solid</Badge>
+                    <Badge color="green" variant="solid">live</Badge>
+                    <Badge variant="outline">outline</Badge>
+                    <Badge color="violet" variant="outline">outline</Badge>
+                </div>
+            </>
+        );
+    }
+
+    if (tab === "card") {
+        return (
+            <div className="stage-row col" style={{ background: "transparent", border: "none", padding: 0 }}>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+                    <Card>
+                        <Card.Header>Active sessions</Card.Header>
+                        <Card.Body>
+                            <div style={{ fontSize: 28, fontWeight: 600, letterSpacing: "-0.02em", lineHeight: 1 }}>128</div>
+                            <div style={{ fontSize: 12, color: "var(--emerald-600)", marginTop: 4, fontWeight: 500 }}>
+                                ▲ 12% this week
+                            </div>
+                        </Card.Body>
+                        <Card.Footer>Updated 2 minutes ago</Card.Footer>
+                    </Card>
+                    <Card>
+                        <Card.Header>
+                            <Badge color="green" dot>Live</Badge>
+                        </Card.Header>
+                        <Card.Body>
+                            <div style={{ fontSize: 14, fontWeight: 500, marginBottom: 4 }}>Q4 design review</div>
+                            <div style={{ fontSize: 12.5, color: "var(--fg-3)" }}>
+                                Claude is editing this board. 7 tool calls so far.
+                            </div>
+                        </Card.Body>
+                        <Card.Footer>
+                            <span style={{ fontFamily: "var(--font-mono)" }}>fancy-artboard:7</span>
+                        </Card.Footer>
+                    </Card>
+                </div>
+            </div>
+        );
+    }
+
+    if (tab === "tabs") {
+        return (
+            <div className="stage-row col">
+                <Tabs defaultTab="overview">
+                    <Tabs.List>
+                        <Tabs.Tab value="overview">Overview</Tabs.Tab>
+                        <Tabs.Tab value="sessions">Sessions</Tabs.Tab>
+                        <Tabs.Tab value="agents">Agents</Tabs.Tab>
+                        <Tabs.Tab value="usage">Usage</Tabs.Tab>
+                    </Tabs.List>
                     <Tabs.Panels>
-                        <Tabs.Panel value="inbox">
-                            <div className="divide-y divide-zinc-100 dark:divide-zinc-800">
-                                {INBOX.map((row) => (
-                                    <div key={row.name} className="flex items-center gap-3 px-4 py-2.5">
-                                        <Avatar fallback={row.initials} size="sm" />
-                                        <div className="min-w-0 flex-1">
-                                            <div className="flex items-baseline justify-between gap-2">
-                                                <Text size="sm" className="!font-medium">{row.name}</Text>
-                                                <Text size="xs" className="!text-zinc-500">{row.time}</Text>
-                                            </div>
-                                            <Text size="xs" className="truncate !text-zinc-500">{row.preview}</Text>
-                                        </div>
-                                        {row.badge && <Badge color={row.badge.color} size="sm">{row.badge.label}</Badge>}
-                                    </div>
-                                ))}
+                        <Tabs.Panel value="overview">
+                            <div style={{ paddingTop: 10, fontSize: 13, color: "var(--fg-3)" }}>
+                                Controlled tabs — the active tint matches the primary accent, and the underline
+                                animates on the bottom border.
                             </div>
                         </Tabs.Panel>
-                        <Tabs.Panel value="compose">
-                            <div className="space-y-3 p-4">
-                                <Pillbox value={["product", "launch"]} onChange={() => {}} color="violet" size="sm" />
-                                <div className="min-h-24 rounded-lg border border-zinc-200 bg-zinc-50/50 p-3 text-sm text-zinc-600 dark:border-zinc-800 dark:bg-zinc-950/40 dark:text-zinc-300">
-                                    Hey team — here&apos;s the launch checklist for tomorrow. <br />
-                                    Anything to add before EOD?
-                                </div>
-                                <div className="flex items-center justify-between">
-                                    <div className="flex gap-1">
-                                        <Action variant="ghost" size="sm" aria-label="Attach">
-                                            <Paperclip size={14} />
-                                        </Action>
-                                        <Action variant="ghost" size="sm" aria-label="Emoji">
-                                            <Smile size={14} />
-                                        </Action>
-                                    </div>
-                                    <Action color="violet" size="sm">
-                                        <Send size={14} className="mr-1" />
-                                        Send
-                                    </Action>
-                                </div>
+                        <Tabs.Panel value="sessions">
+                            <div style={{ paddingTop: 10, fontSize: 13, color: "var(--fg-3)" }}>
+                                Three sessions running. Two have an agent attached.
                             </div>
                         </Tabs.Panel>
-                        <Tabs.Panel value="agent">
-                            <div className="space-y-2 p-4 font-mono text-[11px] leading-relaxed">
-                                <div className="flex items-center gap-2 text-violet-600 dark:text-violet-300">
-                                    <Bot size={14} />
-                                    <span>agent · fancy-ui.mcp</span>
-                                </div>
-                                <div className="text-zinc-500">→ search_components({"{"} query: <span className="text-emerald-600 dark:text-emerald-300">&quot;calendar&quot;</span> {"}"})</div>
-                                <div className="text-zinc-700 dark:text-zinc-300">  ← 1 match: <span className="font-semibold">calendar</span> (react-fancy)</div>
-                                <div className="text-zinc-500">→ install_instructions({"{"} name: <span className="text-emerald-600 dark:text-emerald-300">&quot;calendar&quot;</span> {"}"})</div>
-                                <div className="text-zinc-700 dark:text-zinc-300">  ← <span className="text-violet-600 dark:text-violet-300">npx fancy-ui@latest add calendar</span></div>
-                                <div className="text-zinc-700 dark:text-zinc-300">  ← <span className="text-zinc-500">writes</span> src/components/fancy/calendar/</div>
-                                <div className="mt-2 inline-flex items-center gap-1.5 rounded-md bg-emerald-50 px-2 py-1 text-emerald-800 dark:bg-emerald-500/15 dark:text-emerald-200">
-                                    <span className="size-1.5 animate-pulse rounded-full bg-emerald-500" />
-                                    ready
-                                </div>
+                        <Tabs.Panel value="agents">
+                            <div style={{ paddingTop: 10, fontSize: 13, color: "var(--fg-3)" }}>
+                                Each agent gets a panel, an on-canvas cursor, and an activity feed.
+                            </div>
+                        </Tabs.Panel>
+                        <Tabs.Panel value="usage">
+                            <div style={{ paddingTop: 10, fontSize: 13, color: "var(--fg-3)" }}>
+                                14.2k tool calls this month across all bridges.
                             </div>
                         </Tabs.Panel>
                     </Tabs.Panels>
                 </Tabs>
-            </Card>
+            </div>
+        );
+    }
+
+    // toast
+    return (
+        <div className="stage-row">
+            <span className="row-label">Fire one</span>
+            <Action
+                color="blue"
+                icon="info"
+                onClick={() => toast({ variant: "info", title: "Heads up", description: "Your build finished." })}
+            >
+                Info
+            </Action>
+            <Action
+                color="emerald"
+                icon="check"
+                onClick={() => toast({ variant: "success", title: "Project created", description: "Q4 review is ready." })}
+            >
+                Success
+            </Action>
+            <Action
+                color="amber"
+                icon="triangle-alert"
+                onClick={() => toast({ variant: "warning", title: "Quota at 80%", description: "Consider upgrading." })}
+            >
+                Warning
+            </Action>
+            <Action
+                color="red"
+                icon="x-circle"
+                onClick={() => toast({ variant: "error", title: "Tool failed", description: "artboard_add_piece returned 500." })}
+            >
+                Danger
+            </Action>
         </div>
     );
 }
 
-const INBOX: Array<{
-    initials: string;
-    name: string;
-    preview: string;
-    time: string;
-    badge?: { color: "violet" | "emerald" | "amber"; label: string };
-}> = [
-    { initials: "RK", name: "Rita Kumar", preview: "PR ready — switched the bridge to MCP framing.", time: "2m", badge: { color: "violet", label: "PR" } },
-    { initials: "SL", name: "Sam Lin", preview: "Spec for the new compose surface is in Figma.", time: "1h" },
-    { initials: "MA", name: "Maya Chen", preview: "Calendar a11y audit — three nits. See thread.", time: "3h", badge: { color: "amber", label: "review" } },
-];
+// ─── Philosophy ───────────────────────────────────────────────────────────────
 
-// ─── Live component tiles ───────────────────────────────────────────────────
+const PHILOSOPHY = [
+    {
+        num: "01",
+        title: "Controlled, not captive",
+        body: "Anything an agent might read or write lives in value + onChange — no internal-only state. State is the contract; the UI just renders it.",
+        pills: ["value", "onChange", "json-friendly"],
+    },
+    {
+        num: "02",
+        title: "Agents are participants",
+        body: "Every interactive surface exposes a register<Surface>Bridge that maps stable handles to MCP tools. Agents drive the component itself, not a DOM scrape of it.",
+        pills: ["mcp", "stable handles", "presence"],
+    },
+    {
+        num: "03",
+        title: "Transport-agnostic",
+        body: "The kit ships zero networking. Your app wires the realtime + relay layer; mutations broadcast AgentActivity so presence, undo, and coaching compose for free.",
+        pills: ["relay", "AgentActivity", "undo"],
+    },
+] as const;
 
-function ShowcaseTile({ name, slug, children }: { name: string; slug: string; children: React.ReactNode }) {
+function Philosophy() {
     return (
-        <Link href={`/packages/${slug}`} className="block">
-            <Card className="group relative h-full overflow-hidden transition hover:-translate-y-0.5 hover:border-violet-300 hover:shadow-md dark:hover:border-violet-700">
-                <div className="flex items-center justify-between border-b border-zinc-100 px-3 py-2 dark:border-zinc-800">
-                    <Text size="xs" className="!font-mono !font-semibold !text-zinc-700 dark:!text-zinc-200">
-                        {name}
-                    </Text>
-                    <Text size="xs" className="!text-zinc-400 opacity-0 transition group-hover:opacity-100">
-                        Open →
-                    </Text>
+        <section className="section" id="why">
+            <div className="container">
+                <div className="eyebrow-row">
+                    <span>The Human+ contract</span>
                 </div>
-                <div className="flex min-h-[10rem] items-center justify-center p-4">
-                    {children}
+                <h2 className="section-title">Three rules every component lives by.</h2>
+                <p className="section-sub">
+                    Purely visual primitives owe only a great authoring surface. Anything stateful or
+                    interactive owes both — authorable and inhabitable.
+                </p>
+                <div className="philos-grid">
+                    {PHILOSOPHY.map((it) => (
+                        <div className="philos" key={it.num}>
+                            <span className="num">{it.num}</span>
+                            <h4>{it.title}</h4>
+                            <p>{it.body}</p>
+                            <div className="pill-row">
+                                {it.pills.map((p) => (
+                                    <span className="pill" key={p}>
+                                        {p}
+                                    </span>
+                                ))}
+                            </div>
+                        </div>
+                    ))}
                 </div>
-            </Card>
-        </Link>
+            </div>
+        </section>
     );
 }
 
-function ActionTile() {
+// ─── Install ──────────────────────────────────────────────────────────────────
+
+const INSTALL_BLOCKS: Record<"npm" | "pnpm" | "composer", string> = {
+    npm: `<span class="tok-c"># Install the core component library</span>
+<span class="tok-p">$</span> npm install <span class="tok-s">@particle-academy/react-fancy</span>
+
+<span class="tok-c"># Add only what you need</span>
+<span class="tok-p">$</span> npm install <span class="tok-s">@particle-academy/fancy-artboard</span> <span class="tok-s">@particle-academy/agent-integrations</span>`,
+    pnpm: `<span class="tok-p">$</span> pnpm add <span class="tok-s">@particle-academy/react-fancy</span>
+<span class="tok-p">$</span> pnpm add <span class="tok-s">@particle-academy/fancy-artboard</span> <span class="tok-s">@particle-academy/agent-integrations</span>`,
+    composer: `<span class="tok-c"># PHP / Laravel — the document writers + Inertia bridge</span>
+<span class="tok-p">$</span> composer require <span class="tok-s">particle-academy/holy-sheet</span>
+<span class="tok-p">$</span> composer require <span class="tok-s">particle-academy/dark-slide</span>`,
+};
+
+function Install() {
+    const [tab, setTab] = useState<keyof typeof INSTALL_BLOCKS>("npm");
     return (
-        <div className="flex flex-wrap items-center justify-center gap-2">
-            <Action color="violet" size="sm">Primary</Action>
-            <Action variant="ghost" size="sm">Ghost</Action>
-            <Action color="emerald" size="sm" icon="check">Save</Action>
-            <Action color="red" variant="ghost" size="sm" icon="trash">Delete</Action>
-        </div>
+        <section className="section" id="install">
+            <div className="container install">
+                <div>
+                    <div className="eyebrow-row">
+                        <span>Quick start</span>
+                    </div>
+                    <h2 className="section-title">Bring it in piecemeal.</h2>
+                    <p className="section-sub">
+                        Every JS package ships TypeScript types, a single peer dep on Tailwind v4, and
+                        a Vite-friendly ESM build. PHP packages are framework-agnostic with an optional
+                        Laravel adapter.
+                    </p>
+                    <div style={{ display: "flex", gap: 10, marginTop: 8 }}>
+                        <Link className="btn btn-primary" href="/docs">
+                            <BookOpen size={15} />
+                            Read the docs
+                        </Link>
+                        <a
+                            className="btn btn-ghost"
+                            href="https://github.com/Particle-Academy"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            <Github size={15} />
+                            View on GitHub
+                        </a>
+                    </div>
+                </div>
+                <div className="install-card">
+                    <div className="install-tabs">
+                        {(["npm", "pnpm", "composer"] as const).map((k) => (
+                            <button
+                                key={k}
+                                className={`install-tab ${tab === k ? "active" : ""}`}
+                                onClick={() => setTab(k)}
+                            >
+                                {k}
+                            </button>
+                        ))}
+                    </div>
+                    <div className="codeblock" dangerouslySetInnerHTML={{ __html: INSTALL_BLOCKS[tab] }} />
+                    <div
+                        style={{
+                            padding: "10px 14px",
+                            borderTop: "1px solid var(--border-1)",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: 8,
+                            fontSize: 11.5,
+                            color: "var(--fg-3)",
+                            background: "var(--bg-1)",
+                            fontFamily: "var(--font-mono)",
+                        }}
+                    >
+                        <Info size={12} />
+                        Requires Node 18+, React 19, Tailwind 4.
+                    </div>
+                </div>
+            </div>
+        </section>
     );
 }
 
-function BadgeTile() {
-    return (
-        <div className="flex flex-wrap items-center justify-center gap-1.5">
-            <Badge color="violet">new</Badge>
-            <Badge color="emerald">live</Badge>
-            <Badge color="amber">beta</Badge>
-            <Badge color="red">urgent</Badge>
-            <Badge color="zinc">draft</Badge>
-            <Badge color="indigo">v0.4</Badge>
-        </div>
-    );
-}
+// ─── Explore strip ─────────────────────────────────────────────────────────
 
-function AvatarTile() {
-    return (
-        <div className="flex items-center -space-x-2">
-            {["RK", "SL", "MC", "AY", "+3"].map((label, i) => (
-                <span
-                    key={label}
-                    className={`inline-flex size-9 items-center justify-center rounded-full border-2 border-white bg-gradient-to-br text-xs font-semibold text-white dark:border-zinc-900 ${
-                        i === 0 ? "from-violet-400 to-sky-500"
-                        : i === 1 ? "from-emerald-400 to-teal-500"
-                        : i === 2 ? "from-amber-400 to-orange-500"
-                        : i === 3 ? "from-rose-400 to-pink-500"
-                        : "from-zinc-400 to-zinc-600"
-                    }`}
-                >
-                    {label}
-                </span>
-            ))}
-        </div>
-    );
-}
+const EXPLORE = [
+    {
+        href: "/starter-kits",
+        icon: Boxes,
+        title: "Starter Kits",
+        body: "Vertical demos — clone, study, adapt.",
+        tag: "templates",
+    },
+    {
+        href: "/dreaming",
+        icon: Sparkles,
+        title: "Dreaming",
+        body: "Speculative components you can vote on.",
+        tag: "speculative",
+    },
+    {
+        href: "/showcase",
+        icon: Cpu,
+        title: "Designer Showcase",
+        body: "Sites and repos built with Fancy UI.",
+        tag: "community",
+    },
+    {
+        href: "/leaderboard",
+        icon: ArrowRight,
+        title: "Leaderboard",
+        body: "Top contributors by merged PRs and votes.",
+        tag: "live",
+    },
+] as const;
 
-function SwitchTile() {
-    const [a, setA] = useState(true);
-    const [b, setB] = useState(false);
-    const [c, setC] = useState(true);
+function Explore() {
     return (
-        <div className="w-full max-w-[16rem] space-y-2.5 text-sm">
-            <label className="flex items-center justify-between text-zinc-700 dark:text-zinc-300">
-                Notifications <Switch checked={a} onChange={setA} />
-            </label>
-            <label className="flex items-center justify-between text-zinc-700 dark:text-zinc-300">
-                Auto-save drafts <Switch checked={b} onChange={setB} />
-            </label>
-            <label className="flex items-center justify-between text-zinc-700 dark:text-zinc-300">
-                MCP bridges <Switch checked={c} onChange={setC} />
-            </label>
-        </div>
-    );
-}
-
-function PillboxTile() {
-    const [tags, setTags] = useState(["agent", "human+ux", "fancy-ui"]);
-    return (
-        <div className="w-full max-w-[18rem]">
-            <Pillbox value={tags} onChange={setTags} color="violet" size="sm" />
-            <Text size="xs" className="mt-2 text-center !text-zinc-500">Add or remove tags ↑</Text>
-        </div>
-    );
-}
-
-function CalloutTile() {
-    return (
-        <div className="w-full max-w-[18rem] space-y-2">
-            <Callout color="green">
-                <Check size={14} className="inline mr-1" /> Deploy succeeded
-            </Callout>
-            <Callout color="amber">
-                <Bell size={14} className="inline mr-1" /> Rate limit at 80%
-            </Callout>
-        </div>
-    );
-}
-
-function TimelineTile() {
-    return (
-        <div className="w-full max-w-[18rem]">
-            <Timeline
-                events={[
-                    { date: "Jun 14", title: "Released v0.4", color: "violet" },
-                    { date: "Jun 12", title: "Ports → Zustand", color: "sky" },
-                    { date: "Jun 10", title: "Audit complete", color: "emerald" },
-                ]}
-                variant="stacked"
-                animated={false}
-            />
-        </div>
-    );
-}
-
-function ChartTile() {
-    return (
-        <div className="size-full min-h-[8rem]">
-            <EChart
-                style={{ width: "100%", height: "100%" }}
-                option={{
-                    grid: { left: 4, right: 4, top: 4, bottom: 4 },
-                    xAxis: { type: "category", show: false, data: ["M", "T", "W", "T", "F", "S", "S"] },
-                    yAxis: { type: "value", show: false },
-                    series: [
-                        {
-                            type: "bar",
-                            data: [12, 19, 15, 22, 18, 9, 14],
-                            itemStyle: { color: "#8b5cf6", borderRadius: [3, 3, 0, 0] },
-                            barWidth: "55%",
-                        },
-                    ],
-                    tooltip: { trigger: "axis", confine: true },
-                }}
-            />
-        </div>
-    );
-}
-
-function CalendarTile() {
-    const [value, setValue] = useState<Date | null>(new Date());
-    return (
-        <div className="scale-[0.85]">
-            <Calendar value={value} onChange={setValue} />
-        </div>
+        <section className="section">
+            <div className="container">
+                <div className="eyebrow-row">
+                    <span>Explore the site</span>
+                </div>
+                <h2 className="section-title">More to poke at.</h2>
+                <div className="pkg-grid" style={{ marginTop: 28 }}>
+                    {EXPLORE.map((e) => {
+                        const Ico = e.icon;
+                        return (
+                            <Link key={e.href} href={e.href} className="pkg-card">
+                                <div className="pkg-head">
+                                    <span className="pkg-glyph">
+                                        <Ico size={16} />
+                                    </span>
+                                    <span className="pkg-name">{e.title}</span>
+                                    <span className="pkg-ver">{e.tag}</span>
+                                </div>
+                                <div className="pkg-desc">{e.body}</div>
+                            </Link>
+                        );
+                    })}
+                </div>
+            </div>
+        </section>
     );
 }

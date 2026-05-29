@@ -6,6 +6,9 @@
 /* Canonical design tokens from the design-system bundle. */
 @import "./showcase/tokens.css";
 
+/* Landing / showcase chrome — component + layout classes (consumes tokens.css). */
+@import "./showcase/landing.css";
+
 /* Hand-authored CSS overrides shipped by each consumed package. */
 @import "@particle-academy/react-fancy/styles.css";
 @import "@particle-academy/fancy-code/styles.css";

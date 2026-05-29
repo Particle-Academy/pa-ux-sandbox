@@ -16,6 +16,13 @@ import { KIND_MODULES, KIND_BY_NAME } from "./AgentPlayground/kinds";
  * The canvas is fancy-screens' <ScreenSystem>. A Zustand-backed registry holds
  * a dynamic list of screens; the screens bridge lets the agent create/switch
  * them, and each kind's bridge drives the active screen of that kind.
+ *
+ * Presentation mirrors the editorial showcase agent demo (landing.css):
+ * eyebrow + gradient display hero, a dot-grid `.demo-board` canvas, glassy
+ * connect card with a gradient agent avatar, and a color-coded `.activity`
+ * panel fed by live `useAgentActivity` events. All logic — usePlaygroundServer,
+ * ShareControls, the in-page console, screen rendering + error boundary, and
+ * ScreensActivityBridge — is unchanged; only the markup/classes are reskinned.
  */
 export default function AgentPlayground() {
   return (
@@ -28,31 +35,54 @@ export default function AgentPlayground() {
   );
 }
 
+const MCP_VERSION = "0.7";
+
 function PlaygroundInner() {
   const system = useScreenSystem();
   const pg = usePlaygroundServer();
   const activeEntry = pg.screens.find((s) => s.id === pg.activeId) ?? null;
 
   return (
-    <div className="mx-auto max-w-[1500px] px-2 py-4">
+    <div className="container" style={{ paddingTop: 40, paddingBottom: 72 }}>
       {/* fancy-screens' ScreenSystemValue is structurally the loose shape this
           bridge wants; cast to satisfy the cross-package boundary. */}
       <ScreensActivityBridge system={system as never} />
 
-      <header className="mb-4">
-        <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">Agent Playground</h1>
-        <p className="max-w-3xl text-sm text-zinc-500">
-          Start a session, connect your own agent, and watch it author Fancy UI screens + data live over MCP. The
-          agent calls <code className="rounded bg-zinc-100 px-1 dark:bg-zinc-800">screens_create</code> to spin
-          up surfaces, then drives each one with its per-kind tools. No external agent? Use the in-page console below.
+      {/* ── Hero ── */}
+      <header style={{ marginBottom: 32 }}>
+        <div className="eyebrow-row">
+          <span className="dot" />
+          Agent Playground · Live
+        </div>
+        <h1 className="display" style={{ marginBottom: 16 }}>
+          Your agent. Our UI. <span className="gradient-text">Live.</span>
+        </h1>
+        <p className="lede" style={{ marginBottom: 0 }}>
+          Start a session, connect your own agent over MCP, and watch it author Fancy UI screens + live data —
+          calling <code style={{ fontFamily: "var(--font-mono)" }}>screens_create</code> to spin up surfaces, then
+          driving each one with its per-kind tools. No external agent? Use the in-page console below to drive the
+          same surface.
         </p>
       </header>
 
-      <div className="mb-4">
-        <ShareControls session={pg.session} onStart={pg.startShare} onStop={pg.stopShare} status={pg.statusText} />
+      {/* ── Connect your own agent ── */}
+      <div className="pg-connect" style={{ marginBottom: 20 }}>
+        <div className="pg-connect-head">
+          <span className="av">C</span>
+          <div className="pg-connect-copy">
+            <div className="pg-connect-title">Connect your own agent</div>
+            <div className="pg-connect-sub">
+              Open a relay session, then point any MCP client at it. Frames stream both ways — your agent inhabits
+              the canvas, you ride shotgun.
+            </div>
+          </div>
+        </div>
+        <div className="pg-connect-controls">
+          <ShareControls session={pg.session} onStart={pg.startShare} onStop={pg.stopShare} status={pg.statusText} />
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_340px]">
+      <div className="pg-layout">
         <div className="min-w-0">
           <ScreenSwitcher
             screens={pg.screens}
@@ -61,7 +91,7 @@ function PlaygroundInner() {
             onClose={pg.removeScreen}
           />
 
-          <div className="mt-3 min-h-[500px] rounded-xl border border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-900">
+          <div className={`pg-board demo-board${pg.screens.length === 0 ? " pg-board--empty" : ""}`}>
             {pg.screens.length === 0 && <EmptyState />}
             {pg.screens.map((entry) => {
               const mod = KIND_BY_NAME[entry.kind];
@@ -92,8 +122,8 @@ function PlaygroundInner() {
         </div>
 
         <aside className="flex flex-col gap-4">
+          <ActivityPanel session={pg.session} status={pg.statusText} />
           <Console pg={pg} activeEntry={activeEntry} />
-          <ActivityPanel />
         </aside>
       </div>
     </div>
@@ -113,27 +143,17 @@ function ScreenSwitcher({
 }) {
   if (screens.length === 0) return null;
   return (
-    <nav className="flex flex-wrap gap-2 rounded-xl border border-zinc-200 bg-white p-1 dark:border-zinc-700 dark:bg-zinc-900">
+    <nav className="pg-tabs">
       {screens.map((s) => {
         const isActive = s.id === activeId;
         const mod = KIND_BY_NAME[s.kind];
         return (
-          <div
-            key={s.id}
-            className={[
-              "group flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm font-medium transition",
-              isActive ? "bg-purple-600 text-white shadow-sm" : "text-zinc-700 hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-800",
-            ].join(" ")}
-          >
-            <button onClick={() => onSelect(s.id)} className="flex items-center gap-2">
-              <span className="text-[10px] uppercase opacity-70">{mod?.label ?? s.kind}</span>
-              <span>{s.title}</span>
+          <div key={s.id} className={`pg-tab${isActive ? " active" : ""}`}>
+            <button onClick={() => onSelect(s.id)} className="pg-tab-btn" type="button">
+              <span className="pg-tab-kind">{mod?.label ?? s.kind}</span>
+              <span className="pg-tab-title">{s.title}</span>
             </button>
-            <button
-              onClick={() => onClose(s.id)}
-              title="Close screen"
-              className={isActive ? "opacity-80 hover:opacity-100" : "opacity-0 group-hover:opacity-60 hover:!opacity-100"}
-            >
+            <button onClick={() => onClose(s.id)} title="Close screen" className="pg-tab-close" type="button">
               ✕
             </button>
           </div>
@@ -145,12 +165,14 @@ function ScreenSwitcher({
 
 function EmptyState() {
   return (
-    <div className="flex h-[500px] flex-col items-center justify-center gap-2 text-center">
-      <div className="text-4xl">🎛️</div>
-      <div className="font-semibold text-zinc-700 dark:text-zinc-200">No screens yet</div>
-      <p className="max-w-sm text-sm text-zinc-500">
-        Connect your agent (Share above) and ask it to create a screen, or use the console on the right to add one
-        yourself.
+    <div className="pg-empty">
+      <div className="pg-empty-mark">
+        <span className="av">C</span>
+      </div>
+      <div className="pg-empty-title">The canvas is yours to inhabit</div>
+      <p className="pg-empty-sub">
+        Open a session and ask your agent to <code style={{ fontFamily: "var(--font-mono)" }}>screens_create</code> a
+        surface — or use the console to drop one in yourself. Screens render right here on the grid.
       </p>
     </div>
   );
@@ -239,20 +261,24 @@ function Console({
   };
 
   return (
-    <section className="rounded-xl border border-zinc-200 bg-white p-3 dark:border-zinc-700 dark:bg-zinc-900">
-      <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-zinc-500">In-page console</div>
-      <div className="mb-2 text-[11px] text-zinc-500">{placeholder}</div>
+    <section className="pg-card">
+      <div className="pg-card-head">
+        <span className="pg-card-title">In-page console</span>
+        <span className="pg-card-tag">in-process</span>
+      </div>
+      <div className="pg-card-sub">{placeholder}</div>
 
-      <div className="mb-3 flex flex-wrap gap-1.5">
+      <div className="pg-quickadd">
         {KIND_MODULES.map((k) => (
           <button
             key={k.kind}
             onClick={() => pg.addScreen(k.kind)}
             title={k.description}
-            className="rounded-md border border-zinc-200 px-2 py-1 text-[11px] hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-800"
+            type="button"
+            className="pg-chip-btn"
           >
             + {k.label}
-            {k.status === "stub" && <span className="ml-1 opacity-50">·stub</span>}
+            {k.status === "stub" && <span className="pg-chip-stub">·stub</span>}
           </button>
         ))}
       </div>
@@ -262,59 +288,138 @@ function Console({
         onChange={(e) => setRaw(e.target.value)}
         rows={5}
         spellCheck={false}
-        className="w-full rounded-md border border-zinc-300 bg-transparent p-2 font-mono text-[11px] dark:border-zinc-600"
+        className="pg-console-input"
       />
-      <div className="mt-2 flex items-center gap-2">
-        <button
-          onClick={run}
-          disabled={!pg.serverReady}
-          className="rounded-md bg-purple-600 px-3 py-1.5 text-xs font-medium text-white disabled:opacity-50"
-        >
+      <div className="pg-console-actions">
+        <button onClick={run} disabled={!pg.serverReady} className="btn btn-primary pg-call-btn" type="button">
           Call tool
         </button>
-        <span className="text-[10px] text-zinc-400">in-process · same surface as the relay</span>
+        <span className="pg-console-note">in-process · same surface as the relay</span>
       </div>
-      {out && (
-        <pre className="mt-2 max-h-48 overflow-auto rounded-md bg-zinc-50 p-2 text-[10px] dark:bg-zinc-800">{out}</pre>
-      )}
+      {out && <pre className="pg-console-out">{out}</pre>}
     </section>
   );
 }
 
-function ActivityPanel() {
+/** Map an activity event to one of the four color-coded `.ico` classes by
+ *  inferring intent from the action verb (and target kind as a fallback). */
+type ActivityTone = "write" | "move" | "read" | "tool";
+
+function toneForEvent(event: AgentActivityEvent): ActivityTone {
+  const action = (event.action || "").toLowerCase();
+  // move / reorder / navigate / switch → blue
+  if (/(move|reorder|navigate|switch|drag|position|reposition|pan|zoom)/.test(action)) return "move";
+  // read-only inspection → amber
+  if (/(get|list|read|describe|inspect|query|select|focus|view)/.test(action)) return "read";
+  // additive / mutating writes → emerald
+  if (/(add|create|insert|write|set|update|append|paint|draw|fill|put|edit|rename|attach|connect|apply|generate)/.test(action))
+    return "write";
+  // screens orchestration + everything else → violet "tool"
+  return "tool";
+}
+
+const ICON_BY_TONE: Record<ActivityTone, string> = {
+  write: "M",
+  move: "→",
+  read: "i",
+  tool: "λ",
+};
+
+function ActivityPanel({ session, status }: { session: { id: string } | null; status?: string }) {
   const { events } = useAgentActivity(undefined, { capacity: 80 });
   const list = [...events].reverse();
+  const sessionLabel = session ? session.id : status ?? "in-process";
+
+  // Distinct agents seen in recent activity → presence chips. Always include
+  // the local playground agent; surface any connected peers from events.
+  const peers = useMemo(() => {
+    const seen = new Map<string, { id: string; name: string; color?: string }>();
+    for (const e of events) {
+      if (!e.agentId || e.agentId === PLAYGROUND_AGENT.id) continue;
+      if (!seen.has(e.agentId)) {
+        seen.set(e.agentId, { id: e.agentId, name: e.agentName ?? e.agentId, color: e.agentColor });
+      }
+    }
+    return [...seen.values()];
+  }, [events]);
+
   return (
-    <section className="rounded-xl border border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-900" style={{ maxHeight: 360, display: "flex", flexDirection: "column" }}>
-      <header className="border-b border-zinc-200 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-zinc-500 dark:border-zinc-700">
-        Agent activity
-      </header>
-      <ul className="flex-1 divide-y divide-zinc-100 overflow-auto text-xs dark:divide-zinc-800">
+    <section className="activity pg-activity">
+      <div className="activity-head">
+        <div className="title">
+          <span className="av">C</span>
+          <span>Agent activity</span>
+          <span
+            style={{ marginLeft: "auto", fontFamily: "var(--font-mono)", fontSize: 10.5, color: "var(--fg-3)" }}
+          >
+            {sessionLabel}
+          </span>
+        </div>
+        <div className="sub">Live tool calls from the in-page MCP server.</div>
+        <div className="pg-presence-row">
+          <span className="presence-chip">
+            <span
+              className="av"
+              style={{ background: "linear-gradient(135deg,#7dd3fc,#818cf8,#c4b5fd)" }}
+            >
+              C
+            </span>
+            {PLAYGROUND_AGENT.name ?? "Claude"}
+          </span>
+          {peers.map((p) => (
+            <span className="presence-chip" key={p.id}>
+              <span className="av" style={{ background: p.color ?? "#3b82f6" }}>
+                {(p.name || "?").slice(0, 1).toUpperCase()}
+              </span>
+              {p.name}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      <div className="activity-list pg-activity-list">
         {list.length === 0 && (
-          <li className="px-3 py-2 text-zinc-500">No activity yet — connect an agent or use the console.</li>
+          <div className="pg-activity-empty">No activity yet — connect an agent or use the console.</div>
         )}
-        {list.map((e) => (
-          <ActivityRow key={`${e.timestamp}-${e.action}`} event={e} />
+        {list.map((e, i) => (
+          <ActivityRow key={`${e.timestamp}-${e.action}-${i}`} event={e} fresh={i === 0} />
         ))}
-      </ul>
+      </div>
+
+      <div className="activity-foot">
+        <span className="mcp">mcp:{MCP_VERSION}</span>
+        <span>
+          Bridged to <code style={{ fontFamily: "var(--font-mono)" }}>fancy-ui</code>
+        </span>
+      </div>
     </section>
   );
 }
 
-function ActivityRow({ event }: { event: AgentActivityEvent }) {
+function ActivityRow({ event, fresh }: { event: AgentActivityEvent; fresh: boolean }) {
+  const tone = toneForEvent(event);
   const time = new Date(event.timestamp).toLocaleTimeString([], { hour12: false });
+  const label = event.target.label;
   return (
-    <li className="px-3 py-2">
-      <div className="flex items-center gap-2">
-        <span className="agent-active-badge" style={{ ["--agent-color" as never]: event.agentColor ?? PLAYGROUND_AGENT.color }}>
-          {event.agentName ?? PLAYGROUND_AGENT.name}
+    <div className={`activity-row${fresh ? " fresh" : ""}`}>
+      <span className={`ico ${tone}`} aria-hidden>
+        {ICON_BY_TONE[tone]}
+      </span>
+      <span style={{ flex: 1, minWidth: 0 }}>
+        <span style={{ fontFamily: "var(--font-mono)", color: "var(--fg-1)" }}>{event.action}</span>
+        <span style={{ color: "var(--fg-3)" }}>
+          {" "}
+          · {event.target.kind}
         </span>
-        <span className="text-zinc-500">{time}</span>
-      </div>
-      <div className="mt-1 font-mono text-[11px] text-zinc-700 dark:text-zinc-300">
-        {event.target.kind} · {event.action}
-      </div>
-      {event.target.label && <div className="text-[11px] text-zinc-500 truncate">{event.target.label}</div>}
-    </li>
+        {label && (
+          <span
+            style={{ display: "block", color: "var(--fg-3)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}
+          >
+            {label}
+          </span>
+        )}
+      </span>
+      <span className="when">{time}</span>
+    </div>
   );
 }

@@ -4,12 +4,10 @@ import {
     Action,
     Callout,
     Dropdown,
-    Navbar,
     Profile,
-    Text,
     Tooltip,
 } from "@particle-academy/react-fancy";
-import { Moon, Sun } from "@particle-academy/react-fancy/icons";
+import { ArrowRight, Moon, Sun } from "@particle-academy/react-fancy/icons";
 import { currentTheme, toggleTheme } from "../showcase-theme";
 import { CommandPalette } from "./CommandPalette";
 import { avatarFrameClass, type CosmeticSlots } from "../lib/cosmetics";
@@ -69,101 +67,127 @@ export function Layout({ children }: { children: ReactNode }) {
 
     return (
         <div className="min-h-screen flex flex-col">
-            <Navbar className="sticky top-0 z-30 border-b border-zinc-200 bg-white/85 backdrop-blur dark:border-zinc-800 dark:bg-zinc-950/85">
-                <Navbar.Brand>
-                    <Link href="/" className="flex items-center gap-2.5">
-                        <img
-                            src="/showcase-assets/fancy-ui-logo.jpg"
-                            alt=""
-                            className="h-7 w-7 rounded-md shadow-sm ring-1 ring-zinc-900/5"
-                        />
-                        <span className="text-sm font-semibold tracking-tight text-zinc-900 dark:text-zinc-100">
-                            Fancy UI Kit
-                        </span>
+            <header className="nav">
+                <div className="nav-inner">
+                    <Link href="/" className="nav-brand" style={{ textDecoration: "none", color: "inherit" }}>
+                        <span className="mark">F</span>
+                        <span>Fancy UI Kit</span>
+                        <span className="ver">v0.1</span>
                     </Link>
-                </Navbar.Brand>
 
-                <Navbar.Items>
-                    {NAV_ITEMS.map((item) => (
-                        <Navbar.Item
-                            key={item.to}
-                            href={item.to}
-                            active={path === item.match || path.startsWith(item.match + "/")}
+                    <div className="nav-links">
+                        {NAV_ITEMS.map((item) => {
+                            const active = path === item.match || path.startsWith(item.match + "/");
+                            return (
+                                <Link
+                                    key={item.to}
+                                    href={item.to}
+                                    className="nav-link"
+                                    style={
+                                        active
+                                            ? { background: "var(--bg-1)", color: "var(--fg-1)" }
+                                            : undefined
+                                    }
+                                    aria-current={active ? "page" : undefined}
+                                >
+                                    {item.label}
+                                </Link>
+                            );
+                        })}
+                    </div>
+
+                    <div className="nav-spacer" />
+
+                    <div className="nav-actions">
+                        <button
+                            onClick={() =>
+                                window.dispatchEvent(
+                                    new KeyboardEvent("keydown", { key: "k", metaKey: true, ctrlKey: true }),
+                                )
+                            }
+                            className="btn btn-ghost"
+                            style={{ height: 34, padding: "0 12px" }}
+                            aria-label="Search"
                         >
-                            {item.label}
-                        </Navbar.Item>
-                    ))}
-                </Navbar.Items>
+                            <span>Search…</span>
+                            <span className="kbd">⌘K</span>
+                        </button>
 
-                <div className="flex items-center gap-2">
-                    <button
-                        onClick={() =>
-                            window.dispatchEvent(
-                                new KeyboardEvent("keydown", { key: "k", metaKey: true, ctrlKey: true }),
-                            )
-                        }
-                        className="hidden h-8 items-center gap-2 rounded-md border border-zinc-200 bg-zinc-50 px-2.5 text-xs text-zinc-500 hover:border-zinc-300 hover:text-zinc-700 md:flex dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-400 dark:hover:border-zinc-700 dark:hover:text-zinc-200"
-                        aria-label="Search"
-                    >
-                        <span>Search…</span>
-                        <kbd className="rounded border border-zinc-300 bg-white px-1 font-mono text-[10px] text-zinc-500 dark:border-zinc-700 dark:bg-zinc-950">
-                            ⌘K
-                        </kbd>
-                    </button>
+                        <Tooltip content={theme === "dark" ? "Light mode" : "Dark mode"}>
+                            <button
+                                onClick={() => setTheme(toggleTheme())}
+                                className="btn btn-ghost"
+                                style={{ height: 34, padding: "0 10px" }}
+                                aria-label="Toggle theme"
+                            >
+                                {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
+                            </button>
+                        </Tooltip>
 
-                    <Tooltip content={theme === "dark" ? "Light mode" : "Dark mode"}>
-                        <Action
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => setTheme(toggleTheme())}
-                            aria-label="Toggle theme"
+                        <a
+                            className="btn btn-ghost"
+                            style={{ height: 34, padding: "0 12px" }}
+                            href="https://github.com/particle-academy"
+                            target="_blank"
+                            rel="noopener noreferrer"
                         >
-                            {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
-                        </Action>
-                    </Tooltip>
+                            <span className="gh-mark" />
+                            <span>GitHub</span>
+                            <span className="kbd">14.2k</span>
+                        </a>
 
-                    {auth ? (
-                        <>
-                            {auth.player && <PlayerChip player={auth.player} />}
-                            <Dropdown>
-                                <Dropdown.Trigger>
-                                    <button className={`rounded-full transition hover:ring-2 hover:ring-violet-400/30 ${avatarFrameClass(auth.player?.cosmetics)}`}>
-                                        <Profile
-                                            avatar={auth.avatar_url ?? undefined}
-                                            name={auth.github_username ?? auth.name}
-                                        />
-                                    </button>
-                                </Dropdown.Trigger>
-                                <Dropdown.Items>
-                                    <Dropdown.Item onClick={() => router.visit("/profile")}>
-                                        Your profile
-                                    </Dropdown.Item>
-                                    <Dropdown.Item onClick={() => router.visit("/shop")}>
-                                        Coin shop
-                                    </Dropdown.Item>
-                                    {auth.github_username && (
-                                        <Dropdown.Item
-                                            onClick={() =>
-                                                window.open(`https://github.com/${auth.github_username}`, "_blank", "noopener")
-                                            }
-                                        >
-                                            View GitHub profile
+                        <Link
+                            className="btn btn-primary"
+                            style={{ height: 34, padding: "0 14px" }}
+                            href="/docs"
+                        >
+                            <span>Get started</span>
+                            <ArrowRight size={15} />
+                        </Link>
+
+                        {auth ? (
+                            <>
+                                {auth.player && <PlayerChip player={auth.player} />}
+                                <Dropdown>
+                                    <Dropdown.Trigger>
+                                        <button className={`rounded-full transition hover:ring-2 hover:ring-violet-400/30 ${avatarFrameClass(auth.player?.cosmetics)}`}>
+                                            <Profile
+                                                avatar={auth.avatar_url ?? undefined}
+                                                name={auth.github_username ?? auth.name}
+                                            />
+                                        </button>
+                                    </Dropdown.Trigger>
+                                    <Dropdown.Items>
+                                        <Dropdown.Item onClick={() => router.visit("/profile")}>
+                                            Your profile
                                         </Dropdown.Item>
-                                    )}
-                                    <Dropdown.Separator />
-                                    <Dropdown.Item danger onClick={() => router.post("/auth/logout")}>
-                                        Sign out
-                                    </Dropdown.Item>
-                                </Dropdown.Items>
-                            </Dropdown>
-                        </>
-                    ) : (
-                        <Action as="a" href="/auth/github" size="sm" color="zinc">
-                            Sign in with GitHub
-                        </Action>
-                    )}
+                                        <Dropdown.Item onClick={() => router.visit("/shop")}>
+                                            Coin shop
+                                        </Dropdown.Item>
+                                        {auth.github_username && (
+                                            <Dropdown.Item
+                                                onClick={() =>
+                                                    window.open(`https://github.com/${auth.github_username}`, "_blank", "noopener")
+                                                }
+                                            >
+                                                View GitHub profile
+                                            </Dropdown.Item>
+                                        )}
+                                        <Dropdown.Separator />
+                                        <Dropdown.Item danger onClick={() => router.post("/auth/logout")}>
+                                            Sign out
+                                        </Dropdown.Item>
+                                    </Dropdown.Items>
+                                </Dropdown>
+                            </>
+                        ) : (
+                            <a className="btn btn-primary" style={{ height: 34, padding: "0 14px" }} href="/auth/github">
+                                Sign in with GitHub
+                            </a>
+                        )}
+                    </div>
                 </div>
-            </Navbar>
+            </header>
 
             {flash.auth_error && (
                 <div className="mx-auto w-full max-w-7xl px-4 pt-3">
@@ -190,15 +214,62 @@ export function Layout({ children }: { children: ReactNode }) {
 
             <CommandPalette />
 
-            <footer className="border-t border-zinc-200 dark:border-zinc-800">
-                <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-2 px-4 py-5 text-xs text-zinc-500 dark:text-zinc-400">
-                    <Text size="xs">
-                        Fancy UI Kit ·{" "}
-                        <a href="/docs/human-plus-ux.md" className="underline-offset-2 hover:underline">
-                            Human+ UX whitepaper
-                        </a>
-                    </Text>
-                    <Text size="xs">© Particle Academy · MIT</Text>
+            <footer className="footer">
+                <div className="container">
+                    <div className="footer-grid">
+                        <div>
+                            <div className="nav-brand" style={{ marginBottom: 14 }}>
+                                <span className="mark">F</span>
+                                <span>Fancy UI Kit</span>
+                            </div>
+                            <p style={{ margin: 0, fontSize: 13, lineHeight: 1.6, color: "var(--fg-2)", maxWidth: 320 }}>
+                                UI primitives engineered for Human+ UX — applications where humans and
+                                agents share the same surface, trading control fluidly over MCP bridges.
+                            </p>
+                        </div>
+
+                        <div>
+                            <h5>Packages</h5>
+                            <ul>
+                                <li><Link href="/packages">All packages</Link></li>
+                                <li><Link href="/starter-kits">Starter kits</Link></li>
+                                <li><Link href="/showcase">Showcase</Link></li>
+                                <li><Link href="/agent-playground">Agent Playground</Link></li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h5>Learn</h5>
+                            <ul>
+                                <li><Link href="/docs">Docs</Link></li>
+                                <li><Link href="/dreaming">Dreaming</Link></li>
+                                <li><a href="/docs/human-plus-ux.md">Human+ whitepaper</a></li>
+                                <li><Link href="/leaderboard">Leaderboard</Link></li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h5>Connect</h5>
+                            <ul>
+                                <li>
+                                    <a href="https://github.com/particle-academy" target="_blank" rel="noopener noreferrer">
+                                        GitHub
+                                    </a>
+                                </li>
+                                <li><Link href="/shop">Coin shop</Link></li>
+                                {auth ? (
+                                    <li><Link href="/profile">Your profile</Link></li>
+                                ) : (
+                                    <li><a href="/auth/github">Sign in</a></li>
+                                )}
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div className="footer-bottom">
+                        <span>© Particle Academy · MIT</span>
+                        <span className="right">fancy-ui · v0.1 · react-fancy 3.4</span>
+                    </div>
                 </div>
             </footer>
         </div>

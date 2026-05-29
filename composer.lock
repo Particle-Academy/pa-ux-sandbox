@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4f7bc0d9d73b68aa45a9d996599119dc",
+    "content-hash": "ac8fd889f349faf534a02f15b5d9d785",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -3480,16 +3480,16 @@
         },
         {
             "name": "particle-academy/dark-slide",
-            "version": "v0.4.0",
+            "version": "v0.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/dark-slide.git",
-                "reference": "a9556416e535eb0a3c5eab9c702d36ad4af53c24"
+                "reference": "118ffd83f3f5fba4ed5214b03f7102e0f7b8fbf8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/dark-slide/zipball/a9556416e535eb0a3c5eab9c702d36ad4af53c24",
-                "reference": "a9556416e535eb0a3c5eab9c702d36ad4af53c24",
+                "url": "https://api.github.com/repos/Particle-Academy/dark-slide/zipball/118ffd83f3f5fba4ed5214b03f7102e0f7b8fbf8",
+                "reference": "118ffd83f3f5fba4ed5214b03f7102e0f7b8fbf8",
                 "shasum": ""
             },
             "require": {
@@ -3549,7 +3549,7 @@
                 "issues": "https://github.com/Particle-Academy/dark-slide/issues",
                 "source": "https://github.com/Particle-Academy/dark-slide"
             },
-            "time": "2026-05-29T16:32:15+00:00"
+            "time": "2026-05-29T16:57:29+00:00"
         },
         {
             "name": "particle-academy/holy-sheet",

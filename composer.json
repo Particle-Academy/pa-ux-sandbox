@@ -14,7 +14,7 @@
         "laravel/mcp": "^0.7",
         "laravel/socialite": "^5.27",
         "laravel/tinker": "^3.0",
-        "particle-academy/dark-slide": "0.4",
+        "particle-academy/dark-slide": "0.4.1",
         "particle-academy/holy-sheet": "^1.2",
         "particle-academy/laravel-catalog": "0.9.1",
         "particle-academy/laravel-fms": "0.7",

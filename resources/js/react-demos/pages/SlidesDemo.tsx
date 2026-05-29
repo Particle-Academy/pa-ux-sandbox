@@ -72,6 +72,7 @@ const sampleDeck: Deck = {
                 {
                     id: "e-why-list",
                     type: "text",
+                    animation: { effect: "fly-in", trigger: "on-click", direction: "left", byParagraph: true, duration: 450 },
                     x: 0.08,
                     y: 0.28,
                     w: 0.84,

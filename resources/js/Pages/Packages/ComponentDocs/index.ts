@@ -4,6 +4,10 @@ import { accordionPanelDoc } from "./AccordionPanel";
 import { actionDoc } from "./Action";
 import { agentCursorDoc } from "./AgentCursor";
 import { agentPanelDoc } from "./AgentPanel";
+import { artBoardDoc } from "./ArtBoard";
+import { artPieceDoc } from "./ArtPiece";
+import { artBoardSectionDoc } from "./ArtBoardSection";
+import { artBoardNoteDoc } from "./ArtBoardNote";
 import { autocompleteDoc } from "./Autocomplete";
 import { avatarDoc } from "./Avatar";
 import { badgeDoc } from "./Badge";
@@ -165,6 +169,12 @@ const DOCS: Record<string, ComponentDoc> = {
     "fancy-whiteboard/connector": whiteboardConnectorDoc,
     "fancy-whiteboard/shape": whiteboardShapeDoc,
     "fancy-whiteboard/drawing": whiteboardDrawingDoc,
+
+    // fancy-artboard
+    "fancy-artboard/artboard": artBoardDoc,
+    "fancy-artboard/art-piece": artPieceDoc,
+    "fancy-artboard/artboard-section": artBoardSectionDoc,
+    "fancy-artboard/artboard-note": artBoardNoteDoc,
 
     // fancy-flow
     "fancy-flow/flow-editor": flowEditorDoc,

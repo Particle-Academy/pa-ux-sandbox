@@ -46,6 +46,7 @@ const NAV_ITEMS: Array<{ to: string; label: string; match: string }> = [
     { to: "/packages", label: "Packages", match: "packages" },
     { to: "/starter-kits", label: "Starter Kits", match: "starter-kits" },
     { to: "/dreaming", label: "Dreaming", match: "dreaming" },
+    { to: "/agent-playground", label: "Agent Playground", match: "agent-playground" },
     { to: "/showcase", label: "Showcase", match: "showcase" },
     { to: "/shop", label: "Shop", match: "shop" },
     { to: "/leaderboard", label: "Leaderboard", match: "leaderboard" },

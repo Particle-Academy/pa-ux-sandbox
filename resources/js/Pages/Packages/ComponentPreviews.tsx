@@ -25,6 +25,8 @@ import {
     Tooltip,
 } from "@particle-academy/react-fancy";
 import { EChart } from "@particle-academy/fancy-echarts";
+import { ArtBoard, ArtPiece } from "@particle-academy/fancy-artboard";
+import "@particle-academy/fancy-artboard/styles.css";
 import { Slide as FsSlide, defaultTheme as fsDefaultTheme } from "@particle-academy/fancy-slides";
 import "@particle-academy/fancy-slides/styles.css";
 import {
@@ -922,6 +924,77 @@ const PREVIEWS: Record<string, PreviewFn> = {
                 Audit
             </div>
             <div className="absolute right-8 bottom-6 size-3 rounded-full bg-violet-500 ring-2 ring-violet-300" />
+        </div>
+    ),
+
+    // ─── fancy-artboard ───────────────────────────────────────────────────
+
+    "fancy-artboard/artboard": () => (
+        <div className="h-32 w-full max-w-[20rem] overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-700">
+            <ArtBoard
+                style={{ height: "100%", width: "100%" }}
+                defaultViewport={{ x: 16, y: 12, zoom: 0.42 }}
+            >
+                <ArtBoard.Section id="onboarding" title="Onboarding" subtitle="First-run variants">
+                    <ArtPiece
+                        id="a"
+                        label="A · Dusk"
+                        width={180}
+                        height={300}
+                        content={{ kind: "html", html: '<div style="height:100%;background:linear-gradient(135deg,#a78bfa,#38bdf8)"></div>' }}
+                    />
+                    <ArtPiece
+                        id="b"
+                        label="B · Minimal"
+                        width={180}
+                        height={300}
+                        content={{ kind: "html", html: '<div style="height:100%;padding:16px;font-family:sans-serif"><div style="height:14px;width:60%;background:#e4e4e7;border-radius:4px"></div><div style="margin-top:10px;height:10px;width:80%;background:#f4f4f5;border-radius:4px"></div></div>' }}
+                    />
+                    <ArtPiece
+                        id="c"
+                        label="C · Proposed"
+                        width={180}
+                        height={300}
+                        pending
+                        content={{ kind: "html", html: '<div style="height:100%;background:linear-gradient(135deg,#34d399,#2dd4bf)"></div>' }}
+                    />
+                </ArtBoard.Section>
+                <ArtBoard.Note top={20} left={600} rotate={-4}>
+                    Try the dusk gradient?
+                </ArtBoard.Note>
+            </ArtBoard>
+        </div>
+    ),
+
+    "fancy-artboard/art-piece": () => (
+        <div className="w-full max-w-[12rem] overflow-hidden rounded-md border border-zinc-200 bg-white shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
+            <div className="flex items-center justify-between border-b border-zinc-100 px-2 py-1 text-[10px] dark:border-zinc-800">
+                <span className="flex items-center gap-1 text-zinc-500">
+                    <span className="text-zinc-300">⋮⋮</span> A · Dusk
+                </span>
+                <span className="text-zinc-400">⋯</span>
+            </div>
+            <div className="h-24 bg-gradient-to-br from-violet-400 via-fuchsia-400 to-amber-300" />
+        </div>
+    ),
+
+    "fancy-artboard/artboard-section": () => (
+        <div className="w-full max-w-[20rem]">
+            <div className="mb-1 text-xs font-semibold text-zinc-700 dark:text-zinc-200">Hero variants</div>
+            <div className="text-[10px] text-zinc-500">A/B/C copy directions</div>
+            <div className="mt-1.5 flex gap-2">
+                {["from-violet-300 to-sky-300", "from-emerald-300 to-teal-300", "from-amber-300 to-rose-300"].map((g, i) => (
+                    <div key={i} className={`h-16 w-12 rounded border border-zinc-300 bg-gradient-to-br shadow-sm dark:border-zinc-600 ${g}`} />
+                ))}
+            </div>
+        </div>
+    ),
+
+    "fancy-artboard/artboard-note": () => (
+        <div className="grid h-28 w-full max-w-[18rem] place-items-center rounded-md bg-zinc-50 dark:bg-zinc-950">
+            <div className="size-20 rotate-[-3deg] bg-yellow-200 p-2 text-[11px] leading-snug text-zinc-800 shadow-md">
+                Try the dusk gradient on the hero?
+            </div>
         </div>
     ),
 

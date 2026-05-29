@@ -60,6 +60,8 @@ import { CodeEditor } from "@particle-academy/fancy-code";
 import "@particle-academy/fancy-code/styles.css";
 import { Board, StickyNote, CursorLayer } from "@particle-academy/fancy-whiteboard";
 import "@particle-academy/fancy-whiteboard/styles.css";
+import { ArtBoard, ArtPiece, type ArtBoardValue } from "@particle-academy/fancy-artboard";
+import "@particle-academy/fancy-artboard/styles.css";
 import { FlowEditor } from "@particle-academy/fancy-flow";
 import "@particle-academy/fancy-flow/styles.css";
 import { SheetWorkbook, createEmptyWorkbook } from "@particle-academy/fancy-sheets";
@@ -165,6 +167,12 @@ const REGISTRY: Record<string, DemoFn> = {
     "fancy-whiteboard/connector": WhiteboardConnectorDemo,
     "fancy-whiteboard/shape": WhiteboardShapeDemo,
     "fancy-whiteboard/drawing": WhiteboardDrawingDemo,
+
+    // ── fancy-artboard
+    "fancy-artboard/artboard": ArtboardDemo,
+    "fancy-artboard/art-piece": ArtPieceDemo,
+    "fancy-artboard/artboard-section": ArtboardSectionDemo,
+    "fancy-artboard/artboard-note": ArtboardNoteDemo,
 
     // ── fancy-flow
     "fancy-flow/flow-editor": FlowEditorDemo,
@@ -1208,6 +1216,188 @@ function WhiteboardDrawingDemo() {
             <path d="M40 130 Q 80 110, 120 130 T 200 130" stroke="rgb(16, 185, 129)" strokeWidth={2} fill="none" strokeLinecap="round" />
             <path d="M260 30 L 290 50 L 270 70 L 300 90" stroke="rgb(239, 68, 68)" strokeWidth={2} fill="none" strokeLinecap="round" />
         </svg>
+    );
+}
+
+// ─── fancy-artboard ──────────────────────────────────────────────────────
+
+const ARTBOARD_HTML_MOCKUP = `
+<div style="height:100%;display:flex;flex-direction:column;font-family:system-ui,sans-serif;background:#fff;color:#18181b">
+  <div style="padding:18px 18px 0">
+    <div style="font-size:13px;font-weight:600;color:#7c3aed">Particle</div>
+    <h1 style="margin:14px 0 6px;font-size:26px;line-height:1.15">Build with humans <em>and</em> agents.</h1>
+    <p style="margin:0;font-size:13px;color:#71717a">One surface. Trade control fluidly.</p>
+    <button style="margin-top:14px;padding:8px 16px;border:0;border-radius:8px;background:#7c3aed;color:#fff;font-size:13px">Get started</button>
+  </div>
+  <div style="margin-top:auto;height:120px;background:linear-gradient(135deg,#a78bfa,#38bdf8)"></div>
+</div>`;
+
+function ArtboardDemo() {
+    const [value, setValue] = useState<ArtBoardValue>({
+        sections: [
+            {
+                id: "onboarding",
+                title: "Onboarding",
+                subtitle: "First-run hero variants",
+                pieces: [
+                    {
+                        id: "hero-a",
+                        label: "A · HTML mockup",
+                        width: 320,
+                        height: 460,
+                        content: { kind: "html", html: ARTBOARD_HTML_MOCKUP },
+                    },
+                    {
+                        id: "hero-b",
+                        label: "B · Image",
+                        width: 320,
+                        height: 460,
+                        content: {
+                            kind: "image",
+                            src: "/showcase-assets/fancy-ui-logo.jpg",
+                            alt: "Reference shot",
+                        },
+                    },
+                    {
+                        id: "hero-c",
+                        label: "C · Live JSX",
+                        width: 320,
+                        height: 460,
+                        content: { kind: "node" },
+                    },
+                    {
+                        id: "hero-d",
+                        label: "D · Agent draft",
+                        width: 320,
+                        height: 460,
+                        pending: true,
+                        content: { kind: "html", html: ARTBOARD_HTML_MOCKUP },
+                    },
+                ],
+            },
+        ],
+    });
+    const [focus, setFocus] = useState<string | null>(null);
+
+    return (
+        <div className="h-[28rem] overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-700">
+            <ArtBoard
+                value={value}
+                onChange={setValue}
+                focus={focus}
+                onFocusChange={setFocus}
+                defaultViewport={{ x: 24, y: 24, zoom: 0.6 }}
+                style={{ height: "100%", width: "100%" }}
+            >
+                {/* JSX content resolves to the kind:"node" piece by id. */}
+                <ArtPiece id="hero-c">
+                    <div className="grid h-full place-items-center bg-gradient-to-br from-emerald-400 to-teal-500 p-4 text-center text-white">
+                        <div>
+                            <div className="text-2xl font-bold">Live JSX</div>
+                            <div className="mt-1 text-sm opacity-90">A real React node, scaled with the world transform.</div>
+                            <Badge color="green" className="mt-3">kind: node</Badge>
+                        </div>
+                    </div>
+                </ArtPiece>
+            </ArtBoard>
+        </div>
+    );
+}
+
+function ArtPieceDemo() {
+    const [value, setValue] = useState<ArtBoardValue>({
+        sections: [
+            {
+                id: "kinds",
+                title: "Three content kinds",
+                pieces: [
+                    {
+                        id: "p-image",
+                        label: "image",
+                        width: 240,
+                        height: 200,
+                        content: { kind: "image", src: "/showcase-assets/fancy-ui-logo.jpg", alt: "Logo" },
+                    },
+                    {
+                        id: "p-html",
+                        label: "html",
+                        width: 240,
+                        height: 200,
+                        content: { kind: "html", html: ARTBOARD_HTML_MOCKUP },
+                    },
+                    {
+                        id: "p-node",
+                        label: "node (JSX)",
+                        width: 240,
+                        height: 200,
+                        content: { kind: "node" },
+                    },
+                    {
+                        id: "p-pending",
+                        label: "pending",
+                        width: 240,
+                        height: 200,
+                        pending: true,
+                        content: { kind: "html", html: ARTBOARD_HTML_MOCKUP },
+                    },
+                ],
+            },
+        ],
+    });
+    return (
+        <div className="h-80 overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-700">
+            <ArtBoard value={value} onChange={setValue} defaultViewport={{ x: 24, y: 24, zoom: 0.7 }} style={{ height: "100%", width: "100%" }}>
+                <ArtPiece id="p-node">
+                    <div className="grid h-full place-items-center bg-zinc-900 p-3 text-center font-mono text-xs text-emerald-300">
+                        &lt;ArtPiece&gt;{"{"} any JSX {"}"}&lt;/ArtPiece&gt;
+                    </div>
+                </ArtPiece>
+            </ArtBoard>
+        </div>
+    );
+}
+
+function ArtboardSectionDemo() {
+    const [value, setValue] = useState<ArtBoardValue>({
+        sections: [
+            {
+                id: "hero",
+                title: "Hero variants",
+                subtitle: "A/B/C copy directions",
+                pieces: [
+                    { id: "h-a", label: "A", width: 220, height: 300, content: { kind: "html", html: ARTBOARD_HTML_MOCKUP } },
+                    { id: "h-b", label: "B", width: 220, height: 300, content: { kind: "html", html: ARTBOARD_HTML_MOCKUP } },
+                ],
+            },
+            {
+                id: "pricing",
+                title: "Pricing",
+                subtitle: "Two layouts",
+                pieces: [
+                    { id: "pr-a", label: "Cards", width: 220, height: 300, content: { kind: "html", html: ARTBOARD_HTML_MOCKUP } },
+                    { id: "pr-b", label: "Table", width: 220, height: 300, content: { kind: "html", html: ARTBOARD_HTML_MOCKUP } },
+                ],
+            },
+        ],
+    });
+    return (
+        <div className="h-80 overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-700">
+            <ArtBoard value={value} onChange={setValue} defaultViewport={{ x: 24, y: 24, zoom: 0.55 }} style={{ height: "100%", width: "100%" }} />
+        </div>
+    );
+}
+
+function ArtboardNoteDemo() {
+    const [note, setNote] = useState("Try the dusk gradient on the hero?");
+    return (
+        <div className="h-64 overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-700">
+            <ArtBoard defaultViewport={{ x: 0, y: 0, zoom: 1 }} style={{ height: "100%", width: "100%" }}>
+                <ArtBoard.Note top={40} left={60} rotate={-3} value={note} onChange={setNote} editable />
+                <ArtBoard.Note top={60} left={300} rotate={2} color="violet">
+                    Static notes take children instead of value/onChange.
+                </ArtBoard.Note>
+            </ArtBoard>
+        </div>
     );
 }
 

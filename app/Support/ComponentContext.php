@@ -71,6 +71,30 @@ class ComponentContext
             'how' => 'Hold <code>value</code> in state, pass <code>onChange</code>, render <code>&lt;Board&gt;</code>. For agent operability, register the whiteboard bridge with <code>registerWhiteboardBridge(server, { adapter })</code> from <code>agent-integrations</code> — the agent gets <code>whiteboard_*</code> tools and the canvas exposes presence in return.',
         ],
 
+        'fancy-artboard/artboard' => [
+            'why' => 'Design review, A/B exploration, and agent-drafted screens all want the same surface: an infinite canvas where variants sit side by side and a human can pan, zoom, focus, and rearrange. Roll-your-own versions either lock you to a specific transport, hard-code DOM positions agents can&apos;t target, or skip the controlled-state contract entirely — so an embedded agent can&apos;t propose a frame without screen-scraping.',
+            'what' => '<code>ArtBoard</code> is a fully controlled pan/zoom canvas: <code>value</code>/<code>onChange</code> drive an <code>ArtBoardValue</code> (sections of pieces), <code>viewport</code>/<code>onViewportChange</code> drive the camera, <code>focus</code>/<code>onFocusChange</code> drive the full-screen overlay. Every frame carries <code>data-fa-piece</code> and every section <code>data-fa-section</code> for stable agent handles; <code>pending</code> pieces render a trust-but-verify "proposed" ring. Authorable two ways — JSON value or <code>&lt;ArtBoard.Section&gt;</code>/<code>&lt;ArtPiece&gt;</code> children.',
+            'how' => 'Hold an <code>ArtBoardValue</code> in state, render <code>&lt;ArtBoard value onChange style={{ height }}&gt;</code>, and import <code>@particle-academy/fancy-artboard/styles.css</code> once. Drop <code>&lt;ArtBoard.Section&gt;</code> + <code>&lt;ArtPiece&gt;</code> children for JSX authoring, or pass <code>value</code> for JSON-driven boards. A sibling MCP bridge targets the <code>ArtBoardValue</code> contract for agent operability.',
+        ],
+
+        'fancy-artboard/art-piece' => [
+            'why' => 'A design board is only as useful as the frames on it — and those frames need to hold three different things: exported image mockups, live HTML app shells, and real React components. Most canvases force everything through one rendering path (usually an image), so live mockups go stale and agent-authored frames can&apos;t be real UI.',
+            'what' => '<code>ArtPiece</code> is an authoring marker for one frame. Its <code>content</code> is a JSON-friendly discriminated union — <code>{kind:"image"}</code>, <code>{kind:"html"}</code>, or <code>{kind:"node"}</code> (your JSX children, resolved by <code>id</code>). All three render inline so they scale crisply under the world transform. A stable <code>id</code> is the agent handle; <code>pending</code> marks an agent-staged frame.',
+            'how' => 'Inside an <code>&lt;ArtBoard.Section&gt;</code>, drop <code>&lt;ArtPiece id="a" content={{ kind: "image", src }} /&gt;</code> for a mockup, <code>content={{ kind: "html", html }}</code> for a live shell, or pass JSX <code>children</code> for a <code>kind:"node"</code> piece. Set <code>pending</code> for agent proposals. Each piece&apos;s kebab menu exports PNG/HTML self-contained.',
+        ],
+
+        'fancy-artboard/artboard-section' => [
+            'why' => 'Variants need grouping — "Onboarding A/B/C" should read as one labeled row, not a soup of loose frames. Without a section primitive every board re-implements titled lanes, inline rename, and a stable group id for agents to address.',
+            'what' => '<code>ArtBoard.Section</code> groups pieces into a titled, horizontally-scrolling row. It&apos;s an authoring marker (renders nothing itself — the board compiles it into the value) with an inline-editable <code>title</code>, optional <code>subtitle</code>, and a stable <code>id</code> exposed as <code>data-fa-section</code> so an agent can target the group directly.',
+            'how' => 'Wrap <code>&lt;ArtPiece&gt;</code> children in <code>&lt;ArtBoard.Section id="hero" title="Hero variants" subtitle="A/B/C"&gt;</code>. When the board is driven by <code>value</code>, sections come from <code>ArtBoardValue.sections</code> instead and the children are ignored.',
+        ],
+
+        'fancy-artboard/artboard-note' => [
+            'why' => 'Review feedback and agent suggestions want to live <em>on</em> the canvas, next to the frame they comment on — not in a side panel that loses spatial context. A floating, rotatable sticky note is the natural affordance, but bolting one onto a pan/zoom world (position, rotation, editable text) is fiddly to get right.',
+            'what' => 'An absolutely-positioned react-fancy <code>StickyNote</code> placed in the canvas world. The wrapper owns <code>top</code>/<code>left</code>/<code>right</code>/<code>bottom</code> + <code>rotate</code> + <code>color</code>; the paper and text are react-fancy&apos;s primitive. Controlled text via <code>value</code>/<code>onChange</code> (with <code>editable</code>), or static <code>children</code> that override the text.',
+            'how' => 'Drop <code>&lt;ArtBoard.Note top={40} left={60} rotate={-3} value={note} onChange={setNote} editable /&gt;</code> inside an <code>&lt;ArtBoard&gt;</code> for an editable note, or pass <code>children</code> for static content. Choose a <code>color</code> from the StickyNote presets or any CSS color.',
+        ],
+
         'fancy-sheets/sheet-workbook' => [
             'why' => 'Embedded spreadsheets always come with one of two failure modes: heavyweight (AG Grid Enterprise pricing, license keys) or toy (no formulas, no clipboard, no multi-sheet). Fancy Sheets sits in the middle: a full workbook that an agent can drive.',
             'what' => '<code>SheetWorkbook</code> is a multi-sheet, formula-aware, clipboard-friendly spreadsheet with CSV import/export. Controlled by a workbook value object; agents drive it through <code>sheet_*</code> MCP tools (set cell, append row, name range, etc.).',

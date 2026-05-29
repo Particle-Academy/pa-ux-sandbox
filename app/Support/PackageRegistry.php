@@ -17,6 +17,7 @@ class PackageRegistry
         return [
             self::reactFancy(),
             self::fancyWhiteboard(),
+            self::fancyArtboard(),
             self::fancyFlow(),
             self::fancySheets(),
             self::fancySlides(),
@@ -178,6 +179,25 @@ class PackageRegistry
                 ['slug' => 'connector', 'name' => 'Connector', 'blurb' => 'Edge between items.'],
                 ['slug' => 'shape', 'name' => 'Shape', 'blurb' => 'Geometric shapes.'],
                 ['slug' => 'drawing', 'name' => 'Drawing', 'blurb' => 'Freeform pen strokes.'],
+            ],
+        ];
+    }
+
+    /** @return array<string, mixed> */
+    private static function fancyArtboard(): array
+    {
+        return [
+            'slug' => 'fancy-artboard',
+            'name' => 'fancy-artboard',
+            'tagline' => 'Figma-style design canvas for Human+ UX — a pan/zoom board of image / HTML / live-JSX frames grouped into sections, with focus mode, drag-reorder, sticky notes, and PNG/HTML export.',
+            'npm' => '@particle-academy/fancy-artboard',
+            'repo' => 'Particle-Academy/fancy-artboard',
+            'language' => 'TypeScript',
+            'components' => [
+                ['slug' => 'artboard', 'name' => 'ArtBoard', 'blurb' => 'Controlled pan/zoom canvas root.'],
+                ['slug' => 'art-piece', 'name' => 'ArtPiece', 'blurb' => 'A design frame — image / HTML / live JSX.'],
+                ['slug' => 'artboard-section', 'name' => 'ArtBoard.Section', 'blurb' => 'Titled group of pieces.'],
+                ['slug' => 'artboard-note', 'name' => 'ArtBoard.Note', 'blurb' => 'Sticky note placed in the canvas world.'],
             ],
         ];
     }

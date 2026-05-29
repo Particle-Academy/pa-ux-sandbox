@@ -25,6 +25,7 @@ use App\Http\Controllers\WhiteboardShareController;
 use App\Mcp\Servers\FancyUiRegistry;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 use Laravel\Mcp\Facades\Mcp;
 
 // Authentication routes
@@ -89,6 +90,11 @@ Route::get('/dreaming', [DreamingController::class, 'index'])->name('dreaming.in
 Route::get('/dreaming/archived', [DreamingController::class, 'archived'])->name('dreaming.archived');
 
 Route::get('/leaderboard', LeaderboardController::class)->name('leaderboard');
+
+// Agent Playground — anonymous, ephemeral MCP session where a visitor's own
+// external agent generates Fancy UI screens + data and drives the full kit
+// over MCP. No auth, no DB writes; the page owns an in-browser MicroMcpServer.
+Route::get('/agent-playground', fn () => Inertia::render('AgentPlayground'))->name('agent-playground');
 
 Route::get('/shop', [\App\Http\Controllers\Showcase\ShopController::class, 'index'])->name('shop.index');
 Route::post('/shop/{item:slug}/purchase', [\App\Http\Controllers\Showcase\ShopController::class, 'purchase'])

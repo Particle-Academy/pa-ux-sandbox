@@ -26,7 +26,7 @@ import { KIND_MODULES, KIND_BY_NAME } from "./AgentPlayground/kinds";
  */
 export default function AgentPlayground() {
   return (
-    <Layout>
+    <Layout bleed>
       <Head title="Agent Playground · Fancy UI" />
       <ScreenSystem>
         <PlaygroundInner />

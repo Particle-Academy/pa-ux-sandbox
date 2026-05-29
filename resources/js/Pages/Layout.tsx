@@ -7,7 +7,7 @@ import {
     Profile,
     Tooltip,
 } from "@particle-academy/react-fancy";
-import { ArrowRight, Moon, Sun } from "@particle-academy/react-fancy/icons";
+import { Moon, Sun } from "@particle-academy/react-fancy/icons";
 import { currentTheme, toggleTheme } from "../showcase-theme";
 import { CommandPalette } from "./CommandPalette";
 import { avatarFrameClass, type CosmeticSlots } from "../lib/cosmetics";
@@ -50,7 +50,19 @@ const NAV_ITEMS: Array<{ to: string; label: string; match: string }> = [
     { to: "/leaderboard", label: "Leaderboard", match: "leaderboard" },
 ];
 
-export function Layout({ children }: { children: ReactNode }) {
+export function Layout({
+    children,
+    bleed = false,
+}: {
+    children: ReactNode;
+    /**
+     * Full-bleed pages (the landing + playground) own their own `.section` /
+     * `.container` rhythm and must sit flush under the sticky nav. When true the
+     * `<main>` drops the max-w-7xl + padding wrapper so there's no top seam or
+     * width mismatch against the 1200px nav/footer containers.
+     */
+    bleed?: boolean;
+}) {
     const { props, url } = usePage<SharedProps>();
     const auth = props.auth?.user ?? null;
     const flash = props.flash ?? {};
@@ -125,7 +137,7 @@ export function Layout({ children }: { children: ReactNode }) {
                         </Tooltip>
 
                         <a
-                            className="btn btn-ghost"
+                            className="btn btn-ghost nav-gh"
                             style={{ height: 34, padding: "0 12px" }}
                             href="https://github.com/particle-academy"
                             target="_blank"
@@ -133,17 +145,7 @@ export function Layout({ children }: { children: ReactNode }) {
                         >
                             <span className="gh-mark" />
                             <span>GitHub</span>
-                            <span className="kbd">14.2k</span>
                         </a>
-
-                        <Link
-                            className="btn btn-primary"
-                            style={{ height: 34, padding: "0 14px" }}
-                            href="/docs"
-                        >
-                            <span>Get started</span>
-                            <ArrowRight size={15} />
-                        </Link>
 
                         {auth ? (
                             <>
@@ -182,7 +184,8 @@ export function Layout({ children }: { children: ReactNode }) {
                             </>
                         ) : (
                             <a className="btn btn-primary" style={{ height: 34, padding: "0 14px" }} href="/auth/github">
-                                Sign in with GitHub
+                                <span className="gh-mark" />
+                                <span>Sign in</span>
                             </a>
                         )}
                     </div>
@@ -210,7 +213,9 @@ export function Layout({ children }: { children: ReactNode }) {
                 </div>
             )}
 
-            <main className="mx-auto w-full max-w-7xl flex-1 px-4 py-10 md:py-14">{children}</main>
+            <main className={bleed ? "flex-1" : "mx-auto w-full max-w-7xl flex-1 px-4 py-10 md:py-14"}>
+                {children}
+            </main>
 
             <CommandPalette />
 

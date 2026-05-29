@@ -1,13 +1,35 @@
 import { Head, Link } from "@inertiajs/react";
-import { useState } from "react";
+import { Component, useEffect, useState, type ComponentType, type ErrorInfo, type ReactNode } from "react";
 import {
     Action,
+    Autocomplete,
+    Avatar,
     Badge,
+    Breadcrumbs,
+    Callout,
     Card,
+    Checkbox,
+    CheckboxGroup,
     Field,
     Input,
+    MultiSwitch,
+    OtpInput,
+    Pagination,
+    Pillbox,
+    Profile,
+    Progress,
+    RadioGroup,
+    Select,
+    Separator,
+    Skeleton,
+    Slider,
+    StickyNote,
+    Switch,
+    Table,
     Tabs,
+    Textarea,
     Toast,
+    Tooltip,
     useToast,
 } from "@particle-academy/react-fancy";
 import {
@@ -19,19 +41,14 @@ import {
     BookOpen,
     Github,
     MousePointerClick,
-    TextCursorInput,
-    Tag,
-    RectangleHorizontal,
-    Bell,
-    LayoutPanelTop,
     Check,
     Sparkles,
     Link as LinkIcon,
-    Info,
     Search,
     Boxes,
     Cpu,
     Radio,
+    RectangleHorizontal,
 } from "@particle-academy/react-fancy/icons";
 import { Layout } from "./Layout";
 
@@ -64,6 +81,7 @@ type HomeProps = {
 
 // Spell small counts for the editorial section title; fall back to the digits.
 const NUMBER_WORDS: Record<number, string> = {
+    9: "Nine",
     10: "Ten",
     11: "Eleven",
     12: "Twelve",
@@ -71,8 +89,6 @@ const NUMBER_WORDS: Record<number, string> = {
     14: "Fourteen",
     15: "Fifteen",
     16: "Sixteen",
-    17: "Seventeen",
-    18: "Eighteen",
 };
 
 // react-fancy Badge supports a narrower palette than ActionColor; map tags.
@@ -88,14 +104,14 @@ function langTag(language: string): { label: string; color: BadgeColor } {
 export default function Home({ packages, companions, total_components }: HomeProps) {
     return (
         <Toast.Provider position="bottom-right">
-            <Layout>
+            <Layout bleed>
                 <Head title="Fancy UI · Components for Human+ UX" />
                 <Hero packages={packages} />
                 <Packages packages={packages} companions={companions} />
                 <HumanPlus />
                 <ComponentsShowcase total={total_components} />
                 <Philosophy />
-                <Install />
+                <QuickStart />
                 <Explore />
             </Layout>
         </Toast.Provider>
@@ -135,7 +151,7 @@ function Hero({ packages }: { packages: PackageRow[] }) {
                     </div>
                     <div className="hero-meta">
                         <span className="meta-item">
-                            <Package size={13} /> {packages.length} packages
+                            <Package size={13} /> {packages.length} UI packages
                         </span>
                         <span className="meta-item">
                             <Github size={13} /> MIT licensed
@@ -225,9 +241,8 @@ function Packages({ packages, companions }: { packages: PackageRow[]; companions
                 </div>
                 <h2 className="section-title">{count} small packages. Lift any one out.</h2>
                 <p className="section-sub">
-                    Fancy UI is not a monolith. Each layer ships independently to npm or Packagist
-                    and composes with the rest. Pick the ones you need — most apps reach for two or
-                    three.
+                    Fancy UI is not a monolith. Each layer ships independently to npm and composes
+                    with the rest. Pick the ones you need — most apps reach for two or three.
                 </p>
                 <div className="pkg-grid">
                     {packages.map((p) => {
@@ -251,34 +266,22 @@ function Packages({ packages, companions }: { packages: PackageRow[]; companions
                     })}
                 </div>
 
-                <div
-                    style={{
-                        marginTop: 22,
-                        paddingTop: 18,
-                        borderTop: "1px dashed var(--border-1)",
-                        display: "flex",
-                        flexWrap: "wrap",
-                        alignItems: "baseline",
-                        gap: 12,
-                        fontSize: 12.5,
-                        color: "var(--fg-3)",
-                    }}
-                >
-                    <span style={{ fontFamily: "var(--font-mono)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
-                        + Composer companions
+                <div className="companions">
+                    <span className="companions-label">+ Composer companions</span>
+                    <span className="companions-note">
+                        PHP packages — the agentic document writers and the sandbox's own Laravel infra:
                     </span>
                     {companions.map((c, i) => (
-                        <span key={c.slug} style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+                        <span key={c.slug} className="companion-item">
                             <a
                                 href={`https://packagist.org/packages/${c.composer}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                style={{ fontFamily: "var(--font-mono)", color: "var(--fg-2)", textDecoration: "none" }}
                                 title={c.tagline}
                             >
                                 {c.composer}
                             </a>
-                            {i < companions.length - 1 && <span style={{ color: "var(--fg-4)" }}>·</span>}
+                            {i < companions.length - 1 && <span className="companion-sep">·</span>}
                         </span>
                     ))}
                 </div>
@@ -287,9 +290,46 @@ function Packages({ packages, companions }: { packages: PackageRow[]; companions
     );
 }
 
-// ─── Human+ teaser ─────────────────────────────────────────────────────────
+// ─── Human+ teaser (animated) ────────────────────────────────────────────────
+
+type FeedRow = { tone: "tool" | "write" | "move" | "read"; icon: ReactNode; text: ReactNode; when: string };
+
+// The script the fake agent "runs" on a loop — drives the cursor, the highlighted
+// note, and the streaming activity feed so the teaser reads as genuinely live.
+const HP_NOTES = [
+    { cls: "color-amber", top: 84, left: 34, who: "you · 12:04", text: "Cut the second CTA — it competes with the primary." },
+    { cls: "color-violet", top: 150, left: 232, who: "claude · now", text: "Proposing a tighter hero grid. Confirm to apply?" },
+    { cls: "color-sky", top: 286, left: 92, who: "you · 12:01", text: "Brand gradient reads well in dark mode." },
+];
+const HP_CURSOR = [
+    { top: 138, left: 214 },
+    { top: 96, left: 58 },
+    { top: 300, left: 120 },
+];
+const HP_FEED: FeedRow[] = [
+    { tone: "tool", icon: <Sparkles size={11} />, text: <>Proposed <strong>hero grid</strong> rework — awaiting confirm</>, when: "now" },
+    { tone: "write", icon: <Check size={11} />, text: <>Added note <strong>tighter hero grid</strong></>, when: "0:03" },
+    { tone: "move", icon: <ArrowRight size={11} />, text: <>Moved 2 stickies into the Hero cluster</>, when: "0:11" },
+    { tone: "read", icon: <Search size={11} />, text: <>Read board <strong>state</strong> (3 clusters)</>, when: "0:18" },
+];
 
 function HumanPlus() {
+    const [step, setStep] = useState(0);
+
+    useEffect(() => {
+        const reduce =
+            typeof window !== "undefined" &&
+            window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+        if (reduce) return;
+        const t = setInterval(() => setStep((s) => s + 1), 2400);
+        return () => clearInterval(t);
+    }, []);
+
+    const cursor = HP_CURSOR[step % HP_CURSOR.length];
+    const liveNote = step % HP_NOTES.length; // which note the agent is "touching"
+    // Rotate the feed so a new row streams in at the top each tick.
+    const feed = HP_FEED.map((_, i) => HP_FEED[(i + step) % HP_FEED.length]);
+
     return (
         <section className="section" id="human-plus">
             <div className="container">
@@ -300,21 +340,21 @@ function HumanPlus() {
                 <h2 className="section-title">Watch an agent work in the surface, not behind it.</h2>
                 <p className="section-sub">
                     The Human+ thesis is sharpest across agent-integrations, fancy-whiteboard, and
-                    fancy-artboard. When an agent moves a sticky, you see the cursor, the label, and
+                    fancy-artboard. When an agent moves a sticky you see the cursor, the label, and
                     the activity row — three signals that something real happened.
                 </p>
 
                 <div className="demo-shell">
                     <div className="demo-board">
                         <div className="demo-toolbar">
-                            <button className="tool-btn active" aria-label="Select">
+                            <button className="tool-btn active" aria-label="Select" type="button">
                                 <MousePointerClick size={15} />
                             </button>
                             <span className="tool-sep" />
-                            <button className="tool-btn" aria-label="Sticky">
+                            <button className="tool-btn" aria-label="Sticky" type="button">
                                 <RectangleHorizontal size={15} />
                             </button>
-                            <button className="tool-btn" aria-label="Connect">
+                            <button className="tool-btn" aria-label="Connect" type="button">
                                 <LinkIcon size={15} />
                             </button>
                             <div className="tool-presence">
@@ -336,33 +376,22 @@ function HumanPlus() {
                             </div>
                         </div>
 
-                        <div className="sticky color-amber" style={{ top: 86, left: 36 }}>
-                            Cut the second CTA — it competes with the primary.
-                            <div className="who">
-                                <span className="pin" /> you · 12:04
+                        {HP_NOTES.map((n, i) => (
+                            <div
+                                key={i}
+                                className={`sticky ${n.cls}${i === liveNote ? " highlight" : ""}`}
+                                style={{ top: n.top, left: n.left }}
+                            >
+                                {n.text}
+                                <div className="who">
+                                    <span className="pin" /> {n.who}
+                                </div>
                             </div>
-                        </div>
-                        <div className="sticky color-violet highlight" style={{ top: 150, left: 230 }}>
-                            Proposing a tighter hero grid. Confirm to apply?
-                            <div className="who">
-                                <span className="pin" /> claude · now
-                            </div>
-                        </div>
-                        <div className="sticky color-sky" style={{ top: 286, left: 96 }}>
-                            Brand gradient reads well in dark mode.
-                            <div className="who">
-                                <span className="pin" /> you · 12:01
-                            </div>
-                        </div>
+                        ))}
 
-                        <div className="agent-cursor" style={{ top: 138, left: 214 }}>
+                        <div className="agent-cursor" style={{ top: cursor.top, left: cursor.left }}>
                             <svg viewBox="0 0 24 24">
-                                <path
-                                    d="M4 2l7 18 2.5-7.5L21 10z"
-                                    fill="var(--violet-500)"
-                                    stroke="#fff"
-                                    strokeWidth="1.2"
-                                />
+                                <path d="M4 2l7 18 2.5-7.5L21 10z" fill="var(--violet-500)" stroke="#fff" strokeWidth="1.2" />
                             </svg>
                             <span className="label">
                                 <span className="dot" /> claude
@@ -375,46 +404,19 @@ function HumanPlus() {
                             <div className="title">
                                 <span className="av">AI</span> Agent activity
                             </div>
-                            <div className="sub">fancy-artboard · 7 tool calls this session</div>
+                            <div className="sub">fancy-whiteboard · live tool calls this session</div>
                         </div>
                         <div className="activity-list">
-                            <div className="activity-row fresh">
-                                <span className="ico tool">
-                                    <Sparkles size={11} />
-                                </span>
-                                <span>
-                                    Proposed <strong>hero grid</strong> rework — awaiting confirm
-                                </span>
-                                <span className="when">now</span>
-                            </div>
-                            <div className="activity-row">
-                                <span className="ico write">
-                                    <Check size={11} />
-                                </span>
-                                <span>
-                                    Added note <strong>tighter hero grid</strong>
-                                </span>
-                                <span className="when">0:03</span>
-                            </div>
-                            <div className="activity-row">
-                                <span className="ico move">
-                                    <ArrowRight size={11} />
-                                </span>
-                                <span>Moved 2 pieces into the Hero section</span>
-                                <span className="when">0:11</span>
-                            </div>
-                            <div className="activity-row">
-                                <span className="ico read">
-                                    <Search size={11} />
-                                </span>
-                                <span>
-                                    Read board <strong>state</strong> (3 sections)
-                                </span>
-                                <span className="when">0:18</span>
-                            </div>
+                            {feed.map((row, i) => (
+                                <div className={`activity-row${i === 0 ? " fresh" : ""}`} key={`${step}-${i}`}>
+                                    <span className={`ico ${row.tone}`}>{row.icon}</span>
+                                    <span style={{ flex: 1, minWidth: 0 }}>{row.text}</span>
+                                    <span className="when">{i === 0 ? "now" : row.when}</span>
+                                </div>
+                            ))}
                         </div>
                         <div className="activity-foot">
-                            <span className="mcp">artboard_*</span>
+                            <span className="mcp">whiteboard_*</span>
                             via micro-MCP server
                         </div>
                     </div>
@@ -437,20 +439,89 @@ function HumanPlus() {
 
 // ─── Components showcase ──────────────────────────────────────────────────────
 
-const SHOWCASE = [
-    { id: "action", label: "Action", icon: MousePointerClick, num: 1, blurb: "The workhorse button. Ten Tailwind colors, ghost / circle variants, loading + disabled states, optional icon and badge." },
-    { id: "field", label: "Field", icon: TextCursorInput, num: 2, blurb: "Form field stack — label, description, error, and a focus-ringed Input. Controlled with value + onChange." },
-    { id: "badge", label: "Badge", icon: Tag, num: 3, blurb: "Soft / solid / outline pill with an optional status dot. Signal, not decoration." },
-    { id: "card", label: "Card", icon: RectangleHorizontal, num: 4, blurb: "Border + surface with compound Header / Body / Footer slots separated by inner borders." },
-    { id: "tabs", label: "Tabs", icon: LayoutPanelTop, num: 5, blurb: "Underlined tabs with controlled active state. The active tint matches the accent." },
-    { id: "toast", label: "Toast", icon: Bell, num: 6, blurb: "Portal-mounted toasts fired imperatively via useToast(). Four intents." },
-] as const;
+/** A demo is a small component so it can own its own controlled state. */
+type Demo = ComponentType;
+type CatalogItem = { name: string; sig: string; blurb: string; demo: Demo };
+type CatalogGroup = { group: string; items: CatalogItem[] };
 
-type ShowcaseId = (typeof SHOWCASE)[number]["id"];
+const CATALOG: CatalogGroup[] = [
+    {
+        group: "Actions & control",
+        items: [
+            { name: "Action", sig: "<Action />", blurb: "The workhorse button — 18 colors, ghost / circle variants, loading, badge.", demo: ActionDemo },
+            { name: "Switch", sig: "<Switch />", blurb: "Controlled on/off toggle with a color accent.", demo: SwitchDemo },
+            { name: "MultiSwitch", sig: "<MultiSwitch />", blurb: "Segmented single-choice control.", demo: MultiSwitchDemo },
+            { name: "Slider", sig: "<Slider />", blurb: "Single value or a two-handle range, with marks.", demo: SliderDemo },
+            { name: "OtpInput", sig: "<OtpInput />", blurb: "One-box-per-digit code entry.", demo: OtpDemo },
+        ],
+    },
+    {
+        group: "Text & forms",
+        items: [
+            { name: "Field + Input", sig: "<Field><Input/></Field>", blurb: "Label, description, error, focus-ringed input.", demo: FieldDemo },
+            { name: "Textarea", sig: "<Textarea />", blurb: "Auto-resizing multiline input.", demo: TextareaDemo },
+            { name: "Select", sig: "<Select />", blurb: "Native or listbox select from a JSON list.", demo: SelectDemo },
+            { name: "Autocomplete", sig: "<Autocomplete />", blurb: "Type-ahead with a filtered option list.", demo: AutocompleteDemo },
+            { name: "Pillbox", sig: "<Pillbox />", blurb: "Token / tag entry as a string array.", demo: PillboxDemo },
+        ],
+    },
+    {
+        group: "Selection",
+        items: [
+            { name: "Checkbox", sig: "<Checkbox />", blurb: "Controlled check with indeterminate support.", demo: CheckboxDemo },
+            { name: "CheckboxGroup", sig: "<CheckboxGroup />", blurb: "Multi-select bound to an array.", demo: CheckboxGroupDemo },
+            { name: "RadioGroup", sig: "<RadioGroup />", blurb: "Single-select bound to one value.", demo: RadioGroupDemo },
+        ],
+    },
+    {
+        group: "Feedback & status",
+        items: [
+            { name: "Badge", sig: "<Badge />", blurb: "Soft / solid / outline pill with a status dot.", demo: BadgeDemo },
+            { name: "Callout", sig: "<Callout />", blurb: "Inline banner in five intents, dismissible.", demo: CalloutDemo },
+            { name: "Progress", sig: "<Progress />", blurb: "Linear or circular, determinate or not.", demo: ProgressDemo },
+            { name: "Skeleton", sig: "<Skeleton />", blurb: "Shimmer placeholders while data loads.", demo: SkeletonDemo },
+            { name: "Toast", sig: "useToast()", blurb: "Portal toasts fired imperatively. Four intents.", demo: ToastDemo },
+            { name: "Tooltip", sig: "<Tooltip />", blurb: "Hover label on any element, placement-aware.", demo: TooltipDemo },
+        ],
+    },
+    {
+        group: "Navigation",
+        items: [
+            { name: "Tabs", sig: "<Tabs />", blurb: "Underlined tabs with controlled active state.", demo: TabsDemo },
+            { name: "Breadcrumbs", sig: "<Breadcrumbs />", blurb: "Trail of links with a custom separator.", demo: BreadcrumbsDemo },
+            { name: "Pagination", sig: "<Pagination />", blurb: "Controlled page list with sibling truncation.", demo: PaginationDemo },
+        ],
+    },
+    {
+        group: "Data & people",
+        items: [
+            { name: "Card", sig: "<Card />", blurb: "Header / Body / Footer slots on a surface.", demo: CardDemo },
+            { name: "Table", sig: "<Table />", blurb: "Composable rows with expandable trays.", demo: TableDemo },
+            { name: "Avatar", sig: "<Avatar />", blurb: "Image or initials with a status ring.", demo: AvatarDemo },
+            { name: "Profile", sig: "<Profile />", blurb: "Avatar + name + subtitle row.", demo: ProfileDemo },
+            { name: "Separator", sig: "<Separator />", blurb: "Divider with an optional centered label.", demo: SeparatorDemo },
+            { name: "StickyNote", sig: "<StickyNote />", blurb: "The shared note primitive — artboard + whiteboard.", demo: StickyNoteDemo },
+        ],
+    },
+];
+
+const FLAT = CATALOG.flatMap((g) => g.items);
+
+// Every other react-fancy primitive — listed so the catalog is complete; each
+// links to its full interactive demo on the package page.
+const MORE = [
+    "Accordion", "AccordionPanel", "Autocomplete", "Brand", "Calendar", "Carousel", "Chart",
+    "ChatDrawer", "ColorPicker", "Command", "Composer", "ContentRenderer", "ContextMenu",
+    "DatePicker", "Dropdown", "Editor", "Emoji", "EmojiSelect", "FileUpload", "Heading", "Icon",
+    "InputTag", "Kanban", "MagicWand", "Menu", "MobileMenu", "Modal", "MoodMeter", "Navbar",
+    "Popover", "Portal", "PromptInput", "ReasonTag", "Sidebar", "Text", "TimeGrid", "TimePicker",
+    "Timeline", "TreeNav",
+];
 
 function ComponentsShowcase({ total }: { total: number }) {
-    const [tab, setTab] = useState<ShowcaseId>("action");
-    const current = SHOWCASE.find((s) => s.id === tab)!;
+    const [active, setActive] = useState(FLAT[0].name);
+    const current = FLAT.find((c) => c.name === active) ?? FLAT[0];
+    const ActiveDemo = current.demo;
 
     return (
         <section className="section" id="components">
@@ -460,41 +531,55 @@ function ComponentsShowcase({ total }: { total: number }) {
                 </div>
                 <h2 className="section-title">Real renders. Hover, click, type.</h2>
                 <p className="section-sub">
-                    A live subset of{" "}
-                    <code style={{ fontFamily: "var(--font-mono)" }}>@particle-academy/react-fancy</code>, running
-                    here in your browser — {total}+ components across the suite. Click a name on the
-                    left to switch.
+                    This is the actual{" "}
+                    <code style={{ fontFamily: "var(--font-mono)" }}>@particle-academy/react-fancy</code> —{" "}
+                    {total}+ primitives across the suite, from a single button to a full spreadsheet.
+                    {" "}
+                    {FLAT.length} of them render live right here; pick any name on the left.
                 </p>
 
                 <div className="showcase">
                     <div className="showcase-nav">
-                        <div className="head">Primitives</div>
-                        {SHOWCASE.map((s) => {
-                            const Ico = s.icon;
-                            return (
-                                <div
-                                    key={s.id}
-                                    className={`item ${tab === s.id ? "active" : ""}`}
-                                    onClick={() => setTab(s.id)}
-                                >
-                                    <Ico size={15} />
-                                    <span>{s.label}</span>
-                                    <span className="num">{String(s.num).padStart(2, "0")}</span>
-                                </div>
-                            );
-                        })}
+                        {CATALOG.map((g) => (
+                            <div key={g.group} className="showcase-group">
+                                <div className="head">{g.group}</div>
+                                {g.items.map((it, idx) => (
+                                    <div
+                                        key={it.name}
+                                        className={`item ${active === it.name ? "active" : ""}`}
+                                        onClick={() => setActive(it.name)}
+                                    >
+                                        <span>{it.name}</span>
+                                        <span className="num">{String(FLAT.indexOf(it) + 1).padStart(2, "0")}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        ))}
                     </div>
                     <div className="showcase-stage">
                         <div className="top">
                             <div>
-                                <h3>{current.label}</h3>
+                                <h3>{current.name}</h3>
                                 <p className="blurb">{current.blurb}</p>
                             </div>
-                            <div className="meta">{`<${current.label} />`}</div>
+                            <div className="meta">{current.sig}</div>
                         </div>
                         <div className="stage-body">
-                            <ShowcaseStage tab={tab} />
+                            <ShowcaseBoundary resetKey={active}>
+                                <ActiveDemo />
+                            </ShowcaseBoundary>
                         </div>
+                    </div>
+                </div>
+
+                <div className="more-lib">
+                    <span className="more-label">The complete library</span>
+                    <div className="more-chips">
+                        {MORE.map((n) => (
+                            <Link key={n} href="/packages/react-fancy" className="more-chip">
+                                {n}
+                            </Link>
+                        ))}
                     </div>
                 </div>
             </div>
@@ -502,193 +587,512 @@ function ComponentsShowcase({ total }: { total: number }) {
     );
 }
 
-function ShowcaseStage({ tab }: { tab: ShowcaseId }) {
+/** A demo with a bad prop shouldn't blank the homepage — isolate + show a note. */
+class ShowcaseBoundary extends Component<
+    { resetKey: unknown; children: ReactNode },
+    { failed: boolean }
+> {
+    state = { failed: false };
+    static getDerivedStateFromError() {
+        return { failed: true };
+    }
+    componentDidCatch(_err: unknown, _info: ErrorInfo) {
+        /* swallow — the fallback is enough; this is a marketing surface */
+    }
+    componentDidUpdate(prev: { resetKey: unknown }) {
+        if (prev.resetKey !== this.props.resetKey && this.state.failed) {
+            this.setState({ failed: false });
+        }
+    }
+    render() {
+        if (this.state.failed) {
+            return (
+                <div className="stage-row" style={{ color: "var(--fg-3)" }}>
+                    This demo hit a snag rendering. See the live version on the package page.
+                </div>
+            );
+        }
+        return this.props.children;
+    }
+}
+
+// ─── Component demos (real react-fancy, controlled) ──────────────────────────
+
+function ActionDemo() {
+    return (
+        <>
+            <div className="stage-row">
+                <span className="row-label">Color</span>
+                <Action color="blue" icon="plus">Create</Action>
+                <Action color="emerald" icon="check">Approve</Action>
+                <Action color="amber" icon="triangle-alert">Warning</Action>
+                <Action color="red" icon="trash-2">Delete</Action>
+                <Action color="violet" icon="sparkles">Generate</Action>
+                <Action color="indigo" icon="link">Connect</Action>
+            </div>
+            <div className="stage-row">
+                <span className="row-label">Ghost · circle · sizes</span>
+                <Action variant="ghost" icon="search">Search</Action>
+                <Action variant="ghost" color="blue" icon="filter">Filter</Action>
+                <Action variant="circle" icon="bell" aria-label="Notifications" />
+                <Action variant="circle" color="violet" icon="sparkles" aria-label="Generate" />
+                <Action size="sm" color="blue">Small</Action>
+                <Action size="lg" color="blue" icon="play">Large</Action>
+            </div>
+            <div className="stage-row">
+                <span className="row-label">State · loading · disabled · badge</span>
+                <Action color="blue" loading>Saving…</Action>
+                <Action color="blue" disabled>Disabled</Action>
+                <Action color="blue" icon="inbox" badge="12">Inbox</Action>
+                <Action active icon="check-check">Active</Action>
+                <Action checked icon="check">Checked</Action>
+            </div>
+        </>
+    );
+}
+
+function SwitchDemo() {
+    const [a, setA] = useState(true);
+    const [b, setB] = useState(false);
+    const [c, setC] = useState(true);
+    return (
+        <div className="stage-row">
+            <Switch checked={a} onCheckedChange={setA} color="violet" label="Agent presence" />
+            <Switch checked={b} onCheckedChange={setB} color="blue" label="Email me" />
+            <Switch checked={c} onCheckedChange={setC} color="emerald" label="Auto-undo" />
+            <Switch checked disabled label="Locked" />
+        </div>
+    );
+}
+
+function MultiSwitchDemo() {
+    const [v, setV] = useState("week");
+    return (
+        <div className="stage-row col" style={{ maxWidth: 360 }}>
+            <MultiSwitch
+                value={v}
+                onValueChange={setV}
+                list={[
+                    { value: "day", label: "Day" },
+                    { value: "week", label: "Week" },
+                    { value: "month", label: "Month" },
+                ]}
+            />
+            <span style={{ fontFamily: "var(--font-mono)", fontSize: 11.5, color: "var(--fg-3)" }}>value: {v}</span>
+        </div>
+    );
+}
+
+function SliderDemo() {
+    const [v, setV] = useState(42);
+    const [r, setR] = useState<[number, number]>([20, 70]);
+    return (
+        <div className="stage-row col" style={{ maxWidth: 460 }}>
+            <Slider value={v} onValueChange={setV} showValue label="Temperature" suffix="%" />
+            <Slider range value={r} onValueChange={setR} label="Price range" min={0} max={100} />
+        </div>
+    );
+}
+
+function OtpDemo() {
+    const [v, setV] = useState("");
+    return (
+        <div className="stage-row col" style={{ maxWidth: 360 }}>
+            <OtpInput value={v} onChange={setV} length={6} />
+            <span style={{ fontFamily: "var(--font-mono)", fontSize: 11.5, color: "var(--fg-3)" }}>
+                {v ? `entered: ${v}` : "type a 6-digit code"}
+            </span>
+        </div>
+    );
+}
+
+function FieldDemo() {
     const [name, setName] = useState("");
     const [hook, setHook] = useState("");
+    return (
+        <div className="stage-row col" style={{ maxWidth: 480 }}>
+            <Field label="Project name" description="Lowercase, no spaces.">
+                <Input
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="onboarding-refresh"
+                    leading={<Search size={15} />}
+                />
+            </Field>
+            <Field label="Webhook URL" error={hook === "fail" ? "Not reachable from our agents." : undefined}>
+                <Input
+                    value={hook}
+                    onChange={(e) => setHook(e.target.value)}
+                    placeholder="https://"
+                    leading={<LinkIcon size={15} />}
+                />
+            </Field>
+        </div>
+    );
+}
+
+function TextareaDemo() {
+    const [v, setV] = useState("Agents are first-class participants in the products they help build.");
+    return (
+        <div className="stage-row col" style={{ maxWidth: 520 }}>
+            <Textarea label="Release note" value={v} onValueChange={setV} autoResize minRows={3} />
+        </div>
+    );
+}
+
+function SelectDemo() {
+    const [v, setV] = useState("prod");
+    return (
+        <div className="stage-row col" style={{ maxWidth: 360 }}>
+            <Select
+                label="Environment"
+                value={v}
+                onValueChange={setV}
+                list={[
+                    { value: "dev", label: "Development" },
+                    { value: "staging", label: "Staging" },
+                    { value: "prod", label: "Production" },
+                ]}
+            />
+        </div>
+    );
+}
+
+function AutocompleteDemo() {
+    const [v, setV] = useState("");
+    return (
+        <div className="stage-row col" style={{ maxWidth: 360 }}>
+            <Autocomplete
+                value={v}
+                onChange={setV}
+                placeholder="Pick a package…"
+                options={[
+                    { value: "react-fancy", label: "react-fancy" },
+                    { value: "fancy-artboard", label: "fancy-artboard" },
+                    { value: "fancy-whiteboard", label: "fancy-whiteboard" },
+                    { value: "fancy-flow", label: "fancy-flow" },
+                    { value: "agent-integrations", label: "agent-integrations" },
+                ]}
+            />
+        </div>
+    );
+}
+
+function PillboxDemo() {
+    const [tags, setTags] = useState<string[]>(["agent", "mcp", "human+"]);
+    return (
+        <div className="stage-row col" style={{ maxWidth: 420 }}>
+            <Pillbox value={tags} onChange={setTags} placeholder="Add a tag and press enter" />
+        </div>
+    );
+}
+
+function CheckboxDemo() {
+    const [a, setA] = useState(true);
+    const [b, setB] = useState(false);
+    return (
+        <div className="stage-row col" style={{ maxWidth: 360 }}>
+            <Checkbox checked={a} onCheckedChange={setA} label="Broadcast AgentActivity events" />
+            <Checkbox checked={b} onCheckedChange={setB} label="Require human confirm on destructive tools" />
+            <Checkbox indeterminate label="Partial selection" />
+        </div>
+    );
+}
+
+function CheckboxGroupDemo() {
+    const [v, setV] = useState<string[]>(["read", "write"]);
+    return (
+        <div className="stage-row col" style={{ maxWidth: 360 }}>
+            <CheckboxGroup
+                label="Bridge permissions"
+                value={v}
+                onValueChange={setV}
+                list={[
+                    { value: "read", label: "Read state" },
+                    { value: "write", label: "Mutate state" },
+                    { value: "move", label: "Move / reorder" },
+                ]}
+            />
+        </div>
+    );
+}
+
+function RadioGroupDemo() {
+    const [v, setV] = useState("staged");
+    return (
+        <div className="stage-row col" style={{ maxWidth: 360 }}>
+            <RadioGroup
+                label="Write mode"
+                value={v}
+                onValueChange={setV}
+                list={[
+                    { value: "live", label: "Live — apply immediately" },
+                    { value: "staged", label: "Staged — agent proposes, human confirms" },
+                ]}
+            />
+        </div>
+    );
+}
+
+function BadgeDemo() {
+    return (
+        <>
+            <div className="stage-row">
+                <span className="row-label">Soft · dot</span>
+                <Badge color="green" dot>Running</Badge>
+                <Badge color="amber" dot>Queued</Badge>
+                <Badge color="blue" dot>Done</Badge>
+                <Badge color="rose" dot>Error</Badge>
+                <Badge color="violet">Beta</Badge>
+                <Badge color="zinc">Draft</Badge>
+            </div>
+            <div className="stage-row">
+                <span className="row-label">Solid · outline</span>
+                <Badge color="blue" variant="solid">solid</Badge>
+                <Badge color="green" variant="solid">live</Badge>
+                <Badge variant="outline">outline</Badge>
+                <Badge color="violet" variant="outline">outline</Badge>
+            </div>
+        </>
+    );
+}
+
+function CalloutDemo() {
+    return (
+        <div className="stage-row col">
+            <Callout color="blue" dismissible>An agent connected over MCP and is now inhabiting this surface.</Callout>
+            <Callout color="green">Tool call <code style={{ fontFamily: "var(--font-mono)" }}>artboard_add_piece</code> succeeded.</Callout>
+            <Callout color="amber">Quota at 80% — consider upgrading before the next run.</Callout>
+        </div>
+    );
+}
+
+function ProgressDemo() {
+    const [v, setV] = useState(64);
+    return (
+        <div className="stage-row col" style={{ maxWidth: 460 }}>
+            <Progress value={v} showValue color="violet" />
+            <div style={{ display: "flex", gap: 18, alignItems: "center" }}>
+                <Progress value={v} variant="circular" showValue color="blue" />
+                <Progress indeterminate color="green" />
+                <Action size="sm" variant="ghost" onClick={() => setV((x) => (x >= 100 ? 10 : x + 12))}>
+                    Advance
+                </Action>
+            </div>
+        </div>
+    );
+}
+
+function SkeletonDemo() {
+    return (
+        <div className="stage-row" style={{ alignItems: "center" }}>
+            <Skeleton shape="circle" width={44} height={44} />
+            <div style={{ display: "flex", flexDirection: "column", gap: 8, flex: 1, minWidth: 160 }}>
+                <Skeleton shape="text" width="60%" />
+                <Skeleton shape="text" width="90%" />
+                <Skeleton shape="rect" height={48} />
+            </div>
+        </div>
+    );
+}
+
+function ToastDemo() {
     const { toast } = useToast();
-
-    if (tab === "action") {
-        return (
-            <>
-                <div className="stage-row">
-                    <span className="row-label">Color</span>
-                    <Action color="blue" icon="plus">Create</Action>
-                    <Action color="emerald" icon="check">Approve</Action>
-                    <Action color="amber" icon="triangle-alert">Warning</Action>
-                    <Action color="red" icon="trash-2">Delete</Action>
-                    <Action color="violet" icon="sparkles">Generate</Action>
-                    <Action color="indigo" icon="link">Connect</Action>
-                </div>
-                <div className="stage-row">
-                    <span className="row-label">Ghost · circle · sizes</span>
-                    <Action variant="ghost" icon="search">Search</Action>
-                    <Action variant="ghost" color="blue" icon="filter">Filter</Action>
-                    <Action variant="circle" icon="bell" aria-label="Notifications" />
-                    <Action variant="circle" color="violet" icon="sparkles" aria-label="Generate" />
-                    <Action size="sm" color="blue">Small</Action>
-                    <Action size="lg" color="blue" icon="play">Large</Action>
-                </div>
-                <div className="stage-row">
-                    <span className="row-label">State · loading · disabled · badge</span>
-                    <Action color="blue" loading>Saving…</Action>
-                    <Action color="blue" disabled>Disabled</Action>
-                    <Action color="blue" icon="inbox" badge="12">Inbox</Action>
-                    <Action active icon="check-check">Active</Action>
-                    <Action checked icon="check">Checked</Action>
-                </div>
-            </>
-        );
-    }
-
-    if (tab === "field") {
-        return (
-            <div className="stage-row col" style={{ maxWidth: 480 }}>
-                <Field label="Project name" description="Lowercase, no spaces.">
-                    <Input
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        placeholder="onboarding-refresh"
-                        leading={<Search size={15} />}
-                    />
-                </Field>
-                <Field label="Webhook URL" error={hook === "fail" ? "Not reachable from our agents." : undefined}>
-                    <Input
-                        value={hook}
-                        onChange={(e) => setHook(e.target.value)}
-                        placeholder="https://"
-                        leading={<LinkIcon size={15} />}
-                    />
-                </Field>
-            </div>
-        );
-    }
-
-    if (tab === "badge") {
-        return (
-            <>
-                <div className="stage-row">
-                    <span className="row-label">Soft · dot</span>
-                    <Badge color="green" dot>Running</Badge>
-                    <Badge color="amber" dot>Queued</Badge>
-                    <Badge color="blue" dot>Done</Badge>
-                    <Badge color="rose" dot>Error</Badge>
-                    <Badge color="violet">Beta</Badge>
-                    <Badge color="zinc">Draft</Badge>
-                </div>
-                <div className="stage-row">
-                    <span className="row-label">Solid · outline</span>
-                    <Badge color="blue" variant="solid">solid</Badge>
-                    <Badge color="green" variant="solid">live</Badge>
-                    <Badge variant="outline">outline</Badge>
-                    <Badge color="violet" variant="outline">outline</Badge>
-                </div>
-            </>
-        );
-    }
-
-    if (tab === "card") {
-        return (
-            <div className="stage-row col" style={{ background: "transparent", border: "none", padding: 0 }}>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
-                    <Card>
-                        <Card.Header>Active sessions</Card.Header>
-                        <Card.Body>
-                            <div style={{ fontSize: 28, fontWeight: 600, letterSpacing: "-0.02em", lineHeight: 1 }}>128</div>
-                            <div style={{ fontSize: 12, color: "var(--emerald-600)", marginTop: 4, fontWeight: 500 }}>
-                                ▲ 12% this week
-                            </div>
-                        </Card.Body>
-                        <Card.Footer>Updated 2 minutes ago</Card.Footer>
-                    </Card>
-                    <Card>
-                        <Card.Header>
-                            <Badge color="green" dot>Live</Badge>
-                        </Card.Header>
-                        <Card.Body>
-                            <div style={{ fontSize: 14, fontWeight: 500, marginBottom: 4 }}>Q4 design review</div>
-                            <div style={{ fontSize: 12.5, color: "var(--fg-3)" }}>
-                                Claude is editing this board. 7 tool calls so far.
-                            </div>
-                        </Card.Body>
-                        <Card.Footer>
-                            <span style={{ fontFamily: "var(--font-mono)" }}>fancy-artboard:7</span>
-                        </Card.Footer>
-                    </Card>
-                </div>
-            </div>
-        );
-    }
-
-    if (tab === "tabs") {
-        return (
-            <div className="stage-row col">
-                <Tabs defaultTab="overview">
-                    <Tabs.List>
-                        <Tabs.Tab value="overview">Overview</Tabs.Tab>
-                        <Tabs.Tab value="sessions">Sessions</Tabs.Tab>
-                        <Tabs.Tab value="agents">Agents</Tabs.Tab>
-                        <Tabs.Tab value="usage">Usage</Tabs.Tab>
-                    </Tabs.List>
-                    <Tabs.Panels>
-                        <Tabs.Panel value="overview">
-                            <div style={{ paddingTop: 10, fontSize: 13, color: "var(--fg-3)" }}>
-                                Controlled tabs — the active tint matches the primary accent, and the underline
-                                animates on the bottom border.
-                            </div>
-                        </Tabs.Panel>
-                        <Tabs.Panel value="sessions">
-                            <div style={{ paddingTop: 10, fontSize: 13, color: "var(--fg-3)" }}>
-                                Three sessions running. Two have an agent attached.
-                            </div>
-                        </Tabs.Panel>
-                        <Tabs.Panel value="agents">
-                            <div style={{ paddingTop: 10, fontSize: 13, color: "var(--fg-3)" }}>
-                                Each agent gets a panel, an on-canvas cursor, and an activity feed.
-                            </div>
-                        </Tabs.Panel>
-                        <Tabs.Panel value="usage">
-                            <div style={{ paddingTop: 10, fontSize: 13, color: "var(--fg-3)" }}>
-                                14.2k tool calls this month across all bridges.
-                            </div>
-                        </Tabs.Panel>
-                    </Tabs.Panels>
-                </Tabs>
-            </div>
-        );
-    }
-
-    // toast
     return (
         <div className="stage-row">
             <span className="row-label">Fire one</span>
-            <Action
-                color="blue"
-                icon="info"
-                onClick={() => toast({ variant: "info", title: "Heads up", description: "Your build finished." })}
-            >
+            <Action color="blue" icon="info" onClick={() => toast({ variant: "info", title: "Heads up", description: "Your build finished." })}>
                 Info
             </Action>
-            <Action
-                color="emerald"
-                icon="check"
-                onClick={() => toast({ variant: "success", title: "Project created", description: "Q4 review is ready." })}
-            >
+            <Action color="emerald" icon="check" onClick={() => toast({ variant: "success", title: "Project created", description: "Q4 review is ready." })}>
                 Success
             </Action>
-            <Action
-                color="amber"
-                icon="triangle-alert"
-                onClick={() => toast({ variant: "warning", title: "Quota at 80%", description: "Consider upgrading." })}
-            >
+            <Action color="amber" icon="triangle-alert" onClick={() => toast({ variant: "warning", title: "Quota at 80%", description: "Consider upgrading." })}>
                 Warning
             </Action>
-            <Action
-                color="red"
-                icon="x-circle"
-                onClick={() => toast({ variant: "error", title: "Tool failed", description: "artboard_add_piece returned 500." })}
-            >
+            <Action color="red" icon="x-circle" onClick={() => toast({ variant: "error", title: "Tool failed", description: "artboard_add_piece returned 500." })}>
                 Danger
             </Action>
+        </div>
+    );
+}
+
+function TooltipDemo() {
+    return (
+        <div className="stage-row">
+            <Tooltip content="Stable handle: data-piece-id='hero-v3'">
+                <Action variant="ghost" icon="info">Hover for the handle</Action>
+            </Tooltip>
+            <Tooltip content="Top placement" placement="top">
+                <Action variant="ghost">Top</Action>
+            </Tooltip>
+            <Tooltip content="Right placement" placement="right">
+                <Action variant="ghost">Right</Action>
+            </Tooltip>
+        </div>
+    );
+}
+
+function TabsDemo() {
+    return (
+        <div className="stage-row col">
+            <Tabs defaultTab="overview">
+                <Tabs.List>
+                    <Tabs.Tab value="overview">Overview</Tabs.Tab>
+                    <Tabs.Tab value="sessions">Sessions</Tabs.Tab>
+                    <Tabs.Tab value="agents">Agents</Tabs.Tab>
+                    <Tabs.Tab value="usage">Usage</Tabs.Tab>
+                </Tabs.List>
+                <Tabs.Panels>
+                    <Tabs.Panel value="overview">
+                        <div style={{ paddingTop: 10, fontSize: 13, color: "var(--fg-3)" }}>
+                            Controlled tabs — the active tint matches the primary accent.
+                        </div>
+                    </Tabs.Panel>
+                    <Tabs.Panel value="sessions">
+                        <div style={{ paddingTop: 10, fontSize: 13, color: "var(--fg-3)" }}>
+                            Three sessions running. Two have an agent attached.
+                        </div>
+                    </Tabs.Panel>
+                    <Tabs.Panel value="agents">
+                        <div style={{ paddingTop: 10, fontSize: 13, color: "var(--fg-3)" }}>
+                            Each agent gets a panel, an on-canvas cursor, and an activity feed.
+                        </div>
+                    </Tabs.Panel>
+                    <Tabs.Panel value="usage">
+                        <div style={{ paddingTop: 10, fontSize: 13, color: "var(--fg-3)" }}>
+                            14.2k tool calls this month across all bridges.
+                        </div>
+                    </Tabs.Panel>
+                </Tabs.Panels>
+            </Tabs>
+        </div>
+    );
+}
+
+function BreadcrumbsDemo() {
+    return (
+        <div className="stage-row">
+            <Breadcrumbs>
+                <Breadcrumbs.Item href="#">Packages</Breadcrumbs.Item>
+                <Breadcrumbs.Item href="#">fancy-artboard</Breadcrumbs.Item>
+                <Breadcrumbs.Item active>ArtPiece</Breadcrumbs.Item>
+            </Breadcrumbs>
+        </div>
+    );
+}
+
+function PaginationDemo() {
+    const [page, setPage] = useState(3);
+    return (
+        <div className="stage-row">
+            <Pagination page={page} onPageChange={setPage} totalPages={12} />
+        </div>
+    );
+}
+
+function CardDemo() {
+    return (
+        <div className="stage-row col" style={{ background: "transparent", border: "none", padding: 0 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+                <Card>
+                    <Card.Header>Active sessions</Card.Header>
+                    <Card.Body>
+                        <div style={{ fontSize: 28, fontWeight: 600, letterSpacing: "-0.02em", lineHeight: 1 }}>128</div>
+                        <div style={{ fontSize: 12, color: "var(--emerald-600)", marginTop: 4, fontWeight: 500 }}>
+                            ▲ 12% this week
+                        </div>
+                    </Card.Body>
+                    <Card.Footer>Updated 2 minutes ago</Card.Footer>
+                </Card>
+                <Card>
+                    <Card.Header>
+                        <Badge color="green" dot>Live</Badge>
+                    </Card.Header>
+                    <Card.Body>
+                        <div style={{ fontSize: 14, fontWeight: 500, marginBottom: 4 }}>Q4 design review</div>
+                        <div style={{ fontSize: 12.5, color: "var(--fg-3)" }}>
+                            Claude is editing this board. 7 tool calls so far.
+                        </div>
+                    </Card.Body>
+                    <Card.Footer>
+                        <span style={{ fontFamily: "var(--font-mono)" }}>fancy-artboard:7</span>
+                    </Card.Footer>
+                </Card>
+            </div>
+        </div>
+    );
+}
+
+function TableDemo() {
+    return (
+        <div className="stage-row col" style={{ background: "transparent", border: "none", padding: 0 }}>
+            <Table>
+                <Table.Head>
+                    <Table.Row>
+                        <Table.Cell>Tool</Table.Cell>
+                        <Table.Cell>Surface</Table.Cell>
+                        <Table.Cell>Calls</Table.Cell>
+                    </Table.Row>
+                </Table.Head>
+                <Table.Body>
+                    <Table.Row>
+                        <Table.Cell>artboard_add_piece</Table.Cell>
+                        <Table.Cell>fancy-artboard</Table.Cell>
+                        <Table.Cell>312</Table.Cell>
+                    </Table.Row>
+                    <Table.Row>
+                        <Table.Cell>whiteboard_move</Table.Cell>
+                        <Table.Cell>fancy-whiteboard</Table.Cell>
+                        <Table.Cell>1,204</Table.Cell>
+                    </Table.Row>
+                    <Table.Row>
+                        <Table.Cell>sheet_set_cell</Table.Cell>
+                        <Table.Cell>fancy-sheets</Table.Cell>
+                        <Table.Cell>5,790</Table.Cell>
+                    </Table.Row>
+                </Table.Body>
+            </Table>
+        </div>
+    );
+}
+
+function AvatarDemo() {
+    return (
+        <div className="stage-row" style={{ alignItems: "center" }}>
+            <Avatar fallback="GB" status="online" />
+            <Avatar fallback="AI" size="lg" status="busy" />
+            <Avatar fallback="QA" size="sm" status="away" />
+            <Avatar fallback="42" size="xl" />
+        </div>
+    );
+}
+
+function ProfileDemo() {
+    return (
+        <div className="stage-row col">
+            <Profile name="Glenn Born" subtitle="Maintainer · Particle Academy" fallback="GB" status="online" />
+            <Profile name="Claude" subtitle="Agent · fancy-ui.mcp" fallback="C" status="busy" />
+        </div>
+    );
+}
+
+function SeparatorDemo() {
+    return (
+        <div className="stage-row col">
+            <div>Human edits</div>
+            <Separator label="agent takes over" />
+            <div>Agent edits</div>
+        </div>
+    );
+}
+
+function StickyNoteDemo() {
+    return (
+        <div className="stage-row" style={{ gap: 18, alignItems: "flex-start" }}>
+            <StickyNote defaultValue="Cut the second CTA — it competes." color="yellow" rotate={-2} />
+            <StickyNote defaultValue="Tighter hero grid?" color="violet" rotate={1.5} />
+            <StickyNote defaultValue="Gradient reads well in dark." color="blue" rotate={-1} />
         </div>
     );
 }
@@ -749,81 +1153,97 @@ function Philosophy() {
     );
 }
 
-// ─── Install ──────────────────────────────────────────────────────────────────
+// ─── Quick start — the two ways to add a component + the registry MCP ─────────
 
-const INSTALL_BLOCKS: Record<"npm" | "pnpm" | "composer", string> = {
-    npm: `<span class="tok-c"># Install the core component library</span>
+const PACKAGE_CODE = `<span class="tok-c">// 1 · Install the package — import the component.</span>
 <span class="tok-p">$</span> npm install <span class="tok-s">@particle-academy/react-fancy</span>
 
-<span class="tok-c"># Add only what you need</span>
-<span class="tok-p">$</span> npm install <span class="tok-s">@particle-academy/fancy-artboard</span> <span class="tok-s">@particle-academy/agent-integrations</span>`,
-    pnpm: `<span class="tok-p">$</span> pnpm add <span class="tok-s">@particle-academy/react-fancy</span>
-<span class="tok-p">$</span> pnpm add <span class="tok-s">@particle-academy/fancy-artboard</span> <span class="tok-s">@particle-academy/agent-integrations</span>`,
-    composer: `<span class="tok-c"># PHP / Laravel — the document writers + Inertia bridge</span>
-<span class="tok-p">$</span> composer require <span class="tok-s">particle-academy/holy-sheet</span>
-<span class="tok-p">$</span> composer require <span class="tok-s">particle-academy/dark-slide</span>`,
-};
+<span class="tok-k">import</span> { Badge } <span class="tok-k">from</span> <span class="tok-s">"@particle-academy/react-fancy"</span>;
+&lt;<span class="tok-t">Badge</span> <span class="tok-a">color</span>=<span class="tok-s">"green"</span> <span class="tok-a">dot</span>&gt;Live&lt;/<span class="tok-t">Badge</span>&gt;`;
 
-function Install() {
-    const [tab, setTab] = useState<keyof typeof INSTALL_BLOCKS>("npm");
+const VENDOR_CODE = `<span class="tok-c"># 2 · Vendor the source — copy it into your repo, own it.</span>
+<span class="tok-p">$</span> npx <span class="tok-s">fancy-ui@latest</span> add badge
+<span class="tok-c"># → src/components/fancy/badge/</span>
+
+<span class="tok-k">import</span> { Badge } <span class="tok-k">from</span> <span class="tok-s">"@/components/fancy/badge"</span>;`;
+
+const MCP_CODE = `<span class="tok-c">// Add the registry MCP to your editor — .mcp.json</span>
+{
+  <span class="tok-a">"mcpServers"</span>: {
+    <span class="tok-a">"fancy-ui"</span>: { <span class="tok-a">"url"</span>: <span class="tok-s">"https://ui.particle.academy/mcp"</span> }
+  }
+}
+<span class="tok-c">// → agent calls search_components + install_instructions</span>`;
+
+function QuickStart() {
+    const mono = { fontFamily: "var(--font-mono)" } as const;
     return (
         <section className="section" id="install">
-            <div className="container install">
-                <div>
-                    <div className="eyebrow-row">
-                        <span>Quick start</span>
+            <div className="container">
+                <div className="eyebrow-row">
+                    <span>Quick start</span>
+                </div>
+                <h2 className="section-title">Two ways to add a component.</h2>
+                <p className="section-sub">
+                    Install the npm package and import it, or vendor the source with{" "}
+                    <code style={mono}>npx fancy-ui add</code> and own the code. PHP packages install
+                    with <code style={mono}>composer require</code>. Either way, point your coding
+                    agent at our hosted registry MCP — <code style={mono}>ui.particle.academy/mcp</code>{" "}
+                    — and it'll search the registry and return the exact install commands.
+                </p>
+
+                <div className="qs-grid">
+                    <div className="qs-card">
+                        <div className="qs-head">
+                            <span className="qs-num">1</span>
+                            <div>
+                                <div className="qs-title">Install the package</div>
+                                <div className="qs-sub">npm / pnpm / yarn — version-pinned.</div>
+                            </div>
+                        </div>
+                        <div className="codeblock" dangerouslySetInnerHTML={{ __html: PACKAGE_CODE }} />
                     </div>
-                    <h2 className="section-title">Bring it in piecemeal.</h2>
-                    <p className="section-sub">
-                        Every JS package ships TypeScript types, a single peer dep on Tailwind v4, and
-                        a Vite-friendly ESM build. PHP packages are framework-agnostic with an optional
-                        Laravel adapter.
-                    </p>
-                    <div style={{ display: "flex", gap: 10, marginTop: 8 }}>
-                        <Link className="btn btn-primary" href="/docs">
-                            <BookOpen size={15} />
-                            Read the docs
-                        </Link>
-                        <a
-                            className="btn btn-ghost"
-                            href="https://github.com/Particle-Academy"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            <Github size={15} />
-                            View on GitHub
-                        </a>
+                    <div className="qs-card">
+                        <div className="qs-head">
+                            <span className="qs-num qs-num-alt">2</span>
+                            <div>
+                                <div className="qs-title">Vendor the source</div>
+                                <div className="qs-sub">Copy it in — yours to read and edit.</div>
+                            </div>
+                        </div>
+                        <div className="codeblock" dangerouslySetInnerHTML={{ __html: VENDOR_CODE }} />
                     </div>
                 </div>
-                <div className="install-card">
-                    <div className="install-tabs">
-                        {(["npm", "pnpm", "composer"] as const).map((k) => (
-                            <button
-                                key={k}
-                                className={`install-tab ${tab === k ? "active" : ""}`}
-                                onClick={() => setTab(k)}
-                            >
-                                {k}
-                            </button>
-                        ))}
+
+                <div className="qs-mcp">
+                    <div className="qs-mcp-copy">
+                        <div className="qs-mcp-title">
+                            <span className="qs-mcp-dot" /> Or let your agent do it
+                        </div>
+                        <p>
+                            Wire our hosted registry MCP into Claude Code, Cursor, or VS Code. Your
+                            agent calls <code style={mono}>list_components</code>,{" "}
+                            <code style={mono}>search_components</code>, and{" "}
+                            <code style={mono}>install_instructions</code> against the live registry —
+                            then adds the component the right way, no guessing from memory.
+                        </p>
                     </div>
-                    <div className="codeblock" dangerouslySetInnerHTML={{ __html: INSTALL_BLOCKS[tab] }} />
-                    <div
-                        style={{
-                            padding: "10px 14px",
-                            borderTop: "1px solid var(--border-1)",
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 8,
-                            fontSize: 11.5,
-                            color: "var(--fg-3)",
-                            background: "var(--bg-1)",
-                            fontFamily: "var(--font-mono)",
-                        }}
-                    >
-                        <Info size={12} />
-                        Requires Node 18+, React 19, Tailwind 4.
-                    </div>
+                    <div className="codeblock" dangerouslySetInnerHTML={{ __html: MCP_CODE }} />
+                </div>
+
+                <div style={{ display: "flex", gap: 10, marginTop: 24, flexWrap: "wrap" }}>
+                    <Link className="btn btn-primary" href="/docs">
+                        <BookOpen size={15} />
+                        Read the docs
+                    </Link>
+                    <Link className="btn btn-ghost" href="/agent-playground">
+                        <Radio size={15} />
+                        Try it in the Playground
+                    </Link>
+                    <a className="btn btn-ghost" href="https://github.com/Particle-Academy" target="_blank" rel="noopener noreferrer">
+                        <Github size={15} />
+                        View on GitHub
+                    </a>
                 </div>
             </div>
         </section>
@@ -833,34 +1253,10 @@ function Install() {
 // ─── Explore strip ─────────────────────────────────────────────────────────
 
 const EXPLORE = [
-    {
-        href: "/starter-kits",
-        icon: Boxes,
-        title: "Starter Kits",
-        body: "Vertical demos — clone, study, adapt.",
-        tag: "templates",
-    },
-    {
-        href: "/dreaming",
-        icon: Sparkles,
-        title: "Dreaming",
-        body: "Speculative components you can vote on.",
-        tag: "speculative",
-    },
-    {
-        href: "/showcase",
-        icon: Cpu,
-        title: "Designer Showcase",
-        body: "Sites and repos built with Fancy UI.",
-        tag: "community",
-    },
-    {
-        href: "/leaderboard",
-        icon: ArrowRight,
-        title: "Leaderboard",
-        body: "Top contributors by merged PRs and votes.",
-        tag: "live",
-    },
+    { href: "/starter-kits", icon: Boxes, title: "Starter Kits", body: "Vertical demos — clone, study, adapt.", tag: "templates" },
+    { href: "/dreaming", icon: Sparkles, title: "Dreaming", body: "Speculative components you can vote on.", tag: "speculative" },
+    { href: "/showcase", icon: Cpu, title: "Designer Showcase", body: "Sites and repos built with Fancy UI.", tag: "community" },
+    { href: "/leaderboard", icon: ArrowRight, title: "Leaderboard", body: "Top contributors by merged PRs and votes.", tag: "live" },
 ] as const;
 
 function Explore() {

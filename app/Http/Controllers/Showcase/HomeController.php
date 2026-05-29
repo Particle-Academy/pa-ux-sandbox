@@ -9,31 +9,61 @@ use Inertia\Response;
 
 class HomeController extends Controller
 {
+    /**
+     * PHP document writers — part of the suite, but not UI. They live in the
+     * companion-packages footnote on the homepage rather than the main UI grid.
+     * Still registered in PackageRegistry::all(), so their detail pages + docs
+     * keep working.
+     */
+    private const NON_UI = ['holy-sheet', 'dark-slide'];
+
     public function __invoke(): Response
     {
-        $packages = collect(PackageRegistry::all())->map(fn (array $p) => [
-            'slug' => $p['slug'],
-            'name' => $p['name'],
-            'tagline' => $p['tagline'],
-            'language' => $p['language'],
-            'components_count' => count($p['components'] ?? []),
-            'glyph' => $this->glyphFor($p['slug']),
-            'install' => $p['npm'] ?? $p['composer'] ?? $p['name'],
-            'kind' => isset($p['npm']) ? 'npm' : 'composer',
-        ])->all();
+        $all = collect(PackageRegistry::all());
 
-        $companions = collect(PackageRegistry::companions())->map(fn (array $c) => [
-            'slug' => $c['slug'],
-            'name' => $c['name'],
-            'tagline' => $c['tagline'],
-            'composer' => $c['composer'],
-            'language' => $c['language'],
-        ])->all();
+        $packages = $all
+            ->reject(fn (array $p) => in_array($p['slug'], self::NON_UI, true))
+            ->map(fn (array $p) => [
+                'slug' => $p['slug'],
+                'name' => $p['name'],
+                'tagline' => $p['tagline'],
+                'language' => $p['language'],
+                'components_count' => count($p['components'] ?? []),
+                'glyph' => $this->glyphFor($p['slug']),
+                'install' => $p['npm'] ?? $p['composer'] ?? $p['name'],
+                'kind' => isset($p['npm']) ? 'npm' : 'composer',
+            ])
+            ->values()
+            ->all();
+
+        // The PHP doc writers lead the companion list (suite packages), then the
+        // sandbox's own Composer infra packages.
+        $writers = $all
+            ->filter(fn (array $p) => in_array($p['slug'], self::NON_UI, true))
+            ->map(fn (array $p) => [
+                'slug' => $p['slug'],
+                'name' => $p['name'],
+                'tagline' => $p['tagline'],
+                'composer' => $p['composer'],
+                'language' => $p['language'],
+            ]);
+
+        $companions = $writers
+            ->concat(collect(PackageRegistry::companions())->map(fn (array $c) => [
+                'slug' => $c['slug'],
+                'name' => $c['name'],
+                'tagline' => $c['tagline'],
+                'composer' => $c['composer'],
+                'language' => $c['language'],
+            ]))
+            ->values()
+            ->all();
 
         return Inertia::render('Home', [
             'packages' => $packages,
             'companions' => $companions,
-            'total_components' => collect(PackageRegistry::all())
+            'total_components' => $all
+                ->reject(fn (array $p) => in_array($p['slug'], self::NON_UI, true))
                 ->sum(fn (array $p) => count($p['components'] ?? [])),
         ]);
     }

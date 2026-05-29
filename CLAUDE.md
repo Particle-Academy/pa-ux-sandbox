@@ -171,9 +171,9 @@ The Fancy UI strategic goal is **complete app surfaces where agents drive the UI
 
 **"Ship" = full publish flow** (bump → commit → tag → push tag → wait
 for CI/Packagist → update consumer dep), never just a branch push. The
-complete runbook — new-package bootstrap, OIDC Trusted Publishing,
-workflow gotchas, PHP vs TS flows — lives in
-[`docs/publishing.md`](./docs/publishing.md). Read it before shipping.
+full workspace publishing protocol (new-package bootstrap, OIDC Trusted
+Publishing, workflow gotchas, PHP vs TS flows) is a workspace-level
+document at the workspace root: `../docs/publishing.md`.
 
 ===
 

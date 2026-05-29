@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Action, Badge, Card, Heading, Tabs, Text, Textarea, Toast, useToast } from "@particle-academy/react-fancy";
 import { Slide, defaultTheme, type Deck } from "@particle-academy/fancy-slides";
+import { defaultElementRegistry } from "@particle-academy/fancy-slides/registry";
 import "@particle-academy/fancy-slides/styles.css";
 
 /**
@@ -19,6 +20,7 @@ const sampleDeck: Deck = {
         {
             id: "s1",
             layout: "title-content",
+            transition: { kind: "fade", duration: 500 },
             elements: [
                 {
                     id: "h",
@@ -62,6 +64,49 @@ const sampleDeck: Deck = {
                 },
             ],
             background: { gradient: "linear-gradient(135deg, #faf5ff 0%, #ffffff 60%)" },
+        },
+        {
+            id: "s2",
+            layout: "two-column",
+            transition: { kind: "slide", direction: "left", duration: 450 },
+            elements: [
+                {
+                    id: "h2",
+                    type: "text",
+                    x: 0.06,
+                    y: 0.07,
+                    w: 0.88,
+                    h: 0.1,
+                    content: "## Native charts in the .pptx",
+                    format: "markdown",
+                    style: { fontSize: 32, weight: "semibold" },
+                },
+                {
+                    id: "bar",
+                    type: "chart",
+                    x: 0.06,
+                    y: 0.22,
+                    w: 0.43,
+                    h: 0.64,
+                    option: {
+                        xAxis: { data: ["Q1", "Q2", "Q3", "Q4"] },
+                        series: [{ type: "bar", name: "Revenue", data: [42, 58, 71, 96] }],
+                    },
+                },
+                {
+                    id: "pie",
+                    type: "chart",
+                    x: 0.52,
+                    y: 0.22,
+                    w: 0.42,
+                    h: 0.64,
+                    option: {
+                        series: [
+                            { type: "pie", data: [{ name: "Web", value: 48 }, { name: "Mobile", value: 33 }, { name: "API", value: 19 }] },
+                        ],
+                    },
+                },
+            ],
         },
     ],
 };
@@ -178,7 +223,7 @@ function DarkSlideDemoBody() {
                     </Card.Header>
                     <div className="border-t border-zinc-100 dark:border-zinc-800">
                         {parsed.ok && (parsed.deck as Deck).slides?.[0] ? (
-                            <Slide slide={(parsed.deck as Deck).slides[0]} theme={(parsed.deck as Deck).theme} />
+                            <Slide slide={(parsed.deck as Deck).slides[0]} theme={(parsed.deck as Deck).theme} renderElement={defaultElementRegistry} />
                         ) : (
                             <div className="grid h-56 place-items-center text-sm text-zinc-500">
                                 {parsed.ok ? "Empty deck" : "JSON error — see badge above"}
@@ -193,7 +238,7 @@ function DarkSlideDemoBody() {
                     <Tabs.List>
                         <Tabs.Tab value="api">PHP API</Tabs.Tab>
                         <Tabs.Tab value="route">Laravel route</Tabs.Tab>
-                        <Tabs.Tab value="features">v0.2 features</Tabs.Tab>
+                        <Tabs.Tab value="features">v0.4 features</Tabs.Tab>
                     </Tabs.List>
                     <Tabs.Panels>
                         <Tabs.Panel value="api">
@@ -227,12 +272,12 @@ return response($bytes, 200, [
                         </Tabs.Panel>
                         <Tabs.Panel value="features">
                             <ul className="list-disc space-y-1 pl-5 text-sm text-zinc-600 dark:text-zinc-300">
-                                <li>Inline markdown spans (`**bold**`, `*italic*`, `` `code` ``) → real `&lt;a:r&gt;` runs</li>
-                                <li>Real `&lt;a:tbl&gt;` for table elements — header + striped body rows</li>
-                                <li>Gradient backgrounds — parses CSS `linear-gradient(...)` to `&lt;a:gradFill&gt;`</li>
-                                <li>Image embedding (data URIs + local paths)</li>
-                                <li>Speaker notes via `ppt/notesSlides/notesSlideN.xml`</li>
-                                <li>6 shape primitives (rect / rounded-rect / ellipse / triangle / line / arrow)</li>
+                                <li><strong>Native charts</strong> — bar / line / area / pie / scatter as real `&lt;c:chart&gt;` parts (editable in PowerPoint), image/placeholder fallback</li>
+                                <li><strong>Slide transitions</strong> — `&lt;p:transition&gt;` fade / push / zoom from `slide.transition`</li>
+                                <li><strong>Images</strong> — fit (cover center-crop, contain letterbox) + explicit crop via `&lt;a:srcRect&gt;`</li>
+                                <li><strong>Theme + 8 layouts</strong> — color scheme + font scheme + real `slideLayout` parts</li>
+                                <li>Inline markdown spans + syntax-highlighted code, real `&lt;a:tbl&gt;` tables</li>
+                                <li>Gradient / solid / image backgrounds, speaker notes, 6 shape primitives</li>
                             </ul>
                         </Tabs.Panel>
                     </Tabs.Panels>

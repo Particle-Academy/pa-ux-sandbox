@@ -21,11 +21,12 @@ import "@particle-academy/fancy-slides/styles.css";
 const sampleDeck: Deck = {
     id: "demo-deck",
     title: "Fancy Slides — Sample Deck",
-    theme: defaultTheme,
+    theme: { ...defaultTheme, defaultTransition: { kind: "fade", duration: 400 } },
     slides: [
         {
             id: "s-intro",
             layout: "title",
+            transition: { kind: "fade", duration: 600 },
             elements: [
                 {
                     id: "e-title",
@@ -84,6 +85,7 @@ const sampleDeck: Deck = {
         {
             id: "s-chart",
             layout: "title-content",
+            transition: { kind: "zoom", duration: 400 },
             elements: [
                 {
                     id: "e-chart-h",
@@ -192,6 +194,7 @@ import { defaultElementRegistry } from "@particle-academy/fancy-slides/registry"
         {
             id: "s-shape",
             layout: "blank",
+            transition: { kind: "slide", direction: "left", duration: 450 },
             elements: [
                 {
                     id: "e-shape-bg",

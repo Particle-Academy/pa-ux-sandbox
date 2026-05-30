@@ -21,17 +21,94 @@ class RegistrySource
     /** @return list<RegistryItem> */
     public function all(): array
     {
-        return $this->cached('registry.all', function (): array {
-            $items = [];
-            foreach (PackageRegistry::all() as $pkg) {
-                foreach ($this->itemsForPackage($pkg) as $item) {
-                    $items[] = $item;
-                }
-            }
+        // Key the cache on the artifact fingerprint so deploying a new
+        // registry.json (or this fix itself) busts the cache automatically — the
+        // pre-fix empty result won't linger for the 15-min TTL.
+        return $this->cached('registry.all.' . $this->cacheFingerprint(), function (): array {
+            // Dev / CI: the sibling package source is on disk → scan it live.
+            // Production (Forge deploys only px-ui-sandbox, no siblings) → load
+            // the precompiled artifact committed via `php artisan registry:build`.
+            $items = $this->liveSourceAvailable() ? $this->scanLive() : $this->loadCompiled();
             usort($items, fn (RegistryItem $a, RegistryItem $b) => $a->name <=> $b->name);
 
             return $items;
         });
+    }
+
+    /** A cache-busting fingerprint: 'live' in dev, else the artifact's mtime. */
+    private function cacheFingerprint(): string
+    {
+        if ($this->liveSourceAvailable()) {
+            return 'live';
+        }
+        $path = self::compiledPath();
+
+        return is_file($path) ? (string) filemtime($path) : 'missing';
+    }
+
+    /**
+     * Scan the sibling package source trees on disk. Only usable where the
+     * fancy-ui workspace siblings exist (local dev, CI). @return list<RegistryItem>
+     */
+    public function scanLive(): array
+    {
+        $items = [];
+        foreach (PackageRegistry::all() as $pkg) {
+            foreach ($this->itemsForPackage($pkg) as $item) {
+                $items[] = $item;
+            }
+        }
+
+        return $items;
+    }
+
+    /** Whether any package's source tree is readable on disk (i.e. we can scan live). */
+    public function liveSourceAvailable(): bool
+    {
+        foreach (PackageRegistry::all() as $pkg) {
+            $slug = $pkg['slug'] ?? null;
+            if (! is_string($slug)) {
+                continue;
+            }
+            if (is_dir(dirname(base_path()) . '/' . $slug) || is_dir(base_path('packages/' . $slug))) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /** Path to the compiled registry artifact, committed + deployed with the app. */
+    public static function compiledPath(): string
+    {
+        return resource_path('registry/registry.json');
+    }
+
+    /**
+     * Load the precompiled registry artifact (production, where the sibling
+     * source isn't deployed). Degrades to an empty registry — and reports it —
+     * rather than crashing the MCP / endpoints if the artifact is missing.
+     *
+     * @return list<RegistryItem>
+     */
+    private function loadCompiled(): array
+    {
+        $path = self::compiledPath();
+        if (! is_file($path)) {
+            report(new RuntimeException(
+                "Compiled registry artifact missing at {$path}. Run `php artisan registry:build` and commit it."
+            ));
+
+            return [];
+        }
+
+        $data = json_decode((string) file_get_contents($path), true);
+        $rows = is_array($data) ? ($data['items'] ?? []) : [];
+
+        return array_values(array_map(
+            fn (array $row): RegistryItem => RegistryItem::fromArray($row),
+            $rows,
+        ));
     }
 
     public function find(string $slug): ?RegistryItem

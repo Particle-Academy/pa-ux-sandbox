@@ -1,8 +1,30 @@
 <?php
 
+use App\Support\Registry\RegistryItem;
+use App\Support\Registry\RegistrySource;
 use Tests\TestCase;
 
 uses(TestCase::class);
+
+it('serves the registry from the compiled artifact when sibling source is absent (production parity)', function () {
+    // Simulate Forge: only px-ui-sandbox is deployed — no ../react-fancy etc.
+    // on disk — so RegistrySource must fall back to the committed artifact
+    // (resources/registry/registry.json) instead of coming up empty.
+    $source = Mockery::mock(RegistrySource::class)->makePartial();
+    $source->shouldReceive('liveSourceAvailable')->andReturn(false);
+
+    $items = $source->all();
+
+    expect($items)->not->toBeEmpty();
+    expect($items[0])->toBeInstanceOf(RegistryItem::class);
+    // Full bundles (with source files) survive the round-trip through the artifact.
+    expect($items[0]->files)->toBeArray()->not->toBeEmpty();
+    // The compiled set matches the live scan — same source of truth.
+    expect(count($items))->toBe(count($source->scanLive()));
+})->skip(
+    fn () => ! is_file(RegistrySource::compiledPath()),
+    'registry artifact not built — run `php artisan registry:build`',
+);
 
 it('serves a shadcn-compatible registry index', function () {
     $response = $this->get('/r/index.json');

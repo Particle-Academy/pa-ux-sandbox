@@ -27,6 +27,27 @@ class RegistryItem
     ) {}
 
     /** @return array<string, mixed> */
+    /**
+     * Rebuild an item from its {@see toArray()} payload — used to load the
+     * precompiled registry artifact in production (where the sibling package
+     * source isn't on disk).
+     *
+     * @param  array<string, mixed>  $data
+     */
+    public static function fromArray(array $data): self
+    {
+        return new self(
+            name: (string) ($data['name'] ?? ''),
+            title: (string) ($data['title'] ?? ''),
+            description: (string) ($data['description'] ?? ''),
+            package: (string) ($data['package'] ?? ''),
+            files: $data['files'] ?? [],
+            dependencies: $data['dependencies'] ?? [],
+            registryDependencies: $data['registryDependencies'] ?? [],
+            type: (string) ($data['type'] ?? 'registry:ui'),
+        );
+    }
+
     public function toArray(): array
     {
         return [

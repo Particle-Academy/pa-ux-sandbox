@@ -13,18 +13,29 @@ The Install-MCP server is a hosted streamable-HTTP MCP endpoint that any MCP-cap
 
 | Tool | Input | Output |
 |---|---|---|
-| `list_components` | (none) | The full registry index. |
-| `search_components` | `{ query: string }` | Matching components (substring across name + title + description). |
-| `get_component` | `{ name: string }` | The full registry-item bundle for that component. |
-| `install_instructions` | `{ name: string }` | A short text recipe: the npm command + CLI command + import line. |
+| `list-components` | (none) | The full registry index. |
+| `search-components` | `{ query: string }` | Matching components (substring across name + title + description). |
+| `get-component` | `{ name: string }` | The full registry-item bundle for that component. |
+| `install-instructions` | `{ name: string }` | A short text recipe: the npm command + CLI command + import line. |
 
-> **Status:** Live at [`https://ui.particle.academy/mcp`](https://ui.particle.academy/mcp) — streamable HTTP MCP. Add it to your IDE today using the config snippets below.
+> **Status:** Live at [`https://ui.particle.academy/mcp`](https://ui.particle.academy/mcp) — streamable HTTP MCP. Add it to your IDE today using the plugin (Claude Code) or the config snippets below.
 
-### Configuring your IDE
+### Quickest: the Claude Code plugin
 
-Different IDEs read MCP server config from different files. Here are the common ones:
+Claude Code users can skip manual config. Install the **Fancy UI plugin** — it registers this MCP server with the correct transport and bundles two skills (`fancy-ui:components` for finding/installing components, `fancy-ui:human-plus` for building agent-inhabitable apps):
 
-**Claude Code** — add to `.mcp.json` at your repo root:
+```text
+/plugin marketplace add Particle-Academy/fancy-ui-plugin
+/plugin install fancy-ui@fancy-ui
+```
+
+Approve the `fancy-ui` MCP server when prompted, then run `/mcp` to confirm it's connected. Source: [Particle-Academy/fancy-ui-plugin](https://github.com/Particle-Academy/fancy-ui-plugin).
+
+### Configuring your IDE manually
+
+Prefer to wire it up by hand (or on Cursor / VS Code)? Different IDEs read MCP server config from different files. The `"type": "http"` line is **required** — a remote streamable-HTTP server won't connect without it.
+
+**Claude Code** — add to `.mcp.json` at your repo root (or just use the plugin above):
 
 ```json
 {
@@ -69,15 +80,15 @@ Once connected, you ask in natural language:
 
 > "Show me all Fancy UI components related to navigation."
 
-The agent calls `search_components({ query: "navigation" })` and reports `navbar`, `breadcrumbs`, `sidebar`, `mobile-menu`, `tree-nav`.
+The agent calls `search-components({ query: "navigation" })` and reports `navbar`, `breadcrumbs`, `sidebar`, `mobile-menu`, `tree-nav`.
 
 > "Add the navbar and sidebar to this project."
 
-The agent calls `get_component` for each, fetches the bundles, and writes the files (or invokes `fancy-ui add` on your behalf).
+The agent calls `get-component` for each, fetches the bundles, and writes the files (or invokes `fancy-ui add` on your behalf).
 
 > "What does the Card component depend on?"
 
-The agent calls `get_component({ name: "card" })` and reports its `dependencies` + `registryDependencies`.
+The agent calls `get-component({ name: "card" })` and reports its `dependencies` + `registryDependencies`.
 
 ## Runtime bridges — for inhabited apps
 

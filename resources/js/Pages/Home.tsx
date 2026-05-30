@@ -1167,13 +1167,13 @@ const VENDOR_CODE = `<span class="tok-c"># 2 · Vendor the source — copy it in
 
 <span class="tok-k">import</span> { Badge } <span class="tok-k">from</span> <span class="tok-s">"@/components/fancy/badge"</span>;`;
 
-const MCP_CODE = `<span class="tok-c">// Add the registry MCP to your editor — .mcp.json</span>
-{
-  <span class="tok-a">"mcpServers"</span>: {
-    <span class="tok-a">"fancy-ui"</span>: { <span class="tok-a">"type"</span>: <span class="tok-s">"http"</span>, <span class="tok-a">"url"</span>: <span class="tok-s">"https://ui.particle.academy/mcp"</span> }
-  }
-}
-<span class="tok-c">// → agent calls search_components + install_instructions</span>`;
+const MCP_CODE = `<span class="tok-c"># Claude Code — install the Fancy UI plugin (recommended)</span>
+/plugin marketplace add <span class="tok-s">Particle-Academy/fancy-ui-plugin</span>
+/plugin install <span class="tok-s">fancy-ui@fancy-ui</span>
+<span class="tok-c"># registers the registry MCP + skills, with the right transport</span>
+
+<span class="tok-c">// …or wire the raw server into any IDE — .mcp.json</span>
+{ <span class="tok-a">"mcpServers"</span>: { <span class="tok-a">"fancy-ui"</span>: { <span class="tok-a">"type"</span>: <span class="tok-s">"http"</span>, <span class="tok-a">"url"</span>: <span class="tok-s">"https://ui.particle.academy/mcp"</span> } } }`;
 
 function QuickStart() {
     const mono = { fontFamily: "var(--font-mono)" } as const;
@@ -1221,11 +1221,17 @@ function QuickStart() {
                             <span className="qs-mcp-dot" /> Or let your agent do it
                         </div>
                         <p>
-                            Wire our hosted registry MCP into Claude Code, Cursor, or VS Code. Your
-                            agent calls <code style={mono}>list_components</code>,{" "}
-                            <code style={mono}>search_components</code>, and{" "}
-                            <code style={mono}>install_instructions</code> against the live registry —
-                            then adds the component the right way, no guessing from memory.
+                            On <strong>Claude Code</strong>, install the{" "}
+                            <a href="https://github.com/Particle-Academy/fancy-ui-plugin" target="_blank" rel="noopener noreferrer">
+                                Fancy UI plugin
+                            </a>{" "}
+                            — one command wires up the hosted registry MCP <em>and</em> bundles skills
+                            for finding components and building Human+ UX apps. Other IDEs (Cursor, VS
+                            Code) drop the raw server into their config. Your agent then calls{" "}
+                            <code style={mono}>list-components</code>,{" "}
+                            <code style={mono}>search-components</code>, and{" "}
+                            <code style={mono}>install-instructions</code> against the live registry —
+                            no guessing from memory. <Link href="/docs/mcp">MCP setup docs →</Link>
                         </p>
                     </div>
                     <div className="codeblock" dangerouslySetInnerHTML={{ __html: MCP_CODE }} />

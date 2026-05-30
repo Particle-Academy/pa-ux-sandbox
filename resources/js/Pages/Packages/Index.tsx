@@ -1,5 +1,6 @@
 import { Head, Link } from "@inertiajs/react";
 import { Badge, Card, Heading, Text } from "@particle-academy/react-fancy";
+import { useState } from "react";
 import { Layout } from "../Layout";
 
 type Pkg = {
@@ -37,11 +38,11 @@ const HAS_SHOT = new Set([
     "fancy-echarts",
     "fancy-screens",
     "fancy-3d",
+    "fancy-3d-babylon",
+    "fancy-artboard",
     "fancy-inertia",
     "fancy-slides",
     "agent-integrations",
-    "holy-sheet",
-    "dark-slide",
 ]);
 
 export default function PackagesIndex({ packages, companions = [] }: { packages: Pkg[]; companions?: Companion[] }) {
@@ -104,7 +105,7 @@ function CompanionPackages({ companions }: { companions: Companion[] }) {
                         Companion packages
                     </Heading>
                     <Text size="sm" className="mt-2 max-w-2xl !text-zinc-500">
-                        Composer deps the sandbox monorepo develops alongside the Fancy UI kit. Not part of the showcase narrative — listed here so the development surface stays visible. Open issues are tracked on GitHub.
+                        Headless, no-UI packages developed alongside the Fancy UI kit — the agentic document writers (holy-sheet, dark-slide) and the composer deps the sandbox runs on. No component grid since they render no UI surface; open issues are tracked on GitHub.
                     </Text>
                 </div>
             </div>
@@ -149,7 +150,8 @@ function CompanionPackages({ companions }: { companions: Companion[] }) {
 }
 
 function PackageHero({ pkg }: { pkg: Pkg }) {
-    if (HAS_SHOT.has(pkg.slug)) {
+    const [shotFailed, setShotFailed] = useState(false);
+    if (HAS_SHOT.has(pkg.slug) && !shotFailed) {
         return (
             <div className="relative aspect-[16/10] overflow-hidden border-b border-zinc-100 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950">
                 <img
@@ -157,14 +159,14 @@ function PackageHero({ pkg }: { pkg: Pkg }) {
                     alt={`${pkg.name} preview`}
                     className="absolute inset-0 size-full object-cover object-top transition duration-500 group-hover:scale-[1.02]"
                     loading="lazy"
+                    onError={() => setShotFailed(true)}
                 />
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-zinc-950/40 via-transparent to-transparent opacity-0 transition group-hover:opacity-100" />
             </div>
         );
     }
-    // Tasteful fallback for infrastructure-y packages (e.g. holy-sheet) that
-    // don't have a natural "money shot" — a code-snippet card themed by the
-    // package's language.
+    // Tasteful fallback for packages without a curated "money shot" (or whose
+    // shot 404s) — a code-snippet card themed by the package's language.
     const isPhp = pkg.language === "PHP";
     return (
         <div className={`grid aspect-[16/10] place-items-center border-b border-zinc-100 ${

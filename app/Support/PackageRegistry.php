@@ -27,24 +27,41 @@ class PackageRegistry
             self::fancy3d(),
             self::fancy3dBabylon(),
             self::agentIntegrations(),
-            self::holySheet(),
-            self::darkSlide(),
             self::fancyInertia(),
         ];
     }
 
     /**
-     * Companion PHP packages — composer deps that ship inside this sandbox
-     * monorepo (the sandbox doubles as their development host) but aren't
-     * part of the Fancy UI showcase narrative. Rendered as a footnote
-     * section on /packages, not in the main grid; no per-package detail
-     * page generated.
+     * Companion packages — headless / no-UI deps developed alongside the
+     * Fancy UI kit. holy-sheet + dark-slide are the agentic document writers
+     * (xlsx / pptx); the laravel-* trio are composer deps the sandbox develops
+     * against. None render a UI surface, so they live in a footnote section on
+     * /packages rather than the main component grid; no per-package detail
+     * page is generated.
      *
      * @return array<int, array<string, mixed>>
      */
     public static function companions(): array
     {
         return [
+            [
+                'slug' => 'holy-sheet',
+                'name' => 'particle-academy/holy-sheet',
+                'tagline' => 'PHP 8.2+ xlsx writer for agentic document creation. Headless — top-level Agent write/describe/lint API, optional Laravel adapter.',
+                'composer' => 'particle-academy/holy-sheet',
+                'repo' => 'Particle-Academy/holy-sheet',
+                'packagist' => 'particle-academy/holy-sheet',
+                'language' => 'PHP',
+            ],
+            [
+                'slug' => 'dark-slide',
+                'name' => 'particle-academy/dark-slide',
+                'tagline' => 'PHP 8.2+ pptx writer/reader for agentic deck creation — markdown headings, highlighted code, tables, gradients, high-fidelity reader. Sister to holy-sheet.',
+                'composer' => 'particle-academy/dark-slide',
+                'repo' => 'Particle-Academy/dark-slide',
+                'packagist' => 'particle-academy/dark-slide',
+                'language' => 'PHP',
+            ],
             [
                 'slug' => 'laravel-catalog',
                 'name' => 'particle-academy/laravel-catalog',
@@ -362,41 +379,6 @@ class PackageRegistry
                 ['slug' => 'agent-cursor', 'name' => 'AgentCursor', 'blurb' => 'In-canvas agent cursor.'],
                 ['slug' => 'shared-whiteboard', 'name' => 'SharedWhiteboard', 'blurb' => 'Whiteboard + bridges + share.'],
                 ['slug' => 'share-controls', 'name' => 'ShareControls', 'blurb' => 'Start/stop relay sessions.'],
-            ],
-        ];
-    }
-
-    /** @return array<string, mixed> */
-    private static function holySheet(): array
-    {
-        return [
-            'slug' => 'holy-sheet',
-            'name' => 'holy-sheet',
-            'tagline' => 'PHP 8.2+ xlsx writer for agentic document creation. Optional Laravel adapter.',
-            'composer' => 'particle-academy/holy-sheet',
-            'repo' => 'Particle-Academy/holy-sheet',
-            'language' => 'PHP',
-            'components' => [
-                ['slug' => 'agent', 'name' => 'Agent', 'blurb' => 'Top-level write/describe/lint API.'],
-            ],
-        ];
-    }
-
-    /** @return array<string, mixed> */
-    private static function darkSlide(): array
-    {
-        return [
-            'slug' => 'dark-slide',
-            'name' => 'dark-slide',
-            'tagline' => 'PHP 8.2+ pptx writer/reader for agentic deck creation. v0.3 ships markdown headings, syntax-highlighted code blocks, real tables, gradient backgrounds, and a high-fidelity reader. Framework-agnostic; optional Laravel adapter. Sister to holy-sheet.',
-            'composer' => 'particle-academy/dark-slide',
-            'repo' => 'Particle-Academy/dark-slide',
-            'language' => 'PHP',
-            'components' => [
-                ['slug' => 'agent', 'name' => 'Agent', 'blurb' => 'Top-level static surface: validate / write / toBytes / read / describe / validateAndRepair.'],
-                ['slug' => 'pptx-writer', 'name' => 'PptxWriter', 'blurb' => 'Office Open XML writer — text, image, shape, notes, multi-slide, real tables, gradient backgrounds, syntax-highlighted code.'],
-                ['slug' => 'pptx-reader', 'name' => 'PptxReader', 'blurb' => 'PPTX → Deck schema extractor. Round-trips tables, gradients, embedded images (as data URIs), and inline markdown spans.'],
-                ['slug' => 'syntax-highlighter', 'name' => 'SyntaxHighlighter', 'blurb' => 'Pure-PHP tokenizer used by the writer to color code blocks. JS/TS, PHP, JSON, bash, CSS, Python, HTML.'],
             ],
         ];
     }

@@ -4,10 +4,12 @@ namespace App\Providers;
 
 use App\Models\User;
 use App\Services\Entitlements;
+use App\Support\Seo;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use ParticleAcademy\Fms\Services\FeatureManager;
 
@@ -33,6 +35,14 @@ class AppServiceProvider extends ServiceProvider
         // User::is_admin flag.
         Gate::define('admin', fn (User $user): bool => (bool) $user->is_admin);
         Gate::define('manageCatalog', fn (User $user): bool => (bool) $user->is_admin);
+
+        // Server-rendered SEO meta for the Inertia root view. Only runs on full
+        // HTML page loads (Inertia XHR visits return JSON), so crawlers / social
+        // scrapers / LLM bots get real title/description/OG/JSON-LD on first byte
+        // even though the app is a client-rendered SPA.
+        View::composer('showcase-app', function ($view): void {
+            $view->with('seo', Seo::forRequest(request()));
+        });
 
         // Login throttle — keyed by email + IP so a single attacker IP
         // can't drain the budget for legitimate users on the same email.

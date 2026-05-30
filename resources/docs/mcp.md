@@ -30,6 +30,7 @@ Different IDEs read MCP server config from different files. Here are the common 
 {
   "mcpServers": {
     "fancy-ui": {
+      "type": "http",
       "url": "https://ui.particle.academy/mcp"
     }
   }
@@ -42,6 +43,7 @@ Different IDEs read MCP server config from different files. Here are the common 
 {
   "mcpServers": {
     "fancy-ui": {
+      "type": "http",
       "url": "https://ui.particle.academy/mcp"
     }
   }

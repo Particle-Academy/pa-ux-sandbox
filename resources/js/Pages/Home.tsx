@@ -1170,7 +1170,7 @@ const VENDOR_CODE = `<span class="tok-c"># 2 · Vendor the source — copy it in
 const MCP_CODE = `<span class="tok-c">// Add the registry MCP to your editor — .mcp.json</span>
 {
   <span class="tok-a">"mcpServers"</span>: {
-    <span class="tok-a">"fancy-ui"</span>: { <span class="tok-a">"url"</span>: <span class="tok-s">"https://ui.particle.academy/mcp"</span> }
+    <span class="tok-a">"fancy-ui"</span>: { <span class="tok-a">"type"</span>: <span class="tok-s">"http"</span>, <span class="tok-a">"url"</span>: <span class="tok-s">"https://ui.particle.academy/mcp"</span> }
   }
 }
 <span class="tok-c">// → agent calls search_components + install_instructions</span>`;

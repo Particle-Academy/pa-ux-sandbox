@@ -127,7 +127,7 @@ function Hero({ packages }: { packages: PackageRow[] }) {
                 <div>
                     <div className="eyebrow-row">
                         <span className="dot" />
-                        <span>v0.x · Particle Academy</span>
+                        <span>v0.2 · Particle Academy</span>
                     </div>
                     <h1 className="display">
                         Components for the surfaces where{" "}

@@ -82,9 +82,9 @@ export function Layout({
             <header className="nav">
                 <div className="nav-inner">
                     <Link href="/" className="nav-brand" style={{ textDecoration: "none", color: "inherit" }}>
-                        <span className="mark">F</span>
+                        <img src="/showcase-assets/fancy-ui-logo.jpg" alt="Fancy UI Kit" className="mark" style={{ objectFit: "cover" }} />
                         <span>Fancy UI Kit</span>
-                        <span className="ver">v0.1</span>
+                        <span className="ver">v0.2</span>
                     </Link>
 
                     <div className="nav-links">
@@ -224,7 +224,7 @@ export function Layout({
                     <div className="footer-grid">
                         <div>
                             <div className="nav-brand" style={{ marginBottom: 14 }}>
-                                <span className="mark">F</span>
+                                <img src="/showcase-assets/fancy-ui-logo.jpg" alt="Fancy UI Kit" className="mark" style={{ objectFit: "cover" }} />
                                 <span>Fancy UI Kit</span>
                             </div>
                             <p style={{ margin: 0, fontSize: 13, lineHeight: 1.6, color: "var(--fg-2)", maxWidth: 320 }}>
@@ -273,7 +273,7 @@ export function Layout({
 
                     <div className="footer-bottom">
                         <span>© Particle Academy · MIT</span>
-                        <span className="right">fancy-ui · v0.1 · react-fancy 3.4</span>
+                        <span className="right">fancy-ui · v0.2 · react-fancy 3.4</span>
                     </div>
                 </div>
             </footer>

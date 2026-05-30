@@ -79,7 +79,6 @@ import {
     darkTheme as fsDarkTheme,
     type Deck as FsDeck,
 } from "@particle-academy/fancy-slides";
-import { defaultElementRegistry as fsDefaultElementRegistry } from "@particle-academy/fancy-slides/registry";
 import "@particle-academy/fancy-slides/styles.css";
 import {
     CANONICAL_SLIDE,
@@ -1985,10 +1984,6 @@ function FsDeckEditorRegistryDemo() {
                     onChange={setDeck}
                     onOp={() => setOpCount((n) => n + 1)}
                     onPresent={() => setPresenting(true)}
-                    renderElement={(element, slideWidthPx) => {
-                        const Renderer = fsDefaultElementRegistry[element.type as keyof typeof fsDefaultElementRegistry];
-                        return Renderer ? <Renderer element={element as any} slideWidthPx={slideWidthPx} /> : undefined;
-                    }}
                 />
             </div>
             {presenting && (
@@ -1997,8 +1992,8 @@ function FsDeckEditorRegistryDemo() {
                 </div>
             )}
             <Explainer
-                summary="DeckEditor is controlled (value + onChange). The host owns the deck; the editor renders a view and dispatches ops. `defaultElementRegistry` plugs in renderers for the optional element types (chart, code, table, embed) that the package doesn't render natively."
-                code={'import { DeckEditor, defaultTheme } from "@particle-academy/fancy-slides";\nimport { defaultElementRegistry } from "@particle-academy/fancy-slides/registry";\nimport "@particle-academy/fancy-slides/styles.css";\n\nconst [deck, setDeck] = useState({\n  id: "doc-1",\n  title: "My deck",\n  theme: defaultTheme,\n  slides: [/* … */],\n});\n\n<DeckEditor\n  value={deck}\n  onChange={setDeck}\n  onOp={(op) => activityLog.push(op)}\n  renderElement={(el, w) => {\n    const R = defaultElementRegistry[el.type];\n    return R ? <R element={el} slideWidthPx={w} /> : undefined;\n  }}\n/>'}
+                summary="DeckEditor is controlled (value + onChange). The host owns the deck; the editor renders a view and dispatches ops. Since 0.6.0 it renders every element type — text / image / shape / chart / code / table / embed — out of the box; pass your own `renderElement` only to override."
+                code={'import { DeckEditor, defaultTheme } from "@particle-academy/fancy-slides";\nimport "@particle-academy/fancy-slides/styles.css";\n\nconst [deck, setDeck] = useState({\n  id: "doc-1",\n  title: "My deck",\n  theme: defaultTheme,\n  slides: [/* … */],\n});\n\n// Full editor out of the box — chart/code/table/embed render by default.\n<DeckEditor value={deck} onChange={setDeck} onOp={(op) => activityLog.push(op)} />'}
                 bullets={[
                     "Compose your own layout by importing SlideRail / EditorToolbar / ElementInspector / SpeakerNotes individually.",
                     "Agent-bridgeable — the same DeckOp stream powers human + agent mutations.",

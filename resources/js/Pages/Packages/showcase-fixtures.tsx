@@ -263,13 +263,87 @@ const THANKS_SLIDE: SlideData = {
     notes: "Q&A here. Common questions: yes the bridges are pluggable, no you don't need every package, license is MIT.",
 };
 
+// ── Slide 6 — Native element types (chart + code + table + shapes) ─────────
+//
+// Demonstrates every non-text/-image element type the DeckEditor renders out
+// of the box via `defaultElementRegistry` — a chart (fancy-echarts), a code
+// block (fancy-code), a table, and vector shapes. This is what makes the
+// Preview a *complete* editor rather than a text/image-only one.
+
+const DATA_SLIDE: SlideData = {
+    id: "fancy-data",
+    layout: "title-content",
+    elements: [
+        {
+            id: "h",
+            type: "text",
+            x: 0.04, y: 0.06, w: 0.92, h: 0.1,
+            content: "Charts, code, tables — rendered natively",
+            format: "plain",
+            style: { fontSize: 36, weight: "semibold", align: "center", color: "#0f172a" },
+        },
+        // decorative accent shape behind the chart
+        {
+            id: "accent",
+            type: "shape",
+            shape: "rect",
+            x: 0.04, y: 0.2, w: 0.46, h: 0.74,
+            fill: "rgba(139,92,246,0.06)",
+            radius: 16,
+        },
+        {
+            id: "chart",
+            type: "chart",
+            x: 0.07, y: 0.24, w: 0.4, h: 0.46,
+            option: {
+                tooltip: { trigger: "axis" },
+                legend: { data: ["Humans", "Agents"], textStyle: { color: "#475569" } },
+                xAxis: { type: "category", data: ["Q1", "Q2", "Q3", "Q4"], axisLabel: { color: "#475569" } },
+                yAxis: { type: "value", axisLabel: { color: "#475569" } },
+                series: [
+                    { name: "Humans", type: "bar", data: [38, 42, 50, 61], itemStyle: { color: "#8b5cf6" } },
+                    { name: "Agents", type: "bar", data: [12, 24, 40, 58], itemStyle: { color: "#22c55e" } },
+                ],
+            },
+        },
+        {
+            id: "table",
+            type: "table",
+            x: 0.07, y: 0.74, w: 0.4, h: 0.2,
+            columns: [
+                { key: "surface", label: "Surface" },
+                { key: "type", label: "Element" },
+            ],
+            rows: [
+                { surface: "Analytics", type: "chart" },
+                { surface: "Snippet", type: "code" },
+            ],
+        },
+        {
+            id: "code",
+            type: "code",
+            x: 0.52, y: 0.24, w: 0.44, h: 0.7,
+            code: `import { DeckEditor } from "@particle-academy/fancy-slides";
+import "@particle-academy/fancy-slides/styles.css";
+
+// Full editor out of the box — chart / code /
+// table / shape all render with no extra wiring.
+<DeckEditor value={deck} onChange={setDeck} />`,
+            language: "typescript",
+            codeTheme: "dark",
+        },
+    ],
+    background: { color: "#ffffff" },
+    notes: "The DeckEditor renders chart (fancy-echarts), code (fancy-code), table, and vector shapes natively via defaultElementRegistry — no renderElement wiring required. Agents drive these through the same DeckOp stream.",
+};
+
 // ── Exports ───────────────────────────────────────────────────────────────
 
 export const CANONICAL_DECK: Deck = {
     id: "fancy-ui-pitch",
     title: "Fancy UI Kit",
     theme: defaultTheme,
-    slides: [TITLE_SLIDE, WHY_SLIDE, GALLERY_SLIDE, REACT_FANCY_SLIDE, AGENT_SLIDE, THANKS_SLIDE],
+    slides: [TITLE_SLIDE, WHY_SLIDE, GALLERY_SLIDE, REACT_FANCY_SLIDE, AGENT_SLIDE, DATA_SLIDE, THANKS_SLIDE],
 };
 
 /** Default slide for the `Slide` component demo (the deep-dive slide

@@ -10,6 +10,10 @@ import {
 } from "@particle-academy/fancy-slides";
 import { defaultElementRegistry } from "@particle-academy/fancy-slides/registry";
 import "@particle-academy/fancy-slides/styles.css";
+// The Node/TypeScript port of dark-slide — runs the pptx writer entirely in the
+// browser, byte-identical to the PHP engine. The "engine" switch below lets you
+// download via either, and verify the two outputs match part-for-part.
+import { Agent as NodeDarkSlide, unzipSync as nodeUnzip } from "@particle-academy/dark-slide";
 
 /**
  * Live demo of @particle-academy/fancy-slides. Editor + viewer + activity
@@ -286,12 +290,97 @@ function SlidesDemoBody() {
     const [presenting, setPresenting] = useState(false);
     const [presenterView, setPresenterView] = useState(false);
     const [activity, setActivity] = useState<Array<{ at: number; op: DeckOp }>>([]);
+    const [exportEngine, setExportEngine] = useState<"php" | "node">("node");
     const { toast } = useToast();
 
     const counts = useMemo(() => {
         const elements = deck.slides.reduce((sum, s) => sum + s.elements.length, 0);
         return { slides: deck.slides.length, elements };
     }, [deck.slides]);
+
+    const exportFilename = () => (deck.title || "deck").replace(/[^\w-]+/g, "_") + ".pptx";
+
+    // PHP engine: server-side dark-slide (Packagist) via the sandbox endpoint.
+    const phpExportBytes = async (): Promise<Uint8Array> => {
+        const res = await fetch("/dark-slide/export", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ deck, filename: (deck.title || "deck") + ".pptx" }),
+        });
+        if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            throw new Error(err.message || res.statusText);
+        }
+        return new Uint8Array(await res.arrayBuffer());
+    };
+
+    // Node engine: @particle-academy/dark-slide running in the browser.
+    const nodeExportBytes = (): Uint8Array =>
+        NodeDarkSlide.toBytes(deck as unknown as Record<string, unknown>);
+
+    const triggerDownload = (bytes: Uint8Array, filename: string) => {
+        const blob = new Blob([bytes.slice()], {
+            type: "application/vnd.openxmlformats-officedocument.presentationml.presentation",
+        });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+    };
+
+    const handleDownload = async () => {
+        try {
+            const bytes = exportEngine === "php" ? await phpExportBytes() : nodeExportBytes();
+            triggerDownload(bytes, exportFilename());
+            toast({
+                title: `PPTX downloaded · ${exportEngine === "php" ? "PHP (server)" : "Node (browser)"}`,
+                description: "Open in PowerPoint, Keynote, or Google Slides.",
+                variant: "success",
+            });
+        } catch (e) {
+            toast({ title: "Export failed", description: e instanceof Error ? e.message : String(e), variant: "error" });
+        }
+    };
+
+    // The testable surface: render the SAME deck with both engines and diff every
+    // OOXML part. They should be byte-identical (the docProps/core.xml timestamp
+    // is the one exception — the PHP writer stamps wall-clock time).
+    const handleVerifyParity = async () => {
+        try {
+            const [php, node] = await Promise.all([phpExportBytes(), Promise.resolve(nodeExportBytes())]);
+            const a = nodeUnzip(php);
+            const b = nodeUnzip(node);
+            const dec = new TextDecoder();
+            const names = [...new Set([...Object.keys(a), ...Object.keys(b)])].sort();
+            const diffs: string[] = [];
+            for (const n of names) {
+                if (n === "docProps/core.xml") continue;
+                const ta = a[n] ? dec.decode(a[n]) : "<<missing>>";
+                const tb = b[n] ? dec.decode(b[n]) : "<<missing>>";
+                if (ta !== tb) diffs.push(n.replace(/^ppt\//, ""));
+            }
+            const compared = names.filter((n) => n !== "docProps/core.xml").length;
+            if (diffs.length === 0) {
+                toast({
+                    title: "PHP ≡ Node — byte-identical ✓",
+                    description: `${compared} OOXML parts match (core.xml timestamp excluded).`,
+                    variant: "success",
+                });
+            } else {
+                toast({
+                    title: `PHP vs Node — ${diffs.length} part(s) differ`,
+                    description: diffs.join(", "),
+                    variant: "error",
+                });
+            }
+        } catch (e) {
+            toast({ title: "Verify failed", description: e instanceof Error ? e.message : String(e), variant: "error" });
+        }
+    };
 
     return (
         <div className="flex h-screen flex-col bg-zinc-50 dark:bg-zinc-950">
@@ -320,38 +409,50 @@ function SlidesDemoBody() {
                     >
                         Reset deck
                     </Action>
+                    {/* Export engine switch — PHP (server) vs Node (browser),
+                        both byte-identical. "Verify" diffs the two outputs live. */}
+                    <div
+                        className="flex items-center overflow-hidden rounded-md border border-zinc-300 text-[11px] font-medium dark:border-zinc-700"
+                        role="group"
+                        aria-label="pptx export engine"
+                    >
+                        <button
+                            type="button"
+                            title="dark-slide PHP — runs on the server (Packagist)"
+                            onClick={() => setExportEngine("php")}
+                            className={
+                                "px-2 py-1 transition " +
+                                (exportEngine === "php"
+                                    ? "bg-violet-600 text-white"
+                                    : "bg-white text-zinc-600 hover:bg-zinc-50 dark:bg-zinc-900 dark:text-zinc-300")
+                            }
+                        >
+                            PHP
+                        </button>
+                        <button
+                            type="button"
+                            title="@particle-academy/dark-slide — runs in the browser (npm)"
+                            onClick={() => setExportEngine("node")}
+                            className={
+                                "border-l border-zinc-300 px-2 py-1 transition dark:border-zinc-700 " +
+                                (exportEngine === "node"
+                                    ? "bg-violet-600 text-white"
+                                    : "bg-white text-zinc-600 hover:bg-zinc-50 dark:bg-zinc-900 dark:text-zinc-300")
+                            }
+                        >
+                            Node
+                        </button>
+                    </div>
+                    <Action size="sm" variant="ghost" icon="download" onClick={handleDownload}>
+                        Download .pptx
+                    </Action>
                     <Action
                         size="sm"
                         variant="ghost"
-                        icon="download"
-                        onClick={async () => {
-                            try {
-                                const res = await fetch("/dark-slide/export", {
-                                    method: "POST",
-                                    headers: { "Content-Type": "application/json" },
-                                    body: JSON.stringify({ deck, filename: (deck.title || "deck") + ".pptx" }),
-                                });
-                                if (!res.ok) {
-                                    const err = await res.json().catch(() => ({}));
-                                    toast({ title: "Export failed", description: err.message || res.statusText, variant: "error" });
-                                    return;
-                                }
-                                const blob = await res.blob();
-                                const url = URL.createObjectURL(blob);
-                                const a = document.createElement("a");
-                                a.href = url;
-                                a.download = (deck.title || "deck").replace(/[^\w-]+/g, "_") + ".pptx";
-                                document.body.appendChild(a);
-                                a.click();
-                                a.remove();
-                                URL.revokeObjectURL(url);
-                                toast({ title: "PPTX downloaded", description: "Open in PowerPoint, Keynote, or Google Slides.", variant: "success" });
-                            } catch (e) {
-                                toast({ title: "Export failed", description: e instanceof Error ? e.message : String(e), variant: "error" });
-                            }
-                        }}
+                        title="Render with both engines and diff every OOXML part"
+                        onClick={handleVerifyParity}
                     >
-                        Download .pptx
+                        Verify PHP ≡ Node
                     </Action>
                     <Action
                         size="sm"

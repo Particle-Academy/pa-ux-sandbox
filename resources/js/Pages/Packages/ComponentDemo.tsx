@@ -80,6 +80,7 @@ import {
     type Deck as FsDeck,
 } from "@particle-academy/fancy-slides";
 import "@particle-academy/fancy-slides/styles.css";
+import { PptxExportControl } from "./PptxExportControl";
 import {
     CANONICAL_SLIDE,
     CANONICAL_DECK,
@@ -1984,6 +1985,7 @@ function FsDeckEditorRegistryDemo() {
                     onChange={setDeck}
                     onOp={() => setOpCount((n) => n + 1)}
                     onPresent={() => setPresenting(true)}
+                    toolbarExtra={<PptxExportControl deck={deck as unknown as { title?: string } & Record<string, unknown>} />}
                 />
             </div>
             {presenting && (

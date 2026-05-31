@@ -379,7 +379,7 @@ function HumanPlus() {
                         {HP_NOTES.map((n, i) => (
                             <div
                                 key={i}
-                                className={`sticky ${n.cls}${i === liveNote ? " highlight" : ""}`}
+                                className={`sticky-note ${n.cls}${i === liveNote ? " highlight" : ""}`}
                                 style={{ top: n.top, left: n.left }}
                             >
                                 {n.text}

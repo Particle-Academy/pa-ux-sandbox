@@ -346,7 +346,7 @@ h2.section-title,
 }
 
 /* sticky notes — base state is fully visible; keyframe is a decorative pop only */
-.sticky {
+.sticky-note {
   position: absolute;
   width: 152px;
   padding: 11px 12px 12px;
@@ -361,18 +361,18 @@ h2.section-title,
 @keyframes sticky-pop {
   from { transform: scale(.6) rotate(var(--rot, 0deg)); opacity: 0; }
 }
-.sticky .who {
+.sticky-note .who {
   font-family: var(--font-mono); font-size: 10px;
   opacity: .65; margin-top: 6px;
   display: flex; align-items: center; gap: 5px;
 }
-.sticky .who .pin { width: 6px; height: 6px; border-radius: 999px; background: currentColor; opacity: .7; }
-.sticky.color-amber { background: #fde68a; transform: rotate(-1.5deg); --rot: -1.5deg; }
-.sticky.color-sky   { background: #bae6fd; transform: rotate(1.2deg); --rot: 1.2deg; }
-.sticky.color-rose  { background: #fecdd3; transform: rotate(-0.8deg); --rot: -0.8deg; }
-.sticky.color-emerald { background: #bbf7d0; transform: rotate(1.6deg); --rot: 1.6deg; }
-.sticky.color-violet { background: #ddd6fe; transform: rotate(-1.1deg); --rot: -1.1deg; }
-.sticky.highlight {
+.sticky-note .who .pin { width: 6px; height: 6px; border-radius: 999px; background: currentColor; opacity: .7; }
+.sticky-note.color-amber { background: #fde68a; transform: rotate(-1.5deg); --rot: -1.5deg; }
+.sticky-note.color-sky   { background: #bae6fd; transform: rotate(1.2deg); --rot: 1.2deg; }
+.sticky-note.color-rose  { background: #fecdd3; transform: rotate(-0.8deg); --rot: -0.8deg; }
+.sticky-note.color-emerald { background: #bbf7d0; transform: rotate(1.6deg); --rot: 1.6deg; }
+.sticky-note.color-violet { background: #ddd6fe; transform: rotate(-1.1deg); --rot: -1.1deg; }
+.sticky-note.highlight {
   outline: 2px solid var(--violet-500);
   outline-offset: 3px;
   animation: sticky-pulse 1.4s var(--ease-out) infinite;

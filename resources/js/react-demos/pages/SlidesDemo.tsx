@@ -14,6 +14,7 @@ import "@particle-academy/fancy-slides/styles.css";
 // browser, byte-identical to the PHP engine. The "engine" switch below lets you
 // download via either, and verify the two outputs match part-for-part.
 import { Agent as NodeDarkSlide, unzipSync as nodeUnzip } from "@particle-academy/dark-slide";
+import { inlineImages } from "../../Pages/Packages/PptxExportControl";
 
 /**
  * Live demo of @particle-academy/fancy-slides. Editor + viewer + activity
@@ -301,11 +302,12 @@ function SlidesDemoBody() {
     const exportFilename = () => (deck.title || "deck").replace(/[^\w-]+/g, "_") + ".pptx";
 
     // PHP engine: server-side dark-slide (Packagist) via the sandbox endpoint.
-    const phpExportBytes = async (): Promise<Uint8Array> => {
+    // Takes an already-inlined deck (images resolved to data URIs by the caller).
+    const phpExportBytes = async (ready: Record<string, unknown>): Promise<Uint8Array> => {
         const res = await fetch("/dark-slide/export", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ deck, filename: (deck.title || "deck") + ".pptx" }),
+            body: JSON.stringify({ deck: ready, filename: exportFilename() }),
         });
         if (!res.ok) {
             const err = await res.json().catch(() => ({}));
@@ -315,8 +317,8 @@ function SlidesDemoBody() {
     };
 
     // Node engine: @particle-academy/dark-slide running in the browser.
-    const nodeExportBytes = (): Uint8Array =>
-        NodeDarkSlide.toBytes(deck as unknown as Record<string, unknown>);
+    const nodeExportBytes = (ready: Record<string, unknown>): Uint8Array =>
+        NodeDarkSlide.toBytes(ready);
 
     const triggerDownload = (bytes: Uint8Array, filename: string) => {
         const blob = new Blob([bytes.slice()], {
@@ -334,7 +336,8 @@ function SlidesDemoBody() {
 
     const handleDownload = async () => {
         try {
-            const bytes = exportEngine === "php" ? await phpExportBytes() : nodeExportBytes();
+            const ready = await inlineImages(deck as unknown as { title?: string } & Record<string, unknown>);
+            const bytes = exportEngine === "php" ? await phpExportBytes(ready) : nodeExportBytes(ready);
             triggerDownload(bytes, exportFilename());
             toast({
                 title: `PPTX downloaded · ${exportEngine === "php" ? "PHP (server)" : "Node (browser)"}`,
@@ -351,7 +354,11 @@ function SlidesDemoBody() {
     // is the one exception — the PHP writer stamps wall-clock time).
     const handleVerifyParity = async () => {
         try {
-            const [php, node] = await Promise.all([phpExportBytes(), Promise.resolve(nodeExportBytes())]);
+            // Inline once so both engines render the byte-identical deck (same
+            // image data URIs) — fetching per-engine would still match, but this
+            // guarantees it and halves the network work.
+            const ready = await inlineImages(deck as unknown as { title?: string } & Record<string, unknown>);
+            const [php, node] = [await phpExportBytes(ready), nodeExportBytes(ready)];
             const a = nodeUnzip(php);
             const b = nodeUnzip(node);
             const dec = new TextDecoder();

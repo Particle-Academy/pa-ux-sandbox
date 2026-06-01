@@ -154,8 +154,9 @@ export function Layout({
                                     <Dropdown.Trigger>
                                         <button className={`rounded-full transition hover:ring-2 hover:ring-violet-400/30 ${avatarFrameClass(auth.player?.cosmetics)}`}>
                                             <Profile
-                                                avatar={auth.avatar_url ?? undefined}
+                                                src={auth.avatar_url ?? undefined}
                                                 name={auth.github_username ?? auth.name}
+                                                size="sm"
                                             />
                                         </button>
                                     </Dropdown.Trigger>
@@ -285,7 +286,7 @@ function PlayerChip({ player }: { player: PlayerSummary }) {
     return (
         <Link
             href="/profile"
-            className="hidden items-center gap-2 rounded-full border border-zinc-200 bg-zinc-50 py-1 pl-2.5 pr-1 text-xs font-medium text-zinc-600 transition hover:border-violet-300 hover:text-zinc-900 sm:flex dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-violet-700 dark:hover:text-zinc-100"
+            className="hidden shrink-0 items-center gap-2 whitespace-nowrap rounded-full border border-zinc-200 bg-zinc-50 py-1 pl-3 pr-1 text-xs font-medium text-zinc-600 transition hover:border-violet-300 hover:text-zinc-900 sm:flex dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-violet-700 dark:hover:text-zinc-100"
             title={`${player.levelName ?? "Level " + player.level} · ${player.totalXp.toLocaleString()} XP${player.pro ? ` · Pro (${player.proSource})` : ""}`}
         >
             {player.pro && (

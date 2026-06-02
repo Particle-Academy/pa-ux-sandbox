@@ -2,6 +2,7 @@ import type { ComponentDoc } from "./types";
 import { accordionDoc } from "./Accordion";
 import { accordionPanelDoc } from "./AccordionPanel";
 import { actionDoc } from "./Action";
+import { buttonDoc } from "./Button";
 import { agentCursorDoc } from "./AgentCursor";
 import { agentPanelDoc } from "./AgentPanel";
 import { artBoardDoc } from "./ArtBoard";
@@ -108,6 +109,7 @@ const DOCS: Record<string, ComponentDoc> = {
     // react-fancy
     "react-fancy/accordion": accordionDoc,
     "react-fancy/accordion-panel": accordionPanelDoc,
+    "react-fancy/button": buttonDoc,
     "react-fancy/action": actionDoc,
     "react-fancy/autocomplete": autocompleteDoc,
     "react-fancy/avatar": avatarDoc,

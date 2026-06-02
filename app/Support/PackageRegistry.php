@@ -123,7 +123,7 @@ class PackageRegistry
         // Mirrors packages/react-fancy/src/components/ — hand-listed for Phase 1.
         return array_map(fn (array $r) => $r + ['blurb' => ''], [
             ['slug' => 'accordion', 'name' => 'Accordion'],
-            ['slug' => 'action', 'name' => 'Action'],
+            ['slug' => 'button', 'name' => 'Button', 'blurb' => 'The workhorse button — colors, states, icons, emoji, avatar, badge, loading. (formerly Action)'],
             ['slug' => 'autocomplete', 'name' => 'Autocomplete'],
             ['slug' => 'avatar', 'name' => 'Avatar'],
             ['slug' => 'badge', 'name' => 'Badge'],

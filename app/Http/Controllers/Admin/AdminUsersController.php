@@ -3,9 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ShowcaseSubmission;
 use App\Models\User;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
 use LaravelFunLab\Facades\LFL;
 use LaravelFunLab\Models\Achievement;
 use LaravelFunLab\Models\GamedMetric;
@@ -13,7 +17,7 @@ use LaravelFunLab\Models\Prize;
 
 class AdminUsersController extends Controller
 {
-    public function index(Request $request): \Illuminate\Contracts\View\View
+    public function index(Request $request): Response
     {
         $search = trim((string) $request->query('q', ''));
         $sort = $request->query('sort', 'recent');
@@ -38,14 +42,25 @@ class AdminUsersController extends Controller
 
         $users = $query->paginate(25)->withQueryString();
 
-        return view('admin.users.index', [
-            'users' => $users,
+        return Inertia::render('Admin/Users', [
+            'users' => collect($users->items())->map(fn (User $user) => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'github_username' => $user->github_username,
+                'avatar_url' => $user->avatar_url,
+                'is_admin' => (bool) $user->is_admin,
+                'coins' => (int) ($user->wallet?->balance ?? 0),
+                'joined' => $user->created_at?->format('M j, Y'),
+            ])->all(),
             'search' => $search,
             'sort' => $sort,
+            'total' => $users->total(),
+            'pending' => ShowcaseSubmission::where('status', 'pending')->count(),
         ]);
     }
 
-    public function show(User $user): \Illuminate\Contracts\View\View
+    public function show(User $user): View
     {
         $profile = $user->getProfile()->load('metrics.gamedMetric');
 

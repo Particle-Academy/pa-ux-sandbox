@@ -4,8 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Services\GamificationStats;
-use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
 use LaravelCatalog\Facades\Catalog;
+use LaravelCatalog\Models\Price;
+use LaravelCatalog\Models\Product;
 use ParticleAcademy\Fms\Facades\FMS;
 
 /**
@@ -18,14 +21,14 @@ class AdminDashboardController extends Controller
     /**
      * Display the admin dashboard with overview statistics.
      */
-    public function index(GamificationStats $gamificationStats): \Illuminate\Contracts\View\View
+    public function index(GamificationStats $gamificationStats): Response
     {
         $stats = [
-            'products' => \LaravelCatalog\Models\Product::count(),
-            'active_products' => \LaravelCatalog\Models\Product::active()->count(),
-            'prices' => \LaravelCatalog\Models\Price::count(),
-            'active_prices' => \LaravelCatalog\Models\Price::active()->count(),
-            'synced_products' => \LaravelCatalog\Models\Product::whereNotNull('external_id')->count(),
+            'products' => Product::count(),
+            'active_products' => Product::active()->count(),
+            'prices' => Price::count(),
+            'active_prices' => Price::active()->count(),
+            'synced_products' => Product::whereNotNull('external_id')->count(),
             'stripe_connected' => false,
         ];
 
@@ -39,12 +42,13 @@ class AdminDashboardController extends Controller
 
         // Get enabled features from FMS
         $enabledFeatures = FMS::enabled();
+        $gamification = $gamificationStats->dashboard();
 
-        return view('admin.dashboard', [
+        return Inertia::render('Admin/Dashboard', [
             'stats' => $stats,
-            'enabledFeatures' => $enabledFeatures,
-            'gamification' => $gamificationStats->dashboard(),
+            'enabledFeatures' => array_values($enabledFeatures),
+            'gamification' => $gamification,
+            'pending' => $gamification['pendingSubmissions'] ?? 0,
         ]);
     }
 }
-

@@ -35,6 +35,7 @@ class HandleInertiaRequests extends Middleware
                     'name' => $user->name,
                     'github_username' => $user->github_username,
                     'avatar_url' => $user->avatar_url,
+                    'is_admin' => (bool) $user->is_admin,
                     // Gamification summary for the chrome chip. Lazy so it
                     // only resolves on full page loads / when requested.
                     'player' => fn () => app(PlayerProfile::class)->summary($user),

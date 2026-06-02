@@ -4,12 +4,16 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\ShopItem;
+use App\Models\ShowcaseSubmission;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class AdminShopController extends Controller
 {
-    public function index(): \Illuminate\Contracts\View\View
+    public function index(): Response
     {
         $items = ShopItem::query()
             ->orderBy('kind')
@@ -18,12 +22,22 @@ class AdminShopController extends Controller
             ->withCount('purchases')
             ->paginate(50);
 
-        return view('admin.shop.index', [
-            'items' => $items,
+        return Inertia::render('Admin/Shop', [
+            'items' => $items->getCollection()->map(fn (ShopItem $item): array => [
+                'id' => $item->id,
+                'name' => $item->name,
+                'slug' => $item->slug,
+                'kind' => $item->kind,
+                'description' => $item->description,
+                'price' => (int) $item->price,
+                'active' => (bool) $item->active,
+                'purchases' => (int) $item->purchases_count,
+            ])->all(),
+            'pending' => ShowcaseSubmission::where('status', 'pending')->count(),
         ]);
     }
 
-    public function create(): \Illuminate\Contracts\View\View
+    public function create(): View
     {
         return view('admin.shop.create');
     }
@@ -37,7 +51,7 @@ class AdminShopController extends Controller
         return redirect()->route('admin.shop.index')->with('success', 'Shop item created.');
     }
 
-    public function edit(ShopItem $shop): \Illuminate\Contracts\View\View
+    public function edit(ShopItem $shop): View
     {
         return view('admin.shop.edit', ['item' => $shop]);
     }

@@ -3,9 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ShowcaseSubmission;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use ParticleAcademy\Fms\Facades\FMS;
 use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
+use Inertia\Response;
+use ParticleAcademy\Fms\Facades\FMS;
 
 /**
  * AdminFeaturesController
@@ -16,11 +20,11 @@ class AdminFeaturesController extends Controller
     /**
      * Display a listing of features and their status.
      */
-    public function index(): \Illuminate\Contracts\View\View
+    public function index(): Response
     {
         $user = Auth::user();
         $features = config('fms.features', []);
-        
+
         $featureStatus = [];
         foreach ($features as $key => $definition) {
             $featureStatus[$key] = [
@@ -31,16 +35,23 @@ class AdminFeaturesController extends Controller
             ];
         }
 
-        return view('admin.features.index', [
-            'featureStatus' => $featureStatus,
-            'enabledFeatures' => FMS::enabled($user),
+        return Inertia::render('Admin/Features', [
+            'features' => collect($featureStatus)->map(fn ($v, $k) => [
+                'key' => $k,
+                'name' => $v['definition']['name'] ?? $k,
+                'description' => $v['definition']['description'] ?? '',
+                'type' => $v['definition']['type'] ?? 'boolean',
+                'enabled' => $v['enabled'],
+                'remaining' => $v['remaining'],
+            ])->values(),
+            'pending' => ShowcaseSubmission::where('status', 'pending')->count(),
         ]);
     }
 
     /**
      * Test feature access for a specific feature.
      */
-    public function test(Request $request): \Illuminate\Http\RedirectResponse
+    public function test(Request $request): RedirectResponse
     {
         $validated = $request->validate([
             'feature' => 'required|string',
@@ -60,4 +71,3 @@ class AdminFeaturesController extends Controller
             ->with('test_result', $result);
     }
 }
-

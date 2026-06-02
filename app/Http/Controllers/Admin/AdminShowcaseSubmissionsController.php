@@ -6,12 +6,15 @@ use App\Http\Controllers\Controller;
 use App\Jobs\ScanShowcaseSubmission;
 use App\Models\ShowcaseSubmission;
 use App\Services\ShowcaseRewards;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class AdminShowcaseSubmissionsController extends Controller
 {
-    public function index(Request $request): \Illuminate\Contracts\View\View
+    public function index(Request $request): Response
     {
         $status = $request->query('status', 'pending');
         if (! in_array($status, ['pending', 'verified', 'rejected', 'all'], true)) {
@@ -23,18 +26,36 @@ class AdminShowcaseSubmissionsController extends Controller
             $query->where('status', $status);
         }
 
-        return view('admin.submissions.index', [
-            'submissions' => $query->paginate(25)->withQueryString(),
+        $submissions = $query->paginate(25)->withQueryString();
+
+        $counts = [
+            'pending' => ShowcaseSubmission::where('status', 'pending')->count(),
+            'verified' => ShowcaseSubmission::where('status', 'verified')->count(),
+            'rejected' => ShowcaseSubmission::where('status', 'rejected')->count(),
+        ];
+
+        return Inertia::render('Admin/Submissions', [
+            'submissions' => collect($submissions->items())->map(fn (ShowcaseSubmission $submission) => [
+                'id' => $submission->id,
+                'title' => $submission->title,
+                'url' => $submission->url,
+                'kind' => $submission->kind,
+                'status' => $submission->status,
+                'thumbnail_url' => $submission->thumbnail_url,
+                'featured' => $submission->isFeatured(),
+                'created' => $submission->created_at?->format('M j, Y'),
+                'user' => [
+                    'name' => $submission->user?->name,
+                    'github_username' => $submission->user?->github_username,
+                ],
+            ])->all(),
             'status' => $status,
-            'counts' => [
-                'pending' => ShowcaseSubmission::where('status', 'pending')->count(),
-                'verified' => ShowcaseSubmission::where('status', 'verified')->count(),
-                'rejected' => ShowcaseSubmission::where('status', 'rejected')->count(),
-            ],
+            'counts' => $counts,
+            'pending' => $counts['pending'],
         ]);
     }
 
-    public function show(ShowcaseSubmission $submission): \Illuminate\Contracts\View\View
+    public function show(ShowcaseSubmission $submission): View
     {
         return view('admin.submissions.show', [
             'submission' => $submission->load('user'),

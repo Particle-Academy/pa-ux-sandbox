@@ -1,0 +1,111 @@
+/* admin.css — shell scaffolding for the Fancy UI admin (Inertia + react-fancy).
+   All color/spacing comes from the showcase semantic tokens (tokens.css), so
+   light/dark parity is automatic. Loaded only on admin pages (imported by
+   resources/js/Pages/Admin/AdminLayout.tsx). */
+
+/* app shell layout */
+.admin-root {
+  display: grid;
+  grid-template-columns: var(--sidebar-w, 256px) 1fr;
+  min-height: 100vh;
+  transition: grid-template-columns 0.24s var(--ease-out, ease);
+}
+.admin-root.collapsed { --sidebar-w: 72px; }
+.admin-main { min-width: 0; display: flex; flex-direction: column; background: var(--bg-1); }
+.admin-content { padding: 28px 32px 64px; max-width: 1180px; width: 100%; margin: 0 auto; flex: 1; }
+
+/* sidebar */
+.sb {
+  background: var(--surface);
+  border-right: 1px solid var(--border-1);
+  display: flex; flex-direction: column;
+  position: sticky; top: 0; height: 100vh; overflow: hidden;
+}
+.sb-brand {
+  display: flex; align-items: center; gap: 11px;
+  padding: 14px 16px; border-bottom: 1px solid var(--border-1); min-height: 61px;
+  text-decoration: none; color: inherit;
+}
+.sb-mark {
+  width: 32px; height: 32px; border-radius: 9px; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--brand-grad-from), var(--brand-grad-via) 55%, var(--brand-grad-to));
+  display: grid; place-items: center; color: #fff; font-weight: 700; font-size: 15px; font-family: var(--font-mono);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.25), 0 1px 2px rgba(15, 23, 42, 0.25);
+}
+.sb-brand .txt { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.sb-brand .name { font-weight: 600; font-size: 14px; letter-spacing: -0.01em; color: var(--fg-1); line-height: 1.15; white-space: nowrap; }
+.sb-brand .sub { font-size: 11px; color: var(--fg-3); font-family: var(--font-mono); white-space: nowrap; }
+.sb-nav { flex: 1; overflow-y: auto; padding: 12px 10px; display: flex; flex-direction: column; gap: 2px; }
+.sb-section { font-size: 10px; text-transform: uppercase; letter-spacing: 0.07em; font-weight: 600; color: var(--fg-4); padding: 14px 10px 6px; white-space: nowrap; }
+.sb-item {
+  display: flex; align-items: center; gap: 11px;
+  padding: 8px 10px; border-radius: 9px;
+  font-size: 13.5px; color: var(--fg-2); cursor: pointer;
+  border: 1px solid transparent; text-decoration: none;
+  transition: background 0.15s var(--ease-out, ease), color 0.15s;
+  white-space: nowrap; position: relative;
+}
+.sb-item:hover { background: var(--bg-1); color: var(--fg-1); }
+.sb-item.active { background: color-mix(in oklch, #8b5cf6 11%, transparent); color: var(--fg-1); }
+.sb-item.active .sb-ico { color: #8b5cf6; }
+.sb-item.active::before {
+  content: ""; position: absolute; left: -10px; top: 8px; bottom: 8px; width: 3px;
+  background: #8b5cf6; border-radius: 999px;
+}
+.sb-ico { color: var(--fg-3); flex-shrink: 0; display: inline-flex; }
+.sb-item .label { flex: 1; }
+.sb-foot { border-top: 1px solid var(--border-1); padding: 10px; }
+
+/* collapsed */
+.collapsed .sb-brand { justify-content: center; padding: 14px 0; }
+.collapsed .sb-brand .txt, .collapsed .sb-section, .collapsed .sb-item .label, .collapsed .sb-item .badge-slot, .collapsed .sb-foot .label { display: none; }
+.collapsed .sb-item { justify-content: center; padding: 9px 0; }
+.collapsed .sb-item.active::before { display: none; }
+
+/* topbar */
+.tb {
+  position: sticky; top: 0; z-index: 40;
+  height: 61px; display: flex; align-items: center; gap: 14px; padding: 0 20px;
+  background: color-mix(in oklch, var(--bg-1) 86%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border-1);
+}
+.tb-crumb { font-size: 13px; color: var(--fg-3); display: flex; align-items: center; gap: 7px; }
+.tb-crumb b { color: var(--fg-1); font-weight: 600; }
+.tb-search {
+  display: flex; align-items: center; gap: 8px; width: 280px; max-width: 36vw;
+  background: var(--bg-2); border: 1px solid var(--border-1);
+  border-radius: var(--radius-md); padding: 7px 11px; color: var(--fg-3); cursor: text; font-size: 13px;
+}
+.tb-search .kbd { margin-left: auto; font-family: var(--font-mono); font-size: 10.5px; color: var(--fg-3); border: 1px solid var(--border-1); padding: 1px 5px; border-radius: 5px; background: var(--surface); }
+
+/* generic admin pieces */
+.admin-grid-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.admin-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.admin-stack { display: flex; flex-direction: column; gap: 16px; }
+.admin-ph { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
+.admin-ph h1 { font-size: 22px; font-weight: 600; letter-spacing: -0.02em; margin: 0; color: var(--fg-1); }
+.admin-ph p { margin: 4px 0 0; font-size: 13.5px; color: var(--fg-3); }
+.admin-ph-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.admin-statcard-ico { width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center; background: color-mix(in oklch, #8b5cf6 12%, transparent); color: #8b5cf6; }
+.admin-stat-label { font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--fg-3); font-weight: 600; }
+.admin-stat-value { font-size: 27px; font-weight: 600; letter-spacing: -0.02em; line-height: 1; margin-top: 12px; color: var(--fg-1); }
+
+@media (max-width: 1080px) {
+  .admin-grid-stats { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 860px) {
+  .admin-root { grid-template-columns: 1fr; }
+  .sb { position: fixed; left: 0; top: 0; z-index: 80; width: 256px; transform: translateX(-100%); box-shadow: var(--shadow-xl); transition: transform 0.24s var(--ease-out, ease); }
+  .admin-root.mobile-open .sb { transform: translateX(0); }
+  .admin-content { padding: 20px 18px 56px; }
+  .admin-grid-2, .admin-grid-stats { grid-template-columns: 1fr; }
+  .admin-mobile-scrim { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.4); z-index: 70; }
+}
+.admin-mobile-scrim { display: none; }
+
+.admin-attn-row { transition: background 0.12s; cursor: pointer; }
+.admin-attn-row:hover { background: var(--bg-1); }
+
+/* admin tables: keep react-fancy Table on-brand inside cards */
+.admin-table-wrap { overflow-x: auto; }

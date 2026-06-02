@@ -3,13 +3,18 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ShowcaseSubmission;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Inertia\Inertia;
+use Inertia\Response;
 use LaravelCatalog\Facades\Catalog;
-use LaravelCatalog\Models\Product;
-use LaravelCatalog\Models\Price;
 use LaravelCatalog\Jobs\SyncProductToStripe;
+use LaravelCatalog\Models\Price;
+use LaravelCatalog\Models\Product;
 
 /**
  * AdminProductsController
@@ -20,22 +25,40 @@ class AdminProductsController extends Controller
     /**
      * Display a listing of products.
      */
-    public function index(): \Illuminate\Contracts\View\View
+    public function index(): Response
     {
         $products = Product::with(['prices'])
             ->orderBy('order')
             ->orderBy('name')
-            ->paginate(20);
+            ->get()
+            ->map(fn (Product $product) => [
+                'id' => $product->id,
+                'name' => $product->name,
+                'description' => $product->description,
+                'active' => (bool) $product->active,
+                'synced' => $product->external_id !== null,
+                'order' => $product->order,
+                'prices_count' => $product->prices->count(),
+                'prices' => $product->prices->map(fn (Price $price) => [
+                    'amount' => (int) $price->unit_amount,
+                    'currency' => $price->currency,
+                    'type' => $price->type,
+                    'interval' => $price->recurring_interval,
+                ])->values()->all(),
+            ])
+            ->values()
+            ->all();
 
-        return view('admin.products.index', [
+        return Inertia::render('Admin/Products', [
             'products' => $products,
+            'pending' => ShowcaseSubmission::where('status', 'pending')->count(),
         ]);
     }
 
     /**
      * Show the form for creating a new product.
      */
-    public function create(): \Illuminate\Contracts\View\View
+    public function create(): View
     {
         return view('admin.products.create');
     }
@@ -43,7 +66,7 @@ class AdminProductsController extends Controller
     /**
      * Store a newly created product.
      */
-    public function store(Request $request): \Illuminate\Http\RedirectResponse
+    public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -66,7 +89,7 @@ class AdminProductsController extends Controller
     /**
      * Display the specified product.
      */
-    public function show(Product $product): \Illuminate\Contracts\View\View
+    public function show(Product $product): View
     {
         $product->load(['prices']);
 
@@ -78,7 +101,7 @@ class AdminProductsController extends Controller
     /**
      * Show the form for editing the specified product.
      */
-    public function edit(Product $product): \Illuminate\Contracts\View\View
+    public function edit(Product $product): View
     {
         return view('admin.products.edit', [
             'product' => $product,
@@ -88,7 +111,7 @@ class AdminProductsController extends Controller
     /**
      * Update the specified product.
      */
-    public function update(Request $request, Product $product): \Illuminate\Http\RedirectResponse
+    public function update(Request $request, Product $product): RedirectResponse
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -106,11 +129,11 @@ class AdminProductsController extends Controller
     /**
      * Sync product to Stripe using Catalog facade.
      */
-    public function sync(Product $product): \Illuminate\Http\RedirectResponse
+    public function sync(Product $product): RedirectResponse
     {
         try {
             Catalog::syncProductAndPrices($product);
-            
+
             return redirect()->back()
                 ->with('success', 'Product synced to Stripe successfully.');
         } catch (\Exception $e) {
@@ -128,7 +151,7 @@ class AdminProductsController extends Controller
      * the queue retry, gives operators a real audit trail, and keeps the
      * admin response fast.
      */
-    public function syncAll(): \Illuminate\Http\RedirectResponse
+    public function syncAll(): RedirectResponse
     {
         $products = Product::whereNotNull('external_id')->get();
         $count = $products->count();
@@ -149,7 +172,7 @@ class AdminProductsController extends Controller
     /**
      * Remove the specified product from storage.
      */
-    public function destroy(Product $product): \Illuminate\Http\RedirectResponse
+    public function destroy(Product $product): RedirectResponse
     {
         $product->delete();
 
@@ -157,4 +180,3 @@ class AdminProductsController extends Controller
             ->with('success', 'Product deleted successfully.');
     }
 }
-

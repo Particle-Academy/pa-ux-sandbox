@@ -3,8 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ShowcaseSubmission;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
+use Inertia\Response;
 use LaravelFunLab\Models\Achievement;
 use LaravelFunLab\Models\Prize;
 
@@ -17,15 +21,40 @@ use LaravelFunLab\Models\Prize;
  */
 class AdminGamificationController extends Controller
 {
-    public function index(): \Illuminate\Contracts\View\View
+    public function index(): Response
     {
-        return view('admin.gamification.index', [
-            'achievements' => Achievement::orderByDesc('is_active')->orderBy('sort_order')->orderBy('name')->get(),
-            'prizes' => Prize::orderByDesc('is_active')->orderBy('sort_order')->orderBy('name')->get(),
+        $achievements = Achievement::orderByDesc('is_active')->orderBy('sort_order')->orderBy('name')->get()
+            ->map(fn (Achievement $a): array => [
+                'id' => $a->id,
+                'slug' => $a->slug,
+                'name' => $a->name,
+                'description' => $a->description,
+                'icon' => $a->icon,
+                'is_active' => (bool) $a->is_active,
+                'sort_order' => (int) $a->sort_order,
+            ])->all();
+
+        $prizes = Prize::orderByDesc('is_active')->orderBy('sort_order')->orderBy('name')->get()
+            ->map(fn (Prize $p): array => [
+                'id' => $p->id,
+                'slug' => $p->slug,
+                'name' => $p->name,
+                'description' => $p->description,
+                'type' => $p->type->value,
+                'cost_in_points' => (int) $p->cost_in_points,
+                'inventory_quantity' => $p->inventory_quantity !== null ? (int) $p->inventory_quantity : null,
+                'is_active' => (bool) $p->is_active,
+                'sort_order' => (int) $p->sort_order,
+            ])->all();
+
+        return Inertia::render('Admin/Gamification', [
+            'achievements' => $achievements,
+            'prizes' => $prizes,
+            'pending' => ShowcaseSubmission::where('status', 'pending')->count(),
         ]);
     }
 
-    public function editAchievement(?Achievement $achievement = null): \Illuminate\Contracts\View\View
+    public function editAchievement(?Achievement $achievement = null): View
     {
         return view('admin.gamification.achievement-form', ['achievement' => $achievement]);
     }
@@ -61,7 +90,7 @@ class AdminGamificationController extends Controller
         return back()->with('success', "Achievement '{$achievement->slug}' ".($achievement->is_active ? 'activated.' : 'archived.'));
     }
 
-    public function editPrize(?Prize $prize = null): \Illuminate\Contracts\View\View
+    public function editPrize(?Prize $prize = null): View
     {
         return view('admin.gamification.prize-form', ['prize' => $prize]);
     }

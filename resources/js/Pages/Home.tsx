@@ -54,7 +54,7 @@ import { Layout } from "./Layout";
 
 // ─── Props ───────────────────────────────────────────────────────────────────
 
-type PackageRow = {
+export type PackageRow = {
     slug: string;
     name: string;
     tagline: string;
@@ -65,7 +65,7 @@ type PackageRow = {
     kind: "npm" | "composer";
 };
 
-type CompanionRow = {
+export type CompanionRow = {
     slug: string;
     name: string;
     tagline: string;
@@ -231,7 +231,7 @@ function HeroCard() {
 
 // ─── Packages ────────────────────────────────────────────────────────────────
 
-function Packages({ packages, companions }: { packages: PackageRow[]; companions: CompanionRow[] }) {
+export function Packages({ packages, companions }: { packages: PackageRow[]; companions: CompanionRow[] }) {
     const count = NUMBER_WORDS[packages.length] ?? String(packages.length);
     return (
         <section className="section">
@@ -313,7 +313,7 @@ const HP_FEED: FeedRow[] = [
     { tone: "read", icon: <Search size={11} />, text: <>Read board <strong>state</strong> (3 clusters)</>, when: "0:18" },
 ];
 
-function HumanPlus() {
+export function HumanPlus() {
     const [step, setStep] = useState(0);
 
     useEffect(() => {
@@ -518,7 +518,7 @@ const MORE = [
     "Timeline", "TreeNav",
 ];
 
-function ComponentsShowcase({ total }: { total: number }) {
+export function ComponentsShowcase({ total }: { total: number }) {
     const [active, setActive] = useState(FLAT[0].name);
     const current = FLAT.find((c) => c.name === active) ?? FLAT[0];
     const ActiveDemo = current.demo;
@@ -1120,7 +1120,7 @@ const PHILOSOPHY = [
     },
 ] as const;
 
-function Philosophy() {
+export function Philosophy() {
     return (
         <section className="section" id="why">
             <div className="container">
@@ -1175,7 +1175,7 @@ const MCP_CODE = `<span class="tok-c"># Claude Code — install the Fancy UI plu
 <span class="tok-c">// …or wire the raw server into any IDE — .mcp.json</span>
 { <span class="tok-a">"mcpServers"</span>: { <span class="tok-a">"fancy-ui"</span>: { <span class="tok-a">"type"</span>: <span class="tok-s">"http"</span>, <span class="tok-a">"url"</span>: <span class="tok-s">"https://ui.particle.academy/mcp"</span> } } }`;
 
-function QuickStart() {
+export function QuickStart() {
     const mono = { fontFamily: "var(--font-mono)" } as const;
     return (
         <section className="section" id="install">
@@ -1265,7 +1265,7 @@ const EXPLORE = [
     { href: "/leaderboard", icon: ArrowRight, title: "Leaderboard", body: "Top contributors by merged PRs and votes.", tag: "live" },
 ] as const;
 
-function Explore() {
+export function Explore() {
     return (
         <section className="section">
             <div className="container">

@@ -94,6 +94,12 @@ Route::post('/webhooks/github', GitHubWebhookController::class)
 // ─── Fancy UI Showcase ─────────────────────────────────────────────────
 Route::get('/', HomeController::class)->name('home');
 
+// CMS demo: the WHOLE Home page rendered from a seeded fancy-cms document
+// (read-only, inline EditMode). Fed the same payload as the live Home route so
+// it re-authors the exact same page. The sandbox IS the CMS demo — see
+// resources/js/cms/.
+Route::get('/cms/home', fn (HomeController $home) => Inertia::render('CmsHome', $home->props()))->name('cms.home');
+
 Route::middleware(TrackPackageBrowsing::class)->group(function () {
     Route::get('/packages', [PackagesController::class, 'index'])->name('packages.index');
     Route::get('/packages/{package}', [PackagesController::class, 'show'])->name('packages.show');

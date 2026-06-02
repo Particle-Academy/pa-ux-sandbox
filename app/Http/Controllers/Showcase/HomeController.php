@@ -19,6 +19,18 @@ class HomeController extends Controller
 
     public function __invoke(): Response
     {
+        return Inertia::render('Home', $this->props());
+    }
+
+    /**
+     * The Home page payload — package grid, Composer companions, and the total
+     * component count. Exposed so the CMS demo (`/cms/home`) can re-author the
+     * exact same page from the exact same data.
+     *
+     * @return array{packages: array<int, array<string, mixed>>, companions: array<int, array<string, mixed>>, total_components: int}
+     */
+    public function props(): array
+    {
         $all = collect(PackageRegistry::all());
 
         $packages = $all
@@ -59,13 +71,13 @@ class HomeController extends Controller
             ->values()
             ->all();
 
-        return Inertia::render('Home', [
+        return [
             'packages' => $packages,
             'companions' => $companions,
             'total_components' => $all
                 ->reject(fn (array $p) => in_array($p['slug'], self::NON_UI, true))
                 ->sum(fn (array $p) => count($p['components'] ?? [])),
-        ]);
+        ];
     }
 
     /**

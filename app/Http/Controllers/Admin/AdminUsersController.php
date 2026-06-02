@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\ShowcaseSubmission;
 use App\Models\User;
-use Illuminate\Contracts\View\View;
+use App\Services\PlayerProfile;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -60,27 +60,64 @@ class AdminUsersController extends Controller
         ]);
     }
 
-    public function show(User $user): View
+    public function show(User $user, PlayerProfile $playerProfile): Response
     {
         $profile = $user->getProfile()->load('metrics.gamedMetric');
+        $summary = $playerProfile->summary($user);
+        $wallet = $user->getWallet();
 
-        $metrics = $profile->metrics->map(fn ($m) => [
-            'slug' => $m->gamedMetric?->slug ?? '—',
-            'name' => $m->gamedMetric?->name ?? '—',
-            'total_xp' => $m->total_xp,
-            'level' => $m->current_level,
-        ])->sortByDesc('total_xp')->values();
+        $metrics = $profile->metrics
+            ->filter(fn ($m) => $m->gamedMetric !== null)
+            ->map(fn ($m) => [
+                'metric' => $m->gamedMetric->name,
+                'slug' => $m->gamedMetric->slug,
+                'level' => (int) $m->current_level,
+                'xp' => (int) $m->total_xp,
+            ])
+            ->sortByDesc('xp')
+            ->values()
+            ->all();
 
-        return view('admin.users.show', [
-            'user' => $user,
-            'profile' => $profile,
-            'wallet' => $user->getWallet(),
-            'transactions' => $user->getWallet()->transactions()->limit(30)->get(),
+        $transactions = $wallet->transactions()->limit(30)->get()->map(fn ($tx) => [
+            'kind' => $tx->kind,
+            'amount' => (int) $tx->amount,
+            'reason' => $tx->reason,
+            'at' => $tx->created_at?->diffForHumans(),
+        ])->all();
+
+        $achievements = $user->getRecentAchievements(50)->map(fn ($grant) => [
+            'name' => $grant->achievement?->name ?? $grant->achievement?->slug ?? '—',
+            'granted_at' => $grant->granted_at?->format('M j, Y'),
+        ])->all();
+
+        return Inertia::render('Admin/UserShow', [
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'github_username' => $user->github_username,
+                'avatar_url' => $user->avatar_url,
+                'is_admin' => (bool) $user->is_admin,
+                'opted_out' => $user->isOptedOut(),
+                'pro' => $summary['pro'],
+                'proSource' => $summary['proSource'],
+                'coins' => (int) $wallet->balance,
+                'lifetime_earned' => (int) $wallet->lifetime_earned,
+                'lifetime_spent' => (int) $wallet->lifetime_spent,
+                'level' => $summary['level'],
+                'levelName' => $summary['levelName'],
+                'totalXp' => $summary['totalXp'],
+            ],
             'metrics' => $metrics,
-            'achievements' => $user->getAchievements(),
-            'allMetrics' => GamedMetric::orderBy('name')->get(['slug', 'name']),
-            'allAchievements' => Achievement::orderBy('name')->get(['slug', 'name']),
-            'allPrizes' => Prize::orderBy('name')->get(['slug', 'name']),
+            'transactions' => $transactions,
+            'achievements' => $achievements,
+            'allMetrics' => GamedMetric::orderBy('name')->get(['slug', 'name'])
+                ->map(fn ($m) => ['slug' => $m->slug, 'name' => $m->name])->all(),
+            'allAchievements' => Achievement::orderBy('name')->get(['slug', 'name'])
+                ->map(fn ($a) => ['slug' => $a->slug, 'name' => $a->name])->all(),
+            'allPrizes' => Prize::orderBy('name')->get(['slug', 'name'])
+                ->map(fn ($p) => ['slug' => $p->slug, 'name' => $p->name])->all(),
+            'pending' => ShowcaseSubmission::where('status', 'pending')->count(),
         ]);
     }
 

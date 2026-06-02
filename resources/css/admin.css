@@ -83,6 +83,9 @@
 .admin-grid-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
 .admin-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .admin-stack { display: flex; flex-direction: column; gap: 16px; }
+/* form pages: a wide main column for fields + a narrow aside for status/actions */
+.admin-form-grid { display: grid; grid-template-columns: 1.6fr 1fr; gap: 20px; align-items: start; }
+.admin-field-stack > * + * { margin-top: 14px; }
 .admin-ph { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
 .admin-ph h1 { font-size: 22px; font-weight: 600; letter-spacing: -0.02em; margin: 0; color: var(--fg-1); }
 .admin-ph p { margin: 4px 0 0; font-size: 13.5px; color: var(--fg-3); }
@@ -99,7 +102,7 @@
   .sb { position: fixed; left: 0; top: 0; z-index: 80; width: 256px; transform: translateX(-100%); box-shadow: var(--shadow-xl); transition: transform 0.24s var(--ease-out, ease); }
   .admin-root.mobile-open .sb { transform: translateX(0); }
   .admin-content { padding: 20px 18px 56px; }
-  .admin-grid-2, .admin-grid-stats { grid-template-columns: 1fr; }
+  .admin-grid-2, .admin-grid-stats, .admin-form-grid { grid-template-columns: 1fr; }
   .admin-mobile-scrim { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.4); z-index: 70; }
 }
 .admin-mobile-scrim { display: none; }

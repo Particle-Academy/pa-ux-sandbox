@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\ShowcaseSubmission;
-use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -54,9 +53,20 @@ class AdminGamificationController extends Controller
         ]);
     }
 
-    public function editAchievement(?Achievement $achievement = null): View
+    public function editAchievement(?Achievement $achievement = null): Response
     {
-        return view('admin.gamification.achievement-form', ['achievement' => $achievement]);
+        return Inertia::render('Admin/AchievementForm', [
+            'achievement' => $achievement ? [
+                'id' => $achievement->id,
+                'slug' => $achievement->slug,
+                'name' => $achievement->name,
+                'description' => $achievement->description,
+                'icon' => $achievement->icon,
+                'is_active' => (bool) $achievement->is_active,
+                'sort_order' => (int) $achievement->sort_order,
+            ] : null,
+            'pending' => ShowcaseSubmission::where('status', 'pending')->count(),
+        ]);
     }
 
     public function saveAchievement(Request $request, ?Achievement $achievement = null): RedirectResponse
@@ -90,9 +100,21 @@ class AdminGamificationController extends Controller
         return back()->with('success', "Achievement '{$achievement->slug}' ".($achievement->is_active ? 'activated.' : 'archived.'));
     }
 
-    public function editPrize(?Prize $prize = null): View
+    public function editPrize(?Prize $prize = null): Response
     {
-        return view('admin.gamification.prize-form', ['prize' => $prize]);
+        return Inertia::render('Admin/PrizeForm', [
+            'prize' => $prize ? [
+                'id' => $prize->id,
+                'slug' => $prize->slug,
+                'name' => $prize->name,
+                'description' => $prize->description,
+                'type' => $prize->type->value,
+                'inventory_quantity' => $prize->inventory_quantity !== null ? (int) $prize->inventory_quantity : null,
+                'is_active' => (bool) $prize->is_active,
+                'sort_order' => (int) $prize->sort_order,
+            ] : null,
+            'pending' => ShowcaseSubmission::where('status', 'pending')->count(),
+        ]);
     }
 
     public function savePrize(Request $request, ?Prize $prize = null): RedirectResponse

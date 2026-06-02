@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\ShowcaseSubmission;
-use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -58,9 +57,12 @@ class AdminProductsController extends Controller
     /**
      * Show the form for creating a new product.
      */
-    public function create(): View
+    public function create(): Response
     {
-        return view('admin.products.create');
+        return Inertia::render('Admin/ProductForm', [
+            'product' => null,
+            'pending' => ShowcaseSubmission::where('status', 'pending')->count(),
+        ]);
     }
 
     /**
@@ -89,22 +91,48 @@ class AdminProductsController extends Controller
     /**
      * Display the specified product.
      */
-    public function show(Product $product): View
+    public function show(Product $product): Response
     {
         $product->load(['prices']);
 
-        return view('admin.products.show', [
-            'product' => $product,
+        return Inertia::render('Admin/ProductShow', [
+            'product' => [
+                'id' => $product->id,
+                'name' => $product->name,
+                'description' => $product->description,
+                'active' => (bool) $product->active,
+                'order' => (int) $product->order,
+                'external_id' => $product->external_id,
+                'synced' => $product->external_id !== null,
+                'prices' => $product->prices->map(fn (Price $price) => [
+                    'id' => $price->id,
+                    'amount' => (int) $price->unit_amount,
+                    'currency' => $price->currency,
+                    'type' => $price->type,
+                    'interval' => $price->recurring_interval,
+                    'recurring' => $price->isRecurring(),
+                    'active' => (bool) $price->active,
+                    'external_id' => $price->external_id,
+                ])->values()->all(),
+            ],
+            'pending' => ShowcaseSubmission::where('status', 'pending')->count(),
         ]);
     }
 
     /**
      * Show the form for editing the specified product.
      */
-    public function edit(Product $product): View
+    public function edit(Product $product): Response
     {
-        return view('admin.products.edit', [
-            'product' => $product,
+        return Inertia::render('Admin/ProductForm', [
+            'product' => [
+                'id' => $product->id,
+                'name' => $product->name,
+                'description' => $product->description,
+                'active' => (bool) $product->active,
+                'order' => (int) $product->order,
+            ],
+            'pending' => ShowcaseSubmission::where('status', 'pending')->count(),
         ]);
     }
 

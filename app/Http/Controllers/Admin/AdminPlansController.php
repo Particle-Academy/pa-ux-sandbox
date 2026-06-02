@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\ShowcaseSubmission;
-use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -66,9 +65,12 @@ class AdminPlansController extends Controller
     /**
      * Show the form for creating a new plan.
      */
-    public function create(): View
+    public function create(): Response
     {
-        return view('admin.plans.create');
+        return Inertia::render('Admin/PlanForm', [
+            'plan' => null,
+            'pending' => ShowcaseSubmission::where('status', 'pending')->count(),
+        ]);
     }
 
     /**
@@ -108,24 +110,56 @@ class AdminPlansController extends Controller
     /**
      * Display the specified plan.
      */
-    public function show(Product $plan): View
+    public function show(Product $plan): Response
     {
         $plan->load(['prices' => function ($query) {
             $query->where('type', Price::TYPE_RECURRING);
         }]);
 
-        return view('admin.plans.show', [
-            'plan' => $plan,
+        $metadata = $plan->metadata ?? [];
+
+        return Inertia::render('Admin/PlanShow', [
+            'plan' => [
+                'id' => $plan->id,
+                'name' => $plan->name,
+                'description' => $plan->description,
+                'active' => (bool) $plan->active,
+                'order' => (int) $plan->order,
+                'external_id' => $plan->external_id,
+                'synced' => $plan->external_id !== null,
+                'show_on_storefront' => (bool) ($metadata['storefront']['plan']['show'] ?? false),
+                'recommended' => (bool) ($metadata['storefront']['plan']['recommended'] ?? false),
+                'prices' => $plan->prices->map(fn (Price $price) => [
+                    'id' => $price->id,
+                    'amount' => (int) $price->unit_amount,
+                    'currency' => $price->currency,
+                    'interval' => $price->recurring_interval,
+                    'active' => (bool) $price->active,
+                    'external_id' => $price->external_id,
+                ])->values()->all(),
+            ],
+            'pending' => ShowcaseSubmission::where('status', 'pending')->count(),
         ]);
     }
 
     /**
      * Show the form for editing the specified plan.
      */
-    public function edit(Product $plan): View
+    public function edit(Product $plan): Response
     {
-        return view('admin.plans.edit', [
-            'plan' => $plan,
+        $metadata = $plan->metadata ?? [];
+
+        return Inertia::render('Admin/PlanForm', [
+            'plan' => [
+                'id' => $plan->id,
+                'name' => $plan->name,
+                'description' => $plan->description,
+                'active' => (bool) $plan->active,
+                'order' => (int) $plan->order,
+                'show_on_storefront' => (bool) ($metadata['storefront']['plan']['show'] ?? false),
+                'recommended' => (bool) ($metadata['storefront']['plan']['recommended'] ?? false),
+            ],
+            'pending' => ShowcaseSubmission::where('status', 'pending')->count(),
         ]);
     }
 
@@ -177,5 +211,18 @@ class AdminPlansController extends Controller
             return redirect()->back()
                 ->with('error', 'Failed to sync plan: '.$e->getMessage());
         }
+    }
+
+    /**
+     * Delete a plan (a recurring storefront product). Mirrors the products
+     * destroy — soft-deletes the underlying Product so it drops off the
+     * storefront + admin lists.
+     */
+    public function destroy(Product $plan): RedirectResponse
+    {
+        $plan->delete();
+
+        return redirect()->route('admin.plans.index')
+            ->with('success', 'Plan deleted successfully.');
     }
 }

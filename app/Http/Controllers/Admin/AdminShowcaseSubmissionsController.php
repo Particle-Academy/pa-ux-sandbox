@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Jobs\ScanShowcaseSubmission;
 use App\Models\ShowcaseSubmission;
 use App\Services\ShowcaseRewards;
-use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -55,10 +54,31 @@ class AdminShowcaseSubmissionsController extends Controller
         ]);
     }
 
-    public function show(ShowcaseSubmission $submission): View
+    public function show(ShowcaseSubmission $submission): Response
     {
-        return view('admin.submissions.show', [
-            'submission' => $submission->load('user'),
+        $submission->load('user');
+
+        return Inertia::render('Admin/SubmissionShow', [
+            'submission' => [
+                'id' => $submission->id,
+                'title' => $submission->title,
+                'description' => $submission->description,
+                'url' => $submission->url,
+                'kind' => $submission->kind,
+                'status' => $submission->status,
+                'scan_result' => $submission->scan_result,
+                'thumbnail_url' => $submission->thumbnail_url,
+                'featured' => $submission->isFeatured(),
+                'featured_until' => $submission->featured_until?->format('M j, Y'),
+                'created' => $submission->created_at?->format('M j, Y'),
+                'scanned_at' => $submission->scanned_at?->diffForHumans(),
+                'rewarded_at' => $submission->rewarded_at?->format('M j, Y'),
+                'user' => [
+                    'name' => $submission->user?->name,
+                    'github_username' => $submission->user?->github_username,
+                ],
+            ],
+            'pending' => ShowcaseSubmission::where('status', 'pending')->count(),
         ]);
     }
 

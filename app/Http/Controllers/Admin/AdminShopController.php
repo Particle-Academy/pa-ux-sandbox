@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\ShopItem;
 use App\Models\ShowcaseSubmission;
-use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -37,9 +36,12 @@ class AdminShopController extends Controller
         ]);
     }
 
-    public function create(): View
+    public function create(): Response
     {
-        return view('admin.shop.create');
+        return Inertia::render('Admin/ShopForm', [
+            'item' => null,
+            'pending' => ShowcaseSubmission::where('status', 'pending')->count(),
+        ]);
     }
 
     public function store(Request $request): RedirectResponse
@@ -51,9 +53,27 @@ class AdminShopController extends Controller
         return redirect()->route('admin.shop.index')->with('success', 'Shop item created.');
     }
 
-    public function edit(ShopItem $shop): View
+    public function edit(ShopItem $shop): Response
     {
-        return view('admin.shop.edit', ['item' => $shop]);
+        $metadata = $shop->metadata ?? [];
+
+        return Inertia::render('Admin/ShopForm', [
+            'item' => [
+                'id' => $shop->id,
+                'slug' => $shop->slug,
+                'name' => $shop->name,
+                'description' => $shop->description,
+                'kind' => $shop->kind,
+                'price' => (int) $shop->price,
+                'active' => (bool) $shop->active,
+                'order' => (int) $shop->order,
+                'slot' => $metadata['slot'] ?? '',
+                'value' => $metadata['value'] ?? '',
+                'service' => $metadata['service'] ?? '',
+                'duration_days' => isset($metadata['duration_days']) ? (string) $metadata['duration_days'] : '',
+            ],
+            'pending' => ShowcaseSubmission::where('status', 'pending')->count(),
+        ]);
     }
 
     public function update(Request $request, ShopItem $shop): RedirectResponse

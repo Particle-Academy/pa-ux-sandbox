@@ -4,6 +4,7 @@ use App\Models\ShowcaseSubmission;
 use App\Models\User;
 use App\Services\GamificationStats;
 use Database\Seeders\FunLabSeeder;
+use Inertia\Testing\AssertableInertia as Assert;
 use Tests\TestCase;
 
 uses(TestCase::class);
@@ -67,6 +68,9 @@ it('renders the admin dashboard with gamification widgets', function () {
 
     $this->actingAs($admin)->get('/admin')
         ->assertOk()
-        ->assertSee('Coins in circulation')
-        ->assertSee('Top earners');
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('Admin/Dashboard')
+            ->where('gamification.coins.in_circulation', 777)
+            ->has('gamification.topEarners.all_time')
+            ->has('stats'));
 });

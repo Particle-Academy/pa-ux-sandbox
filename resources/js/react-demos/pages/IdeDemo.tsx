@@ -688,7 +688,7 @@ npm install @particle-academy/react-fancy
 - TreeNav (file tree navigation)
 
 ## Usage
-import { Action, Modal, TreeNav } from "@particle-academy/react-fancy";
+import { Button, Modal, TreeNav } from "@particle-academy/react-fancy";
 import "@particle-academy/react-fancy/styles.css";`,
   },
   "react-demos.tsx": {

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import {
   Editor,
   useEditor,
-  Action,
+  Button,
   ContentRenderer,
   type RenderExtension,
   type RenderExtensionProps,
@@ -19,29 +19,29 @@ function CustomToolbarButtons() {
 
   return (
     <>
-      <Action size="xs" variant="ghost" onClick={() => exec("bold")} title="Bold">
+      <Button size="xs" variant="ghost" onClick={() => exec("bold")} title="Bold">
         <span className="font-bold">B</span>
-      </Action>
-      <Action size="xs" variant="ghost" onClick={() => exec("italic")} title="Italic">
+      </Button>
+      <Button size="xs" variant="ghost" onClick={() => exec("italic")} title="Italic">
         <span className="italic">I</span>
-      </Action>
-      <Action size="xs" variant="ghost" onClick={() => exec("underline")} title="Underline">
+      </Button>
+      <Button size="xs" variant="ghost" onClick={() => exec("underline")} title="Underline">
         <span className="underline">U</span>
-      </Action>
+      </Button>
       <Editor.Toolbar.Separator />
-      <Action size="xs" variant="ghost" onClick={() => exec("formatBlock", "h1")} title="Heading 1">
+      <Button size="xs" variant="ghost" onClick={() => exec("formatBlock", "h1")} title="Heading 1">
         H1
-      </Action>
-      <Action size="xs" variant="ghost" onClick={() => exec("formatBlock", "h2")} title="Heading 2">
+      </Button>
+      <Button size="xs" variant="ghost" onClick={() => exec("formatBlock", "h2")} title="Heading 2">
         H2
-      </Action>
+      </Button>
       <Editor.Toolbar.Separator />
-      <Action size="xs" variant="ghost" onClick={() => exec("insertUnorderedList")} title="Bullet List">
+      <Button size="xs" variant="ghost" onClick={() => exec("insertUnorderedList")} title="Bullet List">
         &#8226;
-      </Action>
-      <Action size="xs" variant="ghost" onClick={() => exec("insertOrderedList")} title="Numbered List">
+      </Button>
+      <Button size="xs" variant="ghost" onClick={() => exec("insertOrderedList")} title="Numbered List">
         1.
-      </Action>
+      </Button>
     </>
   );
 }
@@ -345,9 +345,9 @@ export function EditorDemo() {
   const { exec } = useEditor();
   return (
     <>
-      <Action size="xs" variant="ghost" onClick={() => exec("bold")}>B</Action>
+      <Button size="xs" variant="ghost" onClick={() => exec("bold")}>B</Button>
       <Editor.Toolbar.Separator />
-      <Action size="xs" variant="ghost" onClick={() => exec("formatBlock", "h1")}>H1</Action>
+      <Button size="xs" variant="ghost" onClick={() => exec("formatBlock", "h1")}>H1</Button>
     </>
   );
 }

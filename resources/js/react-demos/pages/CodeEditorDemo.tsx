@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { CodeEditor, useCodeEditor } from "@particle-academy/fancy-code";
-import { Action } from "@particle-academy/react-fancy";
+import { Button } from "@particle-academy/react-fancy";
 import { DemoSection } from "../components/DemoSection";
 
 // ---------------------------------------------------------------------------
@@ -130,9 +130,9 @@ function RunButton() {
 
   return (
     <div className="flex items-center gap-1.5">
-      <Action size="xs" onClick={handleRun} color="green">
+      <Button size="xs" onClick={handleRun} color="green">
         Run
-      </Action>
+      </Button>
       {output && (
         <span className="text-[11px] text-green-600 dark:text-green-400">{output}</span>
       )}
@@ -154,9 +154,9 @@ function FormatButton() {
   };
 
   return (
-    <Action size="xs" onClick={handleFormat}>
+    <Button size="xs" onClick={handleFormat}>
       Format
-    </Action>
+    </Button>
   );
 }
 
@@ -224,7 +224,7 @@ export function CodeEditorDemo() {
         description="Custom toolbar buttons via useCodeEditor() hook — Run parses the code, Format trims trailing whitespace."
         code={`function RunButton() {
   const { getValue } = useCodeEditor();
-  return <Action onClick={() => run(getValue())}>Run</Action>;
+  return <Button onClick={() => run(getValue())}>Run</Button>;
 }
 
 <CodeEditor value={code} onChange={setCode} language="typescript">

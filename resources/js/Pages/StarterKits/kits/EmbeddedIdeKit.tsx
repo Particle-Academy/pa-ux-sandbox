@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Action, Badge, Card, Heading, Text } from "@particle-academy/react-fancy";
+import { Button, Badge, Card, Heading, Text } from "@particle-academy/react-fancy";
 import { CodeEditor } from "@particle-academy/fancy-code";
 
 type Node = { id: string; label: string; kind: "folder" | "file"; lang?: string; children?: Node[]; content?: string };

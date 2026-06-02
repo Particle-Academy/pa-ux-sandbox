@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 import {
   Card,
-  Action,
+  Button,
   Switch,
   Select,
   Badge,
@@ -231,17 +231,17 @@ function DraftStack({
             />
           </div>
           <div className="mt-3 flex justify-between">
-            <Action variant="outline" size="sm" onClick={prev} disabled={safeIdx === 0}>
+            <Button variant="outline" size="sm" onClick={prev} disabled={safeIdx === 0}>
               ← shift
-            </Action>
-            <Action
+            </Button>
+            <Button
               variant="outline"
               size="sm"
               onClick={next}
               disabled={safeIdx >= drafts.length - 2}
             >
               shift →
-            </Action>
+            </Button>
           </div>
         </div>
       </Card>
@@ -302,20 +302,20 @@ function DraftStack({
         </div>
 
         <div className="mt-3 flex flex-wrap items-center gap-2">
-          <Action variant="outline" size="sm" onClick={prev} disabled={safeIdx === 0}>
+          <Button variant="outline" size="sm" onClick={prev} disabled={safeIdx === 0}>
             ← prev
-          </Action>
-          <Action
+          </Button>
+          <Button
             variant="outline"
             size="sm"
             onClick={next}
             disabled={safeIdx >= drafts.length - 1}
           >
             next →
-          </Action>
-          <Action color="emerald" size="sm" onClick={() => onAccept(current)}>
+          </Button>
+          <Button color="emerald" size="sm" onClick={() => onAccept(current)}>
             accept this draft
-          </Action>
+          </Button>
           {previous && showDiff && (
             <span className="ml-auto text-[11px] text-zinc-500">
               diff vs <span className="font-medium">{previous.label}</span>
@@ -365,9 +365,9 @@ function DraftPane({
         {showDiff ? <Diff prev={against.body} next={draft.body} /> : <span>{draft.body}</span>}
       </div>
       <div className="mt-2 flex justify-end">
-        <Action size="sm" color="emerald" onClick={onAccept}>
+        <Button size="sm" color="emerald" onClick={onAccept}>
           accept
-        </Action>
+        </Button>
       </div>
     </div>
   );

@@ -2,7 +2,7 @@ import { useState } from "react";
 import {
   Icon,
   registerIconSet,
-  Action,
+  Button,
   Callout,
   Input,
   Badge,
@@ -144,18 +144,18 @@ registerIconSet("my-set", myIcons);
       <DemoSection
         title="Inside Action Buttons"
         description="Actions accept an icon slug to place icons alongside text."
-        code={`<Action icon="pencil">Edit</Action>
-<Action icon="trash-2" color="red">Delete</Action>
-<Action icon="plus" color="blue">New Item</Action>
-<Action icon="download" variant="ghost">Export</Action>
-<Action icon="share-2" variant="ghost">Share</Action>`}
+        code={`<Button icon="pencil">Edit</Button>
+<Button icon="trash-2" color="red">Delete</Button>
+<Button icon="plus" color="blue">New Item</Button>
+<Button icon="download" variant="ghost">Export</Button>
+<Button icon="share-2" variant="ghost">Share</Button>`}
       >
         <div className="flex flex-wrap items-center gap-3">
-          <Action icon="pencil">Edit</Action>
-          <Action icon="trash-2" color="red">Delete</Action>
-          <Action icon="plus" color="blue">New Item</Action>
-          <Action icon="download" variant="ghost">Export</Action>
-          <Action icon="share-2" variant="ghost">Share</Action>
+          <Button icon="pencil">Edit</Button>
+          <Button icon="trash-2" color="red">Delete</Button>
+          <Button icon="plus" color="blue">New Item</Button>
+          <Button icon="download" variant="ghost">Export</Button>
+          <Button icon="share-2" variant="ghost">Share</Button>
         </div>
       </DemoSection>
 

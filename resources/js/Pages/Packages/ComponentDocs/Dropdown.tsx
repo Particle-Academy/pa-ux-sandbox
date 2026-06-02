@@ -1,5 +1,5 @@
 import type { ComponentDoc } from "./types";
-import { Action, Dropdown, Icon } from "@particle-academy/react-fancy";
+import { Button, Dropdown, Icon } from "@particle-academy/react-fancy";
 
 export const dropdownDoc: ComponentDoc = {
     intro: (
@@ -17,7 +17,7 @@ export const dropdownDoc: ComponentDoc = {
             render: () => (
                 <Dropdown>
                     <Dropdown.Trigger>
-                        <Action variant="ghost" iconTrailing="chevron-down">Account</Action>
+                        <Button variant="ghost" iconTrailing="chevron-down">Account</Button>
                     </Dropdown.Trigger>
                     <Dropdown.Items>
                         <Dropdown.Item>Profile</Dropdown.Item>
@@ -28,7 +28,7 @@ export const dropdownDoc: ComponentDoc = {
             ),
             code: `<Dropdown>
     <Dropdown.Trigger>
-        <Action variant="ghost" iconTrailing="chevron-down">Account</Action>
+        <Button variant="ghost" iconTrailing="chevron-down">Account</Button>
     </Dropdown.Trigger>
     <Dropdown.Items>
         <Dropdown.Item>Profile</Dropdown.Item>
@@ -43,7 +43,7 @@ export const dropdownDoc: ComponentDoc = {
             render: () => (
                 <Dropdown>
                     <Dropdown.Trigger>
-                        <Action variant="ghost" iconTrailing="chevron-down">More</Action>
+                        <Button variant="ghost" iconTrailing="chevron-down">More</Button>
                     </Dropdown.Trigger>
                     <Dropdown.Items>
                         <Dropdown.Item>Open</Dropdown.Item>
@@ -55,7 +55,7 @@ export const dropdownDoc: ComponentDoc = {
                 </Dropdown>
             ),
             code: `<Dropdown>
-    <Dropdown.Trigger><Action>More</Action></Dropdown.Trigger>
+    <Dropdown.Trigger><Button>More</Button></Dropdown.Trigger>
     <Dropdown.Items>
         <Dropdown.Item>Open</Dropdown.Item>
         <Dropdown.Item>Rename</Dropdown.Item>
@@ -71,7 +71,7 @@ export const dropdownDoc: ComponentDoc = {
             render: () => (
                 <Dropdown placement="top-start">
                     <Dropdown.Trigger>
-                        <Action variant="ghost">Open above</Action>
+                        <Button variant="ghost">Open above</Button>
                     </Dropdown.Trigger>
                     <Dropdown.Items>
                         <Dropdown.Item>One</Dropdown.Item>
@@ -90,7 +90,7 @@ export const dropdownDoc: ComponentDoc = {
             render: () => (
                 <Dropdown>
                     <Dropdown.Trigger>
-                        <Action variant="ghost">Actions</Action>
+                        <Button variant="ghost">Actions</Button>
                     </Dropdown.Trigger>
                     <Dropdown.Items>
                         <Dropdown.Item>Available</Dropdown.Item>

@@ -1,12 +1,12 @@
 import type { ComponentDoc } from "./types";
 import { useState } from "react";
-import { Action, Heading, Modal, Text } from "@particle-academy/react-fancy";
+import { Button, Heading, Modal, Text } from "@particle-academy/react-fancy";
 
 function ModalDemo({ size, label }: { size?: "sm" | "md" | "lg" | "xl" | "full"; label: string }) {
     const [open, setOpen] = useState(false);
     return (
         <>
-            <Action onClick={() => setOpen(true)}>{label}</Action>
+            <Button onClick={() => setOpen(true)}>{label}</Button>
             <Modal open={open} onClose={() => setOpen(false)} size={size}>
                 <Modal.Header>
                     <Heading size="md">Modal · {size ?? "md"}</Heading>
@@ -19,8 +19,8 @@ function ModalDemo({ size, label }: { size?: "sm" | "md" | "lg" | "xl" | "full";
                 </Modal.Body>
                 <Modal.Footer>
                     <div className="flex justify-end gap-2">
-                        <Action variant="ghost" onClick={() => setOpen(false)}>Cancel</Action>
-                        <Action color="violet" onClick={() => setOpen(false)}>OK</Action>
+                        <Button variant="ghost" onClick={() => setOpen(false)}>Cancel</Button>
+                        <Button color="violet" onClick={() => setOpen(false)}>OK</Button>
                     </div>
                 </Modal.Footer>
             </Modal>
@@ -43,7 +43,7 @@ export const modalDoc: ComponentDoc = {
             render: () => <ModalDemo label="Open default modal" />,
             code: `const [open, setOpen] = useState(false);
 
-<Action onClick={() => setOpen(true)}>Open modal</Action>
+<Button onClick={() => setOpen(true)}>Open modal</Button>
 <Modal open={open} onClose={() => setOpen(false)}>
     <Modal.Header>
         <Heading size="md">Title</Heading>
@@ -53,8 +53,8 @@ export const modalDoc: ComponentDoc = {
     </Modal.Body>
     <Modal.Footer>
         <div className="flex justify-end gap-2">
-            <Action variant="ghost" onClick={() => setOpen(false)}>Cancel</Action>
-            <Action color="violet" onClick={() => setOpen(false)}>OK</Action>
+            <Button variant="ghost" onClick={() => setOpen(false)}>Cancel</Button>
+            <Button color="violet" onClick={() => setOpen(false)}>OK</Button>
         </div>
     </Modal.Footer>
 </Modal>`,

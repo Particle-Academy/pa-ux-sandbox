@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Action, Badge, Callout, Card } from "@particle-academy/react-fancy";
+import { Button, Badge, Callout, Card } from "@particle-academy/react-fancy";
 import { CodeEditor } from "@particle-academy/fancy-code";
 import { Canvas } from "@particle-academy/fancy-3d/canvas";
 import { domAdapter } from "@particle-academy/fancy-3d/dom";
@@ -134,9 +134,9 @@ function Inspector({ node, onChange, onDelete }: { node: SceneNode | null; onCha
           </CodeEditor>
         </div>
       </div>
-      <Action variant="default" color="red" size="sm" onClick={onDelete}>
+      <Button variant="default" color="red" size="sm" onClick={onDelete}>
         Delete node
-      </Action>
+      </Button>
     </div>
   );
 }
@@ -310,16 +310,16 @@ export function CanvasStudioDemo() {
       <div className="mb-3 flex flex-wrap items-center gap-2">
         <span className="text-[10px] font-semibold tracking-wider text-zinc-500 uppercase">Add widget</span>
         {PALETTE.map((p) => (
-          <Action key={p.kind} variant="default" size="sm" onClick={() => addWidget(p.kind)}>
+          <Button key={p.kind} variant="default" size="sm" onClick={() => addWidget(p.kind)}>
             + {p.label}
-          </Action>
+          </Button>
         ))}
         <span className="ml-auto flex items-center gap-2">
           <Badge size="sm">{scene.nodes.length} nodes</Badge>
           <Badge size="sm">{scene.edges.length} edges</Badge>
-          <Action variant="ghost" size="sm" onClick={resetScene}>
+          <Button variant="ghost" size="sm" onClick={resetScene}>
             Reset scene
-          </Action>
+          </Button>
         </span>
       </div>
 

@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from "react";
 import {
-  Action,
+  Button,
   Avatar,
   Badge,
   Card,
@@ -289,7 +289,7 @@ function FancyCardBody({
           </p>
           <Dropdown placement="bottom-end">
             <Dropdown.Trigger>
-              <Action variant="ghost" size="xs" icon="more-horizontal" />
+              <Button variant="ghost" size="xs" icon="more-horizontal" />
             </Dropdown.Trigger>
             <Dropdown.Items>
               <Dropdown.Item onClick={() => onAction?.("edit")}>
@@ -459,7 +459,7 @@ function FancyColumnHeader({
         </span>
         <Dropdown placement="bottom-end">
           <Dropdown.Trigger>
-            <Action variant="ghost" size="xs" icon="more-horizontal" />
+            <Button variant="ghost" size="xs" icon="more-horizontal" />
           </Dropdown.Trigger>
           <Dropdown.Items>
             <Dropdown.Item onClick={onAdd}>Add card</Dropdown.Item>
@@ -479,7 +479,7 @@ function FancyColumnHeader({
         )}
       </div>
 
-      <Action
+      <Button
         variant="ghost"
         size="xs"
         icon="plus"
@@ -487,7 +487,7 @@ function FancyColumnHeader({
         className="w-full justify-start text-zinc-500"
       >
         Add card
-      </Action>
+      </Button>
     </div>
   );
 }
@@ -709,9 +709,9 @@ function FullKanbanBoard() {
           {filtersActive ? `${visibleCount} of ${totalCount} cards` : `${totalCount} cards`}
         </span>
         {filtersActive && (
-          <Action variant="ghost" size="xs" icon="x" onClick={clearFilters}>
+          <Button variant="ghost" size="xs" icon="x" onClick={clearFilters}>
             Clear
-          </Action>
+          </Button>
         )}
         {recent && (
           <span className="ml-auto text-xs text-zinc-500">last: {recent}</span>

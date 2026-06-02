@@ -1,5 +1,5 @@
 import type { ComponentDoc } from "./types";
-import { Action, Navbar } from "@particle-academy/react-fancy";
+import { Button, Navbar } from "@particle-academy/react-fancy";
 
 export const navbarDoc: ComponentDoc = {
     intro: (
@@ -46,8 +46,8 @@ export const navbarDoc: ComponentDoc = {
                         <Navbar.Item href="#">Pricing</Navbar.Item>
                     </Navbar.Items>
                     <div className="ml-auto flex items-center gap-2">
-                        <Action variant="ghost" size="sm">Sign in</Action>
-                        <Action color="violet" size="sm">Get started</Action>
+                        <Button variant="ghost" size="sm">Sign in</Button>
+                        <Button color="violet" size="sm">Get started</Button>
                     </div>
                 </Navbar>
             ),
@@ -58,8 +58,8 @@ export const navbarDoc: ComponentDoc = {
         <Navbar.Item href="/pricing">Pricing</Navbar.Item>
     </Navbar.Items>
     <div className="ml-auto flex gap-2">
-        <Action variant="ghost">Sign in</Action>
-        <Action color="violet">Get started</Action>
+        <Button variant="ghost">Sign in</Button>
+        <Button color="violet">Get started</Button>
     </div>
 </Navbar>`,
         },

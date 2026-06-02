@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Action, Badge, Card, Heading, Tabs, Text, Textarea, Toast, useToast } from "@particle-academy/react-fancy";
+import { Button, Badge, Card, Heading, Tabs, Text, Textarea, Toast, useToast } from "@particle-academy/react-fancy";
 import { Slide, defaultTheme, type Deck } from "@particle-academy/fancy-slides";
 import { defaultElementRegistry } from "@particle-academy/fancy-slides/registry";
 import "@particle-academy/fancy-slides/styles.css";
@@ -183,12 +183,12 @@ function DarkSlideDemoBody() {
                     </Text>
                 </div>
                 <div className="flex items-center gap-2">
-                    <Action size="sm" variant="ghost" onClick={() => setRaw(JSON.stringify(sampleDeck, null, 2))}>
+                    <Button size="sm" variant="ghost" onClick={() => setRaw(JSON.stringify(sampleDeck, null, 2))}>
                         Reset deck
-                    </Action>
-                    <Action size="sm" color="violet" icon="download" loading={busy} onClick={download}>
+                    </Button>
+                    <Button size="sm" color="violet" icon="download" loading={busy} onClick={download}>
                         Download .pptx
-                    </Action>
+                    </Button>
                 </div>
             </header>
 

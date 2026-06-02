@@ -1,4 +1,4 @@
-import { Toast, useToast, Action } from "@particle-academy/react-fancy";
+import { Toast, useToast, Button } from "@particle-academy/react-fancy";
 import { DemoSection } from "../components/DemoSection";
 
 function ToastButtons() {
@@ -6,44 +6,44 @@ function ToastButtons() {
 
   return (
     <div className="flex flex-wrap gap-2">
-      <Action
+      <Button
         size="sm"
         onClick={() => toast({ title: "Default toast", description: "Something happened." })}
       >
         Default
-      </Action>
-      <Action
+      </Button>
+      <Button
         size="sm"
         onClick={() =>
           toast({ title: "Saved!", description: "Your changes were saved.", variant: "success" })
         }
       >
         Success
-      </Action>
-      <Action
+      </Button>
+      <Button
         size="sm"
         onClick={() =>
           toast({ title: "Error", description: "Something went wrong.", variant: "error" })
         }
       >
         Error
-      </Action>
-      <Action
+      </Button>
+      <Button
         size="sm"
         onClick={() =>
           toast({ title: "Warning", description: "Check your input.", variant: "warning" })
         }
       >
         Warning
-      </Action>
-      <Action
+      </Button>
+      <Button
         size="sm"
         onClick={() =>
           toast({ title: "Info", description: "Here is some information.", variant: "info" })
         }
       >
         Info
-      </Action>
+      </Button>
     </div>
   );
 }

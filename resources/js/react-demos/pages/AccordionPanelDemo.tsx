@@ -1,7 +1,7 @@
 import { useState } from "react";
 import {
   AccordionPanel,
-  Action,
+  Button,
   Badge,
   useAccordionSection,
 } from "@particle-academy/react-fancy";
@@ -27,56 +27,56 @@ function MenuShell({
         className="gap-1"
       >
         <AccordionPanel.Section id="home" pinned>
-          <Action variant="ghost" icon="home" size="sm" />
+          <Button variant="ghost" icon="home" size="sm" />
         </AccordionPanel.Section>
 
         <AccordionPanel.Section id="primary">
           <AccordionPanel.Trigger />
           <AccordionPanel.Content>
-            <Action variant="ghost" icon="bookmark" size="sm">
+            <Button variant="ghost" icon="bookmark" size="sm">
               Wishlist <Badge color="zinc" size="sm" className="ml-1">1</Badge>
-            </Action>
-            <Action variant="ghost" icon="mail" size="sm">
+            </Button>
+            <Button variant="ghost" icon="mail" size="sm">
               Feedback
-            </Action>
-            <Action variant="ghost" icon="file-text" size="sm">
+            </Button>
+            <Button variant="ghost" icon="file-text" size="sm">
               Plans
-            </Action>
-            <Action variant="ghost" icon="play" size="sm" color="emerald">
+            </Button>
+            <Button variant="ghost" icon="play" size="sm" color="emerald">
               WIP
-            </Action>
+            </Button>
           </AccordionPanel.Content>
         </AccordionPanel.Section>
 
         <AccordionPanel.Section id="secondary">
           <AccordionPanel.Trigger />
           <AccordionPanel.Content>
-            <Action variant="ghost" icon="grid" size="sm">
+            <Button variant="ghost" icon="grid" size="sm">
               Board
-            </Action>
-            <Action variant="ghost" icon="zap" size="sm" color="rose" alert>
+            </Button>
+            <Button variant="ghost" icon="zap" size="sm" color="rose" alert>
               VIP
-            </Action>
+            </Button>
           </AccordionPanel.Content>
         </AccordionPanel.Section>
 
         <AccordionPanel.Section id="extras">
           <AccordionPanel.Trigger />
           <AccordionPanel.Content>
-            <Action variant="ghost" icon="rocket" size="sm">
+            <Button variant="ghost" icon="rocket" size="sm">
               Releases
-            </Action>
-            <Action variant="ghost" icon="settings" size="sm">
+            </Button>
+            <Button variant="ghost" icon="settings" size="sm">
               Features
-            </Action>
-            <Action variant="ghost" icon="activity" size="sm">
+            </Button>
+            <Button variant="ghost" icon="activity" size="sm">
               Activity
-            </Action>
+            </Button>
           </AccordionPanel.Content>
         </AccordionPanel.Section>
       </AccordionPanel>
 
-      <Action variant="ghost" icon="settings" size="sm" />
+      <Button variant="ghost" icon="settings" size="sm" />
     </div>
   );
 }
@@ -181,9 +181,9 @@ export function AccordionPanelDemo() {
                 <PillTrigger />
               </AccordionPanel.Trigger>
               <AccordionPanel.Content>
-                <Action variant="ghost" size="sm">First</Action>
-                <Action variant="ghost" size="sm">Second</Action>
-                <Action variant="ghost" size="sm">Third</Action>
+                <Button variant="ghost" size="sm">First</Button>
+                <Button variant="ghost" size="sm">Second</Button>
+                <Button variant="ghost" size="sm">Third</Button>
               </AccordionPanel.Content>
             </AccordionPanel.Section>
             <AccordionPanel.Section id="b">
@@ -191,8 +191,8 @@ export function AccordionPanelDemo() {
                 <PillTrigger />
               </AccordionPanel.Trigger>
               <AccordionPanel.Content>
-                <Action variant="ghost" size="sm">Alpha</Action>
-                <Action variant="ghost" size="sm">Beta</Action>
+                <Button variant="ghost" size="sm">Alpha</Button>
+                <Button variant="ghost" size="sm">Beta</Button>
               </AccordionPanel.Content>
             </AccordionPanel.Section>
           </AccordionPanel>
@@ -211,36 +211,36 @@ export function AccordionPanelDemo() {
           >
             <AccordionPanel.Section id="files">
               <AccordionPanel.Content className="w-full items-stretch">
-                <Action variant="ghost" size="sm" icon="folder" className="justify-start">
+                <Button variant="ghost" size="sm" icon="folder" className="justify-start">
                   components/
-                </Action>
-                <Action variant="ghost" size="sm" icon="file-text" className="justify-start">
+                </Button>
+                <Button variant="ghost" size="sm" icon="file-text" className="justify-start">
                   README.md
-                </Action>
-                <Action variant="ghost" size="sm" icon="file-text" className="justify-start">
+                </Button>
+                <Button variant="ghost" size="sm" icon="file-text" className="justify-start">
                   package.json
-                </Action>
+                </Button>
               </AccordionPanel.Content>
               <AccordionPanel.Trigger />
             </AccordionPanel.Section>
 
             <AccordionPanel.Section id="tools">
               <AccordionPanel.Content className="w-full items-stretch">
-                <Action variant="ghost" size="sm" icon="terminal" className="justify-start">
+                <Button variant="ghost" size="sm" icon="terminal" className="justify-start">
                   Terminal
-                </Action>
-                <Action variant="ghost" size="sm" icon="bug" className="justify-start">
+                </Button>
+                <Button variant="ghost" size="sm" icon="bug" className="justify-start">
                   Debugger
-                </Action>
+                </Button>
               </AccordionPanel.Content>
               <AccordionPanel.Trigger />
             </AccordionPanel.Section>
 
             <AccordionPanel.Section id="output">
               <AccordionPanel.Content className="w-full items-stretch">
-                <Action variant="ghost" size="sm" icon="list" className="justify-start">
+                <Button variant="ghost" size="sm" icon="list" className="justify-start">
                   Build log
-                </Action>
+                </Button>
               </AccordionPanel.Content>
               <AccordionPanel.Trigger />
             </AccordionPanel.Section>

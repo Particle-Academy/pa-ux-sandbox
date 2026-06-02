@@ -1,5 +1,5 @@
 import { Head, Link } from "@inertiajs/react";
-import { Action, Badge, Card, Heading, Text } from "@particle-academy/react-fancy";
+import { Button, Badge, Card, Heading, Text } from "@particle-academy/react-fancy";
 import { Layout } from "../Layout";
 
 type Kit = { slug: string; name: string; pkg: string; blurb: string };
@@ -49,7 +49,7 @@ export default function StarterKitsIndex({ kits }: { kits: Kit[] }) {
                                     <Text size="xs" className="!text-violet-600 opacity-0 transition group-hover:opacity-100 dark:!text-violet-300">
                                         Open kit →
                                     </Text>
-                                    <Action
+                                    <Button
                                         as="a"
                                         href={`/starter-kits/${k.slug}/download.zip`}
                                         variant="ghost"
@@ -57,7 +57,7 @@ export default function StarterKitsIndex({ kits }: { kits: Kit[] }) {
                                         onClick={(e) => e.stopPropagation()}
                                     >
                                         ↓ zip
-                                    </Action>
+                                    </Button>
                                 </div>
                             </Card.Body>
                         </Card>

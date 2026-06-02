@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Action, Badge, Card, Heading, Text } from "@particle-academy/react-fancy";
+import { Button, Badge, Card, Heading, Text } from "@particle-academy/react-fancy";
 import { PresenterView, SlideViewer, defaultTheme, type Deck } from "@particle-academy/fancy-slides";
 import "@particle-academy/fancy-slides/styles.css";
 
@@ -133,12 +133,12 @@ export function PresenterViewDemo() {
             </header>
 
             <div className="flex flex-wrap gap-2">
-                <Action size="sm" color="violet" icon="presentation" onClick={() => setPopout(true)}>
+                <Button size="sm" color="violet" icon="presentation" onClick={() => setPopout(true)}>
                     Open presenter overlay
-                </Action>
-                <Action size="sm" variant="ghost" icon="play" onClick={() => setAudience(true)}>
+                </Button>
+                <Button size="sm" variant="ghost" icon="play" onClick={() => setAudience(true)}>
                     Open audience view
-                </Action>
+                </Button>
                 <Badge color="zinc" size="sm">{demoDeck.slides.length} slides</Badge>
             </div>
 

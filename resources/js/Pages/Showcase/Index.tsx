@@ -1,5 +1,5 @@
 import { Head, Link, usePage } from "@inertiajs/react";
-import { Action, Card, Heading, Text } from "@particle-academy/react-fancy";
+import { Button, Card, Heading, Text } from "@particle-academy/react-fancy";
 import { Layout } from "../Layout";
 
 type Submission = {
@@ -29,13 +29,13 @@ export default function ShowcaseIndex({ submissions }: { submissions: Submission
                     </Text>
                 </div>
                 {isAuth ? (
-                    <Action as={Link} href="/showcase/submit" color="violet">
+                    <Button as={Link} href="/showcase/submit" color="violet">
                         Submit a site or repo
-                    </Action>
+                    </Button>
                 ) : (
-                    <Action as="a" href="/auth/github" color="zinc">
+                    <Button as="a" href="/auth/github" color="zinc">
                         Sign in to submit
-                    </Action>
+                    </Button>
                 )}
             </div>
 

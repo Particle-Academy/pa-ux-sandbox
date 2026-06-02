@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import {
-    Action,
+    Button,
     Badge,
     Card,
     Sidebar,
@@ -193,12 +193,12 @@ export function ReactDashboardKit() {
                         </div>
                         <div className="flex items-center gap-2">
                             <PeriodSwitcher value={period} onChange={setPeriod} />
-                            <Action variant="ghost" size="sm" onClick={() => toast({ title: "Refreshed", description: "Pulled fresh data from Stripe." })}>
+                            <Button variant="ghost" size="sm" onClick={() => toast({ title: "Refreshed", description: "Pulled fresh data from Stripe." })}>
                                 <RefreshCw size={14} />
-                            </Action>
-                            <Action color="violet" size="sm" onClick={() => toast({ title: "Export started", description: "CSV will email when ready." })}>
+                            </Button>
+                            <Button color="violet" size="sm" onClick={() => toast({ title: "Export started", description: "CSV will email when ready." })}>
                                 <Download size={14} className="mr-1" /> Export
-                            </Action>
+                            </Button>
                         </div>
                     </div>
 
@@ -304,7 +304,7 @@ function DashboardSidebar({ active, onChange }: { active: string; onChange: (id:
                     <Text size="xs" className="mt-1 !text-zinc-600 dark:!text-zinc-300">
                         Upgrade to keep your 12 webhooks live.
                     </Text>
-                    <Action color="violet" size="sm" className="mt-2 w-full">Upgrade</Action>
+                    <Button color="violet" size="sm" className="mt-2 w-full">Upgrade</Button>
                 </div>
             </div>
         </Sidebar>
@@ -660,12 +660,12 @@ function CustomerTableCard({
                         </div>
                     </div>
                     <div className="flex items-center gap-2">
-                        <Action variant="ghost" size="sm">
+                        <Button variant="ghost" size="sm">
                             <Filter size={13} className="mr-1" /> Filter
-                        </Action>
-                        <Action color="violet" size="sm">
+                        </Button>
+                        <Button color="violet" size="sm">
                             <Plus size={13} className="mr-1" /> New customer
-                        </Action>
+                        </Button>
                     </div>
                 </div>
 
@@ -727,10 +727,10 @@ function CustomerTableCard({
                                     <td className="px-4 py-2.5 text-xs text-zinc-500">{c.lastSeen}</td>
                                     <td className="px-4 py-2.5 text-right">
                                         <div className="flex justify-end gap-0.5">
-                                            <Action variant="ghost" size="sm" onClick={() => onOpen(c)}>Open</Action>
-                                            <Action variant="ghost" size="sm">
+                                            <Button variant="ghost" size="sm" onClick={() => onOpen(c)}>Open</Button>
+                                            <Button variant="ghost" size="sm">
                                                 <MoreHorizontal size={14} />
-                                            </Action>
+                                            </Button>
                                         </div>
                                     </td>
                                 </tr>

@@ -15,7 +15,7 @@ import {
   StandardMaterial,
   Vector3,
 } from "@babylonjs/core";
-import { Action, Badge, Callout, Card } from "@particle-academy/react-fancy";
+import { Button, Badge, Callout, Card } from "@particle-academy/react-fancy";
 import {
   createBillboard,
   createBuilding,
@@ -326,9 +326,9 @@ export function BabylonCityDemo() {
                   <div className="font-extrabold text-zinc-900 dark:text-zinc-100">{hoveredSpec.name}</div>
                   <div className="font-mono text-xs text-zinc-500">{hoveredSpec.path}</div>
                   <p className="text-xs text-zinc-600 dark:text-zinc-400">{hoveredSpec.description}</p>
-                  <Action variant="default" color="indigo" size="sm" onClick={() => navigate(hoveredSpec.path)}>
+                  <Button variant="default" color="indigo" size="sm" onClick={() => navigate(hoveredSpec.path)}>
                     Open demo →
-                  </Action>
+                  </Button>
                 </div>
               ) : (
                 <div className="text-xs text-zinc-500">Hover a billboard in the city to preview it here.</div>
@@ -342,9 +342,9 @@ export function BabylonCityDemo() {
               {demosScene.nodes.map((n) => {
                 const w = n.widget as DemoPageSpec;
                 return (
-                  <Action key={n.id} variant="ghost" size="sm" onClick={() => navigate(w.path)}>
+                  <Button key={n.id} variant="ghost" size="sm" onClick={() => navigate(w.path)}>
                     {w.name}
-                  </Action>
+                  </Button>
                 );
               })}
             </Card.Body>

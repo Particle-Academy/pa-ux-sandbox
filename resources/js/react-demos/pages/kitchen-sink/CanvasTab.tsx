@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import {
-  Action,
+  Button,
   Dropdown,
   ContextMenu,
   Modal,
@@ -81,9 +81,9 @@ export function CanvasTab({ state, dispatch }: CanvasTabProps) {
       <div className="flex items-center gap-2">
         <Dropdown>
           <Dropdown.Trigger>
-            <Action size="sm" icon="plus">
+            <Button size="sm" icon="plus">
               Add Node
-            </Action>
+            </Button>
           </Dropdown.Trigger>
           <Dropdown.Items>
             {NODE_TYPES.map((nt) => (
@@ -98,14 +98,14 @@ export function CanvasTab({ state, dispatch }: CanvasTabProps) {
         </Dropdown>
 
         <Tooltip content="Execute the full pipeline sequentially">
-          <Action size="sm" onClick={handleRunPipeline} disabled={state.isRunning}>
+          <Button size="sm" onClick={handleRunPipeline} disabled={state.isRunning}>
             {state.isRunning ? "Running..." : "Run Pipeline"}
-          </Action>
+          </Button>
         </Tooltip>
 
-        <Action size="sm" onClick={() => setDeployOpen(true)}>
+        <Button size="sm" onClick={() => setDeployOpen(true)}>
           Deploy
-        </Action>
+        </Button>
       </div>
 
       {/* Callout */}
@@ -171,8 +171,8 @@ export function CanvasTab({ state, dispatch }: CanvasTabProps) {
         </Modal.Body>
         <Modal.Footer>
           <div className="flex justify-end gap-2">
-            <Action size="sm" onClick={() => setDeployOpen(false)}>Cancel</Action>
-            <Action
+            <Button size="sm" onClick={() => setDeployOpen(false)}>Cancel</Button>
+            <Button
               size="sm"
               onClick={() => {
                 setDeployOpen(false);
@@ -180,7 +180,7 @@ export function CanvasTab({ state, dispatch }: CanvasTabProps) {
               }}
             >
               Confirm Deploy
-            </Action>
+            </Button>
           </div>
         </Modal.Footer>
       </Modal>

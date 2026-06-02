@@ -1,4 +1,4 @@
-import { Popover, Action } from "@particle-academy/react-fancy";
+import { Popover, Button } from "@particle-academy/react-fancy";
 import { DemoSection } from "../components/DemoSection";
 
 export function PopoverDemo() {
@@ -8,7 +8,7 @@ export function PopoverDemo() {
 
       <DemoSection title="Basic" description="Click-triggered floating content." code={`<Popover>
   <Popover.Trigger>
-    <Action>Open Popover</Action>
+    <Button>Open Popover</Button>
   </Popover.Trigger>
   <Popover.Content>
     <p>Popover content here</p>
@@ -16,7 +16,7 @@ export function PopoverDemo() {
 </Popover>`}>
         <Popover>
           <Popover.Trigger>
-            <Action>Open Popover</Action>
+            <Button>Open Popover</Button>
           </Popover.Trigger>
           <Popover.Content>
             <div className="w-64">
@@ -31,7 +31,7 @@ export function PopoverDemo() {
 
       <DemoSection title="Hover" description="Opens on hover with configurable delays." code={`<Popover hover>
   <Popover.Trigger>
-    <Action>Hover me</Action>
+    <Button>Hover me</Button>
   </Popover.Trigger>
   <Popover.Content>
     <p>Hoverable content</p>
@@ -40,7 +40,7 @@ export function PopoverDemo() {
         <div className="flex gap-4">
           <Popover hover>
             <Popover.Trigger>
-              <Action>Hover me</Action>
+              <Button>Hover me</Button>
             </Popover.Trigger>
             <Popover.Content>
               <div className="w-56">
@@ -54,7 +54,7 @@ export function PopoverDemo() {
 
           <Popover hover placement="right">
             <Popover.Trigger>
-              <Action>Details</Action>
+              <Button>Details</Button>
             </Popover.Trigger>
             <Popover.Content>
               <div className="w-48">
@@ -72,7 +72,7 @@ export function PopoverDemo() {
           {(["top", "bottom", "left", "right"] as const).map((p) => (
             <Popover key={p} placement={p}>
               <Popover.Trigger>
-                <Action size="sm">{p.charAt(0).toUpperCase() + p.slice(1)}</Action>
+                <Button size="sm">{p.charAt(0).toUpperCase() + p.slice(1)}</Button>
               </Popover.Trigger>
               <Popover.Content>
                 <div className="text-sm">Popover on {p}</div>
@@ -85,7 +85,7 @@ export function PopoverDemo() {
       <DemoSection title="Rich Content (Hover)" description="Hover popover with complex content.">
         <Popover hover>
           <Popover.Trigger>
-            <Action>User Profile</Action>
+            <Button>User Profile</Button>
           </Popover.Trigger>
           <Popover.Content>
             <div className="w-72">

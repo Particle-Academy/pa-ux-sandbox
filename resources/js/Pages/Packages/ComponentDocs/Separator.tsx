@@ -1,5 +1,5 @@
 import type { ComponentDoc } from "./types";
-import { Action, Card, Separator, Text } from "@particle-academy/react-fancy";
+import { Button, Card, Separator, Text } from "@particle-academy/react-fancy";
 
 export const separatorDoc: ComponentDoc = {
     intro: (
@@ -28,34 +28,34 @@ export const separatorDoc: ComponentDoc = {
             description: "A short label sits centered on the line — classic auth-screen pattern.",
             render: () => (
                 <div className="w-full max-w-md space-y-3">
-                    <Action className="w-full" variant="ghost">Continue with email</Action>
+                    <Button className="w-full" variant="ghost">Continue with email</Button>
                     <Separator label="or" />
-                    <Action className="w-full" variant="ghost">Continue with Google</Action>
+                    <Button className="w-full" variant="ghost">Continue with Google</Button>
                 </div>
             ),
-            code: `<Action className="w-full">Continue with email</Action>
+            code: `<Button className="w-full">Continue with email</Button>
 <Separator label="or" />
-<Action className="w-full">Continue with Google</Action>`,
+<Button className="w-full">Continue with Google</Button>`,
         },
         {
             name: "Vertical",
             description: "Vertical separators are great between toolbar groups.",
             render: () => (
                 <div className="flex h-10 items-center gap-3">
-                    <Action size="sm" variant="ghost">Bold</Action>
-                    <Action size="sm" variant="ghost">Italic</Action>
+                    <Button size="sm" variant="ghost">Bold</Button>
+                    <Button size="sm" variant="ghost">Italic</Button>
                     <Separator orientation="vertical" />
-                    <Action size="sm" variant="ghost">Left</Action>
-                    <Action size="sm" variant="ghost">Center</Action>
+                    <Button size="sm" variant="ghost">Left</Button>
+                    <Button size="sm" variant="ghost">Center</Button>
                     <Separator orientation="vertical" />
-                    <Action size="sm" variant="ghost">Link</Action>
+                    <Button size="sm" variant="ghost">Link</Button>
                 </div>
             ),
             code: `<div className="flex h-10 items-center gap-3">
-    <Action size="sm" variant="ghost">Bold</Action>
-    <Action size="sm" variant="ghost">Italic</Action>
+    <Button size="sm" variant="ghost">Bold</Button>
+    <Button size="sm" variant="ghost">Italic</Button>
     <Separator orientation="vertical" />
-    <Action size="sm" variant="ghost">Left</Action>
+    <Button size="sm" variant="ghost">Left</Button>
     …
 </div>`,
         },

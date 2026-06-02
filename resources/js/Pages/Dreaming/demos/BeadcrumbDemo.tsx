@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 import {
   Card,
-  Action,
+  Button,
   Switch,
   Select,
   Badge,
@@ -236,22 +236,22 @@ export function BeadcrumbDemo() {
             </span>
           </div>
           <div className="flex items-center justify-end gap-2 pt-4">
-            <Action
+            <Button
               size="sm"
               variant="outline"
               onClick={() => head && setActive(head)}
               disabled={!head || head === active}
             >
               ← back to head
-            </Action>
-            <Action
+            </Button>
+            <Button
               size="sm"
               variant="outline"
               onClick={() => setCompareWith(null)}
               disabled={!compareWith}
             >
               clear compare
-            </Action>
+            </Button>
           </div>
         </div>
       </Card>

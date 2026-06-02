@@ -1,7 +1,7 @@
 import { ReactNode, useEffect, useState } from "react";
 import { Link, router, usePage } from "@inertiajs/react";
 import {
-    Action,
+    Button,
     Callout,
     Dropdown,
     Profile,

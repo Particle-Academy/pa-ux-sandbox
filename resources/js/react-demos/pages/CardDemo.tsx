@@ -1,4 +1,4 @@
-import { Card, Action } from "@particle-academy/react-fancy";
+import { Card, Button } from "@particle-academy/react-fancy";
 import { DemoSection } from "../components/DemoSection";
 
 export function CardDemo() {
@@ -32,7 +32,7 @@ export function CardDemo() {
   <Card.Header>Title</Card.Header>
   <Card.Body>Content here.</Card.Body>
   <Card.Footer>
-    <Action size="sm">View Details</Action>
+    <Button size="sm">View Details</Button>
   </Card.Footer>
 </Card>`}>
         <Card className="max-w-sm">
@@ -48,8 +48,8 @@ export function CardDemo() {
           </Card.Body>
           <Card.Footer>
             <div className="flex gap-2">
-              <Action size="sm">View Details</Action>
-              <Action size="sm" href="#">Share</Action>
+              <Button size="sm">View Details</Button>
+              <Button size="sm" href="#">Share</Button>
             </div>
           </Card.Footer>
         </Card>

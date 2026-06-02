@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Card,
-  Action,
+  Button,
   Switch,
   Select,
   Badge,
@@ -149,7 +149,7 @@ export function HotZoneDemo() {
         <div className="p-4">
           <div className="mb-3 flex flex-wrap items-center gap-2">
             <span className="text-sm font-medium">Change-detection (value-based)</span>
-            <Action
+            <Button
               size="sm"
               variant="outline"
               onClick={() => {
@@ -162,8 +162,8 @@ export function HotZoneDemo() {
               }}
             >
               mutate A
-            </Action>
-            <Action
+            </Button>
+            <Button
               size="sm"
               variant="outline"
               onClick={() => {
@@ -175,8 +175,8 @@ export function HotZoneDemo() {
               }}
             >
               mutate B
-            </Action>
-            <Action
+            </Button>
+            <Button
               size="sm"
               variant="outline"
               onClick={() => {
@@ -189,7 +189,7 @@ export function HotZoneDemo() {
               }}
             >
               mutate C
-            </Action>
+            </Button>
           </div>
           <div className="grid grid-cols-3 gap-3">
             <HotZone value={cellA} tone={tone} decay={decay} intensity={intensity}>
@@ -209,7 +209,7 @@ export function HotZoneDemo() {
         <div className="p-4">
           <div className="mb-3 flex flex-wrap items-center gap-2">
             <span className="text-sm font-medium">Explicit (pulseKey-based)</span>
-            <Action
+            <Button
               size="sm"
               color="violet"
               onClick={() => {
@@ -218,7 +218,7 @@ export function HotZoneDemo() {
               }}
             >
               ping the zone
-            </Action>
+            </Button>
             <span className="ml-2 text-[11px] text-zinc-500">
               key = {pulseKey}
             </span>

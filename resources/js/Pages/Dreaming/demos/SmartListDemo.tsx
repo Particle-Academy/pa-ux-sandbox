@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 import {
   Card,
-  Action,
+  Button,
   Switch,
   Select,
   Badge,
@@ -216,14 +216,14 @@ export function SmartListDemo() {
           <div className="mb-3 flex items-center gap-2">
             <span className="text-sm font-medium">Suggestions</span>
             <Badge color="zinc">{unpinned.length}</Badge>
-            <Action
+            <Button
               size="sm"
               color="violet"
               onClick={regenerateAll}
               className="ml-auto"
             >
               ↻ regenerate unpinned
-            </Action>
+            </Button>
           </div>
           {unpinned.length === 0 ? (
             <div className="rounded-md border border-dashed border-zinc-300 p-4 text-center text-[12px] italic text-zinc-400 dark:border-zinc-700">
@@ -302,21 +302,21 @@ function RowView({
               : "opacity-0 transition group-hover:opacity-100 group-focus-within:opacity-100"
           }`}
         >
-          <Action size="sm" variant="ghost" onClick={onRegenerate} title="regenerate this row">
+          <Button size="sm" variant="ghost" onClick={onRegenerate} title="regenerate this row">
             ↻
-          </Action>
-          <Action size="sm" variant="ghost" onClick={onExplain} title="explain">
+          </Button>
+          <Button size="sm" variant="ghost" onClick={onExplain} title="explain">
             ?
-          </Action>
-          <Action size="sm" variant="ghost" onClick={onEdit} title="edit">
+          </Button>
+          <Button size="sm" variant="ghost" onClick={onEdit} title="edit">
             ✎
-          </Action>
-          <Action size="sm" variant="ghost" onClick={onPin} title={row.pinned ? "unpin" : "pin"}>
+          </Button>
+          <Button size="sm" variant="ghost" onClick={onPin} title={row.pinned ? "unpin" : "pin"}>
             {row.pinned ? "📌" : "📍"}
-          </Action>
-          <Action size="sm" variant="ghost" onClick={onDrop} title="drop">
+          </Button>
+          <Button size="sm" variant="ghost" onClick={onDrop} title="drop">
             ×
-          </Action>
+          </Button>
         </div>
       </div>
       {row.note && (

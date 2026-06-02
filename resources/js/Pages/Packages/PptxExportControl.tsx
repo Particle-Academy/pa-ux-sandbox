@@ -1,4 +1,4 @@
-import { Action, Dropdown } from "@particle-academy/react-fancy";
+import { Button, Dropdown } from "@particle-academy/react-fancy";
 // The Node/TS port of dark-slide — the pptx writer running in the browser,
 // byte-identical to the PHP engine. This control is injected into DeckEditor's
 // toolbar via `toolbarExtra` to demonstrate customizing the editor chrome: pick
@@ -105,9 +105,9 @@ export function PptxExportControl({ deck }: { deck: AnyDeck }) {
     return (
         <Dropdown placement="bottom-end">
             <Dropdown.Trigger>
-                <Action variant="ghost" size="sm" icon="download" iconTrailing="chevron-down">
+                <Button variant="ghost" size="sm" icon="download" iconTrailing="chevron-down">
                     Export .pptx
-                </Action>
+                </Button>
             </Dropdown.Trigger>
             <Dropdown.Items>
                 <Dropdown.Item icon="globe" onClick={exportNode}>

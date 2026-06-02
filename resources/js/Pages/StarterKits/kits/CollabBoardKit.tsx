@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Action, Avatar, Badge, Card, Heading, Text } from "@particle-academy/react-fancy";
+import { Button, Avatar, Badge, Card, Heading, Text } from "@particle-academy/react-fancy";
 
 type StickyNote = {
     id: string;
@@ -100,7 +100,7 @@ export function CollabBoardKit() {
                             <span className="inline-block h-2 w-2 animate-pulse rounded-full" style={{ background: AGENT.color }} />
                             {AGENT.name} live
                         </span>
-                        <Action color="violet" size="sm" onClick={addNote}>Add note</Action>
+                        <Button color="violet" size="sm" onClick={addNote}>Add note</Button>
                     </div>
                 </div>
                 <div

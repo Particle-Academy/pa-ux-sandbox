@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   Card,
-  Action,
+  Button,
   Badge,
   Switch,
   Select,
@@ -309,7 +309,7 @@ const Wand = ({
           )}
         </span>
         {actions.map((a) => (
-          <Action
+          <Button
             key={a.id}
             size="sm"
             variant="ghost"
@@ -323,7 +323,7 @@ const Wand = ({
                 {a.tag}
               </span>
             )}
-          </Action>
+          </Button>
         ))}
       </div>
       {/* arrow */}

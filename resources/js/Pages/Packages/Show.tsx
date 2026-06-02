@@ -1,6 +1,6 @@
 import { Head, Link } from "@inertiajs/react";
 import { useState } from "react";
-import { Action, Badge, Breadcrumbs, Card, Heading, Tabs, Text } from "@particle-academy/react-fancy";
+import { Button, Badge, Breadcrumbs, Card, Heading, Tabs, Text } from "@particle-academy/react-fancy";
 import { Layout } from "../Layout";
 import { getComponentPreview, GenericPlaceholder } from "./ComponentPreviews";
 
@@ -45,7 +45,7 @@ export default function PackagesShow({ package: pkg }: { package: Pkg }) {
                     </div>
                     <Text className="mt-2 max-w-3xl">{pkg.tagline}</Text>
                 </div>
-                <Action
+                <Button
                     as="a"
                     href={`https://github.com/${pkg.repo}`}
                     target="_blank"
@@ -54,7 +54,7 @@ export default function PackagesShow({ package: pkg }: { package: Pkg }) {
                     icon="github"
                 >
                     View on GitHub
-                </Action>
+                </Button>
             </div>
 
             <Card className="mt-6">

@@ -17,6 +17,7 @@
  */
 import { Link } from "@inertiajs/react";
 import { ArrowRight, Github, Layers, Package, Terminal, Zap } from "lucide-react";
+import { Button } from "@particle-academy/react-fancy";
 import { defaultRegistry, type ElementRegistry } from "@particle-academy/fancy-cms-ui/react";
 import {
   Packages,
@@ -61,8 +62,29 @@ export function makeSandboxRegistry(data: SandboxData): ElementRegistry {
   };
 }
 
+/** Resolve a seeded literal prop to a string. */
+const lit = (v: unknown): string => (v == null ? "" : String(v));
+
 export const sandboxRegistry: ElementRegistry = {
   ...defaultRegistry,
+
+  // CMS `button` element → a real react-fancy Button, so authored buttons match
+  // the rest of the site. Maps the CMS variant (primary/ghost/outline) onto
+  // react-fancy's Button API.
+  button: ({ node }) => {
+    const label = lit(node.props.label) || lit(node.props.content) || "Button";
+    const variant = lit(node.props.variant) || "primary";
+    const href = lit(node.props.href) || undefined;
+    const buttonProps =
+      variant === "ghost" || variant === "outline"
+        ? ({ variant: "ghost" as const })
+        : ({ color: "violet" as const });
+    return (
+      <Button {...buttonProps} href={href}>
+        {label}
+      </Button>
+    );
+  },
 
   "hero-eyebrow": () => (
     <>

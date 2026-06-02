@@ -22,7 +22,7 @@ export const useFancyFormDoc: ComponentDoc = {
                 </Text>
             ),
             code: `import { useFancyForm } from "@particle-academy/fancy-inertia";
-import { Input, Select, Switch, Action } from "@particle-academy/react-fancy";
+import { Input, Select, Switch, Button } from "@particle-academy/react-fancy";
 
 function ProfileForm() {
     const form = useFancyForm({ name: "", email: "", plan: "free", marketing: false });
@@ -36,7 +36,7 @@ function ProfileForm() {
                 { value: "pro", label: "Pro" },
             ]} />
             <Switch {...form.field("marketing")} label="Marketing emails" />
-            <Action type="submit" loading={form.processing}>Save</Action>
+            <Button type="submit" loading={form.processing}>Save</Button>
         </form>
     );
 }`,
@@ -65,9 +65,9 @@ $request->validate([
                     Forwarded from Inertia's useForm. Pair with a Cancel button or a successful submit.
                 </Text>
             ),
-            code: `<Action variant="ghost" onClick={() => form.reset()}>
+            code: `<Button variant="ghost" onClick={() => form.reset()}>
     Cancel
-</Action>
+</Button>
 
 form.post("/profile", {
     onSuccess: () => form.reset("password"),

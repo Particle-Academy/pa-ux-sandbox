@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Action, Badge, Card, Heading, Tabs, Text, Toast, useToast } from "@particle-academy/react-fancy";
+import { Button, Badge, Card, Heading, Tabs, Text, Toast, useToast } from "@particle-academy/react-fancy";
 import {
     DeckEditor,
     PresenterView,
@@ -405,7 +405,7 @@ function SlidesDemoBody() {
                     </Text>
                 </div>
                 <div className="flex items-center gap-2">
-                    <Action
+                    <Button
                         size="sm"
                         variant="ghost"
                         onClick={() => {
@@ -415,7 +415,7 @@ function SlidesDemoBody() {
                         }}
                     >
                         Reset deck
-                    </Action>
+                    </Button>
                     {/* Export engine switch — PHP (server) vs Node (browser),
                         both byte-identical. "Verify" diffs the two outputs live. */}
                     <div
@@ -450,33 +450,33 @@ function SlidesDemoBody() {
                             Node
                         </button>
                     </div>
-                    <Action size="sm" variant="ghost" icon="download" onClick={handleDownload}>
+                    <Button size="sm" variant="ghost" icon="download" onClick={handleDownload}>
                         Download .pptx
-                    </Action>
-                    <Action
+                    </Button>
+                    <Button
                         size="sm"
                         variant="ghost"
                         title="Render with both engines and diff every OOXML part"
                         onClick={handleVerifyParity}
                     >
                         Verify PHP ≡ Node
-                    </Action>
-                    <Action
+                    </Button>
+                    <Button
                         size="sm"
                         variant="ghost"
                         icon="presentation"
                         onClick={() => setPresenterView(true)}
                     >
                         Presenter view
-                    </Action>
-                    <Action
+                    </Button>
+                    <Button
                         size="sm"
                         color="violet"
                         icon="play"
                         onClick={() => setPresenting(true)}
                     >
                         Present
-                    </Action>
+                    </Button>
                 </div>
             </div>
 

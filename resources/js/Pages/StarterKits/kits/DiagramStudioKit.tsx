@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Action, Badge, Card, Tabs, Text } from "@particle-academy/react-fancy";
+import { Button, Badge, Card, Tabs, Text } from "@particle-academy/react-fancy";
 import { EChart } from "@particle-academy/fancy-echarts";
 import { Download, Maximize2 } from "@particle-academy/react-fancy/icons";
 
@@ -22,8 +22,8 @@ export function DiagramStudioKit() {
                         <div className="flex items-center gap-2 pb-3">
                             <Badge color="violet" size="sm">{VIEWS[view].label}</Badge>
                             <Text size="xs" className="!font-mono !text-zinc-500">{VIEWS[view].series}</Text>
-                            <Action variant="ghost" size="sm" aria-label="Fullscreen"><Maximize2 size={14} /></Action>
-                            <Action variant="ghost" size="sm" aria-label="Download"><Download size={14} /></Action>
+                            <Button variant="ghost" size="sm" aria-label="Fullscreen"><Maximize2 size={14} /></Button>
+                            <Button variant="ghost" size="sm" aria-label="Download"><Download size={14} /></Button>
                         </div>
                     </div>
 

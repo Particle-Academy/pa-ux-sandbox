@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Command, Action } from "@particle-academy/react-fancy";
+import { Command, Button } from "@particle-academy/react-fancy";
 import { DemoSection } from "../components/DemoSection";
 
 export function CommandDemo() {
@@ -30,7 +30,7 @@ export function CommandDemo() {
     </Command.Group>
   </Command.List>
 </Command>`}>
-        <Action onClick={() => setOpen(true)}>Open Command Palette</Action>
+        <Button onClick={() => setOpen(true)}>Open Command Palette</Button>
         <p className="mt-2 text-sm text-zinc-500">
           Or press <kbd className="rounded border border-zinc-300 px-1.5 py-0.5 text-xs dark:border-zinc-600">Ctrl+K</kbd>
         </p>

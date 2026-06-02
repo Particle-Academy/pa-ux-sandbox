@@ -1,14 +1,14 @@
 import type { ComponentDoc } from "./types";
 import { useState } from "react";
-import { Action, Command } from "@particle-academy/react-fancy";
+import { Button, Command } from "@particle-academy/react-fancy";
 
 function CommandDemo() {
     const [open, setOpen] = useState(false);
     return (
         <>
-            <Action onClick={() => setOpen(true)} iconTrailing="search">
+            <Button onClick={() => setOpen(true)} iconTrailing="search">
                 Open command palette
-            </Action>
+            </Button>
             <Command open={open} onClose={() => setOpen(false)}>
                 <Command.Input placeholder="Type a command…" />
                 <Command.List>

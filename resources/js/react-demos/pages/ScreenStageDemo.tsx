@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import {
-  Action,
+  Button,
   Badge,
   Card,
   Switch,
@@ -35,9 +35,9 @@ function DashboardScreenContents() {
         </div>
         <div className="mt-auto flex items-center justify-between">
           <span className="text-sm">Click count: <strong>{count}</strong></span>
-          <Action color="indigo" size="sm" onClick={() => setCount((c) => c + 1)}>
+          <Button color="indigo" size="sm" onClick={() => setCount((c) => c + 1)}>
             Increment
-          </Action>
+          </Button>
         </div>
       </Card.Body>
     </Card>
@@ -68,12 +68,12 @@ function SettingsScreenContents() {
           <Switch checked={notifications} onCheckedChange={setNotifications} />
         </div>
         <div className="mt-auto flex gap-2">
-          <Action color="indigo" size="sm">
+          <Button color="indigo" size="sm">
             Save
-          </Action>
-          <Action variant="ghost" size="sm">
+          </Button>
+          <Button variant="ghost" size="sm">
             Cancel
-          </Action>
+          </Button>
         </div>
       </Card.Body>
     </Card>

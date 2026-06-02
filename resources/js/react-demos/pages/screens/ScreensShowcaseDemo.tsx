@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { Screen, useScreens, useRegisterStore } from "@particle-academy/fancy-screens";
-import { Action, Card, Badge } from "@particle-academy/react-fancy";
+import { Button, Card, Badge } from "@particle-academy/react-fancy";
 import { CodeEditor } from "@particle-academy/fancy-code";
 import { registerAll } from "@particle-academy/fancy-echarts";
 import { create, type StoreApi, type UseBoundStore } from "zustand";
@@ -177,14 +177,14 @@ export function ScreensShowcaseDemo() {
 
         <div className="mb-4 flex flex-wrap gap-2">
           {DEMOS.map((d) => (
-            <Action
+            <Button
               key={d.id}
               size="sm"
               color={d.id === activeId ? "indigo" : "zinc"}
               onClick={() => setActiveId(d.id)}
             >
               {d.title}
-            </Action>
+            </Button>
           ))}
         </div>
 

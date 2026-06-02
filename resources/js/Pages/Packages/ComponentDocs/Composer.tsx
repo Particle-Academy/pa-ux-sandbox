@@ -1,5 +1,5 @@
 import type { ComponentDoc } from "./types";
-import { Action, Composer } from "@particle-academy/react-fancy";
+import { Button, Composer } from "@particle-academy/react-fancy";
 
 export const composerDoc: ComponentDoc = {
     intro: (
@@ -40,8 +40,8 @@ export const composerDoc: ComponentDoc = {
                         onSubmit={() => {}}
                         actions={
                             <div className="flex items-center gap-1">
-                                <Action variant="circle" size="sm" icon="paperclip" />
-                                <Action variant="circle" size="sm" icon="face-smile" />
+                                <Button variant="circle" size="sm" icon="paperclip" />
+                                <Button variant="circle" size="sm" icon="face-smile" />
                             </div>
                         }
                     />
@@ -54,8 +54,8 @@ export const composerDoc: ComponentDoc = {
     placeholder="Comment…"
     actions={
         <>
-            <Action variant="circle" icon="paperclip" />
-            <Action variant="circle" icon="face-smile" />
+            <Button variant="circle" icon="paperclip" />
+            <Button variant="circle" icon="face-smile" />
         </>
     }
 />`,

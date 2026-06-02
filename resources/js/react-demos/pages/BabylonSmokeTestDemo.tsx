@@ -9,7 +9,7 @@ import {
   type Scene as BJScene,
 } from "@babylonjs/core";
 import { Stage, useStage } from "@particle-academy/fancy-3d-babylon/react";
-import { Action, Badge, Card } from "@particle-academy/react-fancy";
+import { Button, Badge, Card } from "@particle-academy/react-fancy";
 
 /* ------------------------------------------------------------------ */
 /* Block 1 — playable arcade: Cube Crusher                              */
@@ -221,9 +221,9 @@ function CubeCrusher() {
                 </p>
               </>
             )}
-            <Action color="indigo" size="lg" onClick={start}>
+            <Button color="indigo" size="lg" onClick={start}>
               {status === "idle" ? "Start" : "Play again"}
-            </Action>
+            </Button>
           </div>
         )}
       </div>
@@ -305,12 +305,12 @@ export function BabylonSmokeTestDemo() {
                 tab.
               </p>
               <div className="flex gap-2">
-                <Action color="indigo" size="sm" onClick={() => setEmbedPlayground(true)}>
+                <Button color="indigo" size="sm" onClick={() => setEmbedPlayground(true)}>
                   Embed inline
-                </Action>
-                <Action variant="ghost" size="sm" onClick={() => window.open("https://playground.babylonjs.com/", "_blank")}>
+                </Button>
+                <Button variant="ghost" size="sm" onClick={() => window.open("https://playground.babylonjs.com/", "_blank")}>
                   Open in new tab →
-                </Action>
+                </Button>
               </div>
             </div>
           )}

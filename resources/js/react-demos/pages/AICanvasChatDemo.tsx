@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
   AccordionPanel,
-  Action,
+  Button,
   Avatar,
   Badge,
   Card,
@@ -466,12 +466,12 @@ function ProjectWorkspace({
           connected
         </Badge>
         <div className="ml-auto flex items-center gap-2">
-          <Action variant="ghost" size="sm" icon="search">
+          <Button variant="ghost" size="sm" icon="search">
             Search
-          </Action>
-          <Action onClick={onAskAI} size="sm" color="violet" icon="sparkles">
+          </Button>
+          <Button onClick={onAskAI} size="sm" color="violet" icon="sparkles">
             Ask AI
-          </Action>
+          </Button>
         </div>
       </header>
 
@@ -487,9 +487,9 @@ function ProjectWorkspace({
               canvas.
             </p>
           </div>
-          <Action size="sm" icon="plus" color="blue">
+          <Button size="sm" icon="plus" color="blue">
             New project
-          </Action>
+          </Button>
         </div>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -748,7 +748,7 @@ function AIBrain() {
       {/* Header */}
       <div className="flex items-center gap-2 border-b border-zinc-800 px-4 py-2">
         {activeCluster !== null && (
-          <Action
+          <Button
             variant="ghost"
             size="xs"
             icon="arrow-left"
@@ -847,7 +847,7 @@ function MemoryPopover({
                 {c.summary}
               </p>
             </div>
-            <Action
+            <Button
               variant="ghost"
               size="xs"
               icon="x"
@@ -894,7 +894,7 @@ function MemoryPopover({
               <span>· weight {f.weight}</span>
             </div>
           </div>
-          <Action
+          <Button
             variant="ghost"
             size="xs"
             icon="x"
@@ -947,7 +947,7 @@ function ChatPanel({
             generates renders into the canvas
           </p>
         </div>
-        <Action
+        <Button
           variant="ghost"
           size="xs"
           icon="layout-grid"
@@ -985,15 +985,15 @@ function ChatPanel({
 
       {/* Quick actions strip — also push the canvas open */}
       <div className="flex flex-wrap gap-1 border-t border-zinc-800 px-3 py-2">
-        <Action variant="ghost" size="xs" onClick={onShowCanvas}>
+        <Button variant="ghost" size="xs" onClick={onShowCanvas}>
           Render mockup
-        </Action>
-        <Action variant="ghost" size="xs" onClick={onShowCanvas}>
+        </Button>
+        <Button variant="ghost" size="xs" onClick={onShowCanvas}>
           Suggest layout
-        </Action>
-        <Action variant="ghost" size="xs">
+        </Button>
+        <Button variant="ghost" size="xs">
           Refine copy
-        </Action>
+        </Button>
       </div>
 
       <div className="flex items-center gap-2 border-t border-zinc-800 p-3">
@@ -1009,7 +1009,7 @@ function ChatPanel({
           placeholder="Ask the AI to update the canvas…"
           className="flex-1"
         />
-        <Action onClick={submit} icon="send" size="sm" color="blue" />
+        <Button onClick={submit} icon="send" size="sm" color="blue" />
       </div>
     </div>
   );

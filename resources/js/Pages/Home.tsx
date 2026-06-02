@@ -1,7 +1,7 @@
 import { Head, Link } from "@inertiajs/react";
 import { Component, useEffect, useState, type ComponentType, type ErrorInfo, type ReactNode } from "react";
 import {
-    Action,
+    Button,
     Autocomplete,
     Avatar,
     Badge,
@@ -91,7 +91,7 @@ const NUMBER_WORDS: Record<number, string> = {
     16: "Sixteen",
 };
 
-// react-fancy Badge supports a narrower palette than ActionColor; map tags.
+// react-fancy Badge supports a narrower palette than ButtonColor; map tags.
 type BadgeColor = "zinc" | "red" | "blue" | "green" | "amber" | "violet" | "rose";
 
 function langTag(language: string): { label: string; color: BadgeColor } {
@@ -448,7 +448,7 @@ const CATALOG: CatalogGroup[] = [
     {
         group: "Actions & control",
         items: [
-            { name: "Action", sig: "<Action />", blurb: "The workhorse button — 18 colors, ghost / circle variants, loading, badge.", demo: ActionDemo },
+            { name: "Button", sig: "<Button />", blurb: "The workhorse button — 18 colors, ghost / circle variants, loading, badge.", demo: ActionDemo },
             { name: "Switch", sig: "<Switch />", blurb: "Controlled on/off toggle with a color accent.", demo: SwitchDemo },
             { name: "MultiSwitch", sig: "<MultiSwitch />", blurb: "Segmented single-choice control.", demo: MultiSwitchDemo },
             { name: "Slider", sig: "<Slider />", blurb: "Single value or a two-handle range, with marks.", demo: SliderDemo },
@@ -623,29 +623,29 @@ function ActionDemo() {
         <>
             <div className="stage-row">
                 <span className="row-label">Color</span>
-                <Action color="blue" icon="plus">Create</Action>
-                <Action color="emerald" icon="check">Approve</Action>
-                <Action color="amber" icon="triangle-alert">Warning</Action>
-                <Action color="red" icon="trash-2">Delete</Action>
-                <Action color="violet" icon="sparkles">Generate</Action>
-                <Action color="indigo" icon="link">Connect</Action>
+                <Button color="blue" icon="plus">Create</Button>
+                <Button color="emerald" icon="check">Approve</Button>
+                <Button color="amber" icon="triangle-alert">Warning</Button>
+                <Button color="red" icon="trash-2">Delete</Button>
+                <Button color="violet" icon="sparkles">Generate</Button>
+                <Button color="indigo" icon="link">Connect</Button>
             </div>
             <div className="stage-row">
                 <span className="row-label">Ghost · circle · sizes</span>
-                <Action variant="ghost" icon="search">Search</Action>
-                <Action variant="ghost" color="blue" icon="filter">Filter</Action>
-                <Action variant="circle" icon="bell" aria-label="Notifications" />
-                <Action variant="circle" color="violet" icon="sparkles" aria-label="Generate" />
-                <Action size="sm" color="blue">Small</Action>
-                <Action size="lg" color="blue" icon="play">Large</Action>
+                <Button variant="ghost" icon="search">Search</Button>
+                <Button variant="ghost" color="blue" icon="filter">Filter</Button>
+                <Button variant="circle" icon="bell" aria-label="Notifications" />
+                <Button variant="circle" color="violet" icon="sparkles" aria-label="Generate" />
+                <Button size="sm" color="blue">Small</Button>
+                <Button size="lg" color="blue" icon="play">Large</Button>
             </div>
             <div className="stage-row">
                 <span className="row-label">State · loading · disabled · badge</span>
-                <Action color="blue" loading>Saving…</Action>
-                <Action color="blue" disabled>Disabled</Action>
-                <Action color="blue" icon="inbox" badge="12">Inbox</Action>
-                <Action active icon="check-check">Active</Action>
-                <Action checked icon="check">Checked</Action>
+                <Button color="blue" loading>Saving…</Button>
+                <Button color="blue" disabled>Disabled</Button>
+                <Button color="blue" icon="inbox" badge="12">Inbox</Button>
+                <Button active icon="check-check">Active</Button>
+                <Button checked icon="check">Checked</Button>
             </div>
         </>
     );
@@ -875,9 +875,9 @@ function ProgressDemo() {
             <div style={{ display: "flex", gap: 18, alignItems: "center" }}>
                 <Progress value={v} variant="circular" showValue color="blue" />
                 <Progress indeterminate color="green" />
-                <Action size="sm" variant="ghost" onClick={() => setV((x) => (x >= 100 ? 10 : x + 12))}>
+                <Button size="sm" variant="ghost" onClick={() => setV((x) => (x >= 100 ? 10 : x + 12))}>
                     Advance
-                </Action>
+                </Button>
             </div>
         </div>
     );
@@ -901,18 +901,18 @@ function ToastDemo() {
     return (
         <div className="stage-row">
             <span className="row-label">Fire one</span>
-            <Action color="blue" icon="info" onClick={() => toast({ variant: "info", title: "Heads up", description: "Your build finished." })}>
+            <Button color="blue" icon="info" onClick={() => toast({ variant: "info", title: "Heads up", description: "Your build finished." })}>
                 Info
-            </Action>
-            <Action color="emerald" icon="check" onClick={() => toast({ variant: "success", title: "Project created", description: "Q4 review is ready." })}>
+            </Button>
+            <Button color="emerald" icon="check" onClick={() => toast({ variant: "success", title: "Project created", description: "Q4 review is ready." })}>
                 Success
-            </Action>
-            <Action color="amber" icon="triangle-alert" onClick={() => toast({ variant: "warning", title: "Quota at 80%", description: "Consider upgrading." })}>
+            </Button>
+            <Button color="amber" icon="triangle-alert" onClick={() => toast({ variant: "warning", title: "Quota at 80%", description: "Consider upgrading." })}>
                 Warning
-            </Action>
-            <Action color="red" icon="x-circle" onClick={() => toast({ variant: "error", title: "Tool failed", description: "artboard_add_piece returned 500." })}>
+            </Button>
+            <Button color="red" icon="x-circle" onClick={() => toast({ variant: "error", title: "Tool failed", description: "artboard_add_piece returned 500." })}>
                 Danger
-            </Action>
+            </Button>
         </div>
     );
 }
@@ -921,13 +921,13 @@ function TooltipDemo() {
     return (
         <div className="stage-row">
             <Tooltip content="Stable handle: data-piece-id='hero-v3'">
-                <Action variant="ghost" icon="info">Hover for the handle</Action>
+                <Button variant="ghost" icon="info">Hover for the handle</Button>
             </Tooltip>
             <Tooltip content="Top placement" placement="top">
-                <Action variant="ghost">Top</Action>
+                <Button variant="ghost">Top</Button>
             </Tooltip>
             <Tooltip content="Right placement" placement="right">
-                <Action variant="ghost">Right</Action>
+                <Button variant="ghost">Right</Button>
             </Tooltip>
         </div>
     );

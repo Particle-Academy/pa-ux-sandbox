@@ -11,7 +11,7 @@ import {
   MultiSwitch,
   ColorPicker,
   FileUpload,
-  Action,
+  Button,
   Card,
 } from "@particle-academy/react-fancy";
 import type { KitchenSinkState, KitchenSinkAction } from "./types";
@@ -218,8 +218,8 @@ export function SettingsTab({ state, dispatch }: SettingsTabProps) {
 
       {/* Actions */}
       <div className="flex gap-2">
-        <Action onClick={() => {}}>Save Configuration</Action>
-        <Action onClick={handleReset}>Reset to Defaults</Action>
+        <Button onClick={() => {}}>Save Configuration</Button>
+        <Button onClick={handleReset}>Reset to Defaults</Button>
       </div>
     </div>
   );

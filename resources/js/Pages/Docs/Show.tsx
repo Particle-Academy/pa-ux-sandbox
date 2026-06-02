@@ -1,5 +1,5 @@
 import { Head, Link } from "@inertiajs/react";
-import { Action, Heading, Separator, Text } from "@particle-academy/react-fancy";
+import { Button, Heading, Separator, Text } from "@particle-academy/react-fancy";
 import { Layout } from "../Layout";
 
 type Page = {
@@ -81,22 +81,22 @@ export default function DocsShow({ page, html, sections, neighbors }: Props) {
                     <div className="mt-6 flex flex-wrap items-stretch justify-between gap-3">
                         <div>
                             {neighbors.prev && (
-                                <Action as={Link} href={`/docs/${neighbors.prev.slug}`} variant="ghost" icon="arrow-left">
+                                <Button as={Link} href={`/docs/${neighbors.prev.slug}`} variant="ghost" icon="arrow-left">
                                     <span>
                                         <span className="block text-[10px] uppercase tracking-wider text-zinc-500">Previous</span>
                                         <span>{neighbors.prev.title}</span>
                                     </span>
-                                </Action>
+                                </Button>
                             )}
                         </div>
                         <div>
                             {neighbors.next && (
-                                <Action as={Link} href={`/docs/${neighbors.next.slug}`} variant="ghost" iconTrailing="arrow-right">
+                                <Button as={Link} href={`/docs/${neighbors.next.slug}`} variant="ghost" iconTrailing="arrow-right">
                                     <span>
                                         <span className="block text-[10px] uppercase tracking-wider text-zinc-500">Next</span>
                                         <span>{neighbors.next.title}</span>
                                     </span>
-                                </Action>
+                                </Button>
                             )}
                         </div>
                     </div>

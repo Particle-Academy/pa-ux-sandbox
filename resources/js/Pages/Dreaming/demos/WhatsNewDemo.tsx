@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 import {
   Card,
-  Action,
+  Button,
   Switch,
   Select,
   Badge,
@@ -154,9 +154,9 @@ export function WhatsNewDemo() {
             </span>
           </div>
           <div className="flex items-center justify-end gap-2 pt-4">
-            <Action size="sm" variant="outline" onClick={reset}>
+            <Button size="sm" variant="outline" onClick={reset}>
               reset seed
-            </Action>
+            </Button>
           </div>
         </div>
       </Card>
@@ -173,14 +173,14 @@ export function WhatsNewDemo() {
               ) : (
                 <Popover>
                   <Popover.Trigger>
-                    <Action size="sm" variant="outline">
+                    <Button size="sm" variant="outline">
                       🔔{" "}
                       {fresh.length > 0 ? (
                         <Badge color="violet">{fresh.length}</Badge>
                       ) : (
                         <span className="text-zinc-400">0</span>
                       )}
-                    </Action>
+                    </Button>
                   </Popover.Trigger>
                   <Popover.Content>
                     <WhatsNewBody
@@ -245,17 +245,17 @@ function WhatsNewBody({
         <Badge color="violet">{fresh.length} fresh</Badge>
         <Badge color="zinc">{earlier.length} earlier</Badge>
         <div className="ml-auto flex gap-1">
-          <Action size="sm" variant="ghost" onClick={onMarkRead} disabled={fresh.length === 0}>
+          <Button size="sm" variant="ghost" onClick={onMarkRead} disabled={fresh.length === 0}>
             mark all read
-          </Action>
-          <Action
+          </Button>
+          <Button
             size="sm"
             variant="ghost"
             onClick={onDismissAll}
             disabled={fresh.length + earlier.length === 0}
           >
             clear
-          </Action>
+          </Button>
         </div>
       </div>
 
@@ -383,9 +383,9 @@ function GroupBlock({
                 <div className="text-zinc-600 dark:text-zinc-300">{c.body}</div>
               </div>
             </div>
-            <Action size="sm" variant="ghost" onClick={() => onDismiss(c.id)}>
+            <Button size="sm" variant="ghost" onClick={() => onDismiss(c.id)}>
               ×
-            </Action>
+            </Button>
           </li>
         ))}
       </ul>

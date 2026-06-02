@@ -2,7 +2,7 @@ import { useReducer, useEffect, useCallback } from "react";
 import {
   Navbar,
   Breadcrumbs,
-  Action,
+  Button,
   Dropdown,
   Tabs,
   Badge,
@@ -242,7 +242,7 @@ function KitchenSinkInner() {
           <Badge size="sm" color={state.chaosMode ? "red" : "green"} variant="soft" dot>
             {state.chaosMode ? "Chaos" : "Stable"}
           </Badge>
-          <Action
+          <Button
             size="sm"
             variant="circle"
             icon="zap"

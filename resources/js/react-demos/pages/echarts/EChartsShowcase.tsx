@@ -4,7 +4,7 @@ import {
   Tabs,
   Card,
   Badge,
-  Action,
+  Button,
   Modal,
   ContextMenu,
   Popover,
@@ -227,9 +227,9 @@ function ShowcaseInner() {
           <Badge color={chartTheme === "dark-preset" ? "blue" : "green"}>
             {chartTheme === "dark-preset" ? "Dark theme" : "Light theme"}
           </Badge>
-          <Action size="sm" onClick={() => setChartTheme((t) => (t === "light" ? "dark-preset" : "light"))}>
+          <Button size="sm" onClick={() => setChartTheme((t) => (t === "light" ? "dark-preset" : "light"))}>
             Toggle theme
-          </Action>
+          </Button>
         </div>
       </div>
 
@@ -410,8 +410,8 @@ function ShowcaseInner() {
         </Modal.Body>
         <Modal.Footer>
           <div className="flex justify-end gap-2">
-            <Action size="sm" onClick={() => setDrill(null)}>Close</Action>
-            <Action
+            <Button size="sm" onClick={() => setDrill(null)}>Close</Button>
+            <Button
               size="sm"
               onClick={() => {
                 toast({ title: "Report queued", description: "We'll email you when it's ready.", variant: "success" });
@@ -419,7 +419,7 @@ function ShowcaseInner() {
               }}
             >
               Generate report
-            </Action>
+            </Button>
           </div>
         </Modal.Footer>
       </Modal>
@@ -472,7 +472,7 @@ function ChartFrame({
           <div className="flex items-center gap-2">
             {badge && <Badge color={badge.color}>{badge.label}</Badge>}
             {actions.map((a) => (
-              <Action key={a.label} size="sm" onClick={a.onClick}>{a.label}</Action>
+              <Button key={a.label} size="sm" onClick={a.onClick}>{a.label}</Button>
             ))}
           </div>
         </div>

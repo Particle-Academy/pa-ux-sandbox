@@ -1,5 +1,5 @@
 import type { ComponentDoc } from "./types";
-import { Action, Icon, Tooltip } from "@particle-academy/react-fancy";
+import { Button, Icon, Tooltip } from "@particle-academy/react-fancy";
 
 export const tooltipDoc: ComponentDoc = {
     intro: (
@@ -16,11 +16,11 @@ export const tooltipDoc: ComponentDoc = {
             description: "Hover or focus the child element to reveal the tooltip.",
             render: () => (
                 <Tooltip content="Save changes (⌘S)">
-                    <Action variant="ghost" iconTrailing="check">Save</Action>
+                    <Button variant="ghost" iconTrailing="check">Save</Button>
                 </Tooltip>
             ),
             code: `<Tooltip content="Save changes (⌘S)">
-    <Action variant="ghost" iconTrailing="check">Save</Action>
+    <Button variant="ghost" iconTrailing="check">Save</Button>
 </Tooltip>`,
         },
         {
@@ -29,29 +29,29 @@ export const tooltipDoc: ComponentDoc = {
             render: () => (
                 <div className="flex items-center gap-2">
                     <Tooltip content="Cut">
-                        <Action variant="circle"><Icon name="scissors" /></Action>
+                        <Button variant="circle"><Icon name="scissors" /></Button>
                     </Tooltip>
                     <Tooltip content="Copy">
-                        <Action variant="circle"><Icon name="copy" /></Action>
+                        <Button variant="circle"><Icon name="copy" /></Button>
                     </Tooltip>
                     <Tooltip content="Paste">
-                        <Action variant="circle"><Icon name="clipboard" /></Action>
+                        <Button variant="circle"><Icon name="clipboard" /></Button>
                     </Tooltip>
                 </div>
             ),
-            code: `<Tooltip content="Cut"><Action variant="circle"><Icon name="scissors" /></Action></Tooltip>
-<Tooltip content="Copy"><Action variant="circle"><Icon name="copy" /></Action></Tooltip>
-<Tooltip content="Paste"><Action variant="circle"><Icon name="clipboard" /></Action></Tooltip>`,
+            code: `<Tooltip content="Cut"><Button variant="circle"><Icon name="scissors" /></Button></Tooltip>
+<Tooltip content="Copy"><Button variant="circle"><Icon name="copy" /></Button></Tooltip>
+<Tooltip content="Paste"><Button variant="circle"><Icon name="clipboard" /></Button></Tooltip>`,
         },
         {
             name: "Placement",
             description: "Hint a preferred side; the tooltip auto-flips if there isn't room.",
             render: () => (
                 <div className="flex flex-wrap items-center gap-2">
-                    <Tooltip content="Above" placement="top"><Action variant="ghost">top</Action></Tooltip>
-                    <Tooltip content="To the right" placement="right"><Action variant="ghost">right</Action></Tooltip>
-                    <Tooltip content="Below" placement="bottom"><Action variant="ghost">bottom</Action></Tooltip>
-                    <Tooltip content="To the left" placement="left"><Action variant="ghost">left</Action></Tooltip>
+                    <Tooltip content="Above" placement="top"><Button variant="ghost">top</Button></Tooltip>
+                    <Tooltip content="To the right" placement="right"><Button variant="ghost">right</Button></Tooltip>
+                    <Tooltip content="Below" placement="bottom"><Button variant="ghost">bottom</Button></Tooltip>
+                    <Tooltip content="To the left" placement="left"><Button variant="ghost">left</Button></Tooltip>
                 </div>
             ),
             code: `<Tooltip content="Above" placement="top">…</Tooltip>
@@ -64,8 +64,8 @@ export const tooltipDoc: ComponentDoc = {
             description: "Override the hover-open delay (default 200ms) when you want a faster or slower reveal.",
             render: () => (
                 <div className="flex items-center gap-2">
-                    <Tooltip content="Instant" delay={0}><Action variant="ghost">delay=0</Action></Tooltip>
-                    <Tooltip content="One second" delay={1000}><Action variant="ghost">delay=1000</Action></Tooltip>
+                    <Tooltip content="Instant" delay={0}><Button variant="ghost">delay=0</Button></Tooltip>
+                    <Tooltip content="One second" delay={1000}><Button variant="ghost">delay=1000</Button></Tooltip>
                 </div>
             ),
             code: `<Tooltip content="Instant" delay={0}>…</Tooltip>
@@ -83,7 +83,7 @@ export const tooltipDoc: ComponentDoc = {
                         </div>
                     }
                 >
-                    <Action variant="ghost">Command palette</Action>
+                    <Button variant="ghost">Command palette</Button>
                 </Tooltip>
             ),
             code: `<Tooltip content={
@@ -92,7 +92,7 @@ export const tooltipDoc: ComponentDoc = {
         <div className="font-mono text-[10px] opacity-80">⌘ + Shift + P</div>
     </div>
 }>
-    <Action>Command palette</Action>
+    <Button>Command palette</Button>
 </Tooltip>`,
         },
     ],

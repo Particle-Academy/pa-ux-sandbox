@@ -1,12 +1,12 @@
 import type { ComponentDoc } from "./types";
 import { useState } from "react";
-import { Action, Icon, MobileMenu } from "@particle-academy/react-fancy";
+import { Button, Icon, MobileMenu } from "@particle-academy/react-fancy";
 
 function FlyoutDemo() {
     const [open, setOpen] = useState(false);
     return (
         <>
-            <Action onClick={() => setOpen(true)}>Open flyout</Action>
+            <Button onClick={() => setOpen(true)}>Open flyout</Button>
             <MobileMenu>
                 <MobileMenu.Flyout open={open} onClose={() => setOpen(false)} title="Navigation">
                     <MobileMenu.Item icon={<Icon name="home" />} active>Home</MobileMenu.Item>
@@ -76,7 +76,7 @@ export const mobileMenuDoc: ComponentDoc = {
                 const [open, setOpen] = useState(false);
                 return (
                     <>
-                        <Action onClick={() => setOpen(true)}>Open right flyout</Action>
+                        <Button onClick={() => setOpen(true)}>Open right flyout</Button>
                         <MobileMenu>
                             <MobileMenu.Flyout open={open} onClose={() => setOpen(false)} side="right" title="Account">
                                 <MobileMenu.Item>Profile</MobileMenu.Item>

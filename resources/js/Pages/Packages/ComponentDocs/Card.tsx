@@ -1,5 +1,5 @@
 import type { ComponentDoc } from "./types";
-import { Action, Badge, Card, Heading, Text } from "@particle-academy/react-fancy";
+import { Button, Badge, Card, Heading, Text } from "@particle-academy/react-fancy";
 
 export const cardDoc: ComponentDoc = {
     intro: (
@@ -107,8 +107,8 @@ export const cardDoc: ComponentDoc = {
                     </Card.Body>
                     <Card.Footer>
                         <div className="flex justify-end gap-2">
-                            <Action variant="ghost">Cancel</Action>
-                            <Action color="red">Delete</Action>
+                            <Button variant="ghost">Cancel</Button>
+                            <Button color="red">Delete</Button>
                         </div>
                     </Card.Footer>
                 </Card>
@@ -122,8 +122,8 @@ export const cardDoc: ComponentDoc = {
     </Card.Body>
     <Card.Footer>
         <div className="flex justify-end gap-2">
-            <Action variant="ghost">Cancel</Action>
-            <Action color="red">Delete</Action>
+            <Button variant="ghost">Cancel</Button>
+            <Button color="red">Delete</Button>
         </div>
     </Card.Footer>
 </Card>`,

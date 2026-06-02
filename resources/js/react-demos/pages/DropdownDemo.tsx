@@ -1,4 +1,4 @@
-import { Dropdown, Action } from "@particle-academy/react-fancy";
+import { Dropdown, Button } from "@particle-academy/react-fancy";
 import { DemoSection } from "../components/DemoSection";
 
 export function DropdownDemo() {
@@ -8,7 +8,7 @@ export function DropdownDemo() {
 
       <DemoSection title="Basic" description="Click a trigger to reveal a list of actions." code={`<Dropdown>
   <Dropdown.Trigger>
-    <Action>Options</Action>
+    <Button>Options</Button>
   </Dropdown.Trigger>
   <Dropdown.Items>
     <Dropdown.Item onClick={() => alert("Edit")}>Edit</Dropdown.Item>
@@ -22,7 +22,7 @@ export function DropdownDemo() {
 </Dropdown>`}>
         <Dropdown>
           <Dropdown.Trigger>
-            <Action>Options</Action>
+            <Button>Options</Button>
           </Dropdown.Trigger>
           <Dropdown.Items>
             <Dropdown.Item onClick={() => alert("Edit")}>Edit</Dropdown.Item>
@@ -38,7 +38,7 @@ export function DropdownDemo() {
 
       <DemoSection title="With Disabled Items" description="Items can be individually disabled." code={`<Dropdown>
   <Dropdown.Trigger>
-    <Action>Actions</Action>
+    <Button>Actions</Button>
   </Dropdown.Trigger>
   <Dropdown.Items>
     <Dropdown.Item onClick={() => {}}>Save</Dropdown.Item>
@@ -49,7 +49,7 @@ export function DropdownDemo() {
 </Dropdown>`}>
         <Dropdown>
           <Dropdown.Trigger>
-            <Action>Actions</Action>
+            <Button>Actions</Button>
           </Dropdown.Trigger>
           <Dropdown.Items>
             <Dropdown.Item onClick={() => {}}>Save</Dropdown.Item>

@@ -1,6 +1,6 @@
 import { Head } from "@inertiajs/react";
 import { useState } from "react";
-import { Action, Badge, Breadcrumbs, Card, Heading, Text } from "@particle-academy/react-fancy";
+import { Button, Badge, Breadcrumbs, Card, Heading, Text } from "@particle-academy/react-fancy";
 import { Layout } from "../Layout";
 import { ReactDashboardKit } from "./kits/ReactDashboardKit";
 import { WorkflowStudioKit } from "./kits/WorkflowStudioKit";
@@ -46,9 +46,9 @@ export default function StarterKitsShow({ kit }: { kit: Kit }) {
                     </Text>
                 </div>
                 <div className="flex flex-wrap items-stretch gap-2">
-                    <Action as="a" href={downloadUrl} color="violet" icon="arrow-down-tray">
+                    <Button as="a" href={downloadUrl} color="violet" icon="arrow-down-tray">
                         Download zip
-                    </Action>
+                    </Button>
                 </div>
             </div>
 

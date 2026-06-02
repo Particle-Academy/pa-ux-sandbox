@@ -14,7 +14,7 @@ import {
   type ItemId,
 } from "@particle-academy/fancy-whiteboard";
 import "@particle-academy/fancy-whiteboard/styles.css";
-import { Action, Badge, Card } from "@particle-academy/react-fancy";
+import { Button, Badge, Card } from "@particle-academy/react-fancy";
 
 type ShapeTool = "rect" | "rounded-rect" | "ellipse" | "diamond" | "triangle" | "line" | "arrow";
 type Tool = "select" | "sticky" | "pen" | ShapeTool | "connector";
@@ -207,7 +207,7 @@ export function WhiteboardFullDemo() {
         </div>
         <div className="flex items-center gap-3">
           <PresenceStrip cursors={cursors} />
-          <Action onClick={exportJson} icon="download">Export JSON</Action>
+          <Button onClick={exportJson} icon="download">Export JSON</Button>
         </div>
       </header>
 
@@ -353,7 +353,7 @@ function Toolbar({
   return (
     <div className="flex flex-wrap items-center gap-2 rounded-xl border border-zinc-200 bg-white p-2 dark:border-zinc-700 dark:bg-zinc-900">
       {tools.map((t) => (
-        <Action
+        <Button
           key={t.id}
           icon={t.icon}
           active={tool === t.id}
@@ -361,7 +361,7 @@ function Toolbar({
           title={t.label}
         >
           {t.label}
-        </Action>
+        </Button>
       ))}
       <span className="mx-2 h-6 w-px bg-zinc-200 dark:bg-zinc-700" />
       <span className="text-xs text-zinc-500">Sticky color:</span>
@@ -438,8 +438,8 @@ function SidePanel({
         )}
       </div>
       <div className="flex flex-col gap-2">
-        <Action onClick={onClearStrokes} icon="eraser" size="sm">Clear drawing</Action>
-        <Action onClick={onResetView} icon="maximize" size="sm">Reset view</Action>
+        <Button onClick={onClearStrokes} icon="eraser" size="sm">Clear drawing</Button>
+        <Button onClick={onResetView} icon="maximize" size="sm">Reset view</Button>
       </div>
     </Card>
   );

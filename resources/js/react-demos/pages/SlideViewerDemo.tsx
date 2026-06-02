@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Action, Badge, Card, Heading, Text } from "@particle-academy/react-fancy";
+import { Button, Badge, Card, Heading, Text } from "@particle-academy/react-fancy";
 import { SlideViewer, defaultTheme, type Deck } from "@particle-academy/fancy-slides";
 import "@particle-academy/fancy-slides/styles.css";
 
@@ -139,12 +139,12 @@ export function SlideViewerDemo() {
             </header>
 
             <div className="flex flex-wrap items-center gap-2">
-                <Action size="sm" color="violet" icon="play" onClick={() => setFullscreen(true)}>
+                <Button size="sm" color="violet" icon="play" onClick={() => setFullscreen(true)}>
                     Fullscreen
-                </Action>
-                <Action size="sm" variant="ghost" onClick={() => setAuto((a) => !a)}>
+                </Button>
+                <Button size="sm" variant="ghost" onClick={() => setAuto((a) => !a)}>
                     Auto-advance: {auto ? "on" : "off"}
-                </Action>
+                </Button>
                 <Badge color="zinc" size="sm">{demoDeck.slides.length} slides</Badge>
             </div>
 

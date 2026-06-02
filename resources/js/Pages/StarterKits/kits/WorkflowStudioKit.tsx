@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Action, Badge, Card, Heading, Text } from "@particle-academy/react-fancy";
+import { Button, Badge, Card, Heading, Text } from "@particle-academy/react-fancy";
 
 type Status = "idle" | "running" | "ok" | "error";
 
@@ -64,9 +64,9 @@ export function WorkflowStudioKit() {
             <Card>
                 <div className="flex items-center justify-between border-b border-zinc-200 px-4 py-2 dark:border-zinc-800">
                     <Heading level={3} size="sm">Quote-resolution agent</Heading>
-                    <Action color="violet" size="sm" onClick={run} disabled={running}>
+                    <Button color="violet" size="sm" onClick={run} disabled={running}>
                         {running ? "Running…" : "Run flow"}
-                    </Action>
+                    </Button>
                 </div>
                 <div className="relative h-[320px] overflow-auto bg-zinc-50 dark:bg-zinc-950">
                     <div

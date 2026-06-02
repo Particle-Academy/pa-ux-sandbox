@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import {
   Popover,
-  Action,
+  Button,
   Card,
   Badge,
   Select,
@@ -200,13 +200,13 @@ export function ReasonTagDemo() {
                         </Badge>
                       </td>
                       <td className="px-3 py-2 text-right">
-                        <Action
+                        <Button
                           size="sm"
                           variant={pins.includes(s.id) ? "filled" : "outline"}
                           onClick={() => togglePin(s.id)}
                         >
                           {pins.includes(s.id) ? "unpin" : "pin"}
-                        </Action>
+                        </Button>
                       </td>
                     </tr>
                   );
@@ -307,9 +307,9 @@ function ReasonTag({
         </div>
       )}
       <div className="flex justify-end pt-1">
-        <Action size="sm" variant="outline">
+        <Button size="sm" variant="outline">
           ask follow-up
-        </Action>
+        </Button>
       </div>
     </div>
   );

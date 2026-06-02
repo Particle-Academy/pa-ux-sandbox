@@ -1,5 +1,5 @@
 import type { ComponentDoc } from "./types";
-import { Action, Heading, Popover, Text } from "@particle-academy/react-fancy";
+import { Button, Heading, Popover, Text } from "@particle-academy/react-fancy";
 
 export const popoverDoc: ComponentDoc = {
     intro: (
@@ -16,7 +16,7 @@ export const popoverDoc: ComponentDoc = {
             render: () => (
                 <Popover>
                     <Popover.Trigger>
-                        <Action variant="ghost">Show details</Action>
+                        <Button variant="ghost">Show details</Button>
                     </Popover.Trigger>
                     <Popover.Content className="w-64 p-3">
                         <Heading size="sm">Details</Heading>
@@ -26,7 +26,7 @@ export const popoverDoc: ComponentDoc = {
             ),
             code: `<Popover>
     <Popover.Trigger>
-        <Action variant="ghost">Show details</Action>
+        <Button variant="ghost">Show details</Button>
     </Popover.Trigger>
     <Popover.Content className="w-64 p-3">
         <Heading size="sm">Details</Heading>
@@ -40,7 +40,7 @@ export const popoverDoc: ComponentDoc = {
             render: () => (
                 <Popover hover hoverDelay={150} hoverCloseDelay={250}>
                     <Popover.Trigger>
-                        <Action variant="ghost">Hover me</Action>
+                        <Button variant="ghost">Hover me</Button>
                     </Popover.Trigger>
                     <Popover.Content className="w-56 p-2">
                         <Text size="xs">Opens on hover with a short delay.</Text>
@@ -48,7 +48,7 @@ export const popoverDoc: ComponentDoc = {
                 </Popover>
             ),
             code: `<Popover hover hoverDelay={150} hoverCloseDelay={250}>
-    <Popover.Trigger><Action>Hover me</Action></Popover.Trigger>
+    <Popover.Trigger><Button>Hover me</Button></Popover.Trigger>
     <Popover.Content className="w-56 p-2">
         <Text size="xs">Opens on hover.</Text>
     </Popover.Content>
@@ -60,7 +60,7 @@ export const popoverDoc: ComponentDoc = {
             render: () => (
                 <Popover placement="right-start" offset={8}>
                     <Popover.Trigger>
-                        <Action variant="ghost">Open to the right</Action>
+                        <Button variant="ghost">Open to the right</Button>
                     </Popover.Trigger>
                     <Popover.Content className="w-48 p-2">
                         <Text size="xs">Placement: right-start.</Text>
@@ -78,7 +78,7 @@ export const popoverDoc: ComponentDoc = {
             render: () => (
                 <Popover open onOpenChange={() => {}}>
                     <Popover.Trigger>
-                        <Action variant="ghost">Always open</Action>
+                        <Button variant="ghost">Always open</Button>
                     </Popover.Trigger>
                     <Popover.Content className="w-56 p-2">
                         <Text size="xs">Externally controlled.</Text>

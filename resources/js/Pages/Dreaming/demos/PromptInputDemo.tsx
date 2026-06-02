@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
-  Action,
+  Button,
   Card,
   Badge,
   Switch,
@@ -444,9 +444,9 @@ function PromptInput({
 
         <div className="flex items-center gap-2 border-t border-zinc-200 bg-zinc-50/60 px-3 py-2 dark:border-zinc-800 dark:bg-zinc-900/40">
           <Tooltip content="Attach a file">
-            <Action variant="outline" size="sm" onClick={fakeAttach}>
+            <Button variant="outline" size="sm" onClick={fakeAttach}>
               📎 attach
-            </Action>
+            </Button>
           </Tooltip>
           <div className="ml-2 flex items-center gap-1.5">
             <div className="h-1.5 w-24 overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-700">
@@ -478,9 +478,9 @@ function PromptInput({
                 to send
               </span>
             )}
-            <Action color="violet" size="sm" onClick={submit}>
+            <Button color="violet" size="sm" onClick={submit}>
               send →
-            </Action>
+            </Button>
           </div>
         </div>
       </div>

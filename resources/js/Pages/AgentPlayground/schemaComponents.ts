@@ -12,7 +12,7 @@ import type { ComponentType } from "react";
 import {
   Accordion,
   AccordionPanel,
-  Action,
+  Button,
   Avatar,
   Badge,
   Callout,

@@ -10,7 +10,7 @@ import {
   placeOnWall,
 } from "@particle-academy/fancy-3d-babylon";
 import { Stage, useStage } from "@particle-academy/fancy-3d-babylon/react";
-import { Action, Badge } from "@particle-academy/react-fancy";
+import { Button, Badge } from "@particle-academy/react-fancy";
 import type { Scene as SceneSpec } from "@particle-academy/fancy-3d";
 
 type LayoutKind = "grid" | "wall" | "arc" | "sphere" | "path";
@@ -98,7 +98,7 @@ export function Fancy3DLayoutsDemo() {
 
       <div className="mb-3 flex flex-wrap items-center gap-2">
         {(["arc", "wall", "grid", "sphere", "path"] as const).map((k) => (
-          <Action
+          <Button
             key={k}
             variant="default"
             color={kind === k ? "indigo" : undefined}
@@ -106,7 +106,7 @@ export function Fancy3DLayoutsDemo() {
             onClick={() => setKind(k)}
           >
             placeOn{k.charAt(0).toUpperCase() + k.slice(1)}
-          </Action>
+          </Button>
         ))}
         <Badge size="sm" color="indigo">{kind}</Badge>
       </div>

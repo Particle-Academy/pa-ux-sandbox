@@ -1,7 +1,7 @@
 import { Head } from "@inertiajs/react";
 import { useRef, useState, type ReactNode } from "react";
 import {
-    Action,
+    Button,
     Badge,
     Breadcrumbs,
     Card,
@@ -98,7 +98,7 @@ export default function PackagesComponent({ package: pkg, component, usage, cont
                     {component.blurb && <Text className="mt-2 max-w-3xl">{component.blurb}</Text>}
                 </div>
                 {hasSource && (
-                    <Action
+                    <Button
                         as="a"
                         href={source!.registryUrl}
                         target="_blank"
@@ -108,7 +108,7 @@ export default function PackagesComponent({ package: pkg, component, usage, cont
                         iconTrailing="arrow-right"
                     >
                         Registry JSON
-                    </Action>
+                    </Button>
                 )}
             </div>
 
@@ -386,7 +386,7 @@ function ContextStrip({
                             the showcase repo and add a <code className="font-mono">{pkg.slug}/{component.slug}</code> entry.
                         </Text>
                     </div>
-                    <Action
+                    <Button
                         as="a"
                         href="https://github.com/Particle-Academy/pa-ux-sandbox/edit/main/app/Support/ComponentContext.php"
                         target="_blank"
@@ -396,7 +396,7 @@ function ContextStrip({
                         iconTrailing="arrow-right"
                     >
                         Contribute
-                    </Action>
+                    </Button>
                 </div>
             </Card.Body>
         </Card>

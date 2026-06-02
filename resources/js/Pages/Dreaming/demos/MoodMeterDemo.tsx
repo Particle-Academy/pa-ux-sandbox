@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useRef, useState } from "react";
 import {
   Card,
-  Action,
+  Button,
   Switch,
   Select,
   Badge,
@@ -91,9 +91,9 @@ export function MoodMeterDemo() {
             </span>
           </div>
           <div className="flex items-center justify-end gap-2 pt-4">
-            <Action size="sm" variant="outline" onClick={onAdoptAgent}>
+            <Button size="sm" variant="outline" onClick={onAdoptAgent}>
               adopt agent post
-            </Action>
+            </Button>
           </div>
         </div>
       </Card>

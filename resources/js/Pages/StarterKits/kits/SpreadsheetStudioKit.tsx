@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Action, Card, Heading, Text } from "@particle-academy/react-fancy";
+import { Button, Card, Heading, Text } from "@particle-academy/react-fancy";
 
 type Row = [string, number, number, number, number]; // label, Q1..Q4
 const ROWS_INIT: Row[] = [
@@ -41,8 +41,8 @@ export function SpreadsheetStudioKit() {
                         </Text>
                     </div>
                     <div className="flex gap-1">
-                        <Action variant="ghost" size="sm" onClick={() => setRows(ROWS_INIT)}>Reset</Action>
-                        <Action variant="ghost" size="sm">Export CSV</Action>
+                        <Button variant="ghost" size="sm" onClick={() => setRows(ROWS_INIT)}>Reset</Button>
+                        <Button variant="ghost" size="sm">Export CSV</Button>
                     </div>
                 </div>
 

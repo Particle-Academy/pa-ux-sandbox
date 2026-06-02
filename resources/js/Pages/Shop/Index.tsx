@@ -1,5 +1,5 @@
 import { Head, Link, useForm } from "@inertiajs/react";
-import { Action, Badge, Card, Heading, Text } from "@particle-academy/react-fancy";
+import { Button, Badge, Card, Heading, Text } from "@particle-academy/react-fancy";
 import { useState } from "react";
 import { Layout } from "../Layout";
 
@@ -114,12 +114,12 @@ function CosmeticCard({ item, balance, owned }: { item: Item; balance: number | 
             {item.description && <Text className="mt-2 flex-1 text-sm">{item.description}</Text>}
             <div className="mt-4 flex items-center justify-between">
                 <span className="text-sm font-semibold">{item.price.toLocaleString()} coins</span>
-                <Action
+                <Button
                     disabled={!canBuy || processing}
                     onClick={() => post(`/shop/${item.slug}/purchase`)}
                 >
                     {owned ? "Owned" : "Buy"}
-                </Action>
+                </Button>
             </div>
         </Card>
     );
@@ -176,7 +176,7 @@ function ServiceCard({
 
             <div className="mt-4 flex items-center justify-between">
                 <span className="text-sm font-semibold">{item.price.toLocaleString()} coins</span>
-                <Action
+                <Button
                     disabled={!canBuy || processing}
                     onClick={() => {
                         post(`/shop/${item.slug}/purchase`, {
@@ -185,7 +185,7 @@ function ServiceCard({
                     }}
                 >
                     Buy
-                </Action>
+                </Button>
             </div>
         </Card>
     );

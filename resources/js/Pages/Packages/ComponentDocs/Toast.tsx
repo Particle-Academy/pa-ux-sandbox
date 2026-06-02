@@ -1,10 +1,10 @@
 import type { ComponentDoc } from "./types";
-import { Action, Toast, useToast } from "@particle-academy/react-fancy";
+import { Button, Toast, useToast } from "@particle-academy/react-fancy";
 
 function ToastDemo({ variant, label }: { variant?: "default" | "success" | "error" | "warning" | "info"; label: string }) {
     const { toast } = useToast();
     return (
-        <Action
+        <Button
             onClick={() =>
                 toast({
                     title: label,
@@ -14,7 +14,7 @@ function ToastDemo({ variant, label }: { variant?: "default" | "success" | "erro
             }
         >
             {label}
-        </Action>
+        </Button>
     );
 }
 
@@ -38,9 +38,9 @@ export const toastDoc: ComponentDoc = {
             code: `function MyButton() {
     const { toast } = useToast();
     return (
-        <Action onClick={() => toast({ title: "Saved" })}>
+        <Button onClick={() => toast({ title: "Saved" })}>
             Save
-        </Action>
+        </Button>
     );
 }
 
@@ -75,7 +75,7 @@ toast({ title: "FYI", variant: "info" });`,
                 function Demo() {
                     const { toast } = useToast();
                     return (
-                        <Action
+                        <Button
                             onClick={() =>
                                 toast({
                                     title: "Backup complete",
@@ -85,7 +85,7 @@ toast({ title: "FYI", variant: "info" });`,
                             }
                         >
                             Show
-                        </Action>
+                        </Button>
                     );
                 }
                 return (

@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 import {
   Card,
-  Action,
+  Button,
   Switch,
   Select,
   Badge,
@@ -282,14 +282,14 @@ function FieldRow({
             <Badge color="emerald">{counts.resolved} resolved</Badge>
           )}
           {!alwaysOpen && (
-            <Action
+            <Button
               size="sm"
               variant="ghost"
               onClick={() => setOpen((o) => !o)}
               className="ml-auto"
             >
               {open ? "hide thread" : "show thread"}
-            </Action>
+            </Button>
           )}
         </div>
         {kind === "input" ? (
@@ -335,7 +335,7 @@ function FieldRow({
             rows={2}
           />
           <div className="flex justify-end">
-            <Action
+            <Button
               size="sm"
               color="violet"
               onClick={() => {
@@ -345,7 +345,7 @@ function FieldRow({
               disabled={!draft.trim()}
             >
               send reply
-            </Action>
+            </Button>
           </div>
         </div>
       </aside>
@@ -398,13 +398,13 @@ function NoteRow({
       )}
       <div className="mt-1 flex gap-1">
         {onUseSuggestion && !note.resolved && (
-          <Action size="sm" color="emerald" onClick={onUseSuggestion}>
+          <Button size="sm" color="emerald" onClick={onUseSuggestion}>
             use this
-          </Action>
+          </Button>
         )}
-        <Action size="sm" variant="ghost" onClick={onResolve}>
+        <Button size="sm" variant="ghost" onClick={onResolve}>
           {note.resolved ? "reopen" : "✓ resolve"}
-        </Action>
+        </Button>
       </div>
     </li>
   );

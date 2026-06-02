@@ -1,7 +1,7 @@
 import { Head, Link, usePage } from "@inertiajs/react";
 import { Component, ErrorInfo, ReactNode, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import {
-    Action,
+    Button,
     Badge,
     Card,
     Heading,
@@ -181,13 +181,13 @@ export default function DreamingIndex({ dreams, tallies: initialTallies, themes 
                 </div>
                 <div className="flex gap-2">
                     {!isAuth && (
-                        <Action as="a" href="/auth/github" color="zinc">
+                        <Button as="a" href="/auth/github" color="zinc">
                             Sign in to vote
-                        </Action>
+                        </Button>
                     )}
-                    <Action as={Link} href="/dreaming/archived" variant="ghost">
+                    <Button as={Link} href="/dreaming/archived" variant="ghost">
                         Archived
-                    </Action>
+                    </Button>
                 </div>
             </div>
 
@@ -262,22 +262,22 @@ export default function DreamingIndex({ dreams, tallies: initialTallies, themes 
                                         </Text>
                                     ) : (
                                         <div className="flex items-center gap-1 text-xs">
-                                            <Action
+                                            <Button
                                                 variant={mine === 1 ? "filled" : "ghost"}
                                                 color={mine === 1 ? "emerald" : "zinc"}
                                                 size="sm"
                                                 onClick={() => handleVote(d.slug, 1)}
                                             >
                                                 👍 {tally.up}
-                                            </Action>
-                                            <Action
+                                            </Button>
+                                            <Button
                                                 variant={mine === -1 ? "filled" : "ghost"}
                                                 color={mine === -1 ? "rose" : "zinc"}
                                                 size="sm"
                                                 onClick={() => handleVote(d.slug, -1)}
                                             >
                                                 👎 {tally.down}
-                                            </Action>
+                                            </Button>
                                         </div>
                                     )}
                                     {!d.accepted && (

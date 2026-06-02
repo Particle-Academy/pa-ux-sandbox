@@ -9,7 +9,7 @@
  */
 import { useState, type ReactNode } from "react";
 import {
-    Action,
+    Button,
     Avatar,
     Badge,
     Breadcrumbs,
@@ -103,10 +103,10 @@ const PREVIEWS: Record<string, PreviewFn> = {
 
     "react-fancy/action": () => (
         <div className="flex flex-wrap items-center justify-center gap-2">
-            <Action color="violet" size="sm">Primary</Action>
-            <Action variant="ghost" size="sm">Ghost</Action>
-            <Action color="emerald" size="sm" icon="check">Save</Action>
-            <Action color="red" variant="ghost" size="sm" icon="trash">Delete</Action>
+            <Button color="violet" size="sm">Primary</Button>
+            <Button variant="ghost" size="sm">Ghost</Button>
+            <Button color="emerald" size="sm" icon="check">Save</Button>
+            <Button color="red" variant="ghost" size="sm" icon="trash">Delete</Button>
         </div>
     ),
 
@@ -314,7 +314,7 @@ const PREVIEWS: Record<string, PreviewFn> = {
                     <Sparkles size={12} />
                     <ImageIcon size={12} />
                 </div>
-                <Action color="violet" size="sm">Send</Action>
+                <Button color="violet" size="sm">Send</Button>
             </div>
         </div>
     ),
@@ -509,8 +509,8 @@ const PREVIEWS: Record<string, PreviewFn> = {
                 </div>
                 <div className="px-3 py-2 text-xs text-zinc-600 dark:text-zinc-300">Delete this project?</div>
                 <div className="flex justify-end gap-1.5 px-3 pb-2">
-                    <Action variant="ghost" size="sm">Cancel</Action>
-                    <Action color="red" size="sm">Delete</Action>
+                    <Button variant="ghost" size="sm">Cancel</Button>
+                    <Button color="red" size="sm">Delete</Button>
                 </div>
             </div>
         </div>
@@ -590,7 +590,7 @@ const PREVIEWS: Record<string, PreviewFn> = {
 
     "react-fancy/popover": () => (
         <div className="relative">
-            <Action color="violet" size="sm">Click me</Action>
+            <Button color="violet" size="sm">Click me</Button>
             <div className="absolute left-1/2 top-full mt-2 w-48 -translate-x-1/2 rounded-md border border-zinc-200 bg-white p-2.5 text-xs text-zinc-700 shadow-lg dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-200">
                 <div className="absolute -top-1.5 left-1/2 size-3 -translate-x-1/2 rotate-45 border-l border-t border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-900" />
                 A floating panel anchored to a trigger.
@@ -653,7 +653,7 @@ const PREVIEWS: Record<string, PreviewFn> = {
                     <Code size={12} />
                     <ImageIcon size={12} />
                 </div>
-                <Action color="violet" size="sm" icon="arrow-up" />
+                <Button color="violet" size="sm" icon="arrow-up" />
             </div>
         </div>
     ),
@@ -802,7 +802,7 @@ const PREVIEWS: Record<string, PreviewFn> = {
 
     "react-fancy/tooltip": () => (
         <div className="relative">
-            <Action variant="ghost" size="sm" icon="info">Hover me</Action>
+            <Button variant="ghost" size="sm" icon="info">Hover me</Button>
             <div className="absolute left-1/2 top-full mt-2 -translate-x-1/2 whitespace-nowrap rounded bg-zinc-900 px-2 py-1 text-[10px] text-white shadow-md dark:bg-zinc-100 dark:text-zinc-900">
                 <div className="absolute -top-1 left-1/2 size-2 -translate-x-1/2 rotate-45 bg-zinc-900 dark:bg-zinc-100" />
                 Helpful detail

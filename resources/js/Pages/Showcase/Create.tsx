@@ -1,7 +1,7 @@
 import { Head, Link } from "@inertiajs/react";
 import { useFancyForm } from "@particle-academy/fancy-inertia";
 import {
-    Action,
+    Button,
     Badge,
     Breadcrumbs,
     Card,
@@ -124,10 +124,10 @@ export default function ShowcaseCreate() {
                         </div>
 
                         <div className="flex items-center justify-end gap-2 pt-2">
-                            <Action as={Link} href="/showcase" variant="ghost">Cancel</Action>
-                            <Action type="submit" color="violet" disabled={form.processing}>
+                            <Button as={Link} href="/showcase" variant="ghost">Cancel</Button>
+                            <Button type="submit" color="violet" disabled={form.processing}>
                                 Submit for review
-                            </Action>
+                            </Button>
                         </div>
                     </form>
                 </Card.Body>

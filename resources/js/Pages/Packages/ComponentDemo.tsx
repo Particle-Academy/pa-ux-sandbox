@@ -1,7 +1,7 @@
 import { useRef, useState, type FormEvent } from "react";
 import {
     Accordion,
-    Action,
+    Button,
     Autocomplete,
     Avatar,
     Badge,
@@ -245,14 +245,14 @@ export function ComponentDemo({ slug, name, pkg }: { slug: string; name: string;
 function ActionDemo() {
     return (
         <div className="flex flex-wrap gap-2">
-            <Action color="violet">Primary</Action>
-            <Action>Default</Action>
-            <Action variant="ghost">Ghost</Action>
-            <Action color="emerald" icon="check">Save</Action>
-            <Action color="red" variant="ghost" icon="trash">Delete</Action>
-            <Action disabled>Disabled</Action>
-            <Action variant="circle" icon="search" aria-label="Search" />
-            <Action variant="circle" color="violet" icon="plus" aria-label="New" />
+            <Button color="violet">Primary</Button>
+            <Button>Default</Button>
+            <Button variant="ghost">Ghost</Button>
+            <Button color="emerald" icon="check">Save</Button>
+            <Button color="red" variant="ghost" icon="trash">Delete</Button>
+            <Button disabled>Disabled</Button>
+            <Button variant="circle" icon="search" aria-label="Search" />
+            <Button variant="circle" color="violet" icon="plus" aria-label="New" />
         </div>
     );
 }
@@ -362,8 +362,8 @@ function ProgressDemo() {
             <div className="flex items-center justify-between text-xs">
                 <span className="font-mono">{v}%</span>
                 <div className="flex gap-1">
-                    <Action variant="ghost" size="sm" onClick={() => setV((x) => Math.max(0, x - 10))}>−10</Action>
-                    <Action variant="ghost" size="sm" onClick={() => setV((x) => Math.min(100, x + 10))}>+10</Action>
+                    <Button variant="ghost" size="sm" onClick={() => setV((x) => Math.max(0, x - 10))}>−10</Button>
+                    <Button variant="ghost" size="sm" onClick={() => setV((x) => Math.min(100, x + 10))}>+10</Button>
                 </div>
             </div>
         </div>
@@ -453,10 +453,10 @@ function TooltipDemo() {
     return (
         <div className="flex gap-3">
             <Tooltip content="Pin this dream">
-                <Action variant="circle" icon="star" aria-label="Pin" />
+                <Button variant="circle" icon="star" aria-label="Pin" />
             </Tooltip>
             <Tooltip content="Tooltips appear on hover">
-                <Action>Hover me</Action>
+                <Button>Hover me</Button>
             </Tooltip>
         </div>
     );
@@ -466,7 +466,7 @@ function PopoverDemo() {
     return (
         <Popover>
             <Popover.Trigger>
-                <Action>Open popover</Action>
+                <Button>Open popover</Button>
             </Popover.Trigger>
             <Popover.Content>
                 <div className="w-56 p-3 text-sm">
@@ -505,15 +505,15 @@ function ToastDemo() {
     const { toast } = useToast();
     return (
         <div className="flex flex-wrap gap-2">
-            <Action onClick={() => toast({ title: "Saved", description: "Your changes are live." })}>
+            <Button onClick={() => toast({ title: "Saved", description: "Your changes are live." })}>
                 Show toast
-            </Action>
-            <Action color="emerald" onClick={() => toast({ title: "Deploy succeeded", variant: "success" })}>
+            </Button>
+            <Button color="emerald" onClick={() => toast({ title: "Deploy succeeded", variant: "success" })}>
                 Success
-            </Action>
-            <Action color="red" onClick={() => toast({ title: "Couldn't reach API", variant: "error" })}>
+            </Button>
+            <Button color="red" onClick={() => toast({ title: "Couldn't reach API", variant: "error" })}>
                 Error
-            </Action>
+            </Button>
         </div>
     );
 }
@@ -655,15 +655,15 @@ function ModalDemo() {
     const [open, setOpen] = useState(false);
     return (
         <>
-            <Action color="violet" onClick={() => setOpen(true)}>Open modal</Action>
+            <Button color="violet" onClick={() => setOpen(true)}>Open modal</Button>
             <Modal open={open} onClose={() => setOpen(false)} size="md">
                 <Modal.Header>Are you sure?</Modal.Header>
                 <Modal.Body>
                     <Text size="sm">This will archive the dream. You can restore it later from the archived list.</Text>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Action variant="ghost" onClick={() => setOpen(false)}>Cancel</Action>
-                    <Action color="red" onClick={() => setOpen(false)}>Archive</Action>
+                    <Button variant="ghost" onClick={() => setOpen(false)}>Cancel</Button>
+                    <Button color="red" onClick={() => setOpen(false)}>Archive</Button>
                 </Modal.Footer>
             </Modal>
         </>
@@ -674,7 +674,7 @@ function DropdownDemo() {
     return (
         <Dropdown>
             <Dropdown.Trigger>
-                <Action>Open menu</Action>
+                <Button>Open menu</Button>
             </Dropdown.Trigger>
             <Dropdown.Items>
                 <Dropdown.Item onClick={() => alert("Edit")}>Edit</Dropdown.Item>
@@ -706,7 +706,7 @@ function CommandDemo() {
     const [open, setOpen] = useState(false);
     return (
         <>
-            <Action color="violet" onClick={() => setOpen(true)}>Open ⌘K</Action>
+            <Button color="violet" onClick={() => setOpen(true)}>Open ⌘K</Button>
             <Command open={open} onClose={() => setOpen(false)}>
                 <Command.Input placeholder="Type a command…" />
                 <Command.List>
@@ -751,7 +751,7 @@ function MobileMenuDemo() {
     const [open, setOpen] = useState(false);
     return (
         <>
-            <Action onClick={() => setOpen(true)}>Open mobile menu</Action>
+            <Button onClick={() => setOpen(true)}>Open mobile menu</Button>
             <MobileMenu.Flyout open={open} onClose={() => setOpen(false)}>
                 <MobileMenu.Item href="#" onClick={() => setOpen(false)}>Inbox</MobileMenu.Item>
                 <MobileMenu.Item href="#" onClick={() => setOpen(false)}>Projects</MobileMenu.Item>
@@ -773,7 +773,7 @@ function NavbarDemo() {
                 <Navbar.Item href="#">Docs</Navbar.Item>
                 <Navbar.Item href="#">Pricing</Navbar.Item>
             </Navbar.Items>
-            <Action size="sm" color="violet">Sign up</Action>
+            <Button size="sm" color="violet">Sign up</Button>
         </Navbar>
     );
 }
@@ -1689,9 +1689,9 @@ function ShareControlsDemo() {
                 <span className="text-sm">{sharing ? "Sharing · session active" : "Not shared"}</span>
                 <div className="ml-auto">
                     {sharing ? (
-                        <Action size="sm" color="red" variant="ghost" onClick={() => setSharing(false)}>Stop</Action>
+                        <Button size="sm" color="red" variant="ghost" onClick={() => setSharing(false)}>Stop</Button>
                     ) : (
-                        <Action size="sm" color="violet" onClick={() => setSharing(true)}>Start sharing</Action>
+                        <Button size="sm" color="violet" onClick={() => setSharing(true)}>Start sharing</Button>
                     )}
                 </div>
             </div>
@@ -1760,7 +1760,7 @@ function FancyAppRootDemo() {
             <Text size="sm" className="!text-zinc-600 dark:!text-zinc-300">
                 Provider mounted at this site's <code>createInertiaApp.setup</code>. It owns Toast.Provider, fancy-screens' ScreenSystem, and echarts module registration — survives Inertia page swaps. Tap the button to fire a real toast through the live provider.
             </Text>
-            <Action
+            <Button
                 onClick={() =>
                     toast.success({
                         title: "Hello from FancyAppRoot",
@@ -1769,7 +1769,7 @@ function FancyAppRootDemo() {
                 }
             >
                 Fire a toast
-            </Action>
+            </Button>
         </div>
     );
 }
@@ -1853,7 +1853,7 @@ function UseFancyFormDemo() {
             </Text>
             <Input {...field("url")} label="URL" placeholder="https://example.com" />
             <Input {...field("title")} label="Title (optional)" />
-            <Action type="submit">Submit</Action>
+            <Button type="submit">Submit</Button>
         </form>
     );
 }
@@ -1910,9 +1910,9 @@ function FsSlideViewerRegistryDemo() {
             <Text size="sm" className="!text-zinc-600 dark:!text-zinc-300">
                 Read-only deck player. Same {CANONICAL_DECK.slides.length}-slide deck as the package tile, mounted full-size. Click into the viewer below, then try ←/→ / Space / Home / End / 1-{CANONICAL_DECK.slides.length} / B / F / Esc.
             </Text>
-            <Action color="violet" size="sm" icon="play" onClick={() => setFullscreen(true)}>
+            <Button color="violet" size="sm" icon="play" onClick={() => setFullscreen(true)}>
                 Open fullscreen
-            </Action>
+            </Button>
             <div className="overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
                 <div className="h-[420px] w-full bg-black">
                     <FsSlideViewer deck={CANONICAL_DECK} />
@@ -1934,9 +1934,9 @@ function FsPresenterViewRegistryDemo() {
             <Text size="sm" className="!text-zinc-600 dark:!text-zinc-300">
                 Speaker-only second-monitor view of the same canonical deck. Current slide + next slide preview + speaker notes + wall clock + elapsed timer.
             </Text>
-            <Action color="violet" size="sm" icon="presentation" onClick={() => setPopout(true)}>
+            <Button color="violet" size="sm" icon="presentation" onClick={() => setPopout(true)}>
                 Pop out
-            </Action>
+            </Button>
             <div className="overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
                 <div className="h-[520px] w-full">
                     <FsPresenterView deck={CANONICAL_DECK} />
@@ -1968,7 +1968,7 @@ function FsDeckEditorRegistryDemo() {
             <div className="flex items-center gap-2 text-xs">
                 <Badge color="violet">{deck.slides.length} slides</Badge>
                 <Badge color="zinc">{opCount} ops applied</Badge>
-                <Action
+                <Button
                     size="sm"
                     variant="ghost"
                     onClick={() => {
@@ -1977,7 +1977,7 @@ function FsDeckEditorRegistryDemo() {
                     }}
                 >
                     Reset
-                </Action>
+                </Button>
             </div>
             <div className="h-[640px] overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
                 <FsDeckEditor

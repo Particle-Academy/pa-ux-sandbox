@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Modal, Action } from "@particle-academy/react-fancy";
+import { Modal, Button } from "@particle-academy/react-fancy";
 import { DemoSection } from "../components/DemoSection";
 
 export function ModalDemo() {
@@ -10,16 +10,16 @@ export function ModalDemo() {
     <div>
       <h1 className="mb-6 text-2xl font-bold">Modal</h1>
 
-      <DemoSection title="Basic" description="A simple dialog with header, body, and footer." code={`<Action onClick={() => setOpen(true)}>Open Modal</Action>
+      <DemoSection title="Basic" description="A simple dialog with header, body, and footer." code={`<Button onClick={() => setOpen(true)}>Open Modal</Button>
 <Modal open={open} onClose={() => setOpen(false)}>
   <Modal.Header><h2>Confirm Action</h2></Modal.Header>
   <Modal.Body><p>Are you sure?</p></Modal.Body>
   <Modal.Footer>
-    <Action size="sm" onClick={() => setOpen(false)}>Cancel</Action>
-    <Action size="sm" onClick={() => setOpen(false)}>Confirm</Action>
+    <Button size="sm" onClick={() => setOpen(false)}>Cancel</Button>
+    <Button size="sm" onClick={() => setOpen(false)}>Confirm</Button>
   </Modal.Footer>
 </Modal>`}>
-        <Action onClick={() => setBasicOpen(true)}>Open Modal</Action>
+        <Button onClick={() => setBasicOpen(true)}>Open Modal</Button>
         <Modal open={basicOpen} onClose={() => setBasicOpen(false)}>
           <Modal.Header>
             <h2 className="text-lg font-semibold">Confirm Action</h2>
@@ -31,12 +31,12 @@ export function ModalDemo() {
           </Modal.Body>
           <Modal.Footer>
             <div className="flex justify-end gap-2">
-              <Action size="sm" onClick={() => setBasicOpen(false)}>
+              <Button size="sm" onClick={() => setBasicOpen(false)}>
                 Cancel
-              </Action>
-              <Action size="sm" onClick={() => setBasicOpen(false)}>
+              </Button>
+              <Button size="sm" onClick={() => setBasicOpen(false)}>
                 Confirm
-              </Action>
+              </Button>
             </div>
           </Modal.Footer>
         </Modal>
@@ -46,10 +46,10 @@ export function ModalDemo() {
   <Modal.Header><h2>Project Details</h2></Modal.Header>
   <Modal.Body><p>More complex content here.</p></Modal.Body>
   <Modal.Footer>
-    <Action size="sm" onClick={() => setOpen(false)}>Close</Action>
+    <Button size="sm" onClick={() => setOpen(false)}>Close</Button>
   </Modal.Footer>
 </Modal>`}>
-        <Action onClick={() => setLgOpen(true)}>Open Large Modal</Action>
+        <Button onClick={() => setLgOpen(true)}>Open Large Modal</Button>
         <Modal open={lgOpen} onClose={() => setLgOpen(false)} size="lg">
           <Modal.Header>
             <h2 className="text-lg font-semibold">Project Details</h2>
@@ -68,7 +68,7 @@ export function ModalDemo() {
           </Modal.Body>
           <Modal.Footer>
             <div className="flex justify-end">
-              <Action size="sm" onClick={() => setLgOpen(false)}>Close</Action>
+              <Button size="sm" onClick={() => setLgOpen(false)}>Close</Button>
             </div>
           </Modal.Footer>
         </Modal>

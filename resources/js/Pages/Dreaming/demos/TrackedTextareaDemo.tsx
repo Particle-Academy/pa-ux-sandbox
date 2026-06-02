@@ -1,7 +1,7 @@
 import { useCallback, useMemo, useState } from "react";
 import {
   Card,
-  Action,
+  Button,
   Switch,
   Select,
   Badge,
@@ -171,9 +171,9 @@ export function TrackedTextareaDemo() {
             </span>
           </div>
           <div className="flex items-center justify-end gap-2 pt-4">
-            <Action variant="outline" size="sm" onClick={reset}>
+            <Button variant="outline" size="sm" onClick={reset}>
               reset seed
-            </Action>
+            </Button>
           </div>
         </div>
       </Card>
@@ -198,22 +198,22 @@ export function TrackedTextareaDemo() {
                     <Badge color="emerald">+{c.ins}</Badge>
                     <Badge color="red">−{c.del}</Badge>
                     <div className="ml-auto flex gap-1">
-                      <Action
+                      <Button
                         size="sm"
                         variant="ghost"
                         onClick={() => acceptAllBy(a.id)}
                         disabled={c.ins + c.del === 0}
                       >
                         ✓ all
-                      </Action>
-                      <Action
+                      </Button>
+                      <Button
                         size="sm"
                         variant="ghost"
                         onClick={() => rejectAllBy(a.id)}
                         disabled={c.ins + c.del === 0}
                       >
                         ✕ all
-                      </Action>
+                      </Button>
                     </div>
                   </div>
                 );
@@ -297,12 +297,12 @@ function SpanView({
             "{span.value}"
           </div>
           <div className="flex gap-1 pt-1">
-            <Action size="sm" color="emerald" onClick={onAccept}>
+            <Button size="sm" color="emerald" onClick={onAccept}>
               ✓ accept
-            </Action>
-            <Action size="sm" variant="outline" onClick={onReject}>
+            </Button>
+            <Button size="sm" variant="outline" onClick={onReject}>
               ✕ reject
-            </Action>
+            </Button>
           </div>
         </div>
       }

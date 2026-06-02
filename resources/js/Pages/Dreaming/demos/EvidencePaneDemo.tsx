@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import {
   Card,
-  Action,
+  Button,
   Switch,
   Select,
   Badge,
@@ -276,14 +276,14 @@ function EvidenceDrawer({
         <Badge color="amber">
           {answer.tools.filter((t) => t.ok).length}/{answer.tools.length} tools
         </Badge>
-        <Action
+        <Button
           size="sm"
           variant="ghost"
           onClick={() => setOpen((o) => !o)}
           className="ml-auto"
         >
           {open ? "hide ▴" : "show ▾"}
-        </Action>
+        </Button>
       </div>
       {open && (
         <div className="bg-white p-3 dark:bg-zinc-950">

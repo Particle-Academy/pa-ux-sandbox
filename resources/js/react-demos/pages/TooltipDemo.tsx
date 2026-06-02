@@ -1,4 +1,4 @@
-import { Tooltip, Action } from "@particle-academy/react-fancy";
+import { Tooltip, Button } from "@particle-academy/react-fancy";
 import { DemoSection } from "../components/DemoSection";
 
 export function TooltipDemo() {
@@ -7,23 +7,23 @@ export function TooltipDemo() {
       <h1 className="mb-6 text-2xl font-bold">Tooltip</h1>
 
       <DemoSection title="Placements" description="Tooltip positioning around the trigger." code={`<Tooltip content="Appears on top" placement="top">
-  <Action>Top</Action>
+  <Button>Top</Button>
 </Tooltip>
 <Tooltip content="Appears on bottom" placement="bottom">
-  <Action>Bottom</Action>
+  <Button>Bottom</Button>
 </Tooltip>`}>
         <div className="flex flex-wrap items-center gap-4 py-8">
           <Tooltip content="Appears on top" placement="top">
-            <Action>Top</Action>
+            <Button>Top</Button>
           </Tooltip>
           <Tooltip content="Appears on bottom" placement="bottom">
-            <Action>Bottom</Action>
+            <Button>Bottom</Button>
           </Tooltip>
           <Tooltip content="Appears on left" placement="left">
-            <Action>Left</Action>
+            <Button>Left</Button>
           </Tooltip>
           <Tooltip content="Appears on right" placement="right">
-            <Action>Right</Action>
+            <Button>Right</Button>
           </Tooltip>
         </div>
       </DemoSection>
@@ -34,7 +34,7 @@ export function TooltipDemo() {
     <p>Ctrl + S</p>
   </div>
 }>
-  <Action>Hover for details</Action>
+  <Button>Hover for details</Button>
 </Tooltip>`}>
         <Tooltip
           content={
@@ -44,7 +44,7 @@ export function TooltipDemo() {
             </div>
           }
         >
-          <Action>Hover for details</Action>
+          <Button>Hover for details</Button>
         </Tooltip>
       </DemoSection>
     </div>

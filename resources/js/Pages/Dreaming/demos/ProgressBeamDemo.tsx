@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   Card,
-  Action,
+  Button,
   Switch,
   Select,
   Badge,
@@ -164,12 +164,12 @@ export function ProgressBeamDemo() {
         <div className="relative overflow-hidden p-4">
           <ProgressBeam jobs={jobs} position={position} variant={variant} />
           <div className="mt-4 flex flex-wrap items-center gap-2">
-            <Action size="sm" color="violet" onClick={addJob}>
+            <Button size="sm" color="violet" onClick={addJob}>
               + spawn job
-            </Action>
-            <Action size="sm" variant="outline" onClick={clear}>
+            </Button>
+            <Button size="sm" variant="outline" onClick={clear}>
               clear
-            </Action>
+            </Button>
             <span className="ml-2 text-[11px] text-zinc-500">
               {jobs.filter((j) => j.status === "running").length} running ·{" "}
               {jobs.filter((j) => j.status === "done").length} done ·{" "}
@@ -232,14 +232,14 @@ function ProgressBeam({
               Running jobs
             </span>
             <Badge color="violet">{running.length}</Badge>
-            <Action
+            <Button
               size="sm"
               variant="ghost"
               onClick={() => setOpen(false)}
               className="ml-auto"
             >
               close
-            </Action>
+            </Button>
           </div>
           <ul className="space-y-1 text-[12px]">
             {jobs.map((j) => (

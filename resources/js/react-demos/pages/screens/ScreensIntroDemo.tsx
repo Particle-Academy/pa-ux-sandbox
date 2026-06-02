@@ -1,5 +1,5 @@
 import { Screen, useScreens, useRegisterStore } from "@particle-academy/fancy-screens";
-import { Action, Card, Badge, Input } from "@particle-academy/react-fancy";
+import { Button, Card, Badge, Input } from "@particle-academy/react-fancy";
 import { CodeEditor } from "@particle-academy/fancy-code";
 import { create } from "zustand";
 import { DemoSection } from "../../components/DemoSection";
@@ -75,14 +75,14 @@ function UserPanel() {
         <Card.Body className="space-y-2">
           <div className="flex gap-2">
             {(["all", "active", "archived"] as const).map((f) => (
-              <Action
+              <Button
                 key={f}
                 size="sm"
                 color={filter === f ? "indigo" : "zinc"}
                 onClick={() => setFilter(f)}
               >
                 {f}
-              </Action>
+              </Button>
             ))}
           </div>
           <div className="text-sm text-zinc-500">

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { MoodMeter, Card, Select, Slider, Action } from "@particle-academy/react-fancy";
+import { MoodMeter, Card, Select, Slider, Button } from "@particle-academy/react-fancy";
 import { DemoSection } from "../components/DemoSection";
 
 const SCALES = {
@@ -45,7 +45,7 @@ export function MoodMeterDemo() {
               onValueChange={(v) => onScaleChange(v as keyof typeof SCALES)}
             />
             <div className="flex items-end justify-end gap-2">
-              <Action
+              <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => {
@@ -54,7 +54,7 @@ export function MoodMeterDemo() {
                 }}
               >
                 adopt agent post
-              </Action>
+              </Button>
             </div>
           </div>
         </Card>

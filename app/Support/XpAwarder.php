@@ -4,6 +4,7 @@ namespace App\Support;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use LaravelFunLab\Facades\LFL;
 
 /**
@@ -41,11 +42,21 @@ class XpAwarder
             return false;
         }
 
-        LFL::award($metric)
-            ->to($user)
-            ->amount($amount)
-            ->because($reason)
-            ->save();
+        // XP is a non-critical side-effect — a missing/inactive metric or any
+        // LFL failure must never break the page. Log and skip; leave the
+        // cooldown unset so the award retries once the data is fixed (e.g. the
+        // FunLabSeeder is run).
+        try {
+            LFL::award($metric)
+                ->to($user)
+                ->amount($amount)
+                ->because($reason)
+                ->save();
+        } catch (\Throwable $e) {
+            Log::warning("XP award skipped for metric '{$metric}': ".$e->getMessage());
+
+            return false;
+        }
 
         Cache::put($cacheKey, true, $throttleSeconds);
 

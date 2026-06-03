@@ -27,6 +27,8 @@ This is the **Fancy UI showcase site** — a Laravel 13 + Vite + React 19 + Iner
 The installed packages:
 - `@particle-academy/react-fancy` — core React component library (stays raw React)
 - `@particle-academy/fancy-3d` (+ `/dom`, `/canvas`) — engine-agnostic 3D core: JSON-friendly `Scene` types, the engine-pluggable `<Canvas>` with a built-in DOM/CSS-3D renderer, and shape/layout helpers. **No WebGL-engine dependency.** WebGL engines + `<Stage>`/`<Monitor>`/`<Card3D>` ship as optional sibling adapters — `@particle-academy/fancy-3d-babylon` (Babylon) and `@particle-academy/fancy-3d-three` (three.js).
+- `@particle-academy/fancy-3d-babylon` (+ `/react`, `/engine`) — Babylon.js adapter for fancy-3d (`<Stage>`/`<Monitor>`/`<Card3D>` + `babylonEngine`)
+- `@particle-academy/fancy-3d-three` (+ `/react`, `/engine`) — three.js adapter for fancy-3d (mirrors the Babylon adapter API)
 - `@particle-academy/fancy-echarts` — ECharts wrapper
 - `@particle-academy/fancy-code` — embedded code editor
 - `@particle-academy/fancy-sheets` — spreadsheet workbook
@@ -34,9 +36,12 @@ The installed packages:
 - `@particle-academy/fancy-slides` (+ `/registry`) — presentation editor + viewer
 - `@particle-academy/fancy-screens` — screen registry + cross-screen presence (consumers bring their own Zustand store)
 - `@particle-academy/fancy-whiteboard` — collaborative whiteboard canvas
+- `@particle-academy/fancy-artboard` — design-canvas surface (ArtBoard + pieces / sections / notes)
+- `@particle-academy/fancy-motion` — timeline / animation primitives
+- `@particle-academy/fancy-cms-ui` — WYSIWYG CMS editor (Stages doc model; pairs with the `particle-academy/fancy-cms` PHP package)
 - `@particle-academy/fancy-inertia` — Inertia.js bridge for Laravel hosts (showcase chrome)
-- `@particle-academy/fancy-tsrx` — typed-result React spike (pilot only, 3 components)
 - `@particle-academy/agent-integrations` (+ `/mcp`, `/bridges/*`, `/components/*`) — MCP server + per-package bridges
+- `@particle-academy/dark-slide` — Node/TS pptx writer/reader (JS port of the PHP `dark-slide`; used by the slides export demo)
 
 ## Common Commands
 

@@ -1,4 +1,4 @@
-import { useRef, useState, type FormEvent } from "react";
+import { lazy, Suspense, useRef, useState, type FormEvent } from "react";
 import {
     Accordion,
     Button,
@@ -193,11 +193,16 @@ const REGISTRY: Record<string, DemoFn> = {
     "fancy-screens/screen-system": ScreenSystemDemo,
     "fancy-screens/screen": ScreenDemo,
 
-    // ── fancy-3d
+    // ── fancy-3d (engine-agnostic core)
     "fancy-3d/canvas": Fancy3DCanvasDemo,
-    "fancy-3d/stage": Fancy3DStageDemo,
-    "fancy-3d/monitor": Fancy3DMonitorDemo,
-    "fancy-3d/card-3d": Fancy3DCard3DDemo,
+    // ── fancy-3d-babylon (Babylon adapter)
+    "fancy-3d-babylon/stage": Fancy3DStageDemo,
+    "fancy-3d-babylon/monitor": Fancy3DMonitorDemo,
+    "fancy-3d-babylon/card-3d": Fancy3DCard3DDemo,
+    // ── fancy-3d-three (three.js adapter)
+    "fancy-3d-three/stage": Fancy3DThreeStageDemo,
+    "fancy-3d-three/monitor": Fancy3DThreeMonitorDemo,
+    "fancy-3d-three/card-3d": Fancy3DThreeCard3DDemo,
 
     // ── agent-integrations
     "agent-integrations/micro-mcp-server": MicroMcpServerDemo,
@@ -1592,32 +1597,32 @@ function Fancy3DCanvasDemo() {
     );
 }
 
-function Fancy3DStageDemo() {
+// Lazy-load the WebGL demos so Babylon (~13MB) / three only load when a visitor
+// actually opens one of the fancy-3d-babylon / fancy-3d-three component pages.
+const BabylonDemo = lazy(() => import("./ComponentDocs/Fancy3D.babylon-demo"));
+const ThreeDemo = lazy(() => import("./ComponentDocs/Fancy3D.three-demo"));
+
+function WebGLFrame({ engine, example }: { engine: "babylon" | "three"; example: "stage" | "monitor" | "card3d" }) {
+    const D = engine === "babylon" ? BabylonDemo : ThreeDemo;
     return (
-        <Explainer
-            summary="Scene root. Owns camera, lighting, and the JSON scene graph. Same shape whether you're rendering through the DOM or Babylon adapter."
-            code={'import { Stage } from "@particle-academy/fancy-3d";\n\n<Stage camera={{ position: [0, 2, 5], target: [0, 0, 0] }}>\n  {/* primitives + Card3D / Monitor / Screen go here */}\n</Stage>'}
-        />
+        <Suspense
+            fallback={
+                <div className="grid h-72 w-full place-items-center rounded-lg border border-dashed border-zinc-300 text-xs text-zinc-500 dark:border-zinc-700">
+                    Loading {engine === "babylon" ? "Babylon" : "three.js"} engine…
+                </div>
+            }
+        >
+            <D example={example} />
+        </Suspense>
     );
 }
 
-function Fancy3DMonitorDemo() {
-    return (
-        <Explainer
-            summary="A 3D plane that renders a DOM (HTML/React) surface as a texture. Lets you put a working react-fancy <Card> or <Table> on a monitor in the scene."
-            code={'import { Monitor } from "@particle-academy/fancy-3d-babylon";\nimport { Card } from "@particle-academy/react-fancy";\n\n<Monitor width={2} height={1.2} position={[0, 1, 0]}>\n  <Card>\n    <Card.Body>Renders as a live texture in WebGL.</Card.Body>\n  </Card>\n</Monitor>'}
-        />
-    );
-}
-
-function Fancy3DCard3DDemo() {
-    return (
-        <Explainer
-            summary="3D-native card primitive. Like react-fancy <Card> but positioned + rotated in scene space. Children are regular React nodes."
-            code={'import { Card3D } from "@particle-academy/fancy-3d";\n\n<Card3D position={[0, 0, 0]} rotation={[0, 30, 0]} size={[2, 1.2]}>\n  <h3>Hello from 3D</h3>\n  <p>Children are normal React.</p>\n</Card3D>'}
-        />
-    );
-}
+function Fancy3DStageDemo() { return <WebGLFrame engine="babylon" example="stage" />; }
+function Fancy3DMonitorDemo() { return <WebGLFrame engine="babylon" example="monitor" />; }
+function Fancy3DCard3DDemo() { return <WebGLFrame engine="babylon" example="card3d" />; }
+function Fancy3DThreeStageDemo() { return <WebGLFrame engine="three" example="stage" />; }
+function Fancy3DThreeMonitorDemo() { return <WebGLFrame engine="three" example="monitor" />; }
+function Fancy3DThreeCard3DDemo() { return <WebGLFrame engine="three" example="card3d" />; }
 
 // ─── agent-integrations ────────────────────────────────────────────────────
 

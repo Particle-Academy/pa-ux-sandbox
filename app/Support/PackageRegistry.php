@@ -26,6 +26,7 @@ class PackageRegistry
             self::fancyScreens(),
             self::fancy3d(),
             self::fancy3dBabylon(),
+            self::fancy3dThree(),
             self::agentIntegrations(),
             self::fancyInertia(),
         ];
@@ -358,6 +359,25 @@ class PackageRegistry
                 ['slug' => 'engine', 'name' => 'babylonEngine', 'blurb' => 'CanvasEngine adapter — pass to <Canvas engine={babylonEngine}/>.'],
                 ['slug' => 'stage', 'name' => 'Stage', 'blurb' => 'Babylon scene root (camera + lighting + JSON scene graph).'],
                 ['slug' => 'monitor', 'name' => 'Monitor', 'blurb' => 'In-scene HTML overlay rendered as a WebGL texture.'],
+                ['slug' => 'card-3d', 'name' => 'Card3D', 'blurb' => '3D-native Card primitive positioned in scene space.'],
+            ],
+        ];
+    }
+
+    /** @return array<string, mixed> */
+    private static function fancy3dThree(): array
+    {
+        return [
+            'slug' => 'fancy-3d-three',
+            'name' => 'fancy-3d-three',
+            'tagline' => 'three.js adapter for fancy-3d — WebGL renderer + the React components (Stage, Monitor, Card3D) that mount onto a three.js Scene. Mirrors fancy-3d-babylon, three.js underneath.',
+            'npm' => '@particle-academy/fancy-3d-three',
+            'repo' => 'Particle-Academy/fancy-3d-three',
+            'language' => 'TypeScript',
+            'components' => [
+                ['slug' => 'engine', 'name' => 'threeEngine', 'blurb' => 'CanvasEngine adapter — pass to <Canvas engine={threeEngine}/>.'],
+                ['slug' => 'stage', 'name' => 'Stage', 'blurb' => 'three.js scene root (camera + lighting + JSON scene graph).'],
+                ['slug' => 'monitor', 'name' => 'Monitor', 'blurb' => 'In-scene HTML overlay projected via CSS matrix3d homography.'],
                 ['slug' => 'card-3d', 'name' => 'Card3D', 'blurb' => '3D-native Card primitive positioned in scene space.'],
             ],
         ];

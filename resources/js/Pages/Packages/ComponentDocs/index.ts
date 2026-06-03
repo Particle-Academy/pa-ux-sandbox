@@ -38,6 +38,9 @@ import { fancy3dCanvasDoc } from "./Fancy3DCanvas";
 import { fancy3dCard3DDoc } from "./Fancy3DCard3D";
 import { fancy3dMonitorDoc } from "./Fancy3DMonitor";
 import { fancy3dStageDoc } from "./Fancy3DStage";
+import { fancy3dThreeStageDoc } from "./Fancy3DThreeStage";
+import { fancy3dThreeMonitorDoc } from "./Fancy3DThreeMonitor";
+import { fancy3dThreeCard3DDoc } from "./Fancy3DThreeCard3D";
 import { deckEditorDoc } from "./DeckEditor";
 import { fancySlidesSlideDoc } from "./FancySlidesSlide";
 import { fancySlidesTextElementDoc } from "./FancySlidesTextElement";
@@ -210,9 +213,14 @@ const DOCS: Record<string, ComponentDoc> = {
 
     // fancy-3d
     "fancy-3d/canvas": fancy3dCanvasDoc,
-    "fancy-3d/stage": fancy3dStageDoc,
-    "fancy-3d/monitor": fancy3dMonitorDoc,
-    "fancy-3d/card-3d": fancy3dCard3DDoc,
+    "fancy-3d-babylon/stage": fancy3dStageDoc,
+    "fancy-3d-babylon/monitor": fancy3dMonitorDoc,
+    "fancy-3d-babylon/card-3d": fancy3dCard3DDoc,
+
+    // fancy-3d-three
+    "fancy-3d-three/stage": fancy3dThreeStageDoc,
+    "fancy-3d-three/monitor": fancy3dThreeMonitorDoc,
+    "fancy-3d-three/card-3d": fancy3dThreeCard3DDoc,
 
     // agent-integrations
     "agent-integrations/micro-mcp-server": microMcpServerDoc,

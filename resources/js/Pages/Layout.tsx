@@ -36,7 +36,10 @@ type AuthUser = {
     avatar_url: string | null;
     player?: PlayerSummary | null;
 };
-type Auth = { user: AuthUser | null };
+// `admin` is a server-computed link (from the `admin` Gate), present only for
+// admins. It is deliberately NOT the model's `is_admin` flag and is a separate
+// prop from `user`; it's a UI hint only — access is enforced server-side.
+type Auth = { user: AuthUser | null; admin?: { url: string } | null };
 type SharedProps = { flash: Flash; auth: Auth; csrfToken: string };
 
 const NAV_ITEMS: Array<{ to: string; label: string; match: string }> = [
@@ -65,6 +68,7 @@ export function Layout({
 }) {
     const { props, url } = usePage<SharedProps>();
     const auth = props.auth?.user ?? null;
+    const adminLink = props.auth?.admin ?? null;
     const flash = props.flash ?? {};
     const path = url.replace(/^\/+/, "").split("?")[0];
 
@@ -175,6 +179,14 @@ export function Layout({
                                             >
                                                 View GitHub profile
                                             </Dropdown.Item>
+                                        )}
+                                        {adminLink && (
+                                            <>
+                                                <Dropdown.Separator />
+                                                <Dropdown.Item onClick={() => router.visit(adminLink.url)}>
+                                                    Admin
+                                                </Dropdown.Item>
+                                            </>
                                         )}
                                         <Dropdown.Separator />
                                         <Dropdown.Item danger onClick={() => router.post("/auth/logout")}>

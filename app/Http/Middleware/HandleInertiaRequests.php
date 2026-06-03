@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use App\Services\PlayerProfile;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
@@ -35,11 +36,20 @@ class HandleInertiaRequests extends Middleware
                     'name' => $user->name,
                     'github_username' => $user->github_username,
                     'avatar_url' => $user->avatar_url,
-                    'is_admin' => (bool) $user->is_admin,
                     // Gamification summary for the chrome chip. Lazy so it
                     // only resolves on full page loads / when requested.
                     'player' => fn () => app(PlayerProfile::class)->summary($user),
                 ] : null,
+                // Admin chrome link, computed server-side from the `admin` Gate
+                // — NOT the raw users.is_admin column, which is never sent to the
+                // browser. Non-admins and guests get null, so their payload
+                // carries no admin reference at all. This is a UI convenience
+                // only: every /admin route is independently protected by the
+                // `can:admin` middleware, so faking this client-side reveals and
+                // grants nothing.
+                'admin' => $user && Gate::forUser($user)->allows('admin')
+                    ? ['url' => route('admin.dashboard')]
+                    : null,
             ],
             'flash' => [
                 'auth_error' => fn () => $request->session()->get('auth_error'),

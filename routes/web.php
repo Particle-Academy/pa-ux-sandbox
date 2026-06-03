@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\XpController;
 use App\Http\Controllers\Auth\GitHubLoginController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DarkSlideExportController;
+use App\Http\Controllers\DevLoginController;
 use App\Http\Controllers\HolySheetExportController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SeoController;
@@ -52,6 +53,14 @@ Route::get('/humans.txt', [SeoController::class, 'humans'])->name('seo.humans');
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:login');
+
+    // Local-only one-click dev login. The route is not even registered in
+    // production, and DevLoginController aborts unless the server is `local`
+    // (see App\Support\DevAccounts::enabled()). Belt and suspenders — neither
+    // gate is reachable from the frontend.
+    if (! app()->isProduction()) {
+        Route::post('/dev-login', DevLoginController::class)->name('dev-login');
+    }
 });
 
 Route::middleware('auth')->group(function () {

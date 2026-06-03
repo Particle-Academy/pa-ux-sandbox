@@ -67,34 +67,40 @@
                     Login
                 </button>
             </div>
-
-            <div class="border-t border-gray-300 dark:border-gray-600 pt-4">
-                <p class="text-sm text-gray-600 dark:text-gray-400 mb-3 text-center">Quick Login:</p>
-                <div class="flex gap-2">
-                    <button
-                        type="button"
-                        onclick="fillCredentials('admin@example.com', 'password')"
-                        class="flex-1 bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium py-2 px-4 rounded transition-colors"
-                    >
-                        Admin
-                    </button>
-                    <button
-                        type="button"
-                        onclick="fillCredentials('user@example.com', 'password')"
-                        class="flex-1 bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium py-2 px-4 rounded transition-colors"
-                    >
-                        User
-                    </button>
-                </div>
-            </div>
         </form>
 
-        <script>
-            function fillCredentials(email, password) {
-                document.getElementById('email').value = email;
-                document.getElementById('password').value = password;
-            }
-        </script>
+        {{--
+            Dev quick-login. This whole block is server-rendered and only emitted
+            when the app is running in `local` ($devAccounts is [] otherwise, set
+            by AuthController from App\Support\DevAccounts::enabled()). In any other
+            environment this HTML is never sent to the browser, and the /dev-login
+            route does not exist. There is no JS flag a client could flip.
+        --}}
+        @if (! empty($devAccounts))
+            <div class="border-t border-gray-300 dark:border-gray-600 mt-2 pt-4">
+                <p class="text-sm text-gray-600 dark:text-gray-400 mb-3 text-center">
+                    Dev login <span class="text-xs opacity-70">(local only)</span>
+                </p>
+                <div class="flex gap-2">
+                    @foreach ($devAccounts as $account)
+                        <form method="POST" action="{{ route('dev-login') }}" class="flex-1">
+                            @csrf
+                            <input type="hidden" name="email" value="{{ $account['email'] }}">
+                            <button
+                                type="submit"
+                                class="w-full {{ $account['is_admin'] ? 'bg-violet-600 hover:bg-violet-700' : 'bg-gray-600 hover:bg-gray-700' }} text-white text-sm font-medium py-2 px-4 rounded transition-colors"
+                                title="Log in as {{ $account['email'] }}"
+                            >
+                                {{ $account['label'] }}
+                            </button>
+                        </form>
+                    @endforeach
+                </div>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-3 text-center">
+                    Run <code>php artisan db:seed --class=DevUsersSeeder</code> if these accounts don't exist yet.
+                </p>
+            </div>
+        @endif
     </div>
 </div>
 @endsection

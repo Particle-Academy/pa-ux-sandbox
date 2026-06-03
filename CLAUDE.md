@@ -26,7 +26,7 @@ This is the **Fancy UI showcase site** — a Laravel 13 + Vite + React 19 + Iner
 
 The installed packages:
 - `@particle-academy/react-fancy` — core React component library (stays raw React)
-- `@particle-academy/fancy-3d` (+ `/dom`, `/babylon`, `/react`) — UI kit for humans + agents to author data-driven 3D apps: engine-agnostic `Scene` types + adapters + shape primitives + 3D-native components like `Screen`. The bridge to 3D engines lives here, not in react-fancy.
+- `@particle-academy/fancy-3d` (+ `/dom`, `/canvas`) — engine-agnostic 3D core: JSON-friendly `Scene` types, the engine-pluggable `<Canvas>` with a built-in DOM/CSS-3D renderer, and shape/layout helpers. **No WebGL-engine dependency.** WebGL engines + `<Stage>`/`<Monitor>`/`<Card3D>` ship as optional sibling adapters — `@particle-academy/fancy-3d-babylon` (Babylon) and `@particle-academy/fancy-3d-three` (three.js).
 - `@particle-academy/fancy-echarts` — ECharts wrapper
 - `@particle-academy/fancy-code` — embedded code editor
 - `@particle-academy/fancy-sheets` — spreadsheet workbook

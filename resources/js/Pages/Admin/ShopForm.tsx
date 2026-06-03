@@ -2,7 +2,7 @@ import { Head, useForm } from "@inertiajs/react";
 import { Button, Card, Field, Input, Select, Switch, Textarea } from "@particle-academy/react-fancy";
 import { adminLayout } from "./AdminLayout";
 import { PageHeader } from "./ui";
-import { COSMETIC_CATALOG } from "../../lib/cosmetics";
+import { COSMETIC_CATALOG, avatarFrameClass, nameColorClass, bannerStyle } from "../../lib/cosmetics";
 
 type ShopItem = {
     id: number;
@@ -21,6 +21,58 @@ type ShopItem = {
 type Props = { item: ShopItem | null; pending: number };
 
 const HINT = { fontSize: 12, color: "var(--fg-3)", marginTop: -2, lineHeight: 1.45 } as const;
+
+/**
+ * Live preview of a cosmetic, rendered with the SAME helpers the real UI uses
+ * (lib/cosmetics.ts) — so what you see here is exactly what a buyer gets on
+ * their profile/avatar/name. `slots` carries only the slot being edited, so the
+ * other surfaces show their default (un-owned) state for context.
+ */
+function CosmeticPreview({ slot, value }: { slot: string; value: string }) {
+    if (!slot || !value) {
+        return (
+            <div style={{ ...HINT, padding: 12, border: "1px dashed var(--border, #e4e4e7)", borderRadius: 8 }}>
+                Pick a slot and value to preview the cosmetic.
+            </div>
+        );
+    }
+    const slots = { [slot]: value };
+    const banner = bannerStyle(slots);
+
+    return (
+        <div style={{ borderRadius: 10, overflow: "hidden", border: "1px solid var(--border, #e4e4e7)", background: "var(--bg-2, #fafafa)" }}>
+            <div
+                style={{
+                    height: 52,
+                    ...(banner ?? { backgroundImage: "linear-gradient(120deg, #e4e4e7, #f4f4f5)" }),
+                }}
+            />
+            <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "0 14px 14px", marginTop: -18 }}>
+                <div
+                    className={avatarFrameClass(slots)}
+                    style={{
+                        width: 48,
+                        height: 48,
+                        borderRadius: "9999px",
+                        background: "linear-gradient(135deg, #a78bfa, #6366f1)",
+                        color: "#fff",
+                        display: "grid",
+                        placeItems: "center",
+                        fontWeight: 700,
+                        fontSize: 15,
+                        flexShrink: 0,
+                    }}
+                >
+                    AW
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 2, paddingTop: 18 }}>
+                    <span className={nameColorClass(slots)} style={{ fontWeight: 600, fontSize: 14 }}>Ava Wu</span>
+                    <span style={{ fontSize: 12, color: "var(--fg-3)" }}>Level 7 · 4,820 XP</span>
+                </div>
+            </div>
+        </div>
+    );
+}
 
 function ShopForm({ item }: Props) {
     const editing = item !== null;
@@ -124,6 +176,10 @@ function ShopForm({ item }: Props) {
                                             player's <code>{f.data.slot || "slot"}</code> cosmetic to <code>{f.data.value || "value"}</code>,
                                             rendered by <code>resources/js/lib/cosmetics.ts</code>. New options must be added there too.
                                         </p>
+                                        <div>
+                                            <div style={{ fontSize: 12, fontWeight: 500, color: "var(--fg-2)", marginBottom: 6 }}>Preview</div>
+                                            <CosmeticPreview slot={f.data.slot} value={f.data.value} />
+                                        </div>
                                     </>
                                 );
                             })()}

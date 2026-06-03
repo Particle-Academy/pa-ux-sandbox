@@ -45,13 +45,19 @@ class InstallInstructions extends Tool
             'composer_path' => $composerName ? [
                 'install' => "composer require $composerName",
             ] : null,
-            'vendor_path' => $npmName ? [
+            // Copy-source path only applies to components we ship source files
+            // for. npm-only items (e.g. the WebGL engine adapters, whose source
+            // can't be vendored — it needs the engine) install via npm_path.
+            'vendor_path' => ($npmName && $item->files !== []) ? [
                 'install' => "npx fancy-ui@latest add $name",
                 'lands_at' => "src/components/fancy/$name/",
                 'import' => "import { $title } from \"@/components/fancy/$name\";",
                 'pulls_in' => array_merge($item->dependencies, $item->registryDependencies),
             ] : null,
-            'docs' => "https://ui.particle.academy/packages/{$item->package}/{$name}",
+            'npm_only' => $item->files === [],
+            'docs' => $name === $item->package
+                ? "https://ui.particle.academy/packages/{$item->package}"
+                : "https://ui.particle.academy/packages/{$item->package}/{$name}",
         ]);
     }
 

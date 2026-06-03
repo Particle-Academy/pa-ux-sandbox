@@ -24,7 +24,7 @@ class RegistrySource
         // Key the cache on the artifact fingerprint so deploying a new
         // registry.json (or this fix itself) busts the cache automatically — the
         // pre-fix empty result won't linger for the 15-min TTL.
-        return $this->cached('registry.all.' . $this->cacheFingerprint(), function (): array {
+        return $this->cached('registry.all.'.$this->cacheFingerprint(), function (): array {
             // Dev / CI: the sibling package source is on disk → scan it live.
             // Production (Forge deploys only px-ui-sandbox, no siblings) → load
             // the precompiled artifact committed via `php artisan registry:build`.
@@ -70,7 +70,7 @@ class RegistrySource
             if (! is_string($slug)) {
                 continue;
             }
-            if (is_dir(dirname(base_path()) . '/' . $slug) || is_dir(base_path('packages/' . $slug))) {
+            if (is_dir(dirname(base_path()).'/'.$slug) || is_dir(base_path('packages/'.$slug))) {
                 return true;
             }
         }
@@ -133,8 +133,8 @@ class RegistrySource
         // layout (base_path('packages/X')) so this code keeps working if
         // someone runs the sandbox from inside the old laravel-catalog tree.
         $candidates = [
-            dirname(base_path()) . '/' . $pkg['slug'],
-            base_path('packages/' . $pkg['slug']),
+            dirname(base_path()).'/'.$pkg['slug'],
+            base_path('packages/'.$pkg['slug']),
         ];
         $pkgDir = null;
         foreach ($candidates as $candidate) {
@@ -151,11 +151,38 @@ class RegistrySource
         }
 
         $items = [];
+        $npmOnly = false;
         foreach ($pkg['components'] ?? [] as $component) {
             $item = $this->buildItem($pkg, $component, $pkgDir);
             if ($item) {
                 $items[] = $item;
+            } else {
+                // Component has no copy-source layout (the npm-install packages —
+                // engine adapters, ECharts, slides, … ship flat src/, not
+                // per-component folders).
+                $npmOnly = true;
             }
+        }
+
+        // For npm-install packages, emit ONE package-level item keyed by the
+        // (globally unique) package slug — so agents can discover + install it
+        // via npm without slug collisions between mirrored packages
+        // (fancy-3d-babylon and fancy-3d-three both expose `stage`/`monitor`).
+        if ($npmOnly && ! empty($pkg['npm'])) {
+            $provides = array_map(
+                fn (array $c): string => $c['name'],
+                array_values($pkg['components'] ?? []),
+            );
+            $tagline = (string) ($pkg['tagline'] ?? '');
+            $items[] = new RegistryItem(
+                name: $pkg['slug'],
+                title: $pkg['name'],
+                description: $tagline !== '' ? $tagline : 'npm package — provides '.implode(', ', $provides),
+                package: $pkg['slug'],
+                files: [],
+                dependencies: [],
+                registryDependencies: [],
+            );
         }
 
         return $items;
@@ -264,6 +291,18 @@ class RegistrySource
     }
 
     /**
+     * Remove block + line comments before import parsing so example imports in
+     * JSDoc don't register as real dependencies. URL-safe (won't eat `://`).
+     */
+    private function stripComments(string $code): string
+    {
+        $code = preg_replace('#/\*[\s\S]*?\*/#', '', $code) ?? $code;
+        $code = preg_replace('#(?<!:)//[^\n]*#', '', $code) ?? $code;
+
+        return $code;
+    }
+
+    /**
      * Parse `import ... from "x"` and `import("x")` across all files.
      * Bucket into npm deps (anything not starting with . / @/ / ~) and
      * registry deps (sibling `../OtherComponent` references).
@@ -277,9 +316,13 @@ class RegistrySource
         $registry = [];
 
         foreach ($files as $file) {
+            // Strip comments first — JSDoc `@example` blocks routinely contain
+            // `import … from "other-package"` lines that are NOT real deps.
+            // (e.g. fancy-3d/canvas docs an `import … from "fancy-3d-babylon"`
+            // example, which must not make canvas depend on Babylon.)
             preg_match_all(
                 '/(?:from|import\s*\()\s*["\']([^"\']+)["\']/m',
-                $file['content'],
+                $this->stripComments($file['content']),
                 $matches,
             );
             foreach ($matches[1] as $spec) {

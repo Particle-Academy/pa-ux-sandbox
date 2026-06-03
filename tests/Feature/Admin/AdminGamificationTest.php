@@ -81,13 +81,42 @@ it('creates a new prize', function () {
             'slug' => 'sticker-pack',
             'name' => 'Sticker Pack',
             'type' => 'physical',
+            'cost_in_points' => 750,
             'inventory_quantity' => 50,
             'is_active' => 1,
         ])
         ->assertRedirect(route('admin.gamification.index'));
 
     $p = Prize::where('slug', 'sticker-pack')->firstOrFail();
-    expect($p->type->value)->toBe('physical')->and($p->inventory_quantity)->toBe(50);
+    expect($p->type->value)->toBe('physical')
+        ->and($p->inventory_quantity)->toBe(50)
+        ->and((int) $p->cost_in_points)->toBe(750);
+});
+
+it('requires a coin cost for a prize', function () {
+    $this->actingAs(gamificationAdmin())
+        ->post('/admin/gamification/prizes', [
+            'slug' => 'no-cost-prize',
+            'name' => 'No Cost',
+            'type' => 'virtual',
+        ])
+        ->assertSessionHasErrors('cost_in_points');
+});
+
+it('updates an existing prize cost', function () {
+    $p = Prize::where('slug', 'sandbox-pro')->firstOrFail();
+
+    $this->actingAs(gamificationAdmin())
+        ->put("/admin/gamification/prizes/{$p->id}", [
+            'slug' => 'sandbox-pro',
+            'name' => $p->name,
+            'type' => $p->type->value,
+            'cost_in_points' => 1234,
+            'is_active' => 1,
+        ])
+        ->assertRedirect(route('admin.gamification.index'));
+
+    expect((int) $p->fresh()->cost_in_points)->toBe(1234);
 });
 
 it('toggles a prize', function () {

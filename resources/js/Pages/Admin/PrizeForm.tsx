@@ -9,6 +9,7 @@ type Prize = {
     name: string;
     description: string | null;
     type: string;
+    cost_in_points: number;
     inventory_quantity: number | null;
     is_active: boolean;
     sort_order: number;
@@ -22,6 +23,7 @@ function PrizeForm({ prize }: Props) {
         name: prize?.name ?? "",
         description: prize?.description ?? "",
         type: prize?.type ?? "virtual",
+        cost_in_points: prize?.cost_in_points ?? 0,
         inventory_quantity: prize?.inventory_quantity != null ? String(prize.inventory_quantity) : "",
         is_active: prize?.is_active ?? true,
         sort_order: prize?.sort_order ?? 0,
@@ -61,6 +63,9 @@ function PrizeForm({ prize }: Props) {
                                         { value: "physical", label: "Physical" },
                                     ]}
                                 />
+                            </Field>
+                            <Field label="Cost (coins)" error={f.errors.cost_in_points} required>
+                                <Input type="number" value={String(f.data.cost_in_points)} onChange={(e) => f.setData("cost_in_points", Number(e.target.value))} placeholder="500" />
                             </Field>
                             <Field label="Inventory (blank = unlimited)" error={f.errors.inventory_quantity}>
                                 <Input type="number" value={f.data.inventory_quantity} onChange={(e) => f.setData("inventory_quantity", e.target.value)} />

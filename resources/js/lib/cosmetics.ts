@@ -6,6 +6,51 @@
 
 export type CosmeticSlots = Record<string, string>;
 
+/**
+ * Catalog of cosmetic slots + the values each accepts. This is the single
+ * source the admin Coin Shop form drives its Slot/Value pickers from: a
+ * cosmetic shop item "ties" to a cosmetic by storing `{ slot, value }` in its
+ * metadata, and on purchase that pair is merged onto `users.cosmetic_slots`.
+ * The render helpers below then turn the owned slots into classes/styles.
+ *
+ * To add a brand-new cosmetic: add an entry here AND a matching `case` in the
+ * relevant render helper below (and any CSS), then keep
+ * database/seeders/ShopSeeder.php in sync.
+ */
+export type CosmeticOption = { value: string; label: string };
+export type CosmeticSlotDef = { slot: string; label: string; hint: string; options: CosmeticOption[] };
+
+export const COSMETIC_CATALOG: CosmeticSlotDef[] = [
+    {
+        slot: "avatar-frame",
+        label: "Avatar frame",
+        hint: "Decorative ring drawn around the player's avatar.",
+        options: [
+            { value: "bronze", label: "Bronze ring" },
+            { value: "silver", label: "Silver ring" },
+            { value: "gold", label: "Gold ring (glow)" },
+        ],
+    },
+    {
+        slot: "name-color",
+        label: "Name color",
+        hint: "Color treatment applied to the player's display name.",
+        options: [
+            { value: "blue", label: "Blue" },
+            { value: "rainbow", label: "Rainbow gradient" },
+        ],
+    },
+    {
+        slot: "banner",
+        label: "Profile banner",
+        hint: "Gradient banner shown across the player's profile header.",
+        options: [
+            { value: "sunset", label: "Sunset" },
+            { value: "aurora", label: "Aurora" },
+        ],
+    },
+];
+
 /** Ring/border classes for an avatar frame. */
 export function avatarFrameClass(slots: CosmeticSlots | undefined | null): string {
     switch (slots?.["avatar-frame"]) {

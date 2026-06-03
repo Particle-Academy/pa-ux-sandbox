@@ -55,15 +55,20 @@ function Gamification({ achievements, prizes }: Props) {
                                                 <Badge color={a.is_active ? "emerald" : "zinc"}>{a.is_active ? "Active" : "Inactive"}</Badge>
                                             </Table.Cell>
                                             <Table.Cell>
-                                                <Button
-                                                    color="violet"
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    icon="power"
-                                                    onClick={() => router.post(`/admin/gamification/achievements/${a.id}/toggle`, {}, { preserveScroll: true })}
-                                                >
-                                                    Toggle
-                                                </Button>
+                                                <div style={{ display: "flex", gap: 4 }}>
+                                                    <Button variant="ghost" size="sm" icon="pencil" href={`/admin/gamification/achievements/${a.id}/edit`}>
+                                                        Edit
+                                                    </Button>
+                                                    <Button
+                                                        color="violet"
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        icon="power"
+                                                        onClick={() => router.post(`/admin/gamification/achievements/${a.id}/toggle`, {}, { preserveScroll: true })}
+                                                    >
+                                                        Toggle
+                                                    </Button>
+                                                </div>
                                             </Table.Cell>
                                         </Table.Row>
                                     ))}
@@ -117,15 +122,20 @@ function Gamification({ achievements, prizes }: Props) {
                                                 <Badge color={p.is_active ? "emerald" : "zinc"}>{p.is_active ? "Active" : "Inactive"}</Badge>
                                             </Table.Cell>
                                             <Table.Cell>
-                                                <Button
-                                                    color="violet"
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    icon="power"
-                                                    onClick={() => router.post(`/admin/gamification/prizes/${p.id}/toggle`, {}, { preserveScroll: true })}
-                                                >
-                                                    Toggle
-                                                </Button>
+                                                <div style={{ display: "flex", gap: 4 }}>
+                                                    <Button variant="ghost" size="sm" icon="pencil" href={`/admin/gamification/prizes/${p.id}/edit`}>
+                                                        Edit
+                                                    </Button>
+                                                    <Button
+                                                        color="violet"
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        icon="power"
+                                                        onClick={() => router.post(`/admin/gamification/prizes/${p.id}/toggle`, {}, { preserveScroll: true })}
+                                                    >
+                                                        Toggle
+                                                    </Button>
+                                                </div>
                                             </Table.Cell>
                                         </Table.Row>
                                     ))}

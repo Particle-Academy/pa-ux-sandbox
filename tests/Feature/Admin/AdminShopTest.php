@@ -67,6 +67,30 @@ it('creates a service via /admin/shop POST', function () {
         ->and($item->metadata)->toBe(['service' => 'featured-showcase', 'duration_days' => 90]);
 });
 
+it('requires slot + value for a cosmetic', function () {
+    $this->actingAs(admin())
+        ->post('/admin/shop', [
+            'slug' => 'cosmetic-no-tie',
+            'name' => 'Untied cosmetic',
+            'kind' => 'cosmetic',
+            'price' => 100,
+        ])
+        ->assertSessionHasErrors(['slot', 'value']);
+});
+
+it('rejects an unknown service handler', function () {
+    $this->actingAs(admin())
+        ->post('/admin/shop', [
+            'slug' => 'service-bogus',
+            'name' => 'Bogus service',
+            'kind' => 'service',
+            'price' => 100,
+            'service' => 'teleportation',
+            'duration_days' => 7,
+        ])
+        ->assertSessionHasErrors('service');
+});
+
 it('rejects an invalid slug format', function () {
     $this->actingAs(admin())
         ->post('/admin/shop', [

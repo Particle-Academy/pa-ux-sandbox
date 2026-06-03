@@ -2,6 +2,7 @@ import { Head, useForm } from "@inertiajs/react";
 import { Button, Card, Field, Input, Select, Switch, Textarea } from "@particle-academy/react-fancy";
 import { adminLayout } from "./AdminLayout";
 import { PageHeader } from "./ui";
+import { COSMETIC_CATALOG } from "../../lib/cosmetics";
 
 type ShopItem = {
     id: number;
@@ -18,6 +19,8 @@ type ShopItem = {
     duration_days: string;
 };
 type Props = { item: ShopItem | null; pending: number };
+
+const HINT = { fontSize: 12, color: "var(--fg-3)", marginTop: -2, lineHeight: 1.45 } as const;
 
 function ShopForm({ item }: Props) {
     const editing = item !== null;
@@ -88,24 +91,62 @@ function ShopForm({ item }: Props) {
                                 <Input type="number" value={String(f.data.order)} onChange={(e) => f.setData("order", Number(e.target.value))} />
                             </Field>
 
-                            {f.data.kind === "cosmetic" && (
-                                <>
-                                    <Field label="Slot" error={f.errors.slot}>
-                                        <Input value={f.data.slot} onChange={(e) => f.setData("slot", e.target.value)} placeholder="avatar-frame, name-color, banner" />
-                                    </Field>
-                                    <Field label="Value" error={f.errors.value}>
-                                        <Input value={f.data.value} onChange={(e) => f.setData("value", e.target.value)} placeholder="gold, rainbow, sunset" />
-                                    </Field>
-                                </>
-                            )}
+                            {f.data.kind === "cosmetic" && (() => {
+                                const slotDef = COSMETIC_CATALOG.find((s) => s.slot === f.data.slot);
+                                return (
+                                    <>
+                                        <Field label="Cosmetic slot" error={f.errors.slot} required>
+                                            <Select
+                                                value={f.data.slot}
+                                                onValueChange={(v) => {
+                                                    f.setData("slot", v);
+                                                    f.setData("value", ""); // reset — values are slot-specific
+                                                }}
+                                                list={[
+                                                    { value: "", label: "Select a slot…" },
+                                                    ...COSMETIC_CATALOG.map((s) => ({ value: s.slot, label: s.label })),
+                                                ]}
+                                            />
+                                        </Field>
+                                        <Field label="Cosmetic value" error={f.errors.value} required>
+                                            <Select
+                                                value={f.data.value}
+                                                onValueChange={(v) => f.setData("value", v)}
+                                                disabled={!slotDef}
+                                                list={[
+                                                    { value: "", label: slotDef ? "Select a value…" : "Pick a slot first" },
+                                                    ...(slotDef?.options ?? []).map((o) => ({ value: o.value, label: o.label })),
+                                                ]}
+                                            />
+                                        </Field>
+                                        <p style={HINT}>
+                                            {slotDef ? slotDef.hint : "Pick the cosmetic slot this item unlocks."} Buying it sets the
+                                            player's <code>{f.data.slot || "slot"}</code> cosmetic to <code>{f.data.value || "value"}</code>,
+                                            rendered by <code>resources/js/lib/cosmetics.ts</code>. New options must be added there too.
+                                        </p>
+                                    </>
+                                );
+                            })()}
                             {f.data.kind === "service" && (
                                 <>
-                                    <Field label="Service handler" error={f.errors.service}>
-                                        <Input value={f.data.service} onChange={(e) => f.setData("service", e.target.value)} placeholder="featured-showcase" />
+                                    <Field label="Service handler" error={f.errors.service} required>
+                                        <Select
+                                            value={f.data.service}
+                                            onValueChange={(v) => f.setData("service", v)}
+                                            list={[
+                                                { value: "", label: "Select a handler…" },
+                                                { value: "featured-showcase", label: "Featured showcase — pins a submission" },
+                                            ]}
+                                        />
                                     </Field>
-                                    <Field label="Duration (days)" error={f.errors.duration_days}>
-                                        <Input type="number" value={f.data.duration_days} onChange={(e) => f.setData("duration_days", e.target.value)} />
+                                    <Field label="Duration (days)" error={f.errors.duration_days} required>
+                                        <Input type="number" value={f.data.duration_days} onChange={(e) => f.setData("duration_days", e.target.value)} placeholder="7" />
                                     </Field>
+                                    <p style={HINT}>
+                                        On purchase, <code>featured-showcase</code> extends the linked submission's
+                                        <code> featured_until</code> by the duration. It's the only service handler wired in
+                                        <code> app/Services/Shop.php</code>.
+                                    </p>
                                 </>
                             )}
                         </div>

@@ -117,12 +117,13 @@ class AdminShopController extends Controller
             'price' => 'required|integer|min:0',
             'active' => 'sometimes|boolean',
             'order' => 'sometimes|integer|min:0',
-            // For cosmetics
-            'slot' => 'nullable|string|max:80',
-            'value' => 'nullable|string|max:80',
-            // For services
-            'service' => 'nullable|string|max:80',
-            'duration_days' => 'nullable|integer|min:1|max:365',
+            // For cosmetics — both required so the purchase effect can merge
+            // metadata.slot+value onto users.cosmetic_slots (see App\Services\Shop).
+            'slot' => ['nullable', 'string', 'max:80', 'required_if:kind,cosmetic'],
+            'value' => ['nullable', 'string', 'max:80', 'required_if:kind,cosmetic'],
+            // For services — featured-showcase is the only handler wired in App\Services\Shop.
+            'service' => ['nullable', 'string', 'max:80', 'required_if:kind,service', 'in:featured-showcase'],
+            'duration_days' => ['nullable', 'integer', 'min:1', 'max:365', 'required_if:kind,service'],
         ]);
     }
 

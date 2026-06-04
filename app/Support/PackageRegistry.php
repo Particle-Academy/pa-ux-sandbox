@@ -124,6 +124,7 @@ class PackageRegistry
         // Mirrors packages/react-fancy/src/components/ — hand-listed for Phase 1.
         return array_map(fn (array $r) => $r + ['blurb' => ''], [
             ['slug' => 'accordion', 'name' => 'Accordion'],
+            ['slug' => 'accordion-panel', 'name' => 'AccordionPanel'],
             ['slug' => 'button', 'name' => 'Button', 'blurb' => 'The workhorse button — colors, states, icons, emoji, avatar, badge, loading. (formerly Action)'],
             ['slug' => 'autocomplete', 'name' => 'Autocomplete'],
             ['slug' => 'avatar', 'name' => 'Avatar'],
@@ -170,9 +171,11 @@ class PackageRegistry
             ['slug' => 'separator', 'name' => 'Separator'],
             ['slug' => 'sidebar', 'name' => 'Sidebar'],
             ['slug' => 'skeleton', 'name' => 'Skeleton'],
+            ['slug' => 'sticky-note', 'name' => 'StickyNote'],
             ['slug' => 'table', 'name' => 'Table'],
             ['slug' => 'tabs', 'name' => 'Tabs'],
             ['slug' => 'text', 'name' => 'Text'],
+            ['slug' => 'time-grid', 'name' => 'TimeGrid'],
             ['slug' => 'timeline', 'name' => 'Timeline'],
             ['slug' => 'time-picker', 'name' => 'TimePicker'],
             ['slug' => 'toast', 'name' => 'Toast'],

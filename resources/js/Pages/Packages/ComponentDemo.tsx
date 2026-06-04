@@ -2089,9 +2089,16 @@ function FsDeckEditorRegistryDemo() {
 
     return (
         <div className="space-y-3">
-            <Text size="sm" className="!text-zinc-600 dark:!text-zinc-300">
-                Full live editor — toolbar / slide rail / canvas / inspector / speaker notes. Drag elements, edit text inline, reorder slides in the rail, add new elements from the toolbar, hit ▶ Present to launch the SlideViewer fullscreen. Every mutation flows through the same `DeckOp` enum the agent bridge speaks, so humans and agents drive identical operations.
-            </Text>
+            <div className="rounded-md border border-zinc-200 bg-zinc-50/70 px-3 py-2.5 text-[12px] leading-relaxed dark:border-zinc-800 dark:bg-zinc-900/40">
+                <p className="text-zinc-600 dark:text-zinc-300">
+                    <span className="mr-1.5 inline-block rounded bg-emerald-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300">Out of the box</span>
+                    Toolbar, slide rail, canvas, inspector, and speaker notes — drag elements, edit text inline, reorder slides, add elements, and ▶ Present to launch the SlideViewer fullscreen. Every edit flows through the same <code className="rounded bg-zinc-100 px-1 font-mono text-[11px] dark:bg-zinc-800">DeckOp</code> enum the agent bridge speaks, so humans and agents drive identical ops.
+                </p>
+                <p className="mt-1.5 text-zinc-600 dark:text-zinc-300">
+                    <span className="mr-1.5 inline-block rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-700 dark:bg-amber-500/15 dark:text-amber-300">Demo only</span>
+                    The seeded deck and the PPTX-export toolbar button (wired to this sandbox).
+                </p>
+            </div>
             <div className="flex items-center gap-2 text-xs">
                 <Badge color="violet">{deck.slides.length} slides</Badge>
                 <Badge color="zinc">{opCount} ops applied</Badge>

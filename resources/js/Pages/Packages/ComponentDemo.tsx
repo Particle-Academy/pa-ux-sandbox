@@ -1,4 +1,4 @@
-import { lazy, Suspense, useRef, useState, type FormEvent } from "react";
+import { lazy, Suspense, useRef, useState, type FormEvent, type ReactNode } from "react";
 import {
     Accordion,
     Button,
@@ -248,6 +248,36 @@ export function ComponentDemo({ slug, name, pkg }: { slug: string; name: string;
 }
 
 // ─── Demos ──────────────────────────────────────────────────────────────────
+
+/**
+ * Wraps a rich/interactive demo with a clear "what's stock vs what's demo
+ * scaffolding" footnote, so readers never confuse demo-only seed data or stub
+ * handlers for out-of-the-box behaviour. `outOfBox` is required; `demo` is
+ * optional (omit when the demo adds nothing beyond seed data).
+ */
+function DemoNote({ children, outOfBox, demo }: { children: ReactNode; outOfBox: string; demo?: string }) {
+    return (
+        <div className="space-y-2.5">
+            {children}
+            <div className="rounded-md border border-zinc-200 bg-zinc-50/70 px-3 py-2.5 text-[12px] leading-relaxed dark:border-zinc-800 dark:bg-zinc-900/40">
+                <p className="text-zinc-600 dark:text-zinc-300">
+                    <span className="mr-1.5 inline-block rounded bg-emerald-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300">
+                        Out of the box
+                    </span>
+                    {outOfBox}
+                </p>
+                {demo && (
+                    <p className="mt-1.5 text-zinc-600 dark:text-zinc-300">
+                        <span className="mr-1.5 inline-block rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-700 dark:bg-amber-500/15 dark:text-amber-300">
+                            Demo only
+                        </span>
+                        {demo}
+                    </p>
+                )}
+            </div>
+        </div>
+    );
+}
 
 function ActionDemo() {
     return (
@@ -1431,71 +1461,85 @@ function ArtboardNoteDemo() {
 
 // ─── fancy-flow ────────────────────────────────────────────────────────────
 
-const FLOW_NODE_KINDS = [
-    { kind: "manual_trigger", label: "Manual run", category: "trigger" as const },
-    { kind: "llm_call", label: "LLM call", category: "action" as const },
-    { kind: "tool_call", label: "Tool", category: "action" as const },
-    { kind: "output", label: "Output", category: "output" as const },
-];
+// A realistic order-handling FlowGraph. Node `type` + `data.kind` are the
+// registry kind *names* (manual_trigger, api_request, branch, …) — that's how
+// FlowEditor itself shapes a node (see its palette-drop handler). The branch's
+// true/false output handles drive the two paths.
+const flowNode = (id: string, type: string, x: number, y: number, label: string, extra: Record<string, unknown> = {}) => ({
+    id,
+    type,
+    position: { x, y },
+    data: { kind: type, label, config: {}, ...extra },
+});
+const FLOW_SEED_GRAPH = {
+    nodes: [
+        flowNode("trigger", "manual_trigger", 0, 150, "Start"),
+        flowNode("fetch", "api_request", 220, 60, "Fetch order"),
+        flowNode("branch", "branch", 440, 150, "Paid?"),
+        flowNode("summarize", "llm_call", 680, 60, "Summarize"),
+        flowNode("notify", "notify", 680, 250, "Email customer"),
+        flowNode("respond", "output", 920, 150, "Respond"),
+        { id: "note", type: "note", position: { x: 200, y: 300 }, data: { kind: "note", label: "Tip", body: "Drag a kind from the palette onto the canvas. Select any node to edit it on the right." } },
+    ],
+    edges: [
+        { id: "e1", source: "trigger", target: "fetch" },
+        { id: "e2", source: "fetch", target: "branch" },
+        { id: "e3", source: "branch", target: "summarize", sourceHandle: "true", label: "paid" },
+        { id: "e4", source: "branch", target: "notify", sourceHandle: "false", label: "unpaid" },
+        { id: "e5", source: "summarize", target: "respond" },
+        { id: "e6", source: "notify", target: "respond" },
+    ],
+};
 
-const FLOW_SEED_NODES = [
-    { id: "trigger-1", type: "manual_trigger", position: { x: 60, y: 60 }, data: { label: "Start", config: {} } },
-    { id: "llm-1", type: "llm_call", position: { x: 280, y: 60 }, data: { label: "Summarize", config: {} } },
-    { id: "output-1", type: "output", position: { x: 500, y: 60 }, data: { label: "Result", config: {} } },
-];
-
-const FLOW_SEED_EDGES = [
-    { id: "e-1", source: "trigger-1", target: "llm-1" },
-    { id: "e-2", source: "llm-1", target: "output-1" },
-];
+// One wildcard executor (resolved via the registry's "*" fallback) so every
+// node runs — the Run button executes the graph and streams status to the feed.
+const flowSleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+const FLOW_EXECUTORS = {
+    "*": async ({ node }: { node: { id: string } }) => {
+        await flowSleep(420);
+        return { node: node.id, ok: true };
+    },
+};
 
 function FlowEditorDemo() {
+    const [graph, setGraph] = useState(FLOW_SEED_GRAPH);
     return (
-        <div className="h-80 overflow-hidden rounded-md border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950">
-            <FlowEditor
-                initialNodes={FLOW_SEED_NODES}
-                initialEdges={FLOW_SEED_EDGES}
-                nodeKinds={FLOW_NODE_KINDS}
-            />
-        </div>
+        <DemoNote
+            outOfBox="The drag-to-add palette (left), the per-node config panel (select a node), the Run button + topological executor, and the live run feed below the canvas — all stock FlowEditor. Pan, zoom, connect ports, and rename inline too."
+            demo="The seed graph (7 nodes across all six kinds) and four one-line example executors that just sleep + return — swap in real handlers (LLM, tool, HTTP) for production."
+        >
+            <div className="overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
+                <FlowEditor value={graph} onChange={setGraph} executors={FLOW_EXECUTORS} height={480} />
+            </div>
+        </DemoNote>
     );
 }
 
 function FlowStateHookDemo() {
-    // useFlowState is a hook — we render a tiny FlowEditor and let users
-    // see the controlled-state contract by clicking buttons that mutate
-    // the graph via setters returned from the hook.
+    const [graph, setGraph] = useState(FLOW_SEED_GRAPH);
     return (
-        <div className="space-y-2">
-            <Text size="sm" className="!text-zinc-600 dark:!text-zinc-300">
-                Controlled-state hook for FlowEditor. Owns nodes + edges + per-node status.
-            </Text>
-            <div className="h-72 overflow-hidden rounded-md border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950">
-                <FlowEditor
-                    initialNodes={FLOW_SEED_NODES}
-                    initialEdges={FLOW_SEED_EDGES}
-                    nodeKinds={FLOW_NODE_KINDS}
-                />
+        <DemoNote
+            outOfBox="useFlowState owns the controlled nodes + edges + per-node run status and wires xyflow's onNodesChange / onEdgesChange / onConnect for you — it's exactly what FlowEditor uses internally, shown here driving the same editor."
+            demo="The seed graph below; see the Code tab for the bare useFlowState() call without the editor chrome."
+        >
+            <div className="overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
+                <FlowEditor value={graph} onChange={setGraph} showFeed={false} height={380} />
             </div>
-        </div>
+        </DemoNote>
     );
 }
 
 function FlowRunHookDemo() {
-    // useFlowRun runs the graph and streams per-node status events.
+    const [graph, setGraph] = useState(FLOW_SEED_GRAPH);
     return (
-        <div className="space-y-2">
-            <Text size="sm" className="!text-zinc-600 dark:!text-zinc-300">
-                Topological executor hook. Runs the graph through your executors map and emits a stream of typed events (log, status, output) plus a cancel handle.
-            </Text>
-            <div className="h-72 overflow-hidden rounded-md border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950">
-                <FlowEditor
-                    initialNodes={FLOW_SEED_NODES}
-                    initialEdges={FLOW_SEED_EDGES}
-                    nodeKinds={FLOW_NODE_KINDS}
-                />
+        <DemoNote
+            outOfBox="useFlowRun drives runFlow — topological execution through your executor registry, streaming typed run events (node-status, output) plus a cancel handle. Hit Run and watch the feed below stream per-node status."
+            demo="The executor registry here is four sleep-and-return stubs; the feed and status pills are the real hook output."
+        >
+            <div className="overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
+                <FlowEditor value={graph} onChange={setGraph} executors={FLOW_EXECUTORS} height={420} />
             </div>
-        </div>
+        </DemoNote>
     );
 }
 

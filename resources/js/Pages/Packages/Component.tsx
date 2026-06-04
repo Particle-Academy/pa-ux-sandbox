@@ -12,6 +12,7 @@ import {
 import { CodeEditor } from "@particle-academy/fancy-code";
 import { Layout } from "../Layout";
 import { ComponentDemo } from "./ComponentDemo";
+import { ContextCards } from "./ContextCards";
 import { useXp } from "../../lib/useXp";
 import { getComponentDoc, type ComponentDoc, type ComponentDocExample, type ComponentDocProp } from "./ComponentDocs";
 
@@ -364,10 +365,8 @@ function ContextStrip({
 }) {
     if (context) {
         return (
-            <div className="mt-6 grid gap-3 md:grid-cols-3">
-                <ContextCard label="Why" tone="amber" body={context.why} />
-                <ContextCard label="What" tone="sky" body={context.what} />
-                <ContextCard label="How" tone="emerald" body={context.how} />
+            <div className="mt-6">
+                <ContextCards why={context.why} what={context.what} how={context.how} />
             </div>
         );
     }
@@ -398,35 +397,6 @@ function ContextStrip({
                         Contribute
                     </Button>
                 </div>
-            </Card.Body>
-        </Card>
-    );
-}
-
-function ContextCard({ label, tone, body }: { label: string; tone: "amber" | "sky" | "emerald"; body: string }) {
-    const stripe =
-        tone === "amber"
-            ? "from-amber-300 to-orange-400"
-            : tone === "sky"
-                ? "from-sky-300 to-indigo-400"
-                : "from-emerald-300 to-teal-400";
-    const chip =
-        tone === "amber"
-            ? "bg-amber-50 text-amber-800 dark:bg-amber-500/15 dark:text-amber-200"
-            : tone === "sky"
-                ? "bg-sky-50 text-sky-800 dark:bg-sky-500/15 dark:text-sky-200"
-                : "bg-emerald-50 text-emerald-800 dark:bg-emerald-500/15 dark:text-emerald-200";
-    return (
-        <Card className="relative h-full overflow-hidden">
-            <div className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${stripe}`} />
-            <Card.Body>
-                <span className={`inline-flex rounded-md px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${chip}`}>
-                    {label}
-                </span>
-                <div
-                    className="mt-3 text-sm leading-relaxed text-zinc-700 dark:text-zinc-300 [&_code]:rounded [&_code]:bg-zinc-100 [&_code]:px-1 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-xs [&_code]:text-zinc-700 dark:[&_code]:bg-zinc-800 dark:[&_code]:text-zinc-200"
-                    dangerouslySetInnerHTML={{ __html: body }}
-                />
             </Card.Body>
         </Card>
     );

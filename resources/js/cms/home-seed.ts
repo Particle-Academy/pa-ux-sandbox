@@ -34,8 +34,8 @@ export const homeDoc: PageDoc = {
     grid: { id: "grid", type: "frame", parent: "hero", order: "a", className: "container hero-grid", props: {}, style: { base: {} } },
     left: { id: "left", type: "frame", parent: "grid", order: "a", props: {}, style: { base: {} } },
 
-    eyebrow: { id: "eyebrow", type: "hero-eyebrow", parent: "left", order: "a", className: "eyebrow-row", props: {}, style: { base: {} } },
-    heading: { id: "heading", type: "hero-h1", parent: "left", order: "b", className: "display", props: {}, style: { base: {} } },
+    eyebrow: { id: "eyebrow", type: "richtext", parent: "left", order: "a", className: "eyebrow-row", props: { html: '<span class="dot"></span><span>v0.2 · Particle Academy</span>' }, style: { base: {} } },
+    heading: { id: "heading", type: "richtext", parent: "left", order: "b", className: "display", props: { html: 'Components for the surfaces where <span class="gradient-text">humans and agents work together</span>.' }, style: { base: {} } },
     lede: {
       id: "lede",
       type: "text",
@@ -48,8 +48,8 @@ export const homeDoc: PageDoc = {
       },
       style: { base: {} },
     },
-    cta: { id: "cta", type: "hero-cta", parent: "left", order: "d", className: "hero-cta", props: {}, style: { base: {} } },
-    meta: { id: "meta", type: "hero-meta", parent: "left", order: "e", className: "hero-meta", props: { packages: 12 }, style: { base: {} } },
+    cta: { id: "cta", type: "richtext", parent: "left", order: "d", className: "hero-cta", props: { html: '<a class="btn btn-primary" href="/docs">Install the kit</a><a class="btn btn-ghost" href="/agent-playground">See Human+ in action</a>' }, style: { base: {} } },
+    meta: { id: "meta", type: "richtext", parent: "left", order: "e", className: "hero-meta", props: { html: '<span class="meta-item">12 UI packages</span><span class="meta-item">MIT licensed</span><span class="meta-item"><code>tailwindcss &gt;= 4</code></span><span class="meta-item">React 19 · PHP 8.4</span>' }, style: { base: {} } },
 
     card: { id: "card", type: "hero-card", parent: "grid", order: "b", className: "hero-card", props: {}, style: { base: {} } },
 

@@ -26,6 +26,15 @@ type CmsHomeProps = {
 // Blank by default — a fresh page is static until the author adds keyframes. (The
 // old seed shipped a baked-in card/heading/lede morph, which made animations
 // "already appear" the moment you scrubbed or hit Play.)
+// Data source for the de-hardcoded "Explore" section — a CMS repeater binds this
+// array and repeats its card template per item ({ $bind: "item.title" } etc.).
+const EXPLORE_DATA = [
+  { href: "/starter-kits", title: "Starter Kits", body: "Vertical demos — clone, study, adapt.", tag: "templates" },
+  { href: "/dreaming", title: "Dreaming", body: "Speculative components you can vote on.", tag: "speculative" },
+  { href: "/showcase", title: "Designer Showcase", body: "Sites and repos built with Fancy UI.", tag: "community" },
+  { href: "/leaderboard", title: "Leaderboard", body: "Top contributors by merged PRs and votes.", tag: "live" },
+];
+
 const seedTimeline: TimelineDoc = {
   id: "home-tl",
   axis: "vertical",
@@ -105,7 +114,7 @@ export default function CmsHome({ packages, companions, total_components }: CmsH
         <EditablePage
           doc={homeDoc}
           registry={registry}
-          data={{ packages, companions, total_components }}
+          data={{ packages, companions, total_components, explore: EXPLORE_DATA }}
           pinned={false}
           frames={tl.frames}
           transforms={transforms}

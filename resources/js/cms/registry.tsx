@@ -25,7 +25,6 @@ import {
   ComponentsShowcase,
   Philosophy,
   QuickStart,
-  Explore,
   type PackageRow,
   type CompanionRow,
 } from "../Pages/Home";
@@ -65,7 +64,8 @@ export function makeSandboxRegistry(data: SandboxData): ElementRegistry {
     "section-components": () => <ComponentsShowcase total={data.total} />,
     "section-philosophy": () => <Philosophy />,
     "section-quickstart": () => <QuickStart />,
-    "section-explore": () => <Explore />,
+    // section-explore removed — the Explore section is now real CMS Elements
+    // (a repeater bound to `explore`) in home-seed.ts.
   };
 }
 

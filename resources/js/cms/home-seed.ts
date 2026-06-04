@@ -61,7 +61,18 @@ export const homeDoc: PageDoc = {
     "sec-components": { id: "sec-components", type: "jsx", parent: null as string | null, order: "d", props: { island: "components-preview" }, style: { base: {} } },
     "sec-philosophy": islandSection("sec-philosophy", "section-philosophy", "e"),
     "sec-quickstart": islandSection("sec-quickstart", "section-quickstart", "f"),
-    "sec-explore": islandSection("sec-explore", "section-explore", "g"),
+    // ── Explore (de-hardcoded → CMS Elements + a repeater bound to `explore`) ─
+    "sec-explore": { id: "sec-explore", type: "section", parent: null as string | null, order: "g", className: "section", props: {}, style: { base: {} } },
+    "ex-container": { id: "ex-container", type: "frame", parent: "sec-explore", order: "a", className: "container", props: {}, style: { base: {} } },
+    "ex-eyebrow": { id: "ex-eyebrow", type: "frame", parent: "ex-container", order: "a", className: "eyebrow-row", props: {}, style: { base: {} } },
+    "ex-eyebrow-t": { id: "ex-eyebrow-t", type: "text", parent: "ex-eyebrow", order: "a", props: { content: "Explore the site" }, style: { base: {} } },
+    "ex-title": { id: "ex-title", type: "heading", parent: "ex-container", order: "b", className: "section-title", props: { content: "More to poke at." }, style: { base: {} } },
+    "ex-rep": { id: "ex-rep", type: "repeater", parent: "ex-container", order: "c", className: "pkg-grid", props: { items: { $bind: "explore" } }, style: { base: { gap: { value: 16, unit: "px" } } } },
+    "ex-card": { id: "ex-card", type: "frame", parent: "ex-rep", order: "a", className: "pkg-card", props: {}, style: { base: {} } },
+    "ex-card-head": { id: "ex-card-head", type: "frame", parent: "ex-card", order: "a", className: "pkg-head", props: {}, style: { base: {} } },
+    "ex-card-name": { id: "ex-card-name", type: "text", parent: "ex-card-head", order: "a", className: "pkg-name", props: { content: { $bind: "item.title" } }, style: { base: {} } },
+    "ex-card-ver": { id: "ex-card-ver", type: "text", parent: "ex-card-head", order: "b", className: "pkg-ver", props: { content: { $bind: "item.tag" } }, style: { base: {} } },
+    "ex-card-desc": { id: "ex-card-desc", type: "text", parent: "ex-card", order: "b", className: "pkg-desc", props: { content: { $bind: "item.body" } }, style: { base: {} } },
   },
 };
 

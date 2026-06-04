@@ -65,7 +65,7 @@ import { ArtBoard, ArtPiece, type ArtBoardValue } from "@particle-academy/fancy-
 import "@particle-academy/fancy-artboard/styles.css";
 import { FlowEditor } from "@particle-academy/fancy-flow";
 import "@particle-academy/fancy-flow/styles.css";
-import { SheetWorkbook, createEmptyWorkbook } from "@particle-academy/fancy-sheets";
+import { SheetWorkbook, createEmptyWorkbook, createEmptySheet } from "@particle-academy/fancy-sheets";
 import "@particle-academy/fancy-sheets/styles.css";
 import { EChart } from "@particle-academy/fancy-echarts";
 import { Screen, ScreenSystem } from "@particle-academy/fancy-screens";
@@ -1545,26 +1545,81 @@ function FlowRunHookDemo() {
 
 // ─── fancy-sheets ──────────────────────────────────────────────────────────
 
+// A seeded workbook exercising formulas, number/currency formatting, bold
+// headers, a cell comment, and a second sheet tab. Sheets are built from the
+// package's createEmptySheet() factory so every required field (columnWidths,
+// row heights, …) is present — then we drop in our cells.
+const cur = { displayFormat: "currency" as const, decimals: 0 };
+// Build the seed by cloning the canonical sheet that createEmptyWorkbook()
+// produces (so every required field — columnWidths, row heights, … — is
+// present) and only overriding id / name / cells. Constructing SheetData by
+// hand crashes the renderer; cloning a known-good sheet never does.
+function buildSheetsSeed() {
+    const wb = createEmptyWorkbook();
+    const base = wb.sheets[0];
+    const sales = {
+        ...base,
+        name: "Q1 Sales",
+        cells: {
+            A1: { value: "Region", format: { bold: true } },
+            B1: { value: "Jan", format: { bold: true, textAlign: "right" as const } },
+            C1: { value: "Feb", format: { bold: true, textAlign: "right" as const } },
+            D1: { value: "Mar", format: { bold: true, textAlign: "right" as const } },
+            E1: { value: "Total", format: { bold: true, textAlign: "right" as const } },
+            A2: { value: "North" },
+            B2: { value: 1200, format: cur }, C2: { value: 1450, format: cur }, D2: { value: 1610, format: cur },
+            E2: { value: 0, formula: "SUM(B2:D2)", format: cur },
+            A3: { value: "South" },
+            B3: { value: 980, format: cur }, C3: { value: 1100, format: cur }, D3: { value: 1320, format: cur },
+            E3: { value: 0, formula: "SUM(B3:D3)", format: cur },
+            A4: { value: "Total", format: { bold: true } },
+            B4: { value: 0, formula: "SUM(B2:B3)", format: { bold: true, ...cur } },
+            C4: { value: 0, formula: "SUM(C2:C3)", format: { bold: true, ...cur } },
+            D4: { value: 0, formula: "SUM(D2:D3)", format: { bold: true, ...cur } },
+            E4: { value: 0, formula: "SUM(E2:E3)", format: { bold: true, backgroundColor: "#ecfdf5", ...cur } },
+            A6: { value: "Avg / region", format: { italic: true } },
+            B6: { value: 0, formula: "AVERAGE(E2:E3)", format: { italic: true, ...cur } },
+        },
+    };
+    const notes = {
+        ...base,
+        id: `${base.id}-notes`,
+        name: "Notes",
+        cells: {
+            A1: { value: "Try it", format: { bold: true } },
+            A2: { value: "Edit any cell, type a formula like =SUM(B2:D2), copy/paste a range, or switch sheet tabs below." },
+            A4: { value: "This cell has a comment →" },
+            B4: { value: "hover the corner", comment: { text: "Comments render a corner triangle.", author: "Demo" } },
+        },
+    };
+    return { ...wb, sheets: [sales, notes] };
+}
+
 function SheetWorkbookDemo() {
-    const [wb, setWb] = useState(() => createEmptyWorkbook({ sheets: [{ name: "Q1", rows: 20, cols: 8 }] }));
+    const [wb, setWb] = useState(buildSheetsSeed);
     return (
-        <div className="h-80 overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
-            <SheetWorkbook value={wb} onChange={setWb} />
-        </div>
+        <DemoNote
+            outOfBox="The formula engine (=SUM / =AVERAGE / …), multi-sheet tabs, bold / align / number + currency formatting, cell comments, copy-paste, undo, and the toolbar — all stock. Click a cell and type to edit; type = to start a formula."
+            demo="The seeded Q1 Sales + Notes sheets."
+        >
+            <div className="h-96 overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
+                <SheetWorkbook data={wb} onChange={setWb} rowCount={40} columnCount={12} />
+            </div>
+        </DemoNote>
     );
 }
 
 function EmptyWorkbookDemo() {
-    const [wb, setWb] = useState(() => createEmptyWorkbook({ sheets: [{ name: "Sheet1", rows: 12, cols: 6 }] }));
+    const [wb, setWb] = useState(() => createEmptyWorkbook());
     return (
-        <div className="space-y-2">
-            <Text size="sm" className="!text-zinc-600 dark:!text-zinc-300">
-                <code>createEmptyWorkbook(opts)</code> returns a blank workbook you can hand straight to <code>&lt;SheetWorkbook&gt;</code>. Below is the result rendered live.
-            </Text>
+        <DemoNote
+            outOfBox="createEmptyWorkbook() returns a single-sheet WorkbookData you hand straight to <SheetWorkbook data={…}>. Everything below — editing, formulas, formatting, extra sheets — is the live result."
+            demo="Nothing — this is the bare factory output, ready to fill in."
+        >
             <div className="h-72 overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
-                <SheetWorkbook value={wb} onChange={setWb} />
+                <SheetWorkbook data={wb} onChange={setWb} />
             </div>
-        </div>
+        </DemoNote>
     );
 }
 

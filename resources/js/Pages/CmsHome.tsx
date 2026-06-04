@@ -122,7 +122,12 @@ export default function CmsHome({ packages, companions, total_components }: CmsH
               verLabel: `${p.components_count} comp${p.components_count === 1 ? "" : "s"}`,
               langLabel: langTag(p.language).label,
             })),
-            companions: companions.map((c) => ({ ...c, url: `https://packagist.org/packages/${c.composer}` })),
+            companions: companions.map((c) => ({
+              ...c,
+              url: c.npm
+                ? `https://www.npmjs.com/package/${c.npm}`
+                : `https://packagist.org/packages/${c.composer}`,
+            })),
             total_components,
             packagesTitle: `${packages.length} small packages. Lift any one out.`,
             explore: EXPLORE_DATA,

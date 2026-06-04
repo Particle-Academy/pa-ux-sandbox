@@ -26,6 +26,21 @@ class RegistryItem
         public readonly string $type = 'registry:ui',
     ) {}
 
+    /** Clone this item with a different registry name (used to de-collide). */
+    public function withName(string $name): self
+    {
+        return new self(
+            name: $name,
+            title: $this->title,
+            description: $this->description,
+            package: $this->package,
+            files: $this->files,
+            dependencies: $this->dependencies,
+            registryDependencies: $this->registryDependencies,
+            type: $this->type,
+        );
+    }
+
     /** @return array<string, mixed> */
     /**
      * Rebuild an item from its {@see toArray()} payload — used to load the

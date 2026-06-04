@@ -15,7 +15,8 @@ use Laravel\Mcp\Server\Attributes\Version;
 #[Version('0.1.0')]
 #[Instructions(<<<'TXT'
 The Fancy UI install-MCP. Lets you browse, search, and install components from
-the Fancy UI registry (~100 React + PHP primitives across 11 packages).
+the Fancy UI registry (~100 React + PHP primitives across the full suite — the
+UI packages plus the headless companion packages like holy-sheet and dark-slide).
 
 Workflow:
 1. Use `list_components` to see everything available, or `search_components`

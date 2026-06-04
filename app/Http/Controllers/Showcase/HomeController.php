@@ -65,7 +65,8 @@ class HomeController extends Controller
                 'slug' => $c['slug'],
                 'name' => $c['name'],
                 'tagline' => $c['tagline'],
-                'composer' => $c['composer'],
+                'composer' => $c['composer'] ?? null,
+                'npm' => $c['npm'] ?? null,
                 'language' => $c['language'],
             ]))
             ->values()

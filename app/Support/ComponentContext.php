@@ -23,7 +23,7 @@ class ComponentContext
             'how' => 'Import from <code>@particle-academy/react-fancy</code>, drop in <code>&lt;Card variant="elevated"&gt;</code>, and place <code>Card.Header</code> / <code>Card.Body</code> / <code>Card.Footer</code> inside. For agent-driven layouts: pass content as children — no special hooks needed, the surface is fully static.',
         ],
 
-        'react-fancy/action' => [
+        'react-fancy/button' => [
             'why' => 'Buttons accrete props until they handle icons, emojis, avatars, badges, sort order, behavioral states (active / checked / warn / alert), and shape variants — and most apps end up with five different button components that almost agree on the API. <code>Action</code> bundles every reasonable button affordance behind one consistent prop surface.',
             'what' => 'A single typed button with standalone <code>color</code>, behavioral <code>active</code>/<code>checked</code>/<code>warn</code>/<code>alert</code> states, icon placement (left / right / top / bottom), Heroicon + emoji + avatar + badge support, and a <code>sort</code> prop that reorders adornments. <code>variant="circle"</code> turns any of it into a perfect circle for icon-only toolbars.',
             'how' => '<code>&lt;Action color="violet" icon="check"&gt;Save&lt;/Action&gt;</code> covers 80% of cases. For a pulsing notification button: <code>&lt;Action alert badge="3" icon="bell"&gt;Inbox&lt;/Action&gt;</code>. Agents can drive selection state with <code>active</code> + <code>onClick</code> — no DOM scraping required.',
@@ -132,9 +132,41 @@ class ComponentContext
         ],
     ];
 
+    /**
+     * Generated Why/What/How entries, loaded once from a JSON sidecar and
+     * cached for the request. Hand-curated {@see ENTRIES} always win on a key
+     * collision — the generated file only fills the gaps.
+     *
+     * @var array<string, array{why: string, what: string, how: string}>|null
+     */
+    private static ?array $generated = null;
+
     /** @return array{why: string, what: string, how: string}|null */
     public static function find(string $packageSlug, string $componentSlug): ?array
     {
-        return self::ENTRIES["$packageSlug/$componentSlug"] ?? null;
+        $key = "$packageSlug/$componentSlug";
+
+        return self::ENTRIES[$key] ?? self::generated()[$key] ?? null;
+    }
+
+    /**
+     * Lazily load + cache the generated entries from the JSON sidecar.
+     *
+     * @return array<string, array{why: string, what: string, how: string}>
+     */
+    private static function generated(): array
+    {
+        if (self::$generated !== null) {
+            return self::$generated;
+        }
+
+        $path = resource_path('data/component-context.json');
+        if (! is_file($path)) {
+            return self::$generated = [];
+        }
+
+        $decoded = json_decode((string) file_get_contents($path), true);
+
+        return self::$generated = is_array($decoded) ? $decoded : [];
     }
 }

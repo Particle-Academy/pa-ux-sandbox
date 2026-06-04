@@ -59,6 +59,50 @@ class RegistrySource
             }
         }
 
+        // Companion (headless / no-UI) packages — holy-sheet, dark-slide, the
+        // Laravel infra packages, fancy-query, the JS ports. They expose no
+        // per-component UI, so each contributes a single discoverable
+        // package-level item agents can find + install via the MCP tools.
+        foreach (PackageRegistry::companions() as $pkg) {
+            if ($item = $this->companionItem($pkg)) {
+                $items[] = $item;
+            }
+        }
+
+        return $this->ensureUniqueNames($items);
+    }
+
+    /**
+     * Guarantee every item name is globally unique (it is the `/r/{name}.json`
+     * slug + the `find()` key). Later collisions are disambiguated with the
+     * package slug, so mirrored adapters (fancy-3d-babylon vs fancy-3d-three
+     * both export `stage`/`monitor`/`engine`) and cross-package dupes
+     * (react-fancy vs fancy-whiteboard `sticky-note`) stay individually
+     * addressable instead of shadowing each other.
+     *
+     * @param  list<RegistryItem>  $items
+     * @return list<RegistryItem>
+     */
+    private function ensureUniqueNames(array $items): array
+    {
+        $seen = [];
+        foreach ($items as $i => $item) {
+            if (! isset($seen[$item->name])) {
+                $seen[$item->name] = true;
+
+                continue;
+            }
+            $alt = $item->package.'-'.$item->name;
+            $candidate = $alt;
+            $n = 2;
+            while (isset($seen[$candidate])) {
+                $candidate = $alt.'-'.$n;
+                $n++;
+            }
+            $seen[$candidate] = true;
+            $items[$i] = $item->withName($candidate);
+        }
+
         return $items;
     }
 
@@ -128,21 +172,7 @@ class RegistrySource
      */
     private function itemsForPackage(array $pkg): array
     {
-        // In the flat fancy-ui workspace, each package lives as a sibling of
-        // px-ui-sandbox/ — base_path('../X'). Falls back to the legacy nested
-        // layout (base_path('packages/X')) so this code keeps working if
-        // someone runs the sandbox from inside the old laravel-catalog tree.
-        $candidates = [
-            dirname(base_path()).'/'.$pkg['slug'],
-            base_path('packages/'.$pkg['slug']),
-        ];
-        $pkgDir = null;
-        foreach ($candidates as $candidate) {
-            if (is_dir($candidate)) {
-                $pkgDir = $candidate;
-                break;
-            }
-        }
+        $pkgDir = $this->packageDir((string) $pkg['slug']);
 
         // We can only build registry items for packages we can read on disk.
         // Skip cleanly otherwise — the package still appears in /packages.
@@ -151,41 +181,118 @@ class RegistrySource
         }
 
         $items = [];
-        $npmOnly = false;
+        $hasNpmPointer = false;
         foreach ($pkg['components'] ?? [] as $component) {
             $item = $this->buildItem($pkg, $component, $pkgDir);
             if ($item) {
                 $items[] = $item;
-            } else {
-                // Component has no copy-source layout (the npm-install packages —
-                // engine adapters, ECharts, slides, … ship flat src/, not
-                // per-component folders).
-                $npmOnly = true;
+
+                continue;
+            }
+            // No vendorable copy-source layout (engine adapters that need the
+            // WebGL engine, hooks, factories, renamed sub-elements). Still emit
+            // an npm-install POINTER item so the component is discoverable +
+            // installable via the MCP tools — it just ships in the package
+            // bundle rather than as copy-source files.
+            if ($pointer = $this->npmPointerItem($pkg, $component)) {
+                $items[] = $pointer;
+                $hasNpmPointer = true;
             }
         }
 
-        // For npm-install packages, emit ONE package-level item keyed by the
-        // (globally unique) package slug — so agents can discover + install it
-        // via npm without slug collisions between mirrored packages
-        // (fancy-3d-babylon and fancy-3d-three both expose `stage`/`monitor`).
-        if ($npmOnly && ! empty($pkg['npm'])) {
-            $provides = array_map(
-                fn (array $c): string => $c['name'],
-                array_values($pkg['components'] ?? []),
-            );
-            $tagline = (string) ($pkg['tagline'] ?? '');
-            $items[] = new RegistryItem(
-                name: $pkg['slug'],
-                title: $pkg['name'],
-                description: $tagline !== '' ? $tagline : 'npm package — provides '.implode(', ', $provides),
-                package: $pkg['slug'],
-                files: [],
-                dependencies: [],
-                registryDependencies: [],
-            );
+        // Packages that ship at least one npm-only component (flat src layouts)
+        // also get ONE package-level item keyed by the globally unique slug, so
+        // agents can install the whole package in one step.
+        if ($hasNpmPointer && ! empty($pkg['npm'])) {
+            $items[] = $this->packageLevelItem($pkg);
         }
 
         return $items;
+    }
+
+    /**
+     * Resolve a package's source directory on disk. In the flat fancy-ui
+     * workspace each package is a sibling of px-ui-sandbox/ — base_path('../X');
+     * falls back to the legacy nested layout (base_path('packages/X')).
+     */
+    private function packageDir(string $slug): ?string
+    {
+        foreach ([dirname(base_path()).'/'.$slug, base_path('packages/'.$slug)] as $candidate) {
+            if (is_dir($candidate)) {
+                return $candidate;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * An npm-install pointer item for a component with no vendorable source.
+     *
+     * @param  array<string, mixed>  $pkg
+     * @param  array<string, mixed>  $component
+     */
+    private function npmPointerItem(array $pkg, array $component): ?RegistryItem
+    {
+        $install = $pkg['npm'] ?? $pkg['composer'] ?? null;
+        if ($install === null) {
+            return null;
+        }
+        $blurb = (string) ($component['blurb'] ?? '');
+        $description = $blurb !== ''
+            ? $blurb
+            : "{$component['name']} — ships in {$install} (install the package; no copy-source).";
+
+        return new RegistryItem(
+            name: (string) $component['slug'],
+            title: (string) $component['name'],
+            description: $description,
+            package: (string) $pkg['slug'],
+            files: [],
+        );
+    }
+
+    /**
+     * The package-level "install the whole package" item.
+     *
+     * @param  array<string, mixed>  $pkg
+     */
+    private function packageLevelItem(array $pkg): RegistryItem
+    {
+        $provides = array_map(
+            fn (array $c): string => $c['name'],
+            array_values($pkg['components'] ?? []),
+        );
+        $tagline = (string) ($pkg['tagline'] ?? '');
+
+        return new RegistryItem(
+            name: (string) $pkg['slug'],
+            title: (string) $pkg['name'],
+            description: $tagline !== '' ? $tagline : 'npm package — provides '.implode(', ', $provides),
+            package: (string) $pkg['slug'],
+            files: [],
+        );
+    }
+
+    /**
+     * A single discoverable item for a companion (headless / no-UI) package.
+     *
+     * @param  array<string, mixed>  $pkg
+     */
+    private function companionItem(array $pkg): ?RegistryItem
+    {
+        if (empty($pkg['npm']) && empty($pkg['composer'])) {
+            return null;
+        }
+        $tagline = (string) ($pkg['tagline'] ?? '');
+
+        return new RegistryItem(
+            name: (string) $pkg['slug'],
+            title: (string) $pkg['name'],
+            description: $tagline !== '' ? $tagline : 'Companion package',
+            package: (string) $pkg['slug'],
+            files: [],
+        );
     }
 
     /**
@@ -194,12 +301,14 @@ class RegistrySource
      */
     private function buildItem(array $pkg, array $component, string $pkgDir): ?RegistryItem
     {
-        $sourceDir = $this->locateComponentDirectory($pkgDir, $component['name']);
-        if ($sourceDir === null) {
+        $source = $this->locateComponentSource($pkgDir, (string) $component['name'], (string) $component['slug']);
+        if ($source === null) {
             return null;
         }
 
-        $files = $this->readSourceFiles($sourceDir, $component['slug']);
+        $files = $source['kind'] === 'dir'
+            ? $this->readSourceFiles($source['path'], $component['slug'])
+            : $this->readSingleFile($source['path'], $component['slug']);
         if ($files === []) {
             return null;
         }
@@ -219,38 +328,100 @@ class RegistrySource
     }
 
     /**
-     * react-fancy uses TitleCase folders. The PackageRegistry name is
-     * already TitleCase, so locating is trivial — but we fall back to a
-     * case-insensitive scan in case a folder drifts.
+     * Locate a component's source on disk. Returns the matched path plus its
+     * `kind` — `dir` (read the whole folder as a bundle, the react-fancy case)
+     * or `file` (a single-file component: ECharts wrappers, `scene.ts`, engine
+     * adapters, hooks, app roots). Prefers folders, then exact files, then a
+     * one-level-deep scan for nested folders / files. Returns null when nothing
+     * matches — the caller then emits an npm-install pointer item.
+     *
+     * @return array{kind: 'dir'|'file', path: string}|null
      */
-    private function locateComponentDirectory(string $pkgDir, string $componentName): ?string
+    private function locateComponentSource(string $pkgDir, string $componentName, string $slug): ?array
     {
-        $candidates = [
+        $kebab = Str::kebab($componentName);
+        $camel = Str::camel($componentName);
+
+        // 1) Component folder (TitleCase / kebab / camel) directly under src.
+        foreach ([
             "$pkgDir/src/components/$componentName",
             "$pkgDir/src/$componentName",
-            "$pkgDir/src/components/".Str::kebab($componentName),
-            "$pkgDir/src/components/".Str::camel($componentName),
-        ];
-        foreach ($candidates as $candidate) {
-            if (is_dir($candidate)) {
-                return $candidate;
+            "$pkgDir/src/components/$kebab",
+            "$pkgDir/src/components/$camel",
+        ] as $dir) {
+            if (is_dir($dir)) {
+                return ['kind' => 'dir', 'path' => $dir];
             }
         }
 
-        // Case-insensitive fallback over src/components.
         $componentsDir = "$pkgDir/src/components";
         if (is_dir($componentsDir)) {
-            foreach (scandir($componentsDir) as $entry) {
-                if ($entry === '.' || $entry === '..') {
+            foreach (scandir($componentsDir) as $sub) {
+                if ($sub === '.' || $sub === '..') {
                     continue;
                 }
-                if (strcasecmp($entry, $componentName) === 0) {
-                    return "$componentsDir/$entry";
+                // 2) Nested component folder (e.g. components/elements/TextElement).
+                if (is_dir("$componentsDir/$sub/$componentName")) {
+                    return ['kind' => 'dir', 'path' => "$componentsDir/$sub/$componentName"];
+                }
+                // 3) Case-insensitive direct folder match.
+                if (strcasecmp($sub, $componentName) === 0 && is_dir("$componentsDir/$sub")) {
+                    return ['kind' => 'dir', 'path' => "$componentsDir/$sub"];
+                }
+            }
+        }
+
+        // 4) Single-file component, by component name or by slug.
+        foreach ([
+            "$pkgDir/src/components/$componentName.tsx", "$pkgDir/src/components/$componentName.ts",
+            "$pkgDir/src/$componentName.tsx", "$pkgDir/src/$componentName.ts",
+            "$pkgDir/src/$slug.ts", "$pkgDir/src/$slug.tsx",
+            "$pkgDir/src/components/$slug.tsx", "$pkgDir/src/components/$slug.ts",
+        ] as $file) {
+            if (is_file($file)) {
+                return ['kind' => 'file', 'path' => $file];
+            }
+        }
+
+        // 5) One-level-deep single file by slug or name (e.g. runtime/use-flow-run.ts).
+        $srcDir = "$pkgDir/src";
+        if (is_dir($srcDir)) {
+            foreach (scandir($srcDir) as $sub) {
+                if ($sub === '.' || $sub === '..' || ! is_dir("$srcDir/$sub")) {
+                    continue;
+                }
+                foreach ([
+                    "$srcDir/$sub/$slug.ts", "$srcDir/$sub/$slug.tsx",
+                    "$srcDir/$sub/$componentName.tsx", "$srcDir/$sub/$componentName.ts",
+                ] as $file) {
+                    if (is_file($file)) {
+                        return ['kind' => 'file', 'path' => $file];
+                    }
                 }
             }
         }
 
         return null;
+    }
+
+    /**
+     * Read a single-file component into the registry-item file shape.
+     *
+     * @return list<array{path: string, content: string, type: string, target: string}>
+     */
+    private function readSingleFile(string $file, string $slug): array
+    {
+        if (! is_file($file)) {
+            return [];
+        }
+        $name = basename($file);
+
+        return [[
+            'path' => "components/fancy/$slug/$name",
+            'content' => (string) file_get_contents($file),
+            'type' => 'registry:ui',
+            'target' => "components/fancy/$slug/$name",
+        ]];
     }
 
     /**

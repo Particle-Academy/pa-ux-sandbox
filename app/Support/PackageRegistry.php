@@ -90,6 +90,31 @@ class PackageRegistry
                 'packagist' => 'particle-academy/laravel-fun-lab',
                 'language' => 'PHP',
             ],
+            // Headless TS packages — no UI surface, so they live here, not in the grid.
+            [
+                'slug' => 'fancy-query',
+                'name' => '@particle-academy/fancy-query',
+                'tagline' => 'Server-state for Inertia + Echo — a thin TanStack Query wrapper with Inertia hydration and Echo-driven cache invalidation. Hooks only, no UI.',
+                'npm' => '@particle-academy/fancy-query',
+                'repo' => 'Particle-Academy/fancy-query',
+                'language' => 'TypeScript',
+            ],
+            [
+                'slug' => 'dark-slide-js',
+                'name' => '@particle-academy/dark-slide',
+                'tagline' => 'Node/TS port of dark-slide — pptx writer/reader for agentic decks, isomorphic (browser or Node). Headless Agent API; no UI.',
+                'npm' => '@particle-academy/dark-slide',
+                'repo' => 'Particle-Academy/dark-slide-js',
+                'language' => 'TypeScript',
+            ],
+            [
+                'slug' => 'holy-sheet-js',
+                'name' => '@particle-academy/holy-sheet',
+                'tagline' => 'Node/TS port of holy-sheet — xlsx writer/reader + formula linter, isomorphic. Headless Agent API; no UI.',
+                'npm' => '@particle-academy/holy-sheet',
+                'repo' => 'Particle-Academy/holy-sheet-js',
+                'language' => 'TypeScript',
+            ],
         ];
     }
 
@@ -102,6 +127,18 @@ class PackageRegistry
         }
 
         return null;
+    }
+
+    /**
+     * Like {@see find()}, but also searches the companion (headless / no-UI)
+     * packages — so registry/MCP lookups resolve install metadata for
+     * holy-sheet, dark-slide, the Laravel infra packages, and the JS ports.
+     *
+     * @return array<string, mixed>|null
+     */
+    public static function findAny(string $slug): ?array
+    {
+        return self::find($slug) ?? collect(self::companions())->firstWhere('slug', $slug);
     }
 
     /** @return array<string, mixed> */

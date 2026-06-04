@@ -69,7 +69,8 @@ export type CompanionRow = {
     slug: string;
     name: string;
     tagline: string;
-    composer: string;
+    composer: string | null;
+    npm?: string | null;
     language: string;
 };
 

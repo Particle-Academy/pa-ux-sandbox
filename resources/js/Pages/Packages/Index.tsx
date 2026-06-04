@@ -21,9 +21,12 @@ type Companion = {
     name: string;
     tagline: string;
     language: string;
-    composer: string;
+    composer: string | null;
+    packagist: string | null;
+    npm: string | null;
     repoUrl: string;
-    packagistUrl: string;
+    packagistUrl: string | null;
+    npmUrl: string | null;
     issuesUrl: string;
 };
 
@@ -105,7 +108,7 @@ function CompanionPackages({ companions }: { companions: Companion[] }) {
                         Companion packages
                     </Heading>
                     <Text size="sm" className="mt-2 max-w-2xl !text-zinc-500">
-                        Headless, no-UI packages developed alongside the Fancy UI kit — the agentic document writers (holy-sheet, dark-slide) and the composer deps the sandbox runs on. No component grid since they render no UI surface; open issues are tracked on GitHub.
+                        Headless, no-UI packages developed alongside the Fancy UI kit — the agentic document writers (holy-sheet, dark-slide, plus their isomorphic Node/TS ports), the server-state data hooks (fancy-query), and the composer deps the sandbox runs on. No component grid since they render no UI surface; open issues are tracked on GitHub.
                     </Text>
                 </div>
             </div>
@@ -133,14 +136,26 @@ function CompanionPackages({ companions }: { companions: Companion[] }) {
                             >
                                 Issues →
                             </a>
-                            <a
-                                href={c.packagistUrl}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="text-zinc-600 hover:text-violet-600 dark:text-zinc-400 dark:hover:text-violet-300"
-                            >
-                                Packagist →
-                            </a>
+                            {c.packagistUrl && (
+                                <a
+                                    href={c.packagistUrl}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="text-zinc-600 hover:text-violet-600 dark:text-zinc-400 dark:hover:text-violet-300"
+                                >
+                                    Packagist →
+                                </a>
+                            )}
+                            {c.npmUrl && (
+                                <a
+                                    href={c.npmUrl}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="text-zinc-600 hover:text-violet-600 dark:text-zinc-400 dark:hover:text-violet-300"
+                                >
+                                    npm →
+                                </a>
+                            )}
                         </div>
                     </li>
                 ))}

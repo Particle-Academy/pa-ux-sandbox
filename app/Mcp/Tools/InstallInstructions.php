@@ -25,7 +25,7 @@ class InstallInstructions extends Tool
             return Response::error("Component '$name' not found. Try `search_components` first.");
         }
 
-        $pkg = PackageRegistry::find($item->package);
+        $pkg = PackageRegistry::findAny($item->package);
         $npmName = $pkg['npm'] ?? null;
         $composerName = $pkg['composer'] ?? null;
         $title = $item->title;

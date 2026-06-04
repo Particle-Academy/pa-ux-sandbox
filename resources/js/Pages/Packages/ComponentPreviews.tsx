@@ -18,9 +18,11 @@ import {
     Card,
     Heading,
     Pillbox,
+    StickyNote,
     Switch,
     Tabs,
     Text,
+    TimeGrid,
     Timeline,
     Tooltip,
 } from "@particle-academy/react-fancy";
@@ -101,7 +103,60 @@ const PREVIEWS: Record<string, PreviewFn> = {
         </div>
     ),
 
-    "react-fancy/action": () => (
+    "react-fancy/accordion-panel": () => (
+        <div className="w-full max-w-[18rem] overflow-hidden rounded-md border border-zinc-200 text-xs dark:border-zinc-800">
+            <div className="flex items-center justify-between bg-zinc-50 px-3 py-2 font-medium text-zinc-700 dark:bg-zinc-900 dark:text-zinc-200">
+                <span>Shipping &amp; returns</span>
+                <ChevronDown size={14} className="text-zinc-400" />
+            </div>
+            <div className="border-t border-zinc-100 px-3 py-2 text-zinc-500 dark:border-zinc-800 dark:text-zinc-400">
+                Free returns within 30 days. One panel, fully controlled via <code className="rounded bg-zinc-100 px-1 font-mono text-[10px] dark:bg-zinc-800">open</code>.
+            </div>
+        </div>
+    ),
+
+    "react-fancy/sticky-note": () => (
+        <div className="flex items-center justify-center gap-3">
+            <StickyNote value="Ship the dream ✨" color="yellow" rotate={-4} width={104} editable={false} className="!text-xs" />
+            <StickyNote value="Review PR #42" color="violet" rotate={3} width={104} editable={false} className="!text-xs" />
+        </div>
+    ),
+
+    "react-fancy/faux-client": () => (
+        <div className="w-full max-w-[18rem] overflow-hidden rounded-lg border border-zinc-200 shadow-sm dark:border-zinc-700">
+            <div className="flex items-center gap-1.5 border-b border-zinc-200 bg-zinc-100 px-2.5 py-1.5 dark:border-zinc-700 dark:bg-zinc-800">
+                <span className="size-2 rounded-full bg-red-400" />
+                <span className="size-2 rounded-full bg-amber-400" />
+                <span className="size-2 rounded-full bg-emerald-400" />
+                <span className="ml-2 rounded bg-white px-2 py-0.5 font-mono text-[9px] text-zinc-500 dark:bg-zinc-900">fancy-ui.app</span>
+            </div>
+            <div className="space-y-1.5 bg-white p-3 dark:bg-zinc-950">
+                <div className="h-2 w-2/3 rounded bg-gradient-to-r from-violet-400 to-sky-400" />
+                <div className="h-1.5 w-full rounded bg-zinc-100 dark:bg-zinc-800" />
+                <div className="h-1.5 w-4/5 rounded bg-zinc-100 dark:bg-zinc-800" />
+            </div>
+        </div>
+    ),
+
+    "react-fancy/time-grid": () => (
+        <TimeGrid
+            rows={["9a", "11a", "1p", "3p", "5p"]}
+            cols={["M", "T", "W", "T", "F"]}
+            toneOn="violet"
+            cellWidth={20}
+            cellHeight={14}
+            value={[
+                [false, true, false, true, false],
+                [true, true, false, false, true],
+                [false, false, true, true, false],
+                [true, false, true, false, true],
+                [false, true, false, true, true],
+            ]}
+            onChange={() => {}}
+        />
+    ),
+
+    "react-fancy/button": () => (
         <div className="flex flex-wrap items-center justify-center gap-2">
             <Button color="violet" size="sm">Primary</Button>
             <Button variant="ghost" size="sm">Ghost</Button>

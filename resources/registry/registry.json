@@ -1,6 +1,6 @@
 {
     "$schema": "https://ui.particle.academy/schema/registry-compiled.json",
-    "count": 89,
+    "count": 117,
     "items": [
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
@@ -243,6 +243,28 @@
                     "target": "components/fancy/artboard/context.ts"
                 }
             ]
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "artboard-note",
+            "type": "registry:ui",
+            "title": "ArtBoard.Note",
+            "description": "Sticky note placed in the canvas world.",
+            "package": "fancy-artboard",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "artboard-section",
+            "type": "registry:ui",
+            "title": "ArtBoard.Section",
+            "description": "Titled group of pieces.",
+            "package": "fancy-artboard",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
@@ -671,6 +693,17 @@
                     "target": "components/fancy/card/index.ts"
                 }
             ]
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "card-3d",
+            "type": "registry:ui",
+            "title": "Card3D",
+            "description": "3D-native Card primitive positioned in scene space.",
+            "package": "fancy-3d-babylon",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
@@ -1196,6 +1229,50 @@
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "create-empty-workbook",
+            "type": "registry:ui",
+            "title": "createEmptyWorkbook",
+            "description": "Workbook factory.",
+            "package": "fancy-sheets",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "cursor-layer",
+            "type": "registry:ui",
+            "title": "CursorLayer",
+            "description": "Multi-user cursor presence.",
+            "package": "fancy-whiteboard",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "dark-slide",
+            "type": "registry:ui",
+            "title": "particle-academy/dark-slide",
+            "description": "PHP 8.2+ pptx writer/reader for agentic deck creation \u2014 markdown headings, highlighted code, tables, gradients, high-fidelity reader. Sister to holy-sheet.",
+            "package": "dark-slide",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "dark-slide-js",
+            "type": "registry:ui",
+            "title": "@particle-academy/dark-slide",
+            "description": "Node/TS port of dark-slide \u2014 pptx writer/reader for agentic decks, isomorphic (browser or Node). Headless Agent API; no UI.",
+            "package": "dark-slide-js",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
             "name": "deck-editor",
             "type": "registry:ui",
             "title": "DeckEditor",
@@ -1312,6 +1389,73 @@
                     "content": "export { Dropdown } from \"./Dropdown\";\r\nexport { useDropdown } from \"./Dropdown.context\";\r\nexport type {\r\n  DropdownProps,\r\n  DropdownTriggerProps,\r\n  DropdownItemsProps,\r\n  DropdownItemProps,\r\n  DropdownSeparatorProps,\r\n  DropdownContextValue,\r\n} from \"./Dropdown.types\";\r\n",
                     "type": "registry:ui",
                     "target": "components/fancy/dropdown/index.ts"
+                }
+            ]
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "echart",
+            "type": "registry:ui",
+            "title": "EChart",
+            "description": "Generic chart wrapper.",
+            "package": "fancy-echarts",
+            "dependencies": [
+                "echarts"
+            ],
+            "registryDependencies": [
+                "types"
+            ],
+            "files": [
+                {
+                    "path": "components/fancy/echart/EChart.tsx",
+                    "content": "import React, { forwardRef, useMemo } from \"react\";\r\nimport type { EChartsOption } from \"echarts\";\r\nimport { useECharts } from \"../hooks/use-echarts\";\r\nimport type {\r\n  EChartComponentProps,\r\n  SeriesComponentProps,\r\n  ChartDivProps,\r\n} from \"../types\";\r\n\r\nconst DEFAULT_STYLE: React.CSSProperties = { width: \"100%\", height: 400 };\r\n\r\n/** Base EChart component \u2014 accepts any ECharts option. */\r\nconst EChartBase = forwardRef<HTMLDivElement, EChartComponentProps>(\r\n  (\r\n    {\r\n      option,\r\n      theme,\r\n      renderer,\r\n      notMerge,\r\n      lazyUpdate,\r\n      showLoading,\r\n      loadingOption,\r\n      onEvents,\r\n      autoResize = true,\r\n      style,\r\n      className,\r\n      ...rest\r\n    },\r\n    _ref\r\n  ) => {\r\n    const { chartRef } = useECharts({\r\n      option,\r\n      theme,\r\n      renderer,\r\n      notMerge,\r\n      lazyUpdate,\r\n      showLoading,\r\n      loadingOption,\r\n      onEvents,\r\n      autoResize,\r\n    });\r\n\r\n    return (\r\n      <div\r\n        ref={chartRef}\r\n        style={{ ...DEFAULT_STYLE, ...style }}\r\n        className={className}\r\n        {...rest}\r\n      />\r\n    );\r\n  }\r\n);\r\n\r\nEChartBase.displayName = \"EChart\";\r\n\r\n// --- Helper to create typed series sub-components ---\r\n\r\nfunction createSeriesComponent(\r\n  seriesType: string,\r\n  displayName: string\r\n): React.FC<SeriesComponentProps & ChartDivProps> {\r\n  const Component: React.FC<SeriesComponentProps & ChartDivProps> = ({\r\n    data,\r\n    title,\r\n    xAxis,\r\n    yAxis,\r\n    tooltip = true,\r\n    legend = false,\r\n    grid,\r\n    seriesOptions = {},\r\n    option: extraOption = {},\r\n    style,\r\n    className,\r\n    ...rest\r\n  }) => {\r\n    const option = useMemo((): EChartsOption => {\r\n      const base: EChartsOption = {};\r\n\r\n      if (title) {\r\n        base.title = { text: title };\r\n      }\r\n\r\n      if (tooltip === true) {\r\n        base.tooltip = { trigger: \"axis\" };\r\n      } else if (tooltip && typeof tooltip === \"object\") {\r\n        base.tooltip = tooltip;\r\n      }\r\n\r\n      if (legend === true) {\r\n        base.legend = {};\r\n      } else if (legend && typeof legend === \"object\") {\r\n        base.legend = legend;\r\n      }\r\n\r\n      if (grid) {\r\n        base.grid = grid;\r\n      }\r\n\r\n      // Handle axis-based charts\r\n      const axisCharts = [\r\n        \"line\",\r\n        \"bar\",\r\n        \"scatter\",\r\n        \"candlestick\",\r\n        \"boxplot\",\r\n        \"heatmap\",\r\n        \"effectScatter\",\r\n        \"pictorialBar\",\r\n      ];\r\n      if (axisCharts.includes(seriesType)) {\r\n        base.xAxis = xAxis ?? { type: \"category\" };\r\n        base.yAxis = yAxis ?? { type: \"value\" };\r\n      }\r\n\r\n      // Handle data format\r\n      if (Array.isArray(data)) {\r\n        base.series = [{ type: seriesType, data, ...seriesOptions }] as any;\r\n      } else if (data && typeof data === \"object\" && \"series\" in data) {\r\n        // Multi-series: { categories: [...], series: [{ name, data }, ...] }\r\n        const multiData = data as {\r\n          categories?: string[];\r\n          series: Array<{ name?: string; data: any[]; [k: string]: any }>;\r\n        };\r\n        if (multiData.categories && axisCharts.includes(seriesType)) {\r\n          base.xAxis = xAxis ?? {\r\n            type: \"category\",\r\n            data: multiData.categories,\r\n          };\r\n        }\r\n        base.series = multiData.series.map((s) => ({\r\n          type: seriesType,\r\n          ...seriesOptions,\r\n          ...s,\r\n        })) as any;\r\n      } else {\r\n        base.series = [{ type: seriesType, data, ...seriesOptions }] as any;\r\n      }\r\n\r\n      return { ...base, ...extraOption };\r\n    }, [\r\n      data,\r\n      title,\r\n      xAxis,\r\n      yAxis,\r\n      tooltip,\r\n      legend,\r\n      grid,\r\n      seriesOptions,\r\n      extraOption,\r\n    ]);\r\n\r\n    return (\r\n      <EChartBase\r\n        option={option}\r\n        style={style}\r\n        className={className}\r\n        {...rest}\r\n      />\r\n    );\r\n  };\r\n\r\n  Component.displayName = displayName;\r\n  return Component;\r\n}\r\n\r\n// --- Compound component with all chart type sub-components ---\r\n\r\nexport const EChart = Object.assign(EChartBase, {\r\n  Line: createSeriesComponent(\"line\", \"EChart.Line\"),\r\n  Bar: createSeriesComponent(\"bar\", \"EChart.Bar\"),\r\n  Pie: createSeriesComponent(\"pie\", \"EChart.Pie\"),\r\n  Scatter: createSeriesComponent(\"scatter\", \"EChart.Scatter\"),\r\n  Radar: createSeriesComponent(\"radar\", \"EChart.Radar\"),\r\n  Heatmap: createSeriesComponent(\"heatmap\", \"EChart.Heatmap\"),\r\n  Gauge: createSeriesComponent(\"gauge\", \"EChart.Gauge\"),\r\n  Funnel: createSeriesComponent(\"funnel\", \"EChart.Funnel\"),\r\n  Treemap: createSeriesComponent(\"treemap\", \"EChart.Treemap\"),\r\n  Sunburst: createSeriesComponent(\"sunburst\", \"EChart.Sunburst\"),\r\n  Sankey: createSeriesComponent(\"sankey\", \"EChart.Sankey\"),\r\n  Graph: createSeriesComponent(\"graph\", \"EChart.Graph\"),\r\n  Candlestick: createSeriesComponent(\"candlestick\", \"EChart.Candlestick\"),\r\n  Boxplot: createSeriesComponent(\"boxplot\", \"EChart.Boxplot\"),\r\n  Parallel: createSeriesComponent(\"parallel\", \"EChart.Parallel\"),\r\n  ThemeRiver: createSeriesComponent(\"themeRiver\", \"EChart.ThemeRiver\"),\r\n  Map: createSeriesComponent(\"map\", \"EChart.Map\"),\r\n  Custom: createSeriesComponent(\"custom\", \"EChart.Custom\"),\r\n  EffectScatter: createSeriesComponent(\r\n    \"effectScatter\",\r\n    \"EChart.EffectScatter\"\r\n  ),\r\n  PictorialBar: createSeriesComponent(\"pictorialBar\", \"EChart.PictorialBar\"),\r\n});\r\n",
+                    "type": "registry:ui",
+                    "target": "components/fancy/echart/EChart.tsx"
+                }
+            ]
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "echart-3d",
+            "type": "registry:ui",
+            "title": "EChart3D",
+            "description": "3D chart wrapper (globe / surface / scatter3D).",
+            "package": "fancy-echarts",
+            "dependencies": [
+                "echarts",
+                "echarts-gl"
+            ],
+            "registryDependencies": [
+                "types"
+            ],
+            "files": [
+                {
+                    "path": "components/fancy/echart-3d/EChart3D.tsx",
+                    "content": "import React, { forwardRef, useEffect, useMemo, useState } from \"react\";\r\nimport type { EChartsOption } from \"echarts\";\r\nimport { useECharts } from \"../hooks/use-echarts\";\r\nimport type {\r\n  EChartComponentProps,\r\n  SeriesComponentProps,\r\n  ChartDivProps,\r\n} from \"../types\";\r\n\r\nconst DEFAULT_STYLE: React.CSSProperties = { width: \"100%\", height: 500 };\r\n\r\nlet glLoaded = false;\r\nlet glPromise: Promise<void> | null = null;\r\n\r\nfunction loadEChartsGL(): Promise<void> {\r\n  if (glLoaded) return Promise.resolve();\r\n  if (!glPromise) {\r\n    glPromise = import(\"echarts-gl\")\r\n      .then(() => {\r\n        glLoaded = true;\r\n      })\r\n      .catch((err: unknown) => {\r\n        console.warn(\"Failed to load echarts-gl for 3D charts:\", err);\r\n      });\r\n  }\r\n  return glPromise;\r\n}\r\n\r\n/** Wrapper that delays mount until echarts-gl is loaded */\r\nfunction WithGL({ children, style, className }: { children: React.ReactNode; style?: React.CSSProperties; className?: string }) {\r\n  const [ready, setReady] = useState(glLoaded);\r\n\r\n  useEffect(() => {\r\n    if (glLoaded) {\r\n      setReady(true);\r\n      return;\r\n    }\r\n    loadEChartsGL().then(() => setReady(true));\r\n  }, []);\r\n\r\n  if (!ready) {\r\n    return (\r\n      <div style={{ ...DEFAULT_STYLE, ...style, display: \"flex\", alignItems: \"center\", justifyContent: \"center\" }} className={className}>\r\n        <span style={{ color: \"#9ca3af\", fontSize: 14 }}>Loading 3D engine...</span>\r\n      </div>\r\n    );\r\n  }\r\n\r\n  return <>{children}</>;\r\n}\r\n\r\n/**\r\n * EChart3D \u2014 3D chart component that lazy-loads the bundled echarts-gl\r\n * engine on first mount (split into its own chunk to keep the main bundle small).\r\n */\r\nconst EChart3DInner = forwardRef<HTMLDivElement, EChartComponentProps>(\r\n  (\r\n    {\r\n      option,\r\n      theme,\r\n      renderer,\r\n      notMerge,\r\n      lazyUpdate,\r\n      showLoading,\r\n      loadingOption,\r\n      onEvents,\r\n      autoResize = true,\r\n      style,\r\n      className,\r\n      ...rest\r\n    },\r\n    _ref\r\n  ) => {\r\n    const { chartRef } = useECharts({\r\n      option,\r\n      theme,\r\n      renderer,\r\n      notMerge,\r\n      lazyUpdate,\r\n      showLoading,\r\n      loadingOption,\r\n      onEvents,\r\n      autoResize,\r\n    });\r\n\r\n    return (\r\n      <div\r\n        ref={chartRef}\r\n        style={{ ...DEFAULT_STYLE, ...style }}\r\n        className={className}\r\n        {...rest}\r\n      />\r\n    );\r\n  }\r\n);\r\n\r\nEChart3DInner.displayName = \"EChart3DInner\";\r\n\r\nconst EChart3DBase = forwardRef<HTMLDivElement, EChartComponentProps>(\r\n  (props, ref) => {\r\n    const { style, className, ...rest } = props;\r\n    return (\r\n      <WithGL style={style} className={className}>\r\n        <EChart3DInner ref={ref} style={style} className={className} {...rest} />\r\n      </WithGL>\r\n    );\r\n  }\r\n);\r\n\r\nEChart3DBase.displayName = \"EChart3D\";\r\n\r\nfunction create3DSeriesComponent(\r\n  seriesType: string,\r\n  displayName: string\r\n): React.FC<SeriesComponentProps & ChartDivProps> {\r\n  const Component: React.FC<SeriesComponentProps & ChartDivProps> = ({\r\n    data,\r\n    title,\r\n    tooltip = true,\r\n    seriesOptions = {},\r\n    option: extraOption = {},\r\n    style,\r\n    className,\r\n    ...rest\r\n  }) => {\r\n    const option = useMemo((): EChartsOption => {\r\n      const base: any = {};\r\n\r\n      if (title) {\r\n        base.title = { text: title };\r\n      }\r\n\r\n      if (tooltip === true) {\r\n        base.tooltip = {};\r\n      } else if (tooltip && typeof tooltip === \"object\") {\r\n        base.tooltip = tooltip;\r\n      }\r\n\r\n      if ([\"bar3D\", \"scatter3D\", \"line3D\", \"surface\"].includes(seriesType)) {\r\n        base.xAxis3D = { type: \"value\" };\r\n        base.yAxis3D = { type: \"value\" };\r\n        base.zAxis3D = { type: \"value\" };\r\n        base.grid3D = {};\r\n      }\r\n\r\n      base.series = [{ type: seriesType, data, ...seriesOptions }];\r\n\r\n      return { ...base, ...extraOption } as EChartsOption;\r\n    }, [data, title, tooltip, seriesOptions, extraOption]);\r\n\r\n    return (\r\n      <EChart3DBase\r\n        option={option}\r\n        style={style}\r\n        className={className}\r\n        {...rest}\r\n      />\r\n    );\r\n  };\r\n\r\n  Component.displayName = displayName;\r\n  return Component;\r\n}\r\n\r\nfunction createGlobeComponent(): React.FC<\r\n  Omit<SeriesComponentProps, \"data\"> &\r\n    ChartDivProps & { globe?: any; series?: any[] }\r\n> {\r\n  const Component: React.FC<\r\n    Omit<SeriesComponentProps, \"data\"> &\r\n      ChartDivProps & { globe?: any; series?: any[] }\r\n  > = ({\r\n    title,\r\n    globe,\r\n    series = [],\r\n    option: extraOption = {},\r\n    style,\r\n    className,\r\n    ...rest\r\n  }) => {\r\n    const option = useMemo((): EChartsOption => {\r\n      const base: any = {};\r\n\r\n      if (title) {\r\n        base.title = { text: title };\r\n      }\r\n\r\n      base.globe = globe ?? {\r\n        baseTexture: \"\",\r\n        shading: \"lambert\",\r\n        atmosphere: { show: true },\r\n      };\r\n\r\n      if (series.length > 0) {\r\n        base.series = series;\r\n      }\r\n\r\n      return { ...base, ...extraOption } as EChartsOption;\r\n    }, [title, globe, series, extraOption]);\r\n\r\n    return (\r\n      <EChart3DBase\r\n        option={option}\r\n        style={style}\r\n        className={className}\r\n        {...rest}\r\n      />\r\n    );\r\n  };\r\n\r\n  Component.displayName = \"EChart3D.Globe\";\r\n  return Component;\r\n}\r\n\r\nexport const EChart3D = Object.assign(EChart3DBase, {\r\n  Bar: create3DSeriesComponent(\"bar3D\", \"EChart3D.Bar\"),\r\n  Scatter: create3DSeriesComponent(\"scatter3D\", \"EChart3D.Scatter\"),\r\n  Line: create3DSeriesComponent(\"line3D\", \"EChart3D.Line\"),\r\n  Surface: create3DSeriesComponent(\"surface\", \"EChart3D.Surface\"),\r\n  Globe: createGlobeComponent(),\r\n});\r\n",
+                    "type": "registry:ui",
+                    "target": "components/fancy/echart-3d/EChart3D.tsx"
+                }
+            ]
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "echart-graphic",
+            "type": "registry:ui",
+            "title": "EChartGraphic",
+            "description": "Imperative graphic layer for annotations.",
+            "package": "fancy-echarts",
+            "dependencies": [
+                "echarts"
+            ],
+            "registryDependencies": [
+                "types"
+            ],
+            "files": [
+                {
+                    "path": "components/fancy/echart-graphic/EChartGraphic.tsx",
+                    "content": "import React, { forwardRef, useMemo } from \"react\";\r\nimport type { EChartsOption } from \"echarts\";\r\nimport { useECharts } from \"../hooks/use-echarts\";\r\nimport type { EChartBaseProps, ChartDivProps } from \"../types\";\r\n\r\nexport interface GraphicElement {\r\n  type:\r\n    | \"rect\"\r\n    | \"circle\"\r\n    | \"ring\"\r\n    | \"arc\"\r\n    | \"polygon\"\r\n    | \"polyline\"\r\n    | \"path\"\r\n    | \"image\"\r\n    | \"text\"\r\n    | \"group\";\r\n  left?: number | string;\r\n  top?: number | string;\r\n  right?: number | string;\r\n  bottom?: number | string;\r\n  shape?: Record<string, any>;\r\n  style?: Record<string, any>;\r\n  children?: GraphicElement[];\r\n  onclick?: (e: any) => void;\r\n  onmouseover?: (e: any) => void;\r\n  onmouseout?: (e: any) => void;\r\n  [key: string]: any;\r\n}\r\n\r\nexport interface EChartGraphicProps\r\n  extends Omit<EChartBaseProps, \"option\">,\r\n    ChartDivProps,\r\n    React.HTMLAttributes<HTMLDivElement> {\r\n  elements: GraphicElement[];\r\n  option?: Partial<EChartsOption>;\r\n}\r\n\r\nconst DEFAULT_STYLE: React.CSSProperties = { width: \"100%\", height: 400 };\r\n\r\n/**\r\n * EChartGraphic \u2014 for custom drawing via ECharts graphic layer.\r\n * Supports rect, circle, ring, arc, polygon, polyline, path, image, text, group elements.\r\n */\r\nexport const EChartGraphic = forwardRef<HTMLDivElement, EChartGraphicProps>(\r\n  (\r\n    {\r\n      elements,\r\n      option: extraOption = {},\r\n      theme,\r\n      renderer,\r\n      notMerge,\r\n      lazyUpdate,\r\n      showLoading,\r\n      loadingOption,\r\n      onEvents,\r\n      autoResize = true,\r\n      style,\r\n      className,\r\n      ...rest\r\n    },\r\n    _ref\r\n  ) => {\r\n    const option = useMemo((): EChartsOption => {\r\n      return {\r\n        graphic: {\r\n          elements,\r\n        },\r\n        ...extraOption,\r\n      } as EChartsOption;\r\n    }, [elements, extraOption]);\r\n\r\n    const { chartRef } = useECharts({\r\n      option,\r\n      theme,\r\n      renderer,\r\n      notMerge,\r\n      lazyUpdate,\r\n      showLoading,\r\n      loadingOption,\r\n      onEvents,\r\n      autoResize,\r\n    });\r\n\r\n    return (\r\n      <div\r\n        ref={chartRef}\r\n        style={{ ...DEFAULT_STYLE, ...style }}\r\n        className={className}\r\n        {...rest}\r\n      />\r\n    );\r\n  }\r\n);\r\n\r\nEChartGraphic.displayName = \"EChartGraphic\";\r\n",
+                    "type": "registry:ui",
+                    "target": "components/fancy/echart-graphic/EChartGraphic.tsx"
                 }
             ]
         },
@@ -1441,14 +1585,23 @@
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
-            "name": "fancy-3d",
+            "name": "engine",
             "type": "registry:ui",
-            "title": "fancy-3d",
-            "description": "Engine-agnostic 3D core \u2014 Scene types, the <Canvas> surface, and a DOM/CSS-3D renderer. WebGL engines (Babylon, three.js, \u2026) ship as sibling fancy-3d-* packages.",
-            "package": "fancy-3d",
-            "dependencies": [],
+            "title": "babylonEngine",
+            "description": "CanvasEngine adapter \u2014 pass to <Canvas engine={babylonEngine}/>.",
+            "package": "fancy-3d-babylon",
+            "dependencies": [
+                "@particle-academy/fancy-3d"
+            ],
             "registryDependencies": [],
-            "files": []
+            "files": [
+                {
+                    "path": "components/fancy/engine/engine.ts",
+                    "content": "/**\r\n * Babylon engine adapter for `@particle-academy/fancy-3d`'s <Canvas>.\r\n *\r\n * Mounts a Babylon `Engine` + `Scene` + camera into a `<canvas>` element\r\n * overlaid on the Canvas DOM container, then exposes the live `Scene` via\r\n * `EngineHandle.root` so child components can register meshes alongside the\r\n * 2D node graph.\r\n *\r\n *   import { Canvas } from \"@particle-academy/fancy-3d\";\r\n *   import { babylonEngine } from \"@particle-academy/fancy-3d-babylon/engine\";\r\n *\r\n *   <Canvas engine={babylonEngine} style={{ height: 480 }} />\r\n */\r\nimport type { CanvasEngine, EngineHandle, ViewportState } from \"@particle-academy/fancy-3d\";\r\n\r\n// Declare a CJS-style `require` so the dts compiler doesn't reject the lazy\r\n// load below. Browsers don't have `require`, but this whole engine adapter\r\n// only runs when a host bundler (vite/webpack) replaces the call with its own\r\n// lazy-module shim, or under node-side SSR where the global exists.\r\ndeclare const require: (specifier: string) => unknown;\r\n\r\nexport const babylonEngine: CanvasEngine = {\r\n  name: \"babylon\",\r\n  mount(host: HTMLElement, viewport: ViewportState): EngineHandle {\r\n    // Lazy require so non-babylon Canvas users don't pay the parse cost.\r\n    // eslint-disable-next-line @typescript-eslint/no-require-imports\r\n    const BABYLON: any = require(\"@babylonjs/core\");\r\n\r\n    const overlay = document.createElement(\"canvas\");\r\n    overlay.style.position = \"absolute\";\r\n    overlay.style.inset = \"0\";\r\n    overlay.style.width = \"100%\";\r\n    overlay.style.height = \"100%\";\r\n    overlay.style.pointerEvents = \"none\";\r\n    overlay.dataset.fancy3dCanvasEngine = \"babylon\";\r\n    host.appendChild(overlay);\r\n\r\n    const engine = new BABYLON.Engine(overlay, true, { preserveDrawingBuffer: true, stencil: true });\r\n    const scene = new BABYLON.Scene(engine);\r\n    scene.clearColor = new BABYLON.Color4(0, 0, 0, 0);\r\n\r\n    const camera = new BABYLON.ArcRotateCamera(\r\n      \"fancy3d-canvas-camera\",\r\n      Math.PI / 2,\r\n      Math.PI / 2.5,\r\n      8,\r\n      BABYLON.Vector3.Zero(),\r\n      scene,\r\n    );\r\n    camera.attachControl(overlay, false);\r\n    new BABYLON.HemisphericLight(\"fancy3d-canvas-light\", new BABYLON.Vector3(0, 1, 0), scene);\r\n\r\n    const observer = engine.runRenderLoop(() => scene.render());\r\n\r\n    function updateViewport(_v: ViewportState) {\r\n      // Default: 6DoF camera owns view; 2D viewport changes are observed\r\n      // but don't move the Babylon camera. Consumers can override by\r\n      // attaching their own observers to the scene.\r\n    }\r\n\r\n    function dispose() {\r\n      try { engine.stopRenderLoop(observer as any); } catch {}\r\n      scene.dispose();\r\n      engine.dispose();\r\n      if (overlay.parentElement === host) host.removeChild(overlay);\r\n    }\r\n\r\n    return {\r\n      name: \"babylon\",\r\n      root: scene,\r\n      updateViewport,\r\n      dispose,\r\n    };\r\n  },\r\n};\r\n",
+                    "type": "registry:ui",
+                    "target": "components/fancy/engine/engine.ts"
+                }
+            ]
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
@@ -1474,6 +1627,82 @@
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "fancy-3d-three-card-3d",
+            "type": "registry:ui",
+            "title": "Card3D",
+            "description": "3D-native Card primitive positioned in scene space.",
+            "package": "fancy-3d-three",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "fancy-3d-three-engine",
+            "type": "registry:ui",
+            "title": "threeEngine",
+            "description": "CanvasEngine adapter \u2014 pass to <Canvas engine={threeEngine}/>.",
+            "package": "fancy-3d-three",
+            "dependencies": [
+                "three",
+                "@particle-academy/fancy-3d"
+            ],
+            "registryDependencies": [],
+            "files": [
+                {
+                    "path": "components/fancy/engine/engine.ts",
+                    "content": "/**\n * three.js engine adapter for `@particle-academy/fancy-3d`'s <Canvas>.\n *\n * Mounts a three `WebGLRenderer` + `Scene` + camera into a `<canvas>` overlaid\n * on the Canvas DOM container, then exposes the live `Scene` via\n * `EngineHandle.root` so child components can register meshes alongside the 2D\n * node graph.\n *\n *   import { Canvas } from \"@particle-academy/fancy-3d\";\n *   import { threeEngine } from \"@particle-academy/fancy-3d-three/engine\";\n *\n *   <Canvas engine={threeEngine} style={{ height: 480 }} />\n */\nimport * as THREE from \"three\";\nimport type { CanvasEngine, EngineHandle, ViewportState } from \"@particle-academy/fancy-3d\";\n\nexport const threeEngine: CanvasEngine = {\n  name: \"three\",\n  mount(host: HTMLElement, _viewport: ViewportState): EngineHandle {\n    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true, preserveDrawingBuffer: true });\n    renderer.setPixelRatio(window.devicePixelRatio || 1);\n    const overlay = renderer.domElement;\n    overlay.style.position = \"absolute\";\n    overlay.style.inset = \"0\";\n    overlay.style.width = \"100%\";\n    overlay.style.height = \"100%\";\n    overlay.style.pointerEvents = \"none\"; // the 2D node graph owns interaction\n    overlay.dataset.fancy3dCanvasEngine = \"three\";\n    host.appendChild(overlay);\n\n    const scene = new THREE.Scene();\n    const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 1000);\n    camera.position.set(0, 0, 8);\n    camera.lookAt(0, 0, 0);\n\n    const hemi = new THREE.HemisphereLight(0xb3c6ff, 0x1a1a2e, 1.0);\n    scene.add(hemi);\n\n    const resize = () => {\n      const w = host.clientWidth || 1;\n      const h = host.clientHeight || 1;\n      renderer.setSize(w, h, false);\n      camera.aspect = w / h;\n      camera.updateProjectionMatrix();\n    };\n    resize();\n    const ro = new ResizeObserver(resize);\n    ro.observe(host);\n\n    let raf = 0;\n    const loop = () => {\n      raf = requestAnimationFrame(loop);\n      renderer.render(scene, camera);\n    };\n    loop();\n\n    function updateViewport(_v: ViewportState) {\n      // The 3D camera owns its own view; 2D viewport changes are observed but\n      // don't move the camera. Consumers can drive the camera off the scene.\n    }\n\n    function dispose() {\n      cancelAnimationFrame(raf);\n      ro.disconnect();\n      renderer.dispose();\n      if (overlay.parentElement === host) host.removeChild(overlay);\n    }\n\n    return {\n      name: \"three\",\n      root: scene,\n      updateViewport,\n      dispose,\n    };\n  },\n};\n",
+                    "type": "registry:ui",
+                    "target": "components/fancy/engine/engine.ts"
+                }
+            ]
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "fancy-3d-three-monitor",
+            "type": "registry:ui",
+            "title": "Monitor",
+            "description": "In-scene HTML overlay projected via CSS matrix3d homography.",
+            "package": "fancy-3d-three",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "fancy-3d-three-stage",
+            "type": "registry:ui",
+            "title": "Stage",
+            "description": "three.js scene root (camera + lighting + JSON scene graph).",
+            "package": "fancy-3d-three",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "fancy-app-root",
+            "type": "registry:ui",
+            "title": "FancyAppRoot",
+            "description": "Inertia app root.",
+            "package": "fancy-inertia",
+            "dependencies": [
+                "@particle-academy/react-fancy",
+                "@particle-academy/fancy-screens",
+                "@particle-academy/fancy-echarts"
+            ],
+            "registryDependencies": [],
+            "files": [
+                {
+                    "path": "components/fancy/fancy-app-root/FancyAppRoot.tsx",
+                    "content": "import { useEffect, lazy, Suspense, type ComponentType, type ReactNode } from \"react\";\nimport { Toast } from \"@particle-academy/react-fancy\";\n\n/**\n * fancy-screens is an OPTIONAL peer. Importing `ScreenSystem` statically\n * would put `@particle-academy/fancy-screens` in the base import graph, so\n * any bundler resolving `fancy-inertia` would hard-fail when it isn't\n * installed \u2014 even for consumers who only use `<FancyAppRoot withScreens={false}>`.\n * Load it lazily instead, and degrade to a passthrough if it's absent.\n */\nconst Passthrough = ({ children }: { children?: ReactNode }) => <>{children}</>;\n\nconst SCREENS_MISSING =\n  \"[fancy-inertia] `withScreens` is on but @particle-academy/fancy-screens is not available \u2014 rendering children without the ScreenSystem provider. Pass `withScreens={false}` to silence this.\";\n\nconst ScreenSystemLazy = lazy<ComponentType<{ children?: ReactNode }>>(() =>\n  import(\"@particle-academy/fancy-screens\")\n    .then((m) => {\n      const Comp = (m as { ScreenSystem?: ComponentType<{ children?: ReactNode }> })?.ScreenSystem;\n      // A bundler resolving an ABSENT optional peer can hand back an\n      // export-less stub ({ default: undefined }) instead of rejecting \u2014 so a\n      // reject-only `.catch` misses it and React.lazy gets `{ default: undefined }`\n      // (React #306). Guard the resolved export, not just rejection.\n      if (!Comp) {\n        console.warn(SCREENS_MISSING);\n        return { default: Passthrough };\n      }\n      return { default: Comp };\n    })\n    .catch((err) => {\n      console.warn(SCREENS_MISSING, err);\n      return { default: Passthrough };\n    }),\n);\n\nexport interface FancyAppRootProps {\n  children: ReactNode;\n\n  /** Toast position. Default `\"bottom-right\"`. */\n  toastPosition?: \"top-left\" | \"top-right\" | \"bottom-left\" | \"bottom-right\";\n\n  /**\n   * Mount fancy-screens' `<Screen.System>` provider. Default `true`. Set\n   * `false` if your app doesn't use fancy-screens \u2014 the optional peer is\n   * never imported in that case.\n   */\n  withScreens?: boolean;\n\n  /**\n   * Auto-register echarts modules + built-in themes on mount. Default\n   * `true`. Disable if you call `registerCharts(...)` yourself for\n   * tree-shaking control, or if fancy-echarts isn't installed.\n   */\n  withECharts?: boolean;\n}\n\n/**\n * Composite top-level provider for the fancy UI set under Inertia.\n *\n * Mount once in your Inertia app entry, ABOVE the `<Inertia App>` outlet.\n * Subsequent page swaps preserve the providers \u2014 toasts survive\n * navigation, the screen registry persists, and echarts modules don't\n * have to re-register.\n *\n *   import { createInertiaApp } from \"@inertiajs/react\";\n *   import { FancyAppRoot } from \"@particle-academy/fancy-inertia\";\n *\n *   createInertiaApp({\n *     setup({ App, props, el }) {\n *       createRoot(el).render(\n *         <FancyAppRoot>\n *           <App {...props} />\n *         </FancyAppRoot>\n *       );\n *     },\n *   });\n *\n * `fancy-screens` and `fancy-echarts` are optional peers, loaded lazily\n * only when `withScreens` / `withECharts` are enabled \u2014 the base bundle\n * depends on nothing but `react-fancy`.\n */\nexport function FancyAppRoot({\n  children,\n  toastPosition = \"bottom-right\",\n  withScreens = true,\n  withECharts = true,\n}: FancyAppRootProps) {\n  useEffect(() => {\n    if (!withECharts) return;\n    let cancelled = false;\n    void (async () => {\n      try {\n        const echarts = await import(\"@particle-academy/fancy-echarts\");\n        if (cancelled) return;\n        echarts.registerAll?.();\n        echarts.registerBuiltinThemes?.();\n      } catch (err) {\n        console.warn(\n          \"[fancy-inertia] `withECharts` is on but @particle-academy/fancy-echarts is not installed \u2014 skipping chart registration. Pass `withECharts={false}` to silence this.\",\n          err,\n        );\n      }\n    })();\n    return () => {\n      cancelled = true;\n    };\n  }, [withECharts]);\n\n  const Inner = withScreens ? (\n    <Suspense fallback={null}>\n      <ScreenSystemLazy>{children}</ScreenSystemLazy>\n    </Suspense>\n  ) : (\n    <>{children}</>\n  );\n\n  return <Toast.Provider position={toastPosition}>{Inner}</Toast.Provider>;\n}\n\nFancyAppRoot.displayName = \"FancyAppRoot\";\n",
+                    "type": "registry:ui",
+                    "target": "components/fancy/fancy-app-root/FancyAppRoot.tsx"
+                }
+            ]
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
             "name": "fancy-artboard",
             "type": "registry:ui",
             "title": "fancy-artboard",
@@ -1485,44 +1714,11 @@
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
-            "name": "fancy-echarts",
+            "name": "fancy-query",
             "type": "registry:ui",
-            "title": "fancy-echarts",
-            "description": "Typed React wrapper around Apache ECharts \u2014 every chart type from a single <EChart> component, lazy module registration, four built-in themes.",
-            "package": "fancy-echarts",
-            "dependencies": [],
-            "registryDependencies": [],
-            "files": []
-        },
-        {
-            "$schema": "https://ui.particle.academy/schema/registry-item.json",
-            "name": "fancy-flow",
-            "type": "registry:ui",
-            "title": "fancy-flow",
-            "description": "Workflow editor + runner on top of React Flow \u2014 six node kits, topological executor.",
-            "package": "fancy-flow",
-            "dependencies": [],
-            "registryDependencies": [],
-            "files": []
-        },
-        {
-            "$schema": "https://ui.particle.academy/schema/registry-item.json",
-            "name": "fancy-inertia",
-            "type": "registry:ui",
-            "title": "fancy-inertia",
-            "description": "Inertia.js bridge \u2014 schema-driven pages, useFancyForm(), SSR boundaries.",
-            "package": "fancy-inertia",
-            "dependencies": [],
-            "registryDependencies": [],
-            "files": []
-        },
-        {
-            "$schema": "https://ui.particle.academy/schema/registry-item.json",
-            "name": "fancy-screens",
-            "type": "registry:ui",
-            "title": "fancy-screens",
-            "description": "Multi-screen application shell with cross-screen agent presence.",
-            "package": "fancy-screens",
+            "title": "@particle-academy/fancy-query",
+            "description": "Server-state for Inertia + Echo \u2014 a thin TanStack Query wrapper with Inertia hydration and Echo-driven cache invalidation. Hooks only, no UI.",
+            "package": "fancy-query",
             "dependencies": [],
             "registryDependencies": [],
             "files": []
@@ -1540,17 +1736,6 @@
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
-            "name": "fancy-slides",
-            "type": "registry:ui",
-            "title": "fancy-slides",
-            "description": "Presentation editor + web viewer \u2014 Google-Slides-style deck authoring with JSON-friendly schema, full keyboard viewer, and an agent bridge.",
-            "package": "fancy-slides",
-            "dependencies": [],
-            "registryDependencies": [],
-            "files": []
-        },
-        {
-            "$schema": "https://ui.particle.academy/schema/registry-item.json",
             "name": "fancy-whiteboard",
             "type": "registry:ui",
             "title": "fancy-whiteboard",
@@ -1559,6 +1744,34 @@
             "dependencies": [],
             "registryDependencies": [],
             "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "fancy-whiteboard-sticky-note",
+            "type": "registry:ui",
+            "title": "StickyNote",
+            "description": "Sticky note item type.",
+            "package": "fancy-whiteboard",
+            "dependencies": [
+                "@particle-academy/react-fancy"
+            ],
+            "registryDependencies": [
+                "types"
+            ],
+            "files": [
+                {
+                    "path": "components/fancy/sticky-note/StickyNote.tsx",
+                    "content": "import { type CSSProperties, type ReactNode, useCallback, useEffect, useState } from \"react\";\nimport { StickyNote as FancyStickyNote } from \"@particle-academy/react-fancy\";\nimport type { StickyNoteItem } from \"../../types\";\n\nexport type StickyNoteProps = {\n  item: StickyNoteItem;\n  onChange?: (next: StickyNoteItem) => void;\n  onSelect?: (id: string) => void;\n  selected?: boolean;\n  readOnly?: boolean;\n  /** Smallest size resize will allow (default 80\u00d760). */\n  minWidth?: number;\n  minHeight?: number;\n  className?: string;\n  style?: CSSProperties;\n  /** When provided, replaces the default editable note body. */\n  children?: ReactNode;\n};\n\n/**\n * StickyNote \u2014 draggable, resizable board note.\n *\n * The note's paper look and inline text editing come from react-fancy's shared\n * `<StickyNote>` primitive; this wrapper owns the board concerns: absolute\n * positioning, drag-to-move, corner resize, and selection.\n *\n * Interactions:\n *   \u2022 Drag anywhere on the note to move it.\n *   \u2022 Click (without dragging) \u2014 or double-click \u2014 to edit; click outside to commit.\n *   \u2022 Drag the bottom-right corner handle to resize.\n *\n * Controlled via `item` + `onChange`.\n */\nexport function StickyNote({\n  item,\n  onChange,\n  onSelect,\n  selected,\n  readOnly,\n  minWidth = 80,\n  minHeight = 60,\n  className,\n  style,\n  children,\n}: StickyNoteProps) {\n  const [editing, setEditing] = useState(false);\n  const [dragging, setDragging] = useState(false);\n  const [resizing, setResizing] = useState(false);\n\n  // Deselected by parent \u2192 leave edit mode.\n  useEffect(() => {\n    if (!selected && editing) setEditing(false);\n  }, [selected, editing]);\n\n  const onPointerDown = useCallback(\n    (e: React.PointerEvent) => {\n      if (readOnly || !onChange || editing) return;\n      if (e.button !== 0 || e.altKey) return;\n      onSelect?.(item.id);\n      const start = { x: e.clientX, y: e.clientY };\n      const origin = { x: item.x, y: item.y };\n      const target = e.currentTarget;\n      target.setPointerCapture(e.pointerId);\n      let moved = false;\n      const move = (ev: PointerEvent) => {\n        if (!moved && Math.hypot(ev.clientX - start.x, ev.clientY - start.y) < 4) return;\n        if (!moved) setDragging(true);\n        moved = true;\n        onChange({ ...item, x: origin.x + ev.clientX - start.x, y: origin.y + ev.clientY - start.y });\n      };\n      const up = () => {\n        window.removeEventListener(\"pointermove\", move);\n        window.removeEventListener(\"pointerup\", up);\n        setDragging(false);\n        // Click without drag \u2192 enter edit mode (more discoverable than double-click).\n        if (!moved && !readOnly) setEditing(true);\n      };\n      window.addEventListener(\"pointermove\", move);\n      window.addEventListener(\"pointerup\", up);\n    },\n    [item, onChange, onSelect, readOnly, editing],\n  );\n\n  const onResizePointerDown = useCallback(\n    (e: React.PointerEvent) => {\n      if (readOnly || !onChange) return;\n      e.stopPropagation();\n      e.preventDefault();\n      const start = { x: e.clientX, y: e.clientY };\n      const origin = { w: item.width, h: item.height };\n      const target = e.currentTarget;\n      target.setPointerCapture(e.pointerId);\n      setResizing(true);\n      const move = (ev: PointerEvent) => {\n        const w = Math.max(minWidth, origin.w + ev.clientX - start.x);\n        const h = Math.max(minHeight, origin.h + ev.clientY - start.y);\n        onChange({ ...item, width: w, height: h });\n      };\n      const up = () => {\n        window.removeEventListener(\"pointermove\", move);\n        window.removeEventListener(\"pointerup\", up);\n        setResizing(false);\n      };\n      window.addEventListener(\"pointermove\", move);\n      window.addEventListener(\"pointerup\", up);\n    },\n    [item, onChange, readOnly, minWidth, minHeight],\n  );\n\n  return (\n    <div\n      className={[\n        \"fw-item fw-sticky\",\n        dragging ? \"fw-item--dragging\" : \"\",\n        resizing ? \"fw-item--resizing\" : \"\",\n        selected ? \"fw-sticky--selected\" : \"\",\n        editing ? \"fw-sticky--editing\" : \"\",\n        className ?? \"\",\n      ]\n        .filter(Boolean)\n        .join(\" \")}\n      style={{ left: item.x, top: item.y, width: item.width, height: item.height, zIndex: item.z, ...style }}\n      onPointerDown={onPointerDown}\n      onDoubleClick={() => {\n        if (!readOnly) setEditing(true);\n      }}\n    >\n      <FancyStickyNote\n        className=\"h-full w-full\"\n        color={item.color ?? \"yellow\"}\n        value={item.text}\n        editable={!readOnly && editing}\n        autoFocus\n        onChange={(text) => onChange?.({ ...item, text })}\n      >\n        {children}\n      </FancyStickyNote>\n      {!readOnly && onChange && (\n        <div className=\"fw-sticky__resize\" onPointerDown={onResizePointerDown} aria-label=\"Resize note\" />\n      )}\n    </div>\n  );\n}\n",
+                    "type": "registry:ui",
+                    "target": "components/fancy/sticky-note/StickyNote.tsx"
+                },
+                {
+                    "path": "components/fancy/sticky-note/index.ts",
+                    "content": "export { StickyNote } from \"./StickyNote\";\r\nexport type { StickyNoteProps } from \"./StickyNote\";\r\n",
+                    "type": "registry:ui",
+                    "target": "components/fancy/sticky-note/index.ts"
+                }
+            ]
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
@@ -1708,6 +1921,28 @@
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "holy-sheet",
+            "type": "registry:ui",
+            "title": "particle-academy/holy-sheet",
+            "description": "PHP 8.2+ xlsx writer for agentic document creation. Headless \u2014 top-level Agent write/describe/lint API, optional Laravel adapter.",
+            "package": "holy-sheet",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "holy-sheet-js",
+            "type": "registry:ui",
+            "title": "@particle-academy/holy-sheet",
+            "description": "Node/TS port of holy-sheet \u2014 xlsx writer/reader + formula linter, isomorphic. Headless Agent API; no UI.",
+            "package": "holy-sheet-js",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
             "name": "icon",
             "type": "registry:ui",
             "title": "Icon",
@@ -1747,6 +1982,32 @@
                     "content": "export { Icon } from \"./Icon\";\r\nexport type { IconProps } from \"./Icon.types\";\r\nexport { registerIcons, registerIconSet, configureIcons, resolveIcon } from \"./icon-config\";\r\nexport type { IconSet } from \"./icon-config.types\";\r\n",
                     "type": "registry:ui",
                     "target": "components/fancy/icon/index.ts"
+                }
+            ]
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "image-element",
+            "type": "registry:ui",
+            "title": "ImageElement",
+            "description": "Slide image element renderer.",
+            "package": "fancy-slides",
+            "dependencies": [],
+            "registryDependencies": [
+                "types"
+            ],
+            "files": [
+                {
+                    "path": "components/fancy/image-element/ImageElement.tsx",
+                    "content": "import type { CSSProperties } from \"react\";\nimport type { ImageElement } from \"../../../types\";\n\nexport interface ImageElementRendererProps {\n    element: ImageElement;\n}\n\n/**\n * Renders an image element. When `element.crop` is set (a window in\n * image-relative 0..1 coords `{x,y,w,h}`), the image is shown cropped to that\n * window: an `overflow:hidden` box clips an inner `<img>` that's been scaled up\n * by `1/w` \u00d7 `1/h` and offset so the crop window exactly fills the box. Without\n * a crop it's the plain `object-fit` image. The same renderer feeds both the\n * editor canvas and the viewer, so a crop is visible everywhere.\n */\nexport function ImageElementRenderer({ element }: ImageElementRendererProps) {\n    const crop = element.crop;\n    const fit = element.fit ?? \"contain\";\n\n    if (crop && crop.w > 0 && crop.h > 0) {\n        // The inner image is scaled so the crop window (fraction w\u00d7h of the\n        // image) fills 100% of the box; then translated so the window's\n        // top-left aligns with the box's top-left.\n        const inner: CSSProperties = {\n            position: \"absolute\",\n            left: 0,\n            top: 0,\n            width: `${(1 / crop.w) * 100}%`,\n            height: `${(1 / crop.h) * 100}%`,\n            transform: `translate(${(-crop.x / crop.w) * 100}%, ${(-crop.y / crop.h) * 100}%)`,\n            transformOrigin: \"top left\",\n            objectFit: fit,\n            display: \"block\",\n        };\n        return (\n            <div style={{ position: \"relative\", width: \"100%\", height: \"100%\", overflow: \"hidden\" }}>\n                <img src={element.src} alt={element.alt ?? \"\"} style={inner} draggable={false} />\n            </div>\n        );\n    }\n\n    return (\n        <img\n            src={element.src}\n            alt={element.alt ?? \"\"}\n            style={{\n                width: \"100%\",\n                height: \"100%\",\n                objectFit: fit,\n                display: \"block\",\n            }}\n            draggable={false}\n        />\n    );\n}\n",
+                    "type": "registry:ui",
+                    "target": "components/fancy/image-element/ImageElement.tsx"
+                },
+                {
+                    "path": "components/fancy/image-element/index.ts",
+                    "content": "export { ImageElementRenderer } from \"./ImageElement\";\r\nexport type { ImageElementRendererProps } from \"./ImageElement\";\r\n",
+                    "type": "registry:ui",
+                    "target": "components/fancy/image-element/index.ts"
                 }
             ]
         },
@@ -1872,6 +2133,39 @@
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "laravel-catalog",
+            "type": "registry:ui",
+            "title": "particle-academy/laravel-catalog",
+            "description": "Stripe catalog (Products + Prices) via a facade API. Used by the sandbox for the demo storefront.",
+            "package": "laravel-catalog",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "laravel-fms",
+            "type": "registry:ui",
+            "title": "particle-academy/laravel-fms",
+            "description": "Feature Management System \u2014 gate/policy/config/registry-driven feature access. Pairs with laravel-catalog for entitlement-based UI.",
+            "package": "laravel-fms",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "laravel-fun-lab",
+            "type": "registry:ui",
+            "title": "particle-academy/laravel-fun-lab",
+            "description": "Analytics-driven gamification \u2014 XP, achievements, prizes, and leaderboards. Powers the sandbox's engagement economy.",
+            "package": "laravel-fun-lab",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
             "name": "magic-wand",
             "type": "registry:ui",
             "title": "MagicWand",
@@ -1953,6 +2247,17 @@
                     "target": "components/fancy/menu/index.ts"
                 }
             ]
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "micro-mcp-server",
+            "type": "registry:ui",
+            "title": "MicroMcpServer",
+            "description": "In-page MCP server.",
+            "package": "agent-integrations",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
@@ -2069,6 +2374,17 @@
                     "target": "components/fancy/modal/index.ts"
                 }
             ]
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "monitor",
+            "type": "registry:ui",
+            "title": "Monitor",
+            "description": "In-scene HTML overlay rendered as a WebGL texture.",
+            "package": "fancy-3d-babylon",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
@@ -2476,6 +2792,60 @@
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "scene",
+            "type": "registry:ui",
+            "title": "Scene types",
+            "description": "Engine-agnostic JSON shape (nodes, edges, widget specs).",
+            "package": "fancy-3d",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": [
+                {
+                    "path": "components/fancy/scene/scene.ts",
+                    "content": "/**\r\n * Engine-agnostic scene description.\r\n *\r\n * A scene is plain JSON-serializable data. Adapters consume it to render the\r\n * scene into a concrete engine \u2014 DOM, BabylonJS, three.js, native canvas, etc.\r\n * The same `Scene` should produce a recognizably similar result on every\r\n * supported engine.\r\n */\r\n\r\nexport type WidgetSpec =\r\n  | KpiSpec\r\n  | ChartSpec\r\n  | KanbanSpec\r\n  | TableSpec\r\n  | ProfileSpec\r\n  | CalloutSpec\r\n  | FormSpec\r\n  | ActionSpec\r\n  | TimelineSpec\r\n  | CodeSpec\r\n  | ImageSpec\r\n  | TextSpec\r\n  | DemoPageSpec\r\n  | ScreenSpec;\r\n\r\nexport interface KpiSpec {\r\n  kind: \"kpi\";\r\n  label: string;\r\n  value: string;\r\n  delta?: string;\r\n  trend?: \"up\" | \"down\" | \"flat\";\r\n}\r\n\r\nexport interface ChartSpec {\r\n  kind: \"chart\";\r\n  title: string;\r\n  variant: \"line\" | \"bar\" | \"area\";\r\n  series: number[];\r\n  color?: string;\r\n}\r\n\r\nexport interface KanbanSpec {\r\n  kind: \"kanban\";\r\n  columns: { title: string; cards: string[] }[];\r\n}\r\n\r\nexport interface TableSpec {\r\n  kind: \"table\";\r\n  title: string;\r\n  columns: string[];\r\n  rows: (string | number)[][];\r\n}\r\n\r\nexport interface ProfileSpec {\r\n  kind: \"profile\";\r\n  name: string;\r\n  role: string;\r\n  initials: string;\r\n  status?: \"online\" | \"away\" | \"offline\";\r\n}\r\n\r\nexport interface CalloutSpec {\r\n  kind: \"callout\";\r\n  tone: \"info\" | \"success\" | \"warning\" | \"danger\";\r\n  title: string;\r\n  body: string;\r\n}\r\n\r\nexport interface FormSpec {\r\n  kind: \"form\";\r\n  title: string;\r\n  fields: { id: string; label: string; type: \"text\" | \"switch\" | \"number\" }[];\r\n}\r\n\r\nexport interface ActionSpec {\r\n  kind: \"action\";\r\n  title: string;\r\n  buttons: { label: string; variant?: \"primary\" | \"secondary\" | \"ghost\" }[];\r\n}\r\n\r\nexport interface TimelineSpec {\r\n  kind: \"timeline\";\r\n  title: string;\r\n  events: { at: string; label: string }[];\r\n}\r\n\r\nexport interface CodeSpec {\r\n  kind: \"code\";\r\n  title: string;\r\n  language: string;\r\n  code: string;\r\n}\r\n\r\nexport interface ImageSpec {\r\n  kind: \"image\";\r\n  src: string;\r\n  alt: string;\r\n  caption?: string;\r\n}\r\n\r\nexport interface TextSpec {\r\n  kind: \"text\";\r\n  heading: string;\r\n  body: string;\r\n}\r\n\r\nexport interface DemoPageSpec {\r\n  kind: \"demoPage\";\r\n  name: string;\r\n  description: string;\r\n  path: string;\r\n  accent: string;\r\n  category: string;\r\n}\r\n\r\n/**\r\n * A 3D-native widget \u2014 a screen-shaped panel with a bezel frame, status LED,\r\n * and optional 2D content drawn into the screen surface. Designed to feel\r\n * like a hardware display in a 3D scene.\r\n */\r\nexport interface ScreenSpec {\r\n  kind: \"screen\";\r\n  /** Screen contents \u2014 either a static label or a paint callback that draws\r\n   *  onto a 2D context sized to the screen's inner area. */\r\n  content:\r\n    | { type: \"label\"; title: string; subtitle?: string }\r\n    | { type: \"image\"; src: string; alt?: string }\r\n    | { type: \"paint\"; paint: (ctx: CanvasRenderingContext2D, w: number, h: number) => void };\r\n  /** Bezel color (CSS hex). Defaults to a dark frame. */\r\n  bezel?: string;\r\n  /** Bezel thickness in pixels, scaled with the screen's pixel size. */\r\n  bezelThickness?: number;\r\n  /** Power state \u2014 controls the LED + screen brightness. */\r\n  on?: boolean;\r\n  /** Background fill color when the content does not fill the screen. */\r\n  background?: string;\r\n  /** Brightness multiplier, 0..1. Defaults to 1 when on, 0.05 when off. */\r\n  brightness?: number;\r\n}\r\n\r\nexport interface SceneNode {\r\n  id: string;\r\n  position: { x: number; y: number; z?: number };\r\n  size?: { w: number; h: number };\r\n  widget: WidgetSpec;\r\n}\r\n\r\nexport interface SceneEdge {\r\n  id: string;\r\n  from: string;\r\n  to: string;\r\n  label?: string;\r\n  curve?: \"bezier\" | \"step\" | \"straight\";\r\n  animated?: boolean;\r\n}\r\n\r\nexport interface Scene {\r\n  nodes: SceneNode[];\r\n  edges: SceneEdge[];\r\n}\r\n\r\n/**\r\n * A WidgetAdapter renders one WidgetSpec for one engine. Each engine ships\r\n * its own adapter; the scene data does not change.\r\n *\r\n * The DOM adapter returns a React element. A BabylonJS adapter returns a\r\n * `Mesh`. A three.js adapter would return an `Object3D`.\r\n */\r\nexport interface WidgetAdapter<T> {\r\n  render(spec: WidgetSpec, ctx: AdapterContext): T;\r\n}\r\n\r\nexport interface AdapterContext {\r\n  /** Notify the host when the widget requests selection. */\r\n  onSelect?: (id: string) => void;\r\n  /** The id of the node this widget belongs to. */\r\n  nodeId: string;\r\n  /** Whether the node is currently selected \u2014 adapters may render an outline. */\r\n  selected: boolean;\r\n}\r\n\r\nlet _seq = 1000;\r\nexport function nextId(prefix: string): string {\r\n  _seq += 1;\r\n  return `${prefix}-${_seq}`;\r\n}\r\n\r\n/**\r\n * Convenience: walk a Scene and call the adapter on every node.\r\n *\r\n * Engine-agnostic \u2014 every adapter (DOM, Babylon, three) can share it. The\r\n * host is responsible for placing the returned render results inside its\r\n * scene graph.\r\n */\r\nexport function renderScene<T>(\r\n  scene: Scene,\r\n  adapter: WidgetAdapter<T>,\r\n  ctxFor: (node: SceneNode) => AdapterContext\r\n): { node: SceneNode; rendered: T }[] {\r\n  return scene.nodes.map((node) => ({ node, rendered: adapter.render(node.widget, ctxFor(node)) }));\r\n}\r\n",
+                    "type": "registry:ui",
+                    "target": "components/fancy/scene/scene.ts"
+                }
+            ]
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "screen",
+            "type": "registry:ui",
+            "title": "Screen",
+            "description": "Individual screen container.",
+            "package": "fancy-screens",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": [
+                {
+                    "path": "components/fancy/screen/Screen.tsx",
+                    "content": "import { useEffect, useMemo, type CSSProperties, type ReactNode } from \"react\";\r\nimport { ScreenContext, type ScreenContextValue } from \"./Screen.context\";\r\nimport { useScreenSystem } from \"./ScreenSystem.context\";\r\nimport { ScreenSystem } from \"./ScreenSystem\";\r\nimport { renderSchema } from \"./schema\";\r\nimport type { ScreenBodyProps, ScreenProps } from \"./Screen.types\";\r\n\r\nfunction ScreenBody({ children, className }: ScreenBodyProps) {\r\n  return <div data-fancy-screens-body=\"\" className={className}>{children}</div>;\r\n}\r\nScreenBody.displayName = \"Screen.Body\";\r\n\r\n/**\r\n * Containerized application surface. Registers with the enclosing\r\n * `<Screen.System>` so agents and presence layers can enumerate and\r\n * target it.\r\n *\r\n * Supports two render modes:\r\n *   - JSX children  \u2014 pass any React tree\r\n *   - schema prop   \u2014 agent-emitted JSON, rendered via the schema registry\r\n *\r\n * Children win if both are provided.\r\n */\r\nfunction ScreenRoot({ id, title, children, schema, className }: ScreenProps) {\r\n  const system = useScreenSystem();\r\n\r\n  useEffect(() => {\r\n    system.registerScreen({\r\n      id,\r\n      title,\r\n      lifecycle: \"active\",\r\n      storeKeys: [],\r\n      lastActiveAt: Date.now(),\r\n    });\r\n    return () => system.unregisterScreen(id);\r\n    // eslint-disable-next-line react-hooks/exhaustive-deps\r\n  }, [id]);\r\n\r\n  // Patch title without remounting the registry entry.\r\n  useEffect(() => {\r\n    if (title !== undefined) system.updateScreen(id, { title });\r\n    // eslint-disable-next-line react-hooks/exhaustive-deps\r\n  }, [id, title]);\r\n\r\n  // Read the live agentActivity for this screen so we can apply a CSS\r\n  // class while it's set. Subscribers (e.g. agent-integrations) push\r\n  // updates via system.updateScreen(id, { agentActivity }).\r\n  const meta = system.registry.get(id);\r\n  const agentActivity = meta?.agentActivity;\r\n\r\n  const ctx = useMemo<ScreenContextValue>(\r\n    () => ({ id, title, lifecycle: \"active\" }),\r\n    [id, title],\r\n  );\r\n\r\n  const classes = [\r\n    className,\r\n    agentActivity ? \"agent-focused-element\" : null,\r\n  ].filter(Boolean).join(\" \");\r\n\r\n  const style: CSSProperties | undefined = agentActivity?.agentColor\r\n    ? ({ [\"--agent-color\" as unknown as keyof CSSProperties]: agentActivity.agentColor } as CSSProperties)\r\n    : undefined;\r\n\r\n  const body = children ?? (schema ? renderSchema(schema) : null);\r\n\r\n  return (\r\n    <ScreenContext.Provider value={ctx}>\r\n      <div\r\n        data-fancy-screens-screen=\"\"\r\n        data-screen-id={id}\r\n        className={classes || undefined}\r\n        style={style}\r\n      >\r\n        {body}\r\n      </div>\r\n    </ScreenContext.Provider>\r\n  );\r\n}\r\n\r\nScreenRoot.displayName = \"Screen\";\r\n\r\nexport const Screen = Object.assign(ScreenRoot, {\r\n  Body: ScreenBody,\r\n  System: ScreenSystem,\r\n});\r\n\r\nexport type { ScreenProps, ScreenBodyProps } from \"./Screen.types\";\r\n",
+                    "type": "registry:ui",
+                    "target": "components/fancy/screen/Screen.tsx"
+                }
+            ]
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "screen-system",
+            "type": "registry:ui",
+            "title": "ScreenSystem",
+            "description": "Root provider.",
+            "package": "fancy-screens",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": [
+                {
+                    "path": "components/fancy/screen-system/ScreenSystem.tsx",
+                    "content": "import { useMemo, useRef, useState, type ReactNode } from \"react\";\r\nimport { ScreenSystemContext, type ScreenSystemValue } from \"./ScreenSystem.context\";\r\nimport type { RegisteredStore, ScreenMeta } from \"./Screen.types\";\r\n\r\ninterface ScreenSystemProps {\r\n  children?: ReactNode;\r\n}\r\n\r\n/**\r\n * Root provider for fancy-screens. Wrap your app once. Owns the screen\r\n * registry and a Map of registered Zustand stores. Without this,\r\n * `<Screen>` and `useScreens()` will throw.\r\n */\r\nexport function ScreenSystem({ children }: ScreenSystemProps) {\r\n  const registryRef = useRef<Map<string, ScreenMeta>>(new Map());\r\n  const storesRef = useRef<Map<string, RegisteredStore>>(new Map());\r\n  const [registryVersion, setRegistryVersion] = useState(0);\r\n\r\n  const value = useMemo<ScreenSystemValue>(() => {\r\n    const bump = () => setRegistryVersion((v) => v + 1);\r\n    return {\r\n      registry: registryRef.current,\r\n      registryVersion,\r\n      stores: storesRef.current,\r\n      registerScreen: (meta) => {\r\n        registryRef.current.set(meta.id, meta);\r\n        bump();\r\n      },\r\n      updateScreen: (id, patch) => {\r\n        const existing = registryRef.current.get(id);\r\n        if (!existing) return;\r\n        registryRef.current.set(id, { ...existing, ...patch });\r\n        bump();\r\n      },\r\n      unregisterScreen: (id) => {\r\n        registryRef.current.delete(id);\r\n        // Drop any stores registered to this screen so the maps don't drift.\r\n        const prefix = `${id}.`;\r\n        for (const key of storesRef.current.keys()) {\r\n          if (key.startsWith(prefix)) storesRef.current.delete(key);\r\n        }\r\n        bump();\r\n      },\r\n      registerStore: (key, store) => {\r\n        storesRef.current.set(key, store);\r\n        // Patch the storeKeys array on the owning screen so consumers can\r\n        // enumerate stores without scanning the global map.\r\n        const [screenId, storeName] = key.split(\".\");\r\n        if (screenId && storeName) {\r\n          const existing = registryRef.current.get(screenId);\r\n          if (existing && !existing.storeKeys.includes(storeName)) {\r\n            registryRef.current.set(screenId, {\r\n              ...existing,\r\n              storeKeys: [...existing.storeKeys, storeName],\r\n            });\r\n          }\r\n        }\r\n        bump();\r\n        return () => {\r\n          storesRef.current.delete(key);\r\n          if (screenId && storeName) {\r\n            const existing = registryRef.current.get(screenId);\r\n            if (existing) {\r\n              registryRef.current.set(screenId, {\r\n                ...existing,\r\n                storeKeys: existing.storeKeys.filter((n) => n !== storeName),\r\n              });\r\n            }\r\n          }\r\n          bump();\r\n        };\r\n      },\r\n    };\r\n  }, [registryVersion]);\r\n\r\n  return (\r\n    <ScreenSystemContext.Provider value={value}>{children}</ScreenSystemContext.Provider>\r\n  );\r\n}\r\n\r\nScreenSystem.displayName = \"ScreenSystem\";\r\n",
+                    "type": "registry:ui",
+                    "target": "components/fancy/screen-system/ScreenSystem.tsx"
+                }
+            ]
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
             "name": "separator",
             "type": "registry:ui",
             "title": "Separator",
@@ -2527,6 +2897,33 @@
                     "content": "export { Shape } from \"./Shape\";\r\nexport type { ShapeProps } from \"./Shape\";\r\n",
                     "type": "registry:ui",
                     "target": "components/fancy/shape/index.ts"
+                }
+            ]
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "shape-element",
+            "type": "registry:ui",
+            "title": "ShapeElement",
+            "description": "SVG shape primitives \u2014 rect / ellipse / line / arrow / triangle.",
+            "package": "fancy-slides",
+            "dependencies": [],
+            "registryDependencies": [
+                "types",
+                "theme"
+            ],
+            "files": [
+                {
+                    "path": "components/fancy/shape-element/ShapeElement.tsx",
+                    "content": "import type { ShapeElement, Theme } from \"../../../types\";\r\nimport { resolveTheme } from \"../../../theme/theme-utils\";\r\n\r\nexport interface ShapeElementRendererProps {\r\n    element: ShapeElement;\r\n    theme?: Theme;\r\n    slideWidthPx: number;\r\n}\r\n\r\n/**\r\n * SVG-rendered shape primitive. Sized to fill its element box; the box\r\n * decides world position via the parent Slide's positioning wrapper.\r\n */\r\nexport function ShapeElementRenderer({ element, theme, slideWidthPx }: ShapeElementRendererProps) {\r\n    const t = resolveTheme(theme);\r\n    const designWidth = t.slideWidth ?? 1920;\r\n    const scale = slideWidthPx / designWidth;\r\n\r\n    const fill = element.fill ?? \"rgba(139, 92, 246, 0.15)\";\r\n    const stroke = element.stroke ?? t.colors?.accent ?? \"#8b5cf6\";\r\n    const strokeWidth = (element.strokeWidth ?? 2) * scale;\r\n    const dasharray = element.dashed ? `${6 * scale} ${4 * scale}` : undefined;\r\n\r\n    // SVG uses a 0..100 viewBox so radius/strokeWidth are in box-relative units\r\n    // and resolution-independent at render time.\r\n    return (\r\n        <svg\r\n            viewBox=\"0 0 100 100\"\r\n            preserveAspectRatio=\"none\"\r\n            style={{ width: \"100%\", height: \"100%\", display: \"block\", overflow: \"visible\" }}\r\n        >\r\n            {renderShape(element, { fill, stroke, strokeWidth, dasharray })}\r\n        </svg>\r\n    );\r\n}\r\n\r\ninterface ShapeStyle {\r\n    fill: string;\r\n    stroke: string;\r\n    strokeWidth: number;\r\n    dasharray?: string;\r\n}\r\n\r\nfunction renderShape(el: ShapeElement, s: ShapeStyle) {\r\n    // vectorEffect=\"non-scaling-stroke\" keeps the visible stroke at the\r\n    // pixel width we asked for, regardless of how the parent SVG's\r\n    // `preserveAspectRatio=\"none\"` stretches the viewBox. Without this,\r\n    // narrow arrow / line boxes shrink the stroke into invisibility because\r\n    // the y-axis is squashed.\r\n    const common = {\r\n        fill: s.fill,\r\n        stroke: s.stroke,\r\n        strokeWidth: s.strokeWidth,\r\n        strokeDasharray: s.dasharray,\r\n        vectorEffect: \"non-scaling-stroke\" as const,\r\n    };\r\n    switch (el.shape) {\r\n        case \"rect\":\r\n            return <rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" {...common} />;\r\n        case \"rounded-rect\": {\r\n            const r = el.radius ?? 8;\r\n            return <rect x=\"0\" y=\"0\" width=\"100\" height=\"100\" rx={r} ry={r} {...common} />;\r\n        }\r\n        case \"ellipse\":\r\n            return <ellipse cx=\"50\" cy=\"50\" rx=\"50\" ry=\"50\" {...common} />;\r\n        case \"triangle\":\r\n            return <polygon points=\"50,0 100,100 0,100\" {...common} />;\r\n        case \"line\":\r\n            return <line x1=\"0\" y1=\"50\" x2=\"100\" y2=\"50\" {...common} fill=\"none\" />;\r\n        case \"arrow\":\r\n            // Render the arrow as a polyline shaft + an inline triangular\r\n            // head built from the same SVG geometry. Avoids SVG markers,\r\n            // which scale with stroke-width and turn into specks at tile\r\n            // sizes.\r\n            return (\r\n                <g>\r\n                    <line x1=\"0\" y1=\"50\" x2=\"85\" y2=\"50\" {...common} fill=\"none\" />\r\n                    <polygon points=\"100,50 80,30 80,70\" fill={s.stroke} stroke=\"none\" />\r\n                </g>\r\n            );\r\n        default:\r\n            return null;\r\n    }\r\n}\r\n",
+                    "type": "registry:ui",
+                    "target": "components/fancy/shape-element/ShapeElement.tsx"
+                },
+                {
+                    "path": "components/fancy/shape-element/index.ts",
+                    "content": "export { ShapeElementRenderer } from \"./ShapeElement\";\r\nexport type { ShapeElementRendererProps } from \"./ShapeElement\";\r\n",
+                    "type": "registry:ui",
+                    "target": "components/fancy/shape-element/index.ts"
                 }
             ]
         },
@@ -2776,6 +3173,17 @@
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "stage",
+            "type": "registry:ui",
+            "title": "Stage",
+            "description": "Babylon scene root (camera + lighting + JSON scene graph).",
+            "package": "fancy-3d-babylon",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
             "name": "sticky-note",
             "type": "registry:ui",
             "title": "StickyNote",
@@ -2799,34 +3207,6 @@
                 {
                     "path": "components/fancy/sticky-note/index.ts",
                     "content": "export { StickyNote } from \"./StickyNote\";\nexport type { StickyNoteProps, StickyNoteColor } from \"./StickyNote.types\";\n",
-                    "type": "registry:ui",
-                    "target": "components/fancy/sticky-note/index.ts"
-                }
-            ]
-        },
-        {
-            "$schema": "https://ui.particle.academy/schema/registry-item.json",
-            "name": "sticky-note",
-            "type": "registry:ui",
-            "title": "StickyNote",
-            "description": "Sticky note item type.",
-            "package": "fancy-whiteboard",
-            "dependencies": [
-                "@particle-academy/react-fancy"
-            ],
-            "registryDependencies": [
-                "types"
-            ],
-            "files": [
-                {
-                    "path": "components/fancy/sticky-note/StickyNote.tsx",
-                    "content": "import { type CSSProperties, type ReactNode, useCallback, useEffect, useState } from \"react\";\nimport { StickyNote as FancyStickyNote } from \"@particle-academy/react-fancy\";\nimport type { StickyNoteItem } from \"../../types\";\n\nexport type StickyNoteProps = {\n  item: StickyNoteItem;\n  onChange?: (next: StickyNoteItem) => void;\n  onSelect?: (id: string) => void;\n  selected?: boolean;\n  readOnly?: boolean;\n  /** Smallest size resize will allow (default 80\u00d760). */\n  minWidth?: number;\n  minHeight?: number;\n  className?: string;\n  style?: CSSProperties;\n  /** When provided, replaces the default editable note body. */\n  children?: ReactNode;\n};\n\n/**\n * StickyNote \u2014 draggable, resizable board note.\n *\n * The note's paper look and inline text editing come from react-fancy's shared\n * `<StickyNote>` primitive; this wrapper owns the board concerns: absolute\n * positioning, drag-to-move, corner resize, and selection.\n *\n * Interactions:\n *   \u2022 Drag anywhere on the note to move it.\n *   \u2022 Click (without dragging) \u2014 or double-click \u2014 to edit; click outside to commit.\n *   \u2022 Drag the bottom-right corner handle to resize.\n *\n * Controlled via `item` + `onChange`.\n */\nexport function StickyNote({\n  item,\n  onChange,\n  onSelect,\n  selected,\n  readOnly,\n  minWidth = 80,\n  minHeight = 60,\n  className,\n  style,\n  children,\n}: StickyNoteProps) {\n  const [editing, setEditing] = useState(false);\n  const [dragging, setDragging] = useState(false);\n  const [resizing, setResizing] = useState(false);\n\n  // Deselected by parent \u2192 leave edit mode.\n  useEffect(() => {\n    if (!selected && editing) setEditing(false);\n  }, [selected, editing]);\n\n  const onPointerDown = useCallback(\n    (e: React.PointerEvent) => {\n      if (readOnly || !onChange || editing) return;\n      if (e.button !== 0 || e.altKey) return;\n      onSelect?.(item.id);\n      const start = { x: e.clientX, y: e.clientY };\n      const origin = { x: item.x, y: item.y };\n      const target = e.currentTarget;\n      target.setPointerCapture(e.pointerId);\n      let moved = false;\n      const move = (ev: PointerEvent) => {\n        if (!moved && Math.hypot(ev.clientX - start.x, ev.clientY - start.y) < 4) return;\n        if (!moved) setDragging(true);\n        moved = true;\n        onChange({ ...item, x: origin.x + ev.clientX - start.x, y: origin.y + ev.clientY - start.y });\n      };\n      const up = () => {\n        window.removeEventListener(\"pointermove\", move);\n        window.removeEventListener(\"pointerup\", up);\n        setDragging(false);\n        // Click without drag \u2192 enter edit mode (more discoverable than double-click).\n        if (!moved && !readOnly) setEditing(true);\n      };\n      window.addEventListener(\"pointermove\", move);\n      window.addEventListener(\"pointerup\", up);\n    },\n    [item, onChange, onSelect, readOnly, editing],\n  );\n\n  const onResizePointerDown = useCallback(\n    (e: React.PointerEvent) => {\n      if (readOnly || !onChange) return;\n      e.stopPropagation();\n      e.preventDefault();\n      const start = { x: e.clientX, y: e.clientY };\n      const origin = { w: item.width, h: item.height };\n      const target = e.currentTarget;\n      target.setPointerCapture(e.pointerId);\n      setResizing(true);\n      const move = (ev: PointerEvent) => {\n        const w = Math.max(minWidth, origin.w + ev.clientX - start.x);\n        const h = Math.max(minHeight, origin.h + ev.clientY - start.y);\n        onChange({ ...item, width: w, height: h });\n      };\n      const up = () => {\n        window.removeEventListener(\"pointermove\", move);\n        window.removeEventListener(\"pointerup\", up);\n        setResizing(false);\n      };\n      window.addEventListener(\"pointermove\", move);\n      window.addEventListener(\"pointerup\", up);\n    },\n    [item, onChange, readOnly, minWidth, minHeight],\n  );\n\n  return (\n    <div\n      className={[\n        \"fw-item fw-sticky\",\n        dragging ? \"fw-item--dragging\" : \"\",\n        resizing ? \"fw-item--resizing\" : \"\",\n        selected ? \"fw-sticky--selected\" : \"\",\n        editing ? \"fw-sticky--editing\" : \"\",\n        className ?? \"\",\n      ]\n        .filter(Boolean)\n        .join(\" \")}\n      style={{ left: item.x, top: item.y, width: item.width, height: item.height, zIndex: item.z, ...style }}\n      onPointerDown={onPointerDown}\n      onDoubleClick={() => {\n        if (!readOnly) setEditing(true);\n      }}\n    >\n      <FancyStickyNote\n        className=\"h-full w-full\"\n        color={item.color ?? \"yellow\"}\n        value={item.text}\n        editable={!readOnly && editing}\n        autoFocus\n        onChange={(text) => onChange?.({ ...item, text })}\n      >\n        {children}\n      </FancyStickyNote>\n      {!readOnly && onChange && (\n        <div className=\"fw-sticky__resize\" onPointerDown={onResizePointerDown} aria-label=\"Resize note\" />\n      )}\n    </div>\n  );\n}\n",
-                    "type": "registry:ui",
-                    "target": "components/fancy/sticky-note/StickyNote.tsx"
-                },
-                {
-                    "path": "components/fancy/sticky-note/index.ts",
-                    "content": "export { StickyNote } from \"./StickyNote\";\r\nexport type { StickyNoteProps } from \"./StickyNote\";\r\n",
                     "type": "registry:ui",
                     "target": "components/fancy/sticky-note/index.ts"
                 }
@@ -3009,6 +3389,42 @@
                     "content": "export { Text } from \"./Text\";\r\nexport type { TextProps } from \"./Text.types\";\r\n",
                     "type": "registry:ui",
                     "target": "components/fancy/text/index.ts"
+                }
+            ]
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "text-element",
+            "type": "registry:ui",
+            "title": "TextElement",
+            "description": "Slide text element renderer.",
+            "package": "fancy-slides",
+            "dependencies": [
+                "@particle-academy/react-fancy"
+            ],
+            "registryDependencies": [
+                "types",
+                "theme",
+                "slide"
+            ],
+            "files": [
+                {
+                    "path": "components/fancy/text-element/TextElement.tsx",
+                    "content": "import { useId, type CSSProperties } from \"react\";\r\nimport { ContentRenderer, Editor } from \"@particle-academy/react-fancy\";\r\nimport type { TextElement, Theme } from \"../../../types\";\r\nimport { resolveTheme } from \"../../../theme/theme-utils\";\r\nimport { splitParagraphs, type ParaReveal } from \"../../../utils/builds\";\r\nimport { buildEnterStyle } from \"../../Slide/builds-style\";\r\nimport { PRESENTATION_EDITOR_ACTIONS, normalizeSlideMarkdown } from \"./editor-preset\";\r\n\r\nexport interface TextElementRendererProps {\r\n    element: TextElement;\r\n    theme?: Theme;\r\n    /** Rendered slide width in px (for font-size scaling). */\r\n    slideWidthPx: number;\r\n    /**\r\n     * Edit mode \u2014 when true, the element is potentially editable.\r\n     * The textarea actually becomes pointer-interactive only when both\r\n     * `editing` and `selected` are true, so the first click on an\r\n     * unselected text element selects it (handled by the parent Slide)\r\n     * rather than landing on the textarea.\r\n     */\r\n    editing?: boolean;\r\n    /** Element is selected \u2014 gates whether the textarea grabs pointer events. */\r\n    selected?: boolean;\r\n    /** Called when the user edits the content (only fires when the textarea is focusable). */\r\n    onContentChange?: (content: string) => void;\r\n    /**\r\n     * By-paragraph reveal state, set by `<Slide>` in viewer mode when this text\r\n     * element has a `byParagraph` animation. When present, the renderer splits\r\n     * `content` on `\"\\n\"` and shows only the first `revealed` paragraphs,\r\n     * animating the one at `firingParaIndex`. Ignored in editing mode (the full\r\n     * text always renders so authors can position/edit it).\r\n     */\r\n    paraReveal?: ParaReveal;\r\n}\r\n\r\n/**\r\n * Renderer for `text` elements. Three formats:\r\n *\r\n *   - `\"markdown\"` (default) \u2014 parsed via react-fancy's ContentRenderer.\r\n *     Bullets, bold/italic, code spans, links, headings.\r\n *   - `\"html\"` \u2014 parsed sanitized HTML via ContentRenderer's html path.\r\n *   - `\"plain\"` \u2014 raw text rendered into a single block; preserves newlines\r\n *     via `white-space: pre-wrap`.\r\n *\r\n * In editing mode + when the element is selected, the renderer swaps to a\r\n * textarea showing the raw source. Edits flow back via `onContentChange`.\r\n */\r\nexport function TextElementRenderer({\r\n    element,\r\n    theme,\r\n    slideWidthPx,\r\n    editing = false,\r\n    selected = false,\r\n    onContentChange,\r\n    paraReveal,\r\n}: TextElementRendererProps) {\r\n    const t = resolveTheme(theme);\r\n    const style = element.style ?? {};\r\n    const designWidth = t.slideWidth ?? 1920;\r\n    const scale = slideWidthPx / designWidth;\r\n    const format = element.format ?? \"markdown\";\r\n    const scopeId = useId();\r\n\r\n    const css: CSSProperties = {\r\n        fontFamily: style.fontFamily ?? t.fonts?.body,\r\n        fontSize: `${(style.fontSize ?? 28) * scale}px`,\r\n        fontWeight: weight(style.weight) ?? 400,\r\n        fontStyle: style.italic ? \"italic\" : \"normal\",\r\n        textDecoration: style.underline ? \"underline\" : \"none\",\r\n        color: style.color ?? t.colors?.text,\r\n        textAlign: style.align ?? \"left\",\r\n        lineHeight: style.lineHeight ?? 1.4,\r\n        display: \"flex\",\r\n        flexDirection: \"column\",\r\n        justifyContent:\r\n            style.verticalAlign === \"middle\" ? \"center\" : style.verticalAlign === \"bottom\" ? \"flex-end\" : \"flex-start\",\r\n        width: \"100%\",\r\n        height: \"100%\",\r\n        padding: 0,\r\n        margin: 0,\r\n        outline: \"none\",\r\n        background: \"transparent\",\r\n        whiteSpace: format === \"plain\" ? \"pre-wrap\" : \"normal\",\r\n        wordBreak: \"break-word\",\r\n        overflow: \"hidden\",\r\n    };\r\n\r\n    // Edit mode is gated by selection: an unselected element in the editor\r\n    // still shows the parsed markdown so the user sees the real layout.\r\n    // Clicking selects \u2192 the react-fancy Editor appears, a WYSIWYG rich-text\r\n    // surface tuned for presentations (bold / italic / heading / bullets).\r\n    // Edits emit markdown, normalized to the line-based paragraph model the\r\n    // slide content + dark-slide writer commit to. The Editor is keyed by the\r\n    // element id because it loads its value once on mount (it's uncontrolled\r\n    // after that), so selecting a different element remounts it with the right\r\n    // content. Scoped CSS strips the Editor's card chrome and matches the\r\n    // element's scaled typography so editing looks like the live slide.\r\n    if (editing && selected) {\r\n        const fontPx = Math.round((style.fontSize ?? 28) * scale);\r\n        const lh = style.lineHeight ?? 1.4;\r\n        const editScope = scopeId;\r\n        return (\r\n            <div\r\n                data-fs-edit-scope={editScope}\r\n                style={{\r\n                    width: \"100%\",\r\n                    height: \"100%\",\r\n                    pointerEvents: \"auto\",\r\n                    cursor: \"text\",\r\n                    textAlign: style.align ?? \"left\",\r\n                    color: style.color ?? t.colors?.text,\r\n                    fontFamily: style.fontFamily ?? t.fonts?.body,\r\n                }}\r\n                // Keep editing interactions (toolbar clicks, text selection) from\r\n                // bubbling to the Slide's element drag / deselect handlers.\r\n                onPointerDown={(e) => e.stopPropagation()}\r\n            >\r\n                <style>{`\r\n                    [data-fs-edit-scope=\"${editScope}\"] [data-react-fancy-editor] {\r\n                        border: none; background: transparent; border-radius: 0;\r\n                        height: 100%; display: flex; flex-direction: column; overflow: hidden;\r\n                    }\r\n                    [data-fs-edit-scope=\"${editScope}\"] [data-react-fancy-editor-toolbar] {\r\n                        background: rgba(244,244,245,0.85); border-radius: 6px 6px 0 0;\r\n                        padding: 2px 4px;\r\n                    }\r\n                    [data-fs-edit-scope=\"${editScope}\"] [data-react-fancy-editor-content] {\r\n                        flex: 1; min-height: 0; padding: 4px 2px; overflow: auto;\r\n                        font-size: ${fontPx}px; line-height: ${lh};\r\n                    }\r\n                    [data-fs-edit-scope=\"${editScope}\"] [data-react-fancy-editor-content] :is(p, ul, ol, li) { font-size: inherit; margin: 0; }\r\n                    [data-fs-edit-scope=\"${editScope}\"] [data-react-fancy-editor-content] :where(p, li) + :where(p, li, ul, ol) { margin-top: 0.4em; }\r\n                    [data-fs-edit-scope=\"${editScope}\"] [data-react-fancy-editor-content] h1 { font-size: 1.6em; font-weight: 700; margin: 0; }\r\n                    [data-fs-edit-scope=\"${editScope}\"] [data-react-fancy-editor-content] h2 { font-size: 1.35em; font-weight: 700; margin: 0; }\r\n                    [data-fs-edit-scope=\"${editScope}\"] [data-react-fancy-editor-content] h3 { font-size: 1.15em; font-weight: 600; margin: 0; }\r\n                `}</style>\r\n                <Editor\r\n                    key={element.id}\r\n                    value={element.content}\r\n                    onChange={(md) => onContentChange?.(normalizeSlideMarkdown(md))}\r\n                    outputFormat=\"markdown\"\r\n                    lineSpacing={lh}\r\n                >\r\n                    <Editor.Toolbar actions={PRESENTATION_EDITOR_ACTIONS} />\r\n                    <Editor.Content />\r\n                </Editor>\r\n            </div>\r\n        );\r\n    }\r\n\r\n    // Scope the ContentRenderer's prose styles so element-level typography\r\n    // (fontSize, weight, align) wins over the global prose CSS. We render a\r\n    // tiny inline style block that targets only this instance via the\r\n    // generated useId scope.\r\n    //\r\n    // CRITICAL: ContentRenderer wraps its content in `text-sm` plus per-tag\r\n    // Tailwind utilities (`[&_h1]:text-2xl`, etc). Those have higher\r\n    // specificity than the inline `fontSize` we set on the wrapper, so\r\n    // without forced overrides the slide text ignores `style.fontSize` AND\r\n    // ignores the slide's resolution scaling \u2014 that's why thumbnails were\r\n    // rendering text at ~14px instead of (fontSize \u00d7 scale)px.\r\n    //\r\n    // We double the attribute-selector to outrank Tailwind's\r\n    // `[&_h2]:text-xl`-style utilities, and re-express heading sizes in\r\n    // `em` so they remain proportional as the slide scales.\r\n    const proseScope = `[data-fs-text-scope=\"${scopeId}\"]`;\r\n    const doubleScope = `${proseScope}${proseScope}`;\r\n    const proseStyle = (\r\n        <style>{`\r\n            ${proseScope} > div { width: 100%; height: 100%; font-size: inherit; }\r\n            ${doubleScope} :is(p, ul, ol, li, blockquote, h1, h2, h3, h4, h5, h6, pre, code, strong, em, a) {\r\n                font-size: inherit;\r\n            }\r\n            ${doubleScope} h1 { font-size: 1.6em; font-weight: 700; }\r\n            ${doubleScope} h2 { font-size: 1.35em; font-weight: 700; }\r\n            ${doubleScope} h3 { font-size: 1.15em; font-weight: 600; }\r\n            ${proseScope} :where(p, ul, ol, h1, h2, h3, h4, h5, h6, pre, blockquote) {\r\n                margin: 0;\r\n                padding: 0;\r\n            }\r\n            ${proseScope} :where(p, li) + :where(p, li, ul, ol) { margin-top: 0.4em; }\r\n            ${proseScope} :where(ul, ol) { padding-left: 1.4em; }\r\n            ${proseScope} :where(strong) { font-weight: ${Math.max(700, weight(style.weight) ?? 400 + 200)}; }\r\n            ${proseScope} :where(a) { color: inherit; text-decoration: underline; }\r\n            ${proseScope} :where(code) { font-family: ${t.fonts?.mono ?? \"monospace\"}; }\r\n        `}</style>\r\n    );\r\n\r\n    // Render one chunk of content in the element's format. Reused for the whole\r\n    // element and for each paragraph in a by-paragraph build.\r\n    const renderChunk = (content: string) =>\r\n        format === \"plain\" ? content : <ContentRenderer value={content} format={format === \"html\" ? \"html\" : \"markdown\"} />;\r\n\r\n    // \u2500\u2500\u2500 By-paragraph build reveal \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\r\n    // When `<Slide>` hands us a paraReveal, split the content and show only the\r\n    // first `revealed` paragraphs, animating the one that just fired. We always\r\n    // render the prose scope wrapper so markdown/html paragraphs keep their\r\n    // typography. Each line of markdown renders through the same path, so a\r\n    // bullet line (\"- \u2026\") renders as its own list item.\r\n    if (paraReveal) {\r\n        const paras = splitParagraphs(element.content);\r\n        return (\r\n            <div data-fs-text-scope={scopeId} style={css}>\r\n                {proseStyle}\r\n                {paras.map((para, i) => {\r\n                    if (i >= paraReveal.revealed) return null; // not yet built\r\n                    const firing = i === paraReveal.firingParaIndex && !!element.animation;\r\n                    const enter = firing\r\n                        ? buildEnterStyle(element.animation!, element.animation!.delay ?? 0)\r\n                        : null;\r\n                    return (\r\n                        <div\r\n                            key={i}\r\n                            className={firing ? \"fs-build-enter\" : undefined}\r\n                            style={{ whiteSpace: format === \"plain\" ? \"pre-wrap\" : \"normal\", ...enter }}\r\n                            data-fancy-slides-paragraph={i}\r\n                        >\r\n                            {renderChunk(para)}\r\n                        </div>\r\n                    );\r\n                })}\r\n            </div>\r\n        );\r\n    }\r\n\r\n    if (format === \"plain\") {\r\n        return <div style={css}>{element.content}</div>;\r\n    }\r\n\r\n    return (\r\n        <div data-fs-text-scope={scopeId} style={css}>\r\n            {proseStyle}\r\n            <ContentRenderer value={element.content} format={format === \"html\" ? \"html\" : \"markdown\"} />\r\n        </div>\r\n    );\r\n}\r\n\r\nfunction weight(w: \"normal\" | \"medium\" | \"semibold\" | \"bold\" | number | undefined): number | undefined {\r\n    if (typeof w === \"number\") return w;\r\n    if (w === \"normal\") return 400;\r\n    if (w === \"medium\") return 500;\r\n    if (w === \"semibold\") return 600;\r\n    if (w === \"bold\") return 700;\r\n    return undefined;\r\n}\r\n",
+                    "type": "registry:ui",
+                    "target": "components/fancy/text-element/TextElement.tsx"
+                },
+                {
+                    "path": "components/fancy/text-element/editor-preset.ts",
+                    "content": "import type { EditorAction } from \"@particle-academy/react-fancy\";\n\n/**\n * Presentation-tuned toolbar preset for the react-fancy `Editor` used to edit\n * slide text inline. Only commands that round-trip cleanly through the editor's\n * `htmlToMarkdown` output are included \u2014 bold (`**`), italic (`*`), heading\n * (`## `), and bullet list (`- `). Box-level typography (alignment, color, font\n * size, line height) is NOT here: those are per-element `TextStyle` properties\n * edited in the ElementInspector, and `text-align`/color spans don't survive the\n * markdown the slide content commits to.\n */\nexport const PRESENTATION_EDITOR_ACTIONS: EditorAction[] = [\n    { icon: \"B\", label: \"Bold\", command: \"bold\" },\n    { icon: \"I\", label: \"Italic\", command: \"italic\" },\n    { icon: \"H\", label: \"Heading\", command: \"formatBlock\", commandArg: \"<h2>\" },\n    { icon: \"P\", label: \"Paragraph\", command: \"formatBlock\", commandArg: \"<p>\" },\n    { icon: \"\u2022\", label: \"Bullet list\", command: \"insertUnorderedList\" },\n];\n\n/**\n * Normalize the `Editor`'s markdown output to the *line-based* paragraph model\n * the slide content commits to. The editor emits a blank line (`\\n\\n`) between\n * `<p>` blocks, but `splitParagraphs` (and the dark-slide pptx writer) treat a\n * single `\\n` as one paragraph / build unit, and a blank interior line as its\n * own (phantom) build. Collapsing runs of newlines to a single `\\n` keeps\n * \"by paragraph\" reveals and per-paragraph pptx builds correct \u2014 bullets are\n * already one-per-`\\n`, so they're unaffected. The round-trip invariant\n * (`content \u2192 Editor \u2192 normalize \u2192 content` preserves the `\\n` paragraph count)\n * is covered by a unit test.\n */\nexport function normalizeSlideMarkdown(md: string): string {\n    return md\n        .replace(/\\r\\n/g, \"\\n\")\n        .replace(/\\n{2,}/g, \"\\n\")\n        .replace(/[ \\t]+$/gm, \"\")\n        .trim();\n}\n",
+                    "type": "registry:ui",
+                    "target": "components/fancy/text-element/editor-preset.ts"
+                },
+                {
+                    "path": "components/fancy/text-element/index.ts",
+                    "content": "export { TextElementRenderer } from \"./TextElement\";\r\nexport type { TextElementRendererProps } from \"./TextElement\";\r\nexport { PRESENTATION_EDITOR_ACTIONS, normalizeSlideMarkdown } from \"./editor-preset\";\r\n",
+                    "type": "registry:ui",
+                    "target": "components/fancy/text-element/index.ts"
                 }
             ]
         },
@@ -3239,6 +3655,68 @@
                     "content": "export { TreeNav } from \"./TreeNav\";\r\nexport { useTreeNav } from \"./TreeNav.context\";\r\nexport type {\r\n  TreeNavProps,\r\n  TreeNodeData,\r\n  TreeNodeProps,\r\n  TreeNavContextValue,\r\n  DropPosition,\r\n} from \"./TreeNav.types\";\r\n",
                     "type": "registry:ui",
                     "target": "components/fancy/tree-nav/index.ts"
+                }
+            ]
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "use-fancy-form",
+            "type": "registry:ui",
+            "title": "useFancyForm",
+            "description": "Form hook.",
+            "package": "fancy-inertia",
+            "dependencies": [
+                "@inertiajs/react"
+            ],
+            "registryDependencies": [],
+            "files": [
+                {
+                    "path": "components/fancy/use-fancy-form/useFancyForm.ts",
+                    "content": "import { useCallback, useMemo } from \"react\";\r\nimport { useForm as inertiaUseForm } from \"@inertiajs/react\";\r\n\r\n/**\r\n * Per-field bridge returned by `useFancyForm().field(name)`. Shaped to\r\n * drop directly into react-fancy form components without further\r\n * wiring.\r\n */\r\nexport interface FancyFieldBridge<T = unknown> {\r\n  /** Pass to `<Input value={...} />` \u2014 current field value (string). */\r\n  value: T;\r\n  /** Pass to `<Input onChange={...} />`. Accepts the React event *or* a raw value (Select, Switch). */\r\n  onChange: (e: React.ChangeEvent<HTMLInputElement> | T) => void;\r\n  /** Pass to `<Input error={...} />` \u2014 last server validation error for this field. */\r\n  error?: string;\r\n  /** True while a submit is in flight. */\r\n  loading?: boolean;\r\n  /** Stable name attribute. */\r\n  name: string;\r\n}\r\n\r\n/**\r\n * Bridge type returned by useFancyForm. Wraps Inertia's `useForm()` and\r\n * adds a `field(name)` helper that returns props ready to spread into\r\n * react-fancy's `<Input>`, `<Select>`, `<Switch>`, `<Textarea>`, etc.\r\n */\r\nexport interface FancyFormBridge<TData extends Record<string, unknown>> {\r\n  data: TData;\r\n  setData: <K extends keyof TData>(key: K, value: TData[K]) => void;\r\n  errors: Partial<Record<keyof TData, string>>;\r\n  processing: boolean;\r\n\r\n  /**\r\n   * Returns `{ value, onChange, error, loading, name }` for a field.\r\n   * `onChange` accepts both a React change event (native input/textarea)\r\n   * and a raw value (Select/Switch/MultiSwitch which pass the new value\r\n   * directly).\r\n   */\r\n  field<K extends keyof TData & string>(name: K): FancyFieldBridge<TData[K]>;\r\n\r\n  /** Forwarded from Inertia's useForm. */\r\n  submit: (method: string, url: string, options?: object) => void;\r\n  post: (url: string, options?: object) => void;\r\n  put: (url: string, options?: object) => void;\r\n  patch: (url: string, options?: object) => void;\r\n  delete: (url: string, options?: object) => void;\r\n  reset: (...fields: Array<keyof TData>) => void;\r\n  clearErrors: (...fields: Array<keyof TData>) => void;\r\n}\r\n\r\n/**\r\n * Inertia's `useForm()` shape (loose typing \u2014 we don't import @inertiajs\r\n * statically since it's an optional peer when fancy-inertia is used\r\n * outside of Inertia for code-sharing reasons).\r\n */\r\ntype InertiaForm<T> = {\r\n  data: T;\r\n  setData: (key: keyof T, value: unknown) => void;\r\n  errors: Partial<Record<keyof T, string>>;\r\n  processing: boolean;\r\n  submit: (method: string, url: string, options?: object) => void;\r\n  post: (url: string, options?: object) => void;\r\n  put: (url: string, options?: object) => void;\r\n  patch: (url: string, options?: object) => void;\r\n  delete: (url: string, options?: object) => void;\r\n  reset: (...fields: Array<keyof T>) => void;\r\n  clearErrors: (...fields: Array<keyof T>) => void;\r\n};\r\n\r\n/**\r\n * Wraps Inertia's `useForm()` so each field can be wired into react-fancy\r\n * inputs in one line:\r\n *\r\n *   const form = useFancyForm({ name: \"\", email: \"\" });\r\n *   <Input {...form.field(\"name\")} placeholder=\"Name\" />\r\n *   <Input {...form.field(\"email\")} placeholder=\"Email\" />\r\n *   <Action onClick={() => form.post(\"/users\")}>Save</Action>\r\n *\r\n * Call signature mirrors `useForm()` from @inertiajs/react. Pass either\r\n * the initial values, or the result of `useForm(...)` if you've already\r\n * called it (lets you compose with library-supplied form objects):\r\n *\r\n *   const inertiaForm = useForm({ name: \"\" });\r\n *   const form = useFancyForm(inertiaForm);\r\n */\r\nexport function useFancyForm<TData extends Record<string, unknown>>(\r\n  initialOrForm: TData | InertiaForm<TData>,\r\n): FancyFormBridge<TData> {\r\n  // Lazy-resolve @inertiajs/react. If the consumer has already called\r\n  // useForm() and passed the result in, we re-use it directly. Otherwise\r\n  // we instantiate via the package.\r\n  const form = useMemo<InertiaForm<TData>>(() => {\r\n    if (isInertiaForm<TData>(initialOrForm)) {\r\n      return initialOrForm;\r\n    }\r\n    return useInertiaFormShim(initialOrForm) as InertiaForm<TData>;\r\n    // eslint-disable-next-line react-hooks/exhaustive-deps\r\n  }, [initialOrForm]);\r\n\r\n  const field = useCallback(\r\n    <K extends keyof TData & string>(name: K): FancyFieldBridge<TData[K]> => ({\r\n      name,\r\n      value: form.data[name],\r\n      onChange: (e) => {\r\n        const next =\r\n          e !== null && typeof e === \"object\" && \"target\" in (e as object)\r\n            ? ((e as React.ChangeEvent<HTMLInputElement>).target as HTMLInputElement & {\r\n                checked?: boolean;\r\n                type?: string;\r\n              })\r\n            : null;\r\n        if (next) {\r\n          const value = next.type === \"checkbox\" ? next.checked : next.value;\r\n          form.setData(name, value as unknown as TData[K]);\r\n        } else {\r\n          form.setData(name, e as unknown as TData[K]);\r\n        }\r\n      },\r\n      error: form.errors[name],\r\n      loading: form.processing,\r\n    }),\r\n    [form],\r\n  );\r\n\r\n  return {\r\n    data: form.data,\r\n    setData: form.setData as FancyFormBridge<TData>[\"setData\"],\r\n    errors: form.errors,\r\n    processing: form.processing,\r\n    field,\r\n    submit: form.submit,\r\n    post: form.post,\r\n    put: form.put,\r\n    patch: form.patch,\r\n    delete: form.delete,\r\n    reset: form.reset,\r\n    clearErrors: form.clearErrors,\r\n  };\r\n}\r\n\r\nfunction isInertiaForm<T>(x: unknown): x is InertiaForm<T> {\r\n  return (\r\n    typeof x === \"object\" &&\r\n    x !== null &&\r\n    \"data\" in (x as object) &&\r\n    \"setData\" in (x as object) &&\r\n    \"errors\" in (x as object) &&\r\n    \"processing\" in (x as object)\r\n  );\r\n}\r\n\r\nfunction useInertiaFormShim<TData extends Record<string, unknown>>(initial: TData): InertiaForm<TData> {\r\n  return inertiaUseForm(initial as any) as unknown as InertiaForm<TData>;\r\n}\r\n",
+                    "type": "registry:ui",
+                    "target": "components/fancy/use-fancy-form/useFancyForm.ts"
+                }
+            ]
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "use-flow-run",
+            "type": "registry:ui",
+            "title": "useFlowRun",
+            "description": "Executor hook.",
+            "package": "fancy-flow",
+            "dependencies": [],
+            "registryDependencies": [
+                "types"
+            ],
+            "files": [
+                {
+                    "path": "components/fancy/use-flow-run/use-flow-run.ts",
+                    "content": "import { useCallback, useRef, useState } from \"react\";\r\nimport { runFlow, type RunOptions, type RunResult } from \"./run-flow\";\r\nimport type {\r\n  ExecutorRegistry,\r\n  FlowGraph,\r\n  NodeRunStatus,\r\n  RunEvent,\r\n} from \"../types\";\r\n\r\nexport type FlowRunFeedEntry = {\r\n  id: string;\r\n  at: number;\r\n  level: \"info\" | \"warn\" | \"error\" | \"status\";\r\n  text: string;\r\n  nodeId?: string;\r\n  detail?: unknown;\r\n};\r\n\r\nexport type UseFlowRunReturn = {\r\n  /** Status keyed by nodeId \u2014 drive the UI overlay from this. */\r\n  statuses: Record<string, NodeRunStatus>;\r\n  /** Per-node status text (e.g. error message). */\r\n  statusText: Record<string, string | undefined>;\r\n  /** Live event log (capped to last N). */\r\n  feed: FlowRunFeedEntry[];\r\n  /** Whether a run is currently in progress. */\r\n  running: boolean;\r\n  /** Last run result, or null. */\r\n  lastResult: RunResult | null;\r\n  /** Kick off a run with the provided graph + executors. */\r\n  run: (graph: FlowGraph, executors: ExecutorRegistry, options?: RunOptions) => Promise<RunResult>;\r\n  /** Cancel the current run (if any). */\r\n  cancel: () => void;\r\n  /** Reset all runtime state (statuses, feed, lastResult). */\r\n  reset: () => void;\r\n};\r\n\r\nexport type UseFlowRunOptions = {\r\n  /** Cap the in-memory feed to this many entries. Default 200. */\r\n  maxFeed?: number;\r\n};\r\n\r\n/**\r\n * useFlowRun \u2014 drives `runFlow` + maintains observability state. Pair with\r\n * `applyStatusesToNodes` (below) before passing nodes to `<FlowCanvas>` so\r\n * the per-node status badge renders.\r\n */\r\nexport function useFlowRun({ maxFeed = 200 }: UseFlowRunOptions = {}): UseFlowRunReturn {\r\n  const [statuses, setStatuses] = useState<Record<string, NodeRunStatus>>({});\r\n  const [statusText, setStatusText] = useState<Record<string, string | undefined>>({});\r\n  const [feed, setFeed] = useState<FlowRunFeedEntry[]>([]);\r\n  const [running, setRunning] = useState(false);\r\n  const [lastResult, setLastResult] = useState<RunResult | null>(null);\r\n  const abortRef = useRef<AbortController | null>(null);\r\n\r\n  const handleEvent = useCallback(\r\n    (e: RunEvent) => {\r\n      switch (e.type) {\r\n        case \"node-status\":\r\n          setStatuses((s) => ({ ...s, [e.nodeId]: e.status }));\r\n          setStatusText((t) => ({ ...t, [e.nodeId]: e.text }));\r\n          appendFeed({ level: \"status\", text: `${e.nodeId} \u2192 ${e.status}${e.text ? ` (${e.text})` : \"\"}`, nodeId: e.nodeId });\r\n          break;\r\n        case \"node-output\":\r\n          appendFeed({ level: \"info\", text: `${e.nodeId}.${e.portId} = ${preview(e.value)}`, nodeId: e.nodeId, detail: e.value });\r\n          break;\r\n        case \"log\":\r\n          appendFeed({ level: e.level, text: e.message, nodeId: e.nodeId, detail: e.detail });\r\n          break;\r\n        case \"run-start\":\r\n          appendFeed({ level: \"info\", text: \"\u25b6 run started\" });\r\n          break;\r\n        case \"run-end\":\r\n          appendFeed({ level: e.ok ? \"info\" : \"error\", text: e.ok ? \"\u2713 run complete\" : \"\u2717 run failed\" });\r\n          break;\r\n        case \"run-error\":\r\n          appendFeed({ level: \"error\", text: e.error });\r\n          break;\r\n      }\r\n      function appendFeed(partial: Omit<FlowRunFeedEntry, \"id\" | \"at\">) {\r\n        setFeed((f) => {\r\n          const entry: FlowRunFeedEntry = { id: `${Date.now()}_${f.length}`, at: Date.now(), ...partial };\r\n          const next = [...f, entry];\r\n          return next.length > maxFeed ? next.slice(next.length - maxFeed) : next;\r\n        });\r\n      }\r\n    },\r\n    [maxFeed],\r\n  );\r\n\r\n  const run = useCallback(\r\n    async (graph: FlowGraph, executors: ExecutorRegistry, options: RunOptions = {}) => {\r\n      if (running) {\r\n        return { ok: false, outputs: {}, error: \"another run is already in progress\" } satisfies RunResult;\r\n      }\r\n      const controller = new AbortController();\r\n      abortRef.current = controller;\r\n      // Reset previous statuses for the nodes we're about to run.\r\n      const idleStatuses: Record<string, NodeRunStatus> = {};\r\n      for (const n of graph.nodes) idleStatuses[n.id] = \"idle\";\r\n      setStatuses(idleStatuses);\r\n      setStatusText({});\r\n      setRunning(true);\r\n      try {\r\n        const result = await runFlow(graph, executors, handleEvent, { ...options, signal: controller.signal });\r\n        setLastResult(result);\r\n        return result;\r\n      } finally {\r\n        setRunning(false);\r\n        abortRef.current = null;\r\n      }\r\n    },\r\n    [handleEvent, running],\r\n  );\r\n\r\n  const cancel = useCallback(() => abortRef.current?.abort(), []);\r\n\r\n  const reset = useCallback(() => {\r\n    setStatuses({});\r\n    setStatusText({});\r\n    setFeed([]);\r\n    setLastResult(null);\r\n  }, []);\r\n\r\n  return { statuses, statusText, feed, running, lastResult, run, cancel, reset };\r\n}\r\n\r\n/** Merge runtime statuses into nodes for rendering. */\r\nexport function applyStatusesToNodes<TNode extends { id: string; data: any }>(\r\n  nodes: TNode[],\r\n  statuses: Record<string, NodeRunStatus>,\r\n  statusText: Record<string, string | undefined>,\r\n): TNode[] {\r\n  return nodes.map((n) => ({\r\n    ...n,\r\n    data: {\r\n      ...n.data,\r\n      status: statuses[n.id] ?? n.data?.status ?? \"idle\",\r\n      statusText: statusText[n.id] ?? n.data?.statusText,\r\n    },\r\n  }));\r\n}\r\n\r\nfunction preview(v: unknown): string {\r\n  try {\r\n    const s = JSON.stringify(v);\r\n    return s && s.length > 60 ? s.slice(0, 57) + \"\u2026\" : (s ?? String(v));\r\n  } catch {\r\n    return String(v);\r\n  }\r\n}\r\n",
+                    "type": "registry:ui",
+                    "target": "components/fancy/use-flow-run/use-flow-run.ts"
+                }
+            ]
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "use-flow-state",
+            "type": "registry:ui",
+            "title": "useFlowState",
+            "description": "Controlled state hook.",
+            "package": "fancy-flow",
+            "dependencies": [
+                "@xyflow/react"
+            ],
+            "registryDependencies": [
+                "types"
+            ],
+            "files": [
+                {
+                    "path": "components/fancy/use-flow-state/use-flow-state.ts",
+                    "content": "import { useCallback, useState } from \"react\";\r\nimport {\r\n  addEdge,\r\n  applyEdgeChanges,\r\n  applyNodeChanges,\r\n  type Connection,\r\n  type Edge,\r\n  type EdgeChange,\r\n  type NodeChange,\r\n} from \"@xyflow/react\";\r\nimport type { FlowEdge, FlowGraph, FlowNode } from \"../types\";\r\n\r\nexport type UseFlowStateReturn = {\r\n  nodes: FlowNode[];\r\n  edges: FlowEdge[];\r\n  setNodes: React.Dispatch<React.SetStateAction<FlowNode[]>>;\r\n  setEdges: React.Dispatch<React.SetStateAction<FlowEdge[]>>;\r\n  onNodesChange: (changes: NodeChange[]) => void;\r\n  onEdgesChange: (changes: EdgeChange[]) => void;\r\n  onConnect: (connection: Connection) => void;\r\n  /** Snapshot the current graph (suitable for serialization). */\r\n  toGraph: () => FlowGraph;\r\n};\r\n\r\n/**\r\n * useFlowState \u2014 React Flow's standard controlled-state plumbing in one hook.\r\n * Spread into <FlowCanvas>.\r\n */\r\nexport function useFlowState(initial: FlowGraph): UseFlowStateReturn {\r\n  const [nodes, setNodes] = useState<FlowNode[]>(initial.nodes);\r\n  const [edges, setEdges] = useState<FlowEdge[]>(initial.edges);\r\n\r\n  const onNodesChange = useCallback((changes: NodeChange[]) => {\r\n    setNodes((ns) => applyNodeChanges(changes, ns) as FlowNode[]);\r\n  }, []);\r\n  const onEdgesChange = useCallback((changes: EdgeChange[]) => {\r\n    setEdges((es) => applyEdgeChanges(changes, es));\r\n  }, []);\r\n  const onConnect = useCallback((connection: Connection) => {\r\n    setEdges((es) => addEdge(connection, es) as Edge[]);\r\n  }, []);\r\n\r\n  const toGraph = useCallback(() => ({ nodes, edges }), [nodes, edges]);\r\n\r\n  return { nodes, edges, setNodes, setEdges, onNodesChange, onEdgesChange, onConnect, toGraph };\r\n}\r\n",
+                    "type": "registry:ui",
+                    "target": "components/fancy/use-flow-state/use-flow-state.ts"
                 }
             ]
         }

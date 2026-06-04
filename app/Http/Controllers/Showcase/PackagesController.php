@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Showcase;
 
 use App\Http\Controllers\Controller;
 use App\Support\ComponentContext;
+use App\Support\PackageContext;
 use App\Support\PackageRegistry;
 use App\Support\Registry\RegistrySource;
 use Inertia\Inertia;
@@ -23,19 +24,22 @@ class PackagesController extends Controller
             'components_count' => count($p['components'] ?? []),
         ])->all();
 
-        // Companion packages — composer deps the sandbox develops against
-        // but aren't part of the Fancy UI showcase narrative. Rendered as
-        // a footnote on /packages, not as cards in the main grid.
+        // Companion packages — headless deps the sandbox develops against
+        // but that have no UI surface, so they don't belong in the main grid.
+        // Either PHP (composer/packagist) or TS (npm); the URL fields are
+        // null for whichever registry doesn't apply.
         $companions = collect(PackageRegistry::companions())->map(fn (array $p) => [
             'slug' => $p['slug'],
             'name' => $p['name'],
             'tagline' => $p['tagline'],
             'language' => $p['language'],
-            'composer' => $p['composer'],
+            'composer' => $p['composer'] ?? null,
+            'packagist' => $p['packagist'] ?? null,
+            'npm' => $p['npm'] ?? null,
             'repo' => $p['repo'],
-            'packagist' => $p['packagist'],
             'repoUrl' => "https://github.com/{$p['repo']}",
-            'packagistUrl' => "https://packagist.org/packages/{$p['packagist']}",
+            'packagistUrl' => isset($p['packagist']) ? "https://packagist.org/packages/{$p['packagist']}" : null,
+            'npmUrl' => isset($p['npm']) ? "https://www.npmjs.com/package/{$p['npm']}" : null,
             'issuesUrl' => "https://github.com/{$p['repo']}/issues",
         ])->all();
 
@@ -50,7 +54,10 @@ class PackagesController extends Controller
         $pkg = PackageRegistry::find($package);
         abort_if($pkg === null, 404);
 
-        return Inertia::render('Packages/Show', ['package' => $pkg]);
+        return Inertia::render('Packages/Show', [
+            'package' => $pkg,
+            'context' => PackageContext::find($pkg['slug']),
+        ]);
     }
 
     public function component(string $package, string $component): Response

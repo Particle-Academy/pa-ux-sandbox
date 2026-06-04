@@ -94,7 +94,7 @@ const NUMBER_WORDS: Record<number, string> = {
 // react-fancy Badge supports a narrower palette than ButtonColor; map tags.
 type BadgeColor = "zinc" | "red" | "blue" | "green" | "amber" | "violet" | "rose";
 
-function langTag(language: string): { label: string; color: BadgeColor } {
+export function langTag(language: string): { label: string; color: BadgeColor } {
     if (language === "PHP" || language === "PHP/Blade") {
         return { label: "php", color: "violet" };
     }

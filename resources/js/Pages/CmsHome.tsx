@@ -5,7 +5,7 @@ import { EditablePage, type NodeTransform } from "@particle-academy/fancy-cms-ui
 import { TimelineDock } from "@particle-academy/fancy-motion/react";
 import { sampleTimeline, type TimelineDoc } from "@particle-academy/fancy-motion";
 import { Layout } from "./Layout";
-import type { PackageRow, CompanionRow } from "./Home";
+import { langTag, type PackageRow, type CompanionRow } from "./Home";
 import { homeDoc } from "../cms/home-seed";
 import { makeSandboxRegistry } from "../cms/registry";
 
@@ -114,7 +114,19 @@ export default function CmsHome({ packages, companions, total_components }: CmsH
         <EditablePage
           doc={homeDoc}
           registry={registry}
-          data={{ packages, companions, total_components, explore: EXPLORE_DATA }}
+          data={{
+            // Enriched for the Packages repeater bindings (computed display fields).
+            packages: packages.map((p) => ({
+              ...p,
+              href: `/packages/${p.slug}`,
+              verLabel: `${p.components_count} comp${p.components_count === 1 ? "" : "s"}`,
+              langLabel: langTag(p.language).label,
+            })),
+            companions: companions.map((c) => ({ ...c, url: `https://packagist.org/packages/${c.composer}` })),
+            total_components,
+            packagesTitle: `${packages.length} small packages. Lift any one out.`,
+            explore: EXPLORE_DATA,
+          }}
           pinned={false}
           frames={tl.frames}
           transforms={transforms}

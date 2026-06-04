@@ -20,7 +20,6 @@ import { ArrowRight, Github, Layers, Package, Terminal, Zap } from "lucide-react
 import { Button, Card, FauxClient } from "@particle-academy/react-fancy";
 import { defaultRegistry, type ElementRegistry } from "@particle-academy/fancy-cms-ui/react";
 import {
-  Packages,
   HumanPlus,
   ComponentsShowcase,
   type PackageRow,
@@ -57,7 +56,8 @@ export function makeSandboxRegistry(data: SandboxData): ElementRegistry {
     // `jsx` Element — render a registered island by key (props.island).
     jsx: ({ node }) => islands[lit(node.props.island)]?.() ?? null,
     // Whole-section islands — the real Home components, fed the same server data.
-    "section-packages": () => <Packages packages={data.packages} companions={data.companions} />,
+    // (Packages is now a CMS repeater in the seed; HumanPlus stays an island —
+    // it's live, interactive agent demos that can't be static Elements.)
     "section-human-plus": () => <HumanPlus />,
     "section-components": () => <ComponentsShowcase total={data.total} />,
     // section-philosophy + section-quickstart removed — now real CMS Elements in the seed.

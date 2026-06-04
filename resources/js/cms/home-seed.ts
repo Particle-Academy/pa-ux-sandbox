@@ -58,7 +58,28 @@ export const homeDoc: PageDoc = {
     card: { id: "card", type: "hero-card", parent: "grid", order: "b", className: "hero-card", props: {}, style: { base: {} } },
 
     // ── Downstream sections (whole-section islands) ─────────────────────────
-    "sec-packages": islandSection("sec-packages", "section-packages", "b"),
+    // ── Packages (de-hardcoded → CMS Elements: a repeater bound to `packages`
+    //    + a companions repeater bound to `companions`) ───────────────────────
+    "sec-packages": { id: "sec-packages", type: "section", parent: null as string | null, order: "b", className: "section", props: {}, style: { base: {} } },
+    "pk-container": { id: "pk-container", type: "frame", parent: "sec-packages", order: "a", className: "container", props: {}, style: { base: {} } },
+    "pk-eyebrow": { id: "pk-eyebrow", type: "richtext", parent: "pk-container", order: "a", className: "eyebrow-row", props: { html: "<span>The family</span>" }, style: { base: {} } },
+    "pk-title": { id: "pk-title", type: "heading", parent: "pk-container", order: "b", className: "section-title", props: { content: { $bind: "packagesTitle" } }, style: { base: {} } },
+    "pk-sub": { id: "pk-sub", type: "text", parent: "pk-container", order: "c", className: "section-sub", props: { content: "Fancy UI is not a monolith. Each layer ships independently to npm and composes with the rest. Pick the ones you need — most apps reach for two or three." }, style: { base: {} } },
+    "pk-rep": { id: "pk-rep", type: "repeater", parent: "pk-container", order: "d", className: "pkg-grid", props: { items: { $bind: "packages" } }, style: { base: {} } },
+    "pk-card": { id: "pk-card", type: "frame", parent: "pk-rep", order: "a", className: "pkg-card", props: {}, style: { base: {} } },
+    "pk-head": { id: "pk-head", type: "frame", parent: "pk-card", order: "a", className: "pkg-head", props: {}, style: { base: {} } },
+    "pk-glyph": { id: "pk-glyph", type: "text", parent: "pk-head", order: "a", className: "pkg-glyph", props: { content: { $bind: "item.glyph" } }, style: { base: {} } },
+    "pk-name": { id: "pk-name", type: "text", parent: "pk-head", order: "b", className: "pkg-name", props: { content: { $bind: "item.name" } }, style: { base: {} } },
+    "pk-ver": { id: "pk-ver", type: "text", parent: "pk-head", order: "c", className: "pkg-ver", props: { content: { $bind: "item.verLabel" } }, style: { base: {} } },
+    "pk-desc": { id: "pk-desc", type: "text", parent: "pk-card", order: "b", className: "pkg-desc", props: { content: { $bind: "item.tagline" } }, style: { base: {} } },
+    "pk-tags": { id: "pk-tags", type: "frame", parent: "pk-card", order: "c", className: "pkg-tags", props: {}, style: { base: {} } },
+    "pk-tag1": { id: "pk-tag1", type: "text", parent: "pk-tags", order: "a", className: "pkg-tag", props: { content: { $bind: "item.langLabel" } }, style: { base: {} } },
+    "pk-tag2": { id: "pk-tag2", type: "text", parent: "pk-tags", order: "b", className: "pkg-tag", props: { content: { $bind: "item.kind" } }, style: { base: {} } },
+    "pk-companions": { id: "pk-companions", type: "frame", parent: "pk-container", order: "e", className: "companions", props: {}, style: { base: {} } },
+    "pk-comp-label": { id: "pk-comp-label", type: "text", parent: "pk-companions", order: "a", className: "companions-label", props: { content: "+ Composer companions" }, style: { base: {} } },
+    "pk-comp-note": { id: "pk-comp-note", type: "text", parent: "pk-companions", order: "b", className: "companions-note", props: { content: "PHP packages — the agentic document writers and the sandbox's own Laravel infra:" }, style: { base: {} } },
+    "pk-comp-rep": { id: "pk-comp-rep", type: "repeater", parent: "pk-companions", order: "c", props: { items: { $bind: "companions" } }, style: { base: {} } },
+    "pk-comp-item": { id: "pk-comp-item", type: "link", parent: "pk-comp-rep", order: "a", className: "companion-item", props: { content: { $bind: "item.composer" }, href: { $bind: "item.url" } }, style: { base: {} } },
     "sec-human-plus": islandSection("sec-human-plus", "section-human-plus", "c"),
     // The components preview is the one box that stays React (live demos) — but
     // now via the generic `jsx` Element (escape hatch), not a bespoke island.

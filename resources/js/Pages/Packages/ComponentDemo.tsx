@@ -63,7 +63,8 @@ import { Board, StickyNote, CursorLayer, Shape, Connector, Drawing } from "@part
 import "@particle-academy/fancy-whiteboard/styles.css";
 import { ArtBoard, ArtPiece, type ArtBoardValue } from "@particle-academy/fancy-artboard";
 import "@particle-academy/fancy-artboard/styles.css";
-import { FlowEditor, registerNodeKind } from "@particle-academy/fancy-flow";
+import { FlowEditor } from "@particle-academy/fancy-flow";
+import { useFlowRunnerUx, createFlowRunnerUx } from "@particle-academy/fancy-flow/ux";
 import "@particle-academy/fancy-flow/styles.css";
 import { SheetWorkbook, createEmptyWorkbook, createEmptySheet } from "@particle-academy/fancy-sheets";
 import "@particle-academy/fancy-sheets/styles.css";
@@ -1541,23 +1542,23 @@ const flowNode = (id: string, type: string, x: number, y: number, label: string,
     position: { x, y },
     data: { kind: type, label, config: {}, ...extra },
 });
-// A CUSTOM node kind, registered by the host (not a builtin) — proves fancy-flow
-// supports consumer-defined nodes. It renders in the palette + canvas + config
-// panel like any builtin; the host supplies its runtime behaviour through the
-// `executors` map below, so reaching this node *drives sandbox UX* (a Toast).
-registerNodeKind({
-    name: "show_toast",
-    category: "output",
-    label: "Show Toast",
-    description: "Custom node — fires a real sandbox toast when the flow reaches it.",
-    icon: "🔔",
-    accent: "#8b5cf6",
-    inputs: [{ id: "in" }],
-    outputs: [],
-    configSchema: [
-        { type: "text", key: "message", label: "Toast message", default: "Order handled — a flow node fired this toast!", placeholder: "Toast text" },
-    ],
-});
+// Register the FlowRunnerUx palette node(s) once at module load — appearance
+// only; the real effect handlers are wired per-instance in the component below.
+// `ux_toast` is the node kind for the "toast" effect (kindFor default `ux_<name>`).
+createFlowRunnerUx({
+    effects: { toast: () => {} },
+    meta: {
+        toast: {
+            label: "Show Toast",
+            icon: "🔔",
+            accent: "#8b5cf6",
+            description: "Flow-driven UX — fires a real sandbox toast when reached.",
+            configSchema: [
+                { type: "text", key: "message", label: "Toast message", default: "Order handled — a flow node fired this toast!", placeholder: "Toast text" },
+            ],
+        },
+    },
+}).registerKinds();
 
 const FLOW_SEED_GRAPH = {
     nodes: [
@@ -1567,7 +1568,7 @@ const FLOW_SEED_GRAPH = {
         flowNode("summarize", "llm_call", 680, 60, "Summarize"),
         flowNode("notify", "notify", 680, 250, "Email customer"),
         flowNode("respond", "output", 920, 150, "Respond"),
-        flowNode("toast", "show_toast", 1160, 150, "Show Toast", { config: { message: "Order handled — a flow node fired this toast!" } }),
+        flowNode("toast", "ux_toast", 1160, 150, "Show Toast", { config: { message: "Order handled — a flow node fired this toast!" } }),
         { id: "note", type: "note", position: { x: 200, y: 300 }, data: { kind: "note", label: "Tip", body: "Drag a kind from the palette onto the canvas. Select any node to edit it on the right. The violet Show Toast node is a custom kind." } },
     ],
     edges: [
@@ -1600,27 +1601,26 @@ const FLOW_EXECUTORS = {
 // Flow's own state, which left the canvas stuck + unresponsive.)
 function FlowEditorDemo() {
     const { toast } = useToast();
-    // The host maps node kinds -> behaviour. The custom `show_toast` node drives
-    // real sandbox UX (a Toast) when the run reaches it — flow-driven UX in one line.
-    const executors = useMemo(
-        () => ({
-            ...FLOW_EXECUTORS,
-            show_toast: async ({ node }: { node: { data?: { config?: { message?: string } } } }) => {
-                await flowSleep(200);
+    // FlowRunnerUx (@particle-academy/fancy-flow/ux) maps host UX effects -> flow
+    // executors. The `ux_toast` node fires a real react-fancy Toast when the run
+    // reaches it; the dispatch also broadcasts an AutoActivity event (source:"flow")
+    // on the shared fancy-auto-common bus — the same bus agent-integrations uses.
+    const ux = useFlowRunnerUx({
+        effects: {
+            toast: ({ message }: { message?: string }) =>
                 toast({
-                    title: "🔔 Custom flow node fired",
-                    description: String(node.data?.config?.message ?? "A flow node triggered this sandbox toast."),
+                    title: "🔔 Flow node fired",
+                    description: String(message ?? "A flow node triggered this sandbox toast."),
                     variant: "success",
-                });
-                return { shown: true };
-            },
-        }),
-        [toast],
-    );
+                }),
+        },
+        actor: { id: "demo-flow", name: "Order flow", source: "flow" },
+    });
+    const executors = useMemo(() => ({ ...FLOW_EXECUTORS, ...ux.executors }), [ux]);
     return (
         <DemoNote
-            outOfBox="The drag-to-add palette (left), the per-node config panel (select a node), the Run button + topological executor, and the live run feed below the canvas — all stock FlowEditor. Pan/drag to move, Shift+scroll to zoom, connect ports, rename inline."
-            demo="The seed graph + a wildcard executor stub. The violet Show Toast node is a CUSTOM kind (registerNodeKind) whose executor fires a real react-fancy Toast in this sandbox — hit Run to watch a flow node drive host UX."
+            outOfBox="The drag-to-add palette, the per-node config panel, Run + topological executor, and the live run feed — all stock FlowEditor. Pan/drag to move, Shift+scroll to zoom, connect ports, rename inline."
+            demo="The seed graph + a wildcard stub. The violet Show Toast node is a FlowRunnerUx effect (@particle-academy/fancy-flow/ux): hit Run and a flow node fires a real sandbox Toast — and broadcasts a flow-source activity event on the shared bus agent-integrations also uses."
         >
             <div className="overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
                 <FlowEditor initial={FLOW_SEED_GRAPH} executors={executors} height={480} />

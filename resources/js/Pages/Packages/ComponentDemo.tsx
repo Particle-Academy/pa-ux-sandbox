@@ -1,4 +1,4 @@
-import { lazy, Suspense, useRef, useState, type FormEvent, type ReactNode } from "react";
+import { lazy, Suspense, useMemo, useRef, useState, type FormEvent, type ReactNode } from "react";
 import {
     Accordion,
     Button,
@@ -63,7 +63,7 @@ import { Board, StickyNote, CursorLayer, Shape, Connector, Drawing } from "@part
 import "@particle-academy/fancy-whiteboard/styles.css";
 import { ArtBoard, ArtPiece, type ArtBoardValue } from "@particle-academy/fancy-artboard";
 import "@particle-academy/fancy-artboard/styles.css";
-import { FlowEditor } from "@particle-academy/fancy-flow";
+import { FlowEditor, registerNodeKind } from "@particle-academy/fancy-flow";
 import "@particle-academy/fancy-flow/styles.css";
 import { SheetWorkbook, createEmptyWorkbook, createEmptySheet } from "@particle-academy/fancy-sheets";
 import "@particle-academy/fancy-sheets/styles.css";
@@ -1541,6 +1541,24 @@ const flowNode = (id: string, type: string, x: number, y: number, label: string,
     position: { x, y },
     data: { kind: type, label, config: {}, ...extra },
 });
+// A CUSTOM node kind, registered by the host (not a builtin) — proves fancy-flow
+// supports consumer-defined nodes. It renders in the palette + canvas + config
+// panel like any builtin; the host supplies its runtime behaviour through the
+// `executors` map below, so reaching this node *drives sandbox UX* (a Toast).
+registerNodeKind({
+    name: "show_toast",
+    category: "output",
+    label: "Show Toast",
+    description: "Custom node — fires a real sandbox toast when the flow reaches it.",
+    icon: "🔔",
+    accent: "#8b5cf6",
+    inputs: [{ id: "in" }],
+    outputs: [],
+    configSchema: [
+        { type: "text", key: "message", label: "Toast message", default: "Order handled — a flow node fired this toast!", placeholder: "Toast text" },
+    ],
+});
+
 const FLOW_SEED_GRAPH = {
     nodes: [
         flowNode("trigger", "manual_trigger", 0, 150, "Start"),
@@ -1549,7 +1567,8 @@ const FLOW_SEED_GRAPH = {
         flowNode("summarize", "llm_call", 680, 60, "Summarize"),
         flowNode("notify", "notify", 680, 250, "Email customer"),
         flowNode("respond", "output", 920, 150, "Respond"),
-        { id: "note", type: "note", position: { x: 200, y: 300 }, data: { kind: "note", label: "Tip", body: "Drag a kind from the palette onto the canvas. Select any node to edit it on the right." } },
+        flowNode("toast", "show_toast", 1160, 150, "Show Toast", { config: { message: "Order handled — a flow node fired this toast!" } }),
+        { id: "note", type: "note", position: { x: 200, y: 300 }, data: { kind: "note", label: "Tip", body: "Drag a kind from the palette onto the canvas. Select any node to edit it on the right. The violet Show Toast node is a custom kind." } },
     ],
     edges: [
         { id: "e1", source: "trigger", target: "fetch" },
@@ -1557,7 +1576,7 @@ const FLOW_SEED_GRAPH = {
         { id: "e3", source: "branch", target: "summarize", sourceHandle: "true", label: "paid" },
         { id: "e4", source: "branch", target: "notify", sourceHandle: "false", label: "unpaid" },
         { id: "e5", source: "summarize", target: "respond" },
-        { id: "e6", source: "notify", target: "respond" },
+        { id: "e7", source: "respond", target: "toast" },
     ],
 };
 
@@ -1565,8 +1584,12 @@ const FLOW_SEED_GRAPH = {
 // node runs — the Run button executes the graph and streams status to the feed.
 const flowSleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 const FLOW_EXECUTORS = {
+    // Decision sugar: the branch emits on its "true" (paid) port so the run flows
+    // through to Respond → Show Toast. Without this it publishes on the default
+    // "out" port and the true/false edges never fire.
+    branch: () => ({ branch: "true" }),
     "*": async ({ node }: { node: { id: string } }) => {
-        await flowSleep(420);
+        await flowSleep(320);
         return { node: node.id, ok: true };
     },
 };
@@ -1576,13 +1599,31 @@ const FLOW_EXECUTORS = {
 // onChange round-trips every internal change back through React and fights React
 // Flow's own state, which left the canvas stuck + unresponsive.)
 function FlowEditorDemo() {
+    const { toast } = useToast();
+    // The host maps node kinds -> behaviour. The custom `show_toast` node drives
+    // real sandbox UX (a Toast) when the run reaches it — flow-driven UX in one line.
+    const executors = useMemo(
+        () => ({
+            ...FLOW_EXECUTORS,
+            show_toast: async ({ node }: { node: { data?: { config?: { message?: string } } } }) => {
+                await flowSleep(200);
+                toast({
+                    title: "🔔 Custom flow node fired",
+                    description: String(node.data?.config?.message ?? "A flow node triggered this sandbox toast."),
+                    variant: "success",
+                });
+                return { shown: true };
+            },
+        }),
+        [toast],
+    );
     return (
         <DemoNote
-            outOfBox="The drag-to-add palette (left), the per-node config panel (select a node), the Run button + topological executor, and the live run feed below the canvas — all stock FlowEditor. Pan, zoom, connect ports, and rename inline too."
-            demo="The seed graph (7 nodes across the registry kinds) and one wildcard example executor that just sleeps + returns — swap in real handlers (LLM, tool, HTTP) for production."
+            outOfBox="The drag-to-add palette (left), the per-node config panel (select a node), the Run button + topological executor, and the live run feed below the canvas — all stock FlowEditor. Pan/drag to move, Shift+scroll to zoom, connect ports, rename inline."
+            demo="The seed graph + a wildcard executor stub. The violet Show Toast node is a CUSTOM kind (registerNodeKind) whose executor fires a real react-fancy Toast in this sandbox — hit Run to watch a flow node drive host UX."
         >
             <div className="overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
-                <FlowEditor initial={FLOW_SEED_GRAPH} executors={FLOW_EXECUTORS} height={480} />
+                <FlowEditor initial={FLOW_SEED_GRAPH} executors={executors} height={480} />
             </div>
         </DemoNote>
     );
@@ -1952,7 +1993,7 @@ function FancyAppRootDemo() {
     // FancyAppRoot is the provider already mounted at the showcase entry —
     // every page on this site renders inside it. We can prove it's live by
     // firing a toast (Toast.Provider lives inside FancyAppRoot).
-    const toast = useToast();
+    const { toast } = useToast();
     return (
         <div className="space-y-3">
             <Text size="sm" className="!text-zinc-600 dark:!text-zinc-300">
@@ -1960,9 +2001,10 @@ function FancyAppRootDemo() {
             </Text>
             <Button
                 onClick={() =>
-                    toast.success({
+                    toast({
                         title: "Hello from FancyAppRoot",
                         description: "This toast bubbled through the live Toast.Provider that FancyAppRoot mounts.",
+                        variant: "success",
                     })
                 }
             >

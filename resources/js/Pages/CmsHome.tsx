@@ -1,5 +1,5 @@
 import { Head } from "@inertiajs/react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Toast } from "@particle-academy/react-fancy";
 import { EditablePage, type NodeTransform } from "@particle-academy/fancy-cms-ui/editor";
 import { TimelineDock } from "@particle-academy/fancy-motion/react";
@@ -23,20 +23,14 @@ type CmsHomeProps = {
  * previewed** on the timeline dock: scrub the playhead or hit **▶ Play** to
  * sweep it. Read-only (in-memory) — nothing persists.
  */
+// Blank by default — a fresh page is static until the author adds keyframes. (The
+// old seed shipped a baked-in card/heading/lede morph, which made animations
+// "already appear" the moment you scrubbed or hit Play.)
 const seedTimeline: TimelineDoc = {
   id: "home-tl",
   axis: "vertical",
   frames: 1,
-  keyframes: [
-    { id: "k0", at: 0, mode: "snap", snapshot: {} },
-    {
-      id: "k1",
-      at: 1,
-      mode: "scroll",
-      ease: "ease-out",
-      snapshot: { card: { x: 90, scale: 0.92, opacity: 0.15 }, heading: { y: -32 }, lede: { opacity: 0.3 } },
-    },
-  ],
+  keyframes: [{ id: "k0", at: 0, mode: "snap", snapshot: {} }],
   scenes: [],
 };
 
@@ -50,6 +44,31 @@ export default function CmsHome({ packages, companions, total_components }: CmsH
     [packages, companions, total_components],
   );
   const transforms = useMemo(() => sampleTimeline(tl, progress), [tl, progress]);
+
+  // Scroll ↔ playhead, both ways. A "programmatic scroll" flag breaks the
+  // feedback loop (scrub → scroll → scroll-listener → scrub …).
+  const programmaticScroll = useRef(false);
+  const scrollMax = () => Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+
+  // Scrolling the page moves the timeline tracker.
+  useEffect(() => {
+    const onScroll = () => {
+      if (programmaticScroll.current) {
+        programmaticScroll.current = false;
+        return;
+      }
+      setProgress(Math.min(1, Math.max(0, window.scrollY / scrollMax())));
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // Scrubbing/clicking the timeline scrolls the page to that position.
+  const scrubTo = (p: number) => {
+    setProgress(p);
+    programmaticScroll.current = true;
+    window.scrollTo({ top: p * scrollMax() });
+  };
 
   const selectKeyframe = (id: string | null) => {
     setKf(id);
@@ -94,7 +113,7 @@ export default function CmsHome({ packages, companions, total_components }: CmsH
               value={tl}
               onChange={setTl}
               progress={progress}
-              onScrub={setProgress}
+              onScrub={scrubTo}
               selectedKeyframe={kf}
               onSelectKeyframe={selectKeyframe}
             />

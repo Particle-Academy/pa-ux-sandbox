@@ -59,7 +59,7 @@ import {
 } from "@particle-academy/react-fancy";
 import { CodeEditor } from "@particle-academy/fancy-code";
 import "@particle-academy/fancy-code/styles.css";
-import { Board, StickyNote, CursorLayer } from "@particle-academy/fancy-whiteboard";
+import { Board, StickyNote, CursorLayer, Shape, Connector, Drawing } from "@particle-academy/fancy-whiteboard";
 import "@particle-academy/fancy-whiteboard/styles.css";
 import { ArtBoard, ArtPiece, type ArtBoardValue } from "@particle-academy/fancy-artboard";
 import "@particle-academy/fancy-artboard/styles.css";
@@ -1183,97 +1183,140 @@ function Explainer({
 
 // ─── fancy-whiteboard ──────────────────────────────────────────────────────
 
+// Helpers for the whiteboard demos — all use the REAL components (the old
+// versions hand-drew SVG / divs, which is exactly what these components exist
+// to replace). Items are controlled: parent owns the array, each component
+// gets item + onChange.
+type WbItem = Record<string, unknown> & { id: string; kind: string };
+const wbPatch = (set: React.Dispatch<React.SetStateAction<any[]>>, id: string) => (next: any) =>
+    set((arr) => arr.map((it) => (it.id === id ? next : it)));
+
 function WhiteboardBoardDemo() {
-    const [notes, setNotes] = useState([
-        { id: "n1", x: 60, y: 40, w: 140, h: 90, color: "#fde68a", text: "Onboarding feels heavy at step 3" },
-        { id: "n2", x: 240, y: 70, w: 140, h: 90, color: "#a5b4fc", text: "Try one-click templates" },
-        { id: "n3", x: 150, y: 200, w: 140, h: 90, color: "#bef264", text: "Ship v0.4 — track time-to-first-board" },
+    const [items, setItems] = useState<any[]>([
+        { id: "n1", kind: "sticky", x: 40, y: 36, width: 152, height: 94, text: "Onboarding feels heavy at step 3", color: "#fde68a" },
+        { id: "n2", kind: "sticky", x: 260, y: 70, width: 152, height: 94, text: "Try one-click templates", color: "#a5b4fc" },
+        { id: "s1", kind: "shape", shape: "rounded-rect", x: 120, y: 210, width: 190, height: 64, text: "Ship v0.4", fill: "#bbf7d0", stroke: "#16a34a" },
     ]);
-    const [viewport, setViewport] = useState({ x: 0, y: 0, scale: 1 });
+    const [sel, setSel] = useState<string | null>(null);
+    const [viewport, setViewport] = useState({ x: 0, y: 0, zoom: 1 });
     return (
-        <div className="h-80 overflow-hidden rounded-md border border-zinc-200 bg-amber-50/30 dark:border-zinc-800 dark:bg-amber-900/10">
-            <Board notes={notes} onNotesChange={setNotes} viewport={viewport} onViewportChange={setViewport}>
-                <StickyNote />
-                <CursorLayer cursors={[
-                    { id: "c1", name: "Ada", color: "#a855f7", x: 320, y: 60 },
-                    { id: "c2", name: "Claude", color: "#3b82f6", x: 120, y: 220 },
-                ]} />
-            </Board>
-        </div>
+        <DemoNote
+            outOfBox="A pan/zoom Board hosting real items — drag a sticky to move it, grab a corner to resize, edit text inline, click to select. Sticky notes, a shape, a dashed connector, and a remote-cursor presence layer are all stock components; scroll/pinch to zoom the canvas."
+            demo="Three seeded items + two example presence cursors."
+        >
+            <div className="h-96 overflow-hidden rounded-md border border-zinc-200 bg-amber-50/30 dark:border-zinc-800 dark:bg-amber-900/10">
+                <Board viewport={viewport} onViewportChange={setViewport}>
+                    {items.map((it) =>
+                        it.kind === "sticky" ? (
+                            <StickyNote key={it.id} item={it} onChange={wbPatch(setItems, it.id)} selected={sel === it.id} onSelect={() => setSel(it.id)} />
+                        ) : (
+                            <Shape key={it.id} item={it} onChange={wbPatch(setItems, it.id)} selected={sel === it.id} onSelect={() => setSel(it.id)} />
+                        ),
+                    )}
+                    <Connector from={{ x: 192, y: 82 }} to={{ x: 260, y: 116 }} color="#a855f7" dashed />
+                    <CursorLayer cursors={[
+                        { userId: "ada", name: "Ada", color: "#a855f7", x: 392, y: 56 },
+                        { userId: "claude", name: "Claude", color: "#3b82f6", x: 150, y: 262 },
+                    ]} />
+                </Board>
+            </div>
+        </DemoNote>
     );
 }
 
 function WhiteboardStickyDemo() {
-    const [notes, setNotes] = useState([
-        { id: "n1", text: "Onboarding feels heavy at step 3", color: "#fde68a" },
-        { id: "n2", text: "Try one-click templates", color: "#a5b4fc" },
-        { id: "n3", text: "Track time-to-first-board", color: "#bef264" },
+    const [notes, setNotes] = useState<any[]>([
+        { id: "n1", kind: "sticky", x: 16, y: 16, width: 168, height: 100, text: "Onboarding feels heavy at step 3", color: "#fde68a" },
+        { id: "n2", kind: "sticky", x: 214, y: 44, width: 168, height: 100, text: "Try one-click templates", color: "#a5b4fc" },
+        { id: "n3", kind: "sticky", x: 110, y: 150, width: 168, height: 100, text: "Track time-to-first-board", color: "#bef264" },
     ]);
     return (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-            {notes.map((n) => (
-                <div key={n.id} className="rounded-md p-3 text-sm text-zinc-900 shadow-sm" style={{ background: n.color }}>
-                    <input
-                        value={n.text}
-                        onChange={(e) => setNotes((arr) => arr.map((x) => x.id === n.id ? { ...x, text: e.target.value } : x))}
-                        className="w-full bg-transparent outline-none"
-                    />
-                </div>
-            ))}
-        </div>
+        <DemoNote
+            outOfBox="The real StickyNote primitive — drag to move, corner-resize, edit text inline. Controlled via item + onChange with a stable id agents can target."
+            demo="Three seeded notes in a plain relative container (no Board)."
+        >
+            <div className="relative h-64 overflow-hidden rounded-md border border-zinc-200 bg-amber-50/30 dark:border-zinc-800 dark:bg-amber-900/10">
+                {notes.map((n) => <StickyNote key={n.id} item={n} onChange={wbPatch(setNotes, n.id)} />)}
+            </div>
+        </DemoNote>
     );
 }
 
 function WhiteboardCursorDemo() {
     return (
-        <div className="relative h-32 overflow-hidden rounded-md border border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950">
-            {[
-                { name: "Glenn", color: "#a855f7", x: "20%", y: "30%" },
-                { name: "Rita", color: "#10b981", x: "55%", y: "60%" },
-                { name: "Claude", color: "#3b82f6", x: "75%", y: "25%" },
-            ].map((c) => (
-                <div key={c.name} className="absolute -translate-x-1/2 -translate-y-1/2" style={{ left: c.x, top: c.y }}>
-                    <span className="block h-3 w-3 rounded-full" style={{ background: c.color, boxShadow: `0 0 0 4px ${c.color}33` }} />
-                    <span className="absolute left-3 top-3 whitespace-nowrap rounded px-1.5 py-0.5 text-[10px] text-white" style={{ background: c.color }}>{c.name}</span>
-                </div>
-            ))}
-        </div>
+        <DemoNote
+            outOfBox="CursorLayer renders any number of remote presence cursors (name + color) from a RemoteCursor[] — exactly what the share relay feeds for live multi-user presence."
+            demo="Three static example cursors."
+        >
+            <div className="relative h-40 overflow-hidden rounded-md border border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950">
+                <CursorLayer cursors={[
+                    { userId: "glenn", name: "Glenn", color: "#a855f7", x: 70, y: 50 },
+                    { userId: "rita", name: "Rita", color: "#10b981", x: 240, y: 120 },
+                    { userId: "claude", name: "Claude", color: "#3b82f6", x: 340, y: 44 },
+                ]} />
+            </div>
+        </DemoNote>
     );
 }
 
 function WhiteboardConnectorDemo() {
+    const [items, setItems] = useState<any[]>([
+        { id: "src", kind: "shape", shape: "rounded-rect", x: 24, y: 64, width: 96, height: 50, text: "Source", fill: "#ede9fe", stroke: "#7c3aed" },
+        { id: "a", kind: "shape", shape: "rounded-rect", x: 300, y: 24, width: 96, height: 50, text: "Target A", fill: "#e0f2fe", stroke: "#0284c7" },
+        { id: "b", kind: "shape", shape: "rounded-rect", x: 300, y: 116, width: 96, height: 50, text: "Target B", fill: "#dcfce7", stroke: "#16a34a" },
+    ]);
     return (
-        <svg viewBox="0 0 400 160" className="h-40 w-full rounded-md border border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950">
-            <rect x="20" y="60" width="80" height="40" rx="6" className="fill-violet-100 stroke-violet-400 dark:fill-violet-500/15" />
-            <rect x="160" y="20" width="80" height="40" rx="6" className="fill-sky-100 stroke-sky-400 dark:fill-sky-500/15" />
-            <rect x="160" y="100" width="80" height="40" rx="6" className="fill-emerald-100 stroke-emerald-400 dark:fill-emerald-500/15" />
-            <rect x="300" y="60" width="80" height="40" rx="6" className="fill-amber-100 stroke-amber-400 dark:fill-amber-500/15" />
-            <path d="M100 80 C130 80, 130 40, 160 40" className="fill-none stroke-zinc-400" strokeWidth={1.5} />
-            <path d="M100 80 C130 80, 130 120, 160 120" className="fill-none stroke-zinc-400" strokeWidth={1.5} />
-            <path d="M240 40 C270 40, 270 80, 300 80" className="fill-none stroke-zinc-400" strokeWidth={1.5} />
-            <path d="M240 120 C270 120, 270 80, 300 80" className="fill-none stroke-zinc-400" strokeWidth={1.5} />
-        </svg>
+        <DemoNote
+            outOfBox="Connector draws an SVG link (solid or dashed) between two points. Inside a Board it can anchor to item ids and track as they move; standalone it links fixed points."
+            demo="Three shapes (drag them) plus two connectors between fixed anchor points."
+        >
+            <div className="relative h-48 overflow-hidden rounded-md border border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950">
+                {items.map((s) => <Shape key={s.id} item={s} onChange={wbPatch(setItems, s.id)} />)}
+                <Connector from={{ x: 120, y: 89 }} to={{ x: 300, y: 49 }} color="#7c3aed" />
+                <Connector from={{ x: 120, y: 89 }} to={{ x: 300, y: 141 }} color="#7c3aed" />
+            </div>
+        </DemoNote>
     );
 }
 
 function WhiteboardShapeDemo() {
+    const seed: [string, string, string, string][] = [
+        ["rect", "Rect", "#ede9fe", "#7c3aed"],
+        ["rounded-rect", "Rounded", "#e0f2fe", "#0284c7"],
+        ["ellipse", "Ellipse", "#dcfce7", "#16a34a"],
+        ["diamond", "Diamond", "#fef3c7", "#d97706"],
+        ["triangle", "Triangle", "#fee2e2", "#dc2626"],
+        ["arrow", "Arrow", "#f3e8ff", "#9333ea"],
+    ];
+    const [items, setItems] = useState<any[]>(seed.map(([shape, text, fill, stroke], i) => ({
+        id: `s${i}`, kind: "shape", shape, text, fill, stroke,
+        x: 12 + (i % 3) * 132, y: 12 + Math.floor(i / 3) * 104, width: 112, height: 80,
+    })));
     return (
-        <svg viewBox="0 0 400 160" className="h-40 w-full rounded-md border border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950">
-            <rect x="30" y="40" width="70" height="80" rx="4" className="fill-violet-200 stroke-violet-500 dark:fill-violet-500/30" />
-            <circle cx="170" cy="80" r="40" className="fill-sky-200 stroke-sky-500 dark:fill-sky-500/30" />
-            <polygon points="260,40 300,120 220,120" className="fill-emerald-200 stroke-emerald-500 dark:fill-emerald-500/30" />
-            <polygon points="350,40 380,80 350,120 320,80" className="fill-amber-200 stroke-amber-500 dark:fill-amber-500/30" />
-        </svg>
+        <DemoNote
+            outOfBox="Shape renders eight kinds — rect, rounded-rect, ellipse, diamond, triangle, line, arrow, text — with fill / stroke, inline text, drag + corner-resize. Controlled via item + onChange."
+            demo="Six seeded shapes."
+        >
+            <div className="relative h-56 overflow-hidden rounded-md border border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950">
+                {items.map((s) => <Shape key={s.id} item={s} onChange={wbPatch(setItems, s.id)} />)}
+            </div>
+        </DemoNote>
     );
 }
 
 function WhiteboardDrawingDemo() {
+    const [strokes, setStrokes] = useState<any[]>([
+        { id: "k1", color: "#a855f7", size: 3, points: [{ x: 24, y: 90 }, { x: 70, y: 50 }, { x: 116, y: 96 }, { x: 162, y: 56 }, { x: 208, y: 96 }] },
+    ]);
     return (
-        <svg viewBox="0 0 400 160" className="h-40 w-full rounded-md border border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950">
-            <path d="M20 80 C 60 40, 100 120, 140 80 S 220 40, 260 80 S 340 120, 380 80" stroke="rgb(168, 85, 247)" strokeWidth={3} fill="none" strokeLinecap="round" />
-            <path d="M40 130 Q 80 110, 120 130 T 200 130" stroke="rgb(16, 185, 129)" strokeWidth={2} fill="none" strokeLinecap="round" />
-            <path d="M260 30 L 290 50 L 270 70 L 300 90" stroke="rgb(239, 68, 68)" strokeWidth={2} fill="none" strokeLinecap="round" />
-        </svg>
+        <DemoNote
+            outOfBox="Drawing is the freeform pen layer — draw with the mouse / touch and each finished stroke streams via onStrokeEnd so an app can broadcast it live. Controlled: the parent owns the strokes array."
+            demo="One seeded stroke; draw on the canvas to add more."
+        >
+            <div className="relative h-48 overflow-hidden rounded-md border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950">
+                <Drawing strokes={strokes} onStrokeEnd={(s) => setStrokes((arr) => [...arr, s])} color="#6366f1" size={3} enabled />
+            </div>
+        </DemoNote>
     );
 }
 

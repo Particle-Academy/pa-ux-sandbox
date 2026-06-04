@@ -286,7 +286,7 @@ export function Layout({
 
                     <div className="footer-bottom">
                         <span>© Particle Academy · MIT</span>
-                        <span className="right">fancy-ui · v0.2 · react-fancy 3.4</span>
+                        <span className="right">fancy-ui · v0.2 · react-fancy 4.4.0</span>
                     </div>
                 </div>
             </footer>

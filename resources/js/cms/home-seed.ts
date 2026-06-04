@@ -56,7 +56,9 @@ export const homeDoc: PageDoc = {
     // ── Downstream sections (whole-section islands) ─────────────────────────
     "sec-packages": islandSection("sec-packages", "section-packages", "b"),
     "sec-human-plus": islandSection("sec-human-plus", "section-human-plus", "c"),
-    "sec-components": islandSection("sec-components", "section-components", "d"),
+    // The components preview is the one box that stays React (live demos) — but
+    // now via the generic `jsx` Element (escape hatch), not a bespoke island.
+    "sec-components": { id: "sec-components", type: "jsx", parent: null as string | null, order: "d", props: { island: "components-preview" }, style: { base: {} } },
     "sec-philosophy": islandSection("sec-philosophy", "section-philosophy", "e"),
     "sec-quickstart": islandSection("sec-quickstart", "section-quickstart", "f"),
     "sec-explore": islandSection("sec-explore", "section-explore", "g"),

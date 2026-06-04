@@ -1571,43 +1571,44 @@ const FLOW_EXECUTORS = {
     },
 };
 
+// Uncontrolled (`initial`) — the editor owns its state via useFlowState, so pan,
+// zoom, drag, connect, and fit-view all work natively. (Controlled `value` +
+// onChange round-trips every internal change back through React and fights React
+// Flow's own state, which left the canvas stuck + unresponsive.)
 function FlowEditorDemo() {
-    const [graph, setGraph] = useState(FLOW_SEED_GRAPH);
     return (
         <DemoNote
             outOfBox="The drag-to-add palette (left), the per-node config panel (select a node), the Run button + topological executor, and the live run feed below the canvas — all stock FlowEditor. Pan, zoom, connect ports, and rename inline too."
-            demo="The seed graph (7 nodes across all six kinds) and four one-line example executors that just sleep + return — swap in real handlers (LLM, tool, HTTP) for production."
+            demo="The seed graph (7 nodes across the registry kinds) and one wildcard example executor that just sleeps + returns — swap in real handlers (LLM, tool, HTTP) for production."
         >
             <div className="overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
-                <FlowEditor value={graph} onChange={setGraph} executors={FLOW_EXECUTORS} height={480} />
+                <FlowEditor initial={FLOW_SEED_GRAPH} executors={FLOW_EXECUTORS} height={480} />
             </div>
         </DemoNote>
     );
 }
 
 function FlowStateHookDemo() {
-    const [graph, setGraph] = useState(FLOW_SEED_GRAPH);
     return (
         <DemoNote
-            outOfBox="useFlowState owns the controlled nodes + edges + per-node run status and wires xyflow's onNodesChange / onEdgesChange / onConnect for you — it's exactly what FlowEditor uses internally, shown here driving the same editor."
+            outOfBox="useFlowState owns the nodes + edges + per-node run status and wires xyflow's onNodesChange / onEdgesChange / onConnect for you — it's exactly what FlowEditor uses internally, shown here driving the same editor."
             demo="The seed graph below; see the Code tab for the bare useFlowState() call without the editor chrome."
         >
             <div className="overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
-                <FlowEditor value={graph} onChange={setGraph} showFeed={false} height={380} />
+                <FlowEditor initial={FLOW_SEED_GRAPH} showFeed={false} height={380} />
             </div>
         </DemoNote>
     );
 }
 
 function FlowRunHookDemo() {
-    const [graph, setGraph] = useState(FLOW_SEED_GRAPH);
     return (
         <DemoNote
-            outOfBox="useFlowRun drives runFlow — topological execution through your executor registry, streaming typed run events (node-status, output) plus a cancel handle. Hit Run and watch the feed below stream per-node status."
-            demo="The executor registry here is four sleep-and-return stubs; the feed and status pills are the real hook output."
+            outOfBox="useFlowRun drives runFlow — topological execution through your executor registry, streaming typed run events (node-status, output) plus a cancel handle. Hit Run and watch the feed below stream per-node status. The same runFlow runs headless via @particle-academy/fancy-flow/engine."
+            demo="The executor registry here is one sleep-and-return stub; the feed and status pills are the real hook output."
         >
             <div className="overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
-                <FlowEditor value={graph} onChange={setGraph} executors={FLOW_EXECUTORS} height={420} />
+                <FlowEditor initial={FLOW_SEED_GRAPH} executors={FLOW_EXECUTORS} height={420} />
             </div>
         </DemoNote>
     );

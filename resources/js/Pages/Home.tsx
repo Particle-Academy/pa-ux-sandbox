@@ -1155,19 +1155,19 @@ export function Philosophy() {
 
 // ─── Quick start — the two ways to add a component + the registry MCP ─────────
 
-const PACKAGE_CODE = `<span class="tok-c">// 1 · Install the package — import the component.</span>
+export const PACKAGE_CODE = `<span class="tok-c">// 1 · Install the package — import the component.</span>
 <span class="tok-p">$</span> npm install <span class="tok-s">@particle-academy/react-fancy</span>
 
 <span class="tok-k">import</span> { Badge } <span class="tok-k">from</span> <span class="tok-s">"@particle-academy/react-fancy"</span>;
 &lt;<span class="tok-t">Badge</span> <span class="tok-a">color</span>=<span class="tok-s">"green"</span> <span class="tok-a">dot</span>&gt;Live&lt;/<span class="tok-t">Badge</span>&gt;`;
 
-const VENDOR_CODE = `<span class="tok-c"># 2 · Vendor the source — copy it into your repo, own it.</span>
+export const VENDOR_CODE = `<span class="tok-c"># 2 · Vendor the source — copy it into your repo, own it.</span>
 <span class="tok-p">$</span> npx <span class="tok-s">fancy-ui@latest</span> add badge
 <span class="tok-c"># → src/components/fancy/badge/</span>
 
 <span class="tok-k">import</span> { Badge } <span class="tok-k">from</span> <span class="tok-s">"@/components/fancy/badge"</span>;`;
 
-const MCP_CODE = `<span class="tok-c"># Claude Code — install the Fancy UI plugin (recommended)</span>
+export const MCP_CODE = `<span class="tok-c"># Claude Code — install the Fancy UI plugin (recommended)</span>
 /plugin marketplace add <span class="tok-s">Particle-Academy/fancy-ui-plugin</span>
 /plugin install <span class="tok-s">fancy-ui@fancy-ui</span>
 <span class="tok-c"># registers the registry MCP + skills, with the right transport</span>

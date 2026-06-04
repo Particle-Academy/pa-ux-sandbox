@@ -23,8 +23,6 @@ import {
   Packages,
   HumanPlus,
   ComponentsShowcase,
-  Philosophy,
-  QuickStart,
   type PackageRow,
   type CompanionRow,
 } from "../Pages/Home";
@@ -62,8 +60,7 @@ export function makeSandboxRegistry(data: SandboxData): ElementRegistry {
     "section-packages": () => <Packages packages={data.packages} companions={data.companions} />,
     "section-human-plus": () => <HumanPlus />,
     "section-components": () => <ComponentsShowcase total={data.total} />,
-    "section-philosophy": () => <Philosophy />,
-    "section-quickstart": () => <QuickStart />,
+    // section-philosophy + section-quickstart removed — now real CMS Elements in the seed.
     // section-explore removed — the Explore section is now real CMS Elements
     // (a repeater bound to `explore`) in home-seed.ts.
   };

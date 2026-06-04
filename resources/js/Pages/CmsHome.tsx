@@ -106,6 +106,7 @@ export default function CmsHome({ packages, companions, total_components }: CmsH
           doc={homeDoc}
           registry={registry}
           pinned={false}
+          frames={tl.frames}
           transforms={transforms}
           onNodeTransform={onNodeTransform}
           timelineDock={

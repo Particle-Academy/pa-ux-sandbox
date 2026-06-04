@@ -105,6 +105,7 @@ export default function CmsHome({ packages, companions, total_components }: CmsH
         <EditablePage
           doc={homeDoc}
           registry={registry}
+          data={{ packages, companions, total_components }}
           pinned={false}
           frames={tl.frames}
           transforms={transforms}

@@ -16,6 +16,13 @@
  */
 import type { PageDoc } from "@particle-academy/fancy-cms-ui";
 import { PACKAGE_CODE, VENDOR_CODE, MCP_CODE } from "../Pages/Home";
+import { HERO_CODE_HTML } from "./registry";
+
+const HERO_STATUS_HTML =
+  '<div style="padding:12px 14px;border-top:1px solid var(--border-1);display:flex;align-items:center;gap:10px;font-size:12px;background:var(--bg-1)">' +
+  '<span style="width:6px;height:6px;border-radius:999px;background:var(--emerald-500);box-shadow:0 0 0 3px color-mix(in oklch, var(--emerald-500) 22%, transparent)"></span>' +
+  '<span style="font-family:var(--font-mono);color:var(--fg-3)">agent · fancy-ui.mcp</span>' +
+  '<span style="color:var(--fg-2);flex:1;text-align:right;font-family:var(--font-mono)">artboard_add_piece ✓</span></div>';
 
 const qsCard = (num: string, alt: boolean, title: string, sub: string, code: string) =>
   `<div class="qs-head"><span class="qs-num${alt ? " qs-num-alt" : ""}">${num}</span><div><div class="qs-title">${title}</div><div class="qs-sub">${sub}</div></div></div><div class="codeblock">${code}</div>`;
@@ -55,7 +62,9 @@ export const homeDoc: PageDoc = {
     cta: { id: "cta", type: "richtext", parent: "left", order: "d", className: "hero-cta", props: { html: '<a class="btn btn-primary" href="/docs">Install the kit</a><a class="btn btn-ghost" href="/agent-playground">See Human+ in action</a>' }, style: { base: {} } },
     meta: { id: "meta", type: "richtext", parent: "left", order: "e", className: "hero-meta", props: { html: '<span class="meta-item">12 UI packages</span><span class="meta-item">MIT licensed</span><span class="meta-item"><code>tailwindcss &gt;= 4</code></span><span class="meta-item">React 19 · PHP 8.4</span>' }, style: { base: {} } },
 
-    card: { id: "card", type: "hero-card", parent: "grid", order: "b", className: "hero-card", props: {}, style: { base: {} } },
+    card: { id: "card", type: "device", parent: "grid", order: "b", className: "hero-card", props: { variant: "browser", url: "resources/js/Pages/DesignReview.tsx", meta: "UTF-8 · TSX" }, style: { base: {} } },
+    "card-code": { id: "card-code", type: "richtext", parent: "card", order: "a", className: "codeblock", props: { html: HERO_CODE_HTML }, style: { base: {} } },
+    "card-status": { id: "card-status", type: "richtext", parent: "card", order: "b", props: { html: HERO_STATUS_HTML }, style: { base: {} } },
 
     // ── Downstream sections (whole-section islands) ─────────────────────────
     // ── Packages (de-hardcoded → CMS Elements: a repeater bound to `packages`

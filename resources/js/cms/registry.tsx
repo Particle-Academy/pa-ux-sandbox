@@ -32,7 +32,7 @@ export interface SandboxData {
   total: number;
 }
 
-const HERO_CODE_HTML = `<span class="tok-c">// One surface. Two participants.</span>
+export const HERO_CODE_HTML = `<span class="tok-c">// One surface. Two participants.</span>
 <span class="tok-k">import</span> { ArtBoard, ArtPiece } <span class="tok-k">from</span> <span class="tok-s">"@particle-academy/fancy-artboard"</span>;
 <span class="tok-k">import</span> { registerArtboardBridge } <span class="tok-k">from</span> <span class="tok-s">"@particle-academy/agent-integrations"</span>;
 

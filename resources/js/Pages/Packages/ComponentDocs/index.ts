@@ -17,6 +17,7 @@ import { breadcrumbsDoc } from "./Breadcrumbs";
 import { calendarDoc } from "./Calendar";
 import { calloutDoc } from "./Callout";
 import { cardDoc } from "./Card";
+import { fauxClientDoc } from "./FauxClient";
 import { carouselDoc } from "./Carousel";
 import { chartDoc } from "./Chart";
 import { chatDrawerDoc } from "./ChatDrawer";
@@ -122,6 +123,7 @@ const DOCS: Record<string, ComponentDoc> = {
     "react-fancy/calendar": calendarDoc,
     "react-fancy/callout": calloutDoc,
     "react-fancy/card": cardDoc,
+    "react-fancy/faux-client": fauxClientDoc,
     "react-fancy/carousel": carouselDoc,
     "react-fancy/chart": chartDoc,
     "react-fancy/chat-drawer": chatDrawerDoc,

@@ -1,6 +1,6 @@
 {
     "$schema": "https://ui.particle.academy/schema/registry-compiled.json",
-    "count": 85,
+    "count": 86,
     "items": [
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
@@ -1505,6 +1505,36 @@
             "dependencies": [],
             "registryDependencies": [],
             "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "faux-client",
+            "type": "registry:ui",
+            "title": "FauxClient",
+            "description": "Browser / device / window chrome rendering real, interactive UI inside (with scale-to-fit).",
+            "package": "react-fancy",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": [
+                {
+                    "path": "components/fancy/faux-client/FauxClient.tsx",
+                    "content": "import { forwardRef, useLayoutEffect, useRef, useState } from \"react\";\nimport { cn } from \"../../utils/cn\";\nimport type { FauxClientProps } from \"./FauxClient.types\";\n\nconst DOT_COLORS = [\"bg-rose-300\", \"bg-amber-300\", \"bg-green-300\"];\n\n/**\n * A frame that mimics a browser window or device, rendering **real UI** inside.\n * With a logical `width` + `scale=\"fit\"` it renders a full-size page/app and\n * scales it down to fit any container (live thumbnails, device mockups) \u2014 the\n * content is real and interactive, just zoomed.\n *\n * Omit `width` for chrome around natural-size content (e.g. a code/preview card).\n */\nexport const FauxClient = forwardRef<HTMLDivElement, FauxClientProps>(\n  (\n    {\n      variant = \"browser\",\n      url,\n      meta,\n      dots = true,\n      width,\n      scale = \"fit\",\n      className,\n      barClassName,\n      bodyClassName,\n      children,\n      ...rest\n    },\n    ref,\n  ) => {\n    const scaled = typeof width === \"number\";\n    const viewportRef = useRef<HTMLDivElement>(null);\n    const stageRef = useRef<HTMLDivElement>(null);\n    const [s, setS] = useState(typeof scale === \"number\" ? scale : 1);\n    const [contentHeight, setContentHeight] = useState<number | undefined>(undefined);\n\n    useLayoutEffect(() => {\n      if (!scaled) return;\n      const viewport = viewportRef.current;\n      const stage = stageRef.current;\n      if (!viewport || !stage) return;\n      if (typeof ResizeObserver === \"undefined\") return;\n\n      const measure = () => {\n        const avail = viewport.clientWidth;\n        const next = scale === \"fit\" ? (width && width > 0 ? avail / width : 1) : scale;\n        // offsetHeight is the pre-transform layout height (CSS transforms don't affect it).\n        const naturalHeight = stage.offsetHeight;\n        setS(next);\n        setContentHeight(naturalHeight * next);\n      };\n\n      measure();\n      const ro = new ResizeObserver(measure);\n      ro.observe(viewport);\n      ro.observe(stage);\n      return () => ro.disconnect();\n    }, [scaled, scale, width]);\n\n    const isBrowser = variant === \"browser\";\n    const isDevice = variant === \"device\";\n\n    return (\n      <div\n        ref={ref}\n        data-react-fancy-faux-client=\"\"\n        className={cn(\n          \"overflow-hidden bg-white dark:bg-zinc-900\",\n          isBrowser && \"rounded-2xl border border-zinc-200 shadow-xl dark:border-zinc-800\",\n          isDevice && \"rounded-[2rem] border-[10px] border-zinc-800 shadow-2xl dark:border-zinc-700\",\n          variant === \"bare\" && \"rounded-lg border border-zinc-200 dark:border-zinc-800\",\n          className,\n        )}\n        {...rest}\n      >\n        {isBrowser && (\n          <div\n            className={cn(\n              \"flex items-center gap-2 border-b border-zinc-200 bg-zinc-50 px-3.5 py-2.5 font-mono text-[11.5px] text-zinc-500 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-400\",\n              barClassName,\n            )}\n          >\n            {dots && (\n              <div className=\"mr-1.5 flex gap-[5px]\">\n                {DOT_COLORS.map((color, i) => (\n                  <span key={i} className={cn(\"h-[9px] w-[9px] rounded-full\", color)} />\n                ))}\n              </div>\n            )}\n            {url != null && <span className=\"min-w-0 flex-1 truncate\">{url}</span>}\n            {meta != null && <span className=\"shrink-0 text-zinc-400 dark:text-zinc-500\">{meta}</span>}\n          </div>\n        )}\n\n        <div\n          ref={viewportRef}\n          className={cn(\"relative overflow-hidden\", bodyClassName)}\n          style={scaled ? { height: contentHeight } : undefined}\n        >\n          {scaled ? (\n            <div\n              ref={stageRef}\n              className=\"absolute left-0 top-0 origin-top-left\"\n              style={{ width, transform: `scale(${s})` }}\n            >\n              {children}\n            </div>\n          ) : (\n            children\n          )}\n        </div>\n      </div>\n    );\n  },\n);\n\nFauxClient.displayName = \"FauxClient\";\n",
+                    "type": "registry:ui",
+                    "target": "components/fancy/faux-client/FauxClient.tsx"
+                },
+                {
+                    "path": "components/fancy/faux-client/FauxClient.types.ts",
+                    "content": "import type { HTMLAttributes, ReactNode } from \"react\";\n\nexport interface FauxClientProps extends Omit<HTMLAttributes<HTMLDivElement>, \"children\"> {\n  /** Chrome style: a browser window, a device bezel, or no chrome. */\n  variant?: \"browser\" | \"device\" | \"bare\";\n  /** Address-bar / title text (browser variant). */\n  url?: ReactNode;\n  /** Right-aligned meta text in the bar (browser variant). */\n  meta?: ReactNode;\n  /** Show the macOS traffic-light dots (browser variant). */\n  dots?: boolean;\n  /**\n   * Logical content width in px. When set, children render at this width and are\n   * scaled to fit (see {@link FauxClientProps.scale}) \u2014 for downscaled previews\n   * of full pages/apps. Omit to render children at natural size (chrome only).\n   */\n  width?: number;\n  /** `\"fit\"` scales the logical {@link FauxClientProps.width} to the frame; a number is a fixed scale. */\n  scale?: number | \"fit\";\n  className?: string;\n  /** Class for the browser bar. */\n  barClassName?: string;\n  /** Class for the content viewport. */\n  bodyClassName?: string;\n  children?: ReactNode;\n}\n",
+                    "type": "registry:ui",
+                    "target": "components/fancy/faux-client/FauxClient.types.ts"
+                },
+                {
+                    "path": "components/fancy/faux-client/index.ts",
+                    "content": "export { FauxClient } from \"./FauxClient\";\nexport type { FauxClientProps } from \"./FauxClient.types\";\n",
+                    "type": "registry:ui",
+                    "target": "components/fancy/faux-client/index.ts"
+                }
+            ]
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",

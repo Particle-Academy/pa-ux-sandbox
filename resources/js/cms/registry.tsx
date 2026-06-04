@@ -17,7 +17,7 @@
  */
 import { Link } from "@inertiajs/react";
 import { ArrowRight, Github, Layers, Package, Terminal, Zap } from "lucide-react";
-import { Button } from "@particle-academy/react-fancy";
+import { Button, FauxClient } from "@particle-academy/react-fancy";
 import { defaultRegistry, type ElementRegistry } from "@particle-academy/fancy-cms-ui/react";
 import {
   Packages,
@@ -50,8 +50,15 @@ const HERO_CODE_HTML = `<span class="tok-c">// One surface. Two participants.</s
 }`;
 
 export function makeSandboxRegistry(data: SandboxData): ElementRegistry {
+  // Host JSX islands — the escape hatch the `jsx` Element resolves by `island`
+  // key. The ONE allowed place for non-Element React (live demos, server data).
+  const islands: Record<string, () => JSX.Element> = {
+    "components-preview": () => <ComponentsShowcase total={data.total} />,
+  };
   return {
     ...sandboxRegistry,
+    // `jsx` Element — render a registered island by key (props.island).
+    jsx: ({ node }) => islands[lit(node.props.island)]?.() ?? null,
     // Whole-section islands — the real Home components, fed the same server data.
     "section-packages": () => <Packages packages={data.packages} companions={data.companions} />,
     "section-human-plus": () => <HumanPlus />,
@@ -85,6 +92,19 @@ export const sandboxRegistry: ElementRegistry = {
       </Button>
     );
   },
+
+  // `device` Element — a FauxClient frame (browser / device / bare) that renders
+  // its child Elements as real, interactive UI inside. This is how the CMS hosts
+  // a code/app preview (e.g. the hero) without bespoke chrome markup.
+  device: ({ node, children }) => (
+    <FauxClient
+      variant={(lit(node.props.variant) || "browser") as "browser" | "device" | "bare"}
+      url={lit(node.props.url) || undefined}
+      meta={lit(node.props.meta) || undefined}
+    >
+      {children}
+    </FauxClient>
+  ),
 
   "hero-eyebrow": () => (
     <>
@@ -134,16 +154,7 @@ export const sandboxRegistry: ElementRegistry = {
   },
 
   "hero-card": () => (
-    <>
-      <div className="hero-card-bar">
-        <div className="dotrow">
-          <i />
-          <i />
-          <i />
-        </div>
-        <span style={{ flex: 1 }}>resources/js/Pages/DesignReview.tsx</span>
-        <span>UTF-8 · TSX</span>
-      </div>
+    <FauxClient variant="browser" url="resources/js/Pages/DesignReview.tsx" meta="UTF-8 · TSX">
       <div className="codeblock" dangerouslySetInnerHTML={{ __html: HERO_CODE_HTML }} />
       <div
         style={{
@@ -170,6 +181,6 @@ export const sandboxRegistry: ElementRegistry = {
           artboard_add_piece ✓
         </span>
       </div>
-    </>
+    </FauxClient>
   ),
 };

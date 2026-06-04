@@ -145,6 +145,7 @@ class PackageRegistry
             ['slug' => 'editor', 'name' => 'Editor'],
             ['slug' => 'emoji', 'name' => 'Emoji'],
             ['slug' => 'emoji-select', 'name' => 'EmojiSelect'],
+            ['slug' => 'faux-client', 'name' => 'FauxClient', 'blurb' => 'Browser / device / window chrome rendering real, interactive UI inside (with scale-to-fit).'],
             ['slug' => 'file-upload', 'name' => 'FileUpload'],
             ['slug' => 'heading', 'name' => 'Heading'],
             ['slug' => 'icon', 'name' => 'Icon'],

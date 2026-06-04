@@ -18,6 +18,7 @@ import {
     Composer,
     ContentRenderer,
     ContextMenu,
+    FauxClient,
     Dropdown,
     Editor,
     Emoji,
@@ -116,6 +117,7 @@ const REGISTRY: Record<string, DemoFn> = {
     "react-fancy/reason-tag": ReasonTagDemo,
     // Card / container
     "react-fancy/card": CardDemo,
+    "react-fancy/faux-client": FauxClientDemo,
     "react-fancy/callout": CalloutDemo,
     // Navigation
     "react-fancy/breadcrumbs": BreadcrumbsDemo,
@@ -273,6 +275,27 @@ function BadgeDemo() {
             <Badge color="zinc">archived</Badge>
             <Badge color="emerald" size="sm">small</Badge>
             <Badge color="violet" size="lg">large</Badge>
+        </div>
+    );
+}
+
+function FauxClientDemo() {
+    return (
+        <div className="grid gap-4 sm:grid-cols-2">
+            <FauxClient variant="browser" url="fancy.test/agent-playground" meta="UTF-8">
+                <div className="space-y-2 p-5">
+                    <Badge color="emerald" dot>live</Badge>
+                    <Text className="!font-semibold">Real, interactive UI</Text>
+                    <Text size="sm" className="!text-zinc-500">The children render normally — this Button works.</Text>
+                    <Button color="violet" size="sm" icon="sparkles">Try it</Button>
+                </div>
+            </FauxClient>
+            <FauxClient variant="device">
+                <div className="space-y-2 p-5">
+                    <Text className="!font-semibold">Device chrome</Text>
+                    <Text size="sm" className="!text-zinc-500">Same component, mobile/device framing.</Text>
+                </div>
+            </FauxClient>
         </div>
     );
 }

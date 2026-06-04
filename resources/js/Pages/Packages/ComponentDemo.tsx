@@ -100,7 +100,7 @@ type DemoFn = () => JSX.Element;
 
 const REGISTRY: Record<string, DemoFn> = {
     // Buttons / actions
-    "react-fancy/action": ActionDemo,
+    "react-fancy/button": ActionDemo,
     "react-fancy/magic-wand": MagicWandDemo,
     // Text
     "react-fancy/heading": HeadingDemo,
@@ -281,15 +281,42 @@ function DemoNote({ children, outOfBox, demo }: { children: ReactNode; outOfBox:
 
 function ActionDemo() {
     return (
-        <div className="flex flex-wrap gap-2">
-            <Button color="violet">Primary</Button>
-            <Button>Default</Button>
-            <Button variant="ghost">Ghost</Button>
-            <Button color="emerald" icon="check">Save</Button>
-            <Button color="red" variant="ghost" icon="trash">Delete</Button>
-            <Button disabled>Disabled</Button>
-            <Button variant="circle" icon="search" aria-label="Search" />
-            <Button variant="circle" color="violet" icon="plus" aria-label="New" />
+        <div className="space-y-5">
+            <div className="flex flex-wrap gap-2">
+                <Button color="violet">Primary</Button>
+                <Button>Default</Button>
+                <Button variant="ghost">Ghost</Button>
+                <Button color="emerald" icon="check">Save</Button>
+                <Button color="red" variant="ghost" icon="trash">Delete</Button>
+                <Button disabled>Disabled</Button>
+                <Button variant="circle" icon="search" aria-label="Search" />
+                <Button variant="circle" color="violet" icon="plus" aria-label="New" />
+            </div>
+            <div>
+                <div className="mb-2 text-xs font-medium text-zinc-500">Constrained width · multi-word labels stack left-aligned, icon stays put</div>
+                <div className="flex items-start gap-3">
+                    <div style={{ width: 104 }}>
+                        <Button color="violet" icon="plus" className="w-full">New customer</Button>
+                    </div>
+                    <div style={{ width: 104 }}>
+                        <Button color="emerald" icon="check" className="w-full">Save changes now</Button>
+                    </div>
+                    <div style={{ width: 104 }}>
+                        <Button color="violet" icon="plus" iconPlace="top" className="w-full">New customer</Button>
+                    </div>
+                    <div style={{ width: 104 }}>
+                        <Button color="violet" icon="plus" className="w-full text-center">Centered override</Button>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div className="mb-2 text-xs font-medium text-zinc-500"><code className="rounded bg-zinc-100 px-1 dark:bg-zinc-800">responsive</code> · label hides below the <code className="rounded bg-zinc-100 px-1 dark:bg-zinc-800">sm</code> breakpoint (resize the window)</div>
+                <div className="flex flex-wrap gap-2">
+                    <Button color="violet" icon="plus" responsive>New customer</Button>
+                    <Button color="emerald" icon="check" responsive>Save</Button>
+                    <Button variant="ghost" icon="trash" responsive>Delete</Button>
+                </div>
+            </div>
         </div>
     );
 }

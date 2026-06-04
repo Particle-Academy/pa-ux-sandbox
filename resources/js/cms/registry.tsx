@@ -17,7 +17,7 @@
  */
 import { Link } from "@inertiajs/react";
 import { ArrowRight, Github, Layers, Package, Terminal, Zap } from "lucide-react";
-import { Button, FauxClient } from "@particle-academy/react-fancy";
+import { Button, Card, FauxClient } from "@particle-academy/react-fancy";
 import { defaultRegistry, type ElementRegistry } from "@particle-academy/fancy-cms-ui/react";
 import {
   Packages,
@@ -92,6 +92,9 @@ export const sandboxRegistry: ElementRegistry = {
       </Button>
     );
   },
+
+  // `card` Element → a real react-fancy Card so authored cards match the site.
+  card: ({ children }) => <Card padding="md">{children}</Card>,
 
   // `device` Element — a FauxClient frame (browser / device / bare) that renders
   // its child Elements as real, interactive UI inside. This is how the CMS hosts

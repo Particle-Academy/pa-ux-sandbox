@@ -31,7 +31,7 @@
         "@particle-academy/fancy-3d-babylon": "^0.1.0",
         "@particle-academy/fancy-3d-three": "^0.1.0",
         "@particle-academy/fancy-artboard": "^0.1.0",
-        "@particle-academy/fancy-cms-ui": "^0.0.1-dev.11",
+        "@particle-academy/fancy-cms-ui": "^0.0.1-dev.13",
         "@particle-academy/fancy-code": "^0.4.6",
         "@particle-academy/fancy-echarts": "^4.0",
         "@particle-academy/fancy-flow": "^0.3.1",

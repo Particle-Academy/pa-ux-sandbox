@@ -1,5 +1,5 @@
 import { Head, Link, usePage } from "@inertiajs/react";
-import { Button, Card, Heading, Text } from "@particle-academy/react-fancy";
+import { Badge, Button, Card, FauxClient, Heading, Icon, Separator, Text } from "@particle-academy/react-fancy";
 import { Layout } from "../Layout";
 
 type Submission = {
@@ -10,6 +10,170 @@ type Submission = {
     description: string | null;
     thumbnail_url: string | null;
 };
+
+// ── Coming soon: Fancy Analytics Suite ──────────────────────────────────────
+// A sneak-peek teaser for the upcoming Pixel + Heuristics + Pro Analytics work.
+// The mock dashboard renders inside a FauxClient "device" frame (the FauxDevice).
+// All numbers are static fixtures — no data source yet.
+
+const FOCUS_GRID: number[][] = [
+    [0.05, 0.1, 0.18, 0.22, 0.16, 0.08, 0.04, 0.02],
+    [0.08, 0.22, 0.55, 0.78, 0.62, 0.3, 0.12, 0.05],
+    [0.12, 0.4, 0.85, 1.0, 0.9, 0.5, 0.2, 0.07],
+    [0.07, 0.25, 0.52, 0.7, 0.58, 0.32, 0.14, 0.05],
+    [0.03, 0.09, 0.16, 0.2, 0.15, 0.09, 0.05, 0.02],
+];
+
+const SECTION_BARS = [
+    { label: "Hero", pct: 92 },
+    { label: "Pricing", pct: 74 },
+    { label: "Docs", pct: 58 },
+    { label: "Footer", pct: 21 },
+];
+
+const SESSIONS = [
+    { who: "Human", where: "/pricing", tone: "emerald" as const },
+    { who: "Agent · Claude", where: "/docs/api", tone: "violet" as const },
+    { who: "Human", where: "/showcase", tone: "emerald" as const },
+];
+
+function Sparkline({ points, className = "" }: { points: number[]; className?: string }) {
+    const w = 64;
+    const h = 20;
+    const max = Math.max(...points, 1);
+    const d = points
+        .map((p, i) => `${(i / (points.length - 1)) * w},${h - (p / max) * h}`)
+        .join(" ");
+    return (
+        <svg viewBox={`0 0 ${w} ${h}`} className={className} preserveAspectRatio="none" aria-hidden>
+            <polyline points={d} fill="none" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+    );
+}
+
+function MockAnalyticsDashboard() {
+    return (
+        <div className="space-y-3 bg-white p-3 text-zinc-800 dark:bg-zinc-950 dark:text-zinc-100">
+            <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1.5">
+                    <Icon name="activity" className="h-3.5 w-3.5 text-violet-500" />
+                    <span className="text-[11px] font-semibold">Fancy Analytics</span>
+                </div>
+                <span className="inline-flex items-center gap-1 text-[9px] font-medium text-emerald-500">
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> live
+                </span>
+            </div>
+
+            {/* Metric tiles */}
+            <div className="grid grid-cols-2 gap-2">
+                <div className="rounded-lg border border-zinc-200 p-2 dark:border-zinc-800">
+                    <div className="text-[9px] uppercase tracking-wide text-zinc-400">Avg. time on page</div>
+                    <div className="mt-0.5 text-sm font-semibold">2m 14s</div>
+                    <Sparkline points={[3, 4, 3.5, 5, 4.5, 6, 5.5, 7]} className="mt-1 h-4 w-full text-violet-500" />
+                </div>
+                <div className="rounded-lg border border-zinc-200 p-2 dark:border-zinc-800">
+                    <div className="text-[9px] uppercase tracking-wide text-zinc-400">Clickthrough</div>
+                    <div className="mt-0.5 text-sm font-semibold">38%</div>
+                    <Sparkline points={[2, 3, 2.5, 4, 5, 4.5, 6, 6.5]} className="mt-1 h-4 w-full text-emerald-500" />
+                </div>
+            </div>
+
+            {/* Focus heatmap */}
+            <div className="rounded-lg border border-zinc-200 p-2 dark:border-zinc-800">
+                <div className="mb-1 flex items-center gap-1 text-[9px] uppercase tracking-wide text-zinc-400">
+                    <Icon name="flame" className="h-3 w-3 text-orange-500" /> Focus heatmap
+                </div>
+                <div className="flex flex-col gap-[2px]">
+                    {FOCUS_GRID.map((row, r) => (
+                        <div key={r} className="flex gap-[2px]">
+                            {row.map((v, c) => (
+                                <div
+                                    key={c}
+                                    className="h-2.5 flex-1 rounded-[2px]"
+                                    style={{ backgroundColor: `rgba(249,115,22,${0.08 + v * 0.85})` }}
+                                />
+                            ))}
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* Section engagement bars */}
+            <div className="space-y-1.5">
+                {SECTION_BARS.map((b) => (
+                    <div key={b.label} className="flex items-center gap-2">
+                        <span className="w-12 shrink-0 text-[9px] text-zinc-500">{b.label}</span>
+                        <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-800">
+                            <div className="h-full rounded-full bg-violet-500" style={{ width: `${b.pct}%` }} />
+                        </div>
+                        <span className="w-7 shrink-0 text-right text-[9px] tabular-nums text-zinc-400">{b.pct}%</span>
+                    </div>
+                ))}
+            </div>
+
+            {/* Live sessions (human + agent) */}
+            <div className="space-y-1">
+                {SESSIONS.map((s, i) => (
+                    <div key={i} className="flex items-center gap-2 text-[10px]">
+                        <span className={`h-1.5 w-1.5 shrink-0 rounded-full ${s.tone === "violet" ? "bg-violet-500" : "bg-emerald-500"}`} />
+                        <span className="font-medium">{s.who}</span>
+                        <span className="text-zinc-400">{s.where}</span>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+}
+
+function ComingSoonAnalytics() {
+    const features = [
+        { icon: "sparkles", text: "Fancy Pixel — a one-line badge that verifies your site and unlocks its Showcase listing." },
+        { icon: "mouse-pointer-click", text: "Clickthroughs, time-on-page & scroll depth — per page, human vs. agent." },
+        { icon: "flame", text: "Mouse-movement focus heatmaps that show where attention actually lands." },
+        { icon: "bot", text: "Built for Human+ UX — agents are first-class visitors, measured too." },
+    ];
+    return (
+        <Card className="mt-6 overflow-hidden border-violet-200 bg-gradient-to-br from-violet-50/70 to-transparent dark:border-violet-900/50 dark:from-violet-950/30">
+            <div className="grid gap-6 p-6 lg:grid-cols-[1fr_auto] lg:items-center">
+                <div className="space-y-4">
+                    <div className="flex flex-wrap items-center gap-2">
+                        <Badge color="violet" dot>Coming soon</Badge>
+                        <Badge color="amber">Pro</Badge>
+                    </div>
+                    <Heading level={2} size="lg">Know exactly how people — and agents — use your site</Heading>
+                    <Text className="max-w-xl">
+                        We're building the <strong>Fancy Analytics Suite</strong>: drop in the new
+                        <span className="mx-1 font-medium text-violet-600 dark:text-violet-300">Fancy Pixel</span>
+                        and <span className="font-medium text-violet-600 dark:text-violet-300">Fancy Heuristics</span>
+                        captures how every visitor — human or agent — actually moves through your pages. Pro members
+                        get the full dashboard: engagement, attention heatmaps, and session replay-grade insight.
+                    </Text>
+                    <ul className="space-y-2">
+                        {features.map((f) => (
+                            <li key={f.text} className="flex items-start gap-2.5">
+                                <span className="mt-0.5 grid h-5 w-5 shrink-0 place-items-center rounded-md bg-violet-100 text-violet-600 dark:bg-violet-900/40 dark:text-violet-300">
+                                    <Icon name={f.icon} className="h-3 w-3" />
+                                </span>
+                                <Text size="sm" className="!text-zinc-600 dark:!text-zinc-300">{f.text}</Text>
+                            </li>
+                        ))}
+                    </ul>
+                    <Separator className="!my-1" />
+                    <Text size="xs" className="!text-zinc-500">
+                        Heads up: Showcase listing will soon require a verified Fancy Pixel on your live site.
+                    </Text>
+                </div>
+
+                <div className="mx-auto w-full max-w-[280px]">
+                    <FauxClient variant="device">
+                        <MockAnalyticsDashboard />
+                    </FauxClient>
+                    <Text size="xs" className="mt-2 text-center !text-zinc-400">Sneak peek · mock data</Text>
+                </div>
+            </div>
+        </Card>
+    );
+}
 
 export default function ShowcaseIndex({ submissions }: { submissions: Submission[] }) {
     const { props } = usePage<{ auth: { user: unknown } }>();
@@ -38,6 +202,8 @@ export default function ShowcaseIndex({ submissions }: { submissions: Submission
                     </Button>
                 )}
             </div>
+
+            <ComingSoonAnalytics />
 
             {submissions.length === 0 ? (
                 <Card className="mt-6">

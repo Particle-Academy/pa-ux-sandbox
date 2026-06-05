@@ -16,12 +16,13 @@ type Submission = {
 // The mock dashboard renders inside a FauxClient "device" frame (the FauxDevice).
 // All numbers are static fixtures — no data source yet.
 
-const FOCUS_GRID: number[][] = [
-    [0.05, 0.1, 0.18, 0.22, 0.16, 0.08, 0.04, 0.02],
-    [0.08, 0.22, 0.55, 0.78, 0.62, 0.3, 0.12, 0.05],
-    [0.12, 0.4, 0.85, 1.0, 0.9, 0.5, 0.2, 0.07],
-    [0.07, 0.25, 0.52, 0.7, 0.58, 0.32, 0.14, 0.05],
-    [0.03, 0.09, 0.16, 0.2, 0.15, 0.09, 0.05, 0.02],
+// Heat blobs overlaid on a wireframe of the real page (x/y in %, r in px) —
+// this is an overlay heatmap on the actual site, not an abstract cell grid.
+const HEAT_BLOBS = [
+    { x: 50, y: 40, r: 30, hot: 0.7 }, // hero CTA — hottest
+    { x: 84, y: 13, r: 14, hot: 0.5 }, // nav action
+    { x: 24, y: 80, r: 15, hot: 0.42 }, // first card
+    { x: 72, y: 82, r: 11, hot: 0.3 }, // third card
 ];
 
 const SECTION_BARS = [
@@ -78,23 +79,44 @@ function MockAnalyticsDashboard() {
                 </div>
             </div>
 
-            {/* Focus heatmap */}
+            {/* Focus heatmap — a live overlay on the real page, not an abstract grid */}
             <div className="rounded-lg border border-zinc-200 p-2 dark:border-zinc-800">
                 <div className="mb-1 flex items-center gap-1 text-[9px] uppercase tracking-wide text-zinc-400">
                     <Icon name="flame" className="h-3 w-3 text-orange-500" /> Focus heatmap
+                    <span className="ml-auto font-mono text-zinc-300 dark:text-zinc-600">/pricing</span>
                 </div>
-                <div className="flex flex-col gap-[2px]">
-                    {FOCUS_GRID.map((row, r) => (
-                        <div key={r} className="flex gap-[2px]">
-                            {row.map((v, c) => (
-                                <div
-                                    key={c}
-                                    className="h-2.5 flex-1 rounded-[2px]"
-                                    style={{ backgroundColor: `rgba(249,115,22,${0.08 + v * 0.85})` }}
-                                />
-                            ))}
+                <div className="relative h-[84px] overflow-hidden rounded-md bg-zinc-50 dark:bg-zinc-900">
+                    {/* wireframe of the actual page being measured */}
+                    <div className="space-y-1 p-1.5">
+                        <div className="flex items-center gap-1">
+                            <div className="h-1.5 w-1.5 rounded-full bg-zinc-300 dark:bg-zinc-700" />
+                            <div className="h-1 w-7 rounded bg-zinc-200 dark:bg-zinc-800" />
+                            <div className="ml-auto h-1 w-4 rounded bg-zinc-200 dark:bg-zinc-800" />
+                            <div className="h-1 w-4 rounded bg-zinc-300 dark:bg-zinc-700" />
                         </div>
-                    ))}
+                        <div className="h-7 rounded bg-zinc-200 dark:bg-zinc-800" />
+                        <div className="grid grid-cols-3 gap-1">
+                            <div className="h-4 rounded bg-zinc-200 dark:bg-zinc-800" />
+                            <div className="h-4 rounded bg-zinc-200 dark:bg-zinc-800" />
+                            <div className="h-4 rounded bg-zinc-200 dark:bg-zinc-800" />
+                        </div>
+                    </div>
+                    {/* the heat overlay */}
+                    <div className="pointer-events-none absolute inset-0">
+                        {HEAT_BLOBS.map((b, i) => (
+                            <div
+                                key={i}
+                                className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full"
+                                style={{
+                                    left: `${b.x}%`,
+                                    top: `${b.y}%`,
+                                    width: b.r * 2,
+                                    height: b.r * 2,
+                                    background: `radial-gradient(circle, rgba(239,68,68,${b.hot}) 0%, rgba(249,115,22,${b.hot * 0.5}) 45%, transparent 72%)`,
+                                }}
+                            />
+                        ))}
+                    </div>
                 </div>
             </div>
 
@@ -127,7 +149,7 @@ function MockAnalyticsDashboard() {
 
 function ComingSoonAnalytics() {
     const features = [
-        { icon: "sparkles", text: "Fancy Pixel — a one-line badge that verifies your site and unlocks its Showcase listing." },
+        { icon: "sparkles", text: "Fancy Pixel — a one-line badge to show your site is built with Fancy UI." },
         { icon: "mouse-pointer-click", text: "Clickthroughs, time-on-page & scroll depth — per page, human vs. agent." },
         { icon: "flame", text: "Mouse-movement focus heatmaps that show where attention actually lands." },
         { icon: "bot", text: "Built for Human+ UX — agents are first-class visitors, measured too." },
@@ -158,10 +180,6 @@ function ComingSoonAnalytics() {
                             </li>
                         ))}
                     </ul>
-                    <Separator className="!my-1" />
-                    <Text size="xs" className="!text-zinc-500">
-                        Heads up: Showcase listing will soon require a verified Fancy Pixel on your live site.
-                    </Text>
                 </div>
 
                 <div className="mx-auto w-full max-w-[280px]">

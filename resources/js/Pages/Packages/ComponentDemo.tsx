@@ -67,7 +67,7 @@ import { FlowEditor } from "@particle-academy/fancy-flow";
 import { useFlowRunnerUx, createFlowRunnerUx } from "@particle-academy/fancy-flow/ux";
 import { runFlow } from "@particle-academy/fancy-flow/engine";
 import "@particle-academy/fancy-flow/styles.css";
-import { FancyDiff, type AcceptanceState, type FancyDiffHandle, type MergedResult } from "@particle-academy/fancy-diff";
+import { FancyDiff, computeDiff, mergeResult, parseUnifiedDiff, setAllStatus, type AcceptanceState } from "@particle-academy/fancy-diff";
 import "@particle-academy/fancy-diff/styles.css";
 import { mountPixel, type PixelHandle, type PixelStyle } from "@particle-academy/fancy-pixel";
 import { SheetWorkbook, createEmptyWorkbook, createEmptySheet } from "@particle-academy/fancy-sheets";
@@ -1996,7 +1996,7 @@ const DIFF_UNIFIED = `diff --git a/src/auth.ts b/src/auth.ts
 +  return issueToken(user.id, { ttl: "1h" });
  }`;
 
-function MergedPanel({ result, label }: { result: MergedResult | null; label: string }) {
+function MergedPanel({ result, label }: { result: { text: string } | null; label: string }) {
     return (
         <div className="rounded-md border border-zinc-200 dark:border-zinc-800">
             <div className="flex items-center gap-2 border-b border-zinc-200 px-3 py-1.5 dark:border-zinc-800">
@@ -2010,55 +2010,48 @@ function MergedPanel({ result, label }: { result: MergedResult | null; label: st
     );
 }
 
-// Two in-memory documents — the in-house engine computes the diff; per-hunk
-// accept/reject folds into a live merged document via getMergedResult().
+// Two in-memory documents — the in-house engine computes the diff; the merged
+// document is folded REACTIVELY from the controlled acceptance map, so it stays
+// exactly in sync with `value` (accept a hunk -> take the new line, reject ->
+// keep the original). Computing it from `value` (not a ref read during render)
+// avoids an off-by-one where the panel lags a commit behind the buttons.
 function DocumentsDiffExample() {
+    const diff = useMemo(() => computeDiff(DIFF_CONFIG_BEFORE, DIFF_CONFIG_AFTER), []);
     const [value, setValue] = useState<AcceptanceState>({});
-    const [merged, setMerged] = useState<MergedResult | null>(null);
-    const ref = useRef<FancyDiffHandle>(null);
+    const mergedText = useMemo(() => mergeResult(diff, value, { defaultStatus: "pending" }), [diff, value]);
     return (
         <div className="space-y-3">
             <div className="overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
                 <FancyDiff
-                    ref={ref}
                     source={{ before: DIFF_CONFIG_BEFORE, after: DIFF_CONFIG_AFTER, label: "config.yml" }}
                     mode="split"
                     value={value}
                     onChange={setValue}
-                    onResult={setMerged}
                 />
             </div>
             <div className="flex flex-wrap gap-2">
-                <Button size="sm" color="emerald" icon="check" onClick={() => ref.current && setValue(acceptAll(ref.current))}>
+                <Button size="sm" color="emerald" icon="check" onClick={() => setValue(setAllStatus(diff, "accepted"))}>
                     Accept all
                 </Button>
-                <Button size="sm" variant="ghost" icon="x-mark" onClick={() => ref.current && setValue(rejectAll(ref.current))}>
+                <Button size="sm" variant="ghost" icon="x-mark" onClick={() => setValue(setAllStatus(diff, "rejected"))}>
                     Reject all
                 </Button>
             </div>
-            <MergedPanel result={merged ?? (ref.current ? ref.current.getMergedResult() : null)} label="config.yml" />
+            <MergedPanel result={{ text: mergedText }} label="config.yml" />
         </div>
     );
-}
-
-// Helpers: flip every hunk to one status via the ref handle's diffs.
-function acceptAll(handle: FancyDiffHandle): AcceptanceState {
-    const next: AcceptanceState = {};
-    for (const d of handle.getDiffs()) for (const h of d.hunks) if (h.type !== "equal") next[h.id] = "accepted";
-    return next;
-}
-function rejectAll(handle: FancyDiffHandle): AcceptanceState {
-    const next: AcceptanceState = {};
-    for (const d of handle.getDiffs()) for (const h of d.hunks) if (h.type !== "equal") next[h.id] = "rejected";
-    return next;
 }
 
 // A real git unified diff — parsed in-house into the SAME hunk model. The file
 // is flagged `partial` (the diff window is not the whole file), so the merged
 // result reconstructs only the lines present in the diff.
 function UnifiedDiffExample() {
+    const diffs = useMemo(() => parseUnifiedDiff(DIFF_UNIFIED), []);
     const [value, setValue] = useState<AcceptanceState>({});
-    const [merged, setMerged] = useState<MergedResult | null>(null);
+    const mergedText = useMemo(
+        () => diffs.map((d) => mergeResult(d, value, { defaultStatus: "pending" })).join("\n"),
+        [diffs, value],
+    );
     return (
         <div className="space-y-3">
             <Callout color="amber" className="text-[12px]">
@@ -2073,10 +2066,9 @@ function UnifiedDiffExample() {
                     mode="inline"
                     value={value}
                     onChange={setValue}
-                    onResult={setMerged}
                 />
             </div>
-            <MergedPanel result={merged} label="src/auth.ts (partial)" />
+            <MergedPanel result={{ text: mergedText }} label="src/auth.ts (partial)" />
         </div>
     );
 }
@@ -2085,7 +2077,7 @@ function FancyDiffDemo() {
     return (
         <DemoNote
             outOfBox="The split / inline toolbar, per-hunk accept/reject, the merged-document fold, the in-house LCS diff engine, and the git unified-diff parser are all stock FancyDiff. Acceptance is a controlled value/onChange map (hunkId → accepted | rejected | pending); every hunk carries a stable data-fancy-diff-hunk handle so an embedded agent reads and writes the exact same state a human does — no DOM scraping."
-            demo="The two sample sources — an edited config.yml and a real git unified diff — plus the Accept all / Reject all buttons and the Merged result panel are demo scaffolding wrapped around the stock component. The merged text is the live getMergedResult() return, recomputed on every accept/reject."
+            demo="The two sample sources — an edited config.yml and a real git unified diff — plus the Accept all / Reject all buttons and the Merged result panel are demo scaffolding wrapped around the stock component. The merged text is folded straight from the controlled acceptance map and recomputed on every accept/reject."
         >
             <Tabs defaultTab="documents">
                 <Tabs.List>

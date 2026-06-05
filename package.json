@@ -34,6 +34,7 @@
         "@particle-academy/fancy-auto-common": "^0.1.0",
         "@particle-academy/fancy-cms-ui": "^0.0.1-dev.17",
         "@particle-academy/fancy-code": "^0.4.6",
+        "@particle-academy/fancy-diff": "^0.1.0",
         "@particle-academy/fancy-echarts": "^4.0",
         "@particle-academy/fancy-flow": "^0.5.1",
         "@particle-academy/fancy-inertia": "^0.2",

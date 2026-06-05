@@ -67,6 +67,8 @@ import { FlowEditor } from "@particle-academy/fancy-flow";
 import { useFlowRunnerUx, createFlowRunnerUx } from "@particle-academy/fancy-flow/ux";
 import { runFlow } from "@particle-academy/fancy-flow/engine";
 import "@particle-academy/fancy-flow/styles.css";
+import { FancyDiff, type AcceptanceState, type FancyDiffHandle, type MergedResult } from "@particle-academy/fancy-diff";
+import "@particle-academy/fancy-diff/styles.css";
 import { SheetWorkbook, createEmptyWorkbook, createEmptySheet } from "@particle-academy/fancy-sheets";
 import "@particle-academy/fancy-sheets/styles.css";
 import { EChart } from "@particle-academy/fancy-echarts";
@@ -184,6 +186,9 @@ const REGISTRY: Record<string, DemoFn> = {
     "fancy-flow/use-flow-run": FlowRunHookDemo,
     "fancy-flow/run-flow": RunFlowDemo,
     "fancy-flow/flow-runner-ux": FlowRunnerUxDemo,
+
+    // ── fancy-diff
+    "fancy-diff/fancy-diff": FancyDiffDemo,
 
     // ── fancy-sheets
     "fancy-sheets/sheet-workbook": SheetWorkbookDemo,
@@ -1944,6 +1949,150 @@ function FlowRunnerUxDemo() {
                     </div>
                 </div>
             </div>
+        </DemoNote>
+    );
+}
+
+// ─── fancy-diff ──────────────────────────────────────────────────────────────
+// Two datasources, one component. The first tab diffs two in-memory documents
+// (the in-house LCS engine computes the hunks); the second parses a real git
+// unified diff (partial documents, flagged with a `partial` badge). Both drive
+// the SAME controlled value/onChange loop + live merged result an agent would.
+
+// Datasource 1 — a config file a human (or agent) edited: region moved regions,
+// replicas bumped, a debug flag added, a stale comment removed.
+const DIFF_CONFIG_BEFORE = `name: atlas-api
+region: us-east-1
+replicas: 2
+# legacy: pin to the old gateway
+timeout_ms: 3000
+log_level: info`;
+
+const DIFF_CONFIG_AFTER = `name: atlas-api
+region: eu-west-1
+replicas: 4
+timeout_ms: 3000
+log_level: debug
+tracing: enabled`;
+
+// Datasource 2 — a real git unified diff. A unified diff carries only the
+// changed hunks plus a little context, never the whole file — so fancy-diff
+// flags every parsed file `partial` and merges only the lines in the window.
+const DIFF_UNIFIED = `diff --git a/src/auth.ts b/src/auth.ts
+--- a/src/auth.ts
++++ b/src/auth.ts
+@@ -12,7 +12,8 @@ export async function login(email: string, password: string) {
+   const user = await users.findByEmail(email);
+   if (!user) throw new AuthError("no such user");
+-  const ok = user.password === password;
++  const ok = await bcrypt.compare(password, user.passwordHash);
+   if (!ok) throw new AuthError("bad password");
+-  return issueToken(user.id);
++  await audit.log("login", user.id);
++  return issueToken(user.id, { ttl: "1h" });
+ }`;
+
+function MergedPanel({ result, label }: { result: MergedResult | null; label: string }) {
+    return (
+        <div className="rounded-md border border-zinc-200 dark:border-zinc-800">
+            <div className="flex items-center gap-2 border-b border-zinc-200 px-3 py-1.5 dark:border-zinc-800">
+                <Badge color="emerald" size="sm">Merged result</Badge>
+                <span className="font-mono text-[11px] text-zinc-500">{label}</span>
+            </div>
+            <pre className="max-h-56 overflow-auto bg-zinc-950 p-3 font-mono text-[11px] leading-relaxed text-zinc-100">
+                {result?.text ?? "// accept or reject a hunk to recompute the merged document"}
+            </pre>
+        </div>
+    );
+}
+
+// Two in-memory documents — the in-house engine computes the diff; per-hunk
+// accept/reject folds into a live merged document via getMergedResult().
+function DocumentsDiffExample() {
+    const [value, setValue] = useState<AcceptanceState>({});
+    const [merged, setMerged] = useState<MergedResult | null>(null);
+    const ref = useRef<FancyDiffHandle>(null);
+    return (
+        <div className="space-y-3">
+            <div className="overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
+                <FancyDiff
+                    ref={ref}
+                    source={{ before: DIFF_CONFIG_BEFORE, after: DIFF_CONFIG_AFTER, label: "config.yml" }}
+                    mode="split"
+                    value={value}
+                    onChange={setValue}
+                    onResult={setMerged}
+                />
+            </div>
+            <div className="flex flex-wrap gap-2">
+                <Button size="sm" color="emerald" icon="check" onClick={() => ref.current && setValue(acceptAll(ref.current))}>
+                    Accept all
+                </Button>
+                <Button size="sm" variant="ghost" icon="x-mark" onClick={() => ref.current && setValue(rejectAll(ref.current))}>
+                    Reject all
+                </Button>
+            </div>
+            <MergedPanel result={merged ?? (ref.current ? ref.current.getMergedResult() : null)} label="config.yml" />
+        </div>
+    );
+}
+
+// Helpers: flip every hunk to one status via the ref handle's diffs.
+function acceptAll(handle: FancyDiffHandle): AcceptanceState {
+    const next: AcceptanceState = {};
+    for (const d of handle.getDiffs()) for (const h of d.hunks) if (h.type !== "equal") next[h.id] = "accepted";
+    return next;
+}
+function rejectAll(handle: FancyDiffHandle): AcceptanceState {
+    const next: AcceptanceState = {};
+    for (const d of handle.getDiffs()) for (const h of d.hunks) if (h.type !== "equal") next[h.id] = "rejected";
+    return next;
+}
+
+// A real git unified diff — parsed in-house into the SAME hunk model. The file
+// is flagged `partial` (the diff window is not the whole file), so the merged
+// result reconstructs only the lines present in the diff.
+function UnifiedDiffExample() {
+    const [value, setValue] = useState<AcceptanceState>({});
+    const [merged, setMerged] = useState<MergedResult | null>(null);
+    return (
+        <div className="space-y-3">
+            <Callout color="amber" className="text-[12px]">
+                A git unified diff carries only the changed hunks plus a few context lines — not the
+                whole file. fancy-diff flags every parsed file <code>partial</code> and merges only the
+                lines inside the diff window. For a fully merged file, feed the complete
+                <code>{" {before, after}"}</code> documents instead.
+            </Callout>
+            <div className="overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
+                <FancyDiff
+                    source={{ unified: DIFF_UNIFIED }}
+                    mode="inline"
+                    value={value}
+                    onChange={setValue}
+                    onResult={setMerged}
+                />
+            </div>
+            <MergedPanel result={merged} label="src/auth.ts (partial)" />
+        </div>
+    );
+}
+
+function FancyDiffDemo() {
+    return (
+        <DemoNote
+            outOfBox="The split / inline toolbar, per-hunk accept/reject, the merged-document fold, the in-house LCS diff engine, and the git unified-diff parser are all stock FancyDiff. Acceptance is a controlled value/onChange map (hunkId → accepted | rejected | pending); every hunk carries a stable data-fancy-diff-hunk handle so an embedded agent reads and writes the exact same state a human does — no DOM scraping."
+            demo="The two sample sources — an edited config.yml and a real git unified diff — plus the Accept all / Reject all buttons and the Merged result panel are demo scaffolding wrapped around the stock component. The merged text is the live getMergedResult() return, recomputed on every accept/reject."
+        >
+            <Tabs defaultTab="documents">
+                <Tabs.List>
+                    <Tabs.Tab value="documents">Two documents (split)</Tabs.Tab>
+                    <Tabs.Tab value="unified">Git unified diff (inline)</Tabs.Tab>
+                </Tabs.List>
+                <Tabs.Panels>
+                    <Tabs.Panel value="documents"><div className="pt-3"><DocumentsDiffExample /></div></Tabs.Panel>
+                    <Tabs.Panel value="unified"><div className="pt-3"><UnifiedDiffExample /></div></Tabs.Panel>
+                </Tabs.Panels>
+            </Tabs>
         </DemoNote>
     );
 }

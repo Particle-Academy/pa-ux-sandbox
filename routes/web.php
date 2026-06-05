@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\AdminProductsController;
 use App\Http\Controllers\Admin\AdminShopController;
 use App\Http\Controllers\Admin\AdminShowcaseSubmissionsController;
 use App\Http\Controllers\Admin\AdminUsersController;
+use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\Api\XpController;
 use App\Http\Controllers\Auth\GitHubLoginController;
 use App\Http\Controllers\AuthController;
@@ -81,6 +82,11 @@ Route::middleware('auth')->group(function () {
     // Player profile + gamification opt-out.
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
     Route::post('/profile/opt-out', [ProfileController::class, 'toggleOptOut'])->name('profile.opt-out');
+
+    // Pro Analytics Suite — Pro-gated dashboard over the live Fancy Heuristics
+    // feed. Auth required; the controller's FMS `analytics-suite` check splits
+    // Pro users (real dashboard) from everyone else (upsell panel).
+    Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics.index');
 
     // Hidden Easter-egg story endings → unlock the secret achievements.
     Route::post('/api/easter-eggs/ending', [EasterEggController::class, 'ending'])

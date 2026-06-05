@@ -72,6 +72,13 @@ export function Layout({
     const flash = props.flash ?? {};
     const path = url.replace(/^\/+/, "").split("?")[0];
 
+    // Pro Analytics lives behind the `analytics-suite` Pro feature, so we only
+    // surface the nav link for Pro users. Non-Pro users can still reach the
+    // upsell at /analytics directly — the server enforces the gate either way.
+    const navItems = auth?.player?.pro
+        ? [...NAV_ITEMS, { to: "/analytics", label: "Analytics", match: "analytics" }]
+        : NAV_ITEMS;
+
     const [theme, setTheme] = useState<"light" | "dark">(() =>
         typeof window === "undefined" ? "light" : currentTheme(),
     );
@@ -92,7 +99,7 @@ export function Layout({
                     </Link>
 
                     <div className="nav-links">
-                        {NAV_ITEMS.map((item) => {
+                        {navItems.map((item) => {
                             const active = path === item.match || path.startsWith(item.match + "/");
                             return (
                                 <Link

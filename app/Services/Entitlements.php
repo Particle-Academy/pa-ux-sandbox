@@ -33,6 +33,7 @@ class Entitlements
         'pro-themes',          // extra showcase themes
         'pro-source-export',   // download a component's full source bundle
         'pro-bridge-tools',    // advanced agent bridge tools
+        'analytics-suite',     // the Pro Analytics dashboard (live Fancy Heuristics)
     ];
 
     public function isProFeature(string $feature): bool

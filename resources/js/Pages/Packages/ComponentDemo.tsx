@@ -65,6 +65,7 @@ import { ArtBoard, ArtPiece, type ArtBoardValue } from "@particle-academy/fancy-
 import "@particle-academy/fancy-artboard/styles.css";
 import { FlowEditor } from "@particle-academy/fancy-flow";
 import { useFlowRunnerUx, createFlowRunnerUx } from "@particle-academy/fancy-flow/ux";
+import { runFlow } from "@particle-academy/fancy-flow/engine";
 import "@particle-academy/fancy-flow/styles.css";
 import { SheetWorkbook, createEmptyWorkbook, createEmptySheet } from "@particle-academy/fancy-sheets";
 import "@particle-academy/fancy-sheets/styles.css";
@@ -181,6 +182,8 @@ const REGISTRY: Record<string, DemoFn> = {
     "fancy-flow/flow-editor": FlowEditorDemo,
     "fancy-flow/use-flow-state": FlowStateHookDemo,
     "fancy-flow/use-flow-run": FlowRunHookDemo,
+    "fancy-flow/run-flow": RunFlowDemo,
+    "fancy-flow/flow-runner-ux": FlowEditorDemo,
 
     // ── fancy-sheets
     "fancy-sheets/sheet-workbook": SheetWorkbookDemo,
@@ -1650,6 +1653,46 @@ function FlowRunHookDemo() {
         >
             <div className="overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
                 <FlowEditor initial={FLOW_SEED_GRAPH} executors={FLOW_EXECUTORS} height={420} />
+            </div>
+        </DemoNote>
+    );
+}
+
+// Headless engine — runs a graph with runFlow (zero React/DOM) right in the
+// browser and shows the real result. The same call runs on a server unchanged.
+function RunFlowDemo() {
+    const [out, setOut] = useState<string | null>(null);
+    const [running, setRunning] = useState(false);
+    const run = async () => {
+        setRunning(true);
+        const graph = {
+            nodes: [
+                { id: "t", type: "manual_trigger", position: { x: 0, y: 0 }, data: { kind: "manual_trigger", label: "Start" } },
+                { id: "a", type: "api_request", position: { x: 200, y: 0 }, data: { kind: "api_request", label: "Fetch order" } },
+                { id: "o", type: "output", position: { x: 400, y: 0 }, data: { kind: "output", label: "Respond" } },
+            ],
+            edges: [
+                { id: "e1", source: "t", target: "a" },
+                { id: "e2", source: "a", target: "o" },
+            ],
+        };
+        const executors = { "*": async ({ node }: { node: { id: string } }) => ({ ran: node.id }) };
+        const result = await runFlow(graph as never, executors as never);
+        setOut(JSON.stringify(result, null, 2));
+        setRunning(false);
+    };
+    return (
+        <DemoNote
+            outOfBox="runFlow is the pure topological engine from @particle-academy/fancy-flow/engine — zero React, runs in any JS context. It walks the graph, runs your executors per node kind, resolves ports, and returns { ok, outputs, error }. Here it runs in the browser; the identical call runs on a Node server, worker, or CLI."
+            demo="A 3-node graph + a wildcard executor stub. The JSON below is the real runFlow return value — no editor, no DOM."
+        >
+            <div className="space-y-2">
+                <Button color="violet" size="sm" icon="play" onClick={run} disabled={running}>
+                    {running ? "Running…" : "Run headless"}
+                </Button>
+                <pre className="max-h-52 overflow-auto rounded-md border border-zinc-800 bg-zinc-950 p-3 font-mono text-[11px] leading-relaxed text-zinc-100">
+                    {out ?? "// click Run headless — runFlow executes with no React/DOM and returns the result"}
+                </pre>
             </div>
         </DemoNote>
     );

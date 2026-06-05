@@ -267,7 +267,7 @@ class PackageRegistry
         return [
             'slug' => 'fancy-flow',
             'name' => 'fancy-flow',
-            'tagline' => 'Workflow editor + runner on top of React Flow — six node kits, topological executor.',
+            'tagline' => 'Workflow editor + runner on top of React Flow — six node kits, topological executor, headless engine, and a FlowRunnerUx flow→UX bridge.',
             'npm' => '@particle-academy/fancy-flow',
             'repo' => 'Particle-Academy/fancy-flow',
             'language' => 'TypeScript',
@@ -275,6 +275,8 @@ class PackageRegistry
                 ['slug' => 'flow-editor', 'name' => 'FlowEditor', 'blurb' => 'Main editor canvas.'],
                 ['slug' => 'use-flow-state', 'name' => 'useFlowState', 'blurb' => 'Controlled state hook.'],
                 ['slug' => 'use-flow-run', 'name' => 'useFlowRun', 'blurb' => 'Executor hook.'],
+                ['slug' => 'run-flow', 'name' => 'runFlow', 'blurb' => 'Headless topological runner — /engine, zero React.'],
+                ['slug' => 'flow-runner-ux', 'name' => 'FlowRunnerUx', 'blurb' => 'Flow-driven UX bridge — host effects become flow nodes (/ux).'],
             ],
         ];
     }

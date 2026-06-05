@@ -965,6 +965,31 @@ const PREVIEWS: Record<string, PreviewFn> = {
         </div>
     ),
 
+    "fancy-flow/run-flow": () => (
+        <div className="w-full max-w-[18rem] overflow-hidden rounded-md border border-zinc-800 bg-zinc-950 font-mono text-[10px] text-zinc-100">
+            <div className="border-b border-zinc-800 px-2 py-1 text-[9px] text-zinc-500">/engine · zero React</div>
+            <div className="space-y-0.5 p-2.5">
+                <div><span className="text-violet-300">await</span> runFlow(graph, executors)</div>
+                <div className="text-emerald-300">{"{ ok: true,"}</div>
+                <div className="pl-3 text-zinc-300">{'outputs: { … } }'}</div>
+            </div>
+        </div>
+    ),
+
+    "fancy-flow/flow-runner-ux": () => (
+        <div className="flex items-center gap-2 text-[10px]">
+            <div className="rounded-md border border-zinc-200 bg-white px-2 py-1.5 text-zinc-700 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-200">
+                <div className="font-semibold">effect</div>
+                <div className="text-zinc-500">toast()</div>
+            </div>
+            <div className="text-zinc-400">→</div>
+            <div className="rounded-md border-2 border-violet-500 bg-violet-50 px-2 py-1.5 text-violet-900 dark:bg-violet-500/15 dark:text-violet-100">
+                <div className="flex items-center gap-1 font-semibold"><span>🔔</span> ux_toast</div>
+                <div className="text-violet-500/80 dark:text-violet-200/70">flow node</div>
+            </div>
+        </div>
+    ),
+
     // ─── fancy-whiteboard ─────────────────────────────────────────────────
 
     "fancy-whiteboard/board": () => (

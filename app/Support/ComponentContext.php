@@ -65,6 +65,18 @@ class ComponentContext
             'how' => 'Hold the flow in state with <code>useFlowState</code>, render <code>&lt;FlowEditor&gt;</code>, and call <code>useFlowRun</code> to execute. Wire the flow bridge from <code>@particle-academy/agent-integrations/bridges/flow</code> if you want an embedded agent to author or modify the graph.',
         ],
 
+        'fancy-flow/run-flow' => [
+            'why' => 'A workflow a human (or agent) authors in the editor is worthless if it can only run inside a browser tab. You want the <em>same</em> graph to execute on a server, a queue worker, a CLI, or an edge function — without dragging React, <code>@xyflow/react</code>, or any DOM into your backend bundle.',
+            'what' => '<code>runFlow</code> is the pure topological engine, exported from the <strong>zero-React</strong> <code>@particle-academy/fancy-flow/engine</code> subpath. It walks a <code>FlowGraph</code> against an <code>ExecutorRegistry</code> (one async function per node kind), resolves inputs across connected ports, short-circuits decision branches (<code>{ branch: "true" }</code>), detects cycles, and streams typed <code>RunEvent</code>s. It&apos;s the exact same engine <code>useFlowRun</code> drives in the editor.',
+            'how' => 'Import from the headless entry and run: <code>import { runFlow } from "@particle-academy/fancy-flow/engine"</code>, then <code>const result = await runFlow(graph, executors, onEvent)</code>. Provide executors keyed by node kind (or a <code>"*"</code> wildcard); inspect <code>result.ok</code> / <code>result.outputs</code> / <code>result.error</code>.',
+        ],
+
+        'fancy-flow/flow-runner-ux' => [
+            'why' => 'The flip side of running a flow is letting the flow <em>drive your app</em> — pop a toast, navigate, open a modal, pause for a human approval. Wiring that ad-hoc per node turns into a tangle, and there&apos;s no shared notion of "an autonomous thing just did X" that presence / logging / undo can hook into.',
+            'what' => '<code>FlowRunnerUx</code> is the headless <em>flow-driven UX</em> bridge — the counterpart to agent-integrations. The host registers named UX <code>effects</code>; <code>useFlowRunnerUx</code> turns each into a flow executor (kind <code>ux_&lt;effect&gt;</code>), registers a matching palette node, and broadcasts an <code>AutoActivity</code> event (<code>source:"flow"</code>) per dispatch on the shared <code>@particle-academy/fancy-auto-common</code> bus that agent-integrations also uses. Human-in-the-loop is free: an effect that returns a Promise pauses the run until the user resolves it.',
+            'how' => 'From the <code>/ux</code> subpath: <code>const ux = useFlowRunnerUx({ effects: { toast: ({ message }) =&gt; toast({ title: message }) } })</code>, then <code>&lt;FlowEditor initial={graph} executors={ux.executors} /&gt;</code>. Call <code>ux.registerKinds()</code> once to add the effect nodes to the palette.',
+        ],
+
         'fancy-whiteboard/board' => [
             'why' => 'Collaborative boards are the canonical Human+ UX surface — a shared canvas where humans sketch, paste, and arrange, and where agents need to drop tiles, draw connectors, and move things around. Every existing whiteboard library either has zero agent affordances or assumes a specific transport.',
             'what' => '<code>Board</code> is a controlled, transport-agnostic canvas: sticky notes, freeform pen, connectors, shapes, presence cursors, undo. Every item has a stable id; mutations broadcast <code>AgentActivity</code> events for the presence layer to render.',

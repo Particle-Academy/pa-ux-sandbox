@@ -13,6 +13,7 @@ use App\Http\Controllers\Auth\GitHubLoginController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DarkSlideExportController;
 use App\Http\Controllers\DevLoginController;
+use App\Http\Controllers\EasterEggController;
 use App\Http\Controllers\HolySheetExportController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SeoController;
@@ -79,6 +80,11 @@ Route::middleware('auth')->group(function () {
     // Player profile + gamification opt-out.
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
     Route::post('/profile/opt-out', [ProfileController::class, 'toggleOptOut'])->name('profile.opt-out');
+
+    // Hidden Easter-egg story endings → unlock the secret achievements.
+    Route::post('/api/easter-eggs/ending', [EasterEggController::class, 'ending'])
+        ->middleware('throttle:60,1')
+        ->name('easter-egg.ending');
 });
 
 // xlsx export endpoint for the fancy-sheets demo. The controller is owned

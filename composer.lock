@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "33705e7ad5809dc533c186d3c8eee73d",
+    "content-hash": "021ee53edee78f4fc41209174c77afdf",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -3725,16 +3725,16 @@
         },
         {
             "name": "particle-academy/laravel-fun-lab",
-            "version": "v0.4.2",
+            "version": "v0.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/laravel-fun-lab.git",
-                "reference": "eee94dc7a455f21af4a82ab2667fcd7b48efb630"
+                "reference": "0bb1c227d7953896cfc7419120a87d866700c450"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/laravel-fun-lab/zipball/eee94dc7a455f21af4a82ab2667fcd7b48efb630",
-                "reference": "eee94dc7a455f21af4a82ab2667fcd7b48efb630",
+                "url": "https://api.github.com/repos/Particle-Academy/laravel-fun-lab/zipball/0bb1c227d7953896cfc7419120a87d866700c450",
+                "reference": "0bb1c227d7953896cfc7419120a87d866700c450",
                 "shasum": ""
             },
             "require": {
@@ -3795,9 +3795,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Particle-Academy/laravel-fun-lab/issues",
-                "source": "https://github.com/Particle-Academy/laravel-fun-lab/tree/v0.4.2"
+                "source": "https://github.com/Particle-Academy/laravel-fun-lab/tree/v0.5.0"
             },
-            "time": "2026-05-28T00:38:03+00:00"
+            "time": "2026-06-05T07:20:39+00:00"
         },
         {
             "name": "phpoption/phpoption",

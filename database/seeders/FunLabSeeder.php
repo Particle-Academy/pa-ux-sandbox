@@ -107,16 +107,16 @@ class FunLabSeeder extends Seeder
         // distribution for us.
         $weights = [
             // off-site (1.5–2.0)
-            'promotion-xp'   => 2.0,
+            'promotion-xp' => 2.0,
             'contributor-xp' => 1.8,
-            'bug-hunter-xp'  => 1.7,
-            'projects-xp'    => 1.5,
+            'bug-hunter-xp' => 1.7,
+            'projects-xp' => 1.5,
             // on-site (0.5–1.5)
-            'bridge-xp'      => 1.5,
-            'tinkerer-xp'    => 1.2,
-            'dreamer-xp'     => 1.0,
-            'explorer-xp'    => 0.6,
-            'reader-xp'      => 0.5,
+            'bridge-xp' => 1.5,
+            'tinkerer-xp' => 1.2,
+            'dreamer-xp' => 1.0,
+            'explorer-xp' => 0.6,
+            'reader-xp' => 0.5,
         ];
 
         foreach ($weights as $metric => $weight) {
@@ -172,6 +172,11 @@ class FunLabSeeder extends Seeder
             ['slug' => 'project-veteran', 'name' => 'Project Veteran', 'description' => 'Registered 5+ public projects built with Fancy UI.', 'icon' => 'medal'],
             ['slug' => 'badge-bearer', 'name' => 'Badge Bearer', 'description' => 'Verified "Powered by Fancy" badge spotted on your project.', 'icon' => 'badge-check'],
             ['slug' => 'brand-ambassador', 'name' => 'Brand Ambassador', 'description' => '5+ active projects displaying the Fancy badge.', 'icon' => 'megaphone'],
+
+            // ── Hidden Easter eggs (the FlowRunnerUx "deep system" story) ──
+            // Secret until earned — these never appear in the catalog until unlocked.
+            ['slug' => 'the-adventurer', 'name' => 'The Adventurer', 'description' => 'Found the one true path through Pip\'s descent into the deep system.', 'icon' => 'compass', 'hidden' => true],
+            ['slug' => 'ultimate-adventurer', 'name' => 'Ultimate Adventurer', 'description' => 'Uncovered every ending of the deep system — triumph and every disaster alike.', 'icon' => 'trophy', 'hidden' => true],
         ];
 
         foreach ($achievements as $a) {

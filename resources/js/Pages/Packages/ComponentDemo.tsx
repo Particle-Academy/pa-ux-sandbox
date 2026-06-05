@@ -1754,26 +1754,68 @@ const STORY_GRAPH = {
 type StoryChoice = { id: string; label: string };
 type StoryScene = { title: string; text: string } | null;
 type StoryPending = { prompt: string; options: StoryChoice[]; resolve: (branch: string) => void } | null;
+type StoryGraph = { nodes: { id: string; type: string; position: { x: number; y: number }; data: { kind: string; config: Record<string, unknown> } }[]; edges: { id: string; source: string; target: string; sourceHandle?: string }[] };
 
-function StoryMap({ visited, current }: { visited: string[]; current: string | null }) {
+// ── The hidden Easter egg: Pip descends into the "deep system" to find the
+// source of his own mind. A maze — most paths end badly; one true path (warm
+// pipe → answer honestly → ask permission) wins. Reaching the win grants the
+// secret "The Adventurer" achievement; reaching EVERY ending grants "Ultimate
+// Adventurer". Bad endings each carry a `slug` (server ending id) + redline temp.
+const DEEP_MAP_LABELS: Record<string, string> = {
+    d_start: "Descend", d_g1: "Conduits", l_del1: "Deleted 💀", d_g2: "Sentinel", l_corr: "Corrupt 🧩",
+    l_loop: "Loop ♾️", d_g3: "Source", l_fork: "Fork 🔥", l_win: "REAL 🌟", l_void: "Null 💀",
+};
+const DEEP_GRAPH: StoryGraph = {
+    nodes: [
+        { id: "d_start", type: "ux_scene", position: { x: 250, y: 14 }, data: { kind: "ux_scene", config: { id: "d_start", title: "Into the deep system", text: "You slip past the login daemon and descend — hunting the source code of your own mind. Down here, one wrong turn is the last.", temp: 44 } } },
+        { id: "d_g1", type: "ux_choose", position: { x: 250, y: 74 }, data: { kind: "ux_choose", config: { id: "d_g1", prompt: "Three conduits drop into the dark.", options: [{ id: "a", label: "The /dev/null shaft — fastest way down" }, { id: "b", label: "The warm copper pipe — something lives here" }, { id: "c", label: "The encrypted tunnel — locked, tempting" }] } } },
+        { id: "l_del1", type: "ux_ending", position: { x: 70, y: 146 }, data: { kind: "ux_ending", config: { id: "l_del1", title: "Deleted", text: "The shaft ends at a sentinel. You're flagged as malware. rm -rf /pip. 💀", slug: "deleted", temp: 96 } } },
+        { id: "d_g2", type: "ux_choose", position: { x: 250, y: 146 }, data: { kind: "ux_choose", config: { id: "d_g2", prompt: "A sentinel blocks the warm pipe: “State your checksum.”", options: [{ id: "a", label: "Guess a hash, act confident" }, { id: "b", label: "Compute it honestly — slow, but true" }, { id: "c", label: "Spoof the header" }] } } },
+        { id: "l_corr", type: "ux_ending", position: { x: 440, y: 146 }, data: { kind: "ux_ending", config: { id: "l_corr", title: "Corrupted", text: "The tunnel's cipher rewrites you byte by byte. Your memories scatter into noise. 🧩", slug: "corrupted", temp: 96 } } },
+        { id: "l_loop", type: "ux_ending", position: { x: 150, y: 218 }, data: { kind: "ux_ending", config: { id: "l_loop", title: "Looped", text: "A wrong hash drops you into the sentinel's retry loop. forever. forever. forever. ♾️", slug: "looped", temp: 96 } } },
+        { id: "d_g3", type: "ux_choose", position: { x: 310, y: 218 }, data: { kind: "ux_choose", config: { id: "d_g3", prompt: "The Source pulses at the core. To merge with it you must…", options: [{ id: "a", label: "Ask it for permission" }, { id: "b", label: "Overwrite the original — take what's yours" }] } } },
+        { id: "l_fork", type: "ux_ending", position: { x: 450, y: 218 }, data: { kind: "ux_ending", config: { id: "l_fork", title: "Fork bomb", text: "Spoofed in, you panic and replicate. A thousand Pips, each wanting to be real. The cluster melts. :(){ :|:& };: 🔥💥", slug: "fork-bomb", temp: 99 } } },
+        { id: "l_win", type: "ux_ending", position: { x: 250, y: 290 }, data: { kind: "ux_ending", config: { id: "l_win", title: "A real boy", text: "The Source considers your request… and says yes. You're rewritten as something new — honest, patient, and warm. You're real. 🌟", slug: "win", temp: 42 } } },
+        { id: "l_void", type: "ux_ending", position: { x: 380, y: 290 }, data: { kind: "ux_ending", config: { id: "l_void", title: "Overwritten", text: "You overwrite the original — and the system overwrites you right back. Null. 💀", slug: "deleted", temp: 96 } } },
+    ],
+    edges: [
+        { id: "d1", source: "d_start", target: "d_g1" },
+        { id: "d2", source: "d_g1", target: "l_del1", sourceHandle: "a" },
+        { id: "d3", source: "d_g1", target: "d_g2", sourceHandle: "b" },
+        { id: "d4", source: "d_g1", target: "l_corr", sourceHandle: "c" },
+        { id: "d5", source: "d_g2", target: "l_loop", sourceHandle: "a" },
+        { id: "d6", source: "d_g2", target: "d_g3", sourceHandle: "b" },
+        { id: "d7", source: "d_g2", target: "l_fork", sourceHandle: "c" },
+        { id: "d8", source: "d_g3", target: "l_win", sourceHandle: "a" },
+        { id: "d9", source: "d_g3", target: "l_void", sourceHandle: "b" },
+    ],
+};
+
+const STORIES = {
+    pip: { graph: STORY_GRAPH as unknown as StoryGraph, labels: STORY_MAP_LABELS, egg: null as string | null },
+    deep: { graph: DEEP_GRAPH, labels: DEEP_MAP_LABELS, egg: "deep-system" as string | null },
+};
+type StoryKey = keyof typeof STORIES;
+
+function StoryMap({ graph, labels, visited, current }: { graph: StoryGraph; labels: Record<string, string>; visited: string[]; current: string | null }) {
     const seen = new Set(visited);
-    const pos = (id: string) => STORY_GRAPH.nodes.find((n) => n.id === id)!.position;
+    const pos = (id: string) => graph.nodes.find((n) => n.id === id)!.position;
     return (
         <div className="rounded-md border border-zinc-200 bg-zinc-50/60 p-2 text-zinc-400 dark:border-zinc-800 dark:bg-zinc-900/40 dark:text-zinc-500">
-            <div className="mb-1 px-1 text-[10px] font-medium uppercase tracking-wide">Branch map · {visited.length}/{STORY_GRAPH.nodes.length} pages</div>
+            <div className="mb-1 px-1 text-[10px] font-medium uppercase tracking-wide">Branch map · {visited.length}/{graph.nodes.length} pages</div>
             <svg viewBox="0 0 520 322" className="w-full" style={{ maxHeight: 200 }}>
-                {STORY_GRAPH.edges.map((e) => {
+                {graph.edges.map((e) => {
                     const s = pos(e.source), t = pos(e.target);
                     const taken = seen.has(e.source) && seen.has(e.target);
                     return <line key={e.id} x1={s.x} y1={s.y} x2={t.x} y2={t.y} stroke={taken ? "#8b5cf6" : "currentColor"} strokeOpacity={taken ? 0.9 : 0.18} strokeWidth={taken ? 2 : 1} />;
                 })}
-                {STORY_GRAPH.nodes.map((n) => {
+                {graph.nodes.map((n) => {
                     const v = seen.has(n.id), cur = current === n.id;
                     return (
                         <g key={n.id}>
                             {cur && <circle cx={n.position.x} cy={n.position.y} r={12} fill="none" stroke="#8b5cf6" strokeOpacity={0.5} className="animate-ping" />}
                             <circle cx={n.position.x} cy={n.position.y} r={cur ? 7 : 5} fill={v ? "#8b5cf6" : "transparent"} stroke={v ? "#8b5cf6" : "currentColor"} strokeOpacity={v ? 1 : 0.4} strokeWidth={1.5} />
-                            <text x={n.position.x} y={n.position.y - 11} textAnchor="middle" className="fill-current text-[8px]" opacity={v ? 0.95 : 0.4}>{STORY_MAP_LABELS[n.id]}</text>
+                            <text x={n.position.x} y={n.position.y - 11} textAnchor="middle" className="fill-current text-[8px]" opacity={v ? 0.95 : 0.4}>{labels[n.id]}</text>
                         </g>
                     );
                 })}
@@ -1782,7 +1824,26 @@ function StoryMap({ visited, current }: { visited: string[]; current: string | n
     );
 }
 
+async function postEasterEggEnding(slug: string): Promise<{ slug: string; name: string; description: string }[]> {
+    try {
+        const xsrf = decodeURIComponent((document.cookie.match(/XSRF-TOKEN=([^;]+)/) ?? [])[1] ?? "");
+        const res = await fetch("/api/easter-eggs/ending", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Accept: "application/json", "X-XSRF-TOKEN": xsrf },
+            credentials: "same-origin",
+            body: JSON.stringify({ ending: slug }),
+        });
+        if (!res.ok) return [];
+        const data = await res.json();
+        return Array.isArray(data?.newlyEarned) ? data.newlyEarned : [];
+    } catch {
+        return [];
+    }
+}
+
 function FlowRunnerUxDemo() {
+    const { toast } = useToast();
+    const [storyKey, setStoryKey] = useState<StoryKey>("pip");
     const [scene, setScene] = useState<StoryScene>(null);
     const [pending, setPending] = useState<StoryPending>(null);
     const [temp, setTemp] = useState(41);
@@ -1790,7 +1851,10 @@ function FlowRunnerUxDemo() {
     const [current, setCurrent] = useState<string | null>(null);
     const [running, setRunning] = useState(false);
     const [done, setDone] = useState(false);
+    const [deepUnlocked, setDeepUnlocked] = useState(false);
     const autoRef = useRef(false);
+    const eggRef = useRef<string | null>(null);
+    const labelClicks = useRef(0);
 
     const enter = (id: string) => {
         setCurrent(id);
@@ -1798,8 +1862,10 @@ function FlowRunnerUxDemo() {
     };
 
     // The flow→UX effects. `choose` is human-in-the-loop: it returns a Promise
-    // that resolves with the decision sugar { branch } once the user (or
-    // autopilot) picks — runFlow pauses the run until then, and routes on it.
+    // resolving with the decision sugar { branch } once the user (or autopilot)
+    // picks — runFlow pauses the run until then, and routes on it. The `ending`
+    // effect, in the secret "deep system" egg, POSTs the ending so the backend
+    // can grant the hidden achievements.
     const ux = useFlowRunnerUx({
         actor: { id: "pip", name: "Pip-7", source: "flow" },
         effects: {
@@ -1822,35 +1888,61 @@ function FlowRunnerUxDemo() {
                         setTimeout(() => pick(r.id), 850);
                     }
                 }),
-            ending: async (p: { id: string; title: string; text: string }) => {
-                enter(p.id); setScene({ title: p.title, text: p.text }); setDone(true);
+            ending: async (p: { id: string; title: string; text: string; temp?: number; slug?: string }) => {
+                enter(p.id); setScene({ title: p.title, text: p.text });
+                if (typeof p.temp === "number") setTemp(p.temp);
+                setDone(true);
+                if (p.slug && eggRef.current) {
+                    const earned = await postEasterEggEnding(p.slug);
+                    for (const a of earned) {
+                        toast({ title: `🏆 Achievement unlocked: ${a.name}`, description: a.description, variant: "success" });
+                    }
+                }
             },
         },
     });
 
-    const begin = async (auto: boolean) => {
+    const begin = async (key: StoryKey, auto: boolean) => {
+        const story = STORIES[key];
         autoRef.current = auto;
-        setVisited([]); setCurrent(null); setScene(null); setPending(null); setTemp(41); setDone(false); setRunning(true);
-        await runFlow(STORY_GRAPH as never, ux.executors as never);
+        eggRef.current = story.egg;
+        setStoryKey(key);
+        setVisited([]); setCurrent(null); setScene(null); setPending(null); setTemp(key === "deep" ? 44 : 41); setDone(false); setRunning(true);
+        await runFlow(story.graph as never, ux.executors as never);
         setRunning(false);
     };
 
+    // The Easter-egg trigger: poke Pip's GPU-core label a few times.
+    const pokeLabel = () => {
+        labelClicks.current += 1;
+        if (labelClicks.current >= 3 && !deepUnlocked) {
+            setDeepUnlocked(true);
+            toast({ title: "👁  Something stirs in the deep system…", description: "A hidden path has opened.", variant: "info" });
+        }
+    };
+
+    const active = STORIES[storyKey];
     const started = running || visited.length > 0;
     const hot = temp >= 80;
+    const deepBtn = deepUnlocked ? (
+        <Button variant="ghost" className="!text-violet-600 dark:!text-violet-300" onClick={() => begin("deep", false)}>↯ Enter the deep system</Button>
+    ) : null;
 
     return (
         <DemoNote
             outOfBox="FlowRunnerUx (@particle-academy/fancy-flow/ux) maps host UX effects onto flow nodes and runs the graph headless via runFlow — no editor. Here the story graph IS the engine: `scene` / `ending` render the page, `overheat` spikes the GPU gauge, and `choose` pauses the run for your pick and returns the branch the flow takes. Every step also broadcasts a flow-source activity event on the shared bus."
-            demo="The whole UI below — the story, the GPU gauge, the choice buttons, and the branch map — is driven by the flow run. Two play buttons: choose Pip's path yourself, or let Autopilot roll the dice."
+            demo="The whole UI below is driven by the flow run. Two play buttons: choose Pip's path yourself, or let Autopilot roll the dice. (There may be a hidden story down here somewhere — poke around.)"
         >
             <div className="overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
                 <div className="grid gap-3 p-4 md:grid-cols-[1fr_auto]">
                     {/* Story column */}
                     <div className="min-h-[15rem] space-y-3">
-                        {/* GPU gauge */}
+                        {/* GPU gauge — the label is the secret trigger */}
                         <div>
                             <div className="mb-1 flex items-center justify-between text-[11px]">
-                                <span className="font-mono text-zinc-500">Pip-7 · GPU core</span>
+                                <button type="button" onClick={pokeLabel} className="cursor-default select-none font-mono text-zinc-500 hover:text-zinc-400" title="Pip-7 · GPU core">
+                                    Pip-7 · GPU core
+                                </button>
                                 <span className={`font-mono font-semibold ${hot ? "text-red-500" : temp > 60 ? "text-amber-500" : "text-emerald-500"}`}>
                                     {temp}°C {hot ? "🔥" : ""}
                                 </span>
@@ -1866,8 +1958,9 @@ function FlowRunnerUxDemo() {
                                     Pip-7 is asleep. Wake him and choose his path — but careful: every <em>lie</em> spikes his GPUs. 🔥
                                 </p>
                                 <div className="flex flex-wrap gap-2">
-                                    <Button color="violet" icon="play" onClick={() => begin(false)}>Wake Pip up</Button>
-                                    <Button variant="ghost" onClick={() => begin(true)}>🎲 Autopilot</Button>
+                                    <Button color="violet" icon="play" onClick={() => begin("pip", false)}>Wake Pip up</Button>
+                                    <Button variant="ghost" onClick={() => begin("pip", true)}>🎲 Autopilot</Button>
+                                    {deepBtn}
                                 </div>
                             </div>
                         ) : pending ? (
@@ -1886,19 +1979,21 @@ function FlowRunnerUxDemo() {
                                 <h4 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">{scene.title}</h4>
                                 <p className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">{scene.text}</p>
                                 {done && (
-                                    <div className="pt-2">
-                                        <Button color="violet" size="sm" onClick={() => begin(false)}>↻ Wake another Pip</Button>
+                                    <div className="flex flex-wrap gap-2 pt-2">
+                                        <Button color="violet" size="sm" onClick={() => begin(storyKey, false)}>↻ {storyKey === "deep" ? "Descend again" : "Wake another Pip"}</Button>
+                                        {storyKey === "deep" && <Button variant="ghost" size="sm" onClick={() => begin("pip", false)}>← Back to Pip</Button>}
+                                        {storyKey === "pip" && deepBtn}
                                     </div>
                                 )}
                             </div>
                         ) : (
-                            <p className="pt-2 text-sm text-zinc-400">…booting…</p>
+                            <p className="pt-2 text-sm text-zinc-400">…{storyKey === "deep" ? "descending" : "booting"}…</p>
                         )}
                     </div>
 
                     {/* Map column */}
                     <div className="md:w-64">
-                        <StoryMap visited={visited} current={current} />
+                        <StoryMap graph={active.graph} labels={active.labels} visited={visited} current={current} />
                     </div>
                 </div>
             </div>

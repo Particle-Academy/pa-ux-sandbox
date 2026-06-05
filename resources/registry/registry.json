@@ -1,6 +1,6 @@
 {
     "$schema": "https://ui.particle.academy/schema/registry-compiled.json",
-    "count": 123,
+    "count": 124,
     "items": [
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
@@ -1761,8 +1761,8 @@
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
             "name": "fancy-pixel",
             "type": "registry:ui",
-            "title": "@particle-academy/fancy-pixel",
-            "description": "Embeddable Showcase verification badge + liveness/collection beacon \u2014 Badge / Mark / Beacon styles, placed or floating, Shadow-DOM isolated. Drops in via a <script> tag.",
+            "title": "fancy-pixel",
+            "description": "Embeddable Showcase verification badge + liveness/collection beacon \u2014 Badge / Mark / Beacon styles, placed or floating, Shadow-DOM isolated. Drops in via a <script> tag or mountPixel().",
             "package": "fancy-pixel",
             "dependencies": [],
             "registryDependencies": [],
@@ -2632,6 +2632,17 @@
                     "target": "components/fancy/pillbox/index.ts"
                 }
             ]
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "pixel",
+            "type": "registry:ui",
+            "title": "FancyPixel",
+            "description": "Embeddable verification badge + collection beacon \u2014 Badge / Mark / Beacon styles, placed or floating, rendered into an open Shadow DOM with a stable data-fancy-badge handle.",
+            "package": "fancy-pixel",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",

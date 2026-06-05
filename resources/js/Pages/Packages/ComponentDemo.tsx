@@ -1,4 +1,4 @@
-import { lazy, Suspense, useMemo, useRef, useState, type FormEvent, type ReactNode } from "react";
+import { lazy, Suspense, useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from "react";
 import {
     Accordion,
     Button,
@@ -69,6 +69,7 @@ import { runFlow } from "@particle-academy/fancy-flow/engine";
 import "@particle-academy/fancy-flow/styles.css";
 import { FancyDiff, type AcceptanceState, type FancyDiffHandle, type MergedResult } from "@particle-academy/fancy-diff";
 import "@particle-academy/fancy-diff/styles.css";
+import { mountPixel, type PixelHandle, type PixelStyle } from "@particle-academy/fancy-pixel";
 import { SheetWorkbook, createEmptyWorkbook, createEmptySheet } from "@particle-academy/fancy-sheets";
 import "@particle-academy/fancy-sheets/styles.css";
 import { EChart } from "@particle-academy/fancy-echarts";
@@ -189,6 +190,9 @@ const REGISTRY: Record<string, DemoFn> = {
 
     // ── fancy-diff
     "fancy-diff/fancy-diff": FancyDiffDemo,
+
+    // ── fancy-pixel
+    "fancy-pixel/pixel": FancyPixelDemo,
 
     // ── fancy-sheets
     "fancy-sheets/sheet-workbook": SheetWorkbookDemo,
@@ -2093,6 +2097,67 @@ function FancyDiffDemo() {
                     <Tabs.Panel value="unified"><div className="pt-3"><UnifiedDiffExample /></div></Tabs.Panel>
                 </Tabs.Panels>
             </Tabs>
+        </DemoNote>
+    );
+}
+
+// ─── fancy-pixel ─────────────────────────────────────────────────────────────
+// One component, three styles. Each card mounts the REAL badge via mountPixel
+// into a ref'd container in `placed` mode (so it sits inline in the demo, not
+// floating over the page) with NO endpoint (so it never fires a network
+// beacon). The pixel renders into an open Shadow DOM and stamps a stable
+// data-fancy-badge handle the showcase scanner — and an agent — reads.
+
+const PIXEL_STYLES: { style: PixelStyle; name: string; renders: string }[] = [
+    { style: "badge", name: "Badge", renders: '"Powered by Fancy UI" wordmark + glyph' },
+    { style: "mark", name: "Mark", renders: "Logo glyph only" },
+    { style: "beacon", name: "Beacon", renders: "A small pulsing dot" },
+];
+
+// Mount one real pixel into a container, inline + endpoint-free. Returns the
+// handle so the demo tears it down on unmount.
+function PixelMount({ style }: { style: PixelStyle }) {
+    const ref = useRef<HTMLDivElement>(null);
+    useEffect(() => {
+        const target = ref.current;
+        if (!target) return;
+        let pixel: PixelHandle | null = null;
+        // placed/inline so it lives in the card; no `endpoint` => no beacon POST.
+        pixel = mountPixel({ style, mode: "placed", target, siteKey: "demo" });
+        return () => pixel?.destroy();
+    }, [style]);
+    return <div ref={ref} className="grid min-h-9 place-items-center" />;
+}
+
+function FancyPixelDemo() {
+    return (
+        <DemoNote
+            outOfBox="Every chip here is the real mountPixel() output: each style is rendered into an open Shadow DOM (host-page CSS can't hide it — visibility is part of verification), stamped with the stable data-fancy-badge marker the Showcase scanner detects plus a data-fancy-pixel handle an embedded agent reads. An IntersectionObserver confirms genuine on-screen visibility and dispatches a fancy-pixel:shown event."
+            demo="The three cards, labels, and the Badge / Mark / Beacon grouping are demo scaffolding. The pixels are mounted in mode:'placed' (inline at each card) with no endpoint, so nothing leaves the page. In production you'd typically use mode:'floating' to pin a single badge to a screen corner, and pass an endpoint to turn on the verification / collection beacon."
+        >
+            <div className="grid gap-3 sm:grid-cols-3">
+                {PIXEL_STYLES.map(({ style, name, renders }) => (
+                    <Card key={style} variant="outlined" className="space-y-3 p-4">
+                        <div className="flex items-center gap-2">
+                            <Badge color="violet" size="sm">{name}</Badge>
+                            <code className="font-mono text-[11px] text-zinc-500">style="{style}"</code>
+                        </div>
+                        <div className="grid place-items-center rounded-md border border-dashed border-zinc-200 bg-zinc-50/70 py-4 dark:border-zinc-800 dark:bg-zinc-900/40">
+                            <PixelMount style={style} />
+                        </div>
+                        <Text className="text-[12px] text-zinc-500">{renders}</Text>
+                    </Card>
+                ))}
+            </div>
+            <Callout color="violet" className="text-[12px]">
+                Two placement modes: <code>mode="placed"</code> (shown here) flows the pixel inline at a
+                target; <code>mode="floating"</code> pins it to a fixed screen corner. Set an
+                <code>{" endpoint"}</code> and the pixel POSTs a visibility beacon to{" "}
+                <code>{"${endpoint}/pixel"}</code> on mount and on every visibility change — the
+                Showcase verification + collection signal. Omit it (as this demo does) and no network
+                request is ever made. A one-line <code>&lt;script&gt;</code> tag both loads and
+                auto-mounts the badge with zero build step.
+            </Callout>
         </DemoNote>
     );
 }

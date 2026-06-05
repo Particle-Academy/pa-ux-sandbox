@@ -23,6 +23,7 @@ class PackageRegistry
             self::fancySlides(),
             self::fancyCode(),
             self::fancyDiff(),
+            self::fancyPixel(),
             self::fancyEcharts(),
             self::fancyScreens(),
             self::fancy3d(),
@@ -116,15 +117,9 @@ class PackageRegistry
                 'repo' => 'Particle-Academy/holy-sheet-js',
                 'language' => 'TypeScript',
             ],
-            // Showcase analytics: an embeddable verification/collection pixel + its browser collector.
-            [
-                'slug' => 'fancy-pixel',
-                'name' => '@particle-academy/fancy-pixel',
-                'tagline' => 'Embeddable Showcase verification badge + liveness/collection beacon — Badge / Mark / Beacon styles, placed or floating, Shadow-DOM isolated. Drops in via a <script> tag.',
-                'npm' => '@particle-academy/fancy-pixel',
-                'repo' => 'Particle-Academy/fancy-pixel',
-                'language' => 'TypeScript',
-            ],
+            // Showcase analytics: a headless browser collector (the verification
+            // badge that pairs with it — fancy-pixel — renders UI, so it lives in
+            // the main grid, not here).
             [
                 'slug' => 'fancy-heuristics-js',
                 'name' => '@particle-academy/fancy-heuristics-js',
@@ -272,6 +267,22 @@ class PackageRegistry
             'language' => 'TypeScript',
             'components' => [
                 ['slug' => 'fancy-diff', 'name' => 'FancyDiff', 'blurb' => 'Controlled split / inline diff viewer; per-hunk accept/reject with a merged result, render-prop customization, and a git unified-diff datasource.'],
+            ],
+        ];
+    }
+
+    /** @return array<string, mixed> */
+    private static function fancyPixel(): array
+    {
+        return [
+            'slug' => 'fancy-pixel',
+            'name' => 'fancy-pixel',
+            'tagline' => 'Embeddable Showcase verification badge + liveness/collection beacon — Badge / Mark / Beacon styles, placed or floating, Shadow-DOM isolated. Drops in via a <script> tag or mountPixel().',
+            'npm' => '@particle-academy/fancy-pixel',
+            'repo' => 'Particle-Academy/fancy-pixel',
+            'language' => 'TypeScript',
+            'components' => [
+                ['slug' => 'pixel', 'name' => 'FancyPixel', 'blurb' => 'Embeddable verification badge + collection beacon — Badge / Mark / Beacon styles, placed or floating, rendered into an open Shadow DOM with a stable data-fancy-badge handle.'],
             ],
         ];
     }

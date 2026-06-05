@@ -19,6 +19,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SeoController;
 use App\Http\Controllers\Showcase\DocsController;
 use App\Http\Controllers\Showcase\DreamingController;
+use App\Http\Controllers\Showcase\FancifiedBadgeController;
 use App\Http\Controllers\Showcase\HomeController;
 use App\Http\Controllers\Showcase\LeaderboardController;
 use App\Http\Controllers\Showcase\PackagesController;
@@ -161,6 +162,10 @@ Route::get('/docs', [DocsController::class, 'show'])->name('docs.index');
 Route::get('/docs/{slug}', [DocsController::class, 'show'])
     ->where('slug', '[a-z0-9\-]+')
     ->name('docs.show');
+
+// Public, embeddable "Fancified" badge for repo READMEs. OUTSIDE the auth
+// group so GitHub's README renderer (and the verifier) can hot-link it.
+Route::get('/badge/fancified.svg', FancifiedBadgeController::class)->name('showcase.badge.fancified');
 
 Route::get('/showcase', [ShowcaseSubmissionController::class, 'index'])->name('showcase.showcase.index');
 Route::middleware('auth')->group(function () {

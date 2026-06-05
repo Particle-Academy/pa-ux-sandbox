@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\ShowcaseSubmission;
 use App\Services\Showcase\FancyPixelDetector;
+use App\Services\Showcase\RepoVerifier;
 use App\Services\Showcase\SafeUrlFetcher;
 use App\Services\Showcase\UnsafeUrlException;
 use App\Services\ShowcaseRewards;
@@ -12,7 +13,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Http;
 
 class ScanShowcaseSubmission implements ShouldQueue
 {
@@ -23,7 +23,7 @@ class ScanShowcaseSubmission implements ShouldQueue
     public function handle(): void
     {
         $result = match ($this->submission->kind) {
-            'repo' => $this->scanRepo($this->submission->url),
+            'repo' => app(RepoVerifier::class)->verify($this->submission),
             'website' => $this->scanWebsite($this->submission->url),
             default => ['verified' => false, 'reason' => 'unknown kind'],
         };
@@ -47,66 +47,6 @@ class ScanShowcaseSubmission implements ShouldQueue
         if (! empty($result['badge'])) {
             $rewards->onBadgeDetected($this->submission);
         }
-    }
-
-    /** @return array<string, mixed> */
-    private function scanRepo(string $url): array
-    {
-        $owner = $repo = null;
-        if (preg_match('!github\.com[/:]([\w.-]+)/([\w.-]+?)(?:\.git)?/?$!i', $url, $m)) {
-            [, $owner, $repo] = $m;
-        } else {
-            return ['verified' => false, 'reason' => 'unrecognized GitHub URL'];
-        }
-
-        $token = config('services.github.api_token');
-        $matches = [];
-
-        foreach (['package.json', 'composer.json'] as $file) {
-            $contents = $this->fetchRepoFile($owner, $repo, $file, $token);
-            if ($contents === null) {
-                continue;
-            }
-            $json = json_decode($contents, true);
-            if (! is_array($json)) {
-                continue;
-            }
-
-            foreach (['dependencies', 'devDependencies', 'peerDependencies', 'require', 'require-dev'] as $section) {
-                foreach (($json[$section] ?? []) as $name => $_version) {
-                    if (str_starts_with($name, '@particle-academy/') || str_starts_with($name, 'particle-academy/')) {
-                        $matches[$name] = $section;
-                    }
-                }
-            }
-        }
-
-        if (empty($matches)) {
-            return ['verified' => false, 'reason' => 'no Fancy UI dependencies found in package.json/composer.json'];
-        }
-
-        return [
-            'verified' => true,
-            'kind' => 'repo',
-            'owner' => $owner,
-            'repo' => $repo,
-            'matches' => $matches,
-        ];
-    }
-
-    private function fetchRepoFile(string $owner, string $repo, string $file, ?string $token): ?string
-    {
-        $branches = ['main', 'master'];
-        foreach ($branches as $branch) {
-            $url = "https://raw.githubusercontent.com/{$owner}/{$repo}/{$branch}/{$file}";
-            $req = $token ? Http::withToken($token) : Http::withHeaders([]);
-            $resp = $req->withHeaders(['accept' => 'text/plain'])->get($url);
-            if ($resp->successful() && trim((string) $resp->body()) !== '') {
-                return (string) $resp->body();
-            }
-        }
-
-        return null;
     }
 
     /** @return array<string, mixed> */

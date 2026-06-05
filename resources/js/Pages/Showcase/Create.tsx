@@ -202,6 +202,19 @@ export default function ShowcaseCreate() {
                             </>
                         )}
 
+                        {!isWebsite && (
+                            <Callout color="violet" icon={<Icon name="award" />}>
+                                <Text size="xs">
+                                    We&apos;ll generate a README badge on the next step + scan
+                                    your code. Your repo gets listed once the{" "}
+                                    <span className="font-medium">Fancified</span> badge is in
+                                    your README <span className="font-medium">and</span> Fancy
+                                    powers <span className="font-medium">≥30%</span> of your
+                                    view/component files — async, never blocking.
+                                </Text>
+                            </Callout>
+                        )}
+
                         <div>
                             <label className="block text-xs font-semibold uppercase tracking-wider text-zinc-500">
                                 Title <Badge color="zinc" size="sm">optional</Badge>

@@ -71,7 +71,8 @@ class ShowcaseSubmissionController extends Controller
 
         return Inertia::render('Showcase/Installed', [
             'submission' => $this->present($submission),
-            'snippet' => $this->snippetFor($submission),
+            'snippet' => $submission->kind === 'website' ? $this->snippetFor($submission) : null,
+            'badgeMarkdown' => $submission->kind === 'repo' ? $this->badgeMarkdownFor($submission) : null,
         ]);
     }
 
@@ -85,9 +86,13 @@ class ShowcaseSubmissionController extends Controller
 
         ScanShowcaseSubmission::dispatch($submission);
 
+        $message = $submission->kind === 'repo'
+            ? 'Re-checking your repo for the Fancified badge + Fancy usage…'
+            : 'Re-checking your site for the Fancy Pixel…';
+
         return redirect()
             ->route('showcase.showcase.installed', $submission)
-            ->with('rescanned', 'Re-checking your site for the Fancy Pixel…');
+            ->with('rescanned', $message);
     }
 
     /**
@@ -108,6 +113,20 @@ class ShowcaseSubmissionController extends Controller
     }
 
     /**
+     * Build the copy-paste README markdown for the public Fancified badge,
+     * keyed to this submission's site_key. This is the repo equivalent of the
+     * pixel snippet — pasting it (and using Fancy in >=30% of view/component
+     * files) is what flips a pending repo to verified.
+     */
+    private function badgeMarkdownFor(ShowcaseSubmission $submission): string
+    {
+        $host = rtrim((string) config('app.url'), '/');
+        $badgeUrl = $host.'/badge/fancified.svg?site='.$submission->site_key;
+
+        return sprintf('[![Fancified](%s)](https://particle.academy)', $badgeUrl);
+    }
+
+    /**
      * @return array<string, mixed>
      */
     private function present(ShowcaseSubmission $submission): array
@@ -123,6 +142,7 @@ class ShowcaseSubmissionController extends Controller
             'mode' => $submission->mode,
             'status' => $submission->status,
             'scanned_at' => $submission->scanned_at?->toIso8601String(),
+            'scan_result' => $submission->scan_result,
         ];
     }
 

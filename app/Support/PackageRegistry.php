@@ -22,6 +22,7 @@ class PackageRegistry
             self::fancySheets(),
             self::fancySlides(),
             self::fancyCode(),
+            self::fancyDiff(),
             self::fancyEcharts(),
             self::fancyScreens(),
             self::fancy3d(),
@@ -113,6 +114,23 @@ class PackageRegistry
                 'tagline' => 'Node/TS port of holy-sheet — xlsx writer/reader + formula linter, isomorphic. Headless Agent API; no UI.',
                 'npm' => '@particle-academy/holy-sheet',
                 'repo' => 'Particle-Academy/holy-sheet-js',
+                'language' => 'TypeScript',
+            ],
+            // Showcase analytics: an embeddable verification/collection pixel + its browser collector.
+            [
+                'slug' => 'fancy-pixel',
+                'name' => '@particle-academy/fancy-pixel',
+                'tagline' => 'Embeddable Showcase verification badge + liveness/collection beacon — Badge / Mark / Beacon styles, placed or floating, Shadow-DOM isolated. Drops in via a <script> tag.',
+                'npm' => '@particle-academy/fancy-pixel',
+                'repo' => 'Particle-Academy/fancy-pixel',
+                'language' => 'TypeScript',
+            ],
+            [
+                'slug' => 'fancy-heuristics-js',
+                'name' => '@particle-academy/fancy-heuristics-js',
+                'tagline' => 'Browser collector for Fancy Heuristics — clicks, scroll, time-on-page, and mouse-movement focus heatmaps for humans and agents; sendBeacon batching. Headless.',
+                'npm' => '@particle-academy/fancy-heuristics-js',
+                'repo' => 'Particle-Academy/fancy-heuristics-js',
                 'language' => 'TypeScript',
             ],
         ];
@@ -238,6 +256,22 @@ class PackageRegistry
                 ['slug' => 'connector', 'name' => 'Connector', 'blurb' => 'Edge between items.'],
                 ['slug' => 'shape', 'name' => 'Shape', 'blurb' => 'Geometric shapes.'],
                 ['slug' => 'drawing', 'name' => 'Drawing', 'blurb' => 'Freeform pen strokes.'],
+            ],
+        ];
+    }
+
+    /** @return array<string, mixed> */
+    private static function fancyDiff(): array
+    {
+        return [
+            'slug' => 'fancy-diff',
+            'name' => 'fancy-diff',
+            'tagline' => 'Human+ side-by-side document diff with hunk acceptance — a client-side, zero-dep diff engine or a git unified-diff datasource.',
+            'npm' => '@particle-academy/fancy-diff',
+            'repo' => 'Particle-Academy/fancy-diff',
+            'language' => 'TypeScript',
+            'components' => [
+                ['slug' => 'fancy-diff', 'name' => 'FancyDiff', 'blurb' => 'Controlled split / inline diff viewer; per-hunk accept/reject with a merged result, render-prop customization, and a git unified-diff datasource.'],
             ],
         ];
     }

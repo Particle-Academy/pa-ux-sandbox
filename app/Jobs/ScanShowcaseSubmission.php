@@ -3,6 +3,10 @@
 namespace App\Jobs;
 
 use App\Models\ShowcaseSubmission;
+use App\Services\Showcase\FancyPixelDetector;
+use App\Services\Showcase\SafeUrlFetcher;
+use App\Services\Showcase\UnsafeUrlException;
+use App\Services\ShowcaseRewards;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -14,9 +18,7 @@ class ScanShowcaseSubmission implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public function __construct(public ShowcaseSubmission $submission)
-    {
-    }
+    public function __construct(public ShowcaseSubmission $submission) {}
 
     public function handle(): void
     {
@@ -32,7 +34,7 @@ class ScanShowcaseSubmission implements ShouldQueue
             'scanned_at' => now(),
         ]);
 
-        $rewards = app(\App\Services\ShowcaseRewards::class);
+        $rewards = app(ShowcaseRewards::class);
 
         // Auto-verified submissions earn projects-xp for the submitter
         // (idempotent — see ShowcaseRewards).
@@ -62,9 +64,13 @@ class ScanShowcaseSubmission implements ShouldQueue
 
         foreach (['package.json', 'composer.json'] as $file) {
             $contents = $this->fetchRepoFile($owner, $repo, $file, $token);
-            if ($contents === null) continue;
+            if ($contents === null) {
+                continue;
+            }
             $json = json_decode($contents, true);
-            if (!is_array($json)) continue;
+            if (! is_array($json)) {
+                continue;
+            }
 
             foreach (['dependencies', 'devDependencies', 'peerDependencies', 'require', 'require-dev'] as $section) {
                 foreach (($json[$section] ?? []) as $name => $_version) {
@@ -78,6 +84,7 @@ class ScanShowcaseSubmission implements ShouldQueue
         if (empty($matches)) {
             return ['verified' => false, 'reason' => 'no Fancy UI dependencies found in package.json/composer.json'];
         }
+
         return [
             'verified' => true,
             'kind' => 'repo',
@@ -98,6 +105,7 @@ class ScanShowcaseSubmission implements ShouldQueue
                 return (string) $resp->body();
             }
         }
+
         return null;
     }
 
@@ -105,12 +113,14 @@ class ScanShowcaseSubmission implements ShouldQueue
     private function scanWebsite(string $url): array
     {
         try {
-            $resp = Http::timeout(15)->get($url);
+            $resp = app(SafeUrlFetcher::class)->fetch($url);
+        } catch (UnsafeUrlException $e) {
+            return ['verified' => false, 'reason' => 'unsafe URL: '.$e->getMessage()];
         } catch (\Throwable $e) {
             return ['verified' => false, 'reason' => 'fetch failed: '.$e->getMessage()];
         }
 
-        if (!$resp->successful()) {
+        if (! $resp->successful()) {
             return ['verified' => false, 'reason' => 'HTTP '.$resp->status()];
         }
 
@@ -141,6 +151,7 @@ class ScanShowcaseSubmission implements ShouldQueue
         if (empty($hits)) {
             return ['verified' => false, 'reason' => 'no Fancy UI references in homepage HTML', 'badge' => $badge];
         }
+
         return [
             'verified' => true,
             'kind' => 'website',
@@ -150,13 +161,17 @@ class ScanShowcaseSubmission implements ShouldQueue
     }
 
     /**
-     * Detect a "Powered by Fancy" badge in the page HTML. Looks for the
-     * stable `data-fancy-badge` marker (what our official badge embed
-     * carries) or the literal "Powered by Fancy UI" text.
+     * Detect a Fancy UI pixel in the page HTML. Delegates to the shared
+     * FancyPixelDetector so this stays byte-identical to fancy-heuristics
+     * HeuristicsPixelDetector::detect() and to the submission gate.
+     *
+     * The badge marker is JS-injected at runtime by the `fancy-pixel`
+     * loader, so a server-side fetch sees the loader <script> tag — not the
+     * rendered `data-fancy-badge` marker. The detector therefore also
+     * matches the loader script signature. See FancyPixelDetector.
      */
     private function detectBadge(string $html): bool
     {
-        return str_contains($html, 'data-fancy-badge')
-            || preg_match('/powered\s+by\s+fancy\s+ui/i', $html) === 1;
+        return app(FancyPixelDetector::class)->detect($html);
     }
 }

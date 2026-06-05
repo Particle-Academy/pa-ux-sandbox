@@ -95,6 +95,18 @@ export default function ShowcaseCreate() {
                             {form.errors.url && (
                                 <Text size="xs" className="mt-1 text-red-600">{form.errors.url}</Text>
                             )}
+                            {form.data.kind === "website" && (
+                                <div className="mt-2 rounded-md border border-zinc-200 bg-zinc-50 p-3 dark:border-zinc-800 dark:bg-zinc-900/50">
+                                    <Text size="xs" className="text-zinc-500">
+                                        Websites must embed the Fancy Pixel before they can be listed.
+                                        Add this one-line snippet to your site's{" "}
+                                        <code className="rounded bg-zinc-200 px-1 dark:bg-zinc-800">&lt;head&gt;</code>:
+                                    </Text>
+                                    <pre className="mt-2 overflow-x-auto rounded bg-zinc-900 p-2 text-[11px] leading-relaxed text-zinc-100">
+{`<script src="https://unpkg.com/@particle-academy/fancy-pixel/dist/fancy-pixel.global.min.js" data-site="..." data-style="badge" data-mode="floating"></script>`}
+                                    </pre>
+                                </div>
+                            )}
                         </div>
 
                         <div>

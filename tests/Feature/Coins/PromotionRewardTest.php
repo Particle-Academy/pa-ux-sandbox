@@ -4,6 +4,7 @@ use App\Jobs\ScanShowcaseSubmission;
 use App\Models\ShowcaseSubmission;
 use App\Models\User;
 use App\Services\ShowcaseRewards;
+use App\Services\Showcase\SafeUrlFetcher;
 use Database\Seeders\FunLabSeeder;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
@@ -12,6 +13,16 @@ uses(TestCase::class);
 
 beforeEach(function () {
     $this->seed(FunLabSeeder::class);
+    // The scan fetches the submission URL through the SSRF-safe fetcher, which
+    // DNS-resolves the host. Our fixture uses a `.example` host that never
+    // resolves (fail-closed → blocked), so stub the resolver to a public IP and
+    // let the faked HTTP response through. SSRF behaviour itself is covered in
+    // the Showcase suite.
+    SafeUrlFetcher::resolveUsing(fn (): array => ['93.184.216.34']);
+});
+
+afterEach(function () {
+    SafeUrlFetcher::resolveUsing(null);
 });
 
 function badgeSubmission(User $owner): ShowcaseSubmission

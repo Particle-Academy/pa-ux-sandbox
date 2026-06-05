@@ -205,9 +205,7 @@ export default function ShowcaseIndex({ submissions }: { submissions: Submission
                 <div>
                     <Heading level={1} size="xl">Designer Showcase</Heading>
                     <Text className="mt-2 max-w-3xl">
-                        Live sites and public repos built with Fancy UI. Every submission is scanned for
-                        <code className="mx-1 font-mono">@particle-academy/*</code> /
-                        <code className="mx-1 font-mono">particle-academy/*</code> usage before listing.
+                        Live sites and public repos built with Fancy UI.
                     </Text>
                 </div>
                 {isAuth ? (

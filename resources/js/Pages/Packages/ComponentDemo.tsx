@@ -2133,7 +2133,7 @@ function FancyPixelDemo() {
     return (
         <DemoNote
             outOfBox="Every chip here is the real mountPixel() output: each style is rendered into an open Shadow DOM (host-page CSS can't hide it — visibility is part of verification), stamped with the stable data-fancy-badge marker the Showcase scanner detects plus a data-fancy-pixel handle an embedded agent reads. An IntersectionObserver confirms genuine on-screen visibility and dispatches a fancy-pixel:shown event."
-            demo="The three cards, labels, and the Badge / Mark / Beacon grouping are demo scaffolding. The pixels are mounted in mode:'placed' (inline at each card) with no endpoint, so nothing leaves the page. In production you'd typically use mode:'floating' to pin a single badge to a screen corner, and pass an endpoint to turn on the verification / collection beacon."
+            demo="The three cards, labels, and the Badge / Mark / Beacon grouping are demo scaffolding. The pixels are mounted in mode:'placed' (inline at each card) with no endpoint, so nothing leaves the page. In production you'd pin a single badge with mode:'floating' and pass an endpoint — one embed then renders the badge AND pipes the site's interaction analytics (clicks, scroll, focus heatmaps) to that host."
         >
             <div className="grid gap-3 sm:grid-cols-3">
                 {PIXEL_STYLES.map(({ style, name, renders }) => (
@@ -2151,12 +2151,13 @@ function FancyPixelDemo() {
             </div>
             <Callout color="violet" className="text-[12px]">
                 Two placement modes: <code>mode="placed"</code> (shown here) flows the pixel inline at a
-                target; <code>mode="floating"</code> pins it to a fixed screen corner. Set an
-                <code>{" endpoint"}</code> and the pixel POSTs a visibility beacon to{" "}
-                <code>{"${endpoint}/pixel"}</code> on mount and on every visibility change — the
-                Showcase verification + collection signal. Omit it (as this demo does) and no network
-                request is ever made. A one-line <code>&lt;script&gt;</code> tag both loads and
-                auto-mounts the badge with zero build step.
+                target; <code>mode="floating"</code> pins it to a fixed screen corner. Set a{" "}
+                <code>data-endpoint</code> and one embed does it all — it renders the badge, POSTs the
+                verification ping to <code>{"${endpoint}/pixel"}</code>, and streams interaction analytics
+                (clicks, scroll, focus heatmaps) to <code>{"${endpoint}/collect"}</code>, keyed by{" "}
+                <code>siteKey</code>. Add <code>data-collect="false"</code> for badge + verification only;
+                omit it (as this demo does) and no network request is ever made. A one-line{" "}
+                <code>&lt;script&gt;</code> tag both loads and auto-mounts it with zero build step.
             </Callout>
         </DemoNote>
     );

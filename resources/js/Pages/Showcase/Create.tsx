@@ -4,19 +4,77 @@ import {
     Button,
     Badge,
     Breadcrumbs,
+    Callout,
     Card,
-    
     Heading,
+    Icon,
     Text,
 } from "@particle-academy/react-fancy";
 import { Layout } from "../Layout";
+
+type Style = "badge" | "mark" | "beacon";
+type Mode = "placed" | "floating";
 
 type Form = {
     kind: "website" | "repo";
     url: string;
     title: string;
     description: string;
+    style: Style;
+    mode: Mode;
 };
+
+const STYLES: { value: Style; label: string; hint: string }[] = [
+    { value: "badge", label: "Badge", hint: "“Powered by Fancy UI” pill" },
+    { value: "mark", label: "Mark", hint: "compact logo mark" },
+    { value: "beacon", label: "Beacon", hint: "minimal dot" },
+];
+
+const MODES: { value: Mode; label: string; hint: string }[] = [
+    { value: "floating", label: "Floating", hint: "fixed corner overlay" },
+    { value: "placed", label: "Placed", hint: "inline where you drop it" },
+];
+
+function Segmented<T extends string>({
+    options,
+    value,
+    onChange,
+    name,
+}: {
+    options: { value: T; label: string; hint: string }[];
+    value: T;
+    onChange: (v: T) => void;
+    name: string;
+}) {
+    return (
+        <div className="mt-1 grid gap-2 sm:grid-cols-3">
+            {options.map((o) => {
+                const active = value === o.value;
+                return (
+                    <label
+                        key={o.value}
+                        className={`cursor-pointer rounded-lg border px-3 py-2 text-left transition ${
+                            active
+                                ? "border-violet-500 bg-violet-50 dark:bg-violet-950/40"
+                                : "border-zinc-300 hover:border-zinc-400 dark:border-zinc-700"
+                        }`}
+                    >
+                        <input
+                            type="radio"
+                            name={name}
+                            value={o.value}
+                            checked={active}
+                            onChange={() => onChange(o.value)}
+                            className="sr-only"
+                        />
+                        <span className="block text-sm font-semibold">{o.label}</span>
+                        <span className="block text-[11px] text-zinc-500">{o.hint}</span>
+                    </label>
+                );
+            })}
+        </div>
+    );
+}
 
 export default function ShowcaseCreate() {
     const form = useFancyForm<Form>({
@@ -24,20 +82,28 @@ export default function ShowcaseCreate() {
         url: "",
         title: "",
         description: "",
+        style: "badge",
+        mode: "floating",
     });
+
+    const isWebsite = form.data.kind === "website";
 
     return (
         <Layout>
-            <Head title="Submit · Designer Showcase" />
+            <Head title="Register · Designer Showcase" />
 
             <Breadcrumbs>
                 <Breadcrumbs.Item href="/showcase">Showcase</Breadcrumbs.Item>
-                <Breadcrumbs.Item>Submit</Breadcrumbs.Item>
+                <Breadcrumbs.Item>Register</Breadcrumbs.Item>
             </Breadcrumbs>
 
-            <Heading level={1} size="xl" className="mt-3">Submit a site or repo</Heading>
+            <Heading level={1} size="xl" className="mt-3">
+                Register your site
+            </Heading>
             <Text className="mt-2 max-w-2xl">
-                We'll fetch your URL and check for Fancy UI usage before listing it on the showcase.
+                Register your site and we&apos;ll generate your Fancy Pixel snippet. Your
+                site appears in the Showcase once the pixel is verified — just like adding
+                an analytics tag.
             </Text>
 
             <Card className="mt-6 max-w-xl">
@@ -49,7 +115,7 @@ export default function ShowcaseCreate() {
                             e.preventDefault();
                             form.post("/showcase/submit");
                         }}
-                        className="space-y-4"
+                        className="space-y-5"
                     >
                         <div>
                             <label className="block text-xs font-semibold uppercase tracking-wider text-zinc-500">
@@ -93,21 +159,48 @@ export default function ShowcaseCreate() {
                                 className="mt-1 w-full rounded-md border border-zinc-300 bg-transparent px-3 py-2 text-sm outline-none focus:border-violet-500 dark:border-zinc-700"
                             />
                             {form.errors.url && (
-                                <Text size="xs" className="mt-1 text-red-600">{form.errors.url}</Text>
-                            )}
-                            {form.data.kind === "website" && (
-                                <div className="mt-2 rounded-md border border-zinc-200 bg-zinc-50 p-3 dark:border-zinc-800 dark:bg-zinc-900/50">
-                                    <Text size="xs" className="text-zinc-500">
-                                        Websites must embed the Fancy Pixel before they can be listed.
-                                        Add this one-line snippet to your site's{" "}
-                                        <code className="rounded bg-zinc-200 px-1 dark:bg-zinc-800">&lt;head&gt;</code>:
-                                    </Text>
-                                    <pre className="mt-2 overflow-x-auto rounded bg-zinc-900 p-2 text-[11px] leading-relaxed text-zinc-100">
-{`<script src="https://unpkg.com/@particle-academy/fancy-pixel/dist/fancy-pixel.global.min.js" data-site="..." data-style="badge" data-mode="floating"></script>`}
-                                    </pre>
-                                </div>
+                                <Text size="xs" className="mt-1 text-red-600">
+                                    {form.errors.url}
+                                </Text>
                             )}
                         </div>
+
+                        {isWebsite && (
+                            <>
+                                <div>
+                                    <label className="block text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                                        Pixel style
+                                    </label>
+                                    <Segmented
+                                        name="style"
+                                        options={STYLES}
+                                        value={form.data.style}
+                                        onChange={(v) => form.setData("style", v)}
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                                        Placement
+                                    </label>
+                                    <Segmented
+                                        name="mode"
+                                        options={MODES}
+                                        value={form.data.mode}
+                                        onChange={(v) => form.setData("mode", v)}
+                                    />
+                                </div>
+
+                                <Callout color="violet" icon={<Icon name="sparkles" />}>
+                                    <Text size="xs">
+                                        We&apos;ll generate a one-line snippet on the next step.
+                                        Paste it in your <code className="rounded bg-violet-100 px-1 dark:bg-violet-900/40">&lt;head&gt;</code>{" "}
+                                        and we detect it automatically — no review queue, no
+                                        blocking.
+                                    </Text>
+                                </Callout>
+                            </>
+                        )}
 
                         <div>
                             <label className="block text-xs font-semibold uppercase tracking-wider text-zinc-500">
@@ -136,9 +229,11 @@ export default function ShowcaseCreate() {
                         </div>
 
                         <div className="flex items-center justify-end gap-2 pt-2">
-                            <Button as={Link} href="/showcase" variant="ghost">Cancel</Button>
+                            <Button as={Link} href="/showcase" variant="ghost">
+                                Cancel
+                            </Button>
                             <Button type="submit" color="violet" disabled={form.processing}>
-                                Submit for review
+                                Register site
                             </Button>
                         </div>
                     </form>

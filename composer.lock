@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "021ee53edee78f4fc41209174c77afdf",
+    "content-hash": "3d45286bc51159e49cea52556ac825e1",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -3550,6 +3550,80 @@
                 "source": "https://github.com/Particle-Academy/dark-slide"
             },
             "time": "2026-05-30T00:32:34+00:00"
+        },
+        {
+            "name": "particle-academy/fancy-heuristics",
+            "version": "0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Particle-Academy/fancy-heuristics.git",
+                "reference": "a017c3413979099c3163964ff93286f852c8565e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Particle-Academy/fancy-heuristics/zipball/a017c3413979099c3163964ff93286f852c8565e",
+                "reference": "a017c3413979099c3163964ff93286f852c8565e",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/console": "^11.0|^12.0|^13.0",
+                "illuminate/contracts": "^11.0|^12.0|^13.0",
+                "illuminate/database": "^11.0|^12.0|^13.0",
+                "illuminate/events": "^11.0|^12.0|^13.0",
+                "illuminate/http": "^11.0|^12.0|^13.0",
+                "illuminate/routing": "^11.0|^12.0|^13.0",
+                "illuminate/support": "^11.0|^12.0|^13.0",
+                "illuminate/validation": "^11.0|^12.0|^13.0",
+                "php": "^8.2"
+            },
+            "require-dev": {
+                "laravel/pint": "^1.26",
+                "orchestra/testbench": "^9.0|^10.0|^11.0",
+                "pestphp/pest": "^3.0|^4.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "Heuristics": "FancyHeuristics\\Facades\\Heuristics"
+                    },
+                    "providers": [
+                        "FancyHeuristics\\HeuristicsServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "FancyHeuristics\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Particle Academy",
+                    "homepage": "https://github.com/Particle-Academy"
+                }
+            ],
+            "description": "Human + agent interaction analytics and Fancy UI pixel verification for Laravel hosts. Ingests collector events, aggregates heatmaps, and re-polls sites to verify the embedded badge stays visible.",
+            "homepage": "https://github.com/Particle-Academy/fancy-heuristics",
+            "keywords": [
+                "analytics",
+                "heatmap",
+                "heuristics",
+                "human-plus-ux",
+                "laravel",
+                "particle-academy",
+                "pixel",
+                "verification"
+            ],
+            "support": {
+                "issues": "https://github.com/Particle-Academy/fancy-heuristics/issues",
+                "source": "https://github.com/Particle-Academy/fancy-heuristics"
+            },
+            "time": "2026-06-05T21:30:05+00:00"
         },
         {
             "name": "particle-academy/holy-sheet",

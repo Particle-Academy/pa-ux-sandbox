@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use FancyHeuristics\Models\HeuristicsSite;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Str;
@@ -50,6 +51,18 @@ class ShowcaseSubmission extends Model
             } while (static::query()->where('site_key', $key)->exists());
 
             $submission->site_key = $key;
+        });
+
+        // Register the site with Fancy Heuristics so the Fancy Pixel's piped
+        // interaction data (keyed by the same site_key) lands against a known
+        // site — the host-side destination for the Analytics Suite. `visible`
+        // starts false; the showcase's own per-kind verification gates the
+        // public listing.
+        static::created(function (ShowcaseSubmission $submission): void {
+            HeuristicsSite::firstOrCreate(
+                ['site_key' => $submission->site_key],
+                ['url' => $submission->url, 'visible' => false],
+            );
         });
     }
 

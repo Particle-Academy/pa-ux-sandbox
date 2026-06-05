@@ -1665,26 +1665,43 @@ function RunFlowDemo() {
     const [running, setRunning] = useState(false);
     const run = async () => {
         setRunning(true);
+        // A real order-pricing pipeline: each node's executor reads its upstream
+        // input and enriches it, so the output JSON shows data flowing + transforming.
         const graph = {
             nodes: [
-                { id: "t", type: "manual_trigger", position: { x: 0, y: 0 }, data: { kind: "manual_trigger", label: "Start" } },
-                { id: "a", type: "api_request", position: { x: 200, y: 0 }, data: { kind: "api_request", label: "Fetch order" } },
-                { id: "o", type: "output", position: { x: 400, y: 0 }, data: { kind: "output", label: "Respond" } },
+                { id: "order", type: "manual_trigger", position: { x: 0, y: 0 }, data: { kind: "manual_trigger", label: "New order" } },
+                { id: "price", type: "api_request", position: { x: 200, y: 0 }, data: { kind: "api_request", label: "Price items" } },
+                { id: "tax", type: "transform", position: { x: 400, y: 0 }, data: { kind: "transform", label: "Add 8% tax" } },
+                { id: "respond", type: "output", position: { x: 600, y: 0 }, data: { kind: "output", label: "Respond" } },
             ],
             edges: [
-                { id: "e1", source: "t", target: "a" },
-                { id: "e2", source: "a", target: "o" },
+                { id: "e1", source: "order", target: "price" },
+                { id: "e2", source: "price", target: "tax" },
+                { id: "e3", source: "tax", target: "respond" },
             ],
         };
-        const executors = { "*": async ({ node }: { node: { id: string } }) => ({ ran: node.id }) };
+        const round = (n: number) => Math.round(n * 100) / 100;
+        // Executors keyed by node id; each gets `inputs` (keyed by input port) from upstream.
+        const executors = {
+            order: () => ({ id: "ORD-1042", items: 3 }),
+            price: () => ({ subtotal: 89.5 }),
+            tax: ({ inputs }: { inputs?: { in?: { subtotal?: number } } }) => {
+                const sub = inputs?.in?.subtotal ?? 0;
+                return { subtotal: sub, tax: round(sub * 0.08), total: round(sub * 1.08) };
+            },
+            respond: ({ inputs }: { inputs?: { in?: { total?: number } } }) => ({
+                status: 200,
+                message: `Order total: $${inputs?.in?.total ?? 0}`,
+            }),
+        };
         const result = await runFlow(graph as never, executors as never);
         setOut(JSON.stringify(result, null, 2));
         setRunning(false);
     };
     return (
         <DemoNote
-            outOfBox="runFlow is the pure topological engine from @particle-academy/fancy-flow/engine — zero React, runs in any JS context. It walks the graph, runs your executors per node kind, resolves ports, and returns { ok, outputs, error }. Here it runs in the browser; the identical call runs on a Node server, worker, or CLI."
-            demo="A 3-node graph + a wildcard executor stub. The JSON below is the real runFlow return value — no editor, no DOM."
+            outOfBox="runFlow is the pure topological engine from @particle-academy/fancy-flow/engine — zero React, runs in any JS context. It walks the graph, runs your executor per node, hands each node its upstream output as `inputs`, and returns { ok, outputs, error }. Here it runs in the browser; the identical call runs on a Node server, worker, or CLI."
+            demo="A 4-node order-pricing pipeline (New order → Price → +8% tax → Respond). The JSON below is the real runFlow return — watch the subtotal flow in and the tax/total get computed downstream. No editor, no DOM."
         >
             <div className="space-y-2">
                 <Button color="violet" size="sm" icon="play" onClick={run} disabled={running}>

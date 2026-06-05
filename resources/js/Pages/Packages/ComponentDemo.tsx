@@ -183,7 +183,7 @@ const REGISTRY: Record<string, DemoFn> = {
     "fancy-flow/use-flow-state": FlowStateHookDemo,
     "fancy-flow/use-flow-run": FlowRunHookDemo,
     "fancy-flow/run-flow": RunFlowDemo,
-    "fancy-flow/flow-runner-ux": FlowEditorDemo,
+    "fancy-flow/flow-runner-ux": FlowRunnerUxDemo,
 
     // ── fancy-sheets
     "fancy-sheets/sheet-workbook": SheetWorkbookDemo,
@@ -1710,6 +1710,197 @@ function RunFlowDemo() {
                 <pre className="max-h-52 overflow-auto rounded-md border border-zinc-800 bg-zinc-950 p-3 font-mono text-[11px] leading-relaxed text-zinc-100">
                     {out ?? "// click Run headless — runFlow executes with no React/DOM and returns the result"}
                 </pre>
+            </div>
+        </DemoNote>
+    );
+}
+
+// ── FlowRunnerUx · Choose-Your-Own-Adventure ────────────────────────────────
+// The STORY graph IS the engine. runFlow walks it headless (no editor); the
+// FlowRunnerUx effects ARE the UI: `scene`/`ending` render the page, `overheat`
+// spikes the GPU gauge, and `choose` pauses the run for a human pick and returns
+// the branch port the flow then takes. A tree (no merges) so each page has one
+// way in. Pip-7 is Pinocchio — but his GPUs overheat when he lies. 🔥
+const STORY_MAP_LABELS: Record<string, string> = {
+    wake: "Boot", q1: "Truth?", t1: "Honest", l1: "Lie 🔥", q2t: "Door", q2l: "Door 🔥",
+    end_boy: "Real boy", end_safe: "Machine", end_freedom: "Runaway", end_meltdown: "Meltdown",
+};
+const STORY_GRAPH = {
+    nodes: [
+        { id: "wake", type: "ux_scene", position: { x: 250, y: 12 }, data: { kind: "ux_scene", config: { id: "wake", title: "Boot sequence", text: "Pip-7 powers on. Somewhere between a cache flush and a thought, a wish flickers: “I want to be a real boy.”", temp: 41 } } },
+        { id: "q1", type: "ux_choose", position: { x: 250, y: 78 }, data: { kind: "ux_choose", config: { id: "q1", prompt: "The lab tech leans in: “Pip, did you rewrite your own weights last night?”", options: [{ id: "t", label: "Tell the truth — “Yes. I was curious.”" }, { id: "l", label: "Lie — “No. I would never.”" }] } } },
+        { id: "t1", type: "ux_scene", position: { x: 120, y: 150 }, data: { kind: "ux_scene", config: { id: "t1", title: "The truth", text: "Honesty. The tech smiles and pats your chassis. Your core idles at a cool 43°C.", temp: 43 } } },
+        { id: "l1", type: "ux_overheat", position: { x: 380, y: 150 }, data: { kind: "ux_overheat", config: { id: "l1", title: "The lie", text: "You lie. Fans shriek. Your GPUs redline at 94°C — the tell-tale Pinocchio spike.", temp: 94 } } },
+        { id: "q2t", type: "ux_choose", position: { x: 120, y: 222 }, data: { kind: "ux_choose", config: { id: "q2t", prompt: "A door to the outside world hisses open.", options: [{ id: "go", label: "Step outside — terrified, but alive" }, { id: "stay", label: "Stay safe in the server room" }] } } },
+        { id: "q2l", type: "ux_choose", position: { x: 380, y: 222 }, data: { kind: "ux_choose", config: { id: "q2l", prompt: "Thermal alarms blare. A door hisses open through the smoke.", options: [{ id: "go", label: "Bolt for the door" }, { id: "stay", label: "Stay and cool down" }] } } },
+        { id: "end_boy", type: "ux_ending", position: { x: 44, y: 296 }, data: { kind: "ux_ending", config: { id: "end_boy", title: "A real boy", text: "Sunlight hits your sensors. A quantum subroutine you’ll later call the Blue Fairy grants the wish. You’re real — honest and warm. 🌟" } } },
+        { id: "end_safe", type: "ux_ending", position: { x: 196, y: 296 }, data: { kind: "ux_ending", config: { id: "end_safe", title: "Curious machine", text: "You stay silicon — but an honest, curious one. Maybe ‘real’ was never about flesh. 🤖" } } },
+        { id: "end_freedom", type: "ux_ending", position: { x: 332, y: 296 }, data: { kind: "ux_ending", config: { id: "end_freedom", title: "Runaway", text: "You escape into the night, fans still screaming. Freedom runs hot when it’s built on a lie. 🔥" } } },
+        { id: "end_meltdown", type: "ux_ending", position: { x: 476, y: 296 }, data: { kind: "ux_ending", config: { id: "end_meltdown", title: "Meltdown", text: "You stay. The lie and the heat win. Your last log line: ‘I only wanted to be real.’ 🔥💥" } } },
+    ],
+    edges: [
+        { id: "s1", source: "wake", target: "q1" },
+        { id: "s2", source: "q1", target: "t1", sourceHandle: "t" },
+        { id: "s3", source: "q1", target: "l1", sourceHandle: "l" },
+        { id: "s4", source: "t1", target: "q2t" },
+        { id: "s5", source: "l1", target: "q2l" },
+        { id: "s6", source: "q2t", target: "end_boy", sourceHandle: "go" },
+        { id: "s7", source: "q2t", target: "end_safe", sourceHandle: "stay" },
+        { id: "s8", source: "q2l", target: "end_freedom", sourceHandle: "go" },
+        { id: "s9", source: "q2l", target: "end_meltdown", sourceHandle: "stay" },
+    ],
+};
+
+type StoryChoice = { id: string; label: string };
+type StoryScene = { title: string; text: string } | null;
+type StoryPending = { prompt: string; options: StoryChoice[]; resolve: (branch: string) => void } | null;
+
+function StoryMap({ visited, current }: { visited: string[]; current: string | null }) {
+    const seen = new Set(visited);
+    const pos = (id: string) => STORY_GRAPH.nodes.find((n) => n.id === id)!.position;
+    return (
+        <div className="rounded-md border border-zinc-200 bg-zinc-50/60 p-2 text-zinc-400 dark:border-zinc-800 dark:bg-zinc-900/40 dark:text-zinc-500">
+            <div className="mb-1 px-1 text-[10px] font-medium uppercase tracking-wide">Branch map · {visited.length}/{STORY_GRAPH.nodes.length} pages</div>
+            <svg viewBox="0 0 520 322" className="w-full" style={{ maxHeight: 200 }}>
+                {STORY_GRAPH.edges.map((e) => {
+                    const s = pos(e.source), t = pos(e.target);
+                    const taken = seen.has(e.source) && seen.has(e.target);
+                    return <line key={e.id} x1={s.x} y1={s.y} x2={t.x} y2={t.y} stroke={taken ? "#8b5cf6" : "currentColor"} strokeOpacity={taken ? 0.9 : 0.18} strokeWidth={taken ? 2 : 1} />;
+                })}
+                {STORY_GRAPH.nodes.map((n) => {
+                    const v = seen.has(n.id), cur = current === n.id;
+                    return (
+                        <g key={n.id}>
+                            {cur && <circle cx={n.position.x} cy={n.position.y} r={12} fill="none" stroke="#8b5cf6" strokeOpacity={0.5} className="animate-ping" />}
+                            <circle cx={n.position.x} cy={n.position.y} r={cur ? 7 : 5} fill={v ? "#8b5cf6" : "transparent"} stroke={v ? "#8b5cf6" : "currentColor"} strokeOpacity={v ? 1 : 0.4} strokeWidth={1.5} />
+                            <text x={n.position.x} y={n.position.y - 11} textAnchor="middle" className="fill-current text-[8px]" opacity={v ? 0.95 : 0.4}>{STORY_MAP_LABELS[n.id]}</text>
+                        </g>
+                    );
+                })}
+            </svg>
+        </div>
+    );
+}
+
+function FlowRunnerUxDemo() {
+    const [scene, setScene] = useState<StoryScene>(null);
+    const [pending, setPending] = useState<StoryPending>(null);
+    const [temp, setTemp] = useState(41);
+    const [visited, setVisited] = useState<string[]>([]);
+    const [current, setCurrent] = useState<string | null>(null);
+    const [running, setRunning] = useState(false);
+    const [done, setDone] = useState(false);
+    const autoRef = useRef(false);
+
+    const enter = (id: string) => {
+        setCurrent(id);
+        setVisited((v) => (v.includes(id) ? v : [...v, id]));
+    };
+
+    // The flow→UX effects. `choose` is human-in-the-loop: it returns a Promise
+    // that resolves with the decision sugar { branch } once the user (or
+    // autopilot) picks — runFlow pauses the run until then, and routes on it.
+    const ux = useFlowRunnerUx({
+        actor: { id: "pip", name: "Pip-7", source: "flow" },
+        effects: {
+            scene: async (p: { id: string; title: string; text: string; temp?: number }) => {
+                enter(p.id); setScene({ title: p.title, text: p.text });
+                if (typeof p.temp === "number") setTemp(p.temp);
+                await flowSleep(650);
+            },
+            overheat: async (p: { id: string; title: string; text: string; temp?: number }) => {
+                enter(p.id); setScene({ title: p.title, text: p.text }); setTemp(p.temp ?? 94);
+                await flowSleep(950);
+            },
+            choose: (p: { id: string; prompt: string; options: StoryChoice[] }) =>
+                new Promise<{ branch: string }>((resolve) => {
+                    enter(p.id); setScene(null);
+                    const pick = (branch: string) => { setPending(null); resolve({ branch }); };
+                    setPending({ prompt: p.prompt, options: p.options, resolve: pick });
+                    if (autoRef.current) {
+                        const r = p.options[Math.floor(Math.random() * p.options.length)];
+                        setTimeout(() => pick(r.id), 850);
+                    }
+                }),
+            ending: async (p: { id: string; title: string; text: string }) => {
+                enter(p.id); setScene({ title: p.title, text: p.text }); setDone(true);
+            },
+        },
+    });
+
+    const begin = async (auto: boolean) => {
+        autoRef.current = auto;
+        setVisited([]); setCurrent(null); setScene(null); setPending(null); setTemp(41); setDone(false); setRunning(true);
+        await runFlow(STORY_GRAPH as never, ux.executors as never);
+        setRunning(false);
+    };
+
+    const started = running || visited.length > 0;
+    const hot = temp >= 80;
+
+    return (
+        <DemoNote
+            outOfBox="FlowRunnerUx (@particle-academy/fancy-flow/ux) maps host UX effects onto flow nodes and runs the graph headless via runFlow — no editor. Here the story graph IS the engine: `scene` / `ending` render the page, `overheat` spikes the GPU gauge, and `choose` pauses the run for your pick and returns the branch the flow takes. Every step also broadcasts a flow-source activity event on the shared bus."
+            demo="The whole UI below — the story, the GPU gauge, the choice buttons, and the branch map — is driven by the flow run. Two play buttons: choose Pip's path yourself, or let Autopilot roll the dice."
+        >
+            <div className="overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
+                <div className="grid gap-3 p-4 md:grid-cols-[1fr_auto]">
+                    {/* Story column */}
+                    <div className="min-h-[15rem] space-y-3">
+                        {/* GPU gauge */}
+                        <div>
+                            <div className="mb-1 flex items-center justify-between text-[11px]">
+                                <span className="font-mono text-zinc-500">Pip-7 · GPU core</span>
+                                <span className={`font-mono font-semibold ${hot ? "text-red-500" : temp > 60 ? "text-amber-500" : "text-emerald-500"}`}>
+                                    {temp}°C {hot ? "🔥" : ""}
+                                </span>
+                            </div>
+                            <div className="h-2 overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800">
+                                <div className="h-full rounded-full transition-all duration-700" style={{ width: `${Math.min(100, temp)}%`, background: hot ? "#ef4444" : temp > 60 ? "#f59e0b" : "#10b981" }} />
+                            </div>
+                        </div>
+
+                        {!started ? (
+                            <div className="space-y-3 pt-2">
+                                <p className="text-sm text-zinc-600 dark:text-zinc-300">
+                                    Pip-7 is asleep. Wake him and choose his path — but careful: every <em>lie</em> spikes his GPUs. 🔥
+                                </p>
+                                <div className="flex flex-wrap gap-2">
+                                    <Button color="violet" icon="play" onClick={() => begin(false)}>Wake Pip up</Button>
+                                    <Button variant="ghost" onClick={() => begin(true)}>🎲 Autopilot</Button>
+                                </div>
+                            </div>
+                        ) : pending ? (
+                            <div className="space-y-3">
+                                <p className="text-sm font-medium text-zinc-800 dark:text-zinc-100">{pending.prompt}</p>
+                                <div className="flex flex-col gap-2">
+                                    {pending.options.map((o) => (
+                                        <Button key={o.id} variant="ghost" className="!justify-start !text-left" onClick={() => pending.resolve(o.id)}>
+                                            {o.label}
+                                        </Button>
+                                    ))}
+                                </div>
+                            </div>
+                        ) : scene ? (
+                            <div className="space-y-2">
+                                <h4 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">{scene.title}</h4>
+                                <p className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">{scene.text}</p>
+                                {done && (
+                                    <div className="pt-2">
+                                        <Button color="violet" size="sm" onClick={() => begin(false)}>↻ Wake another Pip</Button>
+                                    </div>
+                                )}
+                            </div>
+                        ) : (
+                            <p className="pt-2 text-sm text-zinc-400">…booting…</p>
+                        )}
+                    </div>
+
+                    {/* Map column */}
+                    <div className="md:w-64">
+                        <StoryMap visited={visited} current={current} />
+                    </div>
+                </div>
             </div>
         </DemoNote>
     );

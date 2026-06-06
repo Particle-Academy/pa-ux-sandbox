@@ -3,11 +3,12 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use FancyHeuristics\Models\HeuristicsSite;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
-use LaravelCatalog\Models\Product;
 use LaravelCatalog\Models\Price;
+use LaravelCatalog\Models\Product;
 
 class DatabaseSeeder extends Seeder
 {
@@ -72,6 +73,16 @@ class DatabaseSeeder extends Seeder
         // Coin shop catalog (cosmetics + services).
         $this->command->info('Seeding coin shop...');
         $this->call(ShopSeeder::class);
+        $this->command->newLine();
+
+        // Register the showcase's OWN site so its dogfooded Fancy Pixel data
+        // (site_key `fancy-ui-showcase`, mounted in showcase-app.tsx) is a
+        // first-class HeuristicsSite — surfaces in /admin/heuristics + /analytics.
+        $this->command->info('Registering the showcase heuristics site...');
+        HeuristicsSite::firstOrCreate(
+            ['site_key' => 'fancy-ui-showcase'],
+            ['url' => config('app.url'), 'visible' => true, 'pixel_status' => 'verified', 'last_verified_at' => now()],
+        );
         $this->command->newLine();
 
         // Summary

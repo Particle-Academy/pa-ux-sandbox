@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AnalyticsController;
+use App\Models\ShowcaseSubmission;
 use App\Models\User;
 use Database\Seeders\FunLabSeeder;
 use FancyHeuristics\Models\HeuristicsEvent;
@@ -161,6 +162,59 @@ it('tags recent sessions human vs agent', function () {
             $actors = $sessions->pluck('actor')->sort()->values()->all();
             expect($actors)->toBe(['agent', 'human']);
         });
+});
+
+it('scopes the site picker to the user’s own submissions (+ the showcase)', function () {
+    $user = User::factory()->create();
+    LFL::grant('sandbox-pro')->to($user)->save();
+
+    ShowcaseSubmission::create([
+        'user_id' => $user->id, 'site_key' => 'owned-key',
+        'kind' => 'website', 'url' => 'https://owned.test', 'status' => 'verified',
+    ]);
+    // Another user's site must never appear in this user's picker.
+    $other = User::factory()->create();
+    ShowcaseSubmission::create([
+        'user_id' => $other->id, 'site_key' => 'foreign-key',
+        'kind' => 'website', 'url' => 'https://foreign.test', 'status' => 'verified',
+    ]);
+
+    $this->actingAs($user)
+        ->get('/analytics')
+        ->assertInertia(function ($page) {
+            $keys = collect($page->toArray()['props']['sites'])->pluck('site_key')->all();
+            expect($keys)->toContain('owned-key')
+                ->and($keys)->toContain(AnalyticsController::DEFAULT_SITE)
+                ->and($keys)->not->toContain('foreign-key');
+        });
+});
+
+it('refuses to resolve a site the user does not own', function () {
+    $user = User::factory()->create();
+    LFL::grant('sandbox-pro')->to($user)->save();
+    $other = User::factory()->create();
+    ShowcaseSubmission::create([
+        'user_id' => $other->id, 'site_key' => 'foreign-key',
+        'kind' => 'website', 'url' => 'https://foreign.test', 'status' => 'verified',
+    ]);
+
+    // Probing someone else's site via ?site= falls back to the showcase default.
+    $this->actingAs($user)
+        ->get('/analytics?site=foreign-key')
+        ->assertInertia(fn ($page) => $page->where('site', AnalyticsController::DEFAULT_SITE));
+});
+
+it('defaults a pro owner to their own first site', function () {
+    $user = User::factory()->create();
+    LFL::grant('sandbox-pro')->to($user)->save();
+    ShowcaseSubmission::create([
+        'user_id' => $user->id, 'site_key' => 'owned-key',
+        'kind' => 'website', 'url' => 'https://owned.test', 'status' => 'verified',
+    ]);
+
+    $this->actingAs($user)
+        ->get('/analytics')
+        ->assertInertia(fn ($page) => $page->where('site', 'owned-key'));
 });
 
 it('renders an empty state for a pro user when the site has no events', function () {

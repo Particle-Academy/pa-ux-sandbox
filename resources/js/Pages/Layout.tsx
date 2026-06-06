@@ -175,6 +175,9 @@ export function Layout({
                                         <Dropdown.Item onClick={() => router.visit("/profile")}>
                                             Your profile
                                         </Dropdown.Item>
+                                        <Dropdown.Item onClick={() => router.visit("/showcase/mine")}>
+                                            My submissions
+                                        </Dropdown.Item>
                                         <Dropdown.Item onClick={() => router.visit("/shop")}>
                                             Coin shop
                                         </Dropdown.Item>
@@ -283,7 +286,10 @@ export function Layout({
                                 </li>
                                 <li><Link href="/shop">Coin shop</Link></li>
                                 {auth ? (
-                                    <li><Link href="/profile">Your profile</Link></li>
+                                    <>
+                                        <li><Link href="/showcase/mine">My submissions</Link></li>
+                                        <li><Link href="/profile">Your profile</Link></li>
+                                    </>
                                 ) : (
                                     <li><a href="/auth/github">Sign in</a></li>
                                 )}

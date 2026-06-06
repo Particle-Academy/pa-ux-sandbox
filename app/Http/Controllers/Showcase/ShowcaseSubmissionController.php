@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Showcase\StoreShowcaseSubmissionRequest;
 use App\Jobs\ScanShowcaseSubmission;
 use App\Models\ShowcaseSubmission;
+use App\Services\Heuristics\HeuristicsReport;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -29,6 +31,32 @@ class ShowcaseSubmissionController extends Controller
             ->all();
 
         return Inertia::render('Showcase/Index', ['submissions' => $submissions]);
+    }
+
+    /**
+     * The signed-in user's own submissions — every status — each with a free
+     * basic stat strip (pageviews / sessions / clicks / human vs agent) read
+     * from the live heuristics feed. It's the owner's own data, so it's not
+     * Pro-gated; the rich suite (heatmaps, sessions, trends, multi-site) stays
+     * behind /analytics for Pro.
+     */
+    public function mine(Request $request, HeuristicsReport $report): Response
+    {
+        $submissions = ShowcaseSubmission::query()
+            ->where('user_id', $request->user()->id)
+            ->orderByDesc('id')
+            ->get()
+            ->map(function (ShowcaseSubmission $submission) use ($report): array {
+                $data = $this->present($submission);
+                $data['stats'] = $submission->site_key
+                    ? $this->basicStats($report, (string) $submission->site_key)
+                    : null;
+
+                return $data;
+            })
+            ->all();
+
+        return Inertia::render('Showcase/Mine', ['submissions' => $submissions]);
     }
 
     public function create(): Response
@@ -124,6 +152,27 @@ class ShowcaseSubmissionController extends Controller
         $badgeUrl = $host.'/badge/fancified.svg?site='.$submission->site_key;
 
         return sprintf('[![Fancified](%s)](https://particle.academy)', $badgeUrl);
+    }
+
+    /**
+     * Owner-visible basic KPIs for one site — a free subset of the Pro suite's
+     * rollups, computed by the same shared HeuristicsReport so the numbers
+     * match /analytics exactly.
+     *
+     * @return array{pageviews: int, sessions: int, clicks: int, human: int, agent: int, totalEvents: int}
+     */
+    private function basicStats(HeuristicsReport $report, string $siteKey): array
+    {
+        $kpis = $report->kpis($siteKey);
+
+        return [
+            'pageviews' => $kpis['pageviews'],
+            'sessions' => $kpis['sessions'],
+            'clicks' => $kpis['clicks'],
+            'human' => $kpis['human'],
+            'agent' => $kpis['agent'],
+            'totalEvents' => $kpis['totalEvents'],
+        ];
     }
 
     /**

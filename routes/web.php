@@ -176,6 +176,7 @@ Route::get('/badge/fancified.svg', FancifiedBadgeController::class)->name('showc
 
 Route::get('/showcase', [ShowcaseSubmissionController::class, 'index'])->name('showcase.showcase.index');
 Route::middleware('auth')->group(function () {
+    Route::get('/showcase/mine', [ShowcaseSubmissionController::class, 'mine'])->name('showcase.showcase.mine');
     Route::get('/showcase/submit', [ShowcaseSubmissionController::class, 'create'])->name('showcase.showcase.create');
     Route::post('/showcase/submit', [ShowcaseSubmissionController::class, 'store'])->name('showcase.showcase.store');
     Route::get('/showcase/submit/{submission}/installed', [ShowcaseSubmissionController::class, 'installed'])->name('showcase.showcase.installed');

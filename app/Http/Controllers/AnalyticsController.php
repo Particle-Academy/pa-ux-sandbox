@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ShowcaseSubmission;
+use App\Models\User;
 use App\Services\Entitlements;
 use App\Services\Heuristics\HeuristicsReport;
-use FancyHeuristics\Models\HeuristicsSite;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -54,7 +55,7 @@ class AnalyticsController extends Controller
             ]);
         }
 
-        $sites = $this->sites();
+        $sites = $this->sites($user);
         $site = $this->resolveSite($request, $sites);
 
         // The KPI / heatmap / paths / sessions / trend math is shared with the
@@ -74,46 +75,63 @@ class AnalyticsController extends Controller
     }
 
     /**
-     * Registered heuristics sites for the picker. Always includes the
-     * default showcase key even if it has not been formally registered yet.
+     * The sites this user is allowed to inspect: the site_keys of their OWN
+     * showcase submissions, plus the public showcase dogfood feed. Scoping to
+     * ownership is what stops one Pro user reading another's stats by guessing
+     * a `?site=` key (every submission auto-registers a HeuristicsSite, so an
+     * unscoped list would expose everyone's site).
      *
      * @return list<array{site_key: string, url: string|null, visible: bool}>
      */
-    private function sites(): array
+    private function sites(?User $user): array
     {
-        $sites = HeuristicsSite::query()
-            ->orderBy('site_key')
-            ->get(['site_key', 'url', 'visible'])
-            ->map(fn (HeuristicsSite $s): array => [
-                'site_key' => $s->site_key,
-                'url' => $s->url,
-                'visible' => (bool) $s->visible,
-            ])
-            ->all();
+        $owned = $user
+            ? ShowcaseSubmission::query()
+                ->where('user_id', $user->id)
+                ->whereNotNull('site_key')
+                ->orderByDesc('id')
+                ->get(['site_key', 'url'])
+                ->map(fn (ShowcaseSubmission $s): array => [
+                    'site_key' => (string) $s->site_key,
+                    'url' => $s->url,
+                    'visible' => true,
+                ])
+                ->unique('site_key')
+                ->values()
+                ->all()
+            : [];
 
-        if (! collect($sites)->contains(fn (array $s): bool => $s['site_key'] === self::DEFAULT_SITE)) {
-            array_unshift($sites, [
+        // The showcase dogfood feed is always available as a sample/default.
+        if (! collect($owned)->contains(fn (array $s): bool => $s['site_key'] === self::DEFAULT_SITE)) {
+            $owned[] = [
                 'site_key' => self::DEFAULT_SITE,
                 'url' => config('app.url'),
                 'visible' => true,
-            ]);
+            ];
         }
 
-        return array_values($sites);
+        return array_values($owned);
     }
 
     /**
-     * Resolve the target site from `?site=`, defaulting to the showcase feed.
-     * Only accepts keys that appear in the registered list so the picker can't
-     * be used to probe arbitrary site keys.
+     * Resolve the target site from `?site=`, restricted to the scoped list so
+     * the picker can't be used to probe sites the user doesn't own. With no
+     * (valid) `?site=`, default to the user's own first site, falling back to
+     * the public showcase feed.
      *
      * @param  list<array{site_key: string, url: string|null, visible: bool}>  $sites
      */
     private function resolveSite(Request $request, array $sites): string
     {
-        $requested = (string) $request->query('site', self::DEFAULT_SITE);
         $keys = array_column($sites, 'site_key');
+        $requested = (string) $request->query('site', '');
 
-        return in_array($requested, $keys, true) ? $requested : self::DEFAULT_SITE;
+        if ($requested !== '' && in_array($requested, $keys, true)) {
+            return $requested;
+        }
+
+        $ownFirst = collect($keys)->first(fn (string $k): bool => $k !== self::DEFAULT_SITE);
+
+        return $ownFirst ?? self::DEFAULT_SITE;
     }
 }

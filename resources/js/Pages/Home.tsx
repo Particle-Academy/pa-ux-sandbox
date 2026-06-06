@@ -128,17 +128,15 @@ function Hero({ packages }: { packages: PackageRow[] }) {
                 <div>
                     <div className="eyebrow-row">
                         <span className="dot" />
-                        <span>v0.2 · Particle Academy</span>
+                        <span>v0.2 · #BYOA</span>
                     </div>
                     <h1 className="display">
-                        Components for the surfaces where{" "}
-                        <span className="gradient-text">humans and agents work together</span>.
+                        Bring your own agent. <span className="gradient-text">Bring your own stack.</span>
                     </h1>
                     <p className="lede">
-                        Fancy UI is a constellation of small React and PHP packages built on one
-                        premise: agents are first-class participants in the products they help
-                        build. Every interactive surface ships an MCP bridge, so an embedded agent
-                        drives it through stable handles — never DOM scraping, never Playwright.
+                        Full-stack and polyglot: a React UI up front, server-side packages for both PHP and
+                        Node behind it. Every surface ships an MCP bridge, so any agent — yours, not ours —
+                        drives the live UI through stable handles. No DOM scraping, no lock-in.
                     </p>
                     <div className="hero-cta">
                         <Link className="btn btn-primary" href="/docs">
@@ -242,8 +240,8 @@ export function Packages({ packages, companions }: { packages: PackageRow[]; com
                 </div>
                 <h2 className="section-title">{count} small packages. Lift any one out.</h2>
                 <p className="section-sub">
-                    Fancy UI is not a monolith. Each layer ships independently to npm and composes
-                    with the rest. Pick the ones you need — most apps reach for two or three.
+                    Not a monolith. Each ships on its own — npm or Packagist — and composes with the
+                    rest. Most apps reach for two or three.
                 </p>
                 <div className="pkg-grid">
                     {packages.map((p) => {
@@ -340,9 +338,8 @@ export function HumanPlus() {
                 </div>
                 <h2 className="section-title">Watch an agent work in the surface, not behind it.</h2>
                 <p className="section-sub">
-                    The Human+ thesis is sharpest across agent-integrations, fancy-whiteboard, and
-                    fancy-artboard. When an agent moves a sticky you see the cursor, the label, and
-                    the activity row — three signals that something real happened.
+                    When an agent moves a sticky, you see the cursor, the label, and the activity
+                    row — it's driving the real surface, not scraping a copy of it.
                 </p>
 
                 <div className="demo-shell">
@@ -532,11 +529,10 @@ export function ComponentsShowcase({ total }: { total: number }) {
                 </div>
                 <h2 className="section-title">Real renders. Hover, click, type.</h2>
                 <p className="section-sub">
-                    This is the actual{" "}
+                    The actual{" "}
                     <code style={{ fontFamily: "var(--font-mono)" }}>@particle-academy/react-fancy</code> —{" "}
-                    {total}+ primitives across the suite, from a single button to a full spreadsheet.
-                    {" "}
-                    {FLAT.length} of them render live right here; pick any name on the left.
+                    {total}+ primitives, from a button to a full spreadsheet.{" "}
+                    {FLAT.length} render live right here; pick any name on the left.
                 </p>
 
                 <div className="showcase">
@@ -1186,11 +1182,11 @@ export function QuickStart() {
                 </div>
                 <h2 className="section-title">Two ways to add a component.</h2>
                 <p className="section-sub">
-                    Install the npm package and import it, or vendor the source with{" "}
-                    <code style={mono}>npx fancy-ui add</code> and own the code. PHP packages install
-                    with <code style={mono}>composer require</code>. Either way, point your coding
-                    agent at our hosted registry MCP — <code style={mono}>ui.particle.academy/mcp</code>{" "}
-                    — and it'll search the registry and return the exact install commands.
+                    npm-install and import, or vendor the source with{" "}
+                    <code style={mono}>npx fancy-ui add</code>. PHP packages:{" "}
+                    <code style={mono}>composer require</code>. Either way, point your agent at the
+                    registry MCP — <code style={mono}>ui.particle.academy/mcp</code> — and it returns
+                    the exact install commands.
                 </p>
 
                 <div className="qs-grid">

@@ -1,6 +1,10 @@
 # Fancy UI — Showcase
 
+[![Fancified](art/fancified.svg)](https://particle.academy)
+
 A Laravel 13 + Vite + React 19 + Inertia + Tailwind v4 app that consumes the Fancy UI package suite. Lives in the flat `fancy-ui/` workspace alongside each package as an independent sibling.
+
+> Dogfooding our own repo badge: this project wears the **Fancified** shield — the same mark the Showcase asks of submitted repos (paste it in your README and power ≥30% of your views with Fancy UI to get listed). The live, per-site version is served from `/badge/fancified.svg?site=<key>`.
 
 ## Packages
 

@@ -36,21 +36,38 @@ class FancifiedBadgeController extends Controller
 
     private function renderSvg(string $site): string
     {
-        $label = '⚡ Fancified';
         $comment = $site !== '' ? "<!-- site:{$site} -->" : '';
 
-        // A small flat badge — violet field, white wordmark + bolt.
+        // A fancy gradient badge: violet→fuchsia field, a sparkle glyph in a
+        // darker chip, a glossy top highlight, and the "Fancified" wordmark.
+        // Pure static SVG (no scripts/animation) so GitHub's camo proxy renders
+        // it inside README files.
         return <<<SVG
-<svg xmlns="http://www.w3.org/2000/svg" width="104" height="20" role="img" aria-label="{$label}">{$comment}
-  <title>{$label}</title>
-  <linearGradient id="fancified-g" x2="0" y2="100%">
-    <stop offset="0" stop-color="#8b5cf6"/>
-    <stop offset="1" stop-color="#7c3aed"/>
-  </linearGradient>
-  <rect rx="3" width="104" height="20" fill="url(#fancified-g)"/>
-  <g fill="#fff" text-anchor="middle" font-family="Verdana,DejaVu Sans,Geneva,sans-serif" font-size="11">
-    <text x="52" y="14">{$label}</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="28" role="img" aria-label="Fancified — built with Fancy UI">{$comment}
+  <title>Fancified · built with Fancy UI</title>
+  <defs>
+    <linearGradient id="fcdBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#6d28d9"/>
+      <stop offset=".5" stop-color="#9333ea"/>
+      <stop offset="1" stop-color="#d946ef"/>
+    </linearGradient>
+    <linearGradient id="fcdGloss" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity=".30"/>
+      <stop offset=".55" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <clipPath id="fcdClip"><rect width="128" height="28" rx="7"/></clipPath>
+  </defs>
+  <g clip-path="url(#fcdClip)">
+    <rect width="128" height="28" fill="url(#fcdBg)"/>
+    <rect width="34" height="28" fill="#3b0764" fill-opacity=".5"/>
+    <rect width="128" height="13" fill="url(#fcdGloss)"/>
+    <g fill="#fff">
+      <path transform="translate(17 14)" d="M0 -7 C.6 -2.2 2.2 -.6 7 0 C2.2 .6 .6 2.2 0 7 C-.6 2.2 -2.2 .6 -7 0 C-2.2 -.6 -.6 -2.2 0 -7 Z"/>
+      <path transform="translate(25.5 7.5) scale(.34)" fill-opacity=".85" d="M0 -7 C.6 -2.2 2.2 -.6 7 0 C2.2 .6 .6 2.2 0 7 C-.6 2.2 -2.2 .6 -7 0 C-2.2 -.6 -.6 -2.2 0 -7 Z"/>
+    </g>
+    <text x="81" y="18.5" fill="#ffffff" text-anchor="middle" font-family="'Segoe UI',Verdana,'DejaVu Sans',sans-serif" font-size="12" font-weight="700" letter-spacing=".3">Fancified</text>
   </g>
+  <rect x=".5" y=".5" width="127" height="27" rx="6.5" fill="none" stroke="#ffffff" stroke-opacity=".22"/>
 </svg>
 SVG;
     }

@@ -1,9 +1,11 @@
 <?php
 
+use App\Jobs\ScanShowcaseSubmission;
 use App\Models\ShowcaseSubmission;
 use App\Models\User;
 use App\Services\ShowcaseRewards;
 use Database\Seeders\FunLabSeeder;
+use Illuminate\Support\Facades\Bus;
 use Tests\TestCase;
 
 uses(TestCase::class);
@@ -97,6 +99,34 @@ it('unfeatures a submission', function () {
     $this->actingAs($admin)->post("/admin/submissions/{$submission->id}/unfeature")->assertRedirect();
 
     expect($submission->refresh()->featured_until)->toBeNull();
+});
+
+it('re-scan re-dispatches the scan job and resets status to pending', function () {
+    Bus::fake();
+    $admin = moderator();
+    $submission = pendingSubmission();
+    $submission->update(['status' => 'rejected']);
+
+    $this->actingAs($admin)->post("/admin/submissions/{$submission->id}/rescan")
+        ->assertRedirect()
+        ->assertSessionHas('success');
+
+    expect($submission->refresh()->status)->toBe('pending');
+    Bus::assertDispatched(ScanShowcaseSubmission::class, function (ScanShowcaseSubmission $job) use ($submission) {
+        return $job->submission->is($submission);
+    });
+});
+
+it('surfaces the site_key on the submission detail page', function () {
+    $admin = moderator();
+    $submission = pendingSubmission();
+
+    $this->actingAs($admin)->get("/admin/submissions/{$submission->id}")
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('Admin/SubmissionShow')
+            ->where('submission.site_key', $submission->site_key)
+        );
 });
 
 it('ShowcaseRewards is idempotent at the service level', function () {

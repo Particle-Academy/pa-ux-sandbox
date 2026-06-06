@@ -8,6 +8,7 @@ type Submission = {
     title: string | null;
     description: string | null;
     url: string;
+    site_key: string | null;
     kind: string;
     status: "pending" | "verified" | "rejected";
     scan_result: Record<string, unknown> | null;
@@ -90,6 +91,18 @@ function SubmissionShow({ submission: s }: Props) {
                                 </Meta>
                                 <Meta label="Created">{s.created ?? "—"}</Meta>
                                 <Meta label="Rewarded">{s.rewarded_at ?? "no"}</Meta>
+                                <Meta label="Site key">
+                                    {s.site_key ? (
+                                        <a
+                                            href={`/admin/heuristics/${s.site_key}`}
+                                            style={{ fontFamily: "var(--font-mono)", fontSize: 12.5, color: "var(--violet-600, #7c3aed)" }}
+                                        >
+                                            {s.site_key}
+                                        </a>
+                                    ) : (
+                                        "—"
+                                    )}
+                                </Meta>
                             </div>
                         </Card.Body>
                     </Card>

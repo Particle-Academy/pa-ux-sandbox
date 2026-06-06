@@ -64,6 +64,7 @@ class AdminShowcaseSubmissionsController extends Controller
                 'title' => $submission->title,
                 'description' => $submission->description,
                 'url' => $submission->url,
+                'site_key' => $submission->site_key,
                 'kind' => $submission->kind,
                 'status' => $submission->status,
                 'scan_result' => $submission->scan_result,

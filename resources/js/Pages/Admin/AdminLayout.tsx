@@ -28,6 +28,12 @@ const NAV: NavGroup[] = [
         ],
     },
     {
+        section: "Analytics",
+        items: [
+            { label: "Heuristics", icon: "activity", href: "/admin/heuristics" },
+        ],
+    },
+    {
         section: "Community",
         items: [
             { label: "Users", icon: "users", href: "/admin/users" },
@@ -44,6 +50,7 @@ const CRUMB: Record<string, { group: string; crumb: string }> = {
     features: { group: "Catalog", crumb: "Features" },
     gamification: { group: "Engagement", crumb: "Gamification" },
     shop: { group: "Engagement", crumb: "Coin Shop" },
+    heuristics: { group: "Analytics", crumb: "Heuristics" },
     users: { group: "Community", crumb: "Users" },
     submissions: { group: "Community", crumb: "Submissions" },
 };

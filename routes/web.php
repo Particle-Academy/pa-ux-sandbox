@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminFeaturesController;
 use App\Http\Controllers\Admin\AdminGamificationController;
+use App\Http\Controllers\Admin\AdminHeuristicsController;
 use App\Http\Controllers\Admin\AdminPlansController;
 use App\Http\Controllers\Admin\AdminProductsController;
 use App\Http\Controllers\Admin\AdminShopController;
@@ -246,6 +247,13 @@ Route::prefix('admin')->name('admin.')->middleware(['web', 'auth', 'can:admin'])
     Route::get('gamification/prizes/{prize}/edit', [AdminGamificationController::class, 'editPrize'])->name('gamification.prizes.edit');
     Route::put('gamification/prizes/{prize}', [AdminGamificationController::class, 'savePrize'])->name('gamification.prizes.update');
     Route::post('gamification/prizes/{prize}/toggle', [AdminGamificationController::class, 'togglePrize'])->name('gamification.prizes.toggle');
+
+    // Fancy Heuristics / Analytics — platform-wide overview + per-site drilldown
+    // over the live pixel feed (any site; admins aren't limited to their own).
+    // Sites bind by their human-friendly `site_key`, not the numeric id.
+    Route::get('heuristics', [AdminHeuristicsController::class, 'index'])->name('heuristics.index');
+    Route::get('heuristics/{site:site_key}', [AdminHeuristicsController::class, 'show'])->name('heuristics.show');
+    Route::post('heuristics/{site:site_key}/verify', [AdminHeuristicsController::class, 'verify'])->name('heuristics.verify');
 
     // Showcase Submissions moderation
     Route::get('submissions', [AdminShowcaseSubmissionsController::class, 'index'])->name('submissions.index');

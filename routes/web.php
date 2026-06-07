@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\AdminGamificationController;
 use App\Http\Controllers\Admin\AdminHeuristicsController;
 use App\Http\Controllers\Admin\AdminPlansController;
 use App\Http\Controllers\Admin\AdminProductsController;
+use App\Http\Controllers\Admin\AdminSettingsController;
 use App\Http\Controllers\Admin\AdminShopController;
 use App\Http\Controllers\Admin\AdminShowcaseSubmissionsController;
 use App\Http\Controllers\Admin\AdminUsersController;
@@ -264,6 +265,10 @@ Route::prefix('admin')->name('admin.')->middleware(['web', 'auth', 'can:admin'])
     Route::post('submissions/{submission}/feature', [AdminShowcaseSubmissionsController::class, 'feature'])->name('submissions.feature');
     Route::post('submissions/{submission}/unfeature', [AdminShowcaseSubmissionsController::class, 'unfeature'])->name('submissions.unfeature');
     Route::post('submissions/{submission}/rescan', [AdminShowcaseSubmissionsController::class, 'rescan'])->name('submissions.rescan');
+
+    // App settings — admin-editable config (e.g. the tracker/pixel snippet).
+    Route::get('settings', [AdminSettingsController::class, 'index'])->name('settings.index');
+    Route::post('settings', [AdminSettingsController::class, 'update'])->name('settings.update');
 });
 
 // React demos (SPA catch-all)

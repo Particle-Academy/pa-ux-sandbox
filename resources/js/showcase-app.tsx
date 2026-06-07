@@ -1,7 +1,6 @@
 import { createInertiaApp } from "@inertiajs/react";
 import { createRoot } from "react-dom/client";
 import { FancyAppRoot } from "@particle-academy/fancy-inertia";
-import { mountPixel } from "@particle-academy/fancy-pixel";
 import { registerAll as registerEChartsAll, registerBuiltinThemes } from "@particle-academy/fancy-echarts";
 import "./showcase-theme";
 import "@particle-academy/react-fancy/styles.css";
@@ -31,17 +30,10 @@ createInertiaApp({
                 <App {...props} />
             </FancyAppRoot>,
         );
-
-        // Dogfood: the showcase is itself a Fancy UI site, so it wears its own
-        // Fancy Pixel. One all-in-one embed — the floating "Powered by Fancy UI"
-        // badge AND first-party interaction analytics streamed to our own
-        // /heuristics endpoint (keyed by this site_key). Mounted here, once,
-        // outside Inertia's page swaps so it persists across navigation.
-        mountPixel({
-            style: "badge",
-            mode: "floating",
-            siteKey: "fancy-ui-showcase",
-            endpoint: "/heuristics",
-        });
+        // The showcase dogfoods its own Fancy Pixel through the *real* flow:
+        // register the site in /showcase, then paste the generated tracker
+        // snippet into Admin → Settings. It's injected server-side into the page
+        // (see the tracker view-composer) exactly like any external consumer —
+        // no hardcoded mount here.
     },
 });

@@ -1,11 +1,14 @@
 import { Head, Link } from "@inertiajs/react";
+import { useEffect, useRef } from "react";
 import { useFancyForm } from "@particle-academy/fancy-inertia";
+import { createPixelHost } from "@particle-academy/fancy-pixel";
 import {
     Button,
     Badge,
     Breadcrumbs,
     Callout,
     Card,
+    FauxClient,
     Heading,
     Icon,
     Text,
@@ -76,6 +79,128 @@ function Segmented<T extends string>({
     );
 }
 
+/**
+ * Live FauxClient preview of the real Fancy Pixel badge. Mounts the actual
+ * shadow-DOM host via `createPixelHost` (render-only — no endpoint, no beacon,
+ * no collector), re-mounting whenever style/mode change. `floating` is pinned
+ * to the frame's corner (contained, not the real viewport); `placed` drops into
+ * the mock page footer — exactly where each mode lands on a real site.
+ */
+function PixelPreview({ style, mode, url }: { style: Style; mode: Mode; url: string }) {
+    const frameRef = useRef<HTMLDivElement>(null);
+    const placedSlotRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const frame = frameRef.current;
+        const placedSlot = placedSlotRef.current;
+        if (!frame || !placedSlot) {
+            return;
+        }
+        let host: HTMLElement | null = null;
+        try {
+            host = createPixelHost(style, mode, "https://particle.academy");
+            if (mode === "floating") {
+                Object.assign(host.style, {
+                    position: "absolute",
+                    right: "14px",
+                    bottom: "14px",
+                    left: "auto",
+                    top: "auto",
+                    zIndex: "20",
+                });
+                frame.appendChild(host);
+            } else {
+                host.style.position = "static";
+                placedSlot.appendChild(host);
+            }
+        } catch {
+            host = null; // a preview must never break the page
+        }
+        return () => host?.remove();
+    }, [style, mode]);
+
+    const host = (url || "your-site.com").replace(/^https?:\/\//, "").replace(/\/.*$/, "");
+
+    return (
+        <FauxClient variant="browser" url={host} meta="Fancy Pixel" className="w-full">
+            <div
+                ref={frameRef}
+                className="relative overflow-hidden bg-gradient-to-b from-zinc-50 to-white dark:from-zinc-900 dark:to-zinc-950"
+                style={{ minHeight: 300 }}
+            >
+                {/* faux site nav */}
+                <div className="flex items-center justify-between border-b border-zinc-200/70 px-4 py-3 dark:border-zinc-800">
+                    <div className="h-3 w-20 rounded bg-zinc-300 dark:bg-zinc-700" />
+                    <div className="flex gap-2">
+                        <div className="h-2.5 w-10 rounded bg-zinc-200 dark:bg-zinc-800" />
+                        <div className="h-2.5 w-10 rounded bg-zinc-200 dark:bg-zinc-800" />
+                        <div className="h-2.5 w-10 rounded bg-zinc-200 dark:bg-zinc-800" />
+                    </div>
+                </div>
+                {/* faux hero */}
+                <div className="space-y-3 px-6 py-7">
+                    <div className="h-5 w-2/3 rounded bg-zinc-300 dark:bg-zinc-700" />
+                    <div className="h-3 w-full rounded bg-zinc-200 dark:bg-zinc-800" />
+                    <div className="h-3 w-4/5 rounded bg-zinc-200 dark:bg-zinc-800" />
+                    <div className="mt-4 h-8 w-28 rounded-md bg-violet-500/80" />
+                </div>
+                {/* faux footer — the drop target for `placed` */}
+                <div className="mt-2 flex items-center gap-3 border-t border-zinc-200/70 px-4 py-3 dark:border-zinc-800">
+                    <Text size="xs" color="muted" className="!text-[11px]">
+                        © {host}
+                    </Text>
+                    <div ref={placedSlotRef} className="flex items-center" />
+                </div>
+            </div>
+        </FauxClient>
+    );
+}
+
+function PreviewPanel({ form }: { form: ReturnType<typeof useFancyForm<Form>> }) {
+    const isWebsite = form.data.kind === "website";
+
+    return (
+        <div className="lg:sticky lg:top-24">
+            <div className="mb-2 flex items-center gap-2">
+                <Icon name="eye" size={15} className="text-violet-500" />
+                <Text size="xs" weight="semibold" className="uppercase tracking-wider !text-zinc-500">
+                    Live preview
+                </Text>
+            </div>
+
+            {isWebsite ? (
+                <>
+                    <PixelPreview style={form.data.style} mode={form.data.mode} url={form.data.url} />
+                    <Text size="xs" color="muted" className="mt-2">
+                        The real Fancy Pixel badge — exactly what your visitors (and embedded agents) see.
+                        {form.data.mode === "floating"
+                            ? " Floating pins to the corner of every page."
+                            : " Placed drops inline wherever you put the snippet."}
+                    </Text>
+                </>
+            ) : (
+                <>
+                    <FauxClient variant="browser" url="github.com/you/your-app" meta="README.md" className="w-full">
+                        <div className="space-y-3 bg-white p-5 dark:bg-zinc-950">
+                            <div className="h-4 w-40 rounded bg-zinc-300 dark:bg-zinc-700" />
+                            <span className="inline-flex items-center gap-1.5 rounded-md bg-violet-600 px-2 py-1 text-[11px] font-semibold text-white">
+                                <Icon name="sparkles" size={12} /> Fancified
+                            </span>
+                            <div className="h-3 w-full rounded bg-zinc-200 dark:bg-zinc-800" />
+                            <div className="h-3 w-5/6 rounded bg-zinc-200 dark:bg-zinc-800" />
+                            <div className="h-3 w-3/4 rounded bg-zinc-200 dark:bg-zinc-800" />
+                        </div>
+                    </FauxClient>
+                    <Text size="xs" color="muted" className="mt-2">
+                        We generate a <span className="font-medium">Fancified</span> badge for your README and
+                        scan your code — listed once the badge is present and Fancy powers ≥30% of your views.
+                    </Text>
+                </>
+            )}
+        </div>
+    );
+}
+
 export default function ShowcaseCreate() {
     const form = useFancyForm<Form>({
         kind: "website",
@@ -106,152 +231,156 @@ export default function ShowcaseCreate() {
                 an analytics tag.
             </Text>
 
-            <Card className="mt-6 max-w-xl">
-                <Card.Body>
-                    <form
-                        method="POST"
-                        action="/showcase/submit"
-                        onSubmit={(e) => {
-                            e.preventDefault();
-                            form.post("/showcase/submit");
-                        }}
-                        className="space-y-5"
-                    >
-                        <div>
-                            <label className="block text-xs font-semibold uppercase tracking-wider text-zinc-500">
-                                Kind
-                            </label>
-                            <div className="mt-1 inline-flex overflow-hidden rounded-md border border-zinc-300 dark:border-zinc-700">
-                                {(["website", "repo"] as const).map((k) => (
-                                    <label
-                                        key={k}
-                                        className={`cursor-pointer px-3 py-1.5 text-xs ${
-                                            form.data.kind === k
-                                                ? "bg-violet-600 text-white"
-                                                : "text-zinc-600 dark:text-zinc-300"
-                                        } ${k === "repo" ? "border-l border-zinc-300 dark:border-zinc-700" : ""}`}
-                                    >
-                                        <input
-                                            type="radio"
-                                            name="kind"
-                                            value={k}
-                                            checked={form.data.kind === k}
-                                            onChange={() => form.setData("kind", k)}
-                                            className="sr-only"
-                                        />
-                                        {k === "website" ? "Website" : "Repo"}
-                                    </label>
-                                ))}
+            <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,34rem)_minmax(0,1fr)]">
+                <Card>
+                    <Card.Body>
+                        <form
+                            method="POST"
+                            action="/showcase/submit"
+                            onSubmit={(e) => {
+                                e.preventDefault();
+                                form.post("/showcase/submit");
+                            }}
+                            className="space-y-5"
+                        >
+                            <div>
+                                <label className="block text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                                    Kind
+                                </label>
+                                <div className="mt-1 inline-flex overflow-hidden rounded-md border border-zinc-300 dark:border-zinc-700">
+                                    {(["website", "repo"] as const).map((k) => (
+                                        <label
+                                            key={k}
+                                            className={`cursor-pointer px-3 py-1.5 text-xs ${
+                                                form.data.kind === k
+                                                    ? "bg-violet-600 text-white"
+                                                    : "text-zinc-600 dark:text-zinc-300"
+                                            } ${k === "repo" ? "border-l border-zinc-300 dark:border-zinc-700" : ""}`}
+                                        >
+                                            <input
+                                                type="radio"
+                                                name="kind"
+                                                value={k}
+                                                checked={form.data.kind === k}
+                                                onChange={() => form.setData("kind", k)}
+                                                className="sr-only"
+                                            />
+                                            {k === "website" ? "Website" : "Repo"}
+                                        </label>
+                                    ))}
+                                </div>
                             </div>
-                        </div>
 
-                        <div>
-                            <label className="block text-xs font-semibold uppercase tracking-wider text-zinc-500">
-                                URL
-                            </label>
-                            <input
-                                type="url"
-                                required
-                                maxLength={255}
-                                value={form.data.url}
-                                onChange={(e) => form.setData("url", e.target.value)}
-                                placeholder="https://your-site.com or https://github.com/you/your-app"
-                                className="mt-1 w-full rounded-md border border-zinc-300 bg-transparent px-3 py-2 text-sm outline-none focus:border-violet-500 dark:border-zinc-700"
-                            />
-                            {form.errors.url && (
-                                <Text size="xs" className="mt-1 text-red-600">
-                                    {form.errors.url}
-                                </Text>
+                            <div>
+                                <label className="block text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                                    URL
+                                </label>
+                                <input
+                                    type="url"
+                                    required
+                                    maxLength={255}
+                                    value={form.data.url}
+                                    onChange={(e) => form.setData("url", e.target.value)}
+                                    placeholder="https://your-site.com or https://github.com/you/your-app"
+                                    className="mt-1 w-full rounded-md border border-zinc-300 bg-transparent px-3 py-2 text-sm outline-none focus:border-violet-500 dark:border-zinc-700"
+                                />
+                                {form.errors.url && (
+                                    <Text size="xs" className="mt-1 text-red-600">
+                                        {form.errors.url}
+                                    </Text>
+                                )}
+                            </div>
+
+                            {isWebsite && (
+                                <>
+                                    <div>
+                                        <label className="block text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                                            Pixel style
+                                        </label>
+                                        <Segmented
+                                            name="style"
+                                            options={STYLES}
+                                            value={form.data.style}
+                                            onChange={(v) => form.setData("style", v)}
+                                        />
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                                            Placement
+                                        </label>
+                                        <Segmented
+                                            name="mode"
+                                            options={MODES}
+                                            value={form.data.mode}
+                                            onChange={(v) => form.setData("mode", v)}
+                                        />
+                                    </div>
+
+                                    <Callout color="violet" icon={<Icon name="sparkles" />}>
+                                        <Text size="xs">
+                                            We&apos;ll generate a one-line snippet on the next step.
+                                            Paste it in your <code className="rounded bg-violet-100 px-1 dark:bg-violet-900/40">&lt;head&gt;</code>{" "}
+                                            and we detect it automatically — no review queue, no
+                                            blocking.
+                                        </Text>
+                                    </Callout>
+                                </>
                             )}
-                        </div>
 
-                        {isWebsite && (
-                            <>
-                                <div>
-                                    <label className="block text-xs font-semibold uppercase tracking-wider text-zinc-500">
-                                        Pixel style
-                                    </label>
-                                    <Segmented
-                                        name="style"
-                                        options={STYLES}
-                                        value={form.data.style}
-                                        onChange={(v) => form.setData("style", v)}
-                                    />
-                                </div>
-
-                                <div>
-                                    <label className="block text-xs font-semibold uppercase tracking-wider text-zinc-500">
-                                        Placement
-                                    </label>
-                                    <Segmented
-                                        name="mode"
-                                        options={MODES}
-                                        value={form.data.mode}
-                                        onChange={(v) => form.setData("mode", v)}
-                                    />
-                                </div>
-
-                                <Callout color="violet" icon={<Icon name="sparkles" />}>
+                            {!isWebsite && (
+                                <Callout color="violet" icon={<Icon name="award" />}>
                                     <Text size="xs">
-                                        We&apos;ll generate a one-line snippet on the next step.
-                                        Paste it in your <code className="rounded bg-violet-100 px-1 dark:bg-violet-900/40">&lt;head&gt;</code>{" "}
-                                        and we detect it automatically — no review queue, no
-                                        blocking.
+                                        We&apos;ll generate a README badge on the next step + scan
+                                        your code. Your repo gets listed once the{" "}
+                                        <span className="font-medium">Fancified</span> badge is in
+                                        your README <span className="font-medium">and</span> Fancy
+                                        powers <span className="font-medium">≥30%</span> of your
+                                        view/component files — async, never blocking.
                                     </Text>
                                 </Callout>
-                            </>
-                        )}
+                            )}
 
-                        {!isWebsite && (
-                            <Callout color="violet" icon={<Icon name="award" />}>
-                                <Text size="xs">
-                                    We&apos;ll generate a README badge on the next step + scan
-                                    your code. Your repo gets listed once the{" "}
-                                    <span className="font-medium">Fancified</span> badge is in
-                                    your README <span className="font-medium">and</span> Fancy
-                                    powers <span className="font-medium">≥30%</span> of your
-                                    view/component files — async, never blocking.
-                                </Text>
-                            </Callout>
-                        )}
+                            <div>
+                                <label className="block text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                                    Title <Badge color="zinc" size="sm">optional</Badge>
+                                </label>
+                                <input
+                                    type="text"
+                                    maxLength={120}
+                                    value={form.data.title}
+                                    onChange={(e) => form.setData("title", e.target.value)}
+                                    className="mt-1 w-full rounded-md border border-zinc-300 bg-transparent px-3 py-2 text-sm outline-none focus:border-violet-500 dark:border-zinc-700"
+                                />
+                            </div>
 
-                        <div>
-                            <label className="block text-xs font-semibold uppercase tracking-wider text-zinc-500">
-                                Title <Badge color="zinc" size="sm">optional</Badge>
-                            </label>
-                            <input
-                                type="text"
-                                maxLength={120}
-                                value={form.data.title}
-                                onChange={(e) => form.setData("title", e.target.value)}
-                                className="mt-1 w-full rounded-md border border-zinc-300 bg-transparent px-3 py-2 text-sm outline-none focus:border-violet-500 dark:border-zinc-700"
-                            />
-                        </div>
+                            <div>
+                                <label className="block text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                                    Description <Badge color="zinc" size="sm">optional</Badge>
+                                </label>
+                                <textarea
+                                    rows={3}
+                                    maxLength={600}
+                                    value={form.data.description}
+                                    onChange={(e) => form.setData("description", e.target.value)}
+                                    className="mt-1 w-full rounded-md border border-zinc-300 bg-transparent px-3 py-2 text-sm outline-none focus:border-violet-500 dark:border-zinc-700"
+                                />
+                            </div>
 
-                        <div>
-                            <label className="block text-xs font-semibold uppercase tracking-wider text-zinc-500">
-                                Description <Badge color="zinc" size="sm">optional</Badge>
-                            </label>
-                            <textarea
-                                rows={3}
-                                maxLength={600}
-                                value={form.data.description}
-                                onChange={(e) => form.setData("description", e.target.value)}
-                                className="mt-1 w-full rounded-md border border-zinc-300 bg-transparent px-3 py-2 text-sm outline-none focus:border-violet-500 dark:border-zinc-700"
-                            />
-                        </div>
+                            <div className="flex items-center justify-end gap-2 pt-2">
+                                <Button as={Link} href="/showcase" variant="ghost">
+                                    Cancel
+                                </Button>
+                                <Button type="submit" color="violet" disabled={form.processing}>
+                                    Register site
+                                </Button>
+                            </div>
+                        </form>
+                    </Card.Body>
+                </Card>
 
-                        <div className="flex items-center justify-end gap-2 pt-2">
-                            <Button as={Link} href="/showcase" variant="ghost">
-                                Cancel
-                            </Button>
-                            <Button type="submit" color="violet" disabled={form.processing}>
-                                Register site
-                            </Button>
-                        </div>
-                    </form>
-                </Card.Body>
-            </Card>
+                <PreviewPanel form={form} />
+            </div>
         </Layout>
     );
 }

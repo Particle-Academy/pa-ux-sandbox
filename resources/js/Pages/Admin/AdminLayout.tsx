@@ -40,6 +40,12 @@ const NAV: NavGroup[] = [
             { label: "Submissions", icon: "image", href: "/admin/submissions" },
         ],
     },
+    {
+        section: "System",
+        items: [
+            { label: "Settings", icon: "gear", href: "/admin/settings" },
+        ],
+    },
 ];
 
 /** group + crumb for the topbar breadcrumb, keyed by the leading path segment. */
@@ -53,6 +59,7 @@ const CRUMB: Record<string, { group: string; crumb: string }> = {
     heuristics: { group: "Analytics", crumb: "Heuristics" },
     users: { group: "Community", crumb: "Users" },
     submissions: { group: "Community", crumb: "Submissions" },
+    settings: { group: "System", crumb: "Settings" },
 };
 
 function initials(name: string): string {

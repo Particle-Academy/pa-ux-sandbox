@@ -54,5 +54,10 @@
 </head>
 <body class="min-h-screen antialiased bg-white text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100">
     @inertia
+
+    {{-- Admin-pasted tracker / Fancy Pixel snippet (Admin → Settings). Raw by
+         design — a script embed set by a trusted admin, exactly like an external
+         site pasting our snippet into their own HTML. --}}
+    {!! $tracker ?? '' !!}
 </body>
 </html>

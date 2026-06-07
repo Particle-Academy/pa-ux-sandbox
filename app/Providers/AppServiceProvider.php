@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Setting;
 use App\Models\User;
 use App\Services\Entitlements;
 use App\Support\Seo;
@@ -42,6 +43,9 @@ class AppServiceProvider extends ServiceProvider
         // even though the app is a client-rendered SPA.
         View::composer('showcase-app', function ($view): void {
             $view->with('seo', Seo::forRequest(request()));
+            // Admin-pasted tracker/pixel snippet (Admin → Settings), injected
+            // raw into the page exactly like an external consumer's embed.
+            $view->with('tracker', Setting::get('tracker_code', ''));
         });
 
         // Login throttle — keyed by email + IP so a single attacker IP

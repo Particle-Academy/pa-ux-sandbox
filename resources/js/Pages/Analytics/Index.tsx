@@ -1,7 +1,9 @@
 import { Head, router } from "@inertiajs/react";
+import { useEffect, useState } from "react";
 import { Badge, Card, Heading, Table, Text } from "@particle-academy/react-fancy";
 import { EChart } from "@particle-academy/fancy-echarts";
 import { Layout } from "../Layout";
+import { currentTheme } from "../../showcase-theme";
 
 type Site = { site_key: string; url: string | null; visible: boolean };
 
@@ -197,7 +199,25 @@ function KpiTiles({ kpis }: { kpis: Kpis }) {
 // and paint a warm radial blob whose radius and opacity scale with the weight.
 // Heavier cells = bigger, hotter blobs, exactly like a classic attention overlay.
 
+/** Track the live showcase theme so the heat overlay can pick the right blend. */
+function useTheme(): "light" | "dark" {
+    const [theme, setTheme] = useState<"light" | "dark">(() =>
+        typeof window === "undefined" ? "dark" : currentTheme(),
+    );
+    useEffect(() => {
+        const onChange = (e: Event) => setTheme((e as CustomEvent<"light" | "dark">).detail);
+        window.addEventListener("fancy-theme-change", onChange as EventListener);
+        return () => window.removeEventListener("fancy-theme-change", onChange as EventListener);
+    }, []);
+    return theme;
+}
+
 function FocusHeatmap({ heatmap }: { heatmap: Heatmap }) {
+    // The blobs must use a *lighten* blend on the dark canvas (so warm colors
+    // glow) and a *darken* blend on the light canvas. `multiply` on a near-black
+    // background collapses every blob to black — which is why the heat looked
+    // nearly invisible in dark mode.
+    const blendMode = useTheme() === "dark" ? "screen" : "multiply";
     return (
         <Card className="overflow-hidden">
             <div className="flex items-center justify-between border-b border-zinc-100 p-4 dark:border-zinc-800">
@@ -250,7 +270,7 @@ function FocusHeatmap({ heatmap }: { heatmap: Heatmap }) {
                                     background: `radial-gradient(circle, ${blobColor(cell.weight)} 0%, ${blobColor(
                                         cell.weight,
                                     )}00 70%)`,
-                                    mixBlendMode: "multiply",
+                                    mixBlendMode: blendMode,
                                 }}
                             />
                         );

@@ -9,6 +9,7 @@ type Pkg = {
     tagline: string;
     language: string;
     components_count: number;
+    core: boolean;
 };
 
 /**
@@ -21,6 +22,7 @@ type Companion = {
     name: string;
     tagline: string;
     language: string;
+    core: boolean;
     composer: string | null;
     packagist: string | null;
     npm: string | null;
@@ -49,6 +51,10 @@ const HAS_SHOT = new Set([
 ]);
 
 export default function PackagesIndex({ packages, companions = [] }: { packages: Pkg[]; companions?: Companion[] }) {
+    const corePkgs = packages.filter((p) => p.core);
+    const gridPkgs = packages.filter((p) => !p.core);
+    const coreCompanions = companions.filter((c) => c.core);
+    const otherCompanions = companions.filter((c) => !c.core);
     const totalComponents = packages.reduce((s, p) => s + p.components_count, 0);
     return (
         <Layout>
@@ -67,8 +73,10 @@ export default function PackagesIndex({ packages, companions = [] }: { packages:
                 </div>
             </div>
 
+            <FancyCore pkgs={corePkgs} companions={coreCompanions} />
+
             <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {packages.map((pkg) => (
+                {gridPkgs.map((pkg) => (
                     <Link key={pkg.slug} href={`/packages/${pkg.slug}`} className="block">
                         <Card className="group h-full overflow-hidden transition hover:-translate-y-0.5 hover:border-violet-300 hover:shadow-lg dark:hover:border-violet-700">
                             <PackageHero pkg={pkg} />
@@ -94,8 +102,66 @@ export default function PackagesIndex({ packages, companions = [] }: { packages:
                 ))}
             </div>
 
-            {companions.length > 0 && <CompanionPackages companions={companions} />}
+            {otherCompanions.length > 0 && <CompanionPackages companions={otherCompanions} />}
         </Layout>
+    );
+}
+
+/**
+ * Fancy Core — the minimal stack to build a normal web application: UI
+ * components (react-fancy), the Inertia bridge (fancy-inertia), and server-state
+ * (fancy-query). Lifted out of the grid into a highlighted band at the top so
+ * newcomers know what to reach for first.
+ */
+function FancyCore({ pkgs, companions }: { pkgs: Pkg[]; companions: Companion[] }) {
+    if (pkgs.length === 0 && companions.length === 0) {
+        return null;
+    }
+    return (
+        <section className="mt-6 rounded-2xl border border-violet-200 bg-gradient-to-br from-violet-50 via-white to-sky-50 p-5 dark:border-violet-900/50 dark:from-violet-950/30 dark:via-zinc-950 dark:to-sky-950/20">
+            <div className="flex items-center gap-2">
+                <Heading level={2} size="md" className="!text-zinc-900 dark:!text-zinc-100">Fancy Core</Heading>
+                <Badge color="violet" size="sm">the essentials</Badge>
+            </div>
+            <Text size="sm" className="mt-1 max-w-2xl !text-zinc-600 dark:!text-zinc-300">
+                The minimal stack to build a normal web application — UI components, the
+                Inertia bridge, and server-state. Reach for these on every Fancy app; everything
+                below is additive.
+            </Text>
+
+            <div className="mt-4 grid gap-4 sm:grid-cols-3">
+                {pkgs.map((p) => (
+                    <Link key={p.slug} href={`/packages/${p.slug}`} className="block">
+                        <Card className="group h-full transition hover:-translate-y-0.5 hover:border-violet-300 hover:shadow-md dark:hover:border-violet-700">
+                            <Card.Body>
+                                <div className="flex items-start justify-between gap-2">
+                                    <Heading level={3} size="sm" className="!font-mono !text-zinc-900 dark:!text-zinc-100">{p.name}</Heading>
+                                    <Badge color="sky" size="sm">{p.language}</Badge>
+                                </div>
+                                <Text size="sm" className="mt-2 line-clamp-3 !text-zinc-600 dark:!text-zinc-300">{p.tagline}</Text>
+                                <Text size="xs" className="mt-3 !font-mono !text-violet-600 dark:!text-violet-300">
+                                    {p.components_count} component{p.components_count === 1 ? "" : "s"} · Explore →
+                                </Text>
+                            </Card.Body>
+                        </Card>
+                    </Link>
+                ))}
+                {companions.map((c) => (
+                    <a key={c.slug} href={c.npmUrl ?? c.repoUrl} target="_blank" rel="noreferrer" className="block">
+                        <Card className="group h-full transition hover:-translate-y-0.5 hover:border-violet-300 hover:shadow-md dark:hover:border-violet-700">
+                            <Card.Body>
+                                <div className="flex items-start justify-between gap-2">
+                                    <Heading level={3} size="sm" className="!font-mono !text-zinc-900 dark:!text-zinc-100">{c.name}</Heading>
+                                    <Badge color="zinc" size="sm" variant="soft">hooks</Badge>
+                                </div>
+                                <Text size="sm" className="mt-2 line-clamp-3 !text-zinc-600 dark:!text-zinc-300">{c.tagline}</Text>
+                                <Text size="xs" className="mt-3 !font-mono !text-violet-600 dark:!text-violet-300">npm →</Text>
+                            </Card.Body>
+                        </Card>
+                    </a>
+                ))}
+            </div>
+        </section>
     );
 }
 

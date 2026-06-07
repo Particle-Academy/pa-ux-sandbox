@@ -22,6 +22,7 @@ class PackagesController extends Controller
             'tagline' => $p['tagline'],
             'language' => $p['language'],
             'components_count' => count($p['components'] ?? []),
+            'core' => $p['core'] ?? false,
         ])->all();
 
         // Companion packages — headless deps the sandbox develops against
@@ -33,6 +34,7 @@ class PackagesController extends Controller
             'name' => $p['name'],
             'tagline' => $p['tagline'],
             'language' => $p['language'],
+            'core' => $p['core'] ?? false,
             'composer' => $p['composer'] ?? null,
             'packagist' => $p['packagist'] ?? null,
             'npm' => $p['npm'] ?? null,

@@ -100,6 +100,7 @@ class PackageRegistry
                 'npm' => '@particle-academy/fancy-query',
                 'repo' => 'Particle-Academy/fancy-query',
                 'language' => 'TypeScript',
+                'core' => true,
             ],
             [
                 'slug' => 'dark-slide-js',
@@ -164,6 +165,7 @@ class PackageRegistry
             'npm' => '@particle-academy/react-fancy',
             'repo' => 'Particle-Academy/react-fancy',
             'language' => 'TypeScript',
+            'core' => true,
             'components' => self::componentsForReactFancy(),
         ];
     }
@@ -501,6 +503,7 @@ class PackageRegistry
             'npm' => '@particle-academy/fancy-inertia',
             'repo' => 'Particle-Academy/fancy-inertia',
             'language' => 'TypeScript',
+            'core' => true,
             'components' => [
                 ['slug' => 'fancy-app-root', 'name' => 'FancyAppRoot', 'blurb' => 'Inertia app root.'],
                 ['slug' => 'use-fancy-form', 'name' => 'useFancyForm', 'blurb' => 'Form hook.'],

@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\User;
-use App\Services\Entitlements;
 use LaravelFunLab\Models\MetricLevelGroup;
 use LaravelFunLab\Models\MetricLevelGroupLevel;
 use LaravelFunLab\Services\MetricLevelGroupService;
@@ -98,6 +97,7 @@ class PlayerProfile
             'prizes' => $prizes,
             'lifetimeEarned' => $user->getWallet()->lifetime_earned,
             'lifetimeSpent' => $user->getWallet()->lifetime_spent,
+            'memberSince' => $user->created_at?->year,
         ];
     }
 

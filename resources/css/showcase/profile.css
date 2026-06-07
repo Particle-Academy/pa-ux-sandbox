@@ -1,0 +1,106 @@
+/* profile.css — gamification profile page. Ported from the Fancy UI design
+   mockup; uses the showcase design tokens (showcase/tokens.css). Component
+   classes only — react-fancy <Card> provides the surface; these style the
+   inner layout. */
+
+.pf-wrap { max-width: 1040px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+
+/* ── hero ─────────────────────────────────────────────────────────────── */
+.pf-hero { position: relative; overflow: hidden; }
+.pf-hero-banner {
+  height: 96px; position: relative;
+  background: linear-gradient(115deg,
+    color-mix(in oklch, var(--brand-grad-from) 70%, transparent),
+    color-mix(in oklch, var(--brand-grad-via) 70%, transparent) 48%,
+    color-mix(in oklch, var(--brand-grad-to) 70%, transparent));
+}
+.pf-hero-banner::after {
+  content: ""; position: absolute; inset: 0;
+  background:
+    radial-gradient(120px 120px at 88% -10%, rgba(255,255,255,.25), transparent 70%),
+    radial-gradient(circle at 1px 1px, rgba(255,255,255,.16) 1px, transparent 0) 0 0 / 20px 20px;
+}
+.pf-hero-body { padding: 0 24px 22px; display: flex; align-items: flex-end; gap: 18px; margin-top: -42px; position: relative; flex-wrap: wrap; }
+.pf-id { display: flex; align-items: flex-end; gap: 16px; flex: 1; min-width: 260px; }
+.pf-avatar-ring { padding: 4px; border-radius: 999px; background: var(--surface); box-shadow: var(--shadow-md); line-height: 0; flex-shrink: 0; }
+.pf-avatar-ring img { display: block; width: 76px; height: 76px; border-radius: 999px; object-fit: cover; background: var(--surface); }
+.pf-name-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.pf-name { font-size: 22px; font-weight: 600; letter-spacing: -0.02em; color: var(--fg-1); }
+.pf-sub { display: flex; align-items: center; gap: 9px; margin-top: 4px; font-size: 13px; color: var(--fg-3); flex-wrap: wrap; }
+.pf-sub .lvl-chip { display: inline-flex; align-items: center; gap: 5px; font-weight: 600; color: var(--fg-2); }
+.pf-sub .dot { color: var(--fg-4); }
+.pf-coins { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; padding-bottom: 4px; }
+.pf-coins .amt { display: flex; align-items: center; gap: 7px; font-size: 26px; font-weight: 700; letter-spacing: -0.02em; color: #d97706; font-family: var(--font-mono); }
+.dark .pf-coins .amt { color: #fbbf24; }
+.pf-coins .shop { font-size: 12.5px; color: #8b5cf6; text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 4px; }
+.dark .pf-coins .shop { color: #a78bfa; }
+.pf-coins .shop:hover { text-decoration: underline; }
+
+/* ── level meter ──────────────────────────────────────────────────────── */
+.pf-meter { padding: 18px 24px 22px; border-top: 1px solid var(--border-1); }
+.pf-meter-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; gap: 12px; flex-wrap: wrap; }
+.pf-meter-head .lbl { font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px; color: var(--fg-1); }
+.pf-meter-head .val { font-size: 12.5px; color: var(--fg-3); font-family: var(--font-mono); }
+.pf-bar { height: 12px; border-radius: 999px; background: var(--bg-2); overflow: hidden; position: relative; box-shadow: inset 0 1px 2px rgba(0,0,0,.08); }
+.pf-bar > span { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--brand-grad-from), var(--brand-grad-via) 55%, var(--brand-grad-to)); box-shadow: 0 0 12px color-mix(in oklch, var(--brand-grad-via) 50%, transparent); transition: width 1s var(--ease-out); }
+.pf-bar-ticks { display: flex; justify-content: space-between; margin-top: 8px; font-size: 11.5px; color: var(--fg-4); }
+.pf-bar-ticks b { color: var(--fg-2); font-weight: 600; }
+
+/* ── 2-col grid + card chrome ─────────────────────────────────────────── */
+.pf-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 760px) { .pf-grid2 { grid-template-columns: 1fr; } .pf-hero-body { margin-top: -36px; } .pf-coins { align-items: flex-start; } }
+.pf-card-head { display: flex; align-items: center; gap: 8px; padding: 14px 18px; border-bottom: 1px solid var(--border-1); font-size: 13px; font-weight: 600; color: var(--fg-1); }
+.pf-card-head .count { margin-left: auto; font-size: 12px; color: var(--fg-3); font-family: var(--font-mono); font-weight: 500; }
+.pf-card-pad { padding: 6px 18px 14px; }
+
+/* ── xp by activity ───────────────────────────────────────────────────── */
+.xp-row { padding: 14px 0; border-bottom: 1px solid var(--border-1); }
+.xp-row:last-child { border-bottom: none; padding-bottom: 2px; }
+.xp-row:first-child { padding-top: 4px; }
+.xp-row-head { display: flex; align-items: center; gap: 10px; margin-bottom: 9px; }
+.xp-ico { width: 32px; height: 32px; border-radius: 9px; display: grid; place-items: center; flex-shrink: 0; }
+.xp-name { font-size: 13.5px; font-weight: 600; flex: 1; color: var(--fg-1); }
+.xp-amt { font-family: var(--font-mono); font-size: 14px; font-weight: 600; color: var(--fg-1); }
+.xp-mini { height: 7px; border-radius: 999px; background: var(--bg-2); overflow: hidden; }
+.xp-mini > span { display: block; height: 100%; border-radius: 999px; transition: width 1s var(--ease-out); }
+.xp-row-foot { display: flex; justify-content: space-between; margin-top: 6px; font-size: 11px; color: var(--fg-4); font-family: var(--font-mono); }
+
+/* ── achievements ─────────────────────────────────────────────────────── */
+.ach-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+@media (max-width: 560px) { .ach-grid { grid-template-columns: repeat(3, 1fr); } }
+.ach { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 9px; padding: 4px 2px; }
+.ach-medal { width: 60px; height: 60px; border-radius: 999px; display: grid; place-items: center; position: relative; }
+.ach-medal.earned { color: #8b5cf6; background: linear-gradient(150deg, color-mix(in oklch, #8b5cf6 22%, var(--surface)), color-mix(in oklch, #6366f1 16%, var(--surface))); border: 1.5px solid color-mix(in oklch, #8b5cf6 45%, transparent); box-shadow: 0 4px 14px -6px color-mix(in oklch, #8b5cf6 60%, transparent); }
+.dark .ach-medal.earned { color: #a78bfa; }
+.ach-medal.locked { background: var(--bg-2); border: 1.5px dashed var(--border-2); color: var(--fg-4); }
+.ach-medal .ring { position: absolute; inset: -5px; border-radius: 999px; border: 1.5px solid color-mix(in oklch, #8b5cf6 25%, transparent); }
+.ach-label { font-size: 12px; font-weight: 600; line-height: 1.25; color: var(--fg-1); }
+.ach.is-locked .ach-label { color: var(--fg-4); font-weight: 500; }
+.ach-tier { font-size: 10.5px; color: var(--fg-4); font-family: var(--font-mono); }
+
+/* ── pro banner ───────────────────────────────────────────────────────── */
+.pro-banner { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.pro-icon { width: 46px; height: 46px; border-radius: 12px; display: grid; place-items: center; flex-shrink: 0; color: #fff; background: linear-gradient(140deg, #8b5cf6, #6366f1); box-shadow: 0 6px 16px -6px color-mix(in oklch, #8b5cf6 70%, transparent); }
+.pro-icon.locked { background: var(--bg-2); color: var(--fg-4); box-shadow: none; }
+.pro-manage { font-size: 12.5px; color: #8b5cf6; text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 4px; white-space: nowrap; }
+.dark .pro-manage { color: #a78bfa; }
+.pro-manage:hover { text-decoration: underline; }
+
+/* ── coins ────────────────────────────────────────────────────────────── */
+.coin-row { display: flex; align-items: center; justify-content: space-between; padding: 11px 0; border-bottom: 1px solid var(--border-1); font-size: 13.5px; }
+.coin-row:last-child { border-bottom: none; }
+.coin-row .k { color: var(--fg-2); display: flex; align-items: center; gap: 8px; }
+.coin-row .v { font-family: var(--font-mono); font-weight: 600; color: var(--fg-1); }
+.coin-row.balance .v { color: #d97706; font-size: 16px; }
+.dark .coin-row.balance .v { color: #fbbf24; }
+
+/* ── footer ───────────────────────────────────────────────────────────── */
+.pf-foot { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding-top: 4px; }
+.pf-foot .optout { background: none; border: none; color: var(--fg-3); font-size: 12.5px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-family: inherit; padding: 0; }
+.pf-foot .optout:hover:not(:disabled) { color: var(--fg-1); text-decoration: underline; }
+.pf-foot .optout:disabled { opacity: .6; cursor: default; }
+.pf-foot .since { font-size: 11.5px; color: var(--fg-4); font-family: var(--font-mono); }
+
+/* ── entrance ─────────────────────────────────────────────────────────── */
+.pf-fade { animation: pf-fade .24s var(--ease-out) both; }
+@keyframes pf-fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }

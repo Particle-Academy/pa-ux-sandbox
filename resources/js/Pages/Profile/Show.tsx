@@ -1,12 +1,7 @@
 import { Head, Link, useForm } from "@inertiajs/react";
-import { Badge, Card, Heading, Text } from "@particle-academy/react-fancy";
+import { Badge, Card, Icon } from "@particle-academy/react-fancy";
 import { Layout } from "../Layout";
-import {
-    avatarFrameClass,
-    bannerStyle,
-    nameColorClass,
-    type CosmeticSlots,
-} from "../../lib/cosmetics";
+import { avatarFrameClass, type CosmeticSlots } from "../../lib/cosmetics";
 
 type Metric = { slug: string; name: string; icon: string | null; xp: number; level: number };
 type Achievement = { slug: string; name: string; description: string | null; icon: string | null };
@@ -31,172 +26,304 @@ type ProfileData = {
     prizes: Prize[];
     lifetimeEarned: number;
     lifetimeSpent: number;
+    memberSince: number | null;
 };
 
+// Per-activity accent colors + safe react-fancy icon names (assigned by index,
+// since the raw metric icons aren't guaranteed to be in the icon set).
+const ACT_COLORS = ["#0ea5e9", "#10b981", "#8b5cf6", "#f59e0b", "#f43f5e", "#6366f1"];
+const ACT_ICONS = ["flame", "sparkles", "code", "award", "medal", "package"];
+
 export default function ProfileShow({ profile }: { profile: ProfileData }) {
-    const banner = bannerStyle(profile.cosmetics);
     const displayName = profile.githubUsername ?? profile.name;
     const optOutForm = useForm({});
+    const maxXp = Math.max(1, ...profile.metrics.map((m) => m.xp));
 
     return (
         <Layout>
             <Head title={`${displayName} · Profile`} />
 
-            {/* Banner + identity */}
-            <Card className="overflow-hidden">
-                <div
-                    className="h-28 w-full"
-                    style={banner ?? { backgroundColor: "rgb(244 244 245)" }}
-                />
-                <div className="flex flex-wrap items-end gap-4 px-6 pb-6">
-                    <img
-                        src={profile.avatarUrl ?? "/showcase-assets/fancy-ui-logo.jpg"}
-                        alt=""
-                        className={`-mt-10 h-20 w-20 rounded-full bg-white object-cover ${avatarFrameClass(profile.cosmetics)}`}
-                    />
-                    <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                            <Heading level={1} size="lg" className={nameColorClass(profile.cosmetics)}>
-                                {displayName}
-                            </Heading>
-                            {profile.pro && (
-                                <span className="rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
-                                    Pro
+            <div className="pf-wrap">
+                {/* ── Hero ──────────────────────────────────────────────── */}
+                <Card className="pf-hero pf-fade">
+                    <div className="pf-hero-banner" />
+                    <div className="pf-hero-body">
+                        <div className="pf-id">
+                            <span className="pf-avatar-ring">
+                                <img
+                                    src={profile.avatarUrl ?? "/showcase-assets/fancy-ui-logo.jpg"}
+                                    alt=""
+                                    className={avatarFrameClass(profile.cosmetics)}
+                                />
+                            </span>
+                            <div style={{ paddingBottom: 4 }}>
+                                <div className="pf-name-row">
+                                    <span className="pf-name">{displayName}</span>
+                                    {profile.pro && (
+                                        <Badge color="violet" variant="soft">
+                                            <Icon name="sparkles" className="mr-0.5 h-3 w-3" />
+                                            PRO
+                                        </Badge>
+                                    )}
+                                </div>
+                                <div className="pf-sub">
+                                    {profile.levelName && (
+                                        <>
+                                            <span>{profile.levelName}</span>
+                                            <span className="dot">·</span>
+                                        </>
+                                    )}
+                                    <span className="lvl-chip">
+                                        <Icon name="shield" className="h-3.5 w-3.5 text-violet-500" />
+                                        Level {profile.level}
+                                    </span>
+                                    <span className="dot">·</span>
+                                    <span className="lvl-chip">
+                                        <Icon name="flame" className="h-3.5 w-3.5 text-amber-500" />
+                                        {profile.totalXp.toLocaleString()} XP
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="pf-coins">
+                            <span className="amt">
+                                <Icon name="coins" className="h-5 w-5" />
+                                {profile.coins.toLocaleString()}
+                            </span>
+                            <Link href="/shop" className="shop">
+                                Spend in the shop <Icon name="arrow-right" className="h-3 w-3" />
+                            </Link>
+                        </div>
+                    </div>
+
+                    {/* Level meter */}
+                    <div className="pf-meter">
+                        <div className="pf-meter-head">
+                            <span className="lbl">
+                                <Icon name="trending-up" className="h-4 w-4 text-violet-500" />
+                                {profile.nextThreshold ? `Progress to Level ${profile.level + 1}` : "Max tier reached"}
+                            </span>
+                            <span className="val">
+                                {profile.nextThreshold
+                                    ? `${profile.totalXp.toLocaleString()} / ${profile.nextThreshold.toLocaleString()} XP`
+                                    : `${profile.totalXp.toLocaleString()} XP`}
+                            </span>
+                        </div>
+                        <div className="pf-bar">
+                            <span style={{ width: `${Math.min(100, profile.progress)}%` }} />
+                        </div>
+                        <div className="pf-bar-ticks">
+                            <span>Level {profile.level}</span>
+                            {profile.nextThreshold && (
+                                <span>
+                                    <b>{Math.max(0, profile.nextThreshold - profile.totalXp).toLocaleString()} XP</b> to go
                                 </span>
                             )}
+                            <span>Level {profile.level + 1}</span>
                         </div>
-                        <Text className="text-sm text-zinc-500">
-                            {profile.levelName ? `${profile.levelName} · ` : ""}Level {profile.level} · {profile.totalXp.toLocaleString()} XP
-                        </Text>
-                    </div>
-                    <div className="text-right">
-                        <div className="text-2xl font-bold text-amber-600 dark:text-amber-400">
-                            {profile.coins.toLocaleString()} ◈
-                        </div>
-                        <Link href="/shop" className="text-xs text-violet-600 hover:underline dark:text-violet-400">
-                            Spend in the shop →
-                        </Link>
-                    </div>
-                </div>
-            </Card>
-
-            {/* Level progress */}
-            <Card className="mt-6 p-5">
-                <div className="flex items-center justify-between text-sm">
-                    <span className="font-medium">Overall engagement</span>
-                    <span className="text-zinc-500">
-                        {profile.nextThreshold
-                            ? `${profile.totalXp.toLocaleString()} / ${profile.nextThreshold.toLocaleString()} XP to Lv ${profile.level + 1}`
-                            : "Max tier reached"}
-                    </span>
-                </div>
-                <div className="mt-2 h-2 overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800">
-                    <div
-                        className="h-full rounded-full bg-violet-500 transition-all"
-                        style={{ width: `${Math.min(100, profile.progress)}%` }}
-                    />
-                </div>
-            </Card>
-
-            <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
-                {/* XP by metric */}
-                <Card className="p-5">
-                    <Heading level={2} size="sm">XP by activity</Heading>
-                    <div className="mt-3 space-y-2">
-                        {profile.metrics.length === 0 && (
-                            <Text className="text-sm text-zinc-400">
-                                No XP yet — explore packages, try demos, or ship a project to start earning.
-                            </Text>
-                        )}
-                        {profile.metrics.map((m) => (
-                            <div key={m.slug} className="flex items-center justify-between text-sm">
-                                <span className="text-zinc-700 dark:text-zinc-300">{m.name}</span>
-                                <span className="flex items-center gap-2">
-                                    <Badge color="zinc" size="sm">Lv {m.level}</Badge>
-                                    <span className="font-medium tabular-nums">{m.xp.toLocaleString()}</span>
-                                </span>
-                            </div>
-                        ))}
                     </div>
                 </Card>
 
-                {/* Achievements */}
-                <Card className="p-5">
-                    <Heading level={2} size="sm">Achievements ({profile.achievements.length})</Heading>
-                    <div className="mt-3 flex flex-wrap gap-2">
-                        {profile.achievements.length === 0 && (
-                            <Text className="text-sm text-zinc-400">None yet.</Text>
-                        )}
-                        {profile.achievements.map((a) => (
-                            <span
-                                key={a.slug}
-                                title={a.description ?? a.name}
-                                className="rounded-full border border-zinc-200 bg-zinc-50 px-3 py-1 text-xs text-zinc-700 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300"
-                            >
-                                {a.name}
+                {/* ── XP by activity + Achievements ─────────────────────── */}
+                <div className="pf-grid2">
+                    <Card className="pf-fade">
+                        <div className="pf-card-head">
+                            <Icon name="trending-up" className="h-4 w-4 text-zinc-500 dark:text-zinc-400" />
+                            XP by activity
+                        </div>
+                        <div className="pf-card-pad">
+                            {profile.metrics.length === 0 ? (
+                                <p style={{ color: "var(--fg-4)", fontSize: 13, padding: "10px 0" }}>
+                                    No XP yet — explore packages, try demos, or ship a project to start earning.
+                                </p>
+                            ) : (
+                                profile.metrics.map((m, i) => {
+                                    const color = ACT_COLORS[i % ACT_COLORS.length];
+                                    const pct = Math.round((m.xp / maxXp) * 100);
+                                    return (
+                                        <div className="xp-row" key={m.slug}>
+                                            <div className="xp-row-head">
+                                                <span
+                                                    className="xp-ico"
+                                                    style={{ background: `color-mix(in oklch, ${color} 14%, transparent)`, color }}
+                                                >
+                                                    <Icon name={ACT_ICONS[i % ACT_ICONS.length]} className="h-4 w-4" />
+                                                </span>
+                                                <span className="xp-name">{m.name}</span>
+                                                <Badge color="zinc" size="sm">Lv {m.level}</Badge>
+                                                <span className="xp-amt">{m.xp.toLocaleString()}</span>
+                                            </div>
+                                            <div className="xp-mini">
+                                                <span style={{ width: `${pct}%`, background: color }} />
+                                            </div>
+                                            <div className="xp-row-foot">
+                                                <span>Level {m.level}</span>
+                                                <span>{m.xp.toLocaleString()} XP</span>
+                                            </div>
+                                        </div>
+                                    );
+                                })
+                            )}
+                        </div>
+                    </Card>
+
+                    <Card className="pf-fade">
+                        <div className="pf-card-head">
+                            <Icon name="award" className="h-4 w-4 text-zinc-500 dark:text-zinc-400" />
+                            Achievements
+                            <span className="count">{profile.achievements.length}</span>
+                        </div>
+                        <div className="pf-card-pad">
+                            {profile.achievements.length === 0 ? (
+                                <p style={{ color: "var(--fg-4)", fontSize: 13, padding: "10px 0" }}>
+                                    None yet — keep exploring to earn your first.
+                                </p>
+                            ) : (
+                                <div className="ach-grid">
+                                    {profile.achievements.map((a) => (
+                                        <div className="ach" key={a.slug} title={a.description ?? a.name}>
+                                            <span className="ach-medal earned">
+                                                <span className="ring" />
+                                                <Icon name="medal" className="h-6 w-6" />
+                                            </span>
+                                            <span className="ach-label">{a.name}</span>
+                                            <span className="ach-tier">Earned</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </Card>
+                </div>
+
+                {/* ── Pro access ────────────────────────────────────────── */}
+                <Card className="pf-fade">
+                    <div style={{ padding: 18 }}>
+                        <div className="pro-banner">
+                            <span className={`pro-icon${profile.pro ? "" : " locked"}`}>
+                                <Icon name="sparkles" className="h-5 w-5" />
                             </span>
-                        ))}
-                    </div>
-                </Card>
-            </div>
-
-            {/* Pro status */}
-            <Card className="mt-6 p-5">
-                <div className="flex items-center justify-between">
-                    <Heading level={2} size="sm">Pro access</Heading>
-                    {profile.pro ? (
-                        <Badge color="violet">Unlocked</Badge>
-                    ) : (
-                        <Badge color="zinc">Locked</Badge>
-                    )}
-                </div>
-                <Text className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-                    {profile.pro
-                        ? profile.proSource === "subscription"
-                            ? "Unlocked via your active subscription. Pro features (extra themes, source export, advanced bridge tools) are on."
-                            : "Earned via the Sandbox Pro prize at the Ambassador tier — no subscription needed. Pro features are on."
-                        : "Pro features unlock two ways: subscribe to a paid plan, or reach the Ambassador tier (Level 10 overall engagement) to earn the Sandbox Pro prize."}
-                </Text>
-            </Card>
-
-            {/* Prizes + cosmetics */}
-            <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
-                <Card className="p-5">
-                    <Heading level={2} size="sm">Prizes</Heading>
-                    <div className="mt-3 space-y-1 text-sm">
-                        {profile.prizes.length === 0 && <Text className="text-sm text-zinc-400">None yet.</Text>}
-                        {profile.prizes.map((p) => (
-                            <div key={p.slug} className="flex items-center justify-between">
-                                <span className="text-zinc-700 dark:text-zinc-300">{p.name}</span>
-                                {p.type && <Badge color="violet" size="sm">{p.type}</Badge>}
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                                <div style={{ display: "flex", alignItems: "center", gap: 9, marginBottom: 3 }}>
+                                    <span style={{ fontSize: 15, fontWeight: 600, color: "var(--fg-1)" }}>Pro access</span>
+                                    {profile.pro ? (
+                                        <Badge color="violet" variant="soft" dot>Unlocked</Badge>
+                                    ) : (
+                                        <Badge color="zinc" variant="soft">Locked</Badge>
+                                    )}
+                                </div>
+                                <div style={{ fontSize: 13, color: "var(--fg-2)", lineHeight: 1.5 }}>
+                                    {profile.pro ? (
+                                        profile.proSource === "subscription" ? (
+                                            <>
+                                                Unlocked via your <b style={{ color: "var(--fg-1)", fontWeight: 600 }}>active subscription</b>.
+                                                Pro features — extra themes, source export, advanced bridge tools — are on.
+                                            </>
+                                        ) : (
+                                            <>
+                                                Earned via the <b style={{ color: "var(--fg-1)", fontWeight: 600 }}>Sandbox Pro</b> prize at the
+                                                Ambassador tier — no subscription needed. Pro features are on.
+                                            </>
+                                        )
+                                    ) : (
+                                        <>
+                                            Unlock Pro two ways: subscribe to a paid plan, or reach the{" "}
+                                            <b style={{ color: "var(--fg-1)", fontWeight: 600 }}>Ambassador tier</b> (Level 10 overall engagement)
+                                            to earn the Sandbox Pro prize.
+                                        </>
+                                    )}
+                                </div>
                             </div>
-                        ))}
+                            {profile.pro && profile.proSource === "subscription" && (
+                                <Link href="/shop" className="pro-manage">
+                                    Manage <Icon name="arrow-right" className="h-3 w-3" />
+                                </Link>
+                            )}
+                        </div>
                     </div>
                 </Card>
 
-                <Card className="p-5">
-                    <Heading level={2} size="sm">Coins</Heading>
-                    <div className="mt-3 space-y-1 text-sm text-zinc-600 dark:text-zinc-400">
-                        <div className="flex justify-between"><span>Balance</span><span className="font-semibold text-amber-600 dark:text-amber-400">{profile.coins.toLocaleString()}</span></div>
-                        <div className="flex justify-between"><span>Lifetime earned</span><span>{profile.lifetimeEarned.toLocaleString()}</span></div>
-                        <div className="flex justify-between"><span>Lifetime spent</span><span>{profile.lifetimeSpent.toLocaleString()}</span></div>
-                    </div>
+                {/* ── Prizes + Coins ────────────────────────────────────── */}
+                <div className="pf-grid2">
+                    <Card className="pf-fade">
+                        <div className="pf-card-head">
+                            <Icon name="gift" className="h-4 w-4 text-zinc-500 dark:text-zinc-400" />
+                            Prizes
+                            <span className="count">{profile.prizes.length}</span>
+                        </div>
+                        <div className="pf-card-pad">
+                            {profile.prizes.length === 0 ? (
+                                <p style={{ color: "var(--fg-4)", fontSize: 13, padding: "10px 0" }}>
+                                    None yet — climb the tiers to earn prizes.
+                                </p>
+                            ) : (
+                                profile.prizes.map((p) => (
+                                    <div key={p.slug} style={{ display: "flex", alignItems: "center", gap: 12, padding: "8px 0" }}>
+                                        <span
+                                            style={{
+                                                width: 40, height: 40, borderRadius: 10, display: "grid", placeItems: "center",
+                                                flexShrink: 0, background: "color-mix(in oklch, #8b5cf6 13%, transparent)", color: "#8b5cf6",
+                                            }}
+                                        >
+                                            <Icon name="package" className="h-5 w-5" />
+                                        </span>
+                                        <div style={{ flex: 1, minWidth: 0 }}>
+                                            <div style={{ fontSize: 13.5, fontWeight: 600, color: "var(--fg-1)" }}>{p.name}</div>
+                                            {p.type && <div style={{ fontSize: 12, color: "var(--fg-3)" }}>{p.type} reward</div>}
+                                        </div>
+                                        {p.type && <Badge color="violet" variant="soft">{p.type}</Badge>}
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    </Card>
+
+                    <Card className="pf-fade">
+                        <div className="pf-card-head">
+                            <Icon name="coins" className="h-4 w-4 text-amber-500" />
+                            Coins
+                        </div>
+                        <div style={{ padding: "4px 18px 8px" }}>
+                            <div className="coin-row balance">
+                                <span className="k">
+                                    <Icon name="coins" className="h-4 w-4 text-zinc-500 dark:text-zinc-400" />
+                                    Balance
+                                </span>
+                                <span className="v">{profile.coins.toLocaleString()}</span>
+                            </div>
+                            <div className="coin-row">
+                                <span className="k">
+                                    <Icon name="trending-up" className="h-4 w-4 text-zinc-500 dark:text-zinc-400" />
+                                    Lifetime earned
+                                </span>
+                                <span className="v" style={{ color: "var(--fg-2)" }}>{profile.lifetimeEarned.toLocaleString()}</span>
+                            </div>
+                            <div className="coin-row">
+                                <span className="k">
+                                    <Icon name="history" className="h-4 w-4 text-zinc-500 dark:text-zinc-400" />
+                                    Lifetime spent
+                                </span>
+                                <span className="v" style={{ color: "var(--fg-2)" }}>{profile.lifetimeSpent.toLocaleString()}</span>
+                            </div>
+                        </div>
+                    </Card>
+                </div>
+
+                {/* ── Footer ────────────────────────────────────────────── */}
+                <div className="pf-foot">
                     <form
                         onSubmit={(e) => {
                             e.preventDefault();
                             optOutForm.post("/profile/opt-out");
                         }}
-                        className="mt-4"
                     >
-                        <button
-                            type="submit"
-                            disabled={optOutForm.processing}
-                            className="text-xs text-zinc-500 underline-offset-2 hover:text-zinc-700 hover:underline dark:hover:text-zinc-300"
-                        >
+                        <button type="submit" disabled={optOutForm.processing} className="optout">
+                            <Icon name="eye" className="h-3.5 w-3.5" />
                             {profile.optedOut ? "Opt back in to gamification" : "Opt out of gamification"}
                         </button>
                     </form>
-                </Card>
+                    {profile.memberSince && <span className="since">member since {profile.memberSince}</span>}
+                </div>
             </div>
         </Layout>
     );

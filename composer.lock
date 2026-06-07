@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "dcab1b1465b079bf5f6fed7d2a4f8a38",
+    "content-hash": "c05dcded2fc372dc79e111b38af38fa8",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -3627,16 +3627,16 @@
         },
         {
             "name": "particle-academy/holy-sheet",
-            "version": "v1.2.2",
+            "version": "v1.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/holy-sheet.git",
-                "reference": "530856e70e9470a5de6d8f36888d56d460ee1af8"
+                "reference": "3b13d4791b6ab217c377517f2e4cd8aaa48934ba"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/holy-sheet/zipball/530856e70e9470a5de6d8f36888d56d460ee1af8",
-                "reference": "530856e70e9470a5de6d8f36888d56d460ee1af8",
+                "url": "https://api.github.com/repos/Particle-Academy/holy-sheet/zipball/3b13d4791b6ab217c377517f2e4cd8aaa48934ba",
+                "reference": "3b13d4791b6ab217c377517f2e4cd8aaa48934ba",
                 "shasum": ""
             },
             "require": {
@@ -3693,7 +3693,7 @@
                 "issues": "https://github.com/Particle-Academy/holy-sheet/issues",
                 "source": "https://github.com/Particle-Academy/holy-sheet"
             },
-            "time": "2026-05-27T19:51:41+00:00"
+            "time": "2026-06-07T22:40:43+00:00"
         },
         {
             "name": "particle-academy/laravel-catalog",

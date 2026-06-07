@@ -47,6 +47,16 @@ class ScanShowcaseSubmission implements ShouldQueue
         if (! empty($result['badge'])) {
             $rewards->onBadgeDetected($this->submission);
         }
+
+        // Capture a screenshot of verified websites for the focus-heatmap
+        // background (queued, best-effort). Repos have no page to shoot.
+        if (! empty($result['verified']) && $this->submission->kind === 'website') {
+            CaptureSiteScreenshot::dispatch(
+                $this->submission->url,
+                (string) $this->submission->site_key,
+                parse_url($this->submission->url, PHP_URL_PATH) ?: '/',
+            );
+        }
     }
 
     /** @return array<string, mixed> */

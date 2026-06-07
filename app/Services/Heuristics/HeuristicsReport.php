@@ -2,6 +2,7 @@
 
 namespace App\Services\Heuristics;
 
+use App\Models\SitePageShot;
 use FancyHeuristics\Facades\Heuristics;
 use FancyHeuristics\Models\HeuristicsEvent;
 
@@ -123,6 +124,37 @@ class HeuristicsReport
         }
 
         return Heuristics::heatmap($site, (string) $busiest);
+    }
+
+    /**
+     * The stored screenshot for a path on a site, shaped as the heatmap
+     * background. Null when nothing has been captured yet (the frontend then
+     * falls back to the wireframe). vw/vh are the capture viewport so the
+     * frontend can reason about alignment if needed.
+     *
+     * @return array{url: string, vw: int, vh: int, capturedAt: string|null}|null
+     */
+    public function screenshotForPath(string $site, ?string $path): ?array
+    {
+        if ($path === null || $path === '') {
+            return null;
+        }
+
+        $shot = SitePageShot::query()
+            ->where('site_key', $site)
+            ->where('path', $path)
+            ->first();
+
+        if ($shot === null) {
+            return null;
+        }
+
+        return [
+            'url' => $shot->url(),
+            'vw' => (int) $shot->vw,
+            'vh' => (int) $shot->vh,
+            'capturedAt' => $shot->captured_at?->toIso8601String(),
+        ];
     }
 
     /**

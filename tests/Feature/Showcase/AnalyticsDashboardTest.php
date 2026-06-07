@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AnalyticsController;
 use App\Models\ShowcaseSubmission;
+use App\Models\SitePageShot;
 use App\Models\User;
 use Database\Seeders\FunLabSeeder;
 use FancyHeuristics\Models\HeuristicsEvent;
@@ -215,6 +216,25 @@ it('defaults a pro owner to their own first site', function () {
     $this->actingAs($user)
         ->get('/analytics')
         ->assertInertia(fn ($page) => $page->where('site', 'owned-key'));
+});
+
+it('includes the page screenshot for the busiest path when one is captured', function () {
+    $user = User::factory()->create();
+    LFL::grant('sandbox-pro')->to($user)->save();
+    seedShowcaseEvents();
+    SitePageShot::create([
+        'site_key' => AnalyticsController::DEFAULT_SITE, 'path' => '/pricing',
+        'image_path' => 'heatmaps/x/y.png', 'vw' => 1440, 'vh' => 900, 'captured_at' => now(),
+    ]);
+
+    $this->actingAs($user)
+        ->get('/analytics')
+        ->assertInertia(fn ($page) => $page
+            // /pricing is the busiest path, so its captured shot is attached.
+            ->where('heatmap.path', '/pricing')
+            ->where('heatmapShot.vw', 1440)
+            ->where('heatmapShot.vh', 900)
+        );
 });
 
 it('renders an empty state for a pro user when the site has no events', function () {

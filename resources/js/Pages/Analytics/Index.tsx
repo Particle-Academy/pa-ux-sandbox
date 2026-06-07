@@ -37,6 +37,8 @@ type Heatmap = {
     cells: HeatCell[];
 } | null;
 
+type Shot = { url: string; vw: number; vh: number; capturedAt: string | null };
+
 type RecentSession = {
     session_id: string;
     actor: string;
@@ -55,6 +57,7 @@ type Props = {
     kpis: Kpis | null;
     topPaths: TopPath[];
     heatmap: Heatmap;
+    heatmapShot: Shot | null;
     recentSessions: RecentSession[];
     eventsOverTime: DayBucket[];
 };
@@ -69,7 +72,7 @@ export default function AnalyticsIndex(props: Props) {
         );
     }
 
-    const { sites, site, kpis, topPaths, heatmap, recentSessions, eventsOverTime } = props;
+    const { sites, site, kpis, topPaths, heatmap, heatmapShot, recentSessions, eventsOverTime } = props;
     const hasData = (kpis?.totalEvents ?? 0) > 0;
 
     return (
@@ -99,7 +102,7 @@ export default function AnalyticsIndex(props: Props) {
 
                     <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-5">
                         <div className="lg:col-span-3">
-                            <FocusHeatmap heatmap={heatmap} />
+                            <FocusHeatmap heatmap={heatmap} shot={heatmapShot} />
                         </div>
                         <div className="lg:col-span-2">
                             <EventsOverTime data={eventsOverTime} />
@@ -212,12 +215,16 @@ function useTheme(): "light" | "dark" {
     return theme;
 }
 
-function FocusHeatmap({ heatmap }: { heatmap: Heatmap }) {
+function FocusHeatmap({ heatmap, shot }: { heatmap: Heatmap; shot: Shot | null }) {
     // The blobs must use a *lighten* blend on the dark canvas (so warm colors
     // glow) and a *darken* blend on the light canvas. `multiply` on a near-black
     // background collapses every blob to black — which is why the heat looked
-    // nearly invisible in dark mode.
-    const blendMode = useTheme() === "dark" ? "screen" : "multiply";
+    // nearly invisible in dark mode. Over a real screenshot we always glow
+    // (screen) so the heat reads against arbitrary page colors.
+    const isDark = useTheme() === "dark";
+    // Over a real screenshot, always glow (screen) so heat reads against arbitrary
+    // page colors; on the bare wireframe, glow on dark / darken on light.
+    const blendMode = shot || isDark ? "screen" : "multiply";
     return (
         <Card className="overflow-hidden">
             <div className="flex items-center justify-between border-b border-zinc-100 p-4 dark:border-zinc-800">
@@ -243,8 +250,20 @@ function FocusHeatmap({ heatmap }: { heatmap: Heatmap }) {
                     className="relative aspect-[16/10] w-full overflow-hidden rounded-lg border border-zinc-200 bg-gradient-to-b from-zinc-50 to-white dark:border-zinc-800 dark:from-zinc-900 dark:to-zinc-950"
                     data-heatmap-canvas
                 >
-                    {/* Page wireframe behind the heat overlay */}
-                    <Wireframe />
+                    {/* Real page screenshot behind the heat — falls back to a
+                        wireframe until the verifier has captured a shot. */}
+                    {shot ? (
+                        <>
+                            <img
+                                src={shot.url}
+                                alt=""
+                                className="absolute inset-0 h-full w-full object-cover object-top"
+                            />
+                            <div className="absolute inset-0 bg-zinc-950/30" />
+                        </>
+                    ) : (
+                        <Wireframe />
+                    )}
 
                     {/* Real heat blobs positioned by the grid weights */}
                     {heatmap?.cells.map((cell) => {

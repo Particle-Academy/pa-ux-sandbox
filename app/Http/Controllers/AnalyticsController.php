@@ -50,6 +50,7 @@ class AnalyticsController extends Controller
                 'kpis' => null,
                 'topPaths' => [],
                 'heatmap' => null,
+                'heatmapShot' => null,
                 'recentSessions' => [],
                 'eventsOverTime' => [],
             ]);
@@ -57,6 +58,7 @@ class AnalyticsController extends Controller
 
         $sites = $this->sites($user);
         $site = $this->resolveSite($request, $sites);
+        $heatmap = $report->heatmapForBusiestPath($site);
 
         // The KPI / heatmap / paths / sessions / trend math is shared with the
         // admin AdminHeuristicsController via HeuristicsReport so the two
@@ -68,7 +70,8 @@ class AnalyticsController extends Controller
             'site' => $site,
             'kpis' => $report->kpis($site),
             'topPaths' => $report->topPaths($site),
-            'heatmap' => $report->heatmapForBusiestPath($site),
+            'heatmap' => $heatmap,
+            'heatmapShot' => $heatmap ? $report->screenshotForPath($site, $heatmap['path']) : null,
             'recentSessions' => $report->recentSessions($site),
             'eventsOverTime' => $report->eventsOverTime($site),
         ]);

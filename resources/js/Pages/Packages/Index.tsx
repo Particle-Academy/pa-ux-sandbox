@@ -121,7 +121,7 @@ function FancyCore({ pkgs, companions }: { pkgs: Pkg[]; companions: Companion[] 
         return null;
     }
     return (
-        <section className="mt-6 overflow-hidden rounded-2xl border border-violet-200 bg-gradient-to-br from-violet-50 via-white to-sky-50 p-5 shadow-sm dark:border-violet-900/50 dark:from-violet-950/40 dark:via-zinc-950 dark:to-sky-950/20">
+        <div className="mt-6 overflow-hidden rounded-2xl border border-violet-200 bg-gradient-to-br from-violet-50 via-white to-sky-50 p-5 shadow-sm dark:border-violet-900/50 dark:from-violet-950/40 dark:via-zinc-950 dark:to-sky-950/20">
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
                 <Heading level={2} size="md" className="!text-zinc-900 dark:!text-zinc-100">Fancy Core</Heading>
                 <Badge color="violet" size="sm">the essentials</Badge>
@@ -164,7 +164,7 @@ function FancyCore({ pkgs, companions }: { pkgs: Pkg[]; companions: Companion[] 
                     </a>
                 ))}
             </div>
-        </section>
+        </div>
     );
 }
 

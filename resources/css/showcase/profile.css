@@ -20,9 +20,11 @@
     radial-gradient(120px 120px at 88% -10%, rgba(255,255,255,.25), transparent 70%),
     radial-gradient(circle at 1px 1px, rgba(255,255,255,.16) 1px, transparent 0) 0 0 / 20px 20px;
 }
-.pf-hero-body { padding: 0 24px 22px; display: flex; align-items: flex-end; gap: 18px; margin-top: -42px; position: relative; flex-wrap: wrap; }
-.pf-id { display: flex; align-items: flex-end; gap: 16px; flex: 1; min-width: 260px; }
-.pf-avatar-ring { padding: 4px; border-radius: 999px; background: var(--surface); box-shadow: var(--shadow-md); line-height: 0; flex-shrink: 0; }
+.pf-hero-body { padding: 18px 24px 22px; display: flex; align-items: flex-start; gap: 18px; position: relative; flex-wrap: wrap; }
+.pf-id { display: flex; align-items: center; gap: 16px; flex: 1; min-width: 260px; }
+/* Only the avatar is pulled up to overlap the banner — the name + coins stay
+   in the padded body so they never sit on top of the banner. */
+.pf-avatar-ring { padding: 4px; border-radius: 999px; background: var(--surface); box-shadow: var(--shadow-md); line-height: 0; flex-shrink: 0; margin-top: -56px; }
 .pf-avatar-ring img { display: block; width: 76px; height: 76px; border-radius: 999px; object-fit: cover; background: var(--surface); }
 .pf-name-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .pf-name { font-size: 22px; font-weight: 600; letter-spacing: -0.02em; color: var(--fg-1); }
@@ -48,7 +50,7 @@
 
 /* ── 2-col grid + card chrome ─────────────────────────────────────────── */
 .pf-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-@media (max-width: 760px) { .pf-grid2 { grid-template-columns: 1fr; } .pf-hero-body { margin-top: -36px; } .pf-coins { align-items: flex-start; } }
+@media (max-width: 760px) { .pf-grid2 { grid-template-columns: 1fr; } .pf-coins { align-items: flex-start; } }
 .pf-card-head { display: flex; align-items: center; gap: 8px; padding: 14px 18px; border-bottom: 1px solid var(--border-1); font-size: 13px; font-weight: 600; color: var(--fg-1); }
 .pf-card-head .count { margin-left: auto; font-size: 12px; color: var(--fg-3); font-family: var(--font-mono); font-weight: 500; }
 .pf-card-pad { padding: 6px 18px 14px; }

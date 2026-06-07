@@ -237,7 +237,10 @@ export function Layout({
             )}
 
             <main className={bleed ? "flex-1" : "mx-auto w-full max-w-7xl flex-1 px-4 py-10 md:py-14"}>
-                {children}
+                {/* Keyed by URL so each Inertia navigation fades/lifts the new page in. */}
+                <div key={url} className="page-enter">
+                    {children}
+                </div>
             </main>
 
             <CommandPalette />

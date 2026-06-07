@@ -1,0 +1,17 @@
+/* transitions.css — smooth page-to-page navigation.
+   The Layout wraps each Inertia page in a `.page-enter` element keyed by URL,
+   so every navigation fades + lifts the new content in. */
+
+.page-enter {
+  animation: page-enter 0.28s var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1)) both;
+}
+
+@keyframes page-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* Respect users who prefer reduced motion — no slide/fade. */
+@media (prefers-reduced-motion: reduce) {
+  .page-enter { animation: none; }
+}

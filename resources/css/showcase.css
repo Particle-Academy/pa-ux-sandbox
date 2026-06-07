@@ -12,6 +12,9 @@
 /* Gamification profile page (consumes tokens.css). */
 @import "./showcase/profile.css";
 
+/* Smooth page-to-page navigation transitions. */
+@import "./showcase/transitions.css";
+
 /* Hand-authored CSS overrides shipped by each consumed package. */
 @import "@particle-academy/react-fancy/styles.css";
 @import "@particle-academy/fancy-code/styles.css";

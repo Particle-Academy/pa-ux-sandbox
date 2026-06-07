@@ -48,6 +48,9 @@ const HAS_SHOT = new Set([
     "fancy-inertia",
     "fancy-slides",
     "agent-integrations",
+    "fancy-diff",
+    "fancy-pixel",
+    "fancy-3d-three",
 ]);
 
 export default function PackagesIndex({ packages, companions = [] }: { packages: Pkg[]; companions?: Companion[] }) {
@@ -118,27 +121,26 @@ function FancyCore({ pkgs, companions }: { pkgs: Pkg[]; companions: Companion[] 
         return null;
     }
     return (
-        <section className="mt-6 rounded-2xl border border-violet-200 bg-gradient-to-br from-violet-50 via-white to-sky-50 p-5 dark:border-violet-900/50 dark:from-violet-950/30 dark:via-zinc-950 dark:to-sky-950/20">
-            <div className="flex items-center gap-2">
+        <section className="mt-6 overflow-hidden rounded-2xl border border-violet-200 bg-gradient-to-br from-violet-50 via-white to-sky-50 p-5 shadow-sm dark:border-violet-900/50 dark:from-violet-950/40 dark:via-zinc-950 dark:to-sky-950/20">
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
                 <Heading level={2} size="md" className="!text-zinc-900 dark:!text-zinc-100">Fancy Core</Heading>
                 <Badge color="violet" size="sm">the essentials</Badge>
+                <Text size="sm" className="!text-zinc-600 dark:!text-zinc-300">
+                    everything you need to build a normal web app — components, the Inertia bridge, and server-state
+                </Text>
             </div>
-            <Text size="sm" className="mt-1 max-w-2xl !text-zinc-600 dark:!text-zinc-300">
-                The minimal stack to build a normal web application — UI components, the
-                Inertia bridge, and server-state. Reach for these on every Fancy app; everything
-                below is additive.
-            </Text>
 
             <div className="mt-4 grid gap-4 sm:grid-cols-3">
                 {pkgs.map((p) => (
                     <Link key={p.slug} href={`/packages/${p.slug}`} className="block">
-                        <Card className="group h-full transition hover:-translate-y-0.5 hover:border-violet-300 hover:shadow-md dark:hover:border-violet-700">
+                        <Card className="group h-full overflow-hidden transition hover:-translate-y-0.5 hover:border-violet-300 hover:shadow-lg dark:hover:border-violet-700">
+                            <PackageHero pkg={p} />
                             <Card.Body>
                                 <div className="flex items-start justify-between gap-2">
                                     <Heading level={3} size="sm" className="!font-mono !text-zinc-900 dark:!text-zinc-100">{p.name}</Heading>
                                     <Badge color="sky" size="sm">{p.language}</Badge>
                                 </div>
-                                <Text size="sm" className="mt-2 line-clamp-3 !text-zinc-600 dark:!text-zinc-300">{p.tagline}</Text>
+                                <Text size="sm" className="mt-2 line-clamp-2 !text-zinc-600 dark:!text-zinc-300">{p.tagline}</Text>
                                 <Text size="xs" className="mt-3 !font-mono !text-violet-600 dark:!text-violet-300">
                                     {p.components_count} component{p.components_count === 1 ? "" : "s"} · Explore →
                                 </Text>
@@ -148,20 +150,36 @@ function FancyCore({ pkgs, companions }: { pkgs: Pkg[]; companions: Companion[] 
                 ))}
                 {companions.map((c) => (
                     <a key={c.slug} href={c.npmUrl ?? c.repoUrl} target="_blank" rel="noreferrer" className="block">
-                        <Card className="group h-full transition hover:-translate-y-0.5 hover:border-violet-300 hover:shadow-md dark:hover:border-violet-700">
+                        <Card className="group h-full overflow-hidden transition hover:-translate-y-0.5 hover:border-violet-300 hover:shadow-lg dark:hover:border-violet-700">
+                            <CoreHooksHero />
                             <Card.Body>
                                 <div className="flex items-start justify-between gap-2">
                                     <Heading level={3} size="sm" className="!font-mono !text-zinc-900 dark:!text-zinc-100">{c.name}</Heading>
                                     <Badge color="zinc" size="sm" variant="soft">hooks</Badge>
                                 </div>
-                                <Text size="sm" className="mt-2 line-clamp-3 !text-zinc-600 dark:!text-zinc-300">{c.tagline}</Text>
-                                <Text size="xs" className="mt-3 !font-mono !text-violet-600 dark:!text-violet-300">npm →</Text>
+                                <Text size="sm" className="mt-2 line-clamp-2 !text-zinc-600 dark:!text-zinc-300">{c.tagline}</Text>
+                                <Text size="xs" className="mt-3 !font-mono !text-violet-600 dark:!text-violet-300">View on npm →</Text>
                             </Card.Body>
                         </Card>
                     </a>
                 ))}
             </div>
         </section>
+    );
+}
+
+/** Code-snippet hero for the hooks-only Core member (fancy-query). */
+function CoreHooksHero() {
+    return (
+        <div className="grid aspect-[16/10] place-items-center overflow-hidden border-b border-zinc-100 bg-gradient-to-br from-violet-500/15 via-sky-500/10 to-emerald-500/15 dark:border-zinc-800">
+            <pre className="rounded-md border border-white/15 bg-zinc-950/90 px-3 py-2 text-left font-mono text-[10px] leading-relaxed text-zinc-100 shadow-lg">
+                <span className="text-sky-300">const</span> {"{ data } = "}
+                <span className="text-violet-300">useFancyQuery</span>({"\n"}
+                {"  "}[<span className="text-emerald-300">"leaderboard"</span>],{"\n"}
+                {"  () => api.get("}<span className="text-emerald-300">"/api/leaderboard"</span>{"),\n"}
+                );
+            </pre>
+        </div>
     );
 }
 

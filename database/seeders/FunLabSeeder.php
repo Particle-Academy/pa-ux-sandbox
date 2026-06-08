@@ -34,7 +34,12 @@ class FunLabSeeder extends Seeder
 {
     public function run(): void
     {
-        $this->command->info('Seeding Laravel Fun Lab taxonomy...');
+        // Null-safe so this idempotent taxonomy can also be invoked from a data
+        // migration (where there's no console command context) — see
+        // database/migrations/*_seed_funlab_taxonomy.php. Feature content
+        // (achievements + awards/prizes + metrics/levels) must deploy via
+        // `migrate`, which Forge runs; `db:seed` does not run on deploy.
+        $this->command?->info('Seeding Laravel Fun Lab taxonomy...');
 
         $this->seedGamedMetrics();
         $this->seedMetricLevels();
@@ -42,7 +47,7 @@ class FunLabSeeder extends Seeder
         $this->seedAchievements();
         $this->seedPrizes();
 
-        $this->command->info('  ✓ Fun Lab taxonomy seeded');
+        $this->command?->info('  ✓ Fun Lab taxonomy seeded');
     }
 
     protected function seedGamedMetrics(): void

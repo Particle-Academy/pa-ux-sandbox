@@ -266,23 +266,26 @@ export function Packages({ packages, companions }: { packages: PackageRow[]; com
                 </div>
 
                 <div className="companions">
-                    <span className="companions-label">+ Composer companions</span>
+                    <span className="companions-label">+ Companions</span>
                     <span className="companions-note">
-                        PHP packages — the agentic document writers and the sandbox's own Laravel infra:
+                        Headless packages — the agentic document writers, the sandbox's Laravel infra, and JS utilities (Packagist + npm):
                     </span>
-                    {companions.map((c, i) => (
-                        <span key={c.slug} className="companion-item">
-                            <a
-                                href={`https://packagist.org/packages/${c.composer}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                title={c.tagline}
-                            >
-                                {c.composer}
-                            </a>
-                            {i < companions.length - 1 && <span className="companion-sep">·</span>}
-                        </span>
-                    ))}
+                    {companions.map((c, i) => {
+                        const href = c.composer
+                            ? `https://packagist.org/packages/${c.composer}`
+                            : c.npm
+                              ? `https://www.npmjs.com/package/${c.npm}`
+                              : `https://github.com/Particle-Academy/${c.slug}`;
+                        const label = c.composer ?? c.npm ?? c.name;
+                        return (
+                            <span key={c.slug} className="companion-item">
+                                <a href={href} target="_blank" rel="noopener noreferrer" title={c.tagline}>
+                                    {label}
+                                </a>
+                                {i < companions.length - 1 && <span className="companion-sep">·</span>}
+                            </span>
+                        );
+                    })}
                 </div>
             </div>
         </section>

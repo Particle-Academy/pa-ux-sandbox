@@ -48,7 +48,7 @@ class HandleInertiaRequests extends Middleware
                 // `can:admin` middleware, so faking this client-side reveals and
                 // grants nothing.
                 'admin' => $user && Gate::forUser($user)->allows('admin')
-                    ? ['url' => route('admin.dashboard')]
+                    ? ['url' => route('admin.dashboard', absolute: false)] // relative, like the other nav links (Inertia client visit)
                     : null,
             ],
             'flash' => [

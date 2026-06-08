@@ -12,7 +12,9 @@ it('shares an admin link for admins and never leaks the is_admin model flag', fu
     $this->actingAs($admin)
         ->get('/')
         ->assertInertia(fn (Assert $page) => $page
-            ->where('auth.admin.url', route('admin.dashboard'))
+            // Relative path (like the other nav links) so the Inertia client visit
+            // stays in-app rather than hitting an absolute URL.
+            ->where('auth.admin.url', route('admin.dashboard', absolute: false))
             // The raw model column must never reach the browser.
             ->missing('auth.user.is_admin')
         );

@@ -1891,7 +1891,7 @@ function FlowRunnerUxDemo() {
     return (
         <DemoNote
             outOfBox="FlowRunnerUx (@particle-academy/fancy-flow/ux) maps host UX effects onto flow nodes and runs the graph headless via runFlow — no editor. Here the story graph IS the engine: `scene` / `ending` render the page, `overheat` spikes the GPU gauge, and `choose` pauses the run for your pick and returns the branch the flow takes. Every step also broadcasts a flow-source activity event on the shared bus."
-            demo="The whole UI below is driven by the flow run — a branching descent where most paths end badly and only one true path wins. Choose Pip's way yourself, or let Autopilot roll the dice. (Reach the right ending — or every ending — and something hidden unlocks. 🏆)"
+            demo="The whole UI below is driven by the flow run — a branching descent where most paths end badly and only one true path wins. Choose Pip's way yourself, or let Autopilot roll the dice."
         >
             <div className="overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
                 <div className="grid gap-3 p-4 md:grid-cols-[1fr_auto]">

@@ -31,6 +31,8 @@ class PackageRegistry
             self::fancy3dThree(),
             self::agentIntegrations(),
             self::fancyInertia(),
+            self::fancyMotion(),
+            self::fancyCmsUi(),
         ];
     }
 
@@ -91,6 +93,32 @@ class PackageRegistry
                 'repo' => 'Particle-Academy/laravel-fun-lab',
                 'packagist' => 'particle-academy/laravel-fun-lab',
                 'language' => 'PHP',
+            ],
+            [
+                'slug' => 'fancy-heuristics',
+                'name' => 'particle-academy/fancy-heuristics',
+                'tagline' => 'Human + agent interaction analytics + Fancy Pixel verification for Laravel — event ingestion, focus heatmaps, session/actor rollups. Server side of fancy-pixel / fancy-heuristics-js.',
+                'composer' => 'particle-academy/fancy-heuristics',
+                'repo' => 'Particle-Academy/fancy-heuristics',
+                'packagist' => 'particle-academy/fancy-heuristics',
+                'language' => 'PHP',
+            ],
+            [
+                'slug' => 'fancy-cms',
+                'name' => 'particle-academy/fancy-cms',
+                'tagline' => 'Laravel host + PHP page renderer for the Stages doc model — node tree → HTML with island hydration. Backend pair of fancy-cms-ui. (preview — dev-main)',
+                'composer' => 'particle-academy/fancy-cms',
+                'repo' => 'Particle-Academy/fancy-cms',
+                'packagist' => 'particle-academy/fancy-cms',
+                'language' => 'PHP',
+            ],
+            [
+                'slug' => 'fancy-auto-common',
+                'name' => '@particle-academy/fancy-auto-common',
+                'tagline' => 'Shared Human+ primitives — AgentActivity events, presence, undo stacks, and effect helpers. Low-level plumbing reused across the kit; usually installed transitively.',
+                'npm' => '@particle-academy/fancy-auto-common',
+                'repo' => 'Particle-Academy/fancy-auto-common',
+                'language' => 'TypeScript',
             ],
             // Headless TS packages — no UI surface, so they live here, not in the grid.
             [
@@ -507,6 +535,41 @@ class PackageRegistry
             'components' => [
                 ['slug' => 'fancy-app-root', 'name' => 'FancyAppRoot', 'blurb' => 'Inertia app root.'],
                 ['slug' => 'use-fancy-form', 'name' => 'useFancyForm', 'blurb' => 'Form hook.'],
+            ],
+        ];
+    }
+
+    /** @return array<string, mixed> */
+    private static function fancyMotion(): array
+    {
+        return [
+            'slug' => 'fancy-motion',
+            'name' => 'fancy-motion',
+            'tagline' => 'Timeline / animation primitives — a headless keyframe engine plus a React MotionStage + TimelineDock for scrubbing and orchestrating motion. (preview — 0.0.x)',
+            'npm' => '@particle-academy/fancy-motion',
+            'repo' => 'Particle-Academy/fancy-motion',
+            'language' => 'TypeScript',
+            'components' => [
+                ['slug' => 'motion-stage', 'name' => 'MotionStage', 'blurb' => 'React stage that plays a timeline against its children.'],
+                ['slug' => 'timeline-dock', 'name' => 'TimelineDock', 'blurb' => 'Scrub/play dock for authoring + previewing a timeline.'],
+            ],
+        ];
+    }
+
+    /** @return array<string, mixed> */
+    private static function fancyCmsUi(): array
+    {
+        return [
+            'slug' => 'fancy-cms-ui',
+            'name' => 'fancy-cms-ui',
+            'tagline' => 'WYSIWYG CMS editor (React) on the Stages doc model — pairs with the particle-academy/fancy-cms PHP renderer. (preview — 0.0.x)',
+            'npm' => '@particle-academy/fancy-cms-ui',
+            'repo' => 'Particle-Academy/fancy-cms-ui',
+            'language' => 'TypeScript',
+            'components' => [
+                ['slug' => 'cms-editor', 'name' => 'Editor', 'blurb' => 'The WYSIWYG editor surface — canvas + layers + inspector over a Stages node tree.'],
+                ['slug' => 'cms-page', 'name' => 'CmsPage', 'blurb' => 'Renders a published Stages document as a page.'],
+                ['slug' => 'cms-region', 'name' => 'CmsRegion', 'blurb' => 'An editable / per-surface region within a CMS page.'],
             ],
         ];
     }

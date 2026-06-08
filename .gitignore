@@ -36,3 +36,6 @@ Thumbs.db
 .ai/bots/
 .worktrees/
 /storage/app/manifest.ts
+
+# Local Cursor MCP config — can hold API tokens; never commit
+.cursor/mcp.json

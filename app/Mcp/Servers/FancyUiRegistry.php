@@ -32,6 +32,17 @@ This server is registry/install-time only. It does NOT operate a running
 Fancy UI app. For that, register the runtime bridges from
 @particle-academy/agent-integrations inside the host app.
 
+To DRIVE a running Fancy UI app yourself over MCP, those bridges expose a
+session-based relay (e.g. the Agent Playground at
+ui.particle.academy/agent-playground). Connect to a relay session URL with
+`mcp-relay-client` — a super-lite, single-file, zero-dependency MCP client in
+bash / Python / TS / Go. Download just the one you want and point it at the
+session URL:
+   curl -O https://raw.githubusercontent.com/Particle-Academy/mcp-relay-client/main/connect.sh
+   bash connect.sh "<session-url>" tools          # list the host's tools
+   bash connect.sh "<session-url>" call <tool> '<json-args>'
+Repo: https://github.com/Particle-Academy/mcp-relay-client
+
 Docs: https://ui.particle.academy/docs/mcp
 Registry contract: https://ui.particle.academy/docs/registry
 TXT)]

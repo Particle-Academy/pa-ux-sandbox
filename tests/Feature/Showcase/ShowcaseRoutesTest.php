@@ -67,6 +67,16 @@ it('rejects unauthenticated showcase submission', function () {
     $this->get('/showcase/submit')->assertRedirect('/login');
 });
 
+it('generates https submission URLs under a forced scheme (proxy mixed-content guard)', function () {
+    // Reproduces the production condition: behind Forge's TLS proxy the request
+    // looks like http, but URL generation must stay https or the browser blocks
+    // the showcase-submission redirect to ".../installed" as mixed content.
+    config(['app.url' => 'https://ui.particle.academy']);
+    \Illuminate\Support\Facades\URL::forceScheme('https');
+
+    expect(route('showcase.showcase.installed', ['submission' => 1]))->toStartWith('https://');
+});
+
 it('shows every starter kit detail page', function (array $kit) {
     $this->get("/starter-kits/{$kit['slug']}")->assertOk();
 })->with(fn () => array_map(fn ($k) => [$k], StarterKitController::kits()));

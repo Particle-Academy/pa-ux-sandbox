@@ -10,6 +10,7 @@ use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use ParticleAcademy\Fms\Services\FeatureManager;
@@ -29,6 +30,16 @@ class AppServiceProvider extends ServiceProvider
             throw new \RuntimeException(
                 'APP_DEBUG must be false in production. Aborting boot.',
             );
+        }
+
+        // Behind Forge's TLS-terminating proxy the request reaches PHP as http,
+        // so route()/redirect() would emit http:// URLs the browser blocks as
+        // mixed content (e.g. the showcase-submission redirect to ".../installed").
+        // Force https URL generation whenever the canonical app URL is https —
+        // a no-op for http-only local dev. (TrustProxies in bootstrap/app.php
+        // additionally fixes scheme detection, secure cookies, and isSecure().)
+        if (str_starts_with((string) config('app.url'), 'https://')) {
+            URL::forceScheme('https');
         }
 
         // Gate definitions — both 'admin' (sandbox routes) and 'manageCatalog'

@@ -4,6 +4,7 @@ use App\Http\Middleware\HandleInertiaRequests;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Request;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -12,6 +13,15 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Behind Forge's load balancer / TLS-terminating nginx, honor the
+        // X-Forwarded-* headers so Laravel sees the real https scheme + host
+        // (otherwise generated URLs are http:// → mixed-content blocks).
+        $middleware->trustProxies(at: '*', headers: Request::HEADER_X_FORWARDED_FOR
+            | Request::HEADER_X_FORWARDED_HOST
+            | Request::HEADER_X_FORWARDED_PORT
+            | Request::HEADER_X_FORWARDED_PROTO
+            | Request::HEADER_X_FORWARDED_AWS_ELB);
+
         // External MCP clients hit these routes with bearer tokens, not
         // session cookies — exempt them from CSRF.
         $middleware->validateCsrfTokens(except: [

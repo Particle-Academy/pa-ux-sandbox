@@ -1,5 +1,5 @@
 import { Head, Link, router, useForm } from "@inertiajs/react";
-import { Avatar, Badge, Button, Card, Field, Icon, Input, Select, Table } from "@particle-academy/react-fancy";
+import { Avatar, Badge, Button, Card, Field, Icon, Input, Select, Table, Text } from "@particle-academy/react-fancy";
 import { adminLayout } from "./AdminLayout";
 import { PageHeader, StatCard, EmptyRow } from "./ui";
 
@@ -13,6 +13,7 @@ type AdminUser = {
     opted_out: boolean;
     pro: boolean;
     proSource: string | null;
+    pro_override: boolean;
     coins: number;
     lifetime_earned: number;
     lifetime_spent: number;
@@ -340,6 +341,19 @@ function UserShow({ user, metrics, transactions, achievements, allMetrics, allAc
                                 >
                                     {user.is_admin ? "Revoke admin" : "Make admin"}
                                 </Button>
+                                <Button
+                                    color={user.pro_override ? "red" : "emerald"}
+                                    variant="ghost"
+                                    icon="sparkles"
+                                    onClick={() => router.post(`${base}/toggle-pro`, {}, { preserveScroll: true })}
+                                >
+                                    {user.pro_override ? "Revoke manual Pro" : "Grant Pro"}
+                                </Button>
+                                {user.pro && !user.pro_override && (
+                                    <Text size="xs" className="!text-zinc-500">
+                                        Already Pro via {user.proSource} — granting manual Pro keeps it after that lapses.
+                                    </Text>
+                                )}
                             </div>
                         </Card.Body>
                     </Card>

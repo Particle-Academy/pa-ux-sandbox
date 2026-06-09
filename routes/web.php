@@ -238,6 +238,7 @@ Route::prefix('admin')->name('admin.')->middleware(['web', 'auth', 'can:admin'])
     Route::post('users/{user}/grant-prize', [AdminUsersController::class, 'grantPrize'])->name('users.grant-prize');
     Route::post('users/{user}/toggle-opt-out', [AdminUsersController::class, 'toggleOptOut'])->name('users.toggle-opt-out');
     Route::post('users/{user}/toggle-admin', [AdminUsersController::class, 'toggleAdmin'])->name('users.toggle-admin');
+    Route::post('users/{user}/toggle-pro', [AdminUsersController::class, 'togglePro'])->name('users.toggle-pro');
 
     // Gamification taxonomy (achievements + prizes)
     Route::get('gamification', [AdminGamificationController::class, 'index'])->name('gamification.index');

@@ -101,6 +101,7 @@ class AdminUsersController extends Controller
                 'opted_out' => $user->isOptedOut(),
                 'pro' => $summary['pro'],
                 'proSource' => $summary['proSource'],
+                'pro_override' => (bool) $user->pro_override,
                 'coins' => (int) $wallet->balance,
                 'lifetime_earned' => (int) $wallet->lifetime_earned,
                 'lifetime_spent' => (int) $wallet->lifetime_spent,
@@ -199,5 +200,20 @@ class AdminUsersController extends Controller
         $user->update(['is_admin' => ! $user->is_admin]);
 
         return back()->with('success', "{$user->name} is ".($user->is_admin ? 'now an admin.' : 'no longer an admin.'));
+    }
+
+    /**
+     * Manually grant / revoke Pro — the admin override (third Pro source). A
+     * user with an active subscription or the earned prize stays Pro regardless;
+     * this just toggles the manual flag.
+     */
+    public function togglePro(User $user): RedirectResponse
+    {
+        $user->update(['pro_override' => ! $user->pro_override]);
+
+        return back()->with(
+            'success',
+            "{$user->name} ".($user->pro_override ? 'manually granted Pro.' : 'manual Pro revoked.'),
+        );
     }
 }

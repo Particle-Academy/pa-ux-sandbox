@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Concerns\HasWallet;
+use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -12,7 +13,7 @@ use LaravelFunLab\Traits\Awardable;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
+    /** @use HasFactory<UserFactory> */
     use Awardable, Billable, HasFactory, HasWallet, Notifiable;
 
     /**
@@ -25,6 +26,7 @@ class User extends Authenticatable
         'email',
         'password',
         'is_admin',
+        'pro_override',
         'github_id',
         'github_username',
         'avatar_url',
@@ -52,6 +54,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_admin' => 'boolean',
+            'pro_override' => 'boolean',
             'cosmetic_slots' => 'array',
         ];
     }

@@ -47,7 +47,9 @@ class Entitlements
     }
 
     /**
-     * How the user is Pro: 'subscription', 'prize', or null if not Pro.
+     * How the user is Pro: 'subscription', 'manual' (admin override), 'prize',
+     * or null if not Pro. Subscription wins the label (billing-relevant); a
+     * manual admin grant is next; an earned prize last.
      */
     public function proSource(?User $user): ?string
     {
@@ -56,6 +58,9 @@ class Entitlements
         }
         if ($user->subscribed()) {
             return 'subscription';
+        }
+        if ($user->pro_override) {
+            return 'manual';
         }
         if ($this->hasPrize($user, self::PRO_PRIZE)) {
             return 'prize';

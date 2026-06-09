@@ -22,6 +22,7 @@ class StarterKitDownloadController extends Controller
 {
     /** Map kit slug → source-file basename (no extension). */
     private const SOURCE_BY_SLUG = [
+        'fancy-query' => 'RealtimeChatKit',
         'react-fancy' => 'ReactDashboardKit',
         'fancy-flow' => 'WorkflowStudioKit',
         'fancy-whiteboard' => 'CollabBoardKit',
@@ -103,18 +104,18 @@ That's it. The starter is a stock Vite + React 19 + Tailwind v4 project.
 
 ## Dependencies
 
-- `react`, `react-dom`
-- `@particle-academy/react-fancy` — the Tailwind v4 component library Kit.tsx uses
+- `react`, `react-dom` (v19)
+- `@particle-academy/react-fancy` — the Tailwind v4 component library
+- `@particle-academy/{$kit['pkg']}` — the headline package this kit is built on
+
+All versions are pinned to the same releases the live showcase runs, so what you
+download matches what you see at ui.particle.academy.
 
 ## Going deeper
 
 - Live demo: https://ui.particle.academy/starter-kits/{$kit['slug']}
-- All components: https://ui.particle.academy/packages/react-fancy
+- Package docs: https://ui.particle.academy/packages/{$kit['pkg']}
 - Whitepaper (Human+ UX): https://ui.particle.academy/docs/human-plus-ux
-
-## Known: TypeScript strict mode
-
-`npm run dev` and `npm run build` work out of the box. `npm run typecheck` may surface type errors in `@particle-academy/react-fancy@^3` — specifically `Heading` accepts a `level` prop at runtime that isn't in the published `.d.ts` yet, and `Badge` accepts a few colors (`emerald`) the type union doesn't list. This is a known gap in the published types; runtime behavior is correct. Tracking fix in react-fancy 3.1.
 
 ## License
 
@@ -138,7 +139,7 @@ MD;
             ],
             'dependencies' => array_merge(
                 [
-                    '@particle-academy/react-fancy' => '^3.0.0',
+                    '@particle-academy/react-fancy' => '^4.4.1',
                     'react' => '^19.0.0',
                     'react-dom' => '^19.0.0',
                 ],
@@ -159,18 +160,29 @@ MD;
     }
 
     /**
-     * Some kits import their headline package directly (e.g. the
-     * Diagram Studio kit uses `<DataDiagram>` / `<OrgChart>` from
-     * fancy-echarts). Those need the package in dependencies on top of
-     * the always-on react-fancy. Kits that are visual mocks of their
-     * package (and only import react-fancy) get nothing extra.
+     * Every package a kit's `Kit.tsx` imports (beyond the always-on
+     * react-fancy + react) must be listed here, or the downloaded zip won't
+     * `npm install`. Each kit now drives its real headline package, so each
+     * has at least its own dep. Versions track the showcase's lockfile.
      *
      * @return array<string, string>
      */
     private function extraDependencies(string $slug): array
     {
         return match ($slug) {
-            'fancy-echarts' => ['@particle-academy/fancy-echarts' => '^3.0.0'],
+            'fancy-query' => [
+                '@particle-academy/fancy-query' => '^0.2.0',
+                '@tanstack/react-query' => '^5.101.0',
+            ],
+            'react-fancy' => ['@particle-academy/fancy-echarts' => '^4.0.1'],
+            'fancy-flow' => [
+                '@particle-academy/fancy-flow' => '^0.5.1',
+                '@xyflow/react' => '^12.10.0',
+            ],
+            'fancy-whiteboard' => ['@particle-academy/fancy-whiteboard' => '^0.2.0'],
+            'fancy-code' => ['@particle-academy/fancy-code' => '^0.4.7'],
+            'fancy-sheets' => ['@particle-academy/fancy-sheets' => '^0.8.0'],
+            'fancy-echarts' => ['@particle-academy/fancy-echarts' => '^4.0.1'],
             default => [],
         };
     }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Showcase\StarterKitController;
 use App\Support\PackageRegistry;
 use Tests\TestCase;
 
@@ -65,3 +66,56 @@ it('404s on an unknown component', function () {
 it('rejects unauthenticated showcase submission', function () {
     $this->get('/showcase/submit')->assertRedirect('/login');
 });
+
+it('shows every starter kit detail page', function (array $kit) {
+    $this->get("/starter-kits/{$kit['slug']}")->assertOk();
+})->with(fn () => array_map(fn ($k) => [$k], StarterKitController::kits()));
+
+it('404s on an unknown starter kit', function () {
+    $this->get('/starter-kits/does-not-exist')->assertNotFound();
+});
+
+/**
+ * Guards the download-zip dependency bug: a kit's bundled package.json must
+ * list every @particle-academy package its Kit.tsx imports, at the current
+ * (non-stale) major, or `npm install` breaks for whoever downloads it.
+ */
+it('bundles every imported package into the download zip', function (array $kit) {
+    $slug = $kit['slug'];
+
+    $response = $this->get("/starter-kits/{$slug}/download.zip");
+    $response->assertOk();
+    $response->assertHeader('content-type', 'application/zip');
+
+    // Capture the streamed binary file response.
+    ob_start();
+    $response->baseResponse->sendContent();
+    $bytes = ob_get_clean();
+
+    $tmp = tempnam(sys_get_temp_dir(), 'kit-test-');
+    file_put_contents($tmp, $bytes);
+    $zip = new ZipArchive;
+    expect($zip->open($tmp))->toBeTrue();
+
+    $root = "{$slug}-starter/";
+    $pkgJson = json_decode($zip->getFromName($root.'package.json'), true);
+    $kitSrc = $zip->getFromName($root.'src/Kit.tsx');
+    $zip->close();
+    @unlink($tmp);
+
+    $deps = array_keys(array_merge(
+        $pkgJson['dependencies'] ?? [],
+        $pkgJson['devDependencies'] ?? [],
+    ));
+
+    // react-fancy must be current-major, never the long-stale ^3.
+    expect($pkgJson['dependencies']['@particle-academy/react-fancy'] ?? '')
+        ->toStartWith('^4');
+
+    // Every @particle-academy/* the kit imports must be a declared dependency.
+    preg_match_all('#@particle-academy/[a-z0-9-]+#', $kitSrc, $m);
+    foreach (array_unique($m[0]) as $imported) {
+        // Strip subpath imports like @particle-academy/react-fancy/icons.
+        expect($deps)->toContain($imported);
+    }
+})->with(fn () => array_map(fn ($k) => [$k], StarterKitController::kits()));

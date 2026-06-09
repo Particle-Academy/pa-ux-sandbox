@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button, Badge, Card, Heading, Text } from "@particle-academy/react-fancy";
 import { CodeEditor } from "@particle-academy/fancy-code";
+import "@particle-academy/fancy-code/styles.css";
 
 type Node = { id: string; label: string; kind: "folder" | "file"; lang?: string; children?: Node[]; content?: string };
 

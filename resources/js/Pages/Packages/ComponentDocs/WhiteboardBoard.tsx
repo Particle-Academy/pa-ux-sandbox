@@ -6,7 +6,7 @@ function BoardDemo() {
     const [viewport, setViewport] = useState({ x: 0, y: 0, zoom: 1 });
     const [note, setNote] = useState({
         id: "n1",
-        type: "sticky" as const,
+        kind: "sticky" as const,
         x: 80,
         y: 50,
         width: 140,
@@ -16,7 +16,7 @@ function BoardDemo() {
     });
     return (
         <div className="h-56 w-full overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-800">
-            <Board viewport={viewport} onViewportChange={setViewport} minZoom={0.25} maxZoom={3}>
+            <Board className="h-full w-full" viewport={viewport} onViewportChange={setViewport} minZoom={0.25} maxZoom={3}>
                 <StickyNote item={note} onChange={setNote} />
             </Board>
         </div>
@@ -49,7 +49,7 @@ export const whiteboardBoardDoc: ComponentDoc = {
             description: "Skip the viewport plumbing — the Board manages its own state.",
             render: () => (
                 <div className="h-40 w-full overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-800">
-                    <Board defaultViewport={{ x: 0, y: 0, zoom: 1 }} />
+                    <Board className="h-full w-full" defaultViewport={{ x: 0, y: 0, zoom: 1 }} />
                 </div>
             ),
             code: `<Board defaultViewport={{ x: 0, y: 0, zoom: 1 }}>
@@ -61,7 +61,7 @@ export const whiteboardBoardDoc: ComponentDoc = {
             description: "Constrain how far the user can scale.",
             render: () => (
                 <div className="h-40 w-full overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-800">
-                    <Board defaultViewport={{ x: 0, y: 0, zoom: 1 }} minZoom={0.5} maxZoom={2} />
+                    <Board className="h-full w-full" defaultViewport={{ x: 0, y: 0, zoom: 1 }} minZoom={0.5} maxZoom={2} />
                 </div>
             ),
             code: `<Board minZoom={0.5} maxZoom={2}>…</Board>`,

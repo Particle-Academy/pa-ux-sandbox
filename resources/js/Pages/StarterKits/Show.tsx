@@ -8,10 +8,12 @@ import { CollabBoardKit } from "./kits/CollabBoardKit";
 import { EmbeddedIdeKit } from "./kits/EmbeddedIdeKit";
 import { SpreadsheetStudioKit } from "./kits/SpreadsheetStudioKit";
 import { DiagramStudioKit } from "./kits/DiagramStudioKit";
+import { RealtimeChatKit } from "./kits/RealtimeChatKit";
 
 type Kit = { slug: string; name: string; pkg: string; blurb: string };
 
 const KITS: Record<string, () => JSX.Element> = {
+    "fancy-query": RealtimeChatKit,
     "react-fancy": ReactDashboardKit,
     "fancy-flow": WorkflowStudioKit,
     "fancy-whiteboard": CollabBoardKit,

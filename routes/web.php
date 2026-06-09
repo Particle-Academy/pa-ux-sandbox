@@ -8,7 +8,7 @@ use App\Http\Controllers\Admin\AdminPlansController;
 use App\Http\Controllers\Admin\AdminProductsController;
 use App\Http\Controllers\Admin\AdminSettingsController;
 use App\Http\Controllers\Admin\AdminShopController;
-use App\Http\Controllers\Admin\AdminShowcaseSubmissionsController;
+use App\Http\Controllers\Admin\AdminSitesController;
 use App\Http\Controllers\Admin\AdminUsersController;
 use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\Api\XpController;
@@ -39,6 +39,7 @@ use App\Http\Controllers\WhiteboardAgentController;
 use App\Http\Controllers\WhiteboardShareController;
 use App\Http\Middleware\TrackPackageBrowsing;
 use App\Mcp\Servers\FancyUiRegistry;
+use App\Models\ShowcaseSubmission;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -253,21 +254,32 @@ Route::prefix('admin')->name('admin.')->middleware(['web', 'auth', 'can:admin'])
     Route::put('gamification/prizes/{prize}', [AdminGamificationController::class, 'savePrize'])->name('gamification.prizes.update');
     Route::post('gamification/prizes/{prize}/toggle', [AdminGamificationController::class, 'togglePrize'])->name('gamification.prizes.toggle');
 
-    // Fancy Heuristics / Analytics — platform-wide overview + per-site drilldown
-    // over the live pixel feed (any site; admins aren't limited to their own).
-    // Sites bind by their human-friendly `site_key`, not the numeric id.
-    Route::get('heuristics', [AdminHeuristicsController::class, 'index'])->name('heuristics.index');
+    // Unified Sites admin — a showcase submission IS an analytics site, so
+    // moderation + analytics + the owner's Pro tier live on one surface.
+    Route::get('sites', [AdminSitesController::class, 'index'])->name('sites.index');
+    Route::get('sites/{submission}', [AdminSitesController::class, 'show'])->name('sites.show');
+    Route::post('sites/bulk', [AdminSitesController::class, 'bulk'])->name('sites.bulk');
+    Route::post('sites/{submission}/verify', [AdminSitesController::class, 'verify'])->name('sites.verify');
+    Route::post('sites/{submission}/reject', [AdminSitesController::class, 'reject'])->name('sites.reject');
+    Route::post('sites/{submission}/rescan', [AdminSitesController::class, 'rescan'])->name('sites.rescan');
+    Route::post('sites/{submission}/recapture', [AdminSitesController::class, 'recapture'])->name('sites.recapture');
+    Route::post('sites/{submission}/feature', [AdminSitesController::class, 'feature'])->name('sites.feature');
+    Route::post('sites/{submission}/unfeature', [AdminSitesController::class, 'unfeature'])->name('sites.unfeature');
+    Route::post('sites/{submission}/suspend', [AdminSitesController::class, 'suspend'])->name('sites.suspend');
+    Route::post('sites/{submission}/unsuspend', [AdminSitesController::class, 'unsuspend'])->name('sites.unsuspend');
+    Route::post('sites/{submission}/nsfw-confirm', [AdminSitesController::class, 'confirmNsfw'])->name('sites.nsfw-confirm');
+    Route::post('sites/{submission}/nsfw-clear', [AdminSitesController::class, 'clearNsfw'])->name('sites.nsfw-clear');
+    Route::post('sites/{submission}/category', [AdminSitesController::class, 'setCategory'])->name('sites.category');
+    Route::post('sites/{submission}/toggle-pro', [AdminSitesController::class, 'toggleOwnerPro'])->name('sites.toggle-pro');
+    Route::post('sites/{submission}/verify-pixel', [AdminSitesController::class, 'verifyPixel'])->name('sites.verify-pixel');
+
+    // Legacy routes → unified Sites admin. Old per-site heuristics drilldown
+    // (incl. the non-submission dogfood site) stays available for deep links.
+    Route::get('submissions', fn () => redirect()->route('admin.sites.index'))->name('submissions.index');
+    Route::get('submissions/{submission}', fn (ShowcaseSubmission $submission) => redirect()->route('admin.sites.show', $submission))->name('submissions.show');
+    Route::get('heuristics', fn () => redirect()->route('admin.sites.index'))->name('heuristics.index');
     Route::get('heuristics/{site:site_key}', [AdminHeuristicsController::class, 'show'])->name('heuristics.show');
     Route::post('heuristics/{site:site_key}/verify', [AdminHeuristicsController::class, 'verify'])->name('heuristics.verify');
-
-    // Showcase Submissions moderation
-    Route::get('submissions', [AdminShowcaseSubmissionsController::class, 'index'])->name('submissions.index');
-    Route::get('submissions/{submission}', [AdminShowcaseSubmissionsController::class, 'show'])->name('submissions.show');
-    Route::post('submissions/{submission}/verify', [AdminShowcaseSubmissionsController::class, 'verify'])->name('submissions.verify');
-    Route::post('submissions/{submission}/reject', [AdminShowcaseSubmissionsController::class, 'reject'])->name('submissions.reject');
-    Route::post('submissions/{submission}/feature', [AdminShowcaseSubmissionsController::class, 'feature'])->name('submissions.feature');
-    Route::post('submissions/{submission}/unfeature', [AdminShowcaseSubmissionsController::class, 'unfeature'])->name('submissions.unfeature');
-    Route::post('submissions/{submission}/rescan', [AdminShowcaseSubmissionsController::class, 'rescan'])->name('submissions.rescan');
 
     // App settings — admin-editable config (e.g. the tracker/pixel snippet).
     Route::get('settings', [AdminSettingsController::class, 'index'])->name('settings.index');

@@ -3,7 +3,6 @@
 use App\Models\User;
 use Database\Seeders\FunLabSeeder;
 use FancyHeuristics\Models\HeuristicsEvent;
-use FancyHeuristics\Models\HeuristicsPixelPing;
 use FancyHeuristics\Models\HeuristicsSite;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
@@ -62,38 +61,16 @@ it('forbids non-admins from a per-site drilldown', function () {
         ->assertForbidden();
 });
 
-it('shows the platform-wide rollups and the site list', function () {
+it('redirects the legacy heuristics index into the unified Sites admin', function () {
+    // The platform-wide rollups moved onto /admin/sites (a showcase submission
+    // IS an analytics site). The old index URL now redirects there; the per-site
+    // drilldown below stays for orphan/dogfood sites with no submission row.
     $admin = heuristicsAdmin();
     seedSiteWithEvents('site-a');
-    seedSiteWithEvents('site-b');
-    HeuristicsPixelPing::create([
-        'site_key' => 'site-a',
-        'style' => 'badge',
-        'mode' => 'floating',
-        'visible' => true,
-        'path' => '/',
-        'pinged_at' => now(),
-    ]);
 
     $this->actingAs($admin)
         ->get('/admin/heuristics')
-        ->assertOk()
-        ->assertInertia(fn ($page) => $page
-            ->component('Admin/Heuristics/Index')
-            // 12 events total across the two seeded sites (6 each).
-            ->where('rollups.totalEvents', 12)
-            ->where('rollups.sites', 2)
-            ->where('rollups.visibleSites', 2)
-            // Two distinct session ids per site, but session_id is shared across
-            // sites in the seed, so DISTINCT session_id across all sites = 2.
-            ->where('rollups.sessions', 2)
-            ->where('rollups.human', 8)
-            ->where('rollups.agent', 4)
-            ->where('rollups.pixelPings', 1)
-            ->has('sites', 2)
-            ->where('sites.0.site_key', 'site-a')
-            ->where('sites.0.events', 6)
-        );
+        ->assertRedirect('/admin/sites');
 });
 
 it('returns the per-site KPIs on the show page', function () {

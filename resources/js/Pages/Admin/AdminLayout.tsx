@@ -28,16 +28,10 @@ const NAV: NavGroup[] = [
         ],
     },
     {
-        section: "Analytics",
-        items: [
-            { label: "Heuristics", icon: "activity", href: "/admin/heuristics" },
-        ],
-    },
-    {
         section: "Community",
         items: [
+            { label: "Sites", icon: "activity", href: "/admin/sites" },
             { label: "Users", icon: "users", href: "/admin/users" },
-            { label: "Submissions", icon: "image", href: "/admin/submissions" },
         ],
     },
     {
@@ -57,6 +51,7 @@ const CRUMB: Record<string, { group: string; crumb: string }> = {
     gamification: { group: "Engagement", crumb: "Gamification" },
     shop: { group: "Engagement", crumb: "Coin Shop" },
     heuristics: { group: "Analytics", crumb: "Heuristics" },
+    sites: { group: "Community", crumb: "Sites" },
     users: { group: "Community", crumb: "Users" },
     submissions: { group: "Community", crumb: "Submissions" },
     settings: { group: "System", crumb: "Settings" },
@@ -102,7 +97,7 @@ export function AdminLayout({ children }: { children: ReactNode }) {
                         <div key={gi} style={{ display: "contents" }}>
                             {grp.section && <div className="sb-section">{grp.section}</div>}
                             {grp.items.map((it) => {
-                                const badge = it.href === "/admin/submissions" && pending > 0 ? pending : it.badge;
+                                const badge = it.href === "/admin/sites" && pending > 0 ? pending : it.badge;
                                 return (
                                     <Link key={it.href} href={it.href} className={`sb-item${isActive(it.href) ? " active" : ""}`} title={collapsed ? it.label : undefined}>
                                         <Icon name={it.icon} size={18} className="sb-ico" />

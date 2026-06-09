@@ -10,6 +10,11 @@ use Tests\TestCase;
 
 uses(TestCase::class);
 
+/**
+ * Moderation lifecycle on the unified Sites admin (/admin/sites/*). A showcase
+ * submission IS an analytics site now, so the old /admin/submissions surface was
+ * folded into AdminSitesController — these tests exercise the live routes.
+ */
 beforeEach(function () {
     $this->seed(FunLabSeeder::class);
 });
@@ -33,15 +38,15 @@ function pendingSubmission(?User $owner = null): ShowcaseSubmission
 
 it('blocks moderation for non-admins', function () {
     $this->actingAs(User::factory()->create(['is_admin' => false]))
-        ->get('/admin/submissions')
+        ->get('/admin/sites')
         ->assertForbidden();
 });
 
-it('lists submissions filtered by status', function () {
+it('lists sites filtered by status', function () {
     $admin = moderator();
     pendingSubmission();
 
-    $this->actingAs($admin)->get('/admin/submissions?status=pending')
+    $this->actingAs($admin)->get('/admin/sites?filter=pending')
         ->assertOk()
         ->assertSee('My Project');
 });
@@ -51,7 +56,7 @@ it('verifying awards projects-xp + first-project to the submitter, once', functi
     $owner = User::factory()->create();
     $submission = pendingSubmission($owner);
 
-    $this->actingAs($admin)->post("/admin/submissions/{$submission->id}/verify")
+    $this->actingAs($admin)->post("/admin/sites/{$submission->id}/verify")
         ->assertRedirect()
         ->assertSessionHas('success');
 
@@ -64,7 +69,7 @@ it('verifying awards projects-xp + first-project to the submitter, once', functi
         ->and($owner->coinBalance())->toBe(110);
 
     // Re-verify must NOT pay out again.
-    $this->actingAs($admin)->post("/admin/submissions/{$submission->id}/verify");
+    $this->actingAs($admin)->post("/admin/sites/{$submission->id}/verify");
     expect($owner->fresh()->getProfile()->getXpFor('projects-xp'))->toBe(200);
 });
 
@@ -73,30 +78,30 @@ it('rejecting sets status without rewarding', function () {
     $owner = User::factory()->create();
     $submission = pendingSubmission($owner);
 
-    $this->actingAs($admin)->post("/admin/submissions/{$submission->id}/reject")->assertRedirect();
+    $this->actingAs($admin)->post("/admin/sites/{$submission->id}/reject")->assertRedirect();
 
     expect($submission->refresh()->status)->toBe('rejected')
         ->and($submission->rewarded_at)->toBeNull()
         ->and($owner->getProfile()->getXpFor('projects-xp'))->toBe(0);
 });
 
-it('features a submission for N days (comp)', function () {
+it('features a site for N days (comp)', function () {
     $admin = moderator();
     $submission = pendingSubmission();
 
-    $this->actingAs($admin)->post("/admin/submissions/{$submission->id}/feature", ['days' => 14])
+    $this->actingAs($admin)->post("/admin/sites/{$submission->id}/feature", ['days' => 14])
         ->assertRedirect();
 
     expect($submission->refresh()->isFeatured())->toBeTrue()
         ->and(now()->diffInDays($submission->featured_until))->toBeGreaterThanOrEqual(13);
 });
 
-it('unfeatures a submission', function () {
+it('unfeatures a site', function () {
     $admin = moderator();
     $submission = pendingSubmission();
     $submission->update(['featured_until' => now()->addDays(5)]);
 
-    $this->actingAs($admin)->post("/admin/submissions/{$submission->id}/unfeature")->assertRedirect();
+    $this->actingAs($admin)->post("/admin/sites/{$submission->id}/unfeature")->assertRedirect();
 
     expect($submission->refresh()->featured_until)->toBeNull();
 });
@@ -107,7 +112,7 @@ it('re-scan re-dispatches the scan job and resets status to pending', function (
     $submission = pendingSubmission();
     $submission->update(['status' => 'rejected']);
 
-    $this->actingAs($admin)->post("/admin/submissions/{$submission->id}/rescan")
+    $this->actingAs($admin)->post("/admin/sites/{$submission->id}/rescan")
         ->assertRedirect()
         ->assertSessionHas('success');
 
@@ -117,16 +122,27 @@ it('re-scan re-dispatches the scan job and resets status to pending', function (
     });
 });
 
-it('surfaces the site_key on the submission detail page', function () {
+it('surfaces the site detail page with the real label + site_key', function () {
     $admin = moderator();
     $submission = pendingSubmission();
 
-    $this->actingAs($admin)->get("/admin/submissions/{$submission->id}")
+    $this->actingAs($admin)->get("/admin/sites/{$submission->id}")
         ->assertOk()
         ->assertInertia(fn ($page) => $page
-            ->component('Admin/SubmissionShow')
-            ->where('submission.site_key', $submission->site_key)
+            ->component('Admin/SiteShow')
+            ->where('site.site_key', $submission->site_key)
+            ->where('site.title', 'My Project')
         );
+});
+
+it('legacy /admin/submissions URLs redirect into the unified Sites admin', function () {
+    $admin = moderator();
+    $submission = pendingSubmission();
+
+    $this->actingAs($admin)->get('/admin/submissions')
+        ->assertRedirect('/admin/sites');
+    $this->actingAs($admin)->get("/admin/submissions/{$submission->id}")
+        ->assertRedirect("/admin/sites/{$submission->id}");
 });
 
 it('ShowcaseRewards is idempotent at the service level', function () {

@@ -12,8 +12,9 @@ type Pkg = {
     language: string;
     npm?: string;
     composer?: string;
+    download?: string;
     repo: string;
-    components: { slug: string; name: string; blurb?: string }[];
+    components?: { slug: string; name: string; blurb?: string }[];
 };
 
 type Context = { why: string; what: string; how: string };
@@ -60,40 +61,53 @@ export default function PackagesShow({ package: pkg, context }: { package: Pkg; 
                 </Button>
             </div>
 
-            <Card className="mt-6">
-                <div className="px-4 pt-3">
-                    <Tabs defaultTab={pkg.npm ? "npm" : "composer"}>
-                        <Tabs.List>
-                            {pkg.npm && <Tabs.Tab value="npm">npm</Tabs.Tab>}
-                            {pkg.npm && <Tabs.Tab value="pnpm">pnpm</Tabs.Tab>}
-                            {pkg.npm && <Tabs.Tab value="yarn">yarn</Tabs.Tab>}
-                            {pkg.composer && <Tabs.Tab value="composer">composer</Tabs.Tab>}
-                        </Tabs.List>
-                        <Tabs.Panels>
-                            {pkg.npm && (
-                                <Tabs.Panel value="npm">
-                                    <InstallBlock cmd={`npm install ${pkg.npm}`} onCopy={(t) => copy(t, "npm")} copied={copied === "npm"} />
-                                </Tabs.Panel>
-                            )}
-                            {pkg.npm && (
-                                <Tabs.Panel value="pnpm">
-                                    <InstallBlock cmd={`pnpm add ${pkg.npm}`} onCopy={(t) => copy(t, "pnpm")} copied={copied === "pnpm"} />
-                                </Tabs.Panel>
-                            )}
-                            {pkg.npm && (
-                                <Tabs.Panel value="yarn">
-                                    <InstallBlock cmd={`yarn add ${pkg.npm}`} onCopy={(t) => copy(t, "yarn")} copied={copied === "yarn"} />
-                                </Tabs.Panel>
-                            )}
-                            {pkg.composer && (
-                                <Tabs.Panel value="composer">
-                                    <InstallBlock cmd={`composer require ${pkg.composer}`} onCopy={(t) => copy(t, "composer")} copied={copied === "composer"} />
-                                </Tabs.Panel>
-                            )}
-                        </Tabs.Panels>
-                    </Tabs>
-                </div>
-            </Card>
+            {(pkg.npm || pkg.composer) && (
+                <Card className="mt-6">
+                    <div className="px-4 pt-3">
+                        <Tabs defaultTab={pkg.npm ? "npm" : "composer"}>
+                            <Tabs.List>
+                                {pkg.npm && <Tabs.Tab value="npm">npm</Tabs.Tab>}
+                                {pkg.npm && <Tabs.Tab value="pnpm">pnpm</Tabs.Tab>}
+                                {pkg.npm && <Tabs.Tab value="yarn">yarn</Tabs.Tab>}
+                                {pkg.composer && <Tabs.Tab value="composer">composer</Tabs.Tab>}
+                            </Tabs.List>
+                            <Tabs.Panels>
+                                {pkg.npm && (
+                                    <Tabs.Panel value="npm">
+                                        <InstallBlock cmd={`npm install ${pkg.npm}`} onCopy={(t) => copy(t, "npm")} copied={copied === "npm"} />
+                                    </Tabs.Panel>
+                                )}
+                                {pkg.npm && (
+                                    <Tabs.Panel value="pnpm">
+                                        <InstallBlock cmd={`pnpm add ${pkg.npm}`} onCopy={(t) => copy(t, "pnpm")} copied={copied === "pnpm"} />
+                                    </Tabs.Panel>
+                                )}
+                                {pkg.npm && (
+                                    <Tabs.Panel value="yarn">
+                                        <InstallBlock cmd={`yarn add ${pkg.npm}`} onCopy={(t) => copy(t, "yarn")} copied={copied === "yarn"} />
+                                    </Tabs.Panel>
+                                )}
+                                {pkg.composer && (
+                                    <Tabs.Panel value="composer">
+                                        <InstallBlock cmd={`composer require ${pkg.composer}`} onCopy={(t) => copy(t, "composer")} copied={copied === "composer"} />
+                                    </Tabs.Panel>
+                                )}
+                            </Tabs.Panels>
+                        </Tabs>
+                    </div>
+                </Card>
+            )}
+
+            {!pkg.npm && !pkg.composer && pkg.download && (
+                <Card className="mt-6">
+                    <Card.Body>
+                        <Text size="xs" className="!font-semibold !uppercase !tracking-wider !text-zinc-500">Download</Text>
+                        <div className="mt-2">
+                            <InstallBlock cmd={pkg.download} onCopy={(t) => copy(t, "download")} copied={copied === "download"} />
+                        </div>
+                    </Card.Body>
+                </Card>
+            )}
 
             <div className="mt-6 flex flex-wrap gap-2 text-xs">
                 <DocLink href={`https://github.com/${pkg.repo}#readme`} label="README" />
@@ -109,14 +123,30 @@ export default function PackagesShow({ package: pkg, context }: { package: Pkg; 
                 </div>
             )}
 
-            <Heading level={2} size="lg" className="mt-10">Components</Heading>
-            <Text size="sm" className="mt-1 !text-zinc-500">
-                {pkg.components.length} component{pkg.components.length === 1 ? "" : "s"} · click any tile for a full demo, source, and install snippet.
-            </Text>
-            <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                {pkg.components.map((c) => {
-                    const Preview = getComponentPreview(pkg.slug, c.slug);
-                    return (
+            {(pkg.components?.length ?? 0) === 0 ? (
+                <Card className="mt-8">
+                    <Card.Body className="!py-6">
+                        <div className="flex items-center gap-2">
+                            <Badge color="zinc" size="sm" variant="soft">headless</Badge>
+                            <Heading level={2} size="sm" className="!text-zinc-700 dark:!text-zinc-200">No UI surface</Heading>
+                        </div>
+                        <Text size="sm" className="mt-2 max-w-2xl !text-zinc-500">
+                            A supporting package with no rendered components (so no live demos or screenshots) —
+                            it's the hooks / APIs / server-side tooling described above. Reach for the README + Changelog
+                            for the full reference, and the Issues link to file feedback.
+                        </Text>
+                    </Card.Body>
+                </Card>
+            ) : (
+                <>
+                    <Heading level={2} size="lg" className="mt-10">Components</Heading>
+                    <Text size="sm" className="mt-1 !text-zinc-500">
+                        {pkg.components!.length} component{pkg.components!.length === 1 ? "" : "s"} · click any tile for a full demo, source, and install snippet.
+                    </Text>
+                    <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                        {pkg.components!.map((c) => {
+                            const Preview = getComponentPreview(pkg.slug, c.slug);
+                            return (
                         <Link key={c.slug} href={`/packages/${pkg.slug}/${c.slug}`} className="block">
                             <Card className="group h-full overflow-hidden transition hover:-translate-y-0.5 hover:border-violet-300 hover:shadow-md dark:hover:border-violet-700">
                                 <div className="flex items-center justify-between border-b border-zinc-100 px-3 py-2 dark:border-zinc-800">
@@ -135,9 +165,11 @@ export default function PackagesShow({ package: pkg, context }: { package: Pkg; 
                                 )}
                             </Card>
                         </Link>
-                    );
-                })}
-            </div>
+                            );
+                        })}
+                    </div>
+                </>
+            )}
         </Layout>
     );
 }

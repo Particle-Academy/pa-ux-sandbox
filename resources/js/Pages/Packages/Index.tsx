@@ -149,7 +149,7 @@ function FancyCore({ pkgs, companions }: { pkgs: Pkg[]; companions: Companion[] 
                     </Link>
                 ))}
                 {companions.map((c) => (
-                    <a key={c.slug} href={c.npmUrl ?? c.repoUrl} target="_blank" rel="noreferrer" className="block">
+                    <Link key={c.slug} href={`/packages/${c.slug}`} className="block">
                         <Card className="group h-full overflow-hidden transition hover:-translate-y-0.5 hover:border-violet-300 hover:shadow-lg dark:hover:border-violet-700">
                             <CoreHooksHero />
                             <Card.Body>
@@ -158,10 +158,10 @@ function FancyCore({ pkgs, companions }: { pkgs: Pkg[]; companions: Companion[] 
                                     <Badge color="zinc" size="sm" variant="soft">hooks</Badge>
                                 </div>
                                 <Text size="sm" className="mt-2 line-clamp-2 !text-zinc-600 dark:!text-zinc-300">{c.tagline}</Text>
-                                <Text size="xs" className="mt-3 !font-mono !text-violet-600 dark:!text-violet-300">View on npm →</Text>
+                                <Text size="xs" className="mt-3 !font-mono !text-violet-600 dark:!text-violet-300">Explore →</Text>
                             </Card.Body>
                         </Card>
-                    </a>
+                    </Link>
                 ))}
             </div>
         </div>
@@ -200,10 +200,21 @@ function CompanionPackages({ companions }: { companions: Companion[] }) {
             <ul className="mt-5 divide-y divide-zinc-100 rounded-lg border border-zinc-200 bg-white dark:divide-zinc-800 dark:border-zinc-800 dark:bg-zinc-950">
                 {companions.map((c) => (
                     <li key={c.slug} className="flex flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3">
-                        <code className="font-mono text-sm text-zinc-900 dark:text-zinc-100">{c.name}</code>
+                        <Link
+                            href={`/packages/${c.slug}`}
+                            className="font-mono text-sm font-medium text-zinc-900 hover:text-violet-600 dark:text-zinc-100 dark:hover:text-violet-300"
+                        >
+                            {c.name}
+                        </Link>
                         <Badge color="indigo" size="sm">{c.language}</Badge>
-                        <span className="min-w-[14rem] flex-1 text-xs text-zinc-500">{c.tagline}</span>
+                        <Link href={`/packages/${c.slug}`} className="min-w-[14rem] flex-1 text-xs text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300">{c.tagline}</Link>
                         <div className="flex items-center gap-3 text-xs">
+                            <Link
+                                href={`/packages/${c.slug}`}
+                                className="font-medium text-violet-600 hover:text-violet-700 dark:text-violet-300"
+                            >
+                                Docs →
+                            </Link>
                             <a
                                 href={c.repoUrl}
                                 target="_blank"

@@ -53,8 +53,14 @@ class PackagesController extends Controller
 
     public function show(string $package): Response
     {
-        $pkg = PackageRegistry::find($package);
+        // findAny() also resolves the headless companion packages (holy-sheet,
+        // dark-slide, fancy-query, mcp-relay-client, …) so they get a real
+        // in-house docs page instead of bouncing out to npm/Packagist.
+        $pkg = PackageRegistry::findAny($package);
         abort_if($pkg === null, 404);
+
+        // Companion packages render no UI, so they carry no component grid.
+        $pkg['components'] ??= [];
 
         return Inertia::render('Packages/Show', [
             'package' => $pkg,

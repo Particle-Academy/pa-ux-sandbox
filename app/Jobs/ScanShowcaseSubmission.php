@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Models\ShowcaseSubmission;
 use App\Services\Showcase\FancyPixelDetector;
+use App\Services\Showcase\NsfwHeuristicDetector;
 use App\Services\Showcase\RepoVerifier;
 use App\Services\Showcase\SafeUrlFetcher;
 use App\Services\Showcase\UnsafeUrlException;
@@ -34,6 +35,35 @@ class ScanShowcaseSubmission implements ShouldQueue
             'scanned_at' => now(),
         ]);
 
+        // Backfill the title/description from the page's <title> / meta / og tags
+        // when the submitter left them blank — so a listing isn't just a bare URL.
+        $backfill = [];
+        if (blank($this->submission->title) && ! blank($result['meta']['title'] ?? null)) {
+            $backfill['title'] = $result['meta']['title'];
+        }
+        if (blank($this->submission->description) && ! blank($result['meta']['description'] ?? null)) {
+            $backfill['description'] = $result['meta']['description'];
+        }
+        if ($backfill !== []) {
+            $this->submission->update($backfill);
+        }
+
+        // Hybrid NSFW pre-screen: an UNDECLARED site whose page tripped the
+        // classifier is flagged for an admin to confirm/clear — held out of the
+        // public listing until reviewed. (A self-declared NSFW site is never
+        // listed regardless, so there's nothing to flag.)
+        if (! empty($result['nsfw_flag']['flagged'])
+            && ! $this->submission->nsfw_declared
+            && $this->submission->nsfw_status === 'none') {
+            $this->submission->update([
+                'nsfw_status' => 'flagged',
+                'nsfw_flag_reason' => $result['nsfw_flag']['reason'],
+            ]);
+        }
+
+        // Keep the linked HeuristicsSite's visibility in lockstep with listability.
+        $this->submission->refresh()->syncHeuristicsVisibility();
+
         $rewards = app(ShowcaseRewards::class);
 
         // Auto-verified submissions earn projects-xp for the submitter
@@ -48,9 +78,11 @@ class ScanShowcaseSubmission implements ShouldQueue
             $rewards->onBadgeDetected($this->submission);
         }
 
-        // Capture a screenshot of verified websites for the focus-heatmap
-        // background (queued, best-effort). Repos have no page to shoot.
-        if (! empty($result['verified']) && $this->submission->kind === 'website') {
+        // Screenshot only verified, eligible websites — skip NSFW + children's
+        // sites (no public preview). Queued, best-effort. Repos have no page.
+        if (! empty($result['verified'])
+            && $this->submission->kind === 'website'
+            && $this->submission->shouldCaptureScreenshot()) {
             CaptureSiteScreenshot::dispatch(
                 $this->submission->url,
                 (string) $this->submission->site_key,
@@ -75,6 +107,8 @@ class ScanShowcaseSubmission implements ShouldQueue
         }
 
         $html = (string) $resp->body();
+        $nsfwFlag = app(NsfwHeuristicDetector::class)->inspect($html);
+        $meta = $this->extractMeta($html);
         $hits = [];
 
         // Look for `@particle-academy/<pkg>` strings (in script tags, bundled chunks, source maps, JSON-LD).
@@ -99,7 +133,7 @@ class ScanShowcaseSubmission implements ShouldQueue
         $badge = $this->detectBadge($html);
 
         if (empty($hits)) {
-            return ['verified' => false, 'reason' => 'no Fancy UI references in homepage HTML', 'badge' => $badge];
+            return ['verified' => false, 'reason' => 'no Fancy UI references in homepage HTML', 'badge' => $badge, 'nsfw_flag' => $nsfwFlag];
         }
 
         return [
@@ -107,6 +141,8 @@ class ScanShowcaseSubmission implements ShouldQueue
             'kind' => 'website',
             'matches' => $hits,
             'badge' => $badge,
+            'nsfw_flag' => $nsfwFlag,
+            'meta' => $meta,
         ];
     }
 
@@ -123,5 +159,44 @@ class ScanShowcaseSubmission implements ShouldQueue
     private function detectBadge(string $html): bool
     {
         return app(FancyPixelDetector::class)->detect($html);
+    }
+
+    /**
+     * Pull a display title + description from the page — preferring Open Graph,
+     * then the document `<title>` / `<meta name="description">`. Trimmed to the
+     * submission's column limits. Best-effort: returns nulls on no match.
+     *
+     * @return array{title: ?string, description: ?string}
+     */
+    private function extractMeta(string $html): array
+    {
+        return [
+            'title' => $this->firstMatch($html, [
+                '/<meta[^>]+(?:property|name)=["\']og:title["\'][^>]+content=["\']([^"\']+)["\']/i',
+                '/<meta[^>]+content=["\']([^"\']+)["\'][^>]+(?:property|name)=["\']og:title["\']/i',
+                '/<title[^>]*>([^<]+)<\/title>/i',
+            ], 120),
+            'description' => $this->firstMatch($html, [
+                '/<meta[^>]+(?:property|name)=["\']og:description["\'][^>]+content=["\']([^"\']+)["\']/i',
+                '/<meta[^>]+content=["\']([^"\']+)["\'][^>]+(?:property|name)=["\']og:description["\']/i',
+                '/<meta[^>]+name=["\']description["\'][^>]+content=["\']([^"\']+)["\']/i',
+            ], 600),
+        ];
+    }
+
+    /**
+     * @param  list<string>  $patterns
+     */
+    private function firstMatch(string $html, array $patterns, int $limit): ?string
+    {
+        foreach ($patterns as $pattern) {
+            if (preg_match($pattern, $html, $m)) {
+                $value = trim(html_entity_decode($m[1], ENT_QUOTES | ENT_HTML5));
+
+                return $value === '' ? null : mb_substr($value, 0, $limit);
+            }
+        }
+
+        return null;
     }
 }

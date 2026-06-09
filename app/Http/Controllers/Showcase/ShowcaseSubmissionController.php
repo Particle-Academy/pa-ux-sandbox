@@ -16,16 +16,22 @@ class ShowcaseSubmissionController extends Controller
 {
     public function index(): Response
     {
+        // Public listing excludes anything not publicly listable — not verified,
+        // suspended, self-declared NSFW, or flagged/confirmed NSFW. Children's
+        // sites ARE listed (badged).
         $submissions = ShowcaseSubmission::query()
-            ->where('status', 'verified')
+            ->publiclyListable()
             ->orderByDesc('id')
             ->get()
-            ->map(fn ($s) => [
+            ->map(fn (ShowcaseSubmission $s) => [
                 'id' => $s->id,
                 'kind' => $s->kind,
                 'url' => $s->url,
                 'title' => $s->title,
                 'description' => $s->description,
+                'category' => $s->category,
+                'category_label' => $s->category ? (ShowcaseSubmission::CATEGORIES[$s->category] ?? null) : null,
+                'made_for_children' => $s->made_for_children,
                 'thumbnail_url' => $s->thumbnail_url,
             ])
             ->all();
@@ -79,6 +85,9 @@ class ShowcaseSubmissionController extends Controller
             'url' => $data['url'],
             'title' => $data['title'] ?? null,
             'description' => $data['description'] ?? null,
+            'category' => $data['category'] ?? null,
+            'nsfw_declared' => $data['nsfw_declared'] ?? false,
+            'made_for_children' => $data['made_for_children'] ?? false,
             'style' => $data['style'] ?? 'badge',
             'mode' => $data['mode'] ?? 'floating',
             'status' => 'pending',

@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Jobs\CaptureSiteScreenshot;
+use App\Models\ShowcaseSubmission;
 use FancyHeuristics\Events\PixelVerificationPassed;
 use FancyHeuristics\Models\HeuristicsEvent;
 
@@ -16,6 +17,12 @@ class CaptureScreenshotOnVerified
     public function handle(PixelVerificationPassed $event): void
     {
         $site = $event->site;
+
+        // Respect moderation — NSFW + children's sites never get a screenshot.
+        $submission = ShowcaseSubmission::query()->where('site_key', $site->site_key)->first();
+        if ($submission && ! $submission->shouldCaptureScreenshot()) {
+            return;
+        }
 
         $busiest = HeuristicsEvent::query()
             ->where('site_key', $site->site_key)

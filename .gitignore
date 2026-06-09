@@ -28,6 +28,13 @@ packages/*/vendor
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# SQLite databases — never commit local OR prod data (the app defaults to
+# DB_CONNECTION=sqlite). Keeps test/seed/local rows from ever shipping.
+/database/*.sqlite
+/database/*.sqlite-journal
+/database/*.sqlite-shm
+/database/*.sqlite-wal
 /emoji-test.txt
 /scripts/
 .bots/state/

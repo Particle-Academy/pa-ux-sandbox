@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests\Showcase;
 
+use App\Models\ShowcaseSubmission;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 /**
  * Validates a showcase registration. The GA-style model: registering NEVER
@@ -28,6 +30,9 @@ class StoreShowcaseSubmissionRequest extends FormRequest
             'url' => 'required|url:http,https|max:255',
             'title' => 'nullable|string|max:120',
             'description' => 'nullable|string|max:600',
+            'category' => ['nullable', Rule::in(array_keys(ShowcaseSubmission::CATEGORIES))],
+            'nsfw_declared' => 'boolean',
+            'made_for_children' => 'boolean',
             'style' => 'nullable|in:badge,mark,beacon',
             'mode' => 'nullable|in:placed,floating',
         ];

@@ -1,6 +1,7 @@
 import { createInertiaApp } from "@inertiajs/react";
 import { createRoot } from "react-dom/client";
 import { FancyAppRoot } from "@particle-academy/fancy-inertia";
+import { FancyDataRoot } from "@particle-academy/fancy-query";
 import { registerAll as registerEChartsAll, registerBuiltinThemes } from "@particle-academy/fancy-echarts";
 import "./showcase-theme";
 import "@particle-academy/react-fancy/styles.css";
@@ -26,8 +27,13 @@ createInertiaApp({
     },
     setup({ App, props, el }) {
         createRoot(el).render(
+            // FancyDataRoot provides the one shared QueryClient (+ Echo when a
+            // consumer wires Reverb) so fancy-query hooks work app-wide. The
+            // showcase dogfoods it on the Leaderboard (cached scope switching).
             <FancyAppRoot>
-                <App {...props} />
+                <FancyDataRoot echo={null}>
+                    <App {...props} />
+                </FancyDataRoot>
             </FancyAppRoot>,
         );
         // The showcase dogfoods its own Fancy Pixel through the *real* flow:

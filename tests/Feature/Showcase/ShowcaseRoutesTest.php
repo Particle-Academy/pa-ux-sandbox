@@ -75,6 +75,21 @@ it('404s on an unknown starter kit', function () {
     $this->get('/starter-kits/does-not-exist')->assertNotFound();
 });
 
+it('serves the leaderboard contributors json feed (fancy-query refetch)', function () {
+    $this->getJson('/api/leaderboard/contributors')
+        ->assertOk()
+        ->assertJson(['scope' => 'all_time', 'snapshot' => null, 'rows' => []]);
+
+    $this->getJson('/api/leaderboard/contributors?scope=last_30_days')
+        ->assertOk()
+        ->assertJsonPath('scope', 'last_30_days');
+
+    // Unknown scope falls back to all_time, never errors.
+    $this->getJson('/api/leaderboard/contributors?scope=bogus')
+        ->assertOk()
+        ->assertJsonPath('scope', 'all_time');
+});
+
 /**
  * Guards the download-zip dependency bug: a kit's bundled package.json must
  * list every @particle-academy package its Kit.tsx imports, at the current

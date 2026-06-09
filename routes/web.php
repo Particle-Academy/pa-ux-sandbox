@@ -140,6 +140,8 @@ Route::get('/dreaming', [DreamingController::class, 'index'])->name('dreaming.in
 Route::get('/dreaming/archived', [DreamingController::class, 'archived'])->name('dreaming.archived');
 
 Route::get('/leaderboard', LeaderboardController::class)->name('leaderboard');
+// JSON feed the Leaderboard page refetches via fancy-query on scope toggle.
+Route::get('/api/leaderboard/contributors', [LeaderboardController::class, 'contributors'])->name('leaderboard.contributors');
 
 // Agent Playground — anonymous, ephemeral MCP session where a visitor's own
 // external agent generates Fancy UI screens + data and drives the full kit

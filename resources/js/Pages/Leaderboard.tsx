@@ -1,5 +1,6 @@
-import { Head, Link } from "@inertiajs/react";
+import { Head } from "@inertiajs/react";
 import { Card, Heading, Table, Text } from "@particle-academy/react-fancy";
+import { useFancyQuery } from "@particle-academy/fancy-query";
 import { useState } from "react";
 import { Layout } from "./Layout";
 import { avatarFrameClass, nameColorClass, type CosmeticSlots } from "../lib/cosmetics";
@@ -118,22 +119,55 @@ function PlayersTable({ players }: { players: Player[] }) {
     );
 }
 
-function ContributorsTable({ scope, snapshot, rows }: Omit<Props, "players">) {
+type Contributors = { scope: Props["scope"]; snapshot: { generated_at: string } | null; rows: Row[] };
+
+/**
+ * Dogfoods @particle-academy/fancy-query: the scope toggle no longer does a
+ * full Inertia page reload — `useFancyQuery` keyed by scope caches each cut and
+ * refetches in place. The initial scope is seeded straight from the Inertia
+ * props (`initialData`), so the first paint needs no request.
+ */
+function ContributorsTable({ scope: initialScope, snapshot: initialSnapshot, rows: initialRows }: Omit<Props, "players">) {
+    const [scope, setScope] = useState<Props["scope"]>(initialScope);
+
+    const { data, isFetching } = useFancyQuery<Contributors>(
+        ["leaderboard-contributors", scope],
+        () => fetch(`/api/leaderboard/contributors?scope=${scope}`).then((r) => r.json()),
+        {
+            initialData:
+                scope === initialScope
+                    ? { scope: initialScope, snapshot: initialSnapshot, rows: initialRows }
+                    : undefined,
+        },
+    );
+
+    const rows = data?.rows ?? [];
+    const snapshot = data?.snapshot ?? null;
+
+    const switchScope = (next: Props["scope"]) => {
+        setScope(next);
+        // Keep the URL shareable without a full Inertia reload.
+        window.history.replaceState(null, "", next === "all_time" ? "/leaderboard" : `/leaderboard?scope=${next}`);
+    };
+
     return (
         <>
-            <div className="mt-4 inline-flex overflow-hidden rounded-md border border-zinc-300 text-xs dark:border-zinc-700">
-                <Link
-                    href="?scope=all_time"
-                    className={`px-3 py-1.5 ${scope === "all_time" ? "bg-violet-600 text-white" : "text-zinc-600 dark:text-zinc-300"}`}
-                >
-                    All time
-                </Link>
-                <Link
-                    href="?scope=last_30_days"
-                    className={`border-l border-zinc-300 px-3 py-1.5 dark:border-zinc-700 ${scope === "last_30_days" ? "bg-violet-600 text-white" : "text-zinc-600 dark:text-zinc-300"}`}
-                >
-                    Last 30 days
-                </Link>
+            <div className="mt-4 inline-flex items-center gap-2">
+                <div className="inline-flex overflow-hidden rounded-md border border-zinc-300 text-xs dark:border-zinc-700">
+                    <button
+                        onClick={() => switchScope("all_time")}
+                        className={`px-3 py-1.5 ${scope === "all_time" ? "bg-violet-600 text-white" : "text-zinc-600 dark:text-zinc-300"}`}
+                    >
+                        All time
+                    </button>
+                    <button
+                        onClick={() => switchScope("last_30_days")}
+                        className={`border-l border-zinc-300 px-3 py-1.5 dark:border-zinc-700 ${scope === "last_30_days" ? "bg-violet-600 text-white" : "text-zinc-600 dark:text-zinc-300"}`}
+                    >
+                        Last 30 days
+                    </button>
+                </div>
+                {isFetching && <Text size="xs" className="!text-zinc-400">updating…</Text>}
             </div>
 
             {rows.length === 0 ? (

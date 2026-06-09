@@ -9,6 +9,7 @@ use FancyHeuristics\Events\PixelVerificationPassed;
 use FancyHeuristics\Models\HeuristicsEvent;
 use FancyHeuristics\Models\HeuristicsSite;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
@@ -57,6 +58,48 @@ it('captures, stores, and upserts a shot for a trusted (own-host) URL', function
         'site_key' => 'fancy-ui-showcase',
         'path' => '/pricing',
     ]);
+});
+
+it('captures via the cloudflare driver — no local browser', function () {
+    Storage::fake('public');
+    config([
+        'screenshots.enabled' => true,
+        'screenshots.driver' => 'cloudflare',
+        'screenshots.cloudflare.account_id' => 'acct123',
+        'screenshots.cloudflare.token' => 'tok123',
+        'app.url' => 'https://showcase.test',
+    ]);
+
+    // Cloudflare returns the PNG base64-encoded inside JSON.
+    Http::fake([
+        'api.cloudflare.com/*' => Http::response([
+            'success' => true,
+            'result' => ['screenshot' => base64_encode('FAKE_PNG_BYTES')],
+        ], 200),
+    ]);
+
+    $shot = app(PageScreenshotService::class)->capture('https://showcase.test/pricing', 'sk', '/pricing');
+
+    expect($shot)->not->toBeNull();
+    Storage::disk('public')->assertExists($shot->image_path);
+    expect(Storage::disk('public')->get($shot->image_path))->toBe('FAKE_PNG_BYTES');
+
+    Http::assertSent(fn ($request) => str_contains($request->url(), '/accounts/acct123/browser-rendering/snapshot')
+        && $request['url'] === 'https://showcase.test/pricing'
+        && data_get($request->data(), 'viewport.width') === 1440);
+});
+
+it('falls back to null when the cloudflare driver errors (wireframe fallback)', function () {
+    config([
+        'screenshots.enabled' => true,
+        'screenshots.driver' => 'cloudflare',
+        'screenshots.cloudflare.account_id' => 'acct123',
+        'screenshots.cloudflare.token' => 'tok123',
+        'app.url' => 'https://showcase.test',
+    ]);
+    Http::fake(['api.cloudflare.com/*' => Http::response(['success' => false], 500)]);
+
+    expect(app(PageScreenshotService::class)->capture('https://showcase.test/x', 'sk', '/x'))->toBeNull();
 });
 
 it('queues a screenshot of the busiest path on pixel verification', function () {

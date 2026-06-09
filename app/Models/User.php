@@ -6,6 +6,7 @@ namespace App\Models;
 use App\Concerns\HasWallet;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Cashier\Billable;
@@ -27,6 +28,8 @@ class User extends Authenticatable
         'password',
         'is_admin',
         'pro_override',
+        'suspended_at',
+        'suspension_reason',
         'github_id',
         'github_username',
         'avatar_url',
@@ -55,7 +58,20 @@ class User extends Authenticatable
             'password' => 'hashed',
             'is_admin' => 'boolean',
             'pro_override' => 'boolean',
+            'suspended_at' => 'datetime',
             'cosmetic_slots' => 'array',
         ];
+    }
+
+    /** A suspended account: login blocked, sites delisted, Pro frozen. */
+    public function isSuspended(): bool
+    {
+        return $this->suspended_at !== null;
+    }
+
+    /** @return HasMany<ShowcaseSubmission, $this> */
+    public function submissions(): HasMany
+    {
+        return $this->hasMany(ShowcaseSubmission::class);
     }
 }

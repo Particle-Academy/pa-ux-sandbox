@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\EnsureUserNotSuspended;
 use App\Http\Middleware\HandleInertiaRequests;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -30,9 +31,11 @@ return Application::configure(basePath: dirname(__DIR__))
             'webhooks/github', // server-to-server; verified via HMAC signature
         ]);
 
-        // Inertia shared props + root view for the Showcase SPA.
+        // Inertia shared props + root view for the Showcase SPA. The suspension
+        // gate runs after auth is resolved so a frozen account is bounced to login.
         $middleware->web(append: [
             HandleInertiaRequests::class,
+            EnsureUserNotSuspended::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

@@ -11,6 +11,9 @@ type AdminUser = {
     avatar_url: string | null;
     is_admin: boolean;
     opted_out: boolean;
+    suspended: boolean;
+    suspension_reason: string | null;
+    can_suspend: boolean;
     pro: boolean;
     proSource: string | null;
     pro_override: boolean;
@@ -51,6 +54,7 @@ function UserShow({ user, metrics, transactions, achievements, ownedSites, allMe
     const coinForm = useForm({ amount: 100, reason: "" });
     const achievementForm = useForm({ achievement: allAchievements[0]?.slug ?? "" });
     const prizeForm = useForm({ prize: allPrizes[0]?.slug ?? "" });
+    const suspendForm = useForm({ reason: "" });
 
     return (
         <>
@@ -77,6 +81,7 @@ function UserShow({ user, metrics, transactions, achievements, ownedSites, allMe
                                     <div style={{ fontSize: 13, color: "var(--fg-3)", marginTop: 2 }}>@{user.github_username}</div>
                                 )}
                                 <div style={{ display: "flex", gap: 6, marginTop: 8, flexWrap: "wrap" }}>
+                                    {user.suspended && <Badge color="red">Suspended</Badge>}
                                     {user.is_admin && <Badge color="violet">Admin</Badge>}
                                     {user.pro && <Badge color="emerald">Pro{user.proSource ? ` · ${user.proSource}` : ""}</Badge>}
                                     {user.opted_out && <Badge color="amber">Opted out</Badge>}
@@ -398,6 +403,44 @@ function UserShow({ user, metrics, transactions, achievements, ownedSites, allMe
                                         Already Pro via {user.proSource} — granting manual Pro keeps it after that lapses.
                                     </Text>
                                 )}
+
+                                {user.suspended ? (
+                                    <div style={{ borderTop: "1px solid var(--border-1)", paddingTop: 10, marginTop: 2 }}>
+                                        {user.suspension_reason && (
+                                            <Text size="xs" className="!text-red-500" style={{ marginBottom: 8 }}>
+                                                Suspended — {user.suspension_reason}
+                                            </Text>
+                                        )}
+                                        <Button
+                                            color="emerald"
+                                            variant="ghost"
+                                            icon="check"
+                                            onClick={() => router.post(`${base}/toggle-suspend`, {}, { preserveScroll: true })}
+                                        >
+                                            Lift suspension
+                                        </Button>
+                                    </div>
+                                ) : user.can_suspend ? (
+                                    <form
+                                        style={{ borderTop: "1px solid var(--border-1)", paddingTop: 10, marginTop: 2, display: "flex", flexDirection: "column", gap: 8 }}
+                                        onSubmit={(e) => {
+                                            e.preventDefault();
+                                            suspendForm.post(`${base}/toggle-suspend`, { preserveScroll: true });
+                                        }}
+                                    >
+                                        <Input
+                                            value={suspendForm.data.reason}
+                                            onValueChange={(v) => suspendForm.setData("reason", v)}
+                                            placeholder="Suspension reason (optional)"
+                                        />
+                                        <Button type="submit" color="red" variant="ghost" icon="ban" loading={suspendForm.processing}>
+                                            Suspend account
+                                        </Button>
+                                        <Text size="xs" className="!text-zinc-500">
+                                            Blocks login, delists every site, and freezes Pro until reinstated.
+                                        </Text>
+                                    </form>
+                                ) : null}
                             </div>
                         </Card.Body>
                     </Card>

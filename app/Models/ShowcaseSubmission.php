@@ -122,7 +122,8 @@ class ShowcaseSubmission extends Model
         return $this->status === 'verified'
             && $this->suspended_at === null
             && ! $this->nsfw_declared
-            && ! in_array($this->nsfw_status, ['flagged', 'confirmed'], true);
+            && ! in_array($this->nsfw_status, ['flagged', 'confirmed'], true)
+            && ! ($this->user?->isSuspended() ?? false);
     }
 
     /** No screenshots for NSFW (declared/flagged/confirmed) or children's sites. */
@@ -147,13 +148,14 @@ class ShowcaseSubmission extends Model
             ->update(['visible' => $this->isPubliclyListable()]);
     }
 
-    /** Verified + listed + not suspended/NSFW/held. */
+    /** Verified + listed + not suspended/NSFW/held, owner not suspended. */
     public function scopePubliclyListable($query)
     {
         return $query->where('status', 'verified')
             ->whereNull('suspended_at')
             ->where('nsfw_declared', false)
-            ->whereNotIn('nsfw_status', ['flagged', 'confirmed']);
+            ->whereNotIn('nsfw_status', ['flagged', 'confirmed'])
+            ->whereDoesntHave('user', fn ($q) => $q->whereNotNull('suspended_at'));
     }
 
     public function user(): BelongsTo

@@ -11,6 +11,7 @@ type AdminUser = {
     github_username: string | null;
     avatar_url: string | null;
     is_admin: boolean;
+    suspended: boolean;
     coins: number;
     joined: string | null;
     proSource: string | null;
@@ -113,7 +114,11 @@ function Users({ users, search, sort, total }: Props) {
                                             <span style={{ fontSize: 13, color: "var(--fg-2)" }}>{user.joined ?? "—"}</span>
                                         </Table.Cell>
                                         <Table.Cell>
-                                            {user.is_admin ? <Badge color="violet">Admin</Badge> : <span style={{ color: "var(--fg-4)" }}>—</span>}
+                                            <div style={{ display: "flex", gap: 5, flexWrap: "wrap" }}>
+                                                {user.suspended && <Badge color="red" size="sm">Suspended</Badge>}
+                                                {user.is_admin && <Badge color="violet" size="sm">Admin</Badge>}
+                                                {!user.suspended && !user.is_admin && <span style={{ color: "var(--fg-4)" }}>—</span>}
+                                            </div>
                                         </Table.Cell>
                                         <Table.Cell>
                                             <Button variant="ghost" size="sm" href={`/admin/users/${user.id}`}>View</Button>

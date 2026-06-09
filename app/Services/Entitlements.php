@@ -56,6 +56,10 @@ class Entitlements
         if ($user === null) {
             return null;
         }
+        // A suspended account loses Pro entitlement (analytics frozen) until reinstated.
+        if ($user->isSuspended()) {
+            return null;
+        }
         if ($user->subscribed()) {
             return 'subscription';
         }

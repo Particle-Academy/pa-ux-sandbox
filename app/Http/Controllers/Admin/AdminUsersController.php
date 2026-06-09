@@ -61,6 +61,7 @@ class AdminUsersController extends Controller
                 'github_username' => $user->github_username,
                 'avatar_url' => $user->avatar_url,
                 'is_admin' => (bool) $user->is_admin,
+                'suspended' => $user->isSuspended(),
                 'coins' => (int) ($user->wallet?->balance ?? 0),
                 'joined' => $user->created_at?->format('M j, Y'),
                 'proSource' => $this->entitlements->proSource($user),
@@ -127,6 +128,9 @@ class AdminUsersController extends Controller
                 'avatar_url' => $user->avatar_url,
                 'is_admin' => (bool) $user->is_admin,
                 'opted_out' => $user->isOptedOut(),
+                'suspended' => $user->isSuspended(),
+                'suspension_reason' => $user->suspension_reason,
+                'can_suspend' => $user->id !== auth()->id() && ! $user->is_admin,
                 'pro' => $summary['pro'],
                 'proSource' => $summary['proSource'],
                 'pro_override' => (bool) $user->pro_override,
@@ -244,5 +248,38 @@ class AdminUsersController extends Controller
             'success',
             "{$user->name} ".($user->pro_override ? 'manually granted Pro.' : 'manual Pro revoked.'),
         );
+    }
+
+    /**
+     * Suspend / reinstate a user — a full account freeze: login is blocked
+     * (EnsureUserNotSuspended), every showcase site is delisted, and Pro is
+     * frozen (Entitlements). Never self, never another admin.
+     */
+    public function toggleSuspend(Request $request, User $user): RedirectResponse
+    {
+        if ($user->id === $request->user()->id) {
+            return back()->with('error', "You can't suspend yourself.");
+        }
+        if ($user->is_admin) {
+            return back()->with('error', "Admins can't be suspended — revoke admin first.");
+        }
+
+        if ($user->isSuspended()) {
+            $user->update(['suspended_at' => null, 'suspension_reason' => null]);
+            // Re-evaluate each site's public listing now the freeze is lifted.
+            $user->submissions()->get()->each->syncHeuristicsVisibility();
+
+            return back()->with('success', "{$user->name}'s suspension was lifted — login + sites restored.");
+        }
+
+        $reason = (string) ($request->validate(['reason' => 'nullable|string|max:255'])['reason'] ?? '');
+        $user->update([
+            'suspended_at' => now(),
+            'suspension_reason' => $reason !== '' ? $reason : 'admin suspension',
+        ]);
+        // Delist every site they own from the public showcase.
+        $user->submissions()->get()->each->syncHeuristicsVisibility();
+
+        return back()->with('success', "{$user->name} suspended — login blocked, sites delisted, Pro frozen.");
     }
 }

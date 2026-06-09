@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\ShowcaseSubmission;
 use App\Models\User;
+use App\Services\Entitlements;
 use App\Services\PlayerProfile;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -17,6 +18,8 @@ use LaravelFunLab\Models\Prize;
 
 class AdminUsersController extends Controller
 {
+    public function __construct(private readonly Entitlements $entitlements) {}
+
     public function index(Request $request): Response
     {
         $search = trim((string) $request->query('q', ''));
@@ -42,6 +45,14 @@ class AdminUsersController extends Controller
 
         $users = $query->paginate(25)->withQueryString();
 
+        // Pre-aggregate each listed user's submission count in one query (no N+1).
+        $userIds = collect($users->items())->pluck('id');
+        $siteCounts = ShowcaseSubmission::query()
+            ->selectRaw('user_id, COUNT(*) as c')
+            ->whereIn('user_id', $userIds)
+            ->groupBy('user_id')
+            ->pluck('c', 'user_id');
+
         return Inertia::render('Admin/Users', [
             'users' => collect($users->items())->map(fn (User $user) => [
                 'id' => $user->id,
@@ -52,6 +63,8 @@ class AdminUsersController extends Controller
                 'is_admin' => (bool) $user->is_admin,
                 'coins' => (int) ($user->wallet?->balance ?? 0),
                 'joined' => $user->created_at?->format('M j, Y'),
+                'proSource' => $this->entitlements->proSource($user),
+                'sites' => (int) ($siteCounts[$user->id] ?? 0),
             ])->all(),
             'search' => $search,
             'sort' => $sort,
@@ -90,6 +103,21 @@ class AdminUsersController extends Controller
             'granted_at' => $grant->granted_at?->format('M j, Y'),
         ])->all();
 
+        $ownedSites = ShowcaseSubmission::query()
+            ->where('user_id', $user->id)
+            ->latest('id')
+            ->get()
+            ->map(fn (ShowcaseSubmission $s) => [
+                'id' => $s->id,
+                'label' => $s->title ?: (parse_url($s->url, PHP_URL_HOST) ?: $s->url),
+                'host' => parse_url($s->url, PHP_URL_HOST) ?: $s->url,
+                'status' => $s->status,
+                'listable' => $s->isPubliclyListable(),
+                'suspended' => $s->isSuspended(),
+                'nsfw_status' => $s->nsfw_status,
+                'created' => $s->created_at?->format('M j, Y'),
+            ])->all();
+
         return Inertia::render('Admin/UserShow', [
             'user' => [
                 'id' => $user->id,
@@ -112,6 +140,7 @@ class AdminUsersController extends Controller
             'metrics' => $metrics,
             'transactions' => $transactions,
             'achievements' => $achievements,
+            'ownedSites' => $ownedSites,
             'allMetrics' => GamedMetric::orderBy('name')->get(['slug', 'name'])
                 ->map(fn ($m) => ['slug' => $m->slug, 'name' => $m->name])->all(),
             'allAchievements' => Achievement::orderBy('name')->get(['slug', 'name'])

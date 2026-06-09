@@ -13,6 +13,8 @@ type AdminUser = {
     is_admin: boolean;
     coins: number;
     joined: string | null;
+    proSource: string | null;
+    sites: number;
 };
 type Props = { users: AdminUser[]; search: string; sort: string; total: number };
 
@@ -72,6 +74,8 @@ function Users({ users, search, sort, total }: Props) {
                             <Table.Head>
                                 <Table.Row>
                                     <Table.Cell header>User</Table.Cell>
+                                    <Table.Cell header>Tier</Table.Cell>
+                                    <Table.Cell header>Sites</Table.Cell>
                                     <Table.Cell header>Coins</Table.Cell>
                                     <Table.Cell header>Joined</Table.Cell>
                                     <Table.Cell header>Role</Table.Cell>
@@ -91,6 +95,16 @@ function Users({ users, search, sort, total }: Props) {
                                                     )}
                                                 </div>
                                             </div>
+                                        </Table.Cell>
+                                        <Table.Cell>
+                                            {user.proSource
+                                                ? <Badge color="emerald" size="sm">Pro · {user.proSource}</Badge>
+                                                : <span style={{ fontSize: 12, color: "var(--fg-4)" }}>Free</span>}
+                                        </Table.Cell>
+                                        <Table.Cell>
+                                            {user.sites > 0
+                                                ? <span style={{ fontFamily: "var(--font-mono)", fontSize: 13, color: "var(--fg-2)" }}>{n(user.sites)}</span>
+                                                : <span style={{ fontSize: 12, color: "var(--fg-4)" }}>—</span>}
                                         </Table.Cell>
                                         <Table.Cell>
                                             <span style={{ fontFamily: "var(--font-mono)", fontSize: 13, color: "var(--fg-2)" }}>{n(user.coins)} ◈</span>

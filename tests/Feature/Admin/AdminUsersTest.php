@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\ShowcaseSubmission;
 use App\Models\User;
 use Database\Seeders\FunLabSeeder;
 use Tests\TestCase;
@@ -130,4 +131,46 @@ it('refuses to change your own admin flag', function () {
         ->assertSessionHas('error');
 
     expect($admin->fresh()->is_admin)->toBeTrue();
+});
+
+it('surfaces each user Pro tier + owned-site count on the index', function () {
+    $admin = adminUser();
+    $owner = User::factory()->create(['name' => 'Site Owner', 'pro_override' => true]);
+    ShowcaseSubmission::create([
+        'user_id' => $owner->id,
+        'kind' => 'website',
+        'url' => 'https://owned.example',
+        'title' => 'Owned Site',
+        'status' => 'verified',
+    ]);
+
+    $this->actingAs($admin)->get('/admin/users?q=Site Owner')
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('Admin/Users')
+            ->where('users.0.name', 'Site Owner')
+            ->where('users.0.proSource', 'manual')
+            ->where('users.0.sites', 1)
+        );
+});
+
+it('lists a user owned showcase sites on the detail page', function () {
+    $admin = adminUser();
+    $owner = User::factory()->create(['name' => 'Builder']);
+    $sub = ShowcaseSubmission::create([
+        'user_id' => $owner->id,
+        'kind' => 'website',
+        'url' => 'https://builder.example',
+        'title' => 'Builder Site',
+        'status' => 'verified',
+    ]);
+
+    $this->actingAs($admin)->get("/admin/users/{$owner->id}")
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('Admin/UserShow')
+            ->has('ownedSites', 1)
+            ->where('ownedSites.0.id', $sub->id)
+            ->where('ownedSites.0.label', 'Builder Site')
+        );
 });

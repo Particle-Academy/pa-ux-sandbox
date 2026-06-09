@@ -24,6 +24,7 @@ type AdminUser = {
 type MetricRow = { metric: string; slug: string; level: number; xp: number };
 type Transaction = { kind: string; amount: number; reason: string | null; at: string | null };
 type AchievementRow = { name: string; granted_at: string | null };
+type OwnedSite = { id: number; label: string; host: string; status: string; listable: boolean; suspended: boolean; nsfw_status: string; created: string | null };
 type Option = { slug: string; name: string };
 
 type Props = {
@@ -31,6 +32,7 @@ type Props = {
     metrics: MetricRow[];
     transactions: Transaction[];
     achievements: AchievementRow[];
+    ownedSites: OwnedSite[];
     allMetrics: Option[];
     allAchievements: Option[];
     allPrizes: Option[];
@@ -42,7 +44,7 @@ function initials(name: string): string {
     return name.split(/\s+/).slice(0, 2).map((p) => p[0]?.toUpperCase() ?? "").join("") || "?";
 }
 
-function UserShow({ user, metrics, transactions, achievements, allMetrics, allAchievements, allPrizes }: Props) {
+function UserShow({ user, metrics, transactions, achievements, ownedSites, allMetrics, allAchievements, allPrizes }: Props) {
     const base = `/admin/users/${user.id}`;
 
     const xpForm = useForm({ metric: allMetrics[0]?.slug ?? "", amount: 100, reason: "" });
@@ -98,6 +100,48 @@ function UserShow({ user, metrics, transactions, achievements, allMetrics, allAc
                         />
                         <StatCard label="Total XP" value={n(user.totalXp)} icon="award" />
                     </div>
+
+                    <Card>
+                        <Card.Header>
+                            <div style={{ fontSize: 14, fontWeight: 600, color: "var(--fg-1)" }}>Owned sites ({ownedSites.length})</div>
+                        </Card.Header>
+                        {ownedSites.length === 0 ? (
+                            <EmptyRow>No showcase submissions yet.</EmptyRow>
+                        ) : (
+                            <div className="admin-table-wrap">
+                                <Table>
+                                    <Table.Head>
+                                        <Table.Row>
+                                            <Table.Cell header>Site</Table.Cell>
+                                            <Table.Cell header>Status</Table.Cell>
+                                            <Table.Cell header></Table.Cell>
+                                        </Table.Row>
+                                    </Table.Head>
+                                    <Table.Body>
+                                        {ownedSites.map((s) => (
+                                            <Table.Row key={s.id}>
+                                                <Table.Cell>
+                                                    <Link href={`/admin/sites/${s.id}`} style={{ fontSize: 13, fontWeight: 500, color: "var(--fg-1)" }}>{s.label}</Link>
+                                                    <div style={{ fontFamily: "var(--font-mono)", fontSize: 11, color: "var(--fg-4)", marginTop: 2 }}>{s.host}</div>
+                                                </Table.Cell>
+                                                <Table.Cell>
+                                                    <div style={{ display: "flex", gap: 5, flexWrap: "wrap" }}>
+                                                        <Badge color={s.status === "verified" ? "emerald" : s.status === "rejected" ? "red" : "zinc"} size="sm">{s.status}</Badge>
+                                                        {s.suspended && <Badge color="red" size="sm">suspended</Badge>}
+                                                        {s.nsfw_status === "flagged" && <Badge color="amber" size="sm">NSFW?</Badge>}
+                                                        {s.listable && <Badge color="violet" size="sm" variant="soft">listed</Badge>}
+                                                    </div>
+                                                </Table.Cell>
+                                                <Table.Cell>
+                                                    <Button variant="ghost" size="sm" href={`/admin/sites/${s.id}`}>Open →</Button>
+                                                </Table.Cell>
+                                            </Table.Row>
+                                        ))}
+                                    </Table.Body>
+                                </Table>
+                            </div>
+                        )}
+                    </Card>
 
                     <Card>
                         <Card.Header>

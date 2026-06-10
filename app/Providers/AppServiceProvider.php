@@ -57,8 +57,16 @@ class AppServiceProvider extends ServiceProvider
         View::composer('showcase-app', function ($view): void {
             $view->with('seo', Seo::forRequest(request()));
             // Admin-pasted tracker/pixel snippet (Admin → Settings), injected
-            // raw into the page exactly like an external consumer's embed.
-            $view->with('tracker', Setting::get('tracker_code', ''));
+            // raw into the page exactly like an external consumer's embed. On a
+            // secure request, upgrade any http:// in it to https:// — a snippet
+            // generated/pasted when APP_URL was http would otherwise have its
+            // pixel beacon + verification ping blocked as mixed content (and so
+            // collect zero events on the live site).
+            $tracker = (string) Setting::get('tracker_code', '');
+            if ($tracker !== '' && request()->isSecure()) {
+                $tracker = str_replace('http://', 'https://', $tracker);
+            }
+            $view->with('tracker', $tracker);
         });
 
         // Login throttle — keyed by email + IP so a single attacker IP

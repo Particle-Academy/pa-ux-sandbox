@@ -3,12 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Jobs\CaptureSiteScreenshot;
 use App\Jobs\ScanShowcaseSubmission;
 use App\Models\ShowcaseSubmission;
+use App\Models\SitePageShot;
 use App\Models\User;
 use App\Services\Entitlements;
 use App\Services\Heuristics\HeuristicsReport;
+use App\Services\Heuristics\PageScreenshotService;
 use App\Services\ShowcaseRewards;
 use FancyHeuristics\Models\HeuristicsEvent;
 use FancyHeuristics\Models\HeuristicsSite;
@@ -87,6 +88,11 @@ class AdminSitesController extends Controller
         $heatmap = $report->heatmapForBusiestPath($key);
         $site = HeuristicsSite::query()->where('site_key', $key)->first();
 
+        // Most recent capture for ANY path — shown as a standalone preview so the
+        // Recapture button has immediate visible feedback even before events
+        // accumulate a heatmap (the focus heatmap below needs pointer data).
+        $latest = SitePageShot::query()->where('site_key', $key)->latest('captured_at')->first();
+
         return Inertia::render('Admin/SiteShow', [
             'site' => [
                 'id' => $submission->id,
@@ -120,6 +126,11 @@ class AdminSitesController extends Controller
             'topPaths' => $report->topPaths($key),
             'heatmap' => $heatmap,
             'heatmapShot' => $heatmap ? $report->screenshotForPath($key, $heatmap['path']) : null,
+            'latestShot' => $latest ? [
+                'url' => $latest->url(),
+                'path' => $latest->path,
+                'capturedAt' => $latest->captured_at?->diffForHumans(),
+            ] : null,
             'recentSessions' => $report->recentSessions($key),
             'eventsOverTime' => $report->eventsOverTime($key),
             'pending' => (int) ShowcaseSubmission::where('status', 'pending')->count(),
@@ -153,18 +164,36 @@ class AdminSitesController extends Controller
         return back()->with('success', "Re-queued {$this->label($submission)} for scanning.");
     }
 
-    public function recapture(ShowcaseSubmission $submission): RedirectResponse
+    /**
+     * Capture a fresh screenshot NOW (synchronously) — the manual admin button
+     * shouldn't depend on a running queue worker, and any driver/credential
+     * failure should surface immediately in the flash message rather than vanish
+     * into the log. Targets the busiest path (what the focus heatmap displays),
+     * falling back to the registered URL's path.
+     */
+    public function recapture(ShowcaseSubmission $submission, PageScreenshotService $shots): RedirectResponse
     {
         if (! $submission->shouldCaptureScreenshot()) {
             return back()->with('error', 'NSFW / children\'s sites do not get screenshots.');
         }
-        CaptureSiteScreenshot::dispatch(
-            $submission->url,
-            (string) $submission->site_key,
-            parse_url($submission->url, PHP_URL_PATH) ?: '/',
-        );
 
-        return back()->with('success', "Queued a fresh screenshot for {$this->label($submission)}.");
+        $key = (string) $submission->site_key;
+        $busiest = HeuristicsEvent::query()
+            ->where('site_key', $key)
+            ->whereIn('kind', ['pointer', 'click'])
+            ->selectRaw('path, COUNT(*) as hits')
+            ->groupBy('path')
+            ->orderByDesc('hits')
+            ->value('path');
+        $path = $busiest ?: (parse_url($submission->url, PHP_URL_PATH) ?: '/');
+        $origin = preg_replace('#^(https?://[^/]+).*#i', '$1', $submission->url);
+        $url = rtrim((string) $origin, '/').'/'.ltrim($path, '/');
+
+        $shot = $shots->capture($url, $key, $path);
+
+        return $shot
+            ? back()->with('success', "Captured a fresh screenshot of {$path} for {$this->label($submission)}.")
+            : back()->with('error', "Screenshot capture failed for {$path} — check SCREENSHOTS_DRIVER + the Cloudflare credentials, and the server logs.");
     }
 
     public function feature(Request $request, ShowcaseSubmission $submission): RedirectResponse

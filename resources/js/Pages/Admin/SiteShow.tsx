@@ -1,6 +1,6 @@
 import { Head, router, useForm } from "@inertiajs/react";
 import { useState } from "react";
-import { Avatar, Badge, Button, Card, Heading, Input, Select, Text } from "@particle-academy/react-fancy";
+import { Avatar, Badge, Button, Card, Heading, Icon, Input, Select, Text } from "@particle-academy/react-fancy";
 import { adminLayout } from "./AdminLayout";
 import { PageHeader } from "./ui";
 import { KpiGrid, FocusHeatmap, EventsOverTime, TopPathsTable, RecentSessions, type Kpis, type Heatmap, type HeatmapShot, type TopPath, type RecentSession, type DayBucket } from "./AnalyticsBlocks";
@@ -18,13 +18,14 @@ type Category = { slug: string; label: string };
 
 const initials = (name: string): string =>
     name.split(/\s+/).slice(0, 2).map((p) => p[0]?.toUpperCase() ?? "").join("") || "?";
+type LatestShot = { url: string; path: string; capturedAt: string | null } | null;
 type Props = {
     site: Site; owner: Owner; categories: Category[];
-    kpis: Kpis; topPaths: TopPath[]; heatmap: Heatmap; heatmapShot: HeatmapShot;
+    kpis: Kpis; topPaths: TopPath[]; heatmap: Heatmap; heatmapShot: HeatmapShot; latestShot: LatestShot;
     recentSessions: RecentSession[]; eventsOverTime: DayBucket[];
 };
 
-function SiteShow({ site, owner, categories, kpis, topPaths, heatmap, heatmapShot, recentSessions, eventsOverTime }: Props) {
+function SiteShow({ site, owner, categories, kpis, topPaths, heatmap, heatmapShot, latestShot, recentSessions, eventsOverTime }: Props) {
     const base = `/admin/sites/${site.id}`;
     const post = (action: string, data: Record<string, unknown> = {}) => router.post(`${base}/${action}`, data, { preserveScroll: true });
     const [suspendReason, setSuspendReason] = useState("");
@@ -149,6 +150,29 @@ function SiteShow({ site, owner, categories, kpis, topPaths, heatmap, heatmapSho
                     </Card.Body>
                 </Card>
             </div>
+
+            {site.kind === "website" && (
+                <Card className="mt-6">
+                    <Card.Header>
+                        <div className="flex w-full items-center justify-between gap-3">
+                            <span className="inline-flex items-center gap-2"><Icon name="camera" size={16} /> Latest screenshot</span>
+                            {latestShot?.capturedAt && <Badge color="zinc" variant="soft">{latestShot.capturedAt}</Badge>}
+                        </div>
+                    </Card.Header>
+                    <Card.Body>
+                        {latestShot ? (
+                            <>
+                                <Text size="xs" className="!text-zinc-400 mb-2">Captured path: <code className="font-mono">{latestShot.path}</code></Text>
+                                <img src={latestShot.url} alt="" className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700" style={{ objectFit: "contain" }} />
+                            </>
+                        ) : (
+                            <Text size="sm" className="!text-zinc-500">
+                                No screenshot captured yet. Click <strong>Recapture screenshot</strong> above — it renders the page server-side via the configured driver and shows here.
+                            </Text>
+                        )}
+                    </Card.Body>
+                </Card>
+            )}
 
             <Heading as="h2" size="md" className="mt-8 mb-3">Analytics</Heading>
             {!hasData ? (

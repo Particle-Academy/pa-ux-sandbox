@@ -18,6 +18,13 @@ function asEnv(string $env): void
     app()->detectEnvironment(fn () => $env);
 }
 
+it('leads with GitHub sign-in on the login page', function () {
+    $this->get('/login')
+        ->assertOk()
+        ->assertSee('Continue with GitHub')
+        ->assertSee(route('auth.github'), false);
+});
+
 it('renders the dev login buttons on the login page in local', function () {
     asEnv('local');
 

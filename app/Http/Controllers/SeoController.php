@@ -44,22 +44,31 @@ class SeoController extends Controller
     public function robots(): Response
     {
         $base = $this->base();
+
+        // Private / non-public areas — never index or scrape. Applied to EVERY
+        // user-agent group (incl. the AI bots), so the admin dashboard and auth
+        // pages are off-limits to bots and to our own screenshot scraper, which
+        // reads this same file (App\Support\RobotsTxt).
+        $disallow = ['/admin', '/auth', '/login', '/logout', '/profile', '/dev-login', '/subscriptions', '/checkout'];
+
         $lines = [
             '# Fancy UI — robots.txt',
-            '# Humans and agents both welcome. We want LLMs to read us.',
+            '# Humans and agents both welcome. We want LLMs to read our public pages.',
             '',
             'User-agent: *',
             'Allow: /',
-            'Disallow: /admin',
-            'Disallow: /auth',
-            'Disallow: /subscriptions',
-            'Disallow: /checkout',
-            '',
         ];
+        foreach ($disallow as $path) {
+            $lines[] = "Disallow: {$path}";
+        }
+        $lines[] = '';
 
         foreach (self::AI_BOTS as $bot) {
             $lines[] = "User-agent: {$bot}";
             $lines[] = 'Allow: /';
+            foreach ($disallow as $path) {
+                $lines[] = "Disallow: {$path}";
+            }
             $lines[] = '';
         }
 

@@ -1,5 +1,6 @@
 <?php
 
+use App\Support\RobotsTxt;
 use App\Support\Seo;
 use Tests\TestCase;
 
@@ -17,6 +18,34 @@ it('serves a robots.txt that welcomes LLM bots and points at the sitemap', funct
     $res->assertSee('User-agent: GPTBot', false);
     $res->assertSee('User-agent: ClaudeBot', false);
     $res->assertSee('Sitemap: '.config('app.url').'/sitemap.xml', false);
+});
+
+it('disallows the admin + auth surface for every user-agent, including AI bots', function () {
+    $res = $this->get('/robots.txt');
+    $res->assertOk();
+
+    // The disallow block repeats for the wildcard group AND each AI-bot group,
+    // so the dashboard is off-limits to every crawler (no per-bot Allow leak).
+    expect(substr_count((string) $res->getContent(), 'Disallow: /admin'))->toBeGreaterThan(1);
+    $res->assertSee('Disallow: /auth', false)
+        ->assertSee('Disallow: /login', false)
+        ->assertSee('Disallow: /profile', false);
+});
+
+it('RobotsTxt evaluates Disallow/Allow with longest-prefix precedence', function () {
+    $body = "User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /auth\n";
+    expect(RobotsTxt::allows($body, '/'))->toBeTrue()
+        ->and(RobotsTxt::allows($body, '/packages'))->toBeTrue()
+        ->and(RobotsTxt::allows($body, '/admin/sites'))->toBeFalse()
+        ->and(RobotsTxt::allows($body, '/auth/github'))->toBeFalse();
+
+    // A more specific Allow overrides a broader Disallow.
+    $nested = "User-agent: *\nDisallow: /admin\nAllow: /admin/public\n";
+    expect(RobotsTxt::allows($nested, '/admin/secret'))->toBeFalse()
+        ->and(RobotsTxt::allows($nested, '/admin/public/x'))->toBeTrue();
+
+    // No rules → allowed.
+    expect(RobotsTxt::allows('', '/admin'))->toBeTrue();
 });
 
 it('serves a well-formed sitemap with the home page and package URLs', function () {

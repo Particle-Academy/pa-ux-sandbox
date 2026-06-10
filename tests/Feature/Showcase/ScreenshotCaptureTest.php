@@ -6,7 +6,6 @@ use App\Services\Heuristics\HeuristicsReport;
 use App\Services\Heuristics\PageScreenshotService;
 use App\Services\Showcase\SafeUrlFetcher;
 use FancyHeuristics\Events\PixelVerificationPassed;
-use FancyHeuristics\Models\HeuristicsEvent;
 use FancyHeuristics\Models\HeuristicsSite;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Http;
@@ -38,6 +37,7 @@ it('refuses to capture an SSRF-unsafe external URL', function () {
 it('captures, stores, and upserts a shot for a trusted (own-host) URL', function () {
     Storage::fake('public');
     config(['screenshots.enabled' => true, 'app.url' => 'https://showcase.test']);
+    Http::fake(['*/robots.txt' => Http::response("User-agent: *\nAllow: /\n", 200)]);
 
     // Subclass overrides the protected render() seam so no headless Chrome runs.
     $svc = new class(app(SafeUrlFetcher::class)) extends PageScreenshotService
@@ -102,25 +102,19 @@ it('falls back to null when the cloudflare driver errors (wireframe fallback)', 
     expect(app(PageScreenshotService::class)->capture('https://showcase.test/x', 'sk', '/x'))->toBeNull();
 });
 
-it('queues a screenshot of the busiest path on pixel verification', function () {
+it('queues a screenshot of the site homepage on pixel verification', function () {
     Bus::fake();
 
-    $site = HeuristicsSite::create(['site_key' => 'sk', 'url' => 'https://sk.test', 'visible' => true]);
-    foreach ([['/', 1], ['/pricing', 5], ['/docs', 2]] as [$path, $n]) {
-        for ($i = 0; $i < $n; $i++) {
-            HeuristicsEvent::create([
-                'site_key' => 'sk', 'kind' => 'click', 'path' => $path,
-                'x' => 1, 'y' => 1, 'occurred_at' => now(),
-            ]);
-        }
-    }
+    // The registered URL is sk.test/app — its homepage path is /app, never the
+    // busiest browsed path (which could be a private/admin route).
+    $site = HeuristicsSite::create(['site_key' => 'sk', 'url' => 'https://sk.test/app', 'visible' => true]);
 
     event(new PixelVerificationPassed($site));
 
     Bus::assertDispatched(CaptureSiteScreenshot::class, function (CaptureSiteScreenshot $job) {
         return $job->siteKey === 'sk'
-            && $job->path === '/pricing'
-            && $job->url === 'https://sk.test/pricing';
+            && $job->path === '/app'
+            && $job->url === 'https://sk.test/app';
     });
 });
 

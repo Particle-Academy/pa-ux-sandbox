@@ -85,7 +85,10 @@ class AdminSitesController extends Controller
     {
         $submission->load('user');
         $key = (string) $submission->site_key;
-        $heatmap = $report->heatmapForBusiestPath($key);
+        // Heatmap + screenshot are both keyed to the site's homepage, so the heat
+        // overlay aligns with the captured page (we only ever shoot the homepage).
+        $homePath = parse_url($submission->url, PHP_URL_PATH) ?: '/';
+        $heatmap = $report->heatmapForPath($key, $homePath);
         $site = HeuristicsSite::query()->where('site_key', $key)->first();
 
         // Most recent capture for ANY path — shown as a standalone preview so the
@@ -125,7 +128,7 @@ class AdminSitesController extends Controller
             'kpis' => $report->kpis($key),
             'topPaths' => $report->topPaths($key),
             'heatmap' => $heatmap,
-            'heatmapShot' => $heatmap ? $report->screenshotForPath($key, $heatmap['path']) : null,
+            'heatmapShot' => $report->screenshotForPath($key, $homePath),
             'latestShot' => $latest ? [
                 'url' => $latest->url(),
                 'path' => $latest->path,
@@ -168,8 +171,8 @@ class AdminSitesController extends Controller
      * Capture a fresh screenshot NOW (synchronously) — the manual admin button
      * shouldn't depend on a running queue worker, and any driver/credential
      * failure should surface immediately in the flash message rather than vanish
-     * into the log. Targets the busiest path (what the focus heatmap displays),
-     * falling back to the registered URL's path.
+     * into the log. Always shoots the site's own registered URL (its homepage),
+     * never an internal path; honors robots.txt via the screenshot service.
      */
     public function recapture(ShowcaseSubmission $submission, PageScreenshotService $shots): RedirectResponse
     {
@@ -178,15 +181,12 @@ class AdminSitesController extends Controller
         }
 
         $key = (string) $submission->site_key;
-        $path = $shots->busiestPublicPath($key, $submission->url);
-        $origin = preg_replace('#^(https?://[^/]+).*#i', '$1', $submission->url);
-        $url = rtrim((string) $origin, '/').'/'.ltrim($path, '/');
-
-        $shot = $shots->capture($url, $key, $path);
+        $path = parse_url($submission->url, PHP_URL_PATH) ?: '/';
+        $shot = $shots->capture($submission->url, $key, $path);
 
         return $shot
-            ? back()->with('success', "Captured a fresh screenshot of {$path} for {$this->label($submission)}.")
-            : back()->with('error', "Screenshot capture failed for {$path} — check SCREENSHOTS_DRIVER + the Cloudflare credentials, and the server logs.");
+            ? back()->with('success', "Captured a fresh screenshot of {$this->label($submission)}.")
+            : back()->with('error', 'Screenshot capture failed — check SCREENSHOTS_DRIVER + the Cloudflare credentials (or robots.txt blocked it), and the server logs.');
     }
 
     public function feature(Request $request, ShowcaseSubmission $submission): RedirectResponse

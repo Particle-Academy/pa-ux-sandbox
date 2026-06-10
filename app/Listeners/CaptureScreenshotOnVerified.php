@@ -4,19 +4,16 @@ namespace App\Listeners;
 
 use App\Jobs\CaptureSiteScreenshot;
 use App\Models\ShowcaseSubmission;
-use App\Services\Heuristics\PageScreenshotService;
 use FancyHeuristics\Events\PixelVerificationPassed;
 
 /**
  * On every successful pixel verification (twice-daily poll + on-demand), queue a
- * fresh screenshot of the site's busiest PUBLIC path so the focus heatmap always
- * draws on a current image of the real page. Falls back to the registered URL's
- * path. Admin/auth routes are excluded — they'd just capture a login redirect.
+ * fresh screenshot of the site's own registered URL — its homepage, never an
+ * internal path — so the focus heatmap always draws on a current image of the
+ * real landing page. The screenshot service additionally honors robots.txt.
  */
 class CaptureScreenshotOnVerified
 {
-    public function __construct(private PageScreenshotService $shots) {}
-
     public function handle(PixelVerificationPassed $event): void
     {
         $site = $event->site;
@@ -27,18 +24,8 @@ class CaptureScreenshotOnVerified
             return;
         }
 
-        $path = $this->shots->busiestPublicPath($site->site_key, $site->url);
+        $path = parse_url($site->url, PHP_URL_PATH) ?: '/';
 
-        CaptureSiteScreenshot::dispatch($this->urlForPath($site->url, $path), $site->site_key, $path);
-    }
-
-    /**
-     * Combine the registered site's origin with the target path.
-     */
-    private function urlForPath(string $registeredUrl, string $path): string
-    {
-        $origin = preg_replace('#^(https?://[^/]+).*#i', '$1', $registeredUrl);
-
-        return rtrim((string) $origin, '/').'/'.ltrim($path, '/');
+        CaptureSiteScreenshot::dispatch($site->url, $site->site_key, $path);
     }
 }

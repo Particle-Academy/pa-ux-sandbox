@@ -7,7 +7,7 @@ use App\Models\User;
 use App\Services\Heuristics\PageScreenshotService;
 use App\Services\Showcase\SafeUrlFetcher;
 use Database\Seeders\FunLabSeeder;
-use FancyHeuristics\Models\HeuristicsEvent;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
@@ -17,14 +17,38 @@ beforeEach(function () {
     $this->seed(FunLabSeeder::class);
 });
 
+/** Fake a permissive robots.txt so capture() proceeds (no real network). */
+function allowRobots(): void
+{
+    Http::fake(['*/robots.txt' => Http::response("User-agent: *\nAllow: /\n", 200)]);
+}
+
 function screenshotAdmin(): User
 {
     return User::factory()->create(['is_admin' => true]);
 }
 
-it('captures a screenshot synchronously from the recapture button', function () {
+function fakeRenderingService(string $bytes = 'FAKE_PNG'): void
+{
+    app()->bind(PageScreenshotService::class, fn ($app) => new class($app->make(SafeUrlFetcher::class), $bytes) extends PageScreenshotService
+    {
+        public function __construct(SafeUrlFetcher $fetcher, private string $bytes)
+        {
+            parent::__construct($fetcher);
+        }
+
+        protected function render(string $url, int $width, int $height): string
+        {
+            return $this->bytes;
+        }
+    });
+}
+
+it('recaptures the site homepage synchronously (never an internal path)', function () {
     Storage::fake('public');
     config(['screenshots.enabled' => true, 'app.url' => 'https://showcase.test']);
+    allowRobots();
+    fakeRenderingService();
 
     $sub = ShowcaseSubmission::create([
         'user_id' => User::factory()->create()->id,
@@ -34,25 +58,18 @@ it('captures a screenshot synchronously from the recapture button', function () 
         'status' => 'verified',
     ]);
 
-    // Override the render seam so no headless Chrome / Cloudflare call runs.
-    $this->app->bind(PageScreenshotService::class, fn ($app) => new class($app->make(SafeUrlFetcher::class)) extends PageScreenshotService
-    {
-        protected function render(string $url, int $width, int $height): string
-        {
-            return 'FAKE_PNG';
-        }
-    });
-
     $this->actingAs(screenshotAdmin())
         ->post("/admin/sites/{$sub->id}/recapture")
         ->assertRedirect()
         ->assertSessionHas('success');
 
-    $this->assertDatabaseHas('site_page_shots', ['site_key' => $sub->site_key]);
+    // The captured path is the registered URL's homepage, not /admin/anything.
+    $this->assertDatabaseHas('site_page_shots', ['site_key' => $sub->site_key, 'path' => '/']);
 });
 
 it('reports an error (not silence) when capture fails', function () {
     config(['screenshots.enabled' => true, 'app.url' => 'https://showcase.test']);
+    allowRobots();
 
     $sub = ShowcaseSubmission::create([
         'user_id' => User::factory()->create()->id,
@@ -75,6 +92,17 @@ it('reports an error (not silence) when capture fails', function () {
         ->post("/admin/sites/{$sub->id}/recapture")
         ->assertRedirect()
         ->assertSessionHas('error');
+});
+
+it('honors robots.txt — a disallowed page is never captured', function () {
+    Storage::fake('public');
+    config(['screenshots.enabled' => true, 'app.url' => 'https://showcase.test']);
+    // robots.txt blocks everything for us → capture must bail before rendering.
+    Http::fake(['*/robots.txt' => Http::response("User-agent: *\nDisallow: /\n", 200)]);
+    fakeRenderingService();
+
+    expect(app(PageScreenshotService::class)->capture('https://showcase.test/', 'sk', '/'))->toBeNull();
+    $this->assertDatabaseMissing('site_page_shots', ['site_key' => 'sk']);
 });
 
 it('exposes the latest screenshot on the site detail page', function () {
@@ -100,24 +128,6 @@ it('exposes the latest screenshot on the site detail page', function () {
             ->where('latestShot.path', '/')
             ->where('latestShot.url', '/storage/heatmaps/x/y.png')
         );
-});
-
-it('never targets admin/auth paths for a screenshot (would capture a login page)', function () {
-    // /admin/sites has the most hits, but an unauthenticated renderer would only
-    // get a login redirect there — so the public /pricing must win.
-    foreach ([['/admin/sites', 9], ['/login', 6], ['/pricing', 3], ['/', 1]] as [$path, $hits]) {
-        for ($i = 0; $i < $hits; $i++) {
-            HeuristicsEvent::create(['site_key' => 'sk', 'kind' => 'click', 'path' => $path, 'x' => 1, 'y' => 1, 'occurred_at' => now()]);
-        }
-    }
-
-    expect(app(PageScreenshotService::class)->busiestPublicPath('sk', 'https://sk.test'))->toBe('/pricing');
-});
-
-it('falls back to the registered homepage when only private paths have events', function () {
-    HeuristicsEvent::create(['site_key' => 'sk2', 'kind' => 'click', 'path' => '/admin/x', 'x' => 1, 'y' => 1, 'occurred_at' => now()]);
-
-    expect(app(PageScreenshotService::class)->busiestPublicPath('sk2', 'https://sk2.test/home'))->toBe('/home');
 });
 
 it('upgrades an http tracker snippet to https on a secure request', function () {

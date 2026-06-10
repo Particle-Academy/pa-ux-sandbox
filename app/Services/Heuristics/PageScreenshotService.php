@@ -4,7 +4,7 @@ namespace App\Services\Heuristics;
 
 use App\Models\SitePageShot;
 use App\Services\Showcase\SafeUrlFetcher;
-use FancyHeuristics\Models\HeuristicsEvent;
+use App\Support\RobotsTxt;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Spatie\Browsershot\Browsershot;
@@ -20,37 +20,39 @@ use Spatie\Browsershot\Browsershot;
  */
 class PageScreenshotService
 {
-    /** Paths that must never be screenshotted — they require auth and would just
-     *  capture a login redirect. LIKE-prefixed groups + exact matches. */
-    private const PRIVATE_PREFIXES = ['/admin', '/auth'];
-
-    private const PRIVATE_EXACT = ['/login', '/logout', '/profile', '/dev-login'];
+    /** User-agent we present to robots.txt (and identify as when rendering). */
+    public const USER_AGENT = 'FancyUiScreenshotBot';
 
     public function __construct(private SafeUrlFetcher $fetcher) {}
 
     /**
-     * The site's busiest PUBLIC path (most pointer/click events) for the focus
-     * heatmap + screenshot — excluding admin/auth routes, which an unauthenticated
-     * headless renderer would only capture as a login page. Falls back to the
-     * registered URL's path (its homepage).
+     * Honor the target host's robots.txt for our user-agent. Fetched once per
+     * capture; unreachable / non-200 / unparseable → allowed (default-open) so a
+     * quirky robots file never silently kills a legitimate capture. Our own
+     * robots.txt disallows /admin, /auth, /login, … so the scraper can never
+     * shoot the dashboard, and submitters' rules are respected too.
      */
-    public function busiestPublicPath(string $siteKey, string $registeredUrl): string
+    private function allowedByRobots(string $url): bool
     {
-        $query = HeuristicsEvent::query()
-            ->where('site_key', $siteKey)
-            ->whereIn('kind', ['pointer', 'click'])
-            ->whereNotIn('path', self::PRIVATE_EXACT);
+        $origin = preg_replace('#^(https?://[^/]+).*#i', '$1', $url);
+        if ($origin === null || $origin === '') {
+            return true;
+        }
+        $path = parse_url($url, PHP_URL_PATH) ?: '/';
 
-        foreach (self::PRIVATE_PREFIXES as $prefix) {
-            $query->where('path', 'not like', $prefix.'%');
+        try {
+            $res = Http::timeout((int) config('screenshots.robots_timeout', 8))
+                ->withHeaders(['User-Agent' => self::USER_AGENT])
+                ->get(rtrim($origin, '/').'/robots.txt');
+        } catch (\Throwable $e) {
+            return true;
         }
 
-        $busiest = $query->selectRaw('path, COUNT(*) as hits')
-            ->groupBy('path')
-            ->orderByDesc('hits')
-            ->value('path');
+        if (! $res->ok()) {
+            return true;
+        }
 
-        return $busiest ?: (parse_url($registeredUrl, PHP_URL_PATH) ?: '/');
+        return RobotsTxt::allows($res->body(), $path, self::USER_AGENT);
     }
 
     public function capture(string $url, string $siteKey, string $path): ?SitePageShot
@@ -65,6 +67,13 @@ class PageScreenshotService
             } catch (\Throwable $e) {
                 return null;
             }
+        }
+
+        // Be a polite scraper: never capture a page the site's robots.txt blocks
+        // for us. Our own robots.txt disallows /admin, /auth, /login, … so we can
+        // never screenshot the dashboard, and external sites' rules are honored.
+        if (! $this->allowedByRobots($url)) {
+            return null;
         }
 
         $width = (int) config('screenshots.width', 1440);

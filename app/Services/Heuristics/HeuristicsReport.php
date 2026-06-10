@@ -127,6 +127,18 @@ class HeuristicsReport
     }
 
     /**
+     * Heatmap grid for a specific path — e.g. a site's registered homepage, so
+     * the heat overlay aligns with the homepage screenshot. Same shape as
+     * heatmapForBusiestPath; null when that path has no pointer data.
+     *
+     * @return array{site_key: string, path: string, grid_size: int, sample_count: int, max: int, cells: list<array{x:int, y:int, count:int, weight:float}>}|null
+     */
+    public function heatmapForPath(string $site, string $path): ?array
+    {
+        return Heuristics::heatmap($site, $path);
+    }
+
+    /**
      * The stored screenshot for a path on a site, shaped as the heatmap
      * background. Null when nothing has been captured yet (the frontend then
      * falls back to the wireframe). vw/vh are the capture viewport so the

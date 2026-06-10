@@ -4,6 +4,7 @@ namespace App\Services\Heuristics;
 
 use App\Models\SitePageShot;
 use App\Services\Showcase\SafeUrlFetcher;
+use FancyHeuristics\Models\HeuristicsEvent;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Spatie\Browsershot\Browsershot;
@@ -19,7 +20,38 @@ use Spatie\Browsershot\Browsershot;
  */
 class PageScreenshotService
 {
+    /** Paths that must never be screenshotted — they require auth and would just
+     *  capture a login redirect. LIKE-prefixed groups + exact matches. */
+    private const PRIVATE_PREFIXES = ['/admin', '/auth'];
+
+    private const PRIVATE_EXACT = ['/login', '/logout', '/profile', '/dev-login'];
+
     public function __construct(private SafeUrlFetcher $fetcher) {}
+
+    /**
+     * The site's busiest PUBLIC path (most pointer/click events) for the focus
+     * heatmap + screenshot — excluding admin/auth routes, which an unauthenticated
+     * headless renderer would only capture as a login page. Falls back to the
+     * registered URL's path (its homepage).
+     */
+    public function busiestPublicPath(string $siteKey, string $registeredUrl): string
+    {
+        $query = HeuristicsEvent::query()
+            ->where('site_key', $siteKey)
+            ->whereIn('kind', ['pointer', 'click'])
+            ->whereNotIn('path', self::PRIVATE_EXACT);
+
+        foreach (self::PRIVATE_PREFIXES as $prefix) {
+            $query->where('path', 'not like', $prefix.'%');
+        }
+
+        $busiest = $query->selectRaw('path, COUNT(*) as hits')
+            ->groupBy('path')
+            ->orderByDesc('hits')
+            ->value('path');
+
+        return $busiest ?: (parse_url($registeredUrl, PHP_URL_PATH) ?: '/');
+    }
 
     public function capture(string $url, string $siteKey, string $path): ?SitePageShot
     {

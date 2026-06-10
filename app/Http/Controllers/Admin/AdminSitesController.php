@@ -178,14 +178,7 @@ class AdminSitesController extends Controller
         }
 
         $key = (string) $submission->site_key;
-        $busiest = HeuristicsEvent::query()
-            ->where('site_key', $key)
-            ->whereIn('kind', ['pointer', 'click'])
-            ->selectRaw('path, COUNT(*) as hits')
-            ->groupBy('path')
-            ->orderByDesc('hits')
-            ->value('path');
-        $path = $busiest ?: (parse_url($submission->url, PHP_URL_PATH) ?: '/');
+        $path = $shots->busiestPublicPath($key, $submission->url);
         $origin = preg_replace('#^(https?://[^/]+).*#i', '$1', $submission->url);
         $url = rtrim((string) $origin, '/').'/'.ltrim($path, '/');
 

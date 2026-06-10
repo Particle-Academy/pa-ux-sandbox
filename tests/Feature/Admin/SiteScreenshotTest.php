@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Services\Heuristics\PageScreenshotService;
 use App\Services\Showcase\SafeUrlFetcher;
 use Database\Seeders\FunLabSeeder;
+use FancyHeuristics\Models\HeuristicsEvent;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
@@ -99,6 +100,24 @@ it('exposes the latest screenshot on the site detail page', function () {
             ->where('latestShot.path', '/')
             ->where('latestShot.url', '/storage/heatmaps/x/y.png')
         );
+});
+
+it('never targets admin/auth paths for a screenshot (would capture a login page)', function () {
+    // /admin/sites has the most hits, but an unauthenticated renderer would only
+    // get a login redirect there — so the public /pricing must win.
+    foreach ([['/admin/sites', 9], ['/login', 6], ['/pricing', 3], ['/', 1]] as [$path, $hits]) {
+        for ($i = 0; $i < $hits; $i++) {
+            HeuristicsEvent::create(['site_key' => 'sk', 'kind' => 'click', 'path' => $path, 'x' => 1, 'y' => 1, 'occurred_at' => now()]);
+        }
+    }
+
+    expect(app(PageScreenshotService::class)->busiestPublicPath('sk', 'https://sk.test'))->toBe('/pricing');
+});
+
+it('falls back to the registered homepage when only private paths have events', function () {
+    HeuristicsEvent::create(['site_key' => 'sk2', 'kind' => 'click', 'path' => '/admin/x', 'x' => 1, 'y' => 1, 'occurred_at' => now()]);
+
+    expect(app(PageScreenshotService::class)->busiestPublicPath('sk2', 'https://sk2.test/home'))->toBe('/home');
 });
 
 it('upgrades an http tracker snippet to https on a secure request', function () {

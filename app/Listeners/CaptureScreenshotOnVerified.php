@@ -4,16 +4,19 @@ namespace App\Listeners;
 
 use App\Jobs\CaptureSiteScreenshot;
 use App\Models\ShowcaseSubmission;
+use App\Services\Heuristics\PageScreenshotService;
 use FancyHeuristics\Events\PixelVerificationPassed;
-use FancyHeuristics\Models\HeuristicsEvent;
 
 /**
  * On every successful pixel verification (twice-daily poll + on-demand), queue a
- * fresh screenshot of the site's busiest path so the focus heatmap always draws
- * on a current image of the real page. Falls back to the registered URL's path.
+ * fresh screenshot of the site's busiest PUBLIC path so the focus heatmap always
+ * draws on a current image of the real page. Falls back to the registered URL's
+ * path. Admin/auth routes are excluded — they'd just capture a login redirect.
  */
 class CaptureScreenshotOnVerified
 {
+    public function __construct(private PageScreenshotService $shots) {}
+
     public function handle(PixelVerificationPassed $event): void
     {
         $site = $event->site;
@@ -24,15 +27,7 @@ class CaptureScreenshotOnVerified
             return;
         }
 
-        $busiest = HeuristicsEvent::query()
-            ->where('site_key', $site->site_key)
-            ->whereIn('kind', ['pointer', 'click'])
-            ->selectRaw('path, COUNT(*) as hits')
-            ->groupBy('path')
-            ->orderByDesc('hits')
-            ->value('path');
-
-        $path = $busiest ?: (parse_url($site->url, PHP_URL_PATH) ?: '/');
+        $path = $this->shots->busiestPublicPath($site->site_key, $site->url);
 
         CaptureSiteScreenshot::dispatch($this->urlForPath($site->url, $path), $site->site_key, $path);
     }

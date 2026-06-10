@@ -7,8 +7,10 @@ use App\Support\ComponentContext;
 use App\Support\PackageContext;
 use App\Support\PackageRegistry;
 use App\Support\Registry\RegistrySource;
+use Illuminate\Support\Facades\File;
 use Inertia\Inertia;
 use Inertia\Response;
+use League\CommonMark\GithubFlavoredMarkdownConverter;
 
 class PackagesController extends Controller
 {
@@ -62,10 +64,80 @@ class PackagesController extends Controller
         // Companion packages render no UI, so they carry no component grid.
         $pkg['components'] ??= [];
 
+        // Headless packages have no live demo — render their installed README in
+        // place of the preview so the page is never a dead "No UI surface" stub.
+        $readmeHtml = $pkg['components'] === [] ? $this->readmeHtmlFor($pkg) : null;
+
         return Inertia::render('Packages/Show', [
             'package' => $pkg,
             'context' => PackageContext::find($pkg['slug']),
+            'readmeHtml' => $readmeHtml,
         ]);
+    }
+
+    /**
+     * Render the installed package's README.md to HTML (GitHub-flavored), with
+     * relative image/link URLs absolutized to the repo so banners + relative doc
+     * links resolve. Reads from node_modules (npm) or vendor (Composer); null
+     * when no README ships with the package.
+     *
+     * @param  array<string, mixed>  $pkg
+     */
+    private function readmeHtmlFor(array $pkg): ?string
+    {
+        $dirs = [];
+        if (! empty($pkg['npm'])) {
+            $dirs[] = base_path('node_modules/'.$pkg['npm']);
+        }
+        if (! empty($pkg['composer'])) {
+            $dirs[] = base_path('vendor/'.$pkg['composer']);
+        }
+
+        $markdown = null;
+        foreach ($dirs as $dir) {
+            foreach (['README.md', 'readme.md', 'README.markdown'] as $name) {
+                if (File::exists("{$dir}/{$name}")) {
+                    $markdown = File::get("{$dir}/{$name}");
+                    break 2;
+                }
+            }
+        }
+
+        if ($markdown === null || trim($markdown) === '') {
+            return null;
+        }
+
+        $html = (string) (new GithubFlavoredMarkdownConverter([
+            'html_input' => 'strip',
+            'allow_unsafe_links' => false,
+        ]))->convert($markdown);
+
+        return $this->absolutizeRepoLinks($html, (string) ($pkg['repo'] ?? ''));
+    }
+
+    /**
+     * Rewrite relative <img src> / <a href> in rendered README HTML to absolute
+     * GitHub raw/blob URLs so a README's banner image + relative links work when
+     * shown off-repo. Anchors (#…) and already-absolute URLs are left alone.
+     */
+    private function absolutizeRepoLinks(string $html, string $repo): string
+    {
+        if ($repo === '') {
+            return $html;
+        }
+        $raw = "https://raw.githubusercontent.com/{$repo}/HEAD/";
+        $blob = "https://github.com/{$repo}/blob/HEAD/";
+
+        return preg_replace_callback('/\b(src|href)="([^"]+)"/i', function (array $m) use ($raw, $blob): string {
+            $attr = strtolower($m[1]);
+            $url = $m[2];
+            if (preg_match('~^(https?://|//|#|mailto:|tel:|data:)~i', $url)) {
+                return $m[0];
+            }
+            $rel = ltrim((string) preg_replace('~^(\./)+~', '', $url), '/');
+
+            return $attr.'="'.($attr === 'src' ? $raw : $blob).$rel.'"';
+        }, $html) ?? $html;
     }
 
     public function component(string $package, string $component): Response

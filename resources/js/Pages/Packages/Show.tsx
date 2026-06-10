@@ -4,6 +4,7 @@ import { Button, Badge, Breadcrumbs, Card, Heading, Tabs, Text } from "@particle
 import { Layout } from "../Layout";
 import { getComponentPreview, GenericPlaceholder } from "./ComponentPreviews";
 import { ContextCards } from "./ContextCards";
+import { Prose } from "./Prose";
 
 type Pkg = {
     slug: string;
@@ -19,7 +20,7 @@ type Pkg = {
 
 type Context = { why: string; what: string; how: string };
 
-export default function PackagesShow({ package: pkg, context }: { package: Pkg; context: Context | null }) {
+export default function PackagesShow({ package: pkg, context, readmeHtml = null }: { package: Pkg; context: Context | null; readmeHtml?: string | null }) {
     const [copied, setCopied] = useState<string | null>(null);
     const installCmd = pkg.npm ? `npm install ${pkg.npm}` : pkg.composer ? `composer require ${pkg.composer}` : null;
 
@@ -124,19 +125,40 @@ export default function PackagesShow({ package: pkg, context }: { package: Pkg; 
             )}
 
             {(pkg.components?.length ?? 0) === 0 ? (
-                <Card className="mt-8">
-                    <Card.Body className="!py-6">
-                        <div className="flex items-center gap-2">
+                readmeHtml ? (
+                    <Card className="mt-8 overflow-hidden">
+                        <div className="flex items-center gap-2 border-b border-zinc-100 px-4 py-2.5 dark:border-zinc-800">
                             <Badge color="zinc" size="sm" variant="soft">headless</Badge>
-                            <Heading level={2} size="sm" className="!text-zinc-700 dark:!text-zinc-200">No UI surface</Heading>
+                            <Text className="!font-mono !text-xs !font-semibold !text-zinc-600 dark:!text-zinc-300">README.md</Text>
+                            <span className="flex-1" />
+                            <a
+                                href={`https://github.com/${pkg.repo}#readme`}
+                                target="_blank"
+                                rel="noopener"
+                                className="text-xs font-medium text-violet-600 hover:underline dark:text-violet-300"
+                            >
+                                View on GitHub →
+                            </a>
                         </div>
-                        <Text size="sm" className="mt-2 max-w-2xl !text-zinc-500">
-                            A supporting package with no rendered components (so no live demos or screenshots) —
-                            it's the hooks / APIs / server-side tooling described above. Reach for the README + Changelog
-                            for the full reference, and the Issues link to file feedback.
-                        </Text>
-                    </Card.Body>
-                </Card>
+                        <Card.Body className="!py-6">
+                            <Prose html={readmeHtml} />
+                        </Card.Body>
+                    </Card>
+                ) : (
+                    <Card className="mt-8">
+                        <Card.Body className="!py-6">
+                            <div className="flex items-center gap-2">
+                                <Badge color="zinc" size="sm" variant="soft">headless</Badge>
+                                <Heading level={2} size="sm" className="!text-zinc-700 dark:!text-zinc-200">No UI surface</Heading>
+                            </div>
+                            <Text size="sm" className="mt-2 max-w-2xl !text-zinc-500">
+                                A supporting package with no rendered components (so no live demos or screenshots) —
+                                it's the hooks / APIs / server-side tooling described above. Reach for the README + Changelog
+                                for the full reference, and the Issues link to file feedback.
+                            </Text>
+                        </Card.Body>
+                    </Card>
+                )
             ) : (
                 <>
                     <Heading level={2} size="lg" className="mt-10">Components</Heading>

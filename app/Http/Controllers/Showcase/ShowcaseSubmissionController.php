@@ -138,7 +138,9 @@ class ShowcaseSubmissionController extends Controller
      */
     private function snippetFor(ShowcaseSubmission $submission): string
     {
-        $endpoint = rtrim((string) config('app.url'), '/').'/heuristics';
+        // Always https: the embed lands on submitters' (usually https) sites, so
+        // an http endpoint would have their pixel beacons blocked as mixed content.
+        $endpoint = secure_url('/heuristics');
 
         return sprintf(
             '<script src="https://unpkg.com/@particle-academy/fancy-pixel/dist/fancy-pixel.global.min.js" data-site="%s" data-style="%s" data-mode="%s" data-endpoint="%s"></script>',

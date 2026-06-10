@@ -41,7 +41,11 @@ return [
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => env('APP_URL').'/storage',
+            // Root-relative so generated asset URLs (heatmap screenshots, etc.)
+            // inherit the page's scheme + host. An absolute env('APP_URL') here
+            // bakes in http when APP_URL is misconfigured → mixed-content blocks
+            // on the https site. Override with ASSET_URL only for a real CDN.
+            'url' => env('ASSET_URL', '/storage'),
             'visibility' => 'public',
             'throw' => false,
             'report' => false,

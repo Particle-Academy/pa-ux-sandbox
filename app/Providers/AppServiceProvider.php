@@ -35,10 +35,12 @@ class AppServiceProvider extends ServiceProvider
         // Behind Forge's TLS-terminating proxy the request reaches PHP as http,
         // so route()/redirect() would emit http:// URLs the browser blocks as
         // mixed content (e.g. the showcase-submission redirect to ".../installed").
-        // Force https URL generation whenever the canonical app URL is https —
-        // a no-op for http-only local dev. (TrustProxies in bootstrap/app.php
-        // additionally fixes scheme detection, secure cookies, and isSecure().)
-        if (str_starts_with((string) config('app.url'), 'https://')) {
+        // Force https URL generation whenever the canonical app URL is https OR
+        // the request actually arrived over https (via the trusted proxy headers)
+        // — so a stale/misconfigured http APP_URL can't reintroduce mixed content.
+        // A genuine no-op for http-only local dev. (TrustProxies in
+        // bootstrap/app.php additionally fixes scheme detection + secure cookies.)
+        if (str_starts_with((string) config('app.url'), 'https://') || request()->isSecure()) {
             URL::forceScheme('https');
         }
 

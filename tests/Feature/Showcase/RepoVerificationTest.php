@@ -2,6 +2,7 @@
 
 use App\Jobs\ScanShowcaseSubmission;
 use App\Models\ShowcaseSubmission;
+use App\Models\SitePageShot;
 use App\Models\User;
 use App\Services\Showcase\RepoVerifier;
 use Database\Seeders\FunLabSeeder;
@@ -309,4 +310,30 @@ it('lists only verified repos on the public showcase index', function () {
             ->has('submissions', 1)
             ->where('submissions.0.url', 'https://github.com/acme/verified-repo')
     );
+});
+
+it('uses the captured homepage screenshot as the showcase thumbnail', function () {
+    $user = User::factory()->create();
+    $site = ShowcaseSubmission::create([
+        'user_id' => $user->id,
+        'kind' => 'website',
+        'url' => 'https://acme.example',
+        'title' => 'Acme',
+        'status' => 'verified',
+    ]);
+    // A captured shot (same source the analytics heatmap uses) — not the dead
+    // thumbnail_url column.
+    SitePageShot::create([
+        'site_key' => $site->site_key,
+        'path' => '/',
+        'image_path' => 'heatmaps/acme/home.png',
+        'vw' => 1440, 'vh' => 900, 'captured_at' => now(),
+    ]);
+
+    $this->get('/showcase')
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('Showcase/Index')
+            ->where('submissions.0.thumbnail_url', '/storage/heatmaps/acme/home.png')
+        );
 });

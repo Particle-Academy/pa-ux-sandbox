@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Showcase\StoreShowcaseSubmissionRequest;
 use App\Jobs\ScanShowcaseSubmission;
 use App\Models\ShowcaseSubmission;
+use App\Models\SitePageShot;
 use App\Services\Heuristics\HeuristicsReport;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -22,21 +23,32 @@ class ShowcaseSubmissionController extends Controller
         $submissions = ShowcaseSubmission::query()
             ->publiclyListable()
             ->orderByDesc('id')
-            ->get()
-            ->map(fn (ShowcaseSubmission $s) => [
-                'id' => $s->id,
-                'kind' => $s->kind,
-                'url' => $s->url,
-                'title' => $s->title,
-                'description' => $s->description,
-                'category' => $s->category,
-                'category_label' => $s->category ? (ShowcaseSubmission::CATEGORIES[$s->category] ?? null) : null,
-                'made_for_children' => $s->made_for_children,
-                'thumbnail_url' => $s->thumbnail_url,
-            ])
-            ->all();
+            ->get();
 
-        return Inertia::render('Showcase/Index', ['submissions' => $submissions]);
+        // The captured homepage screenshot (site_page_shots — same source the
+        // analytics heatmap draws on) IS the thumbnail; the legacy thumbnail_url
+        // column was never populated. Batch the latest shot per site_key (we only
+        // ever capture the homepage now) to avoid an N+1.
+        $shots = SitePageShot::query()
+            ->whereIn('site_key', $submissions->pluck('site_key'))
+            ->orderByDesc('captured_at')
+            ->get()
+            ->groupBy('site_key')
+            ->map(fn ($group) => $group->first()->url());
+
+        $list = $submissions->map(fn (ShowcaseSubmission $s) => [
+            'id' => $s->id,
+            'kind' => $s->kind,
+            'url' => $s->url,
+            'title' => $s->title,
+            'description' => $s->description,
+            'category' => $s->category,
+            'category_label' => $s->category ? (ShowcaseSubmission::CATEGORIES[$s->category] ?? null) : null,
+            'made_for_children' => $s->made_for_children,
+            'thumbnail_url' => $shots->get($s->site_key) ?? $s->thumbnail_url,
+        ])->all();
+
+        return Inertia::render('Showcase/Index', ['submissions' => $list]);
     }
 
     /**

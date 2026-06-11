@@ -59,7 +59,7 @@ import {
 } from "@particle-academy/react-fancy";
 import { CodeEditor, MarkdownEditor } from "@particle-academy/fancy-code";
 import "@particle-academy/fancy-code/styles.css";
-import { Terminal, type TerminalHandle } from "@particle-academy/fancy-term";
+import { Terminal, type TerminalHandle, BUILTIN_SHELLS, type ShellProfile } from "@particle-academy/fancy-term";
 import "@xterm/xterm/css/xterm.css";
 import { Board, StickyNote, CursorLayer, Shape, Connector, Drawing } from "@particle-academy/fancy-whiteboard";
 import "@particle-academy/fancy-whiteboard/styles.css";
@@ -2274,17 +2274,38 @@ function MarkdownEditorDemo() {
 
 function FancyTerminalDemo() {
     const term = useRef<TerminalHandle>(null);
-    const BANNER =
+    // A Windows-flavored shell menu drawn from fancy-term's BUILTIN_SHELLS presets.
+    const shells = BUILTIN_SHELLS.filter((s) => ["cmd", "powershell", "git-bash", "bash"].includes(s.id));
+    const [shell, setShell] = useState("powershell");
+
+    const promptFor = (id: string) =>
+        id === "cmd"
+            ? "C:\\fancy> "
+            : id === "powershell" || id === "pwsh"
+              ? "PS C:\\fancy> "
+              : id === "zsh"
+                ? "% "
+                : "$ ";
+
+    const banner = (id: string) =>
         "\x1b[38;5;141mFancy Term\x1b[0m \x1b[38;5;245m— a Human+ terminal.\x1b[0m\r\n" +
-        "Type here (it echoes), or let an agent drive it.\r\n\r\n$ ";
+        "Pick a shell above, type (it echoes), or let an agent drive it.\r\n\r\n" +
+        promptFor(id);
 
     // Local echo — a real terminal relies on its PTY to echo; the demo does it here.
     const onData = (d: string) => {
         const t = term.current;
         if (!t) return;
-        if (d === "\r") t.write("\r\n$ ");
+        if (d === "\r") t.write("\r\n" + promptFor(shell));
         else if (d === "\x7f") t.write("\b \b"); // backspace
         else if (d >= " ") t.write(d); // printable
+    };
+
+    // Controlled shell: fancy-term emits the choice; a real host reconnects its
+    // PTY to the new shell. Here we just reflect it with a shell-appropriate prompt.
+    const onShellChange = (id: string, profile: ShellProfile) => {
+        setShell(id);
+        term.current?.write(`\r\n\x1b[38;5;245m# switched to ${profile.label}\x1b[0m\r\n` + promptFor(id));
     };
 
     // Simulate the agent's terminal_run → stream output through the same handle.
@@ -2295,7 +2316,7 @@ function FancyTerminalDemo() {
             "drwxr-xr-x  src/\r\n",
             "-rw-r--r--  package.json\r\n",
             "-rw-r--r--  README.md\r\n",
-            "$ ",
+            promptFor(shell),
         ];
         let i = 0;
         const tick = () => {
@@ -2306,23 +2327,35 @@ function FancyTerminalDemo() {
         tick();
     };
 
+    // Simulate the agent's terminal_set_shell — drives the same setShell() handle.
+    const agentSwitch = () => term.current?.setShell(shell === "powershell" ? "git-bash" : "powershell");
+
     return (
         <DemoNote
-            outOfBox="The real <Terminal> (xterm.js under the hood) with the Fancy dark theme. Typing echoes through onData; the buttons write through the same TerminalHandle an MCP bridge drives (terminal_read / terminal_write / terminal_run). getBuffer() is what an agent reads — never the DOM."
-            demo="The banner, prompt, echo, and the fake ls output are demo scaffolding — no real shell runs here. In production you wire onData to a PTY/command backend (or useTerminalSession) and stream real output via the controlled `output` prop; registerTerminalBridge + pendingMode let an agent propose commands a human confirms."
+            outOfBox="The real <Terminal> (xterm.js under the hood) with the Fancy dark theme. The shell bar (showShellBar) is the shipped <ShellSwitcher> — pick cmd / PowerShell / Git Bash and onShellChange fires. Typing echoes through onData; buttons write through the same TerminalHandle an MCP bridge drives (terminal_read / terminal_write / terminal_run / terminal_set_shell). getBuffer() is what an agent reads — never the DOM."
+            demo="The banner, prompt, echo, and the fake ls output are demo scaffolding — no real shell runs here. fancy-term owns the shell choice + UI; in production onShellChange tells your PTY/command backend to reconnect to that shell, and you stream real output via the controlled `output` prop. registerTerminalBridge exposes terminal_set_shell so an agent can switch shells too (the 'Agent: switch shell' button drives the same setShell handle)."
         >
-            <div style={{ height: 280 }} className="overflow-hidden rounded-md border border-zinc-800">
-                <Terminal ref={term} initialOutput={BANNER} onData={onData} />
+            <div style={{ height: 300 }} className="overflow-hidden rounded-md border border-zinc-800">
+                <Terminal
+                    ref={term}
+                    initialOutput={banner(shell)}
+                    onData={onData}
+                    shells={shells}
+                    activeShell={shell}
+                    onShellChange={onShellChange}
+                    showShellBar
+                />
             </div>
             <div className="mt-3 flex gap-2">
                 <Button size="sm" variant="ghost" icon="play" onClick={agentRun}>Agent: run `ls -la`</Button>
+                <Button size="sm" variant="ghost" icon="terminal" onClick={agentSwitch}>Agent: switch shell</Button>
                 <Button
                     size="sm"
                     variant="ghost"
                     icon="rotate-ccw"
                     onClick={() => {
                         term.current?.reset();
-                        term.current?.write(BANNER);
+                        term.current?.write(banner(shell));
                     }}
                 >
                     Reset

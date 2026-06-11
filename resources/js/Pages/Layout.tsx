@@ -327,15 +327,16 @@ function TransitionSwitcher() {
     return (
         <Dropdown>
             <Dropdown.Trigger>
-                <Tooltip content="Page transition">
-                    <button
-                        className="btn btn-ghost"
-                        style={{ height: 34, padding: "0 10px" }}
-                        aria-label="Page transition"
-                    >
-                        <Sparkles size={16} />
-                    </button>
-                </Tooltip>
+                {/* No Tooltip wrapper — its hover bubble overlapped the open
+                    menu's first item. The aria-label carries the accessible name. */}
+                <button
+                    className="btn btn-ghost"
+                    style={{ height: 34, padding: "0 10px" }}
+                    aria-label="Page transition"
+                    title="Page transition"
+                >
+                    <Sparkles size={16} />
+                </button>
             </Dropdown.Trigger>
             <Dropdown.Items>
                 {transitions.map((t) => (

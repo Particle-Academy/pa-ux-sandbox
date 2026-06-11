@@ -95,6 +95,7 @@ class HomeController extends Controller
             'fancy-sheets' => 'fx',
             'fancy-slides' => '▶',
             'fancy-code' => '{ }',
+            'fancy-term' => '>_',
             'fancy-echarts' => '∿',
             'fancy-screens' => '▦',
             'fancy-3d' => '3D',

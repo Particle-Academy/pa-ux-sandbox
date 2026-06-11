@@ -112,7 +112,7 @@ function Sites({ sites, pagination, filter, q, global }: Props) {
                     </Table.Head>
                     <Table.Body>
                         {sites.length === 0 ? (
-                            <Table.Row><Table.Cell><EmptyRow>No sites match this filter.</EmptyRow></Table.Cell></Table.Row>
+                            <Table.Row><Table.Cell colSpan={6}><EmptyRow>No sites match this filter.</EmptyRow></Table.Cell></Table.Row>
                         ) : (
                             sites.map((s) => (
                                 <Table.Row key={s.id}>

@@ -1,17 +1,8 @@
-/* transitions.css — smooth page-to-page navigation.
-   The Layout wraps each Inertia page in a `.page-enter` element keyed by URL,
-   so every navigation fades + lifts the new content in. */
+/* transitions.css — page-to-page navigation.
 
-.page-enter {
-  animation: page-enter 0.28s var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1)) both;
-}
-
-@keyframes page-enter {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: none; }
-}
-
-/* Respect users who prefer reduced motion — no slide/fade. */
-@media (prefers-reduced-motion: reduce) {
-  .page-enter { animation: none; }
-}
+   Page transitions now come from @particle-academy/fancy-inertia:
+   Layout.tsx wraps the page body in <FancyPageTransition pageKey={url}>, and
+   the active transition (fade / slide / zoom / blur / none) is chosen via the
+   nav switcher, backed by <FancyTransitionProvider> in showcase-app.tsx. The
+   keyframes are injected by the package itself and honor prefers-reduced-motion,
+   so no `.page-enter` rule lives here anymore. File kept for the import seam. */

@@ -7,7 +7,11 @@ import {
     Profile,
     Tooltip,
 } from "@particle-academy/react-fancy";
-import { Moon, Sun } from "@particle-academy/react-fancy/icons";
+import { Moon, Sun, Sparkles, Check } from "@particle-academy/react-fancy/icons";
+import {
+    useFancyTransition,
+    FANCY_TRANSITION_LABELS,
+} from "@particle-academy/fancy-inertia";
 import { currentTheme, toggleTheme } from "../showcase-theme";
 import { CommandPalette } from "./CommandPalette";
 import { avatarFrameClass, type CosmeticSlots } from "../lib/cosmetics";
@@ -136,6 +140,8 @@ export function Layout({
                             <span className="kbd">⌘K</span>
                         </button>
 
+                        <TransitionSwitcher />
+
                         <Tooltip content={theme === "dark" ? "Light mode" : "Dark mode"}>
                             <button
                                 onClick={() => setTheme(toggleTheme())}
@@ -237,10 +243,11 @@ export function Layout({
             )}
 
             <main className={bleed ? "flex-1" : "mx-auto w-full max-w-7xl flex-1 px-4 py-10 md:py-14"}>
-                {/* Keyed by URL so each Inertia navigation fades/lifts the new page in. */}
-                <div key={url} className="page-enter">
-                    {children}
-                </div>
+                {/* The page crossfade is mounted once at the App root
+                    (showcase-app.tsx) via <FancyPageTransition>, so it persists
+                    across navigation regardless of how each page attaches its
+                    Layout. The transition is chosen by the nav switcher below. */}
+                {children}
             </main>
 
             <CommandPalette />
@@ -307,6 +314,40 @@ export function Layout({
                 </div>
             </footer>
         </div>
+    );
+}
+
+/**
+ * Live page-transition picker. Reads/sets the active transition from
+ * fancy-inertia's <FancyTransitionProvider> (persisted to localStorage), so
+ * choosing one here re-scopes every subsequent navigation across the showcase.
+ */
+function TransitionSwitcher() {
+    const { transition, setTransition, transitions } = useFancyTransition();
+    return (
+        <Dropdown>
+            <Dropdown.Trigger>
+                <Tooltip content="Page transition">
+                    <button
+                        className="btn btn-ghost"
+                        style={{ height: 34, padding: "0 10px" }}
+                        aria-label="Page transition"
+                    >
+                        <Sparkles size={16} />
+                    </button>
+                </Tooltip>
+            </Dropdown.Trigger>
+            <Dropdown.Items>
+                {transitions.map((t) => (
+                    <Dropdown.Item key={t} onClick={() => setTransition(t)}>
+                        <span className="inline-flex w-full items-center justify-between gap-6">
+                            {FANCY_TRANSITION_LABELS[t]}
+                            {transition === t && <Check size={14} className="text-violet-500" />}
+                        </span>
+                    </Dropdown.Item>
+                ))}
+            </Dropdown.Items>
+        </Dropdown>
     );
 }
 

@@ -57,8 +57,10 @@ import {
     TreeNav,
     useToast,
 } from "@particle-academy/react-fancy";
-import { CodeEditor } from "@particle-academy/fancy-code";
+import { CodeEditor, MarkdownEditor } from "@particle-academy/fancy-code";
 import "@particle-academy/fancy-code/styles.css";
+import { Terminal, type TerminalHandle } from "@particle-academy/fancy-term";
+import "@xterm/xterm/css/xterm.css";
 import { Board, StickyNote, CursorLayer, Shape, Connector, Drawing } from "@particle-academy/fancy-whiteboard";
 import "@particle-academy/fancy-whiteboard/styles.css";
 import { ArtBoard, ArtPiece, type ArtBoardValue } from "@particle-academy/fancy-artboard";
@@ -200,6 +202,10 @@ const REGISTRY: Record<string, DemoFn> = {
 
     // ── fancy-code
     "fancy-code/code-editor": CodeEditorDemo,
+    "fancy-code/markdown-editor": MarkdownEditorDemo,
+
+    // ── fancy-term
+    "fancy-term/terminal": FancyTerminalDemo,
 
     // ── fancy-echarts
     "fancy-echarts/echart": EChartDemo,
@@ -2247,6 +2253,82 @@ function CodeEditorDemo() {
                 <CodeEditor.Panel />
             </CodeEditor>
         </div>
+    );
+}
+
+function MarkdownEditorDemo() {
+    const [md, setMd] = useState(
+        "# Notes\n\nA **markdown** editor with a _live_ preview pane.\n\n- syntax-highlighted editor (the new `markdown` language)\n- dependency-free `renderMarkdown` preview\n- controlled via `value` + `onValueChange`\n\n```ts\nconst safe = 1 < 2; // HTML is escaped\n```\n\n> Switch `mode` to `edit` or `preview` for a single pane.\n",
+    );
+    return (
+        <DemoNote
+            outOfBox="The real <MarkdownEditor> — a CodeEditor on the new `markdown` language beside a live preview rendered by the package's dependency-free renderMarkdown. Controlled via value + onValueChange."
+            demo="The starter content is demo scaffolding; edit the left pane and the preview updates live. Pass mode='edit' | 'preview' for a single pane, or renderPreview to swap in a full CommonMark renderer."
+        >
+            <div className="overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800" style={{ height: 320 }}>
+                <MarkdownEditor value={md} onValueChange={setMd} mode="split" theme="dark" minHeight={300} />
+            </div>
+        </DemoNote>
+    );
+}
+
+function FancyTerminalDemo() {
+    const term = useRef<TerminalHandle>(null);
+    const BANNER =
+        "\x1b[38;5;141mFancy Term\x1b[0m \x1b[38;5;245m— a Human+ terminal.\x1b[0m\r\n" +
+        "Type here (it echoes), or let an agent drive it.\r\n\r\n$ ";
+
+    // Local echo — a real terminal relies on its PTY to echo; the demo does it here.
+    const onData = (d: string) => {
+        const t = term.current;
+        if (!t) return;
+        if (d === "\r") t.write("\r\n$ ");
+        else if (d === "\x7f") t.write("\b \b"); // backspace
+        else if (d >= " ") t.write(d); // printable
+    };
+
+    // Simulate the agent's terminal_run → stream output through the same handle.
+    const agentRun = () => {
+        const out = [
+            '\r\n\x1b[38;5;245m# agent → terminal_run("ls -la")\x1b[0m\r\n',
+            "\x1b[38;5;78mtotal 24\x1b[0m\r\n",
+            "drwxr-xr-x  src/\r\n",
+            "-rw-r--r--  package.json\r\n",
+            "-rw-r--r--  README.md\r\n",
+            "$ ",
+        ];
+        let i = 0;
+        const tick = () => {
+            if (!term.current || i >= out.length) return;
+            term.current.write(out[i++]);
+            window.setTimeout(tick, 150);
+        };
+        tick();
+    };
+
+    return (
+        <DemoNote
+            outOfBox="The real <Terminal> (xterm.js under the hood) with the Fancy dark theme. Typing echoes through onData; the buttons write through the same TerminalHandle an MCP bridge drives (terminal_read / terminal_write / terminal_run). getBuffer() is what an agent reads — never the DOM."
+            demo="The banner, prompt, echo, and the fake ls output are demo scaffolding — no real shell runs here. In production you wire onData to a PTY/command backend (or useTerminalSession) and stream real output via the controlled `output` prop; registerTerminalBridge + pendingMode let an agent propose commands a human confirms."
+        >
+            <div style={{ height: 280 }} className="overflow-hidden rounded-md border border-zinc-800">
+                <Terminal ref={term} initialOutput={BANNER} onData={onData} />
+            </div>
+            <div className="mt-3 flex gap-2">
+                <Button size="sm" variant="ghost" icon="play" onClick={agentRun}>Agent: run `ls -la`</Button>
+                <Button
+                    size="sm"
+                    variant="ghost"
+                    icon="rotate-ccw"
+                    onClick={() => {
+                        term.current?.reset();
+                        term.current?.write(BANNER);
+                    }}
+                >
+                    Reset
+                </Button>
+            </div>
+        </DemoNote>
     );
 }
 

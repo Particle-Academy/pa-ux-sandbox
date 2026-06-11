@@ -22,6 +22,7 @@ class PackageRegistry
             self::fancySheets(),
             self::fancySlides(),
             self::fancyCode(),
+            self::fancyTerm(),
             self::fancyDiff(),
             self::fancyPixel(),
             self::fancyEcharts(),
@@ -415,6 +416,22 @@ class PackageRegistry
             'language' => 'TypeScript',
             'components' => [
                 ['slug' => 'code-editor', 'name' => 'CodeEditor', 'blurb' => 'Editor surface.'],
+                ['slug' => 'markdown-editor', 'name' => 'MarkdownEditor', 'blurb' => 'Markdown editor + live preview.'],
+            ],
+        ];
+    }
+
+    private static function fancyTerm(): array
+    {
+        return [
+            'slug' => 'fancy-term',
+            'name' => 'fancy-term',
+            'tagline' => 'Human+ Terminal — a controlled, themeable <Terminal> over xterm.js with hooks and an MCP-bridgeable surface agents read + drive.',
+            'npm' => '@particle-academy/fancy-term',
+            'repo' => 'Particle-Academy/fancy-term',
+            'language' => 'TypeScript',
+            'components' => [
+                ['slug' => 'terminal', 'name' => 'Terminal', 'blurb' => 'Controlled xterm.js terminal — agent-bridgeable.'],
             ],
         ];
     }

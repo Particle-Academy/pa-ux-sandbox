@@ -166,6 +166,24 @@ class PackageRegistry
                 'repo' => 'Particle-Academy/fancy-heuristics-js',
                 'language' => 'TypeScript',
             ],
+            // Tooling — MCP docs server + the source-vendoring CLI. No app-facing
+            // UI; they're how you discover and pull the rest of the suite.
+            [
+                'slug' => 'docs-mcp',
+                'name' => '@particle-academy/docs-mcp',
+                'tagline' => 'MCP docs server — serves the Fancy UI documentation to agents over MCP, so an assistant can answer questions and pull usage straight from the source.',
+                'npm' => '@particle-academy/docs-mcp',
+                'repo' => 'Particle-Academy/docs-mcp',
+                'language' => 'TypeScript',
+            ],
+            [
+                'slug' => 'fancy-cli',
+                'name' => 'fancy-cli',
+                'tagline' => 'Source-vendoring CLI — `npx fancy-cli add <component>` copies component source from the registry into your project (the shadcn-style own-the-source path).',
+                'npm' => 'fancy-cli',
+                'repo' => 'Particle-Academy/fancy-ui-cli',
+                'language' => 'TypeScript',
+            ],
         ];
     }
 

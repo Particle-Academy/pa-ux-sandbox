@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Showcase;
 
 use App\Http\Controllers\Controller;
+use App\Support\Docs\Changelog;
 use App\Support\Docs\DocsRegistry;
 use App\Support\XpAwarder;
 use Illuminate\Http\Request;
@@ -22,6 +23,12 @@ class DocsController extends Controller
 
         $path = base_path("resources/docs/$slug.md");
         $markdown = File::exists($path) ? File::get($path) : $this->placeholder($page['title']);
+
+        // The changelog's package index is generated from PackageRegistry so it
+        // never drifts — the .md holds only the prose + a placeholder marker.
+        if ($slug === 'changelog') {
+            $markdown = str_replace(Changelog::PLACEHOLDER, Changelog::tables(), $markdown);
+        }
 
         // reader-xp for reading a docs page, once per page per day per user.
         XpAwarder::award(

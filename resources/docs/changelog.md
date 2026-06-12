@@ -1,43 +1,6 @@
-Fancy spans roughly **thirty packages across two families** — UI packages and Service & Tool packages — each its own independent repo with its own release cadence. This page indexes the canonical release notes (GitHub Releases) for each. Install commands and live demos live on the [Packages](/packages) page.
+Fancy spans **two families of package** — UI packages and Service & Tool packages — each its own independent repo with its own release cadence. The index below is generated from the package registry, so it's always current. Click through for the canonical release notes on GitHub; install commands and live demos live on the [Packages](/packages) page.
 
-## UI packages
-
-| Package | Release notes |
-|---|---|
-| `react-fancy` | [Releases](https://github.com/Particle-Academy/react-fancy/releases) |
-| `fancy-whiteboard` | [Releases](https://github.com/Particle-Academy/fancy-whiteboard/releases) |
-| `fancy-artboard` | [Releases](https://github.com/Particle-Academy/fancy-artboard/releases) |
-| `fancy-flow` | [Releases](https://github.com/Particle-Academy/fancy-flow/releases) |
-| `fancy-sheets` | [Releases](https://github.com/Particle-Academy/fancy-sheets/releases) |
-| `fancy-slides` | [Releases](https://github.com/Particle-Academy/fancy-slides/releases) |
-| `fancy-code` | [Releases](https://github.com/Particle-Academy/fancy-code/releases) |
-| `fancy-term` | [Releases](https://github.com/Particle-Academy/fancy-term/releases) |
-| `fancy-diff` | [Releases](https://github.com/Particle-Academy/fancy-diff/releases) |
-| `fancy-echarts` | [Releases](https://github.com/Particle-Academy/fancy-echarts/releases) |
-| `fancy-screens` | [Releases](https://github.com/Particle-Academy/fancy-screens/releases) |
-| `fancy-3d` (+ `-babylon`, `-three`) | [Releases](https://github.com/Particle-Academy/fancy-3d/releases) |
-| `fancy-motion` | [Releases](https://github.com/Particle-Academy/fancy-motion/releases) |
-| `fancy-cms-ui` | [Releases](https://github.com/Particle-Academy/fancy-cms-ui/releases) |
-
-## Service & Tool packages
-
-| Package | Kind | Release notes |
-|---|---|---|
-| `agent-integrations` | MCP server + bridges | [Releases](https://github.com/Particle-Academy/agent-integrations/releases) |
-| `fancy-auto-common` | shared Human+ primitives | [Releases](https://github.com/Particle-Academy/fancy-auto-common/releases) |
-| `docs-mcp` | docs MCP server | [Releases](https://github.com/Particle-Academy/docs-mcp/releases) |
-| `mcp-relay-client` | single-file MCP client | [Releases](https://github.com/Particle-Academy/mcp-relay-client/releases) |
-| `fancy-inertia` | Inertia ↔ React adapter | [Releases](https://github.com/Particle-Academy/fancy-inertia/releases) |
-| `fancy-query` | server-state | [Releases](https://github.com/Particle-Academy/fancy-query/releases) |
-| `fancy-pixel` | verification badge + beacon | [Releases](https://github.com/Particle-Academy/fancy-pixel/releases) |
-| `fancy-heuristics` (PHP) + `-js` | interaction analytics | [Releases](https://github.com/Particle-Academy/fancy-heuristics/releases) |
-| `holy-sheet` (PHP) + `holy-sheet-js` | xlsx writer | [Releases](https://github.com/Particle-Academy/holy-sheet/releases) |
-| `dark-slide` (PHP) + `dark-slide-js` | pptx writer/reader | [Releases](https://github.com/Particle-Academy/dark-slide/releases) |
-| `fancy-cms` (PHP) | Stages page renderer / host | [Releases](https://github.com/Particle-Academy/fancy-cms/releases) |
-| `laravel-catalog` (PHP) | Stripe catalog | [Releases](https://github.com/Particle-Academy/laravel-catalog/releases) |
-| `laravel-fms` (PHP) | feature management | [Releases](https://github.com/Particle-Academy/laravel-fms/releases) |
-| `laravel-fun-lab` (PHP) | gamification | [Releases](https://github.com/Particle-Academy/laravel-fun-lab/releases) |
-| `fancy-cli` | source-vendoring CLI | [Releases](https://github.com/Particle-Academy/fancy-ui-cli/releases) |
+<!--PACKAGES-->
 
 ## Versioning
 

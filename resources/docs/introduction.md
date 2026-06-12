@@ -1,6 +1,6 @@
-Fancy UI is a constellation of open-source packages from **Particle Academy** for building React and Laravel applications where humans and AI agents share the same UI. Every component is designed against two constraints: it has to be a great primitive for humans to author with, **and** a great primitive for embedded agents to drive directly through MCP — not via DOM scraping or Playwright.
+Fancy is a suite of open-source packages from **Particle Academy** for building React and Laravel applications where humans and AI agents share the same UI. It comes in two families: **UI packages** — the component libraries and interactive surfaces people and agents work in — and **Service & Tool packages** — the headless infrastructure (MCP bridges, server-state, agentic document writers, analytics, a CMS, a CLI) that powers them. It is a full stack for Human+ apps, not just a component kit.
 
-We call this **Human+ UX**. It's the architectural baseline for the entire stack. The deep dive lives at [Human+ UX](/docs/human-plus-ux).
+We call the design philosophy **Human+ UX**: every UI primitive has to be a great primitive for humans to author with **and** a great primitive for embedded agents to drive directly through MCP — never via DOM scraping or Playwright — and every service exists to make that possible. It's the architectural baseline for the entire stack. The deep dive lives at [Human+ UX](/docs/human-plus-ux).
 
 ## Why another component library?
 
@@ -14,19 +14,39 @@ Fancy UI is shaped differently. The components are Tailwind-first (so theming is
 
 ## What's in the box
 
-Eleven packages, organized by surface:
+Fancy is **two families of package**. **UI packages** are the surfaces humans and agents share; **Service & Tool packages** are the headless infrastructure that makes those surfaces composable, inhabitable, and shippable. This is the map — every package, with install commands and live demos, lives on the [Packages](/packages) page.
 
-- **`@particle-academy/react-fancy`** — ~50 Tailwind v4 React primitives. The foundation everything else builds on. *Button, Card, Tabs, Dropdown, Modal, Sidebar, Navbar, Calendar, Table, Toast, …*
-- **`@particle-academy/fancy-flow`** — Visual workflow editor + topological executor.
-- **`@particle-academy/fancy-whiteboard`** — Transport-agnostic collaborative board with built-in presence.
-- **`@particle-academy/fancy-sheets`** — Full spreadsheet (formulas, multi-sheet workbooks, clipboard, CSV).
-- **`@particle-academy/fancy-code`** — Lightweight embedded code editor (no Monaco, no CodeMirror).
-- **`@particle-academy/fancy-echarts`** — Typed wrapper around Apache ECharts + four diagram presets.
-- **`@particle-academy/fancy-screens`** — Multi-screen application shell with cross-screen presence.
-- **`@particle-academy/fancy-3d`** — Engine-pluggable 3D bridge across DOM and Babylon.
-- **`@particle-academy/agent-integrations`** — MCP server, presence layer, share relay, per-package bridges.
-- **`@particle-academy/fancy-inertia`** — Inertia.js + React adapter; the chrome you're reading this site through.
-- **`particle-academy/holy-sheet`** — PHP xlsx writer for agent-authored documents.
+### UI packages
+
+The component libraries and interactive surfaces. Each is controlled (`value` + `onChange`), JSON-friendly, and agent-bridgeable.
+
+- **`react-fancy`** — ~50 Tailwind v4 React primitives; the foundation everything else builds on. *Button, Card, Tabs, Dropdown, Modal, Sidebar, Navbar, Calendar, Table, Toast, …*
+- **`fancy-whiteboard`** — transport-agnostic collaborative board with built-in presence.
+- **`fancy-artboard`** — Figma-style pan/zoom design canvas (board + pieces + notes).
+- **`fancy-flow`** — visual workflow editor + topological runner, built on React Flow.
+- **`fancy-sheets`** — full spreadsheet: formulas, multi-sheet workbooks, clipboard, CSV.
+- **`fancy-slides`** — presentation editor + web viewer (Google-Slides-style decks).
+- **`fancy-code`** — lightweight embedded code editor (no Monaco, no CodeMirror).
+- **`fancy-term`** — controlled, themeable `<Terminal>` over xterm.js, with shell switching.
+- **`fancy-diff`** — side-by-side document diff with per-hunk accept/reject.
+- **`fancy-echarts`** — typed React wrapper around Apache ECharts.
+- **`fancy-screens`** — multi-screen application shell with cross-screen agent presence.
+- **`fancy-3d`** — engine-agnostic 3D core, with `fancy-3d-babylon` and `fancy-3d-three` WebGL adapters.
+- **`fancy-motion`** — timeline / scroll-keyframe animation primitives.
+- **`fancy-cms-ui`** — WYSIWYG CMS editor on the Stages document model.
+
+### Service & Tool packages
+
+No UI of their own — but they're what turns a pile of components into a Human+ *application*.
+
+- **Agents & MCP** — `agent-integrations` (MCP server + per-package bridges + presence + share relay), `fancy-auto-common` (shared AgentActivity / undo primitives), `docs-mcp` (docs MCP server), `mcp-relay-client` (single-file MCP client in bash / Python / TS / Go).
+- **App integration & data** — `fancy-inertia` (Inertia ↔ React adapter, page transitions, schema-driven pages), `fancy-query` (server-state: TanStack Query + Inertia hydration + Echo invalidation).
+- **Analytics** — `fancy-pixel` (embeddable verification badge + interaction beacon), `fancy-heuristics` + `fancy-heuristics-js` (human-vs-agent interaction analytics).
+- **Agentic documents** — `holy-sheet` (PHP xlsx writer) + `holy-sheet-js`, `dark-slide` (PHP pptx writer/reader) + `dark-slide-js`.
+- **Laravel infrastructure** — `fancy-cms` (Stages page renderer / host), `laravel-catalog` (Stripe catalog), `laravel-fms` (feature management), `laravel-fun-lab` (gamification).
+- **Tooling** — `fancy-cli` (the `npx fancy-cli` source-vendoring CLI).
+
+PHP packages ship via Packagist; everything else via npm. The full per-package detail is on [Packages](/packages).
 
 ## Two ways to consume any component
 

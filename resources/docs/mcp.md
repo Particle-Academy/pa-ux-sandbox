@@ -108,12 +108,16 @@ The bridges that exist today:
 | Bridge | Tool prefix | Surface |
 |---|---|---|
 | `whiteboard` | `whiteboard_*` | fancy-whiteboard `<Board>` |
+| `artboard` | `artboard_*` | fancy-artboard `<ArtBoard>` |
 | `flow` | `flow_*` | fancy-flow `<FlowEditor>` |
 | `form` | `form_*` | any controlled react-fancy form |
 | `sheets` | `sheet_*` | fancy-sheets `<SheetWorkbook>` |
 | `code` | `code_*` | fancy-code `<CodeEditor>` |
 | `charts` | `chart_*` | fancy-echarts `<EChart>` |
 | `scene` | `scene_*` | fancy-3d Scene primitives |
+| `screens` | `screen_*` | fancy-screens `<Screen>` registry |
+| `slides` | `deck_*` / `slide_*` / `element_*` | fancy-slides `<DeckEditor>` / `<SlideViewer>` |
+| `terminal` | `terminal_*` | fancy-term `<Terminal>` (read, write, run, switch shell) |
 
 There's also a cross-cutting undo system that lives outside any single bridge:
 

@@ -1,6 +1,6 @@
-The `fancy-ui` CLI is the **vendor path** — it fetches component source from the [hosted registry](/docs/registry) and writes the files into your project so you own the code.
+The `fancy-cli` CLI is the **vendor path** — it fetches component source from the [hosted registry](/docs/registry) and writes the files into your project so you own the code.
 
-> **Available now** — published as [`@particle-academy/fancy-ui`](https://www.npmjs.com/package/@particle-academy/fancy-ui). Run it with `npx @particle-academy/fancy-ui …`; the installed binary is named `fancy-ui` (the package is scoped because the bare `fancy-ui` name is taken on npm). Source: [Particle-Academy/fancy-ui-cli](https://github.com/Particle-Academy/fancy-ui-cli).
+> **Available now** — published as [`fancy-cli`](https://www.npmjs.com/package/fancy-cli). Run it with `npx fancy-cli …`; the installed binary is named `fancy-cli` (it uses the name `fancy-cli` because the bare `fancy-ui` name is blocked on npm). Source: [Particle-Academy/fancy-ui-cli](https://github.com/Particle-Academy/fancy-ui-cli).
 
 ## Installation
 
@@ -8,13 +8,13 @@ The CLI is meant to be run with `npx` — no global install required, and the `@
 
 ```bash
 # Always run via npx — never npm install -g.
-npx @particle-academy/fancy-ui@latest init
+npx fancy-cli@latest init
 ```
 
 You can pin a specific version if you need reproducibility:
 
 ```bash
-npx @particle-academy/fancy-ui@0.1.0 init
+npx fancy-cli@0.1.0 init
 ```
 
 ## `init`
@@ -22,7 +22,7 @@ npx @particle-academy/fancy-ui@0.1.0 init
 Configures your project for the vendor flow. Run it once per project.
 
 ```bash
-npx @particle-academy/fancy-ui@latest init
+npx fancy-cli@latest init
 ```
 
 Walks you through:
@@ -55,8 +55,8 @@ Writes a `fancy.json` at the project root capturing these choices. Subsequent `a
 Fetches one or more components from the registry and writes them to disk.
 
 ```bash
-npx @particle-academy/fancy-ui@latest add card
-npx @particle-academy/fancy-ui@latest add card button tabs dropdown
+npx fancy-cli@latest add card
+npx fancy-cli@latest add card button tabs dropdown
 ```
 
 For each component:
@@ -73,7 +73,7 @@ The CLI never overwrites a file you've already vendored unless you pass `--overw
 Show every component available in the registry, grouped by package:
 
 ```bash
-npx @particle-academy/fancy-ui@latest list
+npx fancy-cli@latest list
 
 # Output:
 # react-fancy (54)
@@ -91,7 +91,7 @@ npx @particle-academy/fancy-ui@latest list
 Substring search across name, title, and description:
 
 ```bash
-npx @particle-academy/fancy-ui@latest search calendar
+npx fancy-cli@latest search calendar
 
 # accordion-panel  Stateful disclosure surface...
 # calendar         Calendar           Date picker built on a 6×7 grid...
@@ -103,7 +103,7 @@ npx @particle-academy/fancy-ui@latest search calendar
 Compare the local vendored copy of a component against the latest registry version. Useful for spotting upstream improvements you might want to merge in.
 
 ```bash
-npx @particle-academy/fancy-ui@latest diff card
+npx fancy-cli@latest diff card
 ```
 
 Prints a unified diff. The CLI doesn't apply changes automatically — that's intentional, since the whole point of vendoring is that you may have customized the local copy.

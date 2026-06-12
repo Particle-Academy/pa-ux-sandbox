@@ -35,19 +35,19 @@ This mode is the right call when:
 - You don't need to fork the component source.
 - You're fine getting updates via `npm update`.
 
-## Mode 2 — `npx @particle-academy/fancy-ui add` (vendor the source)
+## Mode 2 — `npx fancy-cli add` (vendor the source)
 
 For teams that want to **own the code** and treat Fancy UI as a starting point they'll modify, the CLI fetches the component source from our [hosted registry](/docs/registry) and writes the files directly into the host project.
 
 ```bash
 # One-time per project — writes fancy.json with your conventions.
-npx @particle-academy/fancy-ui@latest init
+npx fancy-cli@latest init
 
 # Add a component. Sources land under src/components/fancy/<slug>/.
-npx @particle-academy/fancy-ui@latest add card
+npx fancy-cli@latest add card
 
 # Add several at once (registry deps resolve automatically).
-npx @particle-academy/fancy-ui@latest add card action tabs dropdown
+npx fancy-cli@latest add card action tabs dropdown
 ```
 
 After this, you import from your own codebase:

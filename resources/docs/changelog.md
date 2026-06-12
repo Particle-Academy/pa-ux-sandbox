@@ -44,7 +44,7 @@ PHP packages publish via Composer resolving git tags directly — no Packagist p
 
 The `fancy-ui` CLI and the registry contract have their own release notes — track them at:
 
-- [@particle-academy/fancy-ui releases](https://github.com/Particle-Academy/fancy-ui/releases) — CLI
+- [fancy-cli releases](https://github.com/Particle-Academy/fancy-ui-cli/releases) — CLI
 - [pa-ux-sandbox releases](https://github.com/Particle-Academy/pa-ux-sandbox/releases) — registry + docs site
 
 If a major change affects the registry schema, we'll roll a `$schema` version (`/schema/registry-v2.json`) and run both side-by-side for a deprecation window. Consumers pinned to the old schema URL keep working.

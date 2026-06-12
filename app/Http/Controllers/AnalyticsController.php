@@ -47,34 +47,89 @@ class AnalyticsController extends Controller
                 'proSource' => null,
                 'sites' => [],
                 'site' => null,
+                'filters' => $this->filters($request),
                 'kpis' => null,
                 'topPaths' => [],
                 'heatmap' => null,
                 'heatmapShot' => null,
                 'recentSessions' => [],
                 'eventsOverTime' => [],
+                'overview' => null,
+                'overviewSeries' => null,
+                'acquisition' => null,
+                'audience' => null,
+                'behavior' => null,
+                'realtime' => null,
+                'agent' => null,
             ]);
         }
 
         $sites = $this->sites($user);
         $site = $this->resolveSite($request, $sites);
+        $filters = $this->filters($request);
+        $days = $filters['range'];
+        $actor = $filters['actor'];
+        $compare = $filters['compare'];
+
         $heatmap = $report->heatmapForBusiestPath($site);
 
         // The KPI / heatmap / paths / sessions / trend math is shared with the
         // admin AdminHeuristicsController via HeuristicsReport so the two
         // surfaces never drift — only the gate around them differs.
+        //
+        // `kpis` / `topPaths` / `recentSessions` / `eventsOverTime` are the
+        // original event-stream rollups (kept for the heatmap header + the admin
+        // surface). The GA-parity sections below run off the session rollup and
+        // re-scope to the range + actor toggles.
         return Inertia::render('Analytics/Index', [
             'pro' => true,
             'proSource' => $entitlements->proSource($user),
             'sites' => $sites,
             'site' => $site,
+            'filters' => $filters,
             'kpis' => $report->kpis($site),
             'topPaths' => $report->topPaths($site),
             'heatmap' => $heatmap,
             'heatmapShot' => $heatmap ? $report->screenshotForPath($site, $heatmap['path']) : null,
             'recentSessions' => $report->recentSessions($site),
             'eventsOverTime' => $report->eventsOverTime($site),
+            'overview' => $report->overview($site, $days, $actor, $compare),
+            'overviewSeries' => $report->overviewTimeseries($site, $days, $compare),
+            'acquisition' => $report->acquisition($site, $days, $actor),
+            'audience' => $report->audience($site, $days, $actor),
+            'behavior' => $report->behavior($site, $days, $actor),
+            'realtime' => $report->realtime($site),
+            'agent' => $report->agentAnalytics($site, $days),
         ]);
+    }
+
+    /**
+     * Resolve the dashboard filter toggles off the query string, clamped to
+     * valid values so a hand-edited `?range=999` can't reach the report layer.
+     *
+     * @return array{range: int, actor: string, compare: bool}
+     */
+    private function filters(Request $request): array
+    {
+        $range = (int) $request->query('range', 28);
+        if (! in_array($range, HeuristicsReport::RANGES, true)) {
+            $range = 28;
+        }
+
+        $actor = (string) $request->query('actor', 'all');
+        if (! in_array($actor, ['all', 'human', 'agent'], true)) {
+            $actor = 'all';
+        }
+
+        // `compare` defaults on; only an explicit "0"/"false" turns it off.
+        $compareRaw = $request->query('compare', '1');
+        $compare = ! in_array((string) $compareRaw, ['0', 'false', 'off'], true);
+
+        return [
+            'range' => $range,
+            'actor' => $actor,
+            'compare' => $compare,
+        ];
     }
 
     /**

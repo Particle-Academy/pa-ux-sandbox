@@ -343,7 +343,7 @@ function KpiTile({ label, metric, split, field, showCompare }: { label: string; 
     const agent = (split.agent as Record<string, number>)[field] ?? 0;
 
     return (
-        <Card className="p-4" data-kpi={label}>
+        <Card padding="none" className="p-4" data-kpi={label}>
             <div className="text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">{label}</div>
             <div className="mt-2 flex items-baseline gap-2">
                 <span className="text-2xl font-semibold text-zinc-900 dark:text-zinc-50">{fmt(metric.value, metric.format)}</span>
@@ -409,7 +409,7 @@ function OverviewChart({ series, compare }: { series: OverviewSeries; compare: b
     }
 
     return (
-        <Card className="overflow-hidden">
+        <Card padding="none" className="overflow-hidden">
             <div className="border-b border-zinc-100 p-4 dark:border-zinc-800">
                 <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Sessions over time</div>
                 <div className="text-xs text-zinc-500 dark:text-zinc-400">
@@ -440,7 +440,7 @@ function AcquisitionSection({ data }: { data: Acquisition }) {
     return (
         <Section title="Acquisition" subtitle="How sessions arrived">
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-                <Card className="overflow-hidden lg:col-span-1">
+                <Card padding="none" className="overflow-hidden lg:col-span-1">
                     <CardHeader title="Direct vs referral" />
                     <div className="p-4">
                         {d.total === 0 ? (
@@ -475,7 +475,7 @@ function AudienceSection({ data }: { data: Audience }) {
     return (
         <Section title="Audience · Tech" subtitle="Who's visiting">
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                <Card className="overflow-hidden">
+                <Card padding="none" className="overflow-hidden">
                     <CardHeader title="Device" />
                     <div className="p-4">
                         {d.devices.length === 0 ? <Empty label="No data" /> : <DonutChart data={d.devices.map((r, i) => ({ name: r.value!, value: r.sessions, color: PALETTE[i % PALETTE.length] }))} />}
@@ -496,7 +496,7 @@ function BehaviorSection({ data }: { data: Behavior }) {
     return (
         <Section title="Behavior" subtitle="What they did">
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                <Card className="overflow-hidden">
+                <Card padding="none" className="overflow-hidden">
                     <CardHeader title="Top pages" subtitle="By pageviews" />
                     {d.topPages.length === 0 ? (
                         <Empty label="No pageviews yet" pad />
@@ -522,7 +522,7 @@ function BehaviorSection({ data }: { data: Behavior }) {
                     )}
                 </Card>
 
-                <Card className="overflow-hidden">
+                <Card padding="none" className="overflow-hidden">
                     <CardHeader title="Top clicked elements" subtitle="By click count" />
                     {d.topElements.length === 0 ? (
                         <Empty label="No tracked clicks yet" pad />
@@ -563,7 +563,7 @@ function RealtimeSection({ data }: { data: Realtime }) {
     const d = data!;
     return (
         <Section title="Real-time" subtitle="Last 5 minutes">
-            <Card className="overflow-hidden">
+            <Card padding="none" className="overflow-hidden">
                 <div className="flex items-center justify-between border-b border-zinc-100 p-4 dark:border-zinc-800">
                     <div>
                         <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Active now</div>
@@ -619,7 +619,7 @@ function FocusHeatmap({ heatmap, shot }: { heatmap: Heatmap; shot: Shot | null }
     const isDark = useTheme() === "dark";
     const blendMode = shot || isDark ? "screen" : "multiply";
     return (
-        <Card className="overflow-hidden">
+        <Card padding="none" className="overflow-hidden">
             <div className="flex items-center justify-between border-b border-zinc-100 p-4 dark:border-zinc-800">
                 <div>
                     <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Focus heatmap</div>
@@ -742,7 +742,7 @@ function AgentSection({ data, filters }: { data: AgentAnalytics; filters: Filter
 
             {/* Agent share */}
             <div className="grid grid-cols-1 gap-5 lg:grid-cols-3">
-                <Card className="p-5">
+                <Card padding="none" className="p-5">
                     <div className="text-xs font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">Agent share of sessions</div>
                     <div className="mt-2 text-4xl font-bold text-amber-600 dark:text-amber-400" data-agent-pct>{d.totals.agentPct.toFixed(1)}%</div>
                     <div className="mt-3 flex h-2 overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-800">
@@ -756,7 +756,7 @@ function AgentSection({ data, filters }: { data: AgentAnalytics; filters: Filter
                 </Card>
 
                 {/* Metric-by-metric H vs A */}
-                <Card className="overflow-hidden lg:col-span-2">
+                <Card padding="none" className="overflow-hidden lg:col-span-2">
                     <CardHeader title="Human vs agent" subtitle={`Across the headline metrics · last ${filters.range}d`} />
                     <Table>
                         <Table.Head>
@@ -791,7 +791,7 @@ function AgentSection({ data, filters }: { data: AgentAnalytics; filters: Filter
 function ActorActivity({ title, tone, elements, pages }: { title: string; tone: "agent" | "human"; elements: Element[]; pages: PageRow[] }) {
     const accent = tone === "agent" ? "text-amber-600 dark:text-amber-400" : "text-violet-600 dark:text-violet-400";
     return (
-        <Card className="overflow-hidden">
+        <Card padding="none" className="overflow-hidden">
             <CardHeader title={title} />
             <div className="grid grid-cols-1 gap-0 sm:grid-cols-2 sm:divide-x sm:divide-zinc-100 dark:sm:divide-zinc-800">
                 <div className="p-4">
@@ -845,7 +845,7 @@ function CardHeader({ title, subtitle }: { title: string; subtitle?: string }) {
 function BreakdownCard({ title, rows, labelKey, compact, mono }: { title: string; rows: Breakdown[]; labelKey: "host" | "value"; compact?: boolean; mono?: boolean }) {
     const max = Math.max(1, ...rows.map((r) => r.sessions));
     return (
-        <Card className="overflow-hidden">
+        <Card padding="none" className="overflow-hidden">
             <CardHeader title={title} />
             <div className="p-4">
                 {rows.length === 0 ? (
@@ -910,7 +910,7 @@ function Empty({ label, pad }: { label: string; pad?: boolean }) {
 function NoSessions({ site, filters }: { site: string | null; filters: Filters }) {
     const filtered = filters.actor !== "all";
     return (
-        <Card className="mt-6">
+        <Card padding="none" className="mt-6">
             <div className="p-12 text-center">
                 <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-violet-100 text-2xl dark:bg-violet-900/30">📊</div>
                 <div className="text-base font-semibold text-zinc-900 dark:text-zinc-100">
@@ -959,7 +959,7 @@ function Upsell() {
 
             <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
                 {features.map(([title, body]) => (
-                    <Card key={title} className="p-5">
+                    <Card padding="none" key={title} className="p-5">
                         <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">{title}</div>
                         <Text className="mt-1 text-sm">{body}</Text>
                     </Card>

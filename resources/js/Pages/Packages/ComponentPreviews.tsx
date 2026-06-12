@@ -1311,6 +1311,543 @@ const PREVIEWS: Record<string, PreviewFn> = {
             </div>
         </div>
     ),
+
+    // ─── fancy-code ───────────────────────────────────────────────────────
+
+    "fancy-code/code-editor": () => (
+        <div className="h-32 w-full max-w-[20rem] overflow-hidden rounded-md border border-zinc-800 bg-zinc-950 font-mono text-[9px] leading-relaxed">
+            <div className="flex items-center gap-1.5 border-b border-zinc-800 bg-zinc-900 px-2 py-1 text-[8px] text-zinc-400">
+                <Code size={10} className="text-violet-300" /> app.ts
+            </div>
+            <div className="flex p-2">
+                <div className="select-none pr-2 text-right text-zinc-600">
+                    <div>1</div><div>2</div><div>3</div><div>4</div><div>5</div>
+                </div>
+                <div className="space-y-0.5">
+                    <div><span className="text-violet-300">import</span> <span className="text-zinc-300">{"{ run }"}</span> <span className="text-violet-300">from</span> <span className="text-emerald-300">&quot;./engine&quot;</span></div>
+                    <div><span className="text-sky-300">const</span> <span className="text-amber-200">cfg</span> <span className="text-zinc-400">=</span> <span className="text-zinc-300">{"{"}</span></div>
+                    <div className="pl-3"><span className="text-rose-300">retries</span><span className="text-zinc-400">:</span> <span className="text-amber-300">3</span><span className="text-zinc-400">,</span></div>
+                    <div><span className="text-zinc-300">{"}"}</span></div>
+                    <div><span className="text-zinc-500">await</span> <span className="text-amber-200">run</span><span className="text-zinc-300">(cfg)</span><span className="animate-pulse text-zinc-200">▌</span></div>
+                </div>
+            </div>
+        </div>
+    ),
+
+    "fancy-code/markdown-editor": () => (
+        <div className="grid h-32 w-full max-w-[20rem] grid-cols-2 overflow-hidden rounded-md border border-zinc-200 text-[9px] dark:border-zinc-700">
+            <div className="border-r border-zinc-200 bg-zinc-50 p-2 font-mono leading-relaxed text-zinc-600 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-400">
+                <div><span className="text-violet-500"># </span>Fancy UI</div>
+                <div className="text-zinc-400">&nbsp;</div>
+                <div><span className="text-violet-500">**</span>Human+<span className="text-violet-500">**</span> UI.</div>
+                <div><span className="text-violet-500">- </span>terse</div>
+                <div><span className="text-violet-500">- </span>bridgeable</div>
+            </div>
+            <div className="bg-white p-2 leading-relaxed text-zinc-700 dark:bg-zinc-900 dark:text-zinc-200">
+                <div className="text-[11px] font-bold">Fancy UI</div>
+                <div className="mt-1"><span className="font-bold">Human+</span> UI.</div>
+                <ul className="mt-0.5 list-disc pl-3 text-zinc-500">
+                    <li>terse</li>
+                    <li>bridgeable</li>
+                </ul>
+            </div>
+        </div>
+    ),
+
+    // ─── fancy-sheets ─────────────────────────────────────────────────────
+
+    "fancy-sheets/sheet-workbook": () => (
+        <div className="w-full max-w-[20rem] overflow-hidden rounded-md border border-zinc-200 text-[9px] dark:border-zinc-700">
+            <table className="w-full border-collapse text-zinc-700 dark:text-zinc-200">
+                <tbody>
+                    <tr className="bg-zinc-100 font-semibold text-zinc-500 dark:bg-zinc-800">
+                        <td className="w-5 border border-zinc-200 px-1 py-0.5 text-center dark:border-zinc-700"></td>
+                        <td className="border border-zinc-200 px-1.5 py-0.5 dark:border-zinc-700">A</td>
+                        <td className="border border-zinc-200 px-1.5 py-0.5 dark:border-zinc-700">B</td>
+                        <td className="border border-zinc-200 px-1.5 py-0.5 dark:border-zinc-700">C</td>
+                    </tr>
+                    {[
+                        ["1", "Region", "Q1", "Q2"],
+                        ["2", "North", "1,200", "1,540"],
+                        ["3", "South", "980", "1,110"],
+                    ].map(([r, a, b, c]) => (
+                        <tr key={r}>
+                            <td className="border border-zinc-200 bg-zinc-50 px-1 py-0.5 text-center text-zinc-400 dark:border-zinc-700 dark:bg-zinc-950">{r}</td>
+                            <td className="border border-zinc-200 px-1.5 py-0.5 dark:border-zinc-700">{a}</td>
+                            <td className="border border-zinc-200 px-1.5 py-0.5 dark:border-zinc-700">{b}</td>
+                            <td className="border border-zinc-200 px-1.5 py-0.5 dark:border-zinc-700">{c}</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+            <div className="flex gap-1 border-t border-zinc-200 bg-zinc-50 px-1.5 py-1 dark:border-zinc-700 dark:bg-zinc-950">
+                <span className="rounded-t border border-b-0 border-zinc-200 bg-white px-2 py-0.5 font-medium text-violet-600 dark:border-zinc-700 dark:bg-zinc-900">Sales</span>
+                <span className="px-2 py-0.5 text-zinc-400">Costs</span>
+            </div>
+        </div>
+    ),
+
+    "fancy-sheets/create-empty-workbook": () => (
+        <div className="w-full max-w-[18rem] overflow-hidden rounded-md border border-zinc-800 bg-zinc-950 font-mono text-[10px] leading-relaxed text-zinc-100">
+            <div className="border-b border-zinc-800 px-2 py-1 text-[9px] text-zinc-500">factory · headless</div>
+            <div className="space-y-0.5 p-2.5">
+                <div><span className="text-sky-300">const</span> <span className="text-amber-200">wb</span> <span className="text-zinc-400">=</span> <span className="text-violet-300">createEmptyWorkbook</span>(<span className="text-zinc-300">{"{"}</span></div>
+                <div className="pl-3"><span className="text-rose-300">sheets</span><span className="text-zinc-400">:</span> [<span className="text-emerald-300">&quot;Sales&quot;</span>],</div>
+                <div className="text-zinc-300">{"})"}</div>
+            </div>
+        </div>
+    ),
+
+    // ─── fancy-diff ───────────────────────────────────────────────────────
+
+    "fancy-diff/fancy-diff": () => (
+        <div className="w-full max-w-[20rem] overflow-hidden rounded-md border border-zinc-800 bg-zinc-950 font-mono text-[9px] leading-relaxed">
+            <div className="border-b border-zinc-800 px-2 py-1 text-[8px] text-zinc-500">config.ts · 2 changes</div>
+            <div className="grid grid-cols-2">
+                <div className="border-r border-zinc-800">
+                    <div className="bg-rose-500/15 px-2 text-rose-300"><span className="mr-1 text-rose-500">-</span>retries: 1</div>
+                    <div className="px-2 text-zinc-500">timeout: 30</div>
+                    <div className="bg-rose-500/15 px-2 text-rose-300"><span className="mr-1 text-rose-500">-</span>debug: false</div>
+                    <div className="px-2 text-zinc-500">name: app</div>
+                </div>
+                <div>
+                    <div className="bg-emerald-500/15 px-2 text-emerald-300"><span className="mr-1 text-emerald-500">+</span>retries: 3</div>
+                    <div className="px-2 text-zinc-500">timeout: 30</div>
+                    <div className="bg-emerald-500/15 px-2 text-emerald-300"><span className="mr-1 text-emerald-500">+</span>debug: true</div>
+                    <div className="px-2 text-zinc-500">name: app</div>
+                </div>
+            </div>
+        </div>
+    ),
+
+    // ─── fancy-pixel ──────────────────────────────────────────────────────
+
+    "fancy-pixel/pixel": () => (
+        <div className="grid h-32 w-full max-w-[20rem] place-items-center">
+            <div className="inline-flex items-center gap-1.5 rounded-full border border-violet-300 bg-violet-50 px-3 py-1.5 text-[11px] font-medium text-violet-700 shadow-sm dark:border-violet-700 dark:bg-violet-500/15 dark:text-violet-200">
+                <span className="relative flex size-2">
+                    <span className="absolute inline-flex size-full animate-ping rounded-full bg-violet-400 opacity-75" />
+                    <span className="relative inline-flex size-2 rounded-full bg-violet-500" />
+                </span>
+                <Sparkles size={12} /> Powered by Fancy UI
+            </div>
+        </div>
+    ),
+
+    // ─── fancy-echarts (3D + graphic) ─────────────────────────────────────
+
+    "fancy-echarts/echart-3d": () => (
+        <div className="grid h-32 w-full max-w-[20rem] place-items-center overflow-hidden rounded-md border border-zinc-200 bg-gradient-to-b from-zinc-50 to-white dark:border-zinc-700 dark:from-zinc-900 dark:to-zinc-950">
+            <div className="flex items-end gap-1.5" style={{ transform: "perspective(240px) rotateX(48deg) rotateZ(-22deg)" }}>
+                {[
+                    ["h-6", "from-violet-400 to-violet-600"],
+                    ["h-10", "from-sky-400 to-sky-600"],
+                    ["h-8", "from-fuchsia-400 to-fuchsia-600"],
+                    ["h-14", "from-emerald-400 to-emerald-600"],
+                    ["h-9", "from-amber-400 to-amber-600"],
+                ].map(([h, c], i) => (
+                    <div key={i} className={`w-5 rounded-sm bg-gradient-to-t ${c} ${h} shadow-md`} />
+                ))}
+            </div>
+        </div>
+    ),
+
+    "fancy-echarts/echart-graphic": () => (
+        <div className="relative h-32 w-full max-w-[20rem] overflow-hidden rounded-md border border-zinc-200 bg-white p-2 dark:border-zinc-700 dark:bg-zinc-900">
+            <div className="flex h-full items-end gap-1.5">
+                {[40, 65, 50, 80, 60, 90, 70].map((h, i) => (
+                    <div key={i} className={`flex-1 rounded-t ${i === 5 ? "bg-violet-500" : "bg-zinc-200 dark:bg-zinc-700"}`} style={{ height: `${h}%` }} />
+                ))}
+            </div>
+            <div className="absolute right-3 top-3 rounded-md border border-violet-300 bg-violet-50 px-1.5 py-0.5 text-[9px] font-medium text-violet-700 shadow-sm dark:border-violet-700 dark:bg-violet-500/15 dark:text-violet-200">
+                ▲ Peak · 90
+            </div>
+            <div className="absolute right-7 top-7 h-6 w-px bg-violet-400/60" />
+        </div>
+    ),
+
+    // ─── fancy-3d (core) ──────────────────────────────────────────────────
+
+    "fancy-3d/canvas": () => (
+        <div className="grid h-32 w-full max-w-[20rem] place-items-center overflow-hidden rounded-md border border-zinc-200 bg-gradient-to-br from-zinc-50 to-zinc-100 dark:border-zinc-700 dark:from-zinc-900 dark:to-zinc-950">
+            <div className="relative" style={{ perspective: "320px" }}>
+                <div className="absolute -left-8 -top-2 h-16 w-12 rounded-lg bg-gradient-to-br from-violet-400 to-fuchsia-500 shadow-lg" style={{ transform: "rotateY(28deg) rotateX(-8deg)" }} />
+                <div className="h-16 w-12 rounded-lg bg-gradient-to-br from-sky-400 to-cyan-500 shadow-lg" style={{ transform: "rotateY(-24deg) rotateX(-8deg)" }} />
+                <div className="absolute -right-8 top-2 h-16 w-12 rounded-lg bg-gradient-to-br from-emerald-400 to-teal-500 shadow-lg" style={{ transform: "rotateY(-30deg) rotateX(-8deg)" }} />
+            </div>
+        </div>
+    ),
+
+    "fancy-3d/scene": () => (
+        <div className="w-full max-w-[18rem] overflow-hidden rounded-md border border-zinc-800 bg-zinc-950 font-mono text-[10px] leading-relaxed text-zinc-100">
+            <div className="border-b border-zinc-800 px-2 py-1 text-[9px] text-zinc-500">JSON Scene · engine-agnostic</div>
+            <div className="space-y-0.5 p-2.5">
+                <div><span className="text-sky-300">const</span> <span className="text-amber-200">scene</span><span className="text-zinc-400">:</span> <span className="text-violet-300">Scene</span> <span className="text-zinc-400">=</span> <span className="text-zinc-300">{"{"}</span></div>
+                <div className="pl-3"><span className="text-rose-300">nodes</span><span className="text-zinc-400">:</span> [{"{ "}<span className="text-rose-300">box</span>: [<span className="text-amber-300">1</span>,<span className="text-amber-300">1</span>,<span className="text-amber-300">1</span>]{" }"}],</div>
+                <div className="text-zinc-300">{"}"}</div>
+            </div>
+        </div>
+    ),
+
+    // ─── fancy-3d-babylon ─────────────────────────────────────────────────
+
+    "fancy-3d-babylon/stage": () => (
+        <div className="relative grid h-32 w-full max-w-[20rem] place-items-center overflow-hidden rounded-md border border-zinc-200 bg-gradient-to-b from-indigo-50 to-white dark:border-zinc-700 dark:from-indigo-950/40 dark:to-zinc-950">
+            <div className="relative" style={{ perspective: "360px" }}>
+                <div className="h-12 w-28 rounded-md bg-gradient-to-br from-orange-400 to-rose-500 shadow-xl" style={{ transform: "rotateX(52deg) rotateZ(-6deg)" }} />
+                <div className="absolute left-1/2 top-1 size-7 -translate-x-1/2 rounded-full bg-gradient-to-br from-amber-300 to-orange-500 shadow-lg" />
+            </div>
+            <span className="absolute bottom-1.5 right-2 rounded bg-zinc-900/70 px-1.5 py-0.5 text-[8px] font-medium text-orange-300">Babylon</span>
+        </div>
+    ),
+
+    "fancy-3d-babylon/monitor": () => (
+        <div className="relative grid h-32 w-full max-w-[20rem] place-items-center overflow-hidden rounded-md border border-zinc-200 bg-gradient-to-b from-indigo-50 to-white dark:border-zinc-700 dark:from-indigo-950/40 dark:to-zinc-950">
+            <div style={{ perspective: "420px" }}>
+                <div className="rounded-md border-2 border-zinc-700 bg-zinc-900 p-1 shadow-xl" style={{ transform: "rotateY(-24deg) rotateX(6deg)" }}>
+                    <div className="h-12 w-20 rounded-sm bg-gradient-to-br from-sky-500 via-violet-500 to-fuchsia-500" />
+                </div>
+                <div className="mx-auto mt-0.5 h-1.5 w-6 bg-zinc-700" style={{ transform: "rotateY(-24deg)" }} />
+            </div>
+            <span className="absolute bottom-1.5 right-2 rounded bg-zinc-900/70 px-1.5 py-0.5 text-[8px] font-medium text-orange-300">Babylon</span>
+        </div>
+    ),
+
+    "fancy-3d-babylon/card-3d": () => (
+        <div className="relative grid h-32 w-full max-w-[20rem] place-items-center overflow-hidden rounded-md border border-zinc-200 bg-gradient-to-b from-indigo-50 to-white dark:border-zinc-700 dark:from-indigo-950/40 dark:to-zinc-950">
+            <div style={{ perspective: "420px" }}>
+                <div className="h-20 w-16 rounded-xl bg-gradient-to-br from-violet-500 to-fuchsia-600 p-2 shadow-2xl" style={{ transform: "rotateY(-30deg) rotateX(8deg)" }}>
+                    <div className="h-2 w-8 rounded bg-white/40" />
+                    <div className="mt-1 h-1.5 w-10 rounded bg-white/25" />
+                    <Sparkles size={14} className="mt-3 text-white/80" />
+                </div>
+            </div>
+            <span className="absolute bottom-1.5 right-2 rounded bg-zinc-900/70 px-1.5 py-0.5 text-[8px] font-medium text-orange-300">Babylon</span>
+        </div>
+    ),
+
+    "fancy-3d-babylon/engine": () => (
+        <div className="w-full max-w-[18rem] overflow-hidden rounded-md border border-zinc-800 bg-zinc-950 font-mono text-[10px] leading-relaxed text-zinc-100">
+            <div className="border-b border-zinc-800 px-2 py-1 text-[9px] text-zinc-500">engine adapter · Babylon.js</div>
+            <div className="space-y-0.5 p-2.5">
+                <div><span className="text-violet-300">import</span> <span className="text-zinc-300">{"{ babylonEngine }"}</span></div>
+                <div className="pl-3 text-violet-300">from <span className="text-emerald-300">&quot;…/fancy-3d-babylon/engine&quot;</span></div>
+                <div><span className="text-amber-200">&lt;Canvas</span> <span className="text-rose-300">engine</span><span className="text-zinc-400">=</span><span className="text-zinc-300">{"{babylonEngine}"}</span> <span className="text-amber-200">/&gt;</span></div>
+            </div>
+        </div>
+    ),
+
+    // ─── fancy-3d-three ───────────────────────────────────────────────────
+
+    "fancy-3d-three/stage": () => (
+        <div className="relative grid h-32 w-full max-w-[20rem] place-items-center overflow-hidden rounded-md border border-zinc-200 bg-gradient-to-b from-emerald-50 to-white dark:border-zinc-700 dark:from-emerald-950/40 dark:to-zinc-950">
+            <div className="relative" style={{ perspective: "360px" }}>
+                <div className="h-12 w-28 rounded-md bg-gradient-to-br from-cyan-400 to-emerald-500 shadow-xl" style={{ transform: "rotateX(52deg) rotateZ(-6deg)" }} />
+                <div className="absolute left-1/2 top-1 size-7 -translate-x-1/2 rounded-full bg-gradient-to-br from-teal-300 to-cyan-500 shadow-lg" />
+            </div>
+            <span className="absolute bottom-1.5 right-2 rounded bg-zinc-900/70 px-1.5 py-0.5 text-[8px] font-medium text-emerald-300">three.js</span>
+        </div>
+    ),
+
+    "fancy-3d-three/monitor": () => (
+        <div className="relative grid h-32 w-full max-w-[20rem] place-items-center overflow-hidden rounded-md border border-zinc-200 bg-gradient-to-b from-emerald-50 to-white dark:border-zinc-700 dark:from-emerald-950/40 dark:to-zinc-950">
+            <div style={{ perspective: "420px" }}>
+                <div className="rounded-md border-2 border-zinc-700 bg-zinc-900 p-1 shadow-xl" style={{ transform: "rotateY(-24deg) rotateX(6deg)" }}>
+                    <div className="h-12 w-20 rounded-sm bg-gradient-to-br from-emerald-500 via-teal-500 to-cyan-500" />
+                </div>
+                <div className="mx-auto mt-0.5 h-1.5 w-6 bg-zinc-700" style={{ transform: "rotateY(-24deg)" }} />
+            </div>
+            <span className="absolute bottom-1.5 right-2 rounded bg-zinc-900/70 px-1.5 py-0.5 text-[8px] font-medium text-emerald-300">three.js</span>
+        </div>
+    ),
+
+    "fancy-3d-three/card-3d": () => (
+        <div className="relative grid h-32 w-full max-w-[20rem] place-items-center overflow-hidden rounded-md border border-zinc-200 bg-gradient-to-b from-emerald-50 to-white dark:border-zinc-700 dark:from-emerald-950/40 dark:to-zinc-950">
+            <div style={{ perspective: "420px" }}>
+                <div className="h-20 w-16 rounded-xl bg-gradient-to-br from-emerald-500 to-cyan-600 p-2 shadow-2xl" style={{ transform: "rotateY(-30deg) rotateX(8deg)" }}>
+                    <div className="h-2 w-8 rounded bg-white/40" />
+                    <div className="mt-1 h-1.5 w-10 rounded bg-white/25" />
+                    <Zap size={14} className="mt-3 text-white/80" />
+                </div>
+            </div>
+            <span className="absolute bottom-1.5 right-2 rounded bg-zinc-900/70 px-1.5 py-0.5 text-[8px] font-medium text-emerald-300">three.js</span>
+        </div>
+    ),
+
+    "fancy-3d-three/engine": () => (
+        <div className="w-full max-w-[18rem] overflow-hidden rounded-md border border-zinc-800 bg-zinc-950 font-mono text-[10px] leading-relaxed text-zinc-100">
+            <div className="border-b border-zinc-800 px-2 py-1 text-[9px] text-zinc-500">engine adapter · three.js</div>
+            <div className="space-y-0.5 p-2.5">
+                <div><span className="text-violet-300">import</span> <span className="text-zinc-300">{"{ threeEngine }"}</span></div>
+                <div className="pl-3 text-violet-300">from <span className="text-emerald-300">&quot;…/fancy-3d-three/engine&quot;</span></div>
+                <div><span className="text-amber-200">&lt;Canvas</span> <span className="text-rose-300">engine</span><span className="text-zinc-400">=</span><span className="text-zinc-300">{"{threeEngine}"}</span> <span className="text-amber-200">/&gt;</span></div>
+            </div>
+        </div>
+    ),
+
+    // ─── fancy-whiteboard (items) ─────────────────────────────────────────
+
+    "fancy-whiteboard/sticky-note": () => (
+        <div className="grid h-32 w-full max-w-[20rem] place-items-center">
+            <div className="size-20 rotate-[-5deg] bg-yellow-200 p-2 text-[10px] text-yellow-900 shadow-md">
+                <div className="font-semibold">Idea</div>
+                <div className="mt-1 text-yellow-800/80">Ship the preview grid ✨</div>
+            </div>
+        </div>
+    ),
+
+    "fancy-whiteboard/shape": () => (
+        <div className="relative grid h-32 w-full max-w-[20rem] place-items-center overflow-hidden rounded-md bg-zinc-50 dark:bg-zinc-900">
+            <div className="absolute left-6 top-8 grid h-10 w-16 place-items-center rounded-md border-2 border-violet-500 bg-violet-50 text-[9px] font-medium text-violet-700 dark:bg-violet-500/15 dark:text-violet-200">Start</div>
+            <div className="absolute right-6 bottom-8 grid size-12 place-items-center rounded-full border-2 border-emerald-500 bg-emerald-50 text-[9px] font-medium text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-200">End</div>
+            <svg className="absolute inset-0 size-full" viewBox="0 0 320 128" preserveAspectRatio="none">
+                <line x1="100" y1="56" x2="230" y2="86" stroke="#a1a1aa" strokeWidth="1.5" strokeDasharray="4 3" />
+            </svg>
+        </div>
+    ),
+
+    "fancy-whiteboard/connector": () => (
+        <div className="relative grid h-32 w-full max-w-[20rem] place-items-center overflow-hidden rounded-md bg-zinc-50 dark:bg-zinc-900">
+            <div className="absolute left-7 top-10 rounded-md border border-zinc-300 bg-white px-2 py-1 text-[10px] text-zinc-700 shadow-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200">Node A</div>
+            <div className="absolute bottom-10 right-7 rounded-md border border-zinc-300 bg-white px-2 py-1 text-[10px] text-zinc-700 shadow-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200">Node B</div>
+            <svg className="absolute inset-0 size-full" viewBox="0 0 320 128" preserveAspectRatio="none">
+                <defs>
+                    <marker id="wbArrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+                        <path d="M0,0 L6,3 L0,6 Z" fill="#8b5cf6" />
+                    </marker>
+                </defs>
+                <path d="M85 38 C 160 38, 160 92, 235 92" fill="none" stroke="#8b5cf6" strokeWidth="2" markerEnd="url(#wbArrow)" />
+            </svg>
+        </div>
+    ),
+
+    "fancy-whiteboard/drawing": () => (
+        <div className="grid h-32 w-full max-w-[20rem] place-items-center overflow-hidden rounded-md bg-zinc-50 dark:bg-zinc-900">
+            <svg viewBox="0 0 280 100" className="h-24 w-64">
+                <path
+                    d="M10 60 C 30 20, 50 90, 75 55 S 115 15, 140 60 S 185 100, 210 50 S 250 20, 270 55"
+                    fill="none"
+                    stroke="#8b5cf6"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                />
+            </svg>
+        </div>
+    ),
+
+    "fancy-whiteboard/cursor-layer": () => (
+        <div className="relative h-32 w-full max-w-[20rem] overflow-hidden rounded-md bg-amber-50/40 dark:bg-amber-900/10">
+            <div className="absolute left-3 top-3 size-9 rotate-[-3deg] bg-yellow-200 p-1 text-[8px] shadow-sm">Plan</div>
+            <div className="absolute bottom-4 right-5 size-9 rotate-[2deg] bg-violet-200 p-1 text-[8px] text-violet-900 shadow-sm">Build</div>
+            <div className="absolute left-20 top-8">
+                <svg width="14" height="14" viewBox="0 0 16 16" className="text-violet-600"><path d="M1 1 L1 13 L4.5 9.5 L7 14 L9 13 L6.5 8.5 L11 8 Z" fill="currentColor" /></svg>
+                <span className="ml-1 rounded bg-violet-600 px-1 py-0.5 text-[8px] font-medium text-white">Ava</span>
+            </div>
+            <div className="absolute bottom-9 left-32">
+                <svg width="14" height="14" viewBox="0 0 16 16" className="text-emerald-600"><path d="M1 1 L1 13 L4.5 9.5 L7 14 L9 13 L6.5 8.5 L11 8 Z" fill="currentColor" /></svg>
+                <span className="ml-1 rounded bg-emerald-600 px-1 py-0.5 text-[8px] font-medium text-white">Sky</span>
+            </div>
+        </div>
+    ),
+
+    // ─── agent-integrations ───────────────────────────────────────────────
+
+    "agent-integrations/agent-cursor": () => (
+        <div className="relative grid h-32 w-full max-w-[20rem] place-items-center overflow-hidden rounded-md border border-zinc-200 bg-white p-3 dark:border-zinc-700 dark:bg-zinc-900">
+            <div className="w-full space-y-1.5">
+                <div className="h-2 w-2/3 rounded bg-zinc-200 dark:bg-zinc-700" />
+                <div className="h-2 w-1/2 rounded bg-zinc-200 dark:bg-zinc-700" />
+                <div className="h-7 w-24 rounded-md border border-violet-300 bg-violet-50 dark:border-violet-700 dark:bg-violet-500/15" />
+            </div>
+            <div className="absolute left-1/2 top-1/2">
+                <svg width="16" height="16" viewBox="0 0 16 16" className="text-violet-600"><path d="M1 1 L1 13 L4.5 9.5 L7 14 L9 13 L6.5 8.5 L11 8 Z" fill="currentColor" /></svg>
+                <span className="ml-1 rounded bg-violet-600 px-1.5 py-0.5 text-[9px] font-medium text-white">claude</span>
+            </div>
+        </div>
+    ),
+
+    "agent-integrations/agent-panel": () => (
+        <div className="w-full max-w-[20rem] overflow-hidden rounded-md border border-zinc-200 bg-white text-[10px] dark:border-zinc-700 dark:bg-zinc-900">
+            <div className="flex items-center justify-between border-b border-zinc-100 bg-zinc-50 px-2 py-1 font-semibold text-zinc-600 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-300">
+                <span className="flex items-center gap-1"><Sparkles size={11} className="text-violet-500" /> Agents</span>
+                <span className="text-zinc-400">2 online</span>
+            </div>
+            <div className="divide-y divide-zinc-100 dark:divide-zinc-800">
+                <div className="flex items-center gap-2 px-2 py-1.5">
+                    <span className="size-2 rounded-full bg-violet-500" />
+                    <span className="font-medium text-zinc-700 dark:text-zinc-200">claude</span>
+                    <span className="text-zinc-400">editing sheet · B4</span>
+                </div>
+                <div className="flex items-center gap-2 px-2 py-1.5">
+                    <span className="size-2 rounded-full bg-emerald-500" />
+                    <span className="font-medium text-zinc-700 dark:text-zinc-200">scout</span>
+                    <span className="text-zinc-400">idle</span>
+                </div>
+            </div>
+        </div>
+    ),
+
+    "agent-integrations/share-controls": () => (
+        <div className="w-full max-w-[20rem] rounded-md border border-zinc-200 bg-white p-2 dark:border-zinc-700 dark:bg-zinc-900">
+            <div className="flex items-center gap-1.5">
+                <span className="flex-1 truncate rounded border border-zinc-200 bg-zinc-50 px-2 py-1 font-mono text-[9px] text-zinc-500 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-400">
+                    ui.particle.academy/s/9f3a…
+                </span>
+                <button className="rounded bg-violet-600 px-2 py-1 text-[9px] font-medium text-white">Copy</button>
+            </div>
+            <div className="mt-1.5 flex items-center justify-between text-[9px]">
+                <span className="flex items-center gap-1 text-emerald-600"><span className="size-1.5 rounded-full bg-emerald-500" /> Session live</span>
+                <span className="rounded border border-zinc-200 px-1.5 py-0.5 text-zinc-500 dark:border-zinc-700">End</span>
+            </div>
+        </div>
+    ),
+
+    "agent-integrations/shared-whiteboard": () => (
+        <div className="relative h-32 w-full max-w-[20rem] overflow-hidden rounded-md bg-amber-50/40 dark:bg-amber-900/10">
+            <div className="absolute left-3 top-3 size-10 rotate-[-4deg] bg-yellow-200 p-1.5 text-[9px] shadow-sm">Roadmap</div>
+            <div className="absolute right-4 bottom-4 size-10 rotate-[3deg] bg-violet-200 p-1.5 text-[9px] text-violet-900 shadow-sm">Ship</div>
+            <div className="absolute left-24 top-10">
+                <svg width="14" height="14" viewBox="0 0 16 16" className="text-violet-600"><path d="M1 1 L1 13 L4.5 9.5 L7 14 L9 13 L6.5 8.5 L11 8 Z" fill="currentColor" /></svg>
+                <span className="ml-1 rounded bg-violet-600 px-1 py-0.5 text-[8px] font-medium text-white">claude</span>
+            </div>
+            <div className="absolute right-3 top-2 flex items-center gap-1 rounded-full bg-white/80 px-1.5 py-0.5 text-[8px] text-zinc-500 shadow-sm dark:bg-zinc-800/80 dark:text-zinc-300">
+                <span className="size-1.5 rounded-full bg-emerald-500" /> 2 present
+            </div>
+        </div>
+    ),
+
+    "agent-integrations/micro-mcp-server": () => (
+        <div className="w-full max-w-[18rem] overflow-hidden rounded-md border border-zinc-800 bg-zinc-950 font-mono text-[10px] leading-relaxed text-zinc-100">
+            <div className="border-b border-zinc-800 px-2 py-1 text-[9px] text-zinc-500">in-browser MCP server</div>
+            <div className="space-y-0.5 p-2.5">
+                <div><span className="text-sky-300">const</span> <span className="text-amber-200">server</span> <span className="text-zinc-400">=</span> <span className="text-violet-300">microMcpServer</span>()</div>
+                <div><span className="text-amber-200">registerWhiteboardBridge</span>(<span className="text-amber-200">server</span><span className="text-zinc-400">,</span> <span className="text-zinc-300">{"{…}"}</span>)</div>
+                <div className="text-emerald-300">✓ whiteboard_* tools live</div>
+            </div>
+        </div>
+    ),
+
+    // ─── fancy-motion ─────────────────────────────────────────────────────
+
+    "fancy-motion/motion-stage": () => (
+        <div className="relative grid h-32 w-full max-w-[20rem] place-items-center overflow-hidden rounded-md border border-zinc-200 bg-gradient-to-br from-zinc-50 to-zinc-100 dark:border-zinc-700 dark:from-zinc-900 dark:to-zinc-950">
+            <div className="relative flex w-full items-center justify-center">
+                <div className="absolute left-8 size-6 rounded-md bg-violet-500/20" />
+                <div className="absolute left-16 size-7 rounded-md bg-violet-500/40" />
+                <div className="size-9 rotate-12 rounded-md bg-gradient-to-br from-violet-500 to-fuchsia-500 shadow-lg" />
+                <div className="absolute right-6 text-[9px] font-mono text-zinc-400">scrollY → rotate · scale</div>
+            </div>
+        </div>
+    ),
+
+    "fancy-motion/timeline-dock": () => (
+        <div className="w-full max-w-[20rem] overflow-hidden rounded-md border border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-900">
+            <div className="flex justify-between border-b border-zinc-100 px-2 py-1 text-[8px] font-mono text-zinc-400 dark:border-zinc-800">
+                {["0s", "1s", "2s", "3s", "4s"].map((t) => <span key={t}>{t}</span>)}
+            </div>
+            <div className="relative space-y-1.5 px-2 py-2">
+                <div className="absolute bottom-1 left-[38%] top-1 w-px bg-violet-500">
+                    <div className="absolute -top-0.5 -left-1 size-2 rotate-45 bg-violet-500" />
+                </div>
+                {[
+                    ["opacity", ["left-[8%]", "left-[40%]", "left-[72%]"]],
+                    ["x", ["left-[20%]", "left-[60%]"]],
+                ].map(([label, marks]) => (
+                    <div key={label as string} className="relative flex h-4 items-center rounded bg-zinc-100 dark:bg-zinc-800">
+                        <span className="ml-1.5 text-[8px] text-zinc-500">{label}</span>
+                        {(marks as string[]).map((m, i) => (
+                            <span key={i} className={`absolute size-2 rotate-45 bg-violet-400 ${m}`} />
+                        ))}
+                    </div>
+                ))}
+            </div>
+        </div>
+    ),
+
+    // ─── fancy-cms-ui ─────────────────────────────────────────────────────
+
+    "fancy-cms-ui/cms-editor": () => (
+        <div className="flex h-32 w-full max-w-[20rem] overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-700">
+            <div className="flex-1 bg-zinc-50 p-2 dark:bg-zinc-950">
+                <div className="relative rounded border-2 border-dashed border-violet-400 bg-white p-2 dark:bg-zinc-900">
+                    <div className="h-2 w-2/3 rounded bg-zinc-300 dark:bg-zinc-600" />
+                    <div className="mt-1 h-1.5 w-1/2 rounded bg-zinc-200 dark:bg-zinc-700" />
+                    <span className="absolute -left-1 -top-1 size-2 rounded-full border border-white bg-violet-500" />
+                    <span className="absolute -right-1 -top-1 size-2 rounded-full border border-white bg-violet-500" />
+                    <span className="absolute -bottom-1 -left-1 size-2 rounded-full border border-white bg-violet-500" />
+                    <span className="absolute -bottom-1 -right-1 size-2 rounded-full border border-white bg-violet-500" />
+                </div>
+                <div className="mt-2 h-6 rounded bg-zinc-100 dark:bg-zinc-800" />
+            </div>
+            <div className="w-20 border-l border-zinc-200 bg-white p-1.5 text-[9px] dark:border-zinc-700 dark:bg-zinc-900">
+                <div className="mb-1 flex items-center gap-1 font-semibold text-zinc-500"><Layers size={10} /> Layers</div>
+                <div className="rounded bg-violet-50 px-1 py-0.5 text-violet-700 dark:bg-violet-500/15 dark:text-violet-200">Hero</div>
+                <div className="px-1 py-0.5 text-zinc-500">Text</div>
+                <div className="px-1 py-0.5 text-zinc-500">Image</div>
+            </div>
+        </div>
+    ),
+
+    "fancy-cms-ui/cms-page": () => (
+        <div className="h-32 w-full max-w-[20rem] overflow-hidden rounded-md border border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-900">
+            <div className="flex items-center justify-between border-b border-zinc-100 px-2 py-1 dark:border-zinc-800">
+                <div className="h-2 w-10 rounded bg-violet-500" />
+                <div className="flex gap-1">
+                    <div className="h-1.5 w-5 rounded bg-zinc-200 dark:bg-zinc-700" />
+                    <div className="h-1.5 w-5 rounded bg-zinc-200 dark:bg-zinc-700" />
+                </div>
+            </div>
+            <div className="grid place-items-center bg-gradient-to-br from-violet-100 to-sky-100 py-3 dark:from-violet-500/15 dark:to-sky-500/15">
+                <div className="h-2.5 w-28 rounded bg-zinc-700/70 dark:bg-zinc-200/70" />
+                <div className="mt-1 h-1.5 w-20 rounded bg-zinc-400/60" />
+                <div className="mt-1.5 h-3 w-12 rounded bg-violet-500" />
+            </div>
+            <div className="grid grid-cols-3 gap-1.5 p-2">
+                <div className="h-6 rounded bg-zinc-100 dark:bg-zinc-800" />
+                <div className="h-6 rounded bg-zinc-100 dark:bg-zinc-800" />
+                <div className="h-6 rounded bg-zinc-100 dark:bg-zinc-800" />
+            </div>
+        </div>
+    ),
+
+    "fancy-cms-ui/cms-region": () => (
+        <div className="grid h-32 w-full max-w-[20rem] place-items-center overflow-hidden rounded-md border border-zinc-200 bg-zinc-50 p-3 dark:border-zinc-700 dark:bg-zinc-950">
+            <div className="w-full space-y-2">
+                <div className="h-3 rounded bg-zinc-200 dark:bg-zinc-700" />
+                <div className="relative rounded-md border-2 border-violet-500 bg-white p-2 dark:bg-zinc-900">
+                    <span className="absolute -top-2 left-1.5 rounded bg-violet-500 px-1 py-0.5 text-[8px] font-medium text-white">region · editable</span>
+                    <div className="mt-1 h-2 w-3/4 rounded bg-zinc-300 dark:bg-zinc-600" />
+                    <div className="mt-1 h-2 w-1/2 rounded bg-zinc-200 dark:bg-zinc-700" />
+                </div>
+                <div className="h-3 rounded bg-zinc-200 dark:bg-zinc-700" />
+            </div>
+        </div>
+    ),
+
+    // ─── fancy-flow (headless hooks) ──────────────────────────────────────
+
+    "fancy-flow/use-flow-run": () => (
+        <div className="w-full max-w-[18rem] overflow-hidden rounded-md border border-zinc-800 bg-zinc-950 font-mono text-[10px] leading-relaxed text-zinc-100">
+            <div className="border-b border-zinc-800 px-2 py-1 text-[9px] text-zinc-500">hook · React runtime</div>
+            <div className="space-y-0.5 p-2.5">
+                <div><span className="text-sky-300">const</span> <span className="text-amber-200">run</span> <span className="text-zinc-400">=</span> <span className="text-violet-300">useFlowRun</span>(graph)</div>
+                <div><span className="text-amber-200">run</span>.<span className="text-violet-300">start</span>()</div>
+                <div className="text-emerald-300">run.status → &quot;running&quot;</div>
+            </div>
+        </div>
+    ),
+
+    "fancy-flow/use-flow-state": () => (
+        <div className="w-full max-w-[18rem] overflow-hidden rounded-md border border-zinc-800 bg-zinc-950 font-mono text-[10px] leading-relaxed text-zinc-100">
+            <div className="border-b border-zinc-800 px-2 py-1 text-[9px] text-zinc-500">hook · controlled graph</div>
+            <div className="space-y-0.5 p-2.5">
+                <div><span className="text-sky-300">const</span> <span className="text-zinc-300">[graph, setGraph]</span> <span className="text-zinc-400">=</span></div>
+                <div className="pl-3"><span className="text-violet-300">useFlowState</span>(initial)</div>
+                <div><span className="text-amber-200">setGraph</span>.<span className="text-violet-300">addNode</span>({"{…}"})</div>
+            </div>
+        </div>
+    ),
 };
 
 // Generic fallback for components without a custom preview (rare).

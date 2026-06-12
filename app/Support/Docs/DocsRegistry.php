@@ -38,6 +38,12 @@ class DocsRegistry
             ],
         ],
         [
+            'label' => 'Wrapper packages',
+            'pages' => [
+                ['slug' => 'wrapper-packages', 'title' => 'Wrapping other libraries', 'description' => 'The packages that wrap ECharts, React Flow, three.js, Babylon, xterm.js, TanStack Query & Inertia — with deep links.'],
+            ],
+        ],
+        [
             'label' => 'Distribution',
             'pages' => [
                 ['slug' => 'cli', 'title' => 'CLI', 'description' => 'fancy-ui CLI reference — init, add, list, search.'],

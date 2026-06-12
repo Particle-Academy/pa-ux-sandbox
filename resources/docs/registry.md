@@ -98,7 +98,7 @@ curl -s https://ui.particle.academy/r/card.json | jq .files[].path
 ### CLI
 
 ```bash
-npx fancy-ui@latest add card
+npx @particle-academy/fancy-ui@latest add card
 ```
 
 ### MCP

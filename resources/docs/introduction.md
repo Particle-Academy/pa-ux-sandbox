@@ -33,7 +33,7 @@ Eleven packages, organized by surface:
 We deliberately ship **both** distribution models so you can pick the one that matches your team's relationship with the code.
 
 1. **`npm install` + import.** The default fast path. `npm install @particle-academy/react-fancy`, then `import { Card } from "@particle-academy/react-fancy"`. You get updates by bumping the package. You don't own the source.
-2. **`npx fancy-ui add`.** The shadcn-style vendoring path. The CLI fetches the component source from our [hosted registry](/docs/registry) and writes the files into your codebase under `src/components/fancy/{slug}/`. You own the source. You can fork freely. Updates are explicit, never automatic.
+2. **`npx @particle-academy/fancy-ui add`.** The shadcn-style vendoring path. The CLI fetches the component source from our [hosted registry](/docs/registry) and writes the files into your codebase under `src/components/fancy/{slug}/`. You own the source. You can fork freely. Updates are explicit, never automatic.
 
 Both flows are documented under [Installation](/docs/installation). The full registry contract lives at [/docs/registry](/docs/registry).
 

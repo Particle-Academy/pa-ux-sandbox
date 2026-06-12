@@ -24,7 +24,7 @@ cd react-fancy && npm run dev
 # pull a released change into your app
 npm update @particle-academy/react-fancy
 # or, for the copy-source path:
-npx fancy-ui add card
+npx @particle-academy/fancy-ui add card
 ```
 
 There are no source aliases — what you build locally is byte-for-byte what ships. See [Installation](/docs/installation) for both consumption models.

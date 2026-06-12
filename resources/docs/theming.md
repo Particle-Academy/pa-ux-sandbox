@@ -81,7 +81,7 @@ Most surfaces accept a `className` prop for one-off overrides. Use this sparingl
 If your brand needs a custom palette across the board, the cleanest path is to vendor `react-fancy` via the CLI:
 
 ```bash
-npx fancy-ui@latest add card action tabs ...
+npx @particle-academy/fancy-ui@latest add card action tabs ...
 ```
 
 Then edit the `cn()` helper and each variant's class strings to match your tokens. Because everything is Tailwind utility classes inline (no styled-components, no CSS-in-JS, no theme provider), the audit and the changes are local and obvious.

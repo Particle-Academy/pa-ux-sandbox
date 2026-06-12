@@ -27,6 +27,17 @@ class DocsRegistry
             ],
         ],
         [
+            'label' => 'Building with Fancy',
+            'pages' => [
+                ['slug' => 'building', 'title' => 'Building with Fancy', 'description' => 'The stack, the loop, and how the tutorials fit together.'],
+                ['slug' => 'layouts', 'title' => 'Layouts & app shell', 'description' => 'Persistent layouts, navbars, sidebars, and multi-screen shells.'],
+                ['slug' => 'page-transitions', 'title' => 'Page transitions', 'description' => 'Animate Inertia navigation with fancy-inertia crossfades.'],
+                ['slug' => 'mobile', 'title' => 'Mobile & responsive', 'description' => 'Tailwind v4 breakpoints, touch, mobile nav, and SSR-safe rendering.'],
+                ['slug' => 'designing-human-plus', 'title' => 'Designing for Human+', 'description' => 'Design surfaces humans and agents share — presence, trust, affordances.'],
+                ['slug' => 'developing-human-plus', 'title' => 'Developing for Human+', 'description' => 'The component contract in code — controlled state, handles, bridges.'],
+            ],
+        ],
+        [
             'label' => 'Distribution',
             'pages' => [
                 ['slug' => 'cli', 'title' => 'CLI', 'description' => 'fancy-ui CLI reference — init, add, list, search.'],

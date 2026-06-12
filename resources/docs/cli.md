@@ -56,7 +56,7 @@ Fetches one or more components from the registry and writes them to disk.
 
 ```bash
 npx fancy-ui@latest add card
-npx fancy-ui@latest add card action tabs dropdown
+npx fancy-ui@latest add card button tabs dropdown
 ```
 
 For each component:
@@ -78,7 +78,7 @@ npx fancy-ui@latest list
 # Output:
 # react-fancy (54)
 #   accordion        Accordion          Stateful disclosure surface.
-#   action           Action             The flexible button.
+#   button           Button             The flexible button.
 #   card             Card               Container with header/body/footer.
 #   ...
 # fancy-flow (3)

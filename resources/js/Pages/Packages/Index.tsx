@@ -51,6 +51,7 @@ const HAS_SHOT = new Set([
     "fancy-diff",
     "fancy-pixel",
     "fancy-3d-three",
+    "fancy-term",
 ]);
 
 export default function PackagesIndex({ packages, companions = [] }: { packages: Pkg[]; companions?: Companion[] }) {

@@ -85,6 +85,19 @@ const Pill = ({ children, className = "" }: { children: ReactNode; className?: s
 );
 
 const PREVIEWS: Record<string, PreviewFn> = {
+    "fancy-term/terminal": () => (
+        <div className="h-32 w-full max-w-[20rem] overflow-hidden rounded-md border border-zinc-800 bg-zinc-950 font-mono text-[9px] leading-relaxed text-zinc-300">
+            <div className="flex items-center gap-1.5 border-b border-zinc-800 bg-zinc-900 px-2 py-1 text-[8px]">
+                <span className="rounded bg-zinc-800 px-1.5 py-0.5 text-violet-300">⚡ PowerShell ▾</span>
+            </div>
+            <div className="space-y-0.5 p-2">
+                <div className="text-violet-300">Fancy Term <span className="text-zinc-500">— a Human+ terminal.</span></div>
+                <div className="text-zinc-400">PS C:\fancy&gt; <span className="text-emerald-400">npm run build</span></div>
+                <div className="text-emerald-400">✓ built in 1.2s</div>
+                <div className="text-zinc-400">PS C:\fancy&gt; <span className="animate-pulse text-zinc-200">▌</span></div>
+            </div>
+        </div>
+    ),
     "react-fancy/accordion": () => (
         <div className="w-full max-w-[18rem] space-y-1.5 text-xs">
             <div className="rounded-md border border-zinc-200 dark:border-zinc-800">

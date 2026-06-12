@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7c5d04c82780213decf19c254d2b46f8",
+    "content-hash": "cbd69c546d1f6af3deef63d6052f1d35",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -3558,16 +3558,16 @@
         },
         {
             "name": "particle-academy/fancy-heuristics",
-            "version": "v0.2.0",
+            "version": "v0.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/fancy-heuristics.git",
-                "reference": "5d6cb02600287aa40b7d84b316d41aa73915d9c4"
+                "reference": "0a775da531080301a260597d427b17167b99a21e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/fancy-heuristics/zipball/5d6cb02600287aa40b7d84b316d41aa73915d9c4",
-                "reference": "5d6cb02600287aa40b7d84b316d41aa73915d9c4",
+                "url": "https://api.github.com/repos/Particle-Academy/fancy-heuristics/zipball/0a775da531080301a260597d427b17167b99a21e",
+                "reference": "0a775da531080301a260597d427b17167b99a21e",
                 "shasum": ""
             },
             "require": {
@@ -3628,7 +3628,7 @@
                 "issues": "https://github.com/Particle-Academy/fancy-heuristics/issues",
                 "source": "https://github.com/Particle-Academy/fancy-heuristics"
             },
-            "time": "2026-06-12T21:32:07+00:00"
+            "time": "2026-06-12T22:44:41+00:00"
         },
         {
             "name": "particle-academy/holy-sheet",

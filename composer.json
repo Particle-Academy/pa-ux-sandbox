@@ -15,7 +15,7 @@
         "laravel/socialite": "^5.27",
         "laravel/tinker": "^3.0",
         "particle-academy/dark-slide": "^0.6.0",
-        "particle-academy/fancy-heuristics": "0.2.0",
+        "particle-academy/fancy-heuristics": "0.2.1",
         "particle-academy/holy-sheet": "^1.3.0",
         "particle-academy/laravel-catalog": "0.9.1",
         "particle-academy/laravel-fms": "0.7",

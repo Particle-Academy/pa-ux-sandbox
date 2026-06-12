@@ -53,6 +53,7 @@ class DocsRegistry
         [
             'label' => 'Agents',
             'pages' => [
+                ['slug' => 'plugin', 'title' => 'Claude Code plugin', 'description' => 'One-step install of the registry MCP + five skills for Claude Code.'],
                 ['slug' => 'mcp', 'title' => 'MCP servers', 'description' => 'Install-MCP, runtime bridges, and how agents drive the UI.'],
                 ['slug' => 'human-plus-ux', 'title' => 'Human+ UX', 'description' => 'The architectural framework — humans and agents in the same UI.'],
             ],

@@ -22,7 +22,7 @@ The Install-MCP server is a hosted streamable-HTTP MCP endpoint that any MCP-cap
 
 ### Quickest: the Claude Code plugin
 
-Claude Code users can skip manual config. Install the **Fancy UI plugin** — it registers this MCP server with the correct transport and bundles two skills (`fancy-ui:components` for finding/installing components, `fancy-ui:human-plus` for building agent-inhabitable apps):
+Claude Code users can skip manual config. Install the **Fancy UI plugin** — it registers this MCP server with the correct transport and bundles five skills (components, building-apps, human-plus, ssr, realtime). Full details on the [Claude Code plugin](/docs/plugin) page:
 
 ```text
 /plugin marketplace add Particle-Academy/fancy-ui-plugin

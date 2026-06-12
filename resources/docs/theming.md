@@ -40,16 +40,16 @@ Dark mode is class-based. Add the `dark` class to `<html>` (or any ancestor) and
 A typical toggle:
 
 ```tsx
-import { Action } from "@particle-academy/react-fancy";
+import { Button } from "@particle-academy/react-fancy";
 import { Moon, Sun } from "lucide-react";
 
 export function ThemeToggle() {
   const toggle = () => document.documentElement.classList.toggle("dark");
   return (
-    <Action variant="ghost" size="sm" onClick={toggle}>
+    <Button variant="ghost" size="sm" onClick={toggle}>
       <Sun className="size-4 dark:hidden" />
       <Moon className="hidden size-4 dark:block" />
-    </Action>
+    </Button>
   );
 }
 ```

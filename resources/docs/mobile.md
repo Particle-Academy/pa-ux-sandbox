@@ -50,7 +50,7 @@ Two details that make either approach feel native:
 
 ## Touch ergonomics
 
-- **Hit targets ≥ 44px.** Give interactive elements `min-h-11` (44px) or generous padding. react-fancy's `Button`/`Action` default to comfortable sizes; don't shrink them below thumb-reach on mobile.
+- **Hit targets ≥ 44px.** Give interactive elements `min-h-11` (44px) or generous padding. react-fancy's `Button` defaults to a comfortable size; don't shrink it below thumb-reach on mobile.
 - **Avoid hover-only affordances.** Tooltips and hover menus don't exist on touch. Anything reachable only on hover needs a tap equivalent. (We learned this on our own nav — a hover tooltip once overlapped an open menu on touch.)
 - **Respect safe areas.** For full-bleed bottom bars, pad with `env(safe-area-inset-bottom)` so controls clear the home indicator.
 - **Momentum scroll regions** want `overscroll-contain` so a scrollable panel doesn't drag the page behind it.

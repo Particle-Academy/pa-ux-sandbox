@@ -13,14 +13,14 @@ yarn add @particle-academy/react-fancy
 ```
 
 ```tsx
-import { Card, Action, Heading } from "@particle-academy/react-fancy";
+import { Card, Button, Heading } from "@particle-academy/react-fancy";
 
 export function ProductCard() {
   return (
     <Card variant="elevated">
       <Card.Body>
         <Heading level={3} size="sm">Pro plan</Heading>
-        <Action color="violet">Subscribe</Action>
+        <Button color="violet">Subscribe</Button>
       </Card.Body>
     </Card>
   );

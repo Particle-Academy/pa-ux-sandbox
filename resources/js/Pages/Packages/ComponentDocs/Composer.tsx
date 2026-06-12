@@ -76,7 +76,7 @@ export const composerDoc: ComponentDoc = {
         { name: "onChange", type: `(value: string) => void`, default: "—", description: "Called on every keystroke." },
         { name: "onSubmit", type: `(value: string) => void`, default: "—", description: "Called on ⌘/Ctrl+Enter or the send button. Clear the input yourself afterward." },
         { name: "placeholder", type: `string`, default: "—", description: "Placeholder text." },
-        { name: "actions", type: `ReactNode`, default: "—", description: "Element(s) rendered on the trailing edge — usually `Action` buttons." },
+        { name: "actions", type: `ReactNode`, default: "—", description: "Element(s) rendered on the trailing edge — usually `Button` buttons." },
         { name: "disabled", type: `boolean`, default: `false`, description: "Disable the textarea + send button." },
         { name: "className", type: `string`, default: "—", description: "Extra classes on the root wrapper." },
     ],

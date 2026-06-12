@@ -108,7 +108,7 @@ public function show(User $user)
     'children' => [
       ['type' => 'Heading', 'props' => ['level' => 2], 'children' => ['Welcome back, '.$user->name]],
       ['type' => 'Text', 'children' => ['Three tasks need your attention today.']],
-      ['type' => 'Action', 'props' => ['color' => 'violet'], 'children' => ['Review']],
+      ['type' => 'Button', 'props' => ['color' => 'violet'], 'children' => ['Review']],
     ],
   ]],
 ]
@@ -134,7 +134,7 @@ The same surface that lets a designer "compose UI in JSON" (and fail) lets a mod
 
 ### Trust-but-verify on agent-authored pages
 
-Pages emitted by an agent should still respect the contract. If the schema includes a destructive action, that Action's `pendingMode` should be on by default — the page lands rendered, the human reviews, the human confirms. The agent proposes the page; the page proposes its mutations; the human ratifies both. No part of this requires special UI — the existing `pendingMode` affordance covers it.
+Pages emitted by an agent should still respect the contract. If the schema includes a destructive action, that Button's `pendingMode` should be on by default — the page lands rendered, the human reviews, the human confirms. The agent proposes the page; the page proposes its mutations; the human ratifies both. No part of this requires special UI — the existing `pendingMode` affordance covers it.
 
 ## Implications for designers and engineers
 

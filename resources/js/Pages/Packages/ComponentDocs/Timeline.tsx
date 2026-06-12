@@ -3,7 +3,7 @@ import { Timeline } from "@particle-academy/react-fancy";
 
 const events = [
     { date: "Jan 2024", title: "Project started", description: "First commit hits the repo. Caffeine consumed.", emoji: "🚀", color: "violet" as const },
-    { date: "Mar 2024", title: "0.1 shipped", description: "Initial set of primitives — Action, Card, Modal, Tabs, Toast.", emoji: "🎉", color: "emerald" as const },
+    { date: "Mar 2024", title: "0.1 shipped", description: "Initial set of primitives — Button, Card, Modal, Tabs, Toast.", emoji: "🎉", color: "emerald" as const },
     { date: "Jun 2024", title: "Agent integrations", description: "MCP bridges land — agents can drive every interactive primitive.", emoji: "🤖", color: "blue" as const },
     { date: "Today", title: "Component docs", description: "Every primitive becomes its own documentation page.", emoji: "📚", color: "amber" as const, active: true },
 ];

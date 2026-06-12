@@ -745,7 +745,7 @@ function CustomerTableCard({
                         Showing <span className="font-medium text-zinc-700 dark:text-zinc-300">{rows.length}</span> of {CUSTOMERS.length} customers
                     </Text>
                     <Text size="xs" className="!text-zinc-500 !font-mono">
-                        Built from Sidebar · Card · Tabs · Action · Badge · EChart · Tooltip · Toast
+                        Built from Sidebar · Card · Tabs · Button · Badge · EChart · Tooltip · Toast
                     </Text>
                 </div>
             </Card.Body>

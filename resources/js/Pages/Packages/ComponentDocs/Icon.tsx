@@ -6,7 +6,7 @@ export const iconDoc: ComponentDoc = {
         <p>
             A thin wrapper around a pluggable icon registry — pass <code>name</code> and the icon
             resolves from the registered set. Use the configured default set, or specify
-            <code>iconSet</code> per call. Composes inside Action, Callout, Badge, Menu items.
+            <code>iconSet</code> per call. Composes inside Button, Callout, Badge, Menu items.
         </p>
     ),
     examples: [

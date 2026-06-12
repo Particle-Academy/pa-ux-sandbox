@@ -5,7 +5,7 @@ export const emojiDoc: ComponentDoc = {
     intro: (
         <p>
             Render an emoji from a kebab-case slug (<code>fire</code>, <code>thumbs-up</code>,
-            <code>red-heart</code>) or from the raw glyph. Same registry the Action and
+            <code>red-heart</code>) or from the raw glyph. Same registry the Button and
             EmojiSelect components use — so a user-picked emoji in one place renders identically
             everywhere.
         </p>

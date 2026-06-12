@@ -880,7 +880,7 @@ const PREVIEWS: Record<string, PreviewFn> = {
                     <FileIcon size={12} className="text-violet-500" /> Card.tsx
                 </div>
                 <div className="ml-4 flex items-center gap-1 py-0.5 text-zinc-700 dark:text-zinc-200">
-                    <FileIcon size={12} className="text-violet-500" /> Action.tsx
+                    <FileIcon size={12} className="text-violet-500" /> Button.tsx
                 </div>
                 <div className="flex items-center gap-1 py-0.5 text-zinc-700 dark:text-zinc-200">
                     <FileIcon size={12} className="text-violet-500" /> index.ts

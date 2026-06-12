@@ -16,7 +16,7 @@ Fancy UI is shaped differently. The components are Tailwind-first (so theming is
 
 Eleven packages, organized by surface:
 
-- **`@particle-academy/react-fancy`** — ~50 Tailwind v4 React primitives. The foundation everything else builds on. *Action, Card, Tabs, Dropdown, Modal, Sidebar, Navbar, Calendar, Table, Toast, …*
+- **`@particle-academy/react-fancy`** — ~50 Tailwind v4 React primitives. The foundation everything else builds on. *Button, Card, Tabs, Dropdown, Modal, Sidebar, Navbar, Calendar, Table, Toast, …*
 - **`@particle-academy/fancy-flow`** — Visual workflow editor + topological executor.
 - **`@particle-academy/fancy-whiteboard`** — Transport-agnostic collaborative board with built-in presence.
 - **`@particle-academy/fancy-sheets`** — Full spreadsheet (formulas, multi-sheet workbooks, clipboard, CSV).

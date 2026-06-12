@@ -8,7 +8,7 @@ type Column = { id: string; title: string; cards: Card[] };
 const initial: Column[] = [
     { id: "todo", title: "To do", cards: [{ id: "c1", title: "Draft launch checklist" }, { id: "c2", title: "Wire deploy hooks" }] },
     { id: "doing", title: "In progress", cards: [{ id: "c3", title: "Build Kanban demo" }] },
-    { id: "done", title: "Done", cards: [{ id: "c4", title: "Ship Action docs" }] },
+    { id: "done", title: "Done", cards: [{ id: "c4", title: "Ship Button docs" }] },
 ];
 
 function KanbanDemo() {

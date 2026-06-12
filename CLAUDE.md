@@ -169,7 +169,7 @@ The Fancy UI strategic goal is **complete app surfaces where agents drive the UI
 
 - **No submodules anywhere in the workspace.** Each sibling package (`../react-fancy`, `../fancy-3d`, …) is its own independent git repo with its own remote. Edit packages in their own folders; the sandbox sees changes only after they're shipped to npm.
 - **NEVER use `git add -A` or `git add .`**. Always stage specific files by name. This workspace has untracked experiments, secrets, and files that must not be blindly committed.
-- **NEVER `git push` unless the user explicitly asks.** Commit locally is fine.
+- **Push when the task is done — don't ask first.** Commit locally as you go; once the work is complete and verified, push it without asking for push permission. Don't push half-done work mid-task.
 - Before every commit, review changes with `git diff --stat` or `git status`, then `git add <specific files>`.
 
 ## Publishing Releases

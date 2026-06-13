@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "cbd69c546d1f6af3deef63d6052f1d35",
+    "content-hash": "5c2968911df0f2bcba9b0c6fe663b26c",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -3558,16 +3558,16 @@
         },
         {
             "name": "particle-academy/fancy-heuristics",
-            "version": "v0.2.1",
+            "version": "v0.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/fancy-heuristics.git",
-                "reference": "0a775da531080301a260597d427b17167b99a21e"
+                "reference": "76d435eee6a6612ecb347b905486fc6764fe2404"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/fancy-heuristics/zipball/0a775da531080301a260597d427b17167b99a21e",
-                "reference": "0a775da531080301a260597d427b17167b99a21e",
+                "url": "https://api.github.com/repos/Particle-Academy/fancy-heuristics/zipball/76d435eee6a6612ecb347b905486fc6764fe2404",
+                "reference": "76d435eee6a6612ecb347b905486fc6764fe2404",
                 "shasum": ""
             },
             "require": {
@@ -3612,7 +3612,7 @@
                     "homepage": "https://github.com/Particle-Academy"
                 }
             ],
-            "description": "Human + agent interaction analytics and Fancy UI pixel verification for Laravel hosts. Ingests collector events, aggregates heatmaps, and re-polls sites to verify the embedded badge stays visible.",
+            "description": "End-user optimization, not search-engine optimization — human + agent interaction analytics for Laravel hosts. Ingests collector events, aggregates focus heatmaps, rolls up sessions by actor, and re-polls sites to verify the embedded Fancy Pixel stays visible.",
             "homepage": "https://github.com/Particle-Academy/fancy-heuristics",
             "keywords": [
                 "analytics",
@@ -3628,7 +3628,7 @@
                 "issues": "https://github.com/Particle-Academy/fancy-heuristics/issues",
                 "source": "https://github.com/Particle-Academy/fancy-heuristics"
             },
-            "time": "2026-06-12T22:44:41+00:00"
+            "time": "2026-06-13T03:09:39+00:00"
         },
         {
             "name": "particle-academy/holy-sheet",

@@ -98,7 +98,7 @@ class PackageRegistry
             [
                 'slug' => 'fancy-heuristics',
                 'name' => 'particle-academy/fancy-heuristics',
-                'tagline' => 'Human + agent interaction analytics + Fancy Pixel verification for Laravel — event ingestion, focus heatmaps, session/actor rollups. Server side of fancy-pixel / fancy-heuristics-js.',
+                'tagline' => 'End-user optimization, not search-engine optimization — human + agent interaction analytics for Laravel: event ingestion, focus heatmaps, and session/actor rollups, plus Fancy Pixel verification. Server side of fancy-pixel / fancy-heuristics-js.',
                 'composer' => 'particle-academy/fancy-heuristics',
                 'repo' => 'Particle-Academy/fancy-heuristics',
                 'packagist' => 'particle-academy/fancy-heuristics',

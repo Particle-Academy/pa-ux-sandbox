@@ -11,6 +11,7 @@ import { Moon, Sun, Sparkles, Check } from "@particle-academy/react-fancy/icons"
 import {
     useFancyTransition,
     FANCY_TRANSITION_LABELS,
+    AppUpdateAlert,
 } from "@particle-academy/fancy-inertia";
 import { currentTheme, toggleTheme } from "../showcase-theme";
 import { CommandPalette } from "./CommandPalette";
@@ -313,6 +314,13 @@ export function Layout({
                     </div>
                 </div>
             </footer>
+
+            {/* Prompt a refresh after a redeploy ships new assets (renders nothing
+                until a new build is detected). Dogfoods fancy-inertia's detector. */}
+            <AppUpdateAlert
+                title="Fancy UI just updated"
+                description="Refresh to get the latest build."
+            />
         </div>
     );
 }

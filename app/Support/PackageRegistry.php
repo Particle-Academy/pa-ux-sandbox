@@ -155,6 +155,14 @@ class PackageRegistry
                 'repo' => 'Particle-Academy/holy-sheet-js',
                 'language' => 'TypeScript',
             ],
+            [
+                'slug' => 'fancy-term-host',
+                'name' => '@particle-academy/fancy-term-host',
+                'tagline' => 'Headless Node terminal backend for fancy-term — owns the PTYs (node-pty peer) and the T1/T2/T3 persistence engine (snapshot+replay, retained PTYs, detached pty-host) behind four injected ports. No UI.',
+                'npm' => '@particle-academy/fancy-term-host',
+                'repo' => 'Particle-Academy/fancy-term-host',
+                'language' => 'TypeScript',
+            ],
             // Showcase analytics: a headless browser collector (the verification
             // badge that pairs with it — fancy-pixel — renders UI, so it lives in
             // the main grid, not here).

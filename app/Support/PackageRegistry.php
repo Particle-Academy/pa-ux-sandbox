@@ -114,6 +114,15 @@ class PackageRegistry
                 'language' => 'PHP',
             ],
             [
+                'slug' => 'fancy-seo',
+                'name' => 'particle-academy/fancy-seo',
+                'tagline' => 'Server-rendered SEO + crawlability for Laravel + Inertia — per-route meta / Open Graph / Twitter / JSON-LD on the first byte, dynamic sitemap.xml / robots.txt / llms.txt, and per-page Markdown. The PHP baseline that pairs with @particle-academy/fancy-inertia\'s <Seo>.',
+                'composer' => 'particle-academy/fancy-seo',
+                'repo' => 'Particle-Academy/fancy-seo',
+                'packagist' => 'particle-academy/fancy-seo',
+                'language' => 'PHP',
+            ],
+            [
                 'slug' => 'fancy-auto-common',
                 'name' => '@particle-academy/fancy-auto-common',
                 'tagline' => 'Shared Human+ primitives — AgentActivity events, presence, undo stacks, and effect helpers. Low-level plumbing reused across the kit; usually installed transitively.',

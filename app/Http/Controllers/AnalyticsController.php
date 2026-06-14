@@ -148,10 +148,14 @@ class AnalyticsController extends Controller
                 ->where('user_id', $user->id)
                 ->whereNotNull('site_key')
                 ->orderByDesc('id')
-                ->get(['site_key', 'url'])
+                ->get(['site_key', 'url', 'title'])
                 ->map(fn (ShowcaseSubmission $s): array => [
                     'site_key' => (string) $s->site_key,
                     'url' => $s->url,
+                    // Friendly label for the picker: the submission title, else
+                    // the URL host, else the raw site_key. The site_key is a
+                    // random slug — never show it as the only label.
+                    'label' => $this->siteLabel($s->title, $s->url, (string) $s->site_key),
                     'visible' => true,
                 ])
                 ->unique('site_key')
@@ -164,11 +168,32 @@ class AnalyticsController extends Controller
             $owned[] = [
                 'site_key' => self::DEFAULT_SITE,
                 'url' => config('app.url'),
+                'label' => 'Fancy UI Showcase (dogfood)',
                 'visible' => true,
             ];
         }
 
         return array_values($owned);
+    }
+
+    /**
+     * A human-friendly label for a site: title → URL host → the raw site_key.
+     */
+    private function siteLabel(?string $title, ?string $url, string $siteKey): string
+    {
+        $title = is_string($title) ? trim($title) : '';
+        if ($title !== '') {
+            return $title;
+        }
+
+        if (is_string($url) && $url !== '') {
+            $host = parse_url($url, PHP_URL_HOST);
+            if (is_string($host) && $host !== '') {
+                return preg_replace('/^www\./i', '', $host);
+            }
+        }
+
+        return $siteKey;
     }
 
     /**

@@ -13,7 +13,7 @@ import "../../../css/analytics.css";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
-type Site = { site_key: string; url: string | null; visible: boolean };
+type Site = { site_key: string; url: string | null; label: string; visible: boolean };
 type Filters = { range: number; actor: "all" | "human" | "agent"; compare: boolean };
 
 type Metric = { value: number; deltaPct: number | null; format: "int" | "decimal" | "percent" | "duration" };
@@ -142,7 +142,7 @@ function ControlsBar({ filters, site, sites }: { filters: Filters; site: string 
                     value={site ?? ""}
                     onChange={(e) => router.get("/analytics", { site: e.target.value, range: filters.range, actor: filters.actor, compare: filters.compare ? 1 : 0 }, { preserveScroll: true })}
                 >
-                    {sites.map((s) => <option key={s.site_key} value={s.site_key}>{s.site_key}</option>)}
+                    {sites.map((s) => <option key={s.site_key} value={s.site_key}>{s.label ?? s.site_key}</option>)}
                 </select>
             </div>
 

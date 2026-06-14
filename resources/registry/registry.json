@@ -1,6 +1,6 @@
 {
     "$schema": "https://ui.particle.academy/schema/registry-compiled.json",
-    "count": 138,
+    "count": 139,
     "items": [
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
@@ -1830,6 +1830,17 @@
                     "target": "components/fancy/fancy-app-root/FancyAppRoot.tsx"
                 }
             ]
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "fancy-app-update",
+            "type": "registry:ui",
+            "title": "@particle-academy/fancy-app-update",
+            "description": "Framework-agnostic \"a new version is available \u2014 refresh\" detector for any React app \u2014 custom API, version compare, or zero-config ETag polling. No Inertia/PHP; self-contained prompt. fancy-inertia adds an Inertia-409 default on top.",
+            "package": "fancy-app-update",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",

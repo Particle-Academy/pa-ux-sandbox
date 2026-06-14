@@ -165,6 +165,14 @@ class PackageRegistry
                 'language' => 'TypeScript',
             ],
             [
+                'slug' => 'fancy-app-update',
+                'name' => '@particle-academy/fancy-app-update',
+                'tagline' => 'Framework-agnostic "a new version is available — refresh" detector for any React app — custom API, version compare, or zero-config ETag polling. No Inertia/PHP; self-contained prompt. fancy-inertia adds an Inertia-409 default on top.',
+                'npm' => '@particle-academy/fancy-app-update',
+                'repo' => 'Particle-Academy/fancy-app-update',
+                'language' => 'TypeScript',
+            ],
+            [
                 'slug' => 'fancy-term-host',
                 'name' => '@particle-academy/fancy-term-host',
                 'tagline' => 'Headless Node terminal backend for fancy-term — owns the PTYs (node-pty peer) and the T1/T2/T3 persistence engine (snapshot+replay, retained PTYs, detached pty-host) behind four injected ports. No UI.',

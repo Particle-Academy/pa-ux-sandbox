@@ -1,4 +1,4 @@
-import { Head, Link, usePage } from "@inertiajs/react";
+import { Head, Link, router, usePage } from "@inertiajs/react";
 import { Component, ErrorInfo, ReactNode, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import {
     Button,
@@ -7,6 +7,7 @@ import {
     Heading,
     Separator,
     Text,
+    useToast,
 } from "@particle-academy/react-fancy";
 import { Layout } from "../Layout";
 import { dreamDemos } from "./demos";
@@ -120,10 +121,19 @@ function DemoPreview({ slug }: { slug: string }) {
     );
 }
 
+/** The current XSRF-TOKEN cookie (Laravel refreshes it on every response), decoded
+ *  for the `X-XSRF-TOKEN` header. Null on the server / when no cookie is set. */
+function readXsrfCookie(): string | null {
+    if (typeof document === "undefined") return null;
+    const m = document.cookie.match(/(?:^|;\s*)XSRF-TOKEN=([^;]+)/);
+    return m ? decodeURIComponent(m[1]) : null;
+}
+
 export default function DreamingIndex({ dreams, tallies: initialTallies, themes }: Props) {
     const { props } = usePage<{ auth: { user: unknown }; csrfToken: string }>();
     const isAuth = !!props.auth?.user;
     const csrf = props.csrfToken;
+    const { toast } = useToast();
 
     const [tallies, setTallies] = useState(initialTallies);
     const [filter, setFilter] = useState<"all" | "up" | "down" | "undecided">("all");
@@ -154,15 +164,36 @@ export default function DreamingIndex({ dreams, tallies: initialTallies, themes 
                 headers: {
                     "content-type": "application/json",
                     "accept": "application/json",
+                    // Prefer the always-fresh XSRF cookie (Laravel refreshes it on
+                    // every response) and fall back to the page's csrf token, so a
+                    // long-open tab doesn't fail a stale-token check silently.
+                    "x-xsrf-token": readXsrfCookie() ?? "",
                     "x-csrf-token": csrf,
                 },
                 body: JSON.stringify({ type: "dream", slug, value: next }),
             });
-            if (!res.ok) return;
+
+            // 419 = the session/CSRF token expired (e.g. a tab left open past the
+            // session lifetime). Reload to mint a fresh token + session, then the
+            // next click works — instead of silently doing nothing.
+            if (res.status === 419) {
+                toast({ variant: "warning", title: "Session expired", description: "Refreshing — try your vote again." });
+                router.reload();
+                return;
+            }
+            if (res.status === 401) {
+                window.location.href = "/auth/github";
+                return;
+            }
+            if (!res.ok) {
+                toast({ variant: "error", title: "Couldn't save your vote", description: "Something went wrong — please try again." });
+                return;
+            }
+
             const data = (await res.json()) as { tallies: Tally };
             setTallies((t) => ({ ...t, [slug]: data.tallies }));
         } catch {
-            /* ignore */
+            toast({ variant: "error", title: "Couldn't reach the server", description: "Check your connection and try again." });
         }
     };
 

@@ -32,8 +32,6 @@ The component libraries and interactive surfaces. Each is controlled (`value` + 
 - **`fancy-echarts`** — typed React wrapper around Apache ECharts.
 - **`fancy-screens`** — multi-screen application shell with cross-screen agent presence.
 - **`fancy-3d`** — engine-agnostic 3D core, with `fancy-3d-babylon` and `fancy-3d-three` WebGL adapters.
-- **`fancy-motion`** — timeline / scroll-keyframe animation primitives.
-- **`fancy-cms-ui`** — WYSIWYG CMS editor on the Stages document model.
 
 ### Service & Tool packages
 
@@ -43,7 +41,7 @@ No UI of their own — but they're what turns a pile of components into a Human+
 - **App integration & data** — `fancy-inertia` (Inertia ↔ React adapter, page transitions, schema-driven pages), `fancy-query` (server-state: TanStack Query + Inertia hydration + Echo invalidation).
 - **Analytics** — `fancy-pixel` (embeddable verification badge + interaction beacon), `fancy-heuristics` + `fancy-heuristics-js` (human-vs-agent interaction analytics).
 - **Agentic documents** — `holy-sheet` (PHP xlsx writer) + `holy-sheet-js`, `dark-slide` (PHP pptx writer/reader) + `dark-slide-js`.
-- **Laravel infrastructure** — `fancy-cms` (Stages page renderer / host), `laravel-catalog` (Stripe catalog), `laravel-fms` (feature management), `laravel-fun-lab` (gamification).
+- **Laravel infrastructure** — `laravel-catalog` (Stripe catalog), `laravel-fms` (feature management), `laravel-fun-lab` (gamification).
 - **Tooling** — `fancy-cli` (the `npx fancy-cli` source-vendoring CLI).
 
 PHP packages ship via Packagist; everything else via npm. The full per-package detail is on [Packages](/packages).

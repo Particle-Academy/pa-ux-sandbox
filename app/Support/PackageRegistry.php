@@ -11,10 +11,20 @@ namespace App\Support;
  */
 class PackageRegistry
 {
+    /**
+     * Slugs hidden from every public surface — the package grid, /packages,
+     * per-package detail pages, the on-site docs, the sitemap, and the compiled
+     * registry.json (so the helper MCP / install tooling won't surface them
+     * either). Use this for packages that are still in preview and not yet
+     * released; their definitions stay below, so re-listing one is just deleting
+     * its slug from this list (and re-running `php artisan registry:build`).
+     */
+    public const HIDDEN = ['fancy-motion', 'fancy-cms-ui', 'fancy-cms'];
+
     /** @return array<int, array<string, mixed>> */
     public static function all(): array
     {
-        return [
+        return self::visible([
             self::reactFancy(),
             self::fancyWhiteboard(),
             self::fancyArtboard(),
@@ -34,7 +44,21 @@ class PackageRegistry
             self::fancyInertia(),
             self::fancyMotion(),
             self::fancyCmsUi(),
-        ];
+        ]);
+    }
+
+    /**
+     * Drop any {@see HIDDEN} (unreleased / preview) packages from a list.
+     *
+     * @param  array<int, array<string, mixed>>  $packages
+     * @return array<int, array<string, mixed>>
+     */
+    private static function visible(array $packages): array
+    {
+        return array_values(array_filter(
+            $packages,
+            static fn (array $p): bool => ! in_array($p['slug'] ?? null, self::HIDDEN, true),
+        ));
     }
 
     /**
@@ -49,7 +73,7 @@ class PackageRegistry
      */
     public static function companions(): array
     {
-        return [
+        return self::visible([
             [
                 'slug' => 'holy-sheet',
                 'name' => 'particle-academy/holy-sheet',
@@ -209,7 +233,7 @@ class PackageRegistry
                 'repo' => 'Particle-Academy/fancy-ui-cli',
                 'language' => 'TypeScript',
             ],
-        ];
+        ]);
     }
 
     public static function find(string $slug): ?array

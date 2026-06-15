@@ -67,7 +67,7 @@ import {
     User,
     X,
     Zap,
-} from "@particle-academy/react-fancy/icons";
+} from "lucide-react";
 
 type PreviewFn = () => ReactNode;
 

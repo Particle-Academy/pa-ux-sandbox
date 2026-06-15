@@ -1,20 +1,20 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router";
-import {
-  ArcRotateCamera,
-  Color3,
-  Color4,
-  CreateGround,
-  DirectionalLight,
-  Engine,
-  HemisphericLight,
-  Mesh,
-  MeshBuilder,
-  PointerEventTypes,
-  Scene as BJScene,
-  StandardMaterial,
-  Vector3,
-} from "@babylonjs/core";
+// Granular @babylonjs/core imports (not the barrel) so the lazy 3D chunk only
+// includes the engine subsystems these demos use — the bare "@babylonjs/core"
+// barrel pulls the whole ~6MB engine (GUI, physics, loaders, XR, …).
+import { ArcRotateCamera } from "@babylonjs/core/Cameras/arcRotateCamera";
+import { Color3, Color4 } from "@babylonjs/core/Maths/math.color";
+import { CreateGround } from "@babylonjs/core/Meshes/Builders/groundBuilder";
+import { DirectionalLight } from "@babylonjs/core/Lights/directionalLight";
+import { Engine } from "@babylonjs/core/Engines/engine";
+import { HemisphericLight } from "@babylonjs/core/Lights/hemisphericLight";
+import { Mesh } from "@babylonjs/core/Meshes/mesh";
+import { MeshBuilder } from "@babylonjs/core/Meshes/meshBuilder";
+import { PointerEventTypes } from "@babylonjs/core/Events/pointerEvents";
+import { Scene as BJScene } from "@babylonjs/core/scene";
+import { StandardMaterial } from "@babylonjs/core/Materials/standardMaterial";
+import { Vector3 } from "@babylonjs/core/Maths/math.vector";
 import { Button, Badge, Callout, Card } from "@particle-academy/react-fancy";
 import {
   createBillboard,

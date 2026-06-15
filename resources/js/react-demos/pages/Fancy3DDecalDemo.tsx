@@ -1,5 +1,11 @@
 import { useEffect, useState } from "react";
-import { MeshBuilder, StandardMaterial, Color3, Vector3, type Mesh, PointerEventTypes } from "@babylonjs/core";
+// Granular @babylonjs/core imports (not the barrel) — keeps the lazy 3D chunk small.
+import { MeshBuilder } from "@babylonjs/core/Meshes/meshBuilder";
+import { StandardMaterial } from "@babylonjs/core/Materials/standardMaterial";
+import { Color3 } from "@babylonjs/core/Maths/math.color";
+import { Vector3 } from "@babylonjs/core/Maths/math.vector";
+import { PointerEventTypes } from "@babylonjs/core/Events/pointerEvents";
+import type { Mesh } from "@babylonjs/core/Meshes/mesh";
 import { createDecal, createPanel } from "@particle-academy/fancy-3d-babylon";
 import { Stage, useStage } from "@particle-academy/fancy-3d-babylon/react";
 import { Badge, Card } from "@particle-academy/react-fancy";

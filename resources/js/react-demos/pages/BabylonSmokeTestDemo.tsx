@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  Color3,
-  MeshBuilder,
-  PointerEventTypes,
-  StandardMaterial,
-  Vector3,
-  type Mesh,
-  type Scene as BJScene,
-} from "@babylonjs/core";
+// Granular @babylonjs/core imports (not the barrel) — keeps the lazy 3D chunk
+// to the subsystems used here instead of the whole ~6MB engine.
+import { Color3 } from "@babylonjs/core/Maths/math.color";
+import { MeshBuilder } from "@babylonjs/core/Meshes/meshBuilder";
+import { PointerEventTypes } from "@babylonjs/core/Events/pointerEvents";
+import { StandardMaterial } from "@babylonjs/core/Materials/standardMaterial";
+import { Vector3 } from "@babylonjs/core/Maths/math.vector";
+import type { Mesh } from "@babylonjs/core/Meshes/mesh";
+import type { Scene as BJScene } from "@babylonjs/core/scene";
 import { Stage, useStage } from "@particle-academy/fancy-3d-babylon/react";
 import { Button, Badge, Card } from "@particle-academy/react-fancy";
 

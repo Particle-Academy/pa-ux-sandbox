@@ -7,7 +7,7 @@ import {
     Profile,
     Tooltip,
 } from "@particle-academy/react-fancy";
-import { Moon, Sun, Sparkles, Check, Bot } from "@particle-academy/react-fancy/icons";
+import { Moon, Sun, Sparkles, Check, Bot } from "lucide-react";
 import {
     useFancyTransition,
     FANCY_TRANSITION_LABELS,

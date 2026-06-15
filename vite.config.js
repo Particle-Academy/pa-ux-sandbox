@@ -109,34 +109,22 @@ export default defineConfig({
         // Pair with swap on the server (the durable fix); see deploy notes.
         reportCompressedSize: false,
         sourcemap: false,
-        // Vendor-chunk the heavy libraries. Without this, every entry's
-        // shared-chunk graph promotes them into the "core" bundle, which
-        // produced two ~4MB core-*.js files (one per entry: showcase-app +
-        // react-demos). Splitting them out shrinks the eagerly-loaded core
-        // dramatically — Babylon (~4MB), ECharts (~500KB), react-flow,
-        // and lucide-react each live in their own chunk that's only
-        // downloaded when a route actually uses it.
-        rolldownOptions: {
-            output: {
-                codeSplitting: {
-                    groups: [
-                        { name: 'babylonjs', test: /[\\/]node_modules[\\/]@babylonjs[\\/]core[\\/]/ },
-                        { name: 'echarts', test: /[\\/]node_modules[\\/](echarts|echarts-gl|zrender)[\\/]/ },
-                        { name: 'react-flow', test: /[\\/]node_modules[\\/]@xyflow[\\/]/ },
-                        { name: 'lucide-react', test: /[\\/]node_modules[\\/]lucide-react[\\/]/ },
-                    ],
-                },
-            },
-        },
-        // Two vendor chunks exceed the default 500KB heuristic by design:
-        // babylonjs (~13MB — @babylonjs/core ships as a tree-shake-hostile
-        // barrel) and echarts (~1.5MB — combined echarts + echarts-gl +
-        // zrender). Both are split out as separate vendor chunks above,
-        // only fetched by routes that actually use them. The size limit
-        // is bumped past the larger of the two so the warning stops
-        // firing on intentional vendor splits — anything new above 1.5MB
-        // is still flagged.
-        chunkSizeWarningLimit: 15000,
+        // No manual codeSplitting `groups`. They were COUNTERPRODUCTIVE: a
+        // rolldown group hoists every matching module into one named chunk that
+        // the entry statically imports — so Babylon (~1.6MB) and the lucide
+        // barrel (~560KB) were being downloaded EAGERLY on the home page even
+        // though only lazy routes use them. Letting rolldown split at the
+        // natural dynamic-import boundaries instead keeps them in their own lazy
+        // chunks: the 3D demos pull Babylon only when visited, and react-fancy's
+        // <Icon name> auto-fallback dynamic-imports lucide only on pages that
+        // use it (e.g. admin). ECharts stays eager — showcase-app calls
+        // registerEChartsAll() synchronously for first-frame hero previews — so
+        // it lands in the shared entry chunk by design.
+        //
+        // Babylon also gets granular @babylonjs/core imports (in the
+        // fancy-3d-babylon package + the sandbox demos) so the lazy 3D chunk is
+        // ~1.6MB, not the whole ~6MB engine barrel.
+        chunkSizeWarningLimit: 3000,
     },
     server: {
         watch: {

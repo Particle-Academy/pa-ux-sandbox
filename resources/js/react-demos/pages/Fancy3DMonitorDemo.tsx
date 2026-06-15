@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Vector3 } from "@babylonjs/core";
+import { Vector3 } from "@babylonjs/core/Maths/math.vector";
 import { createMonitor, createPanel } from "@particle-academy/fancy-3d-babylon";
 import { Stage, useStage } from "@particle-academy/fancy-3d-babylon/react";
 

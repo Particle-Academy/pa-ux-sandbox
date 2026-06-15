@@ -1,5 +1,6 @@
 import { useEffect } from "react";
-import { Color3, Vector3 } from "@babylonjs/core";
+import { Color3 } from "@babylonjs/core/Maths/math.color";
+import { Vector3 } from "@babylonjs/core/Maths/math.vector";
 import {
   createBillboard,
   createBuilding,

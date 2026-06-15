@@ -49,7 +49,7 @@ import {
     Cpu,
     Radio,
     RectangleHorizontal,
-} from "@particle-academy/react-fancy/icons";
+} from "lucide-react";
 import { Layout } from "./Layout";
 
 // ─── Props ───────────────────────────────────────────────────────────────────

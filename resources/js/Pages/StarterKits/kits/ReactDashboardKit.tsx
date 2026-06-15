@@ -29,7 +29,7 @@ import {
     User,
     Users,
     Webhook,
-} from "@particle-academy/react-fancy/icons";
+} from "lucide-react";
 
 // ─── Dashboard data ───────────────────────────────────────────────────────
 

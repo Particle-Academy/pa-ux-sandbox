@@ -18,6 +18,7 @@ use App\Http\Controllers\DarkSlideExportController;
 use App\Http\Controllers\DevLoginController;
 use App\Http\Controllers\EasterEggController;
 use App\Http\Controllers\HolySheetExportController;
+use App\Http\Controllers\OgImageController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\Showcase\DocsController;
 use App\Http\Controllers\Showcase\DreamingController;
@@ -48,6 +49,13 @@ use Laravel\Mcp\Facades\Mcp;
 // llms-full.txt, .well-known/security.txt, humans.txt) are auto-registered by
 // particle-academy/fancy-seo; their content comes from config/fancy-seo.php +
 // App\Providers\SeoServiceProvider (sitemap + llms providers).
+
+// Dynamic Open Graph / social-card images (branded 1200×630 PNGs, headless-Chrome
+// rendered + cached). Referenced by the per-route og:image in SeoServiceProvider.
+Route::get('/og/default.png', [OgImageController::class, 'default'])->name('og.default');
+Route::get('/og/packages/{package}.png', [OgImageController::class, 'package'])
+    ->where('package', '[a-z0-9\-]+')
+    ->name('og.package');
 
 // Authentication routes
 Route::middleware('guest')->group(function () {

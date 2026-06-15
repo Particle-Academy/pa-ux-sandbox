@@ -34,6 +34,7 @@ class DocsRegistry
                 ['slug' => 'page-transitions', 'title' => 'Page transitions', 'description' => 'Animate Inertia navigation with fancy-inertia crossfades.'],
                 ['slug' => 'mobile', 'title' => 'Mobile & responsive', 'description' => 'Tailwind v4 breakpoints, touch, mobile nav, and SSR-safe rendering.'],
                 ['slug' => 'seo', 'title' => 'SEO & SSR', 'description' => 'Real content on the first byte — server-side rendering, per-page meta + Open Graph + JSON-LD, sitemap / robots / llms.txt.'],
+                ['slug' => 'end-user-optimization', 'title' => 'EUO — End-User Optimization', 'description' => 'The counterpart to SEO: optimize for what humans AND agents actually do in your UI, not just what bots crawl. Powered by fancy-heuristics + fancy-pixel.'],
                 ['slug' => 'designing-human-plus', 'title' => 'Designing for Human+', 'description' => 'Design surfaces humans and agents share — presence, trust, affordances.'],
                 ['slug' => 'developing-human-plus', 'title' => 'Developing for Human+', 'description' => 'The component contract in code — controlled state, handles, bridges.'],
             ],

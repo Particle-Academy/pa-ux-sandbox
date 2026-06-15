@@ -203,6 +203,8 @@ class SeoServiceProvider extends ServiceProvider
         return [
             'title' => "{$name} — Fancy UI",
             'description' => trim("{$tagline} Part of the Fancy UI suite — authorable by humans and agents, bridgeable over MCP."),
+            'image' => "/og/packages/{$slug}.png",
+            'imageAlt' => "{$name} — Fancy UI",
             'jsonLd' => $jsonLd,
         ];
     }

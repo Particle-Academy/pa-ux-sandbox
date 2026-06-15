@@ -33,5 +33,6 @@
         <env name="NIGHTWATCH_ENABLED" value="false"/>
         <env name="CATALOG_ENABLE_UI" value="true"/>
         <env name="INERTIA_SSR_ENABLED" value="false"/>
+        <env name="SCREENSHOTS_ENABLED" value="false"/>
     </php>
 </phpunit>

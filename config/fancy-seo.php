@@ -13,8 +13,10 @@ return [
     'url' => env('FANCY_SEO_URL', config('app.url')),
     'title' => null, // home/per-route titles set in SeoServiceProvider
     'description' => 'Components for the surfaces where humans and agents work together.',
-    'image' => '/showcase-assets/fancy-ui-logo.jpg',
+    'image' => '/og/default.png', // dynamic branded card (App\Http\Controllers\OgImageController)
     'image_alt' => 'Fancy UI — components for Human+ UX',
+    'image_width' => 1200,
+    'image_height' => 630,
     'locale' => 'en_US',
     'type' => 'website',
     'twitter_site' => null,

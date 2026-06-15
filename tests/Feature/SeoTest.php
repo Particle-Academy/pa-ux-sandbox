@@ -144,3 +144,21 @@ it('serves a clean markdown variant of a docs page for LLM fetchers', function (
 it('lists docs pages in the sitemap', function () {
     $this->get('/sitemap.xml')->assertOk()->assertSee('/docs/human-plus-ux', false);
 });
+
+it('serves an OG image (logo fallback when headless Chrome is off)', function () {
+    foreach (['/og/default.png', '/og/packages/react-fancy.png'] as $path) {
+        $res = $this->get($path);
+        $res->assertOk();
+        expect($res->headers->get('Content-Type'))->toContain('image/');
+    }
+
+    // Unknown package 404s.
+    $this->get('/og/packages/not-a-real-package.png')->assertNotFound();
+});
+
+it('points each page og:image at its card', function () {
+    expect($this->get('/')->getContent())
+        ->toContain('property="og:image" content="'.config('app.url').'/og/default.png"');
+    expect($this->get('/packages/react-fancy')->getContent())
+        ->toContain('property="og:image" content="'.config('app.url').'/og/packages/react-fancy.png"');
+});

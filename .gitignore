@@ -18,6 +18,7 @@
 /auth.json
 /react-demo
 /node_modules
+/bootstrap/ssr
 /public/build
 /public/hot
 /public/storage

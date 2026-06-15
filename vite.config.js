@@ -51,6 +51,10 @@ export default defineConfig({
                 'resources/css/showcase.css',
                 'resources/js/showcase-app.tsx',
             ],
+            // SSR entry — `vite build --ssr` bundles this to bootstrap/ssr so the
+            // Inertia SSR node process (createFancyServer) renders the showcase's
+            // content into the first byte. See resources/js/ssr.tsx.
+            ssr: 'resources/js/ssr.tsx',
             refresh: true,
         }),
         tsrxReact(),

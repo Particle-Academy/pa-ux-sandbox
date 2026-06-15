@@ -53,7 +53,6 @@ const NAV_ITEMS: Array<{ to: string; label: string; match: string }> = [
     { to: "/docs", label: "Docs", match: "docs" },
     { to: "/packages", label: "Packages", match: "packages" },
     { to: "/starter-kits", label: "Starter Kits", match: "starter-kits" },
-    { to: "/dreaming", label: "Dreaming", match: "dreaming" },
     { to: "/agent-playground", label: "Agent Playground", match: "agent-playground" },
     { to: "/showcase", label: "Showcase", match: "showcase" },
     { to: "/shop", label: "Shop", match: "shop" },
@@ -79,12 +78,12 @@ export function Layout({
     const flash = props.flash ?? {};
     const path = url.replace(/^\/+/, "").split("?")[0];
 
-    // Pro Analytics lives behind the `analytics-suite` Pro feature, so we only
-    // surface the nav link for Pro users. Non-Pro users can still reach the
-    // upsell at /analytics directly — the server enforces the gate either way.
-    const navItems = auth?.player?.pro
-        ? [...NAV_ITEMS, { to: "/analytics", label: "Analytics", match: "analytics" }]
-        : NAV_ITEMS;
+    // Pro Analytics lives behind the `analytics-suite` Pro feature. The link
+    // lives in the user menu (below) for Pro users to keep the main nav lean;
+    // non-Pro users can still reach the upsell at /analytics directly — the
+    // server enforces the gate either way.
+    const isPro = auth?.player?.pro ?? false;
+    const navItems = NAV_ITEMS;
 
     // Start "light" so the server render and the client's FIRST render agree —
     // reading the real theme during render (the blade inline script may have set
@@ -170,13 +169,14 @@ export function Layout({
 
                         <a
                             className="btn btn-ghost nav-gh"
-                            style={{ height: 34, padding: "0 12px" }}
+                            style={{ height: 34, padding: "0 10px" }}
                             href="https://github.com/particle-academy"
                             target="_blank"
                             rel="noopener noreferrer"
+                            aria-label="GitHub"
+                            title="GitHub"
                         >
                             <span className="gh-mark" />
-                            <span>GitHub</span>
                         </a>
 
                         {auth ? (
@@ -196,6 +196,11 @@ export function Layout({
                                         <Dropdown.Item onClick={() => router.visit("/profile")}>
                                             Your profile
                                         </Dropdown.Item>
+                                        {isPro && (
+                                            <Dropdown.Item onClick={() => router.visit("/analytics")}>
+                                                Analytics
+                                            </Dropdown.Item>
+                                        )}
                                         <Dropdown.Item onClick={() => router.visit("/showcase/mine")}>
                                             My submissions
                                         </Dropdown.Item>

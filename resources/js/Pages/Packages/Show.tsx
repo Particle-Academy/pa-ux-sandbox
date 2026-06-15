@@ -1,4 +1,5 @@
-import { Head, Link } from "@inertiajs/react";
+import { Link } from "@inertiajs/react";
+import { Seo } from "@particle-academy/fancy-inertia/seo";
 import { useState } from "react";
 import { Button, Badge, Breadcrumbs, Card, Heading, Tabs, Text } from "@particle-academy/react-fancy";
 import { Layout } from "../Layout";
@@ -33,7 +34,7 @@ export default function PackagesShow({ package: pkg, context, readmeHtml = null 
 
     return (
         <Layout>
-            <Head title={`${pkg.name} · Fancy UI`} />
+            <Seo title={pkg.name} description={pkg.tagline} />
 
             <Breadcrumbs>
                 <Breadcrumbs.Item href="/packages">Packages</Breadcrumbs.Item>

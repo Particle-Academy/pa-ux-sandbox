@@ -1,6 +1,7 @@
 import { createInertiaApp } from "@inertiajs/react";
 import { createRoot } from "react-dom/client";
 import { FancyAppRoot, FancyTransitionProvider, FancyPageTransition } from "@particle-academy/fancy-inertia";
+import { SeoProvider, defineSeo } from "@particle-academy/fancy-inertia/seo";
 import type { ComponentType, ReactNode } from "react";
 import { FancyDataRoot } from "@particle-academy/fancy-query";
 import { registerAll as registerEChartsAll, registerBuiltinThemes } from "@particle-academy/fancy-echarts";
@@ -15,6 +16,20 @@ import "@particle-academy/fancy-code/styles.css";
 // contains EChart-based previews that render in the first frame.
 registerEChartsAll();
 registerBuiltinThemes();
+
+// Site-wide SEO defaults for the client <Seo> layer. Mirrors the
+// particle-academy/fancy-seo server baseline (config/fancy-seo.php +
+// SeoServiceProvider) so per-page <Seo> stays terse and SPA navigation keeps
+// title/description in sync. `siteUrl` is window-guarded (SSR-safe).
+const seoDefaults = defineSeo({
+    siteName: "Fancy UI",
+    titleTemplate: "%s — Fancy UI",
+    defaultTitle: "Fancy UI for React, Inertia, and Laravel | Human-Agent UI",
+    defaultDescription: "Components for the surfaces where humans and agents work together.",
+    defaultImage: "/showcase-assets/fancy-ui-logo.jpg",
+    locale: "en_US",
+    siteUrl: typeof window !== "undefined" ? window.location.origin : undefined,
+});
 
 createInertiaApp({
     resolve: (name) => {
@@ -40,16 +55,18 @@ createInertiaApp({
                         itself, then reads the active transition from the provider so
                         the nav switcher re-scopes every nav. */}
                     <FancyTransitionProvider defaultTransition="fade">
-                        <App {...props}>
-                            {({ Component, key, props: pageProps }) => {
-                                const Page = Component as ComponentType<Record<string, unknown>> & {
-                                    layout?: (page: ReactNode) => ReactNode;
-                                };
-                                const child = <Page {...pageProps} />;
-                                const rendered = Page.layout ? Page.layout(child) : child;
-                                return <FancyPageTransition pageKey={key ?? ""}>{rendered}</FancyPageTransition>;
-                            }}
-                        </App>
+                        <SeoProvider value={seoDefaults}>
+                            <App {...props}>
+                                {({ Component, key, props: pageProps }) => {
+                                    const Page = Component as ComponentType<Record<string, unknown>> & {
+                                        layout?: (page: ReactNode) => ReactNode;
+                                    };
+                                    const child = <Page {...pageProps} />;
+                                    const rendered = Page.layout ? Page.layout(child) : child;
+                                    return <FancyPageTransition pageKey={key ?? ""}>{rendered}</FancyPageTransition>;
+                                }}
+                            </App>
+                        </SeoProvider>
                     </FancyTransitionProvider>
                 </FancyDataRoot>
             </FancyAppRoot>,

@@ -19,7 +19,6 @@ use App\Http\Controllers\DevLoginController;
 use App\Http\Controllers\EasterEggController;
 use App\Http\Controllers\HolySheetExportController;
 use App\Http\Controllers\ProductController;
-use App\Http\Controllers\SeoController;
 use App\Http\Controllers\Showcase\DocsController;
 use App\Http\Controllers\Showcase\DreamingController;
 use App\Http\Controllers\Showcase\FancifiedBadgeController;
@@ -45,15 +44,10 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Mcp\Facades\Mcp;
 
-// SEO / discovery + well-known endpoints (public, plain-text/xml — served
-// dynamically so they stay in sync with the routes + PackageRegistry).
-Route::get('/robots.txt', [SeoController::class, 'robots'])->name('seo.robots');
-Route::get('/sitemap.xml', [SeoController::class, 'sitemap'])->name('seo.sitemap');
-Route::get('/llms.txt', [SeoController::class, 'llms'])->name('seo.llms');
-Route::get('/llms-full.txt', [SeoController::class, 'llmsFull'])->name('seo.llms-full');
-Route::get('/.well-known/security.txt', [SeoController::class, 'securityTxt'])->name('seo.security');
-Route::get('/security.txt', [SeoController::class, 'securityTxt']);
-Route::get('/humans.txt', [SeoController::class, 'humans'])->name('seo.humans');
+// SEO / discovery + well-known endpoints (robots.txt, sitemap.xml, llms.txt,
+// llms-full.txt, .well-known/security.txt, humans.txt) are auto-registered by
+// particle-academy/fancy-seo; their content comes from config/fancy-seo.php +
+// App\Providers\SeoServiceProvider (sitemap + llms providers).
 
 // Authentication routes
 Route::middleware('guest')->group(function () {

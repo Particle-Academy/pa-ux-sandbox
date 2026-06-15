@@ -1,7 +1,7 @@
 <?php
 
+use App\Providers\SeoServiceProvider;
 use App\Support\RobotsTxt;
-use App\Support\Seo;
 use Tests\TestCase;
 
 uses(TestCase::class);
@@ -69,7 +69,7 @@ it('serves an llms.txt in the llmstxt.org shape with the package index', functio
     $res->assertSee('# Fancy UI', false);
     $res->assertSee('## Packages', false);
     $res->assertSee('/packages/fancy-slides', false);
-    $res->assertSee('version '.Seo::VERSION, false);
+    $res->assertSee('version '.SeoServiceProvider::VERSION, false);
 });
 
 it('serves llms-full.txt with the Human+ UX contract', function () {

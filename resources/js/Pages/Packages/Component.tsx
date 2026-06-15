@@ -1,4 +1,4 @@
-import { Head } from "@inertiajs/react";
+import { Seo } from "@particle-academy/fancy-inertia/seo";
 import { useRef, useState, type ReactNode } from "react";
 import {
     Button,
@@ -82,7 +82,10 @@ export default function PackagesComponent({ package: pkg, component, usage, cont
 
     return (
         <Layout>
-            <Head title={`${component.name} · ${pkg.name}`} />
+            <Seo
+                title={`${component.name} — ${pkg.name}`}
+                description={component.blurb ?? `A ${pkg.name} component for Human+ UX — controlled state, stable handles, agent-bridgeable.`}
+            />
 
             <Breadcrumbs>
                 <Breadcrumbs.Item href="/packages">Packages</Breadcrumbs.Item>

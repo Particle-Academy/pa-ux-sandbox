@@ -1,6 +1,8 @@
 import { createFancyServer } from "@particle-academy/fancy-inertia/server";
 import { SeoProvider, defineSeo } from "@particle-academy/fancy-inertia/seo";
 import type { ReactNode } from "react";
+import { Toast } from "@particle-academy/react-fancy";
+import { ScreenSystem } from "@particle-academy/fancy-screens";
 import { FancyDataRoot } from "@particle-academy/fancy-query";
 
 // Server-side SEO defaults. Mirrors resources/js/showcase-app.tsx; `siteUrl` is
@@ -16,12 +18,19 @@ const seoDefaults = defineSeo({
     locale: "en_US",
 });
 
-// MUST match the client provider tree in showcase-app.tsx so SSR markup and the
-// hydrated client tree are identical.
+// MUST match the client provider tree in showcase-app.tsx EXACTLY (same shape,
+// eager — no Suspense) so SSR markup and the hydrated client tree are identical
+// and renderToString doesn't abort. `appRoot: false` omits FancyAppRoot (whose
+// default withScreens wraps children in <Suspense>); we mount ScreenSystem etc.
+// eagerly here instead.
 const providers = (outlet: ReactNode): ReactNode => (
-    <FancyDataRoot echo={null}>
-        <SeoProvider value={seoDefaults}>{outlet}</SeoProvider>
-    </FancyDataRoot>
+    <Toast.Provider position="bottom-right">
+        <ScreenSystem>
+            <FancyDataRoot echo={null}>
+                <SeoProvider value={seoDefaults}>{outlet}</SeoProvider>
+            </FancyDataRoot>
+        </ScreenSystem>
+    </Toast.Provider>
 );
 
 createFancyServer({
@@ -31,7 +40,7 @@ createFancyServer({
     // browser-only widget libs (xterm, Babylon, CodeMirror, …): a widget-heavy
     // page that errors during SSR render simply falls back to client rendering
     // (Inertia's graceful degradation), while text/content pages render into the
-    // first byte. createInertiaApp awaits the returned promise before rendering.
+    // first byte.
     resolve: (name) => {
         const pages = import.meta.glob<{ default: unknown }>("./Pages/**/*.tsx", { eager: false });
         const importer = pages[`./Pages/${name}.tsx`];
@@ -41,4 +50,5 @@ createFancyServer({
         return importer().then((m) => m.default);
     },
     providers,
+    appRoot: false,
 });

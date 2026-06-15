@@ -84,10 +84,15 @@ export function Layout({
         ? [...NAV_ITEMS, { to: "/analytics", label: "Analytics", match: "analytics" }]
         : NAV_ITEMS;
 
-    const [theme, setTheme] = useState<"light" | "dark">(() =>
-        typeof window === "undefined" ? "light" : currentTheme(),
-    );
+    // Start "light" so the server render and the client's FIRST render agree —
+    // reading the real theme during render (the blade inline script may have set
+    // it to dark from localStorage/system) would mismatch on hydration. The page
+    // colors are already correct (the inline script sets the `dark` class on
+    // <html> before React); this state only drives the toggle icon, which we sync
+    // to the real theme right after mount.
+    const [theme, setTheme] = useState<"light" | "dark">("light");
     useEffect(() => {
+        setTheme(currentTheme());
         const onChange = (e: Event) => setTheme((e as CustomEvent<"light" | "dark">).detail);
         window.addEventListener("fancy-theme-change", onChange as EventListener);
         return () => window.removeEventListener("fancy-theme-change", onChange as EventListener);
@@ -98,7 +103,12 @@ export function Layout({
             <header className="nav">
                 <div className="nav-inner">
                     <Link href="/" className="nav-brand" style={{ textDecoration: "none", color: "inherit" }}>
-                        <img src="/showcase-assets/fancy-ui-logo.jpg" alt="Fancy UI Kit" className="mark" style={{ objectFit: "cover" }} />
+                        {/* loading="lazy" stops React 19 from auto-emitting an
+                            <link rel="preload" as="image"> for this img — under
+                            Inertia's synchronous renderToString SSR that preload
+                            lands in the #app body, but the client hoists it to
+                            <head>, causing a hydration mismatch (#418). */}
+                        <img src="/showcase-assets/fancy-ui-logo.jpg" alt="Fancy UI Kit" className="mark" style={{ objectFit: "cover" }} loading="lazy" />
                         <span>Fancy UI Kit</span>
                         <span className="ver">v0.2</span>
                     </Link>
@@ -258,7 +268,12 @@ export function Layout({
                     <div className="footer-grid">
                         <div>
                             <div className="nav-brand" style={{ marginBottom: 14 }}>
-                                <img src="/showcase-assets/fancy-ui-logo.jpg" alt="Fancy UI Kit" className="mark" style={{ objectFit: "cover" }} />
+                                {/* loading="lazy" stops React 19 from auto-emitting an
+                            <link rel="preload" as="image"> for this img — under
+                            Inertia's synchronous renderToString SSR that preload
+                            lands in the #app body, but the client hoists it to
+                            <head>, causing a hydration mismatch (#418). */}
+                        <img src="/showcase-assets/fancy-ui-logo.jpg" alt="Fancy UI Kit" className="mark" style={{ objectFit: "cover" }} loading="lazy" />
                                 <span>Fancy UI Kit</span>
                             </div>
                             <p style={{ margin: 0, fontSize: 13, lineHeight: 1.6, color: "var(--fg-2)", maxWidth: 320 }}>

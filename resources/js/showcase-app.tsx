@@ -2,6 +2,8 @@ import { createInertiaApp } from "@inertiajs/react";
 import { setupFancyApp } from "@particle-academy/fancy-inertia";
 import { SeoProvider, defineSeo } from "@particle-academy/fancy-inertia/seo";
 import type { ReactNode } from "react";
+import { Toast } from "@particle-academy/react-fancy";
+import { ScreenSystem } from "@particle-academy/fancy-screens";
 import { FancyDataRoot } from "@particle-academy/fancy-query";
 import { registerAll as registerEChartsAll, registerBuiltinThemes } from "@particle-academy/fancy-echarts";
 import "./showcase-theme";
@@ -30,13 +32,20 @@ const seoDefaults = defineSeo({
     siteUrl: typeof window !== "undefined" ? window.location.origin : undefined,
 });
 
-// The shared provider tree (FancyDataRoot for fancy-query + SeoProvider for the
-// client <Seo> defaults). Mirrored EXACTLY in resources/js/ssr.tsx so the SSR
-// markup and the hydrated client tree match.
+// The shared provider tree. Providers are mounted EAGERLY (no React.lazy /
+// Suspense) so the tree renders synchronously under Inertia v3's `renderToString`
+// SSR — FancyAppRoot's default `withScreens` would otherwise wrap children in
+// <Suspense> and abort SSR to client rendering. We therefore pass `appRoot:
+// false` and supply Toast + ScreenSystem + FancyDataRoot + SeoProvider here.
+// MUST match resources/js/ssr.tsx EXACTLY (tree shape) for clean hydration.
 const providers = (outlet: ReactNode): ReactNode => (
-    <FancyDataRoot echo={null}>
-        <SeoProvider value={seoDefaults}>{outlet}</SeoProvider>
-    </FancyDataRoot>
+    <Toast.Provider position="bottom-right">
+        <ScreenSystem>
+            <FancyDataRoot echo={null}>
+                <SeoProvider value={seoDefaults}>{outlet}</SeoProvider>
+            </FancyDataRoot>
+        </ScreenSystem>
+    </Toast.Provider>
 );
 
 createInertiaApp({
@@ -49,10 +58,10 @@ createInertiaApp({
         }
         return importer().then((m) => m.default);
     },
-    // setupFancyApp builds the same FancyAppRoot → providers → transition → page
-    // tree as createFancyServer (resources/js/ssr.tsx) and auto-detects
-    // hydrateRoot vs createRoot, so flipping Inertia SSR on/off is a no-op here.
-    setup: ({ App, props, el }) => setupFancyApp({ el, App, props, providers }),
+    // setupFancyApp builds the same providers → transition → page tree as
+    // createFancyServer (resources/js/ssr.tsx) and auto-detects hydrateRoot vs
+    // createRoot, so flipping Inertia SSR on/off is a no-op here.
+    setup: ({ App, props, el }) => setupFancyApp({ el, App, props, providers, appRoot: false }),
 });
 
 // The showcase dogfoods its own Fancy Pixel through the *real* flow: register

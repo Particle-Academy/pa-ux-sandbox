@@ -11,7 +11,15 @@ import {
 } from "@particle-academy/react-fancy";
 import { CodeEditor } from "@particle-academy/fancy-code";
 import { Layout } from "../Layout";
-import { ComponentDemo } from "./ComponentDemo";
+import { clientOnly } from "../../lib/clientOnly";
+
+// The live demo statically imports every component's widget (xterm, CodeMirror,
+// Babylon, ECharts…), which can't render under synchronous SSR. Load it
+// client-only so the Component page SSRs its text (description, props, usage)
+// while the interactive demo hydrates in the browser.
+const ComponentDemo = clientOnly(() =>
+    import("./ComponentDemo").then((m) => ({ default: m.ComponentDemo })),
+);
 import { ContextCards } from "./ContextCards";
 import { useXp } from "../../lib/useXp";
 import { getComponentDoc, type ComponentDoc, type ComponentDocExample, type ComponentDocProp } from "./ComponentDocs";

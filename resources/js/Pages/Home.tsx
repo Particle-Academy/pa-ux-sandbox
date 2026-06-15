@@ -150,7 +150,7 @@ function Hero({ packages }: { packages: PackageRow[] }) {
                     </div>
                     <div className="hero-meta">
                         <span className="meta-item">
-                            <Package size={13} /> {packages.length} UI packages
+                            <Package size={13} />{` ${packages.length} UI packages`}
                         </span>
                         <span className="meta-item">
                             <Github size={13} /> MIT licensed

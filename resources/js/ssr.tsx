@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import { Toast } from "@particle-academy/react-fancy";
 import { ScreenSystem } from "@particle-academy/fancy-screens";
 import { FancyDataRoot } from "@particle-academy/fancy-query";
+import { CoBrowseProvider } from "./agent/CoBrowseProvider";
 
 // Server-side SEO defaults. Mirrors resources/js/showcase-app.tsx; `siteUrl` is
 // omitted server-side (no window) — the particle-academy/fancy-seo Blade
@@ -27,7 +28,9 @@ const providers = (outlet: ReactNode): ReactNode => (
     <Toast.Provider position="bottom-right">
         <ScreenSystem>
             <FancyDataRoot echo={null}>
-                <SeoProvider value={seoDefaults}>{outlet}</SeoProvider>
+                <SeoProvider value={seoDefaults}>
+                    <CoBrowseProvider>{outlet}</CoBrowseProvider>
+                </SeoProvider>
             </FancyDataRoot>
         </ScreenSystem>
     </Toast.Provider>

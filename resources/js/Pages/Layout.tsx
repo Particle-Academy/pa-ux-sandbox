@@ -7,14 +7,16 @@ import {
     Profile,
     Tooltip,
 } from "@particle-academy/react-fancy";
-import { Moon, Sun, Sparkles, Check } from "@particle-academy/react-fancy/icons";
+import { Moon, Sun, Sparkles, Check, Bot } from "@particle-academy/react-fancy/icons";
 import {
     useFancyTransition,
     FANCY_TRANSITION_LABELS,
     AppUpdateAlert,
 } from "@particle-academy/fancy-inertia";
+import { CoBrowsePresence } from "@particle-academy/agent-integrations";
 import { currentTheme, toggleTheme } from "../showcase-theme";
 import { CommandPalette } from "./CommandPalette";
+import { useCoBrowse } from "../agent/CoBrowseProvider";
 import { avatarFrameClass, type CosmeticSlots } from "../lib/cosmetics";
 
 type Flash = {
@@ -152,6 +154,8 @@ export function Layout({
                         </button>
 
                         <TransitionSwitcher />
+
+                        <CoBrowseControl />
 
                         <Tooltip content={theme === "dark" ? "Light mode" : "Dark mode"}>
                             <button
@@ -372,6 +376,46 @@ function TransitionSwitcher() {
                 ))}
             </Dropdown.Items>
         </Dropdown>
+    );
+}
+
+/**
+ * Site-wide co-browsing control. A connected agent can drive *any* page while
+ * the human watches; this is the human's entry point + take-back. The session
+ * itself (the in-page MCP server + relay) lives in <CoBrowseProvider> above the
+ * page outlet, so it survives Inertia navigations — this is just its surface.
+ */
+function CoBrowseControl() {
+    const session = useCoBrowse();
+    const [open, setOpen] = useState(false);
+    if (!session) return null;
+    const sharing = session.session != null;
+    return (
+        <div className="co-browse-control" style={{ position: "relative" }}>
+            <Tooltip content="Let an agent co-drive this site">
+                <button
+                    className="btn btn-ghost"
+                    style={{ height: 34, padding: "0 10px", position: "relative" }}
+                    onClick={() => setOpen((o) => !o)}
+                    aria-label="Agent co-browsing"
+                    aria-expanded={open}
+                    data-co-browse-trigger
+                >
+                    <Bot size={16} />
+                    {sharing && (
+                        <span className="co-browse-trigger-dot" data-state={session.relayState} aria-hidden />
+                    )}
+                </button>
+            </Tooltip>
+            {open && (
+                <>
+                    <div className="co-browse-popover-scrim" onClick={() => setOpen(false)} aria-hidden />
+                    <div className="co-browse-popover" role="dialog" aria-label="Agent co-browsing">
+                        <CoBrowsePresence session={session} />
+                    </div>
+                </>
+            )}
+        </div>
     );
 }
 

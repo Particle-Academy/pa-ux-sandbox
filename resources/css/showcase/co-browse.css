@@ -1,0 +1,149 @@
+/* Site-wide co-browsing chrome: the nav trigger + popover, the CoBrowsePresence
+   driving bar, and the staged-action confirm modal. The share/connect surface
+   itself (.fai-share*) is styled by @particle-academy/agent-integrations. */
+
+/* Nav trigger — a live dot rides the Bot icon while a session is shared. */
+.co-browse-trigger-dot {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--fg-3);
+  box-shadow: 0 0 0 2px var(--bg-0);
+}
+.co-browse-trigger-dot[data-state="open"] {
+  background: #10b981;
+  animation: co-browse-pulse 1.8s ease-in-out infinite;
+}
+.co-browse-trigger-dot[data-state="connecting"] {
+  background: #f59e0b;
+}
+
+@keyframes co-browse-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* Popover anchored under the nav trigger. */
+.co-browse-popover-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+}
+.co-browse-popover {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 71;
+  width: 360px;
+  max-width: calc(100vw - 24px);
+  max-height: 70vh;
+  overflow: auto;
+  padding: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border-1);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg, 0 12px 40px rgb(0 0 0 / 0.18));
+  animation: fancy-fade-in var(--dur-base) var(--ease-out) both;
+}
+
+/* CoBrowsePresence — idle starter + the live driving bar. */
+[data-co-browse-presence] [data-co-browse-start],
+[data-co-browse-presence="idle"] [data-co-browse-start] {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 14px;
+  font-weight: var(--weight-semibold);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-1);
+  background: var(--bg-1);
+  color: var(--fg-1);
+  cursor: pointer;
+}
+[data-co-browse-presence] [data-co-browse-start]:hover {
+  border-color: var(--accent, #8b5cf6);
+}
+
+[data-co-browse-bar] {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  padding: 8px 10px;
+  border-radius: var(--radius-lg);
+  background: var(--bg-1);
+  border: 1px solid var(--border-1);
+  font-size: 13px;
+}
+[data-co-browse-dot] {
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: var(--fg-3);
+  flex: none;
+}
+[data-co-browse-dot][data-state="open"] {
+  background: #10b981;
+  animation: co-browse-pulse 1.8s ease-in-out infinite;
+}
+[data-co-browse-dot][data-state="connecting"] { background: #f59e0b; }
+[data-co-browse-status] { font-weight: var(--weight-semibold); color: var(--fg-1); }
+[data-co-browse-last] {
+  margin-left: auto;
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--fg-3);
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+[data-co-browse-stop] {
+  margin-left: auto;
+  height: 28px;
+  padding: 0 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-1);
+  background: transparent;
+  color: var(--fg-1);
+  cursor: pointer;
+}
+[data-co-browse-last] + [data-co-browse-stop] { margin-left: 8px; }
+[data-co-browse-stop]:hover { border-color: #f43f5e; color: #f43f5e; }
+
+/* Staged-action confirm modal (rendered by CoBrowseProvider). */
+.co-browse-confirm-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  background: rgb(0 0 0 / 0.45);
+  animation: fancy-fade-in var(--dur-fast, 120ms) var(--ease-out) both;
+}
+.co-browse-confirm-card {
+  width: 380px;
+  max-width: calc(100vw - 24px);
+  padding: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border-1);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg, 0 12px 40px rgb(0 0 0 / 0.3));
+}
+.co-browse-confirm-title { margin: 0 0 6px; font-size: 13px; color: var(--fg-3); }
+.co-browse-confirm-label {
+  margin: 0 0 18px;
+  font-size: 16px;
+  font-weight: var(--weight-semibold);
+  color: var(--fg-1);
+}
+.co-browse-confirm-actions { display: flex; justify-content: flex-end; gap: 10px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .co-browse-trigger-dot[data-state="open"],
+  [data-co-browse-dot][data-state="open"] { animation: none; }
+}

@@ -15,6 +15,9 @@
 /* Smooth page-to-page navigation transitions. */
 @import "./showcase/transitions.css";
 
+/* Site-wide agent co-browsing chrome (nav trigger, presence bar, confirm). */
+@import "./showcase/co-browse.css";
+
 /* Hand-authored CSS overrides shipped by each consumed package. */
 @import "@particle-academy/react-fancy/styles.css";
 @import "@particle-academy/fancy-code/styles.css";

@@ -6,6 +6,7 @@ import { Toast } from "@particle-academy/react-fancy";
 import { ScreenSystem } from "@particle-academy/fancy-screens";
 import { FancyDataRoot } from "@particle-academy/fancy-query";
 import { registerAll as registerEChartsAll, registerBuiltinThemes } from "@particle-academy/fancy-echarts";
+import { CoBrowseProvider } from "./agent/CoBrowseProvider";
 import "./showcase-theme";
 import "@particle-academy/react-fancy/styles.css";
 import "@particle-academy/fancy-code/styles.css";
@@ -42,7 +43,9 @@ const providers = (outlet: ReactNode): ReactNode => (
     <Toast.Provider position="bottom-right">
         <ScreenSystem>
             <FancyDataRoot echo={null}>
-                <SeoProvider value={seoDefaults}>{outlet}</SeoProvider>
+                <SeoProvider value={seoDefaults}>
+                    <CoBrowseProvider>{outlet}</CoBrowseProvider>
+                </SeoProvider>
             </FancyDataRoot>
         </ScreenSystem>
     </Toast.Provider>

@@ -144,7 +144,7 @@ export default function PackagesShow({ package: pkg, context, readmeHtml = null 
                             <Prose html={readmeHtml} />
                         </Card.Body>
                     </Card>
-                ) : (
+                ) : !context ? (
                     <Card className="mt-8">
                         <Card.Body className="!py-6">
                             <div className="flex items-center gap-2">
@@ -158,6 +158,12 @@ export default function PackagesShow({ package: pkg, context, readmeHtml = null 
                             </Text>
                         </Card.Body>
                     </Card>
+                ) : (
+                    <div className="mt-8 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-zinc-500 dark:text-zinc-400">
+                        <Badge color="zinc" size="sm" variant="soft">headless</Badge>
+                        <span>No live demo — this package is hooks / APIs / server-side tooling. Full reference:</span>
+                        <a href={`https://github.com/${pkg.repo}#readme`} target="_blank" rel="noopener" className="font-medium text-violet-600 hover:underline dark:text-violet-300">README →</a>
+                    </div>
                 )
             ) : (
                 <>

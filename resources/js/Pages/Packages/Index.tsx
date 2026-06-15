@@ -52,8 +52,6 @@ const HAS_SHOT = new Set([
     "fancy-pixel",
     "fancy-3d-three",
     "fancy-term",
-    "fancy-motion",
-    "fancy-cms-ui",
 ]);
 
 export default function PackagesIndex({ packages, companions = [] }: { packages: Pkg[]; companions?: Companion[] }) {

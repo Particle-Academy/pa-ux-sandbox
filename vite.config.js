@@ -101,6 +101,14 @@ export default defineConfig({
         exclude: ['zustand', '@xyflow/react'],
     },
     build: {
+        // Keep peak build memory down so the production build isn't OOM-killed
+        // on the RAM-limited Forge box during "rendering chunks".
+        // `reportCompressedSize` gzip/brotli-compresses every emitted chunk just
+        // to print sizes — for the ~13MB Babylon barrel that's a large transient
+        // buffer we don't need. Sourcemaps roughly double the in-memory output.
+        // Pair with swap on the server (the durable fix); see deploy notes.
+        reportCompressedSize: false,
+        sourcemap: false,
         // Vendor-chunk the heavy libraries. Without this, every entry's
         // shared-chunk graph promotes them into the "core" bundle, which
         // produced two ~4MB core-*.js files (one per entry: showcase-app +

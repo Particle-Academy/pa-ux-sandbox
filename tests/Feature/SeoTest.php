@@ -117,3 +117,30 @@ it('gives a package page its own title + canonical', function () {
         ->toContain('<title inertia>fancy-slides — Fancy UI</title>')
         ->toContain('rel="canonical" href="'.config('app.url').'/packages/fancy-slides"');
 });
+
+it('gives each docs page a unique title + Article/Breadcrumb JSON-LD', function () {
+    $res = $this->get('/docs/human-plus-ux');
+
+    $res->assertOk();
+    $html = $res->getContent();
+    expect($html)
+        ->toContain('<title inertia>Human+ UX — Docs — Fancy UI</title>')
+        ->toContain('"@type":"Article"')
+        ->toContain('"@type":"BreadcrumbList"')
+        ->toContain('rel="canonical" href="'.config('app.url').'/docs/human-plus-ux"');
+});
+
+it('serves a clean markdown variant of a docs page for LLM fetchers', function () {
+    $res = $this->get('/docs/human-plus-ux.md');
+
+    $res->assertOk();
+    expect($res->headers->get('Content-Type'))->toContain('text/markdown');
+    expect($res->getContent())->toContain('Human+ UX');
+
+    // Non-doc paths 404.
+    $this->get('/docs/does-not-exist.md')->assertNotFound();
+});
+
+it('lists docs pages in the sitemap', function () {
+    $this->get('/sitemap.xml')->assertOk()->assertSee('/docs/human-plus-ux', false);
+});

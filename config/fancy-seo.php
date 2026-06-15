@@ -50,7 +50,7 @@ return [
         'llms' => true,
         'security' => true,
         'humans' => true,
-        'markdown' => false,
+        'markdown' => true, // /docs/{slug}.md — clean markdown for LLM fetchers
     ],
 
     /*

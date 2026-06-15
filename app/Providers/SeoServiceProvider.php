@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Support\Docs\DocsRegistry;
 use App\Support\PackageRegistry;
 use FancySeo\Facades\FancySeo;
 use FancySeo\JsonLd;
@@ -36,6 +37,29 @@ class SeoServiceProvider extends ServiceProvider
         $this->registerRouteResolvers($base);
         $this->registerSitemap();
         $this->registerLlms($base);
+        $this->registerMarkdown();
+    }
+
+    /**
+     * Serve the raw source markdown of any docs page at `/docs/{slug}.md` — a
+     * clean, chrome-free variant for LLM fetchers (linked from the `<head>` and
+     * llms.txt). Returns null for non-doc paths so the route 404s.
+     */
+    private function registerMarkdown(): void
+    {
+        FancySeo::markdownUsing(function (string $path): ?string {
+            $path = ltrim($path, '/'); // MarkdownController passes a leading slash
+            if (! str_starts_with($path, 'docs/')) {
+                return null;
+            }
+            $slug = substr($path, strlen('docs/'));
+            if (DocsRegistry::find($slug) === null) {
+                return null;
+            }
+            $file = base_path("resources/docs/{$slug}.md");
+
+            return is_file($file) ? (string) file_get_contents($file) : null;
+        });
     }
 
     /** Site-identity JSON-LD emitted on every page (accumulates with per-route nodes). */
@@ -111,6 +135,43 @@ class SeoServiceProvider extends ServiceProvider
 
         FancySeo::route('packages.show', fn (array $params): array => $this->packageSeo($params['package'] ?? null, $base));
         FancySeo::route('packages.component', fn (array $params): array => $this->componentSeo($params['package'] ?? null, $params['component'] ?? null, $base));
+        FancySeo::route('docs.show', fn (array $params): array => $this->docSeo($params['slug'] ?? 'introduction', $base));
+    }
+
+    /**
+     * Per-doc-page SEO: a unique title + the page's own description from the docs
+     * registry, plus Article + BreadcrumbList JSON-LD. Without this every
+     * /docs/{slug} page shared one generic title — the highest-volume content on
+     * the site, left un-targeted.
+     *
+     * @return array<string,mixed>
+     */
+    private function docSeo(mixed $slug, string $base): array
+    {
+        $slug = is_string($slug) ? $slug : 'introduction';
+        $page = DocsRegistry::find($slug);
+        if ($page === null) {
+            return ['title' => 'Docs — Fancy UI', 'type' => 'article'];
+        }
+        $title = (string) $page['title'];
+        $description = trim((string) ($page['description'] ?? ''));
+        $url = $base.'/docs/'.$slug;
+
+        return [
+            'title' => "{$title} — Docs — Fancy UI",
+            'description' => $description !== '' ? $description : "{$title} — Fancy UI documentation.",
+            'type' => 'article',
+            'jsonLd' => [
+                JsonLd::article("{$title} — Fancy UI", $url, array_filter([
+                    'description' => $description ?: null,
+                    'image' => $base.'/showcase-assets/fancy-ui-logo.jpg',
+                ])),
+                JsonLd::breadcrumbList([
+                    ['name' => 'Docs', 'url' => $base.'/docs'],
+                    ['name' => $title, 'url' => $url],
+                ]),
+            ],
+        ];
     }
 
     /**
@@ -191,6 +252,11 @@ class SeoServiceProvider extends ServiceProvider
                 ->add('dreaming', '0.6', 'weekly')
                 ->add('showcase', '0.6', 'weekly')
                 ->add('leaderboard', '0.5', 'daily');
+
+            // Every docs page — the highest-volume indexable content.
+            foreach (DocsRegistry::flat() as $doc) {
+                $map->add('docs/'.$doc['slug'], '0.7', 'monthly');
+            }
 
             foreach (PackageRegistry::all() as $pkg) {
                 $slug = $pkg['slug'] ?? null;

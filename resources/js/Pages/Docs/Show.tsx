@@ -1,4 +1,5 @@
-import { Head, Link } from "@inertiajs/react";
+import { Link } from "@inertiajs/react";
+import { Seo } from "@particle-academy/fancy-inertia/seo";
 import { Button, Heading, Separator, Text } from "@particle-academy/react-fancy";
 import { Layout } from "../Layout";
 
@@ -26,7 +27,11 @@ type Props = {
 export default function DocsShow({ page, html, sections, neighbors }: Props) {
     return (
         <Layout>
-            <Head title={`${page.title} · Docs · Fancy UI`} />
+            <Seo
+                title={`${page.title} — Docs`}
+                description={page.description ?? `${page.title} — Fancy UI documentation.`}
+                type="article"
+            />
 
             <div className="grid gap-8 lg:grid-cols-[14rem_1fr]">
                 <aside className="lg:sticky lg:top-20 lg:max-h-[calc(100vh-6rem)] lg:overflow-auto">

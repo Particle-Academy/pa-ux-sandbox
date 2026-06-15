@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
+    {{-- Geist / Geist Mono web fonts. Loaded here (not via a CSS @import) so they
+         fetch in parallel and don't block CSS parsing. --}}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap">
+
     {{-- Server-rendered SEO baseline. The app is a client-rendered SPA, so this
          is what crawlers / social scrapers / LLM bots see on first byte. Title /
          meta / canonical / OG / Twitter / JSON-LD + the /llms.txt discovery link

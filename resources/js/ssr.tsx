@@ -33,7 +33,15 @@ const providers = (outlet: ReactNode): ReactNode => (
     </Toast.Provider>
 );
 
+// Non-standard SSR port (Inertia's default 13714 collides when a server runs
+// several Inertia sites). Read from the env so each site/deploy can set its own;
+// MUST match config('inertia.ssr.url') in config/inertia.php. The daemon
+// (`php artisan inertia:start-ssr` → `node bootstrap/ssr/ssr.js`) inherits this
+// process's env, so set INERTIA_SSR_PORT on the daemon to override the default.
+const ssrPort = Number(process.env.INERTIA_SSR_PORT) || 13731;
+
 createFancyServer({
+    port: ssrPort,
     // LAZY resolve (not eager) so booting the SSR process does NOT import every
     // page — only the page being rendered is imported per request. This keeps the
     // node process alive even though many demo pages statically import

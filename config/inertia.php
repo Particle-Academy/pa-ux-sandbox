@@ -24,10 +24,15 @@ return [
     |   2. Run the SSR daemon:    php artisan inertia:start-ssr   (as a Forge daemon)
     | Then flip INERTIA_SSR_ENABLED=true. Inertia falls back to client rendering
     | (fast ECONNREFUSED) if the daemon isn't up, so enabling early is safe too.
+    |
+    | PORT: this server runs several Inertia sites, so we DON'T use Inertia's
+    | default 13714 (they'd collide). The SSR daemon listens on INERTIA_SSR_PORT
+    | (default 13731 here) — set the SAME value in resources/js/ssr.tsx (it reads
+    | the same env). Give each Inertia site on the box a distinct INERTIA_SSR_PORT.
     */
     'ssr' => [
         'enabled' => env('INERTIA_SSR_ENABLED', false),
-        'url' => env('INERTIA_SSR_URL', 'http://127.0.0.1:13714'),
+        'url' => env('INERTIA_SSR_URL', 'http://127.0.0.1:'.env('INERTIA_SSR_PORT', '13731')),
     ],
 
     'testing' => [

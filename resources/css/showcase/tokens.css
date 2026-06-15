@@ -5,7 +5,10 @@
    Accessibility target: WCAG AA across light + dark.
    ──────────────────────────────────────────────────────────────────────────── */
 
-@import url("https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap");
+/* The Geist / Geist Mono web fonts are loaded via <link> in the root Blade
+   layout (resources/views/showcase-app.blade.php) — a CSS @import here would be
+   render-blocking, sequential, AND illegal once bundled after Tailwind's rules
+   ("@import must precede all rules"). */
 
 :root {
   /* ─── Brand ───────────────────────────────────────────────────────────── */

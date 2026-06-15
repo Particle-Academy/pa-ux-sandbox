@@ -9,6 +9,26 @@ const withSelectorShim = fileURLToPath(
     new URL('./resources/js/shims/use-sync-external-store-with-selector.js', import.meta.url),
 );
 
+const emptyShim = fileURLToPath(new URL('./resources/js/shims/empty.js', import.meta.url));
+
+/**
+ * Resolve Node built-ins to an empty module in the BROWSER build only. Isomorphic
+ * deps (e.g. @particle-academy/dark-slide) dynamically `import('fs')` in a
+ * Node-only branch that never runs in the browser — without this, the client
+ * build prints "Module 'fs' has been externalized for browser compatibility".
+ * Gated on `!options.ssr` so the SSR build keeps real `fs`.
+ */
+const nodeBuiltinBrowserShim = {
+    name: 'shim-node-builtins-browser',
+    enforce: 'pre',
+    resolveId(id, _importer, options) {
+        if (! options?.ssr && (id === 'fs' || id === 'node:fs')) {
+            return emptyShim;
+        }
+        return null;
+    },
+};
+
 /**
  * Redirects zustand v4's import of the CJS-only
  * `use-sync-external-store/shim/with-selector.js` to a local ESM polyfill.
@@ -42,6 +62,7 @@ const useSyncExternalStoreShim = {
 export default defineConfig({
     plugins: [
         useSyncExternalStoreShim,
+        nodeBuiltinBrowserShim,
         laravel({
             input: [
                 'resources/css/app.css',
@@ -89,7 +110,7 @@ export default defineConfig({
         // downloaded when a route actually uses it.
         rolldownOptions: {
             output: {
-                advancedChunks: {
+                codeSplitting: {
                     groups: [
                         { name: 'babylonjs', test: /[\\/]node_modules[\\/]@babylonjs[\\/]core[\\/]/ },
                         { name: 'echarts', test: /[\\/]node_modules[\\/](echarts|echarts-gl|zrender)[\\/]/ },

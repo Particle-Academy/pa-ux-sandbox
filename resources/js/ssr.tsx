@@ -37,11 +37,13 @@ const providers = (outlet: ReactNode): ReactNode => (
 );
 
 // Non-standard SSR port (Inertia's default 13714 collides when a server runs
-// several Inertia sites). Read from the env so each site/deploy can set its own;
-// MUST match config('inertia.ssr.url') in config/inertia.php. The daemon
-// (`php artisan inertia:start-ssr` → `node bootstrap/ssr/ssr.js`) inherits this
-// process's env, so set INERTIA_SSR_PORT on the daemon to override the default.
-const ssrPort = Number(process.env.INERTIA_SSR_PORT) || 13731;
+// several Inertia sites). HARDCODED to match config('inertia.ssr.url') in
+// config/inertia.php (13733) — NOT read from env. The daemon
+// (`php artisan inertia:start-ssr` → `node bootstrap/ssr/ssr.js`) runs with
+// config cached, so it never loads .env; an env read here would fall back to a
+// default that mismatches PHP's cached config → "can't connect". A literal on
+// both sides is the only thing that can't drift. Change BOTH if you move ports.
+const ssrPort = 13733;
 
 createFancyServer({
     port: ssrPort,

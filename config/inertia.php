@@ -32,7 +32,13 @@ return [
     */
     'ssr' => [
         'enabled' => env('INERTIA_SSR_ENABLED', false),
-        'url' => env('INERTIA_SSR_URL', 'http://127.0.0.1:'.env('INERTIA_SSR_PORT', '13731')),
+        // HARDCODED port 13733 on BOTH sides — here AND resources/js/ssr.tsx — so
+        // PHP and the SSR daemon can never drift. Env can't be relied on: the deploy
+        // runs `php artisan optimize` (config:cache), so when the daemon's
+        // `php artisan inertia:start-ssr` spawns node it doesn't load .env, and an
+        // env read would fall back to a different default than PHP's cached config →
+        // "can't connect". A literal on both sides guarantees they agree.
+        'url' => 'http://127.0.0.1:13733',
         // Explicit bundle path so `inertia:start-ssr` always finds it (the deploy
         // builds it via `npm run build` → `vite build --ssr` → bootstrap/ssr/ssr.js).
         // Without the build step the daemon logs "Inertia SSR bundle not found".

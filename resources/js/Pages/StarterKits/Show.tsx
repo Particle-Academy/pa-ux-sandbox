@@ -1,6 +1,6 @@
 import { Head } from "@inertiajs/react";
 import { useState } from "react";
-import { Button, Badge, Breadcrumbs, Card, Heading, Text } from "@particle-academy/react-fancy";
+import { Button, Badge, Breadcrumbs, Card, FauxClient, Heading, Text } from "@particle-academy/react-fancy";
 import { Layout } from "../Layout";
 import { ReactDashboardKit } from "./kits/ReactDashboardKit";
 import { WorkflowStudioKit } from "./kits/WorkflowStudioKit";
@@ -84,8 +84,20 @@ export default function StarterKitsShow({ kit }: { kit: Kit }) {
                 </Card.Body>
             </Card>
 
+            {/* Each kit demo is a full desktop app layout. Render it in a FauxClient
+                browser frame at its natural desktop width and let scale="fit" shrink
+                the WHOLE preview to the container — so on mobile you see the complete
+                app, proportional, instead of a crushed/clipped layout. */}
             {KitDemo ? (
-                <KitDemo />
+                <FauxClient
+                    variant="browser"
+                    url={`localhost:5173 · ${kit.name}`}
+                    meta="dev"
+                    width={1240}
+                    scale="fit"
+                >
+                    <KitDemo />
+                </FauxClient>
             ) : (
                 <Card>
                     <div className="grid place-items-center rounded-md p-16 text-sm text-zinc-500">

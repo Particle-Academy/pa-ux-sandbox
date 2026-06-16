@@ -287,17 +287,18 @@ h2.section-title,
 }
 
 /* ─────────── Human+ demo (reused by the Agent Playground) ─────────── */
+/* The outer frame (border / radius / shadow) is now the <FauxClient> wrapper,
+   which also scales this whole shell to fit small screens. Keep just the
+   board+activity layout here. */
 .demo-shell {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 320px;
   gap: 16px;
   background: var(--surface);
-  border: 1px solid var(--border-1);
-  border-radius: var(--radius-2xl);
   overflow: hidden;
-  box-shadow: var(--shadow-lg);
 }
-@media (max-width: 900px) { .demo-shell { grid-template-columns: 1fr; } }
+/* No viewport media query for .demo-shell — it renders at a fixed logical width
+   inside the <FauxClient> stage, which scales the whole thing to fit. */
 .demo-board {
   position: relative;
   background:
@@ -893,17 +894,25 @@ h2.section-title,
   .section { padding: 64px 0; }
 }
 
-/* Phones: the nav-actions row (~400px) overflows. Drop the non-essential
-   actions so the essentials (theme + sign-in/avatar) fit; the command palette
-   is still reachable via ⌘K and these features are desktop-oriented anyway. */
+/* Phones: the nav-actions row overflows ~400px. Keep the FLAGSHIP co-browse
+   control + GitHub + theme + sign-in/avatar — never hide the core "let an agent
+   drive" feature. Only drop the two affordances that are genuinely unusable on
+   touch: the ⌘K command palette (no hardware keyboard to trigger it — there's no
+   mobile entry point either way) and the decorative page-transition demo toggle.
+   Then tighten the chrome (padding, version chip, gaps) so the essentials fit. */
 @media (max-width: 640px) {
-  .nav-actions button[aria-label="Search"],
   .nav-actions button[aria-label="Page transition"],
-  .nav-actions .co-browse-control,
+  .nav-actions button[aria-label="Search"],
+  /* The standalone GitHub-org link is a convenience nicety duplicated in the
+     footer; the Sign-in button is GitHub OAuth anyway. Drop it on phones so the
+     flagship co-browse control + theme + sign-in fit without overflow. */
   .nav-actions .nav-gh {
     display: none;
   }
   .nav-actions { gap: 6px; }
+  .nav-inner { padding: 12px 14px; }
+  /* Let the version chip drop so the brand stays compact next to the actions. */
+  .nav-brand .ver { display: none; }
 }
 
 /* hide the nav links before the row would overflow the 1200 container */

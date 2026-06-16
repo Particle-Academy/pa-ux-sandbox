@@ -3,6 +3,7 @@ import { Seo } from "@particle-academy/fancy-inertia/seo";
 import { Component, useEffect, useState, type ComponentType, type ErrorInfo, type ReactNode } from "react";
 import {
     Button,
+    FauxClient,
     Autocomplete,
     Avatar,
     Badge,
@@ -353,6 +354,11 @@ export function HumanPlus() {
                     row — it's driving the real surface, not scraping a copy of it.
                 </p>
 
+                {/* A FauxClient frame renders the demo at a fixed logical width and
+                    SCALES it to fit any container (ResizeObserver), so the whole
+                    board + activity stay visible + proportional on mobile — never
+                    clipped/hidden. All UI previews go in a FauxClient. */}
+                <FauxClient variant="browser" url="fancy.app · Human+ board" meta="live" width={1120} scale="fit">
                 <div className="demo-shell">
                     <div className="demo-board">
                         <div className="demo-toolbar">
@@ -430,6 +436,7 @@ export function HumanPlus() {
                         </div>
                     </div>
                 </div>
+                </FauxClient>
 
                 <div style={{ marginTop: 28, display: "flex", gap: 10, flexWrap: "wrap" }}>
                     <Link className="btn btn-primary" href="/agent-playground">

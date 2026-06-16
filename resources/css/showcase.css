@@ -59,6 +59,15 @@ body {
   background: var(--bg-0);
 }
 
+/* Never let an over-wide child (absolute demo content, long code blocks, a wide
+   nav row) cause horizontal PAGE scroll on small screens — "blows up the page".
+   `overflow-x: clip` on <html> stops it without breaking position: sticky on
+   descendants (unlike overflow:hidden). Individual offenders still get proper
+   responsive fixes below; this is the safety net. */
+html {
+  overflow-x: clip;
+}
+
 code,
 kbd,
 pre {

@@ -885,9 +885,25 @@ h2.section-title,
 /* responsive hero */
 @media (max-width: 880px) {
   .hero-grid { grid-template-columns: 1fr; gap: 36px; }
+  /* min-width:0 lets the grid item shrink so the code block's own overflow-x
+     scroll kicks in instead of forcing the page wider. */
+  .hero-card { min-width: 0; }
   .nav-links { display: none; }
   section,
   .section { padding: 64px 0; }
+}
+
+/* Phones: the nav-actions row (~400px) overflows. Drop the non-essential
+   actions so the essentials (theme + sign-in/avatar) fit; the command palette
+   is still reachable via ⌘K and these features are desktop-oriented anyway. */
+@media (max-width: 640px) {
+  .nav-actions button[aria-label="Search"],
+  .nav-actions button[aria-label="Page transition"],
+  .nav-actions .co-browse-control,
+  .nav-actions .nav-gh {
+    display: none;
+  }
+  .nav-actions { gap: 6px; }
 }
 
 /* hide the nav links before the row would overflow the 1200 container */

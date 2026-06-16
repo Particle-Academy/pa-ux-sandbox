@@ -308,11 +308,10 @@ const HP_NOTES = [
     { cls: "color-violet", top: 150, left: 232, who: "claude · now", text: "Proposing a tighter hero grid. Confirm to apply?" },
     { cls: "color-sky", top: 286, left: 92, who: "you · 12:01", text: "Brand gradient reads well in dark mode." },
 ];
-const HP_CURSOR = [
-    { top: 138, left: 214 },
-    { top: 96, left: 58 },
-    { top: 300, left: 120 },
-];
+// Cursor offset from the note it's "touching" — so the cursor tip always lands
+// on the highlighted note (derived from HP_NOTES below, never a separate coord
+// list that drifts out of sync).
+const HP_CURSOR_OFFSET = { top: 22, left: 52 };
 const HP_FEED: FeedRow[] = [
     { tone: "tool", icon: <Sparkles size={11} />, text: <>Proposed <strong>hero grid</strong> rework — awaiting confirm</>, when: "now" },
     { tone: "write", icon: <Check size={11} />, text: <>Added note <strong>tighter hero grid</strong></>, when: "0:03" },
@@ -332,8 +331,12 @@ export function HumanPlus() {
         return () => clearInterval(t);
     }, []);
 
-    const cursor = HP_CURSOR[step % HP_CURSOR.length];
     const liveNote = step % HP_NOTES.length; // which note the agent is "touching"
+    // Cursor follows the highlighted note → they always move together (no drift).
+    const cursor = {
+        top: HP_NOTES[liveNote].top + HP_CURSOR_OFFSET.top,
+        left: HP_NOTES[liveNote].left + HP_CURSOR_OFFSET.left,
+    };
     // Rotate the feed so a new row streams in at the top each tick.
     const feed = HP_FEED.map((_, i) => HP_FEED[(i + step) % HP_FEED.length]);
 

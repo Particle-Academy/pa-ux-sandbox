@@ -17,6 +17,10 @@ const seoDefaults = defineSeo({
     defaultDescription: "Components for the surfaces where humans and agents work together.",
     defaultImage: "/showcase-assets/fancy-ui-logo.jpg",
     locale: "en_US",
+    // Client-only <Seo> — the fancy-seo Blade baseline owns the SSR head; without
+    // this both emit it and every tag duplicates in the first byte (two <title>s).
+    // MUST match showcase-app.tsx.
+    clientOnly: true,
 });
 
 // MUST match the client provider tree in showcase-app.tsx EXACTLY (same shape,

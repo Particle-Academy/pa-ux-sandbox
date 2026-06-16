@@ -11,12 +11,14 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap">
 
-    {{-- Server-rendered SEO baseline. The app is a client-rendered SPA, so this
-         is what crawlers / social scrapers / LLM bots see on first byte. Title /
-         meta / canonical / OG / Twitter / JSON-LD + the /llms.txt discovery link
-         are all resolved per-route by particle-academy/fancy-seo (config +
-         App\Providers\SeoServiceProvider). The client <Seo> from
-         @particle-academy/fancy-inertia/seo overrides per page on SPA nav. --}}
+    {{-- Server-rendered SEO baseline (the single server-side head source). Title
+         / meta / canonical / OG / Twitter / JSON-LD + the /llms.txt discovery
+         link are resolved per-route by particle-academy/fancy-seo (config +
+         App\Providers\SeoServiceProvider), each tag carrying a head-key so the
+         client <Seo> (@particle-academy/fancy-inertia/seo) cleanly OVERRIDES
+         them on hydration / SPA nav. The client <Seo> is client-only (it does
+         not render during SSR) so it never DUPLICATES this baseline in the SSR
+         first byte — see fancy-inertia's Seo (clientOnly under SSR). --}}
     <x-fancy-seo::head />
 
     <script>

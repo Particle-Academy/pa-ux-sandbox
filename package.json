@@ -39,7 +39,7 @@
         "@particle-academy/fancy-diff": "^0.2.2",
         "@particle-academy/fancy-echarts": "^4.0",
         "@particle-academy/fancy-flow": "^0.5.2",
-        "@particle-academy/fancy-inertia": "^0.7.0",
+        "@particle-academy/fancy-inertia": "^0.8.0",
         "@particle-academy/fancy-motion": "^0.0.1-dev.3",
         "@particle-academy/fancy-pixel": "^0.2.0",
         "@particle-academy/fancy-query": "^0.3.0",

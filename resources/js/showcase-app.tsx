@@ -31,6 +31,10 @@ const seoDefaults = defineSeo({
     defaultImage: "/showcase-assets/fancy-ui-logo.jpg",
     locale: "en_US",
     siteUrl: typeof window !== "undefined" ? window.location.origin : undefined,
+    // The fancy-seo Blade <x-fancy-seo::head> baseline owns the server head, so
+    // <Seo> is client-only — otherwise, with SSR on, BOTH emit the head and every
+    // tag duplicates in the first byte (two <title>s). See fancy-inertia SeoDefaults.
+    clientOnly: true,
 });
 
 // The shared provider tree. Providers are mounted EAGERLY (no React.lazy /

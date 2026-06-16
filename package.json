@@ -27,7 +27,7 @@
     "dependencies": {
         "@babylonjs/core": "^9.4.1",
         "@inertiajs/react": "^3.1.1",
-        "@particle-academy/agent-integrations": "^0.15.0",
+        "@particle-academy/agent-integrations": "^0.16.0",
         "@particle-academy/dark-slide": "^0.5.2",
         "@particle-academy/fancy-3d": "^0.4.2",
         "@particle-academy/fancy-3d-babylon": "^0.1.2",

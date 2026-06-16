@@ -11,6 +11,7 @@ import {
 import { router } from "@inertiajs/react";
 import {
     useCoBrowseSession,
+    CoBrowseCursorLayer,
     type CoBrowseSession,
     type NavigationBridgeAdapter,
     type NavigationConfirmRequest,
@@ -263,6 +264,14 @@ export function CoBrowseProvider({ children }: { children: ReactNode }) {
                 return { ok: true };
             },
             confirm: (req) => new Promise<boolean>((res) => setPending({ req, resolve: res })),
+            // Viewport rect of a handle's element → drives the agent cursor +
+            // highlight overlay (CoBrowseCursorLayer reads it from meta.rect).
+            rectFor: (handle) => {
+                const el = resolve(handle);
+                if (!el) return null;
+                const r = el.getBoundingClientRect();
+                return { x: r.left, y: r.top, width: r.width, height: r.height };
+            },
         }),
         [resolve],
     );
@@ -334,6 +343,9 @@ export function CoBrowseProvider({ children }: { children: ReactNode }) {
     return (
         <CoBrowseContext.Provider value={session}>
             {children}
+            {/* Page-wide agent presence: live cursor + ping/highlight on the
+                element the agent touches. Only while a session is shared. */}
+            <CoBrowseCursorLayer active={active} />
             {pending && (
                 <div className="co-browse-confirm-backdrop" role="dialog" aria-modal="true" data-co-browse-confirm>
                     <div className="co-browse-confirm-card">

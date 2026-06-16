@@ -8,16 +8,19 @@ use Illuminate\Support\Facades\Cache;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 /**
- * In-memory relay broker for shared whiteboard sessions.
+ * In-memory relay broker for agent ⟷ browser MCP sessions.
  *
- * Two endpoints, both gated on a shared secret token (the session token
- * generated client-side and embedded in the share URL):
+ * Generic — it carries any JSON-RPC/MCP frames (co-browse, whiteboard, flow, …),
+ * not just whiteboard. Served at /agent-relay/* (and /whiteboard-share/* as a
+ * back-compat alias; state is keyed by session id, not path, so the two are
+ * interchangeable). Two endpoints, both gated on a shared secret token (the
+ * session token generated client-side and embedded in the share URL):
  *
- *   POST /whiteboard-share/{id}/inbox?token=…
+ *   POST /agent-relay/{id}/inbox?token=…
  *     - body: a single JSON-RPC frame (or batch as array)
  *     - effect: enqueue the frame for delivery to all SSE subscribers
  *
- *   GET  /whiteboard-share/{id}/events?token=…
+ *   GET  /agent-relay/{id}/events?token=…
  *     - response: SSE stream
  *     - delivers each enqueued frame as `event: mcp\ndata: {...}\n\n`
  *
@@ -31,7 +34,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
  * auto-expire after 1 hour of inactivity (cache TTL is bumped on every
  * read/write).
  */
-class WhiteboardShareController extends Controller
+class AgentRelayController extends Controller
 {
     private const TTL_SECONDS = 3600;
     private const POLL_INTERVAL_MS = 200;

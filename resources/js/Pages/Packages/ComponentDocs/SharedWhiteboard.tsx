@@ -37,7 +37,7 @@ export const sharedWhiteboardDoc: ComponentDoc = {
             ),
             code: `<SharedWhiteboard
     agent={{ id: "researcher", name: "Researcher", color: "#a855f7" }}
-    shareBaseUrl="https://my-app.test/whiteboard-share"
+    shareBaseUrl="https://my-app.test/agent-relay"
     initialNotes={[
         {
             id: "n1",
@@ -59,9 +59,9 @@ export const sharedWhiteboardDoc: ComponentDoc = {
             ),
             code: `<SharedWhiteboard
     agent={agent}
-    shareBaseUrl="/whiteboard-share"
+    shareBaseUrl="/agent-relay"
     onRegisterSession={async ({ session, token }) => {
-        await fetch("/whiteboard-share/register", {
+        await fetch("/agent-relay/register", {
             method: "POST",
             headers: { "Content-Type": "application/json", "X-CSRF-TOKEN": csrf },
             body: JSON.stringify({ session, token }),

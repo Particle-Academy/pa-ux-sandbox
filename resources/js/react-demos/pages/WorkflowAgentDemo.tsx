@@ -113,7 +113,7 @@ export function WorkflowAgentDemo() {
     if (session || !serverRef.current) return;
     const desc = createSessionDescriptor();
     const csrf = (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement | null)?.content ?? "";
-    const reg = await fetch("/whiteboard-share/register", {
+    const reg = await fetch("/agent-relay/register", {
       method: "POST",
       headers: { "content-type": "application/json", "x-csrf-token": csrf, accept: "application/json" },
       body: JSON.stringify({ session: desc.id, token: desc.token }),
@@ -123,14 +123,14 @@ export function WorkflowAgentDemo() {
       return;
     }
     const relay = attachSseRelay(serverRef.current, {
-      baseUrl: "/whiteboard-share",
+      baseUrl: "/agent-relay",
       sessionId: desc.id,
       token: desc.token,
     });
     sseRef.current = relay;
     relay.onStateChange(setRelayState);
 
-    const es = new EventSource(`/whiteboard-share/${desc.id}/events?token=${desc.token}&direction=inbound`);
+    const es = new EventSource(`/agent-relay/${desc.id}/events?token=${desc.token}&direction=inbound`);
     es.addEventListener("mcp", (ev: MessageEvent) => {
       try {
         const frame = JSON.parse(ev.data);
@@ -157,7 +157,7 @@ export function WorkflowAgentDemo() {
     sseRef.current = null;
     setRelayState("closed");
     const csrf = (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement | null)?.content ?? "";
-    await fetch(`/whiteboard-share/${desc.id}/unregister?token=${encodeURIComponent(desc.token)}`, {
+    await fetch(`/agent-relay/${desc.id}/unregister?token=${encodeURIComponent(desc.token)}`, {
       method: "POST",
       headers: { "x-csrf-token": csrf, accept: "application/json" },
     }).catch(() => {});

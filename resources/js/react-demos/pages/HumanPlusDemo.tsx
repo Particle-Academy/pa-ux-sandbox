@@ -202,14 +202,14 @@ function HumanPlusDemoInner() {
     if (session || !serverRef.current) return;
     const desc = createSessionDescriptor();
     const csrf = (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement | null)?.content ?? "";
-    const reg = await fetch("/whiteboard-share/register", {
+    const reg = await fetch("/agent-relay/register", {
       method: "POST",
       headers: { "content-type": "application/json", "x-csrf-token": csrf, accept: "application/json" },
       body: JSON.stringify({ session: desc.id, token: desc.token }),
     });
     if (!reg.ok) return;
     const relay = attachSseRelay(serverRef.current, {
-      baseUrl: "/whiteboard-share",
+      baseUrl: "/agent-relay",
       sessionId: desc.id,
       token: desc.token,
     });
@@ -225,7 +225,7 @@ function HumanPlusDemoInner() {
     sseRef.current = null;
     setRelayState("closed");
     const csrf = (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement | null)?.content ?? "";
-    await fetch(`/whiteboard-share/${desc.id}/unregister?token=${encodeURIComponent(desc.token)}`, {
+    await fetch(`/agent-relay/${desc.id}/unregister?token=${encodeURIComponent(desc.token)}`, {
       method: "POST",
       headers: { "x-csrf-token": csrf, accept: "application/json" },
     }).catch(() => {});

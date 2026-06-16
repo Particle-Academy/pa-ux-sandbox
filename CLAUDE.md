@@ -151,7 +151,7 @@ The Fancy UI strategic goal is **complete app surfaces where agents drive the UI
 | `slides` | `deck_*` / `slide_*` / `element_*` | fancy-slides `<DeckEditor>` / `<SlideViewer>` (since `agent-integrations@0.6.3`) |
 | (cross-cutting) | `agent_undo` / `agent_redo` / `agent_history` | per-agent undo stack |
 
-**Relay infrastructure** lives at `app/Http/Controllers/WhiteboardShareController.php` (the name is historical — it carries any MCP frames now, not just whiteboard). Routes in `routes/web.php` under `/whiteboard-share/*`. CSRF-exempt for external clients via `bootstrap/app.php`.
+**Relay infrastructure** lives at `app/Http/Controllers/AgentRelayController.php` (generic — it carries any MCP frames: co-browse, whiteboard, flow, …). Routes in `routes/web.php` under `/agent-relay/*` (with `/whiteboard-share/*` kept as a back-compat alias — state is keyed by session id, not path). CSRF-exempt for external clients via `bootstrap/app.php`.
 
 **Demos:** `/react-demos/whiteboard-shared` (whiteboard only), `/react-demos/workflow-agent` (fancy-flow), `/react-demos/human-plus` (full Human+ UX with all bridges).
 

@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\AdminSettingsController;
 use App\Http\Controllers\Admin\AdminShopController;
 use App\Http\Controllers\Admin\AdminSitesController;
 use App\Http\Controllers\Admin\AdminUsersController;
+use App\Http\Controllers\AgentRelayController;
 use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\Api\XpController;
 use App\Http\Controllers\Auth\GitHubLoginController;
@@ -36,7 +37,6 @@ use App\Http\Controllers\Showcase\VoteController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\Webhooks\GitHubWebhookController;
 use App\Http\Controllers\WhiteboardAgentController;
-use App\Http\Controllers\WhiteboardShareController;
 use App\Http\Middleware\TrackPackageBrowsing;
 use App\Mcp\Servers\FancyUiRegistry;
 use App\Models\ShowcaseSubmission;
@@ -297,11 +297,15 @@ Route::get('/react-demos/{any?}', fn () => view('react-demos'))->where('any', '.
 Route::post('/whiteboard-agent/turn', WhiteboardAgentController::class)
     ->name('whiteboard-agent.turn');
 
-// Whiteboard share relay — token-gated SSE + POST broker that lets external
-// MCP clients reach a browser-side MicroMcpServer. See
-// app/Http/Controllers/WhiteboardShareController.php for the wire model.
-Route::post('/whiteboard-share/register', [WhiteboardShareController::class, 'register']);
-Route::post('/whiteboard-share/{session}/unregister', [WhiteboardShareController::class, 'unregister']);
-Route::post('/whiteboard-share/{session}/inbox', [WhiteboardShareController::class, 'inbox']);
-Route::post('/whiteboard-share/{session}/outbox', [WhiteboardShareController::class, 'outbox']);
-Route::get('/whiteboard-share/{session}/events', [WhiteboardShareController::class, 'events']);
+// Agent relay — token-gated SSE + POST broker that lets external MCP clients
+// reach a browser-side MicroMcpServer. Generic (co-browse / whiteboard / flow /
+// …). See app/Http/Controllers/AgentRelayController.php for the wire model.
+// `/whiteboard-share/*` is kept as a back-compat alias (the relay keys state by
+// session id, not path, so old + new clients interoperate on the same session).
+foreach (['agent-relay', 'whiteboard-share'] as $relayPrefix) {
+    Route::post("/{$relayPrefix}/register", [AgentRelayController::class, 'register']);
+    Route::post("/{$relayPrefix}/{session}/unregister", [AgentRelayController::class, 'unregister']);
+    Route::post("/{$relayPrefix}/{session}/inbox", [AgentRelayController::class, 'inbox']);
+    Route::post("/{$relayPrefix}/{session}/outbox", [AgentRelayController::class, 'outbox']);
+    Route::get("/{$relayPrefix}/{session}/events", [AgentRelayController::class, 'events']);
+}

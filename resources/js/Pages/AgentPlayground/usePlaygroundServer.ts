@@ -11,7 +11,7 @@
  *        to the ACTIVE screen of that kind
  *      • registerUndoTools — per-agent undo/redo/history
  *  - transports: attachInProcess (in-page console) + attachSseRelay
- *    (external agent over the /whiteboard-share relay)
+ *    (external agent over the /agent-relay relay)
  *
  * Ephemeral + anonymous: nothing is persisted. Closing the tab tears it down.
  */
@@ -208,13 +208,13 @@ export function usePlaygroundServer() {
     if (session || !serverRef.current) return;
     const desc = createSessionDescriptor();
     const csrf = (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement | null)?.content ?? "";
-    const reg = await fetch("/whiteboard-share/register", {
+    const reg = await fetch("/agent-relay/register", {
       method: "POST",
       headers: { "content-type": "application/json", "x-csrf-token": csrf, accept: "application/json" },
       body: JSON.stringify({ session: desc.id, token: desc.token }),
     });
     if (!reg.ok) return;
-    const relay = attachSseRelay(serverRef.current, { baseUrl: "/whiteboard-share", sessionId: desc.id, token: desc.token });
+    const relay = attachSseRelay(serverRef.current, { baseUrl: "/agent-relay", sessionId: desc.id, token: desc.token });
     sseRef.current = relay;
     relay.onStateChange(setRelayState);
     setSession(desc);
@@ -228,7 +228,7 @@ export function usePlaygroundServer() {
     sseRef.current = null;
     setRelayState("closed");
     const csrf = (document.querySelector('meta[name="csrf-token"]') as HTMLMetaElement | null)?.content ?? "";
-    await fetch(`/whiteboard-share/${desc.id}/unregister?token=${encodeURIComponent(desc.token)}`, {
+    await fetch(`/agent-relay/${desc.id}/unregister?token=${encodeURIComponent(desc.token)}`, {
       method: "POST",
       headers: { "x-csrf-token": csrf, accept: "application/json" },
     }).catch(() => {});

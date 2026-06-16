@@ -26,7 +26,8 @@ return Application::configure(basePath: dirname(__DIR__))
         // External MCP clients hit these routes with bearer tokens, not
         // session cookies — exempt them from CSRF.
         $middleware->validateCsrfTokens(except: [
-            'whiteboard-share/*',
+            'agent-relay/*',
+            'whiteboard-share/*', // back-compat alias for the agent relay
             'mcp', // public install-MCP for IDE agents
             'webhooks/github', // server-to-server; verified via HMAC signature
         ]);

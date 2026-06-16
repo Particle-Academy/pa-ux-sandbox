@@ -176,7 +176,7 @@ function setNativeValue(el: HTMLInputElement | HTMLTextAreaElement | HTMLSelectE
 
 type PendingConfirm = { req: NavigationConfirmRequest; resolve: (ok: boolean) => void };
 
-// Best-effort CSRF token. The relay routes (/whiteboard-share/*) are
+// Best-effort CSRF token. The relay routes (/agent-relay/*) are
 // CSRF-exempt (bootstrap/app.php), so this is belt-and-braces — read the
 // meta tag if present, else the XSRF-TOKEN cookie Laravel sets. CoBrowseProvider
 // mounts ABOVE the Inertia <App>, so usePage() is unavailable here.
@@ -270,7 +270,7 @@ export function CoBrowseProvider({ children }: { children: ReactNode }) {
     const session = useCoBrowseSession({
         adapter,
         agent: { id: "agent", name: "Agent", color: "#a855f7" },
-        relayBaseUrl: "/whiteboard-share",
+        relayBaseUrl: "/agent-relay",
         info: {
             name: "Fancy UI — co-browse",
             version: "0.1.0",

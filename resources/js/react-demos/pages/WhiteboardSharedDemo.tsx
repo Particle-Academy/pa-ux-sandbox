@@ -19,7 +19,7 @@ const SEED_NOTES: StickyNoteItem[] = [
 /**
  * The whole "shared whiteboard with agent UX" experience is now a single
  * component shipped by @particle-academy/agent-integrations. Drop it into
- * any page that has a whiteboard-share relay endpoint mounted.
+ * any page that has an agent-relay endpoint mounted.
  */
 export function WhiteboardSharedDemo() {
   return (
@@ -27,7 +27,7 @@ export function WhiteboardSharedDemo() {
       <SharedWhiteboard
         initialNotes={SEED_NOTES}
         agent={{ id: "agent", name: "Agent", color: "#a855f7" }}
-        shareBaseUrl="/whiteboard-share"
+        shareBaseUrl="/agent-relay"
         header={
           <header className="mb-4">
             <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-100">Whiteboard — Shared Session</h1>

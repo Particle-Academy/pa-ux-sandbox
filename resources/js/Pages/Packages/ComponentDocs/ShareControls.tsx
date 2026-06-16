@@ -10,7 +10,7 @@ function ShareControlsDemo() {
             onStart={() => setSession({ id: "demo-session-abc", token: "tok_xyz" })}
             onStop={() => setSession(null)}
             status={session ? "connected" : undefined}
-            shareBaseUrl="https://fancy.app/whiteboard-share"
+            shareBaseUrl="https://fancy.app/agent-relay"
         />
     );
 }
@@ -41,7 +41,7 @@ export const shareControlsDoc: ComponentDoc = {
         setSession(null);
     }}
     status={isConnected ? "connected" : "waiting"}
-    shareBaseUrl="https://my-app.test/whiteboard-share"
+    shareBaseUrl="https://my-app.test/agent-relay"
 />`,
         },
         {

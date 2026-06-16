@@ -33,6 +33,10 @@ return [
     'ssr' => [
         'enabled' => env('INERTIA_SSR_ENABLED', false),
         'url' => env('INERTIA_SSR_URL', 'http://127.0.0.1:'.env('INERTIA_SSR_PORT', '13731')),
+        // Explicit bundle path so `inertia:start-ssr` always finds it (the deploy
+        // builds it via `npm run build` → `vite build --ssr` → bootstrap/ssr/ssr.js).
+        // Without the build step the daemon logs "Inertia SSR bundle not found".
+        'bundle' => base_path('bootstrap/ssr/ssr.js'),
     ],
 
     'testing' => [

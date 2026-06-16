@@ -54,7 +54,7 @@ reload                    # Clear cache + npm run build (custom shortcut)
 
 ### Building
 
-**`npm run build` is just `vite build`** — there are no special workspace tricks. Vite resolves every `@particle-academy/*` import from `node_modules` against the versions pinned in `package.json` + `package-lock.json`. Same shape locally and on Forge. To pick up a package release, `npm update @particle-academy/<pkg>` first.
+**`npm run build` runs `vite build && vite build --ssr`** — the client bundle plus the SSR bundle (`bootstrap/ssr/ssr.js`, gitignored) so the Forge deploy + `php artisan inertia:start-ssr` daemon have a bundle to load. (`build:client` is client-only if you need it.) No other workspace tricks: Vite resolves every `@particle-academy/*` import from `node_modules` against the versions pinned in `package.json` + `package-lock.json`. Same shape locally and on Forge. To pick up a package release, `npm update @particle-academy/<pkg>` first.
 
 ### Testing
 ```bash

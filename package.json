@@ -3,7 +3,8 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "vite build",
+        "build": "vite build && vite build --ssr",
+        "build:client": "vite build",
         "build:ssr": "vite build && vite build --ssr",
         "dev": "vite",
         "tm": "npx tsx .bots/lib/cli.ts",

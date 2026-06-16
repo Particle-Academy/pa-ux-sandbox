@@ -1,4 +1,5 @@
-import { Head, Link } from "@inertiajs/react";
+import { Link } from "@inertiajs/react";
+import { Seo } from "@particle-academy/fancy-inertia/seo";
 import { Component, useEffect, useState, type ComponentType, type ErrorInfo, type ReactNode } from "react";
 import {
     Button,
@@ -106,7 +107,11 @@ export default function Home({ packages, companions, total_components }: HomePro
     return (
         <Toast.Provider position="bottom-right">
             <Layout bleed>
-                <Head title="Fancy UI · Components for Human+ UX" />
+                {/* <Seo> (client-only via provider) — single source for the head.
+                    A raw <Head title> here would duplicate the fancy-seo Blade
+                    baseline's <title> under SSR. <Seo/> with no title uses the
+                    provider defaultTitle, which matches the home baseline. */}
+                <Seo />
                 <Hero packages={packages} />
                 <Packages packages={packages} companions={companions} />
                 <HumanPlus />

@@ -158,7 +158,8 @@ class PackageRegistry
             [
                 'slug' => 'mcp-relay-client',
                 'name' => 'mcp-relay-client',
-                'tagline' => 'Super-lite, single-file MCP client (bash / Python / TS / Go) for connecting an agent to a session-based relay — drive any agent-integrations-hosted app (e.g. the Agent Playground) from your terminal. Download one file, point it at a session URL.',
+                'tagline' => 'Super-lite, single-file MCP client (bash / Python / TS / Go) for connecting an agent to a session-based relay — drive any agent-integrations-hosted app (e.g. the Agent Playground) from your terminal. Download one file, or run the zero-install npx CLI; point it at a session URL.',
+                'npm' => 'mcp-relay-client',
                 'repo' => 'Particle-Academy/mcp-relay-client',
                 'download' => 'curl -O https://raw.githubusercontent.com/Particle-Academy/mcp-relay-client/main/connect.sh',
                 'language' => 'Polyglot (bash / Python / TS / Go)',

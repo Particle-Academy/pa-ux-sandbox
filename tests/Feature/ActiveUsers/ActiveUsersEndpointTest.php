@@ -67,3 +67,47 @@ it('returns the recently-active collection with the expected JSON shape', functi
         ->assertJsonPath('data.0.is_xp', true)
         ->assertJsonPath('data.0.is_fake', true);
 });
+
+it('drops fakes past the short demo window but keeps real users for 15 minutes', function () {
+    // A fake from a burst a minute ago — outside the short fake window, so it
+    // must NOT keep re-appearing (the "keeps going after refresh" bug).
+    ActiveUser::create([
+        'user_id' => null,
+        'fake_key' => 'fake-old',
+        'name' => 'Stale Fake',
+        'last_active_at' => now()->subMinute(),
+        'activity_at' => now()->subMinute(),
+        'is_fake' => true,
+    ]);
+
+    // A real user idle for 5 minutes — still present.
+    ActiveUser::create([
+        'user_id' => 1,
+        'name' => 'Real User',
+        'last_active_at' => now()->subMinutes(5),
+        'activity_at' => now()->subMinutes(5),
+        'is_fake' => false,
+    ]);
+
+    $this->getJson('/active-users')
+        ->assertOk()
+        ->assertJsonCount(1, 'data')
+        ->assertJsonPath('data.0.name', 'Real User');
+});
+
+it('prunes old fake rows when a new simulation starts', function () {
+    Queue::fake();
+
+    ActiveUser::create([
+        'user_id' => null,
+        'fake_key' => 'fake-ancient',
+        'name' => 'Ancient Fake',
+        'last_active_at' => now()->subMinutes(10),
+        'activity_at' => now()->subMinutes(10),
+        'is_fake' => true,
+    ]);
+
+    $this->postJson('/active-users/simulate')->assertNoContent();
+
+    expect(ActiveUser::where('fake_key', 'fake-ancient')->exists())->toBeFalse();
+});

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Avatar, Tooltip } from "@particle-academy/react-fancy";
+import { Avatar } from "@particle-academy/react-fancy";
 import { useFancyStream } from "@particle-academy/fancy-query";
 
 /** A live ActiveUser row (matches the backend ActiveUserResource payload). */
@@ -17,12 +17,37 @@ export type ActiveUserRow = {
     is_fake: boolean;
 };
 
-type Phase = "enter" | "hold" | "exit";
-type Slot = { row: ActiveUserRow; version: number; phase: Phase };
+const RISE_MS = 4200; // total time a pill is on screen (rise + fade, matches the CSS)
+const SPACING_MS = 1000; // ≥1s between pills so a burst streams in rather than piling up
 
-const HOLD_MS = 1000; // hold fully visible
-const EXIT_MS = 1600; // slow slide-left + fade (matches the CSS exit duration)
-const SPACING_MS = 1000; // ≥1s between distinct users
+// Latest activity_at (epoch ms) we've already animated, per row id. Persisted
+// as a module singleton (survives Inertia navigations within the SPA) AND in
+// sessionStorage (survives a hard refresh) — so a row only animates once per
+// NEW activity. Without this, every page visit / refresh re-mounts the overlay
+// with empty state and re-plays the whole active roster (most visibly the
+// simulated fakes, which linger briefly).
+const SEEN_KEY = "fancy:active-users:seen";
+let seenStore: Record<string, number> | null = null;
+function seenMap(): Record<string, number> {
+    if (seenStore) return seenStore;
+    try {
+        seenStore = JSON.parse(sessionStorage.getItem(SEEN_KEY) ?? "{}") as Record<string, number>;
+    } catch {
+        seenStore = {};
+    }
+    return seenStore;
+}
+function markSeen(key: string, at: number): void {
+    const s = seenMap();
+    s[key] = at;
+    try {
+        sessionStorage.setItem(SEEN_KEY, JSON.stringify(s));
+    } catch {
+        /* storage unavailable (private mode / SSR) — module singleton still dedupes */
+    }
+}
+
+type Pill = { key: number; row: ActiveUserRow };
 
 function initials(name: string): string {
     return name
@@ -38,84 +63,59 @@ function glowFor(row: ActiveUserRow): "xp" | "achievement" | false {
     return row.is_xp ? "xp" : row.is_achievement ? "achievement" : false;
 }
 
+/** Short, human label for what the activity was. */
+function actionLabel(row: ActiveUserRow): string {
+    if (row.activity_label) return row.activity_label;
+    if (row.is_achievement) return "unlocked an achievement";
+    if (row.is_xp) return "earned XP";
+    return row.activity_type ?? "is active";
+}
+
 /**
- * Live "active users" overlay. Each time a user acts, their avatar enters at the
- * right, holds 1s, then slowly slides left + fades. A new action by the same
- * user RESETS in place immediately (no waiting for the fade). Distinct users
- * stack via a queue ≥1s apart. XP / achievement activity adds a pulsing glow.
+ * Live "active users" stream. Each new activity posts a pill — the user's avatar
+ * plus what they just did (an action, an XP gain, or an achievement/award) — that
+ * rises up from just above the Fancy Pixel (bottom-right) and fades as it climbs.
+ * A burst streams in ≥1s apart, stacking upward. XP / achievement activity tints
+ * the pill and pulses the avatar's glow.
  *
- * The overlay keeps its own animation state; the Echo subscription only feeds it
- * events. It stays inert until a real Echo client is wired into FancyDataRoot
- * (useFancyStream no-ops with a null Echo).
+ * The overlay owns its animation state; the Echo subscription + REST poll only
+ * feed it events. It stays inert until a real Echo client is wired into
+ * FancyDataRoot (useFancyStream no-ops with a null Echo); the poll is the
+ * reliable delivery path regardless of WebSocket / TLS / queue state.
  */
 export function ActiveUsersOverlay() {
-    const [slots, setSlots] = useState<Map<string, Slot>>(() => new Map());
+    const [pills, setPills] = useState<Pill[]>([]);
 
-    // Mutable, non-render state.
-    const timersRef = useRef<Map<string, number[]>>(new Map());
     const queueRef = useRef<ActiveUserRow[]>([]);
-    const lastReleaseRef = useRef<number>(0);
     const drainTimerRef = useRef<number | null>(null);
-    // Latest activity_at (epoch ms) seen per row — dedupes the WS push and the
-    // HTTP poll so a row only animates once per new activity.
-    const seenRef = useRef<Map<string, number>>(new Map());
+    const lastReleaseRef = useRef<number>(0);
+    const idRef = useRef<number>(0);
+    const removeTimersRef = useRef<Set<number>>(new Set());
 
-    const clearTimers = useCallback((key: string) => {
-        const t = timersRef.current.get(key);
-        if (t) t.forEach((id) => window.clearTimeout(id));
-        timersRef.current.delete(key);
+    const removePill = useCallback((key: number) => {
+        setPills((prev) => prev.filter((p) => p.key !== key));
     }, []);
-
-    const removeSlot = useCallback(
-        (key: string) => {
-            clearTimers(key);
-            setSlots((prev) => {
-                if (!prev.has(key)) return prev;
-                const next = new Map(prev);
-                next.delete(key);
-                return next;
-            });
-        },
-        [clearTimers],
-    );
-
-    const armTimers = useCallback(
-        (key: string) => {
-            clearTimers(key);
-            const tHold = window.setTimeout(() => {
-                setSlots((prev) => {
-                    const slot = prev.get(key);
-                    if (!slot) return prev;
-                    const next = new Map(prev);
-                    next.set(key, { ...slot, phase: "exit" });
-                    return next;
-                });
-            }, HOLD_MS);
-            const tExit = window.setTimeout(() => removeSlot(key), HOLD_MS + EXIT_MS);
-            timersRef.current.set(key, [tHold, tExit]);
-        },
-        [clearTimers, removeSlot],
-    );
 
     const drain = useCallback(() => {
         drainTimerRef.current = null;
         const row = queueRef.current.shift();
-        if (!row) return;
-        const key = String(row.id);
-        // Raced a reset — this user already has a live slot; skip + keep draining.
-        if (!timersRef.current.has(key)) {
+        if (row) {
             lastReleaseRef.current = Date.now();
-            setSlots((prev) => {
-                const next = new Map(prev);
-                next.set(key, { row, version: 0, phase: "enter" });
-                return next;
-            });
-            armTimers(key);
+            const key = ++idRef.current;
+            setPills((prev) => [...prev, { key, row }]);
+            // Remove on a timer (not animationend — the avatar's infinite glow
+            // animation would otherwise never fire it, and reduced-motion has no
+            // animation at all).
+            const t = window.setTimeout(() => {
+                removeTimersRef.current.delete(t);
+                removePill(key);
+            }, RISE_MS);
+            removeTimersRef.current.add(t);
         }
         if (queueRef.current.length > 0) {
             drainTimerRef.current = window.setTimeout(drain, SPACING_MS);
         }
-    }, [armTimers]);
+    }, [removePill]);
 
     const requestDrain = useCallback(() => {
         if (drainTimerRef.current != null) return;
@@ -126,36 +126,21 @@ export function ActiveUsersOverlay() {
     const ingest = useCallback(
         (row: ActiveUserRow) => {
             const key = String(row.id);
-            // Dedupe across the WS push + the HTTP poll: only animate when this
-            // row's activity is newer than what we last showed for it.
+            // Dedupe across the WS push + the HTTP poll + remounts: only post a
+            // pill when this row's activity is newer than what we last showed.
             const at = row.activity_at ? Date.parse(row.activity_at) : Date.now();
-            const seen = seenRef.current.get(key) ?? 0;
-            if (at <= seen) return;
-            seenRef.current.set(key, at);
-            // Same user already on screen → reset in place (bump version → remount →
-            // restart entrance), bypassing the queue.
-            if (timersRef.current.has(key)) {
-                setSlots((prev) => {
-                    const slot = prev.get(key);
-                    if (!slot) return prev;
-                    const next = new Map(prev);
-                    next.set(key, { row, version: slot.version + 1, phase: "enter" });
-                    return next;
-                });
-                armTimers(key);
-                return;
-            }
-            // New user → queue (dedupe: replace any pending entry for this user).
+            if (at <= (seenMap()[key] ?? 0)) return;
+            markSeen(key, at);
+            // Collapse a same-user burst already waiting in the queue to its latest.
             const pending = queueRef.current.findIndex((r) => String(r.id) === key);
             if (pending >= 0) queueRef.current[pending] = row;
             else queueRef.current.push(row);
             requestDrain();
         },
-        [armTimers, requestDrain],
+        [requestDrain],
     );
 
-    // Subscribe to the live channel; events feed `ingest`. No cache reducer — the
-    // overlay renders from its own `slots` state.
+    // Subscribe to the live channel; events feed `ingest`.
     useFancyStream<ActiveUserRow[]>(["active-users"], {
         channel: "active-users",
         fetchInitial: async () => [],
@@ -167,11 +152,8 @@ export function ActiveUsersOverlay() {
         flushSync: true,
     });
 
-    // Reliable path: poll the REST endpoint (works regardless of WebSocket /
-    // TLS / queue state). Each poll feeds rows through `ingest`, which dedupes
-    // by activity time — so this surfaces the current user, simulated fakes, and
-    // other real users even when the WS push never connects. The first poll runs
-    // immediately so the user sees their own avatar on load.
+    // Reliable path: poll the REST endpoint (works regardless of WebSocket / TLS
+    // / queue state). Oldest activity first so a burst streams in chronologically.
     const ingestRef = useRef(ingest);
     ingestRef.current = ingest;
     useEffect(() => {
@@ -183,9 +165,7 @@ export function ActiveUsersOverlay() {
                 const body = await res.json();
                 const rows: ActiveUserRow[] = Array.isArray(body) ? body : (body.data ?? []);
                 if (!alive) return;
-                // Oldest activity first so they queue in chronological order.
-                rows
-                    .slice()
+                rows.slice()
                     .sort((a, b) => (a.activity_at ?? "").localeCompare(b.activity_at ?? ""))
                     .forEach((r) => ingestRef.current(r));
             } catch {
@@ -200,40 +180,38 @@ export function ActiveUsersOverlay() {
         };
     }, []);
 
-    // Cleanup every timer on unmount.
+    // Cleanup every pending timer on unmount.
     useEffect(() => {
-        const timers = timersRef.current;
+        const timers = removeTimersRef.current;
         return () => {
-            timers.forEach((ids) => ids.forEach((id) => window.clearTimeout(id)));
+            timers.forEach((id) => window.clearTimeout(id));
             timers.clear();
             if (drainTimerRef.current != null) window.clearTimeout(drainTimerRef.current);
         };
     }, []);
 
-    if (slots.size === 0) return null;
+    if (pills.length === 0) return null;
 
     return (
-        <div className="active-users-overlay" aria-live="polite">
-            {[...slots.values()].map(({ row, version, phase }) => (
-                <div
-                    key={`${row.id}:${version}`}
-                    className="active-user-avatar"
-                    data-phase={phase}
-                    style={{ pointerEvents: "auto" }}
-                >
-                    <Tooltip content={row.activity_label ?? row.name}>
-                        <span>
-                            <Avatar
-                                src={row.avatar_url ?? undefined}
-                                alt={row.name}
-                                fallback={initials(row.name)}
-                                size="sm"
-                                glow={glowFor(row)}
-                            />
+        <div className="active-users-stream" aria-live="polite">
+            {pills.map(({ key, row }) => {
+                const glow = glowFor(row);
+                return (
+                    <div key={key} className="active-user-pill" data-glow={glow || undefined}>
+                        <Avatar
+                            src={row.avatar_url ?? undefined}
+                            alt={row.name}
+                            fallback={initials(row.name)}
+                            size="sm"
+                            glow={glow}
+                        />
+                        <span className="active-user-pill-body">
+                            <span className="active-user-pill-name">{row.name}</span>
+                            <span className="active-user-pill-action">{actionLabel(row)}</span>
                         </span>
-                    </Tooltip>
-                </div>
-            ))}
+                    </div>
+                );
+            })}
         </div>
     );
 }

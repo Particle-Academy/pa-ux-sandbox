@@ -7,6 +7,7 @@ import { ScreenSystem } from "@particle-academy/fancy-screens";
 import { FancyDataRoot } from "@particle-academy/fancy-query";
 import { registerAll as registerEChartsAll, registerBuiltinThemes } from "@particle-academy/fancy-echarts";
 import { CoBrowseProvider } from "./agent/CoBrowseProvider";
+import { getEcho } from "./lib/echo";
 import "./showcase-theme";
 import "@particle-academy/react-fancy/styles.css";
 import "@particle-academy/fancy-code/styles.css";
@@ -46,7 +47,7 @@ const seoDefaults = defineSeo({
 const providers = (outlet: ReactNode): ReactNode => (
     <Toast.Provider position="bottom-right">
         <ScreenSystem>
-            <FancyDataRoot echo={null}>
+            <FancyDataRoot echo={getEcho()}>
                 <SeoProvider value={seoDefaults}>
                     <CoBrowseProvider>{outlet}</CoBrowseProvider>
                 </SeoProvider>

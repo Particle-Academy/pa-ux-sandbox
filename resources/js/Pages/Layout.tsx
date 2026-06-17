@@ -18,6 +18,7 @@ import { currentTheme, toggleTheme } from "../showcase-theme";
 import { CommandPalette } from "./CommandPalette";
 import { useCoBrowse } from "../agent/CoBrowseProvider";
 import { avatarFrameClass, type CosmeticSlots } from "../lib/cosmetics";
+import { ActiveUsersOverlay } from "../components/ActiveUsersOverlay";
 
 type Flash = {
     auth_error?: string | null;
@@ -147,7 +148,6 @@ export function Layout({
                             style={{ height: 34, padding: "0 12px" }}
                             aria-label="Search"
                         >
-                            <span>Search…</span>
                             <span className="kbd">⌘K</span>
                         </button>
 
@@ -180,7 +180,6 @@ export function Layout({
 
                         {auth ? (
                             <>
-                                {auth.player && <PlayerChip player={auth.player} />}
                                 <Dropdown>
                                     <Dropdown.Trigger>
                                         <button className={`rounded-full transition hover:ring-2 hover:ring-violet-400/30 ${avatarFrameClass(auth.player?.cosmetics)}`}>
@@ -192,6 +191,14 @@ export function Layout({
                                         </button>
                                     </Dropdown.Trigger>
                                     <Dropdown.Items>
+                                        {auth.player && (
+                                            <>
+                                                <div className="px-2 py-1.5">
+                                                    <PlayerChip player={auth.player} />
+                                                </div>
+                                                <Dropdown.Separator />
+                                            </>
+                                        )}
                                         <Dropdown.Item onClick={() => router.visit("/profile")}>
                                             Your profile
                                         </Dropdown.Item>
@@ -239,6 +246,8 @@ export function Layout({
                     </div>
                 </div>
             </header>
+
+            {auth && <ActiveUsersOverlay />}
 
             {flash.auth_error && (
                 <div className="mx-auto w-full max-w-7xl px-4 pt-3">
@@ -425,9 +434,8 @@ function CoBrowseControl() {
 
 function PlayerChip({ player }: { player: PlayerSummary }) {
     return (
-        <Link
-            href="/profile"
-            className="hidden shrink-0 items-center gap-2 whitespace-nowrap rounded-full border border-zinc-200 bg-zinc-50 py-1 pl-3 pr-1 text-xs font-medium text-zinc-600 transition hover:border-violet-300 hover:text-zinc-900 sm:flex dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:border-violet-700 dark:hover:text-zinc-100"
+        <div
+            className="flex shrink-0 items-center gap-2 whitespace-nowrap rounded-full border border-zinc-200 bg-zinc-50 py-1 pl-3 pr-1 text-xs font-medium text-zinc-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300"
             title={`${player.levelName ?? "Level " + player.level} · ${player.totalXp.toLocaleString()} XP${player.pro ? ` · Pro (${player.proSource})` : ""}`}
         >
             {player.pro && (
@@ -441,6 +449,6 @@ function PlayerChip({ player }: { player: PlayerSummary }) {
             <span className="rounded-full bg-amber-100 px-2 py-0.5 font-semibold text-amber-800 dark:bg-amber-900/30 dark:text-amber-300">
                 {player.coins.toLocaleString()} ◈
             </span>
-        </Link>
+        </div>
     );
 }

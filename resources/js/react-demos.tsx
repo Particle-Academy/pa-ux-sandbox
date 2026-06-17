@@ -83,6 +83,7 @@ const WhiteboardAgentDemo = l(() => import("./react-demos/pages/WhiteboardAgentD
 const WhiteboardSharedDemo = l(() => import("./react-demos/pages/WhiteboardSharedDemo"), "WhiteboardSharedDemo");
 const WorkflowAgentDemo = l(() => import("./react-demos/pages/WorkflowAgentDemo"), "WorkflowAgentDemo");
 const HumanPlusDemo = l(() => import("./react-demos/pages/HumanPlusDemo"), "HumanPlusDemo");
+const LiveActiveUsersDemo = l(() => import("./react-demos/pages/LiveActiveUsersDemo"), "LiveActiveUsersDemo");
 const Fancy3DHome = l(() => import("./react-demos/pages/Fancy3DHome"), "Fancy3DHome");
 const Fancy3DPrimitivesDemo = l(() => import("./react-demos/pages/Fancy3DPrimitivesDemo"), "Fancy3DPrimitivesDemo");
 const Fancy3DLayoutsDemo = l(() => import("./react-demos/pages/Fancy3DLayoutsDemo"), "Fancy3DLayoutsDemo");
@@ -253,6 +254,7 @@ if (root) {
               <Route path="whiteboard-shared" element={<WhiteboardSharedDemo />} />
               <Route path="workflow-agent" element={<WorkflowAgentDemo />} />
               <Route path="human-plus" element={<HumanPlusDemo />} />
+              <Route path="live-active-users" element={<LiveActiveUsersDemo />} />
               {/* fancy-3d package demos */}
               <Route path="3d" element={<Fancy3DHome />} />
               <Route path="3d-primitives" element={<Fancy3DPrimitivesDemo />} />

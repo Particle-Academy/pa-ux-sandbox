@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ActiveUsersController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminFeaturesController;
 use App\Http\Controllers\Admin\AdminGamificationController;
@@ -117,6 +118,16 @@ Route::post('/dark-slide/export', DarkSlideExportController::class)
 // CSRF-exempt (see bootstrap/app.php). No auth — GitHub posts server-to-server.
 Route::post('/webhooks/github', GitHubWebhookController::class)
     ->name('webhooks.github');
+
+// ─── Live "active users" feed ──────────────────────────────────────────
+// REST seed the frontend hydrates with before subscribing to the public
+// `active-users` Echo channel. The simulate endpoint kicks off a staggered
+// stream of fake presence for the showcase demo (same-session fetch — CSRF
+// stays on; the client sends the token).
+Route::get('/active-users', [ActiveUsersController::class, 'index'])->name('active-users.index');
+Route::post('/active-users/simulate', [ActiveUsersController::class, 'simulate'])
+    ->middleware('throttle:6,1')
+    ->name('active-users.simulate');
 
 // ─── Fancy UI Showcase ─────────────────────────────────────────────────
 Route::get('/', HomeController::class)->name('home');

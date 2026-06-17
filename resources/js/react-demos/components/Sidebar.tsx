@@ -91,6 +91,7 @@ const patternLinks = [
   { to: "/whiteboard-shared", label: "Whiteboard — Shared (MCP relay)" },
   { to: "/workflow-agent", label: "Workflow — Agent Editor" },
   { to: "/human-plus", label: "Human+ UX (full surface)" },
+  { to: "/live-active-users", label: "Live active users (Reverb)" },
 ];
 
 const fancy3dPrimitivesLinks = [

@@ -1,0 +1,37 @@
+<?php
+
+namespace App\Http\Resources;
+
+use App\Models\ActiveUser;
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+/**
+ * The single payload shape for a live presence row — identical on the REST
+ * seed (`GET /active-users`) and on every `active-user.updated` broadcast, so
+ * the frontend reads one schema regardless of transport.
+ *
+ * @mixin ActiveUser
+ */
+class ActiveUserResource extends JsonResource
+{
+    /**
+     * @return array<string, mixed>
+     */
+    public function toArray(Request $request): array
+    {
+        return [
+            'id' => $this->id,
+            'user_id' => $this->user_id,
+            'name' => $this->name,
+            'avatar_url' => $this->avatar_url,
+            'activity_type' => $this->activity_type,
+            'activity_label' => $this->activity_label,
+            'activity_at' => $this->activity_at?->toIso8601String(),
+            'is_xp' => (bool) $this->is_xp,
+            'is_achievement' => (bool) $this->is_achievement,
+            'last_active_at' => $this->last_active_at?->toIso8601String(),
+            'is_fake' => (bool) $this->is_fake,
+        ];
+    }
+}

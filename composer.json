@@ -12,6 +12,7 @@
         "laravel/cashier": "^16.0",
         "laravel/framework": "^13.0",
         "laravel/mcp": "^0.7",
+        "laravel/reverb": "^1.10",
         "laravel/socialite": "^5.27",
         "laravel/tinker": "^3.0",
         "particle-academy/dark-slide": "0.7.0",

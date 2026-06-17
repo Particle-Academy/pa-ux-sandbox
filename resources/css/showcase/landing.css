@@ -67,6 +67,34 @@
 .nav-spacer { flex: 1; }
 .nav-actions { display: flex; align-items: center; gap: 8px; }
 
+/* Live active-users overlay — avatars that appear just under the (sticky) header
+   on each user action, hold, then slide left + fade. Fixed so it tracks the
+   sticky nav. `fancy-slide-in-right` comes from react-fancy/styles.css. */
+.active-users-overlay {
+  position: fixed;
+  top: 60px;
+  right: 16px;
+  z-index: 25;
+  display: flex;
+  flex-direction: row-reverse;
+  gap: 8px;
+  pointer-events: none;
+}
+.active-user-avatar[data-phase="enter"],
+.active-user-avatar[data-phase="hold"] {
+  animation: fancy-slide-in-right 0.25s ease-out;
+}
+@keyframes active-user-exit {
+  from { transform: translateX(0); opacity: 1; }
+  to   { transform: translateX(-32px); opacity: 0; }
+}
+.active-user-avatar[data-phase="exit"] {
+  animation: active-user-exit 1.2s ease-in forwards;
+}
+@media (prefers-reduced-motion: reduce) {
+  .active-user-avatar[data-phase] { animation: none; }
+}
+
 /* ─────────── Layout primitives ─────────── */
 .container {
   max-width: 1200px;

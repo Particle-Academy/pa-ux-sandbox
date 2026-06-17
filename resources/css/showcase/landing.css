@@ -67,29 +67,38 @@
 .nav-spacer { flex: 1; }
 .nav-actions { display: flex; align-items: center; gap: 8px; }
 
-/* Live active-users overlay — avatars that appear just under the (sticky) header
-   on each user action, hold, then slide left + fade. Fixed so it tracks the
-   sticky nav. `fancy-slide-in-right` comes from react-fancy/styles.css. */
+/* Live active-users overlay — avatars drop in (fade + down) just under the user
+   menu on each action, hold, then slide left + fade out. The container is
+   centered to the same 1200px / 22px padding as `.nav-inner` and right-aligned,
+   so the newest avatar sits directly under the profile menu. */
 .active-users-overlay {
   position: fixed;
-  top: 60px;
-  right: 16px;
+  top: 56px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 1200px;
+  padding: 0 22px;
   z-index: 25;
   display: flex;
-  flex-direction: row-reverse;
+  justify-content: flex-end;
   gap: 8px;
   pointer-events: none;
 }
+@keyframes active-user-drop-in {
+  from { transform: translateY(-14px); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
+}
 .active-user-avatar[data-phase="enter"],
 .active-user-avatar[data-phase="hold"] {
-  animation: fancy-slide-in-right 0.25s ease-out;
+  animation: active-user-drop-in 0.45s ease-out;
 }
 @keyframes active-user-exit {
   from { transform: translateX(0); opacity: 1; }
-  to   { transform: translateX(-32px); opacity: 0; }
+  to   { transform: translateX(-64px); opacity: 0; }
 }
 .active-user-avatar[data-phase="exit"] {
-  animation: active-user-exit 1.2s ease-in forwards;
+  animation: active-user-exit 1.6s ease-in forwards;
 }
 @media (prefers-reduced-motion: reduce) {
   .active-user-avatar[data-phase] { animation: none; }

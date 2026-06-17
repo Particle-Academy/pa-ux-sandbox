@@ -21,7 +21,7 @@ type Phase = "enter" | "hold" | "exit";
 type Slot = { row: ActiveUserRow; version: number; phase: Phase };
 
 const HOLD_MS = 1000; // hold fully visible
-const EXIT_MS = 1200; // slow slide-left + fade
+const EXIT_MS = 1600; // slow slide-left + fade (matches the CSS exit duration)
 const SPACING_MS = 1000; // ≥1s between distinct users
 
 function initials(name: string): string {

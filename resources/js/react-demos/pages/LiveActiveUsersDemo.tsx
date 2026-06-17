@@ -148,7 +148,7 @@ function LiveActiveUsersPanel() {
 }
 
 function FormDisplayModeDemo() {
-    const [mode, setMode] = useState<"edit" | "view">("edit");
+    const [mode, setMode] = useState<"edit" | "view">("view");
     const [name, setName] = useState("Ada Lovelace");
     const [role, setRole] = useState("engineer");
     const [notify, setNotify] = useState(true);
@@ -161,12 +161,14 @@ function FormDisplayModeDemo() {
             <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
                     <Heading as="h2" size="sm">
-                        Form display mode
+                        Form display mode — inline click-to-edit
                     </Heading>
                     <Text className="mt-1 !text-zinc-500">
-                        One <code>&lt;Form mode&gt;</code> flips every input between editable and read-only display — the
-                        React/Inertia analog of Livewire public properties. (The “Internal id” field overrides the form
-                        with an explicit <code>mode</code>.)
+                        In <code>view</code> mode each field shows as clean text — <strong>click a value to edit it
+                        inline</strong>, then click away (blur) to commit and return to the display (<code>onChange</code>
+                        fires as usual). A tidy read-only surface where inputs appear only when reached for — the
+                        React/Inertia analog of Livewire bindable properties. Toggle the whole <code>&lt;Form mode&gt;</code>
+                        at once; the “Internal id” field overrides it with an explicit <code>mode="edit"</code>.
                     </Text>
                 </div>
                 <MultiSwitch

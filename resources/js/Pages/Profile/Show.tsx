@@ -145,7 +145,7 @@ export default function ProfileShow({ profile }: { profile: ProfileData }) {
                                             <div className="xp-row-head">
                                                 <span
                                                     className="xp-ico"
-                                                    style={{ background: `color-mix(in oklch, ${color} 14%, transparent)`, color }}
+                                                    style={{ color }}
                                                 >
                                                     <Icon name={ACT_ICONS[i % ACT_ICONS.length]} className="h-4 w-4" />
                                                 </span>
@@ -262,7 +262,7 @@ export default function ProfileShow({ profile }: { profile: ProfileData }) {
                                         <span
                                             style={{
                                                 width: 40, height: 40, borderRadius: 10, display: "grid", placeItems: "center",
-                                                flexShrink: 0, background: "color-mix(in oklch, #8b5cf6 13%, transparent)", color: "#8b5cf6",
+                                                flexShrink: 0, color: "#8b5cf6",
                                             }}
                                         >
                                             <Icon name="package" className="h-5 w-5" />

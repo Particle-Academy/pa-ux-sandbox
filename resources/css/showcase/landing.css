@@ -487,10 +487,10 @@ h2.section-title,
   border-radius: 5px;
   font-size: 10px;
 }
-.activity-row .ico.tool { background: color-mix(in oklch, var(--violet-500) 15%, transparent); color: var(--violet-600); }
-.activity-row .ico.write { background: color-mix(in oklch, var(--emerald-500) 18%, transparent); color: var(--emerald-600); }
-.activity-row .ico.move { background: color-mix(in oklch, var(--blue-500) 15%, transparent); color: var(--blue-600); }
-.activity-row .ico.read { background: color-mix(in oklch, var(--amber-500) 18%, transparent); color: var(--amber-700); }
+.activity-row .ico.tool { color: var(--violet-600); }
+.activity-row .ico.write { color: var(--emerald-600); }
+.activity-row .ico.move { color: var(--blue-600); }
+.activity-row .ico.read { color: var(--amber-700); }
 .activity-row .when { font-family: var(--font-mono); font-size: 10.5px; color: var(--fg-3); margin-left: auto; }
 .dark .activity-row .ico.write { color: var(--emerald-400); }
 .dark .activity-row .ico.tool { color: var(--violet-300); }

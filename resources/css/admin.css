@@ -90,7 +90,7 @@
 .admin-ph h1 { font-size: 22px; font-weight: 600; letter-spacing: -0.02em; margin: 0; color: var(--fg-1); }
 .admin-ph p { margin: 4px 0 0; font-size: 13.5px; color: var(--fg-3); }
 .admin-ph-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-.admin-statcard-ico { width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center; background: color-mix(in oklch, #8b5cf6 12%, transparent); color: #8b5cf6; }
+.admin-statcard-ico { width: 30px; height: 30px; border-radius: 8px; display: grid; place-items: center; color: #8b5cf6; }
 .admin-stat-label { font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--fg-3); font-weight: 600; }
 .admin-stat-value { font-size: 27px; font-weight: 600; letter-spacing: -0.02em; line-height: 1; margin-top: 12px; color: var(--fg-1); }
 

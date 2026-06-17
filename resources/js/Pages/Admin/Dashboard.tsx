@@ -82,7 +82,7 @@ function AdminDashboard({ stats, enabledFeatures, gamification: g }: Props) {
                             ) : (
                                 attention.map((r, i) => (
                                     <Link key={i} href={r.href} style={{ display: "flex", alignItems: "center", gap: 11, padding: "10px", borderRadius: 9, textDecoration: "none" }} className="admin-attn-row">
-                                        <span style={{ width: 28, height: 28, borderRadius: 7, display: "grid", placeItems: "center", background: "color-mix(in oklch, #f59e0b 13%, transparent)", color: "#f59e0b" }}>
+                                        <span style={{ width: 28, height: 28, borderRadius: 7, display: "grid", placeItems: "center", color: "#f59e0b" }}>
                                             <Icon name={r.icon} size={14} />
                                         </span>
                                         <span style={{ flex: 1, fontSize: 13, color: "var(--fg-2)" }}>{r.label}</span>

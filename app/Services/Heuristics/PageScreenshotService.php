@@ -4,9 +4,9 @@ namespace App\Services\Heuristics;
 
 use App\Models\SitePageShot;
 use App\Services\Showcase\SafeUrlFetcher;
-use App\Support\RobotsTxt;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
+use ParticleAcademy\XFiles\Laravel\HonorsRobots;
 use Spatie\Browsershot\Browsershot;
 
 /**
@@ -26,10 +26,12 @@ class PageScreenshotService
     public function __construct(private SafeUrlFetcher $fetcher) {}
 
     /**
-     * Honor the target host's robots.txt for our user-agent. Fetched once per
-     * capture; unreachable / non-200 / unparseable → allowed (default-open) so a
+     * Honor the target host's robots.txt for our user-agent via fancy-x-files'
+     * shared, default-open robots evaluator (HonorsRobots / RobotsPolicy) — the
+     * same honest precedence the site's own robots.txt is built with. Fetched
+     * once per capture; unreachable / non-200 / unparseable → allowed so a
      * quirky robots file never silently kills a legitimate capture. Our own
-     * robots.txt disallows /admin, /auth, /login, … so the scraper can never
+     * robots.txt protects /admin, /auth, /login, … so the scraper can never
      * shoot the dashboard, and submitters' rules are respected too.
      */
     private function allowedByRobots(string $url): bool
@@ -52,7 +54,7 @@ class PageScreenshotService
             return true;
         }
 
-        return RobotsTxt::allows($res->body(), $path, self::USER_AGENT);
+        return HonorsRobots::allows($res->body(), $path, self::USER_AGENT);
     }
 
     public function capture(string $url, string $siteKey, string $path): ?SitePageShot

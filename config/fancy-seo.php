@@ -44,41 +44,30 @@ return [
     | The package registers these; their CONTENT comes from the providers wired
     | in SeoServiceProvider (sitemap + llms) and the keys below (robots).
     | `markdown` (per-page .md) is enabled in Phase 3 once the doc hubs land.
+    |
+    | robots/security/humans are now OWNED by particle-academy/fancy-x-files
+    | (config/x-files.php) — its leak-proof RobotsTxt::protect() keeps /admin &
+    | friends Disallowed for EVERY group, including the welcomed AI bots. They
+    | are disabled here to avoid a route collision. fancy-seo keeps the dynamic
+    | sitemap.xml + llms.txt / llms-full.txt.
     */
     'routes' => [
         'enabled' => true,
         'sitemap' => true,
-        'robots' => true,
+        'robots' => false,   // x-files owns robots.txt
         'llms' => true,
-        'security' => true,
-        'humans' => true,
+        'security' => false,  // x-files owns .well-known/security.txt
+        'humans' => false,   // x-files owns humans.txt
         'markdown' => true, // /docs/{slug}.md — clean markdown for LLM fetchers
     ],
 
     /*
     |--------------------------------------------------------------------------
-    | robots.txt
+    | robots.txt / security.txt / humans.txt
     |--------------------------------------------------------------------------
-    | Private/transactional areas every bot (incl. the welcomed AI crawlers and
-    | our own screenshot scraper, App\Support\RobotsTxt) must not crawl, plus the
-    | AI/LLM user-agents we explicitly welcome (we WANT to be ingested + cited).
+    | Migrated to particle-academy/fancy-x-files — see config/x-files.php for the
+    | disallow (now `protect`) + ai_bots + security contact. One source of truth
+    | now lives there; the package's leak-proof RobotsTxt::protect() keeps every
+    | private path Disallowed for every bot.
     */
-    'robots_txt' => [
-        'disallow' => ['/admin', '/auth', '/login', '/logout', '/profile', '/dev-login', '/subscriptions', '/checkout'],
-        'ai_bots' => [
-            'GPTBot', 'OAI-SearchBot', 'ChatGPT-User', 'ClaudeBot', 'Claude-Web',
-            'anthropic-ai', 'PerplexityBot', 'Google-Extended', 'Applebot-Extended',
-            'CCBot', 'Bytespider', 'Amazonbot', 'Meta-ExternalAgent', 'cohere-ai',
-        ],
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | well-known
-    |--------------------------------------------------------------------------
-    */
-    'security_txt' => [
-        'contact' => env('FANCY_SEO_SECURITY_CONTACT', 'mailto:glenn@impactivism.net'),
-        'languages' => 'en',
-    ],
 ];

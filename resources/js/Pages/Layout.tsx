@@ -13,7 +13,7 @@ import {
     FANCY_TRANSITION_LABELS,
     AppUpdateAlert,
 } from "@particle-academy/fancy-inertia";
-import { CoBrowsePresence } from "@particle-academy/agent-integrations";
+import { CoBrowsePresence, SimulateUsersButton } from "@particle-academy/agent-integrations";
 import { currentTheme, toggleTheme } from "../showcase-theme";
 import { CommandPalette } from "./CommandPalette";
 import { useCoBrowse } from "../agent/CoBrowseProvider";
@@ -152,6 +152,15 @@ export function Layout({
                         </button>
 
                         <TransitionSwitcher />
+
+                        {auth && (
+                            <SimulateUsersButton
+                                count={10}
+                                label="Simulate users"
+                                csrfToken={props.csrfToken}
+                                style={{ height: 34, padding: "0 12px", fontSize: 13 }}
+                            />
+                        )}
 
                         <CoBrowseControl />
 

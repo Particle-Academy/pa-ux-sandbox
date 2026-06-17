@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Events\ActiveUserActivity;
 use App\Models\ActiveUser;
 use App\Models\User;
+use Throwable;
 
 /**
  * Single write-path for the live presence feed. Upserts the signed-in user's
@@ -41,7 +42,14 @@ class ActiveUserRecorder
             ],
         );
 
-        ActiveUserActivity::dispatch($activeUser);
+        // Best-effort instant push. The frontend also polls the REST endpoint,
+        // so a broadcaster that's down / misconfigured (e.g. Reverb cert) must
+        // never break the request that triggered the activity.
+        try {
+            ActiveUserActivity::dispatch($activeUser);
+        } catch (Throwable) {
+            // swallow — polling delivers the update
+        }
 
         return $activeUser;
     }

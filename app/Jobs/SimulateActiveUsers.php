@@ -45,57 +45,25 @@ class SimulateActiveUsers implements ShouldQueue
     {
         $total = max(1, $this->total);
 
-        if ($this->step === 0) {
-            $this->seedFakes($total);
-        }
-
-        if ($this->step >= $total) {
-            return;
-        }
-
-        $this->touchFake($this->step % $total, $this->step);
-
-        self::dispatch($this->step + 1, $total)->delay(now()->addSeconds(2));
-    }
-
-    /**
-     * Upsert the full roster of deterministic fakes up front.
-     */
-    private function seedFakes(int $total): void
-    {
-        $now = now();
-
+        // Seed/refresh all N fakes synchronously with a recent, staggered
+        // activity time (each ~1s apart over the last few seconds) so they're
+        // ordered + "active now". The frontend polls + its own queue spaces
+        // their appearance — no queue worker / delayed jobs required.
         for ($i = 1; $i <= $total; $i++) {
-            $name = self::NAMES[($i - 1) % count(self::NAMES)];
-
-            ActiveUser::updateOrCreate(
-                ['fake_key' => "fake-{$i}"],
-                [
-                    'user_id' => null,
-                    'name' => $name,
-                    'avatar_url' => "https://api.dicebear.com/7.x/avataaars/svg?seed=fake-{$i}",
-                    'activity_type' => 'page',
-                    'activity_label' => 'just arrived',
-                    'activity_at' => $now,
-                    'is_xp' => false,
-                    'is_achievement' => false,
-                    'last_active_at' => $now,
-                    'is_fake' => true,
-                ],
-            );
+            $this->touchFake($i, $i - 1, now()->subSeconds($total - $i));
         }
     }
 
     /**
-     * Touch one fake's latest activity + broadcast it.
+     * Upsert one fake's latest activity + broadcast it.
      */
-    private function touchFake(int $index, int $step): void
+    private function touchFake(int $i, int $step, \DateTimeInterface $at): void
     {
-        $fakeKey = 'fake-'.($index + 1);
+        $name = self::NAMES[($i - 1) % count(self::NAMES)];
 
         [$type, $label] = explode('::', self::ACTIVITIES[$step % count(self::ACTIVITIES)], 2);
 
-        // ~30% of steps light a glow — alternate XP vs achievement.
+        // ~30% of fakes light a glow — alternate XP vs achievement.
         $glow = ($step % 3) === 0;
         $isXp = $glow && ($step % 2) === 0;
         $isAchievement = $glow && ($step % 2) === 1;
@@ -106,21 +74,28 @@ class SimulateActiveUsers implements ShouldQueue
             $label = 'unlocked an achievement';
         }
 
-        $now = now();
-
         $activeUser = ActiveUser::updateOrCreate(
-            ['fake_key' => $fakeKey],
+            ['fake_key' => "fake-{$i}"],
             [
+                'user_id' => null,
+                'name' => $name,
+                'avatar_url' => "https://api.dicebear.com/7.x/avataaars/svg?seed=fake-{$i}",
                 'activity_type' => $isXp ? 'xp' : ($isAchievement ? 'achievement' : $type),
                 'activity_label' => $label,
-                'activity_at' => $now,
+                'activity_at' => $at,
                 'is_xp' => $isXp,
                 'is_achievement' => $isAchievement,
-                'last_active_at' => $now,
+                'last_active_at' => $at,
                 'is_fake' => true,
             ],
         );
 
-        ActiveUserActivity::dispatch($activeUser);
+        // Best-effort push; the frontend polls regardless, so a downed/misconfigured
+        // broadcaster must not fail the simulate request.
+        try {
+            ActiveUserActivity::dispatch($activeUser);
+        } catch (\Throwable) {
+            // swallow — polling delivers the fakes
+        }
     }
 }

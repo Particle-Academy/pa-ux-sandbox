@@ -31,7 +31,9 @@ class ActiveUsersController extends Controller
      */
     public function simulate(Request $request): Response
     {
-        SimulateActiveUsers::dispatch(0, (int) $request->integer('count', 10));
+        // Synchronous so it works without a queue worker — seeds the fakes
+        // immediately; the frontend polls them up and staggers the animation.
+        SimulateActiveUsers::dispatchSync(0, (int) $request->integer('count', 10));
 
         return response()->noContent();
     }

@@ -56,6 +56,9 @@ export function ActiveUsersOverlay() {
     const queueRef = useRef<ActiveUserRow[]>([]);
     const lastReleaseRef = useRef<number>(0);
     const drainTimerRef = useRef<number | null>(null);
+    // Latest activity_at (epoch ms) seen per row — dedupes the WS push and the
+    // HTTP poll so a row only animates once per new activity.
+    const seenRef = useRef<Map<string, number>>(new Map());
 
     const clearTimers = useCallback((key: string) => {
         const t = timersRef.current.get(key);
@@ -123,6 +126,12 @@ export function ActiveUsersOverlay() {
     const ingest = useCallback(
         (row: ActiveUserRow) => {
             const key = String(row.id);
+            // Dedupe across the WS push + the HTTP poll: only animate when this
+            // row's activity is newer than what we last showed for it.
+            const at = row.activity_at ? Date.parse(row.activity_at) : Date.now();
+            const seen = seenRef.current.get(key) ?? 0;
+            if (at <= seen) return;
+            seenRef.current.set(key, at);
             // Same user already on screen → reset in place (bump version → remount →
             // restart entrance), bypassing the queue.
             if (timersRef.current.has(key)) {
@@ -157,6 +166,39 @@ export function ActiveUsersOverlay() {
         streaming: false,
         flushSync: true,
     });
+
+    // Reliable path: poll the REST endpoint (works regardless of WebSocket /
+    // TLS / queue state). Each poll feeds rows through `ingest`, which dedupes
+    // by activity time — so this surfaces the current user, simulated fakes, and
+    // other real users even when the WS push never connects. The first poll runs
+    // immediately so the user sees their own avatar on load.
+    const ingestRef = useRef(ingest);
+    ingestRef.current = ingest;
+    useEffect(() => {
+        let alive = true;
+        const poll = async () => {
+            try {
+                const res = await fetch("/active-users", { headers: { Accept: "application/json" } });
+                if (!res.ok) return;
+                const body = await res.json();
+                const rows: ActiveUserRow[] = Array.isArray(body) ? body : (body.data ?? []);
+                if (!alive) return;
+                // Oldest activity first so they queue in chronological order.
+                rows
+                    .slice()
+                    .sort((a, b) => (a.activity_at ?? "").localeCompare(b.activity_at ?? ""))
+                    .forEach((r) => ingestRef.current(r));
+            } catch {
+                /* offline / transient — next tick retries */
+            }
+        };
+        void poll();
+        const id = window.setInterval(poll, 3000);
+        return () => {
+            alive = false;
+            window.clearInterval(id);
+        };
+    }, []);
 
     // Cleanup every timer on unmount.
     useEffect(() => {

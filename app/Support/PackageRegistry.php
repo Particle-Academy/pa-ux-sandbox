@@ -145,6 +145,7 @@ class PackageRegistry
                 'repo' => 'Particle-Academy/fancy-seo',
                 'packagist' => 'particle-academy/fancy-seo',
                 'language' => 'PHP',
+                'core' => true,
             ],
             [
                 'slug' => 'fancy-auto-common',
@@ -195,6 +196,7 @@ class PackageRegistry
                 'npm' => '@particle-academy/fancy-app-update',
                 'repo' => 'Particle-Academy/fancy-app-update',
                 'language' => 'TypeScript',
+                'core' => true,
             ],
             [
                 'slug' => 'fancy-term-host',
@@ -603,6 +605,7 @@ class PackageRegistry
             'npm' => '@particle-academy/agent-integrations',
             'repo' => 'Particle-Academy/agent-integrations',
             'language' => 'TypeScript',
+            'core' => true,
             'components' => [
                 ['slug' => 'micro-mcp-server', 'name' => 'MicroMcpServer', 'blurb' => 'In-page MCP server.'],
                 ['slug' => 'agent-panel', 'name' => 'AgentPanel', 'blurb' => 'Per-agent control panel.'],

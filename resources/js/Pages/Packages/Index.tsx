@@ -1,6 +1,6 @@
 import { Head, Link } from "@inertiajs/react";
 import { Badge, Card, Heading, Text } from "@particle-academy/react-fancy";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { Layout } from "../Layout";
 
 type Pkg = {
@@ -112,60 +112,120 @@ export default function PackagesIndex({ packages, companions = [] }: { packages:
 }
 
 /**
- * Fancy Core — the minimal stack to build a normal web application: UI
- * components (react-fancy), the Inertia bridge (fancy-inertia), and server-state
- * (fancy-query). Lifted out of the grid into a highlighted band at the top so
- * newcomers know what to reach for first.
+ * Fancy Core — the stack you reach for to ship a real web app: UI components
+ * (react-fancy), the Inertia bridge (fancy-inertia), server-state (fancy-query),
+ * SEO/crawlability (fancy-seo), and live-update detection (fancy-app-update) —
+ * plus agent-integrations, called out separately as the backbone of Human+ UX.
+ * Lifted out of the grid into a highlighted band at the top so newcomers know
+ * what to reach for first.
  */
 function FancyCore({ pkgs, companions }: { pkgs: Pkg[]; companions: Companion[] }) {
     if (pkgs.length === 0 && companions.length === 0) {
         return null;
     }
+    // agent-integrations is core too, but it gets its own highlighted strip as
+    // the Human+ backbone rather than sitting in the essentials grid.
+    const agent = pkgs.find((p) => p.slug === "agent-integrations");
+    const essentialPkgs = pkgs.filter((p) => p.slug !== "agent-integrations");
     return (
         <div className="mt-6 overflow-hidden rounded-2xl border border-violet-200 bg-gradient-to-br from-violet-50 via-white to-sky-50 p-5 shadow-sm dark:border-violet-900/50 dark:from-violet-950/40 dark:via-zinc-950 dark:to-sky-950/20">
             <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
                 <Heading level={2} size="md" className="!text-zinc-900 dark:!text-zinc-100">Fancy Core</Heading>
                 <Badge color="violet" size="sm">the essentials</Badge>
                 <Text size="sm" className="!text-zinc-600 dark:!text-zinc-300">
-                    everything you need to build a normal web app — components, the Inertia bridge, and server-state
+                    everything you need to ship a real web app — components, the Inertia bridge, server-state, SEO, and live-update detection
                 </Text>
             </div>
 
-            <div className="mt-4 grid gap-4 sm:grid-cols-3">
-                {pkgs.map((p) => (
-                    <Link key={p.slug} href={`/packages/${p.slug}`} className="block">
-                        <Card className="group h-full overflow-hidden transition hover:-translate-y-0.5 hover:border-violet-300 hover:shadow-lg dark:hover:border-violet-700">
-                            <PackageHero pkg={p} />
-                            <Card.Body>
-                                <div className="flex items-start justify-between gap-2">
-                                    <Heading level={3} size="sm" className="!font-mono !text-zinc-900 dark:!text-zinc-100">{p.name}</Heading>
-                                    <Badge color="sky" size="sm">{p.language}</Badge>
-                                </div>
-                                <Text size="sm" className="mt-2 line-clamp-2 !text-zinc-600 dark:!text-zinc-300">{p.tagline}</Text>
-                                <Text size="xs" className="mt-3 !font-mono !text-violet-600 dark:!text-violet-300">
-                                    {p.components_count} component{p.components_count === 1 ? "" : "s"} · Explore →
-                                </Text>
-                            </Card.Body>
-                        </Card>
-                    </Link>
+            <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {essentialPkgs.map((p) => (
+                    <CoreCard
+                        key={p.slug}
+                        slug={p.slug}
+                        name={p.name}
+                        tagline={p.tagline}
+                        language={p.language}
+                        hero={<PackageHero pkg={p} />}
+                        meta={`${p.components_count} component${p.components_count === 1 ? "" : "s"} · Explore →`}
+                    />
                 ))}
                 {companions.map((c) => (
-                    <Link key={c.slug} href={`/packages/${c.slug}`} className="block">
-                        <Card className="group h-full overflow-hidden transition hover:-translate-y-0.5 hover:border-violet-300 hover:shadow-lg dark:hover:border-violet-700">
-                            <CoreHooksHero />
-                            <Card.Body>
-                                <div className="flex items-start justify-between gap-2">
-                                    <Heading level={3} size="sm" className="!font-mono !text-zinc-900 dark:!text-zinc-100">{c.name}</Heading>
-                                    <Badge color="zinc" size="sm" variant="soft">hooks</Badge>
-                                </div>
-                                <Text size="sm" className="mt-2 line-clamp-2 !text-zinc-600 dark:!text-zinc-300">{c.tagline}</Text>
-                                <Text size="xs" className="mt-3 !font-mono !text-violet-600 dark:!text-violet-300">Explore →</Text>
-                            </Card.Body>
-                        </Card>
-                    </Link>
+                    <CoreCard
+                        key={c.slug}
+                        slug={c.slug}
+                        name={c.name}
+                        tagline={c.tagline}
+                        language={c.language}
+                        hero={c.slug === "fancy-query" ? <CoreHooksHero /> : <PackageHero pkg={companionAsPkg(c)} />}
+                        meta="Explore →"
+                    />
                 ))}
             </div>
+
+            {agent && <HumanPlusCore pkg={agent} />}
         </div>
+    );
+}
+
+/** Adapt a headless companion to the `Pkg` shape `PackageHero` expects. */
+function companionAsPkg(c: Companion): Pkg {
+    return { slug: c.slug, name: c.name, tagline: c.tagline, language: c.language, components_count: 0, core: c.core };
+}
+
+/** A single Fancy Core member card (shared by core packages + companions). */
+function CoreCard({
+    slug,
+    name,
+    tagline,
+    language,
+    hero,
+    meta,
+}: {
+    slug: string;
+    name: string;
+    tagline: string;
+    language: string;
+    hero: ReactNode;
+    meta: string;
+}) {
+    return (
+        <Link href={`/packages/${slug}`} className="block">
+            <Card className="group h-full overflow-hidden transition hover:-translate-y-0.5 hover:border-violet-300 hover:shadow-lg dark:hover:border-violet-700">
+                {hero}
+                <Card.Body>
+                    <div className="flex items-start justify-between gap-2">
+                        <Heading level={3} size="sm" className="!font-mono !text-zinc-900 dark:!text-zinc-100">{name}</Heading>
+                        <Badge color={language === "PHP" || language === "PHP/Blade" ? "indigo" : "sky"} size="sm">{language}</Badge>
+                    </div>
+                    <Text size="sm" className="mt-2 line-clamp-2 !text-zinc-600 dark:!text-zinc-300">{tagline}</Text>
+                    <Text size="xs" className="mt-3 !font-mono !text-violet-600 dark:!text-violet-300">{meta}</Text>
+                </Card.Body>
+            </Card>
+        </Link>
+    );
+}
+
+/**
+ * agent-integrations — highlighted as the backbone of Human+ UX rather than one
+ * essentials tile among many. It's what makes the whole site an agent playground.
+ */
+function HumanPlusCore({ pkg }: { pkg: Pkg }) {
+    return (
+        <Link href={`/packages/${pkg.slug}`} className="mt-4 block">
+            <div className="group relative overflow-hidden rounded-xl border border-fuchsia-300 bg-gradient-to-br from-fuchsia-50 via-white to-violet-50 p-5 shadow-sm ring-1 ring-fuchsia-200/60 transition hover:-translate-y-0.5 hover:shadow-lg dark:border-fuchsia-800/60 dark:from-fuchsia-950/30 dark:via-zinc-950 dark:to-violet-950/30 dark:ring-fuchsia-900/40">
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                    <Badge color="violet" size="sm">the core of Human+</Badge>
+                    <Heading level={3} size="sm" className="!font-mono !text-zinc-900 dark:!text-zinc-100">{pkg.name}</Heading>
+                    <Badge color="sky" size="sm">{pkg.language}</Badge>
+                </div>
+                <Text size="sm" className="mt-2 max-w-3xl !text-zinc-600 dark:!text-zinc-300">
+                    What makes the whole site an agent playground: a micro-MCP server, per-package bridges, presence, and a share relay — so agents inhabit the same UI humans use, driving it through typed tools instead of DOM scraping. The backbone of every Human+ surface in the kit.
+                </Text>
+                <Text size="xs" className="mt-3 !font-mono !text-fuchsia-600 dark:!text-fuchsia-300">
+                    {pkg.components_count} component{pkg.components_count === 1 ? "" : "s"} · Explore →
+                </Text>
+            </div>
+        </Link>
     );
 }
 

@@ -197,9 +197,13 @@ export default function ShowcaseInstalled({
                 </div>
             </div>
 
-            <div className="mt-6 grid gap-4 lg:grid-cols-[1fr_320px] lg:items-start">
+            <div className="mt-6 grid gap-4 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
                 {/* ── Left: install/badge guide ─────────────────────────────── */}
-                <div className="space-y-4">
+                {/* `min-w-0` (and minmax(0,1fr) on the track) lets the long pixel
+                    snippet scroll inside its `overflow-x-auto` <pre> instead of
+                    forcing the grid wider than the viewport and pushing the status
+                    rail off-screen. */}
+                <div className="min-w-0 space-y-4">
                     {isRepo ? (
                         <RepoGuide
                             submission={submission}

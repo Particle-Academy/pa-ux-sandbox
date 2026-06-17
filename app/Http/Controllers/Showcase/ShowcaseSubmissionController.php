@@ -145,6 +145,22 @@ class ShowcaseSubmissionController extends Controller
     }
 
     /**
+     * Owner-initiated delete: remove the submission from the Showcase + the
+     * owner's list. Owner-only.
+     */
+    public function destroy(ShowcaseSubmission $submission): RedirectResponse
+    {
+        $this->authorizeOwner($submission);
+
+        $label = $submission->title ?: $submission->url;
+        $submission->delete();
+
+        return redirect()
+            ->route('showcase.showcase.mine')
+            ->with('submitted', "Removed “{$label}” from your submissions.");
+    }
+
+    /**
      * Build the copy-paste pixel snippet from the submission's real site_key,
      * chosen style/mode, and this app's host (for the heuristics endpoint).
      */

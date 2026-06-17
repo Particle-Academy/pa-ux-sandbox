@@ -198,6 +198,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/showcase/submit', [ShowcaseSubmissionController::class, 'store'])->name('showcase.showcase.store');
     Route::get('/showcase/submit/{submission}/installed', [ShowcaseSubmissionController::class, 'installed'])->name('showcase.showcase.installed');
     Route::post('/showcase/submit/{submission}/rescan', [ShowcaseSubmissionController::class, 'rescan'])->name('showcase.showcase.rescan');
+    Route::delete('/showcase/submit/{submission}', [ShowcaseSubmissionController::class, 'destroy'])->name('showcase.showcase.destroy');
 });
 
 // Vote endpoints (auth required for cast; tallies are public).

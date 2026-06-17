@@ -1,4 +1,5 @@
-import { Head, Link } from "@inertiajs/react";
+import { Head, Link, router } from "@inertiajs/react";
+import { useState } from "react";
 import { Badge, Button, Card, Heading, Icon, Text } from "@particle-academy/react-fancy";
 import { Layout } from "../Layout";
 
@@ -65,6 +66,20 @@ function Stat({ label, value }: { label: string; value: string | number }) {
 }
 
 export default function MySubmissions({ submissions }: { submissions: Submission[] }) {
+    const [deletingId, setDeletingId] = useState<number | null>(null);
+
+    const remove = (s: Submission) => {
+        const label = s.title || hostOf(s.url);
+        if (!window.confirm(`Remove “${label}” from your submissions? This delists it from the Showcase.`)) {
+            return;
+        }
+        setDeletingId(s.id);
+        router.delete(`/showcase/submit/${s.id}`, {
+            preserveScroll: true,
+            onFinish: () => setDeletingId(null),
+        });
+    };
+
     return (
         <Layout>
             <Head title="Your submissions · Showcase" />
@@ -210,6 +225,19 @@ export default function MySubmissions({ submissions }: { submissions: Submission
                                                 View in Showcase
                                             </Button>
                                         )}
+                                        <div className="ml-auto">
+                                            <Button
+                                                type="button"
+                                                size="sm"
+                                                variant="ghost"
+                                                color="red"
+                                                icon="trash-2"
+                                                onClick={() => remove(s)}
+                                                disabled={deletingId === s.id}
+                                            >
+                                                {deletingId === s.id ? "Removing…" : "Delete"}
+                                            </Button>
+                                        </div>
                                     </div>
                                 </Card.Body>
                             </Card>

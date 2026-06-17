@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { ComponentDoc } from "./types";
-import { DeckEditor, defaultTheme, type Deck } from "@particle-academy/fancy-slides";
+import { DeckEditor, defaultTheme, useDeckEditor, type Deck } from "@particle-academy/fancy-slides";
 import { defaultElementRegistry } from "@particle-academy/fancy-slides/registry";
 import "@particle-academy/fancy-slides/styles.css";
 import { PptxExportControl } from "../PptxExportControl";
@@ -72,6 +72,99 @@ function MiniEditor() {
     );
 }
 
+/**
+ * An app panel that lives *beside* the editor and shares its controller via
+ * `useDeckEditor()` — no props threaded in. It reads the live selection and
+ * drives inserts straight through the shared op surface.
+ */
+function StudioAgentRail() {
+    const { deck, slide, selectedElement, insert } = useDeckEditor();
+    return (
+        <div className="flex w-48 shrink-0 flex-col gap-2 border-r border-zinc-200 bg-zinc-50 p-3 dark:border-zinc-800 dark:bg-zinc-900">
+            <div className="text-xs font-semibold uppercase tracking-wider text-violet-500">Agent panel</div>
+            <div className="text-xs text-zinc-500">
+                {deck.slides.length} slide{deck.slides.length === 1 ? "" : "s"} · {slide?.elements.length ?? 0} on this one
+            </div>
+            <div className="rounded-md bg-white p-2 text-xs text-zinc-600 shadow-sm dark:bg-zinc-950 dark:text-zinc-300">
+                {selectedElement ? (
+                    <>
+                        Selected <span className="font-mono text-violet-500">{selectedElement.type}</span>
+                    </>
+                ) : (
+                    "Nothing selected"
+                )}
+            </div>
+            <button
+                className="rounded-md bg-violet-600 px-2 py-1.5 text-xs font-medium text-white hover:bg-violet-500 disabled:opacity-40"
+                disabled={!slide}
+                onClick={() => insert.text()}
+            >
+                + Add text (shared op)
+            </button>
+        </div>
+    );
+}
+
+/** A bespoke top bar that reads + drives the deck title via the shared controller. */
+function StudioTopBar() {
+    const { toolbarApi } = useDeckEditor();
+    return (
+        <div className="flex items-center gap-3 border-b border-zinc-200 bg-gradient-to-r from-violet-600 to-fuchsia-600 px-4 py-2 text-white dark:border-zinc-800">
+            <span className="text-sm font-semibold">🎬 Studio</span>
+            <input
+                value={toolbarApi.title.value}
+                onChange={(e) => toolbarApi.title.onChange(e.target.value)}
+                className="min-w-0 flex-1 rounded bg-white/15 px-2 py-1 text-sm text-white placeholder:text-white/60 focus:bg-white/25 focus:outline-none"
+                placeholder="Untitled"
+                aria-label="Deck title"
+            />
+            <button
+                className="rounded-md bg-white/20 px-3 py-1 text-xs font-medium hover:bg-white/30"
+                onClick={toolbarApi.present}
+            >
+                Present
+            </button>
+        </div>
+    );
+}
+
+/**
+ * The new #11 capability: a bespoke editor composed from `DeckEditor.Provider` +
+ * the slot parts + app panels, all sharing ONE controller. No fixed chrome —
+ * the app arranges and styles the parts.
+ */
+function StudioEditor() {
+    const [deck, setDeck] = useState<Deck>(seed);
+    return (
+        <div className="h-[560px] w-full overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-800">
+            <DeckEditor.Provider value={deck} onChange={setDeck} renderElement={defaultElementRegistry}>
+                <div className="flex h-full w-full flex-col bg-zinc-100 dark:bg-zinc-950">
+                    <StudioTopBar />
+                    <div className="flex min-h-0 flex-1">
+                        <StudioAgentRail />
+                        <DeckEditor.Rail className="!w-40" />
+                        <DeckEditor.Canvas />
+                        <DeckEditor.Inspector />
+                    </div>
+                    <DeckEditor.StatusBar className="!bg-violet-50 dark:!bg-violet-950/40">
+                        {(ctx) => (
+                            <span className="text-violet-700 dark:text-violet-300">
+                                {ctx.slide
+                                    ? `Editing slide ${ctx.deck.slides.findIndex((s) => s.id === ctx.slideId) + 1} of ${ctx.deck.slides.length}`
+                                    : "No slide"}
+                                {ctx.selectedElement &&
+                                    ` — ${ctx.selectedElement.type} @ ${Math.round(ctx.selectedElement.x * 100)}%, ${Math.round(
+                                        ctx.selectedElement.y * 100,
+                                    )}%`}
+                            </span>
+                        )}
+                    </DeckEditor.StatusBar>
+                </div>
+            </DeckEditor.Provider>
+        </div>
+    );
+}
+
 export const deckEditorDoc: ComponentDoc = {
     intro: (
         <p>
@@ -82,9 +175,50 @@ export const deckEditorDoc: ComponentDoc = {
             fancy-code editor), and a bottom speaker-notes panel. Fully controlled — pass
             a <code>Deck</code> in, get one back via <code>onChange</code>. Extend the
             toolbar with <code>toolbarExtra</code>.
+            {" "}
+            <strong>Composable:</strong> the chrome is a thin default layout over a
+            shared controller — drop <code>DeckEditor.Provider</code> + the slot parts
+            (<code>.Rail</code> / <code>.Canvas</code> / <code>.Inspector</code> /{" "}
+            <code>.StatusBar</code>) into your own arrangement and read the same
+            controller from any app panel via <code>useDeckEditor()</code>.
         </p>
     ),
     examples: [
+        {
+            name: "Composed “Studio” (bespoke layout, one shared controller)",
+            description:
+                "The same editor parts, rearranged: a custom gradient top bar, an app-owned Agent panel sitting BESIDE the rail (sharing selection + the insert op surface via useDeckEditor), and a custom violet status bar via a render-prop. No hide-flags, no fork — DeckEditor.Provider runs the controller and the slots compose around it.",
+            render: () => <StudioEditor />,
+            code: `import { DeckEditor, useDeckEditor } from "@particle-academy/fancy-slides";
+
+// An app panel beside the editor, sharing the controller — no props threaded in:
+function AgentRail() {
+    const { slide, selectedElement, insert } = useDeckEditor();
+    return (
+        <aside>
+            <p>{selectedElement ? \`Selected \${selectedElement.type}\` : "Nothing selected"}</p>
+            <button disabled={!slide} onClick={() => insert.text()}>+ Add text</button>
+        </aside>
+    );
+}
+
+function Studio({ deck, setDeck }) {
+    return (
+        <DeckEditor.Provider value={deck} onChange={setDeck}>
+            <MyTopBar />
+            <div className="studio-grid">
+                <AgentRail />
+                <DeckEditor.Rail className="!w-40" />
+                <DeckEditor.Canvas />
+                <DeckEditor.Inspector />
+            </div>
+            <DeckEditor.StatusBar>
+                {(ctx) => <span>Slide {/* … */} · {ctx.selectedElement?.type}</span>}
+            </DeckEditor.StatusBar>
+        </DeckEditor.Provider>
+    );
+}`,
+        },
         {
             name: "Editor + custom export control",
             description:

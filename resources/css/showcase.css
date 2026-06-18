@@ -12,6 +12,9 @@
 /* Gamification profile page (consumes tokens.css). */
 @import "./showcase/profile.css";
 
+/* Packages listing + per-package detail redesign (consumes tokens.css). */
+@import "./showcase/packages.css";
+
 /* Smooth page-to-page navigation transitions. */
 @import "./showcase/transitions.css";
 

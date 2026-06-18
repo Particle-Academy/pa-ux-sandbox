@@ -21,10 +21,99 @@ class PackageRegistry
      */
     public const HIDDEN = ['fancy-motion', 'fancy-cms-ui', 'fancy-cms'];
 
+    /**
+     * Per-package design classification — the source of truth for the
+     * /packages redesign's grouping + visual system. Mirrors the design
+     * mockup's `pkgdata.jsx` shape: each slug carries
+     *   group     — core | human | companion  (which tier it lists under)
+     *   ecosystem — ts | php | polyglot        (drives the install-snippet + eco badge)
+     *   kind      — ui | bridge | headless     (UI/bridge render preview tiles; headless render install-snippet tiles)
+     *   accent    — hex                         (the package's signature color: glyph + hero gradient)
+     *
+     * Groups honor the design (e.g. fancy-seo / fancy-query / fancy-app-update
+     * are CORE even though they live in companions() today). Slugs absent from
+     * the design mockup use the sensible fallbacks called out in the brief.
+     *
+     * @var array<string, array{group:string, ecosystem:string, kind:string, accent:string}>
+     */
+    private const META = [
+        // ── Fancy Core ───────────────────────────────────────────────────────
+        'react-fancy' => ['group' => 'core', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#8b5cf6'],
+        'fancy-inertia' => ['group' => 'core', 'ecosystem' => 'ts', 'kind' => 'bridge', 'accent' => '#6366f1'],
+        'fancy-query' => ['group' => 'core', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#10b981'],
+        'fancy-app-update' => ['group' => 'core', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#f59e0b'],
+        'fancy-seo' => ['group' => 'core', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#0ea5e9'],
+
+        // ── The Human+ surfaces ──────────────────────────────────────────────
+        // agent-integrations lists under Human+ (it carries the "Core of Human+"
+        // badge via its core:true flag), per the design mockup.
+        'agent-integrations' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'bridge', 'accent' => '#f59e0b'],
+        'fancy-whiteboard' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#8b5cf6'],
+        'fancy-artboard' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#6366f1'],
+        'fancy-flow' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#0ea5e9'],
+        'fancy-sheets' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#10b981'],
+        'fancy-slides' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#f43f5e'],
+        'fancy-code' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#a78bfa'],
+        'fancy-term' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#22c55e'],
+        'fancy-diff' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#eab308'],
+        'fancy-pixel' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#f97316'],
+        'fancy-echarts' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#0ea5e9'],
+        'fancy-screens' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#8b5cf6'],
+        'fancy-3d' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#6366f1'],
+        // 3d adapters — not in the design mockup; sensible fallbacks per the brief.
+        'fancy-3d-babylon' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#6366f1'],
+        'fancy-3d-three' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#6366f1'],
+        'fancy-motion' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#f43f5e'],
+        'fancy-cms-ui' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#0ea5e9'],
+
+        // ── Companion packages ───────────────────────────────────────────────
+        // react-fancy UI companions — appear in the companion tier but still UI.
+        'fancy-x-files-ui' => ['group' => 'companion', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#8b5cf6'],
+        'fancy-brand-icons' => ['group' => 'companion', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#8b5cf6'],
+        // Headless TS ports / collectors / tooling.
+        'holy-sheet-js' => ['group' => 'companion', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#16a34a'],
+        'dark-slide-js' => ['group' => 'companion', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#dc2626'],
+        'fancy-heuristics-js' => ['group' => 'companion', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#0ea5e9'],
+        'fancy-term-host' => ['group' => 'companion', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#10b981'],
+        'fancy-x-files-js' => ['group' => 'companion', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#64748b'],
+        'fancy-auto-common' => ['group' => 'companion', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#6366f1'],
+        'docs-mcp' => ['group' => 'companion', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#0ea5e9'],
+        'fancy-cli' => ['group' => 'companion', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#a78bfa'],
+        // Headless PHP backends + infra.
+        'holy-sheet' => ['group' => 'companion', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#10b981'],
+        'dark-slide' => ['group' => 'companion', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#8b5cf6'],
+        'fancy-heuristics' => ['group' => 'companion', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#8b5cf6'],
+        'fancy-x-files' => ['group' => 'companion', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#64748b'],
+        'fancy-cms' => ['group' => 'companion', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#0ea5e9'],
+        'laravel-catalog' => ['group' => 'companion', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#0ea5e9'],
+        'laravel-fms' => ['group' => 'companion', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#f59e0b'],
+        'laravel-fun-lab' => ['group' => 'companion', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#f43f5e'],
+        // Polyglot single-file client.
+        'mcp-relay-client' => ['group' => 'companion', 'ecosystem' => 'polyglot', 'kind' => 'headless', 'accent' => '#22c55e'],
+    ];
+
+    /** Fallback classification for any slug missing from {@see META}. */
+    private const META_FALLBACK = ['group' => 'companion', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#8b5cf6'];
+
+    /**
+     * Stamp a package definition with its design classification
+     * (group / accent / ecosystem / kind). Hand-set values on the entry win
+     * over {@see META}; META wins over {@see META_FALLBACK}.
+     *
+     * @param  array<string, mixed>  $pkg
+     * @return array<string, mixed>
+     */
+    private static function classify(array $pkg): array
+    {
+        $meta = self::META[$pkg['slug'] ?? ''] ?? self::META_FALLBACK;
+
+        return $pkg + $meta;
+    }
+
     /** @return array<int, array<string, mixed>> */
     public static function all(): array
     {
-        return self::visible([
+        return self::visible(array_map(self::classify(...), [
             self::reactFancy(),
             self::fancyWhiteboard(),
             self::fancyArtboard(),
@@ -44,7 +133,7 @@ class PackageRegistry
             self::fancyInertia(),
             self::fancyMotion(),
             self::fancyCmsUi(),
-        ]);
+        ]));
     }
 
     /**
@@ -73,7 +162,7 @@ class PackageRegistry
      */
     public static function companions(): array
     {
-        return self::visible([
+        return self::visible(array_map(self::classify(...), [
             [
                 'slug' => 'holy-sheet',
                 'name' => 'particle-academy/holy-sheet',
@@ -269,7 +358,7 @@ class PackageRegistry
                 'repo' => 'Particle-Academy/fancy-ui-cli',
                 'language' => 'TypeScript',
             ],
-        ]);
+        ]));
     }
 
     public static function find(string $slug): ?array

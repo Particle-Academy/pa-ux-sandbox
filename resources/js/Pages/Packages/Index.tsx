@@ -1,360 +1,358 @@
 import { Head, Link } from "@inertiajs/react";
-import { Badge, Card, Heading, Text } from "@particle-academy/react-fancy";
-import { useState, type ReactNode } from "react";
+import { Badge, Icon } from "@particle-academy/react-fancy";
+import { Fragment, useMemo, useState, type CSSProperties, type ReactNode } from "react";
 import { Layout } from "../Layout";
 
+/**
+ * One merged catalog entry — emitted by PackagesController::index(). Every
+ * package (UI grid + companions) carries the design classification
+ * (group / accent / ecosystem / kind) the listing groups + styles by.
+ */
 type Pkg = {
     slug: string;
     name: string;
     tagline: string;
     language: string;
+    core: boolean;
+    group: "core" | "human" | "companion";
+    accent: string;
+    ecosystem: "ts" | "php" | "polyglot";
+    kind: "ui" | "bridge" | "headless";
     components_count: number;
-    core: boolean;
-};
-
-/**
- * Companion packages — composer deps the sandbox monorepo develops against
- * (laravel-catalog, laravel-fms, etc.) but aren't part of the Fancy UI
- * showcase narrative. Rendered as a compact footnote below the main grid.
- */
-type Companion = {
-    slug: string;
-    name: string;
-    tagline: string;
-    language: string;
-    core: boolean;
-    composer: string | null;
-    packagist: string | null;
     npm: string | null;
+    composer: string | null;
+    download: string | null;
     repoUrl: string;
-    packagistUrl: string | null;
     npmUrl: string | null;
-    issuesUrl: string;
+    packagistUrl: string | null;
 };
 
-// Packages we have hand-curated screenshots for. The rest fall back to a
-// tasteful logo-style tile rendered from the package slug.
-const HAS_SHOT = new Set([
-    "react-fancy",
-    "fancy-flow",
-    "fancy-whiteboard",
-    "fancy-code",
-    "fancy-sheets",
-    "fancy-echarts",
-    "fancy-screens",
-    "fancy-3d",
-    "fancy-3d-babylon",
-    "fancy-artboard",
-    "fancy-inertia",
-    "fancy-slides",
-    "agent-integrations",
-    "fancy-diff",
-    "fancy-pixel",
-    "fancy-3d-three",
-    "fancy-term",
-]);
+type KindFilter = "all" | "ui" | "headless";
+type EcoFilter = "all" | "ts" | "php" | "polyglot";
 
-export default function PackagesIndex({ packages, companions = [] }: { packages: Pkg[]; companions?: Companion[] }) {
-    const corePkgs = packages.filter((p) => p.core);
-    const gridPkgs = packages.filter((p) => !p.core);
-    const coreCompanions = companions.filter((c) => c.core);
-    const otherCompanions = companions.filter((c) => !c.core);
+const GROUP_ORDER: Pkg["group"][] = ["core", "human", "companion"];
+const GROUP_META: Record<Pkg["group"], { title: string; blurb: string }> = {
+    core: {
+        title: "Fancy Core",
+        blurb: "The stack you reach for to ship a real web app — components, the Inertia bridge, server-state, SEO, live-update detection, and the agent backbone.",
+    },
+    human: {
+        title: "The Human+ surfaces",
+        blurb: "Rich, controlled UI surfaces humans and agents inhabit together — whiteboard, flow, sheets, slides, code, charts, 3D — driven over MCP bridges, never DOM scraping.",
+    },
+    companion: {
+        title: "Companion packages",
+        blurb: "Headless backends, document writers, isomorphic ports, and tooling developed alongside the kit — plus the react-fancy editor companions.",
+    },
+};
+
+const ECO_LABEL: Record<Pkg["ecosystem"], string> = { ts: "TS", php: "PHP", polyglot: "Poly" };
+
+/** Mono initials for the glyph — first letters of the de-scoped name parts. */
+function initials(name: string): string {
+    const base = name.replace(/^@[^/]+\//, "").replace(/^particle-academy\//, "");
+    const parts = base.split(/[-/]/).filter(Boolean);
+    return ((parts[0]?.[0] ?? "") + (parts[1]?.[0] ?? parts[0]?.[1] ?? "")).toUpperCase();
+}
+
+function installCmd(p: Pkg): string {
+    if (p.npm) return `npm install ${p.npm}`;
+    if (p.composer) return `composer require ${p.composer}`;
+    if (p.download) return p.download;
+    return p.name;
+}
+
+export default function PackagesIndex({ packages }: { packages: Pkg[] }) {
+    const [query, setQuery] = useState("");
+    const [kind, setKind] = useState<KindFilter>("all");
+    const [eco, setEco] = useState<EcoFilter>("all");
+
     const totalComponents = packages.reduce((s, p) => s + p.components_count, 0);
+
+    const filtered = useMemo(() => {
+        const q = query.trim().toLowerCase();
+        return packages.filter((p) => {
+            if (kind === "ui" && p.kind === "headless") return false;
+            if (kind === "headless" && p.kind !== "headless") return false;
+            if (eco !== "all" && p.ecosystem !== eco) return false;
+            if (q && !(`${p.name} ${p.slug} ${p.tagline}`.toLowerCase().includes(q))) return false;
+            return true;
+        });
+    }, [packages, query, kind, eco]);
+
+    const groups = GROUP_ORDER.map((g) => ({
+        group: g,
+        meta: GROUP_META[g],
+        items: filtered.filter((p) => p.group === g),
+    })).filter((s) => s.items.length > 0);
+
     return (
         <Layout>
             <Head title="Packages · Fancy UI" />
 
-            <div className="flex flex-wrap items-end justify-between gap-3">
+            <header className="pkgs-head">
                 <div>
-                    <Heading level={1} size="xl" className="!text-zinc-900 dark:!text-zinc-100">Packages</Heading>
-                    <Text className="mt-2 max-w-2xl !text-zinc-600 dark:!text-zinc-300">
-                        Every Fancy UI package, with a per-component live demo behind each tile.
-                    </Text>
+                    <h1 className="pkgs-head__title">Packages</h1>
+                    <p className="pkgs-head__sub">
+                        Every Fancy UI package — UI surfaces with a live preview, headless backends with a one-line install.
+                        Each tile opens a full per-package page with a per-component demo.
+                    </p>
                 </div>
-                <div className="flex items-center gap-2">
-                    <Badge color="violet" size="sm">{packages.length} packages</Badge>
-                    <Badge color="emerald" size="sm">{totalComponents} components</Badge>
+                <div className="pkgs-stats">
+                    <span className="pkgs-stat"><b>{packages.length}</b> packages</span>
+                    <span className="pkgs-stat"><b>{totalComponents}</b> components</span>
+                    <span className="pkgs-stat"><b>MIT</b> licensed</span>
+                </div>
+            </header>
+
+            <div className="pkgs-toolbar">
+                <label className="pkgs-search">
+                    <Icon name="search" size={16} />
+                    <input
+                        type="search"
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}
+                        placeholder="Search packages…"
+                        aria-label="Search packages"
+                    />
+                </label>
+                <div className="pkgs-chips" role="group" aria-label="Filter by kind">
+                    {(["all", "ui", "headless"] as KindFilter[]).map((k) => (
+                        <button
+                            key={k}
+                            type="button"
+                            className="pkgs-chip"
+                            aria-pressed={kind === k}
+                            onClick={() => setKind(k)}
+                        >
+                            {k === "all" ? "All kinds" : k === "ui" ? "UI" : "Headless"}
+                        </button>
+                    ))}
+                </div>
+                <div className="pkgs-chips" role="group" aria-label="Filter by ecosystem">
+                    {(["all", "ts", "php", "polyglot"] as EcoFilter[]).map((e) => (
+                        <button
+                            key={e}
+                            type="button"
+                            className="pkgs-chip"
+                            aria-pressed={eco === e}
+                            onClick={() => setEco(e)}
+                        >
+                            {e === "all" ? "All" : e === "ts" ? "TypeScript" : e === "php" ? "PHP" : "Polyglot"}
+                        </button>
+                    ))}
                 </div>
             </div>
 
-            <FancyCore pkgs={corePkgs} companions={coreCompanions} />
-
-            <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {gridPkgs.map((pkg) => (
-                    <Link key={pkg.slug} href={`/packages/${pkg.slug}`} className="block">
-                        <Card className="group h-full overflow-hidden transition hover:-translate-y-0.5 hover:border-violet-300 hover:shadow-lg dark:hover:border-violet-700">
-                            <PackageHero pkg={pkg} />
-                            <Card.Body>
-                                <div className="flex items-start justify-between gap-2">
-                                    <Heading level={2} size="sm" className="!font-mono !text-zinc-900 dark:!text-zinc-100">{pkg.name}</Heading>
-                                    <Badge color={pkg.language === "PHP" || pkg.language === "PHP/Blade" ? "indigo" : "sky"} size="sm">
-                                        {pkg.language}
-                                    </Badge>
-                                </div>
-                                <Text size="sm" className="mt-2 line-clamp-2 !text-zinc-600 dark:!text-zinc-300">{pkg.tagline}</Text>
-                                <div className="mt-4 flex items-center justify-between border-t border-zinc-100 pt-3 dark:border-zinc-800">
-                                    <Text size="xs" className="!font-mono !text-zinc-500">
-                                        {pkg.components_count} component{pkg.components_count === 1 ? "" : "s"}
-                                    </Text>
-                                    <Text size="xs" className="!text-violet-600 opacity-0 transition group-hover:opacity-100 dark:!text-violet-300">
-                                        Explore →
-                                    </Text>
-                                </div>
-                            </Card.Body>
-                        </Card>
-                    </Link>
-                ))}
-            </div>
-
-            {otherCompanions.length > 0 && <CompanionPackages companions={otherCompanions} />}
+            {groups.length === 0 ? (
+                <div className="pkgs-empty">
+                    No packages match <b>{query || `${kind}/${eco}`}</b>. Try clearing a filter.
+                </div>
+            ) : (
+                groups.map(({ group, meta, items }) => (
+                    <section key={group} className="pkg-group">
+                        <div className="pkg-group__head">
+                            <h2 className="pkg-group__title">{meta.title}</h2>
+                            <span className="pkg-group__count">{items.length}</span>
+                        </div>
+                        <p className="pkg-group__blurb">{meta.blurb}</p>
+                        <div className="pkg-grid">
+                            {items.map((p) =>
+                                p.kind === "headless" ? (
+                                    <HeadlessTile key={p.slug} pkg={p} />
+                                ) : (
+                                    <PreviewTile key={p.slug} pkg={p} />
+                                ),
+                            )}
+                        </div>
+                    </section>
+                ))
+            )}
         </Layout>
     );
 }
 
-/**
- * Fancy Core — the stack you reach for to ship a real web app: UI components
- * (react-fancy), the Inertia bridge (fancy-inertia), server-state (fancy-query),
- * SEO/crawlability (fancy-seo), and live-update detection (fancy-app-update) —
- * plus agent-integrations, called out separately as the backbone of Human+ UX.
- * Lifted out of the grid into a highlighted band at the top so newcomers know
- * what to reach for first.
- */
-function FancyCore({ pkgs, companions }: { pkgs: Pkg[]; companions: Companion[] }) {
-    if (pkgs.length === 0 && companions.length === 0) {
-        return null;
-    }
-    // agent-integrations is core too, but it gets its own highlighted strip as
-    // the Human+ backbone rather than sitting in the essentials grid.
-    const agent = pkgs.find((p) => p.slug === "agent-integrations");
-    const essentialPkgs = pkgs.filter((p) => p.slug !== "agent-integrations");
+/** UI / bridge package → preview tile (mini visual + Explore →). */
+function PreviewTile({ pkg }: { pkg: Pkg }) {
     return (
-        <div className="mt-6 overflow-hidden rounded-2xl border border-violet-200 bg-gradient-to-br from-violet-50 via-white to-sky-50 p-5 shadow-sm dark:border-violet-900/50 dark:from-violet-950/40 dark:via-zinc-950 dark:to-sky-950/20">
-            <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-                <Heading level={2} size="md" className="!text-zinc-900 dark:!text-zinc-100">Fancy Core</Heading>
-                <Badge color="violet" size="sm">the essentials</Badge>
-                <Text size="sm" className="!text-zinc-600 dark:!text-zinc-300">
-                    everything you need to ship a real web app — components, the Inertia bridge, server-state, SEO, and live-update detection
-                </Text>
+        <Link href={`/packages/${pkg.slug}`} className="pkg-tile" style={{ "--accent": pkg.accent } as CSSProperties}>
+            <PreviewVisual pkg={pkg} />
+            <div className="pkg-tile__body">
+                <div className="pkg-tile__row">
+                    <h3 className="pkg-tile__name">{pkg.name}</h3>
+                    <span className="pkg-eco" data-eco={pkg.ecosystem}>{ECO_LABEL[pkg.ecosystem]}</span>
+                </div>
+                <p className="pkg-tile__tagline">{pkg.tagline}</p>
+                <div className="pkg-tile__foot">
+                    <span>
+                        {pkg.components_count > 0
+                            ? `${pkg.components_count} component${pkg.components_count === 1 ? "" : "s"}`
+                            : pkg.kind === "bridge" ? "bridge" : "surface"}
+                    </span>
+                    <span className="pkg-tile__explore">Explore →</span>
+                </div>
             </div>
+        </Link>
+    );
+}
 
-            <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {essentialPkgs.map((p) => (
-                    <CoreCard
-                        key={p.slug}
-                        slug={p.slug}
-                        name={p.name}
-                        tagline={p.tagline}
-                        language={p.language}
-                        hero={<PackageHero pkg={p} />}
-                        meta={`${p.components_count} component${p.components_count === 1 ? "" : "s"} · Explore →`}
-                    />
-                ))}
-                {companions.map((c) => (
-                    <CoreCard
-                        key={c.slug}
-                        slug={c.slug}
-                        name={c.name}
-                        tagline={c.tagline}
-                        language={c.language}
-                        hero={c.slug === "fancy-query" ? <CoreHooksHero /> : <PackageHero pkg={companionAsPkg(c)} />}
-                        meta="Explore →"
-                    />
-                ))}
-            </div>
-
-            {agent && <HumanPlusCore pkg={agent} />}
+/** The visual at the top of a preview tile — a per-package inline mini-preview. */
+function PreviewVisual({ pkg }: { pkg: Pkg }) {
+    return (
+        <div className="pkg-tile__preview">
+            <PkgPreview slug={pkg.slug} />
         </div>
     );
 }
 
-/** Adapt a headless companion to the `Pkg` shape `PackageHero` expects. */
-function companionAsPkg(c: Companion): Pkg {
-    return { slug: c.slug, name: c.name, tagline: c.tagline, language: c.language, components_count: 0, core: c.core };
+const VIOLET = "#8b5cf6";
+const AMBER = "#f59e0b";
+
+/**
+ * Per-package mini-visual — a tiny, recognizable thumbnail of what the package
+ * does, rendered from primitives (no external screenshots). Ported from the
+ * design mockup's `PkgPreview`. Unmapped UI packages fall back to a package glyph.
+ */
+function PkgPreview({ slug }: { slug: string }): ReactNode {
+    const map: Record<string, ReactNode> = {
+        "react-fancy": (
+            <div className="mp" style={{ gap: 6, flexWrap: "wrap", maxWidth: 280 }}>
+                <span style={{ background: VIOLET, color: "#fff", fontSize: 11, fontWeight: 600, padding: "5px 11px", borderRadius: 8, display: "inline-flex", gap: 5, alignItems: "center" }}><Icon name="plus" size={11} />Button</span>
+                <Badge color="emerald" dot size="sm">live</Badge>
+                <Badge color="violet" size="sm">beta</Badge>
+                <span className="mp-box" style={{ padding: "5px 9px", fontSize: 10 }}>Card</span>
+                <span style={{ width: 26, height: 26, borderRadius: 999, background: VIOLET, color: "#fff", display: "grid", placeItems: "center", fontSize: 10, fontWeight: 600 }}>RK</span>
+            </div>
+        ),
+        "agent-integrations": (
+            <div className="mp" style={{ flexDirection: "column", gap: 7 }}>
+                <span style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 11, color: AMBER, fontWeight: 600 }}><Icon name="bot" size={14} />agent · MCP</span>
+                <span className="mp" style={{ gap: 5 }}>
+                    <span style={{ width: 8, height: 8, borderRadius: 999, background: VIOLET }} />
+                    <span style={{ width: 22, height: 3, background: "var(--border-2)" }} />
+                    <span style={{ width: 8, height: 8, borderRadius: 999, background: AMBER }} />
+                </span>
+            </div>
+        ),
+        "fancy-whiteboard": (
+            <div className="mp" style={{ gap: 6 }}>
+                <span style={{ width: 50, height: 50, background: "#fde68a", borderRadius: 5, transform: "rotate(-5deg)", padding: 6, fontSize: 8, color: "#713f12" }}>Ship ✨</span>
+                <span style={{ width: 50, height: 50, background: "#bae6fd", borderRadius: 5, transform: "rotate(4deg)", padding: 6, fontSize: 8, color: "#0c4a6e" }}>Review</span>
+            </div>
+        ),
+        "fancy-flow": (
+            <div className="mp" style={{ gap: 5 }}>
+                {[0, 1, 2].map((i) => (
+                    <Fragment key={i}>
+                        <span className="mp-box" style={{ width: 26, height: 18 }} />
+                        {i < 2 && <span style={{ width: 10, height: 2, background: "var(--border-2)" }} />}
+                    </Fragment>
+                ))}
+            </div>
+        ),
+        "fancy-sheets": (
+            <span className="mp-box" style={{ padding: 0, overflow: "hidden" }}>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 22px)" }}>
+                    {Array.from({ length: 12 }, (_, i) => (
+                        <span key={i} style={{ height: 16, borderRight: "1px solid var(--border-1)", borderBottom: "1px solid var(--border-1)", fontSize: 7, color: "var(--fg-4)", display: "grid", placeItems: "center" }}>{i === 5 ? "=Σ" : ""}</span>
+                    ))}
+                </div>
+            </span>
+        ),
+        "fancy-slides": (
+            <span className="mp-box" style={{ width: 90, height: 54, padding: 8 }}>
+                <div style={{ width: "60%", height: 6, background: VIOLET, borderRadius: 2, marginBottom: 5 }} />
+                <div style={{ width: "90%", height: 4, background: "var(--bg-3)", borderRadius: 2, marginBottom: 3 }} />
+                <div style={{ width: "75%", height: 4, background: "var(--bg-3)", borderRadius: 2 }} />
+            </span>
+        ),
+        "fancy-code": (
+            <span className="mp-box" style={{ width: 110, padding: 8, fontFamily: "var(--font-mono)", fontSize: 8.5, lineHeight: 1.5 }}>
+                <div><span style={{ color: VIOLET }}>const</span> <span style={{ color: AMBER }}>x</span> = <span style={{ color: "#10b981" }}>42</span>;</div>
+                <div style={{ color: "var(--fg-4)" }}>// fancy-code</div>
+            </span>
+        ),
+        "fancy-echarts": (
+            <span className="mp" style={{ alignItems: "flex-end", gap: 3, height: 44 }}>
+                {[40, 70, 35, 85, 55, 65, 45].map((h, i) => (
+                    <span key={i} style={{ width: 7, height: `${h}%`, borderRadius: 2, background: i === 3 ? VIOLET : "var(--bg-3)" }} />
+                ))}
+            </span>
+        ),
+        "fancy-term": (
+            <span className="mp-box" style={{ width: 120, padding: 8, fontFamily: "var(--font-mono)", fontSize: 9, background: "#0a0a0c", border: "1px solid #27272a", color: "#86efac" }}>
+                <span style={{ color: "#71717a" }}>$</span> fancy --help<span className="mp-caret">▋</span>
+            </span>
+        ),
+        "fancy-diff": (
+            <span className="mp-box" style={{ width: 120, padding: 0, overflow: "hidden", fontFamily: "var(--font-mono)", fontSize: 8.5 }}>
+                <div style={{ padding: "2px 7px", background: "color-mix(in oklch,#ef4444 12%,transparent)", color: "#dc2626" }}>- old line</div>
+                <div style={{ padding: "2px 7px", background: "color-mix(in oklch,#10b981 12%,transparent)", color: "#059669" }}>+ new line</div>
+            </span>
+        ),
+        "fancy-artboard": (
+            <div className="mp" style={{ gap: 5 }}>
+                {[0, 1, 2].map((i) => <span key={i} className="mp-box" style={{ width: 26, height: 34, transform: `rotate(${(i - 1) * 4}deg)` }} />)}
+            </div>
+        ),
+        "fancy-screens": (
+            <div className="mp" style={{ gap: 5 }}>
+                <span className="mp-box" style={{ width: 36, height: 28 }} />
+                <span className="mp-box" style={{ width: 36, height: 28 }} />
+            </div>
+        ),
+        "fancy-pixel": (
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: 10, fontWeight: 600, color: AMBER, border: `1px solid color-mix(in oklch,${AMBER} 35%,transparent)`, padding: "3px 9px", borderRadius: 999 }}><Icon name="badge-check" size={12} />Verified</span>
+        ),
+        "fancy-3d": <Icon name="box" size={34} style={{ color: VIOLET }} />,
+        "fancy-inertia": (
+            <span className="mp-box" style={{ width: 130, padding: 9 }}>
+                <div style={{ fontSize: 9, color: "var(--fg-3)", marginBottom: 5 }}>useFancyForm()</div>
+                <div className="mp-line" style={{ width: "100%", marginBottom: 4 }} />
+                <span style={{ fontSize: 8, padding: "2px 7px", borderRadius: 5, background: VIOLET, color: "#fff" }}>Submit</span>
+            </span>
+        ),
+    };
+    return map[slug] ?? <Icon name="package" size={28} style={{ color: "var(--fg-4)" }} />;
 }
 
-/** A single Fancy Core member card (shared by core packages + companions). */
-function CoreCard({
-    slug,
-    name,
-    tagline,
-    language,
-    hero,
-    meta,
-}: {
-    slug: string;
-    name: string;
-    tagline: string;
-    language: string;
-    hero: ReactNode;
-    meta: string;
-}) {
+/** Headless package → install-snippet tile (glyph + $ npm install + links). */
+function HeadlessTile({ pkg }: { pkg: Pkg }) {
+    const cmd = installCmd(pkg);
+    const verb = pkg.npm ? "npm install" : pkg.composer ? "composer require" : "$";
+    const target = pkg.npm ?? pkg.composer ?? "";
     return (
-        <Link href={`/packages/${slug}`} className="block">
-            <Card className="group h-full overflow-hidden transition hover:-translate-y-0.5 hover:border-violet-300 hover:shadow-lg dark:hover:border-violet-700">
-                {hero}
-                <Card.Body>
-                    <div className="flex items-start justify-between gap-2">
-                        <Heading level={3} size="sm" className="!font-mono !text-zinc-900 dark:!text-zinc-100">{name}</Heading>
-                        <Badge color={language === "PHP" || language === "PHP/Blade" ? "indigo" : "sky"} size="sm">{language}</Badge>
+        <Link
+            href={`/packages/${pkg.slug}`}
+            className="pkg-tile pkg-tile--headless"
+            style={{ "--accent": pkg.accent } as CSSProperties}
+        >
+            <div className="pkg-tile__body">
+                <div className="pkg-tile__head">
+                    <span className="pkg-glyph">{initials(pkg.name)}</span>
+                    <div className="min-w-0">
+                        <h3 className="pkg-tile__name">{pkg.name}</h3>
                     </div>
-                    <Text size="sm" className="mt-2 line-clamp-2 !text-zinc-600 dark:!text-zinc-300">{tagline}</Text>
-                    <Text size="xs" className="mt-3 !font-mono !text-violet-600 dark:!text-violet-300">{meta}</Text>
-                </Card.Body>
-            </Card>
-        </Link>
-    );
-}
-
-/**
- * agent-integrations — highlighted as the backbone of Human+ UX rather than one
- * essentials tile among many. It's what makes the whole site an agent playground.
- */
-function HumanPlusCore({ pkg }: { pkg: Pkg }) {
-    return (
-        <Link href={`/packages/${pkg.slug}`} className="mt-4 block">
-            <div className="group relative overflow-hidden rounded-xl border border-fuchsia-300 bg-gradient-to-br from-fuchsia-50 via-white to-violet-50 p-5 shadow-sm ring-1 ring-fuchsia-200/60 transition hover:-translate-y-0.5 hover:shadow-lg dark:border-fuchsia-800/60 dark:from-fuchsia-950/30 dark:via-zinc-950 dark:to-violet-950/30 dark:ring-fuchsia-900/40">
-                <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-                    <Badge color="violet" size="sm">the core of Human+</Badge>
-                    <Heading level={3} size="sm" className="!font-mono !text-zinc-900 dark:!text-zinc-100">{pkg.name}</Heading>
-                    <Badge color="sky" size="sm">{pkg.language}</Badge>
+                    <span className="pkg-eco" data-eco={pkg.ecosystem} style={{ marginLeft: "auto" }}>
+                        {ECO_LABEL[pkg.ecosystem]}
+                    </span>
                 </div>
-                <Text size="sm" className="mt-2 max-w-3xl !text-zinc-600 dark:!text-zinc-300">
-                    What makes the whole site an agent playground: a micro-MCP server, per-package bridges, presence, and a share relay — so agents inhabit the same UI humans use, driving it through typed tools instead of DOM scraping. The backbone of every Human+ surface in the kit.
-                </Text>
-                <Text size="xs" className="mt-3 !font-mono !text-fuchsia-600 dark:!text-fuchsia-300">
-                    {pkg.components_count} component{pkg.components_count === 1 ? "" : "s"} · Explore →
-                </Text>
+                <div className="pkg-snippet">
+                    <span className="pkg-snippet__sigil">$</span>
+                    <span className="pkg-snippet__cmd">
+                        {target ? <>{verb} <b>{target}</b></> : cmd}
+                    </span>
+                </div>
+                <p className="pkg-tile__tagline">{pkg.tagline}</p>
+                <div className="pkg-links">
+                    <span className="pkg-tile__explore" style={{ opacity: 1, color: "color-mix(in oklch, var(--accent) 80%, var(--fg-1))" }}>
+                        Docs →
+                    </span>
+                    <a href={pkg.repoUrl} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()}>GitHub →</a>
+                    {pkg.npmUrl && <a href={pkg.npmUrl} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()}>npm →</a>}
+                    {pkg.packagistUrl && <a href={pkg.packagistUrl} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()}>Packagist →</a>}
+                </div>
             </div>
         </Link>
-    );
-}
-
-/** Code-snippet hero for the hooks-only Core member (fancy-query). */
-function CoreHooksHero() {
-    return (
-        <div className="grid aspect-[16/10] place-items-center overflow-hidden border-b border-zinc-100 bg-gradient-to-br from-violet-500/15 via-sky-500/10 to-emerald-500/15 dark:border-zinc-800">
-            <pre className="rounded-md border border-white/15 bg-zinc-950/90 px-3 py-2 text-left font-mono text-[10px] leading-relaxed text-zinc-100 shadow-lg">
-                <span className="text-sky-300">const</span> {"{ data } = "}
-                <span className="text-violet-300">useFancyQuery</span>({"\n"}
-                {"  "}[<span className="text-emerald-300">"leaderboard"</span>],{"\n"}
-                {"  () => api.get("}<span className="text-emerald-300">"/api/leaderboard"</span>{"),\n"}
-                );
-            </pre>
-        </div>
-    );
-}
-
-function CompanionPackages({ companions }: { companions: Companion[] }) {
-    return (
-        <section className="mt-16 border-t border-zinc-200 pt-8 dark:border-zinc-800">
-            <div className="flex flex-wrap items-end justify-between gap-3">
-                <div>
-                    <Heading level={2} size="sm" className="!text-zinc-700 dark:!text-zinc-300">
-                        Companion packages
-                    </Heading>
-                    <Text size="sm" className="mt-2 max-w-2xl !text-zinc-500">
-                        Headless, no-UI packages developed alongside the Fancy UI kit — the agentic document writers (holy-sheet, dark-slide, plus their isomorphic Node/TS ports), the server-state data hooks (fancy-query), and the composer deps the sandbox runs on. No component grid since they render no UI surface; open issues are tracked on GitHub.
-                    </Text>
-                </div>
-            </div>
-
-            <ul className="mt-5 divide-y divide-zinc-100 rounded-lg border border-zinc-200 bg-white dark:divide-zinc-800 dark:border-zinc-800 dark:bg-zinc-950">
-                {companions.map((c) => (
-                    <li key={c.slug} className="flex flex-wrap items-center gap-x-4 gap-y-2 px-4 py-3">
-                        <Link
-                            href={`/packages/${c.slug}`}
-                            className="font-mono text-sm font-medium text-zinc-900 hover:text-violet-600 dark:text-zinc-100 dark:hover:text-violet-300"
-                        >
-                            {c.name}
-                        </Link>
-                        <Badge color="indigo" size="sm">{c.language}</Badge>
-                        <Link href={`/packages/${c.slug}`} className="min-w-[14rem] flex-1 text-xs text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300">{c.tagline}</Link>
-                        <div className="flex items-center gap-3 text-xs">
-                            <Link
-                                href={`/packages/${c.slug}`}
-                                className="font-medium text-violet-600 hover:text-violet-700 dark:text-violet-300"
-                            >
-                                Docs →
-                            </Link>
-                            <a
-                                href={c.repoUrl}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="text-zinc-600 hover:text-violet-600 dark:text-zinc-400 dark:hover:text-violet-300"
-                            >
-                                GitHub →
-                            </a>
-                            <a
-                                href={c.issuesUrl}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="text-zinc-600 hover:text-violet-600 dark:text-zinc-400 dark:hover:text-violet-300"
-                            >
-                                Issues →
-                            </a>
-                            {c.packagistUrl && (
-                                <a
-                                    href={c.packagistUrl}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    className="text-zinc-600 hover:text-violet-600 dark:text-zinc-400 dark:hover:text-violet-300"
-                                >
-                                    Packagist →
-                                </a>
-                            )}
-                            {c.npmUrl && (
-                                <a
-                                    href={c.npmUrl}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                    className="text-zinc-600 hover:text-violet-600 dark:text-zinc-400 dark:hover:text-violet-300"
-                                >
-                                    npm →
-                                </a>
-                            )}
-                        </div>
-                    </li>
-                ))}
-            </ul>
-        </section>
-    );
-}
-
-function PackageHero({ pkg }: { pkg: Pkg }) {
-    const [shotFailed, setShotFailed] = useState(false);
-    if (HAS_SHOT.has(pkg.slug) && !shotFailed) {
-        return (
-            <div className="relative aspect-[16/10] overflow-hidden border-b border-zinc-100 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950">
-                <img
-                    src={`/showcase-shots/${pkg.slug}.png`}
-                    alt={`${pkg.name} preview`}
-                    className="absolute inset-0 size-full object-cover object-top transition duration-500 group-hover:scale-[1.02]"
-                    loading="lazy"
-                    onError={() => setShotFailed(true)}
-                />
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-zinc-950/40 via-transparent to-transparent opacity-0 transition group-hover:opacity-100" />
-            </div>
-        );
-    }
-    // Tasteful fallback for packages without a curated "money shot" (or whose
-    // shot 404s) — a code-snippet card themed by the package's language.
-    const isPhp = pkg.language === "PHP";
-    return (
-        <div className={`grid aspect-[16/10] place-items-center border-b border-zinc-100 ${
-            isPhp
-                ? "bg-gradient-to-br from-indigo-500/15 via-violet-500/10 to-sky-500/15"
-                : "bg-gradient-to-br from-violet-500/15 via-sky-500/10 to-emerald-500/15"
-        } dark:border-zinc-800`}>
-            <div className="text-center">
-                <div className="inline-flex items-center gap-1 rounded-md border border-white/20 bg-zinc-950/90 px-3 py-1.5 font-mono text-xs text-zinc-100 shadow-lg backdrop-blur">
-                    <span className="text-zinc-500">$</span>
-                    <span>{isPhp ? "composer require" : "npm install"}</span>
-                    <span className="text-violet-300">{pkg.name}</span>
-                </div>
-                <div className="mt-3 font-mono text-[10px] uppercase tracking-wider text-zinc-500">
-                    {isPhp ? "PHP package" : "infrastructure"}
-                </div>
-            </div>
-        </div>
     );
 }

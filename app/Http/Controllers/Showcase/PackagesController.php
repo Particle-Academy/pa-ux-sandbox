@@ -18,39 +18,51 @@ class PackagesController extends Controller
 
     public function index(): Response
     {
-        $packages = collect(PackageRegistry::all())->map(fn (array $p) => [
-            'slug' => $p['slug'],
-            'name' => $p['name'],
-            'tagline' => $p['tagline'],
-            'language' => $p['language'],
-            'components_count' => count($p['components'] ?? []),
-            'core' => $p['core'] ?? false,
-        ])->all();
-
-        // Companion packages — headless deps the sandbox develops against
-        // but that have no UI surface, so they don't belong in the main grid.
-        // Either PHP (composer/packagist) or TS (npm); the URL fields are
-        // null for whichever registry doesn't apply.
-        $companions = collect(PackageRegistry::companions())->map(fn (array $p) => [
-            'slug' => $p['slug'],
-            'name' => $p['name'],
-            'tagline' => $p['tagline'],
-            'language' => $p['language'],
-            'core' => $p['core'] ?? false,
-            'composer' => $p['composer'] ?? null,
-            'packagist' => $p['packagist'] ?? null,
-            'npm' => $p['npm'] ?? null,
-            'repo' => $p['repo'],
-            'repoUrl' => "https://github.com/{$p['repo']}",
-            'packagistUrl' => isset($p['packagist']) ? "https://packagist.org/packages/{$p['packagist']}" : null,
-            'npmUrl' => isset($p['npm']) ? "https://www.npmjs.com/package/{$p['npm']}" : null,
-            'issuesUrl' => "https://github.com/{$p['repo']}/issues",
-        ])->all();
+        // ONE merged catalog — the UI grid packages (all()) plus the headless /
+        // companion packages (companions()) — each carrying the design
+        // classification (group / accent / ecosystem / kind) the redesigned
+        // listing groups + styles by. The frontend buckets on `group`
+        // (core → "Fancy Core", human → "The Human+ surfaces", companion →
+        // "Companion packages") and switches tile style on `kind`
+        // (ui/bridge → preview tile, headless → install-snippet tile).
+        $packages = collect(PackageRegistry::all())
+            ->merge(PackageRegistry::companions())
+            ->map(fn (array $p) => $this->presentForListing($p))
+            ->values()
+            ->all();
 
         return Inertia::render('Packages/Index', [
             'packages' => $packages,
-            'companions' => $companions,
         ]);
+    }
+
+    /**
+     * Shape a registry entry for the listing payload — slug/name/tagline,
+     * install ids, the design classification, and the resolved external URLs.
+     *
+     * @param  array<string, mixed>  $p
+     * @return array<string, mixed>
+     */
+    private function presentForListing(array $p): array
+    {
+        return [
+            'slug' => $p['slug'],
+            'name' => $p['name'],
+            'tagline' => $p['tagline'],
+            'language' => $p['language'],
+            'core' => $p['core'] ?? false,
+            'group' => $p['group'],
+            'accent' => $p['accent'],
+            'ecosystem' => $p['ecosystem'],
+            'kind' => $p['kind'],
+            'components_count' => count($p['components'] ?? []),
+            'npm' => $p['npm'] ?? null,
+            'composer' => $p['composer'] ?? null,
+            'download' => $p['download'] ?? null,
+            'repoUrl' => "https://github.com/{$p['repo']}",
+            'npmUrl' => isset($p['npm']) ? "https://www.npmjs.com/package/{$p['npm']}" : null,
+            'packagistUrl' => isset($p['packagist']) ? "https://packagist.org/packages/{$p['packagist']}" : null,
+        ];
     }
 
     public function show(string $package): Response

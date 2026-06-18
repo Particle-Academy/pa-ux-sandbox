@@ -11,69 +11,142 @@ use ParticleAcademy\XFiles\Registry;
 
 /**
  * Builds the showcase's well-known files (robots.txt / security.txt / humans.txt)
- * into the x-files {@see Registry}.
+ * into the x-files {@see Registry} from the editable {@see WellKnownFilesModel}.
+ *
+ * The model is the admin-saved override (Admin → Well-known files) or, absent
+ * one, the config-derived default — so out of the box the output is identical to
+ * the old hardcoded build, and an admin edit republishes the served files.
  *
  * This lives in a class — not a closure inside config/x-files.php — because
  * `php artisan config:cache` (run on every deploy) serializes config via
- * var_export, which cannot serialize a Closure ("Call to undefined method
- * Closure::__set_state()"). The x-files provider accepts a class-string for
- * `x-files.files` and resolves + invokes it from the container, so config stays
- * pure, serializable data.
+ * var_export, which cannot serialize a Closure. The x-files provider accepts a
+ * class-string for `x-files.files` and resolves + invokes it from the container.
  */
 class XFilesFiles
 {
     public function __invoke(Registry $registry): void
     {
-        $base = rtrim((string) config('app.url'), '/');
+        $model = WellKnownFilesModel::current();
 
-        // robots.txt — index-friendly, explicitly welcomes each AI bot, and
-        // protect()s the private paths so they stay Disallowed for EVERY group
-        // (the wildcard group AND every welcomed AI bot) — no per-bot leak.
-        $robots = RobotsTxt::make()
-            ->userAgent('*')
-            ->allowAll();
+        $this->addRobots($registry, (array) ($model['robots'] ?? []));
+        $this->addSecurity($registry, $model['securityTxt'] ?? null);
+        $this->addHumans($registry, $model['humansTxt'] ?? null);
+    }
 
-        /** @var list<string> $aiBots */
-        $aiBots = (array) config('x-files.ai_bots', []);
-        foreach ($aiBots as $bot) {
-            // Each welcomed AI crawler gets its own group, generously allowed `/`.
-            $robots->userAgent($bot)->allow('/');
+    /**
+     * @param  array<string, mixed>  $robots
+     */
+    private function addRobots(Registry $registry, array $robots): void
+    {
+        $r = RobotsTxt::make();
+
+        /** @var list<array<string, mixed>> $groups */
+        $groups = $robots['groups'] ?? [['userAgents' => ['*'], 'allow' => ['/']]];
+        foreach ($groups as $group) {
+            $r->userAgent(array_values(array_filter((array) ($group['userAgents'] ?? ['*']), 'is_string')) ?: ['*']);
+
+            $allow = array_values(array_filter((array) ($group['allow'] ?? []), 'is_string'));
+            $disallow = array_values(array_filter((array) ($group['disallow'] ?? []), 'is_string'));
+            if ($allow !== []) {
+                $r->allow(...$allow);
+            }
+            if ($disallow !== []) {
+                $r->disallow(...$disallow);
+            }
+            if (isset($group['crawlDelay']) && is_numeric($group['crawlDelay'])) {
+                $r->crawlDelay((int) $group['crawlDelay']);
+            }
         }
 
-        // protect() runs last so it stamps a Disallow onto every group above
-        // (current and future) and refuses to ever Allow these paths.
-        /** @var list<string> $protected */
-        $protected = (array) config('x-files.protect', []);
-        $robots->protect(...$protected)
-            ->sitemap($base.'/sitemap.xml');
+        // SAFETY RAIL: the configured private paths are ALWAYS Disallowed for
+        // EVERY group and can never be Allowed — a UI edit can never expose
+        // /admin. protect() runs after all groups so it stamps each one (incl.
+        // every welcomed AI bot's permissive group). Merged with any
+        // model-declared protected paths.
+        $protect = array_values(array_unique(array_merge(
+            array_values((array) config('x-files.protect', [])),
+            array_values(array_filter((array) ($robots['protectedPaths'] ?? []), 'is_string')),
+        )));
+        if ($protect !== []) {
+            $r->protect(...$protect);
+        }
 
-        $registry->add($robots);
+        foreach ((array) ($robots['sitemaps'] ?? []) as $sitemap) {
+            if (is_string($sitemap) && $sitemap !== '') {
+                $r->sitemap($sitemap);
+            }
+        }
+        if (! empty($robots['host']) && is_string($robots['host'])) {
+            $r->host($robots['host']);
+        }
 
-        // security.txt — Contact + a future Expires (required) + en + canonical.
-        $registry->add(
-            SecurityTxt::make()
-                ->contact((string) config('x-files.security_contact'))
-                ->expires(now()->addYear()->toDateTimeImmutable())
-                ->preferredLanguage('en')
-                ->canonical(secure_url('/.well-known/security.txt'))
-        );
+        $registry->add($r);
+    }
 
-        // humans.txt — colophon for the showcase.
-        $registry->add(
-            HumansTxt::make()
-                ->section('TEAM', [
-                    ['label' => 'Team', 'value' => 'Particle Academy'],
-                    ['label' => 'Site', 'value' => 'Fancy UI'],
-                    ['label' => 'Contact', 'value' => (string) config('x-files.security_contact')],
-                ])
-                ->section('THANKS', [
-                    ['label' => 'Humans and agents', 'value' => 'who share these surfaces'],
-                ])
-                ->section('SITE', [
-                    ['label' => 'URL', 'value' => $base],
-                    ['label' => 'Built with', 'value' => 'Laravel + Inertia + React 19 + Tailwind v4 + the Fancy UI suite'],
-                    ['label' => 'Standards', 'value' => 'Human+ UX — humans and agents share the same UI'],
-                ])
-        );
+    /**
+     * @param  array<string, mixed>|null  $security
+     */
+    private function addSecurity(Registry $registry, ?array $security): void
+    {
+        $contacts = array_values(array_filter((array) ($security['contact'] ?? []), 'is_string'));
+        if ($contacts === []) {
+            return;
+        }
+
+        $s = SecurityTxt::make()->contact(...$contacts);
+        $s->expires(! empty($security['expires']) ? (string) $security['expires'] : now()->addYear()->toDateTimeImmutable());
+        if (! empty($security['preferredLanguages'])) {
+            $s->preferredLanguage((string) $security['preferredLanguages']);
+        }
+        if (! empty($security['canonical'])) {
+            $s->canonical((string) $security['canonical']);
+        }
+        if (! empty($security['encryption'])) {
+            $s->encryption((string) $security['encryption']);
+        }
+        if (! empty($security['policy'])) {
+            $s->policy((string) $security['policy']);
+        }
+
+        $registry->add($s);
+    }
+
+    /**
+     * @param  array<string, mixed>|null  $humans
+     */
+    private function addHumans(Registry $registry, ?array $humans): void
+    {
+        if ($humans === null) {
+            return;
+        }
+
+        $h = HumansTxt::make();
+
+        /** @var list<array<string, mixed>> $team */
+        $team = array_values(array_filter((array) ($humans['team'] ?? []), 'is_array'));
+        if ($team !== []) {
+            $h->section('TEAM', array_map(static function (array $member): array {
+                $value = (string) ($member['name'] ?? '');
+                if (! empty($member['contact'])) {
+                    $value = trim($value.' · '.$member['contact']);
+                }
+
+                return ['label' => (string) ($member['role'] ?? 'Team'), 'value' => $value];
+            }, $team));
+        }
+
+        if (! empty($humans['site']) && is_string($humans['site'])) {
+            $h->section('SITE', [['label' => 'Built with', 'value' => $humans['site']]]);
+        }
+
+        $thanks = array_values(array_filter((array) ($humans['thanks'] ?? []), 'is_string'));
+        if ($thanks !== []) {
+            $h->section('THANKS', array_map(
+                static fn (string $t): array => ['label' => 'Thanks', 'value' => $t],
+                $thanks,
+            ));
+        }
+
+        $registry->add($h);
     }
 }

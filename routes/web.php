@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\AdminSettingsController;
 use App\Http\Controllers\Admin\AdminShopController;
 use App\Http\Controllers\Admin\AdminSitesController;
 use App\Http\Controllers\Admin\AdminUsersController;
+use App\Http\Controllers\Admin\AdminWellKnownFilesController;
 use App\Http\Controllers\AgentRelayController;
 use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\Api\XpController;
@@ -299,6 +300,12 @@ Route::prefix('admin')->name('admin.')->middleware(['web', 'auth', 'can:admin'])
     // App settings — admin-editable config (e.g. the tracker/pixel snippet).
     Route::get('settings', [AdminSettingsController::class, 'index'])->name('settings.index');
     Route::post('settings', [AdminSettingsController::class, 'update'])->name('settings.update');
+
+    // Well-known files editor (robots.txt / security.txt / humans.txt / …),
+    // served by fancy-x-files from the saved model.
+    Route::get('well-known-files', [AdminWellKnownFilesController::class, 'index'])->name('well-known-files.index');
+    Route::post('well-known-files', [AdminWellKnownFilesController::class, 'update'])->name('well-known-files.update');
+    Route::post('well-known-files/reset', [AdminWellKnownFilesController::class, 'reset'])->name('well-known-files.reset');
 });
 
 // React demos (SPA catch-all)

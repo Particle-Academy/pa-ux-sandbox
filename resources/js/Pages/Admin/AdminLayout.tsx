@@ -38,6 +38,7 @@ const NAV: NavGroup[] = [
         section: "System",
         items: [
             { label: "Settings", icon: "gear", href: "/admin/settings" },
+            { label: "Well-known files", icon: "file-text", href: "/admin/well-known-files" },
         ],
     },
 ];
@@ -55,6 +56,7 @@ const CRUMB: Record<string, { group: string; crumb: string }> = {
     users: { group: "Community", crumb: "Users" },
     submissions: { group: "Community", crumb: "Submissions" },
     settings: { group: "System", crumb: "Settings" },
+    "well-known-files": { group: "System", crumb: "Well-known files" },
 };
 
 function initials(name: string): string {

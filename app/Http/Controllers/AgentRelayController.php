@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Support\SelfSite;
+use FancyHeuristics\Facades\Heuristics;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -37,6 +39,7 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 class AgentRelayController extends Controller
 {
     private const TTL_SECONDS = 3600;
+
     private const POLL_INTERVAL_MS = 200;
 
     /** Inbound frames from external MCP clients → forwarded to all browser subscribers. */
@@ -53,7 +56,68 @@ class AgentRelayController extends Controller
 
         $this->fanOut($session, 'inbound', $payload);
 
+        // Record agent tool calls as heuristics activity (server-side path —
+        // catches headless relay clients that never open a collecting browser
+        // tab). Best-effort: never let analytics break frame delivery.
+        $this->recordAgentActivity($session, $payload);
+
         return response()->json(['ok' => true]);
+    }
+
+    /**
+     * Translate inbound `tools/call` JSON-RPC frames into `actor:"agent"`
+     * heuristics events, attributed to the showcase's own site. No-ops when the
+     * site isn't dogfooding a pixel yet (no tracker snippet) or the frame isn't
+     * a tool call. Wrapped so a malformed frame or a down collector can never
+     * 500 the relay.
+     */
+    private function recordAgentActivity(string $session, string $payload): void
+    {
+        try {
+            $siteKey = SelfSite::key();
+            if ($siteKey === null) {
+                return;
+            }
+
+            $decoded = json_decode($payload, true);
+            if (! is_array($decoded)) {
+                return;
+            }
+            // A frame may arrive singly or as a JSON-RPC batch (list of frames).
+            $frames = array_is_list($decoded) ? $decoded : [$decoded];
+
+            $events = [];
+            foreach ($frames as $frame) {
+                if (! is_array($frame) || ($frame['method'] ?? null) !== 'tools/call') {
+                    continue;
+                }
+                $params = is_array($frame['params'] ?? null) ? $frame['params'] : [];
+                $tool = (string) ($params['name'] ?? 'tool');
+                $args = is_array($params['arguments'] ?? null) ? $params['arguments'] : [];
+
+                $events[] = [
+                    'kind' => 'click',
+                    'actor' => 'agent',
+                    'path' => isset($args['path']) && is_string($args['path']) ? $args['path'] : '/',
+                    'ts' => (int) round(microtime(true) * 1000),
+                    'targetId' => $tool,
+                    'label' => str_replace('_', ' ', $tool),
+                    'meta' => ['action' => $tool, 'source' => 'agent', 'via' => 'relay'],
+                ];
+            }
+
+            if ($events === []) {
+                return;
+            }
+
+            Heuristics::collect([
+                'siteKey' => $siteKey,
+                'sessionId' => 'relay-'.$session,
+                'events' => $events,
+            ]);
+        } catch (\Throwable) {
+            // best-effort — analytics must never break the relay
+        }
     }
 
     /** Outbound frames from the browser-side server → forwarded to all external clients. */
@@ -166,6 +230,7 @@ class AgentRelayController extends Controller
             'token' => ['required', 'string', 'min:16', 'max:128'],
         ]);
         Cache::put($this->tokenKey($data['session']), hash('sha256', $data['token']), self::TTL_SECONDS);
+
         return response()->json(['ok' => true]);
     }
 
@@ -176,6 +241,7 @@ class AgentRelayController extends Controller
             return response()->json(['error' => 'invalid_token'], 401);
         }
         Cache::forget($this->tokenKey($session));
+
         return response()->json(['ok' => true]);
     }
 
@@ -195,9 +261,14 @@ class AgentRelayController extends Controller
 
     private function validateToken(string $session, string $token): bool
     {
-        if ($session === '' || $token === '') return false;
+        if ($session === '' || $token === '') {
+            return false;
+        }
         $stored = Cache::get($this->tokenKey($session));
-        if ($stored === null) return false;
+        if ($stored === null) {
+            return false;
+        }
+
         return hash_equals((string) $stored, hash('sha256', $token));
     }
 

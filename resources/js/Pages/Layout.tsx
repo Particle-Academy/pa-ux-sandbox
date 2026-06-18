@@ -19,6 +19,7 @@ import { CommandPalette } from "./CommandPalette";
 import { useCoBrowse } from "../agent/CoBrowseProvider";
 import { avatarFrameClass, type CosmeticSlots } from "../lib/cosmetics";
 import { ActiveUsersOverlay } from "../components/ActiveUsersOverlay";
+import { AgentAnalyticsSink } from "../components/AgentAnalyticsSink";
 
 type Flash = {
     auth_error?: string | null;
@@ -257,6 +258,7 @@ export function Layout({
             </header>
 
             {auth && <ActiveUsersOverlay />}
+            <AgentAnalyticsSink />
 
             {flash.auth_error && (
                 <div className="mx-auto w-full max-w-7xl px-4 pt-3">

@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Services\PlayerProfile;
+use App\Support\SelfSite;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Middleware;
@@ -56,6 +57,14 @@ class HandleInertiaRequests extends Middleware
                 'submitted' => fn () => $request->session()->get('submitted'),
                 'success' => fn () => $request->session()->get('success'),
                 'error' => fn () => $request->session()->get('error'),
+            ],
+            // The showcase's own heuristics identity (read from the pasted Fancy
+            // Pixel tracker), so the in-browser agent sink can attribute
+            // agent-driven activity to the same site humans are tracked under.
+            // Lazy: only resolves on full loads / explicit partial requests.
+            'heuristicsSelf' => fn () => ($key = SelfSite::key()) === null ? null : [
+                'siteKey' => $key,
+                'endpoint' => SelfSite::endpoint(),
             ],
         ];
     }

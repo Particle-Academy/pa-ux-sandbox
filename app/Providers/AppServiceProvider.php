@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Models\Setting;
 use App\Models\User;
 use App\Services\Entitlements;
+use App\Ssr\TimeoutHttpGateway;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -12,6 +13,7 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
+use Inertia\Ssr\Gateway;
 use ParticleAcademy\Fms\Services\FeatureManager;
 
 class AppServiceProvider extends ServiceProvider
@@ -23,6 +25,13 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        // Bounded-timeout Inertia SSR gateway — overrides the package default
+        // (which calls the node daemon with NO HTTP timeout → Laravel's 30s) so a
+        // hung/slow SSR daemon fast-fails to client rendering instead of pinning a
+        // PHP-FPM worker for 30s (which once cascaded to pool exhaustion + a prod
+        // outage). Rebound in boot() so it wins over Inertia's register() binding.
+        $this->app->bind(Gateway::class, TimeoutHttpGateway::class);
+
         // Refuse to boot a production app in debug mode — full stack traces,
         // env values, and SQL bindings would leak in error responses.
         if ($this->app->environment('production') && config('app.debug')) {

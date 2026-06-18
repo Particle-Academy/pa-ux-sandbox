@@ -43,6 +43,12 @@ return [
         // builds it via `npm run build` → `vite build --ssr` → bootstrap/ssr/ssr.js).
         // Without the build step the daemon logs "Inertia SSR bundle not found".
         'bundle' => base_path('bootstrap/ssr/ssr.js'),
+        // SSR HTTP timeouts (seconds), applied by App\Ssr\TimeoutHttpGateway. PHP
+        // holds one FPM worker for the whole render call, so a hung daemon with the
+        // stock 30s default cascades to FPM exhaustion. A render is normally <1s, so
+        // these few-second caps make a slow/hung daemon fast-fail to client render.
+        'timeout' => env('INERTIA_SSR_TIMEOUT', 5),
+        'connect_timeout' => env('INERTIA_SSR_CONNECT_TIMEOUT', 2),
     ],
 
     'testing' => [

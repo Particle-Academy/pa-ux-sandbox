@@ -2,7 +2,6 @@ import { createFancyServer } from "@particle-academy/fancy-inertia/server";
 import { SeoProvider, defineSeo } from "@particle-academy/fancy-inertia/seo";
 import type { ReactNode } from "react";
 import { Toast } from "@particle-academy/react-fancy";
-import { FancyPwaProvider } from "@particle-academy/fancy-pwa";
 import { ScreenSystem } from "@particle-academy/fancy-screens";
 import { FancyDataRoot } from "@particle-academy/fancy-query";
 import { CoBrowseProvider } from "./agent/CoBrowseProvider";
@@ -31,15 +30,13 @@ const seoDefaults = defineSeo({
 // eagerly here instead.
 const providers = (outlet: ReactNode): ReactNode => (
     <Toast.Provider position="bottom-right">
-        <FancyPwaProvider>
-            <ScreenSystem>
-                <FancyDataRoot echo={null}>
-                    <SeoProvider value={seoDefaults}>
-                        <CoBrowseProvider>{outlet}</CoBrowseProvider>
-                    </SeoProvider>
-                </FancyDataRoot>
-            </ScreenSystem>
-        </FancyPwaProvider>
+        <ScreenSystem>
+            <FancyDataRoot echo={null}>
+                <SeoProvider value={seoDefaults}>
+                    <CoBrowseProvider>{outlet}</CoBrowseProvider>
+                </SeoProvider>
+            </FancyDataRoot>
+        </ScreenSystem>
     </Toast.Provider>
 );
 

@@ -1,6 +1,6 @@
 {
     "$schema": "https://ui.particle.academy/schema/registry-compiled.json",
-    "count": 138,
+    "count": 140,
     "items": [
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
@@ -1857,6 +1857,17 @@
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "fancy-pwa",
+            "type": "registry:ui",
+            "title": "fancy-pwa",
+            "description": "Installable + offline PWA layer \u2014 manifest, lean service worker, install/offline/update hooks, and a fancyPwa() Vite plugin. Framework-agnostic, SSR-safe.",
+            "package": "fancy-pwa",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
             "name": "fancy-query",
             "type": "registry:ui",
             "title": "@particle-academy/fancy-query",
@@ -3024,6 +3035,17 @@
                     "target": "components/fancy/prompt-input/index.ts"
                 }
             ]
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "pwa",
+            "type": "registry:ui",
+            "title": "PWA layer",
+            "description": "SW-free hooks + banners (useOnline / OfflineBanner / InstallBanner / useInstallPrompt) plus the fancyPwa() Vite plugin and /sw toolkit.",
+            "package": "fancy-pwa",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",

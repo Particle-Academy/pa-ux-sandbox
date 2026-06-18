@@ -73,6 +73,7 @@ import { portalDoc } from "./Portal";
 import { profileDoc } from "./Profile";
 import { progressDoc } from "./Progress";
 import { promptInputDoc } from "./PromptInput";
+import { pwaDoc } from "./Pwa";
 import { reasonTagDoc } from "./ReasonTag";
 import { screenDoc } from "./Screen";
 import { screenSystemDoc } from "./ScreenSystem";
@@ -230,6 +231,9 @@ const DOCS: Record<string, ComponentDoc> = {
     "agent-integrations/agent-cursor": agentCursorDoc,
     "agent-integrations/shared-whiteboard": sharedWhiteboardDoc,
     "agent-integrations/share-controls": shareControlsDoc,
+
+    // fancy-pwa (contained, SW-free demo — see Pwa.tsx)
+    "fancy-pwa/pwa": pwaDoc,
 
     // holy-sheet
     "holy-sheet/agent": holySheetAgentDoc,

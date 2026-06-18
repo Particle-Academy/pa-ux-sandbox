@@ -77,6 +77,7 @@ class PackageRegistry
         'fancy-term-host' => ['group' => 'companion', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#10b981'],
         'fancy-x-files-js' => ['group' => 'companion', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#64748b'],
         'fancy-auto-common' => ['group' => 'companion', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#6366f1'],
+        'fancy-pwa' => ['group' => 'companion', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#0ea5e9'],
         'docs-mcp' => ['group' => 'companion', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#0ea5e9'],
         'fancy-cli' => ['group' => 'companion', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#a78bfa'],
         // Headless PHP backends + infra.
@@ -131,6 +132,7 @@ class PackageRegistry
             self::fancy3dThree(),
             self::agentIntegrations(),
             self::fancyInertia(),
+            self::fancyPwa(),
             self::fancyMotion(),
             self::fancyCmsUi(),
         ]));
@@ -753,6 +755,22 @@ class PackageRegistry
             'components' => [
                 ['slug' => 'fancy-app-root', 'name' => 'FancyAppRoot', 'blurb' => 'Inertia app root.'],
                 ['slug' => 'use-fancy-form', 'name' => 'useFancyForm', 'blurb' => 'Form hook.'],
+            ],
+        ];
+    }
+
+    /** @return array<string, mixed> */
+    private static function fancyPwa(): array
+    {
+        return [
+            'slug' => 'fancy-pwa',
+            'name' => 'fancy-pwa',
+            'tagline' => 'Installable + offline PWA layer — manifest, lean service worker, install/offline/update hooks, and a fancyPwa() Vite plugin. Framework-agnostic, SSR-safe.',
+            'npm' => '@particle-academy/fancy-pwa',
+            'repo' => 'Particle-Academy/fancy-pwa',
+            'language' => 'TypeScript',
+            'components' => [
+                ['slug' => 'pwa', 'name' => 'PWA layer', 'blurb' => 'SW-free hooks + banners (useOnline / OfflineBanner / InstallBanner / useInstallPrompt) plus the fancyPwa() Vite plugin and /sw toolkit.'],
             ],
         ];
     }

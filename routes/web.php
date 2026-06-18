@@ -131,15 +131,13 @@ Route::post('/active-users/simulate', [ActiveUsersController::class, 'simulate']
     ->middleware('throttle:6,1')
     ->name('active-users.simulate');
 
-// ─── PWA ───────────────────────────────────────────────────────────────
-// Serve the built service worker at ROOT scope (it ships to /build/sw.js, which
-// could only control /build/). Invokable controller — NOT a closure — so
-// route:cache stays intact. 404s in dev when no build exists.
+// ─── Service-worker tombstone ──────────────────────────────────────────
+// The site-wide PWA was removed (the SW served its offline page to online users
+// and risked intercepting dynamic / SSR content). /sw.js now ALWAYS serves a
+// self-unregistering tombstone so any SW from a prior deploy tears itself down
+// on its next update check. Invokable controller — NOT a closure — so
+// route:cache stays intact. The contained PWA demo lives at /packages/fancy-pwa.
 Route::get('/sw.js', ServiceWorkerController::class)->name('sw');
-
-// Offline fallback page (the SW serves this when a navigation can't reach the
-// network). A minimal Inertia page inside <Layout>.
-Route::get('/offline', fn () => Inertia::render('Offline'))->name('offline');
 
 // ─── Fancy UI Showcase ─────────────────────────────────────────────────
 Route::get('/', HomeController::class)->name('home');

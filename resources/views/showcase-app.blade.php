@@ -5,13 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    {{-- PWA: installable manifest + theme color. Manifest + service worker are
-         emitted to public/build/ by the fancyPwa() Vite plugin. The SW is served
-         at root scope by the /sw.js route (App\Http\Controllers\ServiceWorker
-         Controller); registration happens at the end of <body> below. --}}
-    <link rel="manifest" href="{{ asset('build/manifest.webmanifest') }}">
-    <meta name="theme-color" content="#0b0b0f">
-
     {{-- Geist / Geist Mono web fonts. Loaded here (not via a CSS @import) so they
          fetch in parallel and don't block CSS parsing. --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -52,11 +45,10 @@
          site pasting our snippet into their own HTML. --}}
     {!! $tracker ?? '' !!}
 
-    {{-- Register the service worker — only when the build actually emitted it, so
-         `npm run dev` (no build) never tries to register a missing worker. The
-         /sw.js route serves the bundle at root scope (Service-Worker-Allowed: /). --}}
-    @if (file_exists(public_path('build/sw.js')))
-    <script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js',{scope:'/'}).catch(function(){})})}</script>
-    @endif
+    {{-- No service worker is registered. The showcase is intentionally NOT a
+         SW-PWA (it serves dynamic / SSR content). The /sw.js route still exists,
+         serving a self-unregistering tombstone so any SW from a prior deploy
+         tears itself down on its next update check. See ServiceWorkerController
+         and the contained PWA demo at /packages/fancy-pwa. --}}
 </body>
 </html>

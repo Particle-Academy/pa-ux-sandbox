@@ -83,6 +83,13 @@ class DatabaseSeeder extends Seeder
             ['site_key' => 'fancy-ui-showcase'],
             ['url' => config('app.url'), 'visible' => true, 'pixel_status' => 'verified', 'last_verified_at' => now()],
         );
+
+        // Local only: plant a working Fancy Pixel tracker for that site so the
+        // dogfooded analytics (human pixel + agent-activity sink) work out of the
+        // box in dev. Never in prod — the admin pastes the real snippet there.
+        if ($isLocal) {
+            $this->call(LocalPixelSeeder::class);
+        }
         $this->command->newLine();
 
         // Summary

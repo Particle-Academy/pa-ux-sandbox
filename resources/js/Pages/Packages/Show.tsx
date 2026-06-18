@@ -241,8 +241,18 @@ function ComponentGrid({ pkg, components }: { pkg: Pkg; components: Component[] 
                 {components.map((c) => {
                     const Preview = getComponentPreview(pkg.slug, c.slug);
                     return (
-                        <Link key={c.slug} href={`/packages/${pkg.slug}/${c.slug}`} className="block">
-                            <div className="group h-full overflow-hidden rounded-xl border border-[var(--border-1)] bg-[var(--surface)] transition hover:-translate-y-0.5 hover:shadow-md">
+                        // Stretched link (NOT a <Link> wrapping the card): the live
+                        // <Preview/> components render their own anchors (Button-as-a,
+                        // Menu, Navbar…). Nesting them inside a <Link> is invalid HTML
+                        // the browser un-nests → React #418 hydration mismatch. The
+                        // overlay covers the card for whole-card navigation.
+                        <div key={c.slug} className="group relative block h-full">
+                            <Link
+                                href={`/packages/${pkg.slug}/${c.slug}`}
+                                className="absolute inset-0 z-[1] rounded-xl"
+                                aria-label={`Open ${c.name}`}
+                            />
+                            <div className="h-full overflow-hidden rounded-xl border border-[var(--border-1)] bg-[var(--surface)] transition group-hover:-translate-y-0.5 group-hover:shadow-md">
                                 <div className="flex items-center justify-between border-b border-[var(--border-1)] px-3 py-2">
                                     <span className="font-mono text-xs font-semibold text-[var(--fg-1)]">{c.name}</span>
                                     <span className="text-xs opacity-0 transition group-hover:opacity-100" style={{ color: "color-mix(in oklch, var(--accent) 80%, var(--fg-1))" }}>
@@ -258,7 +268,7 @@ function ComponentGrid({ pkg, components }: { pkg: Pkg; components: Component[] 
                                     </div>
                                 )}
                             </div>
-                        </Link>
+                        </div>
                     );
                 })}
             </div>

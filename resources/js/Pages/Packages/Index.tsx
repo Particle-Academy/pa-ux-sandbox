@@ -322,11 +322,17 @@ function HeadlessTile({ pkg }: { pkg: Pkg }) {
     const verb = pkg.npm ? "npm install" : pkg.composer ? "composer require" : "$";
     const target = pkg.npm ?? pkg.composer ?? "";
     return (
-        <Link
-            href={`/packages/${pkg.slug}`}
+        <div
             className="pkg-tile pkg-tile--headless"
             style={{ "--accent": pkg.accent } as CSSProperties}
         >
+            {/* Stretched link — the whole tile navigates to the detail page
+                WITHOUT nesting <a> in <a>. The GitHub/npm/Packagist anchors below
+                are real links; wrapping the tile in a single <Link> would nest
+                them → invalid HTML the browser un-nests → React #418 hydration
+                mismatch. This overlay covers the tile; the external links sit
+                above it via z-index (.pkg-link). */}
+            <Link href={`/packages/${pkg.slug}`} className="pkg-tile__stretch" aria-label={pkg.name} />
             <div className="pkg-tile__body">
                 <div className="pkg-tile__head">
                     <span className="pkg-glyph">{initials(pkg.name)}</span>
@@ -348,11 +354,11 @@ function HeadlessTile({ pkg }: { pkg: Pkg }) {
                     <span className="pkg-tile__explore" style={{ opacity: 1, color: "color-mix(in oklch, var(--accent) 80%, var(--fg-1))" }}>
                         Docs →
                     </span>
-                    <a href={pkg.repoUrl} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()}>GitHub →</a>
-                    {pkg.npmUrl && <a href={pkg.npmUrl} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()}>npm →</a>}
-                    {pkg.packagistUrl && <a href={pkg.packagistUrl} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()}>Packagist →</a>}
+                    <a className="pkg-link" href={pkg.repoUrl} target="_blank" rel="noreferrer">GitHub →</a>
+                    {pkg.npmUrl && <a className="pkg-link" href={pkg.npmUrl} target="_blank" rel="noreferrer">npm →</a>}
+                    {pkg.packagistUrl && <a className="pkg-link" href={pkg.packagistUrl} target="_blank" rel="noreferrer">Packagist →</a>}
                 </div>
             </div>
-        </Link>
+        </div>
     );
 }

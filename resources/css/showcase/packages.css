@@ -156,6 +156,7 @@
 
 /* ── Tile shell (shared by preview + install tiles) ──────────────────────── */
 .pkg-tile {
+  position: relative;
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -331,6 +332,13 @@
   transition: color var(--dur-fast) var(--ease-out);
 }
 .pkg-links a:hover { color: color-mix(in oklch, var(--accent) 80%, var(--fg-1)); }
+
+/* Stretched link: the whole headless tile navigates to the detail page without
+   nesting <a> in <a> (which the browser un-nests → SSR hydration #418). The
+   transparent overlay covers the tile; the external links sit above it. */
+.pkg-tile__stretch { position: absolute; inset: 0; z-index: 1; border-radius: inherit; }
+.pkg-tile--headless .pkg-tile__body { position: relative; }
+.pkg-links .pkg-link { position: relative; z-index: 2; }
 
 /* ── Empty state ─────────────────────────────────────────────────────────── */
 .pkgs-empty {

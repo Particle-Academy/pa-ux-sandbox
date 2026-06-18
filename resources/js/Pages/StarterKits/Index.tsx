@@ -21,8 +21,12 @@ export default function StarterKitsIndex({ kits }: { kits: Kit[] }) {
 
             <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {kits.map((k) => (
-                    <Link key={k.slug} href={`/starter-kits/${k.slug}`} className="block">
-                        <Card className="group h-full overflow-hidden transition hover:-translate-y-0.5 hover:border-violet-300 hover:shadow-lg dark:hover:border-violet-700">
+                    <div key={k.slug} className="group relative block h-full">
+                        {/* Stretched link — whole card opens the kit WITHOUT nesting
+                            the download <a> inside a <Link> (invalid HTML the browser
+                            un-nests → React #418 hydration mismatch). */}
+                        <Link href={`/starter-kits/${k.slug}`} className="absolute inset-0 z-[1] rounded-xl" aria-label={`Open ${k.name}`} />
+                        <Card className="h-full overflow-hidden transition group-hover:-translate-y-0.5 group-hover:border-violet-300 group-hover:shadow-lg dark:group-hover:border-violet-700">
                             {/* Screenshot */}
                             <div className="relative aspect-[16/10] overflow-hidden border-b border-zinc-100 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950">
                                 <img
@@ -54,14 +58,14 @@ export default function StarterKitsIndex({ kits }: { kits: Kit[] }) {
                                         href={`/starter-kits/${k.slug}/download.zip`}
                                         variant="ghost"
                                         size="sm"
-                                        onClick={(e) => e.stopPropagation()}
+                                        className="relative z-[2]"
                                     >
                                         ↓ zip
                                     </Button>
                                 </div>
                             </Card.Body>
                         </Card>
-                    </Link>
+                    </div>
                 ))}
             </div>
         </Layout>

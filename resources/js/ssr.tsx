@@ -4,7 +4,19 @@ import type { ReactNode } from "react";
 import { Toast } from "@particle-academy/react-fancy";
 import { ScreenSystem } from "@particle-academy/fancy-screens";
 import { FancyDataRoot } from "@particle-academy/fancy-query";
+import { registerAll as registerEChartsAll, registerBuiltinThemes } from "@particle-academy/fancy-echarts";
+import { registerBrandIcons } from "@particle-academy/fancy-brand-icons";
 import { CoBrowseProvider } from "./agent/CoBrowseProvider";
+
+// MUST mirror resources/js/showcase-app.tsx EXACTLY. These are pure, SSR-safe
+// registrations (icon defs, echarts modules + themes) that change what
+// components RENDER — e.g. <Icon name="github"> resolves the brand mark only
+// after registerBrandIcons(). Calling them on the client but NOT here made the
+// server render different icon SVGs than the client → React #418 hydration
+// mismatch (the <span> inside a react-fancy <Button icon>). Register on both.
+registerEChartsAll();
+registerBuiltinThemes();
+registerBrandIcons();
 
 // Server-side SEO defaults. Mirrors resources/js/showcase-app.tsx; `siteUrl` is
 // omitted server-side (no window) — the particle-academy/fancy-seo Blade

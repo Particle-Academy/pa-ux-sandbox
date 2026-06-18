@@ -3963,16 +3963,16 @@
         },
         {
             "name": "particle-academy/fancy-x-files",
-            "version": "0.1.0",
+            "version": "0.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/fancy-x-files.git",
-                "reference": "a7620ed4de944e5b94104918fcb7bb3aa6d43da3"
+                "reference": "d0faff53c86d5b147aa0b4267a9b163a23bb61b8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/fancy-x-files/zipball/a7620ed4de944e5b94104918fcb7bb3aa6d43da3",
-                "reference": "a7620ed4de944e5b94104918fcb7bb3aa6d43da3",
+                "url": "https://api.github.com/repos/Particle-Academy/fancy-x-files/zipball/d0faff53c86d5b147aa0b4267a9b163a23bb61b8",
+                "reference": "d0faff53c86d5b147aa0b4267a9b163a23bb61b8",
                 "shasum": ""
             },
             "require": {
@@ -4025,7 +4025,7 @@
                 "issues": "https://github.com/Particle-Academy/fancy-x-files/issues",
                 "source": "https://github.com/Particle-Academy/fancy-x-files"
             },
-            "time": "2026-06-17T19:18:37+00:00"
+            "time": "2026-06-18T01:09:56+00:00"
         },
         {
             "name": "particle-academy/holy-sheet",

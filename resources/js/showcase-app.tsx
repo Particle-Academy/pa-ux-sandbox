@@ -6,6 +6,7 @@ import { Toast } from "@particle-academy/react-fancy";
 import { ScreenSystem } from "@particle-academy/fancy-screens";
 import { FancyDataRoot } from "@particle-academy/fancy-query";
 import { registerAll as registerEChartsAll, registerBuiltinThemes } from "@particle-academy/fancy-echarts";
+import { registerBrandIcons } from "@particle-academy/fancy-brand-icons";
 import { CoBrowseProvider } from "./agent/CoBrowseProvider";
 import { getEcho } from "./lib/echo";
 import "./showcase-theme";
@@ -19,6 +20,11 @@ import "@particle-academy/fancy-code/styles.css";
 // contains EChart-based previews that render in the first frame.
 registerEChartsAll();
 registerBuiltinThemes();
+
+// Layer the brand-icon pack (GitHub, X, Slack, Stripe, …) on top of the active
+// icon set as an addendum, so bare <Icon name="github" /> resolves the brand
+// mark site-wide without a set= query. Additive — base icons still win.
+registerBrandIcons();
 
 // Site-wide SEO defaults for the client <Seo> layer. Mirrors the
 // particle-academy/fancy-seo server baseline (config/fancy-seo.php +

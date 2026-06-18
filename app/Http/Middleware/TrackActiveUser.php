@@ -38,8 +38,26 @@ class TrackActiveUser
             return $response;
         }
 
+        // Only REAL page navigations count as presence — a full HTML page load
+        // or an Inertia visit. XHR/fetch data requests must never generate
+        // presence: the active-users overlay polls GET /active-users every few
+        // seconds, so tracking those would loop back as the user's own activity
+        // ("on active-users.index") forever — false hits with no human action.
+        $isInertiaVisit = $request->headers->has('X-Inertia');
+        $isFullPageLoad = $request->acceptsHtml() && ! $request->headers->has('X-Requested-With');
+        if (! $isInertiaVisit && ! $isFullPageLoad) {
+            return $response;
+        }
+
         $route = $request->route();
         if ($route === null) {
+            return $response;
+        }
+
+        // Belt + suspenders: never record the presence/analytics machinery's
+        // own routes even if they're hit as a navigation.
+        $name = (string) $route->getName();
+        if (str_starts_with($name, 'active-users.') || str_starts_with($name, 'heuristics.')) {
             return $response;
         }
 

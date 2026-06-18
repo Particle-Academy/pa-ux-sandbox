@@ -56,3 +56,30 @@ it('ignores guests', function () {
     expect(ActiveUser::count())->toBe(0);
     Event::assertNotDispatched(ActiveUserActivity::class);
 });
+
+it('does not record presence for the active-users poll itself (no self-referential false hits)', function () {
+    Event::fake([ActiveUserActivity::class]);
+
+    $user = User::factory()->create();
+
+    // The overlay polls GET /active-users every few seconds as a JSON fetch.
+    // It must NOT count as the user's own activity, or idle users would see
+    // their own avatar pop up "on active-users.index" forever.
+    $this->actingAs($user)->getJson('/active-users')->assertOk();
+
+    expect(ActiveUser::where('user_id', $user->id)->count())->toBe(0);
+    Event::assertNotDispatched(ActiveUserActivity::class);
+});
+
+it('does not record presence for XHR/fetch data requests — only real navigations', function () {
+    Event::fake([ActiveUserActivity::class]);
+
+    $user = User::factory()->create();
+
+    // A JSON/XHR fetch (Accept: application/json, no X-Inertia) is not a page
+    // navigation, so it must not generate presence.
+    $this->actingAs($user)->getJson('/leaderboard')->assertOk();
+
+    expect(ActiveUser::where('user_id', $user->id)->count())->toBe(0);
+    Event::assertNotDispatched(ActiveUserActivity::class);
+});

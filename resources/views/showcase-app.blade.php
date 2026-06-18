@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
+    {{-- PWA: installable manifest + theme color. Manifest + service worker are
+         emitted to public/build/ by the fancyPwa() Vite plugin. The SW is served
+         at root scope by the /sw.js route (App\Http\Controllers\ServiceWorker
+         Controller); registration happens at the end of <body> below. --}}
+    <link rel="manifest" href="{{ asset('build/manifest.webmanifest') }}">
+    <meta name="theme-color" content="#0b0b0f">
+
     {{-- Geist / Geist Mono web fonts. Loaded here (not via a CSS @import) so they
          fetch in parallel and don't block CSS parsing. --}}
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -44,5 +51,12 @@
          design — a script embed set by a trusted admin, exactly like an external
          site pasting our snippet into their own HTML. --}}
     {!! $tracker ?? '' !!}
+
+    {{-- Register the service worker — only when the build actually emitted it, so
+         `npm run dev` (no build) never tries to register a missing worker. The
+         /sw.js route serves the bundle at root scope (Service-Worker-Allowed: /). --}}
+    @if (file_exists(public_path('build/sw.js')))
+    <script>if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js',{scope:'/'}).catch(function(){})})}</script>
+    @endif
 </body>
 </html>

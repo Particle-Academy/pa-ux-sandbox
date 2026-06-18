@@ -23,6 +23,7 @@ use App\Http\Controllers\EasterEggController;
 use App\Http\Controllers\HolySheetExportController;
 use App\Http\Controllers\OgImageController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ServiceWorkerController;
 use App\Http\Controllers\Showcase\DocsController;
 use App\Http\Controllers\Showcase\DreamingController;
 use App\Http\Controllers\Showcase\FancifiedBadgeController;
@@ -129,6 +130,16 @@ Route::get('/active-users', [ActiveUsersController::class, 'index'])->name('acti
 Route::post('/active-users/simulate', [ActiveUsersController::class, 'simulate'])
     ->middleware('throttle:6,1')
     ->name('active-users.simulate');
+
+// ─── PWA ───────────────────────────────────────────────────────────────
+// Serve the built service worker at ROOT scope (it ships to /build/sw.js, which
+// could only control /build/). Invokable controller — NOT a closure — so
+// route:cache stays intact. 404s in dev when no build exists.
+Route::get('/sw.js', ServiceWorkerController::class)->name('sw');
+
+// Offline fallback page (the SW serves this when a navigation can't reach the
+// network). A minimal Inertia page inside <Layout>.
+Route::get('/offline', fn () => Inertia::render('Offline'))->name('offline');
 
 // ─── Fancy UI Showcase ─────────────────────────────────────────────────
 Route::get('/', HomeController::class)->name('home');

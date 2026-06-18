@@ -14,6 +14,7 @@ import {
     AppUpdateAlert,
 } from "@particle-academy/fancy-inertia";
 import { CoBrowsePresence, SimulateUsersButton } from "@particle-academy/agent-integrations";
+import { OfflineBanner, UpdateToast } from "@particle-academy/fancy-pwa";
 import { currentTheme, toggleTheme } from "../showcase-theme";
 import { CommandPalette } from "./CommandPalette";
 import { useCoBrowse } from "../agent/CoBrowseProvider";
@@ -256,6 +257,11 @@ export function Layout({
                     </div>
                 </div>
             </header>
+
+            {/* PWA chrome: offline notice + a reload prompt when a new build ships
+                (UpdateToast uses the Toast provider; both no-op until relevant). */}
+            <OfflineBanner />
+            <UpdateToast />
 
             {auth && <ActiveUsersOverlay />}
             <AgentAnalyticsSink />

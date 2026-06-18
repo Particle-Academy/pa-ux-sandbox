@@ -3,6 +3,7 @@ import { setupFancyApp } from "@particle-academy/fancy-inertia";
 import { SeoProvider, defineSeo } from "@particle-academy/fancy-inertia/seo";
 import type { ReactNode } from "react";
 import { Toast } from "@particle-academy/react-fancy";
+import { FancyPwaProvider } from "@particle-academy/fancy-pwa";
 import { ScreenSystem } from "@particle-academy/fancy-screens";
 import { FancyDataRoot } from "@particle-academy/fancy-query";
 import { registerAll as registerEChartsAll, registerBuiltinThemes } from "@particle-academy/fancy-echarts";
@@ -52,13 +53,15 @@ const seoDefaults = defineSeo({
 // MUST match resources/js/ssr.tsx EXACTLY (tree shape) for clean hydration.
 const providers = (outlet: ReactNode): ReactNode => (
     <Toast.Provider position="bottom-right">
-        <ScreenSystem>
-            <FancyDataRoot echo={getEcho()}>
-                <SeoProvider value={seoDefaults}>
-                    <CoBrowseProvider>{outlet}</CoBrowseProvider>
-                </SeoProvider>
-            </FancyDataRoot>
-        </ScreenSystem>
+        <FancyPwaProvider>
+            <ScreenSystem>
+                <FancyDataRoot echo={getEcho()}>
+                    <SeoProvider value={seoDefaults}>
+                        <CoBrowseProvider>{outlet}</CoBrowseProvider>
+                    </SeoProvider>
+                </FancyDataRoot>
+            </ScreenSystem>
+        </FancyPwaProvider>
     </Toast.Provider>
 );
 

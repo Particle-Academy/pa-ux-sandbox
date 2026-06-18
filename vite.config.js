@@ -4,6 +4,7 @@ import laravel from 'laravel-vite-plugin';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import { tsrxReact } from '@tsrx/vite-plugin-react';
+import { fancyPwa } from '@particle-academy/fancy-pwa/vite';
 
 const withSelectorShim = fileURLToPath(
     new URL('./resources/js/shims/use-sync-external-store-with-selector.js', import.meta.url),
@@ -63,6 +64,30 @@ export default defineConfig({
     plugins: [
         useSyncExternalStoreShim,
         nodeBuiltinBrowserShim,
+        // Emits public/build/{manifest.webmanifest,sw.js} on `vite build`. Placed
+        // immediately before laravel() so the Laravel plugin sees the emitted
+        // assets. registerSw:false — the blade injects the registration manually
+        // (no index.html in a Laravel host). The plugin is base-aware, so the
+        // precache list is rewritten to the resolved /build/ base.
+        fancyPwa({
+            sw: 'resources/js/sw.ts',
+            swDest: 'sw.js',
+            manifestDest: 'manifest.webmanifest',
+            registerSw: false,
+            manifest: {
+                name: 'Fancy UI Showcase',
+                short_name: 'Fancy UI',
+                description: 'Components for the surfaces where humans and agents work together.',
+                start_url: '/',
+                scope: '/',
+                display: 'standalone',
+                theme_color: '#0b0b0f',
+                background_color: '#0b0b0f',
+                icons: [
+                    { src: '/showcase-assets/fancy-ui-logo.jpg', sizes: '192x192 512x512', type: 'image/jpeg', purpose: 'any' },
+                ],
+            },
+        }),
         laravel({
             input: [
                 'resources/css/app.css',

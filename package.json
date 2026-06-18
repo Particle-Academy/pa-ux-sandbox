@@ -43,6 +43,7 @@
         "@particle-academy/fancy-inertia": "^0.8.0",
         "@particle-academy/fancy-motion": "^0.0.1-dev.3",
         "@particle-academy/fancy-pixel": "^0.2.0",
+        "@particle-academy/fancy-pwa": "^0.1.5",
         "@particle-academy/fancy-query": "^0.4.0",
         "@particle-academy/fancy-screens": "^0.4",
         "@particle-academy/fancy-sheets": "^0.9.0",

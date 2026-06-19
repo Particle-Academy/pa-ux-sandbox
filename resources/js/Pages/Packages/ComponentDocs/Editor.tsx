@@ -1,5 +1,25 @@
+import { useState } from "react";
 import type { ComponentDoc } from "./types";
-import { Editor, Text } from "@particle-academy/react-fancy";
+import { Editor, Text, Switch, Badge } from "@particle-academy/react-fancy";
+
+function EditorViewEditDemo() {
+    const [editing, setEditing] = useState(false);
+    const [value, setValue] = useState(
+        "## Field notes\n\nIn **view mode** the editor renders through `ContentRenderer` — _markdown_ in, prose out. Flip the switch to **edit**, revise, then flip back.\n\n- controlled `value` + `onChange`\n- same `FieldMode` resolution as the inputs",
+    );
+    return (
+        <div className="w-full max-w-md">
+            <div className="mb-2 flex items-center justify-between">
+                <Switch checked={editing} onCheckedChange={setEditing} label={editing ? "Editing" : "Viewing"} />
+                <Badge color="violet" variant="soft">{`mode="${editing ? "edit" : "view"}"`}</Badge>
+            </div>
+            <Editor value={value} onChange={setValue} outputFormat="markdown" mode={editing ? "edit" : "view"}>
+                <Editor.Toolbar />
+                <Editor.Content />
+            </Editor>
+        </div>
+    );
+}
 
 export const editorDoc: ComponentDoc = {
     intro: (
@@ -32,6 +52,25 @@ export const editorDoc: ComponentDoc = {
     value={content}
     onChange={setContent}
     placeholder="Write something brilliant"
+>
+    <Editor.Toolbar />
+    <Editor.Content />
+</Editor>`,
+        },
+        {
+            name: "View / edit mode",
+            description: "`mode=\"view\"` renders the value read-only through `ContentRenderer` (matching `outputFormat`); flip to `\"edit\"` for the toolbar + contentEditable. Honors a surrounding `<Form mode>`, like the inputs — this is the inline-edit affordance.",
+            render: () => <EditorViewEditDemo />,
+            code: `const [editing, setEditing] = useState(false);
+const [value, setValue] = useState("## Field notes…");
+
+<Switch checked={editing} onCheckedChange={setEditing} label={editing ? "Editing" : "Viewing"} />
+
+<Editor
+    value={value}
+    onChange={setValue}
+    outputFormat="markdown"
+    mode={editing ? "edit" : "view"}
 >
     <Editor.Toolbar />
     <Editor.Content />
@@ -102,6 +141,7 @@ export const editorDoc: ComponentDoc = {
         { name: "defaultValue", type: `string`, default: "—", description: "Initial value (uncontrolled)." },
         { name: "onChange", type: `(value: string) => void`, default: "—", description: "Called on every edit." },
         { name: "outputFormat", type: `"html" | "markdown"`, default: `"html"`, description: "Emitted format for `value` / `onChange`." },
+        { name: "mode", type: `"edit" | "view"`, default: `"edit"`, description: "View/edit field mode (prop → `<Form>` context → `\"edit\"`). `\"view\"` renders read-only via `ContentRenderer`." },
         { name: "lineSpacing", type: `number`, default: `1.5`, description: "Multiplier on paragraph line height." },
         { name: "placeholder", type: `string`, default: "—", description: "Placeholder shown when the editor is empty." },
         { name: "extensions", type: `RenderExtension[]`, default: "—", description: "Per-instance render extensions. Merged with globally registered ones." },

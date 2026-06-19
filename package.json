@@ -27,7 +27,7 @@
     "dependencies": {
         "@babylonjs/core": "^9.4.1",
         "@inertiajs/react": "^3.1.1",
-        "@particle-academy/agent-integrations": "^0.19.0",
+        "@particle-academy/agent-integrations": "^0.20.0",
         "@particle-academy/dark-slide": "^0.5.2",
         "@particle-academy/fancy-3d": "^0.4.2",
         "@particle-academy/fancy-3d-babylon": "^0.1.2",
@@ -35,6 +35,7 @@
         "@particle-academy/fancy-artboard": "^0.1.1",
         "@particle-academy/fancy-auto-common": "^0.1.1",
         "@particle-academy/fancy-brand-icons": "^0.1.0",
+        "@particle-academy/fancy-cf-relay": "^0.1.0",
         "@particle-academy/fancy-cms-ui": "^0.0.1-dev.17",
         "@particle-academy/fancy-code": "^0.5.0",
         "@particle-academy/fancy-diff": "^0.2.3",

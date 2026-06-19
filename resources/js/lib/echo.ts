@@ -23,13 +23,25 @@ export function getEcho(): EchoLike | null {
 
   (window as unknown as { Pusher: typeof Pusher }).Pusher = Pusher;
 
+  const forceTLS = (import.meta.env.VITE_REVERB_SCHEME ?? "http") === "https";
+  const wsPort = Number(import.meta.env.VITE_REVERB_PORT ?? 8080);
+  // A secure socket (wss) MUST terminate at a TLS port. Port 80 is plaintext
+  // HTTP — never valid for wss. A Forge env with VITE_REVERB_PORT=80 + https
+  // made prod dial `wss://host:80`, so the TLS handshake hit a plaintext port
+  // and EVERY Echo connection failed → agent presence / co-browse went dark.
+  // Coerce the secure port to the standard 443 in that case; honor any other
+  // explicit port (e.g. local Reverb on 8080). The real public WSS endpoint must
+  // still exist server-side: nginx serving wss on 443 for VITE_REVERB_HOST →
+  // the Reverb daemon (REVERB_PORT, internal).
+  const wssPort = forceTLS && wsPort === 80 ? 443 : wsPort;
+
   cached = new Echo({
     broadcaster: "reverb",
     key,
     wsHost: import.meta.env.VITE_REVERB_HOST,
-    wsPort: Number(import.meta.env.VITE_REVERB_PORT ?? 8080),
-    wssPort: Number(import.meta.env.VITE_REVERB_PORT ?? 443),
-    forceTLS: (import.meta.env.VITE_REVERB_SCHEME ?? "http") === "https",
+    wsPort,
+    wssPort,
+    forceTLS,
     enabledTransports: ["ws", "wss"],
     authEndpoint: "/broadcasting/auth",
   }) as unknown as EchoLike;

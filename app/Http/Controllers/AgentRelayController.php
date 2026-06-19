@@ -217,8 +217,14 @@ class AgentRelayController extends Controller
             }
         }, 200, [
             'content-type' => 'text/event-stream',
-            'cache-control' => 'no-cache',
+            // no-transform stops a proxy/CDN (Cloudflare) from buffering or
+            // re-encoding the stream. NOTE: this does NOT fix Cloudflare's
+            // HTTP/3 (QUIC) resetting long-lived SSE → net::ERR_QUIC_PROTOCOL_ERROR
+            // — that needs HTTP/3 disabled at the edge (Cloudflare → Network →
+            // HTTP/3 (with QUIC) → off) so the browser falls back to HTTP/2.
+            'cache-control' => 'no-cache, no-transform',
             'x-accel-buffering' => 'no',
+            'connection' => 'keep-alive',
         ]);
     }
 

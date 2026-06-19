@@ -33,6 +33,23 @@ it('renders the per-style page for every registered style', function (string $id
         );
 })->with(array_map(fn (array $s) => $s['id'], GalleryRegistry::all()));
 
+it('serves the Swiss style — the first built gallery page', function () {
+    // Style 01 (Swiss / Minimal) is the pattern-setter: a real FIELDWORK
+    // portfolio mounts client-side via the styleId→component registry in
+    // resources/js/Pages/Inspiration/styles. The server contract is unchanged
+    // (still Inspiration/Show), so we assert the page + the style payload the
+    // Swiss component renders from.
+    $this->get('/inspiration/swiss')
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('Inspiration/Show')
+            ->where('style.id', 'swiss')
+            ->where('style.num', '01')
+            ->where('style.mode', 'light')
+            ->where('style.name', 'Swiss / Minimal')
+        );
+});
+
 it('404s for an unknown style', function () {
     $this->get('/inspiration/does-not-exist')->assertNotFound();
 });

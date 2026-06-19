@@ -22,3 +22,6 @@
   border-color: color-mix(in oklch, var(--accent) 55%, var(--border-1));
   box-shadow: var(--shadow-lg);
 }
+
+/* Per-style scoped stylesheets. Each built style adds one import here. */
+@import "./styles/swiss.css";

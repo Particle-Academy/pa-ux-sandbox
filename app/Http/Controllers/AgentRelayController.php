@@ -198,6 +198,12 @@ class AgentRelayController extends Controller
                     echo ": keepalive\n\n";
                     $this->flush();
                     $lastBeat = time();
+                    // Stay fresh so fanOut()'s 60s GC prune keeps this stream.
+                    $subsNow = Cache::get($subsKey, []);
+                    if (isset($subsNow[$subscriberId])) {
+                        $subsNow[$subscriberId] = time();
+                        Cache::put($subsKey, $subsNow, self::TTL_SECONDS);
+                    }
                 }
                 usleep(self::POLL_INTERVAL_MS * 1000);
             }
@@ -228,6 +234,67 @@ class AgentRelayController extends Controller
         ]);
     }
 
+    /**
+     * Long-poll receive leg — the Cloudflare/CDN-safe alternative to {@see events()}.
+     * A bounded version of the SSE drain loop: register the subscriber, park up to
+     * ~`wait` ms draining its queue, then return JSON. Short requests sail through a
+     * Cloudflare HTTP/3 (QUIC) edge that resets long-lived SSE streams. The client
+     * (`@particle-academy/fancy-cf-relay`) re-polls immediately, echoing back the
+     * `subscriber` id we hand out so it reads the same queue each time.
+     *
+     * The park is capped for FPM safety: each parked request holds one PHP-FPM
+     * worker for the window — bounded here, unlike SSE which held one indefinitely.
+     */
+    public function poll(Request $request, string $session): JsonResponse
+    {
+        if (! $this->validateToken($session, (string) $request->query('token'))) {
+            return response()->json(['error' => 'invalid_token'], 401);
+        }
+
+        $direction = $request->query('direction', 'inbound') === 'outbound' ? 'outbound' : 'inbound';
+        $subscriberId = (string) $request->query('subscriber', '');
+        if (! preg_match('/^[a-f0-9]{16}$/', $subscriberId)) {
+            $subscriberId = bin2hex(random_bytes(8));
+        }
+        // Cap the park so a parked request never ties up an FPM worker too long.
+        $waitMs = max(0, min((int) $request->query('wait', 20000), 25000));
+        @set_time_limit((int) ceil($waitMs / 1000) + 5);
+
+        $subsKey = $this->subscribersKey($session, $direction);
+        $subs = Cache::get($subsKey, []);
+        $isNew = ! isset($subs[$subscriberId]);
+        $subs[$subscriberId] = time();
+        Cache::put($subsKey, $subs, self::TTL_SECONDS);
+
+        // A newly-arrived external (outbound) subscriber notifies the browser side,
+        // mirroring the SSE handler.
+        if ($isNew && $direction === 'outbound') {
+            $this->fanOut($session, 'inbound', json_encode([
+                'jsonrpc' => '2.0',
+                'method' => 'notifications/peer_joined',
+                'params' => ['subscriberId' => $subscriberId, 'ts' => time() * 1000],
+            ]));
+        }
+
+        $key = $this->queueKey($session, $direction, $subscriberId);
+        $deadline = microtime(true) + ($waitMs / 1000);
+        $frames = [];
+        do {
+            $frames = Cache::pull($key, []);
+            if (! empty($frames) || microtime(true) >= $deadline || connection_aborted()) {
+                break;
+            }
+            usleep(self::POLL_INTERVAL_MS * 1000);
+        } while (true);
+
+        // Keep this subscriber fresh (fanOut() prunes ones it hasn't heard from).
+        $subs = Cache::get($subsKey, []);
+        $subs[$subscriberId] = time();
+        Cache::put($subsKey, $subs, self::TTL_SECONDS);
+
+        return response()->json(['subscriber' => $subscriberId, 'frames' => $frames]);
+    }
+
     /** Register a session token. Browsers POST here on share start. */
     public function register(Request $request): JsonResponse
     {
@@ -255,6 +322,12 @@ class AgentRelayController extends Controller
     {
         $subsKey = $this->subscribersKey($session, $direction);
         $subs = Cache::get($subsKey, []);
+        // Drop subscribers we haven't heard from in 60s — a crashed SSE stream or
+        // a browser that stopped long-polling — so their queues don't pile up.
+        // Active subscribers stay fresh: SSE refreshes on each 15s keepalive,
+        // long-poll on each ≤25s round-trip.
+        $now = time();
+        $subs = array_filter($subs, fn ($ts) => ($now - (int) $ts) < 60);
         foreach (array_keys($subs) as $subscriberId) {
             $key = $this->queueKey($session, $direction, $subscriberId);
             $existing = Cache::get($key, []);

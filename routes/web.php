@@ -336,4 +336,7 @@ foreach (['agent-relay', 'whiteboard-share'] as $relayPrefix) {
     Route::post("/{$relayPrefix}/{session}/inbox", [AgentRelayController::class, 'inbox']);
     Route::post("/{$relayPrefix}/{session}/outbox", [AgentRelayController::class, 'outbox']);
     Route::get("/{$relayPrefix}/{session}/events", [AgentRelayController::class, 'events']);
+    // CDN/Cloudflare-safe receive leg (bounded long-poll) — survives an HTTP/3
+    // edge that resets SSE. Client: @particle-academy/fancy-cf-relay.
+    Route::get("/{$relayPrefix}/{session}/poll", [AgentRelayController::class, 'poll']);
 }

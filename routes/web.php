@@ -28,6 +28,7 @@ use App\Http\Controllers\Showcase\DocsController;
 use App\Http\Controllers\Showcase\DreamingController;
 use App\Http\Controllers\Showcase\FancifiedBadgeController;
 use App\Http\Controllers\Showcase\HomeController;
+use App\Http\Controllers\Showcase\InspirationController;
 use App\Http\Controllers\Showcase\LeaderboardController;
 use App\Http\Controllers\Showcase\PackagesController;
 use App\Http\Controllers\Showcase\ProfileController;
@@ -159,6 +160,15 @@ Route::get('/starter-kits/{slug}', [StarterKitController::class, 'show'])->name(
 Route::get('/starter-kits/{slug}/download.zip', StarterKitDownloadController::class)
     ->where('slug', '[a-z0-9\-]+')
     ->name('starter-kits.download');
+
+// ─── Inspiration Gallery ───────────────────────────────────────────────
+// One fictional studio portfolio ("FIELDWORK") designed 20 ways, common →
+// experimental. The index catalogs every style; each style gets its own
+// bespoke page (placeholder until that style component ships).
+Route::get('/inspiration', [InspirationController::class, 'index'])->name('inspiration.index');
+Route::get('/inspiration/{style}', [InspirationController::class, 'show'])
+    ->where('style', '[a-z0-9\-]+')
+    ->name('inspiration.show');
 
 Route::get('/dreaming', [DreamingController::class, 'index'])->name('dreaming.index');
 Route::get('/dreaming/archived', [DreamingController::class, 'archived'])->name('dreaming.archived');

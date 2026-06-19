@@ -15,6 +15,9 @@
 /* Packages listing + per-package detail redesign (consumes tokens.css). */
 @import "./showcase/packages.css";
 
+/* Inspiration Gallery catalog card (consumes tokens.css). */
+@import "./showcase/inspiration.css";
+
 /* Smooth page-to-page navigation transitions. */
 @import "./showcase/transitions.css";
 

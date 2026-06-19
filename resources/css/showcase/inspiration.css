@@ -1,0 +1,24 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Inspiration Gallery — catalog index card
+   FIELDWORK, one portfolio designed 20 ways. The index is Swiss-clean; the
+   bold range lives on the per-style pages. Mirrors the .pkg-tile card model.
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.insp-card {
+  display: block;
+  border: 1px solid var(--border-1);
+  background: var(--surface);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  transition: transform var(--dur-base) var(--ease-out),
+              border-color var(--dur-base) var(--ease-out),
+              box-shadow var(--dur-base) var(--ease-out);
+}
+
+.insp-card:hover {
+  transform: translateY(-2px);
+  border-color: color-mix(in oklch, var(--accent) 55%, var(--border-1));
+  box-shadow: var(--shadow-lg);
+}

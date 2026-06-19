@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Support\Docs\DocsRegistry;
+use App\Support\GalleryRegistry;
 use App\Support\PackageRegistry;
 use FancySeo\Facades\FancySeo;
 use FancySeo\JsonLd;
@@ -108,6 +109,13 @@ class SeoServiceProvider extends ServiceProvider
             'description' => 'Production-ready starter kits built on Fancy UI — clone, install, and ship a Human+ UX app in minutes.',
         ]);
 
+        FancySeo::route('inspiration.index', [
+            'title' => 'Inspiration Gallery — Fancy UI',
+            'description' => 'One creative-studio portfolio, designed twenty ways — from quiet Swiss grids to agent-native surfaces. Self-contained, forkable starting points built on the Fancy UI Kit.',
+        ]);
+
+        FancySeo::route('inspiration.show', fn (array $params): array => $this->inspirationSeo($params['style'] ?? null, $base));
+
         FancySeo::route('agent-playground', [
             'title' => 'Agent Playground — Fancy UI',
             'description' => 'A live playground where you connect your own agent over MCP and watch it author Fancy UI screens and drive live data — humans and agents sharing one UI surface.',
@@ -169,6 +177,37 @@ class SeoServiceProvider extends ServiceProvider
                 JsonLd::breadcrumbList([
                     ['name' => 'Docs', 'url' => $base.'/docs'],
                     ['name' => $title, 'url' => $url],
+                ]),
+            ],
+        ];
+    }
+
+    /**
+     * Per-style SEO for the Inspiration Gallery: a unique title + the style's
+     * own one-line note, plus a BreadcrumbList back to the gallery index.
+     *
+     * @return array<string,mixed>
+     */
+    private function inspirationSeo(mixed $id, string $base): array
+    {
+        $style = is_string($id) ? GalleryRegistry::find($id) : null;
+        if ($style === null) {
+            return [
+                'title' => 'Inspiration Gallery — Fancy UI',
+                'description' => 'One creative-studio portfolio, designed twenty ways with the Fancy UI Kit.',
+            ];
+        }
+        $name = (string) $style['name'];
+        $note = trim((string) $style['note']);
+        $url = $base.'/inspiration/'.$style['id'];
+
+        return [
+            'title' => "{$name} — Inspiration Gallery — Fancy UI",
+            'description' => trim("FIELDWORK, designed as {$name}. {$note} A self-contained, forkable starting point built on the Fancy UI Kit."),
+            'jsonLd' => [
+                JsonLd::breadcrumbList([
+                    ['name' => 'Inspiration', 'url' => $base.'/inspiration'],
+                    ['name' => $name, 'url' => $url],
                 ]),
             ],
         ];
@@ -250,10 +289,16 @@ class SeoServiceProvider extends ServiceProvider
                 ->add('packages', '0.9', 'weekly')
                 ->add('docs', '0.8', 'weekly')
                 ->add('starter-kits', '0.7', 'weekly')
+                ->add('inspiration', '0.7', 'weekly')
                 ->add('agent-playground', '0.8', 'weekly')
                 ->add('dreaming', '0.6', 'weekly')
                 ->add('showcase', '0.6', 'weekly')
                 ->add('leaderboard', '0.5', 'daily');
+
+            // Every inspiration-gallery style page.
+            foreach (GalleryRegistry::all() as $style) {
+                $map->add('inspiration/'.$style['id'], '0.6', 'monthly');
+            }
 
             // Every docs page — the highest-volume indexable content.
             foreach (DocsRegistry::flat() as $doc) {

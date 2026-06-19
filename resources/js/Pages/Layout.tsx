@@ -11,8 +11,8 @@ import { Moon, Sun, Sparkles, Check, Bot } from "lucide-react";
 import {
     useFancyTransition,
     FANCY_TRANSITION_LABELS,
-    AppUpdateAlert,
 } from "@particle-academy/fancy-inertia";
+import { FancyInertiaPwa } from "@particle-academy/fancy-inertia/pwa";
 import { CoBrowsePresence, SimulateUsersButton } from "@particle-academy/agent-integrations";
 import { currentTheme, toggleTheme } from "../showcase-theme";
 import { CommandPalette } from "./CommandPalette";
@@ -358,11 +358,14 @@ export function Layout({
                 </div>
             </footer>
 
-            {/* Prompt a refresh after a redeploy ships new assets (renders nothing
-                until a new build is detected). Dogfoods fancy-inertia's detector. */}
-            <AppUpdateAlert
-                title="Fancy UI just updated"
-                description="Refresh to get the latest build."
+            {/* fancy-inertia's Inertia⇄PWA adapter. Same redeploy detector as
+                before (new build → "refresh" prompt, via Inertia's asset version)
+                + offline-aware navigation (defers a visit made offline, replays on
+                reconnect) + an offline notice. The SW half is inert here — the
+                showcase registers no service worker — so detection is unchanged. */}
+            <FancyInertiaPwa
+                updateTitle="Fancy UI just updated"
+                updateDescription="Refresh to get the latest build."
             />
         </div>
     );

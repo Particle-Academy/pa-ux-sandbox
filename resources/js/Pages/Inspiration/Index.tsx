@@ -123,9 +123,11 @@ function Header({ count }: { count: number }) {
                         maxWidth: 600,
                     }}
                 >
-                    The same creative-studio site, designed twenty times — from quiet Swiss grids to
-                    agent-native surfaces. Each is a self-contained starting point built on the Fancy UI
-                    Kit. Pick one and fork it.
+                    <strong style={{ color: "var(--fg-1)", fontWeight: 600 }}>FIELDWORK</strong> is a fictional
+                    studio — the same one-page site, designed twenty times, from quiet Swiss grids to
+                    agent-native surfaces. Every one is built from the same Fancy UI primitives, restyled:
+                    a design kit is really a box of primitives you can arrange for almost any use case.
+                    These are read-only blueprints to reference and remix — not starter code to fork.
                 </p>
             </div>
 

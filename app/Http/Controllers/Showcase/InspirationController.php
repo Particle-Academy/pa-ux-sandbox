@@ -29,6 +29,9 @@ class InspirationController extends Controller
 
         return Inertia::render('Inspiration/Show', [
             'style' => $entry,
+            // Ordered full list so the demo-frame can render "style N of 20" +
+            // prev/next nav for flipping between styles.
+            'styles' => GalleryRegistry::all(),
         ]);
     }
 }

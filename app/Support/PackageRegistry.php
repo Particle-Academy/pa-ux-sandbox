@@ -402,10 +402,25 @@ class PackageRegistry
     }
 
     /** @return array<int, array{slug:string,name:string,blurb:string}> */
+    /**
+     * react-fancy components that support the view/edit field mode (inline
+     * editing): inside a `<Form mode="view">` (or with `mode="view"`) they render
+     * a clean read-only display — text for inputs, a ContentRenderer for the
+     * Editor — and become editable on demand. Surfaced as a badge on the grid.
+     *
+     * @var list<string>
+     */
+    private const INLINE_EDIT_COMPONENTS = [
+        'inputs', 'autocomplete', 'color-picker', 'otp-input', 'time-picker', 'editor',
+    ];
+
     private static function componentsForReactFancy(): array
     {
         // Mirrors packages/react-fancy/src/components/ — hand-listed for Phase 1.
-        return array_map(fn (array $r) => $r + ['blurb' => ''], [
+        return array_map(fn (array $r) => $r + [
+            'blurb' => '',
+            'inlineEdit' => in_array($r['slug'], self::INLINE_EDIT_COMPONENTS, true),
+        ], [
             ['slug' => 'accordion', 'name' => 'Accordion'],
             ['slug' => 'accordion-panel', 'name' => 'AccordionPanel'],
             ['slug' => 'button', 'name' => 'Button', 'blurb' => 'The workhorse button — colors, states, icons, emoji, avatar, badge, loading. (formerly Action)'],

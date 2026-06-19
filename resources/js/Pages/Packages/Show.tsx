@@ -7,7 +7,7 @@ import { getComponentPreview, GenericPlaceholder } from "./ComponentPreviews";
 import { ContextCards } from "./ContextCards";
 import { Prose } from "./Prose";
 
-type Component = { slug: string; name: string; blurb?: string };
+type Component = { slug: string; name: string; blurb?: string; inlineEdit?: boolean };
 type ApiEntry = { signature: string; description?: string };
 
 type Pkg = {
@@ -253,9 +253,23 @@ function ComponentGrid({ pkg, components }: { pkg: Pkg; components: Component[] 
                                 aria-label={`Open ${c.name}`}
                             />
                             <div className="h-full overflow-hidden rounded-xl border border-[var(--border-1)] bg-[var(--surface)] transition group-hover:-translate-y-0.5 group-hover:shadow-md">
-                                <div className="flex items-center justify-between border-b border-[var(--border-1)] px-3 py-2">
-                                    <span className="font-mono text-xs font-semibold text-[var(--fg-1)]">{c.name}</span>
-                                    <span className="text-xs opacity-0 transition group-hover:opacity-100" style={{ color: "color-mix(in oklch, var(--accent) 80%, var(--fg-1))" }}>
+                                <div className="flex items-center justify-between gap-2 border-b border-[var(--border-1)] px-3 py-2">
+                                    <span className="flex min-w-0 items-center gap-1.5">
+                                        <span className="truncate font-mono text-xs font-semibold text-[var(--fg-1)]">{c.name}</span>
+                                        {c.inlineEdit && (
+                                            <span
+                                                className="relative z-[2] inline-flex shrink-0 items-center gap-0.5 rounded px-1.5 py-0.5 text-[10px] font-medium"
+                                                style={{
+                                                    background: "color-mix(in oklch, var(--accent) 14%, transparent)",
+                                                    color: "color-mix(in oklch, var(--accent) 85%, var(--fg-1))",
+                                                }}
+                                                title="Supports view/edit mode — renders read-only in a <Form mode='view'> and becomes editable on demand"
+                                            >
+                                                ✎ inline&nbsp;edit
+                                            </span>
+                                        )}
+                                    </span>
+                                    <span className="shrink-0 text-xs opacity-0 transition group-hover:opacity-100" style={{ color: "color-mix(in oklch, var(--accent) 80%, var(--fg-1))" }}>
                                         Open →
                                     </span>
                                 </div>

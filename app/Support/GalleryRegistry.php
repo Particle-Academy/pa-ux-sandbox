@@ -87,6 +87,9 @@ class GalleryRegistry
      */
     private static function withThumb(array $style): array
     {
-        return $style + ['thumb' => "/inspiration/thumbs/{$style['id']}.jpeg"];
+        // NB: thumbs live at /inspiration-thumbs/, NOT /inspiration/thumbs/ — a
+        // public/inspiration/ directory would shadow the /inspiration route on
+        // nginx (it 301s /inspiration → /inspiration/, breaking the Inertia visit).
+        return $style + ['thumb' => "/inspiration-thumbs/{$style['id']}.jpeg"];
     }
 }

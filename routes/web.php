@@ -125,13 +125,8 @@ Route::post('/webhooks/github', GitHubWebhookController::class)
 
 // ─── Live "active users" feed ──────────────────────────────────────────
 // REST seed the frontend hydrates with before subscribing to the public
-// `active-users` Echo channel. The simulate endpoint kicks off a staggered
-// stream of fake presence for the showcase demo (same-session fetch — CSRF
-// stays on; the client sends the token).
+// `active-users` Echo channel.
 Route::get('/active-users', [ActiveUsersController::class, 'index'])->name('active-users.index');
-Route::post('/active-users/simulate', [ActiveUsersController::class, 'simulate'])
-    ->middleware('throttle:6,1')
-    ->name('active-users.simulate');
 
 // ─── Service-worker tombstone ──────────────────────────────────────────
 // The site-wide PWA was removed (the SW served its offline page to online users

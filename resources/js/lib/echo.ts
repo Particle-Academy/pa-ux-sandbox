@@ -18,6 +18,15 @@ export function getEcho(): EchoLike | null {
   if (typeof window === "undefined") return null;
   if (cached) return cached;
 
+  // Gate on the RUNTIME broadcasting driver (server-rendered into a meta by
+  // showcase-app.blade.php), not just the build-time VITE_* keys. Prod runs no
+  // Reverb daemon (BROADCAST=null) yet the build still carries
+  // VITE_REVERB_APP_KEY — so without this gate every prod page opened a doomed
+  // `wss://` connection and spammed the console. Only wire Echo when the server
+  // actually broadcasts over Reverb.
+  const driver = document.querySelector('meta[name="broadcasting-driver"]')?.getAttribute("content");
+  if (driver !== "reverb") return null;
+
   const key = import.meta.env.VITE_REVERB_APP_KEY as string | undefined;
   if (!key) return null; // broadcasting not configured — stay inert
 

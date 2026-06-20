@@ -2780,20 +2780,15 @@ function ContentRendererDemo() {
 }
 
 function EditorDemo() {
-    const [doc, setDoc] = useState(CONTENT_DOC);
+    const [value, setValue] = useState(
+        "<h2>Field notes</h2><p>A lightweight rich-text editor — <strong>bold</strong>, <em>italic</em>, headings, and lists, with round-trip-safe HTML or markdown output.</p><ul><li>Controlled <code>value</code> + <code>onChange</code></li><li>Agent-bridgeable via MCP — no DOM scraping</li></ul><p>Edit me…</p>",
+    );
     return (
-        <div className="rounded-md border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950">
-            <Editor
-                value={doc}
-                onChange={setDoc}
-                toolbar={[
-                    { command: "bold", label: "B" },
-                    { command: "italic", label: "I" },
-                    { command: "heading", commandArg: "2", label: "H2" },
-                    { command: "bulletList", label: "•" },
-                    { command: "codeBlock", label: "</>" },
-                ]}
-            />
+        <div className="w-full max-w-lg">
+            <Editor value={value} onChange={setValue} placeholder="Write something…">
+                <Editor.Toolbar />
+                <Editor.Content />
+            </Editor>
         </div>
     );
 }

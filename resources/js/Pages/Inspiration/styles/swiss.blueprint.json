@@ -1,0 +1,43 @@
+{
+    "id": "swiss",
+    "name": "Swiss / Minimal",
+    "note": "Grid, whitespace, restraint.",
+    "mode": "light",
+    "thesis": "International Typographic Style: a strict modular grid, generous whitespace, flush-left hierarchy, hairline rules, zinc-on-white, mono metadata, and one restrained violet accent — the Fancy kit at its quietest.",
+    "tokens": {
+        "bg": "#ffffff",
+        "fg": "zinc-900 (#18181b) text, zinc-600 (#52525b) muted",
+        "accent": "violet-600 (#7c3aed), spent exactly once",
+        "fontDisplay": "Inter / Helvetica-class sans, semibold, tight (-0.02em) tracking",
+        "fontMono": "mono for labels, numbers, running-heads, metadata",
+        "radius": "near-0 — rules and edges, not pills",
+        "border": "1px hairline zinc-200 (#e4e4e7)",
+        "motion": "minimal; no decorative animation"
+    },
+    "layout": "A strict 12-column modular grid, max-width ~1180px, with generous vertical rhythm. Each section opens with a mono running-head ('NN — LABEL') over a hairline rule. Flush-left typographic hierarchy throughout; the content (type, figures, the work index) carries the page, not chrome.",
+    "sections": [
+        { "name": "hero", "what": "A big flush-left statement headline, a short lede, a primary CTA + a jump link, and a mono location/disciplines block at right.", "components": ["Heading", "Text", "Button", "Breadcrumbs"], "restyle": "Buttons flatten to flush rectangles; the right rail is mono metadata; zero decoration." },
+        { "name": "stat-band", "what": "A 4-up band of big tabular figures (founded / shipped / people / awards) with mono captions.", "components": ["Text"], "restyle": "Large tabular numerals over mono labels, hairline-separated cells." },
+        { "name": "selected-work", "what": "A numbered flush-left typographic index of projects (title · discipline · year) with a Pillbox filter and Pagination.", "components": ["Pillbox", "Pagination", "Text"], "restyle": "List rows (not cards), one stretched-link per row, hairline dividers." },
+        { "name": "capabilities", "what": "Services / process / questions in Tabs, plus a 4-column services grid.", "components": ["Tabs", "Accordion", "Timeline"], "restyle": "Tabs as a flush section rail; uppercase mono labels; an accent active-rule." },
+        { "name": "about", "what": "A large set statement with supporting body copy.", "components": ["Heading", "Text", "Separator"], "restyle": "Oversized statement over a hairline rule." },
+        { "name": "team", "what": "A row of people with squared avatars and mono roles.", "components": ["Avatar", "Text"], "restyle": "Squared avatar nameplates; mono role lines." },
+        { "name": "recognition", "what": "An awards ledger Table plus clients and press columns.", "components": ["Table", "Text"], "restyle": "Table styled as an accountant's ledger — hairlines, mono headers." },
+        { "name": "contact", "what": "A 'brief the studio' Composer card with Progress and a budget MoodMeter.", "components": ["Composer", "Progress", "MoodMeter", "ReasonTag", "Tooltip"], "restyle": "Composer reads as a print-clean brief box; restrained, single-accent controls." }
+    ],
+    "palette": [
+        { "component": "Button", "restyle": "Flush rectangle — solid violet primary vs hairline-outline ghost; no shadow." },
+        { "component": "Badge", "restyle": "Mono uppercase hairline kicker." },
+        { "component": "Heading / Text", "restyle": "Semibold tight-tracked display + zinc body + mono metadata." },
+        { "component": "Table", "restyle": "Hairline ledger with mono headers." },
+        { "component": "Tabs", "restyle": "Flush section rail, uppercase mono labels, accent active-rule." },
+        { "component": "Accordion", "restyle": "Hairline rows, mono triggers." },
+        { "component": "Timeline", "restyle": "Hairline track with exactly one step tinted violet." },
+        { "component": "Avatar", "restyle": "Squared nameplate, not a circle." },
+        { "component": "Pillbox / Pagination", "restyle": "Mono, hairline, minimal." },
+        { "component": "Composer", "restyle": "Print-clean brief box." },
+        { "component": "MoodMeter / Progress", "restyle": "Single-accent, restrained." }
+    ],
+    "contentArchetype": "A creative / design studio one-page portfolio: statement hero, key figures, a selected-work index, capabilities, about, team, recognition, and a 'brief us' contact.",
+    "remix": "Swiss is the safest base to start from: re-point the semantic tokens to zinc-on-white + one accent, lay a strict 12-column grid with mono running-heads, and let content carry the page. Blend it with another style by keeping this grid + type discipline and borrowing the other style's colour/treatment — e.g. Swiss layout with a Brand-Gradient hero, or Swiss grid with Editorial type and drop caps."
+}

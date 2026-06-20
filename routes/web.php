@@ -27,6 +27,7 @@ use App\Http\Controllers\ServiceWorkerController;
 use App\Http\Controllers\Showcase\DocsController;
 use App\Http\Controllers\Showcase\DreamingController;
 use App\Http\Controllers\Showcase\FancifiedBadgeController;
+use App\Http\Controllers\Showcase\GalleryController;
 use App\Http\Controllers\Showcase\HomeController;
 use App\Http\Controllers\Showcase\InspirationController;
 use App\Http\Controllers\Showcase\LeaderboardController;
@@ -169,6 +170,15 @@ Route::get('/inspiration', [InspirationController::class, 'index'])->name('inspi
 Route::get('/inspiration/{style}', [InspirationController::class, 'show'])
     ->where('style', '[a-z0-9\-]+')
     ->name('inspiration.show');
+
+// Inspiration Gallery "grab" blueprints — agent-readable design recipes (read-only
+// inspiration to re-implement + mix-and-match, NOT vendored source). Parallels /r/.
+// /gallery/index.json — the 20 styles' metadata + blueprint URLs.
+// /gallery/{style}.json — one style's full grab-blueprint.
+Route::get('/gallery/index.json', [GalleryController::class, 'index'])->name('gallery.index');
+Route::get('/gallery/{style}', [GalleryController::class, 'show'])
+    ->where('style', '[a-z0-9\-\.]+')
+    ->name('gallery.show');
 
 Route::get('/dreaming', [DreamingController::class, 'index'])->name('dreaming.index');
 Route::get('/dreaming/archived', [DreamingController::class, 'archived'])->name('dreaming.archived');

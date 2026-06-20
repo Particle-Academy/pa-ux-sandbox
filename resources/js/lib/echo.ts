@@ -19,11 +19,10 @@ export function getEcho(): EchoLike | null {
   if (cached) return cached;
 
   // Gate on the RUNTIME broadcasting driver (server-rendered into a meta by
-  // showcase-app.blade.php), not just the build-time VITE_* keys. Prod runs no
-  // Reverb daemon (BROADCAST=null) yet the build still carries
-  // VITE_REVERB_APP_KEY — so without this gate every prod page opened a doomed
-  // `wss://` connection and spammed the console. Only wire Echo when the server
-  // actually broadcasts over Reverb.
+  // showcase-app.blade.php), not just the build-time VITE_* keys: only wire Echo
+  // when the server actually broadcasts over Reverb. A build that carries
+  // VITE_REVERB_APP_KEY would otherwise open a `wss://` connection even on an
+  // environment whose BROADCAST_CONNECTION is null/log — dialing nothing.
   const driver = document.querySelector('meta[name="broadcasting-driver"]')?.getAttribute("content");
   if (driver !== "reverb") return null;
 
@@ -32,22 +31,25 @@ export function getEcho(): EchoLike | null {
 
   (window as unknown as { Pusher: typeof Pusher }).Pusher = Pusher;
 
-  const forceTLS = (import.meta.env.VITE_REVERB_SCHEME ?? "http") === "https";
+  const host = import.meta.env.VITE_REVERB_HOST as string | undefined;
+  const loopback = host === "localhost" || host === "127.0.0.1";
+  // A secure (https) page may only open a SECURE socket to a REMOTE host — a
+  // remote `ws://…:80` is mixed-content-blocked by the browser. So force wss for
+  // a remote host on an https page even if VITE_REVERB_SCHEME is stale/unset;
+  // loopback (local-dev Reverb, plaintext on :8080) stays exactly as configured.
+  const forceTLS =
+    (import.meta.env.VITE_REVERB_SCHEME ?? "http") === "https" ||
+    (window.location.protocol === "https:" && !loopback);
   const wsPort = Number(import.meta.env.VITE_REVERB_PORT ?? 8080);
-  // A secure socket (wss) MUST terminate at a TLS port. Port 80 is plaintext
-  // HTTP — never valid for wss. A Forge env with VITE_REVERB_PORT=80 + https
-  // made prod dial `wss://host:80`, so the TLS handshake hit a plaintext port
-  // and EVERY Echo connection failed → agent presence / co-browse went dark.
-  // Coerce the secure port to the standard 443 in that case; honor any other
-  // explicit port (e.g. local Reverb on 8080). The real public WSS endpoint must
-  // still exist server-side: nginx serving wss on 443 for VITE_REVERB_HOST →
-  // the Reverb daemon (REVERB_PORT, internal).
+  // wss MUST terminate on a TLS port — never plaintext 80. Coerce a stale :80 to
+  // the standard 443 when forcing TLS (the public wss endpoint is nginx on 443,
+  // proxying to the internal Reverb daemon on REVERB_SERVER_PORT).
   const wssPort = forceTLS && wsPort === 80 ? 443 : wsPort;
 
   cached = new Echo({
     broadcaster: "reverb",
     key,
-    wsHost: import.meta.env.VITE_REVERB_HOST,
+    wsHost: host,
     wsPort,
     wssPort,
     forceTLS,

@@ -1,0 +1,116 @@
+{
+  "id": "cursor",
+  "name": "Cursor",
+  "note": "A custom cursor and hover-reveal world.",
+  "mode": "dark",
+  "thesis": "Interaction-first restraint: a graphite near-black canvas where the native pointer is replaced by a soft following ring + dot, content and thumbnails are revealed on hover, primary buttons are magnetic, and exactly one electric-lime accent marks every moment of intent.",
+  "tokens": {
+    "bg": "#0a0b09",
+    "fg": "#f4f6ee",
+    "accent": "#c6f24f",
+    "fontDisplay": "Geist, ui-sans-serif, system-ui, sans-serif (weight 600, letter-spacing -0.04em; the one accent word set in italic)",
+    "fontMono": "Geist Mono, ui-monospace, SF Mono, monospace (labels / numbers / metadata, uppercased, +0.08–0.16em tracking)",
+    "radius": "14px on cards/panels, 10px on buttons, 7px on tags",
+    "border": "1px hairlines: #21241b default, #2f3326 on hover/focus; lime bleed (#c6f24f fading to line) on full rules",
+    "motion": "cubic-bezier(0.16,1,0.3,1) ease-out; 150–300ms; cursor ring lerps toward the pointer (0.18) and swells over hover targets; magnetic buttons lean within a 90px radius; underlines/left-bars grow, glyphs swap for reveals; all of it pointer-fine + prefers-reduced-motion gated"
+  },
+  "layout": "A 12-column 1200px-max modular grid with 28px gutters. Numbered, labelled sections (00–08) stacked vertically, each separated by a hairline rule with 78px of vertical padding. A mono running head with the brand mark + underline-grow nav; an asymmetric hero (9 cols of display type with one italic-lime word + magnetic CTAs + a 'move your cursor' hint, beside a 2-col left-hairline aside of vitals); a full-bleed masked client marquee; even 3- and 4-up grids for figures, capabilities, team; a flush-left typographic work index whose titles slide right and reveal a giant watermark glyph on hover; 4-up featured cards whose grid-lit canvas swaps a monogram for a lime 'View case' reveal; a two-column contact (budget pad + brief card). Everything flush-left, feel over decoration. The custom cursor (ring + dot) is injected into the scope root at runtime and torn down on unmount.",
+  "sections": [
+    {
+      "name": "running-head",
+      "what": "Breadcrumbs + lime square brand mark (FIELDWORK) + est. tag + mono nav with underline-grow hovers.",
+      "components": ["Breadcrumbs", "Badge"],
+      "restyle": "Breadcrumbs inherit re-pointed dark fg tokens; brand mark is a solid-lime rounded square (dark ink) with a soft glow ring; nav links are mono uppercase with an animated lime underline; Badge reskinned to a mono uppercase hairline 'tag'. Mark + links carry data-cursor=hover so the ring swells over them."
+    },
+    {
+      "name": "hero",
+      "what": "Eyebrow index line, large display headline with one italic-lime word ('moment'), lede, magnetic primary+ghost CTAs, and a pulsing 'move your cursor' hint, beside a left-hairline aside of availability/location/disciplines.",
+      "components": ["Button", "Separator"],
+      "restyle": "Display type at clamp(2.7rem,7vw,5.7rem), -0.04em tracking; the accent word is italic with a hover-grown underline; CTAs are wrapped in [data-magnetic] spans the cursor effect nudges toward the pointer; primary Button forced to lime fill with dark ink, ghost Button a hairline outline that turns lime on hover; Separator becomes a faint dark hairline."
+    },
+    {
+      "name": "client-ticker",
+      "what": "Infinite horizontal marquee of client names with lime sparkle separators, edge-masked.",
+      "components": [],
+      "restyle": "Hand-rolled CSS marquee (no kit component); muted ink that lifts on hover; mask-image fade at both edges; animation disabled under prefers-reduced-motion."
+    },
+    {
+      "name": "figures",
+      "what": "Four tabular-num studio stats (founded, projects, people, awards) with selective lime emphasis.",
+      "components": [],
+      "restyle": "Hand-rolled figure blocks topped by hairlines that grow a 56px lime rule on hover; large -0.045em display numerals, mono uppercase labels; one stat's number tinted lime for rhythm; each block is a hover target."
+    },
+    {
+      "name": "capabilities",
+      "what": "Four-up service columns (brand systems, product, engineering, motion) each with number, title, body, mono tags, and a corner ↗ reveal.",
+      "components": ["Heading", "Badge"],
+      "restyle": "Hairline-topped columns that indent (padding-left grows) and draw a full lime top rule + fade in a corner ↗ glyph on hover; Heading reads the dark fg token; Badges are mono uppercase hairline tags."
+    },
+    {
+      "name": "featured-work",
+      "what": "Three preview cards, each a grid-lit dark canvas with a large hue-tinted monogram that SWAPS to a full-lime 'View case ↗' overlay on hover, plus title/discipline/award, stretched-link to the project.",
+      "components": ["Heading", "Badge"],
+      "restyle": "Hand-rolled preview card with a per-project hue glow + dotted-grid canvas (scales 1.06 on hover); on hover the monogram fades out and a lime reveal panel fades in; card lifts with a lime-tinted shadow ring; one Inertia <Link> stretched over the card (no nested anchors)."
+    },
+    {
+      "name": "selected-work-index",
+      "what": "Paginated flush-left typographic index of all projects (num / title / discipline / year↗) with a discipline Pillbox filter; titles slide right and a giant watermark glyph fades in on hover.",
+      "components": ["Pillbox", "Pagination", "Heading"],
+      "restyle": "Rows are hairline-separated with a left lime bar that scales in on hover; title goes lime + translateX(8px) on row hover while a per-project hue watermark glyph peeks in from the right; Pillbox + Pagination inherit dark field tokens (near-black field, hairline border, lime focus ring); stretched <Link> per row."
+    },
+    {
+      "name": "how-we-work",
+      "what": "Tabs across Process (Timeline), Principles (2-up columns), and Questions (Accordion).",
+      "components": ["Tabs", "Timeline", "Accordion"],
+      "restyle": "Tabs underline variant restyled to mono uppercase labels with a lime active label; Timeline dots recolored to the dark line + one lime accent step (the 'System & feel' phase); Accordion flattened to hairline rows whose triggers turn lime on hover."
+    },
+    {
+      "name": "about",
+      "what": "A large pull-quote (one word lime) beside a muted supporting paragraph, eyebrow in the left column.",
+      "components": ["Text"],
+      "restyle": "Hand-rolled quote at clamp(1.35rem,2.6vw,2.15rem); Text uses the muted dark token; asymmetric 3+8 column split."
+    },
+    {
+      "name": "team",
+      "what": "Four-up people cards: avatar + name + mono role, hairline-topped, lifting on hover.",
+      "components": ["Avatar"],
+      "restyle": "Avatars use kit fallback initials on dark; columns topped by hairlines and translateY(-3px) on hover (each a cursor target); roles in mono tertiary ink."
+    },
+    {
+      "name": "recognition",
+      "what": "Awards Table (year/project/award) beside a clients Badge cloud and a press list.",
+      "components": ["Table", "Badge", "Separator", "Heading"],
+      "restyle": "Table recolored to transparent dark rows, mono uppercase header, hairline rules, lime-free body that hover-tints the row band; Badges are mono tags; Separator a faint hairline."
+    },
+    {
+      "name": "contact",
+      "what": "A MoodMeter budget pad with a ReasonTag readout beside a brief Card (Composer + Progress + magnetic send), with a received success state.",
+      "components": ["MoodMeter", "ReasonTag", "Card", "Composer", "Progress", "Button", "Tooltip", "Badge", "Text"],
+      "restyle": "MoodMeter color set to the one lime var; Card forced to a flat graphite hairline panel (no kit shadow, lime-ring on hover); Composer/inputs get near-black fields + lime focus ring; Progress track is a hairline, bar is the one lime; the send Button is wrapped magnetic; Tooltip surface darkened; the email line underlines lime on hover."
+    },
+    {
+      "name": "footer",
+      "what": "Brand mark + studio line, mono link grid, fictional-studio note + back-to-gallery link.",
+      "components": ["Separator"],
+      "restyle": "Mono link grid that turns lime on hover; a faint lime-bleed hairline rule; back link in the one accent."
+    }
+  ],
+  "palette": [
+    { "component": "Button", "restyle": "Two roles only: primary = solid electric-lime (#c6f24f) fill with DARK ink (#14180a), a soft glow box-shadow, 10px radius; ghost = transparent with a hairline border that turns lime on hover. Primary CTAs sit inside a [data-magnetic] wrapper the cursor effect translates toward the pointer; disabled drops to 40% opacity, no glow." },
+    { "component": "Badge", "restyle": "Reskinned to a mono uppercase 'tag' — hairline border, graphite fill, +0.08em tracking; the accent variant tints text + border lime over a 13%-lime wash; used for est./awards/status/'hover to reveal' labels." },
+    { "component": "Card", "restyle": "Flattened to a graphite (#121410) panel with a 1px #21241b hairline, 14px radius, and NO kit shadow; border brightens to #2f3326 and gains a faint lime ring on hover." },
+    { "component": "Tabs", "restyle": "Underline variant; tablist gets a hairline base; tabs become mono uppercase tertiary labels; the active tab is the one lime (no heavy pill)." },
+    { "component": "Accordion", "restyle": "Hairline-separated rows; medium-weight triggers in primary ink that turn lime on hover; no fills, no chevron color noise." },
+    { "component": "Table", "restyle": "Transparent dark rows with hairline bottoms; header cells become mono uppercase tertiary labels over a stronger hairline; rows hover-tint to the recessed band." },
+    { "component": "Timeline", "restyle": "Dots/connectors recolored to the dark hairline line; exactly one step (the 'System & feel' build phase) carries the lime accent to mark where design becomes code." },
+    { "component": "Pillbox", "restyle": "Near-black field, hairline border, lime focus ring; chips read as small dark mono tags consistent with Badge." },
+    { "component": "Composer", "restyle": "Near-black editable field flush inside the brief Card; border/rounding stripped so it reads as part of the panel; lime focus ring." },
+    { "component": "Progress", "restyle": "Track recolored to a thin hairline; the bar is the one lime (color='lime'), used as a character-count meter under the brief Composer." },
+    { "component": "MoodMeter", "restyle": "color set to the single lime var so the budget pad's curve and posted marker match the accent; sits on the graphite page with no extra chrome." },
+    { "component": "ReasonTag", "restyle": "Underline theme so the agentic 'why this number' affordance reads as a quiet inline annotation in mono metadata rather than a colored chip." },
+    { "component": "Avatar", "restyle": "Kit fallback initials on the dark surface; no glow ring (reserved emphasis) so the team grid stays restrained; the person card itself lifts on hover." },
+    { "component": "Separator / Breadcrumbs / Tooltip / Heading / Text", "restyle": "All inherit the locally re-pointed semantic tokens (fg/border/surface/accent), so they read graphite natively; Tooltip surface is darkened to the raised panel color." }
+  ],
+  "contentArchetype": "A fictional interaction & design studio (FIELDWORK) one-page portfolio: hero thesis on 'feel', client marquee, studio numbers, four capabilities, featured builds + a full project index, a brief→build→feel process, a studio about + team, awards/clients/press, and a budget-aware contact brief. Confident, terse copy that foregrounds the in-between moments (pointer, hover, the half-second before action); mono numerals and labels everywhere.",
+  "remix": "The whole interaction layer is one self-contained useEffect (pointer-fine + reduced-motion guarded) that injects a ring+dot cursor, swells the ring over [data-cursor=hover] targets, and nudges [data-magnetic] elements toward the pointer — lift that effect plus the .cs-cursor / .cs-magnet CSS into any React page to get the cursor world anywhere. Swap the single accent hue to re-theme instantly (one --c-accent var drives buttons, tabs, timeline, progress, glows, focus rings, the cursor ring) — try cyan or hot-magenta for a different studio voice while keeping the graphite restraint; remember the lime fill needs DARK ink, so re-check --c-accent-ink when you change hue. Because the palette is re-pointed onto the shared semantic tokens under one scope class, the look is portable: lift the .insp-cursor token block + the cs-* restyle rules into any react-fancy project. Blend with Dark Studio by keeping the grid + mono labels and only flipping accent hue + adding/removing the cursor layer; blend with a kinetic style by letting the magnetic + hover-reveal motion spill into the marquee and figures rather than staying on cards."
+}

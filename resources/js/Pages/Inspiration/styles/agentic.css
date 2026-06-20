@@ -1,0 +1,829 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Inspiration Gallery · Style — Agentic Studio (dark)
+   FIELDWORK as an AI-native booking console: near-black terminal-grade surface,
+   electric sky→violet accents, mono labels, glowing hairline borders, a live
+   tool-call feed. The react-fancy primitives are restyled HARD so they read as
+   native console parts (buttons → command pills, cards → consoles, badges →
+   status chips, avatars → operator nodes, accordion/tabs → terminal panels).
+
+   SELF-CONTAINED DARK: this style is dark regardless of the host theme, so we
+   set its own surface tokens directly on .insp-agentic (NOT via .dark, which
+   collides with Tailwind dark mode). Every selector is scoped under
+   .insp-agentic. react-fancy internals are reached via :where(...) so we win
+   without specificity wars and never leak outside the scope.
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.insp-agentic {
+  /* ── Local dark palette + accent system ───────────────────────────────── */
+  --ag-bg:        #07080c;
+  --ag-bg-1:      #0b0d14;
+  --ag-panel:     #0e1019;
+  --ag-panel-2:   #12141f;
+  --ag-raised:    #161a27;
+  --ag-line:      #1d2233;
+  --ag-line-2:    #2a3148;
+  --ag-glow:      color-mix(in oklch, var(--ag-accent) 38%, transparent);
+
+  --ag-fg:        #eef1fb;
+  --ag-fg-2:      #b9c0d8;
+  --ag-fg-3:      #7d86a3;
+  --ag-fg-4:      #565e78;
+
+  --ag-accent:    #a78bfa;   /* violet-400 */
+  --ag-accent-2:  #7dd3fc;   /* sky-300   */
+  --ag-accent-3:  #818cf8;   /* indigo-400 */
+  --ag-accent-ink: #0a0a12;
+
+  --ag-grad: linear-gradient(108deg, var(--ag-accent-2) 0%, var(--ag-accent-3) 48%, var(--ag-accent) 100%);
+  --ag-radius: 14px;
+  --ag-radius-sm: 9px;
+
+  position: relative;
+  color: var(--ag-fg);
+  background:
+    radial-gradient(1100px 540px at 78% -8%, color-mix(in oklch, var(--ag-accent) 16%, transparent), transparent 60%),
+    radial-gradient(900px 480px at 8% 4%, color-mix(in oklch, var(--ag-accent-2) 12%, transparent), transparent 58%),
+    var(--ag-bg);
+  font-family: var(--font-sans);
+  font-feature-settings: "ss01", "cv01";
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* Faint blueprint grid behind everything. */
+.insp-agentic::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(color-mix(in oklch, var(--ag-line) 60%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in oklch, var(--ag-line) 60%, transparent) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(120% 90% at 50% 0%, #000 35%, transparent 80%);
+  opacity: 0.5;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.insp-agentic .ag-shell {
+  position: relative;
+  z-index: 1;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 4px 4px 0;
+}
+
+.insp-agentic .ag-mono {
+  font-family: var(--font-mono);
+  letter-spacing: -0.01em;
+}
+.insp-agentic .ag-dim { color: var(--ag-fg-3); }
+.insp-agentic .ag-spark { color: var(--ag-accent); filter: drop-shadow(0 0 6px var(--ag-glow)); }
+
+/* ── Topbar ──────────────────────────────────────────────────────────────── */
+.insp-agentic .ag-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+  padding: 16px 4px 18px;
+}
+.insp-agentic .ag-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.insp-agentic .ag-mark__glyph {
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  color: var(--ag-accent-ink);
+  box-shadow: 0 0 0 1px color-mix(in oklch, var(--ag-accent) 40%, transparent), 0 0 18px var(--ag-glow);
+}
+.insp-agentic .ag-mark__name {
+  font-weight: 650;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+}
+
+/* ── Eyebrows ────────────────────────────────────────────────────────────── */
+.insp-agentic .ag-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.02em;
+  color: var(--ag-fg-3);
+}
+.insp-agentic .ag-eyebrow svg { color: var(--ag-accent-2); }
+.insp-agentic .ag-cursor {
+  display: inline-block;
+  width: 7px;
+  height: 14px;
+  background: var(--ag-accent-2);
+  box-shadow: 0 0 8px var(--ag-accent-2);
+  animation: ag-blink 1.1s steps(1) infinite;
+}
+@keyframes ag-blink { 50% { opacity: 0; } }
+
+/* ── Hero ────────────────────────────────────────────────────────────────── */
+.insp-agentic .ag-hero {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 40px;
+  align-items: center;
+  padding: 30px 0 56px;
+}
+.insp-agentic .ag-display {
+  margin: 18px 0 0;
+  font-size: clamp(2.4rem, 5vw, 4rem);
+  font-weight: 660;
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  color: var(--ag-fg);
+}
+.insp-agentic .ag-display__grad {
+  background: var(--ag-grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+.insp-agentic .ag-lede {
+  margin: 20px 0 0;
+  max-width: 46ch;
+  font-size: clamp(1rem, 1.4vw, 1.12rem);
+  line-height: 1.6;
+  color: var(--ag-fg-2);
+}
+.insp-agentic .ag-lede--sm { font-size: 0.98rem; max-width: 42ch; }
+.insp-agentic .ag-hero__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 26px;
+}
+
+/* ── Console card (PromptInput shell + brief) ────────────────────────────── */
+.insp-agentic :where(.ag-console) {
+  background: linear-gradient(180deg, var(--ag-panel-2), var(--ag-panel));
+  border: 1px solid var(--ag-line-2);
+  border-radius: var(--ag-radius);
+  box-shadow:
+    0 0 0 1px color-mix(in oklch, var(--ag-accent) 8%, transparent),
+    0 24px 60px -30px rgba(0,0,0,0.9),
+    inset 0 1px 0 rgba(255,255,255,0.03);
+  overflow: hidden;
+}
+.insp-agentic :where(.ag-console__head) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--ag-line);
+  background: color-mix(in oklch, var(--ag-raised) 60%, transparent);
+}
+.insp-agentic .ag-console__title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ag-fg-2);
+}
+.insp-agentic .ag-console__dots { display: inline-flex; gap: 6px; }
+.insp-agentic .ag-console__dots i {
+  width: 9px; height: 9px; border-radius: 50%;
+  background: var(--ag-line-2);
+}
+.insp-agentic .ag-console__dots i:first-child { background: color-mix(in oklch, #f87171 70%, var(--ag-line-2)); }
+.insp-agentic .ag-console__dots i:nth-child(2) { background: color-mix(in oklch, var(--ag-accent-2) 70%, var(--ag-line-2)); }
+.insp-agentic .ag-console__dots i:nth-child(3) { background: color-mix(in oklch, #34d399 70%, var(--ag-line-2)); }
+.insp-agentic :where(.ag-console__body) { padding: 14px; }
+.insp-agentic .ag-console__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+/* PromptInput — restyle into the console's input row */
+.insp-agentic :where(.ag-console) :where([class*="rounded"]) {
+  border-radius: var(--ag-radius-sm);
+}
+.insp-agentic :where(.ag-console) textarea,
+.insp-agentic :where(.ag-wand-body) textarea {
+  background: var(--ag-bg-1) !important;
+  color: var(--ag-fg) !important;
+  border-color: var(--ag-line-2) !important;
+  font-family: var(--font-mono) !important;
+  font-size: 13px !important;
+  line-height: 1.6 !important;
+}
+.insp-agentic :where(.ag-console) textarea::placeholder,
+.insp-agentic :where(.ag-wand-body) textarea::placeholder {
+  color: var(--ag-fg-4) !important;
+}
+/* PromptInput outer shell */
+.insp-agentic :where(.ag-console__body) > div:first-child {
+  background: var(--ag-bg-1);
+  border: 1px solid var(--ag-line-2);
+  border-radius: var(--ag-radius-sm);
+}
+.insp-agentic .ag-wand-body { position: relative; }
+
+/* ── Section frame ───────────────────────────────────────────────────────── */
+.insp-agentic .ag-section {
+  padding: 58px 0;
+  border-top: 1px solid var(--ag-line);
+}
+.insp-agentic .ag-section--tight { padding: 40px 0; }
+.insp-agentic .ag-sechead { margin-bottom: 30px; }
+.insp-agentic .ag-eyebrow--sec { gap: 9px; }
+.insp-agentic .ag-sechead__n {
+  color: var(--ag-accent);
+  font-weight: 600;
+}
+.insp-agentic .ag-sechead__icon {
+  display: inline-grid;
+  place-items: center;
+  width: 20px; height: 20px;
+  border-radius: 6px;
+  background: color-mix(in oklch, var(--ag-accent) 16%, transparent);
+  color: var(--ag-accent-2);
+}
+.insp-agentic :where(.ag-h2) {
+  margin: 12px 0 0;
+  font-size: clamp(1.5rem, 2.6vw, 2.1rem);
+  font-weight: 640;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  color: var(--ag-fg);
+}
+
+/* ── Scoping run: feed grid ──────────────────────────────────────────────── */
+.insp-agentic .ag-feed-grid {
+  display: grid;
+  grid-template-columns: 1.25fr 0.75fr;
+  gap: 22px;
+  align-items: start;
+}
+.insp-agentic .ag-feed {
+  background: linear-gradient(180deg, var(--ag-panel-2), var(--ag-bg-1));
+  border: 1px solid var(--ag-line-2);
+  border-radius: var(--ag-radius);
+  overflow: hidden;
+  min-height: 280px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
+}
+.insp-agentic .ag-feed__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--ag-line);
+  font-size: 12px;
+  background: color-mix(in oklch, var(--ag-raised) 50%, transparent);
+}
+.insp-agentic .ag-feed__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-align: center;
+  padding: 56px 24px;
+  color: var(--ag-fg-3);
+  font-size: 13px;
+}
+.insp-agentic .ag-calls {
+  list-style: none;
+  margin: 0;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.insp-agentic .ag-call {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: start;
+  gap: 11px;
+  padding: 11px 12px;
+  border-radius: 10px;
+  background: color-mix(in oklch, var(--ag-raised) 40%, transparent);
+  border: 1px solid var(--ag-line);
+  animation: ag-call-in 0.34s var(--ease-out) both;
+}
+@keyframes ag-call-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.insp-agentic .ag-call--pending {
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  background: transparent;
+  border-style: dashed;
+  border-color: var(--ag-line-2);
+}
+.insp-agentic .ag-call__icon {
+  display: grid;
+  place-items: center;
+  width: 22px; height: 22px;
+  border-radius: 7px;
+  background: color-mix(in oklch, var(--ag-accent-2) 18%, transparent);
+  color: var(--ag-accent-2);
+  margin-top: 1px;
+}
+.insp-agentic .ag-call__icon--spin { animation: ag-spin 1s linear infinite; color: var(--ag-accent); }
+@keyframes ag-spin { to { transform: rotate(360deg); } }
+.insp-agentic .ag-call__main { min-width: 0; display: flex; flex-direction: column; gap: 5px; }
+.insp-agentic .ag-call__tool {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: var(--ag-fg);
+  word-break: break-word;
+}
+.insp-agentic .ag-call__args { color: var(--ag-accent-3); margin-left: 6px; }
+.insp-agentic .ag-call__result {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  color: #6ee7b7;
+  font-family: var(--font-mono);
+}
+.insp-agentic .ag-call__result svg { flex: none; }
+.insp-agentic .ag-call__ms {
+  font-size: 11px;
+  color: var(--ag-fg-4);
+  margin-top: 2px;
+  white-space: nowrap;
+}
+
+/* Scope result panel */
+.insp-agentic .ag-scope__placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  text-align: center;
+  min-height: 280px;
+  padding: 28px;
+  border: 1px dashed var(--ag-line-2);
+  border-radius: var(--ag-radius);
+  background: color-mix(in oklch, var(--ag-panel) 60%, transparent);
+}
+.insp-agentic .ag-scope__hint { font-size: 12px; color: var(--ag-fg-4); max-width: 26ch; }
+.insp-agentic :where(.ag-scope__card) {
+  background: linear-gradient(180deg, var(--ag-panel-2), var(--ag-panel));
+  border: 1px solid color-mix(in oklch, var(--ag-accent) 28%, var(--ag-line-2));
+  border-radius: var(--ag-radius);
+  box-shadow: 0 0 0 1px color-mix(in oklch, var(--ag-accent) 10%, transparent), 0 18px 50px -28px rgba(0,0,0,0.9);
+  overflow: hidden;
+  animation: ag-call-in 0.4s var(--ease-out) both;
+}
+.insp-agentic :where(.ag-scope__head) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--ag-line);
+  font-size: 12px;
+}
+.insp-agentic :where(.ag-scope__body) { padding: 14px; display: flex; flex-direction: column; }
+.insp-agentic .ag-scope__line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 7px 0;
+  font-size: 13px;
+}
+.insp-agentic .ag-scope__k {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ag-fg-3);
+}
+.insp-agentic .ag-scope__v { color: var(--ag-fg); font-weight: 500; }
+.insp-agentic .ag-tune-copy { margin: 4px 0 10px; line-height: 1.5; }
+.insp-agentic .ag-mood {
+  display: flex;
+  justify-content: center;
+  padding: 4px 0 2px;
+}
+.insp-agentic :where(.ag-scope__foot) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border-top: 1px solid var(--ag-line);
+  background: color-mix(in oklch, var(--ag-raised) 35%, transparent);
+}
+
+/* ── Plan timeline ───────────────────────────────────────────────────────── */
+.insp-agentic .ag-plan { margin-top: 26px; }
+
+/* ── Capabilities ────────────────────────────────────────────────────────── */
+.insp-agentic .ag-cap-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+.insp-agentic .ag-cap {
+  position: relative;
+  padding: 22px 22px 18px;
+  border: 1px solid var(--ag-line-2);
+  border-radius: var(--ag-radius);
+  background: linear-gradient(180deg, var(--ag-panel), var(--ag-bg-1));
+  overflow: hidden;
+  transition: border-color var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-out);
+}
+.insp-agentic .ag-cap::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 2px;
+  background: var(--ag-grad);
+  opacity: 0;
+  transition: opacity var(--dur-base) var(--ease-out);
+}
+.insp-agentic .ag-cap:hover {
+  border-color: color-mix(in oklch, var(--ag-accent) 40%, var(--ag-line-2));
+  transform: translateY(-2px);
+}
+.insp-agentic .ag-cap:hover::after { opacity: 1; }
+.insp-agentic .ag-cap__no { font-size: 11.5px; color: var(--ag-accent-2); }
+.insp-agentic .ag-cap__title {
+  margin: 10px 0 0;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  color: var(--ag-fg);
+}
+.insp-agentic .ag-cap__body {
+  margin: 9px 0 0;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--ag-fg-2);
+}
+.insp-agentic .ag-cap__tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 14px;
+}
+.insp-agentic .ag-tool-chip,
+.insp-agentic .ag-tool-chip:where(span) {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ag-accent-3);
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: color-mix(in oklch, var(--ag-accent) 12%, transparent);
+  border: 1px solid color-mix(in oklch, var(--ag-accent) 24%, transparent);
+}
+
+/* ── Telemetry metrics ───────────────────────────────────────────────────── */
+.insp-agentic .ag-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  border: 1px solid var(--ag-line-2);
+  border-radius: var(--ag-radius);
+  overflow: hidden;
+  background: var(--ag-bg-1);
+}
+.insp-agentic .ag-metric {
+  padding: 24px 22px;
+  border-left: 1px solid var(--ag-line);
+}
+.insp-agentic .ag-metric:first-child { border-left: 0; }
+.insp-agentic .ag-metric__num {
+  font-size: clamp(1.9rem, 3.4vw, 2.7rem);
+  font-weight: 660;
+  letter-spacing: -0.04em;
+  color: var(--ag-fg);
+  font-variant-numeric: tabular-nums;
+  background: var(--ag-grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+.insp-agentic .ag-metric__label {
+  margin-top: 6px;
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ag-fg-2);
+}
+.insp-agentic .ag-metric__sub { margin-top: 3px; font-size: 11.5px; color: var(--ag-fg-4); }
+
+/* ── About / tabs ────────────────────────────────────────────────────────── */
+.insp-agentic .ag-ethos { max-width: 720px; padding-top: 18px; }
+.insp-agentic .ag-ethos__lead {
+  margin: 0;
+  font-size: clamp(1.15rem, 2vw, 1.5rem);
+  line-height: 1.4;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  color: var(--ag-fg);
+}
+.insp-agentic .ag-ethos__body { margin: 16px 0 0; color: var(--ag-fg-2) !important; line-height: 1.65; }
+.insp-agentic .ag-callout { margin-top: 20px; }
+
+.insp-agentic .ag-stack {
+  margin-top: 18px;
+  border: 1px solid var(--ag-line-2);
+  border-radius: var(--ag-radius);
+  overflow: hidden;
+  background: var(--ag-bg-1);
+}
+.insp-agentic .ag-stack__row {
+  display: grid;
+  grid-template-columns: 130px 1fr;
+  gap: 16px;
+  padding: 14px 18px;
+  border-top: 1px solid var(--ag-line);
+  font-size: 13.5px;
+}
+.insp-agentic .ag-stack__row:first-child { border-top: 0; }
+.insp-agentic .ag-stack__k {
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--ag-accent-2);
+  align-self: center;
+}
+.insp-agentic .ag-stack__v { color: var(--ag-fg-2); }
+
+.insp-agentic .ag-faq { max-width: 760px; margin-top: 8px; }
+
+/* ── Operators ───────────────────────────────────────────────────────────── */
+.insp-agentic .ag-team {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+.insp-agentic .ag-op {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 20px 18px;
+  border: 1px solid var(--ag-line-2);
+  border-radius: var(--ag-radius);
+  background: linear-gradient(180deg, var(--ag-panel), var(--ag-bg-1));
+  transition: border-color var(--dur-base) var(--ease-out);
+}
+.insp-agentic .ag-op:hover { border-color: color-mix(in oklch, var(--ag-accent) 38%, var(--ag-line-2)); }
+.insp-agentic .ag-op__name {
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  color: var(--ag-fg);
+}
+.insp-agentic .ag-op__role { font-size: 11.5px; color: var(--ag-fg-3); margin-top: 2px; }
+.insp-agentic .ag-op__focus {
+  display: inline-block;
+  margin-top: 10px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ag-accent-3);
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: color-mix(in oklch, var(--ag-accent) 12%, transparent);
+  border: 1px solid color-mix(in oklch, var(--ag-accent) 22%, transparent);
+}
+
+/* ── Recognition + clients ───────────────────────────────────────────────── */
+.insp-agentic .ag-rec-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 32px;
+}
+.insp-agentic .ag-rec-label {
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ag-fg-3);
+  margin-bottom: 14px;
+}
+.insp-agentic .ag-clients__list { display: flex; flex-wrap: wrap; gap: 8px; }
+.insp-agentic .ag-client {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: var(--ag-fg-2);
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--ag-line-2);
+  background: var(--ag-bg-1);
+  transition: border-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+.insp-agentic .ag-client:hover { border-color: color-mix(in oklch, var(--ag-accent) 45%, var(--ag-line-2)); color: var(--ag-fg); }
+.insp-agentic .ag-press__list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.insp-agentic .ag-press__list li {
+  font-size: 13.5px;
+  color: var(--ag-fg-2);
+  padding-left: 14px;
+  border-left: 2px solid var(--ag-line-2);
+  line-height: 1.4;
+}
+.insp-agentic .ag-press__src { color: var(--ag-fg); font-weight: 600; margin-right: 6px; }
+
+/* ── Brief CTA ───────────────────────────────────────────────────────────── */
+.insp-agentic .ag-brief-grid {
+  display: grid;
+  grid-template-columns: 0.85fr 1.15fr;
+  gap: 32px;
+  align-items: start;
+}
+.insp-agentic .ag-brief__contact {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: 22px;
+}
+.insp-agentic .ag-brief__hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 22px;
+  font-size: 12px;
+}
+.insp-agentic .ag-progress { width: 160px; }
+
+/* ── Links ───────────────────────────────────────────────────────────────── */
+.insp-agentic .ag-link {
+  color: var(--ag-fg-2);
+  text-decoration: none;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+.insp-agentic .ag-link:hover { color: var(--ag-fg); }
+.insp-agentic .ag-link--accent { color: var(--ag-accent-2); font-weight: 500; }
+.insp-agentic .ag-link--accent:hover { color: var(--ag-accent); }
+
+/* ── Footer ──────────────────────────────────────────────────────────────── */
+.insp-agentic .ag-footer {
+  border-top: 1px solid var(--ag-line);
+  padding: 36px 0 14px;
+}
+.insp-agentic .ag-footer__top {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.insp-agentic .ag-footer__brand { display: inline-flex; align-items: center; gap: 9px; }
+.insp-agentic .ag-footer__blurb {
+  margin: 0;
+  max-width: 52ch;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--ag-fg-3);
+}
+.insp-agentic .ag-footer__links { display: flex; flex-wrap: wrap; gap: 18px; }
+.insp-agentic .ag-footer__links a { color: var(--ag-fg-3); text-decoration: none; font-size: 12.5px; transition: color var(--dur-fast) var(--ease-out); }
+.insp-agentic .ag-footer__links a:hover { color: var(--ag-accent-2); }
+.insp-agentic .ag-footer__bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.insp-agentic .ag-footer__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+}
+.insp-agentic .ag-sep--footer { margin: 24px 0 14px; }
+
+/* ═════════════════════════════════════════════════════════════════════════
+   react-fancy primitive overrides — make the kit WEAR Agentic Studio.
+   All reached via :where() inside .insp-agentic so they never leak.
+   ═════════════════════════════════════════════════════════════════════════ */
+
+/* Breadcrumbs → mono console path */
+.insp-agentic :where(nav[aria-label="Breadcrumb"], nav[aria-label="breadcrumb"]) {
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+.insp-agentic :where(nav[aria-label="Breadcrumb"]) a,
+.insp-agentic :where(nav[aria-label="Breadcrumb"]) span { color: var(--ag-fg-3); }
+.insp-agentic :where(nav[aria-label="Breadcrumb"]) a:hover { color: var(--ag-accent-2); }
+
+/* Buttons → command pills. Accent button glows. */
+.insp-agentic :where(button.ag-btn),
+.insp-agentic :where(a.ag-btn) {
+  font-family: var(--font-mono);
+  letter-spacing: -0.01em;
+  border-radius: var(--ag-radius-sm) !important;
+}
+.insp-agentic :where(.ag-btn--accent) {
+  background: var(--ag-grad) !important;
+  color: var(--ag-accent-ink) !important;
+  border: 0 !important;
+  box-shadow: 0 0 0 1px color-mix(in oklch, var(--ag-accent) 50%, transparent), 0 8px 24px -8px var(--ag-glow) !important;
+  font-weight: 600 !important;
+}
+.insp-agentic :where(.ag-btn--accent):hover { filter: brightness(1.08); }
+.insp-agentic :where(.ag-btn--accent) svg { color: var(--ag-accent-ink) !important; }
+
+/* Badges → status chips: dark fill, mono, glowing dot */
+.insp-agentic :where(.ag-badge) { font-weight: 500; }
+.insp-agentic :where(.ag-badge--mono) { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.02em; }
+
+/* Tabs underline → terminal tab strip */
+.insp-agentic :where(.ag-tabs) [role="tablist"] {
+  border-bottom-color: var(--ag-line) !important;
+  gap: 4px;
+}
+.insp-agentic :where(.ag-tabs) [role="tab"] {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: var(--ag-fg-3) !important;
+}
+.insp-agentic :where(.ag-tabs) [role="tab"]:hover { color: var(--ag-fg) !important; }
+.insp-agentic :where(.ag-tabs) [role="tab"][aria-selected="true"] {
+  color: var(--ag-accent-2) !important;
+}
+
+/* Accordion (FAQ) → terminal disclosure rows */
+.insp-agentic :where(.ag-faq) [data-state] button,
+.insp-agentic :where(.ag-faq) button {
+  color: var(--ag-fg) !important;
+}
+.insp-agentic :where(.ag-faq) > div,
+.insp-agentic :where(.ag-faq) [class*="border"] {
+  border-color: var(--ag-line-2) !important;
+}
+.insp-agentic :where(.ag-faq) p,
+.insp-agentic :where(.ag-faq) [class*="text-"] { color: var(--ag-fg-2) !important; }
+
+/* Callout → neon-edged note */
+.insp-agentic :where(.ag-callout) {
+  background: color-mix(in oklch, var(--ag-accent) 12%, var(--ag-bg-1)) !important;
+  border: 1px solid color-mix(in oklch, var(--ag-accent) 32%, transparent) !important;
+  color: var(--ag-fg-2) !important;
+  border-radius: var(--ag-radius-sm) !important;
+}
+.insp-agentic :where(.ag-callout) svg { color: var(--ag-accent) !important; }
+
+/* Separator → faint console rule */
+.insp-agentic :where(.ag-sep) { background: var(--ag-line) !important; border-color: var(--ag-line) !important; }
+.insp-agentic :where(.ag-sep) > * { background: var(--ag-line) !important; }
+
+/* Heading colour normalize */
+.insp-agentic :where(.ag-h2) { color: var(--ag-fg) !important; }
+
+/* Progress → accent bar on dark track */
+.insp-agentic :where(.ag-progress) [class*="bg-"] { background: var(--ag-line-2); }
+
+/* ReasonTag trigger → accent underline */
+.insp-agentic :where(.ag-reason) { color: var(--ag-accent-2) !important; }
+
+/* MagicWand floating toolbar reads on dark; nudge the textarea wrapper */
+.insp-agentic :where(.ag-wand-body) > div:first-child {
+  background: var(--ag-bg-1);
+  border: 1px solid var(--ag-line-2);
+  border-radius: var(--ag-radius-sm);
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 940px) {
+  .insp-agentic .ag-hero { grid-template-columns: 1fr; gap: 28px; }
+  .insp-agentic .ag-feed-grid { grid-template-columns: 1fr; }
+  .insp-agentic .ag-brief-grid { grid-template-columns: 1fr; gap: 24px; }
+  .insp-agentic .ag-rec-grid { grid-template-columns: 1fr; gap: 24px; }
+  .insp-agentic .ag-team { grid-template-columns: repeat(2, 1fr); }
+  .insp-agentic .ag-metrics { grid-template-columns: repeat(2, 1fr); }
+  .insp-agentic .ag-metric:nth-child(3) { border-left: 0; }
+}
+@media (max-width: 600px) {
+  .insp-agentic .ag-cap-grid { grid-template-columns: 1fr; }
+  .insp-agentic .ag-team { grid-template-columns: 1fr; }
+  .insp-agentic .ag-metrics { grid-template-columns: 1fr; }
+  .insp-agentic .ag-metric { border-left: 0; border-top: 1px solid var(--ag-line); }
+  .insp-agentic .ag-metric:first-child { border-top: 0; }
+  .insp-agentic .ag-call { grid-template-columns: auto 1fr; }
+  .insp-agentic .ag-call__ms { grid-column: 2; }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .insp-agentic .ag-cursor,
+  .insp-agentic .ag-call__icon--spin,
+  .insp-agentic .ag-call { animation: none !important; }
+}

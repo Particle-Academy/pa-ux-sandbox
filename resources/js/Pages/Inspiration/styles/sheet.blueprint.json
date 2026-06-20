@@ -1,0 +1,102 @@
+{
+  "id": "sheet",
+  "name": "Spreadsheet",
+  "note": "The studio's work as a living data grid.",
+  "mode": "light",
+  "thesis": "The portfolio AS a spreadsheet — a real, editable fancy-sheets workbook anchors the page, and every surface around it wears the same idiom: a green function-bar header, A1-style cell references as eyebrows, column-letter / row-number gutters, conditional-format status pills, in-cell data bars, ledger tables, and a status-bar footer with sheet tabs.",
+  "tokens": {
+    "bg": "#f6f7f5 app-chrome canvas behind the sheet; #ffffff cell paper; a faint 1px horizontal grid (30px rhythm) is painted into the page background so the whole document reads like ruled cells",
+    "fg": "#18181b near-black cell ink (#3f3f46 body, #71717a metadata/row-numbers, #a1a1aa faint folios)",
+    "accent": "#15803d spreadsheet green (the function/formula accent; #166534 pressed, #e8f1ea wash, #bcd2c0 border) — green = computed/live, never decorative",
+    "fontDisplay": "var(--font-sans) — weight 650, tight tracking (-0.035em) on the hero; modest -0.02em on H2s",
+    "fontMono": "var(--font-mono) — every cell reference, column header, row number, status pill, formula string, eyebrow, breadcrumb, and stat label is mono; font-variant-numeric: tabular-nums page-wide",
+    "radius": "4px on containers (cells aren't round), 3px on chips/pills/inputs/avatars — crisp and near-square",
+    "border": "1px hairline #e4e4e7 grid lines; #d4d4d8 heavier rules; column/row headers filled #f1f3f0; 2px header underline; the live grid + every faux-grid use 1px gaps over a grid-colored background to fake true cell borders",
+    "motion": "var(--dur-base)/var(--ease-out) only — background wash on row/tab/table-row hover, row-number turns green on hover, button color fades; no transforms, no shadows beyond a 1px seated edge"
+  },
+  "layout": "A single centered 1180px column on an off-white, faintly grid-ruled canvas. The page opens with a full-width 'function bar' (ƒx box + breadcrumbs + a =STUDIO() formula + a name-box wordmark with an A1:F∞ range chip). Below it, every section is a bordered white 'cell range' card (4px radius, 1px grid border) opened by a mono A1-style cell-reference eyebrow. The hero is a 1.65fr/1fr split (headline + a 2×2 block of addressed stat cells). The centerpiece is a REAL fancy-sheets <SheetWorkbook> (project/discipline/year/status/fee, frozen header, a bottom =SUM/=COUNTIF formula row) inside a fixed-height framed pane. A hand-built faux reference grid (CSS-grid with 1px gaps, column-letter heads + a row-number gutter + stretched-link rows) re-presents the same data as a paged/filtered query. Capabilities live behind sheet-tab Tabs; About is a 0.32fr label beside a green-ruled cell-comment quote; the team is a roster sheet with utilization data bars; recognition is a ledger Table beside client range-tags; contact is a 1fr/1.05fr split (band Select + a =BRIEF() Card whose Composer is the cell editor). The footer is a status bar with sheet tabs. Collapses to 1-up at 920px; the faux grid drops its Discipline + Fee columns at 720px.",
+  "sections": [
+    {
+      "name": "function-bar (running head)",
+      "what": "A ƒx box, Breadcrumbs as a mono cell-trail, a =STUDIO(\"FIELDWORK\", est:2016) formula string, and a name-box wordmark (gradient F mark) with an A1:F∞ range Badge.",
+      "components": ["Breadcrumbs", "Badge"],
+      "restyle": "Breadcrumbs set in uppercase mono; Badge squared to a 3px mono conditional-format chip used as a cell-range tag. The whole bar is a white pane with a 1px seated edge — Excel's formula bar."
+    },
+    {
+      "name": "hero",
+      "what": "A 'Sheet 00 · Cell A1' reference, a tight headline ('A design studio that runs on a grid.'), a lede, an 'Open a brief' + 'Jump to the data' button pair, and a 2×2 rail of addressed stat cells (B2..B5: active rows, =SUM(fees), shipped, studios).",
+      "components": ["Heading", "Button"],
+      "restyle": "Display is sans weight 650 at -0.035em. Buttons become squared cell/toolbar buttons — primary = green fill with a 1px darker-green seated edge flipping darker on hover; ghost = white with a hairline that goes ink on hover. Stat cells are a 1px-gap grid with a tiny mono address in each corner and tabular numerals."
+    },
+    {
+      "name": "workbook (the live grid)",
+      "what": "A real fancy-sheets <SheetWorkbook> of selected work (ID/project/discipline/year/status/fee), frozen header row, formula bar + bold + align toolbar, and a bottom row that is a real =SUM(F2:Fn) / =COUNTIF(E2:En,\"Shipped\") — editable, recomputes live. An 'Auto-calc' Switch and a save-status caption sit alongside.",
+      "components": ["SheetWorkbook (fancy-sheets)", "Switch", "Heading", "Text"],
+      "restyle": "The workbook keeps its native zinc cell chrome (already spreadsheet-correct) but its blue selection/handles are recolored to spreadsheet-green via scoped attribute-selector overrides; the framed pane gets a 1px seated edge. Header row + total row are conditionally formatted green via per-cell CellFormat (backgroundColor/borderTop/color). Switch becomes a mono 'auto-calc' toggle."
+    },
+    {
+      "name": "filtered index (faux grid)",
+      "what": "The same data re-presented as a hand-built grid: column-letter heads (A·ID … F·Fee €k), a row-number gutter, status as a Badge pill, fee with a € prefix, plus a status Select + discipline Pillbox filter and a row Pagination pager.",
+      "components": ["Select", "Pillbox", "Pagination", "Badge", "Link"],
+      "restyle": "Pure CSS-grid with 1px gaps over a grid-colored bg to fake cell borders; each row is one stretched Inertia <Link> (no nested anchors). Select + Pillbox squared to mono cell-inputs; Pagination numerals squared + mono; Badge → 3px mono conditional-format status pill (emerald/amber/zinc by status). Hover washes the row green and tints the row number."
+    },
+    {
+      "name": "capabilities",
+      "what": "Underline Tabs (Services / Process / Notes) styled as sheet tabs: a 2-up services grid where each service is a referenced cell (A1..A4) with a capacity data bar, a Timeline process ledger with row-numbered dates, and an FAQ Accordion of cell notes (N1..N4).",
+      "components": ["Tabs", "Progress", "Timeline", "Accordion"],
+      "restyle": "Tabs reskinned as physical sheet tabs — mono uppercase labels, header-fill inactive tabs with rounded-top borders, the active tab lifts to white paper and turns green, sitting on a 1px rail. Progress becomes a flat 2px-radius in-cell data bar (green fill). Timeline dates set mono uppercase. Accordion triggers carry a mono note reference."
+    },
+    {
+      "name": "about (cell comment)",
+      "what": "A 0.32fr label column ('Cell comment' ref + an 'About' tag) beside a large lead statement and a supporting paragraph.",
+      "components": ["Text"],
+      "restyle": "The body is set off by a 3px green left rule — a spreadsheet cell-comment marker. Text reset to ink body at 1.65 line-height with no component chrome."
+    },
+    {
+      "name": "team (roster sheet)",
+      "what": "A roster with a mono header row (Name / Role / Utilization) and a row per person: a square ink Avatar chip + name, role, and a utilization data bar with a mono percentage.",
+      "components": ["Avatar", "Progress"],
+      "restyle": "Built as a 1px-gap grid 'sheet'. Avatar squared (3px) and recolored to a solid ink chip with white mono initials — the round portrait becomes a typographic name-cell mark. Progress is the green utilization data bar; rows wash green on hover."
+    },
+    {
+      "name": "recognition",
+      "what": "An awards Table ledger (Year / Project / Award) beside a rail of client range-tags (Badges), a Separator, and a mono press list.",
+      "components": ["Table", "Badge", "Separator"],
+      "restyle": "Table flattened to a framed ledger — mono uppercase head with a 2px underline, 1px row hairlines, mono tabular year column, ink-weighted project column, green-washed row hover. Badges become squared mono header-fill cell-range tags. Press items get a green '›' formula-style bullet."
+    },
+    {
+      "name": "contact (formula-bar input)",
+      "what": "An intro column (ref, 'Add a row.' heading, lede, mono contact lines, a budget-band Select that drives a ReasonTag + =BAND() readout) beside a bordered =BRIEF() Card: header with a ƒx box + an 'Open · Q3' status Badge, a Composer cell editor, a character Progress data bar, and a 'Commit row' Button; success swaps to a 'Row added' confirmation.",
+      "components": ["Heading", "Select", "ReasonTag", "Card", "Composer", "Progress", "Button", "Tooltip", "Badge", "Text"],
+      "restyle": "The Card is a bordered cell range with a header-filled title bar reading =BRIEF(); Composer is the cell editor (1px grid border, green focus ring). Progress is the green character data bar. Select squared to a mono band picker. ReasonTag underline theme for the pricing rationale. Button primary = the green commit-row action."
+    },
+    {
+      "name": "footer (status bar)",
+      "what": "A status bar: a strip of faux sheet tabs (Selected work / Roster / Awards / +) over a meta row with the fictional-studio line and a green 'Back to the gallery' link.",
+      "components": ["Link"],
+      "restyle": "All mono. Active sheet tab lifts to white with a 2px green top inset; the back link is the page's last green accent."
+    }
+  ],
+  "palette": [
+    { "component": "SheetWorkbook (fancy-sheets)", "restyle": "The literal centerpiece — a real editable workbook. Per-cell CellFormat conditionally formats the header + total rows green; the package's blue selection/fill-handle is recolored to spreadsheet-green via scoped [class*=\"border-blue-500\"]/[class*=\"bg-blue-500\"] overrides; the pane is framed with a 1px seated edge. A bottom row carries real =SUM / =COUNTIF formulas." },
+    { "component": "Button", "restyle": "Squared (4px) cell/toolbar buttons. Primary = green fill with a 1px darker-green seated edge, flips darker on hover, greys out disabled. Ghost = white with a hairline border that goes ink on hover. No rounded pill, no big shadow." },
+    { "component": "Badge", "restyle": "Reduced to a 3px squared mono chip and used three ways: a conditional-format STATUS pill (emerald=Shipped / amber=In build / zinc=Scoping), a header-fill client range-tag, and an A1:F∞ name-box range chip." },
+    { "component": "Table", "restyle": "Framed ledger — mono uppercase head with a 2px underline, 1px row hairlines, mono tabular year column, ink project column, green-washed row hover." },
+    { "component": "Tabs", "restyle": "Underline variant rebuilt as physical sheet tabs — header-fill rounded-top inactive tabs on a 1px rail; the active tab lifts to white paper and turns green; mono uppercase labels." },
+    { "component": "Avatar", "restyle": "Squared (3px) and recolored to a solid ink chip with white mono initials — a typographic name-cell mark, not a portrait." },
+    { "component": "Progress", "restyle": "Flattened to a 2px-radius in-cell data bar with a green fill — used as service capacity, team utilization, and the brief character meter." },
+    { "component": "Pagination", "restyle": "Squared mono numerals — a row pager under the faux grid." },
+    { "component": "Pillbox / Select", "restyle": "Squared to mono cell-input fields with hairline borders; used as discipline tag-filter and status / budget-band pickers." },
+    { "component": "Switch", "restyle": "A mono 'auto-calc' toggle (emerald) sitting beside the live workbook." },
+    { "component": "Card", "restyle": "A bordered cell range — 4px radius, 1px grid border, header-filled =BRIEF() title bar, hairline-divided footer, 1px seated edge instead of a drop shadow." },
+    { "component": "Composer", "restyle": "The cell editor — 1px grid border, sans body, green focus ring + wash." },
+    { "component": "Timeline", "restyle": "A process ledger — mono uppercase row-numbered dates ('Rows 4–8 · System'); one green 'System' step, rest neutral." },
+    { "component": "Accordion", "restyle": "Cell notes — each trigger prefixed with a mono note reference (N1..N4); hairline dividers, no fills." },
+    { "component": "ReasonTag", "restyle": "Underline theme — an inline dotted-underline explainer for the indicative budget, in the mono metadata voice." },
+    { "component": "Breadcrumbs", "restyle": "A mono uppercase cell-trail inside the function bar." },
+    { "component": "Separator", "restyle": "Collapsed to a single hairline between the client tags and the press list." },
+    { "component": "Heading / Text", "restyle": "Reset to ink sans with tight tracking (display) / ink body at 1.65; component color presets overridden by scoped tokens." }
+  ],
+  "contentArchetype": "A one-page portfolio for FIELDWORK, a fictional Zürich/Lisbon design + dev studio, told entirely in spreadsheet grammar: a function-bar header, a hero with addressed stat cells, a REAL editable workbook of selected work (with live SUM/COUNTIF totals), a filtered/paged faux grid of the same rows, sheet-tabbed capabilities (services with capacity bars / a process ledger / FAQ notes), a cell-comment about statement, a utilization roster, an awards ledger + client range-tags + press, and an 'add a row' contact box with a =BRIEF() cell editor. Voice is terse, numeric, accountable; every label, reference, status, and total is mono.",
+  "remix": "Keep the conceit literal: the page IS a workbook. Anchor with a real fancy-sheets <SheetWorkbook> carrying at least one genuine formula, and let everything else echo it — cell-reference eyebrows, column-letter + row-number gutters, conditional-format status pills, in-cell data bars, ledger tables, a status-bar footer. Hold the rules: ONE neutral ink + ONE 'computed' accent (green here; swap to any single saturated hue for another brand — blue reads most native), near-square 3–4px radius, mono for every reference/number/label, 1px-gap grids to fake cell borders, no shadows beyond a seated edge. To adapt to a SaaS/analytics product, swap the portfolio rows for live metrics and wire the workbook's onChange to a backend (fancy-query) and registerSheetsBridge so an agent can edit cells over MCP. Blend toward Mono by dropping the green to a single cobalt and squaring everything to radius 0; toward Product by letting the stat cells become real KPI cards — but the moment the grid stops being editable or the formulas stop computing, you've left Spreadsheet."
+}

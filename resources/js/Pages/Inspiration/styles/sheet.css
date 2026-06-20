@@ -1,0 +1,929 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Inspiration Gallery · Style — Spreadsheet ("sheet")
+   FIELDWORK rendered as a LIVING DATA GRID. The portfolio IS a spreadsheet:
+   a real fancy-sheets workbook (project / discipline / year / status with a
+   SUM/COUNTIF formula row) anchors the page, and every surface around it wears
+   the same idiom — a green "function-bar" header, A1-style cell references as
+   eyebrows, column-letter / row-number gutters, ledger tables, status-cell
+   Badges, in-cell data bars, and a formula-bar contact box. The Fancy kit is
+   forced to WEAR the spreadsheet look. Light mode only. Every selector is
+   scoped under .insp-sheet — self-contained, no bare element/utility selectors,
+   never .dark (would collide with Tailwind dark mode).
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.insp-sheet {
+  /* ── Scoped Spreadsheet tokens ─────────────────────────────────────────── */
+  --sh-paper:    #ffffff;   /* the sheet field */
+  --sh-canvas:   #f6f7f5;   /* off-white app chrome behind the sheet */
+  --sh-ink:      #18181b;   /* near-black cell text */
+  --sh-ink-2:    #3f3f46;   /* body text */
+  --sh-ink-3:    #71717a;   /* metadata / row numbers */
+  --sh-ink-4:    #a1a1aa;   /* faint folios */
+  --sh-grid:     #e4e4e7;   /* the cell grid lines */
+  --sh-grid-2:   #d4d4d8;   /* heavier rule (header underline) */
+  --sh-head:     #f1f3f0;   /* column/row header fill */
+  --sh-sel:      #eef4ef;   /* selected-row wash */
+  --sh-accent:   #15803d;   /* spreadsheet green — the function/formula accent */
+  --sh-accent-2: #166534;   /* accent pressed */
+  --sh-accent-w: #e8f1ea;   /* faint green wash */
+  --sh-accent-b: #bcd2c0;   /* green border tint */
+
+  --sh-mono: var(--font-mono);
+  --sh-sans: var(--font-sans);
+
+  --sh-radius: 4px;         /* crisp, near-square — cells aren't round */
+
+  background:
+    linear-gradient(var(--sh-grid) 1px, transparent 1px) 0 0 / 100% 30px,
+    var(--sh-canvas);
+  color: var(--sh-ink);
+  font-family: var(--sh-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.insp-sheet ::selection {
+  background: var(--sh-accent-w);
+  color: var(--sh-accent-2);
+}
+
+.insp-sheet .sh-shell {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 4px 4px;
+}
+
+/* tabular numerals everywhere — it's a spreadsheet */
+.insp-sheet {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Eyebrow: an A1 cell reference ─────────────────────────────────────────── */
+.insp-sheet .sh-ref {
+  display: inline-block;
+  font-family: var(--sh-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--sh-ink-3);
+  background: var(--sh-head);
+  border: 1px solid var(--sh-grid);
+  border-radius: 3px;
+  padding: 2px 7px;
+  line-height: 1.4;
+}
+
+.insp-sheet .sh-code {
+  font-family: var(--sh-mono);
+  font-size: 0.86em;
+  background: var(--sh-accent-w);
+  color: var(--sh-accent-2);
+  border: 1px solid var(--sh-accent-b);
+  border-radius: 3px;
+  padding: 0 4px;
+}
+
+/* ── Function bar (running head) ───────────────────────────────────────────── */
+.insp-sheet .sh-funcbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  background: var(--sh-paper);
+  border: 1px solid var(--sh-grid);
+  border-radius: var(--sh-radius);
+  padding: 7px 10px;
+  margin: 12px 0 4px;
+  box-shadow: 0 1px 0 rgba(24, 24, 27, 0.03);
+}
+.insp-sheet .sh-fx {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 22px;
+  border: 1px solid var(--sh-accent-b);
+  background: var(--sh-accent-w);
+  border-radius: 3px;
+  color: var(--sh-accent-2);
+  flex: none;
+}
+.insp-sheet .sh-fx i {
+  font-style: italic;
+  font-family: var(--sh-mono);
+  font-size: 12px;
+  font-weight: 700;
+}
+.insp-sheet .sh-fx--sm {
+  width: 20px;
+  height: 18px;
+  font-style: italic;
+  font-family: var(--sh-mono);
+  font-size: 11px;
+  font-weight: 700;
+}
+.insp-sheet .sh-funcbar__formula {
+  font-family: var(--sh-mono);
+  font-size: 12px;
+  color: var(--sh-ink-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1 1 auto;
+  min-width: 120px;
+}
+.insp-sheet .sh-namebox {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: -0.01em;
+  color: var(--sh-ink);
+  flex: none;
+}
+.insp-sheet .sh-namebox__mark {
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-weight: 800;
+  font-size: 12px;
+}
+
+/* Breadcrumbs → mono cell trail */
+.insp-sheet .sh-crumbs {
+  font-family: var(--sh-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  flex: none;
+}
+
+/* Badge → conditional-format chip (used as a "name box" range tag) */
+.insp-sheet .sh-chip {
+  font-family: var(--sh-mono);
+  border-radius: 3px !important;
+  letter-spacing: 0.03em;
+}
+
+/* ── Sections ──────────────────────────────────────────────────────────────── */
+.insp-sheet .sh-section {
+  background: var(--sh-paper);
+  border: 1px solid var(--sh-grid);
+  border-radius: var(--sh-radius);
+  padding: 26px clamp(16px, 3vw, 34px);
+  margin-top: 14px;
+}
+.insp-sheet .sh-band-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+.insp-sheet .sh-band-sub {
+  margin-top: 8px !important;
+  max-width: 58ch;
+}
+
+.insp-sheet .sh-h2 {
+  margin-top: 9px !important;
+  letter-spacing: -0.02em !important;
+  color: var(--sh-ink) !important;
+}
+.insp-sheet .sh-h2--mb { margin-bottom: 22px !important; }
+.insp-sheet .sh-h2--sm { margin-top: 9px !important; margin-bottom: 12px !important; }
+
+/* ── Hero ──────────────────────────────────────────────────────────────────── */
+.insp-sheet .sh-hero {
+  display: grid;
+  grid-template-columns: 1.65fr 1fr;
+  gap: clamp(20px, 4vw, 56px);
+  align-items: start;
+}
+.insp-sheet .sh-display {
+  font-size: clamp(2.1rem, 5vw, 3.5rem);
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+  font-weight: 650;
+  margin: 16px 0 0;
+  color: var(--sh-ink);
+  max-width: 16ch;
+}
+.insp-sheet .sh-lede {
+  font-size: 1.06rem;
+  line-height: 1.55;
+  color: var(--sh-ink-2);
+  max-width: 52ch;
+  margin: 18px 0 0;
+}
+.insp-sheet .sh-lede--sm { font-size: 0.98rem; }
+.insp-sheet .sh-hero__actions {
+  display: flex;
+  gap: 9px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+
+/* Hero rail → a 2×2 block of stat "cells" with addresses */
+.insp-sheet .sh-hero__rail {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border: 1px solid var(--sh-grid);
+  border-radius: var(--sh-radius);
+  overflow: hidden;
+  background: var(--sh-grid);
+  gap: 1px;
+}
+.insp-sheet .sh-stat {
+  position: relative;
+  background: var(--sh-paper);
+  padding: 16px 14px 14px;
+  min-height: 92px;
+}
+.insp-sheet .sh-stat__addr {
+  position: absolute;
+  top: 6px;
+  left: 8px;
+  font-family: var(--sh-mono);
+  font-size: 9.5px;
+  color: var(--sh-ink-4);
+  letter-spacing: 0.04em;
+}
+.insp-sheet .sh-stat__num {
+  display: block;
+  margin-top: 14px;
+  font-size: 1.7rem;
+  font-weight: 680;
+  letter-spacing: -0.03em;
+  color: var(--sh-ink);
+  line-height: 1;
+}
+.insp-sheet .sh-stat__label {
+  display: block;
+  margin-top: 6px;
+  font-family: var(--sh-mono);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--sh-ink-3);
+}
+
+/* ── Button → a cell button / toolbar button ───────────────────────────────── */
+.insp-sheet .sh-btn {
+  border-radius: var(--sh-radius) !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.005em !important;
+  transition: background var(--dur-base, 0.16s) var(--ease-out, ease),
+    border-color var(--dur-base, 0.16s) var(--ease-out, ease),
+    color var(--dur-base, 0.16s) var(--ease-out, ease) !important;
+}
+.insp-sheet .sh-btn--primary {
+  background: var(--sh-accent) !important;
+  border: 1px solid var(--sh-accent-2) !important;
+  color: #fff !important;
+  box-shadow: 0 1px 0 rgba(21, 128, 61, 0.25) !important;
+}
+.insp-sheet .sh-btn--primary:hover:not(:disabled) {
+  background: var(--sh-accent-2) !important;
+}
+.insp-sheet .sh-btn--primary:disabled {
+  background: var(--sh-grid) !important;
+  border-color: var(--sh-grid-2) !important;
+  color: var(--sh-ink-4) !important;
+  box-shadow: none !important;
+}
+.insp-sheet .sh-btn--ghost {
+  background: var(--sh-paper) !important;
+  border: 1px solid var(--sh-grid-2) !important;
+  color: var(--sh-ink-2) !important;
+}
+.insp-sheet .sh-btn--ghost:hover:not(:disabled) {
+  background: var(--sh-head) !important;
+  border-color: var(--sh-ink-4) !important;
+  color: var(--sh-ink) !important;
+}
+
+/* ── The fancy-sheets workbook — restyle the live grid to the green idiom ───── */
+.insp-sheet .sh-workbook {
+  border: 1px solid var(--sh-grid-2);
+  border-radius: var(--sh-radius);
+  overflow: hidden;
+  height: 460px;
+  box-shadow: inset 0 0 0 1px var(--sh-paper);
+  background: var(--sh-paper);
+}
+.insp-sheet .sh-workbook > * { height: 100%; }
+/* Recolor the workbook's selection / accents from blue → spreadsheet-green */
+.insp-sheet .sh-workbook [class*="border-blue-500"] {
+  border-color: var(--sh-accent) !important;
+}
+.insp-sheet .sh-workbook [class*="bg-blue-500"] {
+  background-color: var(--sh-accent) !important;
+}
+.insp-sheet .sh-workbook [class*="hover\:bg-blue-500\/50"]:hover {
+  background-color: color-mix(in srgb, var(--sh-accent) 45%, transparent) !important;
+}
+.insp-sheet .sh-workbook__cap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+  font-family: var(--sh-mono);
+  font-size: 11px;
+  color: var(--sh-ink-3);
+}
+.insp-sheet .sh-workbook__live {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--sh-accent-2);
+}
+.insp-sheet .sh-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--sh-accent);
+  box-shadow: 0 0 0 3px var(--sh-accent-w);
+}
+
+/* Switch → "auto-calc" toggle */
+.insp-sheet .sh-recalc {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--sh-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--sh-ink-3);
+}
+
+/* ── Hand-built reference grid (filtered index) ────────────────────────────── */
+.insp-sheet .sh-grid {
+  display: grid;
+  grid-template-columns: 34px 86px 1.4fr 1.4fr 64px 120px 80px;
+  border: 1px solid var(--sh-grid-2);
+  border-radius: var(--sh-radius);
+  overflow: hidden;
+  background: var(--sh-grid);
+  gap: 1px;
+}
+.insp-sheet .sh-grid__corner {
+  background: var(--sh-head);
+  border-right: 1px solid var(--sh-grid-2);
+}
+.insp-sheet .sh-grid__colhead {
+  background: var(--sh-head);
+  font-family: var(--sh-mono);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--sh-ink-3);
+  padding: 8px 10px;
+  font-weight: 600;
+}
+.insp-sheet .sh-grid__row {
+  display: contents;
+}
+.insp-sheet .sh-grid__rownum {
+  background: var(--sh-head);
+  font-family: var(--sh-mono);
+  font-size: 11px;
+  color: var(--sh-ink-4);
+  display: grid;
+  place-items: center;
+  border-right: 1px solid var(--sh-grid-2);
+}
+.insp-sheet .sh-cell {
+  position: relative;
+  background: var(--sh-paper);
+  padding: 11px 10px;
+  font-size: 13.5px;
+  color: var(--sh-ink-2);
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  transition: background var(--dur-base, 0.16s) var(--ease-out, ease);
+}
+.insp-sheet .sh-grid__row:hover .sh-cell,
+.insp-sheet .sh-grid__row:hover .sh-grid__rownum {
+  background: var(--sh-sel);
+}
+.insp-sheet .sh-grid__row:hover .sh-grid__rownum { color: var(--sh-accent-2); }
+.insp-sheet .sh-cell--mono { font-family: var(--sh-mono); font-size: 12px; color: var(--sh-ink-3); }
+.insp-sheet .sh-cell--title { font-weight: 600; color: var(--sh-ink); }
+.insp-sheet .sh-cell--center { justify-content: center; color: var(--sh-ink-3); }
+.insp-sheet .sh-cell--num { justify-content: flex-end; font-family: var(--sh-mono); color: var(--sh-ink); }
+.insp-sheet .sh-cell--num::before { content: "€"; color: var(--sh-ink-4); margin-right: 1px; }
+.insp-sheet .sh-cell--status { padding-block: 8px; }
+/* one stretched <Link> per row, never nested anchors */
+.insp-sheet .sh-grid__stretch {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  grid-column: 1 / -1;
+}
+.insp-sheet .sh-grid__row { position: relative; }
+.insp-sheet .sh-grid__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+/* Badge → conditional-format status pill */
+.insp-sheet .sh-status {
+  border-radius: 3px !important;
+  font-family: var(--sh-mono);
+  font-size: 10.5px !important;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  z-index: 2;
+  position: relative;
+}
+
+/* Filters: Select + Pillbox squared to cell-inputs */
+.insp-sheet .sh-filters {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.insp-sheet .sh-select :where(select, button),
+.insp-sheet .sh-select > * {
+  border-radius: var(--sh-radius) !important;
+  font-family: var(--sh-mono);
+  font-size: 12px !important;
+}
+.insp-sheet .sh-select { min-width: 132px; }
+.insp-sheet .sh-select--wide { min-width: 220px; max-width: 320px; }
+.insp-sheet .sh-pillbox {
+  width: 220px !important;
+  border-radius: var(--sh-radius) !important;
+}
+.insp-sheet .sh-pillbox * { border-radius: 3px !important; }
+
+/* Pagination → a row pager */
+.insp-sheet .sh-pager :where(button, a) {
+  border-radius: 3px !important;
+  font-family: var(--sh-mono);
+}
+
+/* ── Capabilities: Tabs → sheet-tab rail ───────────────────────────────────── */
+.insp-sheet .sh-tabs [role="tablist"],
+.insp-sheet .sh-tabs > div:first-child {
+  border-bottom: 1px solid var(--sh-grid-2);
+  gap: 2px;
+}
+.insp-sheet .sh-tabs [role="tab"] {
+  font-family: var(--sh-mono) !important;
+  font-size: 11.5px !important;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--sh-ink-3) !important;
+  background: var(--sh-head) !important;
+  border: 1px solid var(--sh-grid) !important;
+  border-bottom: none !important;
+  border-radius: var(--sh-radius) var(--sh-radius) 0 0 !important;
+  padding: 7px 14px !important;
+  margin-bottom: -1px;
+}
+.insp-sheet .sh-tabs [role="tab"][aria-selected="true"],
+.insp-sheet .sh-tabs [role="tab"][data-active="true"] {
+  color: var(--sh-accent-2) !important;
+  background: var(--sh-paper) !important;
+  border-color: var(--sh-grid-2) !important;
+  border-bottom: 1px solid var(--sh-paper) !important;
+  font-weight: 600 !important;
+}
+
+.insp-sheet .sh-cap-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px;
+  background: var(--sh-grid);
+  border: 1px solid var(--sh-grid);
+  border-radius: var(--sh-radius);
+  overflow: hidden;
+  margin-top: 18px;
+}
+.insp-sheet .sh-cap {
+  background: var(--sh-paper);
+  padding: 18px 18px 16px;
+  position: relative;
+}
+.insp-sheet .sh-cap__ref {
+  font-family: var(--sh-mono);
+  font-size: 11px;
+  color: var(--sh-accent-2);
+  background: var(--sh-accent-w);
+  border: 1px solid var(--sh-accent-b);
+  border-radius: 3px;
+  padding: 1px 6px;
+}
+.insp-sheet .sh-cap__title {
+  margin: 12px 0 6px;
+  font-size: 1.06rem;
+  font-weight: 640;
+  letter-spacing: -0.01em;
+  color: var(--sh-ink);
+}
+.insp-sheet .sh-cap__body {
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--sh-ink-2);
+  margin: 0;
+}
+.insp-sheet .sh-cap__bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+}
+.insp-sheet .sh-cap__bar-label,
+.insp-sheet .sh-cap__bar-val {
+  font-family: var(--sh-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--sh-ink-3);
+  flex: none;
+}
+.insp-sheet .sh-cap__bar-val { color: var(--sh-accent-2); }
+
+/* Progress → an in-cell data bar */
+.insp-sheet .sh-bar {
+  flex: 1;
+  width: 100% !important;
+}
+.insp-sheet .sh-bar [class*="rounded"] { border-radius: 2px !important; }
+
+/* Timeline → a process ledger */
+.insp-sheet .sh-process { max-width: 660px; margin-top: 18px; }
+.insp-sheet .sh-timeline [class*="text-"]:first-child,
+.insp-sheet .sh-timeline time {
+  font-family: var(--sh-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  font-size: 10.5px;
+}
+
+/* Accordion → cell notes */
+.insp-sheet .sh-faq { max-width: 740px; margin-top: 6px; }
+.insp-sheet .sh-faq__ref {
+  font-family: var(--sh-mono);
+  font-size: 11px;
+  color: var(--sh-ink-4);
+  margin-right: 8px;
+}
+
+/* ── About — a cell comment ────────────────────────────────────────────────── */
+.insp-sheet .sh-about {
+  display: grid;
+  grid-template-columns: 0.32fr 1fr;
+  gap: clamp(16px, 3vw, 40px);
+  align-items: start;
+}
+.insp-sheet .sh-about__label {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-start;
+}
+.insp-sheet .sh-about__tag {
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: -0.01em;
+  color: var(--sh-ink);
+}
+.insp-sheet .sh-about__body {
+  border-left: 3px solid var(--sh-accent-b);
+  padding-left: clamp(16px, 3vw, 28px);
+}
+.insp-sheet .sh-about__lead {
+  font-size: clamp(1.15rem, 2vw, 1.5rem);
+  line-height: 1.42;
+  font-weight: 540;
+  letter-spacing: -0.015em;
+  color: var(--sh-ink);
+  margin: 0;
+}
+.insp-sheet .sh-about__para {
+  margin-top: 16px !important;
+  line-height: 1.65 !important;
+}
+
+/* ── Team — a roster sheet ─────────────────────────────────────────────────── */
+.insp-sheet .sh-team {
+  border: 1px solid var(--sh-grid-2);
+  border-radius: var(--sh-radius);
+  overflow: hidden;
+  background: var(--sh-grid);
+  display: grid;
+  gap: 1px;
+}
+.insp-sheet .sh-team__head,
+.insp-sheet .sh-team__row {
+  display: grid;
+  grid-template-columns: 1.1fr 1.4fr 1fr;
+  background: var(--sh-paper);
+  align-items: center;
+}
+.insp-sheet .sh-team__head {
+  background: var(--sh-head);
+  font-family: var(--sh-mono);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--sh-ink-3);
+  font-weight: 600;
+}
+.insp-sheet .sh-team__head > span { padding: 9px 14px; }
+.insp-sheet .sh-team__row { transition: background var(--dur-base, 0.16s) var(--ease-out, ease); }
+.insp-sheet .sh-team__row:hover { background: var(--sh-sel); }
+.insp-sheet .sh-team__name {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--sh-ink);
+}
+.insp-sheet .sh-team__role {
+  padding: 12px 14px;
+  font-size: 13px;
+  color: var(--sh-ink-2);
+}
+.insp-sheet .sh-team__util {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 12px 14px;
+}
+.insp-sheet .sh-team__util-val {
+  font-family: var(--sh-mono);
+  font-size: 11px;
+  color: var(--sh-accent-2);
+  flex: none;
+}
+/* Avatar → square ink name-cell chip */
+.insp-sheet .sh-avatar {
+  border-radius: 3px !important;
+  background: var(--sh-ink) !important;
+}
+.insp-sheet .sh-avatar * {
+  border-radius: 3px !important;
+  color: #fff !important;
+  font-family: var(--sh-mono) !important;
+  font-weight: 600 !important;
+}
+
+/* ── Recognition + clients ─────────────────────────────────────────────────── */
+.insp-sheet .sh-recog {
+  display: grid;
+  grid-template-columns: 1.55fr 1fr;
+  gap: clamp(18px, 4vw, 44px);
+  align-items: start;
+}
+/* Table → a frozen-header ledger */
+.insp-sheet .sh-table {
+  border: 1px solid var(--sh-grid-2) !important;
+  border-radius: var(--sh-radius) !important;
+  overflow: hidden;
+  margin-top: 4px;
+}
+.insp-sheet .sh-table table { width: 100%; }
+.insp-sheet .sh-table thead th {
+  background: var(--sh-head) !important;
+  font-family: var(--sh-mono) !important;
+  font-size: 10.5px !important;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--sh-ink-3) !important;
+  border-bottom: 2px solid var(--sh-grid-2) !important;
+}
+.insp-sheet .sh-table tbody tr { transition: background var(--dur-base, 0.16s) var(--ease-out, ease); }
+.insp-sheet .sh-table tbody tr:hover { background: var(--sh-sel) !important; }
+.insp-sheet .sh-table tbody td {
+  border-bottom: 1px solid var(--sh-grid) !important;
+  font-size: 13px;
+}
+.insp-sheet .sh-td-mono { font-family: var(--sh-mono) !important; color: var(--sh-ink-3) !important; }
+.insp-sheet .sh-td-strong { font-weight: 600 !important; color: var(--sh-ink) !important; }
+.insp-sheet .sh-td-muted { color: var(--sh-ink-2) !important; }
+
+.insp-sheet .sh-clients {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 12px;
+}
+/* Badge → outlined cell-range tag */
+.insp-sheet .sh-client {
+  border-radius: 3px !important;
+  font-family: var(--sh-mono);
+  font-size: 11px !important;
+  background: var(--sh-head) !important;
+  color: var(--sh-ink-2) !important;
+  border: 1px solid var(--sh-grid-2) !important;
+}
+.insp-sheet .sh-sep { margin: 20px 0 !important; }
+.insp-sheet .sh-press {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 7px;
+}
+.insp-sheet .sh-press li {
+  font-size: 12.5px;
+  color: var(--sh-ink-2);
+  padding-left: 16px;
+  position: relative;
+}
+.insp-sheet .sh-press li::before {
+  content: "›";
+  position: absolute;
+  left: 2px;
+  color: var(--sh-accent);
+  font-family: var(--sh-mono);
+}
+
+/* ── Contact — a formula-bar input ─────────────────────────────────────────── */
+.insp-sheet .sh-contact {
+  display: grid;
+  grid-template-columns: 1fr 1.05fr;
+  gap: clamp(20px, 4vw, 48px);
+  align-items: start;
+}
+.insp-sheet .sh-contact__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 20px;
+}
+.insp-sheet .sh-contact__addr {
+  font-family: var(--sh-mono);
+  font-size: 13px;
+  color: var(--sh-ink);
+}
+.insp-sheet .sh-contact__addr--dim { color: var(--sh-ink-3); font-size: 12px; }
+.insp-sheet .sh-budget { margin-top: 24px; display: grid; gap: 10px; justify-items: start; }
+.insp-sheet .sh-budget__note {
+  font-family: var(--sh-mono);
+  font-size: 11.5px;
+  color: var(--sh-ink-3);
+}
+
+/* Card → a bordered cell range; Composer → the cell editor */
+.insp-sheet .sh-briefcard {
+  border: 1px solid var(--sh-grid-2) !important;
+  border-radius: var(--sh-radius) !important;
+  overflow: hidden;
+  box-shadow: 0 1px 0 rgba(24, 24, 27, 0.04) !important;
+}
+.insp-sheet .sh-briefcard__head {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--sh-head) !important;
+  border-bottom: 1px solid var(--sh-grid-2) !important;
+  padding: 9px 14px !important;
+}
+.insp-sheet .sh-briefcard__title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--sh-mono);
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--sh-accent-2);
+}
+.insp-sheet .sh-briefcard__body { padding: 14px !important; }
+.insp-sheet .sh-composer {
+  border: 1px solid var(--sh-grid) !important;
+  border-radius: var(--sh-radius) !important;
+  font-family: var(--sh-sans);
+}
+.insp-sheet .sh-composer:focus-within {
+  border-color: var(--sh-accent) !important;
+  box-shadow: 0 0 0 2px var(--sh-accent-w) !important;
+}
+.insp-sheet .sh-briefcard__meter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 10px;
+}
+.insp-sheet .sh-briefcard__meter .sh-bar { max-width: 160px; }
+.insp-sheet .sh-briefcard__foot {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--sh-paper) !important;
+  border-top: 1px solid var(--sh-grid) !important;
+  padding: 10px 14px !important;
+}
+.insp-sheet .sh-briefcard__done {
+  display: grid;
+  gap: 10px;
+  justify-items: start;
+  padding: 18px 4px;
+}
+.insp-sheet .sh-briefcard__done p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--sh-ink-2);
+  line-height: 1.5;
+}
+
+/* ── Footer — a status bar with sheet tabs ─────────────────────────────────── */
+.insp-sheet .sh-statusbar {
+  margin-top: 16px;
+  background: var(--sh-paper);
+  border: 1px solid var(--sh-grid);
+  border-radius: var(--sh-radius);
+  overflow: hidden;
+}
+.insp-sheet .sh-statusbar__tabs {
+  display: flex;
+  align-items: stretch;
+  background: var(--sh-head);
+  border-bottom: 1px solid var(--sh-grid-2);
+  font-family: var(--sh-mono);
+  font-size: 11px;
+}
+.insp-sheet .sh-statusbar__tab {
+  padding: 8px 14px;
+  color: var(--sh-ink-3);
+  border-right: 1px solid var(--sh-grid);
+  letter-spacing: 0.02em;
+}
+.insp-sheet .sh-statusbar__tab--active {
+  background: var(--sh-paper);
+  color: var(--sh-accent-2);
+  font-weight: 600;
+  box-shadow: inset 0 2px 0 var(--sh-accent);
+}
+.insp-sheet .sh-statusbar__tab--add { color: var(--sh-ink-4); }
+.insp-sheet .sh-statusbar__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 12px 16px;
+  font-family: var(--sh-mono);
+  font-size: 11.5px;
+  color: var(--sh-ink-3);
+}
+.insp-sheet .sh-statusbar__back {
+  color: var(--sh-accent-2);
+  text-decoration: none;
+  font-weight: 600;
+}
+.insp-sheet .sh-statusbar__back:hover { text-decoration: underline; }
+
+/* ── Responsive collapses ──────────────────────────────────────────────────── */
+@media (max-width: 920px) {
+  .insp-sheet .sh-hero,
+  .insp-sheet .sh-about,
+  .insp-sheet .sh-recog,
+  .insp-sheet .sh-contact {
+    grid-template-columns: 1fr;
+  }
+  .insp-sheet .sh-about__body { border-left: none; padding-left: 0; }
+}
+@media (max-width: 720px) {
+  .insp-sheet .sh-cap-grid { grid-template-columns: 1fr; }
+  /* drop the Discipline (C) + Fee (F) columns → 5 visible columns:
+     row# | A·ID | B·Project | D·Year | E·Status */
+  .insp-sheet .sh-grid {
+    grid-template-columns: 28px 72px 1.3fr 60px 108px;
+  }
+  /* colheads are direct children of .sh-grid: corner(1) A(2) B(3) C(4) D(5) E(6) F(7) */
+  .insp-sheet .sh-grid__colhead:nth-child(4),  /* C · Discipline */
+  .insp-sheet .sh-grid__colhead:nth-child(7) { /* F · Fee */
+    display: none;
+  }
+  /* cells are children of .sh-grid__row (display:contents):
+     stretch(1) rownum(2) ID(3) title(4) discipline(5) year(6) status(7) fee(8) */
+  .insp-sheet .sh-grid__row .sh-cell:nth-child(5),  /* discipline */
+  .insp-sheet .sh-grid__row .sh-cell:nth-child(8) { /* fee */
+    display: none;
+  }
+  .insp-sheet .sh-team__head,
+  .insp-sheet .sh-team__row { grid-template-columns: 1fr 1fr; }
+  .insp-sheet .sh-team__head > span:nth-child(2),
+  .insp-sheet .sh-team__role { display: none; }
+}

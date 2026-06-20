@@ -1,0 +1,1110 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Inspiration Gallery · Style — Whiteboard
+   FIELDWORK rendered as a brainstorming WHITEBOARD / infinite canvas: a warm
+   off-white board with a faint dotted grid, sticky notes pinned and tilted,
+   washi-tape labels, marker handwriting, dashed hand-drawn SVG connectors, and
+   Polaroid headshots. Light mode. Every selector is scoped under .insp-whiteboard
+   so the page carries its OWN paper palette regardless of host theme, and never
+   collides with Tailwind's .dark. The Fancy primitives are restyled HARD to wear
+   the marker-and-paper idiom: StickyNote → literal scraps AND the metaphor for
+   everything else; Card → taped paper pad; Button → marker chip; Badge → washi
+   tape; Avatar → Polaroid; Table → ruled notebook page; Tabs → highlighter index
+   tabs; Progress → highlighter swipe; Composer → note pad; MoodMeter → budget pad.
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.insp-whiteboard {
+  /* ── Self-contained whiteboard palette ─────────────────────────────────────
+     Local semantic tokens so the surface is a warm paper board independent of
+     host light/dark mode. */
+  --wb-board:    #f6f3ea;   /* the board — warm off-white */
+  --wb-board-2:  #efeadd;   /* recessed bands */
+  --wb-paper:    #fffdf7;   /* white paper scraps */
+  --wb-ink:      #2b2722;   /* marker black-brown */
+  --wb-ink-2:    #5a5347;   /* secondary handwriting */
+  --wb-ink-3:    #8a8273;   /* faint pencil */
+  --wb-line:     #ddd6c4;   /* hairline / grid lines */
+  --wb-line-2:   #c8bfa8;   /* stronger pencil rule */
+
+  /* sticky-paper colors (match react-fancy StickyNote presets but warmer) */
+  --wb-paper-yellow: #fff4b8;
+  --wb-paper-blue:   #cfe7fb;
+  --wb-paper-pink:   #fcd2dd;
+  --wb-paper-green:  #cdeecb;
+  --wb-paper-violet: #ddd3f4;
+
+  --wb-accent:   #e8542f;   /* marker red-orange — the one loud accent */
+  --wb-accent-2: #f2b705;   /* highlighter yellow */
+  --wb-blue:     #2f7fd4;   /* marker blue */
+  --wb-tape:     rgba(238, 222, 150, 0.62);  /* washi tape (warm) */
+  --wb-tape-blue: rgba(174, 210, 240, 0.6);
+  --wb-tack:     #e8542f;   /* push-pin red */
+
+  --wb-shadow:   0 10px 22px -14px rgba(60, 50, 30, 0.45);
+  --wb-shadow-lg: 0 22px 44px -20px rgba(60, 50, 30, 0.5);
+  --wb-radius:   3px;
+
+  /* Re-point the shared semantic tokens so any react-fancy primitive that reads
+     them inherits the paper surface without per-component overrides. */
+  --fg-1: var(--wb-ink);
+  --fg-2: var(--wb-ink-2);
+  --fg-3: var(--wb-ink-3);
+  --bg-0: var(--wb-board);
+  --bg-1: var(--wb-board-2);
+  --surface: var(--wb-paper);
+  --border-1: var(--wb-line);
+  --border-2: var(--wb-line-2);
+  --accent: var(--wb-accent);
+  --primary: var(--wb-accent);
+  --ring: rgba(232, 84, 47, 0.3);
+
+  /* a marker / handwriting display face with graceful fallbacks */
+  --wb-hand: "Bradley Hand", "Segoe Print", "Comic Sans MS", "Marker Felt",
+             ui-rounded, "Trebuchet MS", system-ui, sans-serif;
+  --wb-body: var(--font-sans, ui-sans-serif, system-ui, sans-serif);
+
+  position: relative;
+  isolation: isolate;
+  background: var(--wb-board);
+  color: var(--wb-ink-2);
+  font-family: var(--wb-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Dotted-grid canvas backdrop ─────────────────────────────────────────────── */
+.insp-whiteboard .wb-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-color: var(--wb-board);
+  background-image:
+    radial-gradient(circle, rgba(120, 110, 85, 0.16) 1px, transparent 1.4px),
+    radial-gradient(900px 520px at 82% -6%, rgba(242, 183, 5, 0.10), transparent 60%),
+    radial-gradient(760px 460px at -6% 10%, rgba(47, 127, 212, 0.07), transparent 58%);
+  background-size: 24px 24px, 100% 100%, 100% 100%;
+  background-position: 0 0, 0 0, 0 0;
+}
+
+.insp-whiteboard .wb-shell {
+  position: relative;
+  z-index: 1;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 22px clamp(16px, 3vw, 40px) 48px;
+}
+
+.insp-whiteboard ::selection { background: rgba(242, 183, 5, 0.5); }
+
+/* ── Board header ────────────────────────────────────────────────────────────── */
+.insp-whiteboard .wb-runhead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 14px;
+  padding-bottom: 18px;
+}
+.insp-whiteboard .wb-mark {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 10px;
+  position: relative;
+}
+.insp-whiteboard .wb-mark--sm .wb-mark__name { font-size: 16px; }
+.insp-whiteboard .wb-mark__pin {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 35% 30%, #ff8a6b, var(--wb-tack) 70%);
+  box-shadow: 0 2px 4px rgba(60, 30, 10, 0.35);
+  align-self: center;
+}
+.insp-whiteboard .wb-mark__name {
+  font-family: var(--wb-hand);
+  font-weight: 700;
+  font-size: 22px;
+  letter-spacing: 0.01em;
+  color: var(--wb-ink);
+  transform: rotate(-1.5deg);
+}
+.insp-whiteboard .wb-mark__sub {
+  font-family: var(--wb-hand);
+  font-size: 14px;
+  color: var(--wb-ink-3);
+}
+.insp-whiteboard .wb-runhead__meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12.5px;
+  color: var(--wb-ink-3);
+}
+.insp-whiteboard .wb-runhead__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #34a853;
+  box-shadow: 0 0 0 3px rgba(52, 168, 83, 0.18);
+  animation: wb-pulse 2.4s ease-in-out infinite;
+}
+@keyframes wb-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+/* ── Washi tape labels ───────────────────────────────────────────────────────── */
+.insp-whiteboard .wb-tape {
+  display: inline-block;
+  font-family: var(--wb-hand);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--wb-ink);
+  padding: 3px 14px;
+  background: var(--wb-tape);
+  box-shadow: 0 2px 6px -3px rgba(60, 50, 30, 0.4);
+  position: relative;
+}
+.insp-whiteboard .wb-tape::before,
+.insp-whiteboard .wb-tape::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 7px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.35), transparent);
+}
+.insp-whiteboard .wb-tape::before { left: 0; }
+.insp-whiteboard .wb-tape::after { right: 0; transform: scaleX(-1); }
+.insp-whiteboard .wb-tape--sm { font-size: 12.5px; padding: 2px 11px; }
+.insp-whiteboard .wb-tape--rot { transform: rotate(-2.5deg); }
+.insp-whiteboard .wb-tape--alt { background: var(--wb-tape-blue); }
+
+/* ── Generic marker type ─────────────────────────────────────────────────────── */
+.insp-whiteboard .wb-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--wb-hand);
+  font-size: 15px;
+  color: var(--wb-accent);
+  margin-bottom: 8px;
+}
+.insp-whiteboard .wb-kicker__arrow { font-size: 18px; transform: translateY(1px); }
+
+.insp-whiteboard .wb-display {
+  font-family: var(--wb-hand);
+  font-weight: 700;
+  font-size: clamp(2.3rem, 5.6vw, 3.9rem);
+  line-height: 1.06;
+  letter-spacing: -0.01em;
+  color: var(--wb-ink);
+  margin: 0;
+}
+.insp-whiteboard .wb-hi {
+  position: relative;
+  white-space: nowrap;
+  color: var(--wb-ink);
+}
+.insp-whiteboard .wb-hi::before {
+  content: "";
+  position: absolute;
+  left: -4px;
+  right: -4px;
+  top: 12%;
+  bottom: 8%;
+  background: var(--wb-accent-2);
+  opacity: 0.55;
+  transform: rotate(-1.5deg) skewX(-8deg);
+  z-index: -1;
+  border-radius: 2px;
+}
+
+.insp-whiteboard .wb-lede {
+  margin: 18px 0 0;
+  max-width: 50ch;
+  font-size: 16px;
+  line-height: 1.62;
+  color: var(--wb-ink-2);
+}
+.insp-whiteboard .wb-lede--sm { font-size: 14.5px; max-width: 44ch; }
+
+.insp-whiteboard .wb-h2 {
+  font-family: var(--wb-hand) !important;
+  font-weight: 700 !important;
+  font-size: clamp(1.7rem, 3.4vw, 2.4rem) !important;
+  letter-spacing: -0.01em !important;
+  color: var(--wb-ink) !important;
+  line-height: 1.1 !important;
+  transform: rotate(-0.6deg);
+}
+.insp-whiteboard .wb-h2--gap { margin-bottom: 22px !important; }
+
+.insp-whiteboard .wb-meta {
+  font-family: var(--wb-hand);
+  font-size: 14px;
+  color: var(--wb-ink-3);
+}
+
+/* numbered index tab (highlighter) */
+.insp-whiteboard .wb-tab {
+  display: inline-grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  font-family: var(--wb-hand);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--wb-ink);
+  background: var(--wb-accent-2);
+  border-radius: 6px 6px 6px 1px;
+  box-shadow: var(--wb-shadow);
+  transform: rotate(-3deg);
+  margin-bottom: 12px;
+}
+
+/* ── Sections ────────────────────────────────────────────────────────────────── */
+.insp-whiteboard .wb-section { margin-top: clamp(48px, 7vw, 88px); }
+.insp-whiteboard .wb-sechead {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin-bottom: 26px;
+}
+.insp-whiteboard .wb-sechead__note {
+  margin: 8px 0 0;
+  font-family: var(--wb-hand);
+  font-size: 15px;
+  color: var(--wb-ink-3);
+}
+
+/* ── Hero ────────────────────────────────────────────────────────────────────── */
+.insp-whiteboard .wb-hero {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: clamp(24px, 4vw, 56px);
+  align-items: center;
+  margin-top: 22px;
+}
+.insp-whiteboard .wb-hero__cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 26px;
+}
+.insp-whiteboard .wb-hero__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin-top: 22px;
+  font-family: var(--wb-hand);
+  font-size: 14px;
+  color: var(--wb-ink-2);
+}
+.insp-whiteboard .wb-hero__legend span { display: inline-flex; align-items: center; gap: 7px; }
+.insp-whiteboard .wb-swatch {
+  width: 13px;
+  height: 13px;
+  border-radius: 3px;
+  transform: rotate(-6deg);
+  box-shadow: 0 1px 2px rgba(60,50,30,0.3);
+}
+.insp-whiteboard .wb-swatch--y { background: var(--wb-paper-yellow); }
+.insp-whiteboard .wb-swatch--b { background: var(--wb-paper-blue); }
+.insp-whiteboard .wb-swatch--p { background: var(--wb-paper-pink); }
+
+/* hero note board */
+.insp-whiteboard .wb-hero__board {
+  position: relative;
+  min-height: 320px;
+}
+.insp-whiteboard .wb-wires {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+.insp-whiteboard .wb-wire {
+  stroke: var(--wb-accent);
+  stroke-width: 2;
+  stroke-linecap: round;
+  opacity: 0.5;
+}
+.insp-whiteboard .wb-wire--dash { stroke: var(--wb-blue); stroke-dasharray: 5 7; }
+
+.insp-whiteboard .wb-pin { position: absolute; z-index: 1; }
+.insp-whiteboard .wb-pin--a { top: 18px; left: 8%; }
+.insp-whiteboard .wb-pin--b { top: 88px; right: 4%; }
+.insp-whiteboard .wb-pin--c { bottom: 14px; left: 24%; }
+
+.insp-whiteboard .wb-pintack {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 35% 30%, #ff9b7e, var(--wb-tack) 70%);
+  box-shadow: 0 3px 5px rgba(60, 30, 10, 0.4), inset 0 -1px 2px rgba(0,0,0,0.2);
+  z-index: 3;
+}
+.insp-whiteboard .wb-pintack--red { background: radial-gradient(circle at 35% 30%, #ff9b7e, #e8542f 70%); }
+.insp-whiteboard .wb-pintack--blue { background: radial-gradient(circle at 35% 30%, #8fc0ee, #2f7fd4 70%); }
+
+/* ── StickyNote → marker note ────────────────────────────────────────────────── */
+.insp-whiteboard .wb-note {
+  font-family: var(--wb-hand) !important;
+  font-size: 15px !important;
+  line-height: 1.4 !important;
+  color: var(--wb-ink) !important;
+  box-shadow: var(--wb-shadow-lg) !important;
+  border-radius: var(--wb-radius) !important;
+}
+.insp-whiteboard .wb-note * { font-family: var(--wb-hand) !important; color: var(--wb-ink) !important; }
+
+/* ── Buttons → marker chips ──────────────────────────────────────────────────── */
+.insp-whiteboard .wb-btn {
+  font-family: var(--wb-hand) !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  border-radius: 999px !important;
+  padding: 9px 20px !important;
+  transition: transform 0.14s ease, box-shadow 0.14s ease, background 0.14s ease !important;
+}
+.insp-whiteboard .wb-btn--ink {
+  background: var(--wb-ink) !important;
+  color: var(--wb-board) !important;
+  border: 2px solid var(--wb-ink) !important;
+  box-shadow: 3px 3px 0 0 rgba(43, 39, 34, 0.18) !important;
+}
+.insp-whiteboard .wb-btn--ink:hover:not(:disabled) {
+  transform: translate(-1px, -1px) rotate(-1deg) !important;
+  box-shadow: 5px 5px 0 0 var(--wb-accent) !important;
+}
+.insp-whiteboard .wb-btn--ink:disabled { opacity: 0.4 !important; box-shadow: none !important; }
+.insp-whiteboard .wb-btn--ghost {
+  background: transparent !important;
+  color: var(--wb-ink) !important;
+  border: 2px dashed var(--wb-line-2) !important;
+  box-shadow: none !important;
+}
+.insp-whiteboard .wb-btn--ghost:hover:not(:disabled) {
+  border-color: var(--wb-accent) !important;
+  color: var(--wb-accent) !important;
+  transform: rotate(-1deg) !important;
+}
+
+/* ── Figures band ────────────────────────────────────────────────────────────── */
+.insp-whiteboard .wb-figures {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+}
+.insp-whiteboard .wb-figure {
+  position: relative;
+  background: var(--wb-paper);
+  border: 1px solid var(--wb-line);
+  border-radius: var(--wb-radius);
+  padding: 20px 18px 18px;
+  transform: rotate(var(--rot, 0deg));
+  box-shadow: var(--wb-shadow);
+}
+.insp-whiteboard .wb-figure__tack {
+  position: absolute;
+  top: -7px;
+  left: 14px;
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 35% 30%, #8fc0ee, var(--wb-blue) 70%);
+  box-shadow: 0 2px 4px rgba(20, 40, 70, 0.4);
+}
+.insp-whiteboard .wb-figure__num {
+  font-family: var(--wb-hand);
+  font-weight: 700;
+  font-size: clamp(1.7rem, 3.4vw, 2.4rem);
+  color: var(--wb-ink);
+  line-height: 1;
+}
+.insp-whiteboard .wb-figure__label {
+  margin-top: 6px;
+  font-family: var(--wb-hand);
+  font-size: 13.5px;
+  color: var(--wb-ink-3);
+}
+
+/* ── Work wall ───────────────────────────────────────────────────────────────── */
+.insp-whiteboard .wb-wall {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(18px, 2.4vw, 30px);
+  padding-top: 8px;
+}
+.insp-whiteboard .wb-scrap {
+  position: relative;
+  background: var(--paper, var(--wb-paper-yellow));
+  border-radius: var(--wb-radius);
+  padding: 26px 18px 16px;
+  min-height: 184px;
+  display: flex;
+  flex-direction: column;
+  transform: rotate(var(--rot, 0deg));
+  box-shadow: var(--wb-shadow);
+  transition: transform 0.16s ease, box-shadow 0.16s ease;
+}
+.insp-whiteboard .wb-scrap:hover {
+  transform: rotate(0deg) translateY(-4px) scale(1.02);
+  box-shadow: var(--wb-shadow-lg);
+  z-index: 2;
+}
+.insp-whiteboard .wb-scrap__stretch { position: absolute; inset: 0; z-index: 3; border-radius: var(--wb-radius); }
+.insp-whiteboard .wb-scrap > *:not(.wb-scrap__stretch) { position: relative; z-index: 1; }
+.insp-whiteboard .wb-scrap__tack {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 35% 30%, #fff, rgba(255,255,255,0.2) 60%, rgba(43,39,34,0.35));
+  box-shadow: 0 3px 5px rgba(60, 30, 10, 0.35);
+  z-index: 4;
+}
+.insp-whiteboard .wb-scrap__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.insp-whiteboard .wb-scrap__num {
+  font-family: var(--wb-hand);
+  font-size: 13px;
+  color: var(--wb-ink-3);
+}
+.insp-whiteboard .wb-star { color: var(--wb-accent); font-size: 15px; }
+.insp-whiteboard .wb-scrap__title {
+  font-family: var(--wb-hand);
+  font-weight: 700;
+  font-size: 21px;
+  color: var(--wb-ink);
+  margin: 8px 0 4px;
+  letter-spacing: -0.01em;
+}
+.insp-whiteboard .wb-scrap__disc {
+  font-family: var(--wb-hand);
+  font-size: 14px;
+  color: var(--wb-ink-2);
+  margin: 0;
+  flex: 1;
+}
+.insp-whiteboard .wb-scrap__foot {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1.5px dashed rgba(60, 50, 30, 0.25);
+}
+.insp-whiteboard .wb-scrap__client { font-size: 12.5px; color: var(--wb-ink-2); }
+.insp-whiteboard .wb-scrap__year {
+  font-family: var(--wb-hand);
+  font-size: 13px;
+  color: var(--wb-ink);
+  white-space: nowrap;
+  transition: transform 0.14s ease;
+}
+.insp-whiteboard .wb-scrap:hover .wb-scrap__year { transform: translateX(3px); }
+
+.insp-whiteboard .wb-wall__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 26px;
+}
+
+/* ── Pillbox → marker filter ─────────────────────────────────────────────────── */
+.insp-whiteboard .wb-pillbox { width: 300px !important; max-width: 100%; }
+.insp-whiteboard .wb-pillbox * { font-family: var(--wb-hand) !important; }
+.insp-whiteboard .wb-pillbox input,
+.insp-whiteboard .wb-pillbox [class*="input"] {
+  background: var(--wb-paper) !important;
+  border: 2px dashed var(--wb-line-2) !important;
+  border-radius: 10px !important;
+  color: var(--wb-ink) !important;
+  font-size: 14.5px !important;
+}
+
+/* ── Pagination → page flips ─────────────────────────────────────────────────── */
+.insp-whiteboard .wb-pagination * { font-family: var(--wb-hand) !important; }
+.insp-whiteboard .wb-pagination button {
+  background: var(--wb-paper) !important;
+  border: 1.5px solid var(--wb-line-2) !important;
+  border-radius: 8px !important;
+  color: var(--wb-ink-2) !important;
+  font-size: 14px !important;
+  box-shadow: var(--wb-shadow) !important;
+}
+.insp-whiteboard .wb-pagination button:hover {
+  color: var(--wb-accent) !important;
+  border-color: var(--wb-accent) !important;
+  transform: rotate(-2deg) !important;
+}
+.insp-whiteboard .wb-pagination [aria-current="true"],
+.insp-whiteboard .wb-pagination button[aria-current] {
+  background: var(--wb-accent-2) !important;
+  color: var(--wb-ink) !important;
+  border-color: var(--wb-line-2) !important;
+}
+
+/* ── Tabs → highlighter index tabs ───────────────────────────────────────────── */
+.insp-whiteboard .wb-tabs__list {
+  gap: 6px !important;
+  border-bottom: 2px dashed var(--wb-line-2) !important;
+}
+.insp-whiteboard .wb-tabs__list [role="tab"] {
+  font-family: var(--wb-hand) !important;
+  font-size: 16px !important;
+  color: var(--wb-ink-3) !important;
+  padding: 8px 16px !important;
+  border-radius: 8px 8px 0 0 !important;
+  transition: background 0.14s ease, color 0.14s ease !important;
+}
+.insp-whiteboard .wb-tabs__list [role="tab"]:hover {
+  color: var(--wb-ink) !important;
+  background: rgba(242, 183, 5, 0.2) !important;
+}
+.insp-whiteboard .wb-tabs__list [role="tab"][aria-selected="true"],
+.insp-whiteboard .wb-tabs__list [role="tab"][data-state="active"] {
+  color: var(--wb-ink) !important;
+  background: var(--wb-accent-2) !important;
+  border-color: transparent !important;
+}
+
+/* ── Capabilities (StickyNote cards) ─────────────────────────────────────────── */
+.insp-whiteboard .wb-caps {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(18px, 2.4vw, 30px);
+  margin-top: 24px;
+}
+.insp-whiteboard .wb-cap {
+  box-shadow: var(--wb-shadow-lg) !important;
+  border-radius: var(--wb-radius) !important;
+  padding: 4px !important;
+}
+.insp-whiteboard .wb-cap__inner { padding: 18px 18px 16px; }
+.insp-whiteboard .wb-cap__no {
+  font-family: var(--wb-hand);
+  font-size: 13px;
+  color: var(--wb-ink-2);
+}
+.insp-whiteboard .wb-cap__title {
+  font-family: var(--wb-hand);
+  font-weight: 700;
+  font-size: 20px;
+  color: var(--wb-ink);
+  margin: 4px 0 8px;
+}
+.insp-whiteboard .wb-cap__body {
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--wb-ink-2);
+  margin: 0;
+}
+
+/* ── Timeline → marker process ───────────────────────────────────────────────── */
+.insp-whiteboard .wb-process { margin-top: 22px; max-width: 700px; }
+.insp-whiteboard .wb-timeline,
+.insp-whiteboard .wb-timeline * { font-family: var(--wb-hand) !important; }
+.insp-whiteboard .wb-timeline [class*="date"],
+.insp-whiteboard .wb-timeline time {
+  color: var(--wb-accent) !important;
+  font-size: 14px !important;
+  letter-spacing: 0 !important;
+}
+.insp-whiteboard .wb-timeline h3,
+.insp-whiteboard .wb-timeline [class*="title"] {
+  color: var(--wb-ink) !important;
+  font-size: 17px !important;
+  font-weight: 700 !important;
+}
+.insp-whiteboard .wb-timeline [class*="description"],
+.insp-whiteboard .wb-timeline p {
+  color: var(--wb-ink-2) !important;
+  font-size: 14px !important;
+}
+
+/* ── Accordion → flip notes ──────────────────────────────────────────────────── */
+.insp-whiteboard .wb-faq { margin-top: 20px; max-width: 760px; }
+.insp-whiteboard .wb-accordion,
+.insp-whiteboard .wb-accordion * { font-family: var(--wb-hand) !important; }
+.insp-whiteboard .wb-accordion [class*="item"],
+.insp-whiteboard .wb-accordion > * { border-color: var(--wb-line) !important; }
+.insp-whiteboard .wb-accordion button,
+.insp-whiteboard .wb-accordion [role="button"] {
+  color: var(--wb-ink) !important;
+  font-size: 17px !important;
+  font-weight: 600 !important;
+}
+.insp-whiteboard .wb-accordion button:hover { color: var(--wb-accent) !important; }
+.insp-whiteboard .wb-accordion [class*="content"],
+.insp-whiteboard .wb-accordion [role="region"] {
+  color: var(--wb-ink-2) !important;
+  font-size: 14.5px !important;
+  line-height: 1.6 !important;
+  font-family: var(--wb-body) !important;
+}
+
+/* ── About — torn paper note ─────────────────────────────────────────────────── */
+.insp-whiteboard .wb-about {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: clamp(20px, 4vw, 56px);
+  align-items: start;
+}
+.insp-whiteboard .wb-about__side { display: flex; flex-direction: column; gap: 16px; align-items: flex-start; }
+.insp-whiteboard .wb-about__paper {
+  position: relative;
+  background: var(--wb-paper);
+  padding: 30px clamp(22px, 3vw, 40px);
+  box-shadow: var(--wb-shadow-lg);
+  border-radius: var(--wb-radius);
+  /* torn / irregular paper edge */
+  clip-path: polygon(0 2%, 100% 0, 99.5% 98%, 0.5% 100%);
+  background-image: repeating-linear-gradient(
+    transparent, transparent 30px, rgba(60, 50, 30, 0.05) 30px, rgba(60, 50, 30, 0.05) 31px
+  );
+}
+.insp-whiteboard .wb-about__tack { top: -8px; left: 32px; transform: none; }
+.insp-whiteboard .wb-about__lead {
+  font-family: var(--wb-hand);
+  font-size: clamp(1.25rem, 2.2vw, 1.7rem);
+  line-height: 1.4;
+  font-weight: 700;
+  color: var(--wb-ink);
+  margin: 0;
+}
+.insp-whiteboard .wb-about__text {
+  font-size: 15px !important;
+  line-height: 1.7 !important;
+  color: var(--wb-ink-2) !important;
+  margin-top: 16px !important;
+  max-width: 62ch;
+}
+.insp-whiteboard .wb-about__sign {
+  display: block;
+  margin-top: 18px;
+  font-family: var(--wb-hand);
+  font-size: 16px;
+  color: var(--wb-accent);
+  transform: rotate(-1.5deg);
+}
+
+/* ── Team — Polaroid wall ────────────────────────────────────────────────────── */
+.insp-whiteboard .wb-team {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(18px, 2.6vw, 34px);
+}
+.insp-whiteboard .wb-polaroid {
+  position: relative;
+  margin: 0;
+  background: #fff;
+  padding: 12px 12px 0;
+  box-shadow: var(--wb-shadow-lg);
+  border-radius: 2px;
+  transform: rotate(var(--rot, 0deg));
+  transition: transform 0.18s ease;
+}
+.insp-whiteboard .wb-polaroid:hover { transform: rotate(0deg) translateY(-4px); z-index: 2; }
+.insp-whiteboard .wb-polaroid__tack {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 13px;
+  height: 13px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 35% 30%, #ffd27e, var(--wb-accent-2) 70%);
+  box-shadow: 0 2px 4px rgba(80, 60, 10, 0.4);
+}
+.insp-whiteboard .wb-polaroid__photo {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1 / 1;
+  background: linear-gradient(150deg, var(--wb-paper-blue), var(--wb-paper-violet));
+  border-radius: 1px;
+}
+.insp-whiteboard .wb-avatar {
+  width: 76px !important;
+  height: 76px !important;
+  font-family: var(--wb-hand) !important;
+  font-weight: 700 !important;
+  font-size: 26px !important;
+  color: var(--wb-ink) !important;
+  background: rgba(255, 255, 255, 0.7) !important;
+  border: 2px solid rgba(255,255,255,0.9) !important;
+}
+.insp-whiteboard .wb-polaroid__cap {
+  text-align: center;
+  padding: 12px 4px 16px;
+}
+.insp-whiteboard .wb-polaroid__name {
+  display: block;
+  font-family: var(--wb-hand);
+  font-weight: 700;
+  font-size: 17px;
+  color: var(--wb-ink);
+}
+.insp-whiteboard .wb-polaroid__role {
+  display: block;
+  font-size: 12.5px;
+  color: var(--wb-ink-3);
+  margin-top: 2px;
+}
+
+/* ── Recognition: ruled notebook ledger + clients ───────────────────────────── */
+.insp-whiteboard .wb-rec {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: clamp(24px, 4vw, 52px);
+  align-items: start;
+}
+.insp-whiteboard .wb-rec__title { margin: 12px 0 14px !important; }
+
+/* Table → ruled notebook page */
+.insp-whiteboard .wb-ledger {
+  background: var(--wb-paper);
+  border: 1px solid var(--wb-line);
+  border-left: 3px solid var(--wb-accent);
+  border-radius: var(--wb-radius);
+  box-shadow: var(--wb-shadow);
+  overflow: hidden;
+  padding: 4px 6px;
+}
+.insp-whiteboard .wb-table,
+.insp-whiteboard .wb-table * { font-family: var(--wb-hand) !important; }
+.insp-whiteboard .wb-table th {
+  color: var(--wb-ink-3) !important;
+  font-size: 12.5px !important;
+  text-transform: lowercase !important;
+  letter-spacing: 0 !important;
+  border-bottom: 1.5px solid var(--wb-line-2) !important;
+}
+.insp-whiteboard .wb-table td {
+  color: var(--wb-ink-2) !important;
+  font-size: 15px !important;
+  border-top: 1px solid var(--wb-line) !important;
+  border-color: var(--wb-line) !important;
+}
+.insp-whiteboard .wb-table td:first-child { color: var(--wb-ink-3) !important; }
+.insp-whiteboard .wb-table td:nth-child(2) { color: var(--wb-ink) !important; font-weight: 700 !important; }
+.insp-whiteboard .wb-table tr:hover td { background: rgba(242, 183, 5, 0.12) !important; }
+
+/* clients (washi chips) */
+.insp-whiteboard .wb-rec__side { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+.insp-whiteboard .wb-clients {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+.insp-whiteboard .wb-chip {
+  font-family: var(--wb-hand) !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  color: var(--wb-ink) !important;
+  border: none !important;
+  border-radius: 2px !important;
+  padding: 4px 12px !important;
+  box-shadow: 0 2px 5px -3px rgba(60,50,30,0.5) !important;
+}
+.insp-whiteboard .wb-chip:nth-child(odd) { transform: rotate(-2deg); }
+.insp-whiteboard .wb-chip:nth-child(even) { transform: rotate(1.5deg); }
+.insp-whiteboard .wb-chip--y { background: var(--wb-tape) !important; }
+.insp-whiteboard .wb-chip--b { background: var(--wb-tape-blue) !important; }
+.insp-whiteboard .wb-chip--p { background: rgba(252, 210, 221, 0.7) !important; }
+.insp-whiteboard .wb-chip--g { background: rgba(205, 238, 203, 0.7) !important; }
+.insp-whiteboard .wb-chip--v { background: rgba(221, 211, 244, 0.72) !important; }
+
+.insp-whiteboard .wb-sep {
+  width: 100%;
+  margin: 8px 0 !important;
+  border: none !important;
+  border-top: 2px dashed var(--wb-line-2) !important;
+  background: transparent !important;
+}
+.insp-whiteboard .wb-press {
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 0;
+  font-family: var(--wb-hand);
+  font-size: 15px;
+  color: var(--wb-ink-2);
+  line-height: 1.9;
+}
+.insp-whiteboard .wb-press li::before { content: "✶ "; color: var(--wb-accent); }
+.insp-whiteboard .wb-press__lead { color: var(--wb-ink); font-weight: 600; }
+
+/* ── Contact / brief ─────────────────────────────────────────────────────────── */
+.insp-whiteboard .wb-contact {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(24px, 4vw, 56px);
+  align-items: start;
+}
+.insp-whiteboard .wb-contact__addr {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 20px;
+}
+.insp-whiteboard .wb-addr {
+  font-family: var(--wb-hand);
+  font-size: 16px;
+  color: var(--wb-ink-2);
+}
+.insp-whiteboard .wb-addr--accent { color: var(--wb-accent); font-weight: 700; }
+.insp-whiteboard .wb-budget { margin-top: 26px; }
+.insp-whiteboard .wb-budget__hint {
+  margin: 10px 0 12px !important;
+  font-size: 14px !important;
+  color: var(--wb-ink-2) !important;
+  max-width: 36ch;
+}
+.insp-whiteboard .wb-mood {
+  background: var(--wb-paper);
+  border: 2px dashed var(--wb-line-2);
+  border-radius: 10px;
+  padding: 6px;
+  box-shadow: var(--wb-shadow);
+}
+.insp-whiteboard .wb-budget__read { margin-top: 12px; }
+.insp-whiteboard .wb-reason,
+.insp-whiteboard [class*="reason"] {
+  color: var(--wb-accent) !important;
+  font-family: var(--wb-hand) !important;
+}
+
+/* Card → taped brief pad */
+.insp-whiteboard .wb-brief {
+  position: relative;
+  background: var(--wb-paper-yellow) !important;
+  border: none !important;
+  border-radius: var(--wb-radius) !important;
+  box-shadow: var(--wb-shadow-lg) !important;
+  transform: rotate(-1deg);
+  overflow: visible !important;
+}
+.insp-whiteboard .wb-brief__tack {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 35% 30%, #ff9b7e, var(--wb-tack) 70%);
+  box-shadow: 0 3px 6px rgba(60, 30, 10, 0.45), inset 0 -1px 2px rgba(0,0,0,0.2);
+  z-index: 4;
+}
+.insp-whiteboard .wb-brief__head {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 14px 18px 10px !important;
+  border-bottom: 1.5px dashed rgba(60, 50, 30, 0.28) !important;
+  background: transparent !important;
+}
+.insp-whiteboard .wb-brief__title {
+  font-family: var(--wb-hand);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--wb-ink);
+}
+.insp-whiteboard .wb-brief__status {
+  box-shadow: none !important;
+  transform: rotate(2deg);
+}
+.insp-whiteboard .wb-brief__body { padding: 16px 18px !important; }
+.insp-whiteboard .wb-brief__prompt {
+  font-family: var(--wb-hand);
+  font-size: 15px;
+  color: var(--wb-ink-2);
+  margin-bottom: 10px;
+}
+
+/* Composer → note scribble pad */
+.insp-whiteboard .wb-composer,
+.insp-whiteboard .wb-composer * { font-family: var(--wb-hand) !important; }
+.insp-whiteboard .wb-composer {
+  background: rgba(255, 255, 255, 0.6) !important;
+  border: 2px dashed rgba(60, 50, 30, 0.3) !important;
+  border-radius: 8px !important;
+}
+.insp-whiteboard .wb-composer textarea,
+.insp-whiteboard .wb-composer [contenteditable] {
+  color: var(--wb-ink) !important;
+  font-size: 15.5px !important;
+  caret-color: var(--wb-accent) !important;
+}
+.insp-whiteboard .wb-composer textarea::placeholder { color: var(--wb-ink-3) !important; }
+
+.insp-whiteboard .wb-brief__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 12px;
+}
+.insp-whiteboard .wb-pinopt {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--wb-hand);
+  font-size: 14px;
+  color: var(--wb-ink-2);
+}
+
+/* Switch */
+.insp-whiteboard .wb-switch[data-checked="true"],
+.insp-whiteboard .wb-switch[aria-checked="true"] { background: var(--wb-accent) !important; }
+
+/* Progress → highlighter swipe */
+.insp-whiteboard .wb-progress { width: 130px !important; }
+.insp-whiteboard .wb-progress [class*="track"],
+.insp-whiteboard .wb-progress > div {
+  background: rgba(60, 50, 30, 0.12) !important;
+  border-radius: 999px !important;
+  height: 8px !important;
+}
+.insp-whiteboard .wb-progress [class*="bar"],
+.insp-whiteboard .wb-progress [class*="fill"] {
+  background: var(--wb-accent-2) !important;
+  border-radius: 999px !important;
+}
+
+.insp-whiteboard .wb-brief__footer {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 12px 18px !important;
+  border-top: 1.5px dashed rgba(60, 50, 30, 0.28) !important;
+  background: transparent !important;
+}
+.insp-whiteboard .wb-brief__note {
+  font-family: var(--wb-hand) !important;
+  color: var(--wb-ink-3) !important;
+  font-size: 13px !important;
+}
+.insp-whiteboard .wb-brief__sent { padding: 8px 2px 10px; }
+.insp-whiteboard .wb-brief__ok {
+  display: block;
+  margin-bottom: 10px;
+  font-family: var(--wb-hand);
+  font-size: 17px;
+  font-weight: 700;
+  color: #2e7d4f;
+}
+.insp-whiteboard .wb-brief__sent p {
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--wb-ink-2);
+  margin: 0 0 14px;
+}
+.insp-whiteboard .wb-brief__mail { color: var(--wb-accent); font-weight: 600; }
+
+/* ── Footer ──────────────────────────────────────────────────────────────────── */
+.insp-whiteboard .wb-footer { margin-top: clamp(52px, 7vw, 88px); }
+.insp-whiteboard .wb-footer__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 24px;
+  padding: 22px 0;
+}
+.insp-whiteboard .wb-footer__blurb {
+  margin: 12px 0 0;
+  max-width: 350px;
+  font-family: var(--wb-hand);
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--wb-ink-3);
+}
+.insp-whiteboard .wb-footer__links {
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  gap: 8px 38px;
+}
+.insp-whiteboard .wb-footer__links a {
+  font-family: var(--wb-hand);
+  font-size: 15px;
+  color: var(--wb-ink-2);
+  text-decoration: none;
+  transition: color 0.14s ease, transform 0.14s ease;
+}
+.insp-whiteboard .wb-footer__links a:hover { color: var(--wb-accent); transform: rotate(-2deg); }
+
+/* torn-paper divider */
+.insp-whiteboard .wb-footer__torn {
+  height: 10px;
+  margin: 8px 0 16px;
+  background:
+    linear-gradient(135deg, transparent 33.3%, var(--wb-line) 33.3%, var(--wb-line) 66.6%, transparent 66.6%) 0 0 / 14px 10px,
+    linear-gradient(-135deg, transparent 33.3%, var(--wb-line) 33.3%, var(--wb-line) 66.6%, transparent 66.6%) 7px 0 / 14px 10px;
+  opacity: 0.6;
+}
+.insp-whiteboard .wb-footer__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-top: 8px;
+}
+.insp-whiteboard .wb-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--wb-hand);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--wb-accent);
+  text-decoration: none;
+  transition: gap 0.14s ease;
+}
+.insp-whiteboard .wb-back:hover { gap: 11px; }
+
+/* ── Responsive ──────────────────────────────────────────────────────────────── */
+@media (max-width: 980px) {
+  .insp-whiteboard .wb-hero,
+  .insp-whiteboard .wb-about,
+  .insp-whiteboard .wb-rec,
+  .insp-whiteboard .wb-contact { grid-template-columns: 1fr; }
+  .insp-whiteboard .wb-wall,
+  .insp-whiteboard .wb-team,
+  .insp-whiteboard .wb-figures { grid-template-columns: repeat(2, 1fr); }
+  .insp-whiteboard .wb-caps { grid-template-columns: 1fr; }
+  .insp-whiteboard .wb-hero__board { min-height: 280px; margin-top: 8px; }
+}
+@media (max-width: 560px) {
+  .insp-whiteboard .wb-wall,
+  .insp-whiteboard .wb-team,
+  .insp-whiteboard .wb-figures { grid-template-columns: 1fr; }
+}
+
+/* Respect reduced motion: kill hover rotations / pulse motion. */
+@media (prefers-reduced-motion: reduce) {
+  .insp-whiteboard .wb-runhead__dot { animation: none; }
+  .insp-whiteboard .wb-scrap,
+  .insp-whiteboard .wb-polaroid,
+  .insp-whiteboard .wb-btn,
+  .insp-whiteboard .wb-pagination button,
+  .insp-whiteboard .wb-footer__links a { transition: none; }
+  .insp-whiteboard .wb-scrap:hover,
+  .insp-whiteboard .wb-polaroid:hover { transform: rotate(var(--rot, 0deg)) translateY(-2px); }
+}

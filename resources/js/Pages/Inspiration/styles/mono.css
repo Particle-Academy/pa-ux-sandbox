@@ -1,0 +1,818 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Inspiration Gallery · Style — Monochrome
+   FIELDWORK set in strict monochrome: one ink (near-black) on white, a single
+   saturated accent (cobalt) used sparingly, a disciplined index grid, hairline
+   rules everywhere, square geometry (radius 0). Even more reductive than Swiss —
+   no fills, no shadows, no gradients, no second hue. The accent appears only on
+   a marker square, a hover, a key numeral, or a live control. The Fancy kit is
+   forced to WEAR the monochrome idiom (Badge → bracketed/outlined label, Table →
+   ruled ledger, Tabs → hairline rail, Avatar → square ink chip, Card → bordered
+   brief slip, Composer → ruled note). Light mode only. Every selector scoped
+   under .insp-mono — self-contained, no bare element/utility selectors, never
+   .dark (would collide with Tailwind dark mode).
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.insp-mono {
+  /* ── Scoped Monochrome tokens ──────────────────────────────────────────── */
+  --mo-paper:    #ffffff;   /* the field — pure white */
+  --mo-ink:      #0a0a0a;   /* near-black ink */
+  --mo-ink-2:    #2b2b2b;   /* body text */
+  --mo-ink-3:    #6e6e6e;   /* metadata / captions */
+  --mo-ink-4:    #9a9a9a;   /* faint folios */
+  --mo-rule:     #e4e4e4;   /* hairline rules */
+  --mo-rule-2:   #c9c9c9;   /* heavier hairlines */
+  --mo-wash:     #f5f5f5;   /* the only "fill" — a faint hover wash */
+  --mo-accent:   #1b46ff;   /* cobalt — the single accent, used sparingly */
+  --mo-accent-2: #1536c9;   /* accent pressed */
+
+  --mo-mono: var(--font-mono);
+  --mo-sans: var(--font-sans);
+
+  background: var(--mo-paper);
+  color: var(--mo-ink);
+  font-family: var(--mo-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.insp-mono ::selection {
+  background: var(--mo-ink);
+  color: var(--mo-paper);
+}
+
+/* ── Shell ─────────────────────────────────────────────────────────────────── */
+.mono-shell {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 8px 4px 0;
+}
+
+/* ── Hairline rules ────────────────────────────────────────────────────────── */
+.mono-rule {
+  height: 1px;
+  background: var(--mo-rule);
+  border: 0;
+  margin: 0;
+}
+.mono-rule--ink { background: var(--mo-ink); }
+
+.insp-mono .mono-sep {
+  margin: 22px 0;
+  border-color: var(--mo-rule) !important;
+  background: var(--mo-rule) !important;
+}
+
+/* ── Running head ──────────────────────────────────────────────────────────── */
+.mono-runhead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 6px 0 16px;
+}
+.insp-mono .mono-crumbs {
+  font-family: var(--mo-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--mo-ink-3);
+}
+.insp-mono .mono-crumbs a,
+.insp-mono .mono-crumbs [aria-current] {
+  color: var(--mo-ink-3);
+}
+.insp-mono .mono-crumbs a:hover { color: var(--mo-accent); }
+
+.mono-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+}
+.mono-mark__sq {
+  width: 13px;
+  height: 13px;
+  background: var(--mo-ink);
+  position: relative;
+}
+.mono-mark__sq::after {
+  /* the lone accent in the mark — a small inset cobalt square */
+  content: "";
+  position: absolute;
+  inset: 4px 4px auto auto;
+  width: 4px;
+  height: 4px;
+  background: var(--mo-accent);
+}
+.mono-mark__name {
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  color: var(--mo-ink);
+}
+
+/* Badge → bracketed mono chip */
+.insp-mono .mono-chip {
+  background: transparent !important;
+  border: 1px solid var(--mo-rule-2) !important;
+  color: var(--mo-ink-3) !important;
+  border-radius: 0 !important;
+  font-family: var(--mo-mono) !important;
+  font-size: 10px !important;
+  letter-spacing: 0.06em !important;
+  text-transform: uppercase !important;
+  padding: 2px 7px !important;
+}
+
+/* ── Section frame ─────────────────────────────────────────────────────────── */
+.mono-section {
+  padding: 56px 0;
+  border-top: 1px solid var(--mo-rule);
+}
+.mono-section:first-of-type { border-top: 0; }
+
+.mono-section__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+/* ── Eyebrow (numbered running label) ──────────────────────────────────────── */
+.mono-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mo-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--mo-ink-3);
+}
+.mono-eyebrow__no {
+  color: var(--mo-ink);
+  font-weight: 600;
+  position: relative;
+  padding-right: 10px;
+}
+.mono-eyebrow__no::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 50%;
+  width: 1px;
+  height: 11px;
+  transform: translateY(-50%);
+  background: var(--mo-rule-2);
+}
+.mono-eyebrow__dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--mo-accent);
+}
+
+/* ── Typographic hierarchy ─────────────────────────────────────────────────── */
+.mono-display {
+  margin: 22px 0 0;
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  line-height: 0.98;
+  color: var(--mo-ink);
+  font-size: clamp(2.6rem, 6.5vw, 5rem);
+}
+.mono-display__accent {
+  color: var(--mo-accent);
+}
+.mono-lede {
+  margin: 24px 0 0;
+  font-size: clamp(1.02rem, 1.5vw, 1.25rem);
+  line-height: 1.5;
+  color: var(--mo-ink-2);
+  max-width: 46ch;
+}
+.mono-lede--sm { font-size: 1rem; max-width: 42ch; }
+
+.insp-mono .mono-h2 {
+  margin: 12px 0 0;
+  font-size: clamp(1.5rem, 2.4vw, 2rem);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.08;
+  color: var(--mo-ink);
+}
+.insp-mono .mono-h2--gap { margin-bottom: 26px; }
+
+.mono-meta {
+  font-family: var(--mo-mono);
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--mo-ink-3);
+}
+.mono-meta--ink { color: var(--mo-ink); }
+
+/* ── Buttons → square ink / ghost ──────────────────────────────────────────── */
+.insp-mono .mono-btn {
+  font-family: var(--mo-mono) !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.06em !important;
+  text-transform: uppercase !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  transition: background var(--dur-base) var(--ease-out),
+              color var(--dur-base) var(--ease-out),
+              border-color var(--dur-base) var(--ease-out);
+}
+.insp-mono .mono-btn--ink {
+  background: var(--mo-ink) !important;
+  color: var(--mo-paper) !important;
+  border: 1px solid var(--mo-ink) !important;
+}
+.insp-mono .mono-btn--ink:hover:not(:disabled) {
+  background: var(--mo-accent) !important;
+  border-color: var(--mo-accent) !important;
+}
+.insp-mono .mono-btn--ink:disabled { opacity: 0.32 !important; }
+.insp-mono .mono-btn--ghost {
+  background: transparent !important;
+  color: var(--mo-ink) !important;
+  border: 1px solid var(--mo-rule-2) !important;
+}
+.insp-mono .mono-btn--ghost:hover:not(:disabled) {
+  color: var(--mo-accent) !important;
+  border-color: var(--mo-ink) !important;
+}
+
+/* ── Hero ──────────────────────────────────────────────────────────────────── */
+.mono-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+  column-gap: 48px;
+  align-items: start;
+}
+.mono-hero__cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 30px;
+}
+.mono-hero__meta { padding-top: 10px; }
+.mono-disclist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  font-family: var(--mo-mono);
+  font-size: 12px;
+  line-height: 1.85;
+  color: var(--mo-ink-3);
+}
+.mono-disclist li {
+  position: relative;
+  padding-left: 16px;
+}
+.mono-disclist li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.7em;
+  width: 6px;
+  height: 1px;
+  background: var(--mo-ink);
+}
+
+/* ── Figures band ──────────────────────────────────────────────────────────── */
+.mono-figures {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+}
+.mono-figure {
+  border-top: 2px solid var(--mo-ink);
+  padding: 16px 20px 0 0;
+}
+.mono-figure__num {
+  font-size: clamp(2.2rem, 4.5vw, 3.2rem);
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  color: var(--mo-ink);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+.mono-figure:first-child .mono-figure__num { color: var(--mo-accent); }
+.mono-figure__label {
+  margin-top: 8px;
+  font-family: var(--mo-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--mo-ink-3);
+}
+
+/* ── Work index ────────────────────────────────────────────────────────────── */
+.mono-index { display: grid; gap: 0; }
+.mono-index__row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 3rem minmax(0, 1.4fr) minmax(0, 1.2fr) 5.5rem;
+  align-items: baseline;
+  column-gap: 24px;
+  padding: 22px 4px;
+  border-top: 1px solid var(--mo-rule);
+  transition: background var(--dur-base) var(--ease-out);
+}
+.mono-index__row:last-child { border-bottom: 1px solid var(--mo-rule); }
+.mono-index__row:hover { background: var(--mo-wash); }
+.mono-index__stretch { position: absolute; inset: 0; z-index: 1; }
+.mono-index__num {
+  font-family: var(--mo-mono);
+  font-size: 12px;
+  color: var(--mo-ink-4);
+  font-variant-numeric: tabular-nums;
+}
+.mono-index__row:hover .mono-index__num { color: var(--mo-accent); }
+.mono-index__title {
+  font-size: clamp(1.2rem, 2.1vw, 1.55rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--mo-ink);
+  transition: color var(--dur-base) var(--ease-out);
+}
+.mono-index__row:hover .mono-index__title { color: var(--mo-accent); }
+.mono-index__disc {
+  font-family: var(--mo-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.02em;
+  color: var(--mo-ink-3);
+  line-height: 1.5;
+}
+.mono-index__year {
+  font-family: var(--mo-mono);
+  font-size: 12px;
+  color: var(--mo-ink-3);
+  text-align: right;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  font-variant-numeric: tabular-nums;
+}
+.mono-index__arrow {
+  opacity: 0;
+  color: var(--mo-accent);
+  transition: opacity var(--dur-base) var(--ease-out);
+}
+.mono-index__row:hover .mono-index__arrow { opacity: 1; }
+
+.mono-index__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+/* Pillbox → square mono filter */
+.insp-mono .mono-pillbox {
+  width: 18rem !important;
+  max-width: 100%;
+}
+.insp-mono .mono-pillbox,
+.insp-mono .mono-pillbox input,
+.insp-mono .mono-pillbox [class*="input"] {
+  font-family: var(--mo-mono) !important;
+  font-size: 12px !important;
+  border-radius: 0 !important;
+}
+.insp-mono .mono-pillbox [class*="border"],
+.insp-mono .mono-pillbox > div {
+  border-radius: 0 !important;
+  border-color: var(--mo-rule-2) !important;
+}
+.insp-mono .mono-pillbox [class*="rounded"] {
+  border-radius: 0 !important;
+}
+
+/* Pagination → square mono numerals */
+.insp-mono .mono-pagination button {
+  font-family: var(--mo-mono) !important;
+  font-size: 12px !important;
+  border-radius: 0 !important;
+  border-color: var(--mo-rule-2) !important;
+  color: var(--mo-ink-3) !important;
+}
+.insp-mono .mono-pagination button:hover {
+  color: var(--mo-ink) !important;
+  border-color: var(--mo-ink) !important;
+}
+.insp-mono .mono-pagination button[aria-current="true"],
+.insp-mono .mono-pagination button[data-active="true"] {
+  background: var(--mo-ink) !important;
+  color: var(--mo-paper) !important;
+  border-color: var(--mo-ink) !important;
+}
+
+/* ── Capabilities ──────────────────────────────────────────────────────────── */
+/* Tabs → hairline rail */
+.insp-mono .mono-tabs__list {
+  border-bottom: 1px solid var(--mo-rule-2);
+  gap: 0;
+}
+.insp-mono .mono-tabs__list button {
+  font-family: var(--mo-mono) !important;
+  font-size: 11.5px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+  color: var(--mo-ink-3) !important;
+  border-radius: 0 !important;
+  padding: 12px 16px !important;
+}
+.insp-mono .mono-tabs__list button:hover { color: var(--mo-ink) !important; }
+.insp-mono .mono-tabs__list button[aria-selected="true"],
+.insp-mono .mono-tabs__list button[data-active="true"],
+.insp-mono .mono-tabs__list button[data-state="active"] {
+  color: var(--mo-ink) !important;
+}
+/* The active underline indicator → cobalt */
+.insp-mono .mono-tabs__list [class*="indicator"],
+.insp-mono .mono-tabs [role="tablist"] [class*="bg-"] {
+  background: var(--mo-accent) !important;
+}
+
+.mono-caps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  margin-top: 28px;
+}
+.mono-cap {
+  border-top: 1px solid var(--mo-rule);
+  padding: 18px 22px 0 0;
+}
+.mono-cap__no {
+  font-family: var(--mo-mono);
+  font-size: 11px;
+  color: var(--mo-ink-4);
+  font-variant-numeric: tabular-nums;
+}
+.mono-cap__title {
+  margin: 10px 0 0;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--mo-ink);
+}
+.mono-cap__body {
+  margin: 8px 0 0;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--mo-ink-2);
+}
+
+.mono-process { max-width: 640px; margin-top: 26px; }
+/* Timeline → mono dates, ink line */
+.insp-mono .mono-timeline [class*="date"],
+.insp-mono .mono-timeline time {
+  font-family: var(--mo-mono);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 11px;
+  color: var(--mo-ink-3);
+}
+
+.mono-faq { max-width: 740px; margin-top: 22px; }
+.insp-mono .mono-accordion [class*="trigger"],
+.insp-mono .mono-accordion button {
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--mo-ink);
+}
+.insp-mono .mono-accordion [class*="content"] {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--mo-ink-2);
+}
+
+/* ── About ─────────────────────────────────────────────────────────────────── */
+.mono-about {
+  display: grid;
+  grid-template-columns: minmax(0, 0.3fr) minmax(0, 0.7fr);
+  column-gap: 48px;
+  align-items: start;
+}
+.mono-about__lead {
+  margin: 0;
+  font-size: clamp(1.2rem, 2vw, 1.6rem);
+  line-height: 1.4;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--mo-ink);
+}
+.insp-mono .mono-about__text {
+  margin-top: 20px !important;
+  font-size: 15px !important;
+  line-height: 1.65 !important;
+  color: var(--mo-ink-2) !important;
+  max-width: 56ch;
+}
+
+/* ── People ────────────────────────────────────────────────────────────────── */
+.mono-people {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+}
+.mono-person {
+  border-top: 1px solid var(--mo-rule);
+  padding: 20px 18px 0 0;
+}
+/* Avatar → square ink chip */
+.insp-mono .mono-avatar,
+.insp-mono .mono-avatar > * {
+  border-radius: 0 !important;
+}
+.insp-mono .mono-avatar {
+  background: var(--mo-ink) !important;
+  color: var(--mo-paper) !important;
+  font-family: var(--mo-mono) !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.02em !important;
+}
+.mono-person__name {
+  margin-top: 14px;
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  color: var(--mo-ink);
+}
+.mono-person__role {
+  margin-top: 3px;
+  font-family: var(--mo-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--mo-ink-3);
+  line-height: 1.4;
+}
+
+/* ── Recognition ───────────────────────────────────────────────────────────── */
+.mono-recognition {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  column-gap: 48px;
+  align-items: start;
+}
+.insp-mono .mono-recognition__title {
+  margin: 12px 0 16px;
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--mo-ink);
+}
+
+/* Table → ruled ledger */
+.insp-mono .mono-table { background: transparent; border: 0; }
+.insp-mono .mono-table table { border-collapse: collapse; width: 100%; }
+.insp-mono .mono-table thead th,
+.insp-mono .mono-table th {
+  background: transparent !important;
+  border-bottom: 2px solid var(--mo-ink) !important;
+  font-family: var(--mo-mono) !important;
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.1em !important;
+  text-transform: uppercase !important;
+  color: var(--mo-ink-3) !important;
+  padding: 0 14px 10px 0 !important;
+  text-align: left !important;
+}
+.insp-mono .mono-table tbody td,
+.insp-mono .mono-table td {
+  background: transparent !important;
+  border-bottom: 1px solid var(--mo-rule) !important;
+  font-size: 14px !important;
+  color: var(--mo-ink-2) !important;
+  padding: 14px 14px 14px 0 !important;
+  vertical-align: baseline;
+}
+.insp-mono .mono-table tbody tr:hover td { background: var(--mo-wash) !important; }
+.insp-mono .mono-table tbody td:first-child {
+  font-family: var(--mo-mono) !important;
+  font-size: 12px !important;
+  color: var(--mo-ink-4) !important;
+  font-variant-numeric: tabular-nums;
+}
+.insp-mono .mono-table tbody td:nth-child(2) {
+  font-weight: 600 !important;
+  color: var(--mo-ink) !important;
+}
+
+.mono-recognition__side { padding-top: 2px; }
+.mono-clients {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 14px;
+}
+/* Badge → outlined square tag */
+.insp-mono .mono-tag {
+  background: transparent !important;
+  border: 1px solid var(--mo-rule-2) !important;
+  color: var(--mo-ink) !important;
+  border-radius: 0 !important;
+  font-family: var(--mo-mono) !important;
+  font-size: 10.5px !important;
+  letter-spacing: 0.03em !important;
+  padding: 4px 9px !important;
+}
+.insp-mono .mono-tag:hover { border-color: var(--mo-ink) !important; }
+.mono-press {
+  list-style: none;
+  margin: 14px 0 0;
+  padding: 0;
+  font-family: var(--mo-mono);
+  font-size: 12px;
+  line-height: 1.9;
+  color: var(--mo-ink-3);
+}
+.mono-press__lead { color: var(--mo-ink); }
+
+/* ── Contact / brief ───────────────────────────────────────────────────────── */
+.mono-contact {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  column-gap: 48px;
+  align-items: start;
+}
+.mono-contact__addr { margin-top: 24px; }
+.mono-addr {
+  display: block;
+  font-family: var(--mo-mono);
+  font-size: 13px;
+  letter-spacing: 0.01em;
+  color: var(--mo-ink-3);
+}
+.mono-addr--ink { color: var(--mo-ink); margin-bottom: 4px; }
+.mono-contact__why { margin-top: 22px; }
+
+/* Card → bordered brief slip */
+.insp-mono .mono-brief {
+  background: var(--mo-paper) !important;
+  border: 1px solid var(--mo-ink) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+.insp-mono .mono-brief__head {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px !important;
+  border-bottom: 1px solid var(--mo-rule) !important;
+}
+.mono-brief__title {
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: -0.01em;
+  color: var(--mo-ink);
+}
+.insp-mono .mono-brief__status {
+  background: transparent !important;
+  border: 1px solid var(--mo-rule-2) !important;
+  color: var(--mo-ink-3) !important;
+  border-radius: 0 !important;
+  font-family: var(--mo-mono) !important;
+  font-size: 10px !important;
+  letter-spacing: 0.06em !important;
+  text-transform: uppercase !important;
+}
+.insp-mono .mono-brief__body { padding: 18px 20px !important; }
+/* Composer → ruled note */
+.insp-mono .mono-composer {
+  border: 1px solid var(--mo-rule-2) !important;
+  border-radius: 0 !important;
+  background: var(--mo-paper) !important;
+}
+.insp-mono .mono-composer:focus-within {
+  border-color: var(--mo-ink) !important;
+}
+.insp-mono .mono-composer textarea {
+  font-family: var(--mo-sans) !important;
+  font-size: 14px !important;
+  color: var(--mo-ink) !important;
+}
+.mono-brief__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 10px;
+}
+.insp-mono .mono-brief__count {
+  font-family: var(--mo-mono) !important;
+  font-size: 11px !important;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--mo-ink-3) !important;
+}
+.insp-mono .mono-progress { width: 9rem !important; }
+/* Progress bar fill → cobalt; track → hairline */
+.insp-mono .mono-progress [class*="bg-"] { background: var(--mo-accent) !important; }
+.insp-mono .mono-progress [class*="track"],
+.insp-mono .mono-progress > div { background: var(--mo-rule) !important; border-radius: 0 !important; }
+.insp-mono .mono-progress > div > div { background: var(--mo-accent) !important; border-radius: 0 !important; }
+.insp-mono .mono-brief__footer {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px !important;
+  border-top: 1px solid var(--mo-rule) !important;
+}
+.insp-mono .mono-brief__note {
+  font-family: var(--mo-mono) !important;
+  font-size: 10.5px !important;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--mo-ink-3) !important;
+}
+.mono-brief__sent { padding: 16px 2px; }
+.mono-brief__sent p {
+  margin: 14px 0 0;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--mo-ink);
+}
+.mono-brief__sent .mono-btn { margin-top: 16px; }
+
+/* ── Footer ────────────────────────────────────────────────────────────────── */
+.mono-footer { padding: 40px 0 14px; }
+.mono-footer__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin: 26px 0;
+}
+.mono-footer__blurb {
+  margin: 12px 0 0;
+  max-width: 340px;
+  font-family: var(--mo-mono);
+  font-size: 12px;
+  line-height: 1.65;
+  color: var(--mo-ink-3);
+}
+.mono-footer__links {
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  gap: 6px 40px;
+  font-family: var(--mo-mono);
+  font-size: 12px;
+  letter-spacing: 0.03em;
+}
+.mono-footer__links a { color: var(--mo-ink-3); text-decoration: none; }
+.mono-footer__links a:hover { color: var(--mo-accent); }
+.mono-footer__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 16px;
+}
+.mono-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--mo-mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--mo-accent);
+  text-decoration: none;
+}
+.mono-back:hover { color: var(--mo-accent-2); }
+
+/* ── Responsive ────────────────────────────────────────────────────────────── */
+@media (max-width: 920px) {
+  .mono-hero,
+  .mono-about,
+  .mono-recognition,
+  .mono-contact { grid-template-columns: 1fr; row-gap: 36px; }
+  .mono-caps,
+  .mono-people { grid-template-columns: repeat(2, 1fr); }
+  .mono-figures { grid-template-columns: repeat(2, 1fr); row-gap: 24px; }
+}
+@media (max-width: 640px) {
+  .mono-index__row {
+    grid-template-columns: 2.25rem 1fr;
+    row-gap: 6px;
+  }
+  .mono-index__disc,
+  .mono-index__year { grid-column: 2; text-align: left; justify-content: flex-start; }
+  .mono-caps,
+  .mono-people { grid-template-columns: 1fr; }
+}

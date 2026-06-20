@@ -1,0 +1,100 @@
+{
+  "id": "terminal",
+  "name": "Terminal",
+  "note": "A monospace, command-line portfolio.",
+  "mode": "dark",
+  "thesis": "A near-black phosphor CRT where the whole portfolio is a shell session: everything is monospace, section headers are typed commands, content is files/processes/logs, and one live terminal pane proves the kit can wear a TUI skin natively.",
+  "tokens": {
+    "bg": "#07080a (deep terminal black; recessed bands #0b0d10, surfaces #0e1014/#14171d)",
+    "fg": "#d6f5e3 primary (faint phosphor tint); #9fb3a8 secondary; #6b7d74 mono labels; #45544c faint",
+    "accent": "#3ddc84 phosphor green (hover #6bf0a6, dim #1f7a4c); amber #ffb454 + red #ff6b6b used only for window dots / award stars",
+    "fontDisplay": "var(--font-mono) — there is no separate display face; the display heading is just heavy mono (800)",
+    "fontMono": "var(--font-mono) used EVERYWHERE, with font-feature-settings 'liga' 0 / 'calt' 0 so ligatures stay off (true terminal feel)",
+    "radius": "4px on most chrome (var(--t-radius)); 6px on the two raised TUI panels; 3px on badges/chips",
+    "border": "1px hairlines in #1b2420, hover/stronger #28342e; 1px grid gaps (background-color bleed) instead of gutters",
+    "motion": "120–140ms ease micro-transitions; a steps() blinking block caret + status LED; xterm types the boot transcript char-by-char (~11ms/char); all decorative motion killed under prefers-reduced-motion"
+  },
+  "layout": "A single centered column (max-width ~1180px) framed as ONE OS window: a faux titlebar with traffic-light dots + breadcrumb path sits atop a bordered body. A full-page faint scanline overlay + CRT vignette give depth. Sections are stacked and separated by ASCII em-dash rules; each opens with a command-prompt header ($ fieldwork --flag). The hero is a 1.1fr/0.9fr split (copy left, a LIVE terminal pane right). Selected work is a 5-column piped table grid; figures/services/team are 1px-gap grids that read like boxed cells; recognition is a 1.5fr/1fr ledger+sidebar; contact is a 1fr/1fr intro + framed brief panel. Everything collapses to one column under 900px.",
+  "sections": [
+    {
+      "name": "titlebar + runhead",
+      "what": "Faux OS window chrome: red/amber/green traffic dots, a Breadcrumbs restyled as a path (~/inspiration / terminal), the studio mark (▍ glyph + FIELDWORK + a [v2026.6] badge), and an availability LED. An ASCII ──── rule closes it.",
+      "components": ["Breadcrumbs", "Badge"],
+      "restyle": "Breadcrumbs forced to mono 12px and recolored to dim ink with a green hover; the window dots + LED are hand-rolled spans; the rule is a <pre> of em-dashes in dim green."
+    },
+    {
+      "name": "hero",
+      "what": "Command header ($ fieldwork --whoami), a heavy-mono headline ('humans | agents share') with a glowing blinking block caret, a mono lede, two command-shaped buttons (./brief-the-studio, cat ./selected-work), and a key/value meta row. On the right: a real live <Terminal> in a framed pane that types a boot transcript.",
+      "components": ["Heading", "Button", "Terminal"],
+      "restyle": "Terminal (fancy-term) is read-only, bar cursor, transparent xterm background tinted to the pane; the boot transcript is written char-by-char with raw ANSI color escapes in useEffect. Buttons become bordered green-on-soft 'commands' that invert to solid green + glow on hover. The headline is mono 800 with a CSS caret animated via steps()."
+    },
+    {
+      "name": "figures",
+      "what": "A 4-up stat band: 2017 init, 140+ commits shipped, 09 processes, 16 awards — numbers framed as boot/uptime metrics.",
+      "components": [],
+      "restyle": "Hand-rolled 1px-gap grid of boxed cells; the big number is glowing phosphor green, the label dim mono."
+    },
+    {
+      "name": "selected work",
+      "what": "$ fieldwork --selected-work → 'ls ./work' index of 6 builds with idx/name/discipline/stack/year columns, ★ for awarded, a grep-style Pillbox filter, and Pagination.",
+      "components": ["Heading", "Pillbox", "Pagination"],
+      "restyle": "A bordered 5-column grid with a uppercase green-dim header row; titles prefixed './' and turn green on row hover (whole row is a stretched <Link>, an arrow nudges right). Pillbox becomes a 'grep --tag' input on a recessed field; Pagination buttons go mono with green active/hover states."
+    },
+    {
+      "name": "capabilities",
+      "what": "$ fieldwork --capabilities → a man-page of services/process/faq. Tabs are --services/--process/--faq flags; services are boxed cells with --flag labels + [tag] badges; process is a Timeline of stages; faq is an Accordion.",
+      "components": ["Tabs", "Badge", "Timeline", "Accordion"],
+      "restyle": "Tabs become flag pills (mono, green-soft active). Timeline forced mono with uppercase green-dim stage labels. Accordion forced mono, green hover on triggers. Badges are bracketed [tag] via ::before/::after content."
+    },
+    {
+      "name": "about",
+      "what": "$ cat README.md → a '# fieldwork/README.md' hash header, a bold lead line, body copy, and an 'echo \"measure twice, ship once\"' sign-off.",
+      "components": ["Heading", "Text"],
+      "restyle": "Text forced to mono 13px / 1.7 line-height in secondary ink; the hash header + sign-off are hand-rolled prompt lines."
+    },
+    {
+      "name": "team",
+      "what": "$ ps -aux | grep studio → the studio as 'running processes': Avatar glyph chip + name/role + a pid + @handle per person.",
+      "components": ["Avatar"],
+      "restyle": "Avatar becomes a square (radius 4) green-bordered mono glyph chip on a raised surface; each row shows a fake pid and handle in dim/green-dim mono."
+    },
+    {
+      "name": "recognition",
+      "what": "$ fieldwork --awards | less → an 'awards.log' Table ledger (year/project/award), plus a sidebar 'cat clients.txt' of [client] badges and a 'cat press.txt' list.",
+      "components": ["Heading", "Table", "Badge", "Separator"],
+      "restyle": "Table forced full-mono, hairline rows, uppercase green-dim headers, project column in green, green-soft row hover — a piped ASCII ledger. Client badges are outlined bracketed chips; press list items get a '› ' green-dim bullet."
+    },
+    {
+      "name": "contact / brief",
+      "what": "$ fieldwork --new-brief → 'init ./your-project' intro with key/value mail+tel, a ReasonTag on pricing, and a framed brief Card: a '> describe the build' prompt, a Composer, an ASCII char counter + Progress meter, and a 'send ⏎' button. On submit it shows a '[ok] 200 — brief received' state.",
+      "components": ["Heading", "Text", "ReasonTag", "Card", "Tooltip", "Badge", "Composer", "Progress", "Button"],
+      "restyle": "Card becomes a TUI panel with a gradient titlebar (▍ brief.new + a [stdin open] dot badge) and a recessed footer. Composer is a black '>' input with a green caret. Progress is a thin glowing green meter. ReasonTag recolored green mono."
+    },
+    {
+      "name": "footer",
+      "what": "ASCII rules bracket a mark + blurb and a 2-col link grid (./work, ./github, ./contact, ./mastodon), a fictional-studio disclaimer line prefixed '#', and a 'cd ../gallery' back link.",
+      "components": [],
+      "restyle": "Hand-rolled mono links with green hover; the back link is a mono command that widens its gap on hover."
+    }
+  ],
+  "palette": [
+    { "component": "Terminal", "restyle": "The centerpiece — a real fancy-term <Terminal>, read-only with a bar cursor, xterm background made transparent and tinted to a #050607 pane; a boot transcript is typed char-by-char with raw ANSI escapes so it reads as a live shell, not a screenshot." },
+    { "component": "Button", "restyle": "Becomes a shell command: mono, 4px radius, bordered green-on-green-soft (solid variant inverts to solid green + glow on hover); ghost variant is dim-bordered ink that greens on hover. Labels are paths/commands (./brief-the-studio, send ⏎)." },
+    { "component": "Badge", "restyle": "Becomes a bracketed [tag] via ::before/::after '['/']' content; green-soft phosphor fill by default, transparent dim outline for the client variant; lowercased, mono, 3px radius." },
+    { "component": "Table", "restyle": "A piped ASCII ledger: full mono, hairline #1b2420 row borders, uppercase green-dim header labels, the project column rendered in phosphor green, green-soft row hover." },
+    { "component": "Tabs", "restyle": "The tab strip becomes a row of --flags (--services/--process/--faq): mono pills on a hairline rail, active tab in green on green-soft with a green underline." },
+    { "component": "Avatar", "restyle": "A boxed glyph chip — squared to 4px radius, green-bordered, green mono initials on a raised surface, sitting in a 'process' row with a pid + handle." },
+    { "component": "Card", "restyle": "A framed TUI panel: gradient titlebar with a ▍ glyph title + a dot status badge, a recessed footer band, 6px radius, faint green ring + deep drop shadow." },
+    { "component": "Composer", "restyle": "A '>' shell input: black #050607 field, mono text, green caret-color, dim placeholder, preceded by a literal '> describe the build' prompt line." },
+    { "component": "Progress", "restyle": "A thin (2px-radius) glowing phosphor-green meter on a hairline track — an ASCII-style fill bar paired with a zero-padded char counter." },
+    { "component": "Pillbox", "restyle": "A 'grep --tag' input — mono, recessed black field, dim border that the kit's tag chips sit inside; width clamped to ~280px." },
+    { "component": "Pagination", "restyle": "Mono page buttons, transparent by default with green hover + green-soft active state, 4px radius — a terminal pager." },
+    { "component": "Timeline", "restyle": "Process stages — forced mono, uppercase green-dim stage labels (stage 0..3), ink titles; reads like staged build output." },
+    { "component": "Accordion", "restyle": "A ▸/▾ expandable tree of questions — mono throughout, green hover on triggers, secondary-ink answer bodies." },
+    { "component": "ReasonTag", "restyle": "Recolored to phosphor green mono so the underlined 'why' affordance reads as an inline annotated token." },
+    { "component": "Breadcrumbs", "restyle": "A filesystem path (~/inspiration / terminal) in dim mono with a green hover." },
+    { "component": "Heading / Text / Separator / Tooltip", "restyle": "Heading + Text forced to mono with terminal sizing/colors; Separator is a single hairline; Tooltip carries the 'a person reads every brief' note on the status badge." }
+  ],
+  "contentArchetype": "FIELDWORK — a fictional design + engineering studio whose whole site is a shell session: a --whoami hero, an 'ls ./work' project index, a 'man fieldwork' capabilities page, a 'cat README.md' about, a 'ps -aux | grep studio' team of processes, an 'awards.log' recognition ledger, and an 'init ./your-project' brief form. Copy leans into CLI metaphors (paths, pids, flags, exit codes) without becoming illegible.",
+  "remix": "Keep the three load-bearing moves: (1) mono everywhere with ligatures OFF; (2) section headers as typed commands ($ tool --flag); (3) ONE genuinely live terminal pane so the skin is proven, not faked. Swap phosphor green for amber (#ffb454) or IBM-blue and it instantly reads as a different machine; raise --t-radius to 8–10px and soften borders to blend toward a modern 'dev tool' aesthetic; drop the scanline overlay + CRT vignette to de-retro it. To blend with a Brutalist style, keep radius 0 and heavier rules; to blend with a Dashboard style, reuse the boxed 1px-gap grids as stat tiles. The token re-point block (mapping --fg-*/--bg-*/--accent to the local --t-* palette) is the portable core: paste it, restyle Button/Badge/Card/Table/Composer to taste, and any react-fancy primitive inherits the terminal surface for free."
+}

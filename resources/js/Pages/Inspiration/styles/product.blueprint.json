@@ -1,0 +1,76 @@
+{
+  "id": "product",
+  "name": "Product UI",
+  "note": "The portfolio as a Fancy dashboard.",
+  "mode": "light",
+  "thesis": "A studio's public portfolio reimagined as its own internal SaaS admin console — hairline panels on a faintly tinted canvas, an indigo/blue product accent, mono numerics, and a data-dense rhythm that makes Fancy primitives read native to a Linear/Vercel-style operations dashboard.",
+  "tokens": {
+    "bg": "#f6f7f9 canvas with #ffffff surfaces and #fbfbfc recessed sub-surfaces",
+    "fg": "#16181d primary / #515562 secondary / #868b97 muted",
+    "accent": "blue-600 #2563eb (soft fill #eff4ff, focus ring rgba(37,99,235,.16)); emerald/violet/amber/rose as status hues",
+    "fontDisplay": "Geist (var(--font-sans)), 600-650 weight, tight -0.02em tracking",
+    "fontMono": "Geist Mono (var(--font-mono)) for IDs, deltas, percentages, timestamps, range pills — every number is tabular-nums",
+    "radius": "10px panels / 7px controls + chips / 6px row-action buttons",
+    "border": "1px hairlines: #e9eaee default, #e2e3e8 stronger dividers; no heavy shadows — only soft 1-3px elevation, lifting to a pop shadow on hover",
+    "motion": "var(--dur-fast/base) with var(--ease-out); background/border/box-shadow transitions on hover, no transforms"
+  },
+  "layout": "A two-column app shell: a fixed 248px Sidebar (brand mark + plan badge, grouped nav with an active accent rail, a soft 'capacity' upsell card, and a signed-in profile chip pinned to the foot) beside a flexible main column. The main column opens with a sticky translucent top Navbar (breadcrumbs + a centered command-search Input + icon button with unread dot + primary CTA + avatar), then a scrolling content region: a page heading with a segmented range control, a 4-up row of KPI stat cards (icon chip, big tabular value, colored delta, sparkline), an underlined Tabs workspace (Overview / Projects / Capacity), and a closing brief banner + back-to-gallery footer. Inside tabs, content is laid out on a 1.85fr/1fr two-panel grid (charts + side lists) and a full-width filterable Table.",
+  "sections": [
+    {
+      "name": "sidebar",
+      "what": "Persistent workspace navigation + studio identity + signed-in user.",
+      "components": ["Card", "Badge", "Avatar", "Link"],
+      "restyle": "Nav items are hand-composed rows (not the Sidebar primitive) using the stretched-link pattern: each row is a flex container with an icon, label, optional mono count Badge, hover fill, and an accent left-rail + soft-blue background when active. The 'capacity tight' Card is forced to a soft accent callout (tinted bg, accent ring border, 7px radius). Badges are shrunk to 10px mono."
+    },
+    {
+      "name": "topbar",
+      "what": "Sticky command bar: breadcrumbs, global search, notifications, primary action, avatar.",
+      "components": ["Input", "Button", "Tooltip", "Avatar"],
+      "restyle": "Input is restyled into a compact soft search field (recessed sub-surface bg, hairline border, 7px radius, accent focus ring) with a leading Search glyph. The notification control is a hand-built 34px icon button with a rose unread dot ringed by the surface color. Button (CTA) gets squared 7px corners and 600 weight."
+    },
+    {
+      "name": "kpis",
+      "what": "Four KPI stat cards — active projects, utilization, pipeline value, NPS — each with a delta and trend sparkline.",
+      "components": ["Card", "Chart.Sparkline"],
+      "restyle": "Card forced to 10px radius + hairline border + soft elevation that lifts to a pop shadow on hover. Inside: a tinted accent icon chip, a 28px 650-weight tabular value, a green/red delta with an arrow glyph, and a right-aligned react-fancy Chart.Sparkline tinted per-metric. No default card chrome survives."
+    },
+    {
+      "name": "overview",
+      "what": "Revenue area chart (booked vs target) + a discipline-mix donut with a custom legend, then an activity feed and a team-load list.",
+      "components": ["Card", "Chart.Area", "Chart.Donut", "Progress", "Avatar", "Badge", "Button"],
+      "restyle": "Charts use blue-600 + zinc-300 series colors and a horizontal-only grid to sit quietly inside hairline panels. The donut hides its built-in legend in favor of a hand-built dotted legend list with mono percentages. Progress bars are slimmed for team-load rows (amber over 85% load, else blue). Panel headers share a mono eyebrow + 14.5px title pattern."
+    },
+    {
+      "name": "projects",
+      "what": "A filterable, paginated projects Table with a toolbar (count, in-progress switch, status select) and per-row actions menu.",
+      "components": ["Table", "Badge", "Progress", "Avatar", "Switch", "Select", "Dropdown", "Pagination"],
+      "restyle": "Table is restyled into a dense product grid: uppercase mono-ish 10.5px sticky header on a recessed sub-surface, 13px rows with hairline separators and a subtle hover fill. Cells compose a stacked project identity (mono ID / bold name / muted client·discipline), an inline lead avatar, a soft status Badge with dot, an inline Progress+mono percent, mono budget, a colored health pill, and a ghost row-action button triggering a Dropdown. Switch tinted blue; Select shrunk to a soft 7px control. Pagination sits in a hairline footer with a mono range count."
+    },
+    {
+      "name": "capacity",
+      "what": "Throughput bar chart (projects shipped/month) + a quarter-by-quarter allocation runway with booked percentages.",
+      "components": ["Card", "Chart.Bar", "Progress", "Badge", "Separator", "Button"],
+      "restyle": "Chart.Bar with one highlighted accent bar for the current month. Runway rows pair a quarter label + uppercase status tag over a medium Progress bar colored by saturation (rose >90%, amber >60%, else emerald) with a mono '% booked' caption, closed by a ghost 'capacity planner' link."
+    },
+    {
+      "name": "brief",
+      "what": "A closing call-to-action banner to spin up a new project workspace.",
+      "components": ["Card", "Button"],
+      "restyle": "Card flattened and given a faint top-right radial accent glow over the white surface; primary + ghost Buttons share the squared 7px / 600-weight product treatment."
+    }
+  ],
+  "palette": [
+    { "component": "Button", "restyle": "Squared to 7px corners, 600 weight; primary uses blue-600 solid, secondaries become ghost links that tint to accent on hover. Icon slugs (plus, arrow-right) ride trailing." },
+    { "component": "Badge", "restyle": "Soft variant as the default for status + counts; shrunk to 10px mono for nav/plan chips, with a leading dot for live statuses. Color carries semantic meaning (emerald=Live, blue=In build, violet=Discovery, zinc=Paused)." },
+    { "component": "Card", "restyle": "The universal panel: 10px radius, #e9eaee hairline border, soft 1-3px shadow, header/body/footer split by hairlines. Hover lifts KPI cards to a pop shadow. Some variants forced to soft-accent callouts." },
+    { "component": "Table", "restyle": "Reskinned into a dense admin grid — recessed uppercase mono header, 12-14px hairline-separated rows, hover fill, composed multi-line identity cells, inline avatars/progress/badges, right-aligned action column." },
+    { "component": "Progress", "restyle": "Thin inline meters for completion and load; color switches on threshold (emerald complete, blue in-flight, amber hot, rose over-booked). Always paired with a mono tabular percent." },
+    { "component": "Tabs", "restyle": "Underline variant restyled to a quiet 13.5px label set on a hairline baseline; muted by default, full-ink + 600 weight when active. Used as the primary workspace switch." },
+    { "component": "Input / Select / Switch", "restyle": "Form controls squared to 7px on recessed sub-surfaces with hairline borders and an accent focus ring; Input wears a leading Search glyph as a command bar; Switch tinted blue for the table filter." },
+    { "component": "Dropdown", "restyle": "Per-row overflow menu triggered by a ghost MoreHorizontal button; soft popover with a danger 'Archive' item, anchored bottom-end." },
+    { "component": "Chart (native react-fancy)", "restyle": "Sparkline / Area / Donut / Bar all tinted to the blue-600 accent + zinc neutrals; horizontal-only grids, hidden built-in legends replaced by hand-built dotted legends so charts read as quiet panel content, not standalone widgets." },
+    { "component": "Avatar", "restyle": "Initials fallbacks at xs/sm sizes with status rings; used as inline lead identity in table rows, team list, and the profile chip." }
+  ],
+  "contentArchetype": "A fictional design/dev studio (FIELDWORK) viewing its own book of work as an operations dashboard: KPIs (active projects, utilization, pipeline €, NPS), a projects table (ID, client, discipline, lead, status, % complete, budget, health), revenue booked-vs-target + discipline mix, a studio activity feed, per-person sprint load, and quarterly booking runway. Numbers and €k budgets are invented but internally consistent.",
+  "remix": "Drop the Sidebar+Navbar shell and KPI/Table/Tabs vocabulary onto any admin surface (CRM, analytics, billing, project tracker) — swap the local --ip-* light palette to rebrand, keep the hairline-panel + mono-numeric + soft-elevation discipline. To blend toward another style: warm the canvas and round the radii for a friendlier consumer SaaS; or push toward the Swiss style by stripping fills to pure hairline rules and widening whitespace while keeping the same component skeleton. The whole look lives in scoped CSS + local tokens, so the same React tree restyles wholesale by editing only product.css."
+}

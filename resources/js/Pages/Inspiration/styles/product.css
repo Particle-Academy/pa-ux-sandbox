@@ -1,0 +1,1040 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Inspiration Gallery · Product UI  (id "product", light mode)
+   FIELDWORK rendered as a Fancy product / admin dashboard: a fixed sidebar +
+   top navbar app shell, KPI stat cards, a tabbed workspace, a filterable
+   projects table, and native react-fancy charts. The kit's primitives are
+   restyled HARD here — tighter radii, an indigo/blue product accent, hairline
+   panels on a faintly tinted canvas, data-dense rhythm — so they read native to
+   a SaaS console rather than as default widgets.
+
+   LIGHT MODE ONLY — this style pins its own light palette via local tokens so it
+   stays a "Product UI" surface regardless of app theme. Every rule is scoped
+   under .insp-product. Never `.dark` (collides with Tailwind dark mode); never a
+   bare element/utility selector.
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.insp-product {
+    /* ── Local, light-pinned product palette ─────────────────────────────── */
+    --ip-accent: var(--blue-600);
+    --ip-accent-soft: #eff4ff;
+    --ip-accent-ring: rgba(37, 99, 235, 0.16);
+    --ip-violet: #7c3aed;
+    --ip-emerald: #059669;
+    --ip-amber: #d97706;
+    --ip-rose: #e11d48;
+
+    --ip-canvas: #f6f7f9;          /* app background */
+    --ip-surface: #ffffff;         /* panels, cards, sidebar */
+    --ip-surface-2: #fbfbfc;       /* recessed rows, sub-surfaces */
+    --ip-hover: #f3f4f6;           /* row / item hover */
+    --ip-active: var(--ip-accent-soft);
+
+    --ip-line: #e9eaee;            /* hairline borders */
+    --ip-line-2: #e2e3e8;          /* stronger dividers */
+
+    --ip-fg: #16181d;              /* primary text */
+    --ip-fg-2: #515562;            /* secondary text */
+    --ip-fg-3: #868b97;            /* muted / meta */
+
+    --ip-radius: 10px;             /* panels */
+    --ip-radius-sm: 7px;           /* controls, chips */
+    --ip-shadow: 0 1px 2px rgba(16, 18, 29, 0.04), 0 1px 3px rgba(16, 18, 29, 0.05);
+    --ip-shadow-pop: 0 8px 24px -6px rgba(16, 18, 29, 0.16), 0 2px 6px rgba(16, 18, 29, 0.06);
+
+    background: var(--ip-canvas);
+    color: var(--ip-fg);
+    font-family: var(--font-sans);
+    line-height: 1.45;
+    /* Pull the page out of the showcase content padding so the shell goes edge
+       to edge inside the demo frame. */
+    margin: -1px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: inset 0 0 0 1px var(--ip-line);
+}
+
+.insp-product *,
+.insp-product *::before,
+.insp-product *::after {
+    box-sizing: border-box;
+}
+
+/* ── App shell ───────────────────────────────────────────────────────────── */
+.insp-product .ip-app {
+    display: grid;
+    grid-template-columns: 248px minmax(0, 1fr);
+    min-height: 760px;
+}
+
+/* ── Sidebar ─────────────────────────────────────────────────────────────── */
+.insp-product .ip-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 16px 12px 14px;
+    background: var(--ip-surface);
+    border-right: 1px solid var(--ip-line);
+}
+
+.insp-product .ip-side-brand {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 4px 8px 14px;
+}
+.insp-product .ip-mark {
+    width: 26px;
+    height: 26px;
+    border-radius: 7px;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    font-weight: 700;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+.insp-product .ip-brand-name {
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: -0.01em;
+    color: var(--ip-fg);
+}
+.insp-product .ip-brand-plan {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 10px !important;
+    letter-spacing: 0.02em;
+}
+
+.insp-product .ip-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.insp-product .ip-nav-label {
+    font-size: 10.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--ip-fg-3);
+    padding: 6px 8px 4px;
+}
+.insp-product .ip-nav-label--space {
+    margin-top: 12px;
+}
+
+/* Sidebar nav item — restyled link row (stretched-link pattern) */
+.insp-product .ip-nav-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 9px;
+    border-radius: var(--ip-radius-sm);
+    color: var(--ip-fg-2);
+    font-size: 13.5px;
+    font-weight: 500;
+    transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+.insp-product .ip-nav-item:hover {
+    background: var(--ip-hover);
+    color: var(--ip-fg);
+}
+.insp-product .ip-nav-item.is-active {
+    background: var(--ip-active);
+    color: var(--ip-accent);
+}
+.insp-product .ip-nav-item.is-active::before {
+    content: "";
+    position: absolute;
+    left: -12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 18px;
+    border-radius: 0 3px 3px 0;
+    background: var(--ip-accent);
+}
+.insp-product .ip-nav-stretch {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: inherit;
+}
+.insp-product .ip-nav-icon {
+    display: grid;
+    place-items: center;
+    color: currentColor;
+    opacity: 0.92;
+}
+.insp-product .ip-nav-text {
+    flex: 1;
+}
+.insp-product .ip-nav-badge {
+    position: relative;
+    z-index: 2;
+    font-family: var(--font-mono);
+    font-size: 10px !important;
+}
+
+.insp-product .ip-side-foot {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-top: 12px;
+}
+
+/* The "capacity tight" upsell card — Card primitive restyled to a soft callout */
+.insp-product .ip-upsell {
+    display: flex;
+    gap: 10px;
+    padding: 11px;
+    background: var(--ip-accent-soft) !important;
+    border: 1px solid var(--ip-accent-ring) !important;
+    border-radius: var(--ip-radius-sm) !important;
+}
+.insp-product .ip-upsell-icon {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 7px;
+    background: #fff;
+    color: var(--ip-accent);
+    flex-shrink: 0;
+}
+.insp-product .ip-upsell-title {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--ip-fg);
+}
+.insp-product .ip-upsell-body {
+    font-size: 11.5px;
+    line-height: 1.4;
+    color: var(--ip-fg-2);
+    margin-top: 1px;
+}
+
+.insp-product .ip-profile {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 8px;
+    border-radius: var(--ip-radius-sm);
+    border: 1px solid var(--ip-line);
+    cursor: pointer;
+    transition: background var(--dur-fast) var(--ease-out);
+}
+.insp-product .ip-profile:hover {
+    background: var(--ip-hover);
+}
+.insp-product .ip-profile-meta {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+.insp-product .ip-profile-name {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--ip-fg);
+    line-height: 1.2;
+}
+.insp-product .ip-profile-role {
+    font-size: 11px;
+    color: var(--ip-fg-3);
+    line-height: 1.2;
+}
+.insp-product .ip-profile-chev {
+    margin-left: auto;
+    color: var(--ip-fg-3);
+    display: grid;
+    place-items: center;
+}
+
+/* ── Main column ─────────────────────────────────────────────────────────── */
+.insp-product .ip-main {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+/* Top navbar */
+.insp-product .ip-topbar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    height: 58px;
+    padding: 0 22px;
+    background: rgba(255, 255, 255, 0.86);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--ip-line);
+    position: sticky;
+    top: 0;
+    z-index: 20;
+}
+.insp-product .ip-crumbs {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    flex-shrink: 0;
+}
+.insp-product .ip-crumb {
+    color: var(--ip-fg-3);
+    text-decoration: none;
+    font-weight: 500;
+}
+.insp-product a.ip-crumb:hover {
+    color: var(--ip-fg-2);
+}
+.insp-product .ip-crumb--active {
+    color: var(--ip-fg);
+    font-weight: 600;
+}
+.insp-product .ip-crumb-sep {
+    color: var(--ip-line-2);
+}
+
+.insp-product .ip-topbar-search {
+    flex: 1;
+    max-width: 420px;
+}
+/* Restyle the Input primitive into a compact, soft command-search field */
+.insp-product .ip-search-input :where(input) {
+    background: var(--ip-surface-2) !important;
+    border-color: var(--ip-line) !important;
+    border-radius: var(--ip-radius-sm) !important;
+    font-size: 13px !important;
+}
+.insp-product .ip-search-input :where(input):focus {
+    border-color: var(--ip-accent) !important;
+    box-shadow: 0 0 0 3px var(--ip-accent-ring) !important;
+}
+
+.insp-product .ip-topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: auto;
+}
+.insp-product .ip-icon-btn {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: var(--ip-radius-sm);
+    border: 1px solid var(--ip-line);
+    background: var(--ip-surface);
+    color: var(--ip-fg-2);
+    cursor: pointer;
+    transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+.insp-product .ip-icon-btn:hover {
+    background: var(--ip-hover);
+    color: var(--ip-fg);
+}
+.insp-product .ip-icon-dot {
+    position: absolute;
+    top: 7px;
+    right: 8px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--ip-rose);
+    box-shadow: 0 0 0 2px var(--ip-surface);
+}
+
+/* ── Content scroll region ───────────────────────────────────────────────── */
+.insp-product .ip-content {
+    padding: 24px 26px 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+}
+
+.insp-product .ip-page-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+.insp-product .ip-eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--ip-accent);
+}
+.insp-product .ip-page-title {
+    margin: 4px 0 0 !important;
+    font-size: 22px !important;
+    letter-spacing: -0.02em !important;
+    color: var(--ip-fg) !important;
+}
+.insp-product .ip-page-sub {
+    margin: 5px 0 0 !important;
+    color: var(--ip-fg-2) !important;
+    font-size: 13.5px !important;
+}
+
+/* Segmented range control — hand-built to match the product idiom */
+.insp-product .ip-segment {
+    display: inline-flex;
+    padding: 3px;
+    background: var(--ip-surface);
+    border: 1px solid var(--ip-line);
+    border-radius: var(--ip-radius-sm);
+    box-shadow: var(--ip-shadow);
+}
+.insp-product .ip-segment-btn {
+    border: 0;
+    background: transparent;
+    padding: 5px 11px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ip-fg-3);
+    cursor: pointer;
+    font-family: var(--font-mono);
+    letter-spacing: 0.01em;
+    transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+.insp-product .ip-segment-btn:hover {
+    color: var(--ip-fg-2);
+}
+.insp-product .ip-segment-btn.is-active {
+    background: var(--ip-fg);
+    color: #fff;
+}
+
+/* ── KPI cards ───────────────────────────────────────────────────────────── */
+.insp-product .ip-kpis {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+}
+.insp-product .ip-kpi {
+    border-radius: var(--ip-radius) !important;
+    border-color: var(--ip-line) !important;
+    background: var(--ip-surface) !important;
+    box-shadow: var(--ip-shadow);
+    transition: box-shadow var(--dur-base) var(--ease-out), border-color var(--dur-base) var(--ease-out);
+}
+.insp-product .ip-kpi:hover {
+    border-color: var(--ip-line-2) !important;
+    box-shadow: var(--ip-shadow-pop);
+}
+.insp-product .ip-kpi-body {
+    padding: 14px 15px !important;
+}
+.insp-product .ip-kpi-top {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.insp-product .ip-kpi-icon {
+    display: grid;
+    place-items: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 7px;
+    background: var(--ip-accent-soft);
+    color: var(--ip-accent);
+}
+.insp-product .ip-kpi-name {
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--ip-fg-2);
+}
+.insp-product .ip-kpi-value {
+    margin-top: 11px;
+    font-size: 28px;
+    font-weight: 650;
+    letter-spacing: -0.03em;
+    color: var(--ip-fg);
+    font-variant-numeric: tabular-nums;
+}
+.insp-product .ip-kpi-foot {
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+.insp-product .ip-delta {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    font-size: 12px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+.insp-product .ip-delta.up {
+    color: var(--ip-emerald);
+}
+.insp-product .ip-delta.down {
+    color: var(--ip-rose);
+}
+.insp-product .ip-kpi-spark {
+    display: block;
+    line-height: 0;
+}
+
+/* ── Tabs (workspace switch) ─────────────────────────────────────────────── */
+.insp-product .ip-tabs {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+.insp-product .ip-tablist {
+    border-bottom: 1px solid var(--ip-line) !important;
+    gap: 4px;
+}
+/* Restyle Tabs.Tab buttons into product-style underlined tabs */
+.insp-product .ip-tablist :where(button) {
+    font-size: 13.5px !important;
+    font-weight: 500 !important;
+    color: var(--ip-fg-3) !important;
+    padding: 9px 12px !important;
+}
+.insp-product .ip-tablist :where(button):hover {
+    color: var(--ip-fg-2) !important;
+}
+.insp-product .ip-tablist :where(button[aria-selected="true"]),
+.insp-product .ip-tablist :where(button.is-active) {
+    color: var(--ip-fg) !important;
+    font-weight: 600 !important;
+}
+
+/* ── Panels (cards that hold charts / tables / lists) ────────────────────── */
+.insp-product .ip-grid-2 {
+    display: grid;
+    grid-template-columns: minmax(0, 1.85fr) minmax(0, 1fr);
+    gap: 16px;
+}
+.insp-product .ip-grid-2--lean {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin-top: 16px;
+}
+.insp-product .ip-panel {
+    border-radius: var(--ip-radius) !important;
+    border-color: var(--ip-line) !important;
+    background: var(--ip-surface) !important;
+    box-shadow: var(--ip-shadow);
+    overflow: hidden;
+}
+.insp-product .ip-panel-head {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 16px !important;
+    border-bottom: 1px solid var(--ip-line) !important;
+}
+.insp-product .ip-panel-eyebrow {
+    font-size: 10.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--ip-fg-3);
+}
+.insp-product .ip-panel-title {
+    margin: 2px 0 0;
+    font-size: 14.5px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--ip-fg);
+}
+.insp-product .ip-panel-body {
+    padding: 16px !important;
+}
+
+.insp-product .ip-legend {
+    display: flex;
+    gap: 14px;
+}
+.insp-product .ip-legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11.5px;
+    color: var(--ip-fg-2);
+    font-weight: 500;
+}
+.insp-product .ip-swatch {
+    width: 9px;
+    height: 9px;
+    border-radius: 3px;
+}
+.insp-product .ip-swatch--accent { background: var(--ip-accent); }
+.insp-product .ip-swatch--muted { background: var(--zinc-300); }
+
+/* Revenue mix donut + legend */
+.insp-product .ip-mix {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+.insp-product .ip-mix-legend {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+.insp-product .ip-mix-legend li {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 12.5px;
+}
+.insp-product .ip-mix-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 3px;
+    flex-shrink: 0;
+}
+.insp-product .ip-mix-name {
+    color: var(--ip-fg-2);
+    flex: 1;
+}
+.insp-product .ip-mix-val {
+    font-weight: 600;
+    color: var(--ip-fg);
+    font-variant-numeric: tabular-nums;
+}
+
+/* Activity feed */
+.insp-product .ip-feed {
+    display: flex;
+    flex-direction: column;
+    padding: 6px 16px 14px !important;
+}
+.insp-product .ip-feed-row {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--ip-line);
+}
+.insp-product .ip-feed-row:last-child {
+    border-bottom: 0;
+}
+.insp-product .ip-feed-bullet {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+.insp-product .ip-feed-bullet.tone-blue { background: var(--ip-accent); }
+.insp-product .ip-feed-bullet.tone-emerald { background: var(--ip-emerald); }
+.insp-product .ip-feed-bullet.tone-amber { background: var(--ip-amber); }
+.insp-product .ip-feed-bullet.tone-violet { background: var(--ip-violet); }
+.insp-product .ip-feed-text {
+    margin: 0;
+    flex: 1;
+    font-size: 13px;
+    color: var(--ip-fg-2);
+}
+.insp-product .ip-feed-text b {
+    color: var(--ip-fg);
+    font-weight: 600;
+}
+.insp-product .ip-feed-target {
+    color: var(--ip-accent);
+    font-weight: 600;
+}
+.insp-product .ip-feed-when {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ip-fg-3);
+    flex-shrink: 0;
+}
+
+/* Team load */
+.insp-product .ip-team {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 8px 16px 14px !important;
+}
+.insp-product .ip-team-row {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--ip-line);
+}
+.insp-product .ip-team-row:last-child {
+    border-bottom: 0;
+}
+.insp-product .ip-team-meta {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    flex: 1;
+}
+.insp-product .ip-team-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ip-fg);
+    line-height: 1.25;
+}
+.insp-product .ip-team-role {
+    font-size: 11.5px;
+    color: var(--ip-fg-3);
+    line-height: 1.25;
+}
+.insp-product .ip-team-load {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    width: 130px;
+    flex-shrink: 0;
+}
+.insp-product .ip-load-bar {
+    flex: 1;
+}
+.insp-product .ip-team-pct {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ip-fg-2);
+    width: 30px;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+/* ── Projects table ──────────────────────────────────────────────────────── */
+.insp-product .ip-table-toolbar {
+    flex-wrap: wrap;
+}
+.insp-product .ip-toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.insp-product .ip-toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+.insp-product .ip-switch-field {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--ip-fg-2);
+    cursor: pointer;
+}
+.insp-product .ip-status-select :where(select) {
+    border-radius: var(--ip-radius-sm) !important;
+    border-color: var(--ip-line) !important;
+    font-size: 12.5px !important;
+    background: var(--ip-surface-2) !important;
+}
+.insp-product .ip-table-wrap {
+    padding: 0 !important;
+}
+
+/* Restyle the Table primitive into a dense product grid */
+.insp-product .ip-table {
+    width: 100%;
+}
+.insp-product .ip-table :where(thead th) {
+    background: var(--ip-surface-2) !important;
+    font-size: 10.5px !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.06em !important;
+    color: var(--ip-fg-3) !important;
+    padding: 9px 14px !important;
+    border-bottom: 1px solid var(--ip-line) !important;
+}
+.insp-product .ip-table :where(tbody td) {
+    padding: 12px 14px !important;
+    font-size: 13px !important;
+    color: var(--ip-fg-2) !important;
+    border-bottom: 1px solid var(--ip-line) !important;
+    vertical-align: middle !important;
+}
+.insp-product .ip-table :where(tbody tr) {
+    transition: background var(--dur-fast) var(--ease-out);
+}
+.insp-product .ip-table :where(tbody tr):hover {
+    background: var(--ip-surface-2) !important;
+}
+.insp-product .ip-table :where(tbody tr:last-child td) {
+    border-bottom: 0 !important;
+}
+
+.insp-product .ip-cell-project {
+    display: grid;
+    grid-template-columns: auto;
+    gap: 1px;
+    line-height: 1.3;
+}
+.insp-product .ip-proj-id {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: var(--ip-fg-3);
+    letter-spacing: 0.01em;
+}
+.insp-product .ip-proj-name {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--ip-fg);
+    letter-spacing: -0.01em;
+}
+.insp-product .ip-proj-client {
+    font-size: 11.5px;
+    color: var(--ip-fg-3);
+}
+.insp-product .ip-lead {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--ip-fg);
+    font-weight: 500;
+    white-space: nowrap;
+}
+.insp-product .ip-prog {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    min-width: 130px;
+}
+.insp-product .ip-prog-bar {
+    flex: 1;
+}
+.insp-product .ip-prog-num {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ip-fg-2);
+    width: 32px;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+.insp-product .ip-cell-budget {
+    font-family: var(--font-mono) !important;
+    font-weight: 600 !important;
+    color: var(--ip-fg) !important;
+    font-variant-numeric: tabular-nums;
+}
+.insp-product .ip-health {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+}
+.insp-product .ip-health-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+}
+.insp-product .ip-health.ok { color: var(--ip-emerald); }
+.insp-product .ip-health.ok .ip-health-dot { background: var(--ip-emerald); }
+.insp-product .ip-health.watch { color: var(--ip-amber); }
+.insp-product .ip-health.watch .ip-health-dot { background: var(--ip-amber); }
+.insp-product .ip-health.risk { color: var(--ip-rose); }
+.insp-product .ip-health.risk .ip-health-dot { background: var(--ip-rose); }
+.insp-product .ip-cell-actions {
+    text-align: right !important;
+    width: 48px;
+}
+.insp-product .ip-row-action {
+    display: inline-grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    border: 0;
+    background: transparent;
+    color: var(--ip-fg-3);
+    cursor: pointer;
+    transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+}
+.insp-product .ip-row-action:hover {
+    background: var(--ip-hover);
+    color: var(--ip-fg);
+}
+.insp-product .ip-empty {
+    text-align: center !important;
+    padding: 36px 14px !important;
+    color: var(--ip-fg-3) !important;
+    font-size: 13px !important;
+}
+
+.insp-product .ip-table-foot {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 11px 16px !important;
+    border-top: 1px solid var(--ip-line) !important;
+}
+.insp-product .ip-foot-meta {
+    font-size: 12px;
+    color: var(--ip-fg-3);
+    font-variant-numeric: tabular-nums;
+}
+
+/* ── Capacity: runway ────────────────────────────────────────────────────── */
+.insp-product .ip-runway {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+.insp-product .ip-runway-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 6px;
+}
+.insp-product .ip-runway-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.insp-product .ip-runway-q {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ip-fg);
+}
+.insp-product .ip-runway-tag {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--ip-fg-3);
+}
+.insp-product .ip-runway-pct {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ip-fg-3);
+}
+.insp-product .ip-runway-sep {
+    margin: 2px 0 !important;
+}
+
+/* ── Brief banner ────────────────────────────────────────────────────────── */
+.insp-product .ip-brief {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+    padding: 20px 22px !important;
+    border-radius: var(--ip-radius) !important;
+    background:
+        radial-gradient(120% 160% at 100% 0%, rgba(37, 99, 235, 0.08), transparent 60%),
+        var(--ip-surface) !important;
+    border: 1px solid var(--ip-line) !important;
+    box-shadow: var(--ip-shadow);
+}
+.insp-product .ip-brief-eyebrow {
+    font-size: 10.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--ip-accent);
+}
+.insp-product .ip-brief-title {
+    margin: 4px 0 0;
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    color: var(--ip-fg);
+}
+.insp-product .ip-brief-body {
+    margin: 4px 0 0;
+    font-size: 13px;
+    color: var(--ip-fg-2);
+    max-width: 56ch;
+}
+.insp-product .ip-brief-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* ── Shared button restyles ──────────────────────────────────────────────── */
+/* The primary CTA — square off the corners a touch + tabular weight */
+.insp-product .ip-cta {
+    border-radius: var(--ip-radius-sm) !important;
+    font-weight: 600 !important;
+}
+.insp-product .ip-ghost-link {
+    color: var(--ip-fg-2) !important;
+    font-weight: 600 !important;
+}
+.insp-product .ip-ghost-link:hover {
+    color: var(--ip-accent) !important;
+}
+
+/* ── Footer / back ───────────────────────────────────────────────────────── */
+.insp-product .ip-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding-top: 4px;
+    border-top: 1px solid var(--ip-line);
+    margin-top: 2px;
+    padding: 16px 2px 2px;
+}
+.insp-product .ip-footer-note {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--ip-fg-3);
+}
+.insp-product .ip-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ip-accent);
+    text-decoration: none;
+}
+.insp-product .ip-back:hover {
+    color: var(--blue-700);
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 1080px) {
+    .insp-product .ip-kpis {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .insp-product .ip-grid-2,
+    .insp-product .ip-grid-2--lean {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+@media (max-width: 860px) {
+    .insp-product .ip-app {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .insp-product .ip-sidebar {
+        display: none;
+    }
+    .insp-product .ip-topbar-search {
+        display: none;
+    }
+}
+
+@media (max-width: 560px) {
+    .insp-product .ip-kpis {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .insp-product .ip-content {
+        padding: 18px 16px 24px;
+    }
+}

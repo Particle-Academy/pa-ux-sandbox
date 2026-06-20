@@ -1,0 +1,104 @@
+{
+  "id": "bigtype",
+  "name": "Big Type",
+  "note": "Typography at maximum volume.",
+  "mode": "light",
+  "thesis": "The type IS the design — viewport-filling display headlines, oversized single words that bleed past the margins, and a kinetic word-band, all near-black on warm paper with one electric-lime accent; imagery is replaced by scale.",
+  "tokens": {
+    "bg": "#f3f1ea (warm off-white paper; subtle radial highlight #f8f6ef at top)",
+    "fg": "#0d0d0c ink, #34332e body, #8b887d mono captions",
+    "accent": "#c8f000 electric lime (one loud colour; lime highlight-block on text, hover, dot, status chip)",
+    "fontDisplay": "tight heavy grotesk — Geist/Helvetica Neue/Arial Narrow stack at 800 weight, letter-spacing -0.04em, line-height ~0.84, UPPERCASE",
+    "fontMono": "var(--font-mono) (Geist Mono) for kickers, folios, captions, numerals — uppercase, wide tracking",
+    "radius": "0 everywhere — squared corners on every primitive (no rounding)",
+    "border": "1px hairline #d6d2c5 + 2px heavy #15140f section rules; hero outline letters use -webkit-text-stroke",
+    "motion": "var(--ease-out), var(--dur-base/-fast); 26s linear marquee, hover lifts index rows + nudges arrows; respects prefers-reduced-motion"
+  },
+  "layout": "A single centered column (max-width 1240px) of full-bleed type-driven bands stacked vertically, each band separated by a 2px heavy rule. No card grid for narrative content — sections are: a viewport-filling 3-line hero (solid / lime-block / outline-stroke words), a horizontally scrolling word-band, a 4-up figures row, a type-as-index work ledger, capability tabs rendered as giant switchable words, a one-line enormous about statement, a 4-up team row with display-type initials, a recognition ledger + clients sidebar, and a contact band with an offset-shadow brief card. Headlines run 4–17rem via clamp(); body copy and captions stay small to maximise contrast of scale.",
+  "sections": [
+    {
+      "name": "runhead",
+      "what": "Breadcrumbs + FIELDWORK® wordmark + EST·2016 tag, on a heavy bottom rule.",
+      "components": ["Breadcrumbs", "Badge"],
+      "restyle": "Breadcrumbs flattened to mono uppercase muted links; Badge stripped to a squared outlined mono superscript tag."
+    },
+    {
+      "name": "hero",
+      "what": "Three stacked words 'WE SET / IT / HUGE.' filling the viewport, with a mono kicker above and a lede + two CTAs on a rule below.",
+      "components": ["Heading (hand-rolled h1)", "Button"],
+      "restyle": "Display type at clamp(4.2rem,19vw,17rem), line 0.82. Line 2 sits in a lime highlight block; line 3 is transparent with an ink text-stroke outline. Button → squared ink type-link (fills lime on hover) or underline-only ghost link."
+    },
+    {
+      "name": "word-band",
+      "what": "An infinite horizontal marquee of words (BIGGER · LOUDER · BOLDER · FIELDWORK …) between two heavy rules.",
+      "components": ["(hand-rolled marquee)"],
+      "restyle": "Pure CSS keyframe translateX(-50%) over a duplicated word group; alternate words are outline-stroke, dots are lime; pauses under prefers-reduced-motion."
+    },
+    {
+      "name": "figures",
+      "what": "Four stats (2016 / 120 / 31 typefaces / 14 awards) in a ruled 4-up row.",
+      "components": ["(hand-rolled)"],
+      "restyle": "Numbers set as display type at clamp(2.6rem,5.5vw,4.6rem); labels are mono uppercase; cells divided by hairline rules."
+    },
+    {
+      "name": "work",
+      "what": "Selected projects as a type-as-navigation index ledger with a discipline filter.",
+      "components": ["Heading", "Pillbox", "Pagination", "Link (stretched)"],
+      "restyle": "Each row is a colossal uppercase project title (up to 5.2rem) + mono num/meta + an oversized ArrowUpRight; hover tints the title lime and indents the row. Pillbox flattened to a hairline-topped filter strip with squared chips; Pagination → squared mono numerals with an ink active state. One stretched <Link> per row (no nested anchors)."
+    },
+    {
+      "name": "capabilities",
+      "what": "Services / Process / Questions behind tabs.",
+      "components": ["Tabs", "Timeline", "Accordion"],
+      "restyle": "Tabs.List rendered as giant switchable display words (up to 2.6rem) with a thick lime underline on the active word. Services in a 2-up ruled grid. Timeline keeps mono uppercase dates. Accordion triggers become colossal collapsing questions (up to 2.2rem) that tint lime on hover."
+    },
+    {
+      "name": "about",
+      "what": "One enormous statement sentence with a lime-highlighted phrase, then two short body columns.",
+      "components": ["Text"],
+      "restyle": "Statement at clamp(1.9rem,5vw,4.2rem), max 22ch; 'on purpose' wrapped in a lime highlight (box-decoration-break: clone). Text bodies set in the display family at reading size."
+    },
+    {
+      "name": "team",
+      "what": "Four people, each an initial chip + name + mono role.",
+      "components": ["Avatar"],
+      "restyle": "Avatar → an 84px squared ink chip with a single initial set in 42px display type; names in display 800, roles in mono."
+    },
+    {
+      "name": "recognition",
+      "what": "Awards ledger (Table) beside a clients + press sidebar.",
+      "components": ["Table", "Badge", "Separator"],
+      "restyle": "Table → a huge ruled ledger: mono uppercase heads, hairline rows, project column blown up to bold uppercase display (up to 1.6rem), year column in mono. Client Badges → squared outlined mono tags. Separator as a hairline."
+    },
+    {
+      "name": "contact",
+      "what": "A 'TELL US THE HEADLINE.' band: address + a volume MultiSwitch + a budget MoodMeter on the left, a brief Card with Composer on the right.",
+      "components": ["Heading", "MultiSwitch", "MoodMeter", "ReasonTag", "Card", "Composer", "Progress", "Badge", "Tooltip", "Button"],
+      "restyle": "MultiSwitch → a squared 'how loud' segmented control (ink active segment). MoodMeter tinted lime. Card → squared brief card with a hard 10px offset ink shadow; Composer textarea set oversized (1.25rem display). Status Badge → solid lime chip; Progress squared; ReasonTag underline theme on the budget figure."
+    },
+    {
+      "name": "footer",
+      "what": "A giant outlined FIELDWORK wordmark sign-off, about line + mono link grid, demo disclaimer, back-to-gallery link.",
+      "components": ["Separator", "Link"],
+      "restyle": "Wordmark is transparent with an ink text-stroke at clamp(3.4rem,17vw,16rem); links in mono uppercase."
+    }
+  ],
+  "palette": [
+    { "component": "Button", "restyle": "Squared (radius 0) ink type-link in uppercase display; fills electric lime on hover, or an underline-only ghost variant — no fill, no shadow." },
+    { "component": "Badge", "restyle": "Stripped to a squared mono superscript tag (outlined for studio/client tags, solid lime for the 'Open for Q3' status chip)." },
+    { "component": "Tabs", "restyle": "Tab labels become giant switchable display words; the active word carries a thick lime text-underline instead of the default pill/underline." },
+    { "component": "Accordion", "restyle": "Triggers blown up to colossal display questions (up to 2.2rem) that tint lime on hover; content in the display family at reading size." },
+    { "component": "Table", "restyle": "Becomes a huge ruled awards ledger — transparent, mono uppercase heads on a heavy rule, hairline rows, the project cell enlarged to bold uppercase display." },
+    { "component": "Avatar", "restyle": "Square ink chip (no rounding) with a single initial set in 42px display type — a typographic monogram, not a photo slot." },
+    { "component": "Pillbox", "restyle": "Flattened to a hairline-topped filter strip with squared chips and a mono input." },
+    { "component": "Pagination", "restyle": "Squared mono numerals; active page is a solid ink block." },
+    { "component": "MultiSwitch", "restyle": "Squared 'how loud?' segmented control bordered in heavy ink; the selected segment is a solid ink block with paper text." },
+    { "component": "MoodMeter", "restyle": "Kept as the budget pad but tinted with the lime accent so it reads native." },
+    { "component": "Composer", "restyle": "Squared note pad with an oversized 1.25rem display-type textarea — the brief is itself set big." },
+    { "component": "Card", "restyle": "Squared brief card with a hard 10px offset ink shadow and heavy 2px rules between header / body / footer." },
+    { "component": "Progress", "restyle": "Squared lime bar (no rounded ends)." },
+    { "component": "Badge (status)", "restyle": "Solid electric-lime chip with a dot for the live 'Open for Q3' state." }
+  ],
+  "contentArchetype": "A fictional type-first design / lettering studio (FIELDWORK) one-page portfolio: hero manifesto, selected work index, capabilities (type design / brand / editorial / kinetic), an about statement, the team, awards + clients recognition, and a 'brief the studio' contact band — content whose voice is loud, terse, and confident enough to justify being set at maximum size.",
+  "remix": "Drop in any project where confidence and a single message matter — a manifesto landing, an event or release announcement, an agency/portfolio home, a product hero. To adapt: pick ONE display grotesk and one electric accent, set radius to 0, lean on clamp() headlines (4–17rem) against deliberately small mono captions to maximise scale contrast, and replace imagery with type treatments (lime highlight block, outline text-stroke, a marquee word-band). Blends naturally with Swiss (keep the strict grid, only push the top of the hierarchy) or Editorial (swap the grotesk for a heavy serif and the lime for oxblood); pair with a Dark mode by inverting paper↔ink and brightening the accent."
+}

@@ -1,0 +1,102 @@
+{
+  "id": "whiteboard",
+  "name": "Whiteboard",
+  "note": "Sticky notes on an infinite canvas.",
+  "mode": "light",
+  "thesis": "A warm paper board with a faint dotted grid where the whole portfolio is a studio brainstorm mid-thought: content lives on tilted sticky notes and taped scraps, headings are marker handwriting under highlighter index tabs, ideas are wired together with dashed hand-drawn connectors, and one editable react-fancy <StickyNote> proves the kit can wear a marker-and-paper skin natively.",
+  "tokens": {
+    "bg": "#f6f3ea warm off-white board (recessed #efeadd; white paper scraps #fffdf7) under a 24px dotted grid + two soft highlighter glows",
+    "fg": "#2b2722 marker black-brown primary; #5a5347 secondary handwriting; #8a8273 faint pencil",
+    "accent": "#e8542f marker red-orange (push-pins, links, the loud accent) + #f2b705 highlighter yellow (active tabs, marks, progress); #2f7fd4 marker blue used sparingly for dashed wires/tacks",
+    "fontDisplay": "a marker/handwriting stack — \"Bradley Hand\", \"Segoe Print\", \"Comic Sans MS\", \"Marker Felt\", ui-rounded, \"Trebuchet MS\", system-ui — used for ALL headings, labels, notes and most UI text (the handwriting IS the type system)",
+    "fontMono": "none — there is no mono face; numbers/meta are also handwriting. (var(--font-mono) only inherited from the host for the gallery frame, not used inside.)",
+    "radius": "3px on paper scraps/cards (slightly off-square, like cut paper); 999px on marker-chip buttons + highlighter progress; 2px on Polaroids/washi chips; 6–10px on highlighter tabs/inputs",
+    "border": "mostly NONE — depth comes from drop shadows + push-pins + tape; where rules exist they are 1.5–2px DASHED hairlines (#c8bfa8) reading as pencil/perforation; the about note uses a torn clip-path edge",
+    "motion": "120–180ms ease micro-tilts: scraps/Polaroids straighten + lift on hover, buttons skew + cast a hard offset shadow, links rotate; a slow availability dot pulse; everything de-tilts/freezes under prefers-reduced-motion"
+  },
+  "layout": "A single centered column (max-width ~1180px) floating on a full-bleed dotted-grid canvas (a fixed .wb-canvas layer at z0; content at z1). No window chrome — the page IS the board. A header pins the FIELDWORK mark (push-pin dot + handwritten name) with a washi-tape board label. Sections stack with generous air, each opening with a rotated highlighter index tab (01–06) + a marker <Heading>. The hero is a 1.05fr/0.95fr split: marker headline + CTA left, a free-floating note board right (3 absolutely-positioned, tilted, push-pinned <StickyNote>s wired together by an inline-SVG of dashed connectors). Figures are a 4-up row of tacked paper scraps; selected work is a 4-col 'work wall' of tilted colored scraps that straighten on hover; capabilities live under highlighter Tabs (services as a 2-col grid of StickyNote cards, process as a Timeline, faq as an Accordion); about is a torn-paper ruled note; team is a 4-up Polaroid wall; recognition is a 1.6fr/1fr ruled-notebook Table + taped client chips; contact is a 1fr/1fr intro (with a MoodMeter 'budget pad') + a tilted, push-pinned brief Card. Collapses to 2-col then 1-col.",
+  "sections": [
+    {
+      "name": "header",
+      "what": "A push-pin dot + handwritten FIELDWORK mark with a 'design + dev studio · the wall' sub, plus a washi-tape 'board: portfolio.v26' label and a pulsing 'live session · 8 people' presence dot.",
+      "components": [],
+      "restyle": "Entirely hand-rolled: the mark name is rotated marker type, the tape label is a span with gradient edge-highlights (::before/::after), the presence dot pulses."
+    },
+    {
+      "name": "hero",
+      "what": "A marker kicker ('↳ pinned to the top of the board'), a big handwritten headline with the word 'walls' highlighted, a lede, two marker-chip Buttons (Pin us a brief / See the wall), and a sticky-color legend. Right: a note board of three tilted, push-pinned StickyNotes (one EDITABLE) joined by dashed hand-drawn SVG wires.",
+      "components": ["Heading", "Button", "StickyNote"],
+      "restyle": "StickyNote forced to the marker hand font + heavy paper shadow; the lead note is controlled/editable (value+onChange) to prove the primitive is live, the others editable={false}. Buttons become pill marker-chips: solid ink with a hard offset shadow that turns accent + skews on hover, or a dashed-outline ghost. The highlight is a skewed pseudo-element swipe behind the word."
+    },
+    {
+      "name": "figures",
+      "what": "A 4-up band of tacked paper scraps: 2016 first scrap pinned, 120+ projects shipped, 08 people, 14 awards taped up — numbers as wall stats.",
+      "components": [],
+      "restyle": "Hand-rolled tilted paper cards (per-card --rot) each with a blue push-pin tack; big handwritten number, faint handwritten label."
+    },
+    {
+      "name": "selected work",
+      "what": "'The work wall' — six recent projects as tilted, colored, push-pinned scraps (num, ★ if awarded, title, discipline, client + year), a marker Pillbox filter, and Pagination.",
+      "components": ["Heading", "Pillbox", "Pagination"],
+      "restyle": "Each scrap is a colored-paper card (--paper var per project) tilted by --rot that straightens, lifts and scales on hover; the whole card is a stretched <Link>. Pillbox becomes a dashed-outline marker filter on white paper; Pagination buttons become tilting paper page-flips with a highlighter-yellow active page."
+    },
+    {
+      "name": "capabilities",
+      "what": "'What we scribble about' under highlighter index Tabs (services / process / questions). Services are a 2-col grid of StickyNote service cards; process is a Timeline of four stages; questions are an Accordion.",
+      "components": ["Tabs", "StickyNote", "Timeline", "Accordion"],
+      "restyle": "Tabs become highlighter index tabs (handwriting, the active tab fully washed in highlighter yellow). Service cards ARE StickyNotes (colored paper, tilted, editable={false}) with handwritten inner copy. Timeline forced to the hand font with accent-colored stage dates. Accordion triggers go handwritten with accent hover; answer bodies fall back to the body sans for readability."
+    },
+    {
+      "name": "about",
+      "what": "A washi-taped 'about the studio' label beside a big torn-paper ruled note: a bold marker lead line, body copy, and a handwritten accent sign-off.",
+      "components": ["Heading", "Text"],
+      "restyle": "The paper uses a torn clip-path edge + faint ruled-line repeating-gradient + a red push-pin; Text forced to 15px/1.7 secondary ink; lead + sign-off are hand-rolled marker lines."
+    },
+    {
+      "name": "team",
+      "what": "'The people pinned up' — a 4-up Polaroid wall: each person is a push-pinned, tilted Polaroid with an Avatar 'photo' + handwritten name/role.",
+      "components": ["Heading", "Avatar"],
+      "restyle": "Avatar becomes the Polaroid's photo — a rounded handwriting-initials chip on a soft blue/violet gradient inside the white Polaroid frame (per-card --rot, highlighter push-pin); the frame straightens + lifts on hover."
+    },
+    {
+      "name": "recognition",
+      "what": "'Taped-up wins' — a ruled-notebook Table ledger (year/project/award) with a red margin rule, beside a taped 'clients on the wall' set of washi chips, a dashed Separator, and a 'said about us' press list.",
+      "components": ["Heading", "Table", "Badge", "Separator"],
+      "restyle": "Table forced to the hand font on a white paper page with a 3px red left-margin rule, dashed header underline, the project column bold ink, highlighter-tint row hover. Badges become rotated washi-tape client chips (5 tape colors). Separator becomes a dashed pencil rule; press items get an accent '✶' bullet."
+    },
+    {
+      "name": "contact / brief",
+      "what": "'Stick a brief on the board' — intro with handwritten address + a MoodMeter 'budget pad' and a ReasonTag on the indicative figure, beside a tilted, push-pinned brief Card: a '✎ new note' titlebar with a washi 'open for Q3' status, a prompt + Composer, a Switch ('pin it to the top') + highlighter Progress, and a 'Pin it up' button → a '✓ pinned to the board' success state.",
+      "components": ["Heading", "Text", "MoodMeter", "ReasonTag", "Card", "Tooltip", "Badge", "Composer", "Switch", "Progress", "Button"],
+      "restyle": "Card becomes a yellow sticky brief pad (tilted -1deg, red push-pin, dashed header/footer rules, overflow visible for the tack). Composer is a translucent dashed note pad with an accent caret. MoodMeter sits on a dashed paper frame and is tinted to the marker accent. Switch tints accent when on; Progress becomes a rounded highlighter-yellow swipe. ReasonTag recolored accent + hand font."
+    },
+    {
+      "name": "footer",
+      "what": "A mark + blurb and a 2-col handwritten link grid (Work / Instagram / Contact / LinkedIn), a torn-paper divider, a fictional-studio disclaimer line, and a '← back to the gallery' link.",
+      "components": [],
+      "restyle": "Hand-rolled marker links that rotate on hover; the divider is a CSS zig-zag torn-paper strip; the back link is a marker command that widens its gap on hover."
+    }
+  ],
+  "palette": [
+    { "component": "StickyNote", "restyle": "The centerpiece AND the metaphor: used literally (an editable hero note via value/onChange + two static ones) and as the service cards; forced to the marker hand font, heavy paper drop-shadow, 3px cut-paper radius, and topped with hand-rolled push-pin tacks." },
+    { "component": "Button", "restyle": "A marker chip: pill (999px), handwriting label; the ink variant is solid black-brown with a hard 3px offset shadow that turns accent-orange and skews on hover; the ghost variant is a dashed-outline that rotates + goes accent on hover." },
+    { "component": "Badge", "restyle": "Washi tape: borderless rotated chips in five translucent tape colors with a soft shadow, used for client logos; the brief status badge is a small tape pill with a dot." },
+    { "component": "Avatar", "restyle": "The 'photo' inside a Polaroid — handwriting initials on a soft blue/violet gradient, white inner border, sitting in a tilted white photo frame with a highlighter push-pin." },
+    { "component": "Table", "restyle": "A ruled notebook page: hand-font, white paper with a 3px red left-margin rule, dashed header underline, hairline row rules, bold-ink project column, highlighter-tint row hover." },
+    { "component": "Tabs", "restyle": "Highlighter index tabs on a dashed rail — handwriting labels, the active tab fully washed in highlighter yellow with rounded top corners." },
+    { "component": "Timeline", "restyle": "Studio process stages forced to the hand font with accent-orange stage dates and bold-ink titles — reads like dated marker notes down a wire." },
+    { "component": "Accordion", "restyle": "Flip notes — handwriting triggers (accent hover) over dashed-hairline dividers; answer bodies fall back to the body sans so long copy stays legible." },
+    { "component": "Composer", "restyle": "A scribble pad — translucent white field, dashed pencil border, hand-font text, accent caret-color, faint-pencil placeholder." },
+    { "component": "MoodMeter", "restyle": "A 'budget pad' sitting on a dashed paper frame, tinted to the marker accent — drag/up for figure/confidence." },
+    { "component": "Progress", "restyle": "A highlighter swipe — a rounded 8px highlighter-yellow fill on a faint ink track (the brief char meter)." },
+    { "component": "Pillbox", "restyle": "A dashed-outline marker filter on white paper; tag chips inherit the paper surface; width clamped to ~300px." },
+    { "component": "Pagination", "restyle": "Paper page-flips — white tilting buttons with a soft shadow, accent rotate on hover, highlighter-yellow active page." },
+    { "component": "Switch", "restyle": "'Pin it to the top' toggle — tints to the marker accent when on, paired with a handwriting label." },
+    { "component": "Card", "restyle": "A taped sticky brief pad: yellow paper, tilted -1deg, red push-pin tack (overflow visible), dashed header/footer rules instead of borders, heavy paper shadow." },
+    { "component": "ReasonTag", "restyle": "Recolored accent-orange in the hand font so the underlined 'why' annotation reads as a marker-circled note." },
+    { "component": "Separator", "restyle": "A dashed pencil rule (2px dashed) rather than a solid hairline." },
+    { "component": "Heading / Text / Tooltip", "restyle": "Heading forced to the marker hand font with a slight rotate; Text forced to warm-ink body sizing; Tooltip carries the 'a person reads every note' note on the status badge." }
+  ],
+  "contentArchetype": "FIELDWORK — a fictional design + dev studio whose whole site is a brainstorming wall: a hero of pinned idea-notes, a 'work wall' of project scraps, a highlighter-tabbed capabilities page (services notes / a process timeline / an FAQ), a torn-paper about note, a Polaroid team wall, a ruled-notebook awards ledger with taped client chips, and a 'stick a brief on the board' note-pad contact form. Copy leans into board/paper metaphors (pin it up, scraps we kept, taped-up wins, the wall) without becoming twee.",
+  "remix": "Keep the three load-bearing moves: (1) a dotted-grid canvas as the only background + NO borders — depth comes from paper shadows, push-pins and tape; (2) a marker/handwriting display face used for nearly all type, with content riding tilted paper (per-element --rot) that straightens on hover; (3) one genuinely EDITABLE react-fancy <StickyNote> so the skin is proven, not faked. Swap highlighter-yellow + marker-orange for a cool dry-erase palette (a true white --wb-board, blue/green/red dry-erase markers, drop the tape/Polaroids) and it reads as a glass whiteboard; swap the dotted grid for cork texture + leave the push-pins to get a literal cork board. The token re-point block (mapping --fg-*/--surface/--accent to the local --wb-* paper palette + the --wb-hand font var) is the portable core: paste it, restyle StickyNote/Button/Card/Table/Badge/Avatar to taste, and any react-fancy primitive inherits the paper surface for free. To blend with an Editorial style, keep the ruled-notebook Table + torn-paper about but straighten everything to 0deg and trade the marker face for a serif; to blend with a Bento style, drop the tilts and lay the scraps into a tight rounded grid while keeping the sticky colors."
+}

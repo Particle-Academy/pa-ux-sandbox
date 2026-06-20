@@ -1,0 +1,91 @@
+{
+  "id": "bento",
+  "name": "Bento",
+  "note": "Modular tiles of work and numbers.",
+  "mode": "dark",
+  "thesis": "A dashboard-as-portfolio: an asymmetric-but-tidy bento grid of rounded, hairline-bordered tiles on a near-black canvas, where every tile is a different thing — a thumbnail, a big number, a chart, a quote, a live status, a map, a capacity heatmap — unified by one warm amber accent, mono labels, and oversized tabular numerals.",
+  "tokens": {
+    "bg": "#0a0b0f (with a faint top-left amber radial bloom)",
+    "fg": "#f1f3f9 (ink), #b9c0d2 (muted), #6f7794 (subtle/labels)",
+    "accent": "#f5a524 amber (gradient to #fbbf24); soft fill rgba(245,165,36,0.14)",
+    "fontDisplay": "ui-sans-serif / system-ui, weight 600–650, letter-spacing -0.035em on display, -0.02 to -0.04em on numerals",
+    "fontMono": "ui-monospace / Geist Mono — every label, metric, eyebrow, tag, table header, axis tick; uppercased, +0.08–0.12em tracking",
+    "radius": "18px tiles, 12px inner fields, 11px buttons, 7px tags",
+    "border": "1px hairlines #232838 default, #2f3650 on hover/focus; tiles sit on a #121420 raised slate over the #0a0b0f page",
+    "motion": "cubic-bezier(0.16,1,0.3,1), 160–200ms; link-bearing tiles lift -2px + brighten border on hover; live status dot + map ping pulse (both gated by prefers-reduced-motion)"
+  },
+  "layout": "A 12-column CSS grid with grid-auto-rows ~118px and a 16px gap, max-width 1240px. Tiles claim space with span helpers (3/4/5/6/7/12 cols) and an optional 2-row span, so a few large feature tiles (a 6-col×2-row intro, a 6-col×2-row work hero, a 6-col×2-row quote) anchor each band while smaller stat/status/chart/map tiles pack around them — asymmetric masses, consistent gutters. The page is a vertical stack of bento BANDS (hero+stats, work+chart+map+donut, capabilities+quote, full index+process, team+awards+capacity, budget+brief) each its own grid, separated only by the gap. A mono running head and a mono link-grid footer bracket it. Everything is a card; the page itself shows almost no bare background except the gaps.",
+  "sections": [
+    {
+      "name": "running-head",
+      "what": "Breadcrumbs + glowing amber rounded-square brand mark (FIELDWORK) + est. tag + mono nav.",
+      "components": ["Breadcrumbs", "Badge"],
+      "restyle": "Breadcrumbs inherit the re-pointed dark fg tokens; the mark is an amber-gradient rounded square with a glow ring; Badge is reskinned to a mono uppercase hairline 'tag'."
+    },
+    {
+      "name": "hero-band",
+      "what": "A big intro tile (eyebrow, two-tone display headline, lede, primary+ghost CTAs) beside a 2×2 of stat tiles: a circular-progress 'projects shipped' ring, a 'founded' numeral, a live availability toggle, and an 'awards' numeral.",
+      "components": ["Button", "Progress", "Switch"],
+      "restyle": "Intro tile gets a slate gradient + amber corner bloom; primary Button forced to an amber gradient with a glow, ghost Button a hairline that turns amber on hover; circular Progress track recolored to a hairline with amber bar and a mono numeral centered inside; Switch tinted amber driving a pulsing status dot."
+    },
+    {
+      "name": "work-band",
+      "what": "A section heading tile, one large featured work thumbnail (6×2) plus three smaller thumbnails, a 12-month area-chart tile, a map tile, and a work-mix donut tile.",
+      "components": ["Heading", "Chart.Area", "Chart.Donut", "Badge"],
+      "restyle": "Thumbnails are grid-lit dark canvases with an oversized two-tone monogram glyph (per-project accent tone) and a stretched <Link>; Chart.Area stripped of axes/grid, single amber series with a soft fill, mono tick text; Chart.Donut recolored to the accent + 3 secondary hues with a hand-rolled mono legend; the whole tile lifts on hover."
+    },
+    {
+      "name": "capabilities-band",
+      "what": "A heading tile, a large pull-quote tile with author chip, and four capability tiles (number, title, body, mono tag row).",
+      "components": ["Heading", "Avatar", "Badge"],
+      "restyle": "Quote tile gets a slate gradient + serif quotation mark + one amber word; Avatar uses kit fallback initials; capability tiles are hairline cards that brighten their border on hover with amber mono numbers and Badge 'tags'."
+    },
+    {
+      "name": "index-band",
+      "what": "A wide project-index tile (flush-grid rows: num / title / discipline / year↗) with a Pillbox filter + Pagination, beside a process/questions Tabs tile (Timeline + Accordion).",
+      "components": ["Pillbox", "Pagination", "Tabs", "Timeline", "Accordion", "Heading"],
+      "restyle": "Index rows are hairline-separated and title-goes-amber on hover with a stretched <Link> per row; Pillbox + Pagination get near-black fields, hairline borders, amber active state; Tabs underline variant becomes mono uppercase labels with an amber active tab; Timeline connectors use the hairline line with one amber step; Accordion flattened to hairline rows whose triggers turn amber on hover."
+    },
+    {
+      "name": "studio-band",
+      "what": "A team tile (avatar + name + mono role rows), an awards tile (Table + clients Badge cloud), and a live studio-capacity heatmap tile (TimeGrid) with a ReasonTag readout.",
+      "components": ["Avatar", "Table", "Badge", "Separator", "TimeGrid", "ReasonTag", "Text", "Heading"],
+      "restyle": "Table recolored to transparent dark rows, mono uppercase headers, hairline rules, row-hover band; TimeGrid cells become small near-black hairline squares that fill amber when 'booked', mono axis labels; ReasonTag underline theme as a quiet inline 'why this %' annotation; Separator a faint hairline."
+    },
+    {
+      "name": "contact-band",
+      "what": "A budget-pad tile (MoodMeter + ReasonTag readout) beside a brief Card tile (Composer + Progress meter + send), with a received success state.",
+      "components": ["MoodMeter", "ReasonTag", "Card", "Composer", "Progress", "Button", "Tooltip", "Badge", "Text"],
+      "restyle": "MoodMeter color set to the one amber var, sized to the tile; Card flattened to a transparent, shadow-free shell whose header/body/footer keep hairline dividers; Composer field forced to a near-black rounded input with an amber focus ring; Progress as an amber character-count meter; Button primary = amber gradient."
+    },
+    {
+      "name": "footer",
+      "what": "Brand mark + studio line, mono link grid, fictional-studio note + back-to-gallery link.",
+      "components": ["Separator"],
+      "restyle": "Mono link grid turning amber on hover; an amber-bleed hairline rule; back link in the one accent."
+    }
+  ],
+  "palette": [
+    { "component": "Button", "restyle": "Two roles only: primary = amber gradient (#fbbf24→#f5a524) on dark ink text, 11px radius, soft amber glow shadow that grows on hover; ghost = transparent hairline that turns amber on hover. Disabled → 40% opacity, no glow." },
+    { "component": "Badge", "restyle": "Reskinned to a mono uppercase 'tag' — 7px radius, near-black fill, hairline border, +0.08em tracking; the accent variant tints text+border amber over a 14%-amber wash." },
+    { "component": "Card", "restyle": "Flattened to a transparent, border-0, shadow-0 shell that fills its tile; header/body/footer keep 1px hairline dividers so the brief reads as a sectioned panel inside the bento card, not a nested card." },
+    { "component": "Progress", "restyle": "Circular variant: track recolored to a hairline ring, bar to amber, with a mono numeral absolutely centered for the 'projects shipped' stat. Bar variant: thin hairline track, amber fill, used as a brief character-count meter." },
+    { "component": "Switch", "restyle": "Tinted amber and wired to a live availability tile; its on/off drives a pulsing green 'open' status dot and the headline copy." },
+    { "component": "Chart.Area", "restyle": "Axes/grid/dots removed; a single amber series (color via the --b-accent var) with a low-opacity fill; tick + tooltip text forced to mono subtle ink — a calm sparkline-like trend tile." },
+    { "component": "Chart.Donut", "restyle": "Recolored to amber + emerald/rose/sky secondary hues, legend hidden and replaced by a hand-rolled 2-col mono legend so it sits tidily in a 3-col tile." },
+    { "component": "Tabs", "restyle": "Underline variant; tablist on a hairline base; tabs become mono uppercase subtle labels; active tab is amber (label + underline), no heavy pill." },
+    { "component": "Timeline", "restyle": "Connectors/dots use the hairline line via the re-pointed border var; exactly one step (system & build) carries the amber accent to mark design-becomes-code." },
+    { "component": "Accordion", "restyle": "Flattened to hairline-separated rows; medium-weight triggers in primary ink that turn amber on hover; no fills." },
+    { "component": "Table", "restyle": "Transparent dark rows with hairline bottoms; header cells become mono uppercase subtle labels; rows hover-tint to the raised slate; the project column lifts to primary ink." },
+    { "component": "TimeGrid", "restyle": "Cells become small near-black hairline rounded squares; the 'on' (booked) tone is amber; row/column labels forced to mono subtle ink — a literal studio-capacity heatmap tile." },
+    { "component": "Pillbox", "restyle": "Near-black raised field, hairline border, 10px radius; chips read as small dark mono tags; placeholder in subtle ink; sized to share a tile cap with a heading." },
+    { "component": "Pagination", "restyle": "Buttons become near-black hairline squares; the current page tints amber over the amber wash." },
+    { "component": "MoodMeter", "restyle": "color set to the single amber var so the budget pad's curve, handle, and posted ghost match the accent; sized to fit the tile with no extra chrome." },
+    { "component": "ReasonTag", "restyle": "Underline theme so the agentic 'why this number' affordance reads as a quiet inline mono annotation (budget figure; capacity %) rather than a loud chip." },
+    { "component": "Composer", "restyle": "Editable field forced to a near-black rounded input inside the brief Card with border/rounding overridden and an amber focus ring; reads as part of the tile." },
+    { "component": "Avatar", "restyle": "Kit fallback initials on the dark slate; no glow ring (reserved emphasis) so the quote author + team rows stay restrained." },
+    { "component": "Separator / Breadcrumbs / Tooltip / Heading / Text", "restyle": "All inherit the locally re-pointed semantic tokens (bg/surface/border/fg/accent) so they read near-black natively; Tooltip surface darkens to the raised slate." }
+  ],
+  "contentArchetype": "A fictional design + engineering studio (FIELDWORK) one-page portfolio rendered as a dashboard: hero thesis + studio stats, featured + indexed work, a 12-month shipped-work trend, a work-mix split, a location map, four capabilities, a pull-quote, a brief→build process, team + awards + clients, a live studio-capacity heatmap, and a budget-aware contact brief. Confident, terse copy; mono numerals and labels everywhere; numbers treated as first-class content.",
+  "remix": "Swap the single --b-accent hue to re-theme instantly — it drives buttons, charts, the donut's lead slice, the TimeGrid 'booked' tone, the MoodMeter, the status dot wash, focus rings, and every hover. Because the whole palette is re-pointed onto the shared react-fancy semantic tokens under one scope class, the look is portable: lift the .insp-bento token block + the bn-* tile rules into any react-fancy project and the kit instantly wears Bento. The structural idea — a 12-col grid where span helpers + a row-span build a few large feature tiles around many small ones — is the reusable bones; fill the tiles with whatever metrics/components a given app has (it's a natural fit for any analytics or product dashboard, not just a portfolio). Blend with Dark Studio by keeping the near-black tokens and flush mono labels but flattening tiles back to full-bleed sections; blend with Swiss/Minimal by flipping the tokens light, widening the gaps, and trading the amber for a single restrained accent while keeping the modular grid."
+}

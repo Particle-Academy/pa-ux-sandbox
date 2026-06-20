@@ -1,0 +1,116 @@
+{
+  "id": "dark",
+  "name": "Dark Studio",
+  "note": "Near-black, refined, a single blue accent.",
+  "mode": "dark",
+  "thesis": "Swiss-level restraint relit in the dark: deep near-black surfaces, generous negative space, crisp tight-tracked type, and exactly one disciplined blue accent that earns every appearance.",
+  "tokens": {
+    "bg": "#0a0b0e",
+    "fg": "#f3f5f8",
+    "accent": "#3b82f6",
+    "fontDisplay": "Geist, ui-sans-serif, system-ui, sans-serif (weight 600, letter-spacing -0.035em)",
+    "fontMono": "Geist Mono, ui-monospace, SF Mono, monospace (labels / numbers / metadata, uppercased, +0.08–0.14em tracking)",
+    "radius": "12px on cards/panels, 9px on buttons, 6px on tags",
+    "border": "1px hairlines: #1d2029 default, #2a2e3a on hover/focus; faint blue bleed (#3b82f6 fading to line) on full rules",
+    "motion": "cubic-bezier(0.16,1,0.3,1) ease-out; 150–300ms; underlines/borders grow, accent glows softly; marquee respects prefers-reduced-motion"
+  },
+  "layout": "A 12-column 1200px-max modular grid with 28px gutters. Numbered, labelled sections (00–08) stacked vertically, each separated by a hairline rule and breathing 76px of vertical padding. A mono running head with the brand mark; an asymmetric hero (9 cols of display type + a 2-col left-hairline aside of vitals); a full-bleed masked client marquee; even 3- and 4-up grids for figures, capabilities, team; a flush-left typographic work index; 4-up preview cards with a grid-lit canvas; a two-column contact (budget pad + brief card). Everything flush-left, restraint over decoration.",
+  "sections": [
+    {
+      "name": "running-head",
+      "what": "Breadcrumbs + glowing blue square brand mark (FIELDWORK) + est. tag + mono nav.",
+      "components": ["Breadcrumbs", "Badge"],
+      "restyle": "Breadcrumbs inherit re-pointed dark fg tokens; the brand mark is a solid-blue rounded square with a soft accent glow ring; Badge is reskinned to a mono uppercase hairline 'tag'."
+    },
+    {
+      "name": "hero",
+      "what": "Eyebrow index line, large two-tone display headline (one word in blue), lede, primary+ghost CTAs, and a left-hairline aside of availability/location/disciplines.",
+      "components": ["Button", "Separator"],
+      "restyle": "Display type at clamp(2.7rem,7vw,5.6rem), -0.035em tracking; primary Button is forced to solid blue with a glow shadow, ghost Button is a hairline outline that turns blue on hover; Separator becomes a faint dark hairline."
+    },
+    {
+      "name": "client-ticker",
+      "what": "Infinite horizontal marquee of client names with blue dot separators, edge-masked.",
+      "components": [],
+      "restyle": "Hand-rolled CSS marquee (no kit component); muted ink that lifts on hover; mask-image fade at both edges; animation disabled under prefers-reduced-motion."
+    },
+    {
+      "name": "figures",
+      "what": "Four tabular-num studio stats (founded, projects, people, awards) with selective blue emphasis.",
+      "components": [],
+      "restyle": "Hand-rolled figure blocks topped by hairlines; large -0.04em display numerals, mono uppercase labels; one stat's number tinted blue for rhythm."
+    },
+    {
+      "name": "capabilities",
+      "what": "Four-up service columns (design systems, product, engineering, brand) each with number, title, body, and mono tags.",
+      "components": ["Heading", "Badge"],
+      "restyle": "Hairline-topped columns that grow a 48px blue rule on hover; Heading reads the dark fg token; Badges are mono uppercase hairline tags."
+    },
+    {
+      "name": "featured-work",
+      "what": "Three preview cards, each a grid-lit dark canvas with a large two-tone monogram glyph + title/discipline/award, stretched-link to the project.",
+      "components": ["Heading", "Badge"],
+      "restyle": "Hand-rolled preview card with a dotted-grid canvas masked from a top blue glow; hover lifts a blue-tinted shadow ring; one Inertia <Link> stretched over the card (no nested anchors)."
+    },
+    {
+      "name": "selected-work-index",
+      "what": "Paginated flush-left typographic index of all projects (num / title / discipline / year↗) with a discipline Pillbox filter.",
+      "components": ["Pillbox", "Pagination", "Heading"],
+      "restyle": "Rows are hairline-separated; title goes blue on row hover; Pillbox + Pagination inherit dark field tokens (near-black field, hairline border, blue focus ring); stretched <Link> per row."
+    },
+    {
+      "name": "how-we-work",
+      "what": "Tabs across Process (Timeline), Principles (2-up columns), and Questions (Accordion).",
+      "components": ["Tabs", "Timeline", "Accordion"],
+      "restyle": "Tabs underline variant restyled to mono uppercase labels with a blue active label; Timeline dots recolored to dark line + one blue accent step; Accordion flattened to hairline rows whose triggers turn blue on hover."
+    },
+    {
+      "name": "about",
+      "what": "A large pull-quote (one word blue) beside a muted supporting paragraph, eyebrow in the left column.",
+      "components": ["Text"],
+      "restyle": "Hand-rolled quote at clamp(1.35rem,2.6vw,2.1rem); Text uses the muted dark token; asymmetric 3+8 column split."
+    },
+    {
+      "name": "team",
+      "what": "Four-up people cards: avatar + name + mono role, hairline-topped.",
+      "components": ["Avatar"],
+      "restyle": "Avatars use kit fallback initials on dark; columns topped by hairlines; roles in mono tertiary ink."
+    },
+    {
+      "name": "recognition",
+      "what": "Awards Table (year/project/award) beside a clients Badge cloud and a press list.",
+      "components": ["Table", "Badge", "Separator", "Heading"],
+      "restyle": "Table recolored to transparent dark rows, mono uppercase header, hairline rules, blue-free body that hover-tints the row band; Badges are mono tags; Separator a faint hairline."
+    },
+    {
+      "name": "contact",
+      "what": "A MoodMeter budget pad with a ReasonTag readout beside a brief Card (Composer + Progress + send), with a received success state.",
+      "components": ["MoodMeter", "ReasonTag", "Card", "Composer", "Progress", "Button", "Tooltip", "Badge", "Text"],
+      "restyle": "MoodMeter color set to the one blue var; Card forced to a flat near-black hairline panel (no kit shadow); Composer/inputs get near-black fields + blue focus ring; Progress track is a hairline, bar is the one blue; Tooltip surface darkened."
+    },
+    {
+      "name": "footer",
+      "what": "Brand mark + studio line, mono link grid, fictional-studio note + back-to-gallery link.",
+      "components": ["Separator"],
+      "restyle": "Mono link grid that turns blue on hover; a faint blue-bleed hairline rule; back link in the one accent."
+    }
+  ],
+  "palette": [
+    { "component": "Button", "restyle": "Two roles only: primary = solid blue (#3b82f6) with a soft glow box-shadow and a 9px radius; ghost = transparent with a hairline border that turns blue on hover. Disabled drops to 45% opacity, no glow." },
+    { "component": "Badge", "restyle": "Reskinned to a mono uppercase 'tag' — hairline border, near-black fill, +0.08em tracking; the accent variant tints text + border blue over a 12%-blue wash." },
+    { "component": "Card", "restyle": "Flattened to a near-black (#101218) panel with a 1px #1d2029 hairline, 12px radius, and NO kit shadow; border brightens to #2a2e3a on hover." },
+    { "component": "Tabs", "restyle": "Underline variant; tablist gets a hairline base; tabs become mono uppercase tertiary labels; the active tab is the one blue (no heavy pill)." },
+    { "component": "Accordion", "restyle": "Hairline-separated rows; medium-weight triggers in primary ink that turn blue on hover; no fills, no chevron color noise." },
+    { "component": "Table", "restyle": "Transparent dark rows with hairline bottoms; header cells become mono uppercase tertiary labels over a stronger hairline; rows hover-tint to the recessed band." },
+    { "component": "Timeline", "restyle": "Dots/connectors recolored to the dark hairline line; exactly one step (the build phase) carries the blue accent to mark the moment design becomes code." },
+    { "component": "Pillbox", "restyle": "Near-black field, hairline border, blue focus ring; chips read as small dark mono tags consistent with Badge." },
+    { "component": "Composer", "restyle": "Near-black editable field flush inside the brief Card; border/rounding stripped so it reads as part of the panel; blue focus ring." },
+    { "component": "Progress", "restyle": "Track recolored to a thin hairline; the bar is the one blue (color='blue'), used as a character-count meter." },
+    { "component": "MoodMeter", "restyle": "color set to the single blue var so the budget pad's curve and posted marker match the accent; sits on the near-black page with no extra chrome." },
+    { "component": "ReasonTag", "restyle": "Underline theme so the agentic 'why this number' affordance reads as a quiet inline annotation in mono metadata rather than a colored chip." },
+    { "component": "Avatar", "restyle": "Kit fallback initials on the dark surface; no glow ring (reserved emphasis) so the team grid stays restrained." },
+    { "component": "Separator / Breadcrumbs / Tooltip / Heading / Text", "restyle": "All inherit the locally re-pointed semantic tokens (fg/border/surface/accent), so they read near-black natively; Tooltip surface is darkened to the raised panel color." }
+  ],
+  "contentArchetype": "A fictional design + engineering studio (FIELDWORK) one-page portfolio: hero thesis, client marquee, studio numbers, four capabilities, featured builds + a full project index, a brief→build process, a studio about + team, awards/clients/press, and a budget-aware contact brief. Confident, terse, lower-case-friendly copy; mono numerals and labels everywhere.",
+  "remix": "Swap the single accent hue to re-theme instantly (one --d-accent var drives buttons, tabs, timeline, progress, glows, focus rings) — try emerald or amber for a different studio voice while keeping the near-black restraint. Because the palette is re-pointed onto the shared semantic tokens under one scope class, the whole look is portable: lift the .insp-dark token block + the dk-* restyle rules into any react-fancy project and the kit instantly wears Dark Studio. Blend with Swiss/Minimal by keeping the modular grid + mono labels and only flipping the surface tokens light↔dark; blend with a bolder editorial style by widening the display type and letting the accent appear in one full-bleed band rather than only in hairlines."
+}

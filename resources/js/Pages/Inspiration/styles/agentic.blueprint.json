@@ -1,0 +1,100 @@
+{
+  "id": "agentic",
+  "name": "Agentic Studio",
+  "note": "Brief the studio; an agent scopes and books it.",
+  "mode": "dark",
+  "thesis": "A near-black, terminal-grade booking console where the studio IS an agent you brief — electric sky→violet accents, mono labels, glowing hairline borders, and a live tool-call feed that shows the agent working in the open.",
+  "tokens": {
+    "bg": "#07080c with layered radial sky/violet glows (78% top-right, 8% top-left) over a faint 44px blueprint grid masked to the top",
+    "fg": "#eef1fb primary · #b9c0d8 secondary · #7d86a3 muted · #565e78 faint",
+    "accent": "violet-400 #a78bfa (primary) + sky-300 #7dd3fc + indigo-400 #818cf8, blended in a 108deg sky→indigo→violet gradient used on display text, metric numbers, accent buttons, and the brand glyph glow",
+    "fontDisplay": "Geist (var(--font-sans)) at 640–660 weight, tracking -0.03em",
+    "fontMono": "Geist Mono (var(--font-mono)) — labels, eyebrows, tool calls, badges, paths, all metadata",
+    "radius": "14px panels / 9px inputs+buttons / 6–10px chips",
+    "border": "1px hairlines on a low-contrast scale (#1d2233 line, #2a3148 line-2) with an accent-tinted outer ring + soft drop shadow on raised consoles",
+    "motion": "ease-out (cubic-bezier(.16,1,.3,1)); blinking terminal cursor, staggered tool-call fade-in (translateY 6px), spinning 'thinking' icon, 1.08 brightness lift on accent buttons; all gated by prefers-reduced-motion"
+  },
+  "layout": "Single centered 1180px column on a dark, glowing blueprint-grid backdrop. A mono topbar (breadcrumb path + brand glyph + 'agent online' chip) opens it. The hero is a two-column split — headline + lede on the left, a live PromptInput 'new brief' console card on the right. Below, numbered sections (00..06) are separated by hairline rules, each led by a mono running-head (number + boxed icon + label + Heading). The signature section is a two-column 'scoping run': a streaming tool-call feed beside a proposed-scope card that materializes on completion, followed by a phased plan Timeline. Capabilities are a 2-col card grid with tool chips; telemetry is a 4-up gradient-number strip; about uses underline Tabs; operators are a 4-up avatar grid; recognition splits clients vs press; the closing brief is a MagicWand-assisted composer.",
+  "sections": [
+    {
+      "name": "topbar",
+      "what": "Console path + studio mark + live status",
+      "components": ["Breadcrumbs", "Badge"],
+      "restyle": "Breadcrumbs become a mono terminal path (studio://fieldwork); the brand 'F' becomes a circuit glyph with a gradient fill + accent glow ring; Badge is an outline 'agent online' status chip in mono."
+    },
+    {
+      "name": "hero",
+      "what": "The pitch + the brief composer that kicks off the agent",
+      "components": ["PromptInput", "Card", "Button", "Badge"],
+      "restyle": "PromptInput is dropped into a 'new brief' Card console (mac-dot header, mono title) with a near-black mono textarea, slash-commands (/scope, /team, /humanplus) and @mentions (incl. a studio-agent). The submit Button is a gradient command-pill that streams the tool-call feed. Display headline gets a sky→violet gradient clip."
+    },
+    {
+      "name": "scoping-run",
+      "what": "The agent working in the open — live tool calls + the scope it produces",
+      "components": ["Card", "Badge", "ReasonTag", "MoodMeter", "Separator", "Timeline", "Button"],
+      "restyle": "A custom tool-call feed (mono tool name + args + green check result + ms latency, staggered fade-in, dashed 'thinking…' row) sits beside a scope Card that appears on completion. ReasonTag annotates the €-estimate with confidence; MoodMeter is the budget pad (accent handle + dashed ghost of the agent's posted value); Timeline renders the 4-phase plan with per-phase accent colors."
+    },
+    {
+      "name": "capabilities",
+      "what": "Studio services framed as tool surfaces",
+      "components": ["(card grid)", "(tool chips)"],
+      "restyle": "Hand-rolled article cards with a mono number, title, body, and a row of monospace tool chips (brand.tokenize, bridge.register…). An accent gradient bar wipes in on the left edge on hover; card lifts 2px."
+    },
+    {
+      "name": "telemetry",
+      "what": "Studio-in-numbers strip",
+      "components": ["(metric grid)"],
+      "restyle": "A 4-up bordered strip; each metric number uses the sky→violet gradient text clip, mono uppercase label, faint sub-caption. Reads like a dashboard readout, not a marketing stat band."
+    },
+    {
+      "name": "operating-model",
+      "what": "Ethos, stack, and FAQ",
+      "components": ["Tabs", "Text", "Callout", "Accordion"],
+      "restyle": "Underline Tabs become a terminal tab strip (mono, accent-2 active). Stack is a key/value table with mono accent keys. Callout is a neon-edged violet note. Accordion FAQ rows recolor to dark hairlines + light text."
+    },
+    {
+      "name": "operators",
+      "what": "The humans behind the agent",
+      "components": ["Avatar"],
+      "restyle": "Avatars get online status + glow ring as 'operator nodes' in dark cards; each card carries a mono role line and a monospace focus chip. Hover lifts the border to accent."
+    },
+    {
+      "name": "signal",
+      "what": "Clients + press/awards",
+      "components": ["(client chips)", "(press list)"],
+      "restyle": "Clients are mono bordered chips on near-black; press items are an accent-bordered left-rule list with a bold source label. Restrained, signal-over-noise."
+    },
+    {
+      "name": "brief-cta",
+      "what": "Draft-your-brief closer with inline agent edits",
+      "components": ["MagicWand", "Card", "Progress", "Button", "Badge", "Tooltip"],
+      "restyle": "MagicWand wraps the brief textarea inside a 'wand enabled' Card console — selecting text floats AI quick-actions (Tighten / Add constraints / Make it Human+). A thin accent Progress tracks brief length; the gradient 'Scope & book' pill re-runs the agent. Tooltip + emerald 'Open · Q3' badge signal availability."
+    },
+    {
+      "name": "footer",
+      "what": "Brand blurb + mono nav + back-to-gallery",
+      "components": ["Separator", "Link"],
+      "restyle": "Mono lowercase nav links with ↗ glyphs, a faint hairline Separator, and an accent back-to-gallery link. Quiet console outro."
+    }
+  ],
+  "palette": [
+    { "component": "Button", "restyle": "Mono command-pill at 9px radius; the primary action is a sky→violet gradient fill with accent-ink text, an accent ring, and a soft glow shadow that brightens 8% on hover. Ghost/secondary buttons stay outline on dark." },
+    { "component": "Badge", "restyle": "Status chips — outline or soft on the dark surface, mono micro-text (10.5px), glowing dot; colors map to run state (zinc idle / amber running / emerald complete / sky agent-online)." },
+    { "component": "Card", "restyle": "Becomes a 'console' — gradient dark panel, mac-traffic-light header dots, mono title, accent-tinted outer ring + deep drop shadow; the scope variant gets a violet-tinted border and entrance animation." },
+    { "component": "PromptInput", "restyle": "The hero's brief composer — near-black mono textarea, slash-command + mention pickers themed to the studio (a studio-agent mention), submit wired to stream the tool-call feed; lives inside the Card console shell." },
+    { "component": "MagicWand", "restyle": "Wraps the closing brief textarea; floating AI quick-actions (Tighten / Add constraints / Make it Human+) edit the selection in place — the literal 'agent helps you write the brief' gesture." },
+    { "component": "ReasonTag", "restyle": "Accent-underlined trigger on the €-estimate; the popover explains the indicative figure + confidence and credits 'studio-agent', tying the number to the agent that produced it." },
+    { "component": "MoodMeter", "restyle": "The budget pad — accent (violet) live handle on a dark grid with a dashed sky ghost of the agent's posted value, so the human can drag against the agent's estimate." },
+    { "component": "Timeline", "restyle": "The proposed plan — four phases (discovery→direction→build→handoff) with per-phase accent dot colors (sky/violet/indigo/emerald) on the dark column." },
+    { "component": "Tabs", "restyle": "Underline variant recolored into a terminal tab strip: mono labels, faint default, sky-accent active underline + text." },
+    { "component": "Accordion", "restyle": "FAQ disclosure rows recolored to dark hairlines and light text — reads as collapsible terminal output." },
+    { "component": "Callout", "restyle": "Neon-edged violet note (accent-tinted fill + 32% accent border) for the trust-but-verify line; icon glows accent." },
+    { "component": "Avatar", "restyle": "Operator node — online status indicator + glow ring inside a dark operator card; sits above a mono role line." },
+    { "component": "Progress", "restyle": "Thin violet bar on a low-contrast dark track, tracking brief length in the closer." },
+    { "component": "Breadcrumbs", "restyle": "Mono terminal path; muted segments, sky-accent hover." },
+    { "component": "Separator", "restyle": "Recolored to the faint #1d2233 console hairline." },
+    { "component": "Tooltip", "restyle": "Inherits the kit tooltip; used to qualify the 'Open · Q3' availability badge — kept dark-legible." }
+  ],
+  "contentArchetype": "A fictional design + product studio (FIELDWORK) that went agent-first — portfolio reframed as a booking console. Content is goal/constraint briefs, tool-call telemetry, scope estimates with confidence, phased delivery plans, capabilities-as-tools, an operators roster, and client/press signal. Voice is precise, calm, engineering-grade; copy leans on Human+ UX language (controlled state, stable handles, MCP bridges, reviewable diffs).",
+  "remix": "Keep the spine — dark blueprint backdrop, mono metadata, sky→violet gradient reserved for headline/numbers/primary action, and a PromptInput→tool-call-feed→scope-card narrative — and swap the domain: an agent that books a clinic, scopes a renovation, triages support, or plans a trip. To soften toward enterprise SaaS, drop the blueprint grid + glows for a flat #0b0d14, tame the gradient to a single accent, and keep buttons mono. To blend with a brighter style (e.g. Swiss), invert to a light surface but retain the tool-call feed + ReasonTag/MoodMeter agent-trust primitives — those are the load-bearing idiom, not the darkness. The reusable move is making the agent's reasoning visible (tool calls + confidence) rather than hiding it behind a single 'AI suggestion'."
+}

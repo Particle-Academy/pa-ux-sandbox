@@ -1,0 +1,1024 @@
+/* ============================================================================
+ * Inspiration Gallery · Style — Bento
+ * Modular tiles of work and numbers. A near-black canvas; every tile is a
+ * rounded, hairline-bordered card on a slightly-raised dark slate; one warm
+ * amber accent; mono labels; big tabular numerals. The Fancy primitives are
+ * restyled HARD here so they read native to the bento idiom.
+ *
+ * EVERY selector is scoped under `.insp-bento`. We re-point the shared semantic
+ * tokens LOCALLY (never touching Tailwind's `.dark`) so the whole surface reads
+ * near-black regardless of the host theme, and re-theme is a one-var swap.
+ * ========================================================================== */
+
+.insp-bento {
+    /* ── Local palette (re-pointed onto the shared semantic tokens) ───────── */
+    --b-bg: #0a0b0f;
+    --b-tile: #121420;
+    --b-tile-2: #161927;
+    --b-tile-hover: #1a1e2e;
+    --b-line: #232838;
+    --b-line-2: #2f3650;
+    --b-ink: #f1f3f9;
+    --b-ink-2: #b9c0d2;
+    --b-ink-3: #6f7794;
+    --b-accent: #f5a524;
+    --b-accent-soft: rgba(245, 165, 36, 0.14);
+    --b-accent-ink: #fbbf24;
+    --b-radius: 18px;
+    --b-radius-sm: 12px;
+    --b-gap: 16px;
+    --b-ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+    /* re-point react-fancy's semantic vars so kit components inherit the dark
+       field, hairlines, and amber accent natively */
+    --color-bg: var(--b-bg);
+    --color-surface: var(--b-tile);
+    --color-surface-raised: var(--b-tile-2);
+    --color-border: var(--b-line);
+    --color-border-strong: var(--b-line-2);
+    --color-fg: var(--b-ink);
+    --color-fg-muted: var(--b-ink-2);
+    --color-fg-subtle: var(--b-ink-3);
+    --fg-1: var(--b-ink);
+    --fg-2: var(--b-ink-2);
+    --fg-3: var(--b-ink-3);
+    --border-1: var(--b-line);
+    --accent: var(--b-accent);
+
+    background: radial-gradient(120% 80% at 12% -8%, rgba(245, 165, 36, 0.06), transparent 60%), var(--b-bg);
+    color: var(--b-ink);
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+}
+
+.insp-bento *,
+.insp-bento *::before,
+.insp-bento *::after {
+    box-sizing: border-box;
+}
+
+.insp-bento .bn-shell {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 28px clamp(16px, 4vw, 40px) 96px;
+}
+
+/* ── Mono helper ─────────────────────────────────────────────────────────── */
+.insp-bento .bn-eyebrow,
+.insp-bento .bn-meta,
+.insp-bento .bn-stat__label,
+.insp-bento .bn-tag,
+.insp-bento .bn-headnav,
+.insp-bento .bn-mark__name,
+.insp-bento .bn-num,
+.insp-bento .bn-work__year,
+.insp-bento .bn-index__num,
+.insp-bento .bn-index__year {
+    font-family: var(--font-mono, ui-monospace, "SF Mono", "Geist Mono", monospace);
+}
+
+.insp-bento .bn-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--b-ink-3);
+    font-weight: 500;
+}
+.insp-bento .bn-eyebrow b {
+    color: var(--b-accent-ink);
+    font-weight: 600;
+}
+
+.insp-bento .bn-meta {
+    font-size: 11.5px;
+    letter-spacing: 0.04em;
+    color: var(--b-ink-3);
+    line-height: 1.55;
+}
+.insp-bento .bn-mt-auto {
+    margin-top: auto;
+}
+
+.insp-bento .bn-accent {
+    color: var(--b-accent-ink);
+}
+
+/* ── Running head ────────────────────────────────────────────────────────── */
+.insp-bento .bn-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-bottom: 22px;
+}
+.insp-bento .bn-mark {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+.insp-bento .bn-mark__logo {
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    font-weight: 800;
+    font-size: 14px;
+    color: #1a1206;
+    background: linear-gradient(150deg, #fbbf24, #f5a524);
+    box-shadow: 0 0 0 1px rgba(245, 165, 36, 0.4), 0 6px 18px -6px rgba(245, 165, 36, 0.6);
+}
+.insp-bento .bn-mark__name {
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    color: var(--b-ink);
+}
+.insp-bento .bn-headnav {
+    display: flex;
+    gap: 20px;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+.insp-bento .bn-headnav a {
+    color: var(--b-ink-3);
+    text-decoration: none;
+    transition: color 0.18s var(--b-ease);
+}
+.insp-bento .bn-headnav a:hover {
+    color: var(--b-accent-ink);
+}
+
+/* ============================================================================
+ * The bento grid
+ * ========================================================================== */
+.insp-bento .bn-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-auto-rows: minmax(118px, auto);
+    gap: var(--b-gap);
+    margin-top: var(--b-gap);
+}
+.insp-bento .bn-grid--hero {
+    margin-top: 0;
+}
+
+/* span helpers (12-col) */
+.insp-bento .bn-span3 { grid-column: span 3; }
+.insp-bento .bn-span4 { grid-column: span 4; }
+.insp-bento .bn-span5 { grid-column: span 5; }
+.insp-bento .bn-span6 { grid-column: span 6; }
+.insp-bento .bn-span7 { grid-column: span 7; }
+.insp-bento .bn-span12 { grid-column: span 12; }
+.insp-bento .bn-row2 { grid-row: span 2; }
+
+/* ── The tile shell — the load-bearing bento look ────────────────────────── */
+.insp-bento .bn-tile {
+    position: relative;
+    background: var(--b-tile);
+    border: 1px solid var(--b-line);
+    border-radius: var(--b-radius);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0;
+    overflow: hidden;
+    transition: border-color 0.2s var(--b-ease), background 0.2s var(--b-ease), transform 0.2s var(--b-ease);
+}
+.insp-bento .bn-tile--head {
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    padding: 6px 2px 0;
+    gap: 8px;
+}
+
+/* tiles that hold a stretched link lift on hover */
+.insp-bento .bn-tile--work:hover,
+.insp-bento .bn-tile--map:hover {
+    border-color: var(--b-line-2);
+    background: var(--b-tile-hover);
+    transform: translateY(-2px);
+}
+
+.insp-bento .bn-tile__cap {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+/* stretched-link — one anchor over the whole tile (no nested anchors) */
+.insp-bento .bn-stretch {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    border-radius: inherit;
+}
+.insp-bento .bn-stretch:focus-visible {
+    outline: 2px solid var(--b-accent);
+    outline-offset: -2px;
+}
+
+/* ── Typography ──────────────────────────────────────────────────────────── */
+.insp-bento .bn-display {
+    margin: 14px 0 0;
+    font-size: clamp(1.9rem, 3.6vw, 3rem);
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+    font-weight: 650;
+    color: var(--b-ink);
+}
+.insp-bento .bn-lede {
+    margin: 16px 0 0;
+    max-width: 46ch;
+    font-size: 0.98rem;
+    line-height: 1.6;
+    color: var(--b-ink-2);
+}
+.insp-bento .bn-h2 {
+    color: var(--b-ink) !important;
+    letter-spacing: -0.025em !important;
+    margin: 0 !important;
+}
+.insp-bento .bn-h2--sm {
+    margin-top: 4px !important;
+}
+
+/* ── Intro tile ──────────────────────────────────────────────────────────── */
+.insp-bento .bn-tile--intro {
+    justify-content: center;
+    background: linear-gradient(160deg, var(--b-tile-2), var(--b-tile));
+    padding: clamp(22px, 3vw, 34px);
+}
+.insp-bento .bn-tile--intro::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(80% 60% at 88% 6%, rgba(245, 165, 36, 0.12), transparent 60%);
+    pointer-events: none;
+}
+.insp-bento .bn-cta {
+    display: flex;
+    gap: 10px;
+    margin-top: 24px;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 1;
+}
+
+/* ── Buttons (two roles) ─────────────────────────────────────────────────── */
+.insp-bento .bn-btn-primary {
+    background: linear-gradient(150deg, #fbbf24, #f5a524) !important;
+    color: #1a1206 !important;
+    border: 0 !important;
+    border-radius: 11px !important;
+    font-weight: 600 !important;
+    box-shadow: 0 8px 22px -10px rgba(245, 165, 36, 0.7) !important;
+    transition: transform 0.18s var(--b-ease), box-shadow 0.18s var(--b-ease), opacity 0.18s var(--b-ease) !important;
+}
+.insp-bento .bn-btn-primary:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 28px -10px rgba(245, 165, 36, 0.8) !important;
+}
+.insp-bento .bn-btn-primary:disabled {
+    opacity: 0.4 !important;
+    box-shadow: none !important;
+}
+.insp-bento .bn-btn-ghost {
+    background: transparent !important;
+    color: var(--b-ink-2) !important;
+    border: 1px solid var(--b-line-2) !important;
+    border-radius: 11px !important;
+    font-weight: 500 !important;
+    transition: border-color 0.18s var(--b-ease), color 0.18s var(--b-ease) !important;
+}
+.insp-bento .bn-btn-ghost:hover:not(:disabled) {
+    border-color: var(--b-accent) !important;
+    color: var(--b-accent-ink) !important;
+}
+
+/* ── Badge → mono "tag" ──────────────────────────────────────────────────── */
+.insp-bento .bn-tag {
+    background: var(--b-tile-2) !important;
+    border: 1px solid var(--b-line) !important;
+    color: var(--b-ink-2) !important;
+    border-radius: 7px !important;
+    font-size: 10px !important;
+    letter-spacing: 0.08em !important;
+    text-transform: uppercase !important;
+    font-weight: 500 !important;
+    padding: 3px 8px !important;
+}
+.insp-bento .bn-tag--accent {
+    background: var(--b-accent-soft) !important;
+    border-color: rgba(245, 165, 36, 0.4) !important;
+    color: var(--b-accent-ink) !important;
+}
+
+/* ── Big numerals + stat tiles ───────────────────────────────────────────── */
+.insp-bento .bn-num {
+    font-size: clamp(2.4rem, 4vw, 3.2rem);
+    line-height: 0.95;
+    letter-spacing: -0.04em;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--b-ink);
+}
+.insp-bento .bn-num--accent {
+    color: var(--b-accent-ink);
+}
+.insp-bento .bn-num--sm {
+    font-size: 1.5rem;
+}
+.insp-bento .bn-stat__label {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--b-ink-3);
+    margin-top: 2px;
+}
+.insp-bento .bn-tile--num {
+    justify-content: flex-start;
+}
+.insp-bento .bn-tile--stat {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 14px;
+}
+.insp-bento .bn-stat__ring {
+    position: relative;
+    display: grid;
+    place-items: center;
+}
+.insp-bento .bn-stat__ringnum {
+    position: absolute;
+    font-family: var(--font-mono, ui-monospace, monospace);
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--b-ink);
+}
+/* Progress (circular + bar) restyle */
+.insp-bento .bn-progress [data-react-fancy-progress-track],
+.insp-bento .bn-progress svg circle:first-of-type {
+    stroke: var(--b-line) !important;
+    color: var(--b-line) !important;
+}
+
+/* ── Live status tile ────────────────────────────────────────────────────── */
+.insp-bento .bn-tile--status {
+    justify-content: space-between;
+}
+.insp-bento .bn-status__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.insp-bento .bn-status__dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--b-ink-3);
+    box-shadow: 0 0 0 4px rgba(111, 119, 148, 0.18);
+}
+.insp-bento .bn-status__dot.is-live {
+    background: #34d399;
+    box-shadow: 0 0 0 4px rgba(52, 211, 153, 0.18);
+    animation: bn-pulse 2.4s var(--b-ease) infinite;
+}
+.insp-bento .bn-status__state {
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--b-ink);
+}
+@keyframes bn-pulse {
+    0%, 100% { box-shadow: 0 0 0 4px rgba(52, 211, 153, 0.18); }
+    50% { box-shadow: 0 0 0 7px rgba(52, 211, 153, 0.05); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .insp-bento .bn-status__dot.is-live { animation: none; }
+}
+
+/* ── Work thumbnail tiles ────────────────────────────────────────────────── */
+.insp-bento .bn-tile--work {
+    padding: 0;
+    gap: 0;
+}
+.insp-bento .bn-work__canvas {
+    position: relative;
+    flex: 1;
+    min-height: 110px;
+    display: grid;
+    place-items: center;
+    background:
+        radial-gradient(120% 120% at 50% 0%, rgba(255, 255, 255, 0.05), transparent 70%),
+        var(--b-tile-2);
+    background-image:
+        linear-gradient(var(--b-line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--b-line) 1px, transparent 1px);
+    background-size: 100% 100%, 22px 22px, 22px 22px;
+}
+.insp-bento .bn-tile--work[data-tone="amber"] .bn-work__glyph { color: var(--b-accent-ink); }
+.insp-bento .bn-tile--work[data-tone="rose"] .bn-work__glyph { color: #fb7185; }
+.insp-bento .bn-tile--work[data-tone="emerald"] .bn-work__glyph { color: #34d399; }
+.insp-bento .bn-tile--work[data-tone="sky"] .bn-work__glyph { color: #60a5fa; }
+.insp-bento .bn-tile--work[data-tone="violet"] .bn-work__glyph { color: #a78bfa; }
+.insp-bento .bn-work__glyph {
+    font-size: clamp(2.6rem, 6vw, 4.4rem);
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    opacity: 0.92;
+}
+.insp-bento .bn-work__glyph i {
+    color: var(--b-ink-3);
+    font-style: normal;
+}
+.insp-bento .bn-tile--work-lg .bn-work__glyph {
+    font-size: clamp(4rem, 10vw, 7rem);
+}
+.insp-bento .bn-work__meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 16px;
+}
+.insp-bento .bn-work__title {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--b-ink);
+}
+.insp-bento .bn-work__disc {
+    font-size: 11.5px;
+    color: var(--b-ink-3);
+    margin-top: 2px;
+    font-family: var(--font-mono, ui-monospace, monospace);
+    letter-spacing: 0.02em;
+}
+.insp-bento .bn-work__year {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 11px;
+    color: var(--b-ink-3);
+    letter-spacing: 0.04em;
+}
+
+/* ── Chart tile ──────────────────────────────────────────────────────────── */
+.insp-bento .bn-tile--chart {
+    justify-content: space-between;
+}
+.insp-bento .bn-chart {
+    margin: 4px 0;
+}
+.insp-bento .bn-chart svg text {
+    fill: var(--b-ink-3) !important;
+    font-family: var(--font-mono, ui-monospace, monospace) !important;
+    font-size: 10px !important;
+}
+.insp-bento .bn-chart__foot {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+}
+
+/* ── Donut tile ──────────────────────────────────────────────────────────── */
+.insp-bento .bn-tile--donut {
+    align-items: stretch;
+}
+.insp-bento .bn-donut {
+    display: grid;
+    place-items: center;
+    margin: 2px auto;
+}
+.insp-bento .bn-donut svg text {
+    fill: var(--b-ink) !important;
+    font-family: var(--font-mono, ui-monospace, monospace) !important;
+}
+.insp-bento .bn-donut__legend {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px 10px;
+    margin-top: auto;
+}
+.insp-bento .bn-donut__legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10.5px;
+    color: var(--b-ink-2);
+    font-family: var(--font-mono, ui-monospace, monospace);
+    letter-spacing: 0.02em;
+}
+.insp-bento .bn-donut__legend i {
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    flex: none;
+}
+
+/* ── Map tile ────────────────────────────────────────────────────────────── */
+.insp-bento .bn-tile--map {
+    padding: 0;
+    gap: 0;
+}
+.insp-bento .bn-map {
+    position: relative;
+    flex: 1;
+    min-height: 120px;
+    background:
+        radial-gradient(60% 50% at 50% 45%, rgba(245, 165, 36, 0.08), transparent 70%),
+        var(--b-tile-2);
+    overflow: hidden;
+}
+.insp-bento .bn-map__grid {
+    position: absolute;
+    inset: -1px;
+    background-image:
+        linear-gradient(var(--b-line) 1px, transparent 1px),
+        linear-gradient(90deg, var(--b-line) 1px, transparent 1px);
+    background-size: 26px 26px;
+    mask-image: radial-gradient(80% 70% at 50% 45%, #000 40%, transparent 85%);
+}
+.insp-bento .bn-map__pin {
+    position: absolute;
+    left: 50%;
+    top: 45%;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--b-accent);
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 0 4px rgba(245, 165, 36, 0.25), 0 4px 12px -2px rgba(245, 165, 36, 0.6);
+    z-index: 1;
+}
+.insp-bento .bn-map__ring {
+    position: absolute;
+    left: 50%;
+    top: 45%;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 1.5px solid var(--b-accent);
+    transform: translate(-50%, -50%);
+    animation: bn-ring 2.8s var(--b-ease) infinite;
+}
+@keyframes bn-ring {
+    0% { width: 14px; height: 14px; opacity: 0.8; }
+    100% { width: 64px; height: 64px; opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .insp-bento .bn-map__ring { animation: none; }
+}
+.insp-bento .bn-map__meta {
+    padding: 14px 16px;
+}
+
+/* ── Quote tile ──────────────────────────────────────────────────────────── */
+.insp-bento .bn-tile--quote {
+    justify-content: center;
+    background: linear-gradient(160deg, var(--b-tile-2), var(--b-tile));
+    padding: clamp(22px, 3vw, 32px);
+}
+.insp-bento .bn-quote__mark {
+    font-size: 3.4rem;
+    line-height: 0.5;
+    color: var(--b-accent);
+    opacity: 0.5;
+    font-family: Georgia, "Times New Roman", serif;
+    height: 1.2rem;
+}
+.insp-bento .bn-quote {
+    margin: 0;
+    font-size: clamp(1.3rem, 2.4vw, 1.85rem);
+    line-height: 1.35;
+    letter-spacing: -0.02em;
+    font-weight: 500;
+    color: var(--b-ink);
+}
+.insp-bento .bn-quote b {
+    color: var(--b-accent-ink);
+    font-weight: 600;
+}
+.insp-bento .bn-quote__by {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+/* ── Capability tiles ────────────────────────────────────────────────────── */
+.insp-bento .bn-tile--cap {
+    gap: 8px;
+}
+.insp-bento .bn-tile--cap:hover {
+    border-color: var(--b-line-2);
+}
+.insp-bento .bn-cap__no {
+    font-family: var(--font-mono, ui-monospace, monospace);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--b-accent-ink);
+}
+.insp-bento .bn-cap__title {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    color: var(--b-ink);
+}
+.insp-bento .bn-cap__body {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--b-ink-2);
+}
+.insp-bento .bn-cap__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: auto;
+    padding-top: 6px;
+}
+
+/* ── Index tile ──────────────────────────────────────────────────────────── */
+.insp-bento .bn-tile--index {
+    gap: 14px;
+}
+.insp-bento .bn-index {
+    display: flex;
+    flex-direction: column;
+}
+.insp-bento .bn-index__row {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto 1fr auto auto;
+    align-items: center;
+    gap: 14px;
+    padding: 13px 6px;
+    border-top: 1px solid var(--b-line);
+    transition: background 0.16s var(--b-ease);
+}
+.insp-bento .bn-index__row:last-child {
+    border-bottom: 1px solid var(--b-line);
+}
+.insp-bento .bn-index__row:hover {
+    background: var(--b-tile-2);
+}
+.insp-bento .bn-index__num {
+    font-size: 11px;
+    color: var(--b-ink-3);
+    letter-spacing: 0.06em;
+}
+.insp-bento .bn-index__title {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--b-ink);
+    transition: color 0.16s var(--b-ease);
+}
+.insp-bento .bn-index__row:hover .bn-index__title {
+    color: var(--b-accent-ink);
+}
+.insp-bento .bn-index__disc {
+    font-size: 11.5px;
+    color: var(--b-ink-3);
+    font-family: var(--font-mono, ui-monospace, monospace);
+    letter-spacing: 0.01em;
+    text-align: right;
+}
+.insp-bento .bn-index__year {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 11px;
+    color: var(--b-ink-3);
+    letter-spacing: 0.04em;
+}
+.insp-bento .bn-index__foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: auto;
+}
+
+/* ── Tabs tile + Timeline + Accordion restyle ────────────────────────────── */
+.insp-bento .bn-tile--tabs {
+    gap: 14px;
+}
+.insp-bento .bn-tabs [role="tablist"] {
+    border-color: var(--b-line) !important;
+    gap: 18px;
+}
+.insp-bento .bn-tabs [role="tab"] {
+    font-family: var(--font-mono, ui-monospace, monospace) !important;
+    font-size: 11px !important;
+    letter-spacing: 0.1em !important;
+    text-transform: uppercase !important;
+    color: var(--b-ink-3) !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+.insp-bento .bn-tabs [role="tab"][aria-selected="true"] {
+    color: var(--b-accent-ink) !important;
+    border-color: var(--b-accent) !important;
+}
+.insp-bento .bn-timeline {
+    margin-top: 14px;
+}
+.insp-bento .bn-timeline,
+.insp-bento .bn-timeline * {
+    --color-border: var(--b-line);
+}
+.insp-bento .bn-accordion {
+    margin-top: 6px;
+}
+.insp-bento .bn-accordion [data-react-fancy-accordion-item],
+.insp-bento .bn-accordion > div {
+    border-color: var(--b-line) !important;
+}
+.insp-bento .bn-accordion button {
+    color: var(--b-ink) !important;
+    font-weight: 500 !important;
+    transition: color 0.16s var(--b-ease) !important;
+}
+.insp-bento .bn-accordion button:hover {
+    color: var(--b-accent-ink) !important;
+}
+
+/* ── Team tile ───────────────────────────────────────────────────────────── */
+.insp-bento .bn-tile--team {
+    gap: 12px;
+}
+.insp-bento .bn-team {
+    list-style: none;
+    margin: 6px 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+.insp-bento .bn-team__row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 0;
+    border-top: 1px solid var(--b-line);
+}
+.insp-bento .bn-team__row:first-child {
+    border-top: 0;
+}
+
+/* ── Awards tile + Table restyle ─────────────────────────────────────────── */
+.insp-bento .bn-tile--awards {
+    gap: 12px;
+}
+.insp-bento .bn-table table {
+    width: 100%;
+    font-size: 12.5px;
+}
+.insp-bento .bn-table th {
+    font-family: var(--font-mono, ui-monospace, monospace) !important;
+    font-size: 10px !important;
+    letter-spacing: 0.08em !important;
+    text-transform: uppercase !important;
+    color: var(--b-ink-3) !important;
+    border-color: var(--b-line) !important;
+    background: transparent !important;
+    padding: 8px 8px !important;
+}
+.insp-bento .bn-table td {
+    color: var(--b-ink-2) !important;
+    border-color: var(--b-line) !important;
+    background: transparent !important;
+    padding: 9px 8px !important;
+}
+.insp-bento .bn-table tr:hover td {
+    background: var(--b-tile-2) !important;
+}
+.insp-bento .bn-table td.\!font-medium {
+    color: var(--b-ink) !important;
+}
+.insp-bento .bn-sep {
+    margin: 4px 0 !important;
+    --color-border: var(--b-line);
+}
+.insp-bento .bn-clients {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+/* ── Capacity tile + TimeGrid restyle ────────────────────────────────────── */
+.insp-bento .bn-tile--capacity {
+    gap: 10px;
+}
+.insp-bento .bn-cap-note {
+    margin: 0 !important;
+    color: var(--b-ink-3) !important;
+}
+.insp-bento .bn-timegrid {
+    margin: 6px 0;
+}
+.insp-bento .bn-timegrid button {
+    background: var(--b-tile-2) !important;
+    border-color: var(--b-line) !important;
+    border-radius: 4px !important;
+}
+.insp-bento .bn-timegrid span,
+.insp-bento .bn-timegrid div {
+    color: var(--b-ink-3) !important;
+    font-family: var(--font-mono, ui-monospace, monospace) !important;
+    font-size: 10px !important;
+}
+
+/* ── Budget tile + MoodMeter ─────────────────────────────────────────────── */
+.insp-bento .bn-tile--budget {
+    gap: 10px;
+}
+.insp-bento .bn-moodmeter {
+    margin: 6px 0;
+    max-width: 100%;
+}
+.insp-bento .bn-budget__readout {
+    margin-top: 4px;
+}
+
+/* ── Brief tile + Card / Composer / Progress restyle ─────────────────────── */
+.insp-bento .bn-tile--brief {
+    padding: 0;
+    gap: 0;
+}
+.insp-bento .bn-card {
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: var(--b-radius) !important;
+    box-shadow: none !important;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+.insp-bento .bn-card > * {
+    border-color: var(--b-line) !important;
+}
+.insp-bento .bn-brief__title {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--b-ink);
+}
+.insp-bento .bn-composer {
+    display: flex;
+    flex-direction: column;
+}
+.insp-bento .bn-composer [contenteditable],
+.insp-bento .bn-composer textarea {
+    background: var(--b-tile-2) !important;
+    color: var(--b-ink) !important;
+    border-radius: var(--b-radius-sm) !important;
+    min-height: 96px;
+    padding: 12px !important;
+}
+.insp-bento .bn-composer [contenteditable]:focus,
+.insp-bento .bn-composer textarea:focus {
+    outline: 2px solid rgba(245, 165, 36, 0.5) !important;
+    outline-offset: 1px;
+}
+.insp-bento .bn-composer__foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+.insp-bento .bn-progress [data-react-fancy-progress-bar],
+.insp-bento .bn-progress .bg-amber-500 {
+    background: var(--b-accent) !important;
+}
+.insp-bento .bn-brief__done {
+    padding: 24px 4px;
+}
+.insp-bento .bn-brief__thanks {
+    margin: 14px 0 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--b-ink);
+}
+
+/* ── Pillbox + Pagination restyle ────────────────────────────────────────── */
+.insp-bento .bn-pillbox {
+    width: 200px;
+    max-width: 50%;
+}
+.insp-bento .bn-pillbox,
+.insp-bento .bn-pillbox > div {
+    background: var(--b-tile-2) !important;
+    border-color: var(--b-line) !important;
+    border-radius: 10px !important;
+    color: var(--b-ink) !important;
+}
+.insp-bento .bn-pillbox input {
+    color: var(--b-ink) !important;
+}
+.insp-bento .bn-pillbox input::placeholder {
+    color: var(--b-ink-3) !important;
+}
+.insp-bento .bn-pagination button {
+    background: var(--b-tile-2) !important;
+    border-color: var(--b-line) !important;
+    color: var(--b-ink-2) !important;
+    border-radius: 8px !important;
+}
+.insp-bento .bn-pagination button[aria-current="true"],
+.insp-bento .bn-pagination button[aria-current="page"] {
+    background: var(--b-accent-soft) !important;
+    border-color: rgba(245, 165, 36, 0.4) !important;
+    color: var(--b-accent-ink) !important;
+}
+
+/* ── Footer ──────────────────────────────────────────────────────────────── */
+.insp-bento .bn-footer {
+    margin-top: 40px;
+}
+.insp-bento .bn-footer__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 24px;
+}
+.insp-bento .bn-footer__blurb {
+    margin-top: 14px;
+    max-width: 360px;
+}
+.insp-bento .bn-footer__links {
+    display: grid;
+    grid-template-columns: repeat(2, auto);
+    gap: 6px 36px;
+}
+.insp-bento .bn-footer__links a {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--b-ink-3);
+    text-decoration: none;
+    font-family: var(--font-mono, ui-monospace, monospace);
+    transition: color 0.18s var(--b-ease);
+}
+.insp-bento .bn-footer__links a:hover {
+    color: var(--b-accent-ink);
+}
+.insp-bento .bn-rule {
+    border: 0;
+    height: 1px;
+    margin: 28px 0 16px;
+    background: linear-gradient(90deg, rgba(245, 165, 36, 0.4), var(--b-line) 30%);
+}
+.insp-bento .bn-footer__bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+.insp-bento .bn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--b-accent-ink);
+    text-decoration: none;
+}
+.insp-bento .bn-back:hover {
+    text-decoration: underline;
+}
+
+/* ============================================================================
+ * Responsive — collapse the bento toward a single column on small screens
+ * ========================================================================== */
+@media (max-width: 900px) {
+    .insp-bento .bn-span3 { grid-column: span 6; }
+    .insp-bento .bn-span4 { grid-column: span 6; }
+    .insp-bento .bn-span5 { grid-column: span 12; }
+    .insp-bento .bn-span6 { grid-column: span 12; }
+    .insp-bento .bn-span7 { grid-column: span 12; }
+    .insp-bento .bn-row2 { grid-row: span 1; }
+    .insp-bento .bn-pillbox { max-width: none; width: 160px; }
+}
+@media (max-width: 560px) {
+    .insp-bento .bn-span3,
+    .insp-bento .bn-span4 { grid-column: span 12; }
+    .insp-bento .bn-headnav { display: none; }
+    .insp-bento .bn-index__disc { display: none; }
+}

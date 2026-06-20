@@ -1,0 +1,106 @@
+{
+  "id": "broken",
+  "name": "Broken Grid",
+  "note": "Asymmetry, overlap, off-axis layout.",
+  "mode": "light",
+  "thesis": "Editorial chaos that still reads: a deliberately broken modular grid on warm newsprint where blocks overlap, tilt 1–3 degrees off-true, cast hard offset shadows, and bleed past the margins — held together by ink-black grotesk display type, a mono metadata system, and ONE loud marker-red accent (cobalt as a quiet second).",
+  "tokens": {
+    "bg": "#efe9dd warm newsprint paper (twin radial highlights to #f6f1e6 / #f3eee2 in the corners); pasted panels #faf7ef (lifted) and #e6dfd0 (recessed); a faint 4px multiply paper-grain dot texture + a -1.2deg-rotated translucent vertical grid-line layer bleeding behind everything",
+    "fg": "#16140f ink; body #3a362e; captions/mono #847d6e",
+    "accent": "#e8341c marker red — the one loud colour (fills, hero highlight, active underline, hover, odd figures, ledger years, F-mark drop shadow); #1d3bd4 cobalt as a sparing second (tape, award lines)",
+    "fontDisplay": "grotesk stack — Geist / Helvetica Neue / Helvetica / Arial (weights 800 for display/headings, tight -0.035em tracking, frequent UPPERCASE)",
+    "fontMono": "var(--font-mono) Geist Mono — kickers, folios, metadata, badges, table heads, all-caps tracked labels",
+    "radius": "0 everywhere — torn-paper / pasted-collage feel; even Avatars, Badges, Cards, Buttons, inputs are squared off",
+    "border": "1.5–2px ink hairlines on pasted panels; 2.5px heavy rules (--brk-rule-ink) for section dividers / band / table head; soft #cdc5b2 hairlines for in-panel rules",
+    "motion": "hard offset 'paste' shadows (5–9px solid ink, sometimes red); every block carries a per-element --t rotation var; hover STRAIGHTENS the tilt (rotate(0)) + nudges/translate + deepens the shadow; a slow 30s mono-grotesk marquee word-band (honours prefers-reduced-motion)"
+  },
+  "layout": "A single ~1180px column whose contents deliberately refuse the column: each block sets its own small rotation (CSS custom prop --t) and many use negative margins / margin-top staggers so neighbours overlap and step out of alignment. A decorative paper-grain + skewed grid-line layer bleeds behind everything (z-0; content z-1). Running head = mono breadcrumb + a rotated F-mark chip with a red offset shadow + a taped 'est.' tag. Hero = three display lines each translated and rotated differently (one solid, one red-highlit word, one outline-stroke), with an absolutely-positioned 'scrap' note taped over the top-right that bleeds off the page edge; a 1.4fr/1fr foot splits a lede from two pasted CTA buttons. A full-bleed rotated marquee band follows. Figures = a 4-up grid where each cell is a tilted pasted card with alternating margin-top offsets. Sections are separated by 2.5px ink rules and introduced by a skewed-tick mono 'mark-line'. Selected work = a torn index list whose rows alternate tilt and straighten + lift on hover. Capabilities = underline Tabs (rotated triggers) over a 2-up grid of tilted, staggered, overlapping service cards, plus a Timeline and a big-question Accordion. About = an oversized rotated statement with a red-highlit phrase overlapping a right-aligned 2-col body. Team = a 4-up of scattered tilted 'taped' cards with squared photostat Avatars. Recognition = a 1.7fr/1fr split of a slightly-rotated Table ledger and a counter-rotated clients/press sidebar of taped Badge scraps. Contact = a 1fr/1fr split of a rotated brief column (address + MoodMeter budget pad + ReasonTag) and a counter-rotated pasted Card brief with a Composer + Progress. Footer = a giant outline-stroke wordmark sign-off, links, and a back-link.",
+  "sections": [
+    {
+      "name": "running-head",
+      "what": "Mono breadcrumb trail on the left; on the right a rotated black F-mark chip with a red offset shadow, the FIELDWORK wordmark, and a taped mono 'est. 2016' tag. A 2.5px ink rule under it.",
+      "components": ["Breadcrumbs", "Badge"],
+      "restyle": "Breadcrumbs flattened to mono uppercase 11px muted ink (red on hover); Badge stripped to a squared outline mono scrap rotated +2.5deg."
+    },
+    {
+      "name": "hero",
+      "what": "Mono kicker row, a three-line display headline (line 1 solid + shifted left, line 2 shifted right with one red-highlit word, line 3 outline-stroke), an absolutely-positioned taped 'scrap' note bleeding off the right edge with a № tag + coordinates, then a foot splitting a lede from two CTA buttons.",
+      "components": ["Heading (hand-rolled h1)", "Button"],
+      "restyle": "Each display line gets its own translate+rotate; the red word is an inline padded red block tilted -2deg; Buttons become squared 'pasted' ink/ghost blocks with solid offset shadows and opposing tilts that straighten + deepen the shadow on hover."
+    },
+    {
+      "name": "marquee band",
+      "what": "A full-bleed, slightly rotated band of repeating discipline words (with red asterisks) scrolling left forever, bracketed by heavy ink rules.",
+      "components": ["(hand-rolled marquee + lucide Asterisk)"],
+      "restyle": "Pure CSS infinite track (alternating solid / outline-stroke words); decorative only (aria-hidden); pauses for prefers-reduced-motion."
+    },
+    {
+      "name": "figures",
+      "what": "Four stat cards (Founded / Projects / People / Awards), each a tilted pasted panel with a hard shadow and a staggered margin-top so they step out of line.",
+      "components": ["(hand-rolled)"],
+      "restyle": "Odd figures' numerals set in marker red; mono uppercase labels; per-card --t rotation + offset shadow."
+    },
+    {
+      "name": "selected work",
+      "what": "A torn index of projects: red mono folio, UPPERCASE display title, mono discipline + cobalt award line, year with an arrow. Rows alternate tilt; hovering straightens the row, slides it right, paints it red, and lifts it with a shadow. Pagination below.",
+      "components": ["Heading", "Pillbox", "Pagination", "Link (stretched)"],
+      "restyle": "Each row is a stretched-link list item (one Inertia Link covers it, no nested anchors); Pillbox → a torn underlined mono filter strip with squared ink chips; Pagination → squared mono numerals that jiggle (rotate) on hover, ink-filled when active."
+    },
+    {
+      "name": "capabilities",
+      "what": "Underline Tabs (Services / Process / Questions). Services = a 2-up grid of tilted, staggered, overlapping pasted service cards; Process = a Timeline with a red milestone; Questions = a big-type Accordion.",
+      "components": ["Tabs", "Timeline", "Accordion", "Heading"],
+      "restyle": "Tab triggers → big UPPERCASE grotesk words, each rotated, with a fat red underline when active; service cards squared + tilted + hard-shadowed and straighten on hover; Timeline dates pushed to mono, titles to bold grotesk, milestone dot red; Accordion questions enlarged to 1.8rem display weight (red on hover)."
+    },
+    {
+      "name": "about",
+      "what": "An oversized, rotated statement with a red-highlit phrase, overlapping a right-aligned two-column body paragraph set.",
+      "components": ["Text"],
+      "restyle": "Statement is a hand-rolled rotated display block (max 20ch) with a red box-decoration highlight; Text bodies overridden to grotesk 1.04rem and pushed right to break alignment with the statement."
+    },
+    {
+      "name": "team",
+      "what": "Four people as scattered 'taped' cards — a tape strip, a squared photostat Avatar plate, bold name, mono role — each tilted with a staggered margin-top.",
+      "components": ["Avatar"],
+      "restyle": "Avatar de-rounded to a squared black plate with a red offset shadow and display-type initials; the card is a tilted pasted panel that straightens + lifts (bigger shadow) on hover."
+    },
+    {
+      "name": "recognition",
+      "what": "A slightly-rotated awards Table ledger (Year / Project / Award) beside a counter-rotated sidebar of taped client Badge scraps and a press list.",
+      "components": ["Table", "Badge", "Separator"],
+      "restyle": "Table rebuilt as a torn ledger — transparent rows, hairline row rules, a 2.5px ink head rule, mono red years, UPPERCASE bold project names; Badges → squared paper 'client' scraps with solid shadows and per-tag tilt that flip to a red fill on hover."
+    },
+    {
+      "name": "contact / brief",
+      "what": "Left (rotated): heading, lede, mono address lines, an indicative-budget MoodMeter pad themed red with a ReasonTag explainer. Right (counter-rotated): a pasted Card brief with a Composer, a character Progress bar, an 'Open for Q3' status Badge, and a send button; success state swaps to a received note.",
+      "components": ["Heading", "Text", "MoodMeter", "ReasonTag", "Card", "Composer", "Progress", "Badge", "Tooltip", "Button"],
+      "restyle": "Card squared with a hard 8px offset ink shadow + ink-rule header/footer, tilted +1.2deg against the left column's -0.6deg; Composer squared on paper with grotesk body; status Badge a rotated red chip; MoodMeter tinted with the red accent var; ReasonTag kept in underline theme; Progress squared red bar."
+    },
+    {
+      "name": "footer",
+      "what": "A giant outline-stroke FIELDWORK wordmark sign-off, an about blurb + mono nav links, a Separator, and a folio line + back-to-gallery link.",
+      "components": ["Separator", "Link"],
+      "restyle": "Wordmark is a rotated transparent text-stroke headline; back-link mono uppercase ink (red on hover)."
+    }
+  ],
+  "palette": [
+    { "component": "Button", "restyle": "Squared (radius 0), UPPERCASE grotesk, solid offset 'paste' shadow, given a slight rotation; ink-fill (black → red on hover) and ghost (ink hairline → red text+border). Hover straightens the tilt + deepens the shadow instead of a soft fade." },
+    { "component": "Badge", "restyle": "Loses pill shape entirely → a squared, tilted, taped paper scrap. Three reads: outline mono 'est.' tag (header), paper client scrap with a hard shadow + per-tag tilt (recognition), and a flat red status chip (brief)." },
+    { "component": "Pillbox", "restyle": "Container chrome dropped to a single torn underline rule and rotated; input set in mono; selected pills squared to ink blocks with mono labels — a filter strip, not a field." },
+    { "component": "Pagination", "restyle": "Squared mono numeral buttons with ink hairlines that jiggle (rotate) on hover and ink-fill when active." },
+    { "component": "Tabs", "restyle": "Underline variant; triggers become big UPPERCASE grotesk words, each rotated a little, with a thick red text-underline on the active one — handwritten section labels, not buttons." },
+    { "component": "Timeline", "restyle": "Dates → mono uppercase muted; titles → bold grotesk ink; the milestone step dot tinted marker red." },
+    { "component": "Accordion", "restyle": "Triggers blown up to 1.8rem display weight (red on hover); answers in grotesk body — colossal collapsing questions, not UI rows." },
+    { "component": "Avatar", "restyle": "De-rounded to a squared black photostat plate with a red offset shadow and display-type initials — a pasted ID card, not a round photo chip." },
+    { "component": "Table", "restyle": "Becomes a torn ledger: transparent cells, hairline row dividers, a 2.5px ink head rule, mono UPPERCASE column heads, mono red years, UPPERCASE bold project names, the whole block rotated slightly off-true." },
+    { "component": "Card", "restyle": "Squared with a hard 8px solid ink offset shadow, ink-rule header/footer, and a tilt that opposes its column — a brief pasted onto the page." },
+    { "component": "Composer", "restyle": "Squared on warm paper with a hairline ink border and oversized grotesk input text — a note pad, not a chat box." },
+    { "component": "Progress", "restyle": "Thin squared red bar reading as a character-count meter under the composer." },
+    { "component": "MoodMeter", "restyle": "Kept structurally but driven by the marker-red accent var so the budget pad belongs to the palette." },
+    { "component": "ReasonTag", "restyle": "Underline theme so the budget figure reads like a scribbled marginal note with a dotted underline." },
+    { "component": "Breadcrumbs", "restyle": "Flattened to a mono uppercase running-head trail in muted ink, red on hover." },
+    { "component": "Separator / Heading / Text / Tooltip", "restyle": "Rules dropped to paper hairlines; Headings forced to 800-weight grotesk with tight tracking; Text recoloured to ink/soft-ink; Tooltip left default for the trust affordance." }
+  ],
+  "contentArchetype": "A fictional design + dev studio (FIELDWORK) presenting its one-page portfolio as a torn-collage editorial spread — running head + wordmark, a broken hero with a taped scrap note, a scrolling discipline marquee, staggered stat figures, selected work as a tilted torn index, capabilities (services/process/FAQ), an oversized about statement, the team as scattered taped ID cards, an awards ledger + client scraps, a budget+brief contact box, and a giant outline-stroke sign-off.",
+  "remix": "Swap the marker red for any single loud spot colour (electric blue, acid green, hot pink) and the warm newsprint for a cool grey or off-black to flip the whole mood. The load-bearing moves are: (1) a single base column whose children each set their OWN small rotation via a --t custom prop, (2) negative margins / margin-top staggers so neighbouring blocks overlap and step out of alignment, (3) radius 0 + solid offset 'paste' shadows on every panel, (4) hover that STRAIGHTENS the tilt and deepens the shadow (motion that resolves the chaos), (5) a grotesk-800 + mono pairing with one loud accent, (6) at least one element absolutely positioned to bleed off-edge. To blend toward another style: keep the tilt/overlap system but trade the newsprint + offset shadows for flat panels and you approach a softer asymmetric editorial; add the marquee + outline-stroke type and push the accent louder for Kinetic/Big-Type energy; or straighten the rotations to 0 and you fall back to a strict Swiss grid — the same primitives, un-broken. Any Fancy primitive joins by zeroing its radius, squaring its chrome, adding an offset shadow + a --t rotation, and reassigning its type to the grotesk/mono pair."
+}

@@ -1,0 +1,583 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Inspiration Gallery · Style — Dark Studio
+   FIELDWORK rendered as a refined, near-black studio portfolio: deep #0a0b0e
+   surfaces, one disciplined blue accent, generous negative space, crisp type,
+   mono for labels / numbers / metadata. Swiss-level restraint in the dark — no
+   neon, no gradients beyond a single hairline glow, no shadows beyond a quiet
+   lift on raised cards. Every selector is scoped under .insp-dark so the page
+   carries its own dark palette regardless of the host theme, and so it never
+   collides with Tailwind's .dark mode. The Fancy primitives are restyled HARD
+   here (buttons, badges, cards, tabs, table, accordion, timeline, progress…)
+   so they read native to this idiom rather than as kit defaults.
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.insp-dark {
+  /* ── Self-contained Dark Studio palette ──────────────────────────────────
+     We redefine the semantic design tokens locally so the surface is truly
+     near-black + single-blue-accent, independent of light/dark host mode. */
+  --d-bg:        #0a0b0e;   /* page — near black, a touch of blue */
+  --d-bg-1:      #0e0f13;   /* recessed bands */
+  --d-surface:   #101218;   /* cards, panels */
+  --d-surface-2: #14161d;   /* raised / hover */
+  --d-ink:       #f3f5f8;   /* primary text */
+  --d-ink-2:     #b7bdc9;   /* secondary text */
+  --d-ink-3:     #7b8290;   /* tertiary / mono labels */
+  --d-ink-4:     #4d5360;   /* faint / decorative */
+  --d-line:      #1d2029;   /* hairline borders */
+  --d-line-2:    #2a2e3a;   /* hover / stronger hairline */
+  --d-accent:    #3b82f6;   /* the one disciplined blue (blue-500) */
+  --d-accent-2:  #60a5fa;   /* blue-400 — hover / glow */
+  --d-accent-3:  #93c5fd;   /* blue-300 — faint tint */
+  --d-accent-soft: rgba(59, 130, 246, 0.12);
+  --d-accent-glow: rgba(59, 130, 246, 0.28);
+
+  /* Re-point the shared semantic tokens so any react-fancy primitive that
+     reads them inherits the Dark Studio surface without per-component hacks. */
+  --fg-1: var(--d-ink);
+  --fg-2: var(--d-ink-2);
+  --fg-3: var(--d-ink-3);
+  --fg-4: var(--d-ink-4);
+  --bg-0: var(--d-bg);
+  --bg-1: var(--d-bg-1);
+  --bg-2: var(--d-surface-2);
+  --bg-3: var(--d-line-2);
+  --surface: var(--d-surface);
+  --surface-raised: var(--d-surface-2);
+  --border-1: var(--d-line);
+  --border-2: var(--d-line-2);
+  --accent: var(--d-accent);
+  --accent-hover: var(--d-accent-2);
+  --primary: var(--d-accent);
+  --primary-hover: var(--d-accent-2);
+  --ring: var(--d-accent-glow);
+
+  color: var(--d-ink-2);
+  background: var(--d-bg);
+  font-family: var(--font-sans);
+  --d-radius: 12px;
+  /* A subtle vertical wash so the deep black has depth, not flatness. */
+  background-image:
+    radial-gradient(1200px 600px at 80% -10%, rgba(59, 130, 246, 0.06), transparent 60%),
+    radial-gradient(900px 500px at -10% 10%, rgba(59, 130, 246, 0.04), transparent 55%);
+}
+
+/* ── Shell + grid ─────────────────────────────────────────────────────────── */
+.insp-dark .dk-shell {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 4px;
+}
+
+.insp-dark .dk-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  column-gap: 28px;
+}
+
+/* A flush hairline rule with a faint blue bleed at its left edge. */
+.insp-dark .dk-rule {
+  height: 1px;
+  border: 0;
+  margin: 0;
+  background: linear-gradient(90deg, var(--d-accent) 0%, var(--d-line) 14%, var(--d-line) 100%);
+  opacity: 0.7;
+}
+
+/* ── Sections: numbered, labelled bands separated by hairlines ────────────── */
+.insp-dark .dk-section {
+  padding: 76px 0;
+  border-top: 1px solid var(--d-line);
+}
+.insp-dark .dk-section:first-of-type { border-top: 0; }
+
+.insp-dark .dk-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--d-ink-3);
+}
+.insp-dark .dk-eyebrow b { color: var(--d-accent-2); font-weight: 500; }
+.insp-dark .dk-eyebrow::before {
+  content: "";
+  width: 22px;
+  height: 1px;
+  background: var(--d-accent);
+  opacity: 0.8;
+}
+
+/* ── Running head ─────────────────────────────────────────────────────────── */
+.insp-dark .dk-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 22px 0;
+}
+.insp-dark .dk-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+}
+.insp-dark .dk-mark__logo {
+  width: 26px; height: 26px;
+  border-radius: 7px;
+  display: grid; place-items: center;
+  color: #fff; font-weight: 700; font-size: 13px;
+  background: var(--d-accent);
+  box-shadow: 0 0 0 1px rgba(59,130,246,0.4), 0 0 22px var(--d-accent-glow);
+}
+.insp-dark .dk-mark__name {
+  font-weight: 600; font-size: 14.5px; letter-spacing: 0.02em;
+  color: var(--d-ink);
+}
+.insp-dark .dk-headnav {
+  display: flex; align-items: center; gap: 26px;
+  font-family: var(--font-mono);
+  font-size: 11.5px; letter-spacing: 0.06em; text-transform: uppercase;
+}
+.insp-dark .dk-headnav a {
+  color: var(--d-ink-3); text-decoration: none;
+  transition: color var(--dur-base) var(--ease-out);
+}
+.insp-dark .dk-headnav a:hover { color: var(--d-ink); }
+
+/* ── Typography ───────────────────────────────────────────────────────────── */
+.insp-dark .dk-display {
+  margin: 0;
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  line-height: 0.98;
+  color: var(--d-ink);
+  font-size: clamp(2.7rem, 7vw, 5.6rem);
+}
+.insp-dark .dk-display .dk-accent { color: var(--d-accent-2); }
+.insp-dark .dk-lede {
+  margin: 0;
+  font-size: clamp(1.05rem, 1.5vw, 1.3rem);
+  line-height: 1.55;
+  color: var(--d-ink-2);
+  max-width: 48ch;
+}
+.insp-dark .dk-h2 {
+  margin: 0;
+  font-size: clamp(1.6rem, 2.6vw, 2.35rem);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.06;
+  color: var(--d-ink);
+}
+.insp-dark .dk-meta {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.75;
+  color: var(--d-ink-3);
+}
+.insp-dark .dk-meta--ink { color: var(--d-ink); }
+.insp-dark .dk-meta--accent { color: var(--d-accent-2); }
+
+/* ── Hero ─────────────────────────────────────────────────────────────────── */
+.insp-dark .dk-hero {
+  padding-top: 18px;
+}
+.insp-dark .dk-hero__aside {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  border-left: 1px solid var(--d-line);
+  padding-left: 22px;
+}
+.insp-dark .dk-availability {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-mono); font-size: 11.5px;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--d-ink-2);
+}
+.insp-dark .dk-availability .dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--d-accent-2);
+  box-shadow: 0 0 0 3px var(--d-accent-soft);
+}
+
+/* ── Marquee / client ticker ──────────────────────────────────────────────── */
+.insp-dark .dk-ticker {
+  overflow: hidden;
+  border-top: 1px solid var(--d-line);
+  border-bottom: 1px solid var(--d-line);
+  padding: 18px 0;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+          mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+.insp-dark .dk-ticker__track {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  white-space: nowrap;
+  animation: dk-marquee 42s linear infinite;
+}
+.insp-dark .dk-ticker__item {
+  font-size: clamp(1.1rem, 2vw, 1.6rem);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--d-ink-3);
+  padding: 0 36px;
+  transition: color var(--dur-base) var(--ease-out);
+}
+.insp-dark .dk-ticker:hover .dk-ticker__item { color: var(--d-ink-2); }
+.insp-dark .dk-ticker__sep { color: var(--d-accent); opacity: 0.6; }
+@keyframes dk-marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .insp-dark .dk-ticker__track { animation: none; }
+}
+
+/* ── Figures band ─────────────────────────────────────────────────────────── */
+.insp-dark .dk-figure {
+  border-top: 1px solid var(--d-line);
+  padding-top: 18px;
+}
+.insp-dark .dk-figure__num {
+  font-size: clamp(2.1rem, 4.4vw, 3.2rem);
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  color: var(--d-ink);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+.insp-dark .dk-figure__num em {
+  font-style: normal;
+  color: var(--d-accent-2);
+}
+.insp-dark .dk-figure__label {
+  margin-top: 10px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--d-ink-3);
+}
+
+/* ── Capabilities columns ─────────────────────────────────────────────────── */
+.insp-dark .dk-cap {
+  position: relative;
+  border-top: 1px solid var(--d-line);
+  padding-top: 20px;
+  transition: border-color var(--dur-base) var(--ease-out);
+}
+.insp-dark .dk-cap::before {
+  content: "";
+  position: absolute; top: -1px; left: 0;
+  width: 0; height: 1px;
+  background: var(--d-accent);
+  transition: width var(--dur-slow) var(--ease-out);
+}
+.insp-dark .dk-cap:hover::before { width: 48px; }
+.insp-dark .dk-cap__no {
+  font-family: var(--font-mono);
+  font-size: 11px; letter-spacing: 0.08em;
+  color: var(--d-accent-2);
+}
+.insp-dark .dk-cap__title {
+  margin: 12px 0 0;
+  font-size: 17px; font-weight: 600;
+  letter-spacing: -0.015em; color: var(--d-ink);
+}
+.insp-dark .dk-cap__body {
+  margin: 10px 0 0;
+  font-size: 13.5px; line-height: 1.6; color: var(--d-ink-2);
+}
+.insp-dark .dk-cap__tags {
+  margin-top: 14px;
+  display: flex; flex-wrap: wrap; gap: 6px;
+}
+
+/* ── Selected work — typographic index ────────────────────────────────────── */
+.insp-dark .dk-index { display: grid; gap: 0; }
+.insp-dark .dk-index__row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 3.2rem minmax(0, 1.7fr) minmax(0, 1fr) 7rem;
+  align-items: center;
+  column-gap: 28px;
+  padding: 26px 6px;
+  border-top: 1px solid var(--d-line);
+  transition: background var(--dur-base) var(--ease-out);
+}
+.insp-dark .dk-index__row:last-child { border-bottom: 1px solid var(--d-line); }
+.insp-dark .dk-index__row:hover { background: var(--d-bg-1); }
+.insp-dark .dk-index__stretch { position: absolute; inset: 0; z-index: 1; }
+.insp-dark .dk-index__num {
+  font-family: var(--font-mono); font-size: 12px; color: var(--d-ink-4);
+}
+.insp-dark .dk-index__title {
+  font-size: clamp(1.3rem, 2.4vw, 1.9rem);
+  font-weight: 600; letter-spacing: -0.02em; color: var(--d-ink);
+  transition: color var(--dur-base) var(--ease-out);
+}
+.insp-dark .dk-index__row:hover .dk-index__title { color: var(--d-accent-2); }
+.insp-dark .dk-index__disc { font-size: 13.5px; color: var(--d-ink-2); line-height: 1.45; }
+.insp-dark .dk-index__year {
+  font-family: var(--font-mono); font-size: 12px; color: var(--d-ink-3);
+  text-align: right;
+  display: inline-flex; align-items: center; gap: 8px; justify-content: flex-end;
+}
+.insp-dark .dk-index__row:hover .dk-index__year { color: var(--d-accent-2); }
+
+@media (max-width: 760px) {
+  .insp-dark .dk-index__row { grid-template-columns: 2.5rem 1fr; row-gap: 6px; }
+  .insp-dark .dk-index__disc,
+  .insp-dark .dk-index__year { grid-column: 2; text-align: left; justify-content: flex-start; }
+}
+
+/* ── Work preview card (FauxClient host) ──────────────────────────────────── */
+.insp-dark .dk-preview {
+  border: 1px solid var(--d-line);
+  border-radius: var(--d-radius);
+  background: var(--d-surface);
+  overflow: hidden;
+  transition: border-color var(--dur-base) var(--ease-out),
+              box-shadow var(--dur-base) var(--ease-out);
+}
+.insp-dark .dk-preview:hover {
+  border-color: var(--d-line-2);
+  box-shadow: 0 0 0 1px var(--d-accent-soft), 0 18px 48px -28px var(--d-accent-glow);
+}
+.insp-dark .dk-preview__canvas {
+  height: 230px;
+  display: grid; place-items: center;
+  background:
+    radial-gradient(120% 120% at 50% 0%, rgba(59,130,246,0.10), transparent 60%),
+    var(--d-bg);
+  border-bottom: 1px solid var(--d-line);
+  position: relative;
+  overflow: hidden;
+}
+.insp-dark .dk-preview__canvas::after {
+  content: "";
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(var(--d-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--d-line) 1px, transparent 1px);
+  background-size: 28px 28px;
+  opacity: 0.35;
+  -webkit-mask-image: radial-gradient(120% 100% at 50% 0%, #000, transparent 75%);
+          mask-image: radial-gradient(120% 100% at 50% 0%, #000, transparent 75%);
+}
+.insp-dark .dk-preview__glyph {
+  position: relative; z-index: 1;
+  font-size: clamp(2.4rem, 5vw, 3.6rem);
+  font-weight: 600; letter-spacing: -0.04em;
+  color: var(--d-ink);
+}
+.insp-dark .dk-preview__glyph span { color: var(--d-accent-2); }
+.insp-dark .dk-preview__meta {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; padding: 16px 18px;
+}
+.insp-dark .dk-preview__title { font-weight: 600; font-size: 15px; color: var(--d-ink); letter-spacing: -0.01em; }
+.insp-dark .dk-preview__disc { font-family: var(--font-mono); font-size: 11.5px; color: var(--d-ink-3); margin-top: 3px; }
+
+/* ── About pull-quote ─────────────────────────────────────────────────────── */
+.insp-dark .dk-quote {
+  margin: 0;
+  font-size: clamp(1.35rem, 2.6vw, 2.1rem);
+  line-height: 1.32;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--d-ink);
+}
+.insp-dark .dk-quote b { color: var(--d-accent-2); font-weight: 500; }
+
+/* ── Team ─────────────────────────────────────────────────────────────────── */
+.insp-dark .dk-person {
+  border-top: 1px solid var(--d-line);
+  padding-top: 20px;
+}
+.insp-dark .dk-person__name {
+  margin-top: 16px; font-weight: 600; font-size: 15px;
+  letter-spacing: -0.01em; color: var(--d-ink);
+}
+.insp-dark .dk-person__role { margin-top: 3px; }
+
+/* ── Contact / brief card ─────────────────────────────────────────────────── */
+.insp-dark .dk-brief-aside .dk-contact-line {
+  font-family: var(--font-mono); font-size: 13px; color: var(--d-ink);
+}
+.insp-dark .dk-brief-aside .dk-contact-sub { font-family: var(--font-mono); font-size: 12px; color: var(--d-ink-3); margin-top: 4px; }
+
+/* ── Footer ───────────────────────────────────────────────────────────────── */
+.insp-dark .dk-footer {
+  border-top: 1px solid var(--d-line);
+  padding: 40px 0 12px;
+}
+.insp-dark .dk-footer__links {
+  display: grid; grid-template-columns: repeat(2, auto); gap: 6px 48px;
+  font-family: var(--font-mono); font-size: 12px;
+}
+.insp-dark .dk-footer__links a {
+  color: var(--d-ink-3); text-decoration: none;
+  transition: color var(--dur-base) var(--ease-out);
+}
+.insp-dark .dk-footer__links a:hover { color: var(--d-accent-2); }
+.insp-dark .dk-back {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 13px; font-weight: 500; color: var(--d-accent-2);
+  text-decoration: none;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Restyling the Fancy primitives so they WEAR Dark Studio
+   — scoped overrides that re-skin react-fancy's utility-driven defaults to the
+     near-black + single-blue idiom without touching the components themselves.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Buttons — flatten to crisp, near-square dark chips; the primary action wears
+   the one blue with a faint glow, the ghost is a hairline outline. */
+.insp-dark button,
+.insp-dark a[class*="inline-flex"] {
+  letter-spacing: 0.005em;
+}
+.insp-dark .dk-btn-primary,
+.insp-dark .dk-btn-primary:not(:disabled) {
+  background: var(--d-accent) !important;
+  color: #fff !important;
+  border: 1px solid transparent !important;
+  border-radius: 9px !important;
+  box-shadow: 0 0 0 1px rgba(59,130,246,0.35), 0 8px 26px -12px var(--d-accent-glow) !important;
+  transition: background var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out) !important;
+}
+.insp-dark .dk-btn-primary:hover:not(:disabled) {
+  background: var(--d-accent-2) !important;
+  box-shadow: 0 0 0 1px rgba(96,165,250,0.45), 0 10px 30px -10px var(--d-accent-glow) !important;
+}
+.insp-dark .dk-btn-primary:disabled { opacity: 0.45 !important; box-shadow: none !important; }
+
+.insp-dark .dk-btn-ghost,
+.insp-dark .dk-btn-ghost:not(:disabled) {
+  background: transparent !important;
+  color: var(--d-ink) !important;
+  border: 1px solid var(--d-line-2) !important;
+  border-radius: 9px !important;
+  transition: border-color var(--dur-base) var(--ease-out), color var(--dur-base) var(--ease-out) !important;
+}
+.insp-dark .dk-btn-ghost:hover:not(:disabled) {
+  border-color: var(--d-accent) !important;
+  color: var(--d-accent-2) !important;
+}
+
+/* Badges — turn into mono "tags": hairline outline, uppercase, blue dot. */
+.insp-dark .dk-tag {
+  background: var(--d-surface) !important;
+  color: var(--d-ink-2) !important;
+  border: 1px solid var(--d-line-2) !important;
+  border-radius: 6px !important;
+  font-family: var(--font-mono) !important;
+  font-size: 10.5px !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+  padding: 4px 9px !important;
+}
+.insp-dark .dk-tag--accent {
+  color: var(--d-accent-2) !important;
+  border-color: rgba(59,130,246,0.45) !important;
+  background: var(--d-accent-soft) !important;
+}
+
+/* Cards — flat near-black panels with hairline borders, no kit rounding fuzz. */
+.insp-dark .dk-card {
+  background: var(--d-surface) !important;
+  border: 1px solid var(--d-line) !important;
+  border-radius: var(--d-radius) !important;
+  box-shadow: none !important;
+}
+.insp-dark .dk-card:hover { border-color: var(--d-line-2) !important; }
+
+/* Tabs — strip the kit chrome; underline tabs become mono labels with a blue
+   active rule. */
+.insp-dark .dk-tabs [role="tablist"] {
+  border-bottom: 1px solid var(--d-line) !important;
+  gap: 4px;
+}
+.insp-dark .dk-tabs [role="tab"] {
+  font-family: var(--font-mono) !important;
+  font-size: 12px !important;
+  letter-spacing: 0.06em !important;
+  text-transform: uppercase !important;
+  color: var(--d-ink-3) !important;
+  padding: 12px 14px !important;
+  background: transparent !important;
+}
+.insp-dark .dk-tabs [role="tab"]:hover { color: var(--d-ink) !important; }
+.insp-dark .dk-tabs [role="tab"][aria-selected="true"] {
+  color: var(--d-accent-2) !important;
+}
+
+/* Accordion — flatten to hairline-separated rows. */
+.insp-dark .dk-accordion > * { border-color: var(--d-line) !important; }
+.insp-dark .dk-accordion button {
+  color: var(--d-ink) !important;
+  font-weight: 500 !important;
+}
+.insp-dark .dk-accordion button:hover { color: var(--d-accent-2) !important; }
+
+/* Table — recolor to dark surfaces, mono header, hairline rules. */
+.insp-dark .dk-table table { width: 100%; }
+.insp-dark .dk-table thead th {
+  font-family: var(--font-mono) !important;
+  font-size: 11px !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+  color: var(--d-ink-3) !important;
+  border-bottom: 1px solid var(--d-line-2) !important;
+  background: transparent !important;
+}
+.insp-dark .dk-table tbody td {
+  border-bottom: 1px solid var(--d-line) !important;
+  color: var(--d-ink-2) !important;
+  background: transparent !important;
+}
+.insp-dark .dk-table tbody tr:hover td { background: var(--d-bg-1) !important; }
+
+/* Timeline — recolor dots + connectors to the dark line + blue accent. */
+.insp-dark .dk-timeline { color: var(--d-ink-2); }
+
+/* Composer / inputs — near-black field, hairline border, blue focus ring. */
+.insp-dark .dk-composer,
+.insp-dark .dk-composer textarea,
+.insp-dark .dk-composer [contenteditable] {
+  background: var(--d-bg) !important;
+  color: var(--d-ink) !important;
+}
+.insp-dark .dk-input input,
+.insp-dark .dk-input textarea {
+  background: var(--d-bg) !important;
+  border: 1px solid var(--d-line-2) !important;
+  color: var(--d-ink) !important;
+}
+.insp-dark .dk-input input:focus,
+.insp-dark .dk-input textarea:focus {
+  border-color: var(--d-accent) !important;
+  box-shadow: 0 0 0 3px var(--d-accent-soft) !important;
+}
+
+/* Progress — recolor the track to a hairline, bar to the one blue. */
+.insp-dark .dk-progress [class*="rounded"] { background-color: var(--d-line) !important; }
+
+/* Tooltip surface, dark. */
+.insp-dark + [data-react-fancy-tooltip],
+.insp-dark [role="tooltip"] {
+  background: var(--d-surface-2) !important;
+  color: var(--d-ink) !important;
+  border: 1px solid var(--d-line-2) !important;
+}
+
+/* Responsive: collapse the 12-col grid spans on small screens. */
+@media (max-width: 900px) {
+  .insp-dark .dk-grid > [data-dk-col] { grid-column: 1 / -1 !important; }
+}

@@ -1,0 +1,100 @@
+{
+  "id": "kinetic",
+  "name": "Kinetic",
+  "note": "Scroll-driven motion and marquees.",
+  "mode": "dark",
+  "thesis": "The page is a timeline and scroll is the playhead: near-black surfaces lit by a magenta→violet→cyan velocity gradient, with marquees, parallax, reveal-on-scroll staggers, and a telemetry ticker that drifts with scroll speed — motion as the entire visual language, never decoration.",
+  "tokens": {
+    "bg": "#07070b (page) / #0b0b12 (recessed bands) / #101018 (cards)",
+    "fg": "#f4f3fb primary · #b6b4c8 secondary · #7c7a93 mono labels · #4a4860 faint",
+    "accent": "velocity gradient — linear-gradient(100deg, #ff2e88 magenta → #8b5cff violet → #1fd4ff cyan); magenta is the primary point accent, cyan the hover/secondary",
+    "fontDisplay": "var(--font-sans), weights 700–800, tracking -0.03em to -0.05em, line-height ~0.94; italic clip-text gradient on emphasized words",
+    "fontMono": "var(--font-mono) for eyebrows, ticker, runtimes, metadata, table headers — uppercase, letter-spacing 0.08–0.16em",
+    "radius": "14px cards/panels, 11px buttons, 7–10px tags/inputs",
+    "border": "1px hairline #1d1b29 (idle) / #2c2940 (hover); gradient hairlines via border-image on figures, callout, and card hover (mag-soft glow ring)",
+    "motion": "CSS keyframes (marquee 30–36s linear, gradient sweep 6s, blink/pulse/scan loops) + IntersectionObserver reveal (.is-in, 0.7s cubic-bezier(0.2,0.7,0.2,1), 26px rise, staggered by index) + rAF scroll listener for hero parallax (per-layer data-depth translate) and a scroll-velocity ticker offset (--kx-vel). ALL gated behind prefers-reduced-motion."
+  },
+  "layout": "A centered 1200px shell (24px gutters) of full-width horizontal bands separated by 1px top-hairlines, with two intentional full-bleed breakouts: the parallax HERO (layered glows + a faint oversized marquee behind the copy) and two edge-to-edge MARQUEE strips. Inside the shell: a 4-up figures band, a featured reel (Carousel) above a typographic work index (CSS-grid rows: num / title / discipline / runtime, each a stretched link), a 4-up capabilities grid under underline Tabs, a one-paragraph about pull-quote, a 4-up team grid, a 1.6fr/1fr recognition split (Table + press/clients aside), and a 1fr/1fr contact split (copy + brief Card). Every content block is wrapped in a Reveal so it rises into place on scroll; rows and cards stagger by index. Collapses to 2-up then 1-up at 900/720/540px.",
+  "sections": [
+    {
+      "name": "hero",
+      "what": "Full-bleed parallax stage: drifting magenta + cyan radial glows, a masked grid, a faint oversized marquee headline behind the copy, then eyebrow + a huge two-line display headline with italic gradient-clip emphasis words ('move', 'mean'), lede, and two CTAs. A 'scroll to play' cue sits below.",
+      "components": ["Breadcrumbs", "Badge", "Heading (hand-rolled h1)", "Button"],
+      "restyle": "Display headline is a hand-rolled <h1> (kit Heading caps at 2xl) with clip-text gradient italic spans that sweep position on a 6s loop. Button primary wears the velocity gradient + glow and lifts on hover; ghost is a hairline that turns cyan. Background glows + grid are parallax layers translated by a rAF scroll listener via data-depth."
+    },
+    {
+      "name": "ticker",
+      "what": "Edge-to-edge telemetry ticker of capability words (MOTION IDENTITY · SCROLL CHOREOGRAPHY · …) that auto-scrolls AND nudges left/right with live scroll velocity.",
+      "components": ["(hand-rolled marquee)"],
+      "restyle": "Mono uppercase items with magenta ✸ separators on a CSS marquee track; JS adds a translateX(--kx-vel) offset accumulated from scroll delta so the ticker speeds with the page. Masked edges for a clean fade."
+    },
+    {
+      "name": "figures",
+      "what": "Four oversized tabular-num stats (founded, films cut, people, awards) on gradient-topped columns.",
+      "components": ["(hand-rolled grid)"],
+      "restyle": "Each column carries a 2px gradient top via border-image; the suffix (+) is clip-text gradient. Revealed as one staggered block."
+    },
+    {
+      "name": "selected-work",
+      "what": "A featured reel (3 projects in a fading Carousel styled as a film deck: gradient glyph, play button, scanning line, runtime chip) above a typographic index of the remaining projects with Pillbox discipline filter and Pagination.",
+      "components": ["Carousel", "Carousel.Panels", "Carousel.Slide", "Carousel.Controls", "Carousel.Steps", "Pillbox", "Pagination", "Badge", "Inertia Link (stretched)"],
+      "restyle": "Carousel chrome stripped: steps become gradient-active dots, controls become mono hairline buttons; the slide stage is a grid-textured film frame with an animated scan line + pulsing play badge. Index rows reveal a gradient left-bar and slide the title right into a gradient clip-text on hover; the whole row is one stretched <Link> (no nested anchors). Pillbox + Pagination recolored to dark surfaces with gradient active states."
+    },
+    {
+      "name": "capabilities",
+      "what": "Underline Tabs (Services / Process / Questions): a 4-up services grid, a Process Timeline keyed to film 'beats', and an FAQ Accordion.",
+      "components": ["Tabs", "Tabs.List", "Tabs.Tab", "Tabs.Panels", "Tabs.Panel", "Timeline", "Accordion", "Badge"],
+      "restyle": "Tabs become mono uppercase labels with a gradient active underline (::after); service columns grow a gradient top-rule on hover and the number is clip-text gradient. Timeline events use per-event accent colors (pink/fuchsia/cyan/sky) to ride the gradient. Accordion flattened to hairline rows; triggers turn cyan on hover."
+    },
+    {
+      "name": "about",
+      "what": "A short eyebrow + an oversized pull-quote with gradient-clip emphasis phrases, then one body paragraph.",
+      "components": ["Heading (hand-rolled blockquote)", "Text"],
+      "restyle": "Pull-quote is a hand-rolled <blockquote> at clamp(1.7rem,4.4vw,3.2rem); emphasized <b> spans are clip-text gradient. Text body recolored to ink-2."
+    },
+    {
+      "name": "team",
+      "what": "Four crew members on hairline-topped columns with avatar, name, and mono role.",
+      "components": ["Avatar", "(hand-rolled grid)"],
+      "restyle": "Avatars sit on a dark surface with a subtle ring; rows reveal with a per-index stagger."
+    },
+    {
+      "name": "recognition",
+      "what": "A 1.6fr/1fr split: an awards Table (year/project/award) beside a press list and a wrapped clients Badge cloud; followed by a reverse-direction full-bleed clients marquee.",
+      "components": ["Table", "Table.Head/Body/Row/Cell/Column", "Badge", "Separator", "(hand-rolled marquee)"],
+      "restyle": "Table recolored to transparent dark with mono uppercase headers, hairline rules, project column emphasized, year column mono. Client badges are mono tag chips. The marquee runs in reverse so the two strips on the page move in opposite directions."
+    },
+    {
+      "name": "contact",
+      "what": "A 1fr/1fr split: copy (eyebrow, 'Roll camera.' heading, lede, mono contact lines, a motion-treatment Callout) beside a brief Card with a Composer + character Progress that swaps to a 'Received' confirmation on submit.",
+      "components": ["Heading (hand-rolled)", "Callout", "Card", "Card.Header/Body/Footer", "Composer", "Progress", "Button", "Badge", "Tooltip", "Text"],
+      "restyle": "Card is a flat near-black panel that lifts with a magenta glow ring on hover; header/footer hairline-separated. Composer is a near-black field with a magenta focus ring. Progress track is hairline, bar is the velocity gradient. Callout is dark with a gradient left edge (border-image). Submit button wears the gradient and is disabled under 12 chars."
+    },
+    {
+      "name": "footer",
+      "what": "Brand mark + blurb, a 2-col mono link grid, a separator, and a bottom row with the fictional-studio + style-number line and a gradient 'Back to the gallery' link.",
+      "components": ["Separator", "Inertia Link", "Badge"],
+      "restyle": "Footer links are mono and turn cyan on hover; the back link is clip-text gradient with a magenta arrow."
+    }
+  ],
+  "palette": [
+    { "component": "Button", "restyle": "Primary fills with the magenta→cyan velocity gradient (background-size 160%, position sweeps on hover) + a glow shadow and a -2px lift; ghost is a hairline outline that turns cyan and lifts. Rounded 11px, weight 600." },
+    { "component": "Badge", "restyle": "Becomes a mono uppercase 'tag' chip — dark surface, hairline border, 10.5px, tracking 0.08em; an accent variant fills with the gradient and goes white for 'live' states (Open for Q3, Received)." },
+    { "component": "Card", "restyle": "Flat near-black panel, 1px hairline, 14px radius, no kit shadow; on hover gains a magenta-soft ring + a deep gradient-tinted drop glow. Header/Body/Footer are hairline-separated dark bands." },
+    { "component": "Carousel", "restyle": "Reskinned as a film deck: panels fade-transition, steps become gradient-active dots, Controls become mono hairline Prev/Next buttons; each slide is a grid-textured frame with a gradient glyph, an animated scan line, a pulsing play badge, and a mono runtime chip." },
+    { "component": "Tabs", "restyle": "Mono uppercase labels, transparent background, muted idle ink; active tab keeps ink color and grows a gradient underline via ::after instead of the kit's solid bar." },
+    { "component": "Table", "restyle": "Transparent over the dark band — mono uppercase headers with a stronger hairline, 1px row rules, emphasized project column, mono year column, faint bg-1 row hover." },
+    { "component": "Timeline", "restyle": "Connector + text recolored to dark ink; event dots ride the gradient by assigning per-event accent colors (pink/fuchsia/cyan/sky) so the column reads as a magenta→cyan run." },
+    { "component": "Accordion", "restyle": "Flattened to hairline-separated rows; triggers are 600-weight ink that turn cyan on hover; content recolored to ink-2." },
+    { "component": "Composer", "restyle": "Near-black field on the page background, hairline border, 10px radius; focus-within paints a magenta ring + soft halo. Placeholder muted." },
+    { "component": "Progress", "restyle": "Track flattened to a hairline; the fill bar is repainted with the velocity gradient." },
+    { "component": "Pillbox", "restyle": "Field recolored to the dark surface with a 10px radius; chips become magenta-soft pills with a magenta hairline; placeholder muted." },
+    { "component": "Callout", "restyle": "Dark bg-1 surface with a gradient left edge (border-image), 10px radius, muted ink, magenta icon — used for the 'motion treatment' promise." },
+    { "component": "Pagination", "restyle": "Mono buttons over the dark surface; the active page fills with the velocity gradient." },
+    { "component": "Avatar", "restyle": "Dark surface fallback with a subtle ring; sits on hairline-topped team columns." },
+    { "component": "Tooltip", "restyle": "Dark surface-2 panel with a hairline-2 border and ink text." },
+    { "component": "Separator / Breadcrumbs / Text / Heading", "restyle": "Separators are hairlines; Breadcrumbs + metadata go mono; Text recolored to the ink ramp; section headings use a hand-rolled clamp display because the kit Heading caps at 2xl." }
+  ],
+  "contentArchetype": "A fictional motion-design studio (FIELDWORK) one-page portfolio: oversized kinetic hero, a featured reel + selected-work index with runtimes, capabilities/process/FAQ, a short studio manifesto, the crew, awards + press + clients, and a 'roll camera' brief form. Voice is film-and-motion: 'beats', 'runtime', 'reel', 'roll camera', velocity metaphors.",
+  "remix": "Swap the magenta→cyan velocity gradient for any two-stop ramp to rebrand instantly (all accents read --k-grad). To dial motion down, keep the reveal-on-scroll + gradient sweep but drop the parallax and the velocity ticker (they're the rAF listener — remove the effect and the page is still fully kinetic via CSS alone). Blend toward Editorial by widening the type scale and reducing glow; toward Dark Studio by muting the gradient to a single hue and removing marquees; toward Brutalist/Mono by keeping the mono labels + hairlines and dropping the glows. The Reveal wrapper, the masked CSS marquees, and the prefers-reduced-motion block are the portable core — lift them into any dark project and apply the gradient to the brand's own primitives."
+}

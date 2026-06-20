@@ -1,0 +1,1207 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Inspiration Gallery · Brand Gradient  (id "gradient", light mode)
+   FIELDWORK rendered as a gradient-led, glassy portfolio: the brand gradient
+   (sky-300 → indigo-400 → violet-300) leads — a washed gradient field behind
+   everything, a gradient hero with a soft aurora, frosted glass cards, gradient
+   pills, and violet/indigo accents on every interactive primitive. The kit's
+   components are restyled HARD to WEAR this idiom: Buttons, Tabs, Badges, the
+   Table, Charts, MoodMeter, Composer, Slider, Switch all read native here.
+
+   LIGHT MODE ONLY — this style pins its own light palette via local tokens so it
+   stays a "Brand Gradient" surface regardless of app theme. Every rule is scoped
+   under .insp-gradient. Never `.dark` (collides with Tailwind dark mode); never a
+   bare element / utility selector.
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.insp-gradient {
+    /* ── Local, light-pinned gradient palette ───────────────────────────── */
+    --g-sky: #7dd3fc;       /* sky-300 */
+    --g-indigo: #818cf8;    /* indigo-400 */
+    --g-violet: #c4b5fd;    /* violet-300 */
+    --g-indigo-600: #4f46e5;
+    --g-violet-600: #7c3aed;
+    --g-sky-600: #0284c7;
+
+    --g-grad: linear-gradient(110deg, var(--g-sky) 0%, var(--g-indigo) 50%, var(--g-violet) 100%);
+    --g-grad-deep: linear-gradient(120deg, #38bdf8 0%, #6366f1 52%, #8b5cf6 100%);
+
+    --g-canvas: #f7f8fe;          /* page wash base */
+    --g-surface: #ffffff;         /* solid surfaces */
+    --g-glass: rgba(255, 255, 255, 0.62);  /* frosted card fill */
+    --g-glass-2: rgba(255, 255, 255, 0.46);
+    --g-glass-strong: rgba(255, 255, 255, 0.82);
+
+    --g-line: rgba(99, 102, 241, 0.14);    /* hairline border (indigo-tinted) */
+    --g-line-2: rgba(99, 102, 241, 0.24);
+
+    --g-fg: #1e1b3a;              /* primary text — deep indigo ink */
+    --g-fg-2: #4a4870;           /* secondary text */
+    --g-fg-3: #807da6;           /* muted / meta */
+    --g-accent: var(--g-indigo-600);
+    --g-accent-soft: rgba(99, 102, 241, 0.1);
+
+    --g-radius: 18px;            /* cards */
+    --g-radius-sm: 11px;         /* controls, chips */
+    --g-radius-lg: 26px;         /* hero / big panels */
+
+    --g-shadow: 0 1px 2px rgba(60, 60, 120, 0.04), 0 14px 36px -18px rgba(79, 70, 229, 0.22);
+    --g-shadow-pop: 0 18px 50px -16px rgba(99, 102, 241, 0.34), 0 2px 8px rgba(79, 70, 229, 0.1);
+    --g-glow: 0 0 0 1px rgba(255, 255, 255, 0.55) inset;
+
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    margin: -1px;
+    border-radius: 14px;
+    color: var(--g-fg);
+    font-family: var(--font-sans);
+    line-height: 1.55;
+    background:
+        radial-gradient(120% 90% at 8% -8%, rgba(125, 211, 252, 0.5), transparent 55%),
+        radial-gradient(120% 100% at 100% 0%, rgba(196, 181, 253, 0.55), transparent 52%),
+        radial-gradient(140% 120% at 50% 120%, rgba(129, 140, 248, 0.4), transparent 60%),
+        var(--g-canvas);
+}
+
+.insp-gradient *,
+.insp-gradient *::before,
+.insp-gradient *::after {
+    box-sizing: border-box;
+}
+
+/* ── Drifting aurora behind the content ──────────────────────────────────── */
+.insp-gradient .ig-aurora {
+    position: absolute;
+    inset: -25% -10% auto -10%;
+    height: 720px;
+    z-index: 0;
+    pointer-events: none;
+    background:
+        radial-gradient(closest-side, rgba(56, 189, 248, 0.55), transparent),
+        radial-gradient(closest-side, rgba(129, 140, 248, 0.5), transparent),
+        radial-gradient(closest-side, rgba(167, 139, 250, 0.5), transparent);
+    background-size: 60% 60%, 55% 55%, 50% 50%;
+    background-position: 8% 0%, 70% 12%, 42% 40%;
+    background-repeat: no-repeat;
+    filter: blur(46px);
+    opacity: 0.85;
+    animation: ig-drift 22s var(--ease-in-out) infinite alternate;
+}
+@keyframes ig-drift {
+    0% { background-position: 8% 0%, 70% 12%, 42% 40%; }
+    100% { background-position: 18% 10%, 56% 4%, 60% 30%; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .insp-gradient .ig-aurora { animation: none; }
+}
+
+.insp-gradient .ig-shell {
+    position: relative;
+    z-index: 1;
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 26px clamp(18px, 4vw, 52px) 40px;
+}
+
+/* ── Running head ────────────────────────────────────────────────────────── */
+.insp-gradient .ig-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding-bottom: 22px;
+}
+.insp-gradient .ig-crumbs :where(a, span) {
+    font-size: 13px !important;
+    color: var(--g-fg-3) !important;
+}
+.insp-gradient .ig-crumbs :where(a):hover {
+    color: var(--g-accent) !important;
+}
+.insp-gradient .ig-brandmark {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.insp-gradient .ig-mark {
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    font-weight: 800;
+    font-size: 14px;
+    box-shadow: 0 4px 12px -2px rgba(99, 102, 241, 0.5);
+    flex-shrink: 0;
+}
+.insp-gradient .ig-brand-name {
+    font-weight: 700;
+    font-size: 14.5px;
+    letter-spacing: -0.01em;
+    color: var(--g-fg);
+}
+.insp-gradient .ig-est {
+    font-family: var(--font-mono);
+    letter-spacing: 0.01em;
+}
+
+/* ── Hero ────────────────────────────────────────────────────────────────── */
+.insp-gradient .ig-hero {
+    position: relative;
+    text-align: center;
+    padding: 30px 0 8px;
+    max-width: 880px;
+    margin: 0 auto;
+}
+.insp-gradient .ig-hero-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 6px 14px 6px 12px;
+    border-radius: var(--radius-full);
+    background: var(--g-glass-strong);
+    border: 1px solid var(--g-line-2);
+    box-shadow: var(--g-shadow), var(--g-glow);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--g-accent);
+    letter-spacing: 0.01em;
+}
+.insp-gradient .ig-hero-pill svg {
+    color: var(--g-violet-600);
+}
+.insp-gradient .ig-display {
+    margin: 22px auto 0;
+    max-width: 16ch;
+    font-family: var(--font-display);
+    font-size: clamp(2.4rem, 6vw, 4.1rem);
+    font-weight: 600;
+    line-height: 1.04;
+    letter-spacing: -0.035em;
+    color: var(--g-fg);
+}
+.insp-gradient .ig-grad-word {
+    font-weight: 700;
+}
+.insp-gradient .ig-lede {
+    margin: 22px auto 0;
+    max-width: 56ch;
+    font-size: clamp(1.02rem, 1.7vw, 1.2rem);
+    line-height: 1.6;
+    color: var(--g-fg-2);
+}
+.insp-gradient .ig-lede--sm {
+    font-size: 1rem;
+    margin-left: 0;
+    margin-right: 0;
+}
+.insp-gradient .ig-hero-cta {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 30px;
+}
+
+/* Hero figures band */
+.insp-gradient .ig-hero-figures {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-top: 44px;
+    padding: 20px 8px;
+    border-radius: var(--g-radius);
+    background: var(--g-glass);
+    border: 1px solid var(--g-line);
+    box-shadow: var(--g-shadow), var(--g-glow);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+}
+.insp-gradient .ig-figure {
+    text-align: center;
+}
+.insp-gradient .ig-figure-num {
+    font-family: var(--font-display);
+    font-size: clamp(1.6rem, 3.4vw, 2.3rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+}
+.insp-gradient .ig-figure-label {
+    margin-top: 7px;
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--g-fg-3);
+}
+
+/* ── Buttons (restyled to wear the gradient) ─────────────────────────────── */
+.insp-gradient .ig-btn {
+    border-radius: var(--radius-full) !important;
+    font-weight: 600 !important;
+    transition: transform var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out), filter var(--dur-base) var(--ease-out) !important;
+}
+.insp-gradient .ig-btn--grad {
+    background: var(--g-grad-deep) !important;
+    border: 0 !important;
+    color: #fff !important;
+    padding-inline: 20px !important;
+    box-shadow: 0 8px 22px -8px rgba(99, 102, 241, 0.65), var(--g-glow) !important;
+}
+.insp-gradient .ig-btn--grad:hover:not(:disabled) {
+    transform: translateY(-1px);
+    filter: saturate(1.08) brightness(1.03);
+    box-shadow: 0 14px 30px -8px rgba(99, 102, 241, 0.72) !important;
+}
+.insp-gradient .ig-btn--grad:disabled {
+    opacity: 0.5;
+    filter: grayscale(0.2);
+}
+.insp-gradient .ig-btn--glass {
+    background: var(--g-glass-strong) !important;
+    border: 1px solid var(--g-line-2) !important;
+    color: var(--g-accent) !important;
+    padding-inline: 18px !important;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+.insp-gradient .ig-btn--glass:hover:not(:disabled) {
+    transform: translateY(-1px);
+    border-color: var(--g-indigo) !important;
+    color: var(--g-violet-600) !important;
+    background: #fff !important;
+}
+
+/* ── Marquee ─────────────────────────────────────────────────────────────── */
+.insp-gradient .ig-marquee {
+    margin: 46px 0 8px;
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+.insp-gradient .ig-marquee-track {
+    display: flex;
+    width: max-content;
+    animation: ig-marquee 30s linear infinite;
+}
+.insp-gradient .ig-marquee-group {
+    display: flex;
+    gap: 34px;
+    padding-right: 34px;
+    flex-shrink: 0;
+}
+.insp-gradient .ig-marquee-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 11px;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--g-fg-2);
+    white-space: nowrap;
+}
+.insp-gradient .ig-marquee-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--g-grad-deep);
+    flex-shrink: 0;
+}
+@keyframes ig-marquee {
+    to { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+    .insp-gradient .ig-marquee-track { animation: none; }
+}
+
+/* ── Section scaffolding ─────────────────────────────────────────────────── */
+.insp-gradient .ig-section {
+    margin-top: clamp(56px, 8vw, 96px);
+    scroll-margin-top: 80px;
+}
+.insp-gradient .ig-section-head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 18px;
+    margin-bottom: 30px;
+}
+.insp-gradient .ig-eyebrow {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--g-violet-600);
+}
+.insp-gradient .ig-h2 {
+    margin: 10px 0 0 !important;
+    font-family: var(--font-display) !important;
+    font-size: clamp(1.7rem, 3.6vw, 2.5rem) !important;
+    font-weight: 600 !important;
+    letter-spacing: -0.03em !important;
+    color: var(--g-fg) !important;
+    line-height: 1.08 !important;
+}
+.insp-gradient .ig-h3 {
+    margin: 8px 0 18px !important;
+    font-family: var(--font-display) !important;
+    letter-spacing: -0.02em !important;
+    color: var(--g-fg) !important;
+}
+.insp-gradient .ig-meta {
+    font-size: 12.5px;
+    color: var(--g-fg-3);
+    font-variant-numeric: tabular-nums;
+}
+
+/* Pillbox restyle */
+.insp-gradient .ig-pillbox {
+    width: 300px;
+    max-width: 100%;
+}
+.insp-gradient .ig-pillbox :where(input) {
+    background: var(--g-glass-strong) !important;
+    border-color: var(--g-line-2) !important;
+    border-radius: var(--radius-full) !important;
+    backdrop-filter: blur(8px);
+}
+.insp-gradient .ig-pillbox :where(input):focus {
+    border-color: var(--g-indigo) !important;
+    box-shadow: 0 0 0 3px var(--g-accent-soft) !important;
+}
+.insp-gradient .ig-pillbox :where([data-pill], .pill, span[role="button"]) {
+    background: var(--g-accent-soft) !important;
+    color: var(--g-indigo-600) !important;
+    border-color: transparent !important;
+}
+
+/* ── Selected work grid (frosted cards) ──────────────────────────────────── */
+.insp-gradient .ig-work-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+.insp-gradient .ig-work-card {
+    position: relative;
+    border-radius: var(--g-radius) !important;
+    border: 1px solid var(--g-line) !important;
+    background: var(--g-glass) !important;
+    box-shadow: var(--g-shadow), var(--g-glow);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    overflow: hidden;
+    transition: transform var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out), border-color var(--dur-base) var(--ease-out);
+}
+.insp-gradient .ig-work-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--g-line-2) !important;
+    box-shadow: var(--g-shadow-pop), var(--g-glow);
+}
+.insp-gradient .ig-work-stretch {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    border-radius: inherit;
+}
+.insp-gradient .ig-work-thumb {
+    position: relative;
+    height: 156px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 16px 18px;
+    color: rgba(255, 255, 255, 0.95);
+    overflow: hidden;
+}
+.insp-gradient .ig-work-thumb::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(120% 140% at 0% 0%, rgba(255, 255, 255, 0.35), transparent 45%),
+        var(--g-grad-deep);
+    z-index: -1;
+}
+.insp-gradient .ig-work-thumb[data-proj="02"]::after { background: radial-gradient(120% 140% at 0% 0%, rgba(255, 255, 255, 0.35), transparent 45%), linear-gradient(120deg, #818cf8, #a78bfa 55%, #f0abfc); }
+.insp-gradient .ig-work-thumb[data-proj="03"]::after { background: radial-gradient(120% 140% at 0% 0%, rgba(255, 255, 255, 0.35), transparent 45%), linear-gradient(120deg, #38bdf8, #818cf8 55%, #6366f1); }
+.insp-gradient .ig-work-thumb[data-proj="04"]::after { background: radial-gradient(120% 140% at 0% 0%, rgba(255, 255, 255, 0.35), transparent 45%), linear-gradient(120deg, #a78bfa, #c084fc 55%, #f0abfc); }
+.insp-gradient .ig-work-thumb[data-proj="05"]::after { background: radial-gradient(120% 140% at 0% 0%, rgba(255, 255, 255, 0.35), transparent 45%), linear-gradient(120deg, #7dd3fc, #60a5fa 55%, #818cf8); }
+.insp-gradient .ig-work-thumb[data-proj="06"]::after { background: radial-gradient(120% 140% at 0% 0%, rgba(255, 255, 255, 0.35), transparent 45%), linear-gradient(120deg, #c4b5fd, #a78bfa 55%, #818cf8); }
+.insp-gradient .ig-work-num {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    opacity: 0.92;
+}
+.insp-gradient .ig-work-arrow {
+    opacity: 0;
+    transform: translate(-4px, 4px);
+    transition: opacity var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-out);
+}
+.insp-gradient .ig-work-card:hover .ig-work-arrow {
+    opacity: 1;
+    transform: translate(0, 0);
+}
+.insp-gradient .ig-work-body {
+    padding: 16px 18px 18px !important;
+}
+.insp-gradient .ig-work-meta {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+}
+.insp-gradient .ig-work-title {
+    font-size: 18px;
+    font-weight: 650;
+    letter-spacing: -0.02em;
+    color: var(--g-fg);
+}
+.insp-gradient .ig-work-year {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--g-fg-3);
+}
+.insp-gradient .ig-work-disc {
+    display: block;
+    margin-top: 3px;
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--g-violet-600);
+}
+.insp-gradient .ig-work-blurb {
+    margin: 10px 0 0;
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--g-fg-2);
+}
+.insp-gradient .ig-work-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 14px;
+}
+
+/* Badge / tag restyle */
+.insp-gradient .ig-tag {
+    border-radius: var(--radius-full) !important;
+    font-weight: 600 !important;
+}
+
+.insp-gradient .ig-work-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 22px;
+}
+/* Pagination restyle */
+.insp-gradient .ig-pagination :where(button) {
+    border-radius: var(--g-radius-sm) !important;
+    border-color: var(--g-line-2) !important;
+    color: var(--g-fg-2) !important;
+    background: var(--g-glass-strong) !important;
+}
+.insp-gradient .ig-pagination :where(button[aria-current="true"], button.is-active) {
+    background: var(--g-grad-deep) !important;
+    color: #fff !important;
+    border-color: transparent !important;
+}
+
+/* ── Tabs (pill tabs in glass) ───────────────────────────────────────────── */
+.insp-gradient .ig-tabs {
+    margin-top: 26px;
+}
+.insp-gradient .ig-tablist {
+    display: inline-flex !important;
+    gap: 4px;
+    padding: 5px;
+    border-radius: var(--radius-full) !important;
+    background: var(--g-glass) !important;
+    border: 1px solid var(--g-line) !important;
+    box-shadow: var(--g-glow);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+.insp-gradient .ig-tablist :where(button) {
+    border-radius: var(--radius-full) !important;
+    padding: 8px 18px !important;
+    font-size: 13.5px !important;
+    font-weight: 600 !important;
+    color: var(--g-fg-3) !important;
+    border: 0 !important;
+    background: transparent !important;
+    transition: color var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out) !important;
+}
+.insp-gradient .ig-tablist :where(button):hover {
+    color: var(--g-fg) !important;
+}
+.insp-gradient .ig-tablist :where(button[aria-selected="true"], button.is-active) {
+    color: #fff !important;
+    background: var(--g-grad-deep) !important;
+    box-shadow: 0 6px 16px -6px rgba(99, 102, 241, 0.6) !important;
+}
+
+/* Services cards */
+.insp-gradient .ig-services {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 26px;
+}
+.insp-gradient .ig-service {
+    border-radius: var(--g-radius) !important;
+    border: 1px solid var(--g-line) !important;
+    background: var(--g-glass) !important;
+    box-shadow: var(--g-shadow), var(--g-glow);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition: transform var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out);
+}
+.insp-gradient .ig-service:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--g-shadow-pop), var(--g-glow);
+}
+.insp-gradient .ig-service-body {
+    padding: 20px 18px 20px !important;
+}
+.insp-gradient .ig-service-glyph {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    color: #fff;
+    font-size: 17px;
+    box-shadow: 0 6px 16px -6px rgba(99, 102, 241, 0.55);
+}
+.insp-gradient .ig-service-no {
+    display: block;
+    margin-top: 16px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--g-fg-3);
+    letter-spacing: 0.04em;
+}
+.insp-gradient .ig-service-title {
+    margin: 4px 0 0;
+    font-size: 16px;
+    font-weight: 650;
+    letter-spacing: -0.01em;
+    color: var(--g-fg);
+}
+.insp-gradient .ig-service-text {
+    margin: 8px 0 0;
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--g-fg-2);
+}
+
+/* Process timeline restyle */
+.insp-gradient .ig-process {
+    max-width: 660px;
+    margin-top: 28px;
+}
+.insp-gradient .ig-timeline :where(h3, [class*="title"]) {
+    color: var(--g-fg) !important;
+}
+.insp-gradient .ig-timeline :where(p, [class*="desc"]) {
+    color: var(--g-fg-2) !important;
+}
+.insp-gradient .ig-timeline :where([class*="date"]) {
+    font-family: var(--font-mono) !important;
+    color: var(--g-violet-600) !important;
+}
+
+/* FAQ accordion restyle */
+.insp-gradient .ig-faq {
+    max-width: 760px;
+    margin-top: 24px;
+}
+.insp-gradient .ig-accordion {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.insp-gradient .ig-accordion :where([class*="item"], > div) {
+    border: 1px solid var(--g-line) !important;
+    border-radius: var(--g-radius-sm) !important;
+    background: var(--g-glass) !important;
+    backdrop-filter: blur(10px);
+    overflow: hidden;
+}
+.insp-gradient .ig-accordion :where(button) {
+    color: var(--g-fg) !important;
+    font-weight: 600 !important;
+}
+.insp-gradient .ig-accordion :where([class*="content"], [class*="Content"]) {
+    color: var(--g-fg-2) !important;
+}
+
+/* ── About + impact ──────────────────────────────────────────────────────── */
+.insp-gradient .ig-about-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+    gap: 28px;
+    align-items: start;
+}
+.insp-gradient .ig-about-lead {
+    margin: 12px 0 0;
+    font-family: var(--font-display);
+    font-size: clamp(1.4rem, 2.7vw, 2rem);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+    color: var(--g-fg);
+}
+.insp-gradient .ig-about-body {
+    margin-top: 16px !important;
+    color: var(--g-fg-2) !important;
+    line-height: 1.7 !important;
+}
+.insp-gradient .ig-callout {
+    margin-top: 20px !important;
+    border-radius: var(--g-radius-sm) !important;
+    border: 1px solid var(--g-line-2) !important;
+    background: linear-gradient(110deg, rgba(125, 211, 252, 0.16), rgba(196, 181, 253, 0.18)) !important;
+    color: var(--g-fg-2) !important;
+}
+.insp-gradient .ig-callout :where(svg) {
+    color: var(--g-violet-600) !important;
+}
+
+.insp-gradient .ig-impact {
+    border-radius: var(--g-radius) !important;
+    border: 1px solid var(--g-line) !important;
+    background: var(--g-glass-strong) !important;
+    box-shadow: var(--g-shadow), var(--g-glow);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    overflow: hidden;
+}
+.insp-gradient .ig-impact-head {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 16px 18px !important;
+    border-bottom: 1px solid var(--g-line) !important;
+}
+.insp-gradient .ig-impact-title {
+    font-size: 14px;
+    font-weight: 650;
+    letter-spacing: -0.01em;
+    color: var(--g-fg);
+}
+.insp-gradient .ig-impact-body {
+    padding: 16px 18px 18px !important;
+}
+.insp-gradient .ig-impact-label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--g-fg-3);
+}
+.insp-gradient .ig-chart {
+    width: 100%;
+}
+.insp-gradient .ig-sep {
+    margin: 16px 0 !important;
+    border: 0 !important;
+    height: 1px !important;
+    background: linear-gradient(90deg, transparent, var(--g-line-2), transparent) !important;
+}
+
+/* ── Team ────────────────────────────────────────────────────────────────── */
+.insp-gradient .ig-team {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 28px;
+}
+.insp-gradient .ig-member {
+    border-radius: var(--g-radius) !important;
+    border: 1px solid var(--g-line) !important;
+    background: var(--g-glass) !important;
+    box-shadow: var(--g-shadow), var(--g-glow);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    transition: transform var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out);
+}
+.insp-gradient .ig-member:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--g-shadow-pop), var(--g-glow);
+}
+.insp-gradient .ig-member-body {
+    padding: 20px 18px !important;
+    text-align: center;
+}
+.insp-gradient .ig-member-ava {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 14px;
+}
+.insp-gradient .ig-member-name {
+    font-size: 15px;
+    font-weight: 650;
+    letter-spacing: -0.01em;
+    color: var(--g-fg);
+}
+.insp-gradient .ig-member-role {
+    margin-top: 2px;
+    font-size: 12.5px;
+    color: var(--g-fg-3);
+}
+
+/* ── Testimonials carousel ───────────────────────────────────────────────── */
+.insp-gradient .ig-carousel {
+    margin-top: 28px;
+    border-radius: var(--g-radius) !important;
+}
+.insp-gradient .ig-quote {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 18px;
+    padding: 40px clamp(20px, 6vw, 72px);
+    border-radius: var(--g-radius);
+    background: var(--g-glass-strong);
+    border: 1px solid var(--g-line);
+    box-shadow: var(--g-glow);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+}
+.insp-gradient .ig-quote-stars {
+    display: inline-flex;
+    gap: 3px;
+}
+.insp-gradient .ig-star {
+    fill: var(--g-violet-600);
+    color: var(--g-violet-600);
+}
+.insp-gradient .ig-quote-text {
+    margin: 0;
+    max-width: 44ch;
+    font-family: var(--font-display);
+    font-size: clamp(1.15rem, 2.4vw, 1.65rem);
+    font-weight: 500;
+    line-height: 1.35;
+    letter-spacing: -0.02em;
+    color: var(--g-fg);
+}
+.insp-gradient .ig-quote-by {
+    display: inline-flex;
+    align-items: center;
+    gap: 11px;
+    text-align: left;
+}
+.insp-gradient .ig-quote-name {
+    font-size: 13.5px;
+    font-weight: 650;
+    color: var(--g-fg);
+}
+.insp-gradient .ig-quote-role {
+    font-size: 12px;
+    color: var(--g-fg-3);
+}
+.insp-gradient .ig-carousel-controls :where(button) {
+    border-radius: var(--radius-full) !important;
+    border-color: var(--g-line-2) !important;
+    background: var(--g-glass-strong) !important;
+    color: var(--g-accent) !important;
+}
+.insp-gradient .ig-carousel-controls :where(button):hover {
+    background: #fff !important;
+    color: var(--g-violet-600) !important;
+}
+/* Carousel step dots wear the gradient when active */
+.insp-gradient .ig-carousel :where([class*="dot"], [class*="step"][aria-current], [aria-current="true"]) {
+    background: var(--g-grad-deep) !important;
+}
+
+/* ── Recognition + clients ───────────────────────────────────────────────── */
+.insp-gradient .ig-rec-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+    gap: 28px;
+    align-items: start;
+}
+.insp-gradient .ig-table {
+    width: 100%;
+    border-radius: var(--g-radius) !important;
+    overflow: hidden;
+    border: 1px solid var(--g-line) !important;
+    background: var(--g-glass) !important;
+    backdrop-filter: blur(12px);
+    box-shadow: var(--g-glow);
+}
+.insp-gradient .ig-table :where(thead th) {
+    background: rgba(99, 102, 241, 0.07) !important;
+    font-family: var(--font-mono) !important;
+    font-size: 10.5px !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.06em !important;
+    color: var(--g-fg-3) !important;
+    padding: 11px 16px !important;
+    border-bottom: 1px solid var(--g-line) !important;
+}
+.insp-gradient .ig-table :where(tbody td) {
+    padding: 13px 16px !important;
+    font-size: 13.5px !important;
+    color: var(--g-fg-2) !important;
+    border-bottom: 1px solid var(--g-line) !important;
+}
+.insp-gradient .ig-table :where(tbody tr) {
+    transition: background var(--dur-fast) var(--ease-out);
+}
+.insp-gradient .ig-table :where(tbody tr):hover {
+    background: rgba(99, 102, 241, 0.05) !important;
+}
+.insp-gradient .ig-table :where(tbody tr:last-child td) {
+    border-bottom: 0 !important;
+}
+.insp-gradient .ig-cell-year {
+    font-family: var(--font-mono) !important;
+    color: var(--g-fg-3) !important;
+    width: 80px;
+}
+.insp-gradient .ig-cell-proj {
+    font-weight: 650 !important;
+    color: var(--g-fg) !important;
+}
+
+.insp-gradient .ig-clients {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 14px;
+}
+.insp-gradient .ig-client {
+    border-radius: var(--radius-full) !important;
+    border-color: var(--g-line-2) !important;
+    color: var(--g-fg-2) !important;
+    background: var(--g-glass-strong) !important;
+    backdrop-filter: blur(6px);
+}
+.insp-gradient .ig-press {
+    list-style: none;
+    margin: 14px 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+.insp-gradient .ig-press-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--g-fg-2);
+}
+.insp-gradient .ig-press-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--g-grad-deep);
+    flex-shrink: 0;
+}
+
+/* ── Contact / brief ─────────────────────────────────────────────────────── */
+.insp-gradient .ig-contact {
+    position: relative;
+    padding: clamp(28px, 5vw, 52px);
+    border-radius: var(--g-radius-lg);
+    border: 1px solid var(--g-line);
+    background:
+        radial-gradient(110% 130% at 0% 0%, rgba(125, 211, 252, 0.28), transparent 55%),
+        radial-gradient(120% 120% at 100% 100%, rgba(196, 181, 253, 0.3), transparent 55%),
+        var(--g-glass-strong);
+    box-shadow: var(--g-shadow-pop), var(--g-glow);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    overflow: hidden;
+}
+.insp-gradient .ig-contact-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 30px;
+    align-items: start;
+}
+.insp-gradient .ig-contact-lines {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 22px;
+}
+.insp-gradient .ig-contact-line {
+    font-size: 14.5px;
+    font-weight: 600;
+    color: var(--g-fg);
+}
+.insp-gradient .ig-contact-line--muted {
+    font-weight: 500;
+    color: var(--g-fg-3);
+}
+
+.insp-gradient .ig-budget {
+    margin-top: 26px;
+}
+.insp-gradient .ig-budget-help {
+    margin: 6px 0 12px !important;
+    max-width: 36ch;
+    color: var(--g-fg-3) !important;
+}
+.insp-gradient .ig-budget-read {
+    margin-top: 12px;
+    font-size: 12.5px;
+    color: var(--g-fg-3);
+}
+.insp-gradient .ig-moodmeter {
+    border-radius: var(--g-radius-sm);
+}
+
+/* Brief form (elevated glass card) */
+.insp-gradient .ig-form {
+    border-radius: var(--g-radius) !important;
+    border: 1px solid var(--g-line-2) !important;
+    background: rgba(255, 255, 255, 0.9) !important;
+    box-shadow: var(--g-shadow-pop), var(--g-glow);
+    backdrop-filter: blur(12px);
+    overflow: hidden;
+}
+.insp-gradient .ig-form-head {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 16px 18px !important;
+    border-bottom: 1px solid var(--g-line) !important;
+}
+.insp-gradient .ig-form-title {
+    font-size: 14px;
+    font-weight: 650;
+    color: var(--g-fg);
+}
+.insp-gradient .ig-form-body {
+    padding: 16px 18px !important;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+.insp-gradient .ig-composer {
+    border: 1px solid var(--g-line-2) !important;
+    border-radius: var(--g-radius-sm) !important;
+    background: #fff !important;
+}
+.insp-gradient .ig-composer :where(textarea, [contenteditable]) {
+    color: var(--g-fg) !important;
+}
+.insp-gradient .ig-composer :where(textarea, [contenteditable]):focus {
+    outline: none !important;
+}
+.insp-gradient .ig-composer:focus-within {
+    border-color: var(--g-indigo) !important;
+    box-shadow: 0 0 0 3px var(--g-accent-soft) !important;
+}
+.insp-gradient .ig-form-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+.insp-gradient .ig-form-count {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--g-fg-3);
+}
+.insp-gradient .ig-progress {
+    width: 160px;
+}
+.insp-gradient .ig-progress :where([class*="bar"] > *, [role="progressbar"] > *) {
+    background: var(--g-grad-deep) !important;
+}
+
+.insp-gradient .ig-form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+.insp-gradient .ig-field-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.insp-gradient .ig-field-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--g-fg-2);
+}
+.insp-gradient .ig-field-val {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--g-violet-600);
+}
+/* Slider restyle — gradient fill + indigo thumb */
+.insp-gradient .ig-slider :where([class*="track"] > *, [class*="fill"], [class*="range"]) {
+    background: var(--g-grad-deep) !important;
+}
+.insp-gradient .ig-slider :where([class*="thumb"], [role="slider"]) {
+    border-color: var(--g-indigo-600) !important;
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.45) !important;
+}
+.insp-gradient .ig-slider :where([class*="track"]) {
+    background: var(--g-accent-soft) !important;
+}
+
+.insp-gradient .ig-switch-row {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    cursor: pointer;
+}
+.insp-gradient .ig-switch-text {
+    font-size: 13px;
+    color: var(--g-fg-2);
+}
+/* Switch on-state wears the gradient */
+.insp-gradient .ig-switch :where([data-state="checked"], [aria-checked="true"], input:checked + *) {
+    background: var(--g-grad-deep) !important;
+}
+
+.insp-gradient .ig-form-foot {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 18px !important;
+    border-top: 1px solid var(--g-line) !important;
+}
+.insp-gradient .ig-form-note {
+    font-size: 12px;
+    color: var(--g-fg-3);
+}
+.insp-gradient .ig-form-done {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 12px 2px;
+}
+.insp-gradient .ig-done-glyph {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    color: #fff;
+    font-size: 18px;
+    font-weight: 700;
+    box-shadow: 0 6px 16px -6px rgba(99, 102, 241, 0.55);
+}
+.insp-gradient .ig-done-text {
+    margin: 0;
+    font-size: 14.5px;
+    line-height: 1.55;
+    color: var(--g-fg);
+}
+
+/* ── Footer ──────────────────────────────────────────────────────────────── */
+.insp-gradient .ig-footer {
+    margin-top: clamp(56px, 8vw, 92px);
+}
+.insp-gradient .ig-footer-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 24px;
+}
+.insp-gradient .ig-footer-blurb {
+    margin: 12px 0 0;
+    max-width: 340px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--g-fg-3);
+}
+.insp-gradient .ig-footer-links {
+    display: grid;
+    grid-template-columns: repeat(2, auto);
+    gap: 6px 40px;
+}
+.insp-gradient .ig-footer-links a {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--g-fg-2);
+    text-decoration: none;
+    transition: color var(--dur-fast) var(--ease-out);
+}
+.insp-gradient .ig-footer-links a:hover {
+    color: var(--g-violet-600);
+}
+.insp-gradient .ig-footer-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 4px;
+}
+.insp-gradient .ig-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--g-accent);
+    text-decoration: none;
+}
+.insp-gradient .ig-back:hover {
+    color: var(--g-violet-600);
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 940px) {
+    .insp-gradient .ig-about-grid,
+    .insp-gradient .ig-rec-grid,
+    .insp-gradient .ig-contact-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .insp-gradient .ig-services {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .insp-gradient .ig-team {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+    .insp-gradient .ig-work-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .insp-gradient .ig-services {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .insp-gradient .ig-hero-figures {
+        grid-template-columns: repeat(2, 1fr);
+        row-gap: 20px;
+    }
+    .insp-gradient .ig-section-head {
+        align-items: flex-start;
+    }
+}

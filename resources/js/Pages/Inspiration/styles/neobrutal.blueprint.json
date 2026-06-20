@@ -1,0 +1,109 @@
+{
+  "id": "neobrutal",
+  "name": "Neo-Brutalist",
+  "note": "Chunky color blocks and hard shadows.",
+  "mode": "light",
+  "thesis": "Loud and unmissable: saturated color blocks on warm paper, thick black borders on everything, hard offset drop-shadows (6px 6px 0 #000), zero radius, and every surface looks pressable — it slams into its shadow when you touch it.",
+  "tokens": {
+    "bg": "#f5f1e6 warm paper with a 22px black polka-dot grid",
+    "fg": "#0a0a0a near-black ink (also every border + shadow color)",
+    "accent": "rotating saturated set — #ffd400 yellow, #ff2e88 magenta, #21d4fd cyan, #b6f02b lime, #ff7a1a orange, #b388ff violet",
+    "fontDisplay": "Geist at 900 weight, UPPERCASE, tight tracking (-0.03em) for headings",
+    "fontMono": "Geist Mono at 700–800 for all labels, metadata, badges, table data, prices",
+    "radius": "0px everywhere (forced square via a scoped `border-radius: 0 !important` reset)",
+    "border": "3px solid #0a0a0a default; 4px for headline frames; 2.5px for small chips",
+    "motion": "fast 90–120ms ease; hover lifts a surface up-left (translate(-3px,-3px)) into a bigger shadow, :active slams it down-right (translate(3px,3px)) into a 1px shadow — the press"
+  },
+  "layout": "Single centered column (~1180px max) on the dotted paper. A bordered, shadowed running-head bar opens the page. Sections are separated by thick 4px black top-rules. The hero is a 1.7fr/1fr split: a giant uppercase headline with two highlighted phrases (rotated, bordered, shadowed inline blocks) plus a CTA row on the left, and a stack of solid color 'fact' blocks on the right. An infinite black marquee strip breaks the rhythm. Everything else is a grid of bordered+shadowed blocks: a 4-up stats band, a vertical stack of chunky pressable work rows, a 2-up service-card grid, a tabbed capabilities panel, a quote-led about, a 4-up team grid, a recognition split (table + bar chart on the left, clients/press/rating aside on the right), and a contact split (budget pad + reasoned readout on the left, a heavy-bordered brief card on the right). A bordered footer with chip-style links closes it.",
+  "sections": [
+    {
+      "name": "head",
+      "what": "Running head: breadcrumbs + the FIELDWORK mark (square magenta 'F' glyph) + an EST. badge",
+      "components": ["Breadcrumbs", "Badge"],
+      "restyle": "The whole bar is a bordered, shadowed white block. Breadcrumbs become fat uppercase mono links; the glyph is a magenta square with a black border + mini shadow."
+    },
+    {
+      "name": "hero",
+      "what": "Giant uppercase headline with two rotated highlighted phrases, a lede, a CTA pair, and a side stack of solid color fact blocks",
+      "components": ["Button"],
+      "restyle": "Highlighted words are inline bordered+shadowed blocks rotated ~1.4deg in yellow/magenta. Buttons are chunky pressable blocks (yellow primary, white/cyan ghost) that lift on hover and slam into a 1px shadow on :active. Fact tiles are flat saturated color blocks with mono keys + black-900 values."
+    },
+    {
+      "name": "marquee",
+      "what": "Infinite scrolling tagline strip ('LOUD · CHUNKY · LEGIBLE ★ NO INSIDE VOICE…')",
+      "components": [],
+      "restyle": "Hand-rolled black bar with yellow mono text, a CSS keyframe marquee (disabled under prefers-reduced-motion). Bordered + shadowed like every other block."
+    },
+    {
+      "name": "stats",
+      "what": "Four big-number tiles — founded, projects, people, awards",
+      "components": [],
+      "restyle": "Each is a solid color block (yellow/magenta/cyan/lime) with a 900-weight tabular number and a mono label; lifts on hover into a larger shadow."
+    },
+    {
+      "name": "work",
+      "what": "Selected-work index — six chunky project rows with a discipline filter and pagination",
+      "components": ["Pillbox", "Pagination"],
+      "restyle": "Rows are bordered, shadowed white blocks that color-flood (per-project tone) and lift on hover, slamming down on :active. The whole row is a stretched-link (one Link, no nested anchors). Pillbox becomes an ink mono field with square magenta tag chips; Pagination becomes square bordered chips with an ink/yellow active state."
+    },
+    {
+      "name": "capabilities",
+      "what": "Tabbed services / process / questions",
+      "components": ["Tabs", "Card", "Timeline", "Accordion"],
+      "restyle": "Tabs (variant=pills) become chunky bordered tab blocks; the active tab is a solid black block with yellow text, pressed down. Service cards are solid color bordered+shadowed blocks. The process Timeline is reframed inside a bordered panel with square dots + a thick black spine and mono uppercase dates. The FAQ Accordion flattens into separate fat-bordered rows that flood yellow on hover."
+    },
+    {
+      "name": "about",
+      "what": "Studio statement — a big quoted line + supporting prose, tagged with a giant outlined star",
+      "components": ["Text"],
+      "restyle": "Oversized magenta star with a black text-stroke; the statement is an 800-weight quoted line with magenta quote marks; Text body is restyled to muted-ink 500-weight prose."
+    },
+    {
+      "name": "team",
+      "what": "Four crew members with square avatars + mono roles",
+      "components": ["Avatar"],
+      "restyle": "Avatars are forced square with a black border + shadow and a saturated fill (cyan/magenta/lime/yellow); each person sits in a bordered block that color-floods and lifts on hover."
+    },
+    {
+      "name": "recognition",
+      "what": "Awards table + a projects-per-year bar chart, beside a clients/press/rating aside",
+      "components": ["Table", "Chart", "Badge", "Separator", "Tooltip"],
+      "restyle": "Table header is a black bar with yellow mono caps; rows have thick black top-rules and flood yellow on hover. Chart.Bar uses the saturated palette with hard (un-rounded) edges. Client Badges are square mono outline chips; Separator is a 3px black rule; a yellow rating block carries a Tooltip (black block, yellow text)."
+    },
+    {
+      "name": "contact",
+      "what": "Dismissible 'slots left' callout, an indicative-budget MoodMeter with a reasoned readout, and a brief Composer card",
+      "components": ["Callout", "MoodMeter", "ReasonTag", "Card", "Composer", "Progress", "Button", "Badge", "Text"],
+      "restyle": "Callout is an orange bordered+shadowed block. MoodMeter sits in a bordered frame with mono labels; ReasonTag underlines in magenta. The brief Card is the heaviest block (4px border, 9px shadow) with a yellow header bar; Composer is an ink mono field; Progress is a fat-bordered track with a solid magenta fill; the send Button is a magenta pressable block (disabled = paper, no slam)."
+    },
+    {
+      "name": "footer",
+      "what": "Brand mark, chip-style nav links, blurb, and a back-to-gallery button",
+      "components": ["Separator"],
+      "restyle": "Links are individual bordered+shadowed chips that flood lime + lift on hover; the back link is a magenta pressable chip; closed with a 3px black Separator."
+    }
+  ],
+  "palette": [
+    { "component": "Button", "restyle": "Chunky pressable block: 3px black border + 6px hard offset shadow, UPPERCASE 900-weight label, saturated fill. Hover lifts up-left into a 9px shadow; :active slams down-right into a 1px shadow (the press). Disabled goes flat paper, no slam." },
+    { "component": "Badge", "restyle": "Square 2.5px-bordered mono chip with a 2px hard shadow, UPPERCASE; dot variant's dot is forced square + black. Tone variants swap the fill (cyan/lime/white)." },
+    { "component": "Card", "restyle": "Forced-square block with a 3px black border + 6px shadow; lifts on hover. Saturated fills for service cards; the brief card is upgraded to a 4px border + 9px shadow with a colored header bar." },
+    { "component": "Tabs", "restyle": "pills variant rebuilt as bordered tab blocks; hover floods yellow + lifts, active is a solid black block with yellow text pressed down — no underline rail." },
+    { "component": "Table", "restyle": "Header is a solid black bar with yellow mono caps; body rows have thick black top-rules, 900-weight uppercase project names, and flood yellow on hover." },
+    { "component": "Accordion", "restyle": "Flattened to separate fat-bordered rows (gap between them); triggers are 900-weight UPPERCASE and flood yellow on hover; content is muted-ink prose." },
+    { "component": "Timeline", "restyle": "Wrapped in a bordered panel; dots squared with a hard 2px border + mini shadow, spine thickened to solid black, dates mono UPPERCASE." },
+    { "component": "Pillbox", "restyle": "Ink mono input in a bordered+shadowed white field; entered tags become square magenta chips with a 2px black border." },
+    { "component": "Pagination", "restyle": "Square 2.5px-bordered chips with a hard shadow; hover floods yellow + nudges; active page is ink with yellow text." },
+    { "component": "Progress", "restyle": "Fat-bordered square track with a solid magenta fill (no rounded caps, no gradient)." },
+    { "component": "Composer", "restyle": "Bordered+shadowed field; textarea is transparent ink mono 600-weight with a muted placeholder — all kit chrome/radius stripped." },
+    { "component": "MoodMeter", "restyle": "Dropped into a bordered+shadowed white frame; axis/value text switched to mono; magenta user handle." },
+    { "component": "ReasonTag", "restyle": "underline theme with a magenta dashed underline and 900-weight ink value." },
+    { "component": "Callout", "restyle": "Orange bordered block with a 6px shadow; icon + dismiss recolored to ink; bold UPPERCASE lead phrase." },
+    { "component": "Avatar", "restyle": "Forced square (radius 0) with a 3px black border + shadow and a saturated fill; 900-weight initials." },
+    { "component": "Separator", "restyle": "Thinned kit line replaced with a solid 3px black rule." },
+    { "component": "Tooltip", "restyle": "Portal surface overridden to a square black block with yellow mono text and a soft drop shadow." },
+    { "component": "Breadcrumbs", "restyle": "Fat uppercase mono links; muted by default, ink on active/hover." },
+    { "component": "Heading / Text", "restyle": "Headings forced to 900-weight UPPERCASE with tight tracking; Text body recolored to muted-ink 500-weight prose." }
+  ],
+  "contentArchetype": "A fictional loud design/dev studio (FIELDWORK) one-page portfolio: hero pitch, scrolling tagline, studio-in-numbers, selected work index, capabilities (services / process / FAQ), an about statement, the crew, recognition (awards table + volume chart + clients/press/rating), and a contact block with an indicative-budget pad + a brief form. Copy is short, blunt, and SHOUTY — uppercase headlines, mono metadata, playful project names.",
+  "remix": "Keep three things and the look survives any swap: (1) the black ink as the single border + shadow color, (2) zero radius everywhere, (3) the hard offset shadow + lift-on-hover/slam-on-active press. Then choose a saturated palette and one paper background — rotate 3–6 hues across blocks instead of a single accent. To dial it down toward 'soft brutalism', shrink the shadow (3px) and add a touch of radius (4px). To blend with Swiss/editorial, keep the grid + mono labels but drop the color floods to a single accent and use a hairline (1px) black border instead of 3px. To go darker, flip paper to near-black and keep the saturated blocks + white borders. The whole theme is driven by the `--nb-*` vars at the top of the scope, so a re-theme is mostly a palette swap plus the border/shadow width."
+}

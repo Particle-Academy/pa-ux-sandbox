@@ -1,0 +1,110 @@
+{
+  "id": "cobrowse",
+  "name": "Agent Co-Browse",
+  "note": "An agent tours the work beside you.",
+  "mode": "dark",
+  "thesis": "A deep blue-slate Human+ portfolio inhabited by a visible AI co-pilot: one cyan presence accent, a fixed agent rail with a live tool-call feed, and an overlay layer where the agent's cursor glides and a ring pulses around whatever it is reading.",
+  "tokens": {
+    "bg": "#0b0f16 deep blue-slate; faint cyan radial co-presence wash + a fine 26px grid in preview frames",
+    "fg": "#eef4fb primary / #aeb9c9 secondary / #74808f mono-label tertiary on slate",
+    "accent": "#22d3ee cyan-400 ('presence'); hovers/glows ramp to #67e8f9 / #a5f3fc, soft fills at 12% alpha, glow at 30%",
+    "fontDisplay": "var(--font-sans), tight tracking (-0.035em) on the clamp(2.6rem,6.6vw,5.2rem) hero",
+    "fontMono": "var(--font-mono) for eyebrows, figures, tags, the agent feed, addresses, all metadata",
+    "radius": "13px panels/cards/frames; 999px (full pill) on buttons; 7px on tags",
+    "border": "1px hairlines: #1c2533 base, #2a3548 hover; a 2px cyan left-rail bleeds down the assisting card",
+    "motion": "var(--dur-base)/var(--ease-out); 1.6s activity-highlight pulse, gliding agent cursor on a 2.6s tour tick, blinking live dots, 44s client marquee, drifting ghost cursors in preview frames; all guarded by prefers-reduced-motion"
+  },
+  "layout": "A 1180px centered shell on a 12-column grid (28px gutters), reserving a fixed 312px agent rail on the right (docks to a 132px bottom strip under 1080px). Numbered hairline-separated bands stack vertically: running head, hero (8/3 split), full-bleed client marquee, a 4-up figures band, featured work as 4-col co-browsed browser frames, a typographic work index, tabbed capabilities, an about pull-quote, a team grid (humans + one agent), a recognition table + clients column, and a co-drafting brief card. An absolutely-positioned, pointer-events-none overlay spans the content stage to host the agent cursor + activity-highlight; a play/pause/step tour control (in the hero and the rail) drives a scripted sequence that focuses each [data-tour] section in turn.",
+  "sections": [
+    {
+      "name": "agent-rail",
+      "what": "The fixed right rail: agent identity chip (Atlas, cyan avatar, session status + step counter), a scrollable AgentPanel tool-call/narration feed, and play/step controls.",
+      "components": ["AgentPanel", "Badge", "Button(hand-rolled cb-ctrl)"],
+      "restyle": "AgentPanel is stripped to transparent and re-bordered with hairlines so it reads as native rail content; the controls are gradient-cyan + hairline-ghost pills."
+    },
+    {
+      "name": "co-browse-overlay",
+      "what": "A pointer-transparent layer above the page where the agent's cursor glides to the current tour target and a ring pulses around it.",
+      "components": ["AgentCursor", "AgentActivityHighlight"],
+      "restyle": "Both are tinted to the cyan presence token; positions are computed from getBoundingClientRect of [data-tour] anchors inside a useEffect so they stay SSR-inert at 0."
+    },
+    {
+      "name": "hero",
+      "what": "Headline 'An agent tours the work beside you', lede introducing Atlas, a Take-the-tour / Skip / 'Let Atlas drive' switch row, and a co-pilot-online status aside.",
+      "components": ["Heading", "Text", "Button", "Switch", "Separator"],
+      "restyle": "Buttons become full-radius presence pills (cyan gradient primary, hairline ghost); the Switch is recolored cyan; the accent word glows."
+    },
+    {
+      "name": "marquee",
+      "what": "An auto-scrolling band of client names with cyan dot separators.",
+      "components": ["(hand-rolled marquee)"],
+      "restyle": "Mono-ish large type at #74808f, mask-faded edges, cyan separators, paused under reduced-motion."
+    },
+    {
+      "name": "figures",
+      "what": "Four tabular stats — founded, surfaces shipped, humans, resident agent (the agent figure emphasized in cyan).",
+      "components": ["(hand-rolled figure grid)"],
+      "restyle": "Hairline-topped columns, tabular-nums, the emphasized number switches to cyan."
+    },
+    {
+      "name": "featured-work",
+      "what": "Three featured builds shown inside browser-chrome preview frames with a drifting ghost agent cursor — 'inhabited' thumbnails.",
+      "components": ["FauxClient", "Badge", "Link(stretched)"],
+      "restyle": "FauxClient chrome recolored to slate + mono address bar; a CSS ghost-cursor triangle drifts inside; hover lifts the frame with a cyan-glow ring."
+    },
+    {
+      "name": "work-index",
+      "what": "A typographic index of all projects with a discipline filter and pagination.",
+      "components": ["Pillbox", "Pagination", "Link(stretched)"],
+      "restyle": "Rows are hairline-separated grid lines; titles ramp to cyan on hover; Pillbox is a slate input with a cyan focus ring."
+    },
+    {
+      "name": "capabilities",
+      "what": "Tabbed Services / Process / Questions — service columns, a delivery Timeline, and an FAQ Accordion.",
+      "components": ["Tabs", "Timeline", "Accordion", "Badge"],
+      "restyle": "Tabs become uppercase mono labels with a cyan active rule; the Timeline's system step is cyan; the Accordion flattens to hairline rows."
+    },
+    {
+      "name": "team",
+      "what": "A grid of six humans plus the resident agent, whose avatar gets a pulsing cyan presence ring and an 'agent' tag.",
+      "components": ["Avatar", "Badge"],
+      "restyle": "The agent card adds a ringed avatar + radiating pulse dot so presence reads at a glance."
+    },
+    {
+      "name": "recognition",
+      "what": "A selected-awards table beside a clients tag-cloud and a press list.",
+      "components": ["Table", "Badge", "Separator"],
+      "restyle": "Table recolored to slate with a mono uppercase header and hairline row rules; clients become mono session tags."
+    },
+    {
+      "name": "contact-brief",
+      "what": "A 'co-drafting' brief card (Composer + character Progress + confirm-and-send), an indicative-budget MoodMeter, and a ReasonTag explaining the agent's scope — framed as agent-proposes / human-confirms.",
+      "components": ["Card", "Composer", "Progress", "Button", "MoodMeter", "ReasonTag", "Tooltip", "Badge"],
+      "restyle": "The Card gains a live status header (cyan dot) and a 2px cyan left rail; Composer/Progress recolored to slate + cyan; MoodMeter and ReasonTag attributed to the agent 'Atlas'."
+    }
+  ],
+  "palette": [
+    { "component": "Button", "restyle": "Full-radius (999px) presence pills — primary wears a cyan gradient with a glow + ring; ghost is a hairline outline that lights cyan on hover. Tour control mirrors this." },
+    { "component": "Badge", "restyle": "Mono uppercase 'session' tags with hairline borders; --accent / --live variants tint cyan and animate the dot to read as a live indicator." },
+    { "component": "Card", "restyle": "Inhabited panel: flat slate, hairline border, a 2px cyan left-edge bleed, and a status header with a glowing cyan dot ('agent assisting here')." },
+    { "component": "FauxClient", "restyle": "Browser frame recolored to the slate surface with a mono address bar; the body hosts a gridded canvas + a drifting ghost agent cursor so previews read as co-browsed." },
+    { "component": "AgentPanel", "restyle": "Stripped transparent and re-bordered with hairlines to live inside the fixed rail as the live tool-call/narration feed." },
+    { "component": "AgentCursor", "restyle": "Tinted to the cyan presence token; glides to the active [data-tour] section as the scripted tour advances." },
+    { "component": "AgentActivityHighlight", "restyle": "Cyan pulsing ring re-fired (via pulseKey) around each section the agent reads during the tour." },
+    { "component": "Tabs", "restyle": "Uppercase mono labels, hairline tablist, cyan active label — reads like a console toolbar." },
+    { "component": "Table", "restyle": "Slate surface, mono uppercase header, hairline row rules, subtle row-hover wash." },
+    { "component": "Timeline", "restyle": "Dark connector line; the build/system step dot is cyan to mark where the relay is wired." },
+    { "component": "Accordion", "restyle": "Flattened to hairline-separated rows; triggers ramp to cyan on hover." },
+    { "component": "Pillbox", "restyle": "Slate input chip-field with a cyan focus ring." },
+    { "component": "Composer", "restyle": "Near-black slate field, borderless inside the card, cyan-tinted progress beneath." },
+    { "component": "Progress", "restyle": "Hairline track, cyan bar." },
+    { "component": "Switch", "restyle": "Recolored cyan when on — the 'Let Atlas drive' autopilot toggle." },
+    { "component": "MoodMeter", "restyle": "Cyan plotted curve on the slate canvas, attributed to the agent as the budget-scoping surface." },
+    { "component": "ReasonTag", "restyle": "Underline theme attributed to 'Atlas', explaining the indicative scope inline." },
+    { "component": "Avatar", "restyle": "Default for humans; the agent avatar gains a ringed wrapper + radiating pulse dot." },
+    { "component": "Pagination", "restyle": "Inherits the recolored token surface; sits in the index footer." },
+    { "component": "Tooltip", "restyle": "Slate surface with hairline border, explaining the agent-proposes/human-confirms contract." }
+  ],
+  "contentArchetype": "A fictional Human+ design + engineering studio (FIELDWORK) whose one-page portfolio is literally co-browsed by its resident agent 'Atlas'. Content leans into the thesis: agent-driveable products, co-browse onboarding, MCP bridges, a team that includes an agent, and a contact flow where the agent drafts the brief and the human confirms.",
+  "remix": "The reusable kernel is the trio: a deep-slate + single-presence-accent token set, a fixed agent rail with a live AgentPanel feed, and a pointer-transparent overlay driven by a scripted [data-tour] sequence (AgentCursor + AgentActivityHighlight focusing each anchor on a timer). Drop it onto any site by tagging sections with data-tour, scripting a tour array of {anchor, tool, text}, and recoloring with one accent. Swap cyan for any presence hue to rebrand. Blends naturally with 'Dark Studio' (share the near-black restraint) or 'Terminal' (the mono feed + console toolbar tabs read as a shared CLI); pair with real @particle-academy/agent-integrations MCP bridges to make the tour a genuine driveable session instead of a scripted one."
+}

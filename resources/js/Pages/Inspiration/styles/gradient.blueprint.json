@@ -1,0 +1,91 @@
+{
+  "id": "gradient",
+  "name": "Brand Gradient",
+  "note": "Sky to indigo to violet, front and center.",
+  "mode": "light",
+  "thesis": "The brand gradient leads everything: a washed sky→indigo→violet field behind frosted-glass panes, with luminous gradient accents on every interactive primitive — tasteful and airy, never garish.",
+  "tokens": {
+    "bg": "Layered radial washes (sky #7dd3fc top-left, violet #c4b5fd top-right, indigo #818cf8 bottom) over a near-white #f7f8fe canvas, plus a slow-drifting blurred aurora blob layer.",
+    "fg": "Deep indigo-ink #1e1b3a primary, #4a4870 secondary, #807da6 muted — warmer than pure zinc to sit inside the wash.",
+    "accent": "indigo-600 #4f46e5 for interaction; violet-600 #7c3aed for eyebrows/emphasis; the deep gradient linear-gradient(120deg, #38bdf8, #6366f1 52%, #8b5cf6) for fills.",
+    "fontDisplay": "Geist (var(--font-display)) at 600 weight, tight tracking (-0.03em) for big display lines.",
+    "fontMono": "Geist Mono (var(--font-mono)) for eyebrows, numerals, table headers, meta.",
+    "radius": "Soft and generous — 11px controls, 18px cards, 26px hero/contact panels, full-pill buttons/tabs/badges.",
+    "border": "Indigo-tinted hairlines rgba(99,102,241,0.14→0.24) plus a 1px inner white highlight (var glow) so glass reads as a lit pane.",
+    "motion": "Gentle ease-out lifts on hover (translateY -3px), drifting aurora (22s) and a discipline marquee (30s); all animation respects prefers-reduced-motion."
+  },
+  "layout": "Single centered column, max-width ~1140px, on a full-bleed gradient field with a drifting aurora layer behind. A centered hero (pill → display headline with one gradient-clipped phrase → lede → CTA pair → 4-up figures band in glass) opens it, followed by a full-width discipline marquee. Below, left-eyebrowed sections stack with generous rhythm: a 2-col selected-work grid of frosted cards with gradient thumbnails, pill-tab capabilities (services grid / process timeline / FAQ accordion), a 2-col about + impact-charts split, a 4-up team grid, a testimonials carousel, a recognition table beside a clients/press rail, and a large glassy contact panel (budget MoodMeter + ReasonTag on the left, a brief Composer form with Slider/Switch/Progress on the right). Glass cards (translucent fill + backdrop-blur + inner highlight) float over the wash everywhere.",
+  "sections": [
+    {
+      "name": "hero",
+      "what": "Centered studio pitch: glass status pill, large display headline with one phrase gradient-text-clipped, lede, gradient + glass CTA buttons, and a 4-up figures band in a glass card.",
+      "components": ["Button", "Badge", "Breadcrumbs", "brand-gradient mark"],
+      "restyle": "Headline phrase uses .brand-gradient-text (background-clip:text). Primary Button is a pill filled with the deep gradient + colored glow shadow; secondary is frosted glass with indigo text. Figures band is a backdrop-blurred glass pane; numerals are gradient-clipped."
+    },
+    {
+      "name": "marquee",
+      "what": "Edge-faded auto-scrolling band of disciplines with gradient dots.",
+      "components": ["hand-rolled marquee"],
+      "restyle": "Pure CSS infinite track masked at both edges; each dot carries the deep gradient. Pauses under prefers-reduced-motion."
+    },
+    {
+      "name": "selected work",
+      "what": "Filterable 2-col grid of project cards, each with a gradient thumbnail panel, title/year, discipline, blurb, and tag badges; paginated.",
+      "components": ["Card", "Badge", "Pillbox", "Pagination", "Link (stretched)"],
+      "restyle": "Cards are frosted glass with hover-lift; thumbnails are per-project gradient blends via data-proj. Pillbox input becomes a glass pill; Pagination active page wears the gradient. One stretched <Link> per card (no nested anchors)."
+    },
+    {
+      "name": "capabilities",
+      "what": "Pill-tab switcher over Services (4 glass cards), Process (timeline), and Questions (accordion).",
+      "components": ["Tabs", "Card", "Timeline", "Accordion"],
+      "restyle": "Tabs.List is a glass pill rail; the active tab is filled with the gradient + glow. Timeline dot colors run sky→indigo→violet→fuchsia; accordion items are individual glass panes."
+    },
+    {
+      "name": "about + impact",
+      "what": "Left: lead statement + body + a gradient Callout. Right: a glass metrics card with a filled line chart and a horizontal bar chart.",
+      "components": ["Heading", "Text", "Callout", "Card", "Chart.Line", "Chart.HorizontalBar", "Separator", "Badge"],
+      "restyle": "Callout fill is a soft sky→violet wash. Charts use gradient-stop colors (#7dd3fc/#818cf8/#a78bfa/#c4b5fd). Separator is a fading gradient hairline."
+    },
+    {
+      "name": "team",
+      "what": "4-up grid of member cards with glowing avatars.",
+      "components": ["Card", "Avatar"],
+      "restyle": "Avatars use glow ring; cards are frosted glass with hover-lift."
+    },
+    {
+      "name": "testimonials",
+      "what": "Looping carousel of client quotes with star rating and attribution.",
+      "components": ["Carousel", "Avatar", "hand-rolled star row"],
+      "restyle": "Slides are glass panels; controls are glass pills; active step dots wear the gradient. Display-weight quote text with tight tracking."
+    },
+    {
+      "name": "recognition + clients",
+      "what": "Awards Table beside a rail of client badges and a press list.",
+      "components": ["Table", "Badge", "Separator"],
+      "restyle": "Table is wrapped in a glass card; mono uppercase headers on a faint indigo tint; rows hover indigo. Client badges are outline glass pills."
+    },
+    {
+      "name": "contact / brief",
+      "what": "Large gradient-glass panel: left a budget MoodMeter + ReasonTag confidence read; right an elevated brief form (Composer + char Progress + timeline Slider + newsletter Switch + send Button) with a success state.",
+      "components": ["MoodMeter", "ReasonTag", "Composer", "Progress", "Slider", "Switch", "Button", "Card", "Tooltip", "Badge"],
+      "restyle": "Panel has corner radial gradient washes over strong glass. MoodMeter uses indigo/violet handles; Progress, Slider fill, and Switch on-state all wear the deep gradient; Send button is the gradient pill."
+    }
+  ],
+  "palette": [
+    { "component": "Button", "restyle": "Full pill. Primary = deep gradient fill (sky→indigo→violet) + white text + colored glow shadow + hover lift; secondary = frosted glass + indigo text + violet on hover." },
+    { "component": "Badge", "restyle": "Pill radius, weight 600. Soft variants tint indigo/violet/emerald; outline variants are glass with indigo-tinted hairlines." },
+    { "component": "Card", "restyle": "Frosted glass: translucent white fill + backdrop-blur + indigo hairline + inner white highlight; hover lifts 3px into a violet-tinted shadow. The contact panel adds corner radial gradient washes." },
+    { "component": "Tabs", "restyle": "List is a glass pill rail; active tab is gradient-filled with a glow, inactive tabs are muted ink text." },
+    { "component": "Table", "restyle": "Wrapped in a glass card; mono uppercase headers on a faint indigo tint, gradient-free hairline rows that hover to a light indigo wash." },
+    { "component": "Chart", "restyle": "Line + horizontal-bar use the gradient stops as series colors; filled line area at low opacity so data reads as colored light." },
+    { "component": "MoodMeter", "restyle": "Indigo (#6366f1) user handle, violet (#a78bfa) posted-ghost handle, on a soft-radius pad sitting inside the glass contact panel." },
+    { "component": "Composer", "restyle": "White inner surface with a glass-pill border that lights to an indigo ring on focus." },
+    { "component": "Progress / Slider / Switch", "restyle": "All fills and on-states wear the deep gradient; Slider thumb gets an indigo ring + glow." },
+    { "component": "Pillbox", "restyle": "Input becomes a glass pill; chips tint indigo-soft." },
+    { "component": "Callout", "restyle": "Soft sky→violet linear wash fill with a violet icon, indigo hairline." },
+    { "component": "Avatar", "restyle": "Glow ring on team members; plain on attributions." },
+    { "component": "Timeline / Accordion / Separator", "restyle": "Timeline dots gradient-laddered; accordion items become individual glass panes; separators are fading gradient hairlines." }
+  ],
+  "contentArchetype": "A boutique design/dev studio (FIELDWORK) one-page portfolio: a luminous pitch hero, filterable selected work, tabbed capabilities, a warm about + momentum metrics, the team, client testimonials, awards + clients, and an interactive 'brief the studio' contact panel. Also fits any modern SaaS landing, agency, product-launch, or personal portfolio that wants an optimistic, premium, light-and-airy feel.",
+  "remix": "Keep the gradient confined to fills, accents, and one display phrase — let frosted glass + deep indigo ink carry the structure so it stays tasteful. To re-skin: change only the three gradient stops (and the per-thumbnail blends) and the whole identity shifts (sunset, aurora-green, mono-violet). Blend toward Swiss/minimal by dialing glass opacity toward solid white, flattening radii, and demoting the gradient to a single hero accent + the logo mark; blend toward a dark style by inverting the canvas to deep slate, raising glass opacity, and brightening the gradient stops. Drop the aurora + marquee first if you need a calmer, more corporate register."
+}

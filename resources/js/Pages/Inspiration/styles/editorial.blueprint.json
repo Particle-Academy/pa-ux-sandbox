@@ -1,0 +1,92 @@
+{
+  "id": "editorial",
+  "name": "Editorial",
+  "note": "Magazine columns and big display type.",
+  "mode": "light",
+  "thesis": "A printed design magazine on warm paper: ink-black serif display type, justified multi-column body with drop caps, mono folios and standfirsts, hairline + heavy rules, and a single oxblood accent — restraint and reading rhythm over decoration.",
+  "tokens": {
+    "bg": "#f6f2e9 warm newsprint (radial highlight to #fbf8f1 at top); recessed panels #efe9db",
+    "fg": "#1b1815 ink; body #4a4540; captions/folios #8a8278",
+    "accent": "#9b2226 oxblood/rose (deep #7d1c1f); used only for kickers, drop cap, rules, links, hover",
+    "fontDisplay": "serif stack — Iowan Old Style / Palatino / Book Antiqua / Georgia (weights 700–800, italic for accents)",
+    "fontMono": "var(--font-mono) Geist Mono — folios, kickers, metadata, buttons, all-caps tracked labels",
+    "radius": "0 everywhere — print has no rounded corners; even Avatars and Badges are squared off",
+    "border": "1px hairline #d8cfbe for rules/dividers; 2–3px heavy ink #2a2620 for masthead/section/table-head rules; double-rule under masthead",
+    "motion": "minimal — 200ms ease-out color/background only on hover; no transforms, no shadows except a 6px offset 'print' shadow on the letterbox card"
+  },
+  "layout": "Single 1140px centered column with a running head (breadcrumb + folio line). A centered masthead wordmark bracketed by single+double ink rules. The cover is a 1.55fr/1fr split: left = kicker, big serif display headline with one italic oxblood word, dek, mono byline, then a justified 2-column body with a drop cap and a footnote superscript; right = a bordered 'In this issue' contents panel listing features with folio page numbers and three stat figures. Each subsequent section is a horizontal band separated by a 1px top rule, introduced by a mono 'department mark' (small-caps label + short accent rule) and a serif section title. Features are a ruled vertical feed (folio | title+dek | right-aligned mono meta). Departments use a 2-column ruled grid inside underline Tabs. Awards are a 1.6fr/1fr split of a ruled Table ledger + a contributors/press sidebar. Letters is a 1fr/1fr split of brief intro + a 'letterbox' Card. Closes with a colophon: heavy rule, brand + nav links, numbered footnotes, back-link.",
+  "sections": [
+    {
+      "name": "running-head + masthead",
+      "what": "Breadcrumb trail and a price/issue folio line, then a centered magazine wordmark with a single rule above and a printer's double-rule below, plus a mono subtitle row (publication / cities / est.).",
+      "components": ["Breadcrumbs"],
+      "restyle": "Breadcrumbs flattened to mono uppercase 11px in muted ink; the wordmark and rules are hand-rolled type/CSS, not a component."
+    },
+    {
+      "name": "cover (hero + manifesto)",
+      "what": "Kicker badge, big serif display headline with one italic oxblood word, a dek, a mono byline rule, a justified 2-column manifesto with a drop cap and a footnote ref, and two CTA buttons. Right column is a bordered contents/issue index with page folios + stat figures.",
+      "components": ["Badge", "Heading", "Button", "Separator"],
+      "restyle": "Badge stripped of fill/border to become a flush mono kicker; Buttons squared to ink-fill and ghost-outline with mono all-caps labels; columns/drop-cap/footnote are pure CSS (CSS columns + ::first-letter)."
+    },
+    {
+      "name": "pull-quote",
+      "what": "A full-width centered italic serif pull-quote bracketed by 3px ink rules top and bottom, with a quote glyph and a mono attribution line.",
+      "components": ["Callout"],
+      "restyle": "Callout's panel chrome (bg, border, radius, padding) zeroed and rebuilt as an open top/bottom-ruled pull-quote; its icon slot holds a lucide Quote tinted oxblood."
+    },
+    {
+      "name": "features",
+      "what": "A ruled vertical feed of selected work read as magazine features: oxblood folio page number, kicker, serif title (turns oxblood on hover), dek, and right-aligned mono discipline/year/pages with a 'Read ↗'. Pagination below.",
+      "components": ["Heading", "Pagination", "Link (stretched)"],
+      "restyle": "Each row is a stretched-link list item (one Inertia Link covering the row, no nested anchors); Pagination buttons squared with mono numerals."
+    },
+    {
+      "name": "departments (capabilities)",
+      "what": "Underline Tabs (Services / Editorial process / Letters): a 2-column ruled grid of services with italic roman-numeral markers, a process Timeline, and an FAQ Accordion.",
+      "components": ["Tabs", "Timeline", "Accordion", "Heading"],
+      "restyle": "Tab triggers → mono all-caps over a 2px ink rule with oxblood active state; Timeline + Accordion typography overridden to serif body / mono dates; service numerals set in italic serif oxblood."
+    },
+    {
+      "name": "masthead (team)",
+      "what": "Four people in a ruled 4-up grid: squared monogram avatar, serif name, mono all-caps role.",
+      "components": ["Avatar"],
+      "restyle": "Avatar de-rounded to a square ink plate with mono initials — a printer's nameplate, not a profile chip."
+    },
+    {
+      "name": "recognition (awards + contributors)",
+      "what": "A ruled awards Table ledger (Year / Feature / Citation) beside a sidebar of contributor tags and an in-the-press list.",
+      "components": ["Table", "Badge", "Separator", "Heading"],
+      "restyle": "Table rebuilt as an accountant's ledger — transparent rows, hairline row rules, 2px ink header rule, mono oxblood years, serif body; Badges → squared outline mono contributor tags."
+    },
+    {
+      "name": "letters (contact / brief)",
+      "what": "Left: intro, mono address lines, an indicative-budget range slider with a ReasonTag explainer. Right: a 'letterbox' Card with a Composer, a character Progress bar, and a send button; success state swaps to a received note.",
+      "components": ["Card", "Composer", "Progress", "ReasonTag", "Tooltip", "Badge", "Button", "Text"],
+      "restyle": "Card squared with a 6px offset 'print' drop shadow and ink-rule header/footer; Composer squared on paper with serif body; the budget control is a hand-rolled squared range slider (native MoodMeter avoided to keep the print feel); ReasonTag kept in underline theme."
+    },
+    {
+      "name": "colophon",
+      "what": "Heavy rule, brand blurb + uppercase mono nav links, a numbered footnotes list, and a folio line + back-to-gallery link.",
+      "components": ["Link"],
+      "restyle": "Footnotes are a hand-rolled numbered list with oxblood mono indices; back-link is mono all-caps oxblood."
+    }
+  ],
+  "palette": [
+    { "component": "Button", "restyle": "Squared (radius 0), no shadow, mono all-caps tracked label. Two variants: ink-fill (black → oxblood on hover) and ghost (ink hairline outline → oxblood text+border on hover)." },
+    { "component": "Badge", "restyle": "Two reads: stripped to a flush mono oxblood kicker (cover), or squared outline mono uppercase 'contributor tag' (recognition). Loses pill shape and fill entirely." },
+    { "component": "Callout", "restyle": "Chrome removed; reborn as an open pull-quote bracketed by 3px ink rules, centered italic serif, with the icon slot tinting a Quote glyph oxblood." },
+    { "component": "Table", "restyle": "Becomes a ruled ledger: transparent cells, hairline row dividers, a 2px ink header rule, mono uppercase column heads, mono oxblood years, serif body, bold ink feature names." },
+    { "component": "Tabs", "restyle": "Underline variant; triggers set in mono all-caps over a heavy 2px ink rule, muted by default, oxblood when active — a section rail, not buttons." },
+    { "component": "Avatar", "restyle": "De-rounded to a square ink nameplate with mono initials in paper-white — type-foundry monogram instead of a round photo chip." },
+    { "component": "Accordion", "restyle": "Triggers in bold serif (a Q&A 'letters' column); answers in serif body — reads as set type, not UI." },
+    { "component": "Timeline", "restyle": "Dates pushed to mono uppercase muted ink; titles/descriptions to serif; oxblood dots for milestone steps." },
+    { "component": "Composer", "restyle": "Squared on warm paper with a hairline border and serif input text — a typewriter sheet in the letterbox card." },
+    { "component": "Progress", "restyle": "Thin oxblood bar reading as a 'column inches set' meter under the letter composer." },
+    { "component": "Pagination", "restyle": "Squared buttons, mono numerals — page folios at the foot of the features feed." },
+    { "component": "ReasonTag", "restyle": "Underline theme so the budget figure reads like an editor's marginal note with a dotted underline." },
+    { "component": "Breadcrumbs", "restyle": "Flattened to a mono uppercase running-head trail in muted ink, oxblood on hover." },
+    { "component": "Separator / Heading / Text / Tooltip", "restyle": "Rules dropped to hairline paper tone; Headings forced to the serif display stack; Text/Tooltip recolored to ink/mono to match set type." }
+  ],
+  "contentArchetype": "A fictional design + dev studio (FIELDWORK) presenting its one-page portfolio as a quarterly design magazine — masthead, contents/issue index, cover manifesto, selected work as 'features' with page folios, a pull-quote house-style line, departments (services/process/FAQ), the team as a 'masthead', an awards ledger + contributors, a 'letters to the editor' contact box, and a colophon with footnotes.",
+  "remix": "Swap the oxblood for any single ink-friendly spot color (forest, navy, plum) and the warm paper for a cooler off-white to reskin the whole language. To blend toward a different style: keep the multi-column drop-cap body + folio/mono metadata system but trade the serif for a grotesque to move toward Swiss/editorial-modern; drop the paper texture and double rules and raise contrast for a stark editorial-noir. The load-bearing moves are: (1) serif display + mono metadata pairing, (2) radius 0 + hairline/heavy rule system, (3) CSS multi-column justified body with a drop cap, (4) a single restrained spot accent. Any Fancy primitive can be poured into it by zeroing its chrome (bg/border/radius) and reassigning its type to the serif/mono pair."
+}

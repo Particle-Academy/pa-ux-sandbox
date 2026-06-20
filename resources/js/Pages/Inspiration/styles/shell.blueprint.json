@@ -1,0 +1,85 @@
+{
+  "id": "shell",
+  "name": "App Shell",
+  "note": "Sidebar and tabs — the react-fancy shell.",
+  "mode": "dark",
+  "thesis": "The portfolio is a desktop application: a content site dressed in IDE/dashboard chrome — icon rail, project explorer, top bar, document tabs, status bar, and a ⌘K command palette — cool slate surfaces with one disciplined indigo accent and mono labels throughout.",
+  "tokens": {
+    "bg": "#0b0d12 page behind window; #0f1218 app body; #12151c panels; #161a23 raised; #0c0e14 chrome/rail",
+    "fg": "#eef1f6 primary; #aeb6c4 secondary; #727b8c tertiary/mono-labels; #4a5160 faint",
+    "accent": "#6366f1 indigo-500 (one accent); #818cf8 hover; #a5b4fc tint; #34d399 emerald + #fbbf24 amber for status only",
+    "fontDisplay": "Geist / system sans, weight 600, letter-spacing -0.035em on display, tight line-height",
+    "fontMono": "Geist Mono — used for ALL labels, eyebrows, metadata, table headers, tabs, status bar, tree, file names (.case/.md/.json)",
+    "radius": "16px window, 11px panels/cards, 9px buttons, 6-8px pills/inputs",
+    "border": "1px hairlines: #1c212c default, #2a313f hover/stronger; panels and rows separated by hairlines, never shadows",
+    "motion": "200ms ease-out (cubic-bezier(0.16,1,0.3,1)); hover lifts borders + a faint indigo glow; reduced-motion disables all transitions"
+  },
+  "layout": "A single faux app WINDOW (rounded, hairline border, big soft drop shadow) centered at max-width 1280px. Top to bottom: a macOS-style title bar (traffic lights + window title + a ⌘K search trigger); a 3-column body grid (60px icon rail | 232px project explorer | 1fr main); a 30px status bar footer. The main column itself stacks a sticky top bar (breadcrumb + actions), a faux document-tab strip, then a scrollable content region whose sections are the actual portfolio panels (hero/overview, capabilities, featured work, full index, process, about+team, recognition, contact). Each section reads as an app panel: a mono eyebrow that looks like a filename, a heading, then dashboard-style cards/tables/tiles. The command palette overlays everything on ⌘K.",
+  "sections": [
+    {
+      "name": "chrome",
+      "what": "The app frame: title bar with traffic lights + ⌘K search, a collapsed icon rail, a project explorer tree, a status bar.",
+      "components": ["Sidebar", "TreeNav", "Navbar", "Profile", "Command", "Badge"],
+      "restyle": "Sidebar is forced to a 60px collapsed icon rail — items become 40px square icon buttons, active item gets an indigo inset bar + soft tint; group labels shrink to 8.5px mono. TreeNav recolors to a mono file-explorer with folder/file rows, selected row gets an indigo inset rail. Navbar becomes a 50px sticky top bar holding a mono breadcrumb + action buttons, all kit chrome stripped."
+    },
+    {
+      "name": "hero",
+      "what": "Overview panel: readme-style eyebrow, big display headline with one accent word, lede, two CTAs, then a 4-up stat tile row with sparklines.",
+      "components": ["Button", "Chart.Sparkline", "Badge"],
+      "restyle": "Buttons flatten to crisp app chips (indigo primary with a faint glow ring; ghost = panel fill + hairline). Stat tiles are bordered dashboard cards with tabular-nums figures, mono uppercase labels, and a low-opacity indigo sparkline."
+    },
+    {
+      "name": "capabilities",
+      "what": "Four service cards, each with an icon chip, mono number, title, body, and tag pills.",
+      "components": ["Card", "Badge"],
+      "restyle": "Cards become flat slate panels with hairline borders and no kit shadow; hover lifts the border + a faint indigo glow. Icon sits in a 32px tinted indigo chip. Badges are mono uppercase pills."
+    },
+    {
+      "name": "selected-work",
+      "what": "Three featured preview cards (glyph on a blueprint-grid canvas + status badge) plus a full typographic index styled as a data grid with a Pillbox filter and Pagination.",
+      "components": ["Card", "Badge", "Pillbox", "Pagination"],
+      "restyle": "Preview canvas uses a faint indigo radial + CSS grid lines masked at the top, a large glyph, and a status pill. The index is a bordered table-like grid with a mono uppercase header row, hairline row separators, stretched-link rows, and color-coded status pills (emerald shipped / amber in-build / indigo discovery)."
+    },
+    {
+      "name": "process",
+      "what": "A panel hosting Tabs (Process timeline / Principles cards / FAQ accordion).",
+      "components": ["Tabs", "Timeline", "Accordion", "Card"],
+      "restyle": "Tabs sit on a rail-colored bar; tab labels become mono uppercase with an indigo active label. Timeline + Accordion recolor to slate text + indigo accent dots and hairline separators."
+    },
+    {
+      "name": "about-team",
+      "what": "Two columns: an about.md pull-quote + prose, and a team.json roster with avatars + presence dots.",
+      "components": ["Avatar", "Text"],
+      "restyle": "Pull-quote keeps the accent on one bold word; team rows are hover-tinted list items with Avatar presence status (online/busy/away) mapped to the app palette."
+    },
+    {
+      "name": "recognition",
+      "what": "An awards.csv table, a clients.json pill cloud, and a press.md list.",
+      "components": ["Table", "Badge", "Separator"],
+      "restyle": "Table recolored to transparent rows on slate with a mono uppercase header and hairline rules; client pills are mono uppercase chips."
+    },
+    {
+      "name": "contact",
+      "what": "A brief.new panel: contact details + a MoodMeter budget pad with a ReasonTag readout, beside a Composer 'new brief' card with a character Progress bar and submit/confirmation states.",
+      "components": ["MoodMeter", "ReasonTag", "Card", "Composer", "Progress", "Button", "Tooltip", "Badge"],
+      "restyle": "MoodMeter + Progress are themed to the indigo accent. Composer field goes near-black with the app fill; the card mirrors the panel treatment; the submit confirms into a 'Received' state."
+    }
+  ],
+  "palette": [
+    { "component": "Sidebar", "restyle": "Forced into a 60px collapsed icon rail: items become 40px square icon buttons, active = indigo inset bar + soft tint + ring; group labels shrink to micro mono; the collapse toggle is hidden." },
+    { "component": "TreeNav", "restyle": "Becomes a mono code-editor file explorer — folder/file rows with .case/.md/.json/.ts extensions, hover tint, and an indigo inset rail on the selected node; selection is controlled state that the command palette and sidebar both drive." },
+    { "component": "Navbar", "restyle": "A 50px sticky top bar: kit chrome stripped, Brand slot holds a mono breadcrumb (FIELDWORK / portfolio / overview), Items slot holds a status pill + ⌘K button + primary action." },
+    { "component": "Command", "restyle": "The ⌘K command palette (real, keyboard-bound): slate panel, indigo focus ring, mono micro group headings, indigo-tinted active item; groups = Go to / Projects / Actions, each item scrolls to a section and selects the matching tree node." },
+    { "component": "Tabs", "restyle": "Underline tabs on a rail-colored bar; labels become mono uppercase, active label turns indigo — reads as IDE panel tabs, not pills." },
+    { "component": "Button", "restyle": "Crisp app chips: primary = solid indigo with a 1px ring + soft glow; ghost = panel fill + hairline border that turns indigo on hover; disabled drops to 0.42 opacity." },
+    { "component": "Badge", "restyle": "Mono uppercase pills with hairline borders; variants for accent (indigo), ok (emerald availability), and status (shipped/in-build/discovery color-coded with a leading dot)." },
+    { "component": "Card", "restyle": "Flat slate panels, hairline borders, zero kit shadow; hover lifts the border plus a faint indigo glow — used for stat tiles, service cards, preview cards, the tabs panel, and the brief card." },
+    { "component": "Table", "restyle": "Transparent rows on slate, mono uppercase header with a stronger hairline under it, per-row hairline rules, hover tint — reads as a recognition/awards data grid." },
+    { "component": "Chart.Sparkline", "restyle": "Low-opacity indigo trend lines tucked into the overview stat tiles to give the dashboard a live feel." },
+    { "component": "Profile / Avatar", "restyle": "Profile anchors the explorer footer; Avatar presence dots (online/busy/away) recolor to the app status palette." },
+    { "component": "MoodMeter / ReasonTag / Progress / Composer / Pillbox", "restyle": "All inputs go near-black with hairline borders + an indigo focus ring; MoodMeter and Progress paint in the indigo accent; Pillbox tokens render mono." },
+    { "component": "Timeline / Accordion / Separator / Tooltip", "restyle": "Recolored to slate text, hairline separators, indigo accent dots; Tooltip surface is a raised slate panel (portal-rendered, matched via attribute/role selectors)." }
+  ],
+  "contentArchetype": "A small design + engineering studio's one-page portfolio (FIELDWORK): hero/overview, capabilities/services, featured + full project index, process/principles/FAQ, about + team, recognition (awards/clients/press), and a contact brief box — all reframed as documents and panels open inside the studio's own desktop app.",
+  "remix": "Swap the indigo accent and slate ramp for any single-accent dark palette and the whole shell re-skins. The chrome is the reusable shell: keep Sidebar (collapsed rail) + TreeNav (explorer) + Navbar (top bar) + Command (⌘K) + status bar as a frame, and drop ANY content into the scrollable main column — a docs site, an admin dashboard, a settings app, an analytics console. Blend with 'Dark Studio' for a softer marketing read, or with a Bento/grid style by replacing the section panels with a bento card layout inside the same window chrome. The key move is treating page sections as app panels and labeling everything in mono like filenames."
+}

@@ -1,0 +1,99 @@
+{
+  "id": "mono",
+  "name": "Monochrome",
+  "note": "One ink, one accent, strict.",
+  "mode": "light",
+  "thesis": "Strict grayscale discipline — near-black ink on pure white, a single cobalt accent rationed to markers, hover states, and one key numeral; hairline rules and square (radius-0) geometry carry all the structure.",
+  "tokens": {
+    "bg": "#ffffff",
+    "fg": "#0a0a0a",
+    "accent": "#1b46ff",
+    "fontDisplay": "var(--font-sans) — tight tracking (-0.035em), weight 600, no second display face",
+    "fontMono": "var(--font-mono) — every label, folio, number, eyebrow, caption, button, and metadata string is set in mono",
+    "radius": "0 (everything square — buttons, badges, avatars, card, composer, progress)",
+    "border": "1px hairline #e4e4e4 (#c9c9c9 heavier; #0a0a0a ink rules); 2px ink rule tops figures + table head",
+    "motion": "var(--dur-base)/var(--ease-out) only — color/background fades on hover; arrow + accent reveal on row hover; no transforms, no shadows"
+  },
+  "layout": "A single centered 1140px column. Sections are stacked full-width bands, each opened by a 1px hairline top rule and a mono numbered eyebrow ('01 — Selected work'). Internal structure is built almost entirely from CSS Grid + hairlines rather than fills: the hero is a 1.7fr/1fr split (headline + metadata rail), figures/capabilities/people are 4-up grids whose only divider is a rule on each cell's top edge, the work index is a 4-column typographic list (num / title / discipline / year) with stretched-link rows, and recognition/contact are 1.6fr/1fr and 1fr/1fr splits. No cards or boxes except the single bordered brief slip. Collapses to 2-up then 1-up at 920/640px.",
+  "sections": [
+    {
+      "name": "runhead",
+      "what": "Breadcrumbs + studio wordmark (a 13px ink square with a 4px inset cobalt corner) + an outlined 'est. 2016' chip, over an ink hairline.",
+      "components": ["Breadcrumbs", "Badge"],
+      "restyle": "Breadcrumbs set in uppercase mono; Badge stripped to a transparent square-cornered mono chip with a #c9c9c9 hairline border."
+    },
+    {
+      "name": "hero",
+      "what": "Three-line reductive headline ('One ink. One idea. Held to the line.') with the single word 'idea' in cobalt, a lede, two square buttons, and a right rail of mono coordinates + a dash-bulleted discipline list.",
+      "components": ["Heading", "Button", "Separator"],
+      "restyle": "Display is sans at weight 600 with -0.035em tracking; the lone accent is one cobalt word. Buttons become square uppercase mono — ink fill that flips to cobalt on hover, or a hairline ghost. Separator reduced to a 1px rule."
+    },
+    {
+      "name": "figures",
+      "what": "Four big tabular stats (2016 / 120 / 08 / 14) sitting under 2px ink rule tops; the first numeral is cobalt.",
+      "components": [],
+      "restyle": "Hand-built grid — proves the kit doesn't need a stat component; structure is pure rule + tabular-nums."
+    },
+    {
+      "name": "work",
+      "what": "A typographic project index (num / title / discipline / year↗) with a mono Pillbox discipline filter and mono Pagination; hover washes the row, turns the title + num cobalt, and reveals the up-right arrow.",
+      "components": ["Heading", "Pillbox", "Pagination", "Link"],
+      "restyle": "Rows are flush-left lists, not cards, joined by hairlines; one Inertia <Link> stretches over each row (stretched-link, no nested anchors). Pillbox + Pagination forced square with mono text; the active page chip is solid ink, hover borders go ink."
+    },
+    {
+      "name": "capabilities",
+      "what": "Underline Tabs (Services / Process / Questions) over a hairline rail: a 4-up services grid, a Timeline process, and an FAQ Accordion.",
+      "components": ["Tabs", "Timeline", "Accordion"],
+      "restyle": "Tab rail is a 1px rule with uppercase mono labels; the active indicator is the only cobalt mark. Timeline dates set in mono uppercase; Accordion triggers in ink sans."
+    },
+    {
+      "name": "about",
+      "what": "A 0.3fr label column ('03 — About') beside a large lead statement + supporting paragraph.",
+      "components": ["Text"],
+      "restyle": "Editorial label/body split; Text reset to ink-2 body at 1.65 line-height, no component chrome."
+    },
+    {
+      "name": "people",
+      "what": "Four team members as square ink Avatar chips with name + uppercase-mono role, divided by top hairlines.",
+      "components": ["Avatar"],
+      "restyle": "Avatar squared (radius 0) and recolored to an ink chip with white mono initials — the round photo-avatar becomes a typographic mark."
+    },
+    {
+      "name": "recognition",
+      "what": "A ruled awards Table ledger beside a rail of outlined client Badges + a mono press list.",
+      "components": ["Table", "Badge", "Separator"],
+      "restyle": "Table flattened to a borderless ledger: 2px ink rule under the mono uppercase head, 1px hairlines between rows, mono tabular year column, ink project column. Badges become outlined square mono tags."
+    },
+    {
+      "name": "contact",
+      "what": "An intro column (heading, lede, mono address, a ReasonTag explaining pricing) beside a bordered 'New brief' Card with a Composer, a character Progress bar, and a send Button; success state swaps to a confirmation.",
+      "components": ["Heading", "ReasonTag", "Card", "Composer", "Progress", "Button", "Tooltip", "Badge", "Text"],
+      "restyle": "The only enclosed box on the page — Card squared with a 1px ink border, no shadow. Composer ruled and square, focus border goes ink. Progress track is a hairline, fill is cobalt. ReasonTag underline theme. Status Badge stripped to a mono chip."
+    },
+    {
+      "name": "footer",
+      "what": "Ink hairline, wordmark + blurb + mono link grid, a second hairline, then the fictional-studio line + a cobalt 'Back to the gallery' link.",
+      "components": ["Link"],
+      "restyle": "All mono; links default ink-3 and go cobalt on hover — the back link is the page's last accent."
+    }
+  ],
+  "palette": [
+    { "component": "Button", "restyle": "Square (radius 0), uppercase mono label. Primary = ink fill flipping to cobalt on hover; secondary = transparent with a hairline border that goes ink on hover. No shadow." },
+    { "component": "Badge", "restyle": "Reduced to a transparent square-cornered mono chip/tag with a #c9c9c9 hairline border; color prop is overridden to ink/ink-3. Used as 'est. 2016', client tags, and the 'Open for Q3' status." },
+    { "component": "Avatar", "restyle": "Squared and recolored to a solid ink chip with white mono initials — a typographic mark, not a portrait." },
+    { "component": "Table", "restyle": "Borderless ruled ledger — 2px ink rule under a mono uppercase head, 1px hairlines between rows, mono tabular first column, ink-weighted project column, faint-wash row hover." },
+    { "component": "Tabs", "restyle": "Underline variant over a 1px hairline rail; uppercase mono labels in ink-3, active label ink, and the underline indicator is the single cobalt accent." },
+    { "component": "Pagination", "restyle": "Square mono numerals with hairline borders; active page is a solid ink chip; hover borders go ink." },
+    { "component": "Pillbox", "restyle": "Square mono filter field with a #c9c9c9 hairline; all rounding forced off." },
+    { "component": "Card", "restyle": "The lone box — squared, 1px ink border, no shadow; header/footer divided by hairlines." },
+    { "component": "Composer", "restyle": "Ruled square note; sans body text; focus border goes ink." },
+    { "component": "Progress", "restyle": "Hairline track with a square cobalt fill — the accent used as a live read-out." },
+    { "component": "Timeline", "restyle": "Mono uppercase dates, ink body; dot colors kept neutral except one cobalt 'System' step." },
+    { "component": "Accordion", "restyle": "Ink sans triggers, ink-2 body; no fills, hairline dividers only." },
+    { "component": "ReasonTag", "restyle": "Underline theme — an inline cobalt-free dotted-underline explainer that fits the mono metadata voice." },
+    { "component": "Separator", "restyle": "Collapsed to a single 1px hairline in the rule color." },
+    { "component": "Heading / Text", "restyle": "Reset to ink sans with tight tracking (display) / ink-2 body; component color presets overridden by scoped tokens." }
+  ],
+  "contentArchetype": "A one-page portfolio for FIELDWORK, a fictional Zürich/Lisbon graphic-design studio: reductive hero, a numbered selected-work index, tabbed capabilities (services / process / FAQ), an about statement, a squared team grid, an awards ledger + client list + press, and a 'brief the studio' contact box. Voice is terse and confident; all numbers, labels, and metadata are mono.",
+  "remix": "Keep the rules absolute: ONE neutral ink + ONE accent, radius 0 everywhere, mono for every label/number, hairlines instead of fills, no shadows. To re-skin for another brand, swap only --mo-accent (any single saturated hue) and the ink ramp; the structure is hue-agnostic. Blend toward Swiss by relaxing to a 12-column grid and allowing a soft-fill Badge; toward Editorial by swapping the sans display for a serif and letting the accent carry pull-quotes — but the moment you add a second accent or round a corner you've left Monochrome. Dark-mode variant: invert the ink ramp (paper → #0a0a0a, ink → #f5f5f5) and lift the accent ~10% for contrast."
+}

@@ -1,0 +1,99 @@
+{
+  "id": "retro",
+  "name": "Retro Web",
+  "note": "OS windows and web-1.0 nostalgia.",
+  "mode": "light",
+  "thesis": "A teal-wallpaper desktop strewn with beveled '98-era OS windows — hard outset/inset bevels, navy title bars, pixel/MS-Sans type, and knowingly-naff web-1.0 widgets (hit counter, marquee, guestbook, webring, 88x31 buttons) — proving Fancy primitives can wear desktop-OS chrome.",
+  "tokens": {
+    "bg": "teal desktop #2c7a7b → #1f5e5f radial, with a faint 45deg pinstripe; window chrome face #c7c3bb, document paper #fffef6",
+    "fg": "#1a1a17 near-black ink; secondary #44423b; mono labels #6b685e; title-bar text #fff on navy",
+    "accent": "#000080 navy (title bars / primary) + #aa00aa magenta (links/hover) + #008000 GO-green for affirmative actions; #e6a700 under-construction yellow",
+    "fontDisplay": "Verdana / Geneva / Tahoma (bumpy 90s sans), 800 weight, magenta drop-shadow on the wordmark",
+    "fontMono": "Lucida Console / Courier New for all labels, counters, timestamps, URLs",
+    "radius": "0 everywhere — square corners; only the folder tabs round their top 6px",
+    "border": "2px hard bevels: outset = light(top/left)+shadow(bottom/right), inset = the reverse; plus a 3px offset hard drop-shadow (no blur) on raised windows",
+    "motion": "CSS-only gags: a 26s scrolling marquee, a 1s blinking cursor, a bobbing 🚧 sign, a pulsing online dot, an odometer hit counter; ALL disabled under prefers-reduced-motion"
+  },
+  "layout": "A single centered ~1080px column floating on a tiled teal desktop, topped by a full-bleed scrolling marquee status strip. Every major section is its own draggable-looking OS window (FauxClient browser chrome: navy gradient title bar with a fake path/URL + traffic dots, inset white document body). The hero window splits 1.7fr/1fr into a wordmark + CTA column and a sidebar stacking a 'fieldwork.txt' property panel, an odometer hit counter, and a live clock. Work is a two-pane file explorer (file list + properties pane). About/team and contact/guestbook are paired two-up window rows. A lone rotated Post-it and a webmaster footer bar (88x31 badges + copyright + 'back to top') close it out.",
+  "sections": [
+    {
+      "name": "marquee",
+      "what": "Full-bleed black scrolling status ticker in phosphor green above everything — the OS notification bar.",
+      "components": [],
+      "restyle": "Hand-rolled CSS marquee (duplicated track + translateX keyframe) — there is no Fancy Marquee primitive."
+    },
+    {
+      "name": "hero",
+      "what": "Main OS window: FIELD_WORK wordmark with a blinking cursor, tagline, two chrome buttons, an animated under-construction banner; sidebar with a property panel, hit counter, and clock.",
+      "components": ["FauxClient", "Button"],
+      "restyle": "FauxClient becomes a literal 98 window via barClassName/bodyClassName overrides (navy gradient bar, inset paper body). Buttons become 3D outset chrome buttons that depress on :active."
+    },
+    {
+      "name": "stats",
+      "what": "Four desktop-icon tiles — Founded / Projects / People online / Awards — each an emoji glyph over a Verdana number.",
+      "components": [],
+      "restyle": "Plain beveled tiles with hard drop-shadows; no Fancy primitive needed (they're static)."
+    },
+    {
+      "name": "selected-work",
+      "what": "'My Projects' file-explorer window — a selectable file list on the left drives a Windows-style Properties pane on the right.",
+      "components": ["FauxClient", "Pillbox", "Separator"],
+      "restyle": "Pillbox → inset beveled search field with square navy chips. The file list/properties pane are hand-built around controlled selection state; selected row paints navy like a highlighted OS file."
+    },
+    {
+      "name": "capabilities",
+      "what": "Services / Process / F.A.Q. behind manila folder tabs.",
+      "components": ["Tabs", "Accordion"],
+      "restyle": "Tabs → raised manila folder tabs (rounded-top, active tab lifts and connects to the panel). Accordion → a collapsible 'My Documents' tree with 📁 rows, dotted child guides, and bevel headers."
+    },
+    {
+      "name": "about-team",
+      "what": "Two-up: an 'About This Studio' window with a pull-quote + a design webring strip, beside a 'staff/' window listing the crew as online users.",
+      "components": ["FauxClient", "Heading", "Text", "Avatar", "Separator"],
+      "restyle": "Avatar → square pixel portrait (border-radius 0, mono initials) inset in a beveled frame on a per-member color; each member row is a beveled 'user is online' list item with a glowing green dot."
+    },
+    {
+      "name": "recognition-clients",
+      "what": "Awards spec-ledger table beside a wall of 88x31 client/web buttons, a press list, and a 'Valid HTML' badge.",
+      "components": ["FauxClient", "Table", "Badge", "Tooltip", "Separator"],
+      "restyle": "Table → beveled spec ledger (gray raised headers, zebra rows, mono year cells). Badge → the canonical 88x31 web button in rotating navy/magenta/teal/green, wrapped in a Tooltip styled as a yellow OS hint balloon."
+    },
+    {
+      "name": "contact-guestbook",
+      "what": "Two-up: a 'New Message' brief box (Card/Composer/Progress) beside a working guestbook (read existing entries, sign with a handle, optimistic new entry).",
+      "components": ["FauxClient", "Card", "Composer", "Progress", "Button", "Badge", "Tooltip", "Heading", "Text"],
+      "restyle": "Card → beveled email window (navy caption bar + inset body + chrome footer). Composer → inset mono text area. Progress → segmented striped 98 loading bar. The guestbook + sign form are hand-built controlled state (new entry prepends as a highlighted Post-it-yellow row)."
+    },
+    {
+      "name": "ps-note",
+      "what": "A single rotated Post-it note signed by the founder.",
+      "components": ["StickyNote"],
+      "restyle": "StickyNote restyled to a hard-edged Comic-Sans Post-it with a no-blur offset drop-shadow."
+    },
+    {
+      "name": "footer",
+      "what": "Webmaster bar: a row of 88x31 vanity badges, copyright/style line, 'back to the gallery' link + 'back to top'.",
+      "components": ["Badge", "Link"],
+      "restyle": "Badges reuse the 88x31 treatment; links are underlined blue web-1.0 anchors that turn magenta on hover."
+    }
+  ],
+  "palette": [
+    { "component": "FauxClient", "restyle": "The backbone — every section is a FauxClient browser window. barClassName paints a navy→sky gradient title bar with white bold text + a fake DOS/URL path; bodyClassName makes the viewport an inset off-white document. The whole frame gets 2px outset bevels + a 3px hard offset shadow." },
+    { "component": "Button", "restyle": "3D outset chrome button: gray face, light top/left + dark bottom/right bevel, inset highlight; flips to inset bevel + 1px nudge on :active; GO actions tint the label green; disabled goes embossed-gray, not faded." },
+    { "component": "Badge", "restyle": "Becomes the 88x31 'web button' — fixed ~88px min-width, mono caps, 1px black border with an inner white hairline, cycling navy/magenta/teal/green fills." },
+    { "component": "Tabs", "restyle": "Manila folder tabs — rounded-top raised tabs sitting on a 2px rule; the active tab lifts, recolors navy, and merges into the panel below." },
+    { "component": "Table", "restyle": "Beveled spec ledger — raised gray uppercase headers, hairline cell borders, zebra paper rows, mono year column, navy project column." },
+    { "component": "Accordion", "restyle": "Collapsible 'My Documents' tree — 📁 bevel-header rows with dotted left guides on the expanded content." },
+    { "component": "Avatar", "restyle": "Square pixel portrait — border-radius 0, mono initials, framed in a beveled inset square over a per-member solid color." },
+    { "component": "Progress", "restyle": "Segmented striped 98 loading bar inside an inset well — discrete navy ticks rather than a smooth fill." },
+    { "component": "Composer", "restyle": "Inset white mono text area (the message body of an email window)." },
+    { "component": "Pillbox", "restyle": "Inset beveled search field with square navy chips and mono text." },
+    { "component": "StickyNote", "restyle": "Hard-edged Comic-Sans Post-it with a no-blur offset shadow, slightly rotated." },
+    { "component": "Separator", "restyle": "A 2px groove rule (1px dark over 1px light) — the engraved divider OS dialogs use." },
+    { "component": "Tooltip", "restyle": "Pale-yellow OS hint balloon with a 1px black border and a hard offset shadow." },
+    { "component": "Card", "restyle": "Beveled email/message window — navy caption bar, inset paper body, gray chrome footer." },
+    { "component": "Heading / Text", "restyle": "Headings render in bumpy 800-weight Verdana navy with a groove underline; body/labels drop to Lucida Console mono for the system-text feel." }
+  ],
+  "contentArchetype": "A fictional design/dev studio (FIELDWORK) homepage circa 1999 — wordmark + tagline, a file-explorer portfolio of named '.exe' projects, services/process/FAQ in folder tabs, an about pull-quote + webring, an awards ledger + 88x31 client buttons, a 'drop us a line' brief box, and a working guestbook. Garnished with the obligatory hit counter, marquee, under-construction banner, and 'Valid HTML 4.01' badge.",
+  "remix": "Keep ONE structural rule — every region is an OS window (title bar + inset body) — and the rest follows: 2px hard bevels (light TL / dark BR), zero border-radius, mono+Verdana, navy/magenta/green on gray-and-paper. To make it less kitsch for a real product, drop the marquee/hit-counter/under-construction gags and keep just the window chrome + bevels for a tasteful 'OS app' shell; to go further into vaporwave, swap the teal wallpaper for a magenta→cyan gradient and add CRT scanlines. Blends naturally with a Terminal style (share the inset-well + mono treatment) or a Brutalist style (both lean on hard borders and zero radius)."
+}

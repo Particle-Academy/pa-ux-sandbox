@@ -1,0 +1,776 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Inspiration Gallery · Style — Kinetic
+   FIELDWORK rendered as a scroll-driven MOTION studio: layered parallax in the
+   hero, oversized marquees, a telemetry ticker that scrolls with page velocity,
+   and reveal-on-scroll staggers. Near-black surfaces with a magenta→cyan
+   "velocity" gradient threaded through every accent. Every selector is scoped
+   under .insp-kinetic so the page carries its own dark palette regardless of the
+   host theme, and so it never collides with Tailwind's .dark mode. The Fancy
+   primitives are restyled HARD here (buttons, badges, cards, tabs, table,
+   accordion, timeline, progress, carousel, pillbox, composer…) so they read
+   native to the Kinetic idiom rather than as kit defaults.
+
+   ALL motion respects prefers-reduced-motion (see the block at the very bottom).
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.insp-kinetic {
+  /* ── Self-contained Kinetic palette ─────────────────────────────────────── */
+  --k-bg:        #07070b;   /* page — near black, cool */
+  --k-bg-1:      #0b0b12;   /* recessed bands */
+  --k-surface:   #101018;   /* cards, panels */
+  --k-surface-2: #16161f;   /* raised / hover */
+  --k-ink:       #f4f3fb;   /* primary text */
+  --k-ink-2:     #b6b4c8;   /* secondary text */
+  --k-ink-3:     #7c7a93;   /* tertiary / mono labels */
+  --k-ink-4:     #4a4860;   /* faint / decorative */
+  --k-line:      #1d1b29;   /* hairline borders */
+  --k-line-2:    #2c2940;   /* hover / stronger hairline */
+
+  /* The velocity gradient — magenta → violet → cyan. */
+  --k-mag:   #ff2e88;       /* magenta */
+  --k-vio:   #8b5cff;       /* violet */
+  --k-cyan:  #1fd4ff;       /* cyan */
+  --k-accent: var(--k-mag);
+  --k-accent-2: var(--k-cyan);
+  --k-grad: linear-gradient(100deg, var(--k-mag) 0%, var(--k-vio) 48%, var(--k-cyan) 100%);
+  --k-grad-soft: linear-gradient(100deg, rgba(255,46,136,0.16), rgba(139,92,255,0.14) 48%, rgba(31,212,255,0.16));
+  --k-mag-soft: rgba(255, 46, 136, 0.14);
+  --k-cyan-soft: rgba(31, 212, 255, 0.14);
+  --k-glow: rgba(255, 46, 136, 0.34);
+
+  /* Re-point the shared semantic tokens so any react-fancy primitive that reads
+     them inherits the Kinetic surface without per-component hacks. */
+  --fg-1: var(--k-ink);
+  --fg-2: var(--k-ink-2);
+  --fg-3: var(--k-ink-3);
+  --fg-4: var(--k-ink-4);
+  --bg-0: var(--k-bg);
+  --bg-1: var(--k-bg-1);
+  --bg-2: var(--k-surface-2);
+  --bg-3: var(--k-line-2);
+  --surface: var(--k-surface);
+  --surface-raised: var(--k-surface-2);
+  --border-1: var(--k-line);
+  --border-2: var(--k-line-2);
+  --accent: var(--k-accent);
+  --accent-hover: var(--k-accent-2);
+  --primary: var(--k-accent);
+  --primary-hover: var(--k-accent-2);
+  --ring: var(--k-glow);
+
+  color: var(--k-ink-2);
+  background: var(--k-bg);
+  font-family: var(--font-sans);
+  --k-radius: 14px;
+  overflow-x: clip;
+  position: relative;
+}
+
+/* ── Shell ────────────────────────────────────────────────────────────────── */
+.insp-kinetic .kx-shell {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Running head ─────────────────────────────────────────────────────────── */
+.insp-kinetic .kx-head {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  padding: 22px 0 18px;
+}
+.insp-kinetic .kx-mark { display: inline-flex; align-items: center; gap: 11px; }
+.insp-kinetic .kx-mark__logo {
+  position: relative;
+  width: 28px; height: 28px;
+  border-radius: 9px;
+  display: grid; place-items: center;
+  color: #fff; font-weight: 800; font-size: 14px;
+  background: var(--k-grad);
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.08), 0 0 26px var(--k-glow);
+}
+.insp-kinetic .kx-mark__logo--sm { width: 22px; height: 22px; font-size: 12px; border-radius: 7px; }
+.insp-kinetic .kx-mark__pulse {
+  position: absolute; inset: -4px;
+  border-radius: 12px;
+  border: 1px solid var(--k-mag);
+  opacity: 0;
+  animation: kx-pulse 2.6s ease-out infinite;
+}
+@keyframes kx-pulse {
+  0%   { transform: scale(0.85); opacity: 0.7; }
+  70%  { transform: scale(1.5); opacity: 0; }
+  100% { opacity: 0; }
+}
+.insp-kinetic .kx-mark__name {
+  font-weight: 700; font-size: 15px; letter-spacing: 0.04em; color: var(--k-ink);
+}
+.insp-kinetic .kx-headnav {
+  margin-left: auto;
+  display: flex; align-items: center; gap: 24px;
+  font-family: var(--font-mono); font-size: 11.5px;
+  letter-spacing: 0.1em; text-transform: uppercase;
+}
+.insp-kinetic .kx-headnav a {
+  color: var(--k-ink-3); text-decoration: none;
+  transition: color 0.25s ease;
+}
+.insp-kinetic .kx-headnav a:hover { color: var(--k-ink); }
+@media (max-width: 640px) { .insp-kinetic .kx-headnav { display: none; } }
+
+/* ── Eyebrow ──────────────────────────────────────────────────────────────── */
+.insp-kinetic .kx-eyebrow {
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  font-family: var(--font-mono); font-size: 11px;
+  letter-spacing: 0.16em; text-transform: uppercase; color: var(--k-ink-3);
+}
+.insp-kinetic .kx-eyebrow b {
+  background: var(--k-grad); -webkit-background-clip: text; background-clip: text;
+  color: transparent; font-weight: 600;
+}
+.insp-kinetic .kx-eyebrow__live { display: inline-flex; align-items: center; gap: 8px; color: var(--k-ink-2); }
+.insp-kinetic .kx-live-dot {
+  width: 7px; height: 7px; border-radius: 50%; background: var(--k-cyan);
+  box-shadow: 0 0 0 3px var(--k-cyan-soft);
+  animation: kx-blink 1.6s ease-in-out infinite;
+}
+@keyframes kx-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
+
+/* ── Typography ───────────────────────────────────────────────────────────── */
+.insp-kinetic .kx-display {
+  margin: 22px 0 0;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 0.94;
+  color: var(--k-ink);
+  font-size: clamp(2.8rem, 8vw, 6.2rem);
+  text-wrap: balance;
+}
+.insp-kinetic .kx-display__kin {
+  position: relative;
+  background: var(--k-grad);
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  background-size: 220% 100%;
+  animation: kx-grad-sweep 6s ease-in-out infinite;
+  font-style: italic;
+}
+@keyframes kx-grad-sweep {
+  0%, 100% { background-position: 0% 50%; }
+  50%      { background-position: 100% 50%; }
+}
+.insp-kinetic .kx-lede {
+  margin: 24px 0 0;
+  font-size: clamp(1.05rem, 1.5vw, 1.28rem);
+  line-height: 1.55; color: var(--k-ink-2); max-width: 52ch;
+}
+.insp-kinetic .kx-h2 {
+  margin: 12px 0 0;
+  font-size: clamp(1.7rem, 3.2vw, 2.7rem) !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.03em !important;
+  line-height: 1.02 !important;
+  color: var(--k-ink) !important;
+}
+.insp-kinetic .kx-meta {
+  font-family: var(--font-mono); font-size: 12px; line-height: 1.7; color: var(--k-ink-3) !important;
+}
+
+/* ═══ HERO — layered parallax ═════════════════════════════════════════════ */
+.insp-kinetic .kx-hero {
+  position: relative;
+  padding: clamp(40px, 8vh, 96px) 0 clamp(36px, 6vh, 72px);
+  overflow: clip;
+  isolation: isolate;
+}
+.insp-kinetic .kx-hero__bg { position: absolute; inset: -10% 0 -10%; z-index: 0; pointer-events: none; }
+.insp-kinetic .kx-hero__glow {
+  position: absolute; border-radius: 50%;
+  filter: blur(60px); opacity: 0.55; will-change: transform;
+}
+.insp-kinetic .kx-hero__glow--a {
+  width: 46vw; height: 46vw; max-width: 620px; max-height: 620px;
+  top: -8%; right: -6%;
+  background: radial-gradient(circle, var(--k-mag-soft), transparent 68%);
+  animation: kx-float-a 14s ease-in-out infinite;
+}
+.insp-kinetic .kx-hero__glow--b {
+  width: 40vw; height: 40vw; max-width: 540px; max-height: 540px;
+  bottom: -12%; left: -8%;
+  background: radial-gradient(circle, var(--k-cyan-soft), transparent 68%);
+  animation: kx-float-b 18s ease-in-out infinite;
+}
+@keyframes kx-float-a { 0%, 100% { transform: translate(0,0); } 50% { transform: translate(-26px, 22px); } }
+@keyframes kx-float-b { 0%, 100% { transform: translate(0,0); } 50% { transform: translate(30px, -18px); } }
+.insp-kinetic .kx-hero__grid {
+  position: absolute; inset: 0; opacity: 0.5; will-change: transform;
+  background-image:
+    linear-gradient(var(--k-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--k-line) 1px, transparent 1px);
+  background-size: 64px 64px;
+  -webkit-mask-image: radial-gradient(120% 90% at 50% 30%, #000, transparent 78%);
+          mask-image: radial-gradient(120% 90% at 50% 30%, #000, transparent 78%);
+}
+
+/* Oversized hero marquee — the kinetic signature stripe behind the copy. */
+.insp-kinetic .kx-hero__marquee {
+  position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%);
+  z-index: 0; overflow: hidden; pointer-events: none;
+  opacity: 0.06;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+          mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+}
+.insp-kinetic .kx-marquee-track--lg {
+  display: inline-flex; white-space: nowrap;
+  font-size: clamp(5rem, 18vw, 16rem); font-weight: 800; letter-spacing: -0.04em;
+  color: var(--k-ink);
+  animation: kx-marquee 36s linear infinite;
+}
+
+.insp-kinetic .kx-hero__inner { position: relative; z-index: 2; }
+.insp-kinetic .kx-hero__copy { max-width: 60ch; }
+.insp-kinetic .kx-hero__cta { display: flex; gap: 12px; margin-top: 30px; flex-wrap: wrap; }
+.insp-kinetic .kx-hero__scrollcue {
+  position: relative; z-index: 2;
+  margin-top: 28px; padding-left: 24px;
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--k-ink-3);
+}
+.insp-kinetic .kx-hero__scrollcue svg { color: var(--k-cyan); animation: kx-nudge 1.8s ease-in-out infinite; }
+@keyframes kx-nudge { 0%, 100% { transform: translate(0,0); } 50% { transform: translate(3px, 3px); } }
+
+/* ── Telemetry ticker — scrolls with page velocity (--kx-vel set by JS) ───── */
+.insp-kinetic .kx-ticker {
+  --kx-vel: 0px;
+  position: relative;
+  overflow: hidden;
+  border-top: 1px solid var(--k-line);
+  border-bottom: 1px solid var(--k-line);
+  background: var(--k-bg-1);
+  padding: 16px 0;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+          mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+.insp-kinetic .kx-ticker__track {
+  display: inline-flex; white-space: nowrap; will-change: transform;
+  animation: kx-marquee 30s linear infinite;
+  transform: translateX(var(--kx-vel));
+}
+.insp-kinetic .kx-ticker__item {
+  display: inline-flex; align-items: center; gap: 18px;
+  font-family: var(--font-mono); font-size: clamp(0.85rem, 1.4vw, 1.05rem);
+  font-weight: 600; letter-spacing: 0.14em;
+  color: var(--k-ink-2); padding: 0 26px;
+}
+.insp-kinetic .kx-ticker__star { color: var(--k-mag); font-size: 0.8em; }
+
+/* ── Reveal-on-scroll wrapper ─────────────────────────────────────────────── */
+.insp-kinetic .kx-reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition: opacity 0.7s cubic-bezier(0.2, 0.7, 0.2, 1), transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+  will-change: opacity, transform;
+}
+.insp-kinetic .kx-reveal.is-in { opacity: 1; transform: none; }
+
+/* ── Sections ─────────────────────────────────────────────────────────────── */
+.insp-kinetic .kx-section { padding: clamp(56px, 9vh, 100px) 0; border-top: 1px solid var(--k-line); }
+.insp-kinetic .kx-section--flush { padding: 0; border-top: 0; }
+.insp-kinetic .kx-section__head {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: 24px; flex-wrap: wrap; margin-bottom: 30px;
+}
+
+/* ── Figures band ─────────────────────────────────────────────────────────── */
+.insp-kinetic .kx-figures {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px;
+}
+.insp-kinetic .kx-figure { border-top: 2px solid transparent; border-image: var(--k-grad) 1; padding-top: 16px; }
+.insp-kinetic .kx-figure__num {
+  font-size: clamp(2.3rem, 5vw, 3.6rem); font-weight: 800; letter-spacing: -0.04em;
+  color: var(--k-ink); line-height: 1; font-variant-numeric: tabular-nums;
+}
+.insp-kinetic .kx-figure__num em {
+  font-style: normal;
+  background: var(--k-grad); -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.insp-kinetic .kx-figure__label {
+  margin-top: 12px; font-family: var(--font-mono); font-size: 11px;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--k-ink-3);
+}
+@media (max-width: 720px) { .insp-kinetic .kx-figures { grid-template-columns: repeat(2, 1fr); } }
+
+/* ═══ FEATURED REEL — Carousel restyled as a film deck ════════════════════ */
+.insp-kinetic .kx-reel { margin-bottom: 30px; }
+.insp-kinetic .kx-reel__panels { border-radius: var(--k-radius); overflow: hidden; }
+.insp-kinetic .kx-reel__slide { display: block; }
+.insp-kinetic .kx-reel__stage {
+  position: relative; height: clamp(220px, 38vw, 360px);
+  display: grid; place-items: center; overflow: hidden;
+  border: 1px solid var(--k-line); border-bottom: 0;
+  border-radius: var(--k-radius) var(--k-radius) 0 0;
+  background:
+    radial-gradient(120% 120% at 50% 0%, var(--k-mag-soft), transparent 58%),
+    radial-gradient(120% 120% at 100% 100%, var(--k-cyan-soft), transparent 58%),
+    var(--k-bg);
+}
+.insp-kinetic .kx-reel__stage::after {
+  content: ""; position: absolute; inset: 0;
+  background-image:
+    linear-gradient(var(--k-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--k-line) 1px, transparent 1px);
+  background-size: 34px 34px; opacity: 0.3;
+}
+.insp-kinetic .kx-reel__glyph {
+  position: relative; z-index: 1;
+  font-size: clamp(4rem, 12vw, 9rem); font-weight: 800; letter-spacing: -0.05em;
+  background: var(--k-grad); -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.insp-kinetic .kx-reel__play {
+  position: absolute; z-index: 2; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 54px; height: 54px; border-radius: 50%;
+  display: grid; place-items: center; color: #fff;
+  background: rgba(7,7,11,0.55); border: 1px solid rgba(255,255,255,0.18);
+  backdrop-filter: blur(4px);
+  box-shadow: 0 0 0 6px rgba(255,46,136,0.10);
+  animation: kx-playpulse 2.4s ease-in-out infinite;
+}
+@keyframes kx-playpulse {
+  0%, 100% { box-shadow: 0 0 0 6px rgba(255,46,136,0.10); }
+  50%      { box-shadow: 0 0 0 12px rgba(31,212,255,0.06); }
+}
+.insp-kinetic .kx-reel__runtime {
+  position: absolute; z-index: 2; top: 14px; right: 14px;
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em;
+  color: var(--k-ink); background: rgba(7,7,11,0.6);
+  border: 1px solid var(--k-line-2); padding: 4px 9px; border-radius: 6px;
+}
+.insp-kinetic .kx-reel__scan {
+  position: absolute; z-index: 2; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--k-cyan), transparent);
+  opacity: 0.7; top: 0;
+  animation: kx-scan 4.5s linear infinite;
+}
+@keyframes kx-scan { 0% { top: 0; } 100% { top: 100%; } }
+.insp-kinetic .kx-reel__meta {
+  display: flex; align-items: center; justify-content: space-between; gap: 14px;
+  padding: 16px 18px;
+  border: 1px solid var(--k-line); border-top: 0;
+  border-radius: 0 0 var(--k-radius) var(--k-radius);
+  background: var(--k-surface);
+}
+.insp-kinetic .kx-reel__title { font-weight: 700; font-size: 16px; color: var(--k-ink); letter-spacing: -0.01em; }
+.insp-kinetic .kx-reel__disc { font-family: var(--font-mono); font-size: 11.5px; color: var(--k-ink-3); margin-top: 4px; }
+.insp-kinetic .kx-reel__controls {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 16px;
+}
+
+/* Carousel internals — strip the kit chrome, recolor steps + nav to Kinetic. */
+.insp-kinetic .kx-reel__steps [class*="rounded"],
+.insp-kinetic .kx-reel__steps button {
+  background: var(--k-line-2) !important;
+}
+.insp-kinetic .kx-reel__steps [aria-current="true"],
+.insp-kinetic .kx-reel__steps [data-active="true"],
+.insp-kinetic .kx-reel__steps button[aria-selected="true"] {
+  background: var(--k-mag) !important;
+}
+.insp-kinetic .kx-reel__nav button {
+  background: transparent !important;
+  border: 1px solid var(--k-line-2) !important;
+  color: var(--k-ink-2) !important;
+  border-radius: 9px !important;
+  font-family: var(--font-mono) !important;
+  font-size: 11px !important; letter-spacing: 0.08em !important; text-transform: uppercase !important;
+  transition: border-color 0.25s ease, color 0.25s ease !important;
+}
+.insp-kinetic .kx-reel__nav button:hover {
+  border-color: var(--k-mag) !important; color: var(--k-ink) !important;
+}
+
+/* ── Selected work — kinetic typographic index ────────────────────────────── */
+.insp-kinetic .kx-index { display: grid; }
+.insp-kinetic .kx-index__row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 3rem minmax(0, 1.7fr) minmax(0, 1fr) 7rem;
+  align-items: center; column-gap: 26px;
+  padding: 26px 8px;
+  border-top: 1px solid var(--k-line);
+  overflow: hidden;
+  transition: background 0.3s ease;
+}
+.insp-kinetic .kx-index__row::before {
+  content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  background: var(--k-grad); transform: scaleY(0); transform-origin: top;
+  transition: transform 0.35s cubic-bezier(0.2,0.7,0.2,1);
+}
+.insp-kinetic .kx-reveal:last-child .kx-index__row { border-bottom: 1px solid var(--k-line); }
+.insp-kinetic .kx-index__row:hover { background: var(--k-bg-1); }
+.insp-kinetic .kx-index__row:hover::before { transform: scaleY(1); }
+.insp-kinetic .kx-index__stretch { position: absolute; inset: 0; z-index: 1; }
+.insp-kinetic .kx-index__num { font-family: var(--font-mono); font-size: 12px; color: var(--k-ink-4); }
+.insp-kinetic .kx-index__title { overflow: hidden; }
+.insp-kinetic .kx-index__titletext {
+  display: inline-block;
+  font-size: clamp(1.4rem, 2.8vw, 2.2rem); font-weight: 700; letter-spacing: -0.025em;
+  color: var(--k-ink);
+  transition: transform 0.35s cubic-bezier(0.2,0.7,0.2,1), color 0.3s ease;
+}
+.insp-kinetic .kx-index__row:hover .kx-index__titletext {
+  transform: translateX(10px);
+  background: var(--k-grad); -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.insp-kinetic .kx-index__disc { font-size: 13.5px; color: var(--k-ink-2); line-height: 1.4; }
+.insp-kinetic .kx-index__year {
+  font-family: var(--font-mono); font-size: 12px; color: var(--k-ink-3);
+  display: inline-flex; align-items: center; justify-content: flex-end; gap: 8px; text-align: right;
+}
+.insp-kinetic .kx-index__arrow { color: var(--k-ink-4); transition: transform 0.3s ease, color 0.3s ease; }
+.insp-kinetic .kx-index__row:hover .kx-index__year { color: var(--k-cyan); }
+.insp-kinetic .kx-index__row:hover .kx-index__arrow { color: var(--k-cyan); transform: translate(3px, -3px); }
+
+.insp-kinetic .kx-index__foot {
+  display: flex; align-items: center; justify-content: space-between; gap: 14px;
+  margin-top: 24px; flex-wrap: wrap;
+}
+@media (max-width: 760px) {
+  .insp-kinetic .kx-index__row { grid-template-columns: 2.4rem 1fr; row-gap: 6px; }
+  .insp-kinetic .kx-index__disc,
+  .insp-kinetic .kx-index__year { grid-column: 2; text-align: left; justify-content: flex-start; }
+}
+
+/* ── Capabilities columns ─────────────────────────────────────────────────── */
+.insp-kinetic .kx-cap-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; margin-top: 10px; }
+@media (max-width: 900px) { .insp-kinetic .kx-cap-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 540px) { .insp-kinetic .kx-cap-grid { grid-template-columns: 1fr; } }
+.insp-kinetic .kx-cap {
+  position: relative; border-top: 1px solid var(--k-line); padding-top: 20px;
+}
+.insp-kinetic .kx-cap::before {
+  content: ""; position: absolute; top: -1px; left: 0; width: 0; height: 2px;
+  background: var(--k-grad); transition: width 0.4s cubic-bezier(0.2,0.7,0.2,1);
+}
+.insp-kinetic .kx-cap:hover::before { width: 56px; }
+.insp-kinetic .kx-cap__no {
+  font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.06em;
+  background: var(--k-grad); -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.insp-kinetic .kx-cap__title { margin: 12px 0 0; font-size: 17px; font-weight: 700; letter-spacing: -0.015em; color: var(--k-ink); }
+.insp-kinetic .kx-cap__body { margin: 10px 0 0; font-size: 13.5px; line-height: 1.6; color: var(--k-ink-2); }
+.insp-kinetic .kx-cap__tags { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 6px; }
+
+/* ── Process timeline + FAQ wrappers ──────────────────────────────────────── */
+.insp-kinetic .kx-process { max-width: 660px; margin-top: 18px; }
+.insp-kinetic .kx-faq { max-width: 760px; margin-top: 8px; }
+
+/* ── About pull-quote ─────────────────────────────────────────────────────── */
+.insp-kinetic .kx-about { text-align: left; }
+.insp-kinetic .kx-quote {
+  margin: 20px 0 0; max-width: 22ch;
+  font-size: clamp(1.7rem, 4.4vw, 3.2rem); line-height: 1.18; font-weight: 700;
+  letter-spacing: -0.03em; color: var(--k-ink);
+}
+.insp-kinetic .kx-quote b {
+  font-weight: 700;
+  background: var(--k-grad); -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.insp-kinetic .kx-about__body { margin-top: 22px !important; max-width: 60ch; font-size: 14.5px !important; line-height: 1.65 !important; color: var(--k-ink-2) !important; }
+
+/* ── Team ─────────────────────────────────────────────────────────────────── */
+.insp-kinetic .kx-team { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+@media (max-width: 900px) { .insp-kinetic .kx-team { grid-template-columns: repeat(2, 1fr); } }
+.insp-kinetic .kx-person { border-top: 1px solid var(--k-line); padding-top: 20px; }
+.insp-kinetic .kx-person__name { margin-top: 16px; font-weight: 700; font-size: 15px; letter-spacing: -0.01em; color: var(--k-ink); }
+.insp-kinetic .kx-person__role { margin-top: 4px; font-family: var(--font-mono); font-size: 11.5px; color: var(--k-ink-3); }
+
+/* ── Recognition split ────────────────────────────────────────────────────── */
+.insp-kinetic .kx-rec { display: grid; grid-template-columns: 1.6fr 1fr; gap: 48px; }
+@media (max-width: 860px) { .insp-kinetic .kx-rec { grid-template-columns: 1fr; gap: 36px; } }
+.insp-kinetic .kx-press { list-style: none; margin: 14px 0 0; padding: 0; }
+.insp-kinetic .kx-press li {
+  font-family: var(--font-mono); font-size: 12.5px; color: var(--k-ink-2);
+  padding: 8px 0; border-bottom: 1px solid var(--k-line);
+}
+.insp-kinetic .kx-press li:first-child { color: var(--k-ink); }
+.insp-kinetic .kx-clients { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+
+/* ── Clients marquee — reverse direction ──────────────────────────────────── */
+.insp-kinetic .kx-marquee {
+  overflow: hidden;
+  border-top: 1px solid var(--k-line);
+  border-bottom: 1px solid var(--k-line);
+  padding: 26px 0;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+          mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+.insp-kinetic .kx-marquee-track {
+  display: inline-flex; white-space: nowrap; will-change: transform;
+  animation: kx-marquee 34s linear infinite;
+}
+.insp-kinetic .kx-marquee--reverse .kx-marquee-track { animation-direction: reverse; }
+.insp-kinetic .kx-marquee__item {
+  display: inline-flex; align-items: center;
+  font-size: clamp(1.4rem, 3vw, 2.4rem); font-weight: 700; letter-spacing: -0.02em;
+  color: var(--k-ink-3); padding: 0 8px;
+  transition: color 0.3s ease;
+}
+.insp-kinetic .kx-marquee:hover .kx-marquee__item { color: var(--k-ink-2); }
+.insp-kinetic .kx-marquee__sep { color: var(--k-mag); padding: 0 22px; font-size: 0.7em; }
+
+@keyframes kx-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* ── Contact ──────────────────────────────────────────────────────────────── */
+.insp-kinetic .kx-contact { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
+@media (max-width: 860px) { .insp-kinetic .kx-contact { grid-template-columns: 1fr; gap: 36px; } }
+.insp-kinetic .kx-contact__h { margin-top: 12px; }
+.insp-kinetic .kx-contact__lede { font-size: 1rem !important; }
+.insp-kinetic .kx-contact__lines { margin-top: 26px; }
+.insp-kinetic .kx-contact__line { font-family: var(--font-mono); font-size: 14px; color: var(--k-ink); display: block; }
+.insp-kinetic .kx-contact__sub { font-family: var(--font-mono); font-size: 12px; color: var(--k-ink-3); display: block; margin-top: 6px; }
+
+/* ── Footer ───────────────────────────────────────────────────────────────── */
+.insp-kinetic .kx-footer { padding: 56px 0 16px; border-top: 1px solid var(--k-line); }
+.insp-kinetic .kx-footer__top { display: flex; justify-content: space-between; gap: 28px; flex-wrap: wrap; }
+.insp-kinetic .kx-footer__blurb { margin-top: 14px; max-width: 340px; font-size: 13.5px; line-height: 1.6; color: var(--k-ink-3); }
+.insp-kinetic .kx-footer__links {
+  display: grid; grid-template-columns: repeat(2, auto); gap: 8px 48px;
+  font-family: var(--font-mono); font-size: 12px;
+}
+.insp-kinetic .kx-footer__links a { color: var(--k-ink-3); text-decoration: none; transition: color 0.25s ease; }
+.insp-kinetic .kx-footer__links a:hover { color: var(--k-cyan); }
+.insp-kinetic .kx-footer__bottom {
+  display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap;
+}
+.insp-kinetic .kx-back {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 13px; font-weight: 600; text-decoration: none;
+  background: var(--k-grad); -webkit-background-clip: text; background-clip: text; color: transparent;
+}
+.insp-kinetic .kx-back svg { color: var(--k-mag); }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Restyling the Fancy primitives so they WEAR Kinetic
+   — scoped overrides that re-skin react-fancy's utility-driven defaults to the
+     near-black + velocity-gradient idiom without touching the components.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Buttons — primary wears the velocity gradient with a glow; ghost is a hairline
+   that lights up on hover. Both gain a subtle lift-on-hover. */
+.insp-kinetic .kx-btn-primary,
+.insp-kinetic .kx-btn-primary:not(:disabled) {
+  background: var(--k-grad) !important;
+  background-size: 160% 100% !important;
+  color: #fff !important;
+  border: 0 !important;
+  border-radius: 11px !important;
+  font-weight: 600 !important;
+  box-shadow: 0 8px 28px -10px var(--k-glow), 0 0 0 1px rgba(255,255,255,0.06) inset !important;
+  transition: background-position 0.4s ease, transform 0.2s ease, box-shadow 0.25s ease !important;
+}
+.insp-kinetic .kx-btn-primary:hover:not(:disabled) {
+  background-position: 100% 50% !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 12px 34px -8px var(--k-glow), 0 0 0 1px rgba(255,255,255,0.10) inset !important;
+}
+.insp-kinetic .kx-btn-primary:disabled { opacity: 0.4 !important; box-shadow: none !important; }
+
+.insp-kinetic .kx-btn-ghost,
+.insp-kinetic .kx-btn-ghost:not(:disabled) {
+  background: transparent !important;
+  color: var(--k-ink) !important;
+  border: 1px solid var(--k-line-2) !important;
+  border-radius: 11px !important;
+  transition: border-color 0.25s ease, color 0.25s ease, transform 0.2s ease !important;
+}
+.insp-kinetic .kx-btn-ghost:hover:not(:disabled) {
+  border-color: var(--k-cyan) !important; color: var(--k-cyan) !important; transform: translateY(-2px) !important;
+}
+
+/* Badges → mono "tags": hairline outline, uppercase, tight. */
+.insp-kinetic .kx-tag {
+  background: var(--k-surface) !important;
+  color: var(--k-ink-2) !important;
+  border: 1px solid var(--k-line-2) !important;
+  border-radius: 7px !important;
+  font-family: var(--font-mono) !important;
+  font-size: 10.5px !important; letter-spacing: 0.08em !important; text-transform: uppercase !important;
+  padding: 4px 9px !important;
+}
+.insp-kinetic .kx-tag--accent {
+  color: #fff !important;
+  border: 0 !important;
+  background: var(--k-grad) !important;
+}
+.insp-kinetic .kx-tag--accent [class*="dot"],
+.insp-kinetic .kx-tag--accent::before { background: #fff !important; }
+
+/* Pillbox — recolor field + chips to the dark surface; focus glows magenta. */
+.insp-kinetic .kx-pillbox { width: 280px !important; max-width: 100%; }
+.insp-kinetic .kx-pillbox [class*="border"],
+.insp-kinetic .kx-pillbox input,
+.insp-kinetic .kx-pillbox > div {
+  background: var(--k-surface) !important;
+  border-color: var(--k-line-2) !important;
+  color: var(--k-ink) !important;
+  border-radius: 10px !important;
+}
+.insp-kinetic .kx-pillbox input::placeholder { color: var(--k-ink-3) !important; }
+.insp-kinetic .kx-pillbox [class*="rounded-full"] {
+  background: var(--k-mag-soft) !important;
+  color: var(--k-ink) !important;
+  border: 1px solid rgba(255,46,136,0.4) !important;
+}
+
+/* Cards — flat near-black panels with a gradient hairline on hover. */
+.insp-kinetic .kx-card {
+  background: var(--k-surface) !important;
+  border: 1px solid var(--k-line) !important;
+  border-radius: var(--k-radius) !important;
+  box-shadow: none !important;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease !important;
+}
+.insp-kinetic .kx-card:hover {
+  border-color: var(--k-line-2) !important;
+  box-shadow: 0 0 0 1px var(--k-mag-soft), 0 22px 60px -34px var(--k-glow) !important;
+}
+.insp-kinetic .kx-card__head {
+  display: flex !important; align-items: center; justify-content: space-between;
+  padding: 16px 18px !important; border-bottom: 1px solid var(--k-line) !important;
+}
+.insp-kinetic .kx-card__title { font-weight: 700; font-size: 14px; color: var(--k-ink); }
+.insp-kinetic .kx-card__body { padding: 16px 18px !important; }
+.insp-kinetic .kx-card__foot {
+  display: flex !important; align-items: center; justify-content: space-between;
+  padding: 12px 18px !important; border-top: 1px solid var(--k-line) !important;
+}
+.insp-kinetic .kx-card__progress { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 10px; }
+.insp-kinetic .kx-sent { padding: 24px 2px; }
+.insp-kinetic .kx-sent__msg { margin: 14px 0; font-size: 14.5px; color: var(--k-ink); line-height: 1.55; }
+
+/* Composer — near-black field, gradient focus ring. */
+.insp-kinetic .kx-composer,
+.insp-kinetic .kx-composer textarea,
+.insp-kinetic .kx-composer [contenteditable] {
+  background: var(--k-bg) !important;
+  color: var(--k-ink) !important;
+  border-color: var(--k-line-2) !important;
+  border-radius: 10px !important;
+}
+.insp-kinetic .kx-composer textarea::placeholder { color: var(--k-ink-3) !important; }
+.insp-kinetic .kx-composer:focus-within { box-shadow: 0 0 0 1px var(--k-mag), 0 0 0 4px var(--k-mag-soft) !important; }
+
+/* Progress — recolor track + bar to the velocity gradient. */
+.insp-kinetic .kx-progress [class*="rounded"] { background-color: var(--k-line) !important; }
+.insp-kinetic .kx-progress [class*="bg-"][style*="width"],
+.insp-kinetic .kx-progress [role="progressbar"] > * {
+  background: var(--k-grad) !important;
+}
+
+/* Tabs — strip kit chrome; mono labels, gradient active rule. */
+.insp-kinetic .kx-tabs [role="tablist"] { border-bottom: 1px solid var(--k-line) !important; gap: 6px; }
+.insp-kinetic .kx-tabs [role="tab"] {
+  font-family: var(--font-mono) !important;
+  font-size: 12px !important; letter-spacing: 0.08em !important; text-transform: uppercase !important;
+  color: var(--k-ink-3) !important; padding: 12px 14px !important; background: transparent !important;
+}
+.insp-kinetic .kx-tabs [role="tab"]:hover { color: var(--k-ink) !important; }
+.insp-kinetic .kx-tabs [role="tab"][aria-selected="true"] { color: var(--k-ink) !important; }
+.insp-kinetic .kx-tabs [role="tab"][aria-selected="true"]::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px;
+  background: var(--k-grad);
+}
+.insp-kinetic .kx-tabs [role="tab"] { position: relative; }
+
+/* Accordion — hairline-separated rows; trigger glows on hover. */
+.insp-kinetic .kx-accordion > * { border-color: var(--k-line) !important; }
+.insp-kinetic .kx-accordion button { color: var(--k-ink) !important; font-weight: 600 !important; }
+.insp-kinetic .kx-accordion button:hover { color: var(--k-cyan) !important; }
+.insp-kinetic .kx-accordion [class*="text-"]:not(button) { color: var(--k-ink-2) !important; }
+
+/* Table — dark surfaces, mono header, hairline rules, gradient row hover edge. */
+.insp-kinetic .kx-table table { width: 100%; }
+.insp-kinetic .kx-table thead th {
+  font-family: var(--font-mono) !important;
+  font-size: 11px !important; letter-spacing: 0.08em !important; text-transform: uppercase !important;
+  color: var(--k-ink-3) !important;
+  border-bottom: 1px solid var(--k-line-2) !important;
+  background: transparent !important;
+}
+.insp-kinetic .kx-table tbody td {
+  border-bottom: 1px solid var(--k-line) !important;
+  color: var(--k-ink-2) !important; background: transparent !important;
+}
+.insp-kinetic .kx-table tbody td:nth-child(2) { color: var(--k-ink) !important; font-weight: 600 !important; }
+.insp-kinetic .kx-table tbody td:first-child { font-family: var(--font-mono) !important; color: var(--k-ink-3) !important; }
+.insp-kinetic .kx-table tbody tr:hover td { background: var(--k-bg-1) !important; }
+
+/* Timeline — recolor to dark line; dots inherit the per-event accent colors. */
+.insp-kinetic .kx-timeline { color: var(--k-ink-2); }
+.insp-kinetic .kx-timeline [class*="text-"] { color: var(--k-ink-2) !important; }
+
+/* Avatar — gradient ring. */
+.insp-kinetic .kx-avatar {
+  box-shadow: 0 0 0 2px var(--k-bg), 0 0 0 3px transparent !important;
+  background: var(--k-surface-2) !important; color: var(--k-ink) !important;
+  position: relative;
+}
+
+/* Callout — dark surface, gradient left edge. */
+.insp-kinetic .kx-callout {
+  margin-top: 26px !important;
+  background: var(--k-bg-1) !important;
+  border: 1px solid var(--k-line) !important;
+  border-left: 3px solid transparent !important;
+  border-image: var(--k-grad) 1 !important;
+  border-radius: 10px !important;
+  color: var(--k-ink-2) !important;
+}
+.insp-kinetic .kx-callout [class*="text-"] { color: var(--k-ink-2) !important; }
+.insp-kinetic .kx-callout svg { color: var(--k-mag) !important; }
+
+/* Pagination — mono, hairline, gradient active page. */
+.insp-kinetic .kx-index__foot [aria-current="page"],
+.insp-kinetic .kx-index__foot [data-active="true"] {
+  background: var(--k-grad) !important; color: #fff !important; border-color: transparent !important;
+}
+.insp-kinetic .kx-index__foot button { font-family: var(--font-mono) !important; }
+
+/* Breadcrumbs — mono, muted. */
+.insp-kinetic .kx-head nav a,
+.insp-kinetic .kx-head nav span { font-family: var(--font-mono); font-size: 11.5px; }
+
+/* Separators — hairline; footer one slightly stronger. */
+.insp-kinetic .kx-sep { background: var(--k-line) !important; border-color: var(--k-line) !important; margin: 22px 0 !important; }
+.insp-kinetic .kx-sep--footer { margin: 32px 0 16px !important; }
+
+/* Tooltip surface, dark. */
+.insp-kinetic [role="tooltip"] {
+  background: var(--k-surface-2) !important; color: var(--k-ink) !important;
+  border: 1px solid var(--k-line-2) !important;
+}
+
+/* ═══ Reduced motion — kill every animation + scroll effect ════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  .insp-kinetic .kx-marquee-track,
+  .insp-kinetic .kx-marquee-track--lg,
+  .insp-kinetic .kx-ticker__track,
+  .insp-kinetic .kx-hero__glow,
+  .insp-kinetic .kx-display__kin,
+  .insp-kinetic .kx-mark__pulse,
+  .insp-kinetic .kx-live-dot,
+  .insp-kinetic .kx-reel__scan,
+  .insp-kinetic .kx-reel__play,
+  .insp-kinetic .kx-hero__scrollcue svg {
+    animation: none !important;
+  }
+  .insp-kinetic .kx-ticker__track { transform: none !important; }
+  .insp-kinetic .kx-reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
+  .insp-kinetic .kx-display__kin { background-position: 0 50% !important; }
+  .insp-kinetic .kx-hero__grid,
+  .insp-kinetic .kx-hero__glow { transform: none !important; }
+}

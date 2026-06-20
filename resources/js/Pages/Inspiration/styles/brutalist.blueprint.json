@@ -1,0 +1,100 @@
+{
+  "id": "brutalist",
+  "name": "Brutalist",
+  "note": "Raw borders, system type, no decoration.",
+  "mode": "light",
+  "thesis": "Raw web brutalism — the operating-system font stack on raw white, heavy 3px pure-black borders, zero radius, zero shadow, and exposed structure (boxes nested in boxes, header bars, double rules); interaction is a hard 'offset block' (a solid ink rectangle snaps behind the element) instead of a soft fade, so the page reacts with a clunk.",
+  "tokens": {
+    "bg": "#ffffff",
+    "fg": "#000000",
+    "accent": "#000000 (the ink IS the accent — there is no second hue; emphasis comes from inverting ink/paper, never from color)",
+    "fontDisplay": "no designed display face — the native sans stack (-apple-system, Segoe UI, Roboto, …) at weight 800, uppercase, tight -0.02em tracking; the 'display' is just the system font shouting",
+    "fontMono": "ui-monospace / SFMono / Menlo / Consolas system mono — every label, eyebrow, folio, number, caption, button, and metadata string, weight 600–700, ALL-CAPS, positive tracking",
+    "radius": "0 everywhere — buttons, badges, avatars, cards, tabs, table, composer, progress, faux-browser chrome",
+    "border": "3px solid #000 is the canonical heavy border (frames sections, hero, figures, ledger, tabs, card); 2px #000 for internal dividers; no hairlines, no grey borders — every rule is full black",
+    "motion": "60ms steps(1,end) only — no easing curves; the signature move is transform translate(-6px,-6px) + a 6px 0 hard box-shadow appearing on hover (an offset ink block), snapping back to 0 on :active; hover also inverts rows/tags to solid ink"
+  },
+  "layout": "A single centered 1160px column. Sections are stacked full-width bands separated by a 3px ink top rule, each opened by a numbered eyebrow whose number is a white-on-black inline chip ('00 INDEX', '01 SELECTED WORK'). Structure is overwhelmingly explicit boxes, not whitespace: the hero is a single 3px-bordered frame split into a 1.85fr headline cell and a 1fr spec rail (LOCATION / COORDS / STATUS / SCOPE) divided by internal 2/3px borders; figures, capabilities, and people are bordered grids whose cells are divided by 2px internal borders; the work index is a bordered ledger with a black header row (NO. / PROJECT / DISCIPLINE / YEAR) and stretched-link rows that invert to solid ink on hover; a FauxClient browser specimen sits inside the work section; recognition is a 1.65fr/1fr ledger+rail split and contact is a 1fr/1fr intro+brief split. Collapses to 2-up then 1-up at 920/640px, re-parenting internal borders so the grid never loses its frame.",
+  "sections": [
+    {
+      "name": "runhead",
+      "what": "Breadcrumbs (INSPIRATION / BRUTALIST) + studio wordmark (a 26px black square containing a white 'F') + an outlined 'EST. 2016' chip, over a 3px ink rule.",
+      "components": ["Breadcrumbs", "Badge"],
+      "restyle": "Breadcrumbs set in uppercase mono with raw underlines; Badge stripped to a transparent square chip with a 2px black border."
+    },
+    {
+      "name": "hero",
+      "what": "A numbered eyebrow, an uppercase weight-800 system-font headline, a lede, two buttons, and a right-hand spec rail of LOCATION / COORDS / STATUS / SCOPE pairs — the whole thing inside one 3px-bordered frame.",
+      "components": ["Heading", "Button"],
+      "restyle": "Display is the native sans at weight 800 in caps; buttons become blunt mono slabs — primary is an ink fill that jumps to a -6px offset with a 6px hard ink shadow on hover, secondary is a paper ghost that inverts to ink. The hero is a framed box, not open whitespace; the spec rail replaces a Separator with hard internal borders."
+    },
+    {
+      "name": "figures",
+      "what": "Four big tabular stats (2016 / 120+ / 08 / AWARDS) in a 4-cell bordered band divided by 2px internal rules.",
+      "components": [],
+      "restyle": "Hand-built bordered grid — proves the kit needs no stat component; structure is pure 3px frame + 2px dividers + tabular-nums numerals at weight 800."
+    },
+    {
+      "name": "work",
+      "what": "A bordered project ledger (NO. / PROJECT / DISCIPLINE / YEAR↗) with a black header row, a Pillbox discipline filter housed in a bordered FILTER field, blocky Pagination, and a FauxClient browser specimen ('RAW FEED') exhibiting a no-chrome product surface with a caption.",
+      "components": ["Heading", "Pillbox", "Pagination", "FauxClient", "Link"],
+      "restyle": "Rows are a bordered grid joined by 2px rules; one Inertia <Link> stretches over each row (stretched-link, no nested anchors) and hover INVERTS the whole row to solid ink (white text). Pillbox is de-chromed and re-housed in a bordered field with a black FILTER label cap; its pills squared to ink tags. Pagination forced square with 2px borders, active page solid ink. FauxClient is reframed as a raw exhibit: 3px border, black title bar in mono, square body."
+    },
+    {
+      "name": "capabilities",
+      "what": "Boxed Tabs (SERVICES / PROCESS / QUESTIONS) over a bordered panel: a 2-up bordered services grid, a Timeline process, and a numbered FAQ Accordion.",
+      "components": ["Tabs", "Timeline", "Accordion"],
+      "restyle": "Tabs become a boxed row — each tab a bordered cell, the active tab a solid ink fill (the underline indicator is hidden); the panel below is a 3px-bordered box. Services are bordered grid cells with white-on-black number chips. Timeline dates go uppercase mono, dots squared to ink. Accordion triggers are uppercase mono with a white-on-black two-digit number chip."
+    },
+    {
+      "name": "about",
+      "what": "A 0.28fr label column ('03 ABOUT') beside a large uppercase lead statement, a supporting paragraph, and a Callout notice slab.",
+      "components": ["Text", "Callout"],
+      "restyle": "Editorial label/body split; Text reset to ink-2 body. Callout is reskinned as a brutalist notice slab — grey flat fill, 3px border with a fat 10px left border, square, mono uppercase, no shadow."
+    },
+    {
+      "name": "people",
+      "what": "Four team members as square ink Avatar chips with uppercase name + mono role, in a 4-cell bordered band.",
+      "components": ["Avatar"],
+      "restyle": "Avatar squared (radius 0) and recolored to a bordered ink chip with white mono initials — the round photo-avatar becomes a typographic block; cells divided by 2px internal borders."
+    },
+    {
+      "name": "recognition",
+      "what": "A ruled awards Table ledger beside a rail of outlined client Badges, a Separator, and a square-bulleted mono press list.",
+      "components": ["Table", "Badge", "Separator"],
+      "restyle": "Table is wrapped in a 3px frame with a SOLID BLACK header row (white mono caps), 2px rules between rows, mono tabular year column and uppercase weight-800 project column. Client Badges become square 2px-bordered tags that invert to ink on hover. Separator collapses to a 2px solid ink bar."
+    },
+    {
+      "name": "contact",
+      "what": "An intro column (heading, lede, mono address, a bordered terms box of FIXED-FEE / 6–10 WKS / 2 DAYS pairs) beside a 'NEW BRIEF' Card with a Composer, a blocky character Progress bar, and a send Button; success state swaps to a RECEIVED confirmation.",
+      "components": ["Heading", "Card", "Composer", "Progress", "Badge", "Button"],
+      "restyle": "The Card is the page's loudest box — 3px border AND a permanent 6px hard offset shadow, a solid-ink header bar with white mono title, square throughout. Composer is a raw 2px-bordered note with a mono-uppercase placeholder; focus draws an offset outline. Progress is a blocky 2px-bordered track with a square ink fill (no accent hue). Status/RECEIVED Badges are square mono chips."
+    },
+    {
+      "name": "footer",
+      "what": "A 3px ink rule, wordmark + uppercase mono blurb + mono underlined link grid, then the fictional-studio disclaimer line + a 'BACK TO THE GALLERY' link.",
+      "components": ["Link"],
+      "restyle": "All mono uppercase; links are raw underlines that invert to white-on-black on hover — no color accent anywhere, including the back link."
+    }
+  ],
+  "palette": [
+    { "component": "Button", "restyle": "Square (radius 0), uppercase mono label, 3px ink border. The signature interaction: on hover it translates -6px/-6px and grows a 6px solid-ink box-shadow (a hard offset block), snapping back to flush on :active. Primary = ink fill, secondary = paper ghost that inverts to ink. No soft shadow, ever." },
+    { "component": "Badge", "restyle": "Reduced to a square 2px-bordered mono chip; color prop overridden to pure ink/paper. Used as 'EST. 2016', client tags (invert to ink on hover), and the 'OPEN FOR Q3' / 'RECEIVED' statuses (a white-bordered chip on the black card header)." },
+    { "component": "Avatar", "restyle": "Squared and recolored to a bordered ink block with white mono initials — a typographic mark, not a portrait." },
+    { "component": "Table", "restyle": "Wrapped in a 3px frame with a SOLID BLACK header row (white mono caps), 2px ink rules between rows, mono tabular first column, uppercase weight-800 project column, flat-grey row hover. No grey hairlines — every rule is full black." },
+    { "component": "Tabs", "restyle": "Underline variant repurposed as a boxed row — each tab a bordered cell, active tab a solid ink fill, the underline indicator hidden; the tab panel is a 3px-bordered box welded to the tab row." },
+    { "component": "Pagination", "restyle": "Square mono numerals with 2px ink borders; active page is a solid ink block; hover flat-greys the cell." },
+    { "component": "Pillbox", "restyle": "De-chromed (no border/shadow of its own) and re-housed inside a 3px-bordered FILTER field with a black label cap; entered pills squared to ink chips — the discipline filter." },
+    { "component": "FauxClient", "restyle": "Reframed as a raw browser specimen — 3px border, a solid-ink title bar in mono uppercase, square body, traffic-light dots off; houses a hand-built no-chrome 'feed' surface as the exhibit." },
+    { "component": "Card", "restyle": "The loudest box on the page — 3px border plus a PERMANENT 6px hard offset shadow, a solid-ink header bar, square corners, header/footer divided by 2px ink rules." },
+    { "component": "Composer", "restyle": "Raw 2px-bordered square note; sans body text, mono uppercase placeholder; focus draws an offset ink outline instead of a glow." },
+    { "component": "Progress", "restyle": "Blocky 2px-bordered square track with a solid ink fill — a live char count read-out, with no accent hue (ink only)." },
+    { "component": "Timeline", "restyle": "Uppercase mono dates, weight-800 uppercase titles, dots/markers squared to solid ink, the rail set to ink." },
+    { "component": "Accordion", "restyle": "Uppercase mono triggers each prefixed with a white-on-black two-digit number chip; 2px ink dividers, no fills." },
+    { "component": "Callout", "restyle": "Brutalist notice slab — flat grey fill, 3px border with a fat 10px left edge, square, mono uppercase, no shadow." },
+    { "component": "Separator", "restyle": "Collapsed to a single 2px solid ink bar." },
+    { "component": "Heading / Text", "restyle": "Heading reset to the native sans at weight 800, uppercase, tight tracking; Text to ink-2 body; component color presets overridden by scoped tokens." }
+  ],
+  "contentArchetype": "A one-page portfolio for FIELDWORK, a fictional Detroit/Leipzig design & dev studio: a framed uppercase hero with a spec rail, a numbered selected-work ledger plus a faux-browser product specimen, boxed tabbed capabilities (services / process / FAQ), an about statement with a notice slab, a bordered team grid, an awards ledger + client list + press, and a 'brief the studio' card with an offset shadow. Voice is terse, blunt, and confident; everything is uppercase, every label is mono, every box is bordered.",
+  "remix": "Keep the rules absolute: SYSTEM fonts only (no licensed display/serif face), radius 0 everywhere, NO color (ink + paper only — emphasis is inversion, not hue), no soft shadows (only hard offset blocks), and exposed bordered structure instead of whitespace. To re-skin for another brand, you may introduce exactly ONE saturated accent and apply it sparingly to the offset-block shadow and active states — but the moment you round a corner, add a gradient, or reach for a designed typeface you've left Brutalism. Blend toward Monochrome by softening the 3px borders to hairlines and admitting a single cobalt accent; toward Bigtype by letting the uppercase headline grow to fill the frame edge-to-edge; toward Terminal by tinting paper→near-black and ink→phosphor-green. Dark-mode variant: swap paper #fff→#0a0a0a and ink #000→#f4f4f4, keep borders at 3px and the offset block in the new ink — the structure is value-agnostic."
+}

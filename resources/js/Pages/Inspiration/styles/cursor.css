@@ -1,0 +1,765 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Inspiration Gallery · Style — Cursor
+   FIELDWORK rendered as a "custom cursor and hover-reveal world": a graphite
+   near-black canvas with one electric-lime accent, a soft following cursor (ring
+   + dot) injected at runtime, project thumbnails + meta REVEALED on hover, and
+   magnetic primary buttons that lean toward the pointer. Every selector is scoped
+   under .insp-cursor so the page carries its own dark palette regardless of the
+   host theme, and so it never collides with Tailwind's .dark mode. The Fancy
+   primitives are restyled HARD here (buttons, badges, cards, tabs, table,
+   accordion, timeline, progress, inputs…) so they read native to this idiom
+   rather than as kit defaults. SSR-safe — the cursor + magnetism are JS-driven
+   in a guarded useEffect; the CSS only styles the elements that effect creates.
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.insp-cursor {
+  /* ── Self-contained Cursor palette ───────────────────────────────────────
+     Redefine the semantic design tokens locally so the surface is truly
+     graphite near-black + a single electric-lime accent, independent of the
+     host light/dark mode. */
+  --c-bg:        #0a0b09;   /* page — near black, a whisper warm */
+  --c-bg-1:      #0e100c;   /* recessed bands */
+  --c-surface:   #121410;   /* cards, panels */
+  --c-surface-2: #181b14;   /* raised / hover */
+  --c-ink:       #f4f6ee;   /* primary text */
+  --c-ink-2:     #c2c8b6;   /* secondary text */
+  --c-ink-3:     #868d78;   /* tertiary / mono labels */
+  --c-ink-4:     #545a48;   /* faint / decorative */
+  --c-line:      #21241b;   /* hairline borders */
+  --c-line-2:    #2f3326;   /* hover / stronger hairline */
+  --c-accent:    #c6f24f;   /* the one electric lime */
+  --c-accent-2:  #d9ff6b;   /* brighter — hover / glow */
+  --c-accent-3:  #aee030;   /* deeper lime */
+  --c-accent-ink: #14180a;  /* text on the lime fill */
+  --c-accent-soft: rgba(198, 242, 79, 0.13);
+  --c-accent-glow: rgba(198, 242, 79, 0.30);
+
+  /* Re-point the shared semantic tokens so any react-fancy primitive that
+     reads them inherits the Cursor surface without per-component hacks. */
+  --fg-1: var(--c-ink);
+  --fg-2: var(--c-ink-2);
+  --fg-3: var(--c-ink-3);
+  --fg-4: var(--c-ink-4);
+  --bg-0: var(--c-bg);
+  --bg-1: var(--c-bg-1);
+  --bg-2: var(--c-surface-2);
+  --bg-3: var(--c-line-2);
+  --surface: var(--c-surface);
+  --surface-raised: var(--c-surface-2);
+  --border-1: var(--c-line);
+  --border-2: var(--c-line-2);
+  --accent: var(--c-accent);
+  --accent-hover: var(--c-accent-2);
+  --primary: var(--c-accent);
+  --primary-hover: var(--c-accent-2);
+  --ring: var(--c-accent-glow);
+
+  position: relative;
+  color: var(--c-ink-2);
+  background: var(--c-bg);
+  font-family: var(--font-sans);
+  --c-radius: 14px;
+  /* A subtle vertical wash so the deep black has depth, not flatness. */
+  background-image:
+    radial-gradient(1200px 620px at 82% -8%, rgba(198, 242, 79, 0.06), transparent 60%),
+    radial-gradient(900px 520px at -8% 12%, rgba(198, 242, 79, 0.035), transparent 55%);
+}
+
+/* ── Custom cursor (ring + dot, injected by the effect) ───────────────────── */
+.insp-cursor.cs-cursor-on { cursor: none; }
+.insp-cursor.cs-cursor-on a,
+.insp-cursor.cs-cursor-on button,
+.insp-cursor.cs-cursor-on [data-cursor="hover"],
+.insp-cursor.cs-cursor-on [role="tab"] { cursor: none; }
+
+.insp-cursor .cs-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0;
+  transition: opacity 220ms var(--ease-out);
+  will-change: transform;
+}
+.insp-cursor.cs-cursor-active .cs-cursor { opacity: 1; }
+
+.insp-cursor .cs-cursor--ring {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1.5px solid var(--c-accent);
+  box-shadow: 0 0 18px var(--c-accent-glow);
+  transition: opacity 220ms var(--ease-out),
+              width 240ms var(--ease-out),
+              height 240ms var(--ease-out),
+              background 240ms var(--ease-out),
+              border-color 240ms var(--ease-out);
+  mix-blend-mode: screen;
+}
+.insp-cursor .cs-cursor--ring.is-hover {
+  width: 58px;
+  height: 58px;
+  background: var(--c-accent-soft);
+  border-color: var(--c-accent-2);
+}
+.insp-cursor .cs-cursor--dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--c-accent-2);
+  box-shadow: 0 0 10px var(--c-accent-glow);
+}
+@media (prefers-reduced-motion: reduce) {
+  .insp-cursor .cs-cursor--ring { box-shadow: none; }
+}
+
+/* ── Shell + grid ─────────────────────────────────────────────────────────── */
+.insp-cursor .cs-shell {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 4px;
+}
+.insp-cursor .cs-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  column-gap: 28px;
+}
+
+/* A flush hairline rule with a lime bleed at its left edge. */
+.insp-cursor .cs-rule {
+  height: 1px;
+  border: 0;
+  margin: 0;
+  background: linear-gradient(90deg, var(--c-accent) 0%, var(--c-line) 16%, var(--c-line) 100%);
+  opacity: 0.8;
+}
+
+/* ── Sections: numbered, labelled bands separated by hairlines ────────────── */
+.insp-cursor .cs-section {
+  padding: 78px 0;
+  border-top: 1px solid var(--c-line);
+}
+.insp-cursor .cs-section:first-of-type { border-top: 0; }
+
+.insp-cursor .cs-sec-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 30px;
+}
+
+.insp-cursor .cs-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--c-ink-3);
+}
+.insp-cursor .cs-eyebrow b { color: var(--c-accent); font-weight: 500; }
+.insp-cursor .cs-eyebrow::before {
+  content: "";
+  width: 22px;
+  height: 1px;
+  background: var(--c-accent);
+  opacity: 0.85;
+}
+
+/* ── Running head ─────────────────────────────────────────────────────────── */
+.insp-cursor .cs-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 22px 0;
+}
+.insp-cursor .cs-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+}
+.insp-cursor .cs-mark__logo {
+  width: 26px; height: 26px;
+  border-radius: 8px;
+  display: grid; place-items: center;
+  color: var(--c-accent-ink); font-weight: 800; font-size: 13px;
+  background: var(--c-accent);
+  box-shadow: 0 0 0 1px rgba(198, 242, 79, 0.4), 0 0 22px var(--c-accent-glow);
+}
+.insp-cursor .cs-mark__name {
+  font-weight: 600; font-size: 14.5px; letter-spacing: 0.02em;
+  color: var(--c-ink);
+}
+.insp-cursor .cs-headnav {
+  display: flex; align-items: center; gap: 26px;
+  font-family: var(--font-mono);
+  font-size: 11.5px; letter-spacing: 0.06em; text-transform: uppercase;
+}
+.insp-cursor .cs-headnav a {
+  position: relative;
+  color: var(--c-ink-3); text-decoration: none;
+  transition: color var(--dur-base) var(--ease-out);
+}
+.insp-cursor .cs-headnav a::after {
+  content: "";
+  position: absolute; left: 0; bottom: -5px;
+  width: 0; height: 1px; background: var(--c-accent);
+  transition: width var(--dur-base) var(--ease-out);
+}
+.insp-cursor .cs-headnav a:hover { color: var(--c-ink); }
+.insp-cursor .cs-headnav a:hover::after { width: 100%; }
+
+/* ── Typography ───────────────────────────────────────────────────────────── */
+.insp-cursor .cs-display {
+  margin: 0;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  line-height: 0.97;
+  color: var(--c-ink);
+  font-size: clamp(2.7rem, 7vw, 5.7rem);
+}
+.insp-cursor .cs-display .cs-accent {
+  position: relative;
+  color: var(--c-accent);
+  font-style: italic;
+}
+.insp-cursor .cs-display .cs-accent::after {
+  content: "";
+  position: absolute; left: 0; right: 0; bottom: 0.08em;
+  height: 0.08em;
+  background: var(--c-accent);
+  opacity: 0.35;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur-slow) var(--ease-out);
+}
+.insp-cursor .cs-display .cs-accent:hover::after { transform: scaleX(1); }
+.insp-cursor .cs-lede {
+  margin: 0;
+  font-size: clamp(1.05rem, 1.5vw, 1.3rem);
+  line-height: 1.55;
+  color: var(--c-ink-2);
+  max-width: 52ch;
+}
+.insp-cursor .cs-h2 {
+  margin: 0;
+  font-size: clamp(1.6rem, 2.6vw, 2.4rem);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  color: var(--c-ink);
+}
+.insp-cursor .cs-meta {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.75;
+  color: var(--c-ink-3);
+}
+.insp-cursor .cs-meta--ink { color: var(--c-ink); }
+
+/* ── Hero ─────────────────────────────────────────────────────────────────── */
+.insp-cursor .cs-hero { padding-top: 18px; }
+.insp-cursor .cs-cta-row {
+  display: flex; gap: 14px; margin-top: 34px; flex-wrap: wrap;
+}
+.insp-cursor .cs-magnet {
+  display: inline-flex;
+  transition: transform 260ms var(--ease-out);
+  will-change: transform;
+}
+.insp-cursor .cs-hint {
+  display: inline-flex; align-items: center; gap: 9px;
+  margin-top: 26px;
+  font-family: var(--font-mono); font-size: 11.5px;
+  letter-spacing: 0.04em; color: var(--c-ink-3);
+}
+.insp-cursor .cs-hint__dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--c-accent);
+  box-shadow: 0 0 0 3px var(--c-accent-soft);
+  animation: cs-pulse 2.6s ease-in-out infinite;
+}
+@keyframes cs-pulse {
+  0%, 100% { box-shadow: 0 0 0 3px var(--c-accent-soft); }
+  50% { box-shadow: 0 0 0 7px rgba(198, 242, 79, 0.04); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .insp-cursor .cs-hint__dot { animation: none; }
+}
+.insp-cursor .cs-hero__aside {
+  display: flex; flex-direction: column; gap: 14px;
+  border-left: 1px solid var(--c-line);
+  padding-left: 22px;
+}
+.insp-cursor .cs-availability {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-mono); font-size: 11.5px;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--c-ink-2);
+}
+.insp-cursor .cs-availability .dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--c-accent);
+  box-shadow: 0 0 0 3px var(--c-accent-soft);
+}
+
+/* ── Client ticker ────────────────────────────────────────────────────────── */
+.insp-cursor .cs-ticker {
+  overflow: hidden;
+  border-top: 1px solid var(--c-line);
+  border-bottom: 1px solid var(--c-line);
+  padding: 18px 0;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+          mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+.insp-cursor .cs-ticker__track {
+  display: inline-flex; align-items: center; gap: 0;
+  white-space: nowrap;
+  animation: cs-marquee 44s linear infinite;
+}
+.insp-cursor .cs-ticker__item {
+  font-size: clamp(1.1rem, 2vw, 1.65rem);
+  font-weight: 500; letter-spacing: -0.01em;
+  color: var(--c-ink-3);
+  padding: 0 34px;
+  transition: color var(--dur-base) var(--ease-out);
+}
+.insp-cursor .cs-ticker:hover .cs-ticker__item { color: var(--c-ink-2); }
+.insp-cursor .cs-ticker__sep { color: var(--c-accent); opacity: 0.7; }
+@keyframes cs-marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .insp-cursor .cs-ticker__track { animation: none; }
+}
+
+/* ── Figures band ─────────────────────────────────────────────────────────── */
+.insp-cursor .cs-figure {
+  position: relative;
+  border-top: 1px solid var(--c-line);
+  padding-top: 18px;
+  transition: border-color var(--dur-base) var(--ease-out);
+}
+.insp-cursor .cs-figure::before {
+  content: "";
+  position: absolute; top: -1px; left: 0;
+  width: 0; height: 1px; background: var(--c-accent);
+  transition: width var(--dur-slow) var(--ease-out);
+}
+.insp-cursor .cs-figure:hover::before { width: 56px; }
+.insp-cursor .cs-figure__num {
+  font-size: clamp(2.1rem, 4.4vw, 3.3rem);
+  font-weight: 600; letter-spacing: -0.045em;
+  color: var(--c-ink);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+.insp-cursor .cs-figure__num em { font-style: normal; color: var(--c-accent); }
+.insp-cursor .cs-figure__label {
+  margin-top: 10px;
+  font-family: var(--font-mono);
+  font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--c-ink-3);
+}
+
+/* ── Capabilities columns ─────────────────────────────────────────────────── */
+.insp-cursor .cs-cap {
+  position: relative;
+  border-top: 1px solid var(--c-line);
+  padding: 22px 18px 26px 0;
+  transition: padding-left var(--dur-base) var(--ease-out);
+  overflow: hidden;
+}
+.insp-cursor .cs-cap::before {
+  content: "";
+  position: absolute; top: -1px; left: 0;
+  width: 0; height: 1px; background: var(--c-accent);
+  transition: width var(--dur-slow) var(--ease-out);
+}
+.insp-cursor .cs-cap:hover { padding-left: 14px; }
+.insp-cursor .cs-cap:hover::before { width: 100%; }
+.insp-cursor .cs-cap__no {
+  font-family: var(--font-mono);
+  font-size: 11px; letter-spacing: 0.08em;
+  color: var(--c-accent);
+}
+.insp-cursor .cs-cap__title {
+  margin: 12px 0 0;
+  font-size: 17px; font-weight: 600;
+  letter-spacing: -0.015em; color: var(--c-ink);
+}
+.insp-cursor .cs-cap__body {
+  margin: 10px 0 0;
+  font-size: 13.5px; line-height: 1.6; color: var(--c-ink-2);
+}
+.insp-cursor .cs-cap__tags {
+  margin-top: 14px;
+  display: flex; flex-wrap: wrap; gap: 6px;
+}
+.insp-cursor .cs-cap__reveal {
+  position: absolute; top: 22px; right: 4px;
+  font-size: 18px; color: var(--c-accent);
+  opacity: 0; transform: translate(-6px, 6px);
+  transition: opacity var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-out);
+}
+.insp-cursor .cs-cap:hover .cs-cap__reveal { opacity: 1; transform: translate(0, 0); }
+
+/* ── Stretched link (shared) ──────────────────────────────────────────────── */
+.insp-cursor .cs-stretch { position: absolute; inset: 0; z-index: 2; }
+
+/* ── Featured work — hover-reveal cards ───────────────────────────────────── */
+.insp-cursor .cs-preview {
+  position: relative;
+  border: 1px solid var(--c-line);
+  border-radius: var(--c-radius);
+  background: var(--c-surface);
+  overflow: hidden;
+  transition: border-color var(--dur-base) var(--ease-out),
+              box-shadow var(--dur-base) var(--ease-out),
+              transform var(--dur-base) var(--ease-out);
+}
+.insp-cursor .cs-preview:hover {
+  border-color: var(--c-line-2);
+  transform: translateY(-3px);
+  box-shadow: 0 0 0 1px var(--c-accent-soft), 0 22px 54px -30px var(--c-accent-glow);
+}
+.insp-cursor .cs-preview__canvas {
+  position: relative;
+  height: 234px;
+  display: grid; place-items: center;
+  overflow: hidden;
+  border-bottom: 1px solid var(--c-line);
+  background:
+    radial-gradient(130% 130% at 50% 0%, hsla(var(--hue, 92), 70%, 45%, 0.16), transparent 62%),
+    var(--c-bg);
+}
+.insp-cursor .cs-preview__grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(var(--c-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--c-line) 1px, transparent 1px);
+  background-size: 28px 28px;
+  opacity: 0.35;
+  -webkit-mask-image: radial-gradient(120% 100% at 50% 0%, #000, transparent 75%);
+          mask-image: radial-gradient(120% 100% at 50% 0%, #000, transparent 75%);
+  transition: transform var(--dur-slow) var(--ease-out);
+}
+.insp-cursor .cs-preview:hover .cs-preview__grid { transform: scale(1.06); }
+.insp-cursor .cs-preview__glyph {
+  position: relative; z-index: 1;
+  font-size: clamp(2.4rem, 5vw, 3.7rem);
+  font-weight: 600; letter-spacing: -0.04em;
+  color: var(--c-ink);
+  transition: opacity var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-out);
+}
+.insp-cursor .cs-preview__glyph span { color: hsl(var(--hue, 92), 80%, 60%); }
+.insp-cursor .cs-preview:hover .cs-preview__glyph { opacity: 0; transform: scale(0.9); }
+.insp-cursor .cs-preview__reveal {
+  position: absolute; z-index: 1; inset: 0;
+  display: flex; align-items: center; justify-content: center; gap: 9px;
+  font-family: var(--font-mono); font-size: 12px;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--c-accent-ink);
+  background: var(--c-accent);
+  opacity: 0;
+  transition: opacity var(--dur-base) var(--ease-out);
+}
+.insp-cursor .cs-preview:hover .cs-preview__reveal { opacity: 1; }
+.insp-cursor .cs-preview__meta {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; padding: 16px 18px;
+}
+.insp-cursor .cs-preview__title { font-weight: 600; font-size: 15px; color: var(--c-ink); letter-spacing: -0.01em; }
+.insp-cursor .cs-preview__disc { font-family: var(--font-mono); font-size: 11.5px; color: var(--c-ink-3); margin-top: 3px; }
+
+/* ── Selected work — hover-reveal index ───────────────────────────────────── */
+.insp-cursor .cs-index { display: grid; gap: 0; }
+.insp-cursor .cs-index__row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 3.2rem minmax(0, 1.7fr) minmax(0, 1fr) 7rem;
+  align-items: center;
+  column-gap: 28px;
+  padding: 26px 6px;
+  border-top: 1px solid var(--c-line);
+  overflow: hidden;
+  transition: background var(--dur-base) var(--ease-out);
+}
+.insp-cursor .cs-index__row:last-child { border-bottom: 1px solid var(--c-line); }
+.insp-cursor .cs-index__row::before {
+  content: "";
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: 3px; background: var(--c-accent);
+  transform: scaleY(0); transform-origin: top;
+  transition: transform var(--dur-base) var(--ease-out);
+}
+.insp-cursor .cs-index__row:hover { background: var(--c-bg-1); }
+.insp-cursor .cs-index__row:hover::before { transform: scaleY(1); }
+.insp-cursor .cs-index__num {
+  font-family: var(--font-mono); font-size: 12px; color: var(--c-ink-4);
+}
+.insp-cursor .cs-index__title {
+  position: relative; z-index: 1;
+  font-size: clamp(1.3rem, 2.4vw, 1.95rem);
+  font-weight: 600; letter-spacing: -0.025em; color: var(--c-ink);
+  transition: color var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-out);
+}
+.insp-cursor .cs-index__row:hover .cs-index__title { color: var(--c-accent); transform: translateX(8px); }
+.insp-cursor .cs-index__disc { font-size: 13.5px; color: var(--c-ink-2); line-height: 1.45; }
+.insp-cursor .cs-index__year {
+  font-family: var(--font-mono); font-size: 12px; color: var(--c-ink-3);
+  text-align: right;
+  display: inline-flex; align-items: center; gap: 8px; justify-content: flex-end;
+}
+.insp-cursor .cs-index__row:hover .cs-index__year { color: var(--c-accent); }
+/* The big watermark glyph that fades in from the right edge on hover. */
+.insp-cursor .cs-index__peek {
+  position: absolute; right: -8px; top: 50%;
+  transform: translateY(-50%) translateX(20px);
+  font-size: 7rem; font-weight: 700; line-height: 1;
+  letter-spacing: -0.06em;
+  color: hsl(var(--hue, 92), 60%, 55%);
+  opacity: 0; pointer-events: none;
+  transition: opacity var(--dur-base) var(--ease-out), transform var(--dur-slow) var(--ease-out);
+}
+.insp-cursor .cs-index__row:hover .cs-index__peek { opacity: 0.12; transform: translateY(-50%) translateX(0); }
+
+.insp-cursor .cs-index-foot {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 24px; flex-wrap: wrap; gap: 12px;
+}
+
+@media (max-width: 760px) {
+  .insp-cursor .cs-index__row { grid-template-columns: 2.5rem 1fr; row-gap: 6px; }
+  .insp-cursor .cs-index__disc,
+  .insp-cursor .cs-index__year { grid-column: 2; text-align: left; justify-content: flex-start; }
+}
+
+/* ── About pull-quote ─────────────────────────────────────────────────────── */
+.insp-cursor .cs-quote {
+  margin: 0;
+  font-size: clamp(1.35rem, 2.6vw, 2.15rem);
+  line-height: 1.32; font-weight: 500;
+  letter-spacing: -0.02em; color: var(--c-ink);
+}
+.insp-cursor .cs-quote b { color: var(--c-accent); font-weight: 500; }
+
+/* ── Team ─────────────────────────────────────────────────────────────────── */
+.insp-cursor .cs-person {
+  position: relative;
+  border-top: 1px solid var(--c-line);
+  padding-top: 20px;
+  transition: transform var(--dur-base) var(--ease-out);
+}
+.insp-cursor .cs-person:hover { transform: translateY(-3px); }
+.insp-cursor .cs-person__name {
+  margin-top: 16px; font-weight: 600; font-size: 15px;
+  letter-spacing: -0.01em; color: var(--c-ink);
+}
+.insp-cursor .cs-person__role { margin-top: 3px; }
+
+/* ── Recognition / clients ────────────────────────────────────────────────── */
+.insp-cursor .cs-client-wrap { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.insp-cursor .cs-press { list-style: none; margin: 16px 0 0; padding: 0; }
+.insp-cursor .cs-press li { margin-top: 8px; }
+.insp-cursor .cs-press li:first-child { margin-top: 0; }
+
+/* ── Contact / brief ──────────────────────────────────────────────────────── */
+.insp-cursor .cs-brief-aside .cs-contact-line {
+  font-family: var(--font-mono); font-size: 13px; color: var(--c-ink);
+  margin-top: 26px;
+  display: inline-block;
+  border-bottom: 1px solid transparent;
+  transition: color var(--dur-base) var(--ease-out), border-color var(--dur-base) var(--ease-out);
+}
+.insp-cursor .cs-brief-aside .cs-contact-line:hover { color: var(--c-accent); border-color: var(--c-accent); }
+.insp-cursor .cs-brief-aside .cs-contact-sub { font-family: var(--font-mono); font-size: 12px; color: var(--c-ink-3); margin-top: 4px; }
+
+.insp-cursor .cs-card-head { display: flex; align-items: center; justify-content: space-between; }
+.insp-cursor .cs-card-title { font-weight: 600; font-size: 14px; color: var(--c-ink); }
+.insp-cursor .cs-card-msg { margin-top: 16px; font-size: 15px; color: var(--c-ink); line-height: 1.5; }
+.insp-cursor .cs-composer-foot { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; }
+.insp-cursor .cs-card-foot { display: flex; align-items: center; justify-content: space-between; width: 100%; }
+
+/* ── Footer ───────────────────────────────────────────────────────────────── */
+.insp-cursor .cs-footer {
+  border-top: 1px solid var(--c-line);
+  padding: 40px 0 12px;
+}
+.insp-cursor .cs-footer-top {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  flex-wrap: wrap; gap: 24px;
+}
+.insp-cursor .cs-footer-bottom {
+  display: flex; justify-content: space-between; align-items: center;
+  flex-wrap: wrap; gap: 12px;
+}
+.insp-cursor .cs-footer__links {
+  display: grid; grid-template-columns: repeat(2, auto); gap: 6px 48px;
+  font-family: var(--font-mono); font-size: 12px;
+}
+.insp-cursor .cs-footer__links a {
+  color: var(--c-ink-3); text-decoration: none;
+  transition: color var(--dur-base) var(--ease-out);
+}
+.insp-cursor .cs-footer__links a:hover { color: var(--c-accent); }
+.insp-cursor .cs-back {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 13px; font-weight: 500; color: var(--c-accent);
+  text-decoration: none;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Restyling the Fancy primitives so they WEAR Cursor
+   — scoped overrides that re-skin react-fancy's utility-driven defaults to the
+     graphite + electric-lime idiom without touching the components themselves.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.insp-cursor button,
+.insp-cursor a[class*="inline-flex"] { letter-spacing: 0.005em; }
+
+/* Buttons — primary wears the lime fill (dark ink on it); ghost is a hairline
+   outline. Magnetism is applied to the .cs-magnet wrapper by the effect. */
+.insp-cursor .cs-btn-primary,
+.insp-cursor .cs-btn-primary:not(:disabled) {
+  background: var(--c-accent) !important;
+  color: var(--c-accent-ink) !important;
+  border: 1px solid transparent !important;
+  border-radius: 10px !important;
+  font-weight: 600 !important;
+  box-shadow: 0 0 0 1px rgba(198, 242, 79, 0.35), 0 8px 26px -12px var(--c-accent-glow) !important;
+  transition: background var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out) !important;
+}
+.insp-cursor .cs-btn-primary:hover:not(:disabled) {
+  background: var(--c-accent-2) !important;
+  box-shadow: 0 0 0 1px rgba(217, 255, 107, 0.5), 0 12px 34px -10px var(--c-accent-glow) !important;
+}
+.insp-cursor .cs-btn-primary:disabled { opacity: 0.4 !important; box-shadow: none !important; }
+
+.insp-cursor .cs-btn-ghost,
+.insp-cursor .cs-btn-ghost:not(:disabled) {
+  background: transparent !important;
+  color: var(--c-ink) !important;
+  border: 1px solid var(--c-line-2) !important;
+  border-radius: 10px !important;
+  transition: border-color var(--dur-base) var(--ease-out), color var(--dur-base) var(--ease-out) !important;
+}
+.insp-cursor .cs-btn-ghost:hover:not(:disabled) {
+  border-color: var(--c-accent) !important;
+  color: var(--c-accent) !important;
+}
+
+/* Badges — mono "tags": hairline outline, uppercase, lime dot. */
+.insp-cursor .cs-tag {
+  background: var(--c-surface) !important;
+  color: var(--c-ink-2) !important;
+  border: 1px solid var(--c-line-2) !important;
+  border-radius: 7px !important;
+  font-family: var(--font-mono) !important;
+  font-size: 10.5px !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+  padding: 4px 9px !important;
+}
+.insp-cursor .cs-tag--accent {
+  color: var(--c-accent) !important;
+  border-color: rgba(198, 242, 79, 0.45) !important;
+  background: var(--c-accent-soft) !important;
+}
+
+/* Cards — flat graphite panels with hairline borders. */
+.insp-cursor .cs-card {
+  background: var(--c-surface) !important;
+  border: 1px solid var(--c-line) !important;
+  border-radius: var(--c-radius) !important;
+  box-shadow: none !important;
+  transition: border-color var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out) !important;
+}
+.insp-cursor .cs-card:hover {
+  border-color: var(--c-line-2) !important;
+  box-shadow: 0 0 0 1px var(--c-accent-soft) !important;
+}
+
+/* Tabs — mono labels with a lime active rule. */
+.insp-cursor .cs-tabs [role="tablist"] {
+  border-bottom: 1px solid var(--c-line) !important;
+  gap: 4px;
+}
+.insp-cursor .cs-tabs [role="tab"] {
+  font-family: var(--font-mono) !important;
+  font-size: 12px !important;
+  letter-spacing: 0.06em !important;
+  text-transform: uppercase !important;
+  color: var(--c-ink-3) !important;
+  padding: 12px 14px !important;
+  background: transparent !important;
+}
+.insp-cursor .cs-tabs [role="tab"]:hover { color: var(--c-ink) !important; }
+.insp-cursor .cs-tabs [role="tab"][aria-selected="true"] { color: var(--c-accent) !important; }
+
+/* Accordion — flatten to hairline-separated rows. */
+.insp-cursor .cs-accordion > * { border-color: var(--c-line) !important; }
+.insp-cursor .cs-accordion button { color: var(--c-ink) !important; font-weight: 500 !important; }
+.insp-cursor .cs-accordion button:hover { color: var(--c-accent) !important; }
+
+/* Table — recolor to graphite surfaces, mono header, hairline rules. */
+.insp-cursor .cs-table table { width: 100%; }
+.insp-cursor .cs-table thead th {
+  font-family: var(--font-mono) !important;
+  font-size: 11px !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+  color: var(--c-ink-3) !important;
+  border-bottom: 1px solid var(--c-line-2) !important;
+  background: transparent !important;
+}
+.insp-cursor .cs-table tbody td {
+  border-bottom: 1px solid var(--c-line) !important;
+  color: var(--c-ink-2) !important;
+  background: transparent !important;
+}
+.insp-cursor .cs-table tbody tr:hover td { background: var(--c-bg-1) !important; }
+
+/* Timeline — recolor to the graphite line + lime accent. */
+.insp-cursor .cs-timeline { color: var(--c-ink-2); }
+
+/* Composer / inputs — near-black field, hairline border, lime focus ring. */
+.insp-cursor .cs-composer,
+.insp-cursor .cs-composer textarea,
+.insp-cursor .cs-composer [contenteditable] {
+  background: var(--c-bg) !important;
+  color: var(--c-ink) !important;
+}
+.insp-cursor .cs-input input,
+.insp-cursor .cs-input textarea {
+  background: var(--c-bg) !important;
+  border: 1px solid var(--c-line-2) !important;
+  color: var(--c-ink) !important;
+}
+.insp-cursor .cs-input input:focus,
+.insp-cursor .cs-input textarea:focus {
+  border-color: var(--c-accent) !important;
+  box-shadow: 0 0 0 3px var(--c-accent-soft) !important;
+}
+
+/* Progress — hairline track, lime bar. */
+.insp-cursor .cs-progress [class*="rounded"] { background-color: var(--c-line) !important; }
+
+/* Tooltip surface, dark. */
+.insp-cursor [role="tooltip"] {
+  background: var(--c-surface-2) !important;
+  color: var(--c-ink) !important;
+  border: 1px solid var(--c-line-2) !important;
+}
+
+/* Responsive: collapse the 12-col grid spans on small screens. */
+@media (max-width: 900px) {
+  .insp-cursor .cs-grid > [data-cs-col] { grid-column: 1 / -1 !important; }
+}

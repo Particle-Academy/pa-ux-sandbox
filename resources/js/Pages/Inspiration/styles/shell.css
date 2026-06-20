@@ -1,0 +1,794 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Inspiration Gallery · Style — App Shell
+   FIELDWORK rendered as a desktop application shell: the portfolio presented as
+   if it lives inside the studio's own "OS" — an icon rail (Sidebar), a project
+   explorer (TreeNav), a top bar (Navbar) with a global ⌘K search, document tabs,
+   content panels, a status bar, and a command palette (Command). The look is
+   cool-slate IDE chrome with one disciplined indigo accent, mono labels, hairline
+   panel borders, and the dense rhythm of a dashboard rather than a marketing page.
+
+   Every selector is scoped under .insp-shell so the page carries its OWN app
+   palette regardless of the host theme, and never collides with Tailwind's .dark.
+   The Fancy primitives are restyled HARD here (Sidebar, TreeNav, Navbar, Tabs,
+   Command, Card, Table, Badge, Progress, Composer, Timeline, Profile…) so they
+   read native to the app idiom rather than as kit defaults.
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.insp-shell {
+  /* ── Self-contained App Shell palette — cool slate + indigo ─────────────── */
+  --s-bg:        #0b0d12;   /* page behind the window */
+  --s-app:       #0f1218;   /* app body */
+  --s-panel:     #12151c;   /* panels / cards */
+  --s-panel-2:   #161a23;   /* raised / hover */
+  --s-rail:      #0c0e14;   /* icon rail / chrome */
+  --s-ink:       #eef1f6;   /* primary text */
+  --s-ink-2:     #aeb6c4;   /* secondary text */
+  --s-ink-3:     #727b8c;   /* tertiary / mono labels */
+  --s-ink-4:     #4a5160;   /* faint / decorative */
+  --s-line:      #1c212c;   /* hairline borders */
+  --s-line-2:    #2a313f;   /* hover / stronger hairline */
+  --s-accent:    #6366f1;   /* indigo-500 — the one accent */
+  --s-accent-2:  #818cf8;   /* indigo-400 — hover / glow */
+  --s-accent-3:  #a5b4fc;   /* indigo-300 — faint tint */
+  --s-accent-soft: rgba(99, 102, 241, 0.13);
+  --s-accent-glow: rgba(99, 102, 241, 0.30);
+  --s-ok:        #34d399;   /* emerald — status ok */
+  --s-warn:      #fbbf24;   /* amber — in build */
+  --s-radius:    11px;
+  --s-radius-sm: 8px;
+
+  /* Re-point the shared semantic tokens so any react-fancy primitive that reads
+     them inherits the App Shell surface without per-component hacks. */
+  --fg-1: var(--s-ink);
+  --fg-2: var(--s-ink-2);
+  --fg-3: var(--s-ink-3);
+  --fg-4: var(--s-ink-4);
+  --bg-0: var(--s-app);
+  --bg-1: var(--s-panel);
+  --bg-2: var(--s-panel-2);
+  --bg-3: var(--s-line-2);
+  --surface: var(--s-panel);
+  --surface-raised: var(--s-panel-2);
+  --border-1: var(--s-line);
+  --border-2: var(--s-line-2);
+  --accent: var(--s-accent);
+  --accent-hover: var(--s-accent-2);
+  --primary: var(--s-accent);
+  --primary-hover: var(--s-accent-2);
+  --ring: var(--s-accent-glow);
+
+  color: var(--s-ink-2);
+  background:
+    radial-gradient(1100px 560px at 82% -8%, rgba(99,102,241,0.07), transparent 60%),
+    radial-gradient(820px 460px at -8% 4%, rgba(99,102,241,0.05), transparent 55%),
+    var(--s-bg);
+  font-family: var(--font-sans);
+  padding: 22px 16px 40px;
+}
+
+/* ═══ App window ═══════════════════════════════════════════════════════════ */
+.insp-shell .sh-window {
+  max-width: 1280px;
+  margin: 0 auto;
+  border: 1px solid var(--s-line-2);
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--s-app);
+  box-shadow:
+    0 0 0 1px rgba(99,102,241,0.05),
+    0 40px 90px -50px rgba(0,0,0,0.9),
+    0 18px 50px -30px var(--s-accent-glow);
+}
+
+/* ── Title bar ────────────────────────────────────────────────────────────── */
+.insp-shell .sh-titlebar {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 16px;
+  padding: 0 14px;
+  height: 44px;
+  background: linear-gradient(180deg, #0e1118, #0b0d13);
+  border-bottom: 1px solid var(--s-line);
+}
+.insp-shell .sh-lights { display: inline-flex; gap: 8px; }
+.insp-shell .sh-light { width: 12px; height: 12px; border-radius: 50%; display: block; opacity: 0.92; }
+.insp-shell .sh-light--r { background: #ff5f57; }
+.insp-shell .sh-light--y { background: #febc2e; }
+.insp-shell .sh-light--g { background: #28c840; }
+.insp-shell .sh-titlebar__name {
+  display: inline-flex; align-items: center; gap: 9px;
+  justify-self: center;
+  font-size: 12.5px; font-weight: 500; color: var(--s-ink-2);
+  letter-spacing: 0.01em;
+}
+.insp-shell .sh-titlebar__file { color: var(--s-ink-3); font-family: var(--font-mono); font-size: 11.5px; }
+.insp-shell .sh-mark {
+  width: 19px; height: 19px; border-radius: 6px;
+  display: grid; place-items: center;
+  color: #fff; font-weight: 700; font-size: 11px;
+  background: linear-gradient(140deg, var(--s-accent-2), var(--s-accent));
+  box-shadow: 0 0 0 1px rgba(99,102,241,0.5), 0 0 16px var(--s-accent-glow);
+}
+.insp-shell .sh-cmdk {
+  justify-self: end;
+  display: inline-flex; align-items: center; gap: 8px;
+  height: 28px; padding: 0 10px;
+  background: var(--s-panel); border: 1px solid var(--s-line-2);
+  border-radius: 8px; cursor: pointer;
+  font-size: 12px; color: var(--s-ink-3);
+  transition: border-color var(--dur-base) var(--ease-out), color var(--dur-base) var(--ease-out);
+}
+.insp-shell .sh-cmdk:hover { border-color: var(--s-accent); color: var(--s-ink-2); }
+.insp-shell .sh-cmdk span { min-width: 120px; text-align: left; }
+.insp-shell .sh-kbd, .insp-shell .sh-kbd kbd {
+  font-family: var(--font-mono); font-size: 10.5px;
+  color: var(--s-ink-2); background: var(--s-app);
+  border: 1px solid var(--s-line-2); border-radius: 5px;
+  padding: 1px 5px;
+}
+
+/* ── Body grid: rail · explorer · main ────────────────────────────────────── */
+.insp-shell .sh-body {
+  display: grid;
+  grid-template-columns: 60px 232px 1fr;
+  min-height: 78vh;
+}
+
+/* ── Icon rail (Sidebar, collapsed) ───────────────────────────────────────── */
+.insp-shell .sh-rail {
+  background: var(--s-rail);
+  border-right: 1px solid var(--s-line);
+}
+.insp-shell .sh-sidebar {
+  background: transparent !important;
+  border: 0 !important;
+  width: 60px !important;
+  padding: 10px 0 !important;
+  height: 100%;
+}
+.insp-shell .sh-sidebar [class*="group"] > * { color: var(--s-ink-3); }
+/* Sidebar group labels → tiny mono dividers */
+.insp-shell .sh-sidebar [class*="uppercase"],
+.insp-shell .sh-sidebar [class*="text-xs"] {
+  font-family: var(--font-mono) !important;
+  font-size: 8.5px !important;
+  letter-spacing: 0.14em !important;
+  color: var(--s-ink-4) !important;
+  text-align: center;
+}
+/* Sidebar items → square icon buttons */
+.insp-shell .sh-sidebar a,
+.insp-shell .sh-sidebar button {
+  color: var(--s-ink-3) !important;
+  border-radius: 10px !important;
+  margin: 3px auto !important;
+  width: 40px !important; height: 40px !important;
+  display: grid !important; place-items: center !important;
+  transition: background var(--dur-base) var(--ease-out), color var(--dur-base) var(--ease-out) !important;
+  position: relative;
+}
+.insp-shell .sh-sidebar a:hover,
+.insp-shell .sh-sidebar button:hover {
+  color: var(--s-ink) !important;
+  background: var(--s-panel-2) !important;
+}
+.insp-shell .sh-sidebar [aria-current="true"],
+.insp-shell .sh-sidebar [data-active="true"],
+.insp-shell .sh-sidebar .active {
+  color: var(--s-accent-2) !important;
+  background: var(--s-accent-soft) !important;
+  box-shadow: inset 2px 0 0 var(--s-accent), 0 0 0 1px rgba(99,102,241,0.18) !important;
+}
+.insp-shell .sh-railbadge {
+  position: absolute; top: 4px; right: 4px;
+  min-width: 14px; height: 14px; padding: 0 3px;
+  border-radius: 7px; background: var(--s-accent);
+  color: #fff; font-size: 8.5px; font-weight: 700;
+  display: grid; place-items: center; font-family: var(--font-mono);
+}
+/* hide the collapse toggle if rendered */
+.insp-shell .sh-sidebar [class*="Toggle"] { display: none; }
+
+/* ── Project explorer (TreeNav) ───────────────────────────────────────────── */
+.insp-shell .sh-explorer {
+  background: var(--s-app);
+  border-right: 1px solid var(--s-line);
+  padding: 12px 10px;
+  display: flex; flex-direction: column;
+  min-width: 0;
+}
+.insp-shell .sh-explorer__head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 4px 6px 10px;
+}
+.insp-shell .sh-explorer__title {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-family: var(--font-mono); font-size: 11px;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--s-ink-2); font-weight: 600;
+}
+.insp-shell .sh-explorer__title svg { color: var(--s-accent-2); }
+.insp-shell .sh-explorer__hint {
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--s-ink-4);
+  border: 1px solid var(--s-line-2); border-radius: 5px;
+  padding: 1px 6px;
+}
+.insp-shell .sh-tree { flex: 1; min-height: 0; }
+/* TreeNav recolour */
+.insp-shell .sh-tree [role="tree"],
+.insp-shell .sh-tree [role="treeitem"] { color: var(--s-ink-2); }
+.insp-shell .sh-tree button,
+.insp-shell .sh-tree [role="treeitem"] > div {
+  color: var(--s-ink-2) !important;
+  font-family: var(--font-mono) !important;
+  font-size: 12px !important;
+  border-radius: 7px !important;
+}
+.insp-shell .sh-tree button:hover,
+.insp-shell .sh-tree [role="treeitem"]:hover > div {
+  background: var(--s-panel-2) !important;
+  color: var(--s-ink) !important;
+}
+.insp-shell .sh-tree [aria-selected="true"],
+.insp-shell .sh-tree [aria-selected="true"] > div {
+  background: var(--s-accent-soft) !important;
+  color: var(--s-accent-2) !important;
+  box-shadow: inset 2px 0 0 var(--s-accent);
+}
+.insp-shell .sh-tree svg { color: var(--s-ink-3); }
+.insp-shell .sh-explorer__foot { padding: 4px 4px 0; }
+.insp-shell .sh-profile { color: var(--s-ink-2) !important; }
+.insp-shell .sh-profile [class*="font"] { color: var(--s-ink) !important; }
+
+/* ── Main column ──────────────────────────────────────────────────────────── */
+.insp-shell .sh-main {
+  display: flex; flex-direction: column;
+  min-width: 0;
+  background: var(--s-app);
+}
+
+/* ── Top bar (Navbar) ─────────────────────────────────────────────────────── */
+.insp-shell .sh-topbar {
+  display: flex !important; align-items: center; justify-content: space-between;
+  gap: 16px;
+  height: 50px; padding: 0 16px !important;
+  background: var(--s-app) !important;
+  border-bottom: 1px solid var(--s-line) !important;
+  box-shadow: none !important;
+  position: sticky; top: 0; z-index: 5;
+  backdrop-filter: blur(8px);
+}
+.insp-shell .sh-crumbs {
+  display: inline-flex !important; align-items: center; gap: 9px;
+  font-size: 13px; font-family: var(--font-mono);
+}
+.insp-shell .sh-icobtn {
+  display: inline-grid; place-items: center;
+  width: 28px; height: 28px; border-radius: 7px;
+  color: var(--s-ink-3); background: transparent;
+  border: 1px solid transparent; cursor: pointer;
+  transition: background var(--dur-base) var(--ease-out), color var(--dur-base) var(--ease-out);
+}
+.insp-shell .sh-icobtn:hover { color: var(--s-ink); background: var(--s-panel-2); }
+.insp-shell .sh-crumb { color: var(--s-ink-3); }
+.insp-shell .sh-crumb--active { color: var(--s-ink); }
+.insp-shell .sh-crumb__sep { color: var(--s-ink-4); }
+.insp-shell .sh-topbar__actions {
+  display: inline-flex !important; align-items: center; gap: 10px;
+}
+
+/* ── Document tab bar (faux) ──────────────────────────────────────────────── */
+.insp-shell .sh-tabbar {
+  display: flex; align-items: stretch; gap: 1px;
+  height: 38px; padding: 0 8px;
+  background: var(--s-rail);
+  border-bottom: 1px solid var(--s-line);
+  overflow-x: auto;
+}
+.insp-shell .sh-tab {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 0 13px; height: 100%;
+  font-family: var(--font-mono); font-size: 11.5px;
+  color: var(--s-ink-3); white-space: nowrap;
+  border-right: 1px solid var(--s-line);
+  background: transparent;
+}
+.insp-shell .sh-tab svg { color: var(--s-ink-4); }
+.insp-shell .sh-tab--active {
+  color: var(--s-ink); background: var(--s-app);
+  box-shadow: inset 0 2px 0 var(--s-accent);
+}
+.insp-shell .sh-tab--active svg { color: var(--s-accent-2); }
+.insp-shell .sh-tab__x { color: var(--s-ink-4); margin-left: 2px; }
+
+/* ── Scroll content ───────────────────────────────────────────────────────── */
+.insp-shell .sh-content {
+  padding: 0 clamp(20px, 4vw, 52px) 56px;
+}
+.insp-shell .sh-section {
+  padding: 52px 0;
+  border-top: 1px solid var(--s-line);
+  scroll-margin-top: 96px;
+}
+.insp-shell .sh-section:first-of-type { border-top: 0; }
+
+/* ── Shared typography ────────────────────────────────────────────────────── */
+.insp-shell .sh-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-mono); font-size: 11px;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--s-ink-3);
+}
+.insp-shell .sh-eyebrow svg { color: var(--s-accent-2); }
+.insp-shell .sh-display {
+  margin: 18px 0 0;
+  font-weight: 600; letter-spacing: -0.035em;
+  line-height: 1.02; color: var(--s-ink);
+  font-size: clamp(2.2rem, 5.2vw, 4rem);
+  max-width: 18ch;
+}
+.insp-shell .sh-display .sh-accent { color: var(--s-accent-2); }
+.insp-shell .sh-lede {
+  margin: 20px 0 0;
+  font-size: clamp(1.02rem, 1.4vw, 1.22rem);
+  line-height: 1.55; color: var(--s-ink-2); max-width: 52ch;
+}
+.insp-shell .sh-lede--sm { font-size: 0.98rem; }
+.insp-shell .sh-h2 {
+  margin: 12px 0 0 !important;
+  font-size: clamp(1.5rem, 2.4vw, 2.15rem) !important;
+  font-weight: 600 !important; letter-spacing: -0.025em !important;
+  line-height: 1.08 !important; color: var(--s-ink) !important;
+}
+.insp-shell .sh-h3 {
+  margin: 12px 0 16px !important;
+  color: var(--s-ink) !important;
+}
+.insp-shell .sh-meta {
+  font-family: var(--font-mono); font-size: 11.5px;
+  line-height: 1.7; color: var(--s-ink-3);
+}
+.insp-shell .sh-meta--ink { color: var(--s-ink-2); }
+.insp-shell .sh-prose { color: var(--s-ink-2) !important; }
+
+.insp-shell .sh-panelhead { margin-bottom: 26px; }
+.insp-shell .sh-panelhead--row {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  flex-wrap: wrap; gap: 16px;
+}
+
+/* ── Hero CTA + stat tiles ────────────────────────────────────────────────── */
+.insp-shell .sh-hero { padding-top: 44px; }
+.insp-shell .sh-hero__cta { display: flex; gap: 11px; margin-top: 28px; flex-wrap: wrap; }
+.insp-shell .sh-stats {
+  margin-top: 44px;
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
+}
+.insp-shell .sh-stat {
+  border: 1px solid var(--s-line);
+  background: linear-gradient(180deg, var(--s-panel), var(--s-app));
+  border-radius: var(--s-radius);
+  padding: 16px 16px 12px;
+  transition: border-color var(--dur-base) var(--ease-out);
+}
+.insp-shell .sh-stat:hover { border-color: var(--s-line-2); }
+.insp-shell .sh-stat__num {
+  font-size: clamp(1.5rem, 3vw, 2rem); font-weight: 600;
+  letter-spacing: -0.03em; color: var(--s-ink);
+  font-variant-numeric: tabular-nums; line-height: 1;
+}
+.insp-shell .sh-stat__label {
+  margin-top: 7px;
+  font-family: var(--font-mono); font-size: 10px;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--s-ink-3);
+}
+.insp-shell .sh-stat__spark { margin-top: 12px; opacity: 0.85; }
+
+/* ── Card grids ───────────────────────────────────────────────────────────── */
+.insp-shell .sh-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.insp-shell .sh-cards--3 { grid-template-columns: repeat(3, 1fr); }
+.insp-shell .sh-cards--2 { grid-template-columns: repeat(2, 1fr); }
+
+/* Cards — flat panels, hairline borders, no kit shadow */
+.insp-shell .sh-card {
+  background: var(--s-panel) !important;
+  border: 1px solid var(--s-line) !important;
+  border-radius: var(--s-radius) !important;
+  box-shadow: none !important;
+  transition: border-color var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out) !important;
+}
+.insp-shell .sh-card:hover {
+  border-color: var(--s-line-2) !important;
+  box-shadow: 0 0 0 1px var(--s-accent-soft), 0 18px 44px -30px var(--s-accent-glow) !important;
+}
+.insp-shell .sh-card--cap .sh-card__top {
+  display: flex; align-items: center; justify-content: space-between;
+}
+.insp-shell .sh-card__icon {
+  display: grid; place-items: center;
+  width: 32px; height: 32px; border-radius: 9px;
+  background: var(--s-accent-soft); color: var(--s-accent-2);
+  border: 1px solid rgba(99,102,241,0.22);
+}
+.insp-shell .sh-card__no {
+  font-family: var(--font-mono); font-size: 11px; color: var(--s-ink-4);
+}
+.insp-shell .sh-card__title {
+  margin: 14px 0 0; font-size: 16px; font-weight: 600;
+  letter-spacing: -0.015em; color: var(--s-ink);
+}
+.insp-shell .sh-card__body {
+  margin: 8px 0 0; font-size: 13px; line-height: 1.6; color: var(--s-ink-2);
+}
+.insp-shell .sh-card__tags { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 6px; }
+
+/* ── Work preview cards ───────────────────────────────────────────────────── */
+.insp-shell .sh-preview { position: relative; overflow: hidden; }
+.insp-shell .sh-stretch { position: absolute; inset: 0; z-index: 1; }
+.insp-shell .sh-preview__canvas {
+  position: relative;
+  height: 168px;
+  display: grid; place-items: center;
+  border-bottom: 1px solid var(--s-line);
+  background:
+    radial-gradient(110% 110% at 50% 0%, rgba(99,102,241,0.12), transparent 62%),
+    var(--s-app);
+  overflow: hidden;
+}
+.insp-shell .sh-preview__canvas::after {
+  content: ""; position: absolute; inset: 0;
+  background-image:
+    linear-gradient(var(--s-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--s-line) 1px, transparent 1px);
+  background-size: 26px 26px; opacity: 0.4;
+  -webkit-mask-image: radial-gradient(120% 100% at 50% 0%, #000, transparent 78%);
+          mask-image: radial-gradient(120% 100% at 50% 0%, #000, transparent 78%);
+}
+.insp-shell .sh-preview__glyph {
+  position: relative; z-index: 1;
+  font-size: clamp(2rem, 4vw, 3rem); font-weight: 600;
+  letter-spacing: -0.04em; color: var(--s-ink);
+}
+.insp-shell .sh-preview__glyph span { color: var(--s-accent-2); }
+.insp-shell .sh-preview__canvas .sh-status {
+  position: absolute; top: 12px; right: 12px; z-index: 2;
+}
+.insp-shell .sh-preview__meta {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+.insp-shell .sh-preview__title { font-weight: 600; font-size: 15px; color: var(--s-ink); letter-spacing: -0.01em; }
+.insp-shell .sh-preview__disc { font-family: var(--font-mono); font-size: 11px; color: var(--s-ink-3); margin-top: 3px; }
+.insp-shell .sh-card:hover .sh-preview__title { color: var(--s-accent-2); }
+
+/* ── Typographic index (faux data grid) ───────────────────────────────────── */
+.insp-shell .sh-index {
+  border: 1px solid var(--s-line); border-radius: var(--s-radius);
+  overflow: hidden; background: var(--s-panel);
+}
+.insp-shell .sh-index__head,
+.insp-shell .sh-index__row {
+  display: grid;
+  grid-template-columns: 2.6rem minmax(0, 1.4fr) minmax(0, 1.3fr) 8.5rem 5.5rem;
+  align-items: center; column-gap: 18px;
+  padding: 0 16px;
+}
+.insp-shell .sh-index__head {
+  height: 36px;
+  font-family: var(--font-mono); font-size: 10px;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--s-ink-4);
+  background: var(--s-rail); border-bottom: 1px solid var(--s-line);
+}
+.insp-shell .sh-index__row {
+  position: relative; min-height: 58px;
+  border-top: 1px solid var(--s-line);
+  transition: background var(--dur-base) var(--ease-out);
+}
+.insp-shell .sh-index__row:first-of-type { border-top: 0; }
+.insp-shell .sh-index__row:hover { background: var(--s-panel-2); }
+.insp-shell .sh-index__num { font-family: var(--font-mono); font-size: 11px; color: var(--s-ink-4); }
+.insp-shell .sh-index__title {
+  font-size: 1.05rem; font-weight: 600; letter-spacing: -0.015em; color: var(--s-ink);
+  transition: color var(--dur-base) var(--ease-out);
+}
+.insp-shell .sh-index__row:hover .sh-index__title { color: var(--s-accent-2); }
+.insp-shell .sh-index__disc { font-size: 12.5px; color: var(--s-ink-2); }
+.insp-shell .sh-index__year {
+  font-family: var(--font-mono); font-size: 11.5px; color: var(--s-ink-3);
+  display: inline-flex; align-items: center; gap: 6px; justify-content: flex-end; text-align: right;
+}
+.insp-shell .sh-index__row:hover .sh-index__year { color: var(--s-accent-2); }
+.insp-shell .sh-index__foot {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 12px; margin-top: 18px;
+}
+
+/* ── Panel (tabs container) ───────────────────────────────────────────────── */
+.insp-shell .sh-panel { overflow: hidden; }
+.insp-shell .sh-panelbody { padding: 22px; }
+
+/* ── About + team ─────────────────────────────────────────────────────────── */
+.insp-shell .sh-about {
+  display: grid; grid-template-columns: 1.4fr 1fr; gap: 40px;
+}
+.insp-shell .sh-quote {
+  margin: 16px 0 0;
+  font-size: clamp(1.3rem, 2.5vw, 1.9rem); line-height: 1.34;
+  font-weight: 500; letter-spacing: -0.02em; color: var(--s-ink);
+}
+.insp-shell .sh-quote b { color: var(--s-accent-2); font-weight: 500; }
+.insp-shell .sh-team { margin-top: 18px; display: flex; flex-direction: column; gap: 2px; }
+.insp-shell .sh-person {
+  display: flex; align-items: center; gap: 13px;
+  padding: 12px 12px; border-radius: var(--s-radius-sm);
+  transition: background var(--dur-base) var(--ease-out);
+}
+.insp-shell .sh-person:hover { background: var(--s-panel); }
+.insp-shell .sh-person__name { font-weight: 600; font-size: 14px; color: var(--s-ink); letter-spacing: -0.01em; }
+.insp-shell .sh-person__meta { min-width: 0; }
+
+/* ── Recognition ──────────────────────────────────────────────────────────── */
+.insp-shell .sh-recog { display: grid; grid-template-columns: 1.5fr 1fr; gap: 40px; }
+.insp-shell .sh-clients { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 14px; }
+.insp-shell .sh-press { list-style: none; margin: 14px 0 0; padding: 0; display: flex; flex-direction: column; gap: 7px; }
+
+/* ── Contact ──────────────────────────────────────────────────────────────── */
+.insp-shell .sh-contact { display: grid; grid-template-columns: 1fr 1.05fr; gap: 40px; }
+.insp-shell .sh-contact-line {
+  margin-top: 24px; font-family: var(--font-mono); font-size: 13px; color: var(--s-ink);
+}
+.insp-shell .sh-contact-sub { font-family: var(--font-mono); font-size: 11.5px; color: var(--s-ink-3); margin-top: 4px; }
+.insp-shell .sh-budget { margin-top: 28px; }
+.insp-shell .sh-budget__readout { margin-top: 10px; }
+.insp-shell .sh-brief__head,
+.insp-shell .sh-brief__foot { display: flex; align-items: center; justify-content: space-between; }
+.insp-shell .sh-brief__title { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; font-size: 14px; color: var(--s-ink); }
+.insp-shell .sh-brief__title svg { color: var(--s-accent-2); }
+.insp-shell .sh-brief__done { padding: 26px 4px; }
+.insp-shell .sh-brief__done p { margin: 14px 0 0; font-size: 14.5px; color: var(--s-ink); line-height: 1.5; }
+.insp-shell .sh-brief__done .sh-btn-ghost { margin-top: 16px; }
+.insp-shell .sh-composer__foot { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; }
+
+/* ── Page footer ──────────────────────────────────────────────────────────── */
+.insp-shell .sh-pagefoot {
+  margin-top: 48px; padding-top: 20px;
+  border-top: 1px solid var(--s-line);
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+}
+.insp-shell .sh-back {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 13px; font-weight: 500; color: var(--s-accent-2); text-decoration: none;
+}
+.insp-shell .sh-back:hover { color: var(--s-accent-3); }
+
+/* ── Status bar ───────────────────────────────────────────────────────────── */
+.insp-shell .sh-statusbar {
+  display: flex; align-items: center; justify-content: space-between;
+  height: 30px; padding: 0 14px;
+  background: linear-gradient(180deg, #0c0f15, #0a0c11);
+  border-top: 1px solid var(--s-line);
+  font-family: var(--font-mono); font-size: 11px; color: var(--s-ink-3);
+}
+.insp-shell .sh-status-left,
+.insp-shell .sh-status-right { display: inline-flex; align-items: center; gap: 16px; }
+.insp-shell .sh-status-item { display: inline-flex; align-items: center; gap: 6px; }
+.insp-shell .sh-status-item--accent { color: var(--s-accent-2); }
+.insp-shell .sh-status-item--btn {
+  background: transparent; border: 0; cursor: pointer; color: var(--s-ink-3);
+  font-family: inherit; font-size: inherit; transition: color var(--dur-base) var(--ease-out);
+}
+.insp-shell .sh-status-item--btn:hover { color: var(--s-accent-2); }
+.insp-shell .sh-dot-ok { color: var(--s-ok); fill: var(--s-ok); }
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Restyling the Fancy primitives so they WEAR App Shell
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Buttons — crisp app chips: indigo primary with a faint glow, hairline ghost */
+.insp-shell .sh-btn-primary,
+.insp-shell .sh-btn-primary:not(:disabled) {
+  background: var(--s-accent) !important;
+  color: #fff !important;
+  border: 1px solid transparent !important;
+  border-radius: 9px !important;
+  font-weight: 500 !important;
+  box-shadow: 0 0 0 1px rgba(99,102,241,0.4), 0 8px 24px -12px var(--s-accent-glow) !important;
+  transition: background var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out) !important;
+}
+.insp-shell .sh-btn-primary:hover:not(:disabled) {
+  background: var(--s-accent-2) !important;
+  box-shadow: 0 0 0 1px rgba(129,140,248,0.5), 0 10px 28px -10px var(--s-accent-glow) !important;
+}
+.insp-shell .sh-btn-primary:disabled { opacity: 0.42 !important; box-shadow: none !important; }
+.insp-shell .sh-btn-ghost,
+.insp-shell .sh-btn-ghost:not(:disabled) {
+  background: var(--s-panel) !important;
+  color: var(--s-ink) !important;
+  border: 1px solid var(--s-line-2) !important;
+  border-radius: 9px !important;
+  transition: border-color var(--dur-base) var(--ease-out), color var(--dur-base) var(--ease-out) !important;
+}
+.insp-shell .sh-btn-ghost:hover:not(:disabled) {
+  border-color: var(--s-accent) !important;
+  color: var(--s-accent-2) !important;
+}
+
+/* Badges → mono pills: hairline outline, uppercase */
+.insp-shell .sh-pill {
+  background: var(--s-panel-2) !important;
+  color: var(--s-ink-2) !important;
+  border: 1px solid var(--s-line-2) !important;
+  border-radius: 6px !important;
+  font-family: var(--font-mono) !important;
+  font-size: 10px !important;
+  letter-spacing: 0.06em !important;
+  text-transform: uppercase !important;
+  padding: 3px 8px !important;
+}
+.insp-shell .sh-pill--accent {
+  color: var(--s-accent-2) !important;
+  border-color: rgba(99,102,241,0.42) !important;
+  background: var(--s-accent-soft) !important;
+}
+.insp-shell .sh-pill--ok {
+  color: var(--s-ok) !important;
+  border-color: rgba(52,211,153,0.4) !important;
+  background: rgba(52,211,153,0.10) !important;
+}
+.insp-shell .sh-pill [class*="dot"],
+.insp-shell .sh-pill [aria-hidden] { background: currentColor !important; }
+/* status dots */
+.insp-shell .sh-status--shipped { color: var(--s-ok) !important; border-color: rgba(52,211,153,0.4) !important; background: rgba(52,211,153,0.10) !important; }
+.insp-shell .sh-status--inbuild { color: var(--s-warn) !important; border-color: rgba(251,191,36,0.4) !important; background: rgba(251,191,36,0.10) !important; }
+.insp-shell .sh-status--discovery { color: var(--s-accent-2) !important; border-color: rgba(99,102,241,0.4) !important; background: var(--s-accent-soft) !important; }
+
+/* Tabs — mono labels, indigo active rule */
+.insp-shell .sh-tabs [role="tablist"] {
+  border-bottom: 1px solid var(--s-line) !important;
+  padding: 0 10px !important;
+  gap: 2px;
+  background: var(--s-rail);
+}
+.insp-shell .sh-tabs [role="tab"] {
+  font-family: var(--font-mono) !important;
+  font-size: 11.5px !important;
+  letter-spacing: 0.05em !important;
+  text-transform: uppercase !important;
+  color: var(--s-ink-3) !important;
+  padding: 12px 14px !important;
+  background: transparent !important;
+}
+.insp-shell .sh-tabs [role="tab"]:hover { color: var(--s-ink) !important; }
+.insp-shell .sh-tabs [role="tab"][aria-selected="true"] { color: var(--s-accent-2) !important; }
+
+/* Accordion — flatten to hairline rows */
+.insp-shell .sh-accordion > * { border-color: var(--s-line) !important; }
+.insp-shell .sh-accordion button { color: var(--s-ink) !important; font-weight: 500 !important; }
+.insp-shell .sh-accordion button:hover { color: var(--s-accent-2) !important; }
+.insp-shell .sh-accordion [class*="text"] { color: var(--s-ink-2) !important; }
+
+/* Table — dark surfaces, mono header, hairline rules */
+.insp-shell .sh-table table { width: 100%; }
+.insp-shell .sh-table thead th {
+  font-family: var(--font-mono) !important;
+  font-size: 10.5px !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+  color: var(--s-ink-3) !important;
+  border-bottom: 1px solid var(--s-line-2) !important;
+  background: transparent !important;
+}
+.insp-shell .sh-table tbody td {
+  border-bottom: 1px solid var(--s-line) !important;
+  color: var(--s-ink-2) !important;
+  background: transparent !important;
+}
+.insp-shell .sh-table tbody tr:hover td { background: var(--s-panel) !important; }
+
+/* Pillbox / inputs — near-black field, hairline border, indigo focus ring */
+.insp-shell .sh-input input,
+.insp-shell .sh-input textarea,
+.insp-shell .sh-input [class*="border"] {
+  background: var(--s-panel) !important;
+  border-color: var(--s-line-2) !important;
+  color: var(--s-ink) !important;
+  border-radius: 8px !important;
+  font-family: var(--font-mono) !important;
+  font-size: 12px !important;
+}
+.insp-shell .sh-input input:focus,
+.insp-shell .sh-input textarea:focus {
+  border-color: var(--s-accent) !important;
+  box-shadow: 0 0 0 3px var(--s-accent-soft) !important;
+}
+
+/* Composer */
+.insp-shell .sh-composer,
+.insp-shell .sh-composer textarea,
+.insp-shell .sh-composer [contenteditable] {
+  background: var(--s-app) !important;
+  color: var(--s-ink) !important;
+}
+.insp-shell .sh-progress [class*="rounded"] { background-color: var(--s-line) !important; }
+
+/* Timeline — dark line, indigo accent dots */
+.insp-shell .sh-timeline { color: var(--s-ink-2); }
+
+/* Tooltip surface (rendered in a portal — match on attribute/role) */
+.insp-shell [role="tooltip"],
+[data-react-fancy-tooltip] {
+  background: var(--s-panel-2) !important;
+  color: var(--s-ink) !important;
+  border: 1px solid var(--s-line-2) !important;
+}
+
+/* ── Command palette ──────────────────────────────────────────────────────── */
+.insp-shell .sh-palette,
+.sh-palette {
+  background: var(--s-panel) !important;
+  border: 1px solid var(--s-line-2) !important;
+  border-radius: 14px !important;
+  box-shadow: 0 30px 90px -40px #000, 0 0 0 1px var(--s-accent-soft) !important;
+  color: var(--s-ink-2) !important;
+}
+.sh-palette input {
+  background: transparent !important;
+  color: var(--s-ink) !important;
+  border-bottom: 1px solid var(--s-line) !important;
+  font-size: 14px !important;
+}
+.sh-palette input::placeholder { color: var(--s-ink-4) !important; }
+.sh-palette [role="group"] [class*="heading"],
+.sh-palette [class*="heading"] {
+  font-family: var(--font-mono) !important;
+  font-size: 9.5px !important;
+  letter-spacing: 0.12em !important;
+  text-transform: uppercase !important;
+  color: var(--s-ink-4) !important;
+}
+.sh-palette [role="option"],
+.sh-palette [cmdk-item],
+.sh-palette li {
+  color: var(--s-ink-2) !important;
+  border-radius: 8px !important;
+  font-size: 13.5px !important;
+}
+.sh-palette [role="option"]:hover,
+.sh-palette [aria-selected="true"],
+.sh-palette [data-selected="true"] {
+  background: var(--s-accent-soft) !important;
+  color: var(--s-ink) !important;
+}
+.sh-palette .sh-palette__hint {
+  font-family: var(--font-mono); font-size: 10.5px; color: var(--s-ink-4); margin-left: 8px;
+}
+
+/* ── Responsive ───────────────────────────────────────────────────────────── */
+@media (max-width: 1080px) {
+  .insp-shell .sh-body { grid-template-columns: 56px 1fr; }
+  .insp-shell .sh-explorer { display: none; }
+  .insp-shell .sh-stats,
+  .insp-shell .sh-cards { grid-template-columns: repeat(2, 1fr); }
+  .insp-shell .sh-cards--3 { grid-template-columns: repeat(2, 1fr); }
+  .insp-shell .sh-about,
+  .insp-shell .sh-recog,
+  .insp-shell .sh-contact { grid-template-columns: 1fr; }
+}
+@media (max-width: 680px) {
+  .insp-shell { padding: 10px 8px 24px; }
+  .insp-shell .sh-cmdk span { display: none; }
+  .insp-shell .sh-stats,
+  .insp-shell .sh-cards,
+  .insp-shell .sh-cards--2,
+  .insp-shell .sh-cards--3 { grid-template-columns: 1fr; }
+  .insp-shell .sh-index__head,
+  .insp-shell .sh-index__row { grid-template-columns: 2rem 1fr 5rem; }
+  .insp-shell .sh-index__disc,
+  .insp-shell .sh-index__status { display: none; }
+  .insp-shell .sh-titlebar__name { display: none; }
+  .insp-shell .sh-titlebar { grid-template-columns: auto 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .insp-shell * { transition: none !important; }
+}

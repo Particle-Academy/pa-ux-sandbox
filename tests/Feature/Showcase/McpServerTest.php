@@ -100,3 +100,39 @@ it('returns an error when a tool argument is missing', function () {
     $hasError = isset($body['error']);
     expect($isError === true || $hasError)->toBeTrue();
 });
+
+it('lists the gallery design tools', function () {
+    $names = array_column(rpc(['jsonrpc' => '2.0', 'id' => 7, 'method' => 'tools/list'])['result']['tools'], 'name');
+    expect($names)->toContain('gallery-list-styles')->toContain('gallery-get-blueprint');
+});
+
+it('gallery-list-styles returns all 20 styles with blueprint urls', function () {
+    $body = rpc([
+        'jsonrpc' => '2.0',
+        'id' => 8,
+        'method' => 'tools/call',
+        'params' => ['name' => 'gallery-list-styles', 'arguments' => new stdClass],
+    ]);
+
+    expect($body['result']['isError'])->toBeFalse();
+    $payload = json_decode($body['result']['content'][0]['text'], true);
+    expect($payload['count'])->toBe(20);
+    expect($payload['kind'])->toBe('design-blueprints');
+    $ids = array_column($payload['styles'], 'id');
+    expect($ids)->toContain('swiss')->toContain('agentic');
+    expect($payload['styles'][0]['blueprint'])->toBe('/gallery/swiss.json');
+});
+
+it('gallery-get-blueprint returns one style\'s full recipe', function () {
+    $body = rpc([
+        'jsonrpc' => '2.0',
+        'id' => 9,
+        'method' => 'tools/call',
+        'params' => ['name' => 'gallery-get-blueprint', 'arguments' => ['style' => 'dark']],
+    ]);
+
+    expect($body['result']['isError'])->toBeFalse();
+    $payload = json_decode($body['result']['content'][0]['text'], true);
+    expect($payload['id'])->toBe('dark');
+    expect($payload)->toHaveKeys(['thesis', 'tokens', 'sections', 'palette', 'contentArchetype', 'remix']);
+});

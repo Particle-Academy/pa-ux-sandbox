@@ -2,6 +2,8 @@
 
 namespace App\Mcp\Servers;
 
+use App\Mcp\Tools\GalleryGetBlueprint;
+use App\Mcp\Tools\GalleryListStyles;
 use App\Mcp\Tools\GetComponent;
 use App\Mcp\Tools\InstallInstructions;
 use App\Mcp\Tools\ListComponents;
@@ -27,6 +29,14 @@ Workflow:
 3. If you need the actual source code (e.g. to inline into an answer or to
    write files directly), call `get_component` to fetch the full registry
    bundle.
+
+For the DESIGN phase of a new project or a redesign — before picking components —
+use `gallery_list_styles` to browse the 20 Inspiration Gallery styles (one fictional
+studio site designed 20 ways, all from restyled Fancy primitives) and
+`gallery_get_blueprint` to fetch a style's design recipe (tokens, layout, the
+restyled-component palette, remix notes). These are READ-ONLY blueprints to
+re-implement and mix-and-match in the user's own project, not source to copy. Pairs
+with the `/design` skill in the fancy-ui Claude Code plugin.
 
 This server is registry/install-time only. It does NOT operate a running
 Fancy UI app. For that, register the runtime bridges from
@@ -58,6 +68,8 @@ class FancyUiRegistry extends Server
         SearchComponents::class,
         GetComponent::class,
         InstallInstructions::class,
+        GalleryListStyles::class,
+        GalleryGetBlueprint::class,
     ];
 
     protected array $resources = [

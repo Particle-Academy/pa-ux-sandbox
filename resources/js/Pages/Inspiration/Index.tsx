@@ -13,6 +13,7 @@ type Style = {
     note: string;
     mode: "light" | "dark";
     swatch: string;
+    thumb: string;
 };
 
 /**
@@ -148,29 +149,22 @@ function Header({ count }: { count: number }) {
     );
 }
 
-/**
- * Very-light swatches need a faint inset ring so the thumbnail edge reads
- * against the card surface. Anything whiter than ~#f0 (or pure paper tones)
- * gets the ring; gradients + dark swatches don't.
- */
-function isVeryLight(swatch: string): boolean {
-    const m = /^#([0-9a-f]{6})$/i.exec(swatch.trim());
-    if (!m) return false; // gradients etc. — skip
-    const n = parseInt(m[1], 16);
-    const r = (n >> 16) & 0xff;
-    const g = (n >> 8) & 0xff;
-    const b = n & 0xff;
-    // Perceived luminance; near-white reads as "very light".
-    return 0.2126 * r + 0.7152 * g + 0.0722 * b > 235;
-}
-
 function StyleCard({ style }: { style: Style }) {
-    const thumbStyle: CSSProperties = {
-        position: "relative",
-        height: 122,
-        background: style.swatch,
-        // Faint inset ring keeps very-light thumbnails from bleeding into the card.
-        boxShadow: isVeryLight(style.swatch) ? "inset 0 0 0 1px var(--border-1)" : undefined,
+    // Mono chip (dark-translucent + blur) so the num/mode read over any
+    // thumbnail, light or dark.
+    const chip: CSSProperties = {
+        position: "absolute",
+        top: 8,
+        fontFamily: "var(--font-mono)",
+        fontSize: 10.5,
+        fontWeight: 600,
+        padding: "2px 7px",
+        borderRadius: 999,
+        background: "rgba(10,10,14,.5)",
+        color: "rgba(255,255,255,.92)",
+        backdropFilter: "blur(4px)",
+        WebkitBackdropFilter: "blur(4px)",
+        lineHeight: 1.45,
     };
 
     return (
@@ -180,39 +174,23 @@ function StyleCard({ style }: { style: Style }) {
             style={{ "--accent": "var(--accent)" } as CSSProperties}
             aria-label={`${style.name} — FIELDWORK designed style ${style.num}`}
         >
-            {/* TODO: real thumbnail — placeholder swatch until per-style
-                screenshots land (a later task). */}
-            <div style={thumbStyle}>
-                <span
-                    style={{
-                        position: "absolute",
-                        top: 9,
-                        left: 11,
-                        fontFamily: "var(--font-mono)",
-                        fontSize: 11,
-                        fontWeight: 500,
-                        color: style.mode === "dark" ? "rgba(255,255,255,.72)" : "rgba(0,0,0,.55)",
-                    }}
-                >
-                    {style.num}
-                </span>
-                <span
-                    style={{
-                        position: "absolute",
-                        top: 8,
-                        right: 9,
-                        fontFamily: "var(--font-mono)",
-                        fontSize: 10.5,
-                        fontWeight: 500,
-                        padding: "2px 8px",
-                        borderRadius: 999,
-                        background:
-                            style.mode === "dark" ? "rgba(255,255,255,.12)" : "rgba(0,0,0,.06)",
-                        color: style.mode === "dark" ? "rgba(255,255,255,.85)" : "rgba(0,0,0,.6)",
-                    }}
-                >
-                    {style.mode}
-                </span>
+            <div
+                style={{
+                    position: "relative",
+                    height: 122,
+                    overflow: "hidden",
+                    // Swatch shows under the screenshot while it loads / as a fallback.
+                    background: style.swatch,
+                }}
+            >
+                <img
+                    src={style.thumb}
+                    alt={`${style.name} — FIELDWORK portfolio`}
+                    loading="lazy"
+                    style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "top center" }}
+                />
+                <span style={{ ...chip, left: 9 }}>{style.num}</span>
+                <span style={{ ...chip, right: 9 }}>{style.mode}</span>
             </div>
 
             <div style={{ padding: "13px 15px 16px" }}>

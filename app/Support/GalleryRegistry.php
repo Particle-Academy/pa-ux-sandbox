@@ -51,28 +51,42 @@ class GalleryRegistry
     ];
 
     /**
-     * Every gallery style, in display order (common → experimental).
+     * Every gallery style, in display order (common → experimental). Each entry
+     * is decorated with a `thumb` path — a real screenshot of the live style page
+     * (public/inspiration/thumbs/<id>.jpeg), used on the catalog cards in place
+     * of the `swatch` placeholder.
      *
-     * @return list<array{id:string, num:string, name:string, note:string, mode:string, swatch:string}>
+     * @return list<array{id:string, num:string, name:string, note:string, mode:string, swatch:string, thumb:string}>
      */
     public static function all(): array
     {
-        return self::STYLES;
+        return array_map(self::withThumb(...), self::STYLES);
     }
 
     /**
      * Find a single style by its id, or null if no such style exists.
      *
-     * @return array{id:string, num:string, name:string, note:string, mode:string, swatch:string}|null
+     * @return array{id:string, num:string, name:string, note:string, mode:string, swatch:string, thumb:string}|null
      */
     public static function find(string $id): ?array
     {
         foreach (self::STYLES as $style) {
             if ($style['id'] === $id) {
-                return $style;
+                return self::withThumb($style);
             }
         }
 
         return null;
+    }
+
+    /**
+     * Decorate a raw style entry with its derived `thumb` screenshot path.
+     *
+     * @param  array{id:string, num:string, name:string, note:string, mode:string, swatch:string}  $style
+     * @return array{id:string, num:string, name:string, note:string, mode:string, swatch:string, thumb:string}
+     */
+    private static function withThumb(array $style): array
+    {
+        return $style + ['thumb' => "/inspiration/thumbs/{$style['id']}.jpeg"];
     }
 }

@@ -2746,35 +2746,27 @@ function FancyAppRootDemo() {
     );
 }
 
-const CONTENT_DOC = {
-    type: "doc",
-    content: [
-        { type: "heading", level: 2, text: "Hello" },
-        {
-            type: "paragraph",
-            content: [
-                { type: "text", text: "Body text with a " },
-                { type: "text", marks: ["bold"], text: "bold" },
-                { type: "text", text: " span and an " },
-                { type: "text", marks: ["italic"], text: "italic" },
-                { type: "text", text: " one." },
-            ],
-        },
-        { type: "code_block", lang: "ts", text: "const greet = (n) => 'hi ' + n;" },
-        {
-            type: "bullet_list",
-            content: [
-                { type: "list_item", content: [{ type: "paragraph", content: [{ type: "text", text: "Plain JSON — easy for agents to author." }] }] },
-                { type: "list_item", content: [{ type: "paragraph", content: [{ type: "text", text: "Round-trips with Editor — same shape." }] }] },
-            ],
-        },
-    ],
-};
+const CONTENT_MARKDOWN = `## Hello
+
+Render **markdown** or HTML with the Fancy aesthetic — sanitized by default, so it's
+safe for *untrusted* content. It handles [links](#), \`inline code\`, lists, and fenced
+code blocks:
+
+- Auto-detects markdown vs. HTML
+- Strips \`<script>\`, \`<iframe>\`, and \`javascript:\` hrefs
+- Pluggable extensions for shortcodes & embeds
+
+\`\`\`ts
+const greet = (name) => "hi " + name;
+\`\`\`
+
+> Set \`unsafe\` only for content you fully trust.
+`;
 
 function ContentRendererDemo() {
     return (
-        <div className="rounded-md border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-950">
-            <ContentRenderer document={CONTENT_DOC} />
+        <div className="prose prose-sm dark:prose-invert max-w-none rounded-md border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-950">
+            <ContentRenderer value={CONTENT_MARKDOWN} format="markdown" />
         </div>
     );
 }

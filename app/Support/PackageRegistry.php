@@ -342,6 +342,22 @@ class PackageRegistry
                 'repo' => 'Particle-Academy/fancy-heuristics-js',
                 'language' => 'TypeScript',
             ],
+            [
+                'slug' => 'fancy-features-js',
+                'name' => '@particle-academy/fancy-features',
+                'tagline' => 'Node/TS port of laravel-fms — headless, framework-agnostic feature management: gate / registry / config / group strategies + metered quotas. Owns the FeatureSource contract @particle-academy/fancy-catalog plugs into. No UI.',
+                'npm' => '@particle-academy/fancy-features',
+                'repo' => 'Particle-Academy/fancy-features-js',
+                'language' => 'TypeScript',
+            ],
+            [
+                'slug' => 'fancy-catalog-js',
+                'name' => '@particle-academy/fancy-catalog',
+                'tagline' => 'Node/TS port of laravel-catalog — headless Stripe catalog (products / prices / plans + checkout), adapter-based with an injected Stripe client. Composes with @particle-academy/fancy-features for entitlements via its ./features bridge. No UI.',
+                'npm' => '@particle-academy/fancy-catalog',
+                'repo' => 'Particle-Academy/fancy-catalog-js',
+                'language' => 'TypeScript',
+            ],
             // Tooling — MCP docs server + the source-vendoring CLI. No app-facing
             // UI; they're how you discover and pull the rest of the suite.
             [

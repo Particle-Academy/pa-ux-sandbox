@@ -31,6 +31,11 @@ class XFilesFiles
         $this->addRobots($registry, (array) ($model['robots'] ?? []));
         $this->addSecurity($registry, $model['securityTxt'] ?? null);
         $this->addHumans($registry, $model['humansTxt'] ?? null);
+
+        // sitemap.xml — dynamic (auto-discovered URLs from fancy-seo) but served
+        // here so protect() applies, with the admin's `sitemap` controls layered
+        // on. Rendered lazily, so fancy-seo's providers are registered by then.
+        $registry->add(new DynamicSitemap((array) ($model['sitemap'] ?? [])));
     }
 
     /**

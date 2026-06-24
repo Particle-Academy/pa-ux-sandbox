@@ -45,15 +45,17 @@ return [
     | in SeoServiceProvider (sitemap + llms) and the keys below (robots).
     | `markdown` (per-page .md) is enabled in Phase 3 once the doc hubs land.
     |
-    | robots/security/humans are now OWNED by particle-academy/fancy-x-files
-    | (config/x-files.php) — its leak-proof RobotsTxt::protect() keeps /admin &
-    | friends Disallowed for EVERY group, including the welcomed AI bots. They
-    | are disabled here to avoid a route collision. fancy-seo keeps the dynamic
-    | sitemap.xml + llms.txt / llms-full.txt.
+    | robots/security/humans/sitemap are now OWNED by particle-academy/fancy-x-files
+    | (config/x-files.php) — its leak-proof protect() keeps /admin & friends
+    | Disallowed/unlisted for EVERY group, including the welcomed AI bots. They
+    | are disabled here to avoid a route collision. The sitemap STAYS DYNAMIC:
+    | SeoServiceProvider still registers its URL providers and App\Support\
+    | DynamicSitemap renders them (+ the admin's sitemap controls) through
+    | x-files. fancy-seo keeps only llms.txt / llms-full.txt.
     */
     'routes' => [
         'enabled' => true,
-        'sitemap' => true,
+        'sitemap' => false,  // x-files owns sitemap.xml (DynamicSitemap — dynamic + leak-safe)
         'robots' => false,   // x-files owns robots.txt
         'llms' => true,
         'security' => false,  // x-files owns .well-known/security.txt

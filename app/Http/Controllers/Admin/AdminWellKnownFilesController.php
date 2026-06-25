@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Setting;
+use App\Support\DynamicSitemap;
 use App\Support\WellKnownFilesModel;
 use App\Support\XFilesFiles;
+use FancySeo\Facades\FancySeo;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -31,7 +33,28 @@ class AdminWellKnownFilesController extends Controller
             'model' => WellKnownFilesModel::current(),
             'protectedPaths' => array_values((array) config('x-files.protect', [])),
             'isCustomized' => Setting::get(WellKnownFilesModel::SETTING_KEY) !== null,
+            'sitemapUrls' => $this->liveSitemapUrls(),
         ]);
+    }
+
+    /**
+     * The live, auto-discovered sitemap URLs (fancy-seo's registered providers)
+     * the admin's sitemap controls layer on top of — {@see DynamicSitemap}
+     * renders these at request time, so this is exactly what's served.
+     *
+     * @return list<array{loc: string, path: string, priority: string, changefreq: string}>
+     */
+    private function liveSitemapUrls(): array
+    {
+        return array_map(
+            fn (array $url): array => [
+                'loc' => (string) $url['loc'],
+                'path' => parse_url((string) $url['loc'], PHP_URL_PATH) ?: '/',
+                'priority' => (string) ($url['priority'] ?? '0.5'),
+                'changefreq' => (string) ($url['changefreq'] ?? 'weekly'),
+            ],
+            FancySeo::sitemapUrls(),
+        );
     }
 
     public function update(Request $request): RedirectResponse
@@ -47,7 +70,7 @@ class AdminWellKnownFilesController extends Controller
 
         Setting::put(WellKnownFilesModel::SETTING_KEY, json_encode($model));
 
-        return back()->with('success', 'Well-known files published — robots.txt, security.txt, and humans.txt now reflect your edits.');
+        return back()->with('success', 'Well-known files published — robots.txt, security.txt, humans.txt, and the sitemap now reflect your edits.');
     }
 
     /** Reset to the config-derived default (drops the saved override). */

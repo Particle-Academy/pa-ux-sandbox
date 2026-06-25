@@ -69,3 +69,34 @@ it('resets to the config default, dropping the override', function () {
 
     expect(Setting::get(WellKnownFilesModel::SETTING_KEY))->toBeNull();
 });
+
+it('passes the live auto-discovered sitemap URLs to the editor', function () {
+    $this->actingAs(wkfAdmin())
+        ->get('/admin/well-known-files')
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('Admin/WellKnownFiles')
+            ->has('sitemapUrls.0.loc')
+            ->has('sitemapUrls.0.path')
+            ->has('sitemapUrls.0.priority')
+            ->has('sitemapUrls.0.changefreq'));
+});
+
+it('applies admin sitemap controls (exclude + extra) to the served sitemap.xml', function () {
+    Setting::put(WellKnownFilesModel::SETTING_KEY, json_encode(array_merge(
+        WellKnownFilesModel::default(),
+        ['sitemapControls' => [
+            'exclude' => ['/leaderboard'],
+            'extra' => [['loc' => 'https://example.test/grab-bag', 'priority' => '0.9', 'changefreq' => 'daily']],
+        ]],
+    )));
+    // Drop the boot-time Registry singleton so the served file re-renders.
+    $this->app->forgetInstance(Registry::class);
+
+    $body = (string) $this->get('/sitemap.xml')->assertOk()->getContent();
+
+    expect($body)
+        ->toContain('<loc>'.rtrim((string) config('app.url'), '/').'/</loc>') // still dynamic
+        ->not->toContain('/leaderboard</loc>')                                // excluded
+        ->toContain('https://example.test/grab-bag');                         // extra added
+});

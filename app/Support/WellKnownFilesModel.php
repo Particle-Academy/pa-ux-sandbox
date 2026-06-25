@@ -80,6 +80,14 @@ class WellKnownFilesModel
                 'site' => 'Laravel + Inertia + React 19 + Tailwind v4 + the Fancy UI suite',
                 'thanks' => ['Humans and agents who share these surfaces'],
             ],
+            // Dynamic-sitemap controls (read by App\Support\DynamicSitemap): no
+            // exclusions / overrides / extras out of the box ⇒ the full
+            // auto-discovered set is served, identical to before an admin edits.
+            'sitemapControls' => [
+                'exclude' => [],
+                'overrides' => (object) [],
+                'extra' => [],
+            ],
         ];
     }
 }

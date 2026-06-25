@@ -16,7 +16,7 @@ use ParticleAcademy\XFiles\Files\Sitemap;
  * listed here (the gap the old fancy-seo-owned sitemap had).
  *
  * It stays dynamic, but the admin well-known-files model can layer controls on
- * top via its `sitemap` section:
+ * top via its `sitemapControls` section:
  *   exclude   — list<string> paths to drop from the auto-discovered set
  *   overrides — map<path, {priority?, changefreq?}> per-URL tuning
  *   extra     — list<{loc, priority?, changefreq?}> manually-added URLs

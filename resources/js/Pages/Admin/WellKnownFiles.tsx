@@ -3,12 +3,17 @@ import { Button, Callout, Icon, Text } from "@particle-academy/react-fancy";
 import { XFilesManager, type XFilesModel } from "@particle-academy/fancy-x-files-ui";
 import { useState } from "react";
 import { adminLayout } from "./AdminLayout";
+import { SitemapControls, type SitemapControlsModel, type SitemapUrl } from "./SitemapControls";
 import { PageHeader } from "./ui";
 
+/** The aggregate model is the x-files model + our dynamic-sitemap controls. */
+type WkModel = XFilesModel & { sitemapControls?: SitemapControlsModel };
+
 type Props = {
-    model: XFilesModel;
+    model: WkModel;
     protectedPaths: string[];
     isCustomized: boolean;
+    sitemapUrls: SitemapUrl[];
 };
 
 /**
@@ -17,8 +22,8 @@ type Props = {
  * server (App\Support\XFilesFiles) renders into robots.txt / security.txt /
  * humans.txt. The model is controlled here and posted as JSON on save.
  */
-function WellKnownFiles({ model: initial, protectedPaths, isCustomized }: Props) {
-    const [model, setModel] = useState<XFilesModel>(initial);
+function WellKnownFiles({ model: initial, protectedPaths, isCustomized, sitemapUrls }: Props) {
+    const [model, setModel] = useState<WkModel>(initial);
     const [saving, setSaving] = useState(false);
     const flash = usePage<{ flash?: { success?: string } }>().props.flash;
 
@@ -41,7 +46,7 @@ function WellKnownFiles({ model: initial, protectedPaths, isCustomized }: Props)
             <Head title="Well-known files · Admin" />
             <PageHeader
                 title="Well-known files"
-                sub="Author robots.txt, security.txt, humans.txt, llms.txt, sitemap, and AGENTS — served by fancy-x-files. Humans and agents edit the same JSON model."
+                sub="Author robots.txt, security.txt, and humans.txt; tune the dynamic sitemap.xml below. All served by fancy-x-files — humans and agents edit the same JSON model."
             />
 
             <Callout color="violet" icon={<Icon name="shield" />} className="mb-4">
@@ -59,7 +64,17 @@ function WellKnownFiles({ model: initial, protectedPaths, isCustomized }: Props)
                 </Callout>
             )}
 
-            <XFilesManager value={model} onChange={setModel} />
+            <XFilesManager
+                value={model}
+                onChange={(m) => setModel((prev) => ({ ...prev, ...m }))}
+                kinds={["robots", "securityTxt", "humansTxt"]}
+            />
+
+            <SitemapControls
+                urls={sitemapUrls}
+                value={model.sitemapControls ?? {}}
+                onChange={(sc) => setModel((prev) => ({ ...prev, sitemapControls: sc }))}
+            />
 
             <div className="mt-5 flex items-center gap-3">
                 <Button icon="check" onClick={save} disabled={saving}>

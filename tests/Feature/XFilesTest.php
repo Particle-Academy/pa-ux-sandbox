@@ -60,6 +60,22 @@ it('serves a humans.txt', function () {
         ->assertSee('Fancy UI', false);
 });
 
+it('serves a dynamic sitemap.xml that lists pages but never protected paths', function () {
+    $res = $this->get('/sitemap.xml');
+
+    $res->assertOk();
+    expect($res->headers->get('Content-Type'))->toContain('xml');
+
+    $base = rtrim((string) config('app.url'), '/');
+    $body = (string) $res->getContent();
+
+    expect($body)->toContain('<urlset')
+        ->toContain('<loc>'.$base.'/</loc>')   // the homepage is auto-discovered
+        ->not->toContain('/admin')             // protect() leak-guard — the gap the old sitemap had
+        ->not->toContain('/login')
+        ->not->toContain('/checkout');
+});
+
 it('passes x-files:check', function () {
     $this->artisan('x-files:check')->assertSuccessful();
 });

@@ -69,6 +69,14 @@ class RegistrySource
             }
         }
 
+        // Hand-authored block — the catalog-fms storefront/admin components are
+        // authored in THIS app (resources/js/components/fancy/catalog-fms/), not
+        // a sibling package, so source them directly. `npx fancy-ui add
+        // catalog-fms` vendors the whole set; pairs with the Shop-n-Sub kit.
+        if ($block = $this->catalogFmsBlock()) {
+            $items[] = $block;
+        }
+
         return $this->ensureUniqueNames($items);
     }
 
@@ -459,6 +467,39 @@ class RegistrySource
         }
 
         return $files;
+    }
+
+    /**
+     * The `catalog-fms` block: storefront + admin UI components (PricingTable,
+     * FeatureMatrix, FeatureGate, PlanFeaturesEditor) authored in this app
+     * rather than a sibling package. One vendorable bundle — the files target
+     * `components/fancy/catalog-fms/`, which the fancy-ui CLI maps to the
+     * consumer's components dir, so no CLI change is needed.
+     */
+    private function catalogFmsBlock(): ?RegistryItem
+    {
+        $dir = base_path('resources/js/components/fancy/catalog-fms');
+        if (! is_dir($dir)) {
+            return null;
+        }
+
+        $files = $this->readSourceFiles($dir, 'catalog-fms');
+        if ($files === []) {
+            return null;
+        }
+
+        $imports = $this->parseImports($files);
+
+        return new RegistryItem(
+            name: 'catalog-fms',
+            title: 'Catalog + FMS',
+            description: 'Storefront + admin UI for a Stripe catalog (laravel-catalog) with feature gating (laravel-fms): PricingTable, FeatureMatrix, FeatureGate, PlanFeaturesEditor. Framework-agnostic, controlled, JSON-driven — see the Shop-n-Sub starter kit.',
+            package: 'react-fancy',
+            files: $files,
+            dependencies: $imports['npm'],
+            registryDependencies: $imports['registry'],
+            type: 'registry:block',
+        );
     }
 
     /**

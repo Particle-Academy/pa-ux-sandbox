@@ -468,6 +468,12 @@ class PackageRegistry
             ['slug' => 'inputs', 'name' => 'Inputs'],
             ['slug' => 'kanban', 'name' => 'Kanban'],
             ['slug' => 'magic-wand', 'name' => 'MagicWand'],
+            // Media viewers (react-fancy 4.9.0)
+            ['slug' => 'media-viewer', 'name' => 'MediaViewer', 'blurb' => 'Picks the right viewer (image / video / audio / PDF) from a mime or src; download fallback. Exports resolveMediaType.'],
+            ['slug' => 'image-viewer', 'name' => 'ImageViewer', 'blurb' => 'Fit-to-container image with zoom / pan and a transparency checkerboard.'],
+            ['slug' => 'video-viewer', 'name' => 'VideoViewer', 'blurb' => 'Native video controls with poster and fit.'],
+            ['slug' => 'audio-viewer', 'name' => 'AudioViewer', 'blurb' => 'Themed card around the native audio player.'],
+            ['slug' => 'pdf-viewer', 'name' => 'PdfViewer', 'blurb' => 'Inline PDF via <object> / <iframe> with a download fallback.'],
             ['slug' => 'menu', 'name' => 'Menu'],
             ['slug' => 'mobile-menu', 'name' => 'MobileMenu'],
             ['slug' => 'modal', 'name' => 'Modal'],
@@ -642,6 +648,7 @@ class PackageRegistry
             'components' => [
                 ['slug' => 'code-editor', 'name' => 'CodeEditor', 'blurb' => 'Editor surface.'],
                 ['slug' => 'markdown-editor', 'name' => 'MarkdownEditor', 'blurb' => 'Markdown editor + live preview.'],
+                ['slug' => 'file-viewer', 'name' => 'FileViewer', 'blurb' => 'Unified file viewer — CodeEditor for text, react-fancy MediaViewer for image / video / audio / PDF; resolveFileKind decides.'],
             ],
         ];
     }

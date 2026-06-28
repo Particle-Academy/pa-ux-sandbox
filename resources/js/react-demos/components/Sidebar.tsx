@@ -117,6 +117,7 @@ const fancy3dShowcaseLinks = [
 
 const fancyPackageLinks = [
   { to: "/code-editor", label: "CodeEditor" },
+  { to: "/file-viewer", label: "FileViewer" },
   { to: "/spreadsheet", label: "Spreadsheet" },
   { to: "/sheets-agent", label: "Sheets — Agent session" },
 ];

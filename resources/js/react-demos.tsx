@@ -108,6 +108,7 @@ const SliderDemo = l(() => import("./react-demos/pages/SliderDemo"), "SliderDemo
 const DatePickerDemo = l(() => import("./react-demos/pages/DatePickerDemo"), "DatePickerDemo");
 // Fancy Code + Fancy Sheets
 const CodeEditorDemo = l(() => import("./react-demos/pages/CodeEditorDemo"), "CodeEditorDemo");
+const FileViewerDemo = l(() => import("./react-demos/pages/FileViewerDemo"), "FileViewerDemo");
 const SpreadsheetDemo = l(() => import("./react-demos/pages/SpreadsheetDemo"), "SpreadsheetDemo");
 const SheetsAgentDemo = l(() => import("./react-demos/pages/SheetsAgentDemo"), "SheetsAgentDemo");
 const SlidesDemo = l(() => import("./react-demos/pages/SlidesDemo"), "SlidesDemo");
@@ -263,6 +264,7 @@ if (root) {
               <Route path="babylon-smoke" element={<BabylonSmokeTestDemo />} />
               {/* Fancy Code */}
               <Route path="code-editor" element={<CodeEditorDemo />} />
+              <Route path="file-viewer" element={<FileViewerDemo />} />
               <Route path="spreadsheet" element={<SpreadsheetDemo />} />
               <Route path="sheets-agent" element={<SheetsAgentDemo />} />
               <Route path="slides" element={<SlidesDemo />} />

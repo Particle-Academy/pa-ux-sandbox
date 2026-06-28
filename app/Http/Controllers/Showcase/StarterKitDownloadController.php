@@ -29,7 +29,14 @@ class StarterKitDownloadController extends Controller
         'fancy-code' => 'EmbeddedIdeKit',
         'fancy-sheets' => 'SpreadsheetStudioKit',
         'fancy-echarts' => 'DiagramStudioKit',
+        'shop-n-sub' => 'ShopNSubKit',
     ];
+
+    /**
+     * Kits that import the vendored catalog-fms components (`@/components/fancy/
+     * catalog-fms`). Their zip must bundle those component files + an `@` alias.
+     */
+    private const BUNDLES_CATALOG_FMS = ['shop-n-sub'];
 
     public function __invoke(string $slug): BinaryFileResponse
     {
@@ -45,6 +52,10 @@ class StarterKitDownloadController extends Controller
         // by a uniform name regardless of which kit was downloaded.
         $kitSrc = preg_replace('/export\s+function\s+'.preg_quote($sourceName, '/').'\s*\(/', 'export function Kit(', $sourceCode);
 
+        // Kits that import the vendored catalog-fms components get those files
+        // bundled into src/ plus an `@` -> ./src alias in vite/tsconfig.
+        $bundlesComponents = in_array($slug, self::BUNDLES_CATALOG_FMS, true);
+
         $tmp = tempnam(sys_get_temp_dir(), 'fancy-kit-');
         $zip = new ZipArchive;
         $opened = $zip->open($tmp, ZipArchive::CREATE | ZipArchive::OVERWRITE);
@@ -54,14 +65,18 @@ class StarterKitDownloadController extends Controller
         $zip->addFromString($root.'README.md', $this->readme($kit));
         $zip->addFromString($root.'.gitignore', "node_modules\ndist\n.DS_Store\n*.log\n");
         $zip->addFromString($root.'package.json', $this->packageJson($kit));
-        $zip->addFromString($root.'vite.config.ts', $this->viteConfig());
-        $zip->addFromString($root.'tsconfig.json', $this->tsConfig());
+        $zip->addFromString($root.'vite.config.ts', $this->viteConfig($bundlesComponents));
+        $zip->addFromString($root.'tsconfig.json', $this->tsConfig($bundlesComponents));
         $zip->addFromString($root.'tsconfig.node.json', $this->tsConfigNode());
         $zip->addFromString($root.'index.html', $this->indexHtml($kit));
         $zip->addFromString($root.'src/main.tsx', $this->mainTsx());
         $zip->addFromString($root.'src/App.tsx', $this->appTsx($kit));
         $zip->addFromString($root.'src/index.css', $this->indexCss());
         $zip->addFromString($root.'src/Kit.tsx', $kitSrc);
+
+        if ($bundlesComponents) {
+            $this->bundleCatalogFms($zip, $root);
+        }
 
         $zip->close();
 
@@ -187,8 +202,24 @@ MD;
         };
     }
 
-    private function viteConfig(): string
+    private function viteConfig(bool $withAtAlias = false): string
     {
+        if ($withAtAlias) {
+            return <<<'TS'
+            import { fileURLToPath } from "node:url";
+            import { defineConfig } from "vite";
+            import react from "@vitejs/plugin-react";
+            import tailwindcss from "@tailwindcss/vite";
+
+            export default defineConfig({
+              plugins: [react(), tailwindcss()],
+              resolve: {
+                alias: { "@": fileURLToPath(new URL("./src", import.meta.url)) },
+              },
+            });
+            TS;
+        }
+
         return <<<'TS'
         import { defineConfig } from "vite";
         import react from "@vitejs/plugin-react";
@@ -200,32 +231,53 @@ MD;
         TS;
     }
 
-    private function tsConfig(): string
+    private function tsConfig(bool $withAtAlias = false): string
     {
-        return <<<'JSON'
-        {
-          "compilerOptions": {
-            "target": "ES2022",
-            "useDefineForClassFields": true,
-            "lib": ["ES2022", "DOM", "DOM.Iterable"],
-            "module": "ESNext",
-            "skipLibCheck": true,
-            "moduleResolution": "bundler",
-            "allowImportingTsExtensions": true,
-            "resolveJsonModule": true,
-            "isolatedModules": true,
-            "moduleDetection": "force",
-            "noEmit": true,
-            "jsx": "react-jsx",
-            "strict": true,
-            "noUnusedLocals": false,
-            "noUnusedParameters": false,
-            "noFallthroughCasesInSwitch": true
-          },
-          "include": ["src"],
-          "references": [{ "path": "./tsconfig.node.json" }]
+        $compilerOptions = [
+            'target' => 'ES2022',
+            'useDefineForClassFields' => true,
+            'lib' => ['ES2022', 'DOM', 'DOM.Iterable'],
+            'module' => 'ESNext',
+            'skipLibCheck' => true,
+            'moduleResolution' => 'bundler',
+            'allowImportingTsExtensions' => true,
+            'resolveJsonModule' => true,
+            'isolatedModules' => true,
+            'moduleDetection' => 'force',
+            'noEmit' => true,
+            'jsx' => 'react-jsx',
+            'strict' => true,
+            'noUnusedLocals' => false,
+            'noUnusedParameters' => false,
+            'noFallthroughCasesInSwitch' => true,
+        ];
+
+        if ($withAtAlias) {
+            $compilerOptions = ['baseUrl' => '.', 'paths' => ['@/*' => ['src/*']]] + $compilerOptions;
         }
-        JSON;
+
+        return json_encode([
+            'compilerOptions' => $compilerOptions,
+            'include' => ['src'],
+            'references' => [['path' => './tsconfig.node.json']],
+        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)."\n";
+    }
+
+    /**
+     * Bundle the vendored catalog-fms component source into the kit's zip at
+     * src/components/fancy/catalog-fms/ so the kit's `@/components/fancy/
+     * catalog-fms` imports resolve (paired with the `@` -> ./src alias).
+     */
+    private function bundleCatalogFms(ZipArchive $zip, string $root): void
+    {
+        $dir = base_path('resources/js/components/fancy/catalog-fms');
+
+        foreach (File::files($dir) as $file) {
+            $zip->addFromString(
+                $root.'src/components/fancy/catalog-fms/'.$file->getFilename(),
+                File::get($file->getPathname()),
+            );
+        }
     }
 
     private function tsConfigNode(): string

@@ -9,6 +9,7 @@ import { EmbeddedIdeKit } from "./kits/EmbeddedIdeKit";
 import { SpreadsheetStudioKit } from "./kits/SpreadsheetStudioKit";
 import { DiagramStudioKit } from "./kits/DiagramStudioKit";
 import { RealtimeChatKit } from "./kits/RealtimeChatKit";
+import { ShopNSubKit } from "./kits/ShopNSubKit";
 
 type Kit = { slug: string; name: string; pkg: string; blurb: string };
 
@@ -20,6 +21,7 @@ const KITS: Record<string, () => JSX.Element> = {
     "fancy-code": EmbeddedIdeKit,
     "fancy-sheets": SpreadsheetStudioKit,
     "fancy-echarts": DiagramStudioKit,
+    "shop-n-sub": ShopNSubKit,
 };
 
 export default function StarterKitsShow({ kit }: { kit: Kit }) {

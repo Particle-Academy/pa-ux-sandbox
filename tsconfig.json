@@ -8,6 +8,7 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "paths": {
+      "@/*": ["resources/js/*"],
       "@particle-academy/react-fancy": ["../react-fancy/src"],
       "@particle-academy/fancy-echarts": ["../fancy-echarts/src"],
       "@particle-academy/fancy-code": ["../fancy-code/src"],

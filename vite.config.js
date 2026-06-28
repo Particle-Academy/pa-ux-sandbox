@@ -83,6 +83,11 @@ export default defineConfig({
         tailwindcss(),
     ],
     resolve: {
+        alias: {
+            // Standard Laravel+Inertia `@` → resources/js. Lets vendored blocks
+            // (e.g. fancy-ui `catalog-fms`) import `@/components/fancy/...`.
+            '@': fileURLToPath(new URL('./resources/js', import.meta.url)),
+        },
         // Dedupe React so every dep tree (some `@particle-academy/*` packages
         // ship their own React in devDependencies for standalone builds) lands
         // on the sandbox's single React instance. Without this, hooks called

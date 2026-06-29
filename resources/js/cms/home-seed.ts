@@ -45,7 +45,7 @@ export const homeDoc: PageDoc = {
     grid: { id: "grid", type: "frame", parent: "hero", order: "a", className: "container hero-grid", props: {}, style: { base: {} } },
     left: { id: "left", type: "frame", parent: "grid", order: "a", props: {}, style: { base: {} } },
 
-    eyebrow: { id: "eyebrow", type: "richtext", parent: "left", order: "a", className: "eyebrow-row", props: { html: '<span class="dot"></span><span>v0.2 · Particle Academy</span>' }, style: { base: {} } },
+    eyebrow: { id: "eyebrow", type: "richtext", parent: "left", order: "a", className: "eyebrow-row", props: { html: '<span class="dot"></span><span>v0.4 · Particle Academy</span>' }, style: { base: {} } },
     heading: { id: "heading", type: "richtext", parent: "left", order: "b", className: "display", props: { html: 'Components for the surfaces where <span class="gradient-text">humans and agents work together</span>.' }, style: { base: {} } },
     lede: {
       id: "lede",

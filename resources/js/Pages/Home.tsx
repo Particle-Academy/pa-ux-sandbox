@@ -134,7 +134,7 @@ function Hero({ packages }: { packages: PackageRow[] }) {
                 <div>
                     <div className="eyebrow-row">
                         <span className="dot" />
-                        <span>v0.2 · #BYOA</span>
+                        <span>v0.4 · #BYOA</span>
                     </div>
                     <h1 className="display">
                         Bring your own agent. <span className="gradient-text">Bring your own stack.</span>

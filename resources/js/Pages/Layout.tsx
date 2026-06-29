@@ -113,7 +113,7 @@ export function Layout({
                             <head>, causing a hydration mismatch (#418). */}
                         <img src="/showcase-assets/fancy-ui-logo.jpg" alt="Fancy UI Kit" className="mark" style={{ objectFit: "cover" }} loading="lazy" />
                         <span>Fancy UI Kit</span>
-                        <span className="ver">v0.2</span>
+                        <span className="ver">v0.4</span>
                     </Link>
 
                     <div className="nav-links">
@@ -345,7 +345,7 @@ export function Layout({
 
                     <div className="footer-bottom">
                         <span>© Particle Academy · MIT</span>
-                        <span className="right">fancy-ui · v0.2 · react-fancy 4.4.0</span>
+                        <span className="right">fancy-ui · v0.4 · react-fancy 4.4.0</span>
                     </div>
                 </div>
             </footer>

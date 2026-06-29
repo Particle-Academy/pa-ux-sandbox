@@ -70,6 +70,8 @@ For most non-trivial apps, the right answer is **both**: keep the long tail on `
 
 ## Laravel apps with Inertia
 
+> **Starting a brand-new Laravel app?** Skip the manual wiring below — the [Laravel starter kit](/docs/starter-kit) scaffolds a full app shell (Inertia + React 19 + Tailwind v4 + Fortify auth) with Fancy Core already wired in one command: `laravel new my-app --using=particle-academy/fancy-starter-kit`. The steps here are for adding Fancy UI to an app you **already** have.
+
 If you're building a Laravel app with Inertia and React, install the Inertia bridge too:
 
 ```bash

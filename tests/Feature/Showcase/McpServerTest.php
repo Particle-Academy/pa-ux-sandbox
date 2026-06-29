@@ -136,3 +136,45 @@ it('gallery-get-blueprint returns one style\'s full recipe', function () {
     expect($payload['id'])->toBe('dark');
     expect($payload)->toHaveKeys(['thesis', 'tokens', 'sections', 'palette', 'contentArchetype', 'remix']);
 });
+
+it('lists the start-project tool', function () {
+    $names = array_column(rpc(['jsonrpc' => '2.0', 'id' => 10, 'method' => 'tools/list'])['result']['tools'], 'name');
+    expect($names)->toContain('start-project');
+});
+
+it('start-project leads with the backend decision + the per-language mirrors', function () {
+    $body = rpc([
+        'jsonrpc' => '2.0',
+        'id' => 11,
+        'method' => 'tools/call',
+        'params' => ['name' => 'start-project', 'arguments' => new stdClass],
+    ]);
+
+    expect($body['result']['isError'])->toBeFalse();
+    $payload = json_decode($body['result']['content'][0]['text'], true);
+
+    // Backend choice is front-and-centre; all three paths are present.
+    expect($payload)->toHaveKeys(['first_decision', 'ui_is_universal', 'mirror_strategy', 'backends', 'next_steps']);
+    expect($payload['backends'])->toHaveKeys(['php', 'node', 'other']);
+
+    // The PHP <-> Node mirror pairs are accurate.
+    $catalog = collect($payload['mirror_strategy']['pairs'])->firstWhere('php', 'particle-academy/laravel-catalog');
+    expect($catalog['node'])->toBe('@particle-academy/fancy-catalog');
+});
+
+it('start-project focuses on one backend when given', function () {
+    $body = rpc([
+        'jsonrpc' => '2.0',
+        'id' => 12,
+        'method' => 'tools/call',
+        'params' => ['name' => 'start-project', 'arguments' => ['backend' => 'node']],
+    ]);
+
+    expect($body['result']['isError'])->toBeFalse();
+    $payload = json_decode($body['result']['content'][0]['text'], true);
+    expect(array_keys($payload['backends']))->toBe(['node']);
+    expect($payload['backends']['node']['label'])->toContain('Node');
+    // Node uses the JS mirror of the catalog package.
+    expect($payload['backends']['node']['server_packages']['catalog (Stripe products/prices/checkout)'])
+        ->toBe('@particle-academy/fancy-catalog');
+});

@@ -8,6 +8,7 @@ use App\Mcp\Tools\GetComponent;
 use App\Mcp\Tools\InstallInstructions;
 use App\Mcp\Tools\ListComponents;
 use App\Mcp\Tools\SearchComponents;
+use App\Mcp\Tools\StartProject;
 use Laravel\Mcp\Server;
 use Laravel\Mcp\Server\Attributes\Instructions;
 use Laravel\Mcp\Server\Attributes\Name;
@@ -19,6 +20,14 @@ use Laravel\Mcp\Server\Attributes\Version;
 The Fancy UI install-MCP. Lets you browse, search, and install components from
 the Fancy UI registry (~100 React + PHP primitives across the full suite — the
 UI packages plus the headless companion packages like holy-sheet and dark-slide).
+
+Starting a NEW project (or unsure where to begin)? Call `start_project` FIRST.
+It leads with the one decision that shapes everything else — your BACKEND: PHP
+(Laravel + Inertia), Node / TypeScript, or another language — and returns the
+right stack + server-side packages for each. The React UI is identical on every
+backend; only the server layer differs, and each server capability (catalog,
+feature gating, xlsx/pptx, analytics, …) ships as a per-language "mirror" package
+(PHP + Node today; more languages on the roadmap).
 
 Workflow:
 1. Use `list_components` to see everything available, or `search_components`
@@ -64,6 +73,7 @@ TXT)]
 class FancyUiRegistry extends Server
 {
     protected array $tools = [
+        StartProject::class,
         ListComponents::class,
         SearchComponents::class,
         GetComponent::class,

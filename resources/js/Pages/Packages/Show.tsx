@@ -18,14 +18,20 @@ type Pkg = {
     npm?: string | null;
     composer?: string | null;
     download?: string | null;
-    repo: string;
+    /** Vendorable-block install command, e.g. `npx fancy-ui add catalog-fms`. */
+    cli?: string | null;
+    repo?: string;
     core?: boolean;
     group?: "core" | "human" | "companion";
     accent?: string;
     ecosystem?: "ts" | "php" | "polyglot";
-    kind?: "ui" | "bridge" | "headless";
+    kind?: "ui" | "bridge" | "headless" | "block";
     components?: Component[];
     peers?: string[];
+    /** Related package slugs to link ("Pairs with"). */
+    pairs?: string[];
+    /** Starter-kit slug that ships this offering as a full app. */
+    kit?: string | null;
     api?: ApiEntry[];
 };
 
@@ -65,7 +71,8 @@ function kindChip(pkg: Pkg): string {
     if (pkg.kind === "bridge") return "Bridge";
     if (pkg.kind === "headless") return "Headless · no UI";
     const n = pkg.components?.length ?? 0;
-    return n > 0 ? `UI · ${n} component${n === 1 ? "" : "s"}` : "UI";
+    const label = pkg.kind === "block" ? "Block" : "UI";
+    return n > 0 ? `${label} · ${n} component${n === 1 ? "" : "s"}` : label;
 }
 
 export default function PackagesShow({
@@ -98,7 +105,7 @@ export default function PackagesShow({
                     <span className="pkg-glyph pkg-hero__glyph">{initials(pkg.name)}</span>
                     <div className="pkg-hero__main">
                         <h1 className="pkg-hero__name">{pkg.name}</h1>
-                        <div className="pkg-hero__id">{pkg.npm ?? pkg.composer ?? pkg.repo}</div>
+                        <div className="pkg-hero__id">{pkg.npm ?? pkg.composer ?? pkg.cli ?? pkg.repo}</div>
                         <p className="pkg-hero__tagline">{pkg.tagline}</p>
                         <div className="pkg-hero__meta">
                             <span className="pkg-eco" data-eco={eco}>{ECO_LABEL[eco]}</span>
@@ -114,19 +121,41 @@ export default function PackagesShow({
                 {/* ── Install card ─────────────────────────────────────── */}
                 <InstallCard pkg={pkg} eco={eco} />
 
+                {pkg.kit && (
+                    <div className="mt-2 text-sm">
+                        <span className="text-[var(--fg-3)]">Want a full app to start from? </span>
+                        <Link
+                            href={`/starter-kits/${pkg.kit}`}
+                            className="font-medium"
+                            style={{ color: "color-mix(in oklch, var(--accent) 80%, var(--fg-1))" }}
+                        >
+                            Grab the {pkg.kit} starter kit →
+                        </Link>
+                    </div>
+                )}
+
                 {/* ── Doc links + peers ────────────────────────────────── */}
                 <div className="pkg-doclinks">
-                    <a className="pkg-doclink" href={`https://github.com/${pkg.repo}#readme`} target="_blank" rel="noopener">README →</a>
-                    <a className="pkg-doclink" href={`https://github.com/${pkg.repo}`} target="_blank" rel="noopener">GitHub →</a>
+                    {pkg.repo && <a className="pkg-doclink" href={`https://github.com/${pkg.repo}#readme`} target="_blank" rel="noopener">README →</a>}
+                    {pkg.repo && <a className="pkg-doclink" href={`https://github.com/${pkg.repo}`} target="_blank" rel="noopener">GitHub →</a>}
                     {pkg.npm && <a className="pkg-doclink" href={`https://www.npmjs.com/package/${pkg.npm}`} target="_blank" rel="noopener">npm →</a>}
                     {pkg.composer && <a className="pkg-doclink" href={`https://packagist.org/packages/${pkg.composer}`} target="_blank" rel="noopener">Packagist →</a>}
-                    <a className="pkg-doclink" href={`https://github.com/${pkg.repo}/issues`} target="_blank" rel="noopener">Issues →</a>
+                    {pkg.repo && <a className="pkg-doclink" href={`https://github.com/${pkg.repo}/issues`} target="_blank" rel="noopener">Issues →</a>}
+                    {pkg.cli && <a className="pkg-doclink" href={`/r/${pkg.slug}.json`} target="_blank" rel="noopener">Registry JSON →</a>}
                 </div>
                 {pkg.peers && pkg.peers.length > 0 && (
                     <div className="pkg-peers">
                         <span className="pkg-peers__label">Peers</span>
                         {pkg.peers.map((peer) => (
                             <span key={peer} className="pkg-peer">{peer}</span>
+                        ))}
+                    </div>
+                )}
+                {pkg.pairs && pkg.pairs.length > 0 && (
+                    <div className="pkg-peers">
+                        <span className="pkg-peers__label">Pairs with</span>
+                        {pkg.pairs.map((p) => (
+                            <Link key={p} href={`/packages/${p}`} className="pkg-peer" style={{ textDecoration: "none" }}>{p}</Link>
                         ))}
                     </div>
                 )}
@@ -179,6 +208,7 @@ export default function PackagesShow({
 function InstallCard({ pkg, eco }: { pkg: Pkg; eco: NonNullable<Pkg["ecosystem"]> }) {
     type Tab = { id: string; cmd: string };
     const tabs: Tab[] = [];
+    if (pkg.cli) tabs.push({ id: "fancy-ui", cmd: pkg.cli });
     if (pkg.npm) {
         tabs.push({ id: "npm", cmd: `npm install ${pkg.npm}` });
         tabs.push({ id: "pnpm", cmd: `pnpm add ${pkg.npm}` });

@@ -1,4 +1,4 @@
-import { Head } from "@inertiajs/react";
+import { Head, Link } from "@inertiajs/react";
 import { useState } from "react";
 import { Button, Badge, Breadcrumbs, Card, FauxClient, Heading, Text } from "@particle-academy/react-fancy";
 import { Layout } from "../Layout";
@@ -46,7 +46,10 @@ export default function StarterKitsShow({ kit }: { kit: Kit }) {
                     </div>
                     <Text className="mt-2 max-w-3xl !text-zinc-600 dark:!text-zinc-300">{kit.blurb}</Text>
                     <Text size="xs" className="mt-2 !font-mono !text-zinc-500">
-                        headline package: @particle-academy/{kit.pkg}
+                        built with{" "}
+                        <Link href={`/packages/${kit.pkg}`} className="!font-medium !text-violet-500 hover:underline">
+                            {kit.pkg}
+                        </Link>
                     </Text>
                 </div>
                 <div className="flex flex-wrap items-stretch gap-2">

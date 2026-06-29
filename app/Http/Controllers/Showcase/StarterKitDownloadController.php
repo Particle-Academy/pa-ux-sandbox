@@ -91,12 +91,20 @@ class StarterKitDownloadController extends Controller
     /** @param  array<string, string>  $kit */
     private function readme(array $kit): string
     {
+        $bundles = in_array($kit['slug'], self::BUNDLES_CATALOG_FMS, true);
+        $headline = $bundles
+            ? 'This kit vendors the **catalog-fms** UI block — the same components you can drop into any project with `npx fancy-ui add catalog-fms`.'
+            : "Headline package: `@particle-academy/{$kit['pkg']}`.";
+        $depLine = $bundles
+            ? '- The **catalog-fms** components are vendored into `src/components/fancy/catalog-fms/` — edit them freely (they only need `@particle-academy/react-fancy`).'
+            : "- `@particle-academy/{$kit['pkg']}` — the headline package this kit is built on";
+
         return <<<MD
 # {$kit['name']} — Fancy UI starter
 
 {$kit['blurb']}
 
-Built from the [Fancy UI](https://ui.particle.academy) component set. Headline package: `@particle-academy/{$kit['pkg']}`.
+Built from the [Fancy UI](https://ui.particle.academy) component set. {$headline}
 
 ## Quick start
 
@@ -121,7 +129,7 @@ That's it. The starter is a stock Vite + React 19 + Tailwind v4 project.
 
 - `react`, `react-dom` (v19)
 - `@particle-academy/react-fancy` — the Tailwind v4 component library
-- `@particle-academy/{$kit['pkg']}` — the headline package this kit is built on
+{$depLine}
 
 All versions are pinned to the same releases the live showcase runs, so what you
 download matches what you see at ui.particle.academy.

@@ -85,6 +85,68 @@ const Pill = ({ children, className = "" }: { children: ReactNode; className?: s
 );
 
 const PREVIEWS: Record<string, PreviewFn> = {
+    // ─── catalog-fms (block) ─────────────────────────────────────────────────
+    "catalog-fms/pricing-table": () => (
+        <div className="grid w-full max-w-[20rem] grid-cols-3 gap-1.5 text-[9px]">
+            {[
+                { n: "Free", p: "$0", rec: false },
+                { n: "Pro", p: "$29", rec: true },
+                { n: "Team", p: "$99", rec: false },
+            ].map((t) => (
+                <div key={t.n} className={`flex flex-col gap-1 rounded-md border p-2 ${t.rec ? "border-blue-500 ring-1 ring-blue-500" : "border-zinc-200 dark:border-zinc-700"}`}>
+                    <span className="font-semibold text-zinc-700 dark:text-zinc-200">{t.n}</span>
+                    <span className="text-sm font-bold text-zinc-900 dark:text-zinc-100">{t.p}<span className="text-[8px] font-normal text-zinc-400">/mo</span></span>
+                    <span className={`mt-1 rounded px-1 py-0.5 text-center text-white ${t.rec ? "bg-blue-500" : "bg-zinc-400 dark:bg-zinc-600"}`}>Choose</span>
+                </div>
+            ))}
+        </div>
+    ),
+    "catalog-fms/feature-matrix": () => (
+        <div className="w-full max-w-[18rem] overflow-hidden rounded-md border border-zinc-200 text-[10px] dark:border-zinc-700">
+            <div className="grid grid-cols-4 border-b border-zinc-200 bg-zinc-50 px-2 py-1 font-medium text-zinc-500 dark:border-zinc-700 dark:bg-zinc-800/50">
+                <span>Feature</span><span className="text-center">Free</span><span className="text-center">Pro</span><span className="text-center">Team</span>
+            </div>
+            {[
+                ["Projects", "1", "10", "∞"],
+                ["SSO", "—", "—", "✓"],
+                ["Audit log", "—", "✓", "✓"],
+            ].map((r) => (
+                <div key={r[0]} className="grid grid-cols-4 border-b border-zinc-100 px-2 py-1 last:border-0 dark:border-zinc-800">
+                    <span className="text-zinc-600 dark:text-zinc-300">{r[0]}</span>
+                    {r.slice(1).map((c, i) => (
+                        <span key={i} className="text-center text-zinc-500">
+                            {c === "✓" ? <Check size={11} className="mx-auto text-green-500" /> : c}
+                        </span>
+                    ))}
+                </div>
+            ))}
+        </div>
+    ),
+    "catalog-fms/feature-gate": () => (
+        <div className="w-full max-w-[16rem] rounded-lg border-l-4 border-blue-500 bg-blue-50 p-3 text-[10px] dark:bg-blue-950/40">
+            <div className="font-medium text-zinc-800 dark:text-zinc-100">Audit log is not in your plan.</div>
+            <div className="mt-0.5 text-zinc-500">Upgrade to unlock it.</div>
+            <span className="mt-2 inline-block rounded bg-blue-500 px-2 py-0.5 text-white">Upgrade</span>
+        </div>
+    ),
+    "catalog-fms/plan-features-editor": () => (
+        <div className="w-full max-w-[18rem] divide-y divide-zinc-100 rounded-md border border-zinc-200 text-[10px] dark:divide-zinc-800 dark:border-zinc-700">
+            {([
+                ["Projects", true, "10"],
+                ["SSO / SAML", false, null],
+                ["Audit log", true, null],
+            ] as [string, boolean, string | null][]).map(([name, on, limit]) => (
+                <div key={name} className="flex items-center gap-2 px-2 py-1.5">
+                    <span className="flex-1 font-medium text-zinc-700 dark:text-zinc-200">{name}</span>
+                    {limit && <span className="rounded border border-zinc-200 px-1 text-zinc-500 dark:border-zinc-700">{limit}</span>}
+                    <span className={`relative h-3 w-5 rounded-full ${on ? "bg-blue-500" : "bg-zinc-300 dark:bg-zinc-600"}`}>
+                        <span className={`absolute top-0.5 h-2 w-2 rounded-full bg-white ${on ? "right-0.5" : "left-0.5"}`} />
+                    </span>
+                </div>
+            ))}
+        </div>
+    ),
+
     "fancy-term/terminal": () => (
         <div className="h-32 w-full max-w-[20rem] overflow-hidden rounded-md border border-zinc-800 bg-zinc-950 font-mono text-[9px] leading-relaxed text-zinc-300">
             <div className="flex items-center gap-1.5 border-b border-zinc-800 bg-zinc-900 px-2 py-1 text-[8px]">

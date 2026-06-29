@@ -20,7 +20,7 @@ class StarterKitController extends Controller
             ['slug' => 'fancy-code', 'name' => 'Embedded IDE', 'pkg' => 'fancy-code', 'blurb' => 'CodeEditor + TreeNav IDE layout.'],
             ['slug' => 'fancy-sheets', 'name' => 'Spreadsheet Studio', 'pkg' => 'fancy-sheets', 'blurb' => 'Multi-sheet workbook with formulas.'],
             ['slug' => 'fancy-echarts', 'name' => 'Charts Studio', 'pkg' => 'fancy-echarts', 'blurb' => 'Real ECharts in four cuts: trends, composition, hierarchy, flow. Stacked area, donut + bar, sunburst, sankey.'],
-            ['slug' => 'shop-n-sub', 'name' => 'Shop-n-Sub', 'pkg' => 'react-fancy', 'blurb' => 'A personal-Patreon creator app: membership tiers + per-tier perks (catalog + FMS), a members area where perks unlock live as you subscribe, a one-time shop, and a creator studio to configure tiers. Built on react-fancy + the bundled catalog-fms components (PricingTable, FeatureMatrix, FeatureGate, PlanFeaturesEditor).'],
+            ['slug' => 'shop-n-sub', 'name' => 'Shop-n-Sub', 'pkg' => 'catalog-fms', 'blurb' => 'A personal-Patreon creator app: membership tiers + per-tier perks (catalog + FMS), a members area where perks unlock live as you subscribe, a one-time shop, and a creator studio to configure tiers. Built on the catalog-fms UI block (PricingTable, FeatureMatrix, FeatureGate, PlanFeaturesEditor).'],
         ];
     }
 

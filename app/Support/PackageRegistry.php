@@ -65,6 +65,8 @@ class PackageRegistry
         'fancy-3d-three' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#6366f1'],
         'fancy-motion' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#f43f5e'],
         'fancy-cms-ui' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#0ea5e9'],
+        // Vendorable block (npx fancy-ui add) — not a published package.
+        'catalog-fms' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'block', 'accent' => '#0ea5e9'],
 
         // ── Companion packages ───────────────────────────────────────────────
         // react-fancy UI companions — appear in the companion tier but still UI.
@@ -122,6 +124,7 @@ class PackageRegistry
             self::fancySheets(),
             self::fancySlides(),
             self::fancyCode(),
+            self::catalogFms(),
             self::fancyTerm(),
             self::fancyDiff(),
             self::fancyPixel(),
@@ -649,6 +652,35 @@ class PackageRegistry
                 ['slug' => 'code-editor', 'name' => 'CodeEditor', 'blurb' => 'Editor surface.'],
                 ['slug' => 'markdown-editor', 'name' => 'MarkdownEditor', 'blurb' => 'Markdown editor + live preview.'],
                 ['slug' => 'file-viewer', 'name' => 'FileViewer', 'blurb' => 'Unified file viewer — CodeEditor for text, react-fancy MediaViewer for image / video / audio / PDF; resolveFileKind decides.'],
+            ],
+        ];
+    }
+
+    /**
+     * Catalog + FMS — a vendorable React UI block (`npx fancy-ui add
+     * catalog-fms`) + the Shop-n-Sub starter kit. Not a published npm/Composer
+     * package: the components are authored in this showcase and shipped through
+     * the fancy-ui registry, so the entry carries `cli` (the add command) and
+     * `kit` / `pairs` instead of `npm` / `repo`. `kind: block` renders the
+     * component grid + the block landing in Packages/Show.
+     *
+     * @return array<string, mixed>
+     */
+    private static function catalogFms(): array
+    {
+        return [
+            'slug' => 'catalog-fms',
+            'name' => 'Catalog + FMS',
+            'tagline' => 'Storefront + admin UI for subscriptions and metered features — pricing tables, a plan-comparison matrix, feature gating, and a plan/perks editor. Vendor the React block, or grab the Shop-n-Sub starter kit.',
+            'language' => 'TypeScript',
+            'cli' => 'npx fancy-ui add catalog-fms',
+            'kit' => 'shop-n-sub',
+            'pairs' => ['laravel-catalog', 'laravel-fms', 'fancy-catalog-js', 'fancy-features-js'],
+            'components' => [
+                ['slug' => 'pricing-table', 'name' => 'PricingTable', 'blurb' => 'Plan cards with a controlled billing-interval toggle + checkout CTA.'],
+                ['slug' => 'feature-matrix', 'name' => 'FeatureMatrix', 'blurb' => 'Plan × feature comparison — boolean check / resource limit.'],
+                ['slug' => 'feature-gate', 'name' => 'FeatureGate', 'blurb' => 'Gate content behind an FMS entitlement (access + quota) with an upgrade prompt.'],
+                ['slug' => 'plan-features-editor', 'name' => 'PlanFeaturesEditor', 'blurb' => 'Admin editor to attach features + set per-plan limits.'],
             ],
         ];
     }

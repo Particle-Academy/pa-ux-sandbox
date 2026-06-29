@@ -59,7 +59,8 @@ class PackagesController extends Controller
             'npm' => $p['npm'] ?? null,
             'composer' => $p['composer'] ?? null,
             'download' => $p['download'] ?? null,
-            'repoUrl' => "https://github.com/{$p['repo']}",
+            'cli' => $p['cli'] ?? null,
+            'repoUrl' => isset($p['repo']) ? "https://github.com/{$p['repo']}" : null,
             'npmUrl' => isset($p['npm']) ? "https://www.npmjs.com/package/{$p['npm']}" : null,
             'packagistUrl' => isset($p['packagist']) ? "https://packagist.org/packages/{$p['packagist']}" : null,
         ];

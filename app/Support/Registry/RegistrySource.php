@@ -82,33 +82,45 @@ class RegistrySource
 
     /**
      * Guarantee every item name is globally unique (it is the `/r/{name}.json`
-     * slug + the `find()` key). Later collisions are disambiguated with the
-     * package slug, so mirrored adapters (fancy-3d-babylon vs fancy-3d-three
-     * both export `stage`/`monitor`/`engine`) and cross-package dupes
-     * (react-fancy vs fancy-whiteboard `sticky-note`) stay individually
-     * addressable instead of shadowing each other.
+     * slug + the `find()` key). A name shared by more than one package is
+     * package-qualified for *every* occurrence — symmetrically, with no arbitrary
+     * "first package keeps the bare name". So mirrored adapters (fancy-3d-babylon
+     * vs fancy-3d-three, both exporting `stage`/`monitor`/`card-3d`/`engine`) and
+     * cross-package dupes (react-fancy vs fancy-whiteboard `sticky-note`) become
+     * `fancy-3d-babylon-stage` + `fancy-3d-three-stage`, `react-fancy-sticky-note`
+     * + `fancy-whiteboard-sticky-note` — never one short + one prefixed. Names
+     * unique across the whole registry keep their bare slug.
      *
      * @param  list<RegistryItem>  $items
      * @return list<RegistryItem>
      */
     private function ensureUniqueNames(array $items): array
     {
+        // Pass 1 — count how many items carry each bare name.
+        $counts = [];
+        foreach ($items as $item) {
+            $counts[$item->name] = ($counts[$item->name] ?? 0) + 1;
+        }
+
+        // Pass 2 — package-qualify every shared name (both sides); keep unique
+        // names bare. A numeric suffix guards any residual clash.
         $seen = [];
         foreach ($items as $i => $item) {
-            if (! isset($seen[$item->name])) {
-                $seen[$item->name] = true;
+            $base = ($counts[$item->name] ?? 0) > 1
+                ? $item->package.'-'.$item->name
+                : $item->name;
 
-                continue;
-            }
-            $alt = $item->package.'-'.$item->name;
-            $candidate = $alt;
+            $candidate = $base;
             $n = 2;
             while (isset($seen[$candidate])) {
-                $candidate = $alt.'-'.$n;
+                $candidate = $base.'-'.$n;
                 $n++;
             }
             $seen[$candidate] = true;
-            $items[$i] = $item->withName($candidate);
+
+            if ($candidate !== $item->name) {
+                $items[$i] = $item->withName($candidate);
+            }
         }
 
         return $items;

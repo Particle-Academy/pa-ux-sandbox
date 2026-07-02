@@ -66,6 +66,22 @@ it('returns 404 for unknown registry slugs', function () {
     expect($response->json('error'))->toContain('not found');
 });
 
+it('package-qualifies component names shared across packages — symmetrically', function () {
+    // stage/monitor/card-3d/engine exist in BOTH fancy-3d-babylon and fancy-3d-three,
+    // so neither keeps the bare slug — both are package-qualified (no arbitrary winner).
+    $this->get('/r/stage.json')->assertStatus(404);
+    $this->get('/r/fancy-3d-babylon-stage.json')->assertOk();
+    $this->get('/r/fancy-3d-three-stage.json')->assertOk();
+
+    // sticky-note is in react-fancy AND fancy-whiteboard — both qualified too.
+    $this->get('/r/sticky-note.json')->assertStatus(404);
+    $this->get('/r/react-fancy-sticky-note.json')->assertOk();
+    $this->get('/r/fancy-whiteboard-sticky-note.json')->assertOk();
+
+    // a name unique to one package keeps its bare slug.
+    $this->get('/r/card.json')->assertOk();
+});
+
 it('parses npm dependencies and filters peer deps', function () {
     $body = $this->get('/r/card.json')->json();
 

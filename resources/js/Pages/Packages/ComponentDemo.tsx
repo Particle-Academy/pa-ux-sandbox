@@ -60,7 +60,6 @@ import {
 import { CodeEditor, MarkdownEditor } from "@particle-academy/fancy-code";
 import "@particle-academy/fancy-code/styles.css";
 import { Terminal, type TerminalHandle, BUILTIN_SHELLS, type ShellProfile } from "@particle-academy/fancy-term";
-import { registerTerminalBridge, type TerminalRef } from "@particle-academy/agent-integrations/bridges/terminal";
 import "@xterm/xterm/css/xterm.css";
 import { Board, StickyNote, CursorLayer, Shape, Connector, Drawing } from "@particle-academy/fancy-whiteboard";
 import "@particle-academy/fancy-whiteboard/styles.css";
@@ -2345,7 +2344,7 @@ function FancyTerminalDemo() {
     return (
         <DemoNote
             outOfBox="The real <Terminal> (xterm.js) with the Fancy dark theme + shell bar. NEW in 0.3.0: select text and Ctrl+Shift+C (Cmd+C on Mac) copies it; paste pastes; right-click for the Copy/Paste/Select all/Clear menu (customized here with a 'Send selection to agent' item). Plain Ctrl+C stays SIGINT. Buttons write through the same TerminalHandle an MCP bridge drives."
-            demo="The banner / prompt / echo / fake output are scaffolding — no real shell. Copy/paste + the context menu are real (try right-clicking). onPaste surfaces pasted IMAGES (a shell can't draw them) — paste a screenshot to see it noted. Below: a multi-terminal scene where an agent reaches into another terminal via the bridge."
+            demo="The banner / prompt / echo / fake output are scaffolding — no real shell. Copy/paste + the context menu are real (try right-clicking). onPaste surfaces pasted IMAGES (a shell can't draw them) — paste a screenshot to see it noted."
         >
             <div style={{ height: 280 }} className="overflow-hidden rounded-md border border-zinc-800">
                 <Terminal
@@ -2388,97 +2387,7 @@ function FancyTerminalDemo() {
                     Reset
                 </Button>
             </div>
-
-            <MultiTerminalReach />
         </DemoNote>
-    );
-}
-
-/**
- * Multi-terminal reach — two terminals on one "screen". An in-process
- * registerTerminalBridge({ terminals }) (the real bridge, driven by a tiny
- * in-memory tool host) lets the agent `terminal_list` then `terminal_write` into
- * a terminal that is NOT the active one — "reaching into another terminal in the
- * same screen" exactly as an embedded agent would over a session MCP.
- */
-function MultiTerminalReach() {
-    const buildRef = useRef<TerminalHandle>(null);
-    const serverRef = useRef<TerminalHandle>(null);
-    const toolsRef = useRef<Map<string, (a: Record<string, unknown>) => unknown>>(new Map());
-    const [log, setLog] = useState<string[]>([]);
-
-    useEffect(() => {
-        const tools = toolsRef.current;
-        const host = {
-            registerTool: (def: { name: string }, handler: (a: Record<string, unknown>) => unknown) => {
-                tools.set(def.name, handler);
-                return () => tools.delete(def.name);
-            },
-        };
-        const mkRef = (id: string, label: string, get: () => TerminalHandle | null, active: boolean): TerminalRef => ({
-            id,
-            label,
-            active,
-            getBuffer: () => get()?.getBuffer() ?? "",
-            write: (d) => get()?.write(d),
-            clear: () => get()?.clear(),
-            getSelection: () => get()?.getSelection() ?? "",
-        });
-        const bridge = registerTerminalBridge(host as never, {
-            terminals: () => [
-                mkRef("build", "Build", () => buildRef.current, false),
-                mkRef("server", "Server", () => serverRef.current, true),
-            ],
-        });
-        return () => bridge.dispose();
-    }, []);
-
-    const agentReach = async () => {
-        const tools = toolsRef.current;
-        const listRes = (await tools.get("terminal_list")?.({})) as { structuredContent?: { terminals?: { id: string }[] } };
-        const ids = (listRes?.structuredContent?.terminals ?? []).map((t) => t.id).join(", ");
-        setLog((l) => [...l, `agent → terminal_list → [${ids}]  (active = "server")`]);
-        await tools.get("terminal_write")?.({
-            terminal: "build",
-            data: '\r\n\x1b[38;5;78m# written by the agent — into the BUILD terminal\x1b[0m\r\nbuild> ',
-        });
-        setLog((l) => [...l, 'agent → terminal_write { terminal:"build" } — reached the OTHER terminal ✓']);
-    };
-
-    const echo = (get: () => TerminalHandle | null) => (d: string) => {
-        const t = get();
-        if (!t) return;
-        if (d === "\r") t.write("\r\n");
-        else if (d === "\x7f") t.write("\b \b");
-        else if (d >= " ") t.write(d);
-    };
-
-    return (
-        <div className="mt-5 rounded-md border border-zinc-800 p-3">
-            <div className="mb-2 flex items-center justify-between gap-2">
-                <span className="text-xs font-semibold text-zinc-300">Multi-terminal agent reach</span>
-                <Button size="sm" color="violet" icon="bot" onClick={agentReach}>Agent: write into the Build terminal</Button>
-            </div>
-            <div className="grid grid-cols-2 gap-2">
-                <div>
-                    <div className="mb-1 text-[11px] font-mono text-zinc-500">build</div>
-                    <div style={{ height: 130 }} className="overflow-hidden rounded border border-zinc-800">
-                        <Terminal ref={buildRef} initialOutput="build> " onData={echo(() => buildRef.current)} />
-                    </div>
-                </div>
-                <div>
-                    <div className="mb-1 text-[11px] font-mono text-zinc-500">server <span className="text-emerald-500">· active</span></div>
-                    <div style={{ height: 130 }} className="overflow-hidden rounded border border-zinc-800">
-                        <Terminal ref={serverRef} initialOutput="server> " onData={echo(() => serverRef.current)} />
-                    </div>
-                </div>
-            </div>
-            {log.length > 0 && (
-                <div className="mt-2 space-y-0.5 font-mono text-[11px] text-zinc-400">
-                    {log.map((l, i) => <div key={i}>{l}</div>)}
-                </div>
-            )}
-        </div>
     );
 }
 

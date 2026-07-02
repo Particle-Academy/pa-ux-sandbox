@@ -25,7 +25,13 @@ import {
     TimeGrid,
     Timeline,
     Tooltip,
+    MediaViewer,
+    ImageViewer,
+    VideoViewer,
+    AudioViewer,
+    PdfViewer,
 } from "@particle-academy/react-fancy";
+import { FileViewer } from "@particle-academy/fancy-code";
 import { EChart } from "@particle-academy/fancy-echarts";
 import { ArtBoard, ArtPiece } from "@particle-academy/fancy-artboard";
 import "@particle-academy/fancy-artboard/styles.css";
@@ -70,6 +76,18 @@ import {
 } from "lucide-react";
 
 type PreviewFn = () => ReactNode;
+
+// Sample media for the viewer previews — local assets + a tiny data-URI so the
+// cards render self-contained (no external network).
+const SAMPLE_IMG = "/showcase-shots/fancy-echarts.png";
+const SAMPLE_POSTER = "/showcase-shots/fancy-slides.png";
+const SAMPLE_PDF = "/showcase-assets/file-viewer/sample.pdf";
+const SILENT_WAV =
+    "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=";
+const SAMPLE_TSX = `export function Button({ label }: { label: string }) {
+  return <button className="btn">{label}</button>;
+}
+`;
 
 export function getComponentPreview(pkg: string, slug: string): PreviewFn | null {
     return PREVIEWS[`${pkg}/${slug}`] ?? null;
@@ -160,6 +178,39 @@ const PREVIEWS: Record<string, PreviewFn> = {
             </div>
         </div>
     ),
+
+    // ─── react-fancy: media viewers + fancy-code file viewer ──────────────────
+    "react-fancy/media-viewer": () => (
+        <div className="h-36 w-full max-w-[20rem] overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
+            <MediaViewer src={SAMPLE_IMG} alt="Auto-detected from src/mime" style={{ height: "100%" }} />
+        </div>
+    ),
+    "react-fancy/image-viewer": () => (
+        <div className="h-36 w-full max-w-[20rem] overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
+            <ImageViewer src={SAMPLE_IMG} alt="Zoom + pan" fit="cover" style={{ height: "100%" }} />
+        </div>
+    ),
+    "react-fancy/video-viewer": () => (
+        <div className="h-36 w-full max-w-[20rem] overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
+            <VideoViewer src="" poster={SAMPLE_POSTER} muted controls fit="cover" />
+        </div>
+    ),
+    "react-fancy/audio-viewer": () => (
+        <div className="w-full max-w-[20rem]">
+            <AudioViewer src={SILENT_WAV} title="podcast-ep-12.mp3" />
+        </div>
+    ),
+    "react-fancy/pdf-viewer": () => (
+        <div className="h-36 w-full max-w-[20rem] overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
+            <PdfViewer src={SAMPLE_PDF} title="sample.pdf" />
+        </div>
+    ),
+    "fancy-code/file-viewer": () => (
+        <div className="h-36 w-full max-w-[20rem] overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
+            <FileViewer filename="Button.tsx" value={SAMPLE_TSX} readOnly lineNumbers />
+        </div>
+    ),
+
     "react-fancy/accordion": () => (
         <div className="w-full max-w-[18rem] space-y-1.5 text-xs">
             <div className="rounded-md border border-zinc-200 dark:border-zinc-800">

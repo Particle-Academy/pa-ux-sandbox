@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "da1c38d0f388bdb69ba2fc4010d72e0a",
+    "content-hash": "8cfcbde5e40070fedc59c15a03a04d6b",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -3887,6 +3887,77 @@
                 "source": "https://github.com/Particle-Academy/fancy-heuristics"
             },
             "time": "2026-06-13T03:09:39+00:00"
+        },
+        {
+            "name": "particle-academy/fancy-mlm",
+            "version": "v0.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Particle-Academy/fancy-mlm-php.git",
+                "reference": "e447aa3349f673c5eb3f4a5db4c98c0223bc3153"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Particle-Academy/fancy-mlm-php/zipball/e447aa3349f673c5eb3f4a5db4c98c0223bc3153",
+                "reference": "e447aa3349f673c5eb3f4a5db4c98c0223bc3153",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.2"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^9.0|^10.0|^11.0",
+                "pestphp/pest": "^3.0|^4.0",
+                "phpunit/phpunit": "^10.0|^11.0|^12.0"
+            },
+            "suggest": {
+                "illuminate/support": "Only needed when using the optional Laravel service provider, facade, models, and fun-lab listener. Compatible with 11.x through 13.x. The core FancyMlm engine requires zero framework.",
+                "particle-academy/laravel-catalog": "Anchors monetary commissions to real catalog sales (Cashier webhooks + Stripe metadata).",
+                "particle-academy/laravel-fms": "Models referral tiers as feature groups and scales bonus caps via resource-feature limits.",
+                "particle-academy/laravel-fun-lab": "Enables the gamified referral loop — award upline members when a referral acts."
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "Mlm": "FancyMlm\\Laravel\\Facades\\Mlm"
+                    },
+                    "providers": [
+                        "FancyMlm\\Laravel\\MlmServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "FancyMlm\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Particle Academy",
+                    "homepage": "https://github.com/Particle-Academy"
+                }
+            ],
+            "description": "Framework-agnostic multi-level referral / network-marketing engine for agentic apps. Pure PHP core with an optional Laravel 11-13 bridge and fun-lab / catalog / fms integration.",
+            "homepage": "https://github.com/Particle-Academy/fancy-mlm-php",
+            "keywords": [
+                "agentic",
+                "commissions",
+                "downline",
+                "mlm",
+                "network-marketing",
+                "particle-academy",
+                "referral"
+            ],
+            "support": {
+                "issues": "https://github.com/Particle-Academy/fancy-mlm-php/issues",
+                "source": "https://github.com/Particle-Academy/fancy-mlm-php"
+            },
+            "time": "2026-07-02T23:54:13+00:00"
         },
         {
             "name": "particle-academy/fancy-seo",

@@ -5,7 +5,9 @@ namespace App\Providers;
 use App\Models\Setting;
 use App\Models\User;
 use App\Services\Entitlements;
+use App\Services\Mlm\MlmProgram;
 use App\Ssr\TimeoutHttpGateway;
+use FancyMlm\Plan\CompensationPlan;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -25,6 +27,23 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        // Live, admin-editable MLM compensation plan. The fancy-mlm package binds
+        // CompensationPlan from the static config('mlm.plan'); we rebind it to the
+        // Setting-backed plan MlmProgram owns, so the admin config surface can
+        // switch the downline shape (unilevel / binary / matrix) + tiers at
+        // runtime and the package's engine + facade + fun-lab referral listener
+        // all resolve the live plan on the next request. Rebound in boot() so it
+        // wins over the package provider's register() binding.
+        $this->app->bind(
+            CompensationPlan::class,
+            fn ($app) => $app->make(MlmProgram::class)->plan(),
+        );
+
+        // Scope the auto-referral loop to the demo activity metric so the package's
+        // XpAwarded listener only cascades for network activity — not for every XP
+        // award across the whole sandbox economy (explorer-xp, docs reads, …).
+        config(['mlm.fun_lab.trigger_metrics' => [MlmProgram::ACTIVITY_METRIC]]);
+
         // Bounded-timeout Inertia SSR gateway — overrides the package default
         // (which calls the node daemon with NO HTTP timeout → Laravel's 30s) so a
         // hung/slow SSR daemon fast-fails to client rendering instead of pinning a

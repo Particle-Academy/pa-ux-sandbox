@@ -27,7 +27,7 @@ class PackageRegistry
      * mockup's `pkgdata.jsx` shape: each slug carries
      *   group     — core | human | companion  (which tier it lists under)
      *   ecosystem — ts | php | polyglot        (drives the install-snippet + eco badge)
-     *   kind      — ui | bridge | headless     (UI/bridge render preview tiles; headless render install-snippet tiles)
+     *   kind      — ui | bridge | headless | block  (UI/bridge/block render preview tiles; headless render install-snippet tiles)
      *   accent    — hex                         (the package's signature color: glyph + hero gradient)
      *
      * Groups honor the design (e.g. fancy-seo / fancy-query / fancy-app-update
@@ -58,6 +58,7 @@ class PackageRegistry
         'fancy-diff' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#eab308'],
         'fancy-pixel' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#f97316'],
         'fancy-echarts' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#0ea5e9'],
+        'fancy-mlm-ui' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#14b8a6'],
         'fancy-screens' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#8b5cf6'],
         'fancy-3d' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#6366f1'],
         // 3d adapters — not in the design mockup; sensible fallbacks per the brief.
@@ -91,6 +92,8 @@ class PackageRegistry
         'laravel-catalog' => ['group' => 'companion', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#0ea5e9'],
         'laravel-fms' => ['group' => 'companion', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#f59e0b'],
         'laravel-fun-lab' => ['group' => 'companion', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#f43f5e'],
+        'fancy-mlm' => ['group' => 'companion', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#14b8a6'],
+        'fancy-mlm-js' => ['group' => 'companion', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#14b8a6'],
         // Polyglot single-file client.
         'mcp-relay-client' => ['group' => 'companion', 'ecosystem' => 'polyglot', 'kind' => 'headless', 'accent' => '#22c55e'],
     ];
@@ -129,6 +132,7 @@ class PackageRegistry
             self::fancyDiff(),
             self::fancyPixel(),
             self::fancyEcharts(),
+            self::fancyMlmUi(),
             self::fancyScreens(),
             self::fancy3d(),
             self::fancy3dBabylon(),
@@ -212,6 +216,23 @@ class PackageRegistry
                 'repo' => 'Particle-Academy/laravel-fun-lab',
                 'packagist' => 'particle-academy/laravel-fun-lab',
                 'language' => 'PHP',
+            ],
+            [
+                'slug' => 'fancy-mlm',
+                'name' => 'particle-academy/fancy-mlm',
+                'tagline' => 'Framework-agnostic multi-level referral / network-marketing engine — configurable unilevel / binary / matrix downlines, level decay + tier multipliers, dynamic compression. Pure-PHP core with an optional Laravel bridge + fun-lab / catalog / fms integration. Headless; pairs with @particle-academy/fancy-mlm-ui.',
+                'composer' => 'particle-academy/fancy-mlm',
+                'repo' => 'Particle-Academy/fancy-mlm-php',
+                'packagist' => 'particle-academy/fancy-mlm',
+                'language' => 'PHP',
+            ],
+            [
+                'slug' => 'fancy-mlm-js',
+                'name' => '@particle-academy/fancy-mlm',
+                'tagline' => 'Node/TS mirror of particle-academy/fancy-mlm — the same CompensationPlan JSON + unilevel / binary / matrix trees yield identical rewards, isomorphic (browser or Node). Headless; no UI.',
+                'npm' => '@particle-academy/fancy-mlm',
+                'repo' => 'Particle-Academy/fancy-mlm-js',
+                'language' => 'TypeScript',
             ],
             [
                 'slug' => 'fancy-heuristics',
@@ -714,6 +735,25 @@ class PackageRegistry
                 ['slug' => 'echart', 'name' => 'EChart', 'blurb' => 'Generic chart wrapper.'],
                 ['slug' => 'echart-3d', 'name' => 'EChart3D', 'blurb' => '3D chart wrapper (globe / surface / scatter3D).'],
                 ['slug' => 'echart-graphic', 'name' => 'EChartGraphic', 'blurb' => 'Imperative graphic layer for annotations.'],
+            ],
+        ];
+    }
+
+    /** @return array<string, mixed> */
+    private static function fancyMlmUi(): array
+    {
+        return [
+            'slug' => 'fancy-mlm-ui',
+            'name' => 'fancy-mlm-ui',
+            'tagline' => 'React surfaces for the fancy-mlm referral engine — a controlled DownlineTree (unilevel / binary / matrix), a CommissionStatement ledger, and RankProgress toward the next tier. Pairs with particle-academy/fancy-mlm (PHP) or @particle-academy/fancy-mlm (Node).',
+            'npm' => '@particle-academy/fancy-mlm-ui',
+            'repo' => 'Particle-Academy/fancy-mlm-ui',
+            'language' => 'TypeScript',
+            'pairs' => ['fancy-mlm', 'fancy-mlm-js'],
+            'components' => [
+                ['slug' => 'downline-tree', 'name' => 'DownlineTree', 'blurb' => 'Controlled network tree — collapsible nodes, per-member tier/volume, selection + onChange. Renders unilevel, binary, and matrix shapes from a flat member list.'],
+                ['slug' => 'commission-statement', 'name' => 'CommissionStatement', 'blurb' => 'Per-period earnings ledger — level, source member, tier multiplier, and amount per row, with a paid/pending status and totals.'],
+                ['slug' => 'rank-progress', 'name' => 'RankProgress', 'blurb' => 'Progress toward the next rank/tier — current volume vs threshold, with the requirement gap.'],
             ],
         ];
     }

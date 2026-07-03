@@ -70,6 +70,10 @@ class DatabaseSeeder extends Seeder
         $this->call(FunLabSeeder::class);
         $this->command->newLine();
 
+        // fancy-mlm demo referral network (mlm_members: sponsor + placement trees).
+        $this->call(MlmNetworkSeeder::class);
+        $this->command->newLine();
+
         // Coin shop catalog (cosmetics + services).
         $this->command->info('Seeding coin shop...');
         $this->call(ShopSeeder::class);

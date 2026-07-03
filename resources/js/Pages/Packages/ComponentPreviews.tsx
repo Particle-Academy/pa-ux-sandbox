@@ -37,6 +37,8 @@ import { ArtBoard, ArtPiece } from "@particle-academy/fancy-artboard";
 import "@particle-academy/fancy-artboard/styles.css";
 import { Slide as FsSlide, defaultTheme as fsDefaultTheme } from "@particle-academy/fancy-slides";
 import "@particle-academy/fancy-slides/styles.css";
+import { DownlineTree, CommissionStatement, RankProgress } from "@particle-academy/fancy-mlm-ui";
+import "@particle-academy/fancy-mlm-ui/styles.css";
 import {
     CANONICAL_SLIDE,
     CANONICAL_DECK,
@@ -102,7 +104,45 @@ const Pill = ({ children, className = "" }: { children: ReactNode; className?: s
     </span>
 );
 
+const MLM_TIER_COLOR: Record<string, "orange" | "zinc" | "amber" | "violet" | "slate"> = {
+    bronze: "orange", silver: "zinc", gold: "amber", diamond: "violet",
+};
+const mlmTierColor = (t?: string) => (t && MLM_TIER_COLOR[t]) || "slate";
+
 const PREVIEWS: Record<string, PreviewFn> = {
+    // ─── fancy-mlm-ui ────────────────────────────────────────────────────────
+    "fancy-mlm-ui/downline-tree": () => (
+        <div className="w-full max-w-[19rem] scale-90 text-left">
+            <DownlineTree
+                value={[
+                    { id: "you", label: "You", tier: "gold" },
+                    { id: "a", sponsorId: "you", label: "Ada", tier: "silver" },
+                    { id: "b", sponsorId: "you", label: "Bo", tier: "bronze" },
+                    { id: "a1", sponsorId: "a", label: "Cy", tier: "bronze" },
+                    { id: "a2", sponsorId: "a", label: "Di", tier: "bronze", active: false },
+                ]}
+                tierColor={mlmTierColor}
+            />
+        </div>
+    ),
+    "fancy-mlm-ui/commission-statement": () => (
+        <div className="w-full max-w-[19rem] scale-90">
+            <CommissionStatement
+                rows={[
+                    { id: "1", level: 1, tier: "gold", amount: 150, status: "paid", recipientLabel: "L1 · gold" },
+                    { id: "2", level: 2, tier: "silver", amount: 62.5, status: "paid", recipientLabel: "L2 · silver" },
+                    { id: "3", level: 3, tier: "bronze", amount: 25, status: "pending", recipientLabel: "L3 · bronze" },
+                ]}
+                formatAmount={(n) => `${Math.round(n)} pts`}
+            />
+        </div>
+    ),
+    "fancy-mlm-ui/rank-progress": () => (
+        <div className="w-full max-w-[16rem]">
+            <RankProgress tier="gold" nextTier="diamond" value={7} target={12} unit="team members" />
+        </div>
+    ),
+
     // ─── catalog-fms (block) ─────────────────────────────────────────────────
     "catalog-fms/pricing-table": () => (
         <div className="grid w-full max-w-[20rem] grid-cols-3 gap-1.5 text-[9px]">

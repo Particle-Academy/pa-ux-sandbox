@@ -57,6 +57,9 @@ class HandleInertiaRequests extends Middleware
                 'submitted' => fn () => $request->session()->get('submitted'),
                 'success' => fn () => $request->session()->get('success'),
                 'error' => fn () => $request->session()->get('error'),
+                // The commission rows a /referrals "simulate activity" run produced,
+                // surfaced back to the page for immediate visual feedback.
+                'mlm_rewards' => fn () => $request->session()->get('mlm_rewards'),
             ],
             // The showcase's own heuristics identity (read from the pasted Fancy
             // Pixel tracker), so the in-browser agent sink can attribute

@@ -12,6 +12,7 @@ import { getEcho } from "./lib/echo";
 import "./showcase-theme";
 import "@particle-academy/react-fancy/styles.css";
 import "@particle-academy/fancy-code/styles.css";
+import "@particle-academy/fancy-mlm-ui/styles.css";
 
 // Register echarts modules synchronously before any component can render.
 // FancyAppRoot does this in useEffect, but useEffect runs AFTER first render

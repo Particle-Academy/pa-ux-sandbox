@@ -18,7 +18,7 @@ it('emits one merged catalog with the design classification on /packages', funct
                 expect($p)->toHaveKeys(['group', 'accent', 'ecosystem', 'kind']);
                 expect($p['group'])->toBeIn(['core', 'human', 'companion']);
                 expect($p['ecosystem'])->toBeIn(['ts', 'php', 'polyglot']);
-                expect($p['kind'])->toBeIn(['ui', 'bridge', 'headless']);
+                expect($p['kind'])->toBeIn(['ui', 'bridge', 'headless', 'block']);
             });
 
             // Groups honor the design: react-fancy/fancy-inertia are core; the

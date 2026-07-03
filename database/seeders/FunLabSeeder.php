@@ -65,6 +65,13 @@ class FunLabSeeder extends Seeder
             ['slug' => 'contributor-xp', 'name' => 'Contributor XP', 'description' => 'Earned by submitting new components that get accepted into the library.', 'icon' => 'git-merge'],
             ['slug' => 'projects-xp', 'name' => 'Projects XP', 'description' => 'Earned by registering public projects built with Fancy UI.', 'icon' => 'rocket'],
             ['slug' => 'promotion-xp', 'name' => 'Promotion XP', 'description' => 'Earned when a "Powered by Fancy" badge is detected on your public URLs.', 'icon' => 'megaphone'],
+
+            // fancy-mlm referral loop: `network-activity` is what a downline
+            // member earns for an action; `referral-bonus` is what the engine
+            // pays their upline (both must be registered GamedMetrics so
+            // LFL::award accepts them).
+            ['slug' => 'network-activity', 'name' => 'Network Activity', 'description' => 'Earned by a downline member taking an action — the trigger for the referral loop.', 'icon' => 'activity'],
+            ['slug' => 'referral-bonus', 'name' => 'Referral Bonus', 'description' => 'Points paid up the referral tree by fancy-mlm when a downline member is active.', 'icon' => 'gift'],
         ];
 
         foreach ($metrics as $m) {
@@ -88,6 +95,7 @@ class FunLabSeeder extends Seeder
         $allMetrics = [
             'explorer-xp', 'tinkerer-xp', 'bridge-xp', 'reader-xp', 'dreamer-xp',
             'bug-hunter-xp', 'contributor-xp', 'projects-xp', 'promotion-xp',
+            'network-activity', 'referral-bonus',
         ];
         foreach ($allMetrics as $metric) {
             foreach ($tiers as $tier) {

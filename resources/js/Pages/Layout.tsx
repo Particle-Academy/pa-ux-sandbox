@@ -204,6 +204,9 @@ export function Layout({
                                         <Dropdown.Item onClick={() => router.visit("/profile")}>
                                             Your profile
                                         </Dropdown.Item>
+                                        <Dropdown.Item onClick={() => router.visit("/referrals")}>
+                                            Refer a friend
+                                        </Dropdown.Item>
                                         {isPro && (
                                             <Dropdown.Item onClick={() => router.visit("/analytics")}>
                                                 Analytics
@@ -335,6 +338,7 @@ export function Layout({
                                     <>
                                         <li><Link href="/showcase/mine">My submissions</Link></li>
                                         <li><Link href="/profile">Your profile</Link></li>
+                                        <li><Link href="/referrals">Refer a friend</Link></li>
                                     </>
                                 ) : (
                                     <li><a href="/auth/github">Sign in</a></li>

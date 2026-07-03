@@ -25,6 +25,7 @@ const NAV: NavGroup[] = [
         items: [
             { label: "Gamification", icon: "award", href: "/admin/gamification" },
             { label: "Coin Shop", icon: "coins", href: "/admin/shop" },
+            { label: "Referral Program", icon: "git-merge", href: "/admin/mlm" },
         ],
     },
     {
@@ -51,6 +52,7 @@ const CRUMB: Record<string, { group: string; crumb: string }> = {
     features: { group: "Catalog", crumb: "Features" },
     gamification: { group: "Engagement", crumb: "Gamification" },
     shop: { group: "Engagement", crumb: "Coin Shop" },
+    mlm: { group: "Engagement", crumb: "Referral Program" },
     heuristics: { group: "Analytics", crumb: "Heuristics" },
     sites: { group: "Community", crumb: "Sites" },
     users: { group: "Community", crumb: "Users" },

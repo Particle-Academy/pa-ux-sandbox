@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminFeaturesController;
 use App\Http\Controllers\Admin\AdminGamificationController;
 use App\Http\Controllers\Admin\AdminHeuristicsController;
+use App\Http\Controllers\Admin\AdminMlmController;
 use App\Http\Controllers\Admin\AdminPlansController;
 use App\Http\Controllers\Admin\AdminProductsController;
 use App\Http\Controllers\Admin\AdminSettingsController;
@@ -33,6 +34,7 @@ use App\Http\Controllers\Showcase\InspirationController;
 use App\Http\Controllers\Showcase\LeaderboardController;
 use App\Http\Controllers\Showcase\PackagesController;
 use App\Http\Controllers\Showcase\ProfileController;
+use App\Http\Controllers\Showcase\ReferralController;
 use App\Http\Controllers\Showcase\RegistryController;
 use App\Http\Controllers\Showcase\ShopController;
 use App\Http\Controllers\Showcase\ShowcaseSubmissionController;
@@ -92,6 +94,12 @@ Route::middleware('auth')->group(function () {
     // Player profile + gamification opt-out.
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
     Route::post('/profile/opt-out', [ProfileController::class, 'toggleOptOut'])->name('profile.opt-out');
+
+    // Refer-a-friend — the gamified downline surface (fancy-mlm + fancy-mlm-ui).
+    Route::get('/referrals', [ReferralController::class, 'show'])->name('referrals');
+    Route::post('/referrals/simulate', [ReferralController::class, 'simulate'])
+        ->middleware('throttle:30,1')
+        ->name('referrals.simulate');
 
     // Pro Analytics Suite — Pro-gated dashboard over the live Fancy Heuristics
     // feed. Auth required; the controller's FMS `analytics-suite` check splits
@@ -264,6 +272,10 @@ Route::prefix('admin')->name('admin.')->middleware(['web', 'auth', 'can:admin'])
     // Features Management (using FMS facade)
     Route::get('features', [AdminFeaturesController::class, 'index'])->name('features.index');
     Route::post('features/test', [AdminFeaturesController::class, 'test'])->name('features.test');
+
+    // Referral program config (fancy-mlm compensation plan + downline shape)
+    Route::get('mlm', [AdminMlmController::class, 'index'])->name('mlm.index');
+    Route::put('mlm', [AdminMlmController::class, 'update'])->name('mlm.update');
 
     // Coin Shop Management
     Route::resource('shop', AdminShopController::class)->except(['show']);

@@ -1,6 +1,6 @@
 {
     "$schema": "https://ui.particle.academy/schema/registry-compiled.json",
-    "count": 149,
+    "count": 154,
     "items": [
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
@@ -1137,6 +1137,26 @@
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "commission-statement",
+            "type": "registry:ui",
+            "title": "CommissionStatement",
+            "description": "Per-period earnings ledger \u2014 level, source member, tier multiplier, and amount per row, with a paid/pending status and totals.",
+            "package": "fancy-mlm-ui",
+            "dependencies": [
+                "@particle-academy/react-fancy"
+            ],
+            "registryDependencies": [],
+            "files": [
+                {
+                    "path": "components/fancy/commission-statement/CommissionStatement.tsx",
+                    "content": "import { cn, Badge } from \"@particle-academy/react-fancy\";\nimport type { CommissionRow } from \"./types\";\n\nexport interface CommissionStatementProps {\n  /** Reward rows (controlled) \u2014 typically the engine's RewardComputation list. */\n  rows: CommissionRow[];\n  /** Format an amount for display (default: `toLocaleString`). */\n  formatAmount?: (amount: number, row: CommissionRow) => string;\n  /** Shown when there are no rows. */\n  emptyLabel?: string;\n  className?: string;\n}\n\n/**\n * A commission / referral-bonus statement. Each row carries a stable\n * `data-mlm-commission-row` handle; reversed rows are struck through and\n * excluded from the paid total.\n */\nexport function CommissionStatement({\n  rows,\n  formatAmount,\n  emptyLabel = \"No commissions yet.\",\n  className,\n}: CommissionStatementProps) {\n  const format = formatAmount ?? ((amount: number) => amount.toLocaleString());\n  const paidTotal = rows\n    .filter((row) => !row.status || row.status === \"paid\")\n    .reduce((sum, row) => sum + row.amount, 0);\n\n  if (rows.length === 0) {\n    return (\n      <div data-fancy-mlm=\"commission-statement\" className={cn(\"fancy-mlm-statement is-empty\", className)}>\n        {emptyLabel}\n      </div>\n    );\n  }\n\n  return (\n    <div data-fancy-mlm=\"commission-statement\" className={cn(\"fancy-mlm-statement\", className)}>\n      <table className=\"fancy-mlm-statement__table\">\n        <thead>\n          <tr>\n            <th className=\"fancy-mlm-statement__num\">Level</th>\n            <th>Recipient</th>\n            <th>Tier</th>\n            <th className=\"fancy-mlm-statement__num\">Amount</th>\n            <th>Status</th>\n          </tr>\n        </thead>\n        <tbody>\n          {rows.map((row, index) => {\n            const status = row.status ?? \"paid\";\n            return (\n              <tr\n                key={row.id ?? `${row.recipientMemberId ?? \"row\"}-${index}`}\n                data-mlm-commission-row={row.id ?? row.recipientMemberId}\n                data-mlm-status={status}\n                className={cn(status === \"reversed\" && \"is-reversed\")}\n              >\n                <td className=\"fancy-mlm-statement__num\">{row.level}</td>\n                <td>{row.recipientLabel ?? row.recipientMemberId ?? \"\u2014\"}</td>\n                <td>{row.tier ? <Badge variant=\"soft\">{row.tier}</Badge> : null}</td>\n                <td className=\"fancy-mlm-statement__num\">{format(row.amount, row)}</td>\n                <td>\n                  <Badge variant=\"soft\">{status}</Badge>\n                </td>\n              </tr>\n            );\n          })}\n        </tbody>\n        <tfoot>\n          <tr>\n            <td colSpan={3} className=\"fancy-mlm-statement__total-label\">Total (paid)</td>\n            <td className=\"fancy-mlm-statement__num fancy-mlm-statement__total\">{format(paidTotal, rows[0]!)}</td>\n            <td />\n          </tr>\n        </tfoot>\n      </table>\n    </div>\n  );\n}\n",
+                    "type": "registry:ui",
+                    "target": "components/fancy/commission-statement/CommissionStatement.tsx"
+                }
+            ]
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
             "name": "composer",
             "type": "registry:ui",
             "title": "Composer",
@@ -1410,6 +1430,26 @@
             "dependencies": [],
             "registryDependencies": [],
             "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "downline-tree",
+            "type": "registry:ui",
+            "title": "DownlineTree",
+            "description": "Controlled network tree \u2014 collapsible nodes, per-member tier/volume, selection + onChange. Renders unilevel, binary, and matrix shapes from a flat member list.",
+            "package": "fancy-mlm-ui",
+            "dependencies": [
+                "@particle-academy/react-fancy"
+            ],
+            "registryDependencies": [],
+            "files": [
+                {
+                    "path": "components/fancy/downline-tree/DownlineTree.tsx",
+                    "content": "import { useState, type ComponentProps, type ReactNode } from \"react\";\nimport { cn, Badge } from \"@particle-academy/react-fancy\";\nimport type { DownlineEdge, DownlineMember } from \"./types\";\nimport { buildDownline, type DownlineNode } from \"./tree\";\n\ntype BadgeColor = ComponentProps<typeof Badge>[\"color\"];\n\nexport interface DownlineTreeProps<T extends DownlineMember = DownlineMember> {\n  /** Flat member list (controlled). Linked into a tree by `edge`. */\n  value: T[];\n  /**\n   * Which pointer links the tree \u2014 `\"sponsor\"` (unilevel, default) or\n   * `\"placement\"` (binary / matrix). The same `value` renders every tree shape.\n   */\n  edge?: DownlineEdge;\n  /** Render only this member's subtree. */\n  rootId?: string | null;\n  /** Highlight a member (controlled selection). */\n  selectedId?: string | null;\n  onSelect?: (id: string, member: T) => void;\n  /** Map a tier to a react-fancy Badge color. */\n  tierColor?: (tier: string | undefined) => BadgeColor;\n  /** Replace the default member row content. */\n  renderMember?: (member: T, node: DownlineNode<T>) => ReactNode;\n  className?: string;\n}\n\n/**\n * Genealogy / downline tree. Controlled `value`, stable `data-mlm-node` handles\n * on every member, controlled selection, and JSON-friendly inputs \u2014 an agent can\n * read the tree and drive selection without scraping the DOM.\n */\nexport function DownlineTree<T extends DownlineMember = DownlineMember>({\n  value,\n  edge = \"sponsor\",\n  rootId,\n  selectedId,\n  onSelect,\n  tierColor,\n  renderMember,\n  className,\n}: DownlineTreeProps<T>) {\n  const forest = buildDownline(value, rootId, edge);\n\n  return (\n    <div data-fancy-mlm=\"downline-tree\" data-mlm-edge={edge} className={cn(\"fancy-mlm-tree\", className)}>\n      <ul className=\"fancy-mlm-tree__list\" role=\"tree\">\n        {forest.map((node) => (\n          <DownlineNodeView\n            key={node.member.id}\n            node={node}\n            selectedId={selectedId}\n            onSelect={onSelect}\n            tierColor={tierColor}\n            renderMember={renderMember}\n          />\n        ))}\n      </ul>\n    </div>\n  );\n}\n\nfunction DownlineNodeView<T extends DownlineMember>({\n  node,\n  selectedId,\n  onSelect,\n  tierColor,\n  renderMember,\n}: {\n  node: DownlineNode<T>;\n  selectedId?: string | null;\n  onSelect?: (id: string, member: T) => void;\n  tierColor?: (tier: string | undefined) => BadgeColor;\n  renderMember?: (member: T, node: DownlineNode<T>) => ReactNode;\n}) {\n  const [expanded, setExpanded] = useState(true);\n  const { member, children } = node;\n  const hasChildren = children.length > 0;\n  const active = member.active ?? true;\n\n  return (\n    <li className=\"fancy-mlm-tree__item\" data-mlm-node={member.id} role=\"treeitem\" aria-expanded={hasChildren ? expanded : undefined}>\n      <div\n        className={cn(\n          \"fancy-mlm-tree__row\",\n          selectedId === member.id && \"is-selected\",\n          !active && \"is-inactive\",\n        )}\n      >\n        {hasChildren ? (\n          <button\n            type=\"button\"\n            className=\"fancy-mlm-tree__toggle\"\n            aria-label={expanded ? \"Collapse\" : \"Expand\"}\n            aria-expanded={expanded}\n            onClick={() => setExpanded((value) => !value)}\n          >\n            {expanded ? \"\u25be\" : \"\u25b8\"}\n          </button>\n        ) : (\n          <span className=\"fancy-mlm-tree__toggle fancy-mlm-tree__toggle--leaf\" aria-hidden=\"true\" />\n        )}\n\n        <button\n          type=\"button\"\n          className=\"fancy-mlm-tree__label\"\n          data-mlm-member={member.id}\n          onClick={() => onSelect?.(member.id, member)}\n        >\n          {renderMember ? (\n            renderMember(member, node)\n          ) : (\n            <>\n              <span className=\"fancy-mlm-tree__name\">{member.label ?? member.id}</span>\n              {member.tier ? (\n                <Badge color={tierColor?.(member.tier)} variant=\"soft\">\n                  {member.tier}\n                </Badge>\n              ) : null}\n              {!active ? <span className=\"fancy-mlm-tree__muted\">inactive</span> : null}\n            </>\n          )}\n        </button>\n      </div>\n\n      {hasChildren && expanded ? (\n        <ul className=\"fancy-mlm-tree__list\" role=\"group\">\n          {children.map((child) => (\n            <DownlineNodeView\n              key={child.member.id}\n              node={child}\n              selectedId={selectedId}\n              onSelect={onSelect}\n              tierColor={tierColor}\n              renderMember={renderMember}\n            />\n          ))}\n        </ul>\n      ) : null}\n    </li>\n  );\n}\n",
+                    "type": "registry:ui",
+                    "target": "components/fancy/downline-tree/DownlineTree.tsx"
+                }
+            ]
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
@@ -1971,6 +2011,28 @@
             "title": "@particle-academy/fancy-heuristics-js",
             "description": "Browser collector for Fancy Heuristics \u2014 clicks, scroll, time-on-page, and mouse-movement focus heatmaps for humans and agents; sendBeacon batching. Headless.",
             "package": "fancy-heuristics-js",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "fancy-mlm",
+            "type": "registry:ui",
+            "title": "particle-academy/fancy-mlm",
+            "description": "Framework-agnostic multi-level referral / network-marketing engine \u2014 configurable unilevel / binary / matrix downlines, level decay + tier multipliers, dynamic compression. Pure-PHP core with an optional Laravel bridge + fun-lab / catalog / fms integration. Headless; pairs with @particle-academy/fancy-mlm-ui.",
+            "package": "fancy-mlm",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "fancy-mlm-js",
+            "type": "registry:ui",
+            "title": "@particle-academy/fancy-mlm",
+            "description": "Node/TS mirror of particle-academy/fancy-mlm \u2014 the same CompensationPlan JSON + unilevel / binary / matrix trees yield identical rewards, isomorphic (browser or Node). Headless; no UI.",
+            "package": "fancy-mlm-js",
             "dependencies": [],
             "registryDependencies": [],
             "files": []
@@ -3302,6 +3364,26 @@
             "dependencies": [],
             "registryDependencies": [],
             "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "rank-progress",
+            "type": "registry:ui",
+            "title": "RankProgress",
+            "description": "Progress toward the next rank/tier \u2014 current volume vs threshold, with the requirement gap.",
+            "package": "fancy-mlm-ui",
+            "dependencies": [
+                "@particle-academy/react-fancy"
+            ],
+            "registryDependencies": [],
+            "files": [
+                {
+                    "path": "components/fancy/rank-progress/RankProgress.tsx",
+                    "content": "import { cn, Badge } from \"@particle-academy/react-fancy\";\n\nexport interface RankProgressProps {\n  /** Current tier/rank key. */\n  tier: string;\n  /** The next tier (omit / null at the top tier). */\n  nextTier?: string | null;\n  /** Progress toward the next tier (e.g. team volume, active referrals). */\n  value: number;\n  /** Threshold that unlocks `nextTier`. */\n  target?: number | null;\n  unit?: string;\n  className?: string;\n}\n\n/** Current rank + a progress bar toward the next tier's qualification threshold. */\nexport function RankProgress({ tier, nextTier, value, target, unit, className }: RankProgressProps) {\n  const hasTarget = typeof target === \"number\" && target > 0 && nextTier != null;\n  const pct = hasTarget ? Math.max(0, Math.min(100, (value / target) * 100)) : 100;\n  const remaining = hasTarget ? Math.max(0, target - value) : 0;\n  const suffix = unit ? ` ${unit}` : \"\";\n\n  return (\n    <div data-fancy-mlm=\"rank-progress\" className={cn(\"fancy-mlm-rank\", className)}>\n      <div className=\"fancy-mlm-rank__head\">\n        <Badge variant=\"soft\">{tier}</Badge>\n        {hasTarget ? (\n          <span className=\"fancy-mlm-rank__next\">\u2192 {nextTier}</span>\n        ) : (\n          <span className=\"fancy-mlm-rank__muted\">Top tier</span>\n        )}\n      </div>\n\n      <div\n        className=\"fancy-mlm-rank__bar\"\n        role=\"progressbar\"\n        aria-valuenow={Math.round(pct)}\n        aria-valuemin={0}\n        aria-valuemax={100}\n        data-mlm-rank-pct={Math.round(pct)}\n      >\n        <div className=\"fancy-mlm-rank__fill\" style={{ width: `${pct}%` }} />\n      </div>\n\n      {hasTarget ? (\n        <div className=\"fancy-mlm-rank__meta\">\n          {value.toLocaleString()} / {target.toLocaleString()}\n          {suffix} \u00b7 {remaining.toLocaleString()} to {nextTier}\n        </div>\n      ) : null}\n    </div>\n  );\n}\n",
+                    "type": "registry:ui",
+                    "target": "components/fancy/rank-progress/RankProgress.tsx"
+                }
+            ]
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",

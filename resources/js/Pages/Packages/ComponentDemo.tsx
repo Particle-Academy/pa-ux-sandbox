@@ -58,6 +58,33 @@ import {
     useToast,
 } from "@particle-academy/react-fancy";
 import { CodeEditor, MarkdownEditor } from "@particle-academy/fancy-code";
+import {
+    DownlineTree as MlmDownlineTree,
+    CommissionStatement as MlmCommissionStatement,
+    RankProgress as MlmRankProgress,
+    type DownlineMember as MlmMember,
+    type DownlineEdge as MlmEdge,
+    type CommissionRow as MlmCommissionRow,
+} from "@particle-academy/fancy-mlm-ui";
+import "@particle-academy/fancy-mlm-ui/styles.css";
+import {
+    RobotsEditor as XfRobotsEditor,
+    SecurityTxtEditor as XfSecurityTxtEditor,
+    LlmsTxtEditor as XfLlmsTxtEditor,
+    HumansTxtEditor as XfHumansTxtEditor,
+    SitemapEditor as XfSitemapEditor,
+    AgentsEditor as XfAgentsEditor,
+    XFilePreview as XfFilePreview,
+    XFilesManager as XfFilesManager,
+    type XFileKind as XfKind,
+    type XFilesModel as XfFilesModel,
+    type RobotsModel as XfRobotsModel,
+    type SecurityTxtModel as XfSecurityTxtModel,
+    type LlmsTxtModel as XfLlmsTxtModel,
+    type HumansTxtModel as XfHumansTxtModel,
+    type SitemapModel as XfSitemapModel,
+    type AgentsModel as XfAgentsModel,
+} from "@particle-academy/fancy-x-files-ui";
 import "@particle-academy/fancy-code/styles.css";
 import { Terminal, type TerminalHandle, BUILTIN_SHELLS, type ShellProfile } from "@particle-academy/fancy-term";
 import "@xterm/xterm/css/xterm.css";
@@ -253,6 +280,21 @@ const REGISTRY: Record<string, DemoFn> = {
     // ── fancy-inertia
     "fancy-inertia/fancy-app-root": FancyAppRootDemo,
     "fancy-inertia/use-fancy-form": UseFancyFormDemo,
+
+    // ── fancy-mlm-ui
+    "fancy-mlm-ui/downline-tree": MlmDownlineTreeDemo,
+    "fancy-mlm-ui/commission-statement": MlmCommissionStatementDemo,
+    "fancy-mlm-ui/rank-progress": MlmRankProgressDemo,
+
+    // ── fancy-x-files-ui
+    "fancy-x-files-ui/robots-editor": XfRobotsEditorDemo,
+    "fancy-x-files-ui/security-txt-editor": XfSecurityTxtEditorDemo,
+    "fancy-x-files-ui/llms-txt-editor": XfLlmsTxtEditorDemo,
+    "fancy-x-files-ui/humans-txt-editor": XfHumansTxtEditorDemo,
+    "fancy-x-files-ui/sitemap-editor": XfSitemapEditorDemo,
+    "fancy-x-files-ui/agents-editor": XfAgentsEditorDemo,
+    "fancy-x-files-ui/x-file-preview": XfFilePreviewDemo,
+    "fancy-x-files-ui/x-files-manager": XfFilesManagerDemo,
 };
 
 export function ComponentDemo({ slug, name, pkg }: { slug: string; name: string; pkg: string }) {
@@ -3118,5 +3160,325 @@ function DarkSlideSyntaxHighlighterRegistryDemo() {
                 ]}
             />
         </div>
+    );
+}
+
+// ─── fancy-mlm-ui ────────────────────────────────────────────────────────────
+// The referral-engine surfaces. One flat member list carries BOTH parent
+// pointers (sponsorId = who enrolled you, placementId = where you sit after
+// spillover), so flipping the `edge` prop re-shapes the SAME network — the
+// package's whole point.
+
+const MLM_TIER_BADGE: Record<string, "orange" | "zinc" | "amber" | "violet"> = {
+    bronze: "orange",
+    silver: "zinc",
+    gold: "amber",
+    diamond: "violet",
+};
+const mlmTierColor = (t?: string) => (t && MLM_TIER_BADGE[t]) || "slate";
+
+const MLM_DEMO_MEMBERS: MlmMember[] = [
+    { id: "you", label: "You", tier: "gold" },
+    { id: "ada", sponsorId: "you", placementId: "you", label: "Ada", tier: "gold" },
+    { id: "bo", sponsorId: "you", placementId: "you", label: "Bo", tier: "silver" },
+    { id: "cy", sponsorId: "you", placementId: "ada", label: "Cy", tier: "silver" },
+    { id: "di", sponsorId: "you", placementId: "bo", label: "Di", tier: "bronze" },
+    { id: "eve", sponsorId: "you", placementId: "ada", label: "Eve", tier: "bronze", active: false },
+    { id: "fin", sponsorId: "ada", placementId: "cy", label: "Fin", tier: "silver" },
+    { id: "gus", sponsorId: "cy", placementId: "di", label: "Gus", tier: "diamond" },
+];
+
+function MlmDownlineTreeDemo() {
+    const [edge, setEdge] = useState<MlmEdge>("sponsor");
+    const [selected, setSelected] = useState<string | null>("ada");
+    const member = MLM_DEMO_MEMBERS.find((m) => m.id === selected);
+    return (
+        <DemoNote
+            outOfBox="DownlineTree is fully controlled: a flat, JSON-friendly member list in, a collapsible genealogy out. The edge prop picks which parent pointer draws the tree — sponsor (unilevel: everyone you enrolled is a direct leg) or placement (binary / matrix: where members landed after spillover) — so ONE list renders every downline shape. Selection is controlled (selectedId + onSelect), tiers render as Badges via tierColor, inactive members dim, and every row carries a stable data-mlm-node handle an agent reads instead of scraping."
+            demo="The edge toggle and the selection readout are demo scaffolding — watch the same eight members re-shape when you flip the tree."
+        >
+            <div className="space-y-3">
+                <div className="flex flex-wrap items-center gap-2">
+                    <Button size="sm" color="teal" active={edge === "sponsor"} onClick={() => setEdge("sponsor")}>
+                        Sponsor tree (unilevel)
+                    </Button>
+                    <Button size="sm" color="teal" active={edge === "placement"} onClick={() => setEdge("placement")}>
+                        Placement tree (binary / matrix)
+                    </Button>
+                </div>
+                <div className="rounded-lg border border-zinc-200 p-3 dark:border-zinc-800">
+                    <MlmDownlineTree
+                        value={MLM_DEMO_MEMBERS}
+                        rootId="you"
+                        edge={edge}
+                        selectedId={selected}
+                        onSelect={(id) => setSelected(id)}
+                        tierColor={mlmTierColor}
+                    />
+                </div>
+                <div className="text-[12px] text-zinc-500 dark:text-zinc-400">
+                    Selected:{" "}
+                    {member ? (
+                        <>
+                            <span className="font-medium text-zinc-800 dark:text-zinc-200">{member.label}</span>
+                            {" · "}
+                            <Badge color={mlmTierColor(member.tier)} variant="soft">{member.tier}</Badge>
+                            {member.active === false && " · inactive (compressed by the engine)"}
+                        </>
+                    ) : (
+                        "none"
+                    )}
+                </div>
+            </div>
+        </DemoNote>
+    );
+}
+
+const MLM_DEMO_ROWS: MlmCommissionRow[] = [
+    { id: "r1", level: 1, tier: "gold", amount: 150, status: "paid", recipientLabel: "Referral bonus (level 1)" },
+    { id: "r2", level: 2, tier: "silver", amount: 62.5, status: "paid", recipientLabel: "Referral bonus (level 2)" },
+    { id: "r3", level: 3, tier: "bronze", amount: 25, status: "pending", recipientLabel: "Referral bonus (level 3)" },
+    { id: "r4", level: 1, tier: "gold", amount: 90, status: "reversed", recipientLabel: "Clawback — refunded order" },
+];
+
+function MlmCommissionStatementDemo() {
+    const [rows, setRows] = useState<MlmCommissionRow[]>(MLM_DEMO_ROWS);
+    const simulate = () =>
+        setRows((r) => [
+            {
+                id: "sim-" + (r.length + 1),
+                level: (r.length % 3) + 1,
+                tier: ["gold", "silver", "bronze"][r.length % 3],
+                amount: [150, 62.5, 25][r.length % 3],
+                status: "paid",
+                recipientLabel: "Referral bonus (level " + ((r.length % 3) + 1) + ")",
+            },
+            ...r,
+        ]);
+    return (
+        <DemoNote
+            outOfBox="CommissionStatement is a controlled earnings ledger — typically the engine's RewardComputation list. Each row renders level, recipient, tier, amount, and status; reversed rows strike through and drop out of the paid total, which the component folds automatically. Rows carry stable data-mlm-commission-row handles."
+            demo="The Simulate activity button prepends a deterministic demo row — in the real showcase (/referrals) the same rows come from the live fun-lab referral loop."
+        >
+            <div className="space-y-3">
+                <Button size="sm" color="teal" onClick={simulate}>Simulate downline activity</Button>
+                <MlmCommissionStatement rows={rows} formatAmount={(n) => Math.round(n).toLocaleString() + " pts"} />
+            </div>
+        </DemoNote>
+    );
+}
+
+function MlmRankProgressDemo() {
+    const [team, setTeam] = useState(7);
+    const target = 12;
+    const atTop = team >= target;
+    return (
+        <DemoNote
+            outOfBox="RankProgress shows the current tier and a progress bar toward the next tier's qualification threshold — value vs target in any unit (team size, volume, active legs). At or past the target it flips to the Top tier presentation. The bar exposes a stable data-mlm-rank-pct handle."
+            demo="The +/- buttons drive the controlled value; tier thresholds here mirror the sandbox referral program (diamond at 12 team members)."
+        >
+            <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                    <Button size="sm" variant="circle" onClick={() => setTeam((t) => Math.max(0, t - 1))}>−</Button>
+                    <span className="min-w-24 text-center text-[13px] text-zinc-600 dark:text-zinc-300">{team} team members</span>
+                    <Button size="sm" variant="circle" onClick={() => setTeam((t) => Math.min(target, t + 1))}>+</Button>
+                </div>
+                <div className="max-w-md">
+                    <MlmRankProgress
+                        tier={atTop ? "diamond" : "gold"}
+                        nextTier={atTop ? null : "diamond"}
+                        value={team}
+                        target={atTop ? null : target}
+                        unit="team members"
+                    />
+                </div>
+            </div>
+        </DemoNote>
+    );
+}
+
+// ─── fancy-x-files-ui ────────────────────────────────────────────────────────
+// Every editor is controlled (model in, onChange out) and pairs with the
+// XFilePreview that renders the REAL on-disk text — so each demo is the
+// package's own intended layout: edit left, what-ships right.
+
+const XF_DEMO_ROBOTS: XfRobotsModel = {
+    groups: [{ userAgents: ["*"], allow: ["/"], disallow: ["/api"] }],
+    sitemaps: ["https://acme.dev/sitemap.xml"],
+    protectedPaths: ["/admin"],
+};
+const XF_DEMO_SECURITY: XfSecurityTxtModel = {
+    contact: ["mailto:security@acme.dev"],
+    expires: "2027-01-01T00:00:00Z",
+    policy: "https://acme.dev/security-policy",
+};
+const XF_DEMO_LLMS: XfLlmsTxtModel = {
+    title: "Acme Docs",
+    summary: "Everything an LLM needs to use Acme well.",
+    sections: [
+        { name: "Guides", links: [{ title: "Quickstart", url: "https://acme.dev/quickstart" }] },
+        { name: "Reference", links: [{ title: "HTTP API", url: "https://acme.dev/api", notes: "OpenAPI 3.1" }] },
+    ],
+};
+const XF_DEMO_HUMANS: XfHumansTxtModel = {
+    team: [
+        { role: "Developer", name: "Ada Lovelace", contact: "@ada" },
+        { role: "Design", name: "Bo Chen" },
+    ],
+    site: "Standards: HTML5, Tailwind v4. Components: Fancy UI.",
+    thanks: ["react-fancy"],
+};
+const XF_DEMO_SITEMAP: XfSitemapModel = {
+    urls: [
+        { loc: "https://acme.dev/", changefreq: "daily", priority: 1.0 },
+        { loc: "https://acme.dev/pricing", changefreq: "weekly", priority: 0.8 },
+        { loc: "https://acme.dev/about", changefreq: "monthly" },
+    ],
+};
+const XF_DEMO_AGENTS: XfAgentsModel = {
+    agents: [
+        { id: "claude", name: "Claude", policy: "allow", url: "https://claude.ai", scope: "read + summarize docs" },
+        { id: "scraper-9000", policy: "deny" },
+    ],
+    contact: "mailto:ops@acme.dev",
+};
+
+/** Editor left, the real rendered file right — the package's intended layout. */
+function XfPair({ kind, model, children }: { kind: XfKind; model: unknown; children: ReactNode }) {
+    return (
+        <div className="grid gap-4 lg:grid-cols-2">
+            <div>{children}</div>
+            <XfFilePreview kind={kind} model={model} />
+        </div>
+    );
+}
+
+function XfRobotsEditorDemo() {
+    const [model, setModel] = useState<XfRobotsModel>(XF_DEMO_ROBOTS);
+    return (
+        <DemoNote
+            outOfBox="RobotsEditor is a controlled robots.txt rule builder: per-group User-agent / Allow / Disallow / Crawl-delay, sitemap URLs, and the protect() safety rail — protected paths are pinned Disallow for EVERY group, rendered as red chips, and can never be Allowed (validateRobots flags any leak inline). The paired XFilePreview shows the byte-for-byte robots.txt that ships."
+            demo="The two-panel layout is the demo; both panels are stock components sharing one controlled model."
+        >
+            <XfPair kind="robots" model={model}>
+                <XfRobotsEditor value={model} onChange={setModel} />
+            </XfPair>
+        </DemoNote>
+    );
+}
+
+function XfSecurityTxtEditorDemo() {
+    const [model, setModel] = useState<XfSecurityTxtModel>(XF_DEMO_SECURITY);
+    return (
+        <DemoNote
+            outOfBox="SecurityTxtEditor edits an RFC 9116 security.txt: Contact (one or more mailto:/https: URIs, required) and a must-be-future Expires, plus the optional Encryption / Acknowledgments / Canonical / Policy / Hiring fields. validateSecurityTxt surfaces violations inline; the preview is the exact file for /.well-known/security.txt."
+            demo="Two stock panels over one controlled model — clear the Contact field to watch validation fire."
+        >
+            <XfPair kind="securityTxt" model={model}>
+                <XfSecurityTxtEditor value={model} onChange={setModel} />
+            </XfPair>
+        </DemoNote>
+    );
+}
+
+function XfLlmsTxtEditorDemo() {
+    const [model, setModel] = useState<XfLlmsTxtModel>(XF_DEMO_LLMS);
+    return (
+        <DemoNote
+            outOfBox="LlmsTxtEditor edits the llms.txt Markdown index — title, blockquote summary, free-form details, and repeatable link sections — so agents and LLMs get a curated map of your site. The preview renders the exact Markdown document that ships."
+            demo="Two stock panels over one controlled model; add a section to see the Markdown grow."
+        >
+            <XfPair kind="llmsTxt" model={model}>
+                <XfLlmsTxtEditor value={model} onChange={setModel} />
+            </XfPair>
+        </DemoNote>
+    );
+}
+
+function XfHumansTxtEditorDemo() {
+    const [model, setModel] = useState<XfHumansTxtModel>(XF_DEMO_HUMANS);
+    return (
+        <DemoNote
+            outOfBox="HumansTxtEditor edits the humans.txt colophon — team credits (role / name / contact), a Site section, and thanks. Small file, zero mystery: the preview is exactly what ships at /humans.txt."
+            demo="Two stock panels over one controlled model."
+        >
+            <XfPair kind="humansTxt" model={model}>
+                <XfHumansTxtEditor value={model} onChange={setModel} />
+            </XfPair>
+        </DemoNote>
+    );
+}
+
+function XfSitemapEditorDemo() {
+    const [model, setModel] = useState<XfSitemapModel>(XF_DEMO_SITEMAP);
+    return (
+        <DemoNote
+            outOfBox="SitemapEditor edits a flat sitemap.xml URL set — loc / lastmod / changefreq / priority per entry, with validateSitemap catching malformed locs and out-of-range priorities. The preview renders the exact XML document."
+            demo="Two stock panels over one controlled model."
+        >
+            <XfPair kind="sitemap" model={model}>
+                <XfSitemapEditor value={model} onChange={setModel} />
+            </XfPair>
+        </DemoNote>
+    );
+}
+
+function XfAgentsEditorDemo() {
+    const [model, setModel] = useState<XfAgentsModel>(XF_DEMO_AGENTS);
+    return (
+        <DemoNote
+            outOfBox="AgentsEditor edits the /AGENTS register — a machine-readable allow/deny policy per agent (id, name, homepage, permitted scope), the robots.txt idea extended to acting agents rather than crawlers. The preview shows the JSON register that ships."
+            demo="Two stock panels over one controlled model."
+        >
+            <XfPair kind="agents" model={model}>
+                <XfAgentsEditor value={model} onChange={setModel} />
+            </XfPair>
+        </DemoNote>
+    );
+}
+
+function XfFilePreviewDemo() {
+    const kinds: { kind: XfKind; label: string; model: unknown }[] = [
+        { kind: "robots", label: "robots.txt", model: XF_DEMO_ROBOTS },
+        { kind: "securityTxt", label: "security.txt", model: XF_DEMO_SECURITY },
+        { kind: "sitemap", label: "sitemap.xml", model: XF_DEMO_SITEMAP },
+        { kind: "agents", label: "AGENTS", model: XF_DEMO_AGENTS },
+    ];
+    return (
+        <DemoNote
+            outOfBox="XFilePreview renders the REAL text/XML a well-known file becomes on disk, using the same render logic as the fancy-x-files PHP / Node packages — what you see is what ships. Pass any kind + its model; the filename header comes from X_FILE_META."
+            demo="The kind tabs are demo scaffolding around one stock XFilePreview."
+        >
+            <Tabs defaultTab="robots">
+                <Tabs.List>
+                    {kinds.map((k) => (
+                        <Tabs.Tab key={k.kind} value={k.kind}>{k.label}</Tabs.Tab>
+                    ))}
+                </Tabs.List>
+                <Tabs.Panels>
+                    {kinds.map((k) => (
+                        <Tabs.Panel key={k.kind} value={k.kind}>
+                            <div className="pt-3"><XfFilePreview kind={k.kind} model={k.model} /></div>
+                        </Tabs.Panel>
+                    ))}
+                </Tabs.Panels>
+            </Tabs>
+        </DemoNote>
+    );
+}
+
+function XfFilesManagerDemo() {
+    const [model, setModel] = useState<XfFilesModel>({
+        robots: XF_DEMO_ROBOTS,
+        sitemap: XF_DEMO_SITEMAP,
+        agents: XF_DEMO_AGENTS,
+    });
+    return (
+        <DemoNote
+            outOfBox="XFilesManager is the compound surface: one tab per well-known file, each wiring its editor beside its live preview over a single aggregate model (value + onChange). Absent kinds offer an Add affordance; kinds/activeKind props restrict and control the tabs. This is the exact surface the sandbox admin uses at /admin/well-known-files."
+            demo="Seeded with three of the six kinds so the Add flow is visible on the rest."
+        >
+            <XfFilesManager value={model} onChange={setModel} defaultKind="robots" />
+        </DemoNote>
     );
 }

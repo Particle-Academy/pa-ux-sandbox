@@ -166,6 +166,72 @@ class ComponentContext
             'what' => 'A single wrapper component that mounts every cross-cutting provider Fancy UI expects, in the right order, with sensible defaults. Flags (<code>withScreens</code>, <code>withECharts</code>) let you opt out of pieces you don&apos;t need. Providers mount synchronously on first render &mdash; no lazy-import dance.',
             'how' => 'In your Inertia bootstrap, wrap <code>&lt;App ...&gt;</code> with <code>&lt;FancyAppRoot&gt;</code> inside <code>createRoot().render()</code>. That&apos;s the whole integration &mdash; every other Fancy UI primitive now works without further wiring.',
         ],
+
+        'fancy-mlm-ui/downline-tree' => [
+            'why' => 'Referral programs live or die on members understanding their network, but genealogy UIs are usually bespoke: one tree for unilevel, another for binary spillover, each hand-wired to a backend. And the moment an agent should read or drive the view, a bespoke tree means DOM scraping.',
+            'what' => '<code>DownlineTree</code> is a controlled genealogy surface: a flat, JSON-friendly member list in (each row carrying BOTH <code>sponsorId</code> and <code>placementId</code>), a collapsible tree out. The <code>edge</code> prop picks which pointer draws the shape &mdash; <code>"sponsor"</code> (unilevel) or <code>"placement"</code> (binary / matrix) &mdash; so one dataset renders every downline type. Controlled selection, tier Badges via <code>tierColor</code>, dimmed inactive members, stable <code>data-mlm-node</code> handles.',
+            'how' => 'Feed it the member rows your <code>particle-academy/fancy-mlm</code> (or <code>@particle-academy/fancy-mlm</code>) backend already stores, set <code>edge</code> from your plan&apos;s tree type, and wire <code>selectedId</code> + <code>onSelect</code>. The sandbox&apos;s /referrals page is exactly this over the live engine.',
+        ],
+
+        'fancy-mlm-ui/commission-statement' => [
+            'why' => 'A referral payout the member can&apos;t audit is a support ticket. Ad-hoc earnings tables get the totals wrong the first time a clawback appears &mdash; reversed rows keep counting, trust evaporates.',
+            'what' => '<code>CommissionStatement</code> is a controlled ledger over the engine&apos;s <code>RewardComputation</code> rows: level, recipient, tier, amount, and a <code>status</code> per row (paid / pending / held / reversed). Reversed rows strike through and are excluded from the folded paid total automatically. Rows carry stable <code>data-mlm-commission-row</code> handles.',
+            'how' => 'Map your reward log (the sandbox uses fun-lab&apos;s EventLog with <code>source=mlm</code>) into <code>rows</code>, pass a <code>formatAmount</code> for your currency/points, done. New rewards prepend &mdash; the component recomputes the total from the controlled value.',
+        ],
+
+        'fancy-mlm-ui/rank-progress' => [
+            'why' => 'Tier systems only motivate when the next tier feels reachable &mdash; members need to see exactly how far diamond is, in whatever unit the plan measures (team size, volume, active legs). Hand-rolled progress bars drift out of sync with the real qualification rules.',
+            'what' => '<code>RankProgress</code> renders the current tier Badge, the next tier, and a progress bar of <code>value</code> against <code>target</code> with the remaining gap spelled out. At the top tier (no <code>nextTier</code>) it switches presentation. The bar exposes a stable <code>data-mlm-rank-pct</code> handle.',
+            'how' => 'Compute <code>value</code>/<code>target</code> from your plan&apos;s thresholds (the sandbox derives them from downline size via <code>MlmProgram::rankProgress()</code>) and pass <code>tier</code>/<code>nextTier</code>/<code>unit</code>. Purely presentational &mdash; no internal state to fight.',
+        ],
+
+        'fancy-x-files-ui/robots-editor' => [
+            'why' => 'robots.txt is tiny and high-stakes: one mis-ordered Allow leaks an admin path to a single bot group, and no one notices until it&apos;s indexed. Hand-editing the file (or hand-rolling a form) has no guardrail for that class of mistake.',
+            'what' => '<code>RobotsEditor</code> is a controlled rule builder &mdash; per-group User-agent / Allow / Disallow / Crawl-delay plus sitemap URLs &mdash; with the <code>protect()</code> safety rail: protected paths are pinned Disallow for EVERY group, rendered as red chips, stripped from Allow lists, and flagged by <code>validateRobots</code> if they ever sneak back.',
+            'how' => 'Hold the <code>RobotsModel</code> in state, render the editor beside <code>&lt;XFilePreview kind="robots"&gt;</code>, and persist the model to your backend (<code>particle-academy/fancy-x-files</code> renders the identical file server-side). List private paths in <code>protectedPaths</code> and the rail does the rest.',
+        ],
+
+        'fancy-x-files-ui/security-txt-editor' => [
+            'why' => 'RFC 9116 security.txt has two hard rules teams routinely break: Contact is mandatory and Expires must be in the future. An expired file is worse than none &mdash; researchers assume the channel is dead.',
+            'what' => '<code>SecurityTxtEditor</code> edits the full RFC surface (Contact list, Expires date input, Encryption / Acknowledgments / Preferred-Languages / Canonical / Policy / Hiring) with <code>validateSecurityTxt</code> surfacing violations inline as you type.',
+            'how' => 'Controlled <code>value</code> + <code>onChange</code> over a <code>SecurityTxtModel</code>; pair with <code>&lt;XFilePreview kind="securityTxt"&gt;</code> and serve the rendered text at <code>/.well-known/security.txt</code> via the fancy-x-files backend.',
+        ],
+
+        'fancy-x-files-ui/llms-txt-editor' => [
+            'why' => 'llms.txt is your site&apos;s curated map for AI assistants &mdash; leave it to chance and LLMs summarize your marketing page instead of your docs. Writing the Markdown by hand drifts as sections move.',
+            'what' => '<code>LlmsTxtEditor</code> edits the llms.txt structure directly: title, blockquote summary, free-form details, and repeatable link sections (title / URL / notes per link). The paired preview renders the exact Markdown document.',
+            'how' => 'Controlled model in state, editor + preview side by side, persist on save. The fancy-x-files backend serves it at <code>/llms.txt</code>; agents get the same JSON model over MCP if you expose it.',
+        ],
+
+        'fancy-x-files-ui/humans-txt-editor' => [
+            'why' => 'humans.txt is the one well-known file that&apos;s pure credit &mdash; who built the thing. It goes stale because editing a text file on a server is friction nobody prioritizes.',
+            'what' => '<code>HumansTxtEditor</code> edits team entries (role / name / contact), the Site colophon section, and thanks &mdash; a two-minute admin surface instead of an SSH session.',
+            'how' => 'Controlled <code>HumansTxtModel</code> + <code>onChange</code>, preview beside it, persist. Served at <code>/humans.txt</code> by the backend package.',
+        ],
+
+        'fancy-x-files-ui/sitemap-editor' => [
+            'why' => 'For small sites a generated sitemap is overkill and a hand-written one rots. What&apos;s missing is a middle path: a form that guarantees valid XML with sane changefreq / priority values.',
+            'what' => '<code>SitemapEditor</code> edits a flat URL set &mdash; loc, lastmod, changefreq, priority per entry &mdash; with <code>validateSitemap</code> catching malformed locs and out-of-range priorities before they ship.',
+            'how' => 'Controlled <code>SitemapModel</code>, preview beside it, persist. For dynamic routes keep generating server-side; this editor is for the curated set (the sandbox admin combines both).',
+        ],
+
+        'fancy-x-files-ui/agents-editor' => [
+            'why' => 'robots.txt governs crawlers; nothing governs ACTING agents &mdash; the assistants that click, fill, and buy on your site. An explicit register beats guessing which bots you meant to allow.',
+            'what' => '<code>AgentsEditor</code> edits the /AGENTS register: per-agent id, display name, homepage, allow/deny policy, and a permitted-scope line, plus a policy contact. The preview shows the JSON register agents fetch.',
+            'how' => 'Controlled <code>AgentsModel</code>, preview beside it, persist via the backend. Pairs naturally with agent-integrations &mdash; the register says who may connect; the bridges say what they can do.',
+        ],
+
+        'fancy-x-files-ui/x-file-preview' => [
+            'why' => 'A form that edits a file you can&apos;t see is a trust gap &mdash; the whole point of these files is their exact on-disk bytes.',
+            'what' => '<code>XFilePreview</code> renders the REAL text/XML for any kind + model, using the same render logic as the fancy-x-files PHP / Node packages &mdash; what you see is what ships. Filename header comes from <code>X_FILE_META</code>.',
+            'how' => 'Drop it next to any editor with the same model: <code>&lt;XFilePreview kind="robots" model={model} /&gt;</code>. Read-only; no state of its own.',
+        ],
+
+        'fancy-x-files-ui/x-files-manager' => [
+            'why' => 'Six well-known files means six editors, six previews, six routes &mdash; unless something composes them. Admins want one screen: tabs, edit, see the file, save.',
+            'what' => '<code>XFilesManager</code> is the compound surface: a tab per file kind, each wiring its editor beside its live preview over ONE aggregate <code>XFilesModel</code> (<code>value</code> + <code>onChange</code>). Absent kinds get an Add affordance; <code>kinds</code> / <code>activeKind</code> restrict and control the tabs.',
+            'how' => 'Hold the aggregate model, render <code>&lt;XFilesManager value onChange /&gt;</code>, persist on save &mdash; the sandbox&apos;s /admin/well-known-files page is exactly this component over the fancy-x-files backend.',
+        ],
     ];
 
     /**

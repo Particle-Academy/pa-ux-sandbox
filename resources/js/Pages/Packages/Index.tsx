@@ -305,6 +305,52 @@ function PkgPreview({ slug }: { slug: string }): ReactNode {
             <span style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: 10, fontWeight: 600, color: AMBER, border: `1px solid color-mix(in oklch,${AMBER} 35%,transparent)`, padding: "3px 9px", borderRadius: 999 }}><Icon name="badge-check" size={12} />Verified</span>
         ),
         "fancy-3d": <Icon name="box" size={34} style={{ color: VIOLET }} />,
+        "fancy-3d-babylon": (
+            <div className="mp" style={{ flexDirection: "column", gap: 4 }}>
+                <Icon name="box" size={28} style={{ color: VIOLET }} />
+                <span style={{ fontSize: 9, fontWeight: 600, color: "var(--fg-3)" }}>Babylon.js</span>
+            </div>
+        ),
+        "fancy-3d-three": (
+            <div className="mp" style={{ flexDirection: "column", gap: 4 }}>
+                <Icon name="box" size={28} style={{ color: AMBER }} />
+                <span style={{ fontSize: 9, fontWeight: 600, color: "var(--fg-3)" }}>three.js</span>
+            </div>
+        ),
+        "fancy-mlm-ui": (
+            // A tiny downline tree: root → two legs, tier-colored.
+            <div className="mp" style={{ flexDirection: "column", gap: 3 }}>
+                <span style={{ width: 12, height: 12, borderRadius: 999, background: "#14b8a6" }} />
+                <span className="mp" style={{ gap: 0 }}>
+                    <span style={{ width: 14, height: 2, background: "var(--border-2)", transform: "rotate(35deg)" }} />
+                    <span style={{ width: 14, height: 2, background: "var(--border-2)", transform: "rotate(-35deg)" }} />
+                </span>
+                <span className="mp" style={{ gap: 14 }}>
+                    <span style={{ width: 10, height: 10, borderRadius: 999, background: AMBER }} />
+                    <span style={{ width: 10, height: 10, borderRadius: 999, background: VIOLET }} />
+                </span>
+                <span style={{ fontSize: 8.5, fontWeight: 600, color: "#14b8a6" }}>+150 pts · L1</span>
+            </div>
+        ),
+        "fancy-x-files-ui": (
+            <span className="mp-box" style={{ width: 120, padding: 8, fontFamily: "var(--font-mono)", fontSize: 8.5, lineHeight: 1.6, textAlign: "left" }}>
+                <div style={{ color: "var(--fg-4)" }}># robots.txt</div>
+                <div>User-agent: <span style={{ color: VIOLET }}>*</span></div>
+                <div>Disallow: <span style={{ color: "#dc2626" }}>/admin</span></div>
+            </span>
+        ),
+        "catalog-fms": (
+            <div className="mp" style={{ gap: 6 }}>
+                <span className="mp-box" style={{ padding: "6px 9px", textAlign: "center" }}>
+                    <div style={{ fontSize: 11, fontWeight: 700 }}>$29</div>
+                    <div style={{ fontSize: 7.5, color: "var(--fg-4)" }}>/month</div>
+                </span>
+                <span className="mp-box" style={{ padding: "6px 9px", textAlign: "center", borderColor: VIOLET }}>
+                    <div style={{ fontSize: 11, fontWeight: 700, color: VIOLET }}>$99</div>
+                    <div style={{ fontSize: 7.5, color: "var(--fg-4)" }}>/month</div>
+                </span>
+            </div>
+        ),
         "fancy-inertia": (
             <span className="mp-box" style={{ width: 130, padding: 9 }}>
                 <div style={{ fontSize: 9, color: "var(--fg-3)", marginBottom: 5 }}>useFancyForm()</div>

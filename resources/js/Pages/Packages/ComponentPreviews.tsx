@@ -1558,8 +1558,14 @@ const PREVIEWS: Record<string, PreviewFn> = {
                 <Code size={10} className="text-violet-300" /> app.ts
             </div>
             <div className="flex p-2">
+                {/* Line numbers with the 0.8.0 diff-gutter marks (diffBase):
+                    green bar = added, blue = modified, red wedge = deleted. */}
                 <div className="select-none pr-2 text-right text-zinc-600">
-                    <div>1</div><div>2</div><div>3</div><div>4</div><div>5</div>
+                    <div>1</div>
+                    <div className="relative"><span className="absolute -left-1 top-0 bottom-0 w-[2px] rounded bg-sky-500" />2</div>
+                    <div className="relative"><span className="absolute -left-1 top-0 bottom-0 w-[2px] rounded bg-emerald-500" />3</div>
+                    <div>4</div>
+                    <div className="relative"><span className="absolute -left-1.5 top-0 h-0 w-0 border-y-4 border-y-transparent border-l-8 border-l-rose-500" />5</div>
                 </div>
                 <div className="space-y-0.5">
                     <div><span className="text-violet-300">import</span> <span className="text-zinc-300">{"{ run }"}</span> <span className="text-violet-300">from</span> <span className="text-emerald-300">&quot;./engine&quot;</span></div>

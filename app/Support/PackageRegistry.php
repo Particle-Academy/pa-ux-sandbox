@@ -78,6 +78,7 @@ class PackageRegistry
         'dark-slide-js' => ['group' => 'companion', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#dc2626'],
         'fancy-heuristics-js' => ['group' => 'companion', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#0ea5e9'],
         'fancy-term-host' => ['group' => 'companion', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#10b981'],
+        'fancy-file-commons' => ['group' => 'companion', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#eab308'],
         'fancy-x-files-js' => ['group' => 'companion', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#64748b'],
         'fancy-auto-common' => ['group' => 'companion', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#6366f1'],
         'fancy-pwa' => ['group' => 'companion', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#0ea5e9'],
@@ -346,6 +347,14 @@ class PackageRegistry
                 'tagline' => 'Headless Node terminal backend for fancy-term — owns the PTYs (node-pty peer) and the T1/T2/T3 persistence engine (snapshot+replay, retained PTYs, detached pty-host) behind four injected ports. No UI.',
                 'npm' => '@particle-academy/fancy-term-host',
                 'repo' => 'Particle-Academy/fancy-term-host',
+                'language' => 'TypeScript',
+            ],
+            [
+                'slug' => 'fancy-file-commons',
+                'name' => '@particle-academy/fancy-file-commons',
+                'tagline' => 'Shared pure core for the file-focused packages (editors / viewers / writers / diff surfaces) — the structured diff engine + model, git unified-diff parser, merge resolution, per-line gutter annotations, path helpers, and filename→language. Zero deps, no React; fancy-diff re-exports it and the fancy-code diff gutter runs on it.',
+                'npm' => '@particle-academy/fancy-file-commons',
+                'repo' => 'Particle-Academy/fancy-file-commons',
                 'language' => 'TypeScript',
             ],
             // Showcase analytics: a headless browser collector (the verification
@@ -663,7 +672,7 @@ class PackageRegistry
             'repo' => 'Particle-Academy/fancy-code',
             'language' => 'TypeScript',
             'components' => [
-                ['slug' => 'code-editor', 'name' => 'CodeEditor', 'blurb' => 'Editor surface.'],
+                ['slug' => 'code-editor', 'name' => 'CodeEditor', 'blurb' => 'Editor surface — controlled value, language + theme registries, and a diffBase gutter with live change marks (added / modified / deleted).'],
                 ['slug' => 'markdown-editor', 'name' => 'MarkdownEditor', 'blurb' => 'Markdown editor + live preview.'],
                 ['slug' => 'file-viewer', 'name' => 'FileViewer', 'blurb' => 'Unified file viewer — CodeEditor for text, react-fancy MediaViewer for image / video / audio / PDF; resolveFileKind decides.'],
             ],

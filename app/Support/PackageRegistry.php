@@ -133,6 +133,7 @@ class PackageRegistry
             self::fancyPixel(),
             self::fancyEcharts(),
             self::fancyMlmUi(),
+            self::fancyXFilesUi(),
             self::fancyScreens(),
             self::fancy3d(),
             self::fancy3dBabylon(),
@@ -277,14 +278,6 @@ class PackageRegistry
                 'tagline' => 'Node/TS port of fancy-x-files — the same robots / security.txt / humans / llms / sitemap model, builders, and validators, isomorphic (browser or Node). Headless; no UI.',
                 'npm' => '@particle-academy/fancy-x-files',
                 'repo' => 'Particle-Academy/fancy-x-files-js',
-                'language' => 'TypeScript',
-            ],
-            [
-                'slug' => 'fancy-x-files-ui',
-                'name' => '@particle-academy/fancy-x-files-ui',
-                'tagline' => 'react-fancy editor suite for the fancy-x-files well-known files — controlled, JSON-friendly RobotsEditor / SecurityTxtEditor / LlmsTxtEditor / HumansTxtEditor / SitemapEditor / AgentsEditor + live preview and a combined XFilesManager. Built to the Human+ UX contract.',
-                'npm' => '@particle-academy/fancy-x-files-ui',
-                'repo' => 'Particle-Academy/fancy-x-files-ui',
                 'language' => 'TypeScript',
             ],
             [
@@ -754,6 +747,30 @@ class PackageRegistry
                 ['slug' => 'downline-tree', 'name' => 'DownlineTree', 'blurb' => 'Controlled network tree — collapsible nodes, per-member tier/volume, selection + onChange. Renders unilevel, binary, and matrix shapes from a flat member list.'],
                 ['slug' => 'commission-statement', 'name' => 'CommissionStatement', 'blurb' => 'Per-period earnings ledger — level, source member, tier multiplier, and amount per row, with a paid/pending status and totals.'],
                 ['slug' => 'rank-progress', 'name' => 'RankProgress', 'blurb' => 'Progress toward the next rank/tier — current volume vs threshold, with the requirement gap.'],
+            ],
+        ];
+    }
+
+    /** @return array<string, mixed> */
+    private static function fancyXFilesUi(): array
+    {
+        return [
+            'slug' => 'fancy-x-files-ui',
+            'name' => 'fancy-x-files-ui',
+            'tagline' => 'react-fancy editor suite for the well-known + agent-facing files — controlled, JSON-friendly editors for robots.txt / security.txt / llms.txt / humans.txt / sitemap.xml / AGENTS, each with a live preview, plus a combined XFilesManager. Pairs with particle-academy/fancy-x-files (PHP) / @particle-academy/fancy-x-files (Node).',
+            'npm' => '@particle-academy/fancy-x-files-ui',
+            'repo' => 'Particle-Academy/fancy-x-files-ui',
+            'language' => 'TypeScript',
+            'pairs' => ['fancy-x-files', 'fancy-x-files-js'],
+            'components' => [
+                ['slug' => 'robots-editor', 'name' => 'RobotsEditor', 'blurb' => 'Controlled robots.txt rule builder — per-group Allow/Disallow, sitemaps, and protected paths pinned Disallow everywhere (the protect() safety rail).'],
+                ['slug' => 'security-txt-editor', 'name' => 'SecurityTxtEditor', 'blurb' => 'RFC 9116 security.txt editor — required Contact + a future Expires, with inline validation.'],
+                ['slug' => 'llms-txt-editor', 'name' => 'LlmsTxtEditor', 'blurb' => 'llms.txt editor — title / summary / details + repeatable link sections.'],
+                ['slug' => 'humans-txt-editor', 'name' => 'HumansTxtEditor', 'blurb' => 'humans.txt editor — team credits, thanks, and site colophon.'],
+                ['slug' => 'sitemap-editor', 'name' => 'SitemapEditor', 'blurb' => 'sitemap.xml editor — a flat list of URL entries with lastmod / changefreq / priority.'],
+                ['slug' => 'agents-editor', 'name' => 'AgentsEditor', 'blurb' => '/AGENTS register editor — per-agent allow/deny policy + scope.'],
+                ['slug' => 'x-file-preview', 'name' => 'XFilePreview', 'blurb' => 'Read-only render of the real text/XML a well-known file becomes on disk — what-you-see-is-what-ships.'],
+                ['slug' => 'x-files-manager', 'name' => 'XFilesManager', 'blurb' => 'The compound surface — a tab per file kind wiring each editor next to its live preview over one aggregate model.'],
             ],
         ];
     }

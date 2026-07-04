@@ -40,6 +40,16 @@ import "@particle-academy/fancy-slides/styles.css";
 import { DownlineTree, CommissionStatement, RankProgress } from "@particle-academy/fancy-mlm-ui";
 import "@particle-academy/fancy-mlm-ui/styles.css";
 import {
+    RobotsEditor,
+    SecurityTxtEditor,
+    LlmsTxtEditor,
+    HumansTxtEditor,
+    SitemapEditor,
+    AgentsEditor,
+    XFilePreview,
+    XFilesManager,
+} from "@particle-academy/fancy-x-files-ui";
+import {
     CANONICAL_SLIDE,
     CANONICAL_DECK,
     CANONICAL_TEXT_SLIDE,
@@ -109,7 +119,82 @@ const MLM_TIER_COLOR: Record<string, "orange" | "zinc" | "amber" | "violet" | "s
 };
 const mlmTierColor = (t?: string) => (t && MLM_TIER_COLOR[t]) || "slate";
 
+// ─── fancy-x-files-ui seed models (small but real; the editors are controlled) ──
+const XF_ROBOTS = {
+    groups: [{ userAgents: ["*"], allow: ["/"], disallow: ["/admin", "/api"] }],
+    sitemaps: ["https://acme.dev/sitemap.xml"],
+    protectedPaths: ["/admin"],
+};
+const XF_SECURITY = {
+    contact: ["mailto:security@acme.dev"],
+    expires: "2027-01-01T00:00:00Z",
+    policy: "https://acme.dev/security-policy",
+};
+const XF_LLMS = {
+    title: "Acme Docs",
+    summary: "Everything an LLM needs to use Acme.",
+    sections: [{ name: "Guides", links: [{ title: "Quickstart", url: "https://acme.dev/quickstart" }] }],
+};
+const XF_HUMANS = {
+    team: [{ role: "Developer", name: "Ada Lovelace", contact: "@ada" }],
+    thanks: ["react-fancy"],
+};
+const XF_SITEMAP = {
+    urls: [
+        { loc: "https://acme.dev/", changefreq: "daily" as const, priority: 1.0 },
+        { loc: "https://acme.dev/about", changefreq: "monthly" as const },
+    ],
+};
+const XF_AGENTS = {
+    agents: [
+        { id: "claude", name: "Claude", policy: "allow" as const, scope: "read + summarize" },
+        { id: "scraper", policy: "deny" as const },
+    ],
+    contact: "mailto:ops@acme.dev",
+};
+
+// The editors are taller than a card; scale + top-align so the head shows.
+const XFBox = ({ children }: { children: ReactNode }) => (
+    <div className="w-full self-start overflow-hidden text-[11px]">
+        <div className="origin-top-left scale-[0.72]" style={{ width: "139%" }}>
+            {children}
+        </div>
+    </div>
+);
+
 const PREVIEWS: Record<string, PreviewFn> = {
+    // ─── fancy-x-files-ui ────────────────────────────────────────────────────
+    "fancy-x-files-ui/robots-editor": () => (
+        <XFBox><RobotsEditor value={XF_ROBOTS} onChange={() => {}} hideIssues /></XFBox>
+    ),
+    "fancy-x-files-ui/security-txt-editor": () => (
+        <XFBox><SecurityTxtEditor value={XF_SECURITY} onChange={() => {}} hideIssues /></XFBox>
+    ),
+    "fancy-x-files-ui/llms-txt-editor": () => (
+        <XFBox><LlmsTxtEditor value={XF_LLMS} onChange={() => {}} hideIssues /></XFBox>
+    ),
+    "fancy-x-files-ui/humans-txt-editor": () => (
+        <XFBox><HumansTxtEditor value={XF_HUMANS} onChange={() => {}} hideIssues /></XFBox>
+    ),
+    "fancy-x-files-ui/sitemap-editor": () => (
+        <XFBox><SitemapEditor value={XF_SITEMAP} onChange={() => {}} hideIssues /></XFBox>
+    ),
+    "fancy-x-files-ui/agents-editor": () => (
+        <XFBox><AgentsEditor value={XF_AGENTS} onChange={() => {}} hideIssues /></XFBox>
+    ),
+    "fancy-x-files-ui/x-file-preview": () => (
+        <XFBox><XFilePreview kind="robots" model={XF_ROBOTS} /></XFBox>
+    ),
+    "fancy-x-files-ui/x-files-manager": () => (
+        <XFBox>
+            <XFilesManager
+                value={{ robots: XF_ROBOTS, sitemap: XF_SITEMAP, agents: XF_AGENTS }}
+                onChange={() => {}}
+                defaultKind="robots"
+            />
+        </XFBox>
+    ),
+
     // ─── fancy-mlm-ui ────────────────────────────────────────────────────────
     "fancy-mlm-ui/downline-tree": () => (
         <div className="w-full max-w-[19rem] scale-90 text-left">

@@ -1,6 +1,6 @@
 {
     "$schema": "https://ui.particle.academy/schema/registry-compiled.json",
-    "count": 162,
+    "count": 164,
     "items": [
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
@@ -2692,6 +2692,28 @@
             "title": "particle-academy/laravel-fun-lab",
             "description": "Analytics-driven gamification \u2014 XP, achievements, prizes, and leaderboards. Powers the sandbox's engagement economy.",
             "package": "laravel-fun-lab",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "last-word",
+            "type": "registry:ui",
+            "title": "particle-academy/last-word",
+            "description": "PHP 8.2+ docx writer/reader for agentic word-processing documents \u2014 a JSON Doc model (headings / styled runs / nested lists / tables / code / quotes / images), markdown bridges both ways, and Agent read/write/describe. Sister to holy-sheet (xlsx) and dark-slide (pptx).",
+            "package": "last-word",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "last-word-js",
+            "type": "registry:ui",
+            "title": "@particle-academy/last-word",
+            "description": "Node/TS mirror of particle-academy/last-word \u2014 zero-dependency, isomorphic docx writer/reader with the same JSON Doc model + markdown bridges, so react-fancy Editor consumers round-trip Word files without a mammoth/turndown/docx converter sandwich. Headless; no UI.",
+            "package": "last-word-js",
             "dependencies": [],
             "registryDependencies": [],
             "files": []

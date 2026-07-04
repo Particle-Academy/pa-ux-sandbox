@@ -76,6 +76,7 @@ class PackageRegistry
         // Headless TS ports / collectors / tooling.
         'holy-sheet-js' => ['group' => 'companion', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#16a34a'],
         'dark-slide-js' => ['group' => 'companion', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#dc2626'],
+        'last-word-js' => ['group' => 'companion', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#2563eb'],
         'fancy-heuristics-js' => ['group' => 'companion', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#0ea5e9'],
         'fancy-term-host' => ['group' => 'companion', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#10b981'],
         'fancy-file-commons' => ['group' => 'companion', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#eab308'],
@@ -87,6 +88,7 @@ class PackageRegistry
         // Headless PHP backends + infra.
         'holy-sheet' => ['group' => 'companion', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#10b981'],
         'dark-slide' => ['group' => 'companion', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#8b5cf6'],
+        'last-word' => ['group' => 'companion', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#2563eb'],
         'fancy-heuristics' => ['group' => 'companion', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#8b5cf6'],
         'fancy-x-files' => ['group' => 'companion', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#64748b'],
         'fancy-cms' => ['group' => 'companion', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#0ea5e9'],
@@ -191,6 +193,23 @@ class PackageRegistry
                 'repo' => 'Particle-Academy/dark-slide',
                 'packagist' => 'particle-academy/dark-slide',
                 'language' => 'PHP',
+            ],
+            [
+                'slug' => 'last-word',
+                'name' => 'particle-academy/last-word',
+                'tagline' => 'PHP 8.2+ docx writer/reader for agentic word-processing documents — a JSON Doc model (headings / styled runs / nested lists / tables / code / quotes / images), markdown bridges both ways, and Agent read/write/describe. Sister to holy-sheet (xlsx) and dark-slide (pptx).',
+                'composer' => 'particle-academy/last-word',
+                'repo' => 'Particle-Academy/last-word',
+                'packagist' => 'particle-academy/last-word',
+                'language' => 'PHP',
+            ],
+            [
+                'slug' => 'last-word-js',
+                'name' => '@particle-academy/last-word',
+                'tagline' => 'Node/TS mirror of particle-academy/last-word — zero-dependency, isomorphic docx writer/reader with the same JSON Doc model + markdown bridges, so react-fancy Editor consumers round-trip Word files without a mammoth/turndown/docx converter sandwich. Headless; no UI.',
+                'npm' => '@particle-academy/last-word',
+                'repo' => 'Particle-Academy/last-word-js',
+                'language' => 'TypeScript',
             ],
             [
                 'slug' => 'laravel-catalog',

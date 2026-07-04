@@ -76,6 +76,7 @@ class StartProject extends Tool
                 'well-known files (robots / security / llms / AGENTS)' => 'particle-academy/fancy-x-files',
                 'xlsx writer/reader' => 'particle-academy/holy-sheet',
                 'pptx writer/reader' => 'particle-academy/dark-slide',
+                'docx writer/reader (+ markdown bridges)' => 'particle-academy/last-word',
             ],
             'scaffold' => [
                 'laravel new my-app   # (or composer create-project laravel/laravel my-app)',
@@ -105,6 +106,7 @@ class StartProject extends Tool
                 'well-known files (robots / security / llms / AGENTS)' => '@particle-academy/fancy-x-files',
                 'xlsx writer/reader' => '@particle-academy/holy-sheet',
                 'pptx writer/reader' => '@particle-academy/dark-slide',
+                'docx writer/reader (+ markdown bridges)' => '@particle-academy/last-word',
                 'SEO' => 'use the client `<Seo>` head helper from @particle-academy/fancy-inertia/seo, or your framework\'s head/metadata API — no server package needed',
             ],
             'notes' => [
@@ -146,6 +148,7 @@ class StartProject extends Tool
             ['capability' => 'Feature management (gates, quotas, metered features)', 'php' => 'particle-academy/laravel-fms', 'node' => '@particle-academy/fancy-features'],
             ['capability' => 'xlsx writer/reader (+ formula engine)', 'php' => 'particle-academy/holy-sheet', 'node' => '@particle-academy/holy-sheet'],
             ['capability' => 'pptx writer/reader', 'php' => 'particle-academy/dark-slide', 'node' => '@particle-academy/dark-slide'],
+            ['capability' => 'docx writer/reader (+ markdown bridges)', 'php' => 'particle-academy/last-word', 'node' => '@particle-academy/last-word'],
             ['capability' => 'Interaction analytics (EUO)', 'php' => 'particle-academy/fancy-heuristics', 'node' => '@particle-academy/fancy-heuristics-js'],
             ['capability' => 'Multi-level referral / network-marketing engine (unilevel / binary / matrix)', 'php' => 'particle-academy/fancy-mlm', 'node' => '@particle-academy/fancy-mlm'],
             ['capability' => 'Well-known files (robots / security / llms / sitemap / AGENTS)', 'php' => 'particle-academy/fancy-x-files', 'node' => '@particle-academy/fancy-x-files'],

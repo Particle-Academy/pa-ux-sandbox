@@ -19,7 +19,7 @@ class PackageRegistry
      * released; their definitions stay below, so re-listing one is just deleting
      * its slug from this list (and re-running `php artisan registry:build`).
      */
-    public const HIDDEN = ['fancy-motion', 'fancy-cms-ui', 'fancy-cms'];
+    public const HIDDEN = ['fancy-motion', 'fancy-cms-ui'];
 
     /**
      * Per-package design classification — the source of truth for the
@@ -267,7 +267,7 @@ class PackageRegistry
             [
                 'slug' => 'fancy-cms',
                 'name' => 'particle-academy/fancy-cms',
-                'tagline' => 'Laravel host + PHP page renderer for the Stages doc model — node tree → HTML with island hydration. Backend pair of fancy-cms-ui. (preview — dev-main)',
+                'tagline' => 'EARLY-RELEASE BETA — Laravel host + PHP page renderer for the Stages doc model: node tree → HTML with island hydration; backend pair of the fancy-cms-ui editor (still in preview). Expect rough edges and breaking 0.x changes — please report anything you hit at github.com/Particle-Academy/fancy-cms/issues.',
                 'composer' => 'particle-academy/fancy-cms',
                 'repo' => 'Particle-Academy/fancy-cms',
                 'packagist' => 'particle-academy/fancy-cms',

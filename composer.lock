@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8cfcbde5e40070fedc59c15a03a04d6b",
+    "content-hash": "e59cafb6af0be52e58b926b9fde746df",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -3815,6 +3815,59 @@
             "time": "2026-06-09T04:37:20+00:00"
         },
         {
+            "name": "particle-academy/fancy-cms",
+            "version": "v0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Particle-Academy/fancy-cms.git",
+                "reference": "2490a23e0fc83e88112a3d269f31fb51853dd3b2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Particle-Academy/fancy-cms/zipball/2490a23e0fc83e88112a3d269f31fb51853dd3b2",
+                "reference": "2490a23e0fc83e88112a3d269f31fb51853dd3b2",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "^11.0 || ^12.0 || ^13.0",
+                "php": "^8.2"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^11.0 || ^12.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "FancyCms\\FancyCmsServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "FancyCms\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Laravel host for fancy-cms — the PHP page renderer (node tree → HTML + compiled CSS + island placeholders), persistence, file API on any disk, and publish routing. The PHP half of the dual-emitter pair with @particle-academy/fancy-cms-ui.",
+            "keywords": [
+                "cms",
+                "fancy",
+                "human-plus",
+                "inertia",
+                "laravel",
+                "website-builder"
+            ],
+            "support": {
+                "issues": "https://github.com/Particle-Academy/fancy-cms/issues",
+                "source": "https://github.com/Particle-Academy/fancy-cms/tree/v0.1.0"
+            },
+            "time": "2026-07-05T20:55:23+00:00"
+        },
+        {
             "name": "particle-academy/fancy-heuristics",
             "version": "v0.2.2",
             "source": {
@@ -4345,6 +4398,64 @@
                 "source": "https://github.com/Particle-Academy/laravel-fun-lab/tree/v0.5.0"
             },
             "time": "2026-06-05T07:20:39+00:00"
+        },
+        {
+            "name": "particle-academy/last-word",
+            "version": "v0.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Particle-Academy/last-word.git",
+                "reference": "9481622ffed4e3e14a3450c186bda0668bf162cf"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Particle-Academy/last-word/zipball/9481622ffed4e3e14a3450c186bda0668bf162cf",
+                "reference": "9481622ffed4e3e14a3450c186bda0668bf162cf",
+                "shasum": ""
+            },
+            "require": {
+                "ext-dom": "*",
+                "ext-libxml": "*",
+                "ext-zip": "*",
+                "php": "^8.2"
+            },
+            "require-dev": {
+                "pestphp/pest": "^3.0|^4.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "LastWord\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Particle Academy",
+                    "homepage": "https://github.com/Particle-Academy"
+                }
+            ],
+            "description": "Standalone word-processing document read/write tool for agentic docs. Framework-agnostic PHP core that writes .docx (Office Open XML / WordprocessingML) from a JSON document model — headings, styled runs, nested lists, tables, code blocks, quotes, embedded images — reads them back with high fidelity, and bridges to/from GFM markdown so WYSIWYG editors round-trip Word files without converter sandwiches.",
+            "homepage": "https://github.com/Particle-Academy/last-word",
+            "keywords": [
+                "agentic",
+                "ai",
+                "document",
+                "document-creation",
+                "docx",
+                "markdown",
+                "office",
+                "particle-academy",
+                "word"
+            ],
+            "support": {
+                "issues": "https://github.com/Particle-Academy/last-word/issues",
+                "source": "https://github.com/Particle-Academy/last-word"
+            },
+            "time": "2026-07-04T19:10:40+00:00"
         },
         {
             "name": "phpoption/phpoption",

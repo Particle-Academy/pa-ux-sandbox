@@ -168,6 +168,47 @@ it('purges only demo members and splices real children back in', function () {
     expect((int) $realBottom->placement_id)->toBe($realTop->getKey());
 });
 
+it('exposes the referral network card props on the admin user page', function () {
+    $user = User::factory()->create();
+    makeMember(['meta' => ['label' => 'Sponsor']]);
+
+    // Before enrollment: no member row for this user → mlmMember is null.
+    $this->actingAs($this->admin)->get("/admin/users/{$user->getKey()}")
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('Admin/UserShow')
+            ->where('mlmMember', null)
+            ->has('mlmMembers', 1)
+            ->where('mlmMembers.0.label', 'Sponsor')
+            ->has('mlmTierKeys')
+            ->where('mlmTierKeys.0', 'bronze'));
+});
+
+it('enrolls a user from the user page card and the show props flip to the member editor', function () {
+    $user = User::factory()->create();
+    $sponsor = makeMember(['meta' => ['label' => 'Sponsor']]);
+
+    // The card's enroll form: same POST route as /admin/mlm, tier null → plan defaultTier.
+    $this->actingAs($this->admin)->post('/admin/mlm/members', [
+        'user_id' => $user->getKey(),
+        'sponsor_id' => $sponsor->getKey(),
+        'placement_id' => null,
+        'tier' => null,
+    ])->assertRedirect()->assertSessionHasNoErrors();
+
+    // The show page now carries the member, shaped like membersForAdmin() rows.
+    $this->actingAs($this->admin)->get("/admin/users/{$user->getKey()}")
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('Admin/UserShow')
+            ->where('mlmMember.userId', $user->getKey())
+            ->where('mlmMember.sponsorId', (string) $sponsor->getKey())
+            ->where('mlmMember.placementId', null)
+            ->where('mlmMember.tier', 'bronze')
+            ->where('mlmMember.active', true)
+            ->has('mlmMembers', 2));
+});
+
 it('no-ops the demo network seeder outside the local environment', function () {
     $existing = makeMember(['meta' => ['label' => 'Pre-existing']]);
 

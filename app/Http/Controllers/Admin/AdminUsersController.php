@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ShowcaseSubmission;
 use App\Models\User;
 use App\Services\Entitlements;
+use App\Services\Mlm\MlmProgram;
 use App\Services\PlayerProfile;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -74,7 +75,7 @@ class AdminUsersController extends Controller
         ]);
     }
 
-    public function show(User $user, PlayerProfile $playerProfile): Response
+    public function show(User $user, PlayerProfile $playerProfile, MlmProgram $program): Response
     {
         $profile = $user->getProfile()->load('metrics.gamedMetric');
         $summary = $playerProfile->summary($user);
@@ -119,6 +120,11 @@ class AdminUsersController extends Controller
                 'created' => $s->created_at?->format('M j, Y'),
             ])->all();
 
+        // The referral-network card: this user's member row (null until they're
+        // enrolled) plus the full member list for the sponsor/placement pickers.
+        $mlmMembers = $program->membersForAdmin();
+        $mlmMember = collect($mlmMembers)->first(fn (array $m): bool => $m['userId'] === $user->id);
+
         return Inertia::render('Admin/UserShow', [
             'user' => [
                 'id' => $user->id,
@@ -151,6 +157,9 @@ class AdminUsersController extends Controller
                 ->map(fn ($a) => ['slug' => $a->slug, 'name' => $a->name])->all(),
             'allPrizes' => Prize::orderBy('name')->get(['slug', 'name'])
                 ->map(fn ($p) => ['slug' => $p->slug, 'name' => $p->name])->all(),
+            'mlmMember' => $mlmMember,
+            'mlmMembers' => $mlmMembers,
+            'mlmTierKeys' => array_keys($program->planData()['tiers'] ?? []),
             'pending' => ShowcaseSubmission::where('status', 'pending')->count(),
         ]);
     }

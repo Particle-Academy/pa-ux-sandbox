@@ -1,5 +1,7 @@
 import { Head, Link, router, useForm } from "@inertiajs/react";
-import { Avatar, Badge, Button, Card, Field, Icon, Input, Select, Table, Text } from "@particle-academy/react-fancy";
+import { useMemo } from "react";
+import { Avatar, Badge, Button, Card, Field, Icon, Input, Select, Switch, Table, Text } from "@particle-academy/react-fancy";
+import type { Color } from "@particle-academy/react-fancy";
 import { adminLayout } from "./AdminLayout";
 import { PageHeader, StatCard, EmptyRow } from "./ui";
 
@@ -29,6 +31,18 @@ type Transaction = { kind: string; amount: number; reason: string | null; at: st
 type AchievementRow = { name: string; granted_at: string | null };
 type OwnedSite = { id: number; label: string; host: string; status: string; listable: boolean; suspended: boolean; nsfw_status: string; created: string | null };
 type Option = { slug: string; name: string };
+type MlmMember = {
+    id: string;
+    label: string;
+    userId: number | null;
+    userName: string | null;
+    userEmail: string | null;
+    tier: string;
+    active: boolean;
+    sponsorId: string | null;
+    placementId: string | null;
+    demo: boolean;
+};
 
 type Props = {
     user: AdminUser;
@@ -39,6 +53,9 @@ type Props = {
     allMetrics: Option[];
     allAchievements: Option[];
     allPrizes: Option[];
+    mlmMember: MlmMember | null;
+    mlmMembers: MlmMember[];
+    mlmTierKeys: string[];
 };
 
 const n = (v: number) => v.toLocaleString();
@@ -47,7 +64,175 @@ function initials(name: string): string {
     return name.split(/\s+/).slice(0, 2).map((p) => p[0]?.toUpperCase() ?? "").join("") || "?";
 }
 
-function UserShow({ user, metrics, transactions, achievements, ownedSites, allMetrics, allAchievements, allPrizes }: Props) {
+const TIER_COLOR: Record<string, Color> = { bronze: "orange", silver: "zinc", gold: "amber", diamond: "violet" };
+const tierColor = (tier?: string): Color => (tier && TIER_COLOR[tier]) || "slate";
+
+/**
+ * Every member in `id`'s downline, walking BOTH edges (sponsor, and the
+ * placement edge's `placement ?? sponsor` fallback — the pointers the engine
+ * climbs). Used to exclude a member's own subtree from the sponsor/placement
+ * pickers; the server re-checks and rejects cycles regardless.
+ */
+function descendantsOf(id: string, members: MlmMember[]): Set<string> {
+    const out = new Set<string>();
+    const queue = [id];
+    while (queue.length > 0) {
+        const cur = queue.shift()!;
+        for (const m of members) {
+            if (m.id === id || out.has(m.id)) continue;
+            if (m.sponsorId === cur || (m.placementId ?? m.sponsorId) === cur) {
+                out.add(m.id);
+                queue.push(m.id);
+            }
+        }
+    }
+    return out;
+}
+
+/** Enroll this user in the referral network: sponsor + optional tier → POST. */
+function MlmEnrollForm({ userId, members, tierKeys }: { userId: number; members: MlmMember[]; tierKeys: string[] }) {
+    const f = useForm<{ user_id: number; sponsor_id: string | null; tier: string | null }>({
+        user_id: userId,
+        sponsor_id: null,
+        tier: null, // null → the server applies the plan's defaultTier
+    });
+
+    return (
+        <form
+            className="admin-field-stack"
+            onSubmit={(e) => {
+                e.preventDefault();
+                f.post("/admin/mlm/members", { preserveScroll: true });
+            }}
+        >
+            <Field label="Sponsor (referring member)" error={f.errors.sponsor_id}>
+                <Select
+                    value={f.data.sponsor_id ?? ""}
+                    onValueChange={(v) => f.setData("sponsor_id", v || null)}
+                    list={[
+                        { value: "", label: "— none (network root)" },
+                        ...members.map((m) => ({ value: m.id, label: m.label })),
+                    ]}
+                />
+            </Field>
+            <Field label="Tier" error={f.errors.tier}>
+                <Select
+                    value={f.data.tier ?? ""}
+                    onValueChange={(v) => f.setData("tier", v || null)}
+                    list={[
+                        { value: "", label: "Plan default" },
+                        ...tierKeys.map((t) => ({ value: t, label: t })),
+                    ]}
+                />
+            </Field>
+            <Button type="submit" color="teal" icon="user-plus" loading={f.processing}>Enroll in network</Button>
+        </form>
+    );
+}
+
+/** Inline editor for the user's member row: sponsor / placement / tier / active → PUT. */
+function MlmMemberEditor({ member, members, tierKeys }: { member: MlmMember; members: MlmMember[]; tierKeys: string[] }) {
+    // Self + own subtree can't be a parent — that would loop the tree.
+    const excluded = useMemo(() => descendantsOf(member.id, members), [member.id, members]);
+    const parentOptions = members.filter((m) => m.id !== member.id && !excluded.has(m.id));
+    const parentList = (noneLabel: string) => [
+        { value: "", label: noneLabel },
+        ...parentOptions.map((m) => ({ value: m.id, label: m.label })),
+    ];
+
+    const f = useForm<{ sponsor_id: string | null; placement_id: string | null; tier: string; active: boolean }>({
+        sponsor_id: member.sponsorId,
+        placement_id: member.placementId,
+        tier: member.tier,
+        active: member.active,
+    });
+
+    return (
+        <form
+            className="admin-field-stack"
+            onSubmit={(e) => {
+                e.preventDefault();
+                f.put(`/admin/mlm/members/${member.id}`, { preserveScroll: true });
+            }}
+        >
+            <Field label="Sponsor (referring member)" error={f.errors.sponsor_id}>
+                <Select
+                    value={f.data.sponsor_id ?? ""}
+                    onValueChange={(v) => f.setData("sponsor_id", v || null)}
+                    list={parentList("— none (network root)")}
+                />
+            </Field>
+            <Field label="Placement (binary / matrix slot)" error={f.errors.placement_id}>
+                <Select
+                    value={f.data.placement_id ?? ""}
+                    onValueChange={(v) => f.setData("placement_id", v || null)}
+                    list={parentList("— none (falls back to sponsor)")}
+                />
+            </Field>
+            <Field label="Tier" error={f.errors.tier}>
+                <Select
+                    value={f.data.tier}
+                    onValueChange={(v) => f.setData("tier", v)}
+                    list={tierKeys.map((t) => ({ value: t, label: t }))}
+                />
+            </Field>
+            <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 13, color: "var(--fg-2)" }}>
+                <Switch checked={f.data.active} onCheckedChange={(v) => f.setData("active", Boolean(v))} />
+                Active
+            </label>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <Button type="submit" color="teal" icon="check" loading={f.processing}>Save member</Button>
+                {f.recentlySuccessful && (
+                    <span style={{ fontSize: 12, color: "var(--color-teal-600, #0d9488)" }}>Saved — the tree re-shaped.</span>
+                )}
+            </div>
+        </form>
+    );
+}
+
+/** The user's spot in the referral network: enroll them, or re-organize their member row. */
+function ReferralNetworkCard({ userId, member, members, tierKeys }: { userId: number; member: MlmMember | null; members: MlmMember[]; tierKeys: string[] }) {
+    const labelOf = (id: string | null) =>
+        id === null ? "— none" : (members.find((m) => m.id === id)?.label ?? `#${id}`);
+
+    return (
+        <Card>
+            <Card.Header>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
+                    <div style={{ fontSize: 14, fontWeight: 600, color: "var(--fg-1)" }}>Referral network</div>
+                    <Link href="/admin/mlm" style={{ fontSize: 12, color: "var(--fg-3)" }}>Open full network →</Link>
+                </div>
+            </Card.Header>
+            <Card.Body>
+                {member === null ? (
+                    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+                        <Text size="xs" className="!text-zinc-500">
+                            Not in the referral network yet. Enroll them under a referring member (sponsor) — or leave the sponsor empty to make them a network root.
+                        </Text>
+                        <MlmEnrollForm userId={userId} members={members} tierKeys={tierKeys} />
+                    </div>
+                ) : (
+                    <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                        <div style={{ display: "flex", gap: 6, flexWrap: "wrap", alignItems: "center" }}>
+                            <Badge color={tierColor(member.tier)} variant="soft" className="capitalize">{member.tier}</Badge>
+                            <Badge color={member.active ? "emerald" : "zinc"} variant="soft">{member.active ? "active" : "inactive"}</Badge>
+                            {member.demo && <Badge color="rose" variant="soft">demo</Badge>}
+                        </div>
+                        <div style={{ fontSize: 13, color: "var(--fg-2)" }}>
+                            <div>Sponsor: <span style={{ color: "var(--fg-1)", fontWeight: 500 }}>{labelOf(member.sponsorId)}</span></div>
+                            <div style={{ marginTop: 4 }}>Placement: <span style={{ color: "var(--fg-1)", fontWeight: 500 }}>{labelOf(member.placementId)}</span></div>
+                        </div>
+                        <div style={{ borderTop: "1px solid var(--border-1)", paddingTop: 12 }}>
+                            <MlmMemberEditor key={member.id} member={member} members={members} tierKeys={tierKeys} />
+                        </div>
+                    </div>
+                )}
+            </Card.Body>
+        </Card>
+    );
+}
+
+function UserShow({ user, metrics, transactions, achievements, ownedSites, allMetrics, allAchievements, allPrizes, mlmMember, mlmMembers, mlmTierKeys }: Props) {
     const base = `/admin/users/${user.id}`;
 
     const xpForm = useForm({ metric: allMetrics[0]?.slug ?? "", amount: 100, reason: "" });
@@ -368,6 +553,8 @@ function UserShow({ user, metrics, transactions, achievements, ownedSites, allMe
                             </form>
                         </Card.Body>
                     </Card>
+
+                    <ReferralNetworkCard userId={user.id} member={mlmMember} members={mlmMembers} tierKeys={mlmTierKeys} />
 
                     <Card>
                         <Card.Header>

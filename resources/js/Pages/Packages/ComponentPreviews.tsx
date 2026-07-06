@@ -49,6 +49,7 @@ import {
     XFilePreview,
     XFilesManager,
 } from "@particle-academy/fancy-x-files-ui";
+import { CmsPage, CmsRegion } from "@particle-academy/fancy-cms-ui";
 import {
     CANONICAL_SLIDE,
     CANONICAL_DECK,
@@ -59,6 +60,8 @@ import {
     HIGHLIGHT_KIND_COLOR,
     PPTX_WRITER_COVERAGE,
     PPTX_READER_ROUNDTRIP,
+    CMS_DEMO_DOC,
+    CMS_HERO_ID,
 } from "./showcase-fixtures";
 import {
     Bell,
@@ -157,6 +160,15 @@ const XF_AGENTS = {
 const XFBox = ({ children }: { children: ReactNode }) => (
     <div className="w-full self-start overflow-hidden text-[11px]">
         <div className="origin-top-left scale-[0.72]" style={{ width: "139%" }}>
+            {children}
+        </div>
+    </div>
+);
+
+// A rendered CMS page is bigger than a card; scale + top-align like XFBox.
+const CmsBox = ({ children }: { children: ReactNode }) => (
+    <div className="h-32 w-full max-w-[20rem] self-start overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-700">
+        <div className="origin-top-left scale-[0.55]" style={{ width: "182%" }}>
             {children}
         </div>
     </div>
@@ -2011,61 +2023,57 @@ const PREVIEWS: Record<string, PreviewFn> = {
 
     // ─── fancy-cms-ui ─────────────────────────────────────────────────────
 
+    // The real Editor is a 220px | 1fr | 300px interactive three-pane grid —
+    // unreadable at card scale — so this tile stays a faithful visual stub of
+    // its actual chrome: layers + undo/redo | canvas + selection | inspector.
     "fancy-cms-ui/cms-editor": () => (
-        <div className="flex h-32 w-full max-w-[20rem] overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-700">
-            <div className="flex-1 bg-zinc-50 p-2 dark:bg-zinc-950">
-                <div className="relative rounded border-2 border-dashed border-violet-400 bg-white p-2 dark:bg-zinc-900">
-                    <div className="h-2 w-2/3 rounded bg-zinc-300 dark:bg-zinc-600" />
-                    <div className="mt-1 h-1.5 w-1/2 rounded bg-zinc-200 dark:bg-zinc-700" />
-                    <span className="absolute -left-1 -top-1 size-2 rounded-full border border-white bg-violet-500" />
-                    <span className="absolute -right-1 -top-1 size-2 rounded-full border border-white bg-violet-500" />
-                    <span className="absolute -bottom-1 -left-1 size-2 rounded-full border border-white bg-violet-500" />
-                    <span className="absolute -bottom-1 -right-1 size-2 rounded-full border border-white bg-violet-500" />
+        <div className="flex h-32 w-full max-w-[20rem] overflow-hidden rounded-md border border-zinc-200 text-[8px] dark:border-zinc-700">
+            <div className="flex w-[4.5rem] shrink-0 flex-col border-r border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-900">
+                <div className="flex gap-1 border-b border-zinc-100 p-1 dark:border-zinc-800">
+                    <span className="rounded border border-zinc-200 px-1 py-0.5 text-zinc-500 dark:border-zinc-700">Undo</span>
+                    <span className="rounded border border-zinc-200 px-1 py-0.5 text-zinc-400 opacity-50 dark:border-zinc-700">Redo</span>
                 </div>
-                <div className="mt-2 h-6 rounded bg-zinc-100 dark:bg-zinc-800" />
+                <div className="space-y-0.5 p-1">
+                    <div className="flex items-center gap-1 rounded bg-sky-50 px-1 py-0.5 font-medium text-sky-700 dark:bg-sky-500/15 dark:text-sky-200"><Layers size={8} /> hero</div>
+                    <div className="px-1 py-0.5 pl-2.5 text-zinc-500">heading</div>
+                    <div className="px-1 py-0.5 pl-2.5 text-zinc-500">text</div>
+                    <div className="px-1 py-0.5 pl-2.5 text-zinc-500">button</div>
+                </div>
             </div>
-            <div className="w-20 border-l border-zinc-200 bg-white p-1.5 text-[9px] dark:border-zinc-700 dark:bg-zinc-900">
-                <div className="mb-1 flex items-center gap-1 font-semibold text-zinc-500"><Layers size={10} /> Layers</div>
-                <div className="rounded bg-violet-50 px-1 py-0.5 text-violet-700 dark:bg-violet-500/15 dark:text-violet-200">Hero</div>
-                <div className="px-1 py-0.5 text-zinc-500">Text</div>
-                <div className="px-1 py-0.5 text-zinc-500">Image</div>
+            <div className="min-w-0 flex-1 bg-zinc-50 p-2 dark:bg-zinc-950">
+                <div className="relative rounded border-2 border-sky-400 bg-white p-2 dark:bg-zinc-900">
+                    <div className="mx-auto h-2 w-2/3 rounded bg-zinc-300 dark:bg-zinc-600" />
+                    <div className="mx-auto mt-1 h-1.5 w-1/2 rounded bg-zinc-200 dark:bg-zinc-700" />
+                    <div className="mx-auto mt-1.5 h-3 w-12 rounded bg-violet-500" />
+                    <span className="absolute -left-1 -top-1 size-2 rounded-full border border-white bg-sky-500" />
+                    <span className="absolute -right-1 -top-1 size-2 rounded-full border border-white bg-sky-500" />
+                    <span className="absolute -bottom-1 -left-1 size-2 rounded-full border border-white bg-sky-500" />
+                    <span className="absolute -bottom-1 -right-1 size-2 rounded-full border border-white bg-sky-500" />
+                </div>
+                <div className="mt-2 h-5 rounded bg-zinc-100 dark:bg-zinc-800" />
+            </div>
+            <div className="w-[4.5rem] shrink-0 border-l border-zinc-200 bg-white p-1.5 dark:border-zinc-700 dark:bg-zinc-900">
+                <div className="mb-1 font-semibold text-zinc-500">Inspector</div>
+                {["padding", "gap", "color"].map((label) => (
+                    <div key={label} className="mb-1">
+                        <div className="text-zinc-400">{label}</div>
+                        <div className="mt-0.5 h-2 rounded border border-zinc-200 dark:border-zinc-700" />
+                    </div>
+                ))}
             </div>
         </div>
     ),
 
+    // The REAL CmsPage over the canonical demo doc, scale-wrapped to card size.
     "fancy-cms-ui/cms-page": () => (
-        <div className="h-32 w-full max-w-[20rem] overflow-hidden rounded-md border border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-900">
-            <div className="flex items-center justify-between border-b border-zinc-100 px-2 py-1 dark:border-zinc-800">
-                <div className="h-2 w-10 rounded bg-violet-500" />
-                <div className="flex gap-1">
-                    <div className="h-1.5 w-5 rounded bg-zinc-200 dark:bg-zinc-700" />
-                    <div className="h-1.5 w-5 rounded bg-zinc-200 dark:bg-zinc-700" />
-                </div>
-            </div>
-            <div className="grid place-items-center bg-gradient-to-br from-violet-100 to-sky-100 py-3 dark:from-violet-500/15 dark:to-sky-500/15">
-                <div className="h-2.5 w-28 rounded bg-zinc-700/70 dark:bg-zinc-200/70" />
-                <div className="mt-1 h-1.5 w-20 rounded bg-zinc-400/60" />
-                <div className="mt-1.5 h-3 w-12 rounded bg-violet-500" />
-            </div>
-            <div className="grid grid-cols-3 gap-1.5 p-2">
-                <div className="h-6 rounded bg-zinc-100 dark:bg-zinc-800" />
-                <div className="h-6 rounded bg-zinc-100 dark:bg-zinc-800" />
-                <div className="h-6 rounded bg-zinc-100 dark:bg-zinc-800" />
-            </div>
-        </div>
+        <CmsBox><CmsPage doc={CMS_DEMO_DOC} /></CmsBox>
     ),
 
+    // The REAL CmsRegion extracting one subtree (the hero) of the same doc.
     "fancy-cms-ui/cms-region": () => (
-        <div className="grid h-32 w-full max-w-[20rem] place-items-center overflow-hidden rounded-md border border-zinc-200 bg-zinc-50 p-3 dark:border-zinc-700 dark:bg-zinc-950">
-            <div className="w-full space-y-2">
-                <div className="h-3 rounded bg-zinc-200 dark:bg-zinc-700" />
-                <div className="relative rounded-md border-2 border-violet-500 bg-white p-2 dark:bg-zinc-900">
-                    <span className="absolute -top-2 left-1.5 rounded bg-violet-500 px-1 py-0.5 text-[8px] font-medium text-white">region · editable</span>
-                    <div className="mt-1 h-2 w-3/4 rounded bg-zinc-300 dark:bg-zinc-600" />
-                    <div className="mt-1 h-2 w-1/2 rounded bg-zinc-200 dark:bg-zinc-700" />
-                </div>
-                <div className="h-3 rounded bg-zinc-200 dark:bg-zinc-700" />
-            </div>
+        <div className="w-full max-w-[20rem] space-y-1 self-start">
+            <div className="font-mono text-[9px] text-zinc-400">root=&quot;{CMS_HERO_ID}&quot; · one subtree of the doc</div>
+            <CmsBox><CmsRegion doc={CMS_DEMO_DOC} root={CMS_HERO_ID} /></CmsBox>
         </div>
     ),
 

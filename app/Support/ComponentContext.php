@@ -232,6 +232,24 @@ class ComponentContext
             'what' => '<code>XFilesManager</code> is the compound surface: a tab per file kind, each wiring its editor beside its live preview over ONE aggregate <code>XFilesModel</code> (<code>value</code> + <code>onChange</code>). Absent kinds get an Add affordance; <code>kinds</code> / <code>activeKind</code> restrict and control the tabs.',
             'how' => 'Hold the aggregate model, render <code>&lt;XFilesManager value onChange /&gt;</code>, persist on save &mdash; the sandbox&apos;s /admin/well-known-files page is exactly this component over the fancy-x-files backend.',
         ],
+
+        'fancy-cms-ui/cms-editor' => [
+            'why' => 'Page builders usually fuse the edit surface, the document format, and the renderer into one proprietary blob &mdash; so content is trapped, and the moment an agent should co-author a page you&apos;re reverse-engineering contentEditable DOM. The Stages model splits those concerns, but it needs an editing surface that speaks ops, not innerHTML.',
+            'what' => '<code>Editor</code> is the three-pane WYSIWYG over a Stages <code>PageDoc</code>: a layers tree (drag to reorder/reparent), a live canvas with selection overlay and drag-to-move, and a contextual inspector, plus undo/redo. Uncontrolled-with-notify (<code>defaultValue</code> + <code>onChange</code>) &mdash; every mutation from any pane is ONE <code>PageOp</code> through the pure <code>reduce()</code> spine, so human drags, agent tool calls, undo, and future collab all share a single code path.',
+            'how' => 'Load your document, render <code>&lt;Editor defaultValue={doc} onChange={persist} /&gt;</code>, and store the emitted <code>PageDoc</code> JSON. Publishing is rendering that same JSON with <code>CmsPage</code> (React) or the <code>particle-academy/fancy-cms</code> PHP renderer &mdash; there is no export step; the doc IS the format.',
+        ],
+
+        'fancy-cms-ui/cms-page' => [
+            'why' => 'A CMS that stores HTML strings can&apos;t re-render responsively, can&apos;t bind live data, and can&apos;t be edited structurally by an agent. Storing a node tree only pays off if rendering it is deterministic &mdash; same doc, same bytes, on every runtime that hosts it.',
+            'what' => '<code>CmsPage</code> renders a <code>PageDoc</code>: sections in order, nodes through an extensible element registry (heading / text / button / image / stack / grid / &hellip;), with the compiled document CSS injected via <code>&lt;style data-cms-styles&gt;</code>. The emitter is deterministic and the <code>particle-academy/fancy-cms</code> PHP package mirrors it byte-for-byte. Any node prop can be a <code>{ $bind: "path" }</code> binding resolved against the <code>data</code> context, including repeaters over bound arrays.',
+            'how' => 'Fetch the doc JSON your Editor saved, render <code>&lt;CmsPage doc={doc} data={pageData} /&gt;</code>. Pass a custom <code>registry</code> to add or restyle element types; set <code>includeStyles={false}</code> when the host has already injected the styles (e.g. server-rendered by fancy-cms with React hydrating the islands).',
+        ],
+
+        'fancy-cms-ui/cms-region' => [
+            'why' => 'Whole-page CMS is the easy case; real apps want ONE editable band inside an otherwise hand-coded screen &mdash; a promo strip, a help panel, a hero. Re-rendering the full document for that (or iframing a page) is the wrong altitude.',
+            'what' => '<code>CmsRegion</code> renders a single subtree of a <code>PageDoc</code>: pass <code>root</code> (any node id) and it renders that node plus its descendants with the same element registry and injected styles as <code>CmsPage</code>. Stable node ids make every region individually addressable &mdash; by your code and by agents.',
+            'how' => 'Keep one doc for a surface group, then drop <code>&lt;CmsRegion doc={doc} root="promo-band" /&gt;</code> wherever the region belongs. Same <code>registry</code> / <code>includeStyles</code> knobs as <code>CmsPage</code>; an edit made in the Editor shows up everywhere the subtree is mounted.',
+        ],
     ];
 
     /**

@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from "react";
+import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from "react";
 import {
     Accordion,
     Button,
@@ -115,6 +115,7 @@ import {
     type Deck as FsDeck,
 } from "@particle-academy/fancy-slides";
 import "@particle-academy/fancy-slides/styles.css";
+import { Editor as CmsEditor, CmsPage, CmsRegion, type PageDoc } from "@particle-academy/fancy-cms-ui";
 import { PptxExportControl } from "./PptxExportControl";
 import {
     CANONICAL_SLIDE,
@@ -128,6 +129,12 @@ import {
     HIGHLIGHT_KIND_COLOR,
     PPTX_WRITER_COVERAGE,
     PPTX_READER_ROUNDTRIP,
+    CMS_DEMO_DOC,
+    CMS_BOUND_DOC,
+    CMS_HERO_ID,
+    CMS_STATS_ID,
+    CMS_DATA_LAUNCH,
+    CMS_DATA_STUDIO,
 } from "./showcase-fixtures";
 
 type DemoFn = () => JSX.Element;
@@ -285,6 +292,11 @@ const REGISTRY: Record<string, DemoFn> = {
     "fancy-mlm-ui/downline-tree": MlmDownlineTreeDemo,
     "fancy-mlm-ui/commission-statement": MlmCommissionStatementDemo,
     "fancy-mlm-ui/rank-progress": MlmRankProgressDemo,
+
+    // ── fancy-cms-ui
+    "fancy-cms-ui/cms-editor": CmsEditorDemo,
+    "fancy-cms-ui/cms-page": CmsPageDemo,
+    "fancy-cms-ui/cms-region": CmsRegionDemo,
 
     // ── fancy-x-files-ui
     "fancy-x-files-ui/robots-editor": XfRobotsEditorDemo,
@@ -3479,6 +3491,105 @@ function XfFilesManagerDemo() {
             demo="Seeded with three of the six kinds so the Add flow is visible on the rest."
         >
             <XfFilesManager value={model} onChange={setModel} defaultKind="robots" />
+        </DemoNote>
+    );
+}
+
+// ─── fancy-cms-ui ────────────────────────────────────────────────────────────
+// One canonical Stages PageDoc (hero + stats band, see showcase-fixtures)
+// drives all three demos: the Editor mutates it through the op spine, CmsPage
+// renders it (with $bind data fields), CmsRegion extracts one subtree.
+
+function CmsEditorDemo() {
+    const [doc, setDoc] = useState<PageDoc>(CMS_DEMO_DOC);
+    const [edits, setEdits] = useState(0);
+    // Stable identity: the Editor re-notifies when the onChange PROP changes,
+    // so an inline closure here would loop (notify → setState → new closure).
+    const handleChange = useCallback((next: PageDoc) => {
+        setDoc(next);
+        setEdits((n) => n + 1);
+    }, []);
+    return (
+        <DemoNote
+            outOfBox="Editor is the full three-pane WYSIWYG over a Stages PageDoc — a layers tree (click to select, drag to reorder/reparent), a live canvas that renders the real page and overlays selection with drag-to-move, and a contextual inspector — plus an Undo/Redo toolbar. Uncontrolled-with-notify: pass defaultValue, and every mutation from any pane is ONE PageOp through the pure reduce() spine, surfaced via onChange as the next document. No stylesheet import — the doc's own compiled CSS is injected."
+            demo="The height-capped frame and the readout below are demo scaffolding — the readout prints what onChange hands back (seq + node count), showing each drag or inspector edit land as a single reduced op. Select a node in the layers panel or on the canvas, drag it, tweak a style, then Undo."
+        >
+            <div className="space-y-3">
+                <div className="overflow-hidden" style={{ height: 480 }}>
+                    <CmsEditor defaultValue={CMS_DEMO_DOC} onChange={handleChange} />
+                </div>
+                <div className="text-[12px] text-zinc-500 dark:text-zinc-400">
+                    onChange fired:{" "}
+                    <span className="font-medium text-zinc-800 dark:text-zinc-200">{edits}×</span>
+                    {" · "}doc seq:{" "}
+                    <span className="font-medium text-zinc-800 dark:text-zinc-200">{doc.seq}</span>
+                    {" · "}nodes:{" "}
+                    <span className="font-medium text-zinc-800 dark:text-zinc-200">{Object.keys(doc.nodes).length}</span>
+                    {edits === 0 && " — select a node, drag it on the canvas, or edit a style in the inspector"}
+                </div>
+            </div>
+        </DemoNote>
+    );
+}
+
+function CmsPageDemo() {
+    const payloads = [
+        { label: "data = launch context", data: CMS_DATA_LAUNCH },
+        { label: "data = studio context", data: CMS_DATA_STUDIO },
+    ];
+    return (
+        <DemoNote
+            outOfBox='CmsPage renders a published PageDoc: sections in order, every node through the element registry (heading / text / button / image / stack / grid / …), with the compiled document CSS injected as <style data-cms-styles> — a deterministic emitter the particle-academy/fancy-cms PHP renderer mirrors byte-for-byte. Any node prop may be a { $bind: "path" } binding resolved against the data context (repeaters render a template node per bound array item).'
+            demo="Both panels render the SAME document — the hero's heading / copy / button props are $bind bindings, and only the data payload (shown under each panel) differs. Swap the data, the bound nodes re-render; the doc never changes."
+        >
+            <div className="grid gap-4 lg:grid-cols-2">
+                {payloads.map((p) => (
+                    <div key={p.label} className="space-y-2">
+                        <div className="font-mono text-[11px] text-zinc-500 dark:text-zinc-400">{p.label}</div>
+                        <div className="overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-800">
+                            <CmsPage doc={CMS_BOUND_DOC} data={p.data} />
+                        </div>
+                        <pre className="overflow-x-auto rounded-md bg-zinc-50 p-2 font-mono text-[10px] leading-relaxed text-zinc-600 dark:bg-zinc-900 dark:text-zinc-300">
+                            {JSON.stringify(p.data, null, 2)}
+                        </pre>
+                    </div>
+                ))}
+            </div>
+        </DemoNote>
+    );
+}
+
+function CmsRegionDemo() {
+    const [root, setRoot] = useState<string>(CMS_HERO_ID);
+    return (
+        <DemoNote
+            outOfBox="CmsRegion renders ONE subtree of a PageDoc — pass root (any node id) and it renders that node and its descendants through the same registry, with the same injected styles, as CmsPage. That's the per-surface embed: a CMS-managed hero on a hand-coded screen, a promo band inside an app view — each subtree individually addressable by stable node id."
+            demo="Left is the whole document via CmsPage; right is CmsRegion extracting a single section from it. The root buttons swap which subtree renders — same doc, no re-authoring."
+        >
+            <div className="space-y-3">
+                <div className="flex flex-wrap items-center gap-2">
+                    <Button size="sm" color="sky" active={root === CMS_HERO_ID} onClick={() => setRoot(CMS_HERO_ID)}>
+                        root=&quot;{CMS_HERO_ID}&quot;
+                    </Button>
+                    <Button size="sm" color="sky" active={root === CMS_STATS_ID} onClick={() => setRoot(CMS_STATS_ID)}>
+                        root=&quot;{CMS_STATS_ID}&quot;
+                    </Button>
+                </div>
+                <div className="grid gap-4 lg:grid-cols-2">
+                    <div className="space-y-2">
+                        <div className="font-mono text-[11px] text-zinc-500 dark:text-zinc-400">&lt;CmsPage doc /&gt; — the full document</div>
+                        <div className="overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-800">
+                            <CmsPage doc={CMS_DEMO_DOC} />
+                        </div>
+                    </div>
+                    <div className="space-y-2">
+                        <div className="font-mono text-[11px] text-zinc-500 dark:text-zinc-400">&lt;CmsRegion doc root=&quot;{root}&quot; /&gt; — one subtree</div>
+                        <div className="overflow-hidden rounded-lg border-2 border-sky-400/70">
+                            <CmsRegion doc={CMS_DEMO_DOC} root={root} />
+                        </div>
+                    </div>
+                </div>
+            </div>
         </DemoNote>
     );
 }

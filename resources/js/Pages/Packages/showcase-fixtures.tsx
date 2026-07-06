@@ -12,6 +12,7 @@
 
 import type { Deck, SlideData } from "@particle-academy/fancy-slides";
 import { defaultTheme } from "@particle-academy/fancy-slides";
+import type { PageDoc, PerBreakpoint, StyleProps } from "@particle-academy/fancy-cms-ui";
 
 // ── Real Fancy UI screenshots ─────────────────────────────────────────────
 //
@@ -493,3 +494,179 @@ export const PPTX_READER_ROUNDTRIP: string[] = [
     "images → data: URIs",
     "inline **bold** / `code` spans",
 ];
+
+// ── fancy-cms-ui canonical PageDoc (used by tile + detail) ────────────────
+//
+// One small Stages document — a hero section (heading + copy + CTA button)
+// over a three-stat band — authored against the real PageDoc/Node types.
+// The flat node map + StyleProps are the package's whole point: the SAME
+// JSON drives the Editor demo, the CmsPage render, and the CmsRegion
+// subtree extraction, so the grid tile is a faithful miniature of the
+// detail-page demos.
+
+export const CMS_HERO_ID = "hero";
+export const CMS_STATS_ID = "stats";
+
+const CMS_STAT_STYLE: PerBreakpoint<StyleProps> = {
+    base: {
+        background: "#f8fafc",
+        border: "1px solid #e2e8f0",
+        radius: { value: 10, unit: "px" },
+        padding: { value: 14, unit: "px" },
+        textAlign: "center",
+        fontSize: { value: 13, unit: "px" },
+        fontWeight: 600,
+        color: "#334155",
+    },
+};
+
+export const CMS_DEMO_DOC: PageDoc = {
+    id: "showcase-landing",
+    seq: 0,
+    meta: { title: "Fancy Launch", slug: "/launch", scrollMode: "smooth" },
+    theme: { name: "default" },
+    breakpoints: ["base", "md", "lg"],
+    sections: [CMS_HERO_ID, CMS_STATS_ID],
+    nodes: {
+        [CMS_HERO_ID]: {
+            id: CMS_HERO_ID,
+            type: "section",
+            parent: null,
+            order: "a0",
+            props: {},
+            layout: "stack",
+            style: {
+                base: {
+                    direction: "column",
+                    align: "center",
+                    gap: { value: 14, unit: "px" },
+                    padding: { value: 44, unit: "px" },
+                    background: "linear-gradient(135deg, #ede9fe 0%, #e0f2fe 100%)",
+                    textAlign: "center",
+                },
+            },
+        },
+        "hero-heading": {
+            id: "hero-heading",
+            type: "heading",
+            parent: CMS_HERO_ID,
+            order: "a0",
+            props: { content: "Pages humans and agents edit together" },
+            style: {
+                base: {
+                    color: "#0f172a",
+                    fontSize: { value: 30, unit: "px" },
+                    fontWeight: 800,
+                    lineHeight: 1.15,
+                    letterSpacing: { value: -0.5, unit: "px" },
+                },
+            },
+        },
+        "hero-copy": {
+            id: "hero-copy",
+            type: "text",
+            parent: CMS_HERO_ID,
+            order: "a1",
+            props: {
+                content:
+                    "One Stages document — a flat node map with StyleProps — renders in React and PHP, and every edit is a single reducible op.",
+            },
+            style: {
+                base: {
+                    color: "#475569",
+                    fontSize: { value: 15, unit: "px" },
+                    lineHeight: 1.6,
+                },
+            },
+        },
+        "hero-cta": {
+            id: "hero-cta",
+            type: "button",
+            parent: CMS_HERO_ID,
+            order: "a2",
+            props: { label: "Start building", variant: "primary" },
+            style: { base: {} },
+        },
+        [CMS_STATS_ID]: {
+            id: CMS_STATS_ID,
+            type: "section",
+            parent: null,
+            order: "a1",
+            props: {},
+            layout: "grid",
+            style: {
+                base: {
+                    columns: 3,
+                    gap: { value: 12, unit: "px" },
+                    padding: { value: 24, unit: "px" },
+                    background: "#ffffff",
+                },
+            },
+        },
+        "stat-ops": {
+            id: "stat-ops",
+            type: "text",
+            parent: CMS_STATS_ID,
+            order: "a0",
+            props: { content: "Every edit = one PageOp" },
+            style: CMS_STAT_STYLE,
+        },
+        "stat-parity": {
+            id: "stat-parity",
+            type: "text",
+            parent: CMS_STATS_ID,
+            order: "a1",
+            props: { content: "JS + PHP CSS parity" },
+            style: CMS_STAT_STYLE,
+        },
+        "stat-ids": {
+            id: "stat-ids",
+            type: "text",
+            parent: CMS_STATS_ID,
+            order: "a2",
+            props: { content: "Flat map, stable ids" },
+            style: CMS_STAT_STYLE,
+        },
+    },
+};
+
+// The same document with the hero's content props swapped for { $bind }
+// bindings — the cms-page demo renders it twice with two data payloads to
+// show the binding swap. Node ids (and therefore the emitted CSS) are
+// identical to CMS_DEMO_DOC.
+
+export const CMS_BOUND_DOC: PageDoc = {
+    ...CMS_DEMO_DOC,
+    id: "showcase-landing-bound",
+    nodes: {
+        ...CMS_DEMO_DOC.nodes,
+        "hero-heading": {
+            ...CMS_DEMO_DOC.nodes["hero-heading"],
+            props: { content: { $bind: "hero.title" } },
+        },
+        "hero-copy": {
+            ...CMS_DEMO_DOC.nodes["hero-copy"],
+            props: { content: { $bind: "hero.tagline" } },
+        },
+        "hero-cta": {
+            ...CMS_DEMO_DOC.nodes["hero-cta"],
+            props: { label: { $bind: "hero.cta" }, variant: "primary" },
+        },
+    },
+};
+
+export const CMS_DATA_LAUNCH = {
+    hero: {
+        title: "Ship day: Fancy CMS is live",
+        tagline: "The launch page, filled from the product's own data context.",
+        cta: "Read the announcement",
+    },
+};
+
+export const CMS_DATA_STUDIO = {
+    hero: {
+        title: "Aurora Studio — spring collection",
+        tagline: "Same document, different tenant: only the data payload changed.",
+        cta: "Book a visit",
+    },
+};

@@ -207,6 +207,7 @@ function PreviewVisual({ pkg }: { pkg: Pkg }) {
 
 const VIOLET = "#8b5cf6";
 const AMBER = "#f59e0b";
+const SKY = "#0ea5e9";
 
 /**
  * Per-package mini-visual — a tiny, recognizable thumbnail of what the package
@@ -338,6 +339,29 @@ function PkgPreview({ slug }: { slug: string }): ReactNode {
                 <div>User-agent: <span style={{ color: VIOLET }}>*</span></div>
                 <div>Disallow: <span style={{ color: "#dc2626" }}>/admin</span></div>
             </span>
+        ),
+        "fancy-cms-ui": (
+            // The editor's three panes in miniature: layers | canvas | inspector.
+            <div className="mp" style={{ gap: 4, alignItems: "stretch" }}>
+                <span className="mp-box" style={{ width: 24, height: 56, padding: 4, display: "flex", flexDirection: "column", gap: 3 }}>
+                    {[0, 1, 2, 3].map((i) => (
+                        <span key={i} style={{ height: 4, borderRadius: 2, background: i === 0 ? SKY : "var(--bg-3)", marginLeft: i === 0 ? 0 : 4 }} />
+                    ))}
+                </span>
+                <span className="mp-box" style={{ width: 62, height: 56, padding: 7, textAlign: "center" }}>
+                    <div style={{ width: "72%", height: 6, background: "var(--fg-3)", borderRadius: 2, margin: "2px auto 4px" }} />
+                    <div style={{ width: "88%", height: 4, background: "var(--bg-3)", borderRadius: 2, margin: "0 auto 3px" }} />
+                    <div style={{ width: 26, height: 9, background: SKY, borderRadius: 3, margin: "4px auto 0" }} />
+                </span>
+                <span className="mp-box" style={{ width: 24, height: 56, padding: 4, display: "flex", flexDirection: "column", gap: 3 }}>
+                    {[0, 1, 2].map((i) => (
+                        <Fragment key={i}>
+                            <span style={{ height: 2.5, width: "60%", borderRadius: 2, background: "var(--bg-3)" }} />
+                            <span style={{ height: 4, borderRadius: 2, border: "1px solid var(--border-2)" }} />
+                        </Fragment>
+                    ))}
+                </span>
+            </div>
         ),
         "catalog-fms": (
             <div className="mp" style={{ gap: 6 }}>

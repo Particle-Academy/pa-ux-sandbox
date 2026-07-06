@@ -19,7 +19,7 @@ class PackageRegistry
      * released; their definitions stay below, so re-listing one is just deleting
      * its slug from this list (and re-running `php artisan registry:build`).
      */
-    public const HIDDEN = ['fancy-motion', 'fancy-cms-ui'];
+    public const HIDDEN = ['fancy-motion'];
 
     /**
      * Per-package design classification — the source of truth for the
@@ -953,10 +953,11 @@ class PackageRegistry
         return [
             'slug' => 'fancy-cms-ui',
             'name' => 'fancy-cms-ui',
-            'tagline' => 'WYSIWYG CMS editor (React) on the Stages doc model — pairs with the particle-academy/fancy-cms PHP renderer. (preview — 0.0.x)',
+            'tagline' => 'EARLY-RELEASE BETA — WYSIWYG CMS editor (React) for the Stages doc model: three-pane layers / canvas / inspector editing where every mutation is one PageOp through a pure reducer, plus the CmsPage / CmsRegion renderers with $bind data fields; pairs with the particle-academy/fancy-cms PHP renderer. Expect rough edges and breaking 0.x changes — please report anything you hit at github.com/Particle-Academy/fancy-cms-ui/issues.',
             'npm' => '@particle-academy/fancy-cms-ui',
             'repo' => 'Particle-Academy/fancy-cms-ui',
             'language' => 'TypeScript',
+            'pairs' => ['fancy-cms'],
             'components' => [
                 ['slug' => 'cms-editor', 'name' => 'Editor', 'blurb' => 'The WYSIWYG editor surface — canvas + layers + inspector over a Stages node tree.'],
                 ['slug' => 'cms-page', 'name' => 'CmsPage', 'blurb' => 'Renders a published Stages document as a page.'],

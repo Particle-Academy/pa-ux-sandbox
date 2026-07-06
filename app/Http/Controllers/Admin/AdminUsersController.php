@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Services\Entitlements;
 use App\Services\Mlm\MlmProgram;
 use App\Services\PlayerProfile;
+use FancyMlm\Laravel\Models\Member;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -54,6 +55,14 @@ class AdminUsersController extends Controller
             ->groupBy('user_id')
             ->pluck('c', 'user_id');
 
+        // Each listed user's referral sponsor in one query (no N+1): their
+        // member row eager-loading sponsor + the sponsor's user, keyed by user_id.
+        $membersByUserId = Member::query()
+            ->with('sponsor.user')
+            ->whereIn('user_id', $userIds)
+            ->get()
+            ->keyBy('user_id');
+
         return Inertia::render('Admin/Users', [
             'users' => collect($users->items())->map(fn (User $user) => [
                 'id' => $user->id,
@@ -67,12 +76,34 @@ class AdminUsersController extends Controller
                 'joined' => $user->created_at?->format('M j, Y'),
                 'proSource' => $this->entitlements->proSource($user),
                 'sites' => (int) ($siteCounts[$user->id] ?? 0),
+                'sponsor' => $this->sponsorFor($membersByUserId->get($user->id)),
             ])->all(),
             'search' => $search,
             'sort' => $sort,
             'total' => $users->total(),
             'pending' => ShowcaseSubmission::where('status', 'pending')->count(),
         ]);
+    }
+
+    /**
+     * The users-list "Sponsor" cell: who referred this user's member, or null
+     * when they're not in the network / are a network root.
+     *
+     * @return array{label: string, userId: int|null}|null
+     */
+    private function sponsorFor(?Member $member): ?array
+    {
+        $sponsor = $member?->sponsor;
+        if ($sponsor === null) {
+            return null;
+        }
+
+        return [
+            'label' => $sponsor->user?->name
+                ?? ($sponsor->meta['label'] ?? null)
+                ?? 'Member #'.$sponsor->getKey(),
+            'userId' => $sponsor->user_id !== null ? (int) $sponsor->user_id : null,
+        ];
     }
 
     public function show(User $user, PlayerProfile $playerProfile, MlmProgram $program): Response

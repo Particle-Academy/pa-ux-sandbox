@@ -3,6 +3,7 @@
 use App\Models\ShowcaseSubmission;
 use App\Models\User;
 use Database\Seeders\FunLabSeeder;
+use FancyMlm\Laravel\Models\Member;
 use Tests\TestCase;
 
 uses(TestCase::class);
@@ -173,4 +174,34 @@ it('lists a user owned showcase sites on the detail page', function () {
             ->where('ownedSites.0.id', $sub->id)
             ->where('ownedSites.0.label', 'Builder Site')
         );
+});
+
+it('lists each user referral sponsor on the index without an N+1', function () {
+    $admin = adminUser();
+    $sponsorUser = User::factory()->create(['name' => 'Referring Ray']);
+    $sponsored = User::factory()->create(['name' => 'Sponsored Sam']);
+
+    $sponsorMember = Member::query()->create([
+        'user_id' => $sponsorUser->id, 'tier' => 'bronze', 'active' => true,
+    ]);
+    Member::query()->create([
+        'user_id' => $sponsored->id, 'sponsor_id' => $sponsorMember->getKey(),
+        'tier' => 'bronze', 'active' => true,
+    ]);
+
+    // The sponsored user's row carries their sponsor's label + admin link id.
+    $this->actingAs($admin)->get('/admin/users?q=Sponsored')
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('Admin/Users')
+            ->has('users', 1)
+            ->where('users.0.sponsor.label', 'Referring Ray')
+            ->where('users.0.sponsor.userId', $sponsorUser->id));
+
+    // A network root (no sponsor) and a user outside the network both show none.
+    $this->actingAs($admin)->get('/admin/users?q=Referring')
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->has('users', 1)
+            ->where('users.0.sponsor', null));
 });

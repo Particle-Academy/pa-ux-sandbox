@@ -1,4 +1,4 @@
-import { Head, router } from "@inertiajs/react";
+import { Head, Link, router } from "@inertiajs/react";
 import { Avatar, Badge, Button, Card, Field, Icon, Input, MultiSwitch, Table } from "@particle-academy/react-fancy";
 import { useState } from "react";
 import { adminLayout } from "./AdminLayout";
@@ -16,6 +16,7 @@ type AdminUser = {
     joined: string | null;
     proSource: string | null;
     sites: number;
+    sponsor: { label: string; userId: number | null } | null;
 };
 type Props = { users: AdminUser[]; search: string; sort: string; total: number };
 
@@ -76,6 +77,7 @@ function Users({ users, search, sort, total }: Props) {
                                 <Table.Row>
                                     <Table.Cell header>User</Table.Cell>
                                     <Table.Cell header>Tier</Table.Cell>
+                                    <Table.Cell header>Sponsor</Table.Cell>
                                     <Table.Cell header>Sites</Table.Cell>
                                     <Table.Cell header>Coins</Table.Cell>
                                     <Table.Cell header>Joined</Table.Cell>
@@ -103,6 +105,20 @@ function Users({ users, search, sort, total }: Props) {
                                                 : <span style={{ fontSize: 12, color: "var(--fg-4)" }}>Free</span>}
                                         </Table.Cell>
                                         <Table.Cell>
+                                            {user.sponsor === null ? (
+                                                <span style={{ fontSize: 12, color: "var(--fg-4)" }}>—</span>
+                                            ) : user.sponsor.userId !== null ? (
+                                                <Link
+                                                    href={`/admin/users/${user.sponsor.userId}`}
+                                                    style={{ fontSize: 13, color: "var(--fg-2)", textDecoration: "underline", textDecorationStyle: "dotted", textUnderlineOffset: 3 }}
+                                                >
+                                                    {user.sponsor.label}
+                                                </Link>
+                                            ) : (
+                                                <span style={{ fontSize: 13, color: "var(--fg-2)" }}>{user.sponsor.label}</span>
+                                            )}
+                                        </Table.Cell>
+                                        <Table.Cell>
                                             {user.sites > 0
                                                 ? <span style={{ fontFamily: "var(--font-mono)", fontSize: 13, color: "var(--fg-2)" }}>{n(user.sites)}</span>
                                                 : <span style={{ fontSize: 12, color: "var(--fg-4)" }}>—</span>}
@@ -121,7 +137,7 @@ function Users({ users, search, sort, total }: Props) {
                                             </div>
                                         </Table.Cell>
                                         <Table.Cell>
-                                            <Button variant="ghost" size="sm" href={`/admin/users/${user.id}`}>View</Button>
+                                            <Button as={Link} variant="ghost" size="sm" href={`/admin/users/${user.id}`}>View</Button>
                                         </Table.Cell>
                                     </Table.Row>
                                 ))}

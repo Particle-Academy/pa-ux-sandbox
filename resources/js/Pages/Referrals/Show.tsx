@@ -23,7 +23,7 @@ type Rank = { tier: string; nextTier: string | null; value: number; target: numb
 type Props = {
     program: Program;
     myMemberId: string;
-    referralCode: string;
+    referralUrl: string | null;
     network: DownlineMember[];
     commissions: CommissionRow[];
     rank: Rank;
@@ -44,14 +44,18 @@ const TREE_COPY: Record<Program["tree"], string> = {
     matrix: "A forced-width grid — referrals fill each level left-to-right down the placement tree.",
 };
 
-export default function ReferralsShow({ program, myMemberId, referralCode, network, commissions, rank, canSimulate }: Props) {
+export default function ReferralsShow({ program, myMemberId, referralUrl, network, commissions, rank, canSimulate }: Props) {
     const page = usePage<{ flash: { mlm_rewards?: CommissionRow[] | null } }>();
     const justEarned = page.props.flash?.mlm_rewards ?? null;
 
     const [copied, setCopied] = useState(false);
-    const referralLink = typeof window !== "undefined" ? `${window.location.origin}/join/${referralCode}` : `/join/${referralCode}`;
+    // Server-built absolute URL — NEVER derive it from window.location here:
+    // SSR has no window, so any fallback string differs from the client's and
+    // hydration fails (React #418).
+    const referralLink = referralUrl;
 
     const copy = () => {
+        if (referralLink === null) return;
         navigator.clipboard?.writeText(referralLink).then(() => {
             setCopied(true);
             setTimeout(() => setCopied(false), 1600);
@@ -96,17 +100,27 @@ export default function ReferralsShow({ program, myMemberId, referralCode, netwo
                             </Badge>
                         </div>
 
-                        <div className="mt-6 flex flex-wrap items-center gap-3">
-                            <div className="flex items-center gap-2 rounded-lg border border-[var(--border-1)] bg-[var(--bg-0)] px-3 py-2 font-mono text-sm">
-                                <Icon name="link" className="h-4 w-4 text-[var(--fg-3)]" />
-                                <span className="truncate">{referralLink}</span>
+                        {referralLink !== null ? (
+                            <div className="mt-6 flex flex-wrap items-center gap-3">
+                                <div className="flex items-center gap-2 rounded-lg border border-[var(--border-1)] bg-[var(--bg-0)] px-3 py-2 font-mono text-sm">
+                                    <Icon name="link" className="h-4 w-4 text-[var(--fg-3)]" />
+                                    <span className="truncate">{referralLink}</span>
+                                </div>
+                                <Button color="teal" onClick={copy}>
+                                    <Icon name={copied ? "check" : "copy"} className="mr-1 h-4 w-4" />
+                                    {copied ? "Copied" : "Copy link"}
+                                </Button>
                             </div>
-                            <Button color="teal" onClick={copy}>
-                                <Icon name={copied ? "check" : "copy"} className="mr-1 h-4 w-4" />
-                                {copied ? "Copied" : "Copy link"}
-                            </Button>
-                            <Badge variant="outline" className="font-mono">{referralCode}</Badge>
-                        </div>
+                        ) : (
+                            <Callout color="amber" className="mt-6">
+                                <div className="text-sm font-medium">Your referral link isn't active yet</div>
+                                <div className="mt-0.5 text-sm">
+                                    Set your username in{" "}
+                                    <Link href="/profile" className="font-medium underline decoration-dotted">profile settings</Link>{" "}
+                                    to activate your personal <span className="font-mono">/join/…</span> link.
+                                </div>
+                            </Callout>
+                        )}
 
                         <Text className="mt-3 text-xs text-[var(--fg-3)]">{TREE_COPY[program.tree]}</Text>
                     </div>

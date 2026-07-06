@@ -9,6 +9,7 @@ use FancyMlm\Plan\CompensationPlan;
 use FancyMlm\Referral\ReferralEngine;
 use FancyMlm\Referral\RewardComputation;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use LaravelFunLab\Events\XpAwarded;
@@ -119,13 +120,64 @@ class MlmProgram
             ->all();
     }
 
-    /** The member belonging to a user, creating a root member on first visit. */
+    /** The 30-day referral-attribution cookie /join/{username} sets (referrer user id). */
+    public const REFERRAL_COOKIE = 'fancy_ref';
+
+    /**
+     * The member belonging to a user, creating one on first visit. A brand-new
+     * member honors a pending /join/{username} referral attribution: the
+     * referrer's member becomes the sponsor (placement left null — the engine
+     * falls back to the sponsor edge), and the attribution is cleared. Without
+     * one the member is a network root, as before.
+     */
     public function memberForUser(User $user): Member
     {
-        return Member::query()->firstOrCreate(
-            ['user_id' => $user->getKey()],
-            ['tier' => 'bronze', 'active' => true, 'meta' => ['label' => $user->name]],
+        $existing = Member::query()->where('user_id', $user->getKey())->first();
+        if ($existing !== null) {
+            return $existing;
+        }
+
+        $sponsorId = $this->pendingReferralSponsorId($user);
+        $member = Member::query()->create([
+            'user_id' => $user->getKey(),
+            'sponsor_id' => $sponsorId,
+            'tier' => 'bronze',
+            'active' => true,
+            'meta' => ['label' => $user->name],
+        ]);
+
+        if ($sponsorId !== null) {
+            Cookie::queue(Cookie::forget(self::REFERRAL_COOKIE));
+        }
+
+        return $member;
+    }
+
+    /**
+     * Resolve the referral-attribution cookie to a sponsor member id, or null:
+     * the referrer must exist and not be the user themselves. The referrer's
+     * own member row is created on demand (a shared link IS network
+     * participation), so the organic loop works even if the referrer never
+     * opened /referrals after setting their username.
+     */
+    private function pendingReferralSponsorId(User $user): ?int
+    {
+        $referrerId = (int) request()->cookie(self::REFERRAL_COOKIE, 0);
+        if ($referrerId <= 0 || $referrerId === (int) $user->getKey()) {
+            return null;
+        }
+
+        $referrer = User::query()->find($referrerId);
+        if ($referrer === null) {
+            return null;
+        }
+
+        $sponsorMember = Member::query()->firstOrCreate(
+            ['user_id' => $referrer->getKey()],
+            ['tier' => 'bronze', 'active' => true, 'meta' => ['label' => $referrer->name]],
         );
+
+        return (int) $sponsorMember->getKey();
     }
 
     /**

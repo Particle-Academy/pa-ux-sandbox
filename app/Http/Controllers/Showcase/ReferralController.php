@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Showcase;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Services\Mlm\MlmProgram;
+use App\Support\Usernames;
 use FancyMlm\Laravel\Models\Member;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -14,15 +17,16 @@ use Inertia\Response;
 /**
  * The end-user "refer a friend" surface — the gamified downline view built on
  * fancy-mlm-ui (DownlineTree / CommissionStatement / RankProgress) over the live
- * fancy-mlm engine. The signed-in user is the root of the seeded demo network.
- * The "simulate activity" loop is ADMIN-ONLY demo tooling — it mints real
- * fun-lab points to uplines, so it must never be an end-user affordance.
+ * fancy-mlm engine. The user's shareable link is /join/{username}; the
+ * "simulate activity" loop is ADMIN-ONLY demo tooling (it mints real fun-lab
+ * points to uplines).
  */
 class ReferralController extends Controller
 {
     public function show(Request $request, MlmProgram $program): Response
     {
-        $me = $program->memberForUser($request->user());
+        $user = $request->user();
+        $me = $program->memberForUser($user);
 
         return Inertia::render('Referrals/Show', [
             'program' => [
@@ -32,14 +36,39 @@ class ReferralController extends Controller
                 'tiers' => array_keys($program->planData()['tiers'] ?? []),
             ],
             'myMemberId' => (string) $me->getKey(),
-            'referralCode' => $this->referralCode($me),
+            // The username-based link, ABSOLUTE and server-built: the page must
+            // never derive it from window.location — the server renders the
+            // path-only fallback while the client renders the full origin, a
+            // guaranteed hydration mismatch (React #418). Null until the user
+            // claims a username (the page then points them to /profile).
+            'referralUrl' => $user->username === null ? null : url('/join/'.$user->username),
             'network' => $program->network(),
-            'commissions' => $program->commissionsForUser($request->user()),
+            'commissions' => $program->commissionsForUser($user),
             'rank' => $program->rankProgress($me),
             // The simulate card is admin demo tooling — the flag mirrors the
             // route's can:admin middleware so non-admins never see it.
-            'canSimulate' => Gate::forUser($request->user())->allows('admin'),
+            'canSimulate' => Gate::forUser($user)->allows('admin'),
         ]);
+    }
+
+    /**
+     * Public referral entry: /join/{username}. Remember who referred this
+     * visitor (30-day cookie) and send them home; the sponsor attaches when
+     * their member row is first created. Unknown usernames redirect silently.
+     */
+    public function join(Request $request, string $username): RedirectResponse
+    {
+        $referrer = User::query()
+            ->where('username', Usernames::normalize($username))
+            ->first();
+
+        if ($referrer === null) {
+            return redirect('/');
+        }
+
+        Cookie::queue(MlmProgram::REFERRAL_COOKIE, (string) $referrer->getKey(), 60 * 24 * 30);
+
+        return redirect('/')->with('success', "Referred by {$referrer->name} — welcome! Sign in and you'll join their network.");
     }
 
     public function simulate(Request $request, MlmProgram $program): RedirectResponse
@@ -63,10 +92,5 @@ class ReferralController extends Controller
             ->with('success', $rewards === []
                 ? "{$label} acted, but no upline was eligible under this plan."
                 : "{$label} acted — ".count($rewards).' upline member(s) earned a referral bonus.');
-    }
-
-    private function referralCode(Member $member): string
-    {
-        return strtoupper('FANCY-'.str_pad((string) $member->getKey(), 5, '0', STR_PAD_LEFT));
     }
 }

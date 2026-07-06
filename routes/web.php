@@ -102,6 +102,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/referrals/simulate', [ReferralController::class, 'simulate'])
         ->middleware(['can:admin', 'throttle:30,1'])
         ->name('referrals.simulate');
+    // Username settings power the /join/{username} referral link.
+    Route::post('/profile/username', [ProfileController::class, 'updateUsername'])
+        ->name('profile.username');
 
     // Pro Analytics Suite — Pro-gated dashboard over the live Fancy Heuristics
     // feed. Auth required; the controller's FMS `analytics-suite` check splits
@@ -113,6 +116,14 @@ Route::middleware('auth')->group(function () {
         ->middleware('throttle:60,1')
         ->name('easter-egg.ending');
 });
+
+// Public referral entry — a member's shareable /join/{username} link. Stores a
+// 30-day attribution cookie and redirects home; the sponsor attaches when the
+// referred visitor's member row is first created (MlmProgram::memberForUser).
+// Unknown usernames redirect home silently (no user enumeration).
+Route::get('/join/{username}', [ReferralController::class, 'join'])
+    ->where('username', '[A-Za-z0-9\-]+')
+    ->name('referrals.join');
 
 // xlsx export endpoint for the fancy-sheets demo. The controller is owned
 // by the sandbox app — Holy Sheet ships only the writer + facade. Apps

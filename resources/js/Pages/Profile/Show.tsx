@@ -1,5 +1,5 @@
 import { Head, Link, useForm } from "@inertiajs/react";
-import { Badge, Card, Icon } from "@particle-academy/react-fancy";
+import { Badge, Button, Card, Icon, Input } from "@particle-academy/react-fancy";
 import { Layout } from "../Layout";
 import { avatarFrameClass, type CosmeticSlots } from "../../lib/cosmetics";
 
@@ -34,9 +34,16 @@ type ProfileData = {
 const ACT_COLORS = ["#0ea5e9", "#10b981", "#8b5cf6", "#f59e0b", "#f43f5e", "#6366f1"];
 const ACT_ICONS = ["flame", "sparkles", "code", "award", "medal", "package"];
 
-export default function ProfileShow({ profile }: { profile: ProfileData }) {
+type Props = {
+    profile: ProfileData;
+    username: string | null;
+    usernameSuggestion: string | null;
+};
+
+export default function ProfileShow({ profile, username, usernameSuggestion }: Props) {
     const displayName = profile.githubUsername ?? profile.name;
     const optOutForm = useForm({});
+    const usernameForm = useForm({ username: username ?? usernameSuggestion ?? "" });
     const maxXp = Math.max(1, ...profile.metrics.map((m) => m.xp));
 
     return (
@@ -240,6 +247,47 @@ export default function ProfileShow({ profile }: { profile: ProfileData }) {
                                 </Link>
                             )}
                         </div>
+                    </div>
+                </Card>
+
+                {/* ── Username (referral link handle) ───────────────────── */}
+                <Card className="pf-fade">
+                    <div className="pf-card-head">
+                        <Icon name="at-sign" className="h-4 w-4 text-zinc-500 dark:text-zinc-400" />
+                        Username
+                    </div>
+                    <div className="pf-card-pad" style={{ paddingBottom: 16 }}>
+                        <p style={{ color: "var(--fg-3)", fontSize: 13, margin: "4px 0 10px" }}>
+                            {username
+                                ? <>Your referral link is <span style={{ fontFamily: "var(--font-mono)", color: "var(--fg-2)" }}>/join/{username}</span> — share it from the <Link href="/referrals" style={{ textDecoration: "underline", textDecorationStyle: "dotted" }}>referrals page</Link>.</>
+                                : <>Claim a username to activate your personal referral link (<span style={{ fontFamily: "var(--font-mono)" }}>/join/your-name</span>).</>}
+                        </p>
+                        <form
+                            onSubmit={(e) => {
+                                e.preventDefault();
+                                usernameForm.post("/profile/username", { preserveScroll: true });
+                            }}
+                            style={{ display: "flex", gap: 8, alignItems: "flex-start", flexWrap: "wrap" }}
+                        >
+                            <div style={{ flex: 1, minWidth: 220 }}>
+                                <Input
+                                    value={usernameForm.data.username}
+                                    onChange={(e) => usernameForm.setData("username", e.target.value)}
+                                    placeholder={usernameSuggestion ?? "your-name"}
+                                    leading={<span style={{ color: "var(--fg-4)", fontSize: 13 }}>@</span>}
+                                    error={usernameForm.errors.username}
+                                />
+                                {usernameForm.errors.username && (
+                                    <p style={{ color: "var(--color-red-500, #ef4444)", fontSize: 12, marginTop: 6 }}>{usernameForm.errors.username}</p>
+                                )}
+                            </div>
+                            <Button type="submit" color="violet" loading={usernameForm.processing}>
+                                {username ? "Update username" : "Claim username"}
+                            </Button>
+                        </form>
+                        {usernameForm.recentlySuccessful && (
+                            <p style={{ color: "var(--color-teal-600, #0d9488)", fontSize: 12, marginTop: 8 }}>Saved.</p>
+                        )}
                     </div>
                 </Card>
 

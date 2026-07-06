@@ -80,7 +80,7 @@ it('install-instructions returns both npm and vendor paths', function () {
     expect($body['result']['isError'])->toBeFalse();
     $payload = json_decode($body['result']['content'][0]['text'], true);
     expect($payload['npm_path']['install'])->toContain('npm install @particle-academy/react-fancy');
-    expect($payload['vendor_path']['install'])->toBe('npx fancy-ui@latest add card');
+    expect($payload['vendor_path']['install'])->toBe('npx fancy-cli@latest add card');
     expect($payload['vendor_path']['import'])->toContain('@/components/fancy/card');
 });
 

@@ -93,7 +93,7 @@ class StarterKitDownloadController extends Controller
     {
         $bundles = in_array($kit['slug'], self::BUNDLES_CATALOG_FMS, true);
         $headline = $bundles
-            ? 'This kit vendors the **catalog-fms** UI block — the same components you can drop into any project with `npx fancy-ui add catalog-fms`.'
+            ? 'This kit vendors the **catalog-fms** UI block — the same components you can drop into any project with `npx fancy-cli add catalog-fms`.'
             : "Headline package: `@particle-academy/{$kit['pkg']}`.";
         $depLine = $bundles
             ? '- The **catalog-fms** components are vendored into `src/components/fancy/catalog-fms/` — edit them freely (they only need `@particle-academy/react-fancy`).'
@@ -162,7 +162,7 @@ MD;
             ],
             'dependencies' => array_merge(
                 [
-                    '@particle-academy/react-fancy' => '^4.4.1',
+                    '@particle-academy/react-fancy' => '^4.11.0',
                     'react' => '^19.0.0',
                     'react-dom' => '^19.0.0',
                 ],
@@ -185,8 +185,12 @@ MD;
     /**
      * Every package a kit's `Kit.tsx` imports (beyond the always-on
      * react-fancy + react) must be listed here, or the downloaded zip won't
-     * `npm install`. Each kit now drives its real headline package, so each
-     * has at least its own dep. Versions track the showcase's lockfile.
+     * `npm install` — including packages that would resolve by hoisting
+     * (lucide-react, echarts): pnpm/yarn users get no such luck. Versions
+     * track the showcase's package.json; on 0.x carets that matters, because
+     * `^0.N` never advances to `0.N+1` — a stale pin here ships users an old
+     * (or vulnerable: fancy-echarts <5 pulled the pre-GHSA-fgmj-fm8m-jvvx
+     * echarts 5.x) release forever.
      *
      * @return array<string, string>
      */
@@ -194,18 +198,26 @@ MD;
     {
         return match ($slug) {
             'fancy-query' => [
-                '@particle-academy/fancy-query' => '^0.2.0',
+                '@particle-academy/fancy-query' => '^0.5.0',
                 '@tanstack/react-query' => '^5.101.0',
             ],
-            'react-fancy' => ['@particle-academy/fancy-echarts' => '^4.0.1'],
-            'fancy-flow' => [
-                '@particle-academy/fancy-flow' => '^0.5.1',
-                '@xyflow/react' => '^12.10.0',
+            'react-fancy' => [
+                '@particle-academy/fancy-echarts' => '^5.0.0',
+                'echarts' => '^6.1.0',
+                'lucide-react' => '^0.511.0',
             ],
-            'fancy-whiteboard' => ['@particle-academy/fancy-whiteboard' => '^0.2.0'],
-            'fancy-code' => ['@particle-academy/fancy-code' => '^0.4.7'],
-            'fancy-sheets' => ['@particle-academy/fancy-sheets' => '^0.8.0'],
-            'fancy-echarts' => ['@particle-academy/fancy-echarts' => '^4.0.1'],
+            'fancy-flow' => [
+                '@particle-academy/fancy-flow' => '^0.5.3',
+                '@xyflow/react' => '^12.10.2',
+            ],
+            'fancy-whiteboard' => ['@particle-academy/fancy-whiteboard' => '^0.2.1'],
+            'fancy-code' => ['@particle-academy/fancy-code' => '^0.8.0'],
+            'fancy-sheets' => ['@particle-academy/fancy-sheets' => '^0.9.0'],
+            'fancy-echarts' => [
+                '@particle-academy/fancy-echarts' => '^5.0.0',
+                'echarts' => '^6.1.0',
+                'lucide-react' => '^0.511.0',
+            ],
             default => [],
         };
     }

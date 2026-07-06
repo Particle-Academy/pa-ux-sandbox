@@ -1201,7 +1201,7 @@ export function QuickStart() {
                 <h2 className="section-title">Two ways to add a component.</h2>
                 <p className="section-sub">
                     npm-install and import, or vendor the source with{" "}
-                    <code style={mono}>npx fancy-ui add</code>. PHP packages:{" "}
+                    <code style={mono}>npx fancy-cli add</code>. PHP packages:{" "}
                     <code style={mono}>composer require</code>. Either way, point your agent at the
                     registry MCP — <code style={mono}>ui.particle.academy/mcp</code> — and it returns
                     the exact install commands.

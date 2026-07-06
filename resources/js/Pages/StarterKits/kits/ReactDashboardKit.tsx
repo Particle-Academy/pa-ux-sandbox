@@ -9,7 +9,7 @@ import {
     Tooltip,
     useToast,
 } from "@particle-academy/react-fancy";
-import { EChart } from "@particle-academy/fancy-echarts";
+import { EChart, registerAll } from "@particle-academy/fancy-echarts";
 import {
     Activity,
     ArrowDownRight,
@@ -30,6 +30,12 @@ import {
     Users,
     Webhook,
 } from "lucide-react";
+
+// ECharts registration is module-scoped per bundle entry: this file is also
+// the standalone starter-kit zip's src/Kit.tsx, where no app shell has
+// registered anything — without this, init() dies with "Renderer 'undefined'
+// is not imported". Idempotent, so the showcase calling it again is free.
+registerAll();
 
 // ─── Dashboard data ───────────────────────────────────────────────────────
 

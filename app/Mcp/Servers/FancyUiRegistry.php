@@ -34,7 +34,7 @@ Workflow:
    when the user names a UI concept ("calendar", "data grid", "modal").
 2. Use `install_instructions` to get the exact install commands for the
    chosen component — both the `npm install` path (default) and the
-   `npx fancy-ui add` vendor-source path.
+   `npx fancy-cli add` vendor-source path.
 3. If you need the actual source code (e.g. to inline into an answer or to
    write files directly), call `get_component` to fetch the full registry
    bundle.

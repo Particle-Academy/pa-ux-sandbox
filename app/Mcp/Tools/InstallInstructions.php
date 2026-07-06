@@ -49,7 +49,7 @@ class InstallInstructions extends Tool
             // for. npm-only items (e.g. the WebGL engine adapters, whose source
             // can't be vendored — it needs the engine) install via npm_path.
             'vendor_path' => ($npmName && $item->files !== []) ? [
-                'install' => "npx fancy-ui@latest add $name",
+                'install' => "npx fancy-cli@latest add $name",
                 'lands_at' => "src/components/fancy/$name/",
                 'import' => "import { $title } from \"@/components/fancy/$name\";",
                 'pulls_in' => array_merge($item->dependencies, $item->registryDependencies),

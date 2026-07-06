@@ -18,7 +18,7 @@ type Pkg = {
     npm?: string | null;
     composer?: string | null;
     download?: string | null;
-    /** Vendorable-block install command, e.g. `npx fancy-ui add catalog-fms`. */
+    /** Vendorable-block install command, e.g. `npx fancy-cli add catalog-fms`. */
     cli?: string | null;
     repo?: string;
     core?: boolean;

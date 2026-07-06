@@ -71,7 +71,7 @@ class RegistrySource
 
         // Hand-authored block — the catalog-fms storefront/admin components are
         // authored in THIS app (resources/js/components/fancy/catalog-fms/), not
-        // a sibling package, so source them directly. `npx fancy-ui add
+        // a sibling package, so source them directly. `npx fancy-cli add
         // catalog-fms` vendors the whole set; pairs with the Shop-n-Sub kit.
         if ($block = $this->catalogFmsBlock()) {
             $items[] = $block;

@@ -66,7 +66,7 @@ class PackageRegistry
         'fancy-3d-three' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#6366f1'],
         'fancy-motion' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#f43f5e'],
         'fancy-cms-ui' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#0ea5e9'],
-        // Vendorable block (npx fancy-ui add) — not a published package.
+        // Vendorable block (npx fancy-cli add) — not a published package.
         'catalog-fms' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'block', 'accent' => '#0ea5e9'],
 
         // ── Companion packages ───────────────────────────────────────────────
@@ -699,7 +699,7 @@ class PackageRegistry
     }
 
     /**
-     * Catalog + FMS — a vendorable React UI block (`npx fancy-ui add
+     * Catalog + FMS — a vendorable React UI block (`npx fancy-cli add
      * catalog-fms`) + the Shop-n-Sub starter kit. Not a published npm/Composer
      * package: the components are authored in this showcase and shipped through
      * the fancy-ui registry, so the entry carries `cli` (the add command) and
@@ -715,7 +715,7 @@ class PackageRegistry
             'name' => 'Catalog + FMS',
             'tagline' => 'Storefront + admin UI for subscriptions and metered features — pricing tables, a plan-comparison matrix, feature gating, and a plan/perks editor. Vendor the React block, or grab the Shop-n-Sub starter kit.',
             'language' => 'TypeScript',
-            'cli' => 'npx fancy-ui add catalog-fms',
+            'cli' => 'npx fancy-cli add catalog-fms',
             'kit' => 'shop-n-sub',
             'pairs' => ['laravel-catalog', 'laravel-fms', 'fancy-catalog-js', 'fancy-features-js'],
             'components' => [

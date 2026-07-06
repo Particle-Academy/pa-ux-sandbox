@@ -482,7 +482,7 @@ function InstallPanel({
                         </div>
                     </Card.Header>
                     <Card.Body>
-                        <CodeBlock cmd={`npx fancy-ui@latest add ${component.slug}`} />
+                        <CodeBlock cmd={`npx fancy-cli@latest add ${component.slug}`} />
                         <Text size="xs" className="mt-2 !text-zinc-500">
                             Copies the component source into <code className="font-mono">src/components/fancy/{component.slug}/</code> so
                             you own it and can edit it directly. Use this path when you want to fork the design system. (CLI is on the

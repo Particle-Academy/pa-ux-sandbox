@@ -39,8 +39,8 @@ class StartProject extends Tool
             'next_steps' => [
                 '1. (optional) Design direction: `gallery_list_styles` → `gallery_get_blueprint`.',
                 '2. Find UI: `list_components` / `search_components`.',
-                '3. Install a component: `install_instructions` (npm path + the `npx fancy-ui add` vendor-source path).',
-                '4. Full-app templates: the Starter Kits at https://ui.particle.academy/starter-kits (e.g. Shop-n-Sub = catalog + FMS, vendored as `npx fancy-ui add catalog-fms`).',
+                '3. Install a component: `install_instructions` (npm path + the `npx fancy-cli add` vendor-source path).',
+                '4. Full-app templates: the Starter Kits at https://ui.particle.academy/starter-kits (e.g. Shop-n-Sub = catalog + FMS, vendored as `npx fancy-cli add catalog-fms`).',
             ],
             'docs' => 'https://ui.particle.academy/docs/installation',
         ]);

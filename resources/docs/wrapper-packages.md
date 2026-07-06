@@ -48,7 +48,7 @@ A controlled, themeable React `<Terminal>` over <a href="https://xtermjs.org/" t
 
 ## fancy-query → TanStack Query
 
-A thin wrapper over <a href="https://tanstack.com/query/latest" target="_blank" rel="noopener noreferrer">TanStack Query</a> that adds the two bridges it can't know about: **Inertia page-prop hydration** (`useInertiaHydration`, so the first render is seeded with no fetch) and **Laravel Echo invalidation** (`useFancyEchoInvalidation`, mapping broadcasts to cache keys). `useFancyMutation` invalidates the keys it touched; `useFancyStream` patches the cache in place for token/SSE streams (the Realtime Chat starter kit). All of TanStack Query, React, `@inertiajs/react`, and Echo are peers.
+A thin wrapper over <a href="https://tanstack.com/query/latest" target="_blank" rel="noopener noreferrer">TanStack Query</a> that adds the two bridges it can't know about: **Inertia page-prop hydration** (`useInertiaHydration` — imported from `@particle-academy/fancy-query/inertia` since v0.5.0, so non-Inertia apps never touch the optional `@inertiajs/react` peer — so the first render is seeded with no fetch) and **Laravel Echo invalidation** (`useFancyEchoInvalidation`, mapping broadcasts to cache keys). `useFancyMutation` invalidates the keys it touched; `useFancyStream` patches the cache in place for token/SSE streams (the Realtime Chat starter kit). All of TanStack Query, React, `@inertiajs/react`, and Echo are peers.
 
 - **Package page →** [fancy-query](/packages/fancy-query)
 - **Engine docs →** <a href="https://tanstack.com/query/latest/docs/framework/react/overview" target="_blank" rel="noopener noreferrer">TanStack Query React docs</a>

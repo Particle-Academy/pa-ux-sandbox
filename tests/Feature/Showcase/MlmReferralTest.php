@@ -79,3 +79,37 @@ it('guards the admin config surface behind the admin gate', function () {
 
     $this->actingAs($user)->get('/admin/mlm')->assertForbidden();
 });
+
+it('hides the simulate demo from non-admins and 403s the route', function () {
+    $user = User::factory()->create(['is_admin' => false]);
+    $program = app(MlmProgram::class);
+    $root = $program->memberForUser($user);
+    $child = Member::query()->create(['sponsor_id' => $root->getKey(), 'tier' => 'bronze', 'active' => true]);
+
+    // The page renders without the simulate affordance…
+    $this->actingAs($user)->get('/referrals')
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page->where('canSimulate', false));
+
+    // …and the route is hard-gated regardless of UI.
+    $this->actingAs($user)->post('/referrals/simulate', [
+        'member_id' => (string) $child->getKey(),
+        'amount' => 100,
+    ])->assertForbidden();
+});
+
+it('keeps the simulate demo available to admins', function () {
+    $admin = User::factory()->create(['is_admin' => true]);
+    $program = app(MlmProgram::class);
+    $root = $program->memberForUser($admin);
+    $child = Member::query()->create(['sponsor_id' => $root->getKey(), 'tier' => 'bronze', 'active' => true]);
+
+    $this->actingAs($admin)->get('/referrals')
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page->where('canSimulate', true));
+
+    $this->actingAs($admin)->post('/referrals/simulate', [
+        'member_id' => (string) $child->getKey(),
+        'amount' => 100,
+    ])->assertRedirect()->assertSessionHas('mlm_rewards');
+});

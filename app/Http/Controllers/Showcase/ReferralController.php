@@ -7,14 +7,16 @@ use App\Services\Mlm\MlmProgram;
 use FancyMlm\Laravel\Models\Member;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
 
 /**
  * The end-user "refer a friend" surface — the gamified downline view built on
  * fancy-mlm-ui (DownlineTree / CommissionStatement / RankProgress) over the live
- * fancy-mlm engine. The signed-in user is the root of the seeded demo network;
- * "simulate activity" runs the real fun-lab referral loop and shows the payout.
+ * fancy-mlm engine. The signed-in user is the root of the seeded demo network.
+ * The "simulate activity" loop is ADMIN-ONLY demo tooling — it mints real
+ * fun-lab points to uplines, so it must never be an end-user affordance.
  */
 class ReferralController extends Controller
 {
@@ -34,6 +36,9 @@ class ReferralController extends Controller
             'network' => $program->network(),
             'commissions' => $program->commissionsForUser($request->user()),
             'rank' => $program->rankProgress($me),
+            // The simulate card is admin demo tooling — the flag mirrors the
+            // route's can:admin middleware so non-admins never see it.
+            'canSimulate' => Gate::forUser($request->user())->allows('admin'),
         ]);
     }
 

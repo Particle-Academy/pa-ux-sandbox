@@ -97,8 +97,10 @@ Route::middleware('auth')->group(function () {
 
     // Refer-a-friend — the gamified downline surface (fancy-mlm + fancy-mlm-ui).
     Route::get('/referrals', [ReferralController::class, 'show'])->name('referrals');
+    // Admin-only demo tooling: simulating a downline action mints REAL fun-lab
+    // points to uplines, so regular users must never reach it (403).
     Route::post('/referrals/simulate', [ReferralController::class, 'simulate'])
-        ->middleware('throttle:30,1')
+        ->middleware(['can:admin', 'throttle:30,1'])
         ->name('referrals.simulate');
 
     // Pro Analytics Suite — Pro-gated dashboard over the live Fancy Heuristics

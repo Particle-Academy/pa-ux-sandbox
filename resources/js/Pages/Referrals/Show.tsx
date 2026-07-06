@@ -27,6 +27,7 @@ type Props = {
     network: DownlineMember[];
     commissions: CommissionRow[];
     rank: Rank;
+    canSimulate: boolean;
 };
 
 const TIER_COLOR: Record<string, Color> = {
@@ -43,7 +44,7 @@ const TREE_COPY: Record<Program["tree"], string> = {
     matrix: "A forced-width grid — referrals fill each level left-to-right down the placement tree.",
 };
 
-export default function ReferralsShow({ program, myMemberId, referralCode, network, commissions, rank }: Props) {
+export default function ReferralsShow({ program, myMemberId, referralCode, network, commissions, rank, canSimulate }: Props) {
     const page = usePage<{ flash: { mlm_rewards?: CommissionRow[] | null } }>();
     const justEarned = page.props.flash?.mlm_rewards ?? null;
 
@@ -151,13 +152,17 @@ export default function ReferralsShow({ program, myMemberId, referralCode, netwo
                             </Card.Body>
                         </Card>
 
-                        {/* ── Live loop: simulate a downline action ──────── */}
+                        {/* ── Live loop (ADMIN DEMO): simulate a downline action ── */}
+                        {canSimulate && (
                         <Card>
                             <Card.Header>
-                                <Heading as="h2" className="!text-lg">Try the live loop</Heading>
+                                <div className="flex items-center justify-between gap-2">
+                                    <Heading as="h2" className="!text-lg">Try the live loop</Heading>
+                                    <Badge color="violet" variant="soft">admin demo</Badge>
+                                </div>
                                 <Text className="text-sm text-[var(--fg-3)]">
                                     Simulate a downline member taking an action. The fun-lab referral
-                                    engine credits their upline instantly.
+                                    engine credits their upline instantly. Admin-only demo tooling.
                                 </Text>
                             </Card.Header>
                             <Card.Body>
@@ -208,6 +213,7 @@ export default function ReferralsShow({ program, myMemberId, referralCode, netwo
                                 )}
                             </Card.Body>
                         </Card>
+                        )}
                     </div>
                 </div>
 

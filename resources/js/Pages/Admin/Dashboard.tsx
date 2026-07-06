@@ -34,7 +34,7 @@ function AdminDashboard({ stats, enabledFeatures, gamification: g }: Props) {
             <PageHeader
                 title="Dashboard"
                 sub="Catalog, engagement, and moderation at a glance."
-                actions={<Button variant="ghost" size="sm" iconTrailing="external-link" href="/">View site</Button>}
+                actions={<Button as={Link} variant="ghost" size="sm" iconTrailing="external-link" href="/">View site</Button>}
             />
 
             <div className="admin-grid-stats">

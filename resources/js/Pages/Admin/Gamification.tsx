@@ -1,4 +1,4 @@
-import { Head, router } from "@inertiajs/react";
+import { Head, Link, router } from "@inertiajs/react";
 import { Badge, Button, Card, Icon, Table } from "@particle-academy/react-fancy";
 import { adminLayout } from "./AdminLayout";
 import { PageHeader, EmptyRow } from "./ui";
@@ -14,7 +14,7 @@ function Gamification({ achievements, prizes }: Props) {
             <PageHeader
                 title="Gamification"
                 sub="Achievements + prizes taxonomy."
-                actions={<Button icon="plus" size="sm" href="/admin/gamification/achievements/create">New achievement</Button>}
+                actions={<Button as={Link} icon="plus" size="sm" href="/admin/gamification/achievements/create">New achievement</Button>}
             />
 
             <div className="admin-stack">
@@ -24,7 +24,7 @@ function Gamification({ achievements, prizes }: Props) {
                             <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
                                 <Icon name="trophy" size={16} style={{ color: "var(--fg-3)" }} /> Achievements
                             </span>
-                            <Button variant="ghost" size="sm" icon="plus" href="/admin/gamification/achievements/create">New</Button>
+                            <Button as={Link} variant="ghost" size="sm" icon="plus" href="/admin/gamification/achievements/create">New</Button>
                         </div>
                     </Card.Header>
                     {achievements.length === 0 ? (
@@ -84,7 +84,7 @@ function Gamification({ achievements, prizes }: Props) {
                             <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
                                 <Icon name="gift" size={16} style={{ color: "var(--fg-3)" }} /> Prizes
                             </span>
-                            <Button variant="ghost" size="sm" icon="plus" href="/admin/gamification/prizes/create">New prize</Button>
+                            <Button as={Link} variant="ghost" size="sm" icon="plus" href="/admin/gamification/prizes/create">New prize</Button>
                         </div>
                     </Card.Header>
                     {prizes.length === 0 ? (

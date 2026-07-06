@@ -1,4 +1,4 @@
-import { Head } from "@inertiajs/react";
+import { Head, Link } from "@inertiajs/react";
 import { Badge, Button, Card, Icon, Table } from "@particle-academy/react-fancy";
 import { adminLayout } from "../AdminLayout";
 import { PageHeader, StatCard, StatusDot, EmptyRow } from "../ui";
@@ -47,7 +47,7 @@ function Heuristics({ rollups: r, sites }: Props) {
             <PageHeader
                 title="Heuristics"
                 sub="Platform-wide behavioural analytics from the Fancy Pixel — every registered site."
-                actions={<Button variant="ghost" size="sm" iconTrailing="external-link" href="/analytics">Pro dashboard</Button>}
+                actions={<Button as={Link} variant="ghost" size="sm" iconTrailing="external-link" href="/analytics">Pro dashboard</Button>}
             />
 
             <div className="admin-grid-stats">

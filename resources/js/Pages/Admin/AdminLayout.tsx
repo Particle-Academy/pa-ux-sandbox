@@ -75,8 +75,14 @@ export function AdminLayout({ children }: { children: ReactNode }) {
 
     const [collapsed, setCollapsed] = useState(false);
     const [mobileOpen, setMobileOpen] = useState(false);
-    const [theme, setTheme] = useState<"light" | "dark">(() => (typeof window === "undefined" ? "dark" : currentTheme()));
+    // Start "dark" so the server render and the client's FIRST render agree —
+    // reading the real theme during render (currentTheme() → localStorage/media
+    // query) mismatches on hydration whenever the user is in light mode, and a
+    // #418 here discards the whole server-rendered admin layout ("page breaks,
+    // then reforms"). Same pattern as Pages/Layout.tsx: sync post-mount.
+    const [theme, setTheme] = useState<"light" | "dark">("dark");
     useEffect(() => {
+        setTheme(currentTheme());
         const onChange = (e: Event) => setTheme((e as CustomEvent<"light" | "dark">).detail);
         window.addEventListener("fancy-theme-change", onChange as EventListener);
         return () => window.removeEventListener("fancy-theme-change", onChange as EventListener);

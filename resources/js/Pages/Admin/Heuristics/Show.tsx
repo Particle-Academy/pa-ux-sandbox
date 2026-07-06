@@ -1,4 +1,4 @@
-import { Head, router } from "@inertiajs/react";
+import { Head, Link, router } from "@inertiajs/react";
 import { Badge, Button, Card, Icon, Table } from "@particle-academy/react-fancy";
 import { EChart } from "@particle-academy/fancy-echarts";
 import { adminLayout } from "../AdminLayout";
@@ -72,7 +72,7 @@ function HeuristicsShow({ site, kpis, topPaths, heatmap, recentSessions, eventsO
                         >
                             Verify now
                         </Button>
-                        <Button variant="ghost" size="sm" icon="arrow-left" href="/admin/heuristics">
+                        <Button as={Link} variant="ghost" size="sm" icon="arrow-left" href="/admin/heuristics">
                             All sites
                         </Button>
                     </div>

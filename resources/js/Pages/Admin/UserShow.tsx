@@ -248,7 +248,7 @@ function UserShow({ user, metrics, transactions, achievements, ownedSites, allMe
                 title={user.name}
                 sub={`${user.email}${user.github_username ? ` · @${user.github_username}` : ""}`}
                 actions={
-                    <Button variant="ghost" size="sm" icon="arrow-left" href="/admin/users">
+                    <Button as={Link} variant="ghost" size="sm" icon="arrow-left" href="/admin/users">
                         Users
                     </Button>
                 }

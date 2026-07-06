@@ -1,4 +1,4 @@
-import { Head, router } from "@inertiajs/react";
+import { Head, Link, router } from "@inertiajs/react";
 import { Badge, Button, Card, Table } from "@particle-academy/react-fancy";
 import { adminLayout } from "./AdminLayout";
 import { PageHeader, EmptyRow } from "./ui";
@@ -13,7 +13,7 @@ function Shop({ items }: Props) {
             <PageHeader
                 title="Coin Shop"
                 sub="Cosmetics + perks players buy with coins."
-                actions={<Button icon="plus" size="sm" href="/admin/shop/create">New item</Button>}
+                actions={<Button as={Link} icon="plus" size="sm" href="/admin/shop/create">New item</Button>}
             />
 
             <Card>

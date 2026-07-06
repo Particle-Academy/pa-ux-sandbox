@@ -1,4 +1,4 @@
-import { Head, router, useForm } from "@inertiajs/react";
+import { Head, Link, router, useForm } from "@inertiajs/react";
 import { useState } from "react";
 import { Avatar, Badge, Button, Card, Heading, Icon, Input, Select, Text } from "@particle-academy/react-fancy";
 import { adminLayout } from "./AdminLayout";
@@ -41,7 +41,7 @@ function SiteShow({ site, owner, categories, kpis, topPaths, heatmap, heatmapSho
                 actions={
                     <div style={{ display: "flex", gap: 8 }}>
                         <Button href={site.url} variant="ghost" size="sm" icon="external-link">Visit</Button>
-                        <Button variant="ghost" size="sm" icon="arrow-left" href="/admin/sites">All sites</Button>
+                        <Button as={Link} variant="ghost" size="sm" icon="arrow-left" href="/admin/sites">All sites</Button>
                     </div>
                 }
             />

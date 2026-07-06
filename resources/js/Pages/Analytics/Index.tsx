@@ -576,8 +576,12 @@ function RealtimeSection({ data }: { data: NonNullable<Realtime> }) {
 // ─── 6 · Attention ──────────────────────────────────────────────────────────
 
 function useTheme(): "light" | "dark" {
-    const [theme, setTheme] = useState<"light" | "dark">(() => (typeof window === "undefined" ? "dark" : currentTheme()));
+    // Deterministic first render ("dark") on server AND client, then sync to the
+    // real theme post-mount — reading currentTheme() during render mismatches on
+    // hydration (React #418) for light-mode users. Same pattern as Layout.tsx.
+    const [theme, setTheme] = useState<"light" | "dark">("dark");
     useEffect(() => {
+        setTheme(currentTheme());
         const onChange = (e: Event) => setTheme((e as CustomEvent<"light" | "dark">).detail);
         window.addEventListener("fancy-theme-change", onChange as EventListener);
         return () => window.removeEventListener("fancy-theme-change", onChange as EventListener);

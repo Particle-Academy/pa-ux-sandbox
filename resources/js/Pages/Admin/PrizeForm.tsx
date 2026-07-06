@@ -1,4 +1,4 @@
-import { Head, useForm } from "@inertiajs/react";
+import { Head, Link, useForm } from "@inertiajs/react";
 import { Button, Card, Field, Input, Select, Switch, Textarea } from "@particle-academy/react-fancy";
 import { adminLayout } from "./AdminLayout";
 import { PageHeader } from "./ui";
@@ -92,7 +92,7 @@ function PrizeForm({ prize }: Props) {
                                 <Button type="submit" color="violet" loading={f.processing}>
                                     {editing ? "Save changes" : "Create prize"}
                                 </Button>
-                                <Button variant="ghost" href="/admin/gamification">
+                                <Button as={Link} variant="ghost" href="/admin/gamification">
                                     Cancel
                                 </Button>
                             </div>

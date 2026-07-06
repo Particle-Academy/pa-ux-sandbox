@@ -1,4 +1,4 @@
-import { Head, useForm } from "@inertiajs/react";
+import { Head, Link, useForm } from "@inertiajs/react";
 import { Button, Card, Field, Input, Switch, Textarea } from "@particle-academy/react-fancy";
 import { adminLayout } from "./AdminLayout";
 import { PageHeader } from "./ui";
@@ -78,7 +78,7 @@ function AchievementForm({ achievement }: Props) {
                                 <Button type="submit" color="violet" loading={f.processing}>
                                     {editing ? "Save changes" : "Create achievement"}
                                 </Button>
-                                <Button variant="ghost" href="/admin/gamification">
+                                <Button as={Link} variant="ghost" href="/admin/gamification">
                                     Cancel
                                 </Button>
                             </div>

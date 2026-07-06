@@ -288,6 +288,38 @@ export function Layout({
 
             <footer className="footer">
                 <div className="container">
+                    {/* Bold, unmissable cross-link to Particle Academy AI (new tab). */}
+                    <a
+                        href="https://ai.particle.academy/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        data-footer-ai-link
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            gap: 16,
+                            marginBottom: 28,
+                            padding: "16px 20px",
+                            borderRadius: 14,
+                            border: "1px solid color-mix(in oklch, #8b5cf6 45%, transparent)",
+                            background: "linear-gradient(90deg, color-mix(in oklch, #8b5cf6 16%, transparent), color-mix(in oklch, #f59e0b 12%, transparent))",
+                            textDecoration: "none",
+                            color: "var(--fg-1)",
+                        }}
+                    >
+                        <span style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                            <span style={{ fontSize: 16, fontWeight: 800, letterSpacing: 0.2 }}>
+                                ⚡ Particle Academy AI
+                            </span>
+                            <span style={{ fontSize: 13, color: "var(--fg-2)" }}>
+                                ai.particle.academy — the AI side of Particle Academy
+                            </span>
+                        </span>
+                        <span style={{ fontSize: 14, fontWeight: 700, whiteSpace: "nowrap", color: "#8b5cf6" }}>
+                            Visit&nbsp;→
+                        </span>
+                    </a>
                     <div className="footer-grid">
                         <div>
                             <div className="nav-brand" style={{ marginBottom: 14 }}>

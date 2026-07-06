@@ -277,6 +277,12 @@ Route::prefix('admin')->name('admin.')->middleware(['web', 'auth', 'can:admin'])
     Route::get('mlm', [AdminMlmController::class, 'index'])->name('mlm.index');
     Route::put('mlm', [AdminMlmController::class, 'update'])->name('mlm.update');
 
+    // Referral network member management (create / re-organize / splice-delete / demo purge)
+    Route::post('mlm/members', [AdminMlmController::class, 'storeMember'])->name('mlm.members.store');
+    Route::post('mlm/members/purge-demo', [AdminMlmController::class, 'purgeDemoMembers'])->name('mlm.members.purge-demo');
+    Route::put('mlm/members/{member}', [AdminMlmController::class, 'updateMember'])->name('mlm.members.update');
+    Route::delete('mlm/members/{member}', [AdminMlmController::class, 'destroyMember'])->name('mlm.members.destroy');
+
     // Coin Shop Management
     Route::resource('shop', AdminShopController::class)->except(['show']);
     Route::post('shop/{shop}/toggle', [AdminShopController::class, 'toggle'])->name('shop.toggle');

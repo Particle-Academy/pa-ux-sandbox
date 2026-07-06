@@ -9,6 +9,8 @@ use FancyMlm\Plan\CompensationPlan;
 use FancyMlm\Referral\ReferralEngine;
 use FancyMlm\Referral\RewardComputation;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use LaravelFunLab\Events\XpAwarded;
 use LaravelFunLab\Facades\LFL;
 use LaravelFunLab\Models\EventLog;
@@ -124,6 +126,173 @@ class MlmProgram
             ['user_id' => $user->getKey()],
             ['tier' => 'bronze', 'active' => true, 'meta' => ['label' => $user->name]],
         );
+    }
+
+    /**
+     * Every member with their linked user, shaped for the admin Members table.
+     *
+     * @return list<array<string, mixed>>
+     */
+    public function membersForAdmin(): array
+    {
+        return $this->members()
+            ->map(fn (Member $m) => [
+                'id' => (string) $m->getKey(),
+                'label' => $this->labelFor($m),
+                'userId' => $m->user_id !== null ? (int) $m->user_id : null,
+                'userName' => $m->user?->name,
+                'userEmail' => $m->user?->email,
+                'tier' => $m->tier ?: 'bronze',
+                'active' => (bool) $m->active,
+                'sponsorId' => $m->sponsor_id !== null ? (string) $m->sponsor_id : null,
+                'placementId' => $m->placement_id !== null ? (string) $m->placement_id : null,
+                'demo' => (bool) ($m->meta['demo'] ?? false),
+            ])
+            ->values()
+            ->all();
+    }
+
+    /**
+     * Users with no member row yet — the candidates for the admin's
+     * "create member" picker.
+     *
+     * @return list<array{id: int, name: string, email: string}>
+     */
+    public function usersWithoutMember(): array
+    {
+        return User::query()
+            ->whereNotIn('id', Member::query()->whereNotNull('user_id')->select('user_id'))
+            ->orderBy('name')
+            ->get(['id', 'name', 'email'])
+            ->map(fn (User $u) => ['id' => (int) $u->getKey(), 'name' => $u->name, 'email' => $u->email])
+            ->all();
+    }
+
+    /**
+     * Re-organize an existing member: sponsor, placement, tier, active. Rejects
+     * a sponsor/placement that is the member themselves or sits in their own
+     * downline — re-pointing INTO your own subtree would loop the reward walk.
+     *
+     * @param  array<string, mixed>  $attrs
+     *
+     * @throws ValidationException when the assignment would create a cycle
+     */
+    public function updateMember(Member $member, array $attrs): Member
+    {
+        $sponsorId = isset($attrs['sponsor_id']) ? (int) $attrs['sponsor_id'] : null;
+        $placementId = isset($attrs['placement_id']) ? (int) $attrs['placement_id'] : null;
+
+        if ($this->wouldCycle($member, $sponsorId, 'sponsor')) {
+            throw ValidationException::withMessages([
+                'sponsor_id' => 'That sponsor is this member or one of their own descendants — the sponsor tree would loop.',
+            ]);
+        }
+        if ($this->wouldCycle($member, $placementId, 'placement')) {
+            throw ValidationException::withMessages([
+                'placement_id' => 'That placement is this member or one of their own descendants — the placement tree would loop.',
+            ]);
+        }
+
+        $member->update([
+            'sponsor_id' => $sponsorId,
+            'placement_id' => $placementId,
+            'tier' => (string) $attrs['tier'],
+            'active' => (bool) $attrs['active'],
+        ]);
+
+        return $member->refresh();
+    }
+
+    /** A brand-new member for a user who has none, optionally pre-attached to the tree. */
+    public function createForUser(User $user, ?int $sponsorId = null, ?int $placementId = null, ?string $tier = null): Member
+    {
+        return Member::query()->create([
+            'user_id' => $user->getKey(),
+            'sponsor_id' => $sponsorId,
+            'placement_id' => $placementId,
+            'tier' => $tier ?? (string) ($this->planData()['defaultTier'] ?? 'bronze'),
+            'active' => true,
+            'meta' => ['label' => $user->name],
+        ]);
+    }
+
+    /**
+     * Delete a member and SPLICE the chain: children's sponsor_id re-points to
+     * the deleted member's own sponsor, placement children to their placement
+     * (null when the deleted member was a root) — the subtree survives intact.
+     */
+    public function deleteMember(Member $member): void
+    {
+        DB::transaction(function () use ($member) {
+            Member::query()->where('sponsor_id', $member->getKey())->update(['sponsor_id' => $member->sponsor_id]);
+            Member::query()->where('placement_id', $member->getKey())->update(['placement_id' => $member->placement_id]);
+            $member->delete();
+        });
+    }
+
+    /**
+     * Delete every demo-seeded member (meta.demo) with the same splice
+     * semantics — a REAL member sponsored by a demo row re-points to the
+     * nearest surviving ancestor. This is the production cleanup for an
+     * accidentally-run MlmNetworkSeeder.
+     */
+    public function purgeDemo(): int
+    {
+        $demoIds = Member::query()->get()
+            ->filter(fn (Member $m) => (bool) ($m->meta['demo'] ?? false))
+            ->map(fn (Member $m) => (int) $m->getKey())
+            ->values();
+
+        DB::transaction(function () use ($demoIds) {
+            foreach ($demoIds as $id) {
+                $member = Member::query()->find($id);
+                if ($member !== null) {
+                    $this->deleteMember($member);
+                }
+            }
+        });
+
+        return $demoIds->count();
+    }
+
+    /**
+     * Would attaching $member under $candidateId on the given edge loop the
+     * tree? Walks UP the candidate's ancestor chain along the exact pointer the
+     * engine's UpwardTree climbs (sponsor: `sponsor_id`; placement:
+     * `placement_id ?? sponsor_id`); a cycle exists iff the walk reaches
+     * $member — i.e. the candidate IS the member or sits in their downline.
+     */
+    private function wouldCycle(Member $member, ?int $candidateId, string $edge): bool
+    {
+        if ($candidateId === null) {
+            return false;
+        }
+
+        $byId = Member::query()->get(['id', 'sponsor_id', 'placement_id'])->keyBy('id');
+
+        $current = $candidateId;
+        $seen = [];
+        while ($current !== null) {
+            if ($current === (int) $member->getKey()) {
+                return true;
+            }
+            if (isset($seen[$current])) {
+                return false; // pre-existing loop elsewhere — not one we'd create
+            }
+            $seen[$current] = true;
+
+            $parent = $byId->get($current);
+            if ($parent === null) {
+                return false;
+            }
+
+            $next = $edge === 'sponsor'
+                ? $parent->sponsor_id
+                : ($parent->placement_id ?? $parent->sponsor_id);
+            $current = $next !== null ? (int) $next : null;
+        }
+
+        return false;
     }
 
     /**

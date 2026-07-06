@@ -22,6 +22,17 @@ class MlmNetworkSeeder extends Seeder
 {
     public function run(): void
     {
+        // These are FAKE people, and the seed starts by WIPING mlm_members.
+        // Outside the local sandbox that would plant phantom members in (and
+        // erase) a REAL network, so no-op loudly instead — mirrors
+        // DatabaseSeeder's local-only credentials guard. Admins manage real
+        // members on /admin/mlm.
+        if (! app()->environment('local')) {
+            $this->command?->warn('MlmNetworkSeeder seeds a FAKE demo network — skipped outside the local environment. Manage members on /admin/mlm instead.');
+
+            return;
+        }
+
         $this->command?->info('Seeding fancy-mlm demo network...');
 
         // Clean slate — this is demo data, not taxonomy.

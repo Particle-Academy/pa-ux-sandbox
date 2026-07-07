@@ -17,6 +17,7 @@ return [
     'image_alt' => 'Fancy UI — components for Human+ UX',
     'image_width' => 1200,
     'image_height' => 630,
+    'image_type' => 'image/png', // every /og/* card is a GD-rendered PNG
     'locale' => 'en_US',
     'type' => 'website',
     'twitter_site' => null,

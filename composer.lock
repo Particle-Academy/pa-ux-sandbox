@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e59cafb6af0be52e58b926b9fde746df",
+    "content-hash": "c41c5082ee2139ba00ad7173e50aa0a0",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -4014,16 +4014,16 @@
         },
         {
             "name": "particle-academy/fancy-seo",
-            "version": "v0.3.0",
+            "version": "v0.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/fancy-seo.git",
-                "reference": "d84cd47fa330a5211056512919737aabb6919f99"
+                "reference": "8dbd3d6e20cb1e5bbb8ed3d00ef81b2d35ba6b30"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/fancy-seo/zipball/d84cd47fa330a5211056512919737aabb6919f99",
-                "reference": "d84cd47fa330a5211056512919737aabb6919f99",
+                "url": "https://api.github.com/repos/Particle-Academy/fancy-seo/zipball/8dbd3d6e20cb1e5bbb8ed3d00ef81b2d35ba6b30",
+                "reference": "8dbd3d6e20cb1e5bbb8ed3d00ef81b2d35ba6b30",
                 "shasum": ""
             },
             "require": {
@@ -4083,7 +4083,7 @@
                 "issues": "https://github.com/Particle-Academy/fancy-seo/issues",
                 "source": "https://github.com/Particle-Academy/fancy-seo"
             },
-            "time": "2026-06-25T01:24:17+00:00"
+            "time": "2026-07-07T06:19:21+00:00"
         },
         {
             "name": "particle-academy/fancy-x-files",

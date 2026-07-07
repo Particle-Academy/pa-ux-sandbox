@@ -2,9 +2,11 @@
 
 namespace App\Providers;
 
+use App\Models\User;
 use App\Support\Docs\DocsRegistry;
 use App\Support\GalleryRegistry;
 use App\Support\PackageRegistry;
+use App\Support\Usernames;
 use FancySeo\Facades\FancySeo;
 use FancySeo\JsonLd;
 use FancySeo\SitemapBuilder;
@@ -144,6 +146,35 @@ class SeoServiceProvider extends ServiceProvider
         FancySeo::route('packages.show', fn (array $params): array => $this->packageSeo($params['package'] ?? null, $base));
         FancySeo::route('packages.component', fn (array $params): array => $this->componentSeo($params['package'] ?? null, $params['component'] ?? null, $base));
         FancySeo::route('docs.show', fn (array $params): array => $this->docSeo($params['slug'] ?? 'introduction', $base));
+        FancySeo::route('referrals.join', fn (array $params): array => $this->joinSeo($params['username'] ?? null, $base));
+    }
+
+    /**
+     * Personalized share meta for a member's /join/{username} invite link:
+     * inviter-specific title/description, a canonical on the normalized
+     * username, and the personalized OG card (og.join). noindex — thousands of
+     * near-identical invite pages shouldn't compete in search, and scrapers
+     * (LinkedIn/X/Slack) read the OG tags regardless.
+     *
+     * @return array<string,mixed>
+     */
+    private function joinSeo(mixed $username, string $base): array
+    {
+        $username = is_string($username) ? Usernames::normalize($username) : null;
+        $referrer = $username === null ? null : User::query()->where('username', $username)->first();
+        if ($referrer === null) {
+            // The route 302s home for unknown usernames — nothing renders this.
+            return ['title' => 'Join Fancy UI', 'noindex' => true];
+        }
+
+        return [
+            'title' => "{$referrer->name} invited you to Fancy UI",
+            'description' => "Join {$referrer->name}'s referral network and build with Fancy UI — components for the surfaces where humans and AI agents work together.",
+            'canonical' => "{$base}/join/{$referrer->username}",
+            'image' => "/og/join/{$referrer->username}.png",
+            'imageAlt' => "{$referrer->name} invited you to Fancy UI",
+            'noindex' => true,
+        ];
     }
 
     /**

@@ -5,6 +5,7 @@ use App\Services\Mlm\MlmProgram;
 use Database\Seeders\FunLabSeeder;
 use FancyMlm\Laravel\Models\Member;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 uses(TestCase::class);
@@ -101,22 +102,64 @@ it('exposes the username-based referral link when set — absolute and server-bu
 
 // ── /join/{username} attribution flow ───────────────────────────────────
 
-it('stores the referral attribution cookie and redirects home', function () {
+it('renders the invite landing page and stores the referral attribution cookie', function () {
     $referrer = User::factory()->create(['username' => 'ray', 'name' => 'Ray']);
 
-    $response = $this->get('/join/ray');
+    $this->get('/join/ray')
+        ->assertOk()
+        ->assertCookie(MlmProgram::REFERRAL_COOKIE, (string) $referrer->getKey())
+        ->assertInertia(fn ($page) => $page
+            ->component('Referrals/Join')
+            ->where('inviter.name', 'Ray')
+            ->where('inviter.username', 'ray'));
+});
 
-    $response->assertRedirect('/')
-        ->assertSessionHas('success')
-        ->assertCookie(MlmProgram::REFERRAL_COOKIE, (string) $referrer->getKey());
+it('serves personalized OG share meta on the invite page', function () {
+    User::factory()->create(['username' => 'ray', 'name' => 'Ray']);
+
+    $html = $this->get('/join/ray')->assertOk()->getContent();
+
+    expect($html)
+        ->toContain('property="og:title" content="Ray invited you to Fancy UI"')
+        ->toContain('property="og:image" content="'.config('app.url').'/og/join/ray.png"')
+        ->toContain('property="og:url" content="'.config('app.url').'/join/ray"')
+        ->toContain('rel="canonical" href="'.config('app.url').'/join/ray"')
+        ->toContain('property="og:image:width" content="1200"')
+        ->toContain('property="og:image:height" content="630"')
+        ->toContain('name="twitter:card" content="summary_large_image"')
+        // Personalized invite pages stay out of search — shares only need OG.
+        ->toContain('name="robots" content="noindex, nofollow"');
 });
 
 it('matches join links case-insensitively', function () {
     $referrer = User::factory()->create(['username' => 'ray']);
 
     $this->get('/join/RAY')
-        ->assertRedirect('/')
+        ->assertOk()
         ->assertCookie(MlmProgram::REFERRAL_COOKIE, (string) $referrer->getKey());
+
+    // The canonical + OG card normalize to the lowercase username.
+    expect($this->get('/join/RAY')->getContent())
+        ->toContain('rel="canonical" href="'.config('app.url').'/join/ray"')
+        ->toContain('/og/join/ray.png');
+});
+
+it('serves a personalized 1200x630 PNG invite card', function () {
+    Storage::fake('public');
+    User::factory()->create(['username' => 'ray', 'name' => 'Ray']);
+
+    $res = $this->get('/og/join/ray.png');
+
+    $res->assertOk();
+    expect($res->headers->get('Content-Type'))->toBe('image/png');
+    $size = getimagesizefromstring($res->getContent());
+    expect($size[0])->toBe(1200)
+        ->and($size[1])->toBe(630)
+        ->and($size['mime'])->toBe('image/png');
+});
+
+it('404s the invite card for unknown usernames', function () {
+    $this->get('/og/join/nobody-here.png')->assertNotFound();
 });
 
 it('redirects unknown usernames home silently, without a cookie', function () {

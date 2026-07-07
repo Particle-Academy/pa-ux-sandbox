@@ -57,12 +57,15 @@ use Laravel\Mcp\Facades\Mcp;
 // particle-academy/fancy-seo; their content comes from config/fancy-seo.php +
 // App\Providers\SeoServiceProvider (sitemap + llms providers).
 
-// Dynamic Open Graph / social-card images (branded 1200×630 PNGs, headless-Chrome
-// rendered + cached). Referenced by the per-route og:image in SeoServiceProvider.
+// Dynamic Open Graph / social-card images (branded 1200×630 PNGs, GD-drawn +
+// cached). Referenced by the per-route og:image in SeoServiceProvider.
 Route::get('/og/default.png', [OgImageController::class, 'default'])->name('og.default');
 Route::get('/og/packages/{package}.png', [OgImageController::class, 'package'])
     ->where('package', '[a-z0-9\-]+')
     ->name('og.package');
+Route::get('/og/join/{username}.png', [OgImageController::class, 'join'])
+    ->where('username', '[A-Za-z0-9\-]+')
+    ->name('og.join');
 
 // Authentication routes
 Route::middleware('guest')->group(function () {
@@ -117,10 +120,12 @@ Route::middleware('auth')->group(function () {
         ->name('easter-egg.ending');
 });
 
-// Public referral entry — a member's shareable /join/{username} link. Stores a
-// 30-day attribution cookie and redirects home; the sponsor attaches when the
-// referred visitor's member row is first created (MlmProgram::memberForUser).
-// Unknown usernames redirect home silently (no user enumeration).
+// Public referral entry — a member's shareable /join/{username} link. Renders
+// a real invite landing page (personalized OG meta + card, so shares get a
+// rich preview) and stores a 30-day attribution cookie; the sponsor attaches
+// when the referred visitor's member row is first created
+// (MlmProgram::memberForUser). Unknown usernames redirect home silently (no
+// user enumeration).
 Route::get('/join/{username}', [ReferralController::class, 'join'])
     ->where('username', '[A-Za-z0-9\-]+')
     ->name('referrals.join');

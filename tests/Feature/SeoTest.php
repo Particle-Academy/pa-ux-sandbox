@@ -1,6 +1,7 @@
 <?php
 
 use App\Providers\SeoServiceProvider;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 uses(TestCase::class);
@@ -95,15 +96,31 @@ it('lists docs pages in the sitemap', function () {
     $this->get('/sitemap.xml')->assertOk()->assertSee('/docs/human-plus-ux', false);
 });
 
-it('serves an OG image (logo fallback when headless Chrome is off)', function () {
+it('serves real 1200x630 PNG OG cards (GD-drawn — no headless Chrome needed)', function () {
+    Storage::fake('public');
+
     foreach (['/og/default.png', '/og/packages/react-fancy.png'] as $path) {
         $res = $this->get($path);
         $res->assertOk();
-        expect($res->headers->get('Content-Type'))->toContain('image/');
+        expect($res->headers->get('Content-Type'))->toBe('image/png');
+        // The bytes must REALLY be a 1200×630 PNG: LinkedIn ignores the declared
+        // og:image:width/height when the fetched image is a small square.
+        $size = getimagesizefromstring($res->getContent());
+        expect($size[0])->toBe(1200)
+            ->and($size[1])->toBe(630)
+            ->and($size['mime'])->toBe('image/png');
     }
 
     // Unknown package 404s.
     $this->get('/og/packages/not-a-real-package.png')->assertNotFound();
+});
+
+it('declares the og:image dimensions + type site-wide', function () {
+    expect($this->get('/')->getContent())
+        ->toContain('property="og:image:width" content="1200"')
+        ->toContain('property="og:image:height" content="630"')
+        ->toContain('property="og:image:type" content="image/png"')
+        ->toContain('name="twitter:card" content="summary_large_image"');
 });
 
 it('points each page og:image at its card', function () {

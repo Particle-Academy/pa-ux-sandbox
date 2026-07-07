@@ -52,11 +52,14 @@ class ReferralController extends Controller
     }
 
     /**
-     * Public referral entry: /join/{username}. Remember who referred this
-     * visitor (30-day cookie) and send them home; the sponsor attaches when
-     * their member row is first created. Unknown usernames redirect silently.
+     * Public referral entry: /join/{username}. A real, shareable landing page
+     * (personalized OG meta + card come from SeoServiceProvider + the og.join
+     * image route) — NOT an instant 302, which made every shared invite link
+     * inherit the generic home-page preview. Still remembers who referred this
+     * visitor (30-day cookie); the sponsor attaches when their member row is
+     * first created. Unknown usernames redirect home silently.
      */
-    public function join(Request $request, string $username): RedirectResponse
+    public function join(Request $request, string $username): RedirectResponse|Response
     {
         $referrer = User::query()
             ->where('username', Usernames::normalize($username))
@@ -68,7 +71,13 @@ class ReferralController extends Controller
 
         Cookie::queue(MlmProgram::REFERRAL_COOKIE, (string) $referrer->getKey(), 60 * 24 * 30);
 
-        return redirect('/')->with('success', "Referred by {$referrer->name} — welcome! Sign in and you'll join their network.");
+        return Inertia::render('Referrals/Join', [
+            'inviter' => [
+                'name' => $referrer->name,
+                'username' => $referrer->username,
+                'avatarUrl' => $referrer->avatar_url,
+            ],
+        ]);
     }
 
     public function simulate(Request $request, MlmProgram $program): RedirectResponse

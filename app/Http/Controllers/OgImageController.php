@@ -2,31 +2,34 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
+use App\Support\OgCardRenderer;
 use App\Support\PackageRegistry;
+use App\Support\Usernames;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
-use Spatie\Browsershot\Browsershot;
 use Throwable;
 
 /**
- * Dynamic Open Graph / social-card images. Renders a branded 1200×630 card
- * (resources/views/og/card.blade.php) to PNG with headless Chrome (the same
- * Browsershot setup the screenshot service uses), caches it to the public disk,
- * and serves it. Wired into per-route `og:image` by App\Providers\SeoServiceProvider.
+ * Dynamic Open Graph / social-card images: branded 1200×630 PNGs drawn with GD
+ * (App\Support\OgCardRenderer), cached to the public disk, and wired into the
+ * per-route `og:image` by App\Providers\SeoServiceProvider.
  *
- * If Chrome isn't available (or generation fails), it falls back to the static
- * brand logo so a page's social preview never breaks.
+ * GD replaced the old Browsershot/headless-Chrome pipeline deliberately: on
+ * Chrome-less hosts that pipeline fell back to the square brand JPEG, so social
+ * scrapers (LinkedIn especially) rendered a small square card instead of the
+ * large 1200×630 preview. GD needs nothing beyond stock PHP, so the real card
+ * renders on every host. The logo fallback remains only as a last-resort guard.
  */
 class OgImageController extends Controller
 {
     public function default(): Response
     {
-        return $this->card(
-            'default',
-            null,
-            'Fancy UI',
-            'Components for the surfaces where humans and agents work together.',
-        );
+        return $this->card('default', [
+            'title' => 'Fancy UI',
+            'subtitle' => 'Components for the surfaces where humans and agents work together.',
+        ]);
     }
 
     public function package(string $package): Response
@@ -34,28 +37,49 @@ class OgImageController extends Controller
         $pkg = PackageRegistry::find($package);
         abort_if($pkg === null, 404);
 
-        return $this->card(
-            "packages/{$package}",
-            strtoupper((string) ($pkg['language'] ?? '')) ?: null,
-            (string) ($pkg['name'] ?? $package),
-            (string) ($pkg['tagline'] ?? ''),
-        );
+        return $this->card("packages/{$package}", [
+            'eyebrow' => strtoupper((string) ($pkg['language'] ?? '')) ?: null,
+            'title' => (string) ($pkg['name'] ?? $package),
+            'subtitle' => (string) ($pkg['tagline'] ?? ''),
+        ]);
     }
 
-    protected function card(string $key, ?string $eyebrow, string $title, string $subtitle): Response
+    /**
+     * Personalized referral-invite card for /join/{username} shares:
+     * inviter name + avatar over the brand canvas.
+     */
+    public function join(string $username): Response
     {
-        // No headless Chrome (CI, locked-down hosts) → serve the brand logo
-        // rather than attempting (and timing out on) a screenshot.
-        if (! config('screenshots.enabled', true)) {
-            return $this->logoFallback();
-        }
+        $referrer = User::query()
+            ->where('username', Usernames::normalize($username))
+            ->first();
+        abort_if($referrer === null, 404);
 
+        return $this->card('join/'.$referrer->username, [
+            'eyebrow' => 'Referral invite',
+            'title' => "{$referrer->name} invited you to Fancy UI",
+            'subtitle' => 'Join their referral network and build with components made for humans and AI agents working together.',
+            'avatarUrl' => $referrer->avatar_url,
+        ]);
+    }
+
+    /**
+     * Render-and-cache. The cache filename carries a hash of the card's inputs
+     * (plus the renderer's design version), so a renamed user, retagged package,
+     * or redesigned card regenerates instead of serving a stale image.
+     *
+     * @param  array{eyebrow?: ?string, title: string, subtitle?: ?string, avatarUrl?: ?string}  $spec
+     */
+    protected function card(string $key, array $spec): Response
+    {
         $disk = Storage::disk('public');
-        $path = "og/{$key}.png";
+        $hash = substr(sha1(OgCardRenderer::VERSION.'|'.json_encode($spec)), 0, 12);
+        $path = "og/{$key}-{$hash}.png";
 
         if (! $disk->exists($path)) {
             try {
-                $disk->put($path, $this->render($eyebrow, $title, $subtitle));
+                $spec['avatar'] = $this->avatarBytes($spec['avatarUrl'] ?? null);
+                $disk->put($path, app(OgCardRenderer::class)->render($spec));
             } catch (Throwable $e) {
                 report($e);
 
@@ -69,37 +93,26 @@ class OgImageController extends Controller
         ]);
     }
 
-    protected function render(?string $eyebrow, string $title, string $subtitle): string
+    /** Fetch the inviter's avatar; a broken/slow avatar must never break the card. */
+    protected function avatarBytes(?string $url): ?string
     {
-        $logo = $this->logoDataUri();
-        $html = view('og.card', compact('eyebrow', 'title', 'subtitle', 'logo'))->render();
-
-        $shot = Browsershot::html($html)
-            ->windowSize(1200, 630)
-            ->setScreenshotType('png')
-            ->timeout((int) config('screenshots.timeout', 60));
-
-        foreach (['node_binary' => 'setNodeBinary', 'npm_binary' => 'setNpmBinary', 'chrome_path' => 'setChromePath'] as $cfg => $method) {
-            if ($value = config("screenshots.$cfg")) {
-                $shot->{$method}($value);
-            }
-        }
-        if (config('screenshots.no_sandbox', false)) {
-            $shot->noSandbox();
+        if ($url === null || $url === '') {
+            return null;
         }
 
-        return $shot->screenshot();
+        try {
+            $response = Http::timeout(4)->get($url);
+
+            return $response->successful() ? $response->body() : null;
+        } catch (Throwable) {
+            return null;
+        }
     }
 
-    protected function logoDataUri(): string
-    {
-        $file = public_path('showcase-assets/fancy-ui-logo.jpg');
-
-        return is_file($file)
-            ? 'data:image/jpeg;base64,'.base64_encode((string) file_get_contents($file))
-            : '';
-    }
-
+    /**
+     * Last-resort guard (e.g. GD compiled without FreeType): serve the brand
+     * logo rather than a 500 so a page's social preview never hard-breaks.
+     */
     protected function logoFallback(): Response
     {
         $file = public_path('showcase-assets/fancy-ui-logo.jpg');

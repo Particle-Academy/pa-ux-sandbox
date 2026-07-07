@@ -256,9 +256,17 @@ class AgentRelayController extends Controller
         if (! preg_match('/^[a-f0-9]{16}$/', $subscriberId)) {
             $subscriberId = bin2hex(random_bytes(8));
         }
-        // Cap the park so a parked request never ties up an FPM worker too long.
+        // Cap the park so a parked request never ties up an FPM worker too long
+        // (the actual cap is the $deadline below). The execution budget is only
+        // ever RAISED to cover the park + headroom — never lowered: shrinking an
+        // unlimited budget (CLI/tests, where set_time_limit persists across the
+        // whole process) fataled the test suite five seconds after the first poll.
         $waitMs = max(0, min((int) $request->query('wait', 20000), 25000));
-        @set_time_limit((int) ceil($waitMs / 1000) + 5);
+        $needed = (int) ceil($waitMs / 1000) + 5;
+        $current = (int) ini_get('max_execution_time');
+        if ($current !== 0 && $current < $needed) {
+            @set_time_limit($needed);
+        }
 
         $subsKey = $this->subscribersKey($session, $direction);
         $subs = Cache::get($subsKey, []);

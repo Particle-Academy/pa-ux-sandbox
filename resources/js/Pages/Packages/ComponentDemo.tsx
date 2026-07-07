@@ -52,6 +52,7 @@ import {
     Tabs,
     Text,
     textareaAdapter,
+    FileBrowser,
     Timeline,
     TimePicker,
     Tooltip,
@@ -170,6 +171,7 @@ const REGISTRY: Record<string, DemoFn> = {
     "react-fancy/mobile-menu": MobileMenuDemo,
     "react-fancy/menu": MenuDemo,
     "react-fancy/tree-nav": TreeNavDemo,
+    "react-fancy/file-browser": FileBrowserDemo,
     "react-fancy/pagination": PaginationDemo,
     // Overlays
     "react-fancy/tooltip": TooltipDemo,
@@ -978,6 +980,40 @@ function TreeNavDemo() {
     return (
         <div className="max-w-xs rounded-md border border-zinc-200 bg-white p-2 dark:border-zinc-800 dark:bg-zinc-900">
             <TreeNav nodes={tree} defaultExpanded={["src", "components"]} />
+        </div>
+    );
+}
+
+function FileBrowserDemo() {
+    const [picked, setPicked] = useState<string | string[] | null>(null);
+    // Tiny fake FS with latency so the per-folder lazy loading is visible.
+    const fs: Record<string, { path: string; name: string; kind: "file" | "dir"; hasChildren?: boolean; size?: number }[]> = {
+        "/": [
+            { path: "/deploys", name: "deploys", kind: "dir", hasChildren: true },
+            { path: "/logs", name: "logs", kind: "dir", hasChildren: true },
+            { path: "/app.config.json", name: "app.config.json", kind: "file", size: 1840 },
+        ],
+        "/deploys": [
+            { path: "/deploys/2026-07-06", name: "2026-07-06", kind: "dir", hasChildren: false },
+            { path: "/deploys/2026-07-07", name: "2026-07-07", kind: "dir", hasChildren: false },
+        ],
+        "/logs": [
+            { path: "/logs/app.log", name: "app.log", kind: "file", size: 52_400 },
+            { path: "/logs/queue.log", name: "queue.log", kind: "file", size: 9_210 },
+        ],
+    };
+    const provider = {
+        loadChildren: (path: string) =>
+            new Promise<(typeof fs)[string]>((resolve) => {
+                window.setTimeout(() => resolve(fs[path] ?? []), 350);
+            }),
+    };
+    return (
+        <div className="grid max-w-md gap-2">
+            <FileBrowser provider={provider} select="directory" value={picked} onChange={setPicked} />
+            <div className="text-xs text-zinc-500">
+                picked directory: <code>{picked ? String(picked) : "none yet"}</code>
+            </div>
         </div>
     );
 }

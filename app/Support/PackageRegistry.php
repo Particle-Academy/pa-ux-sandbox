@@ -506,6 +506,7 @@ class PackageRegistry
             ['slug' => 'emoji', 'name' => 'Emoji'],
             ['slug' => 'emoji-select', 'name' => 'EmojiSelect'],
             ['slug' => 'faux-client', 'name' => 'FauxClient', 'blurb' => 'Browser / device / window chrome rendering real, interactive UI inside (with scale-to-fit).'],
+            ['slug' => 'file-browser', 'name' => 'FileBrowser', 'blurb' => 'Remote-capable file/folder browser + directory picker — lazy async provider or streamed JSON snapshots, controlled selection, breadcrumb + editable path, ARIA tree keyboard nav.'],
             ['slug' => 'file-upload', 'name' => 'FileUpload'],
             ['slug' => 'heading', 'name' => 'Heading'],
             ['slug' => 'icon', 'name' => 'Icon'],

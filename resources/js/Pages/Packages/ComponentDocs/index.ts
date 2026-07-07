@@ -50,6 +50,7 @@ import { fancySlidesShapeElementDoc } from "./FancySlidesShapeElement";
 import { presenterViewDoc } from "./PresenterView";
 import { slideViewerDoc } from "./SlideViewer";
 import { fancyAppRootDoc } from "./FancyAppRoot";
+import { fileBrowserDoc } from "./FileBrowser";
 import { fileUploadDoc } from "./FileUpload";
 import { flowEditorDoc } from "./FlowEditor";
 import { headingDoc } from "./Heading";
@@ -137,6 +138,7 @@ const DOCS: Record<string, ComponentDoc> = {
     "react-fancy/editor": editorDoc,
     "react-fancy/emoji": emojiDoc,
     "react-fancy/emoji-select": emojiSelectDoc,
+    "react-fancy/file-browser": fileBrowserDoc,
     "react-fancy/file-upload": fileUploadDoc,
     "react-fancy/heading": headingDoc,
     "react-fancy/icon": iconDoc,

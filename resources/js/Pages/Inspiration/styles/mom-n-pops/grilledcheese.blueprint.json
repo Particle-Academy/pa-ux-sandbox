@@ -1,0 +1,95 @@
+{
+    "id": "grilledcheese",
+    "collection": "mom-n-pops",
+    "name": "Melts",
+    "cuisine": "Grilled cheese",
+    "surface": "Agentic catering",
+    "note": "Late-night neon melt shop; brief the agent, it books the truck.",
+    "mode": "dark",
+    "thesis": "A late-night neon storefront on near-black plum: butter-gold amber owns everything food and commerce, and a second accent — violet — is reserved exclusively for the agentic layer, so you can SEE where the agent lives on the page. The signature surface is an agentic catering brief (occasion chips + headcount slider) whose every interaction lands in a mono tool-call feed while a sticky quote card reprices the event live — an AgentActivity log rendered as product UI, closed by a one-tap booking with a mono REF code.",
+    "tokens": {
+        "bg": "#141019 page; card surfaces #1C1726 / #17131F; deepest inset (tool-call feed, REF box) #0F0C15; the quote card alone gets linear-gradient(160deg,#231A32,#1A1424) — the violet-warmed panel that marks agent territory",
+        "fg": "#F3E7CE cream body, #FBF3E4 headings, warm-tan muted tiers #B7A99A / #9A8C7C / #8A7C6C / #7A6E5F; #D8CDBE in the agent bubble",
+        "accent": "TWO accents with a hard boundary. Amber 'butter gold' #F2A93B (+#F2C14E gradient partner) = prices, CTAs, tag badges, hero glow, neon flicker. Violet #8B5CF6 (+lavender #C4A9F0) = agent ONLY: header pill, bot avatar gradient (140deg violet→lavender), selected occasion chips, slider fill/thumb, feed text, quote-card shadow rgba(139,92,246,0.5). Success green #57C98A for feed 'ok' + the booked check.",
+        "fontDisplay": "var(--font-sans) at literal px sizes — 64px/0.98 hero, 40px catering h2, 36px story h2, 33px drawer h1 — all weight 800, letter-spacing -0.02em",
+        "fontMono": "var(--font-mono) for the tool-call feed rows, slider min/max scale, schedule hours, quote line-item prices, the booking REF code, and the hero art's location tag",
+        "radius": "14px dominant (cards, panels, feed); 10px buttons + chips; 12px book CTA; 18px quote card; 999px pills; 16px hero art; asymmetric 4px 14px 14px 14px on the agent chat bubble — the flat corner points at the bot avatar",
+        "border": "#2A2233 1px dominant; #3A3147 lifts the violet quote card + interactive chips; row dividers #26202F (schedule) and #241D33 (quote items); quote header divider #2E2640; hover swaps card borders to amber",
+        "motion": "a 5s neon-sign flicker keyframe (opacity dips to 0.4 at 49%) on the 'MELTS · LATE' header badge; menu cards transition transform/border-color .2s with hover translateY(-4px) + amber border + an 8%-scale emoji tilt; steam and string-light twinkle loops in the CSS art; feed rows and the booked card fade-in from 4px below; drawer slides in 48px; everything zeroed under prefers-reduced-motion"
+    },
+    "layout": "Single 1180px column with 32px side padding under a sticky blurred header (rgba(20,16,25,0.9) + backdrop-blur(8px), z-index kept under the host frame). Page order: 2-col hero (1.05fr/0.95fr — copy left, a 390px CSS-built melt scene right with an amber window-glow box-shadow), a 3-col menu card grid (18px gap), the agentic catering section as a 1fr/400px split (brief stack left: chat bubble → numbered occasion/headcount panels → tool-call feed; sticky top-90px quote card right), a 2-col story band over a top hairline, one bordered schedule list card, and a flex footer. Density is comfortable-to-roomy — 44–56px section padding, 20–24px card padding — EXCEPT the tool-call feed, which compresses to tight mono micro-rows. A fixed 540px right drawer (dim scrim) sits outside the flow for item detail.",
+    "sections": [
+        {
+            "name": "sticky header",
+            "what": "Brand lockup ('Mom-n-Pops' 21px/800 + a flickering amber 'MELTS · LATE' neon badge) linking to the collection hub, text nav (Menu / Story / Find us) that smooth-scrolls to sections, and a violet 'agentic catering' pill with a glowing 6px dot — the page's first and only violet until the catering section.",
+            "components": ["Link", "Tooltip", "Badge"],
+            "restyle": "Hand-rolled plum glass — rgba bg + backdrop-blur(8px) + 1px #2A2233 bottom border, sticky under the host frame's chrome. The neon badge runs the 5s flicker keyframe with an amber text-shadow halo; Tooltip on it delivers the backstory ('flickered since night one'). Nav items are unstyled buttons wired to scrollIntoView."
+        },
+        {
+            "name": "hero",
+            "what": "Uppercase amber kicker ('Open late · Milwaukee · Est. 2026'), the 64px/0.98 'Melted, gooey, and open when you need it.' headline, subcopy that pitches both the melts and the agent, then two CTAs: amber 'See the melts' and outline 'Cater an event →' (jumps to the catering section). Right column: the no-photo melt scene.",
+            "components": ["Button"],
+            "restyle": "Buttons are the two ends of the page's commerce voice — solid #F2A93B fill with near-black text vs a transparent ghost with a #4A3F52 border that warms to amber on hover. The 'photo' is pure CSS: toast-gradient bread slabs, an amber cheese bar with three dripping pseudo-blobs, blurred steam columns, a griddle shadow bar, a 🌙, and a mono 'tonight · water st · till 2:30a' pill — all inside a 16px-radius tile whose box-shadow (0 0 44px amber @ 18%) reads as light spilling from the truck window."
+        },
+        {
+            "name": "menu grid",
+            "what": "'The melts' + 'tap for the full melt' hint, then six cards: a 168px art tile with an optional data-colored tag badge top-left, name + amber price row, one-line description. Every card opens the item drawer.",
+            "components": ["Badge", "Button"],
+            "restyle": "Cards are <button>s (bg #1C1726, border #2A2233, radius 14) that lift 4px and flip their border amber on hover while the emoji subject scales 1.08 and tilts. Tags are Badges force-fed per-item background hexes from data (amber for 'Most loved', #57C98A for 'Veg') over near-black text. Art tiles are deterministic emoji compositions — one big subject + two orbiting sides over a per-item radial tint (CSS var) and faint vertical griddle stripes."
+        },
+        {
+            "name": "agentic catering",
+            "what": "The signature surface. Centered violet-dot kicker + 'Brief the truck. The agent plans it.' Then a 1fr/400px split: LEFT a chat bubble where the agent narrates (bot avatar on a violet→lavender gradient tile, asymmetric bubble radius), an '01 — Occasion' chip picker, an '02 — Headcount' 10–200 slider, and a mono 'Agent · tool calls' feed; RIGHT a sticky quote card with live line items, a 38px amber total, per-guest math, and a gradient 'Book the truck' CTA that swaps the card to a green-check confirmation with a mono REF and a 'Plan another event' reset.",
+            "components": ["Button", "Slider", "Badge"],
+            "restyle": "Occasion chips are Buttons stripped to bordered pills whose aria-pressed state paints them violet (rgba(139,92,246,.2) fill + violet border + white text) — selection is the agent's color, declaratively. The Slider wears a violet→lavender fill and a glowing lavender thumb on a near-black track. Every interaction appends a timestamped mono row to the feed (scope_occasion, recalc, booking_create, email_menu) with a green 'ok' — an AgentActivity log as product UI. The quote card is pure derived state: perHead 15/11/10/9 by occasion, ceil(guests×1.2) melt platters at $4.50, $2 soup shooters per guest, $350-or-$220 griddle service, plus a snack-cart line only for weddings/parties. Booking generates the REF in the click handler (SSR-safe) and the 'Book the truck' Button carries the butter gradient + warm glow shadow."
+        },
+        {
+            "name": "story band",
+            "what": "Two columns over a top hairline: a 310px night-scene art tile (string lights, the truck, a 🧀🥣 pair on a dashed road line), then the amber 'Our story' kicker, 36px 'Comfort food for a city that stays up.', and the Rosa & Sal copy that justifies the agent in-fiction — 'they taught an agent to scope events so nobody's ever on hold — you brief it, it plans, they cook.'",
+            "components": [],
+            "restyle": "Hand-rolled. The art tile hangs a row of twinkling amber dots off a hairline 'wire' (staggered nth-child delays), floats a mirrored 🚚 over an amber ground-glow, and dashes the road with a repeating-linear-gradient — same palette, zero photos."
+        },
+        {
+            "name": "schedule",
+            "what": "'Find the truck' + 'Milwaukee · nights & late', then one bordered card of six rows in a 170px/1fr/auto grid: bold day, muted place, mono hours (7p–2:30a energy). Mon–Tue reads 'Catering only' with an em-dash — cross-selling the agent surface. Tonight's row gets a soft amber wash and a dotted 'tonight' Badge after hydration.",
+            "components": ["Badge"],
+            "restyle": "Rows divided by #26202F hairlines inside a #1C1726 card; hours in mono reinforce the late-night ledger feel. The 'tonight' Badge (amber, soft, dot) appears only client-side — first paint is deterministic for SSR."
+        },
+        {
+            "name": "footer",
+            "what": "Flex row — brand, anti-scrape email (hello<span>@</span>momnpops.truck) + social handle, copyright — plus a mono meta line with the style number and an amber back-link to the collection.",
+            "components": ["Link"],
+            "restyle": "Quiet: warm-tan text over a top hairline, mono 11px fine print, the back-link in amber with a hover underline."
+        },
+        {
+            "name": "item drawer",
+            "what": "Fixed right slide-over (540px, dim scrim): a 270px large-format melt art tile with a circular close button, 33px name + 25px amber price, amber tag badges, the long description, 'Pressed with' ingredient pills, allergens line, and a full-width amber 'Add to order · $N' button. Escape and the scrim both close; body scroll locks while open.",
+            "components": ["Button", "Badge"],
+            "restyle": "Hand-rolled overlay capped at a page-level z-index BELOW the host frame's chrome — the gallery stays in charge. The close Button is variant='circle' recolored to plum glass; ingredient pills reuse the card tokens (#1C1726 bg, #2A2233 border, 999px radius); the drawer slides in 48px with an ease-out entrance."
+        }
+    ],
+    "palette": [
+        {
+            "component": "Button",
+            "restyle": "Four voices, one primitive. Commerce: solid amber fill (#F2A93B, near-black text, radius 10, weight 800) and a transparent ghost with a #4A3F52 border that warms to amber. The book CTA upgrades to a 110deg amber→#F2C14E gradient at radius 12 with a warm glow shadow (0 10px 28px -8px amber @ 60%) and an inline truck icon. Agent: occasion chips stripped to quiet bordered pills that turn violet via [aria-pressed=true]. Utility: variant='circle' as the drawer's plum-glass close, and a ghost 'Plan another event' underline link."
+        },
+        {
+            "component": "Slider",
+            "restyle": "The headcount control and the loudest agent-accent moment: violet→lavender fill on a #0F0C15 track, lavender thumb with a violet glow shadow, mono 10/200 scale labels beneath. Amber never touches it — the number readout above (in amber) is the price side; the slider itself belongs to the agent."
+        },
+        {
+            "component": "Badge",
+            "restyle": "Data-driven: menu tag badges take per-item background hexes via style (amber / #57C98A) over near-black 11px/800 text at radius 6; the quote card's occasion chip is a violet-soft 999px pill (#C4A9F0 on rgba(139,92,246,.16)); drawer tags are solid amber; the schedule's 'tonight' marker is amber-soft with a dot, hydration-gated."
+        },
+        {
+            "component": "Tooltip",
+            "restyle": "One use, tone-setting: hover the flickering neon badge and it admits 'The neon's flickered since night one. Sal calls it ambiance.' — fiction in the chrome."
+        },
+        {
+            "component": "Link (Inertia)",
+            "restyle": "The brand lockup and the footer back-link — plain color transitions, no underline until hover, amber for the return path."
+        }
+    ],
+    "contentArchetype": "A late-night family food truck (Rosa & Sal, Milwaukee, est. 2026) whose site is half storefront, half booking console. Content splits cleanly along the two accents: amber content is menu items with prices, long descriptions, ingredients and allergens, a night-owl schedule (bar-district hours in mono), and the origin story; violet content is the catering brief — occasion, headcount, an agent that narrates its planning in a chat bubble, a tool-call feed, a live-priced quote, and a booking confirmation with a reference code. The story copy justifies the agent in-fiction, and Mon–Tue 'Catering only' cross-sells it from the schedule.",
+    "remix": "The load-bearing move is the TWO-ACCENT DISCIPLINE: one color for the product, one reserved for the agent, applied without exception — swap amber/violet for any brand pair and the page still teaches users where the agent lives. Keep the brief→feed→live-quote→confirm spine (chips + slider in, mono tool calls out, derived-state pricing, staged booking) and repoint the domain: a barber booking walk-ins, a venue quoting private hires, a print shop scoping runs. The tool-call feed generalizes to any AgentActivity stream — keep rows to timestamp + snake_case verb + green status. To lighten the mood, trade #141019 for cream, keep the amber, and move the violet surfaces onto white cards with violet borders; to go full console, let the feed grow and give it the quote card's gradient. The CSS-sandwich hero proves the no-photo rule scales to 'appetizing': gradients + drips + steam in the palette beat a stock photo at 2 a.m."
+}

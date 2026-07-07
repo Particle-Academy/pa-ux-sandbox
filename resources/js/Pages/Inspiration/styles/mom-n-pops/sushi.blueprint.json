@@ -1,0 +1,74 @@
+{
+  "id": "sushi",
+  "name": "Sushi",
+  "note": "Enso calm, one vermilion accent.",
+  "mode": "light",
+  "cuisine": "Sushi",
+  "surface": "Reservations",
+  "thesis": "An eight-seat omakase counter rendered as a page: warm rice-paper off-white, a single deep vermilion accent rationed to the enso mark, prices, and the Reserve CTA, kanji-prefixed section headings with rules extending right, and zero animation — calm, editorial, unhurried. The one rich surface is a reservations week strip whose selection inverts into a near-black summary bar.",
+  "tokens": {
+    "bg": "#FAF8F2 warm rice-paper off-white; the reservation band alone tints to #F3F0E8; night cards sit on #fff; the selected-night bar inverts to #1A1A1A",
+    "fg": "#1A1A1A primary ink; #6A655C secondary; #9A948A and #B0A99C muted labels and eyebrows",
+    "accent": "#C0362C deep vermilion — the enso ring and 鮨 glyph, menu prices, the selected-night double-ring, and the Reserve CTA; seat availability rides its own semantic trio: #2E7D5B open / #C08A1E few / #B0A99C full",
+    "fontDisplay": "var(--font-sans) at 54px weight 400 with -0.01em tracking (a deliberately quiet display voice); Georgia serif reserved for exactly three moments — the 鮨 glyph, the story pull-quote, and the selected-night label",
+    "fontMono": "var(--font-mono) only for the party-size numeral and the schedule hours — numbers as timetable",
+    "radius": "12px night cards, 14px selected bar, 10px CTA, 9px steppers; 50% circles for the logo dot and both enso circles",
+    "border": "1px hairlines everywhere — #E6E2D8 full-bleed band rules and header hairline, #ECE8DE row dividers, #E0DACC night-card borders, dotted #D8D2C6 menu price leaders; selection adds a 0 0 0 1px #C0362C box-shadow over a #C0362C border (the double-ring)",
+    "motion": "none — no transitions or keyframes anywhere; the only kinetic elements are a sticky header with backdrop-filter blur(8px) over rgba(250,248,242,0.92) and smooth scrollIntoView from the nav"
+  },
+  "layout": "A single 1080px column (32px side padding) cut into full-bleed bands separated by 1px #E6E2D8 rules; only the reservation band carries a tinted background. The hero is a 1.1fr/0.9fr grid — three-line 54px headline left, the enso mark right (a 250px filled disc plus a top-aligned 270px outline ring that pokes out below, holding a 120px Georgia 鮨). The menu is a two-column dotted-leader price list; the story is a 1fr/1fr serif-quote/body pairing; the schedule is a 130px/1fr/auto timetable grid. Airy, editorial density: 60-88px section padding, 56px column gaps, and every section opened by a thin uppercase letter-spaced kanji-prefixed heading with a rule flexing to the right edge. Collapses hero and story to one column at 960px, the week strip 7 → 4 → 2 columns at 860/560px.",
+  "sections": [
+    {
+      "name": "header",
+      "what": "Sticky translucent bar (rgba paper + blur) under the gallery frame: a 20px vermilion-ringed enso dot, the Mom-n-Pops wordmark, a small uppercase 寿司 tag, and a right-aligned three-link nav (Menu / Reserve omakase / Find us) that smooth-scrolls to sections.",
+      "components": ["Button"],
+      "restyle": "Ghost Buttons stripped to bare quiet text links — no fill, no border, no radius, secondary ink that darkens on hover; scrolling is done with refs + scrollIntoView, never window offsets."
+    },
+    {
+      "name": "hero",
+      "what": "Uppercase tracked eyebrow ('Eight seats · Milwaukee · since 2026'), a three-line weight-400 headline ('Rolled to order. / Nothing sits. / Nothing hurried.') with only the last line in vermilion, a 400px-max lede, and the decorative enso mark on the right.",
+      "components": [],
+      "restyle": "Hand-rolled — the enso is pure CSS: a #F1EEE5 disc grid-centering a Georgia 鮨 glyph, ringed by an absolutely-positioned, horizontally-centered but top-aligned 2px #C0362C circle so it pokes out 20px below (the brushstroke asymmetry is the point)."
+    },
+    {
+      "name": "menu",
+      "what": "お品書き · The counter menu — a kanji-prefixed uppercase heading with a flexed rule, then six walk-up items in a two-column grid of dotted-leader rows: name, leader, vermilion price.",
+      "components": [],
+      "restyle": "The classic no-photo menu treatment: a flex spacer span with border-bottom 1px dotted #D8D2C6 and translateY(-4px) between the baseline-aligned name and price."
+    },
+    {
+      "name": "reservations",
+      "what": "おまかせ · Reserve omakase — the tinted band and the page's live surface. A seven-column week strip of night cards (day-of-week, date numeral, seat count) color-coded open/few/full; full nights are disabled. Picking a night reveals an inverted #1A1A1A bar with the serif night label, a −/+ party stepper (1-8, mono digit), and a vermilion 'Reserve N · $total' CTA recomputing live at $60/seat; reserving swaps the controls for an inline confirmation with a Change reset.",
+      "components": ["Button"],
+      "restyle": "Night cards are a hand-rolled controlled card-radio group (role=radiogroup/radio, stable data-night handles, disabled full nights) — selection is a #C0362C border plus a 0 0 0 1px box-shadow double-ring, expressed declaratively from state, never a DOM-walking paint pass. Stepper Buttons become 36px hairline #4A4A44 squares on the dark bar; the CTA Button becomes a solid vermilion slab, radius 10, weight 700."
+    },
+    {
+      "name": "story",
+      "what": "A 1fr/1fr pull-quote pairing: 32px Georgia 'Sal apprenticed for a year before we sold a single roll.' beside sans body copy about Rosa running the rice and the eight-seat counter being deliberate.",
+      "components": [],
+      "restyle": "The serif/sans pairing carries the family voice — one of only three serif moments on the page."
+    },
+    {
+      "name": "schedule",
+      "what": "Find us — a six-row weekly timetable in a 130px/1fr/auto grid (day / location / hours) with hairline row dividers, distinguishing lunch service from omakase-only nights.",
+      "components": [],
+      "restyle": "Hours set in 12px var(--font-mono) at the faintest grey so the column reads like a printed timetable."
+    },
+    {
+      "name": "footer",
+      "what": "A hairline-topped single row — wordmark with 寿司, split-span obfuscated email + @momnpops.mke, © 2026 · Milwaukee — plus the gallery's demo footnote strip with a back link.",
+      "components": ["Link"],
+      "restyle": "All quiet secondary ink; the back link is the last element allowed to turn vermilion on hover."
+    }
+  ],
+  "palette": [
+    { "component": "Button (nav)", "restyle": "Ghost variant flattened to plain text — transparent, borderless, radius 0, var(--text-sm) secondary ink darkening to primary on hover; behaves as an in-page smooth-scroll trigger." },
+    { "component": "Button (stepper)", "restyle": "36px squares with a 1px #4A4A44 hairline and 9px radius on the inverted bar, paper-colored −/+ glyphs, 35% opacity when clamped at 1 or 8." },
+    { "component": "Button (Reserve CTA)", "restyle": "Solid #C0362C slab, white weight-700 label, 10px radius, 13px/22px padding, darkening to #A82B22 on hover; the label itself is live state ('Reserve 2 · $120')." },
+    { "component": "Button (Change)", "restyle": "Ghost hairline chip on the dark bar — transparent with the #4A4A44 border, paper text — used to reopen the stepper after a reservation request." },
+    { "component": "Link", "restyle": "Footer-only; quiet secondary ink flexed row, vermilion on hover." },
+    { "component": "night card (hand-rolled)", "restyle": "No primitive fits a 7-night card-radio strip: white 12px-radius cards with #E0DACC hairlines, role=radio + aria-checked + data-night handles, disabled full/closed nights with cursor not-allowed, and a declarative #C0362C border + 0 0 0 1px box-shadow double-ring when picked. Availability text color comes from a {open:#2E7D5B, few:#C08A1E, full:#B0A99C} union on state, never inline DOM writes." }
+  ],
+  "contentArchetype": "A one-page storefront for a tiny reservation-led food business: sticky brand header, a values-forward hero (smallness as the product), a short priced walk-up menu, one high-intent booking surface with real-time-feeling availability, a founder pull-quote, a weekly location timetable, and a minimal footer. Copy is terse and confident — three-line ethos headline, prices as the only numbers in red, kanji as typographic seasoning rather than decoration.",
+  "remix": "The discipline is rationing: ONE warm paper neutral ramp, ONE saturated accent, serif in exactly three places, mono in exactly two, and no motion whatsoever — break any of those and the calm collapses. To re-cuisine, swap the kanji tags, the 鮨 glyph, and the accent hue (e.g. #1E5AA8 for a nautical counter) while keeping the enso double-circle construction and the dotted-leader menu. The reservations pattern generalizes to any scarce-capacity business (barber chairs, tasting tables, studio slots): keep the card-radio week strip, the semantic open/few/full trio, and the inverted summary bar with a live-total CTA. Blend toward mom-n-pops' louder styles by letting the tinted band gain the accent at low alpha, or toward fieldwork's mono by dropping the tint and squaring every radius — but keep the selected-night label serif; it is the page's one moment of ceremony."
+}

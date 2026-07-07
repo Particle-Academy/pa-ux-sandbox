@@ -1,0 +1,713 @@
+/* ============================================================================
+ * Inspiration Gallery · Mom-n-Pops style 14 — Donuts  (light mode)
+ * Candy-neubrutalism: warm cream page, a yellow polka-dot hero, weight-900
+ * uppercase display type with a 1px black text-stroke, and thick #1B1B1B
+ * borders + hard offset slab shadows (4–8px Npx Npx 0) on every card, button
+ * and badge. The specials board is deliberately a DIFFERENT material: a grey
+ * dot-grid whiteboard whose pastel sticky notes wear a soft blur shadow and a
+ * near-square 4px radius. Motion is essentially none — static rotations,
+ * instant hover/press snaps (no transitions, no keyframes).
+ *
+ * EVERY class is prefixed `mpdonuts-` and every selector is scoped under
+ * `.mpdonuts-root` so nothing leaks across the SPA. Page-level z-index stays
+ * well under 30 (the gallery frame owns 30+). Kit semantic vars are
+ * re-pointed locally so restyled react-fancy primitives inherit cream + ink.
+ * ========================================================================== */
+
+.mpdonuts-root {
+    /* ── Palette ──────────────────────────────────────────────────────────── */
+    --mpd-ink: #1b1b1b;
+    --mpd-cream: #fff6e6;
+    --mpd-yellow: #ffc93c;
+    --mpd-dot: #f5c518;
+    --mpd-pink: #ff4d8d;
+    --mpd-blue: #4db7e8;
+    --mpd-white: #ffffff;
+    --mpd-grey: #555555;
+    --mpd-grey-2: #444444;
+    --mpd-slate: #3e4b59;
+    --mpd-muted: #6b7480;
+    --mpd-faint: #888888;
+    --mpd-divider: #f0e4cc;
+    --mpd-board: #edeff2;
+    --mpd-board-dot: #d2d7de;
+    --mpd-agent: #4f46e5;
+    --mpd-agent-2: #6366f1;
+    --mpd-agent-3: #8b5cf6;
+    --mpd-agent-bg: #eef2ff;
+
+    /* ── Slab language ────────────────────────────────────────────────────── */
+    --mpd-border: 3px solid var(--mpd-ink);
+    --mpd-border-fat: 4px solid var(--mpd-ink);
+    --mpd-shadow-3: 3px 3px 0 var(--mpd-ink);
+    --mpd-shadow-4: 4px 4px 0 var(--mpd-ink);
+    --mpd-shadow-5: 5px 5px 0 var(--mpd-ink);
+    --mpd-shadow-6: 6px 6px 0 var(--mpd-ink);
+    --mpd-shadow-8: 8px 8px 0 var(--mpd-ink);
+    --mpd-note-shadow: 0 10px 22px -10px rgba(20, 30, 45, 0.3);
+
+    --mpd-font: var(--font-sans, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif);
+    --mpd-mono: var(--font-mono, ui-monospace, "SF Mono", Menlo, monospace);
+
+    /* re-point react-fancy semantic vars so kit primitives inherit the look */
+    --fg-1: var(--mpd-ink);
+    --fg-2: var(--mpd-grey);
+    --fg-3: var(--mpd-muted);
+    --fg-4: var(--mpd-faint);
+    --bg-0: var(--mpd-cream);
+    --bg-1: var(--mpd-cream);
+    --bg-2: var(--mpd-divider);
+    --bg-3: var(--mpd-yellow);
+    --surface: var(--mpd-white);
+    --surface-raised: var(--mpd-white);
+    --border-1: var(--mpd-ink);
+    --border-2: var(--mpd-ink);
+    --accent: var(--mpd-pink);
+    --accent-hover: var(--mpd-pink);
+    --primary: var(--mpd-ink);
+    --primary-hover: var(--mpd-ink);
+    --ring: rgba(255, 77, 141, 0.45);
+
+    min-height: 100vh;
+    background: var(--mpd-cream);
+    color: var(--mpd-ink);
+    font-family: var(--mpd-font);
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+}
+
+.mpdonuts-root *,
+.mpdonuts-root *::before,
+.mpdonuts-root *::after {
+    box-sizing: border-box;
+}
+
+.mpdonuts-root ::selection {
+    background: var(--mpd-pink);
+    color: var(--mpd-white);
+}
+
+.mpdonuts-container {
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: 0 28px;
+}
+
+/* ═══ Header — black bar (static: the gallery frame owns the sticky top) ═══ */
+.mpdonuts-header {
+    background: var(--mpd-ink);
+    color: var(--mpd-white);
+}
+.mpdonuts-header__in {
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: 12px 28px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+.mpdonuts-brand {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+}
+.mpdonuts-wordmark {
+    font-weight: 900;
+    font-size: 22px;
+    font-style: italic;
+    letter-spacing: -0.01em;
+}
+.mpdonuts-cuisine {
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    color: var(--mpd-pink);
+}
+.mpdonuts-nav {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+.mpdonuts-nav__link {
+    background: none;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    color: var(--mpd-white);
+    font-family: var(--mpd-font);
+    font-size: var(--text-sm, 14px);
+    font-weight: 700;
+}
+.mpdonuts-nav__link:hover {
+    color: var(--mpd-yellow);
+}
+.mpdonuts-nav__link:focus-visible {
+    outline: 3px solid var(--mpd-pink);
+    outline-offset: 3px;
+}
+
+/* ═══ Hero — polka-dot yellow band ═════════════════════════════════════════ */
+.mpdonuts-hero {
+    background-color: var(--mpd-yellow);
+    background-image: radial-gradient(var(--mpd-dot) 22%, transparent 23%);
+    background-size: 18px 18px;
+    border-bottom: 5px solid var(--mpd-ink);
+}
+.mpdonuts-hero__in {
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: 52px 28px;
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: 36px;
+    align-items: center;
+}
+
+/* Badge → the white hero pill */
+.mpdonuts-root .mpdonuts-heropill {
+    display: inline-block !important;
+    background: var(--mpd-white) !important;
+    color: var(--mpd-ink) !important;
+    border: var(--mpd-border) !important;
+    border-radius: 999px !important;
+    font-family: var(--mpd-font) !important;
+    font-weight: 900 !important;
+    font-size: 12px !important;
+    letter-spacing: 0.06em !important;
+    padding: 6px 16px !important;
+    box-shadow: var(--mpd-shadow-3) !important;
+    margin-bottom: 18px;
+}
+
+.mpdonuts-h1 {
+    margin: 0;
+    font-size: clamp(2.5rem, 5.6vw, 66px);
+    line-height: 0.92;
+    letter-spacing: -0.03em;
+    font-weight: 900;
+    text-transform: uppercase;
+    -webkit-text-stroke: 1px var(--mpd-ink);
+}
+.mpdonuts-lede {
+    margin: 20px 0 26px;
+    max-width: 430px;
+    font-size: var(--text-xl, 1.25rem);
+    line-height: 1.45;
+    font-weight: 600;
+    color: var(--mpd-ink);
+}
+.mpdonuts-ctas {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.mpdonuts-hero__art {
+    display: flex;
+    justify-content: center;
+}
+.mpdonuts-medal {
+    width: 230px;
+    height: 230px;
+    border-radius: 50%;
+    background: var(--mpd-white);
+    border: 6px solid var(--mpd-ink);
+    box-shadow: var(--mpd-shadow-8);
+    display: grid;
+    place-items: center;
+    font-size: 110px;
+    line-height: 1;
+}
+
+/* ═══ Button — the offset-slab CTA (react-fancy Button restyled hard) ══════ */
+.mpdonuts-root .mpdonuts-btn,
+.mpdonuts-root .mpdonuts-btn:not(:disabled) {
+    border: var(--mpd-border) !important;
+    border-radius: 12px !important;
+    box-shadow: var(--mpd-shadow-4) !important;
+    padding: 12px 24px !important;
+    font-family: var(--mpd-font) !important;
+    font-weight: 900 !important;
+    font-size: 15px !important;
+    letter-spacing: 0.01em !important;
+    text-transform: uppercase !important;
+    cursor: pointer;
+}
+.mpdonuts-root .mpdonuts-btn--pink,
+.mpdonuts-root .mpdonuts-btn--pink:not(:disabled) {
+    background: var(--mpd-pink) !important;
+    color: var(--mpd-white) !important;
+}
+.mpdonuts-root .mpdonuts-btn--blue,
+.mpdonuts-root .mpdonuts-btn--blue:not(:disabled) {
+    background: var(--mpd-blue) !important;
+    color: var(--mpd-ink) !important;
+}
+/* instant press: the button drops into its shadow (no transition — the
+   design's motion budget is zero) */
+.mpdonuts-root .mpdonuts-btn:active:not(:disabled) {
+    transform: translate(3px, 3px);
+    box-shadow: 1px 1px 0 var(--mpd-ink) !important;
+}
+.mpdonuts-root .mpdonuts-btn:focus-visible {
+    outline: 3px solid var(--mpd-ink);
+    outline-offset: 3px;
+}
+
+/* ═══ The Dozen — rotated plate + menu cards ═══════════════════════════════ */
+.mpdonuts-menu {
+    padding: 48px 0 30px;
+    scroll-margin-top: 56px;
+}
+.mpdonuts-plate {
+    text-align: center;
+    margin-bottom: 26px;
+}
+.mpdonuts-plate__h {
+    display: inline-block;
+    margin: 0;
+    font-size: clamp(1.8rem, 3.8vw, 42px);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    background: var(--mpd-pink);
+    color: var(--mpd-white);
+    border: var(--mpd-border-fat);
+    padding: 6px 24px;
+    border-radius: 14px;
+    box-shadow: var(--mpd-shadow-5);
+    transform: rotate(-1.5deg);
+}
+
+.mpdonuts-menugrid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+}
+/* Card → white slab card, fat border, hard shadow */
+.mpdonuts-root .mpdonuts-mcard {
+    background: var(--mpd-white) !important;
+    border: var(--mpd-border-fat) !important;
+    border-radius: 18px !important;
+    box-shadow: var(--mpd-shadow-6) !important;
+    overflow: visible !important;
+}
+.mpdonuts-root .mpdonuts-mcard__body {
+    padding: 18px !important;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.mpdonuts-mcard__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.mpdonuts-mcard__emoji {
+    font-size: 26px;
+    line-height: 1;
+}
+.mpdonuts-mcard__price {
+    font-size: var(--text-lg, 1.125rem);
+    font-weight: 900;
+    color: var(--mpd-pink);
+}
+.mpdonuts-mcard__name {
+    font-size: var(--text-lg, 1.125rem);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    color: var(--mpd-ink);
+}
+.mpdonuts-mcard__short {
+    margin: 0;
+    font-size: var(--text-sm, 14px);
+    color: var(--mpd-grey);
+    line-height: 1.45;
+}
+
+/* ═══ Today's specials board — the whiteboard surface ══════════════════════ */
+.mpdonuts-boardsec {
+    padding: 30px 0;
+    scroll-margin-top: 56px;
+}
+.mpdonuts-board {
+    background-color: var(--mpd-board);
+    background-image: radial-gradient(var(--mpd-board-dot) 1.3px, transparent 1.3px);
+    background-size: 24px 24px;
+    border: var(--mpd-border-fat);
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: var(--mpd-shadow-6);
+}
+.mpdonuts-board__bar {
+    padding: 15px 20px;
+    background: var(--mpd-white);
+    border-bottom: var(--mpd-border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+.mpdonuts-board__icon {
+    color: var(--mpd-pink);
+    flex-shrink: 0;
+}
+.mpdonuts-board__title {
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    color: var(--mpd-ink);
+}
+.mpdonuts-board__hint {
+    font-size: 12px;
+    color: var(--mpd-muted);
+}
+/* Badge → the indigo Human+ presence chip (soft — NOT the slab language) */
+.mpdonuts-root .mpdonuts-agentchip {
+    margin-left: auto;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    font-family: var(--mpd-font) !important;
+    font-size: 11px !important;
+    font-weight: 500 !important;
+    letter-spacing: 0 !important;
+    text-transform: none !important;
+    color: var(--mpd-agent) !important;
+    background: var(--mpd-agent-bg) !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    padding: 5px 10px !important;
+    box-shadow: none !important;
+    cursor: help;
+}
+.mpdonuts-agentchip__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--mpd-agent-3);
+    flex-shrink: 0;
+}
+
+.mpdonuts-board__canvas {
+    position: relative;
+    height: 340px;
+}
+
+/* Sticky-note hit areas — positions come in as inline left/top percentages */
+.mpdonuts-notewrap {
+    position: absolute;
+    background: none;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    text-align: left;
+    cursor: pointer;
+    font-family: inherit;
+}
+.mpdonuts-notewrap:hover {
+    z-index: 3;
+}
+.mpdonuts-notewrap:focus-visible {
+    outline: none;
+}
+.mpdonuts-notewrap:focus-visible .mpdonuts-note {
+    outline: 3px solid var(--mpd-pink);
+    outline-offset: 2px;
+}
+.mpdonuts-notewrap[aria-pressed="true"] {
+    z-index: 2;
+}
+.mpdonuts-notewrap[aria-pressed="true"] .mpdonuts-note {
+    outline: 3px solid var(--mpd-ink);
+    outline-offset: 2px;
+}
+
+/* StickyNote → Rosa's marker note: near-square 4px radius + soft blur shadow
+   (deliberately NOT the neubrutalist slab — the board is another material) */
+.mpdonuts-root .mpdonuts-note {
+    border-radius: 4px !important;
+    padding: 16px !important;
+    box-shadow: var(--mpd-note-shadow) !important;
+    font-family: var(--mpd-font) !important;
+    color: var(--mpd-ink) !important;
+    line-height: 1.3 !important;
+}
+.mpdonuts-notewrap:hover .mpdonuts-note {
+    box-shadow: 0 14px 26px -10px rgba(20, 30, 45, 0.42) !important;
+}
+.mpdonuts-note__tag {
+    display: block;
+    font-family: var(--mpd-mono);
+    font-size: 11px;
+    opacity: 0.6;
+}
+.mpdonuts-note__name {
+    display: block;
+    margin-top: 3px;
+    font-size: 19px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+}
+.mpdonuts-note__short {
+    display: block;
+    margin-top: 5px;
+    font-size: 12px;
+    opacity: 0.8;
+    line-height: 1.4;
+}
+.mpdonuts-note__price {
+    display: block;
+    margin-top: 9px;
+    font-family: var(--mpd-mono);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+/* Pinned agent cursor */
+.mpdonuts-cursor {
+    position: absolute;
+    left: 54.7%;
+    top: 67.6%;
+    pointer-events: none;
+    z-index: 4;
+}
+.mpdonuts-cursor__label {
+    background: var(--mpd-agent-2);
+    color: var(--mpd-white);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 6px;
+    position: relative;
+    top: -4px;
+    left: 6px;
+    white-space: nowrap;
+}
+
+/* Selected-special detail card — snaps back to the slab language */
+.mpdonuts-detail {
+    margin-top: 14px;
+    background: var(--mpd-white);
+    border: var(--mpd-border-fat);
+    border-radius: 14px;
+    padding: 18px 22px;
+    box-shadow: var(--mpd-shadow-5);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+.mpdonuts-detail__copy {
+    flex: 1;
+    min-width: 200px;
+}
+.mpdonuts-detail__name {
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--mpd-ink);
+}
+.mpdonuts-detail__long {
+    margin: 6px 0 0;
+    font-size: var(--text-sm, 14px);
+    color: var(--mpd-slate);
+    line-height: 1.5;
+}
+.mpdonuts-detail__price {
+    font-family: var(--mpd-mono);
+    font-size: 22px;
+    font-weight: 900;
+    color: var(--mpd-pink);
+}
+/* Button → the ink Add-to-order chip (borderless, per the mockup) */
+.mpdonuts-root .mpdonuts-addbtn,
+.mpdonuts-root .mpdonuts-addbtn:not(:disabled) {
+    background: var(--mpd-ink) !important;
+    color: var(--mpd-white) !important;
+    border: 0 !important;
+    border-radius: 10px !important;
+    padding: 11px 20px !important;
+    font-family: var(--mpd-font) !important;
+    font-weight: 800 !important;
+    font-size: 15px !important;
+    box-shadow: none !important;
+    cursor: pointer;
+}
+.mpdonuts-root .mpdonuts-addbtn:active:not(:disabled) {
+    transform: translate(1px, 1px);
+}
+.mpdonuts-root .mpdonuts-addbtn:disabled {
+    background: var(--mpd-ink) !important;
+    color: var(--mpd-white) !important;
+    opacity: 0.85 !important;
+    cursor: default;
+}
+.mpdonuts-root .mpdonuts-addbtn:focus-visible {
+    outline: 3px solid var(--mpd-pink);
+    outline-offset: 3px;
+}
+
+/* ═══ Find the truck — schedule list card ══════════════════════════════════ */
+.mpdonuts-find {
+    padding: 20px 0 56px;
+    scroll-margin-top: 56px;
+}
+.mpdonuts-find__h {
+    margin: 0 0 18px;
+    font-size: var(--text-2xl, 1.5rem);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    color: var(--mpd-ink);
+}
+.mpdonuts-sched {
+    background: var(--mpd-white);
+    border: var(--mpd-border-fat);
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: var(--mpd-shadow-6);
+}
+.mpdonuts-schedrow {
+    display: grid;
+    grid-template-columns: 130px 1fr auto;
+    gap: 16px;
+    align-items: center;
+    padding: 14px 22px;
+    border-bottom: 2px solid var(--mpd-divider);
+}
+.mpdonuts-schedrow:last-child {
+    border-bottom: 0;
+}
+.mpdonuts-schedrow__day {
+    font-weight: 900;
+    text-transform: uppercase;
+    color: var(--mpd-ink);
+}
+.mpdonuts-schedrow__place {
+    color: var(--mpd-grey-2);
+    font-weight: 500;
+}
+.mpdonuts-schedrow__hours {
+    font-family: var(--mpd-mono);
+    font-size: var(--text-sm, 14px);
+    color: var(--mpd-faint);
+}
+
+/* ═══ Footer — black bar mirroring the header ══════════════════════════════ */
+.mpdonuts-footer {
+    background: var(--mpd-ink);
+    color: var(--mpd-white);
+}
+.mpdonuts-footer__in {
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: 32px 28px 18px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 18px;
+    font-size: var(--text-sm, 14px);
+}
+.mpdonuts-footer__brand {
+    font-weight: 900;
+    font-style: italic;
+}
+.mpdonuts-footer__meta {
+    max-width: 1160px;
+    margin: 0 auto;
+    padding: 12px 28px 26px;
+    border-top: 1px solid rgba(255, 255, 255, 0.16);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    font-family: var(--mpd-mono);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    color: rgba(255, 255, 255, 0.6);
+}
+.mpdonuts-footer__back {
+    color: var(--mpd-yellow);
+    text-decoration: none;
+    font-weight: 700;
+}
+.mpdonuts-footer__back:hover {
+    text-decoration: underline;
+}
+
+/* ═══ Responsive ═══════════════════════════════════════════════════════════ */
+@media (max-width: 960px) {
+    .mpdonuts-hero__in {
+        grid-template-columns: 1fr;
+        padding: 40px 28px;
+    }
+    .mpdonuts-hero__art {
+        order: -1;
+    }
+    .mpdonuts-medal {
+        width: 170px;
+        height: 170px;
+        font-size: 80px;
+        border-width: 5px;
+        box-shadow: var(--mpd-shadow-6);
+    }
+    .mpdonuts-menugrid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Below ~860px the fixed 340px canvas + pixel-ish note positions would
+   overflow — the board reflows into a wrapping shelf of notes instead. */
+@media (max-width: 860px) {
+    .mpdonuts-board__canvas {
+        height: auto;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        padding: 24px 20px 28px;
+    }
+    .mpdonuts-notewrap {
+        position: static;
+    }
+    .mpdonuts-cursor {
+        display: none;
+    }
+}
+
+@media (max-width: 620px) {
+    .mpdonuts-container {
+        padding: 0 18px;
+    }
+    .mpdonuts-header__in,
+    .mpdonuts-hero__in,
+    .mpdonuts-footer__in {
+        padding-left: 18px;
+        padding-right: 18px;
+    }
+    .mpdonuts-footer__meta {
+        padding-left: 18px;
+        padding-right: 18px;
+    }
+    .mpdonuts-nav {
+        gap: 14px;
+    }
+    .mpdonuts-menugrid {
+        grid-template-columns: 1fr;
+    }
+    .mpdonuts-schedrow {
+        grid-template-columns: 96px 1fr auto;
+        gap: 10px;
+        padding: 12px 16px;
+        font-size: 14px;
+    }
+    .mpdonuts-detail {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}

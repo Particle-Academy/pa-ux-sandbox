@@ -1,0 +1,754 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Mom-n-Pops · 04 Pizzeria  (id "pizza", light mode)
+   The truck as a neighborhood trattoria: warm cream paper, tomato red + basil
+   green, italic Georgia, a pure-CSS checked-awning stripe, white cards boxed
+   in tan hairlines — and a live order-tracker kanban (react-fancy Kanban,
+   restyled to cream wells + bordered tickets) embedded mid-page.
+
+   LIGHT MODE ONLY — the style pins its own palette via local --mpp-* tokens so
+   it stays a trattoria regardless of app theme. Every class is prefixed
+   mppizza- and scoped under .mppizza-root. Page-level z-index stays under 30
+   (the gallery frame owns 30+).
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.mppizza-root {
+    /* ── Local trattoria palette ─────────────────────────────────────────── */
+    --mpp-cream: #fbf6ec;        /* page + cream buttons + kanban wells */
+    --mpp-ink: #2b1f17;          /* espresso brown ink + dark peek header */
+    --mpp-ink-2: #6a5648;        /* secondary copy */
+    --mpp-ink-3: #7a6656;        /* card descriptions, stat labels */
+    --mpp-muted: #9a8163;        /* meta, counts, sub-lines */
+    --mpp-faint: #c9b79e;        /* faintest — temp readout, empty dash */
+    --mpp-red: #b71c1c;          /* tomato — CTAs, prices, kickers, awning */
+    --mpp-red-deep: #9d1616;     /* CTA hover */
+    --mpp-green: #2e7d32;        /* basil — wordmark tag, place order, YOU */
+    --mpp-green-deep: #276b2a;   /* place-order hover */
+    --mpp-green-soft: #e3f0e4;   /* YOU pill bg, done banner bg */
+    --mpp-orange: #e0623b;       /* oven column dot */
+    --mpp-live: #4ade80;         /* pulsing live dot */
+    --mpp-line: #e7d9c2;         /* universal tan hairline */
+    --mpp-line-soft: #f1e6d2;    /* inner dividers, glyph tiles, gutters */
+    --mpp-ticket-line: #eadbc2;  /* ticket borders */
+    --mpp-btn-line: #d9c7a8;     /* "+ Add to order" border */
+    --mpp-serif: Georgia, "Times New Roman", serif;
+
+    /* Full-bleed breakout: the gallery shell centers content in a padded
+       container; the trattoria's cream paper must run edge to edge. */
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+
+    background: var(--mpp-cream);
+    color: var(--mpp-ink);
+    font-family: var(--font-sans);
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+}
+
+.mppizza-root *,
+.mppizza-root *::before,
+.mppizza-root *::after {
+    box-sizing: border-box;
+}
+
+/* The one keyframe in the design — the live-oven dot. */
+@keyframes mppizza-pulse {
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* ── Awning stripe ───────────────────────────────────────────────────────── */
+.mppizza-awning {
+    height: 14px;
+    background: repeating-linear-gradient(90deg, var(--mpp-red) 0 22px, var(--mpp-cream) 22px 28px);
+}
+
+/* ── Sticky blurred-cream header ─────────────────────────────────────────── */
+.mppizza-header {
+    position: sticky;
+    top: 44px; /* sits just below the sticky GalleryFrame (z 30) */
+    z-index: 20; /* under the gallery frame's 30 */
+    background: rgba(251, 246, 236, 0.92);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--mpp-line);
+}
+.mppizza-header-in {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 14px 28px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+.mppizza-brand {
+    display: flex;
+    align-items: baseline;
+    gap: 9px;
+}
+.mppizza-brand-name {
+    font-family: var(--mpp-serif);
+    font-weight: 700;
+    font-size: 21px;
+    font-style: italic;
+    color: var(--mpp-ink);
+}
+.mppizza-brand-tag {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--mpp-green);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+.mppizza-nav {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    font-size: 14px;
+    color: var(--mpp-ink-2);
+}
+.mppizza-nav-link {
+    border: 0;
+    background: none;
+    padding: 0;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+}
+.mppizza-nav-plain:hover {
+    color: var(--mpp-ink);
+}
+.mppizza-nav-track {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--mpp-red);
+    font-weight: 600;
+}
+.mppizza-nav-track:hover {
+    color: var(--mpp-red-deep);
+}
+
+/* ── Shared shell + section anchors ──────────────────────────────────────── */
+.mppizza-shell {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 0 28px;
+}
+.mppizza-menu,
+.mppizza-track,
+.mppizza-story,
+.mppizza-find {
+    /* Land smooth-scrolls below the gallery frame + sticky header. */
+    scroll-margin-top: 118px;
+}
+
+/* ── Hero + live-oven peek card ──────────────────────────────────────────── */
+.mppizza-hero {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 40px;
+    align-items: center;
+    padding: 56px 0 44px;
+}
+.mppizza-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--mpp-red);
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+.mppizza-kicker-tight {
+    margin-bottom: 14px;
+}
+.mppizza-h1 {
+    font-family: var(--mpp-serif);
+    font-size: 58px;
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    font-weight: 700;
+    margin: 0;
+    color: var(--mpp-ink);
+}
+.mppizza-lede {
+    font-size: 20px;
+    color: var(--mpp-ink-2);
+    line-height: 1.5;
+    margin: 20px 0 28px;
+    max-width: 440px;
+}
+.mppizza-hero-ctas {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.mppizza-peek {
+    background: #fff;
+    border: 1px solid var(--mpp-line);
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 18px 40px -22px rgba(43, 31, 23, 0.4);
+}
+.mppizza-peek-head {
+    background: var(--mpp-ink);
+    color: var(--mpp-cream);
+    padding: 13px 18px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+.mppizza-peek-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--mpp-live);
+    animation: mppizza-pulse 1.8s infinite;
+    flex-shrink: 0;
+}
+.mppizza-peek-title {
+    font-size: 14px;
+    font-weight: 600;
+}
+.mppizza-peek-temp {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--mpp-faint);
+}
+.mppizza-peek-body {
+    padding: 16px 18px;
+}
+.mppizza-peek-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--mpp-muted);
+    margin-bottom: 10px;
+}
+.mppizza-peek-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--mpp-line-soft);
+}
+.mppizza-peek-row:last-child {
+    border-bottom: 0;
+}
+.mppizza-peek-num {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--mpp-red);
+}
+.mppizza-peek-pie {
+    flex: 1;
+    font-size: 14px;
+}
+.mppizza-peek-stage {
+    font-size: 11px;
+    color: var(--mpp-green);
+    font-weight: 600;
+}
+
+/* ── Menu — Le Pizze ─────────────────────────────────────────────────────── */
+.mppizza-menu {
+    padding: 26px 0 20px;
+}
+.mppizza-menu-head {
+    text-align: center;
+    margin-bottom: 26px;
+}
+.mppizza-h2 {
+    font-family: var(--mpp-serif);
+    font-size: 40px;
+    font-weight: 700;
+    margin: 0;
+    color: var(--mpp-ink);
+}
+.mppizza-menu-sub {
+    font-size: 14px;
+    color: var(--mpp-muted);
+    margin-top: 4px;
+}
+.mppizza-menu-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+}
+.mppizza-dish {
+    background: #fff;
+    border: 1px solid var(--mpp-line);
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.mppizza-dish-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.mppizza-dish-glyph {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: var(--mpp-line-soft);
+    display: grid;
+    place-items: center;
+    font-size: 21px;
+}
+/* Badge primitive → menu tag pill (per-item bg via inline style) */
+.mppizza-root .mppizza-dish-tag {
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    color: #fff !important;
+    padding: 4px 10px !important;
+    border-radius: 999px !important;
+    border: 0 !important;
+    line-height: 1.2 !important;
+}
+.mppizza-dish-name-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 10px;
+}
+.mppizza-dish-name {
+    font-family: var(--mpp-serif);
+    font-size: 20px;
+    font-weight: 700;
+}
+.mppizza-dish-price {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--mpp-red);
+}
+.mppizza-dish-desc {
+    font-size: 14px;
+    color: var(--mpp-ink-3);
+    line-height: 1.45;
+    margin: 0;
+    flex: 1;
+}
+
+/* ── Order tracker (kanban surface) ──────────────────────────────────────── */
+.mppizza-track {
+    padding: 44px 0;
+}
+.mppizza-track-shell {
+    background: #fff;
+    border: 1px solid var(--mpp-line);
+    border-radius: 20px;
+    overflow: hidden;
+}
+.mppizza-track-head {
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--mpp-line);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+.mppizza-track-title {
+    font-family: var(--mpp-serif);
+    font-size: 22px;
+    font-weight: 700;
+}
+.mppizza-track-sub {
+    font-size: 12px;
+    color: var(--mpp-muted);
+}
+.mppizza-track-actions {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+.mppizza-cart-note {
+    font-size: 14px;
+    color: var(--mpp-ink-2);
+    white-space: nowrap;
+}
+
+/* Kanban primitive → 3 cream wells on a 1px gutter grid (read-only board).
+   The root ships flex/overflow-x/p-4 utilities — regrid it. */
+.mppizza-root .mppizza-board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    padding: 0;
+    background: var(--mpp-line-soft);
+    overflow: visible;
+}
+/* unstyled Column keeps only flex/flex-col — make it the cream well */
+.mppizza-root .mppizza-col {
+    background: var(--mpp-cream);
+    min-height: 230px;
+    padding: 14px;
+}
+/* The column's internal cards container ships gap-2 — match the design's 9px */
+.mppizza-root .mppizza-col > div:last-child {
+    gap: 9px;
+}
+.mppizza-col-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 3px; /* + the 9px card gap = the design's 12px */
+}
+.mppizza-col-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+.mppizza-col-label {
+    font-weight: 700;
+    font-size: 14px;
+}
+.mppizza-col-count {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--mpp-muted);
+}
+/* unstyled Card keeps only the grab cursor; the inner div is the ticket so
+   the 3px status border-left can ride an inline style. */
+.mppizza-ticket-in {
+    background: #fff;
+    border: 1px solid var(--mpp-ticket-line);
+    border-left: 3px solid var(--mpp-muted);
+    border-radius: 10px;
+    padding: 11px 12px;
+}
+.mppizza-ticket.is-mine .mppizza-ticket-in {
+    box-shadow: 0 0 0 2px var(--mpp-green);
+}
+.mppizza-ticket-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+}
+.mppizza-ticket-num {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 12px;
+}
+/* Badge primitive → the YOU pill */
+.mppizza-root .mppizza-you {
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    color: var(--mpp-green) !important;
+    background: var(--mpp-green-soft) !important;
+    padding: 2px 8px !important;
+    border-radius: 999px !important;
+    border: 0 !important;
+    line-height: 1.3 !important;
+}
+.mppizza-ticket-pie {
+    font-size: 14px;
+    font-weight: 600;
+    margin-top: 4px;
+}
+.mppizza-ticket-meta {
+    font-size: 11px;
+    color: var(--mpp-muted);
+    margin-top: 2px;
+}
+.mppizza-col-empty {
+    text-align: center;
+    color: var(--mpp-faint);
+    font-size: 12px;
+    padding: 12px 0;
+}
+
+/* Callout primitive → the "order up" banner, flattened to a full-width strip */
+.mppizza-root .mppizza-done {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 15px 22px !important;
+    background: var(--mpp-green-soft) !important;
+    color: var(--mpp-green) !important;
+    font-weight: 600;
+    font-size: 14px;
+    border: 0 !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+}
+
+/* ── Story — La nostra storia ────────────────────────────────────────────── */
+.mppizza-story {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: center;
+    padding: 44px 0;
+    border-top: 1px solid var(--mpp-line);
+}
+.mppizza-story-h2 {
+    font-family: var(--mpp-serif);
+    font-size: 36px;
+    line-height: 1.1;
+    font-weight: 700;
+    margin: 0 0 16px;
+    color: var(--mpp-ink);
+}
+.mppizza-story-p {
+    font-size: 18px;
+    color: var(--mpp-ink-2);
+    line-height: 1.6;
+    margin: 0;
+}
+.mppizza-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+.mppizza-stat {
+    background: #fff;
+    border: 1px solid var(--mpp-line);
+    border-radius: 14px;
+    padding: 18px;
+}
+.mppizza-stat-v {
+    font-size: 30px;
+    font-weight: 800;
+    color: var(--mpp-red);
+    letter-spacing: -0.02em;
+}
+.mppizza-stat-k {
+    font-size: 14px;
+    color: var(--mpp-ink-3);
+    margin-top: 2px;
+}
+
+/* ── Find us — Dove siamo ────────────────────────────────────────────────── */
+.mppizza-find {
+    padding: 20px 0 56px;
+}
+.mppizza-find-h2 {
+    font-family: var(--mpp-serif);
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0 0 18px;
+    color: var(--mpp-ink);
+}
+.mppizza-sched {
+    background: #fff;
+    border: 1px solid var(--mpp-line);
+    border-radius: 16px;
+    overflow: hidden;
+}
+.mppizza-sched-row {
+    display: grid;
+    grid-template-columns: 120px 1fr auto;
+    gap: 16px;
+    align-items: center;
+    padding: 14px 22px;
+    border-bottom: 1px solid var(--mpp-line-soft);
+}
+.mppizza-sched-row:last-child {
+    border-bottom: 0;
+}
+.mppizza-sched-day {
+    font-weight: 700;
+}
+.mppizza-sched-place {
+    color: var(--mpp-ink-2);
+}
+.mppizza-sched-hours {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    color: var(--mpp-muted);
+}
+
+/* ── Footer ──────────────────────────────────────────────────────────────── */
+.mppizza-footer {
+    border-top: 2px solid var(--mpp-ink);
+    background: var(--mpp-cream);
+}
+.mppizza-footer-in {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 32px 28px 20px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 18px;
+    font-size: 14px;
+    color: var(--mpp-ink-2);
+}
+.mppizza-footer-brand {
+    font-family: var(--mpp-serif);
+    font-weight: 700;
+    font-style: italic;
+    color: var(--mpp-ink);
+    font-size: 18px;
+}
+/* Demo framing note under the trattoria footer */
+.mppizza-demonote {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 0 28px 26px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--mpp-muted);
+}
+.mppizza-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--mpp-red);
+    text-decoration: none;
+}
+.mppizza-back:hover {
+    color: var(--mpp-red-deep);
+}
+
+/* ── Button restyles (react-fancy Button worn four ways) ─────────────────── */
+.mppizza-root .mppizza-cta {
+    height: auto !important;
+    padding: 13px 24px !important;
+    border-radius: 12px !important;
+    font-weight: 600 !important;
+    font-size: 15px !important;
+    box-shadow: none !important;
+}
+.mppizza-root .mppizza-cta-primary {
+    background: var(--mpp-red) !important;
+    color: #fff !important;
+    border: 0 !important;
+}
+.mppizza-root .mppizza-cta-primary:hover {
+    background: var(--mpp-red-deep) !important;
+}
+.mppizza-root .mppizza-cta-ghost {
+    background: #fff !important;
+    color: var(--mpp-ink) !important;
+    border: 1px solid var(--mpp-line) !important;
+}
+.mppizza-root .mppizza-cta-ghost:hover {
+    background: var(--mpp-line-soft) !important;
+}
+.mppizza-root .mppizza-add {
+    width: 100%;
+    justify-content: center;
+    height: auto !important;
+    background: var(--mpp-cream) !important;
+    border: 1px solid var(--mpp-btn-line) !important;
+    color: var(--mpp-ink) !important;
+    padding: 9px 12px !important;
+    border-radius: 10px !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    box-shadow: none !important;
+}
+.mppizza-root .mppizza-add:hover {
+    background: var(--mpp-line-soft) !important;
+}
+.mppizza-root .mppizza-place {
+    height: auto !important;
+    background: var(--mpp-green) !important;
+    color: #fff !important;
+    border: 0 !important;
+    padding: 10px 18px !important;
+    border-radius: 10px !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    box-shadow: none !important;
+    white-space: nowrap;
+}
+.mppizza-root .mppizza-place:hover:not(:disabled) {
+    background: var(--mpp-green-deep) !important;
+}
+.mppizza-root .mppizza-place:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 1020px) {
+    .mppizza-hero {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 28px;
+        padding: 40px 0 32px;
+    }
+    .mppizza-h1 {
+        font-size: 44px;
+    }
+    .mppizza-menu-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .mppizza-story {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 28px;
+    }
+}
+
+@media (max-width: 680px) {
+    .mppizza-shell {
+        padding: 0 18px;
+    }
+    .mppizza-header-in {
+        padding: 12px 18px;
+    }
+    .mppizza-nav {
+        gap: 16px;
+    }
+    .mppizza-nav-plain {
+        display: none;
+    }
+    .mppizza-h1 {
+        font-size: 36px;
+    }
+    .mppizza-h2 {
+        font-size: 32px;
+    }
+    .mppizza-menu-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .mppizza-root .mppizza-board {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .mppizza-root .mppizza-col {
+        min-height: 0;
+    }
+    .mppizza-track-head {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+    .mppizza-track-actions {
+        margin-left: 0;
+    }
+    .mppizza-sched-row {
+        grid-template-columns: 96px 1fr auto;
+        gap: 10px;
+        padding: 12px 16px;
+    }
+    .mppizza-footer-in,
+    .mppizza-demonote {
+        padding-left: 18px;
+        padding-right: 18px;
+    }
+}

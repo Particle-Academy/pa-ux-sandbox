@@ -1,0 +1,78 @@
+{
+  "id": "burgers",
+  "name": "Diner",
+  "cuisine": "Burgers",
+  "surface": "Cmd-K order",
+  "mode": "light",
+  "thesis": "A retro-comic American diner as a landing page: cream paper, a diner-red sticky header and footer, a navy open-late hero, and a 'sticker' card system — every light card wears a 2px navy cartoon outline with a hard 4px offset shadow. The whole site funnels into one power feature advertised right in the chrome: a ⌘K command palette that orders food, doubling as a mini cart.",
+  "tokens": {
+    "bg": "#F6F1E7 cream paper for the page; the hero flips to #1C2733 navy (with a #141C25 inset card) and the header/footer bands flip to #D22B2B red",
+    "fg": "#1C2733 near-black navy ink; secondary #5A6672 / #3A4652 on cream; #B7C2CE body and #8A94A2 metadata on dark",
+    "accent": "#D22B2B diner red (bands, prices, primary CTA) with #FFC93C mustard as the action color (secondary CTA, +Add, badges, hero highlight) and #4CD7E0 cameo teal (script eyebrow, stat-card shadow)",
+    "fontDisplay": "var(--font-sans) at 900 weight, UPPERCASE, tight -0.01 to -0.02em tracking; ONE literal 'Georgia, serif' italic for the hero eyebrow script ('Open Late') — the lone nostalgic flourish",
+    "fontMono": "var(--font-mono) strictly for money and machine facts: prices, hours (6p–2:30a), the ⌘K kbd hints, 'esc to close'",
+    "radius": "8-9px on buttons and chips, 14-16px on cards and the palette panel, 999px only on the OUR STORY pill",
+    "border": "2px solid #1C2733 hard cartoon outline on every light-surface card; 1px #E6DECD warm dividers inside placards and the palette; 1px #2A3644 on the dark hero card",
+    "motion": "essentially static — no keyframes; just a 90-120ms sticker 'press' (1-2px translate) on buttons, a 2px lift on card hover, and a cream hover tint on palette rows; the checkerboard strip is a static repeating-conic-gradient"
+  },
+  "layout": "Single-column landing page, 1140px max-width container with 28px gutters. Opens with a 22px pure-CSS checkerboard strip (repeating-conic-gradient, zero markup), then a sticky red header whose nav ENDS in the ⌘K affordance ('Quick order ⌘K' translucent chip). A full-bleed navy hero splits 1.05fr/0.95fr: 62px 900-weight uppercase headline (second line in mustard) vs. a live 'tonight' status card. Then contained sections: a 3-column menu-sticker grid, a 2-column story/stats split (stats are a 2x2 grid), a full-width schedule placard, and a red footer band mirroring the header. Density is medium — 44-56px section padding, 18px card gaps — and the retro-comic flavor comes entirely from the thick outlines + hard offset shadows, not from imagery.",
+  "sections": [
+    {
+      "name": "Checkerboard strip",
+      "what": "22px decorative band at the very top of the page — instantly reads 'diner'.",
+      "components": [],
+      "restyle": "Hand-rolled: repeating-conic-gradient(#1C2733 0deg 90deg, #F6F1E7 90deg 180deg) sized 22px/22px on an empty aria-hidden div. Zero markup cost, zero assets."
+    },
+    {
+      "name": "Sticky header",
+      "what": "Red #D22B2B bar with the italic 900-weight 'Mom-n-Pops' wordmark + a gold DINER tag, and a right nav (Menu / Story / Find us) ending in a 'Quick order ⌘K' chip.",
+      "components": ["Button", "Badge"],
+      "restyle": "Badge flattens to bare #FFE08A gold caps riding the wordmark baseline (no fill, no border). Button becomes the rgba(255,255,255,0.16) translucent chip with a lucide command icon, mono ⌘K hint, and a mustard count bubble once the cart has items — the shortcut is advertised in the chrome itself. Sticky z-index stays under the host frame."
+    },
+    {
+      "name": "Hero (dark)",
+      "what": "Full-bleed navy band: teal Georgia-italic 'Open Late' eyebrow, a 62px uppercase headline ('Smashed thin. / Crispy edges.' with line two in mustard), body copy with an inline kbd-styled ⌘K token, and a red + mustard CTA pair.",
+      "components": ["Button", "Card"],
+      "restyle": "Buttons are solid uppercase 800-weight blocks (8px radius, no outline — the sticker outline is reserved for light surfaces): red 'See the menu' is an anchor-mode Button scrolling to the menu (scroll-margin-top handles the sticky offsets), mustard 'Quick order' opens the palette. The right column Card goes dark (#141C25, 1px #2A3644 border, 16px radius, no shadow): a clock-icon header 'Tonight · Water St bar district · till 2:30 AM', a 'Griddle running · ~6 min a burger' microcopy line, and a 3-row hot-items list with mustard mono prices — a fake-realtime status widget."
+    },
+    {
+      "name": "Menu grid ('Order up!')",
+      "what": "Centered 44px uppercase heading with a 'tap + to add · or press ⌘K anywhere' subline, then a 3-column grid of 6 menu cards: emoji + red 900-weight price on the top row, uppercase name, muted description, and a full-width mustard '+ Add' button.",
+      "components": ["Card", "Button"],
+      "restyle": "Cards are the signature sticker: white fill, 2px #1C2733 outline, 16px radius, box-shadow 4px 4px 0 #1C2733 (lifting to 6px on hover). The +Add Button repeats the 2px outline on a #FFC93C fill at 9px radius and presses 1px on :active. The same menu array that renders this grid feeds the ⌘K palette — one source of truth for the order surface."
+    },
+    {
+      "name": "Story + stats",
+      "what": "Two-column split: mustard 'OUR STORY' pill, a 34px uppercase heading ('A flat-top, a spatula, and a mean secret sauce.'), and the Rosa & Sal paragraph; beside a 2x2 grid of stat cards (2:30a weekend close / 2026 est. Milwaukee / fresh never frozen / 🔒 secret sauce).",
+      "components": ["Badge", "Card", "Tooltip"],
+      "restyle": "Badge becomes the one fully-round element on the page (999px mustard pill, 900 weight, 0.14em tracking). Stat Cards keep the 2px navy outline but SWAP the shadow color to teal (4px 4px 0 #4CD7E0) — the system's cheapest variety trick. The 🔒 stat wears a Tooltip (navy block, cream mono text) delivering the secret-sauce gag on hover."
+    },
+    {
+      "name": "Find the truck (schedule)",
+      "what": "Uppercase heading over ONE white outlined placard holding 6 schedule rows in a 130px/1fr/auto grid: bold uppercase day, location, mono grey hours.",
+      "components": ["Card"],
+      "restyle": "Table-as-one-sticker: a single Card (2px outline, 14px radius, overflow hidden, no shadow) with rows as internal 1px #E6DECD dividers. Hours in mono ('6p–2:30a') read like a printed diner placard; no header row, the day column IS the key."
+    },
+    {
+      "name": "Footer",
+      "what": "Red band mirroring the header: italic wordmark, scrape-obfuscated email (nested span around the @) + social handle, © 2026 · Milwaukee, plus a tiny mono fictional-business disclosure line.",
+      "components": [],
+      "restyle": "Hand-rolled flex space-between band reusing the header red — the page closes on the same chrome it opened with."
+    },
+    {
+      "name": "⌘K quick-order palette",
+      "what": "The star surface: a command palette listing the full menu with live search, where selecting a row ADDS it to the order and a footer bar shows count + running mono total once the cart has items.",
+      "components": ["Command"],
+      "restyle": "The Command primitive restyled to the boldest sticker on the page: 560px white panel, 2px navy outline, 14px radius, and an 8px 8px 0 offset shadow that visually outranks the 4px cards. Its input row gets the warm #E6DECD divider and an absolutely-positioned mono 'esc to close' hint; rows are hand-rolled role='option' buttons (icon tile on #F1E9D8, name + short, red mono price, cream hover) so adding does NOT close the palette — it stays open and doubles as a mini cart, with the #FBF7EE footer bar rendering '{n} items added' + total. Global Cmd/Ctrl+K toggling lives in one cleaned-up window keydown effect; Escape, backdrop click, focus trap and body scroll-lock come free from the primitive. The kit's overlay is re-pinned below the host chrome's z-index."
+    }
+  ],
+  "palette": [
+    { "component": "Command", "restyle": "The centerpiece: white panel with the 2px navy cartoon outline, 14px radius, and a scaled-UP 8px hard offset shadow so the palette visibly floats above the 4px-shadow cards. Warm cream backdrop tint (rgba(10,15,20,0.55), no blur), 13vh drop, mono 'esc to close' hint. Items become add-to-cart rows that keep the palette open; a conditional cream footer bar turns it into a mini cart. One menu array feeds both this and the card grid — the exact shape an MCP order bridge would drive." },
+    { "component": "Card", "restyle": "Three costumes from one primitive: (1) menu sticker — white, 2px #1C2733 outline, 16px radius, 4px 4px 0 navy shadow, 2px hover lift; (2) stat sticker — same outline, shadow swapped to teal #4CD7E0; (3) dark status panel — #141C25 fill, 1px #2A3644 border, no shadow, for the hero 'tonight' widget. The shadow-color swap is the system's one-variable variety mechanism." },
+    { "component": "Button", "restyle": "Two families: solid CTA blocks (13px/24px padding, 8px radius, uppercase 800, red-on-white or mustard-on-navy, 1-2px press on :active, anchor-mode for the scroll CTA) and outlined sticker buttons (+Add: mustard fill repeating the 2px navy outline at 9px radius). The header chip is a third, quieter read: translucent white pill on red with a mono ⌘K hint and a mustard cart-count bubble." },
+    { "component": "Badge", "restyle": "Dressed down twice: the DINER tag is bare #FFE08A gold caps with no fill or border, riding the wordmark baseline; the OUR STORY pill is the page's only 999px-radius element — mustard, 11px, 900 weight, 0.14em tracking." },
+    { "component": "Tooltip", "restyle": "Navy block with cream mono 12px text and a soft 3px offset shadow — used once, to deliver the locked-drawer secret-sauce joke on the 🔒 stat." }
+  ],
+  "contentArchetype": "A fictional family food-truck storefront (Mom-n-Pops, Milwaukee — Rosa smashes, Sal dresses): an open-late hero pitch with a live 'tonight' status card, a 6-item priced menu that is ADDABLE everywhere (grid + palette), a short founder story with four proof stats (one a 🔒 gag), a weekly street schedule, and contact/footer. Copy is short and appetite-forward; prices, hours and shortcuts are always mono. The ⌘K surface is the personality: a burger joint whose power users order without scrolling.",
+  "remix": "The look survives any cuisine or business swap if you keep three things: (1) the single ink color (#1C2733) doing ALL outlines, shadows and display type; (2) the hard offset shadow on 2px-outlined light cards — 4px for content, 8px for the one surface that must dominate; (3) one loud band color for header + footer with the hero flipped dark. Rotate the shadow color (teal here) on ONE card family for variety instead of adding hues. Swap the checkerboard for awning stripes (repeating-linear-gradient) to leave 'diner' territory. To soften toward friendly-retail, drop shadows to 3px and widen radii to 20px; to harden toward neo-brutalism, square the corners and thicken outlines to 3px. Keep the command palette pattern wherever repeat orders exist — advertise the shortcut in the chrome, feed it the same array as the visible grid, and let selections accumulate (stay-open + running total) rather than close-on-select."
+}

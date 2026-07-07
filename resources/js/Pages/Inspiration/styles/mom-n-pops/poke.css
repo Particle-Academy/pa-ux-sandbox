@@ -1,0 +1,641 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Inspiration Gallery · Mom-n-Pops 17 — Poke (Hawaiian · Configurator)
+   Vacation-bright teal on light seafoam: a full-bleed 160° teal-gradient hero
+   with a sunshine-yellow "Aloha, Milwaukee" badge and a 🍥 emoji medallion,
+   coral pops on the brand suffix / hero CTA / signature prices, and a
+   build-your-bowl configurator whose chips flip solid teal beside a sticky
+   summary card with a procedural bowl preview. Fancy primitives wear the
+   look: Button → chips/pill CTAs/Add-to-order, Card → step/summary/signature/
+   schedule panels, Badge → the yellow aloha badge, Heading/Text → the 60px
+   extrabold sans display + ledes. All-sans, rounded-everything, airy.
+   Light mode only. Every class prefixed mppoke- so nothing leaks across the
+   SPA; page stickies stay UNDER z-index 30 (the GalleryFrame owns 30+).
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.mppoke-root {
+  /* ── Scoped Poke tokens ──────────────────────────────────────────────── */
+  --mpp-bg:        #f0fbf8; /* light seafoam page */
+  --mpp-card:      #ffffff;
+  --mpp-ink:       #0e3f3a; /* deep sea green — headings, body, footer bg */
+  --mpp-teal:      #12b5a5; /* nav pill, step numbers, selected chips, Add */
+  --mpp-teal-deep: #0fa090;
+  --mpp-coral:     #ff6b5e; /* brand suffix, hero CTA, signature prices */
+  --mpp-coral-deep:#f2564a;
+  --mpp-sun:       #ffd36b; /* aloha badge */
+  --mpp-sun-ink:   #7a4a00;
+  --mpp-fg2:       #3e6e68; /* nav links, schedule places */
+  --mpp-fg3:       #5e8a84; /* sub copy, summary labels, hours */
+  --mpp-fg4:       #5e7e79; /* signature descriptions */
+  --mpp-chip-ink:  #2e5c56; /* unselected chip text */
+  --mpp-hint:      #8fb8b2; /* step hints */
+  --mpp-border:    #d6eee8; /* header rule, step cards, unselected chips */
+  --mpp-border-2:  #c7ede6; /* signature + schedule cards */
+  --mpp-hairline:  #edf7f4; /* summary row dividers */
+  --mpp-hairline-2:#e4f5f1; /* schedule row dividers */
+  --mpp-grad:      linear-gradient(160deg, #16c0ae, #0e9c93);
+  --mpp-on-grad:   #dffbf5; /* sub-copy on the gradient */
+  --mpp-bowl-tan:  #f3e7ce; /* the bowl base */
+  --mpp-foot-fg:   #a9d6cf; /* footer copy on deep sea */
+
+  --mpp-sans: var(--font-sans);
+  --mpp-mono: var(--font-mono);
+
+  min-height: 100vh;
+  background: var(--mpp-bg);
+  color: var(--mpp-ink);
+  font-family: var(--mpp-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.mppoke-root ::selection {
+  background: var(--mpp-teal);
+  color: #fff;
+}
+
+.mppoke-shell {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 30px;
+}
+
+/* ── Sticky translucent header (tucks under the GalleryFrame) ────────────── */
+.mppoke-header {
+  position: sticky;
+  top: 42px;   /* sits just below the sticky GalleryFrame */
+  z-index: 20; /* under the frame's 30 */
+  background: rgba(240, 251, 248, 0.92);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--mpp-border);
+}
+.mppoke-header-inner {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 14px 30px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.mppoke-lockup {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.mppoke-lockup-name {
+  font-weight: 800;
+  font-size: 21px;
+  line-height: 1.1;
+  color: var(--mpp-ink);
+}
+.mppoke-lockup-suffix {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--mpp-coral);
+}
+.mppoke-nav {
+  margin-left: auto;
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  font-size: var(--text-sm);
+  color: var(--mpp-fg2);
+}
+.mppoke-navlink {
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  color: var(--mpp-fg2);
+  cursor: pointer;
+  transition: color 0.15s;
+}
+.mppoke-navlink:hover { color: var(--mpp-ink); }
+.mppoke-navlink:focus-visible {
+  outline: 2px solid var(--mpp-coral);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ── Buttons (react-fancy Button restyled — pills everywhere) ────────────── */
+.mppoke-root .mppoke-btn {
+  height: auto !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  font-family: var(--mpp-sans) !important;
+  font-weight: 700 !important;
+  font-size: var(--text-base, 16px) !important;
+  line-height: 1.2 !important;
+  box-shadow: none !important;
+  transition: background 0.15s, color 0.15s, border-color 0.15s !important;
+}
+/* Header "Find the truck" pill */
+.mppoke-root .mppoke-btn--pill {
+  background: var(--mpp-teal) !important;
+  color: #fff !important;
+  padding: 9px 18px !important;
+  font-size: var(--text-sm) !important;
+}
+.mppoke-root .mppoke-btn--pill:hover:not(:disabled) {
+  background: var(--mpp-teal-deep) !important;
+}
+/* Hero solid coral CTA */
+.mppoke-root .mppoke-btn--coral {
+  background: var(--mpp-coral) !important;
+  color: #fff !important;
+  padding: 13px 24px !important;
+}
+.mppoke-root .mppoke-btn--coral:hover:not(:disabled) {
+  background: var(--mpp-coral-deep) !important;
+}
+/* Hero translucent glass CTA (on the gradient) */
+.mppoke-root .mppoke-btn--glass {
+  background: rgba(255, 255, 255, 0.18) !important;
+  color: #fff !important;
+  border: 1px solid rgba(255, 255, 255, 0.5) !important;
+  padding: 13px 24px !important;
+  font-weight: 600 !important;
+}
+.mppoke-root .mppoke-btn--glass:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.28) !important;
+}
+/* Full-width Add-to-order (the one non-pill: 12px radius per the design) */
+.mppoke-root .mppoke-btn--add {
+  width: 100%;
+  margin-top: 14px;
+  justify-content: center;
+  background: var(--mpp-teal) !important;
+  color: #fff !important;
+  padding: 13px !important;
+  border-radius: 12px !important;
+}
+.mppoke-root .mppoke-btn--add:hover:not(:disabled) {
+  background: var(--mpp-teal-deep) !important;
+}
+.mppoke-root .mppoke-btn:focus-visible {
+  outline: 2px solid var(--mpp-coral) !important;
+  outline-offset: 2px !important;
+}
+.mppoke-root .mppoke-btn--glass:focus-visible,
+.mppoke-root .mppoke-btn--coral:focus-visible {
+  outline-color: var(--mpp-sun) !important;
+}
+
+/* ── Hero — full-bleed 160° teal gradient ────────────────────────────────── */
+.mppoke-hero {
+  background: var(--mpp-grad);
+  color: #fff;
+}
+.mppoke-hero-grid {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 40px;
+  align-items: center;
+  padding: 56px 0;
+}
+/* Badge → sunshine-yellow uppercase aloha pill */
+.mppoke-root .mppoke-aloha {
+  display: inline-block;
+  background: var(--mpp-sun) !important;
+  color: var(--mpp-sun-ink) !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  font-family: var(--mpp-sans) !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+  padding: 6px 16px !important;
+  margin-bottom: 20px;
+}
+.mppoke-root .mppoke-h1 {
+  font-family: var(--mpp-sans) !important;
+  font-size: clamp(40px, 6vw, 60px) !important;
+  line-height: 0.98 !important;
+  letter-spacing: -0.02em !important;
+  font-weight: 800 !important;
+  color: #fff !important;
+  margin: 0 !important;
+}
+.mppoke-root .mppoke-lede {
+  font-family: var(--mpp-sans) !important;
+  font-size: var(--text-xl) !important;
+  color: var(--mpp-on-grad) !important;
+  line-height: 1.5 !important;
+  margin: 20px 0 26px !important;
+  max-width: 440px;
+}
+.mppoke-hero-ctas {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* The 🍥 medallion — the design's stand-in for photography */
+.mppoke-medallion-wrap {
+  display: flex;
+  justify-content: center;
+}
+.mppoke-medallion {
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  border: 6px solid rgba(255, 255, 255, 0.3);
+  display: grid;
+  place-items: center;
+}
+.mppoke-medallion-emoji {
+  font-size: 96px;
+  line-height: 1;
+}
+
+/* ── Build your bowl (the configurator surface) ──────────────────────────── */
+.mppoke-build {
+  padding: 40px 0 30px;
+  scroll-margin-top: 122px; /* clears the GalleryFrame + sticky header */
+}
+.mppoke-build-grid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 24px;
+  align-items: start; /* keeps the rail's position:sticky working */
+}
+.mppoke-root .mppoke-h2 {
+  font-family: var(--mpp-sans) !important;
+  font-size: var(--text-3xl, 30px) !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.02em !important;
+  line-height: 1.1 !important;
+  color: var(--mpp-ink) !important;
+  margin: 0 0 4px !important;
+}
+.mppoke-root .mppoke-h2--sub {
+  font-size: var(--text-2xl, 24px) !important;
+}
+.mppoke-root .mppoke-build-sub {
+  font-family: var(--mpp-sans) !important;
+  font-size: var(--text-sm) !important;
+  color: var(--mpp-fg3) !important;
+  margin: 0 0 22px !important;
+}
+
+/* Card → numbered step panel */
+.mppoke-root .mppoke-step {
+  background: var(--mpp-card) !important;
+  border: 1px solid var(--mpp-border) !important;
+  border-radius: 16px !important;
+  padding: 18px 20px !important;
+  margin-bottom: 14px;
+  box-shadow: none !important;
+}
+.mppoke-step-head {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 13px;
+}
+.mppoke-step-num {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--mpp-teal);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  font-weight: 700;
+  flex: none;
+}
+.mppoke-step-label { font-weight: 700; }
+.mppoke-step-hint {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--mpp-hint);
+}
+.mppoke-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Button → option chip; selected flips solid teal (the design's paint()) */
+.mppoke-root .mppoke-chip {
+  height: auto !important;
+  font-family: var(--mpp-sans) !important;
+  font-size: var(--text-sm) !important;
+  font-weight: 500 !important;
+  padding: 9px 15px !important;
+  border-radius: 10px !important;
+  border: 1.5px solid var(--mpp-border) !important;
+  background: var(--mpp-card) !important;
+  color: var(--mpp-chip-ink) !important;
+  box-shadow: none !important;
+  transition: all 0.15s !important;
+}
+.mppoke-root .mppoke-chip:hover:not(:disabled) {
+  border-color: var(--mpp-teal) !important;
+  color: var(--mpp-ink) !important;
+}
+.mppoke-root .mppoke-chip--on,
+.mppoke-root .mppoke-chip--on:hover:not(:disabled) {
+  background: var(--mpp-teal) !important;
+  border-color: var(--mpp-teal) !important;
+  color: #fff !important;
+}
+.mppoke-chip-plus {
+  font-size: 11px;
+  opacity: 0.6;
+  margin-left: 2px;
+}
+.mppoke-root .mppoke-chip:focus-visible {
+  outline: 2px solid var(--mpp-coral) !important;
+  outline-offset: 2px !important;
+}
+
+/* ── Sticky bowl summary card ────────────────────────────────────────────── */
+.mppoke-rail {
+  position: sticky;
+  top: 122px; /* clears gallery frame + page header */
+}
+.mppoke-root .mppoke-summary {
+  background: var(--mpp-card) !important;
+  border: 1px solid var(--mpp-border) !important;
+  border-radius: 18px !important;
+  overflow: hidden;
+  padding: 0 !important;
+  box-shadow: 0 16px 40px -20px rgba(14, 63, 58, 0.4) !important;
+}
+.mppoke-root .mppoke-summary-head {
+  display: block !important;
+  background: var(--mpp-grad) !important;
+  border: 0 !important;
+  padding: 26px !important;
+  text-align: center;
+}
+
+/* The procedural bowl preview — tan base, inset white ring, scattered bits */
+.mppoke-bowl {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto;
+  border-radius: 50%;
+  background: var(--mpp-bowl-tan);
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 0 0 6px rgba(255, 255, 255, 0.4);
+}
+.mppoke-bowl-bits {
+  position: absolute;
+  inset: 0;
+}
+.mppoke-cube {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+}
+.mppoke-pip {
+  position: absolute;
+  width: 15px;
+  height: 8px;
+  border-radius: 6px;
+}
+.mppoke-summary-name {
+  color: #fff;
+  font-weight: 700;
+  margin-top: 12px;
+  font-size: var(--text-lg);
+}
+
+.mppoke-root .mppoke-summary-body {
+  padding: 18px 20px !important;
+}
+.mppoke-summary-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 5px 0;
+  font-size: var(--text-sm);
+  border-bottom: 1px solid var(--mpp-hairline);
+}
+.mppoke-summary-label { color: var(--mpp-fg3); }
+.mppoke-summary-value {
+  color: var(--mpp-ink);
+  font-weight: 600;
+  text-align: right;
+}
+.mppoke-total-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: 14px;
+}
+.mppoke-total-label {
+  font-size: var(--text-sm);
+  color: var(--mpp-fg3);
+}
+.mppoke-total {
+  font-size: 30px;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--mpp-ink);
+}
+
+/* "On ice" — the added-bowls list under the Add button */
+.mppoke-order {
+  margin-top: 14px;
+  border-top: 1px dashed var(--mpp-border);
+  padding-top: 10px;
+}
+.mppoke-order-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-family: var(--mpp-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--mpp-hint);
+  margin-bottom: 6px;
+}
+.mppoke-order-clear {
+  background: none;
+  border: 0;
+  padding: 0;
+  font-family: var(--mpp-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--mpp-fg2);
+  cursor: pointer;
+}
+.mppoke-order-clear:hover { color: var(--mpp-ink); }
+.mppoke-order-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 3px 0;
+  font-size: var(--text-sm);
+  color: var(--mpp-fg2);
+}
+.mppoke-order-price {
+  font-weight: 700;
+  color: var(--mpp-ink);
+}
+.mppoke-order-total {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 6px;
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--mpp-ink);
+}
+.mppoke-order-sum { color: var(--mpp-coral); }
+
+/* ── Or a signature (coral-priced preset grid) ───────────────────────────── */
+.mppoke-sigs {
+  padding: 26px 0;
+  scroll-margin-top: 112px;
+}
+.mppoke-sigs-head {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+.mppoke-sigs-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.mppoke-root .mppoke-sig-card {
+  background: var(--mpp-card) !important;
+  border: 1px solid var(--mpp-border-2) !important;
+  border-radius: 16px !important;
+  padding: 18px !important;
+  box-shadow: none !important;
+}
+.mppoke-sig-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline; /* name + price share a baseline */
+  gap: 10px;
+}
+.mppoke-sig-name {
+  font-size: var(--text-lg);
+  font-weight: 800;
+  color: var(--mpp-ink);
+}
+.mppoke-sig-price {
+  font-weight: 800;
+  color: var(--mpp-coral);
+  white-space: nowrap;
+}
+.mppoke-sig-desc {
+  font-size: var(--text-sm);
+  color: var(--mpp-fg4);
+  line-height: 1.45;
+  margin: 6px 0 0;
+}
+
+/* ── Find the truck (schedule timetable) ─────────────────────────────────── */
+.mppoke-find {
+  padding: 40px 0 56px;
+  scroll-margin-top: 112px;
+}
+.mppoke-root .mppoke-h2--find { margin-bottom: 18px !important; }
+.mppoke-root .mppoke-sched {
+  background: var(--mpp-card) !important;
+  border: 1px solid var(--mpp-border-2) !important;
+  border-radius: 16px !important;
+  overflow: hidden;
+  padding: 0 !important;
+  box-shadow: none !important;
+}
+.mppoke-sched-row {
+  display: grid;
+  grid-template-columns: 130px 1fr auto;
+  gap: 16px;
+  align-items: center;
+  padding: 14px 22px;
+  border-bottom: 1px solid var(--mpp-hairline-2);
+}
+.mppoke-sched-row:last-child { border-bottom: 0; }
+.mppoke-sched-day { font-weight: 700; }
+.mppoke-sched-place { color: var(--mpp-fg2); }
+.mppoke-sched-hours {
+  font-family: var(--mpp-mono);
+  font-size: var(--text-sm);
+  color: var(--mpp-fg3);
+}
+
+/* ── Footer — deep-sea bookend ───────────────────────────────────────────── */
+.mppoke-footer {
+  background: var(--mpp-ink);
+  color: var(--mpp-foot-fg);
+}
+.mppoke-footer-inner {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 32px 30px 20px;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 18px;
+  font-size: var(--text-sm);
+}
+.mppoke-footer-brand {
+  font-weight: 800;
+  color: #fff;
+}
+.mppoke-footer-note {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 30px 22px;
+  font-family: var(--mpp-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: rgba(169, 214, 207, 0.6);
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 980px) {
+  .mppoke-hero-grid {
+    grid-template-columns: 1fr;
+    gap: 34px;
+    padding: 44px 0;
+  }
+  .mppoke-medallion {
+    width: 180px;
+    height: 180px;
+  }
+  .mppoke-medallion-emoji { font-size: 78px; }
+  .mppoke-build-grid { grid-template-columns: 1fr; }
+  .mppoke-rail { position: static; }
+  .mppoke-sigs-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 640px) {
+  .mppoke-shell { padding: 0 20px; }
+  .mppoke-header-inner { padding: 12px 20px; }
+  .mppoke-nav { gap: 14px; }
+  .mppoke-navlink { display: none; } /* keep the Find-the-truck pill */
+  .mppoke-sigs-grid { grid-template-columns: 1fr; }
+  .mppoke-sched-row {
+    grid-template-columns: 92px 1fr;
+    row-gap: 2px;
+    padding: 12px 16px;
+  }
+  .mppoke-sched-hours { grid-column: 2; }
+  .mppoke-footer-inner,
+  .mppoke-footer-note { padding-left: 20px; padding-right: 20px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mppoke-root .mppoke-btn,
+  .mppoke-root .mppoke-chip,
+  .mppoke-navlink {
+    transition: none !important;
+  }
+}

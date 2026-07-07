@@ -1,0 +1,604 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Mom-n-Pops · Style 16 — Green Bowl
+   Warm oat/cream page (#EFE9DB), sage-green accent + terracotta counterpoint,
+   hairline #D6CDB8 borders on #FBF8EF cards, emoji food tiles (no photos),
+   and one dark forest-green node-graph inset ("Farm to bowl") whose tokens
+   are scoped locally so the light page never flips theme. Fancy primitives
+   restyled: Button → sage/outline pills, Badge → terracotta hero flag +
+   Today marker, Card → hairline cream surfaces, Tooltip → house-sauce fine
+   print. Motion is deliberately none (the design's stance): only the sticky
+   header blur and instant click-driven repaints. Every class prefixed
+   mpvegan- so nothing leaks across the SPA; page z-index stays under 30
+   (the gallery frame owns 30+).
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.mpvegan-root {
+  /* ── Light page tokens ──────────────────────────────────────────────── */
+  --mpv-bg:          #EFE9DB;  /* warm oat/cream page */
+  --mpv-card:        #FBF8EF;  /* card surface */
+  --mpv-tile:        #E4EAD6;  /* pale-green emoji tiles */
+  --mpv-ink:         #33362A;  /* body */
+  --mpv-head:        #4A5238;  /* headings */
+  --mpv-ink-2:       #5E5F4C;  /* supporting copy */
+  --mpv-ink-3:       #6E6E58;  /* card descriptions / stat labels */
+  --mpv-ink-nav:     #6A6A56;  /* nav + footer */
+  --mpv-muted:       #8A8A72;  /* asides / mono hours / miles */
+  --mpv-muted-2:     #9A9A80;  /* mono eyebrows */
+  --mpv-accent:      #6E8B5A;  /* sage green — CTA, wordmark tag, stats */
+  --mpv-accent-dk:   #5F7A4D;  /* sage hover */
+  --mpv-terra:       #C96F4A;  /* terracotta — flag, prices, eyebrow */
+  --mpv-line:        #D6CDB8;  /* hairline borders */
+  --mpv-line-soft:   #EBE5D5;  /* row dividers */
+  --mpv-outline:     #B9C0A2;  /* outlined button border */
+
+  /* ── Dark flow-panel tokens (scoped island, page stays light) ───────── */
+  --mpv-panel:       #1C2216;  /* panel bg */
+  --mpv-panel-line:  #2E3A22;  /* panel borders */
+  --mpv-node:        #18220F;  /* node card bg */
+  --mpv-node-line:   #2A3A20;  /* resting node border */
+  --mpv-node-rule:   #22301D;  /* node header rule */
+  --mpv-detail:      #141A0E;  /* detail strip bg */
+  --mpv-dot:         #263019;  /* canvas dot grid */
+  --mpv-on-dark:     #E7EFDD;  /* on-dark text */
+  --mpv-on-dark-2:   #7C8C6C;  /* on-dark muted */
+  --mpv-on-dark-3:   #8CA079;  /* node meta */
+  --mpv-on-dark-4:   #B5C6A5;  /* detail body */
+  --mpv-leaf:        #9BD07A;  /* bright sage on dark */
+
+  min-height: 100vh;
+  background: var(--mpv-bg);
+  color: var(--mpv-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.mpvegan-root ::selection {
+  background: var(--mpv-accent);
+  color: #FCFBF4;
+}
+
+.mpvegan-container {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 30px;
+}
+
+/* ── Sticky translucent header (UNDER the z-30 gallery frame) ────────────── */
+.mpvegan-header {
+  position: sticky;
+  top: 43px;              /* sits just below the sticky GalleryFrame */
+  z-index: 20;            /* under the frame's 30 */
+  background: rgba(239, 233, 219, 0.92);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--mpv-line);
+}
+.mpvegan-header__in {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 14px 30px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.mpvegan-brand {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  color: var(--mpv-ink);
+  text-decoration: none;
+}
+.mpvegan-brand__name {
+  font-weight: 800;
+  font-size: 21px;
+  letter-spacing: -0.01em;
+}
+.mpvegan-brand__sub {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--mpv-accent);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.mpvegan-nav {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  font-size: var(--text-sm);
+}
+.mpvegan-nav__link {
+  color: var(--mpv-ink-nav);
+  text-decoration: none;
+}
+.mpvegan-nav__link:hover { color: var(--mpv-ink); }
+
+/* anchor targets land below the two sticky bars */
+#mpvegan-menu,
+#mpvegan-flow,
+#mpvegan-schedule {
+  scroll-margin-top: 112px;
+}
+
+/* ── Hero ─────────────────────────────────────────────────────────────────── */
+.mpvegan-hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 44px;
+  align-items: center;
+  padding: 56px 0 44px;
+}
+.mpvegan-hero__title {
+  font-size: clamp(34px, 5.2vw, 56px);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  font-weight: 800;
+  margin: 0;
+  color: var(--mpv-head);
+}
+.mpvegan-hero__sub {
+  font-size: var(--text-xl);
+  color: var(--mpv-ink-2);
+  line-height: 1.55;
+  margin: 20px 0 28px;
+  max-width: 440px;
+}
+.mpvegan-hero__cta {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* react-fancy Badge worn as the terracotta hero flag */
+.mpvegan-root .mpvegan-flag {
+  display: inline-block;
+  background: var(--mpv-terra) !important;
+  color: #FCEFE2 !important;
+  border: 0 !important;
+  border-radius: 2px !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.1em !important;
+  text-transform: uppercase !important;
+  padding: 6px 15px !important;
+  margin-bottom: 20px;
+}
+
+/* react-fancy Button worn as the Green Bowl pill pair */
+.mpvegan-root .mpvegan-btn {
+  font-family: var(--font-sans) !important;
+  border-radius: 8px !important;
+  padding: 13px 24px !important;
+  font-size: var(--text-base) !important;
+  line-height: 1 !important;
+  box-shadow: none !important;
+  letter-spacing: 0 !important;
+  text-decoration: none !important;
+}
+.mpvegan-root .mpvegan-btn--primary {
+  background: var(--mpv-accent) !important;
+  color: #FCFBF4 !important;
+  border: 1px solid var(--mpv-accent) !important;
+  font-weight: 700 !important;
+}
+.mpvegan-root .mpvegan-btn--primary:hover:not(:disabled) {
+  background: var(--mpv-accent-dk) !important;
+  border-color: var(--mpv-accent-dk) !important;
+}
+.mpvegan-root .mpvegan-btn--outline {
+  background: transparent !important;
+  color: var(--mpv-head) !important;
+  border: 1px solid var(--mpv-outline) !important;
+  font-weight: 600 !important;
+}
+.mpvegan-root .mpvegan-btn--outline:hover:not(:disabled) {
+  border-color: var(--mpv-accent) !important;
+  color: var(--mpv-accent) !important;
+  background: transparent !important;
+}
+
+/* ── Sourcing peek card (the hero's signature move) ──────────────────────── */
+.mpvegan-root .mpvegan-peek {
+  background: var(--mpv-card) !important;
+  border: 1px solid var(--mpv-line) !important;
+  border-radius: 16px !important;
+  box-shadow: none !important;
+  padding: 24px !important;
+}
+.mpvegan-peek__eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--mpv-muted-2);
+  margin-bottom: 12px;
+}
+.mpvegan-peek__row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--mpv-line-soft);
+}
+.mpvegan-peek__row:last-child { border-bottom: 0; }
+.mpvegan-peek__icon {
+  flex-shrink: 0;
+  color: var(--mpv-accent);
+}
+.mpvegan-peek__name {
+  flex: 1;
+  font-size: var(--text-sm);
+  color: #454737;
+}
+.mpvegan-peek__miles {
+  font-size: 12px;
+  color: var(--mpv-muted);
+}
+
+/* ── The bowls (menu grid) ────────────────────────────────────────────────── */
+.mpvegan-menu { padding: 26px 0; }
+.mpvegan-h2 {
+  font-size: var(--text-3xl);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0;
+  color: var(--mpv-head);
+}
+.mpvegan-menu__head {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin-bottom: 22px;
+}
+.mpvegan-menu__aside {
+  font-size: var(--text-sm);
+  color: var(--mpv-muted);
+}
+.mpvegan-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+.mpvegan-root .mpvegan-card {
+  background: var(--mpv-card) !important;
+  border: 1px solid var(--mpv-line) !important;
+  border-radius: 16px !important;
+  box-shadow: none !important;
+  padding: 20px !important;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.mpvegan-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.mpvegan-card__tile {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: var(--mpv-tile);
+  display: grid;
+  place-items: center;
+  font-size: 21px;
+  line-height: 1;
+}
+.mpvegan-card__price {
+  font-size: var(--text-lg);
+  font-weight: 800;
+  color: var(--mpv-terra);
+}
+.mpvegan-card__name {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--mpv-head);
+}
+.mpvegan-card__short {
+  font-size: var(--text-sm);
+  color: var(--mpv-ink-3);
+  line-height: 1.45;
+  margin: 0;
+  flex: 1;
+}
+
+/* ── Farm to bowl — the dark sourcing-flow panel ─────────────────────────── */
+.mpvegan-flow { padding: 36px 0; }
+.mpvegan-panel {
+  background: var(--mpv-panel);
+  border: 1px solid var(--mpv-panel-line);
+  border-radius: 16px;
+  overflow: hidden;
+}
+.mpvegan-panel__head {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--mpv-panel-line);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.mpvegan-panel__glyph {
+  flex-shrink: 0;
+  color: var(--mpv-leaf);
+}
+.mpvegan-panel__title {
+  font-weight: 700;
+  color: var(--mpv-on-dark);
+}
+.mpvegan-panel__hint {
+  font-size: 12px;
+  color: var(--mpv-on-dark-2);
+}
+
+/* the canvas keeps the mockup's geometry; small screens scroll it */
+.mpvegan-panel__scroll {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+}
+.mpvegan-panel__canvas {
+  position: relative;
+  height: 300px;
+  min-width: 920px;
+  background-image: radial-gradient(var(--mpv-dot) 1.2px, transparent 1.2px);
+  background-size: 26px 26px;
+}
+.mpvegan-panel__edges {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* a sourcing step — typed node card (button, keyboard-reachable) */
+.mpvegan-node {
+  position: absolute;
+  width: 170px;
+  background: var(--mpv-node);
+  border: 1px solid var(--mpv-node-line);
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 8px 22px -10px rgba(0, 0, 0, 0.6);
+  padding: 0;
+  margin: 0;
+  text-align: left;
+  font-family: inherit;
+  display: block;
+  appearance: none;
+}
+.mpvegan-node:focus-visible {
+  outline: 2px solid var(--mpv-leaf);
+  outline-offset: 2px;
+}
+.mpvegan-node__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--mpv-node-rule);
+  /* color set inline per node type — icon + kind label ride currentColor */
+}
+.mpvegan-node__kind {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.mpvegan-node__body {
+  display: block;
+  padding: 10px 12px;
+}
+.mpvegan-node__name {
+  display: block;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--mpv-on-dark);
+}
+.mpvegan-node__meta {
+  display: block;
+  font-size: 11px;
+  color: var(--mpv-on-dark-3);
+  margin-top: 2px;
+}
+
+/* the selection detail strip below the canvas */
+.mpvegan-panel__detail {
+  padding: 16px 20px;
+  border-top: 1px solid var(--mpv-panel-line);
+  background: var(--mpv-detail);
+}
+.mpvegan-panel__detail-head {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 6px;
+}
+.mpvegan-panel__detail-kind {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--mpv-on-dark-2);
+}
+.mpvegan-panel__detail-name {
+  font-weight: 700;
+  color: var(--mpv-on-dark);
+}
+.mpvegan-panel__detail-long {
+  font-size: var(--text-sm);
+  color: var(--mpv-on-dark-4);
+  line-height: 1.55;
+  margin: 0;
+}
+
+/* ── Our story + stats ────────────────────────────────────────────────────── */
+.mpvegan-story {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: center;
+  padding: 44px 0;
+  border-top: 1px solid var(--mpv-line);
+}
+.mpvegan-eyebrow {
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--mpv-terra);
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+.mpvegan-story__title {
+  font-size: clamp(26px, 3.4vw, 34px);
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  margin: 0 0 16px;
+  color: var(--mpv-head);
+}
+.mpvegan-story__body {
+  font-size: var(--text-lg);
+  color: var(--mpv-ink-2);
+  line-height: 1.6;
+  margin: 0;
+}
+.mpvegan-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.mpvegan-root .mpvegan-stat {
+  background: var(--mpv-card) !important;
+  border: 1px solid var(--mpv-line) !important;
+  border-radius: 14px !important;
+  box-shadow: none !important;
+  padding: 18px !important;
+}
+.mpvegan-stat__v {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--mpv-accent);
+  letter-spacing: -0.01em;
+}
+.mpvegan-stat__k {
+  font-size: var(--text-sm);
+  color: var(--mpv-ink-3);
+  margin-top: 2px;
+}
+.mpvegan-stat__note {
+  text-decoration: underline dotted;
+  text-underline-offset: 3px;
+  cursor: help;
+}
+.mpvegan-tip {
+  max-width: 260px;
+  font-size: var(--text-xs);
+}
+
+/* ── Find the truck (schedule) ────────────────────────────────────────────── */
+.mpvegan-sched { padding: 10px 0 56px; }
+.mpvegan-sched__title {
+  font-size: var(--text-2xl);
+  margin: 0 0 18px;
+}
+.mpvegan-root .mpvegan-sched__card {
+  background: var(--mpv-card) !important;
+  border: 1px solid var(--mpv-line) !important;
+  border-radius: 14px !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  overflow: hidden;
+}
+.mpvegan-sched__row {
+  display: grid;
+  grid-template-columns: 130px 1fr auto;
+  gap: 16px;
+  align-items: center;
+  padding: 14px 22px;
+  border-bottom: 1px solid var(--mpv-line-soft);
+}
+.mpvegan-sched__row:last-child { border-bottom: 0; }
+.mpvegan-sched__row--today { background: #F2EFDF; }
+.mpvegan-sched__day {
+  font-weight: 700;
+  color: var(--mpv-ink);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.mpvegan-sched__place { color: var(--mpv-ink-2); }
+.mpvegan-sched__hours {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--mpv-muted);
+}
+.mpvegan-root .mpvegan-today {
+  background: var(--mpv-accent) !important;
+  color: #FCFBF4 !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.06em !important;
+  padding: 2px 8px !important;
+}
+
+/* ── Footer ──────────────────────────────────────────────────────────────── */
+.mpvegan-footer {
+  border-top: 1px solid var(--mpv-line);
+}
+.mpvegan-footer__in {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 32px 30px 14px;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 18px;
+  font-size: var(--text-sm);
+  color: var(--mpv-ink-nav);
+}
+.mpvegan-footer__brand {
+  font-weight: 800;
+  color: var(--mpv-head);
+}
+.mpvegan-footer__folio {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 30px 28px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--mpv-muted);
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 960px) {
+  .mpvegan-hero {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    padding: 44px 0 36px;
+  }
+  .mpvegan-grid { grid-template-columns: repeat(2, 1fr); }
+  .mpvegan-story {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+}
+
+@media (max-width: 640px) {
+  .mpvegan-container { padding: 0 20px; }
+  .mpvegan-header__in { padding: 12px 20px; }
+  .mpvegan-nav { gap: 16px; }
+  .mpvegan-grid { grid-template-columns: 1fr; }
+  .mpvegan-sched__row {
+    grid-template-columns: 96px 1fr auto;
+    gap: 10px;
+    padding: 12px 16px;
+  }
+  .mpvegan-footer__in {
+    flex-direction: column;
+    gap: 8px;
+  }
+}

@@ -113,10 +113,12 @@ class SeoServiceProvider extends ServiceProvider
 
         FancySeo::route('inspiration.index', [
             'title' => 'Inspiration Gallery — Fancy UI',
-            'description' => 'One creative-studio portfolio, designed twenty ways — from quiet Swiss grids to agent-native surfaces. Self-contained, forkable starting points built on the Fancy UI Kit.',
+            'description' => 'Fictional businesses, each designed twenty ways — a creative-studio portfolio from quiet Swiss grids to agent-native surfaces, and a family food truck from warm storefronts to live data surfaces. Self-contained, forkable starting points built on the Fancy UI Kit.',
         ]);
 
-        FancySeo::route('inspiration.show', fn (array $params): array => $this->inspirationSeo($params['style'] ?? null, $base));
+        FancySeo::route('inspiration.collection', fn (array $params): array => $this->inspirationCollectionSeo($params['collection'] ?? null));
+
+        FancySeo::route('inspiration.show', fn (array $params): array => $this->inspirationSeo($params['collection'] ?? null, $params['style'] ?? null, $base));
 
         FancySeo::route('agent-playground', [
             'title' => 'Agent Playground — Fancy UI',
@@ -214,30 +216,53 @@ class SeoServiceProvider extends ServiceProvider
     }
 
     /**
-     * Per-style SEO for the Inspiration Gallery: a unique title + the style's
-     * own one-line note, plus a BreadcrumbList back to the gallery index.
+     * Per-collection SEO for the Inspiration Gallery catalogs.
      *
      * @return array<string,mixed>
      */
-    private function inspirationSeo(mixed $id, string $base): array
+    private function inspirationCollectionSeo(mixed $collection): array
     {
-        $style = is_string($id) ? GalleryRegistry::find($id) : null;
-        if ($style === null) {
+        $meta = is_string($collection) ? GalleryRegistry::collection($collection) : null;
+        if ($meta === null) {
             return [
                 'title' => 'Inspiration Gallery — Fancy UI',
-                'description' => 'One creative-studio portfolio, designed twenty ways with the Fancy UI Kit.',
+                'description' => 'Fictional businesses, each designed twenty ways with the Fancy UI Kit.',
+            ];
+        }
+
+        return [
+            'title' => "{$meta['name']} — Inspiration Gallery — Fancy UI",
+            'description' => "{$meta['name']} — {$meta['subject']}, designed {$meta['count']} ways with restyled Fancy UI primitives. {$meta['title']}",
+        ];
+    }
+
+    /**
+     * Per-style SEO for the Inspiration Gallery: a unique title + the style's
+     * own one-line note, plus a BreadcrumbList back to its collection catalog.
+     *
+     * @return array<string,mixed>
+     */
+    private function inspirationSeo(mixed $collection, mixed $id, string $base): array
+    {
+        $style = is_string($collection) && is_string($id) ? GalleryRegistry::find($collection, $id) : null;
+        $meta = is_string($collection) ? GalleryRegistry::collection($collection) : null;
+        if ($style === null || $meta === null) {
+            return [
+                'title' => 'Inspiration Gallery — Fancy UI',
+                'description' => 'Fictional businesses, each designed twenty ways with the Fancy UI Kit.',
             ];
         }
         $name = (string) $style['name'];
         $note = trim((string) $style['note']);
-        $url = $base.'/inspiration/'.$style['id'];
+        $url = $base.'/inspiration/'.$style['collection'].'/'.$style['id'];
 
         return [
-            'title' => "{$name} — Inspiration Gallery — Fancy UI",
-            'description' => trim("FIELDWORK, designed as {$name}. {$note} A self-contained, forkable starting point built on the Fancy UI Kit."),
+            'title' => "{$name} — {$meta['name']} — Inspiration Gallery — Fancy UI",
+            'description' => trim("{$meta['name']}, designed as {$name}. {$note} A self-contained, forkable starting point built on the Fancy UI Kit."),
             'jsonLd' => [
                 JsonLd::breadcrumbList([
                     ['name' => 'Inspiration', 'url' => $base.'/inspiration'],
+                    ['name' => $meta['name'], 'url' => $base.'/inspiration/'.$style['collection']],
                     ['name' => $name, 'url' => $url],
                 ]),
             ],
@@ -326,9 +351,12 @@ class SeoServiceProvider extends ServiceProvider
                 ->add('showcase', '0.6', 'weekly')
                 ->add('leaderboard', '0.5', 'daily');
 
-            // Every inspiration-gallery style page.
-            foreach (GalleryRegistry::all() as $style) {
-                $map->add('inspiration/'.$style['id'], '0.6', 'monthly');
+            // Every inspiration-gallery collection catalog + style page.
+            foreach (GalleryRegistry::collections() as $collection) {
+                $map->add('inspiration/'.$collection['id'], '0.65', 'weekly');
+                foreach (GalleryRegistry::styles($collection['id']) as $style) {
+                    $map->add('inspiration/'.$collection['id'].'/'.$style['id'], '0.6', 'monthly');
+                }
             }
 
             // Every docs page — the highest-volume indexable content.

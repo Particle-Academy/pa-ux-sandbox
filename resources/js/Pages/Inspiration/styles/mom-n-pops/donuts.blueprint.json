@@ -1,0 +1,71 @@
+{
+  "id": "donuts",
+  "name": "Donuts",
+  "note": "Candy-neubrutalist donut stand with a sticky-note specials board.",
+  "mode": "light",
+  "thesis": "A donut truck as a carnival sign: warm cream paper, a full-bleed yellow polka-dot hero, weight-900 uppercase type with a 1px black text-stroke, and thick #1B1B1B borders with hard offset slab shadows on every card, button and badge — loud, chunky, sticker-like. The one deliberate material break is the embedded 'Today's specials board': a grey dot-grid whiteboard where the day's extras are clickable pastel react-fancy <StickyNote>s with soft blur shadows and near-square corners, watched over by a pinned indigo agent cursor and an 'agent tidied the layout' Human+ presence chip.",
+  "tokens": {
+    "bg": "#FFF6E6 warm cream page; hero band #FFC93C under an 18px-repeat #F5C518 polka-dot radial-gradient; the specials board is #EDEFF2 with a 24px #D2D7DE dot grid; header/footer are solid #1B1B1B ink bars",
+    "fg": "#1B1B1B near-black for nearly everything; secondary copy #555/#444/#3E4B59; muted #6B7480/#888; white type on ink and pink surfaces",
+    "accent": "#FF4D8D hot pink (cuisine tag, prices, primary CTA, the rotated section plate, board icon) with #4DB7E8 sky-blue as the secondary CTA; pastel note fills #FDE68A #FCD9A8 #FEF08A #C7EACB #FBC7DE; indigo #4F46E5/#6366f1/#8B5CF6 is reserved strictly for agent chrome",
+    "fontDisplay": "var(--font-sans) at weight 900, uppercase, tight tracking (-0.02/-0.03em); the h1 runs ~66px with -webkit-text-stroke:1px #1B1B1B for a hand-painted sign outline — no serif anywhere, body copy is the same sans at weights 500–800",
+    "fontMono": "var(--font-mono) only for small data: sticky-note status tags and prices, the selected-special price, and schedule hours",
+    "radius": "mixed by role, never uniform: cards 14–18px, buttons 10–12px, pills 999px, sticky notes deliberately near-square 4px, hero medallion 50%",
+    "border": "thick solid #1B1B1B everywhere — 3–4px on cards/buttons/badges, 5px hero bottom rule, 6px on the medallion; the schedule's row dividers are 2px #F0E4CC (a cream tint, not black) so the table stays quiet inside its heavy frame",
+    "motion": "essentially none — no CSS transitions or keyframes; sticky notes wear static rotate() transforms (-2.5 to +2deg), hover/press feedback snaps instantly (offset shadows collapse on :active), and in-page nav scrolls instantly via scrollIntoView"
+  },
+  "layout": "A single column: a black header bar (wordmark + pink DONUTS tag + bold right nav that scroll-jumps to sections), a full-bleed polka-dot hero in a 1.05fr/0.95fr grid (stroked headline + two slab CTAs left, a 230px white circle medallion holding a 110px donut emoji right, 8px offset shadow), then a centered max-width:1160px container (28px side padding) with three sections — a 3-column menu card grid under a rotate(-1.5deg) pink title plate, the framed specials board (white toolbar strip over a 340px relative canvas of absolutely positioned notes at percentage coordinates, plus a conditional detail card below), and a stacked schedule card with 130px/1fr/auto grid rows — closed by a black footer. Density is generous: big type, fat 3–6px borders, 4–8px hard offset shadows, section padding 48/30/56px. The grid collapses 3→2→1 columns and the board reflows from absolute canvas to a wrapping shelf under ~860px.",
+  "sections": [
+    {
+      "name": "header",
+      "what": "Black bar with the italic 900-weight 'Mom-n-Pops' wordmark plus a pink 'DONUTS' cuisine tag, and right-aligned bold nav (Menu / Today's board / Find us) — each nav item scroll-jumps to its section.",
+      "components": [],
+      "restyle": "Hand-rolled: nav items are unstyled <button>s that go yellow on hover; sections carry scroll-margin-top so instant scrollIntoView clears the host chrome. (The mockup's bar is sticky; under a host that owns the sticky top edge, keep it static.)"
+    },
+    {
+      "name": "hero",
+      "what": "Full-bleed #FFC93C band covered in an 18px #F5C518 polka-dot radial-gradient with a 5px black bottom rule. Left: a white pill badge 'FRIED FRESH · MILWAUKEE · 2026 !', a 66px stroked uppercase headline 'Hot donuts, right now!', a bold sub-lede, and two slab CTAs (pink 'See the dozen', blue 'Today's board'). Right: a 230px white circle medallion with a 6px border, 8px offset shadow, and a giant 🍩.",
+      "components": ["Badge", "Button"],
+      "restyle": "Badge becomes the hero pill: white, 3px border, 999px radius, 3px offset shadow, 900 weight. Buttons become offset slabs: 3px border, 12px radius, 4px 4px 0 #1B1B1B shadow, uppercase 900 — pressing drops them into the shadow instantly (no transition). The polka-dot texture and text-stroke are the two signature CSS moves."
+    },
+    {
+      "name": "the dozen (menu grid)",
+      "what": "A centered pink title plate rotated -1.5deg ('The Dozen' — white 42px uppercase on pink, 4px border, 5px offset shadow) above a 3x2 grid of white menu cards: emoji top-left, pink 900-weight price top-right, uppercase name, one-line grey description. Six donuts, $2.50–$4.",
+      "components": ["Card"],
+      "restyle": "Card wears the purest slab treatment: white fill, 4px #1B1B1B border, 18px radius, 6px 6px 0 shadow; Card.Body becomes a flex column with an icon/price split row. The rotated plate is a plain <h2> — the slapped-on-sticker heading is the section's identity."
+    },
+    {
+      "name": "today's specials board",
+      "what": "The style's special surface: a framed whiteboard — grey #EDEFF2 canvas with a 24px dot grid, a white toolbar (sticky-note icon, 'Today's specials board', 'Rosa scribbles the day's extras here — tap one', and an 'agent tidied the layout' chip) over a 340px canvas of five clickable pastel sticky notes, individually rotated -2.5 to +2deg, each carrying a mono status tag (TODAY / WARM / NEW / VEGAN / LAST 6), name, one-liner and price. An indigo SVG agent cursor with an 'agent' label pill sits pinned on the canvas.",
+      "components": ["StickyNote", "Badge", "Tooltip"],
+      "restyle": "Each note IS a react-fancy <StickyNote> (custom pastel hex via the color prop, static rotate, width 190, editable={false}, a stable id per slug) restyled to 4px radius + a soft 0 10px 22px -10px blur shadow — deliberately NOT the slab language, so the board reads as a different material. Notes sit inside absolutely-positioned <button> wrappers at PERCENTAGE coordinates (the mockup's imperative pixel paint() pass goes fully declarative), with aria-pressed driving the selected ink outline. The Badge chip goes soft indigo (#EEF2FF/#4F46E5, #8B5CF6 dot) under a Tooltip explaining the Human+ affordance."
+    },
+    {
+      "name": "selected special detail",
+      "what": "Conditional card below the board when a note is tapped: the special's name, its long story-flavored description ('Rosa reworked it a dozen times until nobody could tell'), a big mono pink price, and a black 'Add to order' button that flips to 'Added to order ✓'.",
+      "components": ["Button"],
+      "restyle": "The card snaps back to the page's slab language (white, 4px border, 14px radius, 5px offset shadow) — bridging the soft board into the commerce CTA. The Button is the one borderless ink chip on the page, per the mockup."
+    },
+    {
+      "name": "find the truck",
+      "what": "Uppercase 900-weight heading over a single white slab card listing the six-day Milwaukee route in 130px/1fr/auto grid rows: bold uppercase day, venue, mono grey hours (Cathedral Square, Marquette, Bronzeville, Third Ward, South Shore, Humboldt Park).",
+      "components": [],
+      "restyle": "Hand-rolled rows; the quiet move is 2px #F0E4CC dividers — a cream tint of the page background instead of black — keeping the timetable readable inside its heavy 4px frame."
+    },
+    {
+      "name": "footer",
+      "what": "Black bar mirroring the header: italic wordmark, obfuscated email (a nested <span>@</span>) + Instagram handle, '© 2026 · Milwaukee', plus a mono demo-disclaimer line with a back-to-gallery link.",
+      "components": [],
+      "restyle": "Hand-rolled; the meta row sits under a translucent white hairline with the back link in the hero yellow."
+    }
+  ],
+  "palette": [
+    { "component": "StickyNote", "restyle": "The centerpiece: five controlled specials as pastel notes (custom hex color prop per slug, static rotate, editable={false}, stable ids) restyled to near-square 4px radius + soft blur shadow, wrapped in percentage-positioned <button>s whose aria-pressed state draws a 3px ink outline — tap to reveal the detail card." },
+    { "component": "Button", "restyle": "Offset slabs: 3px black border, 10–12px radius, uppercase weight-900 label, 4px 4px 0 #1B1B1B shadow that collapses on :active with zero transition; pink primary (white text), sky-blue secondary (ink text); the Add-to-order variant is the one borderless ink chip." },
+    { "component": "Card", "restyle": "White slab menu cards — 4px border, 18px radius, 6px 6px 0 shadow, flex-column body with an emoji/price split row; overflow left visible so the shadow reads as a sticker edge." },
+    { "component": "Badge", "restyle": "Two costumes: the hero pill (white, 3px border, 999px radius, 3px offset shadow, 900 weight, letter-spaced) and the agent presence chip (soft indigo #EEF2FF/#4F46E5 with an #8B5CF6 dot, borderless, shadowless — agent chrome never wears the slab language)." },
+    { "component": "Tooltip", "restyle": "Rides on the agent chip to explain the Human+ affordance — the kit surface is left largely stock so the explanation reads as system chrome, not truck branding." }
+  ],
+  "contentArchetype": "Mom-n-Pops — a fictional Milwaukee family donut truck (Rosa & Sal, est. 2026). Loud carnival-sign storefront: a 'The Dozen' menu of six donuts with prices, a hand-tended specials board where Rosa scribbles the day's extras (five sticky notes with status tags and story-flavored long copy — Nueske's bacon local pride, 'sprinkles applied with zero restraint'), a tap-to-order detail card, a six-day find-the-truck schedule, and Human+ flavor via the agent-tidied board chip and pinned agent cursor. The family voice lives in micro-copy, not a dedicated story section.",
+  "remix": "Three load-bearing moves: (1) the slab system — thick solid #1B1B1B borders (3–6px by role) + hard offset shadows (Npx Npx 0 #1B1B1B) + mixed per-role radii + weight-900 uppercase type with a 1px text-stroke on the biggest line; (2) the two dot textures — an 18px polka-dot radial-gradient on the saturated hero band and a 24px fine dot grid on the board; (3) the material break — one embedded surface (the specials board) that abandons the slab language for soft shadows and near-square pastel notes, which is exactly what makes it read as a live, inhabited tool rather than more branding. Recolor to #7ED0FF hero + #FF7A1A accent for a popsicle stand; swap the donut emoji medallion + pastel map for chalk-white notes on a #1F2937 board to go night-market. The board pattern generalizes to any 'today only' surface: kanban of order tickets, a catch-of-the-day list, a specials calendar — keep notes as controlled react-fancy primitives with stable ids so an agent can rewrite the day's specials over a bridge while the human watches the cursor. Blend with the whiteboard fieldwork style by letting the board take over the whole page; blend with Swiss-minimal by keeping the slab borders but dropping to a two-color ink/cream palette."
+}

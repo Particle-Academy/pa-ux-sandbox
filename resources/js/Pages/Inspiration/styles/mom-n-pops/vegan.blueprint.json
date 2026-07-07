@@ -1,0 +1,74 @@
+{
+  "id": "vegan",
+  "collection": "mom-n-pops",
+  "name": "Green Bowl",
+  "cuisine": "Vegan",
+  "surface": "Sourcing flow",
+  "note": "Sage-and-oat storefront with a dark supply-chain node graph.",
+  "mode": "light",
+  "thesis": "A plant-based truck that sells provenance instead of abstinence: a warm oat/cream page with sage-green doing the brand work and terracotta doing the appetite work, comfortable-editorial density on hairline-bordered cream cards — and, dropped into the middle of the light page like an engineer's tool, a dark forest-green node-graph panel that renders the supply chain as a literal tappable DAG. Sourcing data IS the design language: mile counts in the hero, typed color-coded steps in the flow, a 90-mile radius in the stats.",
+  "tokens": {
+    "bg": "#EFE9DB warm oat/cream page; cards #FBF8EF; emoji tiles #E4EAD6; sticky header rgba(239,233,219,0.92) + backdrop-filter blur(8px); the dark flow island scopes its own surface set — panel #1C2216, node cards #18220F, detail strip #141A0E, dot grid #263019",
+    "fg": "#33362A body; headings #4A5238; supporting copy #5E5F4C / #6E6E58; nav + footer #6A6A56; muted #8A8A72 / #9A9A80; on-dark text #E7EFDD with muted #7C8C6C, node meta #8CA079, detail body #B5C6A5",
+    "accent": "#6E8B5A sage green (primary CTA, wordmark tag, sourcing icons, stat numbers, Today marker; brightens to #9BD07A on the dark panel) with #C96F4A terracotta as the warm counterpoint (hero flag, every price, the Our-story eyebrow, the sauce node) — plus per-type node colors riding the data: grain #C9A24A, prep #5AA9C0, edges #4A6B3A",
+    "fontDisplay": "var(--font-sans) at weight 800 with -0.02em tracking everywhere — hero clamp(34px, 5.2vw, 56px) at line-height 1.02, story h2 clamps to 34px, section h2s var(--text-3xl/-2xl); no serif anywhere",
+    "fontMono": "var(--font-mono) in exactly two timetable places — the 'This week's sourcing' eyebrow (11px uppercase, 0.1em tracking) and the schedule hours column — so logistics data reads typographically different from prose",
+    "radius": "16px on major cards (menu, sourcing peek, flow panel); 14px stat + schedule cards; 12px flow nodes + emoji tiles; 8px buttons; 999px only on the Today pill; 2px on the terracotta hero flag (the one hard-edged element)",
+    "border": "1px #D6CDB8 hairline on every light surface (header rule, cards, section dividers, footer); #EBE5D5 for row dividers inside cards; the dark island swaps to #2E3A22 panel rules, #2A3A20 resting node borders, #22301D node header rules — depth on dark comes from 0 8px 22px -10px black node shadows",
+    "motion": "none — no CSS transitions or keyframes anywhere; the only dynamics are the sticky header's backdrop blur and instant click-driven repaints (a selected node's border snaps to its type color, the detail strip appears). Hover states change color instantly. Nothing to reduce for prefers-reduced-motion."
+  },
+  "layout": "Single column under a 1120px container with 30px side padding, beneath a sticky translucent blurred header (z-index 20, tucked under the gallery frame). Rhythm alternates 2-column grids with full-width bands: hero 1fr/1fr gap 44px (pitch left, sourcing peek card right), then a 3-column menu grid (18px gap, 3→2→1), then the full-width dark flow panel (header strip + 300px dotted canvas + conditional detail strip), then story 1fr/1fr gap 40px (copy left, 2x2 stat cards right) opened by a hairline top border, then the schedule as six rows in one bordered card (130px/1fr/auto grid), then a hairline-topped footer row. Density is comfortable-editorial: 44–56px section padding, 18–24px card padding, hairlines doing all the separating. The flow canvas keeps its literal 920×300 geometry and horizontally scrolls on small screens instead of reflowing — a node graph wants its map intact.",
+  "sections": [
+    {
+      "name": "sticky header",
+      "what": "Wordmark 'Mom-n-Pops' (800/21px) + uppercase letterspaced sage 'GREEN BOWL' sub-brand tag, with a right-aligned 3-link anchor nav (Bowls / Where it's from / Find us).",
+      "components": ["Link"],
+      "restyle": "Hand-rolled translucent bar — rgba oat bg + backdrop blur(8px) + 1px #D6CDB8 bottom rule, sticky at z-index 20 under the gallery frame. Nav items are plain in-page anchors; target sections carry scroll-margin-top so jumps clear both sticky bars."
+    },
+    {
+      "name": "hero",
+      "what": "Left: terracotta uppercase flag 'Plants only · Milwaukee · 2026', the 56px/800 headline 'Bowls that eat like a whole meal.', a supporting paragraph about roasting/charring/fermenting the long way, and two buttons — solid sage 'See the bowls', outlined 'Where it's from'. Right: a cream 'This week's sourcing' card listing three ingredients (delicata squash · Wisco Farms 38 mi, lacinato kale · Riverbend 52 mi, maitake · Prairie Fungi 71 mi) with sage lucide icons and right-aligned mile counts over hairline row dividers.",
+      "components": ["Badge", "Button", "Card"],
+      "restyle": "Badge becomes the terracotta flag: solid #C96F4A, #FCEFE2 text, radius squeezed to 2px, 0.1em uppercase tracking. Buttons flatten to 8px-radius pills (13px/24px padding, no shadow): primary sage fill darkening on hover, secondary transparent with a #B9C0A2 border that flips sage. Card flattened to the cream surface + hairline, holding a mono uppercase eyebrow and hand-rolled icon/name/miles rows — the page's signature move, foreshadowing the flow panel."
+    },
+    {
+      "name": "menu grid",
+      "what": "H2 'The bowls' with a muted '— all vegan' aside, then a 3x2 grid of six priced cards: 42px emoji tile in pale green top-left, terracotta price top-right, bold name, one-line description ($9–$11 — Harvest Bowl to Rainbow Slaw Wrap).",
+      "components": ["Card"],
+      "restyle": "Card variant=flat padding=none, reskinned to #FBF8EF + 1px #D6CDB8 + 16px radius with 20px padding and a column-flex body. The emoji-in-tinted-tile (#E4EAD6, 12px radius) replaces photography entirely; prices in terracotta give every card a warm counterpoint. Static cards, no hover lift — this design holds still."
+    },
+    {
+      "name": "farm to bowl (sourcing flow)",
+      "what": "The special surface: a dark forest panel styled like a node-graph editor. Header strip with a git-branch icon and 'tap a step' hint; a 300px canvas with a 26px radial-dot grid; five absolutely-positioned typed node cards (Local farms, Grains & legumes, Roast & char, House sauces, Bowl assembly) joined by three SVG bezier edges with arrowhead markers (farms + pantry converge into roast, then flow to bowl); a detail strip below showing the selected step's kind, name, and long description.",
+      "components": [],
+      "restyle": "Hand-rolled declaratively (a five-node static DAG needs no workflow editor): each node is a real <button> positioned from static data, header tinted its type color via inline style (Source farm #6E8B5A / grain #C9A24A, Process prep #5AA9C0 / sauce #C96F4A, Output bowl #9BD07A), border snapping from #2A3A20 to the type color when selected (aria-pressed + focus-visible ring). Selection is one useState driving both the border tint and the aria-live detail strip — the mockup's querySelector paint() pass replaced by plain controlled React. The panel scopes its own dark tokens so the page never flips theme; the canvas keeps min-width 920px inside an overflow-x scroll wrapper."
+    },
+    {
+      "name": "story + stats",
+      "what": "2-column band opened by a hairline: left is the terracotta eyebrow 'Our story', the 34px headline 'We went plant-based and refused to make it boring.', and a paragraph crediting the house sauces; right is a 2x2 grid of stat cards — 90 mi sourcing radius, 4 house sauces, 100% plants, 2026 est. Milwaukee.",
+      "components": ["Card", "Tooltip"],
+      "restyle": "Stat values set 28px/800 in sage — the numbers carry the brand color while prices stay terracotta, so money and provenance never share a hue. The '4 house sauces' label gets a dotted underline + Tooltip naming all four (green goddess, miso-ginger, chili-tahini, peanut-lime) — fine print as flavor."
+    },
+    {
+      "name": "schedule",
+      "what": "H2 'Find the truck', then one bordered cream card of six rows in a 130px/1fr/auto grid: bold day, location, right-aligned mono hours (Marquette Mon 11–3 through South Shore Farmers Market Sat 8–2). After hydration the current weekday tints and gains a sage 'Today' pill.",
+      "components": ["Card", "Badge"],
+      "restyle": "Rows hand-rolled inside a flattened Card (truer than a Table — no header row exists); hairline #EBE5D5 dividers inside one rounded container rather than separate cards; mono hours read as timetable type. 'Today' is a Badge shrunk to a 10px uppercase sage pill, computed in useEffect so the SSR first paint stays deterministic."
+    },
+    {
+      "name": "footer",
+      "what": "Hairline-topped single row, space-between: bold 'Mom-n-Pops Green Bowl', the anti-scrape email ('hello<span>@</span>momnpops.truck' · @momnpops.mke), '© 2026 · Milwaukee', plus a tiny mono demo-folio line.",
+      "components": [],
+      "restyle": "Flat hand-rolled row; the email splits its @ into a nested span as a light scraper-obfuscation trick carried over from the mockup."
+    }
+  ],
+  "palette": [
+    { "component": "Button", "restyle": "Grounded 8px-radius pills, sans 600–700, no shadow, no transition: primary = sage #6E8B5A fill on #FCFBF4 text darkening to #5F7A4D on hover; secondary = transparent with a 1px #B9C0A2 border flipping border+text to sage. Both are href anchors to in-page sections." },
+    { "component": "Badge", "restyle": "Two reads: (1) the terracotta hero flag — solid #C96F4A, 2px radius (the page's only hard corner), 12px/700 uppercase with 0.1em tracking; (2) the 'Today' schedule marker — 10px uppercase sage pill, radius 999, hydration-gated." },
+    { "component": "Card", "restyle": "The page's universal surface, flattened hard: variant=flat padding=none, then #FBF8EF bg + 1px #D6CDB8 + 14–16px radius + no shadow via the scoped class. Worn four ways — sourcing peek, menu cards, stat tiles, and the schedule container (padding 0, rows dividing themselves with #EBE5D5 hairlines)." },
+    { "component": "Tooltip", "restyle": "One dotted-underline cursor-help trigger on the '4 house sauces' stat, carrying the full sauce roster — the only floating layer on the page." },
+    { "component": "Link (Inertia)", "restyle": "Only the brand lockup — ink wordmark + uppercase sage sub-brand tag; everything else navigates with plain hash anchors." }
+  ],
+  "contentArchetype": "A provenance-first vegan food truck: hero promise ('Bowls that eat like a whole meal.') backed immediately by a live-feeling sourcing manifest with farm names and mile counts, a six-bowl priced menu ($9–$11, every description an ingredient list), a supply-chain DAG that walks Source → Process → Output from five Wisconsin farms to bowl assembly, a craft-over-abstinence story band ('refused to make it boring') with four stats where the sauces are the flavor engine, a six-day Milwaukee route timetable, and a one-line footer. The angle: transparency as appetite — show where it's from and the food sells itself.",
+  "remix": "The load-bearing moves: (1) a two-accent split where the brand/provenance color (sage) takes CTAs, icons, and stat numbers while a warmer appetite color (terracotta) takes prices and flags — swap the pair (e.g. ocean blue + coral for a catch-of-the-day truck) and the whole system re-skins; (2) ONE dark instrument-panel inset inside an otherwise light page, with its surface tokens scoped locally so the theme never flips — any 'how it's made' story (roast profile, fermentation timeline, delivery route) can live there; (3) typed, color-coded nodes where the type color paints the node header always and the border only when selected — selection state as the entire interaction; (4) mono type reserved exclusively for logistics data (mile counts, hours) against an all-sans page; (5) motion: none — stillness reads as honesty here, so resist adding hover lifts. Scale the flow up by replacing the hand-rolled five-node DAG with a restyled fancy-flow FlowCanvas (dots background, custom typed nodes, onNodeClick selection) once the graph needs dragging, zooming, or more than a handful of steps. Blend toward the Taquería sibling by collapsing to one accent and adding hover lifts; blend toward a data surface by letting the sourcing peek card grow into a live DataGrid fed by the same rows the flow nodes read."
+}

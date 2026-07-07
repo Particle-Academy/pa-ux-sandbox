@@ -1,0 +1,717 @@
+/* ============================================================================
+ * Mom-n-Pops · Style 19 — Boba
+ * Y2K pastel candy site: a full-page pink→lavender→sky gradient with two
+ * blurred blobs morphing behind everything, frosted-glass cards floating on
+ * top, 999px pills everywhere, and ONE hot-pink→violet gradient doing every
+ * accent job — wordmark suffix, H1 text clip, selected chips, prices, CTAs.
+ *
+ * Every class is prefixed `mpboba-` and scoped under .mpboba-root so nothing
+ * leaks across the SPA. Page-level stacking stays low: the sticky header is
+ * z-index 20 and the content layer z-index 1 — always under the gallery
+ * frame's chrome. LIGHT MODE ONLY: the palette is pinned locally so the page
+ * reads pastel regardless of app theme.
+ * ========================================================================== */
+
+.mpboba-root {
+    /* ── Local pinned palette ───────────────────────────────────────────── */
+    --bb-bg: linear-gradient(160deg, #ffe1f1 0%, #e9e1ff 46%, #ddf3ff 100%);
+    --bb-ink: #3a2b52;        /* deep plum — primary text                    */
+    --bb-ink-2: #5c4b76;      /* secondary                                   */
+    --bb-ink-3: #6a5a82;      /* nav / footer text                           */
+    --bb-ink-4: #7c6c92;      /* descriptions                                */
+    --bb-mut: #9a8ab0;        /* muted labels                                */
+    --bb-mut-2: #8a7ba0;      /* hints + mono hours                          */
+    --bb-pink: #ff4fa3;       /* hot pink — the accent                       */
+    --bb-pink-soft: #ff6fb5;  /* softer stop (wordmark suffix)               */
+    --bb-violet: #8a6bff;     /* second gradient stop                        */
+    --bb-sky: #4fb8ff;        /* third stop (H1 only)                        */
+    --bb-lilac: #e7dcf7;      /* pale lilac chip borders + dashed divider    */
+    --bb-grad: linear-gradient(120deg, #ff4fa3, #8a6bff);
+    --bb-grad-soft: linear-gradient(90deg, #ff6fb5, #8a6bff);
+    --bb-grad-h1: linear-gradient(120deg, #ff4fa3, #8a6bff, #4fb8ff);
+    --bb-glow: 0 10px 24px -8px rgba(138, 107, 255, 0.7);
+    --bb-glow-pink: 0 6px 16px -6px rgba(255, 79, 163, 0.6);
+
+    min-height: 100vh;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    background: var(--bb-bg);
+    color: var(--bb-ink);
+    font-family: var(--font-sans, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif);
+    -webkit-font-smoothing: antialiased;
+}
+
+.mpboba-root *,
+.mpboba-root *::before,
+.mpboba-root *::after {
+    box-sizing: border-box;
+}
+
+/* ── Morphing pastel blobs (behind the content layer) ────────────────────── */
+@keyframes mpboba-blob {
+    0%,
+    100% {
+        border-radius: 42% 58% 63% 37% / 41% 44% 56% 59%;
+    }
+    50% {
+        border-radius: 58% 42% 37% 63% / 56% 59% 41% 44%;
+    }
+}
+
+.mpboba-blob {
+    position: absolute;
+    filter: blur(6px);
+    pointer-events: none;
+}
+.mpboba-blob--pink {
+    top: 120px;
+    left: -80px;
+    width: 260px;
+    height: 260px;
+    background: rgba(255, 138, 197, 0.4);
+    animation: mpboba-blob 9s ease-in-out infinite;
+}
+.mpboba-blob--sky {
+    top: 520px;
+    right: -90px;
+    width: 300px;
+    height: 300px;
+    background: rgba(138, 180, 255, 0.4);
+    animation: mpboba-blob 11s ease-in-out infinite;
+}
+
+.mpboba-page {
+    position: relative;
+    z-index: 1;
+}
+
+/* ── Frosted sticky header ───────────────────────────────────────────────── */
+.mpboba-header {
+    position: sticky;
+    top: 43px; /* tucks under the sticky GalleryFrame */
+    z-index: 20; /* under the frame's chrome */
+    background: rgba(255, 255, 255, 0.55);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.7);
+}
+@supports not ((backdrop-filter: blur(12px)) or (-webkit-backdrop-filter: blur(12px))) {
+    .mpboba-header {
+        background: rgba(255, 255, 255, 0.92);
+    }
+}
+
+.mpboba-header__in {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 14px 30px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.mpboba-brand {
+    display: flex;
+    align-items: baseline;
+    gap: 9px;
+    text-decoration: none;
+    color: var(--bb-ink);
+}
+.mpboba-brand__name {
+    font-weight: 800;
+    font-size: 21px;
+    letter-spacing: -0.01em;
+}
+.mpboba-brand__sub {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--bb-pink); /* fallback when text-clip is unsupported */
+    background: var(--bb-grad-soft);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.mpboba-nav {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 22px;
+}
+.mpboba-nav__link {
+    appearance: none;
+    background: none;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    font-family: inherit;
+    font-size: var(--text-sm, 0.875rem);
+    color: var(--bb-ink-3);
+    cursor: pointer;
+    transition: color 0.15s ease;
+}
+.mpboba-nav__link:hover {
+    color: var(--bb-ink);
+}
+.mpboba-nav__link:focus-visible {
+    outline: 2px solid var(--bb-violet);
+    outline-offset: 3px;
+    border-radius: 6px;
+}
+
+/* Little order pill — appears after the first "Add to order". */
+.mpboba-cart {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: #fff;
+    color: var(--bb-pink);
+    font-size: 13px;
+    font-weight: 800;
+    padding: 4px 12px;
+    border-radius: 999px;
+    box-shadow: var(--bb-glow-pink);
+    font-variant-numeric: tabular-nums;
+}
+
+/* ── Main column ─────────────────────────────────────────────────────────── */
+.mpboba-main {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 30px;
+}
+
+/* ── Hero ────────────────────────────────────────────────────────────────── */
+.mpboba-hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: center;
+    padding: 50px 0 36px;
+}
+
+/* Badge restyled into the sparkle status pill. */
+.mpboba-root .mpboba-heropill {
+    display: inline-block;
+    background: #fff !important;
+    color: var(--bb-pink) !important;
+    border: 0 !important;
+    font-size: 12px !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.06em;
+    padding: 7px 16px !important;
+    border-radius: 999px !important;
+    box-shadow: var(--bb-glow-pink);
+    margin-bottom: 20px;
+}
+
+.mpboba-h1 {
+    margin: 0;
+    font-size: clamp(2.4rem, 5.4vw, 60px);
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+    font-weight: 800;
+    color: var(--bb-pink); /* fallback when text-clip is unsupported */
+    background: var(--bb-grad-h1);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.mpboba-lede {
+    font-size: var(--text-xl, 1.25rem);
+    color: var(--bb-ink-2);
+    line-height: 1.5;
+    margin: 20px 0 26px;
+    max-width: 420px;
+}
+
+.mpboba-cta {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+/* Buttons restyled into candy pills. */
+.mpboba-root .mpboba-btn {
+    border-radius: 999px !important;
+    border: 0 !important;
+    padding: 13px 24px !important;
+    font-size: 15px !important;
+    height: auto !important;
+    line-height: 1.2 !important;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease !important;
+}
+.mpboba-root .mpboba-btn--grad {
+    background: var(--bb-grad) !important;
+    color: #fff !important;
+    font-weight: 800 !important;
+    box-shadow: var(--bb-glow) !important;
+}
+.mpboba-root .mpboba-btn--grad:hover:not(:disabled) {
+    transform: translateY(-1px);
+    filter: saturate(1.08) brightness(1.03);
+    box-shadow: 0 14px 30px -8px rgba(138, 107, 255, 0.8) !important;
+}
+.mpboba-root .mpboba-btn--white {
+    background: #fff !important;
+    color: var(--bb-ink) !important;
+    font-weight: 700 !important;
+    box-shadow: 0 6px 16px -8px rgba(138, 107, 255, 0.35) !important;
+}
+.mpboba-root .mpboba-btn--white:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 22px -8px rgba(138, 107, 255, 0.5) !important;
+}
+.mpboba-root .mpboba-btn:focus-visible,
+.mpboba-root .mpboba-add:focus-visible,
+.mpboba-root .mpboba-chip:focus-visible {
+    outline: 2px solid var(--bb-violet) !important;
+    outline-offset: 2px !important;
+}
+
+.mpboba-hero__art {
+    display: flex;
+    justify-content: center;
+}
+.mpboba-heroblob {
+    width: 230px;
+    height: 230px;
+    background: linear-gradient(135deg, #ffb6da, #b7a6ff);
+    animation: mpboba-blob 10s ease-in-out infinite;
+    display: grid;
+    place-items: center;
+    font-size: 96px;
+}
+
+/* ── Build-your-boba configurator ────────────────────────────────────────── */
+.mpboba-build {
+    padding: 26px 0;
+    scroll-margin-top: 118px; /* clears gallery frame + sticky header */
+}
+
+/* Card restyled into the big glass configurator shell. */
+.mpboba-root .mpboba-builder {
+    background: rgba(255, 255, 255, 0.7) !important;
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border: 1px solid #fff !important;
+    border-radius: 26px !important;
+    overflow: hidden;
+    box-shadow: 0 20px 50px -24px rgba(138, 107, 255, 0.6) !important;
+}
+@supports not ((backdrop-filter: blur(10px)) or (-webkit-backdrop-filter: blur(10px))) {
+    .mpboba-root .mpboba-builder {
+        background: rgba(255, 255, 255, 0.92) !important;
+    }
+}
+
+.mpboba-builder__grid {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+}
+
+.mpboba-steps {
+    padding: 26px 28px;
+}
+
+.mpboba-steps__head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+.mpboba-steps__glyph {
+    width: 32px;
+    height: 32px;
+    border-radius: 11px;
+    background: linear-gradient(135deg, #ff6fb5, #8a6bff);
+    display: grid;
+    place-items: center;
+    color: #fff;
+    font-size: 16px;
+    flex: none;
+}
+.mpboba-steps__title {
+    font-weight: 800;
+    font-size: var(--text-lg, 1.125rem);
+    color: var(--bb-ink);
+}
+.mpboba-steps__sub {
+    font-size: 12px;
+    color: var(--bb-mut-2);
+}
+
+.mpboba-group {
+    margin-bottom: 16px;
+}
+.mpboba-group:last-child {
+    margin-bottom: 0;
+}
+.mpboba-group__label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--bb-mut);
+    margin-bottom: 8px;
+}
+.mpboba-group__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+/* Button restyled into single-select option chips. Selected state is
+   declarative — data-on flips the gradient, no DOM repainting. */
+.mpboba-root .mpboba-chip {
+    font-size: var(--text-sm, 0.875rem) !important;
+    font-weight: 600 !important;
+    padding: 9px 15px !important;
+    height: auto !important;
+    line-height: 1.2 !important;
+    border-radius: 999px !important;
+    border: 1.5px solid var(--bb-lilac) !important;
+    background: #fff !important;
+    color: var(--bb-ink-2) !important;
+    box-shadow: none !important;
+    transition: all 0.15s ease !important;
+}
+.mpboba-root .mpboba-chip:hover:not(:disabled) {
+    border-color: #d3c2ee !important;
+    color: var(--bb-ink) !important;
+}
+.mpboba-root .mpboba-chip[data-on="true"] {
+    background: var(--bb-grad) !important;
+    color: #fff !important;
+    border-color: transparent !important;
+    box-shadow: 0 6px 14px -6px rgba(138, 107, 255, 0.55) !important;
+}
+.mpboba-root .mpboba-chip[data-on="true"]:hover:not(:disabled) {
+    color: #fff !important;
+    filter: saturate(1.06);
+}
+
+/* Summary rail — tinted gradient panel on the right. */
+.mpboba-rail {
+    background: linear-gradient(160deg, #f6efff, #ffeff8);
+    padding: 24px;
+    border-left: 1px solid #fff;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Card restyled into the white "Your cup" summary. */
+.mpboba-root .mpboba-cup {
+    background: #fff !important;
+    border: 0 !important;
+    border-radius: 16px !important;
+    padding: 18px !important;
+    box-shadow: 0 8px 20px -10px rgba(138, 107, 255, 0.4) !important;
+    margin-bottom: 14px;
+}
+.mpboba-cup__label {
+    font-size: 12px;
+    color: var(--bb-mut);
+    margin-bottom: 6px;
+}
+.mpboba-cup__name {
+    font-size: var(--text-xl, 1.25rem);
+    font-weight: 800;
+    color: var(--bb-ink);
+    line-height: 1.2;
+}
+.mpboba-cup__desc {
+    font-size: var(--text-sm, 0.875rem);
+    color: var(--bb-ink-4);
+    margin-top: 6px;
+}
+.mpboba-cup__pricerow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--bb-lilac);
+}
+.mpboba-cup__pricelabel {
+    font-size: 12px;
+    color: var(--bb-mut);
+}
+.mpboba-cup__price {
+    font-size: 26px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    color: var(--bb-pink); /* fallback when text-clip is unsupported */
+    background: var(--bb-grad);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Button restyled into the full-width gradient Add-to-order bar. */
+.mpboba-root .mpboba-add {
+    width: 100% !important;
+    justify-content: center !important;
+    text-align: center;
+    background: var(--bb-grad) !important;
+    color: #fff !important;
+    padding: 14px !important;
+    height: auto !important;
+    border: 0 !important;
+    border-radius: 14px !important;
+    font-size: 15px !important;
+    font-weight: 800 !important;
+    line-height: 1.2 !important;
+    box-shadow: var(--bb-glow) !important;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease !important;
+    font-variant-numeric: tabular-nums;
+}
+.mpboba-root .mpboba-add:hover:not(:disabled) {
+    transform: translateY(-1px);
+    filter: saturate(1.08) brightness(1.03);
+    box-shadow: 0 14px 30px -8px rgba(138, 107, 255, 0.8) !important;
+}
+.mpboba-root .mpboba-add:active:not(:disabled) {
+    transform: translateY(0) scale(0.99);
+}
+
+/* "Added ✦" flash under the button — fades in/out on data-show. */
+.mpboba-added {
+    min-height: 20px;
+    margin-top: 10px;
+    text-align: center;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--bb-ink-4);
+    opacity: 0;
+    transform: translateY(2px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.mpboba-added[data-show="true"] {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ── House favorites ─────────────────────────────────────────────────────── */
+.mpboba-menu {
+    padding: 24px 0 30px;
+    scroll-margin-top: 118px;
+}
+.mpboba-h2 {
+    text-align: center;
+    font-size: 34px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin: 0 0 22px;
+    color: var(--bb-ink);
+}
+.mpboba-menu__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+}
+
+/* Card restyled into the frosted favorite tiles. */
+.mpboba-root .mpboba-menucard {
+    background: rgba(255, 255, 255, 0.82) !important;
+    border: 1px solid #fff !important;
+    border-radius: 20px !important;
+    padding: 18px !important;
+    box-shadow: none !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.mpboba-root .mpboba-menucard:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 30px -18px rgba(138, 107, 255, 0.6) !important;
+}
+.mpboba-menucard__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 10px;
+}
+.mpboba-menucard__name {
+    font-size: var(--text-lg, 1.125rem);
+    font-weight: 800;
+    color: var(--bb-ink);
+}
+.mpboba-menucard__price {
+    font-weight: 800;
+    color: var(--bb-pink);
+    font-variant-numeric: tabular-nums;
+}
+.mpboba-menucard__short {
+    font-size: var(--text-sm, 0.875rem);
+    color: var(--bb-ink-4);
+    line-height: 1.45;
+    margin: 6px 0 0;
+}
+
+/* ── Find the truck ──────────────────────────────────────────────────────── */
+.mpboba-find {
+    padding: 30px 0 56px;
+    scroll-margin-top: 118px;
+}
+.mpboba-h3 {
+    font-size: var(--text-2xl, 1.5rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin: 0 0 18px;
+    color: var(--bb-ink);
+}
+
+/* Card restyled into the frosted schedule ticket. */
+.mpboba-root .mpboba-sched {
+    background: rgba(255, 255, 255, 0.82) !important;
+    border: 1px solid #fff !important;
+    border-radius: 20px !important;
+    padding: 0 !important;
+    overflow: hidden;
+    box-shadow: none !important;
+}
+.mpboba-sched__row {
+    display: grid;
+    grid-template-columns: 130px 1fr auto;
+    gap: 16px;
+    align-items: center;
+    padding: 14px 22px;
+    border-bottom: 1px solid rgba(231, 220, 247, 0.7);
+}
+.mpboba-sched__row:last-child {
+    border-bottom: 0;
+}
+.mpboba-sched__day {
+    font-weight: 700;
+    color: var(--bb-ink);
+}
+.mpboba-sched__place {
+    color: var(--bb-ink-2);
+}
+.mpboba-sched__hours {
+    font-family: var(--font-mono, ui-monospace, "SFMono-Regular", Menlo, monospace);
+    font-size: var(--text-sm, 0.875rem);
+    color: var(--bb-mut-2);
+    font-variant-numeric: tabular-nums;
+}
+
+/* ── Footer ──────────────────────────────────────────────────────────────── */
+.mpboba-footer {
+    background: rgba(255, 255, 255, 0.6);
+}
+.mpboba-footer__in {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 30px 30px 14px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 18px;
+    font-size: var(--text-sm, 0.875rem);
+    color: var(--bb-ink-3);
+}
+.mpboba-footer__brand {
+    font-weight: 800;
+    color: var(--bb-ink);
+}
+.mpboba-footer__folio {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 30px 26px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+}
+.mpboba-footer__note {
+    font-family: var(--font-mono, ui-monospace, "SFMono-Regular", Menlo, monospace);
+    font-size: 11.5px;
+    color: var(--bb-mut);
+}
+.mpboba-footer__back {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--bb-pink);
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+.mpboba-footer__back:hover {
+    color: var(--bb-violet);
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 940px) {
+    .mpboba-hero {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 28px;
+        padding-top: 38px;
+        text-align: left;
+    }
+    .mpboba-hero__art {
+        order: -1;
+    }
+    .mpboba-heroblob {
+        width: 180px;
+        height: 180px;
+        font-size: 72px;
+    }
+    .mpboba-builder__grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .mpboba-rail {
+        border-left: 0;
+        border-top: 1px solid #fff;
+    }
+    .mpboba-menu__grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+    .mpboba-header__in,
+    .mpboba-main,
+    .mpboba-footer__in {
+        padding-left: 18px;
+        padding-right: 18px;
+    }
+    .mpboba-footer__folio {
+        padding-left: 18px;
+        padding-right: 18px;
+    }
+    .mpboba-nav {
+        gap: 14px;
+    }
+    .mpboba-menu__grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+    .mpboba-sched__row {
+        grid-template-columns: 92px 1fr auto;
+        gap: 10px;
+        padding: 12px 16px;
+    }
+    .mpboba-h2 {
+        font-size: 28px;
+    }
+}
+
+/* ── Reduced motion ──────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+    .mpboba-blob,
+    .mpboba-heroblob {
+        animation: none;
+    }
+    .mpboba-root .mpboba-btn,
+    .mpboba-root .mpboba-add,
+    .mpboba-root .mpboba-chip,
+    .mpboba-root .mpboba-menucard,
+    .mpboba-added {
+        transition: none !important;
+    }
+    .mpboba-root .mpboba-btn--grad:hover:not(:disabled),
+    .mpboba-root .mpboba-btn--white:hover:not(:disabled),
+    .mpboba-root .mpboba-add:hover:not(:disabled),
+    .mpboba-root .mpboba-menucard:hover {
+        transform: none;
+    }
+}

@@ -1,0 +1,71 @@
+{
+  "id": "poke",
+  "name": "Poke",
+  "note": "Vacation-bright teal storefront with a build-a-bowl configurator.",
+  "mode": "light",
+  "thesis": "Sunshine imported to Milwaukee: a light seafoam page under a full-bleed 160° teal-gradient hero, sans-serif everything at extrabold weights, pill-radius everywhere, and exactly three warm pops — a sunshine-yellow badge, coral CTAs/prices, and a tan bowl of procedurally scattered fish cubes. The centerpiece is a four-step build-your-bowl configurator whose chips flip solid teal beside a sticky summary card that re-prices and re-scatters its bowl preview on every tap. Optimistic fast-casual, zero heritage weight, zero photography.",
+  "tokens": {
+    "bg": "#F0FBF8 light seafoam page; cards #fff; hero + summary-card header wear linear-gradient(160deg,#16C0AE,#0E9C93); footer #0E3F3A deep sea; bowl preview base #F3E7CE tan",
+    "fg": "#0E3F3A deep sea green for headings/body; secondary #3E6E68 / #5E8A84 / #5E7E79; #2E5C56 unselected chip text; #8FB8B2 hints; on-gradient white with #DFFBF5 sub-copy; footer copy #A9D6CF",
+    "accent": "#12B5A5 teal owns interaction (nav pill, step-number circles, selected chips, Add-to-order); #FF6B5E coral is the strict warm counter-accent (brand suffix, hero CTA, signature prices, order total); #FFD36B/#7A4A00 sunshine yellow appears exactly once, on the aloha badge; bowl-art fills #E4574B ahi / #F0805E salmon / #E8C05E tofu / #8FBF6A edamame",
+    "fontDisplay": "var(--font-sans) at literal sizes and weights — hero clamp(40-60px)/0.98 weight 800 letter-spacing -0.02em, section h2s var(--text-3xl)/var(--text-2xl) weight 800; deliberately no serif anywhere",
+    "fontMono": "var(--font-mono) only for schedule hours (en-dash ranges like 11–3) and the tiny on-ice order labels — a single timetable accent in an otherwise all-sans page",
+    "radius": "999px pills (nav CTA, hero buttons, aloha badge); 16px cards; 18px summary card; 10px option chips; 12px Add-to-order; 50% circles (220px hero medallion, 120px bowl preview, 24px step numbers)",
+    "border": "#D6EEE8 dominant 1px (header rule, step cards) with 1.5px on unselected chips; #C7EDE6 on signature/schedule cards; row dividers #EDF7F4 (summary) and #E4F5F1 (schedule); rgba-white 6px ring on the medallion and an inset 6px rgba(255,255,255,.4) ring box-shadow on the bowl",
+    "motion": "transition: all .15s on option chips (the selected-state flip) plus matching 150ms color swaps on buttons — no keyframes at all; the life comes from the sticky blurred header (backdrop-filter blur 8px), the sticky re-pricing summary rail, smooth scrollIntoView jumps, and the bowl preview re-scattering on every selection change"
+  },
+  "layout": "Sticky translucent header (rgba(240,251,248,.92) + blur(8px), 1px #D6EEE8 rule) over a full-bleed teal-gradient hero laid out as a 1.05fr/0.95fr grid — badge/60px headline/lede/two pill CTAs left, a 220px circular emoji medallion right. All content below sits in a 1120px max-width container with 30px side padding. The configurator centerpiece is a 1fr/340px grid (align-items:start): four numbered step cards stacked left, a sticky summary card right whose gradient header holds the 120px procedural bowl. Then a 3-column signature-card grid, a full-width schedule card of 130px/1fr/auto rows, and a dark #0E3F3A footer. Density is airy — 14-24px gaps, 18-26px card padding, 40-56px section padding, rounded-everything.",
+  "sections": [
+    {
+      "name": "sticky header",
+      "what": "'Mom-n-Pops' wordmark at 21px/800 with a 13px coral 'Poke' suffix, right-aligned nav (Build a bowl / Signatures / Find us) as live scroll triggers, and a solid teal 'Find the truck' pill.",
+      "components": ["Button"],
+      "restyle": "Button becomes a 999px teal pill (9/18px padding, var(--text-sm) 700); the bar is position:sticky with backdrop-filter blur(8px) over a 92%-opaque seafoam wash, kept under the host frame's z-index; nav links are plain button resets that darken on hover."
+    },
+    {
+      "name": "hero",
+      "what": "Full-bleed 160deg teal gradient (#16C0AE→#0E9C93): a sunshine-yellow uppercase 'Aloha, Milwaukee · Est. 2026' badge, the 60px extrabold 'Sunshine in a bowl.' headline, a #DFFBF5 lede, and two pill CTAs — solid coral 'Build a bowl' and translucent white-outline 'Signatures'. Right column is a 220px circular medallion: rgba-white fill, 6px translucent ring, one 96px 🍥 emoji instead of any photography.",
+      "components": ["Badge", "Heading", "Text", "Button"],
+      "restyle": "Badge flips to the #FFD36B/#7A4A00 pill with 0.08em tracked uppercase at 12px/800; Heading is forced to the token sans at clamp(40-60px)/0.98 with -0.02em tracking in pure white; the glass CTA is rgba(255,255,255,.18) fill + rgba-white .5 border. Both CTAs and the nav are refs + smooth scrollIntoView, replacing the mockup's window.scrollBy handlers."
+    },
+    {
+      "name": "build your bowl (configurator — the special surface)",
+      "what": "Four numbered step cards — 1 Base (pick one), 2 Protein (pick one, +$2 both fish / −$1 tofu), 3 Toppings (multi-select, '2 free, then +75¢'), 4 Sauce (pick one) — each a white 16px card with a 24px teal number circle, a bold label, a muted right-aligned hint, and a wrap row of chips with inline price deltas.",
+      "components": ["Card", "Button"],
+      "restyle": "Each chip is a restyled Button (1.5px #D6EEE8 border, 10px radius, 9/15px padding, var(--text-sm) 500) that flips solid #12B5A5/white with aria-pressed when selected — declarative className state replacing the mockup's imperative paint() pass over [data-opt]. One controlled bowl object {base, protein, toppings[], sauce} drives everything; price is a pure function ($12 base, +$2 both fish, −$1 tofu, 2 toppings free then +75¢ each) shown as $X.XX."
+    },
+    {
+      "name": "sticky bowl summary",
+      "what": "A 340px sticky rail card: gradient header holding a 120px circular tan bowl filled with 7 scattered/rotated 20px protein cubes and 5 green edamame pips, the derived bowl name ('Ahi tuna bowl'), four hairline-divided label/value rows, a 30px/800 live total, and a full-width teal 'Add to order · $X' button that appends to a small 'on ice' order list.",
+      "components": ["Card", "Button"],
+      "restyle": "Card gets overflow:hidden, an 18px radius, and the deep 0 16px 40px -20px rgba(14,63,58,.4) shadow; Card.Header is the 160deg gradient block. THE KEY MOVE: the mockup rebuilt the bowl with Math.random() + innerHTML every paint — here the scatter is a pure function of the bowl state (FNV-1a hash of the selection seeds a mulberry32 PRNG, positions mapped to absolutely-positioned spans), so SSR and client agree on the first paint yet every tap still reshuffles the bowl. Cube color keys off protein (#E4574B ahi / #F0805E salmon / #E8C05E tofu), and 'Both fish' genuinely alternates ahi and salmon cubes."
+    },
+    {
+      "name": "or a signature",
+      "what": "Three white preset cards in a 3-column grid: bowl name at var(--text-lg)/800 left, coral price right on a shared baseline, one-line description below — Classic Ahi $13, Spicy Salmon $13, Tofu Aloha $11 (vegan).",
+      "components": ["Card"],
+      "restyle": "Cards flattened to 16px-radius #C7EDE6-bordered panels with no shadow; the coral #FF6B5E prices are the section's whole pop against the teal system — flex align-items:baseline keeps the price-tag rhythm."
+    },
+    {
+      "name": "find the truck",
+      "what": "One white card of six Milwaukee stops, each a 130px/1fr/auto grid row: bold day, location (Cathedral Square Park through Bradford Beach), right-aligned mono hours (11–3 weekdays, 11–7 Thursday-Saturday; Sunday off).",
+      "components": ["Card"],
+      "restyle": "A single rounded Card with overflow:hidden holding hand-rolled grid rows split by #E4F5F1 hairlines; hours in var(--font-mono) with en-dash ranges give the clean timetable feel — a Table primitive would be heavier than six rows deserve."
+    },
+    {
+      "name": "footer",
+      "what": "Dark #0E3F3A bar in #A9D6CF: white 800 'Mom-n-Pops Poke' wordmark, obfuscated email (a nested <span>@</span> as the mockup's scraping deterrent) with the @momnpops.mke handle, and '© 2026 · Milwaukee'.",
+      "components": [],
+      "restyle": "Hand-rolled flex bar — the page's only dark surface, bookending the gradient hero; a small mono footnote line credits the fictional truck."
+    }
+  ],
+  "palette": [
+    { "component": "Button", "restyle": "Five wears, all borderless pills except the chip: solid teal header pill (999px, sm/700), solid coral hero CTA (13/24px padding), translucent glass hero CTA (rgba-white .18 fill + .5 border), the full-width 12px-radius teal Add-to-order, and — the signature — the configurator chip: white with a 1.5px #D6EEE8 border and 10px radius that flips solid #12B5A5/white via aria-pressed, its +$/−$ hint an 11px 0.6-opacity inline span." },
+    { "component": "Card", "restyle": "Four wears, all white: flat 16px-radius #D6EEE8-bordered step panels, flat 16px #C7EDE6-bordered signature and schedule panels (schedule with overflow:hidden for its hairline rows), and the 18px-radius sticky summary with a gradient Card.Header, deep sea-green shadow, and overflow:hidden." },
+    { "component": "Badge", "restyle": "One loud wear: the hero's aloha badge — #FFD36B fill, #7A4A00 ink, 999px pill, 12px/800 uppercase with 0.08em tracking. Everything else that looks like a chip on this page is a Button, because it's tappable." },
+    { "component": "Heading", "restyle": "Kept in the token sans and pushed to 800 weight with -0.02em tracking — clamp(40-60px)/0.98 white on the gradient hero, var(--text-3xl)/var(--text-2xl) deep sea green for sections; the brand voice is weight and tightness, not a typeface change." },
+    { "component": "Text", "restyle": "Sans ledes and subtexts in the muted green ramp — var(--text-xl) #DFFBF5 on the gradient, var(--text-sm) #5E8A84 on seafoam." }
+  ],
+  "contentArchetype": "A single-page fast-casual storefront with a product configurator as the conversion surface: brand-gradient hero with one emoji-scale mascot visual, a build-your-own flow with live derived pricing and a procedural product preview, a fixed-price signatures grid as the fallback path, a weekly location schedule, and a thin dark contact footer. The story is deliberately thin — pure vacation-brightness positioning ('Aloha, Milwaukee'), no founder narrative. Ports to any build-your-own product: bowls, smoothies, meal kits, PC builds, subscription bundles.",
+  "remix": "The load-bearing moves: (1) one saturated brand color for ALL interaction plus one warm counter-accent for money and desire, never mixed — swap #12B5A5/#FF6B5E for lavender/lime or ocean/tangerine and the whole mood shifts; (2) the chip configurator + sticky derived-price summary loop — keep one controlled state object with price as a pure function and it ports to any product; (3) the procedural preview seeded from a hash of the selection (deterministic for SSR, reshuffles on every change) — the cheapest 'live product' effect there is, no images required; (4) gradient reserved for exactly two surfaces (hero + summary header) so it reads branded, not busy; (5) the single yellow badge as the one allowed third color. Blend toward the gyros/heritage register by adding a founder story card and a serif display; push toward SaaS by swapping bowls for plan tiers — the toppings step becomes add-ons and the bowl preview becomes a feature meter."
+  }

@@ -1,0 +1,75 @@
+{
+  "id": "churros",
+  "collection": "mom-n-pops",
+  "name": "Churros",
+  "cuisine": "Churros",
+  "surface": "Marquee",
+  "note": "Carnival marquee storefront.",
+  "mode": "dark",
+  "thesis": "The family food truck as a state-fair midway booth after dark: a deep maroon page, cream weight-900 sans display, and ONE carnival-gold accent working every job — CTAs, prices, borders, the barker badge, and an inverted gold plaque heading — under a red/cream striped awning bar. The signature move is the hero's marquee-light frame: a 3px gold border whose top edge carries a string of pure-CSS light bulbs blinking in two alternating phases, so the page feels wired with fairground electricity while everything else holds perfectly still (no transitions anywhere).",
+  "tokens": {
+    "bg": "#3A0E12 deep maroon page; panel surfaces (header, menu cards, schedule, footer) #4A1216; inset panels (marquee poster, today-row tint, schedule dividers) #5A1A1E",
+    "fg": "#FBEFD8 cream primary; secondary #E8C9A0 (nav, subhead, story body, schedule places); muted #D2A98A (card descriptions) and #C99C7E (mono hours, story caption, footer)",
+    "accent": "#F4A825 carnival gold — the single accent for CTAs (hover #FFB63C), the plaque heading, prices, the barker badge, header/footer 2px rules, the marquee frame, and the Today marker; #D62828 carnival red appears ONLY in the awning stripe (alternating with cream); bulb glow #FFE08A",
+    "fontDisplay": "var(--font-sans) at weight 900 with tight tracking — no serif anywhere: hero clamp(2.5rem, 5.6vw, 62px) at line-height 0.96 / -0.02em, plaque h2 clamps to 42px, story h2 to 34px at line-height 1.04",
+    "fontMono": "var(--font-mono) for the emoji-poster captions (12px, 'fried the second you order' / 'met in a churro line at the State Fair'), the schedule hours column (var(--text-sm), #C99C7E), and the footer folio",
+    "radius": "mixed rounded: cards 16px and the marquee frame 16px, story poster 12px, plaque 12px, schedule container 14px, buttons 10px, inner marquee panel 10px, badge/Today pills 999px",
+    "border": "#7A2A2E brick at 2px on menu cards + story poster, 1px on the schedule container and the story section's top rule; #8A3A3E on the outlined button; #F4A825 gold at 2px on header-bottom / footer-top (bookending the page) and 3px on the marquee frame",
+    "motion": "exactly one animation: the marquee bulb blink — an opacity keyframe (1 → 0.55 → 1, 1.6s ease-in-out infinite) run on two interleaved radial-gradient bulb strings (::before / ::after, one offset -0.8s) so alternating bulbs chase like a real fairground marquee; NO transitions anywhere else (hovers snap), and prefers-reduced-motion leaves the bulbs lit but still"
+  },
+  "layout": "Single-column page, 1120px max-width with 30px side padding throughout. Top-to-bottom: a 24px red/cream striped awning bar (one repeating-linear-gradient), a sticky maroon header with a gold bottom rule (wordmark + gold uppercase descriptor left, three anchor links right), a two-column hero (1.05fr/0.95fr, 40px gap — pitch left, marquee-light emoji poster right), then the centered container holding a 3x2 menu Card grid (18px gaps) under a centered gold plaque, a 50/50 story split (bordered ferris-wheel poster beside eyebrow + headline + paragraph) opened by a 1px brick top rule, a schedule rendered as one rounded bordered list of six 130px/1fr/auto rows, and a flex footer whose gold top rule mirrors the header. Density is moderate — 44–56px vertical section padding; grids collapse 3→2→1 and the hero stacks below 980px.",
+  "sections": [
+    {
+      "name": "awning bar",
+      "what": "A 24px-tall strip at the very top of the page, above even the header: alternating 34px bands of carnival red #D62828 and cream #FBEFD8.",
+      "components": [],
+      "restyle": "One div, one class, one repeating-linear-gradient(90deg, red 0 34px, cream 34px 68px) — the entire state-fair mood set before a single word renders. The only place red is allowed on the page."
+    },
+    {
+      "name": "sticky header",
+      "what": "Maroon #4A1216 bar with a 2px gold bottom border: 'Mom-n-Pops' at weight 900/22px beside a 12px letterspaced gold uppercase 'CHURROS' descriptor (the pair links back to the collection hub), with Menu / Story / Find us anchors right-aligned in #E8C9A0 at weight 600.",
+      "components": ["Link"],
+      "restyle": "Hand-rolled sticky header (z-index < 30 so it rides under the gallery frame). The mockup's plain-span nav becomes real in-page anchors paired with scroll-margin-top: 80px on the target sections — replacing DCLogic's window.scrollBy(-64px) offset hack with zero JavaScript."
+    },
+    {
+      "name": "hero",
+      "what": "Left: the gold pill badge '★ Step right up · Milwaukee · 2026 ★', the 62px weight-900 headline 'Hot, crispy, cinnamon-rolled.', a 440px subhead, and two CTAs — gold-filled uppercase 'Get your churros' and a maroon-outlined 'Find the booth'. Right: the marquee-light frame — a 3px gold 16px-radius border around an inset #5A1A1E panel holding a 96px 🥨 and the mono caption 'fried the second you order'.",
+      "components": ["Badge", "Button"],
+      "restyle": "Badge worn as the barker pill: gold fill, dark maroon text, 12px/900 uppercase with 0.08em tracking, radius 999. Buttons worn as midway CTAs with transition:none (hovers snap, per the design's no-transitions rule): primary gold fill + 900 uppercase brightening to #FFB63C, secondary transparent with a 2px #8A3A3E border that flips gold on hover. The marquee frame is hand-rolled — THE reusable surface (see palette)."
+    },
+    {
+      "name": "midway menu",
+      "what": "A centered section heading rendered as an inverted gold plaque — dark #4A1216 text ON a #F4A825 chip (6px 26px padding, 12px radius) — over a 3x2 grid of six menu cards: 24px emoji top-left, gold weight-900 price top-right, weight-800 cream name, one-line #D2A98A description. Classic Churros $5 → Mexican Hot Chocolate $4.",
+      "components": ["Heading", "Card"],
+      "restyle": "Heading becomes the plaque via display:inline-block + the gold fill — the page's strongest reusable heading treatment (an award plaque screwed to the booth). Card is flattened to the mockup's exact spec: #4A1216 fill, 2px #7A2A2E border, 16px radius, 18px padding, no shadow, flex column with 8px gaps; the whole grid is fed from a 6-item JSON array."
+    },
+    {
+      "name": "our story",
+      "what": "A 50/50 split opened by a 1px brick top rule: left a 2px-bordered 12px-radius poster panel (80px 🎡 + mono caption 'met in a churro line at the State Fair'), right the gold uppercase eyebrow 'Our story', the 34px weight-900 headline 'We fell in love at the state fair. Obviously.', and the Rosa & Sal paragraph (met in a churro line at the Wisconsin State Fair; Milwaukee, since 2026).",
+      "components": [],
+      "restyle": "All hand-rolled — the emoji-poster-with-mono-caption pattern repeats from the hero (border instead of marquee bulbs, #C99C7E caption), and the gold 0.14em-tracked weight-800 eyebrow is the section-label pattern to lift for any other section."
+    },
+    {
+      "name": "find the booth",
+      "what": "h2 'Find the booth', then the week as a single rounded #4A1216 container (1px #7A2A2E border, 14px radius, overflow hidden) of six rows on a 130px/1fr/auto grid — weight-800 day, #E8C9A0 place, right-aligned mono hours — divided by 1px #5A1A1E rules. Wednesday Humboldt Park 4–9 through Mon–Tue 'Private events —'. After hydration, today's row tints #5A1A1E and gains a gold 'Today' pill.",
+      "components": ["Heading", "Badge"],
+      "restyle": "A table-as-list with no header row (truer to the mockup than a forced Table). The Today Badge shrinks to a 10px/900 uppercase gold pill; the row index is computed from Date().getDay() in a useEffect (Mon–Tue both resolve to the private-events row) so the SSR first paint is deterministic."
+    },
+    {
+      "name": "footer",
+      "what": "Maroon band whose 2px gold top rule mirrors the header's bottom rule, bookending the page in gold: weight-900 cream 'Mom-n-Pops Churros', the anti-scrape email ('hello<span>@</span>momnpops.truck') + @momnpops.mke, and '© 2026 · Milwaukee' in a space-between wrap row, plus a tiny mono demo-folio line.",
+      "components": [],
+      "restyle": "Flat hand-rolled one-liner; all footer text drops to the #C99C7E muted tone except the brand."
+    }
+  ],
+  "palette": [
+    { "component": "Button", "restyle": "Midway CTA with transition:none — hover states snap instead of fading, matching the design's single-animation rule. Primary: gold #F4A825 fill, dark maroon text, weight 900 uppercase, 10px radius, 13px/24px padding, brightens to #FFB63C. Secondary: transparent with a 2px #8A3A3E border at weight 700, border flipping gold on hover. Both ride anchor mode (href to in-page ids) so the hero CTAs scroll with zero JS." },
+    { "component": "Badge", "restyle": "Two reads: (1) the barker pill — gold fill, #4A1216 text, 12px/900 uppercase, 0.08em tracking, star glyphs in the label, radius 999; (2) the 'Today' schedule marker — the same gold-on-maroon inverted at 10px, applied only after hydration." },
+    { "component": "Card", "restyle": "Menu card flattened to booth signage: #4A1216 fill, 2px #7A2A2E brick border, 16px radius, 18px padding, shadow removed, no hover motion. Emoji top-left and gold weight-900 price top-right on one row, then name, then muted description." },
+    { "component": "Heading", "restyle": "The plaque treatment — inline-block, dark text on a gold chip, 42px/900 with 12px radius — for hero-grade section titles; plain cream var(--text-2xl)/900 for workaday ones ('Find the booth')." },
+    { "component": "Link (Inertia)", "restyle": "Only the brand lockup — cream wordmark + gold letterspaced uppercase cuisine descriptor; nav stays plain anchors that brighten cream on hover." },
+    { "component": "Marquee frame (hand-rolled)", "restyle": "THE portable surface: a relative wrapper with a 3px gold border (16px radius) and an absolutely-positioned 12px strip across the top edge (top:-3px, so bulbs sit ON the border). The strip's ::before/::after each paint bulbs with radial-gradient(circle at 16px 50%, #FFE08A 0 5px, transparent 6px) at background-size 64px, the ::after offset 32px and delayed -0.8s — interleaved that's a bulb every 32px blinking in alternating phases, plus a drop-shadow glow. Under prefers-reduced-motion the bulbs stay lit but stop blinking. Wrap anything — a photo, a chart, a form — to make it the show." }
+  ],
+  "contentArchetype": "A carnival-barker food-truck storefront: an awning and a marquee before any words, a hero promise ('Hot, crispy, cinnamon-rolled.') pitched like a fairground call ('Step right up'), a six-item priced Midway Menu ($4–$8, emoji-illustrated), a meet-cute origin story (Rosa & Sal, a churro line at the Wisconsin State Fair), a six-row Milwaukee booth schedule (Humboldt Park → South Shore Park, Mon–Tue private events), and a one-line contact footer. The whole voice leans midway: 'The Midway Menu', 'Find the booth', star glyphs on the badge.",
+  "remix": "Keep three load-bearing moves and the booth survives any reskin: (1) ONE metallic accent doing every job — CTAs, prices, rules, plaque — over a single dark saturated ground (swap maroon/gold for midnight/neon-pink and it's a night-market stall, for racing-green/brass and it's a fairground pub); (2) the marquee-bulb frame as the singular animated object on an otherwise motionless page — transitions off everywhere makes the blink read louder; (3) the inverted plaque heading (dark text ON the accent chip) as the section-title system. The awning stripe is a one-class mood-setter — retint its two bands to any brand pair. Emoji posters in inset panels with mono captions replace photography entirely; swap in real photos INSIDE the marquee frame if you have them. Blend toward 'kinetic' by letting the bulb chase speed up on hover, toward 'retro' by squaring the radii and hardening the borders, or toward a data surface by growing the schedule list into a live Table with per-stop status."
+}

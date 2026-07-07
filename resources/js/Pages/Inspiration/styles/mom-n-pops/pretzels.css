@@ -1,0 +1,652 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Mom-n-Pops · Style 15 — Brezeln
+   Refined biergarten menu-board: warm parchment (#F4F1E7) page under white
+   header/hero/cards, dark coffee-brown ink, Bavarian blue (#1C6BB0) for money
+   and action, pretzel amber (#C6873A) for kickers and midday chips. Signature
+   move: the pure-CSS Bavarian rautenmuster (.mppretzels-rauten) — an 18px flag
+   ribbon up top, reused as the hero card's backdrop. 1px #E0D9C7 hairlines
+   everywhere; the calendar grid draws its own lines via a #EDE7D8 background-
+   gap trick; event chips carry a 3px solid left bar. Motion is essentially
+   none — no transitions, no keyframes; the single soft shadow (hero card) is
+   static. Every class prefixed mppretzels- so nothing leaks across the SPA;
+   page-level z-index stays under 30 (the gallery frame owns 30+; the Tooltip
+   portals to <body> with the library's own layer).
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.mppretzels-root {
+  /* ── Scoped Brezeln tokens ──────────────────────────────────────────── */
+  --mpz-bg:         #F4F1E7;  /* warm parchment page */
+  --mpz-card:       #ffffff;  /* header, hero band, every card */
+  --mpz-ink:        #241E16;  /* dark coffee-brown ink */
+  --mpz-ink-2:      #5A5040;  /* secondary copy / nav */
+  --mpz-ink-3:      #6E634E;  /* menu shorts / stat labels */
+  --mpz-ink-4:      #9A8E76;  /* muted asides / helpers */
+  --mpz-ink-5:      #9A8E74;  /* calendar dow / gutter labels */
+  --mpz-ink-6:      #8A7E64;  /* hero card mono caption */
+  --mpz-blue:       #1C6BB0;  /* Bavarian blue — accent */
+  --mpz-blue-dk:    #175C99;  /* hover blue */
+  --mpz-amber:      #C6873A;  /* pretzel amber — kickers, midday bars */
+  --mpz-gold:       #F0C64B;  /* "Set a reminder" */
+  --mpz-gold-dk:    #E9BA33;  /* gold hover */
+  --mpz-line:       #E0D9C7;  /* hairline */
+  --mpz-line-2:     #DAD3C2;  /* secondary hero button border */
+  --mpz-grid:       #EDE7D8;  /* calendar gap-lines */
+  --mpz-mid-bg:     #FBEFD8;  /* midday chip tint */
+  --mpz-eve-bg:     #E1ECF6;  /* evening chip tint */
+  --mpz-banner-sub: #CDE0F1;  /* banner secondary text */
+  --mpz-foot-bg:    #241E16;  /* footer = ink inverted into a background */
+  --mpz-foot-ink:   #C8BDA4;  /* footer cream text */
+  --mpz-foot-mut:   #7A6E58;  /* footer folio */
+
+  min-height: 100vh;
+  background: var(--mpz-bg);
+  color: var(--mpz-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.mppretzels-root ::selection {
+  background: var(--mpz-blue);
+  color: #fff;
+}
+
+.mppretzels-container {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 0 28px;
+}
+
+/* ── Bavarian rautenmuster — the design's signature pure-CSS pattern ─────── */
+.mppretzels-rauten {
+  background-color: var(--mpz-blue);
+  background-image:
+    linear-gradient(135deg, #fff 25%, transparent 25%),
+    linear-gradient(225deg, #fff 25%, transparent 25%),
+    linear-gradient(45deg, #fff 25%, transparent 25%),
+    linear-gradient(315deg, #fff 25%, transparent 25%);
+  background-position: 14px 0, 14px 0, 0 0, 0 0;
+  background-size: 28px 28px;
+}
+.mppretzels-ribbon {
+  height: 18px;
+}
+
+/* ── Sticky white hairline header (stays UNDER the z-30 gallery frame) ───── */
+.mppretzels-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--mpz-card);
+  border-bottom: 1px solid var(--mpz-line);
+}
+.mppretzels-header__in {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 14px 28px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.mppretzels-brand {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  color: var(--mpz-ink);
+  text-decoration: none;
+}
+.mppretzels-brand__name {
+  font-weight: 900;
+  font-size: 22px;
+  letter-spacing: -0.01em;
+}
+/* Badge stripped to a flush letterspaced blue caps cuisine tag */
+.mppretzels-root .mppretzels-brand__tag {
+  background: transparent !important;
+  border: 0 !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  color: var(--mpz-blue) !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.08em !important;
+  line-height: 1 !important;
+}
+.mppretzels-nav {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--mpz-ink-2);
+}
+.mppretzels-nav__link {
+  color: var(--mpz-ink-2);
+  text-decoration: none;
+}
+.mppretzels-nav__link:hover {
+  color: var(--mpz-ink);
+}
+.mppretzels-nav__link:focus-visible {
+  outline: 2px solid var(--mpz-blue);
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+/* ── Buttons (react-fancy Button worn as quiet Bavarian rectangles) ──────── */
+.mppretzels-root .mppretzels-btn {
+  font-family: var(--font-sans) !important;
+  font-weight: 600 !important;
+  letter-spacing: 0 !important;
+  box-shadow: none !important;
+  transition: none !important;
+}
+.mppretzels-root .mppretzels-btn--primary {
+  background: var(--mpz-blue) !important;
+  color: #fff !important;
+  border: 1px solid var(--mpz-blue) !important;
+  border-radius: 10px !important;
+}
+.mppretzels-root .mppretzels-btn--primary:hover:not(:disabled) {
+  background: var(--mpz-blue-dk) !important;
+  border-color: var(--mpz-blue-dk) !important;
+}
+.mppretzels-root .mppretzels-btn--nav {
+  border-radius: 8px !important;
+  padding: 9px 16px !important;
+}
+.mppretzels-root .mppretzels-btn--secondary {
+  background: var(--mpz-bg) !important;
+  color: var(--mpz-ink) !important;
+  border: 1px solid var(--mpz-line-2) !important;
+  border-radius: 10px !important;
+}
+.mppretzels-root .mppretzels-btn--secondary:hover:not(:disabled) {
+  border-color: var(--mpz-amber) !important;
+  color: var(--mpz-ink) !important;
+  background: var(--mpz-bg) !important;
+}
+.mppretzels-root .mppretzels-btn--hero {
+  padding: 13px 24px !important;
+  font-size: var(--text-base) !important;
+}
+/* Ghost square week-pagers in the calendar toolbar */
+.mppretzels-root .mppretzels-btn--chev {
+  width: 28px !important;
+  height: 28px !important;
+  padding: 0 !important;
+  border-radius: 7px !important;
+  background: transparent !important;
+  border: 1px solid transparent !important;
+  color: var(--mpz-ink-2) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+.mppretzels-root .mppretzels-btn--chev:hover:not(:disabled) {
+  background: var(--mpz-bg) !important;
+  border-color: var(--mpz-line) !important;
+  color: var(--mpz-ink) !important;
+}
+.mppretzels-root .mppretzels-btn--chev:disabled {
+  opacity: 0.35 !important;
+}
+/* Gold trust-but-verify "Set a reminder" on the blue banner */
+.mppretzels-root .mppretzels-btn--gold {
+  background: var(--mpz-gold) !important;
+  color: var(--mpz-ink) !important;
+  border: 1px solid var(--mpz-gold) !important;
+  border-radius: 9px !important;
+  padding: 11px 20px !important;
+  font-weight: 800 !important;
+}
+.mppretzels-root .mppretzels-btn--gold:hover:not(:disabled) {
+  background: var(--mpz-gold-dk) !important;
+  border-color: var(--mpz-gold-dk) !important;
+}
+/* Confirmed state — quiet glass on blue, so "done" reads without motion */
+.mppretzels-root .mppretzels-btn--gold-set {
+  background: rgba(255, 255, 255, 0.14) !important;
+  border-color: rgba(255, 255, 255, 0.55) !important;
+  color: #fff !important;
+}
+.mppretzels-root .mppretzels-btn--gold-set:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.22) !important;
+  border-color: #fff !important;
+}
+.mppretzels-root .mppretzels-btn:focus-visible {
+  outline: 2px solid var(--mpz-blue) !important;
+  outline-offset: 2px !important;
+}
+.mppretzels-root .mppretzels-btn--gold:focus-visible,
+.mppretzels-root .mppretzels-btn--gold-set:focus-visible {
+  outline-color: #fff !important;
+}
+
+/* ── Shared kicker (amber uppercase, hero + story) ───────────────────────── */
+.mppretzels-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--mpz-amber);
+  font-weight: 800;
+  margin-bottom: 20px;
+}
+
+/* ── Hero ────────────────────────────────────────────────────────────────── */
+.mppretzels-hero {
+  background: var(--mpz-card);
+}
+.mppretzels-hero__in {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 52px 28px 56px;
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 40px;
+  align-items: center;
+}
+.mppretzels-hero__title {
+  font-size: clamp(34px, 5.2vw, 56px);
+  line-height: 0.98;
+  letter-spacing: -0.02em;
+  font-weight: 900;
+  margin: 0;
+}
+.mppretzels-hero__sub {
+  font-size: var(--text-xl);
+  color: var(--mpz-ink-2);
+  line-height: 1.5;
+  margin: 20px 0 28px;
+  max-width: 440px;
+}
+.mppretzels-hero__cta {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+/* Emoji card floating over the diamond-pattern backdrop — the page's only
+   depth effect (one static soft shadow). */
+.mppretzels-hero__art {
+  position: relative;
+}
+.mppretzels-hero__backdrop {
+  position: absolute;
+  inset: -12px;
+  border-radius: 20px;
+  opacity: 0.9;
+}
+.mppretzels-hero__card {
+  position: relative;
+  background: var(--mpz-card);
+  border: 1px solid var(--mpz-line);
+  border-radius: 16px;
+  padding: 30px;
+  text-align: center;
+  box-shadow: 0 18px 40px -22px rgba(36, 30, 22, 0.4);
+}
+.mppretzels-hero__emoji {
+  font-size: 88px;
+  line-height: 1.1;
+}
+.mppretzels-hero__caption {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--mpz-ink-6);
+  margin-top: 8px;
+}
+
+/* ── Die Speisekarte (menu grid) ─────────────────────────────────────────── */
+.mppretzels-menu {
+  padding: 48px 0 30px;
+  scroll-margin-top: 76px;
+}
+.mppretzels-menu__head {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin-bottom: 22px;
+}
+.mppretzels-h2 {
+  font-size: var(--text-3xl);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+.mppretzels-menu__aside {
+  font-size: var(--text-sm);
+  color: var(--mpz-ink-4);
+}
+.mppretzels-menu__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.mppretzels-menu__card {
+  background: var(--mpz-card);
+  border: 1px solid var(--mpz-line);
+  border-radius: 14px;
+  padding: 18px;
+}
+.mppretzels-menu__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+}
+.mppretzels-menu__name {
+  font-size: var(--text-lg);
+  font-weight: 800;
+}
+.mppretzels-menu__price {
+  font-weight: 900;
+  color: var(--mpz-blue);
+}
+.mppretzels-menu__short {
+  font-size: var(--text-sm);
+  color: var(--mpz-ink-3);
+  line-height: 1.45;
+  margin: 6px 0 0;
+}
+
+/* ── Where we'll be (weekly day-part band calendar) ──────────────────────── */
+.mppretzels-cal {
+  padding: 30px 0;
+  scroll-margin-top: 76px;
+}
+.mppretzels-cal__frame {
+  background: var(--mpz-card);
+  border: 1px solid var(--mpz-line);
+  border-radius: 16px;
+  overflow: hidden;
+}
+.mppretzels-cal__toolbar {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--mpz-line);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.mppretzels-cal__icon {
+  color: var(--mpz-blue);
+  flex: none;
+}
+.mppretzels-cal__title {
+  font-weight: 800;
+}
+.mppretzels-cal__helper {
+  font-size: 12px;
+  color: var(--mpz-ink-4);
+}
+.mppretzels-cal__nav {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--mpz-ink-2);
+}
+.mppretzels-cal__label {
+  font-weight: 600;
+  font-size: var(--text-sm);
+  min-width: 74px;
+  text-align: center;
+}
+
+/* The grid draws its own 1px lines: #EDE7D8 shows through a 1px gap. On
+   narrow screens the whole board scrolls inside its frame instead of
+   crushing seven day columns. */
+.mppretzels-cal__scroll {
+  overflow-x: auto;
+}
+.mppretzels-cal__grid {
+  display: grid;
+  grid-template-columns: 56px repeat(7, minmax(96px, 1fr));
+  background: var(--mpz-grid);
+  gap: 1px;
+  min-width: 740px;
+}
+.mppretzels-cal__corner {
+  background: var(--mpz-bg);
+}
+.mppretzels-cal__dayhead {
+  background: var(--mpz-card);
+  padding: 10px 8px;
+  text-align: center;
+}
+.mppretzels-cal__dow {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--mpz-ink-5);
+}
+.mppretzels-cal__date {
+  font-size: 17px;
+  font-weight: 700;
+  margin-top: 2px;
+}
+/* Declarative today badge — the mockup's imperative paint() hack, retired */
+.mppretzels-cal__date--today {
+  background: var(--mpz-blue);
+  color: #fff;
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  margin: 2px auto 0;
+  display: grid;
+  place-items: center;
+  font-size: 15px;
+  cursor: help;
+}
+.mppretzels-cal__gutter {
+  background: var(--mpz-bg);
+  padding: 12px 6px;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--mpz-ink-5);
+  text-align: center;
+}
+.mppretzels-cal__cell {
+  background: var(--mpz-card);
+  min-height: 92px;
+  padding: 7px;
+}
+
+/* Stop chips: tinted fill + 3px left bar — amber midday, blue evening */
+.mppretzels-chip {
+  display: block;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  text-align: left;
+  border: 0;
+  border-radius: 7px;
+  padding: 8px 9px;
+  cursor: pointer;
+  font-family: inherit;
+}
+.mppretzels-chip--mid {
+  background: var(--mpz-mid-bg);
+  border-left: 3px solid var(--mpz-amber);
+}
+.mppretzels-chip--eve {
+  background: var(--mpz-eve-bg);
+  border-left: 3px solid var(--mpz-blue);
+}
+.mppretzels-chip--mid.mppretzels-chip--active {
+  box-shadow: 0 0 0 2px var(--mpz-amber);
+}
+.mppretzels-chip--eve.mppretzels-chip--active {
+  box-shadow: 0 0 0 2px var(--mpz-blue);
+}
+.mppretzels-chip:focus-visible {
+  outline: 2px solid var(--mpz-blue);
+  outline-offset: 2px;
+}
+.mppretzels-chip__place {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--mpz-ink);
+  line-height: 1.2;
+}
+.mppretzels-chip__hours {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--mpz-ink-2);
+  margin-top: 3px;
+}
+
+/* Selected-stop banner — the one high-saturation block on the page */
+.mppretzels-banner {
+  margin-top: 14px;
+  background: var(--mpz-blue);
+  color: #fff;
+  border-radius: 14px;
+  padding: 18px 22px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.mppretzels-banner__main {
+  flex: 1;
+  min-width: 200px;
+}
+.mppretzels-banner__when {
+  font-size: 12px;
+  color: var(--mpz-banner-sub);
+}
+.mppretzels-banner__place {
+  font-size: 22px;
+  font-weight: 800;
+  margin-top: 2px;
+}
+.mppretzels-banner__note {
+  font-size: var(--text-sm);
+  color: var(--mpz-banner-sub);
+  margin-top: 4px;
+}
+
+/* ── Unsere Geschichte (story + stats) ───────────────────────────────────── */
+.mppretzels-story {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: center;
+  padding: 44px 0;
+  border-top: 1px solid var(--mpz-line);
+  scroll-margin-top: 76px;
+}
+.mppretzels-story__copy .mppretzels-kicker {
+  margin-bottom: 14px;
+}
+.mppretzels-story__title {
+  font-size: 34px;
+  font-weight: 900;
+  line-height: 1.04;
+  margin: 0 0 16px;
+  letter-spacing: -0.01em;
+}
+.mppretzels-story__body {
+  font-size: var(--text-lg);
+  color: var(--mpz-ink-2);
+  line-height: 1.6;
+  margin: 0;
+}
+.mppretzels-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.mppretzels-stat {
+  background: var(--mpz-card);
+  border: 1px solid var(--mpz-line);
+  border-radius: 14px;
+  padding: 18px;
+}
+.mppretzels-stat__v {
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--mpz-blue);
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+}
+.mppretzels-stat__k {
+  font-size: var(--text-sm);
+  color: var(--mpz-ink-3);
+  margin-top: 2px;
+}
+
+/* ── Footer — page ink inverted into a background ────────────────────────── */
+.mppretzels-footer {
+  background: var(--mpz-foot-bg);
+  color: var(--mpz-foot-ink);
+}
+.mppretzels-footer__in {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 32px 28px 20px;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 18px;
+  font-size: var(--text-sm);
+}
+.mppretzels-footer__brand {
+  font-weight: 800;
+  color: #F4F1E7;
+}
+.mppretzels-footer__folio {
+  max-width: 1160px;
+  margin: 0 auto;
+  padding: 0 28px 26px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--mpz-foot-mut);
+}
+
+/* ── Responsive collapse ─────────────────────────────────────────────────── */
+@media (max-width: 960px) {
+  .mppretzels-hero__in {
+    grid-template-columns: 1fr;
+    padding: 44px 28px 48px;
+  }
+  .mppretzels-hero__art {
+    max-width: 420px;
+    width: 100%;
+    margin: 14px auto 0;
+  }
+  .mppretzels-menu__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .mppretzels-story {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+}
+
+@media (max-width: 720px) {
+  .mppretzels-nav {
+    gap: 14px;
+  }
+  .mppretzels-nav__link {
+    display: none;
+  }
+  .mppretzels-menu__grid {
+    grid-template-columns: 1fr;
+  }
+  .mppretzels-cal__toolbar {
+    flex-wrap: wrap;
+  }
+  .mppretzels-cal__nav {
+    margin-left: 28px;
+  }
+  .mppretzels-hero__sub {
+    font-size: var(--text-lg);
+  }
+}

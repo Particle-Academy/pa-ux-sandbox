@@ -1,0 +1,852 @@
+/* ============================================================================
+ * Inspiration Gallery · Mom-n-Pops style 08 — Diner (Burgers)  (light mode)
+ *
+ * Retro-comic burger diner: cream paper (#F6F1E7), diner-red (#D22B2B) header
+ * + footer bands, a navy (#1C2733) hero, mustard (#FFC93C) CTAs, cameo teal
+ * (#4CD7E0) accents, and the signature STICKER system — white cards with a
+ * 2px navy cartoon outline and a hard 4px offset shadow (teal under the stat
+ * cards; the ⌘K palette panel gets 8px so it visibly outranks the cards).
+ * Prices, hours, and kbd hints run in mono. Motion is nearly none — just a
+ * light sticker "press" on buttons and a cream hover tint on palette rows.
+ *
+ * EVERY class is prefixed `mpburgers-`. Most selectors are scoped under
+ * `.mpburgers-root`; the ⌘K palette + tooltip rules are keyed off prefixed
+ * classes directly because the kit PORTALS those surfaces to <body>. All
+ * page z-indexes stay UNDER 30 (the GalleryFrame owns 30+): the sticky red
+ * header sits at 20 and the kit Command overlay (z-50 by default) is
+ * re-pinned to 29.
+ * ========================================================================== */
+
+.mpburgers-root {
+    /* ── Palette ──────────────────────────────────────────────────────────── */
+    --mpb-cream: #f6f1e7;      /* page paper */
+    --mpb-cream-2: #fbf7ee;    /* recessed cream (palette cart bar) */
+    --mpb-tile: #f1e9d8;       /* palette icon tile */
+    --mpb-navy: #1c2733;       /* ink: text, outlines, hard shadows */
+    --mpb-navy-2: #141c25;     /* hero "tonight" card */
+    --mpb-navy-3: #2a3644;     /* dark-card border + kbd token */
+    --mpb-red: #d22b2b;        /* diner red: header, footer, prices, CTA */
+    --mpb-mustard: #ffc93c;    /* secondary CTA, +Add, badges, hero highlight */
+    --mpb-mustard-2: #f5bf2e;  /* mustard hover */
+    --mpb-teal: #4cd7e0;       /* eyebrow script + stat-card shadow */
+    --mpb-tag: #ffe08a;        /* DINER tag on red */
+    --mpb-divider: #e6decd;    /* warm 1px rules inside cards + palette */
+    --mpb-muted: #5a6672;      /* secondary text on cream */
+    --mpb-body: #3a4652;       /* story body text */
+    --mpb-ondark: #b7c2ce;     /* body copy on navy */
+    --mpb-ondark-2: #8a94a2;   /* tonight-card header text */
+    --mpb-ondark-3: #6b7480;   /* tonight-card microcopy */
+    --mpb-mono-dim: #7a8692;   /* mono hours / palette hints */
+
+    --mpb-outline: 2px solid var(--mpb-navy);
+    --mpb-shadow: 4px 4px 0 var(--mpb-navy);
+    --mpb-shadow-teal: 4px 4px 0 var(--mpb-teal);
+    --mpb-shadow-lg: 8px 8px 0 var(--mpb-navy);
+
+    --mpb-font: var(--font-sans, ui-sans-serif, system-ui, sans-serif);
+    --mpb-mono: var(--font-mono, ui-monospace, "SF Mono", Menlo, monospace);
+
+    /* Re-point the kit's semantic tokens so any primitive internals inherit
+       the diner surface instead of zinc defaults. */
+    --fg-1: var(--mpb-navy);
+    --fg-2: var(--mpb-body);
+    --fg-3: var(--mpb-muted);
+    --bg-0: var(--mpb-cream);
+    --bg-1: var(--mpb-cream-2);
+    --surface: #ffffff;
+    --surface-raised: #ffffff;
+    --border-1: var(--mpb-divider);
+    --border-2: var(--mpb-navy);
+    --accent: var(--mpb-red);
+    --accent-hover: var(--mpb-red);
+
+    background: var(--mpb-cream);
+    color: var(--mpb-navy);
+    font-family: var(--mpb-font);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.45;
+}
+
+.mpburgers-root *,
+.mpburgers-root *::before,
+.mpburgers-root *::after {
+    box-sizing: border-box;
+}
+
+.mpburgers-root ::selection {
+    background: var(--mpb-mustard);
+    color: var(--mpb-navy);
+}
+
+/* Shared containment — 1140px column, 28px gutters, like the placard. */
+.mpburgers-container,
+.mpburgers-header-inner,
+.mpburgers-hero-inner,
+.mpburgers-footer-inner,
+.mpburgers-footer-note {
+    max-width: 1140px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 28px;
+    padding-right: 28px;
+}
+
+/* Anchored sections clear the GalleryFrame (43px) + sticky header (~50px). */
+.mpburgers-root [id] {
+    scroll-margin-top: 132px;
+}
+
+/* Visually-hidden live region for cart announcements. */
+.mpburgers-sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* ═══ Checkerboard strip ═══════════════════════════════════════════════════ */
+.mpburgers-checker {
+    height: 22px;
+    background: repeating-conic-gradient(
+            var(--mpb-navy) 0deg 90deg,
+            var(--mpb-cream) 90deg 180deg
+        )
+        0 0 / 22px 22px;
+}
+
+/* ═══ Sticky red header ════════════════════════════════════════════════════ */
+.mpburgers-header {
+    background: var(--mpb-red);
+    color: #fff;
+    position: sticky;
+    top: 42px; /* tucks under the 43px GalleryFrame */
+    z-index: 20;
+}
+.mpburgers-header-inner {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+}
+.mpburgers-wordmark {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 10px;
+    color: #fff;
+}
+.mpburgers-wordmark-name {
+    font-weight: 900;
+    font-size: 22px;
+    font-style: italic;
+    letter-spacing: -0.01em;
+}
+
+/* Badge → the DINER tag: bare gold caps riding the wordmark baseline. */
+.mpburgers-root .mpburgers-tag {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    color: var(--mpb-tag) !important;
+    font-family: var(--mpb-font) !important;
+    font-size: 12px !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.06em !important;
+}
+
+.mpburgers-nav {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    font-size: var(--text-sm, 0.875rem);
+    font-weight: 600;
+}
+.mpburgers-nav > a {
+    color: #fff;
+    text-decoration: none;
+}
+.mpburgers-nav > a:hover {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-thickness: 2px;
+}
+
+/* Button → the translucent "Quick order ⌘K" chip advertised in the chrome. */
+.mpburgers-root .mpburgers-chip,
+.mpburgers-root .mpburgers-chip:not(:disabled) {
+    background: rgba(255, 255, 255, 0.16) !important;
+    border: 0 !important;
+    border-radius: 8px !important;
+    box-shadow: none !important;
+    color: #fff !important;
+    font-family: var(--mpb-font) !important;
+    font-size: var(--text-sm, 0.875rem) !important;
+    font-weight: 600 !important;
+    padding: 7px 12px !important;
+    transition: background 120ms ease, transform 90ms ease;
+}
+.mpburgers-root .mpburgers-chip:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.26) !important;
+}
+.mpburgers-root .mpburgers-chip:active:not(:disabled) {
+    transform: translateY(1px);
+}
+.mpburgers-root .mpburgers-chip [data-react-fancy-button-label] {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+}
+.mpburgers-chip-kbd {
+    font-family: var(--mpb-mono);
+    font-size: 11px;
+    opacity: 0.8;
+}
+.mpburgers-chip-count {
+    display: inline-grid;
+    place-items: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+    border-radius: 999px;
+    background: var(--mpb-mustard);
+    color: var(--mpb-navy);
+    font-family: var(--mpb-mono);
+    font-size: 11px;
+    font-weight: 800;
+}
+
+/* ═══ Hero — navy band ═════════════════════════════════════════════════════ */
+.mpburgers-hero {
+    background: var(--mpb-navy);
+    color: #fff;
+}
+.mpburgers-hero-inner {
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: 40px;
+    align-items: center;
+    padding-top: 56px;
+    padding-bottom: 60px;
+}
+.mpburgers-eyebrow {
+    color: var(--mpb-teal);
+    font-family: Georgia, "Times New Roman", serif;
+    font-style: italic;
+    font-size: 24px;
+    margin-bottom: 12px;
+}
+.mpburgers-display {
+    margin: 0;
+    font-size: clamp(40px, 6vw, 62px);
+    line-height: 0.96;
+    letter-spacing: -0.02em;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+.mpburgers-display-hi {
+    color: var(--mpb-mustard);
+}
+.mpburgers-lede {
+    font-size: var(--text-xl, 1.25rem);
+    color: var(--mpb-ondark);
+    line-height: 1.5;
+    margin: 20px 0 26px;
+    max-width: 440px;
+}
+.mpburgers-kbd {
+    font-family: var(--mpb-mono);
+    font-size: 0.9em;
+    background: var(--mpb-navy-3);
+    color: #fff;
+    padding: 1px 7px;
+    border-radius: 5px;
+    white-space: nowrap;
+}
+.mpburgers-hero-cta {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+/* Button → hero CTAs: solid blocks, uppercase 800, tiny press. */
+.mpburgers-root .mpburgers-btn,
+.mpburgers-root .mpburgers-btn:not(:disabled) {
+    border: 0 !important;
+    border-radius: 8px !important;
+    box-shadow: none !important;
+    padding: 13px 24px !important;
+    font-family: var(--mpb-font) !important;
+    font-weight: 800 !important;
+    font-size: 1rem !important;
+    letter-spacing: 0.03em !important;
+    text-transform: uppercase !important;
+    text-decoration: none !important;
+    transition: transform 90ms ease, filter 120ms ease;
+}
+.mpburgers-root .mpburgers-btn:hover:not(:disabled) {
+    filter: brightness(1.06);
+}
+.mpburgers-root .mpburgers-btn:active:not(:disabled) {
+    transform: translate(1px, 2px);
+}
+.mpburgers-root .mpburgers-btn--red,
+.mpburgers-root .mpburgers-btn--red:not(:disabled) {
+    background: var(--mpb-red) !important;
+    color: #fff !important;
+}
+.mpburgers-root .mpburgers-btn--yellow,
+.mpburgers-root .mpburgers-btn--yellow:not(:disabled) {
+    background: var(--mpb-mustard) !important;
+    color: var(--mpb-navy) !important;
+}
+.mpburgers-root .mpburgers-btn--yellow:hover:not(:disabled) {
+    background: var(--mpb-mustard-2) !important;
+    filter: none;
+}
+
+/* Card → the live "tonight" status panel (dark, 1px border, no sticker). */
+.mpburgers-root .mpburgers-tonight {
+    background: var(--mpb-navy-2) !important;
+    border: 1px solid var(--mpb-navy-3) !important;
+    border-radius: 16px !important;
+    box-shadow: none !important;
+    overflow: hidden;
+    color: #fff;
+}
+.mpburgers-root .mpburgers-tonight-head {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 13px 18px;
+    border-bottom: 1px solid var(--mpb-navy-3) !important;
+    font-size: var(--text-sm, 0.875rem);
+    color: var(--mpb-ondark-2);
+}
+.mpburgers-root .mpburgers-tonight-head svg {
+    flex-shrink: 0;
+}
+.mpburgers-root .mpburgers-tonight-body {
+    padding: 16px 18px;
+}
+.mpburgers-tonight-note {
+    font-size: 12px;
+    color: var(--mpb-ondark-3);
+    margin-bottom: 10px;
+}
+.mpburgers-hot {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.mpburgers-hot-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 0;
+    border-bottom: 1px solid #222c36;
+}
+.mpburgers-hot-row:last-child {
+    border-bottom: 0;
+}
+.mpburgers-hot-icon {
+    font-size: 16px;
+}
+.mpburgers-hot-name {
+    flex: 1;
+    font-size: var(--text-sm, 0.875rem);
+}
+.mpburgers-hot-price {
+    font-family: var(--mpb-mono);
+    color: var(--mpb-mustard);
+}
+
+/* ═══ Menu grid — "Order up!" ══════════════════════════════════════════════ */
+.mpburgers-menu {
+    padding: 52px 0 30px;
+}
+.mpburgers-menu-head {
+    text-align: center;
+    margin-bottom: 26px;
+}
+.mpburgers-h2 {
+    font-size: clamp(30px, 4.5vw, 44px);
+    font-weight: 900;
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+    color: var(--mpb-navy);
+}
+.mpburgers-menu-sub {
+    font-size: var(--text-sm, 0.875rem);
+    color: var(--mpb-muted);
+    margin-top: 4px;
+}
+.mpburgers-menu-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+}
+
+/* Card → menu sticker: 2px navy outline + hard 4px offset shadow. */
+.mpburgers-root .mpburgers-menu-card {
+    background: #fff !important;
+    border: var(--mpb-outline) !important;
+    border-radius: 16px !important;
+    box-shadow: var(--mpb-shadow) !important;
+    transition: transform 120ms ease, box-shadow 120ms ease;
+}
+.mpburgers-root .mpburgers-menu-card:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 var(--mpb-navy) !important;
+}
+.mpburgers-root .mpburgers-menu-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    height: 100%;
+    padding: 18px;
+}
+.mpburgers-menu-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.mpburgers-menu-emoji {
+    font-size: 26px;
+    line-height: 1;
+}
+.mpburgers-menu-price {
+    font-size: var(--text-lg, 1.125rem);
+    font-weight: 900;
+    color: var(--mpb-red);
+}
+.mpburgers-menu-name {
+    font-size: var(--text-lg, 1.125rem);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+}
+.mpburgers-menu-short {
+    font-size: var(--text-sm, 0.875rem);
+    color: var(--mpb-muted);
+    line-height: 1.45;
+    margin: 0;
+    flex: 1;
+}
+
+/* Button → "+ Add": mustard sticker button repeating the 2px outline. */
+.mpburgers-root .mpburgers-add,
+.mpburgers-root .mpburgers-add:not(:disabled) {
+    width: 100%;
+    justify-content: center !important;
+    background: var(--mpb-mustard) !important;
+    border: var(--mpb-outline) !important;
+    border-radius: 9px !important;
+    box-shadow: none !important;
+    color: var(--mpb-navy) !important;
+    font-family: var(--mpb-font) !important;
+    font-weight: 800 !important;
+    font-size: var(--text-sm, 0.875rem) !important;
+    padding: 8px !important;
+    transition: background 120ms ease, transform 90ms ease;
+}
+.mpburgers-root .mpburgers-add:hover:not(:disabled) {
+    background: var(--mpb-mustard-2) !important;
+}
+.mpburgers-root .mpburgers-add:active:not(:disabled) {
+    transform: translate(1px, 1px);
+}
+
+/* ═══ Story + stats ════════════════════════════════════════════════════════ */
+.mpburgers-story {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: center;
+    padding: 44px 0;
+}
+.mpburgers-h2--left {
+    text-align: left;
+    font-size: clamp(26px, 3.2vw, 34px);
+    line-height: 1.02;
+    letter-spacing: -0.01em;
+    margin: 0 0 16px;
+}
+
+/* Badge → the OUR STORY pill (999px radius, mustard). */
+.mpburgers-root .mpburgers-story-pill {
+    display: inline-block;
+    background: var(--mpb-mustard) !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    box-shadow: none !important;
+    color: var(--mpb-navy) !important;
+    font-family: var(--mpb-font) !important;
+    font-weight: 900 !important;
+    font-size: 11px !important;
+    letter-spacing: 0.14em !important;
+    padding: 5px 12px !important;
+    margin-bottom: 14px;
+}
+.mpburgers-story-body {
+    font-size: var(--text-lg, 1.125rem);
+    color: var(--mpb-body);
+    line-height: 1.6;
+    margin: 0;
+}
+
+.mpburgers-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+/* Card → stat sticker: same outline, TEAL shadow variant (the system's
+   one-swap trick), red 900 value + muted key. */
+.mpburgers-root .mpburgers-stat {
+    background: #fff !important;
+    border: var(--mpb-outline) !important;
+    border-radius: 14px !important;
+    box-shadow: var(--mpb-shadow-teal) !important;
+    transition: transform 120ms ease, box-shadow 120ms ease;
+}
+.mpburgers-root .mpburgers-stat:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 var(--mpb-teal) !important;
+}
+.mpburgers-root .mpburgers-stat--lock {
+    cursor: help;
+}
+.mpburgers-root .mpburgers-stat-body {
+    padding: 18px;
+}
+.mpburgers-stat-v {
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--mpb-red);
+    line-height: 1.1;
+}
+.mpburgers-stat-k {
+    font-size: var(--text-sm, 0.875rem);
+    color: var(--mpb-muted);
+    margin-top: 2px;
+}
+
+/* Tooltip (portaled) → navy block, cream mono text, sticker shadow. */
+.mpburgers-tip {
+    background: var(--mpb-navy, #1c2733) !important;
+    color: #f6f1e7 !important;
+    border: 0 !important;
+    border-radius: 8px !important;
+    box-shadow: 3px 3px 0 rgba(28, 39, 51, 0.35) !important;
+    font-family: var(--font-mono, ui-monospace, monospace) !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    max-width: 260px;
+}
+
+/* ═══ Schedule — find the truck ════════════════════════════════════════════ */
+.mpburgers-find {
+    padding: 20px 0 56px;
+}
+.mpburgers-h3 {
+    font-size: var(--text-2xl, 1.5rem);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    margin: 0 0 18px;
+    color: var(--mpb-navy);
+}
+
+/* Card → the schedule placard: one sticker, rows as internal dividers. */
+.mpburgers-root .mpburgers-sched {
+    background: #fff !important;
+    border: var(--mpb-outline) !important;
+    border-radius: 14px !important;
+    box-shadow: none !important;
+    overflow: hidden;
+}
+.mpburgers-sched-row {
+    display: grid;
+    grid-template-columns: 130px 1fr auto;
+    gap: 16px;
+    align-items: center;
+    padding: 14px 22px;
+    border-bottom: 1px solid var(--mpb-divider);
+}
+.mpburgers-sched-row:last-child {
+    border-bottom: 0;
+}
+.mpburgers-sched-day {
+    font-weight: 800;
+    text-transform: uppercase;
+}
+.mpburgers-sched-place {
+    color: var(--mpb-body);
+}
+.mpburgers-sched-hours {
+    font-family: var(--mpb-mono);
+    font-size: var(--text-sm, 0.875rem);
+    color: var(--mpb-mono-dim);
+}
+
+/* ═══ Footer — red band ════════════════════════════════════════════════════ */
+.mpburgers-footer {
+    background: var(--mpb-red);
+    color: #fff;
+}
+.mpburgers-footer-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 18px;
+    padding-top: 32px;
+    padding-bottom: 18px;
+    font-size: var(--text-sm, 0.875rem);
+}
+.mpburgers-footer-mark {
+    font-weight: 900;
+    font-style: italic;
+}
+.mpburgers-footer-note {
+    padding-bottom: 26px;
+    font-family: var(--mpb-mono);
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.72);
+    letter-spacing: 0.02em;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   ⌘K quick-order palette — react-fancy Command restyled to the sticker look.
+   The kit PORTALS the overlay to <body>, so these rules key off the prefixed
+   panel class (never bare elements). The wrapper/backdrop have no className
+   hook — :has(> .mpburgers-cmdk) reaches them safely.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* Overlay wrapper: kit ships fixed inset-0 z-50 pt-[20vh] — re-pin under the
+   GalleryFrame (30) and match the mockup's 13vh drop. */
+div:has(> .mpburgers-cmdk) {
+    z-index: 29 !important;
+    padding-top: 13vh !important;
+}
+/* Backdrop: warm near-black dim, no blur (the mockup's flat scrim). */
+div:has(> .mpburgers-cmdk) > div[aria-hidden="true"] {
+    background: rgba(10, 15, 20, 0.55) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+/* Panel: the boldest sticker on the page — 8px offset shadow beats the 4px
+   cards, visually "lifting" the palette above everything. */
+.mpburgers-cmdk {
+    width: 560px !important;
+    max-width: 92vw !important;
+    background: #fff !important;
+    border: 2px solid #1c2733 !important;
+    border-radius: 14px !important;
+    box-shadow: 8px 8px 0 #1c2733 !important;
+    font-family: var(--font-sans, ui-sans-serif, system-ui, sans-serif);
+    color: #1c2733;
+}
+/* mono "esc to close" hint pinned over the input row's right edge. */
+.mpburgers-cmdk::after {
+    content: "esc to close";
+    position: absolute;
+    top: 17px;
+    right: 18px;
+    font-family: var(--font-mono, ui-monospace, monospace);
+    font-size: 11px;
+    color: #7a8692;
+    pointer-events: none;
+}
+
+/* Input row: warm divider, dim search icon, roomy 600-weight field. */
+.mpburgers-cmdk [data-react-fancy-command-input] {
+    border-bottom: 1px solid #e6decd !important;
+    padding-left: 18px !important;
+    padding-right: 18px !important;
+}
+.mpburgers-cmdk [data-react-fancy-command-input] svg {
+    color: #7a8692 !important;
+}
+.mpburgers-cmdk [data-react-fancy-command-input] input {
+    font-size: var(--text-lg, 1.125rem) !important;
+    font-weight: 600 !important;
+    color: #1c2733 !important;
+    padding-top: 13px !important;
+    padding-bottom: 13px !important;
+    padding-right: 88px !important; /* clear the esc hint */
+}
+.mpburgers-cmdk [data-react-fancy-command-input] input::placeholder {
+    color: #7a8692 !important;
+    font-weight: 500 !important;
+}
+
+/* List: mockup's 320px scroll region. */
+.mpburgers-cmdk .mpburgers-cmdk-list {
+    max-height: 320px !important;
+    padding: 8px !important;
+}
+
+/* Rows: icon tile + name/short + red mono price; cream hover tint. */
+.mpburgers-cmdk-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 11px 12px;
+    border: 0;
+    border-radius: 9px;
+    background: transparent;
+    text-align: left;
+    cursor: pointer;
+    font-family: inherit;
+    color: #1c2733;
+    transition: background 100ms ease;
+}
+.mpburgers-cmdk-row:hover,
+.mpburgers-cmdk-row:focus-visible {
+    background: #f6f1e7;
+}
+.mpburgers-cmdk-row:active {
+    background: #f1e9d8;
+}
+.mpburgers-cmdk-tile {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    background: #f1e9d8;
+    display: grid;
+    place-items: center;
+    font-size: 15px;
+    flex-shrink: 0;
+}
+.mpburgers-cmdk-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+.mpburgers-cmdk-name {
+    font-weight: 700;
+    font-size: 0.95rem;
+    line-height: 1.3;
+}
+.mpburgers-cmdk-short {
+    font-size: 12px;
+    color: #7a8692;
+    line-height: 1.35;
+}
+.mpburgers-cmdk-price {
+    font-family: var(--font-mono, ui-monospace, monospace);
+    color: #d22b2b;
+    font-weight: 700;
+    white-space: nowrap;
+}
+.mpburgers-cmdk-empty {
+    padding: 22px 12px;
+    text-align: center;
+    font-size: var(--text-sm, 0.875rem);
+    color: #7a8692;
+}
+
+/* Cart footer bar — appears once the order has items (mini-cart). */
+.mpburgers-cmdk-cart {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 18px;
+    border-top: 1px solid #e6decd;
+    background: #fbf7ee;
+}
+.mpburgers-cmdk-cart-count {
+    font-size: var(--text-sm, 0.875rem);
+    color: #3a4652;
+}
+.mpburgers-cmdk-cart-total {
+    font-weight: 800;
+    font-family: var(--font-mono, ui-monospace, monospace);
+    color: #1c2733;
+}
+
+/* ═══ Focus visibility — teal ring on the cream/red/navy surfaces ══════════ */
+.mpburgers-root a:focus-visible,
+.mpburgers-root button:focus-visible,
+.mpburgers-cmdk button:focus-visible,
+.mpburgers-cmdk input:focus-visible {
+    outline: 3px solid #4cd7e0;
+    outline-offset: 2px;
+    box-shadow: none !important;
+}
+
+/* ═══ Responsive ═══════════════════════════════════════════════════════════ */
+@media (max-width: 980px) {
+    .mpburgers-hero-inner {
+        grid-template-columns: 1fr;
+        gap: 28px;
+        padding-top: 44px;
+        padding-bottom: 46px;
+    }
+    .mpburgers-menu-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .mpburgers-story {
+        grid-template-columns: 1fr;
+        gap: 28px;
+    }
+}
+@media (max-width: 900px) {
+    /* The GalleryFrame wraps taller on narrow screens — release the header
+       from sticking so the two chromes never overlap. */
+    .mpburgers-header {
+        position: static;
+    }
+    .mpburgers-root [id] {
+        scroll-margin-top: 96px;
+    }
+}
+@media (max-width: 640px) {
+    .mpburgers-container,
+    .mpburgers-header-inner,
+    .mpburgers-hero-inner,
+    .mpburgers-footer-inner,
+    .mpburgers-footer-note {
+        padding-left: 18px;
+        padding-right: 18px;
+    }
+    .mpburgers-nav > a {
+        display: none; /* the chip (and the frame) still navigate */
+    }
+    .mpburgers-menu-grid {
+        grid-template-columns: 1fr;
+    }
+    .mpburgers-sched-row {
+        grid-template-columns: 96px 1fr auto;
+        gap: 10px;
+        padding: 12px 16px;
+    }
+    .mpburgers-footer-inner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+}
+
+/* ═══ Reduced motion ═══════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+    .mpburgers-root *,
+    .mpburgers-cmdk,
+    .mpburgers-cmdk * {
+        transition: none !important;
+        animation: none !important;
+    }
+}

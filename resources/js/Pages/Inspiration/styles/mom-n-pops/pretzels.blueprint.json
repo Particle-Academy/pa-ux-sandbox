@@ -1,0 +1,80 @@
+{
+  "id": "pretzels",
+  "collection": "mom-n-pops",
+  "name": "Brezeln",
+  "cuisine": "Pretzels",
+  "surface": "Calendar",
+  "note": "Bavarian blue-and-cream biergarten board with a week-band calendar.",
+  "mode": "light",
+  "thesis": "A pretzel truck as a refined biergarten menu-board: warm parchment under crisp white panels, dark coffee-brown ink set at weight 900 with tight tracking, and a restrained two-hue system — Bavarian blue for money and action, pretzel amber for kickers and the midday service window. The signature move is a pure-CSS Bavarian rautenmuster (diamond flag pattern) worn as an 18px page ribbon and the hero card's backdrop, and the product IS the schedule: the truck follows the beer gardens, so a day-part week calendar sits mid-page as the star surface. Quiet hairlines, generous white space, one soft shadow, essentially zero motion.",
+  "tokens": {
+    "bg": "#F4F1E7 warm parchment page; #fff for the header, hero band, and every card/panel; calendar gap-lines #EDE7D8; chip tints #FBEFD8 (midday) / #E1ECF6 (evening); footer #241E16 — the fg token inverted into a background",
+    "fg": "#241E16 dark coffee-brown ink; secondary #5A5040; muted ramp #6E634E / #9A8E76 / #9A8E74 / #8A7E64; footer text #C8BDA4 on #241E16",
+    "accent": "#1C6BB0 Bavarian blue (hover #175C99) — BREZELN tag, nav pill, primary CTAs, menu prices, calendar icon, evening chip bars, today badge, the selected-stop banner, stat values, and the diamond-pattern base; supporting hues: #C6873A pretzel amber (uppercase kickers + midday chip bars) and #F0C64B gold reserved for the single 'Set a reminder' action; banner secondary text #CDE0F1",
+    "fontDisplay": "var(--font-sans) (Geist) at weight 900 with -0.02em tracking; h1 clamps to 56px at line-height 0.98, story h2 34px/1.04 — no serif anywhere, the register is heavy sans on parchment",
+    "fontMono": "var(--font-mono) (Geist Mono) used surgically: the hero card caption, the calendar's time-band gutter labels ('11–3', '3–9'), event-chip hours, and the footer folio — mono means timetable",
+    "radius": "soft and quiet: 16px section/calendar frames, 14px cards + banner, 10px hero buttons, 9px reminder button, 8px nav pill, 7px calendar chips, 20px pattern backdrop, 50% today badge",
+    "border": "1px solid #E0D9C7 hairlines everywhere (cards, header rule, calendar frame, story top rule); #DAD3C2 on the secondary hero button; the calendar grid draws its own 1px lines via a #EDE7D8 background showing through a 1px grid gap; chips carry a 3px solid left bar (#C6873A midday, #1C6BB0 evening)",
+    "motion": "none — zero transitions and zero keyframes; hovers swap colors instantly, anchors jump, and the single box-shadow (hero card, 0 18px 40px -22px rgba(36,30,22,0.4)) is static. Calm is the brand."
+  },
+  "layout": "Full-bleed single column opening with an 18px Bavarian diamond ribbon (four 45deg-family white linear-gradients on a 28px tile over #1C6BB0), then a sticky white hairline header (wordmark + letterspaced blue BREZELN tag left; anchor nav + solid blue 'Find the truck' pill right, z-index under the gallery frame). A white hero band runs a 1.05fr/0.95fr grid: copy left (amber kicker, 56px/900 headline, subcopy that motivates the calendar, blue + cream-outline CTAs), and right an 88px pretzel-emoji card on white hairline floating over an inset -12px diamond-pattern backdrop — the page's only depth. A 1160px container (28px side padding) then holds: the 3x2 'Die Speisekarte' menu grid, the full-width week-calendar frame (toolbar + 56px-gutter/7-column band grid + conditional blue selection banner), and a 2-col story/stats split over a hairline top rule. A dark coffee-brown footer bookends the parchment. Section rhythm: 52/48/30/44px vertical padding; the register is refined biergarten-menu, never loud street-food.",
+  "sections": [
+    {
+      "name": "bavarian diamond ribbon",
+      "what": "An 18px full-width strip of the rautenmuster — the blue-and-white Bavarian flag rendered in pure CSS (four linear-gradients at 45/135/225/315deg with 25% white stops, background-size 28px 28px, offset positions 14px 0 / 0 0 on #1C6BB0).",
+      "components": [],
+      "restyle": "A tiny reusable pattern utility class (.mppretzels-rauten) applied to both the ribbon and the hero backdrop — an instant Bavarian reference with zero images."
+    },
+    {
+      "name": "sticky header",
+      "what": "White bar with a 1px #E0D9C7 bottom rule, sticky at top: 'Mom-n-Pops' at 900 weight beside a letterspaced blue 'BREZELN' caps tag (links to the collection hub), then anchor nav (Menu / Where we'll be / Story) and a solid blue 'Find the truck' pill.",
+      "components": ["Badge", "Button", "Link"],
+      "restyle": "Badge stripped of fill/border/padding to a flush 12px/800 letterspaced blue caps cuisine tag; Button squeezed to an 8px-radius 9px/16px blue pill; nav items are plain in-page anchors (the mockup's window.scrollBy handlers replaced by href anchors + scroll-margin-top on the target sections). Header z-index stays under 30 so the gallery frame wins."
+    },
+    {
+      "name": "hero",
+      "what": "White band, 2-col grid. Left: amber uppercase kicker 'Hand-rolled · Milwaukee · seit 2026', the 56px/0.98/900 headline 'Big soft pretzels, twisted by hand.', subcopy selling the lye dip and ending 'We follow the beer gardens — check the calendar.', and two CTAs — solid blue 'See the menu', cream-bordered 'This week's stops'. Right: a white hairline card with an 88px pretzel emoji and a mono caption, floating over an absolutely-positioned inset:-12px diamond-pattern backdrop (20px radius, opacity 0.9) with the page's single soft shadow.",
+      "components": ["Button"],
+      "restyle": "Buttons flattened to quiet 10px-radius rectangles: primary = Bavarian-blue fill darkening on hover; secondary = parchment fill + #DAD3C2 hairline whose border warms to amber on hover. The layered pattern-behind-card composition is hand-rolled CSS; the copy explicitly motivates the calendar surface below."
+    },
+    {
+      "name": "die speisekarte (menu grid)",
+      "what": "Bilingual heading ('Die Speisekarte' at 900 with a muted '— the menu' aside) over a 3x2 grid of white hairline cards: item name at 800 left, blue 900-weight price right, one-line grey description below. Six items, $5–$9, classic-to-Obatzda.",
+      "components": [],
+      "restyle": "The quietest section — deliberately zero primitives, zero icons, zero imagery; pure typographic menu-card discipline (white card, 1px #E0D9C7, 14px radius, 18px padding). The German/English pairing repeats in the story section."
+    },
+    {
+      "name": "where we'll be (week-band calendar)",
+      "what": "The star surface: a white 16px-radius framed week calendar. Toolbar with a blue lucide CalendarDays icon, title, dynamic helper ('This week · Jul 7–13 · tap a stop for details'), and chevron week-pagers flanking the week label. Below, a CSS grid of 56px + 7 columns with 1px #EDE7D8 gap-lines: a day-header row (uppercase dow + date, today painted as a 26px blue circle badge), then two time-band rows gutter-labeled '11–3' and '3–9' in mono. Stops render as clickable chips (tinted fill, 3px left bar, 700-weight place, mono hours) in min-height:92px cells; empty cells stay blank white. It is a day-part band grid — two service windows — NOT an hour agenda.",
+      "components": ["Button", "Tooltip"],
+      "restyle": "The band grid is hand-rolled (react-fancy's Calendar is a date picker, wrong shape for a two-band week board): stops are controlled JSON events {place, hours, note} on {dow, band} slots, selection is plain useState, and every chip carries a stable data-stop=\"week:dow:band\" handle plus the frame a data-week handle for MCP bridging. The mockup's inert chevrons become ghost square Buttons paging a three-week schedule array (selection clears on page); the mockup's imperative paint() today-hack becomes a declarative today flag on the data with a Tooltip ('Heute — the oven rests on Mondays') on the 26px blue circle. Midday chips wear #FBEFD8 fill / #C6873A bar, evening #E1ECF6 / #1C6BB0 — color-coding the two service windows."
+    },
+    {
+      "name": "selected-stop banner",
+      "what": "Appears below the calendar only when a chip is selected: a solid #1C6BB0 rounded banner with 'Fri 11 · 5–9' in pale #CDE0F1, the venue at 22px/800 white, the stop note, and a gold 'Set a reminder' button — the one high-saturation block on the page, promoting a calendar cell into a call to action.",
+      "components": ["Button"],
+      "restyle": "Button worn as the gold #F0C64B / 9px-radius / 800-weight action; the mockup's inert affordance becomes a trust-but-verify toggle — clicking stages the reminder per stop (keyed week:dow:band) and the button flips to a quiet white-glass 'Reminder set — see you there' state on the blue. Banner carries data-selected-stop for agent reads."
+    },
+    {
+      "name": "unsere geschichte (story + stats)",
+      "what": "2-col split over a 1px top rule. Left: amber kicker 'Unsere Geschichte', 34px/900 headline 'Milwaukee loves a beer garden. We brought the pretzels.', and the family narrative — Sal's old-Milwaukee German family, the recipe off his grandfather's handwritten card, Rosa perfecting the lye dip, small warm batches. Right: a 2x2 grid of white stat cards with blue 28px/900 values: 'by hand / every twist', 'lye-dipped / real mahogany shell', '2026 / est. Milwaukee', '3 / beer gardens / wk'.",
+      "components": [],
+      "restyle": "Hand-rolled stat cards where two of the four 'numbers' are words ('by hand', 'lye-dipped') — the stat-card primitive repurposed as brand-voice badges; '3 beer gardens / wk' ties the stats back to the calendar surface."
+    },
+    {
+      "name": "footer",
+      "what": "Dark #241E16 bar with cream text: 'Mom-n-Pops Brezeln' wordmark in #F4F1E7, obfuscated email (hello<span>@</span>momnpops.truck) + '@momnpops.mke', '© 2026 · Milwaukee', and a small mono demo-folio line.",
+      "components": [],
+      "restyle": "A tidy two-token bookend — the page's ink color inverted into a background against the parchment; all hand-rolled."
+    }
+  ],
+  "palette": [
+    { "component": "Button", "restyle": "Quiet Bavarian rectangles, transitions off (motion: none is the brand). Four reads: primary = #1C6BB0 fill, 10px radius (8px in the nav), darkening to #175C99 on hover; secondary = parchment #F4F1E7 fill + #DAD3C2 hairline, border warming to amber on hover; chevron week-pager = 28px ghost square with a hairline that appears on hover, 0.35 opacity when the schedule runs out; reminder = gold #F0C64B, 9px radius, weight 800, flipping to white-glass-on-blue once staged." },
+    { "component": "Badge", "restyle": "Stripped entirely — no fill, no border, no padding — leaving a flush 12px/800 letterspaced #1C6BB0 caps label: the 'BREZELN' cuisine tag beside the wordmark." },
+    { "component": "Tooltip", "restyle": "One deployment: fine print on the today badge ('Heute — the oven rests on Mondays'), cursor:help on the 26px blue circle; the library portals it above the page with its own layer." },
+    { "component": "Link (Inertia)", "restyle": "Only the brand lockup — ink wordmark + blue Badge tag back to the collection hub; everything else is in-page anchors that darken on hover, no underlines." },
+    { "component": "Calendar (deliberately not used)", "restyle": "The week surface is hand-rolled because the design is a day-part band grid (56px mono gutter + 7 columns x 2 service windows), not a date picker or hour agenda — model stops as controlled JSON events on {day, band} slots with band-driven chip tints, and keep stable data-stop/data-week handles so an MCP bridge can read and drive selection." }
+  ],
+  "contentArchetype": "A roaming food truck whose schedule IS the product: hero promise ('Big soft pretzels, twisted by hand.') ending in 'we follow the beer gardens — check the calendar', a six-item bilingual priced menu (Classic Soft Pretzel $5 → Bratwurst Pretzel Bun $9, Obatzda & Pretzel $8), a week-band calendar of Milwaukee beer-garden stops (Estabrook, Hubbard Park, Brady Street, Third Ward Riverwalk lunch + happy hour, S. Shore sunset pretzels, Humboldt Park bandshell) with tap-for-details selection and a staged reminder, a family story with German garnish (Sal's grandfather's handwritten recipe card, Rosa's lye dip, seit 2026), four brand-voice stats, and a dark one-line contact footer.",
+  "remix": "Swap the Bavarian blue + amber for any national-flag pair (Italian green/red trattoria, Swedish blue/yellow konditori) and regenerate the CSS diamond pattern in the new base color to reskin the whole truck. The load-bearing moves: (1) a pure-CSS flag/pattern utility worn twice — page ribbon + hero-card backdrop — as the entire art system; (2) a two-hue discipline where the cool hue owns money/action/selection and the warm hue owns kickers plus one of the two time bands; (3) the day-part band grid — gutter-labeled service windows instead of an hour agenda — with 3px left-bar chips color-coded by band and selection promoted into a full-width saturated banner; (4) weight-900 tight-tracked sans on parchment with mono reserved strictly for hours; (5) motion: none — hairlines and white space carry the polish. Blend toward 'editorial' by trading the sans for a serif and letting the hairline rules go heavy; blend toward a data surface by growing the week grid into a real multi-resource scheduler (bands → resources) — the {day, band} event model already fits. Any Fancy primitive joins by dropping its chrome to a 1px #E0D9C7 hairline, taking a 7–16px radius, and asking the blue for permission before using color."
+}

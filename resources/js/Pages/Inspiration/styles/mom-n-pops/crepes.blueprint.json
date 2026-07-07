@@ -1,0 +1,85 @@
+{
+    "id": "crepes",
+    "name": "Crêperie",
+    "cuisine": "Crêpes",
+    "surface": "Chalkboard",
+    "mode": "dark",
+    "thesis": "A hand-chalked Parisian menu board transplanted to Milwaukee: one deep olive-charcoal slate, warm-ivory chalk type in carefully muted tiers, and a single antique-gold accent that does every job — eyebrows, prices, italic keywords, the primary CTA, and the dashed 'chalk rectangle' frames that are the page's whole decorative vocabulary. Zero photography, zero motion; the charm is typographic discipline and bilingual French/English voice.",
+    "tokens": {
+        "bg": "#22271F — a single full-bleed olive-charcoal slate, warmed by the faintest radial chalk-dust wash (ivory at 3%, gold at 4%) so it reads as board, not void",
+        "fg": "#F1EDE2 warm-ivory chalk for headings and day names, stepping down through #C6C2B4 (body), #B8B4A6 (nav, places), #A6A296 (menu descriptions), #8F8B7E (mono meta, tags) — five deliberate tiers of fading chalk",
+        "accent": "#D4AF37 antique gold, used at full strength for eyebrows/prices/italic keywords/solid CTA, and at rgba 0.5/0.4 for the two dashed chalk frames; no second accent exists",
+        "fontDisplay": "Georgia, 'Times New Roman', serif — literal stack, not the design-system serif var; weight 400 throughout (700 only on the wordmark), heavily italic: eyebrows, kickers, prices, La Carte, and the section headings are all italic",
+        "fontMono": "var(--font-mono) locked to 12px for meta lines only — hours, 'Milwaukee · 9h–20h', the emoji-card caption, the footer note",
+        "radius": "6px on everything that has a corner (CTAs, both dashed frames); 999px solely on the tiny sucrée/salée/vegan tag pills",
+        "border": "the whole texture system: 1px solid rgba(241,237,226,0.16) section/header/footer hairlines, 2px dashed rgba(212,175,55,0.5)/0.4 chalk frames, 1px dashed rgba(241,237,226,0.2) menu row rules, 1px dotted rgba(241,237,226,0.3) price leaders, 1px solid rgba(241,237,226,0.12) schedule rules — four alpha tiers of the same ivory",
+        "motion": "none — no transitions, no keyframes; hover states snap instantly, and the only movement is smooth scrollIntoView from the CTAs/nav (dropped to instant under prefers-reduced-motion)"
+    },
+    "layout": "One centered 1080px column with 32px side padding on a full-bleed slate. Vertical rhythm comes from 1px ivory hairlines between sections and generous 40–64px section padding. The hero and the story's emoji card repeat the signature device — a 2px dashed gold rounded rectangle, drawn like chalk. La Carte is a two-column grid (1fr 1fr, gap 6px 56px) of dotted-leader price rows; Notre histoire is a 1fr/1fr split (copy left, chalk-framed emoji right); the schedule is a stacked 130px/1fr/auto grid. Everything is typographic composition — low density, centered hero and menu head, flush-left story and schedule. Below 860px the menu and story fold to one column.",
+    "sections": [
+        {
+            "name": "header",
+            "what": "Hairline-bottomed flex bar: the two-part wordmark ('Mom-n-Pops' Georgia italic 700 23px + 'CRÊPERIE' 12px letterspaced gold uppercase on the same baseline) and a right-aligned French nav — La Carte / Notre Histoire / Où nous trouver.",
+            "components": [],
+            "restyle": "Nav items are hand-rolled text buttons in muted chalk that brighten to ivory on hover; an IntersectionObserver marks the section under the reader with a dashed-gold baseline underline (aria-current), like a chalk tick on the board. No transitions — states snap."
+        },
+        {
+            "name": "hero",
+            "what": "The chalk rectangle: a centered panel inside a 2px dashed gold 6px-radius frame — italic gold eyebrow '— depuis 2026, Milwaukee —', a 64px weight-400 Georgia headline with 'billig' italicized in gold, a 520px lede, and two CTAs (solid gold 'Voir la carte', ghost 'Où est le camion ?').",
+            "components": ["Button"],
+            "restyle": "Both CTAs are react-fancy Buttons flattened hard: 6px radius, 12px/24px padding, no shadow, no transition. The primary wears solid #D4AF37 with slate-colored text at weight 700; the ghost is transparent with a 1px rgba-ivory 0.4 outline at weight 600. onClick smooth-scrolls to the target section via ref.scrollIntoView (instant under reduced motion)."
+        },
+        {
+            "name": "la-carte",
+            "what": "The Chalkboard surface itself: centered italic 42px 'La Carte' with a 'sucrée & salée' subline, then six crêpes in a two-column grid of price rows — Georgia item name, dotted leader stretching to an italic gold price, then a muted one-liner with a tiny outlined tag pill (sucrée / salée / vegan).",
+            "components": ["Badge"],
+            "restyle": "The board is styling, not a widget: rows separate with 1px dashed ivory rules; the price leader is a flex-1 span with border-bottom 1px dotted rgba(241,237,226,0.3) and transform translateY(-4px) so the dots sit exactly on the baseline — copy that detail verbatim. Badge (outline, sm) is rechalked to an 11px transparent 999px pill with a rgba-ivory 0.2 border in the meta tier."
+        },
+        {
+            "name": "notre-histoire",
+            "what": "Two-column origin split: left, a gold italic kicker + 34px Georgia 'Rosa learned on a street corner in Montmartre.' + the rainy-semester/Sal-built-the-billig paragraph; right, the hero's dashed frame one alpha softer holding an 88px 🥞 with a 12px mono caption 'folded to order, off the billig'.",
+            "components": [],
+            "restyle": "The emoji-in-a-chalk-frame card is the collection's no-photos rule at its cheapest and best — 2px dashed rgba(212,175,55,0.4), 6px radius, 30px padding, centered. Give the emoji a role=img + French aria-label so the stand-in stays accessible."
+        },
+        {
+            "name": "ou-nous-trouver",
+            "what": "The Milwaukee week: italic 30px heading, a mono 'Milwaukee · 9h–20h' subline, then six rows Mardi→Dimanche in a 130px/1fr/auto grid — bold French day, muted location, right-aligned mono hours.",
+            "components": [],
+            "restyle": "A definition-list-style grid, hand-rolled: rows rule off with the faintest ivory tier (0.12); day names in full-strength chalk at 600, hours in the locked 12px mono meta tier. French day names carry the bilingual voice into the data."
+        },
+        {
+            "name": "footer",
+            "what": "Full-width hairline-topped band, inner 1080px flex row: italic serif 'Mom-n-Pops Crêperie', the scrape-obfuscated contact line (hello<span>@</span>momnpops.truck · @momnpops.mke), and '© 2026 · Milwaukee · Merci' — the sign-off keeps the bilingual voice to the last word.",
+            "components": [],
+            "restyle": "Plain flex shell in the footer ink tier; a small second mono row carries the fictional-truck note. No back-nav, no sticky — the gallery frame owns the chrome."
+        }
+    ],
+    "palette": [
+        {
+            "component": "Button",
+            "restyle": "Two roles, both flattened to chalk-menu furniture: primary = solid antique gold (#D4AF37) with slate text, weight 700, 6px radius, zero shadow and zero transition; ghost = transparent with a 1px rgba(241,237,226,0.4) outline in ivory, weight 600. Hover snaps (gold lifts one step to #DDBC52, ghost outline brightens) — never animates."
+        },
+        {
+            "component": "Badge",
+            "restyle": "outline + sm, rechalked into the menu's tag pill: transparent fill, 11px weight-400 text in the meta tier (#8F8B7E), 1px rgba-ivory 0.2 border, 999px radius, 1px/7px padding — the only fully-round element on the page."
+        },
+        {
+            "component": "hand-rolled: chalk frames",
+            "restyle": "The signature device — 2px dashed gold rounded rectangles (rgba(212,175,55,0.5) hero, 0.4 story card), 6px radius. Pure border styling; reuse the same frame at descending alphas rather than inventing new ornament."
+        },
+        {
+            "component": "hand-rolled: dotted price leader",
+            "restyle": "A flex row of name / leader / price where the leader is flex:1 with border-bottom 1px dotted rgba(241,237,226,0.3) and transform: translateY(-4px) to sit the dots on the text baseline. This one detail makes the menu read as a real carte."
+        },
+        {
+            "component": "hand-rolled: section nav",
+            "restyle": "Plain text buttons in the nav tier with an IntersectionObserver-driven aria-current state rendered as a dashed-gold baseline underline; smooth scrollIntoView with scroll-margin-top clearing the host's sticky chrome."
+        },
+        {
+            "component": "Heading / Text equivalents",
+            "restyle": "Skipped in favor of raw h1/h2/p so the literal Georgia-italic weight-400 scale (64/42/34/30) stays exact; the page re-points --fg-1/--fg-2/--accent to the chalk tiers so any kit primitive dropped in later inherits the slate automatically."
+        }
+    ],
+    "contentArchetype": "A single-page food-truck storefront in bilingual French/English: chalk-framed hero promise, the carte (six items, sweet/savory split, prices and tags), a two-paragraph founders' origin story with an emoji stand-in for photography, a weekly city schedule, and a signed-off footer. Every proper noun does double duty — French day names, 'billig', 'Merci' — so the theme lives in the data, not just the decoration.",
+    "remix": "The whole look hangs on three dials: the slate (--mpc-bg), the chalk (--mpc-ink + its alpha-tier hairlines), and the one gold (--mpc-gold, which drives eyebrows, prices, CTAs, frames, and focus rings together). Swap gold for chalk-white and it becomes a bistro slate; for dusty rose, a pâtisserie. Keep the dashed-frame + dotted-leader vocabulary and the zero-motion discipline — they ARE the chalkboard. Blend with a lighter storefront by lifting only La Carte (the leader-row pattern + tag pills) onto a paper background, or push interactive by making the carte an admin-editable menu list — the rows are already data-mapped, so a fancy form surface or whiteboard bridge slots in without touching the typography."
+}

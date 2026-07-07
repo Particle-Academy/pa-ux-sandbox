@@ -1,0 +1,64 @@
+{
+  "id": "icecream",
+  "name": "Creamery",
+  "note": "The whole page is one candy bento.",
+  "mode": "light",
+  "thesis": "A menu rendered as a candy-colored bento mosaic: on a strawberry-milk pink ground, a 2×2 bubblegum-gradient hero and six borderless flavor tiles pack a single 4-column grid, and every tile's art direction — background, ink, column span, even title size — lives in its data record. There is no chrome, no borders, no photography: saturated solid blocks, one emoji per flavor, mono prices, and a detail modal that inherits the clicked tile's colors so the tile appears to physically open up.",
+  "tokens": {
+    "bg": "#FFF3F7 — pale strawberry-milk pink; the page never shows any other ground",
+    "fg": "#4A2E3D deep plum-brown (ink), #8A6A79 muted, #B58AA0 soft; modal body copy #5A3E4D; per-tile inks ride in data (#FFF3F7 on chocolate, #5A3A00 on butter-yellows, #7A1F3A on pink, #3A1F52 on lilac, #12564A on mints)",
+    "accent": "#EC6A9C bubblegum pink (hero gradient start → #F49CBB, pills, prices, CTA) with #7FD8C0 mint as the counter-accent (stat tile, ink #12564A)",
+    "fontDisplay": "the sans stack (var(--font-sans)) at literal px sizes and weight 800 — 40px hero, 38px stat, 26/22/18px tile names — with tight -0.02em/-0.01em tracking; no serif anywhere",
+    "fontMono": "var(--font-mono), used EXCLUSIVELY for prices: 12px/700 on tiles, 22px/800 pink in the modal",
+    "radius": "22px hero + modal, 20px flavor/stat tiles, 999px every pill (status chip, CTAs), 7px on the tiny logo square",
+    "border": "none — zero borders anywhere; tiles are borderless solid-color blocks and the modal separates via one big soft shadow (0 30px 70px -20px rgba(74,46,61,0.4)) over a flat rgba(74,46,61,0.42) plum scrim",
+    "motion": "one micro-interaction only: flavor tiles lift translateY(-3px) on hover over a 0.18s transform transition (pill buttons echo it at -1px); everything else is still; gate transforms behind prefers-reduced-motion"
+  },
+  "layout": "A single centered column (max-width 1200px inside 20px page padding) holding exactly three strata: a flat header row (logo square + wordmark left, live-status pill right), THE bento — one CSS grid with grid-template-columns:repeat(4,1fr), grid-auto-rows:150px, gap:14px — and a slim one-row footer. The hero claims span 2×2; each flavor tile declares its own column span from data (two 2×1 wide tiles, four 1×1); a 1×1 mint stat cell caps the mosaic. Density is high: every cell is a saturated block with no whitespace beyond the 14px gutter. Below ~920px the grid collapses to 2 columns (hero now full-width but still 2 rows tall, wide tiles still span 2) — a breakpoint the source design leaves to the implementer. A fixed full-screen modal overlays for flavor detail; the page itself has no sticky elements and no z-index of its own.",
+  "sections": [
+    {
+      "name": "header",
+      "what": "Flex row: 22px pink 'M' logo square (radius 7) + 'Mom-n-Pops · Creamery' wordmark linking back to the collection hub, then a white live-status pill — ice-cream-bowl lucide icon + '12 flavors churning' — a playful live-inventory affordance.",
+      "components": ["Badge"],
+      "restyle": "Badge becomes the status pill: white fill on the pink page, #EC6A9C ink, radius 999px, 12px/500, 6px 12px padding, inline-flex with a 14px lucide icon; no border, no uppercase."
+    },
+    {
+      "name": "bento-hero",
+      "what": "The 2×2 grid cell: linear-gradient(150deg,#EC6A9C,#F49CBB), radius 22, white text. Uppercase kicker 'Scooped fresh · Milwaukee · 2026' pinned top, 40px/800 headline 'The sweetest stop on the block.' + custard subcopy in the middle, and a white pill CTA 'See flavors' pinned bottom by justify-content:space-between — the hero breathes because the grid fixes its height (2×150px rows + gap).",
+      "components": ["Button"],
+      "restyle": "Button inverts the page: #fff fill, #EC6A9C ink, radius 999px, 700 weight, 10px 18px padding, borderless; wired to focus the first flavor tile so 'See flavors' actually walks you into the menu."
+    },
+    {
+      "name": "flavor-tiles",
+      "what": "Six clickable borderless cells mapped from a flavors array — {slug, emoji, name, short, price, bg, ink, cspan, size, long}. Top row: 26px emoji vs a mono price; bottom: the 800-weight name (26px on the dark 2×1 'Milwaukee Mud' chocolate tile, 22px on the mint 2×1 'Root Beer Float', 18px on the four pastel 1×1s) plus a 12px 72%-opacity one-liner. Hover lifts -3px.",
+      "components": [],
+      "restyle": "Hand-rolled <button> cells, deliberately: the per-tile inline bg/ink and data-driven grid spans ARE the design, so no stock grid or Card is forced onto them. Each carries a stable data-flavor handle (agents open a flavor by slug), a data-cspan attribute the CSS turns into grid-column:span 2, and a pink focus-visible ring."
+    },
+    {
+      "name": "stat-tile",
+      "what": "A 1×1 solid mint #7FD8C0 cell, ink #12564A: '4.9★' at 38px/800 over '1,200 scoops / week' at 12px 80% opacity — social proof rendered as just another bento cell, same radius/padding family as the flavors.",
+      "components": [],
+      "restyle": "A plain div in the tile idiom; the mint counter-accent keeps the mosaic from reading monochrome-pink."
+    },
+    {
+      "name": "flavor-modal",
+      "what": "Clicking any tile opens a centered 430px white card: a header band reusing the SELECTED tile's bg/ink with the 40px emoji and 28px flavor name, then the long tasting-notes paragraph, the mono price at 22px pink, and a pink pill 'Add a scoop' that closes (decorative — no cart). Scrim click and Escape also close.",
+      "components": ["Modal", "Button"],
+      "restyle": "Modal panel forced to width 430px, radius 22, border 0, shadow 0 30px 70px -20px rgba(74,46,61,0.4); the kit's blurred black scrim swapped for flat rgba(74,46,61,0.42) plum via a :has() selector on the prefixed panel class. The color continuity between tile and modal band makes the transition feel physical — reproduce it exactly. Keep selection in two states (sel: Flavor, open: boolean) so the exit animation never reads a null record."
+    },
+    {
+      "name": "footer",
+      "what": "Slim flex row: bold 'Mom-n-Pops Creamery', obfuscated email (the @ wrapped in its own span), '© 2026 · Rosa & Sal · Milwaukee' in muted #8A6A79 — deliberately quiet, no nav, no columns; all visual weight stays in the bento.",
+      "components": [],
+      "restyle": "Plain spans; brand at 800 in the ink, the rest muted. Keep the email obfuscation if copying markup."
+    }
+  ],
+  "palette": [
+    { "component": "Button", "restyle": "One shape, two fills: every button is a fully-round pill (radius 999px, weight 700, borderless, no default shadow). On pink ground → white fill with #EC6A9C ink (hero CTA); on white ground → #EC6A9C fill with white ink (modal CTA). Hover lifts -1px with a soft plum glow." },
+    { "component": "Badge", "restyle": "Becomes the live-status pill: white fill, pink ink, radius 999px, 12px/500, sentence case, inline-flex with a small lucide icon — a soft inventory chip, never a loud tag." },
+    { "component": "Modal", "restyle": "The scoop card: 430px, radius 22, border 0, one oversized soft shadow instead of any hairline; scrim flattened to rgba(74,46,61,0.42) with no blur; the header band takes the invoking element's bg/ink inline so content 'opens up' out of the grid." },
+    { "component": "Card / Table / Tabs (anything else)", "restyle": "The house rule for any primitive joining this look: strip every border, go radius 20–22, fill with one saturated solid from the tile palette, pair it with its matching dark ink, and reserve mono strictly for numbers. If it can be a grid cell, make it one — new content earns a tile, not a section." }
+  ],
+  "contentArchetype": "A single-product food-truck storefront where the menu IS the page: brand + live-inventory chip, a hero promise ('chase the pink truck — you'll hear the bell'), six flavors with prices and tasting notes that carry the whole Rosa & Sal story through local-pride copy (the Milwaukee-river joke, July-market strawberries, Wisconsin Sprecher root beer, butter browned on board), one social-proof number, and a whisper of a footer. No schedule, no about page, no cart — the only interaction is opening a flavor.",
+  "remix": "The reusable bones are (1) the fixed-row bento — repeat(4,1fr) columns, 150px auto-rows, 14px gap, spans declared per item — and (2) the palette-per-item pattern: put bg/ink/span/type-size IN each record and render dumb tiles, so adding a menu item is adding a row of data, an agent-perfect authoring surface. Re-theme by swapping the ground/accent pair (#FFF3F7/#EC6A9C) and re-inking the tile records: espresso browns make it a coffee bar, deep greens a juice truck. Keep the modal-inherits-tile-colors move whatever the theme — it is the signature. Blend with Bento (fieldwork) by keeping these spans but re-introducing hairline borders on a dark ground for a dashboard read; blend with a pastel poster style by promoting the hero to 3×2 and letting tiles go 1×1 uniform. If flavors go live, the tiles map cleanly to a controlled value+onChange list and the status pill to a real churn counter."
+  }

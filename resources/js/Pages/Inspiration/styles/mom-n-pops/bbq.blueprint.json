@@ -1,0 +1,74 @@
+{
+  "id": "bbq",
+  "name": "Smokehouse",
+  "note": "Smokehouse site + \"on the pit\" cook timeline.",
+  "mode": "light",
+  "thesis": "A butcher-paper BBQ board that sells scarcity with data instead of adjectives: warm tan paper under alternating charcoal bands, weight-900 uppercase display type annotated everywhere in mono, one rust-ember accent, and — in place of any food photography — a live sellout meter and a full-width cook-timeline Gantt where solid fill means done and a 45° diagonal hatch means still on the pit.",
+  "tokens": {
+    "bg": "#DAC7A2 butcher-paper tan page; dark charcoal bands #241F1B (sticky header / hero / footer) and a deeper #1A1611 for the two data panels (sellout meter, pit timeline); light cards #EFE3CC",
+    "fg": "#2A231C ink on tan; on dark: #EFE3CC primary / #C4B694 secondary / #8A7A62 muted mono; on light cards: #4A3E30 body / #6A5A44 muted",
+    "accent": "#C0491E rust ember (prices, filled CTA, story eyebrow, 3px header underline) with a bright #E88A3C ember for nav highlight / mono eyebrows / flame icon, plus a 6-color smoke-meat ramp (#C24A1E #D98A3C #E0A94E #B8763A #A83A18 #D9B96A) that colors every meter and timeline bar per cut",
+    "fontDisplay": "var(--font-sans) pushed to weight 900, UPPERCASE, tight letter-spacing (-0.01 to -0.02em): 60px hero, 34px story h2 — the heavy type does the visual work photos would",
+    "fontMono": "var(--font-mono) carries the annotation layer: nav, '// LOW & SLOW' eyebrows, prices, the 4a→6p hour axis, schedule days + '11–sellout' hours, the footer colophon",
+    "radius": "small and mixed — 4px buttons/meter tracks/ETA chip, 6px menu cards + timeline bars + schedule table, 8px stat cards, 12–14px on the two big dark data panels",
+    "border": "1px #B8A47C on light cards; #35291F / #4A3F32 / #2A2118 hairlines layered inside the dark panels; #D4C09A schedule row dividers; 2px #6A5A44 outline CTA; 3px #C0491E header underline",
+    "motion": "one keyframe: a 1.8s opacity pulse on the live 'Pit at 225°F' dot; everything else is 140ms color/opacity micro-transitions (bar spotlight dim, CTA hover); killed under prefers-reduced-motion"
+  },
+  "layout": "Single column, 1140px max-width with 28px side padding, rhythm built from alternating bands: charcoal sticky header (3px ember underline, z-index kept under the host chrome), charcoal hero split 1.1fr/0.9fr (shouty copy left, the live sellout-meter panel right), then on the tan paper a 3-up menu card grid, a full-width near-black Gantt panel, a 1fr/1fr story split with a nested 2x2 stat-card grid, a single schedule table-card, and a charcoal mono footer. Section padding is generous (44–56px) while cards stay tight (13–18px) so the weight-900 uppercase headlines carry the hierarchy.",
+  "sections": [
+    {
+      "name": "sticky header",
+      "what": "Charcoal bar: MOM-N-POPS wordmark + mono SMOKEHOUSE tag, right-aligned mono uppercase nav (Menu / On the pit / Find us) with 'On the pit' highlighted bright ember; a 3px solid ember bottom border is the brand line.",
+      "components": ["(hand-rolled nav buttons)"],
+      "restyle": "Nav items are reset <button>s in mono 12px uppercase that smooth-scroll to refs (scroll-margin-top offsets the sticky chrome); sticky at z-index 20 so host chrome above 30 always wins."
+    },
+    {
+      "name": "hero + sellout meter",
+      "what": "Mono eyebrow '// LOW & SLOW · MILWAUKEE · EST. 2026', a 60px weight-900 uppercase headline '14 hours. One fire. No shortcuts.', supporting copy, two CTAs — and on the right the hook: a deep-charcoal live inventory panel headed by a pulsing dot + 'Pit at 225°F · hour 9 of 14' over four labeled sellout bars.",
+      "components": ["Button", "Progress", "Tooltip", "Text"],
+      "restyle": "Button → filled ember 4px-radius CTA ('See the board') and a 2px-outline mono ghost ('ON THE PIT →'), both wired to smooth-scroll. Progress → 7px track recolored #35291F with the fill painted per meat from the smoke ramp via a CSS custom property set inline on each meter wrapper. Tooltip hangs the 'live from the pit' note off the pulsing status dot."
+    },
+    {
+      "name": "the board (menu)",
+      "what": "Shouty 'THE BOARD' h2 paired with a lowercase mono aside '— by the ½lb · when it's gone, it's gone', over a 3-column grid of six light cards: uppercase weight-900 item name, mono ember price on the same baseline, one-line description.",
+      "components": ["Heading", "Card", "Text"],
+      "restyle": "Card → flat #EFE3CC board card on a 1px #B8A47C border, 6px radius, 18px padding; the border warms to ember on hover. Prices right-aligned in mono 700 ember."
+    },
+    {
+      "name": "on the pit (cook timeline — the special surface)",
+      "what": "Full-width near-black Gantt panel: flame-icon header ('live cook timeline · now 1:00 PM'), a 170px/1fr grid with an 8-stop mono hour axis (4a→6p), six cut rows (name + status left, positioned bar right), and a mono legend footer ('■ done · ▨ still on the pit' / a sell-out ETA chip).",
+      "components": ["Badge", "(hand-rolled Gantt)"],
+      "restyle": "The Gantt is hand-rolled — no kit primitive is this shape: each row is a full-width toggle <button> whose track holds one absolutely-positioned bar with left/width percentages rendered declaratively from data; DONE cuts get a solid smoke-ramp fill, cuts still cooking get repeating-linear-gradient(45deg, cutColor 0 6px, #241C14 6px 12px) hatch; each bar carries a dark duration chip ('14 hr', 'hourly'). Clicking a row spotlights that cut (other bars dim to 0.22); a faint dashed ember 'now' rule runs down every track at 1:00 PM. Badge → the ember 'sell-out ETA ~7 PM' chip."
+    },
+    {
+      "name": "our story + stats",
+      "what": "1fr/1fr split: '// OUR STORY' ember eyebrow, 34px weight-900 'Sal gets up at 4am so you don't have to.' and the Rosa & Sal copy (oak, 225°F, three sauces — none of them ketchup) left; a 2x2 grid of stat cards right: 14 hr / 4 AM / 3 / ½ cord.",
+      "components": ["Heading", "Text", "Card"],
+      "restyle": "Card → 8px-radius stat card leading with a 28px weight-900 ember value over a muted caption — the craft is sold with numbers ('½ cord post-oak / day'), not adjectives."
+    },
+    {
+      "name": "find the pit (schedule)",
+      "what": "A single light table-card listing Wednesday–Sunday Milwaukee spots (Walker's Point, Bay View, Third Ward, Sherman Phoenix, Humboldt Park) all at '11–sellout', plus a quieter 'Mon–Tue / Closed — tending the fire' row.",
+      "components": ["Heading", "Table"],
+      "restyle": "Table → the schedule card: transparent cells on #D4C09A hairline dividers, a tiny mono uppercase head row, mono 700 uppercase 140px day column, right-aligned mono hours — the scarcity story lives in the data ('11–sellout' on every open day). The closed row's cells drop to the muted ink."
+    },
+    {
+      "name": "footer",
+      "what": "Charcoal mono strip — wordmark, hello@momnpops.truck · @momnpops.mke (the @ wrapped in its own span), © 2026 · Milwaukee — plus a hairline-topped fictional-truck disclaimer line.",
+      "components": ["(hand-rolled)"],
+      "restyle": "All-mono 12px keeps it a colophon, not a section; the disclaimer sits at 11px muted under a #35291F hairline."
+    }
+  ],
+  "palette": [
+    { "component": "Button", "restyle": "Two smokehouse CTAs at 4px radius: a filled rust-ember block (white 800 uppercase, darkens to #A83A18 on hover) and a mono outlined ghost (2px #6A5A44 border that heats to bright ember on hover); both drive smooth-scrolls, not navigation." },
+    { "component": "Progress", "restyle": "The sellout meter — 7px track flattened to #35291F, 4px radius, and the fill re-pointed per meat to a --mpbbq-mcol custom property set inline from the 6-color smoke ramp; the kit's width transition is kept so restocks would animate." },
+    { "component": "Card", "restyle": "Wears two skins: the 6px-radius menu board card (#EFE3CC on #B8A47C, ember border on hover) and the 8px-radius stat card whose 28px weight-900 ember number leads." },
+    { "component": "Table", "restyle": "The schedule card: borders collapsed to #D4C09A hairlines, mono 10px uppercase head, mono 700 uppercase day column pinned to 140px, right-aligned mono '11–sellout' hours, sand-tint row hover, closed rows dimmed to the muted ink." },
+    { "component": "Badge", "restyle": "The 'sell-out ETA ~7 PM' chip — translucent ember fill, 1px ember border, 4px radius, mono 10.5px." },
+    { "component": "Tooltip", "restyle": "Hung off the pulsing live dot to explain the 'live from the pit' fiction without adding UI chrome." },
+    { "component": "Heading / Text", "restyle": "Heading forced to the shouty register (weight 900, uppercase, tight tracking at 34–36px); Text carries body copy in the sand/body browns at var(--text-lg)/var(--text-sm)." },
+    { "component": "(hand-rolled) Gantt", "restyle": "The signature surface — a CSS-grid label column + relative track rows with absolutely-positioned percentage bars; done = solid cut color, cooking = 45° hatch of the cut color against #241C14; row-click spotlight state and a dashed 'now' rule; bars are rendered declaratively from data, never imperatively painted." }
+  ],
+  "contentArchetype": "A fictional family food truck (Mom-n-Pops — Rosa & Sal, Milwaukee, est. 2026) as a scarcity-driven BBQ smokehouse: six ½lb menu items with prices, a live what's-left inventory, a six-cut cook timeline anchored to real clock hours, craft stats (14 hr brisket, fire lit at 4 AM, ½ cord of post-oak a day), and a five-neighborhood weekly schedule where every open day's hours read '11–sellout'. The voice is terse pitmaster confidence — numbers and mono annotations do the persuading.",
+  "remix": "Steal the three load-bearing moves: (1) weight-900 uppercase display type annotated by a mono layer ('// EYEBROWS', prices, hour axes) instead of imagery; (2) alternating warm-paper and charcoal bands with ONE hot accent plus a small related color ramp for data; (3) a live 'what's left / what's cooking' data surface — the meter + Gantt pair — as the hero hook, with solid-vs-hatch as the done-vs-in-progress encoding. Works for any drops/limited-inventory business: bakeries ('sold out by noon'), ticket releases, print runs, build pipelines (the Gantt maps 1:1 to job timelines). Swap the tan/ember palette for slate/signal-orange and it becomes an ops dashboard; keep radius small and mixed, never large. Blends well with Big Type (push the headlines bigger, keep the mono annotations) or Terminal (move the whole page onto the charcoal panel and let the Gantt own the screen)."
+}

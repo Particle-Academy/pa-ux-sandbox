@@ -1,0 +1,72 @@
+{
+  "id": "coffee",
+  "name": "Coffee",
+  "collection": "mom-n-pops",
+  "cuisine": "Coffee",
+  "surface": "Editorial",
+  "mode": "light",
+  "thesis": "A family coffee cart set like a quiet magazine page: warm cream paper, espresso ink, Georgia serif display type at regular weight, mono micro-labels, and 1px hairline rules carrying the entire vertical rhythm. No cards, no fills, no photos, no CTA button anywhere — restraint IS the brand, and the one rounded, elevated surface (the item-detail dialog) breaks the flatness on purpose.",
+  "tokens": {
+    "bg": "#F5EFE6 warm cream paper, full-bleed; the modal panel reuses the same #F5EFE6 so the dialog reads as a lifted piece of the page",
+    "fg": "#2A211B near-black espresso; secondary tiers descend #5A483A → #6A584A → #8A7563 → #9A8267 → #A38C6F (each section steps down exactly one tier)",
+    "accent": "#6F4E37 coffee brown for prices, schedule day labels, and the modal price; #8A6A4A lighter roast for mono eyebrows and the wordmark's cuisine tag",
+    "fontDisplay": "literal Georgia, serif at font-weight 400 — display size with -0.02em tracking and 1.08 line-height; deliberately NOT the design-system serif var, and never bolded above the 21px wordmark",
+    "fontMono": "var(--font-mono) for eyebrows, prices, schedule days/hours, and the modal's Notes label — uppercase, letterspaced 0.12–0.2em at 11–12px; body copy is var(--font-sans)",
+    "radius": "0 everywhere on the page; two deliberate exceptions — the modal panel at 14px and ingredient chips at 999px pills",
+    "border": "#E2D6C4 1px hairlines do all structural work (header, section dividers, menu rows, schedule rows, footer, modal edge); dotted price leaders #C9B79E; chip borders #D9CBB4",
+    "motion": "none — no transitions, no keyframes; the only affordances are snap hover states (menu rows to opacity 0.7) per the design's printed-page stillness"
+  },
+  "layout": "Single centered column, max-width 1080px with 32px side padding, on a full-bleed cream background. Stacked bands divided only by 1px hairlines: baseline-aligned header (serif wordmark + mono cuisine tag, right-pushed 3-item text nav), a centered editorial hero (mono eyebrow, 60px serif headline capped at 720px, 500px muted lede), a 2-column menu list (gap 0 56px) of dotted-leader rows, a 50/50 story split (34px serif pull-quote heading left, two descending-tier paragraphs right, aligned to the same top baseline), a 130px/1fr/auto schedule grid that reads like a printed transit table, and a space-between footer. Everything collapses to one column under 720px; the schedule's day column narrows to 64px.",
+  "sections": [
+    {
+      "name": "header",
+      "what": "Baseline-aligned two-part wordmark — 'Mom-n-Pops' in Georgia 21px bold plus 'Coffee' in 11px uppercase mono #8A6A4A — linking back to the collection, with a right-pushed text nav (Menu / Story / Find us) as quiet in-page anchor links.",
+      "components": ["Link"],
+      "restyle": "The wordmark is an Inertia Link stripped to plain type (no underline, serif name flips to coffee brown on hover); nav anchors are bare var(--text-sm) sans links in #6A584A with no chrome at all."
+    },
+    {
+      "name": "editorial-hero",
+      "what": "Centered stack: mono uppercase eyebrow 'Family coffee cart · Milwaukee · since 2026', a clamp(34px→60px) Georgia weight-400 headline at -0.02em/1.08, and a 500px-wide muted lede. Magazine-cover restraint — no imagery, no CTA.",
+      "components": [],
+      "restyle": "Pure typography — the whole hero is three text nodes and a hairline; resist adding a button, the menu rows below are the only calls to action."
+    },
+    {
+      "name": "menu-list",
+      "what": "H2 'The list' with an inline mono aside ('— six things, done well · tap for detail'); six items in a 2-column grid, each row a serif name, a dotted price leader, a mono coffee-brown price, and a one-line muted description. Every row opens the detail modal.",
+      "components": ["Modal (trigger rows are native buttons)"],
+      "restyle": "Rows are real <button>s reset to menu typography (block, text-left, hairline bottom border, snap hover to opacity 0.7). The dotted leader is a flex:1 spacer span with border-bottom:1px dotted #C9B79E and transform:translateY(-4px) — hand-roll it, never fake it with period characters."
+    },
+    {
+      "name": "story-two-col",
+      "what": "50/50 grid where the 34px serif heading IS the story hook ('It started with one broken espresso machine and a lot of stubbornness.') and the right column carries two short paragraphs in descending color tiers (#6A584A then #8A7563).",
+      "components": [],
+      "restyle": "align-items:start puts headline and body on the same top baseline; the color-tier step-down between the two paragraphs is the whole hierarchy — no font-size tricks."
+    },
+    {
+      "name": "schedule",
+      "what": "Serif H2 'Where the cart parks' + mono subline 'Milwaukee · mornings 7–11 unless noted', then six hairline-divided rows in a 130px/1fr/auto grid: mono day in coffee brown, plain place name, right-aligned mono hours.",
+      "components": [],
+      "restyle": "Timetable-as-typography — a plain CSS grid, not a Table or Calendar primitive; the fixed day column and auto hours column make it read like a printed transit table, with day (#6F4E37) and hours (#9A8267) sharing the two brown mono tones."
+    },
+    {
+      "name": "footer",
+      "what": "Hairline-topped full-width band whose inner 1080px row space-betweens the serif brand name, an anti-scrape split email ('hello<span>@</span>momnpops.truck · @momnpops.mke'), and '© 2026 · Milwaukee'.",
+      "components": [],
+      "restyle": "Stays inside the same max-width/padding system as the body; the email keeps its nested-span @ obfuscation from the design."
+    },
+    {
+      "name": "item-detail-modal",
+      "what": "Clicking any menu row opens a 420px cream panel: serif item name vs. mono price on one baseline, a long description, an uppercase mono 'Notes' label, and pill-shaped ingredient chips. The page's only rounded/elevated surface.",
+      "components": ["Modal", "Badge", "Button"],
+      "restyle": "react-fancy Modal restyled to the palette — #F5EFE6 panel, 14px radius, 1px #E2D6C4 edge, 0 30px 70px -20px rgba(42,33,27,0.4) shadow, scrim recolored to rgba(42,33,27,0.45) with its blur removed (via a :has()-guarded sibling selector, since the panel portals to body). The primitive contributes Escape-to-close, focus trap, and scroll lock the mockup lacked; Badges become 999px #D9CBB4-bordered pills, and a whispered mono-caps ghost Button is the only visible 'Close'."
+    }
+  ],
+  "palette": [
+    { "component": "Modal", "restyle": "Panel forced to the page's own cream (#F5EFE6) with a 14px radius and deep soft shadow so it reads as a lifted menu card, not a UI dialog; scrim retinted espresso rgba(42,33,27,0.45) and de-blurred. Selectors are stacked (.class×3) because the portal renders outside the scoped root." },
+    { "component": "Badge", "restyle": "Outline variant reborn as an ingredient pill: 999px radius, 1px #D9CBB4 hairline, transparent fill, regular-weight sans in #5A483A, 5px 12px padding — an annotation, not a status chip." },
+    { "component": "Button", "restyle": "Ghost variant stripped to a whispered mono close affordance: no background, no border, no radius, 11px uppercase letterspaced 0.16em in roast brown #8A6A4A, darkening to #6F4E37 on hover. The page otherwise refuses buttons entirely." },
+    { "component": "Link (Inertia)", "restyle": "Wordmark lockup only — plain baseline-aligned type, serif + mono pair, no underline; navigation elsewhere is bare in-page anchors." }
+  ],
+  "contentArchetype": "A two-person family food cart (Rosa & Sal's Milwaukee coffee cart) presented as a single quiet page: a two-part wordmark, one editorial headline, a six-item priced menu with tap-for-detail rows, a two-paragraph origin story, a weekly parking schedule, and a contact footer. Fits any small craft vendor whose brand is restraint — a bakery, a barber, a bookbinder — anywhere the menu and the schedule ARE the product.",
+  "remix": "Swap the roast-brown accent pair (#6F4E37/#8A6A4A) and cream paper for another two-tone craft palette — sage+ivory (tea house), ink+oat (bakery), rust+bone (barbecue) — and the language holds. The load-bearing moves: (1) regular-weight serif display at 60px against 11px letterspaced mono micro-labels (never bold the display), (2) 1px hairline rules as the ONLY structure — no cards, no fills, (3) the flex-spacer dotted price leader on every menu row, (4) descending fg color tiers doing all secondary hierarchy, (5) radius 0 everywhere except one deliberately elevated dialog. Blend toward the fieldwork 'editorial' style for a denser multi-column magazine; toward 'minimal' by dropping the serif for a grotesque. Any Fancy primitive joins by zeroing its chrome and re-dressing it in the serif/mono pair on cream."
+}

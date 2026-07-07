@@ -1,0 +1,74 @@
+{
+  "id": "tacos",
+  "collection": "mom-n-pops",
+  "name": "Taquería",
+  "cuisine": "Tacos",
+  "surface": "Storefront",
+  "note": "Warm cream storefront with one chile-red accent.",
+  "mode": "light",
+  "thesis": "A family taquería as a warm, low-density light storefront: cream paper, espresso-brown sans type set heavy and tight, one chile-red accent doing every job (CTAs, prices, eyebrows, stat numbers), sand hairlines on white cards, and food drawn entirely with emoji in tinted rounded tiles — friendly and confident, zero photography.",
+  "tokens": {
+    "bg": "#FAF4EA warm cream page; cards #fff; tinted tiles/panels #F6EAD8; footer band #F4EAD9; sticky header rgba(250,244,234,0.9) + backdrop-filter blur(10px); today-row tint #FDF4E5",
+    "fg": "#2C211A espresso brown; secondary #6B5A4A; descriptions/labels #7A6858; hints + mono hours #9A8873; footer muted #8A7563; modal body #4A3A2E",
+    "accent": "#D6482B chile red (hover #C23E23) — CTAs, prices, eyebrows, stat numbers, the modal add-to-order; tag-pill support colors ride per-item data: #F3A712 amber (Friday only), #3F7D3A green (Vegetarian), #B3352E dark red (Weekends)",
+    "fontDisplay": "var(--font-sans) at weight 800 with tight negative tracking (-0.02em to -0.03em); hero clamp(2.4rem, 6.2vw, 66px) at line-height 1.02, story h2 clamps to 36px, section h2s var(--text-3xl) — no serif anywhere",
+    "fontMono": "var(--font-mono) used exactly once — the schedule hours column (var(--text-sm), #9A8873) — a single timetable tell against the all-sans page",
+    "radius": "12–16px dominant: cards 16px, modal 18px, buttons 10–12px, emoji tiles 12–14px, stat cards 14px, tag pills and ingredient chips 999px",
+    "border": "1px #ECDFCB sand on every card/button/header/footer edge; lighter #F3E9D9 for schedule row dividers; borders always hairline, depth comes from the warm hover shadow instead",
+    "motion": "menu cards lift on hover: transform .2s + box-shadow .2s to translateY(-4px) with a warm colored shadow 0 16px 32px -16px rgba(120,60,20,0.3); sticky header blurs the scroll behind it; everything else is 150ms color/border fades; honor prefers-reduced-motion by dropping the lift"
+  },
+  "layout": "Single-column storefront capped at 1140px with 28px side padding under a sticky frosted-cream glass header (brand lockup left, anchor nav + red pill CTA right). Flow: centered hero (72px top pad — emoji eyebrow, huge tight-tracked headline capped at 760px, 480px subcopy, two pill CTAs), a 3-column menu card grid (gap 18px, collapsing 3→2→1), a 50/50 story band (copy left, 2x2 stat-card grid right) opened by a 1px sand top border, a schedule list inside one bordered rounded-16px white card, and a darker sand footer band. Density is low and airy — 40–72px section padding, 18–20px card padding. The only layered surface is a fixed 440px taco-detail modal with a warm brown scrim.",
+  "sections": [
+    {
+      "name": "sticky header",
+      "what": "Brand lockup ('Mom-n-Pops' bold 20px + 'Taquería' in accent red 13px) linking to the collection hub, right-aligned anchor nav (Menu / Story / Find us) and a red 'Find the truck' pill.",
+      "components": ["Button", "Link"],
+      "restyle": "Header is hand-rolled frosted glass — rgba cream bg + backdrop-blur(10px) + 1px sand bottom border, sticky under the gallery frame (z-index < 30). The pill CTA is a Button squeezed to 9px/16px padding and 10px radius, red fill."
+    },
+    {
+      "name": "hero",
+      "what": "Centered stack: uppercase letterspaced eyebrow ('🌮 Family food truck · Milwaukee · Est. 2026'), the 66px/1.02 weight-800 headline 'Tacos the way Rosa's abuela made them.', 480px subcopy, and two pill buttons — red filled 'View the menu', white sand-outlined 'This week's stops'.",
+      "components": ["Button"],
+      "restyle": "Buttons flattened to warm pills: 12px radius, 13px/24px padding, no shadow; primary = chile-red fill darkening on hover, secondary = white with sand border turning red on hover. Headline clamps from 66px down for small screens; eyebrow gets 0.14em tracking + accent red."
+    },
+    {
+      "name": "menu grid",
+      "what": "Section header row (h2 'The menu' + muted 'tap a taco for the full story' hint), then a 3-column grid of 6 clickable white cards: 44px emoji tile on #F6EAD8, optional colored tag pill, name + red price on one baseline row, one-line description. The whole card opens the detail modal.",
+      "components": ["Badge"],
+      "restyle": "Cards are hand-rolled <button>s (full-card trigger, focus-visible ring, hover lift translateY(-4px) + warm 32px shadow). Badge becomes the tag pill: 11px/700 white text, radius 999, border 0, with its background driven per-item from data (tagBg) via inline style — Most loved / Friday only / Vegetarian / Weekends."
+    },
+    {
+      "name": "story band",
+      "what": "50/50 band opened by a sand top border: left is eyebrow ('Our story') + 36px headline 'Two parents, one griddle, a whole lot of Milwaukee.' + paragraph; right is a 2x2 grid of white stat cards — big red 30px number over a small muted label (6 tacos from $4 · est. 2026 · 3 salsas · ∞ free chips*).",
+      "components": ["Tooltip"],
+      "restyle": "Stat values styled exactly like menu prices (weight 800, chile red, -0.02em) so the band rhymes with the menu. The '∞ free chips*' asterisk label gets a dotted underline + Tooltip carrying the fine print ('one basket per order — Rosa's rule')."
+    },
+    {
+      "name": "schedule",
+      "what": "h2 'Find the truck', then one bordered rounded-16px white card of six weekday rows in a 120px/1fr/auto grid: bold day, muted place, mono hours; rows divided by 1px #F3E9D9. After hydration the current weekday row tints warm and gains a red 'Today' Badge.",
+      "components": ["Badge"],
+      "restyle": "Rows are a hand-rolled list (truer than a Table here); the mono hours column is the page's single typographic contrast. 'Today' is a Badge shrunk to a 10px uppercase red pill — computed in useEffect so SSR first paint stays deterministic."
+    },
+    {
+      "name": "footer",
+      "what": "Darker sand (#F4EAD9) band with sand top border: bold brand name, anti-scrape email ('hello<span>@</span>momnpops.truck') + instagram handle, and '© 2026 · Rosa & Sal · Milwaukee' in a space-between wrap row, plus a tiny mono demo-folio line.",
+      "components": [],
+      "restyle": "Flat one-liner footer, no link columns; all hand-rolled."
+    },
+    {
+      "name": "taco detail modal",
+      "what": "Clicking any menu card opens a 440px cream modal: tinted #F6EAD8 header with a 56px white emoji tile + 26px name + red price, then the long description, white ingredient-chip pills with sand borders, and a full-width red 'Add to order · $x.xx' button. Scrim, Escape, and the add button all dismiss (no real cart — a themed dismiss).",
+      "components": ["Modal", "Badge", "Button"],
+      "restyle": "Modal panel forced to cream #FAF4EA, radius 18px, border 0, deep warm shadow 0 30px 70px -20px rgba(44,33,26,0.4), max-width 440px; the library backdrop recolored to rgba(44,33,26,0.5) with no blur via a :has() selector on the prefixed panel class. Badges become white ingredient chips (sand border, radius 999). Selected-item state IS the modal state: sel: MenuItem | null plus a separate open flag so content survives the exit animation."
+    }
+  ],
+  "palette": [
+    { "component": "Button", "restyle": "Warm pill: radius 12px (10px in the header), sans weight 600, no shadow. Primary = chile-red #D6482B fill darkening to #C23E23 on hover; secondary = white fill + 1px sand border flipping text/border to red on hover; in the modal it stretches full-width as 'Add to order'." },
+    { "component": "Badge", "restyle": "Three reads: (1) menu tag pill — 11px/700 white on a per-item data-driven background (inline style from tagBg), radius 999, no border; (2) ingredient chip — white pill, sand border, #5A4A3C text, 6px/12px padding; (3) 'Today' marker — 10px uppercase red pill in the schedule row." },
+    { "component": "Modal", "restyle": "The richest surface on the page: cream panel, 18px radius, zero border, deep warm 70px shadow, 440px cap; header band tinted #F6EAD8 holding a 56px white emoji tile; backdrop recolored to warm brown rgba(44,33,26,0.5) without blur. Controlled entirely by the selected menu item." },
+    { "component": "Tooltip", "restyle": "Fine print for the '∞ free chips*' stat — small text, dotted-underline cursor-help trigger; the only floating helper on the page." },
+    { "component": "Link (Inertia)", "restyle": "Only the brand lockup — espresso text with the red 'Taquería' descriptor; nav items are plain in-page anchors that darken on hover." }
+  ],
+  "contentArchetype": "A family food-truck storefront: hero promise ('Tacos the way Rosa's abuela made them.'), a six-item priced menu with per-item tags and full ingredient stories (Al Pastor $4.50 'Most loved' → Barbacoa $5.50 'Weekends'), a founder story band (Rosa runs the comal, Sal runs the window, the kids run the register) with four playful stats ending in '∞ free chips*', a six-day Milwaukee route timetable (Cathedral Square → South Shore Farmers Market), and a one-line contact footer. Everything a taco truck needs, nothing it doesn't.",
+  "remix": "Swap the chile red for any single saturated food accent (salsa-verde green, cochinita orange, horchata brown) and re-tint the cream toward that hue to reskin the whole truck. The load-bearing moves: (1) one warm paper bg + white cards separated only by sand hairlines, (2) a single accent doing CTAs, prices, eyebrows, and stat numbers so money and action share a color, (3) heavy tight-tracked sans display against airy 40–72px section padding, (4) emoji-in-tinted-tile as the entire food art system (44px grid, 56px modal — no photos to shoot), (5) whole-card modal triggers with a warm colored hover lift. Blend toward 'editorial' by trading the sans for a serif and squaring the radii; blend toward a data surface by letting the schedule card grow into a Table or the menu into a configurator. Any Fancy primitive joins by dropping to radius 999 or 12–16px, taking the sand border, and reserving color for the one accent."
+  }

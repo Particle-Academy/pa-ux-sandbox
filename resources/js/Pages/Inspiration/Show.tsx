@@ -2,30 +2,39 @@ import { Head, Link } from "@inertiajs/react";
 import { useEffect, useState, type CSSProperties } from "react";
 import { ArrowLeft, Check, ChevronLeft, ChevronRight, Copy, Info, X } from "lucide-react";
 import { Layout } from "../Layout";
-import type { Style } from "./types";
+import type { Collection, Style } from "./types";
 import { STYLE_COMPONENTS } from "./styles";
 
 /**
- * Per-style shell. Each of the 20 styles renders FIELDWORK — a FICTIONAL studio —
- * in a distinct visual language using the full Fancy UI kit; they are the SAME
- * one-page site, redesigned, and are READ-ONLY design inspiration (not starter
- * code). The GalleryFrame (neutral site chrome, deliberately NOT the style's own
- * design) makes that obvious + lets you flip between styles. A style registers a
- * component in ./styles (keyed by `style.id`); a hit mounts it STATICALLY so it
- * server-renders (React.lazy would render the Suspense fallback under SSR), else
- * the "in progress" placeholder.
+ * Per-style shell. Each style renders its collection's FICTIONAL business
+ * (FIELDWORK the studio, Mom-n-Pops the food truck) in a distinct visual
+ * language using the full Fancy UI kit; within a collection they are the SAME
+ * site, redesigned, and are READ-ONLY design inspiration (not starter code).
+ * The GalleryFrame (neutral site chrome, deliberately NOT the style's own
+ * design) makes that obvious + lets you flip between styles. A style registers
+ * a component in ./styles under its collection (keyed by `style.id`); a hit
+ * mounts it STATICALLY so it server-renders (React.lazy would render the
+ * Suspense fallback under SSR), else the "in progress" placeholder.
  */
-export default function InspirationShow({ style, styles }: { style: Style; styles: Style[] }) {
-    const StyleComponent = STYLE_COMPONENTS[style.id];
+export default function InspirationShow({
+    collection,
+    style,
+    styles,
+}: {
+    collection: Collection;
+    style: Style;
+    styles: Style[];
+}) {
+    const StyleComponent = STYLE_COMPONENTS[collection.id]?.[style.id];
     const idx = styles.findIndex((s) => s.id === style.id);
     const prev = styles.length ? styles[(idx - 1 + styles.length) % styles.length] : undefined;
     const next = styles.length ? styles[(idx + 1) % styles.length] : undefined;
 
     return (
         <Layout>
-            <Head title={`${style.name} · FIELDWORK (demo) · Inspiration · Fancy UI`} />
-            <GalleryFrame style={style} total={styles.length} prev={prev} next={next} />
-            {StyleComponent ? <StyleComponent style={style} /> : <Placeholder style={style} />}
+            <Head title={`${style.name} · ${collection.name} (demo) · Inspiration · Fancy UI`} />
+            <GalleryFrame collection={collection} style={style} total={styles.length} prev={prev} next={next} />
+            {StyleComponent ? <StyleComponent style={style} /> : <Placeholder collection={collection} style={style} />}
         </Layout>
     );
 }
@@ -33,11 +42,22 @@ export default function InspirationShow({ style, styles }: { style: Style; style
 /**
  * The gallery demo-frame — consistent chrome wrapping every style, styled in
  * neutral site tokens (NOT the style's design) so it reads as a demo wrapper:
- * the fictional-studio + same-site + read-only framing, "N / 20", and prev/next
- * to flip between styles. The "Grab this design" affordance lands here once the
- * blueprint registry ships.
+ * the fictional-business + same-site + read-only framing, "N / 20", and
+ * prev/next to flip between styles.
  */
-function GalleryFrame({ style, total, prev, next }: { style: Style; total: number; prev?: Style; next?: Style }) {
+function GalleryFrame({
+    collection,
+    style,
+    total,
+    prev,
+    next,
+}: {
+    collection: Collection;
+    style: Style;
+    total: number;
+    prev?: Style;
+    next?: Style;
+}) {
     const navBtn: CSSProperties = {
         display: "inline-flex",
         alignItems: "center",
@@ -72,10 +92,10 @@ function GalleryFrame({ style, total, prev, next }: { style: Style; total: numbe
         >
             <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>
                 <Link
-                    href="/inspiration"
+                    href={`/inspiration/${collection.id}`}
                     style={{ display: "inline-flex", alignItems: "center", gap: 5, color: "var(--fg-2)", textDecoration: "none", fontWeight: 500, whiteSpace: "nowrap" }}
                 >
-                    <ArrowLeft size={14} /> Gallery
+                    <ArrowLeft size={14} /> {collection.name}
                 </Link>
                 <span style={{ width: 1, height: 14, background: "var(--border-1)" }} aria-hidden />
                 <span style={{ fontFamily: "var(--font-mono)", color: "var(--fg-3)", whiteSpace: "nowrap" }}>
@@ -87,25 +107,25 @@ function GalleryFrame({ style, total, prev, next }: { style: Style; total: numbe
             </div>
 
             <span
-                title="FIELDWORK is a fictional studio. These are 20 designs of the SAME one-page site — read-only design inspiration (blueprints to reference and remix), not starter code to fork."
+                title={`${collection.name} is ${collection.subject}. These are ${collection.count} designs of the SAME site — read-only design inspiration (blueprints to reference and remix), not starter code to fork.`}
                 style={{ display: "inline-flex", alignItems: "center", gap: 5, color: "var(--fg-3)", cursor: "help", minWidth: 0 }}
             >
                 <Info size={13} style={{ flexShrink: 0 }} />
                 <span style={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                    Fictional studio · the same site, 20 ways · read-only
+                    {collection.framing}
                 </span>
             </span>
 
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <GrabButton style={style} />
+                <GrabButton collection={collection} style={style} />
                 <span style={{ width: 1, height: 14, background: "var(--border-1)" }} aria-hidden />
                 {prev && (
-                    <Link href={`/inspiration/${prev.id}`} aria-label={`Previous style: ${prev.name}`} title={`← ${prev.name}`} style={navBtn}>
+                    <Link href={`/inspiration/${collection.id}/${prev.id}`} aria-label={`Previous style: ${prev.name}`} title={`← ${prev.name}`} style={navBtn}>
                         <ChevronLeft size={15} />
                     </Link>
                 )}
                 {next && (
-                    <Link href={`/inspiration/${next.id}`} aria-label={`Next style: ${next.name}`} title={`${next.name} →`} style={navBtn}>
+                    <Link href={`/inspiration/${collection.id}/${next.id}`} aria-label={`Next style: ${next.name}`} title={`${next.name} →`} style={navBtn}>
                         <ChevronRight size={15} />
                     </Link>
                 )}
@@ -118,9 +138,10 @@ function GalleryFrame({ style, total, prev, next }: { style: Style; total: numbe
  * "Grab this design" — copies the style's read-only design BLUEPRINT (a recipe
  * an agent re-implements with the Fancy kit, NOT source to copy) as an
  * agent-ready prompt, and tracks a mix-and-match selection in localStorage so
- * several blueprints can be blended into one direction.
+ * several blueprints can be blended into one direction. Mix keys are
+ * "{collection}/{id}"; bare legacy ids still resolve via /gallery/{id}.json.
  */
-function GrabButton({ style }: { style: Style }) {
+function GrabButton({ collection, style }: { collection: Collection; style: Style }) {
     const [copied, setCopied] = useState<"one" | "mix" | null>(null);
     const [mix, setMix] = useState<string[]>([]);
 
@@ -140,9 +161,9 @@ function GrabButton({ style }: { style: Style }) {
 
     async function grab() {
         try {
-            const bp = await fetch(`/gallery/${style.id}.json`).then((r) => r.json());
+            const bp = await fetch(`/gallery/${collection.id}/${style.id}.json`).then((r) => r.json());
             await navigator.clipboard.writeText(blueprintToPrompt(bp));
-            const next = Array.from(new Set([...mix, style.id]));
+            const next = Array.from(new Set([...mix, `${collection.id}/${style.id}`]));
             window.localStorage.setItem("fancyGalleryMix", JSON.stringify(next));
             setMix(next);
             flash("one");
@@ -153,7 +174,7 @@ function GrabButton({ style }: { style: Style }) {
 
     async function copyMix() {
         try {
-            const bps = await Promise.all(mix.map((id) => fetch(`/gallery/${id}.json`).then((r) => r.json())));
+            const bps = await Promise.all(mix.map((key) => fetch(`/gallery/${key}.json`).then((r) => r.json())));
             const header =
                 `# Blended design direction — ${bps.length} Fancy UI gallery blueprints\n\n` +
                 "Blend these read-only design recipes into one direction for the project — mix and match their tokens, layouts, and restyled-component choices. Re-implement with the Fancy UI kit; do not copy source.\n\n";
@@ -258,11 +279,11 @@ function blueprintToPrompt(bp: Record<string, unknown>): string {
     }
     if (get("contentArchetype")) out.push("## Content archetype", get("contentArchetype")!, "");
     if (get("remix")) out.push("## Remix", get("remix")!, "");
-    out.push(`Live reference: https://ui.particle.academy${get("url") || `/inspiration/${get("id")}`}`);
+    out.push(`Live reference: https://ui.particle.academy${get("url") || `/inspiration/${get("collection")}/${get("id")}`}`);
     return out.join("\n");
 }
 
-function Placeholder({ style }: { style: Style }) {
+function Placeholder({ collection, style }: { collection: Collection; style: Style }) {
     return (
         <div
             style={{
@@ -285,7 +306,7 @@ function Placeholder({ style }: { style: Style }) {
                     letterSpacing: "0.04em",
                 }}
             >
-                FIELDWORK · style {style.num}
+                {collection.name} · style {style.num}
             </span>
 
             <h1
@@ -319,7 +340,7 @@ function Placeholder({ style }: { style: Style }) {
             </div>
 
             <Link
-                href="/inspiration"
+                href={`/inspiration/${collection.id}`}
                 style={{
                     marginTop: 26,
                     display: "inline-flex",

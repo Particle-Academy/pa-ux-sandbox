@@ -1,0 +1,418 @@
+/* ============================================================================
+ * Mom-n-Pops · Style 09 — Creamery
+ * A candy-colored bento on strawberry-milk pink. The whole page is one
+ * 4-column grid of borderless solid-color blocks: a 2×2 bubblegum-gradient
+ * hero, six flavor tiles whose palette/span/type-size come from data, and a
+ * mint stat cell. No borders anywhere — separation is the 14px gutter and,
+ * for the modal, a big soft plum shadow over a plum scrim.
+ *
+ * Every class is prefixed `mpicecream-`. The flavor modal PORTALS outside the
+ * root, so its classes stand alone (still prefixed, still collision-proof).
+ * No z-index is declared anywhere in this file — the gallery frame owns 30+.
+ * ========================================================================== */
+
+.mpicecream-root {
+    /* ── Local palette ────────────────────────────────────────────────────── */
+    --ic-bg: #fff3f7;            /* pale strawberry-milk pink page          */
+    --ic-ink: #4a2e3d;           /* deep plum-brown                          */
+    --ic-ink-2: #8a6a79;         /* muted plum                               */
+    --ic-ink-3: #b58aa0;         /* soft plum (wordmark suffix)              */
+    --ic-body: #5a3e4d;          /* modal body copy                          */
+    --ic-accent: #ec6a9c;        /* bubblegum pink                           */
+    --ic-accent-2: #f49cbb;      /* hero gradient companion                  */
+    --ic-mint: #7fd8c0;          /* stat tile                                */
+    --ic-mint-ink: #12564a;
+    --ic-radius: 22px;           /* hero + modal                             */
+    --ic-radius-tile: 20px;      /* flavor + stat tiles                      */
+    --ic-gap: 14px;
+
+    min-height: 100vh;
+    width: 100%;
+    background: var(--ic-bg);
+    color: var(--ic-ink);
+    font-family: var(--font-sans, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif);
+    -webkit-font-smoothing: antialiased;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.mpicecream-root *,
+.mpicecream-root *::before,
+.mpicecream-root *::after {
+    box-sizing: border-box;
+}
+
+.mpicecream-shell {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* ── Header ──────────────────────────────────────────────────────────────── */
+.mpicecream-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+    padding: 6px 6px 18px;
+}
+
+.mpicecream-brand {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-weight: 800;
+    color: var(--ic-ink);
+    text-decoration: none;
+}
+
+.mpicecream-brand__logo {
+    width: 22px;
+    height: 22px;
+    border-radius: 7px;
+    background: var(--ic-accent);
+    display: grid;
+    place-items: center;
+    color: #fff;
+    font-size: 12px;
+    flex: none;
+}
+
+.mpicecream-brand__sub {
+    color: var(--ic-ink-3);
+    font-weight: 500;
+}
+
+/* Badge → the "12 flavors churning" live-status pill: white-on-page, pink
+   ink, fully round — reads as a soft-serve swirl of a status chip. */
+.mpicecream-pill {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    background: #fff !important;
+    border: 0 !important;
+    color: var(--ic-accent) !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    padding: 6px 12px !important;
+    border-radius: 999px !important;
+    letter-spacing: 0 !important;
+    text-transform: none !important;
+}
+
+.mpicecream-pill svg {
+    flex: none;
+}
+
+/* ── The bento grid ──────────────────────────────────────────────────────── */
+.mpicecream-bento {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-auto-rows: 150px;
+    gap: var(--ic-gap);
+}
+
+/* ── Hero tile (2×2) ─────────────────────────────────────────────────────── */
+.mpicecream-hero {
+    grid-column: span 2;
+    grid-row: span 2;
+    background: linear-gradient(150deg, var(--ic-accent), var(--ic-accent-2));
+    border-radius: var(--ic-radius);
+    padding: 30px;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-width: 0;
+}
+
+.mpicecream-hero__kicker {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    opacity: 0.85;
+}
+
+.mpicecream-hero__title {
+    margin: 0;
+    font-size: clamp(28px, 3.4vw, 40px);
+    font-weight: 800;
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+}
+
+.mpicecream-hero__sub {
+    margin: 10px 0 0;
+    font-size: var(--text-base, 1rem);
+    opacity: 0.9;
+    line-height: 1.5;
+}
+
+.mpicecream-hero__cta {
+    display: flex;
+    gap: 10px;
+}
+
+/* Button → the white hero pill: page-inverted, bubblegum ink. */
+.mpicecream-btn {
+    background: #fff !important;
+    color: var(--ic-accent) !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    padding: 10px 18px !important;
+    font-weight: 700 !important;
+    font-size: var(--text-sm, 0.875rem) !important;
+    box-shadow: none !important;
+    transition: transform 0.18s ease, box-shadow 0.18s ease !important;
+}
+
+.mpicecream-btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 24px -12px rgba(74, 46, 61, 0.5) !important;
+}
+
+/* ── Flavor tiles — hand-rolled buttons; bg/ink/span arrive inline ───────── */
+.mpicecream-tile {
+    appearance: none;
+    border: 0;
+    margin: 0;
+    font: inherit;
+    text-align: left;
+    border-radius: var(--ic-radius-tile);
+    padding: 18px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-width: 0;
+    transition: transform 0.18s ease;
+}
+
+.mpicecream-tile:hover {
+    transform: translateY(-3px);
+}
+
+.mpicecream-tile:focus-visible {
+    outline: 3px solid rgba(236, 106, 156, 0.55);
+    outline-offset: 2px;
+}
+
+.mpicecream-tile[data-cspan="2"] {
+    grid-column: span 2;
+}
+
+.mpicecream-tile__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.mpicecream-tile__icon {
+    font-size: 26px;
+    line-height: 1;
+}
+
+.mpicecream-tile__price {
+    font-family: var(--font-mono, ui-monospace, "SF Mono", monospace);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.mpicecream-tile__label {
+    display: block;
+}
+
+.mpicecream-tile__name {
+    display: block;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    line-height: 1.05;
+}
+
+.mpicecream-tile__short {
+    display: block;
+    font-size: 12px;
+    opacity: 0.72;
+    margin-top: 4px;
+}
+
+/* ── Stat tile — social proof as one more bento cell ─────────────────────── */
+.mpicecream-stat {
+    background: var(--ic-mint);
+    border-radius: var(--ic-radius-tile);
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: var(--ic-mint-ink);
+    min-width: 0;
+}
+
+.mpicecream-stat__num {
+    font-size: 38px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.05;
+}
+
+.mpicecream-stat__label {
+    font-size: 12px;
+    opacity: 0.8;
+}
+
+/* ── Footer ──────────────────────────────────────────────────────────────── */
+.mpicecream-footer {
+    margin-top: 20px;
+    padding: 16px 6px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    font-size: var(--text-sm, 0.875rem);
+    color: var(--ic-ink-2);
+}
+
+.mpicecream-footer__brand {
+    font-weight: 800;
+    color: var(--ic-ink);
+}
+
+.mpicecream-footnote {
+    padding: 0 6px 10px;
+    font-size: 12px;
+    color: var(--ic-ink-3);
+}
+
+/* ============================================================================
+ * Flavor detail modal — react-fancy <Modal> restyled to the scoop card.
+ * The panel portals to <body>, so these selectors anchor on the prefixed
+ * panel class rather than the page root.
+ * ========================================================================== */
+
+/* Panel: 430px white card, radius 22, borderless, one big soft plum shadow. */
+.mpicecream-modal {
+    width: 430px !important;
+    max-width: 100% !important;
+    border: 0 !important;
+    border-radius: 22px !important;
+    background: #fff !important;
+    box-shadow: 0 30px 70px -20px rgba(74, 46, 61, 0.4) !important;
+    color: #4a2e3d;
+    font-family: var(--font-sans, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif);
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Scrim: swap the kit's blurred black for the design's flat plum veil. */
+div:has(> .mpicecream-modal) > div[aria-hidden="true"] {
+    background: rgba(74, 46, 61, 0.42) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+/* Header band — inherits the selected tile's bg/ink inline: the tile opens up. */
+.mpicecream-modal__band {
+    padding: 26px;
+}
+
+.mpicecream-modal__icon {
+    font-size: 40px;
+    line-height: 1;
+}
+
+.mpicecream-modal__name {
+    font-size: 28px;
+    font-weight: 800;
+    margin-top: 6px;
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+}
+
+.mpicecream-modal__body {
+    padding: 22px 26px 28px;
+}
+
+.mpicecream-modal__long {
+    font-size: var(--text-base, 1rem);
+    color: #5a3e4d;
+    line-height: 1.6;
+    margin: 0 0 18px;
+}
+
+.mpicecream-modal__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.mpicecream-modal__price {
+    font-family: var(--font-mono, ui-monospace, "SF Mono", monospace);
+    font-size: 22px;
+    font-weight: 800;
+    color: #ec6a9c;
+}
+
+/* Button → the pink "Add a scoop" pill. */
+.mpicecream-scoop {
+    background: #ec6a9c !important;
+    color: #fff !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    padding: 11px 20px !important;
+    font-weight: 700 !important;
+    font-size: var(--text-sm, 0.875rem) !important;
+    box-shadow: none !important;
+    transition: transform 0.18s ease, box-shadow 0.18s ease !important;
+}
+
+.mpicecream-scoop:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 24px -12px rgba(236, 106, 156, 0.7) !important;
+}
+
+/* ============================================================================
+ * Motion + responsive
+ * ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+    .mpicecream-tile,
+    .mpicecream-btn,
+    .mpicecream-scoop {
+        transition: none !important;
+    }
+
+    .mpicecream-tile:hover,
+    .mpicecream-btn:hover:not(:disabled),
+    .mpicecream-scoop:hover:not(:disabled) {
+        transform: none;
+    }
+}
+
+/* Collapse the 4-col bento to 2 columns; the hero keeps its 2×2 mass (now
+   full-width) and the wide flavor tiles keep their double span. The mockup
+   never defined this — the review flags it as required for mobile. */
+@media (max-width: 920px) {
+    .mpicecream-bento {
+        grid-template-columns: repeat(2, 1fr);
+        grid-auto-rows: 140px;
+    }
+}
+
+@media (max-width: 520px) {
+    .mpicecream-root {
+        padding: 14px;
+    }
+
+    .mpicecream-bento {
+        grid-auto-rows: minmax(124px, auto);
+    }
+
+    .mpicecream-hero {
+        padding: 24px;
+    }
+
+    .mpicecream-footer {
+        flex-direction: column;
+        gap: 6px;
+    }
+}

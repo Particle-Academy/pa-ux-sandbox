@@ -1,0 +1,497 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Mom-n-Pops · Style 13 — Crêperie (Chalkboard)
+   A hand-chalked Parisian menu board on a Milwaukee food truck: deep
+   olive-charcoal slate (#22271F), warm-ivory chalk type in five muted tiers,
+   and one antique-gold accent (#D4AF37) carrying every flourish — italic
+   Georgia display, 2px dashed "chalk rectangle" frames, dotted price leaders,
+   dashed menu rules. Motion is essentially none (the mockup has zero
+   transitions); hover states snap, scrolling is the only movement. Every
+   selector is scoped under .mpcrepes-root so nothing leaks across the SPA,
+   and the shared semantic tokens are re-pointed locally so the two react-fancy
+   primitives on the page (Button, Badge) inherit the slate natively before the
+   hard mpcrepes-* restyles land on top.
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.mpcrepes-root {
+    /* ── The chalkboard palette ─────────────────────────────────────────── */
+    --mpc-bg: #22271f; /* the slate */
+    --mpc-ink: #f1ede2; /* chalk — headings, day names */
+    --mpc-ink-body: #c6c2b4; /* body copy */
+    --mpc-ink-nav: #b8b4a6; /* nav, schedule places */
+    --mpc-ink-desc: #a6a296; /* menu descriptions */
+    --mpc-ink-meta: #8f8b7e; /* mono meta, sublines, tags */
+    --mpc-ink-foot: #928e81; /* footer body */
+    --mpc-gold: #d4af37; /* the one antique-gold accent */
+    --mpc-gold-bright: #ddbc52; /* hover lift for the solid CTA */
+    --mpc-line: rgba(241, 237, 226, 0.16); /* section/header/footer hairlines */
+    --mpc-line-faint: rgba(241, 237, 226, 0.12); /* schedule row rules */
+    --mpc-dash: rgba(241, 237, 226, 0.2); /* menu row dashes, tag borders */
+    --mpc-dot: rgba(241, 237, 226, 0.3); /* dotted price leaders */
+    --mpc-ghost-line: rgba(241, 237, 226, 0.4); /* ghost CTA outline */
+    --mpc-frame: rgba(212, 175, 55, 0.5); /* hero chalk frame */
+    --mpc-frame-soft: rgba(212, 175, 55, 0.4); /* story-card chalk frame */
+    --mpc-serif: Georgia, "Times New Roman", serif; /* literal, per the design */
+
+    /* Re-point the shared semantic tokens so any primitive that reads them
+       already sits on the slate before the class-level restyles. */
+    --fg-1: var(--mpc-ink);
+    --fg-2: var(--mpc-ink-body);
+    --fg-3: var(--mpc-ink-meta);
+    --bg-0: var(--mpc-bg);
+    --bg-1: #262b23;
+    --surface: #262b23;
+    --border-1: var(--mpc-line);
+    --border-2: var(--mpc-dash);
+    --accent: var(--mpc-gold);
+    --primary: var(--mpc-gold);
+    --ring: rgba(212, 175, 55, 0.35);
+
+    min-height: 100vh;
+    background-color: var(--mpc-bg);
+    /* The faintest chalk-dust wash so the slate has depth, not flatness —
+       two whispers of ivory, one of gold. Invisible until you look for it. */
+    background-image:
+        radial-gradient(900px 480px at 18% -6%, rgba(241, 237, 226, 0.035), transparent 60%),
+        radial-gradient(760px 420px at 88% 12%, rgba(212, 175, 55, 0.045), transparent 55%),
+        radial-gradient(1100px 600px at 50% 110%, rgba(241, 237, 226, 0.025), transparent 65%);
+    color: var(--mpc-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Chalk-gold focus ring — dashed, on theme, keyboard-visible everywhere. */
+.mpcrepes-root :focus-visible {
+    outline: 2px dashed rgba(212, 175, 55, 0.75);
+    outline-offset: 3px;
+    border-radius: 2px;
+}
+
+.mpcrepes-shell {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 0 32px;
+}
+
+/* ── Header ──────────────────────────────────────────────────────────────── */
+.mpcrepes-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--mpc-line);
+    flex-wrap: wrap;
+}
+
+.mpcrepes-brand {
+    display: flex;
+    align-items: baseline;
+    gap: 11px;
+    color: var(--mpc-ink);
+}
+
+.mpcrepes-brand__name {
+    font-family: var(--mpc-serif);
+    font-style: italic;
+    font-weight: 700;
+    font-size: 23px;
+    line-height: 1.2;
+}
+
+.mpcrepes-brand__cuisine {
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    color: var(--mpc-gold);
+    text-transform: uppercase;
+}
+
+.mpcrepes-nav {
+    margin-left: auto;
+    display: flex;
+    gap: 26px;
+    flex-wrap: wrap;
+}
+
+/* Nav items are quiet text buttons — chalk that brightens under your hand.
+   No transitions: the mockup's motion budget is zero, so states snap. */
+.mpcrepes-nav__item {
+    background: none;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    font-size: var(--text-sm);
+    color: var(--mpc-ink-nav);
+    cursor: pointer;
+}
+
+.mpcrepes-nav__item:hover {
+    color: var(--mpc-ink);
+}
+
+/* "Vous êtes ici" — the section currently under the reader gets a gold
+   baseline dash, like a chalk underline on the board. */
+.mpcrepes-nav__item[aria-current="true"] {
+    color: var(--mpc-ink);
+    box-shadow: 0 2px 0 0 var(--mpc-frame);
+}
+
+/* ── Hero — the chalk rectangle ──────────────────────────────────────────── */
+.mpcrepes-hero {
+    padding: 64px 0 54px;
+    text-align: center;
+}
+
+.mpcrepes-hero__frame {
+    border: 2px dashed var(--mpc-frame);
+    border-radius: 6px;
+    padding: 52px 40px;
+}
+
+.mpcrepes-hero__eyebrow {
+    font-family: var(--mpc-serif);
+    font-style: italic;
+    font-size: var(--text-lg);
+    color: var(--mpc-gold);
+    margin-bottom: 14px;
+}
+
+.mpcrepes-hero__title {
+    margin: 0;
+    font-family: var(--mpc-serif);
+    font-weight: 400;
+    font-size: clamp(2.4rem, 6.5vw, 4rem); /* 64px at full width */
+    line-height: 1.04;
+    letter-spacing: -0.01em;
+    color: var(--mpc-ink);
+}
+
+.mpcrepes-hero__em {
+    font-style: italic;
+    color: var(--mpc-gold);
+}
+
+.mpcrepes-hero__lede {
+    font-size: var(--text-lg);
+    color: var(--mpc-ink-body);
+    line-height: 1.6;
+    margin: 22px auto 26px;
+    max-width: 520px;
+}
+
+.mpcrepes-hero__ctas {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* ── CTAs — react-fancy Button, rechalked ────────────────────────────────
+   Two roles only, straight from the mockup: solid antique gold with slate
+   text, and a hairline-ivory ghost. Flat, 6px radius, no glow, no motion. */
+.mpcrepes-root .mpcrepes-btn {
+    border-radius: 6px !important;
+    padding: 12px 24px !important;
+    height: auto !important;
+    font-size: 15px !important;
+    line-height: 1.2 !important;
+    box-shadow: none !important;
+    transition: none !important;
+}
+
+.mpcrepes-root .mpcrepes-btn--gold,
+.mpcrepes-root .mpcrepes-btn--gold:not(:disabled) {
+    background: var(--mpc-gold) !important;
+    color: var(--mpc-bg) !important;
+    border: 1px solid transparent !important;
+    font-weight: 700 !important;
+}
+
+.mpcrepes-root .mpcrepes-btn--gold:hover:not(:disabled) {
+    background: var(--mpc-gold-bright) !important;
+}
+
+.mpcrepes-root .mpcrepes-btn--ghost,
+.mpcrepes-root .mpcrepes-btn--ghost:not(:disabled) {
+    background: transparent !important;
+    color: var(--mpc-ink) !important;
+    border: 1px solid var(--mpc-ghost-line) !important;
+    font-weight: 600 !important;
+}
+
+.mpcrepes-root .mpcrepes-btn--ghost:hover:not(:disabled) {
+    border-color: rgba(241, 237, 226, 0.7) !important;
+}
+
+/* ── La Carte — the menu board ───────────────────────────────────────────── */
+.mpcrepes-carte {
+    padding: 26px 0 40px;
+    scroll-margin-top: 84px; /* clear the gallery frame's sticky chrome */
+}
+
+.mpcrepes-carte__head {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.mpcrepes-carte__title {
+    margin: 0;
+    font-family: var(--mpc-serif);
+    font-style: italic;
+    font-weight: 400;
+    font-size: clamp(2rem, 4.2vw, 2.625rem); /* 42px */
+    color: var(--mpc-ink);
+}
+
+.mpcrepes-carte__sub {
+    font-size: var(--text-sm);
+    color: var(--mpc-ink-meta);
+    margin-top: 4px;
+}
+
+.mpcrepes-menu {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 56px;
+}
+
+.mpcrepes-menu__row {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    padding: 18px 0;
+    border-bottom: 1px dashed var(--mpc-dash);
+}
+
+.mpcrepes-menu__main {
+    flex: 1;
+    min-width: 0;
+}
+
+.mpcrepes-menu__line {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+}
+
+.mpcrepes-menu__name {
+    font-family: var(--mpc-serif);
+    font-weight: 400;
+    font-size: var(--text-xl);
+    color: var(--mpc-ink);
+}
+
+/* The signature fiddly detail: a flex-1 dotted rule dropped 4px so the dots
+   sit exactly on the text baseline — the classic chalk-menu price leader. */
+.mpcrepes-menu__leader {
+    flex: 1;
+    border-bottom: 1px dotted var(--mpc-dot);
+    transform: translateY(-4px);
+}
+
+.mpcrepes-menu__price {
+    font-family: var(--mpc-serif);
+    font-style: italic;
+    font-size: var(--text-lg);
+    color: var(--mpc-gold);
+}
+
+.mpcrepes-menu__desc {
+    font-size: var(--text-sm);
+    color: var(--mpc-ink-desc);
+    margin-top: 4px;
+}
+
+/* ── Tag pills — react-fancy Badge, rechalked ────────────────────────────
+   sucrée / salée / vegan as the tiniest outlined chalk pills. */
+.mpcrepes-root .mpcrepes-tag {
+    background: transparent !important;
+    color: var(--mpc-ink-meta) !important;
+    border: 1px solid var(--mpc-dash) !important;
+    border-radius: 999px !important;
+    font-size: 11px !important;
+    font-weight: 400 !important;
+    line-height: 1.4 !important;
+    padding: 1px 7px !important;
+    margin-left: 6px;
+    vertical-align: baseline;
+}
+
+/* ── Notre histoire ──────────────────────────────────────────────────────── */
+.mpcrepes-story {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: center;
+    padding: 56px 0;
+    border-top: 1px solid var(--mpc-line);
+    scroll-margin-top: 84px;
+}
+
+.mpcrepes-story__kicker {
+    font-family: var(--mpc-serif);
+    font-style: italic;
+    font-size: var(--text-lg);
+    color: var(--mpc-gold);
+    margin-bottom: 14px;
+}
+
+.mpcrepes-story__title {
+    margin: 0 0 16px;
+    font-family: var(--mpc-serif);
+    font-weight: 400;
+    font-size: clamp(1.65rem, 3.2vw, 2.125rem); /* 34px */
+    line-height: 1.2;
+    color: var(--mpc-ink);
+}
+
+.mpcrepes-story__body {
+    margin: 0;
+    font-size: var(--text-lg);
+    color: var(--mpc-ink-body);
+    line-height: 1.65;
+}
+
+/* The photography stand-in: the hero's chalk rectangle one alpha step
+   softer, holding an 88px crêpe and a mono caption. */
+.mpcrepes-story__card {
+    border: 2px dashed var(--mpc-frame-soft);
+    border-radius: 6px;
+    padding: 30px;
+    text-align: center;
+}
+
+.mpcrepes-story__emoji {
+    font-size: 88px;
+    line-height: 1.1;
+}
+
+.mpcrepes-story__caption {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--mpc-ink-meta);
+    margin-top: 8px;
+}
+
+/* ── Où nous trouver — the Milwaukee week ────────────────────────────────── */
+.mpcrepes-find {
+    padding: 20px 0 60px;
+    border-top: 1px solid var(--mpc-line);
+    scroll-margin-top: 84px;
+}
+
+.mpcrepes-find__title {
+    margin: 0 0 4px;
+    font-family: var(--mpc-serif);
+    font-style: italic;
+    font-weight: 400;
+    font-size: clamp(1.5rem, 2.8vw, 1.875rem); /* 30px */
+    color: var(--mpc-ink);
+}
+
+.mpcrepes-find__meta {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--mpc-ink-meta);
+    margin-bottom: 22px;
+}
+
+.mpcrepes-find__row {
+    display: grid;
+    grid-template-columns: 130px 1fr auto;
+    gap: 16px;
+    padding: 13px 0;
+    border-bottom: 1px solid var(--mpc-line-faint);
+    align-items: baseline;
+}
+
+.mpcrepes-find__day {
+    font-weight: 600;
+    color: var(--mpc-ink);
+}
+
+.mpcrepes-find__place {
+    color: var(--mpc-ink-nav);
+}
+
+.mpcrepes-find__hours {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--mpc-ink-meta);
+    text-align: right;
+}
+
+/* ── Footer ──────────────────────────────────────────────────────────────── */
+.mpcrepes-footer {
+    border-top: 1px solid var(--mpc-line);
+}
+
+.mpcrepes-footer__inner {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 32px 32px 0;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 18px;
+    font-size: var(--text-sm);
+    color: var(--mpc-ink-foot);
+}
+
+.mpcrepes-footer__brand {
+    font-family: var(--mpc-serif);
+    font-style: italic;
+    color: var(--mpc-ink);
+    font-size: 17px;
+}
+
+.mpcrepes-footer__note {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 14px 32px 28px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: rgba(143, 139, 126, 0.75);
+}
+
+/* ── Responsive — the board folds to one column ──────────────────────────── */
+@media (max-width: 860px) {
+    .mpcrepes-menu {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .mpcrepes-story {
+        grid-template-columns: 1fr;
+        gap: 32px;
+        padding: 44px 0;
+    }
+}
+
+@media (max-width: 640px) {
+    .mpcrepes-shell {
+        padding: 0 20px;
+    }
+
+    .mpcrepes-hero {
+        padding: 44px 0 40px;
+    }
+
+    .mpcrepes-hero__frame {
+        padding: 36px 22px;
+    }
+
+    .mpcrepes-nav {
+        gap: 18px;
+    }
+
+    .mpcrepes-find__row {
+        grid-template-columns: 96px 1fr auto;
+        gap: 10px;
+    }
+
+    .mpcrepes-footer__inner,
+    .mpcrepes-footer__note {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+}

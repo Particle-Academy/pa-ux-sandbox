@@ -1,0 +1,72 @@
+{
+  "id": "ramen",
+  "name": "Ramen",
+  "cuisine": "Ramen",
+  "surface": "Order tracker",
+  "mode": "dark",
+  "thesis": "A late-night ramen-ya rendered as a near-black storefront: warm charcoal surfaces, warm-tan ink, one hot red accent that means 'the broth is on' (a pulsing lamp, solid CTAs, glowing prices and kanji), gold eyebrow labels for quiet structure, and a live kanban order tracker that turns waiting in a Milwaukee January into watching your bowl move from the pot to the window.",
+  "tokens": {
+    "bg": "#100C0B page, #17110F cards/panels, #221A17 inset chips + row dividers",
+    "fg": "#F0E3D0 primary, #F5EBDB card headings, #B5A794/#9A897A muted body, #A89684 nav, #7A6A5C faint captions, #8A7A6C footer",
+    "accent": "#E23B2E solid-red CTAs with #FF5A3C as the hot highlight (prices, kanji, icons) and #FF7A4D in the lamp radial; #E8B94D gold eyebrows; #34D399 green success (YOU pill, done banner, window column); #E0623B pot-column orange",
+    "fontDisplay": "var(--font-sans) at weight 800 with -0.02em tracking; hero clamps to 60px, story h2 to 34px, section h2s use --text-3xl/--text-2xl",
+    "fontMono": "var(--font-mono) for hot-tonight prices, ticket numbers (#42), and right-aligned timetable hours ('6p–1a')",
+    "radius": "14px dominant on cards; 16px on the two big panels (tonight card, tracker shell); 10px CTAs/tickets; 9px inset +Add chips; 999px pills",
+    "border": "1px #2A211E on every card/panel/header/footer; #221A17 inner row hairlines; #3A2E2A outline buttons; the tracker's columns are separated by 1px grid-gap lines over a #2A211E board background",
+    "motion": "one keyframe animation (mpramen-glow: opacity 0.85→1→0.85, 3s ease-in-out infinite) pulsing the hero's 32px radial-gradient lamp with a 24px red glow shadow; sticky header with backdrop blur(8px); 150ms ease color/border transitions on interactive chrome; the order-tracker progression is state-driven re-renders on two setTimeout stages (3s, 6.5s); lamp pulse disabled under prefers-reduced-motion"
+  },
+  "layout": "Single dark page, 1140px max width with 28px side padding, sticky blurred header (z-index 20, under the gallery frame). Hero is a 1.1fr/0.9fr grid — copy + a 'Tonight · Water St' live card. Below: a 3-column menu grid of six flat dish cards, then the full-width order-tracker panel whose body is a 3-column kanban with 1px gap grid lines, then a 1fr/1fr story + 2x2 stat-tile split set off by a top hairline, then a stacked timetable card, then a flex footer. Density is medium: 44–60px section padding, 14–18px card padding. Collapses to one column under 920px; the kanban stacks vertically under 640px.",
+  "sections": [
+    {
+      "name": "sticky-header",
+      "what": "Wordmark 'Mom-n-Pops' + red katakana ラーメン tag; right-aligned scroll nav (Menu / Order ahead / Find us) and a solid-red 'Find the truck' pill.",
+      "components": ["Button"],
+      "restyle": "Header is position:sticky with rgba(16,12,11,0.92) + backdrop blur(8px) at z-index 20; nav items are real <button>s styled as muted tan text links that brighten on hover; the pill is a Fancy Button forced to solid #E23B2E, 8px radius, 9x16 padding."
+    },
+    {
+      "name": "hero",
+      "what": "Pulsing red lamp + gold eyebrow ('Open late · Milwaukee · 2026'), a 60px weight-800 headline 'A 20-hour bowl of broth.', dek, and two CTAs (solid red 'See the bowls', outlined 'Order ahead') beside a 'Tonight · Water St · till 1 AM' card listing three hot items with mono prices.",
+      "components": ["Button", "Card"],
+      "restyle": "The lamp is a 32px circle with radial-gradient(#FF7A4D→#E23B2E), a 24px red box-shadow glow, and the 3s opacity pulse — a cheap, effective 'broth's on' signal. Primary Button is solid red at 10px radius; ghost Button is a #3A2E2A hairline outline that heats to #FF5A3C on hover. The tonight Card is flattened to #17110F with a Soup-icon header row and #221A17 hairline item rows. Both CTAs scroll via refs + scrollIntoView with scroll-margin-top clearing the sticky header."
+    },
+    {
+      "name": "menu",
+      "what": "'The bowls 丼' heading (English h2 + red kanji + 'tap + to add' hint) over a 3-column grid of six dish cards: emoji + big red price on the top row, bold name, short description, and a full-width '+ Add' chip that feeds the order tracker's cart.",
+      "components": ["Card", "Button"],
+      "restyle": "Cards flattened to #17110F/#2A211E hairline panels at 14px radius with an 18px flex-column body (description flexes so the +Add row bottom-aligns). The +Add Button is re-skinned as an inset chip — #221A17 fill, #3A2E2A hairline, 9px radius — whose border and label heat to #FF5A3C on hover."
+    },
+    {
+      "name": "order-tracker",
+      "what": "The special surface: a framed panel with a header bar (title, live cart summary like '2 · $26', red 'Place order' button) over a 3-column kanban (In line / At the pot / At the window) of order tickets, plus a green success banner when your bowl reaches the window.",
+      "components": ["Kanban", "Card", "Button", "Badge"],
+      "restyle": "The Fancy Kanban is re-skinned hard: root forced from flex to a 3-column grid with 1px gaps over a #2A211E background (printed grid lines), unstyled Columns on the #100C0B page color with a 9px status dot + bold label head, unstyled Cards as tickets — #17110F fill, 3px status-colored left border (queue tan #A89684 / pot orange #E0623B / window green #34D399), mono #num. Your ticket gets a Badge re-skinned as the green 'YOU' pill plus a 0 0 0 2px #34D399 ring. Cart + stage are controlled state: '+ Add' appends items, 'Place order' (disabled until the cart has items, dims to 0.5) drops ticket #42 into the queue and two timers (3s / 6.5s) walk it to the window, cleared on unmount. The done banner is a rgba-green strip with a CheckCircle2 icon: 'Bowl #42 is up at the window. Itadakimasu.'"
+    },
+    {
+      "name": "story-stats",
+      "what": "物語 · Our story: gold kanji eyebrow, 34px headline 'The broth starts before we open and never really stops.', the Rosa & Sal January-night copy — beside a 2x2 grid of stat tiles (20 hr broth / 1 AM close / fresh noodles / est. 2026).",
+      "components": [],
+      "restyle": "Hand-rolled split set off by a top hairline instead of a background shift; stat tiles are #17110F hairline cards whose 28px weight-800 values glow #FF5A3C over muted tan labels — a reusable KPI-tile pattern."
+    },
+    {
+      "name": "schedule",
+      "what": "'Find the truck' — a single rounded card of six rows (Tuesday–Sunday), each a 130px/1fr/auto grid: bold day, muted location, mono right-aligned hours.",
+      "components": [],
+      "restyle": "Hand-rolled printed-timetable: one #17110F container with #221A17 inner hairlines between rows; mono '6p–1a' hours give it a train-board feel."
+    },
+    {
+      "name": "footer",
+      "what": "Single flex row: bold wordmark with katakana, scrape-obfuscated email (nested <span>@</span>) + Instagram handle, copyright + style stamp.",
+      "components": [],
+      "restyle": "Top hairline, #8A7A6C ink, weight-800 wordmark in primary ink; stacks vertically on small screens."
+    }
+  ],
+  "palette": [
+    { "component": "Button", "restyle": "Four roles, all forced via scoped !important: primary = solid #E23B2E, 10px radius, weight 700, hover-lifts to #F04435, disabled dims to 0.5 opacity + not-allowed (drives the Place-order gate); ghost = transparent with a #3A2E2A hairline that heats to #FF5A3C; header pill = the same red at 8px radius and pill padding; +Add = a full-width inset chip on #221A17 with a hairline border." },
+    { "component": "Badge", "restyle": "Re-skinned as the green 'YOU' pill: rgba(52,211,153,0.14) fill, #34D399 text, 999px radius, 10px weight-700 label — the single success voice on the board." },
+    { "component": "Card", "restyle": "Flattened to warm charcoal panels — #17110F fill, 1px #2A211E border, no kit shadow; 14px radius on dish cards, 16px on the tonight card and tracker shell; Card.Header becomes the hairline-bottomed panel header row." },
+    { "component": "Kanban", "restyle": "The centerpiece re-skin: root display forced to a 3-column grid with 1px gaps over the border color so the gaps read as grid lines; Columns unstyled onto the page background with dot+label heads; Cards unstyled into read-only order tickets (default cursor, no drop handler) with 3px status-colored left borders keyed to the column and a 2px green ring on the user's ticket; the kit's drag-over ring is recolored into the palette." },
+    { "component": "Hand-rolled", "restyle": "The pulsing lamp (radial-gradient + glow shadow + 3s opacity keyframe), stat KPI tiles, timetable rows, hot-tonight item rows, and the green done banner — all simple flex/grid pieces in the same hairline vocabulary." }
+  ],
+  "contentArchetype": "A family food-truck storefront with a live service surface: hero promise + tonight's location card, a six-item priced menu that feeds a cart, a kanban order tracker with ambient fellow-customer tickets and a staged your-bowl journey, a founders' story with KPI stats, a weekly city schedule, and a one-line footer. Copy is terse and warm — devotion to the broth, a fogged-up window, a line that doesn't care about the cold.",
+  "remix": "The whole mood hangs on three dials: the surface warmth (swap the #100C0B/#17110F browns toward neutral #0a0b0e and it becomes a tech console; toward #1a0f0a and it's more izakaya), the hot accent (trade #E23B2E/#FF5A3C for gold and the lamp becomes a lantern), and the tracker's stage colors. The kanban-as-status-board pattern generalizes to any fulfillment flow — swap 'In line / At the pot / At the window' for 'Queued / Baking / Ready' and keep the 3px left-border + YOU-ring grammar. The 1px-gap-over-border-color grid-line trick and the KPI stat tiles port anywhere dark. Blend with the fieldwork Dark Studio blueprint for a more disciplined single-accent read, or push the katakana/kanji glyph accents further (vertical text, larger 丼) for a full noren-curtain identity."
+}

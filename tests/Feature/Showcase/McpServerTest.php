@@ -106,7 +106,7 @@ it('lists the gallery design tools', function () {
     expect($names)->toContain('gallery-list-styles')->toContain('gallery-get-blueprint');
 });
 
-it('gallery-list-styles returns all 20 styles with blueprint urls', function () {
+it('gallery-list-styles returns every collection + all 40 styles with blueprint urls', function () {
     $body = rpc([
         'jsonrpc' => '2.0',
         'id' => 8,
@@ -116,11 +116,28 @@ it('gallery-list-styles returns all 20 styles with blueprint urls', function () 
 
     expect($body['result']['isError'])->toBeFalse();
     $payload = json_decode($body['result']['content'][0]['text'], true);
-    expect($payload['count'])->toBe(20);
+    expect($payload['count'])->toBe(40);
     expect($payload['kind'])->toBe('design-blueprints');
+    expect(array_column($payload['collections'], 'id'))->toBe(['fieldwork', 'mom-n-pops']);
     $ids = array_column($payload['styles'], 'id');
-    expect($ids)->toContain('swiss')->toContain('agentic');
-    expect($payload['styles'][0]['blueprint'])->toBe('/gallery/swiss.json');
+    expect($ids)->toContain('swiss')->toContain('agentic')->toContain('tacos')->toContain('grilledcheese');
+    expect($payload['styles'][0]['blueprint'])->toBe('/gallery/fieldwork/swiss.json');
+});
+
+it('gallery-list-styles narrows to one collection', function () {
+    $body = rpc([
+        'jsonrpc' => '2.0',
+        'id' => 11,
+        'method' => 'tools/call',
+        'params' => ['name' => 'gallery-list-styles', 'arguments' => ['collection' => 'mom-n-pops']],
+    ]);
+
+    expect($body['result']['isError'])->toBeFalse();
+    $payload = json_decode($body['result']['content'][0]['text'], true);
+    expect($payload['count'])->toBe(20);
+    expect($payload['collection'])->toBe('mom-n-pops');
+    $ids = array_column($payload['styles'], 'id');
+    expect($ids)->toContain('tacos')->not->toContain('swiss');
 });
 
 it('gallery-get-blueprint returns one style\'s full recipe', function () {
@@ -134,6 +151,7 @@ it('gallery-get-blueprint returns one style\'s full recipe', function () {
     expect($body['result']['isError'])->toBeFalse();
     $payload = json_decode($body['result']['content'][0]['text'], true);
     expect($payload['id'])->toBe('dark');
+    expect($payload['collection'])->toBe('fieldwork');
     expect($payload)->toHaveKeys(['thesis', 'tokens', 'sections', 'palette', 'contentArchetype', 'remix']);
 });
 

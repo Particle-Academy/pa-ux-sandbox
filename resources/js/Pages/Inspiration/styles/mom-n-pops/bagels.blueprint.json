@@ -1,0 +1,96 @@
+{
+  "id": "bagels",
+  "name": "The Daily Bagel",
+  "note": "Newsprint broadsheet — the menu as classifieds.",
+  "mode": "light",
+  "thesis": "A small-town broadsheet front page for a bagel truck: aged newsprint cream, near-black ink, one firebrick spot color, Georgia serif headlines at weight 900, two-column justified-feeling body with a drop cap, dotted price leaders, and a rule hierarchy (3px / 2px / 1px) doing all the structure. The menu is the classifieds, the owners are the feature, the schedule is the almanac, and the item detail is a right-side paper drawer — a 'full column', not a modal.",
+  "tokens": {
+    "bg": "#F1EFE6 aged newsprint cream everywhere — page, drawer, art plates (#E9E6DA base under the etchings); the single inversion is the #141414 'Add to order' bar",
+    "fg": "#141414 ink; body copy #4A4A44; secondary chrome #3A3A3A; captions/hints #5A5A5A; faint labels and allergens #7A7568",
+    "accent": "#B22222 firebrick — kickers, prices, the Order Ahead nav item, the drawer price, hover reds; always ink-on-paper, never a fill (the sole fill use is the add-bar hover)",
+    "fontDisplay": "literal Georgia / 'Times New Roman' serif stack set on the root; display is just this serif at weight 900 and scale (74px nameplate, 52px lead headline, tight -0.02em tracking)",
+    "fontMono": "not used — the second voice is var(--font-sans) for UI chrome (dateline nav, kickers, captions, prices, tags, buttons); the serif/sans split IS the type system",
+    "radius": "0 everywhere — rows, chips, buttons, the drawer are square-cornered; the single exception is the 50% round white drawer close button",
+    "border": "#141414 rules in three weights: 3px (masthead top, schedule close), 2px (nav underline, catering box, quote button, drawer art rule), 1px (section hairlines, art frames); #C8C4B8 soft in-column dividers; 1px dotted #8A8578 price leaders",
+    "motion": "none — no keyframes or transitions; hover is an instant #E8E5DA background swap on menu rows and the drawer snaps in and out on state change, like turning a page"
+  },
+  "layout": "Single centered 1120px column with 34px side padding, stacked as full-width newspaper sections separated by horizontal rules of varying weight. Masthead: dateline row, 74px weight-900 nameplate between a 3px top rule and 1px bottom rule, letterspaced sans tagline, then a centered sans nav under a 2px rule. Lead story is a 2fr/1fr grid — red kicker, 52px headline, column-count:2 body with a 58px ::first-letter drop cap, etched hero plate with a FIG. 1 caption on the right. The menu is a 2-column classifieds grid of tappable rows (88x74 thumb, weight-900 name, dotted leader stretching to a red sans price, one-line description). The story section mirrors the lead as 1fr/2fr. The schedule is a 3-column grid of six day/place baseline rows closed by a 3px rule. A 2px ink-outlined WANTED classified carries the catering CTA, then a hairline-topped sans footer. Selecting any menu item opens a fixed 520px right-side paper drawer (rgba-ink scrim, -20px ink shadow) kept at z-index 25, under the host chrome.",
+  "sections": [
+    {
+      "name": "masthead",
+      "what": "Newspaper masthead: a Vol. I / Milwaukee / Est. 2026 · 50¢ dateline, the 'The Daily Bagel' nameplate (a Link back to the collection hub) bracketed by the 3px/1px rules, a 0.24em-tracked sans tagline, and a centered sans nav under a 2px rule — 'Order Ahead' is the only red item and opens the best seller's full column.",
+      "components": ["Link (Inertia)"],
+      "restyle": "Entirely hand-rolled type and rules — the three-rule hierarchy is the signature device and has no primitive equivalent. The nav is plain anchors to section ids plus one reset <button> in firebrick for Order Ahead."
+    },
+    {
+      "name": "lead story",
+      "what": "2fr/1fr front page: red sans kicker 'Front Page · Boiled & Baked Daily', a clamp()'d 52px weight-900 headline, body copy in CSS column-count:2 with a floated drop cap R, and an etched 'this morning's dozen' SVG plate with an underlined FIG. 1 caption.",
+      "components": [],
+      "restyle": "Pure CSS typesetting: columns via column-count, the drop cap via ::first-letter float. The photo is replaced by an ink-etched SVG tray of twelve bagels (shared <symbol> sprite) washed with the site-wide grayscale(1) contrast(1.12) filter so it reads as a halftone press photo."
+    },
+    {
+      "name": "menu classifieds",
+      "what": "A centered '— THE MENU —' banner between hairline rules with a 'tap any item for the full column' hint, then a 2-column grid of six clickable rows: bordered 88x74 etched thumbnail, weight-900 name, a dotted leader line stretching to a red sans price, and a one-line description. Rows hover-swap to #E8E5DA and open the drawer.",
+      "components": [],
+      "restyle": "Rows are reset full-width <button> elements (aria-haspopup=dialog) — the dotted price leader is a flex:1 span with border-bottom:1px dotted #8A8578 nudged translateY(-4px), the classic menu-card device. Thumbnails alternate two etching variants deterministically (index % 2), mirroring the mockup's imgId logic."
+    },
+    {
+      "name": "our story",
+      "what": "Mirrored 1fr/2fr feature: etched single-bagel plate left, 32px weight-900 headline 'Two Owners, One Kettle, Zero Days Off (Almost)', and two-column body about Rosa (Brooklyn boiler, two-day cold ferment, malt in the boil, 'a bagel is 90% patience') and Sal (the deli window man).",
+      "components": [],
+      "restyle": "Same column-count:2 treatment as the lead; the grid mirror keeps the broadsheet rhythm. The pull-quote stays inline in prose — newsprint doesn't break out a quote card."
+    },
+    {
+      "name": "week listings",
+      "what": "Centered all-caps 'WHERE TO FIND THE TRUCK THIS WEEK', then a 3-column grid of six Mon–Sat day/place rows, each a baseline-aligned flex row with a #C8C4B8 bottom rule, the whole section closed by a 3px ink rule.",
+      "components": [],
+      "restyle": "A hand-rolled almanac block — bold serif day left, muted right-aligned location. No calendar or Table primitive needed at this density; if listings grow, restyle Table to transparent cells with these same hairline rules."
+    },
+    {
+      "name": "catering classified",
+      "what": "A 2px ink-outlined box styled as a WANTED classified: red 'Classified · Catering' kicker, weight-900 headline, a support line nodding to the Human+ assistant ('Our assistant will build the order — just say the word'), and a 'Get a quote →' outline Button that swaps the copy to a confirmation on click.",
+      "components": ["Button"],
+      "restyle": "Button flattened to the classified voice: transparent, 2px ink border, radius 0, 13px bold sans, inverting to ink fill on hover. The quoted state is one useState boolean — the ad rewrites its own support line, aria-live polite."
+    },
+    {
+      "name": "footer + folio",
+      "what": "Hairline-topped sans footer: bold brand, scrape-obfuscated email (the @ split into a nested span) plus the social handle, and the 'Printed with love' copyright; below, a soft-ruled uppercase folio line with the style number and a firebrick back-link to the collection.",
+      "components": ["Link (Inertia)"],
+      "restyle": "Small sans utility voice throughout; the back-link is the only navigation the page adds — no fixed headers or back bars that would fight the gallery frame."
+    },
+    {
+      "name": "item drawer (the full column)",
+      "what": "Selecting a row renders a fixed full-screen scrim (rgba(20,20,20,0.5)) with a 520px right-side drawer in the same paper: 250px etched plate over a 2px rule with a round white close Button, red 'The Menu · Full Column' kicker, 34px name + 24px red price, square tag Badges, the long copy, 'Built with' ingredient Badges, an allergens line, and a full-width inverted ink 'Add to order · $price' Button that flips to a confirmation once clicked.",
+      "components": ["Button", "Badge"],
+      "restyle": "The drawer shell is hand-rolled (react-fancy's Modal centers; a right sheet in paper is truer) and capped at z-index 25 so the host chrome stays on top. Escape and the scrim both close it; body scroll locks via useEffect with cleanup. Badges are squared to 1px chips — ink-bordered bold 11px for tags, #C8C4B8-bordered 13px for ingredients. The add bar is the page's only inverted-ink block."
+    }
+  ],
+  "palette": [
+    {
+      "component": "Button",
+      "restyle": "Three reads: (1) the classified 'Get a quote' — transparent, 2px ink border, radius 0, 13px bold sans, ink-fill on hover; (2) the drawer 'Add to order · $x' — full-width inverted #141414 bar with paper text, firebrick on hover, the page's only inversion; (3) variant=\"circle\" for the drawer close — a 34px white disc, the lone rounded element."
+    },
+    {
+      "component": "Badge",
+      "restyle": "Squared to 1px classification stamps, never pills: outline ink border with 11px bold sans for item tags (Staff pick / Vegetarian / Best seller), and a softer #C8C4B8 border with 13px regular sans in #4A4A44 for 'Built with' ingredient chips."
+    },
+    {
+      "component": "Modal",
+      "restyle": "Deliberately not used — the item detail is a hand-rolled fixed right-side 520px paper drawer (scrim + -20px ink shadow, overflow-y auto, square corners). If you reach for Modal elsewhere in this look, zero its radius, repaint it #F1EFE6, trade its shadow for ink rules, and keep its z-index under the host chrome."
+    },
+    {
+      "component": "Table",
+      "restyle": "For anything denser than the six-row almanac: transparent cells, #C8C4B8 hairline row rules, a 2px ink header rule, bold serif lead column, muted right-aligned sans data — a listings page, not a data grid."
+    },
+    {
+      "component": "Tabs / Breadcrumbs / nav chrome",
+      "restyle": "Any navigational primitive flattens to the sans utility voice — 12px uppercase, 0.08em tracking, #3A3A3A on paper over a 2px ink rule, with firebrick reserved for the one action that matters."
+    },
+    {
+      "component": "Heading / Text",
+      "restyle": "Headings inherit the root Georgia stack at weight 900 with -0.02em tracking (no separate display var); Text bodies at 15px/1.6 pour into column-count:2 blocks, the opener taking a 58px ::first-letter drop cap."
+    }
+  ],
+  "contentArchetype": "A fictional Milwaukee family food truck (Mom-n-Pops — Rosa & Sal, est. 2026) selling bagels, written entirely as fake newspaper journalism: dateline and nameplate, a kettle-boiled-bagels lead story with 'sources close to the truck', the six-item menu priced as classifieds, an owners feature with an inline pull-quote, a Mon–Sat street-corner almanac, a WANTED catering classified that name-checks the ordering assistant, an obfuscated-email footer, and a per-item 'full column' drawer with tags, ingredients, allergens, and an add-to-order bar.",
+  "remix": "Swap the firebrick for any ink-safe spot color (forest, navy, oxblood) and the cream for a cooler gray-white to reskin the whole paper. The load-bearing moves: (1) the 3px/2px/1px ink-rule hierarchy replacing every box and shadow, (2) weight-900 serif display against a sans utility chrome, (3) dotted price leaders on flex rows, (4) column-count:2 body with a ::first-letter drop cap, (5) grayscale(1) contrast(1.12) over all art so anything — SVG etching or real photo — reads as halftone press imagery. Blend toward FIELDWORK's editorial style by adding mono folios and softening the rules to hairlines; push tabloid by inflating the nameplate, tightening leading, and letting headlines shout in all caps; go full deli-counter by trading the drawer for an inline ticket rail while keeping the classified rows."
+}

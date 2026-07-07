@@ -1,0 +1,496 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Mom-n-Pops · Style 18 — Churros (carnival marquee storefront, dark)
+   State-fair midway booth after dark: deep maroon page (#3A0E12), cream type,
+   one carnival-gold accent (#F4A825) doing every job, a red/cream striped
+   awning bar up top, and a marquee-light hero frame whose top edge blinks a
+   string of CSS radial-gradient bulbs in two alternating phases. Fancy
+   primitives restyled: Button → gold-fill / maroon-outline midway CTAs,
+   Badge → the gold barker pill + "Today" marker, Card → menu cards on maroon
+   panels with 2px brick borders, Heading → the inverted gold plaque h2.
+   Every class prefixed mpchurros- so nothing leaks across the SPA; page-level
+   z-index stays under 30 (the gallery frame owns 30+). Per the mockup, the
+   ONLY animation is the bulb blink — no transitions anywhere else.
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.mpchurros-root {
+  /* ── Scoped midway tokens ───────────────────────────────────────────── */
+  --mpc-bg:        #3A0E12;  /* deep maroon page */
+  --mpc-panel:     #4A1216;  /* header / cards / schedule / footer */
+  --mpc-inset:     #5A1A1E;  /* inset emoji panel + row dividers */
+  --mpc-cream:     #FBEFD8;  /* primary text */
+  --mpc-cream-2:   #E8C9A0;  /* secondary text / nav / captions */
+  --mpc-muted:     #D2A98A;  /* card descriptions */
+  --mpc-muted-2:   #C99C7E;  /* mono hours / story caption / footer */
+  --mpc-gold:      #F4A825;  /* carnival gold — the one accent */
+  --mpc-gold-hi:   #FFB63C;  /* gold hover */
+  --mpc-red:       #D62828;  /* carnival red — awning stripe only */
+  --mpc-bulb:      #FFE08A;  /* marquee bulb glow */
+  --mpc-line:      #7A2A2E;  /* brick borders (2px cards, 1px rules) */
+  --mpc-line-soft: #8A3A3E;  /* secondary button border */
+
+  min-height: 100vh;
+  background: var(--mpc-bg);
+  color: var(--mpc-cream);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.mpchurros-root ::selection {
+  background: var(--mpc-gold);
+  color: var(--mpc-panel);
+}
+
+.mpchurros-container {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 30px;
+}
+
+/* ── Awning stripe bar — pure CSS carnival awning ────────────────────────── */
+.mpchurros-awning {
+  height: 24px;
+  background: repeating-linear-gradient(90deg, var(--mpc-red) 0 34px, var(--mpc-cream) 34px 68px);
+}
+
+/* ── Sticky header (stays UNDER the z-30 gallery frame) ──────────────────── */
+.mpchurros-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--mpc-panel);
+  border-bottom: 2px solid var(--mpc-gold);
+}
+.mpchurros-header__in {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 14px 30px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.mpchurros-brand {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  color: var(--mpc-cream);
+  text-decoration: none;
+}
+.mpchurros-brand__name {
+  font-weight: 900;
+  font-size: 22px;
+  letter-spacing: -0.01em;
+}
+.mpchurros-brand__desc {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--mpc-gold);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.mpchurros-nav {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+.mpchurros-nav__link {
+  color: var(--mpc-cream-2);
+  text-decoration: none;
+}
+.mpchurros-nav__link:hover { color: var(--mpc-cream); }
+
+/* ── Hero — 1.05fr / 0.95fr split ────────────────────────────────────────── */
+.mpchurros-hero__in {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 52px 30px;
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 40px;
+  align-items: center;
+}
+
+/* Badge → the gold barker pill */
+.mpchurros-root .mpchurros-badge {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 8px;
+  background: var(--mpc-gold) !important;
+  color: var(--mpc-panel) !important;
+  font-size: 12px !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 6px 16px !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  line-height: 1.4 !important;
+  margin-bottom: 20px;
+}
+
+.mpchurros-hero__title {
+  font-size: clamp(2.5rem, 5.6vw, 62px);
+  line-height: 0.96;
+  letter-spacing: -0.02em;
+  font-weight: 900;
+  margin: 0;
+}
+.mpchurros-hero__sub {
+  font-size: var(--text-xl);
+  color: var(--mpc-cream-2);
+  line-height: 1.5;
+  margin: 20px 0 26px;
+  max-width: 440px;
+}
+.mpchurros-hero__cta {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* ── Buttons (react-fancy Button worn as midway CTAs, no transitions) ────── */
+.mpchurros-root .mpchurros-btn {
+  font-family: var(--font-sans) !important;
+  border-radius: 10px !important;
+  padding: 13px 24px !important;
+  font-size: var(--text-base) !important;
+  box-shadow: none !important;
+  transition: none !important;
+}
+.mpchurros-root .mpchurros-btn--gold {
+  background: var(--mpc-gold) !important;
+  color: var(--mpc-panel) !important;
+  border: 2px solid var(--mpc-gold) !important;
+  font-weight: 900 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+.mpchurros-root .mpchurros-btn--gold:hover:not(:disabled) {
+  background: var(--mpc-gold-hi) !important;
+  border-color: var(--mpc-gold-hi) !important;
+}
+.mpchurros-root .mpchurros-btn--outline {
+  background: transparent !important;
+  color: var(--mpc-cream) !important;
+  border: 2px solid var(--mpc-line-soft) !important;
+  font-weight: 700 !important;
+}
+.mpchurros-root .mpchurros-btn--outline:hover:not(:disabled) {
+  border-color: var(--mpc-gold) !important;
+  background: transparent !important;
+  color: var(--mpc-cream) !important;
+}
+.mpchurros-root .mpchurros-btn:focus-visible {
+  outline: 2px solid var(--mpc-gold);
+  outline-offset: 2px;
+}
+
+/* ── THE signature surface: the marquee-light frame ──────────────────────── */
+.mpchurros-marquee {
+  position: relative;
+  padding: 14px;
+  border: 3px solid var(--mpc-gold);
+  border-radius: 16px;
+}
+
+/* A string of bulbs riding the frame's top edge. Two phases (::before at
+   even sockets, ::after at odd) blink in counterpoint — the marquee chase.
+   Each phase repeats every 64px; interleaved they land a bulb every 32px,
+   matching the mockup's background-size: 32px 100%. */
+.mpchurros-bulbs {
+  position: absolute;
+  top: -3px;
+  left: 0;
+  right: 0;
+  height: 12px;
+  pointer-events: none;
+}
+.mpchurros-bulbs::before,
+.mpchurros-bulbs::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 16px 50%, var(--mpc-bulb) 0 5px, transparent 6px);
+  background-size: 64px 100%;
+  filter: drop-shadow(0 0 5px rgba(255, 224, 138, 0.75));
+  animation: mpchurros-bulb 1.6s ease-in-out infinite;
+}
+.mpchurros-bulbs::after {
+  background-position: 32px 0;
+  animation-delay: -0.8s;
+}
+@keyframes mpchurros-bulb {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+.mpchurros-marquee__panel {
+  background: var(--mpc-inset);
+  border-radius: 10px;
+  padding: 36px;
+  text-align: center;
+}
+.mpchurros-marquee__emoji {
+  font-size: 96px;
+  line-height: 1.15;
+}
+.mpchurros-marquee__caption {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--mpc-cream-2);
+  margin-top: 6px;
+}
+
+/* ── The Midway Menu ─────────────────────────────────────────────────────── */
+.mpchurros-menu {
+  padding: 44px 0 30px;
+  scroll-margin-top: 80px;
+}
+.mpchurros-plaquewrap {
+  text-align: center;
+  margin-bottom: 26px;
+}
+
+/* Heading → the inverted gold plaque (dark text on a gold chip) */
+.mpchurros-root .mpchurros-plaque {
+  display: inline-block !important;
+  font-size: clamp(1.8rem, 4vw, 42px) !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.01em !important;
+  color: var(--mpc-panel) !important;
+  background: var(--mpc-gold);
+  padding: 6px 26px;
+  border-radius: 12px;
+  margin: 0 !important;
+  line-height: 1.25 !important;
+}
+
+.mpchurros-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+/* Card → menu card: maroon panel, 2px brick border, gold price top-right */
+.mpchurros-root .mpchurros-mcard {
+  background: var(--mpc-panel) !important;
+  border: 2px solid var(--mpc-line) !important;
+  border-radius: 16px !important;
+  box-shadow: none !important;
+  padding: 18px !important;
+  display: flex !important;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--mpc-cream);
+}
+.mpchurros-mcard__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.mpchurros-mcard__icon { font-size: 24px; line-height: 1.2; }
+.mpchurros-mcard__price {
+  font-size: var(--text-lg);
+  font-weight: 900;
+  color: var(--mpc-gold);
+}
+.mpchurros-mcard__name {
+  font-size: var(--text-lg);
+  font-weight: 800;
+  color: var(--mpc-cream);
+}
+.mpchurros-mcard__short {
+  font-size: var(--text-sm);
+  color: var(--mpc-muted);
+  line-height: 1.45;
+  margin: 0;
+}
+
+/* ── Our story — poster panel beside the meet-cute copy ──────────────────── */
+.mpchurros-story {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: center;
+  padding: 44px 0;
+  border-top: 1px solid var(--mpc-line);
+  scroll-margin-top: 80px;
+}
+.mpchurros-story__poster {
+  border: 2px solid var(--mpc-line);
+  border-radius: 12px;
+  padding: 30px;
+  text-align: center;
+}
+.mpchurros-story__emoji {
+  font-size: 80px;
+  line-height: 1.15;
+}
+.mpchurros-story__caption {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--mpc-muted-2);
+  margin-top: 6px;
+}
+.mpchurros-eyebrow {
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--mpc-gold);
+  font-weight: 800;
+  margin-bottom: 14px;
+}
+.mpchurros-story__title {
+  font-size: clamp(1.6rem, 3.2vw, 34px);
+  font-weight: 900;
+  line-height: 1.04;
+  letter-spacing: -0.01em;
+  margin: 0 0 16px;
+}
+.mpchurros-story__body {
+  font-size: var(--text-lg);
+  color: var(--mpc-cream-2);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ── Find the booth — table-as-list schedule ─────────────────────────────── */
+.mpchurros-find {
+  padding: 20px 0 56px;
+  scroll-margin-top: 80px;
+}
+.mpchurros-root .mpchurros-h2 {
+  font-size: var(--text-2xl) !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.01em !important;
+  color: var(--mpc-cream) !important;
+  margin: 0 0 18px !important;
+}
+.mpchurros-sched {
+  background: var(--mpc-panel);
+  border: 1px solid var(--mpc-line);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.mpchurros-sched__row {
+  display: grid;
+  grid-template-columns: 130px 1fr auto;
+  gap: 16px;
+  align-items: center;
+  padding: 14px 22px;
+  border-bottom: 1px solid var(--mpc-inset);
+}
+.mpchurros-sched__row:last-child { border-bottom: 0; }
+.mpchurros-sched__row--today { background: var(--mpc-inset); }
+.mpchurros-sched__day {
+  font-weight: 800;
+  color: var(--mpc-cream);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.mpchurros-sched__place { color: var(--mpc-cream-2); }
+.mpchurros-sched__hours {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--mpc-muted-2);
+  white-space: nowrap;
+}
+
+/* Badge → live "Today" marker (set after hydration; deterministic SSR) */
+.mpchurros-root .mpchurros-today {
+  background: var(--mpc-gold) !important;
+  color: var(--mpc-panel) !important;
+  border: 0 !important;
+  font-size: 10px !important;
+  font-weight: 900 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 2px 8px !important;
+  border-radius: 999px !important;
+  line-height: 1.4 !important;
+}
+
+/* ── Footer — gold top rule mirrors the header's bottom rule ─────────────── */
+.mpchurros-footer {
+  background: var(--mpc-panel);
+  color: var(--mpc-muted-2);
+  border-top: 2px solid var(--mpc-gold);
+}
+.mpchurros-footer__in {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 32px 30px 10px;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 18px;
+  font-size: var(--text-sm);
+}
+.mpchurros-footer__brand {
+  font-weight: 900;
+  color: var(--mpc-cream);
+}
+.mpchurros-footer__contact { overflow-wrap: anywhere; }
+.mpchurros-footer__folio {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0 30px 26px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--mpc-line-soft);
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 980px) {
+  .mpchurros-hero__in {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    padding: 44px 30px;
+  }
+  .mpchurros-grid { grid-template-columns: repeat(2, 1fr); }
+  .mpchurros-story {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+}
+@media (max-width: 720px) {
+  .mpchurros-nav { gap: 16px; }
+  .mpchurros-container { padding: 0 20px; }
+  .mpchurros-header__in { padding: 12px 20px; }
+  .mpchurros-hero__in { padding: 40px 20px; }
+  .mpchurros-footer__in { padding: 28px 20px 8px; }
+  .mpchurros-footer__folio { padding: 0 20px 22px; }
+  .mpchurros-sched__row {
+    grid-template-columns: 104px 1fr auto;
+    gap: 10px;
+    padding: 13px 16px;
+  }
+}
+@media (max-width: 560px) {
+  .mpchurros-grid { grid-template-columns: 1fr; }
+  .mpchurros-hero__cta .mpchurros-btn {
+    width: 100%;
+    justify-content: center !important;
+  }
+  .mpchurros-marquee__emoji { font-size: 72px; }
+  .mpchurros-sched__row { grid-template-columns: 1fr auto; }
+  .mpchurros-sched__place {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    font-size: var(--text-sm);
+  }
+}
+
+/* ── Reduced motion: bulbs stay lit, no blinking chase ───────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .mpchurros-bulbs::before,
+  .mpchurros-bulbs::after {
+    animation: none !important;
+    opacity: 1;
+  }
+}

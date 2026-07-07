@@ -1,0 +1,738 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Mom-n-Pops · Style 12 — Ramen (ラーメン)
+   The truck as a late-night ramen-ya: near-black warm surfaces (#100C0B page,
+   #17110F cards, #221A17 insets), warm-tan ink, ONE hot red accent (#E23B2E
+   CTAs, #FF5A3C prices/kanji), gold eyebrow labels, a pulsing red "broth's on"
+   lamp, and mono for prices / ticket numbers / timetable hours. Every selector
+   is scoped under .mpramen-root; shared semantic tokens are re-pointed locally
+   so restyled Fancy primitives (Button, Badge, Card, Kanban) wear the idiom
+   natively regardless of the host light/dark theme. Sticky header keeps
+   z-index 20 — always under the gallery frame's 30.
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.mpramen-root {
+  /* ── Ramen-ya palette ──────────────────────────────────────────────────── */
+  --mpr-bg: #100c0b;          /* page — near-black with warmth */
+  --mpr-surface: #17110f;     /* cards / panels */
+  --mpr-inset: #221a17;       /* inset chips + row dividers */
+  --mpr-line: #2a211e;        /* dominant 1px card/panel borders */
+  --mpr-line-strong: #3a2e2a; /* outline buttons / hover borders */
+  --mpr-ink: #f0e3d0;         /* primary text */
+  --mpr-ink-bright: #f5ebdb;  /* card headings */
+  --mpr-ink-2: #b5a794;       /* body muted */
+  --mpr-ink-3: #9a897a;       /* body more muted */
+  --mpr-nav: #a89684;         /* nav + queue-status tan */
+  --mpr-faint: #7a6a5c;       /* faint captions */
+  --mpr-foot: #8a7a6c;        /* footer ink */
+  --mpr-red: #e23b2e;         /* solid red CTAs */
+  --mpr-red-hover: #f04435;   /* CTA hover lift */
+  --mpr-hot: #ff5a3c;         /* hot highlight — prices, kanji, icons */
+  --mpr-lamp: #ff7a4d;        /* hero lamp radial highlight */
+  --mpr-gold: #e8b94d;        /* gold eyebrow labels */
+  --mpr-green: #34d399;       /* success — YOU pill, done banner, up column */
+  --mpr-pot: #e0623b;         /* pot-column status */
+
+  /* Re-point the shared semantic tokens so any Fancy primitive that reads
+     them inherits the ramen-ya surface without per-component hacks. */
+  --fg-1: var(--mpr-ink);
+  --fg-2: var(--mpr-ink-2);
+  --fg-3: var(--mpr-ink-3);
+  --fg-4: var(--mpr-faint);
+  --bg-0: var(--mpr-bg);
+  --bg-1: var(--mpr-surface);
+  --bg-2: var(--mpr-inset);
+  --surface: var(--mpr-surface);
+  --surface-raised: var(--mpr-inset);
+  --border-1: var(--mpr-line);
+  --border-2: var(--mpr-line-strong);
+  --accent: var(--mpr-red);
+  --accent-hover: var(--mpr-hot);
+  --primary: var(--mpr-red);
+  --primary-hover: var(--mpr-hot);
+  --ring: rgba(226, 59, 46, 0.4);
+
+  min-height: 100vh;
+  background: var(--mpr-bg);
+  color: var(--mpr-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* The hero lamp's "broth's on" pulse. */
+@keyframes mpramen-glow {
+  0%,
+  100% {
+    opacity: 0.85;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* ── Sticky header ────────────────────────────────────────────────────────── */
+.mpramen-header {
+  position: sticky;
+  top: 0;
+  z-index: 20; /* under the gallery frame's 30 */
+  background: rgba(16, 12, 11, 0.92);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--mpr-line);
+}
+.mpramen-header__inner {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 14px 28px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.mpramen-mark {
+  display: flex;
+  align-items: baseline;
+  gap: 11px;
+  white-space: nowrap;
+}
+.mpramen-mark__name {
+  font-weight: 800;
+  font-size: 21px;
+  color: var(--mpr-ink);
+  letter-spacing: -0.01em;
+}
+.mpramen-mark__kana {
+  font-size: 12px;
+  color: var(--mpr-hot);
+  letter-spacing: 0.16em;
+}
+.mpramen-nav {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+.mpramen-nav__link {
+  appearance: none;
+  background: none;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  font-size: var(--text-sm);
+  color: var(--mpr-nav);
+  cursor: pointer;
+  transition: color 150ms ease;
+}
+.mpramen-nav__link:hover {
+  color: var(--mpr-ink);
+}
+.mpramen-nav__link:focus-visible {
+  outline: 2px solid var(--mpr-hot);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Header pill — restyled Fancy Button. */
+.mpramen-root .mpramen-pill,
+.mpramen-root .mpramen-pill:not(:disabled) {
+  background: var(--mpr-red) !important;
+  color: #fff !important;
+  border: 1px solid transparent !important;
+  border-radius: 8px !important;
+  padding: 9px 16px !important;
+  font-weight: 600 !important;
+  font-size: var(--text-sm) !important;
+  box-shadow: none !important;
+  transition: background 150ms ease !important;
+}
+.mpramen-root .mpramen-pill:hover:not(:disabled) {
+  background: var(--mpr-red-hover) !important;
+}
+
+/* ── Hero ─────────────────────────────────────────────────────────────────── */
+.mpramen-hero {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 60px 28px 50px;
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 44px;
+  align-items: center;
+}
+.mpramen-hero__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.mpramen-lamp {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: radial-gradient(circle at 40% 35%, var(--mpr-lamp), var(--mpr-red));
+  box-shadow: 0 0 24px rgba(226, 59, 46, 0.8);
+  animation: mpramen-glow 3s ease-in-out infinite;
+}
+.mpramen-eyebrow {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--mpr-gold);
+}
+.mpramen-hero__title {
+  margin: 0;
+  font-size: clamp(38px, 6.2vw, 60px);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-weight: 800;
+  color: var(--mpr-ink);
+}
+.mpramen-hero__dek {
+  font-size: var(--text-xl);
+  color: var(--mpr-ink-2);
+  line-height: 1.55;
+  margin: 20px 0 28px;
+  max-width: 440px;
+}
+.mpramen-hero__ctas {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Hero + tracker CTAs — restyled Fancy Buttons. */
+.mpramen-root .mpramen-btn-primary,
+.mpramen-root .mpramen-btn-primary:not(:disabled) {
+  background: var(--mpr-red) !important;
+  color: #fff !important;
+  border: 1px solid transparent !important;
+  border-radius: 10px !important;
+  padding: 13px 24px !important;
+  font-weight: 700 !important;
+  font-size: 15px !important;
+  box-shadow: none !important;
+  transition: background 150ms ease, opacity 150ms ease !important;
+}
+.mpramen-root .mpramen-btn-primary:hover:not(:disabled) {
+  background: var(--mpr-red-hover) !important;
+}
+.mpramen-root .mpramen-btn-primary:disabled {
+  background: var(--mpr-red) !important;
+  color: #fff !important;
+  border: 1px solid transparent !important;
+  border-radius: 10px !important;
+  padding: 13px 24px !important;
+  font-weight: 700 !important;
+  opacity: 0.5 !important;
+  cursor: not-allowed !important;
+  box-shadow: none !important;
+}
+.mpramen-root .mpramen-btn-ghost,
+.mpramen-root .mpramen-btn-ghost:not(:disabled) {
+  background: transparent !important;
+  color: var(--mpr-ink) !important;
+  border: 1px solid var(--mpr-line-strong) !important;
+  border-radius: 10px !important;
+  padding: 13px 24px !important;
+  font-weight: 600 !important;
+  font-size: 15px !important;
+  box-shadow: none !important;
+  transition: border-color 150ms ease, color 150ms ease !important;
+}
+.mpramen-root .mpramen-btn-ghost:hover:not(:disabled) {
+  border-color: var(--mpr-hot) !important;
+  color: var(--mpr-ink-bright) !important;
+}
+
+/* ── Cards (restyled Fancy Card) ──────────────────────────────────────────── */
+.mpramen-root .mpramen-card {
+  background: var(--mpr-surface) !important;
+  border: 1px solid var(--mpr-line) !important;
+  border-radius: 14px !important;
+  box-shadow: none !important;
+  overflow: hidden;
+}
+
+/* Tonight · Water St — the hero side-card. */
+.mpramen-root .mpramen-tonight {
+  border-radius: 16px !important;
+}
+.mpramen-root .mpramen-tonight__head {
+  display: flex !important;
+  align-items: center;
+  gap: 9px;
+  padding: 13px 18px !important;
+  border-bottom: 1px solid var(--mpr-line) !important;
+  background: transparent !important;
+  font-size: var(--text-sm);
+  color: var(--mpr-ink-2);
+}
+.mpramen-root .mpramen-tonight__head svg {
+  color: var(--mpr-hot);
+  flex-shrink: 0;
+}
+.mpramen-root .mpramen-tonight__body {
+  padding: 16px 18px !important;
+}
+.mpramen-tonight__note {
+  font-size: 12px;
+  color: var(--mpr-faint);
+  margin-bottom: 10px;
+}
+.mpramen-tonight__row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 0;
+  border-bottom: 1px solid var(--mpr-inset);
+}
+.mpramen-tonight__bowl {
+  font-size: 16px;
+}
+.mpramen-tonight__name {
+  flex: 1;
+  font-size: var(--text-sm);
+  color: var(--mpr-ink-bright);
+}
+.mpramen-tonight__price {
+  font-family: var(--font-mono);
+  color: var(--mpr-hot);
+}
+
+/* ── Main column ──────────────────────────────────────────────────────────── */
+.mpramen-main {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 28px;
+}
+.mpramen-h2 {
+  font-size: var(--text-3xl);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0;
+  color: var(--mpr-ink);
+}
+.mpramen-kanji {
+  color: var(--mpr-hot);
+  font-size: 20px;
+}
+.mpramen-hint {
+  font-size: var(--text-sm);
+  color: var(--mpr-faint);
+}
+
+/* ── Menu — the bowls ─────────────────────────────────────────────────────── */
+.mpramen-menu {
+  padding: 44px 0 30px;
+  scroll-margin-top: 76px;
+}
+.mpramen-menu__head {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin-bottom: 22px;
+  flex-wrap: wrap;
+}
+.mpramen-menu__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.mpramen-root .mpramen-dish {
+  display: flex !important;
+  flex-direction: column;
+}
+.mpramen-root .mpramen-dish__body {
+  flex: 1;
+  padding: 18px !important;
+  display: flex !important;
+  flex-direction: column;
+  gap: 8px;
+}
+.mpramen-dish__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.mpramen-dish__icon {
+  font-size: 24px;
+}
+.mpramen-dish__price {
+  font-size: var(--text-lg);
+  font-weight: 800;
+  color: var(--mpr-hot);
+}
+.mpramen-dish__name {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--mpr-ink-bright);
+}
+.mpramen-dish__short {
+  font-size: var(--text-sm);
+  color: var(--mpr-ink-3);
+  line-height: 1.45;
+  margin: 0;
+  flex: 1;
+}
+
+/* "+ Add" — restyled Fancy Button as an inset ghost chip. */
+.mpramen-root .mpramen-add,
+.mpramen-root .mpramen-add:not(:disabled) {
+  width: 100% !important;
+  justify-content: center !important;
+  background: var(--mpr-inset) !important;
+  border: 1px solid var(--mpr-line-strong) !important;
+  color: var(--mpr-ink) !important;
+  padding: 8px !important;
+  border-radius: 9px !important;
+  font-weight: 600 !important;
+  font-size: var(--text-sm) !important;
+  box-shadow: none !important;
+  transition: border-color 150ms ease, color 150ms ease !important;
+}
+.mpramen-root .mpramen-add:hover:not(:disabled) {
+  border-color: var(--mpr-hot) !important;
+  color: var(--mpr-hot) !important;
+}
+
+/* ── Order tracker — the special surface ──────────────────────────────────── */
+.mpramen-track {
+  padding: 30px 0;
+  scroll-margin-top: 76px;
+}
+.mpramen-root .mpramen-tracker {
+  border-radius: 16px !important;
+}
+.mpramen-root .mpramen-tracker__head {
+  display: flex !important;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 16px 20px !important;
+  border-bottom: 1px solid var(--mpr-line) !important;
+  background: transparent !important;
+}
+.mpramen-tracker__title {
+  font-weight: 700;
+  color: var(--mpr-ink-bright);
+}
+.mpramen-tracker__sub {
+  font-size: 12px;
+  color: var(--mpr-faint);
+}
+.mpramen-tracker__actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.mpramen-tracker__cart {
+  font-size: var(--text-sm);
+  color: var(--mpr-ink-2);
+  white-space: nowrap;
+}
+.mpramen-root .mpramen-place,
+.mpramen-root .mpramen-place:not(:disabled),
+.mpramen-root .mpramen-place:disabled {
+  padding: 10px 18px !important;
+  font-size: var(--text-sm) !important;
+  font-weight: 600 !important;
+}
+
+/* The Kanban board re-skinned: 3 fixed columns whose 1px gaps over a
+   border-colored background read as printed grid lines. */
+.mpramen-root .mpramen-board {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px !important;
+  padding: 0 !important;
+  background: var(--mpr-line) !important;
+  overflow: visible !important;
+}
+.mpramen-root .mpramen-col {
+  background: var(--mpr-bg) !important;
+  min-height: 150px;
+  padding: 14px;
+  /* Recolor the kit's drag-over ring to the palette (tickets are read-only —
+     the kitchen moves them — so this only shows on an idle drag attempt). */
+  --tw-ring-color: rgba(255, 90, 60, 0.3);
+}
+/* The column's internal card stack — tighten the kit's gap to the design's. */
+.mpramen-root .mpramen-col > div {
+  gap: 9px !important;
+}
+.mpramen-col__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 3px;
+}
+.mpramen-col__dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.mpramen-col__dot--queue {
+  background: var(--mpr-nav);
+}
+.mpramen-col__dot--pot {
+  background: var(--mpr-pot);
+}
+.mpramen-col__dot--up {
+  background: var(--mpr-green);
+}
+.mpramen-col__label {
+  font-weight: 700;
+  font-size: var(--text-sm);
+  color: var(--mpr-ink);
+}
+.mpramen-col__empty {
+  text-align: center;
+  color: var(--mpr-line-strong);
+  font-size: 12px;
+  padding: 10px 0;
+}
+
+/* Order tickets — restyled Kanban.Cards with status-colored left borders. */
+.mpramen-root .mpramen-ticket {
+  background: var(--mpr-surface) !important;
+  border: 1px solid var(--mpr-line) !important;
+  border-left-width: 3px !important;
+  border-radius: 10px !important;
+  padding: 10px 11px !important;
+  box-shadow: none !important;
+  cursor: default !important;
+}
+.mpramen-root .mpramen-ticket--queue {
+  border-left-color: var(--mpr-nav) !important;
+}
+.mpramen-root .mpramen-ticket--pot {
+  border-left-color: var(--mpr-pot) !important;
+}
+.mpramen-root .mpramen-ticket--up {
+  border-left-color: var(--mpr-green) !important;
+}
+.mpramen-root .mpramen-ticket--mine {
+  border-left-color: var(--mpr-green) !important;
+  box-shadow: 0 0 0 2px var(--mpr-green) !important;
+}
+.mpramen-ticket__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+.mpramen-ticket__num {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--mpr-ink);
+}
+.mpramen-ticket__pie {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--mpr-ink-bright);
+  margin-top: 4px;
+}
+.mpramen-ticket__meta {
+  font-size: 11px;
+  color: var(--mpr-faint);
+  margin-top: 2px;
+}
+
+/* The green YOU pill — restyled Fancy Badge. */
+.mpramen-root .mpramen-you {
+  background: rgba(52, 211, 153, 0.14) !important;
+  color: var(--mpr-green) !important;
+  border: none !important;
+  border-radius: 999px !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.04em !important;
+  padding: 2px 8px !important;
+}
+
+/* Itadakimasu — the done banner. */
+.mpramen-done {
+  padding: 14px 20px;
+  background: rgba(52, 211, 153, 0.1);
+  color: var(--mpr-green);
+  font-weight: 600;
+  font-size: var(--text-sm);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.mpramen-done svg {
+  flex-shrink: 0;
+}
+
+/* ── Story + stats ────────────────────────────────────────────────────────── */
+.mpramen-story {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: center;
+  padding: 44px 0;
+  border-top: 1px solid var(--mpr-line);
+}
+.mpramen-story__eyebrow {
+  font-size: 11px;
+  margin-bottom: 14px;
+  display: block;
+}
+.mpramen-story__title {
+  font-size: clamp(26px, 3.4vw, 34px);
+  font-weight: 800;
+  line-height: 1.08;
+  margin: 0 0 16px;
+  color: var(--mpr-ink-bright);
+  letter-spacing: -0.01em;
+}
+.mpramen-story__copy {
+  font-size: var(--text-lg);
+  color: var(--mpr-ink-2);
+  line-height: 1.6;
+  margin: 0;
+}
+.mpramen-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.mpramen-stat {
+  background: var(--mpr-surface);
+  border: 1px solid var(--mpr-line);
+  border-radius: 14px;
+  padding: 18px;
+}
+.mpramen-stat__value {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--mpr-hot);
+  line-height: 1.15;
+}
+.mpramen-stat__label {
+  font-size: var(--text-sm);
+  color: var(--mpr-ink-3);
+  margin-top: 2px;
+}
+
+/* ── Schedule — printed timetable ─────────────────────────────────────────── */
+.mpramen-find {
+  padding: 10px 0 56px;
+  scroll-margin-top: 76px;
+}
+.mpramen-find__title {
+  font-size: var(--text-2xl);
+  margin: 0 0 18px;
+}
+.mpramen-schedule {
+  background: var(--mpr-surface);
+  border: 1px solid var(--mpr-line);
+  border-radius: 14px;
+  overflow: hidden;
+}
+.mpramen-schedule__row {
+  display: grid;
+  grid-template-columns: 130px 1fr auto;
+  gap: 16px;
+  align-items: center;
+  padding: 14px 22px;
+  border-bottom: 1px solid var(--mpr-inset);
+}
+.mpramen-schedule__row:last-child {
+  border-bottom: 0;
+}
+.mpramen-schedule__day {
+  font-weight: 700;
+  color: var(--mpr-ink);
+}
+.mpramen-schedule__place {
+  color: var(--mpr-ink-2);
+}
+.mpramen-schedule__hours {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--mpr-faint);
+  text-align: right;
+}
+
+/* ── Footer ───────────────────────────────────────────────────────────────── */
+.mpramen-footer {
+  border-top: 1px solid var(--mpr-line);
+}
+.mpramen-footer__inner {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 32px 28px;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 18px;
+  font-size: var(--text-sm);
+  color: var(--mpr-foot);
+}
+.mpramen-footer__mark {
+  font-weight: 800;
+  color: var(--mpr-ink);
+}
+.mpramen-footer__kana {
+  font-weight: 400;
+  letter-spacing: 0.12em;
+}
+
+/* ── Responsive ───────────────────────────────────────────────────────────── */
+@media (max-width: 920px) {
+  .mpramen-hero {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    padding: 44px 24px 36px;
+  }
+  .mpramen-menu__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .mpramen-story {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+}
+@media (max-width: 640px) {
+  .mpramen-header__inner {
+    padding: 12px 18px;
+  }
+  .mpramen-nav {
+    gap: 14px;
+  }
+  .mpramen-nav__link {
+    display: none;
+  }
+  .mpramen-main {
+    padding: 0 18px;
+  }
+  .mpramen-menu__grid {
+    grid-template-columns: 1fr;
+  }
+  .mpramen-root .mpramen-board {
+    grid-template-columns: 1fr;
+  }
+  .mpramen-stats {
+    grid-template-columns: 1fr 1fr;
+  }
+  .mpramen-schedule__row {
+    grid-template-columns: 96px 1fr auto;
+    padding: 12px 16px;
+    gap: 10px;
+  }
+  .mpramen-footer__inner {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mpramen-lamp {
+    animation: none;
+  }
+}

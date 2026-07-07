@@ -1,0 +1,77 @@
+{
+  "id": "chicken",
+  "name": "Fried Chicken",
+  "note": "County-fair hand-bill in three color bands.",
+  "mode": "dark",
+  "cuisine": "Chicken",
+  "surface": "Poster",
+  "thesis": "A food truck as a hand-set county-fair poster: three full-bleed color bands (deep teal, menu cream, near-black brown) carry an all-typographic identity — a 3px mustard-gold ticket frame around a clamp()-sized 900-weight headline, a rotated brick-red sticker, dotted price leaders, and a gold-framed timetable. Zero photos, zero gradients, essentially zero motion; the print language IS the brand.",
+  "tokens": {
+    "bg": "#2E6E6A deep teal page band; #F3E7CE cream for the menu band; #2A211A near-black brown for the footer — full-bleed horizontal bands, never cards",
+    "fg": "#F3E7CE cream on teal, #2A211A ink on cream; secondary copy #DCE9E1 mint on teal, #3E3225 in the item card; footer text #E1CFA8 sand",
+    "accent": "#F0C64B mustard gold (poster frame, ticket eyebrow, schedule frame, mono hours) + #B3352E brick red as the single hot color (sticker, prices, order CTA)",
+    "fontDisplay": "var(--font-sans) pushed to weight 900, UPPERCASE, tight letter-spacing (-0.03em to -0.01em); hero at clamp(56px,11vw,128px) with line-height 0.9 — no serif anywhere, the grotesk does the shouting",
+    "fontMono": "var(--font-mono) reserved for the timetable hours (var(--text-sm), colored gold, tabular-nums) and fine-print footnotes",
+    "radius": "mixed print-object radii: 14px poster frame, 10px schedule frame, 12px item card, 4px CTA, 2px near-square 'ticket' corners on badges and ingredient chips",
+    "border": "gold does the framing — 3px solid #F0C64B on the poster, 2px on the schedule frame and eyebrow badge; 2px solid #2A211A menu-row rules with 2px dotted #B3A88C price leaders; 1px rgba(240,198,75,0.3) timetable hairlines; 3px solid #2A211A header rule in the item card",
+    "motion": "essentially none — menu rows dim to opacity 0.7 on hover and the CTA darkens, both over var(--dur-fast); no keyframes, no transforms beyond the static -1deg sticker rotation; reduced-motion drops even the eases"
+  },
+  "layout": "A single centered 1080px column (28px gutters) running through full-bleed horizontal color bands: teal header + poster hero, cream menu band, teal story + schedule, near-black footer. The hero is a centered gold-framed 'poster' panel (3px border, radius 14, 44px padding) holding an eyebrow ticket badge, the giant clamp() headline, and a 520px deck. The menu is a 2-column grid of dotted-leader price rows (0 row-gap, 44px column-gap); the story is a 2-column editorial spread (headline left, paragraph right); the schedule is a gold-framed single-column timetable in a 142px / 1fr / auto rhythm. Both 2-column grids collapse to one below ~760px. Density is low-to-medium: big type, 40-56px section padding, sectioning done entirely by band-color changes.",
+  "sections": [
+    {
+      "name": "header",
+      "what": "Flex row: 'Mom-n-Pops' 900-weight uppercase wordmark with a gold 'FRIED CHICKEN' sub-tag on one baseline (gap 9px), plus right-aligned uppercase in-page nav (Menu / Story / Find us).",
+      "components": ["(hand-rolled lockup + nav)"],
+      "restyle": "Two-part lockup via align-items:baseline; nav links are plain uppercase anchors that tint gold on hover; sections carry scroll-margin-top so anchors clear the sticky gallery chrome."
+    },
+    {
+      "name": "poster-hero",
+      "what": "The 'Poster' surface: a centered 3px gold-bordered panel (radius 14, 44px padding) with a bordered eyebrow badge ('EST. MILWAUKEE 2026 ★ FRESH DAILY'), the massive 'Fried the slow way.' headline, and a 520px deck paragraph.",
+      "components": ["Badge", "Heading", "Text"],
+      "restyle": "Badge → the double-border print gag: 2px gold outline, gold text, 2px radius, 0.16em tracking — a ticket inside the poster's own 3px gold frame. Heading blown to clamp(56px,11vw,128px), line-height 0.9, weight 900, uppercase: the whole identity in one element."
+    },
+    {
+      "name": "menu-band",
+      "what": "Full-bleed cream band. Centered head: a rotated (-1deg) brick-red 'THE MENU' sticker over a 44px 900-weight 'Get you some.' h2, then a 2-column grid of six clickable dotted-leader price rows.",
+      "components": ["Badge", "Heading", "Button"],
+      "restyle": "Badge → the sticker: solid red, radius 0, 0.18em tracking, transform:rotate(-1deg). Button (ghost) → an entire menu row: full-width, transparent, radius 0, 2px solid ink bottom rule, baseline-aligned name / flexing 2px-dotted leader (translateY(-5px)) / red price inside the button's label span; hover dims the row to opacity 0.7."
+    },
+    {
+      "name": "story",
+      "what": "Back on teal: a 2-column editorial spread — 40px 900-weight uppercase headline left, one mint paragraph right about grandma's laminated index card and Sal on the fryers.",
+      "components": ["Heading", "Text"],
+      "restyle": "Pure typographic spread, no rules or imagery — the cream→teal band change above it does the sectioning; collapses to a single column on small screens."
+    },
+    {
+      "name": "schedule",
+      "what": "'Find the truck': a 2px gold-bordered rounded frame listing six Milwaukee stops as day / place / mono gold hours rows divided by translucent-gold hairlines, plus a mono 'Mondays: dark' footnote.",
+      "components": ["Table", "Heading"],
+      "restyle": "Table → a printed timetable: the primitive's rounded bordered shell re-bordered 2px gold (radius 10, overflow hidden), rows stripped transparent with 1px rgba-gold dividers, day cells 800-weight uppercase at a fixed 142px, hours right-aligned in gold mono with tabular-nums."
+    },
+    {
+      "name": "footer",
+      "what": "Full-bleed near-black brown bar: wordmark, obfuscated email (wrapped @ span), and '© 2026 · Milwaukee' in a space-between flex row, over a hairlined mono demo-disclaimer baseline.",
+      "components": ["(hand-rolled)"],
+      "restyle": "Third band color completes the teal / cream / brown triad; sand #E1CFA8 text with the wordmark punched up to cream 900."
+    },
+    {
+      "name": "item-modal",
+      "what": "Clicking any menu row opens a 440px cream card: name + red price over a 3px near-black rule, the long description, 'WHAT'S IN IT' square ingredient chips, and a full-width red 'Add to order · $X' CTA. Scrim, Esc, X, and the CTA all close it.",
+      "components": ["Modal", "Badge", "Button"],
+      "restyle": "Modal → the cream ticket card: panel recolored #F3E7CE at radius 12 with a deep 70px drop shadow, scrim re-washed teal-black rgba(20,40,38,0.6) with no blur, the primitive's X dressed in ink. Badge → white 1px-tan-bordered chips at 2px radius. Button → solid brick-red full-width CTA, radius 4, weight 800 uppercase. One piece of state (the selected item) drives the whole surface — a perfect controlled value+onChange shape for an MCP order bridge."
+    }
+  ],
+  "palette": [
+    { "component": "Badge (eyebrow)", "restyle": "Transparent with a 2px gold border, gold 800-weight text at 0.16em tracking, 2px 'ticket' radius — the double-border print device inside the poster frame." },
+    { "component": "Badge (sticker)", "restyle": "Solid brick red on cream, radius 0, 0.18em tracking, rotated -1deg — a cheap, high-impact print gag for section headers." },
+    { "component": "Badge (ingredient chip)", "restyle": "White fill, 1px #DCC79E tan border, 2px radius, small quiet text — square ticket-stub chips, never pills." },
+    { "component": "Button (menu row)", "restyle": "Ghost variant flattened into a full-width dotted-leader price row: transparent, radius 0, 2px solid ink bottom rule, baseline-aligned label flex with a flexing 2px-dotted #B3A88C leader nudged down 5px; hover = opacity 0.7, nothing else." },
+    { "component": "Button (CTA)", "restyle": "Solid #B3352E brick red, cream 800-weight uppercase text, radius 4, full width, no shadow; darkens one step on hover." },
+    { "component": "Table", "restyle": "Becomes the gold timetable: shell re-bordered 2px #F0C64B at radius 10, transparent rows with translucent-gold hairlines, a fixed-width 800-uppercase day column, and right-aligned gold mono hours." },
+    { "component": "Modal", "restyle": "The cream item card: #F3E7CE panel at radius 12 with a 3px solid-ink header rule and a deep soft shadow; the scrim recolored to a teal-black wash with the blur removed so it reads print, not glass." },
+    { "component": "Heading", "restyle": "Every level is the same voice at different volumes — weight 900, uppercase, tight negative tracking; only the clamp() size changes (128px hero → 44px menu → 40px story → 32px schedule)." },
+    { "component": "Text", "restyle": "Body copy stays sentence-case and calm (mint #DCE9E1 on teal, #3E3225 on cream) so the shouting headlines keep all the contrast." }
+  ],
+  "contentArchetype": "A single-location food business one-pager: hero promise ('Fried the slow way.'), a priced 6-item menu with per-item detail (description + ingredients), a two-sentence founder story (Rosa's grandmother's recipe card, Sal on the fryers), a weekly neighborhood schedule, and a contact footer — content short and confident enough to be set at poster scale.",
+  "remix": "Reach for this look when a small business needs charm and appetite without photography — food trucks, bakeries, breweries, farmers-market brands, event hand-bills. To adapt: pick a three-band palette (one deep base, one paper, one near-black), let ONE metallic-warm accent do all the framing (borders, badges, mono figures) and ONE hot color do all the pointing (prices, stickers, CTAs); set every headline in the same grotesk at 900/uppercase/negative tracking and keep radii mixed-but-small so surfaces read as printed objects. The dotted-leader row (flex:1; border-bottom:2px dotted; translateY(-5px)) is the reusable star — it turns any name/value list into a menu. Blends well with Big Type (push the hero even larger, keep the bands) or Brutalist (square every radius, harden the rules to black); for a light variant, promote the cream band to the page and use teal as the framing accent."
+}

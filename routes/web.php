@@ -184,22 +184,35 @@ Route::get('/starter-kits/{slug}/download.zip', StarterKitDownloadController::cl
     ->name('starter-kits.download');
 
 // ─── Inspiration Gallery ───────────────────────────────────────────────
-// One fictional studio portfolio ("FIELDWORK") designed 20 ways, common →
-// experimental. The index catalogs every style; each style gets its own
-// bespoke page (placeholder until that style component ships).
+// Fictional businesses, each designed 20 ways: "fieldwork" (FIELDWORK, a
+// studio portfolio, common → experimental) and "mom-n-pops" (a Milwaukee
+// food truck, one cuisine per style, storefront → data surface). The index
+// lands on every collection; each style gets its own bespoke page. Legacy
+// pre-collection URLs (/inspiration/{style}) 301 to their collection via
+// InspirationController::collection().
 Route::get('/inspiration', [InspirationController::class, 'index'])->name('inspiration.index');
-Route::get('/inspiration/{style}', [InspirationController::class, 'show'])
+Route::get('/inspiration/{collection}', [InspirationController::class, 'collection'])
+    ->where('collection', '[a-z0-9\-]+')
+    ->name('inspiration.collection');
+Route::get('/inspiration/{collection}/{style}', [InspirationController::class, 'show'])
+    ->where('collection', '[a-z0-9\-]+')
     ->where('style', '[a-z0-9\-]+')
     ->name('inspiration.show');
 
 // Inspiration Gallery "grab" blueprints — agent-readable design recipes (read-only
 // inspiration to re-implement + mix-and-match, NOT vendored source). Parallels /r/.
-// /gallery/index.json — the 20 styles' metadata + blueprint URLs.
-// /gallery/{style}.json — one style's full grab-blueprint.
+// /gallery/index.json — every collection + every style card.
+// /gallery/{collection}/{style}.json — one style's full grab-blueprint
+//   ({style} "index" returns the collection's own index).
+// /gallery/{style}.json — legacy pre-collection lookup (ids stay unique).
 Route::get('/gallery/index.json', [GalleryController::class, 'index'])->name('gallery.index');
-Route::get('/gallery/{style}', [GalleryController::class, 'show'])
+Route::get('/gallery/{collection}/{style}', [GalleryController::class, 'show'])
+    ->where('collection', '[a-z0-9\-]+')
     ->where('style', '[a-z0-9\-\.]+')
     ->name('gallery.show');
+Route::get('/gallery/{style}', [GalleryController::class, 'legacy'])
+    ->where('style', '[a-z0-9\-\.]+')
+    ->name('gallery.legacy');
 
 Route::get('/dreaming', [DreamingController::class, 'index'])->name('dreaming.index');
 Route::get('/dreaming/archived', [DreamingController::class, 'archived'])->name('dreaming.archived');

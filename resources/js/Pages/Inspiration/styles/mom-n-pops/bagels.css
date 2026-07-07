@@ -1,0 +1,659 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Mom-n-Pops · Style 11 — The Daily Bagel (Newsprint)
+   A broadsheet front page on aged newsprint cream: #141414 ink, one firebrick
+   #B22222 spot color, Georgia serif at weight 900 for display, var(--font-sans)
+   for UI chrome, and a rule hierarchy (3px / 2px / 1px) doing all the
+   structure. Radius 0 everywhere except the round drawer close button. Motion:
+   none — hover is an instant background swap, the drawer snaps like a page
+   turn. Every selector scoped under .mpbagels-root / an mpbagels- class; the
+   overlay tops out at z-index 25 (the gallery frame owns 30+).
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.mpbagels-root {
+    /* ── Scoped newsprint tokens ──────────────────────────────────────────── */
+    --mpb-paper: #f1efe6;      /* aged newsprint cream */
+    --mpb-plate: #e9e6da;      /* art plate base behind the etchings */
+    --mpb-ink: #141414;        /* near-black ink */
+    --mpb-ink-2: #3a3a3a;      /* secondary chrome (nav, tagline) */
+    --mpb-body: #4a4a44;       /* body copy */
+    --mpb-mute: #5a5a5a;       /* captions, hints */
+    --mpb-faint: #7a7568;      /* faint labels, allergens */
+    --mpb-rule-soft: #c8c4b8;  /* soft in-column dividers */
+    --mpb-dot: #8a8578;        /* dotted price leaders */
+    --mpb-red: #b22222;        /* firebrick — the only spot color */
+    --mpb-hover: #e8e5da;      /* menu-row hover swap */
+    --mpb-serif: Georgia, "Times New Roman", serif;
+    --mpb-sans: var(--font-sans);
+
+    min-height: 100vh;
+    background: var(--mpb-paper);
+    color: var(--mpb-ink);
+    font-family: var(--mpb-serif);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+.mpbagels-root ::selection {
+    background: var(--mpb-red);
+    color: var(--mpb-paper);
+}
+
+/* Hidden SVG sprite (glyph + halftone patterns) */
+.mpbagels-defs {
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+}
+
+.mpbagels-sheet {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 34px;
+}
+
+/* Anchored sections clear the gallery frame's sticky chrome */
+.mpbagels-menu,
+.mpbagels-story,
+.mpbagels-schedule,
+.mpbagels-catering {
+    scroll-margin-top: 84px;
+}
+
+/* ── Masthead ─────────────────────────────────────────────────────────────── */
+.mpbagels-masthead {
+    padding-top: 20px;
+}
+.mpbagels-dateline {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 4px 18px;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding-bottom: 8px;
+}
+.mpbagels-plateband {
+    border-top: 3px solid var(--mpb-ink);
+    border-bottom: 1px solid var(--mpb-ink);
+}
+.mpbagels-nameplate {
+    display: block;
+    text-align: center;
+    padding: 10px 0;
+    text-decoration: none;
+    color: var(--mpb-ink);
+}
+.mpbagels-title {
+    display: block;
+    font-size: clamp(40px, 7.5vw, 74px);
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    line-height: 1;
+}
+.mpbagels-tagline {
+    display: block;
+    font-family: var(--mpb-sans);
+    font-size: 12px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    margin-top: 4px;
+    color: var(--mpb-ink-2);
+}
+.mpbagels-nameplate:hover .mpbagels-title {
+    color: var(--mpb-red);
+}
+
+.mpbagels-nav {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 6px 30px;
+    font-family: var(--mpb-sans);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 9px 0;
+    border-bottom: 2px solid var(--mpb-ink);
+    color: var(--mpb-ink-2);
+}
+.mpbagels-nav a {
+    color: var(--mpb-ink-2);
+    text-decoration: none;
+}
+.mpbagels-nav a:hover {
+    color: var(--mpb-ink);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+.mpbagels-nav-order {
+    font-family: var(--mpb-sans);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--mpb-red);
+    background: transparent;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+}
+.mpbagels-nav-order:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+/* ── Shared editorial voice ───────────────────────────────────────────────── */
+.mpbagels-kicker {
+    font-family: var(--mpb-sans);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--mpb-red);
+    margin: 0 0 12px;
+}
+.mpbagels-columns {
+    column-count: 2;
+    column-gap: 28px;
+    font-size: 15px;
+    line-height: 1.6;
+}
+.mpbagels-columns p {
+    margin: 0 0 12px;
+}
+.mpbagels-columns p:last-child {
+    margin-bottom: 0;
+}
+.mpbagels-drop::first-letter {
+    float: left;
+    font-size: 58px;
+    line-height: 0.8;
+    font-weight: 900;
+    padding: 5px 8px 0 0;
+}
+
+/* ── Art plates (the no-photo treatment) ──────────────────────────────────── */
+.mpbagels-art {
+    display: block;
+    background: var(--mpb-plate);
+    filter: grayscale(1) contrast(1.12); /* the mockup's site-wide press-photo wash */
+}
+.mpbagels-art svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+.mpbagels-art-hero {
+    height: 250px;
+    border: 1px solid var(--mpb-ink);
+}
+.mpbagels-art-story {
+    height: 220px;
+    border: 1px solid var(--mpb-ink);
+}
+.mpbagels-thumb {
+    width: 88px;
+    height: 74px;
+    flex: none;
+    border: 1px solid var(--mpb-ink);
+}
+
+/* ── Lead story ───────────────────────────────────────────────────────────── */
+.mpbagels-lead {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 34px;
+    padding: 32px 0 30px;
+    border-bottom: 1px solid var(--mpb-ink);
+}
+.mpbagels-headline {
+    font-size: clamp(30px, 4.6vw, 52px);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    font-weight: 900;
+    margin: 0 0 16px;
+}
+.mpbagels-figure {
+    margin: 0;
+}
+.mpbagels-figcap {
+    font-family: var(--mpb-sans);
+    font-size: 11px;
+    color: var(--mpb-mute);
+    margin-top: 6px;
+    border-bottom: 1px solid var(--mpb-rule-soft);
+    padding-bottom: 8px;
+}
+
+/* ── The menu as classifieds ──────────────────────────────────────────────── */
+.mpbagels-menu {
+    padding: 28px 0;
+    border-bottom: 1px solid var(--mpb-ink);
+}
+.mpbagels-menubar {
+    text-align: center;
+    border-top: 1px solid var(--mpb-ink);
+    border-bottom: 1px solid var(--mpb-ink);
+    padding: 6px 0;
+    margin-bottom: 22px;
+}
+.mpbagels-menubar-title {
+    font-size: 26px;
+    font-weight: 900;
+    letter-spacing: 0.02em;
+}
+.mpbagels-menubar-hint {
+    font-family: var(--mpb-sans);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--mpb-mute);
+    margin-left: 12px;
+}
+.mpbagels-classifieds {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 40px;
+}
+.mpbagels-row {
+    display: flex;
+    gap: 16px;
+    padding: 16px 8px 16px 0;
+    border: 0;
+    border-bottom: 1px solid var(--mpb-rule-soft);
+    background: transparent;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
+    color: inherit;
+}
+.mpbagels-row:hover {
+    background: var(--mpb-hover);
+}
+.mpbagels-row:focus-visible {
+    outline: 2px solid var(--mpb-red);
+    outline-offset: -2px;
+}
+.mpbagels-row-body {
+    flex: 1;
+    min-width: 0;
+}
+.mpbagels-row-line {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+}
+.mpbagels-row-name {
+    font-size: 18px;
+    font-weight: 900;
+}
+.mpbagels-leader {
+    flex: 1;
+    min-width: 24px;
+    border-bottom: 1px dotted var(--mpb-dot);
+    transform: translateY(-4px);
+}
+.mpbagels-row-price {
+    font-family: var(--mpb-sans);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--mpb-red);
+}
+.mpbagels-row-short {
+    display: block;
+    font-size: 13px;
+    color: var(--mpb-body);
+    margin-top: 4px;
+    line-height: 1.4;
+}
+
+/* ── Our story (mirrored feature) ─────────────────────────────────────────── */
+.mpbagels-story {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 34px;
+    padding: 30px 0;
+    border-bottom: 1px solid var(--mpb-ink);
+}
+.mpbagels-story-title {
+    font-size: clamp(24px, 3.2vw, 32px);
+    font-weight: 900;
+    line-height: 1.05;
+    margin: 0 0 12px;
+}
+
+/* ── Week listings ────────────────────────────────────────────────────────── */
+.mpbagels-schedule {
+    padding: 26px 0;
+    border-bottom: 3px solid var(--mpb-ink);
+}
+.mpbagels-schedule-head {
+    text-align: center;
+    margin-bottom: 16px;
+}
+.mpbagels-schedule-title {
+    font-size: 20px;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+}
+.mpbagels-schedule-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0 34px;
+}
+.mpbagels-stop {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--mpb-rule-soft);
+    align-items: baseline;
+}
+.mpbagels-stop-day {
+    font-weight: 700;
+    font-size: 14px;
+}
+.mpbagels-stop-place {
+    font-size: 13px;
+    color: var(--mpb-body);
+    text-align: right;
+}
+
+/* ── Catering classified ──────────────────────────────────────────────────── */
+.mpbagels-catering {
+    padding: 26px 0 40px;
+}
+.mpbagels-ad {
+    border: 2px solid var(--mpb-ink);
+    padding: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+.mpbagels-ad-copy {
+    max-width: 520px;
+}
+.mpbagels-ad-copy .mpbagels-kicker {
+    margin-bottom: 6px;
+}
+.mpbagels-ad-headline {
+    font-size: 24px;
+    font-weight: 900;
+    margin: 0;
+}
+.mpbagels-ad-sub {
+    font-size: 14px;
+    color: var(--mpb-body);
+    margin: 8px 0 0;
+}
+
+/* Button → classified outline ("Get a quote") */
+.mpbagels-root .mpbagels-quote {
+    background: transparent !important;
+    color: var(--mpb-ink) !important;
+    border: 2px solid var(--mpb-ink) !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    font-family: var(--mpb-sans) !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0 !important;
+    padding: 12px 20px !important;
+    height: auto !important;
+}
+.mpbagels-root .mpbagels-quote:hover:not(:disabled) {
+    background: var(--mpb-ink) !important;
+    color: var(--mpb-paper) !important;
+}
+
+/* ── Footer ───────────────────────────────────────────────────────────────── */
+.mpbagels-footer {
+    border-top: 1px solid var(--mpb-ink);
+    padding: 22px 0 28px;
+}
+.mpbagels-footer-row {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    font-family: var(--mpb-sans);
+    font-size: 12px;
+    color: var(--mpb-body);
+}
+.mpbagels-footer-brand {
+    font-weight: 700;
+    color: var(--mpb-ink);
+}
+.mpbagels-folio {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    margin-top: 18px;
+    padding-top: 12px;
+    border-top: 1px solid var(--mpb-rule-soft);
+    font-family: var(--mpb-sans);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--mpb-faint);
+}
+.mpbagels-back {
+    color: var(--mpb-red);
+    text-decoration: none;
+    font-weight: 700;
+}
+.mpbagels-back:hover {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+/* ── The full column: right-side paper drawer ─────────────────────────────── */
+/* Fixed overlay capped at z-index 25 — deliberately UNDER the gallery
+   frame's sticky chrome (which owns 30+), so the host stays in charge. */
+.mpbagels-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 25;
+}
+.mpbagels-scrim {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    background: rgba(20, 20, 20, 0.5);
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+}
+.mpbagels-drawer {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 520px;
+    max-width: 94vw;
+    background: var(--mpb-paper);
+    overflow-y: auto;
+    box-shadow: -20px 0 60px rgba(20, 20, 20, 0.4);
+}
+.mpbagels-drawer-hero {
+    position: relative;
+}
+.mpbagels-drawer-art {
+    height: 250px;
+    border-bottom: 2px solid var(--mpb-ink);
+}
+
+/* Button variant="circle" → the one round thing on the page */
+.mpbagels-root .mpbagels-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 0 !important;
+    padding: 0 !important;
+    border-radius: 50% !important;
+    background: rgba(255, 255, 255, 0.94) !important;
+    color: var(--mpb-ink) !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    font-size: 17px !important;
+    line-height: 1 !important;
+    display: grid !important;
+    place-items: center !important;
+    z-index: 1;
+}
+.mpbagels-root .mpbagels-close:hover:not(:disabled) {
+    background: var(--mpb-paper) !important;
+    color: var(--mpb-red) !important;
+}
+
+.mpbagels-drawer-body {
+    padding: 26px 30px 40px;
+}
+.mpbagels-drawer-body .mpbagels-kicker {
+    letter-spacing: 0.12em;
+    margin-bottom: 8px;
+}
+.mpbagels-drawer-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+}
+.mpbagels-drawer-name {
+    font-size: 34px;
+    font-weight: 900;
+    margin: 0;
+    line-height: 1.05;
+}
+.mpbagels-drawer-price {
+    font-family: var(--mpb-sans);
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--mpb-red);
+    white-space: nowrap;
+}
+.mpbagels-tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin: 14px 0 18px;
+}
+
+/* Badge → square ink tag chip */
+.mpbagels-root .mpbagels-tag {
+    background: transparent !important;
+    border: 1px solid var(--mpb-ink) !important;
+    color: var(--mpb-ink) !important;
+    border-radius: 0 !important;
+    font-family: var(--mpb-sans) !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    padding: 4px 11px !important;
+    letter-spacing: 0 !important;
+}
+.mpbagels-drawer-copy {
+    font-size: 16px;
+    line-height: 1.65;
+    margin: 0 0 24px;
+}
+.mpbagels-builtwith {
+    font-family: var(--mpb-sans);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--mpb-faint);
+    margin: 0 0 10px;
+}
+.mpbagels-ings {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+/* Badge → soft-ruled ingredient chip */
+.mpbagels-root .mpbagels-ing {
+    background: transparent !important;
+    border: 1px solid var(--mpb-rule-soft) !important;
+    color: var(--mpb-body) !important;
+    border-radius: 0 !important;
+    font-family: var(--mpb-sans) !important;
+    font-size: 13px !important;
+    font-weight: 400 !important;
+    padding: 6px 12px !important;
+    letter-spacing: 0 !important;
+}
+.mpbagels-allergens {
+    font-family: var(--mpb-sans);
+    font-size: 13px;
+    color: var(--mpb-faint);
+    margin: 0 0 22px;
+}
+
+/* Button → the inverted ink "Add to order" bar (the page's only inversion) */
+.mpbagels-root .mpbagels-addbar {
+    width: 100% !important;
+    justify-content: center !important;
+    background: var(--mpb-ink) !important;
+    color: var(--mpb-paper) !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    font-family: var(--mpb-sans) !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    padding: 15px !important;
+    height: auto !important;
+}
+.mpbagels-root .mpbagels-addbar:hover:not(:disabled) {
+    background: var(--mpb-red) !important;
+    color: var(--mpb-paper) !important;
+}
+
+/* ── Responsive ───────────────────────────────────────────────────────────── */
+@media (max-width: 940px) {
+    .mpbagels-lead {
+        grid-template-columns: 1fr;
+    }
+    .mpbagels-story {
+        grid-template-columns: 1fr;
+    }
+    .mpbagels-art-story {
+        max-width: 420px;
+    }
+    .mpbagels-schedule-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+@media (max-width: 760px) {
+    .mpbagels-sheet {
+        padding: 0 20px;
+    }
+    .mpbagels-classifieds {
+        grid-template-columns: 1fr;
+    }
+    .mpbagels-menubar-hint {
+        display: block;
+        margin: 4px 0 2px;
+    }
+}
+@media (max-width: 640px) {
+    .mpbagels-columns {
+        column-count: 1;
+    }
+    .mpbagels-schedule-grid {
+        grid-template-columns: 1fr;
+    }
+    .mpbagels-nav {
+        gap: 6px 18px;
+    }
+    .mpbagels-drawer-body {
+        padding: 22px 20px 32px;
+    }
+}

@@ -1,0 +1,71 @@
+{
+  "id": "gyros",
+  "name": "Gyros",
+  "note": "Greek-blue storefront with a build-a-plate configurator.",
+  "mode": "light",
+  "thesis": "A Greek family taverna translated to a food-truck storefront: Greek-flag blue and antique gold on a pale blue-white page, a Greek-key meander band as the opening flourish, Georgia serif display with bilingual Greek/English copy, and a build-your-plate configurator at the center — chips that flip solid blue beside a sticky order summary that prices as you go. Heritage warmth carried by a disciplined two-accent system, not decoration.",
+  "tokens": {
+    "bg": "#F4F8FC pale blue-white page; cards #fff; dark summary panel #0E3A66; meander band #1668B3",
+    "fg": "#0E3A66 deep Aegean navy; secondary #40658C; tertiary #5E7B98; muted #7C99B6 (plus #A9C6E0 for eyebrows on the navy panel)",
+    "accent": "#1668B3 Greek flag blue (CTAs, step-number circles, selected chips, top band) with #C8992F antique gold as the strict second accent — greeting, prices, totals, and the hero's offset frame only",
+    "fontDisplay": "literal Georgia, 'Times New Roman', serif — bold, letter-spacing -0.02em on the 56px hero, italic for the Greek greeting; deliberately NOT the design-system serif var",
+    "fontMono": "var(--font-mono) — the 'Yiayia's recipe' uppercase eyebrow, schedule hours with en-dash ranges, and small ticket labels",
+    "radius": "14px cards (dominant); 16px hero quote card + order summary; 10px chips/CTAs; 8px header pill; 12px add-to-order; 22px hero offset frame; 50% step-number circles",
+    "border": "#D3E2F0 dominant 1px card/header border; #C7DAEC on the hero card + secondary button; #EAF1F8 hairline row dividers; 1.5px chip borders; 2px #C8992F decorative offset frame",
+    "motion": "only `transition: all .15s` on configurator chips (the selected-state color swap) plus matching 150ms color swaps on buttons; no keyframes — the kinetic feel comes from the sticky blurred header (backdrop-filter blur 10px) and the sticky priced summary rail, with smooth scrollIntoView jumps from nav/CTAs"
+  },
+  "layout": "Single 1140px max-width container with 28px side padding on a pale #F4F8FC page, opened by a 30px Greek-key meander band (URL-encoded white SVG repeated over #1668B3) and a sticky blurred header (brand serif lockup + right-aligned nav + solid blue pill). Hero is a 1fr/1fr grid: bilingual greeting, 56px serif headline, lede, and two CTAs on the left; the 'Yiayia's recipe' quote card on the right, floated inside an absolutely-positioned inset:-14px gold offset frame. The configurator centerpiece is a 1fr/320px grid — four numbered step cards stacked left, a sticky order-summary card right (align-items:start on the grid is what lets the rail stick). Below: a 3-column menu card grid, a full-width schedule list card of 120px/1fr/auto rows, and a white top-bordered footer that closes on a Greek thank-you. Airy-editorial density: 40-56px section padding, 14-22px gaps, serif display 30-56px.",
+  "sections": [
+    {
+      "name": "greek-key band",
+      "what": "A 30px #1668B3 strip across the very top filled with a repeating white Greek-key (meander) pattern; the same SVG class reappears at 16px height, 200px wide, half opacity as a centered ornament above the configurator heading.",
+      "components": [],
+      "restyle": "Pure CSS — a URL-encoded inline SVG as background-image with repeat-x, no image asset; the divider reuse swaps the stroke to the flag blue so it stays visible on the pale page."
+    },
+    {
+      "name": "sticky header",
+      "what": "Serif 'Mom-n-Pops' lockup with a gold uppercase 'GYROS' tag, right-aligned nav (Menu / Build a plate / Find us) as live scroll triggers, and a solid blue 'Find the truck' pill.",
+      "components": ["Badge", "Button"],
+      "restyle": "Badge stripped of fill/border/radius into a flush gold tracked-uppercase lockup tag; Button squared to an 8px-radius blue pill; position:sticky with rgba(244,248,252,.92) + backdrop-filter blur(10px) + 1px #D3E2F0 bottom border, kept under the host frame's z-index."
+    },
+    {
+      "name": "hero",
+      "what": "Left: italic gold Greek greeting ('Καλῶς ἤλθατε — welcome'), a 56px serif headline about carving off the spit, a lede, and two CTAs (solid blue / white-bordered). Right: the 'Yiayia's recipe' quote card — mono eyebrow, 30px serif pull-quote 'Don't rush the spit.', and the Thessaloniki backstory.",
+      "components": ["Heading", "Text", "Button", "Card", "Badge"],
+      "restyle": "Heading forced to literal Georgia at clamp(36-56px)/1.02 with -0.02em tracking; the quote Card sits inside a hand-rolled absolutely-positioned inset:-14px 2px-gold 22px-radius offset frame (double-border picture-frame effect) and carries a soft navy shadow (0 20px 44px -22px rgba(14,58,102,.35)); Badge becomes the mono uppercase eyebrow."
+    },
+    {
+      "name": "build your plate (configurator — the special surface)",
+      "what": "Four numbered step cards — 1 Format, 2 Protein, 3 Sides (multi-select, 1 included), 4 Sauce — rendered as chip groups, beside a sticky order summary: navy header block with a derived serif order name, four hairline-divided rows, a 30px extrabold gold total, and 'Add to order · $X' which appends to a small on-the-ticket list.",
+      "components": ["Card", "Button"],
+      "restyle": "Each chip is a restyled Button (1.5px #D3E2F0 border, 10px radius, 9/15px padding) that flips solid #1668B3/white when selected, with an 11px 0.6-opacity +$/−$ hint inline; selection is declarative className state, not DOM painting. One controlled `plate` object drives everything; price and order name are pure derived values (base $10 wrap / $14 plate, +$2 lamb & beef, −$1 falafel, first side included then +$2 each, +$1 extra-of-all sauce). The summary Card gets a navy Card.Header, hairline #EAF1F8 row dividers, and position:sticky on its rail (parent grid align-items:start)."
+    },
+    {
+      "name": "or a house favorite (menu grid)",
+      "what": "Six white menu cards in a 3-column grid: serif item name left, extrabold gold price right, one-line description below — Pork Gyro $10 through Horiatiki Salad $8.",
+      "components": ["Card", "Heading"],
+      "restyle": "Cards flattened to 14px-radius bordered panels with no shadow; name and price share a baseline via flex align-items:baseline — the price-tag rhythm is the whole trick."
+    },
+    {
+      "name": "find us (schedule)",
+      "what": "Greek-titled section ('Ποῦ θὰ μᾶς βρεῖτε — find us') with one white card of six Milwaukee stops, each a 120px/1fr/auto grid row: bold day, location, mono hours ('11–3', '11–3 · 5–9').",
+      "components": ["Card", "Heading"],
+      "restyle": "A single rounded Card with overflow:hidden holding hand-rolled grid rows divided by #EAF1F8 hairlines; hours in var(--font-mono) with en-dash ranges for a timetable feel — a Table primitive would be heavier than the content deserves."
+    },
+    {
+      "name": "footer",
+      "what": "White top-bordered bar: serif brand, obfuscated email + @momnpops.mke handle, and '© 2026 · Milwaukee · Εὐχαριστοῦμε' — the bilingual copy motif bookending the page.",
+      "components": [],
+      "restyle": "Hand-rolled flex bar in the page's secondary blue-gray; the serif brand is the only navy element, plus a small mono demo footnote line."
+    }
+  ],
+  "palette": [
+    { "component": "Button", "restyle": "Four wears: solid Greek-blue CTA (10px radius, 13/24px padding, darkens on hover), white outline CTA with the softer #C7DAEC border, an 8px-radius header pill, and — the signature — the configurator chip: 1.5px border, var(--text-sm) 500 weight, flipping to solid #1668B3/white with aria-pressed when selected, price hint span at 11px/0.6 opacity inline." },
+    { "component": "Card", "restyle": "Five wears, all white on #D3E2F0 borders: 14px-radius flat step/menu/schedule panels (no shadow), the 16px-radius hero quote card with a soft navy shadow inside its gold offset frame, and the 16px-radius order summary with overflow:hidden, a navy Card.Header block, and a deep 0 16px 40px -22px navy shadow." },
+    { "component": "Badge", "restyle": "Stripped entirely of pill chrome twice: the gold tracked-uppercase 'GYROS' lockup tag in the header, and the mono uppercase muted 'Yiayia's recipe' eyebrow on the quote card." },
+    { "component": "Heading", "restyle": "Forced to literal Georgia serif — h1 at clamp(36-56px)/1.02 with -0.02em tracking, h2s at 30-34px bold; Greek text set in the same stack (Ποῦ θὰ μᾶς βρεῖτε renders fine in Georgia)." },
+    { "component": "Text", "restyle": "Kept sans (var(--font-sans)) for ledes and subtexts in the blue-gray secondary tones — the serif is reserved for display and item names so the page reads storefront, not manuscript." }
+  ],
+  "contentArchetype": "A single-page food-truck storefront for a Greek family operation: heritage hero (grandmother's recipe as the founding story, bilingual greeting), a self-serve product configurator with live derived pricing as the conversion surface, a fixed-price menu grid as the fallback path, a weekly location schedule as the 'where to buy', and a thin contact footer. Works for any build-your-own product — bowls, PCs, bouquets, subscription tiers.",
+  "remix": "Swap the flag blue + antique gold for any national-heritage pair (Italian green/tomato, Mexican pink/lime) and the meander SVG for another repeating cultural border — the band + bilingual bookends carry the heritage angle by themselves. The load-bearing moves are: (1) the two-accent discipline — one saturated brand color for interaction, one metallic for money/heritage, never mixed; (2) the chip configurator + sticky derived-price summary loop (keep one controlled state object with price as a pure function — it ports to any product); (3) literal Georgia display over a token sans body; (4) the inset:-14px offset picture frame for the one artifact you want treated as an heirloom. Blend with the editorial style by trading the sans body for serif columns, or push toward product/SaaS by keeping the configurator loop and swapping the heritage copy for spec sheets."
+}

@@ -1,0 +1,77 @@
+{
+  "id": "seafood",
+  "name": "Seafood",
+  "note": "A dockside lobster shack on the lakefront, with a live catch board.",
+  "mode": "light",
+  "thesis": "A New-England dockside seafood shack transplanted to the Milwaukee lakefront: cool off-white canvas, harbor navy + lobster red, an 8px CSS rope-stripe bar as the whole brand, mono for every number — and supply-chain honesty as the design's story. The signature surface is a live 'catch board' (a restyled data Table of dock inventory) whose in/low/out status DRIVES the storefront: menu cards dim and flip their pills, and the hero's peek card updates, all as derived state from one controlled source of truth.",
+  "tokens": {
+    "bg": "#F3F6F8 cool off-white canvas; #FFFFFF cards/panels/footer; #1C3F60 harbor-navy panel headers",
+    "fg": "#12314C deep harbor navy primary; #4A6478 / #5E7789 secondary; #7A93A4 / #8CA3B4 muted meta and column headers; #3E5C72 board source/qty cells",
+    "accent": "#C1352B lobster red — kicker eyebrows, prices, primary CTA, wordmark tag; #1C3F60 harbor navy as the co-accent (nav pill, panel heads, stat numerals, section rules); status trio in #2E9E7A / low #D98A1E / out #B0BEC8, each also as an ~11% alpha background tint",
+    "fontDisplay": "var(--font-sans) at literal px sizes — h1 56px, story h2 34px, var(--text-3xl) section heads — weight 800, letter-spacing -0.02 to -0.025em; no serif anywhere",
+    "fontMono": "var(--font-mono) for every number: the 05:40 timestamp, 'updated 2 min ago', price/lb, on-hand quantities, schedule hours; tabular-nums throughout",
+    "radius": "14px dominant (menu cards, stats, schedule); 16px catch board; 18px hero peek card; 8-10px buttons; 999px status pills",
+    "border": "#DCE6EC dominant hairline (cards, header bottom, section top rules); #C9D8E1 on the peek card + secondary button; graded row hairlines #E8EFF3 / #EEF3F6 / #F2F6F8 / #EAF1F5",
+    "motion": "none — zero transitions/animations, hover states snap; the only softness is the sticky header's backdrop blur(10px) over rgba(243,246,248,0.92) (with a solid @supports fallback) and the peek card's deep 0 18px 40px -22px shadow"
+  },
+  "layout": "Single column centered at max-width 1140px with 28px side padding, opened by an 8px repeating-linear-gradient rope-stripe bar and a sticky glass header (stuck just below the host chrome, z-index under 30). Hero is a 1.05fr/0.95fr grid pairing copy against a mini-dashboard 'catch peek' card; the menu is a 3-column card grid under a 2px navy section rule; the catch board is a full-width white panel wrapping a fixed-rhythm 6-column table (icon 46px / item / source / price / on-hand / status 132px); the story is a 1fr/1fr split with a 2x2 stat grid; the schedule is a stacked tide-table row list; a white footer strip closes. Airy-editorial density: 44-56px section padding, 1px hairline separations, 18-40px gaps. Anchor nav uses refs + scrollIntoView with scroll-margin-top clearing both sticky bars.",
+  "sections": [
+    {
+      "name": "rope-stripe bar",
+      "what": "8px decorative strip at the very top — the page's single strongest branding move.",
+      "components": ["hand-rolled div"],
+      "restyle": "Pure CSS: repeating-linear-gradient(90deg, navy 0 26px, bg 26px 34px, red 34px 60px, bg 60px 68px) — a dashed navy/red nautical rope. Zero assets."
+    },
+    {
+      "name": "sticky glass header",
+      "what": "Wordmark ('Mom-n-Pops' + red uppercase 'Seafood Shack' tag), three anchor nav links (Menu / Today's catch / Find us), and a navy 'Find the shack' pill.",
+      "components": ["Button"],
+      "restyle": "rgba(243,246,248,0.92) + backdrop-filter blur(10px), 1px #DCE6EC bottom hairline; sticks below the host's own chrome (top offset, z-index 20) and releases to static on narrow screens. Nav links are unstyled text buttons that scroll via refs; the pill is a react-fancy Button forced to navy, 8px radius, 9px/16px padding."
+    },
+    {
+      "name": "hero + catch peek",
+      "what": "Left: anchor-emoji eyebrow, 56px/800 headline 'A little taste of the coast, on the lakefront.', lede, red + white Button pair. Right: 'Off the truck this morning' — a mini dashboard card with a navy header (lucide Fish + mono 05:40) and four emoji/name/status-pill rows.",
+      "components": ["Button", "Badge"],
+      "restyle": "Buttons flattened to solid #C1352B (white text) and white-with-#C9D8E1-border, 10px radius, 13px/24px padding, no shadow, no transition. The peek card is hand-rolled (18px radius, deep 0 18px 40px -22px rgba(18,49,76,0.4) shadow); its pills are Badges forced to 11px/700 with status-colored text over ~11%-alpha tints — and their in/low/out values are DERIVED from the catch-board state, not hardcoded."
+    },
+    {
+      "name": "today's menu",
+      "what": "3x2 grid of dish cards — 42px rounded emoji tile, red price, name, one-line description, availability pill — under a section head ruled with 2px solid navy and the microcopy 'sold-out items dim automatically'.",
+      "components": ["Badge"],
+      "restyle": "Cards are white 14px-radius panels with #DCE6EC hairlines. Each dish declares which board row it draws from (supply: 'lobster' | 'crab' | ...); availability is computed — out dims the whole card to opacity 0.5 and flips its Badge to grey 'Sold out today', low reads 'Only a few left', else green 'Available'. No availability is ever stored on the dish."
+    },
+    {
+      "name": "catch board (signature surface)",
+      "what": "A white panel styled as live dock inventory: clipboard-list header ('Live dock inventory — this is what the menu draws from', mono 'updated 2 min ago'), then a 6-column table of rows — emoji, item + category, source port, mono price/lb, mono on-hand count with − / + steppers, and a dotted status pill.",
+      "components": ["Table", "Badge", "Button"],
+      "restyle": "react-fancy Table reskinned hard: table-layout fixed mirroring the mockup's 40px/1.6fr/1fr/1fr/1fr/130px rhythm, uppercase 11px #8CA3B4 column header, graded hairline row dividers, mono numeric cells, wrapped in its own overflow-x scroll container. Rows are CONTROLLED state [{key, qty, lowAt, step, cap}] — status derives from qty (0=out, <=lowAt=low), and one qty nudge re-derives the peek pills and menu availability as pure computed props (the mockup did this with a post-render querySelectorAll paint pass; the port does it with useState + useMemo). Steppers are 20px hairline buttons; a ghost 'Reset the morning' Button and an 'updated just now' timestamp appear once touched."
+    },
+    {
+      "name": "story + stat brag-wall",
+      "what": "Two-column split: the Rosa (Maine) vs Sal (Milwaukee) compromise narrative beside a 2x2 grid of stat cards (2×/wk lobster flown in, est. 2026, 'both' mayo & butter, AM chowder daily).",
+      "components": ["hand-rolled cards"],
+      "restyle": "Opens on a 1px #DCE6EC top rule. Stat cards are white 14px panels with 30px/800 harbor-navy numerals over small slate captions — a compact brag-wall pattern."
+    },
+    {
+      "name": "where we're docked",
+      "what": "A tide-table schedule panel: six Tuesday-Sunday rows of day / Milwaukee location / mono hours.",
+      "components": ["hand-rolled list"],
+      "restyle": "One rounded panel, rows on a 120px/1fr/auto grid with #EAF1F5 hairline dividers (dropped on the last row); hours in mono tabular-nums."
+    },
+    {
+      "name": "footer",
+      "what": "White strip: wordmark, obfuscated email (the @ isolated in its own span to defeat scrapers), social handle, copyright; a mono demo-note line closes the page.",
+      "components": ["hand-rolled"],
+      "restyle": "Flex space-between with wrap over a #DCE6EC top hairline; 800-weight ink wordmark, slate body."
+    }
+  ],
+  "palette": [
+    { "component": "Table", "restyle": "The star: reskinned from admin grid to dock inventory — fixed 6-column rhythm, uppercase mono-adjacent 11px header, graded hairline dividers (#EEF3F6 header / #F2F6F8 rows), mono price + quantity cells, emoji lead column, a status-pill trailing column, all inside a 16px-radius white panel with its own horizontal scroll container." },
+    { "component": "Badge", "restyle": "Every status pill on the page: 999px radius, 11-12px/600-700 type, status-colored text over the same color at ~11% alpha (the mockup's hex+18/1F trick). Board pills add a 6px currentColor dot. Semantic trio: in #2E9E7A, low #D98A1E, out #B0BEC8 — grey-on-grey for sold-out is deliberate (muted, not alarming)." },
+    { "component": "Button", "restyle": "Flat and quiet, transition:none per the design's zero-motion stance. Primary = solid lobster red, 10px radius, 13px/24px; secondary = white with #C9D8E1 border; the header CTA = navy pill at 8px/9px/16px; the board reset = a 12px ghost chip that only mounts after interaction." },
+    { "component": "Card (hand-rolled panels)", "restyle": "White surfaces on #DCE6EC hairlines at 14-18px radii; the only shadow on the page belongs to the hero peek card (0 18px 40px -22px navy-tinted). Everything else stays flat — hierarchy comes from hairline grades and navy fills, not elevation." },
+    { "component": "lucide icons", "restyle": "Fish (peek header) and ClipboardList (board header) at 16-18px, inheriting navy or white; the mockup's window.lucide.createIcons() runtime is replaced by direct lucide-react imports so SSR renders them." }
+  ],
+  "contentArchetype": "A family food truck as supply-chain-honest storefront: hero promise + live 'what came off the truck' peek, a six-dish menu (Maine Lobster Roll $17, Connecticut Roll $17, Shrimp Roll $12, Crab Roll $14, Clam Chowder $6, Raw Bar MP) whose availability is derived from a six-row dock inventory (item, source port, price/lb, on-hand, status), a founders'-compromise story (Rosa's from Maine, Sal's from Milwaukee) with a 2x2 stat wall, a Tuesday-Sunday location schedule, and an obfuscated-email footer. The data story IS the brand: 'what we serve depends on what came off the truck.'",
+  "remix": "Lift the derived-inventory pattern for any storefront where supply drives the catalog — bakery flour bins, coffee roast drops, plant-shop stock, ticket allotments: keep ONE controlled source-of-truth list and compute every downstream pill/dim/label from it, never store availability twice. Rebrand by swapping the three-hue system (navy structure, red desire, status trio) and the rope-stripe gradient stops; the shack reads instantly nautical, but the same skeleton wears any two-accent palette. Blend toward the product-UI style by promoting the catch board to a full admin table with filters; blend toward editorial by dropping the peek card and letting the menu grid lead. For a Human+ build, the board is the obvious MCP bridge surface: expose rows by their stable keys (data-stock handles are already in the DOM) with a catch_restock / catch_sell tool pair and let an agent run the dock while the human watches the menu react."
+}

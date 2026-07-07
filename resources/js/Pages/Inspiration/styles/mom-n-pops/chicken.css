@@ -1,0 +1,554 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Inspiration Gallery · Mom-n-Pops 05 — Fried Chicken
+   County-fair hand-bill: three full-bleed color bands (deep teal / menu cream /
+   near-black brown) held together by mustard-gold rules and one brick red.
+   Everything is print language — a 3px gold poster frame around a clamp()-sized
+   900-weight headline, a double-border ticket eyebrow, a rotated red sticker,
+   dotted price leaders, a gold-framed timetable. No photos, no gradients, and
+   essentially no motion (a single hover dim + tiny color eases).
+   The Fancy kit wears the poster: Badge → ticket eyebrow / sticker / square
+   ingredient chips, Button → dotted-leader menu rows + the red order CTA,
+   Table → the gold timetable, Modal → the cream item card.
+   Every selector scoped under .mpchicken-root or .mpchicken-modal (the Modal
+   portals to <body>, so it re-declares the palette vars). No z-index anywhere —
+   the gallery frame owns the stacking chrome.
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.mpchicken-root,
+.mpchicken-modal {
+  /* ── Scoped Fried Chicken palette ──────────────────────────────────────── */
+  --mpc-teal:       #2e6e6a;  /* page band */
+  --mpc-cream:      #f3e7ce;  /* menu band + type on teal */
+  --mpc-brown:      #2a211a;  /* footer band + ink on cream */
+  --mpc-brown-soft: #3e3225;  /* modal body copy */
+  --mpc-gold:       #f0c64b;  /* frames, badges, mono hours */
+  --mpc-gold-dim:   rgba(240, 198, 75, 0.3);  /* timetable hairlines */
+  --mpc-red:        #b3352e;  /* sticker, prices, CTA */
+  --mpc-red-deep:   #9a2b25;  /* CTA hover */
+  --mpc-mint:       #dce9e1;  /* secondary copy on teal */
+  --mpc-tan:        #b3a88c;  /* dotted price leaders */
+  --mpc-tan-2:      #dcc79e;  /* chip borders */
+  --mpc-tan-3:      #a08a64;  /* "what's in it" label */
+  --mpc-sand:       #e1cfa8;  /* footer text */
+  --mpc-scrim:      rgba(20, 40, 38, 0.6);
+}
+
+.mpchicken-root {
+  background: var(--mpc-teal);
+  color: var(--mpc-cream);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
+}
+
+.mpchicken-root ::selection {
+  background: var(--mpc-gold);
+  color: var(--mpc-brown);
+}
+
+/* Shared centered column — bands stay full-bleed, the shell re-applies the
+   28px gutters inside each one. */
+.mpchicken-shell {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 28px;
+}
+
+/* Full-bleed color bands */
+.mpchicken-band--cream {
+  background: var(--mpc-cream);
+  color: var(--mpc-brown);
+  scroll-margin-top: 76px; /* clear the sticky gallery frame on #anchors */
+}
+
+/* ── Header / nav ────────────────────────────────────────────────────────── */
+.mpchicken-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 0;
+}
+.mpchicken-lockup {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  color: var(--mpc-cream);
+}
+.mpchicken-lockup__word {
+  font-weight: 900;
+  font-size: 21px;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+}
+.mpchicken-lockup__tag {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--mpc-gold);
+}
+.mpchicken-nav {
+  margin-left: auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 22px;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.mpchicken-nav a {
+  color: var(--mpc-cream);
+  text-decoration: none;
+  transition: color var(--dur-fast) var(--ease-out);
+}
+.mpchicken-nav a:hover {
+  color: var(--mpc-gold);
+}
+
+/* ── Poster hero — the "Poster" surface ──────────────────────────────────── */
+.mpchicken-hero {
+  border: 3px solid var(--mpc-gold);
+  border-radius: 14px;
+  padding: 44px;
+  margin: 8px 0 40px;
+  text-align: center;
+  position: relative;
+}
+/* Badge → double-border gold ticket eyebrow */
+.mpchicken-root .mpchicken-hero__badge {
+  display: inline-block;
+  background: transparent !important;
+  border: 2px solid var(--mpc-gold) !important;
+  color: var(--mpc-gold) !important;
+  border-radius: 2px !important;
+  font-family: var(--font-sans) !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.16em !important;
+  line-height: 1.4 !important;
+  padding: 5px 14px !important;
+  margin-bottom: 24px;
+}
+.mpchicken-root .mpchicken-hero__title {
+  margin: 0 !important;
+  font-family: var(--font-sans) !important;
+  font-size: clamp(56px, 11vw, 128px) !important;
+  line-height: 0.9 !important;
+  letter-spacing: -0.03em !important;
+  font-weight: 900 !important;
+  text-transform: uppercase;
+  color: var(--mpc-cream) !important;
+}
+.mpchicken-root .mpchicken-hero__deck {
+  font-size: var(--text-xl) !important;
+  color: var(--mpc-mint) !important;
+  line-height: 1.5 !important;
+  margin: 24px auto 0 !important;
+  max-width: 520px;
+}
+
+/* ── Menu band ("Get you some.") ─────────────────────────────────────────── */
+.mpchicken-menu {
+  padding: 52px 0;
+}
+.mpchicken-menu__head {
+  text-align: center;
+  margin-bottom: 30px;
+}
+/* Badge → rotated brick-red print sticker */
+.mpchicken-root .mpchicken-sticker {
+  display: inline-block;
+  background: var(--mpc-red) !important;
+  color: var(--mpc-cream) !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  font-family: var(--font-sans) !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.18em !important;
+  line-height: 1.4 !important;
+  padding: 6px 18px !important;
+  transform: rotate(-1deg);
+}
+.mpchicken-root .mpchicken-menu__title {
+  margin: 14px 0 0 !important;
+  font-family: var(--font-sans) !important;
+  font-size: 44px !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.01em !important;
+  text-transform: uppercase;
+  color: var(--mpc-brown) !important;
+}
+.mpchicken-menu__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 44px;
+}
+
+/* Button (ghost) → a dotted-leader menu row. The whole row is the button. */
+.mpchicken-root .mpchicken-menurow {
+  display: flex !important;
+  width: 100%;
+  align-items: baseline !important;
+  justify-content: flex-start !important;
+  gap: 0 !important;
+  margin: 0;
+  padding: 18px 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-bottom: 2px solid var(--mpc-brown) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  color: var(--mpc-brown) !important;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: opacity var(--dur-fast) var(--ease-out);
+}
+.mpchicken-root .mpchicken-menurow:hover:not(:disabled) {
+  background: transparent !important;
+  color: var(--mpc-brown) !important;
+  opacity: 0.7;
+}
+.mpchicken-root .mpchicken-menurow:focus-visible {
+  outline: 2px solid var(--mpc-red);
+  outline-offset: 4px;
+}
+/* The Button's label span becomes the row's flex track. */
+.mpchicken-root .mpchicken-menurow .mpchicken-menurow__label {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  align-items: baseline;
+  gap: 14px;
+  white-space: normal;
+}
+.mpchicken-menurow__name {
+  font-size: 24px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  color: var(--mpc-brown);
+}
+/* The classic dotted price leader, dropped to sit on the baseline. */
+.mpchicken-menurow__leader {
+  flex: 1;
+  min-width: 24px;
+  border-bottom: 2px dotted var(--mpc-tan);
+  transform: translateY(-5px);
+}
+.mpchicken-menurow__price {
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--mpc-red);
+}
+
+/* ── Story ("A recipe card & a cast-iron skillet.") ──────────────────────── */
+.mpchicken-story {
+  padding: 56px 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: center;
+  scroll-margin-top: 76px;
+}
+.mpchicken-root .mpchicken-story__title {
+  margin: 0 !important;
+  font-family: var(--font-sans) !important;
+  font-size: 40px !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  letter-spacing: -0.01em !important;
+  text-transform: uppercase;
+  color: var(--mpc-cream) !important;
+}
+.mpchicken-root .mpchicken-story__body {
+  margin: 0 !important;
+  font-size: var(--text-lg) !important;
+  line-height: 1.6 !important;
+  color: var(--mpc-mint) !important;
+}
+
+/* ── Schedule ("Find the truck") ─────────────────────────────────────────── */
+.mpchicken-find {
+  padding: 10px 0 56px;
+  scroll-margin-top: 76px;
+}
+.mpchicken-root .mpchicken-find__title {
+  margin: 0 0 18px !important;
+  font-family: var(--font-sans) !important;
+  font-size: 32px !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.01em !important;
+  text-transform: uppercase;
+  color: var(--mpc-cream) !important;
+}
+
+/* Table → the gold-framed printed timetable. */
+.mpchicken-root .mpchicken-sched {
+  background: transparent !important;
+  border: 2px solid var(--mpc-gold) !important;
+  border-radius: 10px !important;
+  overflow: hidden;
+}
+.mpchicken-root .mpchicken-sched table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.mpchicken-root .mpchicken-sched tbody tr {
+  background: transparent !important;
+  border-top: 0 !important;
+  border-bottom: 1px solid var(--mpc-gold-dim) !important;
+}
+.mpchicken-root .mpchicken-sched tbody tr:last-child {
+  border-bottom: 0 !important;
+}
+.mpchicken-root .mpchicken-sched tbody tr:hover {
+  background: rgba(240, 198, 75, 0.06) !important;
+}
+.mpchicken-root .mpchicken-sched td {
+  background: transparent !important;
+  border: 0 !important;
+  padding: 14px 22px !important;
+  font-size: 1rem;
+  vertical-align: middle;
+}
+.mpchicken-root .mpchicken-sched .mpchicken-sched__day {
+  width: 142px;
+  font-weight: 800 !important;
+  text-transform: uppercase;
+  color: var(--mpc-cream) !important;
+  white-space: nowrap;
+}
+.mpchicken-root .mpchicken-sched .mpchicken-sched__place {
+  color: var(--mpc-mint) !important;
+}
+.mpchicken-root .mpchicken-sched .mpchicken-sched__hours {
+  font-family: var(--font-mono) !important;
+  font-size: var(--text-sm) !important;
+  color: var(--mpc-gold) !important;
+  text-align: right;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.mpchicken-find__note {
+  margin: 12px 0 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(240, 198, 75, 0.55);
+}
+
+/* ── Footer — the third band completes the teal / cream / brown triad ────── */
+.mpchicken-footer {
+  background: var(--mpc-brown);
+  color: var(--mpc-sand);
+}
+.mpchicken-footer__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 18px;
+  padding: 32px 0 24px;
+  font-size: var(--text-sm);
+}
+.mpchicken-footer__mark {
+  font-weight: 900;
+  color: var(--mpc-cream);
+  text-transform: uppercase;
+}
+.mpchicken-footer__base {
+  border-top: 1px solid rgba(225, 207, 168, 0.16);
+  padding: 14px 0 20px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(225, 207, 168, 0.55);
+}
+
+/* ── Item-detail Modal — portaled to <body>, restyled as the cream card ──── */
+/* Scrim: recolor the primitive's overlay to the mockup's teal-black wash.
+   (Anchored on the .mpchicken-modal panel so it can't leak to other modals.) */
+div:has(> .mpchicken-modal) > div[aria-hidden="true"] {
+  background: var(--mpc-scrim, rgba(20, 40, 38, 0.6)) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.mpchicken-modal {
+  background: var(--mpc-cream) !important;
+  color: var(--mpc-brown) !important;
+  border: 0 !important;
+  border-radius: 12px !important;
+  width: 100%;
+  max-width: 440px !important;
+  box-shadow: 0 30px 70px -20px rgba(0, 0, 0, 0.5) !important;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Header: name + red price over the heavy 3px near-black rule. */
+.mpchicken-modal .mpchicken-modal__head {
+  padding: 24px 26px !important;
+  border-bottom: 3px solid var(--mpc-brown) !important;
+  align-items: flex-start !important;
+}
+.mpchicken-modal .mpchicken-modal__head > div:first-child {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  min-width: 0;
+}
+.mpchicken-modal__name {
+  font-size: 28px;
+  font-weight: 900;
+  line-height: 1.05;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  color: var(--mpc-brown);
+}
+.mpchicken-modal__price {
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--mpc-red);
+  white-space: nowrap;
+}
+/* The primitive's close button, kept but dressed in the card's ink. */
+.mpchicken-modal .mpchicken-modal__head button {
+  color: var(--mpc-brown) !important;
+  border-radius: 4px !important;
+  margin-top: 2px;
+}
+.mpchicken-modal .mpchicken-modal__head button:hover {
+  background: rgba(42, 33, 26, 0.08) !important;
+  color: var(--mpc-brown) !important;
+}
+
+.mpchicken-modal .mpchicken-modal__body {
+  padding: 22px 26px 28px !important;
+  color: var(--mpc-brown) !important;
+}
+.mpchicken-modal__long {
+  margin: 0 0 18px;
+  font-size: var(--text-lg);
+  line-height: 1.6;
+  color: var(--mpc-brown-soft);
+}
+.mpchicken-modal__label {
+  margin-bottom: 8px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--mpc-tan-3);
+}
+.mpchicken-modal__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-bottom: 20px;
+}
+/* Badge → square white "ticket" ingredient chip. */
+.mpchicken-modal .mpchicken-chip {
+  background: #fff !important;
+  border: 1px solid var(--mpc-tan-2) !important;
+  color: #5a4a38 !important;
+  border-radius: 2px !important;
+  font-family: var(--font-sans) !important;
+  font-size: var(--text-sm) !important;
+  font-weight: 500 !important;
+  letter-spacing: 0 !important;
+  line-height: 1.4 !important;
+  padding: 6px 12px !important;
+}
+/* Button → the full-width brick-red order CTA. */
+.mpchicken-modal .mpchicken-modal__cta {
+  display: flex !important;
+  width: 100%;
+  justify-content: center !important;
+  background: var(--mpc-red) !important;
+  color: var(--mpc-cream) !important;
+  border: 0 !important;
+  border-radius: 4px !important;
+  box-shadow: none !important;
+  padding: 13px 16px !important;
+  font-family: var(--font-sans) !important;
+  font-size: 1rem !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  transition: background var(--dur-fast) var(--ease-out);
+}
+.mpchicken-modal .mpchicken-modal__cta:hover:not(:disabled) {
+  background: var(--mpc-red-deep) !important;
+  color: var(--mpc-cream) !important;
+}
+.mpchicken-modal .mpchicken-modal__cta:focus-visible {
+  outline: 2px solid var(--mpc-brown);
+  outline-offset: 2px;
+}
+
+/* ── Responsive — the mockup leaves collapse undefined; fold at ~760px ───── */
+@media (max-width: 760px) {
+  .mpchicken-shell {
+    padding: 0 20px;
+  }
+  .mpchicken-hero {
+    padding: 34px 22px;
+  }
+  .mpchicken-menu {
+    padding: 44px 0;
+  }
+  .mpchicken-menu__grid {
+    grid-template-columns: 1fr;
+  }
+  .mpchicken-root .mpchicken-menu__title {
+    font-size: 36px !important;
+  }
+  .mpchicken-story {
+    grid-template-columns: 1fr;
+    gap: 18px;
+    padding: 44px 0;
+  }
+  .mpchicken-root .mpchicken-story__title {
+    font-size: 34px !important;
+  }
+}
+
+@media (max-width: 560px) {
+  .mpchicken-header {
+    flex-wrap: wrap;
+    row-gap: 8px;
+  }
+  .mpchicken-nav {
+    gap: 16px;
+  }
+  .mpchicken-menurow__name {
+    font-size: 20px;
+  }
+  .mpchicken-root .mpchicken-sched td {
+    padding: 12px 14px !important;
+  }
+  .mpchicken-root .mpchicken-sched .mpchicken-sched__day {
+    width: 96px;
+    font-size: var(--text-sm) !important;
+  }
+  .mpchicken-root .mpchicken-sched .mpchicken-sched__place {
+    font-size: var(--text-sm) !important;
+  }
+}
+
+/* Motion is "essentially none" in this design; make that literal for
+   reduced-motion users by dropping the few hover eases too. */
+@media (prefers-reduced-motion: reduce) {
+  .mpchicken-nav a,
+  .mpchicken-root .mpchicken-menurow,
+  .mpchicken-modal .mpchicken-modal__cta {
+    transition: none !important;
+  }
+}

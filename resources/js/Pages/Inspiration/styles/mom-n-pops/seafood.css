@@ -1,0 +1,878 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Mom-n-Pops · Style 03 — Seafood  (id "seafood", light)
+   The truck as a New-England dockside lobster shack on the Milwaukee
+   lakefront: cool off-white canvas (#F3F6F8), harbor navy (#1C3F60) + lobster
+   red (#C1352B), an 8px nautical rope-stripe bar in pure CSS, a glassy sticky
+   header, airy-editorial density with 1px hairline separations, mono for
+   every number (timestamps, price/lb, on-hand, hours). The signature surface
+   is the "Today's catch board" — a restyled react-fancy Table reading as live
+   dock inventory, whose stock status drives the hero peek pills and the menu
+   cards' availability.
+
+   MOTION: the design declares none — zero transitions/animations. Hover
+   states snap. The only "soft" effects are the header's backdrop blur and the
+   peek card's deep soft shadow.
+
+   LIGHT MODE ONLY — the palette is pinned via local --mps-* tokens so the
+   shack stays sunlit regardless of app theme. Every class is prefixed
+   mpseafood- (modifiers use the --suffix form, never a bare class) so nothing
+   leaks across the SPA. Page-level sticky z-index stays under 30 — the
+   gallery frame owns 30+.
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.mpseafood-root {
+    /* ── The dockside palette ───────────────────────────────────────────── */
+    --mps-bg: #f3f6f8; /* cool off-white canvas */
+    --mps-surface: #ffffff; /* cards, panels, footer */
+    --mps-navy: #1c3f60; /* harbor navy — panel heads, stats, nav pill */
+    --mps-navy-deep: #16344f; /* navy hover */
+    --mps-ink: #12314c; /* deep harbor navy — primary text */
+    --mps-ink-2: #4a6478; /* secondary copy, lede, nav links */
+    --mps-ink-3: #5e7789; /* dish shorts, stat captions */
+    --mps-source: #3e5c72; /* board source + on-hand cells */
+    --mps-meta: #7a93a4; /* muted meta, menu hint, hours */
+    --mps-meta-2: #8ca3b4; /* column headers, board timestamps */
+    --mps-red: #c1352b; /* lobster red — kicker, prices, primary CTA */
+    --mps-red-deep: #ad2f26; /* red hover */
+    --mps-line: #dce6ec; /* dominant card/header border */
+    --mps-line-2: #c9d8e1; /* hero peek card + secondary button border */
+    --mps-hairline: #e8eff3; /* board head divider */
+    --mps-hairline-2: #eef3f6; /* board column-header divider */
+    --mps-hairline-3: #f2f6f8; /* board row dividers */
+    --mps-hairline-4: #eaf1f5; /* schedule row dividers */
+    --mps-tile: #e4edf2; /* menu emoji tile */
+    --mps-peek-time: #a9c6d6; /* 05:40 on the navy peek header */
+
+    /* Status trio — text color + alpha-tinted background (the mockup's
+       hex+18/1F alpha suffixes, as rgba). */
+    --mps-in: #2e9e7a;
+    --mps-low: #d98a1e;
+    --mps-out: #b0bec8;
+    --mps-in-soft: rgba(46, 158, 122, 0.11);
+    --mps-low-soft: rgba(217, 138, 30, 0.11);
+    --mps-out-soft: rgba(176, 190, 200, 0.14);
+
+    /* Radii — 14px dominant, 16px board, 18px peek, 8-10px buttons. */
+    --mps-r: 14px;
+    --mps-r-board: 16px;
+    --mps-r-peek: 18px;
+    --mps-r-btn: 10px;
+    --mps-r-pill: 999px;
+
+    /* Map a few site tokens so anything unstyled inherits the palette. */
+    --bg-0: var(--mps-bg);
+    --bg-1: var(--mps-surface);
+    --surface: var(--mps-surface);
+    --border-1: var(--mps-line);
+    --fg-1: var(--mps-ink);
+    --fg-2: var(--mps-ink-2);
+    --fg-3: var(--mps-meta);
+    --accent: var(--mps-red);
+
+    min-height: 100vh;
+    background: var(--mps-bg);
+    color: var(--mps-ink);
+    font-family: var(--font-sans);
+    line-height: 1.45;
+    -webkit-font-smoothing: antialiased;
+}
+
+.mpseafood-root *,
+.mpseafood-root *::before,
+.mpseafood-root *::after {
+    box-sizing: border-box;
+}
+
+/* Keyboard focus wears the lobster red — visible on every interactive bit. */
+.mpseafood-root :focus-visible {
+    outline: 2px solid var(--mps-red);
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+/* ── Rope-stripe bar ─────────────────────────────────────────────────────
+   The single strongest branding move on the page: a dashed navy/red
+   nautical rope pattern, pure CSS. */
+.mpseafood-rope {
+    height: 8px;
+    background: repeating-linear-gradient(
+        90deg,
+        var(--mps-navy) 0 26px,
+        var(--mps-bg) 26px 34px,
+        var(--mps-red) 34px 60px,
+        var(--mps-bg) 60px 68px
+    );
+}
+
+/* ── Page shell ──────────────────────────────────────────────────────────── */
+.mpseafood-shell {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 0 28px;
+}
+
+/* ── Sticky glass header ─────────────────────────────────────────────────
+   Sticks just below the gallery frame (which owns z 30+); z stays under 30. */
+.mpseafood-header {
+    position: sticky;
+    top: 42px;
+    z-index: 20;
+    background: rgba(243, 246, 248, 0.92);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--mps-line);
+}
+@supports not ((backdrop-filter: blur(10px)) or (-webkit-backdrop-filter: blur(10px))) {
+    .mpseafood-header {
+        background: rgba(243, 246, 248, 0.98);
+    }
+}
+
+.mpseafood-header-shell {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 14px 28px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.mpseafood-wordmark {
+    display: flex;
+    align-items: baseline;
+    gap: 9px;
+    white-space: nowrap;
+}
+.mpseafood-wordmark-name {
+    font-weight: 800;
+    font-size: 20px;
+    color: var(--mps-ink);
+}
+.mpseafood-wordmark-tag {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--mps-red);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.mpseafood-nav {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+.mpseafood-nav-link {
+    background: none;
+    border: 0;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    font-size: var(--text-sm);
+    color: var(--mps-ink-2);
+    cursor: pointer;
+    white-space: nowrap;
+}
+.mpseafood-nav-link:hover {
+    color: var(--mps-ink);
+}
+
+/* ── Buttons — react-fancy Button, restyled to the shack ─────────────────
+   Flat fills, 8-10px radius, no shadow, no transition (motion: none). */
+.mpseafood-root .mpseafood-btn {
+    border-radius: var(--mps-r-btn) !important;
+    padding: 13px 24px !important;
+    height: auto !important;
+    font-size: 15px !important;
+    font-weight: 600 !important;
+    line-height: 1.2 !important;
+    box-shadow: none !important;
+    transition: none !important;
+}
+
+.mpseafood-root .mpseafood-btn--red,
+.mpseafood-root .mpseafood-btn--red:not(:disabled) {
+    background: var(--mps-red) !important;
+    color: #fff !important;
+    border: 1px solid transparent !important;
+}
+.mpseafood-root .mpseafood-btn--red:hover:not(:disabled) {
+    background: var(--mps-red-deep) !important;
+}
+
+.mpseafood-root .mpseafood-btn--shell,
+.mpseafood-root .mpseafood-btn--shell:not(:disabled) {
+    background: var(--mps-surface) !important;
+    color: var(--mps-ink) !important;
+    border: 1px solid var(--mps-line-2) !important;
+}
+.mpseafood-root .mpseafood-btn--shell:hover:not(:disabled) {
+    border-color: var(--mps-meta-2) !important;
+}
+
+/* The header's navy pill CTA — tighter padding, 8px radius. */
+.mpseafood-root .mpseafood-btn--navy,
+.mpseafood-root .mpseafood-btn--navy:not(:disabled) {
+    background: var(--mps-navy) !important;
+    color: #fff !important;
+    border: 1px solid transparent !important;
+    border-radius: 8px !important;
+    padding: 9px 16px !important;
+    font-size: var(--text-sm) !important;
+}
+.mpseafood-root .mpseafood-btn--navy:hover:not(:disabled) {
+    background: var(--mps-navy-deep) !important;
+}
+
+/* The board's quiet reset — only appears once the day has been touched. */
+.mpseafood-root .mpseafood-btn--reset,
+.mpseafood-root .mpseafood-btn--reset:not(:disabled) {
+    background: var(--mps-surface) !important;
+    color: var(--mps-ink-2) !important;
+    border: 1px solid var(--mps-line) !important;
+    border-radius: 8px !important;
+    padding: 5px 10px !important;
+    font-size: 12px !important;
+}
+.mpseafood-root .mpseafood-btn--reset:hover:not(:disabled) {
+    color: var(--mps-navy) !important;
+    border-color: var(--mps-navy) !important;
+}
+
+/* ── Hero + catch peek ───────────────────────────────────────────────────── */
+.mpseafood-hero {
+    display: grid;
+    grid-template-columns: 1.05fr 0.95fr;
+    gap: 40px;
+    align-items: center;
+    padding: 56px 0 44px;
+}
+
+.mpseafood-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--mps-red);
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+.mpseafood-eyebrow--tight {
+    margin-bottom: 14px;
+}
+
+.mpseafood-h1 {
+    font-size: 56px;
+    line-height: 1.04;
+    letter-spacing: -0.025em;
+    font-weight: 800;
+    margin: 0;
+    color: var(--mps-ink);
+}
+
+.mpseafood-lede {
+    font-size: var(--text-xl);
+    color: var(--mps-ink-2);
+    line-height: 1.5;
+    margin: 20px 0 28px;
+    max-width: 440px;
+}
+
+.mpseafood-hero-ctas {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+/* The mini dashboard card that sells the concept — navy header bar, mono
+   timestamp, four derived status rows, deep soft shadow. */
+.mpseafood-peek {
+    background: var(--mps-surface);
+    border: 1px solid var(--mps-line-2);
+    border-radius: var(--mps-r-peek);
+    overflow: hidden;
+    box-shadow: 0 18px 40px -22px rgba(18, 49, 76, 0.4);
+}
+.mpseafood-peek-head {
+    background: var(--mps-navy);
+    color: #fff;
+    padding: 13px 18px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+}
+.mpseafood-peek-title {
+    font-size: var(--text-sm);
+    font-weight: 600;
+}
+.mpseafood-peek-time {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--mps-peek-time);
+}
+.mpseafood-peek-body {
+    padding: 10px 8px;
+}
+.mpseafood-peek-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+}
+.mpseafood-peek-emoji {
+    font-size: 16px;
+}
+.mpseafood-peek-name {
+    flex: 1;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--mps-ink);
+}
+
+/* Peek status pills — react-fancy Badge, forced to the mockup's tints. */
+.mpseafood-root .mpseafood-pk {
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    padding: 2px 9px !important;
+    border-radius: var(--mps-r-pill) !important;
+    border: 0 !important;
+    line-height: 1.5 !important;
+}
+.mpseafood-root .mpseafood-pk--in {
+    color: var(--mps-in) !important;
+    background: var(--mps-in-soft) !important;
+}
+.mpseafood-root .mpseafood-pk--low {
+    color: var(--mps-low) !important;
+    background: var(--mps-low-soft) !important;
+}
+.mpseafood-root .mpseafood-pk--out {
+    color: var(--mps-out) !important;
+    background: var(--mps-out-soft) !important;
+}
+
+/* ── Today's menu ────────────────────────────────────────────────────────── */
+.mpseafood-menu {
+    padding: 26px 0;
+    scroll-margin-top: 104px; /* gallery frame + the shack's own sticky header */
+}
+
+.mpseafood-menu-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 22px;
+    border-bottom: 2px solid var(--mps-navy);
+    padding-bottom: 12px;
+}
+.mpseafood-menu-title {
+    font-size: var(--text-3xl);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin: 0;
+    color: var(--mps-ink);
+}
+.mpseafood-menu-hint {
+    font-size: var(--text-sm);
+    color: var(--mps-meta);
+    white-space: nowrap;
+}
+
+.mpseafood-menu-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+}
+
+.mpseafood-dish {
+    background: var(--mps-surface);
+    border: 1px solid var(--mps-line);
+    border-radius: var(--mps-r);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+/* Sold-out dishes dim automatically — derived from the catch board. */
+.mpseafood-dish--out {
+    opacity: 0.5;
+}
+
+.mpseafood-dish-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.mpseafood-dish-tile {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: var(--mps-tile);
+    display: grid;
+    place-items: center;
+    font-size: 21px;
+}
+.mpseafood-dish-price {
+    font-size: var(--text-lg);
+    font-weight: 800;
+    color: var(--mps-red);
+}
+.mpseafood-dish-name {
+    font-size: var(--text-lg);
+    font-weight: 700;
+    color: var(--mps-ink);
+}
+.mpseafood-dish-short {
+    font-size: var(--text-sm);
+    color: var(--mps-ink-3);
+    line-height: 1.45;
+    margin: 0;
+    flex: 1;
+}
+
+/* Availability pills — green while it lasts, grey when the crate is empty. */
+.mpseafood-root .mpseafood-avail {
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    align-self: flex-start;
+    padding: 3px 10px !important;
+    border-radius: var(--mps-r-pill) !important;
+    border: 0 !important;
+    line-height: 1.5 !important;
+}
+.mpseafood-root .mpseafood-avail--ok {
+    color: var(--mps-in) !important;
+    background: var(--mps-in-soft) !important;
+}
+.mpseafood-root .mpseafood-avail--out {
+    color: var(--mps-out) !important;
+    background: var(--mps-out-soft) !important;
+}
+
+/* ── The catch board — restyled react-fancy Table ────────────────────────── */
+.mpseafood-catch {
+    padding: 36px 0;
+    scroll-margin-top: 104px;
+}
+
+.mpseafood-board {
+    background: var(--mps-surface);
+    border: 1px solid var(--mps-line);
+    border-radius: var(--mps-r-board);
+    overflow: hidden;
+}
+
+.mpseafood-board-head {
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--mps-hairline);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.mpseafood-board-icon {
+    display: inline-flex;
+    color: var(--mps-navy);
+    flex-shrink: 0;
+}
+.mpseafood-board-title {
+    font-weight: 700;
+    color: var(--mps-ink);
+}
+.mpseafood-board-sub {
+    font-size: 12px;
+    color: var(--mps-meta);
+}
+.mpseafood-board-meta {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.mpseafood-board-updated {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--mps-meta-2);
+    white-space: nowrap;
+}
+
+/* The board never breaks the page — it scrolls inside its own panel. */
+.mpseafood-board-scroll {
+    overflow-x: auto;
+}
+
+/* Reskin the Table primitive into the mockup's dock-inventory grid:
+   fixed column rhythm (icon 46px / item / source / price / on-hand /
+   status 132px), uppercase 11px header, hairline row dividers, mono
+   numerics. */
+.mpseafood-root .mpseafood-table {
+    width: 100%;
+    min-width: 720px;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+.mpseafood-root .mpseafood-table :where(thead th) {
+    background: var(--mps-surface) !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    color: var(--mps-meta-2) !important;
+    text-align: left !important;
+    padding: 10px 12px !important;
+    border-bottom: 1px solid var(--mps-hairline-2) !important;
+}
+.mpseafood-root .mpseafood-table :where(thead th:first-child) {
+    padding-left: 20px !important;
+}
+.mpseafood-root .mpseafood-table :where(thead th:last-child) {
+    padding-right: 20px !important;
+}
+.mpseafood-root .mpseafood-table :where(tbody td) {
+    padding: 12px !important;
+    font-size: var(--text-sm) !important;
+    color: var(--mps-ink) !important;
+    border-bottom: 1px solid var(--mps-hairline-3) !important;
+    vertical-align: middle !important;
+    background: transparent !important;
+}
+.mpseafood-root .mpseafood-table :where(tbody td:first-child) {
+    padding-left: 20px !important;
+}
+.mpseafood-root .mpseafood-table :where(tbody td:last-child) {
+    padding-right: 20px !important;
+}
+.mpseafood-root .mpseafood-table :where(tbody tr:last-child td) {
+    border-bottom: 0 !important;
+}
+.mpseafood-root .mpseafood-table :where(tbody tr):hover {
+    background: #fafcfd !important;
+}
+
+/* Column rhythm — mirrors the mockup's 40px 1.6fr 1fr 1fr 1fr 130px grid. */
+.mpseafood-root .mpseafood-table th.mpseafood-col-icon {
+    width: 46px;
+}
+.mpseafood-root .mpseafood-table th.mpseafood-col-item {
+    width: 27%;
+}
+.mpseafood-root .mpseafood-table th.mpseafood-col-source {
+    width: 18%;
+}
+.mpseafood-root .mpseafood-table th.mpseafood-col-price {
+    width: 14%;
+}
+.mpseafood-root .mpseafood-table th.mpseafood-col-qty {
+    width: 20%;
+}
+.mpseafood-root .mpseafood-table th.mpseafood-col-status {
+    width: 132px;
+}
+
+.mpseafood-cell-icon span {
+    font-size: 16px;
+}
+.mpseafood-item-name {
+    display: block;
+    font-weight: 600;
+    color: var(--mps-ink);
+    line-height: 1.3;
+}
+.mpseafood-item-cat {
+    display: block;
+    font-size: 12px;
+    color: var(--mps-meta-2);
+    line-height: 1.3;
+}
+.mpseafood-root .mpseafood-table td.mpseafood-cell-source {
+    color: var(--mps-source) !important;
+}
+.mpseafood-root .mpseafood-table td.mpseafood-cell-price {
+    font-family: var(--font-mono) !important;
+    color: var(--mps-ink) !important;
+    font-variant-numeric: tabular-nums;
+}
+
+/* On-hand cell: mono count flanked by − / + steppers — the live handle. */
+.mpseafood-qty {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+}
+.mpseafood-qty-num {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--mps-source);
+    min-width: 46px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+}
+.mpseafood-step {
+    width: 20px;
+    height: 20px;
+    border-radius: 6px;
+    border: 1px solid var(--mps-line);
+    background: var(--mps-surface);
+    color: var(--mps-ink-2);
+    display: inline-grid;
+    place-items: center;
+    padding: 0;
+    cursor: pointer;
+}
+.mpseafood-step:hover:not(:disabled) {
+    border-color: var(--mps-navy);
+    color: var(--mps-navy);
+}
+.mpseafood-step:disabled {
+    opacity: 0.35;
+    cursor: default;
+}
+
+/* Board status pills — Badge with a currentColor dot, alpha-tinted fill. */
+.mpseafood-root .mpseafood-bpill {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 5px !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    padding: 3px 9px !important;
+    border-radius: var(--mps-r-pill) !important;
+    border: 0 !important;
+    line-height: 1.5 !important;
+    white-space: nowrap;
+}
+.mpseafood-bdot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    flex-shrink: 0;
+}
+.mpseafood-root .mpseafood-bpill--in {
+    color: var(--mps-in) !important;
+    background: var(--mps-in-soft) !important;
+}
+.mpseafood-root .mpseafood-bpill--low {
+    color: var(--mps-low) !important;
+    background: var(--mps-low-soft) !important;
+}
+.mpseafood-root .mpseafood-bpill--out {
+    color: var(--mps-out) !important;
+    background: var(--mps-out-soft) !important;
+}
+
+/* The demo caption under the table. */
+.mpseafood-board-foot {
+    padding: 10px 20px 12px;
+    border-top: 1px solid var(--mps-hairline-2);
+    font-size: 12px;
+    color: var(--mps-meta);
+    background: #fbfdfe;
+}
+
+/* ── Our story + stats ───────────────────────────────────────────────────── */
+.mpseafood-story {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: center;
+    padding: 44px 0;
+    border-top: 1px solid var(--mps-line);
+}
+.mpseafood-story-h2 {
+    font-size: 34px;
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+    font-weight: 800;
+    margin: 0 0 16px;
+    color: var(--mps-ink);
+}
+.mpseafood-story-p {
+    font-size: var(--text-lg);
+    color: var(--mps-ink-2);
+    line-height: 1.6;
+    margin: 0;
+}
+
+.mpseafood-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+.mpseafood-stat {
+    background: var(--mps-surface);
+    border: 1px solid var(--mps-line);
+    border-radius: var(--mps-r);
+    padding: 18px;
+}
+.mpseafood-stat-v {
+    font-size: 30px;
+    font-weight: 800;
+    color: var(--mps-navy);
+    letter-spacing: -0.02em;
+}
+.mpseafood-stat-k {
+    font-size: var(--text-sm);
+    color: var(--mps-ink-3);
+    margin-top: 2px;
+}
+
+/* ── Where we're docked — the tide-table ─────────────────────────────────── */
+.mpseafood-find {
+    padding: 20px 0 56px;
+    scroll-margin-top: 104px;
+}
+.mpseafood-find-title {
+    font-size: var(--text-3xl);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin: 0 0 18px;
+    color: var(--mps-ink);
+}
+
+.mpseafood-sched {
+    background: var(--mps-surface);
+    border: 1px solid var(--mps-line);
+    border-radius: var(--mps-r);
+    overflow: hidden;
+}
+.mpseafood-sched-row {
+    display: grid;
+    grid-template-columns: 120px 1fr auto;
+    gap: 16px;
+    align-items: center;
+    padding: 14px 22px;
+    border-bottom: 1px solid var(--mps-hairline-4);
+}
+.mpseafood-sched-row:last-child {
+    border-bottom: 0;
+}
+.mpseafood-sched-day {
+    font-weight: 700;
+    color: var(--mps-ink);
+}
+.mpseafood-sched-place {
+    color: var(--mps-ink-2);
+}
+.mpseafood-sched-hours {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--mps-meta);
+    font-variant-numeric: tabular-nums;
+}
+
+/* ── Footer ──────────────────────────────────────────────────────────────── */
+.mpseafood-footer {
+    border-top: 1px solid var(--mps-line);
+    background: var(--mps-surface);
+}
+.mpseafood-footer-shell {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 32px 28px 24px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 18px;
+    font-size: var(--text-sm);
+    color: var(--mps-ink-2);
+}
+.mpseafood-footer-brand {
+    font-weight: 800;
+    color: var(--mps-ink);
+}
+.mpseafood-demo-note {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 0 28px 26px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--mps-meta);
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 1020px) {
+    .mpseafood-hero {
+        grid-template-columns: 1fr;
+        gap: 32px;
+        padding: 44px 0 36px;
+    }
+    .mpseafood-h1 {
+        font-size: 44px;
+    }
+    .mpseafood-menu-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .mpseafood-story {
+        grid-template-columns: 1fr;
+        gap: 28px;
+    }
+}
+
+@media (max-width: 860px) {
+    /* The gallery frame can wrap to two rows here — release the page header
+       from sticky so the two chromes never fight. */
+    .mpseafood-header {
+        position: static;
+    }
+    .mpseafood-menu,
+    .mpseafood-catch,
+    .mpseafood-find {
+        scroll-margin-top: 90px;
+    }
+}
+
+@media (max-width: 700px) {
+    .mpseafood-shell {
+        padding: 0 20px;
+    }
+    .mpseafood-header-shell {
+        padding: 12px 20px;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    .mpseafood-nav {
+        gap: 16px;
+    }
+    .mpseafood-nav-link {
+        display: none;
+    }
+    .mpseafood-h1 {
+        font-size: 36px;
+    }
+    .mpseafood-lede {
+        font-size: var(--text-lg);
+    }
+    .mpseafood-menu-grid {
+        grid-template-columns: 1fr;
+    }
+    .mpseafood-menu-head {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+    .mpseafood-board-head {
+        flex-wrap: wrap;
+    }
+    .mpseafood-board-meta {
+        margin-left: 0;
+        width: 100%;
+        justify-content: space-between;
+    }
+    .mpseafood-sched-row {
+        grid-template-columns: 92px 1fr auto;
+        gap: 10px;
+        padding: 12px 16px;
+    }
+    .mpseafood-footer-shell {
+        flex-direction: column;
+        gap: 8px;
+        padding: 26px 20px 18px;
+    }
+    .mpseafood-demo-note {
+        padding: 0 20px 22px;
+    }
+}

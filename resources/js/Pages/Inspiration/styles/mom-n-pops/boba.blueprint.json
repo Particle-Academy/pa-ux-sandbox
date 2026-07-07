@@ -1,0 +1,67 @@
+{
+  "id": "boba",
+  "collection": "mom-n-pops",
+  "name": "Boba",
+  "cuisine": "Bubble tea",
+  "surface": "+ Configurator",
+  "note": "Y2K site + build-a-drink configurator.",
+  "mode": "light",
+  "thesis": "A bubble-tea truck as a Y2K pastel candy site: one full-page pink→lavender→sky gradient with two blurred blob shapes morphing behind everything, frosted-glass cards floating on top, 999px pills everywhere, and a single hot-pink→violet gradient doing every accent job — wordmark suffix, H1 text clip, selected chips, prices, CTAs. No heritage copy at all: freshness plus build-it-yourself agency ('sealed and shaken to order') IS the brand, and the page's centerpiece is a live drink configurator, not a story band.",
+  "tokens": {
+    "bg": "linear-gradient(160deg, #FFE1F1 0%, #E9E1FF 46%, #DDF3FF 100%) full-page pastel gradient; two absolutely-positioned morphing blobs behind the content (rgba(255,138,197,0.4) left, rgba(138,180,255,0.4) right, blur(6px)); frosted surfaces rgba(255,255,255,0.55–0.82) with backdrop-blur 10–12px; the configurator rail tints linear-gradient(160deg,#F6EFFF,#FFEFF8)",
+    "fg": "#3A2B52 deep plum primary; #5C4B76 secondary; #6A5A82 nav/footer; #7C6C92 descriptions; #9A8AB0 / #8A7BA0 muted labels + mono hours",
+    "accent": "#FF4FA3 hot pink, almost always worn as the gradient linear-gradient(120deg,#FF4FA3,#8A6BFF); #8A6BFF violet is the second stop and #4FB8FF sky joins only in the 3-stop H1 clip; softer tints #FF6FB5 (wordmark suffix) and #FFB6DA/#B7A6FF (hero blob) support",
+    "fontDisplay": "var(--font-sans) at weight 800 with literal px sizes — h1 60px/0.98 (-0.02em), h2 34px, wordmark 21px; no serif anywhere; body rides var(--text-sm)/var(--text-xl) scale tokens",
+    "fontMono": "var(--font-mono) used exactly twice — the schedule hours column (var(--text-sm), #8A7BA0) and the tiny demo-folio footer line — a quiet ticket-stub tell against the bubbly sans",
+    "radius": "999px pills dominate (chips, buttons, badges, cart pill); cards step down by importance: configurator shell 26px, menu/schedule cards 20px, summary card 16px, add-to-order button 14px, glyph tile 11px",
+    "border": "1px solid #fff on every frosted card (glass reads as a lit pane on the pastel wash); 1.5px solid #E7DCF7 pale lilac on unselected chips; 1px dashed #E7DCF7 divider above the price; schedule rows split by rgba(231,220,247,0.7) hairlines",
+    "motion": "One border-radius morph keyframe (42% 58% 63% 37% ↔ 58% 42% 37% 63%) shared by both background blobs and the hero emoji blob at staggered 9s/10s/11s ease-in-out infinite; chips swap to the gradient via transition: all .15s; CTAs lift translateY(-1px) with a violet glow shadow; all of it drops under prefers-reduced-motion"
+  },
+  "layout": "Single column capped at 1120px with 30px side padding, sitting on the full-viewport pastel gradient (overflow:hidden on the root so the negative blob offsets never cause horizontal scroll; blobs behind a z-index:1 content layer). A frosted sticky header (rgba white 0.55 + blur 12px, z-index 20 under the gallery chrome) carries the wordmark + gradient sub-brand and a 3-link section nav. The hero is a 1fr/1fr grid — badge pill, 60px gradient-clipped H1, lede, two pill CTAs on the left; a 230px morphing gradient blob holding a 96px 🧋 emoji on the right. Below it the page's centerpiece: one big glass card split 1fr/320px — four chip-groups left, a tinted summary rail right ('Your cup' white card + gradient add-to-order bar). Then a centered-heading 3×2 grid of frosted menu cards, a six-row schedule ticket in one glass card, and a translucent white footer strip. Density is airy — 24–50px section padding, pill-heavy spacing.",
+  "sections": [
+    {
+      "name": "sticky header",
+      "what": "Frosted-glass bar: 'Mom-n-Pops' wordmark (800/21px) plus a gradient-text 'Boba ✦' suffix linking to the collection hub, right-aligned nav (Build a drink / Menu / Find us) that smooth-scrolls via refs, and a white '🧋 n' order pill that appears after the first add.",
+      "components": ["Link (Inertia)"],
+      "restyle": "Hand-rolled glass: rgba(255,255,255,0.55) + backdrop-blur(12px) + 1px rgba-white bottom border, sticky under the gallery frame (z-index 20, top offset clearing it); the sub-brand is background-clip:text on the pink→violet gradient with a solid pink fallback. Nav items are unstyled <button>s calling scrollIntoView on section refs — no window/document reads."
+    },
+    {
+      "name": "hero",
+      "what": "1fr/1fr grid. Left: '✦ SHAKEN FRESH · MILWAUKEE · 2026 ✦' pill, the 60px gradient H1 'Boba, built your way.', a 420px lede about real brewed tea and sealed-to-order shaking, and two pill CTAs (gradient 'Build a drink ✦' + white 'See favorites') that jump to their sections. Right: a 230px pink→periwinkle blob morphing on the shared keyframe with a 96px 🧋 emoji centered in it — the emoji IS the product shot.",
+      "components": ["Badge", "Button"],
+      "restyle": "Badge flattened to the white sparkle pill: 12px/800, 0.06em tracking, radius 999, no border, pink text, pink glow shadow. Buttons become candy pills (radius 999, 13px/24px padding): primary wears the pink→violet gradient + violet glow 0 10px 24px -8px rgba(138,107,255,0.7), secondary is plain white with plum text. The H1 runs the only 3-stop gradient clip (#FF4FA3→#8A6BFF→#4FB8FF) with a pink fallback color."
+    },
+    {
+      "name": "build-your-boba configurator",
+      "what": "THE special surface: one glass card (radius 26, blur 10, white 1px border, big violet shadow) split 1fr/320px. Left: a gradient ✦ glyph tile + 'Build-your-boba / tap the options — it mixes as you go', then four single-select chip groups — Tea base (4), Milk (3), Sweetness (5), Topping (5). Right: a tinted rail holding a white 'Your cup' card (derived name 'base ✦ topping', description 'milk · sweetness sweet', gradient-clipped live price over a dashed divider), a full-width gradient 'Add to order · $X.XX' button, and a fading '✦ Added — n cups in your order' aria-live flash.",
+      "components": ["Card", "Button"],
+      "restyle": "The outer Card and inner summary Card go glass/white with forced radii; every option chip is a react-fancy Button squeezed to a 999px pill (1.5px lilac border, white fill, .15s transition) whose data-on='true' state flips to the gradient with white text — declarative selected styling, NOT the mockup's imperative DOM repaint. State is one {base,milk,sweet,top} object; the price lives in a single priceFor() ($5 base, +$0.75 brown-sugar/popping boba, +$1 cheese foam, +$0.50 taro/matcha) shared by the summary, the button label, and any future configure_drink bridge. Chips carry stable data-group/data-opt handles so an agent can drive the builder without guessing DOM."
+    },
+    {
+      "name": "house favorites",
+      "what": "Centered 34px 'Or a house favorite' heading over a 3×2 grid of frosted cards: name + flat-pink price on one baseline row, one-line description (Brown Sugar Milk Tea $6 → Mango Green Tea $6).",
+      "components": ["Card"],
+      "restyle": "Cards forced to rgba(255,255,255,0.82) with 1px solid #fff borders and radius 20; hover lifts 3px into a soft violet shadow. Prices are flat #FF4FA3 here — the gradient is reserved for the configurator's live price so the centerpiece stays the loudest number on the page."
+    },
+    {
+      "name": "find the truck",
+      "what": "One glass card of six rows in a 130px/1fr/auto grid — bold day, plum place, mono hours — covering the Tue–Sun Milwaukee route (Marquette → Bay View), rows split by faint lilac hairlines.",
+      "components": ["Card"],
+      "restyle": "Same frosted treatment as the menu cards but padding 0 with row hairlines inside; the mono hours column at var(--text-sm) #8A7BA0 is the page's single typographic contrast — a ticket-stub read against the bubbly sans."
+    },
+    {
+      "name": "footer",
+      "what": "Translucent white strip (rgba 0.6): brand 'Mom-n-Pops Boba ✦', scrape-obfuscated email (hello<span>@</span>momnpops.truck) + Instagram handle, '© 2026 · Milwaukee'; below it a tiny mono demo-folio line and a pink '← Back to the trucks' link.",
+      "components": ["Link (Inertia)"],
+      "restyle": "Flat flex space-between rows, all hand-rolled; the ✦ sparkle motif closes the page in the wordmark."
+    }
+  ],
+  "palette": [
+    { "component": "Button", "restyle": "Three reads, all candy: (1) hero CTAs — 999px pills, 13px/24px padding, primary in the pink→violet gradient with a violet glow + hover lift, secondary plain white with plum text; (2) option chips — the workhorse: 9px/15px pill, 1.5px lilac border, white fill, 600 weight, transition all .15s, and a data-on='true' repaint to the full gradient with white text and a soft glow; (3) the add-to-order bar — full-width, radius 14, gradient fill, tabular-nums price in the label." },
+    { "component": "Badge", "restyle": "The hero status pill: solid white, hot-pink 12px/800 text with 0.06em tracking, radius 999, zero border, and a pink glow shadow 0 6px 16px -6px rgba(255,79,163,0.6) — a sticker sitting on the gradient." },
+    { "component": "Card", "restyle": "Four glass weights by importance: configurator shell rgba(255,255,255,0.7) + blur(10px) + 1px #fff border + radius 26 + 0 20px 50px -24px violet shadow; menu/schedule cards rgba 0.82 + radius 20 (no blur needed at that opacity); the 'Your cup' summary solid #fff + radius 16 + soft violet shadow. Always pair backdrop-filter with an @supports solid fallback." },
+    { "component": "Link (Inertia)", "restyle": "Brand lockup (plum wordmark + gradient-clipped suffix) and the pink footer back-link — nav jumps are buttons, not anchors, so the SPA never fights hash routing." }
+  ],
+  "contentArchetype": "A build-your-own product configurator wrapped in a storefront: hero promise ('Boba, built your way.'), a four-group single-select builder with live derived name/description/price, a six-item priced favorites menu as the escape hatch for non-builders, a six-day city route timetable, and a one-line contact footer. Fits any customize-then-buy surface — sandwich builders, plan pickers, PC configurators, bouquet builders — anywhere the configurator, not the catalog, is the hero.",
+  "remix": "The load-bearing moves: (1) ONE tri-stop pastel page gradient plus white-bordered frosted cards — the glass only reads because the wash behind it is saturated; (2) a single accent gradient worn by every selected/priced/actionable thing so 'chosen' and 'costs money' share a color; (3) 999px pills for anything tappable, 16–26px radii for anything that holds content; (4) derived state from one selection object with a single shared price function — summary card, button label, and agent bridge can never disagree; (5) blob-morph keyframes on decorative shapes only, never on content. Re-skin by rotating the three page-gradient stops and the two accent stops together (mint→lilac→lemon with a teal→blue accent reads spa; peach→rose→sky with sunset stops reads smoothie bar). Blend toward 'gradient' (fieldwork) by cooling the stops and letting glass carry more structure; toward a dark Y2K by flipping the wash to deep purple and cranking the blob opacity. Drop the blobs first for a calmer read — the pills and the gradient accent alone still say bubble tea."
+}

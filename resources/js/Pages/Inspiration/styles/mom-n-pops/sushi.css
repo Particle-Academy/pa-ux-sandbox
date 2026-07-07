@@ -1,0 +1,631 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Mom-n-Pops · Style 10 — Sushi (鮨)
+   The family truck as an eight-seat sushi counter: warm rice-paper off-white,
+   one deep vermilion accent, an enso double-circle hero mark, kanji-prefixed
+   uppercase section headings with rules extending right, a dotted-leader
+   counter menu, and a Reservations week strip whose selection bar inverts to
+   near-black. Deliberately motionless — no transitions, no keyframes; the only
+   "motion" is a blurred sticky header and a smooth scrollIntoView. Every class
+   is prefixed mpsushi- and every selector is scoped under .mpsushi-root so
+   nothing leaks across the SPA. Page-level z-index stays well under 30 (the
+   GalleryFrame owns 30+).
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.mpsushi-root {
+  /* ── Scoped tokens ─────────────────────────────────────────────────────── */
+  --mps-paper:     #FAF8F2;  /* warm off-white field */
+  --mps-paper-2:   #F3F0E8;  /* tinted reservation band */
+  --mps-card:      #ffffff;  /* night cards */
+  --mps-ink:       #1A1A1A;  /* primary ink; also the inverted selected bar */
+  --mps-ink-2:     #6A655C;  /* secondary text */
+  --mps-mut:       #9A948A;  /* muted labels */
+  --mps-mut-2:     #B0A99C;  /* faintest labels / full-state grey */
+  --mps-red:       #C0362C;  /* deep vermilion — the single accent */
+  --mps-red-2:     #A82B22;  /* vermilion, pressed */
+  --mps-rule:      #E6E2D8;  /* band rules + header hairline */
+  --mps-rule-2:    #ECE8DE;  /* row dividers */
+  --mps-cardline:  #E0DACC;  /* night-card borders */
+  --mps-leader:    #D8D2C6;  /* dotted menu leaders */
+  --mps-open:      #2E7D5B;  /* seats: open */
+  --mps-few:       #C08A1E;  /* seats: few */
+  --mps-full:      #B0A99C;  /* seats: full / closed */
+  --mps-bar-line:  #4A4A44;  /* stepper hairline on the inverted bar */
+  --mps-disc:      #F1EEE5;  /* enso disc fill */
+  --mps-serif:     Georgia, "Times New Roman", serif;
+
+  min-height: 100vh;
+  background: var(--mps-paper);
+  color: var(--mps-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.mpsushi-root ::selection {
+  background: var(--mps-red);
+  color: #fff;
+}
+
+/* ── Shared shell ──────────────────────────────────────────────────────────── */
+.mpsushi-container {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 32px;
+}
+
+/* Full-bleed bands separated by hairline rules; one band gets the tint. */
+.mpsushi-band {
+  border-top: 1px solid var(--mps-rule);
+}
+.mpsushi-band--tinted {
+  background: var(--mps-paper-2);
+}
+
+.mpsushi-section {
+  padding: 60px 0;
+  scroll-margin-top: 120px; /* clears the GalleryFrame + sticky header */
+}
+
+/* ── Header (sticky, translucent, blurred) ─────────────────────────────────── */
+.mpsushi-header {
+  position: sticky;
+  top: 43px;              /* sits just below the sticky GalleryFrame */
+  z-index: 20;            /* under the frame's 30 */
+  border-bottom: 1px solid var(--mps-rule);
+  background: rgba(250, 248, 242, 0.92);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+}
+.mpsushi-header__inner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
+
+.mpsushi-brand {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 0;
+}
+.mpsushi-brand__enso {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 2px solid var(--mps-red);
+}
+.mpsushi-brand__name {
+  font-weight: 600;
+  font-size: 19px;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.mpsushi-brand__kanji {
+  font-size: 12px;
+  color: var(--mps-mut);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.mpsushi-nav {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+/* Button (ghost) → quiet text nav link: no chrome, secondary ink, ink hover. */
+.mpsushi-root .mpsushi-navlink {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  min-height: 0 !important;
+  height: auto !important;
+  font-family: var(--font-sans) !important;
+  font-size: var(--text-sm) !important;
+  font-weight: 400 !important;
+  color: var(--mps-ink-2) !important;
+}
+.mpsushi-root .mpsushi-navlink:hover {
+  color: var(--mps-ink) !important;
+}
+.mpsushi-root .mpsushi-navlink:focus-visible {
+  outline: 2px solid var(--mps-red);
+  outline-offset: 3px;
+}
+
+/* ── Hero ──────────────────────────────────────────────────────────────────── */
+.mpsushi-hero {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 56px;
+  align-items: center;
+  padding: 88px 0 72px;
+}
+
+.mpsushi-eyebrow {
+  font-size: 12px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--mps-mut-2);
+  margin: 0 0 30px;
+}
+
+.mpsushi-display {
+  font-size: clamp(38px, 5.4vw, 54px);
+  line-height: 1.14;
+  letter-spacing: -0.01em;
+  font-weight: 400;
+  margin: 0;
+}
+.mpsushi-display__accent {
+  color: var(--mps-red);
+}
+
+.mpsushi-lede {
+  font-size: var(--text-lg);
+  color: var(--mps-ink-2);
+  line-height: 1.7;
+  margin: 30px 0 0;
+  max-width: 400px;
+}
+
+/* The signature enso: a filled disc plus a slightly larger, top-aligned
+   outline ring that pokes out below — a brushstroke-style asymmetry. */
+.mpsushi-hero__mark {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+.mpsushi-enso__ring {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 270px;
+  height: 270px;
+  border: 2px solid var(--mps-red);
+  border-radius: 50%;
+}
+.mpsushi-enso__disc {
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  background: var(--mps-disc);
+  display: grid;
+  place-items: center;
+}
+.mpsushi-enso__glyph {
+  font-family: var(--mps-serif);
+  font-size: 120px;
+  line-height: 1;
+  color: var(--mps-red);
+}
+
+/* ── Kanji-prefixed section heading with a rule extending right ───────────── */
+.mpsushi-rulehead {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  margin-bottom: 36px;
+}
+.mpsushi-rulehead--tight {
+  margin-bottom: 8px;
+}
+.mpsushi-h2 {
+  font-size: 14px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 600;
+  margin: 0;
+  white-space: nowrap;
+}
+.mpsushi-rulehead__rule {
+  flex: 1;
+  border-bottom: 1px solid var(--mps-rule);
+}
+
+/* ── Counter menu: two columns of dotted-leader price rows ─────────────────── */
+.mpsushi-menu {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px 56px;
+}
+.mpsushi-menu__row {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--mps-rule-2);
+}
+.mpsushi-menu__name {
+  font-size: var(--text-xl);
+  font-weight: 500;
+}
+.mpsushi-menu__leader {
+  flex: 1;
+  border-bottom: 1px dotted var(--mps-leader);
+  transform: translateY(-4px);
+}
+.mpsushi-menu__price {
+  font-size: var(--text-base);
+  color: var(--mps-red);
+}
+
+/* ── Reserve omakase: the Reservations surface ─────────────────────────────── */
+.mpsushi-book__sub {
+  font-size: var(--text-base);
+  color: var(--mps-ink-2);
+  margin: 0 0 24px;
+}
+
+.mpsushi-week {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+}
+
+/* Night card — a hand-rolled card-radio (no primitive fits a 7-night strip).
+   Selection ring + availability colors are declarative, replacing the
+   mockup's imperative paint() DOM pass. */
+.mpsushi-night {
+  appearance: none;
+  font: inherit;
+  color: inherit;
+  display: block;
+  width: 100%;
+  background: var(--mps-card);
+  border: 1px solid var(--mps-cardline);
+  border-radius: 12px;
+  padding: 14px 10px;
+  text-align: center;
+  cursor: pointer;
+}
+.mpsushi-night:not(.mpsushi-night--full):not(.mpsushi-night--picked):hover {
+  border-color: #C9C2B2;
+}
+.mpsushi-night--picked {
+  border-color: var(--mps-red); /* later in the cascade than the base card */
+  box-shadow: 0 0 0 1px var(--mps-red); /* the double-ring */
+}
+.mpsushi-night--full {
+  cursor: not-allowed;
+}
+.mpsushi-night:focus-visible {
+  outline: 2px solid var(--mps-red);
+  outline-offset: 2px;
+}
+
+.mpsushi-night__dow {
+  display: block;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--mps-mut);
+}
+.mpsushi-night__date {
+  display: block;
+  font-size: 20px;
+  font-weight: 600;
+  margin: 4px 0;
+}
+.mpsushi-night__seats {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+}
+.mpsushi-night__seats--open { color: var(--mps-open); }
+.mpsushi-night__seats--few  { color: var(--mps-few); }
+.mpsushi-night__seats--full { color: var(--mps-full); }
+
+/* Selected-night summary bar — inverts to near-black. */
+.mpsushi-bar {
+  margin-top: 22px;
+  background: var(--mps-ink);
+  color: var(--mps-paper);
+  border-radius: 14px;
+  padding: 22px 26px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.mpsushi-bar__info {
+  flex: 1;
+  min-width: 200px;
+}
+.mpsushi-bar__label {
+  font-size: 12px;
+  color: var(--mps-mut-2);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.mpsushi-bar__night {
+  font-family: var(--mps-serif);
+  font-size: 24px;
+  margin-top: 3px;
+}
+.mpsushi-bar__meta {
+  font-size: var(--text-sm);
+  color: var(--mps-mut-2);
+  margin-top: 4px;
+}
+
+/* Party-size stepper — Buttons restyled to 36px hairline squares. */
+.mpsushi-stepper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.mpsushi-root .mpsushi-step {
+  width: 36px !important;
+  height: 36px !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  display: grid !important;
+  place-items: center !important;
+  background: transparent !important;
+  border: 1px solid var(--mps-bar-line) !important;
+  border-radius: 9px !important;
+  box-shadow: none !important;
+  color: var(--mps-paper) !important;
+  font-size: 18px !important;
+  font-weight: 400 !important;
+  line-height: 1 !important;
+}
+.mpsushi-root .mpsushi-step:hover:not(:disabled) {
+  border-color: var(--mps-mut-2) !important;
+}
+.mpsushi-root .mpsushi-step:disabled {
+  opacity: 0.35 !important;
+  cursor: not-allowed !important;
+}
+.mpsushi-root .mpsushi-step:focus-visible {
+  outline: 2px solid var(--mps-red);
+  outline-offset: 2px;
+}
+.mpsushi-stepper__count {
+  font-family: var(--font-mono);
+  font-size: 20px;
+  width: 24px;
+  text-align: center;
+}
+
+/* Reserve CTA — Button as a solid vermilion slab. */
+.mpsushi-root .mpsushi-cta {
+  background: var(--mps-red) !important;
+  color: #fff !important;
+  border: 0 !important;
+  border-radius: 10px !important;
+  box-shadow: none !important;
+  padding: 13px 22px !important;
+  height: auto !important;
+  min-height: 0 !important;
+  font-family: var(--font-sans) !important;
+  font-size: var(--text-base) !important;
+  font-weight: 700 !important;
+}
+.mpsushi-root .mpsushi-cta:hover {
+  background: var(--mps-red-2) !important;
+}
+.mpsushi-root .mpsushi-cta:focus-visible {
+  outline: 2px solid var(--mps-paper);
+  outline-offset: 2px;
+}
+
+/* Post-reserve confirmation (replaces stepper + CTA inside the bar). */
+.mpsushi-confirm {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+.mpsushi-confirm__badge {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 2px solid var(--mps-red);
+  color: var(--mps-paper);
+  display: grid;
+  place-items: center;
+}
+.mpsushi-confirm__title {
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+.mpsushi-confirm__note {
+  font-size: 12px;
+  color: var(--mps-mut-2);
+  margin-top: 2px;
+  max-width: 340px;
+}
+.mpsushi-root .mpsushi-change {
+  background: transparent !important;
+  border: 1px solid var(--mps-bar-line) !important;
+  border-radius: 9px !important;
+  box-shadow: none !important;
+  color: var(--mps-paper) !important;
+  font-size: var(--text-sm) !important;
+  font-weight: 400 !important;
+  padding: 6px 14px !important;
+  height: auto !important;
+  min-height: 0 !important;
+}
+.mpsushi-root .mpsushi-change:hover {
+  border-color: var(--mps-mut-2) !important;
+}
+
+/* ── Story pull-quote ──────────────────────────────────────────────────────── */
+.mpsushi-story {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 56px;
+  align-items: center;
+  padding: 70px 0;
+}
+.mpsushi-quote {
+  font-family: var(--mps-serif);
+  font-size: 32px;
+  font-weight: 400;
+  line-height: 1.3;
+  margin: 0;
+}
+.mpsushi-story__body {
+  font-size: var(--text-lg);
+  color: var(--mps-ink-2);
+  line-height: 1.75;
+  margin: 0;
+}
+
+/* ── Find us (weekly schedule) ─────────────────────────────────────────────── */
+.mpsushi-find {
+  padding: 20px 0 64px;
+  border-top: 1px solid var(--mps-rule);
+  scroll-margin-top: 120px;
+}
+.mpsushi-find__h {
+  margin: 0 0 22px;
+}
+.mpsushi-sched__row {
+  display: grid;
+  grid-template-columns: 130px 1fr auto;
+  gap: 16px;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--mps-rule-2);
+  align-items: baseline;
+}
+.mpsushi-sched__day {
+  font-size: var(--text-sm);
+}
+.mpsushi-sched__place {
+  color: var(--mps-ink-2);
+}
+.mpsushi-sched__hours {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--mps-mut-2);
+}
+
+/* ── Footer ────────────────────────────────────────────────────────────────── */
+.mpsushi-footer {
+  border-top: 1px solid var(--mps-rule);
+}
+.mpsushi-footer__inner {
+  padding-top: 32px;
+  padding-bottom: 32px;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 18px;
+  font-size: var(--text-sm);
+  color: var(--mps-ink-2);
+}
+.mpsushi-footer__brand {
+  color: var(--mps-ink);
+}
+
+/* Demo footnote strip (gallery convention, below the fictional footer). */
+.mpsushi-demoline {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-top: 14px;
+  padding-bottom: 26px;
+  border-top: 1px dotted var(--mps-leader);
+  font-size: 12px;
+  color: var(--mps-mut);
+}
+.mpsushi-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--mps-ink-2);
+  text-decoration: none;
+}
+.mpsushi-back:hover {
+  color: var(--mps-red);
+}
+
+/* ── Responsive ────────────────────────────────────────────────────────────── */
+@media (max-width: 960px) {
+  .mpsushi-hero {
+    grid-template-columns: 1fr;
+    gap: 44px;
+    padding: 56px 0 52px;
+  }
+  .mpsushi-hero__mark {
+    order: -1;
+  }
+  .mpsushi-enso__ring {
+    width: 210px;
+    height: 210px;
+  }
+  .mpsushi-enso__disc {
+    width: 194px;
+    height: 194px;
+  }
+  .mpsushi-enso__glyph {
+    font-size: 92px;
+  }
+  .mpsushi-story {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    padding: 52px 0;
+  }
+}
+
+@media (max-width: 900px) {
+  /* The GalleryFrame wraps taller on small screens — release the header
+     rather than fight it for sticky space. */
+  .mpsushi-header {
+    position: static;
+  }
+  .mpsushi-nav {
+    gap: 18px;
+  }
+}
+
+@media (max-width: 860px) {
+  .mpsushi-week {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 760px) {
+  .mpsushi-container {
+    padding: 0 20px;
+  }
+  .mpsushi-menu {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .mpsushi-section {
+    padding: 48px 0;
+  }
+}
+
+@media (max-width: 560px) {
+  .mpsushi-week {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .mpsushi-sched__row {
+    grid-template-columns: 92px 1fr auto;
+    gap: 10px;
+  }
+  .mpsushi-brand__name {
+    font-size: 17px;
+  }
+  .mpsushi-nav {
+    gap: 14px;
+  }
+  .mpsushi-bar {
+    padding: 18px 20px;
+  }
+}

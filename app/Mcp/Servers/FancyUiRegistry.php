@@ -40,12 +40,15 @@ Workflow:
    bundle.
 
 For the DESIGN phase of a new project or a redesign — before picking components —
-use `gallery_list_styles` to browse the 20 Inspiration Gallery styles (one fictional
-studio site designed 20 ways, all from restyled Fancy primitives) and
-`gallery_get_blueprint` to fetch a style's design recipe (tokens, layout, the
-restyled-component palette, remix notes). These are READ-ONLY blueprints to
-re-implement and mix-and-match in the user's own project, not source to copy. Pairs
-with the `/design` skill in the fancy-ui Claude Code plugin.
+use `gallery_list_styles` to browse the Inspiration Gallery collections (fictional
+businesses, each designed 20 ways from restyled Fancy primitives: "fieldwork", a
+studio portfolio from Swiss-minimal to agent-native, and "mom-n-pops", a family
+food truck with live Fancy surfaces woven in — order trackers, configurators, a
+reservations calendar, ⌘K ordering, agentic catering) and `gallery_get_blueprint`
+to fetch a style's design recipe (tokens, layout, the restyled-component palette,
+remix notes). These are READ-ONLY blueprints to re-implement and mix-and-match in
+the user's own project, not source to copy. Pairs with the `/design` skill in the
+fancy-ui Claude Code plugin.
 
 This server is registry/install-time only. It does NOT operate a running
 Fancy UI app. For that, register the runtime bridges from

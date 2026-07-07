@@ -1,0 +1,641 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Mom-n-Pops · Style 07 — Smokehouse (BBQ)
+   Warm butcher-paper tan page under alternating dark charcoal bands, one
+   rust-ember accent, weight-900 uppercase display type + mono annotations
+   ("// LOW & SLOW", prices, hour axes, schedule days). No photos — scarcity
+   is sold with data: a live sellout meter (restyled Progress bars in a
+   6-color smoke-meat ramp) and a hand-rolled "on the pit" cook-timeline
+   Gantt (solid fill = done, 45° diagonal hatch = still cooking).
+   Every selector scoped under .mpbbq-root, every class prefixed mpbbq-.
+   Page-level sticky/z-index stays UNDER 30 (the gallery frame owns 30+).
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.mpbbq-root {
+  /* ── Scoped Smokehouse tokens ────────────────────────────────────────── */
+  --mpbbq-tan:        #DAC7A2; /* butcher-paper page */
+  --mpbbq-ink:        #2A231C; /* ink on the tan page */
+  --mpbbq-char:       #241F1B; /* charcoal bands: header / hero / footer */
+  --mpbbq-char-deep:  #1A1611; /* deepest panels: sellout meter + pit Gantt */
+  --mpbbq-cream:      #EFE3CC; /* light cards + primary text on dark */
+  --mpbbq-sand:       #C4B694; /* secondary text on dark */
+  --mpbbq-smoke:      #8A7A62; /* muted mono on dark */
+  --mpbbq-mut:        #6A5A44; /* muted on light */
+  --mpbbq-body:       #4A3E30; /* body text on light */
+  --mpbbq-ember:      #C0491E; /* rust ember — prices, CTA, story eyebrow */
+  --mpbbq-ember-hot:  #E88A3C; /* bright ember — nav highlight, eyebrows, flame */
+  --mpbbq-ember-deep: #A83A18; /* CTA hover / burnt-ends ramp stop */
+  --mpbbq-live:       #E8613C; /* pulsing pit-status dot */
+  --mpbbq-line-card:  #B8A47C; /* 1px borders on light cards */
+  --mpbbq-line-dark:  #35291F; /* hairlines inside dark panels */
+  --mpbbq-line-dark2: #4A3F32; /* sellout-panel border */
+  --mpbbq-line-dark3: #2A2118; /* Gantt row dividers */
+  --mpbbq-line-row:   #D4C09A; /* schedule row dividers */
+  --mpbbq-hatch-ink:  #241C14; /* hatch gap + bar-chip label ink */
+  --mpbbq-hours:      #8A7658; /* schedule hours mono */
+  --mpbbq-now:        64.3%;   /* 1:00 PM on the 4a→6p (14 h) axis */
+
+  background: var(--mpbbq-tan);
+  color: var(--mpbbq-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  min-height: 100vh;
+  overflow-x: clip;
+}
+
+.mpbbq-root ::selection {
+  background: var(--mpbbq-ember);
+  color: #fff;
+}
+
+.mpbbq-shell {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 28px;
+}
+
+/* ── Sticky header — charcoal bar on a 3px ember line ────────────────────── */
+.mpbbq-header {
+  background: var(--mpbbq-char);
+  color: var(--mpbbq-tan);
+  border-bottom: 3px solid var(--mpbbq-ember);
+  position: sticky;
+  top: 43px;        /* tucks under the gallery frame */
+  z-index: 20;      /* under the frame's 30 */
+}
+.mpbbq-header__in {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-top: 14px;
+  padding-bottom: 14px;
+}
+.mpbbq-mark {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  white-space: nowrap;
+}
+.mpbbq-mark__word {
+  font-weight: 900;
+  font-size: 21px;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  color: var(--mpbbq-tan);
+}
+.mpbbq-mark__tag {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: var(--mpbbq-ember-hot);
+}
+.mpbbq-nav {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+.mpbbq-nav__link {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--mpbbq-sand);
+  transition: color 140ms ease;
+}
+.mpbbq-nav__link:hover { color: var(--mpbbq-cream); }
+.mpbbq-nav__link--hot { color: var(--mpbbq-ember-hot); }
+.mpbbq-nav__link--hot:hover { color: var(--mpbbq-cream); }
+
+/* ── Hero — dark band, copy left / sellout meter right ───────────────────── */
+.mpbbq-hero {
+  background: var(--mpbbq-char);
+  color: var(--mpbbq-cream);
+}
+.mpbbq-hero__grid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 40px;
+  align-items: center;
+  padding-top: 52px;
+  padding-bottom: 56px;
+}
+.mpbbq-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  color: var(--mpbbq-ember-hot);
+  margin-bottom: 20px;
+}
+.mpbbq-h1 {
+  margin: 0;
+  font-size: clamp(2.4rem, 5.2vw, 3.75rem); /* 60px at full width */
+  line-height: 0.98;
+  letter-spacing: -0.02em;
+  font-weight: 900;
+  text-transform: uppercase;
+  color: var(--mpbbq-cream);
+}
+.mpbbq-root .mpbbq-lede {
+  font-size: var(--text-xl) !important;
+  color: var(--mpbbq-sand) !important;
+  line-height: 1.5 !important;
+  margin: 20px 0 28px !important;
+  max-width: 450px;
+}
+.mpbbq-cta {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Buttons → smokehouse CTAs (filled ember / outlined mono) */
+.mpbbq-root .mpbbq-btn {
+  border-radius: 4px !important;
+  box-shadow: none !important;
+  text-transform: uppercase;
+  transition: background 140ms ease, color 140ms ease, border-color 140ms ease !important;
+}
+.mpbbq-root .mpbbq-btn--fill {
+  background: var(--mpbbq-ember) !important;
+  color: #fff !important;
+  border: 0 !important;
+  font-weight: 800 !important;
+  font-size: 14px !important;
+  letter-spacing: 0.04em !important;
+  padding: 13px 24px !important;
+}
+.mpbbq-root .mpbbq-btn--fill:hover:not(:disabled) {
+  background: var(--mpbbq-ember-deep) !important;
+  color: #fff !important;
+}
+.mpbbq-root .mpbbq-btn--line {
+  background: transparent !important;
+  color: var(--mpbbq-cream) !important;
+  border: 2px solid var(--mpbbq-mut) !important;
+  font-family: var(--font-mono) !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  padding: 13px 24px !important;
+}
+.mpbbq-root .mpbbq-btn--line:hover:not(:disabled) {
+  border-color: var(--mpbbq-ember-hot) !important;
+  color: var(--mpbbq-ember-hot) !important;
+  background: transparent !important;
+}
+
+/* ── Sellout meter panel (Progress in the smoke-meat ramp) ───────────────── */
+.mpbbq-meterpanel {
+  background: var(--mpbbq-char-deep);
+  border: 1px solid var(--mpbbq-line-dark2);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.mpbbq-meterpanel__head {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--mpbbq-line-dark);
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.mpbbq-live-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--mpbbq-live);
+  animation: mpbbq-pulse 1.8s ease-in-out infinite;
+  cursor: help;
+}
+.mpbbq-meterpanel__title {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--mpbbq-cream);
+}
+.mpbbq-meterpanel__body { padding: 16px 18px 3px; }
+.mpbbq-meter { margin-bottom: 13px; }
+.mpbbq-meter__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 12px;
+  margin-bottom: 5px;
+}
+.mpbbq-meter__name { color: var(--mpbbq-cream); font-weight: 600; }
+.mpbbq-meter__left { font-family: var(--font-mono); color: var(--mpbbq-sand); }
+/* Progress → 7px track on #35291F, fill in the per-meat ramp color */
+.mpbbq-root .mpbbq-meter__bar > div {
+  height: 7px !important;
+  border-radius: 4px !important;
+  background: var(--mpbbq-line-dark) !important;
+}
+.mpbbq-root .mpbbq-meter__bar > div > div {
+  border-radius: 4px !important;
+  background: var(--mpbbq-mcol, var(--mpbbq-ember)) !important;
+}
+
+@keyframes mpbbq-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* ── The board (menu) ────────────────────────────────────────────────────── */
+.mpbbq-menu {
+  padding: 48px 0 30px;
+  scroll-margin-top: 118px; /* frame + sticky header */
+}
+.mpbbq-sechead {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 22px;
+}
+.mpbbq-root .mpbbq-h2 {
+  font-size: var(--text-3xl);
+  font-weight: 900;
+  letter-spacing: -0.01em;
+  margin: 0;
+  text-transform: uppercase;
+  color: var(--mpbbq-ink);
+}
+.mpbbq-aside {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--mpbbq-mut);
+}
+.mpbbq-menu__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+/* Card → light board card on a sand border */
+.mpbbq-root .mpbbq-item {
+  background: var(--mpbbq-cream) !important;
+  border: 1px solid var(--mpbbq-line-card) !important;
+  border-radius: 6px !important;
+  box-shadow: none !important;
+  padding: 18px !important;
+  transition: border-color 140ms ease;
+}
+.mpbbq-root .mpbbq-item:hover { border-color: var(--mpbbq-ember) !important; }
+.mpbbq-item__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+}
+.mpbbq-item__name {
+  font-size: var(--text-lg);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  color: var(--mpbbq-ink);
+}
+.mpbbq-item__price {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--mpbbq-ember);
+  white-space: nowrap;
+}
+.mpbbq-root .mpbbq-item__desc {
+  font-size: var(--text-sm) !important;
+  color: var(--mpbbq-mut) !important;
+  line-height: 1.45 !important;
+  margin: 6px 0 0 !important;
+}
+
+/* ── On the pit — the cook-timeline Gantt ────────────────────────────────── */
+.mpbbq-pit {
+  padding: 30px 0;
+  scroll-margin-top: 118px;
+}
+.mpbbq-pit__panel {
+  background: var(--mpbbq-char-deep);
+  border: 1px solid var(--mpbbq-line-dark);
+  border-radius: 14px;
+  overflow: hidden;
+  color: var(--mpbbq-cream);
+}
+.mpbbq-pit__head {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--mpbbq-line-dark);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.mpbbq-pit__flame { color: var(--mpbbq-ember-hot); flex: none; }
+.mpbbq-pit__title { font-weight: 700; color: var(--mpbbq-cream); }
+.mpbbq-pit__sub {
+  font-size: 12px;
+  color: var(--mpbbq-smoke);
+  font-family: var(--font-mono);
+}
+
+/* Hour axis (4a → 6p, 8 stops) */
+.mpbbq-axis {
+  display: grid;
+  grid-template-columns: 170px 1fr;
+  border-bottom: 1px solid var(--mpbbq-line-dark3);
+}
+.mpbbq-axis__label {
+  padding: 10px 16px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--mpbbq-smoke);
+  text-transform: uppercase;
+}
+.mpbbq-axis__hours {
+  display: flex;
+  padding: 10px 0;
+}
+.mpbbq-axis__h {
+  flex: 1;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--mpbbq-smoke);
+}
+
+/* Cut rows — whole row is a spotlight toggle button */
+.mpbbq-row {
+  display: grid;
+  grid-template-columns: 170px 1fr;
+  align-items: center;
+  width: 100%;
+  border: 0;
+  border-bottom: 1px solid var(--mpbbq-line-dark3);
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background 140ms ease;
+}
+.mpbbq-row:hover { background: rgba(239, 227, 204, 0.03); }
+.mpbbq-row--focus { background: rgba(232, 138, 60, 0.06); }
+.mpbbq-row__meta {
+  display: block;
+  padding: 13px 16px;
+}
+.mpbbq-row__name {
+  display: block;
+  font-weight: 700;
+  color: var(--mpbbq-cream);
+  font-size: var(--text-sm);
+}
+.mpbbq-row__status {
+  display: block;
+  font-size: 11px;
+  color: var(--mpbbq-smoke);
+}
+.mpbbq-row__track {
+  display: block;
+  position: relative;
+  height: 40px;
+}
+/* faint "now" rule at 1:00 PM, continuous down the rows */
+.mpbbq-row__track::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--mpbbq-now);
+  border-left: 1px dashed rgba(232, 138, 60, 0.3);
+  pointer-events: none;
+}
+.mpbbq-bar {
+  position: absolute;
+  top: 9px;
+  height: 22px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  transition: opacity 140ms ease;
+  /* left / width / background painted inline from row data */
+}
+.mpbbq-bar--dim { opacity: 0.22; }
+.mpbbq-bar__label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--mpbbq-hatch-ink);
+  white-space: nowrap;
+}
+
+/* Legend footer */
+.mpbbq-pit__legend {
+  padding: 11px 20px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--mpbbq-smoke);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+/* Badge → ember sell-out ETA chip */
+.mpbbq-root .mpbbq-eta {
+  background: rgba(192, 73, 30, 0.14) !important;
+  color: var(--mpbbq-ember-hot) !important;
+  border: 1px solid rgba(192, 73, 30, 0.45) !important;
+  border-radius: 4px !important;
+  font-family: var(--font-mono) !important;
+  font-size: 10.5px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.06em !important;
+}
+
+/* ── Our story + stat cards ──────────────────────────────────────────────── */
+.mpbbq-story {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: center;
+  padding: 44px 0;
+}
+.mpbbq-story__eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  color: var(--mpbbq-ember);
+  margin-bottom: 14px;
+}
+.mpbbq-root .mpbbq-story__h2 {
+  font-size: clamp(1.65rem, 3vw, 2.125rem); /* 34px at full width */
+  font-weight: 900;
+  line-height: 1.02;
+  margin: 0 0 16px;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  color: var(--mpbbq-ink);
+}
+.mpbbq-root .mpbbq-story__body {
+  font-size: var(--text-lg) !important;
+  color: var(--mpbbq-body) !important;
+  line-height: 1.6 !important;
+  margin: 0 !important;
+}
+.mpbbq-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+/* Card → number-first stat card */
+.mpbbq-root .mpbbq-stat {
+  background: var(--mpbbq-cream) !important;
+  border: 1px solid var(--mpbbq-line-card) !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+  padding: 18px !important;
+}
+.mpbbq-stat__v {
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--mpbbq-ember);
+  font-variant-numeric: tabular-nums;
+}
+.mpbbq-stat__k {
+  font-size: var(--text-sm);
+  color: var(--mpbbq-mut);
+  margin-top: 2px;
+}
+
+/* ── Find the pit (schedule Table) ───────────────────────────────────────── */
+.mpbbq-find {
+  padding: 10px 0 56px;
+  scroll-margin-top: 118px;
+}
+.mpbbq-root .mpbbq-find__h { margin-bottom: 18px; font-size: var(--text-2xl); }
+/* Table → the light schedule card */
+.mpbbq-root .mpbbq-sched {
+  background: var(--mpbbq-cream);
+  border: 1px solid var(--mpbbq-line-card);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.mpbbq-root .mpbbq-sched table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.mpbbq-root .mpbbq-sched th {
+  background: transparent !important;
+  border-bottom: 1px solid var(--mpbbq-line-row) !important;
+  font-family: var(--font-mono) !important;
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.14em !important;
+  text-transform: uppercase !important;
+  color: var(--mpbbq-mut) !important;
+  padding: 10px 22px !important;
+  text-align: left !important;
+}
+.mpbbq-root .mpbbq-sched td {
+  background: transparent !important;
+  border-bottom: 1px solid var(--mpbbq-line-row) !important;
+  padding: 13px 22px !important;
+  vertical-align: baseline;
+}
+.mpbbq-root .mpbbq-sched tbody tr:last-child td { border-bottom: 0 !important; }
+.mpbbq-root .mpbbq-sched tbody tr:hover td {
+  background: rgba(184, 164, 124, 0.14) !important;
+}
+.mpbbq-root .mpbbq-sched td:first-child {
+  font-family: var(--font-mono) !important;
+  font-size: var(--text-sm) !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  color: var(--mpbbq-ink) !important;
+  width: 140px;
+  white-space: nowrap;
+}
+.mpbbq-root .mpbbq-sched td:nth-child(2) { color: var(--mpbbq-body) !important; }
+.mpbbq-root .mpbbq-sched td:last-child {
+  font-family: var(--font-mono) !important;
+  font-size: 12px !important;
+  color: var(--mpbbq-hours) !important;
+  text-align: right !important;
+  white-space: nowrap;
+}
+/* the Mon–Tue closed row reads quieter */
+.mpbbq-root .mpbbq-sched .mpbbq-sched__closed td,
+.mpbbq-root .mpbbq-sched .mpbbq-sched__closed td:first-child {
+  color: var(--mpbbq-mut) !important;
+}
+
+/* ── Footer — dark mono colophon ─────────────────────────────────────────── */
+.mpbbq-footer {
+  background: var(--mpbbq-char);
+  color: var(--mpbbq-sand);
+}
+.mpbbq-footer__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 18px;
+  padding-top: 32px;
+  padding-bottom: 18px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+.mpbbq-footer__mark {
+  font-weight: 700;
+  color: var(--mpbbq-cream);
+  text-transform: uppercase;
+}
+.mpbbq-footer__base {
+  border-top: 1px solid var(--mpbbq-line-dark);
+  padding: 14px 0 26px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--mpbbq-smoke);
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 980px) {
+  .mpbbq-hero__grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    padding-top: 40px;
+    padding-bottom: 44px;
+  }
+  .mpbbq-menu__grid { grid-template-columns: repeat(2, 1fr); }
+  .mpbbq-story {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+}
+@media (max-width: 680px) {
+  .mpbbq-header {
+    position: static; /* frame may wrap taller on narrow screens */
+  }
+  .mpbbq-shell { padding-left: 18px; padding-right: 18px; }
+  .mpbbq-header__in { flex-wrap: wrap; gap: 10px; }
+  .mpbbq-nav { gap: 14px; }
+  .mpbbq-menu__grid { grid-template-columns: 1fr; }
+  .mpbbq-axis,
+  .mpbbq-row { grid-template-columns: 112px 1fr; }
+  .mpbbq-axis__label,
+  .mpbbq-row__meta { padding-left: 12px; padding-right: 8px; }
+  /* every other hour label off — 4a / 8a / 12p / 4p keep the rhythm */
+  .mpbbq-axis__h:nth-child(even) { display: none; }
+  .mpbbq-bar { padding: 0 6px; }
+  .mpbbq-sched td,
+  .mpbbq-sched th { padding-left: 14px !important; padding-right: 14px !important; }
+  .mpbbq-root .mpbbq-sched td:first-child { width: 92px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mpbbq-live-dot { animation: none; }
+  .mpbbq-root .mpbbq-btn,
+  .mpbbq-nav__link,
+  .mpbbq-row,
+  .mpbbq-bar { transition: none !important; }
+}

@@ -1,0 +1,553 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Mom-n-Pops · Style 01 — Taquería
+   Warm cream storefront: #FAF4EA paper, espresso-brown type, one chile-red
+   accent, sand hairlines on white cards, emoji food tiles (no photos). Fancy
+   primitives restyled: Button → red/outline pills, Badge → tag pills +
+   ingredient chips + Today marker, Modal → the taco-detail overlay, Tooltip →
+   the free-chips fine print. Every class prefixed mptacos- so nothing leaks
+   across the SPA; page-level z-index stays under 30 (the gallery frame owns
+   30+; the Modal portals to <body> with the library's own layer).
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.mptacos-root {
+  /* ── Scoped Taquería tokens ─────────────────────────────────────────── */
+  --mpt-bg:        #FAF4EA;  /* warm cream page */
+  --mpt-bg-tint:   #F6EAD8;  /* tinted tiles / modal header */
+  --mpt-bg-foot:   #F4EAD9;  /* darker sand footer band */
+  --mpt-ink:       #2C211A;  /* espresso brown */
+  --mpt-ink-2:     #6B5A4A;  /* secondary copy */
+  --mpt-ink-3:     #7A6858;  /* card descriptions / stat labels */
+  --mpt-ink-4:     #9A8873;  /* hints / mono hours */
+  --mpt-ink-foot:  #8A7563;  /* footer muted */
+  --mpt-ink-modal: #4A3A2E;  /* modal body copy */
+  --mpt-chip-ink:  #5A4A3C;  /* ingredient chip text */
+  --mpt-accent:    #D6482B;  /* chile red */
+  --mpt-accent-dk: #C23E23;  /* hover red */
+  --mpt-line:      #ECDFCB;  /* sand hairline */
+  --mpt-line-soft: #F3E9D9;  /* schedule row dividers */
+  --mpt-card:      #ffffff;
+
+  min-height: 100vh;
+  background: var(--mpt-bg);
+  color: var(--mpt-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.mptacos-root ::selection {
+  background: var(--mpt-accent);
+  color: #fff;
+}
+
+.mptacos-container {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 28px;
+}
+
+/* ── Sticky frosted-cream header (stays UNDER the z-30 gallery frame) ────── */
+.mptacos-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: rgba(250, 244, 234, 0.9);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--mpt-line);
+}
+.mptacos-header__in {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 15px 28px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.mptacos-brand {
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+  color: var(--mpt-ink);
+  text-decoration: none;
+}
+.mptacos-brand__name {
+  font-weight: 800;
+  font-size: 20px;
+  letter-spacing: -0.01em;
+}
+.mptacos-brand__sub {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--mpt-accent);
+}
+.mptacos-nav {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  font-size: var(--text-sm);
+  color: var(--mpt-ink-2);
+}
+.mptacos-nav__link {
+  color: var(--mpt-ink-2);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+.mptacos-nav__link:hover { color: var(--mpt-ink); }
+
+/* ── Buttons (react-fancy Button worn as warm pills) ─────────────────────── */
+.mptacos-root .mptacos-btn,
+.mptacos-modal .mptacos-btn {
+  font-family: var(--font-sans) !important;
+  font-weight: 600 !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  letter-spacing: 0 !important;
+  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease !important;
+}
+.mptacos-root .mptacos-btn--primary,
+.mptacos-modal .mptacos-btn--primary {
+  background: var(--mpt-accent) !important;
+  color: #fff !important;
+  border: 1px solid var(--mpt-accent) !important;
+}
+.mptacos-root .mptacos-btn--primary:hover:not(:disabled),
+.mptacos-modal .mptacos-btn--primary:hover:not(:disabled) {
+  background: var(--mpt-accent-dk) !important;
+  border-color: var(--mpt-accent-dk) !important;
+}
+.mptacos-root .mptacos-btn--outline {
+  background: var(--mpt-card) !important;
+  color: var(--mpt-ink) !important;
+  border: 1px solid var(--mpt-line) !important;
+}
+.mptacos-root .mptacos-btn--outline:hover:not(:disabled) {
+  border-color: var(--mpt-accent) !important;
+  color: var(--mpt-accent) !important;
+  background: var(--mpt-card) !important;
+}
+.mptacos-root .mptacos-btn--hero {
+  padding: 13px 24px !important;
+  font-size: var(--text-base) !important;
+}
+.mptacos-root .mptacos-btn--pill {
+  padding: 9px 16px !important;
+  border-radius: 10px !important;
+  font-size: var(--text-sm) !important;
+}
+
+/* ── Hero ────────────────────────────────────────────────────────────────── */
+.mptacos-hero {
+  text-align: center;
+  padding: 72px 0 44px;
+}
+.mptacos-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--mpt-accent);
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+.mptacos-eyebrow--left {
+  display: block;
+  margin-bottom: 14px;
+}
+.mptacos-hero__title {
+  margin: 0 auto;
+  max-width: 760px;
+  font-size: clamp(2.4rem, 6.2vw, 66px);
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  font-weight: 800;
+}
+.mptacos-hero__sub {
+  font-size: var(--text-xl);
+  color: var(--mpt-ink-2);
+  line-height: 1.5;
+  margin: 22px auto 30px;
+  max-width: 480px;
+}
+.mptacos-hero__cta {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* ── Menu grid ───────────────────────────────────────────────────────────── */
+.mptacos-menu {
+  padding: 20px 0 40px;
+  scroll-margin-top: 110px;
+}
+.mptacos-menu__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 22px;
+}
+.mptacos-h2 {
+  font-size: var(--text-3xl);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+.mptacos-hint {
+  font-size: var(--text-sm);
+  color: var(--mpt-ink-4);
+}
+.mptacos-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+/* Whole card is the modal trigger — a real <button>, restyled */
+.mptacos-card {
+  display: block;
+  width: 100%;
+  text-align: left;
+  font-family: inherit;
+  color: inherit;
+  background: var(--mpt-card);
+  border: 1px solid var(--mpt-line);
+  border-radius: 16px;
+  padding: 20px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.mptacos-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 32px -16px rgba(120, 60, 20, 0.3);
+}
+.mptacos-card:focus-visible {
+  outline: 2px solid var(--mpt-accent);
+  outline-offset: 2px;
+}
+.mptacos-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.mptacos-card__tile {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  font-size: 22px;
+  background: var(--mpt-bg-tint);
+}
+.mptacos-card__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+}
+.mptacos-card__name {
+  font-size: var(--text-lg);
+  font-weight: 700;
+}
+.mptacos-card__price {
+  font-size: var(--text-lg);
+  font-weight: 800;
+  color: var(--mpt-accent);
+}
+.mptacos-card__short {
+  font-size: var(--text-sm);
+  color: var(--mpt-ink-3);
+  line-height: 1.45;
+  margin: 6px 0 0;
+}
+
+/* Badge → data-driven tag pill (bg comes from item data via inline style) */
+.mptacos-root .mptacos-tag {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  color: #fff !important;
+  border: 0 !important;
+  padding: 4px 10px !important;
+  border-radius: 999px !important;
+  line-height: 1.2 !important;
+}
+
+/* ── Story band ──────────────────────────────────────────────────────────── */
+.mptacos-story {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: center;
+  padding: 56px 0;
+  border-top: 1px solid var(--mpt-line);
+  scroll-margin-top: 110px;
+}
+.mptacos-story__title {
+  font-size: clamp(1.6rem, 3.4vw, 36px);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  font-weight: 800;
+  margin: 0 0 16px;
+}
+.mptacos-story__body {
+  font-size: var(--text-lg);
+  color: var(--mpt-ink-2);
+  line-height: 1.6;
+  margin: 0;
+}
+.mptacos-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.mptacos-stat {
+  background: var(--mpt-card);
+  border: 1px solid var(--mpt-line);
+  border-radius: 14px;
+  padding: 18px;
+}
+.mptacos-stat__v {
+  font-size: clamp(1.5rem, 2.6vw, 30px);
+  font-weight: 800;
+  color: var(--mpt-accent);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+.mptacos-stat__k {
+  font-size: var(--text-sm);
+  color: var(--mpt-ink-3);
+  margin-top: 2px;
+}
+.mptacos-stat__note {
+  cursor: help;
+  text-decoration: underline dotted var(--mpt-ink-4);
+  text-underline-offset: 3px;
+}
+.mptacos-tip {
+  font-size: var(--text-xs);
+  max-width: 220px;
+}
+
+/* ── Schedule ────────────────────────────────────────────────────────────── */
+.mptacos-sched {
+  padding: 20px 0 56px;
+  scroll-margin-top: 110px;
+}
+.mptacos-sched__title { margin: 0 0 18px; }
+.mptacos-sched__card {
+  background: var(--mpt-card);
+  border: 1px solid var(--mpt-line);
+  border-radius: 16px;
+  overflow: hidden;
+}
+.mptacos-sched__row {
+  display: grid;
+  grid-template-columns: 120px 1fr auto;
+  gap: 16px;
+  align-items: center;
+  padding: 14px 22px;
+  border-bottom: 1px solid var(--mpt-line-soft);
+}
+.mptacos-sched__row:last-child { border-bottom: 0; }
+.mptacos-sched__row--today { background: #FDF4E5; }
+.mptacos-sched__day {
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.mptacos-sched__place { color: var(--mpt-ink-2); }
+.mptacos-sched__hours {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--mpt-ink-4);
+  white-space: nowrap;
+}
+
+/* Badge → live "Today" marker (set after hydration; deterministic first paint) */
+.mptacos-root .mptacos-today {
+  background: var(--mpt-accent) !important;
+  color: #fff !important;
+  border: 0 !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 2px 8px !important;
+  border-radius: 999px !important;
+  line-height: 1.4 !important;
+}
+
+/* ── Footer band ─────────────────────────────────────────────────────────── */
+.mptacos-footer {
+  border-top: 1px solid var(--mpt-line);
+  background: var(--mpt-bg-foot);
+}
+.mptacos-footer__in {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 34px 28px 10px;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 18px;
+  font-size: var(--text-sm);
+  color: var(--mpt-ink-foot);
+}
+.mptacos-footer__brand {
+  font-weight: 800;
+  color: var(--mpt-ink);
+}
+.mptacos-footer__contact { overflow-wrap: anywhere; }
+.mptacos-footer__folio {
+  max-width: 1140px;
+  margin: 0 auto;
+  padding: 0 28px 26px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--mpt-ink-4);
+}
+
+/* ── Taco detail modal (react-fancy Modal, portaled to <body>) ───────────── */
+/* Warm scrim + no blur — scoped via :has() on the prefixed panel class. */
+div:has(> .mptacos-modal) > div[aria-hidden="true"] {
+  background: rgba(44, 33, 26, 0.5);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+.mptacos-modal {
+  background: var(--mpt-bg, #FAF4EA) !important;
+  border: 0 !important;
+  border-radius: 18px !important;
+  box-shadow: 0 30px 70px -20px rgba(44, 33, 26, 0.4) !important;
+  max-width: 440px !important;
+  width: 100% !important;
+  color: #2C211A;
+  font-family: var(--font-sans);
+  /* re-declare the palette — the portal renders outside .mptacos-root */
+  --mpt-bg: #FAF4EA;
+  --mpt-bg-tint: #F6EAD8;
+  --mpt-ink: #2C211A;
+  --mpt-ink-modal: #4A3A2E;
+  --mpt-chip-ink: #5A4A3C;
+  --mpt-accent: #D6482B;
+  --mpt-accent-dk: #C23E23;
+  --mpt-line: #ECDFCB;
+}
+.mptacos-modal__head {
+  padding: 26px;
+  background: var(--mpt-bg-tint);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.mptacos-modal__tile {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background: #fff;
+  display: grid;
+  place-items: center;
+  font-size: 28px;
+  flex: none;
+}
+.mptacos-modal__name {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0;
+  color: var(--mpt-ink);
+}
+.mptacos-modal__price {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--mpt-accent);
+}
+.mptacos-modal__body {
+  padding: 22px 26px 28px;
+}
+.mptacos-modal__long {
+  font-size: var(--text-lg);
+  color: var(--mpt-ink-modal);
+  line-height: 1.6;
+  margin: 0 0 18px;
+}
+.mptacos-modal__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-bottom: 20px;
+}
+
+/* Badge → ingredient chip (white pill, sand border) */
+.mptacos-chip {
+  font-size: var(--text-sm) !important;
+  font-weight: 500 !important;
+  color: var(--mpt-chip-ink, #5A4A3C) !important;
+  background: #fff !important;
+  border: 1px solid var(--mpt-line, #ECDFCB) !important;
+  padding: 6px 12px !important;
+  border-radius: 999px !important;
+  line-height: 1.3 !important;
+}
+
+/* Full-width themed dismiss — "Add to order" */
+.mptacos-modal__add {
+  width: 100% !important;
+  justify-content: center !important;
+  padding: 13px !important;
+  font-weight: 700 !important;
+  font-size: var(--text-base) !important;
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 980px) {
+  .mptacos-grid { grid-template-columns: repeat(2, 1fr); }
+  .mptacos-story {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    padding: 44px 0;
+  }
+  .mptacos-hero { padding: 56px 0 40px; }
+}
+@media (max-width: 720px) {
+  .mptacos-nav { gap: 16px; }
+  .mptacos-nav__link { display: none; }
+  .mptacos-container { padding: 0 20px; }
+  .mptacos-header__in { padding: 13px 20px; }
+  .mptacos-footer__in { padding: 28px 20px 8px; }
+  .mptacos-footer__folio { padding: 0 20px 22px; }
+  .mptacos-sched__row {
+    grid-template-columns: 92px 1fr auto;
+    gap: 10px;
+    padding: 13px 16px;
+  }
+}
+@media (max-width: 560px) {
+  .mptacos-grid { grid-template-columns: 1fr; }
+  .mptacos-hero__cta .mptacos-btn--hero { width: 100%; justify-content: center !important; }
+  .mptacos-sched__row {
+    grid-template-columns: 1fr auto;
+  }
+  .mptacos-sched__place {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    font-size: var(--text-sm);
+  }
+}
+
+/* ── Reduced motion ──────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .mptacos-card,
+  .mptacos-root .mptacos-btn {
+    transition: none !important;
+  }
+  .mptacos-card:hover { transform: none; }
+}

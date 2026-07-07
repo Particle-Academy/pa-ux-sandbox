@@ -4,7 +4,7 @@ import { DemoSection } from "../components/DemoSection";
 export function ActionDemo() {
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-bold">Action</h1>
+      <h1 className="mb-6 text-2xl font-bold">Button</h1>
 
       {/* State Variants */}
       <DemoSection title="State Variants" description="Default, active, checked, and warn states." code={`<Button>Default</Button>

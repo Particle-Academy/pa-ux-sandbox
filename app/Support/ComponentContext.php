@@ -24,9 +24,9 @@ class ComponentContext
         ],
 
         'react-fancy/button' => [
-            'why' => 'Buttons accrete props until they handle icons, emojis, avatars, badges, sort order, behavioral states (active / checked / warn / alert), and shape variants — and most apps end up with five different button components that almost agree on the API. <code>Action</code> bundles every reasonable button affordance behind one consistent prop surface.',
+            'why' => 'Buttons accrete props until they handle icons, emojis, avatars, badges, sort order, behavioral states (active / checked / warn / alert), and shape variants — and most apps end up with five different button components that almost agree on the API. <code>Button</code> (formerly <code>Action</code>) bundles every reasonable button affordance behind one consistent prop surface.',
             'what' => 'A single typed button with standalone <code>color</code>, behavioral <code>active</code>/<code>checked</code>/<code>warn</code>/<code>alert</code> states, icon placement (left / right / top / bottom), Heroicon + emoji + avatar + badge support, and a <code>sort</code> prop that reorders adornments. <code>variant="circle"</code> turns any of it into a perfect circle for icon-only toolbars.',
-            'how' => '<code>&lt;Action color="violet" icon="check"&gt;Save&lt;/Action&gt;</code> covers 80% of cases. For a pulsing notification button: <code>&lt;Action alert badge="3" icon="bell"&gt;Inbox&lt;/Action&gt;</code>. Agents can drive selection state with <code>active</code> + <code>onClick</code> — no DOM scraping required.',
+            'how' => '<code>&lt;Button color="violet" icon="check"&gt;Save&lt;/Button&gt;</code> covers 80% of cases. For a pulsing notification button: <code>&lt;Button alert badge="3" icon="bell"&gt;Inbox&lt;/Button&gt;</code>. Agents can drive selection state with <code>active</code> + <code>onClick</code> — no DOM scraping required.',
         ],
 
         'react-fancy/tabs' => [

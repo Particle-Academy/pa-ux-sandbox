@@ -1,7 +1,7 @@
 import { NavLink, useLocation } from "react-router";
 
 const componentLinks = [
-  { to: "/action", label: "Action" },
+  { to: "/action", label: "Button" },
   { to: "/carousel", label: "Carousel" },
   { to: "/color-picker", label: "ColorPicker" },
   { to: "/emoji", label: "Emoji" },

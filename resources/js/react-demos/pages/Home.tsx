@@ -15,7 +15,7 @@ const reactFancySections: Section[] = [
   {
     label: "Components",
     demos: [
-      { name: "Action", slug: "action", description: "Buttons, links, and interactive action elements" },
+      { name: "Button", slug: "action", description: "Buttons, links, and interactive action elements" },
       { name: "Carousel", slug: "carousel", description: "Compound carousel with slides, controls, and steps" },
       { name: "ColorPicker", slug: "color-picker", description: "HSL color picker with swatches and input" },
       { name: "Emoji", slug: "emoji", description: "Render emojis by name with size variants" },

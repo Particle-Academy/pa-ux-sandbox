@@ -623,7 +623,7 @@ class CatalogServiceProvider extends ServiceProvider
   "rf-index.ts": {
     lang: "TypeScript",
     code: `// Phase 1: Core Components
-export { Action } from "./components/Action";
+export { Button } from "./components/Button";
 export { Carousel } from "./components/Carousel";
 export { Table } from "./components/Table";
 
@@ -680,7 +680,7 @@ React UI component library with 48+ components.
 npm install @particle-academy/react-fancy
 
 ## Components
-- Action, Carousel, Table, Inputs
+- Button, Carousel, Table, Inputs
 - Heading, Text, Badge, Card, Timeline
 - Modal, Toast, Dropdown, Popover
 - Tabs, Accordion, Navbar, Pagination

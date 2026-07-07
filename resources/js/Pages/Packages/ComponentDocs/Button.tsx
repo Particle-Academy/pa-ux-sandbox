@@ -454,7 +454,7 @@ export const buttonDoc: ComponentDoc = {
             <strong>Agent-driveable:</strong> stable handles are required.
             Either pass <code>id</code> directly or rely on the host
             assigning one — the MCP form bridge in agent-integrations
-            walks Actions by id when applying click instructions.
+            walks Buttons by id when applying click instructions.
         </>
     ),
 };

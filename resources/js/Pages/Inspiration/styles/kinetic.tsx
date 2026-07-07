@@ -13,6 +13,7 @@ import {
     Carousel,
     Composer,
     Heading,
+    Marquee,
     Pagination,
     Pillbox,
     Progress,
@@ -38,10 +39,13 @@ import type { Style } from "../types";
  * so the surface reads dark regardless of the host light/dark theme — and so it
  * never collides with Tailwind's `.dark`.
  *
- * Motion is CSS-keyframe driven (marquees, gradient sweep, blink) plus a tiny
- * SSR-safe IntersectionObserver that toggles `.is-in` for reveal-on-scroll and
- * a rAF scroll listener for parallax + the scroll-velocity ticker. EVERYTHING
- * respects `prefers-reduced-motion`: the observer reveals immediately and the
+ * Motion is CSS-keyframe driven (gradient sweep, blink) plus a tiny SSR-safe
+ * IntersectionObserver that toggles `.is-in` for reveal-on-scroll and a rAF
+ * scroll listener for parallax + the scroll-velocity ticker. The hero + clients
+ * marquees are the first-party react-fancy <Marquee> primitive (restyled via
+ * kx-* classes); only the telemetry ticker stays hand-rolled, because its
+ * scroll-velocity offset is bespoke. EVERYTHING respects
+ * `prefers-reduced-motion`: the observer reveals immediately and the
  * scroll/parallax effects are disabled.
  *
  * Mounted by Inspiration/Show.tsx for `style.id === "kinetic"`. SSR-safe: no
@@ -242,11 +246,15 @@ export default function Kinetic({ style }: { style: Style }) {
                 </div>
 
                 {/* Oversized marquee headline — the kinetic signature. */}
-                <div className="kx-hero__marquee" aria-hidden>
-                    <div className="kx-marquee-track kx-marquee-track--lg">
-                        <span>MOTION&nbsp;·&nbsp;FILM&nbsp;·&nbsp;SCROLL&nbsp;·&nbsp;</span>
-                        <span>MOTION&nbsp;·&nbsp;FILM&nbsp;·&nbsp;SCROLL&nbsp;·&nbsp;</span>
-                    </div>
+                <div className="kx-hero__marquee">
+                    <Marquee
+                        duration={36}
+                        fade="12%"
+                        gap="0.35em"
+                        items={["MOTION", "FILM", "SCROLL"]}
+                        separator="·"
+                        className="kx-marquee--lg"
+                    />
                 </div>
 
                 <div className="kx-shell kx-hero__inner">
@@ -575,17 +583,18 @@ export default function Kinetic({ style }: { style: Style }) {
                 </section>
 
                 {/* ── Clients marquee — reverse direction ──────────────────── */}
-                <section className="kx-section kx-section--flush" aria-hidden>
-                    <div className="kx-marquee kx-marquee--reverse">
-                        <div className="kx-marquee-track">
-                            {[...CLIENTS, ...CLIENTS].map((c, i) => (
-                                <span className="kx-marquee__item" key={i}>
-                                    {c}
-                                    <span className="kx-marquee__sep">✸</span>
-                                </span>
-                            ))}
-                        </div>
-                    </div>
+                <section className="kx-section kx-section--flush">
+                    <Marquee
+                        duration={34}
+                        direction="right"
+                        fade="8%"
+                        gap={0}
+                        items={CLIENTS.map((c) => (
+                            <span className="kx-marquee__item" key={c}>{c}</span>
+                        ))}
+                        separator={<span className="kx-marquee__sep">✸</span>}
+                        className="kx-marquee"
+                    />
                 </section>
 
                 {/* ── Brief / contact ──────────────────────────────────────── */}

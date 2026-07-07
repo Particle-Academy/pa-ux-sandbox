@@ -19,14 +19,14 @@
     {
       "name": "hero",
       "what": "Full-bleed parallax stage: drifting magenta + cyan radial glows, a masked grid, a faint oversized marquee headline behind the copy, then eyebrow + a huge two-line display headline with italic gradient-clip emphasis words ('move', 'mean'), lede, and two CTAs. A 'scroll to play' cue sits below.",
-      "components": ["Breadcrumbs", "Badge", "Heading (hand-rolled h1)", "Button"],
-      "restyle": "Display headline is a hand-rolled <h1> (kit Heading caps at 2xl) with clip-text gradient italic spans that sweep position on a 6s loop. Button primary wears the velocity gradient + glow and lifts on hover; ghost is a hairline that turns cyan. Background glows + grid are parallax layers translated by a rAF scroll listener via data-depth."
+      "components": ["Breadcrumbs", "Badge", "Heading (hand-rolled h1)", "Button", "Marquee"],
+      "restyle": "Display headline is a hand-rolled <h1> (kit Heading caps at 2xl) with clip-text gradient italic spans that sweep position on a 6s loop. Button primary wears the velocity gradient + glow and lifts on hover; ghost is a hairline that turns cyan. Background glows + grid are parallax layers translated by a rAF scroll listener via data-depth. The faint oversized headline strip behind the copy is a kit Marquee (duration=36, fade=\"12%\", separator=\"·\") at opacity 0.06 with clamp(5rem,18vw,16rem) type inherited from its className."
     },
     {
       "name": "ticker",
       "what": "Edge-to-edge telemetry ticker of capability words (MOTION IDENTITY · SCROLL CHOREOGRAPHY · …) that auto-scrolls AND nudges left/right with live scroll velocity.",
       "components": ["(hand-rolled marquee)"],
-      "restyle": "Mono uppercase items with magenta ✸ separators on a CSS marquee track; JS adds a translateX(--kx-vel) offset accumulated from scroll delta so the ticker speeds with the page. Masked edges for a clean fade."
+      "restyle": "Mono uppercase items with magenta ✸ separators on a CSS marquee track; JS adds a translateX(--kx-vel) offset accumulated from scroll delta so the ticker speeds with the page. Masked edges for a clean fade. (This velocity coupling is why the ticker stays hand-rolled; the constant-speed strips on the page use the kit Marquee instead.)"
     },
     {
       "name": "figures",
@@ -61,8 +61,8 @@
     {
       "name": "recognition",
       "what": "A 1.6fr/1fr split: an awards Table (year/project/award) beside a press list and a wrapped clients Badge cloud; followed by a reverse-direction full-bleed clients marquee.",
-      "components": ["Table", "Table.Head/Body/Row/Cell/Column", "Badge", "Separator", "(hand-rolled marquee)"],
-      "restyle": "Table recolored to transparent dark with mono uppercase headers, hairline rules, project column emphasized, year column mono. Client badges are mono tag chips. The marquee runs in reverse so the two strips on the page move in opposite directions."
+      "components": ["Table", "Table.Head/Body/Row/Cell/Column", "Badge", "Separator", "Marquee"],
+      "restyle": "Table recolored to transparent dark with mono uppercase headers, hairline rules, project column emphasized, year column mono. Client badges are mono tag chips. The clients strip is one kit Marquee (direction=\"right\", duration=34, fade=\"8%\", ✸ separator) so the two strips on the page move in opposite directions; type and hover color come from the kx-marquee classes."
     },
     {
       "name": "contact",

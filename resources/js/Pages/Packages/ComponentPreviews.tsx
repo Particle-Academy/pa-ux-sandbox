@@ -17,6 +17,7 @@ import {
     Callout,
     Card,
     Heading,
+    Marquee,
     Pillbox,
     StickyNote,
     Switch,
@@ -786,6 +787,28 @@ const PREVIEWS: Record<string, PreviewFn> = {
                 <Pill className="!bg-violet-50 !text-violet-700 dark:!bg-violet-500/15 dark:!text-violet-200"><Sparkles size={10} className="mr-1" /> Shorten</Pill>
                 <Pill className="!bg-violet-50 !text-violet-700 dark:!bg-violet-500/15 dark:!text-violet-200"><Sparkles size={10} className="mr-1" /> Translate</Pill>
             </div>
+        </div>
+    ),
+
+    "react-fancy/marquee": () => (
+        <div className="w-full max-w-[18rem] space-y-2">
+            <Marquee
+                speed={30}
+                gap={20}
+                fade={24}
+                items={["MOTION", "FILM", "SCROLL", "BRAND"]}
+                separator={<span className="text-[0.7em] text-fuchsia-500">✸</span>}
+                className="border-y border-zinc-200 py-1.5 text-sm font-bold tracking-tight text-zinc-700 dark:border-zinc-700 dark:text-zinc-200"
+            />
+            <Marquee
+                speed={30}
+                gap={20}
+                fade={24}
+                direction="right"
+                items={["Velocity", "Slipstream", "Afterburn", "Parallax"]}
+                separator={<span className="text-[0.7em] text-cyan-500">✦</span>}
+                className="py-1 text-xs font-semibold text-zinc-400 dark:text-zinc-500"
+            />
         </div>
     ),
 

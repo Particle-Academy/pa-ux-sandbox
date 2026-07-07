@@ -215,19 +215,17 @@
           mask-image: radial-gradient(120% 90% at 50% 30%, #000, transparent 78%);
 }
 
-/* Oversized hero marquee — the kinetic signature stripe behind the copy. */
+/* Oversized hero marquee — the kinetic signature stripe behind the copy.
+   The strip itself is the react-fancy <Marquee> (loop, wrap, fade, pace);
+   this wrapper only positions it, and .kx-marquee--lg restyles the type. */
 .insp-kinetic .kx-hero__marquee {
   position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%);
-  z-index: 0; overflow: hidden; pointer-events: none;
+  z-index: 0; pointer-events: none;
   opacity: 0.06;
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
-          mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
 }
-.insp-kinetic .kx-marquee-track--lg {
-  display: inline-flex; white-space: nowrap;
+.insp-kinetic .kx-marquee--lg {
   font-size: clamp(5rem, 18vw, 16rem); font-weight: 800; letter-spacing: -0.04em;
   color: var(--k-ink);
-  animation: kx-marquee 36s linear infinite;
 }
 
 .insp-kinetic .kx-hero__inner { position: relative; z-index: 2; }
@@ -499,20 +497,14 @@
 .insp-kinetic .kx-press li:first-child { color: var(--k-ink); }
 .insp-kinetic .kx-clients { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
 
-/* ── Clients marquee — reverse direction ──────────────────────────────────── */
+/* ── Clients marquee — reverse direction ──────────────────────────────────────
+   A react-fancy <Marquee direction="right" fade="8%"> owns the loop, wrap,
+   mask fade, and reduced-motion gate; these rules only restyle the strip. */
 .insp-kinetic .kx-marquee {
-  overflow: hidden;
   border-top: 1px solid var(--k-line);
   border-bottom: 1px solid var(--k-line);
   padding: 26px 0;
-  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
-          mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
 }
-.insp-kinetic .kx-marquee-track {
-  display: inline-flex; white-space: nowrap; will-change: transform;
-  animation: kx-marquee 34s linear infinite;
-}
-.insp-kinetic .kx-marquee--reverse .kx-marquee-track { animation-direction: reverse; }
 .insp-kinetic .kx-marquee__item {
   display: inline-flex; align-items: center;
   font-size: clamp(1.4rem, 3vw, 2.4rem); font-weight: 700; letter-spacing: -0.02em;
@@ -522,6 +514,7 @@
 .insp-kinetic .kx-marquee:hover .kx-marquee__item { color: var(--k-ink-2); }
 .insp-kinetic .kx-marquee__sep { color: var(--k-mag); padding: 0 22px; font-size: 0.7em; }
 
+/* Still drives the hand-rolled telemetry ticker below. */
 @keyframes kx-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
 /* ── Contact ──────────────────────────────────────────────────────────────── */

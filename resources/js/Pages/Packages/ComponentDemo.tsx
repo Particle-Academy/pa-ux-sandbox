@@ -30,6 +30,7 @@ import {
     InputTag,
     Kanban,
     MagicWand,
+    Marquee,
     Menu,
     MobileMenu,
     Modal,
@@ -198,6 +199,7 @@ const REGISTRY: Record<string, DemoFn> = {
     "react-fancy/timeline": TimelineDemo,
     "react-fancy/table": TableDemo,
     "react-fancy/carousel": CarouselDemo,
+    "react-fancy/marquee": MarqueeDemo,
     "react-fancy/chart": ChartDemo,
     "react-fancy/kanban": KanbanDemo,
     "react-fancy/content-renderer": ContentRendererDemo,
@@ -1175,6 +1177,89 @@ function CarouselDemo() {
                 <Carousel.Steps />
             </Carousel>
         </div>
+    );
+}
+
+function MarqueeDemo() {
+    const [speed, setSpeed] = useState(60);
+    const [direction, setDirection] = useState<"left" | "right">("right");
+    const [pauseOnHover, setPauseOnHover] = useState(true);
+    const [paused, setPaused] = useState(false);
+
+    return (
+        <DemoNote
+            outOfBox="Seamless infinite wrap (short content auto-repeats to fill the strip), px/s speed with constant perceived pace, left/right direction for opposing pairs, pauseOnHover + a controlled paused prop, gap / separator / fade-edge / angle props, decorative (aria-hidden) by default, and zero animation under prefers-reduced-motion. Typography and color inherit from className — the strip below is the Kinetic gallery clients marquee rebuilt as a single <Marquee> element."
+            demo="The client list, dark panel, and the controls are demo scaffolding."
+        >
+            <div className="space-y-4">
+                <div className="overflow-hidden rounded-lg bg-zinc-950 py-3">
+                    <Marquee
+                        items={["Velocity Films", "Slipstream Labs", "Afterburn Audio", "Parallax Studio", "Tilt Collective", "Overdrive Co."]}
+                        speed={speed}
+                        direction={direction}
+                        pauseOnHover={pauseOnHover}
+                        paused={paused}
+                        fade="8%"
+                        separator={<span className="text-[0.7em] text-fuchsia-500">✸</span>}
+                        className="border-y border-zinc-800 py-5 text-3xl font-bold tracking-tight text-zinc-500"
+                    />
+                    <Marquee
+                        items={["MOTION", "FILM", "SCROLL", "BRAND", "TYPE"]}
+                        speed={speed}
+                        direction={direction === "left" ? "right" : "left"}
+                        pauseOnHover={pauseOnHover}
+                        paused={paused}
+                        fade="8%"
+                        gap={24}
+                        separator={<span className="text-cyan-400">✦</span>}
+                        className="py-3 font-mono text-xs font-semibold uppercase tracking-[0.14em] text-zinc-400"
+                    />
+                </div>
+                <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
+                    <label className="flex items-center gap-2">
+                        <span className="text-xs uppercase tracking-wider text-zinc-500">Speed</span>
+                        <input
+                            type="range"
+                            min={20}
+                            max={200}
+                            value={speed}
+                            onChange={(e) => setSpeed(Number(e.target.value))}
+                            className="w-32 accent-violet-600"
+                        />
+                        <span className="w-14 font-mono text-xs text-zinc-500">{speed} px/s</span>
+                    </label>
+                    <label className="flex items-center gap-2">
+                        <span className="text-xs uppercase tracking-wider text-zinc-500">Direction</span>
+                        <select
+                            value={direction}
+                            onChange={(e) => setDirection(e.target.value as "left" | "right")}
+                            className="rounded-md border border-zinc-300 bg-transparent px-2 py-1 text-xs outline-none focus:border-violet-500 dark:border-zinc-700 dark:bg-zinc-900"
+                        >
+                            <option value="left">left</option>
+                            <option value="right">right</option>
+                        </select>
+                    </label>
+                    <label className="flex items-center gap-2">
+                        <input
+                            type="checkbox"
+                            checked={pauseOnHover}
+                            onChange={(e) => setPauseOnHover(e.target.checked)}
+                            className="h-4 w-4 accent-violet-600"
+                        />
+                        Pause on hover
+                    </label>
+                    <label className="flex items-center gap-2">
+                        <input
+                            type="checkbox"
+                            checked={paused}
+                            onChange={(e) => setPaused(e.target.checked)}
+                            className="h-4 w-4 accent-violet-600"
+                        />
+                        Paused
+                    </label>
+                </div>
+            </div>
+        </DemoNote>
     );
 }
 

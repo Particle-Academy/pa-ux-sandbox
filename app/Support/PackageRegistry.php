@@ -513,6 +513,7 @@ class PackageRegistry
             ['slug' => 'inputs', 'name' => 'Inputs'],
             ['slug' => 'kanban', 'name' => 'Kanban'],
             ['slug' => 'magic-wand', 'name' => 'MagicWand'],
+            ['slug' => 'marquee', 'name' => 'Marquee', 'blurb' => 'Auto-scrolling ticker strip — seamless wrap, px/s speed, opposing directions, fade edges, reduced-motion safe.'],
             // Media viewers (react-fancy 4.9.0)
             ['slug' => 'media-viewer', 'name' => 'MediaViewer', 'blurb' => 'Picks the right viewer (image / video / audio / PDF) from a mime or src; download fallback. Exports resolveMediaType.'],
             ['slug' => 'image-viewer', 'name' => 'ImageViewer', 'blurb' => 'Fit-to-container image with zoom / pan and a transparency checkerboard.'],

@@ -14,6 +14,7 @@ import {
     CheckboxGroup,
     Field,
     Input,
+    Marquee,
     MultiSwitch,
     OtpInput,
     Pagination,
@@ -114,6 +115,7 @@ export default function Home({ packages, companions, total_components }: HomePro
                     provider defaultTitle, which matches the home baseline. */}
                 <Seo />
                 <Hero packages={packages} />
+                <PackageTicker packages={packages} />
                 <Packages packages={packages} companions={companions} />
                 <HumanPlus />
                 <ComponentsShowcase total={total_components} />
@@ -231,6 +233,31 @@ function HeroCard() {
                 </span>
             </div>
         </div>
+    );
+}
+
+// ─── Package ticker ──────────────────────────────────────────────────────────
+
+/**
+ * Edge-to-edge marquee bridging the hero into "The family" — the suite's real
+ * package names (the same server-driven `packages` prop the grid below renders)
+ * streaming past like a logo wall. Decorative by default (react-fancy Marquee
+ * is aria-hidden and static under prefers-reduced-motion); every name is fully
+ * readable + linked in the grid one scroll below.
+ */
+function PackageTicker({ packages }: { packages: PackageRow[] }) {
+    return (
+        <section className="ticker">
+            <Marquee
+                speed={28}
+                gap={44}
+                fade={72}
+                pauseOnHover
+                items={packages.map((p) => p.name)}
+                separator={<span className="ticker-sep">✦</span>}
+                className="ticker-strip"
+            />
+        </section>
     );
 }
 

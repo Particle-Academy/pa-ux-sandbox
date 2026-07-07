@@ -306,6 +306,24 @@ h2.section-title,
 .dark .tok-t { color: var(--indigo-300); }
 .dark .tok-a { color: var(--rose-300); }
 
+/* ─────────── Package ticker (react-fancy <Marquee>) ─────────── */
+/* Edge-to-edge strip between the hero and the package grid. It relies on the
+   standard `section + section` top borders (its own + the next section's) to
+   read as a thin recessed band in the page rhythm, not a whole new section. */
+section.ticker { padding: 0; background: var(--bg-1); }
+.ticker-strip {
+  padding: 17px 0;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  color: var(--fg-3);
+}
+.ticker-sep {
+  font-size: 0.72em;
+  color: var(--accent);
+  opacity: 0.65;
+}
+
 /* ─────────── Generic buttons (site-level, distinct from Action) ─────────── */
 .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 7px;

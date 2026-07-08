@@ -1,0 +1,69 @@
+{
+    "thesis": "A light-lavender back-of-house recruiting console — a hiring team's pipeline 'at a glance'. The Fancy kit worn as a people-ops screen: a slim white topbar with a Pipeline / Roles / Calendar switcher over a full-bleed, board-first work area, closed by a pinned 4-KPI strip. The hero is a horizontal Kanban of five funnel stages whose candidate cards drag between stages (the totals follow), each card an initials avatar + a 5-segment fit-score meter + a mono time-in-stage stamp. One violet accent on near-white, medium-high density, mono numerics — a screen a recruiter actually runs a req from.",
+    "tokens": {
+        "bg": "#FAF8FD (app canvas) · #FFFFFF (topbar, cards, KPI strip)",
+        "fg": "#241C33 primary · #5B5170 secondary/inactive-tab · #8A7FA0 muted labels+roles · #A99EC0 faint mono (card age)",
+        "accent": "#7C3AED violet-600 (with #8B5CF6 violet-500) · gradient 'R' mark #5B21B6→#A78BFA · stage ramp #8A7FA0→#8B5CF6→#7C3AED→#5B21B6→#0F9D58 (muted→violet→green Hired) · #0F9D58 positive-delta green",
+        "fontDisplay": "Geist (var(--font-sans))",
+        "fontMono": "Geist Mono (var(--font-mono)) — meta count, stage-count pills, card age stamps, table candidate counts, KPI deltas",
+        "radius": "12px candidate cards + Table + status chips (999px pills) · 9px tab track / 6px active pill · avatars 50% · 999px stage-count + score chips",
+        "border": "1px #ECE7F4 hairline on every panel/card/topbar; #F1EDF8 softer table-row + KPI dividers; score-meter track #E7DEF5",
+        "motion": "Restrained: a 1.8s opacity/glow pulse on the live topbar dot; a 140ms card-lift + border-tint on candidate-card hover; a 180ms tab-switch ease; ECharts' own sparkline mount. Respects prefers-reduced-motion."
+    },
+    "layout": "Full-viewport, board-first workspace that fills the frame (height: calc(100dvh - 52px), overflow hidden). A 52px white Navbar topbar (gradient 'R' mark + Roster/Recruiting wordmark linking to the gallery index, a 3-way segmented Tabs switcher Pipeline/Roles/Calendar, and a right-aligned mono meta count with a live dot) sits above a flex work area. Pipeline is a horizontally-scrolling Kanban of five 250px stage lanes (14px gutters, 18px pad); each lane is a sticky header (label + gradient-ramp count pill) over an independently-scrolling 9px-gapped candidate-card stack. Roles swaps in a centred open-reqs Table with a Pillbox team filter; Calendar swaps in an upcoming-interviews Timeline. A pinned bottom KPI strip closes the frame: 4 borderless Cards split by vertical Separators, each an eyebrow label + big value + colored delta + violet trend sparkline.",
+    "sections": [
+        {
+            "name": "Topbar",
+            "what": "52px white bar: a gradient 'R' logo tile + 'Roster / Recruiting' wordmark linking back to the gallery index; a segmented pill switcher of three views (Pipeline active, Roles, Calendar) wired to real state (the mock's tabs were visually active but static); a right-aligned live dot + mono status '18 open roles · 42 candidates'.",
+            "components": ["Navbar", "Navbar.Brand", "Tabs", "Tabs.List", "Tabs.Tab", "Badge", "Link"],
+            "restyle": "react-fancy <Navbar> flattened to a 52px hairline-bottom strip; the pills <Tabs.List variant=pills> re-skinned via [data-react-fancy-tabs-tab][aria-selected] to a #F1ECFB track with a white/#7C3AED active pill; the meta is a <Badge> stripped to transparent mono muted text beside a CSS-pulsed dot."
+        },
+        {
+            "name": "Pipeline board",
+            "what": "The hero: a horizontal Kanban of five recruiting stages (Applied 42, Screening 24, Interview 14, Offer 6, Hired 3). Each 250px lane header pairs a bold stage label with a count pill whose fill deepens along the stage-progress ramp; candidate cards drag between stages and the stage totals follow the move (Human+ controlled board state an agent could drive).",
+            "components": ["Kanban", "Kanban.Column", "Kanban.Card", "Badge"],
+            "restyle": "react-fancy <Kanban> as the board (data-react-fancy-kanban → flex row, 14px gap, 18px pad, x-scroll); each unstyled <Kanban.Column> becomes a 250px lane whose auto cards-container scrolls under a sticky header; the count <Badge> gets its background inline from the STAGE_RAMP indexed by stage order."
+        },
+        {
+            "name": "Candidate card",
+            "what": "Per-candidate tile inside a stage lane: a circular initials avatar in the person's brand colour, name + role (ellipsised), a 5-segment fit-score meter (filled violet up to the 1–5 score, remainder pale lilac), and a mono time-in-stage stamp (today / 1d / 2d / Jul 1).",
+            "components": ["Kanban.Card", "Avatar", "Progress", "Text"],
+            "restyle": "unstyled <Kanban.Card> → white 12px tile with a hover lift; <Avatar fallback> forced to 32px with a per-person background from a --dbroster-avbg custom prop + white initials; the score is five restyled <Progress size=sm> bars (track #E7DEF5, fill #7C3AED, width 100/0 per segment) — the review's segmented rating meter as a real Fancy primitive rather than the mock's post-render paint() DOM mutation."
+        },
+        {
+            "name": "Roles view",
+            "what": "The Roles tab: a centred snapshot of open requisitions (role, team, stage, candidate count, status) with a Pillbox team filter and a '+ New role' button. Status chips read Open (violet) / Hot (amber) / Closing (green); the count column is mono.",
+            "components": ["Tabs.Panel", "Heading", "Text", "Pillbox", "Button", "Table", "Table.Head", "Table.Column", "Table.Body", "Table.Row", "Table.Cell", "Badge"],
+            "restyle": "a restyled <Table> (data-react-fancy-table → 12px card, uppercase muted column heads on a lilac wash, #F1EDF8 row dividers, hover tint); <Pillbox> as a compact violet-bordered filter that actually narrows the rows; a ghost <Button>; status <Badge>s coloured inline from a STATUS_COLOR map."
+        },
+        {
+            "name": "Calendar view",
+            "what": "The Calendar tab: this week's five scheduled interviews as a vertical feed (onsite loops, system-design rounds, an offer call, an EM panel), each with a date/time, title, and one-line context; offer events read green, interviews violet.",
+            "components": ["Tabs.Panel", "Heading", "Text", "Timeline"],
+            "restyle": "a data-driven <Timeline events=[...] animated=false> inside a white 14px panel; dot colours come from each event's color (violet / green) so the feed keys to the same palette as the board."
+        },
+        {
+            "name": "KPI strip",
+            "what": "Pinned bottom row of four metrics, each an uppercase eyebrow, a large value, a colored delta, and a violet trend sparkline: Time to hire 24d (▼3d, green), Offer accept 82% (▲5%, green), Pipeline value 42 (active, muted), Cost / hire $4.2k (▼$300, green).",
+            "components": ["Card", "Badge", "Separator", "EChart"],
+            "restyle": "four <Card variant=flat padding=none> flattened to a borderless divided strip (transparent, no radius/shadow) split by vertical <Separator>s recoloured #F1EDF8; the delta is a transparent <Badge> coloured inline; the sparkline is the review's blessed chart upgrade — a fancy-echarts <EChart> line+area (violet stroke, faint violet fill, axes/tooltip off), SSR-safe with a static series."
+        }
+    ],
+    "palette": [
+        { "component": "Navbar / Navbar.Brand", "restyle": "the app shell — a 52px white strip with a hairline bottom; brand = gradient 'R' mark + Roster/Recruiting wordmark; inner flex row splits nav-left (brand + switcher) from nav-right (live dot + meta)." },
+        { "component": "Tabs / Tabs.List / Tabs.Tab / Tabs.Panels / Tabs.Panel", "restyle": "the Pipeline/Roles/Calendar switcher (variant=pills) re-skinned to a #F1ECFB segmented track with a white/#7C3AED active pill via [aria-selected]; each panel is a full-height work surface (board / table / timeline), controlled by real useState." },
+        { "component": "Kanban / Kanban.Column / Kanban.Card", "restyle": "the pipeline board — unstyled columns become 250px scroll-lanes with sticky headers; unstyled cards become white 12px candidate tiles; onCardMove reclassifies a candidate between stages and the stage totals follow (agent-driveable board state)." },
+        { "component": "Avatar", "restyle": "per-candidate initials chip forced to 32px, background set from a --dbroster-avbg custom prop (the person's brand colour) with white bold initials." },
+        { "component": "Progress", "restyle": "the 5-segment fit-score meter — five size=sm bars per card, track #E7DEF5, fill #7C3AED, each bar width 100 or 0 from whether its index is below the candidate's 1–5 score." },
+        { "component": "Badge", "restyle": "four roles — the mono meta count (transparent), the stage-count pills (background inline from the STAGE_RAMP), the Roles status chips (Open/Hot/Closing coloured inline), and the KPI deltas (transparent, coloured inline)." },
+        { "component": "Table / Table.Head / Table.Column / Table.Row / Table.Cell", "restyle": "the open-roles grid — 12px card wrapper, uppercase muted column heads on a lilac wash, #F1EDF8 row dividers, hover tint, mono candidate-count column." },
+        { "component": "Pillbox", "restyle": "the Roles team filter — a compact violet-bordered input whose selected teams actually filter the visible rows." },
+        { "component": "Button", "restyle": "the '+ New role' action as a ghost button — white on a hairline border, violet label, lilac hover." },
+        { "component": "Timeline", "restyle": "the Calendar view — a data-driven upcoming-interviews feed inside a white panel, dot colours keyed violet / green per event." },
+        { "component": "Card / Separator", "restyle": "the pinned KPI strip — four borderless flat Cards (transparent, no radius/shadow) split by vertical Separators recoloured to the soft #F1EDF8 divider." },
+        { "component": "EChart", "restyle": "one violet trend sparkline under each KPI (line + faint area, axes + tooltip off, animation off) — the review's blessed chart upgrade, mounted client-side and SSR-safe with static series." },
+        { "component": "Heading / Text", "restyle": "the Roles/Calendar view headers (section title + muted sub) and the card role sub-line + fineprint colophon crediting the restyled primitives." }
+    ],
+    "contentArchetype": "A single-snapshot people-ops dashboard: one hiring team's live recruiting pipeline for a fictional company. Real back-office data — a five-stage funnel with per-candidate cards (initials, role, 1–5 fit score, time-in-stage), a table of open requisitions by team and status, this week's scheduled interviews, and four hiring KPIs (time to hire, offer-accept rate, pipeline value, cost per hire) with trend deltas. Everything is one moment in time — the screen a recruiter glances at between interviews, and drags a candidate across when they advance.",
+    "remix": "Swap the violet-on-lavender palette for any single-accent-on-light scheme and this becomes a generic pipeline console: the Kanban stages generalise to any funnel (sales deals, support tickets, content review, applications) by renaming the columns and recolouring the stage ramp; the 5-segment Progress meter becomes any 1–5 rating (lead score, priority, confidence); the KPI strip re-labels to any four metrics with sparkline trends. Keep the Tabs switcher to fan a board out into board / table / timeline views of the same data, or drop the Calendar tab and widen the board for a pure kanban. Blend with a dark ops-console blueprint (e.g. griddle) for a night-shift theme."
+}

@@ -1,0 +1,477 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Dashboards · Northstar (id "northstar", dark)
+   A chromeless SaaS product-analytics back-office for the fictional "Northstar":
+   a slim restyled <Navbar> topbar (violet-gradient "N" lockup + a <Tabs> date-
+   range switcher) over a single full-width scrollable column — a 4-up KPI band
+   of <Card>s with <EChart> sparklines, a hero retention-cohort <EChart> heatmap,
+   then a 1fr/1fr row of a <Progress> activation funnel + an <EChart> MRR
+   waterfall. Near-black #0B0A12 canvas, #130F1F cards, #221D33 hairlines, a
+   violet #8B5CF6 accent with sky / green / pink metric strokes.
+
+   Every rule is scoped under .dbnorthstar-root. Every class is prefixed
+   dbnorthstar-. Page-level sticky/z-index stays UNDER 30 (the gallery frame
+   owns 30+).
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.dbnorthstar-root {
+    /* ── Scoped near-black tokens ─────────────────────────────────────────── */
+    --ns-bg: #0b0a12; /* app background */
+    --ns-topbar: #100e1a; /* topbar band */
+    --ns-surface: #130f1f; /* cards + panels */
+    --ns-track: #1b1729; /* funnel track / inset plates */
+    --ns-border: #221d33; /* hairline borders */
+    --ns-border-2: #201c30; /* topbar hairline */
+    --ns-fg: #d9d6e4; /* primary text */
+    --ns-fg-title: #edeaf6; /* headings + figures */
+    --ns-fg-2: #9a92b8; /* secondary text */
+    --ns-fg-3: #7a719a; /* muted labels / mono */
+    --ns-fg-4: #6a6390; /* faint subtitle */
+    --ns-accent: #8b5cf6; /* violet */
+    --ns-accent-soft: #c4b5fd; /* violet highlight */
+    --ns-sky: #38bdf8; /* sky */
+    --ns-pos: #34d399; /* positive green */
+    --ns-churn: #f472b6; /* churn / negative pink */
+
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - 46px);
+    background: var(--ns-bg);
+    color: var(--ns-fg);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+
+    /* Full-bleed: break out of the showcase's max-w-7xl + padded <main> so the
+       near-black canvas spans the whole viewport width. */
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    width: 100vw;
+    max-width: 100vw;
+    margin-bottom: -2.5rem;
+    overflow-x: clip;
+}
+
+@media (min-width: 768px) {
+    .dbnorthstar-root {
+        margin-bottom: -3.5rem;
+    }
+}
+
+.dbnorthstar-root *,
+.dbnorthstar-root *::before,
+.dbnorthstar-root *::after {
+    box-sizing: border-box;
+}
+
+.dbnorthstar-root ::selection {
+    background: var(--ns-accent);
+    color: #fff;
+}
+
+/* ── Topbar (react-fancy <Navbar> restyled) ──────────────────────────────── */
+.dbnorthstar-root [data-react-fancy-navbar].dbnorthstar-topbar {
+    background: var(--ns-topbar);
+    border-bottom: 1px solid var(--ns-border-2);
+    padding: 0 20px;
+    height: 52px;
+    min-height: 52px;
+    display: flex;
+    align-items: center;
+    flex: none;
+    position: sticky;
+    top: 46px;
+    z-index: 10;
+}
+
+.dbnorthstar-root [data-react-fancy-navbar].dbnorthstar-topbar > div {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.dbnorthstar-brandwrap {
+    display: flex;
+    align-items: center;
+}
+
+.dbnorthstar-brand {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: var(--text-sm);
+    color: var(--ns-fg-title);
+    letter-spacing: -0.01em;
+}
+
+.dbnorthstar-brand__mark {
+    width: 24px;
+    height: 24px;
+    border-radius: 7px;
+    display: grid;
+    place-items: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: #fff;
+    background: linear-gradient(135deg, #1e1b4b, #8b5cf6);
+    flex: none;
+}
+
+.dbnorthstar-brand__word {
+    font-weight: 700;
+}
+
+.dbnorthstar-brand__sub {
+    font-weight: 400;
+    font-size: 13px;
+    color: var(--ns-fg-4);
+}
+
+/* Force the right cluster visible at all widths (Navbar hides items < md). */
+.dbnorthstar-root [data-react-fancy-navbar-items].dbnorthstar-topbar__right {
+    display: flex !important;
+    flex-direction: row;
+    align-items: center;
+    margin-left: auto;
+    border: 0;
+    padding: 0;
+    gap: 0;
+}
+
+/* ── Date-range switcher (react-fancy <Tabs> restyled to mono pills) ──────── */
+.dbnorthstar-ranges {
+    flex: none;
+}
+
+.dbnorthstar-root .dbnorthstar-ranges__list {
+    display: flex !important;
+    gap: 6px;
+    border: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+}
+
+.dbnorthstar-root .dbnorthstar-ranges [role="tab"] {
+    border: 0 !important;
+    background: transparent;
+    color: var(--ns-fg-3);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    padding: 5px 11px !important;
+    margin: 0 !important;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: background 0.16s ease, color 0.16s ease;
+}
+
+.dbnorthstar-root .dbnorthstar-ranges [role="tab"]:hover {
+    color: var(--ns-fg);
+}
+
+.dbnorthstar-root .dbnorthstar-ranges [role="tab"][aria-selected="true"] {
+    background: var(--ns-accent);
+    color: #fff !important;
+}
+
+/* ── Scroll body ─────────────────────────────────────────────────────────── */
+.dbnorthstar-body {
+    flex: 1;
+    min-width: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* ── KPI metric band ─────────────────────────────────────────────────────── */
+.dbnorthstar-kpis {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+}
+
+.dbnorthstar-root .dbnorthstar-kpi {
+    background: var(--ns-surface);
+    border: 1px solid var(--ns-border);
+    border-radius: 14px;
+    animation: dbnorthstar-rise 0.4s var(--ease-out, ease-out) both;
+}
+
+.dbnorthstar-kpi__body {
+    padding: 16px 18px;
+}
+
+.dbnorthstar-kpi__top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.dbnorthstar-kpi__label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--ns-fg-3);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Delta chip (restyled <Badge> — transparent, color set inline per metric). */
+.dbnorthstar-root .dbnorthstar-delta {
+    background: transparent;
+    border: 0;
+    padding: 0;
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.dbnorthstar-kpi__value {
+    font-size: 30px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin-top: 6px;
+    color: var(--ns-fg-title);
+    font-family: var(--font-mono);
+}
+
+.dbnorthstar-kpi__spark {
+    width: 100%;
+    height: 24px;
+    margin-top: 6px;
+}
+
+/* ── Retention cohort hero (restyled <Card> + <EChart> heatmap) ──────────── */
+.dbnorthstar-root .dbnorthstar-hero {
+    background: var(--ns-surface);
+    border: 1px solid var(--ns-border);
+    border-radius: 14px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    animation: dbnorthstar-rise 0.4s var(--ease-out, ease-out) both;
+    animation-delay: 0.04s;
+}
+
+.dbnorthstar-hero__head {
+    padding: 18px 20px 12px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    border: 0;
+}
+
+.dbnorthstar-hero__titles {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.dbnorthstar-root .dbnorthstar-hero__title {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--ns-fg-title);
+}
+
+.dbnorthstar-root .dbnorthstar-hero__sub {
+    margin-top: 2px;
+    font-size: 12px;
+    color: var(--ns-fg-3);
+}
+
+.dbnorthstar-hero__legend {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: var(--ns-fg-3);
+    flex: none;
+}
+
+.dbnorthstar-hero__legend-bar {
+    width: 60px;
+    height: 8px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, rgba(139, 92, 246, 0.2), #8b5cf6);
+}
+
+.dbnorthstar-hero__body {
+    padding: 0 16px 16px;
+    flex: 1;
+}
+
+.dbnorthstar-heatmap {
+    width: 100%;
+}
+
+/* ── Lower row (funnel + waterfall) ──────────────────────────────────────── */
+.dbnorthstar-lower {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+@media (max-width: 900px) {
+    .dbnorthstar-kpis {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .dbnorthstar-lower {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Panels (restyled <Card>). */
+.dbnorthstar-root .dbnorthstar-panel {
+    background: var(--ns-surface);
+    border: 1px solid var(--ns-border);
+    border-radius: 14px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    animation: dbnorthstar-rise 0.4s var(--ease-out, ease-out) both;
+    animation-delay: 0.08s;
+}
+
+.dbnorthstar-panel__head {
+    padding: 18px 20px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    border: 0;
+}
+
+.dbnorthstar-panel__head--col {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+}
+
+.dbnorthstar-root .dbnorthstar-panel__title {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--ns-fg-title);
+}
+
+.dbnorthstar-root .dbnorthstar-panel__sub {
+    font-size: 12px;
+    color: var(--ns-fg-3);
+}
+
+.dbnorthstar-net {
+    color: var(--ns-pos);
+    font-family: var(--font-mono);
+}
+
+.dbnorthstar-panel__body {
+    padding: 0 20px 20px;
+    flex: 1;
+}
+
+/* ── Activation funnel (restyled <Progress> bars) ────────────────────────── */
+.dbnorthstar-funnel {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.dbnorthstar-funnel__row {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.dbnorthstar-funnel__top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+    font-size: var(--text-sm);
+}
+
+.dbnorthstar-funnel__k {
+    color: var(--ns-fg-2);
+}
+
+.dbnorthstar-funnel__v {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--ns-fg-3);
+    white-space: nowrap;
+}
+
+/* Progress root — full width, no default margins. */
+.dbnorthstar-root .dbnorthstar-funnelbar {
+    width: 100%;
+    margin: 0;
+}
+
+/* Track — dark inset channel. */
+.dbnorthstar-root .dbnorthstar-funnelbar > div {
+    background: var(--ns-track) !important;
+    height: 22px !important;
+    border-radius: 7px !important;
+}
+
+/* Fill — violet gradient. */
+.dbnorthstar-root .dbnorthstar-funnelbar > div > div {
+    background: linear-gradient(90deg, var(--ns-accent), var(--ns-accent-soft)) !important;
+    border-radius: 7px !important;
+    transition: width 0.5s var(--ease-out, ease-out);
+}
+
+/* ── MRR waterfall chart container ───────────────────────────────────────── */
+.dbnorthstar-waterfall {
+    width: 100%;
+}
+
+/* ── Colophon ────────────────────────────────────────────────────────────── */
+.dbnorthstar-colophon {
+    margin-top: 4px;
+    padding-top: 14px;
+    border-top: 1px solid var(--ns-border);
+}
+
+.dbnorthstar-root .dbnorthstar-colophon__h {
+    color: var(--ns-fg-2);
+    font-family: var(--font-mono);
+    letter-spacing: 0.02em;
+}
+
+.dbnorthstar-root .dbnorthstar-colophon__note {
+    margin-top: 4px;
+    color: var(--ns-fg-3);
+    max-width: 760px;
+}
+
+/* ── Motion ──────────────────────────────────────────────────────────────── */
+@keyframes dbnorthstar-rise {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dbnorthstar-root .dbnorthstar-kpi,
+    .dbnorthstar-root .dbnorthstar-hero,
+    .dbnorthstar-root .dbnorthstar-panel {
+        animation: none;
+    }
+    .dbnorthstar-root .dbnorthstar-funnelbar > div > div {
+        transition: none;
+    }
+}

@@ -1,0 +1,70 @@
+{
+  "id": "still",
+  "name": "Still",
+  "note": "A meditation habit tracker as a calm Today view.",
+  "mode": "dark",
+  "thesis": "A consumer-grade meditation 'Today' screen built entirely from restyled Fancy primitives: a near-black deep-green canvas, a single teal accent, generous airy padding, and lots of muted sage secondary text. The point is that a Navbar + Card + Button + Badge + Table + Avatar, dressed in scoped CSS and fed by two fancy-echarts charts, read as native to a Calm/Headspace-class wellness app — a gradient hero, three stat tiles, a minutes heatmap, a mood bar chart, and a recommended-sessions list — with no bespoke widgets, just kit.",
+  "tokens": {
+    "bg": "#0E1512 near-black deep-green page canvas with #132019 surface cards and a #0B1512 chart-tooltip well",
+    "fg": "#DCE8E1 primary text / #7DA396 muted sage secondary / #5E7A70 faint sage captions & legend",
+    "accent": "bright teal #5EEAD4 (icons, deltas, active states, play glyphs) paired with deep teal #0F766E (hero gradient base, bar-fill bottom); a translucent rgba(94,234,212,0.14) wash tints the KPI icon chips + delta badge",
+    "fontDisplay": "Geist (var(--font-sans)); the hero H1 'Morning Calm' is 30px / 700 at -0.01em, KPI numbers 24px / 800",
+    "fontMono": "Geist Mono (var(--font-mono)) for the 'this month' tag and the per-session durations",
+    "radius": "22px hero banner, 18px cards + KPI + panels + recommended list, 13px KPI icon chips, 12px session-icon tiles, 8px 'S' logo mark, 6px delta badge + heatmap legend cells, 4px heatmap cells, 50% avatar + circular play button",
+    "border": "1px hairlines: #1F3329 card borders + list header divider, #17251E quieter in-list row separators; no shadows — depth is pure surface-over-canvas contrast plus a soft breathing ring on the hero play button",
+    "motion": "Minimal/calm. The mockup only ran an imperative paint() pass; recreated as a single 0.5s DS-ease mount rise on every card plus a slow 4.5s breathing halo on the hero play button, both honoring prefers-reduced-motion. Charts fade in on client mount."
+  },
+  "layout": "A centered single-column reading layout (max-width 1040px, ~22px page padding) full-bleed over the deep-green canvas — no sidebar. A slim restyled Navbar holds the gradient 'S' mark + 'Still' wordmark (linking to the collection index) with Today/Library/Progress links and a round 'NA' avatar pushed right. Below it a full-width teal gradient hero Card, then a 3-up KPI row (equal 1fr columns, 16px gap), then an asymmetric 1.4fr / 1fr grid (minutes heatmap : mood bars) that collapses to one column under 820px, and finally a full-width Recommended list card. A hairline colophon closes the page.",
+  "sections": [
+    {
+      "name": "topbar / nav",
+      "what": "Gradient rounded-square 'S' mark + 'Still' wordmark linking back to the dashboards index; a right-aligned inline nav (Today active, Library, Progress) and a circular 'NA' monogram avatar.",
+      "components": ["Navbar", "Avatar", "Link"],
+      "restyle": "Navbar is stripped of its default white bg / bottom border / padding and laid out as a transparent flex row; Navbar.Items is forced visible (overriding its hidden-below-md default) and pushed right with margin-left:auto. Nav links are controlled <button>s (muted sage, the active one full-ink 600) driven by useState so Today highlights. The 'S' mark is a 26px 8px-radius tile with a #0F766E→#5EEAD4 gradient and dark ink. Avatar is forced to a 34px #134E48 circle with #5EEAD4 600-weight NA initials."
+    },
+    {
+      "name": "today's practice hero",
+      "what": "Full-width teal gradient banner: eyebrow 'TODAY'S PRACTICE', 30px H1 'Morning Calm', subline '10 min · breath focus', and a large 64px translucent circular play button on the right.",
+      "components": ["Card", "Heading", "Button"],
+      "restyle": "Card forced to a borderless 22px panel carrying a 150deg #0F766E→#134E48 gradient; Card.Body is a flex space-between row that wraps on narrow widths. Heading sets the 30px/700 'Morning Calm' title in near-white. The play control is a Button variant='circle' overridden to a 64px rgba(255,255,255,0.16) circle with a white lucide Play/Pause icon — it's controlled (useState) so clicking toggles the icon, and it carries a slow breathing box-shadow halo."
+    },
+    {
+      "name": "KPI row",
+      "what": "Three stat tiles — 18 day streak (flame), 1,240 total minutes (clock), 7.2h avg sleep (moon) — each a rounded card with a teal-tinted icon chip beside a big number + muted caption.",
+      "components": ["Card", "lucide-react icons"],
+      "restyle": "Three restyled Cards (#132019 surface, 1px #1F3329, 18px radius, staggered mount rise). Each Card.Body is a flex row: a 46px 13px-radius icon chip (rgba(94,234,212,0.14) wash, #5EEAD4 lucide Flame/Clock/Moon) beside a stacked 24px/800 number and a 12px sage caption. Only the inner flex layout is hand-rolled; the tile IS a Card."
+    },
+    {
+      "name": "minutes meditated (heatmap)",
+      "what": "Card titled 'Minutes meditated' with a mono 'this month' tag, a '312 min' figure with a '+18% vs last month' delta badge, a month grid of ~30 intensity cells, and a less→more legend row.",
+      "components": ["Card", "EChart", "Badge"],
+      "restyle": "Card panel wraps a fancy-echarts HEATMAP rendered over a 15×2 category lattice (30 daily-minute values, y-axis inverted so the month reads top-left→bottom-right). A piecewise visualMap quantizes fill into the mockup's exact four buckets (0 → #1A2A22 rest, <40 → rgba(94,234,212,0.2), <70 → rgba(94,234,212,0.5), ≥70 → #5EEAD4) — replacing the hand-coded threshold paint() script; cells get a 4px radius and a surface-colored 4px border to fake the gaps. The '+18%' delta is a Badge flattened to a soft teal chip; the less→more legend is four hand-rolled swatch spans matching the bucket colors."
+    },
+    {
+      "name": "mood check-ins (7-day bars)",
+      "what": "Card 'Mood check-ins / Last 7 days' with a 7-bar weekday chart (M T W T F S S), each bar an emoji face above and a day letter below, dipping to 😐 midweek and peaking 😊 Sunday.",
+      "components": ["Card", "EChart"],
+      "restyle": "Card panel wraps a fancy-echarts vertical BAR series across seven weekday categories (values 70,55,40,75,90,80,100). Bars carry 5px top corners and a top-down #5EEAD4→#0F766E linearGradient fill; each data point sets a rich-text label above it with its emoji (😌🙂😐😌😊😌😊), and the x-axis prints faint sage weekday letters. Axes/splitlines are hidden — replacing the mockup's data-attribute bar-height paint() with a real chart."
+    },
+    {
+      "name": "recommended for you",
+      "what": "Full-width list card, header 'Recommended for you' over four divider-separated rows: a colored rounded emoji tile, session name + meta (Stress relief / Wind down / …), a mono duration, and a teal play-circle icon. Rows: Ocean Breath 12min, Deep Sleep 20min, Focus Flow 8min, Body Scan 15min.",
+      "components": ["Card", "Table", "lucide-react icons"],
+      "restyle": "A restyled Card wraps a borderless Table (header row hidden). Each row composes a 40px 12px-radius emoji tile (background from a per-session color via inline style), a stacked bold name / 12px sage meta cell, a right-aligned mono duration, and a #5EEAD4 lucide PlayCircle. Rows get #17251E hairline separators (last borderless) and a faint teal hover fill — the mockup's <sc-for> list rebuilt as a real data grid."
+    }
+  ],
+  "palette": [
+    { "component": "Navbar", "restyle": "Chrome stripped to a transparent flex bar; Brand is a gradient-mark Link, Items forced visible and right-aligned with margin-left:auto. The whole top-bar identity rides on the primitive, not a hand-rolled <header>." },
+    { "component": "Card", "restyle": "The universal surface — used for the gradient hero (borderless, 22px, teal gradient), the three KPI tiles, the two chart panels, and the recommended list (all #132019 / 1px #1F3329 / 18px radius, no shadow). padding='none' with header/body padding supplied by scoped CSS; a staggered mount rise animates each in." },
+    { "component": "Heading", "restyle": "Sets the 30px/700 hero title 'Morning Calm' in near-white on the teal gradient; type stays on var(--font-sans) at -0.01em tracking." },
+    { "component": "Button", "restyle": "One control — the hero play/pause. variant='circle' overridden to a 64px rgba(255,255,255,0.16) circle with a white lucide icon, controlled by useState (Play ↔ Pause) and wrapped in a slow breathing halo; hover brightens + scales." },
+    { "component": "Badge", "restyle": "The '+18% vs last month' delta — flattened to a soft teal chip (rgba(94,234,212,0.14) fill, #5EEAD4 text, 6px radius, no border/shadow) so it reads as a quiet positive marker beside the '312 min' figure." },
+    { "component": "Table", "restyle": "The Recommended list — reskinned via its data-react-fancy-* hooks into a borderless session grid: header row hidden, 13px/20px rows with #17251E separators and a faint teal hover, an emoji-tile identity cell, a stacked name/meta cell, a right mono duration, and a play-circle cell." },
+    { "component": "Avatar", "restyle": "A 34px circular NA monogram forced to a #134E48 fill with #5EEAD4 600-weight initials — the account chip at the far right of the top bar." },
+    { "component": "EChart (fancy-echarts)", "restyle": "The two data surfaces — a minutes HEATMAP (15×2 lattice, 4-bucket piecewise visualMap, rounded surface-gapped cells) and a mood BAR chart (top-gradient bars with per-point emoji rich-text labels) — both mounted behind a client-only flag and SSR-safe, replacing the mockup's data-attribute paint() pass. registerAll() runs once at module top." },
+    { "component": "Text", "restyle": "Carries the muted sage colophon line at the foot; sits on var(--font-sans) at 12px in the faint-sage token." },
+    { "component": "Link (Inertia)", "restyle": "Wraps the brand mark and the 'Back to the gallery' footer link for client-side navigation back to the dashboards index." }
+  ],
+  "contentArchetype": "A fictional meditation & habit app (Still) showing one signed-in meditator's Today view: a featured session hero (Morning Calm, 10 min breath focus), three headline stats (18-day streak, 1,240 total minutes, 7.2h avg sleep), a month-long minutes-meditated intensity grid with a +18% delta, a seven-day mood check-in trend, and a recommended session library. All figures are invented but internally consistent; the only 'live' behavior is the nav active-state and the hero play/pause toggle — the per-session play affordances are inert, marking where a real build would bind session-start.",
+  "remix": "Reuse the centered-canvas + gradient-hero + stat-tile + heatmap skeleton for any consumer habit/wellness surface (a fitness streak tracker, a sleep app, a journaling or hydration tracker, a language-learning daily view) — swap the teal accent + emoji vocabulary to rebrand, keep the airy padding and muted-secondary discipline. Lift the piecewise-visualMap heatmap for any calendar/streak intensity grid, and the emoji-labeled bar series for any mood/rating trend. To warm it toward light mode, flip the canvas + surface tokens and keep the same React tree; to push it more clinical, tighten padding and drop the breathing halo. The whole look lives in scoped still.css + local tokens, so the same tree restyles wholesale by editing one file."
+}

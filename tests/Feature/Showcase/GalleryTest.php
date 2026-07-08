@@ -5,10 +5,10 @@ use Tests\TestCase;
 
 uses(TestCase::class);
 
-it('serves the gallery index with every collection + all 53 style cards', function () {
+it('serves the gallery index with every collection + all 60 style cards', function () {
     $this->getJson('/gallery/index.json')
         ->assertOk()
-        ->assertJsonPath('count', 53)
+        ->assertJsonPath('count', 60)
         ->assertJsonPath('kind', 'design-blueprints')
         ->assertJsonPath('collections.0.id', 'fieldwork')
         ->assertJsonPath('collections.1.id', 'mom-n-pops')

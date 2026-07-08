@@ -1,0 +1,54 @@
+{
+    "thesis": "A wall-mounted hospital bed-command board — a static, read-at-distance status wall for one moment of a day shift. The Fancy kit worn as a clinical operations screen: a slim header (no sidebar, no ticking clock) over a 1.7fr/1fr body — a ward bed map of per-ward EChart heatmaps on the left, a right rail stacking a 2x2 KPI grid (one promoted to a radial gauge) above a scrolling ER triage queue. Deep navy canvas, one rose ER accent plus clinical green/amber/red status colors, mono numerics everywhere, high density and big glanceable numbers.",
+    "tokens": {
+        "bg": "#0B1220 (command wall) · #101A2C (panels + KPI tiles)",
+        "fg": "#CDD7E5 primary · #EAF0F8 headings/clock · #AEBBCE ward names · #7A8AA0 muted labels · #5C6B80 faint mono sublabel",
+        "accent": "#FB7185 rose (ER) · #38BDF8 blue (staffing); clinical status ramp #EF4444 occupied / #22C55E open / #F59E0B cleaning; triage #DC2626 / #F59E0B / #0EA5A0",
+        "fontDisplay": "Geist (var(--font-sans))",
+        "fontMono": "Geist Mono (var(--font-mono)) — clock, occupancy counts, KPI values, gauge read-out, triage level, patient ids + wait times",
+        "radius": "14px cards/panels · 9px triage badges + logo mark · 5px bed heatmap cells · 3px legend swatches + progress bars",
+        "border": "1px #1C2942 hairline on every panel/tile; #16223A softer row dividers inside the triage table",
+        "motion": "Almost none — a static status wall. The single flourish is a 2.4s box-shadow glow pulse on the ER-capacity dot (0 0 10px #FB7185); ECharts mount is animation:false so heatmaps + gauge paint instantly. Respects prefers-reduced-motion."
+    },
+    "layout": "No sidebar and no real nav topbar — a full-bleed 100vh command wall. A fixed-height (calc(100vh - 46px)) flex column with 16px padding: a slim restyled Navbar header (rose 'V' mark + 'Bed Command · Day shift' mono sublabel on the left; a glowing 'ER 92% capacity' Badge + a big mono 14:06 clock pushed right), a flex-1 body that is a 1.7fr/1fr grid, and a slim colophon footer. Left of the body: a Ward bed map Card whose scrollable body stacks four wards (header + occupancy Progress + a 12-col EChart heatmap each). Right rail: a 2x2 grid of KPI Cards over a flex-1 ER triage queue Card (a scrolling Table). Collapses to a single stacked, scrolling column under 900px.",
+    "sections": [
+        {
+            "name": "Command header",
+            "what": "Rose-gradient 'V' logo mark + 'Vitals' wordmark + '/ Bed Command · Day shift' mono sublabel (links back to the dashboards gallery); on the right a live-styled 'ER 92% capacity' pill with a glowing pulsing rose dot and a large mono 14:06 clock. Clock + capacity are static text, never ticking.",
+            "components": ["Navbar", "Navbar.Brand", "Navbar.Items", "Badge", "Link"],
+            "restyle": "react-fancy <Navbar> flattened to a transparent borderless header row; the capacity indicator is a <Badge variant=soft> stripped to transparent rose text with a CSS box-shadow-glow dot; items forced visible at every width; brand lockup is an Inertia <Link> to /inspiration/dashboards."
+        },
+        {
+            "name": "Ward bed map",
+            "what": "Left panel titled 'Ward bed map' with a 3-chip legend (occupied red / open green / cleaning amber). Body stacks four wards — ICU 22/24, ER 33/36, Medical/Surgical 128/160 (showing 24), Maternity 18/30 (showing 24). Each ward = a name + mono occupancy count, a slim occupancy meter tinted by load, and a 12-column grid of bed cells colored by status. This is the dashboard's primary visualization.",
+            "components": ["Card", "Card.Header", "Card.Body", "Heading", "Badge", "Progress", "EChart (heatmap)"],
+            "restyle": "the mockup's data-bed CSS-grid paint is rebuilt as four fancy-echarts <EChart> heatmaps (one per ward) — a piecewise visualMap maps the status dimension to fixed clinical colors (occupied #EF4444 / open #22C55E / cleaning #F59E0B), grid full-bleed with cell borders as gaps + rounded caps; each host div uses aspect-ratio 12/rows so cells stay square. Legend chips are <Badge>s with a ::before swatch driven by a --dbv-swatch var; each ward header carries a restyled <Progress> occupancy meter whose fill color keys off load (hot rose / warm amber / ok green)."
+        },
+        {
+            "name": "KPI stat tiles",
+            "what": "2x2 grid of four big-number tiles: Total occupancy 87% (amber), ER avg wait 38m (rose), Discharges today 42 (green), Nurse ratio 1:4 (blue). Each is a centered 32px mono value over an 11px muted label — except Total occupancy, promoted to a radial gauge.",
+            "components": ["Card", "Card.Body", "EChart (gauge)"],
+            "restyle": "four <Card variant=outlined padding=none> as dark KPI tiles (14px radius, semantic-colored 32px mono value). The 'Total occupancy' tile promotes its number to a fancy-echarts <EChart> full-circle gauge (value 87, amber progress arc on a #1C2942 track, mono center read-out); the other three stay as number tiles. All charts mount behind a client-only flag with a static-number fallback for SSR."
+        },
+        {
+            "name": "ER triage queue",
+            "what": "Right panel with a header (siren icon + 'ER triage queue' + mono '14 waiting') over a scrolling list of 6 patient rows: a square triage-level badge (1/2/3), the chief complaint, patient id + wait time, and a right-aligned severity label (Critical/Urgent/Minor). Chest pain ER-204 6m Critical … Sprained ankle ER-209 54m Minor.",
+            "components": ["Card", "Card.Header", "Card.Body", "Table", "Table.Head", "Table.Column", "Table.Row", "Table.Cell", "Badge", "lucide-react Siren"],
+            "restyle": "<Card> panel wrapping a <Table> flattened to a headerless dark list (transparent rows on #16223A dividers, internal scroll). The mockup's data-tri / data-triL DOM paint is rebuilt as props→style computed in render: the triage level is a square <Badge> whose background comes from a level→color map (1 #DC2626 / 2 #F59E0B / 3 #0EA5A0) and the severity label color from a parallel map (1 #FB7185 / 2 #F59E0B / 3 #0EA5A0). The lucide CDN + createIcons() is replaced by a lucide-react <Siren>."
+        }
+    ],
+    "palette": [
+        { "component": "Navbar / Navbar.Brand / Navbar.Items", "restyle": "flattened to a transparent, borderless command-wall header; brand = 'V' mark + wordmark + mono sublabel (an Inertia Link), items = capacity Badge + mono clock forced visible at every width." },
+        { "component": "Card / Card.Header / Card.Body", "restyle": "every surface — the ward-map panel, the four KPI tiles, and the triage panel — #101A2C on a #1C2942 hairline at 14px radius; headers as title/legend or title/count rows." },
+        { "component": "EChart (heatmap)", "restyle": "the primary viz — four per-ward bed heatmaps, a piecewise visualMap coloring the status dimension (occupied/open/cleaning), cell borders as gaps + rounded caps, aspect-ratio hosts for square cells, animation off." },
+        { "component": "EChart (gauge)", "restyle": "the 'Total occupancy' tile — a full-circle radial gauge, amber progress arc on a #1C2942 track, no pointer, mono center read-out (87%)." },
+        { "component": "Table / Table.Head / Table.Column / Table.Row / Table.Cell", "restyle": "the ER triage queue flattened to a headerless dark, internally-scrolling list — transparent rows, #16223A dividers, a level-badge column + a complaint/meta column + a right-aligned severity column." },
+        { "component": "Badge", "restyle": "three roles — the 'ER 92% capacity' header pill (transparent rose + glowing dot), the three bed-map legend chips (transparent + ::before swatch), and the square data-driven triage-level badge." },
+        { "component": "Progress", "restyle": "the per-ward occupancy meters — slim 4px bars on a #1C2942 track, fill colored by load (hot rose / warm amber / ok green)." },
+        { "component": "Heading / Text", "restyle": "the ward-map panel title (Heading) and the footer colophon note (Text) crediting the restyled primitives." },
+        { "component": "lucide-react Siren", "restyle": "the rose triage-header icon, replacing the mockup's lucide CDN + window.lucide.createIcons() paint." },
+        { "component": "Link (@inertiajs/react)", "restyle": "the brand lockup + 'Back to the gallery' footer link, both to /inspiration/dashboards." }
+    ],
+    "contentArchetype": "A single-snapshot operational status wall: one moment (14:06, day shift) of a fictional hospital's bed command center. Real ops data — per-ward bed occupancy maps across ICU / ER / Medical-Surgical / Maternity, four headline KPIs (total occupancy, ER average wait, discharges today, nurse ratio), and a live ER triage queue with acuity levels, complaints, and wait times. Everything is read-only and glanceable — the kind of wall-mounted board a charge nurse scans from across the room.",
+    "remix": "Swap the rose-on-navy clinical palette + status ramp and this becomes any capacity/triage command wall: hotel housekeeping (rooms occupied/dirty/clean), a data-center rack map (nodes up/idle/draining), a parking or berth board, or a support war-room. The per-ward EChart heatmap generalizes to any categorical status grid via the piecewise visualMap; the promoted-gauge KPI + big-number tiles are a reusable stat row; the triage Table is any priority queue by re-labeling the level→color maps. Blend with a lighter dashboard blueprint for a daytime clinic view, or add a Tabs view-switcher for By-ward / By-floor / Waitlist without touching the shell."
+}

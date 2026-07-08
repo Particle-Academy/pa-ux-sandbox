@@ -1,0 +1,74 @@
+{
+  "id": "helios",
+  "name": "Helios",
+  "note": "A home-solar system as a warm, homeowner-friendly energy surface.",
+  "mode": "dark",
+  "thesis": "A front-of-house home-solar dashboard rendered entirely from restyled Fancy primitives — deliberately NOT an operator console. No app-shell sidebar: a single centered 1080px column over a near-black olive canvas, big 18px-radius cards, large solar-gold numerals, and an airy, consumer-friendly cadence. The point is that Navbar + Card + Badge + Heading + Text, dressed in scoped CSS and fed by fancy-echarts, read as native to a Tesla/Enphase-class homeowner app — the energy-flow tiles, the intraday production curve, the Powerwall ring, and the monthly bars are all kit, not bespoke widgets.",
+  "tokens": {
+    "bg": "#0F1408 near-black olive canvas with #171E0C surface cards and a warm #3A2E06→#65500A gradient on the savings card",
+    "fg": "#E8EFD8 primary warm off-white / #9AA67E muted olive captions & labels / #7E8B5E fainter olive (bar labels) / #5E6B44 faint mono axis",
+    "accent": "solar gold #FACC15 (hero, solar curve, gauge arc, savings figure, brand gradient end) with usage lime #65A30D / #4D7C0F; per-flow-node hues — solar #FACC15, home #84CC16 on deep-lime #65A30D icon, battery cyan #22D3EE, grid slate #94A3B8, each on a 16%-tint tile",
+    "fontDisplay": "Geist (var(--font-sans)); the hero '6.4 kW' is 30px / 800 at -0.02em, the savings '$184' is 34px / 800",
+    "fontMono": "Geist Mono (var(--font-mono)) reserved for the chart axis labels (6a/9a/12p… tick row rendered by ECharts in mono)",
+    "radius": "18px on every card, 16px on the flow-node icon tiles, 8px on the 'H' logo badge, 4px top-rounded ([4,4,0,0]) monthly bar columns, round-cap on the gauge arc",
+    "border": "1px #2A3416 hairlines on cards + the colophon rule; the same #2A3416 doubles as the gauge/ring track color; the savings card is borderless (gradient fill); no shadows — depth is surface-over-canvas contrast",
+    "motion": "none in the mockup (render-driven paint() only); recreated as a single 0.5s ease mount rise on cards plus a slow 3.4s sun-glow pulse on the peak-sun icon — both honor prefers-reduced-motion"
+  },
+  "layout": "A centered single-column canvas (max-width 1080px, no persistent sidebar) under a slim restyled Navbar header: the gradient 'H' mark + 'Helios' wordmark links back to the collection index at left; a sun-icon 'Peak sun · 2:10p' Badge plus a '32 Maple St' address sit right. Below it a single hero KPI line ('6.4 kW — covering 118% of your use'), then a full-width energy-flow Card (a 4-up flex row of tinted icon tiles), then a 1.5fr/1fr responsive grid — a today's-production combo chart card at left, a stacked Powerwall-ring card + gradient savings card at right — and finally a full-width monthly production-vs-consumption bar card. The grid collapses to one column under 900px. A hairline colophon closes the page.",
+  "sections": [
+    {
+      "name": "Header / brand + status",
+      "what": "Gradient 'H' badge + 'Helios' wordmark linking to the dashboards index; a sun-icon 'Peak sun · 2:10p' status chip and a '32 Maple St' location label pushed right in muted olive.",
+      "components": ["Navbar", "Badge", "Link", "Icon (lucide Sun)"],
+      "restyle": "Navbar is stripped of its default bg/border/padding and laid out as a transparent flex row; Navbar.Items is forced visible (overriding its hidden-below-md default) and pushed right with margin-left:auto. The 'H' mark is a 26px 8px-radius tile with a 135deg #ca8a04→#facc15 gradient over #3A2E06 ink. The peak-sun Badge is flattened to chrome-less inline text (fill/border/padding zeroed) carrying a #FACC15 lucide Sun that slowly glows."
+    },
+    {
+      "name": "Producing-now hero KPI",
+      "what": "Eyebrow 'Producing now' over a 30px '6.4 kW' headline with a lighter trailing caption '— covering 118% of your use'. A single hero stat, not a KPI row.",
+      "components": ["Heading", "Text"],
+      "restyle": "Text renders the muted eyebrow; Heading (as h1) is dialed to 30px / 800 at -0.02em tracking for the solar-gold-adjacent figure, with a nested 16px / 500 muted caption span so the two weights share one line."
+    },
+    {
+      "name": "Energy-flow diagram",
+      "what": "Full-width card with a 4-up flex row of flow nodes — Solar 6.4 kW (sun), Home use 5.4 kW (home), Battery +1.0 kW (battery-charging), Grid 0.0 kW (zap) — each a 60px rounded icon tile with a tinted background, a large color-coded value, and a muted label.",
+      "components": ["Card", "Icon (lucide Sun / Home / BatteryCharging / Zap)"],
+      "restyle": "Card forced to the 18px olive surface panel, padding='none' with a 26px body. Each node is a hand-laid flex column: a 60px 16px-radius icon tile whose tinted background + icon color come from an inline per-node map (solar gold / deep-lime / cyan / slate on matching 16% tints), a 22px/800 value in the node's bright hex, and a 12px muted label. A natural Human+ remix renders this as an EChart sankey to show real kW flow."
+    },
+    {
+      "name": "Today's production curve",
+      "what": "Left card (1.5fr) titled 'Today's production' with a '42.8 kWh generated' sub-caption and an inline yellow-solar / green-used legend; body is an area+line chart — a filled solar production curve peaking near midday and a dashed lime usage line over a 6a–9p axis.",
+      "components": ["Card", "EChart", "Heading"],
+      "restyle": "Card header splits a Heading title + mono-adjacent sub-caption from a hand-built two-swatch legend. The chart is a fancy-echarts two-series line: series 1 'solar' a 2.5px #FACC15 stroke over a vertical 0.4→0 gold areaStyle gradient; series 2 'used' a 2px dashed #65A30D line with no fill. The x-axis is a category of 10 points with blank in-betweens so only 6a/9a/12p/3p/6p/9p show in faint mono; y-axis hidden. Replaces the mockup's fixed 10-point SVG path pair."
+    },
+    {
+      "name": "Powerwall battery ring",
+      "what": "Right-column upper card: an 82%-filled circular ring (gold arc on a dark #2A3416 track) with a centered '82%' beside a 'Powerwall / Charging · full by 3p / ≈ 11.2 kWh stored' readout.",
+      "components": ["Card", "EChart", "overlay div"],
+      "restyle": "Card body lays a 90px ring beside the readout. The ring is a fancy-echarts single gauge (startAngle 90 / endAngle -270, value 82): an 8px round-cap #FACC15 progress arc over an 8px #2A3416 axisLine track, with pointer / ticks / splitLine / labels / detail all hidden; the '82%' is an absolute-centered overlay div so the numeral uses the app font. Replaces the mockup's imperative rotated-SVG two-circle ring."
+    },
+    {
+      "name": "Saved-this-month card",
+      "what": "Right-column lower card on a warm gradient: eyebrow 'Saved this month', a 34px gold '$184', and a caption '1.2 tons CO₂ avoided · 4,210 mi equiv'.",
+      "components": ["Card"],
+      "restyle": "A borderless Card variant (variant='flat', padding='none') whose surface is overridden to a 135deg #3A2E06→#65500A gradient; the body stacks a #E8D77E eyebrow, a 34px/800 #FACC15 figure, and a #C8B96E caption. It flexes to fill the right column's remaining height beside the production card."
+    },
+    {
+      "name": "Production vs consumption bars",
+      "what": "Full-width card titled 'Production vs consumption' with a 'Last 6 months' caption; a grouped column chart of Feb–Jul, each month a pair of thin bars — production gold beside consumption lime.",
+      "components": ["Card", "EChart", "Heading"],
+      "restyle": "Card header pairs a Heading title with a muted 'Last 6 months' caption. The chart is a fancy-echarts grouped bar: two series over [Feb…Jul] — production [50,66,82,92,100,96] in #FACC15 and consumption [64,60,56,58,62,66] in #4D7C0F — as 12px top-rounded ([4,4,0,0]) paired columns with a small barGap, y-axis hidden, faint olive category labels, dark hairline shadow tooltip. Replaces the mockup's data-h div bars."
+    }
+  ],
+  "palette": [
+    { "component": "Navbar", "restyle": "Chrome stripped to a transparent flex bar; Brand is a gradient-mark Link back to the gallery, Items forced visible (overriding hidden-below-md) and right-aligned with margin-left:auto. The whole header identity rides on the primitive, not a hand-rolled <header>." },
+    { "component": "Card", "restyle": "The universal panel — #171E0C surface, 1px #2A3416 border, 18px radius, no shadow, padding='none' with header/body padding supplied by scoped CSS. Worn four ways: the flow diagram, the production panel, the Powerwall card, and the monthly panel; the savings card is the borderless flat variant with a warm gradient fill. A staggered 0.5s mount rise animates each in." },
+    { "component": "EChart (fancy-echarts)", "restyle": "The three data surfaces — the production area+line combo (gold gradient-fill stroke + dashed lime usage line), the Powerwall gauge (round-cap gold arc on a #2A3416 track, 82%), and the monthly grouped bar (gold production vs lime consumption, top-rounded thin columns) — all mounted behind a client-only flag and SSR-safe, replacing the mockup's SVG path, rotated-SVG ring, and data-h div bars. registerAll() runs once at module top." },
+    { "component": "Badge", "restyle": "Flattened to a chrome-less inline chip (fill / border / box-shadow / padding zeroed) so the 'Peak sun · 2:10p' status reads as plain muted-olive text hosting a glowing #FACC15 lucide Sun." },
+    { "component": "Heading", "restyle": "Drives the 30px/800 hero '6.4 kW' figure (as h1) and the small semibold card titles ('Today's production', 'Production vs consumption'); type stays on var(--font-sans) with -0.02em tracking on the big numerals." },
+    { "component": "Text", "restyle": "Carries the muted 'Producing now' eyebrow and the faint olive colophon note at the small/xs sizes." },
+    { "component": "Icon (lucide-react)", "restyle": "Sun / Home / BatteryCharging / Zap render the four energy-flow node glyphs inside 60px tinted tiles, each colored from a per-node map; a second Sun sits in the peak-sun Badge with a slow drop-shadow glow." },
+    { "component": "Link (Inertia)", "restyle": "Wraps the brand lockup and the colophon 'Back to the gallery' link — SPA navigation back to /inspiration/dashboards, styled as plain warm-off-white / muted-olive text." }
+  ],
+  "contentArchetype": "A fictional home-solar system (Helios at 32 Maple St) showing one homeowner's live energy picture: a producing-now headline (6.4 kW covering 118% of use), a real-time energy-flow diagram (solar → home / battery / grid), today's production-vs-usage curve (42.8 kWh generated), a Powerwall state-of-charge ring (82%, charging, ~11.2 kWh stored), a savings tally ($184 this month, 1.2 tons CO₂ avoided), and a 6-month production-vs-consumption comparison. All figures are invented but internally consistent; the surface is purely informational (render-driven, no user-mutated state in the mock).",
+  "remix": "Reuse the centered-canvas + big-radius-card + solar-gold skeleton for any consumer telemetry surface — an EV charging app, a smart-home energy monitor, a water/gas utility portal, a fitness or sleep tracker. Swap the flow-node color map + the gold/lime accent pair to rebrand, keep the airy homeowner cadence (large numerals, 20–26px card padding, muted olive captions). Lift the energy-flow-tiles pattern for any 'sources feeding a system' readout, and the gauge-with-overlay for any single state-of-charge / capacity metric. The mockup's remix hook is turning the static flow row into an EChart sankey for actual kW routing. The whole look lives in scoped helios.css + local tokens, so the same React tree restyles wholesale by editing one file."
+}

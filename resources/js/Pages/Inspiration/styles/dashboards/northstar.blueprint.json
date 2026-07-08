@@ -1,0 +1,68 @@
+{
+  "id": "northstar",
+  "name": "Northstar",
+  "note": "A SaaS growth console — cohorts, funnels, and MRR movement.",
+  "mode": "dark",
+  "thesis": "A data-forward SaaS product-analytics back-office rendered entirely from restyled Fancy primitives. The point is that a chromeless growth console — no sidebar, just a slim topbar over a dense vertical stack of a KPI band, a hero retention heatmap, and a funnel + waterfall row — reads as native to an Amplitude / Mixpanel / ChartMogul-class surface using nothing but Navbar + Tabs + Card + Badge + Progress dressed in scoped CSS and fed by six fancy-echarts <EChart>s. Near-black canvas, floating surface cards on hairline borders, one violet accent with sky / green / pink metric strokes, and compact mono numerals throughout.",
+  "tokens": {
+    "bg": "#0B0A12 near-black canvas with #130F1F surface cards, a #100E1A topbar band, and a #1B1729 funnel track / inset plate",
+    "fg": "#D9D6E4 primary / #EDEAF6 headings + 30px KPI figures / #9A92B8 secondary + y-axis labels / #7A719A muted mono labels / #6A6390 faint brand subtitle",
+    "accent": "violet #8B5CF6 (brand mark, active range pill, funnel fill, heatmap ramp, End-of-waterfall) paired with sky #38BDF8 (MAU spark, Expand), positive green #34D399 (deltas, NRR spark, New), and churn/negative pink #F472B6 (Churn spark + step)",
+    "fontDisplay": "Geist (var(--font-sans)); KPI figures are 30px / 800 weight at -0.03em tracking",
+    "fontMono": "Geist Mono (var(--font-mono)) for every numeric surface — range pills, KPI figures, deltas, funnel counts/rates, heatmap cell % + week/cohort axes, waterfall value tags",
+    "radius": "14px on cards + panels, 7px on range pills / funnel bars, 5px on heatmap cells, 7px on the brand 'N' mark",
+    "border": "1px hairlines: #221D33 card borders, #201C30 topbar divider; no shadows — depth is pure surface-over-canvas contrast",
+    "motion": "none in the mockup (imperative paint() only); recreated with a single ~0.4s staggered mount rise on the KPI cards / hero / panels plus a 0.5s ease width tween on the funnel fills — honors prefers-reduced-motion"
+  },
+  "layout": "A chromeless single-column back-office (no persistent sidebar) under a slim 52px topbar: a restyled Navbar carries the violet-gradient 'N' mark + 'Northstar' wordmark with a muted '/ Growth' subtitle (linking to the collection index) at left, and a 7d/30d/90d date-range switcher pushed right. The body is a 20px-padded vertical stack: a 4-up KPI metric band (repeat(4,1fr), 12px gap), a full-width hero retention-cohort heatmap card, then an even 1fr/1fr row (16px gap) holding the activation funnel beside the MRR-movement waterfall. The KPI band collapses to 2-up and the lower row to a single column under 900px. A hairline colophon closes the page.",
+  "sections": [
+    {
+      "name": "topbar",
+      "what": "Violet-gradient 'N' mark + 'Northstar / Growth' wordmark linking back to the gallery, with a 7d / 30d / 90d date-range switcher (30d active) on the right.",
+      "components": ["Navbar", "Tabs", "Link"],
+      "restyle": "Navbar is stripped of its default white bg / padding and laid out as a 52px #100E1A flex bar with a #201C30 bottom hairline, sticky under the gallery frame (z-index 10). Navbar.Brand hosts a Link whose 24px 7px-radius 'N' tile carries a 135deg #1e1b4b→#8b5cf6 gradient beside the wordmark + faint '/ Growth' subtitle. Navbar.Items is forced visible (overriding its hidden-below-md default) and pushed right with margin-left:auto."
+    },
+    {
+      "name": "date-range switcher",
+      "what": "Three mono pills 7d / 30d / 90d; the active one (30d) fills solid violet with white text, the rest transparent + muted. Controlled state.",
+      "components": ["Tabs"],
+      "restyle": "A controlled Tabs (List only, no Panels) repurposed from the underline variant into mono 11px pills: transparent + #7A719A by default, the aria-selected pill gets a solid #8B5CF6 fill with white text. Bound to a `range` useState (30d default) so clicking swaps the active pill — the controlled handle an agent bridge could drive."
+    },
+    {
+      "name": "KPI metric band",
+      "what": "Four stat cards — MRR $412k (▲8.1%), MAU 84.2k (▲6.4%), Net revenue retention 118% (▲3pts), Churn 2.4% (▼0.3%) — each with an uppercase label, a colored delta chip, a 30px figure, and a full-width per-metric sparkline.",
+      "components": ["Card", "Badge", "EChart", "Heading"],
+      "restyle": "Each KPI is a padding='none' Card reskinned to the #130F1F 14px surface. The header row pairs an 11px uppercase #7A719A label with a Badge flattened to a chrome-less colored delta chip (fill/border/padding zeroed, color set inline per metric). Below sits a 30px/800 mono figure and a 24px-tall fancy-echarts sparkline — an axis-less smooth line with a per-metric stroke (MRR violet, MAU sky, NRR green, Churn pink) and a fading vertical gradient areaStyle, series precomputed from the mockup's Math.sin spark(seed)."
+    },
+    {
+      "name": "retention cohorts (hero)",
+      "what": "A cohort heatmap: monthly signup cohorts Jan→Jul (each with its size 1,820→3,310), columns = weeks since join W0..W12, each cell % still active and tinted by that value; '—' plates for weeks not yet elapsed, with a low↔high violet legend gradient top-right.",
+      "components": ["Card", "EChart", "Heading", "Text"],
+      "restyle": "A full-width Card whose header splits a 'Retention cohorts' Heading + muted Text subtitle from a hand-rolled low→high violet gradient legend bar. The body hosts a fancy-echarts heatmap: cohort × week matrix, cohorts reversed so Jan sits on top, each cohort's size folded into the mono y-axis label, weeks on a top x-axis. Per-cell tint is computed exactly like the mockup — rgba(139,92,246, 0.14 + v/100*0.78) — with '—' nulls given a muted #15111F plate + #3A3450 text; 5px rounded cells with surface-colored 3px borders fake the grid gaps, and the % is drawn inside each cell in mono. Replaces the mockup's imperative data-ret paint()."
+    },
+    {
+      "name": "activation funnel",
+      "what": "Four descending stages — Signed up 12,400·100% → Activated 5,704·46% → Habit (wk2) 3,472·28% → Converted to paid 1,116·9% — each a labelled count·rate over a violet-gradient fill bar.",
+      "components": ["Card", "Progress", "Heading"],
+      "restyle": "A panel Card whose body stacks four rows, each pairing a label + mono count·rate caption above a restyled Progress bar. Progress is reskinned via its root>track>fill DOM: a 22px #1B1729 rounded track carrying a 90deg #8B5CF6→#c4b5fd gradient fill whose width animates on mount. Uses the mockup's funnel percentages (100/52/34/16) so the bars mirror the data-bar widths."
+    },
+    {
+      "name": "MRR movement waterfall",
+      "what": "A floating column waterfall for the month netting +$31k: Start $381k → New +$28k → Expand +$14k → Churn −$11k → End $412k, color-coded per step (End matches the MRR KPI).",
+      "components": ["Card", "EChart", "Heading", "Text"],
+      "restyle": "A panel Card whose header pairs an 'MRR movement' Heading with a 'This month · net +$31k' Text (the net in green mono). The body hosts a fancy-echarts stacked-bar waterfall: a transparent base series offsets each visible delta segment so New/Expand/Churn float between Start and End columns, each bar colored per step (#4C4470 / #34D399 / #38BDF8 / #F472B6 / #8B5CF6) with a mono value tag above it. Replaces the mockup's raw data-h bars with a semantically correct floating waterfall."
+    }
+  ],
+  "palette": [
+    { "component": "Navbar", "restyle": "Chrome stripped to a 52px #100E1A flex bar with a bottom hairline; Brand is a gradient-mark Link, Items forced visible and right-aligned. The whole topbar identity rides on the primitive, not a hand-rolled <header>." },
+    { "component": "Tabs", "restyle": "Underline variant repurposed as a segmented date-range switcher (List only, no Panels): mono 11px pills, muted by default, solid violet fill + white text on the aria-selected segment. Controlled by a `range` useState." },
+    { "component": "Card", "restyle": "The universal panel — #130F1F surface, 1px #221D33 border, 14px radius, no shadow. padding='none' with header/body padding supplied by scoped CSS; a staggered mount rise animates the KPI cards, hero, and lower panels in. Used for the 4 KPI tiles, the hero heatmap card, and both lower panels." },
+    { "component": "Badge", "restyle": "Flattened to a chrome-less chip so each KPI delta reads as plain colored text (all green in the mock — even Churn ▼, since churn falling is good); the soft variant's fill/border/padding are zeroed and the color is set inline per metric." },
+    { "component": "Progress", "restyle": "Reskinned four times into the activation-funnel bars via its root>track>fill DOM: a 22px #1B1729 rounded track and a 90deg violet→#c4b5fd gradient fill with a width tween on mount. Controlled by each stage's percentage." },
+    { "component": "EChart (fancy-echarts)", "restyle": "Six data surfaces — four axis-less KPI sparklines (per-metric stroke + fading gradient fill), the hero retention heatmap (per-cell violet tint, muted null plates, mono in-cell %, size in the y-axis label), and the MRR floating waterfall (transparent base series + color-coded delta segments + mono value tags) — all client-only mounted behind a `mounted` flag with fixed-height containers, SSR-safe and deterministic (Math.sin, no Math.random/Date.now). registerAll() runs once at module top." },
+    { "component": "Heading / Text", "restyle": "Heading sets the small semibold card/panel titles ('Retention cohorts', 'Activation funnel', 'MRR movement') and the colophon head; Text carries the muted card subtitles and the mono colophon note. Type stays on var(--font-sans) with numerics escalated to var(--font-mono)." },
+    { "component": "Link (@inertiajs/react)", "restyle": "Wraps the brand lockup, routing back to /inspiration/dashboards without a full reload — the topbar identity is a real navigation affordance, not decoration." }
+  ],
+  "contentArchetype": "A fictional SaaS product-analytics tool (Northstar) showing one workspace's growth health: four headline KPIs (MRR, MAU, net revenue retention, churn) each with a delta + sparkline, a retention-cohort heatmap (monthly cohorts × weeks-since-join, triangular so recent cohorts trail off into '—'), an activation funnel from signup to paid, and an MRR-movement waterfall (start → new → expand → churn → end). All figures are invented but internally consistent — the waterfall's End equals the MRR KPI — and the only 'live' behavior is the date-range switcher toggling its active pill.",
+  "remix": "Reuse the chromeless-topbar + dense-vertical-stack skeleton for any product/growth analytics surface (a marketing dashboard, an ops health board, a churn/retention war-room, a fundraising-metrics view) — swap the metric set + the violet/sky/green/pink stroke map to rebrand, keep the hairline-panel discipline and mono-numeral density. Lift the per-cell-tinted EChart heatmap into any cohort/retention/calendar matrix, and the transparent-base-series waterfall into any bridge/variance chart (revenue movement, headcount change, budget vs actual). To warm it toward a consumer look, lighten the canvas and round radii; to push it more terminal, tighten density and drop the mount motion. The whole look lives in scoped northstar.css + local tokens, so the same React tree restyles wholesale by editing one file."
+}

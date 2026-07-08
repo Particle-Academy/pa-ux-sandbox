@@ -12,16 +12,20 @@ import Griddle from "./griddle";
 import Vertex from "./vertex";
 import Relay from "./relay";
 import Voyage from "./voyage";
+import Roster from "./roster";
+import Helios from "./helios";
+import Northstar from "./northstar";
+import Meridian from "./meridian";
+import Vitals from "./vitals";
+import Still from "./still";
+import Amplify from "./amplify";
 
 /**
- * The Dashboards collection's style-mounting registry — fictional apps
+ * The Dashboards collection's style-mounting registry — twenty fictional apps
  * (user-facing + admin), each a dashboard built to demonstrate the Fancy UI Kit
  * (fancy-echarts EChart + Card + Table + Kanban + Timeline + Progress + …).
  * Same rules as the other collections: STATIC imports (Inertia SSR), each page
  * self-contained with its co-located ./{id}.css.
- *
- * Dashboards 14–20 (roster, helios, northstar, meridian, vitals, still,
- * amplify) are designed + reviewed and land in the next batch.
  */
 export const DASHBOARDS_STYLES: Record<string, StyleComponent> = {
     pulse: Pulse,
@@ -37,4 +41,11 @@ export const DASHBOARDS_STYLES: Record<string, StyleComponent> = {
     vertex: Vertex,
     relay: Relay,
     voyage: Voyage,
+    roster: Roster,
+    helios: Helios,
+    northstar: Northstar,
+    meridian: Meridian,
+    vitals: Vitals,
+    still: Still,
+    amplify: Amplify,
 };

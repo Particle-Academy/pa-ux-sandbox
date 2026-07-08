@@ -126,9 +126,13 @@ class GalleryRegistry
                 ['id' => 'vertex', 'num' => '11', 'name' => 'Vertex', 'cuisine' => 'Crypto & trading', 'note' => 'Portfolio, watchlist, candlesticks.', 'surface' => 'user-facing', 'mode' => 'dark', 'swatch' => 'linear-gradient(120deg,#0b0f14,#22c55e)'],
                 ['id' => 'relay', 'num' => '12', 'name' => 'Relay', 'cuisine' => 'Support helpdesk', 'note' => 'Ticket queue, SLA, CSAT, agents.', 'surface' => 'admin', 'mode' => 'light', 'swatch' => 'linear-gradient(120deg,#4338ca,#38bdf8)'],
                 ['id' => 'voyage', 'num' => '13', 'name' => 'Voyage', 'cuisine' => 'Airline & travel', 'note' => 'Trips, boarding, miles, itineraries.', 'surface' => 'user-facing', 'mode' => 'light', 'swatch' => 'linear-gradient(120deg,#0369a1,#38bdf8)'],
-                // Dashboards 14–20 (roster, helios, northstar, meridian, vitals, still, amplify)
-                // are designed + reviewed (sandbox/mom-n-pops/reviews/dash-*.json) and land in the
-                // next batch — held back only by a weekly build-capacity limit, not by design.
+                ['id' => 'roster', 'num' => '14', 'name' => 'Roster', 'cuisine' => 'HR & people ops', 'note' => 'Headcount, attrition, hiring pipeline.', 'surface' => 'admin', 'mode' => 'light', 'swatch' => 'linear-gradient(120deg,#5b21b6,#a78bfa)'],
+                ['id' => 'helios', 'num' => '15', 'name' => 'Helios', 'cuisine' => 'Solar & energy', 'note' => 'Production, usage, savings, battery.', 'surface' => 'user-facing', 'mode' => 'dark', 'swatch' => 'linear-gradient(120deg,#ca8a04,#facc15)'],
+                ['id' => 'northstar', 'num' => '16', 'name' => 'Northstar', 'cuisine' => 'SaaS product analytics', 'note' => 'MAU, retention cohorts, funnel, churn.', 'surface' => 'admin', 'mode' => 'dark', 'swatch' => 'linear-gradient(120deg,#1e1b4b,#8b5cf6)'],
+                ['id' => 'meridian', 'num' => '17', 'name' => 'Meridian', 'cuisine' => 'Personal banking', 'note' => 'Accounts, cards, transactions, transfers.', 'surface' => 'user-facing', 'mode' => 'dark', 'swatch' => 'linear-gradient(120deg,#0f172a,#38bdf8)'],
+                ['id' => 'vitals', 'num' => '18', 'name' => 'Vitals', 'cuisine' => 'Hospital operations', 'note' => 'Bed occupancy, ER wait, staffing.', 'surface' => 'admin', 'mode' => 'dark', 'swatch' => 'linear-gradient(120deg,#be123c,#fb7185)'],
+                ['id' => 'still', 'num' => '19', 'name' => 'Still', 'cuisine' => 'Meditation & habit', 'note' => 'Sessions, streaks, mood, minutes.', 'surface' => 'user-facing', 'mode' => 'dark', 'swatch' => 'linear-gradient(120deg,#0f766e,#5eead4)'],
+                ['id' => 'amplify', 'num' => '20', 'name' => 'Amplify', 'cuisine' => 'Social media manager', 'note' => 'Follower growth, engagement, schedule.', 'surface' => 'admin', 'mode' => 'light', 'swatch' => 'linear-gradient(120deg,#c026d3,#f472b6)'],
             ],
         ],
     ];

@@ -1,0 +1,657 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Dashboards · Roster (id "roster", light)
+   A light-lavender back-of-house RECRUITING board — a 52px white topbar (gradient
+   "R" mark + Roster/Recruiting wordmark, a Pipeline/Roles/Calendar segmented
+   switcher, a mono meta count) over a full-bleed work area, closed by a pinned
+   4-cell KPI strip. The hero is a horizontal Kanban of five funnel stages; each
+   candidate is a compact restyled card (initials Avatar + 5-segment fit-score
+   meter + mono time-in-stage stamp).
+
+   Every rule is scoped under .dbroster-root; every class is prefixed dbroster-.
+   Page-level z-index stays UNDER 30 (the neutral GalleryFrame owns 30+). The
+   Fancy primitives (Navbar, Tabs, Kanban, Card, Avatar, Progress, Badge, Table,
+   Timeline, Pillbox, Separator, EChart) are restyled HARD via scoped CSS + their
+   data-react-fancy-* hooks so they wear this violet HR idiom natively.
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.dbroster-root {
+    /* ── Scoped light-lavender tokens ────────────────────────────────────── */
+    --r-bg: #faf8fd; /* app canvas */
+    --r-surface: #ffffff; /* cards + bars */
+    --r-fg: #241c33; /* primary text */
+    --r-fg-2: #5b5170; /* secondary / inactive tab */
+    --r-muted: #8a7fa0; /* muted labels + roles */
+    --r-muted-2: #a99ec0; /* faint mono (card age) */
+    --r-border: #ece7f4; /* hairline borders */
+    --r-border-soft: #f1edf8; /* softer dividers */
+    --r-accent: #7c3aed; /* violet-600 accent */
+    --r-accent-2: #8b5cf6; /* violet-500 */
+    --r-track: #e7def5; /* score-meter empty / progress track */
+    --r-tabtrack: #f1ecfb; /* segmented switcher track */
+    --r-green: #0f9d58; /* positive delta */
+
+    /* Full-bleed breakout: the gallery shell centres content in a padded,
+       max-w-7xl <main>; this recruiting console must run edge to edge. */
+    width: 100vw;
+    max-width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+
+    /* A locked, board-first workspace that fills the viewport below the frame. */
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 52px);
+    height: calc(100dvh - 52px);
+    min-height: 560px;
+    overflow: hidden;
+
+    background: var(--r-bg);
+    color: var(--r-fg);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+.dbroster-root *,
+.dbroster-root *::before,
+.dbroster-root *::after {
+    box-sizing: border-box;
+}
+
+.dbroster-root ::selection {
+    background: color-mix(in oklch, var(--r-accent) 22%, transparent);
+}
+
+/* Tabs root = the app column (Navbar + Panels + KPI footer). */
+.dbroster-app {
+    flex: 1;
+    min-width: 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ── Topbar — react-fancy <Navbar> flattened to a 52px white strip ───────── */
+.dbroster-root .dbroster-topbar {
+    flex: none;
+    height: 52px;
+    padding: 0 20px;
+    background: var(--r-surface);
+    border-bottom: 1px solid var(--r-border) !important;
+    display: flex;
+    align-items: center;
+    z-index: 6;
+}
+
+.dbroster-root .dbroster-topbar > div {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.dbroster-navleft {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-width: 0;
+}
+
+.dbroster-navright {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Brand — gradient "R" mark + Roster / Recruiting wordmark. */
+.dbroster-root .dbroster-brand {
+    display: flex;
+    align-items: center;
+}
+
+.dbroster-brand__link {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    text-decoration: none;
+    color: var(--r-fg);
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.dbroster-brand__mark {
+    width: 24px;
+    height: 24px;
+    border-radius: 7px;
+    display: grid;
+    place-items: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: #fff;
+    background: linear-gradient(135deg, #5b21b6, #a78bfa);
+    flex: none;
+}
+
+.dbroster-brand__word {
+    font-size: var(--text-sm);
+    letter-spacing: -0.01em;
+}
+
+.dbroster-brand__sub {
+    font-weight: 400;
+    color: var(--r-muted);
+    font-size: 13px;
+}
+
+/* Segmented view switcher — Tabs.List (variant="pills") restyled. */
+.dbroster-root .dbroster-tabs {
+    display: flex;
+    gap: 2px;
+    background: var(--r-tabtrack);
+    border-radius: 9px;
+    padding: 3px;
+}
+
+.dbroster-root .dbroster-tabs [data-react-fancy-tabs-tab] {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 13px;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--r-fg-2);
+    box-shadow: none;
+    transition: background var(--dur-base, 0.18s) var(--ease-out, ease),
+        color var(--dur-base, 0.18s) var(--ease-out, ease);
+}
+
+.dbroster-root .dbroster-tabs [data-react-fancy-tabs-tab]:hover {
+    color: var(--r-fg);
+}
+
+.dbroster-root .dbroster-tabs [data-react-fancy-tabs-tab][aria-selected="true"] {
+    background: #fff;
+    color: var(--r-accent);
+    box-shadow: 0 1px 2px rgba(40, 20, 60, 0.1);
+}
+
+/* Live dot + mono meta count on the right. */
+.dbroster-live {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--r-accent);
+    box-shadow: 0 0 8px color-mix(in oklch, var(--r-accent) 60%, transparent);
+    animation: dbroster-pulse 1.8s ease-in-out infinite;
+    flex: none;
+}
+
+.dbroster-root .dbroster-meta {
+    background: transparent !important;
+    border: 0 !important;
+    padding: 0 !important;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--r-muted) !important;
+    white-space: nowrap;
+}
+
+/* ── Work area — Tabs.Panels; one panel fills at a time ──────────────────── */
+.dbroster-body {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.dbroster-panel {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* ── Pipeline board — the Kanban (data-react-fancy-kanban) ───────────────── */
+.dbroster-root .dbroster-board {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    gap: 14px;
+    padding: 18px;
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    align-items: stretch;
+}
+
+/* unstyled Column keeps only "flex flex-col" — make it a 250px stage lane. */
+.dbroster-root .dbroster-col {
+    width: 250px;
+    flex: none;
+    max-height: 100%;
+    overflow: hidden;
+}
+
+/* the Column's auto cards container ("relative flex flex-1 flex-col gap-2"). */
+.dbroster-root .dbroster-col > div {
+    gap: 9px;
+    padding: 0 4px 6px;
+    overflow-y: auto;
+}
+
+/* sticky stage header rides atop the scrolling candidate stack. */
+.dbroster-colhead {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 4px 12px;
+    background: var(--r-bg);
+    flex: none;
+}
+
+.dbroster-colhead__label {
+    font-weight: 700;
+    font-size: var(--text-sm);
+    color: var(--r-fg);
+}
+
+/* Stage-count pill — background comes inline from the stg[] ramp. */
+.dbroster-root .dbroster-scount {
+    margin-left: auto;
+    padding: 1px 9px !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    font-family: var(--font-mono);
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    line-height: 1.5;
+}
+
+/* ── Candidate card (unstyled Kanban.Card → white tile) ──────────────────── */
+.dbroster-root .dbroster-card {
+    background: var(--r-surface);
+    border: 1px solid var(--r-border);
+    border-radius: 12px;
+    padding: 13px;
+    box-shadow: 0 1px 2px rgba(40, 20, 60, 0.04);
+    cursor: grab;
+    transition: box-shadow 0.14s ease, border-color 0.14s ease,
+        transform 0.14s ease;
+}
+
+.dbroster-root .dbroster-card:hover {
+    border-color: color-mix(in oklch, var(--r-accent) 30%, var(--r-border));
+    box-shadow: 0 4px 12px rgba(40, 20, 60, 0.08);
+}
+
+.dbroster-root .dbroster-card:active {
+    cursor: grabbing;
+}
+
+.dbroster-card__in {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+
+.dbroster-card__top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
+/* Per-person initials avatar (colour from --dbroster-avbg on .card__in). */
+.dbroster-root .dbroster-av {
+    width: 32px !important;
+    height: 32px !important;
+    flex: none;
+    background: var(--dbroster-avbg, var(--r-accent-2)) !important;
+}
+
+.dbroster-root .dbroster-av span {
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    color: #fff !important;
+}
+
+.dbroster-card__id {
+    min-width: 0;
+}
+
+.dbroster-card__name {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--r-fg);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dbroster-card__role {
+    font-size: 11px;
+    color: var(--r-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dbroster-card__foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+/* 5-segment fit-score meter — a row of restyled <Progress> bars. */
+.dbroster-score {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.dbroster-root .dbroster-seg {
+    width: 14px !important;
+    flex: none;
+}
+
+.dbroster-root .dbroster-seg > div {
+    height: 4px !important;
+    border-radius: 2px !important;
+    background: var(--r-track) !important;
+}
+
+.dbroster-root .dbroster-seg > div > div {
+    border-radius: 2px !important;
+    background: var(--r-accent) !important;
+}
+
+.dbroster-card__ago {
+    font-size: 10px;
+    font-family: var(--font-mono);
+    color: var(--r-muted-2);
+    white-space: nowrap;
+    flex: none;
+}
+
+/* ── Roles + Calendar views (Table / Timeline) ──────────────────────────── */
+.dbroster-view {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    width: 100%;
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 22px 24px 26px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.dbroster-view__head {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.dbroster-root .dbroster-view__h {
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--r-fg);
+}
+
+.dbroster-root .dbroster-view__sub {
+    margin-top: 2px;
+    font-size: 13px;
+    color: var(--r-muted);
+}
+
+.dbroster-view__tools {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Pillbox team filter — a compact violet-bordered input. */
+.dbroster-root .dbroster-pillbox {
+    min-width: 210px;
+    border: 1px solid var(--r-border) !important;
+    border-radius: 8px !important;
+    background: var(--r-surface) !important;
+    padding: 5px 8px !important;
+    font-size: 13px;
+}
+
+.dbroster-root .dbroster-pillbox input {
+    color: var(--r-fg);
+    font-size: 13px;
+}
+
+.dbroster-root .dbroster-pillbox input::placeholder {
+    color: var(--r-muted);
+}
+
+/* "+ New role" ghost Button. */
+.dbroster-root .dbroster-btn {
+    height: 32px;
+    padding: 0 12px !important;
+    border: 1px solid var(--r-border) !important;
+    border-radius: 8px !important;
+    background: var(--r-surface) !important;
+    color: var(--r-accent) !important;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.dbroster-root .dbroster-btn:hover {
+    background: var(--r-tabtrack) !important;
+    border-color: color-mix(in oklch, var(--r-accent) 30%, var(--r-border)) !important;
+}
+
+/* Open-roles Table (data-react-fancy-table wraps the <table>). */
+.dbroster-tablewrap {
+    width: 100%;
+}
+
+.dbroster-root .dbroster-table {
+    border: 1px solid var(--r-border) !important;
+    border-radius: 12px !important;
+    background: var(--r-surface);
+    overflow: hidden;
+}
+
+.dbroster-root .dbroster-table table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+.dbroster-root .dbroster-table [data-react-fancy-table-head] {
+    border-bottom: 1px solid var(--r-border) !important;
+    background: color-mix(in oklch, var(--r-tabtrack) 55%, var(--r-surface));
+}
+
+.dbroster-root .dbroster-table [data-react-fancy-table-column] {
+    text-align: left;
+    padding: 10px 16px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--r-muted);
+    white-space: nowrap;
+}
+
+.dbroster-root .dbroster-table [data-react-fancy-table-body] > tr {
+    border-top: 1px solid var(--r-border-soft) !important;
+    transition: background 0.12s ease;
+}
+
+.dbroster-root .dbroster-table [data-react-fancy-table-body] > tr:first-child {
+    border-top: 0 !important;
+}
+
+.dbroster-root .dbroster-table [data-react-fancy-table-row]:hover {
+    background: var(--r-bg);
+}
+
+.dbroster-root .dbroster-table [data-react-fancy-table-cell] {
+    padding: 12px 16px;
+    color: var(--r-fg);
+    vertical-align: middle;
+}
+
+.dbroster-root .dbroster-td-role {
+    font-weight: 600;
+    color: var(--r-fg);
+}
+
+.dbroster-root .dbroster-td-num {
+    font-family: var(--font-mono);
+    color: var(--r-fg-2);
+}
+
+/* Status chip — colour set inline from the STATUS_COLOR map. */
+.dbroster-root .dbroster-status {
+    padding: 2px 10px !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+}
+
+/* Calendar view — upcoming-interviews Timeline. */
+.dbroster-timelinewrap {
+    background: var(--r-surface);
+    border: 1px solid var(--r-border);
+    border-radius: 14px;
+    padding: 22px 22px 8px;
+}
+
+.dbroster-root .dbroster-timeline {
+    color: var(--r-fg);
+}
+
+/* ── Pinned KPI strip — borderless Cards split by Separators ─────────────── */
+.dbroster-kpis {
+    flex: none;
+    display: flex;
+    align-items: stretch;
+    background: var(--r-surface);
+    border-top: 1px solid var(--r-border);
+}
+
+.dbroster-root .dbroster-kpi {
+    flex: 1;
+    min-width: 0;
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    padding: 12px 20px !important;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.dbroster-kpi__k {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--r-muted);
+}
+
+.dbroster-kpi__valrow {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+}
+
+.dbroster-kpi__v {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--r-fg);
+    line-height: 1.1;
+}
+
+.dbroster-root .dbroster-kpi__delta {
+    background: transparent !important;
+    border: 0 !important;
+    padding: 0 !important;
+    font-size: 11px !important;
+    font-weight: 500 !important;
+}
+
+.dbroster-kpi__spark {
+    margin-top: 4px;
+    height: 30px;
+    width: 100%;
+}
+
+.dbroster-root .dbroster-kpisep {
+    flex: none;
+    align-self: stretch;
+    height: auto;
+    border-left-color: var(--r-border-soft) !important;
+}
+
+/* ── Fineprint colophon ──────────────────────────────────────────────────── */
+.dbroster-fineprint {
+    flex: none;
+    padding: 6px 20px 8px;
+    background: var(--r-surface);
+    border-top: 1px solid var(--r-border-soft);
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    line-height: 1.4;
+    color: var(--r-muted);
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* ── Motion ──────────────────────────────────────────────────────────────── */
+@keyframes dbroster-pulse {
+    0%,
+    100% {
+        opacity: 1;
+        box-shadow: 0 0 8px color-mix(in oklch, var(--r-accent) 60%, transparent);
+    }
+    50% {
+        opacity: 0.5;
+        box-shadow: 0 0 2px color-mix(in oklch, var(--r-accent) 40%, transparent);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dbroster-live {
+        animation: none;
+    }
+}
+
+/* ── Responsive — narrow viewports keep the board scroll, tighten padding ── */
+@media (max-width: 720px) {
+    .dbroster-root .dbroster-board {
+        padding: 14px;
+    }
+    .dbroster-view {
+        padding: 18px 16px 22px;
+    }
+    .dbroster-kpi__spark {
+        display: none;
+    }
+    .dbroster-root .dbroster-kpi {
+        padding: 10px 14px !important;
+    }
+}

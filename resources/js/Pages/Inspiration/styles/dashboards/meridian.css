@@ -1,0 +1,773 @@
+/* ============================================================================
+   Meridian — Dashboards style 17 (Personal banking, front-of-house, dark).
+
+   A consumer money app rendered as a centered single-column dashboard on a
+   near-black navy canvas (#0A0F1C): a slim top bar (sky-gradient "M" wordmark +
+   inline nav + circular "DA" avatar), a 1fr:1fr row pairing a gradient debit-
+   card hero with a stack of three account tiles, a 1.5fr:1fr row pairing a
+   spending cash-flow chart with a "Send again" quick-transfer panel, and a
+   full-width recent-transactions list.
+
+   Every rule restyles a real Fancy primitive (Navbar / Avatar / Tabs / Card /
+   Table / Badge / Button / Heading / Text / Tooltip) or the fancy-echarts
+   <EChart>. Every class is prefixed dbmeridian- so nothing leaks across the
+   gallery SPA; page-level z-index stays under 30 (the neutral GalleryFrame owns
+   30+). Motion is a gentle mount rise + DS-ease hovers only.
+   ========================================================================== */
+
+.dbmeridian-root {
+    /* ── Scoped navy-banking tokens ──────────────────────────────────────── */
+    --m-bg: #0a0f1c; /* near-black navy page */
+    --m-surface: #101827; /* panels + account tiles */
+    --m-border: #1e2a3e; /* panel hairlines */
+    --m-hair: #161f2e; /* transaction row dividers */
+    --m-hair2: #1b2637; /* panel-header divider */
+    --m-fg: #dce3ef; /* primary text */
+    --m-fg-bright: #eaf0f8; /* headings / balances */
+    --m-mut: #7c8aa0; /* secondary text */
+    --m-mut2: #5e6b80; /* faint running balance */
+    --m-axis: #4e5b70; /* chart axis labels */
+    --m-sky: #38bdf8; /* accent — cash "in" */
+    --m-sky-300: #7dd3fc; /* soft sky (links, avatar text) */
+    --m-pink: #f472b6; /* accent2 — cash "out" / debit */
+    --m-green: #34d399; /* credit */
+    --m-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+
+    min-height: 100vh;
+    background: var(--m-bg);
+    color: var(--m-fg);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+
+    /* Full-bleed: break out of the showcase's max-w-7xl + padded <main> so the
+       navy canvas spans the whole viewport width; cancel the bottom padding. */
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    width: 100vw;
+    max-width: 100vw;
+    margin-bottom: -2.5rem;
+    overflow-x: clip;
+}
+
+@media (min-width: 768px) {
+    .dbmeridian-root {
+        margin-bottom: -3.5rem;
+    }
+}
+
+.dbmeridian-root *,
+.dbmeridian-root *::before,
+.dbmeridian-root *::after {
+    box-sizing: border-box;
+}
+
+.dbmeridian-root ::selection {
+    background: rgba(56, 189, 248, 0.28);
+    color: #fff;
+}
+
+/* Centered single-column shell (max 1080px), retail-friendly rhythm. */
+.dbmeridian-shell {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 22px 24px 60px;
+}
+
+/* ── Top bar (restyled Navbar) ───────────────────────────────────────────── */
+.dbmeridian-root [data-react-fancy-navbar].dbmeridian-nav {
+    background: transparent !important;
+    border: 0 !important;
+    padding: 0 !important;
+    margin-bottom: 24px;
+    min-height: auto;
+}
+
+/* Navbar's inner wrapper is already flex/justify-between — brand left, cluster
+   right. */
+.dbmeridian-brandwrap {
+    display: flex !important;
+    align-items: center;
+}
+
+.dbmeridian-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: var(--m-fg-bright);
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: -0.01em;
+}
+
+.dbmeridian-mark {
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #0f172a, #38bdf8);
+    display: grid;
+    place-items: center;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    flex: none;
+}
+
+.dbmeridian-brand__name {
+    color: var(--m-fg-bright);
+    font-weight: 700;
+}
+
+/* Right cluster — force visible (Navbar hides items < md) + horizontal. */
+.dbmeridian-root [data-react-fancy-navbar-items].dbmeridian-navitems {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center;
+    gap: 22px;
+    margin-left: auto;
+    border: 0 !important;
+    padding: 0 !important;
+}
+
+/* Text nav — restyled Tabs (no panels), reads as plain inline links. */
+.dbmeridian-navtabs {
+    border: 0 !important;
+    background: transparent !important;
+}
+
+.dbmeridian-root .dbmeridian-navtabs__list {
+    display: flex !important;
+    gap: 22px;
+    border: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+}
+
+.dbmeridian-root .dbmeridian-navtabs [role="tab"] {
+    border: 0 !important;
+    background: transparent !important;
+    color: var(--m-mut);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    padding: 0 !important;
+    margin: 0 !important;
+    min-height: auto;
+    cursor: pointer;
+    transition: color 0.16s var(--m-ease);
+}
+
+.dbmeridian-root .dbmeridian-navtabs [role="tab"]:hover {
+    color: #b4c1d4;
+}
+
+.dbmeridian-root .dbmeridian-navtabs [role="tab"][aria-selected="true"] {
+    color: var(--m-fg-bright);
+    font-weight: 600;
+}
+
+/* "DA" monogram (restyled Avatar). */
+.dbmeridian-avatar {
+    width: 34px !important;
+    height: 34px !important;
+    flex: none;
+}
+
+.dbmeridian-avatar,
+.dbmeridian-avatar > * {
+    background: #1e3a5f !important;
+    color: var(--m-sky-300) !important;
+    font-weight: 600 !important;
+    font-size: 13px !important;
+    border-radius: 50% !important;
+}
+
+/* ── Layout grids ────────────────────────────────────────────────────────── */
+.dbmeridian-grid {
+    display: grid;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.dbmeridian-grid--top {
+    grid-template-columns: 1fr 1fr;
+}
+
+.dbmeridian-grid--mid {
+    grid-template-columns: 1.5fr 1fr;
+}
+
+@media (max-width: 860px) {
+    .dbmeridian-grid--top,
+    .dbmeridian-grid--mid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ── Debit-card hero (restyled gradient Card) ────────────────────────────── */
+.dbmeridian-root [data-react-fancy-card].dbmeridian-hero {
+    background: linear-gradient(135deg, #0c1b33, #1e4e7c) !important;
+    border: 0 !important;
+    border-radius: 20px !important;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 18px 40px -24px rgba(4, 12, 26, 0.9);
+    animation: dbmeridian-rise 0.5s var(--m-ease) both;
+}
+
+/* Faint sheen so the flat gradient reads like a physical card. */
+.dbmeridian-hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(120% 90% at 100% 0%, rgba(125, 211, 252, 0.16), transparent 55%);
+    pointer-events: none;
+}
+
+.dbmeridian-root .dbmeridian-hero__body {
+    position: relative;
+    z-index: 1;
+    padding: 24px !important;
+    min-height: 180px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 24px;
+}
+
+.dbmeridian-hero__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.dbmeridian-hero__label {
+    font-size: 12px;
+    color: #8fb8d8;
+}
+
+.dbmeridian-hero__bal {
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    margin-top: 6px;
+    color: #fff;
+}
+
+.dbmeridian-hero__wifi {
+    display: inline-flex;
+    color: var(--m-sky-300);
+    transform: rotate(90deg);
+    line-height: 0;
+}
+
+.dbmeridian-hero__foot {
+    display: block;
+}
+
+.dbmeridian-hero__pan {
+    font-family: var(--font-mono);
+    font-size: var(--text-lg);
+    letter-spacing: 0.12em;
+    color: #cfe4f5;
+}
+
+.dbmeridian-hero__meta {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    color: #8fb8d8;
+}
+
+/* ── Other accounts — stack of restyled Card tiles ───────────────────────── */
+.dbmeridian-accts {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.dbmeridian-root [data-react-fancy-card].dbmeridian-acct {
+    background: var(--m-surface) !important;
+    border: 1px solid var(--m-border) !important;
+    border-radius: 14px !important;
+    overflow: hidden;
+    flex: 1;
+    animation: dbmeridian-rise 0.5s var(--m-ease) both;
+    transition: border-color 0.16s var(--m-ease), background 0.16s var(--m-ease);
+}
+
+.dbmeridian-accts .dbmeridian-acct:nth-child(1) {
+    animation-delay: 0.04s;
+}
+.dbmeridian-accts .dbmeridian-acct:nth-child(2) {
+    animation-delay: 0.08s;
+}
+.dbmeridian-accts .dbmeridian-acct:nth-child(3) {
+    animation-delay: 0.12s;
+}
+
+.dbmeridian-root [data-react-fancy-card].dbmeridian-acct:hover {
+    border-color: #2a3a54 !important;
+    background: #121b2d !important;
+}
+
+.dbmeridian-root .dbmeridian-acct__body {
+    padding: 15px 18px !important;
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    height: 100%;
+}
+
+/* Tinted icon chip (restyled Badge → 38px square). */
+.dbmeridian-root .dbmeridian-acct__chip {
+    width: 38px;
+    height: 38px;
+    border-radius: 11px;
+    padding: 0 !important;
+    display: grid;
+    place-items: center;
+    border: 0 !important;
+    box-shadow: none !important;
+    flex: none;
+    background: var(--chip-bg) !important;
+    color: var(--chip-col) !important;
+}
+
+.dbmeridian-acct__chip--savings {
+    --chip-bg: rgba(52, 211, 153, 0.14);
+    --chip-col: var(--m-green);
+}
+.dbmeridian-acct__chip--credit {
+    --chip-bg: rgba(244, 114, 182, 0.14);
+    --chip-col: var(--m-pink);
+}
+.dbmeridian-acct__chip--invest {
+    --chip-bg: rgba(125, 211, 252, 0.14);
+    --chip-col: var(--m-sky-300);
+}
+
+.dbmeridian-acct__meta {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+    line-height: 1.35;
+}
+
+.dbmeridian-acct__name {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--m-fg);
+}
+
+.dbmeridian-acct__sub {
+    font-size: 11px;
+    color: var(--m-mut);
+}
+
+.dbmeridian-acct__bal {
+    font-family: var(--font-mono);
+    font-size: var(--text-base);
+    font-weight: 700;
+    color: var(--m-fg-bright);
+    white-space: nowrap;
+}
+
+/* ── Panels (restyled Card) — spending / send / transactions ─────────────── */
+.dbmeridian-root [data-react-fancy-card].dbmeridian-panel {
+    background: var(--m-surface) !important;
+    border: 1px solid var(--m-border) !important;
+    border-radius: 16px !important;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    animation: dbmeridian-rise 0.5s var(--m-ease) both;
+    animation-delay: 0.08s;
+}
+
+.dbmeridian-txns {
+    animation-delay: 0.14s !important;
+}
+
+.dbmeridian-root .dbmeridian-panel__head {
+    padding: 20px !important;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    border: 0 !important;
+    background: transparent !important;
+}
+
+.dbmeridian-root .dbmeridian-panel__title {
+    margin: 0;
+    font-weight: 600;
+    font-size: var(--text-base);
+    color: var(--m-fg-bright);
+}
+
+.dbmeridian-panel__sub {
+    display: block;
+    font-size: 12px;
+    color: var(--m-mut);
+    margin-top: 3px;
+}
+
+/* ── Spending legend (native buttons toggling the EChart series) ──────────── */
+.dbmeridian-legend {
+    display: flex;
+    gap: 6px;
+    flex: none;
+}
+
+.dbmeridian-legend__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 8px;
+    border: 0;
+    border-radius: 7px;
+    background: transparent;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--m-mut);
+    cursor: pointer;
+    transition: color 0.16s var(--m-ease), background 0.16s var(--m-ease), opacity 0.16s var(--m-ease);
+}
+
+.dbmeridian-legend__chip:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.dbmeridian-legend__dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 2px;
+    flex: none;
+    transition: opacity 0.16s var(--m-ease);
+}
+
+.dbmeridian-legend__chip--in .dbmeridian-legend__dot {
+    background: var(--m-sky);
+}
+.dbmeridian-legend__chip--out .dbmeridian-legend__dot {
+    background: var(--m-pink);
+}
+
+/* Off state — dim the whole chip + desaturate the dot. */
+.dbmeridian-legend__chip:not(.is-on) {
+    opacity: 0.45;
+}
+.dbmeridian-legend__chip:not(.is-on) .dbmeridian-legend__dot {
+    background: var(--m-mut2);
+}
+
+.dbmeridian-legend__chip--in.is-on {
+    color: var(--m-sky);
+}
+.dbmeridian-legend__chip--out.is-on {
+    color: var(--m-pink);
+}
+
+.dbmeridian-root .dbmeridian-spending__body {
+    padding: 0 12px 12px !important;
+    flex: 1;
+}
+
+/* ── Send again (quick transfer) ─────────────────────────────────────────── */
+.dbmeridian-send__head {
+    padding-bottom: 6px !important;
+}
+
+.dbmeridian-root .dbmeridian-send__body {
+    padding: 6px 20px 20px !important;
+    display: flex;
+    flex-direction: column;
+}
+
+.dbmeridian-payees {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.dbmeridian-payee {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 4px;
+    border: 0;
+    border-radius: 12px;
+    background: transparent;
+    cursor: pointer;
+    transition: transform 0.14s var(--m-ease), background 0.14s var(--m-ease);
+}
+
+.dbmeridian-payee:hover {
+    transform: translateY(-2px);
+}
+
+.dbmeridian-payee.is-selected {
+    background: rgba(56, 189, 248, 0.08);
+}
+
+/* Payee bubble (restyled Avatar) — background comes from the --pay var set
+   inline on the button, inherited by the avatar + its inner initials. */
+.dbmeridian-payee__av {
+    width: 46px !important;
+    height: 46px !important;
+}
+
+.dbmeridian-payee__av,
+.dbmeridian-payee__av > * {
+    background: var(--pay) !important;
+    color: #fff !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    border-radius: 50% !important;
+    box-shadow: none !important;
+}
+
+.dbmeridian-payee.is-selected .dbmeridian-payee__av {
+    box-shadow: 0 0 0 2px var(--m-bg), 0 0 0 4px var(--m-sky);
+}
+
+.dbmeridian-payee__name {
+    font-size: 11px;
+    color: #9aa8bc;
+}
+
+/* Dashed "New transfer" add tile (restyled Button). */
+.dbmeridian-root .dbmeridian-add {
+    margin-top: 18px;
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: 1px dashed #2c3a50 !important;
+    border-radius: 12px !important;
+    background: transparent !important;
+    color: var(--m-sky-300) !important;
+    font-size: var(--text-sm) !important;
+    font-weight: 500 !important;
+    padding: 13px !important;
+    box-shadow: none !important;
+    cursor: pointer;
+    transition: border-color 0.16s var(--m-ease), background 0.16s var(--m-ease);
+}
+
+.dbmeridian-root .dbmeridian-add:hover {
+    border-color: var(--m-sky) !important;
+    background: rgba(56, 189, 248, 0.06) !important;
+}
+
+/* ── Recent transactions (restyled Card + Table) ─────────────────────────── */
+.dbmeridian-txns__head {
+    padding: 14px 20px !important;
+    border-bottom: 1px solid var(--m-hair2) !important;
+}
+
+/* "See all" (restyled ghost Button → plain sky link). */
+.dbmeridian-root .dbmeridian-seeall {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    min-height: auto;
+    color: var(--m-sky-300) !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    cursor: pointer;
+    transition: color 0.16s var(--m-ease);
+}
+
+.dbmeridian-root .dbmeridian-seeall:hover {
+    color: var(--m-sky) !important;
+}
+
+.dbmeridian-root .dbmeridian-txns__body {
+    padding: 0 !important;
+}
+
+/* Table wrapper — drop its own border/radius (the Card already frames it). */
+.dbmeridian-root [data-react-fancy-table].dbmeridian-txn-table {
+    border: 0 !important;
+    border-radius: 0 !important;
+    overflow: visible;
+    width: 100%;
+}
+
+/* No visible header row in the mockup. */
+.dbmeridian-root .dbmeridian-txn-table [data-react-fancy-table-head] {
+    display: none;
+}
+
+.dbmeridian-root .dbmeridian-txn-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.dbmeridian-root .dbmeridian-txn-table [data-react-fancy-table-body] tr {
+    border-bottom: 1px solid var(--m-hair);
+    cursor: pointer;
+    transition: background 0.14s var(--m-ease);
+}
+
+.dbmeridian-root .dbmeridian-txn-table [data-react-fancy-table-body] tr:last-child {
+    border-bottom: 0;
+}
+
+.dbmeridian-root .dbmeridian-txn-table [data-react-fancy-table-body] tr:hover {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.dbmeridian-root .dbmeridian-txn-table [data-react-fancy-table-body] tr.is-open {
+    background: rgba(56, 189, 248, 0.06);
+    box-shadow: inset 2px 0 0 var(--m-sky);
+}
+
+.dbmeridian-root .dbmeridian-txn-table [data-react-fancy-table-cell] {
+    padding: 12px 20px;
+    border: 0;
+    background: transparent;
+    vertical-align: middle;
+    font-size: var(--text-sm);
+    color: var(--m-fg);
+}
+
+.dbmeridian-txn__iconcell {
+    width: 34px;
+    padding-right: 0 !important;
+}
+
+.dbmeridian-txn__icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: #182338;
+    display: grid;
+    place-items: center;
+    font-size: 15px;
+    flex: none;
+}
+
+.dbmeridian-txn__namecell {
+    width: 100%;
+}
+
+.dbmeridian-txn__name {
+    display: block;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--m-fg-bright);
+}
+
+.dbmeridian-txn__sub {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    margin-top: 2px;
+    font-size: 11px;
+    color: var(--m-mut);
+}
+
+/* Category tag (restyled Badge → small sky pill). */
+.dbmeridian-root .dbmeridian-txn__cat {
+    background: rgba(56, 189, 248, 0.1) !important;
+    color: var(--m-sky-300) !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    border-radius: 999px !important;
+    padding: 1px 7px !important;
+    font-size: 10px !important;
+    font-weight: 500 !important;
+    line-height: 1.5;
+}
+
+.dbmeridian-txn__when {
+    color: var(--m-mut);
+    white-space: nowrap;
+}
+
+.dbmeridian-root .dbmeridian-txn__amt {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    text-align: right;
+    white-space: nowrap;
+}
+
+.dbmeridian-txn__amt--credit {
+    color: var(--m-green) !important;
+}
+
+.dbmeridian-txn__amt--debit {
+    color: var(--m-pink) !important;
+}
+
+.dbmeridian-root .dbmeridian-txn__bal {
+    font-size: 11px;
+    color: var(--m-mut2);
+    text-align: right;
+    white-space: nowrap;
+}
+
+/* ── Colophon ────────────────────────────────────────────────────────────── */
+.dbmeridian-foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 24px;
+    padding-top: 18px;
+    border-top: 1px solid var(--m-hair);
+}
+
+.dbmeridian-root .dbmeridian-foot__note {
+    color: var(--m-mut2);
+    font-size: 12px;
+}
+
+.dbmeridian-foot__back {
+    color: var(--m-mut);
+    text-decoration: none;
+    font-size: 12px;
+    white-space: nowrap;
+    transition: color 0.16s var(--m-ease);
+}
+
+.dbmeridian-foot__back:hover {
+    color: var(--m-sky);
+}
+
+/* ── Motion ──────────────────────────────────────────────────────────────── */
+@keyframes dbmeridian-rise {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dbmeridian-root [data-react-fancy-card].dbmeridian-hero,
+    .dbmeridian-root [data-react-fancy-card].dbmeridian-acct,
+    .dbmeridian-root [data-react-fancy-card].dbmeridian-panel {
+        animation: none;
+    }
+    .dbmeridian-payee:hover {
+        transform: none;
+    }
+}

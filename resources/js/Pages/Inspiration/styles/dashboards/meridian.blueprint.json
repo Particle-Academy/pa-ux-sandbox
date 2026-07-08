@@ -1,0 +1,71 @@
+{
+  "id": "meridian",
+  "name": "Meridian",
+  "note": "A personal banking app as a centered money dashboard.",
+  "mode": "dark",
+  "thesis": "A consumer money app rendered entirely from restyled Fancy primitives: a near-black navy canvas, big rounded surface cards, oversized mono balances, and one sky (cash-in) + one pink (cash-out / debit) accent. The point is that Navbar + Card + Table + Badge + Avatar + Tabs + Button, dressed in scoped CSS and fed by a single fancy-echarts bar chart, read as native to a Monzo/Revolut-class retail banking surface — a gradient debit card, tinted account tiles, a spending chart, quick-transfer bubbles, a running transaction ledger — with no bespoke widgets, just kit.",
+  "tokens": {
+    "bg": "#0A0F1C near-black navy page with #101827 surface panels/tiles and a #182338 transaction-icon well; the debit-card hero is a 135deg #0C1B33->#1E4E7C gradient",
+    "fg": "#DCE3EF primary / #EAF0F8 bright headings & balances / #7C8AA0 secondary labels / #5E6B80 faint running balance / #8FB8D8 on-card captions / #4E5B70 chart axis",
+    "accent": "sky #38BDF8 (cash in, links, focus) paired with pink #F472B6 (cash out, debit amounts); soft sky #7DD3FC for on-card glyphs + the DA avatar text, green #34D399 for credits, plus per-account tinted chips (green savings / pink credit / sky investments)",
+    "fontDisplay": "Geist (var(--font-sans)); the debit-card balance is 32px / 800 weight at -0.02em tracking, panel titles 600",
+    "fontMono": "Geist Mono (var(--font-mono)) for every numeric surface — the masked card PAN, account balances, the signed transaction amounts + running balances, and the Wk1/Wk4/Wk8 chart axis labels",
+    "radius": "20px on the debit-card hero, 16px on the spending/send/transactions panels, 14px on the account tiles, 11px on the account-icon chips, 10px on the transaction-icon chips, 8px on the 'M' brand mark, 999px on the category tag, 50% on the DA avatar + payee bubbles",
+    "border": "1px hairlines: #1E2A3E panel borders, #1B2637 panel-header divider, #161F2E transaction row separators; the 'New transfer' tile is a 1px dashed #2C3A50; the hero card is borderless with a soft radial sheen + a low drop shadow",
+    "motion": "none in the mockup (imperative paint() only set bar heights + hydrated icons); recreated with a single 0.5s ease mount rise on the hero / account tiles / panels (staggered) plus DS-ease hovers on account tiles, legend chips, payee bubbles, and transaction rows, and a cubicOut bar-reveal inside the EChart — honors prefers-reduced-motion"
+  },
+  "layout": "A centered single-column consumer app (max-width 1080px, no persistent sidebar) on a full-bleed near-black navy canvas. A slim top bar — a restyled Navbar — carries the sky-gradient 'M' Meridian wordmark (linking to the collection index) on the left and, pushed right, an inline text nav (Accounts active / Payments / Cards / Invest) beside a circular 'DA' avatar. The body is three stacked, responsive regions: a 1fr / 1fr row pairing a large gradient debit-card hero with a stack of three account tiles; a 1.5fr / 1fr row pairing a spending cash-flow bar chart with a 'Send again' quick-transfer panel; then a full-width recent-transactions card. Both split rows collapse to a single column under 860px. A hairline colophon closes the page. Density is low and retail-friendly — 16px gaps, generous padding, oversized balances.",
+  "sections": [
+    {
+      "name": "top bar",
+      "what": "Sky-gradient 'M' Meridian wordmark linking back to the gallery, an inline text nav (Accounts active / Payments / Cards / Invest), and a circular 'DA' user avatar on the right.",
+      "components": ["Navbar", "Tabs", "Avatar", "Link"],
+      "restyle": "Navbar is stripped of its default white bg / bottom border / padding and laid out via its own flex/justify-between inner wrapper as a transparent bar; Navbar.Items is forced visible (overriding its hidden-below-md default) and right-aligned. The nav is a controlled Tabs (List only, no Panels) restyled into plain 22px-gapped inline text links — muted #7C8AA0, the aria-selected tab full-ink #EAF0F8 600. The 'M' mark is a 26px 8px-radius tile with a #0f172a->#38bdf8 gradient. Avatar is forced to a 34px #1E3A5F circle with soft-sky #7DD3FC 600-weight 'DA' initials."
+    },
+    {
+      "name": "debit card hero",
+      "what": "A large gradient payment-card panel: 'Everyday checking' label, a 32px $12,480.55 balance, a rotated contactless glyph, a mono masked PAN '•••• •••• •••• 4019', and a footer row with cardholder 'DANA ARROYO' and expiry '08/29'.",
+      "components": ["Card", "Icon (lucide)", "Tooltip"],
+      "restyle": "Card is forced from its outlined default to a borderless 20px-radius surface painted with the 135deg #0C1B33->#1E4E7C gradient, a soft radial sky sheen (::after), and a low drop shadow. Its body is a min-height 180px flex column justifying the label+balance block against the PAN+meta footer. The contactless mark is a lucide Wifi Icon rotated 90deg in soft sky, wrapped in a Tooltip. The PAN uses var(--font-mono) at 0.12em tracking; the meta row is 12px letter-spaced on-card blue."
+    },
+    {
+      "name": "other accounts",
+      "what": "A stack of three account rows — Savings $34,200 (2.4% APY), Credit card -$842 (Due Jul 28), Investments $58,910 (up 1.8% today) — each with a tinted lucide-icon chip, a name + sub-label, and a right-aligned mono balance.",
+      "components": ["Card", "Badge", "Icon (lucide)"],
+      "restyle": "Each row is its own restyled Card (surface #101827, 1px #1E2A3E, 14px radius, hover border-lift) whose body is a flex row. The icon chip is a Badge stripped of its pill chrome and forced to a 38px 11px-radius grid-centered square, tinted per account via CSS-var modifier classes (green savings / pink credit / sky investments) each holding a matching lucide Icon. Name is var(--text-sm) 600 over an 11px muted sub-label; the balance is a right-aligned var(--font-mono) 700 figure."
+    },
+    {
+      "name": "spending",
+      "what": "A 'Spending — $2,840 this month' panel with an in/out legend and a grouped vertical bar chart of cash flow over eight weeks (sky 'in', pink 'out'), with mono Wk1/Wk4/Wk8 axis labels.",
+      "components": ["Card", "EChart", "Heading", "Text"],
+      "restyle": "Card is the 16px surface panel; its header splits the title + '$2,840 this month' sub from a two-chip legend. The legend chips are native buttons (a square dot + label) that toggle each EChart series — dimmed when off, sky/pink when on, and guarded so both can never go dark at once. The chart is a fancy-echarts grouped bar: two series over eight week categories with 9px bars, 3px top-rounded caps, itemStyle #38BDF8 (in) / #F472B6 (out), barGap pairing, a formatter that shows only Wk1/Wk4/Wk8, and a dark hairline shadow tooltip — replacing the mockup's imperative data-h bar-height divs so the flow values are controlled props."
+    },
+    {
+      "name": "send again",
+      "what": "A quick-transfer panel: a row of four circular payee avatars with colored backgrounds and initials (Kai L., Rosa S., Theo N., Mia B.) plus a dashed 'New transfer' add tile with a plus icon.",
+      "components": ["Card", "Avatar", "Button", "Icon (lucide)"],
+      "restyle": "Card is a 16px surface panel. Each payee is a native button carrying a --pay CSS var; the Avatar is forced to a 46px circle whose background inherits that var (so the four brand colors come from data, not four classes) with white 600 initials, and a selected payee gets a sky focus ring. The 'New transfer' tile is a full-width ghost Button flattened to a 1px dashed #2C3A50 12px-radius tile with a lucide Plus and soft-sky text, hover-brightening its border."
+    },
+    {
+      "name": "recent transactions",
+      "what": "A full-width panel with a 'Recent transactions' header + 'See all' link, then six transaction rows: emoji-on-tinted-chip, name + 'category · when', a signed mono amount (green credit / pink debit), and a muted running balance.",
+      "components": ["Card", "Table", "Badge", "Button"],
+      "restyle": "Card frames a restyled Table via its data-react-fancy-* hooks: the header row is hidden (the mockup shows none), rows are hairline-separated (#161F2E, last borderless), clickable with a hover fill and a sky inset-bar 'is-open' spotlight. Cell 1 is a 34px 10px-radius emoji chip; cell 2 stacks a bold name over a sub-line where the category is a Badge reskinned to a small sky pill and the date is muted; cell 3 is a right-aligned var(--font-mono) amount colored #34D399 (credit) / #F472B6 (debit); cell 4 is a faint right-aligned running balance. 'See all' is a ghost Button flattened to a plain sky link."
+    }
+  ],
+  "palette": [
+    { "component": "Navbar", "restyle": "Chrome stripped to a transparent bar; its flex/justify-between inner wrapper seats Brand (a gradient 'M' Link) on the left and Items — forced visible and right-aligned — on the right. The whole top-bar identity rides on the primitive, not a hand-rolled <header>." },
+    { "component": "Card", "restyle": "The universal surface, restyled three ways from padding='none': the borderless gradient debit-card hero (20px, radial sheen, shadow), the bordered 14px account tiles (hover-lift), and the bordered 16px spending / send / transactions panels — header + body padding supplied by scoped CSS, each animated in with a staggered mount rise." },
+    { "component": "Tabs", "restyle": "Repurposed as the top-bar text nav (List only, no Panels): transparent, 22px-gapped inline links, muted by default with a full-ink 600 aria-selected tab. Controlled — it holds the active Accounts/Payments/Cards/Invest state." },
+    { "component": "Table", "restyle": "The transaction ledger, reskinned via its data-react-fancy-* hooks: header hidden, hairline-separated clickable rows with hover + a sky 'is-open' spotlight, an emoji identity chip, a Badge category tag, and right-aligned mono amount + balance columns." },
+    { "component": "Badge", "restyle": "Two reskins: the 38px tinted account-icon chips (pill chrome zeroed, forced to a grid-centered rounded square via per-account CSS vars) and the small sky category pill on each transaction row." },
+    { "component": "Avatar", "restyle": "The 34px circular 'DA' monogram (dark navy bg, soft-sky initials) in the top bar, and the four 46px payee bubbles whose backgrounds inherit a per-payee --pay CSS var with a sky focus ring on selection." },
+    { "component": "Button", "restyle": "Two flattened ghosts: the full-width dashed 'New transfer' add tile (dashed border, soft-sky text, lucide Plus) and the chrome-less 'See all' sky text link in the transactions header." },
+    { "component": "EChart (fancy-echarts)", "restyle": "The single data surface — a grouped two-series vertical bar of weekly cash flow (sky 'in' / pink 'out', 9px bars, 3px rounded caps, barGap pairing, sparse Wk1/Wk4/Wk8 axis, dark hairline tooltip) — mounted client-side and SSR-safe, replacing the mockup's imperative data-h height setters. registerAll() runs once at module top and the legend chips toggle series visibility live." },
+    { "component": "Tooltip", "restyle": "Wraps the contactless glyph on the debit card with a 'Contactless enabled' hint — the only overlay affordance on the page." },
+    { "component": "Icon (lucide-react)", "restyle": "Wifi (rotated 90deg) as the card's contactless mark, PiggyBank / CreditCard / TrendingUp inside the tinted account chips, and Plus on the add tile — imported as static React components (no window.lucide runtime hydration)." },
+    { "component": "Heading / Text", "restyle": "Heading sets the small semibold panel titles ('Spending', 'Send again', 'Recent transactions'); Text carries the muted colophon. Type stays on var(--font-sans) with every numeric escalated to var(--font-mono)." }
+  ],
+  "contentArchetype": "A fictional consumer bank (Meridian) showing one signed-in cardholder — Dana Arroyo — with a primary Everyday-checking debit card ($12,480.55, •••• 4019, exp 08/29), three other accounts (savings / credit / investments), a monthly spending cash-flow chart, a saved-payee quick-transfer strip, and a running ledger of six recent transactions with categories, dates, signed amounts, and balances. All figures are invented but internally consistent; the only 'live' behavior is the nav tabs, the in/out legend toggling the chart series, a selectable payee, and a spotlightable transaction row.",
+  "remix": "Reuse the centered-canvas + big-rounded-card + mono-balance skeleton for any personal-finance or consumer money surface (a neobank, a budgeting app, a wallet, an expense tracker, a subscription manager) — swap the sky/pink accent pair and the account/payee data to rebrand, keep the gradient-card-hero + tinted-tile + ledger discipline. Lift the legend-chips-toggle-the-EChart-series pattern into any KPI card that needs series filtering, and the --pay-var-drives-the-Avatar-color trick anywhere a list of people needs per-row brand colors from data. To warm it toward a lighter fintech look, raise the canvas lightness and soften the gradient; to push it more premium, deepen the card gradient and add a metallic sheen. The whole look lives in scoped meridian.css + local tokens, so the same React tree restyles wholesale by editing one file."
+}

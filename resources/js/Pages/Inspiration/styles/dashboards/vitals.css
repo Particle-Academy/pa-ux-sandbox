@@ -1,0 +1,550 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Dashboards · Vitals (id "vitals", dark)
+   A wall-mounted hospital bed-command board. No sidebar, no live clock — a
+   static, glanceable status wall: a slim restyled <Navbar> header over a
+   1.7fr/1fr body (a Ward bed-map <Card> of per-ward <EChart> heatmaps beside a
+   right rail stacking a 2x2 KPI <Card> grid + an ER-triage <Card> with a
+   restyled <Table>). Every Fancy primitive is restyled HARD via scoped CSS so it
+   wears this dark clinical idiom natively.
+
+   Every rule is scoped under .dbvitals-root. Every class is prefixed dbvitals-.
+   Page-level z-index stays UNDER 30 (the gallery frame owns 30+).
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.dbvitals-root {
+    /* ── Scoped clinical-dark tokens ─────────────────────────────────────── */
+    --dbv-bg: #0b1220; /* command-wall background */
+    --dbv-surface: #101a2c; /* panels + KPI tiles */
+    --dbv-border: #1c2942; /* hairline borders + empty bed */
+    --dbv-border-soft: #16223a; /* row dividers */
+    --dbv-fg: #cdd7e5; /* primary text */
+    --dbv-fg-strong: #eaf0f8; /* headings + clock */
+    --dbv-fg-2: #aebbce; /* ward names */
+    --dbv-fg-3: #7a8aa0; /* muted labels */
+    --dbv-fg-4: #5c6b80; /* faint mono sublabel */
+    --dbv-rose: #fb7185; /* ER accent */
+    --dbv-blue: #38bdf8; /* staffing accent */
+    --dbv-amber: #f59e0b; /* cleaning / warm occupancy */
+    --dbv-green: #22c55e; /* open / positive */
+    --dbv-red: #ef4444; /* occupied / hot occupancy */
+
+    background: var(--dbv-bg);
+    color: var(--dbv-fg);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+
+    /* Full-bleed: break out of the showcase's max-w-7xl + padded <main> so the
+       dark command wall spans the whole viewport. */
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    width: 100vw;
+    max-width: 100vw;
+    margin-bottom: -2.5rem;
+    overflow-x: clip;
+}
+
+@media (min-width: 768px) {
+    .dbvitals-root {
+        margin-bottom: -3.5rem;
+    }
+}
+
+.dbvitals-root *,
+.dbvitals-root *::before,
+.dbvitals-root *::after {
+    box-sizing: border-box;
+}
+
+.dbvitals-root ::selection {
+    background: var(--dbv-rose);
+    color: #fff;
+}
+
+/* ── Shell — fixed-height command wall, flex column ───────────────────────── */
+.dbvitals-shell {
+    height: calc(100vh - 46px);
+    min-height: 560px;
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    overflow: hidden;
+}
+
+/* ── Command header (react-fancy <Navbar> restyled) ──────────────────────── */
+.dbvitals-root [data-react-fancy-navbar].dbvitals-header {
+    background: transparent;
+    border: 0;
+    padding: 0;
+    height: auto;
+    min-height: 0;
+    margin-bottom: 14px;
+    flex: none;
+    display: flex;
+    align-items: center;
+}
+
+.dbvitals-root [data-react-fancy-navbar].dbvitals-header > div {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.dbvitals-brandwrap {
+    min-width: 0;
+}
+
+.dbvitals-brand {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    text-decoration: none;
+    color: var(--dbv-fg-strong);
+    font-weight: 700;
+}
+
+.dbvitals-mark {
+    width: 24px;
+    height: 24px;
+    border-radius: 7px;
+    display: grid;
+    place-items: center;
+    font-size: 12px;
+    color: #fff;
+    background: linear-gradient(135deg, #be123c, #fb7185);
+}
+
+.dbvitals-brand__name {
+    font-size: var(--text-sm);
+    letter-spacing: -0.01em;
+}
+
+.dbvitals-brand__sub {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--dbv-fg-4);
+}
+
+/* Force the right-hand cluster visible at all widths (Navbar hides items < md). */
+.dbvitals-root [data-react-fancy-navbar-items].dbvitals-headright {
+    display: flex !important;
+    flex-direction: row;
+    align-items: center;
+    gap: 18px;
+    border: 0;
+    padding: 0;
+    background: transparent;
+}
+
+/* Capacity indicator (restyled <Badge>). */
+.dbvitals-root .dbvitals-capacity {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    color: var(--dbv-rose);
+    font-size: var(--text-sm);
+    font-weight: 500;
+}
+
+.dbvitals-capacity__dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--dbv-rose);
+    box-shadow: 0 0 10px var(--dbv-rose);
+    animation: dbvitals-glow 2.4s ease-in-out infinite;
+}
+
+.dbvitals-clock {
+    font-family: var(--font-mono);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--dbv-fg-strong);
+    letter-spacing: -0.01em;
+}
+
+/* ── Body grid ───────────────────────────────────────────────────────────── */
+.dbvitals-body {
+    flex: 1;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: 1.7fr 1fr;
+    gap: 12px;
+    overflow: hidden;
+}
+
+/* Panels (restyled <Card>). */
+.dbvitals-root .dbvitals-wardcard,
+.dbvitals-root .dbvitals-triage {
+    background: var(--dbv-surface);
+    border: 1px solid var(--dbv-border);
+    border-radius: 14px;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.dbvitals-panel__title {
+    font-weight: 600;
+    font-size: var(--text-sm);
+    color: var(--dbv-fg);
+    margin: 0;
+}
+
+/* ── Ward bed map ────────────────────────────────────────────────────────── */
+.dbvitals-wardhead {
+    padding: 16px 18px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border: 0;
+    flex: none;
+}
+
+.dbvitals-legend {
+    display: flex;
+    gap: 12px;
+}
+
+.dbvitals-root .dbvitals-legend__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--dbv-fg-3);
+    text-transform: none;
+}
+
+.dbvitals-root .dbvitals-legend__chip::before {
+    content: "";
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+    background: var(--dbv-swatch, var(--dbv-border));
+}
+
+.dbvitals-wardbody {
+    padding: 4px 18px 18px;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+.dbvitals-ward {
+    margin-bottom: 16px;
+}
+
+.dbvitals-ward:last-child {
+    margin-bottom: 0;
+}
+
+.dbvitals-ward__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 12px;
+    margin-bottom: 8px;
+}
+
+.dbvitals-ward__name {
+    font-weight: 600;
+    color: var(--dbv-fg-2);
+}
+
+.dbvitals-ward__occ {
+    font-family: var(--font-mono);
+    color: var(--dbv-fg-3);
+}
+
+/* Per-ward occupancy meter (restyled <Progress>: root > track > fill). */
+.dbvitals-root .dbvitals-wardbar {
+    width: 100%;
+    margin-bottom: 9px;
+}
+
+.dbvitals-root .dbvitals-wardbar > div {
+    background: var(--dbv-border) !important;
+    height: 4px !important;
+    border-radius: 3px !important;
+}
+
+.dbvitals-root .dbvitals-wardbar > div > div {
+    border-radius: 3px !important;
+}
+
+.dbvitals-root .dbvitals-wardbar--hot > div > div {
+    background: var(--dbv-red) !important;
+}
+
+.dbvitals-root .dbvitals-wardbar--warm > div > div {
+    background: var(--dbv-amber) !important;
+}
+
+.dbvitals-root .dbvitals-wardbar--ok > div > div {
+    background: var(--dbv-green) !important;
+}
+
+/* The <EChart> heatmap host — aspect-ratio keeps bed cells square. */
+.dbvitals-bedgrid {
+    width: 100%;
+}
+
+/* ── Right rail ──────────────────────────────────────────────────────────── */
+.dbvitals-rail {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-height: 0;
+    overflow: hidden;
+}
+
+/* KPI 2x2 grid. */
+.dbvitals-kpis {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    flex: none;
+}
+
+.dbvitals-root .dbvitals-kpi {
+    background: var(--dbv-surface);
+    border: 1px solid var(--dbv-border);
+    border-radius: 14px;
+}
+
+.dbvitals-kpi__body {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    gap: 2px;
+}
+
+.dbvitals-kpi__value {
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    font-family: var(--font-mono);
+    line-height: 1.05;
+}
+
+.dbvitals-kpi__label {
+    font-size: 11px;
+    color: var(--dbv-fg-3);
+}
+
+.dbvitals-kpi__gauge {
+    width: 78px;
+    height: 78px;
+}
+
+.dbvitals-kpi--gauge .dbvitals-kpi__body {
+    gap: 6px;
+}
+
+/* ── ER triage queue (restyled <Card> + <Table>) ─────────────────────────── */
+.dbvitals-root .dbvitals-triage {
+    flex: 1;
+}
+
+.dbvitals-triage__head {
+    padding: 14px 18px;
+    border: 0;
+    border-bottom: 1px solid var(--dbv-border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: none;
+    font-weight: 600;
+    font-size: var(--text-sm);
+    color: var(--dbv-fg);
+}
+
+.dbvitals-triage__icon {
+    color: var(--dbv-rose);
+    flex: none;
+}
+
+.dbvitals-triage__title {
+    font-weight: 600;
+    color: var(--dbv-fg);
+}
+
+.dbvitals-triage__count {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--dbv-fg-3);
+}
+
+.dbvitals-triage__body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 0;
+}
+
+/* Table restyle — flush dark rows, no header. */
+.dbvitals-root .dbvitals-triage-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.dbvitals-root .dbvitals-triage-table thead {
+    display: none;
+}
+
+.dbvitals-root .dbvitals-triage-table tbody tr {
+    border-bottom: 1px solid var(--dbv-border-soft);
+}
+
+.dbvitals-root .dbvitals-triage-table tbody tr:last-child {
+    border-bottom: 0;
+}
+
+.dbvitals-root .dbvitals-triage-table td {
+    padding: 11px 18px;
+    background: transparent;
+    border: 0;
+    vertical-align: middle;
+}
+
+.dbvitals-root .dbvitals-tri__row:hover td {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.dbvitals-root .dbvitals-tri__lvlcell {
+    width: 32px;
+}
+
+/* Triage level (restyled <Badge>) — square, mono, data-driven bg. */
+.dbvitals-root .dbvitals-tri__lvl {
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border: 0;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.dbvitals-tri__main {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    width: 100%;
+}
+
+.dbvitals-tri__complaint {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: #dce4ef;
+}
+
+.dbvitals-tri__meta {
+    font-size: 11px;
+    color: var(--dbv-fg-3);
+}
+
+.dbvitals-root .dbvitals-tri__sevcell {
+    text-align: right;
+    white-space: nowrap;
+}
+
+.dbvitals-tri__sev {
+    font-size: 11px;
+    font-weight: 600;
+}
+
+/* ── Colophon ────────────────────────────────────────────────────────────── */
+.dbvitals-foot {
+    flex: none;
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid var(--dbv-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.dbvitals-root .dbvitals-foot__note {
+    color: var(--dbv-fg-4);
+    font-size: 11px;
+}
+
+.dbvitals-foot__back {
+    flex: none;
+    font-size: 11px;
+    color: var(--dbv-fg-3);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+}
+
+.dbvitals-foot__back:hover {
+    color: var(--dbv-rose);
+    border-bottom-color: var(--dbv-rose);
+}
+
+/* ── Responsive — stack + scroll below the command-wall breakpoint ────────── */
+@media (max-width: 900px) {
+    .dbvitals-shell {
+        height: auto;
+        min-height: 0;
+        overflow: visible;
+    }
+
+    .dbvitals-body {
+        grid-template-columns: 1fr;
+        overflow: visible;
+    }
+
+    .dbvitals-root .dbvitals-wardcard,
+    .dbvitals-root .dbvitals-triage,
+    .dbvitals-rail {
+        overflow: visible;
+    }
+
+    .dbvitals-foot {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+}
+
+/* ── Motion — the one flourish: the ER-capacity dot glow ──────────────────── */
+@keyframes dbvitals-glow {
+    0%,
+    100% {
+        opacity: 1;
+        box-shadow: 0 0 10px var(--dbv-rose);
+    }
+    50% {
+        opacity: 0.55;
+        box-shadow: 0 0 3px var(--dbv-rose);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dbvitals-capacity__dot {
+        animation: none;
+    }
+}

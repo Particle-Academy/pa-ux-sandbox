@@ -1,0 +1,565 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Dashboards · Still (id "still", dark)
+   A calm front-of-house "Today" view for the fictional meditation app "Still".
+   A centered single-column reading layout (max-w 1040px) on a near-black deep-
+   green canvas. Every surface is a restyled react-fancy primitive — Navbar,
+   Avatar, Card, Button, Badge, Table, Heading, Text — plus two fancy-echarts
+   <EChart>s (a minutes heatmap + a mood bar chart).
+
+   Every rule is scoped under .dbstill-root. Every class is prefixed dbstill-.
+   Page-level z-index stays UNDER 30 (the gallery frame owns 30+).
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.dbstill-root {
+    /* ── Scoped calm-green tokens ────────────────────────────────────────── */
+    --dbs-bg: #0e1512; /* page background */
+    --dbs-surface: #132019; /* cards + panels */
+    --dbs-border: #1f3329; /* hairline borders */
+    --dbs-divider: #17251e; /* row dividers */
+    --dbs-fg: #dce8e1; /* primary text */
+    --dbs-fg-2: #7da396; /* muted sage */
+    --dbs-fg-3: #5e7a70; /* faint sage */
+    --dbs-accent: #5eead4; /* bright teal */
+    --dbs-accent-deep: #0f766e; /* deep teal */
+    --dbs-tint: rgba(94, 234, 212, 0.14); /* icon-chip wash */
+    --dbs-ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+    width: 100%;
+    min-height: 100vh;
+    background: var(--dbs-bg);
+    color: var(--dbs-fg);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+
+    /* Full-bleed: break out of the showcase's max-w-7xl padded <main> so the
+       deep-green canvas spans the whole viewport width. */
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    max-width: 100vw;
+    margin-bottom: -2.5rem;
+    overflow-x: clip;
+}
+
+@media (min-width: 768px) {
+    .dbstill-root {
+        margin-bottom: -3.5rem;
+    }
+}
+
+.dbstill-root *,
+.dbstill-root *::before,
+.dbstill-root *::after {
+    box-sizing: border-box;
+}
+
+.dbstill-root ::selection {
+    background: var(--dbs-accent);
+    color: #04211c;
+}
+
+.dbstill-shell {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 22px 24px 60px;
+}
+
+/* ── Topbar (restyled Navbar) ──────────────────────────────────────────── */
+.dbstill-nav {
+    display: flex !important;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 26px;
+    padding: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    min-height: auto;
+}
+
+.dbstill-brandwrap {
+    display: flex;
+    align-items: center;
+}
+
+.dbstill-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: var(--dbs-fg);
+    font-weight: 700;
+    font-size: 15px;
+}
+
+.dbstill-mark {
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--dbs-accent-deep), var(--dbs-accent));
+    display: grid;
+    place-items: center;
+    color: #04211c;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.dbstill-brand__name {
+    letter-spacing: -0.01em;
+}
+
+.dbstill-navitems {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center;
+    gap: 22px;
+    margin-left: auto;
+    border: none !important;
+    padding: 0 !important;
+}
+
+.dbstill-navlink {
+    background: none;
+    border: 0;
+    padding: 0;
+    font-family: inherit;
+    font-size: var(--text-sm);
+    color: var(--dbs-fg-2);
+    cursor: pointer;
+    transition: color 0.18s var(--dbs-ease);
+}
+
+.dbstill-navlink:hover {
+    color: #a9c9bd;
+}
+
+.dbstill-navlink--active {
+    color: var(--dbs-fg);
+    font-weight: 600;
+}
+
+/* NA monogram (restyled Avatar) */
+.dbstill-avatar {
+    width: 34px !important;
+    height: 34px !important;
+    flex: none;
+}
+
+.dbstill-avatar,
+.dbstill-avatar > * {
+    background: #134e48 !important;
+    color: var(--dbs-accent) !important;
+    font-weight: 600 !important;
+    font-size: 13px !important;
+    border-radius: 50% !important;
+}
+
+/* ── Hero (restyled Card, teal gradient) ───────────────────────────────── */
+.dbstill-hero {
+    background: linear-gradient(150deg, var(--dbs-accent-deep), #134e48) !important;
+    border: none !important;
+    border-radius: 22px !important;
+    box-shadow: none !important;
+    margin-bottom: 16px;
+    overflow: hidden;
+    animation: dbstill-rise 0.5s var(--dbs-ease) both;
+}
+
+.dbstill-hero__body {
+    padding: 30px !important;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.dbstill-hero__text {
+    display: flex;
+    flex-direction: column;
+}
+
+.dbstill-hero__eyebrow {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #9de6d8;
+}
+
+.dbstill-root .dbstill-hero__title {
+    font-size: 30px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin: 10px 0 6px;
+    color: #f2fbf8;
+}
+
+.dbstill-hero__sub {
+    font-size: var(--text-sm);
+    color: #b4ede2;
+}
+
+/* Circular play button (restyled Button variant="circle") */
+.dbstill-root .dbstill-hero__play {
+    width: 64px !important;
+    height: 64px !important;
+    min-width: 0 !important;
+    padding: 0 !important;
+    border-radius: 50% !important;
+    border: none !important;
+    background: rgba(255, 255, 255, 0.16) !important;
+    color: #fff !important;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    box-shadow: none !important;
+    cursor: pointer;
+    transition: background 0.2s var(--dbs-ease), transform 0.2s var(--dbs-ease);
+    animation: dbstill-breathe 4.5s ease-in-out infinite;
+}
+
+.dbstill-root .dbstill-hero__play:hover {
+    background: rgba(255, 255, 255, 0.26) !important;
+    transform: scale(1.04);
+}
+
+.dbstill-root .dbstill-hero__play:active {
+    transform: scale(0.97);
+}
+
+/* ── KPI row (restyled Card ×3) ────────────────────────────────────────── */
+.dbstill-kpis {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.dbstill-root .dbstill-kpi {
+    background: var(--dbs-surface) !important;
+    border: 1px solid var(--dbs-border) !important;
+    border-radius: 18px !important;
+    box-shadow: none !important;
+    animation: dbstill-rise 0.5s var(--dbs-ease) both;
+}
+
+.dbstill-kpi__body {
+    padding: 20px !important;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.dbstill-kpi__chip {
+    width: 46px;
+    height: 46px;
+    border-radius: 13px;
+    background: var(--dbs-tint);
+    color: var(--dbs-accent);
+    display: grid;
+    place-items: center;
+    flex: none;
+}
+
+.dbstill-kpi__meta {
+    display: flex;
+    flex-direction: column;
+}
+
+.dbstill-kpi__num {
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    color: var(--dbs-fg);
+    line-height: 1.1;
+}
+
+.dbstill-kpi__cap {
+    font-size: 12px;
+    color: var(--dbs-fg-2);
+    margin-top: 3px;
+}
+
+/* ── Split grid (heatmap : mood) ───────────────────────────────────────── */
+.dbstill-grid {
+    display: grid;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.dbstill-grid--split {
+    grid-template-columns: 1.4fr 1fr;
+}
+
+@media (max-width: 820px) {
+    .dbstill-grid--split {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 560px) {
+    .dbstill-kpis {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Panels (restyled Card) */
+.dbstill-root .dbstill-panel {
+    background: var(--dbs-surface) !important;
+    border: 1px solid var(--dbs-border) !important;
+    border-radius: 18px !important;
+    box-shadow: none !important;
+    overflow: hidden;
+    animation: dbstill-rise 0.5s var(--dbs-ease) both;
+}
+
+.dbstill-panel__body {
+    padding: 20px !important;
+}
+
+.dbstill-panel__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.dbstill-panel__title {
+    font-weight: 600;
+    font-size: var(--text-sm);
+    color: var(--dbs-fg);
+}
+
+.dbstill-panel__tag {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--dbs-accent);
+}
+
+.dbstill-panel__delta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.dbstill-panel__deltaval {
+    font-size: 12px;
+    color: var(--dbs-fg-2);
+}
+
+.dbstill-panel__caption {
+    font-size: 12px;
+    color: var(--dbs-fg-2);
+}
+
+/* +18% delta (restyled Badge — reads as a soft teal chip) */
+.dbstill-root .dbstill-delta {
+    background: var(--dbs-tint) !important;
+    color: var(--dbs-accent) !important;
+    border: none !important;
+    border-radius: 6px !important;
+    padding: 2px 7px !important;
+    font-size: 11px !important;
+    font-weight: 500 !important;
+    box-shadow: none !important;
+}
+
+/* Chart wells */
+.dbstill-heat {
+    width: 100%;
+    height: 96px;
+}
+
+.dbstill-mood {
+    width: 100%;
+    height: 150px;
+}
+
+/* Heatmap legend */
+.dbstill-heatlegend {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    margin-top: 12px;
+    font-size: 10px;
+    color: var(--dbs-fg-3);
+}
+
+.dbstill-heatlegend__label {
+    margin: 0 2px;
+}
+
+.dbstill-heatlegend__cell {
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+    flex: none;
+}
+
+/* ── Recommended (restyled Card + borderless Table) ────────────────────── */
+.dbstill-root .dbstill-rec {
+    background: var(--dbs-surface) !important;
+    border: 1px solid var(--dbs-border) !important;
+    border-radius: 18px !important;
+    box-shadow: none !important;
+    overflow: hidden;
+    animation: dbstill-rise 0.5s var(--dbs-ease) both;
+}
+
+.dbstill-rec__head {
+    padding: 14px 20px !important;
+    border-bottom: 1px solid var(--dbs-border) !important;
+    background: transparent !important;
+}
+
+.dbstill-rec__body {
+    padding: 0 !important;
+}
+
+.dbstill-root .dbstill-sess {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/* No header row in the mockup */
+.dbstill-root .dbstill-sess thead {
+    display: none;
+}
+
+.dbstill-root .dbstill-sess tbody tr.dbstill-sess__row {
+    border-bottom: 1px solid var(--dbs-divider);
+    transition: background 0.16s var(--dbs-ease);
+}
+
+.dbstill-root .dbstill-sess tbody tr:last-child {
+    border-bottom: 0;
+}
+
+.dbstill-root .dbstill-sess tbody tr:hover {
+    background: rgba(94, 234, 212, 0.03);
+}
+
+.dbstill-root .dbstill-sess td {
+    padding: 13px 20px;
+    background: transparent;
+    border: 0;
+    vertical-align: middle;
+}
+
+.dbstill-root .dbstill-sess .dbstill-sess__iconcell {
+    width: 40px;
+    padding-right: 0;
+}
+
+.dbstill-sess__icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    font-size: 18px;
+    flex: none;
+}
+
+.dbstill-root .dbstill-sess .dbstill-sess__namecell {
+    width: 100%;
+}
+
+.dbstill-sess__name {
+    display: block;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--dbs-fg);
+}
+
+.dbstill-sess__meta {
+    display: block;
+    font-size: 12px;
+    color: var(--dbs-fg-2);
+    margin-top: 2px;
+}
+
+.dbstill-root .dbstill-sess .dbstill-sess__len {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--dbs-fg-2);
+    text-align: right;
+    white-space: nowrap;
+}
+
+.dbstill-root .dbstill-sess .dbstill-sess__playcell {
+    width: 40px;
+    text-align: right;
+}
+
+.dbstill-sess__play {
+    color: var(--dbs-accent);
+    cursor: pointer;
+    vertical-align: middle;
+}
+
+/* ── Colophon ──────────────────────────────────────────────────────────── */
+.dbstill-foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 24px;
+    padding-top: 18px;
+    border-top: 1px solid var(--dbs-divider);
+}
+
+.dbstill-root .dbstill-foot__note {
+    color: var(--dbs-fg-3);
+    font-size: 12px;
+    max-width: 720px;
+}
+
+.dbstill-foot__back {
+    color: var(--dbs-fg-2);
+    text-decoration: none;
+    font-size: 12px;
+    white-space: nowrap;
+    transition: color 0.18s var(--dbs-ease);
+}
+
+.dbstill-foot__back:hover {
+    color: var(--dbs-accent);
+}
+
+/* ── Motion ────────────────────────────────────────────────────────────── */
+@keyframes dbstill-rise {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes dbstill-breathe {
+    0%,
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.14);
+    }
+    50% {
+        box-shadow: 0 0 0 10px rgba(255, 255, 255, 0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dbstill-hero,
+    .dbstill-kpi,
+    .dbstill-panel,
+    .dbstill-rec {
+        animation: none;
+    }
+    .dbstill-root .dbstill-hero__play {
+        animation: none;
+    }
+}

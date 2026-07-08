@@ -1,0 +1,74 @@
+{
+  "thesis": "A bright, airy social-media command center: a fictional brand team schedules a week of posts across four channels, watches followers climb, and celebrates its top post — all rendered from restyled Fancy primitives on a near-white lavender canvas. The centerpiece is a week-at-a-glance content calendar where every scheduled post is a Card wearing its channel's brand color; a controlled Tabs switcher flips the same data between Calendar, a Queue Table, and an Analytics view of EChart trends. Proof that the kit reads just as naturally in a light, consumer-marketing idiom as in a dark ops console.",
+  "tokens": {
+    "bg": "#FBFAFC",
+    "fg": "#1E1B2E",
+    "accent": "#C026D3",
+    "accent2": "#F472B6",
+    "fontDisplay": "Geist (var(--font-sans))",
+    "fontMono": "Geist Mono (var(--font-mono))",
+    "radius": "cards/tiles 9-12px, segmented switcher pills 6-9px, channel chips 5-8px, logo mark 7px, status chips 999px, today marker 50%",
+    "border": "1px hairlines in #ECE8F2 (surfaces) and softer #F1EDF6 (tinted tiles); post cards add a 3px channel-colored left border driven by a --chan CSS var",
+    "motion": "Restrained. A 0.24s fade-up on view swaps, 0.16s ease color/shadow transitions on the segmented switcher + chevrons, a magenta press-nudge on Compose; all gated behind prefers-reduced-motion. The imperative paint() of the mock (segmented active-state, channel tinting, today circle) becomes pure derived styling — className/CSS-var props, no DOM writes."
+  },
+  "layout": "No sidebar. A fixed 52px white top header (restyled Navbar) holds the gradient 'A' logo mark + Amplify wordmark, a 3-way segmented Tabs switcher (Calendar / Queue / Analytics), and a right cluster of 4 channel Avatar chips plus a filled magenta Compose Button. Below, a two-column body grid of 1fr + a fixed 320px right rail. The left column is the swappable centerpiece; the right rail is constant: a 2x2 KPI Card grid on a tinted surface, a full-width follower-growth EChart sparkline, a highlighted top-post Card, and a colophon. Collapses to a single column under 1040px (rail drops below) and to a 3-column week under 720px.",
+  "sections": [
+    {
+      "name": "Top header bar",
+      "what": "Fixed 52px white bar: gradient 'A' mark + Amplify wordmark linking home, a 3-item segmented view switcher (Calendar active / Queue / Analytics) bound to controlled view state, a right cluster of 4 channel Avatar chips (IG/X/TT/YT) tinted by a channel->brand-color map, and a filled magenta Compose button with a lucide plus icon.",
+      "components": "Navbar (shell) + Navbar.Brand + Navbar.Items; Tabs + Tabs.List + Tabs.Tab (segmented switcher); Avatar x4 (channel chips); Button (Compose); lucide-react Plus",
+      "restyle": "Navbar stripped to a 52px white sticky bar (top:46px, z:10); its inner flex row splits Brand (logo + switcher) from Items (chips + Compose). Tabs.List becomes a #F1EDF6 pill track; each Tabs.Tab is a transparent 12px pill that on [aria-selected=true] gets a white bg, magenta text, and a soft shadow. Navbar.Items forced display:flex (it hides < md). Avatar chips squared off (radius 8px) with brand backgrounds beating bg-zinc via added specificity, white fallback text. Button repainted to filled magenta with a plus glyph."
+    },
+    {
+      "name": "Content calendar (week grid)",
+      "what": "The centerpiece (Calendar view): a header (Content calendar title + 'Jul 7 – 13' + prev/next chevrons) over a 7-column Mon-Sun grid. Each column has a dow/date header (today = magenta filled circle) and a stack of post cards; each post card carries a channel-colored 3px left border, a small channel Avatar, a mono timestamp, the copy, and a green 'Published' marker when live.",
+      "components": "Heading + Text (header); hand-rolled 7-col grid shell + chevron buttons (lucide ChevronLeft/ChevronRight); Card + Card.Body per post; Avatar (per-post channel chip); div markers for time/copy/Published",
+      "restyle": "The 7-column grid is a hand-rolled shell (Calendar/TimeGrid are a date-picker + boolean matrix, neither fits post cards). Each post is a restyled Card: white surface, 1px hairline, plus a 3px left border reading a per-card --chan CSS var from the channel map; 9px padding, 11px body, 10px mono timestamp. Today's date becomes a 24px magenta circle. Chevrons are 28px hairline icon-buttons that tint magenta on hover."
+    },
+    {
+      "name": "Queue view",
+      "what": "Alternate view behind the switcher: every scheduled post flattened into a chronological table — channel chip, when, time, post copy, and a status chip (Published / Scheduled).",
+      "components": "Heading; Card (panel) + Table + Table.Head/Column/Body/Row/Cell; Avatar (channel chip); Badge (status)",
+      "restyle": "Table restyled to a borderless list: tinted uppercase 10px header row, hairline row dividers, a lavender row-hover, mono day/time cells. Status Badges become soft rounded chips — green for Published, magenta-tinted for Scheduled."
+    },
+    {
+      "name": "Analytics view",
+      "what": "Alternate view: an audience-growth area chart beside a reach-by-channel horizontal bar, then a full-width top-posts table (post, when, likes, shares, engagement rate).",
+      "components": "Heading; Card + Card.Header/Body (panels); EChart (28-day area) + EChart (brand-colored horizontal bar); Table (top posts); Avatar (channel chip); mono metric cells",
+      "restyle": "Panels are restyled Cards with a title + magenta accent figure. The area EChart reuses the magenta stroke + fuchsia gradient at 220px; the bar EChart paints each channel its brand color with rounded right caps and mono M-formatted labels. Top-posts Table reuses the Queue styling with pink/violet/teal mono metric columns."
+    },
+    {
+      "name": "Quick stats (right rail)",
+      "what": "A 'Last 28 days' 2x2 grid of 4 KPI tiles on a tinted surface: Followers 284k (+12.4k), Engagement 6.8% (+0.9%), Impressions 4.2M (+18%), Posts 48 (12 queued). Big number + label + green delta.",
+      "components": "Card + Card.Body x4 (KPI tiles); Badge (green delta)",
+      "restyle": "Cards repainted to #FAF7FC tiles with 12px radius and a soft #F1EDF6 border; 20px extrabold value, 11px muted label. The delta Badge is stripped to plain 10px green text to match the mock."
+    },
+    {
+      "name": "Follower growth (right rail)",
+      "what": "Full-width area sparkline showing a 7-point upward follower trend — magenta stroke with a vertical fuchsia gradient fill fading to transparent, no axes.",
+      "components": "EChart (area / line)",
+      "restyle": "A fancy-echarts area chart: single smooth series (values = 80 − the mockup's SVG path y's, so it rises), #C026D3 stroke width 2, linear gradient fill #C026D3 @0.24 -> 0 alpha, all axes/gridlines hidden for a sparkline feel; mounted client-only behind a flag for SSR safety."
+    },
+    {
+      "name": "Top post this week (right rail)",
+      "what": "Highlighted tile: a TikTok Avatar + 'TikTok · Tue' label, the headline 'POV: linen season', and a mono engagement row — likes 88k (pink), shares 6.2k (violet), 14% (teal).",
+      "components": "Card + Card.Body; Avatar (tt channel); Badge x3 (metric chips)",
+      "restyle": "Card matches the KPI tint. The three metric Badges become soft brand-tinted mono pills (pink/violet/teal) instead of the mock's bare colored text."
+    }
+  ],
+  "palette": [
+    { "component": "Navbar (+ Brand, Items)", "restyle": "52px white sticky top bar; inner flex row splits left (brand + switcher) from right (chips + Compose); Items forced visible below md" },
+    { "component": "Tabs (+ List, Tab)", "restyle": "segmented pill switcher — #F1EDF6 track, transparent tabs, active tab (aria-selected) gets white bg + magenta text + soft shadow; drives controlled view state" },
+    { "component": "Avatar", "restyle": "channel chips — squared (radius 5-8px), brand-colored backgrounds (IG #E1306C / X #111 / TT #000 / YT #FF0000) beating bg-zinc via specificity, white fallback initials; three sizes (header 26px, post 16px, top 18px)" },
+    { "component": "Button", "restyle": "Compose — filled magenta with a lucide plus glyph, 9px radius, soft magenta shadow, press-nudge" },
+    { "component": "Card (+ Header, Body)", "restyle": "every surface — post cards (3px channel left border via --chan), KPI tiles (#FAF7FC), top-post tile, and Queue/Analytics panels" },
+    { "component": "Badge", "restyle": "green KPI deltas (as plain text), pink/violet/teal top-post metric chips, and green/magenta Queue status chips" },
+    { "component": "Table (+ Head, Column, Body, Row, Cell)", "restyle": "Queue + top-posts lists — tinted uppercase header, hairline dividers, lavender hover, mono day/time/metric cells" },
+    { "component": "EChart", "restyle": "follower-growth area sparkline (rail), 28-day audience-growth area, and reach-by-channel brand-colored horizontal bar (Analytics)" },
+    { "component": "Heading", "restyle": "view titles (Content calendar / Publishing queue / Analytics) at text-xl bold" },
+    { "component": "Text", "restyle": "the rail colophon note at xs muted" },
+    { "component": "lucide-react icons", "restyle": "Plus (Compose), ChevronLeft/ChevronRight (week nav)" }
+  ],
+  "contentArchetype": "Admin/back-office console for a consumer social-media team — a multi-channel content scheduler with a week calendar, a publishing queue, and an analytics view, all fully mock (four channels, four 28-day KPIs, seven days of scheduled posts, a follower-growth curve, and a top post).",
+  "remix": "Swap the magenta/fuchsia accent for any brand duo to re-skin the whole page (accent + accent2 gradient + chart stroke all key off two tokens). Extend the channel map (add LinkedIn / Threads / Pinterest) and every chip, post border, and reach bar picks up the new brand color automatically. Wire the calendar + queue to a registerFormBridge / registerChartsBridge pair so an agent can draft, reschedule, or publish posts and repaint the analytics — the controlled view state, per-post --chan styling, and flattened QUEUE array are already agent-addressable. Turn the chevrons into a real week-range control by lifting DAYS into state keyed by week offset."
+}

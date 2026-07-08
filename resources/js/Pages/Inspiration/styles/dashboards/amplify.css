@@ -1,0 +1,752 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Dashboards · Amplify (id "amplify", light)
+   A near-white lavender social-media scheduling console. A slim white <Navbar>
+   (gradient "A" mark + a <Tabs> view switcher + channel <Avatar> chips + a
+   magenta Compose <Button>) over a 1fr / 320px body: a hand-rolled 7-column
+   week grid of post <Card>s beside a right rail of KPI <Card>s, a follower
+   <EChart> sparkline, and a top-post <Card>. Fancy primitives are restyled HARD
+   via scoped CSS + data-attribute hooks so they wear this bright idiom natively.
+
+   Every rule is scoped under .dbamplify-root. Every class is prefixed dbamplify-.
+   Page-level sticky/z-index stays UNDER 30 (the gallery frame owns 30+).
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.dbamplify-root {
+    /* ── Scoped light-lavender tokens ────────────────────────────────────── */
+    --dba-bg: #fbfafc; /* page background */
+    --dba-surface: #ffffff; /* header + rail + panels */
+    --dba-tint: #faf7fc; /* KPI + top-post tiles */
+    --dba-tint2: #f1edf6; /* switcher track */
+    --dba-border: #ece8f2; /* hairline borders */
+    --dba-border-soft: #f1edf6; /* softer tile borders */
+    --dba-fg: #1e1b2e; /* primary text */
+    --dba-fg-2: #3a3450; /* body copy */
+    --dba-fg-3: #5b5470; /* muted labels */
+    --dba-fg-4: #9089a6; /* faint / mono meta */
+    --dba-accent: #c026d3; /* magenta */
+    --dba-accent2: #f472b6; /* pink */
+    --dba-green: #0f9d58; /* positive delta */
+
+    background: var(--dba-bg);
+    color: var(--dba-fg);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    display: flex;
+    flex-direction: column;
+    min-height: calc(100vh - 46px);
+
+    /* Full-bleed: break out of the showcase's max-w-7xl + padded <main> so the
+       lavender canvas spans the whole viewport width. */
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    width: 100vw;
+    max-width: 100vw;
+    margin-bottom: -2.5rem;
+    overflow-x: clip;
+}
+
+@media (min-width: 768px) {
+    .dbamplify-root {
+        margin-bottom: -3.5rem;
+    }
+}
+
+.dbamplify-root *,
+.dbamplify-root *::before,
+.dbamplify-root *::after {
+    box-sizing: border-box;
+}
+
+.dbamplify-root ::selection {
+    background: var(--dba-accent);
+    color: #fff;
+}
+
+/* ── Top header (react-fancy <Navbar> restyled) ──────────────────────────── */
+.dbamplify-root [data-react-fancy-navbar].dbamplify-topbar {
+    background: var(--dba-surface);
+    border-bottom: 1px solid var(--dba-border);
+    padding: 0 20px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    flex: none;
+    position: sticky;
+    top: 46px;
+    z-index: 10;
+}
+
+.dbamplify-root [data-react-fancy-navbar].dbamplify-topbar > div {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+/* Left zone (NavbarBrand): logo + wordmark + switcher. */
+.dbamplify-root [data-react-fancy-navbar-brand].dbamplify-leftzone {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-width: 0;
+}
+
+.dbamplify-brand {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    text-decoration: none;
+    color: var(--dba-fg);
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.dbamplify-mark {
+    width: 24px;
+    height: 24px;
+    border-radius: 7px;
+    display: grid;
+    place-items: center;
+    font-size: 12px;
+    color: #fff;
+    background: linear-gradient(135deg, var(--dba-accent), var(--dba-accent2));
+}
+
+.dbamplify-brand__word {
+    font-size: var(--text-sm);
+    letter-spacing: -0.01em;
+}
+
+/* ── View switcher (react-fancy <Tabs> restyled into a segmented pill) ────── */
+.dbamplify-switch {
+    display: inline-flex;
+}
+
+.dbamplify-root [data-react-fancy-tabs-list].dbamplify-switch__list {
+    display: inline-flex;
+    gap: 2px;
+    background: var(--dba-tint2);
+    border-radius: 9px;
+    padding: 3px;
+    border: 0;
+}
+
+.dbamplify-root [data-react-fancy-tabs-tab].dbamplify-switch__tab {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 13px;
+    border-radius: 6px;
+    border: 0;
+    background: transparent;
+    color: var(--dba-fg-3);
+    cursor: pointer;
+    transition: background var(--dur-base, 0.16s) var(--ease-out, ease),
+        color var(--dur-base, 0.16s) var(--ease-out, ease), box-shadow 0.16s ease;
+}
+
+.dbamplify-root [data-react-fancy-tabs-tab].dbamplify-switch__tab:hover {
+    color: var(--dba-fg);
+}
+
+.dbamplify-root [data-react-fancy-tabs-tab].dbamplify-switch__tab[aria-selected="true"] {
+    background: var(--dba-surface);
+    color: var(--dba-accent);
+    box-shadow: 0 1px 2px rgba(30, 20, 50, 0.08);
+}
+
+/* Right zone (NavbarItems): channel chips + Compose. Force visible < md. */
+.dbamplify-root [data-react-fancy-navbar-items].dbamplify-rightzone {
+    display: flex !important;
+    flex-direction: row;
+    align-items: center;
+    gap: 14px;
+    border: 0;
+    padding: 0;
+}
+
+.dbamplify-chans {
+    display: flex;
+    gap: 6px;
+}
+
+/* ── Channel chips (react-fancy <Avatar> restyled — square, brand-colored) ── */
+.dbamplify-root [data-react-fancy-avatar].dbamplify-chip {
+    border-radius: 7px;
+    font-weight: 700;
+    flex: none;
+    color: #fff;
+}
+
+.dbamplify-root [data-react-fancy-avatar].dbamplify-chip > span {
+    color: #fff;
+    font-weight: 700;
+}
+
+.dbamplify-root [data-react-fancy-avatar].dbamplify-chip--hdr {
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
+    font-size: 11px;
+}
+.dbamplify-root [data-react-fancy-avatar].dbamplify-chip--hdr > span {
+    font-size: 11px;
+}
+
+.dbamplify-root [data-react-fancy-avatar].dbamplify-chip--post {
+    width: 16px;
+    height: 16px;
+    border-radius: 5px;
+}
+.dbamplify-root [data-react-fancy-avatar].dbamplify-chip--post > span {
+    font-size: 8px;
+}
+
+.dbamplify-root [data-react-fancy-avatar].dbamplify-chip--top {
+    width: 18px;
+    height: 18px;
+    border-radius: 6px;
+}
+.dbamplify-root [data-react-fancy-avatar].dbamplify-chip--top > span {
+    font-size: 9px;
+}
+
+/* Brand backgrounds (beat Avatar's default bg-zinc-200 via added specificity). */
+.dbamplify-root [data-react-fancy-avatar].dbamplify-chip--ig {
+    background: #e1306c;
+}
+.dbamplify-root [data-react-fancy-avatar].dbamplify-chip--x {
+    background: #111111;
+}
+.dbamplify-root [data-react-fancy-avatar].dbamplify-chip--tt {
+    background: #000000;
+}
+.dbamplify-root [data-react-fancy-avatar].dbamplify-chip--yt {
+    background: #ff0000;
+}
+
+/* ── Compose (react-fancy <Button> restyled → filled magenta) ────────────── */
+.dbamplify-root .dbamplify-compose {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: var(--dba-accent);
+    color: #fff;
+    border: 0;
+    border-radius: 9px;
+    padding: 8px 14px;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    box-shadow: 0 1px 2px rgba(192, 38, 211, 0.24);
+    transition: background 0.16s ease, transform 0.12s ease;
+}
+
+.dbamplify-root .dbamplify-compose:hover {
+    background: #a81fb8;
+}
+
+.dbamplify-root .dbamplify-compose:active {
+    transform: translateY(1px);
+}
+
+/* ── Body: centerpiece + right rail ──────────────────────────────────────── */
+.dbamplify-body {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    min-height: 0;
+    align-items: start;
+}
+
+.dbamplify-main {
+    padding: 18px 20px;
+    min-width: 0;
+}
+
+/* ── Calendar / view header ──────────────────────────────────────────────── */
+.dbamplify-calhead {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.dbamplify-root .dbamplify-caltitle {
+    font-size: var(--text-xl);
+    font-weight: 700;
+    margin: 0;
+    color: var(--dba-fg);
+    line-height: 1.1;
+}
+
+.dbamplify-calrange {
+    font-size: 12px;
+    color: var(--dba-fg-4);
+}
+
+.dbamplify-calnav {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.dbamplify-chev {
+    display: grid;
+    place-items: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    border: 1px solid var(--dba-border);
+    background: var(--dba-surface);
+    color: var(--dba-fg-3);
+    cursor: pointer;
+    transition: background 0.14s ease, color 0.14s ease, border-color 0.14s ease;
+}
+
+.dbamplify-chev:hover {
+    color: var(--dba-accent);
+    border-color: var(--dba-accent);
+    background: #fdf4fe;
+}
+
+/* ── Week grid (hand-rolled shell; every post is a restyled <Card>) ───────── */
+.dbamplify-week {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+}
+
+.dbamplify-col {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+}
+
+.dbamplify-dayhead {
+    text-align: center;
+    padding: 6px 0 2px;
+}
+
+.dbamplify-dow {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--dba-fg-4);
+}
+
+.dbamplify-date {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--dba-fg);
+    line-height: 24px;
+    height: 24px;
+}
+
+/* Today marker — a 24px magenta filled circle with white centered text. */
+.dbamplify-date--today {
+    width: 24px;
+    height: 24px;
+    margin: 0 auto;
+    border-radius: 50%;
+    background: var(--dba-accent);
+    color: #fff;
+    display: grid;
+    place-items: center;
+}
+
+/* Post card (react-fancy <Card> restyled; --chan drives the left accent). */
+.dbamplify-root .dbamplify-post {
+    background: var(--dba-surface);
+    border: 1px solid var(--dba-border);
+    border-left: 3px solid var(--chan, var(--dba-accent));
+    border-radius: 9px;
+    box-shadow: 0 1px 2px rgba(30, 20, 50, 0.04);
+    overflow: hidden;
+}
+
+.dbamplify-post__body {
+    padding: 9px;
+}
+
+.dbamplify-post__top {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 5px;
+}
+
+.dbamplify-post__time {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--dba-fg-4);
+}
+
+.dbamplify-post__text {
+    font-size: 11px;
+    line-height: 1.3;
+    color: var(--dba-fg-2);
+}
+
+.dbamplify-post__live {
+    font-size: 9px;
+    color: var(--dba-green);
+    margin-top: 5px;
+    font-weight: 600;
+}
+
+/* ── Right rail ──────────────────────────────────────────────────────────── */
+.dbamplify-rail {
+    border-left: 1px solid var(--dba-border);
+    background: var(--dba-surface);
+    padding: 18px;
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+}
+
+.dbamplify-railcap {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--dba-fg-4);
+    margin-bottom: 12px;
+}
+
+/* KPI tiles (react-fancy <Card> restyled) — 2x2 tinted grid. */
+.dbamplify-kpis {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.dbamplify-root .dbamplify-kpi {
+    background: var(--dba-tint);
+    border: 1px solid var(--dba-border-soft);
+    border-radius: 12px;
+}
+
+.dbamplify-kpi__body {
+    padding: 13px 14px;
+}
+
+.dbamplify-kpi__value {
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--dba-fg);
+    line-height: 1.1;
+}
+
+.dbamplify-kpi__label {
+    font-size: 11px;
+    color: var(--dba-fg-4);
+    margin-top: 2px;
+}
+
+/* Delta chip (react-fancy <Badge> restyled → plain green text, per the mock). */
+.dbamplify-root .dbamplify-delta {
+    display: inline-flex;
+    margin-top: 3px;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    color: var(--dba-green);
+    font-size: 10px;
+    font-weight: 600;
+}
+
+/* Follower-growth sparkline (fancy-echarts <EChart>). */
+.dbamplify-spark {
+    width: 100%;
+    height: 80px;
+    margin-bottom: 20px;
+}
+
+/* Top post (react-fancy <Card> restyled). */
+.dbamplify-root .dbamplify-toppost {
+    background: var(--dba-tint);
+    border: 1px solid var(--dba-border-soft);
+    border-radius: 12px;
+}
+
+.dbamplify-toppost__body {
+    padding: 14px;
+}
+
+.dbamplify-toppost__head {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 8px;
+}
+
+.dbamplify-toppost__meta {
+    font-size: 11px;
+    color: var(--dba-fg-4);
+}
+
+.dbamplify-toppost__title {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--dba-fg);
+    margin-bottom: 10px;
+}
+
+.dbamplify-metrics {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+/* Metric chips (react-fancy <Badge> restyled → soft brand-tinted mono pills). */
+.dbamplify-root .dbamplify-metric {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 7px;
+    border: 0;
+}
+
+.dbamplify-root .dbamplify-metric--like {
+    background: #fce7f3;
+    color: #ec4899;
+}
+.dbamplify-root .dbamplify-metric--share {
+    background: #ede9fe;
+    color: #8b5cf6;
+}
+.dbamplify-root .dbamplify-metric--rate {
+    background: #d7f5f2;
+    color: #0ea5a0;
+}
+
+/* ── Colophon (bottom of the rail) ───────────────────────────────────────── */
+.dbamplify-foot {
+    margin-top: auto;
+    padding-top: 16px;
+    border-top: 1px solid var(--dba-border);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.dbamplify-root .dbamplify-foot__note {
+    color: var(--dba-fg-4);
+    line-height: 1.5;
+}
+
+.dbamplify-foot__back {
+    font-size: var(--text-xs, 12px);
+    font-weight: 600;
+    color: var(--dba-accent);
+    text-decoration: none;
+}
+
+.dbamplify-foot__back:hover {
+    text-decoration: underline;
+}
+
+/* ── Panels (react-fancy <Card> restyled — Queue + Analytics) ────────────── */
+.dbamplify-root .dbamplify-panel {
+    background: var(--dba-surface);
+    border: 1px solid var(--dba-border);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.dbamplify-panel__head {
+    padding: 14px 18px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 0;
+}
+
+.dbamplify-panel__title {
+    font-weight: 600;
+    font-size: var(--text-sm);
+    color: var(--dba-fg);
+}
+
+.dbamplify-panel__accent {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    font-weight: 700;
+    color: var(--dba-accent);
+}
+
+.dbamplify-panel__body {
+    padding: 0 16px 16px;
+}
+
+/* Analytics: area + bar side by side. */
+.dbamplify-agrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+/* ── Tables (react-fancy <Table> restyled — Queue + Top posts) ───────────── */
+.dbamplify-root .dbamplify-qtable {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--text-sm);
+}
+
+.dbamplify-root .dbamplify-qtable thead th {
+    text-align: left;
+    padding: 10px 16px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--dba-fg-4);
+    background: var(--dba-tint);
+    border-bottom: 1px solid var(--dba-border);
+}
+
+.dbamplify-root .dbamplify-qtable tbody tr {
+    border-bottom: 1px solid var(--dba-border-soft);
+}
+
+.dbamplify-root .dbamplify-qtable tbody tr:last-child {
+    border-bottom: 0;
+}
+
+.dbamplify-root .dbamplify-qtable tbody tr:hover {
+    background: #fdf4fe;
+}
+
+.dbamplify-root .dbamplify-qtable td {
+    padding: 11px 16px;
+    background: transparent;
+    border: 0;
+    vertical-align: middle;
+    color: var(--dba-fg-2);
+}
+
+.dbamplify-root .dbamplify-qtable .dbamplify-qcell-chan {
+    width: 1%;
+    white-space: nowrap;
+}
+
+.dbamplify-root .dbamplify-qtable .dbamplify-qcell-day {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--dba-fg-3);
+    white-space: nowrap;
+}
+
+.dbamplify-root .dbamplify-qtable .dbamplify-qcell-time {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--dba-fg-4);
+    white-space: nowrap;
+}
+
+.dbamplify-root .dbamplify-qtable .dbamplify-qcell-text {
+    font-weight: 500;
+    color: var(--dba-fg);
+    width: 100%;
+}
+
+.dbamplify-root .dbamplify-qtable .dbamplify-qcell-num {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    text-align: right;
+    white-space: nowrap;
+}
+
+.dbamplify-root .dbamplify-qtable .dbamplify-qcell-status {
+    width: 1%;
+    white-space: nowrap;
+}
+
+/* Top-posts table: let the copy column take the slack. */
+.dbamplify-root .dbamplify-qtable--top .dbamplify-qcell-text {
+    min-width: 180px;
+}
+
+.dbamplify-root .dbamplify-qcell-num--like {
+    color: #ec4899;
+}
+.dbamplify-root .dbamplify-qcell-num--share {
+    color: #8b5cf6;
+}
+.dbamplify-root .dbamplify-qcell-num--rate {
+    color: #0ea5a0;
+}
+
+/* Status chips (react-fancy <Badge> restyled). */
+.dbamplify-root .dbamplify-status {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 999px;
+    border: 0;
+    white-space: nowrap;
+}
+
+.dbamplify-root .dbamplify-status--live {
+    background: #dcf5e8;
+    color: var(--dba-green);
+}
+
+.dbamplify-root .dbamplify-status--sched {
+    background: #f3e8fc;
+    color: var(--dba-accent);
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 1040px) {
+    .dbamplify-body {
+        grid-template-columns: 1fr;
+    }
+    .dbamplify-rail {
+        border-left: 0;
+        border-top: 1px solid var(--dba-border);
+    }
+    .dbamplify-agrid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 720px) {
+    .dbamplify-week {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    .dbamplify-root [data-react-fancy-navbar-brand].dbamplify-leftzone {
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+}
+
+/* ── Motion ──────────────────────────────────────────────────────────────── */
+@keyframes dbamplify-fade {
+    from {
+        opacity: 0;
+        transform: translateY(3px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.dbamplify-main > * {
+    animation: dbamplify-fade 0.24s var(--ease-out, ease) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dbamplify-main > * {
+        animation: none;
+    }
+}

@@ -1,0 +1,470 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Dashboards · Helios (id "helios", dark)
+   A homeowner-facing solar & energy surface for the fictional "Helios" system.
+   NOT an operator console: no app-shell sidebar — a centered 1080px column over
+   a near-black olive canvas, a slim restyled <Navbar> header, one hero KPI, a
+   full-width energy-flow <Card> (4 tinted lucide tiles), a 1.5fr/1fr grid
+   (today's production <EChart> · a Powerwall gauge <EChart> + a gradient savings
+   <Card>), then a full-width monthly production-vs-consumption bar <EChart>.
+
+   Every rule is scoped under .dbhelios-root. Every class is prefixed dbhelios-.
+   Page-level z-index stays UNDER 30 (the gallery frame owns 30+).
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.dbhelios-root {
+    /* ── Scoped solar-dark tokens ────────────────────────────────────────── */
+    --dbh-bg: #0f1408; /* near-black olive canvas */
+    --dbh-surface: #171e0c; /* card / panel surface */
+    --dbh-border: #2a3416; /* hairline borders + gauge track */
+    --dbh-fg: #e8efd8; /* primary warm off-white */
+    --dbh-fg-2: #9aa67e; /* muted olive text */
+    --dbh-fg-3: #7e8b5e; /* fainter olive (bar labels) */
+    --dbh-fg-4: #5e6b44; /* faint mono axis */
+    --dbh-accent: #facc15; /* solar gold */
+    --dbh-accent-deep: #ca8a04; /* amber-600 (brand gradient start) */
+    --dbh-lime: #65a30d; /* usage lime */
+    --dbh-ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+
+    background: var(--dbh-bg);
+    color: var(--dbh-fg);
+    min-height: 100vh;
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+
+    /* Full-bleed: break out of the showcase's max-w + padded <main> so the
+       olive canvas spans the whole viewport width. */
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    width: 100vw;
+    max-width: 100vw;
+    margin-bottom: -2.5rem;
+    overflow-x: clip;
+}
+
+@media (min-width: 768px) {
+    .dbhelios-root {
+        margin-bottom: -3.5rem;
+    }
+}
+
+.dbhelios-root *,
+.dbhelios-root *::before,
+.dbhelios-root *::after {
+    box-sizing: border-box;
+}
+
+.dbhelios-root ::selection {
+    background: var(--dbh-accent);
+    color: #3a2e06;
+}
+
+.dbhelios-shell {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 22px 24px 60px;
+}
+
+/* ── Header (restyled Navbar — a plain inline lockup + status row) ────────── */
+.dbhelios-root .dbhelios-nav {
+    display: flex !important;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 24px;
+    padding: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    min-height: auto;
+}
+
+.dbhelios-brandwrap {
+    display: flex;
+    align-items: center;
+}
+
+.dbhelios-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: var(--dbh-fg);
+    font-weight: 700;
+    font-size: 15px;
+}
+
+.dbhelios-mark {
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--dbh-accent-deep), var(--dbh-accent));
+    display: grid;
+    place-items: center;
+    color: #3a2e06;
+    font-size: 13px;
+    font-weight: 700;
+    flex: none;
+}
+
+/* Right-hand status cluster — forced visible (Navbar hides items < md). */
+.dbhelios-root .dbhelios-navitems {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center;
+    gap: 14px;
+    margin-left: auto;
+    border: none !important;
+    padding: 0 !important;
+    font-size: var(--text-sm);
+    color: var(--dbh-fg-2);
+}
+
+/* Peak-sun chip (restyled Badge — reads as plain inline text + sun glyph). */
+.dbhelios-root .dbhelios-peak {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    color: var(--dbh-fg-2) !important;
+    font-size: var(--text-sm);
+    font-weight: 500;
+}
+
+.dbhelios-peak__icon {
+    color: var(--dbh-accent);
+    animation: dbhelios-glow 3.4s ease-in-out infinite;
+}
+
+.dbhelios-addr {
+    color: var(--dbh-fg-2);
+}
+
+/* ── Hero KPI ─────────────────────────────────────────────────────────────── */
+.dbhelios-hero {
+    margin-bottom: 20px;
+}
+
+.dbhelios-root .dbhelios-hero__eyebrow {
+    color: var(--dbh-fg-2);
+    font-size: var(--text-sm);
+}
+
+.dbhelios-root .dbhelios-hero__h {
+    margin: 4px 0 0;
+    font-size: 30px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--dbh-fg);
+    line-height: 1.15;
+}
+
+.dbhelios-hero__cap {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--dbh-fg-2);
+    letter-spacing: 0;
+}
+
+/* ── Cards (restyled Card — shared surface / radius / hairline) ───────────── */
+.dbhelios-root .dbhelios-card {
+    background: var(--dbh-surface) !important;
+    border: 1px solid var(--dbh-border) !important;
+    border-radius: 18px !important;
+    box-shadow: none !important;
+    margin-bottom: 16px;
+    overflow: hidden;
+    animation: dbhelios-rise 0.5s var(--dbh-ease) both;
+}
+
+/* ── Energy-flow diagram ──────────────────────────────────────────────────── */
+.dbhelios-flowcard__body {
+    padding: 26px !important;
+}
+
+.dbhelios-flow {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.dbhelios-fnode {
+    flex: 1;
+    min-width: 130px;
+    text-align: center;
+}
+
+.dbhelios-ftile {
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+    margin: 0 auto 10px;
+    display: grid;
+    place-items: center;
+}
+
+.dbhelios-fval {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+
+.dbhelios-flabel {
+    font-size: 12px;
+    color: var(--dbh-fg-2);
+    margin-top: 2px;
+}
+
+/* ── Grid: production (1.5fr) · battery + savings (1fr) ───────────────────── */
+.dbhelios-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+    align-items: stretch;
+}
+
+/* Cards inside the grid handle their own spacing via the grid gap. */
+.dbhelios-root .dbhelios-grid > .dbhelios-card {
+    margin-bottom: 0;
+}
+
+.dbhelios-rightcol {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-width: 0;
+    height: 100%;
+}
+
+.dbhelios-root .dbhelios-rightcol > .dbhelios-card {
+    margin-bottom: 0;
+}
+
+.dbhelios-root .dbhelios-rightcol > .dbhelios-savings {
+    flex: 1;
+}
+
+@media (max-width: 900px) {
+    .dbhelios-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ── Panels (production + monthly) ─────────────────────────────────────────── */
+.dbhelios-phead {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 20px 20px 14px !important;
+    border: none !important;
+    background: transparent !important;
+}
+
+.dbhelios-phead__meta {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.dbhelios-root .dbhelios-ptitle {
+    margin: 0;
+    font-weight: 600;
+    color: var(--dbh-fg);
+}
+
+.dbhelios-psub {
+    font-size: 12px;
+    color: var(--dbh-fg-2);
+}
+
+.dbhelios-panel__body {
+    padding: 0 16px 18px !important;
+    border: none !important;
+}
+
+.dbhelios-chart {
+    width: 100%;
+}
+
+/* Chart legend (hand-rolled inline swatches). */
+.dbhelios-legend {
+    display: flex;
+    gap: 12px;
+    font-size: 11px;
+}
+
+.dbhelios-legend__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.dbhelios-legend__sq {
+    width: 9px;
+    height: 9px;
+    border-radius: 2px;
+}
+
+.dbhelios-legend__item--solar {
+    color: var(--dbh-accent);
+}
+
+.dbhelios-legend__item--solar .dbhelios-legend__sq {
+    background: var(--dbh-accent);
+}
+
+.dbhelios-legend__item--used {
+    color: var(--dbh-lime);
+}
+
+.dbhelios-legend__item--used .dbhelios-legend__sq {
+    background: var(--dbh-lime);
+}
+
+/* ── Powerwall battery ring ────────────────────────────────────────────────── */
+.dbhelios-battcard__body {
+    padding: 20px !important;
+}
+
+.dbhelios-batt {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.dbhelios-ring {
+    position: relative;
+    width: 90px;
+    height: 90px;
+    flex: none;
+}
+
+.dbhelios-ring__val {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--dbh-fg);
+    letter-spacing: -0.01em;
+    pointer-events: none;
+}
+
+.dbhelios-batt__meta {
+    min-width: 0;
+}
+
+.dbhelios-batt__title {
+    font-weight: 600;
+    color: var(--dbh-fg);
+}
+
+.dbhelios-batt__line {
+    font-size: 12px;
+    color: var(--dbh-fg-2);
+    margin-top: 2px;
+}
+
+/* ── Saved-this-month card (gradient stat surface) ─────────────────────────── */
+.dbhelios-root .dbhelios-savings {
+    background: linear-gradient(135deg, #3a2e06, #65500a) !important;
+    border: none !important;
+    display: flex;
+}
+
+.dbhelios-savings__body {
+    padding: 20px !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.dbhelios-savings__eyebrow {
+    font-size: 12px;
+    color: #e8d77e;
+}
+
+.dbhelios-savings__num {
+    font-size: 34px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--dbh-accent);
+    margin-top: 4px;
+    line-height: 1.1;
+}
+
+.dbhelios-savings__cap {
+    font-size: 12px;
+    color: #c8b96e;
+    margin-top: 6px;
+}
+
+/* ── Colophon ──────────────────────────────────────────────────────────────── */
+.dbhelios-foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 24px;
+    padding-top: 18px;
+    border-top: 1px solid var(--dbh-border);
+}
+
+.dbhelios-root .dbhelios-foot__note {
+    color: var(--dbh-fg-3);
+    font-size: 12px;
+    max-width: 720px;
+}
+
+.dbhelios-foot__back {
+    color: var(--dbh-fg-2);
+    text-decoration: none;
+    font-size: 12px;
+    white-space: nowrap;
+    transition: color 0.16s var(--dbh-ease);
+}
+
+.dbhelios-foot__back:hover {
+    color: var(--dbh-accent);
+}
+
+/* ── Motion ────────────────────────────────────────────────────────────────── */
+@keyframes dbhelios-rise {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes dbhelios-glow {
+    0%,
+    100% {
+        opacity: 1;
+        filter: drop-shadow(0 0 2px rgba(250, 204, 21, 0.5));
+    }
+    50% {
+        opacity: 0.78;
+        filter: drop-shadow(0 0 6px rgba(250, 204, 21, 0.7));
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dbhelios-root .dbhelios-card {
+        animation: none;
+    }
+    .dbhelios-peak__icon {
+        animation: none;
+    }
+}

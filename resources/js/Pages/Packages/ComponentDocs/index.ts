@@ -50,6 +50,7 @@ import { fancySlidesShapeElementDoc } from "./FancySlidesShapeElement";
 import { presenterViewDoc } from "./PresenterView";
 import { slideViewerDoc } from "./SlideViewer";
 import { fancyAppRootDoc } from "./FancyAppRoot";
+import { fancyMapDoc } from "./FancyMap";
 import { fileBrowserDoc } from "./FileBrowser";
 import { fileUploadDoc } from "./FileUpload";
 import { flowEditorDoc } from "./FlowEditor";
@@ -194,6 +195,9 @@ const DOCS: Record<string, ComponentDoc> = {
     // fancy-sheets
     "fancy-sheets/sheet-workbook": sheetWorkbookDoc,
     "fancy-sheets/create-empty-workbook": createEmptyWorkbookDoc,
+
+    // fancy-map
+    "fancy-map/map": fancyMapDoc,
 
     // fancy-code
     "fancy-code/code-editor": codeEditorDoc,

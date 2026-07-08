@@ -141,6 +141,7 @@ class PackageRegistry
             self::fancy3d(),
             self::fancy3dBabylon(),
             self::fancy3dThree(),
+            self::fancyMap(),
             self::agentIntegrations(),
             self::fancyInertia(),
             self::fancyPwa(),
@@ -549,6 +550,22 @@ class PackageRegistry
             ['slug' => 'tooltip', 'name' => 'Tooltip'],
             ['slug' => 'tree-nav', 'name' => 'TreeNav'],
         ]);
+    }
+
+    /** @return array<string, mixed> */
+    private static function fancyMap(): array
+    {
+        return [
+            'slug' => 'fancy-map',
+            'name' => 'fancy-map',
+            'tagline' => 'Engine-agnostic Map — one <Map> API over OpenStreetMap (Leaflet) + Google Maps, live position tracking, and a Human+ MCP bridge for cohabited human/agent maps.',
+            'npm' => '@particle-academy/fancy-map',
+            'repo' => 'Particle-Academy/fancy-map',
+            'language' => 'TypeScript',
+            'components' => [
+                ['slug' => 'map', 'name' => 'Map', 'blurb' => 'Controlled map surface — view/markers/selection, live tracking (follow + useGeolocationTrack), stable data-map-marker-id handles, SSR-safe. Swap providers (leafletProvider / googleProvider) with one prop.'],
+            ],
+        ];
     }
 
     /** @return array<string, mixed> */

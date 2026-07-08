@@ -104,6 +104,9 @@ import { mountPixel, type PixelHandle, type PixelStyle } from "@particle-academy
 import { SheetWorkbook, createEmptyWorkbook, createEmptySheet } from "@particle-academy/fancy-sheets";
 import "@particle-academy/fancy-sheets/styles.css";
 import { EChart } from "@particle-academy/fancy-echarts";
+import { Map as FancyMap, type MapMarker as FancyMapMarker, type MapView as FancyMapView } from "@particle-academy/fancy-map";
+import { leafletProvider } from "@particle-academy/fancy-map/leaflet";
+import "leaflet/dist/leaflet.css";
 import { Screen, ScreenSystem } from "@particle-academy/fancy-screens";
 import { Canvas } from "@particle-academy/fancy-3d";
 import { AgentPanel } from "@particle-academy/agent-integrations";
@@ -247,6 +250,9 @@ const REGISTRY: Record<string, DemoFn> = {
 
     // ── fancy-echarts
     "fancy-echarts/echart": EChartDemo,
+
+    // ── fancy-map
+    "fancy-map/map": FancyMapDemo,
 
     // ── fancy-screens
     "fancy-screens/screen-system": ScreenSystemDemo,
@@ -1015,6 +1021,56 @@ function FileBrowserDemo() {
                 picked directory: <code>{picked ? String(picked) : "none yet"}</code>
             </div>
         </div>
+    );
+}
+
+// One OpenStreetMap provider + a deterministic delivery route, created at module
+// load (not per render) so the engine isn't rebuilt and SSR/hydration match.
+const fancyMapProvider = leafletProvider();
+const FANCY_MAP_CENTER = { lat: 43.0389, lng: -87.9065 };
+const FANCY_MAP_ROUTE = Array.from({ length: 48 }, (_, i) => {
+    const t = (i / 48) * Math.PI * 2;
+    return { lat: FANCY_MAP_CENTER.lat + Math.sin(t) * 0.02, lng: FANCY_MAP_CENTER.lng + Math.cos(t) * 0.03 };
+});
+
+function FancyMapDemo() {
+    const [step, setStep] = useState(0);
+    const [view, setView] = useState<FancyMapView>({ center: FANCY_MAP_CENTER, zoom: 13 });
+    const [selected, setSelected] = useState<string | null>(null);
+
+    // SSR-safe: the timer only runs in the browser and is cleared on unmount.
+    useEffect(() => {
+        const id = window.setInterval(() => setStep((s) => (s + 1) % FANCY_MAP_ROUTE.length), 900);
+        return () => window.clearInterval(id);
+    }, []);
+
+    const markers: FancyMapMarker[] = [
+        { id: "truck", position: FANCY_MAP_ROUTE[step], icon: "🚚", color: "#2563eb", label: "Order #4821" },
+        { id: "home", position: FANCY_MAP_CENTER, icon: "🏠", color: "#16a34a", label: "You" },
+    ];
+
+    return (
+        <DemoNote
+            outOfBox="Engine-agnostic <Map> with leafletProvider() rendering OpenStreetMap tiles (no API key). view / markers / selectedId are controlled; follow keeps the camera on a moving marker."
+            demo="The 🚚 marker's position is advanced on a 900ms timer along a precomputed route to stand in for a live position feed (websocket, Echo channel, or an agent over the map bridge)."
+        >
+            <div className="space-y-2">
+                <div style={{ height: 420 }} className="overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
+                    <FancyMap
+                        provider={fancyMapProvider}
+                        view={view}
+                        onViewChange={setView}
+                        markers={markers}
+                        selectedId={selected}
+                        onSelect={setSelected}
+                        follow="truck"
+                    />
+                </div>
+                <Text size="xs" className="!text-zinc-500">
+                    {selected ? `Selected: ${selected}` : "Click a pin to select it — selection is controlled state."}
+                </Text>
+            </div>
+        </DemoNote>
     );
 }
 

@@ -1,0 +1,40 @@
+{
+  "id": "cadence",
+  "name": "Cadence",
+  "note": "Campaign opens, clicks, deliverability.",
+  "mode": "light",
+  "thesis": "A calm, lavender-tinted email-marketing back-office in the master-detail idiom: a fixed campaign list drives a per-campaign report. Violet (#7C3AED) leads, sky (#38BDF8) supports; white cards on a #FBFAFF page with hairline borders keep it airy and operator-friendly rather than flashy.",
+  "tokens": {
+    "bg": "#FBFAFF",
+    "fg": "#1F1B2E",
+    "accent": "#7C3AED",
+    "fontDisplay": "var(--font-sans)",
+    "fontMono": "var(--font-mono)",
+    "radius": "12–14px cards, 999px pills/dots, 8px search",
+    "border": "#ECE9F5 hairline",
+    "motion": "cubic-bezier(.16,1,.3,1) ~200ms on selection + bar-fill"
+  },
+  "layout": "Two-pane master-detail shell: a fixed 300px left rail (brand + search + scrollable campaign list) beside a scrolling detail column — a sticky topbar, a 4-up KPI row, a 1.5fr/1fr row (opens-over-time chart + ranked links), and a full-width deliverability card. Comfortable, airy density; white cards on a lavender page.",
+  "sections": [
+    { "name": "Sidebar + brand", "what": "Fixed rail with a gradient sky→violet logo mark, wordmark, search box, and the campaign master list.", "components": ["Sidebar", "Avatar", "Inputs"], "restyle": "Sidebar rail on #FFFFFF; gradient logo mark; pill search input." },
+    { "name": "Campaign list", "what": "Six selectable campaign rows — status dot, meta line, and inline open/click % on the selected row.", "components": ["Table", "Badge"], "restyle": "Selectable rows with an inset-violet left rail + tinted bg on the active id; status dot is a Badge colored by {sent/scheduled/draft}." },
+    { "name": "Detail topbar", "what": "Sticky header for the selected campaign — title, green Sent pill, recipient meta.", "components": ["Navbar", "Badge"], "restyle": "Slim sticky Navbar; Badge for send status." },
+    { "name": "KPI row", "what": "Open rate, click rate, revenue, unsubs — four stat tiles.", "components": ["Card"], "restyle": "Restyled Card KPI tiles, uppercase micro-label + 28px colored value." },
+    { "name": "Opens since send", "what": "Cumulative opens across the first 48h after send.", "components": ["EChart", "Card"], "restyle": "EChart area — violet line with a top-down gradient fill over an hours-since-send axis, inside a Card." },
+    { "name": "Top clicked links", "what": "Four destination URLs ranked by click share with proportional bars.", "components": ["Progress", "Card"], "restyle": "Progress bars (sky #38BDF8 fill on #F0EEF7 track), mono URLs, inside a Card." },
+    { "name": "Deliverability", "what": "Delivered / bounced / spam / failed mini-tiles on a lavender fill.", "components": ["Card", "Badge"], "restyle": "A Card of four color-coded mini Cards." }
+  ],
+  "palette": [
+    { "component": "Sidebar", "restyle": "The 300px master rail — brand header, search, campaign list." },
+    { "component": "Table", "restyle": "The selectable campaign list; active row gets a tinted bg + inset-violet left rail." },
+    { "component": "Navbar", "restyle": "The slim sticky detail topbar." },
+    { "component": "Card", "restyle": "KPI tiles, the chart/links panels, and the deliverability mini-tiles." },
+    { "component": "EChart", "restyle": "The opens-since-send area chart (violet gradient areaStyle)." },
+    { "component": "Progress", "restyle": "The ranked top-clicked-links bars (sky fill on lavender track)." },
+    { "component": "Badge", "restyle": "Send-status pills + the campaign status dots (sent/scheduled/draft color map)." },
+    { "component": "Avatar", "restyle": "The gradient sky→violet Cadence logo mark." },
+    { "component": "Inputs", "restyle": "The campaign search box." }
+  ],
+  "contentArchetype": "An email-marketing operator's per-campaign report — a fixed list of sends on the left, and the selected campaign's opens/clicks/revenue/deliverability on the right. Swap in your own campaigns and metrics.",
+  "remix": "The master-detail shell (300px selectable list + sticky-topbar detail) generalizes to any 'list drives a report' admin — support tickets, orders, subscribers. Keep the airy lavender-on-white and the single hero chart; make the accent your brand color and the list rows your entities."
+}

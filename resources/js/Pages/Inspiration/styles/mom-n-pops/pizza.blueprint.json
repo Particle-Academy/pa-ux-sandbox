@@ -28,14 +28,14 @@
     {
       "name": "hero + live-oven peek",
       "what": "Left: red uppercase kicker ('Wood-fired · Milwaukee · dal 2026'), 58px Georgia headline '60 seconds in a 900° oven.', lede, and two CTAs (red 'Start an order' scrolls to the menu, white-bordered 'Tonight's stop' scrolls to the schedule). Right: a white card 'The oven, right now' — dark ink header with pulsing green dot + mono 612°F, then a 3-row live queue (mono red ticket #, pie, green stage) under a '4 pies ahead · ~12 min' summary.",
-      "components": ["Button"],
-      "restyle": "Buttons flattened to the trattoria idiom: 12px radius, 13px/24px padding, 600 weight, no shadow — tomato solid vs white with tan border. The peek card is hand-rolled: 18px radius, deep soft shadow 0 18px 40px -22px rgba(43,31,23,0.4), #2B1F17 header band, the one CSS keyframe (mppizza-pulse) on the #4ADE80 dot."
+      "components": ["Button", "Card", "Table"],
+      "restyle": "Buttons flattened to the trattoria idiom: 12px radius, 13px/24px padding, 600 weight, no shadow — tomato solid vs white with tan border. The peek is a Card (variant=flat, padding=none) restyled back to an 18px-radius white shell with a deep soft shadow 0 18px 40px -22px rgba(43,31,23,0.4) and a #2B1F17 header band; its 3-row live queue is a headerless Table (wrapper chrome stripped, cells re-padded to 7px/0 on #F1E6D2 hairlines — mono red #, pie name, green stage). Only the pulsing #4ADE80 dot (mppizza-pulse keyframe) stays hand-rolled."
     },
     {
       "name": "menu — Le Pizze",
       "what": "Centered Georgia h2 with '10-inch personal pies · add to your order' sub-line, then a 3x2 grid of six white pie cards: 42px emoji glyph tile on #F1E6D2, optional colored tag pill, Georgia name vs bold red price on one baseline, one-line description, and a full-width '+ Add to order' button feeding the cart.",
-      "components": ["Button", "Badge"],
-      "restyle": "Badge (solid) becomes the tag pill — 11px/700 white text, 999px radius, background driven per-item from data (tagBg: #2E7D32 / #B71C1C / #B3352E / #3F7D3A / #F0A202) via inline style; the untagged pie simply omits it. The add Button is restyled to a cream card action: full-width, #FBF6EC fill, 1px #D9C7A8 border, 10px radius, hover to #F1E6D2 — every click appends to cart state."
+      "components": ["Card", "Button", "Badge"],
+      "restyle": "Each pie is a Card (variant=flat, padding=none) restyled to the white 16px-radius / 1px-tan-hairline dish (flex column, 20px padding). Badge (solid) becomes the tag pill — 11px/700 white text, 999px radius, background driven per-item from data (tagBg: #2E7D32 / #B71C1C / #B3352E / #3F7D3A / #F0A202) via inline style; the untagged pie simply omits it. The add Button is restyled to a cream card action: full-width, #FBF6EC fill, 1px #D9C7A8 border, 10px radius, hover to #F1E6D2 — every click appends to cart state."
     },
     {
       "name": "order tracker (kanban surface)",
@@ -46,14 +46,14 @@
     {
       "name": "story — La nostra storia",
       "what": "A 2-column band above a tan top hairline: left is the red kicker + Georgia h2 'Sal built the oven. Rosa built the dough.' + one origin paragraph (two-day cold ferment, ninety seconds flat); right is a 2x2 grid of stat tiles — 30px extra-bold red values (90s / 2-day / 2026 / 6) over muted labels.",
-      "components": [],
-      "restyle": "Hand-rolled 'numbers as proof' tiles: white cards, tan hairline, 14px radius, stat values in the same tomato red as the menu prices so money, action, and proof share one color."
+      "components": ["Card"],
+      "restyle": "The four 'numbers as proof' tiles are Cards (variant=flat, padding=none) restyled back to white 14px-radius / tan-hairline tiles (18px padding), stat values in the same tomato red as the menu prices so money, action, and proof share one color."
     },
     {
       "name": "find us — Dove siamo",
       "what": "Georgia h2 over a single white card listing six Milwaukee evenings (Bay View → Humboldt Park) as ledger rows: bold day, muted neighborhood, mono hours.",
-      "components": [],
-      "restyle": "Hand-rolled 120px/1fr/auto grid rows divided by #F1E6D2 hairlines — reads like a printed hours card taped to the truck window; the mono hours column is the timetable tell."
+      "components": ["Table"],
+      "restyle": "A headerless Table (Table.Body only): the rounded-lg/border wrapper is re-skinned to the white 16px-radius / tan-hairline card and the text-sm cells re-padded to 14px/22px on #F1E6D2 hairlines — bold 120px day, ink neighborhood, right-aligned mono hours. Reads like a printed hours card taped to the truck window; the mono hours column is the timetable tell."
     },
     {
       "name": "footer + demo folio",
@@ -64,6 +64,8 @@
   ],
   "palette": [
     { "component": "Button", "restyle": "Four wears, all 600 weight / auto height / no shadow: tomato-solid hero CTA (12px radius, hover deepens to #9D1616); white secondary with tan #E7D9C2 border; full-width cream '+ Add to order' card action (10px radius, #D9C7A8 border, #F1E6D2 hover); basil-green 'Place order' (10px radius) with a real disabled prop at 0.5 opacity." },
+    { "component": "Card", "restyle": "Worn three ways, all variant=flat + padding=none with rounded-lg and the flat bg overridden (!important) back to the trattoria look: the hero live-oven peek shell (white, 18px radius, deep soft shadow 0 18px 40px -22px rgba(43,31,23,0.4), dark #2B1F17 header band, overflow hidden), the six menu pie cards (white, 16px radius, 1px #E7D9C2 hairline, flex column, 20px padding), and the four story stat tiles (white, 14px radius, tan hairline, 18px padding)." },
+    { "component": "Table", "restyle": "Two headerless boards (Table.Body only): the hero peek's 3-row live queue (rounded/border wrapper chrome stripped so it sits flush inside the peek Card — text-sm cells re-padded to 7px/0 on #F1E6D2 hairlines: mono red #, pie name, right-aligned green stage) and the Dove siamo schedule ledger (wrapper re-skinned to the white 16px-radius / tan-hairline card, cells re-padded to 14px/22px: bold 120px day, ink neighborhood, right-aligned mono hours). tr hover-bg neutralized to keep the static printed-card look." },
     { "component": "Kanban", "restyle": "A read-only status board, not a drag surface: root forced to a 3-up grid with 1px #F1E6D2 gutters; Columns unstyled → cream wells (min-height 230px, 14px padding) with dot + label + mono-count headers rendered as the first child; Cards unstyled → white 10px-radius tickets, 1px #EADBC2 border, 3px border-left inline-colored per column (queue #9A8163, oven #E0623B, up #2E7D32), green 2px ring when mine. Tickets migrate by re-rendering into a different column as order state advances." },
     { "component": "Badge", "restyle": "Two reads: the menu tag pill (solid variant, 11px/700 white text, 999px radius, per-item background via inline style from data) and the YOU pill on the user's ticket (10px/700, #2E7D32 on #E3F0E4, 999px)." },
     { "component": "Callout", "restyle": "The 'order up' banner: color=green flattened hard — zero border, zero radius, full-width #E3F0E4 strip with #2E7D32 600-weight text and a CircleCheck icon — appearing only at the final order stage." },

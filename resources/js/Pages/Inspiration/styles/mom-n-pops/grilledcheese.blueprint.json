@@ -22,8 +22,8 @@
         {
             "name": "sticky header",
             "what": "Brand lockup ('Mom-n-Pops' 21px/800 + a flickering amber 'MELTS · LATE' neon badge) linking to the collection hub, text nav (Menu / Story / Find us) that smooth-scrolls to sections, and a violet 'agentic catering' pill with a glowing 6px dot — the page's first and only violet until the catering section.",
-            "components": ["Link", "Tooltip", "Badge"],
-            "restyle": "Hand-rolled plum glass — rgba bg + backdrop-blur(8px) + 1px #2A2233 bottom border, sticky under the host frame's chrome. The neon badge runs the 5s flicker keyframe with an amber text-shadow halo; Tooltip on it delivers the backstory ('flickered since night one'). Nav items are unstyled buttons wired to scrollIntoView."
+            "components": ["Link", "Tooltip"],
+            "restyle": "Deliberately hand-rolled chrome (react-fancy's Navbar is a non-sticky bar with a mobile toggle that would fight this sticky plum-glass look and its z-index discipline): rgba bg + backdrop-blur(8px) + 1px #2A2233 bottom border, sticky UNDER the host frame's chrome. The Inertia Link carries the brand lockup; the neon badge runs the 5s flicker keyframe with an amber text-shadow halo and a Tooltip that delivers the backstory ('flickered since night one'). Nav items + the agent pill are unstyled buttons wired to scrollIntoView."
         },
         {
             "name": "hero",
@@ -34,14 +34,14 @@
         {
             "name": "menu grid",
             "what": "'The melts' + 'tap for the full melt' hint, then six cards: a 168px art tile with an optional data-colored tag badge top-left, name + amber price row, one-line description. Every card opens the item drawer.",
-            "components": ["Badge", "Button"],
-            "restyle": "Cards are <button>s (bg #1C1726, border #2A2233, radius 14) that lift 4px and flip their border amber on hover while the emoji subject scales 1.08 and tilts. Tags are Badges force-fed per-item background hexes from data (amber for 'Most loved', #57C98A for 'Veg') over near-black text. Art tiles are deterministic emoji compositions — one big subject + two orbiting sides over a per-item radial tint (CSS var) and faint vertical griddle stripes."
+            "components": ["Card", "Badge"],
+            "restyle": "Each melt is a react-fancy Card (variant='flat' padding='none') made clickable — role='button', tabIndex, aria-haspopup='dialog', an Enter/Space keydown, and onClick open the drawer. Root-scoped !important overrides the Card's flat bg / rounded-lg with the melt tile (bg #1C1726, border #2A2233, radius 14) that lifts 4px and flips its border amber on hover while the emoji subject scales 1.08 and tilts. Tags are Badges force-fed per-item background hexes from data (amber for 'Most loved', #57C98A for 'Veg') over near-black text. Art tiles stay hand-rolled: deterministic emoji compositions — one big subject + two orbiting sides over a per-item radial tint (CSS var) and faint vertical griddle stripes."
         },
         {
             "name": "agentic catering",
-            "what": "The signature surface. Centered violet-dot kicker + 'Brief the truck. The agent plans it.' Then a 1fr/400px split: LEFT a chat bubble where the agent narrates (bot avatar on a violet→lavender gradient tile, asymmetric bubble radius), an '01 — Occasion' chip picker, an '02 — Headcount' 10–200 slider, and a mono 'Agent · tool calls' feed; RIGHT a sticky quote card with live line items, a 38px amber total, per-guest math, and a gradient 'Book the truck' CTA that swaps the card to a green-check confirmation with a mono REF and a 'Plan another event' reset.",
-            "components": ["Button", "Slider", "Badge"],
-            "restyle": "Occasion chips are Buttons stripped to bordered pills whose aria-pressed state paints them violet (rgba(139,92,246,.2) fill + violet border + white text) — selection is the agent's color, declaratively. The Slider wears a violet→lavender fill and a glowing lavender thumb on a near-black track. Every interaction appends a timestamped mono row to the feed (scope_occasion, recalc, booking_create, email_menu) with a green 'ok' — an AgentActivity log as product UI. The quote card is pure derived state: perHead 15/11/10/9 by occasion, ceil(guests×1.2) melt platters at $4.50, $2 soup shooters per guest, $350-or-$220 griddle service, plus a snack-cart line only for weddings/parties. Booking generates the REF in the click handler (SSR-safe) and the 'Book the truck' Button carries the butter gradient + warm glow shadow."
+            "what": "The signature surface. Centered violet-dot kicker + 'Brief the truck. The agent plans it.' Then a 1fr/400px split: LEFT a chat bubble where the agent narrates (Avatar chip on a violet→lavender gradient tile, asymmetric bubble radius), an '01 — Occasion' chip picker, an '02 — Headcount' 10–200 slider, and a mono 'Agent · tool calls' feed; RIGHT a sticky quote Card with live line items, a 38px amber total, per-guest math, and a gradient 'Book the truck' CTA that swaps the card to a green-check confirmation with a mono REF and a 'Plan another event' reset.",
+            "components": ["Avatar", "Card", "Table", "Button", "Slider", "Badge"],
+            "restyle": "The agent chip is a react-fancy Avatar (fallback 'AI') restyled from a round photo well to the squared 34px violet→lavender gradient tile — the agent's color. The sticky quote panel is a Card composed with Card.Header (title + occasion Badge) and Card.Body, its flat bg / rounded-lg overridden by the violet gradient + violet-shadow. Its line items are a react-fancy Table stripped to hairline rows (name/note cell + right-aligned mono price cell). Occasion chips are Buttons stripped to bordered pills whose aria-pressed state paints them violet (rgba(139,92,246,.2) fill + violet border + white text) — selection is the agent's color, declaratively. The Slider wears a violet→lavender fill and a glowing lavender thumb on a near-black track. Left hand-rolled: the asymmetric chat bubble and the mono tool-call feed (the signature AgentActivity log — scope_occasion, recalc, booking_create, email_menu, each with a green 'ok'). The quote is pure derived state: perHead 15/11/10/9 by occasion, ceil(guests×1.2) melt platters at $4.50, $2 soup shooters per guest, $350-or-$220 griddle service, plus a snack-cart line only for weddings/parties. Booking generates the REF in the click handler (SSR-safe) and the 'Book the truck' Button carries the butter gradient + warm glow shadow."
         },
         {
             "name": "story band",
@@ -51,9 +51,9 @@
         },
         {
             "name": "schedule",
-            "what": "'Find the truck' + 'Milwaukee · nights & late', then one bordered card of six rows in a 170px/1fr/auto grid: bold day, muted place, mono hours (7p–2:30a energy). Mon–Tue reads 'Catering only' with an em-dash — cross-selling the agent surface. Tonight's row gets a soft amber wash and a dotted 'tonight' Badge after hydration.",
-            "components": ["Badge"],
-            "restyle": "Rows divided by #26202F hairlines inside a #1C1726 card; hours in mono reinforce the late-night ledger feel. The 'tonight' Badge (amber, soft, dot) appears only client-side — first paint is deterministic for SSR."
+            "what": "'Find the truck' + 'Milwaukee · nights & late', then one bordered card of six rows: bold day, muted place, mono hours (7p–2:30a energy). Mon–Tue reads 'Catering only' with an em-dash — cross-selling the agent surface. Tonight's row gets a soft amber wash and a dotted 'tonight' Badge after hydration.",
+            "components": ["Table", "Badge"],
+            "restyle": "A react-fancy Table restyled to the bordered night ledger: the wrapper keeps the #1C1726 card chrome while cells drop the default px-4/py-3 padding + hover and take the 170px day / fluid place / mono right-aligned hours rhythm, rows divided by #26202F hairlines. The 'tonight' Badge (amber, soft, dot) sits inside the day cell and appears only client-side — first paint is deterministic for SSR."
         },
         {
             "name": "footer",
@@ -63,12 +63,24 @@
         },
         {
             "name": "item drawer",
-            "what": "Fixed right slide-over (540px, dim scrim): a 270px large-format melt art tile with a circular close button, 33px name + 25px amber price, amber tag badges, the long description, 'Pressed with' ingredient pills, allergens line, and a full-width amber 'Add to order · $N' button. Escape and the scrim both close; body scroll locks while open.",
+            "what": "Fixed right slide-over (540px, dim scrim): a 270px large-format melt art tile with a circular close button, 33px name + 25px amber price, amber tag Badges, the long description, 'Pressed with' ingredient pills, allergens line, and a full-width amber 'Add to order · $N' button. Escape and the scrim both close; body scroll locks while open.",
             "components": ["Button", "Badge"],
-            "restyle": "Hand-rolled overlay capped at a page-level z-index BELOW the host frame's chrome — the gallery stays in charge. The close Button is variant='circle' recolored to plum glass; ingredient pills reuse the card tokens (#1C1726 bg, #2A2233 border, 999px radius); the drawer slides in 48px with an ease-out entrance."
+            "restyle": "The overlay itself is deliberately hand-rolled (react-fancy's Modal portals to a z-50 centered dialog — this drawer is a right slide-over capped at a page-level z-index BELOW the host frame's chrome, so the gallery stays in charge and the scoped restyle can reach it). The close Button is variant='circle' recolored to plum glass; both the tag Badges and the 'Pressed with' ingredient pills are react-fancy Badges reusing the card tokens (#1C1726 bg, #2A2233 border, 999px radius); the drawer slides in 48px with an ease-out entrance; Escape + scrim close via an effect with cleanup."
         }
     ],
     "palette": [
+        {
+            "component": "Card",
+            "restyle": "Worn twice. The six menu melts are clickable Cards (variant='flat' padding='none' + role='button', tabIndex, aria-haspopup='dialog', Enter/Space keydown, onClick) whose flat bg / rounded-lg is overridden (root-scoped !important) to the #1C1726 melt tile that lifts 4px to an amber border on hover. The sticky live-quote panel is a Card composed with Card.Header (title + occasion Badge, its default bottom border recolored to the quote hairline) and Card.Body (line items + total + book CTA / or the booked confirmation), its flat surface overridden by the violet gradient (160deg #231A32→#1A1424) + violet-shadow. Card.Body also carries the booked-state confirmation."
+        },
+        {
+            "component": "Table",
+            "restyle": "The page's two ledgers, both stripped to hairline rows. The 'Find the truck' schedule is a Table whose wrapper keeps the #1C1726 card chrome while its cells drop the default px-4/py-3 padding + hover for a 170px bold day / fluid muted place / mono right-aligned hours rhythm (rows divided by #26202F), with the 'tonight' Badge nested in the day cell. The quote's line items are a second Table with no wrapper chrome (transparent, borderless) — a name+note cell and a right-aligned mono price cell, divided by #241D33, flush inside the quote Card.Body."
+        },
+        {
+            "component": "Avatar",
+            "restyle": "The agent's face in the chat bubble: a react-fancy Avatar (fallback 'AI', size sm) restyled from a round photo well to the squared 34px, radius-10 violet→lavender gradient tile with near-black 800-weight initials — violet is the agent's reserved color, so the Avatar is the one photo-well primitive on the page and it belongs entirely to the agent layer."
+        },
         {
             "component": "Button",
             "restyle": "Four voices, one primitive. Commerce: solid amber fill (#F2A93B, near-black text, radius 10, weight 800) and a transparent ghost with a #4A3F52 border that warms to amber. The book CTA upgrades to a 110deg amber→#F2C14E gradient at radius 12 with a warm glow shadow (0 10px 28px -8px amber @ 60%) and an inline truck icon. Agent: occasion chips stripped to quiet bordered pills that turn violet via [aria-pressed=true]. Utility: variant='circle' as the drawer's plum-glass close, and a ghost 'Plan another event' underline link."
@@ -79,7 +91,7 @@
         },
         {
             "component": "Badge",
-            "restyle": "Data-driven: menu tag badges take per-item background hexes via style (amber / #57C98A) over near-black 11px/800 text at radius 6; the quote card's occasion chip is a violet-soft 999px pill (#C4A9F0 on rgba(139,92,246,.16)); drawer tags are solid amber; the schedule's 'tonight' marker is amber-soft with a dot, hydration-gated."
+            "restyle": "Data-driven and everywhere. Menu tag Badges take per-item background hexes via style (amber / #57C98A) over near-black 11px/800 text at radius 6; the quote Card's occasion chip is a violet-soft 999px pill (#C4A9F0 on rgba(139,92,246,.16)); drawer tags are solid amber and the 'Pressed with' ingredient chips are Badges restyled to the card-token pill (font-weight normalized to 400); the schedule's 'tonight' marker is amber-soft with a dot, hydration-gated."
         },
         {
             "component": "Tooltip",

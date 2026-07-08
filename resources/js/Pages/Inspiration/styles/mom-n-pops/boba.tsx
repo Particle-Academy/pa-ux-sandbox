@@ -2,7 +2,7 @@ import "./boba.css";
 
 import { Link } from "@inertiajs/react";
 import { useEffect, useRef, useState } from "react";
-import { Badge, Button, Card } from "@particle-academy/react-fancy";
+import { Badge, Button, Card, Navbar, Table } from "@particle-academy/react-fancy";
 import type { Style } from "../../types";
 
 /**
@@ -23,12 +23,14 @@ import type { Style } from "../../types";
  * The mockup's imperative paint() DOM repaint is replaced with declarative
  * selected-state styling via data-on + a .15s transition.
  *
- * Restyled Fancy primitives: Button (gradient + white hero pills, every
- * option chip, the Add-to-order bar), Badge (the "SHAKEN FRESH" hero pill),
- * Card (the glass configurator shell, the white "Your cup" summary, six
- * frosted menu favorites, the schedule card). The morphing blobs, gradient
- * text clips, and frosted sticky header are hand-rolled — no primitive owns
- * those. Each chip carries stable data-group/data-opt handles so an agent
+ * Restyled Fancy primitives: Navbar (the frosted sticky header — brand slot +
+ * section-link items + the "🧋 n" order Badge), Button (gradient + white hero
+ * pills, every option chip, the Add-to-order bar), Badge (the "SHAKEN FRESH"
+ * hero pill + the header order-count pill), Card (the glass configurator shell,
+ * the white "Your cup" summary, six frosted menu favorites), Table (the "Find
+ * the truck" schedule — day / place / hours). The morphing blobs, gradient text
+ * clips, and the frosted-glass surface treatment are hand-rolled — no primitive
+ * owns those. Each chip carries stable data-group/data-opt handles so an agent
  * can drive the configurator without guessing DOM.
  *
  * Mounted by Inspiration/Show.tsx for `style.id === "boba"`. SSR-safe: no
@@ -155,34 +157,34 @@ export default function Boba({ style }: { style: Style }) {
             <div className="mpboba-blob mpboba-blob--sky" aria-hidden />
 
             <div className="mpboba-page">
-                {/* ── Frosted sticky header ─────────────────────────────── */}
-                <header className="mpboba-header">
-                    <div className="mpboba-header__in">
+                {/* ── Frosted sticky header — restyled Navbar ───────────── */}
+                <Navbar className="mpboba-header">
+                    <Navbar.Brand className="mpboba-brand-wrap">
                         <Link href="/inspiration/mom-n-pops" className="mpboba-brand">
                             <span className="mpboba-brand__name">Mom-n-Pops</span>
                             <span className="mpboba-brand__sub">Boba ✦</span>
                         </Link>
-                        <nav className="mpboba-nav" aria-label="Page sections">
-                            <button type="button" className="mpboba-nav__link" onClick={jumpTo(buildRef)}>
-                                Build a drink
-                            </button>
-                            <button type="button" className="mpboba-nav__link" onClick={jumpTo(menuRef)}>
-                                Menu
-                            </button>
-                            <button type="button" className="mpboba-nav__link" onClick={jumpTo(findRef)}>
-                                Find us
-                            </button>
-                            {orderCount > 0 && (
-                                <span
-                                    className="mpboba-cart"
-                                    aria-label={`${orderCount} ${orderCount === 1 ? "cup" : "cups"} in your order`}
-                                >
-                                    🧋 {orderCount}
-                                </span>
-                            )}
-                        </nav>
-                    </div>
-                </header>
+                    </Navbar.Brand>
+                    <Navbar.Items className="mpboba-nav">
+                        <button type="button" className="mpboba-nav__link" onClick={jumpTo(buildRef)}>
+                            Build a drink
+                        </button>
+                        <button type="button" className="mpboba-nav__link" onClick={jumpTo(menuRef)}>
+                            Menu
+                        </button>
+                        <button type="button" className="mpboba-nav__link" onClick={jumpTo(findRef)}>
+                            Find us
+                        </button>
+                        {orderCount > 0 && (
+                            <Badge
+                                className="mpboba-cart"
+                                aria-label={`${orderCount} ${orderCount === 1 ? "cup" : "cups"} in your order`}
+                            >
+                                🧋 {orderCount}
+                            </Badge>
+                        )}
+                    </Navbar.Items>
+                </Navbar>
 
                 <main className="mpboba-main">
                     {/* ── Hero ──────────────────────────────────────────── */}
@@ -298,15 +300,17 @@ export default function Boba({ style }: { style: Style }) {
                         <h2 className="mpboba-h3" id="mpboba-find-title">
                             Find the truck
                         </h2>
-                        <Card className="mpboba-sched" variant="outlined" padding="none">
-                            {SCHEDULE.map((s) => (
-                                <div className="mpboba-sched__row" key={s.day}>
-                                    <span className="mpboba-sched__day">{s.day}</span>
-                                    <span className="mpboba-sched__place">{s.place}</span>
-                                    <span className="mpboba-sched__hours">{s.hours}</span>
-                                </div>
-                            ))}
-                        </Card>
+                        <Table className="mpboba-sched">
+                            <Table.Body>
+                                {SCHEDULE.map((s) => (
+                                    <Table.Row key={s.day}>
+                                        <Table.Cell className="mpboba-sched__day">{s.day}</Table.Cell>
+                                        <Table.Cell className="mpboba-sched__place">{s.place}</Table.Cell>
+                                        <Table.Cell className="mpboba-sched__hours">{s.hours}</Table.Cell>
+                                    </Table.Row>
+                                ))}
+                            </Table.Body>
+                        </Table>
                     </section>
                 </main>
 

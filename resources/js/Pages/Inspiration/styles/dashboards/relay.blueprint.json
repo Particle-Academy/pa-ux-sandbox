@@ -1,0 +1,66 @@
+{
+  "id": "relay",
+  "name": "Relay",
+  "note": "Board-first support helpdesk — a Kanban ticket board is the whole workspace.",
+  "mode": "light",
+  "thesis": "A support helpdesk that is nothing but the queue: a slim 52px top bar and a one-row KPI strip sit above a horizontally-scrolling Kanban ticket board that fills the entire screen. No sidebar, no charts on the primary surface — the board IS the app. Cool indigo (#4338CA) with a sky (#38BDF8) second accent on a near-white #F4F5FA canvas; density is high and every colour is data (priority → a fixed fg/bg pair, SLA breach → red) rather than an imperative repaint. The whole point is that a live, agent-driveable ticket board can be assembled almost entirely from one restyled Fancy <Kanban> plus small composed cells.",
+  "tokens": {
+    "bg": "#F4F5FA app canvas; #FFFFFF for the top bar, KPI strip, ticket cards and panels; #EEF0F5 for the kanban column wells + the segmented-switcher track",
+    "fg": "#1C2530 primary ink; #5B6674 secondary (nav, table body); #8895A6 muted (KPI captions, customer names, SLA, mono count pills)",
+    "accent": "#4338CA indigo (brand mark gradient start, active tab text, mono ticket ids, avatar initials, Normal-priority pill) with #38BDF8 sky as the gradient end + chart second series; health colours: #0EA5A0 teal (avg reply / online), #EA580C orange (unassigned / Waiting / High), #DC2626 red (SLA breach / Urgent), #8B5CF6 violet (Triage), #64748B slate (New / Low)",
+    "fontDisplay": "var(--font-sans) (Geist) — 22px/700 KPI numbers with -0.02em tracking, 15px/700 brand + panel titles, 13–14px/600–700 column + ticket labels",
+    "fontMono": "var(--font-mono) (Geist Mono) — ticket ids (#8241), the white column count pills, table id column, agent load percentages",
+    "radius": "kanban column wells 14px, panels/cards 14px, ticket cards 11px, brand mark 7px, switcher track 9px / tabs 6px, pills + avatars 999px, KPI strip cells are square (0)",
+    "border": "1px #E5EAF0 hairlines everywhere (top bar underline, ticket cards, panels, table head); #EEF1F5 softer hairlines for the KPI-cell Separators + table body rows; a 2px white ring separates the overlapping online avatars",
+    "motion": "restrained — one 2s scale+opacity pulse on the teal 'online' dot; 140ms colour/shadow micro-transitions on tab switch + ticket-card hover; drag-and-drop reordering is the Kanban primitive's own transitions; all killed under prefers-reduced-motion"
+  },
+  "layout": "A locked full-viewport flex column that never scrolls the page body: a flush 52px white top bar (Navbar), a single flush row of 5 KPI cells joined by vertical Separators (KPI strip), then a flex:1 workspace region. In the default Board view that region is the horizontally-scrolling <Kanban> — five fixed 280px column wells, each a rounded #EEF0F5 well with a sticky header (colour dot + label + mono count pill) over a vertically-scrolling stack of white ticket cards. The segmented switcher swaps the region to a List view (a full-width ticket Table inside a card) or an Agents view (a responsive grid of per-rep load cards + a throughput EChart card). Full-bleed via width:100vw + margin-left:calc(50% - 50vw); page height is calc(100dvh - 52px) so the board sits below the gallery frame.",
+  "sections": [
+    {
+      "name": "Top bar",
+      "what": "A slim 52px white bar: a gradient 'R' mark + 'Relay' wordmark, a segmented Board / List / Agents switcher, and a right cluster — an 'SLA 30m' clock chip, an overlapping stack of four online-agent avatars (AK/JR/TN/MB), and a pulsing-teal-dot '7 online' presence indicator.",
+      "components": ["Navbar", "Navbar.Brand", "Tabs", "Badge", "Avatar", "Clock (lucide)"],
+      "restyle": "Navbar is flattened via its data-react-fancy-navbar hook to a 52px flex strip (no mobile toggle, white bg, #E5EAF0 underline); its inner flex is forced to space-between with a left group (brand + switcher) and right cluster. Tabs (variant pills) becomes the segmented control — the list track goes #EEF0F5/9px, and [aria-selected] drives active = white bg + indigo text + subtle shadow vs inactive = transparent + grey. The SLA Badge is stripped to a plain muted clock+text; the online avatars are re-sized to 26px indigo-wash chips with a 2px white ring and -6px overlap; '7 online' is a hand-rolled teal chip whose dot pulses."
+    },
+    {
+      "name": "Metric strip",
+      "what": "One flush row of 5 KPI cells divided by hairlines: 142 open, 24 unassigned (orange), 12m avg reply (teal), 318 resolved today, 6 SLA breach (red) — each a big tracked number over a small muted caption, colour-coded by health.",
+      "components": ["Card", "Separator"],
+      "restyle": "Each cell is a flat, borderless, transparent Card (padding stripped, radius 0) holding a 22px/700 number (colour set inline from the data) + an 11px muted caption; a vertical Separator recoloured to the #EEF1F5 soft hairline sits between cells and stretches full height. Pass value/label/colour as data — never hand-roll each cell."
+    },
+    {
+      "name": "Ticket board (Board view)",
+      "what": "The core surface: a horizontally-scrolling Kanban with 5 columns (New 8, Triage 5, In progress 11, Waiting 7, Resolved 318). Each column shows a colour status dot, title, and a white mono count pill; inside are ticket cards with a mono id, a colour-coded priority pill (Urgent/High/Normal/Low), the subject, an assignee avatar, the customer name, and an SLA countdown that turns red on breach (#8231 'API returning 500s').",
+      "components": ["Kanban", "Kanban.Column", "Kanban.Card", "Badge", "Avatar", "Clock (lucide)"],
+      "restyle": "Built straight from <Kanban onCardMove>: unstyled Columns become 280px #EEF0F5 wells (max-height:100%, radius 14) whose auto card-container scrolls, with a sticky #EEF0F5 header (colour dot + label + a Badge recoloured to a white mono count pill). unstyled Cards become white 11px ticket cells that lift on hover. Priority is a Badge whose fg/bg come inline from a fixed lookup (Urgent #DC2626/#FDE7E7 … Low #64748B/#EEF1F5); the assignee is an xs Avatar in the indigo wash (grey '?' when unassigned); the SLA is a clock Badge stripped to muted text that flips red via an .is-breach class. Dragging a card calls onCardMove to reclassify it between stages — the mockup's imperative paint() is gone."
+    },
+    {
+      "name": "List view (enhancement)",
+      "what": "The switcher's List tab: a full-width Table of every open ticket — id, priority pill, subject, assignee (avatar + customer), stage (dot + label), and SLA — reading the same controlled ticket state as the board.",
+      "components": ["Table", "Card", "Badge", "Avatar"],
+      "restyle": "Table wrapped in a rounded white Card: uppercase 11px muted head on a tinted row, 1px #EEF1F5 body dividers, a mono indigo id column, reused priority + assignee cells, and a stage cell carrying the column's status dot. Row hover tints #FAFBFD."
+    },
+    {
+      "name": "Agents view (enhancement)",
+      "what": "The switcher's Agents tab: a responsive grid of the four reps (avatar, name, role, a live open-ticket Badge, and a load meter) above a throughput card charting opened vs resolved tickets over the last 7 days.",
+      "components": ["Card", "Avatar", "Badge", "Progress", "EChart", "Heading", "Text", "Button"],
+      "restyle": "Each rep is a white card: an md indigo-wash Avatar with an online status dot, a live 'N open' Badge derived from the board state, and a Progress meter coloured by load (>85 rose, >70 amber, else indigo). Below, a chart card (title + sub + a ghost Export Button) hosts a fancy-echarts <EChart> grouped bar chart in indigo #4338CA + sky #38BDF8 on soft #EEF1F5 gridlines."
+    }
+  ],
+  "palette": [
+    { "component": "Kanban", "restyle": "The whole workspace — a horizontally-scrolling board of unstyled Columns re-skinned as 280px #EEF0F5 wells with sticky headers + internally-scrolling card stacks, and unstyled Cards re-skinned as white 11px ticket cells; onCardMove reclassifies tickets between stages (the agent-driveable, controlled surface)." },
+    { "component": "Navbar", "restyle": "Flattened to a slim 52px white top bar via its data attribute — mobile toggle dropped, inner flex forced to a left brand+switcher group and a right presence cluster." },
+    { "component": "Tabs", "restyle": "The Board/List/Agents segmented control (variant pills): #EEF0F5/9px track, and [aria-selected] repainting active = white + indigo + shadow, inactive = transparent grey. Controlled by view state, actually swapping the workspace." },
+    { "component": "Badge", "restyle": "Wears four skins: the colour-inline priority pill, the white mono column count pill, the muted/red SLA clock chip, and the indigo-wash 'N open' agent chip — all padding/radius/weight overridden per role." },
+    { "component": "Avatar", "restyle": "26px indigo-wash chips with a 2px white ring overlapping -6px in the online stack; xs indigo-wash initials as ticket assignees (grey '?' unassigned); md status-dot avatars on the agent cards." },
+    { "component": "Card", "restyle": "Borderless transparent square cells in the KPI strip; rounded white 14px panels for the List table, each agent card, and the throughput chart card." },
+    { "component": "Separator", "restyle": "Vertical hairline recoloured to #EEF1F5, stretched full-height between the five KPI cells." },
+    { "component": "Progress", "restyle": "The per-agent load meter (size sm), fill coloured by load band — rose over 85, amber over 70, else indigo." },
+    { "component": "Table", "restyle": "The List-view ticket grid inside a card: uppercase muted head, soft row dividers, mono indigo id column, reused priority/assignee/stage/SLA cells, tinted row hover." },
+    { "component": "EChart (fancy-echarts)", "restyle": "The Agents-view throughput chart — a grouped bar of opened vs resolved over 7 days in indigo #4338CA + sky #38BDF8 on #EEF1F5 gridlines; registerAll() once at module top, SSR-safe container mount." },
+    { "component": "Heading / Text", "restyle": "Heading for the chart-card title (15px/700); Text for the muted sub-caption." },
+    { "component": "Button", "restyle": "A quiet ghost 'Export' action on the chart card — #EEF0F5 fill, hairline border, muted label." }
+  ],
+  "contentArchetype": "A SaaS support helpdesk / ticket triage console (Relay) for a small support team: a live queue of ~150 open tickets across five stages (New / Triage / In progress / Waiting / Resolved), each ticket carrying an id, priority, subject, assignee, customer, and an SLA countdown; a top KPI strip (open / unassigned / avg reply / resolved today / SLA breaches); four online agents with load; and a 7-day opened-vs-resolved throughput trend. The board is the workspace and it is agent-driveable — the exact shape a registerKanbanBridge would move + reclassify tickets on.",
+  "remix": "Steal three moves: (1) board-first layout — kill the sidebar, let a single <Kanban> be the entire workspace under a slim bar + one KPI row; (2) colour-as-data — priority and SLA-breach are fixed fg/bg lookups and an .is-breach class, never an imperative repaint, so an agent bridge changing a field instantly recolours; (3) controlled Kanban (onCardMove) + controlled Tabs so the same surface a human drags is the surface an agent reclassifies. The five-stage board maps 1:1 onto any pipeline: sales deals, hiring stages, content editorial, build/deploy jobs, order fulfilment. Swap the indigo/sky palette + the stage labels and it re-themes instantly; add a Timeline or Calendar view behind a fourth tab for incident/on-call variants. Blends with a denser 'terminal' look (drop radius, tighten type) or a warmer ops palette (slate + signal-orange) without touching the structure."
+}

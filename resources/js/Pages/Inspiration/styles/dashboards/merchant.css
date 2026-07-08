@@ -1,0 +1,451 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Dashboards · Style 04 — Merchant (light)
+   A back-of-house e-commerce seller console for "Threadline Co." — a slim white
+   Navbar over a two-column app grid (1.15fr / 1fr) split by a hairline. Cool
+   #F7F8FB canvas, white surfaces, one indigo accent (#4F46E5) + a live green,
+   compact type, mono for every numeric. Restyled Fancy primitives: Navbar,
+   Card, EChart, Timeline, Table, Progress, Badge, Button, Heading, Text.
+   Every selector scoped under .dbmerchant-root, every class prefixed dbmerchant-.
+   No page-level sticky/z-index (the gallery frame owns 30+).
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.dbmerchant-root {
+    /* ── Scoped tokens ──────────────────────────────────────────────────── */
+    --dbm-bg: #f7f8fb;          /* app canvas */
+    --dbm-fg: #1e2230;          /* ink */
+    --dbm-surface: #ffffff;     /* panels + topbar */
+    --dbm-border: #e7e9f0;      /* panel + topbar hairline */
+    --dbm-divider: #eef0f5;     /* row divider (feed / panel head) */
+    --dbm-divider2: #f3f4f8;    /* faint table row divider */
+    --dbm-accent: #4f46e5;      /* indigo */
+    --dbm-accent-2: #818cf8;    /* light indigo (gradient top) */
+    --dbm-green: #0f9d58;       /* live / positive amounts */
+    --dbm-muted: #8890a8;       /* secondary text */
+    --dbm-faint: #a0a6bc;       /* tertiary / mono ticks */
+    --dbm-orange: #ea580c;      /* low-stock warning */
+    --dbm-red: #dc2626;         /* low-stock critical */
+    --dbm-track: #f0f1f5;       /* progress track */
+    --dbm-mono: var(--font-mono);
+
+    background: var(--dbm-bg);
+    color: var(--dbm-fg);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+
+    height: calc(100dvh - 43px); /* fill the viewport under the gallery frame */
+    min-height: 540px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.dbmerchant-root ::selection {
+    background: color-mix(in oklch, var(--dbm-accent) 22%, transparent);
+    color: var(--dbm-fg);
+}
+
+/* ── Topbar (Navbar) ─────────────────────────────────────────────────────── */
+.dbmerchant-root .dbmerchant-topbar {
+    flex: none;
+    height: 52px;
+    background: var(--dbm-surface) !important;
+    border-bottom: 1px solid var(--dbm-border) !important;
+    padding: 0 20px !important;
+    display: flex;
+    align-items: center;
+}
+.dbmerchant-root .dbmerchant-topbar > div {
+    width: 100%;
+}
+.dbmerchant-root .dbmerchant-brand {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-weight: 700;
+    color: var(--dbm-fg);
+}
+.dbmerchant-mark {
+    width: 24px;
+    height: 24px;
+    border-radius: 7px;
+    background: linear-gradient(135deg, #4f46e5, #818cf8);
+    display: grid;
+    place-items: center;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    flex: none;
+}
+.dbmerchant-brand__name {
+    font-size: 14px;
+    font-weight: 700;
+}
+.dbmerchant-brand__biz {
+    font-weight: 400;
+    color: var(--dbm-muted);
+    font-size: 13px;
+}
+.dbmerchant-topbar__right {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+.dbmerchant-live {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--dbm-green);
+    font-weight: 500;
+}
+.dbmerchant-live__dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--dbm-green);
+    animation: dbmerchant-pulse 1.8s ease-in-out infinite;
+}
+.dbmerchant-root .dbmerchant-today {
+    font-family: var(--dbm-mono) !important;
+    font-size: 11px !important;
+    font-weight: 500 !important;
+    background: transparent !important;
+    color: var(--dbm-muted) !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    text-transform: none !important;
+}
+
+@keyframes dbmerchant-pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.45; transform: scale(0.85); }
+}
+
+/* ── Two-column body ─────────────────────────────────────────────────────── */
+.dbmerchant-body {
+    flex: 1;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    overflow: hidden;
+}
+.dbmerchant-left {
+    padding: 22px;
+    overflow-y: auto;
+    border-right: 1px solid var(--dbm-border);
+}
+.dbmerchant-right {
+    padding: 22px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* ── Revenue hero (borderless Card) ──────────────────────────────────────── */
+.dbmerchant-root .dbmerchant-hero {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+}
+.dbmerchant-root .dbmerchant-hero__body {
+    padding: 0 !important;
+}
+.dbmerchant-root .dbmerchant-eyebrow {
+    font-size: 12px;
+    color: var(--dbm-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+.dbmerchant-hero__num {
+    font-size: 56px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin: 8px 0 6px;
+    font-variant-numeric: tabular-nums;
+}
+.dbmerchant-hero__cents {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--dbm-faint);
+}
+.dbmerchant-hero__delta {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    flex-wrap: wrap;
+}
+.dbmerchant-root .dbmerchant-deltabadge {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    background: color-mix(in oklch, var(--dbm-green) 12%, transparent) !important;
+    color: var(--dbm-green) !important;
+    font-family: var(--dbm-mono) !important;
+    font-weight: 700 !important;
+    border: 0 !important;
+    box-shadow: none !important;
+}
+.dbmerchant-root .dbmerchant-hero__ctx {
+    font-size: 13px;
+    color: var(--dbm-green);
+}
+
+/* ── Intraday revenue chart (EChart) ─────────────────────────────────────── */
+.dbmerchant-revchart {
+    margin: 18px 0 24px;
+}
+
+/* ── Live orders feed head ───────────────────────────────────────────────── */
+.dbmerchant-feedhead {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+.dbmerchant-root .dbmerchant-feedhead__title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--dbm-fg);
+}
+.dbmerchant-feedhead__right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.dbmerchant-streaming {
+    font-family: var(--dbm-mono);
+    font-size: 11px;
+    color: var(--dbm-muted);
+}
+.dbmerchant-root .dbmerchant-pause {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    height: 24px;
+    padding: 0 8px !important;
+    border-radius: 7px !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    color: var(--dbm-accent) !important;
+    background: color-mix(in oklch, var(--dbm-accent) 8%, transparent) !important;
+    border: 0 !important;
+    box-shadow: none !important;
+}
+.dbmerchant-root .dbmerchant-pause:hover {
+    background: color-mix(in oklch, var(--dbm-accent) 15%, transparent) !important;
+}
+
+/* ── Order ticker (Timeline restyled to hairline-divided rows) ───────────── */
+.dbmerchant-root .dbmerchant-feed [data-react-fancy-timeline-item] {
+    gap: 12px !important;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--dbm-divider);
+}
+.dbmerchant-root .dbmerchant-feed [data-react-fancy-timeline-item]:last-child {
+    border-bottom: 0;
+}
+/* drop the vertical connector rail — rows read as a divided feed */
+.dbmerchant-root .dbmerchant-feed div.absolute {
+    display: none !important;
+}
+/* dot column: shrink from w-8 to a tight 12px, kill the mt-1.5 offset */
+.dbmerchant-root .dbmerchant-feed [data-react-fancy-timeline-item] > div:first-child {
+    width: 12px !important;
+    align-self: center;
+}
+.dbmerchant-root .dbmerchant-feed [data-react-fancy-timeline-item] > div:first-child > div {
+    margin-top: 0 !important;
+}
+/* the dot itself → indigo, 8px */
+.dbmerchant-root .dbmerchant-feed [data-react-fancy-timeline-item] > div:first-child span {
+    width: 8px !important;
+    height: 8px !important;
+    background: var(--dbm-accent) !important;
+}
+/* content column: kill the big pb-8 */
+.dbmerchant-root .dbmerchant-feed [data-react-fancy-timeline-item] > div:last-child {
+    padding-bottom: 0 !important;
+}
+.dbmerchant-order__row {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 12px;
+    align-items: center;
+}
+.dbmerchant-order__main {
+    min-width: 0;
+}
+.dbmerchant-order__item {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--dbm-fg);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.dbmerchant-order__sub {
+    display: block;
+    font-size: 11px;
+    color: var(--dbm-muted);
+}
+.dbmerchant-order__ago {
+    font-family: var(--dbm-mono);
+    font-size: 11px;
+    color: var(--dbm-faint);
+}
+.dbmerchant-order__amt {
+    font-family: var(--dbm-mono);
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--dbm-green);
+}
+
+/* ── Right-column panels (Card) ──────────────────────────────────────────── */
+.dbmerchant-root .dbmerchant-panel {
+    background: var(--dbm-surface) !important;
+    border: 1px solid var(--dbm-border) !important;
+    border-radius: 14px !important;
+    box-shadow: none !important;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+.dbmerchant-root .dbmerchant-panel--grow {
+    flex: 1;
+    min-height: 0;
+}
+.dbmerchant-root .dbmerchant-panel__head {
+    padding: 13px 16px !important;
+    border-bottom: 1px solid var(--dbm-divider) !important;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.dbmerchant-root .dbmerchant-panel__head--icon .dbmerchant-warn {
+    color: var(--dbm-orange);
+    flex: none;
+}
+.dbmerchant-root .dbmerchant-panel__title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--dbm-fg);
+}
+.dbmerchant-root .dbmerchant-panel__body {
+    padding: 16px !important;
+}
+.dbmerchant-root .dbmerchant-panel__body--flush {
+    padding: 0 !important;
+}
+
+/* ── Low-stock table (Table + Progress) ──────────────────────────────────── */
+.dbmerchant-root .dbmerchant-stock,
+.dbmerchant-root .dbmerchant-top {
+    width: 100%;
+}
+.dbmerchant-root .dbmerchant-stock table,
+.dbmerchant-root .dbmerchant-top table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.dbmerchant-root .dbmerchant-stock td,
+.dbmerchant-root .dbmerchant-top td {
+    padding: 10px 16px !important;
+    border-bottom: 1px solid var(--dbm-divider2) !important;
+    vertical-align: middle;
+    background: transparent !important;
+}
+.dbmerchant-root .dbmerchant-stock tbody tr:last-child td,
+.dbmerchant-root .dbmerchant-top tbody tr:last-child td {
+    border-bottom: 0 !important;
+}
+.dbmerchant-root .dbmerchant-stock tbody tr:hover td,
+.dbmerchant-root .dbmerchant-top tbody tr:hover td {
+    background: #fafbfd !important;
+}
+.dbmerchant-root .dbmerchant-stock__name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--dbm-fg);
+    width: 100%;
+}
+.dbmerchant-root .dbmerchant-stock__barcell {
+    width: 84px;
+}
+.dbmerchant-root .dbmerchant-stock__left {
+    font-family: var(--dbm-mono) !important;
+    font-size: 11px !important;
+    color: var(--dbm-orange) !important;
+    white-space: nowrap;
+    text-align: right;
+}
+/* Progress → 6px track, per-row critical/warning fill */
+.dbmerchant-root .dbmerchant-stockbar {
+    width: 70px;
+}
+.dbmerchant-root .dbmerchant-stockbar > div {
+    height: 6px !important;
+    border-radius: 4px !important;
+    background: var(--dbm-track) !important;
+}
+.dbmerchant-root .dbmerchant-stockbar > div > div {
+    border-radius: 4px !important;
+    background: var(--dbm-sbc, var(--dbm-orange)) !important;
+}
+
+/* ── Top-sellers table (Table, ranked) ───────────────────────────────────── */
+.dbmerchant-root .dbmerchant-top__rank {
+    font-family: var(--dbm-mono) !important;
+    font-size: 12px !important;
+    color: var(--dbm-faint) !important;
+    width: 22px;
+}
+.dbmerchant-root .dbmerchant-top__name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--dbm-fg);
+    width: 100%;
+}
+.dbmerchant-root .dbmerchant-top__rev {
+    font-family: var(--dbm-mono) !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    color: var(--dbm-fg) !important;
+    text-align: right;
+    white-space: nowrap;
+}
+.dbmerchant-top__foot {
+    padding: 12px 16px 14px;
+    font-size: 11px;
+    color: var(--dbm-faint);
+    line-height: 1.5;
+    margin-top: auto;
+}
+
+/* ── Narrow viewports: stack the two columns, let the page scroll ────────── */
+@media (max-width: 860px) {
+    .dbmerchant-root {
+        height: auto;
+        min-height: calc(100dvh - 43px);
+        overflow: visible;
+    }
+    .dbmerchant-body {
+        grid-template-columns: 1fr;
+        overflow: visible;
+    }
+    .dbmerchant-left {
+        border-right: 0;
+        border-bottom: 1px solid var(--dbm-border);
+        overflow: visible;
+    }
+    .dbmerchant-right {
+        overflow: visible;
+    }
+    .dbmerchant-hero__num {
+        font-size: 44px;
+    }
+}

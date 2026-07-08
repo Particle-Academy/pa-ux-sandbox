@@ -1,0 +1,58 @@
+{
+  "thesis": "Helm is a cloud-infrastructure NOC wallboard: a single-screen, status-first control room where the health of a whole region reads at a glance. Near-black canvas, monospace metrics everywhere, and one blue accent — the only motion is neon glow (green/amber/red) on status dots, sparklines, and alert severity. Density is high and calm: giant KPI numbers, a 24-tile service wall each with its own live sparkline, and a right rail that stacks global throughput over a scrolling alerts feed.",
+  "tokens": {
+    "bg": "#07090D",
+    "fg": "#C9D2DE",
+    "accent": "#3B82F6",
+    "fontDisplay": "Geist / system sans (var(--font-sans))",
+    "fontMono": "Geist Mono / var(--font-mono) — every metric, rps, uptime, clock, and alert subline",
+    "radius": "14px panels & KPI cards / 11px service tiles / 50% status pills",
+    "border": "1px solid #1A2130 hairlines on a #0E121A surface; status tiles get colored washes — ok #0E1A14/#1C3A2A, warn #1E1708/#3E3212, err #1E0E0E/#3E1A1A",
+    "motion": "No transitions; the only animation is a slow neon-glow pulse (box-shadow) on the live Operational dot. Status dots, sparkline bars, and severity dots carry a static 0 0 6-10px glow in their health color."
+  },
+  "layout": "Full-viewport (calc(100vh - frame)) flex column with 16px padding and no page scroll. A Navbar topbar (brand + '/ NOC · us-east-1' breadcrumb left; Operational badge, 30-day uptime, and a large live wall-clock right) sits over a 5-up hero KPI grid. Below, the body splits 2fr / 1fr: a scrollable service-health wall (4-column grid of 24 compact tiles) on the left, and a right rail stacking a fixed global-throughput panel over a flex-1 scrolling alerts feed. A one-line colophon closes the column.",
+  "sections": [
+    {
+      "name": "Topbar / status bar",
+      "what": "Gradient 'H' brand mark + 'Helm / NOC · us-east-1' on the left; on the right a green pulsing Operational pill, a mono 'uptime 99.98% · 30d', and a 20px live wall-clock (HH:MM:SS).",
+      "components": ["Navbar", "Navbar.Brand", "Navbar.Items", "Badge"],
+      "restyle": "Navbar stripped to a transparent hairline-bottom bar; Navbar.Items forced visible (defeat the default md-only reveal); Badge (emerald soft) flattened to transparent with a 9px glowing, pulsing dot. The clock is a client-only field (useState seeded to a fixed string, advanced in useEffect)."
+    },
+    {
+      "name": "Hero KPI row",
+      "what": "Five oversized stat tiles — Requests/s 18.4k (+4%), p95 142 ms (amber), Error rate 0.42% (green ▼), Saturation 63% CPU (with a slim meter), Incidents 0 P1/P2 (green). Uppercase micro-label, 38px mono value color-coded by health, sub-caption.",
+      "components": ["Card", "Progress"],
+      "restyle": "Card padding='none' repainted to the #0E121A/#1A2130/14px token; value color passed per-metric inline. The Saturation tile adds a slim Progress bar with its track darkened to a translucent blue."
+    },
+    {
+      "name": "Service health wall",
+      "what": "The centerpiece — a 4-column grid of 24 microservice tiles. Each tile: a glowing status dot, current rps (mono), the service name (mono, ellipsized), and a 10-bar sparkline tinted to the tile's health. Whole tile is washed by status. Clicking a tile spotlights it and dims the rest.",
+      "components": ["Card", "EChart"],
+      "restyle": "Each tile is an outlined Card (padding='none') with background + border set inline from the status map; the sparkline is a silent, animation-free EChart bar chart (10 bars, status color at 0.55 opacity). Tiles are role=button with controlled focus state (aria-pressed) — no imperative paint() pass."
+    },
+    {
+      "name": "Global throughput",
+      "what": "Right-rail panel (activity icon) with a 30-column mini bar chart in a vertical blue gradient and a footer row '18.4k rps' / 'p95 142ms'.",
+      "components": ["Card", "EChart", "Heading"],
+      "restyle": "Card panel; EChart single bar series with a linear #3B82F6→#1D4ED8 gradient itemStyle, axes hidden, animation off. The 30-point wave is a deterministic sinusoid (SSR-safe, no randomness)."
+    },
+    {
+      "name": "Active alerts feed",
+      "what": "Scrolling list (bell icon) titled 'Active alerts / 2 firing'. Six rows, each a glowing severity dot (crit/warn/info), the alert message, and a mono 'service · time-ago' subline. Fixed header, scrollable body.",
+      "components": ["Card", "Timeline", "Timeline.Item", "Heading"],
+      "restyle": "Timeline (animated off) with per-row Timeline.Item; color prop maps crit→red / warn→amber / info→blue (exact palette hits), and scoped CSS adds a matching box-shadow glow to each dot, shrinks it to 8px, darkens the connector line, and tightens vertical rhythm. Message + mono subline are the item children."
+    }
+  ],
+  "palette": [
+    { "component": "Navbar", "restyle": "Transparent NOC topbar: no chrome, a single #1A2130 bottom hairline, brand left / status cluster right; Navbar.Items forced to flex so the cluster never collapses." },
+    { "component": "Badge", "restyle": "The Operational status — emerald soft badge flattened to transparent green text with a 9px glowing dot that slowly pulses; the only animated element on the board." },
+    { "component": "Card", "restyle": "The universal panel + tile: repainted to #0E121A on a #1A2130 hairline at 14px (11px for service tiles), padding='none' with bespoke internal padding. Service tiles override background/border inline per health status." },
+    { "component": "Progress", "restyle": "Slim saturation meter under the CPU KPI; track darkened to translucent blue, blue fill — the mockup's percentage made legible as a bar." },
+    { "component": "EChart", "restyle": "25 instances: 24 tiny silent bar sparklines (status-tinted, no axes/animation) inside the service tiles, plus the 30-column throughput bar with a vertical blue gradient. All mount client-side and are SSR-safe." },
+    { "component": "Timeline", "restyle": "The alerts feed: stacked, animation off, dense rhythm, connector line recolored to the border token; each item's severity dot recolored + glowed to match crit/warn/info." },
+    { "component": "Heading", "restyle": "Small (size='xs') panel titles recolored to #D6DEE8 at weight 600 — quiet section labels, not display type." },
+    { "component": "Text", "restyle": "The muted mono/sans colophon line at the foot of the board." }
+  ],
+  "contentArchetype": "An ops / observability control room for any multi-service backend: a single region's live health snapshot. Reskin the KPI row to your golden signals, the wall to your service inventory (status + rps + sparkline per service), throughput to your primary time-series, and the feed to your alert stream. Ideal for SRE / NOC / platform-status wallboards meant to live on a big screen.",
+  "remix": "Swap the blue accent + green/amber/red health scale for your brand and keep the monospace-metric, glow-only-motion discipline. Turn the service tiles into a bridgeable surface (register a charts/table bridge so an agent can flip a service to 'warn' or acknowledge an alert). Add a Tabs region switcher (us-east-1 / eu-west-1) above the wall, or a Pillbox to filter the wall by team. For a calmer variant, drop the tile washes to hairlines-only and let the status dot carry all the color."
+}

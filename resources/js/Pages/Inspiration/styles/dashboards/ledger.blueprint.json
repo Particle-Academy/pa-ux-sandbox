@@ -1,0 +1,73 @@
+{
+    "thesis": "Ledger reframes the Fancy kit as a friendly, front-of-house personal-budgeting dashboard: no sidebar, a single centered 1080px column on a warm off-white page under a slim navbar, a plain-language budget hero, and airy two-column grid rows. It proves the same primitives that wear a dense analyst grid can wear a calm consumer-finance idiom — big legible numbers, one emerald accent, generous white space — with every panel a restyled Fancy component (Card, EChart, Progress, Table) rather than bespoke markup.",
+    "tokens": {
+        "bg": "#F6F7F5 warm off-white page (full-bleed); #FFFFFF card surfaces; #0F3D2E dark emergency-fund accent card",
+        "fg": "#1A2420 ink · #5C6B64 secondary/nav · #8A968F muted captions",
+        "accent": "#059669 emerald (primary — hero figure, ring arc, income, left-to-spend) with #34D399 light-emerald (goal fill) and #E4674A spend-red for debits / cash-out",
+        "fontDisplay": "Geist / var(--font-sans) — 28px bold hero, 800-weight tabular figures",
+        "fontMono": "Geist Mono / var(--font-mono) — every dollar amount (category amounts, transaction amounts)",
+        "radius": "18px cards · 9px emoji tiles · 8px logo mark · 7px category icon chips · 4px progress tracks · 50% avatar/ring",
+        "border": "1px #E4E8E5 card hairline · #F0F2F0 row dividers · #EEF1EF progress + ring track",
+        "motion": "Restrained: 0.18s cubic-bezier(0.16,1,0.3,1) opacity dim when a category row is spotlighted; EChart's own draw tween. No looping animation."
+    },
+    "layout": "Full-bleed off-white root with a centered max-width 1080px column (22-24px padding, no sidebar). A slim Navbar (gradient 'L' mark + 'Ledger' wordmark left; Overview/Transactions/Goals/Cards pushed right; emerald 'AM' avatar far right) sits above a plain-language budget hero (eyebrow 'July 2026' + '18 days left' badge over a 28px 'You've spent $1,840 of your $3,200 budget.' with the figure in emerald). Body is two stacked 2-column CSS-grid rows: row 1 is 1fr/1.3fr (budget-used ring card + spending-by-category card), row 2 is 1.4fr/1fr (cash-flow chart card + a right stack of the dark emergency-fund goal card over the recent-transactions card). Collapses to one column under 860px.",
+    "sections": [
+        {
+            "name": "Header / top nav",
+            "what": "Gradient rounded 'L' logo mark + 'Ledger' wordmark left; horizontal nav (Overview active) pushed right; round emerald 'AM' avatar at the far right.",
+            "components": ["Navbar", "Navbar.Brand", "Navbar.Items", "Navbar.Item", "Avatar"],
+            "restyle": "Navbar stripped to transparent/borderless; its inner flex left-aligned; Navbar.Items pushed right with margin-left:auto and forced always-visible (no mobile collapse); Navbar.Item links flattened to plain text (muted, active = ink 600); Avatar recolored solid emerald with white initials."
+        },
+        {
+            "name": "Budget hero headline",
+            "what": "Eyebrow 'July 2026' + emerald '18 days left' badge over a 28px plain-language statement with the spent figure ($1,840) emphasized in emerald against the $3,200 budget.",
+            "components": ["Heading", "Text", "Badge"],
+            "restyle": "Heading forced to 28px/700/-0.01em with an inline emerald <span> around the spent figure; Badge soft-emerald size-sm as the days-left chip; Text size-sm muted for the month eyebrow."
+        },
+        {
+            "name": "Budget-used ring",
+            "what": "Left card: a 130px emerald gauge reading 57% of budget (rounded-cap arc on a light track) beside a large emerald 'Left to spend $1,360' figure and a '≈ $75 / day to stay on track' helper.",
+            "components": ["Card", "Card.Body", "EChart", "Text"],
+            "restyle": "EChart gauge: startAngle 90 / endAngle -270 (12 o'clock, clockwise), progress width 12 roundCap #059669 on an #EEF1EF axisLine, all ticks/labels/pointer/detail hidden; the 57% / 'of budget' center label is an absolutely-positioned HTML overlay for crisp type. Chart mounts client-only behind a same-size ring placeholder."
+        },
+        {
+            "name": "Spending by category",
+            "what": "Right card listing 5 categories — each row a colored rounded icon chip + label + mono amount over a thin fill bar sized to its % of the category cap (Housing 100 / Groceries 62 / Dining 38 / Transport 22 / Fun 14).",
+            "components": ["Card", "Card.Header", "Card.Body", "Progress", "Icon (lucide)"],
+            "restyle": "Each row is a <button> carrying --dbledger-catcol / --dbledger-catbg CSS vars; the lucide icon sits in a 7px chip tinted per-category; a restyled Progress (track → 6px #EEF1EF, fill → the category color via > div > div override) is the bar. Clicking a row spotlights it (others dim to 0.4) via controlled focusCat state."
+        },
+        {
+            "name": "Cash flow",
+            "what": "Wide card charting the last 6 months (Feb-Jul) as grouped vertical bars — a green 'in' column and a red 'out' column per month — with a small inline ■ in / ■ out legend.",
+            "components": ["Card", "Card.Header", "Card.Body", "EChart", "Text"],
+            "restyle": "The one true EChart: grouped bar, x = 6 months, series income #059669 + spending #E4674A, 11px columns with 4px rounded tops, dark #0F3D2E tooltip, hidden y-axis. A hand-rolled colored-square legend sits in the card header. Mounts client-only behind a same-size placeholder."
+        },
+        {
+            "name": "Emergency fund goal",
+            "what": "Dark green (#0F3D2E) accent card: 'Emergency fund' label + target icon, big $6,400 / $10,000 figure, and a light-on-dark progress bar at 64%.",
+            "components": ["Card", "Card.Body", "Progress", "Tooltip", "Icon (lucide)"],
+            "restyle": "Card flipped to the dark #0F3D2E variant (borderless, light text); Progress restyled to a 7px translucent-white track with a #34D399 fill; the lucide Target icon wears a Tooltip ('on track to fully fund by …') for the inhabited-surface touch."
+        },
+        {
+            "name": "Recent transactions",
+            "what": "White card titled 'Recent' listing 4 transactions — each row an emoji tile + merchant name + category + signed mono amount (red for spend, green for income).",
+            "components": ["Card", "Card.Header", "Table", "Table.Head", "Table.Column", "Table.Body", "Table.Row", "Table.Cell"],
+            "restyle": "A compact restyled Table: its own border/radius dropped (the Card owns them), the column header hidden ([data-react-fancy-table-head]{display:none}), rows separated by #F0F2F0 top-borders; cell 1 = emoji tile (9px #F0F4F2) + name/category stack, cell 2 = right-aligned mono amount tinted spend-red or income-emerald."
+        }
+    ],
+    "palette": [
+        { "component": "Navbar (+ Brand / Items / Item)", "restyle": "Transparent borderless top bar; inner flex left-aligned, items pushed right via margin-left:auto and forced visible; items flattened to plain muted text, active = ink 600." },
+        { "component": "Avatar", "restyle": "Solid-emerald 'AM' user badge with white initials, size sm, far-right of the navbar." },
+        { "component": "Heading", "restyle": "28px/700 budget hero with an inline emerald span around the spent figure." },
+        { "component": "Text", "restyle": "size-sm/xs muted captions — month eyebrow, 'Left to spend', per-day helper, 'Last 6 months', colophon." },
+        { "component": "Badge", "restyle": "Soft-emerald size-sm '18 days left' hero chip." },
+        { "component": "Card (+ Header / Body)", "restyle": "Every panel — 18px radius, #FFFFFF, 1px #E4E8E5, shadow removed; one instance flipped to the dark #0F3D2E emergency-fund variant." },
+        { "component": "EChart (fancy-echarts)", "restyle": "Two charts — a single-value emerald gauge (budget ring) and a grouped income/spending bar (cash flow); both mount client-only behind same-size placeholders." },
+        { "component": "Progress", "restyle": "Restyled bars — 5 per-category fills (track→#EEF1EF, fill→category color) and the emergency-fund meter (translucent-white track, #34D399 fill), all via > div / > div > div overrides." },
+        { "component": "Table (+ Head / Column / Body / Row / Cell)", "restyle": "Compact headerless transactions list — header hidden, border/radius dropped, top-border row dividers, emoji-tile + two-line merchant cell + right-aligned mono amount." },
+        { "component": "Tooltip", "restyle": "Wraps the emergency-fund Target icon with a goal-status hint (inhabited-surface affordance)." },
+        { "component": "Icon (lucide-react)", "restyle": "Home / ShoppingCart / Utensils / Car / Sparkles in per-category 7px chips; Target on the goal card." }
+    ],
+    "contentArchetype": "A single fictional user's monthly budget snapshot — a personal-finance / consumer-budgeting app 'Overview' screen. Swap in: the hero statement (spent vs budget + days left), a budget-used percentage, a spending-by-category breakdown (label + amount + % of cap), a 6-month income-vs-spending cash-flow series, one savings goal (have / target / %), and a short recent-transactions feed (merchant + category + signed amount). Reads for any 'money left this period' consumer dashboard: budgeting, subscriptions spend, allowance, or team expense wallets.",
+    "remix": "Keep the calm: off-white page, one emerald accent, big tabular figures, low density, no sidebar. To make it an analyst tool instead, add a Sidebar + a Tabs range switcher and swap the Table for a paginated, sortable version. Turn the category rings into an EChart donut, or the cash flow into a stacked/area net-flow line. For Human+, register a charts bridge on the two EСharts and a form bridge on an add-transaction Composer so an agent can log spend and re-forecast the ring live. Darken every token for a night-wallet variant (the emergency-fund card already proves the dark treatment)."
+}

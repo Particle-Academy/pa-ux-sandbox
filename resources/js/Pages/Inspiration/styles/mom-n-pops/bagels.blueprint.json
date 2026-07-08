@@ -3,7 +3,7 @@
   "name": "The Daily Bagel",
   "note": "Newsprint broadsheet — the menu as classifieds.",
   "mode": "light",
-  "thesis": "A small-town broadsheet front page for a bagel truck: aged newsprint cream, near-black ink, one firebrick spot color, Georgia serif headlines at weight 900, two-column justified-feeling body with a drop cap, dotted price leaders, and a rule hierarchy (3px / 2px / 1px) doing all the structure. The menu is the classifieds, the owners are the feature, the schedule is the almanac, and the item detail is a right-side paper drawer — a 'full column', not a modal.",
+  "thesis": "A small-town broadsheet front page for a bagel truck: aged newsprint cream, near-black ink, one firebrick spot color, Georgia serif headlines at weight 900, two-column justified-feeling body with a drop cap, dotted price leaders, and a rule hierarchy (3px / 2px / 1px) doing all the structure. The menu is the classifieds, the owners are the feature, the schedule is the almanac, and the item detail is the Fancy Modal restyled into a right-side paper sheet — the 'full column'.",
   "tokens": {
     "bg": "#F1EFE6 aged newsprint cream everywhere — page, drawer, art plates (#E9E6DA base under the etchings); the single inversion is the #141414 'Add to order' bar",
     "fg": "#141414 ink; body copy #4A4A44; secondary chrome #3A3A3A; captions/hints #5A5A5A; faint labels and allergens #7A7568",
@@ -14,13 +14,13 @@
     "border": "#141414 rules in three weights: 3px (masthead top, schedule close), 2px (nav underline, catering box, quote button, drawer art rule), 1px (section hairlines, art frames); #C8C4B8 soft in-column dividers; 1px dotted #8A8578 price leaders",
     "motion": "none — no keyframes or transitions; hover is an instant #E8E5DA background swap on menu rows and the drawer snaps in and out on state change, like turning a page"
   },
-  "layout": "Single centered 1120px column with 34px side padding, stacked as full-width newspaper sections separated by horizontal rules of varying weight. Masthead: dateline row, 74px weight-900 nameplate between a 3px top rule and 1px bottom rule, letterspaced sans tagline, then a centered sans nav under a 2px rule. Lead story is a 2fr/1fr grid — red kicker, 52px headline, column-count:2 body with a 58px ::first-letter drop cap, etched hero plate with a FIG. 1 caption on the right. The menu is a 2-column classifieds grid of tappable rows (88x74 thumb, weight-900 name, dotted leader stretching to a red sans price, one-line description). The story section mirrors the lead as 1fr/2fr. The schedule is a 3-column grid of six day/place baseline rows closed by a 3px rule. A 2px ink-outlined WANTED classified carries the catering CTA, then a hairline-topped sans footer. Selecting any menu item opens a fixed 520px right-side paper drawer (rgba-ink scrim, -20px ink shadow) kept at z-index 25, under the host chrome.",
+  "layout": "Single centered 1120px column with 34px side padding, stacked as full-width newspaper sections separated by horizontal rules of varying weight. Masthead: dateline row, 74px weight-900 nameplate between a 3px top rule and 1px bottom rule, letterspaced sans tagline, then a centered sans nav under a 2px rule. Lead story is a 2fr/1fr grid — red kicker, 52px headline, column-count:2 body with a 58px ::first-letter drop cap, etched hero plate with a FIG. 1 caption on the right. The menu is a 2-column grid of tappable Cards (88x74 thumb, weight-900 name, dotted leader stretching to a red sans price, one-line description). The story section mirrors the lead as 1fr/2fr. The schedule is a Fancy Table of six day/place rows on #C8C4B8 hairlines, closed by a 3px rule. A 2px ink-outlined WANTED classified carries the catering CTA, then a hairline-topped sans footer. Selecting any menu item opens the Fancy Modal restyled as a fixed 520px right-side paper sheet (flat rgba-ink scrim, -20px ink shadow); the primitive owns Escape, scroll-lock, focus trap, and stacking.",
   "sections": [
     {
       "name": "masthead",
       "what": "Newspaper masthead: a Vol. I / Milwaukee / Est. 2026 · 50¢ dateline, the 'The Daily Bagel' nameplate (a Link back to the collection hub) bracketed by the 3px/1px rules, a 0.24em-tracked sans tagline, and a centered sans nav under a 2px rule — 'Order Ahead' is the only red item and opens the best seller's full column.",
-      "components": ["Link (Inertia)"],
-      "restyle": "Entirely hand-rolled type and rules — the three-rule hierarchy is the signature device and has no primitive equivalent. The nav is plain anchors to section ids plus one reset <button> in firebrick for Order Ahead."
+      "components": ["Button", "Link (Inertia)"],
+      "restyle": "Hand-rolled type and rules — the three-rule hierarchy is the signature device and has no primitive equivalent. The nav is plain anchors to section ids; the one action, 'Order Ahead', is a restyled Fancy Button (variant=\"ghost\") flattened to a red inline link that opens the best seller's full column. Navbar is deliberately skipped here: its fixed brand/items justify-between wrapper (no centering hook) and its items hiding below md would fight the centered newspaper section bar and drop the anchors on mobile."
     },
     {
       "name": "lead story",
@@ -31,8 +31,8 @@
     {
       "name": "menu classifieds",
       "what": "A centered '— THE MENU —' banner between hairline rules with a 'tap any item for the full column' hint, then a 2-column grid of six clickable rows: bordered 88x74 etched thumbnail, weight-900 name, a dotted leader line stretching to a red sans price, and a one-line description. Rows hover-swap to #E8E5DA and open the drawer.",
-      "components": [],
-      "restyle": "Rows are reset full-width <button> elements (aria-haspopup=dialog) — the dotted price leader is a flex:1 span with border-bottom:1px dotted #8A8578 nudged translateY(-4px), the classic menu-card device. Thumbnails alternate two etching variants deterministically (index % 2), mirroring the mockup's imgId logic."
+      "components": ["Card"],
+      "restyle": "Each of the six rows is a Fancy Card (variant=\"flat\", padding=\"none\") repainted transparent with radius 0 and a single #C8C4B8 hairline underline; the whole card is the click target (role=\"button\" + tabIndex + Enter/Space handler + aria-haspopup=\"dialog\") that opens the full-column Modal. Inside: a bordered 88x74 etched thumbnail, a weight-900 name, a flex:1 dotted price leader (border-bottom:1px dotted #8A8578, nudged translateY(-4px) — the classic menu-card device) stretching to a red sans price, and a one-line description. Thumbnails alternate two etching variants deterministically, mirroring the mockup's imgId logic."
     },
     {
       "name": "our story",
@@ -43,8 +43,8 @@
     {
       "name": "week listings",
       "what": "Centered all-caps 'WHERE TO FIND THE TRUCK THIS WEEK', then a 3-column grid of six Mon–Sat day/place rows, each a baseline-aligned flex row with a #C8C4B8 bottom rule, the whole section closed by a 3px ink rule.",
-      "components": [],
-      "restyle": "A hand-rolled almanac block — bold serif day left, muted right-aligned location. No calendar or Table primitive needed at this density; if listings grow, restyle Table to transparent cells with these same hairline rules."
+      "components": ["Table"],
+      "restyle": "Rendered through a Fancy Table (Table.Body / Row / Cell) flattened to a transparent newspaper almanac: the primitive's outer frame, rounded corners, and divide-y are all reset, leaving #C8C4B8 hairline row rules, a bold-serif day lead column, and a muted right-aligned place column. Closed by the section's 3px ink rule."
     },
     {
       "name": "catering classified",
@@ -61,34 +61,38 @@
     {
       "name": "item drawer (the full column)",
       "what": "Selecting a row renders a fixed full-screen scrim (rgba(20,20,20,0.5)) with a 520px right-side drawer in the same paper: 250px etched plate over a 2px rule with a round white close Button, red 'The Menu · Full Column' kicker, 34px name + 24px red price, square tag Badges, the long copy, 'Built with' ingredient Badges, an allergens line, and a full-width inverted ink 'Add to order · $price' Button that flips to a confirmation once clicked.",
-      "components": ["Button", "Badge"],
-      "restyle": "The drawer shell is hand-rolled (react-fancy's Modal centers; a right sheet in paper is truer) and capped at z-index 25 so the host chrome stays on top. Escape and the scrim both close it; body scroll locks via useEffect with cleanup. Badges are squared to 1px chips — ink-bordered bold 11px for tags, #C8C4B8-bordered 13px for ingredients. The add bar is the page's only inverted-ink block."
+      "components": ["Modal", "Button", "Badge"],
+      "restyle": "Backed by the Fancy Modal primitive, restyled from its centered rounded-white default into the newsprint drawer: the panel is pinned position:fixed to the right edge (520px, max-width 94vw, full height), square-cornered, repainted #F1EFE6 with a -20px ink shadow, and the primitive's blurred scrim is recolored to a flat rgba(20,20,20,0.5) via a :has() hook on the panel. The Modal owns Escape, scroll-lock, focus trap, and stacking — no hand-rolled overlay or page z-index remains. It portals to <body>, so the drawer subtree re-declares the newsprint tokens under .mpbagels-drawer. Inside: a 250px etched plate over a 2px rule with a circle Button close, a red 'Full Column' kicker, 34px name + 24px red price, square ink tag Badges, the long copy, #C8C4B8-bordered 'Built with' ingredient Badges, an allergens line, and the full-width inverted-ink 'Add to order' Button (the page's only inverted block)."
     }
   ],
   "palette": [
     {
-      "component": "Button",
-      "restyle": "Three reads: (1) the classified 'Get a quote' — transparent, 2px ink border, radius 0, 13px bold sans, ink-fill on hover; (2) the drawer 'Add to order · $x' — full-width inverted #141414 bar with paper text, firebrick on hover, the page's only inversion; (3) variant=\"circle\" for the drawer close — a 34px white disc, the lone rounded element."
-    },
-    {
-      "component": "Badge",
-      "restyle": "Squared to 1px classification stamps, never pills: outline ink border with 11px bold sans for item tags (Staff pick / Vegetarian / Best seller), and a softer #C8C4B8 border with 13px regular sans in #4A4A44 for 'Built with' ingredient chips."
-    },
-    {
-      "component": "Modal",
-      "restyle": "Deliberately not used — the item detail is a hand-rolled fixed right-side 520px paper drawer (scrim + -20px ink shadow, overflow-y auto, square corners). If you reach for Modal elsewhere in this look, zero its radius, repaint it #F1EFE6, trade its shadow for ink rules, and keep its z-index under the host chrome."
+      "component": "Card",
+      "restyle": "The six tappable classified menu rows. variant=\"flat\" padding=\"none\" repainted transparent (bg-white / flat fill / rounded-lg all reset), radius 0, one #C8C4B8 hairline underline, #E8E5DA hover swap. The whole Card is the click target — role=\"button\" + tabIndex=0 + Enter/Space handler + aria-haspopup=\"dialog\" — opening the full-column Modal. Holds the 88x74 etched thumbnail, weight-900 name, dotted price leader, red price, and one-line description."
     },
     {
       "component": "Table",
-      "restyle": "For anything denser than the six-row almanac: transparent cells, #C8C4B8 hairline row rules, a 2px ink header rule, bold serif lead column, muted right-aligned sans data — a listings page, not a data grid."
+      "restyle": "The Mon–Sat week listings (Table.Body / Row / Cell, no head). Flattened to a transparent newspaper almanac: outer frame, rounded corners, and divide-y reset; #C8C4B8 hairline row rules, transparent cells with zero side padding, a 120px bold-serif day lead column, and a muted #4A4A44 right-aligned place column. A listings block, not a data grid."
     },
     {
-      "component": "Tabs / Breadcrumbs / nav chrome",
-      "restyle": "Any navigational primitive flattens to the sans utility voice — 12px uppercase, 0.08em tracking, #3A3A3A on paper over a 2px ink rule, with firebrick reserved for the one action that matters."
+      "component": "Modal",
+      "restyle": "The item-detail 'full column'. Restyled from the primitive's centered rounded-white card into a right-side paper sheet: panel pinned position:fixed to the right edge (520px, max-width 94vw, full height, display:block, overflow-y auto), square corners, repainted #F1EFE6 with a -20px ink shadow; the blurred scrim recolored to flat rgba(20,20,20,0.5) via a :has() hook. The Modal owns Escape, scroll-lock, focus trap, and stacking (no page z-index). It portals to <body>, so the drawer subtree re-declares the newsprint tokens under .mpbagels-drawer."
+    },
+    {
+      "component": "Button",
+      "restyle": "Four reads: (1) variant=\"ghost\" 'Order Ahead' in the masthead nav — flattened to a red inline link matching the anchors; (2) the classified 'Get a quote' — transparent, 2px ink border, radius 0, 13px bold sans, ink-fill on hover; (3) variant=\"circle\" drawer close — a 34px white disc, the lone rounded element; (4) the drawer 'Add to order · $x' — full-width inverted #141414 bar with paper text, firebrick on hover, the page's only inversion."
+    },
+    {
+      "component": "Badge",
+      "restyle": "Squared to 1px classification stamps, never pills (all inside the drawer, scoped under .mpbagels-drawer): variant=\"outline\" with an ink border + 11px bold sans for item tags (Staff pick / Vegetarian / Best seller), and a softer #C8C4B8 border with 13px regular sans in #4A4A44 for 'Built with' ingredient chips."
     },
     {
       "component": "Heading / Text",
-      "restyle": "Headings inherit the root Georgia stack at weight 900 with -0.02em tracking (no separate display var); Text bodies at 15px/1.6 pour into column-count:2 blocks, the opener taking a 58px ::first-letter drop cap."
+      "restyle": "Deliberately NOT used — the display type is bespoke newsprint typesetting the primitives can't carry: raw h1/h2 inherit the root Georgia stack at weight 900 with -0.02em tracking, and raw <p> bodies at 15px/1.6 pour into column-count:2 blocks with a 58px ::first-letter drop cap. Reach for Heading/Text only outside these hand-set columns."
+    },
+    {
+      "component": "Navbar",
+      "restyle": "Deliberately NOT used for the masthead — its brand/items justify-between wrapper has no centering hook and its items hide below md, both of which would break the centered newspaper section bar. The nav stays plain section-anchor <a>s with the one action ('Order Ahead') as a restyled ghost Button. If you do reach for Navbar in this look, flatten items to the sans utility voice (12px uppercase, 0.08em tracking, #3A3A3A on paper over a 2px ink rule) and reserve firebrick for the single action."
     }
   ],
   "contentArchetype": "A fictional Milwaukee family food truck (Mom-n-Pops — Rosa & Sal, est. 2026) selling bagels, written entirely as fake newspaper journalism: dateline and nameplate, a kettle-boiled-bagels lead story with 'sources close to the truck', the six-item menu priced as classifieds, an owners feature with an inline pull-quote, a Mon–Sat street-corner almanac, a WANTED catering classified that name-checks the ordering assistant, an obfuscated-email footer, and a per-item 'full column' drawer with tags, ingredients, allergens, and an add-to-order bar.",

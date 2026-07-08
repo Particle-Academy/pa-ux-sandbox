@@ -1,0 +1,459 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Dashboards · Style 13 — Voyage (airline & travel, light)
+   A centered, airy SkyMiles home screen on a pale sky-tinted page: a gradient
+   boarding-pass hero, a miles-to-Platinum meter (gradient Progress), a 12-month
+   flight-activity EChart bar, and an upcoming-trips Table with status Badges.
+   Every selector is scoped under .dbvoyage-root; every class is prefixed
+   dbvoyage-. No page-level sticky/z-index climbs to 30 (the gallery frame owns
+   that layer). One entrance keyframe, killed under prefers-reduced-motion.
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.dbvoyage-root {
+    /* ── Scoped Voyage tokens ──────────────────────────────────────────────── */
+    --dbv-bg: #eef4fa;          /* pale sky page */
+    --dbv-fg: #12283d;          /* deep ink */
+    --dbv-fg-2: #5a748c;        /* secondary */
+    --dbv-fg-3: #8da3b8;        /* muted / scale */
+    --dbv-accent: #0369a1;      /* sky-700 */
+    --dbv-accent-2: #38bdf8;    /* sky-400 */
+    --dbv-surface: #ffffff;     /* cards */
+    --dbv-border: #d6e3ef;      /* card hairline */
+    --dbv-border-soft: #eaf0f6; /* inner dividers */
+    --dbv-track: #e4edf4;       /* progress track */
+
+    background: var(--dbv-bg);
+    color: var(--dbv-fg);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    min-height: 82vh;
+    /* Pull out of the demo-frame content padding so the sky field goes edge to
+       edge inside the frame, then round + ring it like a contained app surface. */
+    margin: -1px;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: inset 0 0 0 1px var(--dbv-border);
+}
+
+.dbvoyage-root *,
+.dbvoyage-root *::before,
+.dbvoyage-root *::after {
+    box-sizing: border-box;
+}
+
+.dbvoyage-root ::selection {
+    background: color-mix(in oklch, var(--dbv-accent-2) 42%, transparent);
+    color: var(--dbv-fg);
+}
+
+.dbvoyage-shell {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 22px 24px 60px;
+}
+
+/* Screen-reader-only (the trips table's semantic head, visually hidden). */
+.dbvoyage-root .dbvoyage-sr {
+    position: absolute !important;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* ── Topbar (restyled Navbar) ──────────────────────────────────────────────── */
+.dbvoyage-root .dbvoyage-topbar {
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin-bottom: 22px;
+}
+.dbvoyage-root .dbvoyage-topbar > div {
+    align-items: center;
+}
+.dbvoyage-topbar__right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.dbvoyage-root .dbvoyage-brand {
+    gap: 10px;
+    font-weight: 700;
+    color: var(--dbv-fg);
+}
+.dbvoyage-brand__chip {
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--dbv-accent), var(--dbv-accent-2));
+    display: grid;
+    place-items: center;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+}
+.dbvoyage-brand__word {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+}
+
+.dbvoyage-root .dbvoyage-nav {
+    display: flex;
+    flex-direction: row;
+    gap: 22px;
+    align-items: center;
+}
+.dbvoyage-nav__link {
+    font-family: inherit;
+    font-size: 13px;
+    color: var(--dbv-fg-2);
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: color 140ms ease;
+}
+.dbvoyage-nav__link:hover {
+    color: var(--dbv-fg);
+}
+.dbvoyage-nav__link.is-active {
+    color: var(--dbv-fg);
+    font-weight: 600;
+}
+
+/* Avatar → 34px solid-blue "RW" circle. */
+.dbvoyage-root .dbvoyage-avatar {
+    width: 34px;
+    height: 34px;
+    background: var(--dbv-accent);
+}
+.dbvoyage-root .dbvoyage-avatar span {
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+/* ── Boarding-pass hero (gradient Card) ────────────────────────────────────── */
+.dbvoyage-root .dbvoyage-hero {
+    background: linear-gradient(120deg, #0c4a6e, #0ea5e9);
+    color: #fff;
+    border: none;
+    border-radius: 22px;
+    padding: 26px 28px;
+    margin-bottom: 16px;
+    overflow: hidden;
+    animation: dbvoyage-rise 480ms ease both;
+}
+.dbvoyage-hero__eyebrow {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(255, 255, 255, 0.7);
+}
+.dbvoyage-route {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-top: 14px;
+}
+.dbvoyage-port__code {
+    font-size: 40px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1;
+}
+.dbvoyage-port__city {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.8);
+    margin-top: 6px;
+}
+.dbvoyage-port--right {
+    text-align: right;
+}
+.dbvoyage-route__line {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: rgba(255, 255, 255, 0.7);
+}
+.dbvoyage-route__dash {
+    height: 1px;
+    flex: 1;
+    background: rgba(255, 255, 255, 0.4);
+}
+.dbvoyage-route__plane {
+    flex-shrink: 0;
+}
+
+/* Separator → dashed rule inside the boarding pass (renders as an <hr>). */
+.dbvoyage-root .dbvoyage-hero__sep {
+    border: none;
+    border-top: 1px dashed rgba(255, 255, 255, 0.3);
+    background: none;
+    height: 0;
+    margin: 22px 0 0;
+}
+
+.dbvoyage-pass {
+    display: flex;
+    gap: 30px;
+    margin-top: 18px;
+    flex-wrap: wrap;
+}
+.dbvoyage-pass__k {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.7);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+.dbvoyage-pass__v {
+    font-size: 17px;
+    font-weight: 700;
+    font-family: var(--font-mono);
+    margin-top: 4px;
+}
+
+/* ── Two-up grid: SkyMiles + 2026 travel ───────────────────────────────────── */
+.dbvoyage-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.dbvoyage-root .dbvoyage-card {
+    background: var(--dbv-surface);
+    border: 1px solid var(--dbv-border);
+    border-radius: 18px;
+    overflow: hidden;
+    animation: dbvoyage-rise 480ms ease both;
+    animation-delay: 60ms;
+}
+.dbvoyage-root .dbvoyage-card__body {
+    padding: 20px;
+}
+.dbvoyage-card__title {
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--dbv-fg);
+}
+.dbvoyage-card__sub {
+    font-size: 12px;
+    color: var(--dbv-fg-2);
+    margin: 4px 0 16px;
+}
+
+/* SkyMiles meter */
+.dbvoyage-miles__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 6px;
+}
+.dbvoyage-miles__bal {
+    font-family: var(--font-mono);
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--dbv-accent);
+}
+.dbvoyage-miles__sub {
+    font-size: 12px;
+    color: var(--dbv-fg-2);
+    margin-bottom: 14px;
+}
+/* Progress → 9px track recolored, gradient fill. */
+.dbvoyage-root .dbvoyage-miles__bar > div {
+    height: 9px;
+    background: var(--dbv-track);
+    border-radius: 5px;
+}
+.dbvoyage-root .dbvoyage-miles__bar > div > div {
+    background: linear-gradient(90deg, var(--dbv-accent), var(--dbv-accent-2));
+    border-radius: 5px;
+}
+.dbvoyage-miles__scale {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--dbv-fg-3);
+    margin-top: 8px;
+    font-family: var(--font-mono);
+}
+
+/* 2026 travel chart wrapper */
+.dbvoyage-chart {
+    width: 100%;
+}
+
+/* ── Upcoming trips panel (Card + Table) ───────────────────────────────────── */
+.dbvoyage-root .dbvoyage-panel {
+    background: var(--dbv-surface);
+    border: 1px solid var(--dbv-border);
+    border-radius: 18px;
+    overflow: hidden;
+    animation: dbvoyage-rise 480ms ease both;
+    animation-delay: 120ms;
+}
+.dbvoyage-root .dbvoyage-panel__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--dbv-border-soft);
+}
+.dbvoyage-root .dbvoyage-panel__title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--dbv-fg);
+    margin: 0;
+}
+/* "Add trip +" ghost Button → sky-700 text affordance. */
+.dbvoyage-root .dbvoyage-addtrip {
+    color: var(--dbv-accent);
+    font-size: 12px;
+    font-weight: 600;
+    background: none;
+    padding: 2px 4px;
+    min-height: 0;
+    height: auto;
+}
+.dbvoyage-root .dbvoyage-addtrip:hover:not(:disabled) {
+    background: color-mix(in oklch, var(--dbv-accent-2) 14%, transparent);
+}
+.dbvoyage-root .dbvoyage-panel__body {
+    padding: 0;
+}
+
+/* Table → borderless list; neutralize the kit's own frame. */
+.dbvoyage-root .dbvoyage-trips {
+    border: none;
+    border-radius: 0;
+    overflow: visible;
+}
+.dbvoyage-root .dbvoyage-trip {
+    cursor: pointer;
+    transition: background 140ms ease, opacity 140ms ease;
+}
+.dbvoyage-root .dbvoyage-trip:hover {
+    background: #f6fafd;
+}
+.dbvoyage-root .dbvoyage-trip.is-selected > td {
+    background: color-mix(in oklch, var(--dbv-accent-2) 12%, transparent);
+}
+.dbvoyage-root .dbvoyage-trip.is-selected > td:first-child {
+    box-shadow: inset 3px 0 0 var(--dbv-accent);
+}
+.dbvoyage-root .dbvoyage-trip.is-dim {
+    opacity: 0.5;
+}
+.dbvoyage-root .dbvoyage-trip > td {
+    padding: 14px 20px;
+    vertical-align: middle;
+    border-color: #f0f4f8;
+}
+.dbvoyage-root .dbvoyage-trip__tilecell {
+    width: 52px;
+}
+.dbvoyage-trip__tile {
+    width: 46px;
+    height: 46px;
+    border-radius: 13px;
+    display: grid;
+    place-items: center;
+    font-size: 22px;
+}
+.dbvoyage-root .dbvoyage-trip__info {
+    width: 100%;
+}
+.dbvoyage-trip__city {
+    display: block;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--dbv-fg);
+}
+.dbvoyage-trip__meta {
+    display: block;
+    font-size: 12px;
+    color: var(--dbv-fg-2);
+    margin-top: 2px;
+}
+.dbvoyage-root .dbvoyage-trip__statuscell {
+    white-space: nowrap;
+}
+.dbvoyage-root .dbvoyage-trip__chev {
+    width: 28px;
+    color: #b4c6d6;
+    text-align: right;
+}
+
+/* Badge status pills — exact mockup colors, override the kit's soft palette. */
+.dbvoyage-root .dbvoyage-badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 999px;
+    border: none;
+}
+.dbvoyage-root .dbvoyage-badge--confirmed {
+    color: #0f9d58;
+    background: #e3f3ec;
+}
+.dbvoyage-root .dbvoyage-badge--booked,
+.dbvoyage-root .dbvoyage-badge--planning {
+    color: var(--dbv-accent);
+    background: #e0f0fa;
+}
+
+/* ── Colophon ──────────────────────────────────────────────────────────────── */
+.dbvoyage-foot {
+    margin-top: 26px;
+    text-align: center;
+    font-size: 11.5px;
+    color: var(--dbv-fg-3);
+    font-family: var(--font-mono);
+}
+
+/* ── Motion ────────────────────────────────────────────────────────────────── */
+@keyframes dbvoyage-rise {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dbvoyage-root .dbvoyage-hero,
+    .dbvoyage-root .dbvoyage-card,
+    .dbvoyage-root .dbvoyage-panel {
+        animation: none;
+    }
+    .dbvoyage-root .dbvoyage-trip,
+    .dbvoyage-nav__link,
+    .dbvoyage-root .dbvoyage-addtrip {
+        transition: none;
+    }
+}
+
+/* ── Responsive: stack the two-up grid on narrow viewports ─────────────────── */
+@media (max-width: 720px) {
+    .dbvoyage-grid {
+        grid-template-columns: 1fr;
+    }
+    .dbvoyage-port__code {
+        font-size: 32px;
+    }
+    .dbvoyage-pass {
+        gap: 20px;
+    }
+}

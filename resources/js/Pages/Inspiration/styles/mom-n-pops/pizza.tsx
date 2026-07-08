@@ -1,7 +1,7 @@
 import "./pizza.css";
 import { Link } from "@inertiajs/react";
 import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
-import { Badge, Button, Callout, Kanban } from "@particle-academy/react-fancy";
+import { Badge, Button, Callout, Card, Kanban, Table } from "@particle-academy/react-fancy";
 import { ArrowLeft, CircleCheck, Radio } from "lucide-react";
 import type { Style } from "../../types";
 
@@ -14,6 +14,14 @@ import type { Style } from "../../types";
  * ("In line / In the oven / Out the window") built on the react-fancy
  * Kanban primitive, driven by cart + stage state, that physically moves
  * your ticket down the line on timers after you place an order.
+ *
+ * Restyled Fancy primitives: Kanban (the order tracker), Button (hero CTAs,
+ * "+ Add to order", "Place order"), Badge (menu tag pills + the YOU chip),
+ * Callout (the "order up" banner), Card (the hero live-oven peek shell, the
+ * six pie cards, the four story stat tiles) and Table (the peek's live-queue
+ * rows and the "Dove siamo" schedule ledger). The only hand-rolled surfaces
+ * are pure decoration — the CSS awning stripe, the sticky blurred header,
+ * and the pulsing live dot.
  *
  * Mounted by Inspiration/Show.tsx for `style.id === "pizza"`. SSR-safe:
  * deterministic first paint (no Date/random), timers armed only in a click
@@ -190,7 +198,8 @@ export default function Pizza({ style }: { style: Style }) {
                         </div>
                     </div>
 
-                    <div className="mppizza-peek">
+                    {/* Card primitive → the live-oven peek shell (dark header + queue) */}
+                    <Card className="mppizza-peek" variant="flat" padding="none">
                         <div className="mppizza-peek-head">
                             <span className="mppizza-peek-dot" aria-hidden />
                             <span className="mppizza-peek-title">The oven, right now</span>
@@ -201,15 +210,20 @@ export default function Pizza({ style }: { style: Style }) {
                                 <span>Live queue</span>
                                 <span>4 pies ahead · ~12 min</span>
                             </div>
-                            {PEEK.map((p) => (
-                                <div key={p.num} className="mppizza-peek-row">
-                                    <span className="mppizza-peek-num">#{p.num}</span>
-                                    <span className="mppizza-peek-pie">{p.pie}</span>
-                                    <span className="mppizza-peek-stage">{p.stage}</span>
-                                </div>
-                            ))}
+                            {/* Table primitive → the 3-row live queue (headerless) */}
+                            <Table className="mppizza-peek-table">
+                                <Table.Body>
+                                    {PEEK.map((p) => (
+                                        <Table.Row key={p.num} className="mppizza-peek-row">
+                                            <Table.Cell className="mppizza-peek-num">#{p.num}</Table.Cell>
+                                            <Table.Cell className="mppizza-peek-pie">{p.pie}</Table.Cell>
+                                            <Table.Cell className="mppizza-peek-stage">{p.stage}</Table.Cell>
+                                        </Table.Row>
+                                    ))}
+                                </Table.Body>
+                            </Table>
                         </div>
-                    </div>
+                    </Card>
                 </section>
 
                 {/* ── Menu — Le Pizze ────────────────────────────────────────── */}
@@ -220,7 +234,8 @@ export default function Pizza({ style }: { style: Style }) {
                     </div>
                     <div className="mppizza-menu-grid">
                         {MENU.map((m) => (
-                            <article key={m.slug} className="mppizza-dish">
+                            /* Card primitive → each white pie card */
+                            <Card key={m.slug} className="mppizza-dish" variant="flat" padding="none">
                                 <div className="mppizza-dish-top">
                                     <span className="mppizza-dish-glyph" aria-hidden>
                                         {m.icon}
@@ -239,7 +254,7 @@ export default function Pizza({ style }: { style: Style }) {
                                 <Button className="mppizza-add" onClick={() => addToCart(m)}>
                                     + Add to order
                                 </Button>
-                            </article>
+                            </Card>
                         ))}
                     </div>
                 </section>
@@ -322,10 +337,11 @@ export default function Pizza({ style }: { style: Style }) {
                     </div>
                     <div className="mppizza-stats">
                         {STATS.map((s) => (
-                            <div key={s.k} className="mppizza-stat">
+                            /* Card primitive → each "numbers as proof" stat tile */
+                            <Card key={s.k} className="mppizza-stat" variant="flat" padding="none">
                                 <div className="mppizza-stat-v">{s.v}</div>
                                 <div className="mppizza-stat-k">{s.k}</div>
-                            </div>
+                            </Card>
                         ))}
                     </div>
                 </section>
@@ -333,15 +349,18 @@ export default function Pizza({ style }: { style: Style }) {
                 {/* ── Find us — Dove siamo ───────────────────────────────────── */}
                 <section className="mppizza-find" ref={findRef}>
                     <h2 className="mppizza-find-h2">Dove siamo</h2>
-                    <div className="mppizza-sched">
-                        {SCHEDULE.map((s) => (
-                            <div key={s.day} className="mppizza-sched-row">
-                                <span className="mppizza-sched-day">{s.day}</span>
-                                <span className="mppizza-sched-place">{s.place}</span>
-                                <span className="mppizza-sched-hours">{s.hours}</span>
-                            </div>
-                        ))}
-                    </div>
+                    {/* Table primitive → the weekly schedule ledger (headerless) */}
+                    <Table className="mppizza-sched">
+                        <Table.Body>
+                            {SCHEDULE.map((s) => (
+                                <Table.Row key={s.day} className="mppizza-sched-row">
+                                    <Table.Cell className="mppizza-sched-day">{s.day}</Table.Cell>
+                                    <Table.Cell className="mppizza-sched-place">{s.place}</Table.Cell>
+                                    <Table.Cell className="mppizza-sched-hours">{s.hours}</Table.Cell>
+                                </Table.Row>
+                            ))}
+                        </Table.Body>
+                    </Table>
                 </section>
             </div>
 

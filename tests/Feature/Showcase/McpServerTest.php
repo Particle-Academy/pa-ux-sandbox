@@ -106,7 +106,7 @@ it('lists the gallery design tools', function () {
     expect($names)->toContain('gallery-list-styles')->toContain('gallery-get-blueprint');
 });
 
-it('gallery-list-styles returns every collection + all 40 styles with blueprint urls', function () {
+it('gallery-list-styles returns every collection + all 53 styles with blueprint urls', function () {
     $body = rpc([
         'jsonrpc' => '2.0',
         'id' => 8,
@@ -116,11 +116,11 @@ it('gallery-list-styles returns every collection + all 40 styles with blueprint 
 
     expect($body['result']['isError'])->toBeFalse();
     $payload = json_decode($body['result']['content'][0]['text'], true);
-    expect($payload['count'])->toBe(40);
+    expect($payload['count'])->toBe(53);
     expect($payload['kind'])->toBe('design-blueprints');
-    expect(array_column($payload['collections'], 'id'))->toBe(['fieldwork', 'mom-n-pops']);
+    expect(array_column($payload['collections'], 'id'))->toBe(['fieldwork', 'mom-n-pops', 'dashboards']);
     $ids = array_column($payload['styles'], 'id');
-    expect($ids)->toContain('swiss')->toContain('agentic')->toContain('tacos')->toContain('grilledcheese');
+    expect($ids)->toContain('swiss')->toContain('agentic')->toContain('tacos')->toContain('grilledcheese')->toContain('pulse')->toContain('voyage');
     expect($payload['styles'][0]['blueprint'])->toBe('/gallery/fieldwork/swiss.json');
 });
 

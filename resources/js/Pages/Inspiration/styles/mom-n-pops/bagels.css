@@ -3,13 +3,21 @@
    A broadsheet front page on aged newsprint cream: #141414 ink, one firebrick
    #B22222 spot color, Georgia serif at weight 900 for display, var(--font-sans)
    for UI chrome, and a rule hierarchy (3px / 2px / 1px) doing all the
-   structure. Radius 0 everywhere except the round drawer close button. Motion:
-   none — hover is an instant background swap, the drawer snaps like a page
-   turn. Every selector scoped under .mpbagels-root / an mpbagels- class; the
-   overlay tops out at z-index 25 (the gallery frame owns 30+).
+   structure. Radius 0 everywhere except the round drawer close button.
+   Restyled Fancy primitives carry the interactive + data surfaces: Card (the
+   tappable classified menu rows), Table (the week listings), Modal (the "full
+   column" repainted as a right-side paper sheet), Button (Order Ahead / quote
+   / close / add-to-order), Badge (tag + ingredient chips). Every selector is
+   scoped under .mpbagels-root (in-page) or .mpbagels-drawer (the Modal panel,
+   which portals to <body>). No page-owned z-index — the Modal primitive owns
+   the drawer's stacking, Escape, scroll-lock, and focus trap.
    ──────────────────────────────────────────────────────────────────────────── */
 
-.mpbagels-root {
+/* Tokens live on BOTH the page root and the Modal panel (.mpbagels-drawer):
+   the Modal primitive portals to <body>, outside .mpbagels-root, so the
+   drawer re-declares the newsprint tokens to inherit them. */
+.mpbagels-root,
+.mpbagels-drawer {
     /* ── Scoped newsprint tokens ──────────────────────────────────────────── */
     --mpb-paper: #f1efe6;      /* aged newsprint cream */
     --mpb-plate: #e9e6da;      /* art plate base behind the etchings */
@@ -24,7 +32,9 @@
     --mpb-hover: #e8e5da;      /* menu-row hover swap */
     --mpb-serif: Georgia, "Times New Roman", serif;
     --mpb-sans: var(--font-sans);
+}
 
+.mpbagels-root {
     min-height: 100vh;
     background: var(--mpb-paper);
     color: var(--mpb-ink);
@@ -127,20 +137,34 @@
     text-decoration: underline;
     text-underline-offset: 3px;
 }
-.mpbagels-nav-order {
-    font-family: var(--mpb-sans);
-    font-size: 12px;
+/* Button (ghost) → the one red "Order Ahead" nav link, flattened to sit inline
+   with the section anchors (no fill, no chrome — the firebrick is the tell). */
+.mpbagels-root .mpbagels-nav-order {
+    font-family: var(--mpb-sans) !important;
+    font-size: 12px !important;
+    font-weight: 400 !important;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--mpb-red);
-    background: transparent;
-    border: 0;
-    padding: 0;
+    letter-spacing: 0.08em !important;
+    color: var(--mpb-red) !important;
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    line-height: inherit !important;
     cursor: pointer;
 }
-.mpbagels-nav-order:hover {
+.mpbagels-root .mpbagels-nav-order:hover:not(:disabled) {
+    background: transparent !important;
+    color: var(--mpb-red) !important;
     text-decoration: underline;
     text-underline-offset: 3px;
+}
+.mpbagels-root .mpbagels-nav-order:focus-visible {
+    outline: 2px solid var(--mpb-red);
+    outline-offset: 2px;
 }
 
 /* ── Shared editorial voice ───────────────────────────────────────────────── */
@@ -255,23 +279,28 @@
     grid-template-columns: 1fr 1fr;
     gap: 0 40px;
 }
-.mpbagels-row {
+/* Card (flat) → a tappable classified row: transparent, radius 0, one soft
+   hairline underline. The whole card is the click target (role="button"),
+   so the primitive's bg-white / rounded-lg / flat fill are all reset. */
+.mpbagels-root .mpbagels-row {
     display: flex;
     gap: 16px;
     padding: 16px 8px 16px 0;
-    border: 0;
-    border-bottom: 1px solid var(--mpb-rule-soft);
-    background: transparent;
+    background: transparent !important;
+    border: 0 !important;
+    border-bottom: 1px solid var(--mpb-rule-soft) !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
     cursor: pointer;
     width: 100%;
     text-align: left;
     font-family: inherit;
     color: inherit;
 }
-.mpbagels-row:hover {
-    background: var(--mpb-hover);
+.mpbagels-root .mpbagels-row:hover {
+    background: var(--mpb-hover) !important;
 }
-.mpbagels-row:focus-visible {
+.mpbagels-root .mpbagels-row:focus-visible {
     outline: 2px solid var(--mpb-red);
     outline-offset: -2px;
 }
@@ -337,24 +366,45 @@
     font-weight: 900;
     letter-spacing: 0.04em;
 }
-.mpbagels-schedule-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0 34px;
+/* Table → the week listings, flattened to a transparent newspaper almanac:
+   no frame, no fill, #C8C4B8 hairline row rules (the primitive's divide-y and
+   outer border are reset), bold-serif day lead, muted right-aligned place. */
+.mpbagels-root .mpbagels-schedule-table {
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    overflow: visible !important;
 }
-.mpbagels-stop {
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-    padding: 9px 0;
-    border-bottom: 1px solid var(--mpb-rule-soft);
-    align-items: baseline;
+.mpbagels-root .mpbagels-schedule-table table {
+    width: 100%;
+    border-collapse: collapse;
 }
-.mpbagels-stop-day {
+.mpbagels-root .mpbagels-schedule-table tbody {
+    border: 0 !important;
+}
+.mpbagels-root .mpbagels-schedule-table tbody tr.mpbagels-stop {
+    background: transparent !important;
+    border: 0 !important;
+    border-bottom: 1px solid var(--mpb-rule-soft) !important;
+}
+.mpbagels-root .mpbagels-schedule-table tbody tr.mpbagels-stop:hover {
+    background: var(--mpb-hover) !important;
+}
+.mpbagels-root .mpbagels-schedule-table td {
+    background: transparent !important;
+    border: 0 !important;
+    padding: 9px 0 !important;
+    vertical-align: baseline;
+    font-family: var(--mpb-serif);
+}
+.mpbagels-root .mpbagels-schedule-table td.mpbagels-stop-day {
+    width: 120px;
     font-weight: 700;
     font-size: 14px;
+    color: var(--mpb-ink);
+    white-space: nowrap;
 }
-.mpbagels-stop-place {
+.mpbagels-root .mpbagels-schedule-table td.mpbagels-stop-place {
     font-size: 13px;
     color: var(--mpb-body);
     text-align: right;
@@ -451,33 +501,34 @@
     text-underline-offset: 3px;
 }
 
-/* ── The full column: right-side paper drawer ─────────────────────────────── */
-/* Fixed overlay capped at z-index 25 — deliberately UNDER the gallery
-   frame's sticky chrome (which owns 30+), so the host stays in charge. */
-.mpbagels-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 25;
-}
-.mpbagels-scrim {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    background: rgba(20, 20, 20, 0.5);
-    border: 0;
-    padding: 0;
-    cursor: pointer;
-}
+/* ── The full column: Modal restyled as a right-side paper sheet ───────────── */
+/* The Modal primitive centers a rounded white card and portals it to <body>;
+   here it's repainted into the newsprint drawer — square-cornered #F1EFE6
+   pinned full-height to the right edge. The primitive owns Escape + scroll
+   lock + focus trap + scrim, so no hand-rolled overlay/z-index is needed. */
 .mpbagels-drawer {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    width: 520px;
-    max-width: 94vw;
-    background: var(--mpb-paper);
-    overflow-y: auto;
-    box-shadow: -20px 0 60px rgba(20, 20, 20, 0.4);
+    position: fixed !important;
+    inset: 0 0 0 auto !important;
+    display: block !important;
+    width: 520px !important;
+    max-width: 94vw !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+    margin: 0 !important;
+    background: var(--mpb-paper) !important;
+    color: var(--mpb-ink) !important;
+    font-family: var(--mpb-serif) !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    overflow-y: auto !important;
+    box-shadow: -20px 0 60px rgba(20, 20, 20, 0.4) !important;
+}
+/* Recolor the primitive's blurred scrim to the flat rgba-ink newsprint wash
+   (anchored on the panel so it can't leak to other modals in the app). */
+div:has(> .mpbagels-drawer) > div[aria-hidden="true"] {
+    background: rgba(20, 20, 20, 0.5) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
 }
 .mpbagels-drawer-hero {
     position: relative;
@@ -487,8 +538,9 @@
     border-bottom: 2px solid var(--mpb-ink);
 }
 
-/* Button variant="circle" → the one round thing on the page */
-.mpbagels-root .mpbagels-close {
+/* Button variant="circle" → the one round thing on the page (inside the Modal
+   panel, which portals to <body>, so it's scoped under .mpbagels-drawer). */
+.mpbagels-drawer .mpbagels-close {
     position: absolute;
     top: 16px;
     right: 16px;
@@ -507,7 +559,7 @@
     place-items: center !important;
     z-index: 1;
 }
-.mpbagels-root .mpbagels-close:hover:not(:disabled) {
+.mpbagels-drawer .mpbagels-close:hover:not(:disabled) {
     background: var(--mpb-paper) !important;
     color: var(--mpb-red) !important;
 }
@@ -546,7 +598,7 @@
 }
 
 /* Badge → square ink tag chip */
-.mpbagels-root .mpbagels-tag {
+.mpbagels-drawer .mpbagels-tag {
     background: transparent !important;
     border: 1px solid var(--mpb-ink) !important;
     color: var(--mpb-ink) !important;
@@ -578,7 +630,7 @@
 }
 
 /* Badge → soft-ruled ingredient chip */
-.mpbagels-root .mpbagels-ing {
+.mpbagels-drawer .mpbagels-ing {
     background: transparent !important;
     border: 1px solid var(--mpb-rule-soft) !important;
     color: var(--mpb-body) !important;
@@ -597,7 +649,8 @@
 }
 
 /* Button → the inverted ink "Add to order" bar (the page's only inversion) */
-.mpbagels-root .mpbagels-addbar {
+.mpbagels-drawer .mpbagels-addbar {
+    display: flex !important;
     width: 100% !important;
     justify-content: center !important;
     background: var(--mpb-ink) !important;
@@ -611,7 +664,7 @@
     padding: 15px !important;
     height: auto !important;
 }
-.mpbagels-root .mpbagels-addbar:hover:not(:disabled) {
+.mpbagels-drawer .mpbagels-addbar:hover:not(:disabled) {
     background: var(--mpb-red) !important;
     color: var(--mpb-paper) !important;
 }
@@ -626,9 +679,6 @@
     }
     .mpbagels-art-story {
         max-width: 420px;
-    }
-    .mpbagels-schedule-grid {
-        grid-template-columns: repeat(2, 1fr);
     }
 }
 @media (max-width: 760px) {
@@ -646,9 +696,6 @@
 @media (max-width: 640px) {
     .mpbagels-columns {
         column-count: 1;
-    }
-    .mpbagels-schedule-grid {
-        grid-template-columns: 1fr;
     }
     .mpbagels-nav {
         gap: 6px 18px;

@@ -21,32 +21,32 @@
     {
       "name": "header",
       "what": "Baseline-aligned two-part wordmark — 'Mom-n-Pops' in Georgia 21px bold plus 'Coffee' in 11px uppercase mono #8A6A4A — linking back to the collection, with a right-pushed text nav (Menu / Story / Find us) as quiet in-page anchor links.",
-      "components": ["Link"],
-      "restyle": "The wordmark is an Inertia Link stripped to plain type (no underline, serif name flips to coffee brown on hover); nav anchors are bare var(--text-sm) sans links in #6A584A with no chrome at all."
+      "components": ["Navbar", "Navbar.Brand", "Navbar.Items", "Navbar.Item", "Link (Inertia)"],
+      "restyle": "The header IS a react-fancy Navbar with its fill, rounding, and padding zeroed to a single #E2D6C4 hairline band. Navbar.Brand wraps the Inertia Link wordmark (plain type, no underline, serif name flips to coffee brown on hover); Navbar.Items is forced flex (the primitive hides its items under md — this editorial page keeps them visible with no toggle) and each Navbar.Item href='#…' is stripped of its pill chrome to a bare var(--text-sm) sans anchor in #6A584A."
     },
     {
       "name": "editorial-hero",
       "what": "Centered stack: mono uppercase eyebrow 'Family coffee cart · Milwaukee · since 2026', a clamp(34px→60px) Georgia weight-400 headline at -0.02em/1.08, and a 500px-wide muted lede. Magazine-cover restraint — no imagery, no CTA.",
-      "components": [],
-      "restyle": "Pure typography — the whole hero is three text nodes and a hairline; resist adding a button, the menu rows below are the only calls to action."
+      "components": ["Text", "Heading", "Text"],
+      "restyle": "The three text nodes now run through the kit: a Text (as='div') mono eyebrow, a weight-normal Heading (as='h1') re-dressed to literal Georgia at clamp(34→60px)/-0.02em, and a Text (as='p') lede. Each component's injected size/weight/zinc-color utilities are overridden two-class to the cream palette. No button — the menu rows below are the only calls to action."
     },
     {
       "name": "menu-list",
       "what": "H2 'The list' with an inline mono aside ('— six things, done well · tap for detail'); six items in a 2-column grid, each row a serif name, a dotted price leader, a mono coffee-brown price, and a one-line muted description. Every row opens the detail modal.",
-      "components": ["Modal (trigger rows are native buttons)"],
-      "restyle": "Rows are real <button>s reset to menu typography (block, text-left, hairline bottom border, snap hover to opacity 0.7). The dotted leader is a flex:1 spacer span with border-bottom:1px dotted #C9B79E and transform:translateY(-4px) — hand-roll it, never fake it with period characters."
+      "components": ["Heading", "Text", "Card", "Modal"],
+      "restyle": "A weight-normal Heading (as='h2') 'The list' plus a Text mono aside. The six items are react-fancy Cards (variant='flat' padding='none') zeroed to plain hairline list rows — fill, radius, and shadow stripped with !important — each made keyboard-operable (role='button', tabIndex, onKeyDown) so the div-based Card behaves like the old <button> and opens the Modal. The one hand-rolled piece is the dotted price leader: a flex:1 spacer span with border-bottom:1px dotted #C9B79E and transform:translateY(-4px), never faked with period characters. The one-line description is a Text (as='span')."
     },
     {
       "name": "story-two-col",
       "what": "50/50 grid where the 34px serif heading IS the story hook ('It started with one broken espresso machine and a lot of stubbornness.') and the right column carries two short paragraphs in descending color tiers (#6A584A then #8A7563).",
-      "components": [],
-      "restyle": "align-items:start puts headline and body on the same top baseline; the color-tier step-down between the two paragraphs is the whole hierarchy — no font-size tricks."
+      "components": ["Heading", "Text"],
+      "restyle": "The hook is a weight-normal Heading (as='h2'); the two body paragraphs are Text (as='p') in descending color tiers (#6A584A then #8A7563). align-items:start keeps the heading and body columns on the same top baseline; the color-tier step-down is the whole hierarchy — no font-size tricks."
     },
     {
       "name": "schedule",
       "what": "Serif H2 'Where the cart parks' + mono subline 'Milwaukee · mornings 7–11 unless noted', then six hairline-divided rows in a 130px/1fr/auto grid: mono day in coffee brown, plain place name, right-aligned mono hours.",
-      "components": [],
-      "restyle": "Timetable-as-typography — a plain CSS grid, not a Table or Calendar primitive; the fixed day column and auto hours column make it read like a printed transit table, with day (#6F4E37) and hours (#9A8267) sharing the two brown mono tones."
+      "components": ["Heading", "Text", "Table", "Table.Column", "Table.Row", "Table.Cell"],
+      "restyle": "Timetable-as-typography, now on a real react-fancy Table: its rounded/bordered wrapper is chrome-zeroed and the thead / tbody-divide utilities recolored to #E2D6C4 hairlines. Day/Place/Hours run as Table.Columns dressed down to quiet mono micro-labels; a fixed 130px mono day column (#6F4E37) and a right-aligned mono hours column (#9A8267) make it read like a printed transit table. A weight-normal Heading titles it and a Text carries the mono subline."
     },
     {
       "name": "footer",
@@ -57,15 +57,20 @@
     {
       "name": "item-detail-modal",
       "what": "Clicking any menu row opens a 420px cream panel: serif item name vs. mono price on one baseline, a long description, an uppercase mono 'Notes' label, and pill-shaped ingredient chips. The page's only rounded/elevated surface.",
-      "components": ["Modal", "Badge", "Button"],
-      "restyle": "react-fancy Modal restyled to the palette — #F5EFE6 panel, 14px radius, 1px #E2D6C4 edge, 0 30px 70px -20px rgba(42,33,27,0.4) shadow, scrim recolored to rgba(42,33,27,0.45) with its blur removed (via a :has()-guarded sibling selector, since the panel portals to body). The primitive contributes Escape-to-close, focus trap, and scroll lock the mockup lacked; Badges become 999px #D9CBB4-bordered pills, and a whispered mono-caps ghost Button is the only visible 'Close'."
+      "components": ["Modal", "Heading", "Text", "Badge", "Button"],
+      "restyle": "react-fancy Modal restyled to the palette — #F5EFE6 panel, 14px radius, 1px #E2D6C4 edge, 0 30px 70px -20px rgba(42,33,27,0.4) shadow, scrim recolored to rgba(42,33,27,0.45) with its blur removed (via a :has()-guarded sibling selector, since the panel portals to body). The primitive contributes Escape-to-close, focus trap, and scroll lock the mockup lacked. Even the dialog's type runs through the kit: the item name is a weight-normal Heading (as='h3') and the price, long copy, and 'Notes' label are Text nodes, re-dressed via `.mpcoffee-modal <descendant>` two-class selectors. Badges become 999px #D9CBB4-bordered pills, and a whispered mono-caps ghost Button is the only visible 'Close'."
     }
   ],
   "palette": [
-    { "component": "Modal", "restyle": "Panel forced to the page's own cream (#F5EFE6) with a 14px radius and deep soft shadow so it reads as a lifted menu card, not a UI dialog; scrim retinted espresso rgba(42,33,27,0.45) and de-blurred. Selectors are stacked (.class×3) because the portal renders outside the scoped root." },
+    { "component": "Navbar", "restyle": "The header band: Navbar + Navbar.Brand + Navbar.Items + Navbar.Item, with the primitive's white fill, rounded pills, and px-4 py-3 padding all zeroed to a single 22px-tall #E2D6C4 hairline row. Navbar.Items is forced to display:flex (the primitive hides items under md; this page has no mobile toggle, so nav stays visible and wraps under 480px), and each Navbar.Item href='#…' loses its pill chrome to become a bare var(--text-sm) sans anchor in #6A584A that darkens to ink on hover." },
+    { "component": "Heading", "restyle": "Every display headline — hero h1, the three section h2s, and the modal item name (h3) — is a Heading with weight='normal', re-dressed two-class from its injected text-*/font-bold/text-zinc-900 utilities to literal Georgia serif at weight 400 in espresso ink (#2A211B): clamp(34→60px)/-0.02em for the h1, 30–34px for the h2s, 32px for the modal name." },
+    { "component": "Text", "restyle": "Carries all non-heading type through the kit: the mono eyebrow (as='div'), the lede + story paragraphs (as='p') in descending #6A584A→#8A7563 tiers, the menu aside + schedule subline (as='div'/'span'), the menu row descriptions (as='span'), and the modal price/long copy/'Notes' label — each overriding Text's default text-base/zinc color to the cream palette's mono or sans micro-type." },
+    { "component": "Card", "restyle": "The six menu items: variant='flat' padding='none' Cards with fill (bg-white / bg-zinc-50), rounded-lg, and shadow all stripped with !important down to a plain hairline list row (border-bottom:1px #E2D6C4, snap hover to opacity 0.7). The div-based Card is made keyboard-operable (role='button', tabIndex=0, onKeyDown for Enter/Space) so it opens the detail Modal exactly like the original native <button>." },
+    { "component": "Table", "restyle": "The weekly schedule: a Table (Head/Column/Body/Row/Cell) with its rounded overflow-hidden border wrapper chrome-zeroed and the thead border + tbody divide utilities recolored to #E2D6C4 hairlines. Columns render as quiet uppercase mono micro-labels; a fixed 130px mono day column (#6F4E37, narrowing to 64px under 720px), a plain place column (#5A483A), and a right-aligned mono hours column (#9A8267) make it read like a printed transit table." },
+    { "component": "Modal", "restyle": "Panel forced to the page's own cream (#F5EFE6) with a 14px radius and deep soft shadow so it reads as a lifted menu card, not a UI dialog; scrim retinted espresso rgba(42,33,27,0.45) and de-blurred. Selectors are stacked (.class×3) because the portal renders outside the scoped root; it also contributes the Escape-to-close, focus trap, and scroll lock the mockup lacked." },
     { "component": "Badge", "restyle": "Outline variant reborn as an ingredient pill: 999px radius, 1px #D9CBB4 hairline, transparent fill, regular-weight sans in #5A483A, 5px 12px padding — an annotation, not a status chip." },
     { "component": "Button", "restyle": "Ghost variant stripped to a whispered mono close affordance: no background, no border, no radius, 11px uppercase letterspaced 0.16em in roast brown #8A6A4A, darkening to #6F4E37 on hover. The page otherwise refuses buttons entirely." },
-    { "component": "Link (Inertia)", "restyle": "Wordmark lockup only — plain baseline-aligned type, serif + mono pair, no underline; navigation elsewhere is bare in-page anchors." }
+    { "component": "Link (Inertia)", "restyle": "Wordmark lockup only, nested inside Navbar.Brand — plain baseline-aligned type, serif name + mono cuisine-tag pair, no underline, name flips to coffee brown on hover; navigation elsewhere is the Navbar's in-page anchors." }
   ],
   "contentArchetype": "A two-person family food cart (Rosa & Sal's Milwaukee coffee cart) presented as a single quiet page: a two-part wordmark, one editorial headline, a six-item priced menu with tap-for-detail rows, a two-paragraph origin story, a weekly parking schedule, and a contact footer. Fits any small craft vendor whose brand is restraint — a bakery, a barber, a bookbinder — anywhere the menu and the schedule ARE the product.",
   "remix": "Swap the roast-brown accent pair (#6F4E37/#8A6A4A) and cream paper for another two-tone craft palette — sage+ivory (tea house), ink+oat (bakery), rust+bone (barbecue) — and the language holds. The load-bearing moves: (1) regular-weight serif display at 60px against 11px letterspaced mono micro-labels (never bold the display), (2) 1px hairline rules as the ONLY structure — no cards, no fills, (3) the flex-spacer dotted price leader on every menu row, (4) descending fg color tiers doing all secondary hierarchy, (5) radius 0 everywhere except one deliberately elevated dialog. Blend toward the fieldwork 'editorial' style for a denser multi-column magazine; toward 'minimal' by dropping the serif for a grotesque. Any Fancy primitive joins by zeroing its chrome and re-dressing it in the serif/mono pair on cream."

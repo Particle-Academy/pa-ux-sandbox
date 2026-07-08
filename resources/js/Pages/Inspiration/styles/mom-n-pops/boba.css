@@ -86,28 +86,32 @@
     z-index: 1;
 }
 
-/* ── Frosted sticky header ───────────────────────────────────────────────── */
-.mpboba-header {
+/* ── Frosted sticky header — restyled Navbar ─────────────────────────────── */
+/* The Navbar renders <nav class="…px-4 py-3 bg-white border-b…"> wrapping a
+   "flex items-center justify-between" div. We strip its default chrome and move
+   the padding onto that inner wrapper so the frosted sticky bar reads exactly
+   as the old hand-rolled header did. */
+.mpboba-root .mpboba-header {
     position: sticky;
     top: 43px; /* tucks under the sticky GalleryFrame */
     z-index: 20; /* under the frame's chrome */
-    background: rgba(255, 255, 255, 0.55);
+    padding: 0 !important;
+    background: rgba(255, 255, 255, 0.55) !important;
     -webkit-backdrop-filter: blur(12px);
     backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.7);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.7) !important;
 }
 @supports not ((backdrop-filter: blur(12px)) or (-webkit-backdrop-filter: blur(12px))) {
-    .mpboba-header {
-        background: rgba(255, 255, 255, 0.92);
+    .mpboba-root .mpboba-header {
+        background: rgba(255, 255, 255, 0.92) !important;
     }
 }
 
-.mpboba-header__in {
+/* Navbar's inner flex wrapper (brand left, items right via justify-between). */
+.mpboba-root .mpboba-header > div {
     max-width: 1120px;
     margin: 0 auto;
     padding: 14px 30px;
-    display: flex;
-    align-items: center;
     gap: 16px;
 }
 
@@ -133,11 +137,12 @@
     -webkit-text-fill-color: transparent;
 }
 
-.mpboba-nav {
-    margin-left: auto;
-    display: flex;
+/* Navbar.Items renders "items-center gap-1 hidden md:flex"; force it always
+   visible (there is no Navbar.Toggle here) and restore the nav gap. */
+.mpboba-root .mpboba-nav {
+    display: flex !important;
     align-items: center;
-    gap: 22px;
+    gap: 22px !important;
 }
 .mpboba-nav__link {
     appearance: none;
@@ -160,18 +165,19 @@
     border-radius: 6px;
 }
 
-/* Little order pill — appears after the first "Add to order". */
-.mpboba-cart {
-    display: inline-flex;
-    align-items: center;
+/* Badge restyled into the little order pill — appears after the first add.
+   Badge base is inline-flex/items-center/rounded-full/font-medium on a soft
+   zinc chip; we flatten it to the white hot-pink glow pill. */
+.mpboba-root .mpboba-cart {
     gap: 5px;
-    background: #fff;
-    color: var(--bb-pink);
-    font-size: 13px;
-    font-weight: 800;
-    padding: 4px 12px;
-    border-radius: 999px;
-    box-shadow: var(--bb-glow-pink);
+    background: #fff !important;
+    color: var(--bb-pink) !important;
+    border: 0 !important;
+    font-size: 13px !important;
+    font-weight: 800 !important;
+    padding: 4px 12px !important;
+    border-radius: 999px !important;
+    box-shadow: var(--bb-glow-pink) !important;
     font-variant-numeric: tabular-nums;
 }
 
@@ -561,34 +567,49 @@
     color: var(--bb-ink);
 }
 
-/* Card restyled into the frosted schedule ticket. */
+/* Table restyled into the frosted schedule ticket. The Table's outer wrapper
+   is the glass card; each Stop is a real <tr> with day / place / hours cells,
+   so this is literal tabular data expressed as a table. */
 .mpboba-root .mpboba-sched {
     background: rgba(255, 255, 255, 0.82) !important;
     border: 1px solid #fff !important;
     border-radius: 20px !important;
-    padding: 0 !important;
     overflow: hidden;
     box-shadow: none !important;
 }
-.mpboba-sched__row {
-    display: grid;
-    grid-template-columns: 130px 1fr auto;
-    gap: 16px;
-    align-items: center;
-    padding: 14px 22px;
-    border-bottom: 1px solid rgba(231, 220, 247, 0.7);
+.mpboba-root .mpboba-sched table {
+    width: 100%;
+    border-collapse: collapse;
 }
-.mpboba-sched__row:last-child {
-    border-bottom: 0;
+/* Neutralize Table's default row chrome (divide-y borders + hover fill) so the
+   only separators are our own lilac hairlines on the cells. */
+.mpboba-root .mpboba-sched tbody tr {
+    border: 0 !important;
 }
-.mpboba-sched__day {
+.mpboba-root .mpboba-sched tbody tr:hover td {
+    background: transparent !important;
+}
+.mpboba-root .mpboba-sched td {
+    padding: 14px 22px !important;
+    border-top: 0 !important;
+    border-bottom: 1px solid rgba(231, 220, 247, 0.7) !important;
+    font-size: 1rem;
+    vertical-align: middle;
+}
+.mpboba-root .mpboba-sched tbody tr:last-child td {
+    border-bottom: 0 !important;
+}
+.mpboba-root .mpboba-sched .mpboba-sched__day {
+    width: 130px;
     font-weight: 700;
     color: var(--bb-ink);
 }
-.mpboba-sched__place {
+.mpboba-root .mpboba-sched .mpboba-sched__place {
     color: var(--bb-ink-2);
 }
-.mpboba-sched__hours {
+.mpboba-root .mpboba-sched .mpboba-sched__hours {
+    width: 1%;
+    white-space: nowrap;
     font-family: var(--font-mono, ui-monospace, "SFMono-Regular", Menlo, monospace);
     font-size: var(--text-sm, 0.875rem);
     color: var(--bb-mut-2);
@@ -669,7 +690,7 @@
 }
 
 @media (max-width: 600px) {
-    .mpboba-header__in,
+    .mpboba-root .mpboba-header > div,
     .mpboba-main,
     .mpboba-footer__in {
         padding-left: 18px;
@@ -679,16 +700,17 @@
         padding-left: 18px;
         padding-right: 18px;
     }
-    .mpboba-nav {
-        gap: 14px;
+    .mpboba-root .mpboba-nav {
+        gap: 14px !important;
     }
     .mpboba-menu__grid {
         grid-template-columns: minmax(0, 1fr);
     }
-    .mpboba-sched__row {
-        grid-template-columns: 92px 1fr auto;
-        gap: 10px;
-        padding: 12px 16px;
+    .mpboba-root .mpboba-sched td {
+        padding: 12px 16px !important;
+    }
+    .mpboba-root .mpboba-sched .mpboba-sched__day {
+        width: 92px;
     }
     .mpboba-h2 {
         font-size: 28px;

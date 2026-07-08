@@ -1,0 +1,555 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Dashboards · Griddle (id "griddle", dark)
+   A warm-dark restaurant back-office console — "The Copper Fork" dinner service.
+   Fixed two-column app shell: a restyled react-fancy <Sidebar> beside a <Navbar>
+   topbar over three stacked grids (KPI row, sales-bar + labor-gauge, top-sellers
+   table + floor tiles). The Fancy primitives are restyled HARD via scoped CSS +
+   data-attribute hooks so they wear this warm-ember idiom natively.
+
+   Every rule is scoped under .dbgriddle-root. Every class is prefixed dbgriddle-.
+   Page-level sticky/z-index stays UNDER 30 (the gallery frame owns 30+).
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.dbgriddle-root {
+    /* ── Scoped warm-dark tokens ─────────────────────────────────────────── */
+    --dbg-bg: #161310; /* app background */
+    --dbg-side: #1c1814; /* sidebar band */
+    --dbg-surface: #1f1b16; /* panels + KPI tiles */
+    --dbg-border: #2e2820; /* hairline borders */
+    --dbg-border-soft: #241f16; /* row dividers */
+    --dbg-fg: #ebe3d8; /* primary text */
+    --dbg-fg-2: #b8ac98; /* secondary text */
+    --dbg-fg-3: #8a7e6c; /* muted mono */
+    --dbg-fg-4: #6e6252; /* faint axis text */
+    --dbg-accent: #f97316; /* ember orange */
+    --dbg-accent-deep: #9a3412; /* deep ember */
+    --dbg-accent2: #4ade80; /* positive green */
+    --dbg-pill: #2a2318; /* active nav pill */
+
+    display: grid;
+    grid-template-columns: 210px 1fr;
+    align-items: start;
+    min-height: calc(100vh - 46px);
+    background: var(--dbg-bg);
+    color: var(--dbg-fg);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+
+    /* Full-bleed: break out of the showcase's max-w-7xl + padded <main> so the
+       warm-dark canvas spans the whole viewport width. */
+    margin-left: calc(50% - 50vw);
+    margin-right: calc(50% - 50vw);
+    width: 100vw;
+    max-width: 100vw;
+    margin-bottom: -2.5rem;
+    overflow-x: clip;
+}
+
+@media (min-width: 768px) {
+    .dbgriddle-root {
+        margin-bottom: -3.5rem;
+    }
+}
+
+.dbgriddle-root *,
+.dbgriddle-root *::before,
+.dbgriddle-root *::after {
+    box-sizing: border-box;
+}
+
+.dbgriddle-root ::selection {
+    background: var(--dbg-accent);
+    color: #fff;
+}
+
+/* ── Sidebar (react-fancy <Sidebar> restyled via data hooks) ─────────────── */
+.dbgriddle-root [data-react-fancy-sidebar].dbgriddle-sidebar {
+    width: 210px;
+    background: var(--dbg-side);
+    border-right: 1px solid var(--dbg-border);
+    padding: 16px 12px;
+    gap: 2px;
+    position: sticky;
+    top: 46px;
+    align-self: stretch;
+    min-height: calc(100vh - 46px);
+    z-index: 5;
+}
+
+.dbgriddle-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 10px;
+    margin-bottom: 14px;
+    font-weight: 700;
+    color: var(--dbg-fg);
+}
+
+.dbgriddle-brand__mark {
+    width: 24px;
+    height: 24px;
+    border-radius: 7px;
+    display: grid;
+    place-items: center;
+    font-size: 12px;
+    color: #fff;
+    background: linear-gradient(135deg, var(--dbg-accent-deep), var(--dbg-accent));
+}
+
+.dbgriddle-brand__word {
+    font-size: var(--text-sm);
+    letter-spacing: -0.01em;
+}
+
+.dbgriddle-navgroup {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+/* Nav items — muted by default, ember on the active pill. */
+.dbgriddle-root [data-react-fancy-sidebar-item].dbgriddle-navitem {
+    padding: 8px 10px;
+    border-radius: 8px;
+    gap: 11px;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: #9a8e7c;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    transition: background 0.14s ease, color 0.14s ease;
+}
+
+.dbgriddle-root [data-react-fancy-sidebar-item].dbgriddle-navitem:hover {
+    color: var(--dbg-fg);
+    background: #241f18;
+}
+
+.dbgriddle-root [data-react-fancy-sidebar-item].dbgriddle-navitem[data-active] {
+    color: var(--dbg-accent);
+    background: var(--dbg-pill);
+}
+
+.dbgriddle-sidefoot {
+    margin-top: auto;
+    padding: 14px 10px 2px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    line-height: 1.5;
+    color: var(--dbg-fg-3);
+}
+
+/* ── Main column ─────────────────────────────────────────────────────────── */
+.dbgriddle-main {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: calc(100vh - 46px);
+}
+
+/* Topbar (react-fancy <Navbar> restyled). */
+.dbgriddle-root [data-react-fancy-navbar].dbgriddle-topbar {
+    background: var(--dbg-bg);
+    border-bottom: 1px solid var(--dbg-border);
+    padding: 0 22px;
+    height: 54px;
+    display: flex;
+    align-items: center;
+    flex: none;
+    position: sticky;
+    top: 46px;
+    z-index: 10;
+}
+
+.dbgriddle-root [data-react-fancy-navbar].dbgriddle-topbar > div {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.dbgriddle-topbar__title {
+    font-weight: 600;
+    font-size: var(--text-sm);
+    color: var(--dbg-fg);
+}
+
+/* Force the right-hand cluster visible at all widths (Navbar hides items < md). */
+.dbgriddle-root [data-react-fancy-navbar-items].dbgriddle-topbar__right {
+    display: flex !important;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    border: 0;
+    padding: 0;
+}
+
+/* Live-covers pill (restyled <Badge>). */
+.dbgriddle-root .dbgriddle-live {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0;
+    background: transparent;
+    color: var(--dbg-accent);
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.dbgriddle-live__dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--dbg-accent);
+    box-shadow: 0 0 8px var(--dbg-accent);
+    animation: dbgriddle-pulse 1.8s ease-in-out infinite;
+}
+
+.dbgriddle-clock {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--dbg-fg-3);
+}
+
+/* Scroll body. */
+.dbgriddle-body {
+    flex: 1;
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* ── KPI row ─────────────────────────────────────────────────────────────── */
+.dbgriddle-kpis {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+}
+
+.dbgriddle-root .dbgriddle-kpi {
+    background: var(--dbg-surface);
+    border: 1px solid var(--dbg-border);
+    border-radius: 12px;
+}
+
+.dbgriddle-kpi__body {
+    padding: 16px 18px;
+}
+
+.dbgriddle-kpi__label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--dbg-fg-3);
+}
+
+.dbgriddle-kpi__value {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-top: 6px;
+    font-family: var(--font-mono);
+    color: var(--dbg-fg);
+}
+
+.dbgriddle-kpi__sub {
+    font-size: 12px;
+    margin-top: 2px;
+}
+
+/* ── Panel grids ─────────────────────────────────────────────────────────── */
+.dbgriddle-grid {
+    display: grid;
+    gap: 16px;
+}
+
+.dbgriddle-grid--wide {
+    grid-template-columns: 1.5fr 1fr;
+}
+
+.dbgriddle-grid--even {
+    grid-template-columns: 1fr 1fr;
+}
+
+@media (max-width: 900px) {
+    .dbgriddle-kpis {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .dbgriddle-grid--wide,
+    .dbgriddle-grid--even {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Panels (restyled <Card>). */
+.dbgriddle-root .dbgriddle-panel {
+    background: var(--dbg-surface);
+    border: 1px solid var(--dbg-border);
+    border-radius: 14px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.dbgriddle-panel__head {
+    padding: 16px 20px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 0;
+}
+
+.dbgriddle-panel__title {
+    font-weight: 600;
+    font-size: var(--text-sm);
+    color: var(--dbg-fg);
+}
+
+.dbgriddle-panel__total {
+    font-family: var(--font-mono);
+    font-size: var(--text-lg);
+    font-weight: 700;
+    color: var(--dbg-accent);
+}
+
+.dbgriddle-panel__body {
+    padding: 0 20px 20px;
+    flex: 1;
+}
+
+.dbgriddle-panel__body--flush {
+    padding: 0;
+}
+
+.dbgriddle-chart {
+    width: 100%;
+}
+
+/* ── Labor gauge + turnover ──────────────────────────────────────────────── */
+.dbgriddle-labor {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 16px;
+}
+
+.dbgriddle-gauge {
+    flex: none;
+}
+
+.dbgriddle-labor__big {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--dbg-accent);
+    font-family: var(--font-mono);
+    letter-spacing: -0.02em;
+}
+
+.dbgriddle-labor__cap {
+    font-size: 12px;
+    color: var(--dbg-fg-3);
+    margin-top: 2px;
+}
+
+.dbgriddle-kv {
+    padding-top: 14px;
+    border-top: 1px solid var(--dbg-border);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.dbgriddle-kv__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: var(--text-sm);
+    padding: 4px 0;
+}
+
+.dbgriddle-kv__k {
+    color: var(--dbg-fg-2);
+}
+
+.dbgriddle-kv__v {
+    font-family: var(--font-mono);
+    color: var(--dbg-fg);
+}
+
+/* Covers-on-books meter (restyled <Progress>: root > track > fill). */
+.dbgriddle-root .dbgriddle-booksbar {
+    margin-top: 8px;
+    width: 100%;
+}
+
+/* Track — dark hairline channel. */
+.dbgriddle-root .dbgriddle-booksbar > div {
+    background: var(--dbg-border) !important;
+}
+
+/* Fill — ember. */
+.dbgriddle-root .dbgriddle-booksbar > div > div {
+    background: var(--dbg-accent) !important;
+}
+
+/* ── Top sellers table (restyled <Table>) ────────────────────────────────── */
+.dbgriddle-root .dbgriddle-sellers {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--text-sm);
+}
+
+.dbgriddle-root .dbgriddle-sellers thead {
+    display: none; /* the mockup shows no header row */
+}
+
+.dbgriddle-root .dbgriddle-sellers tbody tr {
+    border-bottom: 1px solid var(--dbg-border-soft);
+}
+
+.dbgriddle-root .dbgriddle-sellers tbody tr:last-child {
+    border-bottom: 0;
+}
+
+.dbgriddle-root .dbgriddle-sellers td {
+    padding: 11px 20px;
+    background: transparent;
+    border: 0;
+    vertical-align: middle;
+}
+
+.dbgriddle-root .dbgriddle-sellers .dbgriddle-sellers__name {
+    font-weight: 600;
+    color: var(--dbg-fg);
+    width: 100%;
+}
+
+.dbgriddle-root .dbgriddle-sellers .dbgriddle-sellers__count {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--dbg-fg-3);
+    text-align: right;
+    white-space: nowrap;
+}
+
+.dbgriddle-root .dbgriddle-sellers .dbgriddle-sellers__rev {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--dbg-accent);
+    text-align: right;
+    white-space: nowrap;
+}
+
+/* ── Floor status (hand-rolled tile grid of restyled <Badge>s) ───────────── */
+.dbgriddle-floor {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 9px;
+}
+
+.dbgriddle-tile {
+    aspect-ratio: 1;
+    border-radius: 10px;
+    border: 0;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    padding: 0;
+    background: var(--tile-bg);
+    color: var(--tile-fg);
+    transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.dbgriddle-tile:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.32);
+}
+
+.dbgriddle-tile:focus-visible {
+    outline: 2px solid var(--dbg-fg);
+    outline-offset: 2px;
+}
+
+.dbgriddle-tile__n {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--tile-fg);
+}
+
+.dbgriddle-root .dbgriddle-tile__badge {
+    background: transparent;
+    color: var(--tile-fg);
+    border: 0;
+    padding: 0;
+    font-size: 9px;
+    font-weight: 500;
+    opacity: 0.82;
+    text-transform: lowercase;
+}
+
+.dbgriddle-legend {
+    display: flex;
+    gap: 14px;
+    margin-top: 16px;
+    font-size: 11px;
+    color: var(--dbg-fg-3);
+}
+
+.dbgriddle-legend__item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.dbgriddle-legend__swatch {
+    width: 9px;
+    height: 9px;
+    border-radius: 3px;
+}
+
+/* ── Colophon ────────────────────────────────────────────────────────────── */
+.dbgriddle-colophon {
+    margin-top: 4px;
+    padding-top: 14px;
+    border-top: 1px solid var(--dbg-border);
+}
+
+.dbgriddle-root .dbgriddle-colophon__h {
+    color: var(--dbg-fg-2);
+    font-family: var(--font-mono);
+    letter-spacing: 0.02em;
+}
+
+.dbgriddle-root .dbgriddle-colophon__note {
+    margin-top: 4px;
+    color: var(--dbg-fg-3);
+    max-width: 720px;
+}
+
+/* ── Motion ──────────────────────────────────────────────────────────────── */
+@keyframes dbgriddle-pulse {
+    0%,
+    100% {
+        opacity: 1;
+        box-shadow: 0 0 8px var(--dbg-accent);
+    }
+    50% {
+        opacity: 0.5;
+        box-shadow: 0 0 2px var(--dbg-accent);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dbgriddle-live__dot {
+        animation: none;
+    }
+}

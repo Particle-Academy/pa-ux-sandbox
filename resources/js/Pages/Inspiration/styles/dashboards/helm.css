@@ -1,0 +1,453 @@
+/* helm — Dashboards style 02. Cloud-infra NOC wallboard.
+ * Status-first, monospace-heavy, single-screen board with no page scroll.
+ * Every class is prefixed `dbhelm-`; all keyframes stay well under z-index 30.
+ * Fancy component defaults are overridden with `.dbhelm-root <selector>`
+ * (specificity 0,2,0) so they beat Tailwind's single-class utilities in either
+ * light or dark host theme without !important. */
+
+.dbhelm-root {
+    --dbhelm-bg: #07090d;
+    --dbhelm-fg: #c9d2de;
+    --dbhelm-surface: #0e121a;
+    --dbhelm-border: #1a2130;
+    --dbhelm-dim: #5a6472;
+    --dbhelm-bright: #eaeef4;
+    --dbhelm-blue: #3b82f6;
+
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    height: calc(100vh - 44px);
+    min-height: 560px;
+    padding: 16px;
+    overflow: hidden;
+    background: var(--dbhelm-bg);
+    color: var(--dbhelm-fg);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+}
+
+.dbhelm-root *,
+.dbhelm-root *::before,
+.dbhelm-root *::after {
+    box-sizing: border-box;
+}
+
+.dbhelm-mono-dim,
+.dbhelm-uptime,
+.dbhelm-clock,
+.dbhelm-svc__rps,
+.dbhelm-svc__name,
+.dbhelm-alert__meta,
+.dbhelm-tp__foot {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+}
+
+/* ── Topbar (Navbar) ──────────────────────────────────────────────────────── */
+
+.dbhelm-root [data-react-fancy-navbar] {
+    flex: none;
+    padding: 0 0 12px 0;
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid var(--dbhelm-border);
+}
+
+.dbhelm-root [data-react-fancy-navbar-items] {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
+
+.dbhelm-root .dbhelm-brand {
+    gap: 9px;
+    font-weight: 700;
+}
+
+.dbhelm-mark {
+    display: grid;
+    place-items: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 7px;
+    background: linear-gradient(135deg, #0f172a, #3b82f6);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.dbhelm-brand__name {
+    color: var(--dbhelm-bright);
+    font-weight: 700;
+}
+
+.dbhelm-brand__crumb {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--dbhelm-dim);
+}
+
+.dbhelm-cluster {
+    align-items: center;
+}
+
+.dbhelm-root .dbhelm-op {
+    padding: 0;
+    background: transparent;
+    color: #34d399;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.dbhelm-root .dbhelm-op > span:first-child {
+    width: 9px;
+    height: 9px;
+    background: #34d399;
+    box-shadow: 0 0 10px #34d399;
+    animation: dbhelm-pulse 2.6s ease-in-out infinite;
+}
+
+.dbhelm-uptime {
+    font-size: 12px;
+    color: var(--dbhelm-dim);
+}
+
+.dbhelm-clock {
+    min-width: 92px;
+    text-align: right;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--dbhelm-bright);
+}
+
+/* ── Hero KPI row ─────────────────────────────────────────────────────────── */
+
+.dbhelm-kpis {
+    flex: none;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+}
+
+.dbhelm-root .dbhelm-kpi {
+    display: flex;
+    flex-direction: column;
+    padding: 16px 18px;
+    background: var(--dbhelm-surface);
+    border: 1px solid var(--dbhelm-border);
+    border-radius: 14px;
+}
+
+.dbhelm-kpi__k {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--dbhelm-dim);
+}
+
+.dbhelm-kpi__v {
+    margin-top: 6px;
+    font-family: var(--font-mono);
+    font-size: 38px;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -0.03em;
+}
+
+.dbhelm-kpi__sub {
+    margin-top: 4px;
+    font-size: 11px;
+    color: var(--dbhelm-dim);
+}
+
+.dbhelm-root .dbhelm-kpi__meter {
+    margin-top: 10px;
+}
+
+.dbhelm-root .dbhelm-kpi__meter > div {
+    background: rgba(59, 130, 246, 0.16);
+}
+
+/* ── Body: service wall (2fr) + right rail (1fr) ──────────────────────────── */
+
+.dbhelm-body {
+    flex: 1;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 12px;
+    overflow: hidden;
+}
+
+/* ── Service health wall ──────────────────────────────────────────────────── */
+
+.dbhelm-root .dbhelm-wall {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    padding: 18px;
+    background: var(--dbhelm-surface);
+    border: 1px solid var(--dbhelm-border);
+    border-radius: 14px;
+    overflow-y: auto;
+}
+
+.dbhelm-wall__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+}
+
+.dbhelm-root .dbhelm-panel-title {
+    margin: 0;
+    color: #d6dee8;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0;
+}
+
+.dbhelm-mono-dim {
+    font-size: 11px;
+    color: var(--dbhelm-dim);
+}
+
+.dbhelm-wall__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+.dbhelm-root .dbhelm-svc {
+    padding: 13px;
+    border-radius: 11px;
+    cursor: pointer;
+}
+
+.dbhelm-root .dbhelm-svc--focus {
+    outline: 1px solid var(--dbhelm-blue);
+    box-shadow: 0 0 0 1px var(--dbhelm-blue), 0 0 14px rgba(59, 130, 246, 0.28);
+}
+
+.dbhelm-root .dbhelm-svc--dim {
+    opacity: 0.42;
+}
+
+.dbhelm-svc__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 9px;
+}
+
+.dbhelm-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    flex: none;
+}
+
+.dbhelm-svc__rps {
+    font-size: 10px;
+    color: #6b7688;
+}
+
+.dbhelm-svc__name {
+    font-size: 12px;
+    font-weight: 600;
+    color: #d6dee8;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dbhelm-svc__spark {
+    margin-top: 9px;
+}
+
+/* ── Right rail ───────────────────────────────────────────────────────────── */
+
+.dbhelm-rail {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.dbhelm-root .dbhelm-tp {
+    flex: none;
+    padding: 16px 18px;
+    background: var(--dbhelm-surface);
+    border: 1px solid var(--dbhelm-border);
+    border-radius: 14px;
+}
+
+.dbhelm-tp__head,
+.dbhelm-alerts__head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.dbhelm-tp__head {
+    margin-bottom: 12px;
+}
+
+.dbhelm-ic-blue {
+    color: #3b82f6;
+}
+
+.dbhelm-ic-amber {
+    color: #f59e0b;
+}
+
+.dbhelm-tp__foot {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 6px;
+    font-size: 10px;
+    color: var(--dbhelm-dim);
+}
+
+.dbhelm-root .dbhelm-alerts {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    background: var(--dbhelm-surface);
+    border: 1px solid var(--dbhelm-border);
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.dbhelm-alerts__head {
+    flex: none;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--dbhelm-border);
+}
+
+.dbhelm-alerts__firing {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: #f59e0b;
+}
+
+.dbhelm-alerts__body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 14px 18px 6px;
+}
+
+/* Timeline restyle — dense activity feed with glowing severity dots. */
+.dbhelm-root .dbhelm-alerts-tl .w-px {
+    background-color: var(--dbhelm-border);
+}
+
+.dbhelm-root .dbhelm-alert > div:last-child {
+    padding-bottom: 14px;
+}
+
+.dbhelm-root .dbhelm-alert > div:first-child span {
+    width: 8px;
+    height: 8px;
+    margin-top: 2px;
+}
+
+.dbhelm-root .dbhelm-alert--crit > div:first-child span {
+    background: #ef4444;
+    box-shadow: 0 0 6px #ef4444;
+}
+
+.dbhelm-root .dbhelm-alert--warn > div:first-child span {
+    background: #f59e0b;
+    box-shadow: 0 0 6px #f59e0b;
+}
+
+.dbhelm-root .dbhelm-alert--info > div:first-child span {
+    background: #3b82f6;
+    box-shadow: 0 0 6px #3b82f6;
+}
+
+.dbhelm-alert__msg {
+    font-size: 13px;
+    line-height: 1.35;
+    color: #d6dee8;
+}
+
+.dbhelm-alert__meta {
+    margin-top: 2px;
+    font-size: 10px;
+    color: var(--dbhelm-dim);
+}
+
+/* ── Colophon ─────────────────────────────────────────────────────────────── */
+
+.dbhelm-root .dbhelm-colophon {
+    flex: none;
+    color: var(--dbhelm-dim);
+    font-size: 11px;
+    letter-spacing: 0.01em;
+}
+
+/* ── Motion: subtle neon pulse on the live status dots ────────────────────── */
+
+@keyframes dbhelm-pulse {
+    0%,
+    100% {
+        opacity: 1;
+        box-shadow: 0 0 10px #34d399;
+    }
+    50% {
+        opacity: 0.55;
+        box-shadow: 0 0 4px #34d399;
+    }
+}
+
+/* ── Narrow screens: relax the single-screen lock, stack the board ────────── */
+
+@media (max-width: 960px) {
+    .dbhelm-root {
+        height: auto;
+        min-height: 0;
+        overflow: visible;
+    }
+
+    .dbhelm-kpis {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .dbhelm-body {
+        grid-template-columns: 1fr;
+        overflow: visible;
+    }
+
+    .dbhelm-root .dbhelm-wall {
+        overflow-y: visible;
+    }
+
+    .dbhelm-wall__grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .dbhelm-root .dbhelm-alerts {
+        min-height: 320px;
+    }
+}
+
+@media (max-width: 560px) {
+    .dbhelm-wall__grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .dbhelm-cluster {
+        gap: 12px;
+    }
+}

@@ -1,0 +1,480 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Dashboards · Style 05 — Wrapped (music streaming recap)
+   A Spotify-Wrapped-style personal listening recap on a near-black violet page:
+   a gradient wordmark topbar (Navbar + Tabs period switcher + Avatar), a
+   violet→pink gradient hero with two oversized KPIs (rank = Badge), a two-up
+   grid (ranked-artist Table with violet-pink Progress plays bars | genre donut
+   EChart + Badge-% legend), a full-width hour-of-day histogram EChart, and a
+   fixed frosted now-playing bar (art tile + Button transport + white Progress
+   scrubber). Every selector scoped under .dbwrapped-root, every class prefixed
+   dbwrapped-. Page-level z-index stays UNDER 30 (the gallery frame owns 30+).
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.dbwrapped-root {
+  /* ── Scoped Wrapped tokens ───────────────────────────────────────────── */
+  --dbw-bg:          #0C0A14; /* near-black violet page */
+  --dbw-fg:          #EFEAF6; /* primary text */
+  --dbw-surface:     #151020; /* cards / panels */
+  --dbw-border:      #241C34; /* card borders + bar tracks */
+  --dbw-border-soft: #201830; /* row dividers */
+  --dbw-text2:       #CBC2DA; /* legend labels */
+  --dbw-muted:       #9A8FB0; /* secondary text */
+  --dbw-muted2:      #7C6F92; /* mono ranks */
+  --dbw-muted3:      #5A4F70; /* axis / faintest mono */
+  --dbw-accent:      #7c3aed; /* violet accent */
+  --dbw-accent2:     #ec4899; /* pink accent */
+  --dbw-violet:      #a855f7;
+  --dbw-amber:       #f59e0b;
+  --dbw-sky:         #38bdf8;
+  --dbw-grad:        linear-gradient(135deg, #7c3aed, #ec4899);
+
+  background: var(--dbw-bg);
+  color: var(--dbw-fg);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  min-height: 100vh;
+  width: 100%;
+  overflow-x: clip;
+}
+
+.dbwrapped-root ::selection {
+  background: var(--dbw-accent);
+  color: #fff;
+}
+
+.dbwrapped-shell {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 8px 24px 132px; /* bottom room for the fixed player */
+}
+
+/* ── Topbar (Navbar) ─────────────────────────────────────────────────────── */
+.dbwrapped-root .dbwrapped-nav {
+  background: transparent !important;
+  border: 0 !important;
+  padding: 22px 0 24px !important;
+}
+.dbwrapped-brandwrap { display: flex; align-items: center; }
+.dbwrapped-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--dbw-fg);
+  font-weight: 700;
+}
+.dbwrapped-logo {
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  background: var(--dbw-grad);
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+}
+.dbwrapped-brand-word {
+  font-size: 16px;
+  letter-spacing: -0.01em;
+}
+.dbwrapped-navright {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+/* Tabs (pills) → plain text nav links */
+.dbwrapped-root .dbwrapped-periodlist {
+  background: transparent !important;
+  padding: 0 !important;
+  gap: 22px !important;
+  border: 0 !important;
+}
+.dbwrapped-root .dbwrapped-periods [data-react-fancy-tabs-tab] {
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  color: var(--dbw-muted) !important;
+  font-size: var(--text-sm) !important;
+  font-weight: 500 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  transition: color 140ms ease;
+}
+.dbwrapped-root .dbwrapped-periods [data-react-fancy-tabs-tab]:hover {
+  color: var(--dbw-text2) !important;
+}
+.dbwrapped-root .dbwrapped-periods [data-react-fancy-tabs-tab][aria-selected="true"] {
+  color: var(--dbw-fg) !important;
+  font-weight: 600 !important;
+}
+
+/* Avatar → violet-pink user bubble */
+.dbwrapped-root .dbwrapped-userav {
+  background: var(--dbw-grad) !important;
+  color: #fff !important;
+  font-weight: 600 !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+.dbwrapped-root .dbwrapped-userav * {
+  color: #fff !important;
+  background: transparent !important;
+}
+
+/* ── Recap hero banner (gradient Card) ───────────────────────────────────── */
+.dbwrapped-root .dbwrapped-hero {
+  background: var(--dbw-grad) !important;
+  border: 0 !important;
+  border-radius: 22px !important;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 24px 60px -30px rgba(124, 58, 237, 0.7);
+  animation: dbwrapped-rise 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.dbwrapped-hero-body {
+  padding: 30px 32px !important;
+}
+.dbwrapped-hero-eyebrow {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: rgba(255, 255, 255, 0.82);
+  margin-bottom: 14px;
+}
+.dbwrapped-hero-kpis {
+  display: flex;
+  align-items: flex-end;
+  gap: 44px;
+  flex-wrap: wrap;
+}
+.dbwrapped-kpi { min-width: 0; }
+.dbwrapped-kpi-num {
+  font-size: 52px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+}
+.dbwrapped-kpi-label {
+  font-size: var(--text-sm);
+  color: rgba(255, 255, 255, 0.85);
+  margin-top: 6px;
+}
+/* Badge → the big glassy rank chip */
+.dbwrapped-root .dbwrapped-kpi-badge {
+  background: rgba(255, 255, 255, 0.16) !important;
+  color: #fff !important;
+  border: 1px solid rgba(255, 255, 255, 0.28) !important;
+  border-radius: 12px !important;
+  font-size: 34px !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.02em !important;
+  padding: 4px 14px !important;
+  backdrop-filter: blur(4px);
+}
+
+/* ── Card panels (Top artists / Genres / When you listen) ────────────────── */
+.dbwrapped-grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 16px;
+}
+.dbwrapped-root .dbwrapped-panel {
+  background: var(--dbw-surface) !important;
+  border: 1px solid var(--dbw-border) !important;
+  border-radius: 18px !important;
+  box-shadow: none !important;
+  overflow: hidden;
+  animation: dbwrapped-rise 560ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.dbwrapped-root .dbwrapped-clock { margin-top: 16px; }
+.dbwrapped-root .dbwrapped-panel-head {
+  border: 0 !important;
+  padding: 18px 20px 6px !important;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.dbwrapped-root .dbwrapped-clock-head { padding-bottom: 0 !important; }
+.dbwrapped-root .dbwrapped-panel-title {
+  color: var(--dbw-fg) !important;
+  margin: 0 !important;
+}
+.dbwrapped-clock-sub {
+  color: var(--dbw-muted) !important;
+  margin: 0 !important;
+}
+.dbwrapped-panel-body {
+  padding: 8px 20px 18px !important;
+}
+
+/* Top artists — restyled Table (header hidden, compact rows) */
+.dbwrapped-root .dbwrapped-artists { width: 100%; }
+.dbwrapped-root .dbwrapped-artists table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.dbwrapped-root .dbwrapped-artists thead { display: none; }
+.dbwrapped-root .dbwrapped-artists td {
+  background: transparent !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--dbw-border-soft) !important;
+  padding: 9px 0 !important;
+  vertical-align: middle;
+}
+.dbwrapped-root .dbwrapped-artists tbody tr:last-child td { border-bottom: 0 !important; }
+.dbwrapped-art-rank {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--dbw-muted2) !important;
+  width: 22px;
+  white-space: nowrap;
+}
+.dbwrapped-root .dbwrapped-art-id {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+/* Avatar → emoji-on-tint circle (bg from the per-row --dbw-art-bg var) */
+.dbwrapped-root .dbwrapped-art-av {
+  background: var(--dbw-art-bg, #2A2340) !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  width: 38px !important;
+  height: 38px !important;
+  font-size: 17px !important;
+}
+.dbwrapped-root .dbwrapped-art-av * {
+  background: transparent !important;
+  color: var(--dbw-fg) !important;
+}
+.dbwrapped-art-meta {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.dbwrapped-art-name {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--dbw-fg);
+}
+.dbwrapped-art-plays {
+  font-size: 11px;
+  color: var(--dbw-muted);
+}
+.dbwrapped-art-barcell {
+  width: 84px;
+  text-align: right;
+}
+/* Progress → 5px violet-pink plays bar on a #241C34 track */
+.dbwrapped-root .dbwrapped-plays-bar { width: 70px; margin-left: auto; }
+.dbwrapped-root .dbwrapped-plays-bar > div {
+  height: 5px !important;
+  border-radius: 3px !important;
+  background: var(--dbw-border) !important;
+}
+.dbwrapped-root .dbwrapped-plays-bar > div > div {
+  border-radius: 3px !important;
+  background: linear-gradient(90deg, #7c3aed, #ec4899) !important;
+  transition: width 620ms cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+
+/* Genres — donut EChart + color-keyed legend */
+.dbwrapped-genres {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+.dbwrapped-donut { flex: none; width: 150px; height: 150px; }
+.dbwrapped-legend {
+  flex: 1;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+}
+.dbwrapped-legend-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 5px 0;
+  font-size: var(--text-sm);
+}
+.dbwrapped-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  flex: none;
+}
+.dbwrapped-legend-label {
+  flex: 1;
+  color: var(--dbw-text2);
+  min-width: 0;
+}
+/* Badge → mono % chip */
+.dbwrapped-root .dbwrapped-legend-pct {
+  background: transparent !important;
+  border: 0 !important;
+  color: var(--dbw-muted) !important;
+  font-family: var(--font-mono) !important;
+  font-size: 12px !important;
+  padding: 0 !important;
+}
+
+/* ── Colophon ────────────────────────────────────────────────────────────── */
+.dbwrapped-root .dbwrapped-rule {
+  margin: 22px 0 14px !important;
+  border-color: var(--dbw-border) !important;
+  background: var(--dbw-border) !important;
+}
+.dbwrapped-colophon {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--dbw-muted3);
+  line-height: 1.6;
+}
+
+/* ── Fixed now-playing player ────────────────────────────────────────────── */
+.dbwrapped-player {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20; /* under the gallery frame's 30 */
+}
+.dbwrapped-root .dbwrapped-player-card {
+  background: rgba(21, 16, 32, 0.96) !important;
+  border: 0 !important;
+  border-top: 1px solid var(--dbw-border) !important;
+  border-radius: 0 !important;
+  box-shadow: 0 -14px 40px -24px rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+}
+.dbwrapped-player-in {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.dbwrapped-art-tile {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+  flex: none;
+}
+.dbwrapped-nowmeta { flex: 1; min-width: 0; }
+.dbwrapped-now-title {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--dbw-fg);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.dbwrapped-now-artist {
+  color: var(--dbw-muted) !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.dbwrapped-transport {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: none;
+}
+/* Button → icon-only transport controls */
+.dbwrapped-root .dbwrapped-tbtn {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: var(--dbw-text2) !important;
+  padding: 4px !important;
+  min-width: 0 !important;
+  border-radius: 50% !important;
+  display: inline-grid;
+  place-items: center;
+  transition: color 140ms ease, background 140ms ease, transform 120ms ease;
+}
+.dbwrapped-root .dbwrapped-tbtn:hover:not(:disabled) {
+  color: var(--dbw-fg) !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+}
+.dbwrapped-root .dbwrapped-tbtn:active:not(:disabled) { transform: scale(0.92); }
+.dbwrapped-root .dbwrapped-tbtn--play {
+  width: 38px !important;
+  height: 38px !important;
+  background: #fff !important;
+  color: #0C0A14 !important;
+}
+.dbwrapped-root .dbwrapped-tbtn--play:hover:not(:disabled) {
+  background: #fff !important;
+  color: #0C0A14 !important;
+  transform: scale(1.05);
+}
+.dbwrapped-scrub {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  max-width: 280px;
+}
+.dbwrapped-time {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--dbw-muted);
+  white-space: nowrap;
+}
+/* Progress → 4px white scrubber on a #241C34 track */
+.dbwrapped-root .dbwrapped-scrub-bar { flex: 1; }
+.dbwrapped-root .dbwrapped-scrub-bar > div {
+  height: 4px !important;
+  border-radius: 3px !important;
+  background: var(--dbw-border) !important;
+}
+.dbwrapped-root .dbwrapped-scrub-bar > div > div {
+  border-radius: 3px !important;
+  background: #fff !important;
+  transition: width 260ms linear !important;
+}
+
+/* ── Motion ──────────────────────────────────────────────────────────────── */
+@keyframes dbwrapped-rise {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 860px) {
+  .dbwrapped-grid2 { grid-template-columns: 1fr; }
+  .dbwrapped-kpi-num { font-size: 42px; }
+  .dbwrapped-root .dbwrapped-kpi-badge { font-size: 28px !important; }
+}
+@media (max-width: 620px) {
+  .dbwrapped-shell { padding-left: 16px; padding-right: 16px; }
+  .dbwrapped-hero-kpis { gap: 26px; }
+  .dbwrapped-navright { gap: 12px; }
+  .dbwrapped-root .dbwrapped-periodlist { gap: 14px !important; }
+  .dbwrapped-scrub { max-width: 160px; }
+  .dbwrapped-genres { flex-direction: column; align-items: flex-start; }
+  .dbwrapped-donut { margin: 0 auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dbwrapped-root .dbwrapped-hero,
+  .dbwrapped-root .dbwrapped-panel { animation: none !important; }
+  .dbwrapped-root .dbwrapped-plays-bar > div > div,
+  .dbwrapped-root .dbwrapped-scrub-bar > div > div,
+  .dbwrapped-root .dbwrapped-tbtn { transition: none !important; }
+}

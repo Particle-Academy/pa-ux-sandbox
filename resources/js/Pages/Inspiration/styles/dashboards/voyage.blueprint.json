@@ -1,0 +1,66 @@
+{
+  "id": "voyage",
+  "name": "Voyage",
+  "note": "Airline SkyMiles home screen — boarding-pass hero + miles meter + trip list.",
+  "mode": "light",
+  "thesis": "A calm consumer airline app rendered as a centered, airy single column on a pale sky-tinted field: a full-bleed gradient boarding-pass hero (deep ocean → sky), a miles-to-Platinum meter, a twelve-month flight-activity bar chart, and an upcoming-trips list. Big extra-bold IATA numerals and a mono annotation layer (flight/gate/seat, miles balance, tier scale) carry the boarding-pass fiction; one sky accent ramp (sky-700 → sky-400) colors every meter, peak bar, and gradient chip. Generous whitespace, rounded corners throughout, no app chrome.",
+  "tokens": {
+    "bg": "#EEF4FA pale sky page; #FFFFFF cards; a #0C4A6E→#0EA5E9 linear-gradient boarding-pass hero (white ink)",
+    "fg": "#12283D deep ink primary / #5A748C secondary / #8DA3B8 muted (tier scale, chevrons); on the gradient hero: #fff with rgba(255,255,255,.7–.8) for eyebrow + subtitles",
+    "accent": "#0369A1 sky-700 (miles balance, peak bars, brand chip, Add-trip, selected row) + #38BDF8 sky-400 (gradient stop, default bars, meter fill end); status pills add one emerald #0F9D58 on #E3F3EC for Confirmed",
+    "fontDisplay": "var(--font-sans) (Geist) — 40px/800 IATA codes, 700 city/panel headings, 15px semibold card titles",
+    "fontMono": "var(--font-mono) (Geist Mono) — the annotation layer: boarding-pass detail values (DL 1428 / C7 / 14A / 3:50p), the 84,210 miles balance, the Gold / Platinum·100k scale, the colophon",
+    "radius": "22px on the boarding-pass hero, 18px on cards + the trips panel, 13px flag tiles, 999px pill badges, 5px meter track/fill, 4px rounded bar caps",
+    "border": "1px #D6E3EF card hairline; #EAF0F6 panel-head divider; #F0F4F8 trip-row dividers; the root wears an inset 1px #D6E3EF ring; the boarding pass carries a 1px dashed rgba(255,255,255,.3) Separator",
+    "motion": "one keyframe — an 8px rise+fade entrance staggered across the hero (0ms) / cards (60ms) / panel (120ms); plus 140ms color/opacity micro-transitions on nav links, the Add-trip hover, and trip-row hover/select/dim. All killed under prefers-reduced-motion."
+  },
+  "layout": "No sidebar, no persistent chrome — a centered single column capped at 1080px with 22–24px page padding on a pale sky field, the whole surface pulled full-bleed (margin:-1px) and ring-framed inside the demo frame. A light transparent topbar (gradient 'V' chip + Voyage wordmark left; Trips/Explore/Miles nav + circular 'RW' avatar right) sits over a full-width gradient boarding-pass hero, then a 1fr/1fr card row (SkyMiles meter + 2026-travel chart), then a full-width upcoming-trips list card, then a mono colophon. Airy density: big numerals, lots of whitespace, rounded corners throughout; the two-up grid stacks under 720px.",
+  "sections": [
+    {
+      "name": "Topbar",
+      "what": "Transparent bar: a 26px sky→cyan gradient rounded 'V' chip + 'Voyage' wordmark on the left; a right group holding a horizontal text nav (Trips active / Explore / Miles) and a 34px solid-blue circular 'RW' avatar.",
+      "components": ["Navbar", "Navbar.Brand", "Navbar.Items", "Avatar"],
+      "restyle": "Navbar stripped of its border/white-bg/padding so it floats on the sky field; Navbar.Items forced always-visible (kit hides it under md) and filled with controlled <button> nav links (activeNav useState toggles the active weight/color). Avatar recolored to a solid sky-700 34px circle with white 13px initials."
+    },
+    {
+      "name": "Boarding-pass hero",
+      "what": "Full-width gradient banner: uppercase eyebrow 'Next flight · boards in 2h 40m', a big MKE → SFO route (two 40px/800 IATA codes with city·time subtitles flanking a plane icon on a dashed connector), then a dashed rule over a four-item mono detail strip (Flight DL 1428 · Gate C7 · Seat 14A · Boarding 3:50p).",
+      "components": ["Card", "Separator", "Icon (lucide Plane)"],
+      "restyle": "Card → a flat, borderless 22px-radius hero carrying a 120deg #0C4A6E→#0EA5E9 gradient and white ink. Separator → an <hr> restyled to a 1px dashed rgba(255,255,255,.3) divider. The route line + plane and the detail strip are hand-rolled layout (flex); values sit in mono 700."
+    },
+    {
+      "name": "SkyMiles meter",
+      "what": "Card: 'SkyMiles' title + mono 84,210 balance (sky-700), '15,790 miles to Platinum' subtext, a 9px gradient meter filled to 84%, and a mono Gold / 'Platinum · 100k' scale row beneath.",
+      "components": ["Card", "Card.Body", "Progress", "Text"],
+      "restyle": "Progress → track flattened to 9px #E4EDF4 (5px radius) with the fill repainted as a 90deg #0369A1→#38BDF8 gradient via child selectors, value passed as a prop (value=84) — never an imperative width effect."
+    },
+    {
+      "name": "2026 travel chart",
+      "what": "Card titled '2026 travel' with '14 trips · 38,400 mi flown' over a twelve-column monthly flight-activity bar chart (single-letter J–D labels); most months sky-400, peak months (Apr/May/Jul) sky-700, zero-height months render as empty columns.",
+      "components": ["Card", "Card.Body", "EChart"],
+      "restyle": "fancy-echarts <EChart> bar, 96px tall: 12-point series with per-bar itemStyle color (sky-400 default, sky-700 peaks) and 4px rounded caps, yAxis hidden (max 100), xAxis reduced to muted 9px single-letter labels with no axis line/ticks, a sky-900 item tooltip showing the full month name. Mounts client-side (SSR-safe container)."
+    },
+    {
+      "name": "Upcoming trips",
+      "what": "White card: a head row ('Upcoming trips' + a sky-700 'Add trip +' affordance) over four list rows — a rounded flag-emoji tile (tinted bg), city over 'dates · nights', a colored status pill (Confirmed emerald, Booked/Planning sky), and a chevron-right.",
+      "components": ["Card", "Card.Header", "Card.Body", "Table", "Badge", "Button", "Heading", "Icon (lucide ChevronRight)"],
+      "restyle": "Card.Header holds the title + a ghost Button (iconTrailing 'plus') recolored to sky-700. Table stripped of its kit frame into a borderless list (head visually sr-only); rows are clickable — selecting one spotlights it (sky wash + 3px sky inset rule) and dims the rest. Badge → soft pill recolored per status to the exact mockup pairs (emerald on #E3F3EC / sky on #E0F0FA)."
+    }
+  ],
+  "palette": [
+    { "component": "Navbar", "restyle": "The topbar shell — border/white-bg/padding stripped so it floats transparent on the sky field; the inner flex keeps brand left, a nav+avatar group right." },
+    { "component": "Navbar.Brand", "restyle": "Holds the 26px sky→cyan gradient rounded 'V' chip + 'Voyage' 700 wordmark." },
+    { "component": "Navbar.Items", "restyle": "Forced always-visible (kit hides it below md) and filled with controlled reset-<button> nav links; the active link goes ink + 600 weight from activeNav state." },
+    { "component": "Avatar", "restyle": "A solid sky-700 34px circle with white 13px 'RW' initials — the fallback text recolored via a scoped span rule." },
+    { "component": "Card", "restyle": "Three skins: the flat gradient 22px boarding-pass hero (borderless, white ink); the 18px outlined white metric cards; and the 18px outlined trips panel with a hairline-divided header." },
+    { "component": "Separator", "restyle": "Rendered as the boarding pass's dashed divider — the <hr> restyled to a 1px dashed rgba(255,255,255,.3) line, no background." },
+    { "component": "Progress", "restyle": "The SkyMiles meter — 9px #E4EDF4 track (5px radius) with a 90deg sky-700→sky-400 gradient fill painted via child selectors; value driven by the value prop, no data-attr paint." },
+    { "component": "EChart", "restyle": "The only chart: a 12-bar 2026 activity chart, hidden yAxis, muted single-letter xAxis, per-bar sky-400/sky-700 color with 4px rounded caps and a sky-900 month-name tooltip." },
+    { "component": "Table", "restyle": "The upcoming-trips list — kit border/radius neutralized, head visually hidden, rows given a 52px flag-tile cell + stacked city/meta + status + chevron; clickable rows carry hover, selected (sky wash + inset rule) and dimmed-sibling states." },
+    { "component": "Badge", "restyle": "Status pills — soft variant recolored to the exact mockup pairs: Confirmed emerald #0F9D58 on #E3F3EC, Booked/Planning sky #0369A1 on #E0F0FA; 999px, 11px 600." },
+    { "component": "Button", "restyle": "'Add trip +' — a ghost Button (iconTrailing 'plus') stripped to a sky-700 12px text affordance with a faint sky hover wash." },
+    { "component": "Heading / Text", "restyle": "Heading carries the 'Upcoming trips' panel title (15px semibold); Text labels the card titles ('SkyMiles', '2026 travel') at 15px 600." }
+  ],
+  "contentArchetype": "A single traveler's airline / miles home screen (traveler 'RW'): the next flight as a live boarding pass (MKE Milwaukee 4:20p → SFO San Francisco 6:55p, Delta DL 1428, Gate C7, Seat 14A, boards in 2h 40m), a SkyMiles balance of 84,210 at Gold with 15,790 to Platinum (84% of 100k), a year of flight activity (14 trips · 38,400 mi flown across twelve months with mid-year peaks), and four upcoming trips (San Francisco / Tokyo / Denver / Lisbon) each with a flag tile, dates·nights, and a Confirmed/Booked/Planning status. Terse, friendly, numbers-forward — a loyalty app you glance at before you fly.",
+  "remix": "Steal the three moves: (1) a full-width gradient 'pass/ticket' hero with big extra-bold codes + a mono detail strip split by a dashed Separator — reads as a boarding pass, event ticket, receipt, or order confirmation; (2) one accent RAMP (sky-700 → sky-400) reused everywhere — gradient chip, meter fill, and per-bar chart color (a two-tone default/peak encoding) — so the palette stays coherent with zero extra hues; (3) an airy centered consumer layout (no sidebar) that pairs a metric meter with a small EChart and a status-pill list. Swap the sky gradient + IATA codes and it becomes any loyalty/wallet/subscription home: a hotel-points app, a transit pass, a gym membership, a rideshare wallet. Blends well with Bento (retile the hero + two cards + list into asymmetric tiles) or a darker Product idiom (drop the gradient onto slate, keep the ramp)."
+}

@@ -1,0 +1,639 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Dashboards · Style 08 — Cadence  (email marketing admin, light mode)
+
+   An email campaign console as a master–detail app shell built from restyled
+   Fancy primitives: a fixed 300px <Sidebar> master (gradient <Avatar> mark +
+   search <Input> + selectable <Sidebar.Item> rows) beside a scrolling detail
+   column — sticky topbar (<Badge> send-status pill), a 4-up KPI <Card> row, an
+   "Opens since send" <EChart> area chart beside <Progress>-bar link ranks, and a
+   deliverability <Card> of mini <Card> tiles.
+
+   Every selector is scoped under .dbcadence-root and every class is prefixed
+   dbcadence-. LIGHT MODE ONLY — pins its own lavender palette regardless of app
+   theme. Page-level sticky/z-index stays UNDER 30 (the gallery frame owns 30+).
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.dbcadence-root {
+    /* ── Scoped Cadence tokens (the mockup's exact palette) ──────────────── */
+    --dbc-bg: #fbfaff;          /* lavender-tinted page */
+    --dbc-surface: #ffffff;     /* cards, sidebar, topbar */
+    --dbc-fg: #1f1b2e;          /* primary ink */
+    --dbc-body: #5c556e;        /* secondary text (link urls) */
+    --dbc-muted: #9990b0;       /* meta / labels */
+    --dbc-faint: #b4adc8;       /* axis ticks */
+    --dbc-line: #ece9f5;        /* hairline borders */
+    --dbc-accent: #7c3aed;      /* violet */
+    --dbc-accent2: #38bdf8;     /* sky */
+    --dbc-green: #0f9d58;
+    --dbc-tint: #f4f1fc;        /* selected row bg */
+    --dbc-tint2: #faf8fe;       /* mini-tile fill */
+    --dbc-tint3: #f1edf9;       /* mini-tile border */
+    --dbc-search: #f4f1fa;      /* search pill */
+    --dbc-track: #f0eef7;       /* progress track */
+
+    background: var(--dbc-bg);
+    color: var(--dbc-fg);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    /* Pull out of the showcase content padding so the shell meets the demo
+       frame edges (matches the sibling product/admin styles). */
+    margin: -1px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: inset 0 0 0 1px var(--dbc-line);
+}
+
+.dbcadence-root *,
+.dbcadence-root *::before,
+.dbcadence-root *::after {
+    box-sizing: border-box;
+}
+
+.dbcadence-root ::selection {
+    background: color-mix(in oklch, var(--dbc-accent) 22%, transparent);
+    color: var(--dbc-fg);
+}
+
+/* ── App shell — two-pane master/detail grid ─────────────────────────────── */
+.dbcadence-app {
+    display: grid;
+    grid-template-columns: 300px minmax(0, 1fr);
+    height: clamp(580px, 78vh, 860px);
+    background: var(--dbc-bg);
+}
+
+/* ── MASTER: the Sidebar aside ───────────────────────────────────────────── */
+.dbcadence-root .dbcadence-master {
+    width: 100% !important;
+    height: 100%;
+    gap: 0 !important;
+    padding: 0 !important;
+    background: var(--dbc-surface) !important;
+    border-right: 1px solid var(--dbc-line) !important;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Brand header */
+.dbcadence-brand {
+    height: 52px;
+    flex: none;
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    border-bottom: 1px solid var(--dbc-line);
+}
+
+.dbcadence-brand__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    text-decoration: none;
+    color: var(--dbc-fg);
+    font-weight: 700;
+    font-size: 14px;
+}
+
+.dbcadence-root .dbcadence-mark {
+    width: 24px !important;
+    height: 24px !important;
+    border-radius: 7px !important;
+    background: linear-gradient(135deg, #7c3aed, #38bdf8) !important;
+}
+
+.dbcadence-root .dbcadence-mark span {
+    color: #fff !important;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.dbcadence-brand__name {
+    letter-spacing: -0.01em;
+}
+
+/* Search */
+.dbcadence-search {
+    flex: none;
+    padding: 10px 12px;
+}
+
+.dbcadence-root .dbcadence-search__input {
+    background: var(--dbc-search) !important;
+    border: 0 !important;
+    border-radius: 8px !important;
+    height: 34px !important;
+    font-size: 12px !important;
+    color: var(--dbc-fg) !important;
+    box-shadow: none !important;
+    padding-left: 34px !important;
+}
+
+.dbcadence-root .dbcadence-search__input::placeholder {
+    color: var(--dbc-muted) !important;
+    opacity: 1;
+}
+
+.dbcadence-search [data-react-fancy-input] span {
+    color: var(--dbc-muted) !important;
+    left: 11px !important;
+}
+
+/* Campaign list (scrollable) */
+.dbcadence-clist {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding: 0 8px 10px;
+}
+
+.dbcadence-root .dbcadence-crow {
+    display: block !important;
+    width: 100%;
+    text-align: left;
+    padding: 12px !important;
+    border-radius: 11px !important;
+    margin-bottom: 4px;
+    background: transparent !important;
+    color: var(--dbc-fg) !important;
+    box-shadow: none;
+    cursor: pointer;
+    transition: background 160ms cubic-bezier(0.16, 1, 0.3, 1),
+        box-shadow 160ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dbcadence-root .dbcadence-crow:hover {
+    background: var(--dbc-tint2) !important;
+}
+
+.dbcadence-root .dbcadence-crow.is-sel,
+.dbcadence-root .dbcadence-crow[data-active] {
+    background: var(--dbc-tint) !important;
+    box-shadow: inset 3px 0 0 var(--dbc-accent);
+}
+
+/* Neutralize the Sidebar.Item inner truncate span so the row can stack. */
+.dbcadence-root .dbcadence-crow > span {
+    display: flex !important;
+    flex-direction: column;
+    gap: 4px;
+    width: 100%;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-align: left;
+    flex: none;
+}
+
+.dbcadence-crow__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.dbcadence-crow__name {
+    font-size: var(--text-sm, 13px);
+    font-weight: 600;
+    line-height: 1.3;
+}
+
+.dbcadence-crow__dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    flex: none;
+}
+
+.dbcadence-crow__meta {
+    font-size: 11px;
+    color: var(--dbc-muted);
+    font-weight: 400;
+}
+
+.dbcadence-crow__stats {
+    display: flex;
+    gap: 12px;
+    margin-top: 4px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+}
+
+.dbcadence-crow__open {
+    color: var(--dbc-accent);
+}
+
+.dbcadence-crow__click {
+    color: var(--dbc-accent2);
+}
+
+.dbcadence-crow__pending {
+    color: var(--dbc-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.dbcadence-empty {
+    padding: 24px 12px;
+    font-size: 12px;
+    color: var(--dbc-muted);
+    text-align: center;
+}
+
+/* ── DETAIL: scrolling column ────────────────────────────────────────────── */
+.dbcadence-detail {
+    height: 100%;
+    overflow-y: auto;
+    min-width: 0;
+}
+
+.dbcadence-topbar {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 0 22px;
+    background: var(--dbc-surface);
+    border-bottom: 1px solid var(--dbc-line);
+}
+
+.dbcadence-topbar__title {
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.dbcadence-topbar__meta {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--dbc-muted);
+    white-space: nowrap;
+}
+
+/* Send-status Badge */
+.dbcadence-root .dbcadence-status {
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    padding: 3px 10px !important;
+    border-radius: 999px !important;
+    border: 0 !important;
+    line-height: 1.4 !important;
+}
+
+.dbcadence-root .dbcadence-status--sent {
+    color: var(--dbc-green) !important;
+    background: #e3f3ec !important;
+}
+
+.dbcadence-root .dbcadence-status--scheduled {
+    color: var(--dbc-accent) !important;
+    background: #f1ebfc !important;
+}
+
+.dbcadence-root .dbcadence-status--draft {
+    color: #6a6480 !important;
+    background: #efedf4 !important;
+}
+
+/* ── Detail body ─────────────────────────────────────────────────────────── */
+.dbcadence-body {
+    padding: 22px;
+}
+
+/* KPI row */
+.dbcadence-kpis {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 18px;
+}
+
+.dbcadence-root .dbcadence-kpi {
+    background: var(--dbc-surface) !important;
+    border: 1px solid var(--dbc-line) !important;
+    border-radius: 12px !important;
+    box-shadow: none !important;
+}
+
+.dbcadence-kpi__body {
+    padding: 16px 18px !important;
+    display: flex;
+    flex-direction: column;
+}
+
+.dbcadence-kpi__k {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--dbc-muted);
+}
+
+.dbcadence-kpi__v {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-top: 6px;
+    line-height: 1.1;
+}
+
+.dbcadence-kpi__sub {
+    font-size: 11px;
+    color: var(--dbc-muted);
+    margin-top: 2px;
+}
+
+/* Chart + ranked links row */
+.dbcadence-two {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.dbcadence-root .dbcadence-panel {
+    background: var(--dbc-surface) !important;
+    border: 1px solid var(--dbc-line) !important;
+    border-radius: 14px !important;
+    box-shadow: none !important;
+}
+
+.dbcadence-panel__body {
+    padding: 20px !important;
+}
+
+.dbcadence-panel__title {
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 4px;
+}
+
+.dbcadence-panel__sub {
+    font-size: 12px;
+    color: var(--dbc-muted);
+    margin-bottom: 14px;
+}
+
+/* Opens-since-send chart */
+.dbcadence-chart {
+    width: 100%;
+}
+
+.dbcadence-chart__ph {
+    width: 100%;
+    border-radius: 8px;
+    background: linear-gradient(180deg, rgba(124, 58, 237, 0.08), rgba(124, 58, 237, 0));
+}
+
+.dbcadence-axis {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--dbc-faint);
+    margin-top: 6px;
+}
+
+/* Top clicked links */
+.dbcadence-links {
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+}
+
+.dbcadence-link__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 10px;
+    font-size: 12px;
+    margin-bottom: 5px;
+}
+
+.dbcadence-link__url {
+    color: var(--dbc-body);
+    font-family: var(--font-mono);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 170px;
+}
+
+.dbcadence-link__n {
+    font-family: var(--font-mono);
+    color: var(--dbc-muted);
+    flex: none;
+}
+
+/* Progress bar restyle: sky fill on a lavender track, 6px tall */
+.dbcadence-root .dbcadence-linkbar > div {
+    background: var(--dbc-track) !important;
+    height: 6px !important;
+    border-radius: 4px !important;
+}
+
+.dbcadence-root .dbcadence-linkbar > div > div {
+    background: var(--dbc-accent2) !important;
+    border-radius: 4px !important;
+}
+
+/* Deliverability mini tiles */
+.dbcadence-deliv {
+    display: flex;
+    gap: 10px;
+}
+
+.dbcadence-root .dbcadence-mini {
+    flex: 1;
+    background: var(--dbc-tint2) !important;
+    border: 1px solid var(--dbc-tint3) !important;
+    border-radius: 11px !important;
+    box-shadow: none !important;
+    padding: 14px !important;
+    display: flex;
+    flex-direction: column;
+}
+
+.dbcadence-mini__v {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+}
+
+.dbcadence-mini__k {
+    font-size: 11px;
+    color: var(--dbc-muted);
+    margin-top: 2px;
+}
+
+/* ── Pending / draft detail panel ────────────────────────────────────────── */
+.dbcadence-pending__body {
+    padding: 40px 44px !important;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    max-width: 560px;
+}
+
+.dbcadence-pending__icon {
+    display: grid;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+}
+
+.dbcadence-pending__icon--scheduled {
+    color: var(--dbc-accent);
+    background: #f1ebfc;
+}
+
+.dbcadence-pending__icon--draft {
+    color: #6a6480;
+    background: #efedf4;
+}
+
+.dbcadence-root .dbcadence-pending__h {
+    font-size: 20px;
+    letter-spacing: -0.01em;
+    margin: 0;
+}
+
+.dbcadence-root .dbcadence-pending__p {
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--dbc-body);
+    margin: 8px 0 0;
+}
+
+.dbcadence-pending__subject {
+    margin-top: 18px;
+    padding: 12px 14px;
+    width: 100%;
+    background: var(--dbc-tint2);
+    border: 1px solid var(--dbc-tint3);
+    border-radius: 11px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.dbcadence-pending__label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--dbc-muted);
+}
+
+.dbcadence-pending__value {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.dbcadence-root .dbcadence-pending__sep {
+    margin: 20px 0 !important;
+    width: 100%;
+    background: var(--dbc-line) !important;
+}
+
+.dbcadence-pending__actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* Buttons */
+.dbcadence-root .dbcadence-btn {
+    height: 34px !important;
+    padding: 0 14px !important;
+    border-radius: 9px !important;
+    font-size: 12.5px !important;
+    font-weight: 600 !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.dbcadence-btn__ico {
+    display: inline-flex;
+}
+
+.dbcadence-root .dbcadence-btn--primary {
+    background: var(--dbc-accent) !important;
+    color: #fff !important;
+    border: 0 !important;
+}
+
+.dbcadence-root .dbcadence-btn--primary:hover:not(:disabled) {
+    background: #6d31d6 !important;
+}
+
+.dbcadence-root .dbcadence-btn--ghost {
+    background: transparent !important;
+    color: var(--dbc-body) !important;
+    border: 1px solid var(--dbc-line) !important;
+}
+
+.dbcadence-root .dbcadence-btn--ghost:hover:not(:disabled) {
+    background: var(--dbc-tint2) !important;
+}
+
+/* ── Colophon strip ──────────────────────────────────────────────────────── */
+.dbcadence-foot {
+    padding: 14px 22px;
+    border-top: 1px solid var(--dbc-line);
+    background: var(--dbc-surface);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--dbc-muted);
+}
+
+/* ── Responsive: stack the two panes on narrow viewports ─────────────────── */
+@media (max-width: 900px) {
+    .dbcadence-app {
+        grid-template-columns: 1fr;
+        height: auto;
+    }
+
+    .dbcadence-root .dbcadence-master {
+        height: auto;
+    }
+
+    .dbcadence-clist {
+        max-height: 320px;
+    }
+
+    .dbcadence-detail {
+        height: auto;
+    }
+
+    .dbcadence-kpis {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .dbcadence-two {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 560px) {
+    .dbcadence-deliv {
+        flex-wrap: wrap;
+    }
+
+    .dbcadence-root .dbcadence-mini {
+        flex: 1 1 40%;
+    }
+
+    .dbcadence-pending__body {
+        padding: 28px 22px !important;
+    }
+}

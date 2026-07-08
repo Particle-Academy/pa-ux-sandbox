@@ -5,17 +5,20 @@ use Tests\TestCase;
 
 uses(TestCase::class);
 
-it('serves the gallery index with every collection + all 40 style cards', function () {
+it('serves the gallery index with every collection + all 53 style cards', function () {
     $this->getJson('/gallery/index.json')
         ->assertOk()
-        ->assertJsonPath('count', 40)
+        ->assertJsonPath('count', 53)
         ->assertJsonPath('kind', 'design-blueprints')
         ->assertJsonPath('collections.0.id', 'fieldwork')
         ->assertJsonPath('collections.1.id', 'mom-n-pops')
+        ->assertJsonPath('collections.2.id', 'dashboards')
         ->assertJsonPath('styles.0.id', 'swiss')
         ->assertJsonPath('styles.0.blueprint', '/gallery/fieldwork/swiss.json')
         ->assertJsonPath('styles.20.id', 'tacos')
         ->assertJsonPath('styles.20.blueprint', '/gallery/mom-n-pops/tacos.json')
+        ->assertJsonPath('styles.40.id', 'pulse')
+        ->assertJsonPath('styles.40.blueprint', '/gallery/dashboards/pulse.json')
         ->assertHeader('access-control-allow-origin', '*');
 });
 

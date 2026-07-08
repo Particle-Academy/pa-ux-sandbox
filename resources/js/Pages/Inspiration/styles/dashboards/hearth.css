@@ -1,0 +1,529 @@
+/* ============================================================================
+   Hearth — Dashboards style 07 (smart home).
+   A near-black teal consumer surface: airy single 1080px column, cyan accent,
+   generous card radii. Every class is prefixed `dbhearth-` and every override
+   is scoped under `.dbhearth-root` so nothing leaks across the SPA. No fixed
+   positioning and no z-index >= 30 (the gallery frame owns 30).
+   ============================================================================ */
+
+.dbhearth-root {
+    --dbhearth-bg: #0b1416;
+    --dbhearth-fg: #dce8e8;
+    --dbhearth-accent: #22d3ee;
+    --dbhearth-accent-2: #0891b2;
+    --dbhearth-surface: #122024;
+    --dbhearth-border: #1d3438;
+    --dbhearth-line: #172a2e;
+    --dbhearth-muted: #7fa5a8;
+    --dbhearth-muted-2: #9fc0c2;
+    --dbhearth-faint: #4e6b6e;
+
+    width: 100%;
+    min-height: 100vh;
+    background: var(--dbhearth-bg);
+    color: var(--dbhearth-fg);
+    font-family: var(--font-sans, "Geist", ui-sans-serif, system-ui, sans-serif);
+    -webkit-font-smoothing: antialiased;
+}
+
+.dbhearth-shell {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 22px 24px 60px;
+}
+
+/* ── Header / Navbar ─────────────────────────────────────────────────────── */
+
+.dbhearth-root [data-react-fancy-navbar].dbhearth-nav {
+    background: transparent !important;
+    border: 0 !important;
+    padding: 0 !important;
+    margin-bottom: 24px;
+}
+
+.dbhearth-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    color: var(--dbhearth-fg);
+}
+
+.dbhearth-brand__mark {
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #0891b2, #22d3ee);
+    display: grid;
+    place-items: center;
+    color: #062126;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.dbhearth-brand__word {
+    font-size: 15px;
+    letter-spacing: -0.01em;
+}
+
+.dbhearth-navmeta {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    font-size: var(--text-sm, 0.875rem);
+    color: var(--dbhearth-muted);
+}
+
+.dbhearth-root .dbhearth-weather {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(34, 211, 238, 0.12) !important;
+    color: var(--dbhearth-accent) !important;
+    border: 0 !important;
+    border-radius: 999px;
+    padding: 4px 10px;
+    font-weight: 500;
+}
+
+.dbhearth-place {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--dbhearth-muted);
+}
+
+.dbhearth-livedot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--dbhearth-accent);
+    box-shadow: 0 0 0 0 rgba(34, 211, 238, 0.5);
+    animation: dbhearth-pulse 2.4s ease-out infinite;
+}
+
+/* ── Welcome greeting ────────────────────────────────────────────────────── */
+
+.dbhearth-welcome {
+    margin-bottom: 20px;
+}
+
+.dbhearth-root .dbhearth-eyebrow {
+    color: var(--dbhearth-muted);
+}
+
+.dbhearth-root .dbhearth-greeting {
+    margin: 4px 0 0;
+    font-size: 26px;
+    line-height: 1.2;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--dbhearth-fg);
+}
+
+/* ── Scene selector — Button tiles ───────────────────────────────────────── */
+
+.dbhearth-scenes {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+}
+
+.dbhearth-root .dbhearth-scene {
+    flex: 1;
+    min-width: 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    height: auto;
+    background: var(--dbhearth-surface) !important;
+    border: 1px solid var(--dbhearth-border) !important;
+    border-radius: 14px !important;
+    padding: 14px 16px !important;
+    cursor: pointer;
+    text-align: left;
+    color: var(--dbhearth-fg) !important;
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.dbhearth-root .dbhearth-scene:hover {
+    border-color: #2b4a4f !important;
+}
+
+.dbhearth-root .dbhearth-scene.is-active {
+    background: rgba(34, 211, 238, 0.14) !important;
+    border-color: var(--dbhearth-accent) !important;
+}
+
+/* The Button component nests children inside a label wrapper — make it a column. */
+.dbhearth-root .dbhearth-scene [data-react-fancy-button-label] {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    width: 100%;
+    white-space: normal;
+}
+
+.dbhearth-scene__icon {
+    color: var(--dbhearth-scene-col, var(--dbhearth-accent));
+    display: inline-flex;
+}
+
+.dbhearth-scene__label {
+    margin-top: 8px;
+    font-size: var(--text-sm, 0.875rem);
+    font-weight: 600;
+    color: var(--dbhearth-fg);
+}
+
+.dbhearth-scene__sub {
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--dbhearth-muted);
+}
+
+/* ── Cards (shared restyle) ──────────────────────────────────────────────── */
+
+.dbhearth-root .dbhearth-card {
+    background: var(--dbhearth-surface) !important;
+    border: 1px solid var(--dbhearth-border) !important;
+    border-radius: 18px !important;
+    overflow: hidden;
+}
+
+.dbhearth-grid2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+/* ── Climate card ────────────────────────────────────────────────────────── */
+
+.dbhearth-climate__body {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 22px;
+}
+
+.dbhearth-gauge {
+    position: relative;
+    width: 140px;
+    height: 140px;
+    flex: none;
+}
+
+.dbhearth-gauge__overlay {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    text-align: center;
+    pointer-events: none;
+}
+
+.dbhearth-gauge__temp {
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--dbhearth-fg);
+}
+
+.dbhearth-gauge__cap {
+    font-size: 11px;
+    color: var(--dbhearth-muted);
+}
+
+.dbhearth-readout {
+    flex: 1;
+    min-width: 0;
+}
+
+.dbhearth-root .dbhearth-readout__title {
+    margin: 0 0 12px;
+    font-weight: 600;
+    color: var(--dbhearth-fg);
+}
+
+.dbhearth-deflist {
+    margin: 0;
+}
+
+.dbhearth-deflist__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    font-size: var(--text-sm, 0.875rem);
+    border-bottom: 1px solid var(--dbhearth-line);
+}
+
+.dbhearth-deflist__row:last-child {
+    border-bottom: 0;
+}
+
+.dbhearth-deflist__row dt {
+    color: var(--dbhearth-muted-2);
+}
+
+.dbhearth-deflist__row dd {
+    margin: 0;
+    font-family: var(--font-mono, "Geist Mono", ui-monospace, monospace);
+    color: var(--dbhearth-accent);
+}
+
+/* ── Energy card ─────────────────────────────────────────────────────────── */
+
+.dbhearth-root .dbhearth-energy__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 20px 4px;
+    border: 0 !important;
+}
+
+.dbhearth-energy__title {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    color: var(--dbhearth-fg);
+}
+
+.dbhearth-energy__title svg {
+    color: var(--dbhearth-accent);
+}
+
+.dbhearth-energy__kwh {
+    font-family: var(--font-mono, "Geist Mono", ui-monospace, monospace);
+    font-size: var(--text-lg, 1.125rem);
+    font-weight: 700;
+    color: var(--dbhearth-accent);
+}
+
+.dbhearth-energy__body {
+    padding: 0 20px 18px;
+}
+
+.dbhearth-root .dbhearth-delta {
+    display: inline-flex;
+    background: transparent !important;
+    color: var(--dbhearth-muted) !important;
+    border: 0 !important;
+    padding: 0 0 12px !important;
+    font-size: 12px;
+}
+
+/* ── Devices card ────────────────────────────────────────────────────────── */
+
+.dbhearth-root .dbhearth-devices__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--dbhearth-border) !important;
+}
+
+.dbhearth-devices__title {
+    font-weight: 600;
+    color: var(--dbhearth-fg);
+}
+
+.dbhearth-devices__count {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.dbhearth-root .dbhearth-devices__meter {
+    width: 92px;
+}
+
+.dbhearth-root .dbhearth-devices__meter > div {
+    background: var(--dbhearth-line) !important;
+}
+
+.dbhearth-root .dbhearth-devices__meter > div > div {
+    background: var(--dbhearth-accent) !important;
+}
+
+.dbhearth-devices__num {
+    font-family: var(--font-mono, "Geist Mono", ui-monospace, monospace);
+    font-size: 11px;
+    color: var(--dbhearth-muted);
+    white-space: nowrap;
+}
+
+.dbhearth-devices__body {
+    padding: 0;
+    overflow-x: auto;
+}
+
+/* Device table (react-fancy Table hardcodes its own <table> class, so scope by
+   the card body it lives in rather than a forwarded className). */
+.dbhearth-devices__body table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.dbhearth-devices__body [data-react-fancy-table-head] {
+    border-bottom: 1px solid var(--dbhearth-border) !important;
+}
+
+.dbhearth-devices__body [data-react-fancy-table-column] {
+    padding: 10px 20px !important;
+    font-size: 10px !important;
+    font-weight: 600 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--dbhearth-faint) !important;
+}
+
+.dbhearth-devices__body [data-react-fancy-table-body] {
+    border: 0 !important;
+}
+
+.dbhearth-devices__body [data-react-fancy-table-body] > tr {
+    border-top: 1px solid var(--dbhearth-line) !important;
+}
+
+.dbhearth-devices__body [data-react-fancy-table-cell] {
+    padding: 13px 20px !important;
+    font-size: var(--text-sm, 0.875rem);
+    color: var(--dbhearth-fg) !important;
+    vertical-align: middle;
+}
+
+.dbhearth-dev {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+}
+
+.dbhearth-dev__icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 11px;
+    display: grid;
+    place-items: center;
+    flex: none;
+    background: #1a2e32;
+    color: #5e7b7e;
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
+}
+
+.dbhearth-dev__icon.is-on {
+    background: rgba(34, 211, 238, 0.16);
+    color: var(--dbhearth-accent);
+}
+
+.dbhearth-dev__meta {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.dbhearth-dev__name {
+    font-size: var(--text-sm, 0.875rem);
+    font-weight: 600;
+    color: var(--dbhearth-fg);
+}
+
+.dbhearth-dev__detail {
+    font-size: 11px;
+    color: var(--dbhearth-muted);
+}
+
+.dbhearth-dev__power {
+    text-align: right;
+    width: 1%;
+    white-space: nowrap;
+}
+
+.dbhearth-dev__power [data-react-fancy-switch] {
+    display: inline-flex;
+    justify-content: flex-end;
+}
+
+/* Status badges */
+.dbhearth-root .dbhearth-devstatus {
+    border: 0 !important;
+    border-radius: 999px;
+    font-weight: 500;
+}
+
+.dbhearth-root .dbhearth-devstatus.is-on {
+    background: rgba(34, 211, 238, 0.12) !important;
+    color: var(--dbhearth-accent) !important;
+}
+
+.dbhearth-root .dbhearth-devstatus.is-off {
+    background: rgba(127, 165, 168, 0.1) !important;
+    color: var(--dbhearth-muted) !important;
+}
+
+/* Switch track colors — restyle to the mock's teal on / slate off. */
+.dbhearth-root .dbhearth-devices__body [role="switch"] {
+    background: #243c40 !important;
+}
+
+.dbhearth-root .dbhearth-devices__body [role="switch"][aria-checked="true"] {
+    background: var(--dbhearth-accent-2) !important;
+}
+
+/* ── Colophon ────────────────────────────────────────────────────────────── */
+
+.dbhearth-colophon {
+    margin-top: 32px;
+    padding-top: 20px;
+    border-top: 1px solid var(--dbhearth-line);
+    font-family: var(--font-mono, "Geist Mono", ui-monospace, monospace);
+    font-size: 11px;
+    line-height: 1.6;
+    color: var(--dbhearth-faint);
+}
+
+/* ── Motion ──────────────────────────────────────────────────────────────── */
+
+@keyframes dbhearth-pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(34, 211, 238, 0.45);
+    }
+    70% {
+        box-shadow: 0 0 0 7px rgba(34, 211, 238, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(34, 211, 238, 0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dbhearth-livedot {
+        animation: none;
+    }
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+
+@media (max-width: 720px) {
+    .dbhearth-grid2 {
+        grid-template-columns: 1fr;
+    }
+
+    .dbhearth-climate__body {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .dbhearth-scene {
+        min-width: calc(50% - 5px);
+    }
+}

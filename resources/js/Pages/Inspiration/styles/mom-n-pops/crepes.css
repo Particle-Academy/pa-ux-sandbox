@@ -7,9 +7,11 @@
    dashed menu rules. Motion is essentially none (the mockup has zero
    transitions); hover states snap, scrolling is the only movement. Every
    selector is scoped under .mpcrepes-root so nothing leaks across the SPA,
-   and the shared semantic tokens are re-pointed locally so the two react-fancy
-   primitives on the page (Button, Badge) inherit the slate natively before the
-   hard mpcrepes-* restyles land on top.
+   and the shared semantic tokens are re-pointed locally so the react-fancy
+   primitives on the page (Navbar, Button, Card, Table, Badge) inherit the slate
+   natively before the hard mpcrepes-* restyles land on top — stripping the kit's
+   card/table chrome (rounded corners, borders, shadows, zebra rules, hover
+   tints) back to flat chalk furniture with !important overrides.
    ──────────────────────────────────────────────────────────────────────────── */
 
 .mpcrepes-root {
@@ -72,19 +74,28 @@
     padding: 0 32px;
 }
 
-/* ── Header ──────────────────────────────────────────────────────────────── */
-.mpcrepes-header {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    padding: 20px 0;
-    border-bottom: 1px solid var(--mpc-line);
+/* ── Header — react-fancy Navbar, rechalked ──────────────────────────────────
+   Strip the kit's white bar (bg-white, border-b-zinc, px-4/py-3) back to a bare
+   hairline-bottomed slate band; Navbar's inner flex wrapper already lays the
+   brand left / nav right, so we only restore the old header's wrap + gap. */
+.mpcrepes-root .mpcrepes-navbar {
+    padding: 20px 0 !important;
+    background: transparent !important;
+    border: 0 !important;
+    border-bottom: 1px solid var(--mpc-line) !important;
+    border-radius: 0 !important;
+}
+
+/* Navbar's inner justify-between flex row: let brand + nav wrap on narrow
+   viewports like the old flex-wrap header did. */
+.mpcrepes-root .mpcrepes-navbar > div {
     flex-wrap: wrap;
+    gap: 16px;
 }
 
 .mpcrepes-brand {
     display: flex;
-    align-items: baseline;
+    align-items: baseline !important; /* beat Navbar.Brand's items-center */
     gap: 11px;
     color: var(--mpc-ink);
 }
@@ -104,10 +115,12 @@
     text-transform: uppercase;
 }
 
-.mpcrepes-nav {
-    margin-left: auto;
-    display: flex;
-    gap: 26px;
+/* Navbar.Items ships hidden md:flex gap-1 — force it always-visible (there is
+   no hamburger toggle) at the board's own 26px rhythm. */
+.mpcrepes-root .mpcrepes-nav {
+    display: flex !important;
+    align-items: center;
+    gap: 26px !important;
     flex-wrap: wrap;
 }
 
@@ -254,12 +267,19 @@
     gap: 6px 56px;
 }
 
-.mpcrepes-menu__row {
+/* Each row is a react-fancy Card (variant flat, padding none) stripped of all
+   kit chrome — no white fill, no rounded corners, no shadow — back to a single
+   dashed chalk rule, so the Card reads exactly as the old menu row. */
+.mpcrepes-root .mpcrepes-menu__row {
     display: flex;
     align-items: baseline;
     gap: 14px;
-    padding: 18px 0;
-    border-bottom: 1px dashed var(--mpc-dash);
+    padding: 18px 0 !important;
+    background: transparent !important;
+    border: 0 !important;
+    border-bottom: 1px dashed var(--mpc-dash) !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
 }
 
 .mpcrepes-menu__main {
@@ -395,29 +415,66 @@
     margin-bottom: 22px;
 }
 
-.mpcrepes-find__row {
-    display: grid;
-    grid-template-columns: 130px 1fr auto;
-    gap: 16px;
-    padding: 13px 0;
-    border-bottom: 1px solid var(--mpc-line-faint);
-    align-items: baseline;
+/* ── The week as a react-fancy Table, rechalked to a bare schedule ────────────
+   Strip the kit's card shell (rounded-lg border overflow-hidden) and the inner
+   <table>'s zebra/hover/transition back to flat chalk rows ruled with the
+   faintest ivory tier — the same look the old grid list had, now a real
+   <table> of day / place / hours. */
+.mpcrepes-root .mpcrepes-find__table {
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    overflow: visible !important;
 }
 
-.mpcrepes-find__day {
+.mpcrepes-root .mpcrepes-find__table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+/* Neutralize Table.Body's divide-y row borders + Table.Row's hover/transition
+   — the board has its own hairline rules and a zero-motion budget. */
+.mpcrepes-root .mpcrepes-find__tbody tr {
+    border-top: 0 !important;
+    transition: none !important;
+}
+
+.mpcrepes-root .mpcrepes-find__trow:hover {
+    background: transparent !important;
+}
+
+/* Cells: flush-left, the faintest ivory row rule, the old 13px vertical
+   rhythm; last cell (hours) loses its trailing pad so it hugs the right edge. */
+.mpcrepes-root .mpcrepes-find__table td {
+    padding: 13px 16px 13px 0 !important;
+    border: 0 !important;
+    border-bottom: 1px solid var(--mpc-line-faint) !important;
+    font-size: 1rem !important;
+    vertical-align: baseline;
+}
+
+.mpcrepes-root .mpcrepes-find__table td:last-child {
+    padding-right: 0 !important;
+}
+
+/* Column roles carried on the cells (there is no visible header row). */
+.mpcrepes-root .mpcrepes-find__day {
+    width: 130px;
     font-weight: 600;
     color: var(--mpc-ink);
 }
 
-.mpcrepes-find__place {
+.mpcrepes-root .mpcrepes-find__place {
     color: var(--mpc-ink-nav);
 }
 
-.mpcrepes-find__hours {
+.mpcrepes-root .mpcrepes-find__table td.mpcrepes-find__hours {
+    width: 1%;
     font-family: var(--font-mono);
-    font-size: 12px;
+    font-size: 12px !important;
     color: var(--mpc-ink-meta);
     text-align: right;
+    white-space: nowrap;
 }
 
 /* ── Footer ──────────────────────────────────────────────────────────────── */
@@ -480,13 +537,16 @@
         padding: 36px 22px;
     }
 
-    .mpcrepes-nav {
-        gap: 18px;
+    .mpcrepes-root .mpcrepes-nav {
+        gap: 18px !important;
     }
 
-    .mpcrepes-find__row {
-        grid-template-columns: 96px 1fr auto;
-        gap: 10px;
+    .mpcrepes-root .mpcrepes-find__day {
+        width: 96px;
+    }
+
+    .mpcrepes-root .mpcrepes-find__table td {
+        padding-right: 10px !important;
     }
 
     .mpcrepes-footer__inner,

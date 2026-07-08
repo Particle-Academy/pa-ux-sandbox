@@ -1,0 +1,74 @@
+{
+    "thesis": "A consumer fitness dashboard as a single centered near-black column: big soft numerals, one rose + one orange accent, Apple-Watch-style activity rings, and one focal chart per row. It proves the Fancy kit can wear a calm, personal, health-app skin — every ring, curve, bar, tile and list is a restyled Fancy primitive, not a bespoke div.",
+    "tokens": {
+        "bg": "#0B0B0F near-black page; #141419 card surface",
+        "fg": "#E8E8EC primary; #C4C4CC secondary; #8A8A94 muted; #5A5A64 faint axis",
+        "accent": "#F43F5E rose (primary / Move ring / kcal / heart rate) + #FB923C orange (secondary / Exercise ring / steps) + #22D3EE cyan (Stand ring)",
+        "fontDisplay": "Geist (var(--font-sans)) — 700/800 weights for numerals & headline",
+        "fontMono": "Geist Mono (var(--font-mono)) — metric readouts, durations, kcal, axis ticks",
+        "radius": "18px cards; 12px KPI icon chips; 10px workout icon tiles; 8px logo mark; 50% avatar; 4px progress rails; 5px bar top caps",
+        "border": "1px solid #24242C card hairline; #1E1E25 workout row dividers",
+        "motion": "Data-driven grow-in — EChart rings/line/bars animate on mount (cubicOut ~0.9–1.1s); Progress rails ride the DS width transition; cards fade+rise 480ms on the DS ease; a CSS heartbeat pulse on the live heart pin. prefers-reduced-motion drops the pulse and rise."
+    },
+    "layout": "No sidebar, no chrome navbar. A centered max-width 1080px column (22px padding) on a near-black page. A light flex top bar (gradient 'P' mark + wordmark left, a Today/Week/Month Tabs switch pushed right, a rose 'JR' avatar far right) sits over a personal greeting hero. Below, three stacked responsive grid rows: (1) a wide activity-rings card beside a 2-row streak+steps KPI stack (1.1fr / 1fr); (2) a heart-rate area chart beside a weekly move-minutes bar chart (1.4fr / 1fr); (3) a full-width recent-workouts list. Collapses to one column under 860px.",
+    "sections": [
+        {
+            "name": "Top bar",
+            "what": "Gradient 'P' logo + 'Pulse' wordmark linking back to the Dashboards index, a Today/Week/Month period switch (Today active, others muted), and a round rose 'JR' avatar.",
+            "components": ["Link", "Tabs", "Tabs.List", "Tabs.Tab", "Avatar"],
+            "restyle": "Tabs stripped to minimal inline text via [data-react-fancy-tabs-list]{border:none;gap:16px} and [data-react-fancy-tabs-tab] recolored muted→fg on aria-selected; Avatar forced to the rose fill + white initials. The switch is genuine controlled state (activeTab/onTabChange)."
+        },
+        {
+            "name": "Greeting hero",
+            "what": "'Good evening, Jordan' eyebrow over a 28px bold headline 'You're closing in on your rings.'",
+            "components": ["Text", "Heading"],
+            "restyle": "Heading forced to 28px/700 with tight tracking; Text eyebrow in the muted token. Hand-rolled text block — the only non-component copy."
+        },
+        {
+            "name": "Activity rings card",
+            "what": "168px triple concentric ring gauge with a centered '78% of goals' overlay, beside three labeled Move/Exercise/Stand progress rails, each with a color dot and a mono value readout.",
+            "components": ["Card", "EChart", "Progress"],
+            "restyle": "Card flat → #141419 on #24242C, 18px radius. EChart gauge (3 nested ring series, roundCap arcs on a #24242C track); the '78%' is an absolutely-positioned HTML overlay. Progress rails restyled via [data-react-fancy-progress] children — rail = border color, fill = per-ring hue set by a --dbpulse-mcol custom prop. Gauge AND rails are fed from the SAME rings[].pct data so they can't drift (fixes the mockup's duplicated ring fractions)."
+        },
+        {
+            "name": "Streak + Steps KPI tiles",
+            "what": "Two KPI tiles: a rose flame chip with '32 day streak / Personal best — keep it alive', and an orange footprints chip with '9,240 steps / 760 to your daily goal'.",
+            "components": ["Card"],
+            "restyle": "Card flat KPI shells with a tinted lucide icon chip (rose/orange at 14% alpha); 24px/800 numeral + muted unit + subcaption. lucide-react Flame/Footprints icons."
+        },
+        {
+            "name": "Heart rate chart",
+            "what": "Full-day heart-rate area line with a rose gradient fill, header 'Heart rate / Today · resting 58 bpm', a mono 'peak 162' chip, and a 6a/10a/2p/6p/now axis.",
+            "components": ["Card", "EChart", "Badge", "Tooltip", "Heart (lucide)"],
+            "restyle": "EChart smooth line (stroke #F43F5E, LinearGradient fill 0.35→0), sparse mono axis ticks, hidden y-axis, dark tooltip. Badge → soft rose mono 'peak' chip; Tooltip wraps it; a CSS-pulsing Heart pin marks 'live'."
+        },
+        {
+            "name": "Move minutes weekly bars",
+            "what": "Seven vertical bars (M T W T F S S) of weekly move minutes (60/80/45/95/70/100/55), each rose or orange with rounded top caps.",
+            "components": ["Card", "EChart"],
+            "restyle": "EChart bar with per-datum itemStyle color (rose for the bigger days, orange for the rest) and 5px rounded top caps; hidden y-axis, faint x labels, staggered grow-in."
+        },
+        {
+            "name": "Recent workouts list",
+            "what": "Card header ('Recent workouts' / 'See all') over four workout rows: rounded icon tile, name + relative timestamp, mono duration, mono kcal in rose.",
+            "components": ["Card", "Table", "Table.Body", "Table.Row", "Table.Cell", "Button"],
+            "restyle": "Table stripped of its default border/rounding, rows divided by #1E1E25 with a subtle hover + click-to-open spotlight (controlled openWorkout state); leading orange icon tile (lucide Activity/Dumbbell/Bike/Waves), mono duration + rose kcal cells. 'See all' is a ghost Button with a trailing chevron."
+        }
+    ],
+    "palette": [
+        { "component": "Card", "restyle": "Flat #141419 surface, #24242C hairline, 18px radius; the universal panel + KPI + list shell. Fade+rise in on mount." },
+        { "component": "EChart (gauge)", "restyle": "Three nested ring series, full-circle roundCap progress arcs on a #24242C track; center '78%' via HTML overlay. Fed from rings[].pct." },
+        { "component": "EChart (line/area)", "restyle": "Smooth heart-rate line, rose stroke + LinearGradient area (0.35→0), sparse mono ticks, hidden y-axis, dark tooltip." },
+        { "component": "EChart (bar)", "restyle": "Weekly move minutes, per-datum rose/orange itemStyle, 5px rounded top caps, staggered animation." },
+        { "component": "Progress", "restyle": "Move/Exercise/Stand rails — rail recolored to the border token, fill to the per-ring hue via --dbpulse-mcol; 4px radius, size sm." },
+        { "component": "Tabs", "restyle": "Header period switch reduced to minimal inline text (no underline/border), muted→fg on selected; controlled." },
+        { "component": "Avatar", "restyle": "Rose-filled 'JR' bubble with white initials." },
+        { "component": "Badge", "restyle": "Soft rose mono 'peak 162' chip; border removed." },
+        { "component": "Tooltip", "restyle": "Wraps the peak badge with a plain-text hint." },
+        { "component": "Table", "restyle": "Recent-workouts list — default border/rounding removed, #1E1E25 row dividers, hover + open spotlight, mono metric cells." },
+        { "component": "Button", "restyle": "Ghost 'See all' link-button, rose text, trailing chevron." },
+        { "component": "Heading / Text", "restyle": "Hero headline (28/700) + eyebrow; muted subcaptions throughout." }
+    ],
+    "contentArchetype": "A single athlete's daily fitness snapshot — activity rings (Move/Exercise/Stand), streak + steps KPIs, an all-day heart-rate curve, weekly move minutes, and a recent-workouts log. All values are static mock literals; the period switch and workout spotlight are the live controlled state.",
+    "remix": "Swap the three-accent health palette for any personal-metrics domain: reading streaks, meditation minutes, savings goals, habit trackers. Keep the shape — a rings/gauge focal card + a 2-tile KPI stack + a paired area/bar row + a recent-activity list — and repoint rings[] to whatever three goals matter. Feed the gauge and the Progress rails from one array so they never drift. Any of the three EСharts can become a different ECharts type (radar for balance, calendar-heatmap for consistency) without touching the shell."
+}

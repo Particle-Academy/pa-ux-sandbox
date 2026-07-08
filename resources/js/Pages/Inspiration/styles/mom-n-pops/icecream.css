@@ -171,7 +171,10 @@
     box-shadow: 0 10px 24px -12px rgba(74, 46, 61, 0.5) !important;
 }
 
-/* ── Flavor tiles — hand-rolled buttons; bg/ink/span arrive inline ───────── */
+/* ── Flavor tiles — restyled Card (variant="flat"); bg/ink/span arrive inline.
+   The Card renders a <div data-react-fancy-card> with the kit's rounded-lg +
+   flat bg-zinc-50 and a border-b on Card.Header; the override block below strips
+   all of that so the borderless solid-color block look survives untouched. ──── */
 .mpicecream-tile {
     appearance: none;
     border: 0;
@@ -186,6 +189,21 @@
     justify-content: space-between;
     min-width: 0;
     transition: transform 0.18s ease;
+}
+
+/* Card kit-default overrides: kill the stock radius/border/shadow/bg so the
+   inline per-tile bg/ink and the 20px tile radius win. Scoped under the root
+   (0,2,0) + !important to beat the Tailwind utilities Card ships with. */
+.mpicecream-root .mpicecream-tile {
+    border: 0 !important;
+    border-radius: var(--ic-radius-tile) !important;
+    box-shadow: none !important;
+    background: var(--ic-bg);
+}
+
+.mpicecream-root .mpicecream-tile__top,
+.mpicecream-root .mpicecream-tile__label {
+    border: 0 !important;
 }
 
 .mpicecream-tile:hover {
@@ -237,7 +255,7 @@
     margin-top: 4px;
 }
 
-/* ── Stat tile — social proof as one more bento cell ─────────────────────── */
+/* ── Stat tile — social proof as one more flat Card bento cell ───────────── */
 .mpicecream-stat {
     background: var(--ic-mint);
     border-radius: var(--ic-radius-tile);
@@ -247,6 +265,15 @@
     justify-content: center;
     color: var(--ic-mint-ink);
     min-width: 0;
+}
+
+/* Same Card kit-default strip as the flavor tiles: mint fill + 20px radius must
+   beat the stock rounded-lg / flat bg-zinc-50 the Card ships with. */
+.mpicecream-root .mpicecream-stat {
+    background: var(--ic-mint) !important;
+    border: 0 !important;
+    border-radius: var(--ic-radius-tile) !important;
+    box-shadow: none !important;
 }
 
 .mpicecream-stat__num {

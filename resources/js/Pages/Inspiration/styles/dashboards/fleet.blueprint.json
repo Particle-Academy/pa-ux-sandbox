@@ -1,0 +1,70 @@
+{
+  "id": "fleet",
+  "num": "06",
+  "name": "Fleet",
+  "note": "A last-mile delivery depot as a live dispatch console.",
+  "mode": "dark",
+  "thesis": "A logistics operations console rendered entirely from restyled Fancy primitives: a 220px Sidebar rail + Navbar topbar shell wrapping a two-pane split where a fancy-echarts map of live trucks sits beside a dense, scrollable ops panel. Near-black surfaces, hairline #1E242E rules, mono numerals, an amber primary with emerald/blue/amber status hues — the terse, high-density, essentially-static idiom of a real-time NOC where the only 'live' cue is a pulsing green status dot.",
+  "tokens": {
+    "bg": "#0E1116 page / #0B0E13 map field / #12161D surfaces (sidebar, cards, overlay) / #1A1F27 recessed chips",
+    "fg": "#D3D8E0 primary / #EAEEF4 bright (active nav, values) / #8A93A0 nav-muted / #6B7280 captions / #5E6774 depot footer",
+    "accent": "amber #F59E0B primary; status triad emerald #34D399 (on-time), blue #3B82F6 (arriving/soon), amber #F59E0B (delayed/late); brand mark = slate→amber gradient tile",
+    "fontDisplay": "Geist (var(--font-sans)), 600-700 weight for titles + big values",
+    "fontMono": "Geist Mono (var(--font-mono)) for the clock, KPI values, vehicle chips, ETA pills, plate labels, depot footer — every datum is monospace",
+    "radius": "8px nav pills + vehicle chips, 10px overlay/cards, 999px status + ETA pills, 9px truck markers on the map",
+    "border": "1px hairlines: #1E242E structural dividers (sidebar/topbar/pane split/KPI backing), #161B22 lighter row separators; no shadows except the overlay's soft lift + a black drop under truck markers",
+    "motion": "Essentially static. One CSS keyframe (dbfleet-pulse) breathes the emerald live dot; the EChart plays a 600ms appear and eases selected markers larger. prefers-reduced-motion drops the pulse. No route-dash animation (kept faithful to the static mockup)."
+  },
+  "layout": "A dispatch-console shell: a fixed 220px dark Sidebar (slate→amber 'F' mark + 5-item nav — Live map active — + a bottom-anchored mono 'dispatch · shift B / Milwaukee depot' footer) beside a single flex main column. The main column opens with a 54px Navbar topbar (title 'Live operations' left; a right-aligned live cluster of an emerald pulsing dot + '28 active', amber '3 delayed', and a mono '14:06 CST' clock), then a two-pane body on a 1.5fr/1fr grid. Left ~60% is a full-bleed live map (a 44px CSS grid under a transparent EChart of dashed routes + truck markers, with a bottom-left glass status Card). Right ~40% is a scrollable ops panel stacking a 3-up KPI Card strip (1px-gap hairline dividers), an 'Active deliveries' Table, and a shift-targets Progress trio. Height is pinned to calc(100vh - 46px) so it reads as a fixed viewport app under the neutral gallery frame; below 720px the panes stack and the map fixes to 320px.",
+  "sections": [
+    {
+      "name": "Sidebar nav",
+      "what": "Persistent dispatch rail: brand mark, five nav items (Live map / Deliveries / Vehicles / Drivers / Reports), and a shift/depot footer.",
+      "components": ["Sidebar", "Sidebar.Item"],
+      "restyle": "The react-fancy Sidebar <aside> is targeted via [data-react-fancy-sidebar] and forced from its light w-60 default to a full-width #12161D rail with a #1E242E right border and 16px/12px padding. Sidebar.Item drops the zinc defaults for an 8px pill: muted #8A93A0 text, #161B22 hover, and a filled #1C2430 + #EAEEF4 active state driven off [data-active]. Nav is controlled React state (setNav). The brand mark and depot footer are hand-composed (no primitive)."
+    },
+    {
+      "name": "Topbar / live status",
+      "what": "Section title + a live-ops counter cluster and a mono clock.",
+      "components": ["Navbar", "Navbar.Brand", "Heading"],
+      "restyle": "The Navbar <nav> ([data-react-fancy-navbar]) is flattened to a 54px #0E1116 bar with a single #1E242E bottom hairline; its inner flex row is stretched full width. The title rides a Heading; the counters are a hand-built flex cluster where the emerald 'active' dot carries the dbfleet-pulse neon glow and the clock is a static mono literal (never Date.now — SSR-safe)."
+    },
+    {
+      "name": "Live fleet map",
+      "what": "The dashboard's one data-viz: schematic dark map with two dashed routes, five status-colored truck markers, and a glass FLEET STATUS overlay (28 en route / 3 delayed / 9 idle).",
+      "components": ["EChart", "Card", "Progress"],
+      "restyle": "A CSS 44px grid draws the schematic field; a transparent fancy-echarts <EChart> layers on top on a 0-100 value grid — two smooth dashed 'line' series (amber + blue routes) plus a 'scatter' of roundRect truck markers colored by status, plate labels in mono chips below each. The EChart is gated behind a mounted flag (server emits only the grid placeholder). Clicking a marker selects its delivery. The overlay is a flat Card forced to a translucent blurred glass box with three big mono figures and a thin emerald Progress capacity bar."
+    },
+    {
+      "name": "KPI strip",
+      "what": "3-up tile row: On-time 94%, Avg / stop 6.2m, Miles today 1,840.",
+      "components": ["Card"],
+      "restyle": "Three flat Cards laid on a #1E242E-backed grid with 1px gaps so the backing shows through as hairline dividers; each Card is forced border/radius/shadow off with a #12161D fill. Inside: a 10px uppercase caption + a 22px mono value in bright #EAEEF4."
+    },
+    {
+      "name": "Active deliveries list",
+      "what": "A dense 7-row delivery list — vehicle chip, destination + driver·stops subline, status-tinted ETA pill.",
+      "components": ["Table", "Table.Row", "Table.Cell", "Badge", "Button"],
+      "restyle": "The react-fancy Table is stripped of its light card chrome (border/radius/overflow off), its head hidden, and its rows retinted via [data-react-fancy-table-row]: #161B22 separators, a hover wash, and a blue left-rail + wash on the selected row. Each row composes a square mono vehicle chip (status-ringed), a stacked destination/subline identity, and a status-keyed soft Badge pill for the ETA. Rows are clickable (onClick) and link to the map marker; the section header pairs a count Badge + a ghost 'All' Button."
+    },
+    {
+      "name": "Shift targets",
+      "what": "A compact footer trio of labeled meters — On-time SLA, Fleet in service, Route completion.",
+      "components": ["Progress"],
+      "restyle": "Three thin Progress bars (emerald/blue/amber) each over a label + mono note row, sitting below the deliveries under a #1E242E rule — a natural dispatch-metrics coda that demonstrates Progress consistently."
+    }
+  ],
+  "palette": [
+    { "component": "Sidebar", "restyle": "Restyled via [data-react-fancy-sidebar] / [data-react-fancy-sidebar-item]: full-width dark rail, muted items, filled #1C2430 active pill off [data-active]; the whole nav is controlled state, not links." },
+    { "component": "Navbar", "restyle": "Flattened to a 54px #0E1116 topbar with one bottom hairline; inner flex stretched full-width so the live counter cluster right-aligns against the title." },
+    { "component": "EChart (fancy-echarts)", "restyle": "The live map — transparent backgroundColor over a CSS 44px grid, a 0-100 value coordinate system, dashed 'line' routes (amber + blue), and a 'scatter' of roundRect status-colored truck markers with mono plate labels; selected marker eased larger + white-bordered. Client-only mount." },
+    { "component": "Card", "restyle": "Two treatments: the glass FLEET STATUS overlay (translucent #12161D, blur, 10px radius, drop shadow) and the KPI tiles (flat, chromeless, #12161D fill on a 1px-gap hairline grid)." },
+    { "component": "Table", "restyle": "Reskinned into a dense dispatch list — card chrome and head removed, #161B22 row separators, hover + selected (blue rail) states, compact multi-line identity cells; rows are onClick handles tying the grid to the map." },
+    { "component": "Badge", "restyle": "Soft variant as status pills — 999px radius, 11px mono; color carries the status enum (emerald on-time, blue arriving, amber delayed). Also the zinc count chip in the deliveries header." },
+    { "component": "Progress", "restyle": "Thin bars: an emerald fleet-capacity meter in the status overlay and the emerald/blue/amber shift-target trio at the panel foot." },
+    { "component": "Button", "restyle": "A ghost, muted 'All' link in the deliveries header with a trailing arrow — the retired Action never used." },
+    { "component": "Heading / Text", "restyle": "Heading carries the topbar 'Live operations' title at sm/semibold; Text renders the FLEET STATUS eyebrow — both re-colored to the dark scale." }
+  ],
+  "contentArchetype": "A fictional Milwaukee last-mile delivery depot (shift B, 14:06 CST) watching its fleet live: totals (28 en route, 3 delayed, 9 idle), KPIs (94% on-time, 6.2m avg per stop, 1,840 miles today), five tracked trucks (MKE-12/08/21/03/17) on a schematic map, and seven active deliveries (destination, driver, stop count, status, ETA/overrun). All values are static, internally consistent literals — a snapshot, not a feed.",
+  "remix": "Keep the Sidebar+Navbar console shell and the map-beside-grid split for any real-time operations surface — ride-hail dispatch, field-service, drone ops, network/NOC monitoring, a warehouse floor. Swap the local --dbf-* tokens to rebrand; the EChart map is the one bespoke piece — repoint its scatter to real geo/lat-lng (an ECharts geo or bmap coordinate system) and upgrade the dashed 'line' routes to an animated 'lines' series with trailEffect for flowing routes. To blend toward the 'product' style, lighten the canvas and trade the map pane for a chart grid; toward 'terminal', drop the fills to pure hairline rules and push everything monospace. The whole look lives in scoped fleet.css + local tokens, so the same React tree restyles by editing one file."
+}

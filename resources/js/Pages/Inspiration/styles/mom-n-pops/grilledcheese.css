@@ -453,24 +453,27 @@
     grid-template-columns: repeat(3, 1fr);
     gap: 18px;
 }
-.mpgrilledcheese-card {
+/* Menu melts — react-fancy Card (clickable) restyled to the melt tile. The
+   root scope + !important beats Card's own bg/border/radius Tailwind chrome. */
+.mpgrilledcheese-root .mpgrilledcheese-card {
     display: block;
     text-align: left;
     font-family: inherit;
-    padding: 0;
-    background: var(--mpgc-card);
-    border: 1px solid var(--mpgc-line);
-    border-radius: 14px;
+    padding: 0 !important;
+    background: var(--mpgc-card) !important;
+    border: 1px solid var(--mpgc-line) !important;
+    border-radius: 14px !important;
+    box-shadow: none !important;
     overflow: hidden;
     cursor: pointer;
     color: inherit;
     transition: transform 0.2s, border-color 0.2s;
 }
-.mpgrilledcheese-card:hover {
+.mpgrilledcheese-root .mpgrilledcheese-card:hover {
     transform: translateY(-4px);
-    border-color: var(--mpgc-amber);
+    border-color: var(--mpgc-amber) !important;
 }
-.mpgrilledcheese-card:focus-visible {
+.mpgrilledcheese-root .mpgrilledcheese-card:focus-visible {
     outline: 2px solid var(--mpgc-amber);
     outline-offset: 2px;
 }
@@ -633,15 +636,20 @@
     gap: 12px;
     align-items: flex-start;
 }
-.mpgrilledcheese-bot {
-    width: 34px;
-    height: 34px;
-    border-radius: 10px;
+/* Agent chip — react-fancy Avatar restyled from a round photo well to the
+   squared violet→lavender gradient tile (the agent's color). */
+.mpgrilledcheese-root .mpgrilledcheese-bot {
+    width: 34px !important;
+    height: 34px !important;
+    border-radius: 10px !important;
     flex: none;
-    background: linear-gradient(140deg, var(--mpgc-violet), var(--mpgc-lav));
-    display: grid;
-    place-items: center;
-    color: #1b0f2e;
+    background: linear-gradient(140deg, var(--mpgc-violet), var(--mpgc-lav)) !important;
+}
+.mpgrilledcheese-root .mpgrilledcheese-bot span {
+    color: #1b0f2e !important;
+    font-weight: 800 !important;
+    font-size: 12px !important;
+    letter-spacing: 0.02em;
 }
 .mpgrilledcheese-bubble {
     background: var(--mpgc-card);
@@ -792,18 +800,21 @@
 
 /* ── Quote card — sticky, violet-shadowed, live math ───────────────────────── */
 
-.mpgrilledcheese-quote {
+/* The quote panel — react-fancy Card (Card.Header + Card.Body). Root scope +
+   !important overrides the Card's flat bg / rounded-lg with the violet gradient. */
+.mpgrilledcheese-root .mpgrilledcheese-quote {
     position: sticky;
     top: 90px; /* sits below the page header; the frame's chrome stays above */
-    background: linear-gradient(160deg, #231a32, #1a1424);
-    border: 1px solid var(--mpgc-line-2);
-    border-radius: 18px;
+    background: linear-gradient(160deg, #231a32, #1a1424) !important;
+    border: 1px solid var(--mpgc-line-2) !important;
+    border-radius: 18px !important;
     overflow: hidden;
-    box-shadow: 0 24px 60px -24px rgba(139, 92, 246, 0.5);
+    box-shadow: 0 24px 60px -24px rgba(139, 92, 246, 0.5) !important;
 }
-.mpgrilledcheese-quote-head {
+.mpgrilledcheese-root .mpgrilledcheese-quote-head {
     padding: 20px 24px 14px;
-    border-bottom: 1px solid var(--mpgc-quote-line);
+    border: 0 !important;
+    border-bottom: 1px solid var(--mpgc-quote-line) !important;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -821,15 +832,36 @@
     border-radius: 999px !important;
     font-weight: 500 !important;
 }
-.mpgrilledcheese-quote-items {
+/* Quote line items — react-fancy Table stripped to the quote's hairline rows.
+   The wrapper loses its card border/radius; cells drop the default px-4 py-3
+   padding + hover for the flush, transparent ledger inside the quote panel. */
+.mpgrilledcheese-root .mpgrilledcheese-quote-lines {
     padding: 6px 24px;
+    border: 0 !important;
+    border-radius: 0 !important;
+    overflow: visible !important;
+    background: transparent !important;
 }
-.mpgrilledcheese-li {
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    padding: 11px 0;
-    border-bottom: 1px solid var(--mpgc-quote-row);
+.mpgrilledcheese-root .mpgrilledcheese-quote-lines table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.mpgrilledcheese-root .mpgrilledcheese-quote-lines tr {
+    border-top: 0 !important;
+    background: transparent !important;
+    transition: none !important;
+}
+.mpgrilledcheese-root .mpgrilledcheese-quote-lines tbody tr:hover {
+    background: transparent !important;
+}
+.mpgrilledcheese-root .mpgrilledcheese-quote-lines td {
+    padding: 11px 0 !important;
+    border-bottom: 1px solid var(--mpgc-quote-row) !important;
+    vertical-align: baseline;
+    background: transparent !important;
+}
+.mpgrilledcheese-root .mpgrilledcheese-quote-lines tbody tr:last-child td {
+    border-bottom: 0 !important;
 }
 .mpgrilledcheese-li-name {
     font-size: var(--text-base);
@@ -839,10 +871,13 @@
     font-size: var(--text-xs);
     color: #8a7ca5;
 }
-.mpgrilledcheese-li-price {
-    font-family: var(--font-mono);
-    font-size: var(--text-sm);
-    color: #d8cdbe;
+.mpgrilledcheese-root .mpgrilledcheese-li-price {
+    font-family: var(--font-mono) !important;
+    font-size: var(--text-sm) !important;
+    color: #d8cdbe !important;
+    text-align: right !important;
+    white-space: nowrap;
+    width: 1%;
 }
 .mpgrilledcheese-quote-total {
     padding: 14px 24px;
@@ -1051,29 +1086,47 @@
     padding: 20px 0 50px;
     scroll-margin-top: 84px;
 }
-.mpgrilledcheese-sched-card {
-    background: var(--mpgc-card);
-    border: 1px solid var(--mpgc-line);
-    border-radius: 14px;
+/* Find the truck — react-fancy Table restyled to the bordered night ledger.
+   Wrapper keeps the card chrome; cells drop the default padding/hover and pick
+   up the 170px day / fluid place / mono right-aligned hours rhythm. */
+.mpgrilledcheese-root .mpgrilledcheese-sched {
+    background: var(--mpgc-card) !important;
+    border: 1px solid var(--mpgc-line) !important;
+    border-radius: 14px !important;
     overflow: hidden;
 }
-.mpgrilledcheese-sched-row {
-    display: grid;
-    grid-template-columns: 170px 1fr auto;
-    gap: 16px;
-    align-items: center;
-    padding: 15px 22px;
-    border-bottom: 1px solid var(--mpgc-row-line);
+.mpgrilledcheese-root .mpgrilledcheese-sched table {
+    width: 100%;
+    border-collapse: collapse;
 }
-.mpgrilledcheese-sched-row:last-child {
-    border-bottom: 0;
+.mpgrilledcheese-root .mpgrilledcheese-sched tr {
+    border-top: 0 !important;
+    background: transparent !important;
+    transition: none !important;
 }
-.mpgrilledcheese-sched-row--tonight {
-    background: rgba(242, 169, 59, 0.06);
+.mpgrilledcheese-root .mpgrilledcheese-sched tbody tr:hover {
+    background: transparent !important;
 }
-.mpgrilledcheese-sched-day {
-    font-weight: 700;
-    color: var(--mpgc-cream);
+.mpgrilledcheese-root .mpgrilledcheese-sched td {
+    padding: 15px 22px !important;
+    border-bottom: 1px solid var(--mpgc-row-line) !important;
+    vertical-align: middle;
+    background: transparent !important;
+    font-size: var(--text-base) !important;
+}
+.mpgrilledcheese-root .mpgrilledcheese-sched tbody tr:last-child td {
+    border-bottom: 0 !important;
+}
+.mpgrilledcheese-root .mpgrilledcheese-sched .mpgrilledcheese-sched-row--tonight td {
+    background: rgba(242, 169, 59, 0.06) !important;
+}
+.mpgrilledcheese-root .mpgrilledcheese-sched-day {
+    font-weight: 700 !important;
+    color: var(--mpgc-cream) !important;
+    width: 170px;
+    white-space: nowrap;
+}
+.mpgrilledcheese-sched-day-inner {
     display: inline-flex;
     align-items: center;
     gap: 10px;
@@ -1082,13 +1135,15 @@
     font-size: 10px !important;
     letter-spacing: 0.04em;
 }
-.mpgrilledcheese-sched-place {
-    color: var(--mpgc-mut-1);
+.mpgrilledcheese-root .mpgrilledcheese-sched-place {
+    color: var(--mpgc-mut-1) !important;
 }
-.mpgrilledcheese-sched-hours {
-    font-family: var(--font-mono);
-    font-size: var(--text-sm);
-    color: var(--mpgc-mut-4);
+.mpgrilledcheese-root .mpgrilledcheese-sched-hours {
+    font-family: var(--font-mono) !important;
+    font-size: var(--text-sm) !important;
+    color: var(--mpgc-mut-4) !important;
+    text-align: right !important;
+    white-space: nowrap;
 }
 
 /* ── Footer ────────────────────────────────────────────────────────────────── */
@@ -1260,13 +1315,16 @@
     gap: 8px;
     margin-bottom: 22px;
 }
-.mpgrilledcheese-pill {
-    font-size: var(--text-sm);
-    color: var(--mpgc-mut-1);
-    background: var(--mpgc-card);
-    border: 1px solid var(--mpgc-line);
-    padding: 6px 13px;
-    border-radius: 999px;
+/* Ingredient pills — react-fancy Badge restyled to the card-token chips
+   (matches the drawer's tag Badges above them). */
+.mpgrilledcheese-root .mpgrilledcheese-pill {
+    font-size: var(--text-sm) !important;
+    font-weight: 400 !important;
+    color: var(--mpgc-mut-1) !important;
+    background: var(--mpgc-card) !important;
+    border: 1px solid var(--mpgc-line) !important;
+    padding: 6px 13px !important;
+    border-radius: 999px !important;
 }
 .mpgrilledcheese-allergens {
     font-size: var(--text-sm);
@@ -1323,9 +1381,11 @@
     .mpgrilledcheese-story-h {
         font-size: 28px;
     }
-    .mpgrilledcheese-sched-row {
-        grid-template-columns: 110px 1fr auto;
-        padding: 13px 16px;
+    .mpgrilledcheese-root .mpgrilledcheese-sched td {
+        padding: 13px 16px !important;
+    }
+    .mpgrilledcheese-root .mpgrilledcheese-sched-day {
+        width: 110px;
     }
     .mpgrilledcheese-footer-in,
     .mpgrilledcheese-footer-meta {
@@ -1345,8 +1405,8 @@
     .mpgrilledcheese-drawer {
         animation: none !important;
     }
-    .mpgrilledcheese-card,
-    .mpgrilledcheese-card:hover {
-        transform: none;
+    .mpgrilledcheese-root .mpgrilledcheese-card,
+    .mpgrilledcheese-root .mpgrilledcheese-card:hover {
+        transform: none !important;
     }
 }

@@ -27,32 +27,32 @@
     {
       "name": "hero",
       "what": "Uppercase tracked eyebrow ('Eight seats · Milwaukee · since 2026'), a three-line weight-400 headline ('Rolled to order. / Nothing sits. / Nothing hurried.') with only the last line in vermilion, a 400px-max lede, and the decorative enso mark on the right.",
-      "components": [],
-      "restyle": "Hand-rolled — the enso is pure CSS: a #F1EEE5 disc grid-centering a Georgia 鮨 glyph, ringed by an absolutely-positioned, horizontally-centered but top-aligned 2px #C0362C circle so it pokes out 20px below (the brushstroke asymmetry is the point)."
+      "components": ["Heading", "Text"],
+      "restyle": "Heading (as=h1) wears the quiet weight-400 display voice; Text (as=p) wears the tracked eyebrow and the lede — both root-scoped so the scoped CSS out-specifies the components' default size/weight/color utilities. Only the enso mark stays hand-rolled: pure CSS — a #F1EEE5 disc grid-centering a Georgia 鮨 glyph, ringed by an absolutely-positioned, horizontally-centered but top-aligned 2px #C0362C circle so it pokes out 20px below (the brushstroke asymmetry is the point)."
     },
     {
       "name": "menu",
-      "what": "お品書き · The counter menu — a kanji-prefixed uppercase heading with a flexed rule, then six walk-up items in a two-column grid of dotted-leader rows: name, leader, vermilion price.",
-      "components": [],
-      "restyle": "The classic no-photo menu treatment: a flex spacer span with border-bottom 1px dotted #D8D2C6 and translateY(-4px) between the baseline-aligned name and price."
+      "what": "お品書き · The counter menu — a kanji-prefixed uppercase Heading with a flexed rule, then six walk-up items across two dotted-leader Tables laid side-by-side: name, leader, vermilion price.",
+      "components": ["Heading", "Table"],
+      "restyle": "The two menu columns are each a restyled zero-chrome Table (name / leader-cell / price rows) — the Table shell's border, radius, clip and default divide-y are all stripped so only a 1px #ECE8DE bottom hairline per row remains; a 1fr/1fr grid places the two Tables side-by-side, collapsing to one column under 760px. Only the dotted price leader stays hand-rolled: a spacer cell holding a block span with border-bottom 1px dotted #D8D2C6 and translateY(-4px) between the baseline-aligned name and price."
     },
     {
       "name": "reservations",
-      "what": "おまかせ · Reserve omakase — the tinted band and the page's live surface. A seven-column week strip of night cards (day-of-week, date numeral, seat count) color-coded open/few/full; full nights are disabled. Picking a night reveals an inverted #1A1A1A bar with the serif night label, a −/+ party stepper (1-8, mono digit), and a vermilion 'Reserve N · $total' CTA recomputing live at $60/seat; reserving swaps the controls for an inline confirmation with a Change reset.",
-      "components": ["Button"],
-      "restyle": "Night cards are a hand-rolled controlled card-radio group (role=radiogroup/radio, stable data-night handles, disabled full nights) — selection is a #C0362C border plus a 0 0 0 1px box-shadow double-ring, expressed declaratively from state, never a DOM-walking paint pass. Stepper Buttons become 36px hairline #4A4A44 squares on the dark bar; the CTA Button becomes a solid vermilion slab, radius 10, weight 700."
+      "what": "おまかせ · Reserve omakase — the tinted band and the page's live surface, opened by a Heading + Text sub-line. A seven-column week strip of night Cards (day-of-week, date numeral, seat-count Badge) color-coded open/few/full; full nights are disabled. Picking a night reveals an inverted #1A1A1A Card bar with the serif night label, a −/+ party stepper (1-8, mono digit) and a vermilion 'Reserve N · $total' CTA (Buttons) recomputing live at $60/seat; reserving swaps the controls for a Callout confirmation with a Change reset.",
+      "components": ["Heading", "Text", "Card", "Badge", "Callout", "Button"],
+      "restyle": "The seven nights are restyled Cards (variant=outlined, padding=none) driven as a controlled card-radio group — role=radiogroup on the strip, role=radio + aria-checked + tabIndex + data-night on each Card, aria-disabled + not-allowed for full nights, and Enter/Space activation in onKeyDown since a Card is a div not a button; Card's default border/radius/bg are overridden so selection is a declarative #C0362C border + 0 0 0 1px box-shadow double-ring from state, never a DOM-walking paint pass. Seat availability is a Badge flattened to a plain colored micro-label (no pill fill/border/padding) tinted by a {open:#2E7D5B, few:#C08A1E, full:#B0A99C} class union. The selected-night bar is a Card (variant=flat) forced to the near-black #1A1A1A inverted slab. The confirmation is a Callout flattened to transparent dark-bar chrome (border-l-4 / bg / padding stripped) carrying the ring-check icon, copy, and a Change Button. Stepper Buttons become 36px hairline #4A4A44 squares on the dark bar; the CTA Button becomes a solid vermilion slab, radius 10, weight 700."
     },
     {
       "name": "story",
       "what": "A 1fr/1fr pull-quote pairing: 32px Georgia 'Sal apprenticed for a year before we sold a single roll.' beside sans body copy about Rosa running the rice and the eight-seat counter being deliberate.",
-      "components": [],
-      "restyle": "The serif/sans pairing carries the family voice — one of only three serif moments on the page."
+      "components": ["Heading", "Text"],
+      "restyle": "Heading (as=h2) is root-scoped back to the Georgia serif at weight 400 (overriding its sans utilities) for the quote; Text (as=p) carries the sans body. The serif/sans pairing is one of only three serif moments on the page."
     },
     {
       "name": "schedule",
-      "what": "Find us — a six-row weekly timetable in a 130px/1fr/auto grid (day / location / hours) with hairline row dividers, distinguishing lunch service from omakase-only nights.",
-      "components": [],
-      "restyle": "Hours set in 12px var(--font-mono) at the faintest grey so the column reads like a printed timetable."
+      "what": "Find us — a six-row weekly timetable Table (day / location / hours) with hairline row dividers, distinguishing lunch service from omakase-only nights, opened by a Heading.",
+      "components": ["Heading", "Table"],
+      "restyle": "A restyled zero-chrome, headerless Table (Body-only, no Head) — shell border/radius/clip and default divide-y stripped to leave only 1px #ECE8DE row hairlines; per-cell widths reproduce the old 130px/1fr/auto layout (day fixed 130px→92px under 560px, place fluid ink-2, hours right-aligned). Hours set in 12px var(--font-mono) at the faintest grey so the column reads like a printed timetable."
     },
     {
       "name": "footer",
@@ -62,12 +62,18 @@
     }
   ],
   "palette": [
+    { "component": "Heading", "restyle": "Carries every display + section head: as=h1 for the quiet weight-400 54px hero headline, as=h2 for the kanji-prefixed uppercase 14px section heads (menu / omakase / find) and — root-scoped back to Georgia serif at weight 400 — the 32px story pull-quote. Each scoped class is root-prefixed (.mpsushi-root .mpsushi-*) so it out-specifies Heading's default text-zinc / size / weight utilities without !important." },
+    { "component": "Text", "restyle": "Carries the prose: as=p for the tracked uppercase eyebrow, the 400px-max hero lede, the omakase $60/seat sub-line, and the story body — all root-scoped so the scoped font-size / weight / color win over Text's size/color presets." },
+    { "component": "Table", "restyle": "Both data lists, stripped to zero chrome: the two side-by-side dotted-leader menu columns and the headerless Find-us timetable. The Table shell's rounded border + overflow clip and TableBody's default divide-y are all overridden to transparent with a single 1px #ECE8DE bottom hairline per row; TableCell px-4/py-3 is replaced with the page's own row padding + per-column widths + right-aligned mono hours. Body-only (no Head) keeps the mockup's headerless look." },
+    { "component": "Card", "restyle": "Two roles. (1) The seven omakase night cards — variant=outlined padding=none, driven as a controlled card-radio group (role=radio, aria-checked, tabIndex, data-night, aria-disabled for full nights, Enter/Space in onKeyDown) with Card's default border/radius/bg overridden so the selected #C0362C border + 0 0 0 1px box-shadow double-ring is declarative from state. (2) The selected-night summary bar — variant=flat forced to the inverted near-black #1A1A1A slab, 14px radius, flex row." },
+    { "component": "Badge", "restyle": "Seat availability (open/few/full) rendered as a Badge but flattened to the mockup's plain colored micro-label: variant=soft with fill, border, radius, padding and gap all stripped, 11px weight-600 text tinted by a {open:#2E7D5B, few:#C08A1E, full:#B0A99C} class union; keeps a stable data-seats handle." },
+    { "component": "Callout", "restyle": "The post-reserve confirmation, flattened to transparent dark-bar chrome — color=gray with Callout's border-l-4, bg, radius and p-4 stripped and the icon-wrapper's mt-0.5 nudge + tint reset — carrying the ring-check icon (icon prop), the request title + note, and a Change Button, laid out as a flex row inside the inverted bar." },
     { "component": "Button (nav)", "restyle": "Ghost variant flattened to plain text — transparent, borderless, radius 0, var(--text-sm) secondary ink darkening to primary on hover; behaves as an in-page smooth-scroll trigger." },
     { "component": "Button (stepper)", "restyle": "36px squares with a 1px #4A4A44 hairline and 9px radius on the inverted bar, paper-colored −/+ glyphs, 35% opacity when clamped at 1 or 8." },
     { "component": "Button (Reserve CTA)", "restyle": "Solid #C0362C slab, white weight-700 label, 10px radius, 13px/22px padding, darkening to #A82B22 on hover; the label itself is live state ('Reserve 2 · $120')." },
     { "component": "Button (Change)", "restyle": "Ghost hairline chip on the dark bar — transparent with the #4A4A44 border, paper text — used to reopen the stepper after a reservation request." },
     { "component": "Link", "restyle": "Footer-only; quiet secondary ink flexed row, vermilion on hover." },
-    { "component": "night card (hand-rolled)", "restyle": "No primitive fits a 7-night card-radio strip: white 12px-radius cards with #E0DACC hairlines, role=radio + aria-checked + data-night handles, disabled full/closed nights with cursor not-allowed, and a declarative #C0362C border + 0 0 0 1px box-shadow double-ring when picked. Availability text color comes from a {open:#2E7D5B, few:#C08A1E, full:#B0A99C} union on state, never inline DOM writes." }
+    { "component": "enso mark + dotted leader + selection ring (bespoke art)", "restyle": "Deliberately hand-rolled, no primitive owns them: the pure-CSS enso (a #F1EEE5 disc grid-centering a Georgia 鮨 glyph ringed by an offset 2px #C0362C circle), the dotted price leader (a spacer cell's dotted border-bottom + translateY(-4px)), the frosted sticky header (backdrop-filter blur over rgba paper), and the declarative selected-night double-ring layered onto the night Card." }
   ],
   "contentArchetype": "A one-page storefront for a tiny reservation-led food business: sticky brand header, a values-forward hero (smallness as the product), a short priced walk-up menu, one high-intent booking surface with real-time-feeling availability, a founder pull-quote, a weekly location timetable, and a minimal footer. Copy is terse and confident — three-line ethos headline, prices as the only numbers in red, kanji as typographic seasoning rather than decoration.",
   "remix": "The discipline is rationing: ONE warm paper neutral ramp, ONE saturated accent, serif in exactly three places, mono in exactly two, and no motion whatsoever — break any of those and the calm collapses. To re-cuisine, swap the kanji tags, the 鮨 glyph, and the accent hue (e.g. #1E5AA8 for a nautical counter) while keeping the enso double-circle construction and the dotted-leader menu. The reservations pattern generalizes to any scarce-capacity business (barber chairs, tasting tables, studio slots): keep the card-radio week strip, the semantic open/few/full trio, and the inverted summary bar with a live-total CTA. Blend toward mom-n-pops' louder styles by letting the tinted band gain the accent at low alpha, or toward fieldwork's mono by dropping the tint and squaring every radius — but keep the selected-night label serif; it is the page's one moment of ceremony."

@@ -23,31 +23,31 @@
       "name": "sticky header",
       "what": "Brand lockup ('Mom-n-Pops' bold 20px + 'Taquería' in accent red 13px) linking to the collection hub, right-aligned anchor nav (Menu / Story / Find us) and a red 'Find the truck' pill.",
       "components": ["Button", "Link"],
-      "restyle": "Header is hand-rolled frosted glass — rgba cream bg + backdrop-blur(10px) + 1px sand bottom border, sticky under the gallery frame (z-index < 30). The pill CTA is a Button squeezed to 9px/16px padding and 10px radius, red fill."
+      "restyle": "Header stays hand-rolled frosted glass — rgba cream bg + backdrop-blur(10px) + 1px sand bottom border, sticky under the gallery frame (z-index < 30) — an audit-sanctioned decorative-chrome exception (adopting Navbar here would regress the frosted glass, the 1140px centering, and the mobile-only pill behaviour, and it is flagged lower-priority). The brand lockup is an Inertia Link back to the collection hub; the pill CTA is a Button squeezed to 9px/16px padding and 10px radius, red fill."
     },
     {
       "name": "hero",
       "what": "Centered stack: uppercase letterspaced eyebrow ('🌮 Family food truck · Milwaukee · Est. 2026'), the 66px/1.02 weight-800 headline 'Tacos the way Rosa's abuela made them.', 480px subcopy, and two pill buttons — red filled 'View the menu', white sand-outlined 'This week's stops'.",
-      "components": ["Button"],
-      "restyle": "Buttons flattened to warm pills: 12px radius, 13px/24px padding, no shadow; primary = chile-red fill darkening on hover, secondary = white with sand border turning red on hover. Headline clamps from 66px down for small screens; eyebrow gets 0.14em tracking + accent red."
+      "components": ["Heading", "Text", "Button"],
+      "restyle": "Headline is a Heading (as=h1) restyled to the clamp(2.4rem,6.2vw,66px) display face (weight 800, -0.03em, espresso ink — overriding the library's zinc/text-lg defaults); subcopy is a Text (as=p) at var(--text-xl) warm brown. Buttons flattened to warm pills: 12px radius, 13px/24px padding, no shadow; primary = chile-red fill darkening on hover, secondary = white with sand border turning red on hover. Eyebrow stays a hand-rolled label with 0.14em tracking + accent red."
     },
     {
       "name": "menu grid",
-      "what": "Section header row (h2 'The menu' + muted 'tap a taco for the full story' hint), then a 3-column grid of 6 clickable white cards: 44px emoji tile on #F6EAD8, optional colored tag pill, name + red price on one baseline row, one-line description. The whole card opens the detail modal.",
-      "components": ["Badge"],
-      "restyle": "Cards are hand-rolled <button>s (full-card trigger, focus-visible ring, hover lift translateY(-4px) + warm 32px shadow). Badge becomes the tag pill: 11px/700 white text, radius 999, border 0, with its background driven per-item from data (tagBg) via inline style — Most loved / Friday only / Vegetarian / Weekends."
+      "what": "Section header row (Heading h2 'The menu' + muted 'tap a taco for the full story' hint), then a 3-column grid of 6 clickable white cards: 44px emoji tile on #F6EAD8, optional colored tag pill, name + red price on one baseline row, one-line description. The whole card opens the detail modal.",
+      "components": ["Card", "Heading", "Badge"],
+      "restyle": "Each menu tile is a Card (variant=outlined, padding=none) worn as an accessible role=\"button\" (tabIndex 0 + Enter/Space handler = the modal trigger), restyled to override the library's rounded-lg/bg-white/border-zinc chrome → 16px radius, sand border, 20px padding, focus-visible ring, hover lift translateY(-4px) + warm 32px shadow. The section heading is a Heading (h2). Badge becomes the tag pill: 11px/700 white text, radius 999, border 0, background driven per-item from data (tagBg) via inline style — Most loved / Friday only / Vegetarian / Weekends."
     },
     {
       "name": "story band",
-      "what": "50/50 band opened by a sand top border: left is eyebrow ('Our story') + 36px headline 'Two parents, one griddle, a whole lot of Milwaukee.' + paragraph; right is a 2x2 grid of white stat cards — big red 30px number over a small muted label (6 tacos from $4 · est. 2026 · 3 salsas · ∞ free chips*).",
-      "components": ["Tooltip"],
-      "restyle": "Stat values styled exactly like menu prices (weight 800, chile red, -0.02em) so the band rhymes with the menu. The '∞ free chips*' asterisk label gets a dotted underline + Tooltip carrying the fine print ('one basket per order — Rosa's rule')."
+      "what": "50/50 band opened by a sand top border: left is eyebrow ('Our story') + Heading 'Two parents, one griddle, a whole lot of Milwaukee.' + Text paragraph; right is a 2x2 grid of white stat cards — big red 30px number over a small muted label (6 tacos from $4 · est. 2026 · 3 salsas · ∞ free chips*).",
+      "components": ["Card", "Heading", "Text", "Tooltip"],
+      "restyle": "The four stat tiles are Cards (variant=outlined, padding=none) restyled to 14px radius + sand border + 18px padding; stat values styled exactly like menu prices (weight 800, chile red, -0.02em) so the band rhymes with the menu. Headline is a Heading (h2), body a Text (p). The '∞ free chips*' asterisk label gets a dotted underline + Tooltip carrying the fine print ('one basket per order — Rosa's rule')."
     },
     {
       "name": "schedule",
-      "what": "h2 'Find the truck', then one bordered rounded-16px white card of six weekday rows in a 120px/1fr/auto grid: bold day, muted place, mono hours; rows divided by 1px #F3E9D9. After hydration the current weekday row tints warm and gains a red 'Today' Badge.",
-      "components": ["Badge"],
-      "restyle": "Rows are a hand-rolled list (truer than a Table here); the mono hours column is the page's single typographic contrast. 'Today' is a Badge shrunk to a 10px uppercase red pill — computed in useEffect so SSR first paint stays deterministic."
+      "what": "Heading 'Find the truck', then one bordered rounded-16px white card of six weekday rows: bold day (120px), muted place, right-aligned mono hours; rows divided by 1px #F3E9D9. After hydration the current weekday row tints warm and gains a red 'Today' Badge.",
+      "components": ["Table", "Heading", "Badge"],
+      "restyle": "The route is a react-fancy Table (Table.Body / Table.Row / Table.Cell, no header row) restyled to the hairline card: the wrapper div forced to 16px radius + sand border (overriding rounded-lg/border-zinc), the default zinc divide-y recolored to warm #F3E9D9, the zinc row hover killed, cells re-padded 14px/22px with the day cell fixed at 120px and the hours cell right-aligned mono #9A8873 (the page's single typographic contrast). 'Today' is a Badge shrunk to a 10px uppercase red pill — computed in useEffect so SSR first paint stays deterministic."
     },
     {
       "name": "footer",
@@ -58,14 +58,18 @@
     {
       "name": "taco detail modal",
       "what": "Clicking any menu card opens a 440px cream modal: tinted #F6EAD8 header with a 56px white emoji tile + 26px name + red price, then the long description, white ingredient-chip pills with sand borders, and a full-width red 'Add to order · $x.xx' button. Scrim, Escape, and the add button all dismiss (no real cart — a themed dismiss).",
-      "components": ["Modal", "Badge", "Button"],
-      "restyle": "Modal panel forced to cream #FAF4EA, radius 18px, border 0, deep warm shadow 0 30px 70px -20px rgba(44,33,26,0.4), max-width 440px; the library backdrop recolored to rgba(44,33,26,0.5) with no blur via a :has() selector on the prefixed panel class. Badges become white ingredient chips (sand border, radius 999). Selected-item state IS the modal state: sel: MenuItem | null plus a separate open flag so content survives the exit animation."
+      "components": ["Modal", "Heading", "Text", "Badge", "Button"],
+      "restyle": "Modal panel forced to cream #FAF4EA, radius 18px, border 0, deep warm shadow 0 30px 70px -20px rgba(44,33,26,0.4), max-width 440px; the library backdrop recolored to rgba(44,33,26,0.5) with no blur via a :has() selector on the prefixed panel class. The name is a Heading (h2) and the long copy a Text (p), both re-scoped under the portaled .mptacos-modal panel to override the library zinc/size defaults. Badges become white ingredient chips (sand border, radius 999). The full-width dismiss is a Button. Selected-item state IS the modal state: sel: MenuItem | null plus a separate open flag so content survives the exit animation."
     }
   ],
   "palette": [
+    { "component": "Card", "restyle": "Two reads, both variant=outlined + padding=none with the library's rounded-lg/bg-white/border-zinc chrome overridden under .mptacos-root: (1) the 6 menu tiles — 16px radius, 1px sand border, 20px padding, worn as an accessible role=\"button\" (tabIndex 0 + Enter/Space handler) so the whole card opens the detail Modal, with a focus-visible ring and a hover lift translateY(-4px) + warm 0 16px 32px -16px shadow; (2) the 4 story stat tiles — 14px radius, sand border, 18px padding, big chile-red weight-800 number over a muted label." },
+    { "component": "Table", "restyle": "The six-row weekly route (Table.Body / Table.Row / Table.Cell, no header row) restyled to the single hairline card: wrapper div forced to 16px radius + sand border, the default divide-y row hairline recolored to warm #F3E9D9, the zinc row hover killed, cells re-padded 14px/22px, day cell fixed 120px bold espresso, place cell muted, hours cell right-aligned var(--font-mono) #9A8873 (the page's one typographic contrast). The active row tints #FDF4E5 and carries the 'Today' Badge." },
     { "component": "Button", "restyle": "Warm pill: radius 12px (10px in the header), sans weight 600, no shadow. Primary = chile-red #D6482B fill darkening to #C23E23 on hover; secondary = white fill + 1px sand border flipping text/border to red on hover; in the modal it stretches full-width as 'Add to order'." },
-    { "component": "Badge", "restyle": "Three reads: (1) menu tag pill — 11px/700 white on a per-item data-driven background (inline style from tagBg), radius 999, no border; (2) ingredient chip — white pill, sand border, #5A4A3C text, 6px/12px padding; (3) 'Today' marker — 10px uppercase red pill in the schedule row." },
+    { "component": "Badge", "restyle": "Three reads: (1) menu tag pill — 11px/700 white on a per-item data-driven background (inline style from tagBg), radius 999, no border; (2) ingredient chip — white pill, sand border, #5A4A3C text, 6px/12px padding; (3) 'Today' marker — 10px uppercase red pill in the schedule Table row." },
     { "component": "Modal", "restyle": "The richest surface on the page: cream panel, 18px radius, zero border, deep warm 70px shadow, 440px cap; header band tinted #F6EAD8 holding a 56px white emoji tile; backdrop recolored to warm brown rgba(44,33,26,0.5) without blur. Controlled entirely by the selected menu item." },
+    { "component": "Heading", "restyle": "The display faces (as=h1 hero, as=h2 section + modal titles) re-scoped under .mptacos-root / .mptacos-modal to override the library's zinc color + size/weight presets → weight 800, tight negative tracking, espresso ink; hero clamps to 66px, section h2s to var(--text-3xl), story h2 to 36px, modal name to 26px." },
+    { "component": "Text", "restyle": "The prose (hero subcopy var(--text-xl), story body var(--text-lg), modal long description) as Text (as=p) re-scoped to override the zinc color into the warm-brown secondary inks; menu-card one-liners stay plain <p> to mirror the calibration reference." },
     { "component": "Tooltip", "restyle": "Fine print for the '∞ free chips*' stat — small text, dotted-underline cursor-help trigger; the only floating helper on the page." },
     { "component": "Link (Inertia)", "restyle": "Only the brand lockup — espresso text with the red 'Taquería' descriptor; nav items are plain in-page anchors that darken on hover." }
   ],

@@ -5,6 +5,12 @@
    in tan hairlines — and a live order-tracker kanban (react-fancy Kanban,
    restyled to cream wells + bordered tickets) embedded mid-page.
 
+   Restyled Fancy primitives: Kanban (the tracker), Button, Badge, Callout,
+   Card (the hero peek shell, the pie cards, the stat tiles) and Table (the
+   peek's live queue + the schedule ledger). Card's rounded-lg/flat bg and
+   Table's rounded wrapper + text-sm cells are overridden here (!important)
+   back to the trattoria's tan-hairline / cream look.
+
    LIGHT MODE ONLY — the style pins its own palette via local --mpp-* tokens so
    it stays a trattoria regardless of app theme. Every class is prefixed
    mppizza- and scoped under .mppizza-root. Page-level z-index stays under 30
@@ -192,12 +198,14 @@
     flex-wrap: wrap;
 }
 
-.mppizza-peek {
-    background: #fff;
-    border: 1px solid var(--mpp-line);
-    border-radius: 18px;
+/* Card primitive → the live-oven peek shell (override rounded-lg / flat bg) */
+.mppizza-root .mppizza-peek {
+    background: #fff !important;
+    border: 1px solid var(--mpp-line) !important;
+    border-radius: 18px !important;
+    padding: 0 !important;
     overflow: hidden;
-    box-shadow: 0 18px 40px -22px rgba(43, 31, 23, 0.4);
+    box-shadow: 0 18px 40px -22px rgba(43, 31, 23, 0.4) !important;
 }
 .mppizza-peek-head {
     background: var(--mpp-ink);
@@ -235,29 +243,47 @@
     color: var(--mpp-muted);
     margin-bottom: 10px;
 }
-.mppizza-peek-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 7px 0;
-    border-bottom: 1px solid var(--mpp-line-soft);
+/* Table primitive → the live queue: strip the wrapper chrome, rows on hairlines */
+.mppizza-root .mppizza-peek-table {
+    border: 0 !important;
+    border-radius: 0 !important;
+    overflow: visible !important;
 }
-.mppizza-peek-row:last-child {
-    border-bottom: 0;
+.mppizza-root .mppizza-peek-table table {
+    width: 100%;
+    border-collapse: collapse;
 }
-.mppizza-peek-num {
-    font-family: var(--font-mono);
-    font-size: 12px;
-    color: var(--mpp-red);
+.mppizza-root .mppizza-peek-table tbody tr:hover {
+    background: transparent !important;
 }
-.mppizza-peek-pie {
-    flex: 1;
-    font-size: 14px;
+.mppizza-root .mppizza-peek-row td {
+    padding: 7px 0 !important;
+    border-bottom: 1px solid var(--mpp-line-soft) !important;
+    background: transparent !important;
+    vertical-align: middle;
+    font-size: 14px !important;
 }
-.mppizza-peek-stage {
-    font-size: 11px;
-    color: var(--mpp-green);
-    font-weight: 600;
+.mppizza-root .mppizza-peek-table tbody tr:last-child td {
+    border-bottom: 0 !important;
+}
+.mppizza-root .mppizza-peek-num {
+    font-family: var(--font-mono) !important;
+    font-size: 12px !important;
+    color: var(--mpp-red) !important;
+    white-space: nowrap;
+    width: 1%;
+    padding-right: 10px !important;
+}
+.mppizza-root .mppizza-peek-pie {
+    font-size: 14px !important;
+    width: 100%;
+}
+.mppizza-root .mppizza-peek-stage {
+    font-size: 11px !important;
+    color: var(--mpp-green) !important;
+    font-weight: 600 !important;
+    white-space: nowrap;
+    text-align: right !important;
 }
 
 /* ── Menu — Le Pizze ─────────────────────────────────────────────────────── */
@@ -285,11 +311,13 @@
     grid-template-columns: repeat(3, 1fr);
     gap: 18px;
 }
-.mppizza-dish {
-    background: #fff;
-    border: 1px solid var(--mpp-line);
-    border-radius: 16px;
-    padding: 20px;
+/* Card primitive → each pie card (override rounded-lg / flat bg / padding) */
+.mppizza-root .mppizza-dish {
+    background: #fff !important;
+    border: 1px solid var(--mpp-line) !important;
+    border-radius: 16px !important;
+    padding: 20px !important;
+    box-shadow: none !important;
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -517,11 +545,13 @@
     grid-template-columns: 1fr 1fr;
     gap: 14px;
 }
-.mppizza-stat {
-    background: #fff;
-    border: 1px solid var(--mpp-line);
-    border-radius: 14px;
-    padding: 18px;
+/* Card primitive → each stat tile (override rounded-lg / flat bg / padding) */
+.mppizza-root .mppizza-stat {
+    background: #fff !important;
+    border: 1px solid var(--mpp-line) !important;
+    border-radius: 14px !important;
+    padding: 18px !important;
+    box-shadow: none !important;
 }
 .mppizza-stat-v {
     font-size: 30px;
@@ -546,33 +576,46 @@
     margin: 0 0 18px;
     color: var(--mpp-ink);
 }
-.mppizza-sched {
-    background: #fff;
-    border: 1px solid var(--mpp-line);
-    border-radius: 16px;
+/* Table primitive → the Dove siamo schedule ledger (headerless card) */
+.mppizza-root .mppizza-sched {
+    background: #fff !important;
+    border: 1px solid var(--mpp-line) !important;
+    border-radius: 16px !important;
     overflow: hidden;
 }
-.mppizza-sched-row {
-    display: grid;
-    grid-template-columns: 120px 1fr auto;
-    gap: 16px;
-    align-items: center;
-    padding: 14px 22px;
-    border-bottom: 1px solid var(--mpp-line-soft);
+.mppizza-root .mppizza-sched table {
+    width: 100%;
+    border-collapse: collapse;
 }
-.mppizza-sched-row:last-child {
-    border-bottom: 0;
+.mppizza-root .mppizza-sched tbody tr:hover {
+    background: transparent !important;
 }
-.mppizza-sched-day {
-    font-weight: 700;
+.mppizza-root .mppizza-sched-row td {
+    padding: 14px 22px !important;
+    border-bottom: 1px solid var(--mpp-line-soft) !important;
+    background: transparent !important;
+    vertical-align: middle;
+    font-size: 1rem !important;
 }
-.mppizza-sched-place {
-    color: var(--mpp-ink-2);
+.mppizza-root .mppizza-sched tbody tr:last-child td {
+    border-bottom: 0 !important;
 }
-.mppizza-sched-hours {
-    font-family: var(--font-mono);
-    font-size: 14px;
-    color: var(--mpp-muted);
+.mppizza-root .mppizza-sched-day {
+    font-weight: 700 !important;
+    color: var(--mpp-ink) !important;
+    width: 120px;
+    white-space: nowrap;
+}
+.mppizza-root .mppizza-sched-place {
+    color: var(--mpp-ink-2) !important;
+    width: 100%;
+}
+.mppizza-root .mppizza-sched-hours {
+    font-family: var(--font-mono) !important;
+    font-size: 14px !important;
+    color: var(--mpp-muted) !important;
+    text-align: right !important;
+    white-space: nowrap;
 }
 
 /* ── Footer ──────────────────────────────────────────────────────────────── */
@@ -741,10 +784,11 @@
     .mppizza-track-actions {
         margin-left: 0;
     }
-    .mppizza-sched-row {
-        grid-template-columns: 96px 1fr auto;
-        gap: 10px;
-        padding: 12px 16px;
+    .mppizza-root .mppizza-sched-row td {
+        padding: 12px 16px !important;
+    }
+    .mppizza-root .mppizza-sched-day {
+        width: 96px;
     }
     .mppizza-footer-in,
     .mppizza-demonote {

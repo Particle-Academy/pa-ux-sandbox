@@ -1,6 +1,6 @@
 import "./seafood.css";
 import { useMemo, useRef, useState, type RefObject } from "react";
-import { Badge, Button, Table } from "@particle-academy/react-fancy";
+import { Badge, Button, Card, Table } from "@particle-academy/react-fancy";
 import { ClipboardList, Fish, Minus, Plus } from "lucide-react";
 import type { Style } from "../../types";
 
@@ -15,7 +15,15 @@ import type { Style } from "../../types";
  * (querySelectorAll + inline styles); here the board is CONTROLLED state and
  * everything downstream — the hero peek card's pills, each menu card's
  * availability pill, the sold-out dimming — is derived per render. Nudge a
- * row's on-hand count with the − / + steppers and the menu re-derives itself.
+ * row's on-hand count with the − / + Button steppers and the menu re-derives.
+ *
+ * Every surface is a restyled Fancy primitive: Card (the six menu dishes, the
+ * four stat tiles, and the hero "off the truck" peek panel — Card.Header +
+ * Card.Body), Table (the catch board AND the "where we're docked" schedule),
+ * Badge (all in/low/out status pills), Button (hero + header CTAs, the reset
+ * chip, and the on-hand − / + steppers). Only the rope-stripe bar, the glassy
+ * sticky header shell, and the footer stay hand-rolled — legitimately bespoke
+ * chrome the kit has no primitive for.
  *
  * Mounted by Inspiration/Show.tsx for `style.id === "seafood"`. SSR-safe: no
  * browser APIs at module scope or during render (scrollIntoView lives in
@@ -206,13 +214,19 @@ export default function Seafood({ style }: { style: Style }) {
                         </div>
                     </div>
 
-                    <aside className="mpseafood-peek" aria-label="Off the truck this morning">
-                        <div className="mpseafood-peek-head">
+                    <Card
+                        variant="outlined"
+                        padding="none"
+                        className="mpseafood-peek"
+                        role="complementary"
+                        aria-label="Off the truck this morning"
+                    >
+                        <Card.Header className="mpseafood-peek-head">
                             <Fish size={16} aria-hidden />
                             <span className="mpseafood-peek-title">Off the truck this morning</span>
                             <span className="mpseafood-peek-time">05:40</span>
-                        </div>
-                        <div className="mpseafood-peek-body">
+                        </Card.Header>
+                        <Card.Body className="mpseafood-peek-body">
                             {peekRows.map((row) => {
                                 const s = statusOf(row);
                                 return (
@@ -227,8 +241,8 @@ export default function Seafood({ style }: { style: Style }) {
                                     </div>
                                 );
                             })}
-                        </div>
-                    </aside>
+                        </Card.Body>
+                    </Card>
                 </section>
 
                 {/* ── Today's menu — availability derived from the board ──── */}
@@ -241,8 +255,10 @@ export default function Seafood({ style }: { style: Style }) {
                         {MENU.map((dish) => {
                             const avail = availabilityOf(dish);
                             return (
-                                <article
+                                <Card
                                     key={dish.name}
+                                    variant="outlined"
+                                    padding="none"
                                     className={`mpseafood-dish${avail.out ? " mpseafood-dish--out" : ""}`}
                                     data-dish={dish.supply}
                                 >
@@ -260,7 +276,7 @@ export default function Seafood({ style }: { style: Style }) {
                                     >
                                         {avail.label}
                                     </Badge>
-                                </article>
+                                </Card>
                             );
                         })}
                     </div>
@@ -333,25 +349,29 @@ export default function Seafood({ style }: { style: Style }) {
                                                 </Table.Cell>
                                                 <Table.Cell className="mpseafood-cell-qty">
                                                     <span className="mpseafood-qty" data-stock={row.key}>
-                                                        <button
+                                                        <Button
                                                             type="button"
+                                                            variant="ghost"
+                                                            size="sm"
                                                             className="mpseafood-step"
                                                             onClick={() => adjust(row.key, -row.step)}
                                                             disabled={row.qty <= 0}
                                                             aria-label={`Sell ${row.step} ${row.unit} of ${row.name}`}
                                                         >
                                                             <Minus size={11} />
-                                                        </button>
+                                                        </Button>
                                                         <span className="mpseafood-qty-num">{fmtQty(row)}</span>
-                                                        <button
+                                                        <Button
                                                             type="button"
+                                                            variant="ghost"
+                                                            size="sm"
                                                             className="mpseafood-step"
                                                             onClick={() => adjust(row.key, row.step)}
                                                             disabled={row.qty >= row.cap}
                                                             aria-label={`Restock ${row.step} ${row.unit} of ${row.name}`}
                                                         >
                                                             <Plus size={11} />
-                                                        </button>
+                                                        </Button>
                                                     </span>
                                                 </Table.Cell>
                                                 <Table.Cell className="mpseafood-cell-status">
@@ -389,10 +409,10 @@ export default function Seafood({ style }: { style: Style }) {
                     </div>
                     <div className="mpseafood-stats">
                         {STATS.map((stat) => (
-                            <div key={stat.k} className="mpseafood-stat">
+                            <Card key={stat.k} variant="outlined" padding="none" className="mpseafood-stat">
                                 <div className="mpseafood-stat-v">{stat.v}</div>
                                 <div className="mpseafood-stat-k">{stat.k}</div>
-                            </div>
+                            </Card>
                         ))}
                     </div>
                 </section>
@@ -400,15 +420,25 @@ export default function Seafood({ style }: { style: Style }) {
                 {/* ── Where we're docked — the tide-table schedule ────────── */}
                 <section ref={findRef} className="mpseafood-find" id="find-us" aria-label="Where we're docked">
                     <h2 className="mpseafood-find-title">Where we're docked</h2>
-                    <div className="mpseafood-sched">
-                        {SCHEDULE.map((s) => (
-                            <div key={s.day} className="mpseafood-sched-row">
-                                <span className="mpseafood-sched-day">{s.day}</span>
-                                <span className="mpseafood-sched-place">{s.place}</span>
-                                <span className="mpseafood-sched-hours">{s.hours}</span>
-                            </div>
-                        ))}
-                    </div>
+                    {/* The tide-table schedule — a restyled Table (day / place / hours).
+                        The column header is hidden by CSS to keep the mockup's headerless
+                        tide-table look while the columns stay declared for a11y + agents. */}
+                    <Table className="mpseafood-sched">
+                        <Table.Head>
+                            <Table.Column label="Day" className="mpseafood-sched-col-day" />
+                            <Table.Column label="Place" className="mpseafood-sched-col-place" />
+                            <Table.Column label="Hours" className="mpseafood-sched-col-hours" />
+                        </Table.Head>
+                        <Table.Body>
+                            {SCHEDULE.map((s) => (
+                                <Table.Row key={s.day} className="mpseafood-sched-row">
+                                    <Table.Cell className="mpseafood-sched-day">{s.day}</Table.Cell>
+                                    <Table.Cell className="mpseafood-sched-place">{s.place}</Table.Cell>
+                                    <Table.Cell className="mpseafood-sched-hours">{s.hours}</Table.Cell>
+                                </Table.Row>
+                            ))}
+                        </Table.Body>
+                    </Table>
                 </section>
             </div>
 

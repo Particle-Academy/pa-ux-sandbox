@@ -2,9 +2,13 @@
    Mom-n-Pops · Style 01 — Taquería
    Warm cream storefront: #FAF4EA paper, espresso-brown type, one chile-red
    accent, sand hairlines on white cards, emoji food tiles (no photos). Fancy
-   primitives restyled: Button → red/outline pills, Badge → tag pills +
-   ingredient chips + Today marker, Modal → the taco-detail overlay, Tooltip →
-   the free-chips fine print. Every class prefixed mptacos- so nothing leaks
+   primitives restyled to look identical to the mockup: Card → menu tiles +
+   story stat tiles, Table → the schedule route, Button → red/outline pills,
+   Badge → tag pills + ingredient chips + Today marker, Modal → the taco-detail
+   overlay, Heading/Text → display headings + prose, Tooltip → the free-chips
+   fine print. Component overrides are scoped under .mptacos-root (or the
+   portaled .mptacos-modal) with !important where they must beat the library's
+   Tailwind utility classes. Every class prefixed mptacos- so nothing leaks
    across the SPA; page-level z-index stays under 30 (the gallery frame owns
    30+; the Modal portals to <body> with the library's own layer).
    ──────────────────────────────────────────────────────────────────────────── */
@@ -157,17 +161,20 @@
   display: block;
   margin-bottom: 14px;
 }
-.mptacos-hero__title {
+/* Heading → hero display (override library size/weight/zinc color) */
+.mptacos-root .mptacos-hero__title {
   margin: 0 auto;
   max-width: 760px;
-  font-size: clamp(2.4rem, 6.2vw, 66px);
+  font-size: clamp(2.4rem, 6.2vw, 66px) !important;
   line-height: 1.02;
   letter-spacing: -0.03em;
-  font-weight: 800;
+  font-weight: 800 !important;
+  color: var(--mpt-ink) !important;
 }
-.mptacos-hero__sub {
-  font-size: var(--text-xl);
-  color: var(--mpt-ink-2);
+/* Text → hero subcopy */
+.mptacos-root .mptacos-hero__sub {
+  font-size: var(--text-xl) !important;
+  color: var(--mpt-ink-2) !important;
   line-height: 1.5;
   margin: 22px auto 30px;
   max-width: 480px;
@@ -192,10 +199,12 @@
   flex-wrap: wrap;
   margin-bottom: 22px;
 }
-.mptacos-h2 {
-  font-size: var(--text-3xl);
-  font-weight: 800;
+/* Heading → section h2 (override library size/weight/zinc color) */
+.mptacos-root .mptacos-h2 {
+  font-size: var(--text-3xl) !important;
+  font-weight: 800 !important;
   letter-spacing: -0.02em;
+  color: var(--mpt-ink) !important;
   margin: 0;
 }
 .mptacos-hint {
@@ -208,25 +217,27 @@
   gap: 18px;
 }
 
-/* Whole card is the modal trigger — a real <button>, restyled */
-.mptacos-card {
+/* Card → the whole-card modal trigger (worn as role="button"), restyled to
+   override the library's rounded-lg / bg-white / border-zinc defaults */
+.mptacos-root .mptacos-card {
   display: block;
   width: 100%;
   text-align: left;
   font-family: inherit;
   color: inherit;
-  background: var(--mpt-card);
-  border: 1px solid var(--mpt-line);
-  border-radius: 16px;
-  padding: 20px;
+  background: var(--mpt-card) !important;
+  border: 1px solid var(--mpt-line) !important;
+  border-radius: 16px !important;
+  box-shadow: none !important;
+  padding: 20px !important;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-.mptacos-card:hover {
+.mptacos-root .mptacos-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 16px 32px -16px rgba(120, 60, 20, 0.3);
+  box-shadow: 0 16px 32px -16px rgba(120, 60, 20, 0.3) !important;
 }
-.mptacos-card:focus-visible {
+.mptacos-root .mptacos-card:focus-visible {
   outline: 2px solid var(--mpt-accent);
   outline-offset: 2px;
 }
@@ -288,16 +299,19 @@
   border-top: 1px solid var(--mpt-line);
   scroll-margin-top: 110px;
 }
-.mptacos-story__title {
-  font-size: clamp(1.6rem, 3.4vw, 36px);
+/* Heading → story display */
+.mptacos-root .mptacos-story__title {
+  font-size: clamp(1.6rem, 3.4vw, 36px) !important;
   line-height: 1.1;
   letter-spacing: -0.02em;
-  font-weight: 800;
+  font-weight: 800 !important;
+  color: var(--mpt-ink) !important;
   margin: 0 0 16px;
 }
-.mptacos-story__body {
-  font-size: var(--text-lg);
-  color: var(--mpt-ink-2);
+/* Text → story body */
+.mptacos-root .mptacos-story__body {
+  font-size: var(--text-lg) !important;
+  color: var(--mpt-ink-2) !important;
   line-height: 1.6;
   margin: 0;
 }
@@ -306,11 +320,13 @@
   grid-template-columns: 1fr 1fr;
   gap: 14px;
 }
-.mptacos-stat {
-  background: var(--mpt-card);
-  border: 1px solid var(--mpt-line);
-  border-radius: 14px;
-  padding: 18px;
+/* Card → number-first story stat tile */
+.mptacos-root .mptacos-stat {
+  background: var(--mpt-card) !important;
+  border: 1px solid var(--mpt-line) !important;
+  border-radius: 14px !important;
+  box-shadow: none !important;
+  padding: 18px !important;
 }
 .mptacos-stat__v {
   font-size: clamp(1.5rem, 2.6vw, 30px);
@@ -339,34 +355,57 @@
   padding: 20px 0 56px;
   scroll-margin-top: 110px;
 }
-.mptacos-sched__title { margin: 0 0 18px; }
-.mptacos-sched__card {
-  background: var(--mpt-card);
-  border: 1px solid var(--mpt-line);
-  border-radius: 16px;
+.mptacos-root .mptacos-sched__title { margin: 0 0 18px; }
+
+/* Table wrapper → the single bordered rounded-16px white card
+   (overrides the library's rounded-lg / border-zinc default chrome) */
+.mptacos-root .mptacos-sched__card {
+  background: var(--mpt-card) !important;
+  border: 1px solid var(--mpt-line) !important;
+  border-radius: 16px !important;
   overflow: hidden;
 }
-.mptacos-sched__row {
-  display: grid;
-  grid-template-columns: 120px 1fr auto;
-  gap: 16px;
-  align-items: center;
-  padding: 14px 22px;
-  border-bottom: 1px solid var(--mpt-line-soft);
+.mptacos-root .mptacos-sched__card table {
+  width: 100%;
+  border-collapse: collapse;
 }
-.mptacos-sched__row:last-child { border-bottom: 0; }
-.mptacos-sched__row--today { background: #FDF4E5; }
-.mptacos-sched__day {
-  font-weight: 700;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
+/* Recolor the Table's default divide-y hairline to warm sand (rows 2–6 get a
+   top border from divide-y — 5 hairlines between the 6 rows, edges clean) */
+.mptacos-root .mptacos-sched__body > tr {
+  border-top-color: var(--mpt-line-soft) !important;
 }
-.mptacos-sched__place { color: var(--mpt-ink-2); }
-.mptacos-sched__hours {
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
-  color: var(--mpt-ink-4);
+/* Rows carry no interactive hover here (kill the library's zinc hover) */
+.mptacos-root .mptacos-sched__row:hover {
+  background: transparent !important;
+}
+.mptacos-root .mptacos-sched__row td {
+  background: transparent !important;
+  padding: 14px 22px !important;
+  vertical-align: middle;
+  font-size: var(--text-base) !important;
+}
+.mptacos-root .mptacos-sched__row--today td {
+  background: #FDF4E5 !important;
+}
+.mptacos-root .mptacos-sched__day {
+  width: 120px;
+  font-weight: 700 !important;
+  color: var(--mpt-ink) !important;
+  white-space: nowrap;
+}
+.mptacos-root .mptacos-sched__day .mptacos-today {
+  margin-left: 8px;
+  vertical-align: middle;
+}
+.mptacos-root .mptacos-sched__place {
+  width: 100%; /* absorb the slack like the old 1fr column, pushing hours right */
+  color: var(--mpt-ink-2) !important;
+}
+.mptacos-root .mptacos-sched__hours {
+  font-family: var(--font-mono) !important;
+  font-size: var(--text-sm) !important;
+  color: var(--mpt-ink-4) !important;
+  text-align: right;
   white-space: nowrap;
 }
 
@@ -458,12 +497,13 @@ div:has(> .mptacos-modal) > div[aria-hidden="true"] {
   font-size: 28px;
   flex: none;
 }
-.mptacos-modal__name {
-  font-size: 26px;
-  font-weight: 800;
+/* Heading → modal name (portaled outside .mptacos-root, scoped to the panel) */
+.mptacos-modal .mptacos-modal__name {
+  font-size: 26px !important;
+  font-weight: 800 !important;
   letter-spacing: -0.02em;
-  margin: 0;
-  color: var(--mpt-ink);
+  margin: 0 !important;
+  color: var(--mpt-ink) !important;
 }
 .mptacos-modal__price {
   font-size: 20px;
@@ -473,11 +513,12 @@ div:has(> .mptacos-modal) > div[aria-hidden="true"] {
 .mptacos-modal__body {
   padding: 22px 26px 28px;
 }
-.mptacos-modal__long {
-  font-size: var(--text-lg);
-  color: var(--mpt-ink-modal);
+/* Text → modal long description */
+.mptacos-modal .mptacos-modal__long {
+  font-size: var(--text-lg) !important;
+  color: var(--mpt-ink-modal) !important;
   line-height: 1.6;
-  margin: 0 0 18px;
+  margin: 0 0 18px !important;
 }
 .mptacos-modal__chips {
   display: flex;
@@ -524,30 +565,21 @@ div:has(> .mptacos-modal) > div[aria-hidden="true"] {
   .mptacos-header__in { padding: 13px 20px; }
   .mptacos-footer__in { padding: 28px 20px 8px; }
   .mptacos-footer__folio { padding: 0 20px 22px; }
-  .mptacos-sched__row {
-    grid-template-columns: 92px 1fr auto;
-    gap: 10px;
-    padding: 13px 16px;
-  }
+  .mptacos-root .mptacos-sched__row td { padding: 13px 16px !important; }
+  .mptacos-root .mptacos-sched__day { width: 92px; }
 }
 @media (max-width: 560px) {
   .mptacos-grid { grid-template-columns: 1fr; }
   .mptacos-hero__cta .mptacos-btn--hero { width: 100%; justify-content: center !important; }
-  .mptacos-sched__row {
-    grid-template-columns: 1fr auto;
-  }
-  .mptacos-sched__place {
-    grid-column: 1 / -1;
-    grid-row: 2;
-    font-size: var(--text-sm);
-  }
+  /* Table stays three columns; the flexible place cell wraps instead of a grid reflow */
+  .mptacos-root .mptacos-sched__place { font-size: var(--text-sm) !important; }
 }
 
 /* ── Reduced motion ──────────────────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
-  .mptacos-card,
+  .mptacos-root .mptacos-card,
   .mptacos-root .mptacos-btn {
     transition: none !important;
   }
-  .mptacos-card:hover { transform: none; }
+  .mptacos-root .mptacos-card:hover { transform: none !important; }
 }

@@ -1,0 +1,63 @@
+{
+  "id": "vertex",
+  "name": "Vertex",
+  "note": "A crypto portfolio as a trading console.",
+  "mode": "dark",
+  "thesis": "A retail crypto/trading dashboard rendered entirely from restyled Fancy primitives: an ink-black canvas, floating surface cards on hairline borders, one green-up / red-down accent pair, and 11px mono numerics everywhere. The point is that Card + Tabs + Table + Badge + Avatar + Navbar, dressed in scoped CSS and fed by fancy-echarts, read as native to a Coinbase/Binance-class portfolio surface — no bespoke widgets, just kit.",
+  "tokens": {
+    "bg": "#08090C ink canvas with #101319 surface cards and a #0B0F14 chart-tooltip well",
+    "fg": "#D8DCE4 primary / #EAECEF bright headings & values / #B4BAC4 legend labels / #7A828E muted / #565E6A faint captions",
+    "accent": "green-up #22C55E (gains, active range pill, deposit CTA) paired with red-down #EF4444 (losses); coin-brand hues carry allocation + glyphs (BTC #F7931A, ETH #627EEA, SOL #14F195, USDC #2775CA)",
+    "fontDisplay": "Geist (var(--font-sans)); the portfolio value is 34px / 800 weight at -0.02em tracking",
+    "fontMono": "Geist Mono (var(--font-mono)) for every numeric surface — range pills, holdings amounts + USD values, 24h change chips, tickers, allocation percentages",
+    "radius": "18px on the portfolio + allocation cards, 16px on the holdings/watchlist list cards, 8px deposit button + 'V' mark, 6px range pills, 50% coin glyphs + TX avatar",
+    "border": "1px hairlines: #1C2129 card borders + header dividers, #161A20 quieter in-list row separators; no shadows — depth is pure surface-over-canvas contrast",
+    "motion": "none in the mockup (imperative paint() only); recreated with a single 0.5s ease mount rise on cards (staggered) plus DS-ease color/background hover transitions on nav links, range pills, and table rows — honors prefers-reduced-motion"
+  },
+  "layout": "A centered single-column canvas (max-width 1120px, no persistent sidebar) under a slim top bar: a restyled Navbar carries the gradient 'V' mark + wordmark (linking to the collection index), an inline text nav (Portfolio active / Markets / Trade / Earn), a green Deposit button, and a round TX monogram avatar pushed right. The body is two stacked responsive CSS grids: a top row split 1.4fr / 1fr — a portfolio-value KPI + full-width area chart card beside an allocation donut + legend card — then an even 1fr / 1fr row — a Holdings table beside a sparkline Watchlist table. Both grids collapse to a single column under 860px. A hairline colophon closes the page.",
+  "sections": [
+    {
+      "name": "top bar",
+      "what": "Gradient 'V' wordmark linking back to the gallery, inline nav (Portfolio active, Markets, Trade, Earn), a green Deposit CTA, and a TX monogram avatar on the right.",
+      "components": ["Navbar", "Button", "Avatar", "Link"],
+      "restyle": "Navbar is stripped of its default white bg / bottom border / padding and laid out as a transparent flex row; Navbar.Items is forced visible (overriding its hidden-below-md default) and pushed right with margin-left:auto. Nav links are plain non-navigating spans (muted, the active one full-ink 600). The 'V' mark is a 26px 8px-radius tile with a #0b0f14→#22c55e gradient. Button becomes a compact 8px-radius green Deposit CTA with dark ink text; Avatar is forced to a 34px #16A34A circle with white 600-weight TX initials."
+    },
+    {
+      "name": "portfolio value + performance",
+      "what": "KPI: 'Portfolio value' label, huge $84,213.40 figure, a green ▲ delta ('$2,104 (2.56%) today'), a 1H/1D/1W/1M/1Y range switcher (1D active), and a full-width area chart of value over the selected range.",
+      "components": ["Card", "Tabs", "EChart", "Heading", "Text"],
+      "restyle": "Card forced to the 18px surface panel; its header splits the value block (12px muted label, 34px/800 value, inline green delta with a ▲ glyph) from the range switcher. The switcher is a controlled Tabs (List only, no Panels) restyled from the underline variant into mono 11px pills — transparent + muted by default, the aria-selected pill gets a solid #22C55E fill with dark ink. Selecting a range swaps the EChart series live. The chart is a fancy-echarts area line: 2.5px #22C55E stroke, a vertical 0.30→0 green gradient areaStyle, axes/grid hidden, dark hairline tooltip."
+    },
+    {
+      "name": "allocation",
+      "what": "A donut ring of portfolio composition beside a color-keyed legend (Bitcoin 48%, Ethereum 28%, Solana 14%, USDC 10%) with mono percentages.",
+      "components": ["Card", "EChart", "Heading"],
+      "restyle": "Card header carries a 'Allocation' Heading with no divider. The donut is a fancy-echarts pie with radius ['62%','100%'] and four coin-brand slices, each itemStyle.borderColor set to the surface color to fake the slice gaps — replacing the mockup's conic-gradient + radial-mask paint() trick. The hand-built legend list pairs a 9px brand-color square, a #B4BAC4 name, and a right-aligned mono percentage."
+    },
+    {
+      "name": "holdings",
+      "what": "Owned assets: brand-tinted round coin glyph, name over amount (e.g. 0.62 BTC), USD value, and a colored 24h change (green up / red down / grey flat).",
+      "components": ["Card", "Table", "Badge"],
+      "restyle": "A restyled Table inside a 16px list card: its px-4/py-3 zinc header is overridden to a 10px uppercase mono #565E6A caption row on a #1C2129 hairline, right-aligned for the numeric columns; body rows get 11px/18px padding, #161A20 separators (last row borderless), and a faint hover fill. The first cell composes a 28px brand-tinted circular coin glyph (background = dark tint, text = brand color, via inline style from a lookup map) beside a stacked bold name / mono amount. The 24h change is a Badge stripped to plain mono colored text keyed green/red/grey."
+    },
+    {
+      "name": "watchlist",
+      "what": "Tracked tickers (AVAX, MATIC, DOGE, LINK, ADA), each with a tiny inline sparkline and a colored 24h change.",
+      "components": ["Card", "Table", "EChart", "Badge"],
+      "restyle": "A second restyled Table (mono ticker column, centered trend column, right change column). Each middle cell hosts a minimal 80x22 fancy-echarts sparkline — one smooth line, no axes/grid/tooltip/symbols, stroked green for gainers / red for losers — replacing the mockup's raw <polyline>. Series points are precomputed deterministically from the mockup's Math.sin spark(seed, up) generator (SSR-safe, no randomness). Change reuses the plain-mono Badge chip."
+    }
+  ],
+  "palette": [
+    { "component": "Navbar", "restyle": "Chrome stripped to a transparent flex bar; Brand is a gradient-mark Link, Items forced visible and right-aligned. The whole top-bar identity rides on the primitive, not a hand-rolled <header>." },
+    { "component": "Card", "restyle": "The universal panel — #101319 surface, 1px #1C2129 border, 18px (KPI/allocation) or 16px (lists) radius, no shadow. padding='none' with header/body padding supplied by scoped CSS; a staggered mount rise animates each card in." },
+    { "component": "Tabs", "restyle": "Underline variant repurposed as a segmented range switcher (List only, no Panels): mono 11px pills, muted by default, solid green fill + dark ink on the aria-selected segment. Controlled — it drives the area-chart series." },
+    { "component": "Table", "restyle": "Reskinned twice into dense crypto list grids via its data-react-fancy-* hooks: mono uppercase caption header on a hairline, 11px/18px hairline-separated rows with hover fill, composed coin-glyph identity cells, an embedded sparkline cell, right-aligned mono numerics." },
+    { "component": "Badge", "restyle": "Flattened to a chrome-less mono chip so it reads as plain colored change text (green up / red down / grey flat) — the soft variant's fill/border/padding are all zeroed out." },
+    { "component": "Button", "restyle": "A single compact Deposit CTA: 8px corners, solid #22C55E, dark #08090C ink, 600 weight, subtle press translate." },
+    { "component": "Avatar", "restyle": "A 34px circular initials monogram (TX) forced to the #16A34A brand green with white 600-weight text — the account chip at the far right of the bar." },
+    { "component": "EChart (fancy-echarts)", "restyle": "The three data surfaces — area line (green stroke + vertical gradient fill), allocation donut (coin-brand slices with surface-colored gaps), and five row sparklines (axis-less, direction-colored) — all mounted client-side and SSR-safe, replacing the mockup's SVG paths, conic-gradient donut, and imperative paint() pass. registerAll() runs once at module top." },
+    { "component": "Heading / Text", "restyle": "Heading sets the small semibold card titles ('Allocation', 'Holdings', 'Watchlist'); Text carries the muted mono colophon. Type stays on var(--font-sans) with numerics escalated to var(--font-mono)." }
+  ],
+  "contentArchetype": "A fictional retail crypto brokerage (Vertex) showing one signed-in user's portfolio: a headline balance with a period delta, a value-over-time chart with a range switcher, an asset allocation donut (BTC/ETH/SOL/USDC), a holdings ledger (amount, USD value, 24h change), and a sparkline watchlist of tracked tickers. All figures are invented but internally consistent; the only 'live' behavior is range selection re-rendering the chart.",
+  "remix": "Reuse the centered-canvas + surface-card + mono-numeric skeleton for any finance/markets surface (a brokerage, a treasury view, a DeFi position tracker, a payments dashboard) — swap the coin-brand map + green/red accent pair to rebrand, keep the hairline-panel discipline. Lift the controlled-Tabs-drives-the-chart pattern into any KPI card that needs a range switch. To warm it toward a consumer fintech look, lighten the canvas and round radii; to push it more terminal/Bloomberg, tighten density, drop the mount motion, and lean harder on the mono scale. The whole look lives in scoped vertex.css + local tokens, so the same React tree restyles wholesale by editing one file."
+}

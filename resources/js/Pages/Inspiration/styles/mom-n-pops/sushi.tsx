@@ -1,7 +1,7 @@
 import "./sushi.css";
 import { Link } from "@inertiajs/react";
 import { useRef, useState } from "react";
-import { Button } from "@particle-academy/react-fancy";
+import { Badge, Button, Callout, Card, Heading, Table, Text } from "@particle-academy/react-fancy";
 import { ArrowLeft, Check } from "lucide-react";
 import type { Style } from "../../types";
 
@@ -19,6 +19,16 @@ import type { Style } from "../../types";
  * summary bar with a party-size stepper and a live-total vermilion Reserve
  * CTA. All of it is controlled React state with stable data-night handles —
  * the mockup's imperative paint() pass is expressed declaratively instead.
+ *
+ * Built from RESTYLED Fancy primitives, not hand-rolled markup: Heading/Text
+ * carry the display + prose, Table wears the two data lists (the dotted-leader
+ * counter menu and the Find-us timetable — zero-chrome, hairline-only), Badge
+ * carries the open/few/full seat-availability status, Card wears the seven
+ * night cards (as a controlled card-radio group) and the inverted selected-
+ * night bar, Callout wears the reservation confirmation, and Button wears the
+ * nav links, the party stepper, the Reserve CTA, and Change. Bespoke art that
+ * no primitive owns stays hand-rolled: the enso mark, the dotted-leader
+ * texture, the frosted sticky header, and the declarative selection ring.
  *
  * Mounted by Inspiration/Show.tsx for `style.id === "sushi"` (collection
  * mom-n-pops). SSR-safe: no browser APIs at render time; nav scrolling uses
@@ -57,6 +67,9 @@ const MENU = [
     { name: "Chirashi Bowl", price: "$14" },
     { name: "Miso Soup", price: "$3" },
 ];
+
+/** Two dotted-leader columns — a Table each, laid side-by-side on the grid. */
+const MENU_COLS = [MENU.slice(0, 3), MENU.slice(3)];
 
 const SCHEDULE = [
     { day: "Tuesday", place: "Downtown — Cathedral Sq", hours: "11–2 lunch" },
@@ -131,18 +144,20 @@ export default function Sushi({ style }: { style: Style }) {
             <div className="mpsushi-container">
                 <section className="mpsushi-hero">
                     <div className="mpsushi-hero__copy">
-                        <p className="mpsushi-eyebrow">Eight seats · Milwaukee · since 2026</p>
-                        <h1 className="mpsushi-display">
+                        <Text as="p" className="mpsushi-eyebrow">
+                            Eight seats · Milwaukee · since 2026
+                        </Text>
+                        <Heading as="h1" className="mpsushi-display">
                             Rolled to order.
                             <br />
                             Nothing sits.
                             <br />
                             <span className="mpsushi-display__accent">Nothing hurried.</span>
-                        </h1>
-                        <p className="mpsushi-lede">
+                        </Heading>
+                        <Text as="p" className="mpsushi-lede">
                             A tiny sushi counter on wheels. Fish cut that morning, rice seasoned by
                             hand. Walk up for a roll — or book one of eight omakase seats.
-                        </p>
+                        </Text>
                     </div>
                     <div className="mpsushi-hero__mark" aria-hidden>
                         <span className="mpsushi-enso__ring" />
@@ -153,23 +168,35 @@ export default function Sushi({ style }: { style: Style }) {
                 </section>
             </div>
 
-            {/* ── お品書き · The counter menu ──────────────────────────────── */}
+            {/* ── お品書き · The counter menu (two Tables) ─────────────────── */}
             <div className="mpsushi-band">
                 <div className="mpsushi-container">
                     <section ref={menuRef} className="mpsushi-section" aria-labelledby="mpsushi-menu-h">
                         <div className="mpsushi-rulehead">
-                            <h2 id="mpsushi-menu-h" className="mpsushi-h2">
+                            <Heading as="h2" id="mpsushi-menu-h" className="mpsushi-h2">
                                 お品書き · The counter menu
-                            </h2>
+                            </Heading>
                             <span className="mpsushi-rulehead__rule" aria-hidden />
                         </div>
                         <div className="mpsushi-menu">
-                            {MENU.map((m) => (
-                                <div key={m.name} className="mpsushi-menu__row">
-                                    <span className="mpsushi-menu__name">{m.name}</span>
-                                    <span className="mpsushi-menu__leader" aria-hidden />
-                                    <span className="mpsushi-menu__price">{m.price}</span>
-                                </div>
+                            {MENU_COLS.map((col, ci) => (
+                                <Table key={ci} className="mpsushi-menu__table">
+                                    <Table.Body>
+                                        {col.map((m) => (
+                                            <Table.Row key={m.name} className="mpsushi-menu__row">
+                                                <Table.Cell className="mpsushi-menu__name">
+                                                    {m.name}
+                                                </Table.Cell>
+                                                <Table.Cell className="mpsushi-menu__leadcell">
+                                                    <span className="mpsushi-menu__leader" aria-hidden />
+                                                </Table.Cell>
+                                                <Table.Cell className="mpsushi-menu__price">
+                                                    {m.price}
+                                                </Table.Cell>
+                                            </Table.Row>
+                                        ))}
+                                    </Table.Body>
+                                </Table>
                             ))}
                         </div>
                     </section>
@@ -181,30 +208,41 @@ export default function Sushi({ style }: { style: Style }) {
                 <div className="mpsushi-container">
                     <section ref={bookRef} data-book className="mpsushi-section" aria-labelledby="mpsushi-book-h">
                         <div className="mpsushi-rulehead mpsushi-rulehead--tight">
-                            <h2 id="mpsushi-book-h" className="mpsushi-h2">
+                            <Heading as="h2" id="mpsushi-book-h" className="mpsushi-h2">
                                 おまかせ · Reserve omakase
-                            </h2>
+                            </Heading>
                             <span className="mpsushi-rulehead__rule" aria-hidden />
                         </div>
-                        <p className="mpsushi-book__sub">
+                        <Text as="p" className="mpsushi-book__sub">
                             $60 / seat · 12 courses, chef's choice · two seatings a night, eight
                             seats each. Pick a night.
-                        </p>
+                        </Text>
 
                         <div className="mpsushi-week" role="radiogroup" aria-label="Pick an omakase night">
                             {NIGHTS.map((night) => {
                                 const isPicked = night.id === pickedId;
                                 const isFull = night.state === "full";
                                 return (
-                                    <button
+                                    <Card
                                         key={night.id}
-                                        type="button"
+                                        variant="outlined"
+                                        padding="none"
                                         role="radio"
                                         aria-checked={isPicked}
                                         aria-label={`${night.label} — ${night.seats}`}
+                                        aria-disabled={isFull || undefined}
+                                        tabIndex={isFull ? -1 : 0}
                                         data-night={night.id}
-                                        disabled={isFull}
                                         onClick={() => pickNight(night)}
+                                        onKeyDown={(e) => {
+                                            if (isFull) {
+                                                return;
+                                            }
+                                            if (e.key === "Enter" || e.key === " ") {
+                                                e.preventDefault();
+                                                pickNight(night);
+                                            }
+                                        }}
                                         className={
                                             "mpsushi-night" +
                                             (isPicked ? " mpsushi-night--picked" : "") +
@@ -213,19 +251,20 @@ export default function Sushi({ style }: { style: Style }) {
                                     >
                                         <span className="mpsushi-night__dow">{night.dow}</span>
                                         <span className="mpsushi-night__date">{night.date}</span>
-                                        <span
-                                            className={`mpsushi-night__seats mpsushi-night__seats--${night.state}`}
+                                        <Badge
+                                            variant="soft"
+                                            className={`mpsushi-seatbadge mpsushi-seatbadge--${night.state}`}
                                             data-seats={night.state}
                                         >
                                             {night.seats}
-                                        </span>
-                                    </button>
+                                        </Badge>
+                                    </Card>
                                 );
                             })}
                         </div>
 
                         {picked && (
-                            <div className="mpsushi-bar">
+                            <Card variant="flat" padding="none" className="mpsushi-bar">
                                 <div className="mpsushi-bar__info">
                                     <div className="mpsushi-bar__label">Selected</div>
                                     <div className="mpsushi-bar__night">{picked.label}</div>
@@ -235,27 +274,34 @@ export default function Sushi({ style }: { style: Style }) {
                                 </div>
 
                                 {reserved ? (
-                                    <div className="mpsushi-confirm" role="status">
-                                        <span className="mpsushi-confirm__badge" aria-hidden>
-                                            <Check size={14} strokeWidth={3} />
-                                        </span>
-                                        <div className="mpsushi-confirm__copy">
-                                            <div className="mpsushi-confirm__title">
-                                                Seats requested — {picked.label}, party of {party}.
+                                    <Callout
+                                        color="gray"
+                                        className="mpsushi-confirm"
+                                        icon={
+                                            <span className="mpsushi-confirm__badge" aria-hidden>
+                                                <Check size={14} strokeWidth={3} />
+                                            </span>
+                                        }
+                                    >
+                                        <div className="mpsushi-confirm__row">
+                                            <div className="mpsushi-confirm__copy">
+                                                <div className="mpsushi-confirm__title">
+                                                    Seats requested — {picked.label}, party of {party}.
+                                                </div>
+                                                <div className="mpsushi-confirm__note">
+                                                    Rosa texts back within the hour. Nothing charged until
+                                                    you're at the counter.
+                                                </div>
                                             </div>
-                                            <div className="mpsushi-confirm__note">
-                                                Rosa texts back within the hour. Nothing charged until
-                                                you're at the counter.
-                                            </div>
+                                            <Button
+                                                variant="ghost"
+                                                className="mpsushi-change"
+                                                onClick={() => setReserved(false)}
+                                            >
+                                                Change
+                                            </Button>
                                         </div>
-                                        <Button
-                                            variant="ghost"
-                                            className="mpsushi-change"
-                                            onClick={() => setReserved(false)}
-                                        >
-                                            Change
-                                        </Button>
-                                    </div>
+                                    </Callout>
                                 ) : (
                                     <>
                                         <div className="mpsushi-stepper" aria-label="Party size">
@@ -286,7 +332,7 @@ export default function Sushi({ style }: { style: Style }) {
                                         </Button>
                                     </>
                                 )}
-                            </div>
+                            </Card>
                         )}
                     </section>
                 </div>
@@ -296,29 +342,31 @@ export default function Sushi({ style }: { style: Style }) {
             <div className="mpsushi-band">
                 <div className="mpsushi-container">
                     <section className="mpsushi-story">
-                        <h2 className="mpsushi-quote">
+                        <Heading as="h2" className="mpsushi-quote">
                             Sal apprenticed for a year before we sold a single roll.
-                        </h2>
-                        <p className="mpsushi-story__body">
+                        </Heading>
+                        <Text as="p" className="mpsushi-story__body">
                             Rosa runs the rice — the part everyone underrates. Sal trained under an
                             itamae in Chicago and won't cut corners. The truck holds eight seats at
                             a little counter, and that's exactly how they like it.
-                        </p>
+                        </Text>
                     </section>
 
                     <section ref={findRef} className="mpsushi-find" aria-labelledby="mpsushi-find-h">
-                        <h2 id="mpsushi-find-h" className="mpsushi-h2 mpsushi-find__h">
+                        <Heading as="h2" id="mpsushi-find-h" className="mpsushi-h2 mpsushi-find__h">
                             Find us
-                        </h2>
-                        <div className="mpsushi-sched">
-                            {SCHEDULE.map((s) => (
-                                <div key={s.day} className="mpsushi-sched__row">
-                                    <span className="mpsushi-sched__day">{s.day}</span>
-                                    <span className="mpsushi-sched__place">{s.place}</span>
-                                    <span className="mpsushi-sched__hours">{s.hours}</span>
-                                </div>
-                            ))}
-                        </div>
+                        </Heading>
+                        <Table className="mpsushi-sched">
+                            <Table.Body>
+                                {SCHEDULE.map((s) => (
+                                    <Table.Row key={s.day} className="mpsushi-sched__row">
+                                        <Table.Cell className="mpsushi-sched__day">{s.day}</Table.Cell>
+                                        <Table.Cell className="mpsushi-sched__place">{s.place}</Table.Cell>
+                                        <Table.Cell className="mpsushi-sched__hours">{s.hours}</Table.Cell>
+                                    </Table.Row>
+                                ))}
+                            </Table.Body>
+                        </Table>
                     </section>
                 </div>
             </div>

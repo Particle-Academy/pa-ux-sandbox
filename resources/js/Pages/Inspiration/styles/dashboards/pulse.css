@@ -1,0 +1,503 @@
+/* ============================================================================
+   Pulse — Dashboards style 01 (Fitness & training)
+   Every class is prefixed `dbpulse-` so nothing leaks across the SPA. A single
+   near-black centered column, big numerals, rose + orange accents. All the
+   interactive surfaces are restyled Fancy primitives (Card / Progress / Table /
+   Tabs / Badge / Avatar / Button) reached through data-attributes + our own
+   classes. Keyframes included; nothing reaches the gallery frame's z-index 30.
+   ============================================================================ */
+
+.dbpulse-root {
+    --dbp-bg: #0b0b0f;
+    --dbp-fg: #e8e8ec;
+    --dbp-fg2: #c4c4cc;
+    --dbp-muted: #8a8a94;
+    --dbp-faint: #5a5a64;
+    --dbp-surface: #141419;
+    --dbp-border: #24242c;
+    --dbp-rowline: #1e1e25;
+    --dbp-rose: #f43f5e;
+    --dbp-orange: #fb923c;
+    --dbp-cyan: #22d3ee;
+
+    min-height: 100vh;
+    width: 100%;
+    background: var(--dbp-bg);
+    color: var(--dbp-fg);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+}
+
+.dbpulse-shell {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 22px 22px 64px;
+}
+
+/* ── Top bar ─────────────────────────────────────────────────────────────── */
+
+.dbpulse-top {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 26px;
+}
+
+.dbpulse-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    color: var(--dbp-fg);
+    text-decoration: none;
+}
+
+.dbpulse-brand__mark {
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--dbp-rose), var(--dbp-orange));
+    display: grid;
+    place-items: center;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.dbpulse-brand__word {
+    font-size: 15px;
+    letter-spacing: -0.01em;
+}
+
+/* Period switch — a Fancy <Tabs> restyled to minimal inline text */
+.dbpulse-period {
+    margin-left: auto;
+}
+
+.dbpulse-period[data-react-fancy-tabs] [data-react-fancy-tabs-list] {
+    border: none;
+    background: transparent;
+    padding: 0;
+    gap: 16px;
+}
+
+.dbpulse-period [data-react-fancy-tabs-tab] {
+    background: transparent;
+    border: none;
+    padding: 2px 0;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--dbp-muted);
+    cursor: pointer;
+    transition: color var(--dur-base, 200ms) var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1));
+}
+
+.dbpulse-period [data-react-fancy-tabs-tab]:hover {
+    color: var(--dbp-fg2);
+}
+
+.dbpulse-period [data-react-fancy-tabs-tab][aria-selected="true"] {
+    color: var(--dbp-fg);
+}
+
+.dbpulse-avatar {
+    flex: none;
+    background: var(--dbp-rose) !important;
+    color: #fff !important;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+/* ── Greeting hero ───────────────────────────────────────────────────────── */
+
+.dbpulse-hero {
+    margin-bottom: 22px;
+}
+
+.dbpulse-hero__eyebrow {
+    font-size: var(--text-sm);
+    color: var(--dbp-muted);
+}
+
+.dbpulse-hero__h1 {
+    margin: 4px 0 0;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: var(--dbp-fg);
+    line-height: 1.15;
+}
+
+/* ── Card base + grid rows ───────────────────────────────────────────────── */
+
+.dbpulse-card {
+    background: var(--dbp-surface) !important;
+    border: 1px solid var(--dbp-border) !important;
+    border-radius: 18px !important;
+    animation: dbpulse-rise 480ms var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1)) both;
+}
+
+.dbpulse-grid {
+    display: grid;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.dbpulse-grid--rings {
+    grid-template-columns: 1.1fr 1fr;
+}
+
+.dbpulse-grid--charts {
+    grid-template-columns: 1.4fr 1fr;
+}
+
+/* ── Activity rings card ─────────────────────────────────────────────────── */
+
+.dbpulse-rings {
+    display: flex;
+    align-items: center;
+    gap: 26px;
+    padding: 22px !important;
+}
+
+.dbpulse-rings__gauge {
+    position: relative;
+    width: 168px;
+    height: 168px;
+    flex: none;
+}
+
+.dbpulse-rings__chart {
+    width: 168px;
+    height: 168px;
+}
+
+.dbpulse-rings__center {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    text-align: center;
+    pointer-events: none;
+}
+
+.dbpulse-rings__pct {
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1;
+}
+
+.dbpulse-rings__cap {
+    margin-top: 2px;
+    font-size: 11px;
+    color: var(--dbp-muted);
+}
+
+.dbpulse-rings__list {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    min-width: 0;
+}
+
+.dbpulse-metric__row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 6px;
+}
+
+.dbpulse-metric__name {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: var(--text-sm);
+    color: var(--dbp-fg2);
+}
+
+.dbpulse-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--dbpulse-mcol, var(--dbp-rose));
+}
+
+.dbpulse-metric__val {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--dbp-fg);
+}
+
+/* Restyle the Fancy <Progress> bar: rail = border color, fill = the ring hue */
+.dbpulse-mbar[data-react-fancy-progress] > div {
+    background: var(--dbp-border) !important;
+    border-radius: 4px !important;
+}
+
+.dbpulse-mbar[data-react-fancy-progress] > div > div {
+    background: var(--dbpulse-mcol, var(--dbp-rose)) !important;
+    border-radius: 4px !important;
+}
+
+/* ── KPI tiles ───────────────────────────────────────────────────────────── */
+
+.dbpulse-kpis {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    gap: 16px;
+}
+
+.dbpulse-kpi {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 20px !important;
+}
+
+.dbpulse-kpi__chip {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    flex: none;
+}
+
+.dbpulse-kpi__chip--rose {
+    background: rgba(244, 63, 94, 0.14);
+    color: var(--dbp-rose);
+}
+
+.dbpulse-kpi__chip--orange {
+    background: rgba(251, 146, 60, 0.14);
+    color: var(--dbp-orange);
+}
+
+.dbpulse-kpi__num {
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+}
+
+.dbpulse-kpi__unit {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--dbp-muted);
+}
+
+.dbpulse-kpi__sub {
+    margin-top: 2px;
+    font-size: 12px;
+    color: var(--dbp-muted);
+}
+
+/* ── Chart panels (heart rate + move minutes) ────────────────────────────── */
+
+.dbpulse-panel {
+    padding: 20px !important;
+    display: flex;
+    flex-direction: column;
+}
+
+.dbpulse-panel__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+}
+
+.dbpulse-panel__title {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-weight: 600;
+    font-size: var(--text-base);
+}
+
+.dbpulse-panel__sub {
+    margin-top: 2px;
+    font-size: 12px;
+    color: var(--dbp-muted);
+}
+
+.dbpulse-livepin {
+    color: var(--dbp-rose);
+    animation: dbpulse-beat 1.6s ease-in-out infinite;
+}
+
+.dbpulse-peak.dbpulse-peak {
+    background: rgba(244, 63, 94, 0.12) !important;
+    color: var(--dbp-rose) !important;
+    border: none !important;
+    font-family: var(--font-mono);
+    font-size: 12px;
+}
+
+.dbpulse-chartbox {
+    width: 100%;
+}
+
+/* ── Recent workouts ─────────────────────────────────────────────────────── */
+
+.dbpulse-workouts {
+    overflow: hidden !important;
+}
+
+.dbpulse-workouts__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+}
+
+.dbpulse-workouts__title {
+    font-weight: 600;
+    font-size: var(--text-base);
+}
+
+.dbpulse-seeall.dbpulse-seeall {
+    background: transparent !important;
+    border: none !important;
+    color: var(--dbp-rose) !important;
+    font-size: 12px !important;
+    padding: 2px 4px !important;
+    min-height: 0 !important;
+    height: auto !important;
+}
+
+/* Fancy <Table> wearing the dark list look */
+.dbpulse-wtable[data-react-fancy-table] {
+    border: none !important;
+    border-radius: 0 !important;
+    overflow: visible !important;
+    background: transparent !important;
+}
+
+.dbpulse-wtable [data-react-fancy-table-body] > .dbpulse-wrow {
+    border-top: 1px solid var(--dbp-rowline) !important;
+    cursor: pointer;
+    transition: background var(--dur-base, 200ms) var(--ease-out, cubic-bezier(0.16, 1, 0.3, 1));
+}
+
+.dbpulse-wtable .dbpulse-wrow:hover,
+.dbpulse-wtable .dbpulse-wrow.is-open {
+    background: rgba(255, 255, 255, 0.03) !important;
+}
+
+.dbpulse-wcell.dbpulse-wcell {
+    padding: 12px 20px !important;
+    vertical-align: middle;
+    border: none;
+}
+
+.dbpulse-wcell--icon {
+    width: 40px;
+    padding-right: 0 !important;
+}
+
+.dbpulse-wicon {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: rgba(251, 146, 60, 0.12);
+    color: var(--dbp-orange);
+    display: grid;
+    place-items: center;
+}
+
+.dbpulse-wcell--name {
+    width: 100%;
+}
+
+.dbpulse-wname {
+    display: block;
+    font-weight: 600;
+    font-size: var(--text-sm);
+    color: var(--dbp-fg);
+}
+
+.dbpulse-wwhen {
+    display: block;
+    margin-top: 1px;
+    font-size: 12px;
+    color: var(--dbp-muted);
+}
+
+.dbpulse-wdur {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--dbp-fg2);
+    text-align: right;
+    white-space: nowrap;
+}
+
+.dbpulse-wkcal {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--dbp-rose);
+    text-align: right;
+    white-space: nowrap;
+}
+
+/* ── Colophon ────────────────────────────────────────────────────────────── */
+
+.dbpulse-colophon {
+    margin-top: 26px;
+    font-size: 11px;
+    color: var(--dbp-faint);
+    text-align: center;
+}
+
+/* ── Motion ──────────────────────────────────────────────────────────────── */
+
+@keyframes dbpulse-rise {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes dbpulse-beat {
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.18);
+        opacity: 0.55;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dbpulse-card {
+        animation: none;
+    }
+    .dbpulse-livepin {
+        animation: none;
+    }
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+
+@media (max-width: 860px) {
+    .dbpulse-grid--rings,
+    .dbpulse-grid--charts {
+        grid-template-columns: 1fr;
+    }
+    .dbpulse-rings {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 20px;
+    }
+    .dbpulse-rings__gauge {
+        margin: 0 auto;
+    }
+}

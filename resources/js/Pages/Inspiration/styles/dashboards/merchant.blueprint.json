@@ -1,0 +1,75 @@
+{
+  "id": "merchant",
+  "name": "Merchant",
+  "note": "A live e-commerce seller console as a Fancy dashboard.",
+  "mode": "light",
+  "thesis": "The back-of-house order desk for a small apparel brand, rendered as a two-column live-sales dashboard: an oversized revenue hero and a streaming order ticker on the left, a conversion funnel + inventory + top-sellers stack on the right. Cool near-white canvas, a single indigo accent and a live green, compact type, and mono numerics everywhere — restyled Fancy primitives (Navbar, Card, EChart, Timeline, Table, Progress, Badge) that read native to a Shopify/Linear-style operations console.",
+  "tokens": {
+    "bg": "#F7F8FB cool app canvas with #FFFFFF panels/topbar",
+    "fg": "#1E2230 ink / #8890A8 secondary / #A0A6BC tertiary (mono ticks)",
+    "accent": "indigo #4F46E5 (bar/area/line), light indigo #818CF8 as the gradient top; live green #0F9D58 for the Live pulse + positive amounts; orange #EA580C / red #DC2626 for low-stock warning vs critical",
+    "fontDisplay": "Geist (var(--font-sans)); hero is 56px 800-weight -0.03em, panels 14px 600",
+    "fontMono": "Geist Mono (var(--font-mono)) for every numeric — hero cents, revenue ticks, order times + amounts, 'N left', ranks, top-seller revenue",
+    "radius": "14px panels; 7px topbar mark + ghost pause button; 4px progress bars; full circles for the order + live status dots",
+    "border": "1px hairlines: #E7E9F0 panels/topbar, #EEF0F5 feed + panel-head dividers, #F3F4F8 faint table row rules. No shadows — flat surfaces on the tinted canvas.",
+    "motion": "cubic-bezier(0.16,1,0.3,1) ease-out feel; a CSS pulse on the live green dot; the order ticker prepends a new row every ~3.8s (setInterval in useEffect, cleaned up). EChart bars/area animate in on mount (700ms). Deterministic first paint — no wall-clock or random."
+  },
+  "layout": "Full-height flex column: a slim 52px white Navbar (brand M-mark + 'Merchant / Threadline Co.' left; a green Live pulse dot + a mono 'Today' Badge right) over a two-column CSS grid split 1.15fr / 1fr with an internal vertical hairline divider — no sidebar. Both columns scroll independently inside a fixed-height app shell (height: 100dvh minus the gallery frame). LEFT is the live-sales focus: a borderless revenue hero (56px number, muted cents, green delta Badge), a full-width intraday revenue area EChart with 4 mono time ticks, then a streaming 'Live orders' Timeline feed with a pause/resume Button. RIGHT is a gap-16 stack of three white 14px panels: a conversion-funnel bar EChart, a Low-stock Table (name + Progress level bar + orange 'N left'), and a flex-filling ranked Top-sellers Table. Under 860px the grid stacks to one column and the page scrolls.",
+  "sections": [
+    {
+      "name": "topbar",
+      "what": "Slim 52px identity bar: brand mark + shop name on the left, a live-status pulse and a 'Today' range chip on the right.",
+      "components": ["Navbar", "Badge"],
+      "restyle": "Navbar forced to a 52px flat white bar (px 20, one hairline bottom); its inner flex keeps brand left / status right. Brand = a 24px indigo-gradient rounded 'M' mark + 700 name + muted '/ Threadline Co.'. The live indicator is a hand-rolled green dot (CSS pulse keyframes) + 'Live'. 'Today' is a Badge stripped to a transparent mono muted chip. Right-side items live as a plain div (not Navbar.Items) so they never collapse behind the mobile toggle."
+    },
+    {
+      "name": "revenue-hero",
+      "what": "Oversized revenue-today figure with a green delta and order count.",
+      "components": ["Card", "Badge", "Heading", "Text"],
+      "restyle": "A borderless, transparent, zero-padding Card (all default chrome removed) holding an uppercase mono-tracked eyebrow, a 56px 800-weight tabular number with a 24px faint '.50' cents span, and a delta row: a soft-green Badge ('+18%' with a TrendingUp glyph, mono) beside muted-green context text ('vs same time yesterday · 214 orders')."
+    },
+    {
+      "name": "intraday-revenue",
+      "what": "Full-width smoothed area chart of cumulative revenue from 12a to now.",
+      "components": ["EChart"],
+      "restyle": "fancy-echarts area line: indigo #4F46E5 stroke at 2.5px, a vertical gradient areaStyle from rgba(79,70,229,0.26) to transparent, smoothed, symbol none, y-axis hidden, grid flush to the edges. The category x-axis shows only 4 mono ticks (12a / 6a / 12p / now) via an axisLabel.interval predicate; tooltip is a dark chip formatting the value as $-money."
+    },
+    {
+      "name": "live-orders",
+      "what": "Streaming feed of the latest orders — status dot, item, customer · city, relative time, green amount — with a pause/resume control.",
+      "components": ["Timeline", "Button", "Heading"],
+      "restyle": "A stacked Timeline restyled into a hairline-divided feed: the vertical connector rail is hidden, the dot column shrunk to 12px and its dot recolored indigo 8px, item content laid out as a 3-column grid (item + 'cust · city' | mono time | green mono amount) with a bottom rule per row. The header pairs a 'Live orders' Heading with a mono 'streaming/paused' label and a soft-indigo ghost Button toggling the setInterval ticker."
+    },
+    {
+      "name": "funnel",
+      "what": "Today's conversion funnel — Visits → Product → Cart → Paid — as descending bars with rate labels.",
+      "components": ["Card", "EChart", "Heading"],
+      "restyle": "A 14px white panel (Card) titled 'Today's funnel' wrapping a fancy-echarts categorical bar chart: heights [100,56,32,16], an indigo vertical gradient (#818CF8 → #4F46E5), rounded 7px tops, in-bar mono value labels showing the rates [100%, 45%, 12%, 3.1%], hidden y-axis, muted category labels beneath. Bar heights come from data, not from imperative div painting."
+    },
+    {
+      "name": "low-stock",
+      "what": "Inventory alert list — variant name, a remaining-level bar, and an 'N left' count.",
+      "components": ["Card", "Table", "Progress", "Heading"],
+      "restyle": "A Card titled 'Low stock' with an orange AlertTriangle glyph over a header-less Table. Each row: bold variant name, a 70px Progress level bar whose fill is set per-row via a --dbm-sbc CSS var (red #DC2626 when pct < 20 else orange #EA580C) — replacing the mockup's imperative data-stock painting — and an orange mono 'N left'."
+    },
+    {
+      "name": "top-sellers",
+      "what": "Ranked list (01–04) of today's best-selling products with revenue.",
+      "components": ["Card", "Table", "Heading"],
+      "restyle": "A flex-filling Card titled 'Top sellers today' over a header-less ranked Table: a mono faint 22px rank column, a bold product name, and a right-aligned mono 700-weight revenue figure. A muted mono colophon fills the remaining panel height at the foot."
+    }
+  ],
+  "palette": [
+    { "component": "Navbar", "restyle": "Flattened to a 52px white app topbar (one hairline bottom, px 20); brand left / status right kept in its inner justify-between flex, with the right cluster as a plain div so it never hides behind the mobile toggle." },
+    { "component": "Card", "restyle": "The universal panel — 14px radius, #E7E9F0 hairline, no shadow, flat white; header/body split by a divider, body optionally flush (padding 0) so Tables and charts sit edge to edge. The revenue hero is a Card stripped fully transparent/borderless." },
+    { "component": "EChart", "restyle": "Both charts are fancy-echarts <EChart> (registerAll() once at module top). The intraday chart is an indigo smoothed area with a vertical gradient fill, hidden y-axis and 4 mono x-ticks; the funnel is an indigo-gradient rounded-top bar series with in-bar mono rate labels. Dark tooltips, edge-flush grids, mono axis fonts." },
+    { "component": "Timeline", "restyle": "Reskinned into a compact streaming order feed: connector rail hidden, 12px dot column with an indigo 8px dot, big pb-8 spacing killed, each item a 3-column order row on a bottom hairline. animated={false} for deterministic hydration." },
+    { "component": "Table", "restyle": "Two header-less dense grids (low-stock, top-sellers): 10px/16px hairline-separated rows, transparent cells, a subtle hover tint, mono numeric columns right-aligned. No visible thead — the panel Card header names the table." },
+    { "component": "Progress", "restyle": "Slim 6px inventory level bars on a #F0F1F5 track; the fill color is switched per row via a --dbm-sbc CSS var (critical red under 20%, warning orange otherwise), overriding the default token." },
+    { "component": "Badge", "restyle": "Soft chips carrying semantics: an emerald delta chip ('+18%' with a glyph, mono) in the hero and a transparent mono muted 'Today' range chip in the topbar. Borders + shadows stripped." },
+    { "component": "Button", "restyle": "The stream pause/resume control — a compact 24px soft-indigo ghost Button (no border/shadow, 7px radius) pairing a Pause/Play glyph with a label; toggles the useEffect interval." },
+    { "component": "Heading / Text", "restyle": "Heading for panel + feed titles (14px 600); Text for the uppercase mono-tracked hero eyebrow and the muted-green delta context. All numerics ride var(--font-mono) with tabular-nums." }
+  ],
+  "contentArchetype": "A fictional apparel brand (Threadline Co.) watching today's sales in real time: revenue-today with a vs-yesterday delta, an intraday revenue curve, a streaming live-orders feed (item × qty, customer, city, amount), a Visits→Product→Cart→Paid conversion funnel, low-stock inventory alerts with remaining levels, and a ranked top-sellers list. All figures are invented but internally consistent (revenue $8,412.50, 214 orders, funnel 100/45/12/3.1%).",
+  "remix": "Lift the Navbar + two-column (live focus / analytics stack) shell onto any real-time operations surface — a support queue, a trading desk, a delivery dispatch board, a fulfillment console. Keep the flat-hairline-panel + mono-numeric discipline and the one-accent-plus-live-green palette; swap the EChart series and the Timeline/Table data. To rebrand, repoint the --dbm-* tokens in merchant.css — the whole look restyles wholesale without touching the React tree. Blend toward a darker admin idiom by flipping the canvas to slate and the panels to near-black, or toward a friendlier consumer look by warming the canvas and rounding radii."
+}

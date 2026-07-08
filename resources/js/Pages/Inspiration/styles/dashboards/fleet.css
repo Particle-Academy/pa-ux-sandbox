@@ -1,0 +1,531 @@
+/*
+ * Dashboards · Style 06 — Fleet. Scoped dispatch-console theme; every class is
+ * prefixed `dbfleet-`. Restyles the react-fancy Sidebar / Navbar / Card / Table
+ * / Badge / Progress (targeted via their stable `data-react-fancy-*` handles)
+ * into a dark logistics idiom. Full-bleed, static-first; the only motion is a
+ * neon pulse on the live status dot. All z-index < 6 (under the frame's 30).
+ */
+
+.dbfleet-root {
+    --dbf-bg: #0e1116;
+    --dbf-map-bg: #0b0e13;
+    --dbf-surface: #12161d;
+    --dbf-surface-2: #1a1f27;
+    --dbf-border: #1e242e;
+    --dbf-hair: #161b22;
+    --dbf-fg: #d3d8e0;
+    --dbf-fg-bright: #eaeef4;
+    --dbf-muted: #6b7280;
+    --dbf-muted-2: #8a93a0;
+    --dbf-amber: #f59e0b;
+    --dbf-emerald: #34d399;
+    --dbf-blue: #3b82f6;
+
+    width: 100%;
+    background: var(--dbf-bg);
+    color: var(--dbf-fg);
+    font-family: "Geist", var(--font-sans, ui-sans-serif, system-ui, sans-serif);
+    -webkit-font-smoothing: antialiased;
+}
+
+.dbfleet-root *,
+.dbfleet-root *::before,
+.dbfleet-root *::after {
+    box-sizing: border-box;
+}
+
+/* Mono numerals everywhere they read as data. */
+.dbfleet-live__clock,
+.dbfleet-brand__mark,
+.dbfleet-depot,
+.dbfleet-kpi__v,
+.dbfleet-status__num,
+.dbfleet-status__label,
+.dbfleet-veh,
+.dbfleet-eta,
+.dbfleet-target__note {
+    font-family: "Geist Mono", var(--font-mono, ui-monospace, monospace);
+}
+
+/* ── Shell ───────────────────────────────────────────────────────────────── */
+.dbfleet-shell {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    height: calc(100vh - 46px);
+    min-height: 560px;
+    max-height: 900px;
+    overflow: hidden;
+}
+
+/* ── Sidebar (restyle the react-fancy <aside>) ──────────────────────────── */
+.dbfleet-root [data-react-fancy-sidebar].dbfleet-side {
+    width: 100% !important;
+    gap: 0;
+    background: var(--dbf-surface) !important;
+    border-right: 1px solid var(--dbf-border) !important;
+    padding: 16px 12px;
+    color: var(--dbf-fg);
+    transition: none;
+}
+
+.dbfleet-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 10px;
+    margin-bottom: 16px;
+    font-weight: 700;
+    color: var(--dbf-fg-bright);
+}
+.dbfleet-brand__mark {
+    width: 24px;
+    height: 24px;
+    border-radius: 7px;
+    background: linear-gradient(135deg, #1e293b, var(--dbf-amber));
+    display: grid;
+    place-items: center;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+}
+.dbfleet-brand__name {
+    font-size: var(--text-sm, 0.875rem);
+}
+
+.dbfleet-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+/* Sidebar.Item — drop the light defaults, wear the dispatch pill. */
+.dbfleet-root [data-react-fancy-sidebar-item].dbfleet-navitem {
+    gap: 11px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    font-size: var(--text-sm, 0.875rem);
+    font-weight: 500;
+    color: var(--dbf-muted-2);
+    background: transparent;
+    transition: background 0.14s ease, color 0.14s ease;
+}
+.dbfleet-root [data-react-fancy-sidebar-item].dbfleet-navitem:hover {
+    background: #161b22;
+    color: var(--dbf-fg);
+}
+.dbfleet-root [data-react-fancy-sidebar-item].dbfleet-navitem[data-active] {
+    background: #1c2430;
+    color: var(--dbf-fg-bright);
+}
+.dbfleet-root [data-react-fancy-sidebar-item].dbfleet-navitem:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+}
+
+.dbfleet-depot {
+    margin-top: auto;
+    padding: 0 10px;
+    font-size: 11px;
+    line-height: 1.5;
+    color: #5e6774;
+}
+
+/* ── Main column ─────────────────────────────────────────────────────────── */
+.dbfleet-main {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    min-width: 0;
+}
+
+/* Topbar (restyle the react-fancy <nav>) */
+.dbfleet-root [data-react-fancy-navbar].dbfleet-topbar {
+    flex: none;
+    height: 54px;
+    display: flex;
+    align-items: center;
+    padding: 0 22px;
+    background: var(--dbf-bg) !important;
+    border-bottom: 1px solid var(--dbf-border) !important;
+}
+.dbfleet-root [data-react-fancy-navbar].dbfleet-topbar > div {
+    width: 100%;
+}
+.dbfleet-topbar__title {
+    font-size: var(--text-sm, 0.875rem) !important;
+    color: var(--dbf-fg) !important;
+    margin: 0 !important;
+}
+
+.dbfleet-live {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+}
+.dbfleet-live__active {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--dbf-emerald);
+}
+.dbfleet-live__dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--dbf-emerald);
+    box-shadow: 0 0 8px var(--dbf-emerald);
+    animation: dbfleet-pulse 2.4s ease-in-out infinite;
+}
+.dbfleet-live__delayed {
+    color: var(--dbf-amber);
+}
+.dbfleet-live__sep {
+    color: var(--dbf-muted);
+}
+.dbfleet-live__clock {
+    color: var(--dbf-muted);
+}
+
+/* ── Body split ──────────────────────────────────────────────────────────── */
+.dbfleet-body {
+    flex: 1;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    overflow: hidden;
+}
+
+/* ── Live fleet map ──────────────────────────────────────────────────────── */
+.dbfleet-map {
+    position: relative;
+    overflow: hidden;
+    border-right: 1px solid var(--dbf-border);
+    background: var(--dbf-map-bg);
+}
+.dbfleet-map__grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(var(--dbf-hair) 1px, transparent 1px),
+        linear-gradient(90deg, var(--dbf-hair) 1px, transparent 1px);
+    background-size: 44px 44px;
+    pointer-events: none;
+}
+.dbfleet-map__chart {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+}
+.dbfleet-map__placeholder {
+    width: 100%;
+    height: 100%;
+}
+
+/* Glass status overlay (restyle the flat Card) */
+.dbfleet-root .dbfleet-status {
+    position: absolute;
+    left: 16px;
+    bottom: 16px;
+    z-index: 4;
+    background: rgba(18, 22, 29, 0.9) !important;
+    border: 1px solid var(--dbf-border) !important;
+    border-radius: 10px !important;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+.dbfleet-status__body {
+    padding: 12px 14px !important;
+}
+.dbfleet-status__label {
+    font-size: 11px !important;
+    letter-spacing: 0.04em;
+    color: var(--dbf-muted) !important;
+    margin-bottom: 6px;
+}
+.dbfleet-status__figs {
+    display: flex;
+    gap: 16px;
+}
+.dbfleet-status__num {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.1;
+}
+.dbfleet-status__cap {
+    font-size: 10px;
+    color: var(--dbf-muted);
+    margin-top: 1px;
+}
+.dbfleet-root .dbfleet-status__bar {
+    margin-top: 10px;
+    width: 176px;
+}
+
+/* ── Ops panel ───────────────────────────────────────────────────────────── */
+.dbfleet-panel {
+    overflow-y: auto;
+    background: var(--dbf-bg);
+}
+.dbfleet-panel::-webkit-scrollbar {
+    width: 8px;
+}
+.dbfleet-panel::-webkit-scrollbar-thumb {
+    background: #232a34;
+    border-radius: 8px;
+}
+
+/* KPI strip — 1px gaps over a border-colored backing = hairline dividers. */
+.dbfleet-kpis {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--dbf-border);
+}
+.dbfleet-root .dbfleet-kpi {
+    background: var(--dbf-surface) !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+.dbfleet-kpi__body {
+    padding: 14px 16px !important;
+}
+.dbfleet-kpi__k {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--dbf-muted);
+}
+.dbfleet-kpi__v {
+    font-size: 22px;
+    font-weight: 700;
+    margin-top: 4px;
+    color: var(--dbf-fg-bright);
+}
+
+/* Active-deliveries header */
+.dbfleet-deliv__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--dbf-border);
+}
+.dbfleet-deliv__title {
+    font-weight: 600;
+    font-size: var(--text-sm, 0.875rem);
+    color: var(--dbf-fg);
+}
+.dbfleet-deliv__meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.dbfleet-root .dbfleet-deliv__all {
+    color: var(--dbf-muted-2) !important;
+    font-size: 12px !important;
+}
+.dbfleet-root .dbfleet-deliv__all:hover {
+    color: var(--dbf-fg) !important;
+}
+
+/* Deliveries table — strip the light chrome, hide the head, wear rows. */
+.dbfleet-tablewrap {
+    padding: 0;
+}
+.dbfleet-root .dbfleet-table[data-react-fancy-table],
+.dbfleet-root [data-react-fancy-table].dbfleet-table {
+    border: 0 !important;
+    border-radius: 0 !important;
+    overflow: visible !important;
+    background: transparent !important;
+}
+.dbfleet-root .dbfleet-table [data-react-fancy-table-head] {
+    display: none;
+}
+.dbfleet-root .dbfleet-table [data-react-fancy-table-body] {
+    border: 0 !important;
+}
+.dbfleet-root .dbfleet-table [data-react-fancy-table-body] > tr {
+    border: 0 !important;
+}
+.dbfleet-root .dbfleet-table [data-react-fancy-table-row].dbfleet-row {
+    border-bottom: 1px solid var(--dbf-hair);
+    background: transparent;
+    transition: background 0.14s ease;
+    cursor: pointer;
+}
+.dbfleet-root .dbfleet-table [data-react-fancy-table-row].dbfleet-row:hover {
+    background: rgba(255, 255, 255, 0.02);
+}
+.dbfleet-root .dbfleet-table [data-react-fancy-table-row].dbfleet-row.is-selected {
+    background: rgba(59, 130, 246, 0.1);
+    box-shadow: inset 3px 0 0 var(--dbf-blue);
+}
+.dbfleet-root .dbfleet-table td {
+    padding: 11px 8px !important;
+    vertical-align: middle;
+    border: 0 !important;
+    color: var(--dbf-fg);
+}
+.dbfleet-root .dbfleet-table td.dbfleet-cell-veh {
+    padding-left: 18px !important;
+    width: 48px;
+}
+.dbfleet-root .dbfleet-table td.dbfleet-cell-eta {
+    padding-right: 18px !important;
+    text-align: right;
+    white-space: nowrap;
+}
+
+.dbfleet-veh {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    background: var(--dbf-surface-2);
+    font-size: 11px;
+    color: #9aa3b0;
+    border: 1px solid transparent;
+}
+.dbfleet-veh--ontime {
+    box-shadow: inset 0 0 0 1px rgba(52, 211, 153, 0.35);
+}
+.dbfleet-veh--soon {
+    box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.35);
+}
+.dbfleet-veh--late {
+    box-shadow: inset 0 0 0 1px rgba(245, 158, 11, 0.35);
+}
+
+.dbfleet-cell-dest {
+    min-width: 0;
+    width: 100%;
+}
+.dbfleet-dest {
+    display: block;
+    font-size: var(--text-sm, 0.875rem);
+    font-weight: 600;
+    color: var(--dbf-fg);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.dbfleet-sub {
+    display: block;
+    font-size: 11px;
+    color: var(--dbf-muted);
+    margin-top: 1px;
+}
+
+/* ETA badge — pill tinted by status (Badge soft variants carry the hue). */
+.dbfleet-root .dbfleet-eta {
+    border-radius: 999px !important;
+    font-weight: 600;
+    font-size: 11px !important;
+}
+
+/* ── Shift-target progress trio ──────────────────────────────────────────── */
+.dbfleet-targets {
+    padding: 16px 18px 6px;
+    border-top: 1px solid var(--dbf-border);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.dbfleet-targets__head {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--dbf-muted);
+}
+.dbfleet-target__row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 5px;
+}
+.dbfleet-target__label {
+    font-size: 12px;
+    color: var(--dbf-fg);
+}
+.dbfleet-target__note {
+    font-size: 11px;
+    color: var(--dbf-muted);
+}
+.dbfleet-root .dbfleet-target__bar {
+    width: 100%;
+}
+
+.dbfleet-colophon {
+    padding: 16px 18px 22px;
+    font-size: 11px;
+    line-height: 1.5;
+    color: #4d5560;
+}
+
+/* ── Motion ──────────────────────────────────────────────────────────────── */
+@keyframes dbfleet-pulse {
+    0%,
+    100% {
+        opacity: 1;
+        box-shadow: 0 0 8px var(--dbf-emerald);
+    }
+    50% {
+        opacity: 0.55;
+        box-shadow: 0 0 3px var(--dbf-emerald);
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .dbfleet-live__dot {
+        animation: none;
+    }
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+    .dbfleet-shell {
+        grid-template-columns: 64px 1fr;
+    }
+    .dbfleet-brand__name,
+    .dbfleet-depot,
+    .dbfleet-root [data-react-fancy-sidebar-item].dbfleet-navitem > span:not(:first-child) {
+        display: none;
+    }
+    .dbfleet-root [data-react-fancy-sidebar-item].dbfleet-navitem {
+        justify-content: center;
+        padding: 10px 0;
+    }
+    .dbfleet-brand {
+        justify-content: center;
+        padding: 6px 0;
+    }
+}
+
+@media (max-width: 720px) {
+    .dbfleet-shell {
+        height: auto;
+        max-height: none;
+        overflow: visible;
+    }
+    .dbfleet-main {
+        overflow: visible;
+    }
+    .dbfleet-body {
+        grid-template-columns: 1fr;
+        overflow: visible;
+    }
+    .dbfleet-map {
+        height: 320px;
+        border-right: 0;
+        border-bottom: 1px solid var(--dbf-border);
+    }
+    .dbfleet-panel {
+        overflow: visible;
+    }
+}

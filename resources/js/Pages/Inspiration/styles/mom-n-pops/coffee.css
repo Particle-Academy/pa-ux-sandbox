@@ -5,10 +5,16 @@
    and 1px hairline rules carrying the whole vertical rhythm. Radius 0 across
    the page — the restyled react-fancy Modal (14px, soft-shadowed) is the one
    deliberate break in the flatness. No photos, no fills, no motion (hover
-   affordances snap, per the design). Light mode only. Every class prefixed
-   mpcoffee- so nothing leaks across the SPA; the modal + chips + close button
-   selectors are stacked for specificity because the Modal portals to <body>,
-   outside .mpcoffee-root.
+   affordances snap, per the design). Light mode only.
+
+   The page is built from restyled Fancy primitives: a Navbar (header lockup +
+   nav), Heading + Text (the whole typographic hierarchy), a Card grid (the
+   menu rows), a Table (the schedule), and the Modal/Badge/Button dialog. Each
+   primitive injects Tailwind utility classes, so the coffee selectors are
+   prefixed `.mpcoffee-root …` (two-class specificity) — and !important where a
+   utility must be zeroed — to re-dress every component in the cream/serif/mono
+   language. The modal + chips + close selectors are stacked instead, because
+   the Modal portals to <body>, outside .mpcoffee-root.
    ──────────────────────────────────────────────────────────────────────────── */
 
 .mpcoffee-root,
@@ -52,14 +58,17 @@
   padding: 0 32px;
 }
 
-/* ── Header ─────────────────────────────────────────────────────────────── */
-.mpcoffee-header {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 22px 0;
-  border-bottom: 1px solid var(--mpc-rule);
+/* ── Header — Navbar restyled to a hairline wordmark band ────────────────────
+   Navbar renders <nav border-b bg-white px-4 py-3><div flex justify-between>.
+   Zero the fill/padding, recolor the rule, and force the items visible (the
+   primitive hides them under md; this editorial page has no mobile toggle). */
+.mpcoffee-root .mpcoffee-header {
+  background: transparent !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--mpc-rule) !important;
+  padding: 22px 0 !important;
 }
+.mpcoffee-brand { min-width: 0; }
 .mpcoffee-wordmark {
   text-decoration: none;
   color: var(--mpc-ink);
@@ -81,30 +90,39 @@
   letter-spacing: 0.14em;
   color: var(--mpc-accent-2);
 }
-.mpcoffee-nav {
-  margin-left: auto;
-  display: flex;
-  gap: 26px;
-  font-size: var(--text-sm);
-  color: var(--mpc-ink-3);
+.mpcoffee-root .mpcoffee-nav {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center;
+  gap: 26px !important;
+  border: 0 !important;
+  padding: 0 !important;
 }
-.mpcoffee-nav a {
-  color: inherit;
-  text-decoration: none;
+.mpcoffee-root .mpcoffee-nav-link {
+  padding: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  font-family: var(--mpc-sans);
+  font-size: var(--text-sm) !important;
+  font-weight: 400 !important;
+  color: var(--mpc-ink-3) !important;
 }
-.mpcoffee-nav a:hover { color: var(--mpc-ink); }
-.mpcoffee-nav a:focus-visible {
+.mpcoffee-root .mpcoffee-nav-link:hover {
+  background: transparent !important;
+  color: var(--mpc-ink) !important;
+}
+.mpcoffee-root .mpcoffee-nav-link:focus-visible {
   outline: 1px dotted var(--mpc-accent);
   outline-offset: 4px;
 }
 
-/* ── Editorial hero ─────────────────────────────────────────────────────── */
+/* ── Editorial hero (Text eyebrow + Heading + Text lede) ─────────────────── */
 .mpcoffee-hero {
   padding: 80px 0 60px;
   text-align: center;
   border-bottom: 1px solid var(--mpc-rule);
 }
-.mpcoffee-eyebrow {
+.mpcoffee-root .mpcoffee-eyebrow {
   font-family: var(--mpc-mono);
   font-size: 11px;
   text-transform: uppercase;
@@ -112,16 +130,17 @@
   color: var(--mpc-accent-2);
   margin-bottom: 26px;
 }
-.mpcoffee-h1 {
+.mpcoffee-root .mpcoffee-h1 {
   font-family: var(--mpc-serif);
   font-size: clamp(34px, 5.6vw, 60px);
   line-height: 1.08;
   letter-spacing: -0.02em;
   font-weight: 400;
+  color: var(--mpc-ink);
   margin: 0 auto;
   max-width: 720px;
 }
-.mpcoffee-lede {
+.mpcoffee-root .mpcoffee-lede {
   font-size: var(--text-lg);
   color: var(--mpc-ink-3);
   line-height: 1.6;
@@ -129,18 +148,18 @@
   max-width: 500px;
 }
 
-/* ── Shared serif section headings ──────────────────────────────────────── */
-.mpcoffee-h2 {
+/* ── Shared serif section headings (Heading) ────────────────────────────── */
+.mpcoffee-root .mpcoffee-h2 {
   font-family: var(--mpc-serif);
   font-weight: 400;
   margin: 0;
   color: var(--mpc-ink);
 }
-.mpcoffee-h2-menu  { font-size: 32px; }
-.mpcoffee-h2-story { font-size: 34px; line-height: 1.16; }
-.mpcoffee-h2-sched { font-size: 30px; margin-bottom: 4px; }
+.mpcoffee-root .mpcoffee-h2-menu  { font-size: 32px; }
+.mpcoffee-root .mpcoffee-h2-story { font-size: 34px; line-height: 1.16; }
+.mpcoffee-root .mpcoffee-h2-sched { font-size: 30px; margin-bottom: 4px; }
 
-/* ── Menu list ("The list") ─────────────────────────────────────────────── */
+/* ── Menu list ("The list") — restyled Card rows ────────────────────────── */
 .mpcoffee-menu {
   padding: 56px 0;
   scroll-margin-top: 80px; /* clear the gallery frame's sticky chrome */
@@ -151,7 +170,7 @@
   gap: 14px;
   margin-bottom: 22px;
 }
-.mpcoffee-menu-aside {
+.mpcoffee-root .mpcoffee-menu-aside {
   font-family: var(--mpc-mono);
   font-size: 12px;
   color: var(--mpc-ink-5);
@@ -162,25 +181,26 @@
   gap: 0 56px;
 }
 
-/* Menu rows are real <button>s wearing plain menu-typography. Hover snaps
-   to 0.7 opacity — the design declares no transitions, so none here. */
-.mpcoffee-row {
-  appearance: none;
+/* Each menu item is a react-fancy Card zeroed to a plain hairline list row
+   (flat card fill, radius, and shadow all stripped) that behaves like a button
+   — role/tabindex/keydown live on the component. Hover snaps to 0.7 opacity;
+   no transitions, per the design's printed-page stillness. */
+.mpcoffee-root .mpcoffee-row {
   display: block;
   width: 100%;
   text-align: left;
-  background: none;
-  border: 0;
-  border-bottom: 1px solid var(--mpc-rule);
-  border-radius: 0;
+  background: none !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--mpc-rule) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
   margin: 0;
   padding: 18px 0;
-  font: inherit;
-  color: inherit;
+  color: var(--mpc-ink);
   cursor: pointer;
 }
-.mpcoffee-row:hover { opacity: 0.7; }
-.mpcoffee-row:focus-visible {
+.mpcoffee-root .mpcoffee-row:hover { opacity: 0.7; }
+.mpcoffee-root .mpcoffee-row:focus-visible {
   outline: 1px dotted var(--mpc-accent);
   outline-offset: 4px;
 }
@@ -195,7 +215,8 @@
   font-weight: 400;
 }
 /* The classic dotted price leader — a flex:1 spacer carrying the dotted
-   rule, nudged up to sit on the type baseline. Never fake this with dots. */
+   rule, nudged up to sit on the type baseline. Never fake this with dots.
+   Legitimately bespoke: it stays a hand-rolled span inside the Card. */
 .mpcoffee-row-leader {
   flex: 1;
   border-bottom: 1px dotted var(--mpc-leader);
@@ -206,14 +227,14 @@
   font-size: var(--text-sm);
   color: var(--mpc-accent);
 }
-.mpcoffee-row-short {
+.mpcoffee-root .mpcoffee-row-short {
   display: block;
-  font-size: var(--text-sm);
-  color: var(--mpc-ink-4);
+  font-size: var(--text-sm) !important;
+  color: var(--mpc-ink-4) !important;
   margin-top: 4px;
 }
 
-/* ── Story two-col ──────────────────────────────────────────────────────── */
+/* ── Story two-col (Heading + Text) ─────────────────────────────────────── */
 .mpcoffee-story {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -223,54 +244,92 @@
   border-top: 1px solid var(--mpc-rule);
   scroll-margin-top: 80px;
 }
-.mpcoffee-story-p1 {
+.mpcoffee-root .mpcoffee-story-p1 {
   font-size: var(--text-lg);
   color: var(--mpc-ink-3);
   line-height: 1.7;
   margin: 0 0 14px;
 }
-.mpcoffee-story-p2 {
+.mpcoffee-root .mpcoffee-story-p2 {
   font-size: var(--text-base);
   color: var(--mpc-ink-4);
   line-height: 1.7;
   margin: 0;
 }
 
-/* ── Schedule ("Where the cart parks") ──────────────────────────────────── */
+/* ── Schedule ("Where the cart parks") — chrome-zeroed Table ─────────────────
+   The react-fancy Table stripped of its rounded/bordered wrapper and re-dressed
+   as a printed transit table: a quiet mono header rule, hairline rows, a fixed
+   130px mono day column, and right-aligned mono hours. */
 .mpcoffee-sched {
   padding: 40px 0 70px;
   border-top: 1px solid var(--mpc-rule);
   scroll-margin-top: 80px;
 }
-.mpcoffee-sched-sub {
+.mpcoffee-root .mpcoffee-sched-sub {
   font-family: var(--mpc-mono);
   font-size: 12px;
   color: var(--mpc-ink-5);
   margin-bottom: 22px;
 }
-/* Timetable-as-typography: fixed day column, flexible place, right-shrunk
-   hours — reads like a printed transit table. */
-.mpcoffee-sched-row {
-  display: grid;
-  grid-template-columns: 130px 1fr auto;
-  gap: 16px;
-  padding: 13px 0;
-  border-bottom: 1px solid var(--mpc-rule);
-  align-items: baseline;
+.mpcoffee-root .mpcoffee-sched-table {
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  overflow: visible !important;
 }
-.mpcoffee-sched-day {
-  font-family: var(--mpc-mono);
-  font-size: var(--text-sm);
-  color: var(--mpc-accent);
+.mpcoffee-root .mpcoffee-sched-table table {
+  width: 100%;
+  border-collapse: collapse;
 }
-.mpcoffee-sched-place { color: var(--mpc-ink-2); }
-.mpcoffee-sched-hours {
-  font-family: var(--mpc-mono);
-  font-size: 12px;
-  color: var(--mpc-ink-5);
+.mpcoffee-root .mpcoffee-sched-table thead {
+  border: 0 !important;
+  border-bottom: 1px solid var(--mpc-rule) !important;
+}
+.mpcoffee-root .mpcoffee-sched-table th {
+  background: transparent !important;
+  padding: 0 16px 12px 0 !important;
+  text-align: left !important;
+  font-family: var(--mpc-mono) !important;
+  font-size: 11px !important;
+  font-weight: 400 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.14em !important;
+  color: var(--mpc-ink-6) !important;
+}
+.mpcoffee-root .mpcoffee-sched-table tbody tr { border: 0 !important; }
+.mpcoffee-root .mpcoffee-sched-table td {
+  background: transparent !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--mpc-rule) !important;
+  padding: 13px 16px 13px 0 !important;
+  vertical-align: baseline;
+  font-size: var(--text-base) !important;
+  color: var(--mpc-ink-2) !important;
+}
+.mpcoffee-root .mpcoffee-sched-table th:first-child,
+.mpcoffee-root .mpcoffee-sched-table td:first-child {
+  width: 130px;
+  white-space: nowrap;
+}
+.mpcoffee-root .mpcoffee-sched-table td:first-child {
+  font-family: var(--mpc-mono) !important;
+  font-size: var(--text-sm) !important;
+  color: var(--mpc-accent) !important;
+}
+.mpcoffee-root .mpcoffee-sched-table th:last-child,
+.mpcoffee-root .mpcoffee-sched-table td:last-child {
+  text-align: right !important;
+  padding-right: 0 !important;
+  white-space: nowrap;
+}
+.mpcoffee-root .mpcoffee-sched-table td:last-child {
+  font-family: var(--mpc-mono) !important;
+  font-size: 12px !important;
+  color: var(--mpc-ink-5) !important;
 }
 
-/* ── Footer ─────────────────────────────────────────────────────────────── */
+/* ── Footer — legitimately bespoke (split anti-scrape email) ─────────────── */
 .mpcoffee-footer { border-top: 1px solid var(--mpc-rule); }
 .mpcoffee-footer-inner {
   max-width: 1080px;
@@ -293,7 +352,9 @@
    The react-fancy Modal restyled to the cream palette: the page's ONLY
    rounded, elevated surface. The panel portals to <body>, so selectors are
    stacked (.mpcoffee-modal ×3) to outrank the primitive's own utility
-   classes AND any .dark-scoped variants regardless of stylesheet order. */
+   classes AND any .dark-scoped variants regardless of stylesheet order.
+   The Heading/Text inside are re-dressed via `.mpcoffee-modal <descendant>`
+   (two-class) since they, too, live outside .mpcoffee-root. */
 .mpcoffee-modal.mpcoffee-modal.mpcoffee-modal {
   max-width: 420px;
   width: 100%;
@@ -323,24 +384,26 @@ div:has(> .mpcoffee-modal) > div[aria-hidden="true"] {
   align-items: baseline;
   gap: 14px;
 }
-.mpcoffee-modal-name {
+.mpcoffee-modal .mpcoffee-modal-name {
   font-family: var(--mpc-serif);
   font-size: 32px;
   font-weight: 400;
+  line-height: 1.15;
   margin: 0;
+  color: var(--mpc-ink);
 }
-.mpcoffee-modal-price {
+.mpcoffee-modal .mpcoffee-modal-price {
   font-family: var(--mpc-mono);
   font-size: 20px;
   color: var(--mpc-accent);
 }
-.mpcoffee-modal-long {
+.mpcoffee-modal .mpcoffee-modal-long {
   font-size: var(--text-lg);
   color: var(--mpc-ink-2);
   line-height: 1.65;
   margin: 18px 0 22px;
 }
-.mpcoffee-modal-noteslabel {
+.mpcoffee-modal .mpcoffee-modal-noteslabel {
   font-family: var(--mpc-mono);
   font-size: 11px;
   text-transform: uppercase;
@@ -413,13 +476,14 @@ div:has(> .mpcoffee-modal) > div[aria-hidden="true"] {
     gap: 22px;
     padding: 44px 0;
   }
-  .mpcoffee-h2-story { font-size: 28px; }
-  .mpcoffee-sched-row { grid-template-columns: 64px 1fr auto; gap: 12px; }
+  .mpcoffee-root .mpcoffee-h2-story { font-size: 28px; }
+  .mpcoffee-root .mpcoffee-sched-table th:first-child,
+  .mpcoffee-root .mpcoffee-sched-table td:first-child { width: 64px; }
   .mpcoffee-footer-inner { padding: 26px 20px; }
 }
 
 @media (max-width: 480px) {
-  .mpcoffee-header { flex-wrap: wrap; }
-  .mpcoffee-nav { gap: 18px; }
-  .mpcoffee-lede { font-size: var(--text-base); }
+  .mpcoffee-root .mpcoffee-header > div { flex-wrap: wrap; row-gap: 12px; }
+  .mpcoffee-root .mpcoffee-nav { gap: 18px !important; }
+  .mpcoffee-root .mpcoffee-lede { font-size: var(--text-base); }
 }

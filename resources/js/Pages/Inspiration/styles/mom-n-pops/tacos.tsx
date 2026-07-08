@@ -1,7 +1,8 @@
 import "./tacos.css";
 import { Link } from "@inertiajs/react";
 import { useEffect, useState } from "react";
-import { Badge, Button, Modal, Tooltip } from "@particle-academy/react-fancy";
+import type { KeyboardEvent } from "react";
+import { Badge, Button, Card, Heading, Modal, Table, Text, Tooltip } from "@particle-academy/react-fancy";
 import type { Style } from "../../types";
 
 /**
@@ -14,12 +15,26 @@ import type { Style } from "../../types";
  * cards lift on hover with a warm shadow; the single layered surface is a
  * taco-detail Modal whose open state IS the selected menu item.
  *
- * Fancy primitives worn by the design: Button (red-fill + sand-outline pills),
- * Badge (data-driven tag pills + ingredient chips + the live "Today" marker),
- * Modal (the taco detail overlay — scrim, Escape, and "Add to order" all
- * dismiss), Tooltip (the fine print behind "∞ free chips*"). Menu cards, stat
- * tiles, and the schedule rows stay hand-rolled — truer to the mockup than a
- * forced Table.
+ * Fancy primitives worn by the design — every content block is a restyled
+ * primitive, not hand-rolled markup that shadows one:
+ *   • Card — the 6 clickable menu tiles (whole card is the modal trigger, worn
+ *     as an accessible role="button") AND the 2x2 story stat tiles.
+ *   • Table — the six-row day/place/hours weekly route, restyled to the
+ *     hairline "one bordered card" look (no header row, mono hours column).
+ *   • Badge — data-driven menu tag pills, ingredient chips, the live "Today"
+ *     schedule marker.
+ *   • Button — red-fill + sand-outline pills (hero CTAs, header pill, modal
+ *     add-to-order).
+ *   • Modal — the taco detail overlay (scrim, Escape, and "Add to order" all
+ *     dismiss).
+ *   • Heading / Text — the display headings + prose.
+ *   • Tooltip — the fine print behind "∞ free chips*".
+ *   • Link (Inertia) — the brand lockup back to the collection hub.
+ *
+ * Only the frosted-glass sticky header chrome, the emoji tiles, and the footer
+ * colophon stay hand-rolled — decorative art, not component stand-ins (an
+ * audit-sanctioned exception; Navbar is a lower-priority optional swap that
+ * would regress the frosted-glass + mobile pill behaviour).
  *
  * Mounted by Inspiration/Show.tsx for mom-n-pops / `style.id === "tacos"`.
  * SSR-safe: all data static, no timers, no randomness; the only browser
@@ -139,9 +154,17 @@ export default function Tacos({ style }: { style: Style }) {
     };
     const closeTaco = () => setOpen(false);
 
+    /** The menu Card is worn as a role="button" — mirror native Enter/Space activation. */
+    const onCardKey = (e: KeyboardEvent<HTMLDivElement>, m: MenuItem) => {
+        if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            openTaco(m);
+        }
+    };
+
     return (
         <div className="mptacos-root">
-            {/* ── Sticky frosted-cream header ─────────────────────────────── */}
+            {/* ── Sticky frosted-cream header (decorative chrome, hand-rolled) ── */}
             <header className="mptacos-header">
                 <div className="mptacos-header__in">
                     <Link href="/inspiration/mom-n-pops" className="mptacos-brand">
@@ -170,13 +193,13 @@ export default function Tacos({ style }: { style: Style }) {
                     <div className="mptacos-eyebrow">
                         <span aria-hidden>🌮</span> Family food truck · Milwaukee · Est. 2026
                     </div>
-                    <h1 id="mptacos-hero-title" className="mptacos-hero__title">
+                    <Heading as="h1" id="mptacos-hero-title" className="mptacos-hero__title">
                         Tacos the way Rosa's abuela made them.
-                    </h1>
-                    <p className="mptacos-hero__sub">
+                    </Heading>
+                    <Text as="p" className="mptacos-hero__sub">
                         Hand-pressed tortillas, slow-cooked fillings, salsas made fresh
                         every morning. Chase us down across Milwaukee.
-                    </p>
+                    </Text>
                     <div className="mptacos-hero__cta">
                         <Button
                             href="#mptacos-menu"
@@ -194,19 +217,23 @@ export default function Tacos({ style }: { style: Style }) {
                     </div>
                 </section>
 
-                {/* ── Menu grid ───────────────────────────────────────────── */}
+                {/* ── Menu grid (Card) ────────────────────────────────────── */}
                 <section id="mptacos-menu" className="mptacos-menu" aria-labelledby="mptacos-menu-title">
                     <div className="mptacos-menu__head">
-                        <h2 id="mptacos-menu-title" className="mptacos-h2">The menu</h2>
+                        <Heading as="h2" id="mptacos-menu-title" className="mptacos-h2">The menu</Heading>
                         <span className="mptacos-hint">tap a taco for the full story</span>
                     </div>
                     <div className="mptacos-grid">
                         {MENU.map((m) => (
-                            <button
+                            <Card
                                 key={m.name}
-                                type="button"
+                                variant="outlined"
+                                padding="none"
+                                role="button"
+                                tabIndex={0}
                                 className="mptacos-card"
                                 onClick={() => openTaco(m)}
+                                onKeyDown={(e) => onCardKey(e, m)}
                                 aria-haspopup="dialog"
                                 aria-label={`${m.name}, ${m.price} — ${m.short}`}
                             >
@@ -228,28 +255,28 @@ export default function Tacos({ style }: { style: Style }) {
                                     <span className="mptacos-card__price">{m.price}</span>
                                 </div>
                                 <p className="mptacos-card__short">{m.short}</p>
-                            </button>
+                            </Card>
                         ))}
                     </div>
                 </section>
 
-                {/* ── Story band ──────────────────────────────────────────── */}
+                {/* ── Story band (Card stat tiles) ────────────────────────── */}
                 <section id="mptacos-story" className="mptacos-story" aria-labelledby="mptacos-story-title">
                     <div className="mptacos-story__copy">
                         <div className="mptacos-eyebrow mptacos-eyebrow--left">Our story</div>
-                        <h2 id="mptacos-story-title" className="mptacos-story__title">
+                        <Heading as="h2" id="mptacos-story-title" className="mptacos-story__title">
                             Two parents, one griddle, a whole lot of Milwaukee.
-                        </h2>
-                        <p className="mptacos-story__body">
+                        </Heading>
+                        <Text as="p" className="mptacos-story__body">
                             Rosa runs the comal; Sal runs the window; the kids run the
                             register on weekends. Everything from scratch, small batches,
                             the slow way. If the line's long, that's why — and it's worth
                             it.
-                        </p>
+                        </Text>
                     </div>
                     <div className="mptacos-stats">
                         {STATS.map((s) => (
-                            <div key={s.k} className="mptacos-stat">
+                            <Card key={s.k} variant="outlined" padding="none" className="mptacos-stat">
                                 <div className="mptacos-stat__v">{s.v}</div>
                                 <div className="mptacos-stat__k">
                                     {s.note ? (
@@ -260,37 +287,41 @@ export default function Tacos({ style }: { style: Style }) {
                                         s.k
                                     )}
                                 </div>
-                            </div>
+                            </Card>
                         ))}
                     </div>
                 </section>
 
-                {/* ── Schedule ────────────────────────────────────────────── */}
+                {/* ── Schedule (Table) ────────────────────────────────────── */}
                 <section id="mptacos-schedule" className="mptacos-sched" aria-labelledby="mptacos-sched-title">
-                    <h2 id="mptacos-sched-title" className="mptacos-h2 mptacos-sched__title">Find the truck</h2>
-                    <div className="mptacos-sched__card">
-                        {SCHEDULE.map((s, i) => (
-                            <div
-                                key={s.day}
-                                className={`mptacos-sched__row${i === todayIdx ? " mptacos-sched__row--today" : ""}`}
-                            >
-                                <span className="mptacos-sched__day">
-                                    {s.day}
-                                    {i === todayIdx && (
-                                        <Badge size="sm" variant="solid" className="mptacos-today">
-                                            Today
-                                        </Badge>
-                                    )}
-                                </span>
-                                <span className="mptacos-sched__place">{s.place}</span>
-                                <span className="mptacos-sched__hours">{s.hours}</span>
-                            </div>
-                        ))}
-                    </div>
+                    <Heading as="h2" id="mptacos-sched-title" className="mptacos-h2 mptacos-sched__title">
+                        Find the truck
+                    </Heading>
+                    <Table className="mptacos-sched__card">
+                        <Table.Body className="mptacos-sched__body">
+                            {SCHEDULE.map((s, i) => (
+                                <Table.Row
+                                    key={s.day}
+                                    className={`mptacos-sched__row${i === todayIdx ? " mptacos-sched__row--today" : ""}`}
+                                >
+                                    <Table.Cell className="mptacos-sched__day">
+                                        {s.day}
+                                        {i === todayIdx && (
+                                            <Badge size="sm" variant="solid" className="mptacos-today">
+                                                Today
+                                            </Badge>
+                                        )}
+                                    </Table.Cell>
+                                    <Table.Cell className="mptacos-sched__place">{s.place}</Table.Cell>
+                                    <Table.Cell className="mptacos-sched__hours">{s.hours}</Table.Cell>
+                                </Table.Row>
+                            ))}
+                        </Table.Body>
+                    </Table>
                 </section>
             </div>
 
-            {/* ── Footer band ─────────────────────────────────────────────── */}
+            {/* ── Footer band (decorative colophon, hand-rolled) ──────────── */}
             <footer className="mptacos-footer">
                 <div className="mptacos-footer__in">
                     <span className="mptacos-footer__brand">Mom-n-Pops Taquería</span>
@@ -317,12 +348,12 @@ export default function Tacos({ style }: { style: Style }) {
                         <div className="mptacos-modal__head">
                             <span className="mptacos-modal__tile" aria-hidden>{sel.icon}</span>
                             <div>
-                                <h2 className="mptacos-modal__name">{sel.name}</h2>
+                                <Heading as="h2" className="mptacos-modal__name">{sel.name}</Heading>
                                 <span className="mptacos-modal__price">{sel.price}</span>
                             </div>
                         </div>
                         <div className="mptacos-modal__body">
-                            <p className="mptacos-modal__long">{sel.long}</p>
+                            <Text as="p" className="mptacos-modal__long">{sel.long}</Text>
                             <div className="mptacos-modal__chips">
                                 {sel.ingredients.map((ing) => (
                                     <Badge key={ing} variant="outline" size="md" className="mptacos-chip">

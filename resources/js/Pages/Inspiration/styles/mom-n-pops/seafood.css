@@ -286,15 +286,18 @@
     flex-wrap: wrap;
 }
 
-/* The mini dashboard card that sells the concept — navy header bar, mono
-   timestamp, four derived status rows, deep soft shadow. */
-.mpseafood-peek {
-    background: var(--mps-surface);
-    border: 1px solid var(--mps-line-2);
-    border-radius: var(--mps-r-peek);
-    overflow: hidden;
-    box-shadow: 0 18px 40px -22px rgba(18, 49, 76, 0.4);
+/* The mini dashboard card that sells the concept — a restyled react-fancy
+   Card (Card.Header = navy bar + mono timestamp, Card.Body = four derived
+   status rows), deep soft shadow. Card's rounded-lg / border / bg-white
+   defaults are overridden to the shack's 18px peek radius. */
+.mpseafood-root .mpseafood-peek {
+    background: var(--mps-surface) !important;
+    border: 1px solid var(--mps-line-2) !important;
+    border-radius: var(--mps-r-peek) !important;
+    overflow: hidden !important;
+    box-shadow: 0 18px 40px -22px rgba(18, 49, 76, 0.4) !important;
 }
+/* Card.Header ships a light border-b — the navy bar wants none. */
 .mpseafood-peek-head {
     background: var(--mps-navy);
     color: #fff;
@@ -302,6 +305,7 @@
     display: flex;
     align-items: center;
     gap: 9px;
+    border-bottom: 0 !important;
 }
 .mpseafood-peek-title {
     font-size: var(--text-sm);
@@ -388,11 +392,14 @@
     gap: 18px;
 }
 
-.mpseafood-dish {
-    background: var(--mps-surface);
-    border: 1px solid var(--mps-line);
-    border-radius: var(--mps-r);
-    padding: 20px;
+/* Each dish is a restyled react-fancy Card — its rounded-lg / bg-white /
+   border-zinc defaults forced back to the shack's flat white 14px panel. */
+.mpseafood-root .mpseafood-dish {
+    background: var(--mps-surface) !important;
+    border: 1px solid var(--mps-line) !important;
+    border-radius: var(--mps-r) !important;
+    box-shadow: none !important;
+    padding: 20px !important;
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -610,24 +617,30 @@
     text-align: center;
     font-variant-numeric: tabular-nums;
 }
-.mpseafood-step {
-    width: 20px;
-    height: 20px;
-    border-radius: 6px;
-    border: 1px solid var(--mps-line);
-    background: var(--mps-surface);
-    color: var(--mps-ink-2);
-    display: inline-grid;
-    place-items: center;
-    padding: 0;
+/* − / + steppers are react-fancy ghost Buttons flattened back to the mockup's
+   20px hairline box — Button's size padding / min-height / hover fill stripped. */
+.mpseafood-root .mpseafood-step {
+    width: 20px !important;
+    height: 20px !important;
+    min-width: 20px !important;
+    min-height: 20px !important;
+    border-radius: 6px !important;
+    border: 1px solid var(--mps-line) !important;
+    background: var(--mps-surface) !important;
+    color: var(--mps-ink-2) !important;
+    display: inline-grid !important;
+    place-items: center !important;
+    padding: 0 !important;
+    box-shadow: none !important;
     cursor: pointer;
 }
-.mpseafood-step:hover:not(:disabled) {
-    border-color: var(--mps-navy);
-    color: var(--mps-navy);
+.mpseafood-root .mpseafood-step:hover:not(:disabled) {
+    background: var(--mps-surface) !important;
+    border-color: var(--mps-navy) !important;
+    color: var(--mps-navy) !important;
 }
-.mpseafood-step:disabled {
-    opacity: 0.35;
+.mpseafood-root .mpseafood-step:disabled {
+    opacity: 0.35 !important;
     cursor: default;
 }
 
@@ -702,11 +715,14 @@
     grid-template-columns: 1fr 1fr;
     gap: 14px;
 }
-.mpseafood-stat {
-    background: var(--mps-surface);
-    border: 1px solid var(--mps-line);
-    border-radius: var(--mps-r);
-    padding: 18px;
+/* Stat tiles are restyled react-fancy Cards — flat white 14px brag-wall
+   panels, Card's default chrome overridden. */
+.mpseafood-root .mpseafood-stat {
+    background: var(--mps-surface) !important;
+    border: 1px solid var(--mps-line) !important;
+    border-radius: var(--mps-r) !important;
+    box-shadow: none !important;
+    padding: 18px !important;
 }
 .mpseafood-stat-v {
     font-size: 30px;
@@ -733,35 +749,57 @@
     color: var(--mps-ink);
 }
 
-.mpseafood-sched {
-    background: var(--mps-surface);
-    border: 1px solid var(--mps-line);
-    border-radius: var(--mps-r);
-    overflow: hidden;
+/* The tide-table is a restyled react-fancy Table. Its wrapper carries Card-like
+   defaults (overflow-hidden rounded-lg border border-zinc) — forced to the
+   shack's 14px white panel; the column header (thead) is hidden so the schedule
+   keeps the mockup's headerless tide-table read while the columns stay declared
+   for a11y + agents; the inner tbody dividers are re-drawn as td hairlines. */
+.mpseafood-root .mpseafood-sched {
+    background: var(--mps-surface) !important;
+    border: 1px solid var(--mps-line) !important;
+    border-radius: var(--mps-r) !important;
+    overflow: hidden !important;
 }
-.mpseafood-sched-row {
-    display: grid;
-    grid-template-columns: 120px 1fr auto;
-    gap: 16px;
-    align-items: center;
-    padding: 14px 22px;
-    border-bottom: 1px solid var(--mps-hairline-4);
+.mpseafood-root .mpseafood-sched thead {
+    display: none;
 }
-.mpseafood-sched-row:last-child {
-    border-bottom: 0;
+/* Neutralise the Table body's divide-y so only our td hairline shows. */
+.mpseafood-root .mpseafood-sched tbody tr {
+    border-top: 0 !important;
 }
-.mpseafood-sched-day {
-    font-weight: 700;
-    color: var(--mps-ink);
+.mpseafood-root .mpseafood-sched td {
+    padding: 14px 8px !important; /* 8+8 = the mockup's 16px inter-column gap */
+    font-size: var(--text-sm) !important;
+    color: var(--mps-ink-2) !important;
+    background: transparent !important;
+    border-bottom: 1px solid var(--mps-hairline-4) !important;
+    vertical-align: middle !important;
 }
-.mpseafood-sched-place {
-    color: var(--mps-ink-2);
+.mpseafood-root .mpseafood-sched td:first-child {
+    padding-left: 22px !important;
 }
-.mpseafood-sched-hours {
-    font-family: var(--font-mono);
-    font-size: var(--text-sm);
-    color: var(--mps-meta);
+.mpseafood-root .mpseafood-sched td:last-child {
+    padding-right: 22px !important;
+}
+.mpseafood-root .mpseafood-sched tbody tr:last-child td {
+    border-bottom: 0 !important;
+}
+.mpseafood-root .mpseafood-sched td.mpseafood-sched-day {
+    width: 120px;
+    font-weight: 700 !important;
+    color: var(--mps-ink) !important;
+    white-space: nowrap;
+}
+.mpseafood-root .mpseafood-sched td.mpseafood-sched-place {
+    color: var(--mps-ink-2) !important;
+}
+.mpseafood-root .mpseafood-sched td.mpseafood-sched-hours {
+    font-family: var(--font-mono) !important;
+    font-size: var(--text-sm) !important;
+    color: var(--mps-meta) !important;
+    text-align: right !important;
     font-variant-numeric: tabular-nums;
+    white-space: nowrap;
 }
 
 /* ── Footer ──────────────────────────────────────────────────────────────── */
@@ -862,10 +900,17 @@
         width: 100%;
         justify-content: space-between;
     }
-    .mpseafood-sched-row {
-        grid-template-columns: 92px 1fr auto;
-        gap: 10px;
-        padding: 12px 16px;
+    .mpseafood-root .mpseafood-sched td {
+        padding: 12px 5px !important; /* 5+5 = the mockup's 10px narrow-screen gap */
+    }
+    .mpseafood-root .mpseafood-sched td:first-child {
+        padding-left: 16px !important;
+    }
+    .mpseafood-root .mpseafood-sched td:last-child {
+        padding-right: 16px !important;
+    }
+    .mpseafood-root .mpseafood-sched td.mpseafood-sched-day {
+        width: 92px;
     }
     .mpseafood-footer-shell {
         flex-direction: column;

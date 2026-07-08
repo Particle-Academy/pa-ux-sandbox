@@ -72,20 +72,23 @@
   height: 18px;
 }
 
-/* ── Sticky white hairline header (stays UNDER the z-30 gallery frame) ───── */
-.mppretzels-header {
+/* ── Navbar worn as the sticky white hairline header ─────────────────────── */
+/* The react-fancy Navbar <nav> gets .mppretzels-header; its Tailwind chrome
+   (px-4 py-3, zinc border, white bg) is overridden to the parchment palette,
+   and its inner flex row becomes the centered 1160px container. Stays UNDER
+   the z-30 gallery frame. */
+.mppretzels-root .mppretzels-header {
   position: sticky;
   top: 0;
   z-index: 20;
-  background: var(--mpz-card);
-  border-bottom: 1px solid var(--mpz-line);
+  padding: 0 !important;
+  background: var(--mpz-card) !important;
+  border-bottom: 1px solid var(--mpz-line) !important;
 }
-.mppretzels-header__in {
+.mppretzels-root .mppretzels-header > div {
   max-width: 1160px;
   margin: 0 auto;
   padding: 14px 28px;
-  display: flex;
-  align-items: center;
   gap: 16px;
 }
 .mppretzels-brand {
@@ -112,23 +115,32 @@
   letter-spacing: 0.08em !important;
   line-height: 1 !important;
 }
-.mppretzels-nav {
-  margin-left: auto;
-  display: flex;
+/* Navbar.Items — override the hidden/md:flex + gap-1 Tailwind so the row is
+   always visible (no mobile toggle rendered) at the design's 24px rhythm */
+.mppretzels-root .mppretzels-nav {
+  display: flex !important;
   align-items: center;
-  gap: 24px;
+  gap: 24px !important;
   font-size: var(--text-sm);
   font-weight: 600;
   color: var(--mpz-ink-2);
 }
-.mppretzels-nav__link {
-  color: var(--mpz-ink-2);
+/* Navbar.Item <a> stripped of its pill chrome to a plain biergarten link */
+.mppretzels-root .mppretzels-nav__link {
+  padding: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: var(--mpz-ink-2) !important;
+  font-size: var(--text-sm) !important;
+  font-weight: 600 !important;
   text-decoration: none;
+  transition: none !important;
 }
-.mppretzels-nav__link:hover {
-  color: var(--mpz-ink);
+.mppretzels-root .mppretzels-nav__link:hover {
+  background: transparent !important;
+  color: var(--mpz-ink) !important;
 }
-.mppretzels-nav__link:focus-visible {
+.mppretzels-root .mppretzels-nav__link:focus-visible {
   outline: 2px solid var(--mpz-blue);
   outline-offset: 3px;
   border-radius: 3px;
@@ -326,11 +338,13 @@
   grid-template-columns: repeat(3, 1fr);
   gap: 16px;
 }
-.mppretzels-menu__card {
-  background: var(--mpz-card);
-  border: 1px solid var(--mpz-line);
-  border-radius: 14px;
-  padding: 18px;
+/* Card (variant flat / padding none) → white hairline menu card */
+.mppretzels-root .mppretzels-menu__card {
+  background: var(--mpz-card) !important;
+  border: 1px solid var(--mpz-line) !important;
+  border-radius: 14px !important;
+  padding: 18px !important;
+  box-shadow: none !important;
 }
 .mppretzels-menu__row {
   display: flex;
@@ -501,17 +515,24 @@
   margin-top: 3px;
 }
 
-/* Selected-stop banner — the one high-saturation block on the page */
-.mppretzels-banner {
-  margin-top: 14px;
-  background: var(--mpz-blue);
-  color: #fff;
-  border-radius: 14px;
-  padding: 18px 22px;
+/* Callout → the one high-saturation block: its alert chrome (light bg,
+   border-l-4, rounded-lg, p-4, gap-3) is overridden to the solid blue banner;
+   Callout wraps children in a min-w-0 flex-1 div, so the row lives inside. */
+.mppretzels-root .mppretzels-banner {
+  margin-top: 14px !important;
+  background: var(--mpz-blue) !important;
+  color: #fff !important;
+  border: 0 !important;
+  border-radius: 14px !important;
+  padding: 18px 22px !important;
+  gap: 0 !important;
+}
+.mppretzels-banner__inner {
   display: flex;
   align-items: center;
   gap: 16px;
   flex-wrap: wrap;
+  width: 100%;
 }
 .mppretzels-banner__main {
   flex: 1;
@@ -563,11 +584,13 @@
   grid-template-columns: 1fr 1fr;
   gap: 14px;
 }
-.mppretzels-stat {
-  background: var(--mpz-card);
-  border: 1px solid var(--mpz-line);
-  border-radius: 14px;
-  padding: 18px;
+/* Card (variant flat / padding none) → brand-voice stat tile */
+.mppretzels-root .mppretzels-stat {
+  background: var(--mpz-card) !important;
+  border: 1px solid var(--mpz-line) !important;
+  border-radius: 14px !important;
+  padding: 18px !important;
+  box-shadow: none !important;
 }
 .mppretzels-stat__v {
   font-size: 28px;
@@ -631,11 +654,11 @@
 }
 
 @media (max-width: 720px) {
-  .mppretzels-nav {
-    gap: 14px;
+  .mppretzels-root .mppretzels-nav {
+    gap: 14px !important;
   }
-  .mppretzels-nav__link {
-    display: none;
+  .mppretzels-root .mppretzels-nav__link {
+    display: none !important;
   }
   .mppretzels-menu__grid {
     grid-template-columns: 1fr;

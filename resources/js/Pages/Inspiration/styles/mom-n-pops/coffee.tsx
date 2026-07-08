@@ -1,7 +1,7 @@
 import "./coffee.css";
 import { Link } from "@inertiajs/react";
-import { useState } from "react";
-import { Badge, Button, Modal } from "@particle-academy/react-fancy";
+import { useState, type KeyboardEvent } from "react";
+import { Badge, Button, Card, Heading, Modal, Navbar, Table, Text } from "@particle-academy/react-fancy";
 import type { Style } from "../../types";
 
 /**
@@ -10,11 +10,18 @@ import type { Style } from "../../types";
  * The family truck as a family COFFEE CART, set like a quiet magazine page:
  * warm cream paper (#F5EFE6), espresso ink, Georgia serif display type at
  * regular weight, mono eyebrows, and 1px hairline rules carrying the entire
- * vertical rhythm. No cards, no fills, no photos, no CTA button anywhere —
- * hierarchy is purely typographic. Six menu rows with classic dotted price
- * leaders open the one elevated surface on the page: a restyled react-fancy
- * Modal item card (the only rounded corner in the design). The schedule is a
- * printed-transit-table grid; the footer keeps the anti-scrape split email.
+ * vertical rhythm. No fills, no photos, no CTA button anywhere — hierarchy is
+ * purely typographic, but the typography and structure run through the Fancy
+ * kit: the whole page is restyled react-fancy primitives dressed down to cream.
+ *
+ * Restyled Fancy primitives: Navbar (the header lockup + in-page nav), Heading
+ * + Text (every display headline, eyebrow, lede, story paragraph, and modal
+ * label — the full typographic hierarchy), Card (the six tap-for-detail menu
+ * rows, chrome-zeroed to hairline list rows with dotted price leaders), Table
+ * (the weekly parking schedule as a printed transit table), and the Modal /
+ * Badge / Button item-detail dialog — the page's one rounded, elevated surface.
+ * Legitimately bespoke and left hand-rolled: the dotted flex-spacer price
+ * leaders, the cream/hairline texture, and the split anti-scrape email footer.
  *
  * Mounted by Inspiration/Show.tsx for `style.id === "coffee"`. SSR-safe: the
  * only state is the selected menu item (modal), no browser APIs at render,
@@ -97,91 +104,146 @@ export default function Coffee({ style }: { style: Style }) {
     };
     const close = () => setOpen(false);
 
+    /** Menu rows are restyled Cards; keep them keyboard-operable like buttons. */
+    const onRowKey = (item: MenuItem) => (e: KeyboardEvent<HTMLDivElement>) => {
+        if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            openItem(item);
+        }
+    };
+
     return (
         <div className="mpcoffee-root" data-style-num={style.num}>
             <div className="mpcoffee-shell">
-                {/* ── Header: two-part wordmark + text nav ─────────────────── */}
-                <header className="mpcoffee-header">
-                    <Link href="/inspiration/mom-n-pops" className="mpcoffee-wordmark">
-                        <span className="mpcoffee-wordmark-name">Mom-n-Pops</span>
-                        <span className="mpcoffee-wordmark-tag">Coffee</span>
-                    </Link>
-                    <nav className="mpcoffee-nav" aria-label="Sections">
-                        <a href="#menu">Menu</a>
-                        <a href="#story">Story</a>
-                        <a href="#findus">Find us</a>
-                    </nav>
-                </header>
+                {/* ── Header: Navbar restyled to a two-part wordmark + text nav ── */}
+                <Navbar className="mpcoffee-header">
+                    <Navbar.Brand className="mpcoffee-brand">
+                        <Link href="/inspiration/mom-n-pops" className="mpcoffee-wordmark">
+                            <span className="mpcoffee-wordmark-name">Mom-n-Pops</span>
+                            <span className="mpcoffee-wordmark-tag">Coffee</span>
+                        </Link>
+                    </Navbar.Brand>
+                    <Navbar.Items className="mpcoffee-nav">
+                        <Navbar.Item href="#menu" className="mpcoffee-nav-link">
+                            Menu
+                        </Navbar.Item>
+                        <Navbar.Item href="#story" className="mpcoffee-nav-link">
+                            Story
+                        </Navbar.Item>
+                        <Navbar.Item href="#findus" className="mpcoffee-nav-link">
+                            Find us
+                        </Navbar.Item>
+                    </Navbar.Items>
+                </Navbar>
 
                 {/* ── Editorial hero: eyebrow / serif display / lede ───────── */}
                 <section className="mpcoffee-hero" aria-labelledby="mpcoffee-h1">
-                    <div className="mpcoffee-eyebrow">Family coffee cart · Milwaukee · since 2026</div>
-                    <h1 id="mpcoffee-h1" className="mpcoffee-h1">
+                    <Text as="div" className="mpcoffee-eyebrow">
+                        Family coffee cart · Milwaukee · since 2026
+                    </Text>
+                    <Heading as="h1" id="mpcoffee-h1" weight="normal" className="mpcoffee-h1">
                         Small-batch coffee, pulled slow by the people who roast it.
-                    </h1>
-                    <p className="mpcoffee-lede">
+                    </Heading>
+                    <Text as="p" className="mpcoffee-lede">
                         Rosa roasts on Sundays. Sal pulls the shots. You'll find our little
                         cart wherever Milwaukee needs a good cup.
-                    </p>
+                    </Text>
                 </section>
 
-                {/* ── The list: six menu rows with dotted price leaders ────── */}
+                {/* ── The list: six menu rows as restyled Cards ────────────── */}
                 <section className="mpcoffee-menu" id="menu" aria-labelledby="mpcoffee-menu-title">
                     <div className="mpcoffee-menu-head">
-                        <h2 id="mpcoffee-menu-title" className="mpcoffee-h2 mpcoffee-h2-menu">The list</h2>
-                        <span className="mpcoffee-menu-aside">— six things, done well · tap for detail</span>
+                        <Heading
+                            as="h2"
+                            id="mpcoffee-menu-title"
+                            weight="normal"
+                            className="mpcoffee-h2 mpcoffee-h2-menu"
+                        >
+                            The list
+                        </Heading>
+                        <Text as="span" className="mpcoffee-menu-aside">
+                            — six things, done well · tap for detail
+                        </Text>
                     </div>
                     <div className="mpcoffee-menu-grid">
                         {MENU.map((m) => (
-                            <button
+                            <Card
                                 key={m.name}
-                                type="button"
+                                variant="flat"
+                                padding="none"
                                 className="mpcoffee-row"
+                                role="button"
+                                tabIndex={0}
                                 onClick={() => openItem(m)}
+                                onKeyDown={onRowKey(m)}
                                 aria-haspopup="dialog"
                                 aria-label={`${m.name}, ${m.price} — details`}
+                                data-menu-item={m.name}
                             >
                                 <span className="mpcoffee-row-line">
                                     <span className="mpcoffee-row-name">{m.name}</span>
                                     <span className="mpcoffee-row-leader" aria-hidden="true" />
                                     <span className="mpcoffee-row-price">{m.price}</span>
                                 </span>
-                                <span className="mpcoffee-row-short">{m.short}</span>
-                            </button>
+                                <Text as="span" className="mpcoffee-row-short">
+                                    {m.short}
+                                </Text>
+                            </Card>
                         ))}
                     </div>
                 </section>
 
                 {/* ── Story: pull-quote heading left, copy right ───────────── */}
                 <section className="mpcoffee-story" id="story" aria-labelledby="mpcoffee-story-title">
-                    <h2 id="mpcoffee-story-title" className="mpcoffee-h2 mpcoffee-h2-story">
+                    <Heading
+                        as="h2"
+                        id="mpcoffee-story-title"
+                        weight="normal"
+                        className="mpcoffee-h2 mpcoffee-h2-story"
+                    >
                         It started with one broken espresso machine and a lot of stubbornness.
-                    </h2>
+                    </Heading>
                     <div className="mpcoffee-story-copy">
-                        <p className="mpcoffee-story-p1">
+                        <Text as="p" className="mpcoffee-story-p1">
                             Rosa &amp; Sal fixed up a secondhand lever machine, bolted it to a
                             bike cart, and started serving neighbors in 2026.
-                        </p>
-                        <p className="mpcoffee-story-p2">
+                        </Text>
+                        <Text as="p" className="mpcoffee-story-p2">
                             The cart's bigger now, the coffee's better, and the two of them
                             still argue about grind size every single morning.
-                        </p>
+                        </Text>
                     </div>
                 </section>
 
-                {/* ── Schedule: printed transit-table grid ─────────────────── */}
+                {/* ── Schedule: printed transit table (restyled Table) ─────── */}
                 <section className="mpcoffee-sched" id="findus" aria-labelledby="mpcoffee-sched-title">
-                    <h2 id="mpcoffee-sched-title" className="mpcoffee-h2 mpcoffee-h2-sched">Where the cart parks</h2>
-                    <div className="mpcoffee-sched-sub">Milwaukee · mornings 7–11 unless noted</div>
-                    <div role="list">
-                        {SCHEDULE.map((s) => (
-                            <div key={s.day} role="listitem" className="mpcoffee-sched-row">
-                                <span className="mpcoffee-sched-day">{s.day}</span>
-                                <span className="mpcoffee-sched-place">{s.place}</span>
-                                <span className="mpcoffee-sched-hours">{s.hours}</span>
-                            </div>
-                        ))}
-                    </div>
+                    <Heading
+                        as="h2"
+                        id="mpcoffee-sched-title"
+                        weight="normal"
+                        className="mpcoffee-h2 mpcoffee-h2-sched"
+                    >
+                        Where the cart parks
+                    </Heading>
+                    <Text as="div" className="mpcoffee-sched-sub">
+                        Milwaukee · mornings 7–11 unless noted
+                    </Text>
+                    <Table className="mpcoffee-sched-table">
+                        <Table.Head>
+                            <Table.Column label="Day" />
+                            <Table.Column label="Place" />
+                            <Table.Column label="Hours" />
+                        </Table.Head>
+                        <Table.Body>
+                            {SCHEDULE.map((s) => (
+                                <Table.Row key={s.day}>
+                                    <Table.Cell>{s.day}</Table.Cell>
+                                    <Table.Cell>{s.place}</Table.Cell>
+                                    <Table.Cell>{s.hours}</Table.Cell>
+                                </Table.Row>
+                            ))}
+                        </Table.Body>
+                    </Table>
                 </section>
             </div>
 
@@ -207,11 +269,19 @@ export default function Coffee({ style }: { style: Style }) {
                 {sel && (
                     <div className="mpcoffee-modal-inner">
                         <div className="mpcoffee-modal-head">
-                            <h3 className="mpcoffee-modal-name">{sel.name}</h3>
-                            <span className="mpcoffee-modal-price">{sel.price}</span>
+                            <Heading as="h3" weight="normal" className="mpcoffee-modal-name">
+                                {sel.name}
+                            </Heading>
+                            <Text as="span" className="mpcoffee-modal-price">
+                                {sel.price}
+                            </Text>
                         </div>
-                        <p className="mpcoffee-modal-long">{sel.long}</p>
-                        <div className="mpcoffee-modal-noteslabel">Notes</div>
+                        <Text as="p" className="mpcoffee-modal-long">
+                            {sel.long}
+                        </Text>
+                        <Text as="div" className="mpcoffee-modal-noteslabel">
+                            Notes
+                        </Text>
                         <div className="mpcoffee-modal-chips">
                             {sel.ingredients.map((i) => (
                                 <Badge key={i} variant="outline" size="md" className="mpcoffee-chip">

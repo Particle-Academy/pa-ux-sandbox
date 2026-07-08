@@ -1,0 +1,624 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Dashboards · App 12 — Relay (support helpdesk)
+   Board-first helpdesk: a slim 52px white Navbar bar, a flush 5-cell KPI strip
+   joined by hairline Separators, and a horizontally-scrolling Kanban ticket
+   board that fills the workspace. Cool indigo #4338CA accent + sky #38BDF8 on a
+   #F4F5FA canvas; priority/SLA colour is data, not an imperative paint() pass.
+   Every selector is scoped under .dbrelay-root; every class is prefixed
+   dbrelay-. Page-level z-index stays UNDER 30 (the gallery frame owns 30+).
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.dbrelay-root {
+    /* ── Scoped Relay tokens ─────────────────────────────────────────────── */
+    --db-bg: #f4f5fa; /* app canvas */
+    --db-surface: #ffffff; /* bars, cards, tickets */
+    --db-well: #eef0f5; /* kanban column wells + switcher track */
+    --db-fg: #1c2530; /* primary ink */
+    --db-fg-2: #5b6674; /* secondary */
+    --db-muted: #8895a6; /* muted labels */
+    --db-accent: #4338ca; /* indigo */
+    --db-accent-soft: #eef0fb; /* indigo wash — avatars */
+    --db-sky: #38bdf8; /* secondary accent */
+    --db-teal: #0ea5a0; /* avg reply / online */
+    --db-orange: #ea580c; /* unassigned / waiting */
+    --db-red: #dc2626; /* breach */
+    --db-border: #e5eaf0; /* hairline */
+    --db-border-2: #eef1f5; /* softer hairline */
+
+    /* Full-bleed breakout: the gallery shell centres content in a padded
+       container; the dashboard canvas must run edge to edge. */
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+
+    background: var(--db-bg);
+    color: var(--db-fg);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+
+    /* A locked, board-first workspace that fills the viewport below the frame. */
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 52px);
+    height: calc(100dvh - 52px);
+    min-height: 600px;
+    overflow: hidden;
+}
+
+.dbrelay-root *,
+.dbrelay-root *::before,
+.dbrelay-root *::after {
+    box-sizing: border-box;
+}
+
+.dbrelay-root ::selection {
+    background: color-mix(in oklch, var(--db-accent) 22%, transparent);
+}
+
+/* ── Top bar — the Navbar shell, flattened to a slim 52px strip ──────────────── */
+.dbrelay-root .dbrelay-topbar {
+    flex: none;
+    padding: 0 20px !important;
+    height: 52px;
+    background: var(--db-surface) !important;
+    border-bottom: 1px solid var(--db-border) !important;
+    display: flex;
+    align-items: center;
+}
+.dbrelay-root .dbrelay-topbar > div {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+.dbrelay-topbar-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-width: 0;
+}
+.dbrelay-topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 12px;
+}
+
+/* Brand — gradient "R" mark + wordmark */
+.dbrelay-root .dbrelay-brand {
+    gap: 9px;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--db-fg);
+    white-space: nowrap;
+}
+.dbrelay-mark {
+    width: 24px;
+    height: 24px;
+    border-radius: 7px;
+    background: linear-gradient(135deg, #4338ca, #38bdf8);
+    display: grid;
+    place-items: center;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+/* Segmented Board / List / Agents switcher (restyled Tabs pills) */
+.dbrelay-switch {
+    display: flex;
+}
+.dbrelay-root .dbrelay-switch-list {
+    display: inline-flex;
+    gap: 2px;
+    background: var(--db-well);
+    border-radius: 9px;
+    padding: 3px;
+}
+.dbrelay-root .dbrelay-switch-list [data-react-fancy-tabs-tab] {
+    padding: 6px 13px !important;
+    border-radius: 6px !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    line-height: 1.2 !important;
+    transition: background 0.14s ease, color 0.14s ease;
+}
+.dbrelay-root .dbrelay-switch-list [data-react-fancy-tabs-tab][aria-selected="false"] {
+    background: transparent !important;
+    color: var(--db-fg-2) !important;
+    box-shadow: none !important;
+}
+.dbrelay-root .dbrelay-switch-list [data-react-fancy-tabs-tab][aria-selected="true"] {
+    background: var(--db-surface) !important;
+    color: var(--db-accent) !important;
+    box-shadow: 0 1px 2px rgba(20, 30, 50, 0.08) !important;
+}
+
+/* SLA clock badge */
+.dbrelay-root .dbrelay-sla-badge {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 5px;
+    padding: 0 !important;
+    background: transparent !important;
+    border: 0 !important;
+    color: var(--db-fg-2) !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+}
+
+/* Overlapping online-agent avatar stack */
+.dbrelay-online-stack {
+    display: flex;
+    align-items: center;
+}
+.dbrelay-root .dbrelay-av {
+    width: 26px !important;
+    height: 26px !important;
+    background: var(--db-accent-soft) !important;
+    border: 2px solid var(--db-surface);
+}
+.dbrelay-online-stack .dbrelay-av + .dbrelay-av {
+    margin-left: -6px;
+}
+.dbrelay-root .dbrelay-av span {
+    font-size: 9px !important;
+    font-weight: 700 !important;
+    color: var(--db-accent) !important;
+}
+
+/* "7 online" presence chip */
+.dbrelay-online {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--db-teal);
+    font-weight: 600;
+}
+.dbrelay-online-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--db-teal);
+    animation: dbrelay-pulse 2s ease-in-out infinite;
+}
+
+/* ── Metric strip — 5 flush KPI cells joined by hairline Separators ──────────── */
+.dbrelay-strip {
+    flex: none;
+    display: flex;
+    background: var(--db-surface);
+    border-bottom: 1px solid var(--db-border);
+}
+.dbrelay-strip-cell {
+    flex: 1;
+    display: flex;
+    align-items: stretch;
+    min-width: 0;
+}
+.dbrelay-root .dbrelay-kpi {
+    flex: 1;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    padding: 11px 20px;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    min-width: 0;
+}
+.dbrelay-kpi-v {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+}
+.dbrelay-kpi-k {
+    font-size: 11px;
+    color: var(--db-muted);
+    white-space: nowrap;
+}
+.dbrelay-root .dbrelay-strip-sep {
+    height: auto;
+    align-self: stretch;
+    background: var(--db-border-2);
+    margin: 0;
+}
+
+/* ── Workspace region ───────────────────────────────────────────────────────── */
+.dbrelay-body {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    overflow: hidden;
+}
+
+/* ── Board (the Kanban) ─────────────────────────────────────────────────────── */
+.dbrelay-root .dbrelay-board {
+    display: flex;
+    gap: 14px;
+    padding: 18px;
+    width: 100%;
+    height: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    align-items: stretch;
+}
+
+/* unstyled Column keeps only "flex flex-col" — make it the well */
+.dbrelay-root .dbrelay-col {
+    width: 280px;
+    flex: none;
+    background: var(--db-well);
+    border-radius: 14px;
+    max-height: 100%;
+    overflow: hidden;
+}
+/* the Column's auto cards container ("relative flex flex-1 flex-col gap-2") */
+.dbrelay-root .dbrelay-col > div {
+    gap: 9px;
+    padding: 0 10px 12px;
+    overflow-y: auto;
+}
+/* sticky column header rides at the top of the scrolling card list */
+.dbrelay-col-head {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 -10px 0;
+    padding: 13px 15px 9px;
+    background: var(--db-well);
+}
+.dbrelay-col-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    flex: none;
+}
+.dbrelay-col-label {
+    font-weight: 700;
+    font-size: 13px;
+}
+.dbrelay-root .dbrelay-col-count {
+    margin-left: auto;
+    padding: 1px 8px !important;
+    background: var(--db-surface) !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    font-family: var(--font-mono);
+    font-size: 11px !important;
+    font-weight: 500 !important;
+    color: var(--db-muted) !important;
+}
+
+/* ticket card (unstyled Kanban.Card → white cell) */
+.dbrelay-root .dbrelay-ticket {
+    background: var(--db-surface);
+    border: 1px solid var(--db-border);
+    border-radius: 11px;
+    padding: 12px 13px;
+    box-shadow: 0 1px 2px rgba(20, 30, 50, 0.04);
+    transition: box-shadow 0.14s ease, border-color 0.14s ease;
+}
+.dbrelay-root .dbrelay-ticket:hover {
+    border-color: color-mix(in oklch, var(--db-accent) 30%, var(--db-border));
+    box-shadow: 0 3px 10px rgba(20, 30, 50, 0.08);
+}
+.dbrelay-ticket-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 7px;
+}
+.dbrelay-ticket-id {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--db-accent);
+}
+.dbrelay-ticket-subj {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.35;
+    margin-bottom: 9px;
+}
+.dbrelay-ticket-foot {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.dbrelay-ticket-cust {
+    font-size: 11px;
+    color: var(--db-muted);
+}
+
+/* priority pill (Badge, colour set inline from the data map) */
+.dbrelay-root .dbrelay-pri {
+    padding: 2px 8px !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    line-height: 1.4 !important;
+}
+
+/* assignee avatar (per-ticket) */
+.dbrelay-root .dbrelay-assignee {
+    width: 22px !important;
+    height: 22px !important;
+    background: var(--db-accent-soft) !important;
+    border: 0;
+}
+.dbrelay-root .dbrelay-assignee span {
+    font-size: 9px !important;
+    font-weight: 700 !important;
+    color: var(--db-accent) !important;
+}
+.dbrelay-root .dbrelay-assignee.is-unassigned {
+    background: var(--db-border-2) !important;
+}
+.dbrelay-root .dbrelay-assignee.is-unassigned span {
+    color: var(--db-muted) !important;
+}
+
+/* SLA countdown badge (red on breach) */
+.dbrelay-root .dbrelay-sla {
+    margin-left: auto;
+    display: inline-flex !important;
+    align-items: center;
+    gap: 3px;
+    padding: 0 !important;
+    background: transparent !important;
+    border: 0 !important;
+    font-size: 11px !important;
+    font-weight: 500 !important;
+    color: var(--db-muted) !important;
+}
+.dbrelay-root .dbrelay-sla.is-breach {
+    color: var(--db-red) !important;
+    font-weight: 600 !important;
+}
+.dbrelay-col-empty {
+    text-align: center;
+    color: var(--db-muted);
+    font-size: 12px;
+    padding: 14px 0;
+    border: 1px dashed var(--db-border);
+    border-radius: 10px;
+}
+
+/* ── List view (Table of every open ticket) ─────────────────────────────────── */
+.dbrelay-listwrap {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+    padding: 18px;
+}
+.dbrelay-root .dbrelay-listcard {
+    background: var(--db-surface) !important;
+    border: 1px solid var(--db-border) !important;
+    border-radius: 14px !important;
+    overflow: hidden;
+}
+.dbrelay-root .dbrelay-table {
+    width: 100%;
+    font-size: 13px;
+}
+.dbrelay-root .dbrelay-table th {
+    text-align: left;
+    padding: 12px 16px !important;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--db-muted);
+    background: #fafbfd;
+    border-bottom: 1px solid var(--db-border);
+}
+.dbrelay-root .dbrelay-table td {
+    padding: 11px 16px !important;
+    border-bottom: 1px solid var(--db-border-2);
+    vertical-align: middle;
+}
+.dbrelay-root .dbrelay-trow:hover td {
+    background: #fafbfd;
+}
+.dbrelay-tid {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--db-accent);
+}
+.dbrelay-tsubj {
+    font-weight: 600;
+    color: var(--db-fg);
+}
+.dbrelay-tassignee {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--db-fg-2);
+}
+.dbrelay-tstage {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--db-fg-2);
+    font-weight: 500;
+}
+.dbrelay-tsla {
+    font-size: 12px;
+    color: var(--db-muted);
+}
+.dbrelay-tsla.is-breach {
+    color: var(--db-red);
+    font-weight: 600;
+}
+
+/* ── Agents view (per-rep load + throughput chart) ──────────────────────────── */
+.dbrelay-agentswrap {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+.dbrelay-agentgrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 14px;
+}
+.dbrelay-root .dbrelay-agentcard {
+    background: var(--db-surface) !important;
+    border: 1px solid var(--db-border) !important;
+    border-radius: 14px !important;
+    padding: 16px !important;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+.dbrelay-agent-head {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+}
+.dbrelay-root .dbrelay-agent-av {
+    background: var(--db-accent-soft) !important;
+}
+.dbrelay-root .dbrelay-agent-av span {
+    font-weight: 700 !important;
+    color: var(--db-accent) !important;
+}
+.dbrelay-agent-meta {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+.dbrelay-agent-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--db-fg);
+}
+.dbrelay-agent-role {
+    font-size: 12px;
+    color: var(--db-muted);
+}
+.dbrelay-root .dbrelay-agent-open {
+    margin-left: auto;
+    padding: 3px 9px !important;
+    background: var(--db-accent-soft) !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    color: var(--db-accent) !important;
+    white-space: nowrap;
+}
+.dbrelay-agent-loadrow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.dbrelay-agent-loadlabel {
+    font-size: 11px;
+    color: var(--db-muted);
+    width: 32px;
+    flex: none;
+}
+.dbrelay-root .dbrelay-agent-load {
+    flex: 1;
+}
+.dbrelay-agent-loadpct {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--db-fg-2);
+    width: 34px;
+    text-align: right;
+    flex: none;
+}
+
+.dbrelay-root .dbrelay-chartcard {
+    background: var(--db-surface) !important;
+    border: 1px solid var(--db-border) !important;
+    border-radius: 14px !important;
+    padding: 16px 18px 18px !important;
+}
+.dbrelay-chart-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 4px;
+}
+.dbrelay-root .dbrelay-chart-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--db-fg);
+    margin: 0;
+}
+.dbrelay-root .dbrelay-chart-sub {
+    font-size: 12px;
+    color: var(--db-muted);
+    margin: 2px 0 0;
+}
+.dbrelay-root .dbrelay-chart-btn {
+    padding: 6px 13px !important;
+    background: var(--db-well) !important;
+    border: 1px solid var(--db-border) !important;
+    border-radius: 8px !important;
+    color: var(--db-fg-2) !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    box-shadow: none !important;
+}
+.dbrelay-root .dbrelay-chart-btn:hover {
+    background: #e6e9f1 !important;
+}
+
+/* ── Motion ─────────────────────────────────────────────────────────────────── */
+@keyframes dbrelay-pulse {
+    0%,
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.45;
+        transform: scale(0.82);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dbrelay-online-dot {
+        animation: none;
+    }
+}
+
+/* ── Narrow viewports ───────────────────────────────────────────────────────── */
+@media (max-width: 720px) {
+    .dbrelay-root .dbrelay-topbar {
+        padding: 0 12px !important;
+    }
+    .dbrelay-topbar-left {
+        gap: 10px;
+    }
+    .dbrelay-online-stack,
+    .dbrelay-online {
+        display: none;
+    }
+    .dbrelay-strip {
+        overflow-x: auto;
+    }
+    .dbrelay-strip-cell {
+        flex: 0 0 auto;
+    }
+    .dbrelay-root .dbrelay-kpi {
+        padding: 10px 16px;
+    }
+}

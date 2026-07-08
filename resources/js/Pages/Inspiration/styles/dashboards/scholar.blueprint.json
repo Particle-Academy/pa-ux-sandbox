@@ -1,0 +1,70 @@
+{
+  "id": "scholar",
+  "name": "Scholar",
+  "note": "A language-learning home as a friendly Fancy dashboard.",
+  "mode": "light",
+  "thesis": "A consumer language-learning platform's home screen rendered from restyled Fancy primitives — a centered, single-column app on a cool blue-grey canvas, one indigo accent with a violet/cyan/amber skill palette, soft 18-20px cards with hairline borders, and gamification (streak, XP, levels) that makes Card, Progress, Badge, Table and a single fancy-echarts bar read native to a Duolingo-style learner dashboard rather than an ops console.",
+  "tokens": {
+    "bg": "#F4F6FB cool canvas with #FFFFFF card surfaces",
+    "fg": "#1B2338 primary / #5F6B85 nav-muted / #8590A8 caption / #A6AEC0 faint",
+    "accent": "#2563EB indigo-blue (hero gradient #1e3a8a→#3b82f6, brand mark #2563eb→#60a5fa); skill hues #8B5CF6 violet, #0891B2 cyan, #F59E0B amber; lesson states done #0F9D58/#E3F3EC, active #2563EB/#E3ECFB, locked #A6AEC0/#EDF0F6",
+    "fontDisplay": "Geist (var(--font-sans)); h1 28px/700 tight -0.01em, streak number 24px/800",
+    "fontMono": "Geist Mono (var(--font-mono)) tabular-nums for XP figure, Lv N chips, and per-lesson XP rewards",
+    "radius": "20px hero card / 18px white cards / 13px streak icon tile / 11px lesson state tiles / 10px pill buttons / 8px brand mark / 4-5px progress tracks / 50% avatar",
+    "border": "1px #E4E8F2 card hairlines; #EDF0F6 header hairline; #F2F4F9 between lesson rows; no heavy shadows (only a faint tinted drop under the gradient hero)",
+    "motion": "var(--ease-out); Progress fills animate width 0→value on mount (hero 38% + four skill meters); the streak flame gently flickers (scale/rotate/opacity keyframe); reduced-motion drops both"
+  },
+  "layout": "No sidebar — a centered single-column app capped at max-width 1080px (22/24px padding). A slim restyled Navbar (gradient 'S' brand + wordmark, Learn/Practice/Community pushed right, an 'EM' Avatar at the far right) sits above the body. The body opens with a 2-column feature grid (1.5fr / 1fr): a large gradient 'Continue learning' hero Card on the left and a stacked pair on the right (daily-streak Card over a 'This week' XP Card holding the EChart). Below, a full-width 'Your skills' Card with a 1fr/1fr grid of four skill meters, then a full-width 'Up next' lesson Card whose queue is a Table. A hairline colophon closes the page. Collapses to one column under 820px.",
+  "sections": [
+    {
+      "name": "Top header / nav",
+      "what": "Brand lockup (gradient 'S' mark + 'Scholar' wordmark linking to the collection), inline nav (Learn active, Practice, Community) pushed right, and a circular blue 'EM' user avatar at the far right.",
+      "components": ["Navbar", "Avatar", "Link"],
+      "restyle": "Navbar stripped of its default white bg/border/padding; inner flex switched to justify-start so Navbar.Items gets margin-left:auto (nav to the right) and the Avatar trails it. Navbar.Item padding/bg reset — muted #5F6B85, active item goes full-ink #1B2338/600. Avatar forced to a 34px solid #2563EB circle with white 13px initials."
+    },
+    {
+      "name": "Continue learning hero",
+      "what": "Large gradient card: eyebrow 'CONTINUE LEARNING', h1 'Spanish · Unit 4', subtitle 'Lesson 3 of 8 — Past tense verbs', a white-on-translucent Progress at 38%, the caption '38% through the unit', and a white 'Resume →' pill button.",
+      "components": ["Card", "Heading", "Progress", "Button"],
+      "restyle": "Card flattened to a #1e3a8a→#3b82f6 135deg gradient, 20px radius, white text, faint tinted drop shadow, flex column space-between. Progress overridden to an 8px translucent-white track with a solid-white fill (width transitions in). Button forced to a white pill (#1e3a8a text, 10px radius) with an 'arrow-right' trailing Icon slug."
+    },
+    {
+      "name": "Daily streak tile",
+      "what": "White card: left an amber flame icon in a #FEF0DC rounded tile, right '47 days' (800 weight) with a 'Daily streak' caption.",
+      "components": ["Card", "Icon (lucide flame)"],
+      "restyle": "Card set to the shared 18px/hairline white chrome, flex-row with a 46px #FEF0DC icon tile (13px radius) holding a lucide Flame at #F59E0B that flickers via a scoped keyframe."
+    },
+    {
+      "name": "This week XP mini-chart",
+      "what": "White card with 'This week' + a mono '1,240 XP' figure over a 7-bar weekly activity chart (M-T-W-T-F-S-S) where busy days are #2563EB and quiet days #93C5FD.",
+      "components": ["Card", "EChart"],
+      "restyle": "Card matches the white chrome; the chart is a real fancy-echarts <EChart> bar — 7 categories, per-point itemStyle color (#2563EB vs #93C5FD), top-rounded caps (borderRadius [4,4,0,0]), yAxis hidden, xAxis reduced to 9px #A6AEC0 day labels with no line/tick for a spark look, ~92px tall."
+    },
+    {
+      "name": "Your skills",
+      "what": "White card titled 'Your skills' with a 2-column grid of four skill meters — each a label + mono 'Lv N' chip over a thin progress track: Vocabulary Lv12 78%, Grammar Lv8 54%, Listening Lv10 66%, Speaking Lv6 40%.",
+      "components": ["Card", "Progress", "Badge"],
+      "restyle": "Four Progress bars slimmed to a 7px #EDF0F6 track; the fill color is set per skill via a modifier class (#2563EB / #8B5CF6 / #0891B2 / #F59E0B) since Progress's color prop is palette-only. The 'Lv N' Badge is stripped to a bare mono 12px muted chip."
+    },
+    {
+      "name": "Up next (lesson queue)",
+      "what": "White card titled 'Up next' with a bordered header, then rows: a state-colored icon tile (active/locked/done) + lesson name + meta + a mono XP value. Clicking a row spotlights it.",
+      "components": ["Card", "Table", "Icon (lucide play/messages-square/help-circle/check)"],
+      "restyle": "Card header is a bordered 'Up next' bar; body padding zeroed so the Table sits flush. Table head hidden; rows reset to hairline-separated flex-feel lesson rows with a hover fill and an inset accent rail on the selected row. The leading 36px state tile is colored by the done/active/locked map and holds a lucide icon; XP is right-aligned mono."
+    }
+  ],
+  "palette": [
+    { "component": "Navbar", "restyle": "Stripped of default white/border/padding into a transparent top bar; inner flex re-flowed to justify-start so nav items push right and the avatar trails; items reset to muted text with a full-ink active state." },
+    { "component": "Avatar", "restyle": "Forced to a 34px solid-accent circle with white 13px initials — the signed-in 'EM' learner chip at the far right of the header." },
+    { "component": "Card", "restyle": "The universal panel: 18px radius + 1px #E4E8F2 hairline + no shadow for white cards; one variant becomes the 20px indigo-gradient hero with white text and a faint drop; another is the flush Table shell (header hairline + zero body padding)." },
+    { "component": "Progress", "restyle": "Thin meters everywhere — an 8px white-on-translucent bar in the hero and four 7px meters on a #EDF0F6 track whose fill color is set per-skill via a modifier class; all fills transition width 0→value on mount." },
+    { "component": "Heading", "restyle": "The hero h1 at 28px/700 with tight -0.01em tracking in white on the gradient." },
+    { "component": "Button", "restyle": "The 'Resume' CTA reduced to a white 10px pill with #1e3a8a text and an arrow-right trailing Icon slug; lifts 1px on hover." },
+    { "component": "Badge", "restyle": "Soft variant stripped to a bare mono 12px muted 'Lv N' chip beside each skill label — semantic level indicator, no fill." },
+    { "component": "Table", "restyle": "Reskinned into a flush lesson queue: hidden head, hairline-separated rows, hover fill, controlled selection rail, a leading state-colored icon tile, a two-line name/meta cell, and a right-aligned mono XP cell." },
+    { "component": "EChart", "restyle": "A single fancy-echarts bar (registerAll at module top) as the weekly-XP spark: per-point colors, rounded caps, hidden y-axis, minimal x-axis day labels — quiet panel content, not a standalone widget." },
+    { "component": "Text", "restyle": "The demonstration colophon note in 12px muted grey beneath the hairline footer." }
+  ],
+  "contentArchetype": "A single learner's language-course home for a fictional platform (Scholar): a continue-learning hero (Spanish Unit 4, Lesson 3 of 8, 38% through), gamification (47-day streak, 1,240 XP this week with a 7-day activity bar), four skill mastery meters (Vocabulary/Grammar/Listening/Speaking with levels + percents), and an up-next lesson queue with per-item state (active/locked/done) and XP rewards. All numbers are invented but internally consistent.",
+  "remix": "Keep the centered single-column shell + soft-card + one-accent + gamified-meter vocabulary for any consumer progress surface (fitness, habit tracker, course platform, onboarding checklist) — swap the local --dbscholar-* palette to rebrand and the four skill hues to your own tracks. Push toward an ops console by dropping in a Sidebar + KPI Card row + a filterable Table; or warm it further by rounding radii and softening the canvas. The whole look lives in scoped dbscholar- CSS + local tokens, so the same React tree restyles wholesale by editing only scholar.css."
+}

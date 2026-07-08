@@ -148,27 +148,34 @@
   padding: 88px 0 72px;
 }
 
-.mpsushi-eyebrow {
+/* Text → tracked uppercase eyebrow (root-scoped so it beats Text defaults). */
+.mpsushi-root .mpsushi-eyebrow {
   font-size: 12px;
+  line-height: 1.4;
   letter-spacing: 0.24em;
   text-transform: uppercase;
+  font-weight: 400;
   color: var(--mps-mut-2);
   margin: 0 0 30px;
 }
 
-.mpsushi-display {
+/* Heading → the quiet weight-400 display voice (out-specifies Heading utils). */
+.mpsushi-root .mpsushi-display {
   font-size: clamp(38px, 5.4vw, 54px);
   line-height: 1.14;
   letter-spacing: -0.01em;
   font-weight: 400;
+  color: var(--mps-ink);
   margin: 0;
 }
 .mpsushi-display__accent {
   color: var(--mps-red);
 }
 
-.mpsushi-lede {
+/* Text → the lede. */
+.mpsushi-root .mpsushi-lede {
   font-size: var(--text-lg);
+  font-weight: 400;
   color: var(--mps-ink-2);
   line-height: 1.7;
   margin: 30px 0 0;
@@ -217,11 +224,14 @@
 .mpsushi-rulehead--tight {
   margin-bottom: 8px;
 }
-.mpsushi-h2 {
+/* Heading → the kanji-prefixed section head (root-scoped over Heading utils). */
+.mpsushi-root .mpsushi-h2 {
   font-size: 14px;
+  line-height: 1.3;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   font-weight: 600;
+  color: var(--mps-ink);
   margin: 0;
   white-space: nowrap;
 }
@@ -230,36 +240,66 @@
   border-bottom: 1px solid var(--mps-rule);
 }
 
-/* ── Counter menu: two columns of dotted-leader price rows ─────────────────── */
+/* ── Counter menu: two Tables of dotted-leader price rows ──────────────────── */
+/* Each column is a restyled zero-chrome Table (hairline row dividers only);
+   the dotted price leader stays hand-rolled as a spacer cell's border. */
 .mpsushi-menu {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 2px 56px;
+  gap: 0 56px;
 }
-.mpsushi-menu__row {
-  display: flex;
-  align-items: baseline;
-  gap: 12px;
-  padding: 18px 0;
-  border-bottom: 1px solid var(--mps-rule-2);
+/* Strip the Table shell: no card border, radius, or clip. */
+.mpsushi-root .mpsushi-menu__table {
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  overflow: visible !important;
 }
-.mpsushi-menu__name {
-  font-size: var(--text-xl);
-  font-weight: 500;
+.mpsushi-root .mpsushi-menu__table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+/* Kill the default divide-y so only our per-row bottom hairline shows. */
+.mpsushi-root .mpsushi-menu__table tbody > tr {
+  border-top: 0 !important;
+}
+.mpsushi-root .mpsushi-menu__table td {
+  background: transparent !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--mps-rule-2) !important;
+  padding: 18px 0 !important;
+  vertical-align: baseline !important;
+}
+.mpsushi-root .mpsushi-menu__table .mpsushi-menu__name {
+  font-size: var(--text-xl) !important;
+  font-weight: 500 !important;
+  color: var(--mps-ink) !important;
+  white-space: nowrap;
+  width: 1%;
+}
+.mpsushi-root .mpsushi-menu__table .mpsushi-menu__leadcell {
+  width: 100%;
+  padding-left: 12px !important;
+  padding-right: 12px !important;
 }
 .mpsushi-menu__leader {
-  flex: 1;
+  display: block;
   border-bottom: 1px dotted var(--mps-leader);
   transform: translateY(-4px);
 }
-.mpsushi-menu__price {
-  font-size: var(--text-base);
-  color: var(--mps-red);
+.mpsushi-root .mpsushi-menu__table .mpsushi-menu__price {
+  font-size: var(--text-base) !important;
+  color: var(--mps-red) !important;
+  text-align: right !important;
+  white-space: nowrap;
+  width: 1%;
 }
 
 /* ── Reserve omakase: the Reservations surface ─────────────────────────────── */
-.mpsushi-book__sub {
+/* Text → the omakase sub-line. */
+.mpsushi-root .mpsushi-book__sub {
   font-size: var(--text-base);
+  font-weight: 400;
   color: var(--mps-ink-2);
   margin: 0 0 24px;
 }
@@ -270,33 +310,33 @@
   gap: 10px;
 }
 
-/* Night card — a hand-rolled card-radio (no primitive fits a 7-night strip).
-   Selection ring + availability colors are declarative, replacing the
-   mockup's imperative paint() DOM pass. */
-.mpsushi-night {
-  appearance: none;
-  font: inherit;
-  color: inherit;
+/* Night card — a restyled Card acting as a controlled card-radio (role=radio,
+   aria-checked, data-night handles). No native <button>, so it carries its own
+   keyboard activation; the declarative selection ring + availability Badge
+   replace the mockup's imperative paint() DOM pass. Root-scoped + !important so
+   these win over Card's default border/radius/background utilities. */
+.mpsushi-root .mpsushi-night {
   display: block;
   width: 100%;
-  background: var(--mps-card);
-  border: 1px solid var(--mps-cardline);
-  border-radius: 12px;
-  padding: 14px 10px;
+  background: var(--mps-card) !important;
+  border: 1px solid var(--mps-cardline) !important;
+  border-radius: 12px !important;
+  box-shadow: none !important;
+  padding: 14px 10px !important;
   text-align: center;
   cursor: pointer;
 }
-.mpsushi-night:not(.mpsushi-night--full):not(.mpsushi-night--picked):hover {
-  border-color: #C9C2B2;
+.mpsushi-root .mpsushi-night:not(.mpsushi-night--full):not(.mpsushi-night--picked):hover {
+  border-color: #C9C2B2 !important;
 }
-.mpsushi-night--picked {
-  border-color: var(--mps-red); /* later in the cascade than the base card */
-  box-shadow: 0 0 0 1px var(--mps-red); /* the double-ring */
+.mpsushi-root .mpsushi-night--picked {
+  border-color: var(--mps-red) !important;
+  box-shadow: 0 0 0 1px var(--mps-red) !important; /* the double-ring */
 }
-.mpsushi-night--full {
+.mpsushi-root .mpsushi-night--full {
   cursor: not-allowed;
 }
-.mpsushi-night:focus-visible {
+.mpsushi-root .mpsushi-night:focus-visible {
   outline: 2px solid var(--mps-red);
   outline-offset: 2px;
 }
@@ -314,22 +354,33 @@
   font-weight: 600;
   margin: 4px 0;
 }
-.mpsushi-night__seats {
-  display: block;
-  font-size: 11px;
-  font-weight: 600;
+/* Badge → the open/few/full seat-availability status, flattened to the
+   mockup's plain colored micro-label (no pill fill, border, or padding). */
+.mpsushi-root .mpsushi-seatbadge {
+  display: inline-flex !important;
+  gap: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  font-family: var(--font-sans) !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  line-height: 1.3 !important;
 }
-.mpsushi-night__seats--open { color: var(--mps-open); }
-.mpsushi-night__seats--few  { color: var(--mps-few); }
-.mpsushi-night__seats--full { color: var(--mps-full); }
+.mpsushi-root .mpsushi-seatbadge--open { color: var(--mps-open) !important; }
+.mpsushi-root .mpsushi-seatbadge--few  { color: var(--mps-few) !important; }
+.mpsushi-root .mpsushi-seatbadge--full { color: var(--mps-full) !important; }
 
-/* Selected-night summary bar — inverts to near-black. */
-.mpsushi-bar {
+/* Card → the selected-night summary bar, inverted to near-black (root-scoped +
+   !important to override Card's flat-variant bg / radius). */
+.mpsushi-root .mpsushi-bar {
   margin-top: 22px;
-  background: var(--mps-ink);
+  background: var(--mps-ink) !important;
   color: var(--mps-paper);
-  border-radius: 14px;
-  padding: 22px 26px;
+  border: 0 !important;
+  border-radius: 14px !important;
+  padding: 22px 26px !important;
   display: flex;
   align-items: center;
   gap: 20px;
@@ -418,11 +469,35 @@
   outline-offset: 2px;
 }
 
-/* Post-reserve confirmation (replaces stepper + CTA inside the bar). */
-.mpsushi-confirm {
+/* Callout → the post-reserve confirmation (replaces stepper + CTA in the bar).
+   Flattened to transparent so it reads as inline dark-bar chrome, not a boxed
+   alert; root-scoped + !important to strip Callout's border-l-4 / bg / padding. */
+.mpsushi-root .mpsushi-confirm {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 14px !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  color: var(--mps-paper) !important;
+}
+/* Reset the Callout icon wrapper (kills its mt-0.5 nudge + tint). */
+.mpsushi-root .mpsushi-confirm > span {
+  margin-top: 0 !important;
+  color: var(--mps-paper) !important;
+}
+.mpsushi-confirm__row {
+  flex: 1;
+  min-width: 0;
   display: flex;
   align-items: center;
   gap: 14px;
+}
+.mpsushi-confirm__copy {
+  flex: 1;
   min-width: 0;
 }
 .mpsushi-confirm__badge {
@@ -469,15 +544,19 @@
   align-items: center;
   padding: 70px 0;
 }
-.mpsushi-quote {
+/* Heading → the serif pull-quote (root-scoped over Heading's sans utils). */
+.mpsushi-root .mpsushi-quote {
   font-family: var(--mps-serif);
   font-size: 32px;
   font-weight: 400;
+  color: var(--mps-ink);
   line-height: 1.3;
   margin: 0;
 }
-.mpsushi-story__body {
+/* Text → the story body. */
+.mpsushi-root .mpsushi-story__body {
   font-size: var(--text-lg);
+  font-weight: 400;
   color: var(--mps-ink-2);
   line-height: 1.75;
   margin: 0;
@@ -489,27 +568,48 @@
   border-top: 1px solid var(--mps-rule);
   scroll-margin-top: 120px;
 }
-.mpsushi-find__h {
+/* Root-scoped so it out-specifies the shared .mpsushi-h2 margin reset. */
+.mpsushi-root .mpsushi-find__h {
   margin: 0 0 22px;
 }
-.mpsushi-sched__row {
-  display: grid;
-  grid-template-columns: 130px 1fr auto;
-  gap: 16px;
-  padding: 13px 0;
-  border-bottom: 1px solid var(--mps-rule-2);
-  align-items: baseline;
+/* Table → the weekly timetable: a zero-chrome, headerless day/place/hours grid
+   (hairline row dividers only), matching the old 130px/1fr/auto layout. */
+.mpsushi-root .mpsushi-sched {
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  overflow: visible !important;
 }
-.mpsushi-sched__day {
-  font-size: var(--text-sm);
+.mpsushi-root .mpsushi-sched table {
+  width: 100%;
+  border-collapse: collapse;
 }
-.mpsushi-sched__place {
-  color: var(--mps-ink-2);
+.mpsushi-root .mpsushi-sched tbody > tr {
+  border-top: 0 !important;
 }
-.mpsushi-sched__hours {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  color: var(--mps-mut-2);
+.mpsushi-root .mpsushi-sched td {
+  background: transparent !important;
+  border: 0 !important;
+  border-bottom: 1px solid var(--mps-rule-2) !important;
+  padding: 13px 0 !important;
+  vertical-align: baseline !important;
+}
+.mpsushi-root .mpsushi-sched .mpsushi-sched__day {
+  font-size: var(--text-sm) !important;
+  color: var(--mps-ink) !important;
+  width: 130px;
+  white-space: nowrap;
+}
+.mpsushi-root .mpsushi-sched .mpsushi-sched__place {
+  color: var(--mps-ink-2) !important;
+}
+.mpsushi-root .mpsushi-sched .mpsushi-sched__hours {
+  font-family: var(--font-mono) !important;
+  font-size: 12px !important;
+  color: var(--mps-mut-2) !important;
+  text-align: right !important;
+  white-space: nowrap;
+  width: 1%;
 }
 
 /* ── Footer ────────────────────────────────────────────────────────────────── */
@@ -615,9 +715,8 @@
   .mpsushi-week {
     grid-template-columns: repeat(2, 1fr);
   }
-  .mpsushi-sched__row {
-    grid-template-columns: 92px 1fr auto;
-    gap: 10px;
+  .mpsushi-root .mpsushi-sched .mpsushi-sched__day {
+    width: 92px;
   }
   .mpsushi-brand__name {
     font-size: 17px;

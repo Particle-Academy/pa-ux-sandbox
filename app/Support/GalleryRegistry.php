@@ -104,6 +104,33 @@ class GalleryRegistry
                 ['id' => 'grilledcheese', 'num' => '20', 'name' => 'Melts', 'cuisine' => 'Grilled cheese', 'note' => 'Late-night site + agentic catering booking.', 'surface' => '+ Agentic', 'mode' => 'dark', 'swatch' => 'linear-gradient(120deg,#141019,#F2A93B)'],
             ],
         ],
+        'dashboards' => [
+            'name' => 'Dashboards',
+            'kicker' => 'app index',
+            'title' => 'Twenty dashboards, twenty apps.',
+            'subject' => 'twenty fictional apps',
+            'blurb' => 'Twenty dashboard designs on the Fancy UI Kit — a mix of user-facing and admin/operator surfaces, from fitness and budgeting to fleet ops, crypto, and hospital operations. Each is built from real Fancy components: every chart is a fancy-echarts EChart, KPI tiles are Cards, data grids are Tables, pipelines are Kanban boards. Read-only blueprints to reference and remix — not starter code to fork.',
+            'framing' => 'Fictional apps · 20 dashboards · built from Fancy components · read-only',
+            'range' => 'user-facing + admin',
+            'styles' => [
+                ['id' => 'pulse', 'num' => '01', 'name' => 'Pulse', 'cuisine' => 'Fitness & training', 'note' => 'Rings, streaks, heart-rate trends.', 'surface' => 'user-facing', 'mode' => 'dark', 'swatch' => 'linear-gradient(120deg,#f43f5e,#fb923c)'],
+                ['id' => 'helm', 'num' => '02', 'name' => 'Helm', 'cuisine' => 'Cloud infrastructure', 'note' => 'Live metrics, incidents, service health.', 'surface' => 'admin', 'mode' => 'dark', 'swatch' => 'linear-gradient(120deg,#0f172a,#3b82f6)'],
+                ['id' => 'ledger', 'num' => '03', 'name' => 'Ledger', 'cuisine' => 'Personal budgeting', 'note' => 'Spending by category, balance, goals.', 'surface' => 'user-facing', 'mode' => 'light', 'swatch' => 'linear-gradient(120deg,#059669,#34d399)'],
+                ['id' => 'merchant', 'num' => '04', 'name' => 'Merchant', 'cuisine' => 'E-commerce seller', 'note' => 'Revenue, orders, funnel, top products.', 'surface' => 'admin', 'mode' => 'light', 'swatch' => 'linear-gradient(120deg,#4f46e5,#818cf8)'],
+                ['id' => 'wrapped', 'num' => '05', 'name' => 'Wrapped', 'cuisine' => 'Music streaming', 'note' => 'Listening minutes, top artists, genres.', 'surface' => 'user-facing', 'mode' => 'dark', 'swatch' => 'linear-gradient(120deg,#7c3aed,#ec4899)'],
+                ['id' => 'fleet', 'num' => '06', 'name' => 'Fleet', 'cuisine' => 'Logistics operations', 'note' => 'Vehicle map, deliveries, fuel, ETAs.', 'surface' => 'admin', 'mode' => 'dark', 'swatch' => 'linear-gradient(120deg,#1e293b,#f59e0b)'],
+                ['id' => 'hearth', 'num' => '07', 'name' => 'Hearth', 'cuisine' => 'Smart home', 'note' => 'Rooms, energy, climate, devices.', 'surface' => 'user-facing', 'mode' => 'dark', 'swatch' => 'linear-gradient(120deg,#0891b2,#22d3ee)'],
+                ['id' => 'cadence', 'num' => '08', 'name' => 'Cadence', 'cuisine' => 'Email marketing', 'note' => 'Campaign opens, clicks, deliverability.', 'surface' => 'admin', 'mode' => 'light', 'swatch' => 'linear-gradient(120deg,#0d9488,#2dd4bf)'],
+                ['id' => 'scholar', 'num' => '09', 'name' => 'Scholar', 'cuisine' => 'Learning platform', 'note' => 'Course progress, streak, next lessons.', 'surface' => 'user-facing', 'mode' => 'light', 'swatch' => 'linear-gradient(120deg,#2563eb,#60a5fa)'],
+                ['id' => 'griddle', 'num' => '10', 'name' => 'Griddle', 'cuisine' => 'Restaurant manager', 'note' => 'Sales, covers, labor, table turnover.', 'surface' => 'admin', 'mode' => 'dark', 'swatch' => 'linear-gradient(120deg,#9a3412,#f97316)'],
+                ['id' => 'vertex', 'num' => '11', 'name' => 'Vertex', 'cuisine' => 'Crypto & trading', 'note' => 'Portfolio, watchlist, candlesticks.', 'surface' => 'user-facing', 'mode' => 'dark', 'swatch' => 'linear-gradient(120deg,#0b0f14,#22c55e)'],
+                ['id' => 'relay', 'num' => '12', 'name' => 'Relay', 'cuisine' => 'Support helpdesk', 'note' => 'Ticket queue, SLA, CSAT, agents.', 'surface' => 'admin', 'mode' => 'light', 'swatch' => 'linear-gradient(120deg,#4338ca,#38bdf8)'],
+                ['id' => 'voyage', 'num' => '13', 'name' => 'Voyage', 'cuisine' => 'Airline & travel', 'note' => 'Trips, boarding, miles, itineraries.', 'surface' => 'user-facing', 'mode' => 'light', 'swatch' => 'linear-gradient(120deg,#0369a1,#38bdf8)'],
+                // Dashboards 14–20 (roster, helios, northstar, meridian, vitals, still, amplify)
+                // are designed + reviewed (sandbox/mom-n-pops/reviews/dash-*.json) and land in the
+                // next batch — held back only by a weekly build-capacity limit, not by design.
+            ],
+        ],
     ];
 
     /**

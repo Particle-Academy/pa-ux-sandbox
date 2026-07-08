@@ -20,8 +20,8 @@
         {
             "name": "header",
             "what": "Hairline-bottomed flex bar: the two-part wordmark ('Mom-n-Pops' Georgia italic 700 23px + 'CRÊPERIE' 12px letterspaced gold uppercase on the same baseline) and a right-aligned French nav — La Carte / Notre Histoire / Où nous trouver.",
-            "components": [],
-            "restyle": "Nav items are hand-rolled text buttons in muted chalk that brighten to ivory on hover; an IntersectionObserver marks the section under the reader with a dashed-gold baseline underline (aria-current), like a chalk tick on the board. No transitions — states snap."
+            "components": ["Navbar"],
+            "restyle": "A react-fancy Navbar (Navbar.Brand for the wordmark lockup + Navbar.Items for the nav) stripped of the kit's white bar — bg-white / border-b-zinc / px-4-py-3 overridden back to a bare hairline-bottomed slate band, Navbar.Brand's items-center overridden to baseline, and Navbar.Items forced always-visible (its default hidden md:flex would hide the nav on mobile since there is no hamburger). The nav entries stay hand-rolled <button>s inside Navbar.Items (Navbar.Item is href-only) so their onClick smooth-scroll survives; an IntersectionObserver marks the section under the reader with a dashed-gold baseline underline (aria-current), like a chalk tick on the board. No transitions — states snap."
         },
         {
             "name": "hero",
@@ -32,8 +32,8 @@
         {
             "name": "la-carte",
             "what": "The Chalkboard surface itself: centered italic 42px 'La Carte' with a 'sucrée & salée' subline, then six crêpes in a two-column grid of price rows — Georgia item name, dotted leader stretching to an italic gold price, then a muted one-liner with a tiny outlined tag pill (sucrée / salée / vegan).",
-            "components": ["Badge"],
-            "restyle": "The board is styling, not a widget: rows separate with 1px dashed ivory rules; the price leader is a flex-1 span with border-bottom 1px dotted rgba(241,237,226,0.3) and transform translateY(-4px) so the dots sit exactly on the baseline — copy that detail verbatim. Badge (outline, sm) is rechalked to an 11px transparent 999px pill with a rgba-ivory 0.2 border in the meta tier."
+            "components": ["Card", "Badge"],
+            "restyle": "Each crêpe is a react-fancy Card (variant flat, padding none) rechalked down to a single dashed-rule price row — the kit's white fill, rounded-lg corners, and shadow are all overridden away so the Card reads as bare chalk furniture. Inside, the price leader is a flex-1 span with border-bottom 1px dotted rgba(241,237,226,0.3) and transform translateY(-4px) so the dots sit exactly on the baseline — copy that detail verbatim. Badge (outline, sm) is rechalked to an 11px transparent 999px pill with a rgba-ivory 0.2 border in the meta tier."
         },
         {
             "name": "notre-histoire",
@@ -43,9 +43,9 @@
         },
         {
             "name": "ou-nous-trouver",
-            "what": "The Milwaukee week: italic 30px heading, a mono 'Milwaukee · 9h–20h' subline, then six rows Mardi→Dimanche in a 130px/1fr/auto grid — bold French day, muted location, right-aligned mono hours.",
-            "components": [],
-            "restyle": "A definition-list-style grid, hand-rolled: rows rule off with the faintest ivory tier (0.12); day names in full-strength chalk at 600, hours in the locked 12px mono meta tier. French day names carry the bilingual voice into the data."
+            "what": "The Milwaukee week: italic 30px heading, a mono 'Milwaukee · 9h–20h' subline, then six rows Mardi→Dimanche as day / place / hours — bold French day, muted location, right-aligned mono hours.",
+            "components": ["Table"],
+            "restyle": "A real react-fancy Table (Table.Body / Table.Row / Table.Cell — no visible header, exactly as chalked) stripped to bare rows: the kit's rounded-lg bordered card shell, the inner table's divide-y zebra rules, and the row hover/transition are all overridden away, leaving rows ruled off with the faintest ivory tier (0.12). Day names in full-strength chalk at 600 (130px column), place in the nav tier, hours right-hugged in the locked 12px mono meta tier. French day names carry the bilingual voice into the data."
         },
         {
             "name": "footer",
@@ -60,6 +60,14 @@
             "restyle": "Two roles, both flattened to chalk-menu furniture: primary = solid antique gold (#D4AF37) with slate text, weight 700, 6px radius, zero shadow and zero transition; ghost = transparent with a 1px rgba(241,237,226,0.4) outline in ivory, weight 600. Hover snaps (gold lifts one step to #DDBC52, ghost outline brightens) — never animates."
         },
         {
+            "component": "Card",
+            "restyle": "The six La Carte rows. Each crêpe is a Card (variant flat, padding none) rechalked to a single dashed price row: the kit's white/zinc fill, rounded-lg corners, and shadow are all overridden to transparent / 0-radius / no-shadow, leaving only a 1px dashed rgba-ivory 0.2 bottom rule. The Card becomes a flex baseline row holding the name, dotted leader, price, description, and Badge — bare chalk furniture, not a panel."
+        },
+        {
+            "component": "Table",
+            "restyle": "The Où nous trouver weekly schedule as a genuine data table (Table.Body / Table.Row / Table.Cell, no visible header). The Table root's rounded-lg bordered overflow-hidden shell is stripped to transparent/0; the inner <table> keeps border-collapse; Table.Body's divide-y zebra borders and Table.Row's hover tint + transition are overridden away. Cells go flush-left with a 1px rgba-ivory 0.12 bottom rule at the old 13px rhythm — a 130px chalk day column, a nav-tier place column, and a right-hugged 12px mono hours column."
+        },
+        {
             "component": "Badge",
             "restyle": "outline + sm, rechalked into the menu's tag pill: transparent fill, 11px weight-400 text in the meta tier (#8F8B7E), 1px rgba-ivory 0.2 border, 999px radius, 1px/7px padding — the only fully-round element on the page."
         },
@@ -72,8 +80,8 @@
             "restyle": "A flex row of name / leader / price where the leader is flex:1 with border-bottom 1px dotted rgba(241,237,226,0.3) and transform: translateY(-4px) to sit the dots on the text baseline. This one detail makes the menu read as a real carte."
         },
         {
-            "component": "hand-rolled: section nav",
-            "restyle": "Plain text buttons in the nav tier with an IntersectionObserver-driven aria-current state rendered as a dashed-gold baseline underline; smooth scrollIntoView with scroll-margin-top clearing the host's sticky chrome."
+            "component": "Navbar",
+            "restyle": "The header lockup + section nav. Navbar.Brand wears the two-part wordmark (align-items overridden from items-center to baseline); Navbar.Items wears the nav, forced always-visible over its default hidden md:flex (there is no hamburger). The whole bar is stripped of the kit's white fill, zinc border, and px-4/py-3 padding back to a bare hairline-bottomed slate band; its inner justify-between flex row is allowed to wrap so brand + nav stack on narrow viewports. The nav entries stay hand-rolled <button>s inside Navbar.Items (Navbar.Item is href-only) so onClick smooth-scroll works, each carrying an IntersectionObserver-driven aria-current state rendered as a dashed-gold baseline underline."
         },
         {
             "component": "Heading / Text equivalents",

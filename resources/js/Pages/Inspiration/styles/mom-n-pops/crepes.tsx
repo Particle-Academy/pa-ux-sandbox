@@ -1,7 +1,7 @@
 import "./crepes.css";
 
 import { useEffect, useRef, useState } from "react";
-import { Badge, Button } from "@particle-academy/react-fancy";
+import { Badge, Button, Card, Navbar, Table } from "@particle-academy/react-fancy";
 import type { RefObject } from "react";
 import type { Style } from "../../types";
 
@@ -14,12 +14,17 @@ import type { Style } from "../../types";
  * italic Georgia display, dashed-gold "chalk rectangle" frames, dotted price
  * leaders, and bilingual French/English copy down to the closing "Merci".
  *
- * This is the quietest surface in the collection by design: the Chalkboard is
- * pure CSS craft (dashed frames, dotted leaders, dashed row rules), not an
- * interactive component. The interactive bits — the two hero CTAs and the
- * header nav — are restyled react-fancy Buttons / hand-rolled text buttons
- * that smooth-scroll between sections, with an IntersectionObserver keeping
- * the nav's "you are here" state in sync as the visitor drifts down the board.
+ * This is the quietest surface in the collection by design, yet it is composed
+ * from restyled Fancy primitives rather than raw markup: a react-fancy Navbar
+ * (Brand + Items) carries the header, La Carte is a Card grid (one flat Card per
+ * crêpe), and the weekly schedule is a Table (day / place / hours). Button wears
+ * the two hero CTAs; Badge wears the sucrée/salée/vegan tag pills. The chalk
+ * craft — dashed frames, dotted price leaders, dashed row rules — is restyled
+ * onto those components through the scoped mpcrepes-* CSS so the board still
+ * reads as hand-chalked slate while the DOM stays semantic. The header's
+ * scroll-buttons live inside Navbar.Items (Navbar.Item is href-only) so the
+ * onClick smooth-scroll and the IntersectionObserver "vous êtes ici" state both
+ * survive the swap.
  *
  * Mounted by Inspiration/Show.tsx for `style.id === "crepes"`. SSR-safe:
  * no browser APIs during render (window/matchMedia only inside client-only
@@ -134,13 +139,16 @@ export default function Crepes({ style }: { style: Style }) {
     return (
         <div className="mpcrepes-root">
             <div className="mpcrepes-shell">
-                {/* ── Header — wordmark lockup + French nav ─────────────────── */}
-                <header className="mpcrepes-header">
-                    <div className="mpcrepes-brand">
+                {/* ── Header — wordmark lockup + French nav (react-fancy Navbar,
+                    rechalked; scroll-buttons stay inside Navbar.Items so their
+                    onClick + IntersectionObserver "vous êtes ici" state live on,
+                    since Navbar.Item is href-only) ──────────────────────────── */}
+                <Navbar className="mpcrepes-navbar">
+                    <Navbar.Brand className="mpcrepes-brand">
                         <span className="mpcrepes-brand__name">Mom-n-Pops</span>
                         <span className="mpcrepes-brand__cuisine">Crêperie</span>
-                    </div>
-                    <nav className="mpcrepes-nav" aria-label="Sections du tableau">
+                    </Navbar.Brand>
+                    <Navbar.Items className="mpcrepes-nav">
                         {NAV.map((item) => (
                             <button
                                 key={item.id}
@@ -152,8 +160,8 @@ export default function Crepes({ style }: { style: Style }) {
                                 {item.label}
                             </button>
                         ))}
-                    </nav>
-                </header>
+                    </Navbar.Items>
+                </Navbar>
 
                 {/* ── Hero — the chalk rectangle ────────────────────────────── */}
                 <section className="mpcrepes-hero" aria-labelledby="mpcrepes-hero-title">
@@ -198,9 +206,18 @@ export default function Crepes({ style }: { style: Style }) {
                         </h2>
                         <div className="mpcrepes-carte__sub">sucrée &amp; salée</div>
                     </div>
+                    {/* Each crêpe is a flat react-fancy Card, rechalked down to a
+                        dashed-rule price row — the Card carries the name/price
+                        line, the description, and the existing Badge tag. */}
                     <div className="mpcrepes-menu" role="list">
                         {MENU.map((m) => (
-                            <div key={m.name} className="mpcrepes-menu__row" role="listitem">
+                            <Card
+                                key={m.name}
+                                variant="flat"
+                                padding="none"
+                                role="listitem"
+                                className="mpcrepes-menu__row"
+                            >
                                 <div className="mpcrepes-menu__main">
                                     <div className="mpcrepes-menu__line">
                                         <span className="mpcrepes-menu__name">{m.name}</span>
@@ -221,7 +238,7 @@ export default function Crepes({ style }: { style: Style }) {
                                         </Badge>
                                     </div>
                                 </div>
-                            </div>
+                            </Card>
                         ))}
                     </div>
                 </section>
@@ -265,15 +282,21 @@ export default function Crepes({ style }: { style: Style }) {
                         Où nous trouver
                     </h2>
                     <div className="mpcrepes-find__meta">Milwaukee · 9h–20h</div>
-                    <div role="list">
-                        {SCHEDULE.map((s) => (
-                            <div key={s.day} className="mpcrepes-find__row" role="listitem">
-                                <span className="mpcrepes-find__day">{s.day}</span>
-                                <span className="mpcrepes-find__place">{s.place}</span>
-                                <span className="mpcrepes-find__hours">{s.hours}</span>
-                            </div>
-                        ))}
-                    </div>
+                    {/* The Milwaukee week as a restyled react-fancy Table — a real
+                        day / place / hours data table, chrome stripped to the
+                        chalk hairline row rules (no visible header, exactly as
+                        chalked on the board). */}
+                    <Table className="mpcrepes-find__table">
+                        <Table.Body className="mpcrepes-find__tbody">
+                            {SCHEDULE.map((s) => (
+                                <Table.Row key={s.day} className="mpcrepes-find__trow">
+                                    <Table.Cell className="mpcrepes-find__day">{s.day}</Table.Cell>
+                                    <Table.Cell className="mpcrepes-find__place">{s.place}</Table.Cell>
+                                    <Table.Cell className="mpcrepes-find__hours">{s.hours}</Table.Cell>
+                                </Table.Row>
+                            ))}
+                        </Table.Body>
+                    </Table>
                 </section>
             </div>
 

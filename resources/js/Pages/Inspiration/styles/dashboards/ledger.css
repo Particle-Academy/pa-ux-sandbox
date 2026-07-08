@@ -1,0 +1,519 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Dashboards · Style 03 — Ledger (personal budgeting, light / front-of-house)
+   A friendly consumer-finance dashboard: warm off-white (#F6F7F5) page, a single
+   centered 1080px column (no sidebar) under a slim Navbar, a plain-language
+   budget hero, then two stacked 2-column grid rows. Emerald (#059669) accent,
+   generous white space, low density. Every panel is a restyled Fancy primitive;
+   this sheet only paints tokens + the two hand-rolled grid rows + decorative
+   bits (logo mark, emoji tiles, ring center label).
+   Every selector scoped under .dbledger-root, every class prefixed dbledger-.
+   No fixed positioning; nothing reaches z-index 30 (the gallery frame owns 30+).
+   ──────────────────────────────────────────────────────────────────────────── */
+
+.dbledger-root {
+    /* ── Scoped Ledger tokens ───────────────────────────────────────────── */
+    --dbl-bg: #f6f7f5; /* warm off-white page */
+    --dbl-surface: #ffffff; /* card surfaces */
+    --dbl-ink: #1a2420; /* primary ink */
+    --dbl-body: #5c6b64; /* secondary copy / nav */
+    --dbl-muted: #8a968f; /* muted captions */
+    --dbl-faint: #8a968f; /* faint labels */
+    --dbl-accent: #059669; /* emerald — primary accent */
+    --dbl-accent-2: #34d399; /* light emerald — goal fill */
+    --dbl-spend: #e4674a; /* spend red — cash out / debits */
+    --dbl-border: #e4e8e5; /* card hairline */
+    --dbl-track: #eef1ef; /* progress + ring track */
+    --dbl-divider: #f0f2f0; /* row dividers */
+    --dbl-goal-bg: #0f3d2e; /* dark emergency-fund card */
+    --dbl-goal-ink: #d7f0e5; /* text on the dark card */
+    --dbl-goal-of: #7fc9a8; /* "/ $10,000" on the dark card */
+    --dbl-tile-bg: #f0f4f2; /* recent-transaction emoji tiles */
+    --dbl-radius: 18px; /* card radius */
+    --dbl-ease: cubic-bezier(0.16, 1, 0.3, 1);
+
+    /* Full-bleed breakout: the gallery shell centers content in a padded
+       container; Ledger's off-white page must run edge to edge. */
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    overflow-x: clip;
+
+    background: var(--dbl-bg);
+    color: var(--dbl-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    min-height: 100vh;
+}
+
+.dbledger-root *,
+.dbledger-root *::before,
+.dbledger-root *::after {
+    box-sizing: border-box;
+}
+
+.dbledger-root ::selection {
+    background: color-mix(in oklch, var(--dbl-accent) 22%, transparent);
+    color: var(--dbl-ink);
+}
+
+.dbledger-shell {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 22px 24px 60px;
+}
+
+.dbledger-muted {
+    color: var(--dbl-body) !important;
+}
+.dbledger-faint {
+    color: var(--dbl-muted) !important;
+}
+
+/* ── Header (restyled Navbar) ────────────────────────────────────────────── */
+.dbledger-root .dbledger-nav {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin-bottom: 24px;
+}
+/* Navbar's inner flex row: left-align the pieces, gap 14px */
+.dbledger-root .dbledger-nav > div {
+    justify-content: flex-start !important;
+    gap: 14px;
+    align-items: center;
+}
+.dbledger-root .dbledger-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 700;
+    color: var(--dbl-ink);
+}
+.dbledger-mark {
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #059669, #34d399);
+    display: grid;
+    place-items: center;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    flex: none;
+}
+.dbledger-wordmark {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+}
+/* nav links pushed to the right, always visible (no mobile collapse) */
+.dbledger-root .dbledger-navitems {
+    margin-left: auto !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center;
+    gap: 22px;
+    border: none !important;
+    padding: 0 !important;
+}
+.dbledger-root .dbledger-navlink {
+    background: transparent !important;
+    color: var(--dbl-body) !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    padding: 2px 0 !important;
+    border-radius: 0 !important;
+    transition: color 0.16s var(--dbl-ease);
+}
+.dbledger-root .dbledger-navlink:hover {
+    color: var(--dbl-ink) !important;
+}
+.dbledger-root .dbledger-navlink--active {
+    color: var(--dbl-ink) !important;
+    font-weight: 600 !important;
+}
+/* emerald AM avatar */
+.dbledger-root .dbledger-avatar {
+    background: var(--dbl-accent) !important;
+    color: #fff !important;
+    font-weight: 600 !important;
+    flex: none;
+}
+.dbledger-root .dbledger-avatar * {
+    color: #fff !important;
+    background: transparent !important;
+}
+
+/* ── Budget hero ─────────────────────────────────────────────────────────── */
+.dbledger-hero {
+    margin-bottom: 22px;
+}
+.dbledger-hero__eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 4px;
+}
+.dbledger-hero__dot {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: var(--dbl-muted);
+}
+.dbledger-root .dbledger-daychip {
+    font-size: 11px !important;
+}
+.dbledger-root .dbledger-hero__title {
+    font-size: 28px !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+    margin: 4px 0 0;
+    color: var(--dbl-ink) !important;
+}
+.dbledger-hero__accent {
+    color: var(--dbl-accent);
+}
+
+/* ── Grid rows (hand-rolled scaffolding) ─────────────────────────────────── */
+.dbledger-grid {
+    display: grid;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+.dbledger-grid--top {
+    grid-template-columns: 1fr 1.3fr;
+}
+.dbledger-grid--bottom {
+    grid-template-columns: 1.4fr 1fr;
+    margin-bottom: 0;
+}
+.dbledger-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-height: 0;
+}
+
+/* ── Card baseline (restyle Card to 18px radius, hairline, white) ────────── */
+.dbledger-root .dbledger-card {
+    background: var(--dbl-surface);
+    border: 1px solid var(--dbl-border) !important;
+    border-radius: var(--dbl-radius) !important;
+    box-shadow: none !important;
+    overflow: hidden;
+}
+.dbledger-root .dbledger-card__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: none !important;
+    padding: 20px 20px 0 !important;
+    background: transparent !important;
+}
+.dbledger-card__title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--dbl-ink);
+}
+
+/* ── Budget ring card ────────────────────────────────────────────────────── */
+.dbledger-ringcard__body {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    padding: 22px !important;
+}
+.dbledger-ring {
+    position: relative;
+    width: 130px;
+    height: 130px;
+    flex: none;
+}
+.dbledger-ring__ph {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    border: 12px solid var(--dbl-track);
+}
+.dbledger-ring__label {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    text-align: center;
+    pointer-events: none;
+}
+.dbledger-ring__pct {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--dbl-ink);
+}
+.dbledger-ring__cap {
+    font-size: 10px;
+    color: var(--dbl-muted);
+}
+.dbledger-ringcard__stat {
+    min-width: 0;
+}
+.dbledger-ringcard__left {
+    font-size: 30px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--dbl-accent);
+    line-height: 1.1;
+}
+.dbledger-root .dbledger-ringcard__hint {
+    color: var(--dbl-body) !important;
+    margin-top: 8px;
+}
+
+/* ── Spending by category (restyled Progress per row) ────────────────────── */
+.dbledger-catcard__body {
+    padding: 16px 20px 20px !important;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.dbledger-catrow {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+    transition: opacity 0.18s var(--dbl-ease);
+}
+.dbledger-catrow.is-dim {
+    opacity: 0.4;
+}
+.dbledger-catrow__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 6px;
+}
+.dbledger-catrow__label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--dbl-ink);
+}
+.dbledger-chip {
+    width: 22px;
+    height: 22px;
+    border-radius: 7px;
+    background: var(--dbledger-catbg, var(--dbl-track));
+    color: var(--dbledger-catcol, var(--dbl-accent));
+    display: grid;
+    place-items: center;
+    flex: none;
+}
+.dbledger-catrow__amt {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    color: var(--dbl-ink);
+}
+/* Progress → 6px track on #EEF1EF, fill in the per-category color */
+.dbledger-root .dbledger-catbar > div {
+    height: 6px !important;
+    border-radius: 4px !important;
+    background: var(--dbl-track) !important;
+}
+.dbledger-root .dbledger-catbar > div > div {
+    border-radius: 4px !important;
+    background: var(--dbledger-catcol, var(--dbl-accent)) !important;
+}
+
+/* ── Cash flow (EChart grouped bar) ──────────────────────────────────────── */
+.dbledger-cashcard__head {
+    padding-bottom: 0 !important;
+}
+.dbledger-legend {
+    display: flex;
+    gap: 12px;
+    font-size: 11px;
+}
+.dbledger-legend__item--in {
+    color: var(--dbl-accent);
+}
+.dbledger-legend__item--out {
+    color: var(--dbl-spend);
+}
+.dbledger-cashcard__body {
+    padding: 6px 20px 18px !important;
+}
+.dbledger-root .dbledger-cashcard__sub {
+    color: var(--dbl-muted) !important;
+    margin-bottom: 12px;
+}
+.dbledger-chart {
+    width: 100%;
+    height: 150px;
+}
+.dbledger-chart__ph {
+    width: 100%;
+    height: 150px;
+}
+
+/* ── Emergency fund (dark accent Card + restyled Progress) ────────────────── */
+.dbledger-root .dbledger-goalcard {
+    background: var(--dbl-goal-bg) !important;
+    border: none !important;
+    color: var(--dbl-goal-ink);
+}
+.dbledger-goalcard__body {
+    padding: 20px !important;
+}
+.dbledger-goalcard__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+.dbledger-goalcard__label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--dbl-goal-ink);
+}
+.dbledger-goalcard__icon {
+    color: var(--dbl-accent-2);
+    display: inline-flex;
+}
+.dbledger-goalcard__fig {
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--dbl-goal-ink);
+}
+.dbledger-goalcard__of {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--dbl-goal-of);
+}
+/* Progress → 7px translucent-white track, emerald #34D399 fill */
+.dbledger-root .dbledger-goalbar {
+    margin-top: 10px;
+}
+.dbledger-root .dbledger-goalbar > div {
+    height: 7px !important;
+    border-radius: 4px !important;
+    background: rgba(255, 255, 255, 0.12) !important;
+}
+.dbledger-root .dbledger-goalbar > div > div {
+    border-radius: 4px !important;
+    background: var(--dbl-accent-2) !important;
+}
+
+/* ── Recent transactions (restyled Table, headerless) ────────────────────── */
+.dbledger-recentcard {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+}
+.dbledger-recentcard__head {
+    padding: 14px 18px 8px !important;
+}
+/* Table root: drop its own border/radius (the Card owns them) */
+.dbledger-root .dbledger-txntable[data-react-fancy-table],
+.dbledger-root .dbledger-txntable [data-react-fancy-table] {
+    border: none !important;
+    border-radius: 0 !important;
+    overflow: visible !important;
+}
+/* hide the column header — the mockup lists rows only */
+.dbledger-root .dbledger-txntable [data-react-fancy-table-head] {
+    display: none !important;
+}
+.dbledger-root .dbledger-txntable table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.dbledger-root .dbledger-txntable [data-react-fancy-table-body] {
+    border: none !important;
+}
+.dbledger-root .dbledger-txn {
+    border-top: 1px solid var(--dbl-divider) !important;
+}
+.dbledger-root .dbledger-txn__cell,
+.dbledger-root .dbledger-txn__amtcell {
+    padding: 9px 18px !important;
+    vertical-align: middle;
+    border: none !important;
+}
+.dbledger-root .dbledger-txn__amtcell {
+    text-align: right;
+    white-space: nowrap;
+    width: 1%;
+}
+.dbledger-txn__main {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    min-width: 0;
+}
+.dbledger-txn__tile {
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    background: var(--dbl-tile-bg);
+    display: grid;
+    place-items: center;
+    font-size: 14px;
+    flex: none;
+}
+.dbledger-txn__meta {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+.dbledger-txn__name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--dbl-ink);
+}
+.dbledger-txn__cat {
+    font-size: 11px;
+    color: var(--dbl-muted);
+}
+.dbledger-txn__amt {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    color: var(--dbl-spend);
+}
+.dbledger-txn__amt.is-income {
+    color: var(--dbl-accent);
+}
+
+/* ── Colophon ────────────────────────────────────────────────────────────── */
+.dbledger-foot {
+    margin-top: 22px;
+    text-align: center;
+}
+.dbledger-root .dbledger-foot :where(span) {
+    color: var(--dbl-muted) !important;
+}
+
+/* ── Responsive: collapse to one column on narrow viewports ──────────────── */
+@media (max-width: 860px) {
+    .dbledger-grid--top,
+    .dbledger-grid--bottom {
+        grid-template-columns: 1fr;
+    }
+    .dbledger-root .dbledger-navitems {
+        display: none !important;
+    }
+}
+@media (max-width: 520px) {
+    .dbledger-ringcard__body {
+        flex-direction: column;
+        text-align: center;
+    }
+}

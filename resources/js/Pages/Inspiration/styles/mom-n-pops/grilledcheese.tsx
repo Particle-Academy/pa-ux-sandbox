@@ -1,8 +1,8 @@
 import "./grilledcheese.css";
 import { Link } from "@inertiajs/react";
 import { useEffect, useRef, useState, type CSSProperties, type RefObject } from "react";
-import { Badge, Button, Slider, Tooltip } from "@particle-academy/react-fancy";
-import { Bot, Check, Truck } from "lucide-react";
+import { Avatar, Badge, Button, Card, Slider, Table, Tooltip } from "@particle-academy/react-fancy";
+import { Check, Truck } from "lucide-react";
 import type { Style } from "../../types";
 
 /**
@@ -24,12 +24,20 @@ import type { Style } from "../../types";
  * green-check confirmation with a mono REF code — an AgentActivity log
  * rendered as product UI.
  *
- * Fancy primitives worn by the design: Button (amber fill, butter-gradient
- * book CTA, outline ghosts, violet occasion chips, circle drawer close),
- * Slider (headcount — violet fill + glowing thumb), Badge (menu tags, the
- * agentic pill, the quote's occasion chip, the "tonight" schedule marker),
- * Tooltip (the neon badge's backstory). The chat bubble, tool-call feed,
- * quote card, and slide-over drawer stay hand-rolled — truer to the mockup.
+ * Fancy primitives worn by the design: Card (the six clickable menu melts, and
+ * the sticky live-quote panel composed with Card.Header/Card.Body), Table (the
+ * find-us schedule AND the quote's line items — both restyled to the page's
+ * hairline rows), Avatar (the violet agent chip in the chat bubble), Button
+ * (amber fill, butter-gradient book CTA, outline ghosts, violet occasion chips,
+ * circle drawer close), Slider (headcount — violet fill + glowing thumb), Badge
+ * (menu tags, the agentic pill, the quote's occasion chip, drawer tags +
+ * ingredient pills, the "tonight" schedule marker), Tooltip (the neon badge's
+ * backstory). Left legitimately hand-rolled: the CSS melt art, hero/story night
+ * scenes, the 5s neon flicker, the asymmetric agent chat bubble + tool-call
+ * feed, and the z-index-disciplined slide-over drawer + sticky plum-glass
+ * header — both kept UNDER the host frame's chrome, where react-fancy's Modal
+ * (portals to a z-50 centered dialog) and Navbar (a non-sticky bar with a
+ * mobile toggle) would break the look and the z-index discipline.
  *
  * Mounted by Inspiration/Show.tsx for mom-n-pops / `style.id ===
  * "grilledcheese"`. SSR-safe: the booking ref (Math.random) and feed
@@ -380,12 +388,22 @@ export default function GrilledCheese({ style }: { style: Style }) {
                     </div>
                     <div className="mpgrilledcheese-grid">
                         {MENU.map((m) => (
-                            <button
+                            <Card
                                 key={m.slug}
-                                type="button"
+                                variant="flat"
+                                padding="none"
                                 className="mpgrilledcheese-card"
-                                onClick={() => setSel(m)}
+                                role="button"
+                                tabIndex={0}
                                 aria-haspopup="dialog"
+                                aria-label={`${m.name} — ${m.price}`}
+                                onClick={() => setSel(m)}
+                                onKeyDown={(event) => {
+                                    if (event.key === "Enter" || event.key === " ") {
+                                        event.preventDefault();
+                                        setSel(m);
+                                    }
+                                }}
                             >
                                 <div className="mpgrilledcheese-card-art">
                                     <MeltArt item={m} />
@@ -405,7 +423,7 @@ export default function GrilledCheese({ style }: { style: Style }) {
                                     </div>
                                     <p className="mpgrilledcheese-card-short">{m.short}</p>
                                 </div>
-                            </button>
+                            </Card>
                         ))}
                     </div>
                 </section>
@@ -428,9 +446,7 @@ export default function GrilledCheese({ style }: { style: Style }) {
                         {/* The brief: agent bubble → occasion → headcount → feed */}
                         <div className="mpgrilledcheese-brief">
                             <div className="mpgrilledcheese-say">
-                                <span className="mpgrilledcheese-bot" aria-hidden>
-                                    <Bot size={18} />
-                                </span>
+                                <Avatar className="mpgrilledcheese-bot" fallback="AI" size="sm" />
                                 <div className="mpgrilledcheese-bubble" aria-live="polite">
                                     {agentSay}
                                 </div>
@@ -487,44 +503,56 @@ export default function GrilledCheese({ style }: { style: Style }) {
                         </div>
 
                         {/* The sticky quote card — live math, then confirmation */}
-                        <aside className="mpgrilledcheese-quote">
+                        <Card
+                            variant="flat"
+                            padding="none"
+                            className="mpgrilledcheese-quote"
+                            role="complementary"
+                            aria-label="Live catering quote"
+                        >
                             {!booked ? (
-                                <div>
-                                    <div className="mpgrilledcheese-quote-head">
+                                <>
+                                    <Card.Header className="mpgrilledcheese-quote-head">
                                         <span className="mpgrilledcheese-quote-title">Proposed spread</span>
                                         <Badge className="mpgrilledcheese-occbadge">{occLabel}</Badge>
-                                    </div>
-                                    <div className="mpgrilledcheese-quote-items">
-                                        {lineItems.map((li) => (
-                                            <div key={li.name} className="mpgrilledcheese-li">
-                                                <div>
-                                                    <div className="mpgrilledcheese-li-name">{li.name}</div>
-                                                    <div className="mpgrilledcheese-li-note">{li.note}</div>
-                                                </div>
-                                                <span className="mpgrilledcheese-li-price">{li.price}</span>
+                                    </Card.Header>
+                                    <Card.Body className="mpgrilledcheese-quote-body">
+                                        <Table className="mpgrilledcheese-quote-lines">
+                                            <Table.Body>
+                                                {lineItems.map((li) => (
+                                                    <Table.Row key={li.name} className="mpgrilledcheese-li">
+                                                        <Table.Cell className="mpgrilledcheese-li-main">
+                                                            <div className="mpgrilledcheese-li-name">{li.name}</div>
+                                                            <div className="mpgrilledcheese-li-note">{li.note}</div>
+                                                        </Table.Cell>
+                                                        <Table.Cell className="mpgrilledcheese-li-price">
+                                                            {li.price}
+                                                        </Table.Cell>
+                                                    </Table.Row>
+                                                ))}
+                                            </Table.Body>
+                                        </Table>
+                                        <div className="mpgrilledcheese-quote-total">
+                                            <div className="mpgrilledcheese-total-line">
+                                                <span className="mpgrilledcheese-total-label">Estimated total</span>
+                                                <span className="mpgrilledcheese-total-num">{totalFmt}</span>
                                             </div>
-                                        ))}
-                                    </div>
-                                    <div className="mpgrilledcheese-quote-total">
-                                        <div className="mpgrilledcheese-total-line">
-                                            <span className="mpgrilledcheese-total-label">Estimated total</span>
-                                            <span className="mpgrilledcheese-total-num">{totalFmt}</span>
+                                            <div className="mpgrilledcheese-total-per">
+                                                ${perHead} / guest · 90-min service
+                                            </div>
                                         </div>
-                                        <div className="mpgrilledcheese-total-per">
-                                            ${perHead} / guest · 90-min service
+                                        <div className="mpgrilledcheese-quote-cta">
+                                            <Button className="mpgrilledcheese-btn mpgrilledcheese-btn--book" onClick={book}>
+                                                <Truck size={18} aria-hidden /> Book the truck
+                                            </Button>
+                                            <div className="mpgrilledcheese-quote-fine">
+                                                No deposit — the agent holds your date and emails the full menu.
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div className="mpgrilledcheese-quote-cta">
-                                        <Button className="mpgrilledcheese-btn mpgrilledcheese-btn--book" onClick={book}>
-                                            <Truck size={18} aria-hidden /> Book the truck
-                                        </Button>
-                                        <div className="mpgrilledcheese-quote-fine">
-                                            No deposit — the agent holds your date and emails the full menu.
-                                        </div>
-                                    </div>
-                                </div>
+                                    </Card.Body>
+                                </>
                             ) : (
-                                <div className="mpgrilledcheese-bookedwrap">
+                                <Card.Body className="mpgrilledcheese-bookedwrap">
                                     <div className="mpgrilledcheese-booked-check" aria-hidden>
                                         <Check size={28} />
                                     </div>
@@ -541,9 +569,9 @@ export default function GrilledCheese({ style }: { style: Style }) {
                                     >
                                         Plan another event
                                     </Button>
-                                </div>
+                                </Card.Body>
                             )}
-                        </aside>
+                        </Card>
                     </div>
                 </section>
 
@@ -583,25 +611,35 @@ export default function GrilledCheese({ style }: { style: Style }) {
                         <h2 className="mpgrilledcheese-h2">Find the truck</h2>
                         <span className="mpgrilledcheese-sechint">Milwaukee · nights &amp; late</span>
                     </div>
-                    <div className="mpgrilledcheese-sched-card">
-                        {SCHEDULE.map((s, i) => (
-                            <div
-                                key={s.day}
-                                className={`mpgrilledcheese-sched-row${i === tonightIdx ? " mpgrilledcheese-sched-row--tonight" : ""}`}
-                            >
-                                <span className="mpgrilledcheese-sched-day">
-                                    {s.day}
-                                    {i === tonightIdx && (
-                                        <Badge className="mpgrilledcheese-tonight" color="amber" variant="soft" size="sm" dot>
-                                            tonight
-                                        </Badge>
-                                    )}
-                                </span>
-                                <span className="mpgrilledcheese-sched-place">{s.place}</span>
-                                <span className="mpgrilledcheese-sched-hours">{s.hours}</span>
-                            </div>
-                        ))}
-                    </div>
+                    <Table className="mpgrilledcheese-sched">
+                        <Table.Body>
+                            {SCHEDULE.map((s, i) => (
+                                <Table.Row
+                                    key={s.day}
+                                    className={i === tonightIdx ? "mpgrilledcheese-sched-row--tonight" : undefined}
+                                >
+                                    <Table.Cell className="mpgrilledcheese-sched-day">
+                                        <span className="mpgrilledcheese-sched-day-inner">
+                                            {s.day}
+                                            {i === tonightIdx && (
+                                                <Badge
+                                                    className="mpgrilledcheese-tonight"
+                                                    color="amber"
+                                                    variant="soft"
+                                                    size="sm"
+                                                    dot
+                                                >
+                                                    tonight
+                                                </Badge>
+                                            )}
+                                        </span>
+                                    </Table.Cell>
+                                    <Table.Cell className="mpgrilledcheese-sched-place">{s.place}</Table.Cell>
+                                    <Table.Cell className="mpgrilledcheese-sched-hours">{s.hours}</Table.Cell>
+                                </Table.Row>
+                            ))}
+                        </Table.Body>
+                    </Table>
                 </section>
             </div>
 
@@ -664,9 +702,9 @@ export default function GrilledCheese({ style }: { style: Style }) {
                             <div className="mpgrilledcheese-drawer-label">Pressed with</div>
                             <div className="mpgrilledcheese-pills">
                                 {sel.ingredients.map((ing) => (
-                                    <span key={ing} className="mpgrilledcheese-pill">
+                                    <Badge key={ing} className="mpgrilledcheese-pill">
                                         {ing}
-                                    </span>
+                                    </Badge>
                                 ))}
                             </div>
                             <div className="mpgrilledcheese-allergens">Allergens: {sel.allergens}</div>

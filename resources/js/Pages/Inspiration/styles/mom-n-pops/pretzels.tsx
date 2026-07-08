@@ -1,7 +1,7 @@
 import "./pretzels.css";
 import { Link } from "@inertiajs/react";
 import { Fragment, useState } from "react";
-import { Badge, Button, Tooltip } from "@particle-academy/react-fancy";
+import { Badge, Button, Callout, Card, Navbar, Tooltip } from "@particle-academy/react-fancy";
 import { CalendarDays, ChevronLeft, ChevronRight } from "lucide-react";
 import type { Style } from "../../types";
 
@@ -27,12 +27,16 @@ import type { Style } from "../../types";
  * three-week schedule array, and the mockup's imperative paint() today-badge
  * hack is replaced by a declarative `today` flag on the data.
  *
- * Fancy primitives worn by the design: Button (blue fills, cream outline,
- * ghost chevron week-pagers, the gold reminder toggle), Badge (the BREZELN
- * wordmark tag stripped to letterspaced blue caps), Tooltip (the Monday
- * today-badge fine print). The band grid itself is hand-rolled — react-fancy's
- * Calendar is a date picker, not a day-part week board — with stable
- * data-stop/data-week handles on every chip so agents never guess DOM.
+ * Fancy primitives worn by the design: Navbar (the sticky biergarten header —
+ * brand + anchor items + the "Find the truck" pill), Card (the six Speisekarte
+ * menu items and the four Geschichte stat tiles, flattened to white hairline
+ * panels), Callout (the selected-stop promotion, restyled from an alert into
+ * the one solid-blue banner), Button (blue fills, cream outline, ghost chevron
+ * week-pagers, the gold reminder toggle), Badge (the BREZELN wordmark tag
+ * stripped to letterspaced blue caps), Tooltip (the Monday today-badge fine
+ * print). Only the band grid itself is hand-rolled — react-fancy's Calendar is
+ * a date picker, not a day-part week board — with stable data-stop/data-week
+ * handles on every chip so agents never guess DOM.
  *
  * Mounted by Inspiration/Show.tsx for mom-n-pops / `style.id === "pretzels"`.
  * SSR-safe: all data static, no timers, no Date/randomness during render;
@@ -178,29 +182,35 @@ export default function Pretzels({ style }: { style: Style }) {
             {/* ── Bavarian diamond ribbon (pure-CSS rautenmuster) ─────────── */}
             <div className="mppretzels-rauten mppretzels-ribbon" aria-hidden />
 
-            {/* ── Sticky white hairline header ────────────────────────────── */}
-            <header className="mppretzels-header">
-                <div className="mppretzels-header__in">
+            {/* ── Sticky white hairline header (Navbar, restyled) ─────────── */}
+            <Navbar className="mppretzels-header">
+                <Navbar.Brand className="mppretzels-brandwrap">
                     <Link href="/inspiration/mom-n-pops" className="mppretzels-brand">
                         <span className="mppretzels-brand__name">Mom-n-Pops</span>
                         <Badge size="sm" variant="soft" className="mppretzels-brand__tag">
                             BREZELN
                         </Badge>
                     </Link>
-                    <nav className="mppretzels-nav" aria-label="Site">
-                        <a href="#mppretzels-menu" className="mppretzels-nav__link">Menu</a>
-                        <a href="#mppretzels-cal" className="mppretzels-nav__link">Where we&rsquo;ll be</a>
-                        <a href="#mppretzels-story" className="mppretzels-nav__link">Story</a>
-                        <Button
-                            href="#mppretzels-cal"
-                            size="sm"
-                            className="mppretzels-btn mppretzels-btn--primary mppretzels-btn--nav"
-                        >
-                            Find the truck
-                        </Button>
-                    </nav>
-                </div>
-            </header>
+                </Navbar.Brand>
+                <Navbar.Items className="mppretzels-nav">
+                    <Navbar.Item href="#mppretzels-menu" className="mppretzels-nav__link">
+                        Menu
+                    </Navbar.Item>
+                    <Navbar.Item href="#mppretzels-cal" className="mppretzels-nav__link">
+                        Where we&rsquo;ll be
+                    </Navbar.Item>
+                    <Navbar.Item href="#mppretzels-story" className="mppretzels-nav__link">
+                        Story
+                    </Navbar.Item>
+                    <Button
+                        href="#mppretzels-cal"
+                        size="sm"
+                        className="mppretzels-btn mppretzels-btn--primary mppretzels-btn--nav"
+                    >
+                        Find the truck
+                    </Button>
+                </Navbar.Items>
+            </Navbar>
 
             {/* ── Hero: copy left, emoji card over the diamond pattern ────── */}
             <section className="mppretzels-hero" aria-labelledby="mppretzels-hero-title">
@@ -249,13 +259,18 @@ export default function Pretzels({ style }: { style: Style }) {
                     </div>
                     <div className="mppretzels-menu__grid">
                         {MENU.map((m) => (
-                            <div key={m.name} className="mppretzels-menu__card">
+                            <Card
+                                key={m.name}
+                                variant="flat"
+                                padding="none"
+                                className="mppretzels-menu__card"
+                            >
                                 <div className="mppretzels-menu__row">
                                     <span className="mppretzels-menu__name">{m.name}</span>
                                     <span className="mppretzels-menu__price">{m.price}</span>
                                 </div>
                                 <p className="mppretzels-menu__short">{m.short}</p>
-                            </div>
+                            </Card>
                         ))}
                     </div>
                 </section>
@@ -354,23 +369,27 @@ export default function Pretzels({ style }: { style: Style }) {
                         </div>
                     </div>
 
-                    {/* Selected-stop banner — the one high-saturation block */}
+                    {/* Selected-stop promotion — a Callout restyled into the
+                        one high-saturation block; the stable data-selected-stop
+                        handle rides the inner row (Callout forwards no rest props). */}
                     {selDay && selStop && (
-                        <div className="mppretzels-banner" data-selected-stop={selKey ?? undefined}>
-                            <div className="mppretzels-banner__main">
-                                <div className="mppretzels-banner__when">
-                                    {selDay.dow} {selDay.date} · {selStop.hours}
+                        <Callout color="blue" className="mppretzels-banner">
+                            <div className="mppretzels-banner__inner" data-selected-stop={selKey ?? undefined}>
+                                <div className="mppretzels-banner__main">
+                                    <div className="mppretzels-banner__when">
+                                        {selDay.dow} {selDay.date} · {selStop.hours}
+                                    </div>
+                                    <div className="mppretzels-banner__place">{selStop.place}</div>
+                                    <div className="mppretzels-banner__note">{selStop.note}</div>
                                 </div>
-                                <div className="mppretzels-banner__place">{selStop.place}</div>
-                                <div className="mppretzels-banner__note">{selStop.note}</div>
+                                <Button
+                                    className={`mppretzels-btn mppretzels-btn--gold${reminded ? " mppretzels-btn--gold-set" : ""}`}
+                                    onClick={toggleReminder}
+                                >
+                                    {reminded ? "Reminder set — see you there" : "Set a reminder"}
+                                </Button>
                             </div>
-                            <Button
-                                className={`mppretzels-btn mppretzels-btn--gold${reminded ? " mppretzels-btn--gold-set" : ""}`}
-                                onClick={toggleReminder}
-                            >
-                                {reminded ? "Reminder set — see you there" : "Set a reminder"}
-                            </Button>
-                        </div>
+                        </Callout>
                     )}
                 </section>
 
@@ -390,10 +409,15 @@ export default function Pretzels({ style }: { style: Style }) {
                     </div>
                     <div className="mppretzels-stats">
                         {STATS.map((s) => (
-                            <div key={s.k} className="mppretzels-stat">
+                            <Card
+                                key={s.k}
+                                variant="flat"
+                                padding="none"
+                                className="mppretzels-stat"
+                            >
                                 <div className="mppretzels-stat__v">{s.v}</div>
                                 <div className="mppretzels-stat__k">{s.k}</div>
-                            </div>
+                            </Card>
                         ))}
                     </div>
                 </section>

@@ -28,8 +28,8 @@
     {
       "name": "sticky header",
       "what": "White bar with a 1px #E0D9C7 bottom rule, sticky at top: 'Mom-n-Pops' at 900 weight beside a letterspaced blue 'BREZELN' caps tag (links to the collection hub), then anchor nav (Menu / Where we'll be / Story) and a solid blue 'Find the truck' pill.",
-      "components": ["Badge", "Button", "Link"],
-      "restyle": "Badge stripped of fill/border/padding to a flush 12px/800 letterspaced blue caps cuisine tag; Button squeezed to an 8px-radius 9px/16px blue pill; nav items are plain in-page anchors (the mockup's window.scrollBy handlers replaced by href anchors + scroll-margin-top on the target sections). Header z-index stays under 30 so the gallery frame wins."
+      "components": ["Navbar", "Badge", "Button", "Link"],
+      "restyle": "Navbar (Navbar.Brand + Navbar.Items + Navbar.Item) wears the whole bar: its Tailwind chrome (px-4/py-3, zinc border, gap-1, hidden/md:flex) is overridden so the <nav> is the sticky white hairline header, its inner flex row becomes the centered 1160px container, and the items stay visible with no mobile toggle rendered. Navbar.Item anchors are stripped of their pill chrome to plain in-page links (the mockup's window.scrollBy handlers replaced by href anchors + scroll-margin-top on the targets). Badge stripped of fill/border/padding to a flush 12px/800 letterspaced blue caps cuisine tag; the 'Find the truck' Button squeezed to an 8px-radius 9px/16px blue pill. Header z-index stays under 30 so the gallery frame wins."
     },
     {
       "name": "hero",
@@ -40,8 +40,8 @@
     {
       "name": "die speisekarte (menu grid)",
       "what": "Bilingual heading ('Die Speisekarte' at 900 with a muted '— the menu' aside) over a 3x2 grid of white hairline cards: item name at 800 left, blue 900-weight price right, one-line grey description below. Six items, $5–$9, classic-to-Obatzda.",
-      "components": [],
-      "restyle": "The quietest section — deliberately zero primitives, zero icons, zero imagery; pure typographic menu-card discipline (white card, 1px #E0D9C7, 14px radius, 18px padding). The German/English pairing repeats in the story section."
+      "components": ["Card"],
+      "restyle": "Six Card (variant='flat' padding='none') tiles, each flattened from the library's rounded-lg zinc fill to a white #FFF panel on a 1px #E0D9C7 hairline (14px radius, 18px padding, no shadow) — the quietest section, pure typographic menu-card discipline with the price/name row and grey description held inside the Card. The German/English pairing repeats in the story section."
     },
     {
       "name": "where we'll be (week-band calendar)",
@@ -52,14 +52,14 @@
     {
       "name": "selected-stop banner",
       "what": "Appears below the calendar only when a chip is selected: a solid #1C6BB0 rounded banner with 'Fri 11 · 5–9' in pale #CDE0F1, the venue at 22px/800 white, the stop note, and a gold 'Set a reminder' button — the one high-saturation block on the page, promoting a calendar cell into a call to action.",
-      "components": ["Button"],
-      "restyle": "Button worn as the gold #F0C64B / 9px-radius / 800-weight action; the mockup's inert affordance becomes a trust-but-verify toggle — clicking stages the reminder per stop (keyed week:dow:band) and the button flips to a quiet white-glass 'Reminder set — see you there' state on the blue. Banner carries data-selected-stop for agent reads."
+      "components": ["Callout", "Button"],
+      "restyle": "A Callout (color='blue') restyled from its light-tint alert (border-l-4, rounded-lg, blue-50 fill) into the solid #1C6BB0 banner — border stripped, 14px radius, 18px/22px padding — with the when/place/note + action laid out in the row it wraps in its flex-1 slot (the stable data-selected-stop handle rides that inner row, since Callout forwards no arbitrary props). Button worn as the gold #F0C64B / 9px-radius / 800-weight action; the mockup's inert affordance becomes a trust-but-verify toggle — clicking stages the reminder per stop (keyed week:dow:band) and the button flips to a quiet white-glass 'Reminder set — see you there' state on the blue."
     },
     {
       "name": "unsere geschichte (story + stats)",
       "what": "2-col split over a 1px top rule. Left: amber kicker 'Unsere Geschichte', 34px/900 headline 'Milwaukee loves a beer garden. We brought the pretzels.', and the family narrative — Sal's old-Milwaukee German family, the recipe off his grandfather's handwritten card, Rosa perfecting the lye dip, small warm batches. Right: a 2x2 grid of white stat cards with blue 28px/900 values: 'by hand / every twist', 'lye-dipped / real mahogany shell', '2026 / est. Milwaukee', '3 / beer gardens / wk'.",
-      "components": [],
-      "restyle": "Hand-rolled stat cards where two of the four 'numbers' are words ('by hand', 'lye-dipped') — the stat-card primitive repurposed as brand-voice badges; '3 beer gardens / wk' ties the stats back to the calendar surface."
+      "components": ["Card"],
+      "restyle": "The 2x2 stat tiles are Card (variant='flat' padding='none') flattened to the same white #FFF / 1px #E0D9C7 / 14px-radius panel as the menu, repurposed as brand-voice badges where two of the four 'numbers' are words ('by hand', 'lye-dipped'); '3 beer gardens / wk' ties the stats back to the calendar surface."
     },
     {
       "name": "footer",
@@ -69,10 +69,13 @@
     }
   ],
   "palette": [
+    { "component": "Navbar", "restyle": "Navbar (+ Navbar.Brand / Navbar.Items / Navbar.Item) is the sticky header. Its default chrome is overridden to the parchment palette: the <nav> loses px-4/py-3 and takes position:sticky + a 1px #E0D9C7 bottom rule on white; the inner flex/justify-between row is turned into the centered 1160px container; Navbar.Items has its hidden/md:flex + gap-1 forced to a persistent 24px flex (no mobile Toggle rendered), collapsing only the three text links (not the CTA) under 720px; each Navbar.Item <a> is stripped of its rounded-lg zinc pill to a plain 14px/600 ink link that darkens on hover, no underline." },
+    { "component": "Card", "restyle": "Worn ten times as the design's card discipline — the six Speisekarte menu items and the four Geschichte stat tiles — all variant='flat' padding='none'. The library's rounded-lg zinc-50 fill is overridden to a white #FFF panel on a 1px #E0D9C7 hairline (14px radius, 18px padding, box-shadow none), letting terse name/price/description and value/label markup sit inside with no visual regression from the hand-rolled divs they replace." },
+    { "component": "Callout", "restyle": "One deployment: the selected-stop promotion. color='blue' but its alert skin (border-l-4, rounded-lg, blue-50 tint, p-4, gap-3) is fully overridden to the page's single solid #1C6BB0 banner (border 0, 14px radius, 18px/22px padding); the when/place/note block + gold reminder Button live in the flex-1 slot it wraps children in, and the stable data-selected-stop handle rides that inner row." },
     { "component": "Button", "restyle": "Quiet Bavarian rectangles, transitions off (motion: none is the brand). Four reads: primary = #1C6BB0 fill, 10px radius (8px in the nav), darkening to #175C99 on hover; secondary = parchment #F4F1E7 fill + #DAD3C2 hairline, border warming to amber on hover; chevron week-pager = 28px ghost square with a hairline that appears on hover, 0.35 opacity when the schedule runs out; reminder = gold #F0C64B, 9px radius, weight 800, flipping to white-glass-on-blue once staged." },
     { "component": "Badge", "restyle": "Stripped entirely — no fill, no border, no padding — leaving a flush 12px/800 letterspaced #1C6BB0 caps label: the 'BREZELN' cuisine tag beside the wordmark." },
     { "component": "Tooltip", "restyle": "One deployment: fine print on the today badge ('Heute — the oven rests on Mondays'), cursor:help on the 26px blue circle; the library portals it above the page with its own layer." },
-    { "component": "Link (Inertia)", "restyle": "Only the brand lockup — ink wordmark + blue Badge tag back to the collection hub; everything else is in-page anchors that darken on hover, no underlines." },
+    { "component": "Link (Inertia)", "restyle": "Only the brand lockup — ink wordmark + blue Badge tag back to the collection hub, nested inside Navbar.Brand; everything else is Navbar.Item in-page anchors that darken on hover, no underlines." },
     { "component": "Calendar (deliberately not used)", "restyle": "The week surface is hand-rolled because the design is a day-part band grid (56px mono gutter + 7 columns x 2 service windows), not a date picker or hour agenda — model stops as controlled JSON events on {day, band} slots with band-driven chip tints, and keep stable data-stop/data-week handles so an MCP bridge can read and drive selection." }
   ],
   "contentArchetype": "A roaming food truck whose schedule IS the product: hero promise ('Big soft pretzels, twisted by hand.') ending in 'we follow the beer gardens — check the calendar', a six-item bilingual priced menu (Classic Soft Pretzel $5 → Bratwurst Pretzel Bun $9, Obatzda & Pretzel $8), a week-band calendar of Milwaukee beer-garden stops (Estabrook, Hubbard Park, Brady Street, Third Ward Riverwalk lunch + happy hour, S. Shore sunset pretzels, Humboldt Park bandshell) with tap-for-details selection and a staged reminder, a family story with German garnish (Sal's grandfather's handwritten recipe card, Rosa's lye dip, seit 2026), four brand-voice stats, and a dark one-line contact footer.",

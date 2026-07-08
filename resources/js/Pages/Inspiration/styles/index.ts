@@ -2,6 +2,7 @@ import type { ComponentType } from "react";
 import type { Style } from "../types";
 import { FIELDWORK_STYLES } from "./fieldwork";
 import { MOM_N_POPS_STYLES } from "./mom-n-pops";
+import { DASHBOARDS_STYLES } from "./dashboards";
 
 /**
  * The style-mounting registry — collection → style id → component.
@@ -22,4 +23,5 @@ export type StyleComponent = ComponentType<{ style: Style }>;
 export const STYLE_COMPONENTS: Record<string, Record<string, StyleComponent>> = {
     fieldwork: FIELDWORK_STYLES,
     "mom-n-pops": MOM_N_POPS_STYLES,
+    dashboards: DASHBOARDS_STYLES,
 };

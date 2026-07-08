@@ -1,8 +1,8 @@
 import "./icecream.css";
 
 import { Link } from "@inertiajs/react";
-import { useRef, useState } from "react";
-import { Badge, Button, Modal } from "@particle-academy/react-fancy";
+import { useRef, useState, type KeyboardEvent } from "react";
+import { Badge, Button, Card, Modal } from "@particle-academy/react-fancy";
 import { IceCreamBowl } from "lucide-react";
 import type { Style } from "../../types";
 
@@ -19,13 +19,16 @@ import type { Style } from "../../types";
  * a tile opens a restyled react-fancy <Modal> whose header band inherits the
  * selected tile's bg/ink, so the tile appears to physically "open up".
  *
- * Restyled Fancy primitives: Badge (the "12 flavors churning" live-status
- * pill), Button (the white "See flavors" hero pill + the pink "Add a scoop"
- * modal pill), Modal (the flavor detail card — radius 22, big soft shadow,
- * plum scrim). The flavor tiles themselves are hand-rolled <button> cells:
- * their data-driven spans and per-tile inline colors ARE the design, so no
- * stock grid component is forced onto them. Each tile carries a stable
- * `data-flavor` handle so an agent could open a flavor by slug.
+ * Restyled Fancy primitives: Card (the six flavor tiles + the mint stat cell —
+ * variant="flat" stripped of the kit's radius/border via scoped CSS so each
+ * tile keeps its data-driven bg/ink/span; Card.Header carries the icon+price
+ * row, Card.Body the name+short label), Badge (the "12 flavors churning"
+ * live-status pill), Button (the white "See flavors" hero pill + the pink "Add
+ * a scoop" modal pill), Modal (the flavor detail card — radius 22, big soft
+ * shadow, plum scrim). The flavor Cards act as buttons (role + tabIndex +
+ * Enter/Space) and carry a stable `data-flavor` handle so an agent could open a
+ * flavor by slug; their data-driven column spans and per-tile inline colors ARE
+ * the design, so the bento grid math still lives in CSS, not a stock grid.
  *
  * Mounted by Inspiration/Show.tsx for `style.id === "icecream"`. SSR-safe:
  * no browser globals, no timers, no randomness — the modal renders nothing
@@ -132,11 +135,22 @@ export default function IceCream({ style }: { style: Style }) {
      */
     const [sel, setSel] = useState<Flavor>(FLAVORS[0]);
     const [open, setOpen] = useState(false);
-    const firstTileRef = useRef<HTMLButtonElement>(null);
+    const firstTileRef = useRef<HTMLDivElement>(null);
 
     const openFlavor = (flavor: Flavor) => {
         setSel(flavor);
         setOpen(true);
+    };
+
+    /**
+     * Flavor Cards are divs with role="button"; restore native button keys so
+     * Enter/Space open the flavor just like the original <button> tiles did.
+     */
+    const onTileKey = (event: KeyboardEvent<HTMLDivElement>, flavor: Flavor) => {
+        if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            openFlavor(flavor);
+        }
     };
 
     return (
@@ -175,38 +189,43 @@ export default function IceCream({ style }: { style: Style }) {
                         </div>
                     </div>
 
-                    {/* Flavor tiles — per-tile palette + span straight from data */}
+                    {/* Flavor tiles — restyled Card (flat); per-tile palette +
+                        span arrive inline, so each tile is one bento cell. */}
                     {FLAVORS.map((flavor, i) => (
-                        <button
+                        <Card
                             key={flavor.slug}
                             ref={i === 0 ? firstTileRef : undefined}
-                            type="button"
+                            variant="flat"
+                            padding="none"
                             className="mpicecream-tile"
                             data-flavor={flavor.slug}
                             data-cspan={flavor.cspan}
                             style={{ background: flavor.bg, color: flavor.ink }}
+                            role="button"
+                            tabIndex={0}
                             onClick={() => openFlavor(flavor)}
+                            onKeyDown={(event) => onTileKey(event, flavor)}
                             aria-haspopup="dialog"
                             aria-label={`${flavor.name} — ${flavor.price} — ${flavor.short}`}
                         >
-                            <span className="mpicecream-tile__top">
+                            <Card.Header className="mpicecream-tile__top">
                                 <span className="mpicecream-tile__icon" aria-hidden>{flavor.icon}</span>
                                 <span className="mpicecream-tile__price">{flavor.price}</span>
-                            </span>
-                            <span className="mpicecream-tile__label">
+                            </Card.Header>
+                            <Card.Body className="mpicecream-tile__label">
                                 <span className="mpicecream-tile__name" style={{ fontSize: flavor.size }}>
                                     {flavor.name}
                                 </span>
                                 <span className="mpicecream-tile__short">{flavor.short}</span>
-                            </span>
-                        </button>
+                            </Card.Body>
+                        </Card>
                     ))}
 
-                    {/* Stat tile — social proof as just another bento cell */}
-                    <div className="mpicecream-stat">
+                    {/* Stat tile — social proof as another flat Card bento cell */}
+                    <Card variant="flat" padding="none" className="mpicecream-stat">
                         <div className="mpicecream-stat__num">4.9★</div>
                         <div className="mpicecream-stat__label">1,200 scoops / week</div>
-                    </div>
+                    </Card>
                 </section>
 
                 {/* ── Footer — deliberately quiet, one slim row ────────────── */}

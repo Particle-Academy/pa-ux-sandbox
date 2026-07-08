@@ -1,0 +1,73 @@
+{
+  "id": "wrapped",
+  "name": "Wrapped",
+  "note": "A personal listening recap as a Fancy dashboard.",
+  "mode": "dark",
+  "thesis": "A Spotify-Wrapped-style consumer recap built entirely from restyled Fancy primitives instead of bespoke divs: a low-density, generous single column on a near-black violet page, one violet→pink gradient carrying the whole identity, oversized display numerals with mono annotations, and a fixed frosted 'now playing' bar. It proves the same kit that wears a dense ops console can wear an emotional, consumer year-in-review — Card/Table/Progress/Badge/Avatar/EChart made to feel native to a music app, not an admin panel.",
+  "tokens": {
+    "bg": "#0C0A14 near-black violet page with #151020 card/panel surfaces and a rgba(21,16,32,.96) frosted player",
+    "fg": "#EFEAF6 primary / #CBC2DA legend / #9A8FB0 secondary / #7C6F92 mono ranks / #5A4F70 axis+colophon",
+    "accent": "violet #7c3aed → pink #ec4899 gradient (linear-gradient 135deg) as the single brand device; #a855f7 / #ec4899 / #f59e0b / #38bdf8 as the fixed 4-color genre/chart palette",
+    "fontDisplay": "Geist (var(--font-sans)); 800-weight, -0.03em tracking on the 52px hero KPIs and rank Badge",
+    "fontMono": "Geist Mono (var(--font-mono)) for ranks, play counts, %s, hour-axis labels, scrubber timecodes, colophon — all tabular",
+    "radius": "22px hero banner / 18px cards / 8px art tile / 50% avatars + user bubble / 3px bars",
+    "border": "1px #241C34 card hairlines + bar tracks, #201830 row dividers; no heavy shadows except a violet hero glow and an upward player shadow",
+    "motion": "subtle ease-out reveals — hero + panels rise-fade on mount (dbwrapped-rise), Progress plays bars ease their width on period switch, the scrubber fill advances linearly each second; all disabled under prefers-reduced-motion"
+  },
+  "layout": "A centered single column (max-width 1080px) on a full-bleed near-black violet page — not a sidebar shell. A transparent Navbar topbar carries a gradient 'W' wordmark (Inertia Link back to the collection), a Tabs period switcher styled down to plain text links (This month / All time / Discover), and a gradient 'SL' Avatar. Below it a full-width violet→pink gradient hero Card holds an uppercase eyebrow and two oversized KPIs (the rank reads as a glassy Badge). Then a 2-up card grid (Top artists | Genres), a full-width 'When you listen' histogram card, a hairline Separator + mono colophon, and a fixed frosted 'now playing' bar docked to the bottom (z-index 20, under the gallery frame's 30). Density is low and consumer-friendly — big numerals, lots of breathing room.",
+  "sections": [
+    {
+      "name": "topbar",
+      "what": "Gradient 'W' Wrapped wordmark linking back to the dashboards index, a period switcher (This month active / All time / Discover), and a violet-pink 'SL' user avatar.",
+      "components": ["Navbar", "Tabs", "Avatar", "Link"],
+      "restyle": "Navbar stripped of its border + white background to sit transparent on the page; its internal justify-between flow separates the branded Link from the right cluster. Tabs (pills variant) are flattened to plain text nav links — the pill track loses its bg/padding and each tab becomes a muted text link that goes full-strength + 600-weight when aria-selected. The Avatar is forced to the violet→pink gradient with white initials. This is a genuinely controlled view switcher: onTabChange swaps the whole dataset."
+    },
+    {
+      "name": "hero",
+      "what": "Full-width violet→pink gradient banner: an uppercase eyebrow ('Your July, so far') over two 52px KPIs — '14,208 minutes listened' and a 'Top 2%' rank.",
+      "components": ["Card", "Badge"],
+      "restyle": "Card (flat, padding none) forced to the 135deg violet→pink gradient at 22px radius with a violet drop-glow and a mount rise-fade. The first KPI is a plain 800-weight 52px tabular numeral; the second is a Badge blown up to a 34px glassy chip (translucent white fill + hairline + blur) so the rank reads as a pill, per the mock."
+    },
+    {
+      "name": "top-artists",
+      "what": "Ranked list of 5 artists — mono rank, emoji-on-tinted-circle avatar, name, play count, and a right-aligned relative-plays mini bar.",
+      "components": ["Card", "Table", "Avatar", "Progress"],
+      "restyle": "A panel Card wraps a Table whose header is display:none, giving a compact three-column list (mono rank | avatar+name+plays | plays bar) with hairline row dividers and transparent cells. Each row's Avatar is tinted per-artist by a --dbw-art-bg CSS var set on the cell and carries the artist's emoji as its fallback. Progress is slimmed to a 5px violet→pink gradient fill on a #241C34 track (pct = plays relative to #1) that eases its width when the period changes."
+    },
+    {
+      "name": "genres",
+      "what": "A 4-slice genre donut beside a color-keyed legend of genre + share %.",
+      "components": ["Card", "EChart", "Badge"],
+      "restyle": "A panel Card holds a fancy-echarts pie EChart rendered as a ring (radius ['57%','100%'], 2px surface-colored slice borders, labels off, item tooltip) using the fixed 4-color palette, paired with a hand-rolled legend list where each row is a rounded color swatch + label + a Badge stripped to a mono % (no chip chrome). The imperative conic-gradient donut of the mock becomes a real controlled EChart."
+    },
+    {
+      "name": "when-you-listen",
+      "what": "24-bar histogram of plays by hour of day (12a→11p) with a per-period subtitle.",
+      "components": ["Card", "EChart", "Heading", "Text"],
+      "restyle": "A full-width panel Card with a bar EChart: one 24-point series, rounded 3px top caps, a violet vertical LinearGradient (#a855f7→#7c3aed) fill, a hidden y-axis and a mono x-axis that only labels 12a/6a/12p/6p/11p via an interval predicate. The imperative [data-h] height setters of the mock become a controlled series that swaps with the period."
+    },
+    {
+      "name": "now-playing",
+      "what": "Fixed frosted bottom bar: art tile, 'Motion Sickness / Phoebe Bridgers', skip-back / play-pause / skip-forward transport, and a scrubber between two mono timecodes.",
+      "components": ["Card", "Button", "Progress", "Tooltip", "Text"],
+      "restyle": "A fixed full-width Card (flat) becomes the frosted player — rgba surface, blur, hairline top border, upward shadow — with a centered max-width inner flex row. The art is a hand-rolled 8px gradient tile. Three Buttons are reset to icon-only transport controls (ghost circles; the center play/pause is a 38px white disc with a dark lucide icon, wrapped in a Tooltip). Progress is slimmed to a 4px white scrubber on a #241C34 track. Unlike the mock, the player actually plays: a useEffect interval advances the scrubber every second and auto-skips at track end (cleaned up on unmount); transport buttons cycle a small queue."
+    }
+  ],
+  "palette": [
+    { "component": "Navbar", "restyle": "Transparent, borderless topbar; the built-in justify-between flow splits the brand Link from the right-hand period + avatar cluster." },
+    { "component": "Tabs", "restyle": "Pills variant flattened into plain text nav links — no pill track, muted→full-strength on aria-selected; drives the period dataset via onTabChange (controlled)." },
+    { "component": "Avatar", "restyle": "User bubble forced to the violet→pink gradient with white initials; artist avatars carry an emoji fallback over a per-row --dbw-art-bg tint." },
+    { "component": "Card", "restyle": "Three faces — the 22px violet→pink gradient hero, the flat #151020 hairline panels (18px), and the fixed frosted rgba player bar (radius 0, blur, top border)." },
+    { "component": "Badge", "restyle": "Two faces — a 34px glassy translucent-white rank chip in the hero, and a chrome-stripped mono % in the genre legend." },
+    { "component": "Table", "restyle": "Header hidden, cells made transparent with hairline row dividers — a dense three-column ranked-artist list rather than a data grid." },
+    { "component": "Progress", "restyle": "Slimmed bars in two skins — 5px violet→pink gradient plays bars (eased width on period switch) and a 4px white now-playing scrubber, both on #241C34 tracks." },
+    { "component": "EChart", "restyle": "Two fancy-echarts charts — a genre donut (pie ring, fixed 4-color slices, surface-colored borders) and a plays-by-hour bar (violet vertical LinearGradient, rounded caps, sparse mono axis)." },
+    { "component": "Button", "restyle": "Reset to icon-only transport controls: ghost circles for skip, a 38px white disc for play/pause with a dark lucide icon." },
+    { "component": "Tooltip", "restyle": "Wraps the play/pause control with a Play/Pause hint that tracks state." },
+    { "component": "Heading", "restyle": "Panel titles set at 'md' semibold in the primary fg, sitting in borderless card headers." },
+    { "component": "Text", "restyle": "Per-period histogram subtitle + now-playing artist line rendered muted, ellipsis-clamped." },
+    { "component": "Separator", "restyle": "A single hairline #241C34 rule above the mono demonstration colophon." }
+  ],
+  "contentArchetype": "A single-user consumer year-in-review / recap surface: two headline KPIs, a ranked top-N list with relative bars, a categorical share donut with legend, a time-of-day histogram, and a persistent media player. Reskin the copy + data and it becomes any personal analytics recap — fitness year-in-review, reading wrapped, spending recap, gaming stats — anywhere a warm, low-density 'here's your year' beats a dense ops console.",
+  "remix": "Swap the violet→pink gradient for any two-stop brand ramp and the fixed 4-color genre palette follows. Point the Tabs at real periods and feed each a dataset (the switcher is already controlled). Turn the histogram into a weekday/streak heatmap by swapping the bar EChart for a calendar-heatmap option, or make the donut a stacked-bar mix. The now-playing bar generalizes to any persistent transport (podcast, audiobook, workout timer); wire it to a real bridge (registerChartsBridge for the charts, a media adapter for the player) and an agent can drive the recap — switch periods, queue tracks, narrate the year — over MCP while the human rides along."
+}

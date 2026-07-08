@@ -1,0 +1,66 @@
+{
+    "thesis": "A calm consumer smart-home dashboard — no operator app-shell, just a single airy 1080px column on near-black teal, one cyan accent, generous 18px card radii. It proves the Fancy kit can wear a warm, low-density product idiom: the same primitives that make a data-dense admin console (Card, Table, Badge, Switch, Progress, Navbar, EChart) restyle into a friendly home surface where a thermostat ring and an energy sparkbar are real charts, not decoration.",
+    "tokens": {
+        "bg": "#0B1416",
+        "fg": "#DCE8E8",
+        "accent": "#22D3EE",
+        "fontDisplay": "Geist (var(--font-sans))",
+        "fontMono": "Geist Mono (var(--font-mono))",
+        "radius": "18px cards; 14px scene tiles; 11px device icon tiles; 999px pills/switches",
+        "border": "1px solid #1D3438 (cards) · #172A2E (interior hairlines) · surface #122024",
+        "motion": "0.2s transitions on scene background/border, device icon tile, and switch track; a single CSS opacity/box-shadow pulse on the header live dot (respects prefers-reduced-motion). Charts render statically — no tweened entrance."
+    },
+    "layout": "No sidebar/topbar chrome. A full-bleed teal root centers a single 1080px column (padding 22/24/60). A light restyled Navbar holds the gradient 'H' lockup left and a weather Badge + 'Home' place label right; below it a two-line welcome greeting. Rhythm flows top-down: a 4-up flex row of scene toggle tiles, then a 2-column 1fr/1fr card grid (Climate + Energy) at 16px gap, then a full-width Devices card whose body is a device Table. Collapses to one column under 720px.",
+    "sections": [
+        {
+            "name": "Header / brand + weather",
+            "what": "Gradient 'H' badge with 'Hearth' wordmark left; a cyan weather chip (cloud-sun, 72°F · clear) and a 'Home' label with a pulsing live dot pushed right.",
+            "components": ["Navbar", "Navbar.Brand", "Navbar.Items", "Badge", "lucide CloudSun"],
+            "restyle": "Navbar stripped to transparent (no border/bg/padding) via [data-react-fancy-navbar] override so it reads as an inline header, not an app bar; its inner flex justify-between does the brand-left / meta-right split. The weather Badge is forced to a cyan-tint pill (rgba(34,211,238,.12) on #22D3EE)."
+        },
+        {
+            "name": "Welcome greeting",
+            "what": "Eyebrow 'Welcome home' over a 26px status headline 'Everything's calm. 8 devices on.' — a sentence, not a KPI row.",
+            "components": ["Heading", "Text"],
+            "restyle": "Heading restyled to 26px/700/-0.01em in fg; Text eyebrow to muted teal #7FA5A8. No decorative chrome."
+        },
+        {
+            "name": "Scene selector",
+            "what": "Four tappable scene tiles (Good morning 6:30 AM, Home active, Movie dim+TV, Good night 10:30 PM), each a colored lucide icon + label + sub-caption; single-select, the active tile gets a cyan-tinted fill + cyan border.",
+            "components": ["Button (ghost)", "lucide Sunrise/House/Clapperboard/Moon"],
+            "restyle": "Each ghost Button is flattened into a column tile (surface bg, 14px radius, 14/16 padding); the button's [data-react-fancy-button-label] wrapper is forced to a left-aligned column so icon/label/sub stack. Active state (.is-active) repaints background to rgba(34,211,238,.14) + border to accent. Per-tile icon color comes from a --dbhearth-scene-col CSS var."
+        },
+        {
+            "name": "Climate card",
+            "what": "A 140px circular thermostat gauge (cyan arc on a dark track, ~62% fill) with a centered '70°' + 'heating to 72°' overlay, beside a 'Living room' key/value readout (Temperature 70°F, Humidity 44%, Air quality Good) with mono cyan values.",
+            "components": ["Card", "Card.Body", "EChart (gauge)", "Heading", "hand-rolled dl"],
+            "restyle": "Card forced to surface #122024 / 18px radius / #1D3438 border. The gauge is a fancy-echarts EChart gauge series (full-circle, round-cap cyan progress on #1A2E32 track, all ticks/labels/pointer hidden); the temperature text is an absolutely-positioned overlay div, NOT chart detail. The readout is a genuinely hand-rolled definition list on #172A2E hairlines."
+        },
+        {
+            "name": "Energy card",
+            "what": "'Energy today' title (with a Zap glyph) + mono KPI '18.4 kWh' and a muted '−12% vs yesterday' delta, over a 12-bar hourly column chart with 12a / 12p / now axis markers.",
+            "components": ["Card", "Card.Header", "Card.Body", "EChart (bar)", "Badge"],
+            "restyle": "Card.Header border stripped (no divider under energy title). The bars are an EChart bar series with top-rounded (borderRadius [3,3,0,0]) columns filled by a vertical linear gradient #22d3ee→#0891b2; y-axis hidden, x-axis shows only 12a/12p/now. The delta Badge is restyled down to a plain muted caption to match the mock."
+        },
+        {
+            "name": "Devices grid",
+            "what": "Full-width 'Devices' card whose header carries a live on-count Progress meter, and whose body is a Table of six device rows: a rounded icon tile (cyan-tinted when on), name + detail, a status Badge (Locked / Playing / Recording / Heating 72° / …), and a controlled Switch.",
+            "components": ["Card", "Card.Header", "Card.Body", "Progress (bar)", "Table", "Table.Head", "Table.Column", "Table.Body", "Table.Row", "Table.Cell", "Badge", "Switch", "lucide Lightbulb/Thermometer/Lock/Speaker/Warehouse/Cctv"],
+            "restyle": "Card.Header keeps its hairline divider; a small Progress bar (track #172A2E, fill cyan) reflects onCount/6. The Table is scoped via the card body it lives in (react-fancy hardcodes the <table> class): thead → tiny uppercase faint labels, rows on #172A2E hairlines, cells repadded. Device icon tiles bind their bg/color to on-state; status Badges toggle cyan-soft (on) vs slate (off); Switch tracks are recolored #243C40 off / #0891B2 on via [role=switch][aria-checked]."
+        }
+    ],
+    "palette": [
+        { "component": "Navbar", "restyle": "De-chromed to a transparent inline header — background/border/padding zeroed via the [data-react-fancy-navbar] attribute; the built-in flex justify-between splits brand vs weather meta." },
+        { "component": "Card", "restyle": "Surface #122024, 1px #1D3438 border, 18px radius, overflow hidden; used flat (padding none) so section padding is applied by scoped body/header classes." },
+        { "component": "Button", "restyle": "Ghost buttons become scene toggle tiles — column layout, surface fill, 14px radius; active state repaints to a cyan tint + accent border; label wrapper coerced to a left-aligned stack." },
+        { "component": "EChart", "restyle": "Two charts. A gauge series = the thermostat ring (round-cap cyan arc on a dark track, all axis furniture hidden). A bar series = hourly energy (top-rounded cyan-gradient columns, sparse mono axis)." },
+        { "component": "Table", "restyle": "The devices data grid — headers reduced to faint uppercase micro-labels, body rows on #172A2E hairlines, cells repadded to an airy 13/20; scoped by its card body since react-fancy fixes the table element class." },
+        { "component": "Badge", "restyle": "Three roles: cyan-tint weather pill, muted energy-delta caption, and per-device status chips (cyan-soft when on, slate when off)." },
+        { "component": "Switch", "restyle": "Device power toggles — controlled booleans; track recolored to #243C40 off / #0891B2 on to match the mock's sliding pill." },
+        { "component": "Progress", "restyle": "A slim on-count meter in the Devices header — track #172A2E, fill cyan — driven live off the Switch state." },
+        { "component": "Heading", "restyle": "The 26px status greeting and the compact 'Living room' card title; weight + tracking tuned, recolored to fg." },
+        { "component": "Text", "restyle": "The muted 'Welcome home' eyebrow." }
+    ],
+    "contentArchetype": "A consumer IoT / smart-home control surface: brand + local weather, a status greeting, scene presets, a room climate readout with a thermostat gauge, today's energy consumption, and a controllable device list — the antithesis of a data-dense operator console, proving the same primitives flex warm and airy.",
+    "remix": "Swap the cyan accent + teal surface for any single-hue home palette (amber hearth, sage, indigo night) by re-pointing the --dbhearth-* vars and the two chart color stops. Add rooms as a Tabs or Pillbox view-switcher above the device Table; promote the climate readout's Humidity to a Progress meter; turn scene tiles into a MultiSwitch. To make it truly Human+, register a bridge exposing each scene id and device id as a handle so an agent can flip a scene or a device by name — the state is already controlled for exactly that."
+}

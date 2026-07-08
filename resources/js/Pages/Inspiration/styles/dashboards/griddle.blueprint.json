@@ -1,0 +1,71 @@
+{
+    "thesis": "A warm-dark restaurant back-office console — dinner service 'at a glance' for a single Friday night. The Fancy kit worn as a working manager's screen: a fixed sidebar + topbar app shell over a KPI row, an hourly sales bar chart beside a labor-cost ring gauge, and a top-sellers table beside a live floor-status tile grid. One ember-orange accent on charcoal, mono numerics everywhere, medium-high density — data you'd actually run a shift from.",
+    "tokens": {
+        "bg": "#161310 (app) · #1C1814 (sidebar) · #1F1B16 (panels/tiles)",
+        "fg": "#EBE3D8 primary · #B8AC98 secondary · #8A7E6C muted mono · #6E6252 faint axis",
+        "accent": "#F97316 ember orange (with #9A3412 deep ember ramp) · #4ADE80 positive-delta green",
+        "fontDisplay": "Geist (var(--font-sans))",
+        "fontMono": "Geist Mono (var(--font-mono)) — every numeric: KPI values, clock, prices, axes, table counts",
+        "radius": "12px KPI tiles · 14px chart & list panels · 8px nav pills · 10px floor tiles",
+        "border": "1px #2E2820 hairline on every panel/tile; #241F16 softer row dividers inside lists",
+        "motion": "Restrained: a 1.8s opacity/glow pulse on the live 'covers seated' dot; a 120ms lift on floor-tile hover; ECharts' own mount ease. Everything else is static."
+    },
+    "layout": "Fixed two-column app shell, full-bleed to the viewport. A 210px charcoal Sidebar (brand lozenge 'G', 5 icon nav items, service footer) sticks beside a flex main column. The main column carries a 54px sticky Navbar topbar (section title + live-covers pill + mono wall clock) over a 22px-padded body. Body rhythm = three stacked grids: a 4-up KPI row, a 1.5fr/1fr split (sales-by-hour bar + labor gauge with a turnover key/value list), and a 1fr/1fr split (top-sellers table + floor-status tile grid). Collapses to 2-up KPIs and single-column panels under 900px.",
+    "sections": [
+        {
+            "name": "Sidebar nav",
+            "what": "Brand lozenge ('G' orange gradient) + Griddle wordmark, 5 nav items (Tonight active, Orders, Menu, Staff, Reports) each with a lucide icon, and a mono service footer 'The Copper Fork · Fri · dinner service'. Active item is ember text on a #2A2318 pill; controlled active state so an agent could switch views.",
+            "components": ["Sidebar", "Sidebar.Group", "Sidebar.Item", "lucide-react icons"],
+            "restyle": "react-fancy <Sidebar> re-skinned via its data-react-fancy-sidebar / -item hooks: charcoal band, 210px, muted #9A8E7C items, ember-on-pill [data-active]. Icons are lucide LayoutDashboard/Receipt/Utensils/Users/BarChart3."
+        },
+        {
+            "name": "Topbar",
+            "what": "Section title 'Tonight at a glance' on the left; on the right a live '42 covers seated' pill with a glowing pulsing orange dot and a mono wall clock '7:48 PM'. Clock + seated count are static props (never Date.now()).",
+            "components": ["Navbar", "Navbar.Brand", "Navbar.Items", "Badge"],
+            "restyle": "react-fancy <Navbar> flattened to a 54px hairline-bottom bar; the live pill is a <Badge variant=soft> stripped to transparent ember text with a CSS-animated dot; items forced visible at all widths."
+        },
+        {
+            "name": "KPI row",
+            "what": "Four stat tiles: Sales tonight $8.4k (▲14% vs Fri avg, green), Covers 128 (42 seated now, muted), Avg check $66 (▲$4, green), Void % 1.2% (2 comps, muted). Uppercase label, big mono value, colored delta sub-line (green positive / muted neutral).",
+            "components": ["Card", "Card.Body"],
+            "restyle": "four <Card variant=outlined padding=none> as warm-dark stat tiles — 12px radius, uppercase 11px label, 26px mono value, delta color from data (#4ADE80 / #8A7E6C)."
+        },
+        {
+            "name": "Sales by hour",
+            "what": "Panel titled 'Sales by hour' with a mono '$8,420' total and a 7-bar column chart across dinner hours 5p–11p, per-bar ember-intensity coloring peaking at 8p.",
+            "components": ["Card", "Card.Header", "Card.Body", "EChart (bar)"],
+            "restyle": "<Card> panel wrapping a fancy-echarts <EChart> bar — single series, 7 categories, values [30,58,88,100,70,44,22], per-point itemStyle color ramp #5C2E10→#7C3A12→#9A3412→#F97316, rounded top caps, axis hidden but for the hour labels."
+        },
+        {
+            "name": "Labor vs sales",
+            "what": "Panel with a 118px ring gauge at 26% (ember arc on a #2E2820 track, center read-out, a light target tick at 30%) beside a '26% labor cost · target 30%' caption, over a two-row key/value list (Avg table turn 62 min, Covers on books 88/120) with a slim covers-on-books meter.",
+            "components": ["Card", "EChart (gauge)", "Progress"],
+            "restyle": "the mockup's hand-drawn SVG ring is replaced by an <EChart> full-circle gauge (value 26, progress orange, roundCap; a second slim gauge pointer marks the 30% target). 'Covers on books' is a restyled <Progress> bar (value 88 / max 120, ember fill on dark track)."
+        },
+        {
+            "name": "Top sellers tonight",
+            "what": "Panel listing 5 dishes, each row a dish name + mono count (×) + ember mono revenue (Dry-aged Ribeye 38× $1,710 … Chocolate Tart 41× $451).",
+            "components": ["Card", "EChart", "Table", "Table.Row", "Table.Cell"],
+            "restyle": "<Card> wrapping a <Table> flattened to a warm list: header hidden, transparent rows on #241F16 dividers, name in fg, count in muted mono, revenue in ember mono, right-aligned."
+        },
+        {
+            "name": "Floor status",
+            "what": "Panel with a 4-column grid of 12 square table tiles colored by state (seated=orange, open=green, reserved=brown), each showing a mono table number + state label; a 3-swatch legend below. Tiles are a controlled array — click one to cycle its state, so an agent bridge could repaint the floor.",
+            "components": ["Card", "Badge"],
+            "restyle": "hand-rolled aspect-ratio:1 tile grid (the one genuinely bespoke piece) where each tile is a button painted from a state→[bg,fg] map with a nested <Badge> state label; legend swatches + a controlled useState array keep it agent-repaintable."
+        }
+    ],
+    "palette": [
+        { "component": "Sidebar / Sidebar.Group / Sidebar.Item", "restyle": "the app shell's left rail — charcoal 210px band, muted items, ember-on-#2A2318-pill active state via [data-active]; lucide glyph per item." },
+        { "component": "Navbar / Navbar.Brand / Navbar.Items", "restyle": "flattened to a 54px sticky topbar with a hairline bottom; brand = section title, items = live pill + mono clock, forced flex at every width." },
+        { "component": "Card / Card.Header / Card.Body", "restyle": "every surface — KPI stat tiles (12px), chart & list panels (14px) — warm #1F1B16 on a #2E2820 hairline, header as a title/total row." },
+        { "component": "EChart (bar)", "restyle": "sales-by-hour columns with a per-point ember→orange itemStyle ramp, rounded caps, hidden y-axis, dark tooltip." },
+        { "component": "EChart (gauge)", "restyle": "labor-cost ring — full-circle progress gauge, ember arc on a dark track, mono center read-out, plus a slim second-series pointer marking the 30% target." },
+        { "component": "Table / Table.Row / Table.Cell", "restyle": "top-sellers flattened to a headerless warm list — transparent rows, soft dividers, ember mono revenue column, right-aligned numerics." },
+        { "component": "Badge", "restyle": "two roles — the live 'covers seated' topbar pill (transparent ember + animated dot) and the per-tile floor state label (transparent, inherits the tile foreground)." },
+        { "component": "Progress", "restyle": "the 'covers on books' meter — slim ember bar on a #2E2820 track under the turnover key/value list." },
+        { "component": "Heading / Text", "restyle": "the footer colophon — mono uppercase heading + muted note crediting the restyled primitives." }
+    ],
+    "contentArchetype": "A single-snapshot operational dashboard: one Friday dinner service for a fictional restaurant ('The Copper Fork'). Real back-office data — sales totals, hourly revenue curve, labor-cost ratio vs target, table turn, covers on books, top-selling dishes with counts + revenue, and a live floor map of table states. Everything is one moment in time (7:48 PM), the kind of screen a manager glances at between courses.",
+    "remix": "Swap the ember-on-charcoal palette for any single-accent-on-dark scheme and this becomes a generic ops console: rename the KPIs, repoint the hourly bar to any time series, and re-label the gauge (SLA %, utilization, error budget). The floor-tile grid generalizes to any status board — parking bays, server racks, delivery zones, seats — by changing the state→color map. Blend with a lighter dashboard blueprint for a day-shift theme, or add a Tabs view-switcher above the panels for Tonight / Week / Menu views."
+}

@@ -1,7 +1,7 @@
 import "./bagels.css";
 import { Link } from "@inertiajs/react";
-import { useEffect, useState } from "react";
-import { Badge, Button } from "@particle-academy/react-fancy";
+import { useState } from "react";
+import { Badge, Button, Card, Modal, Table } from "@particle-academy/react-fancy";
 import type { Style } from "../../types";
 
 /**
@@ -10,17 +10,28 @@ import type { Style } from "../../types";
  * Rosa & Sal's bagel truck set as a small-town broadsheet front page: a
  * three-rule masthead (3px/1px/2px), a lead story with a drop cap and CSS
  * two-column body, the menu as tappable classifieds with dotted price
- * leaders, a mirrored owners feature, a three-column week listings block, a
- * WANTED catering classified, and a fixed right-side paper drawer for the
- * "full column" on any menu item. Photos are recreated as etched ink SVG art
- * (shared <symbol> sprite) run through the mockup's site-wide
- * grayscale(1) contrast(1.12) treatment — no photo assets.
+ * leaders, a mirrored owners feature, a week listings block, a WANTED
+ * catering classified, and a right-side paper sheet for the "full column"
+ * on any menu item. Photos are recreated as etched ink SVG art (shared
+ * <symbol> sprite) run through the mockup's site-wide grayscale(1)
+ * contrast(1.12) treatment — no photo assets.
+ *
+ * Restyled Fancy primitives carry every interactive + data surface: Card →
+ * the six tappable classified menu rows (transparent, #C8C4B8 hairline, the
+ * dotted-leader price line), Table → the Mon–Sat week listings, Modal → the
+ * "full column" restyled as a right-side paper sheet (radius 0, repainted
+ * #F1EFE6, dark scrim), Button → the red "Order Ahead" masthead action, the
+ * catering quote, the drawer close (variant="circle") + the inverted "Add to
+ * order" bar, and Badge → the square ink tag / ingredient chips. The
+ * three-rule masthead hierarchy, drop-cap typesetting, dotted leaders, and
+ * SVG art plates stay hand-rolled — they have no primitive equivalent.
  *
  * Mounted by Inspiration/Show.tsx for `style.id === "bagels"`. SSR-safe: the
- * only state is a nullable selected item plus two booleans; window/document
- * are touched exclusively inside useEffect (Escape key + scroll lock, with
- * cleanup); art alternates deterministically (index % 2). The drawer overlay
- * stays at z-index 25 — under the gallery frame's chrome (which owns 30+).
+ * only state is a nullable selected item plus three booleans; there are NO
+ * browser APIs anywhere (the Modal primitive owns Escape + scroll-lock), no
+ * Math.random / Date.now in render, and art alternates deterministically
+ * (variant assigned in data). The Modal portals to <body>, so its scoped
+ * styles live under .mpbagels-drawer, which re-declares the newsprint tokens.
  */
 
 type BagelVariant = "a" | "b";
@@ -119,7 +130,8 @@ const SCHEDULE = [
 /**
  * Hidden SVG sprite: the etched bagel glyph + halftone/hatch patterns every
  * art plate reuses via same-document fragment references. Fixed ids are safe
- * (prefixed, page mounts once) and identical on server and client.
+ * (prefixed, page mounts once) and identical on server and client. The
+ * fragment refs resolve document-wide, so the portaled Modal art works too.
  */
 function InkDefs() {
     return (
@@ -265,35 +277,22 @@ function BagelArt({ variant, compact = false }: { variant: "hero" | BagelVariant
 }
 
 export default function Bagels({ style }: { style: Style }) {
+    /**
+     * `sel` holds the item shown in the "full column" (kept through the Modal's
+     * exit animation); `open` alone drives visibility. `added` / `quoted` are
+     * the two confirm-copy toggles. Initial paint renders no Modal at all.
+     */
     const [sel, setSel] = useState<MenuItem | null>(null);
+    const [open, setOpen] = useState(false);
     const [added, setAdded] = useState(false);
     const [quoted, setQuoted] = useState(false);
 
-    const open = (item: MenuItem) => {
+    const openItem = (item: MenuItem) => {
         setSel(item);
         setAdded(false);
+        setOpen(true);
     };
-    const close = () => setSel(null);
-
-    /* Escape closes the full column; the paper behind it stops scrolling.
-       Browser APIs live only here, with full cleanup — SSR renders nothing of this. */
-    useEffect(() => {
-        if (!sel) {
-            return;
-        }
-        const onKey = (event: KeyboardEvent) => {
-            if (event.key === "Escape") {
-                setSel(null);
-            }
-        };
-        window.addEventListener("keydown", onKey);
-        const previousOverflow = document.body.style.overflow;
-        document.body.style.overflow = "hidden";
-        return () => {
-            window.removeEventListener("keydown", onKey);
-            document.body.style.overflow = previousOverflow;
-        };
-    }, [sel]);
+    const close = () => setOpen(false);
 
     return (
         <div className="mpbagels-root">
@@ -318,13 +317,14 @@ export default function Bagels({ style }: { style: Style }) {
                         <a href="#mpbagels-menu">The Menu</a>
                         <a href="#mpbagels-story">Our Story</a>
                         <a href="#mpbagels-schedule">Where to Find Us</a>
-                        <button
+                        <Button
                             type="button"
+                            variant="ghost"
                             className="mpbagels-nav-order"
-                            onClick={() => open(MENU[3])}
+                            onClick={() => openItem(MENU[3])}
                         >
                             Order Ahead
-                        </button>
+                        </Button>
                         <a href="#mpbagels-catering">Catering</a>
                     </nav>
                 </header>
@@ -360,7 +360,7 @@ export default function Bagels({ style }: { style: Style }) {
                     </figure>
                 </section>
 
-                {/* ── The menu, set as classifieds ──────────────────────────── */}
+                {/* ── The menu, set as classifieds (Card grid) ──────────────── */}
                 <section id="mpbagels-menu" className="mpbagels-menu" aria-label="The menu">
                     <div className="mpbagels-menubar">
                         <span className="mpbagels-menubar-title">— THE MENU —</span>
@@ -368,11 +368,20 @@ export default function Bagels({ style }: { style: Style }) {
                     </div>
                     <div className="mpbagels-classifieds">
                         {MENU.map((item) => (
-                            <button
+                            <Card
                                 key={item.slug}
-                                type="button"
+                                variant="flat"
+                                padding="none"
                                 className="mpbagels-row"
-                                onClick={() => open(item)}
+                                role="button"
+                                tabIndex={0}
+                                onClick={() => openItem(item)}
+                                onKeyDown={(event) => {
+                                    if (event.key === "Enter" || event.key === " ") {
+                                        event.preventDefault();
+                                        openItem(item);
+                                    }
+                                }}
                                 aria-haspopup="dialog"
                                 aria-label={`${item.name}, ${item.price} — read the full column`}
                             >
@@ -387,7 +396,7 @@ export default function Bagels({ style }: { style: Style }) {
                                     </span>
                                     <span className="mpbagels-row-short">{item.short}</span>
                                 </span>
-                            </button>
+                            </Card>
                         ))}
                     </div>
                 </section>
@@ -417,21 +426,23 @@ export default function Bagels({ style }: { style: Style }) {
                     </div>
                 </section>
 
-                {/* ── Week listings ─────────────────────────────────────────── */}
+                {/* ── Week listings (Table) ─────────────────────────────────── */}
                 <section id="mpbagels-schedule" className="mpbagels-schedule" aria-labelledby="mpbagels-schedule-title">
                     <div className="mpbagels-schedule-head">
                         <span id="mpbagels-schedule-title" className="mpbagels-schedule-title">
                             WHERE TO FIND THE TRUCK THIS WEEK
                         </span>
                     </div>
-                    <div className="mpbagels-schedule-grid">
-                        {SCHEDULE.map((stop) => (
-                            <div key={stop.day} className="mpbagels-stop">
-                                <span className="mpbagels-stop-day">{stop.day}</span>
-                                <span className="mpbagels-stop-place">{stop.place}</span>
-                            </div>
-                        ))}
-                    </div>
+                    <Table className="mpbagels-schedule-table">
+                        <Table.Body>
+                            {SCHEDULE.map((stop) => (
+                                <Table.Row key={stop.day} className="mpbagels-stop">
+                                    <Table.Cell className="mpbagels-stop-day">{stop.day}</Table.Cell>
+                                    <Table.Cell className="mpbagels-stop-place">{stop.place}</Table.Cell>
+                                </Table.Row>
+                            ))}
+                        </Table.Body>
+                    </Table>
                 </section>
 
                 {/* ── Catering classified ───────────────────────────────────── */}
@@ -474,22 +485,16 @@ export default function Bagels({ style }: { style: Style }) {
                 </footer>
             </div>
 
-            {/* ── The full column: fixed right-side paper drawer ────────────── */}
-            {sel !== null && (
-                <div className="mpbagels-overlay">
-                    <button
-                        type="button"
-                        className="mpbagels-scrim"
-                        onClick={close}
-                        aria-label="Close the full column"
-                        tabIndex={-1}
-                    />
-                    <aside
-                        className="mpbagels-drawer"
-                        role="dialog"
-                        aria-modal="true"
-                        aria-label={`${sel.name} — the full column`}
-                    >
+            {/* ── The full column: Modal restyled as a right-side paper sheet ─ */}
+            <Modal
+                open={open}
+                onClose={close}
+                size="lg"
+                className="mpbagels-drawer"
+                aria-label={sel ? `${sel.name} — the full column` : "Menu item — the full column"}
+            >
+                {sel && (
+                    <>
                         <div className="mpbagels-drawer-hero">
                             <div className="mpbagels-art mpbagels-drawer-art">
                                 <BagelArt variant={sel.variant} />
@@ -538,9 +543,9 @@ export default function Bagels({ style }: { style: Style }) {
                                     : `Add to order · ${sel.price}`}
                             </Button>
                         </div>
-                    </aside>
-                </div>
-            )}
+                    </>
+                )}
+            </Modal>
         </div>
     );
 }

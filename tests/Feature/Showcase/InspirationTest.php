@@ -12,11 +12,12 @@ it('lists every collection with all its styles on /inspiration', function () {
             $page->component('Inspiration/Index');
             $collections = collect($page->toArray()['props']['collections']);
 
-            expect($collections->pluck('id')->all())->toBe(['fieldwork', 'mom-n-pops']);
+            expect($collections->pluck('id')->all())->toBe(['fieldwork', 'mom-n-pops', 'dashboards']);
 
             $collections->each(function (array $c) {
                 expect($c)->toHaveKeys(['id', 'name', 'kicker', 'title', 'subject', 'blurb', 'framing', 'range', 'count', 'styles']);
-                expect($c['styles'])->toHaveCount(20)->and($c['count'])->toBe(20);
+                // fieldwork + mom-n-pops ship 20; dashboards is landing in batches.
+                expect(count($c['styles']))->toBe($c['count'])->toBeGreaterThan(0);
                 collect($c['styles'])->each(function (array $s) use ($c) {
                     expect($s)->toHaveKeys(['id', 'num', 'name', 'note', 'mode', 'swatch', 'collection', 'thumb']);
                     expect($s['mode'])->toBeIn(['light', 'dark']);
@@ -34,7 +35,7 @@ it('renders each collection catalog with its ordered styles', function (string $
             $page->component('Inspiration/Collection')
                 ->where('collection.id', $collection);
             $styles = collect($page->toArray()['props']['styles']);
-            expect($styles)->toHaveCount(20);
+            expect($styles->count())->toBeGreaterThan(0);
             expect($styles->first()['id'])->toBe($first);
             expect($styles->last()['id'])->toBe($last);
         });
@@ -43,6 +44,8 @@ it('renders each collection catalog with its ordered styles', function (string $
     ['fieldwork', 'swiss', 'agentic'],
     // Ordered storefront → data surface: Taquería first, agentic Melts last.
     ['mom-n-pops', 'tacos', 'grilledcheese'],
+    // Apps 01–13 (batch one): Pulse first, Voyage last.
+    ['dashboards', 'pulse', 'voyage'],
 ]);
 
 it('renders the per-style page for every registered style in every collection', function (string $collection, string $id) {
@@ -99,7 +102,7 @@ it('keeps style ids unique across collections (legacy lookups depend on it)', fu
 });
 
 it('exposes the registry lookup api', function () {
-    expect(GalleryRegistry::collections())->toHaveCount(2);
+    expect(GalleryRegistry::collections())->toHaveCount(3);
     expect(GalleryRegistry::styles('fieldwork'))->toHaveCount(20);
     expect(GalleryRegistry::styles('mom-n-pops'))->toHaveCount(20);
     expect(GalleryRegistry::find('fieldwork', 'swiss'))->toMatchArray(['id' => 'swiss', 'num' => '01', 'mode' => 'light', 'collection' => 'fieldwork']);

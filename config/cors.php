@@ -13,9 +13,17 @@ return [
     | Scope is deliberately narrow: the Fancy Heuristics ingestion endpoints
     | (`heuristics/collect` + `heuristics/pixel`) are hit by browsers on OTHER
     | origins — every site that embeds the Fancy Pixel beacons back here — so
-    | they MUST answer cross-origin preflight. Without this, external embeds
-    | (e.g. tynn.ai) get "No 'Access-Control-Allow-Origin' header" and the
-    | collector retry-spams the console.
+    | they MUST answer cross-origin preflight.
+    |
+    | CREDENTIALS: the collector beacons via navigator.sendBeacon, which ALWAYS
+    | sends in credentials mode "include" (you can't opt a beacon out of cookies).
+    | The CORS spec forbids a wildcard `Access-Control-Allow-Origin: *` for a
+    | credentialed request — the server must echo the *specific* origin and set
+    | `Access-Control-Allow-Credentials: true`. So `supports_credentials` is TRUE
+    | here: with `allowed_origins: ['*']` php-cors then REFLECTS the request
+    | Origin (not a literal `*`) + adds the credentials header + `Vary: Origin`.
+    | These endpoints are anonymous, write-only telemetry that return no
+    | sensitive body and use no session, so reflecting any origin is safe.
     |
     | NB: the /gallery/* and /r/* (registry) JSON endpoints set their own
     | `Access-Control-Allow-Origin: *` header in-controller — they are NOT
@@ -31,8 +39,6 @@ return [
 
     'allowed_methods' => ['POST', 'OPTIONS'],
 
-    // Ingestion is anonymous, write-only telemetry with no cookies/credentials,
-    // so a wildcard origin is correct here (and required for arbitrary embeds).
     'allowed_origins' => ['*'],
 
     'allowed_origins_patterns' => [],
@@ -43,8 +49,9 @@ return [
 
     'max_age' => 86400,
 
-    // Must stay false with a wildcard origin (the two are mutually exclusive
-    // per the CORS spec); the beacons carry no credentials anyway.
-    'supports_credentials' => false,
+    // Required because sendBeacon requests are credentialed; with allowed_origins
+    // ['*'] php-cors reflects the request Origin (never a literal '*') so the
+    // credentialed preflight passes.
+    'supports_credentials' => true,
 
 ];

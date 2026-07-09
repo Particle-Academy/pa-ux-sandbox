@@ -1,6 +1,6 @@
 import { Head, Link } from "@inertiajs/react";
-import { useEffect, useState, type CSSProperties } from "react";
-import { ArrowLeft, Check, ChevronLeft, ChevronRight, Copy, Info, X } from "lucide-react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { ArrowLeft, Check, ChevronLeft, ChevronRight, Copy, Info, Layers, Plus, X } from "lucide-react";
 import { Layout } from "../Layout";
 import type { Collection, Style } from "./types";
 import { STYLE_COMPONENTS } from "./styles";
@@ -135,15 +135,25 @@ function GalleryFrame({
 }
 
 /**
- * "Grab this design" — copies the style's read-only design BLUEPRINT (a recipe
- * an agent re-implements with the Fancy kit, NOT source to copy) as an
- * agent-ready prompt, and tracks a mix-and-match selection in localStorage so
- * several blueprints can be blended into one direction. Mix keys are
- * "{collection}/{id}"; bare legacy ids still resolve via /gallery/{id}.json.
+ * The gallery grab toolbar. Two deliberate steps, no blind clipboard writes:
+ *
+ * - **Mix this** toggles the current style in/out of a mix-and-match selection
+ *   (persisted in localStorage under "fancyGalleryMix"; keys are
+ *   "{collection}/{id}", and bare legacy ids still resolve via /gallery/{id}.json).
+ * - **Grab this design / Grab this mix** opens a popover with the assembled,
+ *   copy-ready prompt — the style's own blueprint when not mixing, or the blend
+ *   of every mixed blueprint when the mix is non-empty. The user reads it, then
+ *   clicks Copy. Blueprints are read-only recipes an agent re-implements with
+ *   the Fancy kit, NOT source to copy.
  */
 function GrabButton({ collection, style }: { collection: Collection; style: Style }) {
-    const [copied, setCopied] = useState<"one" | "mix" | null>(null);
+    const selfKey = `${collection.id}/${style.id}`;
     const [mix, setMix] = useState<string[]>([]);
+    const [open, setOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [prompt, setPrompt] = useState("");
+    const [copied, setCopied] = useState(false);
+    const rootRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         try {
@@ -154,40 +164,67 @@ function GrabButton({ collection, style }: { collection: Collection; style: Styl
         }
     }, []);
 
-    const flash = (which: "one" | "mix") => {
-        setCopied(which);
-        window.setTimeout(() => setCopied((c) => (c === which ? null : c)), 1800);
-    };
+    // Close the popover on outside-click / Escape while it is open.
+    useEffect(() => {
+        if (!open) return;
+        const onDown = (e: MouseEvent) => {
+            if (rootRef.current && !rootRef.current.contains(e.target as Node)) setOpen(false);
+        };
+        const onKey = (e: KeyboardEvent) => {
+            if (e.key === "Escape") setOpen(false);
+        };
+        document.addEventListener("mousedown", onDown);
+        document.addEventListener("keydown", onKey);
+        return () => {
+            document.removeEventListener("mousedown", onDown);
+            document.removeEventListener("keydown", onKey);
+        };
+    }, [open]);
 
-    async function grab() {
+    const inMix = mix.includes(selfKey);
+    const mixing = mix.length > 0;
+
+    function persist(next: string[]) {
+        setMix(next);
         try {
-            const bp = await fetch(`/gallery/${collection.id}/${style.id}.json`).then((r) => r.json());
-            await navigator.clipboard.writeText(blueprintToPrompt(bp));
-            const next = Array.from(new Set([...mix, `${collection.id}/${style.id}`]));
-            window.localStorage.setItem("fancyGalleryMix", JSON.stringify(next));
-            setMix(next);
-            flash("one");
+            if (next.length) window.localStorage.setItem("fancyGalleryMix", JSON.stringify(next));
+            else window.localStorage.removeItem("fancyGalleryMix");
         } catch {
-            /* clipboard / fetch unavailable */
+            /* ignore unwritable storage */
+        }
+        // Any change to the mix could make an open popover stale — reopen fresh.
+        setOpen(false);
+    }
+
+    const toggleMix = () => persist(inMix ? mix.filter((k) => k !== selfKey) : Array.from(new Set([...mix, selfKey])));
+    const clearMix = () => persist([]);
+
+    // What the grab popover assembles: the whole mix, or just this design.
+    const grabKeys = mixing ? mix : [selfKey];
+
+    async function openGrab() {
+        setOpen(true);
+        setCopied(false);
+        setLoading(true);
+        setPrompt("");
+        try {
+            const bps = await Promise.all(grabKeys.map((key) => fetch(`/gallery/${key}.json`).then((r) => r.json())));
+            setPrompt(assemblePrompt(bps));
+        } catch {
+            setPrompt("Couldn't load the blueprint — check your connection and try again.");
+        } finally {
+            setLoading(false);
         }
     }
 
-    async function copyMix() {
+    async function copyPrompt() {
         try {
-            const bps = await Promise.all(mix.map((key) => fetch(`/gallery/${key}.json`).then((r) => r.json())));
-            const header =
-                `# Blended design direction — ${bps.length} Fancy UI gallery blueprints\n\n` +
-                "Blend these read-only design recipes into one direction for the project — mix and match their tokens, layouts, and restyled-component choices. Re-implement with the Fancy UI kit; do not copy source.\n\n";
-            await navigator.clipboard.writeText(header + bps.map(blueprintToPrompt).join("\n\n---\n\n"));
-            flash("mix");
+            await navigator.clipboard.writeText(prompt);
+            setCopied(true);
+            window.setTimeout(() => setCopied(false), 1800);
         } catch {
-            /* ignore */
+            /* clipboard unavailable */
         }
-    }
-
-    function clearMix() {
-        window.localStorage.removeItem("fancyGalleryMix");
-        setMix([]);
     }
 
     const btn: CSSProperties = {
@@ -205,81 +242,220 @@ function GrabButton({ collection, style }: { collection: Collection; style: Styl
         cursor: "pointer",
         whiteSpace: "nowrap",
     };
+    const inMixBtn: CSSProperties = {
+        ...btn,
+        background: "color-mix(in oklch, var(--accent) 12%, var(--surface))",
+        borderColor: "color-mix(in oklch, var(--accent) 34%, var(--border-1))",
+    };
+    const primaryBtn: CSSProperties = { ...btn, background: "var(--fg-1)", color: "var(--surface)", borderColor: "transparent" };
 
     return (
-        <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            {mix.length > 1 && (
-                <button
-                    type="button"
-                    onClick={copyMix}
-                    title={`Copy ${mix.length} grabbed blueprints to blend into one direction`}
-                    style={{ ...btn, fontFamily: "var(--font-mono)", fontWeight: 500, paddingRight: 8 }}
+        <div ref={rootRef} style={{ position: "relative", display: "flex", alignItems: "center", gap: 6 }}>
+            {mixing && (
+                <span
+                    title={`${mix.length} design${mix.length === 1 ? "" : "s"} in your mix`}
+                    style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: 5,
+                        height: 28,
+                        padding: "0 4px 0 10px",
+                        borderRadius: 999,
+                        border: "1px solid var(--border-1)",
+                        background: "var(--surface)",
+                        color: "var(--fg-2)",
+                        fontFamily: "var(--font-mono)",
+                        fontSize: 12,
+                        whiteSpace: "nowrap",
+                    }}
                 >
-                    {copied === "mix" ? <Check size={13} /> : null}
+                    <Layers size={12} style={{ opacity: 0.7 }} />
                     Mix · {mix.length}
-                    <span
-                        role="button"
+                    <button
+                        type="button"
+                        onClick={clearMix}
                         aria-label="Clear mix"
-                        title="Clear grabbed mix"
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            clearMix();
+                        title="Clear your mix"
+                        style={{
+                            display: "inline-flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            width: 20,
+                            height: 20,
+                            borderRadius: 999,
+                            border: "none",
+                            background: "transparent",
+                            color: "var(--fg-3)",
+                            cursor: "pointer",
                         }}
-                        style={{ display: "inline-flex", marginLeft: 2, opacity: 0.6 }}
                     >
                         <X size={12} />
-                    </span>
-                </button>
+                    </button>
+                </span>
             )}
+
             <button
                 type="button"
-                onClick={grab}
-                title="Copy this design's blueprint — a read-only recipe to re-implement with the Fancy kit (composable; grab several to mix-and-match)"
+                onClick={toggleMix}
+                aria-pressed={inMix}
+                title={inMix ? "Remove this design from your mix" : "Add this design to your mix — blend several into one prompt"}
+                style={inMix ? inMixBtn : btn}
+            >
+                {inMix ? <Check size={13} /> : <Plus size={13} />}
+                {inMix ? "In mix" : "Mix this"}
+            </button>
+
+            <button
+                type="button"
+                onClick={() => (open ? setOpen(false) : openGrab())}
+                aria-expanded={open}
+                title={mixing ? "Show the copy-ready prompt for your mix" : "Show the copy-ready prompt for this design"}
                 style={btn}
             >
-                {copied === "one" ? <Check size={13} /> : <Copy size={13} />}
-                {copied === "one" ? "Copied" : "Grab this design"}
+                <Copy size={13} />
+                {mixing ? "Grab this mix" : "Grab this design"}
             </button>
+
+            {open && (
+                <div
+                    role="dialog"
+                    aria-label={mixing ? "Blended design prompt" : "Design prompt"}
+                    style={{
+                        position: "absolute",
+                        top: "calc(100% + 8px)",
+                        right: 0,
+                        zIndex: 50,
+                        width: "min(480px, 92vw)",
+                        borderRadius: 12,
+                        border: "1px solid var(--border-1)",
+                        background: "var(--surface)",
+                        boxShadow: "0 16px 40px -12px rgba(0,0,0,0.4)",
+                        overflow: "hidden",
+                        textAlign: "left",
+                    }}
+                >
+                    <div
+                        style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            gap: 8,
+                            padding: "10px 12px",
+                            borderBottom: "1px solid var(--border-1)",
+                        }}
+                    >
+                        <span style={{ display: "inline-flex", alignItems: "center", gap: 6, fontWeight: 600, fontSize: 12.5, color: "var(--fg-1)" }}>
+                            {mixing ? <Layers size={13} /> : <Copy size={13} />}
+                            {mixing ? `Blended prompt · ${mix.length} blueprints` : "Design prompt"}
+                        </span>
+                        <button
+                            type="button"
+                            onClick={() => setOpen(false)}
+                            aria-label="Close"
+                            style={{
+                                display: "inline-flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                width: 24,
+                                height: 24,
+                                borderRadius: 6,
+                                border: "none",
+                                background: "transparent",
+                                color: "var(--fg-3)",
+                                cursor: "pointer",
+                            }}
+                        >
+                            <X size={14} />
+                        </button>
+                    </div>
+
+                    <div style={{ padding: 12 }}>
+                        <p style={{ margin: "0 0 8px", fontSize: 12, lineHeight: 1.5, color: "var(--fg-3)" }}>
+                            Paste into your agent — it pulls the full design + components from the fancy-ui MCP and builds it with the Fancy UI kit.
+                        </p>
+                        <pre
+                            style={{
+                                margin: 0,
+                                maxHeight: 260,
+                                overflow: "auto",
+                                padding: "10px 12px",
+                                borderRadius: 8,
+                                border: "1px solid var(--border-1)",
+                                background: "color-mix(in oklch, var(--fg-1) 4%, var(--surface))",
+                                fontFamily: "var(--font-mono)",
+                                fontSize: 11.5,
+                                lineHeight: 1.55,
+                                color: "var(--fg-2)",
+                                whiteSpace: "pre-wrap",
+                                wordBreak: "break-word",
+                            }}
+                        >
+                            {loading ? "Loading…" : prompt}
+                        </pre>
+                        <div style={{ display: "flex", justifyContent: "flex-end", marginTop: 10 }}>
+                            <button type="button" onClick={copyPrompt} disabled={loading || !prompt} style={{ ...primaryBtn, opacity: loading || !prompt ? 0.5 : 1 }}>
+                                {copied ? <Check size={13} /> : <Copy size={13} />}
+                                {copied ? "Copied" : "Copy prompt"}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
 
-/** Format a grab-blueprint as an agent-ready, re-implementable design prompt. */
-function blueprintToPrompt(bp: Record<string, unknown>): string {
-    const out: string[] = [];
-    const get = (k: string) => bp[k] as string | undefined;
-    out.push(`# Design blueprint — ${get("name")} (Fancy UI Inspiration Gallery)`, "");
-    if (get("thesis")) out.push(get("thesis")!, "");
+/**
+ * Turn one or more grabbed blueprints into an agent-ready BUILD prompt. The
+ * prompt deliberately does NOT dump the recipe — it directs the agent to the
+ * fancy-ui MCP server to fetch each design's full blueprint
+ * (`gallery_get_blueprint`) plus the Fancy primitives it needs
+ * (`search_components` / `get_component` / `install_instructions`), then rebuild
+ * the look with the Fancy UI kit. That keeps the copied text short and always
+ * pulls the live, authoritative recipe rather than a stale inline snapshot.
+ */
+function assemblePrompt(bps: Array<Record<string, unknown>>): string {
+    if (!bps.length) return "";
+    return bps.length === 1 ? designBuildPrompt(bps[0]) : mixBuildPrompt(bps);
+}
+
+const bpField = (bp: Record<string, unknown>, k: string) => (typeof bp[k] === "string" ? (bp[k] as string) : "");
+const bpLiveUrl = (bp: Record<string, unknown>) =>
+    `https://ui.particle.academy${bpField(bp, "url") || `/inspiration/${bpField(bp, "collection")}/${bpField(bp, "id")}`}`;
+
+/** Single design: direct the agent to fetch the blueprint + components from the MCP, then build. */
+function designBuildPrompt(bp: Record<string, unknown>): string {
+    const name = bpField(bp, "name");
+    const id = bpField(bp, "id");
+    const out: string[] = [`# Build this design with Fancy UI — ${name}`, ""];
+    if (bpField(bp, "thesis")) out.push(bpField(bp, "thesis"), "");
     out.push(
-        "READ-ONLY design inspiration. Re-implement this recipe in your project with the Fancy UI kit — restyle the primitives, bring your own content. It is NOT source to copy, and it composes with other gallery blueprints.",
+        `Recreate the "${name}" design from the Fancy UI Inspiration Gallery in this project, built with the Fancy UI kit. Pull the real recipe and components from the **fancy-ui MCP server** — don't guess or hand-roll HTML:`,
         "",
+        `1. Get the full blueprint — design tokens, layout, per-section components, how each primitive is restyled, remix notes: call \`gallery_get_blueprint\` with style \`"${id}"\`.`,
+        "2. For every Fancy primitive the blueprint names, pull it from the same MCP: `search_components` / `list_components` to find it, `get_component` for source, `install_instructions` for the exact install command + import line.",
+        "3. Build it here with those components — restyle them to the blueprint's tokens and component palette, and bring your own content. The blueprint is a READ-ONLY recipe to re-implement, NOT source to copy.",
+        "",
+        `If the fancy-ui MCP isn't connected (or doesn't have this style), fall back to the live reference: ${bpLiveUrl(bp)}`,
     );
-    const tokens = bp.tokens as Record<string, string> | undefined;
-    if (tokens) {
-        out.push("## Design tokens");
-        for (const [k, v] of Object.entries(tokens)) out.push(`- ${k}: ${v}`);
-        out.push("");
-    }
-    if (get("layout")) out.push("## Layout", get("layout")!, "");
-    const sections = bp.sections as Array<Record<string, unknown>> | undefined;
-    if (Array.isArray(sections) && sections.length) {
-        out.push("## Sections");
-        for (const s of sections) {
-            const comps = Array.isArray(s.components) && s.components.length ? ` · components: ${(s.components as string[]).join(", ")}` : "";
-            const restyle = s.restyle ? ` · restyle: ${s.restyle}` : "";
-            out.push(`- **${s.name}** — ${s.what}${comps}${restyle}`);
-        }
-        out.push("");
-    }
-    const palette = bp.palette as Array<Record<string, string>> | undefined;
-    if (Array.isArray(palette) && palette.length) {
-        out.push("## Component palette (how each Fancy primitive is restyled)");
-        for (const p of palette) out.push(`- ${p.component}: ${p.restyle}`);
-        out.push("");
-    }
-    if (get("contentArchetype")) out.push("## Content archetype", get("contentArchetype")!, "");
-    if (get("remix")) out.push("## Remix", get("remix")!, "");
-    out.push(`Live reference: https://ui.particle.academy${get("url") || `/inspiration/${get("collection")}/${get("id")}`}`);
+    return out.join("\n");
+}
+
+/** Several designs: direct the agent to fetch each blueprint from the MCP and fuse them into one direction. */
+function mixBuildPrompt(bps: Array<Record<string, unknown>>): string {
+    const out: string[] = [`# Blended design direction — build with Fancy UI (${bps.length} gallery blueprints)`, ""];
+    out.push(
+        `Blend these ${bps.length} Fancy UI Inspiration Gallery designs into ONE coherent direction for this project, built with the Fancy UI kit. Pull each recipe and the components from the **fancy-ui MCP server** — don't guess:`,
+        "",
+        "1. Fetch each blueprint with `gallery_get_blueprint` and blend their design tokens, layouts, and restyled-component choices into one direction:",
+    );
+    for (const bp of bps) out.push(`   - **${bpField(bp, "name")}** — style \`"${bpField(bp, "id")}"\`  (${bpLiveUrl(bp)})`);
+    out.push(
+        "2. For the Fancy primitives the blueprints name, pull them from the same MCP: `search_components` / `list_components` -> `get_component` -> `install_instructions`.",
+        "3. Rebuild here with those components, restyled to the blended tokens and palette. These are READ-ONLY recipes to re-implement, not source to copy.",
+        "",
+        "If a style isn't in the fancy-ui MCP, use its live reference above.",
+    );
     return out.join("\n");
 }
 

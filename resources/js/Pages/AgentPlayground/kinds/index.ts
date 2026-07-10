@@ -14,6 +14,7 @@ import { flowKind } from "./flow";
 import { slidesKind } from "./slides";
 import { codeKind } from "./code";
 import { sceneKind } from "./scene";
+import { cmsKind } from "./cms";
 
 export const KIND_MODULES: KindModule[] = [
   compositionKind,
@@ -26,6 +27,7 @@ export const KIND_MODULES: KindModule[] = [
   slidesKind,
   codeKind,
   sceneKind,
+  cmsKind,
 ];
 
 export const KIND_BY_NAME: Record<string, KindModule> = Object.fromEntries(

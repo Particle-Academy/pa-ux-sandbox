@@ -9,7 +9,7 @@
  * its imports are untyped here (same as the existing SlidesDemo). The bridge
  * still type-checks because registerSlidesBridge declares its own DeckOp type.
  */
-import { DeckEditor, defaultTheme, reduceDeck, mapLegacyOp, type Deck, type LegacyDeckOp } from "@particle-academy/fancy-slides";
+import { DeckEditor, defaultTheme, reduceDeck, type Deck, type DeckOp } from "@particle-academy/fancy-slides";
 import { defaultElementRegistry } from "@particle-academy/fancy-slides/registry";
 import "@particle-academy/fancy-slides/styles.css";
 import { registerSlidesBridge } from "@particle-academy/agent-integrations/bridges/slides";
@@ -69,9 +69,9 @@ export const slidesKind: KindModule = {
     return registerSlidesBridge(server, {
       adapter: {
         getDeck: () => read().deck,
-        // The slides bridge still emits the pre-0.13 `kind`-flavored ops; map
-        // them forward to the canonical DeckOp vocab before reducing.
-        apply: (op: LegacyDeckOp) => ctx.setActiveState({ deck: reduceDeck(read().deck, mapLegacyOp(op)) }),
+        // The slides bridge emits canonical DeckOps (agent-integrations >=0.24);
+        // reduce them directly — the same path the editor uses.
+        apply: (op: DeckOp) => ctx.setActiveState({ deck: reduceDeck(read().deck, op) }),
       },
       agent: ctx.agent,
     });

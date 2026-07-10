@@ -6,20 +6,17 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Services\Mlm\MlmProgram;
 use App\Support\Usernames;
-use FancyMlm\Laravel\Models\Member;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
-use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
 
 /**
- * The end-user "refer a friend" surface — the gamified downline view built on
- * fancy-mlm-ui (DownlineTree / CommissionStatement / RankProgress) over the live
- * fancy-mlm engine. The user's shareable link is /join/{username}; the
- * "simulate activity" loop is ADMIN-ONLY demo tooling (it mints real fun-lab
- * points to uplines).
+ * The end-user "refer a friend" surface — the gamified downline dashboard built
+ * on fancy-mlm-ui (DownlineTree / CommissionStatement / RankProgress) over the
+ * live fancy-mlm engine, plus a share kit (one-tap social + copy-ready
+ * conversation starters). The user's shareable link is /join/{username}.
  */
 class ReferralController extends Controller
 {
@@ -45,9 +42,6 @@ class ReferralController extends Controller
             'network' => $program->network(),
             'commissions' => $program->commissionsForUser($user),
             'rank' => $program->rankProgress($me),
-            // The simulate card is admin demo tooling — the flag mirrors the
-            // route's can:admin middleware so non-admins never see it.
-            'canSimulate' => Gate::forUser($user)->allows('admin'),
         ]);
     }
 
@@ -78,28 +72,5 @@ class ReferralController extends Controller
                 'avatarUrl' => $referrer->avatar_url,
             ],
         ]);
-    }
-
-    public function simulate(Request $request, MlmProgram $program): RedirectResponse
-    {
-        $data = $request->validate([
-            'member_id' => ['required', 'string'],
-            'amount' => ['nullable', 'numeric', 'min:1', 'max:100000'],
-        ]);
-
-        $member = Member::query()->find($data['member_id']);
-        if ($member === null) {
-            return back()->with('error', 'That member is not in the network.');
-        }
-
-        $rewards = $program->simulateActivity($member, (float) ($data['amount'] ?? 100));
-
-        $label = $member->user?->name ?? ($member->meta['label'] ?? 'Member #'.$member->getKey());
-
-        return back()
-            ->with('mlm_rewards', $rewards)
-            ->with('success', $rewards === []
-                ? "{$label} acted, but no upline was eligible under this plan."
-                : "{$label} acted — ".count($rewards).' upline member(s) earned a referral bonus.');
     }
 }

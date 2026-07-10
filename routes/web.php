@@ -98,13 +98,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
     Route::post('/profile/opt-out', [ProfileController::class, 'toggleOptOut'])->name('profile.opt-out');
 
-    // Refer-a-friend — the gamified downline surface (fancy-mlm + fancy-mlm-ui).
+    // Refer-a-friend — the gamified downline dashboard + share kit (fancy-mlm + fancy-mlm-ui).
     Route::get('/referrals', [ReferralController::class, 'show'])->name('referrals');
-    // Admin-only demo tooling: simulating a downline action mints REAL fun-lab
-    // points to uplines, so regular users must never reach it (403).
-    Route::post('/referrals/simulate', [ReferralController::class, 'simulate'])
-        ->middleware(['can:admin', 'throttle:30,1'])
-        ->name('referrals.simulate');
     // Username settings power the /join/{username} referral link.
     Route::post('/profile/username', [ProfileController::class, 'updateUsername'])
         ->name('profile.username');

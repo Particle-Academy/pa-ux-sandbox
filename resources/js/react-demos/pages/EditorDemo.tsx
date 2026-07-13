@@ -272,6 +272,59 @@ export function EditorDemo() {
       </DemoSection>
 
       <DemoSection
+        title="Source View"
+        description={
+          'Click the Source toggle (</>) in the toolbar to swap the rich-text ' +
+          'surface for a textarea holding the raw markup — HTML here, Markdown ' +
+          'when outputFormat="markdown". Edits round-trip: change the source, ' +
+          'toggle back, and the rich-text surface re-renders from it. The toggle ' +
+          'ships in the default toolbar; drop <Editor.SourceToggle /> into a ' +
+          'custom one to place it yourself.'
+        }
+        code={`{/* Default toolbar — Source toggle included automatically */}
+<Editor defaultValue="<h1>Title</h1><p>Body copy.</p>">
+  <Editor.Toolbar />
+  <Editor.Content />
+</Editor>
+
+{/* Custom toolbar — compose the toggle wherever you like */}
+<Editor outputFormat="markdown">
+  <Editor.Toolbar>
+    <CustomToolbarButtons />
+    <Editor.SourceToggle className="ml-auto" />
+  </Editor.Toolbar>
+  <Editor.Content />
+</Editor>`}
+      >
+        <div className="grid max-w-3xl gap-6 md:grid-cols-2">
+          <div>
+            <p className="mb-2 text-xs font-medium text-zinc-500">
+              Default toolbar (HTML source)
+            </p>
+            <Editor defaultValue="<h1>Release notes</h1><p>Toggle <strong>Source</strong> to see the raw HTML.</p>">
+              <Editor.Toolbar />
+              <Editor.Content />
+            </Editor>
+          </div>
+          <div>
+            <p className="mb-2 text-xs font-medium text-zinc-500">
+              Custom toolbar (Markdown source)
+            </p>
+            <Editor
+              outputFormat="markdown"
+              defaultValue="<h2>Changelog</h2><p>Now with a <strong>Source</strong> view.</p>"
+            >
+              <Editor.Toolbar>
+                <CustomToolbarButtons />
+                <Editor.SourceToggle className="ml-auto" />
+              </Editor.Toolbar>
+              <Editor.Content />
+            </Editor>
+          </div>
+        </div>
+      </DemoSection>
+
+      <DemoSection
         title="Line Spacing"
         description="Editors with different lineSpacing values: 1.2, 1.6 (default), and 2.0."
         code={`<Editor lineSpacing={1.2}>...</Editor>

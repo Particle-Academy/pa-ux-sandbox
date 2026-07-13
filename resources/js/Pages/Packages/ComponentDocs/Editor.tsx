@@ -97,6 +97,35 @@ const [value, setValue] = useState("## Field notes…");
 </Editor>`,
         },
         {
+            name: "Source view",
+            description: "The default toolbar's Source toggle (`</>`) swaps the rich-text surface for a textarea of the raw markup — HTML, or Markdown under `outputFormat=\"markdown\"`. Edits round-trip back into the editor. Drive it with `showSource` / `onShowSourceChange`, or drop `<Editor.SourceToggle />` into a custom toolbar.",
+            render: () => (
+                <div className="w-full max-w-md">
+                    <Editor defaultValue="<h2>Release notes</h2><p>Toggle <strong>Source</strong> to edit the raw HTML.</p>">
+                        <Editor.Toolbar />
+                        <Editor.Content />
+                    </Editor>
+                </div>
+            ),
+            code: `<Editor
+    value={content}
+    onChange={setContent}
+    // optional: control the source view yourself
+    showSource={showSource}
+    onShowSourceChange={setShowSource}
+>
+    {/* default toolbar includes the Source toggle */}
+    <Editor.Toolbar />
+    <Editor.Content />
+</Editor>
+
+{/* …or place it in a custom toolbar */}
+<Editor.Toolbar>
+    <MyButtons />
+    <Editor.SourceToggle className="ml-auto" />
+</Editor.Toolbar>`,
+        },
+        {
             name: "Custom toolbar actions",
             description: "Pass an `actions` array to drop the defaults and ship your own button set.",
             render: () => (
@@ -142,6 +171,9 @@ const [value, setValue] = useState("## Field notes…");
         { name: "onChange", type: `(value: string) => void`, default: "—", description: "Called on every edit." },
         { name: "outputFormat", type: `"html" | "markdown"`, default: `"html"`, description: "Emitted format for `value` / `onChange`." },
         { name: "mode", type: `"edit" | "view"`, default: `"edit"`, description: "View/edit field mode (prop → `<Form>` context → `\"edit\"`). `\"view\"` renders read-only via `ContentRenderer`." },
+        { name: "showSource", type: `boolean`, default: "—", description: "Controlled source-view flag. `true` shows the raw `value` (in `outputFormat`) in an editable textarea instead of the rich-text surface." },
+        { name: "defaultShowSource", type: `boolean`, default: `false`, description: "Initial source-view state (uncontrolled)." },
+        { name: "onShowSourceChange", type: `(showSource: boolean) => void`, default: "—", description: "Fired when the Source toggle flips source view on/off." },
         { name: "lineSpacing", type: `number`, default: `1.5`, description: "Multiplier on paragraph line height." },
         { name: "placeholder", type: `string`, default: "—", description: "Placeholder shown when the editor is empty." },
         { name: "extensions", type: `RenderExtension[]`, default: "—", description: "Per-instance render extensions. Merged with globally registered ones." },

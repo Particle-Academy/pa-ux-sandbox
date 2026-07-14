@@ -169,14 +169,44 @@ class SeoServiceProvider extends ServiceProvider
             return ['title' => 'Join Fancy UI', 'noindex' => true];
         }
 
+        // Social scrapers (X/Twitter, Facebook, LinkedIn, Slack, …) drop the
+        // preview IMAGE when a page is noindex — but the rich share card is the
+        // entire reason this landing page exists. So keep `noindex` for real
+        // search engines (thousands of near-duplicate invite URLs shouldn't
+        // compete in search) while serving indexable meta to the unfurl bots,
+        // whose only job is to build that card. Identical content either way —
+        // not cloaking, just letting link previews render. The join route
+        // queues a referral cookie on every hit, so the response is never
+        // shared-cached, making per-UA head resolution safe (no Vary needed).
+        $forCard = $this->isSocialCardScraper(request()->userAgent());
+
         return [
             'title' => "{$referrer->name} invited you to Fancy UI",
             'description' => "Join {$referrer->name}'s referral network and build with Fancy UI — components for the surfaces where humans and AI agents work together.",
             'canonical' => "{$base}/join/{$referrer->username}",
             'image' => "/og/join/{$referrer->username}.png",
             'imageAlt' => "{$referrer->name} invited you to Fancy UI",
-            'noindex' => true,
+            'noindex' => ! $forCard,
         ];
+    }
+
+    /**
+     * Whether the request is a social-card / link-unfurl scraper — the bots
+     * that fetch a page solely to build a share preview (X/Twitter, Facebook,
+     * LinkedIn, Slack, Discord, Telegram, WhatsApp, Pinterest, Reddit, …).
+     * Deliberately excludes general search crawlers (Googlebot/Bingbot/Applebot),
+     * which must still honor `noindex` on invite pages.
+     */
+    private function isSocialCardScraper(?string $userAgent): bool
+    {
+        if ($userAgent === null || $userAgent === '') {
+            return false;
+        }
+
+        return (bool) preg_match(
+            '/twitterbot|facebookexternalhit|facebot|linkedinbot|slackbot|slack-imgproxy|discordbot|telegrambot|whatsapp|pinterest|redditbot|embedly|skypeuripreview|vkshare|tumblr|mastodon|nuzzel|qwantify/i',
+            $userAgent,
+        );
     }
 
     /**

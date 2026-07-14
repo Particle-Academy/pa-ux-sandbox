@@ -127,7 +127,38 @@ it('serves personalized OG share meta on the invite page', function () {
         ->toContain('property="og:image:width" content="1200"')
         ->toContain('property="og:image:height" content="630"')
         ->toContain('name="twitter:card" content="summary_large_image"')
-        // Personalized invite pages stay out of search — shares only need OG.
+        // Personalized invite pages stay out of search for ordinary requests +
+        // search engines (this test's UA is neither a social scraper).
+        ->toContain('name="robots" content="noindex, nofollow"');
+});
+
+it('serves indexable meta to social card scrapers so the preview image renders', function () {
+    User::factory()->create(['username' => 'ray', 'name' => 'Ray']);
+
+    // X/Twitter, Facebook, Slack, … drop the preview IMAGE when a page is
+    // noindex. Invite pages are noindex on purpose, so we must hand the unfurl
+    // bots indexable meta — otherwise the share card (the page's whole reason
+    // to exist) loses its image.
+    $html = $this->withHeader('User-Agent', 'Twitterbot/1.0')
+        ->get('/join/ray')
+        ->assertOk()
+        ->getContent();
+
+    expect($html)
+        ->not->toContain('noindex')
+        // …while still carrying the full personalized card meta.
+        ->toContain('property="og:title" content="Ray invited you to Fancy UI"')
+        ->toContain('property="og:image" content="'.config('app.url').'/og/join/ray.png"')
+        ->toContain('name="twitter:card" content="summary_large_image"');
+});
+
+it('keeps invite pages noindex for real search engines', function () {
+    User::factory()->create(['username' => 'ray', 'name' => 'Ray']);
+
+    // Googlebot is a search crawler, not a card scraper — the near-duplicate
+    // invite URLs must still be kept out of the index.
+    expect($this->withHeader('User-Agent', 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)')
+        ->get('/join/ray')->getContent())
         ->toContain('name="robots" content="noindex, nofollow"');
 });
 

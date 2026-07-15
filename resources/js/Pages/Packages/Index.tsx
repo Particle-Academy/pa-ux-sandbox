@@ -80,11 +80,15 @@ export default function PackagesIndex({ packages }: { packages: Pkg[] }) {
         });
     }, [packages, query, kind, eco]);
 
-    const groups = GROUP_ORDER.map((g) => ({
-        group: g,
-        meta: GROUP_META[g],
-        items: filtered.filter((p) => p.group === g),
-    })).filter((s) => s.items.length > 0);
+    const groups = GROUP_ORDER.map((g) => {
+        let items = filtered.filter((p) => p.group === g);
+        // Supporting (companion) packages list alphabetically; the core + Human+
+        // surfaces keep their curated narrative order.
+        if (g === "companion") {
+            items = [...items].sort((a, b) => a.name.localeCompare(b.name));
+        }
+        return { group: g, meta: GROUP_META[g], items };
+    }).filter((s) => s.items.length > 0);
 
     return (
         <Layout>

@@ -497,6 +497,7 @@ class PackageRegistry
             ['slug' => 'carousel', 'name' => 'Carousel'],
             ['slug' => 'chart', 'name' => 'Chart'],
             ['slug' => 'chat-drawer', 'name' => 'ChatDrawer'],
+            ['slug' => 'code-view', 'name' => 'CodeView', 'blurb' => 'Lightweight syntax-highlighted source view (HTML highlighted; fills height). Powers the Editor Source toggle.'],
             ['slug' => 'color-picker', 'name' => 'ColorPicker'],
             ['slug' => 'command', 'name' => 'Command'],
             ['slug' => 'composer', 'name' => 'Composer'],

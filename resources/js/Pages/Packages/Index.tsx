@@ -19,6 +19,7 @@ type Pkg = {
     ecosystem: "ts" | "php" | "polyglot";
     kind: "ui" | "bridge" | "headless";
     components_count: number;
+    stars: number | null;
     npm: string | null;
     composer: string | null;
     download: string | null;
@@ -176,6 +177,21 @@ export default function PackagesIndex({ packages }: { packages: Pkg[] }) {
     );
 }
 
+/** GitHub star count — synced from the API + nudged live by the star webhook. */
+function Stars({ count }: { count: number | null }) {
+    if (count == null) return null;
+    const label = count >= 1000 ? `${(count / 1000).toFixed(count >= 10000 ? 0 : 1)}k` : String(count);
+    return (
+        <span
+            title={`${count.toLocaleString()} GitHub stars`}
+            style={{ display: "inline-flex", alignItems: "center", gap: 3, color: "#f59e0b", fontWeight: 600, fontVariantNumeric: "tabular-nums" }}
+        >
+            <Icon name="star" size={12} />
+            {label}
+        </span>
+    );
+}
+
 /** UI / bridge package → preview tile (mini visual + Explore →). */
 function PreviewTile({ pkg }: { pkg: Pkg }) {
     return (
@@ -188,10 +204,13 @@ function PreviewTile({ pkg }: { pkg: Pkg }) {
                 </div>
                 <p className="pkg-tile__tagline">{pkg.tagline}</p>
                 <div className="pkg-tile__foot">
-                    <span>
-                        {pkg.components_count > 0
-                            ? `${pkg.components_count} component${pkg.components_count === 1 ? "" : "s"}`
-                            : pkg.kind === "bridge" ? "bridge" : "surface"}
+                    <span style={{ display: "inline-flex", alignItems: "center", gap: 10 }}>
+                        <span>
+                            {pkg.components_count > 0
+                                ? `${pkg.components_count} component${pkg.components_count === 1 ? "" : "s"}`
+                                : pkg.kind === "bridge" ? "bridge" : "surface"}
+                        </span>
+                        <Stars count={pkg.stars} />
                     </span>
                     <span className="pkg-tile__explore">Explore →</span>
                 </div>
@@ -428,6 +447,7 @@ function HeadlessTile({ pkg }: { pkg: Pkg }) {
                     <span className="pkg-tile__explore" style={{ opacity: 1, color: "color-mix(in oklch, var(--accent) 80%, var(--fg-1))" }}>
                         Docs →
                     </span>
+                    <Stars count={pkg.stars} />
                     <a className="pkg-link" href={pkg.repoUrl} target="_blank" rel="noreferrer">GitHub →</a>
                     {pkg.npmUrl && <a className="pkg-link" href={pkg.npmUrl} target="_blank" rel="noreferrer">npm →</a>}
                     {pkg.packagistUrl && <a className="pkg-link" href={pkg.packagistUrl} target="_blank" rel="noreferrer">Packagist →</a>}

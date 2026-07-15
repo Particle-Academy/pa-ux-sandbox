@@ -8,6 +8,8 @@ import { avatarFrameClass, nameColorClass, type CosmeticSlots } from "../lib/cos
 type Row = {
     github_username: string;
     merged_prs: number;
+    stars?: number;
+    issues_opened?: number;
     votes_cast: number;
     score: number;
 };
@@ -41,7 +43,7 @@ export default function Leaderboard({ scope, snapshot, rows, players }: Props) {
                     <Text className="mt-2 max-w-3xl">
                         {view === "players"
                             ? "Top players by total XP earned across the showcase — exploring, tinkering, driving agents, and shipping projects."
-                            : "Top contributors by merged PRs across every Particle-Academy repo and votes cast on dreams."}
+                            : "Top contributors across the whole package ecosystem — stars, merged PRs, and opened issues on every Particle-Academy repo, plus votes cast. No account needed: log in with GitHub to claim your score."}
                     </Text>
                 </div>
                 <div className="inline-flex overflow-hidden rounded-md border border-zinc-300 text-xs dark:border-zinc-700">
@@ -184,8 +186,10 @@ function ContributorsTable({ scope: initialScope, snapshot: initialSnapshot, row
                             <Table.Row>
                                 <Table.Column label="#" />
                                 <Table.Column label="Contributor" />
+                                <Table.Column label="Stars" className="!text-right" />
                                 <Table.Column label="Merged PRs" className="!text-right" />
-                                <Table.Column label="Votes cast" className="!text-right" />
+                                <Table.Column label="Issues" className="!text-right" />
+                                <Table.Column label="Votes" className="!text-right" />
                                 <Table.Column label="Score" className="!text-right" />
                             </Table.Row>
                         </Table.Head>
@@ -203,7 +207,9 @@ function ContributorsTable({ scope: initialScope, snapshot: initialSnapshot, row
                                             {row.github_username}
                                         </a>
                                     </Table.Cell>
+                                    <Table.Cell className="text-right font-mono text-amber-600 dark:text-amber-400">{row.stars ?? 0}</Table.Cell>
                                     <Table.Cell className="text-right font-mono">{row.merged_prs}</Table.Cell>
+                                    <Table.Cell className="text-right font-mono">{row.issues_opened ?? 0}</Table.Cell>
                                     <Table.Cell className="text-right font-mono">{row.votes_cast}</Table.Cell>
                                     <Table.Cell className="text-right font-mono font-semibold">{row.score}</Table.Cell>
                                 </Table.Row>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Showcase;
 
 use App\Http\Controllers\Controller;
+use App\Models\GithubRepoStat;
 use App\Support\ComponentContext;
 use App\Support\PackageContext;
 use App\Support\PackageRegistry;
@@ -25,9 +26,13 @@ class PackagesController extends Controller
         // (core → "Fancy Core", human → "The Human+ surfaces", companion →
         // "Companion packages") and switches tile style on `kind`
         // (ui/bridge → preview tile, headless → install-snippet tile).
+        // GitHub star counts, refreshed by showcase:refresh-leaderboard +
+        // nudged live by the star webhook. Absent (null) until the first sync.
+        $stars = GithubRepoStat::starMap();
+
         $packages = collect(PackageRegistry::all())
             ->merge(PackageRegistry::companions())
-            ->map(fn (array $p) => $this->presentForListing($p))
+            ->map(fn (array $p) => $this->presentForListing($p, $stars))
             ->values()
             ->all();
 
@@ -41,9 +46,10 @@ class PackagesController extends Controller
      * install ids, the design classification, and the resolved external URLs.
      *
      * @param  array<string, mixed>  $p
+     * @param  array<string, int>  $stars  repo (lowercased) => star count
      * @return array<string, mixed>
      */
-    private function presentForListing(array $p): array
+    private function presentForListing(array $p, array $stars = []): array
     {
         return [
             'slug' => $p['slug'],
@@ -56,6 +62,7 @@ class PackagesController extends Controller
             'ecosystem' => $p['ecosystem'],
             'kind' => $p['kind'],
             'components_count' => count($p['components'] ?? []),
+            'stars' => isset($p['repo']) ? ($stars[strtolower((string) $p['repo'])] ?? null) : null,
             'npm' => $p['npm'] ?? null,
             'composer' => $p['composer'] ?? null,
             'download' => $p['download'] ?? null,

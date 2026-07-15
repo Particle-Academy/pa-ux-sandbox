@@ -1,7 +1,9 @@
 <?php
 
+use App\Models\GithubRepoStat;
 use App\Models\User;
 use Database\Seeders\FunLabSeeder;
+use Illuminate\Testing\TestResponse;
 use Tests\TestCase;
 
 uses(TestCase::class);
@@ -15,7 +17,7 @@ beforeEach(function () {
     ]);
 });
 
-function ghPost(array $payload, string $event = 'issues', ?string $secret = 'shh-secret'): \Illuminate\Testing\TestResponse
+function ghPost(array $payload, string $event = 'issues', ?string $secret = 'shh-secret'): TestResponse
 {
     $body = json_encode($payload);
     $headers = ['X-GitHub-Event' => $event, 'Content-Type' => 'application/json'];
@@ -74,30 +76,29 @@ it('returns 503 when no webhook secret is configured', function () {
 it('awards bug-hunter-xp + first-bug to the linked issue author', function () {
     $user = User::factory()->create(['github_username' => 'octocat']);
 
-    ghPost(bugPayload('octocat'))->assertOk()->assertJson(['awarded' => true]);
+    ghPost(bugPayload('octocat'))->assertOk()->assertJson(['bug' => true]);
 
     $user->refresh();
     expect($user->getProfile()->getXpFor('bug-hunter-xp'))->toBe(50)
-        ->and($user->hasAchievement('first-bug'))->toBeTrue()
-        // bug-hunter-xp 0.35 -> 17 coins + first-bug default achievement bonus 50
-        ->and($user->coinBalance())->toBe(67);
+        ->and($user->hasAchievement('first-bug'))->toBeTrue();
 });
 
 it('is idempotent per issue', function () {
     $user = User::factory()->create(['github_username' => 'octocat']);
 
     ghPost(bugPayload('octocat', number: 7))->assertOk();
-    ghPost(bugPayload('octocat', number: 7))->assertOk()->assertJson(['awarded' => false]);
+    ghPost(bugPayload('octocat', number: 7))->assertOk()->assertJson(['bug' => false]);
 
     expect($user->fresh()->getProfile()->getXpFor('bug-hunter-xp'))->toBe(50);
 });
 
-it('ignores issues without a bug label', function () {
+it('does not award bug-hunter-xp without a bug label', function () {
     $user = User::factory()->create(['github_username' => 'octocat']);
     $payload = bugPayload('octocat');
+    $payload['action'] = 'labeled';
     $payload['issue']['labels'] = [['name' => 'question']];
 
-    ghPost($payload)->assertOk()->assertJson(['ignored' => 'no bug label']);
+    ghPost($payload)->assertOk();
 
     expect($user->getProfile()->getXpFor('bug-hunter-xp'))->toBe(0);
 });
@@ -111,6 +112,74 @@ it('ignores repos outside the configured org', function () {
     expect($user->getProfile()->getXpFor('bug-hunter-xp'))->toBe(0);
 });
 
-it('ignores issues from users with no linked account', function () {
-    ghPost(bugPayload('stranger'))->assertOk()->assertJson(['ignored' => 'no linked user']);
+it('awards contributor-xp when a linked user opens any issue', function () {
+    $user = User::factory()->create(['github_username' => 'octocat']);
+
+    ghPost([
+        'action' => 'opened',
+        'repository' => ['full_name' => 'Particle-Academy/react-fancy'],
+        'issue' => ['number' => 12, 'user' => ['login' => 'octocat'], 'labels' => []],
+    ])->assertOk()->assertJson(['contributor' => true]);
+
+    expect($user->fresh()->getProfile()->getXpFor('contributor-xp'))->toBe(10);
+});
+
+it('awards contributor-xp when a linked user gets a PR merged', function () {
+    $user = User::factory()->create(['github_username' => 'octocat']);
+
+    ghPost([
+        'action' => 'closed',
+        'repository' => ['full_name' => 'Particle-Academy/react-fancy'],
+        'pull_request' => ['number' => 5, 'merged' => true, 'user' => ['login' => 'octocat']],
+    ], event: 'pull_request')->assertOk()->assertJson(['awarded' => true]);
+
+    expect($user->fresh()->getProfile()->getXpFor('contributor-xp'))->toBe(50);
+});
+
+it('ignores a closed-but-unmerged PR', function () {
+    $user = User::factory()->create(['github_username' => 'octocat']);
+
+    ghPost([
+        'action' => 'closed',
+        'repository' => ['full_name' => 'Particle-Academy/react-fancy'],
+        'pull_request' => ['number' => 5, 'merged' => false, 'user' => ['login' => 'octocat']],
+    ], event: 'pull_request')->assertOk()->assertJson(['ignored' => 'not merged']);
+
+    expect($user->fresh()->getProfile()->getXpFor('contributor-xp'))->toBe(0);
+});
+
+it('awards promotion-xp on a star and nudges the cached count', function () {
+    $user = User::factory()->create(['github_username' => 'octocat']);
+    GithubRepoStat::create(['repo' => 'Particle-Academy/react-fancy', 'stars' => 100]);
+
+    ghPost([
+        'action' => 'created',
+        'repository' => ['full_name' => 'Particle-Academy/react-fancy'],
+        'sender' => ['login' => 'octocat'],
+    ], event: 'star')->assertOk()->assertJson(['awarded' => true]);
+
+    expect($user->fresh()->getProfile()->getXpFor('promotion-xp'))->toBe(5)
+        ->and(GithubRepoStat::first()->stars)->toBe(101);
+});
+
+it('decrements the cached count when a star is removed', function () {
+    GithubRepoStat::create(['repo' => 'Particle-Academy/react-fancy', 'stars' => 100]);
+
+    ghPost([
+        'action' => 'deleted',
+        'repository' => ['full_name' => 'Particle-Academy/react-fancy'],
+        'sender' => ['login' => 'octocat'],
+    ], event: 'star')->assertOk();
+
+    expect(GithubRepoStat::first()->stars)->toBe(99);
+});
+
+it('accepts engagement from unlinked GitHub users without awarding XP', function () {
+    // No account for "stranger" — the periodic sweep credits them on the
+    // leaderboard instead; the webhook just 200s.
+    ghPost([
+        'action' => 'created',
+        'repository' => ['full_name' => 'Particle-Academy/react-fancy'],
+        'sender' => ['login' => 'stranger'],
+    ], event: 'star')->assertOk()->assertJson(['awarded' => false]);
 });

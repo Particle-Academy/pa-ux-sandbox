@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Support\SelfSite;
 use FancyHeuristics\Facades\Heuristics;
+use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -167,9 +168,9 @@ class AgentRelayController extends Controller
             $key = $this->queueKey($session, $direction, $subscriberId);
             // Register the subscriber so fanOut writes to its queue.
             $subsKey = $this->subscribersKey($session, $direction);
-            $subs = Cache::get($subsKey, []);
+            $subs = $this->cache()->get($subsKey, []);
             $subs[$subscriberId] = time();
-            Cache::put($subsKey, $subs, self::TTL_SECONDS);
+            $this->cache()->put($subsKey, $subs, self::TTL_SECONDS);
 
             // Outbound subscribers are external agents reading frames from
             // the browser. Notify the browser (inbound side) when one joins.
@@ -186,7 +187,7 @@ class AgentRelayController extends Controller
 
             $lastBeat = time();
             while (! connection_aborted()) {
-                $frames = Cache::pull($key, []);
+                $frames = $this->cache()->pull($key, []);
                 foreach ($frames as $frame) {
                     echo "event: mcp\n";
                     echo 'data: '.$frame."\n\n";
@@ -199,20 +200,20 @@ class AgentRelayController extends Controller
                     $this->flush();
                     $lastBeat = time();
                     // Stay fresh so fanOut()'s 60s GC prune keeps this stream.
-                    $subsNow = Cache::get($subsKey, []);
+                    $subsNow = $this->cache()->get($subsKey, []);
                     if (isset($subsNow[$subscriberId])) {
                         $subsNow[$subscriberId] = time();
-                        Cache::put($subsKey, $subsNow, self::TTL_SECONDS);
+                        $this->cache()->put($subsKey, $subsNow, self::TTL_SECONDS);
                     }
                 }
                 usleep(self::POLL_INTERVAL_MS * 1000);
             }
 
             // Clean up subscriber record on disconnect.
-            $subs = Cache::get($subsKey, []);
+            $subs = $this->cache()->get($subsKey, []);
             unset($subs[$subscriberId]);
-            Cache::put($subsKey, $subs, self::TTL_SECONDS);
-            Cache::forget($key);
+            $this->cache()->put($subsKey, $subs, self::TTL_SECONDS);
+            $this->cache()->forget($key);
 
             if ($direction === 'outbound') {
                 $this->fanOut($session, 'inbound', json_encode([
@@ -269,10 +270,10 @@ class AgentRelayController extends Controller
         }
 
         $subsKey = $this->subscribersKey($session, $direction);
-        $subs = Cache::get($subsKey, []);
+        $subs = $this->cache()->get($subsKey, []);
         $isNew = ! isset($subs[$subscriberId]);
         $subs[$subscriberId] = time();
-        Cache::put($subsKey, $subs, self::TTL_SECONDS);
+        $this->cache()->put($subsKey, $subs, self::TTL_SECONDS);
 
         // A newly-arrived external (outbound) subscriber notifies the browser side,
         // mirroring the SSE handler.
@@ -288,7 +289,7 @@ class AgentRelayController extends Controller
         $deadline = microtime(true) + ($waitMs / 1000);
         $frames = [];
         do {
-            $frames = Cache::pull($key, []);
+            $frames = $this->cache()->pull($key, []);
             if (! empty($frames) || microtime(true) >= $deadline || connection_aborted()) {
                 break;
             }
@@ -296,9 +297,9 @@ class AgentRelayController extends Controller
         } while (true);
 
         // Keep this subscriber fresh (fanOut() prunes ones it hasn't heard from).
-        $subs = Cache::get($subsKey, []);
+        $subs = $this->cache()->get($subsKey, []);
         $subs[$subscriberId] = time();
-        Cache::put($subsKey, $subs, self::TTL_SECONDS);
+        $this->cache()->put($subsKey, $subs, self::TTL_SECONDS);
 
         return response()->json(['subscriber' => $subscriberId, 'frames' => $frames]);
     }
@@ -310,7 +311,7 @@ class AgentRelayController extends Controller
             'session' => ['required', 'string', 'regex:/^[A-Za-z0-9_-]{4,64}$/'],
             'token' => ['required', 'string', 'min:16', 'max:128'],
         ]);
-        Cache::put($this->tokenKey($data['session']), hash('sha256', $data['token']), self::TTL_SECONDS);
+        $this->cache()->put($this->tokenKey($data['session']), hash('sha256', $data['token']), self::TTL_SECONDS);
 
         return response()->json(['ok' => true]);
     }
@@ -321,7 +322,7 @@ class AgentRelayController extends Controller
         if (! $this->validateToken($session, (string) $request->query('token'))) {
             return response()->json(['error' => 'invalid_token'], 401);
         }
-        Cache::forget($this->tokenKey($session));
+        $this->cache()->forget($this->tokenKey($session));
 
         return response()->json(['ok' => true]);
     }
@@ -329,7 +330,7 @@ class AgentRelayController extends Controller
     private function fanOut(string $session, string $direction, string $payload): void
     {
         $subsKey = $this->subscribersKey($session, $direction);
-        $subs = Cache::get($subsKey, []);
+        $subs = $this->cache()->get($subsKey, []);
         // Drop subscribers we haven't heard from in 60s — a crashed SSE stream or
         // a browser that stopped long-polling — so their queues don't pile up.
         // Active subscribers stay fresh: SSE refreshes on each 15s keepalive,
@@ -338,12 +339,12 @@ class AgentRelayController extends Controller
         $subs = array_filter($subs, fn ($ts) => ($now - (int) $ts) < 60);
         foreach (array_keys($subs) as $subscriberId) {
             $key = $this->queueKey($session, $direction, $subscriberId);
-            $existing = Cache::get($key, []);
+            $existing = $this->cache()->get($key, []);
             $existing[] = $payload;
-            Cache::put($key, $existing, self::TTL_SECONDS);
+            $this->cache()->put($key, $existing, self::TTL_SECONDS);
         }
         // Refresh subscribers TTL.
-        Cache::put($subsKey, $subs, self::TTL_SECONDS);
+        $this->cache()->put($subsKey, $subs, self::TTL_SECONDS);
     }
 
     private function validateToken(string $session, string $token): bool
@@ -351,7 +352,7 @@ class AgentRelayController extends Controller
         if ($session === '' || $token === '') {
             return false;
         }
-        $stored = Cache::get($this->tokenKey($session));
+        $stored = $this->cache()->get($this->tokenKey($session));
         if ($stored === null) {
             return false;
         }
@@ -362,6 +363,11 @@ class AgentRelayController extends Controller
     private function tokenKey(string $session): string
     {
         return "wb-share:token:{$session}";
+    }
+
+    private function cache(): Repository
+    {
+        return Cache::store(config('agent-relay.cache_store'));
     }
 
     private function subscribersKey(string $session, string $direction): string

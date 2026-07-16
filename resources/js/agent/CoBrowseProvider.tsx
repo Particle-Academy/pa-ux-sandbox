@@ -317,6 +317,18 @@ export function CoBrowseProvider({ children }: { children: ReactNode }) {
         };
         document.addEventListener("change", onInput, true);
 
+        const onClick = (event: MouseEvent) => {
+            const target = event.target instanceof Element ? event.target.closest(INTERACTIVE) : null;
+            if (!target || !isVisible(target)) return;
+            const handle =
+                target.getAttribute("data-co-handle") ??
+                (target as HTMLInputElement).name ??
+                target.getAttribute("id") ??
+                roleOf(target);
+            observeRef.current({ kind: "click", handle, label: accessibleName(target) });
+        };
+        document.addEventListener("click", onClick, true);
+
         let raf = 0;
         const onScroll = () => {
             if (raf) return;
@@ -330,6 +342,7 @@ export function CoBrowseProvider({ children }: { children: ReactNode }) {
         return () => {
             offNavigate();
             document.removeEventListener("change", onInput, true);
+            document.removeEventListener("click", onClick, true);
             window.removeEventListener("scroll", onScroll);
             if (raf) window.cancelAnimationFrame(raf);
         };

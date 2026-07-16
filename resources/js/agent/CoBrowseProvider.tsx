@@ -191,6 +191,8 @@ function readCsrf(): string | undefined {
 
 export function CoBrowseProvider({ children }: { children: ReactNode }) {
     const registryRef = useRef<Map<string, Element>>(new Map());
+    const revisionRef = useRef(0);
+    const agentNavigationRef = useRef(false);
     const [pending, setPending] = useState<PendingConfirm | null>(null);
 
     const resolve = useCallback((handle: string): Element | null => {
@@ -211,6 +213,7 @@ export function CoBrowseProvider({ children }: { children: ReactNode }) {
                 url: window.location.pathname + window.location.search,
                 title: document.title,
             }),
+            getRevision: () => revisionRef.current,
             describe: () => {
                 const { snapshot, registry } = walk();
                 registryRef.current = registry;
@@ -224,7 +227,10 @@ export function CoBrowseProvider({ children }: { children: ReactNode }) {
                 const text = (main.textContent ?? "").replace(/\s+/g, " ").trim().slice(0, 4000);
                 return [document.title, ...heads, "", text].join("\n");
             },
-            visit: (url) => router.visit(url),
+            visit: (url) => {
+                agentNavigationRef.current = true;
+                router.visit(url);
+            },
             back: () => window.history.back(),
             forward: () => window.history.forward(),
             scrollTo: ({ x, y, handle }) => {
@@ -298,26 +304,35 @@ export function CoBrowseProvider({ children }: { children: ReactNode }) {
         if (!active) return;
         const offNavigate = router.on("navigate", (event) => {
             const url = (event as any).detail?.page?.url ?? window.location.pathname;
-            observeRef.current({ kind: "navigation", url, title: document.title });
+            if (agentNavigationRef.current) {
+                agentNavigationRef.current = false;
+                return;
+            }
+            revisionRef.current += 1;
+            observeRef.current({ kind: "navigation", url, title: document.title, revision: revisionRef.current });
         });
 
         const onInput = (e: Event) => {
+            if (!e.isTrusted) return;
             const t = e.target as HTMLElement | null;
             if (!t || !(t instanceof HTMLInputElement || t instanceof HTMLTextAreaElement || t instanceof HTMLSelectElement)) {
                 return;
             }
             const handle = t.getAttribute("data-co-handle") ?? (t as HTMLInputElement).name ?? t.id ?? "field";
             const masked = isSensitive(t);
+            revisionRef.current += 1;
             observeRef.current({
                 kind: "form",
                 handle,
                 value: masked ? undefined : (t as HTMLInputElement).value,
                 masked,
+                revision: revisionRef.current,
             });
         };
         document.addEventListener("change", onInput, true);
 
         const onClick = (event: MouseEvent) => {
+            if (!event.isTrusted) return;
             const target = event.target instanceof Element ? event.target.closest(INTERACTIVE) : null;
             if (!target || !isVisible(target)) return;
             const handle =
@@ -325,9 +340,17 @@ export function CoBrowseProvider({ children }: { children: ReactNode }) {
                 (target as HTMLInputElement).name ??
                 target.getAttribute("id") ??
                 roleOf(target);
-            observeRef.current({ kind: "click", handle, label: accessibleName(target) });
+            revisionRef.current += 1;
+            observeRef.current({ kind: "click", handle, label: accessibleName(target), revision: revisionRef.current });
         };
         document.addEventListener("click", onClick, true);
+
+        const onWheel = (event: WheelEvent) => {
+            if (!event.isTrusted) return;
+            revisionRef.current += 1;
+            observeRef.current({ kind: "scroll", y: window.scrollY, revision: revisionRef.current });
+        };
+        window.addEventListener("wheel", onWheel, { passive: true });
 
         let raf = 0;
         const onScroll = () => {
@@ -343,6 +366,7 @@ export function CoBrowseProvider({ children }: { children: ReactNode }) {
             offNavigate();
             document.removeEventListener("change", onInput, true);
             document.removeEventListener("click", onClick, true);
+            window.removeEventListener("wheel", onWheel);
             window.removeEventListener("scroll", onScroll);
             if (raf) window.cancelAnimationFrame(raf);
         };

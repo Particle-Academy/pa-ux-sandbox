@@ -1,10 +1,27 @@
 <?php
 
+use App\Support\PackageRegistry;
 use App\Support\Registry\RegistryItem;
 use App\Support\Registry\RegistrySource;
 use Tests\TestCase;
 
 uses(TestCase::class);
+
+it('discovers Fancy TUI as a package and npm registry surface', function () {
+    $package = PackageRegistry::find('fancy-tui');
+
+    expect($package)->not->toBeNull()
+        ->and($package['npm'])->toBe('@particle-academy/fancy-tui')
+        ->and($package['showcase'])->toBe('/fancy-tui')
+        ->and($package['components'])->toHaveCount(51);
+
+    $this->get('/packages/fancy-tui')->assertOk();
+
+    $registry = $this->get('/r/fancy-tui.json')->assertOk()->json();
+    expect($registry['package'])->toBe('fancy-tui')
+        ->and($registry['title'])->toBe('fancy-tui')
+        ->and($registry['name'])->toBe('fancy-tui');
+});
 
 it('serves the registry from the compiled artifact when sibling source is absent (production parity)', function () {
     // Simulate Forge: only px-ui-sandbox is deployed — no ../react-fancy etc.

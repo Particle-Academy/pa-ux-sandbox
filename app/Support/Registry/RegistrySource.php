@@ -264,7 +264,7 @@ class RegistrySource
             : "{$component['name']} — ships in {$install} (install the package; no copy-source).";
 
         return new RegistryItem(
-            name: (string) $component['slug'],
+            name: $this->componentRegistryName($pkg, $component),
             title: (string) $component['name'],
             description: $description,
             package: (string) $pkg['slug'],
@@ -337,7 +337,7 @@ class RegistrySource
         $description = $component['blurb'] ?: $this->fallbackDescription($pkg, $component);
 
         return new RegistryItem(
-            name: $component['slug'],
+            name: $this->componentRegistryName($pkg, $component),
             title: $component['name'],
             description: $description,
             package: $pkg['slug'],
@@ -345,6 +345,23 @@ class RegistrySource
             dependencies: $imports['npm'],
             registryDependencies: $imports['registry'],
         );
+    }
+
+    /**
+     * Keep packages with broad cross-surface vocabularies from destabilizing
+     * existing global registry slugs (for example browser Card vs TUI Card).
+     *
+     * @param  array<string, mixed>  $pkg
+     * @param  array<string, mixed>  $component
+     */
+    private function componentRegistryName(array $pkg, array $component): string
+    {
+        $slug = (string) $component['slug'];
+        $prefix = (string) ($pkg['registry_prefix'] ?? '');
+
+        return $prefix !== '' && ! str_starts_with($slug, $prefix)
+            ? $prefix.$slug
+            : $slug;
     }
 
     /**

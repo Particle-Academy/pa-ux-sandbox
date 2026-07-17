@@ -316,6 +316,20 @@ const PREVIEWS: Record<string, PreviewFn> = {
             </div>
         </div>
     ),
+    "fancy-tui/fancy-tui-provider": () => (
+        <div className="h-32 w-full max-w-[20rem] overflow-hidden rounded-md border border-violet-500/30 bg-[#090b10] p-2 font-mono text-[9px] leading-relaxed text-zinc-300">
+            <div className="mb-2 flex items-center justify-between border-b border-zinc-800 pb-1.5">
+                <span className="font-semibold text-violet-300">Fancy TUI</span>
+                <span className="text-emerald-400">● MCP live</span>
+            </div>
+            <div className="rounded border border-zinc-700 px-2 py-1.5">
+                <div className="text-zinc-500">Conversation</div>
+                <div><span className="text-cyan-300">YOU</span> Inspect the active surface.</div>
+                <div><span className="text-violet-300">AGENT</span> Reading stable handle…</div>
+            </div>
+            <div className="mt-1.5 text-zinc-500">[Tab] focus · [Alt+Enter] newline</div>
+        </div>
+    ),
 
     // ─── react-fancy: media viewers + fancy-code file viewer ──────────────────
     "react-fancy/media-viewer": () => (

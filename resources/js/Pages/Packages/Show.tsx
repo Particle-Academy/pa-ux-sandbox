@@ -32,6 +32,7 @@ type Pkg = {
     pairs?: string[];
     /** Starter-kit slug that ships this offering as a full app. */
     kit?: string | null;
+    showcase?: string | null;
     api?: ApiEntry[];
 };
 
@@ -52,6 +53,7 @@ const MCP_TOOLS: Record<string, string[]> = {
     "fancy-echarts": ["chart_set_option", "chart_read"],
     "fancy-code": ["code_read", "code_write", "code_replace"],
     "fancy-term": ["terminal_read", "terminal_write", "terminal_run"],
+    "fancy-tui": ["tui_surfaces_list", "tui_surface_read", "tui_action_invoke"],
     "fancy-3d": ["scene_add_node", "scene_move", "scene_paint"],
     "fancy-3d-babylon": ["scene_add_node", "scene_move", "scene_paint"],
     "fancy-3d-three": ["scene_add_node", "scene_move", "scene_paint"],
@@ -136,6 +138,7 @@ export default function PackagesShow({
 
                 {/* ── Doc links + peers ────────────────────────────────── */}
                 <div className="pkg-doclinks">
+                    {pkg.showcase && <Link className="pkg-doclink" href={pkg.showcase}>Live sandbox →</Link>}
                     {pkg.repo && <a className="pkg-doclink" href={`https://github.com/${pkg.repo}#readme`} target="_blank" rel="noopener">README →</a>}
                     {pkg.repo && <a className="pkg-doclink" href={`https://github.com/${pkg.repo}`} target="_blank" rel="noopener">GitHub →</a>}
                     {pkg.npm && <a className="pkg-doclink" href={`https://www.npmjs.com/package/${pkg.npm}`} target="_blank" rel="noopener">npm →</a>}

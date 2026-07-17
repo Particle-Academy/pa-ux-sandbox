@@ -1,6 +1,6 @@
 {
     "$schema": "https://ui.particle.academy/schema/registry-compiled.json",
-    "count": 172,
+    "count": 224,
     "items": [
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
@@ -2316,6 +2316,17 @@
             "title": "@particle-academy/fancy-term-host",
             "description": "Headless Node terminal backend for fancy-term \u2014 owns the PTYs (node-pty peer) and the T1/T2/T3 persistence engine (snapshot+replay, retained PTYs, detached pty-host) behind four injected ports. No UI.",
             "package": "fancy-term-host",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "fancy-tui",
+            "type": "registry:ui",
+            "title": "fancy-tui",
+            "description": "Ink components for Human+ terminal apps \u2014 consistent layout, controlled inputs, scrollback-safe conversations, and durable push + inbox MCP workflows.",
+            "package": "fancy-tui",
             "dependencies": [],
             "registryDependencies": [],
             "files": []
@@ -4774,6 +4785,583 @@
                     "target": "components/fancy/tree-nav/index.ts"
                 }
             ]
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "tui-accordion",
+            "type": "registry:ui",
+            "title": "Accordion",
+            "description": "Controlled expandable sections.",
+            "package": "fancy-tui",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "tui-activity-indicator",
+            "type": "registry:ui",
+            "title": "ActivityIndicator",
+            "description": "Idle, pending, success, and failure marker.",
+            "package": "fancy-tui",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "tui-autocomplete",
+            "type": "registry:ui",
+            "title": "Autocomplete",
+            "description": "Query-filtered selection.",
+            "package": "fancy-tui",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "tui-badge",
+            "type": "registry:ui",
+            "title": "Badge",
+            "description": "Compact semantic status badge.",
+            "package": "fancy-tui",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "tui-box",
+            "type": "registry:ui",
+            "title": "Box",
+            "description": "Typed Ink/Yoga box primitive.",
+            "package": "fancy-tui",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "tui-button",
+            "type": "registry:ui",
+            "title": "Button",
+            "description": "Stable-handle terminal action.",
+            "package": "fancy-tui",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "tui-callout",
+            "type": "registry:ui",
+            "title": "Callout",
+            "description": "Toned informational panel.",
+            "package": "fancy-tui",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "tui-card",
+            "type": "registry:ui",
+            "title": "Card",
+            "description": "Compound header, body, and footer surface.",
+            "package": "fancy-tui",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "tui-checkbox",
+            "type": "registry:ui",
+            "title": "Checkbox",
+            "description": "Controlled boolean choice.",
+            "package": "fancy-tui",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "tui-checkbox-group",
+            "type": "registry:ui",
+            "title": "CheckboxGroup",
+            "description": "Controlled multiple-choice list.",
+            "package": "fancy-tui",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "tui-code-view",
+            "type": "registry:ui",
+            "title": "CodeView",
+            "description": "Syntax-highlighted terminal code.",
+            "package": "fancy-tui",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "tui-column",
+            "type": "registry:ui",
+            "title": "Column",
+            "description": "Semantic vertical column.",
+            "package": "fancy-tui",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "tui-command",
+            "type": "registry:ui",
+            "title": "Command",
+            "description": "Searchable command palette.",
+            "package": "fancy-tui",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "tui-composer",
+            "type": "registry:ui",
+            "title": "Composer",
+            "description": "Multiline prompt with Enter submit and Alt+Enter newline.",
+            "package": "fancy-tui",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "tui-fancy-tui-provider",
+            "type": "registry:ui",
+            "title": "FancyTuiProvider",
+            "description": "Theme, terminal capabilities, and resize-aware viewport context.",
+            "package": "fancy-tui",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "tui-field",
+            "type": "registry:ui",
+            "title": "Field",
+            "description": "Label, description, error, and input composition.",
+            "package": "fancy-tui",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "tui-file-browser",
+            "type": "registry:ui",
+            "title": "FileBrowser",
+            "description": "Controlled path and file selection.",
+            "package": "fancy-tui",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "tui-form",
+            "type": "registry:ui",
+            "title": "Form",
+            "description": "Token-spaced form shell.",
+            "package": "fancy-tui",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "tui-header",
+            "type": "registry:ui",
+            "title": "Header",
+            "description": "Application title, subtitle, and status.",
+            "package": "fancy-tui",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "tui-heading",
+            "type": "registry:ui",
+            "title": "Heading",
+            "description": "Semantic terminal heading levels.",
+            "package": "fancy-tui",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "tui-input",
+            "type": "registry:ui",
+            "title": "Input",
+            "description": "Controlled single-line input.",
+            "package": "fancy-tui",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "tui-key-hint",
+            "type": "registry:ui",
+            "title": "KeyHint",
+            "description": "Keyboard shortcut label.",
+            "package": "fancy-tui",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "tui-live-region",
+            "type": "registry:ui",
+            "title": "LiveRegion",
+            "description": "Mutable activity below committed scrollback.",
+            "package": "fancy-tui",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "tui-markdown",
+            "type": "registry:ui",
+            "title": "Markdown",
+            "description": "ANSI Markdown for headings, lists, emphasis, and code.",
+            "package": "fancy-tui",
+            "dependencies": [
+                "marked",
+                "marked-terminal"
+            ],
+            "registryDependencies": [],
+            "files": [
+                {
+                    "path": "components/fancy/markdown/index.ts",
+                    "content": "export * from \"./render.js\";\n",
+                    "type": "registry:ui",
+                    "target": "components/fancy/markdown/index.ts"
+                },
+                {
+                    "path": "components/fancy/markdown/render.ts",
+                    "content": "import { Marked } from \"marked\";\nimport { markedTerminal } from \"marked-terminal\";\n\n// marked-terminal's DefinitelyTyped signature still models the pre-token\n// renderer API although v7 supports marked 15 at runtime.\nconst parser = new Marked();\nparser.use(markedTerminal({ reflowText: true, tab: 2 }) as never);\n\nexport function renderMarkdown(source: string): string {\n  const safe = source.replace(/[\\u0000-\\u0008\\u000B\\u000C\\u000E-\\u001A\\u001C-\\u001F\\u007F]/g, \"\");\n  const result = parser.parse(safe);\n  return String(result).trimEnd();\n}\n",
+                    "type": "registry:ui",
+                    "target": "components/fancy/markdown/render.ts"
+                }
+            ]
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "tui-menu",
+            "type": "registry:ui",
+            "title": "Menu",
+            "description": "Stable-handle action menu.",
+            "package": "fancy-tui",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "tui-message-list",
+            "type": "registry:ui",
+            "title": "MessageList",
+            "description": "Scrollback-safe committed messages using Ink Static.",
+            "package": "fancy-tui",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "tui-modal",
+            "type": "registry:ui",
+            "title": "Modal",
+            "description": "Controlled terminal overlay.",
+            "package": "fancy-tui",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "tui-multi-switch",
+            "type": "registry:ui",
+            "title": "MultiSwitch",
+            "description": "Segmented terminal option switch.",
+            "package": "fancy-tui",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "tui-multiline-input",
+            "type": "registry:ui",
+            "title": "MultilineInput",
+            "description": "Grapheme-aware buffer, cursor, selection, and enhanced keyboard support.",
+            "package": "fancy-tui",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "tui-panel",
+            "type": "registry:ui",
+            "title": "Panel",
+            "description": "Bordered region with focus and tone states.",
+            "package": "fancy-tui",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "tui-pillbox",
+            "type": "registry:ui",
+            "title": "Pillbox",
+            "description": "Controlled removable-value list.",
+            "package": "fancy-tui",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "tui-progress",
+            "type": "registry:ui",
+            "title": "Progress",
+            "description": "Determinate text-mode progress bar.",
+            "package": "fancy-tui",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "tui-radio-group",
+            "type": "registry:ui",
+            "title": "RadioGroup",
+            "description": "Controlled exclusive-choice list.",
+            "package": "fancy-tui",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "tui-responsive",
+            "type": "registry:ui",
+            "title": "Responsive",
+            "description": "Terminal-width-aware conditional layout.",
+            "package": "fancy-tui",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "tui-row",
+            "type": "registry:ui",
+            "title": "Row",
+            "description": "Token-spaced horizontal layout.",
+            "package": "fancy-tui",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "tui-screen",
+            "type": "registry:ui",
+            "title": "Screen",
+            "description": "Full-width root terminal layout.",
+            "package": "fancy-tui",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "tui-select",
+            "type": "registry:ui",
+            "title": "Select",
+            "description": "Controlled selection list.",
+            "package": "fancy-tui",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "tui-separator",
+            "type": "registry:ui",
+            "title": "Separator",
+            "description": "Horizontal or vertical labeled rule.",
+            "package": "fancy-tui",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "tui-sidebar",
+            "type": "registry:ui",
+            "title": "Sidebar",
+            "description": "Compact controlled navigation rail.",
+            "package": "fancy-tui",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "tui-slider",
+            "type": "registry:ui",
+            "title": "Slider",
+            "description": "Keyboard-adjustable numeric control.",
+            "package": "fancy-tui",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "tui-spacer",
+            "type": "registry:ui",
+            "title": "Spacer",
+            "description": "Flexible Yoga spacer.",
+            "package": "fancy-tui",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "tui-spinner",
+            "type": "registry:ui",
+            "title": "Spinner",
+            "description": "Animated activity indicator.",
+            "package": "fancy-tui",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "tui-stack",
+            "type": "registry:ui",
+            "title": "Stack",
+            "description": "Token-spaced vertical layout.",
+            "package": "fancy-tui",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "tui-status-bar",
+            "type": "registry:ui",
+            "title": "StatusBar",
+            "description": "Left, center, and right status regions.",
+            "package": "fancy-tui",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "tui-switch",
+            "type": "registry:ui",
+            "title": "Switch",
+            "description": "Controlled on/off setting.",
+            "package": "fancy-tui",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "tui-table",
+            "type": "registry:ui",
+            "title": "Table",
+            "description": "Typed table with stable row identities.",
+            "package": "fancy-tui",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "tui-tabs",
+            "type": "registry:ui",
+            "title": "Tabs",
+            "description": "Controlled terminal tab navigation.",
+            "package": "fancy-tui",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "tui-text",
+            "type": "registry:ui",
+            "title": "Text",
+            "description": "Theme-aware terminal text.",
+            "package": "fancy-tui",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "tui-timeline",
+            "type": "registry:ui",
+            "title": "Timeline",
+            "description": "Vertical event and activity history.",
+            "package": "fancy-tui",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "tui-tool-call",
+            "type": "registry:ui",
+            "title": "ToolCall",
+            "description": "Agent tool status and detail row.",
+            "package": "fancy-tui",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "tui-tree-nav",
+            "type": "registry:ui",
+            "title": "TreeNav",
+            "description": "Controlled hierarchy navigation.",
+            "package": "fancy-tui",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",

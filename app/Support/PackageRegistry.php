@@ -60,6 +60,7 @@ class PackageRegistry
         'fancy-pixel' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#f97316'],
         'fancy-echarts' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#0ea5e9'],
         'fancy-mlm-ui' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#14b8a6'],
+        'fancy-git-ui' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#f97316'],
         'fancy-screens' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#8b5cf6'],
         'fancy-3d' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#6366f1'],
         // 3d adapters — not in the design mockup; sensible fallbacks per the brief.
@@ -98,6 +99,8 @@ class PackageRegistry
         'laravel-fun-lab' => ['group' => 'companion', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#f43f5e'],
         'fancy-mlm' => ['group' => 'companion', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#14b8a6'],
         'fancy-mlm-js' => ['group' => 'companion', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#14b8a6'],
+        'fancy-git' => ['group' => 'companion', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#f97316'],
+        'fancy-git-js' => ['group' => 'companion', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#f97316'],
         // Polyglot single-file client.
         'mcp-relay-client' => ['group' => 'companion', 'ecosystem' => 'polyglot', 'kind' => 'headless', 'accent' => '#22c55e'],
     ];
@@ -138,6 +141,7 @@ class PackageRegistry
             self::fancyPixel(),
             self::fancyEcharts(),
             self::fancyMlmUi(),
+            self::fancyGitUi(),
             self::fancyXFilesUi(),
             self::fancyScreens(),
             self::fancy3d(),
@@ -256,6 +260,23 @@ class PackageRegistry
                 'tagline' => 'Node/TS mirror of particle-academy/fancy-mlm — the same CompensationPlan JSON + unilevel / binary / matrix trees yield identical rewards, isomorphic (browser or Node). Headless; no UI.',
                 'npm' => '@particle-academy/fancy-mlm',
                 'repo' => 'Particle-Academy/fancy-mlm-js',
+                'language' => 'TypeScript',
+            ],
+            [
+                'slug' => 'fancy-git',
+                'name' => 'particle-academy/fancy-git',
+                'tagline' => 'Framework-agnostic PHP Git engine with normalized provider contracts and proposal-first mutations.',
+                'composer' => 'particle-academy/fancy-git',
+                'repo' => 'Particle-Academy/fancy-git-php',
+                'packagist' => 'particle-academy/fancy-git',
+                'language' => 'PHP',
+            ],
+            [
+                'slug' => 'fancy-git-js',
+                'name' => '@particle-academy/fancy-git',
+                'tagline' => 'Node/TypeScript Git engine and normalized GitHub, GitLab, and Bitbucket provider contracts.',
+                'npm' => '@particle-academy/fancy-git',
+                'repo' => 'Particle-Academy/fancy-git-js',
                 'language' => 'TypeScript',
             ],
             [
@@ -866,6 +887,30 @@ class PackageRegistry
                 ['slug' => 'downline-tree', 'name' => 'DownlineTree', 'blurb' => 'Controlled network tree — collapsible nodes, per-member tier/volume, selection + onChange. Renders unilevel, binary, and matrix shapes from a flat member list.'],
                 ['slug' => 'commission-statement', 'name' => 'CommissionStatement', 'blurb' => 'Per-period earnings ledger — level, source member, tier multiplier, and amount per row, with a paid/pending status and totals.'],
                 ['slug' => 'rank-progress', 'name' => 'RankProgress', 'blurb' => 'Progress toward the next rank/tier — current volume vs threshold, with the requirement gap.'],
+            ],
+        ];
+    }
+
+    /** @return array<string, mixed> */
+    private static function fancyGitUi(): array
+    {
+        return [
+            'slug' => 'fancy-git-ui',
+            'name' => 'fancy-git-ui',
+            'tagline' => 'Controlled Human+ React surfaces for repositories, working trees, diffs, commits, branches, and pull/merge requests.',
+            'npm' => '@particle-academy/fancy-git-ui',
+            'repo' => 'Particle-Academy/fancy-git-ui',
+            'language' => 'TypeScript',
+            'pairs' => ['fancy-git', 'fancy-git-js'],
+            'components' => [
+                ['slug' => 'repository-browser', 'name' => 'RepositoryBrowser', 'blurb' => 'Controlled file and directory browser with stable path handles.'],
+                ['slug' => 'working-tree', 'name' => 'WorkingTree', 'blurb' => 'Staged, unstaged, and untracked changes with stage/unstage intents.'],
+                ['slug' => 'commit-history', 'name' => 'CommitHistory', 'blurb' => 'Pageable controlled commit history and selection.'],
+                ['slug' => 'diff-viewer', 'name' => 'DiffViewer', 'blurb' => 'Unified/split Git diff surface with stable file and hunk handles.'],
+                ['slug' => 'branch-picker', 'name' => 'BranchPicker', 'blurb' => 'Local/remote branch selection and proposal-first checkout.'],
+                ['slug' => 'review-list', 'name' => 'ReviewList', 'blurb' => 'Provider-neutral pull/merge request list.'],
+                ['slug' => 'commit-composer', 'name' => 'CommitComposer', 'blurb' => 'Controlled commit proposal form.'],
+                ['slug' => 'create-review-form', 'name' => 'CreateReviewForm', 'blurb' => 'Controlled pull/merge request proposal form.'],
             ],
         ];
     }

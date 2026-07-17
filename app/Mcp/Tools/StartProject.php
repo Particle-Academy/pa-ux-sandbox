@@ -151,6 +151,7 @@ class StartProject extends Tool
             ['capability' => 'docx writer/reader (+ markdown bridges)', 'php' => 'particle-academy/last-word', 'node' => '@particle-academy/last-word'],
             ['capability' => 'Interaction analytics (EUO)', 'php' => 'particle-academy/fancy-heuristics', 'node' => '@particle-academy/fancy-heuristics-js'],
             ['capability' => 'Multi-level referral / network-marketing engine (unilevel / binary / matrix)', 'php' => 'particle-academy/fancy-mlm', 'node' => '@particle-academy/fancy-mlm'],
+            ['capability' => 'Local Git + GitHub / GitLab / Bitbucket collaboration', 'php' => 'particle-academy/fancy-git', 'node' => '@particle-academy/fancy-git'],
             ['capability' => 'Well-known files (robots / security / llms / sitemap / AGENTS)', 'php' => 'particle-academy/fancy-x-files', 'node' => '@particle-academy/fancy-x-files'],
             ['capability' => 'Server SEO (meta / OG / JSON-LD / sitemap)', 'php' => 'particle-academy/fancy-seo', 'node' => null],
         ];

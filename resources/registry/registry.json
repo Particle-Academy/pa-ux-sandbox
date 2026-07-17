@@ -1,6 +1,6 @@
 {
     "$schema": "https://ui.particle.academy/schema/registry-compiled.json",
-    "count": 224,
+    "count": 234,
     "items": [
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
@@ -441,6 +441,26 @@
                     "content": "export { Board } from \"./Board\";\r\nexport type { BoardProps } from \"./Board\";\r\n",
                     "type": "registry:ui",
                     "target": "components/fancy/board/index.ts"
+                }
+            ]
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "branch-picker",
+            "type": "registry:ui",
+            "title": "BranchPicker",
+            "description": "Local/remote branch selection and proposal-first checkout.",
+            "package": "fancy-git-ui",
+            "dependencies": [
+                "@particle-academy/fancy-git"
+            ],
+            "registryDependencies": [],
+            "files": [
+                {
+                    "path": "components/fancy/branch-picker/branch-picker.tsx",
+                    "content": "import type { Branch } from \"@particle-academy/fancy-git\";\nexport interface BranchPickerProps {\n  value: Branch[];\n  selectedName?: string;\n  onSelectedNameChange?: (name: string) => void;\n  onCheckout?: (name: string) => void;\n  pending?: boolean;\n  className?: string;\n}\nexport function BranchPicker({ value, selectedName, onSelectedNameChange, onCheckout, pending, className }: BranchPickerProps) {\n  return <div className={className} data-git-branch-picker=\"\">\n    <label>Branch <select value={selectedName ?? \"\"} onChange={(event) => onSelectedNameChange?.(event.target.value)}>\n      <option value=\"\" disabled>Select a branch</option>{value.map((branch) => <option key={branch.name} value={branch.name}>{branch.current ? \"\u2713 \" : \"\"}{branch.name}</option>)}\n    </select></label>\n    <button type=\"button\" disabled={!selectedName || pending} onClick={() => selectedName && onCheckout?.(selectedName)}>Propose checkout</button>\n  </div>;\n}\n",
+                    "type": "registry:ui",
+                    "target": "components/fancy/branch-picker/branch-picker.tsx"
                 }
             ]
         },
@@ -1345,6 +1365,44 @@
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "commit-composer",
+            "type": "registry:ui",
+            "title": "CommitComposer",
+            "description": "Controlled commit proposal form.",
+            "package": "fancy-git-ui",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": [
+                {
+                    "path": "components/fancy/commit-composer/commit-composer.tsx",
+                    "content": "export interface CommitDraft { message: string; description?: string }\nexport interface CommitComposerProps {\n  value: CommitDraft;\n  onChange: (value: CommitDraft) => void;\n  onSubmit?: (value: CommitDraft) => void;\n  pending?: boolean;\n  className?: string;\n}\nexport function CommitComposer({ value, onChange, onSubmit, pending, className }: CommitComposerProps) {\n  return <form className={className} data-git-commit-composer=\"\" onSubmit={(event) => { event.preventDefault(); onSubmit?.(value); }}>\n    <label>Summary<input value={value.message} onChange={(event) => onChange({ ...value, message: event.target.value })} required /></label>\n    <label>Description<textarea value={value.description ?? \"\"} onChange={(event) => onChange({ ...value, description: event.target.value })} /></label>\n    <button type=\"submit\" disabled={pending || !value.message.trim()}>Review commit proposal</button>\n  </form>;\n}\n",
+                    "type": "registry:ui",
+                    "target": "components/fancy/commit-composer/commit-composer.tsx"
+                }
+            ]
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "commit-history",
+            "type": "registry:ui",
+            "title": "CommitHistory",
+            "description": "Pageable controlled commit history and selection.",
+            "package": "fancy-git-ui",
+            "dependencies": [
+                "@particle-academy/fancy-git"
+            ],
+            "registryDependencies": [],
+            "files": [
+                {
+                    "path": "components/fancy/commit-history/commit-history.tsx",
+                    "content": "import type { Commit } from \"@particle-academy/fancy-git\";\n\nexport interface CommitHistoryProps {\n  value: Commit[];\n  selectedId?: string;\n  onSelectedIdChange?: (id: string) => void;\n  onLoadMore?: () => void;\n  hasMore?: boolean;\n  className?: string;\n}\n\nexport function CommitHistory({ value, selectedId, onSelectedIdChange, onLoadMore, hasMore, className }: CommitHistoryProps) {\n  return <section className={className} data-git-commit-history=\"\" aria-label=\"Commit history\">\n    <ol>{value.map((commit) => <li key={commit.id} data-git-commit-id={commit.id}>\n      <button type=\"button\" aria-pressed={selectedId === commit.id} onClick={() => onSelectedIdChange?.(commit.id)}>\n        <code>{commit.shortId}</code><span>{commit.subject}</span><small>{commit.authorName}</small>\n      </button>\n    </li>)}</ol>\n    {hasMore && <button type=\"button\" onClick={onLoadMore}>Load more</button>}\n  </section>;\n}\n",
+                    "type": "registry:ui",
+                    "target": "components/fancy/commit-history/commit-history.tsx"
+                }
+            ]
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
             "name": "composer",
             "type": "registry:ui",
             "title": "Composer",
@@ -1526,6 +1584,26 @@
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "create-review-form",
+            "type": "registry:ui",
+            "title": "CreateReviewForm",
+            "description": "Controlled pull/merge request proposal form.",
+            "package": "fancy-git-ui",
+            "dependencies": [
+                "@particle-academy/fancy-git"
+            ],
+            "registryDependencies": [],
+            "files": [
+                {
+                    "path": "components/fancy/create-review-form/create-review-form.tsx",
+                    "content": "import type { CreateReviewInput } from \"@particle-academy/fancy-git\";\nexport interface CreateReviewFormProps {\n  value: CreateReviewInput;\n  onChange: (value: CreateReviewInput) => void;\n  onSubmit?: (value: CreateReviewInput) => void;\n  branches: string[];\n  pending?: boolean;\n  className?: string;\n}\nexport function CreateReviewForm({ value, onChange, onSubmit, branches, pending, className }: CreateReviewFormProps) {\n  return <form className={className} data-git-create-review=\"\" onSubmit={(event) => { event.preventDefault(); onSubmit?.(value); }}>\n    <label>Title<input value={value.title} onChange={(event) => onChange({ ...value, title: event.target.value })} required /></label>\n    <label>Source<select value={value.sourceBranch} onChange={(event) => onChange({ ...value, sourceBranch: event.target.value })}>{branches.map((branch) => <option key={branch}>{branch}</option>)}</select></label>\n    <label>Target<select value={value.targetBranch} onChange={(event) => onChange({ ...value, targetBranch: event.target.value })}>{branches.map((branch) => <option key={branch}>{branch}</option>)}</select></label>\n    <label>Body<textarea value={value.body ?? \"\"} onChange={(event) => onChange({ ...value, body: event.target.value })} /></label>\n    <label><input type=\"checkbox\" checked={value.draft ?? false} onChange={(event) => onChange({ ...value, draft: event.target.checked })} /> Draft</label>\n    <button type=\"submit\" disabled={pending || !value.title.trim()}>Review creation proposal</button>\n  </form>;\n}\n",
+                    "type": "registry:ui",
+                    "target": "components/fancy/create-review-form/create-review-form.tsx"
+                }
+            ]
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
             "name": "cursor-layer",
             "type": "registry:ui",
             "title": "CursorLayer",
@@ -1605,6 +1683,24 @@
                     "content": "import { type CSSProperties, type ReactNode } from \"react\";\r\nimport type { SlideElement, TextElement } from \"../../types\";\r\nimport { Slide } from \"../Slide\";\r\nimport { SlideRail } from \"../SlideRail\";\r\nimport { EditorToolbar, type ToolbarApi } from \"../EditorToolbar\";\r\nimport { ElementInspector } from \"../ElementInspector\";\r\nimport { SpeakerNotes } from \"../SpeakerNotes\";\r\nimport { useDeckEditor } from \"./context\";\r\n\r\nexport interface DeckEditorToolbarProps {\r\n    className?: string;\r\n    /**\r\n     * Compose the toolbar yourself. Receives the toolbar action surface and\r\n     * returns the toolbar node. When omitted, the default `EditorToolbar` is\r\n     * rendered.\r\n     */\r\n    renderToolbar?: (api: ToolbarApi) => ReactNode;\r\n    /** Extra content on the toolbar's trailing edge (default toolbar only). */\r\n    extra?: ReactNode;\r\n}\r\n\r\n/**\r\n * The editor toolbar, wired to the shared controller. Renders the default\r\n * `EditorToolbar` from the `toolbarApi`, or your `renderToolbar(api)` node.\r\n */\r\nexport function DeckEditorToolbar({ className, renderToolbar, extra }: DeckEditorToolbarProps) {\r\n    const { toolbarApi, deck, ops, themes } = useDeckEditor();\r\n    if (renderToolbar) {\r\n        return <>{renderToolbar(toolbarApi)}</>;\r\n    }\r\n    const bar = (\r\n        <EditorToolbar\r\n            title={deck.title}\r\n            onTitleChange={(t) => ops.setTitle(t)}\r\n            themeName={deck.theme.name}\r\n            onApplyTheme={(t) => ops.applyTheme(t)}\r\n            themes={themes}\r\n            onInsertText={toolbarApi.insert.text}\r\n            onInsertImage={toolbarApi.insert.image}\r\n            onInsertShape={toolbarApi.insert.shape}\r\n            onInsertChart={toolbarApi.insert.chart}\r\n            onInsertCode={toolbarApi.insert.code}\r\n            onInsertTable={toolbarApi.insert.table}\r\n            onPresent={toolbarApi.present}\r\n            disabled={toolbarApi.disabled}\r\n            toolbarExtra={extra}\r\n        />\r\n    );\r\n    // Keep the default layout's DOM byte-identical: wrap only when a className\r\n    // is supplied (bespoke composition), otherwise render the bar bare.\r\n    return className ? <div className={className}>{bar}</div> : bar;\r\n}\r\n\r\nexport interface DeckEditorRailProps {\r\n    className?: string;\r\n    style?: CSSProperties;\r\n}\r\n\r\n/** The slide rail \u2014 thumbnails, add / duplicate / remove / reorder, selection. */\r\nexport function DeckEditorRail({ className, style }: DeckEditorRailProps) {\r\n    const { deck, ops, slideId, setSlideId, renderElement } = useDeckEditor();\r\n    return (\r\n        <div\r\n            className={`w-56 shrink-0 overflow-y-auto border-r border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950${className ? ` ${className}` : \"\"}`}\r\n            style={style}\r\n        >\r\n            <SlideRail\r\n                slides={deck.slides}\r\n                selectedId={slideId}\r\n                theme={deck.theme}\r\n                onSelect={setSlideId}\r\n                onAdd={(after) => {\r\n                    const id = ops.addSlide(after !== undefined ? after : deck.slides.length);\r\n                    setSlideId(id);\r\n                }}\r\n                onDuplicate={(id) => {\r\n                    const newId = ops.duplicateSlide(id);\r\n                    setSlideId(newId);\r\n                }}\r\n                onRemove={(id) => ops.removeSlide(id)}\r\n                onReorder={(id, toIndex) => ops.reorderSlide(id, toIndex)}\r\n                renderElement={renderElement}\r\n            />\r\n        </div>\r\n    );\r\n}\r\n\r\nexport interface DeckEditorCanvasProps {\r\n    className?: string;\r\n    style?: CSSProperties;\r\n}\r\n\r\n/** The centered, editable slide canvas (drag / resize / inline-edit). */\r\nexport function DeckEditorCanvas({ className, style }: DeckEditorCanvasProps) {\r\n    const { deck, theme, slide, ops, selectedElementId, setSelectedElementId, renderElement } = useDeckEditor();\r\n    return (\r\n        <div className={`flex flex-1 items-center justify-center overflow-auto p-6${className ? ` ${className}` : \"\"}`} style={style}>\r\n            {slide ? (\r\n                <div\r\n                    className=\"rounded-lg shadow-xl\"\r\n                    style={{\r\n                        width: \"min(96%, 1280px)\",\r\n                        aspectRatio: String(theme.aspectRatio ?? 16 / 9),\r\n                        background: \"white\",\r\n                    }}\r\n                >\r\n                    <Slide\r\n                        slide={slide}\r\n                        theme={deck.theme}\r\n                        editing\r\n                        onElementContentChange={(eid, content) => ops.updateElement(slide.id, eid, { content, format: \"markdown\" } as Partial<TextElement>)}\r\n                        onElementSelect={setSelectedElementId}\r\n                        selectedElementId={selectedElementId}\r\n                        onElementMove={(eid, x, y) => ops.moveElement(slide.id, eid, x, y)}\r\n                        onElementResize={(eid, patch) => ops.updateElement(slide.id, eid, patch as Partial<SlideElement>)}\r\n                        renderElement={renderElement}\r\n                    />\r\n                </div>\r\n            ) : (\r\n                <div className=\"grid place-items-center rounded-lg border border-dashed border-zinc-300 bg-white px-12 py-24 text-sm text-zinc-500 dark:border-zinc-700 dark:bg-zinc-950\">\r\n                    Add a slide to start editing.\r\n                </div>\r\n            )}\r\n        </div>\r\n    );\r\n}\r\n\r\nexport interface DeckEditorInspectorProps {\r\n    className?: string;\r\n    style?: CSSProperties;\r\n}\r\n\r\n/** The right-hand element / slide inspector. */\r\nexport function DeckEditorInspector({ className, style }: DeckEditorInspectorProps) {\r\n    const { slide, ops, selectedElement, selectedElementId, setSelectedElementId } = useDeckEditor();\r\n    return (\r\n        <div className={`w-72 shrink-0 overflow-y-auto${className ? ` ${className}` : \"\"}`} style={style}>\r\n            <ElementInspector\r\n                element={selectedElement}\r\n                slide={slide ?? null}\r\n                onPatch={(patch) => slide && selectedElementId && ops.updateElement(slide.id, selectedElementId, patch)}\r\n                onDelete={() => {\r\n                    if (!slide || !selectedElementId) return;\r\n                    ops.removeElement(slide.id, selectedElementId);\r\n                    setSelectedElementId(null);\r\n                }}\r\n                onLockToggle={(locked) => slide && selectedElementId && ops.updateElement(slide.id, selectedElementId, { locked } as Partial<SlideElement>)}\r\n                onSetTransition={(transition) => slide && ops.setTransition(slide.id, transition)}\r\n                onSetBackground={(background) => slide && ops.setBackground(slide.id, background)}\r\n                onSetLayout={(layout) => slide && ops.setLayout(slide.id, layout)}\r\n                onSetAnimation={(animation) => slide && selectedElementId && ops.setAnimation(slide.id, selectedElementId, animation)}\r\n                onSetElementAnimation={(eid, animation) => slide && ops.setAnimation(slide.id, eid, animation)}\r\n            />\r\n        </div>\r\n    );\r\n}\r\n\r\nexport interface DeckEditorNotesProps {\r\n    className?: string;\r\n    placeholder?: string;\r\n}\r\n\r\n/** Speaker notes for the active slide. Renders nothing when no slide is selected. */\r\nexport function DeckEditorNotes({ className, placeholder }: DeckEditorNotesProps) {\r\n    const { slide, ops } = useDeckEditor();\r\n    if (!slide) return null;\r\n    const notes = <SpeakerNotes notes={slide.notes} onChange={(n) => ops.setNotes(slide.id, n)} placeholder={placeholder} />;\r\n    // Match the default layout: render bare unless a className wrapper is asked for.\r\n    return className ? <div className={className}>{notes}</div> : notes;\r\n}\r\n\r\nexport interface DeckEditorStatusBarProps {\r\n    className?: string;\r\n    style?: CSSProperties;\r\n    /** Custom content. Receives the shared controller for a bespoke bar. */\r\n    children?: ReactNode | ((ctx: ReturnType<typeof useDeckEditor>) => ReactNode);\r\n}\r\n\r\n/**\r\n * A status bar summarizing the current slide + selection. Not part of the\r\n * default `<DeckEditor>` layout \u2014 drop it into a bespoke composition. Pass\r\n * `children` (node or render-prop) to replace the default summary entirely.\r\n */\r\nexport function DeckEditorStatusBar({ className, style, children }: DeckEditorStatusBarProps) {\r\n    const ctx = useDeckEditor();\r\n    const { deck, slideId, slide, selectedElement } = ctx;\r\n    const cls = `fs-statusbar flex items-center gap-3 border-t border-zinc-200 bg-white px-4 py-1.5 text-xs text-zinc-500 dark:border-zinc-800 dark:bg-zinc-950${className ? ` ${className}` : \"\"}`;\r\n\r\n    if (children !== undefined) {\r\n        return (\r\n            <div className={cls} style={style}>\r\n                {typeof children === \"function\" ? children(ctx) : children}\r\n            </div>\r\n        );\r\n    }\r\n\r\n    const index = slideId ? deck.slides.findIndex((s) => s.id === slideId) : -1;\r\n    const pct = (n: number) => `${Math.round(n * 100)}%`;\r\n    return (\r\n        <div className={cls} style={style}>\r\n            <span>{slide ? `Slide ${index + 1}/${deck.slides.length}` : `${deck.slides.length} slide${deck.slides.length === 1 ? \"\" : \"s\"}`}</span>\r\n            {selectedElement && (\r\n                <>\r\n                    <span className=\"text-zinc-300 dark:text-zinc-700\">\u00b7</span>\r\n                    <span className=\"font-mono\">{selectedElement.type}</span>\r\n                    <span className=\"font-mono\">\r\n                        x {pct(selectedElement.x)} \u00b7 y {pct(selectedElement.y)} \u00b7 w {pct(selectedElement.w)} \u00b7 h {pct(selectedElement.h)}\r\n                    </span>\r\n                </>\r\n            )}\r\n        </div>\r\n    );\r\n}\r\n",
                     "type": "registry:ui",
                     "target": "components/fancy/deck-editor/slots.tsx"
+                }
+            ]
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "diff-viewer",
+            "type": "registry:ui",
+            "title": "DiffViewer",
+            "description": "Unified/split Git diff surface with stable file and hunk handles.",
+            "package": "fancy-git-ui",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": [
+                {
+                    "path": "components/fancy/diff-viewer/diff-viewer.tsx",
+                    "content": "export type DiffLine = { id: string; kind: \"context\" | \"addition\" | \"deletion\" | \"header\"; oldNumber?: number; newNumber?: number; text: string };\nexport type DiffFile = { id: string; path: string; previousPath?: string; binary?: boolean; lines: DiffLine[] };\nexport interface DiffViewerProps {\n  value: DiffFile[];\n  selectedHunkIds?: string[];\n  onSelectedHunkIdsChange?: (ids: string[]) => void;\n  mode?: \"unified\" | \"split\";\n  onModeChange?: (mode: \"unified\" | \"split\") => void;\n  className?: string;\n}\nexport function DiffViewer({ value, selectedHunkIds = [], onSelectedHunkIdsChange, mode = \"unified\", onModeChange, className }: DiffViewerProps) {\n  const toggle = (id: string) => onSelectedHunkIdsChange?.(selectedHunkIds.includes(id) ? selectedHunkIds.filter((item) => item !== id) : [...selectedHunkIds, id]);\n  return <section className={className} data-git-diff=\"\" data-git-diff-mode={mode} aria-label=\"Git diff\">\n    <header><strong>Changes</strong><button type=\"button\" onClick={() => onModeChange?.(mode === \"unified\" ? \"split\" : \"unified\")}>{mode}</button></header>\n    {value.map((file) => <article key={file.id} data-git-diff-file={file.path}><h3>{file.path}</h3>\n      {file.binary ? <p>Binary file</p> : <pre>{file.lines.map((line) => <button type=\"button\" key={line.id} data-git-diff-line={line.id} data-kind={line.kind} aria-pressed={selectedHunkIds.includes(line.id)} onClick={() => line.kind === \"header\" && toggle(line.id)}><span>{line.oldNumber ?? \" \"}</span><span>{line.newNumber ?? \" \"}</span><code>{line.text}</code></button>)}</pre>}\n    </article>)}\n  </section>;\n}\n",
+                    "type": "registry:ui",
+                    "target": "components/fancy/diff-viewer/diff-viewer.tsx"
                 }
             ]
         },
@@ -2206,6 +2302,28 @@
             "title": "fancy-flow",
             "description": "Workflow editor + runner on top of React Flow \u2014 six node kits, topological executor, headless engine, and a FlowRunnerUx flow\u2192UX bridge.",
             "package": "fancy-flow",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "fancy-git",
+            "type": "registry:ui",
+            "title": "particle-academy/fancy-git",
+            "description": "Framework-agnostic PHP Git engine with normalized provider contracts and proposal-first mutations.",
+            "package": "fancy-git",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "fancy-git-js",
+            "type": "registry:ui",
+            "title": "@particle-academy/fancy-git",
+            "description": "Node/TypeScript Git engine and normalized GitHub, GitLab, and Bitbucket provider contracts.",
+            "package": "fancy-git-js",
             "dependencies": [],
             "registryDependencies": [],
             "files": []
@@ -3845,6 +3963,44 @@
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "repository-browser",
+            "type": "registry:ui",
+            "title": "RepositoryBrowser",
+            "description": "Controlled file and directory browser with stable path handles.",
+            "package": "fancy-git-ui",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": [
+                {
+                    "path": "components/fancy/repository-browser/repository-browser.tsx",
+                    "content": "export type RepositoryEntry = {\n  id: string;\n  name: string;\n  path: string;\n  kind: \"file\" | \"directory\" | \"symlink\" | \"submodule\";\n  size?: number;\n  status?: string;\n};\n\nexport interface RepositoryBrowserProps {\n  value: RepositoryEntry[];\n  path: string;\n  selectedPath?: string;\n  onPathChange?: (path: string) => void;\n  onSelectedPathChange?: (path: string) => void;\n  loading?: boolean;\n  className?: string;\n}\n\nexport function RepositoryBrowser({ value, path, selectedPath, onPathChange, onSelectedPathChange, loading, className }: RepositoryBrowserProps) {\n  const crumbs = path.split(\"/\").filter(Boolean);\n  return <section className={className} data-git-repository-browser=\"\" aria-label=\"Repository browser\" aria-busy={loading}>\n    <nav aria-label=\"Repository path\"><button type=\"button\" onClick={() => onPathChange?.(\"\")}>root</button>\n      {crumbs.map((crumb, index) => <span key={`${crumb}-${index}`}> / <button type=\"button\" onClick={() => onPathChange?.(crumbs.slice(0, index + 1).join(\"/\"))}>{crumb}</button></span>)}\n    </nav>\n    <ul>{value.map((entry) => <li key={entry.id} data-git-path={entry.path} data-git-entry-kind={entry.kind}>\n      <button type=\"button\" aria-pressed={selectedPath === entry.path} onClick={() => entry.kind === \"directory\" ? onPathChange?.(entry.path) : onSelectedPathChange?.(entry.path)}>\n        <span aria-hidden>{entry.kind === \"directory\" ? \"\ud83d\udcc1\" : \"\ud83d\udcc4\"}</span> {entry.name}<small>{entry.status}</small>\n      </button>\n    </li>)}</ul>\n  </section>;\n}\n",
+                    "type": "registry:ui",
+                    "target": "components/fancy/repository-browser/repository-browser.tsx"
+                }
+            ]
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "review-list",
+            "type": "registry:ui",
+            "title": "ReviewList",
+            "description": "Provider-neutral pull/merge request list.",
+            "package": "fancy-git-ui",
+            "dependencies": [
+                "@particle-academy/fancy-git"
+            ],
+            "registryDependencies": [],
+            "files": [
+                {
+                    "path": "components/fancy/review-list/review-list.tsx",
+                    "content": "import type { Review } from \"@particle-academy/fancy-git\";\n\nexport interface ReviewListProps {\n  value: Review[];\n  selectedNumber?: number;\n  onSelectedNumberChange?: (number: number) => void;\n  className?: string;\n}\n\nexport function ReviewList({ value, selectedNumber, onSelectedNumberChange, className }: ReviewListProps) {\n  return <section className={className} data-git-review-list=\"\" aria-label=\"Reviews\"><ul>\n    {value.map((review) => <li key={review.id} data-git-review-number={review.number}>\n      <button type=\"button\" aria-pressed={selectedNumber === review.number} onClick={() => onSelectedNumberChange?.(review.number)}>\n        <strong>#{review.number} {review.title}</strong><span>{review.state}</span><small>{review.sourceBranch} \u2192 {review.targetBranch}</small>\n      </button>\n    </li>)}\n  </ul></section>;\n}\n",
+                    "type": "registry:ui",
+                    "target": "components/fancy/review-list/review-list.tsx"
+                }
+            ]
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
             "name": "robots-editor",
             "type": "registry:ui",
             "title": "RobotsEditor",
@@ -5060,7 +5216,7 @@
                 },
                 {
                     "path": "components/fancy/markdown/render.ts",
-                    "content": "import { Marked } from \"marked\";\nimport { markedTerminal } from \"marked-terminal\";\n\n// marked-terminal's DefinitelyTyped signature still models the pre-token\n// renderer API although v7 supports marked 15 at runtime.\nconst parser = new Marked();\nparser.use(markedTerminal({ reflowText: true, tab: 2 }) as never);\n\nexport function renderMarkdown(source: string): string {\n  const safe = source.replace(/[\\u0000-\\u0008\\u000B\\u000C\\u000E-\\u001A\\u001C-\\u001F\\u007F]/g, \"\");\n  const result = parser.parse(safe);\n  return String(result).trimEnd();\n}\n",
+                    "content": "import { Marked } from \"marked\";\nimport { markedTerminal } from \"marked-terminal\";\n\n// marked-terminal's DefinitelyTyped signature still models the pre-token\n// renderer API although v7 supports marked 15 at runtime.\nconst parser = new Marked();\nparser.use(markedTerminal({ reflowText: true, tab: 2 }) as never);\n\n// C0 control codes we keep: TAB (9), LF (10), CR (13). Everything else in\n// 0x00-0x1F, plus DEL (0x7F), is stripped from untrusted markdown before it\n// reaches the terminal. Critically this includes ESC (27) \u2014 ESC begins every\n// ANSI / OSC / CSI escape sequence, so leaving it in would let agent replies or\n// tool output carry OSC52 clipboard writes, OSC8 hyperlink spoofs, and CSI\n// buffer overwrites straight to the user's terminal. Expressed as a codepoint\n// filter (not a regex character class) so the pattern carries no invisible\n// control characters itself \u2014 the split-range class that predated this let ESC\n// slip through exactly because the gap was easy to miss.\nconst KEEP_CONTROL = new Set([9, 10, 13]);\n\nfunction stripControlChars(source: string): string {\n  let out = \"\";\n  for (const ch of source) {\n    const cp = ch.codePointAt(0) ?? 0;\n    const isControl = cp <= 0x1f || cp === 0x7f;\n    if (!isControl || KEEP_CONTROL.has(cp)) {\n      out += ch;\n    }\n  }\n  return out;\n}\n\nexport function renderMarkdown(source: string): string {\n  const result = parser.parse(stripControlChars(source));\n  return String(result).trimEnd();\n}\n",
                     "type": "registry:ui",
                     "target": "components/fancy/markdown/render.ts"
                 }
@@ -5452,6 +5608,26 @@
                     "content": "export { VideoViewer } from \"./VideoViewer\";\nexport type { VideoViewerProps } from \"./VideoViewer.types\";\n",
                     "type": "registry:ui",
                     "target": "components/fancy/video-viewer/index.ts"
+                }
+            ]
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "working-tree",
+            "type": "registry:ui",
+            "title": "WorkingTree",
+            "description": "Staged, unstaged, and untracked changes with stage/unstage intents.",
+            "package": "fancy-git-ui",
+            "dependencies": [
+                "@particle-academy/fancy-git"
+            ],
+            "registryDependencies": [],
+            "files": [
+                {
+                    "path": "components/fancy/working-tree/working-tree.tsx",
+                    "content": "import type { WorkingTreeStatus } from \"@particle-academy/fancy-git\";\n\nexport interface WorkingTreeProps {\n  value: WorkingTreeStatus;\n  selectedPaths?: string[];\n  onSelectedPathsChange?: (paths: string[]) => void;\n  onStage?: (paths: string[]) => void;\n  onUnstage?: (paths: string[]) => void;\n  pending?: boolean;\n  className?: string;\n}\n\nexport function WorkingTree({ value, selectedPaths = [], onSelectedPathsChange, onStage, onUnstage, pending, className }: WorkingTreeProps) {\n  const toggle = (path: string) => onSelectedPathsChange?.(selectedPaths.includes(path) ? selectedPaths.filter((item) => item !== path) : [...selectedPaths, path]);\n  return <section className={className} data-git-working-tree=\"\" aria-label=\"Working tree\">\n    <header><strong>{value.branch ?? \"Detached HEAD\"}</strong><span>{value.clean ? \"Clean\" : `${value.files.length} changes`}</span></header>\n    <ul>{value.files.map((file) => <li key={file.path} data-git-path={file.path}>\n      <label><input type=\"checkbox\" checked={selectedPaths.includes(file.path)} onChange={() => toggle(file.path)} /> <code>{file.path}</code></label>\n      <span>{file.index ?? file.worktree}</span>\n    </li>)}</ul>\n    <footer>\n      <button type=\"button\" disabled={pending || selectedPaths.length === 0} onClick={() => onStage?.(selectedPaths)}>Stage</button>\n      <button type=\"button\" disabled={pending || selectedPaths.length === 0} onClick={() => onUnstage?.(selectedPaths)}>Unstage</button>\n    </footer>\n  </section>;\n}\n",
+                    "type": "registry:ui",
+                    "target": "components/fancy/working-tree/working-tree.tsx"
                 }
             ]
         },

@@ -27,6 +27,8 @@ use Illuminate\Support\Facades\Log;
  */
 class RepoVerifier
 {
+    public function __construct(private readonly FancyPackageResolver $packages) {}
+
     /** Pass when >= this fraction of component files reference Fancy. */
     public const USAGE_THRESHOLD = 0.30;
 
@@ -102,14 +104,24 @@ class RepoVerifier
             $componentPaths = array_slice($componentPaths, 0, self::MAX_COMPONENT_FILES);
         }
 
+        // The dependency manifests are the most reliable record of WHICH Fancy
+        // packages the project uses; the component scan below adds any that are
+        // referenced in source (e.g. vendored via fancy-cli, no manifest entry).
+        $packageNames = $this->packagesFromManifests($owner, $repo, $tree, $token);
+
         $scanned = count($componentPaths);
         $fancyFiles = 0;
         foreach ($componentPaths as $path) {
             $contents = $this->fetchRawFile($owner, $repo, $tree['branch'], $path, $token);
-            if ($contents !== null && $this->usesFancy($contents)) {
+            if ($contents === null) {
+                continue;
+            }
+            if ($this->usesFancy($contents)) {
                 $fancyFiles++;
             }
+            $packageNames = array_merge($packageNames, $this->packages->extractFromText($contents));
         }
+        $packageNames = array_values(array_unique($packageNames));
 
         $ratio = $scanned > 0 ? $fancyFiles / $scanned : 0.0;
         $passed = $badge && $ratio >= self::USAGE_THRESHOLD;
@@ -124,6 +136,7 @@ class RepoVerifier
             'fancy_files' => $fancyFiles,
             'component_files_total' => $componentCount,
             'truncated' => $truncated,
+            'packages' => $packageNames,
             'passed' => $passed,
             'verified' => $passed,
         ];
@@ -179,6 +192,39 @@ class RepoVerifier
     {
         return str_contains($contents, '@particle-academy/')
             || str_contains($contents, 'particle-academy/');
+    }
+
+    /**
+     * Read Fancy package names out of the repo's dependency manifests —
+     * root-level (and one-level-deep, for monorepo layouts) package.json +
+     * composer.json.
+     *
+     * @param  array{branch: string, paths: list<string>}  $tree
+     * @return list<string>
+     */
+    private function packagesFromManifests(string $owner, string $repo, array $tree, ?string $token): array
+    {
+        $manifests = array_values(array_filter($tree['paths'], function (string $path): bool {
+            $base = strtolower(basename($path));
+            if (! in_array($base, ['package.json', 'composer.json'], true)) {
+                return false;
+            }
+            if (str_contains($path, 'node_modules/') || str_contains($path, 'vendor/')) {
+                return false;
+            }
+
+            return substr_count($path, '/') <= 1; // root or one directory deep
+        }));
+
+        $names = [];
+        foreach (array_slice($manifests, 0, 10) as $path) {
+            $contents = $this->fetchRawFile($owner, $repo, $tree['branch'], $path, $token);
+            if ($contents !== null) {
+                $names = array_merge($names, $this->packages->extractFromText($contents));
+            }
+        }
+
+        return array_values(array_unique($names));
     }
 
     /**

@@ -8,6 +8,7 @@ use App\Jobs\ScanShowcaseSubmission;
 use App\Models\ShowcaseSubmission;
 use App\Models\SitePageShot;
 use App\Services\Heuristics\HeuristicsReport;
+use App\Services\Showcase\SubmissionSnippets;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -46,6 +47,9 @@ class ShowcaseSubmissionController extends Controller
             'category_label' => $s->category ? (ShowcaseSubmission::CATEGORIES[$s->category] ?? null) : null,
             'made_for_children' => $s->made_for_children,
             'thumbnail_url' => $shots->get($s->site_key) ?? $s->thumbnail_url,
+            // The verified "built with" record — Fancy packages the scan
+            // detected, linked to their registry pages when known.
+            'packages' => $s->packages ?? [],
         ])->all();
 
         return Inertia::render('Showcase/Index', ['submissions' => $list]);
@@ -74,7 +78,24 @@ class ShowcaseSubmissionController extends Controller
             })
             ->all();
 
-        return Inertia::render('Showcase/Mine', ['submissions' => $submissions]);
+        // The user's agent access keys — the credential an AI agent presents to
+        // register/verify projects on their behalf via the showcase MCP tools.
+        $agentKeys = $request->user()->agentKeys()
+            ->orderByDesc('id')
+            ->get()
+            ->map(fn ($key) => [
+                'id' => $key->id,
+                'name' => $key->name,
+                'created_at' => $key->created_at?->toIso8601String(),
+                'last_used_at' => $key->last_used_at?->toIso8601String(),
+                'revoked' => $key->isRevoked(),
+            ])
+            ->all();
+
+        return Inertia::render('Showcase/Mine', [
+            'submissions' => $submissions,
+            'agentKeys' => $agentKeys,
+        ]);
     }
 
     public function create(): Response
@@ -161,36 +182,21 @@ class ShowcaseSubmissionController extends Controller
     }
 
     /**
-     * Build the copy-paste pixel snippet from the submission's real site_key,
-     * chosen style/mode, and this app's host (for the heuristics endpoint).
+     * The copy-paste pixel snippet — shared with the showcase MCP tools via
+     * SubmissionSnippets so both surfaces hand out byte-identical embeds.
      */
     private function snippetFor(ShowcaseSubmission $submission): string
     {
-        // Always https: the embed lands on submitters' (usually https) sites, so
-        // an http endpoint would have their pixel beacons blocked as mixed content.
-        $endpoint = secure_url('/heuristics');
-
-        return sprintf(
-            '<script src="https://unpkg.com/@particle-academy/fancy-pixel/dist/fancy-pixel.global.min.js" data-site="%s" data-style="%s" data-mode="%s" data-endpoint="%s"></script>',
-            $submission->site_key,
-            $submission->style,
-            $submission->mode,
-            $endpoint,
-        );
+        return app(SubmissionSnippets::class)->pixelSnippet($submission);
     }
 
     /**
-     * Build the copy-paste README markdown for the public Fancified badge,
-     * keyed to this submission's site_key. This is the repo equivalent of the
-     * pixel snippet — pasting it (and using Fancy in >=30% of view/component
-     * files) is what flips a pending repo to verified.
+     * The copy-paste Fancified badge markdown — the repo equivalent of the
+     * pixel snippet. Shared with the showcase MCP tools via SubmissionSnippets.
      */
     private function badgeMarkdownFor(ShowcaseSubmission $submission): string
     {
-        $host = rtrim((string) config('app.url'), '/');
-        $badgeUrl = $host.'/badge/fancified.svg?site='.$submission->site_key;
-
-        return sprintf('[![Fancified](%s)](https://particle.academy)', $badgeUrl);
+        return app(SubmissionSnippets::class)->badgeMarkdown($submission);
     }
 
     /**
@@ -231,6 +237,9 @@ class ShowcaseSubmissionController extends Controller
             'status' => $submission->status,
             'scanned_at' => $submission->scanned_at?->toIso8601String(),
             'scan_result' => $submission->scan_result,
+            'packages' => $submission->packages ?? [],
+            'registered_via' => $submission->registered_via,
+            'agent_name' => $submission->agent_name,
         ];
     }
 

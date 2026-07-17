@@ -1,7 +1,15 @@
-import { Head, Link, router } from "@inertiajs/react";
+import { Head, Link, router, usePage } from "@inertiajs/react";
 import { useState } from "react";
 import { Badge, Button, Card, Heading, Icon, Text } from "@particle-academy/react-fancy";
 import { Layout } from "../Layout";
+
+type AgentKeyRow = {
+    id: number;
+    name: string;
+    created_at: string | null;
+    last_used_at: string | null;
+    revoked: boolean;
+};
 
 type Stats = {
     pageviews: number;
@@ -65,8 +73,39 @@ function Stat({ label, value }: { label: string; value: string | number }) {
     );
 }
 
-export default function MySubmissions({ submissions }: { submissions: Submission[] }) {
+export default function MySubmissions({
+    submissions,
+    agentKeys = [],
+}: {
+    submissions: Submission[];
+    agentKeys?: AgentKeyRow[];
+}) {
     const [deletingId, setDeletingId] = useState<number | null>(null);
+    const [keyName, setKeyName] = useState("");
+    const [minting, setMinting] = useState(false);
+    const flash = (usePage().props as { flash?: { agent_key_plaintext?: string | null } }).flash;
+    const freshKey = flash?.agent_key_plaintext ?? null;
+
+    const mintKey = (e: React.FormEvent) => {
+        e.preventDefault();
+        setMinting(true);
+        router.post(
+            "/showcase/agent-keys",
+            { name: keyName },
+            {
+                preserveScroll: true,
+                onSuccess: () => setKeyName(""),
+                onFinish: () => setMinting(false),
+            },
+        );
+    };
+
+    const revokeKey = (key: AgentKeyRow) => {
+        if (!window.confirm(`Revoke “${key.name}”? Agents holding it lose access immediately.`)) {
+            return;
+        }
+        router.delete(`/showcase/agent-keys/${key.id}`, { preserveScroll: true });
+    };
 
     const remove = (s: Submission) => {
         const label = s.title || hostOf(s.url);
@@ -245,6 +284,106 @@ export default function MySubmissions({ submissions }: { submissions: Submission
                     })}
                 </div>
             )}
+
+            {/* Agent access — mint a key an AI agent presents to the showcase
+                MCP tools to register + verify projects on your behalf. */}
+            <div className="mt-12">
+                <Heading level={2} size="lg">
+                    Agent access
+                </Heading>
+                <Text className="mt-2 max-w-2xl">
+                    Mint a key and hand it to your AI agent. With your permission, it can
+                    register your projects here, check verification, and rescan — via the
+                    showcase tools on the Fancy UI MCP server at{" "}
+                    <code className="rounded bg-zinc-100 px-1 py-0.5 text-[13px] dark:bg-zinc-900">
+                        ui.particle.academy/mcp
+                    </code>
+                    . Every registration is attributed to the key, and revoking it cuts
+                    access instantly.
+                </Text>
+
+                {freshKey && (
+                    <Card className="mt-4 border-violet-300 dark:border-violet-700">
+                        <Card.Body>
+                            <div className="flex items-center gap-2">
+                                <Icon name="key" className="h-4 w-4 text-violet-500" />
+                                <Text size="sm" className="font-semibold">
+                                    Copy your new key now — it won&apos;t be shown again.
+                                </Text>
+                            </div>
+                            <code className="mt-2 block overflow-x-auto rounded-md bg-zinc-100 px-3 py-2 text-sm dark:bg-zinc-900">
+                                {freshKey}
+                            </code>
+                        </Card.Body>
+                    </Card>
+                )}
+
+                <Card className="mt-4">
+                    <Card.Body>
+                        <form onSubmit={mintKey} className="flex flex-wrap items-end gap-3">
+                            <div className="min-w-[220px] flex-1">
+                                <label className="block text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                                    Key name
+                                </label>
+                                <input
+                                    type="text"
+                                    required
+                                    maxLength={120}
+                                    value={keyName}
+                                    onChange={(e) => setKeyName(e.target.value)}
+                                    placeholder="e.g. Claude Code"
+                                    className="mt-1 w-full rounded-md border border-zinc-300 bg-transparent px-3 py-2 text-sm outline-none focus:border-violet-500 dark:border-zinc-700"
+                                />
+                            </div>
+                            <Button type="submit" color="violet" icon="key" disabled={minting}>
+                                {minting ? "Minting…" : "Mint key"}
+                            </Button>
+                        </form>
+
+                        {agentKeys.length > 0 && (
+                            <ul className="mt-5 divide-y divide-zinc-200 dark:divide-zinc-800">
+                                {agentKeys.map((key) => (
+                                    <li
+                                        key={key.id}
+                                        className="flex flex-wrap items-center gap-3 py-3"
+                                    >
+                                        <Icon name="key" className="h-4 w-4 text-violet-500" />
+                                        <span className="text-sm font-medium">{key.name}</span>
+                                        {key.revoked ? (
+                                            <Badge color="zinc" size="sm" variant="soft">
+                                                Revoked
+                                            </Badge>
+                                        ) : (
+                                            <Badge color="emerald" size="sm" variant="soft">
+                                                Active
+                                            </Badge>
+                                        )}
+                                        <span className="text-xs text-zinc-500">
+                                            {key.last_used_at
+                                                ? `last used ${new Date(key.last_used_at).toLocaleDateString()}`
+                                                : "never used"}
+                                        </span>
+                                        {!key.revoked && (
+                                            <div className="ml-auto">
+                                                <Button
+                                                    type="button"
+                                                    size="sm"
+                                                    variant="ghost"
+                                                    color="red"
+                                                    icon="shield-off"
+                                                    onClick={() => revokeKey(key)}
+                                                >
+                                                    Revoke
+                                                </Button>
+                                            </div>
+                                        )}
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                    </Card.Body>
+                </Card>
+            </div>
         </Layout>
     );
 }

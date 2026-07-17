@@ -42,6 +42,9 @@ class ShowcaseSubmission extends Model
         'mode',
         'status',
         'scan_result',
+        'packages',
+        'registered_via',
+        'agent_name',
         'thumbnail_url',
         'scanned_at',
         'featured_until',
@@ -51,6 +54,7 @@ class ShowcaseSubmission extends Model
 
     protected $casts = [
         'scan_result' => 'array',
+        'packages' => 'array',
         'nsfw_declared' => 'boolean',
         'made_for_children' => 'boolean',
         'suspended_at' => 'datetime',

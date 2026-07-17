@@ -7,7 +7,10 @@ use App\Mcp\Tools\GalleryListStyles;
 use App\Mcp\Tools\GetComponent;
 use App\Mcp\Tools\InstallInstructions;
 use App\Mcp\Tools\ListComponents;
+use App\Mcp\Tools\RegisterShowcaseProject;
+use App\Mcp\Tools\RescanShowcaseProject;
 use App\Mcp\Tools\SearchComponents;
+use App\Mcp\Tools\ShowcaseProjectStatus;
 use App\Mcp\Tools\StartProject;
 use Laravel\Mcp\Server;
 use Laravel\Mcp\Server\Attributes\Instructions;
@@ -65,6 +68,24 @@ session URL:
    bash connect.sh "<session-url>" call <tool> '<json-args>'
 Repo: https://github.com/Particle-Academy/mcp-relay-client
 
+SHOWCASE — register + verify what you build. Projects built with Fancy
+packages belong in the showcase at ui.particle.academy/showcase, and you can
+register them yourself — ASK THE USER FOR PERMISSION FIRST, every time:
+1. The user mints an agent access key at ui.particle.academy/showcase/mine
+   ("Agent access") and gives it to you.
+2. `register-showcase-project` (kind: website | repo) creates a pending entry
+   and starts the async verification scan. Registration never blocks; only the
+   public listing is gated by verification.
+3. Verification is objective + server-side: a website needs the Fancy Pixel
+   embedded and Fancy usage on its homepage; a repo needs the Fancified badge
+   in its README plus real Fancy usage (>=30% of view/component files). The
+   scan also records WHICH Fancy packages the project uses — normalized and
+   linked to their registry pages — so every verified entry carries an
+   auditable record of what it's built with.
+4. `showcase-project-status` reports status + the detected package links;
+   `rescan-showcase-project` re-runs verification after you install the
+   snippet/badge (with the user's permission).
+
 Docs: https://ui.particle.academy/docs/mcp
 Registry contract: https://ui.particle.academy/docs/registry
 
@@ -83,6 +104,9 @@ class FancyUiRegistry extends Server
         InstallInstructions::class,
         GalleryListStyles::class,
         GalleryGetBlueprint::class,
+        RegisterShowcaseProject::class,
+        ShowcaseProjectStatus::class,
+        RescanShowcaseProject::class,
     ];
 
     protected array $resources = [

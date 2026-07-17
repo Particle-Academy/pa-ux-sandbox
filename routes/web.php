@@ -25,6 +25,7 @@ use App\Http\Controllers\HolySheetExportController;
 use App\Http\Controllers\OgImageController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ServiceWorkerController;
+use App\Http\Controllers\Showcase\AgentKeyController;
 use App\Http\Controllers\Showcase\DocsController;
 use App\Http\Controllers\Showcase\DreamingController;
 use App\Http\Controllers\Showcase\FancifiedBadgeController;
@@ -259,6 +260,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/showcase/submit/{submission}/installed', [ShowcaseSubmissionController::class, 'installed'])->name('showcase.showcase.installed');
     Route::post('/showcase/submit/{submission}/rescan', [ShowcaseSubmissionController::class, 'rescan'])->name('showcase.showcase.rescan');
     Route::delete('/showcase/submit/{submission}', [ShowcaseSubmissionController::class, 'destroy'])->name('showcase.showcase.destroy');
+
+    // Agent access keys — minted here, presented by an AI agent to the showcase
+    // MCP tools (register / status / rescan) to act on the user's behalf.
+    Route::post('/showcase/agent-keys', [AgentKeyController::class, 'store'])->name('showcase.agent-keys.store');
+    Route::delete('/showcase/agent-keys/{agentKey}', [AgentKeyController::class, 'destroy'])->name('showcase.agent-keys.destroy');
 });
 
 // Vote endpoints (auth required for cast; tallies are public).

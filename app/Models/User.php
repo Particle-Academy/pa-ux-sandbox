@@ -75,4 +75,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(ShowcaseSubmission::class);
     }
+
+    /** @return HasMany<AgentKey, $this> */
+    public function agentKeys(): HasMany
+    {
+        return $this->hasMany(AgentKey::class);
+    }
 }

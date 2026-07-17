@@ -57,6 +57,8 @@ class HandleInertiaRequests extends Middleware
                 'submitted' => fn () => $request->session()->get('submitted'),
                 'success' => fn () => $request->session()->get('success'),
                 'error' => fn () => $request->session()->get('error'),
+                // A freshly minted agent access key — shown ONCE (only its hash is stored).
+                'agent_key_plaintext' => fn () => $request->session()->get('agent_key_plaintext'),
                 // The commission rows a /referrals "simulate activity" run produced,
                 // surfaced back to the page for immediate visual feedback.
                 'mlm_rewards' => fn () => $request->session()->get('mlm_rewards'),

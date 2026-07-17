@@ -1,6 +1,12 @@
-import { Head, Link, usePage } from "@inertiajs/react";
+import { Head, Link, router, usePage } from "@inertiajs/react";
 import { Badge, Button, Card, Heading, Icon, Text } from "@particle-academy/react-fancy";
 import { Layout } from "../Layout";
+
+type SubmissionPackage = {
+    name: string;
+    slug: string | null;
+    registry_url: string | null;
+};
 
 type Submission = {
     id: number;
@@ -12,6 +18,7 @@ type Submission = {
     category_label: string | null;
     made_for_children: boolean;
     thumbnail_url: string | null;
+    packages?: SubmissionPackage[];
 };
 
 function hostOf(url: string): string {
@@ -90,6 +97,36 @@ function SubmissionCard({ s }: { s: Submission }) {
                     </div>
                     {s.description && (
                         <p className="line-clamp-2 text-sm text-zinc-600 dark:text-zinc-400">{s.description}</p>
+                    )}
+                    {/* The verified "built with" record — packages the scan detected,
+                        linked to their registry pages. Buttons (router.visit), NOT
+                        anchors: the whole card is already an <a>, and nested anchors
+                        break SSR hydration. */}
+                    {(s.packages?.filter((p) => p.slug).length ?? 0) > 0 && (
+                        <div className="flex flex-wrap gap-1 pt-1">
+                            {s
+                                .packages!.filter((p) => p.slug)
+                                .slice(0, 4)
+                                .map((p) => (
+                                    <button
+                                        key={p.slug}
+                                        type="button"
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            router.visit(`/packages/${p.slug}`);
+                                        }}
+                                        className="cursor-pointer rounded-full border border-violet-200 px-2 py-0.5 text-[11px] font-medium text-violet-700 hover:bg-violet-50 dark:border-violet-900/60 dark:text-violet-300 dark:hover:bg-violet-950/40"
+                                    >
+                                        {p.slug}
+                                    </button>
+                                ))}
+                            {s.packages!.filter((p) => p.slug).length > 4 && (
+                                <span className="px-1 text-[11px] text-zinc-500">
+                                    +{s.packages!.filter((p) => p.slug).length - 4} more
+                                </span>
+                            )}
+                        </div>
                     )}
                     <div className="mt-auto flex items-center gap-2 pt-2.5">
                         {s.category_label && <Badge color="zinc">{s.category_label}</Badge>}

@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\ShowcaseSubmission;
+use App\Services\Showcase\FancyPackageResolver;
 use App\Services\Showcase\FancyPixelDetector;
 use App\Services\Showcase\NsfwHeuristicDetector;
 use App\Services\Showcase\RepoVerifier;
@@ -29,9 +30,17 @@ class ScanShowcaseSubmission implements ShouldQueue
             default => ['verified' => false, 'reason' => 'unknown kind'],
         };
 
+        // Normalize + registry-link the Fancy packages the scan detected — the
+        // structured record of WHAT this project builds with (raw evidence
+        // stays in scan_result).
+        $packages = app(FancyPackageResolver::class)->resolve(
+            $result['packages'] ?? array_keys($result['matches'] ?? []),
+        );
+
         $this->submission->update([
             'status' => $result['verified'] ? 'verified' : 'rejected',
             'scan_result' => $result,
+            'packages' => $packages,
             'scanned_at' => now(),
         ]);
 
@@ -131,15 +140,17 @@ class ScanShowcaseSubmission implements ShouldQueue
         // independently of package usage so it can earn promotion-xp even
         // on an SSR'd site whose HTML doesn't expose our package strings.
         $badge = $this->detectBadge($html);
+        $packages = app(FancyPackageResolver::class)->extractFromText($html);
 
         if (empty($hits)) {
-            return ['verified' => false, 'reason' => 'no Fancy UI references in homepage HTML', 'badge' => $badge, 'nsfw_flag' => $nsfwFlag];
+            return ['verified' => false, 'reason' => 'no Fancy UI references in homepage HTML', 'badge' => $badge, 'nsfw_flag' => $nsfwFlag, 'packages' => $packages];
         }
 
         return [
             'verified' => true,
             'kind' => 'website',
             'matches' => $hits,
+            'packages' => $packages,
             'badge' => $badge,
             'nsfw_flag' => $nsfwFlag,
             'meta' => $meta,

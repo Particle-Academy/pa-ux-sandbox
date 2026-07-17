@@ -220,6 +220,7 @@ Route::get('/api/leaderboard/contributors', [LeaderboardController::class, 'cont
 // external agent generates Fancy UI screens + data and drives the full kit
 // over MCP. No auth, no DB writes; the page owns an in-browser MicroMcpServer.
 Route::get('/agent-playground', fn () => Inertia::render('AgentPlayground'))->name('agent-playground');
+Route::get('/fancy-tui', fn () => Inertia::render('FancyTui/Index'))->name('fancy-tui.index');
 
 Route::get('/shop', [ShopController::class, 'index'])->name('shop.index');
 Route::post('/shop/{item:slug}/purchase', [ShopController::class, 'purchase'])

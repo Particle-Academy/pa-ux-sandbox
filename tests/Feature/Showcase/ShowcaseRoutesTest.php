@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Showcase\StarterKitController;
 use App\Support\PackageRegistry;
+use Illuminate\Support\Facades\URL;
 use Tests\TestCase;
 
 uses(TestCase::class);
@@ -17,6 +18,13 @@ it('renders the agent playground', function () {
     $response = $this->get('/agent-playground');
     $response->assertOk();
     $response->assertSee('"component":"AgentPlayground"', escape: false);
+});
+
+it('renders the Fancy TUI dual-surface showcase', function () {
+    $response = $this->get('/fancy-tui');
+
+    $response->assertOk();
+    $response->assertSee('"component":"FancyTui\\/Index"', escape: false);
 });
 
 it('renders the packages index', function () {
@@ -72,7 +80,7 @@ it('generates https submission URLs under a forced scheme (proxy mixed-content g
     // looks like http, but URL generation must stay https or the browser blocks
     // the showcase-submission redirect to ".../installed" as mixed content.
     config(['app.url' => 'https://ui.particle.academy']);
-    \Illuminate\Support\Facades\URL::forceScheme('https');
+    URL::forceScheme('https');
 
     expect(route('showcase.showcase.installed', ['submission' => 1]))->toStartWith('https://');
 });

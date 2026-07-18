@@ -2,6 +2,7 @@
 
 namespace App\Mcp\Tools;
 
+use App\Support\PackageParity;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
@@ -139,20 +140,18 @@ class StartProject extends Tool
      * Each server-side capability + its current per-language mirror packages.
      * PHP + Node ship today; null = no native mirror yet for that language.
      *
+     * The real parity groups come from {@see PackageParity} — the single source
+     * of truth shared with the /packages listing — so the two never drift. The
+     * php-only baselines below (Node mirror still on the roadmap) are appended
+     * here because the listing does not treat a single-language package as a
+     * parity group.
+     *
      * @return array<int, array<string, mixed>>
      */
     private function mirrorPairs(): array
     {
         return [
-            ['capability' => 'Stripe catalog (products / prices / plans / checkout)', 'php' => 'particle-academy/laravel-catalog', 'node' => '@particle-academy/fancy-catalog'],
-            ['capability' => 'Feature management (gates, quotas, metered features)', 'php' => 'particle-academy/laravel-fms', 'node' => '@particle-academy/fancy-features'],
-            ['capability' => 'xlsx writer/reader (+ formula engine)', 'php' => 'particle-academy/holy-sheet', 'node' => '@particle-academy/holy-sheet'],
-            ['capability' => 'pptx writer/reader', 'php' => 'particle-academy/dark-slide', 'node' => '@particle-academy/dark-slide'],
-            ['capability' => 'docx writer/reader (+ markdown bridges)', 'php' => 'particle-academy/last-word', 'node' => '@particle-academy/last-word'],
-            ['capability' => 'Interaction analytics (EUO)', 'php' => 'particle-academy/fancy-heuristics', 'node' => '@particle-academy/fancy-heuristics-js'],
-            ['capability' => 'Multi-level referral / network-marketing engine (unilevel / binary / matrix)', 'php' => 'particle-academy/fancy-mlm', 'node' => '@particle-academy/fancy-mlm'],
-            ['capability' => 'Local Git + GitHub / GitLab / Bitbucket collaboration', 'php' => 'particle-academy/fancy-git', 'node' => '@particle-academy/fancy-git'],
-            ['capability' => 'Well-known files (robots / security / llms / sitemap / AGENTS)', 'php' => 'particle-academy/fancy-x-files', 'node' => '@particle-academy/fancy-x-files'],
+            ...PackageParity::mcpPairs(),
             ['capability' => 'Server SEO (meta / OG / JSON-LD / sitemap)', 'php' => 'particle-academy/fancy-seo', 'node' => null],
         ];
     }

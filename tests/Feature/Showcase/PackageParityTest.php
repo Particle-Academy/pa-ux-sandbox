@@ -1,8 +1,25 @@
 <?php
 
+use App\Support\PackageParity;
 use Tests\TestCase;
 
 uses(TestCase::class);
+
+it('derives the MCP start_project mirror pairs from the same parity source', function () {
+    $pairs = collect(PackageParity::mcpPairs());
+
+    // One MCP pair per parity group, package ids resolved from the registry.
+    expect($pairs)->toHaveCount(count(PackageParity::groups()));
+
+    $catalog = $pairs->firstWhere('php', 'particle-academy/laravel-catalog');
+    expect($catalog['node'])->toBe('@particle-academy/fancy-catalog');
+
+    $holy = $pairs->firstWhere('php', 'particle-academy/holy-sheet');
+    expect($holy['node'])->toBe('@particle-academy/holy-sheet');
+
+    // Every pair resolved both language ids (no accidental null from a typo'd slug).
+    $pairs->each(fn (array $p) => expect($p['php'])->not->toBeNull()->and($p['node'])->not->toBeNull());
+});
 
 it('folds language mirrors into one parity card on /packages', function () {
     $this->get('/packages')

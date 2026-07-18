@@ -45,6 +45,8 @@ import {
     Github,
     MousePointerClick,
     Check,
+    Copy,
+    Bot,
     Sparkles,
     Link as LinkIcon,
     Search,
@@ -1217,6 +1219,68 @@ export const MCP_CODE = `<span class="tok-c"># Claude Code — install the Fancy
 <span class="tok-c">// …or wire the raw server into any IDE — .mcp.json</span>
 { <span class="tok-a">"mcpServers"</span>: { <span class="tok-a">"fancy-ui"</span>: { <span class="tok-a">"type"</span>: <span class="tok-s">"http"</span>, <span class="tok-a">"url"</span>: <span class="tok-s">"https://ui.particle.academy/mcp"</span> } } }`;
 
+// The copyable prompt that points an agent at the plugin or the hosted MCP.
+// Plain ASCII so it pastes cleanly into any client.
+export const AGENT_PROMPT = `Help me build with the Fancy UI suite from Particle Academy — Human+ UX components and headless packages for React + Laravel/Node, where humans and agents share the same UI over MCP tool bridges.
+
+First, get access to the registry:
+
+- Claude Code — install the plugin:
+    /plugin marketplace add Particle-Academy/fancy-ui-plugin
+    /plugin install fancy-ui@fancy-ui
+
+- Any other client — add the hosted MCP server (streamable HTTP):
+    https://ui.particle.academy/mcp
+
+Then use its tools — start_project, list-components, search-components, get-component, install-instructions — to choose packages and scaffold the app instead of guessing from memory. Browse the full catalog at https://ui.particle.academy/packages.`;
+
+/** Homepage "Show this to your agent" card — one copyable prompt that hands an
+ *  agent the plugin + hosted-MCP entry points. */
+export function AgentPrompt() {
+    const [copied, setCopied] = useState(false);
+    const copy = () => {
+        navigator.clipboard.writeText(AGENT_PROMPT).then(() => {
+            setCopied(true);
+            window.setTimeout(() => setCopied(false), 1600);
+        });
+    };
+    return (
+        <div className="fancy-card" style={{ padding: 0, overflow: "hidden", marginBottom: 28 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "11px 16px", borderBottom: "1px solid var(--border-1)" }}>
+                <Bot size={16} style={{ color: "var(--accent, #8b5cf6)" }} />
+                <strong>Show this to your agent</strong>
+                <span style={{ marginLeft: 8, fontSize: 12.5, color: "var(--fg-3)" }}>
+                    hands it the plugin or the MCP — then it takes over
+                </span>
+                <span style={{ flex: 1 }} />
+                <button
+                    type="button"
+                    className="btn btn-ghost"
+                    onClick={copy}
+                    style={{ padding: "5px 11px", fontSize: 13, display: "inline-flex", alignItems: "center", gap: 6 }}
+                >
+                    {copied ? <><Check size={14} /> Copied</> : <><Copy size={14} /> Copy prompt</>}
+                </button>
+            </div>
+            <pre
+                style={{
+                    margin: 0,
+                    padding: "16px 18px",
+                    whiteSpace: "pre-wrap",
+                    wordBreak: "break-word",
+                    fontFamily: "var(--font-mono)",
+                    fontSize: 12.5,
+                    lineHeight: 1.7,
+                    color: "var(--fg-2)",
+                    background: "var(--bg-2)",
+                }}
+            >
+                {AGENT_PROMPT}
+            </pre>
+        </div>
+    );
+}
+
 export function QuickStart() {
     const mono = { fontFamily: "var(--font-mono)" } as const;
     return (
@@ -1233,6 +1297,8 @@ export function QuickStart() {
                     registry MCP — <code style={mono}>ui.particle.academy/mcp</code> — and it returns
                     the exact install commands.
                 </p>
+
+                <AgentPrompt />
 
                 <div className="qs-grid">
                     <div className="qs-card">

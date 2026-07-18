@@ -26,6 +26,10 @@ type Pkg = {
     repoUrl: string;
     npmUrl: string | null;
     packagistUrl: string | null;
+    /** True for a consolidated language-mirror card (PHP + Node/TS + …). */
+    parity?: boolean;
+    /** The languages a parity card ships in, e.g. ["PHP", "Node / TypeScript"]. */
+    languages?: string[] | null;
 };
 
 type KindFilter = "all" | "ui" | "headless";
@@ -82,12 +86,11 @@ export default function PackagesIndex({ packages }: { packages: Pkg[] }) {
     }, [packages, query, kind, eco]);
 
     const groups = GROUP_ORDER.map((g) => {
-        let items = filtered.filter((p) => p.group === g);
-        // Supporting (companion) packages list alphabetically; the core + Human+
-        // surfaces keep their curated narrative order.
-        if (g === "companion") {
-            items = [...items].sort((a, b) => a.name.localeCompare(b.name));
-        }
+        // Every section lists alphabetically by slug (the clean, de-scoped id),
+        // so the catalog is scannable A→Z within each tier.
+        const items = filtered
+            .filter((p) => p.group === g)
+            .sort((a, b) => a.slug.localeCompare(b.slug));
         return { group: g, meta: GROUP_META[g], items };
     }).filter((s) => s.items.length > 0);
 
@@ -436,21 +439,41 @@ function HeadlessTile({ pkg }: { pkg: Pkg }) {
                         {ECO_LABEL[pkg.ecosystem]}
                     </span>
                 </div>
-                <div className="pkg-snippet">
-                    <span className="pkg-snippet__sigil">$</span>
-                    <span className="pkg-snippet__cmd">
-                        {target ? <>{verb} <b>{target}</b></> : cmd}
-                    </span>
-                </div>
+                {pkg.parity ? (
+                    // A language-mirror capability — show the languages it ships
+                    // in, not a single install line (each mirror installs its own
+                    // way; the detail page has a per-language card for each).
+                    <div style={{ display: "flex", gap: 6, flexWrap: "wrap", alignItems: "center", margin: "2px 0 6px" }}>
+                        {(pkg.languages ?? []).map((l) => (
+                            <span key={l} className="pkg-eco" data-eco={l === "PHP" ? "php" : "ts"}>
+                                {l === "PHP" ? "PHP" : "TS"}
+                            </span>
+                        ))}
+                        <span style={{ fontSize: 11, color: "var(--fg-3)", fontWeight: 500 }}>
+                            {(pkg.languages ?? []).length} languages · one API
+                        </span>
+                    </div>
+                ) : (
+                    <div className="pkg-snippet">
+                        <span className="pkg-snippet__sigil">$</span>
+                        <span className="pkg-snippet__cmd">
+                            {target ? <>{verb} <b>{target}</b></> : cmd}
+                        </span>
+                    </div>
+                )}
                 <p className="pkg-tile__tagline">{pkg.tagline}</p>
                 <div className="pkg-links">
                     <span className="pkg-tile__explore" style={{ opacity: 1, color: "color-mix(in oklch, var(--accent) 80%, var(--fg-1))" }}>
-                        Docs →
+                        {pkg.parity ? "Compare languages →" : "Docs →"}
                     </span>
                     <Stars count={pkg.stars} />
-                    <a className="pkg-link" href={pkg.repoUrl} target="_blank" rel="noreferrer">GitHub →</a>
-                    {pkg.npmUrl && <a className="pkg-link" href={pkg.npmUrl} target="_blank" rel="noreferrer">npm →</a>}
-                    {pkg.packagistUrl && <a className="pkg-link" href={pkg.packagistUrl} target="_blank" rel="noreferrer">Packagist →</a>}
+                    {!pkg.parity && (
+                        <>
+                            <a className="pkg-link" href={pkg.repoUrl} target="_blank" rel="noreferrer">GitHub →</a>
+                            {pkg.npmUrl && <a className="pkg-link" href={pkg.npmUrl} target="_blank" rel="noreferrer">npm →</a>}
+                            {pkg.packagistUrl && <a className="pkg-link" href={pkg.packagistUrl} target="_blank" rel="noreferrer">Packagist →</a>}
+                        </>
+                    )}
                 </div>
             </div>
         </div>

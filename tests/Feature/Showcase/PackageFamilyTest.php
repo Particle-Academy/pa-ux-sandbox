@@ -53,23 +53,42 @@ it('folds related packages into one family card on /packages', function () {
             expect($git['member_count'])->toBe(9);
             expect($git['languages'])->toContain('PHP')->toContain('Node / TypeScript')->toContain('React');
 
-            // A UI-headlined family keeps its Human+ tier and preview tile.
+            // A UI-headlined family lands in Surfaces and keeps its preview tile.
             $flow = $pkgs->firstWhere('slug', 'fancy-flow');
-            expect($flow['group'])->toBe('human');
+            expect($flow['group'])->toBe('surfaces');
             expect($flow['kind'])->toBe('ui');
             expect($flow['member_count'])->toBe(2);
 
-            // Standalone packages are untouched.
-            expect($slugs)->toContain('react-fancy')->toContain('fancy-pixel');
+            // Themes replace the old core/human/companion tiers entirely.
+            $unknown = $pkgs->pluck('group')->unique()
+                ->diff(['core', 'surfaces', 'documents', 'commerce', 'platform', 'tooling'])
+                ->values()->all();
+            expect($unknown)->toBe([]);
+            expect($pkgs->firstWhere('slug', 'fancy-git')['group'])->toBe('tooling');
+            expect($pkgs->firstWhere('slug', 'holy-sheet')['group'])->toBe('documents');
+            expect($pkgs->firstWhere('slug', 'fancy-map')['group'])->toBe('surfaces');
+
+            // Core is a family too — its members fold in behind one card.
+            expect($slugs)->toContain('fancy-core');
+            foreach (['react-fancy', 'fancy-inertia', 'fancy-query', 'fancy-app-update', 'agent-integrations'] as $member) {
+                expect($slugs)->not->toContain($member);
+            }
+
+            // Packages in no family are untouched.
+            expect($slugs)->toContain('fancy-pixel')->toContain('fancy-map');
         });
 });
 
-it('redirects any family member to the family page', function () {
-    $this->get('/packages/fancy-git-js')->assertRedirect('/packages/fancy-git');
-    $this->get('/packages/fancy-git-ui')->assertRedirect('/packages/fancy-git');
+it('routes a family member by whether it has content of its own', function () {
+    // Ships component demos — grouping must NEVER bury these.
+    foreach (['fancy-git-ui', 'fancy-3d-babylon', 'fancy-3d-three', 'fancy-cms-ui', 'fancy-mlm-ui', 'fancy-x-files-ui'] as $ui) {
+        $this->get("/packages/{$ui}")
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page->component('Packages/Show'));
+    }
+
+    // No components and no shipped README — a thin stub, so it folds in.
     $this->get('/packages/fancy-git-github-php')->assertRedirect('/packages/fancy-git');
-    $this->get('/packages/fancy-flow-php')->assertRedirect('/packages/fancy-flow');
-    $this->get('/packages/holy-sheet-js')->assertRedirect('/packages/holy-sheet');
 });
 
 it('renders the family page with a section per role', function () {
@@ -91,6 +110,32 @@ it('renders the family page with a section per role', function () {
 
                 $ui = $sections->firstWhere('label', 'React UI');
                 expect(collect($ui['members'])->first()['slug'])->toBe('fancy-git-ui');
+
+                return true;
+            })
+        );
+});
+
+it('keeps a member page when it has real content, and folds the thin ones', function () {
+    // react-fancy ships ~50 component demos — grouping must never bury them.
+    $this->get('/packages/react-fancy')
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page->component('Packages/Show'));
+
+    // fancy-query has no components but ships a README — still its own page.
+    $this->get('/packages/fancy-query')
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page->component('Packages/Show'));
+
+    // The family page links out to the members that kept a page.
+    $this->get('/packages/fancy-core')
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('Packages/Family')
+            ->where('family.sections', function ($sections) {
+                $members = collect($sections)->flatMap(fn ($s) => $s['members']);
+                expect($members->firstWhere('slug', 'react-fancy')['href'])->toBe('/packages/react-fancy');
+                expect($members->pluck('slug'))->toContain('agent-integrations');
 
                 return true;
             })

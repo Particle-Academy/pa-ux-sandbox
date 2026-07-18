@@ -14,7 +14,7 @@ type Pkg = {
     tagline: string;
     language: string;
     core: boolean;
-    group: "core" | "human" | "companion";
+    group: "core" | "surfaces" | "documents" | "commerce" | "platform" | "tooling";
     accent: string;
     ecosystem: "ts" | "php" | "polyglot";
     kind: "ui" | "bridge" | "headless";
@@ -37,19 +37,31 @@ type Pkg = {
 type KindFilter = "all" | "ui" | "headless";
 type EcoFilter = "all" | "ts" | "php" | "polyglot";
 
-const GROUP_ORDER: Pkg["group"][] = ["core", "human", "companion"];
+const GROUP_ORDER: Pkg["group"][] = ["core", "surfaces", "documents", "commerce", "platform", "tooling"];
 const GROUP_META: Record<Pkg["group"], { title: string; blurb: string }> = {
     core: {
-        title: "Fancy Core",
-        blurb: "The stack you reach for to ship a real web app — components, the Inertia bridge, server-state, SEO, live-update detection, and the agent backbone.",
+        title: "Core",
+        blurb: "Start here — the components, the Inertia bridge, server-state, live-update detection, and the agent backbone every Fancy app is built on.",
     },
-    human: {
-        title: "The Human+ surfaces",
-        blurb: "Rich, controlled UI surfaces humans and agents inhabit together — whiteboard, flow, sheets, slides, code, charts, 3D — driven over MCP bridges, never DOM scraping.",
+    surfaces: {
+        title: "Surfaces",
+        blurb: "Rich, controlled UI humans and agents inhabit together — whiteboard, flow, sheets, slides, code, terminal, charts, maps, 3D — driven over MCP bridges, never DOM scraping.",
     },
-    companion: {
-        title: "Companion packages",
-        blurb: "Headless backends, document writers, isomorphic ports, and tooling developed alongside the kit — plus the react-fancy editor companions.",
+    documents: {
+        title: "Documents",
+        blurb: "Read and write real office files from an agent — xlsx, pptx, docx — plus the shared document and file cores they are built on.",
+    },
+    commerce: {
+        title: "Commerce & growth",
+        blurb: "Sell, gate, and grow — Stripe catalog, feature management and quotas, gamification, and multi-level referral engines.",
+    },
+    platform: {
+        title: "Web platform",
+        blurb: "How your app meets the web and its crawlers — SEO on the first byte, well-known + agent-facing files, interaction analytics, verification, and installability.",
+    },
+    tooling: {
+        title: "Agents & tooling",
+        blurb: "The workbench — Git as an agent-driveable surface, MCP servers and relays, the source-vendoring CLI, and the shared plumbing underneath.",
     },
 };
 
@@ -246,7 +258,8 @@ const SKY = "#0ea5e9";
  */
 function PkgPreview({ slug }: { slug: string }): ReactNode {
     const map: Record<string, ReactNode> = {
-        "react-fancy": (
+        // The Fancy Core family leads with react-fancy, so it reuses its visual.
+        "fancy-core": (
             <div className="mp" style={{ gap: 6, flexWrap: "wrap", maxWidth: 280 }}>
                 <span style={{ background: VIOLET, color: "#fff", fontSize: 11, fontWeight: 600, padding: "5px 11px", borderRadius: 8, display: "inline-flex", gap: 5, alignItems: "center" }}><Icon name="plus" size={11} />Button</span>
                 <Badge color="emerald" dot size="sm">live</Badge>
@@ -413,6 +426,7 @@ function PkgPreview({ slug }: { slug: string }): ReactNode {
             </span>
         ),
     };
+    map["react-fancy"] = map["fancy-core"];
     return map[slug] ?? <Icon name="package" size={28} style={{ color: "var(--fg-4)" }} />;
 }
 

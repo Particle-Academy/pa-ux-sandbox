@@ -21,13 +21,16 @@ class PackagesController extends Controller
 
     public function index(): Response
     {
-        // ONE merged catalog — the UI grid packages (all()) plus the headless /
-        // companion packages (companions()) — each carrying the design
-        // classification (group / accent / ecosystem / kind) the redesigned
-        // listing groups + styles by. The frontend buckets on `group`
-        // (core → "Fancy Core", human → "The Human+ surfaces", companion →
-        // "Companion packages") and switches tile style on `kind`
-        // (ui/bridge → preview tile, headless → install-snippet tile).
+        // ONE merged catalog — the UI grid packages (all()) plus the no-UI ones
+        // (companions()) — each carrying the design classification
+        // (group / accent / ecosystem / kind) the listing buckets + styles by.
+        //
+        // `group` is a THEME, not a tier: Core / Surfaces / Documents /
+        // Commerce & growth / Web platform / Agents & tooling. Nothing is a
+        // second-class "companion" — a headless writer is as first-class as a
+        // canvas. `kind` only picks the tile style (ui/bridge → preview tile,
+        // headless → install-snippet tile).
+        //
         // GitHub star counts, refreshed by showcase:refresh-leaderboard +
         // nudged live by the star webhook. Absent (null) until the first sync.
         $stars = GithubRepoStat::starMap();
@@ -151,23 +154,27 @@ class PackagesController extends Controller
     public function show(string $package): Response|RedirectResponse
     {
         // Related packages get ONE page: the family slug renders the family
-        // page; any member slug (fancy-git-js, fancy-git-github-php, …) 301s
-        // to it.
+        // page. A member slug 301s to it — UNLESS that member ships its own
+        // components, in which case it keeps its page so the live per-component
+        // demos (react-fancy's ~50 primitives, the surfaces) stay reachable;
+        // the family page links to it.
         if ($family = PackageFamily::find($package)) {
             if ($package !== $family['slug']) {
-                return redirect()->route('packages.show', $family['slug'], 301);
+                if (! $this->memberKeepsOwnPage(PackageRegistry::findAny($package))) {
+                    return redirect()->route('packages.show', $family['slug'], 301);
+                }
+            } else {
+                return $this->family($family);
             }
-
-            return $this->family($family);
         }
 
-        // findAny() also resolves the headless companion packages (fancy-query,
+        // findAny() also resolves the headless packages (fancy-query,
         // mcp-relay-client, …) so they get a real in-house docs page instead of
         // bouncing out to npm/Packagist.
         $pkg = PackageRegistry::findAny($package);
         abort_if($pkg === null, 404);
 
-        // Companion packages render no UI, so they carry no component grid.
+        // Headless packages render no UI, so they carry no component grid.
         $pkg['components'] ??= [];
 
         // Headless packages have no live demo — render their installed README in
@@ -227,6 +234,23 @@ class PackagesController extends Controller
     }
 
     /**
+     * Does this family member warrant its own page? Yes when it has real
+     * content of its own — live component demos or a shipped README. Members
+     * with neither would be a thin stub, so those 301 to the family page and we
+     * never link them. Nothing is lost by grouping.
+     *
+     * @param  array<string, mixed>|null  $rec
+     */
+    private function memberKeepsOwnPage(?array $rec): bool
+    {
+        if ($rec === null) {
+            return false;
+        }
+
+        return ($rec['components'] ?? []) !== [] || $this->readmeHtmlFor($rec) !== null;
+    }
+
+    /**
      * Shape one family member for the family page.
      *
      * @param  array{language: string, slug: string}  $m
@@ -249,6 +273,7 @@ class PackagesController extends Controller
                 ? "npm install {$rec['npm']}"
                 : (isset($rec['composer']) ? "composer require {$rec['composer']}" : null),
             'components_count' => count($rec['components'] ?? []),
+            'href' => $this->memberKeepsOwnPage($rec) ? "/packages/{$m['slug']}" : null,
             'stars' => isset($rec['repo']) ? ($stars[strtolower((string) $rec['repo'])] ?? null) : null,
             'repoUrl' => isset($rec['repo']) ? "https://github.com/{$rec['repo']}" : null,
             'npmUrl' => isset($rec['npm']) ? "https://www.npmjs.com/package/{$rec['npm']}" : null,

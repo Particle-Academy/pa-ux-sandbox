@@ -34,10 +34,42 @@ final class PackageFamily
      */
     private const FAMILIES = [
         [
+            'slug' => 'fancy-core',
+            'name' => 'Fancy Core',
+            'tagline' => 'The stack every Fancy app starts from — the React primitives, the Laravel/Inertia bridge, server-state, a new-build detector, and the agent backbone that makes the whole UI agent-driveable.',
+            'group' => 'core',
+            'kind' => 'ui',
+            'sections' => [
+                [
+                    'label' => 'Components',
+                    'capability' => null,
+                    'members' => [['language' => 'React', 'slug' => 'react-fancy']],
+                ],
+                [
+                    'label' => 'Laravel + Inertia',
+                    'capability' => null,
+                    'members' => [
+                        ['language' => 'React', 'slug' => 'fancy-inertia'],
+                        ['language' => 'React', 'slug' => 'fancy-query'],
+                    ],
+                ],
+                [
+                    'label' => 'App lifecycle',
+                    'capability' => null,
+                    'members' => [['language' => 'React', 'slug' => 'fancy-app-update']],
+                ],
+                [
+                    'label' => 'Agent backbone',
+                    'capability' => null,
+                    'members' => [['language' => 'React', 'slug' => 'agent-integrations']],
+                ],
+            ],
+        ],
+        [
             'slug' => 'fancy-git',
             'name' => 'Fancy Git',
             'tagline' => 'Git as a first-class, agent-driveable surface — a headless engine with proposal-first mutations, normalized provider adapters for GitHub / GitLab / Bitbucket, and a React UI. Mirrored in PHP and Node.',
-            'group' => 'companion',
+            'group' => 'tooling',
             'kind' => 'headless',
             'sections' => [
                 [
@@ -83,7 +115,7 @@ final class PackageFamily
             'slug' => 'fancy-flow',
             'name' => 'Fancy Flow',
             'tagline' => 'Workflow graphs humans and agents author together — a headless topological engine plus an optional React Flow editor. The editor designs; the engine runs anywhere, including a PHP backend with queued durable runs.',
-            'group' => 'human',
+            'group' => 'surfaces',
             'kind' => 'ui',
             'sections' => [
                 [
@@ -100,7 +132,7 @@ final class PackageFamily
             'slug' => 'fancy-mlm',
             'name' => 'Fancy MLM',
             'tagline' => 'Multi-level referral / network-marketing engine — configurable unilevel / binary / matrix downlines from one CompensationPlan JSON, with identical rewards across languages and a React surface for trees and statements.',
-            'group' => 'companion',
+            'group' => 'commerce',
             'kind' => 'headless',
             'sections' => [
                 [
@@ -122,7 +154,7 @@ final class PackageFamily
             'slug' => 'fancy-x-files',
             'name' => 'Fancy X-Files',
             'tagline' => 'Well-known + agent-facing files from one declarative registry — robots.txt, security.txt, humans, llms, sitemap, AGENTS — with a leak-safe protect() guard, plus an admin UI to edit them.',
-            'group' => 'companion',
+            'group' => 'platform',
             'kind' => 'headless',
             'sections' => [
                 [
@@ -144,7 +176,7 @@ final class PackageFamily
             'slug' => 'fancy-3d',
             'name' => 'Fancy 3D',
             'tagline' => 'Engine-agnostic 3D — JSON-friendly Scene types and a pluggable <Canvas> with a built-in DOM/CSS-3D renderer (no WebGL dependency), plus optional Babylon.js and three.js adapters.',
-            'group' => 'human',
+            'group' => 'surfaces',
             'kind' => 'ui',
             'sections' => [
                 [
@@ -166,7 +198,7 @@ final class PackageFamily
             'slug' => 'fancy-term',
             'name' => 'Fancy Term',
             'tagline' => 'A controlled, themeable <Terminal> over xterm.js, plus the headless Node backend that owns the PTYs and the snapshot/replay persistence engine behind it.',
-            'group' => 'human',
+            'group' => 'surfaces',
             'kind' => 'ui',
             'sections' => [
                 [
@@ -185,7 +217,7 @@ final class PackageFamily
             'slug' => 'fancy-cms',
             'name' => 'Fancy CMS',
             'tagline' => 'The Stages document model — a PHP host + page renderer (node tree → HTML with island hydration) paired with a WYSIWYG React editor. Early-release beta.',
-            'group' => 'human',
+            'group' => 'surfaces',
             'kind' => 'ui',
             'sections' => [
                 [
@@ -204,7 +236,7 @@ final class PackageFamily
             'slug' => 'holy-sheet',
             'name' => 'Holy Sheet',
             'tagline' => 'Headless xlsx spreadsheet writer/reader with a formula engine — one Agent write / describe / lint API, mirrored across languages.',
-            'group' => 'companion',
+            'group' => 'documents',
             'kind' => 'headless',
             'sections' => [[
                 'label' => 'Writer / reader',
@@ -219,7 +251,7 @@ final class PackageFamily
             'slug' => 'dark-slide',
             'name' => 'Dark Slide',
             'tagline' => 'Headless pptx deck writer/reader — markdown headings, highlighted code, tables, gradients, and a high-fidelity reader.',
-            'group' => 'companion',
+            'group' => 'documents',
             'kind' => 'headless',
             'sections' => [[
                 'label' => 'Writer / reader',
@@ -234,7 +266,7 @@ final class PackageFamily
             'slug' => 'last-word',
             'name' => 'Last Word',
             'tagline' => 'Headless docx writer/reader on one JSON Doc model — headings, styled runs, lists, tables, code — with markdown bridges both ways.',
-            'group' => 'companion',
+            'group' => 'documents',
             'kind' => 'headless',
             'sections' => [[
                 'label' => 'Writer / reader',
@@ -249,7 +281,7 @@ final class PackageFamily
             'slug' => 'laravel-catalog',
             'name' => 'Fancy Catalog',
             'tagline' => 'Headless Stripe catalog — products / prices / plans + checkout — adapter-based with an injected Stripe client.',
-            'group' => 'companion',
+            'group' => 'commerce',
             'kind' => 'headless',
             'sections' => [[
                 'label' => 'Catalog',
@@ -264,7 +296,7 @@ final class PackageFamily
             'slug' => 'laravel-fms',
             'name' => 'Fancy Features',
             'tagline' => 'Headless feature management — gate / registry / config / group strategies plus metered quotas. Owns the FeatureSource contract catalog plugs into.',
-            'group' => 'companion',
+            'group' => 'commerce',
             'kind' => 'headless',
             'sections' => [[
                 'label' => 'Feature management',
@@ -279,7 +311,7 @@ final class PackageFamily
             'slug' => 'fancy-heuristics',
             'name' => 'Fancy Heuristics',
             'tagline' => 'End-user (not search-engine) optimization — human + agent interaction analytics: event ingestion, focus heatmaps, and session / actor rollups, with a browser collector.',
-            'group' => 'companion',
+            'group' => 'platform',
             'kind' => 'headless',
             'sections' => [[
                 'label' => 'Server + collector',

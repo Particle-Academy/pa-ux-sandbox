@@ -58,5 +58,5 @@ it('shows GitHub star counts on the packages page', function () {
         ->assertInertia(fn ($page) => $page
             ->component('Packages/Index')
             ->where('packages', fn ($packages) => collect($packages)
-                ->firstWhere('slug', 'react-fancy')['stars'] === 1234));
+                ->firstWhere('slug', 'fancy-core')['stars'] === 1234));
 });

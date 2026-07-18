@@ -1,3 +1,4 @@
+import { Link } from "@inertiajs/react";
 import { Seo } from "@particle-academy/fancy-inertia/seo";
 import { Breadcrumbs, Icon } from "@particle-academy/react-fancy";
 import { useState, type CSSProperties } from "react";
@@ -16,6 +17,8 @@ type Member = {
     composer: string | null;
     install: string | null;
     components_count: number;
+    /** Set when this member keeps its own page (it ships components/demos). */
+    href: string | null;
     stars: number | null;
     repoUrl: string | null;
     npmUrl: string | null;
@@ -174,6 +177,11 @@ function MemberCard({ member: m }: { member: Member }) {
             )}
 
             <div className="mt-auto flex flex-wrap items-center gap-x-4 gap-y-1 px-4 pb-3 pt-2 text-xs">
+                {m.href && (
+                    <Link href={m.href} className="font-medium" style={{ color: "color-mix(in oklch, var(--accent) 80%, var(--fg-1))" }}>
+                        {m.components_count > 0 ? `${m.components_count} components →` : "Docs →"}
+                    </Link>
+                )}
                 {m.repoUrl && <a className="pkg-link" href={m.repoUrl} target="_blank" rel="noreferrer">GitHub →</a>}
                 {m.npmUrl && <a className="pkg-link" href={m.npmUrl} target="_blank" rel="noreferrer">npm →</a>}
                 {m.packagistUrl && <a className="pkg-link" href={m.packagistUrl} target="_blank" rel="noreferrer">Packagist →</a>}

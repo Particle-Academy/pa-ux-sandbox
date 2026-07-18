@@ -22,7 +22,7 @@ type Pkg = {
     cli?: string | null;
     repo?: string;
     core?: boolean;
-    group?: "core" | "human" | "companion";
+    group?: "core" | "surfaces" | "documents" | "commerce" | "platform" | "tooling";
     accent?: string;
     ecosystem?: "ts" | "php" | "polyglot";
     kind?: "ui" | "bridge" | "headless" | "block";

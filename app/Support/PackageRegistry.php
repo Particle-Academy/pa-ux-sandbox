@@ -42,82 +42,87 @@ class PackageRegistry
         'fancy-inertia' => ['group' => 'core', 'ecosystem' => 'ts', 'kind' => 'bridge', 'accent' => '#6366f1'],
         'fancy-query' => ['group' => 'core', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#10b981'],
         'fancy-app-update' => ['group' => 'core', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#f59e0b'],
-        'fancy-seo' => ['group' => 'core', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#0ea5e9'],
+        'fancy-seo' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#0ea5e9'],
 
         // ── The Human+ surfaces ──────────────────────────────────────────────
         // agent-integrations lists under Human+ (it carries the "Core of Human+"
         // badge via its core:true flag), per the design mockup.
-        'agent-integrations' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'bridge', 'accent' => '#f59e0b'],
-        'fancy-whiteboard' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#8b5cf6'],
-        'fancy-artboard' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#6366f1'],
-        'fancy-flow' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#0ea5e9'],
-        'fancy-sheets' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#10b981'],
-        'fancy-slides' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#f43f5e'],
-        'fancy-code' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#a78bfa'],
-        'fancy-term' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#22c55e'],
-        'fancy-tui' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#a78bfa'],
-        'fancy-diff' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#eab308'],
-        'fancy-pixel' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#f97316'],
-        'fancy-echarts' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#0ea5e9'],
-        'fancy-mlm-ui' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#14b8a6'],
-        'fancy-git-ui' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#f97316'],
-        'fancy-screens' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#8b5cf6'],
-        'fancy-3d' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#6366f1'],
+        'agent-integrations' => ['group' => 'core', 'ecosystem' => 'ts', 'kind' => 'bridge', 'accent' => '#f59e0b'],
+        'fancy-whiteboard' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#8b5cf6'],
+        'fancy-artboard' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#6366f1'],
+        'fancy-flow' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#0ea5e9'],
+        'fancy-sheets' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#10b981'],
+        'fancy-slides' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#f43f5e'],
+        'fancy-code' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#a78bfa'],
+        'fancy-term' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#22c55e'],
+        'fancy-tui' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#a78bfa'],
+        'fancy-diff' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#eab308'],
+        'fancy-pixel' => ['group' => 'platform', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#f97316'],
+        'fancy-echarts' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#0ea5e9'],
+        'fancy-mlm-ui' => ['group' => 'commerce', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#14b8a6'],
+        'fancy-git-ui' => ['group' => 'tooling', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#f97316'],
+        'fancy-screens' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#8b5cf6'],
+        'fancy-3d' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#6366f1'],
         // 3d adapters — not in the design mockup; sensible fallbacks per the brief.
-        'fancy-3d-babylon' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#6366f1'],
-        'fancy-3d-three' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#6366f1'],
-        'fancy-motion' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#f43f5e'],
-        'fancy-cms-ui' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#0ea5e9'],
+        'fancy-3d-babylon' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#6366f1'],
+        'fancy-3d-three' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#6366f1'],
+        'fancy-motion' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#f43f5e'],
+        'fancy-cms-ui' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#0ea5e9'],
         // Vendorable block (npx fancy-cli add) — not a published package.
-        'catalog-fms' => ['group' => 'human', 'ecosystem' => 'ts', 'kind' => 'block', 'accent' => '#0ea5e9'],
+        'catalog-fms' => ['group' => 'commerce', 'ecosystem' => 'ts', 'kind' => 'block', 'accent' => '#0ea5e9'],
 
-        // ── Companion packages ───────────────────────────────────────────────
+        // ── Everything else, by theme ────────────────────────────────────────
         // react-fancy UI companions — appear in the companion tier but still UI.
-        'fancy-x-files-ui' => ['group' => 'companion', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#8b5cf6'],
-        'fancy-brand-icons' => ['group' => 'companion', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#8b5cf6'],
+        'fancy-x-files-ui' => ['group' => 'platform', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#8b5cf6'],
+        'fancy-brand-icons' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#8b5cf6'],
         // Headless TS ports / collectors / tooling.
-        'holy-sheet-js' => ['group' => 'companion', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#16a34a'],
-        'dark-slide-js' => ['group' => 'companion', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#dc2626'],
-        'last-word-js' => ['group' => 'companion', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#2563eb'],
-        'fancy-heuristics-js' => ['group' => 'companion', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#0ea5e9'],
-        'fancy-term-host' => ['group' => 'companion', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#10b981'],
-        'fancy-file-commons' => ['group' => 'companion', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#eab308'],
-        'fancy-x-files-js' => ['group' => 'companion', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#64748b'],
-        'fancy-auto-common' => ['group' => 'companion', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#6366f1'],
-        'fancy-pwa' => ['group' => 'companion', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#0ea5e9'],
-        'docs-mcp' => ['group' => 'companion', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#0ea5e9'],
-        'fancy-cli' => ['group' => 'companion', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#a78bfa'],
+        'holy-sheet-js' => ['group' => 'documents', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#16a34a'],
+        'dark-slide-js' => ['group' => 'documents', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#dc2626'],
+        'last-word-js' => ['group' => 'documents', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#2563eb'],
+        'fancy-heuristics-js' => ['group' => 'platform', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#0ea5e9'],
+        'fancy-term-host' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#10b981'],
+        'fancy-file-commons' => ['group' => 'documents', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#eab308'],
+        'fancy-x-files-js' => ['group' => 'platform', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#64748b'],
+        'fancy-auto-common' => ['group' => 'tooling', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#6366f1'],
+        'fancy-pwa' => ['group' => 'platform', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#0ea5e9'],
+        'docs-mcp' => ['group' => 'tooling', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#0ea5e9'],
+        'fancy-cli' => ['group' => 'tooling', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#a78bfa'],
         // Headless PHP backends + infra.
-        'holy-sheet' => ['group' => 'companion', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#10b981'],
-        'dark-slide' => ['group' => 'companion', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#8b5cf6'],
-        'last-word' => ['group' => 'companion', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#2563eb'],
-        'fancy-heuristics' => ['group' => 'companion', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#8b5cf6'],
-        'fancy-x-files' => ['group' => 'companion', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#64748b'],
-        'fancy-cms' => ['group' => 'companion', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#0ea5e9'],
-        'laravel-catalog' => ['group' => 'companion', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#0ea5e9'],
-        'laravel-fms' => ['group' => 'companion', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#f59e0b'],
-        'laravel-fun-lab' => ['group' => 'companion', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#f43f5e'],
-        'fancy-mlm' => ['group' => 'companion', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#14b8a6'],
-        'fancy-mlm-js' => ['group' => 'companion', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#14b8a6'],
-        'fancy-git' => ['group' => 'companion', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#f97316'],
-        'fancy-git-js' => ['group' => 'companion', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#f97316'],
+        'holy-sheet' => ['group' => 'documents', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#10b981'],
+        'dark-slide' => ['group' => 'documents', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#8b5cf6'],
+        'last-word' => ['group' => 'documents', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#2563eb'],
+        'fancy-heuristics' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#8b5cf6'],
+        'fancy-x-files' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#64748b'],
+        'fancy-cms' => ['group' => 'surfaces', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#0ea5e9'],
+        'laravel-catalog' => ['group' => 'commerce', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#0ea5e9'],
+        'laravel-fms' => ['group' => 'commerce', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#f59e0b'],
+        'laravel-fun-lab' => ['group' => 'commerce', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#f43f5e'],
+        'fancy-mlm' => ['group' => 'commerce', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#14b8a6'],
+        'fancy-mlm-js' => ['group' => 'commerce', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#14b8a6'],
+        'fancy-git' => ['group' => 'tooling', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#f97316'],
+        'fancy-git-js' => ['group' => 'tooling', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#f97316'],
+        // Previously unclassified — these silently fell through to the fallback
+        // and looked like second-class "companions" despite being first-class.
+        'fancy-map' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#10b981'],
+        'fancy-catalog-js' => ['group' => 'commerce', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#0ea5e9'],
+        'fancy-features-js' => ['group' => 'commerce', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#f59e0b'],
         // Git provider adapters — a PHP + Node mirror per host (brand accents).
-        'fancy-git-github-php' => ['group' => 'companion', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#6e5494'],
-        'fancy-git-github-js' => ['group' => 'companion', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#6e5494'],
-        'fancy-git-gitlab-php' => ['group' => 'companion', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#fc6d26'],
-        'fancy-git-gitlab-js' => ['group' => 'companion', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#fc6d26'],
-        'fancy-git-bitbucket-php' => ['group' => 'companion', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#0052cc'],
-        'fancy-git-bitbucket-js' => ['group' => 'companion', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#0052cc'],
+        'fancy-git-github-php' => ['group' => 'tooling', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#6e5494'],
+        'fancy-git-github-js' => ['group' => 'tooling', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#6e5494'],
+        'fancy-git-gitlab-php' => ['group' => 'tooling', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#fc6d26'],
+        'fancy-git-gitlab-js' => ['group' => 'tooling', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#fc6d26'],
+        'fancy-git-bitbucket-php' => ['group' => 'tooling', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#0052cc'],
+        'fancy-git-bitbucket-js' => ['group' => 'tooling', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#0052cc'],
         // Workflow runtime twin, relay transport, shared document core.
-        'fancy-flow-php' => ['group' => 'companion', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#0ea5e9'],
-        'fancy-cf-relay' => ['group' => 'companion', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#f6821f'],
-        'fancy-doc-commons' => ['group' => 'companion', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#2563eb'],
+        'fancy-flow-php' => ['group' => 'surfaces', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#0ea5e9'],
+        'fancy-cf-relay' => ['group' => 'tooling', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#f6821f'],
+        'fancy-doc-commons' => ['group' => 'documents', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#2563eb'],
         // Polyglot single-file client.
-        'mcp-relay-client' => ['group' => 'companion', 'ecosystem' => 'polyglot', 'kind' => 'headless', 'accent' => '#22c55e'],
+        'mcp-relay-client' => ['group' => 'tooling', 'ecosystem' => 'polyglot', 'kind' => 'headless', 'accent' => '#22c55e'],
     ];
 
     /** Fallback classification for any slug missing from {@see META}. */
-    private const META_FALLBACK = ['group' => 'companion', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#8b5cf6'];
+    private const META_FALLBACK = ['group' => 'tooling', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#8b5cf6'];
 
     /**
      * Stamp a package definition with its design classification
@@ -182,7 +187,7 @@ class PackageRegistry
     }
 
     /**
-     * Companion packages — headless / no-UI deps developed alongside the
+     * The no-UI half of the catalog — headless deps developed alongside the
      * Fancy UI kit. holy-sheet + dark-slide are the agentic document writers
      * (xlsx / pptx); the laravel-* trio are composer deps the sandbox develops
      * against. None render a UI surface, so they live in a footnote section on

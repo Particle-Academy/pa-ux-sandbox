@@ -16,23 +16,19 @@ it('emits one merged catalog with the design classification on /packages', funct
             expect($pkgs)->not->toBeEmpty();
             $pkgs->each(function (array $p) {
                 expect($p)->toHaveKeys(['group', 'accent', 'ecosystem', 'kind']);
-                expect($p['group'])->toBeIn(['core', 'human', 'companion']);
+                expect($p['group'])->toBeIn(['core', 'surfaces', 'documents', 'commerce', 'platform', 'tooling']);
                 expect($p['ecosystem'])->toBeIn(['ts', 'php', 'polyglot']);
                 expect($p['kind'])->toBeIn(['ui', 'bridge', 'headless', 'block']);
             });
 
-            // Groups honor the design: react-fancy/fancy-inertia are core; the
-            // headless Core members (fancy-query) are core even though they live
-            // in companions() today; the surfaces are human; the rest companion.
-            expect($pkgs->firstWhere('slug', 'react-fancy')['group'])->toBe('core');
-            expect($pkgs->firstWhere('slug', 'react-fancy')['core'])->toBeTrue();
-            expect($pkgs->firstWhere('slug', 'fancy-inertia')['group'])->toBe('core');
-            expect($pkgs->firstWhere('slug', 'fancy-query')['group'])->toBe('core');
-            expect($pkgs->firstWhere('slug', 'fancy-whiteboard')['group'])->toBe('human');
-            expect($pkgs->firstWhere('slug', 'holy-sheet')['group'])->toBe('companion');
+            // Themes place each card; react-fancy/fancy-inertia/fancy-query now
+            // fold into the Fancy Core family card.
+            expect($pkgs->firstWhere('slug', 'fancy-core')['group'])->toBe('core');
+            expect($pkgs->firstWhere('slug', 'fancy-whiteboard')['group'])->toBe('surfaces');
+            expect($pkgs->firstWhere('slug', 'holy-sheet')['group'])->toBe('documents');
 
             // UI vs headless distinction drives the tile style.
-            expect($pkgs->firstWhere('slug', 'react-fancy')['kind'])->toBe('ui');
+            expect($pkgs->firstWhere('slug', 'fancy-core')['kind'])->toBe('ui');
             expect($pkgs->firstWhere('slug', 'holy-sheet')['kind'])->toBe('headless');
         });
 });

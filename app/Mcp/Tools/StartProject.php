@@ -2,7 +2,7 @@
 
 namespace App\Mcp\Tools;
 
-use App\Support\PackageParity;
+use App\Support\PackageFamily;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
@@ -140,7 +140,7 @@ class StartProject extends Tool
      * Each server-side capability + its current per-language mirror packages.
      * PHP + Node ship today; null = no native mirror yet for that language.
      *
-     * The real parity groups come from {@see PackageParity} — the single source
+     * The real parity groups come from {@see PackageFamily} — the single source
      * of truth shared with the /packages listing — so the two never drift. The
      * php-only baselines below (Node mirror still on the roadmap) are appended
      * here because the listing does not treat a single-language package as a
@@ -151,7 +151,7 @@ class StartProject extends Tool
     private function mirrorPairs(): array
     {
         return [
-            ...PackageParity::mcpPairs(),
+            ...PackageFamily::mcpPairs(),
             ['capability' => 'Server SEO (meta / OG / JSON-LD / sitemap)', 'php' => 'particle-academy/fancy-seo', 'node' => null],
         ];
     }

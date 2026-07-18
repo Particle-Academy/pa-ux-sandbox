@@ -26,10 +26,12 @@ type Pkg = {
     repoUrl: string;
     npmUrl: string | null;
     packagistUrl: string | null;
-    /** True for a consolidated language-mirror card (PHP + Node/TS + …). */
-    parity?: boolean;
-    /** The languages a parity card ships in, e.g. ["PHP", "Node / TypeScript"]. */
+    /** True for a consolidated family card (related packages shown as one). */
+    family?: boolean;
+    /** The languages a family spans, e.g. ["PHP", "Node / TypeScript"]. */
     languages?: string[] | null;
+    /** How many packages the family contains. */
+    member_count?: number;
 };
 
 type KindFilter = "all" | "ui" | "headless";
@@ -209,13 +211,15 @@ function PreviewTile({ pkg }: { pkg: Pkg }) {
                 <div className="pkg-tile__foot">
                     <span style={{ display: "inline-flex", alignItems: "center", gap: 10 }}>
                         <span>
-                            {pkg.components_count > 0
-                                ? `${pkg.components_count} component${pkg.components_count === 1 ? "" : "s"}`
-                                : pkg.kind === "bridge" ? "bridge" : "surface"}
+                            {pkg.family
+                                ? `${pkg.member_count ?? 0} packages`
+                                : pkg.components_count > 0
+                                    ? `${pkg.components_count} component${pkg.components_count === 1 ? "" : "s"}`
+                                    : pkg.kind === "bridge" ? "bridge" : "surface"}
                         </span>
                         <Stars count={pkg.stars} />
                     </span>
-                    <span className="pkg-tile__explore">Explore →</span>
+                    <span className="pkg-tile__explore">{pkg.family ? "Explore family →" : "Explore →"}</span>
                 </div>
             </div>
         </Link>
@@ -439,7 +443,7 @@ function HeadlessTile({ pkg }: { pkg: Pkg }) {
                         {ECO_LABEL[pkg.ecosystem]}
                     </span>
                 </div>
-                {pkg.parity ? (
+                {pkg.family ? (
                     // A language-mirror capability — show the languages it ships
                     // in, not a single install line (each mirror installs its own
                     // way; the detail page has a per-language card for each).
@@ -450,7 +454,7 @@ function HeadlessTile({ pkg }: { pkg: Pkg }) {
                             </span>
                         ))}
                         <span style={{ fontSize: 11, color: "var(--fg-3)", fontWeight: 500 }}>
-                            {(pkg.languages ?? []).length} languages · one API
+                            {pkg.member_count ?? 0} packages · one product
                         </span>
                     </div>
                 ) : (
@@ -464,10 +468,10 @@ function HeadlessTile({ pkg }: { pkg: Pkg }) {
                 <p className="pkg-tile__tagline">{pkg.tagline}</p>
                 <div className="pkg-links">
                     <span className="pkg-tile__explore" style={{ opacity: 1, color: "color-mix(in oklch, var(--accent) 80%, var(--fg-1))" }}>
-                        {pkg.parity ? "Compare languages →" : "Docs →"}
+                        {pkg.family ? "Compare languages →" : "Docs →"}
                     </span>
                     <Stars count={pkg.stars} />
-                    {!pkg.parity && (
+                    {!pkg.family && (
                         <>
                             <a className="pkg-link" href={pkg.repoUrl} target="_blank" rel="noreferrer">GitHub →</a>
                             {pkg.npmUrl && <a className="pkg-link" href={pkg.npmUrl} target="_blank" rel="noreferrer">npm →</a>}

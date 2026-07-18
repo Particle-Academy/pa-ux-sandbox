@@ -5,7 +5,7 @@ import { Layout } from "../Layout";
 import { ContextCards } from "./ContextCards";
 import { Prose } from "./Prose";
 
-/** One language mirror of a parity capability. */
+/** One package inside a family. */
 type Member = {
     language: string;
     slug: string;
@@ -15,13 +15,17 @@ type Member = {
     npm: string | null;
     composer: string | null;
     install: string | null;
+    components_count: number;
     stars: number | null;
     repoUrl: string | null;
     npmUrl: string | null;
     packagistUrl: string | null;
 };
 
-type Group = { slug: string; name: string; tagline: string; members: Member[] };
+/** A labelled group of members — Engine, React UI, GitHub provider, … */
+type Section = { label: string; capability: string | null; members: Member[] };
+
+type Family = { slug: string; name: string; tagline: string; sections: Section[] };
 type Context = { why: string; what: string; how: string };
 
 const ECO_LABEL: Record<Member["ecosystem"], string> = { ts: "TS", php: "PHP", polyglot: "Poly" };
@@ -34,52 +38,67 @@ function initials(name: string): string {
     return ((parts[0]?.[0] ?? "") + (parts[1]?.[0] ?? parts[0]?.[1] ?? "")).toUpperCase();
 }
 
-export default function PackagesParity({
-    group,
+export default function PackagesFamily({
+    family,
     context,
     readmeHtml = null,
 }: {
-    group: Group;
+    family: Family;
     context: Context | null;
     readmeHtml?: string | null;
 }) {
+    const members = family.sections.flatMap((s) => s.members);
+    const languages = [...new Set(members.map((m) => m.language))];
+
     return (
         <Layout>
-            <Seo title={`${group.name} — every language`} description={group.tagline} />
+            <Seo title={family.name} description={family.tagline} />
 
             <Breadcrumbs>
                 <Breadcrumbs.Item href="/packages">Packages</Breadcrumbs.Item>
-                <Breadcrumbs.Item>{group.name}</Breadcrumbs.Item>
+                <Breadcrumbs.Item>{family.name}</Breadcrumbs.Item>
             </Breadcrumbs>
 
             <div style={{ "--accent": ACCENT } as CSSProperties}>
                 {/* ── Hero ─────────────────────────────────────────────── */}
                 <header className="pkg-hero">
-                    <span className="pkg-glyph pkg-hero__glyph">{initials(group.name)}</span>
+                    <span className="pkg-glyph pkg-hero__glyph">{initials(family.name)}</span>
                     <div className="pkg-hero__main">
-                        <h1 className="pkg-hero__name">{group.name}</h1>
-                        <p className="pkg-hero__tagline">{group.tagline}</p>
+                        <h1 className="pkg-hero__name">{family.name}</h1>
+                        <p className="pkg-hero__tagline">{family.tagline}</p>
                         <div className="pkg-hero__meta">
-                            <span className="pkg-eco" data-eco="polyglot">Poly</span>
-                            <span className="pkg-kind">
-                                One capability · {group.members.length} language{group.members.length === 1 ? "" : "s"}
+                            <span className="pkg-eco" data-eco={languages.length > 1 ? "polyglot" : "ts"}>
+                                {languages.length > 1 ? "Poly" : ECO_LABEL[members[0]?.ecosystem ?? "ts"]}
                             </span>
+                            <span className="pkg-kind">
+                                {members.length} package{members.length === 1 ? "" : "s"} · one product
+                            </span>
+                            {languages.map((l) => (
+                                <span key={l} className="pkg-meta-chip">{l}</span>
+                            ))}
                         </div>
                     </div>
                 </header>
 
-                {/* ── Why one page ─────────────────────────────────────── */}
-                <p className="mt-2 text-sm text-[var(--fg-3)]" style={{ maxWidth: "64ch" }}>
-                    The same headless capability, offered as a native package per language — an identical model and API, so
-                    you pick your stack and get the same behavior. More languages are on the way.
+                <p className="mt-2 text-sm text-[var(--fg-3)]" style={{ maxWidth: "68ch" }}>
+                    Everything in this family ships against one shared contract — install only the pieces your stack
+                    needs. Language mirrors behave identically, so you pick your backend and get the same product.
                 </p>
 
-                {/* ── Per-language install cards ────────────────────────── */}
-                <div className="mt-6 grid gap-4 sm:grid-cols-2">
-                    {group.members.map((m) => (
-                        <LanguageCard key={m.slug} member={m} />
-                    ))}
-                </div>
+                {/* ── Sections ─────────────────────────────────────────── */}
+                {family.sections.map((section) => (
+                    <section key={section.label} className="mt-8">
+                        <div className="pkg-section-head">
+                            <h2>{section.label}</h2>
+                            {section.capability && <p>{section.capability}</p>}
+                        </div>
+                        <div className="grid gap-4 sm:grid-cols-2">
+                            {section.members.map((m) => (
+                                <MemberCard key={m.slug} member={m} />
+                            ))}
+                        </div>
+                    </section>
+                ))}
 
                 {/* ── Why / What / How ─────────────────────────────────── */}
                 {context && (
@@ -88,7 +107,7 @@ export default function PackagesParity({
                     </div>
                 )}
 
-                {/* ── Shared docs (canonical README) ────────────────────── */}
+                {/* ── Shared docs ──────────────────────────────────────── */}
                 {readmeHtml && (
                     <div className="mt-10 fancy-card overflow-hidden">
                         <div className="flex items-center gap-2 border-b border-[var(--border-1)] px-4 py-2.5">
@@ -107,8 +126,8 @@ export default function PackagesParity({
     );
 }
 
-/** A single language's install + links — one card per mirror. */
-function LanguageCard({ member: m }: { member: Member }) {
+/** One package in the family — install command + links. */
+function MemberCard({ member: m }: { member: Member }) {
     const [copied, setCopied] = useState(false);
     const id = m.npm ?? m.composer ?? m.name;
 
@@ -126,6 +145,9 @@ function LanguageCard({ member: m }: { member: Member }) {
                 <span className="pkg-eco" data-eco={m.ecosystem}>{ECO_LABEL[m.ecosystem]}</span>
                 <span className="font-semibold text-[var(--fg-1)]">{m.language}</span>
                 <span className="flex-1" />
+                {m.components_count > 0 && (
+                    <span className="text-xs text-[var(--fg-3)]">{m.components_count} components</span>
+                )}
                 {m.stars != null && (
                     <span
                         title={`${m.stars.toLocaleString()} GitHub stars`}
@@ -147,7 +169,11 @@ function LanguageCard({ member: m }: { member: Member }) {
                 </div>
             )}
 
-            <div className="mt-auto flex flex-wrap items-center gap-x-4 gap-y-1 px-4 pb-3 pt-1 text-xs">
+            {m.tagline && (
+                <p className="px-4 pt-1 text-xs leading-relaxed text-[var(--fg-3)]">{m.tagline}</p>
+            )}
+
+            <div className="mt-auto flex flex-wrap items-center gap-x-4 gap-y-1 px-4 pb-3 pt-2 text-xs">
                 {m.repoUrl && <a className="pkg-link" href={m.repoUrl} target="_blank" rel="noreferrer">GitHub →</a>}
                 {m.npmUrl && <a className="pkg-link" href={m.npmUrl} target="_blank" rel="noreferrer">npm →</a>}
                 {m.packagistUrl && <a className="pkg-link" href={m.packagistUrl} target="_blank" rel="noreferrer">Packagist →</a>}

@@ -32,7 +32,7 @@ The installed packages:
 - `@particle-academy/fancy-echarts` — ECharts wrapper
 - `@particle-academy/fancy-code` — embedded code editor
 - `@particle-academy/fancy-sheets` — spreadsheet workbook
-- `@particle-academy/fancy-flow` (+ `/runtime`) — React Flow workflow editor
+- `@particle-academy/fancy-flow` (+ `/engine`, `/runtime`) — headless workflow engine + React Flow editor. `/engine` runs a graph with **zero React** (server / worker / CLI); the editor is only for designing. PHP backend twin: `particle-academy/fancy-flow-php`.
 - `@particle-academy/fancy-slides` (+ `/registry`) — presentation editor + viewer
 - `@particle-academy/fancy-screens` — screen registry + cross-screen presence (consumers bring their own Zustand store)
 - `@particle-academy/fancy-whiteboard` — collaborative whiteboard canvas

@@ -60,7 +60,12 @@ class PackagesController extends Controller
      */
     private function presentParityCard(array $group, array $stars = []): array
     {
-        $canonical = PackageRegistry::findAny($group['slug']) ?? [];
+        // A group's canonical slug is usually its PHP member, but it can be a
+        // language-neutral slug that is not itself a package (e.g.
+        // `fancy-git-github`) — fall back to the first member for styling.
+        $canonical = PackageRegistry::findAny($group['slug'])
+            ?? PackageRegistry::findAny($group['members'][0]['slug'] ?? '')
+            ?? [];
         $languages = array_map(static fn (array $m): string => $m['language'], $group['members']);
 
         $starCount = null;
@@ -196,9 +201,19 @@ class PackagesController extends Controller
             ];
         }, $group['members']);
 
-        // The mirrors share one model / API, so render the canonical member's
-        // README once as the group's documentation (null if none installed).
-        $canonical = PackageRegistry::findAny($group['slug']) ?? [];
+        // The mirrors share one model / API, so render ONE README as the group's
+        // documentation — the first member that ships one (PHP first).
+        $readmeHtml = null;
+        foreach ($group['members'] as $member) {
+            $record = PackageRegistry::findAny($member['slug']);
+            if ($record === null) {
+                continue;
+            }
+            $readmeHtml = $this->readmeHtmlFor($record);
+            if ($readmeHtml !== null) {
+                break;
+            }
+        }
 
         return Inertia::render('Packages/Parity', [
             'group' => [
@@ -208,7 +223,7 @@ class PackagesController extends Controller
                 'members' => $members,
             ],
             'context' => PackageContext::find($group['slug']),
-            'readmeHtml' => $this->readmeHtmlFor($canonical),
+            'readmeHtml' => $readmeHtml,
         ]);
     }
 

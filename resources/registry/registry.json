@@ -1,6 +1,6 @@
 {
     "$schema": "https://ui.particle.academy/schema/registry-compiled.json",
-    "count": 234,
+    "count": 243,
     "items": [
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
@@ -2230,6 +2230,17 @@
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "fancy-cf-relay",
+            "type": "registry:ui",
+            "title": "@particle-academy/fancy-cf-relay",
+            "description": "CDN-safe browser relay channel for agent-integrations' RelayTransport. Adaptive SSE\u2194long-poll with Cloudflare detection, so the MCP relay survives a Cloudflare/HTTP-3 edge that resets long-lived SSE streams. Zero runtime deps.",
+            "package": "fancy-cf-relay",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
             "name": "fancy-cli",
             "type": "registry:ui",
             "title": "fancy-cli",
@@ -2275,6 +2286,17 @@
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "fancy-doc-commons",
+            "type": "registry:ui",
+            "title": "@particle-academy/fancy-doc-commons",
+            "description": "Shared pure core for the Fancy document/surface packages \u2014 the model an agent or human emits and edits. Flat node-tree + collab-safe fractional ordering, a typed op-spine contract (reduce + invert), an infinite-canvas primitive, and a surface-agnostic staged-write (accept/reject) model. Zero dependencies, no React.",
+            "package": "fancy-doc-commons",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
             "name": "fancy-features-js",
             "type": "registry:ui",
             "title": "@particle-academy/fancy-features",
@@ -2300,8 +2322,19 @@
             "name": "fancy-flow",
             "type": "registry:ui",
             "title": "fancy-flow",
-            "description": "Workflow editor + runner on top of React Flow \u2014 six node kits, topological executor, headless engine, and a FlowRunnerUx flow\u2192UX bridge.",
+            "description": "Headless workflow engine + an optional React Flow editor \u2014 six node kits, topological executor, and a FlowRunnerUx flow\u2192UX bridge. The editor designs graphs; `/engine` runs them with zero React on a server, worker, or CLI (PHP twin: fancy-flow-php).",
             "package": "fancy-flow",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "fancy-flow-php",
+            "type": "registry:ui",
+            "title": "particle-academy/fancy-flow-php",
+            "description": "PHP runtime for fancy-flow workflow graphs \u2014 the framework-free twin of @particle-academy/fancy-flow's engine. Same WorkflowSchema JSON in, same outputs out; author in <FlowEditor>, run on PHP. Adds a Laravel layer: queued durable runs with resume-from-checkpoint, human approval + user_input pauses, and an agent node. Headless; no UI.",
+            "package": "fancy-flow-php",
             "dependencies": [],
             "registryDependencies": [],
             "files": []
@@ -2313,6 +2346,72 @@
             "title": "particle-academy/fancy-git",
             "description": "Framework-agnostic PHP Git engine with normalized provider contracts and proposal-first mutations.",
             "package": "fancy-git",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "fancy-git-bitbucket-js",
+            "type": "registry:ui",
+            "title": "@particle-academy/fancy-git-bitbucket",
+            "description": "Bitbucket Cloud adapter for @particle-academy/fancy-git.",
+            "package": "fancy-git-bitbucket-js",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "fancy-git-bitbucket-php",
+            "type": "registry:ui",
+            "title": "particle-academy/fancy-git-bitbucket",
+            "description": "Bitbucket Cloud adapter for particle-academy/fancy-git.",
+            "package": "fancy-git-bitbucket-php",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "fancy-git-github-js",
+            "type": "registry:ui",
+            "title": "@particle-academy/fancy-git-github",
+            "description": "GitHub.com and GitHub Enterprise adapter for @particle-academy/fancy-git.",
+            "package": "fancy-git-github-js",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "fancy-git-github-php",
+            "type": "registry:ui",
+            "title": "particle-academy/fancy-git-github",
+            "description": "GitHub.com and GitHub Enterprise adapter for particle-academy/fancy-git.",
+            "package": "fancy-git-github-php",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "fancy-git-gitlab-js",
+            "type": "registry:ui",
+            "title": "@particle-academy/fancy-git-gitlab",
+            "description": "GitLab.com and GitLab Self-Managed adapter for @particle-academy/fancy-git.",
+            "package": "fancy-git-gitlab-js",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "fancy-git-gitlab-php",
+            "type": "registry:ui",
+            "title": "particle-academy/fancy-git-gitlab",
+            "description": "GitLab.com and Self-Managed adapter for particle-academy/fancy-git.",
+            "package": "fancy-git-gitlab-php",
             "dependencies": [],
             "registryDependencies": [],
             "files": []

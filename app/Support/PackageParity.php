@@ -101,6 +101,36 @@ final class PackageParity
             ],
         ],
         [
+            'slug' => 'fancy-git-github',
+            'name' => 'Fancy Git — GitHub',
+            'capability' => 'GitHub.com / GitHub Enterprise provider adapter',
+            'tagline' => 'GitHub.com and GitHub Enterprise adapter for the Fancy Git engine, behind its normalized provider contract.',
+            'members' => [
+                ['language' => 'PHP', 'slug' => 'fancy-git-github-php'],
+                ['language' => 'Node / TypeScript', 'slug' => 'fancy-git-github-js'],
+            ],
+        ],
+        [
+            'slug' => 'fancy-git-gitlab',
+            'name' => 'Fancy Git — GitLab',
+            'capability' => 'GitLab.com / Self-Managed provider adapter',
+            'tagline' => 'GitLab.com and GitLab Self-Managed adapter for the Fancy Git engine, behind its normalized provider contract.',
+            'members' => [
+                ['language' => 'PHP', 'slug' => 'fancy-git-gitlab-php'],
+                ['language' => 'Node / TypeScript', 'slug' => 'fancy-git-gitlab-js'],
+            ],
+        ],
+        [
+            'slug' => 'fancy-git-bitbucket',
+            'name' => 'Fancy Git — Bitbucket',
+            'capability' => 'Bitbucket Cloud provider adapter',
+            'tagline' => 'Bitbucket Cloud adapter for the Fancy Git engine, behind its normalized provider contract.',
+            'members' => [
+                ['language' => 'PHP', 'slug' => 'fancy-git-bitbucket-php'],
+                ['language' => 'Node / TypeScript', 'slug' => 'fancy-git-bitbucket-js'],
+            ],
+        ],
+        [
             'slug' => 'fancy-heuristics',
             'name' => 'Fancy Heuristics',
             'capability' => 'Interaction analytics (EUO)',

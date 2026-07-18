@@ -113,6 +113,7 @@ class PackagesController extends Controller
             'family' => true,
             'languages' => $languages,
             'member_count' => count($slugs),
+            'members' => $slugs,
         ];
     }
 

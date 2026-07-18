@@ -32,6 +32,8 @@ type Pkg = {
     languages?: string[] | null;
     /** How many packages the family contains. */
     member_count?: number;
+    /** The family's member slugs, in declaration order. */
+    members?: string[];
 };
 
 type KindFilter = "all" | "ui" | "headless";
@@ -99,9 +101,13 @@ export default function PackagesIndex({ packages }: { packages: Pkg[] }) {
         });
     }, [packages, query, kind, eco]);
 
-    const groups = GROUP_ORDER.map((g) => {
+    // Core is a single "start here" bundle, so it gets a full-width featured
+    // band instead of a section header + blurb wrapped around one lonely tile.
+    const featured = filtered.filter((p) => p.group === "core");
+
+    const groups = GROUP_ORDER.filter((g) => g !== "core").map((g) => {
         // Every section lists alphabetically by slug (the clean, de-scoped id),
-        // so the catalog is scannable A→Z within each tier.
+        // so the catalog is scannable A→Z within each theme.
         const items = filtered
             .filter((p) => p.group === g)
             .sort((a, b) => a.slug.localeCompare(b.slug));
@@ -166,7 +172,11 @@ export default function PackagesIndex({ packages }: { packages: Pkg[] }) {
                 </div>
             </div>
 
-            {groups.length === 0 ? (
+            {featured.map((p) => (
+                <CoreHero key={p.slug} pkg={p} />
+            ))}
+
+            {groups.length === 0 && featured.length === 0 ? (
                 <div className="pkgs-empty">
                     No packages match <b>{query || `${kind}/${eco}`}</b>. Try clearing a filter.
                 </div>
@@ -191,6 +201,81 @@ export default function PackagesIndex({ packages }: { packages: Pkg[] }) {
                 ))
             )}
         </Layout>
+    );
+}
+
+/**
+ * The Core bundle — the one set every app starts from, so it leads the page as
+ * a full-width hero rather than a lone tile in an otherwise-empty grid.
+ */
+function CoreHero({ pkg }: { pkg: Pkg }) {
+    return (
+        <Link
+            href={`/packages/${pkg.slug}`}
+            className="pkg-tile pkg-hero-tile"
+            style={{
+                "--accent": pkg.accent,
+                display: "flex",
+                flexDirection: "column",
+                marginBottom: 32,
+                overflow: "hidden",
+            } as CSSProperties}
+        >
+            <div className="flex flex-col md:flex-row md:items-stretch">
+                <div className="pkg-tile__preview" style={{ flex: "0 0 40%", minHeight: 200 }}>
+                    <PkgPreview slug={pkg.slug} />
+                </div>
+                <div className="pkg-tile__body" style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", gap: 10 }}>
+                    <span
+                        style={{
+                            alignSelf: "flex-start",
+                            fontSize: 10.5,
+                            fontWeight: 700,
+                            letterSpacing: "0.08em",
+                            textTransform: "uppercase",
+                            color: "color-mix(in oklch, var(--accent) 85%, var(--fg-1))",
+                            border: "1px solid color-mix(in oklch, var(--accent) 35%, transparent)",
+                            borderRadius: 999,
+                            padding: "3px 10px",
+                        }}
+                    >
+                        Start here
+                    </span>
+
+                    <h3 className="pkg-tile__name" style={{ fontSize: 22, lineHeight: 1.2 }}>{pkg.name}</h3>
+                    <p className="pkg-tile__tagline" style={{ WebkitLineClamp: "unset", fontSize: 13.5 }}>{pkg.tagline}</p>
+
+                    {(pkg.members ?? []).length > 0 && (
+                        <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: 2 }}>
+                            {(pkg.members ?? []).map((m) => (
+                                <span
+                                    key={m}
+                                    style={{
+                                        fontFamily: "var(--font-mono)",
+                                        fontSize: 11,
+                                        padding: "3px 8px",
+                                        borderRadius: 6,
+                                        background: "var(--bg-2)",
+                                        border: "1px solid var(--border-1)",
+                                        color: "var(--fg-2)",
+                                    }}
+                                >
+                                    {m}
+                                </span>
+                            ))}
+                        </div>
+                    )}
+
+                    <div className="pkg-tile__foot" style={{ marginTop: 4 }}>
+                        <span style={{ display: "inline-flex", alignItems: "center", gap: 10 }}>
+                            <span>{pkg.member_count ?? 0} packages</span>
+                            <Stars count={pkg.stars} />
+                        </span>
+                        <span className="pkg-tile__explore" style={{ opacity: 1 }}>Explore Fancy Core →</span>
+                    </div>
+                </div>
+            </div>
+        </Link>
     );
 }
 

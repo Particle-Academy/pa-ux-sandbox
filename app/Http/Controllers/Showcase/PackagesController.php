@@ -110,6 +110,7 @@ class PackagesController extends Controller
             'repoUrl' => null,
             'npmUrl' => null,
             'packagistUrl' => null,
+            'href' => "/packages/family/{$family['slug']}",
             'family' => true,
             'languages' => $languages,
             'member_count' => count($slugs),
@@ -146,6 +147,7 @@ class PackagesController extends Controller
             'repoUrl' => isset($p['repo']) ? "https://github.com/{$p['repo']}" : null,
             'npmUrl' => isset($p['npm']) ? "https://www.npmjs.com/package/{$p['npm']}" : null,
             'packagistUrl' => isset($p['packagist']) ? "https://packagist.org/packages/{$p['packagist']}" : null,
+            'href' => "/packages/{$p['slug']}",
             'family' => false,
             'languages' => null,
             'member_count' => 1,
@@ -154,19 +156,13 @@ class PackagesController extends Controller
 
     public function show(string $package): Response|RedirectResponse
     {
-        // Related packages get ONE page: the family slug renders the family
-        // page. A member slug 301s to it — UNLESS that member ships its own
-        // components, in which case it keeps its page so the live per-component
-        // demos (react-fancy's ~50 primitives, the surfaces) stay reachable;
-        // the family page links to it.
-        if ($family = PackageFamily::find($package)) {
-            if ($package !== $family['slug']) {
-                if (! $this->memberKeepsOwnPage(PackageRegistry::findAny($package))) {
-                    return redirect()->route('packages.show', $family['slug'], 301);
-                }
-            } else {
-                return $this->family($family);
-            }
+        // Families render at /packages/family/{slug}, so a package slug that is
+        // ALSO a family slug (fancy-3d, fancy-flow, holy-sheet, …) still serves
+        // its own page here — with its component demos, previews and props.
+        // Only a member with nothing of its own to show is sent to the family.
+        $family = PackageFamily::find($package);
+        if ($family !== null && ! $this->memberKeepsOwnPage(PackageRegistry::findAny($package))) {
+            return redirect()->route('packages.family', $family['slug'], 301);
         }
 
         // findAny() also resolves the headless packages (fancy-query,
@@ -186,6 +182,12 @@ class PackagesController extends Controller
             'package' => $pkg,
             'context' => PackageContext::find($pkg['slug']),
             'readmeHtml' => $readmeHtml,
+            // So a member page can point back at the product it belongs to.
+            'family' => $family === null ? null : [
+                'slug' => $family['slug'],
+                'name' => $family['name'],
+                'href' => "/packages/family/{$family['slug']}",
+            ],
         ]);
     }
 
@@ -193,11 +195,12 @@ class PackagesController extends Controller
      * Render the family page — every related package in one place, grouped by
      * the family's labelled sections (Engine / React UI / GitHub provider / …),
      * each member carrying its own install command and links.
-     *
-     * @param  array<string, mixed>  $family
      */
-    private function family(array $family): Response
+    public function family(string $family): Response
     {
+        $family = PackageFamily::find($family);
+        abort_if($family === null, 404);
+
         $stars = GithubRepoStat::starMap();
 
         $sections = array_map(fn (array $section): array => [

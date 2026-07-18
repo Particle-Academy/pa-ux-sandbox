@@ -79,6 +79,37 @@ it('folds related packages into one family card on /packages', function () {
         });
 });
 
+it('never lets a family slug swallow a package page', function () {
+    // fancy-3d / fancy-flow are BOTH a family slug and a real package. The
+    // package page must still serve its own component demos + props.
+    foreach (['fancy-3d', 'fancy-flow'] as $slug) {
+        $this->get("/packages/{$slug}")
+            ->assertOk()
+            ->assertInertia(fn ($page) => $page->component('Packages/Show'));
+    }
+
+    // …and the family lives on its own path, so nothing collides.
+    $this->get('/packages/family/fancy-3d')
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page->component('Packages/Family'));
+});
+
+it('links every family member that has its own page', function () {
+    $this->get('/packages/family/fancy-3d')
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->where('family.sections', function ($sections) {
+                $members = collect($sections)->flatMap(fn ($s) => $s['members']);
+                // Each member with demos links to its OWN page, never back here.
+                foreach (['fancy-3d', 'fancy-3d-babylon', 'fancy-3d-three'] as $slug) {
+                    expect($members->firstWhere('slug', $slug)['href'])->toBe("/packages/{$slug}");
+                }
+
+                return true;
+            })
+        );
+});
+
 it('routes a family member by whether it has content of its own', function () {
     // Ships component demos — grouping must NEVER bury these.
     foreach (['fancy-git-ui', 'fancy-3d-babylon', 'fancy-3d-three', 'fancy-cms-ui', 'fancy-mlm-ui', 'fancy-x-files-ui'] as $ui) {
@@ -88,11 +119,13 @@ it('routes a family member by whether it has content of its own', function () {
     }
 
     // No components and no shipped README — a thin stub, so it folds in.
-    $this->get('/packages/fancy-git-github-php')->assertRedirect('/packages/fancy-git');
+    $this->get('/packages/fancy-git-github-php')->assertRedirect('/packages/family/fancy-git');
+    // A family slug that is not itself a package resolves to the family page.
+    $this->get('/packages/fancy-core')->assertRedirect('/packages/family/fancy-core');
 });
 
 it('renders the family page with a section per role', function () {
-    $this->get('/packages/fancy-git')
+    $this->get('/packages/family/fancy-git')
         ->assertOk()
         ->assertInertia(fn ($page) => $page
             ->component('Packages/Family')
@@ -128,7 +161,7 @@ it('keeps a member page when it has real content, and folds the thin ones', func
         ->assertInertia(fn ($page) => $page->component('Packages/Show'));
 
     // The family page links out to the members that kept a page.
-    $this->get('/packages/fancy-core')
+    $this->get('/packages/family/fancy-core')
         ->assertOk()
         ->assertInertia(fn ($page) => $page
             ->component('Packages/Family')

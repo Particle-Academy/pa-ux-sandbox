@@ -169,6 +169,10 @@ Route::get('/cms/home', fn (HomeController $home) => Inertia::render('CmsHome', 
 
 Route::middleware(TrackPackageBrowsing::class)->group(function () {
     Route::get('/packages', [PackagesController::class, 'index'])->name('packages.index');
+    // Families live on their OWN path so a family slug can never collide with a
+    // member's package slug (fancy-3d, fancy-flow, … are both). Must be
+    // declared before /packages/{package}/{component}, which is also 3 segments.
+    Route::get('/packages/family/{family}', [PackagesController::class, 'family'])->name('packages.family');
     Route::get('/packages/{package}', [PackagesController::class, 'show'])->name('packages.show');
     Route::get('/packages/{package}/{component}', [PackagesController::class, 'component'])->name('packages.component');
 });

@@ -34,6 +34,8 @@ type Pkg = {
     member_count?: number;
     /** The family's member slugs, in declaration order. */
     members?: string[];
+    /** Where this card links — a package page, or the family page. */
+    href: string;
 };
 
 type KindFilter = "all" | "ui" | "headless";
@@ -211,7 +213,7 @@ export default function PackagesIndex({ packages }: { packages: Pkg[] }) {
 function CoreHero({ pkg }: { pkg: Pkg }) {
     return (
         <Link
-            href={`/packages/${pkg.slug}`}
+            href={pkg.href}
             className="pkg-tile pkg-hero-tile"
             style={{
                 "--accent": pkg.accent,
@@ -297,7 +299,7 @@ function Stars({ count }: { count: number | null }) {
 /** UI / bridge package → preview tile (mini visual + Explore →). */
 function PreviewTile({ pkg }: { pkg: Pkg }) {
     return (
-        <Link href={`/packages/${pkg.slug}`} className="pkg-tile" style={{ "--accent": pkg.accent } as CSSProperties}>
+        <Link href={pkg.href} className="pkg-tile" style={{ "--accent": pkg.accent } as CSSProperties}>
             <PreviewVisual pkg={pkg} />
             <div className="pkg-tile__body">
                 <div className="pkg-tile__row">
@@ -531,7 +533,7 @@ function HeadlessTile({ pkg }: { pkg: Pkg }) {
                 them → invalid HTML the browser un-nests → React #418 hydration
                 mismatch. This overlay covers the tile; the external links sit
                 above it via z-index (.pkg-link). */}
-            <Link href={`/packages/${pkg.slug}`} className="pkg-tile__stretch" aria-label={pkg.name} />
+            <Link href={pkg.href} className="pkg-tile__stretch" aria-label={pkg.name} />
             <div className="pkg-tile__body">
                 <div className="pkg-tile__head">
                     <span className="pkg-glyph">{initials(pkg.name)}</span>

@@ -81,10 +81,12 @@ export default function PackagesShow({
     package: pkg,
     context,
     readmeHtml = null,
+    family = null,
 }: {
     package: Pkg;
     context: Context | null;
     readmeHtml?: string | null;
+    family?: { slug: string; name: string; href: string } | null;
 }) {
     const accent = pkg.accent ?? "#8b5cf6";
     const eco = pkg.ecosystem ?? (pkg.language === "PHP" ? "php" : "ts");
@@ -98,6 +100,7 @@ export default function PackagesShow({
 
             <Breadcrumbs>
                 <Breadcrumbs.Item href="/packages">Packages</Breadcrumbs.Item>
+                {family && <Breadcrumbs.Item href={family.href}>{family.name}</Breadcrumbs.Item>}
                 <Breadcrumbs.Item>{pkg.name}</Breadcrumbs.Item>
             </Breadcrumbs>
 

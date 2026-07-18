@@ -10,8 +10,9 @@ namespace App\Support;
  * A capability rarely ships as a single package: it has a PHP core and a Node
  * mirror, a React UI companion, per-host provider adapters, a headless backend.
  * Listing each as its own tile buries the product. So a family lists as ONE
- * card and gets ONE page at /packages/{slug}, with every member slug resolving
- * there.
+ * card and gets ONE page at /packages/family/{slug} — its OWN path, because a
+ * family slug is usually also a member's package slug (fancy-3d, fancy-flow, …)
+ * and must never shadow that package's page.
  *
  * Members live in ordered, labelled `sections` (Engine / React UI / GitHub
  * provider / …). A section that represents the SAME capability offered in more
@@ -19,8 +20,9 @@ namespace App\Support;
  * {@see mcpPairs()} feeds to the MCP start_project mirror strategy — so the
  * listing and the MCP agent guidance stay derived from this one table.
  *
- * `group`/`kind` place the family card in the listing (a family headlined by a
- * UI surface stays in the Human+ tier and keeps its preview tile). Member facts
+ * `group`/`kind` place the family card in the listing (`group` is a THEME —
+ * core / surfaces / documents / commerce / platform / tooling — so a family
+ * headlined by a UI surface lands in Surfaces with a preview tile). Member facts
  * — name, install id, repo — are NOT duplicated here; they come from
  * {@see PackageRegistry} by slug.
  */
@@ -36,7 +38,7 @@ final class PackageFamily
         [
             'slug' => 'fancy-core',
             'name' => 'Fancy Core',
-            'tagline' => 'The stack every Fancy app starts from — the React primitives, the Laravel/Inertia bridge, server-state, a new-build detector, and the agent backbone that makes the whole UI agent-driveable.',
+            'tagline' => 'The stack every Fancy app starts from — the React primitives, the Inertia bridge (any Inertia backend, not just Laravel), server-state, a new-build detector, and the agent backbone that makes the whole UI agent-driveable.',
             'group' => 'core',
             'kind' => 'ui',
             'sections' => [
@@ -46,7 +48,7 @@ final class PackageFamily
                     'members' => [['language' => 'React', 'slug' => 'react-fancy']],
                 ],
                 [
-                    'label' => 'Laravel + Inertia',
+                    'label' => 'Inertia bridge + server-state',
                     'capability' => null,
                     'members' => [
                         ['language' => 'React', 'slug' => 'fancy-inertia'],

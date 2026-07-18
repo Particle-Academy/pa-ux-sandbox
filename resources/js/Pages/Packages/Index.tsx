@@ -78,6 +78,12 @@ function initials(name: string): string {
     return ((parts[0]?.[0] ?? "") + (parts[1]?.[0] ?? parts[0]?.[1] ?? "")).toUpperCase();
 }
 
+/** Tile title — de-scoped so "@particle-academy/x" reads as "x" beside the
+ *  family display names, instead of a ragged mix of both. */
+function displayName(p: Pkg): string {
+    return p.family ? p.name : p.name.replace(/^@?particle-academy\//, "");
+}
+
 function installCmd(p: Pkg): string {
     if (p.npm) return `npm install ${p.npm}`;
     if (p.composer) return `composer require ${p.composer}`;
@@ -303,7 +309,7 @@ function PreviewTile({ pkg }: { pkg: Pkg }) {
             <PreviewVisual pkg={pkg} />
             <div className="pkg-tile__body">
                 <div className="pkg-tile__row">
-                    <h3 className="pkg-tile__name">{pkg.name}</h3>
+                    <h3 className="pkg-tile__name">{displayName(pkg)}</h3>
                     <span className="pkg-eco" data-eco={pkg.ecosystem}>{ECO_LABEL[pkg.ecosystem]}</span>
                 </div>
                 <p className="pkg-tile__tagline">{pkg.tagline}</p>
@@ -538,7 +544,7 @@ function HeadlessTile({ pkg }: { pkg: Pkg }) {
                 <div className="pkg-tile__head">
                     <span className="pkg-glyph">{initials(pkg.name)}</span>
                     <div className="min-w-0">
-                        <h3 className="pkg-tile__name">{pkg.name}</h3>
+                        <h3 className="pkg-tile__name">{displayName(pkg)}</h3>
                     </div>
                     <span className="pkg-eco" data-eco={pkg.ecosystem} style={{ marginLeft: "auto" }}>
                         {ECO_LABEL[pkg.ecosystem]}
@@ -569,7 +575,7 @@ function HeadlessTile({ pkg }: { pkg: Pkg }) {
                 <p className="pkg-tile__tagline">{pkg.tagline}</p>
                 <div className="pkg-links">
                     <span className="pkg-tile__explore" style={{ opacity: 1, color: "color-mix(in oklch, var(--accent) 80%, var(--fg-1))" }}>
-                        {pkg.family ? "Compare languages →" : "Docs →"}
+                        {pkg.family ? "Explore family →" : "Docs →"}
                     </span>
                     <Stars count={pkg.stars} />
                     {!pkg.family && (

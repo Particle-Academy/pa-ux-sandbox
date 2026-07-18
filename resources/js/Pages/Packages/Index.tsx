@@ -289,7 +289,8 @@ function CoreHero({ pkg }: { pkg: Pkg }) {
 
 /** GitHub star count — synced from the API + nudged live by the star webhook. */
 function Stars({ count }: { count: number | null }) {
-    if (count == null) return null;
+    // A zero is noise, not information — show nothing until a repo has stars.
+    if (count == null || count === 0) return null;
     const label = count >= 1000 ? `${(count / 1000).toFixed(count >= 10000 ? 0 : 1)}k` : String(count);
     return (
         <span

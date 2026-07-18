@@ -90,12 +90,18 @@ export default function PackagesFamily({
 
                 {/* ── Sections ─────────────────────────────────────────── */}
                 {family.sections.map((section) => (
-                    <section key={section.label} className="mt-8">
-                        <div className="pkg-section-head">
-                            <h2>{section.label}</h2>
-                            {section.capability && <p>{section.capability}</p>}
-                        </div>
-                        <div className="grid gap-4 sm:grid-cols-2">
+                    <section
+                        key={section.label}
+                        style={{ marginTop: 24, paddingTop: 20, borderTop: "1px solid var(--border-1)" }}
+                    >
+                        <h2 style={{ fontSize: 15, fontWeight: 700, letterSpacing: "-0.01em" }}>{section.label}</h2>
+                        {section.capability && (
+                            <p style={{ fontSize: 12.5, color: "var(--fg-3)", margin: "2px 0 0" }}>{section.capability}</p>
+                        )}
+                        <div
+                            className={section.members.length === 1 ? "grid gap-4" : "grid gap-4 sm:grid-cols-2"}
+                            style={{ marginTop: 12 }}
+                        >
                             {section.members.map((m) => (
                                 <MemberCard key={m.slug} member={m} />
                             ))}
@@ -151,7 +157,7 @@ function MemberCard({ member: m }: { member: Member }) {
                 {m.components_count > 0 && (
                     <span className="text-xs text-[var(--fg-3)]">{m.components_count} components</span>
                 )}
-                {m.stars != null && (
+                {m.stars != null && m.stars > 0 && (
                     <span
                         title={`${m.stars.toLocaleString()} GitHub stars`}
                         style={{ display: "inline-flex", alignItems: "center", gap: 3, color: "#f59e0b", fontWeight: 600, fontVariantNumeric: "tabular-nums", fontSize: 12 }}

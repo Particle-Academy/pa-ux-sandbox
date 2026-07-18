@@ -69,6 +69,17 @@ class PageScreenshotService
             } catch (\Throwable $e) {
                 return null;
             }
+
+            // assertSafe only vets the top-level URL. A local headless-Chrome
+            // render then follows redirects / subresources / iframes to ANY
+            // host with no re-validation — so an externally-submitted page can
+            // pull 127.0.0.1 / 169.254.169.254 / internal services into a PNG
+            // that is served publicly (SSRF → exfil). Only render an untrusted
+            // URL on the off-box renderer, which has no route to our internal
+            // network. Own-host URLs are trusted and render on any driver.
+            if (! $this->rendererIsOffBox()) {
+                return null;
+            }
         }
 
         // Be a polite scraper: never capture a page the site's robots.txt blocks
@@ -171,6 +182,16 @@ class PageScreenshotService
         }
 
         return $png;
+    }
+
+    /**
+     * True when the configured renderer runs off this server's network
+     * (Cloudflare Browser Rendering), so it cannot reach our internal services
+     * or cloud metadata even if a page redirects there.
+     */
+    private function rendererIsOffBox(): bool
+    {
+        return config('screenshots.driver', 'browsershot') === 'cloudflare';
     }
 
     /**

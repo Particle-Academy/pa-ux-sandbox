@@ -30,9 +30,8 @@ class DevUsersSeeder extends Seeder
                 [
                     'name' => $account['name'],
                     'password' => Hash::make($account['password']),
-                    'is_admin' => $account['is_admin'],
                 ],
-            );
+            )->forceFill(['is_admin' => $account['is_admin']])->save();
 
             $this->command?->info("  ✓ {$account['label']}: {$account['email']} / {$account['password']}");
         }

@@ -36,7 +36,7 @@ function verifiedSiteOwner(): array
 it('suspends a user: freezes Pro, delists every site, blocks future login', function () {
     $admin = suspendAdmin();
     [$owner, $sub] = verifiedSiteOwner();
-    $owner->update(['pro_override' => true]);
+    $owner->forceFill(['pro_override' => true])->save();
 
     // Sanity: before suspension the site is listed + the owner is Pro.
     expect($sub->fresh()->isPubliclyListable())->toBeTrue()
@@ -72,7 +72,7 @@ it('blocks a suspended user from any authenticated request', function () {
 it('reinstates a user: restores login + re-lists their sites', function () {
     $admin = suspendAdmin();
     [$owner, $sub] = verifiedSiteOwner();
-    $owner->update(['suspended_at' => now(), 'suspension_reason' => 'spam']);
+    $owner->forceFill(['suspended_at' => now(), 'suspension_reason' => 'spam'])->save();
     $sub->fresh()->syncHeuristicsVisibility();
     expect(HeuristicsSite::where('site_key', $sub->site_key)->value('visible'))->toBeFalse();
 

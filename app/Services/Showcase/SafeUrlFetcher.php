@@ -72,9 +72,46 @@ class SafeUrlFetcher
                 ],
                 'stream' => false,
                 'max' => $this->maxBytes,
+                // Pin the connection to the exact IPs we validate below so a
+                // low-TTL record can't rebind to a private/metadata address
+                // between the check and the connect (DNS-rebinding TOCTOU).
+                // curl still sends the correct Host header + TLS SNI.
+                'curl' => $this->pinnedResolveOptions($url),
             ])
             ->withHeaders(['User-Agent' => 'FancyUI-ShowcaseVerifier/1.0'])
             ->get($url);
+    }
+
+    /**
+     * Resolve the URL's host once, re-validate those exact addresses, and
+     * return a curl CURLOPT_RESOLVE map pinning host:port → validated IPs so the
+     * connection can't be rebound to an internal address after the check. A
+     * literal-IP host needs no pin (it was validated in assertSafe).
+     *
+     * @return array<int, mixed>
+     *
+     * @throws UnsafeUrlException
+     */
+    protected function pinnedResolveOptions(string $url): array
+    {
+        $parts = parse_url($url);
+        $host = $parts['host'] ?? '';
+        if ($host === '' || filter_var($host, FILTER_VALIDATE_IP)) {
+            return [];
+        }
+
+        $scheme = strtolower($parts['scheme'] ?? 'https');
+        $port = $parts['port'] ?? ($scheme === 'https' ? 443 : 80);
+
+        $entries = [];
+        foreach ($this->resolve($host) as $ip) {
+            if ($this->isBlockedIp($ip)) {
+                throw new UnsafeUrlException('The URL resolves to a private or reserved address.');
+            }
+            $entries[] = "{$host}:{$port}:{$ip}";
+        }
+
+        return $entries === [] ? [] : [CURLOPT_RESOLVE => $entries];
     }
 
     /**

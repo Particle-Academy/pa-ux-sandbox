@@ -36,8 +36,21 @@ class WhiteboardAgentController extends Controller
             'max_tokens' => ['nullable', 'integer', 'min:1', 'max:8192'],
         ]);
 
+        // This endpoint is intentionally public (the whiteboard demo drives the
+        // agent from the browser), so it forwards an untrusted caller's request
+        // to Anthropic on the operator's key. Pin the model to a small
+        // demo-appropriate allow-list so a caller can't select an arbitrary /
+        // most-expensive model; anything else falls back to the default. Volume
+        // is bounded by the route throttle and the max_tokens cap above.
+        $default = 'claude-sonnet-4-5';
+        $allowedModels = [$default, 'claude-sonnet-5', 'claude-haiku-4-5'];
+        $model = $payload['model'] ?? $default;
+        if (! in_array($model, $allowedModels, true)) {
+            $model = $default;
+        }
+
         $body = [
-            'model' => $payload['model'] ?? 'claude-sonnet-4-5',
+            'model' => $model,
             'max_tokens' => $payload['max_tokens'] ?? 4096,
             'messages' => $payload['messages'],
         ];

@@ -270,7 +270,7 @@ class AdminUsersController extends Controller
             return back()->with('error', "You can't change your own admin flag.");
         }
 
-        $user->update(['is_admin' => ! $user->is_admin]);
+        $user->forceFill(['is_admin' => ! $user->is_admin])->save();
 
         return back()->with('success', "{$user->name} is ".($user->is_admin ? 'now an admin.' : 'no longer an admin.'));
     }
@@ -282,7 +282,7 @@ class AdminUsersController extends Controller
      */
     public function togglePro(User $user): RedirectResponse
     {
-        $user->update(['pro_override' => ! $user->pro_override]);
+        $user->forceFill(['pro_override' => ! $user->pro_override])->save();
 
         return back()->with(
             'success',
@@ -305,7 +305,7 @@ class AdminUsersController extends Controller
         }
 
         if ($user->isSuspended()) {
-            $user->update(['suspended_at' => null, 'suspension_reason' => null]);
+            $user->forceFill(['suspended_at' => null, 'suspension_reason' => null])->save();
             // Re-evaluate each site's public listing now the freeze is lifted.
             $user->submissions()->get()->each->syncHeuristicsVisibility();
 
@@ -313,10 +313,10 @@ class AdminUsersController extends Controller
         }
 
         $reason = (string) ($request->validate(['reason' => 'nullable|string|max:255'])['reason'] ?? '');
-        $user->update([
+        $user->forceFill([
             'suspended_at' => now(),
             'suspension_reason' => $reason !== '' ? $reason : 'admin suspension',
-        ]);
+        ])->save();
         // Delist every site they own from the public showcase.
         $user->submissions()->get()->each->syncHeuristicsVisibility();
 

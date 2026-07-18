@@ -20,6 +20,12 @@ class User extends Authenticatable
     /**
      * The attributes that are mass assignable.
      *
+     * Privilege / moderation columns (is_admin, pro_override, suspended_at,
+     * suspension_reason) are deliberately EXCLUDED from this whitelist, so a
+     * stray `create($request->all())` / `fill()` can never escalate an account.
+     * The admin screens set them explicitly via forceFill() at their (gated)
+     * call sites.
+     *
      * @var list<string>
      */
     protected $fillable = [
@@ -27,10 +33,6 @@ class User extends Authenticatable
         'username',
         'email',
         'password',
-        'is_admin',
-        'pro_override',
-        'suspended_at',
-        'suspension_reason',
         'github_id',
         'github_username',
         'avatar_url',

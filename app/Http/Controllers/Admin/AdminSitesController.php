@@ -266,7 +266,7 @@ class AdminSitesController extends Controller
         if ($owner === null) {
             return back()->with('error', 'This site has no owner.');
         }
-        $owner->update(['pro_override' => ! $owner->pro_override]);
+        $owner->forceFill(['pro_override' => ! $owner->pro_override])->save();
 
         return back()->with('success', "{$owner->name} ".($owner->pro_override ? 'granted Pro.' : 'Pro revoked.'));
     }

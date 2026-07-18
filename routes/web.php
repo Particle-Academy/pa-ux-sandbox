@@ -389,6 +389,7 @@ Route::get('/react-demos/{any?}', fn () => view('react-demos'))->where('any', '.
 // Shared whiteboard agent — proxies Anthropic messages so the browser
 // can drive an MCP-style tool-use loop against the local board state.
 Route::post('/whiteboard-agent/turn', WhiteboardAgentController::class)
+    ->middleware('throttle:20,1')
     ->name('whiteboard-agent.turn');
 
 // Agent relay — token-gated SSE + POST broker that lets external MCP clients

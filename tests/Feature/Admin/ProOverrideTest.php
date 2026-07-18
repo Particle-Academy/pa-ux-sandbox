@@ -10,7 +10,7 @@ it('treats a manual pro_override as a "manual" Pro source', function () {
     $user = User::factory()->create(['pro_override' => false]);
     expect(app(Entitlements::class)->proSource($user))->toBeNull();
 
-    $user->update(['pro_override' => true]);
+    $user->forceFill(['pro_override' => true])->save();
     expect(app(Entitlements::class)->isPro($user))->toBeTrue()
         ->and(app(Entitlements::class)->proSource($user))->toBe('manual');
 });

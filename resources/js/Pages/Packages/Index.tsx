@@ -97,6 +97,9 @@ export default function PackagesIndex({ packages }: { packages: Pkg[] }) {
     const [eco, setEco] = useState<EcoFilter>("all");
 
     const totalComponents = packages.reduce((s, p) => s + p.components_count, 0);
+    // Families collapse several packages into one card, so count the members —
+    // "37 packages" would undercount the ~65 we actually publish.
+    const totalPackages = packages.reduce((s, p) => s + (p.member_count ?? 1), 0);
 
     const filtered = useMemo(() => {
         const q = query.trim().toLowerCase();
@@ -131,11 +134,12 @@ export default function PackagesIndex({ packages }: { packages: Pkg[] }) {
                     <h1 className="pkgs-head__title">Packages</h1>
                     <p className="pkgs-head__sub">
                         Every Fancy UI package — UI surfaces with a live preview, headless backends with a one-line install.
-                        Each tile opens a full per-package page with a per-component demo.
+                        Related packages are grouped as one family; each tile opens its full page, with per-component demos.
                     </p>
                 </div>
                 <div className="pkgs-stats">
-                    <span className="pkgs-stat"><b>{packages.length}</b> packages</span>
+                    <span className="pkgs-stat"><b>{totalPackages}</b> packages</span>
+                    <span className="pkgs-stat"><b>{packages.length}</b> listings</span>
                     <span className="pkgs-stat"><b>{totalComponents}</b> components</span>
                     <span className="pkgs-stat"><b>MIT</b> licensed</span>
                 </div>

@@ -98,7 +98,7 @@ class StartProject extends Tool
             'pick_when' => "You're on a JS stack or don't want Laravel. react-fancy is plain React; you bring your own data layer.",
             'fancy_core' => [
                 '@particle-academy/react-fancy — UI primitives',
-                'your own data layer — fetch / server actions / tRPC / TanStack Query (fancy-inertia + fancy-query are Laravel-Inertia-specific; skip them here)',
+                'your own data layer — fetch / server actions / tRPC / TanStack Query. NOTE: fancy-inertia + fancy-query need INERTIA, not Laravel — they have zero PHP/Laravel runtime deps, so use them with any Inertia server adapter (Adonis, Rails, …); skip them only if you are not using Inertia.',
             ],
             'server_packages' => [
                 'catalog (Stripe products/prices/checkout)' => '@particle-academy/fancy-catalog',

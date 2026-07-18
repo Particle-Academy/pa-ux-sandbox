@@ -39,7 +39,7 @@ The installed packages:
 - `@particle-academy/fancy-artboard` — design-canvas surface (ArtBoard + pieces / sections / notes)
 - `@particle-academy/fancy-motion` — timeline / animation primitives
 - `@particle-academy/fancy-cms-ui` — WYSIWYG CMS editor (Stages doc model; pairs with the `particle-academy/fancy-cms` PHP package)
-- `@particle-academy/fancy-inertia` — Inertia.js bridge for Laravel hosts (showcase chrome)
+- `@particle-academy/fancy-inertia` — Inertia.js bridge (showcase chrome). Works with ANY Inertia backend — zero Laravel/PHP runtime deps; the Laravel bits (fancy-seo Blade dedup, `php artisan inertia:start-ssr`) are optional integrations
 - `@particle-academy/agent-integrations` (+ `/mcp`, `/bridges/*`, `/components/*`) — MCP server + per-package bridges
 - `@particle-academy/dark-slide` — Node/TS pptx writer/reader (JS port of the PHP `dark-slide`; used by the slides export demo)
 

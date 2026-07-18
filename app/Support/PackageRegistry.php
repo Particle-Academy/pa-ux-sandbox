@@ -1134,7 +1134,7 @@ class PackageRegistry
         return [
             'slug' => 'fancy-inertia',
             'name' => 'fancy-inertia',
-            'tagline' => 'Inertia.js bridge — schema-driven pages, useFancyForm(), SSR boundaries.',
+            'tagline' => 'Inertia.js bridge — schema-driven pages, useFancyForm(), SSR boundaries. Works with ANY Inertia backend (zero Laravel/PHP runtime deps), not just Laravel.',
             'npm' => '@particle-academy/fancy-inertia',
             'repo' => 'Particle-Academy/fancy-inertia',
             'language' => 'TypeScript',

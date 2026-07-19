@@ -1,6 +1,11 @@
 import { Component, useMemo, useState, type ErrorInfo, type ReactNode } from "react";
 import { Head } from "@inertiajs/react";
-import { ScreenSystem, Screen, useScreenSystem } from "@particle-academy/fancy-screens";
+import {
+  ScreenSystem,
+  Screen,
+  ScreenSwitcher,
+  useScreenSystem,
+} from "@particle-academy/fancy-screens";
 import { ShareControls, ScreensActivityBridge, useAgentActivity, type AgentActivityEvent } from "@particle-academy/agent-integrations";
 import "@particle-academy/agent-integrations/styles.css";
 import { Layout } from "./Layout";
@@ -85,10 +90,18 @@ function PlaygroundInner() {
       <div className="pg-layout">
         <div className="min-w-0">
           <ScreenSwitcher
-            screens={pg.screens}
+            screens={pg.screens.map((screen) => ({
+              id: screen.id,
+              title: screen.title,
+              kind: screen.kind,
+              affordances: {
+                kind: KIND_BY_NAME[screen.kind]?.label ?? screen.kind,
+              },
+            }))}
             activeId={pg.activeId}
             onSelect={pg.setActive}
             onClose={pg.removeScreen}
+            className="mb-3"
           />
 
           <div className={`pg-board demo-board${pg.screens.length === 0 ? " pg-board--empty" : ""}`}>
@@ -127,39 +140,6 @@ function PlaygroundInner() {
         </aside>
       </div>
     </div>
-  );
-}
-
-function ScreenSwitcher({
-  screens,
-  activeId,
-  onSelect,
-  onClose,
-}: {
-  screens: ScreenEntry[];
-  activeId: string | null;
-  onSelect: (id: string) => void;
-  onClose: (id: string) => void;
-}) {
-  if (screens.length === 0) return null;
-  return (
-    <nav className="pg-tabs">
-      {screens.map((s) => {
-        const isActive = s.id === activeId;
-        const mod = KIND_BY_NAME[s.kind];
-        return (
-          <div key={s.id} className={`pg-tab${isActive ? " active" : ""}`}>
-            <button onClick={() => onSelect(s.id)} className="pg-tab-btn" type="button">
-              <span className="pg-tab-kind">{mod?.label ?? s.kind}</span>
-              <span className="pg-tab-title">{s.title}</span>
-            </button>
-            <button onClick={() => onClose(s.id)} title="Close screen" className="pg-tab-close" type="button">
-              ✕
-            </button>
-          </div>
-        );
-      })}
-    </nav>
   );
 }
 

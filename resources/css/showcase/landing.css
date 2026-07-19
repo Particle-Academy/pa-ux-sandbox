@@ -844,57 +844,6 @@ section.ticker { padding: 0; background: var(--bg-1); }
 .pg-connect-sub { font-size: 12.5px; line-height: 1.5; color: var(--fg-2); margin-top: 2px; }
 .pg-connect-controls { min-width: 0; }
 
-/* refined pill tabs (screen switcher) */
-.pg-tabs {
-  display: flex; flex-wrap: wrap; gap: 6px;
-  padding: 6px;
-  margin-bottom: 12px;
-  background: var(--surface);
-  border: 1px solid var(--border-1);
-  border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-sm);
-}
-.pg-tab {
-  display: flex; align-items: center; gap: 4px;
-  padding: 4px 6px 4px 10px;
-  border-radius: 999px;
-  background: var(--bg-1);
-  border: 1px solid transparent;
-  transition: background var(--dur-base) var(--ease-out), border-color var(--dur-base), box-shadow var(--dur-base);
-}
-.pg-tab:hover { border-color: var(--border-2); }
-.pg-tab.active {
-  background: linear-gradient(135deg, var(--brand-grad-from), var(--brand-grad-via) 55%, var(--brand-grad-to));
-  border-color: transparent;
-  box-shadow: 0 4px 12px -4px color-mix(in oklch, var(--brand-grad-via) 55%, transparent);
-}
-.pg-tab-btn {
-  display: inline-flex; align-items: center; gap: 7px;
-  border: none; background: transparent; cursor: pointer;
-  font: inherit; color: var(--fg-1); padding: 0;
-}
-.pg-tab.active .pg-tab-btn { color: #fff; }
-.pg-tab-kind {
-  font-family: var(--font-mono); font-size: 9.5px;
-  text-transform: uppercase; letter-spacing: 0.05em;
-  padding: 2px 6px; border-radius: 999px;
-  background: color-mix(in oklch, var(--fg-1) 8%, transparent);
-  color: var(--fg-3);
-}
-.pg-tab.active .pg-tab-kind { background: rgba(255,255,255,.22); color: rgba(255,255,255,.92); }
-.pg-tab-title { font-size: 13px; font-weight: 500; }
-.pg-tab-close {
-  width: 20px; height: 20px; border-radius: 999px;
-  display: grid; place-items: center;
-  border: none; background: transparent; cursor: pointer;
-  font-size: 11px; line-height: 1;
-  color: var(--fg-3); opacity: .55;
-  transition: opacity var(--dur-base), background var(--dur-base), color var(--dur-base);
-}
-.pg-tab-close:hover { opacity: 1; background: color-mix(in oklch, var(--fg-1) 10%, transparent); }
-.pg-tab.active .pg-tab-close { color: #fff; opacity: .8; }
-.pg-tab.active .pg-tab-close:hover { background: rgba(255,255,255,.22); opacity: 1; }
-
 /* board surface — reuses .demo-board dot-grid; gives it a framed card look */
 .pg-board {
   border: 1px solid var(--border-1);

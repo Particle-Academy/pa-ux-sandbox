@@ -48,7 +48,7 @@
         "@particle-academy/fancy-echarts": "^5.0.0",
         "@particle-academy/fancy-features": "^0.1.0",
         "@particle-academy/fancy-flow": "^0.8.0",
-        "@particle-academy/fancy-inertia": "^0.9.2",
+        "@particle-academy/fancy-inertia": "^0.9.3",
         "@particle-academy/fancy-map": "^0.1.1",
         "@particle-academy/fancy-mlm-ui": "^0.2.0",
         "@particle-academy/fancy-motion": "^0.0.1-dev.3",

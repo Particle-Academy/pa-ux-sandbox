@@ -3,6 +3,7 @@ import { Badge, Button } from "@particle-academy/react-fancy";
 import { Check, Code2, Copy, LayoutPanelTop, Monitor, TerminalSquare } from "lucide-react";
 import { useMemo, useState } from "react";
 import { clientOnly } from "../../lib/clientOnly";
+import { ComponentGallery } from "./ComponentGallery";
 import { Layout } from "../Layout";
 import "./fancy-tui.css";
 
@@ -94,7 +95,7 @@ export default function FancyTuiIndex() {
             <main className="ftui-page">
                 <header className="ftui-hero">
                     <div>
-                        <div className="ftui-eyebrow"><TerminalSquare size={15} /> @particle-academy/fancy-tui <Badge color="violet">v0.1</Badge></div>
+                        <div className="ftui-eyebrow"><TerminalSquare size={15} /> @particle-academy/fancy-tui <Badge color="violet">v0.2</Badge></div>
                         <h1>One component vocabulary.<br /><span>Browser and terminal.</span></h1>
                         <p>Browse the same layouts, agent workflows, and Human+ patterns as semantic HTML or a real ANSI console inside Fancy Term.</p>
                     </div>
@@ -130,6 +131,8 @@ export default function FancyTuiIndex() {
                         <div className="ftui-source"><div><Code2 size={15} /><b>React / Ink</b><button onClick={() => void copySource()}>{copied ? "Copied" : "Copy"}</button></div><pre><code>{selected.source}</code></pre></div>
                     </div>
                 </section>
+
+                <ComponentGallery />
             </main>
         </Layout>
     );

@@ -1,4 +1,8 @@
 import { Terminal } from "@particle-academy/fancy-term";
+// Required by fancy-term. Without it xterm's character-measurement helper —
+// a long run of "w" it uses to size the grid — renders as visible text above
+// the output, and the helper textarea sits at full opacity.
+import "@xterm/xterm/css/xterm.css";
 
 export default function ConsoleSurface({ output, label }: { output: string; label: string }) {
     return (

@@ -80,36 +80,30 @@ it('guards the admin config surface behind the admin gate', function () {
     $this->actingAs($user)->get('/admin/mlm')->assertForbidden();
 });
 
-it('hides the simulate demo from non-admins and 403s the route', function () {
-    $user = User::factory()->create(['is_admin' => false]);
+/**
+ * The "simulate activity" demo loop was retired from the member-facing surface
+ * (78bdc64) in favour of the share kit: minting bonuses walks the upline and
+ * awards REAL fun-lab points, so it must not be reachable over HTTP by anyone —
+ * admins included. `MlmProgram::simulateActivity()` survives as an internal
+ * seeding/demo helper and is covered by the bonus test above.
+ */
+it('exposes no simulate endpoint or affordance on the referrals surface', function (bool $isAdmin) {
+    $user = User::factory()->create(['is_admin' => $isAdmin]);
     $program = app(MlmProgram::class);
     $root = $program->memberForUser($user);
     $child = Member::query()->create(['sponsor_id' => $root->getKey(), 'tier' => 'bronze', 'active' => true]);
 
-    // The page renders without the simulate affordance…
+    // The page carries no simulate affordance for either role…
     $this->actingAs($user)->get('/referrals')
         ->assertOk()
-        ->assertInertia(fn ($page) => $page->where('canSimulate', false));
+        ->assertInertia(fn ($page) => $page->missing('canSimulate'));
 
-    // …and the route is hard-gated regardless of UI.
+    // …and there is no endpoint behind it to reach.
     $this->actingAs($user)->post('/referrals/simulate', [
         'member_id' => (string) $child->getKey(),
         'amount' => 100,
-    ])->assertForbidden();
-});
-
-it('keeps the simulate demo available to admins', function () {
-    $admin = User::factory()->create(['is_admin' => true]);
-    $program = app(MlmProgram::class);
-    $root = $program->memberForUser($admin);
-    $child = Member::query()->create(['sponsor_id' => $root->getKey(), 'tier' => 'bronze', 'active' => true]);
-
-    $this->actingAs($admin)->get('/referrals')
-        ->assertOk()
-        ->assertInertia(fn ($page) => $page->where('canSimulate', true));
-
-    $this->actingAs($admin)->post('/referrals/simulate', [
-        'member_id' => (string) $child->getKey(),
-        'amount' => 100,
-    ])->assertRedirect()->assertSessionHas('mlm_rewards');
-});
+    ])->assertNotFound();
+})->with([
+    'member' => false,
+    'admin' => true,
+]);

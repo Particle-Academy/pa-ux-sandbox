@@ -194,7 +194,7 @@ describe("render — the detail view", () => {
     it("renders the captured frame inline for a fancy-tui component", () => {
         const text = stripAnsi(render(cat, tuiState, index, SIZE));
         expect(text).toContain("StatusBar");
-        expect(text).toContain("live preview");
+        expect(text).toContain("rendered preview");
         expect(text).toContain("queue healthy"); // straight out of the captured frame
         expect(text).toContain("<StatusBar"); // …and its source snippet
         expect(text).not.toContain("press o");
@@ -206,7 +206,7 @@ describe("render — the detail view", () => {
         expect(text).toContain("press o");
         expect(text).toContain("/packages/react-fancy/accordion");
         expect(text).toContain("renders in a browser");
-        expect(text).not.toContain("live preview");
+        expect(text).not.toContain("rendered preview");
     });
 
     it("lists description, dependencies and files", () => {

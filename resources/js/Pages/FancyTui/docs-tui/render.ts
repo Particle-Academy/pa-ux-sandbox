@@ -274,7 +274,9 @@ export function detailLines(item: RegistryItem, frame: CapturedFrame | null, inn
   }
 
   if (frame) {
-    lines.push(rule("live preview", inner));
+    // Not "live" — this is a recorded frame. The subtitle says so, but the
+    // label shouldn't claim otherwise in the first place.
+    lines.push(rule("rendered preview", inner));
     lines.push(dim(`captured from real Ink at ${FRAME_COLUMNS} columns`));
     lines.push("");
     lines.push(...frame.frame.split("\n"));

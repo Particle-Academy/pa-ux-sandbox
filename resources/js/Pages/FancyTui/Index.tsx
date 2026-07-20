@@ -147,7 +147,7 @@ export default function FancyTuiIndex() {
                             </div>
                         </div>
 
-                        <div className="ftui-doc-heading"><div><Badge color={selected.group === "Human+" ? "violet" : "blue"}>{selected.group}</Badge><h2>{selected.title}</h2><p>{selected.summary}</p></div><Button variant="outline" onClick={() => void copySource()}>{copied ? <Check size={14} /> : <Copy size={14} />}{copied ? "Copied" : "Copy example"}</Button></div>
+                        <div className="ftui-doc-heading"><div><Badge color={selected.group === "Human+" ? "violet" : "blue"}>{selected.group}</Badge><h2>{selected.title}</h2><p>{selected.summary}</p></div><Button variant="ghost" onClick={() => void copySource()}>{copied ? <Check size={14} /> : <Copy size={14} />}{copied ? "Copied" : "Copy example"}</Button></div>
 
                         <div className="ftui-preview ftui-preview--html">
                             <div className="ftui-preview__bar"><span /><span /><span /><b>HTML preview</b></div>

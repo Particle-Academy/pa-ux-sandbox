@@ -423,3 +423,85 @@
   .ftui-path { display: none; }
   .ftui-terminal, .html-demo { height: 25rem; }
 }
+
+/* ── Fancy Docs TUI — the full-viewport takeover ─────────────────────────
+   "View as console" hands the whole screen to a terminal application, so the
+   surface deliberately drops the site chrome. Only the terminal's INTERIOR is
+   unconditionally dark (a terminal is dark in either theme); the thin title
+   bar around it still speaks in semantic tokens. */
+body.ftui-takeover-active { overflow: hidden; }
+
+.ftui-takeover {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+  background: #090b10;
+  font: var(--text-sm) / 1.5 var(--font-mono);
+}
+
+.ftui-takeover--loading {
+  align-items: center;
+  justify-content: center;
+  color: var(--fg-3);
+}
+
+.ftui-takeover__bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex: none;
+  height: 2.25rem;
+  padding: 0 var(--space-3);
+  background: var(--surface, var(--bg-1));
+  border-bottom: 1px solid var(--border-1);
+  color: var(--fg-3);
+  font: var(--text-xs) / 1 var(--font-mono);
+}
+.ftui-takeover__bar b { color: var(--fg-2); font-weight: 500; }
+
+.ftui-takeover__dots { display: inline-flex; gap: 0.4rem; }
+.ftui-takeover__dots i {
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: var(--radius-full);
+  background: var(--border-2);
+}
+
+.ftui-takeover__exit {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0.2rem var(--space-2);
+  border: 1px solid var(--border-1);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--fg-3);
+  font: inherit;
+  cursor: pointer;
+}
+.ftui-takeover__exit:hover { border-color: var(--accent); color: var(--fg-1); }
+.ftui-takeover__exit kbd {
+  padding: 0 0.3rem;
+  border: 1px solid var(--border-2);
+  border-radius: var(--radius-sm);
+  color: var(--fg-2);
+}
+
+/* The terminal itself: fills everything left, and must have a real height or
+   xterm's fit addon collapses it to zero rows. */
+.ftui-takeover__screen {
+  flex: 1;
+  min-height: 0;
+  padding: var(--space-2) var(--space-3);
+  background: #090b10;
+}
+.ftui-takeover__screen > * { height: 100%; }
+
+/* The docs TUI repaints a full screen every frame and never scrolls, so
+   xterm's viewport scrollbar has nothing to scroll — but it still overlays the
+   last column and clips the header's right edge. */
+.ftui-takeover__screen .xterm-viewport { scrollbar-width: none; }
+.ftui-takeover__screen .xterm-viewport::-webkit-scrollbar { display: none; }

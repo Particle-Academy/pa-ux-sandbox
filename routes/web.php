@@ -29,6 +29,7 @@ use App\Http\Controllers\Showcase\AgentKeyController;
 use App\Http\Controllers\Showcase\DocsController;
 use App\Http\Controllers\Showcase\DreamingController;
 use App\Http\Controllers\Showcase\FancifiedBadgeController;
+use App\Http\Controllers\Showcase\FancyTuiController;
 use App\Http\Controllers\Showcase\GalleryController;
 use App\Http\Controllers\Showcase\HomeController;
 use App\Http\Controllers\Showcase\InspirationController;
@@ -225,7 +226,10 @@ Route::get('/api/leaderboard/contributors', [LeaderboardController::class, 'cont
 // external agent generates Fancy UI screens + data and drives the full kit
 // over MCP. No auth, no DB writes; the page owns an in-browser MicroMcpServer.
 Route::get('/agent-playground', fn () => Inertia::render('AgentPlayground'))->name('agent-playground');
-Route::get('/fancy-tui', fn () => Inertia::render('FancyTui/Index'))->name('fancy-tui.index');
+Route::get('/fancy-tui', [FancyTuiController::class, 'index'])->name('fancy-tui.index');
+// The stripped registry the page's "Fancy Docs TUI" browses. Fetched lazily by
+// the terminal, so the HTML view never pays for it.
+Route::get('/fancy-tui/catalogue.json', [FancyTuiController::class, 'catalogue'])->name('fancy-tui.catalogue');
 
 Route::get('/shop', [ShopController::class, 'index'])->name('shop.index');
 Route::post('/shop/{item:slug}/purchase', [ShopController::class, 'purchase'])

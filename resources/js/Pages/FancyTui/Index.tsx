@@ -13,12 +13,16 @@ type Demo = {
     title: string;
     summary: string;
     source: string;
-    console: string;
 };
 
-const ConsoleSurface = clientOnly(
-    () => import("./ConsoleSurface"),
-    ({ label }: { output: string; label: string }) => <div className="ftui-terminal ftui-terminal--loading">Loading {label} console…</div>,
+/**
+ * "View as console" doesn't swap a preview pane — it hands the whole viewport
+ * to a terminal application. xterm is browser-only, so the TUI is deferred to
+ * the client the same way every other terminal surface on this page is.
+ */
+const DocsTui = clientOnly(
+    () => import("./DocsTui"),
+    () => <div className="ftui-takeover ftui-takeover--loading">Starting the Fancy Docs TUI…</div>,
 );
 
 const demos: Demo[] = [
@@ -36,7 +40,6 @@ render(
     <Panel title="Run"><Text>Ready for instructions.</Text></Panel>
   </FancyTuiProvider>
 );`,
-        console: `\x1b[1;35mFancy TUI\x1b[0m  Human+ terminal components                         \x1b[32m● connected\x1b[0m\r\n\r\n\x1b[2m╭─\x1b[0m \x1b[1mDeploy agent\x1b[0m \x1b[2m──────────────────────────────────────────────────────────────╮\x1b[0m\r\n\x1b[2m│\x1b[0m  Ready for instructions.                                                   \x1b[2m│\x1b[0m\r\n\x1b[2m╰───────────────────────────────────────────────────────────────────────────╯\x1b[0m\r\n\r\n\x1b[2m[Tab] focus   [Enter] submit   [Alt+Enter] newline\x1b[0m`,
     },
     {
         id: "conversation",
@@ -49,7 +52,6 @@ render(
   <Spinner label="thinking…" />
 </LiveRegion>
 <Composer id="prompt" value={prompt} onChange={setPrompt} onSubmit={send} />`,
-        console: `\x1b[1;36mYOU\x1b[0m\r\nSummarize the failing build and suggest a fix.\r\n\r\n\x1b[1;35mAGENT\x1b[0m\r\nThe failure is caused by a missing baseUrl for the configured TypeScript paths.\r\n\r\n\x1b[33m◐ running tool\x1b[0m  inspect_config  \x1b[2mtsconfig.json\x1b[0m\r\n\r\n\x1b[2m┌───────────────────────────────────────────────────────────────────────────┐\x1b[0m\r\n\x1b[2m│\x1b[0m Ask a follow-up…                                                         \x1b[2m│\x1b[0m\r\n\x1b[2m└───────────────────────────────────────────────────────────────────────────┘\x1b[0m`,
     },
     {
         id: "layout",
@@ -59,7 +61,6 @@ render(
         source: `<Responsive narrow={<Stack>{panels}</Stack>} wide={<Row>{panels}</Row>} />
 <Table id="jobs" rows={jobs} columns={columns} />
 <StatusBar left="3 workers" right="queue healthy" />`,
-        console: `\x1b[1mPipeline overview\x1b[0m                                      \x1b[32mqueue healthy\x1b[0m\r\n\r\n╭─ Workers ─────────────────────╮  ╭─ Context ───────────────────────────────╮\r\n│ \x1b[32m●\x1b[0m build      active            │  │ ███████████████░░░░░  72%           │\r\n│ \x1b[32m●\x1b[0m test       active            │  │ 18.4k / 25.6k tokens                │\r\n╰───────────────────────────────╯  ╰─────────────────────────────────────────╯\r\n\r\nJOB              STATE       ELAPSED\r\ncompile          \x1b[32msuccess\x1b[0m     12.4s\r\nintegration      \x1b[33mrunning\x1b[0m      8.1s\r\n\r\n\x1b[2m3 workers                                                     Ctrl+R refresh\x1b[0m`,
     },
     {
         id: "mcp-inbox",
@@ -71,12 +72,11 @@ render(
 // pushed: notifications/human_plus/event
 // pulled: human_plus_events_list
 // acknowledged per consumer: human_plus_events_ack`,
-        console: `\x1b[1mHuman+ event delivery\x1b[0m\r\n\r\n\x1b[32m✓\x1b[0m persisted     evt_01KX  action.requested\r\n\x1b[32m✓\x1b[0m pushed        agent:codex  notifications/human_plus/event\r\n\x1b[36m↓\x1b[0m inbox         consumer:reviewer  1 unread\r\n\r\nPOLICY           ACTION                 STATE\r\nproposed         deploy.production      \x1b[33mawaiting confirmation\x1b[0m\r\nimmediate        panel.inspect          \x1b[32mcomplete\x1b[0m\r\n\r\n\x1b[2mEvery mutation emits AgentActivity and retains a recoverable event.\x1b[0m`,
     },
 ];
 
 export default function FancyTuiIndex() {
-    const [surface, setSurface] = useState<Surface>("console");
+    const [surface, setSurface] = useState<Surface>("html");
     const [selectedId, setSelectedId] = useState(demos[0].id);
     const [copied, setCopied] = useState(false);
     const selected = useMemo(() => demos.find((demo) => demo.id === selectedId) ?? demos[0], [selectedId]);
@@ -87,6 +87,18 @@ export default function FancyTuiIndex() {
         setCopied(true);
         window.setTimeout(() => setCopied(false), 1_500);
     };
+
+    // The console surface takes the whole screen — no site chrome, no Layout —
+    // so it reads as a terminal application rather than an embedded widget.
+    // `q` (or Escape at the root) inside the TUI brings the HTML view back.
+    if (surface === "console") {
+        return (
+            <>
+                <Seo title="Fancy Docs TUI — the Fancy registry by keyboard" description="Browse every Fancy UI package, component, and prop from a terminal." />
+                <DocsTui onExit={() => setSurface("html")} />
+            </>
+        );
+    }
 
     return (
         <Layout>
@@ -131,15 +143,15 @@ export default function FancyTuiIndex() {
                             <div><span className="ftui-dot" /><b>{selected.title}</b><span className="ftui-path">examples/{selected.id}.tsx</span></div>
                             <div className="ftui-switch" role="group" aria-label="Preview surface">
                                 <button className={surface === "html" ? "is-active" : ""} onClick={() => setSurface("html")}><Monitor size={14} /> View as HTML</button>
-                                <button className={surface === "console" ? "is-active" : ""} onClick={() => setSurface("console")}><TerminalSquare size={14} /> View as console</button>
+                                <button title="Browse the whole Fancy registry as a full-screen terminal app" onClick={() => setSurface("console")}><TerminalSquare size={14} /> View as console</button>
                             </div>
                         </div>
 
                         <div className="ftui-doc-heading"><div><Badge color={selected.group === "Human+" ? "violet" : "blue"}>{selected.group}</Badge><h2>{selected.title}</h2><p>{selected.summary}</p></div><Button variant="outline" onClick={() => void copySource()}>{copied ? <Check size={14} /> : <Copy size={14} />}{copied ? "Copied" : "Copy example"}</Button></div>
 
-                        <div className={`ftui-preview ftui-preview--${surface}`}>
-                            <div className="ftui-preview__bar"><span /><span /><span /><b>{surface === "console" ? "fancy-tui — 100×28" : "HTML preview"}</b></div>
-                            {surface === "console" ? <ConsoleSurface output={selected.console} label={selected.title} /> : <HtmlSurface demo={selected} />}
+                        <div className="ftui-preview ftui-preview--html">
+                            <div className="ftui-preview__bar"><span /><span /><span /><b>HTML preview</b></div>
+                            <HtmlSurface demo={selected} />
                         </div>
 
                         <div className="ftui-source"><div><Code2 size={15} /><b>React / Ink</b><button onClick={() => void copySource()}>{copied ? "Copied" : "Copy"}</button></div><pre><code>{selected.source}</code></pre></div>

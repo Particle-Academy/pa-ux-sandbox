@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c41c5082ee2139ba00ad7173e50aa0a0",
+    "content-hash": "1c0fdf1025302ca9bb2d55240c55b4b8",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -3866,6 +3866,80 @@
                 "source": "https://github.com/Particle-Academy/fancy-cms/tree/v0.1.0"
             },
             "time": "2026-07-05T20:55:23+00:00"
+        },
+        {
+            "name": "particle-academy/fancy-flow-php",
+            "version": "v0.8.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Particle-Academy/fancy-flow-php.git",
+                "reference": "68b998f14f276d3a77b237e1930ee04f07b2c17a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Particle-Academy/fancy-flow-php/zipball/68b998f14f276d3a77b237e1930ee04f07b2c17a",
+                "reference": "68b998f14f276d3a77b237e1930ee04f07b2c17a",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.3"
+            },
+            "require-dev": {
+                "laravel/ai": "^0.9",
+                "orchestra/testbench": "^8.0|^9.0|^10.0|^11.0",
+                "pestphp/pest": "^2.0|^3.0|^4.0",
+                "phpunit/phpunit": "^10.0|^11.0|^12.0",
+                "prism-php/prism": "^0.100"
+            },
+            "suggest": {
+                "illuminate/support": "Enables the optional Laravel layer — service provider, facade, queued durable runs, #[FlowNode] discovery, Artisan, and RunEvent → Laravel events. Compatible with 10.x through 13.x. The framework-free core (Workflow, FlowRunner, registries, the 24 built-ins) needs no framework.",
+                "laravel/ai": "Makes the `llm_branch` node work with zero glue — auto-detected and wired through the shipped laravel/ai adapter (structured output constrained to the declared routes).",
+                "prism-php/prism": "Makes the `llm_branch` node work with zero glue — auto-detected and wired through the shipped Prism adapter (structured output constrained to the declared routes)."
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "FancyFlow": "FancyFlow\\Laravel\\Facades\\FancyFlow"
+                    },
+                    "providers": [
+                        "FancyFlow\\Laravel\\FancyFlowServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "FancyFlow\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Particle Academy",
+                    "homepage": "https://github.com/Particle-Academy"
+                }
+            ],
+            "description": "PHP runtime for fancy-flow workflow graphs — the framework-free twin of @particle-academy/fancy-flow's engine. Same WorkflowSchema JSON in, same outputs out; author in <FlowEditor>, run on PHP.",
+            "homepage": "https://github.com/Particle-Academy/fancy-flow-php",
+            "keywords": [
+                "DAG",
+                "agentic",
+                "ai",
+                "automation",
+                "fancy-flow",
+                "flow",
+                "orchestration",
+                "particle-academy",
+                "workflow"
+            ],
+            "support": {
+                "issues": "https://github.com/Particle-Academy/fancy-flow-php/issues",
+                "source": "https://github.com/Particle-Academy/fancy-flow-php"
+            },
+            "time": "2026-07-20T07:32:30+00:00"
         },
         {
             "name": "particle-academy/fancy-heuristics",
@@ -13140,7 +13214,7 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": "^8.2"
+        "php": "^8.3"
     },
     "platform-dev": {},
     "plugin-api-version": "2.9.0"

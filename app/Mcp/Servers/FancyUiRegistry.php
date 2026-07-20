@@ -5,11 +5,15 @@ namespace App\Mcp\Servers;
 use App\Mcp\Tools\GalleryGetBlueprint;
 use App\Mcp\Tools\GalleryListStyles;
 use App\Mcp\Tools\GetComponent;
+use App\Mcp\Tools\GetNode;
 use App\Mcp\Tools\InstallInstructions;
 use App\Mcp\Tools\ListComponents;
+use App\Mcp\Tools\ListNodes;
+use App\Mcp\Tools\NodeInstallInstructions;
 use App\Mcp\Tools\RegisterShowcaseProject;
 use App\Mcp\Tools\RescanShowcaseProject;
 use App\Mcp\Tools\SearchComponents;
+use App\Mcp\Tools\SearchNodes;
 use App\Mcp\Tools\ShowcaseProjectStatus;
 use App\Mcp\Tools\StartProject;
 use Laravel\Mcp\Server;
@@ -52,6 +56,28 @@ to fetch a style's design recipe (tokens, layout, the restyled-component palette
 remix notes). These are READ-ONLY blueprints to re-implement and mix-and-match in
 the user's own project, not source to copy. Pairs with the `/design` skill in the
 fancy-ui Claude Code plugin.
+
+WORKFLOW NODES — building a fancy-flow graph? Before you hand-roll a step in
+app code, call `search_nodes` with the concept ("upload to s3", "wait for
+approval", "route with an llm"). The expensive failure is not "could not install
+it" — it is not knowing a node existed and writing a worse version inline.
+
+Two places a node can come from, and they are NOT the same:
+1. fancy-flow's CORE builtins ship with the engine — triggers, branch,
+   switch_case, merge, for_each, wait, transform, http, output, user_input,
+   human_approval, subflow, llm_router, llm_call. These need NO installation.
+   Check these FIRST; `search_nodes` does not list them.
+2. The MARKETPLACE — third-party node packages, which is what `list_nodes` /
+   `search_nodes` / `get_node` / `node_install_instructions` cover. It may well
+   be empty; that is not an error.
+
+A node is installed once PER RUNTIME the project executes on. A node installed
+only for TS is invisible to a PHP runner, and the graph fails at that node with
+nothing visible beforehand — so prefer `npx fancy-cli add node <kind>`, which
+reads the project's real runtimes and refuses a mismatch, over raw npm/composer.
+Call `get_node` before wiring one in: required capabilities, whether it pauses
+for a human, and whether it is unsafe to replay all change what the HOST must
+provide, and none of that is visible from a listing.
 
 This server is registry/install-time only. It does NOT operate a running
 Fancy UI app. For that, register the runtime bridges from
@@ -107,6 +133,10 @@ class FancyUiRegistry extends Server
         RegisterShowcaseProject::class,
         ShowcaseProjectStatus::class,
         RescanShowcaseProject::class,
+        ListNodes::class,
+        SearchNodes::class,
+        GetNode::class,
+        NodeInstallInstructions::class,
     ];
 
     protected array $resources = [

@@ -34,6 +34,7 @@ use App\Http\Controllers\Showcase\GalleryController;
 use App\Http\Controllers\Showcase\HomeController;
 use App\Http\Controllers\Showcase\InspirationController;
 use App\Http\Controllers\Showcase\LeaderboardController;
+use App\Http\Controllers\Showcase\NodeRegistryController;
 use App\Http\Controllers\Showcase\PackagesController;
 use App\Http\Controllers\Showcase\ProfileController;
 use App\Http\Controllers\Showcase\ReferralController;
@@ -240,6 +241,16 @@ Route::post('/shop/{item:slug}/purchase', [ShopController::class, 'purchase'])
 // /r/index.json — list of all installable components.
 // /r/{slug}.json — full source bundle for one component.
 Route::get('/r/index.json', [RegistryController::class, 'index'])->name('registry.index');
+
+// Node marketplace — third-party fancy-flow node packages. Registered BEFORE
+// /r/{slug} so `nodes` is not swallowed by the component route's pattern.
+// Core builtins are absent on purpose: they ship with fancy-flow and are not
+// installable.
+Route::get('/r/nodes/index.json', [NodeRegistryController::class, 'index'])->name('registry.nodes.index');
+Route::get('/r/nodes/{slug}', [NodeRegistryController::class, 'show'])
+    ->where('slug', '[a-z0-9_\-\.]+')
+    ->name('registry.nodes.show');
+
 Route::get('/r/{slug}', [RegistryController::class, 'show'])
     ->where('slug', '[a-z0-9\-\.]+')
     ->name('registry.show');

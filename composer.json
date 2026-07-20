@@ -3,10 +3,13 @@
     "name": "laravel/laravel",
     "type": "project",
     "description": "The skeleton application for the Laravel framework.",
-    "keywords": ["laravel", "framework"],
+    "keywords": [
+        "laravel",
+        "framework"
+    ],
     "license": "MIT",
     "require": {
-        "php": "^8.2",
+        "php": "^8.3",
         "inertiajs/inertia-laravel": "^3.1",
         "laravel/ai": "^0.6.7",
         "laravel/cashier": "^16.0",
@@ -27,7 +30,8 @@
         "particle-academy/laravel-fun-lab": "0.5.0",
         "particle-academy/last-word": "0.2.0",
         "spatie/browsershot": "^5.4",
-        "stripe/stripe-php": "^17.3"
+        "stripe/stripe-php": "^17.3",
+        "particle-academy/fancy-flow-php": "^0.8"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

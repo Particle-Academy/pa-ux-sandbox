@@ -1,11 +1,10 @@
 import { Seo } from "@particle-academy/fancy-inertia/seo";
-import { Badge, Button } from "@particle-academy/react-fancy";
+import { Badge, Breadcrumbs, Button } from "@particle-academy/react-fancy";
 import { Check, Code2, Copy, LayoutPanelTop, Monitor, TerminalSquare } from "lucide-react";
 import { useMemo, useState } from "react";
 import { clientOnly } from "../../lib/clientOnly";
 import { ComponentGallery } from "./ComponentGallery";
 import { Layout } from "../Layout";
-import "./fancy-tui.css";
 
 type Surface = "html" | "console";
 type Demo = {
@@ -90,16 +89,31 @@ export default function FancyTuiIndex() {
     };
 
     return (
-        <Layout bleed>
+        <Layout>
             <Seo title="Fancy TUI — terminal UI components for Human+ apps" description="Browse Fancy TUI documentation and examples as equivalent HTML and terminal surfaces." />
+            <Breadcrumbs>
+                <Breadcrumbs.Item href="/packages">Packages</Breadcrumbs.Item>
+                <Breadcrumbs.Item>fancy-tui</Breadcrumbs.Item>
+            </Breadcrumbs>
+
             <main className="ftui-page">
-                <header className="ftui-hero">
-                    <div>
-                        <div className="ftui-eyebrow"><TerminalSquare size={15} /> @particle-academy/fancy-tui <Badge color="violet">v0.2</Badge></div>
-                        <h1>One component vocabulary.<br /><span>Browser and terminal.</span></h1>
-                        <p>Browse the same layouts, agent workflows, and Human+ patterns as semantic HTML or a real ANSI console inside Fancy Term.</p>
+                {/* Same hero the package pages use, so this reads as part of the
+                    showcase rather than a separate microsite. */}
+                <header className="pkg-hero">
+                    <span className="pkg-glyph pkg-hero__glyph"><TerminalSquare size={22} /></span>
+                    <div className="pkg-hero__main">
+                        <h1 className="pkg-hero__name">fancy-tui</h1>
+                        <div className="pkg-hero__id">@particle-academy/fancy-tui</div>
+                        <p className="pkg-hero__tagline">
+                            One component vocabulary, browser and terminal. Browse the same layouts, agent
+                            workflows, and Human+ patterns as semantic HTML or a real ANSI console.
+                        </p>
+                        <div className="pkg-hero__meta">
+                            <span className="pkg-eco" data-eco="ts">TypeScript</span>
+                            <span className="pkg-kind">Terminal UI</span>
+                            <Badge color="green">MCP ready</Badge>
+                        </div>
                     </div>
-                    <code>npm i @particle-academy/fancy-tui ink</code>
                 </header>
 
                 <section className="ftui-workbench">

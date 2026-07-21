@@ -76,9 +76,33 @@ triggers any of it** — real certificate, straight through. Override with
 
 ### On Forge
 
-Run it as a daemon with `npm run tui-service` (the deploy already has Node), set
-`TUI_MCP_URL` to the app's `/mcp`, and set `TUI_SERVICE_URL` in the app env to
-the localhost port. No build step: it runs through `tsx`.
+> **This never goes in the deploy script.** `npm run tui-service` starts a
+> server that does not exit, so a deploy script containing it blocks forever and
+> the deployment hangs until it times out. It belongs in Forge's **Daemons**
+> section, which is supervised and restarts it on crash.
+
+Create a Forge **Daemon**:
+
+| Field | Value |
+|---|---|
+| Command | `npm run tui-service` |
+| Directory | `/home/forge/<site>/current` |
+| User | `forge` |
+
+Then set `TUI_MCP_URL` to the app's own `/mcp` and `TUI_SERVICE_URL` to
+`http://127.0.0.1:8790` in the site env. No build step: it runs through `tsx`.
+
+**One line does belong in the deploy script** — restarting the daemon, so it
+picks up the new release. A daemon launched in `current` keeps serving the old
+release after a deploy, because `current` is a symlink that moves out from under
+the running process:
+
+```bash
+sudo -S supervisorctl restart daemon-<id>:*
+```
+
+Forge prints that command with the real `<id>` on the daemon's own page. It
+returns immediately, so it cannot hang a deploy the way the service itself does.
 
 `tsx` is a **devDependency**, so the deploy must install dev dependencies — it
 already does, since `vite` is a devDependency too and the deploy runs

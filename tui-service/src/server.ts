@@ -1,4 +1,5 @@
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
+import { readFileSync } from "node:fs";
 import { McpClient } from "./mcp.js";
 import { CatalogueCache } from "./catalogue.js";
 import { reduce, initialState, type DocsState, type Effect } from "./model.js";
@@ -21,9 +22,35 @@ import { renderFrame, renderError } from "./render.js";
  * catalogue, and incoming state is coerced to sane values before it is used.
  */
 
-const PORT = Number(process.env.TUI_SERVICE_PORT ?? 8790);
+/**
+ * Fall back to the app's `.env` for our own settings.
+ *
+ * `TUI_SERVICE_URL` is documented as a `.env` key because Laravel reads it
+ * there — so `.env` is where anyone configuring this feature naturally puts
+ * `TUI_MCP_URL` too. Without this, the service silently kept its
+ * `artisan serve` default and every render failed with "fetch failed" against
+ * a port nothing was listening on, while `.env` sat there looking correct.
+ *
+ * A real environment variable always wins; this only fills the gaps. Failure to
+ * read the file is not an error — the defaults below still apply.
+ */
+function envFallback(key: string): string | undefined {
+  if (process.env[key] !== undefined) return process.env[key];
+  try {
+    const url = new URL("../../.env", import.meta.url);
+    const line = readFileSync(url, "utf8")
+      .split(/\r?\n/)
+      .find((l) => l.trimStart().startsWith(`${key}=`));
+    if (!line) return undefined;
+    return line.slice(line.indexOf("=") + 1).trim().replace(/^["']|["']$/g, "") || undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+const PORT = Number(envFallback("TUI_SERVICE_PORT") ?? 8790);
 const HOST = "127.0.0.1";
-const MCP_URL = process.env.TUI_MCP_URL ?? "http://127.0.0.1:8000/mcp";
+const MCP_URL = envFallback("TUI_MCP_URL") ?? "http://127.0.0.1:8000/mcp";
 const MAX_BODY = 64 * 1024; // navigation state is tiny; anything larger is abuse.
 
 const mcp = new McpClient(MCP_URL);

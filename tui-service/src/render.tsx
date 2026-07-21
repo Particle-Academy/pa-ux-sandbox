@@ -32,6 +32,24 @@ class FrameStdout extends EventEmitter {
   };
 }
 
+/**
+ * Terminate every line with CRLF on the way out.
+ *
+ * Ink writes `\n` because it targets a TTY, where the kernel's ONLCR turns that
+ * into `\r\n`. The consumer here is xterm.js in a browser — a raw emulator with
+ * no line discipline — so a bare `\n` moves DOWN a row without returning to
+ * column 0 and every line starts one column further right than the last. The
+ * whole frame staircases off the screen.
+ *
+ * This is the producer's job, not the terminal's: `<Terminal>` writes its
+ * `output` verbatim, which is correct, because a PTY-backed consumer already
+ * sends CRLF and rewriting a raw byte stream would corrupt it. The `\r?\n`
+ * form is idempotent, so a frame that already has CRLF passes through unharmed.
+ */
+function crlf(frame: string): string {
+  return frame.replace(/\r?\n/g, "\r\n");
+}
+
 export function renderFrame(
   catalogue: Catalogue,
   state: DocsState,
@@ -52,18 +70,18 @@ export function renderFrame(
   instance.unmount();
   instance.cleanup?.();
 
-  return frame;
+  return crlf(frame);
 }
 
 /** A minimal frame for when the catalogue could not be loaded. */
 export function renderError(message: string, cols: number): string {
   const line = (text: string) => text.padEnd(cols).slice(0, cols);
-  return [
+  return crlf([
     line(""),
     line("  Fancy Docs TUI"),
     line(""),
     line(`  Could not reach the registry: ${message}`),
     line("  Press q to return."),
     line(""),
-  ].join("\n");
+  ].join("\n"));
 }

@@ -50,6 +50,32 @@ screen.
 | `TUI_SERVICE_PORT` | `8790` | Port to bind on `127.0.0.1`. |
 | `TUI_MCP_URL` | `http://127.0.0.1:8000/mcp` | The MCP endpoint to browse — this app's own `/mcp`. |
 
+Both fall back to the app's `.env` when the variable is not in the real
+environment, since `.env` is where `TUI_SERVICE_URL` already lives and so where
+anyone configuring this naturally puts them. A real env var always wins.
+
+### Local HTTPS (Herd / Valet)
+
+The default assumes `php artisan serve` on port 8000. If you serve the app over
+Herd or Valet instead, point `TUI_MCP_URL` at that host — but note **Node does
+not trust the local CA**, so `https://your-app.test/mcp` fails with
+`UNABLE_TO_VERIFY_LEAF_SIGNATURE`, which surfaces in the terminal as the
+unhelpful `Could not reach the registry: fetch failed`. Plain `http://` will not
+save you either; Valet 301s it to https.
+
+Hand Node the CA rather than disabling verification:
+
+```bash
+# macOS / Linux
+NODE_EXTRA_CA_CERTS="$HOME/.config/valet/CA/LaravelValetCASelfSigned.pem" npm run tui-service
+
+# Windows (Herd)
+NODE_EXTRA_CA_CERTS="$env:USERPROFILE\.config\herd\config\valet\CA\LaravelValetCASelfSigned.crt" npm run tui-service
+```
+
+This is a local-certificate problem only — a deployed app has a real
+certificate and needs none of it.
+
 ### On Forge
 
 Run it as a daemon with `npm run tui-service` (the deploy already has Node), set

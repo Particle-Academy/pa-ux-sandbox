@@ -91,6 +91,46 @@ function windowed<T>(items: T[], selected: number, height: number): { slice: T[]
   return { slice: items.slice(start, start + height), start };
 }
 
+/**
+ * Window a grouped list by RENDERED rows, not item count.
+ *
+ * A family costs one row, but the first family of a theme also draws a heading
+ * and a blank line above it — three rows, not one. Budgeting one row per family
+ * (as a plain `windowed` does) under-counts by two per theme, so with six themes
+ * the list overflowed its box by a dozen rows and pushed the hero off the top of
+ * the terminal. There is no scrollback to recover it from: the docs TUI repaints
+ * a full screen every frame.
+ */
+function windowedGroups(
+  families: Family[],
+  selected: number,
+  height: number,
+): { slice: Family[]; start: number } {
+  const opensGroup = (i: number) => i === 0 || families[i]!.group !== families[i - 1]!.group;
+  const cost = (i: number) => (opensGroup(i) ? 3 : 1);
+  // The first visible row skips the blank line above its heading — but only if
+  // it HAS a heading. Discounting unconditionally made a window that starts
+  // mid-group price its first family at zero rows, so the frame came out one
+  // row taller than the terminal exactly when the selection was scrolled down.
+  const costFrom = (start: number, i: number) =>
+    i === start && opensGroup(i) ? 2 : cost(i);
+
+  const fits = (start: number) => {
+    let used = 0;
+    let end = start;
+    while (end < families.length && used + costFrom(start, end) <= height) {
+      used += costFrom(start, end);
+      end++;
+    }
+    return end;
+  };
+
+  // Walk the start forward until the selection is inside the window.
+  let start = 0;
+  while (start < families.length && fits(start) <= selected) start++;
+  return { slice: families.slice(start, fits(start)), start };
+}
+
 /** The one glyph that answers "does this draw in a terminal?" at a glance. */
 function PreviewMark({ component }: { component: CatalogueComponent }) {
   return component.previewable ? (
@@ -102,30 +142,65 @@ function PreviewMark({ component }: { component: CatalogueComponent }) {
 
 // ── home ─────────────────────────────────────────────────────────────────────
 
+/** Rows the Hero occupies: border + padding + mark + title + tagline + hints. */
+const HERO_ROWS = 12;
+/** Rows a slim header occupies when the Hero will not fit. */
+const SLIM_HEADER_ROWS = 2;
+/** Below this width the companion column is dropped rather than squeezed. */
+const TWO_COLUMN_MIN_COLS = 76;
+
 function HomePane({ cat, state, cols, rows }: { cat: Catalogue; state: DocsState; cols: number; rows: number }) {
   const families = visibleFamilies(cat, state);
 
-  // Budget: Hero (~9) + status (~1) + search line leave the rest for the list.
-  const listHeight = Math.max(4, rows - 13);
-  const { slice, start } = windowed(families, state.familyIndex, listHeight);
+  // The Hero is the first thing to go when the terminal is short. Losing it is
+  // better than letting it push the list off the top — which is what happens
+  // when the budget lies, since there is no scrollback to recover from.
+  const showHero = rows >= 28;
+  const headerRows = showHero ? HERO_ROWS : SLIM_HEADER_ROWS;
+  const searchRows = state.searching || state.search ? 2 : 0;
+  // Chrome below the header: the blank line above the list, plus the footer's
+  // own margin and its three bordered rows.
+  const CHROME_ROWS = 5;
+  const listHeight = Math.max(4, rows - headerRows - searchRows - CHROME_ROWS);
+
+  const { slice, start } = windowedGroups(families, state.familyIndex, listHeight);
+
+  // A single narrow column on a wide terminal wastes most of the screen, so the
+  // selected family's contents fill the space beside it. Purely presentational
+  // — it reads `state.familyIndex`, and navigation is unchanged.
+  const twoColumn = cols >= TWO_COLUMN_MIN_COLS;
+  const listWidth = twoColumn ? Math.max(28, Math.min(38, Math.floor(cols * 0.36))) : cols;
+  const current = families[state.familyIndex];
 
   let lastTheme = start > 0 ? families[start - 1]?.group : undefined;
 
   return (
     <Stack gap={0}>
-      <Hero
-        title="Fancy Docs"
-        version={`${cat.total} components`}
-        tagline="The Fancy UI registry, browsed from a terminal — over the real MCP."
-        mark={BRAND_MARK}
-        asciiMark={ASCII_MARK}
-        hints={[
-          { keys: "↑↓", label: "family" },
-          { keys: "→", label: "open" },
-          { keys: "/", label: "search" },
-          { keys: "q", label: "quit" },
-        ]}
-      />
+      {showHero ? (
+        <Hero
+          title="Fancy Docs"
+          version={`${cat.total} components`}
+          tagline="The Fancy UI registry, browsed from a terminal — over the real MCP."
+          mark={BRAND_MARK}
+          asciiMark={ASCII_MARK}
+          hints={[
+            { keys: "↑↓", label: "family" },
+            { keys: "→", label: "open" },
+            { keys: "/", label: "search" },
+            { keys: "q", label: "quit" },
+          ]}
+        />
+      ) : (
+        <Row gap={1}>
+          <Text tone="primary" bold>Fancy Docs</Text>
+          <Text tone="muted">{cat.total} components</Text>
+          <Spacer />
+          <KeyHint keys="↑↓" label="family" />
+          <KeyHint keys="→" label="open" />
+          <KeyHint keys="/" label="search" />
+          <KeyHint keys="q" label="quit" />
+        </Row>
+      )}
 
       {state.searching || state.search ? (
         <Box marginTop={1}>
@@ -137,34 +212,40 @@ function HomePane({ cat, state, cols, rows }: { cat: Catalogue; state: DocsState
         </Box>
       ) : null}
 
-      <Box marginTop={1} flexDirection="column">
-        {slice.map((family, i) => {
-          const index = start + i;
-          const active = index === state.familyIndex;
-          const showThemeHeading = family.group !== lastTheme;
-          lastTheme = family.group;
-          const previewable = family.components.filter((c) => c.previewable).length;
+      <Row gap={2} marginTop={1}>
+        <Box width={listWidth} flexShrink={0} flexDirection="column">
+          {slice.map((family, i) => {
+            const index = start + i;
+            const active = index === state.familyIndex;
+            const showThemeHeading = family.group !== lastTheme;
+            lastTheme = family.group;
+            const previewable = family.components.filter((c) => c.previewable).length;
 
-          return (
-            <Box key={family.slug} flexDirection="column">
-              {showThemeHeading ? (
-                <Box marginTop={index === start ? 0 : 1}>
-                  <Text tone={themeTone(family.group)} bold>
-                    {themeLabel(family.group)}
+            return (
+              <Box key={family.slug} flexDirection="column">
+                {showThemeHeading ? (
+                  <Box marginTop={index === start ? 0 : 1}>
+                    <Text tone={themeTone(family.group)} bold>
+                      {themeLabel(family.group)}
+                    </Text>
+                  </Box>
+                ) : null}
+                <Row gap={1}>
+                  <Text tone={active ? "primary" : "text"} bold={active}>
+                    {active ? "›" : " "} {family.name}
                   </Text>
-                </Box>
-              ) : null}
-              <Row gap={1}>
-                <Text tone={active ? "primary" : "text"} bold={active}>
-                  {active ? "›" : " "} {family.name}
-                </Text>
-                <Text tone="muted">{family.components.length}</Text>
-                {previewable > 0 ? <Text tone="success">◉ {previewable}</Text> : null}
-              </Row>
-            </Box>
-          );
-        })}
-      </Box>
+                  <Text tone="muted">{family.components.length}</Text>
+                  {previewable > 0 ? <Text tone="success">◉ {previewable}</Text> : null}
+                </Row>
+              </Box>
+            );
+          })}
+        </Box>
+
+        {twoColumn && current ? (
+          <FamilyPeek family={current} height={listHeight} />
+        ) : null}
+      </Row>
 
       <Footer
         width={cols}
@@ -172,6 +253,46 @@ function HomePane({ cat, state, cols, rows }: { cat: Catalogue; state: DocsState
         right={<Text tone="muted">MCP · list-components</Text>}
       />
     </Stack>
+  );
+}
+
+/**
+ * What is inside the highlighted family, shown beside the list.
+ *
+ * The home screen was one ~30-column list on a terminal three times that wide,
+ * so this fills the space with the thing you are about to open. It reads
+ * `state.familyIndex` and nothing else — navigation is untouched, so `→` still
+ * opens the family pane.
+ */
+function FamilyPeek({ family, height }: { family: Family; height: number }) {
+  const previewable = family.components.filter((c) => c.previewable).length;
+  // Name, counts, the blank line above the list, and the "… more" line — four
+  // rows of chrome this column has to pay for out of the same budget the family
+  // list gets, or it is the thing that overflows instead.
+  const listRows = Math.max(1, height - 4);
+  const shown = family.components.slice(0, listRows);
+  const rest = family.components.length - shown.length;
+
+  return (
+    <Box flexGrow={1} flexDirection="column">
+      <Text tone="primary" bold>{family.name}</Text>
+      <Row gap={1}>
+        <Text tone="muted">{family.components.length} components</Text>
+        {previewable > 0 ? <Text tone="success">◉ {previewable} draw in a terminal</Text> : null}
+      </Row>
+
+      <Box marginTop={1} flexDirection="column">
+        {shown.map((component) => (
+          <Row key={component.name} gap={1}>
+            <Text tone={component.previewable ? "success" : "muted"}>
+              {component.previewable ? "◉" : "○"}
+            </Text>
+            <Text tone="text">{component.title ?? component.name}</Text>
+          </Row>
+        ))}
+        {rest > 0 ? <Text tone="muted">  … {rest} more</Text> : null}
+      </Box>
+    </Box>
   );
 }
 

@@ -33,6 +33,31 @@ class FrameStdout extends EventEmitter {
 }
 
 /**
+ * A stdin that exists only to satisfy Ink, and never delivers a keystroke.
+ *
+ * Ink refuses raw mode unless `stdin.isTTY`, and a component that calls
+ * `useInput` unconditionally — every overlay in fancy-tui does, to close on
+ * Escape — throws during render when it cannot get it. Ink then REPLACES the
+ * whole frame with its error screen, so one such component in a live preview
+ * blanked the entire page rather than degrading.
+ *
+ * The real process stdin is the wrong thing to hand it: this service is an HTTP
+ * renderer whose keyboard arrives as JSON, and under a test runner or a daemon
+ * process.stdin is not a TTY at all. So it gets a stub that claims raw-mode
+ * support and does nothing with it — accurate, since nothing here ever types.
+ */
+class FrameStdin extends EventEmitter {
+  readonly isTTY = true;
+  setRawMode = (): void => {};
+  setEncoding = (): void => {};
+  resume = (): void => {};
+  pause = (): void => {};
+  ref = (): void => {};
+  unref = (): void => {};
+  read = (): null => null;
+}
+
+/**
  * Terminate every line with CRLF on the way out.
  *
  * Ink writes `\n` because it targets a TTY, where the kernel's ONLCR turns that
@@ -57,10 +82,11 @@ export function renderFrame(
   rows: number,
 ): string {
   const stdout = new FrameStdout(cols, rows) as unknown as NodeJS.WriteStream;
+  const stdin = new FrameStdin() as unknown as NodeJS.ReadStream;
 
   const instance = inkRender(
     <DocsApp catalogue={catalogue} state={state} cols={cols} rows={rows} />,
-    { stdout, debug: true, exitOnCtrlC: false, patchConsole: false },
+    { stdout, stdin, debug: true, exitOnCtrlC: false, patchConsole: false },
   );
 
   const frame = (stdout as unknown as FrameStdout).last;

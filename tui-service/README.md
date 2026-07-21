@@ -8,6 +8,14 @@ It exists as a separate Node process because **Ink runs in Node, not the
 browser**, and it must never touch the Inertia SSR daemon (that is kit
 machinery; a leak here must not blank the site's first paint).
 
+Because it can run Ink, a component preview is a **live render**, not a
+picture: the detail pane imports `@particle-academy/fancy-tui/showcase` and puts
+the example's `node` straight into its own tree, so the component is laid out by
+Yoga at the visitor's real terminal size. `showcase/previews.json` is still read,
+but only as a fallback — for the two examples that commit scrollback through
+Ink's `<Static>` (`MessageList`, `StaticList`), whose output is written above the
+frame and outside the box model where no pane can clip it.
+
 ## What it is
 
 A pure function behind HTTP:
@@ -115,7 +123,7 @@ together.
 |---|---|
 | `src/server.ts` | HTTP server; the `(state,key,size) -> (state,frame,effects)` seam. |
 | `src/mcp.ts` | Minimal read-only MCP client (initialize + `tools/call`). |
-| `src/catalogue.ts` | Fetches + caches the catalogue; groups by family/theme; resolves previewability. |
+| `src/catalogue.ts` | Fetches + caches the catalogue; groups by family/theme; resolves each component's showcase slug. |
 | `src/model.ts` | Pure reducer — the whole navigation. |
 | `src/app.tsx` | The real fancy-tui Ink components for each pane. |
 | `src/render.tsx` | Drives Ink at a specific terminal size → one ANSI frame. |
@@ -123,4 +131,9 @@ together.
 | `src/keys.ts` | Decodes raw xterm bytes into keys. |
 
 Pure logic (`model`, `keys`, `state`, `catalogue`) is covered by
-`tests/js/tui-service-*.test.ts` in the sandbox suite.
+`tests/js/tui-service-*.test.ts` in the sandbox suite. `tui-service-fit.test.ts`
+additionally renders the home pane AND the detail pane — with every live
+showcase example — at eight terminal sizes and asserts the frame never exceeds
+the rows or columns it was given. That is not a formality: this UI repaints a
+full screen with no scrollback, so a frame one row too tall pushes content off
+the top irrecoverably.

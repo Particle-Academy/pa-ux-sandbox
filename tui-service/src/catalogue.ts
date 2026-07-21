@@ -1,4 +1,5 @@
 import { McpClient } from "./mcp.js";
+import { SHOWCASE_EXAMPLES_BY_SLUG } from "@particle-academy/fancy-tui/showcase";
 import previews from "@particle-academy/fancy-tui/showcase/previews.json" with { type: "json" };
 
 /**
@@ -30,13 +31,24 @@ export type McpComponent = {
 export type CatalogueComponent = McpComponent & {
   /**
    * Whether this component has a real terminal preview. True only for the
-   * fancy-tui package: those are Ink components that DRAW in a terminal, and
-   * their captured frame lives in `previewFrame`. Everything else is a web /
-   * React component with nothing to render in a console — the distinction the
-   * navigation makes visible.
+   * fancy-tui package: those are Ink components that DRAW in a terminal.
+   * Everything else is a web / React component with nothing to render in a
+   * console — the distinction the navigation makes visible.
    */
   previewable: boolean;
-  /** The captured Ink frame for a previewable component, else null. */
+  /**
+   * Key into fancy-tui's showcase examples, else null.
+   *
+   * This service runs Ink, so it renders the LIVE component: the detail pane
+   * looks the example up by this slug and puts `example.node` straight into its
+   * own tree. That is the entire reason the docs UI is a Node service.
+   */
+  previewSlug: string | null;
+  /**
+   * The captured Ink frame — a FALLBACK, for a component the installed
+   * fancy-tui has a capture for but no live example (a version skew). Null when
+   * there is no capture either.
+   */
   previewFrame: string | null;
   /** The source snippet shown alongside a preview, else null. */
   previewSource: string | null;
@@ -60,19 +72,32 @@ export type Catalogue = {
 
 type ListComponentsResult = { count: number; groups: string[]; items: McpComponent[] };
 
-/** Captured Ink frames from fancy-tui's `npm run showcase`, keyed by slug. */
+/**
+ * Captured Ink frames from fancy-tui's `npm run showcase`, keyed by slug.
+ *
+ * A DERIVED artifact — fancy-tui renders its example table at build time for
+ * consumers that cannot run Ink (the web gallery is a browser page). This
+ * service can run Ink, so it only reads these as a fallback.
+ */
 type Preview = { slug: string; name: string; group: string; source: string; frame: string };
 const PREVIEWS = new Map<string, Preview>(
   (previews as { components: Preview[] }).components.map((p) => [p.slug, p]),
 );
 
-/** The registry prefixes fancy-tui components with `tui-`; previews do not. */
+/**
+ * The registry prefixes fancy-tui components with `tui-`; showcase slugs do not.
+ *
+ * Exported because it is the ONE place that translation lives: the detail pane
+ * resolves a live example through the slug this returns.
+ */
 const TUI_PACKAGE = "fancy-tui";
-function previewSlugFor(component: McpComponent): string | null {
+export function previewSlugFor(component: McpComponent): string | null {
   if (component.package !== TUI_PACKAGE) return null;
   // `tui-badge` → `badge`; the bare `fancy-tui` entry maps to nothing.
   const slug = component.name.startsWith("tui-") ? component.name.slice(4) : component.name;
-  return PREVIEWS.has(slug) ? slug : null;
+  // A live example is the preferred source; a capture alone still counts, so a
+  // fancy-tui that ships one but not the other never blanks the pane.
+  return SHOWCASE_EXAMPLES_BY_SLUG.has(slug) || PREVIEWS.has(slug) ? slug : null;
 }
 
 function resolvePreview(component: McpComponent): CatalogueComponent {
@@ -80,7 +105,8 @@ function resolvePreview(component: McpComponent): CatalogueComponent {
   const preview = slug ? PREVIEWS.get(slug) : undefined;
   return {
     ...component,
-    previewable: preview !== undefined,
+    previewable: slug !== null,
+    previewSlug: slug,
     previewFrame: preview?.frame ?? null,
     previewSource: preview?.source ?? null,
   };

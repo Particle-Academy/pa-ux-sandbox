@@ -13,6 +13,7 @@ import {
   Row,
   Spacer,
 } from "@particle-academy/fancy-tui";
+import { findShowcaseExample, type ShowcaseExample } from "@particle-academy/fancy-tui/showcase";
 import type { Catalogue, CatalogueComponent, Family } from "./catalogue.js";
 import {
   visibleFamilies,
@@ -30,9 +31,12 @@ import {
  * takes a catalogue + state and returns a tree, and the server turns that tree
  * into a frame.
  *
- * The one thing it renders that it does NOT compose is a component's captured
- * preview frame — that is itself a real Ink render (from fancy-tui's showcase),
- * embedded line by line so the detail pane shows the component drawing.
+ * That extends to the component previews: the detail pane renders fancy-tui's
+ * exported showcase example INLINE, in this same Ink tree. It is the real
+ * component, laid out by Yoga at the reader's actual terminal size — not a
+ * picture of one taken at 68 columns. (`showcase/previews.json` is still read,
+ * but only as a fallback for a component the installed fancy-tui captured and
+ * has no live example for.)
  */
 
 /**
@@ -362,9 +366,31 @@ function FamilyPane({ cat, state, cols, rows }: { cat: Catalogue; state: DocsSta
 
 // ── detail ───────────────────────────────────────────────────────────────────
 
+/**
+ * Rows the detail pane spends on everything that is not the preview: the header
+ * (1), the description block (marginTop + a clipped 2 rows), the blank line
+ * above the preview, and the footer (marginTop + 3 bordered rows).
+ *
+ * Fixed on purpose. A description is arbitrary prose that wraps to an unknown
+ * number of rows, so leaving it unbounded makes the preview's budget a guess —
+ * and a frame taller than the terminal is unrecoverable here: this TUI repaints
+ * a full screen and keeps no scrollback.
+ */
+const DETAIL_CHROME_ROWS = 9;
+const DESCRIPTION_ROWS = 2;
+
 function DetailPane({ cat, state, cols, rows }: { cat: Catalogue; state: DocsState; cols: number; rows: number }) {
   const component = selectedComponent(cat, state);
   if (!component) return <Text tone="muted">No component selected.</Text>;
+
+  const found = component.previewSlug ? findShowcaseExample(component.previewSlug) : undefined;
+  // An example that commits scrollback through Ink's `Static` (MessageList,
+  // StaticList) paints ABOVE the frame and outside every box, so this pane
+  // cannot clip it — it would land on top of the header and make the frame
+  // taller than the terminal. Those fall back to their capture, which is a
+  // picture and therefore clippable.
+  const example = found?.scrollback ? undefined : found;
+  const bodyHeight = Math.max(5, rows - DETAIL_CHROME_ROWS);
 
   return (
     <Stack gap={0}>
@@ -373,12 +399,18 @@ function DetailPane({ cat, state, cols, rows }: { cat: Catalogue; state: DocsSta
         subtitle={component.package}
         status={<PreviewMark component={component} />}
       />
-      <Box marginTop={1}>
+      <Box marginTop={1} height={DESCRIPTION_ROWS} overflow="hidden">
         <Text>{component.description}</Text>
       </Box>
 
-      {component.previewable && component.previewFrame ? (
-        <PreviewBody component={component} state={state} rows={rows} />
+      {example || component.previewFrame ? (
+        <PreviewBody
+          component={component}
+          example={example}
+          state={state}
+          cols={cols}
+          height={bodyHeight}
+        />
       ) : (
         <Box marginTop={1} flexDirection="column">
           <Panel title="No terminal preview" tone="neutral">
@@ -409,50 +441,160 @@ function DetailPane({ cat, state, cols, rows }: { cat: Catalogue; state: DocsSta
 }
 
 /**
- * The captured Ink frame, shown line by line inside a Panel.
+ * A component's preview: the LIVE component when fancy-tui exports an example
+ * for it, otherwise the captured frame.
  *
- * These lines already carry their own ANSI colour from the showcase capture, so
- * they are printed as-is rather than re-styled — the detail pane shows the
- * component exactly as it draws. Scrolls with the detail offset so a tall
- * preview + its source both stay reachable.
+ * Either way the whole block is a Panel with a `maxHeight` and `overflow`
+ * hidden. A live example is arbitrary-height content composed for its own
+ * layout — Hero is twelve rows, Modal draws inside a 68-column box — so
+ * clipping is not a nicety: without it a tall component would push the footer,
+ * and then the header, off a short terminal, with no scrollback to recover
+ * them. `maxHeight` rather than `height` so a one-row component (a Badge row)
+ * gets a panel that hugs it instead of thirty rows of empty box.
+ *
+ * The content sits in its own `flexShrink={0}` column INSIDE that panel, and
+ * this is load-bearing: a height-constrained Yoga container squeezes its
+ * children, and a squeezed Ink text node still writes all of its lines — from a
+ * position that no longer matches. The frame comes back with rows painted on
+ * top of each other ("LIVE PREVIEWble") rather than merely cut off. So the
+ * inner column keeps its natural height and overflows; only the panel clips.
  */
 function PreviewBody({
   component,
+  example,
   state,
-  rows,
+  cols,
+  height,
+}: {
+  component: CatalogueComponent;
+  example: ShowcaseExample | undefined;
+  state: DocsState;
+  cols: number;
+  height: number;
+}) {
+  return (
+    <Box marginTop={1} flexDirection="column">
+      <Panel tone="success" width={cols} maxHeight={height} overflow="hidden">
+        {/*
+          The title is drawn INSIDE the unshrinkable column rather than passed
+          as Panel's `title`, because a Panel title is a second flex child — and
+          the constrained container squeezes whichever child can be squeezed,
+          landing the title and the first content row on the same terminal row.
+        */}
+        <Box flexDirection="column" flexShrink={0}>
+          <Text tone="success" bold>{`Preview — ${component.title || component.name}`}</Text>
+          {example ? (
+            <LivePreview example={example} state={state} cols={cols} height={height} />
+          ) : (
+            <CapturedPreview component={component} state={state} height={height} />
+          )}
+        </Box>
+      </Panel>
+    </Box>
+  );
+}
+
+/** Rows a live example may claim before it is clipped — the tallest is 12. */
+const LIVE_PREVIEW_MAX_ROWS = 14;
+
+/**
+ * The real component, rendered here, now.
+ *
+ * Two clamps make it safe to drop arbitrary content into a pane:
+ *
+ *  - a fixed-height `overflow: hidden` box, so a tall example is cut off rather
+ *    than allowed to grow the frame past the terminal;
+ *  - a nested `FancyTuiProvider` carrying the PANE's size, because components
+ *    that measure the terminal (`Separator` rules to full width, `Hero` folds
+ *    below 60, `Responsive` switches at a breakpoint) would otherwise size
+ *    themselves to the whole screen and be clipped at the panel border.
+ */
+function LivePreview({
+  example,
+  state,
+  cols,
+  height,
+}: {
+  example: ShowcaseExample;
+  state: DocsState;
+  cols: number;
+  height: number;
+}) {
+  // Panel spends 2 columns on its border and 2 on its horizontal padding.
+  const innerWidth = Math.max(10, cols - 4);
+  // …and 2 rows on its border plus 1 on its title.
+  const contentRows = Math.max(3, height - 3);
+  // The three label rows this block draws around the two sections.
+  const previewRows = Math.max(3, Math.min(LIVE_PREVIEW_MAX_ROWS, contentRows - 4));
+  const sourceRows = Math.max(1, contentRows - previewRows - 3);
+
+  const sourceLines = example.source.split("\n");
+  const start = Math.min(state.detailOffset, Math.max(0, sourceLines.length - sourceRows));
+  const slice = sourceLines.slice(start, start + sourceRows);
+  const more = start + sourceRows < sourceLines.length;
+
+  return (
+    <>
+      <Text tone="muted" bold>LIVE PREVIEW</Text>
+      <Box width={innerWidth} maxHeight={previewRows} overflow="hidden" flexDirection="column">
+        <Box flexDirection="column" flexShrink={0}>
+          <FancyTuiProvider width={innerWidth} height={previewRows}>
+            {example.node}
+          </FancyTuiProvider>
+        </Box>
+      </Box>
+      <Text tone="muted" bold>SOURCE</Text>
+      {slice.map((line, i) => (
+        <Text key={i} tone="agent">{line}</Text>
+      ))}
+      {more ? <Text tone="muted">↓ more</Text> : null}
+    </>
+  );
+}
+
+/**
+ * The captured frame, line by line — the fallback when the installed fancy-tui
+ * has a capture for a component but no live example for it.
+ *
+ * These lines already carry their own ANSI colour, so they are printed as-is
+ * rather than re-styled. Scrolls with the detail offset so a tall capture and
+ * its source both stay reachable.
+ */
+function CapturedPreview({
+  component,
+  state,
+  height,
 }: {
   component: CatalogueComponent;
   state: DocsState;
-  rows: number;
+  height: number;
 }) {
   const frameLines = (component.previewFrame ?? "").split("\n");
   const sourceLines = (component.previewSource ?? "").split("\n");
   const body = [
-    { kind: "label" as const, text: "LIVE PREVIEW" },
+    { kind: "label" as const, text: "CAPTURED PREVIEW" },
     ...frameLines.map((text) => ({ kind: "frame" as const, text })),
     { kind: "gap" as const, text: "" },
     { kind: "label" as const, text: "SOURCE" },
     ...sourceLines.map((text) => ({ kind: "source" as const, text })),
   ];
 
-  const height = Math.max(6, rows - 10);
-  const start = Math.min(state.detailOffset, Math.max(0, body.length - height));
-  const slice = body.slice(start, start + height);
-  const more = start + height < body.length;
+  const rows = Math.max(1, height - 4);
+  const start = Math.min(state.detailOffset, Math.max(0, body.length - rows));
+  const slice = body.slice(start, start + rows);
+  const more = start + rows < body.length;
 
   return (
-    <Box marginTop={1} flexDirection="column">
-      <Panel title={`Preview — ${component.title || component.name}`} tone="success">
-        {slice.map((line, i) => {
-          if (line.kind === "label") return <Text key={i} tone="muted" bold>{line.text}</Text>;
-          if (line.kind === "gap") return <Text key={i}> </Text>;
-          if (line.kind === "source") return <Text key={i} tone="agent">{line.text}</Text>;
-          // A pre-coloured frame line: print verbatim.
-          return <Text key={i}>{line.text}</Text>;
-        })}
-        {more ? <Text tone="muted">↓ more</Text> : null}
-      </Panel>
-    </Box>
+    <>
+      {slice.map((line, i) => {
+        if (line.kind === "label") return <Text key={i} tone="muted" bold>{line.text}</Text>;
+        if (line.kind === "gap") return <Text key={i}> </Text>;
+        if (line.kind === "source") return <Text key={i} tone="agent">{line.text}</Text>;
+        // A pre-coloured frame line: print verbatim.
+        return <Text key={i}>{line.text}</Text>;
+      })}
+      {more ? <Text tone="muted">↓ more</Text> : null}
+    </>
   );
 }
 

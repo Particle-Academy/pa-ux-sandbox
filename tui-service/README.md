@@ -54,33 +54,36 @@ Both fall back to the app's `.env` when the variable is not in the real
 environment, since `.env` is where `TUI_SERVICE_URL` already lives and so where
 anyone configuring this naturally puts them. A real env var always wins.
 
-### Local HTTPS (Herd / Valet)
+### Local HTTPS (Herd / Valet) — handled for you
 
-The default assumes `php artisan serve` on port 8000. If you serve the app over
-Herd or Valet instead, point `TUI_MCP_URL` at that host — but note **Node does
-not trust the local CA**, so `https://your-app.test/mcp` fails with
-`UNABLE_TO_VERIFY_LEAF_SIGNATURE`, which surfaces in the terminal as the
-unhelpful `Could not reach the registry: fetch failed`. Plain `http://` will not
-save you either; Valet 301s it to https.
+The default assumes `php artisan serve` on port 8000. Serving the app over Herd
+or Valet instead means `TUI_MCP_URL` is an `https://…test` URL, and **Node does
+not trust the local CA** — the fetch fails with `UNABLE_TO_VERIFY_LEAF_SIGNATURE`,
+which reaches the terminal as the unhelpful `Could not reach the registry: fetch
+failed`. Plain `http://` does not save you; Valet 301s it to https.
 
-Hand Node the CA rather than disabling verification:
+`npm run tui-service` goes through `run.mjs`, which handles this: when
+`TUI_MCP_URL` is an https `.test` (or `localhost`) host it finds the Herd/Valet
+CA and sets `NODE_EXTRA_CA_CERTS` before starting the service. It exists as a
+launcher because Node reads that variable at STARTUP — the service cannot fix
+its own trust from the inside.
 
-```bash
-# macOS / Linux
-NODE_EXTRA_CA_CERTS="$HOME/.config/valet/CA/LaravelValetCASelfSigned.pem" npm run tui-service
-
-# Windows (Herd)
-NODE_EXTRA_CA_CERTS="$env:USERPROFILE\.config\herd\config\valet\CA\LaravelValetCASelfSigned.crt" npm run tui-service
-```
-
-This is a local-certificate problem only — a deployed app has a real
-certificate and needs none of it.
+It supplies the correct trust anchor; it never disables verification. And the
+detection is scoped to `.test`/`localhost` over https, so **a deployed app never
+triggers any of it** — real certificate, straight through. Override with
+`TUI_MCP_CA_FILE` (env or `.env`) for a CA elsewhere, or set
+`NODE_EXTRA_CA_CERTS` yourself and the launcher defers to it.
 
 ### On Forge
 
 Run it as a daemon with `npm run tui-service` (the deploy already has Node), set
 `TUI_MCP_URL` to the app's `/mcp`, and set `TUI_SERVICE_URL` in the app env to
 the localhost port. No build step: it runs through `tsx`.
+
+`tsx` is a **devDependency**, so the deploy must install dev dependencies — it
+already does, since `vite` is a devDependency too and the deploy runs
+`npm run build`. Adding `--omit=dev` would break this daemon and the asset build
+together.
 
 ## Layout
 

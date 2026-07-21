@@ -10,7 +10,7 @@
         "test": "vitest run",
         "tui:agent": "tsx resources/tui/agent-console.tsx",
         "tui:smoke": "tsx resources/tui/agent-console.tsx --smoke",
-        "tui-service": "tsx tui-service/src/server.ts",
+        "tui-service": "node tui-service/run.mjs",
         "tm": "npx tsx .bots/lib/cli.ts",
         "tm:status": "npx tsx .bots/lib/cli.ts status",
         "tm:jobs": "npx tsx .bots/lib/cli.ts jobs"

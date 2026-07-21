@@ -228,9 +228,12 @@ Route::get('/api/leaderboard/contributors', [LeaderboardController::class, 'cont
 // over MCP. No auth, no DB writes; the page owns an in-browser MicroMcpServer.
 Route::get('/agent-playground', fn () => Inertia::render('AgentPlayground'))->name('agent-playground');
 Route::get('/fancy-tui', [FancyTuiController::class, 'index'])->name('fancy-tui.index');
-// The stripped registry the page's "Fancy Docs TUI" browses. Fetched lazily by
-// the terminal, so the HTML view never pays for it.
-Route::get('/fancy-tui/catalogue.json', [FancyTuiController::class, 'catalogue'])->name('fancy-tui.catalogue');
+// One keystroke -> one rendered frame, proxied to the localhost render service.
+// Throttled because it is one request per keypress: a generous ceiling for a
+// human typing, a low one for anything hammering it.
+Route::post('/fancy-tui/frame', [FancyTuiController::class, 'frame'])
+    ->middleware('throttle:120,1')
+    ->name('fancy-tui.frame');
 
 Route::get('/shop', [ShopController::class, 'index'])->name('shop.index');
 Route::post('/shop/{item:slug}/purchase', [ShopController::class, 'purchase'])

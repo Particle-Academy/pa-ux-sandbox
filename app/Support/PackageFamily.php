@@ -376,6 +376,43 @@ final class PackageFamily
     }
 
     /**
+     * Family membership for a package slug, as flat fields.
+     *
+     * This is the ONE source that groups the registry — the /packages listing,
+     * the MCP `list-components` tool, and the docs TUI all read a component's
+     * family + theme from here rather than each re-deriving it. A package in no
+     * family (a standalone repo not yet folded into a product) falls back to the
+     * "tooling" theme under its own name, so nothing is silently ungrouped.
+     *
+     * @return array{family:string, familyName:string, group:string}
+     */
+    public static function groupFor(string $packageSlug): array
+    {
+        $family = self::find($packageSlug);
+
+        if ($family === null) {
+            return ['family' => $packageSlug, 'familyName' => $packageSlug, 'group' => 'tooling'];
+        }
+
+        return [
+            'family' => (string) $family['slug'],
+            'familyName' => (string) $family['name'],
+            'group' => (string) $family['group'],
+        ];
+    }
+
+    /**
+     * Theme order for the listing, so every surface groups families the same
+     * way the /packages page does. A theme not named here sorts last.
+     *
+     * @return list<string>
+     */
+    public static function themeOrder(): array
+    {
+        return ['core', 'surfaces', 'documents', 'commerce', 'platform', 'tooling'];
+    }
+
+    /**
      * Distinct language labels across a family, in first-seen order.
      *
      * @return list<string>

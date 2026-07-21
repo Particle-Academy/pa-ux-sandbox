@@ -10,6 +10,7 @@
         "test": "vitest run",
         "tui:agent": "tsx resources/tui/agent-console.tsx",
         "tui:smoke": "tsx resources/tui/agent-console.tsx --smoke",
+        "tui-service": "tsx tui-service/src/server.ts",
         "tm": "npx tsx .bots/lib/cli.ts",
         "tm:status": "npx tsx .bots/lib/cli.ts status",
         "tm:jobs": "npx tsx .bots/lib/cli.ts jobs"
@@ -78,6 +79,7 @@
         "echarts": "^6.1.0",
         "echarts-gl": "^2.1.0",
         "ink": "^7.1.1",
+        "ink-testing-library": "^4.0.0",
         "laravel-echo": "^2.3.7",
         "leaflet": "^1.9.4",
         "lucide-react": "^0.511.0",

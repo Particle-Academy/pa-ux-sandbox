@@ -3,100 +3,75 @@
 namespace App\Http\Controllers\Showcase;
 
 use App\Http\Controllers\Controller;
-use App\Support\PackageRegistry;
-use App\Support\Registry\RegistrySource;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Inertia\Inertia;
 use Inertia\Response;
 
 /**
- * The /fancy-tui showcase page plus the catalogue feed its "Fancy Docs TUI"
+ * The /fancy-tui showcase page plus the render proxy its "Fancy Docs TUI"
  * browses.
  *
  * The TUI is a human-browseable version of the registry MCP: the same
- * catalogue agents get from `list_components` / `get_component`, driven by a
- * keyboard. The full registry artifact is ~1.4 MB (it carries every file's
- * source), so this endpoint strips it to what the terminal actually draws and
- * the page fetches it lazily — only when the visitor switches to the console.
+ * `list-components` / `get-component` an agent calls, driven by a keyboard.
+ * The terminal is rendered by a localhost Node service (Ink needs Node), and
+ * `frame()` is its public edge — see that method.
  */
 class FancyTuiController extends Controller
 {
-    public function __construct(private readonly RegistrySource $source) {}
-
     public function index(): Response
     {
         return Inertia::render('FancyTui/Index');
     }
 
     /**
-     * GET /fancy-tui/catalogue.json — the stripped registry the docs TUI browses.
-     */
-    public function catalogue(): JsonResponse
-    {
-        $pages = $this->componentPages();
-
-        $items = array_map(function ($item) use ($pages): array {
-            return [
-                'name' => $item->name,
-                'title' => $item->title,
-                'description' => $item->description,
-                'package' => $item->package,
-                'type' => $item->type,
-                'dependencies' => array_values($item->dependencies),
-                'registryDependencies' => array_values($item->registryDependencies),
-                // Paths only — the TUI lists files, it never shows their source.
-                'files' => array_values(array_map(
-                    fn (array $file): array => ['path' => (string) ($file['path'] ?? '')],
-                    $item->files,
-                )),
-                // Resolved server-side so the terminal never offers a dead link:
-                // the component's own page when one exists, else the package
-                // page, else null (no web docs at all).
-                'href' => $this->hrefFor($item->package, $item->name, $pages),
-            ];
-        }, $this->source->all());
-
-        return response()->json([
-            'count' => count($items),
-            'items' => array_values($items),
-        ], 200, [
-            'Cache-Control' => 'public, max-age=300, s-maxage=900',
-        ]);
-    }
-
-    /**
-     * Every component slug that actually has a /packages/{pkg}/{slug} page,
-     * keyed "package/slug". The route 404s on anything else, so the TUI's
-     * "open the web docs" affordance is resolved against this, not guessed.
+     * Proxy one keystroke to the docs TUI render service and return its frame.
      *
-     * @return array<string, true>
+     * The terminal itself is a Node service that runs the real fancy-tui Ink
+     * components and browses the real MCP — it has to be Node, because Ink is
+     * Node. That service binds localhost only; THIS is its public edge, so the
+     * throttling and the never-trust-the-body posture live here, not there.
+     *
+     * The browser owns the navigation state and sends it back each keystroke,
+     * so there is no session to store. The body is forwarded as-is: the service
+     * sanitises it (an unknown pane, a NaN index, an oversized search all
+     * degrade to the home screen), because the state is untrusted on the way in.
      */
-    private function componentPages(): array
+    public function frame(Request $request): JsonResponse
     {
-        $pages = [];
-        foreach (PackageRegistry::all() as $pkg) {
-            $slug = (string) ($pkg['slug'] ?? '');
-            if ($slug === '') {
-                continue;
-            }
-            $pages[$slug.'/'] = true;
-            foreach ($pkg['components'] ?? [] as $component) {
-                if ($componentSlug = (string) ($component['slug'] ?? '')) {
-                    $pages[$slug.'/'.$componentSlug] = true;
-                }
-            }
+        $base = rtrim((string) config('services.tui.url'), '/');
+
+        // No service configured (e.g. a plain `php artisan serve` with no TUI
+        // process) is a clean "unavailable", not a 500 — the HTML docs still work.
+        if ($base === '') {
+            return response()->json(['error' => 'The docs terminal is not available here.'], 503);
         }
 
-        return $pages;
-    }
-
-    /** @param  array<string, true>  $pages */
-    private function hrefFor(string $package, string $name, array $pages): ?string
-    {
-        if (isset($pages[$package.'/'.$name])) {
-            return "/packages/{$package}/{$name}";
+        // Forward the RAW body, not `$request->only(...)`. The global
+        // TrimStrings middleware strips whitespace from parsed input — which
+        // silently eats the Enter key (a lone `\r`/`\n`), so arrows would work
+        // and Enter would not. The render service is the validation boundary
+        // and sanitises everything, so a verbatim pass-through is both correct
+        // and safe.
+        $raw = $request->getContent();
+        if (strlen($raw) > 64 * 1024) {
+            return response()->json(['error' => 'Payload too large.'], 413);
         }
 
-        return isset($pages[$package.'/']) ? "/packages/{$package}" : null;
+        try {
+            $response = Http::timeout((float) config('services.tui.timeout', 5))
+                ->withBody($raw !== '' ? $raw : '{}', 'application/json')
+                ->acceptJson()
+                ->post("{$base}/render");
+        } catch (\Throwable) {
+            return response()->json(['error' => 'The docs terminal is not responding.'], 503);
+        }
+
+        if (! $response->successful()) {
+            return response()->json(['error' => 'The docs terminal returned an error.'], 502);
+        }
+
+        return response()->json($response->json(), 200);
     }
 }

@@ -67,4 +67,12 @@ return [
         'bug_labels' => ['bug', 'confirmed', 'confirmed-bug'],
     ],
 
+    // The docs TUI render service — a localhost Node process (`npm run
+    // tui-service`) that renders the real fancy-tui Ink app and browses the
+    // real MCP. Unset in environments without it; the page degrades to HTML.
+    'tui' => [
+        'url' => env('TUI_SERVICE_URL'),
+        'timeout' => env('TUI_SERVICE_TIMEOUT', 5),
+    ],
+
 ];

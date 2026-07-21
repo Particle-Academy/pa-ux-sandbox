@@ -1,123 +1,120 @@
 import { Terminal } from "@particle-academy/fancy-term";
-import previews from "@particle-academy/fancy-tui/showcase/previews.json";
 // Required by fancy-term: without it xterm's character-measurement helper (a
 // long run of "w") renders as visible text over the output.
 import "@xterm/xterm/css/xterm.css";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { ComponentRef } from "react";
-import {
-    buildCatalogue,
-    decodeKey,
-    initialState,
-    reduce,
-    TUI_PACKAGE,
-    type CapturedFrame,
-    type DocsState,
-    type RegistryItem,
-} from "./docs-tui/model";
-import { buildFrameIndex, render, renderLoading, type Size } from "./docs-tui/render";
-
-const frames = (previews as { components: CapturedFrame[] }).components;
 
 /**
- * The Fancy Docs TUI — the whole /fancy-tui page as a terminal application.
+ * The Fancy Docs TUI — the /fancy-tui page as a terminal application.
  *
- * This component owns nothing but state and effects: the catalogue browser is
- * a pure `(state, key) -> state` reducer in `docs-tui/model.ts` and a pure
- * `state -> ANSI` function in `docs-tui/render.ts`. `<Terminal>` is only a
- * display surface and a keystroke source.
+ * This component owns almost nothing. The terminal itself is rendered by a
+ * server-side Node service that runs the REAL fancy-tui Ink components and
+ * browses the REAL MCP server; the browser is a dumb terminal. Every keystroke
+ * is POSTed to `/fancy-tui/frame`, and the reply is the next ANSI frame plus
+ * the opaque navigation state to send back with the following key.
+ *
+ * Holding the state here (rather than in a server session) is what keeps the
+ * service stateless and safe: there is nothing per-user to store, and the
+ * service treats the returned state as untrusted on the way back in.
  */
+
+type Effect = { type: "open"; url: string } | { type: "quit" };
+type FrameResponse = { state: unknown; frame: string; effects: Effect[] };
+type Size = { cols: number; rows: number };
+
+const BOOT_FRAME = "\r\n  Starting the Fancy Docs TUI…\r\n";
+
+/** Laravel's XSRF cookie, so this same-origin POST clears CSRF like Inertia's do. */
+function xsrfToken(): string {
+    const match = document.cookie.match(/(?:^|;\s*)XSRF-TOKEN=([^;]+)/);
+    return match ? decodeURIComponent(match[1]) : "";
+}
+
 export default function DocsTui({ onExit }: { onExit: () => void }) {
-    const [items, setItems] = useState<RegistryItem[] | null>(null);
-    const [error, setError] = useState<string | null>(null);
-    const [state, setState] = useState<DocsState>(initialState);
-    // A sane first paint; `onResize` corrects it as soon as xterm measures.
-    const [size, setSize] = useState<Size>({ cols: 100, rows: 32 });
+    const [frame, setFrame] = useState<string>(BOOT_FRAME);
+    const [unavailable, setUnavailable] = useState<string | null>(null);
 
-    // The registry is ~95 KB stripped — fetched here rather than shipped as a
-    // page prop so the HTML view never pays for it.
-    useEffect(() => {
-        const controller = new AbortController();
-        fetch("/fancy-tui/catalogue.json", {
-            signal: controller.signal,
-            headers: { Accept: "application/json" },
-        })
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}`);
-                }
-                return response.json() as Promise<{ items: RegistryItem[] }>;
-            })
-            .then((payload) => setItems(payload.items ?? []))
-            .catch((cause: unknown) => {
-                if (!controller.signal.aborted) {
-                    setError(cause instanceof Error ? cause.message : String(cause));
-                }
+    // The opaque navigation state the server round-trips. Held in a ref because
+    // keystrokes arrive from xterm outside React's render cycle.
+    const stateRef = useRef<unknown>(null);
+    const sizeRef = useRef<Size>({ cols: 100, rows: 32 });
+    const terminal = useRef<ComponentRef<typeof Terminal>>(null);
+    // Serialise requests: a burst of keys must apply in order, since each reply
+    // carries the state the next key builds on.
+    const chain = useRef<Promise<void>>(Promise.resolve());
+
+    const post = useCallback(
+        async (key: string | null) => {
+            const { cols, rows } = sizeRef.current;
+            const res = await fetch("/fancy-tui/frame", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Accept: "application/json",
+                    "X-Requested-With": "XMLHttpRequest",
+                    "X-XSRF-TOKEN": xsrfToken(),
+                },
+                body: JSON.stringify({ state: stateRef.current, key, cols, rows }),
             });
-        return () => controller.abort();
-    }, []);
 
-    const catalogue = useMemo(() => buildCatalogue(items ?? []), [items]);
-    const frameIndex = useMemo(() => buildFrameIndex(frames), []);
-
-    // Open on fancy-tui: this IS the fancy-tui page, and it's the one package
-    // whose components the terminal can actually draw.
-    useEffect(() => {
-        if (!items) {
-            return;
-        }
-        const index = catalogue.packages.findIndex((pkg) => pkg.name === TUI_PACKAGE);
-        if (index > 0) {
-            setState((current) => ({ ...current, packageIndex: index }));
-        }
-    }, [items, catalogue]);
-
-    // Keystrokes arrive from xterm outside React's render cycle, so the reducer
-    // reads the live state through a ref rather than a stale closure.
-    const stateRef = useRef(state);
-    stateRef.current = state;
-    const catalogueRef = useRef(catalogue);
-    catalogueRef.current = catalogue;
-
-    const onData = useCallback(
-        (data: string) => {
-            const key = decodeKey(data);
-            if (!key) {
+            if (!res.ok) {
+                // 503/502 from the proxy means the render service isn't there —
+                // say so in-terminal rather than leaving a dead screen.
+                setUnavailable(
+                    res.status === 503
+                        ? "The docs terminal isn't running in this environment."
+                        : "The docs terminal hit an error.",
+                );
                 return;
             }
-            const result = reduce(catalogueRef.current, stateRef.current, key);
-            stateRef.current = result.state;
-            setState(result.state);
-            if (result.open) {
-                window.open(result.open, "_blank", "noopener,noreferrer");
-            }
-            if (result.quit) {
-                onExit();
+
+            const payload = (await res.json()) as FrameResponse;
+            stateRef.current = payload.state;
+            setFrame(payload.frame);
+
+            for (const effect of payload.effects ?? []) {
+                if (effect.type === "open") window.open(effect.url, "_blank", "noopener,noreferrer");
+                if (effect.type === "quit") onExit();
             }
         },
         [onExit],
     );
 
-    const onResize = useCallback((next: Size) => {
-        setSize((current) => (current.cols === next.cols && current.rows === next.rows ? current : next));
-    }, []);
-
-    const output = useMemo(
-        () => (items ? render(catalogue, state, frameIndex, size) : renderLoading(size, error)),
-        [items, catalogue, state, frameIndex, size, error],
+    /** Queue a keystroke so replies apply in the order the keys were pressed. */
+    const enqueue = useCallback(
+        (key: string | null) => {
+            chain.current = chain.current
+                .then(() => post(key))
+                .catch(() => setUnavailable("The docs terminal isn't reachable."));
+        },
+        [post],
     );
 
-    // Full-viewport takeover: stop the page behind it from scrolling.
+    const onData = useCallback((data: string) => enqueue(data), [enqueue]);
+
+    const onResize = useCallback(
+        (next: Size) => {
+            const current = sizeRef.current;
+            if (current.cols === next.cols && current.rows === next.rows) return;
+            sizeRef.current = next;
+            // A resize is a repaint at the new size — no key.
+            enqueue(null);
+        },
+        [enqueue],
+    );
+
+    // First paint.
+    useEffect(() => {
+        enqueue(null);
+    }, [enqueue]);
+
+    // Full-viewport takeover: stop the page behind it from scrolling, and own
+    // the keyboard from the moment it opens.
     useEffect(() => {
         document.body.classList.add("ftui-takeover-active");
-        return () => document.body.classList.remove("ftui-takeover-active");
-    }, []);
-
-    // A full-screen terminal app owns the keyboard from the moment it opens —
-    // without this the first keystrokes go nowhere until the user clicks in.
-    const terminal = useRef<ComponentRef<typeof Terminal>>(null);
-    useEffect(() => {
         terminal.current?.focus();
+        return () => document.body.classList.remove("ftui-takeover-active");
     }, []);
 
     return (
@@ -128,33 +125,44 @@ export default function DocsTui({ onExit }: { onExit: () => void }) {
                     <i />
                     <i />
                 </span>
-                <b>fancy-docs — {size.cols}×{size.rows}</b>
+                <b>fancy-docs — real components over MCP</b>
                 <button type="button" className="ftui-takeover__exit" onClick={onExit}>
                     Exit <kbd>q</kbd>
                 </button>
             </div>
             <div className="ftui-takeover__screen">
-                <Terminal
-                    ref={terminal}
-                    output={output}
-                    onData={onData}
-                    onResize={onResize}
-                    fit
-                    fontSize={14}
-                    cursorBlink={false}
-                    scrollback={0}
-                    theme={{
-                        background: "#090b10",
-                        foreground: "#e4e4e7",
-                        cursor: "#a78bfa",
-                        black: "#18181b",
-                        brightBlack: "#71717a",
-                        cyan: "#22d3ee",
-                        green: "#4ade80",
-                        magenta: "#c084fc",
-                        yellow: "#facc15",
-                    }}
-                />
+                {unavailable ? (
+                    <div className="ftui-takeover__notice">
+                        <p>{unavailable}</p>
+                        <p>
+                            Run the docs terminal service and set <code>TUI_SERVICE_URL</code>, or browse
+                            the HTML docs.
+                        </p>
+                        <button type="button" onClick={onExit}>Back to HTML docs</button>
+                    </div>
+                ) : (
+                    <Terminal
+                        ref={terminal}
+                        output={frame}
+                        onData={onData}
+                        onResize={onResize}
+                        fit
+                        fontSize={14}
+                        cursorBlink={false}
+                        scrollback={0}
+                        theme={{
+                            background: "#090b10",
+                            foreground: "#e4e4e7",
+                            cursor: "#a78bfa",
+                            black: "#18181b",
+                            brightBlack: "#71717a",
+                            cyan: "#22d3ee",
+                            green: "#4ade80",
+                            magenta: "#c084fc",
+                            yellow: "#facc15",
+                        }}
+                    />
+                )}
             </div>
         </div>
     );

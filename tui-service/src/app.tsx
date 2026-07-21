@@ -35,8 +35,16 @@ import {
  * embedded line by line so the detail pane shows the component drawing.
  */
 
-const BRAND_MARK = ["╭─────╮", "│ ▟█▙ │", "╰─────╯"];
-const ASCII_MARK = ["+-----+", "| FUI |", "+-----+"];
+/**
+ * An F, drawn with full blocks against empty cells.
+ *
+ * The old mark was `▟█▙` inside a box: three adjacent filled glyphs with no
+ * internal gap, which at terminal font sizes merge into one grey rectangle and
+ * read as a missing-glyph box rather than a logo. Contrast in a terminal comes
+ * from empty cells, not from shading — so the negative space IS the design.
+ */
+const BRAND_MARK = ["█▀▀▀", "█▀▀ ", "█   "];
+const ASCII_MARK = ["|===", "|== ", "|   "];
 
 /** Accent for a theme, so the constellation reads at a glance. */
 const THEME_TONE: Record<string, "primary" | "agent" | "success" | "warning" | "info" | "neutral"> = {

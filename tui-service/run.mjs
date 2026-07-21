@@ -82,6 +82,21 @@ const child = spawn(
   { stdio: "inherit", env },
 );
 
+/**
+ * Pass shutdown signals down to the real server.
+ *
+ * Supervisor signals only the process it spawned — this launcher. Without
+ * forwarding, `supervisorctl restart` stops the launcher while the server keeps
+ * running and keeps port 8790, so the restart cannot rebind: supervisor reports
+ * success, the old code carries on serving, and a deploy silently does nothing.
+ * The same orphaning is what left a stale process holding the port locally.
+ */
+for (const signal of ["SIGTERM", "SIGINT", "SIGHUP"]) {
+  process.on(signal, () => {
+    if (!child.killed) child.kill(signal);
+  });
+}
+
 child.on("exit", (code, signal) => {
   if (signal) process.kill(process.pid, signal);
   else process.exit(code ?? 0);

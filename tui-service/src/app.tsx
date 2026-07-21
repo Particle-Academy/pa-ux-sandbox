@@ -392,8 +392,11 @@ function DetailPane({ cat, state, cols, rows }: { cat: Catalogue; state: DocsSta
   const example = found?.scrollback ? undefined : found;
   const bodyHeight = Math.max(5, rows - DETAIL_CHROME_ROWS);
 
+  // Claim the full terminal so the footer sits on the LAST row. A short preview
+  // otherwise leaves the status line floating in the middle of the screen with
+  // dead space beneath it, which reads as a half-drawn page rather than a pane.
   return (
-    <Stack gap={0}>
+    <Stack gap={0} height={rows}>
       <Header
         title={component.title || component.name}
         subtitle={component.package}
@@ -424,6 +427,8 @@ function DetailPane({ cat, state, cols, rows }: { cat: Catalogue; state: DocsSta
           </Panel>
         </Box>
       )}
+
+      <Spacer />
 
       <Footer
         width={cols}

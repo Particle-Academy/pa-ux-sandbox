@@ -93,9 +93,25 @@ Create a Forge **Daemon**:
 
 | Field | Value |
 |---|---|
-| Command | `npm run tui-service` |
-| Directory | `/home/forge/<site>/current` |
+| Command | `node --import tsx tui-service/src/server.ts` |
+| Directory | `/home/forge/<site>/current` (or `$FORGE_SITE_PATH`) |
 | User | `forge` |
+
+**Not `npm run tui-service` in production.** That goes through `run.mjs`, which
+spawns the server as a child so it can set `NODE_EXTRA_CA_CERTS` first — a local
+concern that never applies to a deployed app. In production it only buys you a
+process tree: `supervisor → npm → node → node`. Supervisor signals the top of
+that tree, and if a signal fails to reach the bottom, the real server survives
+`supervisorctl restart` still holding port 8790 — supervisor reports success,
+the old code keeps serving, and the deploy silently does nothing.
+
+The command above runs the server *as* the supervised process, so there is no
+tree to traverse and nothing to orphan. (`run.mjs` does forward `SIGTERM`/
+`SIGINT`/`SIGHUP` for the local case, but not needing the forwarding at all is
+better than depending on it.)
+
+If a deployed app ever does need a custom CA, set `NODE_EXTRA_CA_CERTS` in the
+daemon's environment rather than reaching for the launcher.
 
 Then set `TUI_MCP_URL` to the app's own `/mcp` and `TUI_SERVICE_URL` to
 `http://127.0.0.1:8790` in the site env. No build step: it runs through `tsx`.

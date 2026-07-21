@@ -41,6 +41,12 @@ class ComponentContext
             'how' => 'Drop a <code>&lt;Dropdown&gt;</code> wrapper, mark the open affordance with <code>Dropdown.Trigger</code>, and list <code>Dropdown.Item</code> children with <code>onSelect</code> handlers. For multi-select or persistent menus, use the controlled <code>open</code> + <code>onOpenChange</code> form.',
         ],
 
+        'react-fancy/drawer' => [
+            'why' => 'Edge panels get rebuilt on every project, and always with the same three bugs: the size prop quietly does nothing on two of the four sides, the panel escapes its container because nothing above it was positioned, and a panel scoped to a card still traps focus like a dialog and strands keyboard users inside it.',
+            'what' => 'A controlled panel that slides in from any edge. <code>side</code> takes left / right / top / bottom, and <code>size</code> addresses the drawer&apos;s own axis — width on the horizontal edges, height on the vertical ones — so one scale reads the same wherever you attach it. Compound <code>Drawer.Header</code> / <code>Drawer.Body</code> / <code>Drawer.Footer</code> match <code>Modal</code>&apos;s rhythm.',
+            'how' => 'Hold <code>open</code> in state and pass it with <code>onClose</code>. Leave <code>attach</code> alone for an app-level drawer — it portals, locks scroll, traps focus, and sets <code>aria-modal</code>. Set <code>attach="container"</code> to scope it to a Card, layout pane, or prompt-input shell instead; wrap that region in <code>Drawer.Container</code> so the absolute panel has a positioned ancestor to resolve against.',
+        ],
+
         'react-fancy/modal' => [
             'why' => 'Modal dialogs are the highest-stakes UX surface — wrong focus management, scroll lock, escape behavior, or stacking and you break accessibility AND lose users. Every accessible modal you build from scratch costs days, and shadcn-style copy-paste is the only way you actually own the markup.',
             'what' => 'A controlled modal with built-in focus trap, scroll lock, escape-to-close, and predictable backdrop behavior. Subcomponents (<code>Modal.Header</code>, <code>Modal.Body</code>, <code>Modal.Footer</code>) compose the same way the rest of the library does, so visual rhythm is consistent.',

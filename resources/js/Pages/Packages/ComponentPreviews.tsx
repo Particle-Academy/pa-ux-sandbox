@@ -680,6 +680,22 @@ const PREVIEWS: Record<string, PreviewFn> = {
         </div>
     ),
 
+    "react-fancy/drawer": () => (
+        <div className="relative h-32 w-full max-w-[18rem] overflow-hidden rounded-md bg-zinc-200/60 dark:bg-zinc-800/60">
+            <div className="absolute inset-0 bg-black/20" />
+            <div className="absolute inset-y-0 right-0 w-32 border-l border-zinc-200 bg-white shadow-xl dark:border-zinc-700 dark:bg-zinc-900">
+                <div className="flex items-center justify-between border-b border-zinc-100 px-2.5 py-1.5 text-xs font-semibold text-zinc-700 dark:border-zinc-800 dark:text-zinc-200">
+                    Filters
+                    <span className="text-zinc-400">×</span>
+                </div>
+                <div className="space-y-1.5 px-2.5 py-2">
+                    <div className="h-1.5 w-full rounded bg-zinc-200 dark:bg-zinc-700" />
+                    <div className="h-1.5 w-3/4 rounded bg-zinc-200 dark:bg-zinc-700" />
+                    <div className="h-1.5 w-5/6 rounded bg-zinc-200 dark:bg-zinc-700" />
+                </div>
+            </div>
+        </div>
+    ),
     "react-fancy/dropdown": () => (
         <div className="w-44 overflow-hidden rounded-md border border-zinc-200 bg-white shadow-md dark:border-zinc-700 dark:bg-zinc-900">
             <button className="flex w-full items-center gap-2 px-3 py-1.5 text-left text-xs text-zinc-700 hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-zinc-800">

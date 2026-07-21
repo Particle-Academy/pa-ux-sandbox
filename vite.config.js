@@ -1,4 +1,5 @@
 import { fileURLToPath } from 'node:url';
+import { readFileSync } from 'node:fs';
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 import tailwindcss from '@tailwindcss/vite';
@@ -59,7 +60,17 @@ const useSyncExternalStoreShim = {
     },
 };
 
+// The footer advertises which react-fancy the site is actually running. It was
+// hardcoded and drifted twelve minor versions behind before anyone noticed, so
+// read it from the installed package instead — it can no longer go stale.
+const reactFancyVersion = JSON.parse(
+    readFileSync(fileURLToPath(new URL('./node_modules/@particle-academy/react-fancy/package.json', import.meta.url)), 'utf8'),
+).version;
+
 export default defineConfig({
+    define: {
+        __REACT_FANCY_VERSION__: JSON.stringify(reactFancyVersion),
+    },
     plugins: [
         useSyncExternalStoreShim,
         nodeBuiltinBrowserShim,

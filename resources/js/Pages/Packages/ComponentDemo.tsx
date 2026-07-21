@@ -19,6 +19,7 @@ import {
     ContentRenderer,
     ContextMenu,
     FauxClient,
+    Drawer,
     Dropdown,
     Editor,
     Emoji,
@@ -179,6 +180,7 @@ const REGISTRY: Record<string, DemoFn> = {
     // Overlays
     "react-fancy/tooltip": TooltipDemo,
     "react-fancy/popover": PopoverDemo,
+    "react-fancy/drawer": DrawerDemo,
     "react-fancy/dropdown": DropdownDemo,
     "react-fancy/context-menu": ContextMenuDemo,
     "react-fancy/modal": ModalDemo,
@@ -835,6 +837,32 @@ function ModalDemo() {
                 </Modal.Footer>
             </Modal>
         </>
+    );
+}
+
+function DrawerDemo() {
+    const [side, setSide] = useState<"left" | "right" | "top" | "bottom" | null>(null);
+    return (
+        <div className="flex flex-wrap gap-2">
+            {(["left", "right", "top", "bottom"] as const).map((s) => (
+                <Button key={s} color={s === "right" ? "violet" : undefined} onClick={() => setSide(s)}>
+                    {s}
+                </Button>
+            ))}
+            <Drawer open={side !== null} onClose={() => setSide(null)} side={side ?? "right"}>
+                <Drawer.Header>Drawer · {side}</Drawer.Header>
+                <Drawer.Body>
+                    <Text size="sm">
+                        Slides in from the {side} edge. On a horizontal edge <code>size</code> sets the
+                        width; on a vertical one it sets the height.
+                    </Text>
+                </Drawer.Body>
+                <Drawer.Footer>
+                    <Button variant="ghost" onClick={() => setSide(null)}>Cancel</Button>
+                    <Button color="violet" onClick={() => setSide(null)}>Save</Button>
+                </Drawer.Footer>
+            </Drawer>
+        </div>
     );
 }
 

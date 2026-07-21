@@ -28,6 +28,7 @@ import { composerDoc } from "./Composer";
 import { contentRendererDoc } from "./ContentRenderer";
 import { contextMenuDoc } from "./ContextMenu";
 import { createEmptyWorkbookDoc } from "./CreateEmptyWorkbook";
+import { drawerDoc } from "./Drawer";
 import { dropdownDoc } from "./Dropdown";
 import { echart3dDoc } from "./EChart3D";
 import { echartDoc } from "./EChart";
@@ -135,6 +136,7 @@ const DOCS: Record<string, ComponentDoc> = {
     "react-fancy/composer": composerDoc,
     "react-fancy/content-renderer": contentRendererDoc,
     "react-fancy/context-menu": contextMenuDoc,
+    "react-fancy/drawer": drawerDoc,
     "react-fancy/dropdown": dropdownDoc,
     "react-fancy/editor": editorDoc,
     "react-fancy/emoji": emojiDoc,

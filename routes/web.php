@@ -228,16 +228,11 @@ Route::get('/api/leaderboard/contributors', [LeaderboardController::class, 'cont
 // over MCP. No auth, no DB writes; the page owns an in-browser MicroMcpServer.
 Route::get('/agent-playground', fn () => Inertia::render('AgentPlayground'))->name('agent-playground');
 Route::get('/fancy-tui', [FancyTuiController::class, 'index'])->name('fancy-tui.index');
-// One keystroke -> one rendered frame, proxied to the localhost render service.
-// Throttled because it is one request per keypress: a generous ceiling for a
-// human typing, a low one for anything hammering it.
-Route::post('/fancy-tui/frame', [FancyTuiController::class, 'frame'])
-    ->middleware('throttle:120,1')
-    ->name('fancy-tui.frame');
 
-// Live component previews: start/feed/end a persistent Ink render, and long-poll
-// its frames. The stream is one held-open request per viewer, so its throttle is
-// generous; the service caps concurrent sessions and holds each poll ~2s.
+// The whole TUI is one live session: start/feed/end a persistent Ink app, and
+// long-poll its frames. `session` carries a keystroke per request (generous
+// human-typing ceiling); the stream is one held-open request per viewer. The
+// service caps concurrent sessions and holds each poll ~2s.
 Route::post('/fancy-tui/session', [FancyTuiController::class, 'session'])
     ->middleware('throttle:240,1')
     ->name('fancy-tui.session');

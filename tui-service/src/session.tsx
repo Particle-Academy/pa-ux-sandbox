@@ -1,44 +1,40 @@
 import { EventEmitter } from "node:events";
 import React from "react";
-import { render as inkRender, Box, Text } from "ink";
-import { FancyTuiProvider } from "@particle-academy/fancy-tui";
-import { findShowcaseExample, type ShowcaseExample } from "@particle-academy/fancy-tui/showcase";
+import { render as inkRender } from "ink";
+import { DocsApp, type AppEffect } from "./app.js";
 import { crlf } from "./render.js";
 
 /**
- * Interactive preview sessions — the "alive" half of the docs TUI.
+ * The live docs app — one persistent Ink render per viewer, streamed.
  *
- * The navigation model (home/family/detail) stays a pure stateless function:
- * one key in, one frame out, no session. This is the deliberate exception. A
- * component preview cannot be alive under request/response — a Spinner captured
- * once is frozen at frame 0, and a controlled component fed keys does nothing
- * unless something holds its state between requests.
+ * The whole docs UI is a single React tree that holds its own navigation state
+ * and receives every keystroke. Because it is always mounted, every preview is
+ * alive: a Spinner spins on its own timer, an Input types as keys arrive, and a
+ * long-poll pushes each new frame to the browser — a keystroke OR a timer tick.
  *
- * So a preview is a PERSISTENT Ink render, held server-side, that:
- *   - receives keystrokes on its own stdin, so its `useInput`/`useFocus` fire;
- *   - re-renders on its own timers, so a Spinner spins with no input;
- *   - pushes each new frame to a long-poll waiter, so the browser animates.
- *
- * The cost is a stateful process where there was none. It is fenced hard:
- * a fixed cap on live sessions, idle-TTL garbage collection, and a slug that
- * must name one of a FIXED set of showcase examples — never user code.
+ * The cost is a stateful process where a stateless one would do. It is fenced
+ * hard: a fixed cap on live sessions, idle-TTL garbage collection, and an
+ * allow-list of app KINDS — a session is one of a FIXED set, never arbitrary.
  */
 
-/** Hard ceiling on concurrent live previews. Each is one Ink instance + timers. */
+/** Hard ceiling on concurrent live apps. Each is one Ink instance + timers. */
 export const MAX_SESSIONS = 24;
 /** A session with no activity for this long is swept. */
 export const SESSION_TTL_MS = 45_000;
 /** How long a long-poll waits for a new frame before returning the current one. */
 export const STREAM_HOLD_MS = 2_000;
 
+/** The app kinds a session may run. The gate that keeps a session non-arbitrary. */
+const APP_KINDS = new Set<string>(["docs"]);
+
 /**
- * A stdin that DELIVERS keystrokes, unlike the render stub.
+ * A stdin that DELIVERS keystrokes, unlike the one-shot render stub.
  *
- * Ink's `useInput` listens for `'data'` on the stdin it was given; in raw mode
- * it parses escape sequences itself. So feeding the raw bytes the browser's
- * xterm produced (`\x1b[C` for a right arrow, a bare char for a letter) is
- * exactly what a real terminal would hand Ink. It claims raw-mode support
- * because Ink refuses `useInput` without it.
+ * Ink 7 reads input via the readable + `read()` pattern, not the `'data'` event
+ * alone — this mirrors ink-testing-library's stdin exactly, the contract known
+ * to deliver keys to `useInput`. Emitting only `'data'` (with `read()`
+ * returning null) silently dropped every key. It claims raw-mode support because
+ * Ink refuses `useInput` without it.
  */
 class SessionStdin extends EventEmitter {
   readonly isTTY = true;
@@ -50,10 +46,6 @@ class SessionStdin extends EventEmitter {
   ref = (): void => {};
   unref = (): void => {};
 
-  // Ink 7 reads input via the readable + `read()` pattern, not the `'data'`
-  // event alone — this mirrors ink-testing-library's stdin exactly, which is
-  // the contract known to deliver keystrokes to `useInput`. Emitting only
-  // `'data'` (with `read()` returning null) silently dropped every key.
   read = (): string | null => {
     const data = this.buffered;
     this.buffered = null;
@@ -86,59 +78,39 @@ class SessionStdout extends EventEmitter {
   };
 }
 
-/**
- * The frame the preview draws: the live example, clipped to the pane, with a
- * thin hint line. The example is the ONLY focusable thing on screen, so its
- * auto-focus wins with no competition — keys land where they should.
- */
-function PreviewHost({ node, cols, rows }: { node: React.ReactNode; cols: number; rows: number }) {
-  // One row for the hint, the rest for the component. It is clipped, never
-  // allowed to push past the pane — the same fit invariant the whole UI holds.
-  const bodyRows = Math.max(1, rows - 1);
-  return (
-    <FancyTuiProvider width={cols} height={rows}>
-      <Box flexDirection="column" width={cols} height={rows}>
-        <Box width={cols} height={bodyRows} overflow="hidden" flexDirection="column">
-          <Box flexShrink={0} flexDirection="column">{node}</Box>
-        </Box>
-        <Box flexShrink={0}>
-          <Text dimColor>{" [esc] back · live — type to interact".slice(0, cols)}</Text>
-        </Box>
-      </Box>
-    </FancyTuiProvider>
-  );
-}
-
 type Waiter = { resolve: (payload: StreamPayload) => void; timer: NodeJS.Timeout };
-export type StreamPayload = { seq: number; frame: string };
-export type SessionInfo = { id: string; seq: number; frame: string };
+export type StreamPayload = { seq: number; frame: string; effects: AppEffect[] };
+export type SessionInfo = { id: string; seq: number; frame: string; effects: AppEffect[] };
 
-class PreviewSession {
+class AppSession {
   seq = 0;
   frame = "";
   lastActivity = Date.now();
   private readonly stdin = new SessionStdin();
   private readonly instance: ReturnType<typeof inkRender>;
   private readonly waiters = new Set<Waiter>();
+  private pendingEffects: AppEffect[] = [];
   private ended = false;
 
   constructor(
     readonly id: string,
-    readonly slug: string,
+    readonly kind: string,
     readonly cols: number,
     readonly rows: number,
-    example: ShowcaseExample,
+    initialSlug: string | undefined,
   ) {
     const stdout = new SessionStdout(cols, rows, (frame) => this.onFrame(frame));
-    this.instance = inkRender(<PreviewHost node={example.node} cols={cols} rows={rows} />, {
-      stdout: stdout as unknown as NodeJS.WriteStream,
-      stdin: this.stdin as unknown as NodeJS.ReadStream,
-      debug: true,
-      exitOnCtrlC: false,
-      patchConsole: false,
-    });
-    // The synchronous first render has already written; make sure we have it
-    // even if the component drew nothing yet.
+    this.instance = inkRender(
+      <DocsApp cols={cols} rows={rows} initialSlug={initialSlug} onEffect={(e) => this.onEffect(e)} />,
+      {
+        stdout: stdout as unknown as NodeJS.WriteStream,
+        stdin: this.stdin as unknown as NodeJS.ReadStream,
+        debug: true,
+        exitOnCtrlC: false,
+        patchConsole: false,
+      },
+    );
+    // The synchronous first render has already written; make sure we hold it.
     this.frame = crlf(stdout.last);
   }
 
@@ -146,16 +118,36 @@ class PreviewSession {
     if (this.ended) return;
     this.seq++;
     this.frame = crlf(frame);
-    // Wake everyone waiting; a fresh frame is a fresh frame for all of them.
+    this.wake();
+  }
+
+  /** An effect the app raised (quit / open). Delivered with the next payload,
+   *  and it wakes waiters at once so `q` is never stuck behind the poll hold. */
+  private onEffect(effect: AppEffect): void {
+    if (this.ended) return;
+    this.pendingEffects.push(effect);
+    this.wake();
+  }
+
+  private drainEffects(): AppEffect[] {
+    if (this.pendingEffects.length === 0) return [];
+    const effects = this.pendingEffects;
+    this.pendingEffects = [];
+    return effects;
+  }
+
+  private wake(): void {
+    if (this.waiters.size === 0) return;
+    const payload: StreamPayload = { seq: this.seq, frame: this.frame, effects: this.drainEffects() };
     for (const waiter of this.waiters) {
       clearTimeout(waiter.timer);
-      waiter.resolve({ seq: this.seq, frame: this.frame });
+      waiter.resolve(payload);
     }
     this.waiters.clear();
   }
 
   info(): SessionInfo {
-    return { id: this.id, seq: this.seq, frame: this.frame };
+    return { id: this.id, seq: this.seq, frame: this.frame, effects: this.drainEffects() };
   }
 
   key(data: string): SessionInfo {
@@ -164,18 +156,19 @@ class PreviewSession {
     return this.info();
   }
 
-  /** Long-poll: resolve as soon as a frame past `since` exists, else after the hold. */
+  /** Long-poll: resolve as soon as a frame past `since` (or an effect) exists,
+   *  else after the hold. */
   wait(since: number): Promise<StreamPayload> {
     this.lastActivity = Date.now();
-    if (this.ended || this.seq > since) {
-      return Promise.resolve({ seq: this.seq, frame: this.frame });
+    if (this.ended || this.seq > since || this.pendingEffects.length > 0) {
+      return Promise.resolve({ seq: this.seq, frame: this.frame, effects: this.drainEffects() });
     }
     return new Promise<StreamPayload>((resolve) => {
       const waiter: Waiter = {
         resolve,
         timer: setTimeout(() => {
           this.waiters.delete(waiter);
-          resolve({ seq: this.seq, frame: this.frame });
+          resolve({ seq: this.seq, frame: this.frame, effects: this.drainEffects() });
         }, STREAM_HOLD_MS),
       };
       this.waiters.add(waiter);
@@ -187,18 +180,18 @@ class PreviewSession {
     this.ended = true;
     for (const waiter of this.waiters) {
       clearTimeout(waiter.timer);
-      waiter.resolve({ seq: this.seq, frame: this.frame });
+      waiter.resolve({ seq: this.seq, frame: this.frame, effects: [] });
     }
     this.waiters.clear();
-    // Unmount stops the component's own timers (a Spinner's interval), which is
-    // the whole point of GC — an abandoned session must not keep ticking.
+    // Unmount stops the app's own timers (a Spinner's interval), which is the
+    // whole point of GC — an abandoned session must not keep ticking.
     this.instance.unmount();
     this.instance.cleanup?.();
   }
 }
 
 export class SessionManager {
-  private readonly sessions = new Map<string, PreviewSession>();
+  private readonly sessions = new Map<string, AppSession>();
   private counter = 0;
   private readonly sweeper: NodeJS.Timeout;
 
@@ -213,24 +206,23 @@ export class SessionManager {
   }
 
   /**
-   * Start a preview. The slug MUST resolve to a known showcase example — this is
-   * the allow-list that keeps a session from being anything but one of a fixed
-   * set of components. A scrollback example is refused: it cannot be windowed.
+   * Start a live app. `kind` MUST be an allowed app kind — the allow-list that
+   * keeps a session from being anything but one of a fixed set. `initialSlug`
+   * only picks which showcase example is selected on mount; it never widens what
+   * a session can be.
    */
-  start(slug: string, cols: number, rows: number): SessionInfo | { error: string } {
-    const example = findShowcaseExample(slug);
-    if (!example) return { error: `unknown preview: ${slug}` };
-    if (example.scrollback) return { error: `preview is not interactive: ${slug}` };
+  start(kind: string, cols: number, rows: number, initialSlug?: string): SessionInfo | { error: string } {
+    if (!APP_KINDS.has(kind)) return { error: `unknown app: ${kind}` };
 
     if (this.sessions.size >= MAX_SESSIONS && !this.evictIdle()) {
-      return { error: "too many live previews; try again in a moment" };
+      return { error: "too many live sessions; try again in a moment" };
     }
 
     // A monotone counter, not randomness — unguessable is not the property that
     // matters (Laravel is the auth edge), uniqueness is. Time-seeded so a
     // restart cannot collide with an id a client is still holding.
     const id = `s${Date.now().toString(36)}-${(this.counter++).toString(36)}`;
-    const session = new PreviewSession(id, slug, cols, rows, example);
+    const session = new AppSession(id, kind, cols, rows, initialSlug);
     this.sessions.set(id, session);
     return session.info();
   }
@@ -253,7 +245,7 @@ export class SessionManager {
 
   /** Drop the least-recently-used idle session; returns whether one was freed. */
   private evictIdle(): boolean {
-    let oldest: PreviewSession | null = null;
+    let oldest: AppSession | null = null;
     const now = Date.now();
     for (const session of this.sessions.values()) {
       // Only evict something actually idle — never yank a session a viewer is

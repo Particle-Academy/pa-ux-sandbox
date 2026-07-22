@@ -94,7 +94,7 @@ export default function FancyTuiIndex() {
     if (surface === "console") {
         return (
             <>
-                <Seo title="Fancy Docs TUI — the Fancy registry by keyboard" description="Browse every Fancy UI package, component, and prop from a terminal." />
+                <Seo title="Fancy TUI — live components in your terminal" description="Browse every fancy-tui component as a real, live, animated terminal app." />
                 <DocsTui onExit={() => setSurface("html")} />
             </>
         );
@@ -143,7 +143,7 @@ export default function FancyTuiIndex() {
                             <div><span className="ftui-dot" /><b>{selected.title}</b><span className="ftui-path">examples/{selected.id}.tsx</span></div>
                             <div className="ftui-switch" role="group" aria-label="Preview surface">
                                 <button className={surface === "html" ? "is-active" : ""} onClick={() => setSurface("html")}><Monitor size={14} /> View as HTML</button>
-                                <button title="Browse the whole Fancy registry as a full-screen terminal app" onClick={() => setSurface("console")}><TerminalSquare size={14} /> View as console</button>
+                                <button title="Browse every fancy-tui component as a live, full-screen terminal app" onClick={() => setSurface("console")}><TerminalSquare size={14} /> View as console</button>
                             </div>
                         </div>
 

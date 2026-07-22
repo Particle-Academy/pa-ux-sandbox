@@ -1,638 +1,467 @@
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import { useFocus, useFocusManager, useInput } from "ink";
 import {
-  FancyTuiProvider,
-  Hero,
-  Panel,
-  Header,
-  Text,
   Badge,
-  KeyHint,
-  Separator,
   Box,
-  Stack,
+  CodeView,
+  FancyTuiProvider,
+  KeyHint,
+  Panel,
   Row,
+  Separator,
   Spacer,
+  Text,
+  useFancyTui,
 } from "@particle-academy/fancy-tui";
-import { findShowcaseExample, type ShowcaseExample } from "@particle-academy/fancy-tui/showcase";
-import type { Catalogue, CatalogueComponent, Family } from "./catalogue.js";
-import {
-  visibleFamilies,
-  selectedFamily,
-  selectedComponent,
-  type DocsState,
-} from "./model.js";
+import { SHOWCASE_EXAMPLES, type ShowcaseExample } from "@particle-academy/fancy-tui/showcase";
+import type { TuiTone } from "@particle-academy/fancy-tui";
 
 /**
- * The docs TUI, as REAL fancy-tui components.
+ * The Fancy TUI docs — the whole page as ONE live Ink app.
  *
- * Every pane is composed from the same primitives an app author would use —
- * `Hero`, `Panel`, `Badge`, `CodeView`. Nothing here hand-draws ANSI; Ink
- * renders it, which is the whole point of the rebuild. `<DocsApp>` is pure: it
- * takes a catalogue + state and returns a tree, and the server turns that tree
- * into a frame.
+ * There is no navigation model, no MCP, no per-preview session: the app is a
+ * single persistent React tree that the service renders and streams. It holds
+ * its own selection in `useState`, receives every keystroke through Ink's
+ * `useInput`, and — because it is always mounted — every preview is LIVE. A
+ * Spinner spins, an ActivityIndicator ticks, and an Input types, all without a
+ * request/response round-trip.
  *
- * That extends to the component previews: the detail pane renders fancy-tui's
- * exported showcase example INLINE, in this same Ink tree. It is the real
- * component, laid out by Yoga at the reader's actual terminal size — not a
- * picture of one taken at 68 columns. (`showcase/previews.json` is still read,
- * but only as a fallback for a component the installed fancy-tui captured and
- * has no live example for.)
+ * The design is dogfood: every pane is composed from the real fancy-tui
+ * primitives (`Panel`, `Badge`, `KeyHint`, `Separator`, `CodeView`, …). Nothing
+ * here hand-draws ANSI or does column math a component/Yoga already does.
+ *
+ *   ┌ brand bar ──────────────────────────────────────────────┐
+ *   │ [F] Fancy TUI · 62 components · live in your terminal    │
+ *   ├─ separator ─────────────────────────────────────────────┤
+ *   │ Components         │ Badge                    [live]     │
+ *   │  LAYOUT            │  LIVE                                │
+ *   │  ▸ Hero           │  ┌────────────────────────────────┐  │
+ *   │    Screen          │  │ passing  flaky  failed         │  │
+ *   │  DISPLAY           │  └────────────────────────────────┘  │
+ *   │    Spinner         │  SOURCE                              │
+ *   │    …               │  ┌ 1 │ <Row gap="sm"> … ┐           │
+ *   ├─ status bar (KeyHints) ─────────────────────────────────┤
  */
 
-/**
- * An F, drawn with full blocks against empty cells.
- *
- * The old mark was `▟█▙` inside a box: three adjacent filled glyphs with no
- * internal gap, which at terminal font sizes merge into one grey rectangle and
- * read as a missing-glyph box rather than a logo. Contrast in a terminal comes
- * from empty cells, not from shading — so the negative space IS the design.
- */
-const BRAND_MARK = ["█▀▀▀", "█▀▀ ", "█   "];
-const ASCII_MARK = ["|===", "|== ", "|   "];
+/** An action the browser performs; the app never performs it itself. */
+export type AppEffect = { type: "quit" } | { type: "open"; url: string };
 
-/** Accent for a theme, so the constellation reads at a glance. */
-const THEME_TONE: Record<string, "primary" | "agent" | "success" | "warning" | "info" | "neutral"> = {
-  terminal: "success",
-  core: "primary",
-  surfaces: "agent",
-  documents: "info",
-  commerce: "success",
-  platform: "warning",
-  tooling: "neutral",
+/** Ink focus id for the list pane. Focus sits here in "browse" mode; moving it
+ *  into the preview is what makes keys drive the component. First-come, so the
+ *  list — rendered before any preview control — claims focus on mount and the
+ *  preview's own auto-focus never steals it. */
+const LIST_FOCUS_ID = "docs:list";
+
+/** Shown in the brand bar. Bumped with the installed fancy-tui. */
+const FANCY_TUI_VERSION = "fancy-tui v0.8.0";
+
+/** The showcase groups, in first-seen order — Layout / Content / … / Human+. */
+export const GROUP_ORDER: string[] = [...new Set(SHOWCASE_EXAMPLES.map((e) => e.group))];
+
+/** A colour accent per group, so the constellation reads at a glance. Cosmetic;
+ *  there are more groups than distinct terminal colours, so Human+ reuses one. */
+const GROUP_TONE: Record<string, TuiTone> = {
+  Layout: "primary",
+  Content: "info",
+  Display: "success",
+  Inputs: "warning",
+  Navigation: "agent",
+  Data: "danger",
+  "Human+": "user",
 };
 
-/** Heading label for a theme; the hoisted preview group gets a plain-English one. */
-const THEME_LABEL: Record<string, string> = {
-  terminal: "LIVE IN TERMINAL",
-};
+type Kind = "interactive" | "live" | "scrollback" | "static";
 
-function themeTone(group: string) {
-  return THEME_TONE[group] ?? "neutral";
-}
+/** Components that animate on their own timers (a Spinner interval). */
+const ANIMATED = new Set(["spinner", "activity-indicator", "live-region", "tool-call"]);
 
-function themeLabel(group: string) {
-  return THEME_LABEL[group] ?? group.toUpperCase();
+const KIND_MARK: Record<Kind, string> = { interactive: "◆", live: "◉", scrollback: "≣", static: "·" };
+const KIND_LABEL: Record<Kind, string> = { interactive: "interactive", live: "live", scrollback: "scrollback", static: "static" };
+const KIND_TONE: Record<Kind, TuiTone> = { interactive: "agent", live: "success", scrollback: "warning", static: "neutral" };
+
+function kindOf(example: ShowcaseExample): Kind {
+  if (example.scrollback) return "scrollback";
+  if (example.interactive) return "interactive";
+  if (ANIMATED.has(example.slug)) return "live";
+  return "static";
 }
 
 /**
- * A full-width footer.
- *
- * fancy-tui's `StatusBar` hugs its content rather than spanning the screen, so
- * its left/right ends collide at these widths. This lays out left + right
- * across an explicit `width`, which is what a status line actually wants.
+ * The examples visible for a query — every showcase example, or those whose
+ * name/slug matches the search. The app's list is EXACTLY this, so a test can
+ * assert it against `SHOWCASE_EXAMPLES` directly.
  */
-function Footer({ left, right, width }: { left: React.ReactNode; right: React.ReactNode; width: number }) {
-  return (
-    <Box width={width} marginTop={1} borderStyle="single" borderColor="gray" paddingX={1}>
-      {left}
-      <Spacer />
-      {right}
-    </Box>
+export function docExamples(search = ""): ShowcaseExample[] {
+  const q = search.trim().toLowerCase();
+  if (!q) return SHOWCASE_EXAMPLES;
+  return SHOWCASE_EXAMPLES.filter(
+    (e) => e.name.toLowerCase().includes(q) || e.slug.includes(q),
   );
 }
 
 /**
- * A vertical window around the selected index, so a long list never overflows
- * the terminal — the row the cursor is on is always shown, with context above
- * and below.
- */
-function windowed<T>(items: T[], selected: number, height: number): { slice: T[]; start: number } {
-  if (items.length <= height) return { slice: items, start: 0 };
-  let start = selected - Math.floor(height / 2);
-  start = Math.max(0, Math.min(start, items.length - height));
-  return { slice: items.slice(start, start + height), start };
-}
-
-/**
- * Window a grouped list by RENDERED rows, not item count.
+ * A window over the grouped list that keeps the selected row on screen and
+ * never renders more rows than `height`.
  *
- * A family costs one row, but the first family of a theme also draws a heading
- * and a blank line above it — three rows, not one. Budgeting one row per family
- * (as a plain `windowed` does) under-counts by two per theme, so with six themes
- * the list overflowed its box by a dozen rows and pushed the hero off the top of
- * the terminal. There is no scrollback to recover it from: the docs TUI repaints
- * a full screen every frame.
+ * A group heading costs a row on top of its first item, so budgeting one row
+ * per item under-counts and the list overflows its pane — and there is no
+ * scrollback here to recover a row pushed off the top. The cost model prices a
+ * group-opening item at 2 (heading + item) and every other at 1, then walks the
+ * window start forward until the selection falls inside it.
  */
-function windowedGroups(
-  families: Family[],
+export function windowByGroup(
+  items: ShowcaseExample[],
   selected: number,
   height: number,
-): { slice: Family[]; start: number } {
-  const opensGroup = (i: number) => i === 0 || families[i]!.group !== families[i - 1]!.group;
-  const cost = (i: number) => (opensGroup(i) ? 3 : 1);
-  // The first visible row skips the blank line above its heading — but only if
-  // it HAS a heading. Discounting unconditionally made a window that starts
-  // mid-group price its first family at zero rows, so the frame came out one
-  // row taller than the terminal exactly when the selection was scrolled down.
-  const costFrom = (start: number, i: number) =>
-    i === start && opensGroup(i) ? 2 : cost(i);
-
+): { start: number; end: number } {
+  const opens = (i: number) => i === 0 || items[i]?.group !== items[i - 1]?.group;
+  const cost = (i: number) => (opens(i) ? 2 : 1);
   const fits = (start: number) => {
     let used = 0;
     let end = start;
-    while (end < families.length && used + costFrom(start, end) <= height) {
-      used += costFrom(start, end);
+    while (end < items.length && used + cost(end) <= height) {
+      used += cost(end);
       end++;
     }
-    return end;
+    return Math.max(end, start + 1); // always show at least the start row
   };
 
-  // Walk the start forward until the selection is inside the window.
   let start = 0;
-  while (start < families.length && fits(start) <= selected) start++;
-  return { slice: families.slice(start, fits(start)), start };
+  while (start < items.length && fits(start) <= selected) start++;
+  return { start, end: fits(start) };
 }
 
-/** The one glyph that answers "does this draw in a terminal?" at a glance. */
-function PreviewMark({ component }: { component: CatalogueComponent }) {
-  return component.previewable ? (
-    <Text tone="success">◉ preview</Text>
-  ) : (
-    <Text tone="muted">○ web</Text>
-  );
-}
+// ── brand bar ────────────────────────────────────────────────────────────────
 
-// ── home ─────────────────────────────────────────────────────────────────────
-
-/** Rows the Hero occupies: border + padding + mark + title + tagline + hints. */
-const HERO_ROWS = 12;
-/** Rows a slim header occupies when the Hero will not fit. */
-const SLIM_HEADER_ROWS = 2;
-/** Below this width the companion column is dropped rather than squeezed. */
-const TWO_COLUMN_MIN_COLS = 76;
-
-function HomePane({ cat, state, cols, rows }: { cat: Catalogue; state: DocsState; cols: number; rows: number }) {
-  const families = visibleFamilies(cat, state);
-
-  // The Hero is the first thing to go when the terminal is short. Losing it is
-  // better than letting it push the list off the top — which is what happens
-  // when the budget lies, since there is no scrollback to recover from.
-  const showHero = rows >= 28;
-  const headerRows = showHero ? HERO_ROWS : SLIM_HEADER_ROWS;
-  const searchRows = state.searching || state.search ? 2 : 0;
-  // Chrome below the header: the blank line above the list, plus the footer's
-  // own margin and its three bordered rows.
-  const CHROME_ROWS = 5;
-  const listHeight = Math.max(4, rows - headerRows - searchRows - CHROME_ROWS);
-
-  const { slice, start } = windowedGroups(families, state.familyIndex, listHeight);
-
-  // A single narrow column on a wide terminal wastes most of the screen, so the
-  // selected family's contents fill the space beside it. Purely presentational
-  // — it reads `state.familyIndex`, and navigation is unchanged.
-  const twoColumn = cols >= TWO_COLUMN_MIN_COLS;
-  const listWidth = twoColumn ? Math.max(28, Math.min(38, Math.floor(cols * 0.36))) : cols;
-  const current = families[state.familyIndex];
-
-  let lastTheme = start > 0 ? families[start - 1]?.group : undefined;
-
+function BrandBar({ count }: { count: number }) {
+  const { width } = useFancyTui();
+  const compact = width < 76;
   return (
-    <Stack gap={0}>
-      {showHero ? (
-        <Hero
-          title="Fancy Docs"
-          version={`${cat.total} components`}
-          tagline="The Fancy UI registry, browsed from a terminal — over the real MCP."
-          mark={BRAND_MARK}
-          asciiMark={ASCII_MARK}
-          hints={[
-            { keys: "↑↓", label: "family" },
-            { keys: "→", label: "open" },
-            { keys: "/", label: "search" },
-            { keys: "q", label: "quit" },
-          ]}
-        />
+    <Row>
+      <Badge tone="primary">F</Badge>
+      <Text tone="primary" bold> Fancy TUI</Text>
+      {compact ? (
+        <Text tone="muted"> · {count}</Text>
       ) : (
-        <Row gap={1}>
-          <Text tone="primary" bold>Fancy Docs</Text>
-          <Text tone="muted">{cat.total} components</Text>
-          <Spacer />
-          <KeyHint keys="↑↓" label="family" />
-          <KeyHint keys="→" label="open" />
-          <KeyHint keys="/" label="search" />
-          <KeyHint keys="q" label="quit" />
-        </Row>
+        <Text tone="muted"> · {count} components · live in your terminal</Text>
       )}
+      <Spacer />
+      <Text tone="muted" wrap="truncate">{FANCY_TUI_VERSION}</Text>
+    </Row>
+  );
+}
 
-      {state.searching || state.search ? (
-        <Box marginTop={1}>
-          <Text tone="primary">/ </Text>
-          <Text>{state.search}</Text>
-          <Text tone="muted">{state.searching ? "▌" : ""}</Text>
+function SearchLine({ search, typing, count }: { search: string; typing: boolean; count: number }) {
+  return (
+    <Row>
+      <Text tone="primary">/ </Text>
+      <Text wrap="truncate">{search}</Text>
+      <Text tone="muted">{typing ? "▌" : ""}</Text>
+      <Spacer />
+      <Text tone="muted">{count} matches</Text>
+    </Row>
+  );
+}
+
+// ── list ─────────────────────────────────────────────────────────────────────
+
+function ListPane({
+  examples,
+  selected,
+  start,
+  end,
+  width,
+  height,
+  focused,
+}: {
+  examples: ShowcaseExample[];
+  selected: number;
+  start: number;
+  end: number;
+  width: number;
+  height: number;
+  focused: boolean;
+}) {
+  const slice = examples.slice(start, end);
+  return (
+    <Panel tone="neutral" focused={focused} width={width} height={height} overflow="hidden">
+      <Box flexShrink={0} flexDirection="column">
+        <Row>
+          <Text tone="primary" bold>Components</Text>
           <Spacer />
-          <Text tone="muted">{families.length} families</Text>
-        </Box>
-      ) : null}
-
-      <Row gap={2} marginTop={1}>
-        <Box width={listWidth} flexShrink={0} flexDirection="column">
-          {slice.map((family, i) => {
-            const index = start + i;
-            const active = index === state.familyIndex;
-            const showThemeHeading = family.group !== lastTheme;
-            lastTheme = family.group;
-            const previewable = family.components.filter((c) => c.previewable).length;
-
-            return (
-              <Box key={family.slug} flexDirection="column">
-                {showThemeHeading ? (
-                  <Box marginTop={index === start ? 0 : 1}>
-                    <Text tone={themeTone(family.group)} bold>
-                      {themeLabel(family.group)}
-                    </Text>
-                  </Box>
-                ) : null}
-                <Row gap={1}>
-                  <Text tone={active ? "primary" : "text"} bold={active}>
-                    {active ? "›" : " "} {family.name}
-                  </Text>
-                  <Text tone="muted">{family.components.length}</Text>
-                  {previewable > 0 ? <Text tone="success">◉ {previewable}</Text> : null}
-                </Row>
-              </Box>
-            );
-          })}
-        </Box>
-
-        {twoColumn && current ? (
-          <FamilyPeek family={current} height={listHeight} />
-        ) : null}
-      </Row>
-
-      <Footer
-        width={cols}
-        left={<Text tone="muted">{`${cat.families.length} families · ${cat.previewableCount} previewable`}</Text>}
-        right={<Text tone="muted">MCP · list-components</Text>}
-      />
-    </Stack>
-  );
-}
-
-/**
- * What is inside the highlighted family, shown beside the list.
- *
- * The home screen was one ~30-column list on a terminal three times that wide,
- * so this fills the space with the thing you are about to open. It reads
- * `state.familyIndex` and nothing else — navigation is untouched, so `→` still
- * opens the family pane.
- */
-function FamilyPeek({ family, height }: { family: Family; height: number }) {
-  const previewable = family.components.filter((c) => c.previewable).length;
-  // Name, counts, the blank line above the list, and the "… more" line — four
-  // rows of chrome this column has to pay for out of the same budget the family
-  // list gets, or it is the thing that overflows instead.
-  const listRows = Math.max(1, height - 4);
-  const shown = family.components.slice(0, listRows);
-  const rest = family.components.length - shown.length;
-
-  return (
-    <Box flexGrow={1} flexDirection="column">
-      <Text tone="primary" bold>{family.name}</Text>
-      <Row gap={1}>
-        <Text tone="muted">{family.components.length} components</Text>
-        {previewable > 0 ? <Text tone="success">◉ {previewable} draw in a terminal</Text> : null}
-      </Row>
-
-      <Box marginTop={1} flexDirection="column">
-        {shown.map((component) => (
-          <Row key={component.name} gap={1}>
-            <Text tone={component.previewable ? "success" : "muted"}>
-              {component.previewable ? "◉" : "○"}
-            </Text>
-            <Text tone="text">{component.title ?? component.name}</Text>
-          </Row>
-        ))}
-        {rest > 0 ? <Text tone="muted">  … {rest} more</Text> : null}
-      </Box>
-    </Box>
-  );
-}
-
-// ── family ───────────────────────────────────────────────────────────────────
-
-function FamilyPane({ cat, state, cols, rows }: { cat: Catalogue; state: DocsState; cols: number; rows: number }) {
-  const family = selectedFamily(cat, state);
-  if (!family) return <Text tone="muted">No family selected.</Text>;
-
-  const listHeight = Math.max(4, rows - 8);
-  const { slice, start } = windowed(family.components, state.componentIndex, listHeight);
-  const previewable = family.components.filter((c) => c.previewable).length;
-
-  return (
-    <Stack gap={0}>
-      <Header
-        title={family.name}
-        subtitle={family.group}
-        status={
-          <Row gap={1}>
-            <Badge tone={themeTone(family.group)}>{family.group}</Badge>
-            {previewable > 0 ? <Badge tone="success">{previewable} previewable</Badge> : null}
-          </Row>
-        }
-      />
-      <Separator />
-
-      <Box flexDirection="column" marginTop={1}>
-        {slice.map((component, i) => {
+          <Text tone="muted">{examples.length}</Text>
+        </Row>
+        {slice.map((example, i) => {
           const index = start + i;
-          const active = index === state.componentIndex;
+          const active = index === selected;
+          const opensGroup = index === 0 || examples[index - 1]?.group !== example.group;
+          const kind = kindOf(example);
           return (
-            <Row key={component.name} gap={1}>
-              <Text tone={active ? "primary" : "text"} bold={active}>
-                {active ? "›" : " "} {component.title || component.name}
-              </Text>
-              <Spacer />
-              <Text tone="muted">{component.package}</Text>
-              <PreviewMark component={component} />
-            </Row>
+            <Box key={example.slug} flexDirection="column">
+              {opensGroup ? (
+                <Text tone={GROUP_TONE[example.group] ?? "neutral"} bold wrap="truncate">
+                  {example.group.toUpperCase()}
+                </Text>
+              ) : null}
+              <Row>
+                <Text tone={active ? "primary" : "text"} bold={active} wrap="truncate">
+                  {active ? "▸ " : "  "}
+                  {example.name}
+                </Text>
+                <Spacer />
+                <Text tone={KIND_TONE[kind]}>{KIND_MARK[kind]}</Text>
+              </Row>
+            </Box>
           );
         })}
       </Box>
-
-      <Footer
-        width={cols}
-        left={
-          <Row gap={1}>
-            <KeyHint keys="↑↓" label="select" />
-            <KeyHint keys="→" label="detail" />
-            <KeyHint keys="←" label="back" />
-          </Row>
-        }
-        right={<Text tone="muted">{`${state.componentIndex + 1}/${family.components.length}`}</Text>}
-      />
-    </Stack>
+    </Panel>
   );
 }
 
-// ── detail ───────────────────────────────────────────────────────────────────
+// ── preview ──────────────────────────────────────────────────────────────────
 
-/**
- * Rows the detail pane spends on everything that is not the preview: the header
- * (1), the description block (marginTop + a clipped 2 rows), the blank line
- * above the preview, and the footer (marginTop + 3 bordered rows).
- *
- * Fixed on purpose. A description is arbitrary prose that wraps to an unknown
- * number of rows, so leaving it unbounded makes the preview's budget a guess —
- * and a frame taller than the terminal is unrecoverable here: this TUI repaints
- * a full screen and keeps no scrollback.
- */
-const DETAIL_CHROME_ROWS = 9;
-const DESCRIPTION_ROWS = 2;
+/** Tallest a live example may claim before it is clipped — Hero/Modal are ~12. */
+const LIVE_CAP = 14;
 
-function DetailPane({ cat, state, cols, rows }: { cat: Catalogue; state: DocsState; cols: number; rows: number }) {
-  const component = selectedComponent(cat, state);
-  if (!component) return <Text tone="muted">No component selected.</Text>;
-
-  const found = component.previewSlug ? findShowcaseExample(component.previewSlug) : undefined;
-  // An example that commits scrollback through Ink's `Static` (MessageList,
-  // StaticList) paints ABOVE the frame and outside every box, so this pane
-  // cannot clip it — it would land on top of the header and make the frame
-  // taller than the terminal. Those fall back to their capture, which is a
-  // picture and therefore clippable.
-  const example = found?.scrollback ? undefined : found;
-  const bodyHeight = Math.max(5, rows - DETAIL_CHROME_ROWS);
-
-  // Claim the full terminal so the footer sits on the LAST row. A short preview
-  // otherwise leaves the status line floating in the middle of the screen with
-  // dead space beneath it, which reads as a half-drawn page rather than a pane.
-  return (
-    <Stack gap={0} height={rows}>
-      <Header
-        title={component.title || component.name}
-        subtitle={component.package}
-        status={<PreviewMark component={component} />}
-      />
-      <Box marginTop={1} height={DESCRIPTION_ROWS} overflow="hidden">
-        <Text>{component.description}</Text>
-      </Box>
-
-      {example || component.previewFrame ? (
-        <PreviewBody
-          component={component}
-          example={example}
-          state={state}
-          cols={cols}
-          height={bodyHeight}
-        />
-      ) : (
-        <Box marginTop={1} flexDirection="column">
-          <Panel title="No terminal preview" tone="neutral">
-            <Text tone="muted">
-              {component.title || component.name} is a web / React component. It renders in a
-              browser, not a terminal — so there is nothing to draw here.
-            </Text>
-            <Box marginTop={1}>
-              <KeyHint keys="o" label="open its docs page" />
-            </Box>
-          </Panel>
-        </Box>
-      )}
-
-      <Spacer />
-
-      <Footer
-        width={cols}
-        left={
-          <Row gap={1}>
-            {component.interactive ? <KeyHint keys="enter" label="interact" /> : null}
-            <KeyHint keys="↑↓" label="scroll" />
-            <KeyHint keys="o" label="web docs" />
-            <KeyHint keys="←" label="back" />
-          </Row>
-        }
-        right={<Text tone="muted">{component.family}</Text>}
-      />
-    </Stack>
-  );
-}
-
-/**
- * A component's preview: the LIVE component when fancy-tui exports an example
- * for it, otherwise the captured frame.
- *
- * Either way the whole block is a Panel with a `maxHeight` and `overflow`
- * hidden. A live example is arbitrary-height content composed for its own
- * layout — Hero is twelve rows, Modal draws inside a 68-column box — so
- * clipping is not a nicety: without it a tall component would push the footer,
- * and then the header, off a short terminal, with no scrollback to recover
- * them. `maxHeight` rather than `height` so a one-row component (a Badge row)
- * gets a panel that hugs it instead of thirty rows of empty box.
- *
- * The content sits in its own `flexShrink={0}` column INSIDE that panel, and
- * this is load-bearing: a height-constrained Yoga container squeezes its
- * children, and a squeezed Ink text node still writes all of its lines — from a
- * position that no longer matches. The frame comes back with rows painted on
- * top of each other ("LIVE PREVIEWble") rather than merely cut off. So the
- * inner column keeps its natural height and overflows; only the panel clips.
- */
-function PreviewBody({
-  component,
+function PreviewPane({
   example,
-  state,
-  cols,
+  width,
   height,
+  focused,
 }: {
-  component: CatalogueComponent;
   example: ShowcaseExample | undefined;
-  state: DocsState;
-  cols: number;
+  width: number;
   height: number;
+  focused: boolean;
 }) {
-  return (
-    <Box marginTop={1} flexDirection="column">
-      <Panel tone="success" width={cols} maxHeight={height} overflow="hidden">
-        {/*
-          The title is drawn INSIDE the unshrinkable column rather than passed
-          as Panel's `title`, because a Panel title is a second flex child — and
-          the constrained container squeezes whichever child can be squeezed,
-          landing the title and the first content row on the same terminal row.
-        */}
-        <Box flexDirection="column" flexShrink={0}>
-          <Text tone="success" bold>{`Preview — ${component.title || component.name}`}</Text>
-          {example ? (
-            <LivePreview example={example} state={state} cols={cols} height={height} />
-          ) : (
-            <CapturedPreview component={component} state={state} height={height} />
-          )}
-        </Box>
-      </Panel>
-    </Box>
-  );
-}
+  // Panel spends 2 rows on its border; the rest is the unshrinkable content
+  // column. The column draws its own title so a height clamp can never squeeze
+  // the title and the first content row onto the same terminal row.
+  const inner = Math.max(3, height - 2);
+  // Panel border (2) + paddingX (1 each side) = 4 columns of chrome.
+  const innerWidth = Math.max(10, width - 4);
+  // Rows left for [live + source] after title (1) + LIVE label (1) + SOURCE
+  // label (1) + CodeView border (2) = 5.
+  const avail = Math.max(2, inner - 5);
+  const liveRows = Math.max(1, Math.min(LIVE_CAP, avail - 3));
+  const codeLines = Math.max(1, avail - liveRows);
+  const kind = example ? kindOf(example) : "static";
 
-/** Rows a live example may claim before it is clipped — the tallest is 12. */
-const LIVE_PREVIEW_MAX_ROWS = 14;
-
-/**
- * The real component, rendered here, now.
- *
- * Two clamps make it safe to drop arbitrary content into a pane:
- *
- *  - a fixed-height `overflow: hidden` box, so a tall example is cut off rather
- *    than allowed to grow the frame past the terminal;
- *  - a nested `FancyTuiProvider` carrying the PANE's size, because components
- *    that measure the terminal (`Separator` rules to full width, `Hero` folds
- *    below 60, `Responsive` switches at a breakpoint) would otherwise size
- *    themselves to the whole screen and be clipped at the panel border.
- */
-function LivePreview({
-  example,
-  state,
-  cols,
-  height,
-}: {
-  example: ShowcaseExample;
-  state: DocsState;
-  cols: number;
-  height: number;
-}) {
-  // Panel spends 2 columns on its border and 2 on its horizontal padding.
-  const innerWidth = Math.max(10, cols - 4);
-  // …and 2 rows on its border plus 1 on its title.
-  const contentRows = Math.max(3, height - 3);
-  // The three label rows this block draws around the two sections.
-  const previewRows = Math.max(3, Math.min(LIVE_PREVIEW_MAX_ROWS, contentRows - 4));
-  const sourceRows = Math.max(1, contentRows - previewRows - 3);
-
-  const sourceLines = example.source.split("\n");
-  const start = Math.min(state.detailOffset, Math.max(0, sourceLines.length - sourceRows));
-  const slice = sourceLines.slice(start, start + sourceRows);
-  const more = start + sourceRows < sourceLines.length;
+  // Truncate each source line so CodeView never WRAPS a long line into extra
+  // rows and blows the fixed budget — the pane has no scrollback to spare.
+  const sourceLines = (example?.source ?? "").split("\n");
+  const maxLineWidth = Math.max(8, innerWidth - 10); // line-number gutter + border/padding
+  const shown = sourceLines
+    .slice(0, codeLines)
+    .map((line) => (line.length > maxLineWidth ? `${line.slice(0, maxLineWidth - 1)}…` : line));
+  if (sourceLines.length > codeLines && shown.length > 0) shown[shown.length - 1] = "…";
+  const code = shown.join("\n");
 
   return (
-    <>
-      <Text tone="muted" bold>LIVE PREVIEW</Text>
-      <Box width={innerWidth} maxHeight={previewRows} overflow="hidden" flexDirection="column">
-        <Box flexDirection="column" flexShrink={0}>
-          <FancyTuiProvider width={innerWidth} height={previewRows}>
-            {example.node}
-          </FancyTuiProvider>
+    <Panel
+      tone={focused ? "primary" : "success"}
+      focused={focused}
+      width={width}
+      height={height}
+      overflow="hidden"
+    >
+      <Box flexShrink={0} flexDirection="column">
+        <Row>
+          <Text tone={example ? GROUP_TONE[example.group] ?? "primary" : "primary"} bold wrap="truncate">
+            {example?.name ?? "—"}
+          </Text>
+          <Spacer />
+          <Badge tone={KIND_TONE[kind]}>{KIND_LABEL[kind]}</Badge>
+        </Row>
+
+        <Text tone="muted" bold>LIVE</Text>
+        <Box width={innerWidth} maxHeight={liveRows} overflow="hidden" flexDirection="column">
+          <Box flexShrink={0} flexDirection="column">
+            {example?.scrollback ? (
+              // A `<Static>` example writes ABOVE the frame and outside the box
+              // model — rendering it live would make the frame taller than the
+              // terminal. Show the source, and say why the live view is withheld.
+              <Text tone="warning" wrap="truncate">
+                Writes to terminal scrollback (Ink Static) — shown as source.
+              </Text>
+            ) : example ? (
+              <FancyTuiProvider width={innerWidth} height={liveRows}>{example.node}</FancyTuiProvider>
+            ) : null}
+          </Box>
         </Box>
+
+        <Text tone="muted" bold>SOURCE</Text>
+        <CodeView code={code} language="tsx" lineNumbers />
       </Box>
-      <Text tone="muted" bold>SOURCE</Text>
-      {slice.map((line, i) => (
-        <Text key={i} tone="agent">{line}</Text>
-      ))}
-      {more ? <Text tone="muted">↓ more</Text> : null}
-    </>
+    </Panel>
   );
 }
 
-/**
- * The captured frame, line by line — the fallback when the installed fancy-tui
- * has a capture for a component but no live example for it.
- *
- * These lines already carry their own ANSI colour, so they are printed as-is
- * rather than re-styled. Scrolls with the detail offset so a tall capture and
- * its source both stay reachable.
- */
-function CapturedPreview({
-  component,
-  state,
-  height,
-}: {
-  component: CatalogueComponent;
-  state: DocsState;
-  height: number;
-}) {
-  const frameLines = (component.previewFrame ?? "").split("\n");
-  const sourceLines = (component.previewSource ?? "").split("\n");
-  const body = [
-    { kind: "label" as const, text: "CAPTURED PREVIEW" },
-    ...frameLines.map((text) => ({ kind: "frame" as const, text })),
-    { kind: "gap" as const, text: "" },
-    { kind: "label" as const, text: "SOURCE" },
-    ...sourceLines.map((text) => ({ kind: "source" as const, text })),
-  ];
+// ── footer ───────────────────────────────────────────────────────────────────
 
-  const rows = Math.max(1, height - 4);
-  const start = Math.min(state.detailOffset, Math.max(0, body.length - rows));
-  const slice = body.slice(start, start + rows);
-  const more = start + rows < body.length;
-
+function Footer({ width, example }: { width: number; example: ShowcaseExample | undefined }) {
+  const { theme } = useFancyTui();
+  const compact = width < 76;
+  const kind = example ? kindOf(example) : "static";
   return (
-    <>
-      {slice.map((line, i) => {
-        if (line.kind === "label") return <Text key={i} tone="muted" bold>{line.text}</Text>;
-        if (line.kind === "gap") return <Text key={i}> </Text>;
-        if (line.kind === "source") return <Text key={i} tone="agent">{line.text}</Text>;
-        // A pre-coloured frame line: print verbatim.
-        return <Text key={i}>{line.text}</Text>;
-      })}
-      {more ? <Text tone="muted">↓ more</Text> : null}
-    </>
+    <Box
+      width={width}
+      borderStyle="single"
+      borderColor={theme.colors.border}
+      paddingX={1}
+      flexDirection="row"
+    >
+      <Row gap={compact ? 1 : 2}>
+        <KeyHint keys="↑↓" label="browse" />
+        <KeyHint keys="enter" label="interact" />
+        <KeyHint keys="esc" label="back" />
+        {compact ? null : <KeyHint keys="/" label="search" />}
+        <KeyHint keys="q" label="quit" />
+      </Row>
+      <Spacer />
+      {compact ? null : (
+        <Text tone="muted" wrap="truncate">
+          {example ? `${example.name} · ${kind}` : ""}
+        </Text>
+      )}
+    </Box>
   );
 }
 
 // ── root ─────────────────────────────────────────────────────────────────────
 
-export function DocsApp({
-  catalogue,
-  state,
-  cols,
-  rows,
-}: {
-  catalogue: Catalogue;
-  state: DocsState;
+export interface DocsAppProps {
   cols: number;
   rows: number;
-}) {
-  const pane =
-    state.pane === "home" ? (
-      <HomePane cat={catalogue} state={state} cols={cols} rows={rows} />
-    ) : state.pane === "family" ? (
-      <FamilyPane cat={catalogue} state={state} cols={cols} rows={rows} />
-    ) : (
-      <DetailPane cat={catalogue} state={state} cols={cols} rows={rows} />
-    );
+  /** Slug to select on mount, for deep-links and tests. Ignored if unknown. */
+  initialSlug?: string;
+  /** Side-effect sink (quit / open a URL). The service forwards these to the
+   *  browser; a one-shot render passes nothing. */
+  onEffect?: (effect: AppEffect) => void;
+}
 
-  // Provider width MUST match the Ink stdout columns the renderer sets, or the
-  // components' own width logic (Hero's compact fold, Separator) disagrees with
-  // the flexbox layout.
+const FOOTER_ROWS = 3;
+
+export function DocsApp({ cols, rows, initialSlug, onEffect }: DocsAppProps) {
+  const initialIndex = Math.max(0, SHOWCASE_EXAMPLES.findIndex((e) => e.slug === initialSlug));
+  const [index, setIndex] = useState(initialIndex);
+  const [search, setSearch] = useState("");
+  const [searching, setSearching] = useState(false);
+  // Which pane reads as focused. Drives ONLY the border; key routing follows
+  // Ink's real focus (`listFocused`). Defaulting to browse means the very first
+  // frame shows the list focused, without the flash you get from reading Ink's
+  // focus before its mount effect has claimed it.
+  const [divedIn, setDivedIn] = useState(false);
+
+  const { focus, focusNext } = useFocusManager();
+  // Ink's real focus on the list sink — the authority for KEY routing.
+  const { isFocused: listFocused } = useFocus({ id: LIST_FOCUS_ID, autoFocus: true });
+
+  // Claim focus for the list on mount, deterministically. `autoFocus` alone is
+  // not enough: React runs child effects BEFORE the parent's, so a preview whose
+  // control auto-focuses (an Input, an Accordion) registers first and would win
+  // the initial claim — leaving the list unfocused and arrow keys dead until Tab.
+  // This parent mount-effect runs last and takes focus back to the list.
+  useEffect(() => {
+    focus(LIST_FOCUS_ID);
+  }, [focus]);
+
+  // Whenever the sink regains Ink focus (Escape, or a Shift+Tab out of the
+  // preview), we are browsing again — keep the border honest.
+  useEffect(() => {
+    if (listFocused) setDivedIn(false);
+  }, [listFocused]);
+
+  const examples = useMemo(() => docExamples(search), [search]);
+  const selectedIndex = Math.min(index, Math.max(0, examples.length - 1));
+  const selected = examples[selectedIndex];
+
+  useInput((input, key) => {
+    // Preview has focus: the component drives itself. The only key we still own
+    // is Escape, which hands focus back to the list.
+    if (!listFocused) {
+      if (key.escape) {
+        focus(LIST_FOCUS_ID);
+        setDivedIn(false);
+      }
+      return;
+    }
+
+    // Search box: swallow text so typing "q" does not quit mid-query.
+    if (searching) {
+      if (key.escape) {
+        setSearch("");
+        setSearching(false);
+        setIndex(0);
+      } else if (key.return) {
+        setSearching(false);
+      } else if (key.upArrow) {
+        setIndex((i) => Math.max(0, i - 1));
+      } else if (key.downArrow) {
+        setIndex((i) => Math.min(examples.length - 1, i + 1));
+      } else if (key.backspace || key.delete) {
+        setSearch((s) => s.slice(0, -1));
+        setIndex(0);
+      } else if (input && !key.ctrl && !key.meta) {
+        setSearch((s) => s + input);
+        setIndex(0);
+      }
+      return;
+    }
+
+    // Browse mode.
+    if (key.upArrow || input === "k") {
+      setIndex((i) => Math.max(0, i - 1));
+    } else if (key.downArrow || input === "j") {
+      setIndex((i) => Math.min(examples.length - 1, i + 1));
+    } else if (key.return) {
+      // Dive into an interactive component so keys drive it.
+      if (selected?.interactive) {
+        focusNext();
+        setDivedIn(true);
+      }
+    } else if (key.tab) {
+      // Ink's focus manager already advances focus into the preview on Tab; we
+      // only mirror it into the border (no focusNext here — that would advance
+      // focus twice).
+      if (selected?.interactive) setDivedIn(true);
+    } else if (input === "/") {
+      setSearching(true);
+      setSearch("");
+      setIndex(0);
+    } else if (input === "q" || key.escape) {
+      onEffect?.({ type: "quit" });
+    }
+  });
+
+  const showSearch = searching || search.length > 0;
+  const searchRows = showSearch ? 1 : 0;
+  // brand (1) + separator (1) + search + body + footer (3) = rows.
+  const bodyRows = Math.max(6, rows - 2 - searchRows - FOOTER_ROWS);
+  const listWidth = Math.max(22, Math.min(34, Math.floor(cols * 0.32)));
+  const previewWidth = Math.max(20, cols - listWidth - 1);
+  const { start, end } = windowByGroup(examples, selectedIndex, Math.max(2, bodyRows - 3));
+
   return (
     <FancyTuiProvider width={cols} height={rows}>
-      <Box width={cols} flexDirection="column">
-        {pane}
+      <Box width={cols} height={rows} flexDirection="column" overflow="hidden">
+        <BrandBar count={SHOWCASE_EXAMPLES.length} />
+        <Separator />
+        {showSearch ? <SearchLine search={search} typing={searching} count={examples.length} /> : null}
+        <Row gap={1} flexGrow={1}>
+          <ListPane
+            examples={examples}
+            selected={selectedIndex}
+            start={start}
+            end={end}
+            width={listWidth}
+            height={bodyRows}
+            focused={!divedIn}
+          />
+          <PreviewPane example={selected} width={previewWidth} height={bodyRows} focused={divedIn} />
+        </Row>
+        <Footer width={cols} example={selected} />
       </Box>
     </FancyTuiProvider>
   );

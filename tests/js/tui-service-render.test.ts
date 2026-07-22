@@ -1,7 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { renderFrame, renderError } from "../../tui-service/src/render.js";
-import { initialState } from "../../tui-service/src/model.js";
-import type { Catalogue } from "../../tui-service/src/catalogue.js";
+import { renderAppFrame, crlf } from "../../tui-service/src/render.js";
 
 const CR = "\r";
 const LF = "\n";
@@ -23,26 +21,11 @@ function bareLineFeeds(frame: string): number {
     return bare;
 }
 
-/** The smallest catalogue that still renders the home pane. */
-const catalogue: Catalogue = {
-    themes: [{ group: "SURFACES", families: [] }],
-    families: [],
-    total: 0,
-} as unknown as Catalogue;
-
 describe("tui-service render — line endings", () => {
     it("renders a frame with no bare line feeds", () => {
-        const frame = renderFrame(catalogue, initialState, 80, 12);
+        const frame = renderAppFrame(80, 20);
 
         expect(frame.length).toBeGreaterThan(0);
-        expect(frame).toContain(LF);
-        expect(bareLineFeeds(frame)).toBe(0);
-    });
-
-    it("renders the error frame with no bare line feeds", () => {
-        const frame = renderError("registry unreachable", 80);
-
-        expect(frame).toContain("registry unreachable");
         expect(frame).toContain(LF);
         expect(bareLineFeeds(frame)).toBe(0);
     });
@@ -51,8 +34,8 @@ describe("tui-service render — line endings", () => {
         // The translation must be idempotent — a frame that already ends its
         // lines with CRLF has to pass through untouched, or the cursor would
         // take an extra return and blank lines would appear.
-        const frame = renderError("x", 40);
-
-        expect(frame).not.toContain(`${CR}${CR}`);
+        expect(crlf("a\r\nb\r\n")).toBe("a\r\nb\r\n");
+        expect(crlf("a\nb\n")).toBe("a\r\nb\r\n");
+        expect(renderAppFrame(60, 18)).not.toContain(`${CR}${CR}`);
     });
 });

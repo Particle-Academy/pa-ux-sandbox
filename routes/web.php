@@ -235,6 +235,16 @@ Route::post('/fancy-tui/frame', [FancyTuiController::class, 'frame'])
     ->middleware('throttle:120,1')
     ->name('fancy-tui.frame');
 
+// Live component previews: start/feed/end a persistent Ink render, and long-poll
+// its frames. The stream is one held-open request per viewer, so its throttle is
+// generous; the service caps concurrent sessions and holds each poll ~2s.
+Route::post('/fancy-tui/session', [FancyTuiController::class, 'session'])
+    ->middleware('throttle:240,1')
+    ->name('fancy-tui.session');
+Route::get('/fancy-tui/session/stream', [FancyTuiController::class, 'sessionStream'])
+    ->middleware('throttle:600,1')
+    ->name('fancy-tui.session.stream');
+
 Route::get('/shop', [ShopController::class, 'index'])->name('shop.index');
 Route::post('/shop/{item:slug}/purchase', [ShopController::class, 'purchase'])
     ->middleware('auth')

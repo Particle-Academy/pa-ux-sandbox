@@ -47,7 +47,11 @@ export type Key =
   | { type: "char"; value: string };
 
 /** A side effect the browser performs; the reducer never performs it itself. */
-export type Effect = { type: "open"; url: string } | { type: "quit" };
+export type Effect =
+  | { type: "open"; url: string }
+  | { type: "quit" }
+  /** Enter a live, interactive preview session for the given showcase slug. */
+  | { type: "enter-preview"; slug: string };
 
 export type Reduction = { state: DocsState; effects: Effect[] };
 
@@ -131,6 +135,15 @@ export function reduce(cat: Catalogue, state: DocsState, key: Key): Reduction {
     case "enter":
       if (state.pane === "home") return none({ ...state, pane: "family", componentIndex: 0 });
       if (state.pane === "family") return none({ ...state, pane: "detail", detailOffset: 0 });
+      // On the detail pane, Enter dives INTO the component when it is
+      // interactive — the browser opens a live session. State is unchanged; the
+      // preview is a browser-side mode, not a fourth pane.
+      if (state.pane === "detail") {
+        const component = selectedComponent(cat, state);
+        if (component?.interactive && component.previewSlug) {
+          return { state, effects: [{ type: "enter-preview", slug: component.previewSlug }] };
+        }
+      }
       return none(state);
 
     case "left":

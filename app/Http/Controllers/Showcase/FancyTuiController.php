@@ -74,4 +74,69 @@ class FancyTuiController extends Controller
 
         return response()->json($response->json(), 200);
     }
+
+    /**
+     * Start / feed / end a live preview session (POST) — the interactive,
+     * animated half of the TUI. Same edge posture as frame(): loopback service,
+     * raw body forwarded, service is the validation boundary. A preview is one
+     * of a FIXED set of showcase components chosen by slug; the service refuses
+     * anything else.
+     */
+    public function session(Request $request): JsonResponse
+    {
+        $base = rtrim((string) config('services.tui.url'), '/');
+        if ($base === '') {
+            return response()->json(['error' => 'The docs terminal is not available here.'], 503);
+        }
+
+        $raw = $request->getContent();
+        if (strlen($raw) > 64 * 1024) {
+            return response()->json(['error' => 'Payload too large.'], 413);
+        }
+
+        try {
+            $response = Http::timeout((float) config('services.tui.timeout', 5))
+                ->withBody($raw !== '' ? $raw : '{}', 'application/json')
+                ->acceptJson()
+                ->post("{$base}/session");
+        } catch (\Throwable) {
+            return response()->json(['error' => 'The docs terminal is not responding.'], 503);
+        }
+
+        // Pass the service's status through: a full-sessions 409 or an
+        // unknown-slug 409 is meaningful to the browser, not a generic error.
+        return response()->json($response->json(), $response->status());
+    }
+
+    /**
+     * Long-poll for the next frame of a live preview.
+     *
+     * The service holds this open until the component redraws — a keystroke or a
+     * timer tick — or ~2s elapses, so animation arrives without the browser
+     * hammering. The HTTP timeout sits just above the service's hold so a normal
+     * quiet return is never mistaken for a dead service.
+     */
+    public function sessionStream(Request $request): JsonResponse
+    {
+        $base = rtrim((string) config('services.tui.url'), '/');
+        if ($base === '') {
+            return response()->json(['error' => 'The docs terminal is not available here.'], 503);
+        }
+
+        $id = (string) $request->query('id', '');
+        $since = (int) $request->query('since', 0);
+        if ($id === '') {
+            return response()->json(['error' => 'missing session id'], 400);
+        }
+
+        try {
+            $response = Http::timeout((float) config('services.tui.stream_timeout', 8))
+                ->acceptJson()
+                ->get("{$base}/session/stream", ['id' => $id, 'since' => $since]);
+        } catch (\Throwable) {
+            return response()->json(['error' => 'The docs terminal is not responding.'], 503);
+        }
+
+        return response()->json($response->json(), $response->status());
+    }
 }

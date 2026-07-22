@@ -434,6 +434,7 @@ function DetailPane({ cat, state, cols, rows }: { cat: Catalogue; state: DocsSta
         width={cols}
         left={
           <Row gap={1}>
+            {component.interactive ? <KeyHint keys="enter" label="interact" /> : null}
             <KeyHint keys="↑↓" label="scroll" />
             <KeyHint keys="o" label="web docs" />
             <KeyHint keys="←" label="back" />

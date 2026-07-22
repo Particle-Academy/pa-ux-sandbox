@@ -52,6 +52,13 @@ export type CatalogueComponent = McpComponent & {
   previewFrame: string | null;
   /** The source snippet shown alongside a preview, else null. */
   previewSource: string | null;
+  /**
+   * Whether the live example RESPONDS to input — an Accordion you can toggle, an
+   * Input you can type in. When true the detail pane offers `[enter] interact`,
+   * which opens a persistent, animated preview session. Static examples (a
+   * Badge, a Separator) and capture-only fallbacks are false.
+   */
+  interactive: boolean;
 };
 
 export type Family = {
@@ -103,12 +110,20 @@ export function previewSlugFor(component: McpComponent): string | null {
 function resolvePreview(component: McpComponent): CatalogueComponent {
   const slug = previewSlugFor(component);
   const preview = slug ? PREVIEWS.get(slug) : undefined;
+  const example = slug ? SHOWCASE_EXAMPLES_BY_SLUG.get(slug) : undefined;
   return {
     ...component,
     previewable: slug !== null,
     previewSlug: slug,
     previewFrame: preview?.frame ?? null,
     previewSource: preview?.source ?? null,
+    // Interactive only when a LIVE example says so — a capture-only fallback
+    // cannot be operated, and a scrollback example cannot be windowed. Read
+    // defensively: the `interactive` flag arrives with fancy-tui 0.8.0, and an
+    // older installed copy simply reports everything non-interactive.
+    interactive: Boolean(
+      (example as { interactive?: boolean } | undefined)?.interactive && !example?.scrollback,
+    ),
   };
 }
 

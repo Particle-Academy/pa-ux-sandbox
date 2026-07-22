@@ -71,7 +71,7 @@ class FrameStdin extends EventEmitter {
  * sends CRLF and rewriting a raw byte stream would corrupt it. The `\r?\n`
  * form is idempotent, so a frame that already has CRLF passes through unharmed.
  */
-function crlf(frame: string): string {
+export function crlf(frame: string): string {
   return frame.replace(/\r?\n/g, "\r\n");
 }
 

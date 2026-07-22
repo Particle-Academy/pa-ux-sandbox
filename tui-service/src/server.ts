@@ -6,6 +6,7 @@ import { reduce, initialState, type DocsState, type Effect } from "./model.js";
 import { decodeKey } from "./keys.js";
 import { sanitizeState, sanitizeSize } from "./state.js";
 import { renderFrame, renderError } from "./render.js";
+import { SessionManager } from "./session.js";
 
 /**
  * The docs TUI render service.
@@ -55,6 +56,41 @@ const MAX_BODY = 64 * 1024; // navigation state is tiny; anything larger is abus
 
 const mcp = new McpClient(MCP_URL);
 const catalogue = new CatalogueCache(mcp);
+const sessions = new SessionManager();
+
+/** Coerce an incoming string field to a bounded string, or "". */
+function asString(value: unknown, max: number): string {
+  return typeof value === "string" ? value.slice(0, max) : "";
+}
+
+type SessionRequest = { action?: unknown; slug?: unknown; id?: unknown; key?: unknown; cols?: unknown; rows?: unknown };
+
+/**
+ * Start / feed / end a live preview session. One route, dispatched on `action`,
+ * so it shares the raw-body-forward and never-trust posture of `/render`.
+ */
+function handleSession(body: SessionRequest): { status: number; payload: unknown } {
+  const action = asString(body.action, 16);
+
+  if (action === "start") {
+    const { cols, rows } = sanitizeSize(body.cols, body.rows);
+    const result = sessions.start(asString(body.slug, 64), cols, rows);
+    if ("error" in result) return { status: 409, payload: result };
+    return { status: 200, payload: result };
+  }
+
+  if (action === "key") {
+    const info = sessions.key(asString(body.id, 64), asString(body.key, 64));
+    if (!info) return { status: 404, payload: { error: "no such session" } };
+    return { status: 200, payload: info };
+  }
+
+  if (action === "end") {
+    return { status: 200, payload: { ended: sessions.end(asString(body.id, 64)) } };
+  }
+
+  return { status: 400, payload: { error: "unknown action" } };
+}
 
 type RenderRequest = {
   state?: unknown;
@@ -120,12 +156,41 @@ function readBody(req: IncomingMessage): Promise<string> {
 
 const server = createServer((req, res) => {
   void (async () => {
-    if (req.method === "GET" && req.url === "/health") {
+    const url = new URL(req.url ?? "/", "http://localhost");
+
+    if (req.method === "GET" && url.pathname === "/health") {
       send(res, 200, { ok: true });
       return;
     }
 
-    if (req.method !== "POST" || req.url !== "/render") {
+    // Long-poll: hold the request open until the session draws a new frame (a
+    // keystroke OR a timer tick) or the hold elapses. This is the animation
+    // channel — no SSE, because it has to survive Cloudflare, which resets it.
+    if (req.method === "GET" && url.pathname === "/session/stream") {
+      const id = asString(url.searchParams.get("id"), 64);
+      const since = Number(url.searchParams.get("since") ?? 0);
+      const pending = sessions.wait(id, Number.isFinite(since) ? since : 0);
+      if (!pending) {
+        send(res, 404, { error: "no such session" });
+        return;
+      }
+      send(res, 200, await pending);
+      return;
+    }
+
+    if (req.method === "POST" && url.pathname === "/session") {
+      try {
+        const raw = await readBody(req);
+        const body = raw ? (JSON.parse(raw) as SessionRequest) : {};
+        const { status, payload } = handleSession(body);
+        send(res, status, payload);
+      } catch (err) {
+        send(res, 400, { error: err instanceof Error ? err.message : String(err) });
+      }
+      return;
+    }
+
+    if (req.method !== "POST" || url.pathname !== "/render") {
       send(res, 404, { error: "not found" });
       return;
     }

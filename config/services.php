@@ -73,6 +73,9 @@ return [
     'tui' => [
         'url' => env('TUI_SERVICE_URL'),
         'timeout' => env('TUI_SERVICE_TIMEOUT', 5),
+        // Just above the service's ~2s long-poll hold, so a normal quiet return
+        // is never read as a dead service.
+        'stream_timeout' => env('TUI_SERVICE_STREAM_TIMEOUT', 8),
     ],
 
 ];

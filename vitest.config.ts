@@ -15,5 +15,12 @@ export default defineConfig({
         // Node by default — the model + renderer are pure. The component test
         // opts into jsdom with a `@vitest-environment` docblock.
         environment: "node",
+        // The docs TUI renders frames for a browser terminal, which always
+        // wants colour. Ink derives its colour level from the process stdout,
+        // which is not a TTY under a test runner — so pin truecolor here, the
+        // same lever the service uses (`tui-service/src/force-color.ts`). Every
+        // content assertion strips ANSI first, so this only lets the colour
+        // tests SEE the SGR codes; it changes no measured width or height.
+        env: { FORCE_COLOR: "3" },
     },
 });

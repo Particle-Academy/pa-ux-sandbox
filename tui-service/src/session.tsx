@@ -1,3 +1,4 @@
+import "./force-color.js"; // MUST be first — pins chalk to truecolor before ink loads.
 import { EventEmitter } from "node:events";
 import React from "react";
 import { render as inkRender } from "ink";

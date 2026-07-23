@@ -33,32 +33,52 @@ function measure(frame: string) {
     };
 }
 
+// "Make it Fancy" is a live toggle, so BOTH looks must obey the fixed-frame
+// contract at every size — the Plain theme swaps borders (single vs round/double)
+// and the source panel drops its syntax colour, either of which could shift a row.
+const MODES = [true, false] as const;
+
 describe("docs app — the frame fits the terminal it was given", () => {
-    for (const [cols, rows] of SIZES) {
-        it(`fits ${cols}x${rows} on first paint`, () => {
-            const { height, width } = measure(renderAppFrame(cols, rows));
-            expect(height).toBeLessThanOrEqual(rows);
-            expect(width).toBeLessThanOrEqual(cols);
-        });
-    }
+    for (const fancy of MODES) {
+        for (const [cols, rows] of SIZES) {
+            it(`fits ${cols}x${rows} on first paint (fancy=${fancy})`, () => {
+                const { height, width } = measure(renderAppFrame(cols, rows, { fancy }));
+                expect(height).toBeLessThanOrEqual(rows);
+                expect(width).toBeLessThanOrEqual(cols);
+            });
+        }
 
-    // Every example is rendered LIVE in the preview pane — arbitrary content,
-    // composed for its own layout, dropped into a fixed pane. Hero is twelve
-    // rows and Modal draws inside a 68-column box, so selecting each in turn is
-    // the surest way to find one that overflows a short terminal.
-    for (const [cols, rows] of SIZES) {
-        it(`fits every live preview at ${cols}x${rows}`, () => {
-            const tooTall: string[] = [];
-            const tooWide: string[] = [];
+        // Every example is rendered LIVE in the preview pane — arbitrary content,
+        // composed for its own layout, dropped into a fixed pane. Hero is twelve
+        // rows and Modal draws inside a 68-column box, so selecting each in turn
+        // is the surest way to find one that overflows a short terminal.
+        for (const [cols, rows] of SIZES) {
+            it(`fits every live preview at ${cols}x${rows} (fancy=${fancy})`, () => {
+                const tooTall: string[] = [];
+                const tooWide: string[] = [];
 
-            for (const example of SHOWCASE_EXAMPLES) {
-                const { height, width } = measure(renderAppFrame(cols, rows, { initialSlug: example.slug }));
-                if (height > rows) tooTall.push(`${example.slug} (${height} rows)`);
-                if (width > cols) tooWide.push(`${example.slug} (${width} cols)`);
-            }
+                for (const example of SHOWCASE_EXAMPLES) {
+                    const { height, width } = measure(renderAppFrame(cols, rows, { initialSlug: example.slug, fancy }));
+                    if (height > rows) tooTall.push(`${example.slug} (${height} rows)`);
+                    if (width > cols) tooWide.push(`${example.slug} (${width} cols)`);
+                }
 
-            expect(tooTall).toEqual([]);
-            expect(tooWide).toEqual([]);
+                expect(tooTall).toEqual([]);
+                expect(tooWide).toEqual([]);
+            });
+        }
+
+        // The three things a windowed, fixed-height layout is most at risk of
+        // clipping: a group heading, the live view, and the source. Badge is the
+        // first row of the Display group, so selecting it puts its heading on
+        // screen; assert all three survive, in BOTH looks.
+        it(`keeps group headings, the live view and the source on screen (fancy=${fancy})`, () => {
+            const clean = renderAppFrame(110, 36, { initialSlug: "badge", fancy }).replace(ANSI, "");
+            expect(clean, "group heading").toContain("DISPLAY");
+            expect(clean, "live label").toContain("LIVE");
+            expect(clean, "live render").toContain("passing"); // the live Badge
+            expect(clean, "source label").toContain("SOURCE");
+            expect(clean, "source text").toContain('tone="success"');
         });
     }
 
@@ -108,12 +128,18 @@ describe("docs app — the preview is the component, running", () => {
 
     it("lays the component out at the pane's width, not a fixed 68 columns", () => {
         // A Hero centres its title across the pane it is given, so a wide
-        // terminal starts it much further right than a narrow one.
-        const titleCol = (cols: number) =>
-            detailFor("hero", cols, 40)
-                .split(CR + LF)
-                .find((line) => line.includes("Fancy Docs"))
-                ?.indexOf("Fancy Docs") ?? -1;
+        // terminal starts it much further right than a narrow one. The docs app
+        // overrides the Hero preview copy to its own "Fancy TUI" title, which
+        // also appears in the brand bar (small indent) and the SOURCE panel
+        // (`title="Fancy TUI"`, at the gutter). The centred LIVE title has the
+        // largest indent, so take the max — ignoring the source occurrence.
+        const titleCol = (cols: number) => {
+            const lines = detailFor("hero", cols, 40).split(CR + LF);
+            return Math.max(
+                -1,
+                ...lines.map((l) => (l.includes('title="') ? -1 : l.indexOf("Fancy TUI"))),
+            );
+        };
 
         const wide = titleCol(200);
         const narrow = titleCol(90);

@@ -3,8 +3,9 @@ import { useFocus, useFocusManager, useInput } from "ink";
 import {
   Badge,
   Box,
-  CodeView,
+  darkTheme,
   FancyTuiProvider,
+  Hero,
   KeyHint,
   Panel,
   Row,
@@ -14,7 +15,8 @@ import {
   useFancyTui,
 } from "@particle-academy/fancy-tui";
 import { SHOWCASE_EXAMPLES, type ShowcaseExample } from "@particle-academy/fancy-tui/showcase";
-import type { TuiTone } from "@particle-academy/fancy-tui";
+import type { TuiTheme, TuiTone } from "@particle-academy/fancy-tui";
+import { SourceView } from "./highlight.js";
 
 /**
  * The Fancy TUI docs — the whole page as ONE live Ink app.
@@ -54,6 +56,72 @@ const LIST_FOCUS_ID = "docs:list";
 
 /** Shown in the brand bar. Bumped with the installed fancy-tui. */
 const FANCY_TUI_VERSION = "fancy-tui v0.8.0";
+
+// ── the two looks ──────────────────────────────────────────────────────────
+//
+// "Make it Fancy" is the docs TUI demonstrating itself: `f` flips the WHOLE UI
+// between a deliberately plain black-&-white look and the vivid Fancy one. Both
+// are driven by swapping the theme passed to `FancyTuiProvider` (fancy-tui's
+// `theme.colors` are ANSI colour NAMES, so a monochrome theme paints every tone
+// white/gray) — plus a `fancy` flag threaded into the source highlighter and
+// the footer toggle.
+
+/** Fancy: the vivid dark theme — round panels, a double border on focus, and a
+ *  distinct accent per tone. This is fancy-tui's own `darkTheme`. */
+const FANCY_THEME: TuiTheme = darkTheme;
+
+/** Plain: genuinely monochrome — white text, gray chrome, single borders, no
+ *  accent anywhere. Every tone collapses to white or gray, so a component that
+ *  asks for `tone="danger"` still renders plain. */
+const PLAIN_THEME: TuiTheme = {
+  mode: "dark",
+  colors: {
+    neutral: "gray", primary: "white", success: "white", warning: "white", danger: "white",
+    info: "white", agent: "white", user: "white", tool: "white",
+    text: "white", muted: "gray", border: "gray", focus: "white", background: "black",
+  },
+  spacing: { xs: 0, sm: 1, md: 1, lg: 2, xl: 3 },
+  borders: { panel: "single", focus: "single" },
+  glyphs: { success: "✓", failure: "✗", warning: "!", pending: "…", bullet: "•", cursor: "▌" },
+};
+
+/**
+ * Per-slug preview overrides — a small, sandbox-local patch over a showcase
+ * example's live node and source, WITHOUT touching fancy-tui's showcase table.
+ *
+ * The Hero example ships fancy-tui's own demo copy ("Fancy Docs" / "Browse the
+ * Fancy UI registry from your terminal"), which name-drops a registry this docs
+ * app deliberately dropped. Overriding just this slug keeps the preview honest
+ * and keeps the SOURCE panel agreeing with what is rendered.
+ */
+const PREVIEW_OVERRIDES: Record<string, { node: React.ReactNode; source: string }> = {
+  hero: {
+    node: (
+      <Hero
+        title="Fancy TUI"
+        version={FANCY_TUI_VERSION}
+        tagline="Live components in your terminal"
+        mark={["╭───╮", "│ F │", "╰───╯"]}
+        hints={[{ keys: "f", label: "fancy" }, { keys: "/", label: "search" }, { keys: "q", label: "quit" }]}
+      />
+    ),
+    source: `<Hero
+  title="Fancy TUI"
+  version="${FANCY_TUI_VERSION}"
+  tagline="Live components in your terminal"
+  mark={["╭───╮", "│ F │", "╰───╯"]}
+  hints={[{ keys: "f", label: "fancy" }, { keys: "/", label: "search" }, { keys: "q", label: "quit" }]}
+/>`,
+  },
+};
+
+/** The example a slug should preview — its showcase entry with any sandbox-local
+ *  node/source override applied. */
+function effectiveExample(example: ShowcaseExample | undefined): ShowcaseExample | undefined {
+  if (!example) return example;
+  const override = PREVIEW_OVERRIDES[example.slug];
+  return override ? { ...example, node: override.node, source: override.source } : example;
+}
 
 /** The showcase groups, in first-seen order — Layout / Content / … / Human+. */
 export const GROUP_ORDER: string[] = [...new Set(SHOWCASE_EXAMPLES.map((e) => e.group))];
@@ -229,11 +297,13 @@ function PreviewPane({
   width,
   height,
   focused,
+  fancy,
 }: {
   example: ShowcaseExample | undefined;
   width: number;
   height: number;
   focused: boolean;
+  fancy: boolean;
 }) {
   // Panel spends 2 rows on its border; the rest is the unshrinkable content
   // column. The column draws its own title so a height clamp can never squeeze
@@ -256,7 +326,6 @@ function PreviewPane({
     .slice(0, codeLines)
     .map((line) => (line.length > maxLineWidth ? `${line.slice(0, maxLineWidth - 1)}…` : line));
   if (sourceLines.length > codeLines && shown.length > 0) shown[shown.length - 1] = "…";
-  const code = shown.join("\n");
 
   return (
     <Panel
@@ -286,13 +355,15 @@ function PreviewPane({
                 Writes to terminal scrollback (Ink Static) — shown as source.
               </Text>
             ) : example ? (
-              <FancyTuiProvider width={innerWidth} height={liveRows}>{example.node}</FancyTuiProvider>
+              <FancyTuiProvider width={innerWidth} height={liveRows} theme={fancy ? FANCY_THEME : PLAIN_THEME}>
+                {example.node}
+              </FancyTuiProvider>
             ) : null}
           </Box>
         </Box>
 
         <Text tone="muted" bold>SOURCE</Text>
-        <CodeView code={code} language="tsx" lineNumbers />
+        <SourceView lines={shown} fancy={fancy} lineNumbers />
       </Box>
     </Panel>
   );
@@ -300,9 +371,32 @@ function PreviewPane({
 
 // ── footer ───────────────────────────────────────────────────────────────────
 
-function Footer({ width, example }: { width: number; example: ShowcaseExample | undefined }) {
+/**
+ * The "make it Fancy" toggle, made obvious: the `f` key hint next to a badge
+ * that SHOWS the current state — a vivid `✨ Fancy` pill when on, a dull
+ * `Fancy: off` pill when off. Both are real fancy-tui `KeyHint` + `Badge`, so
+ * the badge is styled by the active theme (magenta pill in Fancy, gray in
+ * Plain) — the toggle demonstrates the very thing it controls.
+ */
+function FancyToggle({ fancy, compact }: { fancy: boolean; compact: boolean }) {
+  return (
+    <Row gap={1}>
+      <KeyHint keys="f" />
+      {fancy ? (
+        <Badge tone="agent">{compact ? "✨" : "✨ Fancy"}</Badge>
+      ) : (
+        <Badge tone="neutral">{compact ? "plain" : "Fancy: off"}</Badge>
+      )}
+    </Row>
+  );
+}
+
+function Footer({ width, example, fancy }: { width: number; example: ShowcaseExample | undefined; fancy: boolean }) {
   const { theme } = useFancyTui();
   const compact = width < 76;
+  // The obvious Fancy toggle is always shown; the secondary hints and the
+  // right-hand caption only earn their columns on a wide terminal.
+  const wide = width >= 100;
   const kind = example ? kindOf(example) : "static";
   return (
     <Box
@@ -313,18 +407,19 @@ function Footer({ width, example }: { width: number; example: ShowcaseExample | 
       flexDirection="row"
     >
       <Row gap={compact ? 1 : 2}>
+        <FancyToggle fancy={fancy} compact={compact} />
         <KeyHint keys="↑↓" label="browse" />
         <KeyHint keys="enter" label="interact" />
-        <KeyHint keys="esc" label="back" />
-        {compact ? null : <KeyHint keys="/" label="search" />}
+        {wide ? <KeyHint keys="esc" label="back" /> : null}
+        {wide ? <KeyHint keys="/" label="search" /> : null}
         <KeyHint keys="q" label="quit" />
       </Row>
       <Spacer />
-      {compact ? null : (
+      {wide ? (
         <Text tone="muted" wrap="truncate">
           {example ? `${example.name} · ${kind}` : ""}
         </Text>
-      )}
+      ) : null}
     </Box>
   );
 }
@@ -336,6 +431,9 @@ export interface DocsAppProps {
   rows: number;
   /** Slug to select on mount, for deep-links and tests. Ignored if unknown. */
   initialSlug?: string;
+  /** Start in Fancy (vivid) or Plain (b/w) mode. Defaults to Fancy — the app
+   *  leads with the flare it exists to show off. `f` flips it live. */
+  initialFancy?: boolean;
   /** Side-effect sink (quit / open a URL). The service forwards these to the
    *  browser; a one-shot render passes nothing. */
   onEffect?: (effect: AppEffect) => void;
@@ -343,11 +441,14 @@ export interface DocsAppProps {
 
 const FOOTER_ROWS = 3;
 
-export function DocsApp({ cols, rows, initialSlug, onEffect }: DocsAppProps) {
+export function DocsApp({ cols, rows, initialSlug, initialFancy, onEffect }: DocsAppProps) {
   const initialIndex = Math.max(0, SHOWCASE_EXAMPLES.findIndex((e) => e.slug === initialSlug));
   const [index, setIndex] = useState(initialIndex);
   const [search, setSearch] = useState("");
   const [searching, setSearching] = useState(false);
+  // "Make it Fancy" lives here: one flag flips the WHOLE UI. Default on, so the
+  // first frame is the flare.
+  const [fancy, setFancy] = useState(initialFancy ?? true);
   // Which pane reads as focused. Drives ONLY the border; key routing follows
   // Ink's real focus (`listFocused`). Defaulting to browse means the very first
   // frame shows the list focused, without the flash you get from reading Ink's
@@ -376,6 +477,9 @@ export function DocsApp({ cols, rows, initialSlug, onEffect }: DocsAppProps) {
   const examples = useMemo(() => docExamples(search), [search]);
   const selectedIndex = Math.min(index, Math.max(0, examples.length - 1));
   const selected = examples[selectedIndex];
+  // The previewed example, with any sandbox-local node/source override applied
+  // (e.g. the Hero's app-appropriate copy).
+  const preview = useMemo(() => effectiveExample(selected), [selected]);
 
   useInput((input, key) => {
     // Preview has focus: the component drives itself. The only key we still own
@@ -430,6 +534,9 @@ export function DocsApp({ cols, rows, initialSlug, onEffect }: DocsAppProps) {
       setSearching(true);
       setSearch("");
       setIndex(0);
+    } else if (input === "f") {
+      // The one keypress the whole thing is about: flip Fancy ↔ Plain, live.
+      setFancy((on) => !on);
     } else if (input === "q" || key.escape) {
       onEffect?.({ type: "quit" });
     }
@@ -444,7 +551,7 @@ export function DocsApp({ cols, rows, initialSlug, onEffect }: DocsAppProps) {
   const { start, end } = windowByGroup(examples, selectedIndex, Math.max(2, bodyRows - 3));
 
   return (
-    <FancyTuiProvider width={cols} height={rows}>
+    <FancyTuiProvider width={cols} height={rows} theme={fancy ? FANCY_THEME : PLAIN_THEME}>
       <Box width={cols} height={rows} flexDirection="column" overflow="hidden">
         <BrandBar count={SHOWCASE_EXAMPLES.length} />
         <Separator />
@@ -459,9 +566,9 @@ export function DocsApp({ cols, rows, initialSlug, onEffect }: DocsAppProps) {
             height={bodyRows}
             focused={!divedIn}
           />
-          <PreviewPane example={selected} width={previewWidth} height={bodyRows} focused={divedIn} />
+          <PreviewPane example={preview} width={previewWidth} height={bodyRows} focused={divedIn} fancy={fancy} />
         </Row>
-        <Footer width={cols} example={selected} />
+        <Footer width={cols} example={selected} fancy={fancy} />
       </Box>
     </FancyTuiProvider>
   );

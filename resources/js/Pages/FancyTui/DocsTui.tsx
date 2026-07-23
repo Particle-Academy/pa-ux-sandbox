@@ -232,16 +232,34 @@ export default function DocsTui({ onExit }: { onExit: () => void }) {
                         fontSize={14}
                         cursorBlink={false}
                         scrollback={0}
+                        // The FULL 16-colour ANSI palette. fancy-tui's tones are
+                        // ANSI colour NAMES (info→blue, danger→red, text→white),
+                        // so a partial palette left those falling back to xterm's
+                        // muddy defaults on this near-black background — which is
+                        // why Fancy mode looked flat. Every slot is set to a
+                        // cohesive, vivid dark-theme colour so every tone renders.
                         theme={{
                             background: "#090b10",
                             foreground: "#e4e4e7",
                             cursor: "#a78bfa",
+                            cursorAccent: "#090b10",
+                            selectionBackground: "#312e81",
                             black: "#18181b",
-                            brightBlack: "#71717a",
-                            cyan: "#22d3ee",
+                            red: "#fb7185",
                             green: "#4ade80",
-                            magenta: "#c084fc",
                             yellow: "#facc15",
+                            blue: "#818cf8",
+                            magenta: "#c084fc",
+                            cyan: "#22d3ee",
+                            white: "#e4e4e7",
+                            brightBlack: "#71717a",
+                            brightRed: "#fda4af",
+                            brightGreen: "#86efac",
+                            brightYellow: "#fde047",
+                            brightBlue: "#a5b4fc",
+                            brightMagenta: "#d8b4fe",
+                            brightCyan: "#67e8f9",
+                            brightWhite: "#fafafa",
                         }}
                     />
                 )}

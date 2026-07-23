@@ -1,9 +1,12 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { useFocus, useFocusManager, useInput } from "ink";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useFocus, useFocusManager, useInput, type DOMElement } from "ink";
 import {
   Badge,
   Box,
+  Clickable,
+  createMouseRegistry,
   darkTheme,
+  decodeMouseSgr,
   FancyTuiProvider,
   Hero,
   KeyHint,
@@ -12,10 +15,11 @@ import {
   Separator,
   Spacer,
   Text,
+  useClickable,
   useFancyTui,
 } from "@particle-academy/fancy-tui";
 import { SHOWCASE_EXAMPLES, type ShowcaseExample } from "@particle-academy/fancy-tui/showcase";
-import type { TuiTheme, TuiTone } from "@particle-academy/fancy-tui";
+import type { MouseRegistry, TuiTheme, TuiTone } from "@particle-academy/fancy-tui";
 import { SourceView } from "./highlight.js";
 
 /**
@@ -55,7 +59,7 @@ export type AppEffect = { type: "quit" } | { type: "open"; url: string };
 const LIST_FOCUS_ID = "docs:list";
 
 /** Shown in the brand bar. Bumped with the installed fancy-tui. */
-const FANCY_TUI_VERSION = "fancy-tui v0.8.0";
+const FANCY_TUI_VERSION = "fancy-tui v0.9.0";
 
 // ── the two looks ──────────────────────────────────────────────────────────
 //
@@ -233,6 +237,48 @@ function SearchLine({ search, typing, count }: { search: string; typing: boolean
 
 // ── list ─────────────────────────────────────────────────────────────────────
 
+/**
+ * One selectable row in the component list.
+ *
+ * Clickable via a ref on its OWN existing row Box — a click selects it exactly
+ * as arrowing onto it would. The ref adds a layout node's identity, not a cell,
+ * so the windowed list keeps its precise row budget.
+ */
+function ListRow({
+  example,
+  index,
+  active,
+  opensGroup,
+  onSelect,
+}: {
+  example: ShowcaseExample;
+  index: number;
+  active: boolean;
+  opensGroup: boolean;
+  onSelect: (index: number) => void;
+}) {
+  const ref = useRef<DOMElement | null>(null);
+  useClickable(ref, () => onSelect(index));
+  const kind = kindOf(example);
+  return (
+    <Box ref={ref} flexDirection="column">
+      {opensGroup ? (
+        <Text tone={GROUP_TONE[example.group] ?? "neutral"} bold wrap="truncate">
+          {example.group.toUpperCase()}
+        </Text>
+      ) : null}
+      <Row>
+        <Text tone={active ? "primary" : "text"} bold={active} wrap="truncate">
+          {active ? "▸ " : "  "}
+          {example.name}
+        </Text>
+        <Spacer />
+        <Text tone={KIND_TONE[kind]}>{KIND_MARK[kind]}</Text>
+      </Row>
+    </Box>
+  );
+}
+
 function ListPane({
   examples,
   selected,
@@ -241,6 +287,7 @@ function ListPane({
   width,
   height,
   focused,
+  onSelect,
 }: {
   examples: ShowcaseExample[];
   selected: number;
@@ -249,6 +296,7 @@ function ListPane({
   width: number;
   height: number;
   focused: boolean;
+  onSelect: (index: number) => void;
 }) {
   const slice = examples.slice(start, end);
   return (
@@ -261,25 +309,15 @@ function ListPane({
         </Row>
         {slice.map((example, i) => {
           const index = start + i;
-          const active = index === selected;
-          const opensGroup = index === 0 || examples[index - 1]?.group !== example.group;
-          const kind = kindOf(example);
           return (
-            <Box key={example.slug} flexDirection="column">
-              {opensGroup ? (
-                <Text tone={GROUP_TONE[example.group] ?? "neutral"} bold wrap="truncate">
-                  {example.group.toUpperCase()}
-                </Text>
-              ) : null}
-              <Row>
-                <Text tone={active ? "primary" : "text"} bold={active} wrap="truncate">
-                  {active ? "▸ " : "  "}
-                  {example.name}
-                </Text>
-                <Spacer />
-                <Text tone={KIND_TONE[kind]}>{KIND_MARK[kind]}</Text>
-              </Row>
-            </Box>
+            <ListRow
+              key={example.slug}
+              example={example}
+              index={index}
+              active={index === selected}
+              opensGroup={index === 0 || examples[index - 1]?.group !== example.group}
+              onSelect={onSelect}
+            />
           );
         })}
       </Box>
@@ -298,12 +336,14 @@ function PreviewPane({
   height,
   focused,
   fancy,
+  mouse,
 }: {
   example: ShowcaseExample | undefined;
   width: number;
   height: number;
   focused: boolean;
   fancy: boolean;
+  mouse: MouseRegistry;
 }) {
   // Panel spends 2 rows on its border; the rest is the unshrinkable content
   // column. The column draws its own title so a height clamp can never squeeze
@@ -355,7 +395,7 @@ function PreviewPane({
                 Writes to terminal scrollback (Ink Static) — shown as source.
               </Text>
             ) : example ? (
-              <FancyTuiProvider width={innerWidth} height={liveRows} theme={fancy ? FANCY_THEME : PLAIN_THEME}>
+              <FancyTuiProvider width={innerWidth} height={liveRows} theme={fancy ? FANCY_THEME : PLAIN_THEME} mouse={mouse}>
                 {example.node}
               </FancyTuiProvider>
             ) : null}
@@ -378,26 +418,44 @@ function PreviewPane({
  * the badge is styled by the active theme (magenta pill in Fancy, gray in
  * Plain) — the toggle demonstrates the very thing it controls.
  */
-function FancyToggle({ fancy, compact }: { fancy: boolean; compact: boolean }) {
+function FancyToggle({ fancy, compact, onFlip }: { fancy: boolean; compact: boolean; onFlip: () => void }) {
+  // Clickable via a ref on its own row Box — clicking the pill flips Fancy,
+  // exactly like the `f` key. `Row` with gap 1 becomes a `Box` with gap 1 so it
+  // can carry the ref; the rendered pill is unchanged.
+  const ref = useRef<DOMElement | null>(null);
+  useClickable(ref, onFlip);
   return (
-    <Row gap={1}>
+    <Box ref={ref} flexDirection="row" gap={1}>
       <KeyHint keys="f" />
       {fancy ? (
         <Badge tone="agent">{compact ? "✨" : "✨ Fancy"}</Badge>
       ) : (
         <Badge tone="neutral">{compact ? "plain" : "Fancy: off"}</Badge>
       )}
-    </Row>
+    </Box>
   );
 }
 
-function Footer({ width, example, fancy }: { width: number; example: ShowcaseExample | undefined; fancy: boolean }) {
+/** The footer actions a click can trigger — the keyboard equivalents behind
+ *  each hint the footer draws. */
+export interface FooterActions {
+  toggleFancy: () => void;
+  interact: () => void;
+  back: () => void;
+  search: () => void;
+  quit: () => void;
+}
+
+function Footer({ width, example, fancy, actions }: { width: number; example: ShowcaseExample | undefined; fancy: boolean; actions: FooterActions }) {
   const { theme } = useFancyTui();
   const compact = width < 76;
   // The obvious Fancy toggle is always shown; the secondary hints and the
   // right-hand caption only earn their columns on a wide terminal.
   const wide = width >= 100;
   const kind = example ? kindOf(example) : "static";
+  // Each actionable hint is wrapped so a click does what the key does. ↑↓ browse
+  // has no single action, so it stays a plain hint. A Clickable is a bare Box —
+  // no border/padding — so the footer's single-row budget is unchanged.
   return (
     <Box
       width={width}
@@ -407,12 +465,12 @@ function Footer({ width, example, fancy }: { width: number; example: ShowcaseExa
       flexDirection="row"
     >
       <Row gap={compact ? 1 : 2}>
-        <FancyToggle fancy={fancy} compact={compact} />
+        <FancyToggle fancy={fancy} compact={compact} onFlip={actions.toggleFancy} />
         <KeyHint keys="↑↓" label="browse" />
-        <KeyHint keys="enter" label="interact" />
-        {wide ? <KeyHint keys="esc" label="back" /> : null}
-        {wide ? <KeyHint keys="/" label="search" /> : null}
-        <KeyHint keys="q" label="quit" />
+        <Clickable onClick={actions.interact}><KeyHint keys="enter" label="interact" /></Clickable>
+        {wide ? <Clickable onClick={actions.back}><KeyHint keys="esc" label="back" /></Clickable> : null}
+        {wide ? <Clickable onClick={actions.search}><KeyHint keys="/" label="search" /></Clickable> : null}
+        <Clickable onClick={actions.quit}><KeyHint keys="q" label="quit" /></Clickable>
       </Row>
       <Spacer />
       {wide ? (
@@ -474,6 +532,15 @@ export function DocsApp({ cols, rows, initialSlug, initialFancy, onEffect }: Doc
     if (listFocused) setDivedIn(false);
   }, [listFocused]);
 
+  // Two mouse registries, held here so the app OWNS decoding and dispatch (it
+  // reads mouse off the session's input, below). `chromeMouse` collects the
+  // app's own clickables (list rows, the Fancy toggle, footer hints);
+  // `previewMouse` collects the live preview component's, inside its own nested
+  // provider. Both measure against the single Ink root, so their coordinates
+  // share the frame's space and no per-pane offset is needed.
+  const chromeMouse = useMemo<MouseRegistry>(() => createMouseRegistry(), []);
+  const previewMouse = useMemo<MouseRegistry>(() => createMouseRegistry(), []);
+
   const examples = useMemo(() => docExamples(search), [search]);
   const selectedIndex = Math.min(index, Math.max(0, examples.length - 1));
   const selected = examples[selectedIndex];
@@ -481,7 +548,51 @@ export function DocsApp({ cols, rows, initialSlug, initialFancy, onEffect }: Doc
   // (e.g. the Hero's app-appropriate copy).
   const preview = useMemo(() => effectiveExample(selected), [selected]);
 
+  // Clicking a list row selects it and returns to browse mode (a click is a
+  // navigation, never a dive).
+  const selectExample = (i: number) => {
+    setIndex(i);
+    setDivedIn(false);
+    focus(LIST_FOCUS_ID);
+  };
+
+  // The keyboard equivalents behind the footer hints, so a click does the same.
+  const footerActions: FooterActions = {
+    toggleFancy: () => setFancy((on) => !on),
+    interact: () => {
+      if (selected?.interactive) {
+        focusNext();
+        setDivedIn(true);
+      }
+    },
+    back: () => {
+      focus(LIST_FOCUS_ID);
+      setDivedIn(false);
+    },
+    search: () => {
+      setSearching(true);
+      setSearch("");
+      setIndex(0);
+    },
+    quit: () => onEffect?.({ type: "quit" }),
+  };
+
+  // Route a left-click: chrome first (list / toggle / footer), then the live
+  // preview. Both registries hit-test in the frame's own coordinate space.
+  const handleClick = (col: number, row: number) => {
+    if (!chromeMouse.dispatch(col, row)) previewMouse.dispatch(col, row);
+  };
+
   useInput((input, key) => {
+    // Mouse before keys: a click works regardless of which pane holds keyboard
+    // focus, and a mouse report must never be mistaken for a keystroke (its
+    // decoded form would otherwise land in the search box or trigger quit).
+    const click = decodeMouseSgr(input);
+    if (click) {
+      if (click.press) handleClick(click.col, click.row);
+      return;
+    }
+
     // Preview has focus: the component drives itself. The only key we still own
     // is Escape, which hands focus back to the list.
     if (!listFocused) {
@@ -551,7 +662,7 @@ export function DocsApp({ cols, rows, initialSlug, initialFancy, onEffect }: Doc
   const { start, end } = windowByGroup(examples, selectedIndex, Math.max(2, bodyRows - 3));
 
   return (
-    <FancyTuiProvider width={cols} height={rows} theme={fancy ? FANCY_THEME : PLAIN_THEME}>
+    <FancyTuiProvider width={cols} height={rows} theme={fancy ? FANCY_THEME : PLAIN_THEME} mouse={chromeMouse}>
       <Box width={cols} height={rows} flexDirection="column" overflow="hidden">
         <BrandBar count={SHOWCASE_EXAMPLES.length} />
         <Separator />
@@ -565,10 +676,11 @@ export function DocsApp({ cols, rows, initialSlug, initialFancy, onEffect }: Doc
             width={listWidth}
             height={bodyRows}
             focused={!divedIn}
+            onSelect={selectExample}
           />
-          <PreviewPane example={preview} width={previewWidth} height={bodyRows} focused={divedIn} fancy={fancy} />
+          <PreviewPane example={preview} width={previewWidth} height={bodyRows} focused={divedIn} fancy={fancy} mouse={previewMouse} />
         </Row>
-        <Footer width={cols} example={selected} fancy={fancy} />
+        <Footer width={cols} example={selected} fancy={fancy} actions={footerActions} />
       </Box>
     </FancyTuiProvider>
   );

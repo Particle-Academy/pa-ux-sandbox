@@ -27,6 +27,32 @@ type Size = { cols: number; rows: number };
 
 const BOOT_FRAME = "\r\n  Starting the Fancy TUI docs…\r\n";
 
+// Mouse reporting: xterm emits mouse events only once the running app turns it
+// on. DECSET 1000 = report button press + release (NOT motion, so drag-select
+// still works with Shift); 1006 = SGR extended coordinates, which the service
+// decodes. The app itself never writes these — the browser owns enabling them.
+const MOUSE_ON = "\x1b[?1000;1006h";
+const MOUSE_OFF = "\x1b[?1000;1006l";
+
+// An SGR mouse report, ESC [ < button ; col ; row (M press | m release).
+const MOUSE_REPORT = /^\x1b\[<(\d+);\d+;\d+([Mm])$/;
+
+/**
+ * Whether to forward a chunk of terminal input to the service.
+ *
+ * Keystrokes and everything non-mouse pass through untouched. A mouse report is
+ * forwarded ONLY when it is a left-button PRESS — release, wheel, motion, and
+ * the middle/right buttons are dropped, so a click is a single request rather
+ * than a flood the service has to decode and discard.
+ */
+function forwardable(data: string): boolean {
+    const match = MOUSE_REPORT.exec(data);
+    if (!match) return true;
+    const button = Number(match[1]);
+    const press = match[2] === "M";
+    return press && (button & 0b1100011) === 0;
+}
+
 /** Laravel's XSRF cookie, so this same-origin POST clears CSRF like Inertia's do. */
 function xsrfToken(): string {
     const match = document.cookie.match(/(?:^|;\s*)XSRF-TOKEN=([^;]+)/);
@@ -155,6 +181,9 @@ export default function DocsTui({ onExit }: { onExit: () => void }) {
         (data: string) => {
             const s = session.current;
             if (!s) return;
+            // Drop the mouse reports the app does not act on (release / wheel /
+            // drag / middle / right); keystrokes always pass.
+            if (!forwardable(data)) return;
             void fetch("/fancy-tui/session", {
                 method: "POST",
                 headers: jsonHeaders(),
@@ -188,6 +217,16 @@ export default function DocsTui({ onExit }: { onExit: () => void }) {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    // Keep mouse reporting on. fancy-term's controlled-output diffing resets
+    // xterm whenever a frame is a wholesale replace (every repaint here is), and
+    // a reset clears DEC private modes — so re-assert mouse reporting after each
+    // frame. This parent effect runs AFTER <Terminal>'s output effect (child
+    // effects fire first), so it lands after the reset; the sequence is a
+    // mode-set with no visible output, so re-sending it is idempotent.
+    useEffect(() => {
+        terminal.current?.write(MOUSE_ON);
+    }, [frame]);
+
     // Full-viewport takeover: stop the page behind it from scrolling, own the
     // keyboard, and never leak a live session when the view closes.
     useEffect(() => {
@@ -195,6 +234,7 @@ export default function DocsTui({ onExit }: { onExit: () => void }) {
         terminal.current?.focus();
         return () => {
             document.body.classList.remove("ftui-takeover-active");
+            terminal.current?.write(MOUSE_OFF);
             void endSession();
         };
     }, [endSession]);

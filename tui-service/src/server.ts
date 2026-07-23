@@ -147,7 +147,12 @@ const server = createServer((req, res) => {
         const { status, payload } = handleSession(body);
         send(res, status, payload);
       } catch (err) {
-        send(res, 400, { error: err instanceof Error ? err.message : String(err) });
+        // Log the real error for the operator; return a GENERIC message to the
+        // client. Echoing `err.message` leaks internal detail (a JSON parse
+        // position, a stack frame) to the caller — CodeQL js/stack-trace-exposure.
+        // eslint-disable-next-line no-console
+        console.error("session request failed:", err);
+        send(res, 400, { error: "Bad session request." });
       }
       return;
     }

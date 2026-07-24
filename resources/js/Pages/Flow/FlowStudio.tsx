@@ -199,16 +199,15 @@ const TRIAGE: FlowGraph = {
 // modal (no executor needed); we only supply executors for the stubbed/real work.
 function EditorExample({ seed, executors }: { seed: FlowGraph; executors: ExecutorRegistry }) {
   const [graph, setGraph] = useState<FlowGraph>(seed);
+  // FlowEditor 0.27+ provides its own unified bordered shell, so no wrapper.
   return (
-    <div className="overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800">
-      <FlowEditor
-        value={graph}
-        onChange={setGraph}
-        executors={executors}
-        height={540}
-        canvasProps={{ showHelperLines: true }}
-      />
-    </div>
+    <FlowEditor
+      value={graph}
+      onChange={setGraph}
+      executors={executors}
+      height={560}
+      canvasProps={{ showHelperLines: true }}
+    />
   );
 }
 

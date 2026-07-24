@@ -771,6 +771,7 @@ class PackageRegistry
             'npm' => '@particle-academy/fancy-flow',
             'repo' => 'Particle-Academy/fancy-flow',
             'language' => 'TypeScript',
+            'showcase' => '/flow',
             'components' => [
                 ['slug' => 'flow-editor', 'name' => 'FlowEditor', 'blurb' => 'Main editor canvas.'],
                 ['slug' => 'use-flow-state', 'name' => 'useFlowState', 'blurb' => 'Controlled state hook.'],

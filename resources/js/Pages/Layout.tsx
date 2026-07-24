@@ -55,10 +55,10 @@ const NAV_ITEMS: Array<{ to: string; label: string; match: string }> = [
     { to: "/docs", label: "Docs", match: "docs" },
     { to: "/packages", label: "Packages", match: "packages" },
     { to: "/fancy-tui", label: "TUI", match: "fancy-tui" },
+    { to: "/flow", label: "Flow", match: "flow" },
     { to: "/starter-kits", label: "Starter Kits", match: "starter-kits" },
     { to: "/inspiration", label: "Inspiration", match: "inspiration" },
     { to: "/showcase", label: "Showcase", match: "showcase" },
-    { to: "/shop", label: "Shop", match: "shop" },
     { to: "/leaderboard", label: "Leaderboard", match: "leaderboard" },
 ];
 
@@ -217,7 +217,7 @@ export function Layout({
                                             My submissions
                                         </Dropdown.Item>
                                         <Dropdown.Item onClick={() => router.visit("/shop")}>
-                                            Coin shop
+                                            Shop
                                         </Dropdown.Item>
                                         {auth.github_username && (
                                             <Dropdown.Item

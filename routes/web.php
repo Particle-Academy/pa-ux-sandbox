@@ -229,6 +229,10 @@ Route::get('/api/leaderboard/contributors', [LeaderboardController::class, 'cont
 Route::get('/agent-playground', fn () => Inertia::render('AgentPlayground'))->name('agent-playground');
 Route::get('/fancy-tui', [FancyTuiController::class, 'index'])->name('fancy-tui.index');
 
+// Fancy Flow showcase — the live <FlowEditor> (swimlanes, undo/redo, auto-layout,
+// headless engine) + why the fancy-flow package family matters.
+Route::get('/flow', fn () => Inertia::render('Flow/Index'))->name('flow.index');
+
 // The whole TUI is one live session: start/feed/end a persistent Ink app, and
 // long-poll its frames. `session` carries a keystroke per request (generous
 // human-typing ceiling); the stream is one held-open request per viewer. The

@@ -8,6 +8,7 @@ import {
     ServerCog,
     ShieldCheck,
     Spline,
+    StickyNote,
     Undo2,
     Wand2,
     Workflow,
@@ -30,6 +31,11 @@ const FlowStudio = clientOnly(
 type Highlight = { icon: ReactNode; title: string; body: string };
 
 const HIGHLIGHTS: Highlight[] = [
+    {
+        icon: <StickyNote size={18} />,
+        title: "Notes on the canvas",
+        body: "Document a flow with sticky notes — a first-class note kind (title, text, color). Notes are visual-only: the engine skips them, so their text never reaches a runner — it's there for the people and agents reading the graph.",
+    },
     {
         icon: <Rows3 size={18} />,
         title: "True swimlanes",
@@ -100,7 +106,7 @@ export default function FlowIndex() {
                             <span className="pkg-eco" data-eco="ts">TypeScript</span>
                             <span className="pkg-kind">Workflow canvas</span>
                             <Badge color="green">MCP ready</Badge>
-                            <Badge color="blue">v0.24</Badge>
+                            <Badge color="blue">v0.25</Badge>
                         </div>
                     </div>
                 </header>
@@ -110,7 +116,7 @@ export default function FlowIndex() {
                     <div className="mb-3 flex items-baseline justify-between gap-3">
                         <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">Try it live</h2>
                         <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                            Drag from the palette · drop a node into the lane · wire it up · hit Run. Undo/redo, ▤ Lane, and ⤢ Tidy are in the toolbar.
+                            Pick an example · each is a real, fully-configured flow you can run, edit, and read. Every canvas is documented with sticky notes.
                         </p>
                     </div>
                     <FlowStudio />

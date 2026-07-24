@@ -8,16 +8,14 @@ import "@particle-academy/fancy-flow/styles.css";
 
 /**
  * The Flow studio — a gallery of fully-configured example flows built on the real
- * @particle-academy/fancy-flow <FlowEditor> (v0.25). Each example is a different
- * common use case, documented on the canvas with real `note` nodes (the amber /
- * sky / violet sticky notes). Notes are visual-only — the engine skips them, so a
- * note's text never reaches a runner; it's there for the people and agents reading
- * the graph. Select a note and edit it in the right panel, or double-click it.
+ * @particle-academy/fancy-flow <FlowEditor> (v0.26). Each example is a different
+ * common use case; EVERY node is configured, and each canvas is documented with
+ * real `note` nodes (the sticky notes — visual-only, never fed to a runner).
  *
- * What's real vs faked: your typed input is REAL (never auto-filled). Only the
- * parts that need a live backend are stubbed — the LLM calls and any data / files
- * / datastore reads. Everything else (triggers, branching, transforms, routing on
- * your input) runs for real.
+ * Hit Run. When the flow reaches a "User Input" node it opens the editor's
+ * built-in input modal (a real form from the node's fields) and pauses until you
+ * submit — your input is never faked. Only the parts that need a live backend are
+ * stubbed: the LLM calls and any data / file / datastore reads.
  */
 
 const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
@@ -43,17 +41,39 @@ const note = (
   }) as FlowGraph["nodes"][number];
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Example 1 — Agentic content pipeline (real human input → LLM → shape → output)
+// Example 1 — Agentic content pipeline (User Input modal → LLM → shape → output)
 // ─────────────────────────────────────────────────────────────────────────────
 const CONTENT: FlowGraph = {
   nodes: [
     { id: "trigger", type: "manual_trigger", position: { x: 0, y: 0 }, data: { kind: "manual_trigger", label: "Manual run", config: {} } as any },
     { id: "lane-ai", type: "lane", position: { x: -40, y: 110 }, width: 880, height: 190, data: { kind: "lane", label: "AI pipeline", config: { title: "AI pipeline", orientation: "horizontal" } } as any },
-    { id: "ask", type: "user_input", parentId: "lane-ai", extent: "parent", position: { x: 40, y: 66 }, data: { kind: "user_input", label: "Ask user", config: { title: "What can I help with?" } } as any },
-    { id: "llm", type: "llm_call", parentId: "lane-ai", extent: "parent", position: { x: 330, y: 66 }, data: { kind: "llm_call", label: "Draft", config: { provider: "anthropic", model: "claude-sonnet-4-5" } } as any },
-    { id: "shape", type: "transform", parentId: "lane-ai", extent: "parent", position: { x: 620, y: 66 }, data: { kind: "transform", label: "Shape result", config: {} } as any },
+    {
+      id: "ask", type: "user_input", parentId: "lane-ai", extent: "parent", position: { x: 40, y: 66 },
+      data: { kind: "user_input", label: "Ask user", config: {
+        title: "What can I help you write?",
+        fields: [{ key: "answer", label: "Your request", type: "textarea", required: true }],
+      } } as any,
+    },
+    {
+      id: "llm", type: "llm_call", parentId: "lane-ai", extent: "parent", position: { x: 330, y: 66 },
+      data: { kind: "llm_call", label: "Draft", config: {
+        provider: "anthropic", model: "claude-sonnet-4-5",
+        system: "You are a concise, upbeat copywriter for a developer-tools company.",
+        prompt: "{{ $json.answer }}", temperature: 0.7, max_tokens: 1024,
+      } } as any,
+    },
+    {
+      id: "shape", type: "transform", parentId: "lane-ai", extent: "parent", position: { x: 620, y: 66 },
+      data: { kind: "transform", label: "Shape result", config: {
+        mode: "fields",
+        fields: [
+          { key: "draft", value: "{{ $json.reply }}" },
+          { key: "chars", value: "{{ $json.reply.length }}" },
+        ],
+      } } as any,
+    },
     { id: "out", type: "output", position: { x: 330, y: 350 }, data: { kind: "output", label: "Result", config: {} } as any },
-    note("n1", 900, 60, "Content pipeline", "Type a prompt below, hit Run. Your input is real; the LLM Draft step is stubbed. The swimlane groups the AI steps — drop a node in and it moves with the lane.", "amber", 250, 170),
+    note("n1", 900, 60, "Content pipeline", "Hit Run — the swimlane's Ask user step opens a form modal (real input, never faked). The LLM Draft is stubbed; Shape reformats the result. Drop a node into the lane and it moves with it.", "amber", 250, 180),
   ] as FlowGraph["nodes"],
   edges: [
     { id: "e1", source: "trigger", target: "ask" },
@@ -69,12 +89,37 @@ const CONTENT: FlowGraph = {
 const ORDER: FlowGraph = {
   nodes: [
     { id: "trg", type: "manual_trigger", position: { x: 0, y: 120 }, data: { kind: "manual_trigger", label: "New order", config: {} } as any },
-    { id: "fetch", type: "api_request", position: { x: 220, y: 120 }, data: { kind: "api_request", label: "Fetch order", config: { method: "GET", url: "https://api.example.com/orders/1042" } } as any },
-    { id: "paid", type: "branch", position: { x: 450, y: 120 }, data: { kind: "branch", label: "Paid?", config: { conditions: [{ left: "{{ $json.paid }}", operator: "truthy", right: "" }] } } as any },
-    { id: "sum", type: "llm_call", position: { x: 700, y: 40 }, data: { kind: "llm_call", label: "Summarize", config: { provider: "anthropic", model: "claude-sonnet-4-5" } } as any },
-    { id: "email", type: "notify", position: { x: 700, y: 220 }, data: { kind: "notify", label: "Email customer", config: { channel: "email", to: "{{ $json.email }}" } } as any },
+    {
+      id: "fetch", type: "api_request", position: { x: 220, y: 120 },
+      data: { kind: "api_request", label: "Fetch order", config: {
+        method: "GET", url: "https://api.example.com/orders/1042",
+        headers: { "content-type": "application/json" },
+      } } as any,
+    },
+    {
+      id: "paid", type: "branch", position: { x: 450, y: 120 },
+      data: { kind: "branch", label: "Paid?", config: {
+        match: "all",
+        conditions: [{ left: "{{ $json.paid }}", operator: "truthy", right: "" }],
+      } } as any,
+    },
+    {
+      id: "sum", type: "llm_call", position: { x: 700, y: 40 },
+      data: { kind: "llm_call", label: "Summarize", config: {
+        provider: "anthropic", model: "claude-sonnet-4-5",
+        system: "Summarize an order for a fulfilment agent in one line.",
+        prompt: "Order {{ $json.orderId }} — total ${{ $json.total }}", temperature: 0.3, max_tokens: 256,
+      } } as any,
+    },
+    {
+      id: "email", type: "notify", position: { x: 700, y: 220 },
+      data: { kind: "notify", label: "Email customer", config: {
+        channel: "email", to: "{{ $json.email }}",
+        message: "Your order {{ $json.orderId }} isn't paid yet — complete checkout to continue.",
+      } } as any,
+    },
     { id: "out", type: "output", position: { x: 950, y: 120 }, data: { kind: "output", label: "Respond", config: {} } as any },
-    note("n1", 190, 250, "Data + branching", "Fetch is stubbed demo data (a datastore read). The Paid? branch is REAL — it routes on the fetched order's `paid` flag: paid → Summarize, unpaid → Email.", "sky", 260, 150),
+    note("n1", 190, 260, "Data + branching", "Fetch is stubbed demo data (a datastore read). The Paid? branch is REAL — it routes on the fetched order's `paid` flag: paid → Summarize, unpaid → Email.", "sky", 260, 150),
   ] as FlowGraph["nodes"],
   edges: [
     { id: "e1", source: "trg", target: "fetch" },
@@ -87,22 +132,56 @@ const ORDER: FlowGraph = {
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Example 3 — Support triage (real ticket text → LLM router → one of 3 replies)
+// Example 3 — Support triage (User Input modal → LLM router → one of 3 replies)
 // ─────────────────────────────────────────────────────────────────────────────
 const TRIAGE: FlowGraph = {
   nodes: [
     { id: "trg", type: "manual_trigger", position: { x: 0, y: 150 }, data: { kind: "manual_trigger", label: "New ticket", config: {} } as any },
-    { id: "ticket", type: "user_input", position: { x: 210, y: 150 }, data: { kind: "user_input", label: "Ticket text", config: { title: "Paste a support ticket" } } as any },
-    { id: "route", type: "llm_router", position: { x: 440, y: 150 }, data: { kind: "llm_router", label: "Route", config: { prompt: "{{ $json.ticket }}", fallback: false, routes: [
-      { port: "billing", description: "Refunds, invoices, charges, pricing." },
-      { port: "technical", description: "Errors, bugs, logins, API issues." },
-      { port: "other", description: "Anything else." },
-    ] } } as any },
-    { id: "r_bill", type: "llm_call", position: { x: 700, y: 30 }, data: { kind: "llm_call", label: "Billing reply", config: { model: "claude-sonnet-4-5" } } as any },
-    { id: "r_tech", type: "llm_call", position: { x: 700, y: 150 }, data: { kind: "llm_call", label: "Technical reply", config: { model: "claude-sonnet-4-5" } } as any },
-    { id: "r_other", type: "llm_call", position: { x: 700, y: 270 }, data: { kind: "llm_call", label: "General reply", config: { model: "claude-sonnet-4-5" } } as any },
+    {
+      id: "ticket", type: "user_input", position: { x: 210, y: 150 },
+      data: { kind: "user_input", label: "Ticket text", config: {
+        title: "Paste a support ticket",
+        fields: [{ key: "ticket", label: "Ticket", type: "textarea", required: true }],
+      } } as any,
+    },
+    {
+      id: "route", type: "llm_router", position: { x: 440, y: 150 },
+      data: { kind: "llm_router", label: "Route", config: {
+        system: "Classify the support ticket into exactly one route.",
+        prompt: "{{ $json.ticket }}", provider: "anthropic", model: "claude-sonnet-4-5", fallback: false,
+        routes: [
+          { port: "billing", description: "Refunds, invoices, charges, pricing." },
+          { port: "technical", description: "Errors, bugs, logins, API issues." },
+          { port: "other", description: "Anything else." },
+        ],
+      } } as any,
+    },
+    {
+      id: "r_bill", type: "llm_call", position: { x: 700, y: 30 },
+      data: { kind: "llm_call", label: "Billing reply", config: {
+        provider: "anthropic", model: "claude-sonnet-4-5",
+        system: "You are a billing support agent. Be warm and specific.",
+        prompt: "{{ $json.ticket }}", temperature: 0.4, max_tokens: 512,
+      } } as any,
+    },
+    {
+      id: "r_tech", type: "llm_call", position: { x: 700, y: 150 },
+      data: { kind: "llm_call", label: "Technical reply", config: {
+        provider: "anthropic", model: "claude-sonnet-4-5",
+        system: "You are a technical support engineer. Give clear, numbered steps.",
+        prompt: "{{ $json.ticket }}", temperature: 0.4, max_tokens: 512,
+      } } as any,
+    },
+    {
+      id: "r_other", type: "llm_call", position: { x: 700, y: 270 },
+      data: { kind: "llm_call", label: "General reply", config: {
+        provider: "anthropic", model: "claude-sonnet-4-5",
+        system: "You are a friendly general support agent.",
+        prompt: "{{ $json.ticket }}", temperature: 0.5, max_tokens: 512,
+      } } as any,
+    },
     { id: "out", type: "output", position: { x: 950, y: 150 }, data: { kind: "output", label: "Send reply", config: {} } as any },
-    note("n1", 420, 300, "AI routing", "A model picks ONE route from your real ticket text (routing is stubbed with a keyword match here). Try 'I want a refund' vs 'login is broken' vs anything else.", "violet", 270, 150),
+    note("n1", 420, 300, "AI routing", "The User Input step opens a modal for the ticket. A model then picks ONE route (routing is stubbed with a keyword match here). Try 'I want a refund' vs 'login is broken'.", "violet", 270, 156),
   ] as FlowGraph["nodes"],
   edges: [
     { id: "e1", source: "trg", target: "ticket" },
@@ -116,126 +195,90 @@ const TRIAGE: FlowGraph = {
   ] as FlowGraph["edges"],
 };
 
-// ── A live editor example: input controls + the real FlowEditor. ───────────────
-function EditorExample({
-  seed,
-  makeExecutors,
-  input,
-}: {
-  seed: FlowGraph;
-  makeExecutors: (msg: () => string) => ExecutorRegistry;
-  input?: { label: string; placeholder: string };
-}) {
+// ── A live editor example. user_input is handled by the editor's built-in input
+// modal (no executor needed); we only supply executors for the stubbed/real work.
+function EditorExample({ seed, executors }: { seed: FlowGraph; executors: ExecutorRegistry }) {
   const [graph, setGraph] = useState<FlowGraph>(seed);
-  const [message, setMessage] = useState("");
-  const msgRef = useRef(message);
-  msgRef.current = message;
-
-  const executors = useMemo(() => makeExecutors(() => msgRef.current), [makeExecutors]);
-
   return (
-    <div className="space-y-3">
-      {input && (
-        <label className="block">
-          <span className="mb-1 block text-sm font-medium text-zinc-700 dark:text-zinc-300">
-            {input.label} <span className="font-normal text-zinc-400">— real input, nothing is auto-filled</span>
-          </span>
-          <input
-            type="text"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            placeholder={input.placeholder}
-            className="w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900 outline-none focus:border-sky-500 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
-          />
-        </label>
-      )}
-      <div className="overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800">
-        <FlowEditor
-          value={graph}
-          onChange={setGraph}
-          executors={executors}
-          height={540}
-          canvasProps={{ showHelperLines: true }}
-        />
-      </div>
+    <div className="overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800">
+      <FlowEditor
+        value={graph}
+        onChange={setGraph}
+        executors={executors}
+        height={540}
+        canvasProps={{ showHelperLines: true }}
+      />
     </div>
   );
 }
 
-// ── Executor factories (real input; only LLM + data/files/datastores faked). ──
-function contentExecutors(msg: () => string): ExecutorRegistry {
-  return {
-    manual_trigger: () => ({ startedAt: 1 }),
-    user_input: ({ emit, node }) => {
-      const answer = msg().trim();
-      emit({ type: "log", level: answer ? "info" : "warn", message: answer ? `You said: ${answer}` : "No input yet — type a message above, then Run.", nodeId: node.id });
-      return { answer };
-    },
-    llm_call: async ({ inputs, emit, node }) => {
-      emit({ type: "log", level: "info", message: "Stub LLM call — wire a real provider here.", nodeId: node.id });
-      await delay(650);
-      const said = (inputs as any)?.in?.answer ?? "(nothing)";
-      return { reply: `(demo draft) You asked: "${said}"` };
-    },
-    transform: ({ inputs }) => ({ result: (inputs as any)?.in ?? inputs }),
-    output: ({ inputs }) => (inputs as any).in,
-  };
-}
+// ── Executors: only LLM + data/file/datastore reads are faked. User Input is the
+// editor's built-in modal; triggers/branch/transform/output run for real. ──────
+const firstString = (o: unknown): string => {
+  if (o && typeof o === "object") for (const v of Object.values(o)) if (typeof v === "string" && v) return v;
+  return "";
+};
 
-function orderExecutors(): ExecutorRegistry {
-  return {
-    manual_trigger: () => ({ ok: true }),
-    api_request: async ({ emit, node }) => {
-      emit({ type: "log", level: "info", message: "Stub fetch — returning demo order data (a datastore read).", nodeId: node.id });
-      await delay(450);
-      return { orderId: "ORD-1042", email: "sam@example.com", paid: true, total: 89.5 };
-    },
-    branch: ({ inputs, emit, node }) => {
-      const paid = !!(inputs as any)?.in?.paid;
-      emit({ type: "log", level: "info", message: `Order is ${paid ? "paid → Summarize" : "unpaid → Email"}.`, nodeId: node.id });
-      return { branch: paid ? "true" : "false", value: (inputs as any)?.in };
-    },
-    llm_call: async ({ inputs, emit, node }) => {
-      emit({ type: "log", level: "info", message: "Stub LLM call.", nodeId: node.id });
-      await delay(500);
-      const o = (inputs as any)?.in ?? {};
-      return { summary: `Order ${o.orderId ?? "?"} totaling $${o.total ?? 0} — paid, ready to fulfil.` };
-    },
-    notify: ({ emit, node }) => {
-      emit({ type: "log", level: "info", message: "Stub notify — would email the customer.", nodeId: node.id });
-      return { sent: true };
-    },
-    output: ({ inputs }) => (inputs as any).in,
-  };
-}
+const CONTENT_EXECUTORS: ExecutorRegistry = {
+  manual_trigger: () => ({ startedAt: 1 }),
+  llm_call: async ({ inputs, emit, node }) => {
+    emit({ type: "log", level: "info", message: "Stub LLM call — wire a real provider here.", nodeId: node.id });
+    await delay(650);
+    const said = (inputs as any)?.in?.answer ?? firstString((inputs as any)?.in) ?? "(nothing)";
+    return { reply: `(demo draft) You asked: "${said}"` };
+  },
+  transform: ({ inputs }) => {
+    const reply = (inputs as any)?.in?.reply ?? "";
+    return { draft: reply, chars: String(reply).length };
+  },
+  output: ({ inputs }) => (inputs as any).in,
+};
 
-function triageExecutors(msg: () => string): ExecutorRegistry {
-  return {
-    manual_trigger: () => ({ ok: true }),
-    user_input: ({ emit, node }) => {
-      const ticket = msg().trim();
-      emit({ type: "log", level: ticket ? "info" : "warn", message: ticket ? `Ticket: ${ticket}` : "No ticket yet — paste one above, then Run.", nodeId: node.id });
-      return { ticket };
-    },
-    llm_router: ({ inputs, emit, node }) => {
-      const t = String((inputs as any)?.in?.ticket ?? "").toLowerCase();
-      const route = /refund|invoice|charge|bill|payment|price|pricing/.test(t)
-        ? "billing"
-        : /error|bug|crash|broken|login|password|api|500|down/.test(t)
-          ? "technical"
-          : "other";
-      emit({ type: "log", level: "info", message: `Stub router (a model would decide) → ${route}.`, nodeId: node.id });
-      return { __port: route, value: { ticket: t } };
-    },
-    llm_call: async ({ emit, node }) => {
-      emit({ type: "log", level: "info", message: "Stub LLM call.", nodeId: node.id });
-      await delay(500);
-      const kind = node.id === "r_bill" ? "billing" : node.id === "r_tech" ? "technical" : "general";
-      return { reply: `(demo) Drafted a ${kind} response.` };
-    },
-    output: ({ inputs }) => (inputs as any).in,
-  };
-}
+const ORDER_EXECUTORS: ExecutorRegistry = {
+  manual_trigger: () => ({ ok: true }),
+  api_request: async ({ emit, node }) => {
+    emit({ type: "log", level: "info", message: "Stub fetch — returning demo order data (a datastore read).", nodeId: node.id });
+    await delay(450);
+    return { orderId: "ORD-1042", email: "sam@example.com", paid: true, total: 89.5 };
+  },
+  branch: ({ inputs, emit, node }) => {
+    const paid = !!(inputs as any)?.in?.paid;
+    emit({ type: "log", level: "info", message: `Order is ${paid ? "paid → Summarize" : "unpaid → Email"}.`, nodeId: node.id });
+    return { branch: paid ? "true" : "false", value: (inputs as any)?.in };
+  },
+  llm_call: async ({ inputs, emit, node }) => {
+    emit({ type: "log", level: "info", message: "Stub LLM call.", nodeId: node.id });
+    await delay(500);
+    const o = (inputs as any)?.in ?? {};
+    return { summary: `Order ${o.orderId ?? "?"} totaling $${o.total ?? 0} — paid, ready to fulfil.` };
+  },
+  notify: ({ emit, node }) => {
+    emit({ type: "log", level: "info", message: "Stub notify — would email the customer.", nodeId: node.id });
+    return { sent: true };
+  },
+  output: ({ inputs }) => (inputs as any).in,
+};
+
+const TRIAGE_EXECUTORS: ExecutorRegistry = {
+  manual_trigger: () => ({ ok: true }),
+  llm_router: ({ inputs, emit, node }) => {
+    const t = String((inputs as any)?.in?.ticket ?? firstString((inputs as any)?.in) ?? "").toLowerCase();
+    const route = /refund|invoice|charge|bill|payment|price|pricing/.test(t)
+      ? "billing"
+      : /error|bug|crash|broken|login|password|api|500|down/.test(t)
+        ? "technical"
+        : "other";
+    emit({ type: "log", level: "info", message: `Stub router (a model would decide) → ${route}.`, nodeId: node.id });
+    return { __port: route, value: { ticket: t } };
+  },
+  llm_call: async ({ emit, node }) => {
+    emit({ type: "log", level: "info", message: "Stub LLM call.", nodeId: node.id });
+    await delay(500);
+    const kind = node.id === "r_bill" ? "billing" : node.id === "r_tech" ? "technical" : "general";
+    return { reply: `(demo) Drafted a ${kind} response.` };
+  },
+  output: ({ inputs }) => (inputs as any).in,
+};
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Example 4 — Choose-your-own-adventure (FlowRunnerUx, runs headless via runFlow)
@@ -450,20 +493,20 @@ const EXAMPLES: Example[] = [
   {
     id: "content",
     label: "Content pipeline",
-    blurb: "Human input → LLM draft → shape → output, grouped in a swimlane.",
-    render: () => <EditorExample seed={CONTENT} makeExecutors={contentExecutors} input={{ label: "Your message to the agent", placeholder: "e.g. Draft a launch tweet for fancy-flow" }} />,
+    blurb: "User Input modal → LLM draft → shape → output, grouped in a swimlane.",
+    render: () => <EditorExample seed={CONTENT} executors={CONTENT_EXECUTORS} />,
   },
   {
     id: "order",
     label: "Order processing",
     blurb: "Trigger → fetch → branch on paid → summarize or email → respond.",
-    render: () => <EditorExample seed={ORDER} makeExecutors={() => orderExecutors()} />,
+    render: () => <EditorExample seed={ORDER} executors={ORDER_EXECUTORS} />,
   },
   {
     id: "triage",
     label: "Support triage",
-    blurb: "Real ticket text → an LLM router picks one of three reply paths.",
-    render: () => <EditorExample seed={TRIAGE} makeExecutors={triageExecutors} input={{ label: "Paste a support ticket", placeholder: "e.g. I want a refund for last month" }} />,
+    blurb: "User Input ticket → an LLM router picks one of three reply paths.",
+    render: () => <EditorExample seed={TRIAGE} executors={TRIAGE_EXECUTORS} />,
   },
   {
     id: "adventure",
@@ -475,7 +518,7 @@ const EXAMPLES: Example[] = [
 
 export default function FlowStudio() {
   const [activeId, setActiveId] = useState(EXAMPLES[0].id);
-  const active = EXAMPLES.find((e) => e.id === activeId) ?? EXAMPLES[0];
+  const active = useMemo(() => EXAMPLES.find((e) => e.id === activeId) ?? EXAMPLES[0], [activeId]);
 
   return (
     <div className="space-y-4">

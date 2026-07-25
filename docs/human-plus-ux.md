@@ -199,7 +199,12 @@ Human+ UX is not the right shape for every problem. It deliberately leaves four 
 
 ## How Fancy UI implements it
 
-Fancy UI is a monorepo of small React packages, each of which meets the contract for its corner of the UI surface area:
+Fancy UI is a suite of small, independently released packages — 64 of them, 47
+TypeScript and 16 PHP, each its own repository, pinned together by the envelope
+rather than living in a monorepo. Roughly half are headless: server capabilities,
+engines and tooling that render nothing. The table below covers the *interactive*
+packages — the ones that own a UI surface, and so the ones the contract applies
+to:
 
 | Package | Surface | Why it's Human+-shaped |
 |---|---|---|

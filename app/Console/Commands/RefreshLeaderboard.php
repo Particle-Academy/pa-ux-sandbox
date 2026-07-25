@@ -19,7 +19,8 @@ use Illuminate\Support\Facades\Http;
 class RefreshLeaderboard extends Command
 {
     protected $signature = 'showcase:refresh-leaderboard
-                            {--scope=all_time : all_time or last_30_days}';
+                            {--scope=all_time : all_time or last_30_days}
+                            {--force : write the snapshot even if a whole section collected nothing}';
 
     protected $description = 'Aggregate merged PRs + stars + issues across all package repos (+ votes) into a leaderboard snapshot.';
 
@@ -85,6 +86,54 @@ class RefreshLeaderboard extends Command
         }
         usort($rows, fn ($a, $b) => $b['score'] <=> $a['score']);
         $rows = array_slice($rows, 0, 50);
+
+        $this->info(sprintf(
+            'Collected across %d repos — PRs: %d, stars: %d, issues: %d, votes: %d.',
+            count($repos), array_sum($prs), array_sum($stars), array_sum($issues), array_sum($votes),
+        ));
+
+        /**
+         * Refuse to replace a good snapshot with a degraded one.
+         *
+         * Every GitHub section fails SOFTLY — `paginate()` warns and returns, so
+         * an expired token, a missing scope, or a rate-limit answers with an
+         * empty array that looks exactly like "nobody did that". The command
+         * then wrote the thinner snapshot over the good one and exited 0, so a
+         * scheduled run reported success while quietly deleting contributors.
+         * That is how the board silently fell from 15 rows to 3, with every
+         * star-only contributor disappearing.
+         *
+         * A section that legitimately has no data stays empty run after run, so
+         * comparing against the PREVIOUS snapshot distinguishes "genuinely zero"
+         * from "collection broke": only a drop from non-zero to zero is an
+         * error. `--force` is the escape hatch for a real drop to zero.
+         */
+        if ($token && ! $this->option('force')) {
+            $previous = LeaderboardSnapshot::query()
+                ->where('scope', $scope)
+                ->latest('generated_at')
+                ->value('rows');
+            $previous = is_array($previous) ? $previous : [];
+
+            $sections = [
+                ['stars', 'stars', array_sum($stars)],
+                ['merged PRs', 'merged_prs', array_sum($prs)],
+                ['issues', 'issues_opened', array_sum($issues)],
+            ];
+
+            foreach ($sections as [$label, $column, $collected]) {
+                $before = array_sum(array_column($previous, $column));
+                if ($collected === 0 && $before > 0) {
+                    $this->error(
+                        "Collected 0 {$label} but the previous snapshot had {$before} — refusing to overwrite it. ".
+                        'Check GITHUB_API_TOKEN (expiry + scopes) and the GitHub API rate limit, then re-run. '.
+                        'Pass --force if the drop to zero is real.'
+                    );
+
+                    return self::FAILURE;
+                }
+            }
+        }
 
         LeaderboardSnapshot::create([
             'scope' => $scope,

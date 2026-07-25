@@ -110,7 +110,7 @@ it('renders the invite landing page and stores the referral attribution cookie',
         ->assertCookie(MlmProgram::REFERRAL_COOKIE, (string) $referrer->getKey())
         ->assertInertia(fn ($page) => $page
             ->component('Referrals/Join')
-            ->where('inviter.name', 'Ray')
+            ->where('inviter.identity.name', 'Ray')
             ->where('inviter.username', 'ray'));
 });
 

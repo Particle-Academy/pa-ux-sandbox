@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Avatar } from "@particle-academy/react-fancy";
 import { useFancyStream } from "@particle-academy/fancy-query";
+import { PlayerAvatar, PlayerName, type PlayerIdentityData } from "./PlayerIdentity";
 
 /** A live ActiveUser row (matches the backend ActiveUserResource payload). */
 export type ActiveUserRow = {
@@ -8,6 +8,8 @@ export type ActiveUserRow = {
     user_id: number | null;
     name: string;
     avatar_url: string | null;
+    /** Display name + avatar + owned cosmetics, snapshotted on the row. */
+    identity: PlayerIdentityData;
     activity_type: string | null;
     activity_label: string | null;
     activity_at: string | null;
@@ -49,15 +51,6 @@ function markSeen(key: string, at: number): void {
 
 type Pill = { key: number; row: ActiveUserRow };
 
-function initials(name: string): string {
-    return name
-        .split(/\s+/)
-        .map((p) => p[0])
-        .filter(Boolean)
-        .slice(0, 2)
-        .join("")
-        .toUpperCase();
-}
 
 function glowFor(row: ActiveUserRow): "xp" | "achievement" | false {
     return row.is_xp ? "xp" : row.is_achievement ? "achievement" : false;
@@ -198,15 +191,9 @@ export function ActiveUsersOverlay() {
                 const glow = glowFor(row);
                 return (
                     <div key={key} className="active-user-pill" data-glow={glow || undefined}>
-                        <Avatar
-                            src={row.avatar_url ?? undefined}
-                            alt={row.name}
-                            fallback={initials(row.name)}
-                            size="sm"
-                            glow={glow}
-                        />
+                        <PlayerAvatar player={row.identity} size="sm" glow={glow} />
                         <span className="active-user-pill-body">
-                            <span className="active-user-pill-name">{row.name}</span>
+                            <PlayerName player={row.identity} className="active-user-pill-name" />
                             <span className="active-user-pill-action">{actionLabel(row)}</span>
                         </span>
                     </div>

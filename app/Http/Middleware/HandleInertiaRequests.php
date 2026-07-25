@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Services\PlayerProfile;
+use App\Support\PlayerIdentity;
 use App\Support\SelfSite;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -37,6 +38,10 @@ class HandleInertiaRequests extends Middleware
                     'name' => $user->name,
                     'github_username' => $user->github_username,
                     'avatar_url' => $user->avatar_url,
+                    // How this user is drawn anywhere the chrome shows them —
+                    // display name + avatar + owned cosmetics in one payload.
+                    // See App\Support\PlayerIdentity.
+                    'identity' => PlayerIdentity::for($user),
                     // Gamification summary for the chrome chip. Lazy so it
                     // only resolves on full page loads / when requested.
                     'player' => fn () => app(PlayerProfile::class)->summary($user),

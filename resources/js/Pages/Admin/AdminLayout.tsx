@@ -1,10 +1,11 @@
 import { type ReactNode, useEffect, useState } from "react";
 import { Link, router, usePage } from "@inertiajs/react";
-import { Avatar, Badge, Dropdown, Icon } from "@particle-academy/react-fancy";
+import { Badge, Dropdown, Icon } from "@particle-academy/react-fancy";
 import { currentTheme, toggleTheme } from "../../showcase-theme";
+import { PlayerAvatar, type PlayerIdentityData } from "../../components/PlayerIdentity";
 import "../../../css/admin.css";
 
-type AdminAuth = { user: { name: string; github_username: string | null; avatar_url: string | null; is_admin?: boolean } | null };
+type AdminAuth = { user: { name: string; github_username: string | null; avatar_url: string | null; identity: PlayerIdentityData; is_admin?: boolean } | null };
 type AdminShared = { auth: AdminAuth; pending?: number };
 
 type NavItem = { label: string; icon: string; href: string; badge?: number };
@@ -60,10 +61,6 @@ const CRUMB: Record<string, { group: string; crumb: string }> = {
     settings: { group: "System", crumb: "Settings" },
     "well-known-files": { group: "System", crumb: "Well-known files" },
 };
-
-function initials(name: string): string {
-    return name.split(/\s+/).slice(0, 2).map((p) => p[0]?.toUpperCase() ?? "").join("") || "?";
-}
 
 export function AdminLayout({ children }: { children: ReactNode }) {
     const { props, url } = usePage<AdminShared>();
@@ -166,7 +163,7 @@ export function AdminLayout({ children }: { children: ReactNode }) {
                         <Dropdown>
                             <Dropdown.Trigger>
                                 <button style={{ display: "flex", alignItems: "center", gap: 8, border: "none", background: "transparent", cursor: "pointer", padding: 2 }}>
-                                    <Avatar src={user.avatar_url ?? undefined} fallback={initials(user.name)} size="sm" />
+                                    <PlayerAvatar player={user.identity} size="sm" />
                                     <Icon name="chevron-down" size={14} style={{ color: "var(--fg-3)" }} />
                                 </button>
                             </Dropdown.Trigger>

@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Services\Entitlements;
 use App\Services\Mlm\MlmProgram;
 use App\Services\PlayerProfile;
+use App\Support\PlayerIdentity;
 use FancyMlm\Laravel\Models\Member;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -69,7 +70,10 @@ class AdminUsersController extends Controller
                 'name' => $user->name,
                 'email' => $user->email,
                 'github_username' => $user->github_username,
-                'avatar_url' => $user->avatar_url,
+                // Admin lists label people by their account name, not their
+                // public handle — but still render the equipped cosmetics, so
+                // moderators see exactly what other players see.
+                'identity' => PlayerIdentity::for($user, $user->name),
                 'is_admin' => (bool) $user->is_admin,
                 'suspended' => $user->isSuspended(),
                 'coins' => (int) ($user->wallet?->balance ?? 0),
@@ -162,7 +166,7 @@ class AdminUsersController extends Controller
                 'name' => $user->name,
                 'email' => $user->email,
                 'github_username' => $user->github_username,
-                'avatar_url' => $user->avatar_url,
+                'identity' => PlayerIdentity::for($user, $user->name),
                 'is_admin' => (bool) $user->is_admin,
                 'opted_out' => $user->isOptedOut(),
                 'suspended' => $user->isSuspended(),

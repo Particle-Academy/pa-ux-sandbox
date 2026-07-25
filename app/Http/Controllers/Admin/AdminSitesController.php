@@ -11,6 +11,7 @@ use App\Services\Entitlements;
 use App\Services\Heuristics\HeuristicsReport;
 use App\Services\Heuristics\PageScreenshotService;
 use App\Services\ShowcaseRewards;
+use App\Support\PlayerIdentity;
 use FancyHeuristics\Models\HeuristicsEvent;
 use FancyHeuristics\Models\HeuristicsSite;
 use FancyHeuristics\Services\PixelVerifier;
@@ -358,7 +359,7 @@ class AdminSitesController extends Controller
             'id' => $owner?->id,
             'name' => $owner?->name ?? '—',
             'github' => $owner?->github_username,
-            'avatar_url' => $owner?->avatar_url,
+            'identity' => PlayerIdentity::for($owner, $owner?->name ?? '—'),
             'proSource' => $owner ? $this->entitlements->proSource($owner) : null,
             'pro_override' => (bool) $owner?->pro_override,
         ];

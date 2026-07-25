@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Showcase;
 use App\Http\Controllers\Controller;
 use App\Models\LeaderboardSnapshot;
 use App\Models\User;
+use App\Support\PlayerIdentity;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -81,11 +82,9 @@ class LeaderboardController extends Controller
 
                 return [
                     'rank' => (int) $profile->getAttribute('rank'),
-                    'name' => $user?->github_username ?? $user?->name ?? 'Anonymous',
-                    'avatar_url' => $user?->avatar_url,
+                    'identity' => PlayerIdentity::for($user),
                     'total_xp' => (int) $profile->total_xp,
                     'coins' => $user ? $user->coinBalance() : 0,
-                    'cosmetics' => $user?->cosmetic_slots ?? [],
                 ];
             })
             ->all();

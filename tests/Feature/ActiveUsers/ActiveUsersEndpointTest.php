@@ -33,7 +33,7 @@ it('returns the recently-active collection with the expected JSON shape', functi
         ->assertJsonCount(1, 'data')
         ->assertJsonStructure([
             'data' => [
-                ['id', 'user_id', 'name', 'avatar_url', 'activity_type', 'activity_label', 'activity_at', 'is_xp', 'is_achievement', 'last_active_at', 'is_fake'],
+                ['id', 'user_id', 'name', 'avatar_url', 'identity' => ['name', 'avatarUrl', 'cosmetics'], 'activity_type', 'activity_label', 'activity_at', 'is_xp', 'is_achievement', 'last_active_at', 'is_fake'],
             ],
         ])
         ->assertJsonPath('data.0.name', 'Ada Lovelace')

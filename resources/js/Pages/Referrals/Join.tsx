@@ -1,12 +1,12 @@
 import { Head, usePage } from "@inertiajs/react";
 import { Badge, Button, Card, Heading, Icon, Text } from "@particle-academy/react-fancy";
 import { Layout } from "../Layout";
+import { PlayerAvatar, PlayerName, type PlayerIdentityData } from "../../components/PlayerIdentity";
 
 type Props = {
     inviter: {
-        name: string;
+        identity: PlayerIdentityData;
         username: string;
-        avatarUrl: string | null;
     };
 };
 
@@ -23,7 +23,7 @@ export default function ReferralsJoin({ inviter }: Props) {
 
     return (
         <Layout>
-            <Head title={`${inviter.name} invited you`} />
+            <Head title={`${inviter.identity.name} invited you`} />
 
             <div className="mx-auto flex max-w-2xl flex-col gap-6 py-10 md:py-16">
                 <Card className="overflow-hidden">
@@ -33,20 +33,17 @@ export default function ReferralsJoin({ inviter }: Props) {
                             Referral invite
                         </Badge>
 
-                        {inviter.avatarUrl ? (
-                            <img
-                                src={inviter.avatarUrl}
-                                alt={inviter.name}
-                                className="mx-auto mb-5 h-20 w-20 rounded-full border-2 border-violet-500/40 object-cover"
+                        <div className="mb-5 flex justify-center">
+                            <PlayerAvatar
+                                player={inviter.identity}
+                                size="xl"
+                                className="h-20 w-20"
+                                fallbackRingClassName="border-2 border-violet-500/40"
                             />
-                        ) : (
-                            <div className="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-full border-2 border-violet-500/40 bg-violet-500/10 text-2xl font-bold text-violet-500">
-                                {inviter.name.slice(0, 1).toUpperCase()}
-                            </div>
-                        )}
+                        </div>
 
                         <Heading as="h1" className="!text-3xl">
-                            {inviter.name} invited you to Fancy UI
+                            <PlayerName player={inviter.identity} /> invited you to Fancy UI
                         </Heading>
                         <Text className="mx-auto mt-3 max-w-md text-[var(--fg-2)]">
                             Sign in and you'll join{" "}
@@ -72,7 +69,7 @@ export default function ReferralsJoin({ inviter }: Props) {
 
                         <Text className="mt-6 text-xs text-[var(--fg-3)]">
                             Your invite is remembered for 30 days — sign in any time and you'll still land on{" "}
-                            {inviter.name}'s team.
+                            {inviter.identity.name}'s team.
                         </Text>
                     </div>
                 </Card>

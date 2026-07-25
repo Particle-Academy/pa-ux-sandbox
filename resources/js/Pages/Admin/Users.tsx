@@ -1,15 +1,16 @@
 import { Head, Link, router } from "@inertiajs/react";
-import { Avatar, Badge, Button, Card, Field, Icon, Input, MultiSwitch, Table } from "@particle-academy/react-fancy";
+import { Badge, Button, Card, Field, Icon, Input, MultiSwitch, Table } from "@particle-academy/react-fancy";
 import { useState } from "react";
 import { adminLayout } from "./AdminLayout";
 import { PageHeader, EmptyRow } from "./ui";
+import { PlayerAvatar, PlayerName, type PlayerIdentityData } from "../../components/PlayerIdentity";
 
 type AdminUser = {
     id: number;
     name: string;
     email: string;
     github_username: string | null;
-    avatar_url: string | null;
+    identity: PlayerIdentityData;
     is_admin: boolean;
     suspended: boolean;
     coins: number;
@@ -21,10 +22,6 @@ type AdminUser = {
 type Props = { users: AdminUser[]; search: string; sort: string; total: number };
 
 const n = (v: number) => v.toLocaleString();
-
-function initials(name: string): string {
-    return name.split(/\s+/).slice(0, 2).map((p) => p[0]?.toUpperCase() ?? "").join("") || "?";
-}
 
 function Users({ users, search, sort, total }: Props) {
     const [q, setQ] = useState(search ?? "");
@@ -90,9 +87,9 @@ function Users({ users, search, sort, total }: Props) {
                                     <Table.Row key={user.id}>
                                         <Table.Cell>
                                             <div style={{ display: "flex", alignItems: "center", gap: 11 }}>
-                                                <Avatar src={user.avatar_url ?? undefined} fallback={initials(user.name)} size="sm" />
+                                                <PlayerAvatar player={user.identity} size="sm" />
                                                 <div>
-                                                    <div style={{ fontSize: 13.5, fontWeight: 500, color: "var(--fg-1)" }}>{user.name}</div>
+                                                    <PlayerName player={user.identity} style={{ fontSize: 13.5, fontWeight: 500, color: "var(--fg-1)", display: "block" }} />
                                                     {user.github_username && (
                                                         <div style={{ fontSize: 12, color: "var(--fg-3)", marginTop: 2 }}>@{user.github_username}</div>
                                                     )}

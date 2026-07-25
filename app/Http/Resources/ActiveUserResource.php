@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Models\ActiveUser;
+use App\Support\PlayerIdentity;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -25,6 +26,7 @@ class ActiveUserResource extends JsonResource
             'user_id' => $this->user_id,
             'name' => $this->name,
             'avatar_url' => $this->avatar_url,
+            'identity' => PlayerIdentity::fromParts($this->name, $this->avatar_url, $this->cosmetic_slots),
             'activity_type' => $this->activity_type,
             'activity_label' => $this->activity_label,
             'activity_at' => $this->activity_at?->toIso8601String(),

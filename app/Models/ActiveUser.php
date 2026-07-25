@@ -20,6 +20,7 @@ class ActiveUser extends Model
         'fake_key',
         'name',
         'avatar_url',
+        'cosmetic_slots',
         'activity_type',
         'activity_label',
         'activity_at',
@@ -38,6 +39,7 @@ class ActiveUser extends Model
             'is_xp' => 'boolean',
             'is_achievement' => 'boolean',
             'is_fake' => 'boolean',
+            'cosmetic_slots' => 'array',
             'activity_at' => 'datetime',
             'last_active_at' => 'datetime',
         ];

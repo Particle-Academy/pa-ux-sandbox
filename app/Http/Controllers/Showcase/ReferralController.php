@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Showcase;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Services\Mlm\MlmProgram;
+use App\Support\PlayerIdentity;
 use App\Support\Usernames;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -67,9 +68,8 @@ class ReferralController extends Controller
 
         return Inertia::render('Referrals/Join', [
             'inviter' => [
-                'name' => $referrer->name,
+                'identity' => PlayerIdentity::for($referrer, $referrer->name),
                 'username' => $referrer->username,
-                'avatarUrl' => $referrer->avatar_url,
             ],
         ]);
     }

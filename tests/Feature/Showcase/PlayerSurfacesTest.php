@@ -35,7 +35,7 @@ it('PlayerProfile full includes per-metric, achievements and prizes', function (
     expect($full['metrics'])->toHaveCount(1)
         ->and($full['metrics'][0]['slug'])->toBe('explorer-xp')
         ->and(collect($full['achievements'])->pluck('slug'))->toContain('first-visit')
-        ->and($full)->toHaveKeys(['name', 'lifetimeEarned', 'lifetimeSpent']);
+        ->and($full)->toHaveKeys(['identity', 'name', 'lifetimeEarned', 'lifetimeSpent']);
 });
 
 it('shares the player summary on auth.user for signed-in users', function () {
@@ -78,7 +78,7 @@ it('lists top players on the leaderboard ranked by XP', function () {
 
     $this->get('/leaderboard')->assertOk()->assertInertia(fn ($page) => $page
         ->has('players', fn ($players) => $players
-            ->where('0.name', 'Whale')
+            ->where('0.identity.name', 'Whale')
             ->etc()
         )
     );
@@ -90,6 +90,6 @@ it('excludes opted-out users from the players leaderboard', function () {
     $optedOut->optOut();
 
     $this->get('/leaderboard')->assertOk()->assertInertia(fn ($page) => $page
-        ->where('players', fn ($players) => collect($players)->doesntContain(fn ($p) => $p['name'] === 'Hidden'))
+        ->where('players', fn ($players) => collect($players)->doesntContain(fn ($p) => $p['identity']['name'] === 'Hidden'))
     );
 });

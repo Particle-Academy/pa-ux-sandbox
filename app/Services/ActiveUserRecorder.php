@@ -32,6 +32,10 @@ class ActiveUserRecorder
             [
                 'name' => $user->name,
                 'avatar_url' => $user->avatar_url,
+                // Snapshotted alongside name/avatar so the presence pills draw
+                // the player's purchased frame + name colour like every other
+                // identity surface.
+                'cosmetic_slots' => $user->cosmetic_slots ?? [],
                 'activity_type' => $activityType,
                 'activity_label' => $activityLabel,
                 'activity_at' => $now,

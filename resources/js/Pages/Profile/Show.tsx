@@ -1,16 +1,22 @@
 import { Head, Link, useForm } from "@inertiajs/react";
 import { Badge, Button, Card, Icon, Input } from "@particle-academy/react-fancy";
 import { Layout } from "../Layout";
-import { avatarFrameClass, type CosmeticSlots } from "../../lib/cosmetics";
+import { type CosmeticSlots } from "../../lib/cosmetics";
+import {
+    PlayerAvatar,
+    PlayerBanner,
+    PlayerName,
+    type PlayerIdentityData,
+} from "../../components/PlayerIdentity";
 
 type Metric = { slug: string; name: string; icon: string | null; xp: number; level: number };
 type Achievement = { slug: string; name: string; description: string | null; icon: string | null };
 type Prize = { slug: string; name: string; type: string | null };
 
 type ProfileData = {
+    /** The account's own name; `identity.name` is the public display name. */
     name: string;
-    githubUsername: string | null;
-    avatarUrl: string | null;
+    identity: PlayerIdentityData;
     coins: number;
     level: number;
     levelName: string | null;
@@ -41,7 +47,7 @@ type Props = {
 };
 
 export default function ProfileShow({ profile, username, usernameSuggestion }: Props) {
-    const displayName = profile.githubUsername ?? profile.name;
+    const displayName = profile.identity.name;
     const optOutForm = useForm({});
     const usernameForm = useForm({ username: username ?? usernameSuggestion ?? "" });
     const maxXp = Math.max(1, ...profile.metrics.map((m) => m.xp));
@@ -53,19 +59,20 @@ export default function ProfileShow({ profile, username, usernameSuggestion }: P
             <div className="pf-wrap">
                 {/* ── Hero ──────────────────────────────────────────────── */}
                 <Card className="pf-hero pf-fade">
-                    <div className="pf-hero-banner" />
+                    <PlayerBanner player={profile.identity} className="pf-hero-banner" />
                     <div className="pf-hero-body">
                         <div className="pf-id">
                             <span className="pf-avatar-ring">
-                                <img
-                                    src={profile.avatarUrl ?? "/showcase-assets/fancy-ui-logo.jpg"}
-                                    alt=""
-                                    className={avatarFrameClass(profile.cosmetics)}
+                                <PlayerAvatar
+                                    player={profile.identity}
+                                    size="xl"
+                                    className="h-[76px] w-[76px]"
+                                    fallbackSrc="/showcase-assets/fancy-ui-logo.jpg"
                                 />
                             </span>
                             <div style={{ paddingBottom: 4 }}>
                                 <div className="pf-name-row">
-                                    <span className="pf-name">{displayName}</span>
+                                    <PlayerName player={profile.identity} className="pf-name" />
                                     {profile.pro && (
                                         <Badge color="violet" variant="soft">
                                             <Icon name="sparkles" className="mr-0.5 h-3 w-3" />

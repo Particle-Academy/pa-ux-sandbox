@@ -1,16 +1,17 @@
 import { Head, Link, router, useForm } from "@inertiajs/react";
 import { useMemo } from "react";
-import { Avatar, Badge, Button, Card, Field, Icon, Input, Select, Switch, Table, Text } from "@particle-academy/react-fancy";
+import { Badge, Button, Card, Field, Icon, Input, Select, Switch, Table, Text } from "@particle-academy/react-fancy";
 import type { Color } from "@particle-academy/react-fancy";
 import { adminLayout } from "./AdminLayout";
 import { PageHeader, StatCard, EmptyRow } from "./ui";
+import { PlayerAvatar, PlayerName, type PlayerIdentityData } from "../../components/PlayerIdentity";
 
 type AdminUser = {
     id: number;
     name: string;
     email: string;
     github_username: string | null;
-    avatar_url: string | null;
+    identity: PlayerIdentityData;
     is_admin: boolean;
     opted_out: boolean;
     suspended: boolean;
@@ -59,10 +60,6 @@ type Props = {
 };
 
 const n = (v: number) => v.toLocaleString();
-
-function initials(name: string): string {
-    return name.split(/\s+/).slice(0, 2).map((p) => p[0]?.toUpperCase() ?? "").join("") || "?";
-}
 
 const TIER_COLOR: Record<string, Color> = { bronze: "orange", silver: "zinc", gold: "amber", diamond: "violet" };
 const tierColor = (tier?: string): Color => (tier && TIER_COLOR[tier]) || "slate";
@@ -259,9 +256,9 @@ function UserShow({ user, metrics, transactions, achievements, ownedSites, allMe
                 <div className="admin-stack">
                     <Card padding="lg">
                         <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-                            <Avatar src={user.avatar_url ?? undefined} fallback={initials(user.name)} size="lg" />
+                            <PlayerAvatar player={user.identity} size="lg" />
                             <div style={{ minWidth: 0 }}>
-                                <div style={{ fontSize: 16, fontWeight: 600, color: "var(--fg-1)" }}>{user.name}</div>
+                                <PlayerName player={user.identity} style={{ fontSize: 16, fontWeight: 600, color: "var(--fg-1)", display: "block" }} />
                                 {user.github_username && (
                                     <div style={{ fontSize: 13, color: "var(--fg-3)", marginTop: 2 }}>@{user.github_username}</div>
                                 )}

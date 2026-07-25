@@ -3,7 +3,7 @@ import { Badge, Card, Heading, Icon, Table, Text } from "@particle-academy/react
 import { useFancyQuery } from "@particle-academy/fancy-query";
 import { useMemo, useState } from "react";
 import { Layout } from "./Layout";
-import { avatarFrameClass, nameColorClass, type CosmeticSlots } from "../lib/cosmetics";
+import { PlayerAvatar, PlayerName, type PlayerIdentityData } from "../components/PlayerIdentity";
 
 type Row = {
     github_username: string;
@@ -16,11 +16,9 @@ type Row = {
 
 type Player = {
     rank: number;
-    name: string;
-    avatar_url: string | null;
+    identity: PlayerIdentityData;
     total_xp: number;
     coins: number;
-    cosmetics: CosmeticSlots;
 };
 
 type Props = {
@@ -170,19 +168,16 @@ function Podium({ players }: { players: Player[] }) {
                             <Icon name={t.icon} size={12} />
                             {t.label}
                         </span>
-                        <img
-                            src={p.avatar_url ?? AVATAR_FALLBACK}
-                            alt=""
-                            className={[
-                                "rounded-full object-cover ring-2 ring-offset-2 ring-offset-white dark:ring-offset-zinc-900",
-                                champion ? "h-16 w-16" : "h-12 w-12",
-                                t.ring,
-                                avatarFrameClass(p.cosmetics),
-                            ].join(" ")}
+                        <PlayerAvatar
+                            player={p.identity}
+                            size={champion ? "xl" : "lg"}
+                            fallbackSrc={AVATAR_FALLBACK}
+                            fallbackRingClassName={`ring-2 ring-offset-2 ring-offset-white dark:ring-offset-zinc-900 ${t.ring}`}
                         />
-                        <div className={`mt-3 truncate font-semibold ${champion ? "text-base" : "text-sm"} ${nameColorClass(p.cosmetics)}`}>
-                            {p.name}
-                        </div>
+                        <PlayerName
+                            player={p.identity}
+                            className={`mt-3 block truncate font-semibold ${champion ? "text-base" : "text-sm"}`}
+                        />
                         <div className="mt-3 flex w-full items-center justify-center gap-6">
                             <div>
                                 <div className="text-[10px] font-medium uppercase tracking-wide text-zinc-400">XP</div>
@@ -239,12 +234,13 @@ function PlayersBoard({ players }: { players: Player[] }) {
                                     <Table.Cell className="font-mono text-zinc-400 tabular-nums">{p.rank}</Table.Cell>
                                     <Table.Cell>
                                         <span className="flex items-center gap-2.5">
-                                            <img
-                                                src={p.avatar_url ?? AVATAR_FALLBACK}
-                                                alt=""
-                                                className={`h-7 w-7 rounded-full object-cover ${avatarFrameClass(p.cosmetics)}`}
+                                            <PlayerAvatar
+                                                player={p.identity}
+                                                size="sm"
+                                                className="h-7 w-7"
+                                                fallbackSrc={AVATAR_FALLBACK}
                                             />
-                                            <span className={`font-medium ${nameColorClass(p.cosmetics)}`}>{p.name}</span>
+                                            <PlayerName player={p.identity} className="font-medium" />
                                         </span>
                                     </Table.Cell>
                                     <Table.Cell className="text-right font-mono tabular-nums text-amber-600 dark:text-amber-400">

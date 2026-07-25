@@ -1,8 +1,9 @@
 import { Head, Link, router, useForm } from "@inertiajs/react";
 import { useState } from "react";
-import { Avatar, Badge, Button, Card, Heading, Icon, Input, Select, Text } from "@particle-academy/react-fancy";
+import { Badge, Button, Card, Heading, Icon, Input, Select, Text } from "@particle-academy/react-fancy";
 import { adminLayout } from "./AdminLayout";
 import { PageHeader } from "./ui";
+import { PlayerAvatar, PlayerName, type PlayerIdentityData } from "../../components/PlayerIdentity";
 import { KpiGrid, FocusHeatmap, EventsOverTime, TopPathsTable, RecentSessions, type Kpis, type Heatmap, type HeatmapShot, type TopPath, type RecentSession, type DayBucket } from "./AnalyticsBlocks";
 
 type Site = {
@@ -13,11 +14,9 @@ type Site = {
     featured: boolean; featured_until: string | null; thumbnail_url: string | null;
     scanned_at: string | null; created: string | null; pixel_status: string | null; last_verified: string | null;
 };
-type Owner = { id: number | null; name: string; github: string | null; avatar_url: string | null; proSource: string | null; pro_override: boolean };
+type Owner = { id: number | null; name: string; github: string | null; identity: PlayerIdentityData; proSource: string | null; pro_override: boolean };
 type Category = { slug: string; label: string };
 
-const initials = (name: string): string =>
-    name.split(/\s+/).slice(0, 2).map((p) => p[0]?.toUpperCase() ?? "").join("") || "?";
 type LatestShot = { url: string; path: string; capturedAt: string | null } | null;
 type Props = {
     site: Site; owner: Owner; categories: Category[];
@@ -124,9 +123,9 @@ function SiteShow({ site, owner, categories, kpis, topPaths, heatmap, heatmapSho
                     <Card.Header>Owner</Card.Header>
                     <Card.Body>
                         <div className="flex items-center gap-3">
-                            <Avatar fallback={initials(owner.name)} src={owner.avatar_url ?? undefined} size="md" />
+                            <PlayerAvatar player={owner.identity} size="md" />
                             <div className="min-w-0">
-                                <Text className="!font-medium">{owner.name}</Text>
+                                <PlayerName player={owner.identity} className="text-sm font-medium" />
                                 {owner.github && <Text size="xs" className="!font-mono !text-zinc-400">@{owner.github}</Text>}
                             </div>
                         </div>

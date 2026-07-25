@@ -66,13 +66,19 @@ export function avatarFrameClass(slots: CosmeticSlots | undefined | null): strin
 }
 
 /**
- * Class for the display-name color cosmetic. The rainbow variant uses a
- * clipped gradient (defined in showcase.css as `.cosmetic-name-rainbow`).
+ * Class for the display-name color cosmetic.
+ *
+ * These are hand-written `.cosmetic-name-*` classes in showcase.css, NOT
+ * Tailwind utilities: names render inside components that set their own
+ * `color` in unlayered CSS (`.pf-name`, `.active-user-pill-name`, …), and
+ * unlayered rules beat Tailwind's `utilities` layer regardless of class order.
+ * The cosmetic classes use a doubled selector so an equipped colour always
+ * wins. Add a new value here AND in showcase.css.
  */
 export function nameColorClass(slots: CosmeticSlots | undefined | null): string {
     switch (slots?.["name-color"]) {
         case "blue":
-            return "text-sky-500 dark:text-sky-400";
+            return "cosmetic-name-blue";
         case "rainbow":
             return "cosmetic-name-rainbow";
         default:

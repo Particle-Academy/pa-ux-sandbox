@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\User;
+use App\Support\PlayerIdentity;
 use LaravelFunLab\Models\MetricLevelGroup;
 use LaravelFunLab\Models\MetricLevelGroupLevel;
 use LaravelFunLab\Services\MetricLevelGroupService;
@@ -89,9 +90,10 @@ class PlayerProfile
 
         return [
             ...$this->summary($user),
+            // Display name + avatar + cosmetics in the one shape every
+            // identity surface renders (App\Support\PlayerIdentity).
+            'identity' => PlayerIdentity::for($user),
             'name' => $user->name,
-            'githubUsername' => $user->github_username,
-            'avatarUrl' => $user->avatar_url,
             'metrics' => $metrics,
             'achievements' => $achievements,
             'prizes' => $prizes,

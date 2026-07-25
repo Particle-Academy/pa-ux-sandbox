@@ -4,7 +4,6 @@ import {
     Button,
     Callout,
     Dropdown,
-    Profile,
     Tooltip,
 } from "@particle-academy/react-fancy";
 import { Moon, Sun, Sparkles, Check, Bot } from "lucide-react";
@@ -17,7 +16,8 @@ import { CoBrowsePresence } from "@particle-academy/agent-integrations";
 import { currentTheme, toggleTheme } from "../showcase-theme";
 import { CommandPalette } from "./CommandPalette";
 import { useCoBrowse } from "../agent/CoBrowseProvider";
-import { avatarFrameClass, type CosmeticSlots } from "../lib/cosmetics";
+import { type CosmeticSlots } from "../lib/cosmetics";
+import { PlayerIdentityRow, type PlayerIdentityData } from "../components/PlayerIdentity";
 import { ActiveUsersOverlay } from "../components/ActiveUsersOverlay";
 import { AgentAnalyticsSink } from "../components/AgentAnalyticsSink";
 
@@ -43,6 +43,8 @@ type AuthUser = {
     name: string;
     github_username: string | null;
     avatar_url: string | null;
+    /** Display name + avatar + owned cosmetics — see components/PlayerIdentity. */
+    identity: PlayerIdentityData;
     player?: PlayerSummary | null;
 };
 // `admin` is a server-computed link (from the `admin` Gate), present only for
@@ -185,12 +187,8 @@ export function Layout({
                             <>
                                 <Dropdown>
                                     <Dropdown.Trigger>
-                                        <button className={`rounded-full transition hover:ring-2 hover:ring-violet-400/30 ${avatarFrameClass(auth.player?.cosmetics)}`}>
-                                            <Profile
-                                                src={auth.avatar_url ?? undefined}
-                                                name={auth.github_username ?? auth.name}
-                                                size="sm"
-                                            />
+                                        <button className="rounded-full transition hover:ring-2 hover:ring-violet-400/30">
+                                            <PlayerIdentityRow player={auth.identity} size="sm" />
                                         </button>
                                     </Dropdown.Trigger>
                                     <Dropdown.Items>

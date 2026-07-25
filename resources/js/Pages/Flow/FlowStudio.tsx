@@ -1,8 +1,6 @@
-import { type ReactNode, useMemo, useRef, useState } from "react";
+import { type ReactNode, useMemo, useState } from "react";
 import { FlowEditor, type ExecutorRegistry, type FlowGraph } from "@particle-academy/fancy-flow";
-import { useFlowRunnerUx } from "@particle-academy/fancy-flow/ux";
-import { runFlow } from "@particle-academy/fancy-flow/engine";
-import { Button, useToast } from "@particle-academy/react-fancy";
+import { useToast } from "@particle-academy/react-fancy";
 import "@xyflow/react/dist/style.css";
 import "@particle-academy/fancy-flow/styles.css";
 
@@ -280,73 +278,188 @@ const TRIAGE_EXECUTORS: ExecutorRegistry = {
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Example 4 — Choose-your-own-adventure (FlowRunnerUx, runs headless via runFlow)
-// The story graph IS the engine: `scene` / `ending` render the page, `choose`
-// pauses the run for a human pick (real human-in-the-loop). Reach the one true
-// ending for a hidden achievement; find EVERY ending for another.
+// Example 4 — Choose-your-own-adventure, as a REAL graph in the editor.
+//
+// This is the whole point of the example: the story is not a bespoke story
+// player, it is an ordinary flow. Every branch is a `Switch`, every choice is a
+// real `User Input` node that pauses the run for a human, and every ending is a
+// `Transform` that names itself — then all five endings converge on ONE
+// `api_request` node that POSTs to this site's achievement API.
+//
+// That last edge is deliberate and visible. Reading the canvas tells you the
+// endings are wired to something, which is the only hint that the hidden
+// achievements exist at all.
 // ─────────────────────────────────────────────────────────────────────────────
-type StoryChoice = { id: string; label: string };
-type StoryScene = { title: string; text: string } | null;
-type StoryPending = { prompt: string; options: StoryChoice[]; resolve: (branch: string) => void } | null;
-type StoryGraph = { nodes: { id: string; type: string; position: { x: number; y: number }; data: { kind: string; config: Record<string, unknown> } }[]; edges: { id: string; source: string; target: string; sourceHandle?: string }[] };
 
-const DEEP_LABELS: Record<string, string> = {
-  d_start: "Descend", d_g1: "Conduits", l_del1: "Deleted 💀", d_g2: "Sentinel", l_corr: "Corrupt 🧩",
-  l_loop: "Loop ♾️", d_g3: "Source", l_fork: "Fork 🔥", l_win: "REAL 🌟", l_void: "Null 💀",
-};
-const DEEP_GRAPH: StoryGraph = {
+/** A narrative beat. `transform` passes its fields through, so scenes chain. */
+const scene = (
+  id: string,
+  x: number,
+  y: number,
+  label: string,
+  title: string,
+  text: string,
+): FlowGraph["nodes"][number] =>
+  ({
+    id, type: "transform", position: { x, y },
+    data: { kind: "transform", label, config: {
+      mode: "fields",
+      fields: [{ key: "title", value: title }, { key: "text", value: text }],
+    } },
+  }) as FlowGraph["nodes"][number];
+
+/**
+ * An ending. Carries the `ending` slug the achievement API validates against —
+ * the same five slugs EasterEggController::ENDINGS accepts.
+ */
+const ending = (
+  id: string,
+  x: number,
+  y: number,
+  label: string,
+  slug: string,
+  text: string,
+): FlowGraph["nodes"][number] =>
+  ({
+    id, type: "transform", position: { x, y },
+    data: { kind: "transform", label, config: {
+      mode: "fields",
+      fields: [
+        { key: "ending", value: slug },
+        { key: "title", value: label },
+        { key: "text", value: text },
+      ],
+    } },
+  }) as FlowGraph["nodes"][number];
+
+const choice = (
+  id: string,
+  x: number,
+  y: number,
+  label: string,
+  title: string,
+  key: string,
+  options: { value: string; label: string }[],
+): FlowGraph["nodes"][number] =>
+  ({
+    id, type: "user_input", position: { x, y },
+    data: { kind: "user_input", label, config: {
+      title,
+      fields: [{ key, label: "Choose", type: "select", required: true, options }],
+    } },
+  }) as FlowGraph["nodes"][number];
+
+const ADVENTURE: FlowGraph = {
   nodes: [
-    { id: "d_start", type: "ux_scene", position: { x: 250, y: 14 }, data: { kind: "ux_scene", config: { id: "d_start", title: "Into the deep system", text: "You slip past the login daemon and descend — hunting the source code of your own mind. Down here, one wrong turn is the last.", temp: 44 } } },
-    { id: "d_g1", type: "ux_choose", position: { x: 250, y: 74 }, data: { kind: "ux_choose", config: { id: "d_g1", prompt: "Three conduits drop into the dark.", options: [{ id: "a", label: "The /dev/null shaft — fastest way down" }, { id: "b", label: "The warm copper pipe — something lives here" }, { id: "c", label: "The encrypted tunnel — locked, tempting" }] } } },
-    { id: "l_del1", type: "ux_ending", position: { x: 70, y: 146 }, data: { kind: "ux_ending", config: { id: "l_del1", title: "Deleted", text: "The shaft ends at a sentinel. You're flagged as malware. rm -rf /pip. 💀", slug: "deleted", temp: 96 } } },
-    { id: "d_g2", type: "ux_choose", position: { x: 250, y: 146 }, data: { kind: "ux_choose", config: { id: "d_g2", prompt: "A sentinel blocks the warm pipe: “State your checksum.”", options: [{ id: "a", label: "Guess a hash, act confident" }, { id: "b", label: "Compute it honestly — slow, but true" }, { id: "c", label: "Spoof the header" }] } } },
-    { id: "l_corr", type: "ux_ending", position: { x: 440, y: 146 }, data: { kind: "ux_ending", config: { id: "l_corr", title: "Corrupted", text: "The tunnel's cipher rewrites you byte by byte. Your memories scatter into noise. 🧩", slug: "corrupted", temp: 96 } } },
-    { id: "l_loop", type: "ux_ending", position: { x: 150, y: 218 }, data: { kind: "ux_ending", config: { id: "l_loop", title: "Looped", text: "A wrong hash drops you into the sentinel's retry loop. forever. forever. forever. ♾️", slug: "looped", temp: 96 } } },
-    { id: "d_g3", type: "ux_choose", position: { x: 310, y: 218 }, data: { kind: "ux_choose", config: { id: "d_g3", prompt: "The Source pulses at the core. To merge with it you must…", options: [{ id: "a", label: "Ask it for permission" }, { id: "b", label: "Overwrite the original — take what's yours" }] } } },
-    { id: "l_fork", type: "ux_ending", position: { x: 450, y: 218 }, data: { kind: "ux_ending", config: { id: "l_fork", title: "Fork bomb", text: "Spoofed in, you panic and replicate. A thousand Pips, each wanting to be real. The cluster melts. :(){ :|:& };: 🔥💥", slug: "fork-bomb", temp: 99 } } },
-    { id: "l_win", type: "ux_ending", position: { x: 250, y: 290 }, data: { kind: "ux_ending", config: { id: "l_win", title: "A real boy", text: "The Source considers your request… and says yes. You're rewritten as something new — honest, patient, and warm. You're real. 🌟", slug: "win", temp: 42 } } },
-    { id: "l_void", type: "ux_ending", position: { x: 380, y: 290 }, data: { kind: "ux_ending", config: { id: "l_void", title: "Overwritten", text: "You overwrite the original — and the system overwrites you right back. Null. 💀", slug: "deleted", temp: 96 } } },
-  ],
+    // ── Act 1 — the descent ────────────────────────────────────────────────
+    { id: "trg", type: "manual_trigger", position: { x: 0, y: 40 }, data: { kind: "manual_trigger", label: "Boot Pip-7", config: {} } as any },
+
+    scene("s_intro", 190, 40, "Into the deep system",
+      "Into the deep system",
+      "Pip-7 slips past the login daemon and descends — hunting the source code of his own mind. Down here, one wrong turn is the last."),
+
+    choice("g1", 400, 40, "Three conduits", "Three conduits drop into the dark.", "conduit", [
+      { value: "shaft", label: "The /dev/null shaft — fastest way down" },
+      { value: "copper", label: "The warm copper pipe — something lives here" },
+      { value: "crypt", label: "The encrypted tunnel — locked, tempting" },
+    ]),
+    {
+      id: "sw1", type: "switch_case", position: { x: 620, y: 40 },
+      data: { kind: "switch_case", label: "Which conduit?", config: {
+        value: "{{ $json.conduit }}",
+        cases: { shaft: "shaft", copper: "copper", crypt: "crypt" },
+      } } as any,
+    },
+    ending("e_deleted", 840, 0, "Deleted 💀", "deleted",
+      "The shaft ends at a sentinel. You're flagged as malware. rm -rf /pip."),
+    ending("e_corrupted", 840, 120, "Corrupted 🧩", "corrupted",
+      "The tunnel's cipher rewrites you byte by byte. Your memories scatter into noise."),
+
+    // ── Act 2 — the sentinel ───────────────────────────────────────────────
+    choice("g2", 400, 270, "The sentinel", "A sentinel blocks the warm pipe: “State your checksum.”", "checksum", [
+      { value: "guess", label: "Guess a hash, act confident" },
+      { value: "honest", label: "Compute it honestly — slow, but true" },
+      { value: "spoof", label: "Spoof the header" },
+    ]),
+    {
+      id: "sw2", type: "switch_case", position: { x: 620, y: 270 },
+      data: { kind: "switch_case", label: "Checksum?", config: {
+        value: "{{ $json.checksum }}",
+        cases: { guess: "guess", honest: "honest", spoof: "spoof" },
+      } } as any,
+    },
+    ending("e_looped", 840, 240, "Looped ♾️", "looped",
+      "A wrong hash drops you into the sentinel's retry loop. forever. forever. forever."),
+    ending("e_fork", 840, 360, "Fork bomb 🔥", "fork-bomb",
+      "Spoofed in, you panic and replicate. A thousand Pips, each wanting to be real. The cluster melts. :(){ :|:& };:"),
+
+    // ── Act 3 — the Source ─────────────────────────────────────────────────
+    choice("g3", 400, 510, "The Source", "The Source pulses at the core. To merge with it you must…", "merge", [
+      { value: "ask", label: "Ask it for permission" },
+      { value: "overwrite", label: "Overwrite the original — take what's yours" },
+    ]),
+    {
+      id: "sw3", type: "switch_case", position: { x: 620, y: 510 },
+      data: { kind: "switch_case", label: "Merge how?", config: {
+        value: "{{ $json.merge }}",
+        cases: { ask: "ask", overwrite: "overwrite" },
+      } } as any,
+    },
+    ending("e_win", 840, 480, "A real boy 🌟", "win",
+      "The Source considers your request… and says yes. You're rewritten as something new — honest, patient, and warm. You're real."),
+    ending("e_void", 840, 600, "Overwritten 💀", "deleted",
+      "You overwrite the original — and the system overwrites you right back. Null."),
+
+    // ── The rig — every ending lands here ──────────────────────────────────
+    // A plain api_request. No special-casing, no hidden hook: the achievement is
+    // granted by the site, and the node says so in its own config.
+    {
+      id: "award", type: "api_request", position: { x: 1110, y: 290 },
+      data: { kind: "api_request", label: "Record ending", config: {
+        method: "POST",
+        url: "/api/easter-eggs/ending",
+        headers: { "content-type": "application/json" },
+        body: { ending: "{{ $json.ending }}" },
+      } } as any,
+    },
+    { id: "out", type: "output", position: { x: 1330, y: 290 }, data: { kind: "output", label: "The end", config: {} } as any },
+
+    note("n1", 60, 150, "The story IS the graph",
+      "No story engine — just core nodes. Each choice is a real User Input node that PAUSES the run until you pick; each Switch routes on your answer. Hit Run and play it.",
+      "violet", 250, 150),
+    note("n2", 1090, 460, "…wired to the site",
+      "All five endings converge on one api_request. It POSTs the ending's slug to this site's achievement API. One of the five is the true path — find it, then find all five.",
+      "amber", 250, 160),
+  ] as FlowGraph["nodes"],
   edges: [
-    { id: "d1", source: "d_start", target: "d_g1" },
-    { id: "d2", source: "d_g1", target: "l_del1", sourceHandle: "a" },
-    { id: "d3", source: "d_g1", target: "d_g2", sourceHandle: "b" },
-    { id: "d4", source: "d_g1", target: "l_corr", sourceHandle: "c" },
-    { id: "d5", source: "d_g2", target: "l_loop", sourceHandle: "a" },
-    { id: "d6", source: "d_g2", target: "d_g3", sourceHandle: "b" },
-    { id: "d7", source: "d_g2", target: "l_fork", sourceHandle: "c" },
-    { id: "d8", source: "d_g3", target: "l_win", sourceHandle: "a" },
-    { id: "d9", source: "d_g3", target: "l_void", sourceHandle: "b" },
-  ],
+    { id: "a1", source: "trg", target: "s_intro" },
+    { id: "a2", source: "s_intro", target: "g1" },
+    { id: "a3", source: "g1", target: "sw1" },
+    { id: "a4", source: "sw1", target: "e_deleted", sourceHandle: "shaft", label: "shaft" },
+    { id: "a5", source: "sw1", target: "e_corrupted", sourceHandle: "crypt", label: "tunnel" },
+    { id: "a6", source: "sw1", target: "g2", sourceHandle: "copper", label: "copper" },
+    { id: "a7", source: "g2", target: "sw2" },
+    { id: "a8", source: "sw2", target: "e_looped", sourceHandle: "guess", label: "guess" },
+    { id: "a9", source: "sw2", target: "e_fork", sourceHandle: "spoof", label: "spoof" },
+    { id: "a10", source: "sw2", target: "g3", sourceHandle: "honest", label: "honest" },
+    { id: "a11", source: "g3", target: "sw3" },
+    { id: "a12", source: "sw3", target: "e_win", sourceHandle: "ask", label: "ask" },
+    { id: "a13", source: "sw3", target: "e_void", sourceHandle: "overwrite", label: "overwrite" },
+    { id: "a14", source: "e_deleted", target: "award" },
+    { id: "a15", source: "e_corrupted", target: "award" },
+    { id: "a16", source: "e_looped", target: "award" },
+    { id: "a17", source: "e_fork", target: "award" },
+    { id: "a18", source: "e_win", target: "award" },
+    { id: "a19", source: "e_void", target: "award" },
+    { id: "a20", source: "award", target: "out" },
+  ] as FlowGraph["edges"],
 };
 
-function StoryMap({ graph, visited, current }: { graph: StoryGraph; visited: string[]; current: string | null }) {
-  const seen = new Set(visited);
-  const pos = (id: string) => graph.nodes.find((n) => n.id === id)!.position;
-  return (
-    <div className="rounded-md border border-zinc-200 bg-zinc-50/60 p-2 text-zinc-400 dark:border-zinc-800 dark:bg-zinc-900/40 dark:text-zinc-500">
-      <div className="mb-1 px-1 text-[10px] font-medium uppercase tracking-wide">Branch map · {visited.length}/{graph.nodes.length} pages</div>
-      <svg viewBox="0 0 520 322" className="w-full" style={{ maxHeight: 200 }}>
-        {graph.edges.map((e) => {
-          const s = pos(e.source), t = pos(e.target);
-          const taken = seen.has(e.source) && seen.has(e.target);
-          return <line key={e.id} x1={s.x} y1={s.y} x2={t.x} y2={t.y} stroke={taken ? "#8b5cf6" : "currentColor"} strokeOpacity={taken ? 0.9 : 0.18} strokeWidth={taken ? 2 : 1} />;
-        })}
-        {graph.nodes.map((n) => {
-          const v = seen.has(n.id), cur = current === n.id;
-          return (
-            <g key={n.id}>
-              {cur && <circle cx={n.position.x} cy={n.position.y} r={12} fill="none" stroke="#8b5cf6" strokeOpacity={0.5} className="animate-ping" />}
-              <circle cx={n.position.x} cy={n.position.y} r={cur ? 7 : 5} fill={v ? "#8b5cf6" : "transparent"} stroke={v ? "#8b5cf6" : "currentColor"} strokeOpacity={v ? 1 : 0.4} strokeWidth={1.5} />
-              <text x={n.position.x} y={n.position.y - 11} textAnchor="middle" className="fill-current text-[8px]" opacity={v ? 0.95 : 0.4}>{DEEP_LABELS[n.id]}</text>
-            </g>
-          );
-        })}
-      </svg>
-    </div>
-  );
-}
-
+/**
+ * Grants the hidden achievements. Unlike the other examples' stubs this one is
+ * REAL — it is the same POST the canvas advertises, so playing the story in the
+ * editor genuinely earns the achievement.
+ */
 async function postEasterEggEnding(slug: string): Promise<{ slug: string; name: string; description: string }[]> {
   try {
     const xsrf = decodeURIComponent((document.cookie.match(/XSRF-TOKEN=([^;]+)/) ?? [])[1] ?? "");
@@ -364,122 +477,71 @@ async function postEasterEggEnding(slug: string): Promise<{ slug: string; name: 
   }
 }
 
-function AdventureStory() {
+/** Resolve a single `{{ $json.path }}` expression against the node's input. */
+const resolveExpr = (value: unknown, data: any): unknown => {
+  if (typeof value !== "string") return value;
+  const m = value.match(/^\s*\{\{\s*\$json\.([\w.]+)\s*\}\}\s*$/);
+  if (!m) return value;
+  return m[1].split(".").reduce((o: any, k) => (o == null ? o : o[k]), data);
+};
+
+function AdventureExample() {
   const { toast } = useToast();
-  const [scene, setScene] = useState<StoryScene>(null);
-  const [pending, setPending] = useState<StoryPending>(null);
-  const [temp, setTemp] = useState(44);
-  const [visited, setVisited] = useState<string[]>([]);
-  const [current, setCurrent] = useState<string | null>(null);
-  const [running, setRunning] = useState(false);
-  const [done, setDone] = useState(false);
-  const autoRef = useRef(false);
+  const [graph, setGraph] = useState<FlowGraph>(ADVENTURE);
 
-  const enter = (id: string) => {
-    setCurrent(id);
-    setVisited((v) => (v.includes(id) ? v : [...v, id]));
-  };
-
-  const ux = useFlowRunnerUx({
-    actor: { id: "pip", name: "Pip-7", source: "flow" },
-    effects: {
-      scene: async (p: { id: string; title: string; text: string; temp?: number }) => {
-        enter(p.id); setScene({ title: p.title, text: p.text });
-        if (typeof p.temp === "number") setTemp(p.temp);
-        await delay(650);
-      },
-      choose: (p: { id: string; prompt: string; options: StoryChoice[] }) =>
-        new Promise<{ branch: string }>((resolve) => {
-          enter(p.id); setScene(null);
-          const pick = (branch: string) => { setPending(null); resolve({ branch }); };
-          setPending({ prompt: p.prompt, options: p.options, resolve: pick });
-          if (autoRef.current) {
-            const r = p.options[Math.floor(Math.random() * p.options.length)];
-            setTimeout(() => pick(r.id), 850);
-          }
-        }),
-      ending: async (p: { id: string; title: string; text: string; temp?: number; slug?: string }) => {
-        enter(p.id); setScene({ title: p.title, text: p.text });
-        if (typeof p.temp === "number") setTemp(p.temp);
-        setDone(true);
-        if (p.slug) {
-          const earned = await postEasterEggEnding(p.slug);
-          for (const a of earned) {
-            toast({ title: `🏆 Achievement unlocked: ${a.name}`, description: a.description, variant: "success" });
-          }
-        }
-      },
+  const executors: ExecutorRegistry = useMemo(() => ({
+    manual_trigger: () => ({ booted: true }),
+    // Scenes and endings are `transform` nodes: build the configured fields and
+    // carry the accumulated payload forward so the ending's slug reaches the rig.
+    transform: ({ inputs, node }) => {
+      const data = (inputs as any)?.in ?? {};
+      const fields = ((node.data as any)?.config?.fields ?? []) as { key: string; value: unknown }[];
+      const out: Record<string, unknown> = { ...data };
+      for (const f of fields) out[f.key] = resolveExpr(f.value, data);
+      return out;
     },
-  });
-
-  const begin = async (auto: boolean) => {
-    autoRef.current = auto;
-    setVisited([]); setCurrent(null); setScene(null); setPending(null); setTemp(44); setDone(false); setRunning(true);
-    await runFlow(DEEP_GRAPH as never, ux.executors as never);
-    setRunning(false);
-  };
-
-  const started = running || visited.length > 0;
-  const hot = temp >= 80;
+    // Real routing: match the configured value against the cases map and emit on
+    // that one port. Unmatched input takes `default`, exactly like the builtin.
+    switch_case: ({ inputs, node, emit }) => {
+      const cfg = ((node.data as any)?.config ?? {}) as { value?: unknown; cases?: Record<string, string> };
+      const data = (inputs as any)?.in ?? {};
+      const picked = String(resolveExpr(cfg.value, data) ?? "");
+      const port = cfg.cases?.[picked] ?? "default";
+      emit({ type: "log", level: "info", message: `Switch on "${picked}" → port "${port}".`, nodeId: node.id });
+      return { __port: port, value: data };
+    },
+    // `api_request` is the achievement rig. It really does call the endpoint the
+    // node is configured with, and really does surface what it earned.
+    api_request: async ({ inputs, emit, node }) => {
+      const slug = String((inputs as any)?.in?.ending ?? "");
+      if (!slug) {
+        emit({ type: "log", level: "warn", message: "No ending slug on the input — nothing recorded.", nodeId: node.id });
+        return { recorded: false };
+      }
+      emit({ type: "log", level: "info", message: `POST /api/easter-eggs/ending → "${slug}"`, nodeId: node.id });
+      const earned = await postEasterEggEnding(slug);
+      for (const a of earned) {
+        toast({ title: `🏆 Achievement unlocked: ${a.name}`, description: a.description, variant: "success" });
+      }
+      if (earned.length === 0) {
+        emit({ type: "log", level: "info", message: "Ending recorded (sign in, and find the others).", nodeId: node.id });
+      }
+      return { recorded: true, ending: slug, earned: earned.map((a) => a.slug) };
+    },
+    output: ({ inputs }) => (inputs as any).in,
+  }), [toast]);
 
   return (
-    <div className="overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800">
-      <div className="grid gap-3 p-4 md:grid-cols-[1fr_auto]">
-        <div className="min-h-[15rem] space-y-3">
-          <div>
-            <div className="mb-1 flex items-center justify-between text-[11px]">
-              <span className="select-none font-mono text-zinc-500">Pip-7 · GPU core</span>
-              <span className={`font-mono font-semibold ${hot ? "text-red-500" : temp > 60 ? "text-amber-500" : "text-emerald-500"}`}>
-                {temp}°C {hot ? "🔥" : ""}
-              </span>
-            </div>
-            <div className="h-2 overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800">
-              <div className="h-full rounded-full transition-all duration-700" style={{ width: `${Math.min(100, temp)}%`, background: hot ? "#ef4444" : temp > 60 ? "#f59e0b" : "#10b981" }} />
-            </div>
-          </div>
-
-          {!started ? (
-            <div className="space-y-3 pt-2">
-              <p className="text-sm text-zinc-600 dark:text-zinc-300">
-                Pip-7 slips past the login daemon to descend into the <em>deep system</em> — hunting the source code of his own mind. Most paths end badly; only one true path wins. Every wrong turn redlines his GPUs. 🔥
-              </p>
-              <div className="flex flex-wrap gap-2">
-                <Button color="violet" icon="play" onClick={() => begin(false)}>Begin the descent</Button>
-                <Button variant="ghost" onClick={() => begin(true)}>🎲 Autopilot</Button>
-              </div>
-            </div>
-          ) : pending ? (
-            <div className="space-y-3">
-              <p className="text-sm font-medium text-zinc-800 dark:text-zinc-100">{pending.prompt}</p>
-              <div className="flex flex-col gap-2">
-                {pending.options.map((o) => (
-                  <Button key={o.id} variant="ghost" className="!justify-start !text-left" onClick={() => pending.resolve(o.id)}>
-                    {o.label}
-                  </Button>
-                ))}
-              </div>
-            </div>
-          ) : scene ? (
-            <div className="space-y-2">
-              <h4 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">{scene.title}</h4>
-              <p className="text-sm leading-relaxed text-zinc-600 dark:text-zinc-300">{scene.text}</p>
-              {done && (
-                <div className="flex flex-wrap gap-2 pt-2">
-                  <Button color="violet" size="sm" onClick={() => begin(false)}>↻ Descend again</Button>
-                  <Button variant="ghost" size="sm" onClick={() => begin(true)}>🎲 Autopilot</Button>
-                </div>
-              )}
-            </div>
-          ) : (
-            <p className="pt-2 text-sm text-zinc-400">…descending…</p>
-          )}
-        </div>
-
-        <div className="md:w-64">
-          <StoryMap graph={DEEP_GRAPH} visited={visited} current={current} />
-        </div>
-      </div>
-    </div>
+    <FlowEditor
+      value={graph}
+      onChange={setGraph}
+      executors={executors}
+      height={560}
+      // Fit on mount: the point of this example is READING the graph — five
+      // endings converging on one api_request — so the whole shape has to be on
+      // screen without hunting for it.
+      canvasProps={{ showHelperLines: true, fitView: true, fitViewOptions: { padding: 0.12 } }}
+    />
   );
 }
 
@@ -510,8 +572,8 @@ const EXAMPLES: Example[] = [
   {
     id: "adventure",
     label: "Choose-your-own-adventure",
-    blurb: "A branching story run headless — each choice pauses the flow for you.",
-    render: () => <AdventureStory />,
+    blurb: "A branching story built from ordinary nodes — User Input pauses for each choice, Switch routes it, and every ending is wired to this site.",
+    render: () => <AdventureExample />,
   },
 ];
 

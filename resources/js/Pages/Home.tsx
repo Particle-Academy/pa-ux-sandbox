@@ -1219,12 +1219,15 @@ export const VENDOR_CODE = `<span class="tok-c"># 2 · Vendor the source — cop
 
 <span class="tok-k">import</span> { Badge } <span class="tok-k">from</span> <span class="tok-s">"@/components/fancy/badge"</span>;`;
 
-export const MCP_CODE = `<span class="tok-c"># Claude Code — install the Fancy UI plugin (recommended)</span>
+export const MCP_CODE = `<span class="tok-c"># Claude Code — registry MCP + skills</span>
 /plugin marketplace add <span class="tok-s">Particle-Academy/fancy-ui-plugin</span>
 /plugin install <span class="tok-s">fancy-ui@fancy-ui</span>
-<span class="tok-c"># registers the registry MCP + skills, with the right transport</span>
 
-<span class="tok-c">// …or wire the raw server into any IDE — .mcp.json</span>
+<span class="tok-c"># Codex — the same, for the Codex CLI</span>
+codex plugin marketplace add <span class="tok-s">Particle-Academy/fancy-ui-codex-plugin</span>
+codex plugin add <span class="tok-s">fancy-ui@fancy-ui</span>
+
+<span class="tok-c">// Any other MCP client — wire the hosted server (no API key)</span>
 { <span class="tok-a">"mcpServers"</span>: { <span class="tok-a">"fancy-ui"</span>: { <span class="tok-a">"type"</span>: <span class="tok-s">"http"</span>, <span class="tok-a">"url"</span>: <span class="tok-s">"https://ui.particle.academy/mcp"</span> } } }`;
 
 // The copyable prompt that introduces an agent to the ecosystem and points it at
@@ -1238,14 +1241,23 @@ primitives, data grids, spreadsheets, workflow engines, whiteboards, xlsx/pptx/d
 writers, Stripe catalogs, feature gating, analytics. Most server capabilities ship
 as a matched PHP and Node pair, so it fits whatever backend we are on.
 
-First, get access to the registry so you can look things up instead of guessing:
+First, get access to the registry so you can look things up instead of guessing.
+Use whichever of these matches the client you are running in:
 
-- Claude Code — install the plugin:
+- Claude Code:
     /plugin marketplace add Particle-Academy/fancy-ui-plugin
     /plugin install fancy-ui@fancy-ui
 
-- Any other client — add the hosted MCP server (streamable HTTP):
+- Codex:
+    codex plugin marketplace add Particle-Academy/fancy-ui-codex-plugin
+    codex plugin add fancy-ui@fancy-ui
+
+- Any other MCP client — add the hosted server (streamable HTTP, no API key):
     https://ui.particle.academy/mcp
+
+The plugins bundle the same registry tools plus skills for architecture,
+components, design, realtime, SEO and SSR. The raw endpoint gives you the tools
+alone, which is enough for everything below.
 
 Then explore it before writing code:
 
@@ -1354,13 +1366,18 @@ export function QuickStart() {
                             <span className="qs-mcp-dot" /> Or let your agent do it
                         </div>
                         <p>
-                            On <strong>Claude Code</strong>, install the{" "}
+                            There's a plugin for{" "}
                             <a href="https://github.com/Particle-Academy/fancy-ui-plugin" target="_blank" rel="noopener noreferrer">
-                                Fancy UI plugin
+                                Claude Code
                             </a>{" "}
-                            — one command wires up the hosted registry MCP <em>and</em> bundles skills
-                            for finding components and building Human+ UX apps. Other IDEs (Cursor, VS
-                            Code) drop the raw server into their config. Your agent then calls{" "}
+                            and one for{" "}
+                            <a href="https://github.com/Particle-Academy/fancy-ui-codex-plugin" target="_blank" rel="noopener noreferrer">
+                                Codex
+                            </a>{" "}
+                            — either wires up the hosted registry MCP <em>and</em> bundles skills for
+                            architecture, components, design, realtime, SEO and SSR. Any other MCP
+                            client drops the hosted server into its config; no API key. Your agent then
+                            calls{" "}
                             <code style={mono}>list-components</code>,{" "}
                             <code style={mono}>search-components</code>, and{" "}
                             <code style={mono}>install-instructions</code> against the live registry —

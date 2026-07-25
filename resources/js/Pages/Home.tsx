@@ -116,7 +116,7 @@ export default function Home({ packages, companions, total_components }: HomePro
                     baseline's <title> under SSR. <Seo/> with no title uses the
                     provider defaultTitle, which matches the home baseline. */}
                 <Seo />
-                <Hero packages={packages} />
+                <Hero packages={packages} companions={companions} />
                 <PackageTicker packages={packages} />
                 <Packages packages={packages} companions={companions} />
                 <HumanPlus />
@@ -131,36 +131,43 @@ export default function Home({ packages, companions, total_components }: HomePro
 
 // ─── Hero ──────────────────────────────────────────────────────────────────
 
-function Hero({ packages }: { packages: PackageRow[] }) {
+function Hero({ packages, companions }: { packages: PackageRow[]; companions: CompanionRow[] }) {
+    // The real size of the kit — the UI grid plus every companion package. The
+    // hero used to say "N UI packages" off the grid alone, which undercounted
+    // the ecosystem by more than half.
+    const packageCount = packages.length + companions.length;
+
     return (
         <section className="hero">
             <div className="container hero-grid">
                 <div>
                     <div className="eyebrow-row">
                         <span className="dot" />
-                        <span>v0.4 · #BYOA</span>
+                        <span>v0.4 · React · PHP · Node</span>
                     </div>
                     <h1 className="display">
-                        Bring your own agent. <span className="gradient-text">Bring your own stack.</span>
+                        Build the app, <span className="gradient-text">not the plumbing.</span>
                     </h1>
                     <p className="lede">
-                        Full-stack and polyglot: a React UI up front, server-side packages for both PHP and
-                        Node behind it. Every surface ships an MCP bridge, so any agent — yours, not ours —
-                        drives the live UI through stable handles. No DOM scraping, no lock-in.
+                        {packageCount} small packages covering the parts every real app needs and nobody wants
+                        to write twice — data grids, spreadsheets, workflow engines, xlsx/pptx/docx writers,
+                        Stripe catalogs, feature gating. Install one or take the whole stack; every server
+                        capability ships for PHP <em>and</em> Node. Agent-friendly throughout, so you can hand
+                        the boring half over and stay in flow.
                     </p>
                     <div className="hero-cta">
                         <Link className="btn btn-primary" href="/docs">
                             <Terminal size={15} />
                             Install the kit
                         </Link>
-                        <Link className="btn btn-ghost" href="/agent-playground">
-                            See Human+ in action
-                            <ArrowRight size={15} />
-                        </Link>
+                        <a className="btn btn-ghost" href="#install">
+                            <Bot size={15} />
+                            Introduce your agent to Fancy
+                        </a>
                     </div>
                     <div className="hero-meta">
                         <span className="meta-item">
-                            <Package size={13} />{` ${packages.length} UI packages`}
+                            <Package size={13} />{` ${packageCount} packages`}
                         </span>
                         <span className="meta-item">
                             <Github size={13} /> MIT licensed
@@ -273,10 +280,11 @@ export function Packages({ packages, companions }: { packages: PackageRow[]; com
                 <div className="eyebrow-row">
                     <span>The family</span>
                 </div>
-                <h2 className="section-title">{count} small packages. Lift any one out.</h2>
+                <h2 className="section-title">{count} UI packages. Lift any one out.</h2>
                 <p className="section-sub">
                     Not a monolith. Each ships on its own — npm or Packagist — and composes with the
-                    rest. Most apps reach for two or three.
+                    rest. Most apps reach for two or three. The companions below take the kit to{" "}
+                    {packages.length + companions.length} in total.
                 </p>
                 <div className="pkg-grid">
                     {packages.map((p) => {
@@ -1219,11 +1227,18 @@ export const MCP_CODE = `<span class="tok-c"># Claude Code — install the Fancy
 <span class="tok-c">// …or wire the raw server into any IDE — .mcp.json</span>
 { <span class="tok-a">"mcpServers"</span>: { <span class="tok-a">"fancy-ui"</span>: { <span class="tok-a">"type"</span>: <span class="tok-s">"http"</span>, <span class="tok-a">"url"</span>: <span class="tok-s">"https://ui.particle.academy/mcp"</span> } } }`;
 
-// The copyable prompt that points an agent at the plugin or the hosted MCP.
+// The copyable prompt that introduces an agent to the ecosystem and points it at
+// the registry MCP. Deliberately NOT the agent-driving pitch — this one just
+// gets an agent oriented so it looks things up instead of writing from memory.
 // Plain ASCII so it pastes cleanly into any client.
-export const AGENT_PROMPT = `Help me build with the Fancy UI suite from Particle Academy — Human+ UX components and headless packages for React + Laravel/Node, where humans and agents share the same UI over MCP tool bridges.
+export const AGENT_PROMPT = `Get to know the Fancy UI suite from Particle Academy before we build anything.
 
-First, get access to the registry:
+It is a kit of ~64 small, independent packages for React, PHP and Node — UI
+primitives, data grids, spreadsheets, workflow engines, whiteboards, xlsx/pptx/docx
+writers, Stripe catalogs, feature gating, analytics. Most server capabilities ship
+as a matched PHP and Node pair, so it fits whatever backend we are on.
+
+First, get access to the registry so you can look things up instead of guessing:
 
 - Claude Code — install the plugin:
     /plugin marketplace add Particle-Academy/fancy-ui-plugin
@@ -1232,7 +1247,17 @@ First, get access to the registry:
 - Any other client — add the hosted MCP server (streamable HTTP):
     https://ui.particle.academy/mcp
 
-Then use its tools — start_project, list-components, search-components, get-component, install-instructions — to choose packages and scaffold the app instead of guessing from memory. Browse the full catalog at https://ui.particle.academy/packages.`;
+Then explore it before writing code:
+
+    start_project          pick the stack — backend first
+    list_components        everything available
+    search_components      find one by concept ("data grid", "kanban")
+    get_component          read the real source
+    install_instructions   exact install commands
+    list_nodes             workflow nodes for fancy-flow
+
+Tell me what you found that fits, and what you would reach for. Full catalog:
+https://ui.particle.academy/packages`;
 
 /** Homepage "Show this to your agent" card — one copyable prompt that hands an
  *  agent the plugin + hosted-MCP entry points. */
@@ -1248,9 +1273,9 @@ export function AgentPrompt() {
         <div className="fancy-card" style={{ padding: 0, overflow: "hidden", marginBottom: 28 }}>
             <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "11px 16px", borderBottom: "1px solid var(--border-1)" }}>
                 <Bot size={16} style={{ color: "var(--accent, #8b5cf6)" }} />
-                <strong>Show this to your agent</strong>
+                <strong>Introduce your agent to Fancy</strong>
                 <span style={{ marginLeft: 8, fontSize: 12.5, color: "var(--fg-3)" }}>
-                    hands it the plugin or the MCP — then it takes over
+                    points it at the registry so it looks things up, not guesses
                 </span>
                 <span style={{ flex: 1 }} />
                 <button

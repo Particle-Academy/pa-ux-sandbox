@@ -91,8 +91,8 @@ class SeoServiceProvider extends ServiceProvider
     private function registerRouteResolvers(string $base): void
     {
         FancySeo::route('home', [
-            'title' => 'Fancy UI for React, Inertia, and Laravel | Human-Agent UI',
-            'description' => self::TAGLINE.' A suite of React + Laravel UI primitives, every component both authorable (terse, JSON-friendly) and inhabitable by AI agents over MCP — no DOM scraping.',
+            'title' => 'Fancy UI — build the app, not the plumbing | React, PHP, Node',
+            'description' => 'A kit of small, independent packages for React, PHP and Node: UI primitives, data grids, spreadsheets, workflow engines, xlsx/pptx/docx writers, Stripe catalogs, feature gating. Take one or take the stack — and every server capability ships for both PHP and Node.',
         ]);
 
         FancySeo::route('packages.index', [

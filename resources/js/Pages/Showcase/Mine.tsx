@@ -1,5 +1,5 @@
 import { Head, Link, router, usePage } from "@inertiajs/react";
-import { useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import { Badge, Button, Card, Heading, Icon, Text } from "@particle-academy/react-fancy";
 import { Layout } from "../Layout";
 
@@ -73,6 +73,112 @@ function Stat({ label, value }: { label: string; value: string | number }) {
     );
 }
 
+/**
+ * Grouping. A list of registered sites is mostly repetition — every unverified
+ * row carries the same "add the pixel" hint. Splitting verified from awaiting
+ * collapses that noise into one labelled block instead of N identical ones.
+ */
+type Group = "verified" | "pending";
+
+const groupOf = (s: Submission): Group => (s.status === "verified" ? "verified" : "pending");
+
+const GROUP_LABEL: Record<Group, string> = {
+    verified: "Verified",
+    pending: "Awaiting verification",
+};
+
+function orderByGroup(list: Submission[]): Submission[] {
+    return [
+        ...list.filter((s) => groupOf(s) === "verified"),
+        ...list.filter((s) => groupOf(s) !== "verified"),
+    ];
+}
+
+/** A heading only on the first row of each group, so groups read as sections. */
+function groupHeadingFor(list: Submission[], i: number): { label: string; count: number } | null {
+    const g = groupOf(list[i]);
+    if (i > 0 && groupOf(list[i - 1]) === g) {
+        return null;
+    }
+    return { label: GROUP_LABEL[g], count: list.filter((s) => groupOf(s) === g).length };
+}
+
+function GroupHeader({ label, count }: { label: string; count: number }) {
+    return (
+        <div className="flex items-center gap-3 pt-2">
+            <span className="text-sm font-semibold text-zinc-700 dark:text-zinc-200">{label}</span>
+            <span className="rounded-full bg-zinc-100 px-2 py-0.5 font-mono text-[11px] tabular-nums text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400">
+                {count}
+            </span>
+            <span className="h-px flex-1 bg-zinc-200 dark:bg-zinc-800" />
+        </div>
+    );
+}
+
+/** Three aggregates, all derived from the rows already on the page. */
+function SubmissionsSummary({ submissions }: { submissions: Submission[] }) {
+    const summary = useMemo(() => {
+        const verified = submissions.filter((s) => s.status === "verified");
+        const pageviews = verified.reduce((n, s) => n + (s.stats?.pageviews ?? 0), 0);
+        const human = submissions.reduce((n, s) => n + (s.stats?.human ?? 0), 0);
+        const agent = submissions.reduce((n, s) => n + (s.stats?.agent ?? 0), 0);
+        const total = human + agent;
+        return {
+            registered: submissions.length,
+            verified: verified.length,
+            awaiting: submissions.length - verified.length,
+            pageviews,
+            agentShare: total > 0 ? Math.round((agent / total) * 100) : null,
+        };
+    }, [submissions]);
+
+    const boxes = [
+        {
+            icon: "globe",
+            label: "Registered",
+            value: summary.registered.toLocaleString(),
+            sub: `${summary.verified} verified · ${summary.awaiting} awaiting`,
+        },
+        {
+            icon: "eye",
+            label: "Total pageviews",
+            value: summary.pageviews.toLocaleString(),
+            sub: "across verified sites",
+        },
+        {
+            icon: "bot",
+            label: "Agent traffic",
+            value: summary.agentShare === null ? "—" : `${summary.agentShare}%`,
+            sub: summary.agentShare === null ? "no events yet" : "of recorded events",
+            accent: true,
+        },
+    ];
+
+    return (
+        <div className="mt-6 grid gap-3 sm:grid-cols-3">
+            {boxes.map((b) => (
+                <div
+                    key={b.label}
+                    className="rounded-xl border border-zinc-200 bg-zinc-50/60 px-4 py-3 dark:border-zinc-800 dark:bg-zinc-900/40"
+                >
+                    <div className="flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
+                        <Icon name={b.icon} size={12} />
+                        {b.label}
+                    </div>
+                    <div
+                        className={`mt-1 font-mono text-2xl font-semibold tabular-nums ${
+                            b.accent ? "text-sky-600 dark:text-sky-400" : "text-zinc-900 dark:text-zinc-50"
+                        }`}
+                    >
+                        {b.value}
+                    </div>
+                    <div className="mt-0.5 text-xs text-zinc-500 dark:text-zinc-400">{b.sub}</div>
+                </div>
+            ))}
+        </div>
+    );
+}
+
 export default function MySubmissions({
     submissions,
     agentKeys = [],
@@ -139,6 +245,8 @@ export default function MySubmissions({
                 </Button>
             </div>
 
+            {submissions.length > 0 && <SubmissionsSummary submissions={submissions} />}
+
             {submissions.length === 0 ? (
                 <Card className="mt-8">
                     <Card.Body>
@@ -168,11 +276,14 @@ export default function MySubmissions({
                 </Card>
             ) : (
                 <div className="mt-8 space-y-4">
-                    {submissions.map((s) => {
+                    {orderByGroup(submissions).map((s, i, list) => {
                         const host = hostOf(s.url);
                         const hasActivity = !!s.stats && s.stats.totalEvents > 0;
+                        const heading = groupHeadingFor(list, i);
                         return (
-                            <Card key={s.id}>
+                            <Fragment key={s.id}>
+                            {heading && <GroupHeader label={heading.label} count={heading.count} />}
+                            <Card>
                                 <Card.Body>
                                     <div className="flex flex-wrap items-start justify-between gap-3">
                                         <div className="min-w-0">
@@ -280,6 +391,7 @@ export default function MySubmissions({
                                     </div>
                                 </Card.Body>
                             </Card>
+                            </Fragment>
                         );
                     })}
                 </div>

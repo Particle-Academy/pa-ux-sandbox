@@ -8,23 +8,22 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Human+ UX** = applications where humans and agents share the same UI, trading control fluidly: every component must be both an *authoring surface* (terse, JSON-friendly, agents compose it) and an *inhabited surface* (agents drive it via MCP bridges + stable handles, never DOM scraping or Playwright).
 
-The full **component contract** — the bullet checklist every stateful component must meet — is the single source in [`../CLAUDE.md`](../CLAUDE.md#component-contract). Don't restate it here; follow it there. Whitepaper: [`docs/human-plus-ux.md`](./docs/human-plus-ux.md).
+The full **component contract** — the bullet checklist every stateful component must meet — is the single source in [`../../CLAUDE.md`](../../CLAUDE.md#component-contract). Don't restate it here; follow it there. Whitepaper: [`docs/human-plus-ux.md`](./docs/human-plus-ux.md).
 
 ## Project Overview
 
-This is the **Fancy UI showcase site** — a Laravel 13 + Vite + React 19 + Inertia + Tailwind v4 app that consumes the Fancy UI package suite. It lives in the flat `fancy-ui/` workspace alongside each package as an independent sibling. See `../CLAUDE.md` for workspace-wide rules; this file covers sandbox-specific guidance.
+This is the **Fancy UI showcase site** — a Laravel 13 + Vite + React 19 + Inertia + Tailwind v4 app that consumes the Fancy UI package suite. It lives at `repos/px-ui-sandbox` inside the **`fancy.agi` envelope**, alongside every other repo in the suite. See [`../../AGENTS.md`](../../AGENTS.md) for envelope-wide rules; this file covers sandbox-specific guidance.
 
-**No submodules. No Composer path repos. No Flux.**
+**No Composer path repos. No Vite source aliases. No Flux.** The envelope tracks each repo — this one included — as a **git submodule** pinned to a commit; after shipping a package you advance its pin from the envelope (`git submodule update --remote repos/<name>`). Don't confuse "no path repos" with "no submodules".
 
-**PHP packages** come from Packagist (declared in `composer.json`):
-- `particle-academy/laravel-catalog` — Stripe catalog (Products, Prices) with optional admin UI
-- `particle-academy/laravel-fms` — Feature Management System; dependency of Catalog
-- `particle-academy/holy-sheet` — xlsx writer used by the AI sheets demo
-- `particle-academy/dark-slide` — pptx writer/reader
+**The installed dependencies are `composer.json` and `package.json` — read them; never trust a hand-maintained list.** As of this writing that's 12 Composer packages and 33 npm packages, and both lists move most weeks. The highlights worth knowing without opening a manifest:
+
+- **PHP (Packagist):** `laravel-catalog` (Stripe catalog) + `laravel-fms` (feature gating) + `laravel-fun-lab` (gamification); `holy-sheet` / `dark-slide` / `last-word` (xlsx / pptx / docx writers); `fancy-seo`, `fancy-x-files`, `fancy-heuristics`, `fancy-cms`, `fancy-mlm`, `fancy-flow-php`.
+- **Most server capabilities ship as a matched PHP + Node pair** — `holy-sheet`/`holy-sheet-js`, `dark-slide`/`dark-slide-js`, `last-word`/`last-word-js`, `laravel-catalog`/`fancy-catalog`, `laravel-fms`/`fancy-features`, `fancy-mlm`/`fancy-mlm-js`, `fancy-heuristics`/`fancy-heuristics-js`. Pick the one that matches the runtime you're in; the contract is identical.
 
 **JS/TS packages** are installed from npm like in any other consumer app. There are **no Vite aliases pointing at sibling source** — that means the local build is byte-for-byte the same as Forge's, but it also means a package change isn't visible in the showcase until the package is shipped (bump → tag → push → wait for CI publish → `npm update @particle-academy/<pkg>`). For tight iteration on a single package, `cd ../<pkg> && npm run dev` (or `tsup --watch`) drives that package's own demos in isolation.
 
-The installed packages:
+Notable installed packages (not exhaustive — see `package.json`):
 - `@particle-academy/react-fancy` — core React component library (stays raw React)
 - `@particle-academy/fancy-3d` (+ `/dom`, `/canvas`) — engine-agnostic 3D core: JSON-friendly `Scene` types, the engine-pluggable `<Canvas>` with a built-in DOM/CSS-3D renderer, and shape/layout helpers. **No WebGL-engine dependency.** WebGL engines + `<Stage>`/`<Monitor>`/`<Card3D>` ship as optional sibling adapters — `@particle-academy/fancy-3d-babylon` (Babylon) and `@particle-academy/fancy-3d-three` (three.js).
 - `@particle-academy/fancy-3d-babylon` (+ `/react`, `/engine`) — Babylon.js adapter for fancy-3d (`<Stage>`/`<Monitor>`/`<Card3D>` + `babylonEngine`)
@@ -54,7 +53,7 @@ reload                    # Clear cache + npm run build (custom shortcut)
 
 ### Building
 
-**`npm run build` runs `vite build && vite build --ssr`** — the client bundle plus the SSR bundle (`bootstrap/ssr/ssr.js`, gitignored) so the Forge deploy + `php artisan inertia:start-ssr` daemon have a bundle to load. (`build:client` is client-only if you need it.) No other workspace tricks: Vite resolves every `@particle-academy/*` import from `node_modules` against the versions pinned in `package.json` + `package-lock.json`. Same shape locally and on Forge. To pick up a package release, `npm update @particle-academy/<pkg>` first.
+**`npm run build` runs `vite build && vite build --ssr && node refresh-ssr.mjs`** — the client bundle, the SSR bundle (`bootstrap/ssr/ssr.js`, gitignored) so the Forge deploy + `php artisan inertia:start-ssr` daemon have a bundle to load, and then the SSR-daemon refresh. (`build:client` is client-only if you need it.) If you build by hand, don't skip `refresh-ssr.mjs` — a running SSR daemon will keep serving the old bundle. No other workspace tricks: Vite resolves every `@particle-academy/*` import from `node_modules` against the versions pinned in `package.json` + `package-lock.json`. Same shape locally and on Forge. To pick up a package release, `npm update @particle-academy/<pkg>` first.
 
 ### Testing
 ```bash
@@ -115,7 +114,7 @@ Generated xlsx artifacts land in `storage/app/public/ai-sheets/` and are served 
 
 The Fancy UI strategic goal is **complete app surfaces where agents drive the UI and humans ride shotgun, trading control fluidly**. Two packages are the top-level entry points:
 
-- **`@particle-academy/agent-integrations`** — MCP server, presence layer, share relay, and per-package bridges (`registerWhiteboardBridge`, `registerFlowBridge`, `registerFormBridge`, `registerSheetsBridge`, `registerCodeBridge`, `registerChartsBridge`, `registerSceneBridge`, `registerScreensBridge`, `registerSlidesBridge`).
+- **`@particle-academy/agent-integrations`** — MCP server, presence layer, share relay, and **20** per-package bridges (see the table below). The full list lives in `agent-integrations/src/bridges/` and its `package.json` `exports` — check there before assuming a surface isn't bridged.
 - **`@particle-academy/fancy-screens`** — `<Screen>` containers + global `<ScreenSystem>` + ports + `ScreenMeta.agentActivity` field for cross-screen presence.
 
 **Pattern for adding a new surface to the Human+ UX vocabulary:**
@@ -148,7 +147,18 @@ The Fancy UI strategic goal is **complete app surfaces where agents drive the UI
 | `charts` | `chart_*` | fancy-echarts `<EChart>` |
 | `scene` | `scene_*` | fancy-3d `Scene` types (engine-agnostic) |
 | `screens` | `screen_*` | fancy-screens `<Screen>` registry |
-| `slides` | `deck_*` / `slide_*` / `element_*` | fancy-slides `<DeckEditor>` / `<SlideViewer>` (since `agent-integrations@0.6.3`) |
+| `slides` | `deck_*` / `slide_*` / `element_*` | fancy-slides `<DeckEditor>` / `<SlideViewer>` |
+| `artboard` | `artboard_*` | fancy-artboard `<ArtBoard>` + pieces |
+| `terminal` | `terminal_*` | fancy-term `<Terminal>` (read / write / run, `pendingMode`) |
+| `tui` | `tui_*` | fancy-tui Ink surfaces (push + inbox delivery) |
+| `map` | `map_*` | fancy-map `<Map>` — pan, pins, fit bounds, follow |
+| `git` | `git_*` | fancy-git-ui — status / log / diff, proposal-first mutations |
+| `files` | `files_*` | file browser / viewer surfaces |
+| `doc` | `get_node` / `set_props` / … | the shared `fancy-doc-commons` document model |
+| `cms` | `set_style` / `set_layout` / … | fancy-cms-ui page documents |
+| `navigation` | `page_*` | site-wide co-browse — read / focus / navigate the app itself |
+| `catalog` | `catalog_*` | laravel-catalog / fancy-catalog products + prices |
+| `features` | `features_*` | laravel-fms / fancy-features flags + quotas |
 | (cross-cutting) | `agent_undo` / `agent_redo` / `agent_history` | per-agent undo stack |
 
 **Relay infrastructure** lives at `app/Http/Controllers/AgentRelayController.php` (generic — it carries any MCP frames: co-browse, whiteboard, flow, …). Routes in `routes/web.php` under `/agent-relay/*` (with `/whiteboard-share/*` kept as a back-compat alias — state is keyed by session id, not path). CSRF-exempt for external clients via `bootstrap/app.php`.
@@ -167,7 +177,7 @@ The Fancy UI strategic goal is **complete app surfaces where agents drive the UI
 
 ## Git Rules
 
-- **No submodules anywhere in the workspace.** Each sibling package (`../react-fancy`, `../fancy-3d`, …) is its own independent git repo with its own remote. Edit packages in their own folders; the sandbox sees changes only after they're shipped to npm.
+- **Code lives in the submodule, not the envelope.** Every repo (`repos/react-fancy`, `repos/fancy-3d`, …) is its own independent git repo with its own remote, tracked by the `fancy.agi` envelope as a **git submodule pinned to a commit**. Edit packages in their own folder, commit + push there, then advance the envelope's pin separately (`git submodule update --remote repos/<name>` → `git add repos/<name>` → commit in the envelope). The sandbox sees changes only after they're shipped to npm/Packagist.
 - **NEVER use `git add -A` or `git add .`**. Always stage specific files by name. This workspace has untracked experiments, secrets, and files that must not be blindly committed.
 - **Push when the task is done — don't ask first.** Commit locally as you go; once the work is complete and verified, push it without asking for push permission. Don't push half-done work mid-task.
 - Before every commit, review changes with `git diff --stat` or `git status`, then `git add <specific files>`.
@@ -176,9 +186,9 @@ The Fancy UI strategic goal is **complete app surfaces where agents drive the UI
 
 **"Ship" = full publish flow** (bump → commit → tag → push tag → wait
 for CI/Packagist → update consumer dep), never just a branch push. The
-full workspace publishing protocol (new-package bootstrap, OIDC Trusted
-Publishing, workflow gotchas, PHP vs TS flows) is a workspace-level
-document at the workspace root: `../docs/publishing.md`.
+full publishing protocol (new-package bootstrap, OIDC Trusted
+Publishing, workflow gotchas, PHP vs TS flows) lives in the envelope:
+[`../../.ai/knowledge/publishing.md`](../../.ai/knowledge/publishing.md).
 
 ===
 
@@ -193,9 +203,11 @@ The Laravel Boost guidelines are specifically curated by Laravel maintainers for
 
 This application is a Laravel application and its main Laravel ecosystems package & versions are below. You are an expert with them all. Ensure you abide by these specific packages & versions.
 
-- php - 8.4
-- laravel/cashier (CASHIER) - v15
-- laravel/framework (LARAVEL) - v12
+- php - 8.3+
+- inertiajs/inertia-laravel (INERTIA) - v3
+- laravel/ai (AI) - v0
+- laravel/cashier (CASHIER) - v16
+- laravel/framework (LARAVEL) - v13
 - laravel/prompts (PROMPTS) - v0
 - laravel/boost (BOOST) - v2
 - laravel/mcp (MCP) - v0
@@ -331,16 +343,16 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 
 - If you receive an "Illuminate\Foundation\ViteException: Unable to locate file in Vite manifest" error, you can run `npm run build` or ask the user to run `npm run dev` or `composer run dev`.
 
-=== laravel/v12 rules ===
+=== laravel/v13 rules ===
 
-# Laravel 12
+# Laravel 13
 
 - CRITICAL: ALWAYS use `search-docs` tool for version-specific Laravel documentation and updated code examples.
 - Since Laravel 11, Laravel has a new streamlined file structure which this project uses.
 
-## Laravel 12 Structure
+## Laravel 13 Structure
 
-- In Laravel 12, middleware are no longer registered in `app\Http/Kernel.php`.
+- Middleware are no longer registered in `app\Http/Kernel.php`.
 - Middleware are configured declaratively in `bootstrap/app.php` using `Application::configure()->withMiddleware()`.
 - `bootstrap/app.php` is the file to register middleware, exceptions, and routing files.
 - `bootstrap/providers.php` contains application specific service providers.
@@ -350,7 +362,7 @@ This project has domain-specific skills available in `**/skills/**`. You MUST ac
 ## Database
 
 - When modifying a column, the migration must include all of the attributes that were previously defined on the column. Otherwise, they will be dropped and lost.
-- Laravel 12 allows limiting eagerly loaded records natively, without external packages: `$query->latest()->limit(10);`.
+- Laravel allows limiting eagerly loaded records natively, without external packages: `$query->latest()->limit(10);`.
 
 ### Models
 
@@ -778,21 +790,3 @@ Resource features support metered usage:
 
 </laravel-boost-guidelines>
 
-## BOTS -- Bolt-On Taskmaster System
-
-> **IMPORTANT:** Read `.bots/AGENTS.md` before dispatching workers or processing shortcodes. It contains worker domains, enforced chains, gate types, team mode instructions, and output directory rules.
-
-**Shortcodes** (queue work from any prompt):
-```
-w:> <task description>    Queue background work
-n:> <frame topic>         Set next frame after current work
-```
-
-**Quick CLI:**
-```
-npm run tm status          Active jobs
-npm run tm jobs            All jobs
-npm run tm approve <id>    Approve checkpoint
-```
-
-Full reference: `.bots/AGENTS.md`

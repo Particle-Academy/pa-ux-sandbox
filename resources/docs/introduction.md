@@ -20,7 +20,7 @@ Fancy is **two families of package**. **UI packages** are the surfaces humans an
 
 The component libraries and interactive surfaces. Each is controlled (`value` + `onChange`), JSON-friendly, and agent-bridgeable.
 
-- **`react-fancy`** — ~50 Tailwind v4 React primitives; the foundation everything else builds on. *Button, Card, Tabs, Dropdown, Modal, Sidebar, Navbar, Calendar, Table, Toast, …*
+- **`react-fancy`** — ~70 Tailwind v4 React primitives; the foundation everything else builds on. *Button, Card, Tabs, Dropdown, Modal, Sidebar, Navbar, Calendar, Table, Toast, …*
 - **`fancy-whiteboard`** — transport-agnostic collaborative board with built-in presence.
 - **`fancy-artboard`** — Figma-style pan/zoom design canvas (board + pieces + notes).
 - **`fancy-flow`** — visual workflow editor + topological runner, built on React Flow.

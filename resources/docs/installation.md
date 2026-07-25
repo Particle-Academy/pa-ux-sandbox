@@ -47,7 +47,7 @@ npx fancy-cli@latest init
 npx fancy-cli@latest add card
 
 # Add several at once (registry deps resolve automatically).
-npx fancy-cli@latest add card action tabs dropdown
+npx fancy-cli@latest add card button tabs dropdown
 ```
 
 After this, you import from your own codebase:

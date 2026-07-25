@@ -573,7 +573,7 @@ class PackageRegistry
         return [
             'slug' => 'react-fancy',
             'name' => 'react-fancy',
-            'tagline' => 'Tailwind v4 + React component library — about 50 primitives.',
+            'tagline' => 'Tailwind v4 + React component library — about 70 primitives.',
             'npm' => '@particle-academy/react-fancy',
             'repo' => 'Particle-Academy/react-fancy',
             'language' => 'TypeScript',

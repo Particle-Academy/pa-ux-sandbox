@@ -76,15 +76,32 @@ Show every component available in the registry, grouped by package:
 npx fancy-cli@latest list
 
 # Output:
-# react-fancy (54)
+# react-fancy (68)
 #   accordion        Accordion          Stateful disclosure surface.
 #   button           Button             The flexible button.
 #   card             Card               Container with header/body/footer.
 #   ...
-# fancy-flow (3)
+# fancy-flow (6)
 #   flow-editor      FlowEditor         Workflow canvas + executor.
 #   ...
 ```
+
+## Workflow nodes — `add node` / `list nodes` / `search nodes`
+
+A [fancy-flow](/packages/fancy-flow) graph runs on node **kinds**. The engine ships 27 builtins that need no install; the rest come from the node marketplace, and the CLI installs them per runtime.
+
+```bash
+# Find one by concept before you hand-roll a step in app code.
+npx fancy-cli@latest search nodes "route with an llm"
+
+# Every published node, grouped by category.
+npx fancy-cli@latest list nodes
+
+# Install — checks the node runs on the runtimes your project actually executes on.
+npx fancy-cli@latest add node @acme/salesforce_upsert
+```
+
+`add node` is a subcommand rather than a flag because it installs something different from a component: components vendor source files; nodes install per-runtime packages after a compatibility check. A node installed only for TypeScript is invisible to a PHP runner and the graph fails at that node — `add node` reads the project's real runtimes and refuses a mismatch, which raw `npm install` / `composer require` cannot.
 
 ## `search <query>`
 

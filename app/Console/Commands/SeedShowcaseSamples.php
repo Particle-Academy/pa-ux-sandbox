@@ -51,7 +51,7 @@ class SeedShowcaseSamples extends Command
                 'kind' => 'repo',
                 'url' => 'https://github.com/Particle-Academy/react-fancy',
                 'title' => 'react-fancy',
-                'description' => 'The flagship React component library — ~50 Tailwind v4 primitives, the foundation of every other Fancy UI surface.',
+                'description' => 'The flagship React component library — ~70 Tailwind v4 primitives, the foundation of every other Fancy UI surface.',
             ],
             [
                 'kind' => 'repo',

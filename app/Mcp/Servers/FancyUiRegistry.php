@@ -25,8 +25,11 @@ use Laravel\Mcp\Server\Attributes\Version;
 #[Version('0.1.0')]
 #[Instructions(<<<'TXT'
 The Fancy UI install-MCP. Lets you browse, search, and install components from
-the Fancy UI registry (~100 React + PHP primitives across the full suite — the
-UI packages plus the headless companion packages like holy-sheet and dark-slide).
+the Fancy UI registry — 245 installable components across 64 packages (47
+TypeScript, 16 PHP, 1 polyglot). Fancy UI is an ECOSYSTEM, not just a component
+library: the React surfaces, plus headless engines, server backends, agentic
+document writers, commerce, analytics, and tooling. Most server capabilities
+ship as a matched PHP + Node pair.
 
 Starting a NEW project (or unsure where to begin)? Call `start_project` FIRST.
 It leads with the one decision that shapes everything else — your BACKEND: PHP
@@ -47,15 +50,16 @@ Workflow:
    bundle.
 
 For the DESIGN phase of a new project or a redesign — before picking components —
-use `gallery_list_styles` to browse the Inspiration Gallery collections (fictional
-businesses, each designed 20 ways from restyled Fancy primitives: "fieldwork", a
-studio portfolio from Swiss-minimal to agent-native, and "mom-n-pops", a family
-food truck with live Fancy surfaces woven in — order trackers, configurators, a
-reservations calendar, ⌘K ordering, agentic catering) and `gallery_get_blueprint`
-to fetch a style's design recipe (tokens, layout, the restyled-component palette,
-remix notes). These are READ-ONLY blueprints to re-implement and mix-and-match in
-the user's own project, not source to copy. Pairs with the `/design` skill in the
-fancy-ui Claude Code plugin.
+use `gallery_list_styles` to browse the Inspiration Gallery — three collections,
+each designed 20 ways from restyled Fancy primitives: "fieldwork", a studio
+portfolio from Swiss-minimal to agent-native; "mom-n-pops", a family food truck
+with live Fancy surfaces woven in (order trackers, configurators, a reservations
+calendar, ⌘K ordering, agentic catering); and "dashboards", 20 chart-driven app
+dashboards from fitness to fleet ops. Then `gallery_get_blueprint` fetches a
+style's design recipe (tokens, layout, the restyled-component palette, remix
+notes). These are READ-ONLY blueprints to re-implement and mix-and-match in the
+user's own project, not source to copy. Pairs with the `/design` skill in the
+fancy-ui plugins for Claude Code and Codex.
 
 WORKFLOW NODES — building a fancy-flow graph? Before you hand-roll a step in
 app code, call `search_nodes` with the concept ("upload to s3", "wait for
@@ -63,10 +67,13 @@ approval", "route with an llm"). The expensive failure is not "could not install
 it" — it is not knowing a node existed and writing a worse version inline.
 
 Two places a node can come from, and they are NOT the same:
-1. fancy-flow's CORE builtins ship with the engine — triggers, branch,
-   switch_case, merge, for_each, wait, transform, http, output, user_input,
-   human_approval, subflow, llm_router, llm_call. These need NO installation.
-   Check these FIRST; `search_nodes` does not list them.
+1. fancy-flow's CORE builtins ship with the engine — 27 kinds, and they need NO
+   installation: manual_trigger, webhook_trigger, schedule_trigger, user_input,
+   rich_user_input, human_approval, branch, switch_case, merge, for_each, wait,
+   transform, variable, memory_store, data_store, llm_call, llm_router (alias
+   llm_branch), tool_use, embed_search, api_request, webhook_out, notify, log,
+   subflow, lane, note, output. Check these FIRST; `search_nodes` does not list
+   them. NOTE: there is no `http` kind — the HTTP node is `api_request`.
 2. The MARKETPLACE — third-party node packages, which is what `list_nodes` /
    `search_nodes` / `get_node` / `node_install_instructions` cover. It may well
    be empty; that is not an error.

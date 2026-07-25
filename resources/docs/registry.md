@@ -81,7 +81,7 @@ Each item carries enough to render in a list or run substring search against. Th
 
 ## How consumers use it
 
-The reference consumer is the [`fancy-ui` CLI](/docs/cli) but anything that speaks HTTP can use it.
+The reference consumer is the [`fancy-cli` CLI](/docs/cli) but anything that speaks HTTP can use it.
 
 ### Manual fetch
 

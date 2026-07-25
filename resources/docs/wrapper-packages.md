@@ -18,7 +18,7 @@ A typed React wrapper around <a href="https://echarts.apache.org/" target="_blan
 
 ## fancy-flow → React Flow
 
-A batteries-included workflow editor *and* topological runner built on <a href="https://reactflow.dev/" target="_blank" rel="noopener noreferrer">React Flow</a> — which it **bundles and hides** behind a `defineNode` + `<NodePort>` authoring API, so you never import `@xyflow/react` directly. Six built-in node kinds, a real `runFlow` / `useFlowRun` runtime with per-node status events, and a JSON-serializable `FlowGraph`.
+A batteries-included workflow editor *and* topological runner built on <a href="https://reactflow.dev/" target="_blank" rel="noopener noreferrer">React Flow</a> — which it **bundles and hides** behind a `defineNode` + `<NodePort>` authoring API, so you never import `@xyflow/react` directly. 27 built-in node kinds (triggers, `branch` / `switch_case` / `merge` / `for_each`, `http` + `api_request`, `transform`, `wait`, `user_input` / `human_approval`, `subflow`, `llm_call` / `llm_router`, …), a real `runFlow` / `useFlowRun` runtime with per-node status events, and a JSON-serializable `FlowGraph`. It's a **shuttle, not an engine** for AI: core declares a `registerLlmClient` contract and never imports a provider SDK — opt-in adapters ride on the `./llm/vercel-ai` and `./llm/prism` subpaths.
 
 - **Package page →** [fancy-flow](/packages/fancy-flow)
 - **Concepts (handles, connections, viewport) →** <a href="https://reactflow.dev/learn" target="_blank" rel="noopener noreferrer">React Flow concepts guide</a>

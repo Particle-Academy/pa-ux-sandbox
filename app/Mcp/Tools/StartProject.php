@@ -26,8 +26,8 @@ class StartProject extends Tool
             'title' => 'Start a Fancy UI project',
             'first_decision' => 'Choose your BACKEND first — it decides which server-side packages you install. The React UI (react-fancy + the Human+ surfaces + the agent-integrations bridges) is the SAME on every backend; only the server layer changes.',
             'ui_is_universal' => [
-                'core_ui' => '@particle-academy/react-fancy — ~50 React 19 + Tailwind v4 primitives. Plain React; works under any backend.',
-                'human_plus_surfaces' => 'whiteboard, flow, sheets, slides, code, term, diff, 3d, echarts, screens, artboard — React packages that render on any backend.',
+                'core_ui' => '@particle-academy/react-fancy — ~70 React 19 + Tailwind v4 primitives. Plain React; works under any backend.',
+                'human_plus_surfaces' => 'whiteboard, flow, sheets, slides, code, term, tui, diff, map, 3d, echarts, screens, artboard, git-ui, mlm-ui, cms-ui — React packages that render on any backend.',
                 'agents' => '@particle-academy/agent-integrations — MCP bridges so an embedded agent co-drives the SAME UI. Backend-agnostic.',
             ],
             'mirror_strategy' => [

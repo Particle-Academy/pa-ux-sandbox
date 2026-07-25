@@ -79,7 +79,7 @@ class ComponentContext
 
         'fancy-flow/flow-editor' => [
             'why' => 'Visual workflow editors are useful in three places (no-code builders, agent toolchains, internal automations) and most teams either lift React Flow and re-style it or build something fragile from scratch. The result is editor surfaces that look great in screenshots and break the moment anyone tries to actually run a workflow.',
-            'what' => '<code>FlowEditor</code> is a controlled workflow canvas on top of React Flow, with six built-in node kits, a topological executor, and a Human+ UX bridge so agents can read and mutate the graph via MCP — without DOM scraping or Playwright.',
+            'what' => '<code>FlowEditor</code> is a controlled workflow canvas on top of React Flow, with 27 built-in node kinds, a topological executor, and a Human+ UX bridge so agents can read and mutate the graph via MCP — without DOM scraping or Playwright.',
             'how' => 'Hold the flow in state with <code>useFlowState</code>, render <code>&lt;FlowEditor&gt;</code>, and call <code>useFlowRun</code> to execute. Wire the flow bridge from <code>@particle-academy/agent-integrations/bridges/flow</code> if you want an embedded agent to author or modify the graph.',
         ],
 

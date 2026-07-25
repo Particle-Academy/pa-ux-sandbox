@@ -45,8 +45,8 @@ export const homeDoc: PageDoc = {
     grid: { id: "grid", type: "frame", parent: "hero", order: "a", className: "container hero-grid", props: {}, style: { base: {} } },
     left: { id: "left", type: "frame", parent: "grid", order: "a", props: {}, style: { base: {} } },
 
-    eyebrow: { id: "eyebrow", type: "richtext", parent: "left", order: "a", className: "eyebrow-row", props: { html: '<span class="dot"></span><span>v0.4 · Particle Academy</span>' }, style: { base: {} } },
-    heading: { id: "heading", type: "richtext", parent: "left", order: "b", className: "display", props: { html: 'Components for the surfaces where <span class="gradient-text">humans and agents work together</span>.' }, style: { base: {} } },
+    eyebrow: { id: "eyebrow", type: "richtext", parent: "left", order: "a", className: "eyebrow-row", props: { html: '<span class="dot"></span><span>v0.4 · React · PHP · Node</span>' }, style: { base: {} } },
+    heading: { id: "heading", type: "richtext", parent: "left", order: "b", className: "display", props: { html: 'Build the app, <span class="gradient-text">not the plumbing.</span>' }, style: { base: {} } },
     lede: {
       id: "lede",
       type: "text",
@@ -55,7 +55,7 @@ export const homeDoc: PageDoc = {
       className: "lede",
       props: {
         content:
-          "Fancy UI is a constellation of small React and PHP packages built on one premise: agents are first-class participants in the products they help build. Every interactive surface ships an MCP bridge, so an embedded agent drives it through stable handles — never DOM scraping, never Playwright.",
+          "64 small packages covering the parts every real app needs and nobody wants to write twice — data grids, spreadsheets, workflow engines, xlsx/pptx/docx writers, Stripe catalogs, feature gating. Install one or take the whole stack; every server capability ships for PHP and Node. Agent-friendly throughout, so you can hand the boring half over and stay in flow.",
       },
       style: { base: {} },
     },

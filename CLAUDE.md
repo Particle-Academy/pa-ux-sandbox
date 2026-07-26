@@ -47,6 +47,25 @@ reload                    # Clear cache + npm run build (custom shortcut)
 
 **`npm run build` runs `vite build && vite build --ssr && node refresh-ssr.mjs`** — the client bundle, the SSR bundle (`bootstrap/ssr/ssr.js`, gitignored) so the Forge deploy + `php artisan inertia:start-ssr` daemon have a bundle to load, and then the SSR-daemon refresh. (`build:client` is client-only if you need it.) If you build by hand, don't skip `refresh-ssr.mjs` — a running SSR daemon will keep serving the old bundle. No other workspace tricks: Vite resolves every `@particle-academy/*` import from `node_modules` against the versions pinned in `package.json` + `package-lock.json`. Same shape locally and on Forge. To pick up a package release, `npm update @particle-academy/<pkg>` first.
 
+### Registry + docs artifacts
+
+```bash
+php artisan registry:build   # compile component source  -> resources/registry/registry.json
+php artisan readmes:build    # compile package READMEs   -> resources/registry/readmes.json
+```
+
+Production deploys ONLY px-ui-sandbox, so neither the sibling repos nor most
+packages' `node_modules` entries exist there — both artifacts are read in prod
+and scanned live everywhere else. **Run `readmes:build` and commit the artifact
+whenever a package's README changes**, or its docs page goes stale (or empty) on
+prod while looking fine locally.
+
+A package's README is read from **its own repo**, never from this app's
+`node_modules`/`vendor`. Sourcing it from the install made documentation a side
+effect of the showcase's dependency list — every package the sandbox doesn't
+install (the `-js` twins, the git provider adapters) had none, and several
+redirected away entirely for want of one.
+
 ### Testing
 ```bash
 php artisan test --compact                                    # Run all tests

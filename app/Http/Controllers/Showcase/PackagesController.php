@@ -8,16 +8,19 @@ use App\Support\ComponentContext;
 use App\Support\PackageContext;
 use App\Support\PackageFamily;
 use App\Support\PackageRegistry;
+use App\Support\Registry\ReadmeSource;
 use App\Support\Registry\RegistrySource;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\File;
 use Inertia\Inertia;
 use Inertia\Response;
 use League\CommonMark\GithubFlavoredMarkdownConverter;
 
 class PackagesController extends Controller
 {
-    public function __construct(private readonly RegistrySource $registry) {}
+    public function __construct(
+        private readonly RegistrySource $registry,
+        private readonly ReadmeSource $readmes,
+    ) {}
 
     public function index(): Response
     {
@@ -293,27 +296,19 @@ class PackagesController extends Controller
      *
      * @param  array<string, mixed>  $pkg
      */
+    /**
+     * A package's README as HTML.
+     *
+     * Sourced by {@see ReadmeSource} from the package's own repo, NOT from
+     * whatever the showcase installs — that made documentation a side effect of
+     * this app's dependency list, and left every uninstalled package (the `-js`
+     * twins, the git provider adapters) with none at all.
+     */
     private function readmeHtmlFor(array $pkg): ?string
     {
-        $dirs = [];
-        if (! empty($pkg['npm'])) {
-            $dirs[] = base_path('node_modules/'.$pkg['npm']);
-        }
-        if (! empty($pkg['composer'])) {
-            $dirs[] = base_path('vendor/'.$pkg['composer']);
-        }
+        $markdown = $this->readmes->markdownFor($pkg);
 
-        $markdown = null;
-        foreach ($dirs as $dir) {
-            foreach (['README.md', 'readme.md', 'README.markdown'] as $name) {
-                if (File::exists("{$dir}/{$name}")) {
-                    $markdown = File::get("{$dir}/{$name}");
-                    break 2;
-                }
-            }
-        }
-
-        if ($markdown === null || trim($markdown) === '') {
+        if ($markdown === null) {
             return null;
         }
 

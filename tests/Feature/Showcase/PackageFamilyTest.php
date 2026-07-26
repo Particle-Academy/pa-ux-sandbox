@@ -118,9 +118,16 @@ it('routes a family member by whether it has content of its own', function () {
             ->assertInertia(fn ($page) => $page->component('Packages/Show'));
     }
 
-    // No components and no shipped README — a thin stub, so it folds in.
-    $this->get('/packages/fancy-git-github-php')->assertRedirect('/packages/family/fancy-git');
-    // A family slug that is not itself a package resolves to the family page.
+    // Has no components, but DOES have a README — read from its own repo, not
+    // from whatever this app happens to install — so it keeps its page. It used
+    // to fold in, which was the sourcing bug rather than a fact about the
+    // package: a real, published adapter with real docs, redirected away.
+    $this->get('/packages/fancy-git-github-php')
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page->component('Packages/Show'));
+
+    // A family slug that is not itself a package still resolves to the family
+    // page — there is no package there to document.
     $this->get('/packages/fancy-core')->assertRedirect('/packages/family/fancy-core');
 });
 

@@ -4,6 +4,7 @@ import { Link } from "@inertiajs/react";
 import {
     Bot,
     Copy,
+    GitMerge,
     Rows3,
     ServerCog,
     ShieldCheck,
@@ -16,6 +17,9 @@ import {
 import type { ReactNode } from "react";
 import { clientOnly } from "../../lib/clientOnly";
 import { Layout } from "../Layout";
+// The cohort demo runs on fancy-flow/engine — zero React Flow, zero DOM — so it
+// renders on the server like the rest of the page.
+import TriggerCohortDemo from "./TriggerCohortDemo";
 
 // The editor mounts React Flow (xyflow), which is browser-only — defer it to the
 // client like every other live canvas surface on the showcase.
@@ -60,6 +64,11 @@ const HIGHLIGHTS: Highlight[] = [
         icon: <Spline size={18} />,
         title: "Validated, reconnectable edges",
         body: "Drag an endpoint to rewire a connection; a type-incompatible port pairing is refused — the same rule an agent's flow_connect obeys, so they never drift.",
+    },
+    {
+        icon: <GitMerge size={18} />,
+        title: "Trigger cohorts",
+        body: "When one event fires several workflows, runCohort orders them, runs them one at a time, and re-checks a guard before each — so a flow that deletes the record leaves the rest skipped with a reason, not silently succeeding.",
     },
     {
         icon: <ServerCog size={18} />,
@@ -120,6 +129,20 @@ export default function FlowIndex() {
                         </p>
                     </div>
                     <FlowStudio />
+                </section>
+
+                {/* Trigger collision — the failure you can only see by running it. */}
+                <section className="mt-10">
+                    <div className="mb-3 flex items-baseline justify-between gap-3">
+                        <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">
+                            One trigger, three workflows
+                        </h2>
+                        <p className="max-w-2xl text-sm text-zinc-500 dark:text-zinc-400">
+                            Fan one event out and something has to decide what happens when they collide.
+                            Run it unguarded first — the interesting part is that nothing breaks.
+                        </p>
+                    </div>
+                    <TriggerCohortDemo />
                 </section>
 
                 {/* What makes it powerful. */}

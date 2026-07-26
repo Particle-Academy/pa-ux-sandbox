@@ -978,8 +978,24 @@ section.ticker { padding: 0; background: var(--bg-1); }
   .nav-brand .ver { display: none; }
 }
 
-/* hide the nav links before the row would overflow the 1200 container */
-@media (max-width: 1180px) { .nav-links { display: none; } }
+/* The nav links would overflow the 1200 container below this, so they collapse
+   into the flyout instead. The burger and the links are exact opposites — one
+   is always present, so the main nav is never unreachable. It used to just
+   vanish here, taking Docs / Packages / Flow / everything with it, on any
+   window under 1180px rather than only on phones. */
+.nav-burger { display: none; }
+
+@media (max-width: 1180px) {
+  .nav-links { display: none; }
+  .nav-burger { display: inline-flex; align-items: center; }
+}
+
+/* The burger is the last thing to go. On phones the actions row sheds the
+   palette, transitions and the GitHub link — but dropping the only route to the
+   nav would leave the site unnavigable, so it stays and orders first. */
+@media (max-width: 640px) {
+  .nav-burger { order: -1; }
+}
 
 /* ─────────── Companion packages footnote ─────────── */
 .companions {

@@ -4,9 +4,10 @@ import {
     Button,
     Callout,
     Dropdown,
+    MobileMenu,
     Tooltip,
 } from "@particle-academy/react-fancy";
-import { Moon, Sun, Sparkles, Check, Bot } from "lucide-react";
+import { Moon, Sun, Sparkles, Check, Bot, Menu, X } from "lucide-react";
 import {
     useFancyTransition,
     FANCY_TRANSITION_LABELS,
@@ -89,6 +90,12 @@ export function Layout({
     // server enforces the gate either way.
     const isPro = auth?.player?.pro ?? false;
     const navItems = NAV_ITEMS;
+    const [navOpen, setNavOpen] = useState(false);
+
+    // Close on navigation. Inertia swaps the page without unmounting the
+    // layout, so a flyout left open would hang over the page you just
+    // arrived at.
+    useEffect(() => setNavOpen(false), [path]);
 
     // Start "light" so the server render and the client's FIRST render agree —
     // reading the real theme during render (the blade inline script may have set
@@ -143,6 +150,22 @@ export function Layout({
                     <div className="nav-spacer" />
 
                     <div className="nav-actions">
+                        {/* The main nav collapses below 1180px (it would overflow
+                            the container), so this is the ONLY way to reach Docs,
+                            Packages, Flow and the rest on a narrow window — not
+                            just on a phone. */}
+                        <button
+                            type="button"
+                            onClick={() => setNavOpen((open) => !open)}
+                            className="btn btn-ghost nav-burger"
+                            style={{ height: 34, padding: "0 10px" }}
+                            aria-label={navOpen ? "Close menu" : "Open menu"}
+                            aria-expanded={navOpen}
+                            aria-controls="site-mobile-nav"
+                        >
+                            {navOpen ? <X size={18} /> : <Menu size={18} />}
+                        </button>
+
                         <button
                             onClick={() =>
                                 window.dispatchEvent(
@@ -250,6 +273,35 @@ export function Layout({
                     </div>
                 </div>
             </header>
+
+            {/* The main nav, for every viewport too narrow to show it inline.
+                react-fancy's own MobileMenu — the showcase should be running the
+                kit it sells, and a hand-rolled drawer here would be the one
+                surface not doing that. */}
+            <div id="site-mobile-nav">
+                <MobileMenu.Flyout
+                    open={navOpen}
+                    onClose={() => setNavOpen(false)}
+                    side="right"
+                    title="Fancy UI Kit"
+                >
+                    {navItems.map((item) => (
+                        <MobileMenu.Item
+                            key={item.to}
+                            href={item.to}
+                            active={path === item.match || path.startsWith(item.match + "/")}
+                        >
+                            {item.label}
+                        </MobileMenu.Item>
+                    ))}
+
+                    {/* The affordances the header drops on phones, kept reachable
+                        rather than lost: the org link, and sign-in for a signed-out
+                        visitor (the avatar menu already covers signed-in). */}
+                    <MobileMenu.Item href="https://github.com/Particle-Academy">GitHub</MobileMenu.Item>
+                    {!auth && <MobileMenu.Item href="/auth/github">Sign in</MobileMenu.Item>}
+                </MobileMenu.Flyout>
+            </div>
 
             {auth && <ActiveUsersOverlay />}
             <AgentAnalyticsSink />

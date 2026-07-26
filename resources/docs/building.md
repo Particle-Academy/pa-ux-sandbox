@@ -41,4 +41,4 @@ There are no source aliases — what you build locally is byte-for-byte what shi
 
 ## A note on order
 
-Read [Layouts](/docs/layouts) first — everything else assumes you have a shell. [Page transitions](/docs/page-transitions) and [Mobile](/docs/mobile) are independent after that. The two **Human+** pages are the capstone: they're not optional polish, they're the reason the suite exists. Every tutorial here ends by pointing back at them, because a layout, a transition, or a responsive breakpoint that an agent can't perceive or operate is only half-built.
+Read [Layouts](/docs/layouts) first — everything else assumes you have a shell. [Page transitions](/docs/page-transitions) and [Mobile](/docs/mobile) are independent after that. The two **Human+** pages are the capstone: not optional polish, and one of the reasons the suite exists. Every tutorial here ends by pointing back at them, because a layout, a transition, or a responsive breakpoint that an agent can't perceive or operate is only half-built.

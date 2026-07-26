@@ -2,14 +2,6 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Human+ UX — the architectural framework
-
-**This is the architectural baseline for the entire sandbox and every package it contains** — react-fancy, fancy-whiteboard, fancy-flow, fancy-sheets, fancy-code, fancy-echarts, fancy-screens, fancy-3d, agent-integrations, plus anything new. It is not a feature, a goal, or a roadmap item; it is the prerequisite that decides whether a component, demo, or package belongs here at all. Speculative work on the `dreaming` branch must satisfy it too.
-
-**Human+ UX** = applications where humans and agents share the same UI, trading control fluidly: every component must be both an *authoring surface* (terse, JSON-friendly, agents compose it) and an *inhabited surface* (agents drive it via MCP bridges + stable handles, never DOM scraping or Playwright).
-
-The full **component contract** — the bullet checklist every stateful component must meet — is the single source in [`../../CLAUDE.md`](../../CLAUDE.md#component-contract). Don't restate it here; follow it there. Whitepaper: [`docs/human-plus-ux.md`](./docs/human-plus-ux.md).
-
 ## Project Overview
 
 This is the **Fancy UI showcase site** — a Laravel 13 + Vite + React 19 + Inertia + Tailwind v4 app that consumes the Fancy UI package suite. It lives at `repos/px-ui-sandbox` inside the **`fancy.agi` envelope**, alongside every other repo in the suite. See [`../../AGENTS.md`](../../AGENTS.md) for envelope-wide rules; this file covers sandbox-specific guidance.
@@ -109,6 +101,16 @@ Live demo of holy-sheet's tool-use surface driven by the Laravel AI SDK (`larave
 - `resources/views/components/⚡ai-sheets.blade.php` — view at `Route::get('/ai-sheets', ...)`
 
 Generated xlsx artifacts land in `storage/app/public/ai-sheets/` and are served via the public disk (`php artisan storage:link` is required, run during setup). Requires `ANTHROPIC_API_KEY` in `.env`. The default AI provider is configured via `AI_DEFAULT_PROVIDER` (defaults to `anthropic`).
+
+## Human+ UX — the contract for interactive surfaces
+
+**Human+ UX** = applications where humans and agents share the same UI, trading control fluidly: a surface should be both an *authoring surface* (terse, JSON-friendly, agents compose it) and an *inhabited surface* (agents drive it via MCP bridges + stable handles, never DOM scraping or Playwright).
+
+It is one of the suite's headline capabilities and the bar every **interactive** package is held to — react-fancy, fancy-whiteboard, fancy-flow, fancy-sheets, fancy-code, fancy-echarts, fancy-screens, fancy-3d, agent-integrations, and anything new that owns a surface. Speculative work on the `dreaming` branch is held to it too.
+
+It is **not** an entry fee for the ecosystem. Roughly half the suite is headless and renders nothing — `holy-sheet`, `last-word`, `fancy-git-php`, `laravel-fms` and friends are first-class members with no UI to inhabit. Don't reject a package for failing a contract it has no surface to satisfy.
+
+The full **component contract** — the checklist every stateful *component* must meet — is the single source in [`../../CLAUDE.md`](../../CLAUDE.md#component-contract). Don't restate it here; follow it there. Whitepaper: [`docs/human-plus-ux.md`](./docs/human-plus-ux.md).
 
 ## Building agent-driveable surfaces (Human+ UX)
 

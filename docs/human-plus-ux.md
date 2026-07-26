@@ -18,7 +18,7 @@ Both patterns leave value on the table. The first is brittle, slow, and expensiv
 
 **Human+ UX** is the alternative. It is the position that a modern application is a *shared environment* whose first-class participants are humans *and* agents — both reading from and writing to the same user interface, in real time, with no special privilege for either, trading control fluidly throughout a task.
 
-Fancy UI is the component library for building applications that way.
+Fancy UI's interactive surfaces are built to that standard. The suite itself is broader — 64 packages, roughly half of them headless — but wherever it owns a UI, this is the bar that UI is held to.
 
 ---
 

@@ -1,4 +1,4 @@
-**Human+ UX** is the architectural framework behind everything in Fancy UI. It's not a feature, it's a precondition: every component in the library must satisfy two design constraints, not one.
+**Human+ UX** is the contract Fancy UI's *interactive* surfaces are held to. The suite is an ecosystem of 64 packages and roughly half of it is headless — document writers, catalogs, feature gating, engines — which render nothing and so have no UI to inhabit. But where a package **does** own a surface, that surface owes two design constraints, not one.
 
 > **The full whitepaper** is at [`docs/human-plus-ux.md`](https://github.com/Particle-Academy/pa-ux-sandbox/blob/main/docs/human-plus-ux.md) in the sandbox repo. The summary below is the high-bandwidth version.
 
@@ -7,7 +7,7 @@
 1. **Authoring surface.** Humans and agents can rapidly compose beautiful, well-functioning applications using the component. Terse props, JSON-friendly inputs, sensible defaults, good types.
 2. **Inhabited surface.** The running app embeds agents as first-class environment participants. Agents read and write component state via MCP bridges and stable handles — **not** via DOM screen-scraping, Playwright, or other puppeting tools. The component itself is the agent's affordance, not a target to be operated externally.
 
-If a primitive only satisfies #1, it's a component library entry. If it satisfies both, it's a **Human+ UX primitive** — and that's the only kind Fancy UI ships.
+If a primitive only satisfies #1, it's a component library entry. If it satisfies both, it's a **Human+ UX primitive** — and every interactive surface in the suite is one.
 
 ## The component contract
 

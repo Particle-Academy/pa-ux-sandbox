@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1c0fdf1025302ca9bb2d55240c55b4b8",
+    "content-hash": "68c9cd4faf13023c55268566146ec141",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -3869,16 +3869,16 @@
         },
         {
             "name": "particle-academy/fancy-flow-php",
-            "version": "v0.8.0",
+            "version": "v0.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/fancy-flow-php.git",
-                "reference": "68b998f14f276d3a77b237e1930ee04f07b2c17a"
+                "reference": "153a6ca61e0d58aa430d4d0474f20241d622ea5e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/fancy-flow-php/zipball/68b998f14f276d3a77b237e1930ee04f07b2c17a",
-                "reference": "68b998f14f276d3a77b237e1930ee04f07b2c17a",
+                "url": "https://api.github.com/repos/Particle-Academy/fancy-flow-php/zipball/153a6ca61e0d58aa430d4d0474f20241d622ea5e",
+                "reference": "153a6ca61e0d58aa430d4d0474f20241d622ea5e",
                 "shasum": ""
             },
             "require": {
@@ -3887,14 +3887,14 @@
             "require-dev": {
                 "laravel/ai": "^0.9",
                 "orchestra/testbench": "^8.0|^9.0|^10.0|^11.0",
+                "particle-academy/prism": "0.111",
                 "pestphp/pest": "^2.0|^3.0|^4.0",
-                "phpunit/phpunit": "^10.0|^11.0|^12.0",
-                "prism-php/prism": "^0.100"
+                "phpunit/phpunit": "^10.0|^11.0|^12.0"
             },
             "suggest": {
-                "illuminate/support": "Enables the optional Laravel layer — service provider, facade, queued durable runs, #[FlowNode] discovery, Artisan, and RunEvent → Laravel events. Compatible with 10.x through 13.x. The framework-free core (Workflow, FlowRunner, registries, the 24 built-ins) needs no framework.",
+                "illuminate/support": "Enables the optional Laravel layer — service provider, facade, queued durable runs, #[FlowNode] discovery, Artisan, and RunEvent → Laravel events. Compatible with 10.x through 13.x. The framework-free core (Workflow, FlowRunner, registries, the 26 built-ins) needs no framework.",
                 "laravel/ai": "Makes the `llm_branch` node work with zero glue — auto-detected and wired through the shipped laravel/ai adapter (structured output constrained to the declared routes).",
-                "prism-php/prism": "Makes the `llm_branch` node work with zero glue — auto-detected and wired through the shipped Prism adapter (structured output constrained to the declared routes)."
+                "particle-academy/prism": "Makes the `llm_branch` node work with zero glue — auto-detected and wired through the shipped Prism adapter (structured output constrained to the declared routes). Particle Academy’s maintained fork of prism-php/prism, carrying the same Prism\\Prism\\ namespace — do not install both."
             },
             "type": "library",
             "extra": {
@@ -3939,7 +3939,7 @@
                 "issues": "https://github.com/Particle-Academy/fancy-flow-php/issues",
                 "source": "https://github.com/Particle-Academy/fancy-flow-php"
             },
-            "time": "2026-07-20T07:32:30+00:00"
+            "time": "2026-07-26T02:43:31+00:00"
         },
         {
             "name": "particle-academy/fancy-heuristics",

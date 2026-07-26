@@ -53,7 +53,7 @@
         "@particle-academy/fancy-doc-commons": "^0.1.0",
         "@particle-academy/fancy-echarts": "^5.0.0",
         "@particle-academy/fancy-features": "^0.1.0",
-        "@particle-academy/fancy-flow": "^0.28.0",
+        "@particle-academy/fancy-flow": "^0.29.0",
         "@particle-academy/fancy-inertia": "^0.9.3",
         "@particle-academy/fancy-map": "^0.1.1",
         "@particle-academy/fancy-mlm-ui": "^0.2.0",

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Showcase;
 
 use App\Http\Controllers\Controller;
 use App\Models\FlowNodePackage;
+use App\Support\Registry\NodeSource;
 use Illuminate\Http\JsonResponse;
 
 /**
@@ -21,6 +22,8 @@ use Illuminate\Http\JsonResponse;
  */
 class NodeRegistryController extends Controller
 {
+    public function __construct(private readonly NodeSource $source) {}
+
     private const HEADERS = [
         'Cache-Control' => 'public, max-age=300, s-maxage=900',
         'Access-Control-Allow-Origin' => '*',
@@ -48,7 +51,13 @@ class NodeRegistryController extends Controller
     }
 
     /**
-     * GET /r/nodes/{slug}.json — one package's full manifest.
+     * GET /r/nodes/{slug}.json — one node's manifest AND its source.
+     *
+     * The source is the point. A node is vendored, not installed: the CLI
+     * copies these files into the project the way it copies a component's, so
+     * the response has to carry them. Naming an npm package instead would put
+     * the node in `node_modules`, where it cannot be read or edited, and would
+     * need a second package for the PHP half.
      *
      * The slug is the flattened kind id (`acme__salesforce_upsert`), because a
      * kind contains a slash and percent-encoding a path separator is handled
@@ -68,13 +77,14 @@ class NodeRegistryController extends Controller
             return response()->json(['error' => "node '{$slug}' not found"], 404);
         }
 
-        // The manifest as submitted, plus the two facts the registry owns
-        // rather than the package: whether we verified it, and on what
-        // evidence. A package cannot vouch for itself.
+        // The manifest as submitted, plus what the registry owns rather than
+        // the package — whether we verified it, on what evidence, and the
+        // source itself. A package cannot vouch for itself.
         return response()->json(
             array_merge($package->manifest, [
                 'verified' => (bool) $package->verified,
                 'fixturesAttestation' => $package->fixtures_attestation,
+                'files' => $this->source->filesFor($package->manifest, $package->nodeDirectory()),
             ]),
             200,
             self::HEADERS,

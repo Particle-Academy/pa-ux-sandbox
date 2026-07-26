@@ -21,7 +21,8 @@ function manifestFile(array $overrides = []): string
         'title' => 'Widget',
         'category' => 'io',
         'description' => 'Does widget things.',
-        'runtimes' => ['ts' => ['entry' => './dist/index.js', 'engine' => '>=0.29.0']],
+        'ui' => ['ui'],
+        'runtimes' => ['ts' => ['files' => ['js'], 'engine' => '>=0.30.0']],
         'fixtures' => 'fixtures/widget.json',
         'sideEffects' => 'idempotent',
     ], $overrides);

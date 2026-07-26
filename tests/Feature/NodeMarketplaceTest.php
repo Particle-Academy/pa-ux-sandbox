@@ -21,8 +21,8 @@ function nodeManifest(array $overrides = []): array
         'description' => 'Create or update a Salesforce record.',
         'category' => 'integrations',
         'runtimes' => [
-            'ts' => ['entry' => 'dist/executor.js', 'engine' => '^0.16'],
-            'php' => ['package' => 'acme/fancy-flow-salesforce:^0.1', 'engine' => '^0.8'],
+            'ts' => ['files' => ['js'], 'engine' => '^0.30'],
+            'php' => ['files' => ['php'], 'engine' => '^0.9'],
         ],
         'capabilities' => ['llm' => 'optional'],
         'sideEffects' => 'unsafe-to-replay',

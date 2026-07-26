@@ -140,6 +140,22 @@ class FlowNodePackage extends Model
     }
 
     /**
+     * The node's directory name in the marketplace repo — the last segment of
+     * its kind id.
+     *
+     * `@particle-academy/ui_effect` lives in `nodes/ui-effect/`: underscores
+     * become hyphens because that is the directory convention, and the kind id
+     * is the only thing the registry stores, so the mapping has to be derivable
+     * rather than a second column to keep in sync.
+     */
+    public function nodeDirectory(): string
+    {
+        $bare = explode('/', $this->kind);
+
+        return str_replace('_', '-', end($bare));
+    }
+
+    /**
      * URL-safe slug for the manifest endpoint.
      *
      * A kind id contains a slash, and percent-encoding a path separator is

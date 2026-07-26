@@ -44,10 +44,10 @@ class BuildReadmes extends Command
                 continue;
             }
 
-            $markdown = $readmes->fromRepo($slug);
+            $markdown = $readmes->fromRepo($slug, $pkg);
             if ($markdown !== null && trim($markdown) !== '') {
                 $compiled[$slug] = $markdown;
-            } elseif ($readmes->repoDir($slug) !== null) {
+            } elseif ($readmes->repoDir($slug, $pkg) !== null) {
                 // The repo is here and has no README. Worth naming: it is a
                 // package whose docs page will be empty, and nothing else says so.
                 $missing[] = $slug;

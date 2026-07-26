@@ -82,6 +82,8 @@ import {
     Moon,
     Music,
     Search,
+    GitBranch,
+    GitPullRequest,
     MapPin,
     Settings,
     Sparkles,
@@ -1207,6 +1209,151 @@ const PREVIEWS: Record<string, PreviewFn> = {
     ),
 
     // ─── fancy-echarts ────────────────────────────────────────────────────
+
+    // ── fancy-git-ui ────────────────────────────────────────────────────────
+    // Stills, not live surfaces: every one of these is a CONTROLLED component
+    // whose data comes from a host adapter, so a listing tile has no repository
+    // to read. These show the shape each one draws — the detail pages carry the
+    // real demos.
+    "fancy-git-ui/repository-browser": () => (
+        <div className="w-full max-w-[18rem] overflow-hidden rounded-md border border-zinc-200 bg-white text-[9px] dark:border-zinc-800 dark:bg-zinc-950">
+            <div className="border-b border-zinc-200 px-2 py-1 font-mono text-[8px] text-zinc-500 dark:border-zinc-800 dark:text-zinc-400">
+                src/
+            </div>
+            <div className="p-1.5 font-mono leading-[1.7] text-zinc-700 dark:text-zinc-300">
+                {[
+                    ["▾", "components", true],
+                    ["", "Button.tsx", false],
+                    ["", "Card.tsx", false],
+                    ["▸", "hooks", true],
+                    ["", "index.ts", false],
+                ].map(([glyph, name, dir], i) => (
+                    <div key={i} className={`flex items-center gap-1 rounded px-1 ${i === 2 ? "bg-sky-500/15" : ""}`}>
+                        <span className="w-2 text-zinc-400">{glyph as string}</span>
+                        <span className={dir ? "text-sky-500 dark:text-sky-400" : ""}>{name as string}</span>
+                    </div>
+                ))}
+            </div>
+        </div>
+    ),
+
+    "fancy-git-ui/working-tree": () => (
+        <div className="w-full max-w-[18rem] overflow-hidden rounded-md border border-zinc-200 bg-white p-2 font-mono text-[9px] dark:border-zinc-800 dark:bg-zinc-950">
+            <div className="mb-1 text-[8px] uppercase tracking-wide text-zinc-400">Staged</div>
+            <div className="flex items-center gap-1.5 rounded bg-emerald-500/10 px-1 py-0.5">
+                <span className="text-emerald-500">M</span>
+                <span className="text-zinc-700 dark:text-zinc-300">src/Button.tsx</span>
+            </div>
+            <div className="mb-1 mt-2 text-[8px] uppercase tracking-wide text-zinc-400">Unstaged</div>
+            {[["M", "src/Card.tsx", "text-amber-500"], ["?", "src/New.tsx", "text-zinc-400"]].map(([s, f, c], i) => (
+                <div key={i} className="flex items-center gap-1.5 px-1 py-0.5">
+                    <span className={c as string}>{s as string}</span>
+                    <span className="text-zinc-700 dark:text-zinc-300">{f as string}</span>
+                </div>
+            ))}
+        </div>
+    ),
+
+    "fancy-git-ui/commit-history": () => (
+        <div className="w-full max-w-[18rem] rounded-md border border-zinc-200 bg-white p-2 dark:border-zinc-800 dark:bg-zinc-950">
+            {[
+                ["feat: swimlanes", "a1b2c3d", true],
+                ["fix: merge point", "9f8e7d6", false],
+                ["chore: bump deps", "4c5b6a7", false],
+            ].map(([msg, sha, active], i) => (
+                <div key={i} className="flex items-center gap-2">
+                    <div className="flex flex-col items-center">
+                        <span className={`size-1.5 rounded-full ${active ? "bg-sky-500" : "bg-zinc-300 dark:bg-zinc-600"}`} />
+                        {i < 2 && <span className="h-4 w-px bg-zinc-200 dark:bg-zinc-700" />}
+                    </div>
+                    <div className={`flex-1 truncate text-[9px] ${active ? "text-zinc-900 dark:text-zinc-100" : "text-zinc-500"}`}>
+                        {msg as string}
+                    </div>
+                    <span className="font-mono text-[8px] text-zinc-400">{sha as string}</span>
+                </div>
+            ))}
+        </div>
+    ),
+
+    "fancy-git-ui/diff-viewer": () => (
+        <div className="w-full max-w-[18rem] overflow-hidden rounded-md border border-zinc-200 bg-white font-mono text-[9px] dark:border-zinc-800 dark:bg-zinc-950">
+            <div className="border-b border-zinc-200 px-2 py-1 text-[8px] text-zinc-500 dark:border-zinc-800">
+                run-flow.ts <span className="text-emerald-500">+2</span> <span className="text-rose-500">−1</span>
+            </div>
+            <div className="leading-[1.7]">
+                <div className="bg-rose-500/10 px-2 text-rose-600 dark:text-rose-400">- inputs[portId] = value;</div>
+                <div className="bg-emerald-500/10 px-2 text-emerald-600 dark:text-emerald-400">+ if (!portValues.has(key)) continue;</div>
+                <div className="bg-emerald-500/10 px-2 text-emerald-600 dark:text-emerald-400">+ inputs[portId] = portValues.get(key);</div>
+                <div className="px-2 text-zinc-500">  return inputs;</div>
+            </div>
+        </div>
+    ),
+
+    "fancy-git-ui/branch-picker": () => (
+        <div className="w-full max-w-[16rem] overflow-hidden rounded-md border border-zinc-200 bg-white text-[9px] dark:border-zinc-800 dark:bg-zinc-950">
+            <div className="flex items-center gap-1.5 border-b border-zinc-200 px-2 py-1 dark:border-zinc-800">
+                <GitBranch size={10} className="text-sky-500" />
+                <span className="font-mono text-zinc-800 dark:text-zinc-200">main</span>
+            </div>
+            <div className="p-1 font-mono text-zinc-600 dark:text-zinc-400">
+                {["feature/swimlanes", "fix/merge-point", "origin/main"].map((b, i) => (
+                    <div key={b} className={`truncate rounded px-1.5 py-0.5 ${i === 0 ? "bg-sky-500/15 text-sky-600 dark:text-sky-300" : ""}`}>
+                        {b}
+                    </div>
+                ))}
+            </div>
+        </div>
+    ),
+
+    "fancy-git-ui/review-list": () => (
+        <div className="w-full max-w-[18rem] rounded-md border border-zinc-200 bg-white p-1.5 dark:border-zinc-800 dark:bg-zinc-950">
+            {[
+                ["Add trigger cohorts", "#41", "open", "text-emerald-500"],
+                ["Fix the merge point", "#38", "merged", "text-violet-500"],
+                ["Bump postcss", "#37", "draft", "text-zinc-400"],
+            ].map(([title, num, state, color], i) => (
+                <div key={i} className="flex items-center gap-1.5 px-1 py-1">
+                    <GitPullRequest size={10} className={color as string} />
+                    <span className="flex-1 truncate text-[9px] text-zinc-700 dark:text-zinc-300">{title as string}</span>
+                    <span className="font-mono text-[8px] text-zinc-400">{num as string}</span>
+                </div>
+            ))}
+        </div>
+    ),
+
+    "fancy-git-ui/commit-composer": () => (
+        <div className="w-full max-w-[17rem] rounded-md border border-zinc-200 bg-white p-2 dark:border-zinc-800 dark:bg-zinc-950">
+            <div className="rounded border border-zinc-200 px-1.5 py-1 font-mono text-[9px] text-zinc-800 dark:border-zinc-700 dark:text-zinc-200">
+                fix: guard the merge point
+            </div>
+            <div className="mt-1 h-6 rounded border border-zinc-200 px-1.5 py-1 text-[8px] text-zinc-400 dark:border-zinc-700">
+                Longer description…
+            </div>
+            <div className="mt-1.5 flex items-center justify-between">
+                <span className="text-[8px] text-zinc-400">1 file staged</span>
+                <span className="rounded bg-emerald-600 px-2 py-0.5 text-[8px] font-medium text-white">Propose commit</span>
+            </div>
+        </div>
+    ),
+
+    "fancy-git-ui/create-review-form": () => (
+        <div className="w-full max-w-[17rem] rounded-md border border-zinc-200 bg-white p-2 dark:border-zinc-800 dark:bg-zinc-950">
+            <div className="flex items-center gap-1 font-mono text-[8px] text-zinc-500">
+                <span className="rounded bg-zinc-100 px-1 dark:bg-zinc-800">feature/x</span>
+                <span>→</span>
+                <span className="rounded bg-zinc-100 px-1 dark:bg-zinc-800">main</span>
+            </div>
+            <div className="mt-1.5 rounded border border-zinc-200 px-1.5 py-1 text-[9px] text-zinc-800 dark:border-zinc-700 dark:text-zinc-200">
+                Add trigger cohorts
+            </div>
+            <div className="mt-1.5 flex items-center justify-between">
+                <span className="flex items-center gap-1 text-[8px] text-zinc-400">
+                    <span className="size-2 rounded-sm border border-zinc-400" /> Draft
+                </span>
+                <span className="rounded bg-sky-600 px-2 py-0.5 text-[8px] font-medium text-white">Open PR</span>
+            </div>
+        </div>
+    ),
 
     // ── fancy-map ───────────────────────────────────────────────────────────
     // A still of the shape the real <Map> draws — tiles, pins, a follow dot.

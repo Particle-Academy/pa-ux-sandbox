@@ -62,17 +62,21 @@ class ReadmeSource
             return $this->memo[$slug];
         }
 
-        $markdown = $this->fromRepo($slug)
+        $markdown = $this->fromRepo($slug, $pkg)
             ?? $this->fromCompiled($slug)
             ?? $this->fromInstalled($pkg);
 
         return $this->memo[$slug] = ($markdown !== null && trim($markdown) !== '') ? $markdown : null;
     }
 
-    /** Read from the package's own repo — the authoritative copy. */
-    public function fromRepo(string $slug): ?string
+    /**
+     * Read from the package's own repo — the authoritative copy.
+     *
+     * @param  array<string,mixed>  $pkg
+     */
+    public function fromRepo(string $slug, array $pkg = []): ?string
     {
-        $dir = $this->repoDir($slug);
+        $dir = $this->repoDir($slug, $pkg);
         if ($dir === null) {
             return null;
         }
@@ -89,15 +93,31 @@ class ReadmeSource
     /**
      * Resolve a package's repo on disk.
      *
+     * A slug is NOT always its directory: `fancy-git` lives in `fancy-git-php`,
+     * because the PHP core owns the bare package name while the repo carries
+     * the language suffix. The registry's `repo` field is authoritative about
+     * that, so it is tried first — guessing from the slug alone silently loses
+     * the docs for exactly the packages where the two differ.
+     *
      * The `.agi` envelope keeps every repo under `repos/`, so px-ui-sandbox's
      * siblings are its peers there; the flat and legacy nested layouts are kept
      * as fallbacks so this works in any checkout.
+     *
+     * @param  array<string,mixed>  $pkg
      */
-    public function repoDir(string $slug): ?string
+    public function repoDir(string $slug, array $pkg = []): ?string
     {
-        foreach ([dirname(base_path()).'/'.$slug, base_path('packages/'.$slug)] as $candidate) {
-            if (is_dir($candidate)) {
-                return $candidate;
+        $names = [];
+        if (is_string($pkg['repo'] ?? null) && $pkg['repo'] !== '') {
+            $names[] = basename((string) $pkg['repo']);
+        }
+        $names[] = $slug;
+
+        foreach (array_unique($names) as $name) {
+            foreach ([dirname(base_path()).'/'.$name, base_path('packages/'.$name)] as $candidate) {
+                if (is_dir($candidate)) {
+                    return $candidate;
+                }
             }
         }
 
@@ -108,7 +128,7 @@ class ReadmeSource
     public function liveSourceAvailable(): bool
     {
         foreach ($this->everyPackage() as $pkg) {
-            if (is_string($pkg['slug'] ?? null) && $this->repoDir($pkg['slug']) !== null) {
+            if (is_string($pkg['slug'] ?? null) && $this->repoDir($pkg['slug'], $pkg) !== null) {
                 return true;
             }
         }

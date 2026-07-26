@@ -177,9 +177,16 @@ class PackagesController extends Controller
         // Headless packages render no UI, so they carry no component grid.
         $pkg['components'] ??= [];
 
-        // Headless packages have no live demo — render their installed README in
-        // place of the preview so the page is never a dead "No UI surface" stub.
-        $readmeHtml = $pkg['components'] === [] ? $this->readmeHtmlFor($pkg) : null;
+        // A page with no live demo shows its README instead, so it is never a
+        // dead "No UI surface" stub.
+        //
+        // Keyed on `kind`, not on an empty component list. Those were treated as
+        // the same thing and are not: `fancy-pwa` is classified headless AND
+        // lists a component, so it fetched no README, then rendered through the
+        // headless body with nothing in it — a completely blank page from one
+        // word of metadata disagreeing with another.
+        $isHeadless = ($pkg['kind'] ?? null) === 'headless';
+        $readmeHtml = $isHeadless || $pkg['components'] === [] ? $this->readmeHtmlFor($pkg) : null;
 
         return Inertia::render('Packages/Show', [
             'package' => $pkg,

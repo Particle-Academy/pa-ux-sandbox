@@ -82,6 +82,7 @@ import {
     Moon,
     Music,
     Search,
+    MapPin,
     Settings,
     Sparkles,
     Star,
@@ -1206,6 +1207,43 @@ const PREVIEWS: Record<string, PreviewFn> = {
     ),
 
     // ─── fancy-echarts ────────────────────────────────────────────────────
+
+    // ── fancy-map ───────────────────────────────────────────────────────────
+    // A still of the shape the real <Map> draws — tiles, pins, a follow dot.
+    // Mounting Leaflet in a listing tile would pull a tile server per card.
+    "fancy-map/map": () => (
+        <div className="relative h-32 w-full max-w-[18rem] overflow-hidden rounded-md border border-zinc-200 bg-[#e8eef2] dark:border-zinc-800 dark:bg-[#1b2733]">
+            {/* Street grid */}
+            <div
+                className="absolute inset-0 opacity-70"
+                style={{
+                    backgroundImage:
+                        "linear-gradient(#cbd5e1 1px, transparent 1px), linear-gradient(90deg, #cbd5e1 1px, transparent 1px)",
+                    backgroundSize: "34px 26px",
+                }}
+            />
+            {/* A road and a river, so it reads as a map rather than graph paper */}
+            <div className="absolute inset-x-0 top-[58%] h-[6px] -rotate-6 bg-amber-200/80 dark:bg-amber-400/30" />
+            <div className="absolute inset-y-0 left-[22%] w-[7px] rotate-3 bg-sky-300/70 dark:bg-sky-500/25" />
+
+            <span className="absolute left-[30%] top-[30%] text-rose-500 dark:text-rose-400">
+                <MapPin size={16} strokeWidth={2.5} />
+            </span>
+            <span className="absolute left-[62%] top-[46%] text-rose-500 dark:text-rose-400">
+                <MapPin size={16} strokeWidth={2.5} />
+            </span>
+
+            {/* Live position — the tracking half of the package. */}
+            <span className="absolute left-[46%] top-[66%] flex size-3 items-center justify-center">
+                <span className="absolute size-3 animate-ping rounded-full bg-sky-400/60" />
+                <span className="size-2 rounded-full border border-white bg-sky-500" />
+            </span>
+
+            <span className="absolute bottom-1 right-1 rounded bg-white/80 px-1 text-[7px] font-medium text-zinc-500 dark:bg-zinc-900/80 dark:text-zinc-400">
+                OSM · Leaflet
+            </span>
+        </div>
+    ),
 
     "fancy-echarts/echart": () => (
         <div className="size-full min-h-[8rem] max-w-[18rem]">

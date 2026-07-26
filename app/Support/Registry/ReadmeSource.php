@@ -44,6 +44,9 @@ class ReadmeSource
     /** @var array<string,string|null> */
     private array $memo = [];
 
+    /** @var array<string,string>|null */
+    private ?array $compiled = null;
+
     /**
      * The raw markdown for a package, or null when it genuinely has none.
      *
@@ -129,17 +132,22 @@ class ReadmeSource
         );
     }
 
-    /** @return array<string,string> slug => markdown */
+    /**
+     * @return array<string,string> slug => markdown
+     */
     public function compiled(): array
     {
-        static $cache = null;
-        if ($cache !== null) {
-            return $cache;
+        // Memoized on the INSTANCE, not statically. A static cache outlives the
+        // object: it survived into other tests, and in a long-lived worker
+        // (Octane) a freshly built artifact would never be picked up — the
+        // process would serve the docs it happened to read first, forever.
+        if ($this->compiled !== null) {
+            return $this->compiled;
         }
 
         $path = self::compiledPath();
 
-        return $cache = File::exists($path)
+        return $this->compiled = File::exists($path)
             ? (array) (json_decode(File::get($path), true)['readmes'] ?? [])
             : [];
     }

@@ -1,11 +1,10 @@
 <?php
 
-use App\Http\Controllers\SubscriptionController;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Laravel\Cashier\Checkout;
 use LaravelCatalog\Facades\Catalog;
-use LaravelCatalog\Models\Product;
 use LaravelCatalog\Models\Price;
+use LaravelCatalog\Models\Product;
 use Tests\TestCase;
 
 uses(TestCase::class);
@@ -28,7 +27,7 @@ it('subscription controller uses catalog facade', function () {
         ]);
 
     // Mock the facade
-    $checkoutMock = \Mockery::mock(\Laravel\Cashier\Checkout::class);
+    $checkoutMock = Mockery::mock(Checkout::class);
     $stripeSession = (object) ['url' => 'https://checkout.stripe.com/test'];
     $checkoutMock->shouldReceive('asStripeCheckoutSession')
         ->andReturn($stripeSession);
@@ -36,11 +35,11 @@ it('subscription controller uses catalog facade', function () {
     Catalog::shouldReceive('subscriptionCheckout')
         ->once()
         ->with(
-            \Mockery::on(function ($arg) use ($user) {
-                return $arg instanceof \App\Models\User && $arg->id === $user->id;
+            Mockery::on(function ($arg) use ($user) {
+                return $arg instanceof User && $arg->id === $user->id;
             }),
-            \Mockery::on(function ($arg) use ($price) {
-                return $arg instanceof \LaravelCatalog\Models\Price && $arg->id === $price->id;
+            Mockery::on(function ($arg) use ($price) {
+                return $arg instanceof Price && $arg->id === $price->id;
             }),
             route('subscriptions.success'),
             route('subscriptions.cancel')
@@ -86,33 +85,65 @@ it('subscription controller validates price is synced to stripe', function () {
         ->assertSessionHas('error', 'Price has not been synced to Stripe yet.');
 });
 
-it('can access subscriptions index', function () {
+it('renders the Go Pro page for a signed-in user', function () {
     $user = User::factory()->create();
     $this->actingAs($user);
 
-    $response = $this->get(route('subscriptions.index'));
-
-    $response->assertOk()
-        ->assertViewIs('subscriptions.index');
+    $this->get(route('subscriptions.index'))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('Pro/Index')
+            ->has('plans')
+            ->has('features')
+            ->where('pro.isPro', false)
+            ->where('pro.source', null)
+        );
 });
 
-it('can access subscription success page', function () {
+it('shows the Go Pro page to guests', function () {
+    // The pricing IS the pitch. Bouncing a visitor to a login form to read it
+    // loses them; only checkout needs an owner.
+    $this->get(route('subscriptions.index'))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page->component('Pro/Index')->where('pro.isPro', false));
+});
+
+it('tells a user who EARNED pro that they already have it', function () {
+    // The prize route grants the same features as a subscription. Selling to
+    // someone who already qualifies is the fastest way to look broken.
+    $user = User::factory()->create(['pro_override' => true]);
+    $this->actingAs($user);
+
+    $this->get(route('subscriptions.index'))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->where('pro.isPro', true)
+            ->where('pro.source', 'manual')
+        );
+});
+
+it('returns to the Go Pro page after a completed checkout', function () {
     $user = User::factory()->create();
     $this->actingAs($user);
 
-    $response = $this->get(route('subscriptions.success'));
-
-    $response->assertOk()
-        ->assertViewIs('subscriptions.success');
+    $this->get(route('subscriptions.success'))
+        ->assertRedirect(route('subscriptions.index'))
+        ->assertSessionHas('success');
 });
 
-it('can cancel subscription checkout', function () {
+it('returns to the Go Pro page after a cancelled checkout', function () {
     $user = User::factory()->create();
     $this->actingAs($user);
 
-    $response = $this->get(route('subscriptions.cancel'));
-
-    $response->assertRedirect(route('products.index'))
-        ->assertSessionHas('message', 'Subscription checkout was cancelled.');
+    $this->get(route('subscriptions.cancel'))
+        ->assertRedirect(route('subscriptions.index'))
+        ->assertSessionHas('success', 'Checkout cancelled — nothing was charged.');
 });
 
+it('renders the catalog storefront in the site chrome', function () {
+    // It used to be a standalone Blade app with its own nav — clicking through
+    // from the showcase dropped you into what looked like a different website.
+    $this->get(route('products.index'))
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page->component('Catalog/Storefront')->has('products'));
+});

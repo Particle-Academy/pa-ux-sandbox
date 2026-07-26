@@ -312,9 +312,11 @@ Route::get('/catalog-demo', [ProductController::class, 'index'])->name('catalog-
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
 
-// Subscription management routes (require authentication)
+// Go Pro. The pricing page is PUBLIC — it's the pitch, and bouncing a curious
+// visitor to a login form to read it is how you lose them. Only checkout and the
+// post-checkout returns need an owner to attach a subscription to.
+Route::get('/subscriptions', [SubscriptionController::class, 'index'])->name('subscriptions.index');
 Route::middleware(['auth'])->group(function () {
-    Route::get('/subscriptions', [SubscriptionController::class, 'index'])->name('subscriptions.index');
     Route::post('/subscriptions/create/{price}', [SubscriptionController::class, 'create'])->name('subscriptions.create');
     Route::get('/subscriptions/success', [SubscriptionController::class, 'success'])->name('subscriptions.success');
     Route::get('/subscriptions/cancel', [SubscriptionController::class, 'cancel'])->name('subscriptions.cancel');

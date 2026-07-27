@@ -1139,20 +1139,25 @@ const GIT_TREE = [
     { id: "5", name: "types.ts", path: "src/types.ts", kind: "file" as const, size: 3120, status: "modified" },
 ];
 
-const GIT_DIFF = [
-    {
-        id: "run-flow",
-        path: "src/runtime/run-flow.ts",
-        lines: [
-            { id: "h1", kind: "header" as const, text: "@@ -212,7 +212,8 @@ collectInputs" },
-            { id: "l1", kind: "context" as const, oldNumber: 212, newNumber: 212, text: "  for (const edge of incoming) {" },
-            { id: "l2", kind: "deletion" as const, oldNumber: 213, text: "    inputs[portId] = portValues.get(key);" },
-            { id: "l3", kind: "addition" as const, newNumber: 213, text: "    if (!portValues.has(key)) continue;" },
-            { id: "l4", kind: "addition" as const, newNumber: 214, text: "    inputs[portId] = portValues.get(key);" },
-            { id: "l5", kind: "context" as const, oldNumber: 214, newNumber: 215, text: "  }" },
-        ],
-    },
-];
+/**
+ * The real 0.27.1 merge-point fix, as the unified diff git actually emits.
+ *
+ * A patch string rather than a hand-built object tree, because that is what
+ * `fancy-git`'s `Diff.patch` carries and what `<DiffViewer>` takes since 0.2.0.
+ * The old fixture was a shape only this demo produced, which is exactly what
+ * made the component hard to adopt: a consumer had to write a parser to get
+ * from git's output to it.
+ */
+const GIT_DIFF = `diff --git a/src/runtime/run-flow.ts b/src/runtime/run-flow.ts
+--- a/src/runtime/run-flow.ts
++++ b/src/runtime/run-flow.ts
+@@ -212,7 +212,8 @@ collectInputs
+   for (const edge of incoming) {
+-    inputs[portId] = portValues.get(key);
++    if (!portValues.has(key)) continue;
++    inputs[portId] = portValues.get(key);
+   }
+`;
 
 function GitWorkingTreeDemo() {
     const [status, setStatus] = useState(GIT_STATUS);
@@ -1246,19 +1251,19 @@ function GitRepositoryBrowserDemo() {
 
 function GitDiffViewerDemo() {
     const [mode, setMode] = useState<"unified" | "split">("unified");
-    const [hunks, setHunks] = useState<string[]>([]);
+    const [acceptance, setAcceptance] = useState<Record<string, "accepted" | "rejected" | "pending">>({});
 
     return (
         <DemoNote
-            outOfBox="<DiffViewer> renders a diff with stable file and hunk handles, and toggles unified / split. Hunk selection is what per-hunk staging and review comments hang off."
-            demo="The real 0.27.1 merge-point fix as fixture data. Selecting hunks emits ids — a host turns those into a partial stage or a review comment."
+            outOfBox="<DiffViewer> takes the unified patch fancy-git returns and renders it with stable file and hunk handles, unified or split. Per-hunk accept/reject is what partial staging and review comments hang off."
+            demo="The real 0.27.1 merge-point fix, as the patch git emits. A hunk cycles pending → accepted → rejected — pending is NOT rejected, which is how a review knows whether it is finished."
         >
             <DiffViewer
                 value={GIT_DIFF}
                 mode={mode}
                 onModeChange={setMode}
-                selectedHunkIds={hunks}
-                onSelectedHunkIdsChange={setHunks}
+                acceptance={acceptance}
+                onAcceptanceChange={setAcceptance}
             />
         </DemoNote>
     );

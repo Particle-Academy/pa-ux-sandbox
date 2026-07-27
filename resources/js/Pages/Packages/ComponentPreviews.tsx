@@ -12,6 +12,18 @@ import { useState, type ReactNode } from "react";
 // a client-only chunk — so the stylesheet has to be imported here too or the
 // grid shows unstyled git surfaces. Bundlers dedupe the second import.
 import "@particle-academy/fancy-git-ui/styles.css";
+// react-fancy exports a StickyNote too — a decorative note primitive, unrelated
+// to the whiteboard's board item. Aliased rather than renamed so each tile
+// still shows the component its own package ships.
+import { FancyDiff } from "@particle-academy/fancy-diff";
+import {
+    Board,
+    Connector,
+    CursorLayer,
+    Drawing,
+    Shape as BoardShape,
+    StickyNote as BoardStickyNote,
+} from "@particle-academy/fancy-whiteboard";
 import {
     BranchPicker,
     CommitComposer,
@@ -22,6 +34,30 @@ import {
     ReviewList,
     WorkingTree,
 } from "@particle-academy/fancy-git-ui";
+/** A small real patch, so the diff tile parses one instead of drawing one. */
+const PREVIEW_UNIFIED_DIFF = `--- a/src/auth.ts
++++ b/src/auth.ts
+@@ -12,3 +12,4 @@
+ export function verify(token: string) {
+-  return decode(token);
++  if (!token) return null;
++  return decode(token);
+ }
+`;
+
+/** A hand-drawn stroke, as the shape <Drawing> actually stores. */
+const PREVIEW_STROKES = [
+    {
+        id: "s1",
+        color: "#8b5cf6",
+        size: 3,
+        points: Array.from({ length: 40 }, (_, i) => ({
+            x: 20 + i * 7,
+            y: 64 + Math.sin(i / 3.2) * 26,
+        })),
+    },
+];
+
 import {
     GIT_BRANCHES,
     GIT_COMMITS,
@@ -53,6 +89,12 @@ import {
     VideoViewer,
     AudioViewer,
     PdfViewer,
+    Emoji,
+    MoodMeter,
+    OtpInput,
+    Pagination,
+    Progress,
+    Skeleton,
 } from "@particle-academy/react-fancy";
 import { FileViewer } from "@particle-academy/fancy-code";
 import { EChart } from "@particle-academy/fancy-echarts";
@@ -483,20 +525,10 @@ const PREVIEWS: Record<string, PreviewFn> = {
 
     "react-fancy/avatar": () => (
         <div className="flex items-center -space-x-2">
-            {["RK", "SL", "MC", "AY", "+3"].map((label, i) => (
-                <span
-                    key={label}
-                    className={`inline-flex size-10 items-center justify-center rounded-full border-2 border-white bg-gradient-to-br text-sm font-semibold text-white dark:border-zinc-900 ${
-                        i === 0 ? "from-violet-400 to-sky-500"
-                        : i === 1 ? "from-emerald-400 to-teal-500"
-                        : i === 2 ? "from-amber-400 to-orange-500"
-                        : i === 3 ? "from-rose-400 to-pink-500"
-                        : "from-zinc-400 to-zinc-600"
-                    }`}
-                >
-                    {label}
-                </span>
+            {["RK", "SL", "MC", "AY"].map((f) => (
+                <Avatar key={f} fallback={f} size="lg" />
             ))}
+            <Avatar fallback="+3" size="lg" />
         </div>
     ),
 
@@ -747,8 +779,10 @@ const PREVIEWS: Record<string, PreviewFn> = {
     ),
 
     "react-fancy/emoji": () => (
-        <div className="flex gap-2 text-2xl">
-            <span>🚀</span><span>✨</span><span>🔥</span><span>🎯</span><span>💜</span>
+        <div className="flex gap-2">
+            {["rocket", "sparkles", "fire", "dart", "purple-heart"].map((name) => (
+                <Emoji key={name} name={name} size="xl" />
+            ))}
         </div>
     ),
 
@@ -911,15 +945,8 @@ const PREVIEWS: Record<string, PreviewFn> = {
     ),
 
     "react-fancy/mood-meter": () => (
-        <div className="text-center">
-            <div className="flex gap-2 text-3xl">
-                <button className="opacity-50 hover:opacity-100">😢</button>
-                <button className="opacity-50 hover:opacity-100">😐</button>
-                <button className="opacity-100">🙂</button>
-                <button className="opacity-50 hover:opacity-100">😊</button>
-                <button className="opacity-50 hover:opacity-100">🤩</button>
-            </div>
-            <div className="mt-2 text-xs text-zinc-500">How&apos;s the new build?</div>
+        <div className="w-full max-w-[16rem]">
+            <MoodMeter min={1} max={5} value={4} confidence={0.7} onChange={() => {}} />
         </div>
     ),
 
@@ -937,40 +964,10 @@ const PREVIEWS: Record<string, PreviewFn> = {
         </div>
     ),
 
-    "react-fancy/otp-input": () => (
-        <div className="flex items-center gap-1.5">
-            {["4", "9", "1", "—", "—", "—"].map((d, i) => (
-                <div
-                    key={i}
-                    className={`grid size-9 place-items-center rounded-md border font-mono text-base font-semibold ${
-                        d === "—"
-                            ? "border-zinc-200 bg-white text-zinc-300 dark:border-zinc-700 dark:bg-zinc-900"
-                            : "border-violet-300 bg-violet-50 text-violet-900 dark:border-violet-700 dark:bg-violet-500/10 dark:text-violet-100"
-                    }`}
-                >
-                    {d === "—" ? "" : d}
-                </div>
-            ))}
-        </div>
-    ),
+    "react-fancy/otp-input": () => <OtpInput length={6} value="491" onChange={() => {}} />,
 
     "react-fancy/pagination": () => (
-        <div className="flex items-center gap-1 text-xs">
-            <button className="rounded border border-zinc-200 px-2 py-1 text-zinc-500 dark:border-zinc-700">←</button>
-            {[1, 2, 3, "…", 12].map((p, i) => (
-                <button
-                    key={i}
-                    className={`min-w-[28px] rounded px-2 py-1 ${
-                        p === 2
-                            ? "bg-violet-600 text-white"
-                            : "border border-zinc-200 text-zinc-600 dark:border-zinc-700 dark:text-zinc-300"
-                    }`}
-                >
-                    {p}
-                </button>
-            ))}
-            <button className="rounded border border-zinc-200 px-2 py-1 text-zinc-500 dark:border-zinc-700">→</button>
-        </div>
+        <Pagination page={3} totalPages={12} onPageChange={() => {}} />
     ),
 
     "react-fancy/pillbox": () => {
@@ -1015,25 +1012,10 @@ const PREVIEWS: Record<string, PreviewFn> = {
     ),
 
     "react-fancy/progress": () => (
-        <div className="w-full max-w-[18rem] space-y-2">
-            <div>
-                <div className="mb-1 flex justify-between text-[10px] text-zinc-500">
-                    <span>Uploading…</span>
-                    <span>68%</span>
-                </div>
-                <div className="h-1.5 overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800">
-                    <div className="h-full w-[68%] rounded-full bg-violet-500" />
-                </div>
-            </div>
-            <div>
-                <div className="mb-1 flex justify-between text-[10px] text-zinc-500">
-                    <span>Tests</span>
-                    <span>100%</span>
-                </div>
-                <div className="h-1.5 overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800">
-                    <div className="h-full w-full rounded-full bg-emerald-500" />
-                </div>
-            </div>
+        <div className="w-full max-w-[18rem] space-y-3">
+            <Progress value={68} color="violet" />
+            <Progress indeterminate color="sky" />
+            <Progress value={42} variant="circular" size="lg" color="emerald" />
         </div>
     ),
 
@@ -1091,15 +1073,12 @@ const PREVIEWS: Record<string, PreviewFn> = {
 
     "react-fancy/skeleton": () => (
         <div className="w-full max-w-[18rem] space-y-2">
-            <div className="h-3 w-1/3 animate-pulse rounded bg-zinc-200 dark:bg-zinc-800" />
-            <div className="h-3 w-full animate-pulse rounded bg-zinc-200 dark:bg-zinc-800" />
-            <div className="h-3 w-5/6 animate-pulse rounded bg-zinc-200 dark:bg-zinc-800" />
-            <div className="mt-3 flex items-center gap-2">
-                <div className="size-8 animate-pulse rounded-full bg-zinc-200 dark:bg-zinc-800" />
-                <div className="flex-1 space-y-1.5">
-                    <div className="h-2 w-1/2 animate-pulse rounded bg-zinc-200 dark:bg-zinc-800" />
-                    <div className="h-2 w-1/3 animate-pulse rounded bg-zinc-200 dark:bg-zinc-800" />
-                </div>
+            <Skeleton shape="text" width="33%" />
+            <Skeleton shape="text" />
+            <Skeleton shape="text" width="83%" />
+            <div className="flex items-center gap-2 pt-1">
+                <Skeleton shape="circle" width={32} height={32} />
+                <Skeleton shape="text" width="50%" />
             </div>
         </div>
     ),
@@ -1442,20 +1421,14 @@ const PREVIEWS: Record<string, PreviewFn> = {
     // ─── fancy-whiteboard ─────────────────────────────────────────────────
 
     "fancy-whiteboard/board": () => (
-        <div className="relative h-32 w-full max-w-[20rem] overflow-hidden rounded-md bg-amber-50/40 dark:bg-amber-900/10">
-            <div className="absolute left-3 top-3 size-10 rotate-[-4deg] bg-yellow-200 p-1.5 text-[9px] shadow-sm">
-                Q3 OKRs
-            </div>
-            <div className="absolute right-4 top-6 size-12 rotate-[3deg] bg-violet-200 p-1.5 text-[9px] text-violet-900 shadow-sm">
-                Ship v0.4
-            </div>
-            <div className="absolute bottom-3 left-10 size-10 rotate-[-2deg] bg-emerald-200 p-1.5 text-[9px] text-emerald-900 shadow-sm">
-                Audit
-            </div>
-            <div className="absolute right-8 bottom-6 size-3 rounded-full bg-violet-500 ring-2 ring-violet-300" />
+        <div className="h-32 w-full max-w-[20rem] overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
+            <Board className="h-full w-full" viewport={{ x: 0, y: 0, zoom: 0.62 }} onViewportChange={() => {}}>
+                <BoardStickyNote item={{ id: "a", kind: "sticky", x: 16, y: 14, width: 130, height: 78, text: "Q3 OKRs", color: "#fef3c7" }} onChange={() => {}} />
+                <BoardStickyNote item={{ id: "b", kind: "sticky", x: 190, y: 40, width: 130, height: 78, text: "Ship v0.4", color: "#ede9fe" }} onChange={() => {}} />
+                <BoardStickyNote item={{ id: "c", kind: "sticky", x: 70, y: 120, width: 130, height: 78, text: "Audit", color: "#d1fae5" }} onChange={() => {}} />
+            </Board>
         </div>
     ),
-
     // ─── fancy-artboard ───────────────────────────────────────────────────
 
     "fancy-artboard/artboard": () => (
@@ -1520,10 +1493,12 @@ const PREVIEWS: Record<string, PreviewFn> = {
     ),
 
     "fancy-artboard/artboard-note": () => (
-        <div className="grid h-28 w-full max-w-[18rem] place-items-center rounded-md bg-zinc-50 dark:bg-zinc-950">
-            <div className="size-20 rotate-[-3deg] bg-yellow-200 p-2 text-[11px] leading-snug text-zinc-800 shadow-md">
-                Try the dusk gradient on the hero?
-            </div>
+        <div className="h-28 w-full max-w-[18rem] overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
+            <ArtBoard defaultViewport={{ x: 0, y: 0, zoom: 0.85 }} style={{ height: "100%", width: "100%" }}>
+                <ArtBoard.Note top={14} left={16} rotate={-3}>
+                    Try the dusk gradient on the hero?
+                </ArtBoard.Note>
+            </ArtBoard>
         </div>
     ),
 
@@ -1843,22 +1818,8 @@ const PREVIEWS: Record<string, PreviewFn> = {
     // ─── fancy-diff ───────────────────────────────────────────────────────
 
     "fancy-diff/fancy-diff": () => (
-        <div className="w-full max-w-[20rem] overflow-hidden rounded-md border border-zinc-800 bg-zinc-950 font-mono text-[9px] leading-relaxed">
-            <div className="border-b border-zinc-800 px-2 py-1 text-[8px] text-zinc-500">config.ts · 2 changes</div>
-            <div className="grid grid-cols-2">
-                <div className="border-r border-zinc-800">
-                    <div className="bg-rose-500/15 px-2 text-rose-300"><span className="mr-1 text-rose-500">-</span>retries: 1</div>
-                    <div className="px-2 text-zinc-500">timeout: 30</div>
-                    <div className="bg-rose-500/15 px-2 text-rose-300"><span className="mr-1 text-rose-500">-</span>debug: false</div>
-                    <div className="px-2 text-zinc-500">name: app</div>
-                </div>
-                <div>
-                    <div className="bg-emerald-500/15 px-2 text-emerald-300"><span className="mr-1 text-emerald-500">+</span>retries: 3</div>
-                    <div className="px-2 text-zinc-500">timeout: 30</div>
-                    <div className="bg-emerald-500/15 px-2 text-emerald-300"><span className="mr-1 text-emerald-500">+</span>debug: true</div>
-                    <div className="px-2 text-zinc-500">name: app</div>
-                </div>
-            </div>
+        <div className="w-full max-w-[20rem] overflow-hidden text-[9px]">
+            <FancyDiff source={{ unified: PREVIEW_UNIFIED_DIFF }} />
         </div>
     ),
 
@@ -2029,67 +1990,59 @@ const PREVIEWS: Record<string, PreviewFn> = {
 
     // ─── fancy-whiteboard (items) ─────────────────────────────────────────
 
+    // fancy-whiteboard — the REAL components. They render in plain DOM and SVG,
+    // so nothing here needed deferring; the drawings they replace were SVG
+    // re-implementations of components that draw the same SVG themselves.
     "fancy-whiteboard/sticky-note": () => (
-        <div className="grid h-32 w-full max-w-[20rem] place-items-center">
-            <div className="size-20 rotate-[-5deg] bg-yellow-200 p-2 text-[10px] text-yellow-900 shadow-md">
-                <div className="font-semibold">Idea</div>
-                <div className="mt-1 text-yellow-800/80">Ship the preview grid ✨</div>
-            </div>
+        <div className="relative h-32 w-full max-w-[20rem] overflow-hidden rounded-md bg-zinc-50 dark:bg-zinc-900">
+            <BoardStickyNote
+                item={{ id: "n1", kind: "sticky", x: 14, y: 14, width: 140, height: 90, text: "Ship the preview grid ✨", color: "#fef3c7" }}
+                onChange={() => {}}
+            />
         </div>
     ),
 
     "fancy-whiteboard/shape": () => (
-        <div className="relative grid h-32 w-full max-w-[20rem] place-items-center overflow-hidden rounded-md bg-zinc-50 dark:bg-zinc-900">
-            <div className="absolute left-6 top-8 grid h-10 w-16 place-items-center rounded-md border-2 border-violet-500 bg-violet-50 text-[9px] font-medium text-violet-700 dark:bg-violet-500/15 dark:text-violet-200">Start</div>
-            <div className="absolute right-6 bottom-8 grid size-12 place-items-center rounded-full border-2 border-emerald-500 bg-emerald-50 text-[9px] font-medium text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-200">End</div>
-            <svg className="absolute inset-0 size-full" viewBox="0 0 320 128" preserveAspectRatio="none">
-                <line x1="100" y1="56" x2="230" y2="86" stroke="#a1a1aa" strokeWidth="1.5" strokeDasharray="4 3" />
-            </svg>
+        <div className="relative h-32 w-full max-w-[20rem] overflow-hidden rounded-md bg-zinc-50 dark:bg-zinc-900">
+            <BoardShape
+                item={{ id: "s1", kind: "shape", shape: "rounded-rect", x: 16, y: 16, width: 90, height: 52, fill: "rgba(139,92,246,0.15)", stroke: "#8b5cf6" }}
+                onChange={() => {}}
+            />
+            <BoardShape
+                item={{ id: "s2", kind: "shape", shape: "ellipse", x: 170, y: 56, width: 70, height: 52, fill: "rgba(16,185,129,0.15)", stroke: "#10b981" }}
+                onChange={() => {}}
+            />
         </div>
     ),
 
     "fancy-whiteboard/connector": () => (
-        <div className="relative grid h-32 w-full max-w-[20rem] place-items-center overflow-hidden rounded-md bg-zinc-50 dark:bg-zinc-900">
-            <div className="absolute left-7 top-10 rounded-md border border-zinc-300 bg-white px-2 py-1 text-[10px] text-zinc-700 shadow-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200">Node A</div>
-            <div className="absolute bottom-10 right-7 rounded-md border border-zinc-300 bg-white px-2 py-1 text-[10px] text-zinc-700 shadow-sm dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200">Node B</div>
-            <svg className="absolute inset-0 size-full" viewBox="0 0 320 128" preserveAspectRatio="none">
-                <defs>
-                    <marker id="wbArrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
-                        <path d="M0,0 L6,3 L0,6 Z" fill="#8b5cf6" />
-                    </marker>
-                </defs>
-                <path d="M85 38 C 160 38, 160 92, 235 92" fill="none" stroke="#8b5cf6" strokeWidth="2" markerEnd="url(#wbArrow)" />
+        <div className="relative h-32 w-full max-w-[20rem] overflow-hidden rounded-md bg-zinc-50 dark:bg-zinc-900">
+            <svg className="absolute inset-0 size-full">
+                <Connector from={{ x: 50, y: 40 }} to={{ x: 240, y: 90 }} />
+                <circle cx={50} cy={40} r={5} fill="#64748b" />
+                <circle cx={240} cy={90} r={5} fill="#64748b" />
             </svg>
         </div>
     ),
 
     "fancy-whiteboard/drawing": () => (
-        <div className="grid h-32 w-full max-w-[20rem] place-items-center overflow-hidden rounded-md bg-zinc-50 dark:bg-zinc-900">
-            <svg viewBox="0 0 280 100" className="h-24 w-64">
-                <path
-                    d="M10 60 C 30 20, 50 90, 75 55 S 115 15, 140 60 S 185 100, 210 50 S 250 20, 270 55"
-                    fill="none"
-                    stroke="#8b5cf6"
-                    strokeWidth="3"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                />
-            </svg>
+        <div className="relative h-32 w-full max-w-[20rem] overflow-hidden rounded-md bg-zinc-50 dark:bg-zinc-900">
+            <Drawing strokes={PREVIEW_STROKES} color="#8b5cf6" size={3} />
         </div>
     ),
 
     "fancy-whiteboard/cursor-layer": () => (
-        <div className="relative h-32 w-full max-w-[20rem] overflow-hidden rounded-md bg-amber-50/40 dark:bg-amber-900/10">
-            <div className="absolute left-3 top-3 size-9 rotate-[-3deg] bg-yellow-200 p-1 text-[8px] shadow-sm">Plan</div>
-            <div className="absolute bottom-4 right-5 size-9 rotate-[2deg] bg-violet-200 p-1 text-[8px] text-violet-900 shadow-sm">Build</div>
-            <div className="absolute left-20 top-8">
-                <svg width="14" height="14" viewBox="0 0 16 16" className="text-violet-600"><path d="M1 1 L1 13 L4.5 9.5 L7 14 L9 13 L6.5 8.5 L11 8 Z" fill="currentColor" /></svg>
-                <span className="ml-1 rounded bg-violet-600 px-1 py-0.5 text-[8px] font-medium text-white">Ava</span>
-            </div>
-            <div className="absolute bottom-9 left-32">
-                <svg width="14" height="14" viewBox="0 0 16 16" className="text-emerald-600"><path d="M1 1 L1 13 L4.5 9.5 L7 14 L9 13 L6.5 8.5 L11 8 Z" fill="currentColor" /></svg>
-                <span className="ml-1 rounded bg-emerald-600 px-1 py-0.5 text-[8px] font-medium text-white">Sky</span>
-            </div>
+        <div className="relative h-32 w-full max-w-[20rem] overflow-hidden rounded-md bg-zinc-50 dark:bg-zinc-900">
+            <BoardStickyNote
+                item={{ id: "p", kind: "sticky", x: 12, y: 12, width: 74, height: 48, text: "Plan", color: "#fef3c7" }}
+                onChange={() => {}}
+            />
+            <CursorLayer
+                cursors={[
+                    { userId: "u1", name: "Ava", color: "#8b5cf6", x: 120, y: 40 },
+                    { userId: "u2", name: "Sky", color: "#10b981", x: 200, y: 92 },
+                ]}
+            />
         </div>
     ),
 

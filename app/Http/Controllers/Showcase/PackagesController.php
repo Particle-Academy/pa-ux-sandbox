@@ -376,6 +376,13 @@ class PackagesController extends Controller
         $comp = collect($pkg['components'] ?? [])->firstWhere('slug', $component);
         abort_if($comp === null, 404);
 
+        // Same captured frame the grid tile shows. Without this the detail page
+        // is the one place a fancy-tui component still falls back to a
+        // placeholder — after the grid has just shown the real render.
+        if (($frame = $this->tuiPreviews->forComponent($component)) !== null && $pkg['slug'] === 'fancy-tui') {
+            $comp = $comp + ['frame' => $frame['frame'], 'columns' => $frame['columns']];
+        }
+
         // Pull the matching registry-item (source files + deps) if we can
         // scan it from disk. Falls through to null for packages we don't yet
         // read (e.g. composer-only PHP packages).

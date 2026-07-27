@@ -637,3 +637,37 @@
 .mp-line { height: 6px; border-radius: 999px; background: var(--bg-3); }
 .mp-caret { animation: mp-blink 1s steps(1) infinite; }
 @keyframes mp-blink { 50% { opacity: 0; } }
+
+/* ── fancy-tui captured frames ───────────────────────────────────────────
+   Real Ink renders, captured to ANSI by the package's showcase harness and
+   painted as text (see resources/js/lib/ansi.ts). Not an xterm: these are
+   snippets, and a terminal viewport would frame each one in empty black.
+
+   The frame SCALES to the tile rather than wrapping. Box-drawing characters
+   are positional — a wrapped border lands mid-row and the frame stops being
+   a frame — so the font size is derived from the tile width and the frame's
+   own column count, which is what `ch` units and a container query give us
+   for free. */
+.tui-frame {
+  container-type: inline-size;
+  width: 100%;
+  --tui-bg: #10141c;
+  --tui-fg: #c8ccd4;
+  background: var(--tui-bg);
+  border: 1px solid color-mix(in oklch, var(--fg-1) 12%, transparent);
+  border-radius: 8px;
+  padding: 10px 12px;
+  overflow: hidden;
+}
+.tui-frame__pre {
+  margin: 0;
+  color: var(--tui-fg);
+  font-family: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace;
+  /* One `ch` is ~0.6em in these faces; +2 keeps the frame off the padding.
+     Capped so a one-line Spinner does not balloon to headline size. */
+  font-size: min(13px, calc(100cqw / ((var(--tui-cols) + 2) * 0.6)));
+  line-height: 1.35;
+  white-space: pre;
+  tab-size: 4;
+}
+.tui-frame__row { min-height: 1.35em; }

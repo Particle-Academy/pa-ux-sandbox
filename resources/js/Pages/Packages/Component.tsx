@@ -1,3 +1,4 @@
+import { Link } from "@inertiajs/react";
 import { Seo } from "@particle-academy/fancy-inertia/seo";
 import { useRef, useState, type ReactNode } from "react";
 import {
@@ -21,6 +22,7 @@ const ComponentDemo = clientOnly(() =>
     import("./ComponentDemo").then((m) => ({ default: m.ComponentDemo })),
 );
 import { ContextCards } from "./ContextCards";
+import TuiFrame from "./TuiFrame";
 import { useXp } from "../../lib/useXp";
 import { getComponentDoc, type ComponentDoc, type ComponentDocExample, type ComponentDocProp } from "./ComponentDocs";
 
@@ -46,7 +48,8 @@ type Context = {
 
 type Props = {
     package: { slug: string; name: string; npm?: string; composer?: string };
-    component: { slug: string; name: string; blurb?: string };
+    /** `frame` is a captured ANSI render — fancy-tui only, see TuiFrame. */
+    component: { slug: string; name: string; blurb?: string; frame?: string; columns?: number };
     usage: string | null;
     context: Context | null;
     source: Source | null;
@@ -143,9 +146,26 @@ export default function PackagesComponent({ package: pkg, component, usage, cont
                         <Tabs.Panel value="preview">
                             <Card className="mt-4">
                                 <Card.Body>
-                                    <DemoInteractionTracker demo={`${pkg.slug}/${component.slug}`}>
-                                        <ComponentDemo slug={component.slug} name={component.name} pkg={pkg.slug} />
-                                    </DemoInteractionTracker>
+                                    {component.frame ? (
+                                        // A terminal component has no React demo to drive — the
+                                        // preview IS the captured render. Pointed at the live TUI
+                                        // page, which is where you can actually drive one.
+                                        <div className="space-y-3">
+                                            <TuiFrame frame={component.frame} columns={component.columns} />
+                                            <Text size="xs" className="!text-zinc-500">
+                                                A real Ink render, captured by fancy-tui&apos;s own showcase harness. For a
+                                                TUI you can drive, open{" "}
+                                                <Link href="/fancy-tui" className="underline">
+                                                    the live terminal docs
+                                                </Link>
+                                                .
+                                            </Text>
+                                        </div>
+                                    ) : (
+                                        <DemoInteractionTracker demo={`${pkg.slug}/${component.slug}`}>
+                                            <ComponentDemo slug={component.slug} name={component.name} pkg={pkg.slug} />
+                                        </DemoInteractionTracker>
+                                    )}
                                 </Card.Body>
                             </Card>
                         </Tabs.Panel>

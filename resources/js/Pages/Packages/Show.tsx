@@ -6,8 +6,21 @@ import { Layout } from "../Layout";
 import { getComponentPreview, GenericPlaceholder } from "./ComponentPreviews";
 import { ContextCards } from "./ContextCards";
 import { Prose } from "./Prose";
+import TuiFrame from "./TuiFrame";
 
-type Component = { slug: string; name: string; blurb?: string; inlineEdit?: boolean };
+type Component = {
+    slug: string;
+    name: string;
+    blurb?: string;
+    inlineEdit?: boolean;
+    /**
+     * A captured terminal frame (fancy-tui only) — real ANSI from the package's
+     * own Ink showcase harness, attached server-side by TuiPreviewSource. A
+     * package that renders to a terminal cannot have a React preview.
+     */
+    frame?: string;
+    columns?: number;
+};
 type ApiEntry = { signature: string; description?: string };
 
 type Pkg = {
@@ -310,7 +323,13 @@ function ComponentGrid({ pkg, components }: { pkg: Pkg; components: Component[] 
                                     </span>
                                 </div>
                                 <div className="flex min-h-[10rem] items-center justify-center overflow-hidden p-4">
-                                    {Preview ? <Preview /> : <GenericPlaceholder name={c.name} />}
+                                    {c.frame ? (
+                                        <TuiFrame frame={c.frame} columns={c.columns} />
+                                    ) : Preview ? (
+                                        <Preview />
+                                    ) : (
+                                        <GenericPlaceholder name={c.name} />
+                                    )}
                                 </div>
                                 {c.blurb && (
                                     <div className="border-t border-[var(--border-1)] px-3 py-2">

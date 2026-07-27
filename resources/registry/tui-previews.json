@@ -1,0 +1,377 @@
+{
+    "$schema": "https://ui.particle.academy/schema/tui-previews.json",
+    "components": {
+        "accordion": {
+            "frame": "\u001b[7m\u001b[90m[ ▾ Build ]\u001b[39m\u001b[27m\n  Compiles the workspace.\n\u001b[90m[ ▸ Test ]\u001b[39m",
+            "columns": 68,
+            "name": "Accordion",
+            "group": "Navigation"
+        },
+        "activity-indicator": {
+            "frame": "\u001b[36m⠋ integration\u001b[39m",
+            "columns": 68,
+            "name": "ActivityIndicator",
+            "group": "Display"
+        },
+        "autocomplete": {
+            "frame": "╔══════════════════════════════════════════════════════════════════╗\n║ te▌                                                              ║\n╚══════════════════════════════════════════════════════════════════╝\n\n\u001b[36m1. ● Test\u001b[39m",
+            "columns": 68,
+            "name": "Autocomplete",
+            "group": "Inputs"
+        },
+        "avatar": {
+            "frame": "\u001b[46m\u001b[30m ◆ \u001b[39m\u001b[49m",
+            "columns": 68,
+            "name": "Avatar",
+            "group": "Display"
+        },
+        "badge": {
+            "frame": "\u001b[42m\u001b[30m passing \u001b[39m\u001b[49m \u001b[43m\u001b[30m flaky \u001b[39m\u001b[49m \u001b[41m\u001b[30m failed \u001b[39m\u001b[49m",
+            "columns": 68,
+            "name": "Badge",
+            "group": "Display"
+        },
+        "box": {
+            "frame": "╭──────────────────────────────────────────────────────────────────╮\n│ \u001b[37mTyped Ink/Yoga box\u001b[39m                                               │\n╰──────────────────────────────────────────────────────────────────╯",
+            "columns": 68,
+            "name": "Box",
+            "group": "Layout"
+        },
+        "breadcrumbs": {
+            "frame": "\u001b[37mrepo › src › index.ts\u001b[39m",
+            "columns": 68,
+            "name": "Breadcrumbs",
+            "group": "Navigation"
+        },
+        "button": {
+            "frame": "\u001b[7m\u001b[36m[ Run ]\u001b[39m\u001b[27m \u001b[31m[ Stop ]\u001b[39m",
+            "columns": 68,
+            "name": "Button",
+            "group": "Inputs"
+        },
+        "callout": {
+            "frame": "\u001b[33m┌──────────────────────────────────────────────────────────────────┐\u001b[39m\n\u001b[33m│\u001b[39m \u001b[1m\u001b[33mHeads up\u001b[39m\u001b[22m                                                         \u001b[33m│\u001b[39m\n\u001b[33m│\u001b[39m \u001b[37mDestructive actions wait for human confirmation.\u001b[39m                 \u001b[33m│\u001b[39m\n\u001b[33m└──────────────────────────────────────────────────────────────────┘\u001b[39m",
+            "columns": 68,
+            "name": "Callout",
+            "group": "Display"
+        },
+        "card": {
+            "frame": "\u001b[90m╭──────────────────────────────────────────────────────────────────╮\u001b[39m\n\u001b[90m│\u001b[39m \u001b[1m\u001b[90mDeploy\u001b[39m\u001b[22m                                                           \u001b[90m│\u001b[39m\n\u001b[90m│\u001b[39m \u001b[1mProduction\u001b[22m                                                       \u001b[90m│\u001b[39m\n\u001b[90m│\u001b[39m                                                                  \u001b[90m│\u001b[39m\n\u001b[90m│\u001b[39m \u001b[37m2 pending approvals.\u001b[39m                                             \u001b[90m│\u001b[39m\n\u001b[90m│\u001b[39m                                                                  \u001b[90m│\u001b[39m\n\u001b[90m│\u001b[39m \u001b[90m[\u001b[1m\u001b[36mEnter\u001b[22m\u001b[90m] approve\u001b[39m                                                  \u001b[90m│\u001b[39m\n\u001b[90m╰──────────────────────────────────────────────────────────────────╯\u001b[39m",
+            "columns": 68,
+            "name": "Card",
+            "group": "Layout"
+        },
+        "card-variants": {
+            "frame": "\u001b[90m╭──────────╮\u001b[39m \u001b[90m┏━━━━━━━━━━┓\u001b[39m  \u001b[37mflat\u001b[39m\n\u001b[90m│\u001b[39m \u001b[37moutlined\u001b[39m \u001b[90m│\u001b[39m \u001b[90m┃\u001b[39m \u001b[37melevated\u001b[39m \u001b[90m┃\u001b[39m\n\u001b[90m╰──────────╯\u001b[39m \u001b[90m┗━━━━━━━━━━┛\u001b[39m",
+            "columns": 68,
+            "name": "Card variants",
+            "group": "Layout"
+        },
+        "checkbox": {
+            "frame": "\u001b[36m1. [x] Run in CI\u001b[39m",
+            "columns": 68,
+            "name": "Checkbox",
+            "group": "Inputs"
+        },
+        "checkbox-group": {
+            "frame": "\u001b[36m1. [x] Build\u001b[39m\n\u001b[37m2. [ ] Test\u001b[39m\n\u001b[37m3. [ ] Deploy\u001b[39m",
+            "columns": 68,
+            "name": "CheckboxGroup",
+            "group": "Inputs"
+        },
+        "code-view": {
+            "frame": "┌──────────────────────────────────────────────────────────────────┐\n│     \u001b[32m1\u001b[39m │ \u001b[34mconst\u001b[39m x = \u001b[32m1\u001b[39m;                                             │\n│     \u001b[32m2\u001b[39m │ \u001b[34mexport\u001b[39m \u001b[34mdefault\u001b[39m x;                                        │\n└──────────────────────────────────────────────────────────────────┘",
+            "columns": 68,
+            "name": "CodeView",
+            "group": "Content"
+        },
+        "column": {
+            "frame": "\u001b[37mQueued\u001b[39m\n\n\u001b[37mRunning\u001b[39m",
+            "columns": 68,
+            "name": "Column",
+            "group": "Layout"
+        },
+        "command": {
+            "frame": "\u001b[90m╭──────────────────────────────────────────────────────────────────╮\u001b[39m\n\u001b[90m│\u001b[39m \u001b[1m\u001b[90mCommand\u001b[39m\u001b[22m                                                          \u001b[90m│\u001b[39m\n\u001b[90m│\u001b[39m \u001b[90mSearch: …\u001b[39m                                                        \u001b[90m│\u001b[39m\n\u001b[90m│\u001b[39m                                                                  \u001b[90m│\u001b[39m\n\u001b[90m│\u001b[39m \u001b[7m\u001b[36m[ Build ]\u001b[39m\u001b[27m                                                        \u001b[90m│\u001b[39m\n\u001b[90m│\u001b[39m                                                                  \u001b[90m│\u001b[39m\n\u001b[90m│\u001b[39m \u001b[36m[ Test ]\u001b[39m                                                         \u001b[90m│\u001b[39m\n\u001b[90m│\u001b[39m                                                                  \u001b[90m│\u001b[39m\n\u001b[90m│\u001b[39m \u001b[36m[ Deploy ]\u001b[39m                                                       \u001b[90m│\u001b[39m\n\u001b[90m╰──────────────────────────────────────────────────────────────────╯\u001b[39m",
+            "columns": 68,
+            "name": "Command",
+            "group": "Navigation"
+        },
+        "composer": {
+            "frame": "╔══════════════════════════════════════════════════════════════════╗\n║ ▌\u001b[2mMessage…\u001b[22m                                                        ║\n╚══════════════════════════════════════════════════════════════════╝",
+            "columns": 68,
+            "name": "Composer",
+            "group": "Human+"
+        },
+        "display-value": {
+            "frame": "\u001b[90mBranch:\u001b[39m \u001b[37mmain\u001b[39m",
+            "columns": 68,
+            "name": "DisplayValue",
+            "group": "Inputs"
+        },
+        "drawer": {
+            "frame": "\u001b[1m\u001b[36mJobs\u001b[39m\u001b[22m                                     \u001b[90m╭─────────────────────────╮\u001b[39m\n\u001b[90mcompile · integration · package · publish│\u001b[39m \u001b[1mFilters\u001b[22m           \u001b[90m[\u001b[1m\u001b[36mesc\u001b[22m\u001b[90m]\u001b[39m \u001b[90m│\u001b[39m\n\u001b[90mworker-01 · worker-02 · worker-03 · worke│\u001b[39m \u001b[37mstate: failing\u001b[39m          \u001b[90m│\u001b[39m\n\u001b[90mretries: 2 · queue depth: 11 · oldest: 4m│\u001b[39m \u001b[37mbranch: main\u001b[39m            \u001b[90m│\u001b[39m\n                                         \u001b[90m│\u001b[39m                         \u001b[90m│\u001b[39m\n                                         \u001b[90m│\u001b[39m                         \u001b[90m│\u001b[39m\n                                         \u001b[90m│\u001b[39m                         \u001b[90m│\u001b[39m\n                                         \u001b[90m│\u001b[39m                         \u001b[90m│\u001b[39m\n                                         \u001b[90m│\u001b[39m             \u001b[90menter apply\u001b[39m \u001b[90m│\u001b[39m\n                                         \u001b[90m╰─────────────────────────╯\u001b[39m",
+            "columns": 68,
+            "name": "Drawer",
+            "group": "Navigation"
+        },
+        "fancy-tui-provider": {
+            "frame": "\u001b[1m\u001b[36mDeploy agent\u001b[39m\u001b[22m                                               connected\n\n\u001b[90m╭──────────────────────────────────────────────────────────────────╮\u001b[39m\n\u001b[90m│\u001b[39m \u001b[1m\u001b[90mRun\u001b[39m\u001b[22m                                                              \u001b[90m│\u001b[39m\n\u001b[90m│\u001b[39m \u001b[37mReady for instructions.\u001b[39m                                          \u001b[90m│\u001b[39m\n\u001b[90m╰──────────────────────────────────────────────────────────────────╯\u001b[39m",
+            "columns": 68,
+            "name": "FancyTuiProvider",
+            "group": "Human+"
+        },
+        "field": {
+            "frame": "\u001b[1m\u001b[37mToken\u001b[39m\u001b[22m\n╔══════════════════════════════════════════════════════════════════╗\n║ ▌\u001b[2mpaste token\u001b[22m                                                     ║\n╚══════════════════════════════════════════════════════════════════╝\n\u001b[90mStored in your keychain.\u001b[39m\n\u001b[31mRequired\u001b[39m",
+            "columns": 68,
+            "name": "Field",
+            "group": "Inputs"
+        },
+        "file-browser": {
+            "frame": "\u001b[37mrepo\u001b[39m\n\u001b[36m› ▸ src\u001b[39m\n\u001b[37m  · package.json\u001b[39m",
+            "columns": 68,
+            "name": "FileBrowser",
+            "group": "Data"
+        },
+        "form": {
+            "frame": "\u001b[1m\u001b[37mBranch\u001b[39m\u001b[22m\n╔══════════════════════════════════════════════════════════════════╗\n║ main▌                                                            ║\n╚══════════════════════════════════════════════════════════════════╝",
+            "columns": 68,
+            "name": "Form",
+            "group": "Inputs"
+        },
+        "header": {
+            "frame": "\u001b[1m\u001b[36mFancy TUI\u001b[39m\u001b[22m \u001b[2mHuman+ terminal\u001b[22m                                  connected",
+            "columns": 68,
+            "name": "Header",
+            "group": "Layout"
+        },
+        "heading": {
+            "frame": "\u001b[1m\u001b[37m█ Pipeline\u001b[39m\u001b[22m\n\u001b[1m\u001b[37m▌ Workers\u001b[39m\u001b[22m",
+            "columns": 68,
+            "name": "Heading",
+            "group": "Content"
+        },
+        "hero": {
+            "frame": "\u001b[36m╭──────────────────────────────────────────────────────────────────╮\u001b[39m\n\u001b[36m│\u001b[39m                                                                  \u001b[36m│\u001b[39m\n\u001b[36m│\u001b[39m                               \u001b[1m\u001b[36m╭───╮\u001b[39m\u001b[22m                              \u001b[36m│\u001b[39m\n\u001b[36m│\u001b[39m                               \u001b[1m\u001b[36m│ F │\u001b[39m\u001b[22m                              \u001b[36m│\u001b[39m\n\u001b[36m│\u001b[39m                               \u001b[1m\u001b[36m╰───╯\u001b[39m\u001b[22m                              \u001b[36m│\u001b[39m\n\u001b[36m│\u001b[39m                                                                  \u001b[36m│\u001b[39m\n\u001b[36m│\u001b[39m                         \u001b[1m\u001b[36mFancy Docs\u001b[39m\u001b[22m \u001b[90mv0.4.0\u001b[39m                        \u001b[36m│\u001b[39m\n\u001b[36m│\u001b[39m         \u001b[90mBrowse the Fancy UI registry from your terminal\u001b[39m          \u001b[36m│\u001b[39m\n\u001b[36m│\u001b[39m                                                                  \u001b[36m│\u001b[39m\n\u001b[36m│\u001b[39m                \u001b[90m[\u001b[1m\u001b[36m/\u001b[22m\u001b[90m] search\u001b[39m  \u001b[90m[\u001b[1m\u001b[36menter\u001b[22m\u001b[90m] open\u001b[39m  \u001b[90m[\u001b[1m\u001b[36m?\u001b[22m\u001b[90m] help\u001b[39m                \u001b[36m│\u001b[39m\n\u001b[36m│\u001b[39m                                                                  \u001b[36m│\u001b[39m\n\u001b[36m╰──────────────────────────────────────────────────────────────────╯\u001b[39m",
+            "columns": 68,
+            "name": "Hero",
+            "group": "Layout"
+        },
+        "input": {
+            "frame": "╔══════════════════════════════════════════════════════════════════╗\n║ main▌                                                            ║\n╚══════════════════════════════════════════════════════════════════╝",
+            "columns": 68,
+            "name": "Input",
+            "group": "Inputs"
+        },
+        "key-hint": {
+            "frame": "\u001b[90m[\u001b[1m\u001b[36mTab\u001b[22m\u001b[90m] focus\u001b[39m \u001b[90m[\u001b[1m\u001b[36mAlt+Enter\u001b[22m\u001b[90m] newline\u001b[39m",
+            "columns": 68,
+            "name": "KeyHint",
+            "group": "Content"
+        },
+        "live-region": {
+            "frame": "\u001b[36m⠋ thinking…\u001b[39m",
+            "columns": 68,
+            "name": "LiveRegion",
+            "group": "Human+"
+        },
+        "markdown": {
+            "frame": "\u001b[32m\u001b[1m## Result\u001b[22m\u001b[39m\n\nThe build \u001b[1mpassed\u001b[22m with \u001b[33m0\u001b[39m warnings.",
+            "columns": 68,
+            "name": "Markdown",
+            "group": "Content"
+        },
+        "menu": {
+            "frame": "\u001b[37m  Build\u001b[39m\n\u001b[36m› Test\u001b[39m\n\u001b[37m  Deploy\u001b[39m",
+            "columns": 68,
+            "name": "Menu",
+            "group": "Navigation"
+        },
+        "message-list": {
+            "frame": "\u001b[46m\u001b[30m user \u001b[39m\u001b[49m\nSummarize the failing build.\n\u001b[45m\u001b[30m agent \u001b[39m\u001b[49m\nA missing baseUrl breaks the paths.\n",
+            "columns": 68,
+            "name": "MessageList",
+            "group": "Human+"
+        },
+        "modal": {
+            "frame": "\u001b[1m\u001b[36mDeploy agent\u001b[39m\u001b[22m                                               connected\n\u001b[37m2 approvals pending · main@8f2c1d\u001b[39m\n\u001b[90mworker-01 · wor╭───────────────────────────────────╮\u001b[39m\n\u001b[90mqueued: compile│\u001b[39m \u001b[1mDeploy to production?\u001b[22m       \u001b[90m[\u001b[1m\u001b[36mesc\u001b[22m\u001b[90m]\u001b[39m \u001b[90m│fy\u001b[39m\n               \u001b[90m│\u001b[39m \u001b[37mThis replaces 3 running services.\u001b[39m \u001b[90m│\u001b[39m\n               \u001b[90m│\u001b[39m                                   \u001b[90m│\u001b[39m\n               \u001b[90m│\u001b[39m                                   \u001b[90m│\u001b[39m\n               \u001b[90m│\u001b[39m                         \u001b[7m\u001b[36m[ Close ]\u001b[39m\u001b[27m \u001b[90m│\u001b[39m\n               \u001b[90m╰───────────────────────────────────╯\u001b[39m\n\n\n",
+            "columns": 68,
+            "name": "Modal",
+            "group": "Navigation"
+        },
+        "multi-switch": {
+            "frame": "\u001b[37m1. ○ Build\u001b[39m\n\u001b[36m2. ● Test\u001b[39m\n\u001b[37m3. ○ Deploy\u001b[39m",
+            "columns": 68,
+            "name": "MultiSwitch",
+            "group": "Inputs"
+        },
+        "multiline-input": {
+            "frame": "╔══════════════════════════════════════════════════════════════════╗\n║ Summarize the failing build▌                                     ║\n╚══════════════════════════════════════════════════════════════════╝",
+            "columns": 68,
+            "name": "MultilineInput",
+            "group": "Inputs"
+        },
+        "pagination": {
+            "frame": "\u001b[7m\u001b[36m[ Prev ]\u001b[39m\u001b[27m \u001b[37m2 / 5\u001b[39m \u001b[36m[ Next ]\u001b[39m",
+            "columns": 68,
+            "name": "Pagination",
+            "group": "Navigation"
+        },
+        "panel": {
+            "frame": "\u001b[36m╔══════════════════════════════════════════════════════════════════╗\u001b[39m\n\u001b[36m║\u001b[39m \u001b[1m\u001b[90mRun\u001b[39m\u001b[22m                                                              \u001b[36m║\u001b[39m\n\u001b[36m║\u001b[39m \u001b[37mReady for instructions.\u001b[39m                                          \u001b[36m║\u001b[39m\n\u001b[36m╚══════════════════════════════════════════════════════════════════╝\u001b[39m",
+            "columns": 68,
+            "name": "Panel",
+            "group": "Layout"
+        },
+        "pillbox": {
+            "frame": "\u001b[36m[ci]\u001b[39m \u001b[36m[nightly]\u001b[39m ╔══════════╗\n               ║ ▌\u001b[2madd tag\u001b[22m ║\n               ╚══════════╝",
+            "columns": 68,
+            "name": "Pillbox",
+            "group": "Inputs"
+        },
+        "profile": {
+            "frame": "\u001b[46m\u001b[30m ◆ \u001b[39m\u001b[49m \u001b[1m\u001b[37mCodex\u001b[39m\u001b[22m\n    \u001b[90magent · connected\u001b[39m",
+            "columns": 68,
+            "name": "Profile",
+            "group": "Display"
+        },
+        "progress": {
+            "frame": "\u001b[36m██████████████\u001b[2m░░░░░░\u001b[22m\u001b[39m \u001b[37mcontext\u001b[39m \u001b[90m72%\u001b[39m",
+            "columns": 68,
+            "name": "Progress",
+            "group": "Display"
+        },
+        "radio-group": {
+            "frame": "\u001b[37m1. ○ Build\u001b[39m\n\u001b[36m2. ● Test\u001b[39m\n\u001b[37m3. ○ Deploy\u001b[39m",
+            "columns": 68,
+            "name": "RadioGroup",
+            "group": "Inputs"
+        },
+        "responsive": {
+            "frame": "\u001b[37mwide layout\u001b[39m",
+            "columns": 68,
+            "name": "Responsive",
+            "group": "Layout"
+        },
+        "row": {
+            "frame": "\u001b[42m\u001b[30m ready \u001b[39m\u001b[49m \u001b[37m3 workers\u001b[39m",
+            "columns": 68,
+            "name": "Row",
+            "group": "Layout"
+        },
+        "screen": {
+            "frame": "\u001b[1m\u001b[36mDeploy agent\u001b[39m\u001b[22m                                               connected\n\u001b[37mReady for instructions.\u001b[39m",
+            "columns": 68,
+            "name": "Screen",
+            "group": "Layout"
+        },
+        "select": {
+            "frame": "\u001b[37m1. ○ Build\u001b[39m\n\u001b[37m2. ○ Test\u001b[39m\n\u001b[36m3. ● Deploy\u001b[39m",
+            "columns": 68,
+            "name": "Select",
+            "group": "Inputs"
+        },
+        "separator": {
+            "frame": "\u001b[90mWorkers ────────────────────────────────────────────────────────────\u001b[39m\n\u001b[90m───────────────────────────────\u001b[39m",
+            "columns": 68,
+            "name": "Separator",
+            "group": "Layout"
+        },
+        "sidebar": {
+            "frame": "\u001b[37m  Build\u001b[39m\n\u001b[36m› Test\u001b[39m\n\u001b[37m  Deploy\u001b[39m",
+            "columns": 68,
+            "name": "Sidebar",
+            "group": "Layout"
+        },
+        "skeleton": {
+            "frame": "\u001b[2m░░░░░░░░░░░░░░░░░░░░░░░░\u001b[22m",
+            "columns": 68,
+            "name": "Skeleton",
+            "group": "Display"
+        },
+        "slider": {
+            "frame": "\u001b[36m──────●──── 60\u001b[39m",
+            "columns": 68,
+            "name": "Slider",
+            "group": "Inputs"
+        },
+        "spacer": {
+            "frame": "\u001b[37mleft\u001b[39m                                                           \u001b[37mright\u001b[39m",
+            "columns": 68,
+            "name": "Spacer",
+            "group": "Layout"
+        },
+        "spinner": {
+            "frame": "\u001b[36m⠋ thinking…\u001b[39m",
+            "columns": 68,
+            "name": "Spinner",
+            "group": "Display"
+        },
+        "stack": {
+            "frame": "\u001b[37mFirst\u001b[39m\n\n\u001b[37mSecond\u001b[39m",
+            "columns": 68,
+            "name": "Stack",
+            "group": "Layout"
+        },
+        "static-list": {
+            "frame": "\u001b[37mbuild started\u001b[39m\n\u001b[37mbuild finished\u001b[39m\n",
+            "columns": 68,
+            "name": "StaticList",
+            "group": "Data"
+        },
+        "status-bar": {
+            "frame": "\u001b[90m┌──────────────────────────────────────────────────────────────────┐\u001b[39m\n\u001b[90m│\u001b[39m 3 workers                   main                  Ctrl+R refresh \u001b[90m│\u001b[39m\n\u001b[90m└──────────────────────────────────────────────────────────────────┘\u001b[39m",
+            "columns": 68,
+            "name": "StatusBar",
+            "group": "Layout"
+        },
+        "switch": {
+            "frame": "\u001b[36m1. [x] Verbose ON\u001b[39m",
+            "columns": 68,
+            "name": "Switch",
+            "group": "Inputs"
+        },
+        "table": {
+            "frame": "\u001b[1m\u001b[37mJOB            │ STATE         \u001b[39m\u001b[22m\n\u001b[90m───────────────────────────────\u001b[39m\n\u001b[37m  compile        │ success       \u001b[39m\n\u001b[36m› integration    │ running       \u001b[39m",
+            "columns": 68,
+            "name": "Table",
+            "group": "Data"
+        },
+        "tabs": {
+            "frame": "\u001b[7m\u001b[90m[ Build ]\u001b[39m\u001b[27m \u001b[36m[ Test ]\u001b[39m \u001b[90m[ Deploy ]\u001b[39m",
+            "columns": 68,
+            "name": "Tabs",
+            "group": "Navigation"
+        },
+        "text": {
+            "frame": "\u001b[37mDefault\u001b[39m\n\u001b[90mMuted\u001b[39m\n\u001b[31mDanger\u001b[39m",
+            "columns": 68,
+            "name": "Text",
+            "group": "Content"
+        },
+        "timeline": {
+            "frame": "\u001b[32m├─\u001b[39m \u001b[1m\u001b[37mqueued\u001b[39m\u001b[22m\n   \u001b[90m12.4s\u001b[39m\n\u001b[33m├─\u001b[39m \u001b[1m\u001b[37mbuilding\u001b[39m\u001b[22m\n   \u001b[90m8.1s\u001b[39m\n\u001b[36m└─\u001b[39m \u001b[1m\u001b[37mdeploy\u001b[39m\u001b[22m",
+            "columns": 68,
+            "name": "Timeline",
+            "group": "Display"
+        },
+        "toast": {
+            "frame": "\u001b[32m● Deployed to production\u001b[39m",
+            "columns": 68,
+            "name": "Toast",
+            "group": "Navigation"
+        },
+        "tool-call": {
+            "frame": "\u001b[36m⠋\u001b[39m \u001b[33minspect_config\u001b[39m \u001b[90mtsconfig.json\u001b[39m",
+            "columns": 68,
+            "name": "ToolCall",
+            "group": "Human+"
+        },
+        "tree-nav": {
+            "frame": "\u001b[37m▾ src\u001b[39m\n\u001b[36m    index.ts\u001b[39m",
+            "columns": 68,
+            "name": "TreeNav",
+            "group": "Data"
+        }
+    }
+}

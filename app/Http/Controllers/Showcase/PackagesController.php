@@ -10,6 +10,7 @@ use App\Support\PackageFamily;
 use App\Support\PackageRegistry;
 use App\Support\Registry\ReadmeSource;
 use App\Support\Registry\RegistrySource;
+use App\Support\Registry\TuiPreviewSource;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -20,6 +21,7 @@ class PackagesController extends Controller
     public function __construct(
         private readonly RegistrySource $registry,
         private readonly ReadmeSource $readmes,
+        private readonly TuiPreviewSource $tuiPreviews,
     ) {}
 
     public function index(): Response
@@ -176,6 +178,20 @@ class PackagesController extends Controller
 
         // Headless packages render no UI, so they carry no component grid.
         $pkg['components'] ??= [];
+
+        // fancy-tui renders to a TERMINAL, so its previews are captured ANSI
+        // frames rather than React. Attached here so a tile can render the real
+        // thing; the alternative was 51 "coming soon" boxes on a package whose
+        // capture harness has existed all along.
+        if ($pkg['slug'] === 'fancy-tui') {
+            $pkg['components'] = array_map(function (array $component): array {
+                $frame = $this->tuiPreviews->forComponent((string) ($component['slug'] ?? ''));
+
+                return $frame === null
+                    ? $component
+                    : $component + ['frame' => $frame['frame'], 'columns' => $frame['columns']];
+            }, $pkg['components']);
+        }
 
         // A page with no live demo shows its README instead, so it is never a
         // dead "No UI surface" stub.

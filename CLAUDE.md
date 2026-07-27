@@ -691,7 +691,7 @@ return [
             'description' => 'Metered AI token usage per billing period.',
             'type' => 'resource',
             'limit' => 10000, // or callable
-            'usage' => fn($user) => $user->getTokenUsage(), // optional
+            'usage' => fn($user, $context) => $user->getTokenUsage(), // optional
         ],
     ],
 ];
@@ -806,10 +806,18 @@ Resource features support metered usage:
 'api-calls' => [
     'type' => 'resource',
     'limit' => 1000,
-    'usage' => fn($user) => $user->apiCalls()->thisMonth()->count(),
-    'remaining' => fn($user) => 1000 - $user->apiCalls()->thisMonth()->count(), // optional
+    'usage' => fn($user, $context) => $user->apiCalls()->thisMonth()->count(),
+    'remaining' => fn($user, $context) => 1000 - $user->apiCalls()->thisMonth()->count(), // optional
 ],
 </code-snippet>
+
+**Every FMS definition callback receives `($user, $context)`** — `check`,
+`enabled`, `limit`, `usage`, `remaining`. The feature KEY is not passed; the
+callback lives inside `features.<key>`, so the key is already known where it is
+written. Before laravel-fms 0.8.0 `usage` and `remaining` received
+`($feature, $user, $context)`, which these docs never described — following them
+bound `$user` to the key string and silently metered nothing, so an allowance
+never ran out.
 
 ### Best Practices
 

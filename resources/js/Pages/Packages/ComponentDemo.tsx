@@ -105,6 +105,25 @@ import { mountPixel, type PixelHandle, type PixelStyle } from "@particle-academy
 import { SheetWorkbook, createEmptyWorkbook, createEmptySheet } from "@particle-academy/fancy-sheets";
 import "@particle-academy/fancy-sheets/styles.css";
 import { EChart } from "@particle-academy/fancy-echarts";
+import {
+    WorkingTree,
+    CommitHistory,
+    ReviewList,
+    RepositoryBrowser,
+    DiffViewer,
+    BranchPicker,
+    CommitComposer,
+    CreateReviewForm,
+    type CommitDraft as FancyGitCommitDraft,
+} from "@particle-academy/fancy-git-ui";
+import "@particle-academy/fancy-git-ui/styles.css";
+import type {
+    WorkingTreeStatus as FancyGitWorkingTreeStatus,
+    Commit as FancyGitCommit,
+    Branch as FancyGitBranch,
+    Review as FancyGitReview,
+    CreateReviewInput as FancyGitCreateReviewInput,
+} from "@particle-academy/fancy-git";
 import { Map as FancyMap, type MapMarker as FancyMapMarker, type MapView as FancyMapView } from "@particle-academy/fancy-map";
 import { leafletProvider } from "@particle-academy/fancy-map/leaflet";
 import "leaflet/dist/leaflet.css";
@@ -252,6 +271,16 @@ const REGISTRY: Record<string, DemoFn> = {
 
     // ── fancy-echarts
     "fancy-echarts/echart": EChartDemo,
+
+    // ── fancy-git-ui
+    "fancy-git-ui/working-tree": GitWorkingTreeDemo,
+    "fancy-git-ui/commit-history": GitCommitHistoryDemo,
+    "fancy-git-ui/review-list": GitReviewListDemo,
+    "fancy-git-ui/repository-browser": GitRepositoryBrowserDemo,
+    "fancy-git-ui/diff-viewer": GitDiffViewerDemo,
+    "fancy-git-ui/branch-picker": GitBranchPickerDemo,
+    "fancy-git-ui/commit-composer": GitCommitComposerDemo,
+    "fancy-git-ui/create-review-form": GitCreateReviewFormDemo,
 
     // ── fancy-map
     "fancy-map/map": FancyMapDemo,
@@ -1060,6 +1089,275 @@ const FANCY_MAP_ROUTE = Array.from({ length: 48 }, (_, i) => {
     const t = (i / 48) * Math.PI * 2;
     return { lat: FANCY_MAP_CENTER.lat + Math.sin(t) * 0.02, lng: FANCY_MAP_CENTER.lng + Math.cos(t) * 0.03 };
 });
+
+
+// ── fancy-git-ui ────────────────────────────────────────────────────────────
+// All eight run the REAL components against one fixture repository. Every
+// fancy-git-ui component is fully controlled and provider-neutral: it renders
+// what you pass and emits intents, holding no Git state of its own. So a demo
+// is exactly what a host does — own the state, answer the intents — and these
+// answer them locally instead of shelling out to git.
+
+const GIT_STATUS: FancyGitWorkingTreeStatus = {
+    branch: "feature/trigger-cohorts",
+    upstream: "origin/feature/trigger-cohorts",
+    ahead: 3,
+    behind: 0,
+    clean: false,
+    files: [
+        { path: "src/runtime/run-cohort.ts", index: "added", worktree: null },
+        { path: "src/runtime/run-flow.ts", index: null, worktree: "modified" },
+        { path: "tests/run-cohort.test.ts", index: null, worktree: "untracked" },
+        { path: "CHANGELOG.md", index: null, worktree: "modified" },
+    ],
+};
+
+const GIT_COMMITS: FancyGitCommit[] = [
+    { id: "a1b2c3d4e5f6", shortId: "a1b2c3d", parents: ["9f8e7d6"], authorName: "Ada", authorEmail: "ada@example.test", authoredAt: "2026-07-26T09:12:00Z", subject: "feat(runtime): runCohort — the runs one trigger fires" },
+    { id: "9f8e7d6c5b4a", shortId: "9f8e7d6", parents: ["4c5b6a7"], authorName: "Ada", authorEmail: "ada@example.test", authoredAt: "2026-07-25T16:40:00Z", subject: "fix(engine): a skipped branch no longer clobbers a merge point" },
+    { id: "4c5b6a7d8e9f", shortId: "4c5b6a7", parents: [], authorName: "Grace", authorEmail: "grace@example.test", authoredAt: "2026-07-24T11:05:00Z", subject: "chore: bump postcss to 8.5.23" },
+];
+
+const GIT_BRANCHES: FancyGitBranch[] = [
+    { name: "main", current: false, remote: false, target: "4c5b6a7", upstream: "origin/main" },
+    { name: "feature/trigger-cohorts", current: true, remote: false, target: "a1b2c3d", upstream: "origin/feature/trigger-cohorts" },
+    { name: "fix/merge-point", current: false, remote: false, target: "9f8e7d6" },
+    { name: "origin/main", current: false, remote: true, target: "4c5b6a7" },
+];
+
+const GIT_REVIEWS: FancyGitReview[] = [
+    { id: "41", number: 41, title: "Add trigger cohorts", state: "open", webUrl: "#", sourceBranch: "feature/trigger-cohorts", targetBranch: "main", author: "ada" },
+    { id: "38", number: 38, title: "Fix the merge point", state: "merged", webUrl: "#", sourceBranch: "fix/merge-point", targetBranch: "main", author: "ada" },
+    { id: "37", number: 37, title: "Bump postcss", state: "draft", webUrl: "#", sourceBranch: "chore/postcss", targetBranch: "main", author: "grace" },
+];
+
+const GIT_TREE = [
+    { id: "1", name: "runtime", path: "src/runtime", kind: "directory" as const },
+    { id: "2", name: "registry", path: "src/registry", kind: "directory" as const },
+    { id: "3", name: "engine.ts", path: "src/engine.ts", kind: "file" as const, size: 4210 },
+    { id: "4", name: "index.ts", path: "src/index.ts", kind: "file" as const, size: 9877 },
+    { id: "5", name: "types.ts", path: "src/types.ts", kind: "file" as const, size: 3120, status: "modified" },
+];
+
+const GIT_DIFF = [
+    {
+        id: "run-flow",
+        path: "src/runtime/run-flow.ts",
+        lines: [
+            { id: "h1", kind: "header" as const, text: "@@ -212,7 +212,8 @@ collectInputs" },
+            { id: "l1", kind: "context" as const, oldNumber: 212, newNumber: 212, text: "  for (const edge of incoming) {" },
+            { id: "l2", kind: "deletion" as const, oldNumber: 213, text: "    inputs[portId] = portValues.get(key);" },
+            { id: "l3", kind: "addition" as const, newNumber: 213, text: "    if (!portValues.has(key)) continue;" },
+            { id: "l4", kind: "addition" as const, newNumber: 214, text: "    inputs[portId] = portValues.get(key);" },
+            { id: "l5", kind: "context" as const, oldNumber: 214, newNumber: 215, text: "  }" },
+        ],
+    },
+];
+
+function GitWorkingTreeDemo() {
+    const [status, setStatus] = useState(GIT_STATUS);
+    const [selected, setSelected] = useState<string[]>([]);
+
+    // Staging is the host's job — the component only says which paths the user
+    // asked for. Here that moves the change from `worktree` to `index`; in a
+    // real app it is `repository.stage(paths)`.
+    const move = (paths: string[], toIndex: boolean) => {
+        setStatus((s) => ({
+            ...s,
+            files: s.files.map((f) =>
+                paths.includes(f.path)
+                    ? toIndex
+                        ? { ...f, index: f.worktree ?? f.index, worktree: null }
+                        : { ...f, worktree: f.index ?? f.worktree, index: null }
+                    : f,
+            ),
+        }));
+        setSelected([]);
+    };
+
+    return (
+        <DemoNote
+            outOfBox="<WorkingTree> renders staged / unstaged / untracked changes from a fancy-git WorkingTreeStatus, with selection and stage/unstage intents."
+            demo="Staging is answered in local state rather than by shelling out to git — in an app this is repository.stage(paths), which also takes a propose flag so an agent can ask instead of act."
+        >
+            <WorkingTree
+                value={status}
+                selectedPaths={selected}
+                onSelectedPathsChange={setSelected}
+                onStage={(paths) => move(paths, true)}
+                onUnstage={(paths) => move(paths, false)}
+            />
+        </DemoNote>
+    );
+}
+
+function GitCommitHistoryDemo() {
+    const [selectedId, setSelectedId] = useState<string | undefined>(GIT_COMMITS[0].id);
+    const [commits, setCommits] = useState(GIT_COMMITS.slice(0, 2));
+
+    return (
+        <DemoNote
+            outOfBox="<CommitHistory> is a controlled, pageable log — selection and 'load more' are intents, so the host owns paging."
+            demo="Load more appends the third fixture commit. A real host would call repository.log({ skip }) and append the page it gets back."
+        >
+            <CommitHistory
+                value={commits}
+                selectedId={selectedId}
+                onSelectedIdChange={setSelectedId}
+                hasMore={commits.length < GIT_COMMITS.length}
+                onLoadMore={() => setCommits(GIT_COMMITS)}
+            />
+        </DemoNote>
+    );
+}
+
+function GitReviewListDemo() {
+    const [selected, setSelected] = useState<number | undefined>(41);
+
+    return (
+        <DemoNote
+            outOfBox="<ReviewList> is provider-neutral: a GitHub pull request and a GitLab merge request are both a fancy-git Review, so this one list renders either."
+            demo="Fixture reviews stand in for provider.listReviews(ref) — swapping GitHub for GitLab changes the adapter you registered, not this component."
+        >
+            <ReviewList value={GIT_REVIEWS} selectedNumber={selected} onSelectedNumberChange={setSelected} />
+        </DemoNote>
+    );
+}
+
+function GitRepositoryBrowserDemo() {
+    const [path, setPath] = useState("src");
+    const [selectedPath, setSelectedPath] = useState<string | undefined>("src/types.ts");
+
+    return (
+        <DemoNote
+            outOfBox="<RepositoryBrowser> walks a directory listing with stable path handles — the handle is how an agent addresses a file without guessing DOM."
+            demo="One fixture directory; navigating deeper re-renders the same component with a new listing, which is what a host does after reading the new path."
+        >
+            <RepositoryBrowser
+                value={GIT_TREE}
+                path={path}
+                selectedPath={selectedPath}
+                onPathChange={setPath}
+                onSelectedPathChange={setSelectedPath}
+            />
+        </DemoNote>
+    );
+}
+
+function GitDiffViewerDemo() {
+    const [mode, setMode] = useState<"unified" | "split">("unified");
+    const [hunks, setHunks] = useState<string[]>([]);
+
+    return (
+        <DemoNote
+            outOfBox="<DiffViewer> renders a diff with stable file and hunk handles, and toggles unified / split. Hunk selection is what per-hunk staging and review comments hang off."
+            demo="The real 0.27.1 merge-point fix as fixture data. Selecting hunks emits ids — a host turns those into a partial stage or a review comment."
+        >
+            <DiffViewer
+                value={GIT_DIFF}
+                mode={mode}
+                onModeChange={setMode}
+                selectedHunkIds={hunks}
+                onSelectedHunkIdsChange={setHunks}
+            />
+        </DemoNote>
+    );
+}
+
+function GitBranchPickerDemo() {
+    const [branches, setBranches] = useState(GIT_BRANCHES);
+    const [selected, setSelected] = useState<string | undefined>("feature/trigger-cohorts");
+    const [proposal, setProposal] = useState<string | null>(null);
+
+    return (
+        <DemoNote
+            outOfBox="<BranchPicker> lists local and remote branches and emits a checkout intent — it never checks anything out itself."
+            demo="Checkout is PROPOSED rather than applied, which is the package's trust-but-verify shape: repository.checkout(name, propose: true) returns what it WOULD run, for a human to confirm."
+        >
+            <div className="space-y-2">
+                <BranchPicker
+                    value={branches}
+                    selectedName={selected}
+                    onSelectedNameChange={setSelected}
+                    onCheckout={(name) => setProposal(name)}
+                />
+                {proposal && (
+                    <div className="flex items-center gap-2 rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-xs dark:border-amber-900/60 dark:bg-amber-950/30">
+                        <span className="flex-1">
+                            Proposed: <code>git checkout {proposal}</code>
+                        </span>
+                        <button
+                            type="button"
+                            className="rounded bg-amber-600 px-2 py-0.5 text-[11px] font-medium text-white"
+                            onClick={() => {
+                                setBranches((b) => b.map((x) => ({ ...x, current: x.name === proposal })));
+                                setProposal(null);
+                            }}
+                        >
+                            Confirm
+                        </button>
+                        <button type="button" className="text-[11px] text-zinc-500" onClick={() => setProposal(null)}>
+                            Discard
+                        </button>
+                    </div>
+                )}
+            </div>
+        </DemoNote>
+    );
+}
+
+function GitCommitComposerDemo() {
+    const [draft, setDraft] = useState<FancyGitCommitDraft>({ message: "", description: "" });
+    const [committed, setCommitted] = useState<string | null>(null);
+
+    return (
+        <DemoNote
+            outOfBox="<CommitComposer> is a controlled commit draft — value / onChange / onSubmit, with a pending flag while the host works."
+            demo="Submitting records the message here instead of writing a commit. An agent drafting a message and a human editing it use this same one surface."
+        >
+            <div className="space-y-2">
+                <CommitComposer value={draft} onChange={setDraft} onSubmit={(v) => setCommitted(v.message)} />
+                {committed && (
+                    <p className="text-xs text-emerald-600 dark:text-emerald-400">
+                        Would commit: <code>{committed}</code>
+                    </p>
+                )}
+            </div>
+        </DemoNote>
+    );
+}
+
+function GitCreateReviewFormDemo() {
+    const [draft, setDraft] = useState<FancyGitCreateReviewInput>({
+        title: "",
+        body: "",
+        sourceBranch: "feature/trigger-cohorts",
+        targetBranch: "main",
+        draft: false,
+    });
+    const [opened, setOpened] = useState<string | null>(null);
+
+    return (
+        <DemoNote
+            outOfBox="<CreateReviewForm> is a controlled pull/merge request draft over fancy-git's CreateReviewInput, so the same form opens a PR on GitHub or an MR on GitLab."
+            demo="Submitting records the title rather than calling provider.createReview(ref, input) — the one operation in the family that cannot be taken back by re-running it."
+        >
+            <div className="space-y-2">
+                <CreateReviewForm
+                    value={draft}
+                    onChange={setDraft}
+                    branches={GIT_BRANCHES.filter((b) => !b.remote).map((b) => b.name)}
+                    onSubmit={(v) => setOpened(v.title)}
+                />
+                {opened && (
+                    <p className="text-xs text-emerald-600 dark:text-emerald-400">
+                        Would open: <code>{opened}</code>
+                    </p>
+                )}
+            </div>
+        </DemoNote>
+    );
+}
 
 function FancyMapDemo() {
     const [step, setStep] = useState(0);

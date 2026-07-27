@@ -117,6 +117,7 @@ import {
     type CommitDraft as FancyGitCommitDraft,
 } from "@particle-academy/fancy-git-ui";
 import "@particle-academy/fancy-git-ui/styles.css";
+import { GIT_BRANCHES, GIT_COMMITS, GIT_DIFF, GIT_REVIEWS, GIT_STATUS, GIT_TREE } from "./gitFixtures";
 import type {
     WorkingTreeStatus as FancyGitWorkingTreeStatus,
     Commit as FancyGitCommit,
@@ -1097,67 +1098,6 @@ const FANCY_MAP_ROUTE = Array.from({ length: 48 }, (_, i) => {
 // what you pass and emits intents, holding no Git state of its own. So a demo
 // is exactly what a host does — own the state, answer the intents — and these
 // answer them locally instead of shelling out to git.
-
-const GIT_STATUS: FancyGitWorkingTreeStatus = {
-    branch: "feature/trigger-cohorts",
-    upstream: "origin/feature/trigger-cohorts",
-    ahead: 3,
-    behind: 0,
-    clean: false,
-    files: [
-        { path: "src/runtime/run-cohort.ts", index: "added", worktree: null },
-        { path: "src/runtime/run-flow.ts", index: null, worktree: "modified" },
-        { path: "tests/run-cohort.test.ts", index: null, worktree: "untracked" },
-        { path: "CHANGELOG.md", index: null, worktree: "modified" },
-    ],
-};
-
-const GIT_COMMITS: FancyGitCommit[] = [
-    { id: "a1b2c3d4e5f6", shortId: "a1b2c3d", parents: ["9f8e7d6"], authorName: "Ada", authorEmail: "ada@example.test", authoredAt: "2026-07-26T09:12:00Z", subject: "feat(runtime): runCohort — the runs one trigger fires" },
-    { id: "9f8e7d6c5b4a", shortId: "9f8e7d6", parents: ["4c5b6a7"], authorName: "Ada", authorEmail: "ada@example.test", authoredAt: "2026-07-25T16:40:00Z", subject: "fix(engine): a skipped branch no longer clobbers a merge point" },
-    { id: "4c5b6a7d8e9f", shortId: "4c5b6a7", parents: [], authorName: "Grace", authorEmail: "grace@example.test", authoredAt: "2026-07-24T11:05:00Z", subject: "chore: bump postcss to 8.5.23" },
-];
-
-const GIT_BRANCHES: FancyGitBranch[] = [
-    { name: "main", current: false, remote: false, target: "4c5b6a7", upstream: "origin/main" },
-    { name: "feature/trigger-cohorts", current: true, remote: false, target: "a1b2c3d", upstream: "origin/feature/trigger-cohorts" },
-    { name: "fix/merge-point", current: false, remote: false, target: "9f8e7d6" },
-    { name: "origin/main", current: false, remote: true, target: "4c5b6a7" },
-];
-
-const GIT_REVIEWS: FancyGitReview[] = [
-    { id: "41", number: 41, title: "Add trigger cohorts", state: "open", webUrl: "#", sourceBranch: "feature/trigger-cohorts", targetBranch: "main", author: "ada" },
-    { id: "38", number: 38, title: "Fix the merge point", state: "merged", webUrl: "#", sourceBranch: "fix/merge-point", targetBranch: "main", author: "ada" },
-    { id: "37", number: 37, title: "Bump postcss", state: "draft", webUrl: "#", sourceBranch: "chore/postcss", targetBranch: "main", author: "grace" },
-];
-
-const GIT_TREE = [
-    { id: "1", name: "runtime", path: "src/runtime", kind: "directory" as const },
-    { id: "2", name: "registry", path: "src/registry", kind: "directory" as const },
-    { id: "3", name: "engine.ts", path: "src/engine.ts", kind: "file" as const, size: 4210 },
-    { id: "4", name: "index.ts", path: "src/index.ts", kind: "file" as const, size: 9877 },
-    { id: "5", name: "types.ts", path: "src/types.ts", kind: "file" as const, size: 3120, status: "modified" },
-];
-
-/**
- * The real 0.27.1 merge-point fix, as the unified diff git actually emits.
- *
- * A patch string rather than a hand-built object tree, because that is what
- * `fancy-git`'s `Diff.patch` carries and what `<DiffViewer>` takes since 0.2.0.
- * The old fixture was a shape only this demo produced, which is exactly what
- * made the component hard to adopt: a consumer had to write a parser to get
- * from git's output to it.
- */
-const GIT_DIFF = `diff --git a/src/runtime/run-flow.ts b/src/runtime/run-flow.ts
---- a/src/runtime/run-flow.ts
-+++ b/src/runtime/run-flow.ts
-@@ -212,7 +212,8 @@ collectInputs
-   for (const edge of incoming) {
--    inputs[portId] = portValues.get(key);
-+    if (!portValues.has(key)) continue;
-+    inputs[portId] = portValues.get(key);
-   }
-`;
 
 function GitWorkingTreeDemo() {
     const [status, setStatus] = useState(GIT_STATUS);

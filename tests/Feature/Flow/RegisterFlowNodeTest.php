@@ -78,16 +78,25 @@ it('can hold a package back for review', function () {
     // Pending is not servable: an install command must never resolve it.
     expect(FlowNodePackage::query()->listed()->count())->toBe(0);
 
-    $this->getJson('/r/nodes/index.json')->assertOk()->assertJsonCount(0, 'items');
+    // Asserted on the submission, not on the index being empty. The index also
+    // carries the first-party nodes, which are built rather than registered —
+    // and an index that WAS empty is the bug FirstPartyNodeRegistryTest covers.
+    $items = collect($this->getJson('/r/nodes/index.json')->assertOk()->json('items'));
+
+    expect($items->pluck('kind'))->not->toContain('@acme/widget');
+    $this->getJson('/r/nodes/acme__widget.json')->assertNotFound();
 });
 
 it('serves a registered node to the public index and manifest endpoints', function () {
     $this->artisan('flow:register-node', ['manifest' => manifestFile()])->assertSuccessful();
 
-    $this->getJson('/r/nodes/index.json')
-        ->assertOk()
-        ->assertJsonPath('items.0.kind', '@acme/widget')
-        ->assertJsonPath('items.0.url', '/r/nodes/acme__widget.json');
+    // Looked up by kind rather than by position: the index also carries the
+    // first-party nodes, so `items.0` is whatever sorts first, not this one.
+    $entry = collect($this->getJson('/r/nodes/index.json')->assertOk()->json('items'))
+        ->firstWhere('kind', '@acme/widget');
+
+    expect($entry)->not->toBeNull();
+    expect($entry['url'])->toBe('/r/nodes/acme__widget.json');
 
     $this->getJson('/r/nodes/acme__widget.json')
         ->assertOk()

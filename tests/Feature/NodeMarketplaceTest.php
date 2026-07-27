@@ -67,28 +67,35 @@ it('never lets a package vouch for itself', function () {
     expect(listPackage(['verified' => true])->fresh()->verified)->toBeFalse();
 });
 
-it('serves an empty index rather than an error when nothing is published', function () {
-    // An empty marketplace is the correct answer today — the contract shipped
-    // before anyone published against it.
-    $this->getJson('/r/nodes/index.json')
-        ->assertOk()
-        ->assertJsonPath('items', []);
+it('serves a well-formed index with no third-party submissions at all', function () {
+    // This used to assert `items: []`. It cannot any more, and the reason is
+    // the point: the first-party nodes are now BUILT into the index rather than
+    // registered by hand, after production spent its whole life serving an
+    // empty marketplace. What is still worth pinning is the response shape.
+    $response = $this->getJson('/r/nodes/index.json')->assertOk();
+
+    expect($response->json('items'))->toBeArray();
+    expect($response->json('name'))->toBe('fancy-flow-nodes');
 });
 
 it('lists a published package with its runtimes', function () {
     listPackage();
 
-    $this->getJson('/r/nodes/index.json')
-        ->assertOk()
-        ->assertJsonPath('items.0.kind', '@acme/salesforce_upsert')
-        ->assertJsonPath('items.0.runtimes', ['ts', 'php'])
-        ->assertJsonPath('items.0.verified', false);
+    // Found by kind, not by position: the index also carries the first-party
+    // nodes, so `items.0` is whatever sorts first rather than this submission.
+    $entry = collect($this->getJson('/r/nodes/index.json')->assertOk()->json('items'))
+        ->firstWhere('kind', '@acme/salesforce_upsert');
+
+    expect($entry)->not->toBeNull();
+    expect($entry['runtimes'])->toBe(['ts', 'php']);
+    expect($entry['verified'])->toBeFalse();
 });
 
 it('hides packages that are not listed', function (string $status) {
     listPackage([], ['status' => $status]);
 
-    $this->getJson('/r/nodes/index.json')->assertJsonPath('items', []);
+    expect(collect($this->getJson('/r/nodes/index.json')->json('items'))->pluck('kind'))
+        ->not->toContain('@acme/salesforce_upsert');
 })->with([FlowNodePackage::PENDING, FlowNodePackage::REJECTED]);
 
 it('serves one package by its flattened slug', function () {

@@ -50,15 +50,26 @@ reload                    # Clear cache + npm run build (custom shortcut)
 ### Registry + docs artifacts
 
 ```bash
-php artisan registry:build   # compile component source  -> resources/registry/registry.json
-php artisan readmes:build    # compile package READMEs   -> resources/registry/readmes.json
+php artisan registry:build   # compile component source     -> resources/registry/registry.json
+php artisan readmes:build    # compile package READMEs      -> resources/registry/readmes.json
+php artisan tui:build        # compile fancy-tui ANSI frames -> resources/registry/tui-previews.json
+php artisan flow:build       # compile marketplace nodes    -> resources/registry/flow-nodes.json
 ```
 
 Production deploys ONLY px-ui-sandbox, so neither the sibling repos nor most
-packages' `node_modules` entries exist there — both artifacts are read in prod
-and scanned live everywhere else. **Run `readmes:build` and commit the artifact
-whenever a package's README changes**, or its docs page goes stale (or empty) on
+packages' `node_modules` entries exist there — every artifact is read in prod
+and scanned live everywhere else. **Run the matching build and commit the
+artifact whenever its source changes**, or the page goes stale (or empty) on
 prod while looking fine locally.
+
+`flow:build` is the one with teeth. Marketplace nodes used to reach consumers
+only via `flow:register-node`, which writes a database row — and nobody ran it
+against production, so `/r/nodes/index.json` served `items: []` while eight
+nodes sat in `fancy-flow-nodes`. `npx fancy-cli add node` resolved to nothing
+for every real consumer, and nothing reported it, because an empty marketplace
+is a valid answer. **First-party nodes are built; `flow:register-node` is for
+third-party submissions**, which need the status and verification the table
+carries.
 
 A package's README is read from **its own repo**, never from this app's
 `node_modules`/`vendor`. Sourcing it from the install made documentation a side

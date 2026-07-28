@@ -16,6 +16,7 @@ import "@particle-academy/fancy-git-ui/styles.css";
 // to the whiteboard's board item. Aliased rather than renamed so each tile
 // still shows the component its own package ships.
 import { FancyDiff } from "@particle-academy/fancy-diff";
+import { AgentCursor, ShareControls } from "@particle-academy/agent-integrations";
 import { clientOnly } from "../../lib/clientOnly";
 import {
     Board,
@@ -416,20 +417,12 @@ const PREVIEWS: Record<string, PreviewFn> = {
             </div>
         </div>
     ),
-    "fancy-tui/fancy-tui-provider": () => (
-        <div className="h-32 w-full max-w-[20rem] overflow-hidden rounded-md border border-violet-500/30 bg-[#090b10] p-2 font-mono text-[9px] leading-relaxed text-zinc-300">
-            <div className="mb-2 flex items-center justify-between border-b border-zinc-800 pb-1.5">
-                <span className="font-semibold text-violet-300">Fancy TUI</span>
-                <span className="text-emerald-400">● MCP live</span>
-            </div>
-            <div className="rounded border border-zinc-700 px-2 py-1.5">
-                <div className="text-zinc-500">Conversation</div>
-                <div><span className="text-cyan-300">YOU</span> Inspect the active surface.</div>
-                <div><span className="text-violet-300">AGENT</span> Reading stable handle…</div>
-            </div>
-            <div className="mt-1.5 text-zinc-500">[Tab] focus · [Alt+Enter] newline</div>
-        </div>
-    ),
+    // fancy-tui has NO entries here on purpose. Its components render to a
+    // terminal, so `PackagesController` attaches a captured ANSI frame to every
+    // one of them and `Show.tsx` prefers `frame` over a preview — making any
+    // entry here unreachable. A drawn `fancy-tui-provider` tile used to sit at
+    // this spot; it had been dead since the frames landed.
+
 
     // ─── react-fancy: media viewers + fancy-code file viewer ──────────────────
     "react-fancy/media-viewer": () => (
@@ -1471,14 +1464,14 @@ const PREVIEWS: Record<string, PreviewFn> = {
     ),
 
     "fancy-artboard/art-piece": () => (
-        <div className="w-full max-w-[12rem] overflow-hidden rounded-md border border-zinc-200 bg-white shadow-sm dark:border-zinc-700 dark:bg-zinc-900">
-            <div className="flex items-center justify-between border-b border-zinc-100 px-2 py-1 text-[10px] dark:border-zinc-800">
-                <span className="flex items-center gap-1 text-zinc-500">
-                    <span className="text-zinc-300">⋮⋮</span> A · Dusk
-                </span>
-                <span className="text-zinc-400">⋯</span>
-            </div>
-            <div className="h-24 bg-gradient-to-br from-violet-400 via-fuchsia-400 to-amber-300" />
+        <div className="h-32 w-full max-w-[20rem] overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
+            <ArtBoard defaultViewport={{ x: 0, y: 0, zoom: 0.55 }} style={{ height: "100%", width: "100%" }}>
+                <ArtPiece id="hero">
+                    <div className="grid h-full place-items-center bg-gradient-to-br from-emerald-400 to-teal-500 p-4 text-center text-white">
+                        <div className="text-lg font-bold">Live JSX</div>
+                    </div>
+                </ArtPiece>
+            </ArtBoard>
         </div>
     ),
 
@@ -2051,16 +2044,9 @@ const PREVIEWS: Record<string, PreviewFn> = {
     // ─── agent-integrations ───────────────────────────────────────────────
 
     "agent-integrations/agent-cursor": () => (
-        <div className="relative grid h-32 w-full max-w-[20rem] place-items-center overflow-hidden rounded-md border border-zinc-200 bg-white p-3 dark:border-zinc-700 dark:bg-zinc-900">
-            <div className="w-full space-y-1.5">
-                <div className="h-2 w-2/3 rounded bg-zinc-200 dark:bg-zinc-700" />
-                <div className="h-2 w-1/2 rounded bg-zinc-200 dark:bg-zinc-700" />
-                <div className="h-7 w-24 rounded-md border border-violet-300 bg-violet-50 dark:border-violet-700 dark:bg-violet-500/15" />
-            </div>
-            <div className="absolute left-1/2 top-1/2">
-                <svg width="16" height="16" viewBox="0 0 16 16" className="text-violet-600"><path d="M1 1 L1 13 L4.5 9.5 L7 14 L9 13 L6.5 8.5 L11 8 Z" fill="currentColor" /></svg>
-                <span className="ml-1 rounded bg-violet-600 px-1.5 py-0.5 text-[9px] font-medium text-white">claude</span>
-            </div>
+        <div className="relative h-32 w-full max-w-[20rem] overflow-hidden rounded-md border border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900">
+            <AgentCursor x={70} y={38} name="Researcher" />
+            <AgentCursor x={190} y={86} name="Reviewer" />
         </div>
     ),
 
@@ -2086,17 +2072,14 @@ const PREVIEWS: Record<string, PreviewFn> = {
     ),
 
     "agent-integrations/share-controls": () => (
-        <div className="w-full max-w-[20rem] rounded-md border border-zinc-200 bg-white p-2 dark:border-zinc-700 dark:bg-zinc-900">
-            <div className="flex items-center gap-1.5">
-                <span className="flex-1 truncate rounded border border-zinc-200 bg-zinc-50 px-2 py-1 font-mono text-[9px] text-zinc-500 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-400">
-                    ui.particle.academy/s/9f3a…
-                </span>
-                <button className="rounded bg-violet-600 px-2 py-1 text-[9px] font-medium text-white">Copy</button>
-            </div>
-            <div className="mt-1.5 flex items-center justify-between text-[9px]">
-                <span className="flex items-center gap-1 text-emerald-600"><span className="size-1.5 rounded-full bg-emerald-500" /> Session live</span>
-                <span className="rounded border border-zinc-200 px-1.5 py-0.5 text-zinc-500 dark:border-zinc-700">End</span>
-            </div>
+        <div className="w-full max-w-[20rem] text-[11px]">
+            <ShareControls
+                session={{ id: "demo-session-abc", token: "tok_xyz" }}
+                onStart={() => {}}
+                onStop={() => {}}
+                status="connected"
+                shareBaseUrl="https://fancy.app/agent-relay"
+            />
         </div>
     ),
 

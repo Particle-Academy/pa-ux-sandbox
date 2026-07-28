@@ -2,6 +2,9 @@ import { useState } from "react";
 import { MarkdownEditor } from "@particle-academy/fancy-code";
 import { SheetWorkbook } from "@particle-academy/fancy-sheets";
 import { FlowEditor } from "@particle-academy/fancy-flow";
+import { Canvas } from "@particle-academy/fancy-3d";
+import { Stage as BabylonStage, Monitor as BabylonMonitor } from "@particle-academy/fancy-3d-babylon/react";
+import { Stage as ThreeStage, Monitor as ThreeMonitor } from "@particle-academy/fancy-3d-three/react";
 import { createEmptyWorkbook } from "@particle-academy/fancy-sheets";
 import "@particle-academy/fancy-flow/styles.css";
 import "@particle-academy/fancy-sheets/styles.css";
@@ -84,6 +87,50 @@ export function FlowEditorTile() {
   return (
     <div className="h-32 w-full max-w-[20rem] overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
       <FlowEditor initial={TILE_GRAPH as never} showFeed={false} showPalette={false} height={128} />
+    </div>
+  );
+}
+
+/**
+ * WebGL and canvas tiles.
+ *
+ * Babylon and three each build a WebGL context at module scope, and ECharts
+ * measures a canvas — none of which survives `renderToString`. Deferred for the
+ * same reason as the editors above, and grouped here so the whole grid still
+ * costs one chunk.
+ */
+export function BabylonStageTile() {
+  return (
+    <div className="h-32 w-full max-w-[20rem] overflow-hidden rounded-md border border-zinc-800">
+      <BabylonStage cameraRadius={6.5} cameraTarget={[0, 1.2, 0]} clearColor="#0b1220" style={{ height: "100%" }}>
+        <BabylonMonitor position={[0, 1.2, 0]} width={3.4} height={2.1} bezel="#0b0f17">
+          <div className="grid h-full place-items-center bg-violet-600 text-sm text-white">Live DOM</div>
+        </BabylonMonitor>
+      </BabylonStage>
+    </div>
+  );
+}
+
+export function ThreeStageTile() {
+  return (
+    <div className="h-32 w-full max-w-[20rem] overflow-hidden rounded-md border border-zinc-800">
+      <ThreeStage cameraRadius={6.5} cameraTarget={[0, 1.2, 0]} clearColor="#0b1220" style={{ height: "100%" }}>
+        <ThreeMonitor position={[0, 1.2, 0]} width={3.4} height={2.1} bezel="#0b0f17">
+          <div className="grid h-full place-items-center bg-emerald-600 text-sm text-white">Live DOM</div>
+        </ThreeMonitor>
+      </ThreeStage>
+    </div>
+  );
+}
+
+/** The DOM/CSS-3D renderer — no WebGL, but it still measures on mount. */
+export function Canvas3DTile() {
+  return (
+    <div className="h-32 w-full max-w-[20rem] overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
+      <Canvas engine="dom" style={{ height: 128 }}>
+        {/* CanvasProps requires children — the scene it renders. */}
+        <div className="grid h-full place-items-center text-[11px] text-zinc-500">DOM / CSS-3D scene</div>
+      </Canvas>
     </div>
   );
 }

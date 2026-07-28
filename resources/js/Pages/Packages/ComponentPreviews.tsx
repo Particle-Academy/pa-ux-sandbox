@@ -1876,7 +1876,7 @@ const PREVIEWS: Record<string, PreviewFn> = {
 
     // ─── fancy-3d (core) ──────────────────────────────────────────────────
 
-    "fancy-3d/canvas": () => (
+    "fancy-3d/canvas": heavy("Canvas3DTile", () => (
         <div className="grid h-32 w-full max-w-[20rem] place-items-center overflow-hidden rounded-md border border-zinc-200 bg-gradient-to-br from-zinc-50 to-zinc-100 dark:border-zinc-700 dark:from-zinc-900 dark:to-zinc-950">
             <div className="relative" style={{ perspective: "320px" }}>
                 <div className="absolute -left-8 -top-2 h-16 w-12 rounded-lg bg-gradient-to-br from-violet-400 to-fuchsia-500 shadow-lg" style={{ transform: "rotateY(28deg) rotateX(-8deg)" }} />
@@ -1884,7 +1884,7 @@ const PREVIEWS: Record<string, PreviewFn> = {
                 <div className="absolute -right-8 top-2 h-16 w-12 rounded-lg bg-gradient-to-br from-emerald-400 to-teal-500 shadow-lg" style={{ transform: "rotateY(-30deg) rotateX(-8deg)" }} />
             </div>
         </div>
-    ),
+    )),
 
     "fancy-3d/scene": () => (
         <div className="w-full max-w-[18rem] overflow-hidden rounded-md border border-zinc-800 bg-zinc-950 font-mono text-[10px] leading-relaxed text-zinc-100">
@@ -1899,7 +1899,7 @@ const PREVIEWS: Record<string, PreviewFn> = {
 
     // ─── fancy-3d-babylon ─────────────────────────────────────────────────
 
-    "fancy-3d-babylon/stage": () => (
+    "fancy-3d-babylon/stage": heavy("BabylonStageTile", () => (
         <div className="relative grid h-32 w-full max-w-[20rem] place-items-center overflow-hidden rounded-md border border-zinc-200 bg-gradient-to-b from-indigo-50 to-white dark:border-zinc-700 dark:from-indigo-950/40 dark:to-zinc-950">
             <div className="relative" style={{ perspective: "360px" }}>
                 <div className="h-12 w-28 rounded-md bg-gradient-to-br from-orange-400 to-rose-500 shadow-xl" style={{ transform: "rotateX(52deg) rotateZ(-6deg)" }} />
@@ -1907,7 +1907,7 @@ const PREVIEWS: Record<string, PreviewFn> = {
             </div>
             <span className="absolute bottom-1.5 right-2 rounded bg-zinc-900/70 px-1.5 py-0.5 text-[8px] font-medium text-orange-300">Babylon</span>
         </div>
-    ),
+    )),
 
     "fancy-3d-babylon/monitor": () => (
         <div className="relative grid h-32 w-full max-w-[20rem] place-items-center overflow-hidden rounded-md border border-zinc-200 bg-gradient-to-b from-indigo-50 to-white dark:border-zinc-700 dark:from-indigo-950/40 dark:to-zinc-950">
@@ -1947,7 +1947,7 @@ const PREVIEWS: Record<string, PreviewFn> = {
 
     // ─── fancy-3d-three ───────────────────────────────────────────────────
 
-    "fancy-3d-three/stage": () => (
+    "fancy-3d-three/stage": heavy("ThreeStageTile", () => (
         <div className="relative grid h-32 w-full max-w-[20rem] place-items-center overflow-hidden rounded-md border border-zinc-200 bg-gradient-to-b from-emerald-50 to-white dark:border-zinc-700 dark:from-emerald-950/40 dark:to-zinc-950">
             <div className="relative" style={{ perspective: "360px" }}>
                 <div className="h-12 w-28 rounded-md bg-gradient-to-br from-cyan-400 to-emerald-500 shadow-xl" style={{ transform: "rotateX(52deg) rotateZ(-6deg)" }} />
@@ -1955,7 +1955,7 @@ const PREVIEWS: Record<string, PreviewFn> = {
             </div>
             <span className="absolute bottom-1.5 right-2 rounded bg-zinc-900/70 px-1.5 py-0.5 text-[8px] font-medium text-emerald-300">three.js</span>
         </div>
-    ),
+    )),
 
     "fancy-3d-three/monitor": () => (
         <div className="relative grid h-32 w-full max-w-[20rem] place-items-center overflow-hidden rounded-md border border-zinc-200 bg-gradient-to-b from-emerald-50 to-white dark:border-zinc-700 dark:from-emerald-950/40 dark:to-zinc-950">

@@ -17,6 +17,9 @@ import "@particle-academy/fancy-git-ui/styles.css";
 // still shows the component its own package ships.
 import { FancyDiff } from "@particle-academy/fancy-diff";
 import { AgentCursor, ShareControls } from "@particle-academy/agent-integrations";
+// A VENDORED block, not an npm package — its source lives in this app, which is
+// exactly why these tiles can render the real thing.
+import { FeatureGate, PlanFeaturesEditor, PricingTable } from "../../components/fancy/catalog-fms";
 import { clientOnly } from "../../lib/clientOnly";
 import {
     Board,
@@ -342,18 +345,14 @@ const PREVIEWS: Record<string, PreviewFn> = {
 
     // ─── catalog-fms (block) ─────────────────────────────────────────────────
     "catalog-fms/pricing-table": () => (
-        <div className="grid w-full max-w-[20rem] grid-cols-3 gap-1.5 text-[9px]">
-            {[
-                { n: "Free", p: "$0", rec: false },
-                { n: "Pro", p: "$29", rec: true },
-                { n: "Team", p: "$99", rec: false },
-            ].map((t) => (
-                <div key={t.n} className={`flex flex-col gap-1 rounded-md border p-2 ${t.rec ? "border-blue-500 ring-1 ring-blue-500" : "border-zinc-200 dark:border-zinc-700"}`}>
-                    <span className="font-semibold text-zinc-700 dark:text-zinc-200">{t.n}</span>
-                    <span className="text-sm font-bold text-zinc-900 dark:text-zinc-100">{t.p}<span className="text-[8px] font-normal text-zinc-400">/mo</span></span>
-                    <span className={`mt-1 rounded px-1 py-0.5 text-center text-white ${t.rec ? "bg-blue-500" : "bg-zinc-400 dark:bg-zinc-600"}`}>Choose</span>
-                </div>
-            ))}
+        <div className="w-full max-w-[20rem] text-[10px]">
+            <PricingTable
+                plans={[
+                    { id: "starter", name: "Starter", prices: [{ id: "p1", amount: 900, currency: "usd", interval: "month" }], highlights: ["1 seat"] },
+                    { id: "pro", name: "Pro", recommended: true, badge: "Most popular", prices: [{ id: "p2", amount: 2900, currency: "usd", interval: "month" }], highlights: ["5 seats"] },
+                ]}
+                defaultInterval="month"
+            />
         </div>
     ),
     "catalog-fms/feature-matrix": () => (
@@ -378,27 +377,26 @@ const PREVIEWS: Record<string, PreviewFn> = {
         </div>
     ),
     "catalog-fms/feature-gate": () => (
-        <div className="w-full max-w-[16rem] rounded-lg border-l-4 border-blue-500 bg-blue-50 p-3 text-[10px] dark:bg-blue-950/40">
-            <div className="font-medium text-zinc-800 dark:text-zinc-100">Audit log is not in your plan.</div>
-            <div className="mt-0.5 text-zinc-500">Upgrade to unlock it.</div>
-            <span className="mt-2 inline-block rounded bg-blue-500 px-2 py-0.5 text-white">Upgrade</span>
+        <div className="w-full max-w-[20rem] text-[11px]">
+            <FeatureGate
+                feature="exports"
+                featureName="Exports"
+                entitlements={{ planId: "starter", features: { exports: { allowed: false } } }}
+            >
+                <div className="rounded border border-zinc-200 p-2 dark:border-zinc-700">Gated content</div>
+            </FeatureGate>
         </div>
     ),
     "catalog-fms/plan-features-editor": () => (
-        <div className="w-full max-w-[18rem] divide-y divide-zinc-100 rounded-md border border-zinc-200 text-[10px] dark:divide-zinc-800 dark:border-zinc-700">
-            {([
-                ["Projects", true, "10"],
-                ["SSO / SAML", false, null],
-                ["Audit log", true, null],
-            ] as [string, boolean, string | null][]).map(([name, on, limit]) => (
-                <div key={name} className="flex items-center gap-2 px-2 py-1.5">
-                    <span className="flex-1 font-medium text-zinc-700 dark:text-zinc-200">{name}</span>
-                    {limit && <span className="rounded border border-zinc-200 px-1 text-zinc-500 dark:border-zinc-700">{limit}</span>}
-                    <span className={`relative h-3 w-5 rounded-full ${on ? "bg-blue-500" : "bg-zinc-300 dark:bg-zinc-600"}`}>
-                        <span className={`absolute top-0.5 h-2 w-2 rounded-full bg-white ${on ? "right-0.5" : "left-0.5"}`} />
-                    </span>
-                </div>
-            ))}
+        <div className="w-full max-w-[20rem] text-[10px]">
+            <PlanFeaturesEditor
+                features={[
+                    { key: "seats", name: "Seats", type: "resource", unit: "seats" },
+                    { key: "exports", name: "Exports", type: "boolean" },
+                ]}
+                value={{ seats: { limit: 5 }, exports: { enabled: true } }}
+                onChange={() => {}}
+            />
         </div>
     ),
 

@@ -7,7 +7,7 @@
  * component (or a faithful visual stub when stateful/complex) — never
  * just text-only pills.
  */
-import { useState, type ReactNode } from "react";
+import { useState, type ComponentType, type ReactNode } from "react";
 // The listing page renders these tiles directly, while the full demos live in
 // a client-only chunk — so the stylesheet has to be imported here too or the
 // grid shows unstyled git surfaces. Bundlers dedupe the second import.
@@ -16,6 +16,7 @@ import "@particle-academy/fancy-git-ui/styles.css";
 // to the whiteboard's board item. Aliased rather than renamed so each tile
 // still shows the component its own package ships.
 import { FancyDiff } from "@particle-academy/fancy-diff";
+import { clientOnly } from "../../lib/clientOnly";
 import {
     Board,
     Connector,
@@ -34,6 +35,30 @@ import {
     ReviewList,
     WorkingTree,
 } from "@particle-academy/fancy-git-ui";
+
+/**
+ * Tiles whose component needs a browser.
+ *
+ * The packages page is server-rendered through Inertia's synchronous
+ * `renderToString`, and xterm / CodeMirror / React Flow all touch `window` at
+ * import time — so importing them here would crash the SSR render of the whole
+ * page. That, not "a tile has no data", is why these were drawings.
+ *
+ * `clientOnly` defers the import into one browser-only chunk; each drawing
+ * below survives as the SSR fallback, so the server and the first client paint
+ * agree and the real component swaps in after hydration.
+ */
+type HeavyTile = keyof typeof import("./HeavyPreviews");
+
+const heavy = (name: HeavyTile, Fallback: PreviewFn): PreviewFn => {
+    const Deferred = clientOnly<Record<string, never>>(
+        () => import("./HeavyPreviews").then((m) => ({ default: m[name] })),
+        () => <>{Fallback()}</>,
+    );
+
+    return () => <Deferred />;
+};
+
 /** A small real patch, so the diff tile parses one instead of drawing one. */
 const PREVIEW_UNIFIED_DIFF = `--- a/src/auth.ts
 +++ b/src/auth.ts
@@ -368,6 +393,8 @@ const PREVIEWS: Record<string, PreviewFn> = {
         </div>
     ),
 
+    // Stays a drawing, on evidence: xterm leaks its char-measure row at this
+    // size and letter-spaces every glyph once that is hidden. See HeavyPreviews.
     "fancy-term/terminal": () => (
         <div className="h-32 w-full max-w-[20rem] overflow-hidden rounded-md border border-zinc-800 bg-zinc-950 font-mono text-[9px] leading-relaxed text-zinc-300">
             <div className="flex items-center gap-1.5 border-b border-zinc-800 bg-zinc-900 px-2 py-1 text-[8px]">
@@ -1374,7 +1401,7 @@ const PREVIEWS: Record<string, PreviewFn> = {
 
     // ─── fancy-flow ───────────────────────────────────────────────────────
 
-    "fancy-flow/flow-editor": () => (
+    "fancy-flow/flow-editor": heavy("FlowEditorTile", () => (
         <div className="flex items-center gap-2 text-[10px]">
             <div className="rounded border-2 border-violet-500 bg-violet-50 px-2 py-1.5 text-violet-900 dark:bg-violet-500/15 dark:text-violet-100">
                 <div className="font-semibold">Input</div>
@@ -1391,7 +1418,7 @@ const PREVIEWS: Record<string, PreviewFn> = {
                 <div className="text-zinc-500">sink</div>
             </div>
         </div>
-    ),
+    )),
 
     "fancy-flow/run-flow": () => (
         <div className="w-full max-w-[18rem] overflow-hidden rounded-md border border-zinc-800 bg-zinc-950 font-mono text-[10px] text-zinc-100">
@@ -1751,7 +1778,7 @@ const PREVIEWS: Record<string, PreviewFn> = {
         </div>
     ),
 
-    "fancy-code/markdown-editor": () => (
+    "fancy-code/markdown-editor": heavy("MarkdownEditorTile", () => (
         <div className="grid h-32 w-full max-w-[20rem] grid-cols-2 overflow-hidden rounded-md border border-zinc-200 text-[9px] dark:border-zinc-700">
             <div className="border-r border-zinc-200 bg-zinc-50 p-2 font-mono leading-relaxed text-zinc-600 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-400">
                 <div><span className="text-violet-500"># </span>Fancy UI</div>
@@ -1769,11 +1796,11 @@ const PREVIEWS: Record<string, PreviewFn> = {
                 </ul>
             </div>
         </div>
-    ),
+    )),
 
     // ─── fancy-sheets ─────────────────────────────────────────────────────
 
-    "fancy-sheets/sheet-workbook": () => (
+    "fancy-sheets/sheet-workbook": heavy("SheetWorkbookTile", () => (
         <div className="w-full max-w-[20rem] overflow-hidden rounded-md border border-zinc-200 text-[9px] dark:border-zinc-700">
             <table className="w-full border-collapse text-zinc-700 dark:text-zinc-200">
                 <tbody>
@@ -1802,7 +1829,7 @@ const PREVIEWS: Record<string, PreviewFn> = {
                 <span className="px-2 py-0.5 text-zinc-400">Costs</span>
             </div>
         </div>
-    ),
+    )),
 
     "fancy-sheets/create-empty-workbook": () => (
         <div className="w-full max-w-[18rem] overflow-hidden rounded-md border border-zinc-800 bg-zinc-950 font-mono text-[10px] leading-relaxed text-zinc-100">

@@ -17,6 +17,8 @@ import "@particle-academy/fancy-git-ui/styles.css";
 // still shows the component its own package ships.
 import { FancyDiff } from "@particle-academy/fancy-diff";
 import { AgentCursor, ShareControls } from "@particle-academy/agent-integrations";
+import { MotionStage, TimelineDock } from "@particle-academy/fancy-motion/react";
+import { Screen, ScreenSystem } from "@particle-academy/fancy-screens";
 // A VENDORED block, not an npm package — its source lives in this app, which is
 // exactly why these tiles can render the real thing.
 import { FeatureGate, PlanFeaturesEditor, PricingTable } from "../../components/fancy/catalog-fms";
@@ -61,6 +63,17 @@ const heavy = (name: HeavyTile, Fallback: PreviewFn): PreviewFn => {
     );
 
     return () => <Deferred />;
+};
+
+/** A two-keyframe timeline — the shape TimelineDoc actually declares. */
+const PREVIEW_TIMELINE = {
+    id: "preview",
+    axis: "y" as const,
+    frames: 3,
+    keyframes: [
+        { id: "k1", at: 0, mode: "snap" as const, snapshot: {} },
+        { id: "k2", at: 0.6, mode: "scroll" as const, snapshot: {} },
+    ],
 };
 
 /** A small real patch, so the diff tile parses one instead of drawing one. */
@@ -1348,20 +1361,16 @@ const PREVIEWS: Record<string, PreviewFn> = {
     ),
 
     "fancy-screens/screen-system": () => (
-        <div className="grid grid-cols-2 gap-2 text-[10px]">
-            {["inbox", "compose", "settings", "agent"].map((id, i) => (
-                <div
-                    key={id}
-                    className={`rounded border px-2 py-1.5 ${
-                        i === 0
-                            ? "border-violet-300 bg-violet-50 text-violet-900 dark:border-violet-700 dark:bg-violet-500/15 dark:text-violet-100"
-                            : "border-zinc-200 bg-white text-zinc-600 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300"
-                    }`}
-                >
-                    <div className="font-mono">{id}</div>
-                    <div className="text-zinc-500">active</div>
+        <div className="w-full max-w-[20rem] text-[10px]">
+            <ScreenSystem>
+                <div className="grid grid-cols-2 gap-2">
+                    {["inbox", "compose"].map((id) => (
+                        <Screen key={id} id={id} title={id}>
+                            <div className="rounded border border-zinc-200 p-2 dark:border-zinc-700">{id}</div>
+                        </Screen>
+                    ))}
                 </div>
-            ))}
+            </ScreenSystem>
         </div>
     ),
 
@@ -1397,6 +1406,9 @@ const PREVIEWS: Record<string, PreviewFn> = {
         </div>
     ),
 
+    // A BRIDGE, not a component — the runtime exports are createFlowRunnerUx /
+    // useFlowRunnerUx and `FlowRunnerUx` is the type. Nothing renders, so this
+    // stays a diagram of what it wires together.
     "fancy-flow/flow-runner-ux": () => (
         <div className="flex items-center gap-2 text-[10px]">
             <div className="rounded-md border border-zinc-200 bg-white px-2 py-1.5 text-zinc-700 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-200">
@@ -2095,51 +2107,33 @@ const PREVIEWS: Record<string, PreviewFn> = {
         </div>
     ),
 
+    // An in-page MCP SERVER, not a component — `MicroMcpServer` is a type, and
+    // the runtime export is a factory. Nothing to render, so this illustrates
+    // the wiring instead.
     "agent-integrations/micro-mcp-server": () => (
-        <div className="w-full max-w-[18rem] overflow-hidden rounded-md border border-zinc-800 bg-zinc-950 font-mono text-[10px] leading-relaxed text-zinc-100">
-            <div className="border-b border-zinc-800 px-2 py-1 text-[9px] text-zinc-500">in-browser MCP server</div>
-            <div className="space-y-0.5 p-2.5">
-                <div><span className="text-sky-300">const</span> <span className="text-amber-200">server</span> <span className="text-zinc-400">=</span> <span className="text-violet-300">microMcpServer</span>()</div>
-                <div><span className="text-amber-200">registerWhiteboardBridge</span>(<span className="text-amber-200">server</span><span className="text-zinc-400">,</span> <span className="text-zinc-300">{"{…}"}</span>)</div>
-                <div className="text-emerald-300">✓ whiteboard_* tools live</div>
-            </div>
+        <div className="w-full max-w-[20rem] overflow-hidden rounded-md bg-zinc-950 p-2.5 font-mono text-[9px] leading-relaxed text-zinc-300">
+            <div className="mb-1.5 text-[8px] uppercase tracking-wider text-zinc-500">in-browser MCP server</div>
+            <div><span className="text-violet-300">const</span> server = microMcpServer()</div>
+            <div><span className="text-sky-300">registerWhiteboardBridge</span>(server, {"{…}"})</div>
+            <div className="text-emerald-400">✓ whiteboard_* tools live</div>
         </div>
     ),
 
     // ─── fancy-motion ─────────────────────────────────────────────────────
 
     "fancy-motion/motion-stage": () => (
-        <div className="relative grid h-32 w-full max-w-[20rem] place-items-center overflow-hidden rounded-md border border-zinc-200 bg-gradient-to-br from-zinc-50 to-zinc-100 dark:border-zinc-700 dark:from-zinc-900 dark:to-zinc-950">
-            <div className="relative flex w-full items-center justify-center">
-                <div className="absolute left-8 size-6 rounded-md bg-violet-500/20" />
-                <div className="absolute left-16 size-7 rounded-md bg-violet-500/40" />
-                <div className="size-9 rotate-12 rounded-md bg-gradient-to-br from-violet-500 to-fuchsia-500 shadow-lg" />
-                <div className="absolute right-6 text-[9px] font-mono text-zinc-400">scrollY → rotate · scale</div>
-            </div>
+        <div className="relative h-32 w-full max-w-[20rem] overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
+            <MotionStage timeline={PREVIEW_TIMELINE}>
+                <div data-motion="card" className="absolute left-6 top-8 rounded-md bg-violet-500 px-3 py-2 text-[10px] text-white">
+                    Tweened
+                </div>
+            </MotionStage>
         </div>
     ),
 
     "fancy-motion/timeline-dock": () => (
-        <div className="w-full max-w-[20rem] overflow-hidden rounded-md border border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-900">
-            <div className="flex justify-between border-b border-zinc-100 px-2 py-1 text-[8px] font-mono text-zinc-400 dark:border-zinc-800">
-                {["0s", "1s", "2s", "3s", "4s"].map((t) => <span key={t}>{t}</span>)}
-            </div>
-            <div className="relative space-y-1.5 px-2 py-2">
-                <div className="absolute bottom-1 left-[38%] top-1 w-px bg-violet-500">
-                    <div className="absolute -top-0.5 -left-1 size-2 rotate-45 bg-violet-500" />
-                </div>
-                {[
-                    ["opacity", ["left-[8%]", "left-[40%]", "left-[72%]"]],
-                    ["x", ["left-[20%]", "left-[60%]"]],
-                ].map(([label, marks]) => (
-                    <div key={label as string} className="relative flex h-4 items-center rounded bg-zinc-100 dark:bg-zinc-800">
-                        <span className="ml-1.5 text-[8px] text-zinc-500">{label}</span>
-                        {(marks as string[]).map((m, i) => (
-                            <span key={i} className={`absolute size-2 rotate-45 bg-violet-400 ${m}`} />
-                        ))}
-                    </div>
-                ))}
-            </div>
+        <div className="w-full max-w-[20rem] overflow-hidden rounded-md text-[10px]">
+            <TimelineDock value={PREVIEW_TIMELINE} onChange={() => {}} progress={0.45} />
         </div>
     ),
 

@@ -41,7 +41,7 @@ export const sharedWhiteboardDoc: ComponentDoc = {
     initialNotes={[
         {
             id: "n1",
-            type: "sticky",
+            kind: "sticky",
             x: 60, y: 60, width: 160, height: 100,
             text: "Brainstorm here",
             color: "#fef3c7",

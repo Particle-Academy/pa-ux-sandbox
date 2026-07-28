@@ -1,11 +1,11 @@
 import type { ComponentDoc } from "./types";
 import { useState } from "react";
-import { Shape } from "@particle-academy/fancy-whiteboard";
+import { Shape, type ShapeItem } from "@particle-academy/fancy-whiteboard";
 
 function ShapeDemo({ kind, x }: { kind: "rect" | "rounded-rect" | "ellipse" | "diamond" | "triangle"; x: number }) {
-    const [item, setItem] = useState({
+    const [item, setItem] = useState<ShapeItem>({
         id: kind,
-        type: "shape" as const,
+        kind: "shape" as const,
         shape: kind,
         x,
         y: 20,
@@ -13,7 +13,6 @@ function ShapeDemo({ kind, x }: { kind: "rect" | "rounded-rect" | "ellipse" | "d
         height: 60,
         fill: "rgba(139,92,246,0.15)",
         stroke: "#8b5cf6",
-        strokeWidth: 2,
     });
     return <Shape item={item} onChange={setItem} />;
 }
@@ -43,12 +42,11 @@ export const whiteboardShapeDoc: ComponentDoc = {
             code: `<Shape
     item={{
         id: "s1",
-        type: "shape",
+        kind: "shape",
         shape: "rect", // or "rounded-rect", "ellipse", "diamond", "triangle", "line", "arrow", "text"
         x: 20, y: 20, width: 80, height: 60,
         fill: "rgba(139,92,246,0.15)",
         stroke: "#8b5cf6",
-        strokeWidth: 2,
     }}
     onChange={setShape}
 />`,
@@ -57,9 +55,9 @@ export const whiteboardShapeDoc: ComponentDoc = {
             name: "Selected",
             description: "Drive the focus ring from your selection state.",
             render: () => {
-                const [s, setS] = useState({
+                const [s, setS] = useState<ShapeItem>({
                     id: "sel",
-                    type: "shape" as const,
+                    kind: "shape" as const,
                     shape: "rounded-rect" as const,
                     x: 30,
                     y: 30,
@@ -67,7 +65,6 @@ export const whiteboardShapeDoc: ComponentDoc = {
                     height: 60,
                     fill: "rgba(16,185,129,0.2)",
                     stroke: "#10b981",
-                    strokeWidth: 2,
                 });
                 return (
                     <div className="relative h-32 w-full overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-800">

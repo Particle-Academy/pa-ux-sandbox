@@ -1,11 +1,11 @@
 import type { ComponentDoc } from "./types";
 import { useState } from "react";
-import { StickyNote } from "@particle-academy/fancy-whiteboard";
+import { StickyNote, type StickyNoteItem } from "@particle-academy/fancy-whiteboard";
 
 function StickyDemo() {
-    const [note, setNote] = useState({
+    const [note, setNote] = useState<StickyNoteItem>({
         id: "n1",
-        type: "sticky" as const,
+        kind: "sticky",
         x: 20,
         y: 20,
         width: 160,
@@ -36,7 +36,7 @@ export const whiteboardStickyNoteDoc: ComponentDoc = {
             render: () => <StickyDemo />,
             code: `const [note, setNote] = useState<StickyNoteItem>({
     id: "n1",
-    type: "sticky",
+    kind: "sticky",
     x: 20, y: 20, width: 160, height: 100,
     text: "Double-click to edit.",
     color: "#fef3c7",
@@ -48,9 +48,9 @@ export const whiteboardStickyNoteDoc: ComponentDoc = {
             name: "Selected",
             description: "Set `selected` to add the focus ring (typically driven by your selection model).",
             render: () => {
-                const [n, setN] = useState({
+                const [n, setN] = useState<StickyNoteItem>({
                     id: "n2",
-                    type: "sticky" as const,
+                    kind: "sticky",
                     x: 20,
                     y: 20,
                     width: 160,
@@ -75,9 +75,9 @@ export const whiteboardStickyNoteDoc: ComponentDoc = {
             name: "Read-only",
             description: "Skip drag/edit affordances. Useful for snapshot views.",
             render: () => {
-                const [n, setN] = useState({
+                const [n, setN] = useState<StickyNoteItem>({
                     id: "n3",
-                    type: "sticky" as const,
+                    kind: "sticky",
                     x: 20,
                     y: 20,
                     width: 200,

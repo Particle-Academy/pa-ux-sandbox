@@ -114,12 +114,20 @@ import {
     VideoViewer,
     AudioViewer,
     PdfViewer,
+    ColorPicker,
+    ContextMenu,
+    ContentRenderer,
+    Drawer,
     Emoji,
+    FauxClient,
+    Kanban,
     MoodMeter,
     OtpInput,
     Pagination,
+    Profile,
     Progress,
     Skeleton,
+    TimePicker,
 } from "@particle-academy/react-fancy";
 import { FileViewer } from "@particle-academy/fancy-code";
 import { EChart } from "@particle-academy/fancy-echarts";
@@ -493,18 +501,10 @@ const PREVIEWS: Record<string, PreviewFn> = {
     ),
 
     "react-fancy/faux-client": () => (
-        <div className="w-full max-w-[18rem] overflow-hidden rounded-lg border border-zinc-200 shadow-sm dark:border-zinc-700">
-            <div className="flex items-center gap-1.5 border-b border-zinc-200 bg-zinc-100 px-2.5 py-1.5 dark:border-zinc-700 dark:bg-zinc-800">
-                <span className="size-2 rounded-full bg-red-400" />
-                <span className="size-2 rounded-full bg-amber-400" />
-                <span className="size-2 rounded-full bg-emerald-400" />
-                <span className="ml-2 rounded bg-white px-2 py-0.5 font-mono text-[9px] text-zinc-500 dark:bg-zinc-900">fancy-ui.app</span>
-            </div>
-            <div className="space-y-1.5 bg-white p-3 dark:bg-zinc-950">
-                <div className="h-2 w-2/3 rounded bg-gradient-to-r from-violet-400 to-sky-400" />
-                <div className="h-1.5 w-full rounded bg-zinc-100 dark:bg-zinc-800" />
-                <div className="h-1.5 w-4/5 rounded bg-zinc-100 dark:bg-zinc-800" />
-            </div>
+        <div className="w-full max-w-[20rem] text-[11px]">
+            <FauxClient variant="browser" url="ui.particle.academy/packages" dots>
+                <div className="p-3 text-zinc-600 dark:text-zinc-300">The page inside the chrome.</div>
+            </FauxClient>
         </div>
     ),
 
@@ -690,15 +690,7 @@ const PREVIEWS: Record<string, PreviewFn> = {
     ),
 
     "react-fancy/color-picker": () => (
-        <div className="space-y-2 text-center">
-            <div className="size-12 rounded-md border-2 border-white bg-violet-500 shadow-md ring-1 ring-zinc-200 dark:border-zinc-900 dark:ring-zinc-700" />
-            <div className="flex gap-1.5">
-                {["#8b5cf6", "#06b6d4", "#10b981", "#f59e0b", "#ef4444", "#ec4899"].map((c) => (
-                    <span key={c} className="size-5 rounded ring-1 ring-zinc-200 dark:ring-zinc-700" style={{ background: c }} />
-                ))}
-            </div>
-            <code className="font-mono text-[10px] text-zinc-500">#8b5cf6</code>
-        </div>
+        <ColorPicker defaultValue="#8b5cf6" presets={["#8b5cf6", "#10b981", "#f59e0b", "#ef4444", "#0ea5e9"]} />
     ),
 
     "react-fancy/command": () => (
@@ -735,47 +727,36 @@ const PREVIEWS: Record<string, PreviewFn> = {
     ),
 
     "react-fancy/content-renderer": () => (
-        <div className="w-full max-w-[18rem] space-y-1.5 text-left">
-            <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Release notes</div>
-            <div className="text-xs text-zinc-600 dark:text-zinc-300">
-                Shipping <code className="rounded bg-zinc-100 px-1 text-[10px] dark:bg-zinc-800">v0.4</code> with Zustand-store registration. The Port system is gone.
-            </div>
-            <ul className="text-xs text-zinc-600 dark:text-zinc-300">
-                <li>• Cleaner state model</li>
-                <li>• Same agent introspectability</li>
-            </ul>
+        <div className="w-full max-w-[20rem] text-[11px]">
+            <ContentRenderer
+                format="markdown"
+                value={"### Release notes\n\nReal components, **not** drawings.\n\n- one\n- two"}
+            />
         </div>
     ),
 
     "react-fancy/context-menu": () => (
-        <div className="w-44 overflow-hidden rounded-md border border-zinc-200 bg-white shadow-md dark:border-zinc-700 dark:bg-zinc-900">
-            <button className="flex w-full items-center justify-between px-3 py-1.5 text-left text-xs text-zinc-700 hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-zinc-800">
-                Copy <kbd className="font-mono text-[10px] text-zinc-400">⌘C</kbd>
-            </button>
-            <button className="flex w-full items-center justify-between px-3 py-1.5 text-left text-xs text-zinc-700 hover:bg-zinc-50 dark:text-zinc-300 dark:hover:bg-zinc-800">
-                Paste <kbd className="font-mono text-[10px] text-zinc-400">⌘V</kbd>
-            </button>
-            <div className="my-0.5 h-px bg-zinc-100 dark:bg-zinc-800" />
-            <button className="flex w-full items-center justify-between px-3 py-1.5 text-left text-xs text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-500/10">
-                Delete
-            </button>
+        <div className="w-full max-w-[20rem] text-[11px]">
+            <ContextMenu>
+                <ContextMenu.Trigger>
+                    <div className="grid h-24 place-items-center rounded-md border border-dashed border-zinc-300 text-zinc-500 dark:border-zinc-700">
+                        Right-click me
+                    </div>
+                </ContextMenu.Trigger>
+                <ContextMenu.Item onClick={() => {}}>Copy</ContextMenu.Item>
+                <ContextMenu.Item onClick={() => {}}>Paste</ContextMenu.Item>
+            </ContextMenu>
         </div>
     ),
 
     "react-fancy/drawer": () => (
-        <div className="relative h-32 w-full max-w-[18rem] overflow-hidden rounded-md bg-zinc-200/60 dark:bg-zinc-800/60">
-            <div className="absolute inset-0 bg-black/20" />
-            <div className="absolute inset-y-0 right-0 w-32 border-l border-zinc-200 bg-white shadow-xl dark:border-zinc-700 dark:bg-zinc-900">
-                <div className="flex items-center justify-between border-b border-zinc-100 px-2.5 py-1.5 text-xs font-semibold text-zinc-700 dark:border-zinc-800 dark:text-zinc-200">
-                    Filters
-                    <span className="text-zinc-400">×</span>
+        <div className="relative h-32 w-full max-w-[20rem] overflow-hidden rounded-md border border-zinc-200 bg-zinc-50 text-[11px] dark:border-zinc-800 dark:bg-zinc-900">
+            <Drawer open attach="container" onClose={() => {}} side="right" size="sm" backdrop={false}>
+                <div className="p-3">
+                    <div className="font-semibold">Filters</div>
+                    <div className="mt-1 text-zinc-500">Anchored to its container.</div>
                 </div>
-                <div className="space-y-1.5 px-2.5 py-2">
-                    <div className="h-1.5 w-full rounded bg-zinc-200 dark:bg-zinc-700" />
-                    <div className="h-1.5 w-3/4 rounded bg-zinc-200 dark:bg-zinc-700" />
-                    <div className="h-1.5 w-5/6 rounded bg-zinc-200 dark:bg-zinc-700" />
-                </div>
-            </div>
+            </Drawer>
         </div>
     ),
     "react-fancy/dropdown": () => (
@@ -875,20 +856,28 @@ const PREVIEWS: Record<string, PreviewFn> = {
     ),
 
     "react-fancy/kanban": () => (
-        <div className="flex w-full max-w-[18rem] gap-1.5 text-[10px]">
-            {[
-                { label: "Todo", color: "bg-zinc-100 dark:bg-zinc-800", count: 4 },
-                { label: "Doing", color: "bg-violet-100 dark:bg-violet-500/20", count: 2 },
-                { label: "Done", color: "bg-emerald-100 dark:bg-emerald-500/20", count: 5 },
-            ].map((col) => (
-                <div key={col.label} className="flex-1 space-y-1">
-                    <div className={`flex items-center justify-between rounded ${col.color} px-1.5 py-1 font-semibold text-zinc-700 dark:text-zinc-200`}>
-                        {col.label} <span className="opacity-50">{col.count}</span>
-                    </div>
-                    <div className="rounded border border-zinc-200 bg-white px-1.5 py-1 text-zinc-600 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300">Task</div>
-                    <div className="rounded border border-zinc-200 bg-white px-1.5 py-1 text-zinc-600 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-300">Task</div>
-                </div>
-            ))}
+        <div className="w-full max-w-[20rem] text-[10px]">
+            <Kanban>
+                {[
+                    { id: "todo", title: "Todo", cards: ["Audit tiles"] },
+                    { id: "doing", title: "Doing", cards: ["Ship 0.4"] },
+                ].map((col) => (
+                    <Kanban.Column key={col.id} id={col.id}>
+                        <Kanban.ColumnHandle>
+                            <div className="px-2 py-1 text-[9px] font-semibold uppercase tracking-wider text-zinc-500">
+                                {col.title}
+                            </div>
+                        </Kanban.ColumnHandle>
+                        {col.cards.map((c) => (
+                            <Kanban.Card key={c} id={c}>
+                                <div className="rounded border border-zinc-200 bg-white p-1.5 dark:border-zinc-700 dark:bg-zinc-900">
+                                    {c}
+                                </div>
+                            </Kanban.Card>
+                        ))}
+                    </Kanban.Column>
+                ))}
+            </Kanban>
         </div>
     ),
 
@@ -1029,13 +1018,7 @@ const PREVIEWS: Record<string, PreviewFn> = {
     ),
 
     "react-fancy/profile": () => (
-        <div className="flex items-center gap-3">
-            <span className="inline-flex size-10 items-center justify-center rounded-full bg-gradient-to-br from-violet-400 to-sky-500 text-sm font-semibold text-white">RK</span>
-            <div className="text-left">
-                <div className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">Rita Kumar</div>
-                <div className="text-xs text-zinc-500">Senior engineer · NYC</div>
-            </div>
-        </div>
+        <Profile name="Rita Kumar" subtitle="Senior engineer · NYC" fallback="RK" status="online" size="lg" />
     ),
 
     "react-fancy/progress": () => (
@@ -1175,15 +1158,7 @@ const PREVIEWS: Record<string, PreviewFn> = {
         </div>
     ),
 
-    "react-fancy/time-picker": () => (
-        <div className="flex items-center gap-1 rounded-md border border-zinc-200 bg-white px-3 py-2 text-base font-semibold text-zinc-800 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100">
-            <span className="rounded bg-violet-50 px-1.5 dark:bg-violet-500/15 dark:text-violet-100">09</span>
-            <span className="text-zinc-400">:</span>
-            <span>30</span>
-            <span className="text-zinc-400">·</span>
-            <span className="text-xs text-zinc-500">AM</span>
-        </div>
-    ),
+    "react-fancy/time-picker": () => <TimePicker defaultValue="09:30" format="12h" />,
 
     "react-fancy/toast": () => (
         <div className="w-full max-w-[18rem] space-y-2">

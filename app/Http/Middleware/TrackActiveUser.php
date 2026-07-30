@@ -68,10 +68,14 @@ class TrackActiveUser
 
         [$type, $label] = $this->describe($request);
 
+        [$actorKind, $actorName] = $this->actor($request);
+
         $this->recorder->record(
             user: $user,
             activityType: $type,
             activityLabel: $label,
+            actorKind: $actorKind,
+            actorName: $actorName,
         );
 
         Cache::put($cacheKey, true, 10);
@@ -137,5 +141,30 @@ class TrackActiveUser
         $path = trim($request->path(), '/');
 
         return $path === '' ? 'the home page' : '/'.$path;
+    }
+
+    /**
+     * Whether this request was caused by the human or by their agent.
+     *
+     * The co-browse provider stamps `X-Fancy-Actor: agent` on every visit it
+     * causes — including the ones a `page_click` triggers indirectly, which is
+     * why it hooks Inertia's `before` rather than the navigate call.
+     *
+     * The header is NOT a trust boundary and does not need to be: it only
+     * decides how the row is labelled, on a row already scoped to the
+     * authenticated user. The worst a forged value achieves is mislabelling
+     * one's own presence entry.
+     *
+     * @return array{0: string, 1: string|null}
+     */
+    private function actor(Request $request): array
+    {
+        if ($request->header('X-Fancy-Actor') !== 'agent') {
+            return ['human', null];
+        }
+
+        $name = trim((string) $request->header('X-Fancy-Agent-Name', ''));
+
+        return ['agent', $name !== '' ? mb_substr($name, 0, 40) : 'Agent'];
     }
 }

@@ -129,6 +129,34 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+/* Name + agent badge sit on one line; the action stays on its own beneath. */
+.active-user-pill-who {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+/*
+ * "Their agent did this", not "they did this".
+ *
+ * Reads as a badge rather than more text because the pill's own name is right
+ * beside it — the distinction has to survive a glance, which is all a pill that
+ * rises and fades in ~4s ever gets. Violet matches the agent cursor and the
+ * co-browse presence colour (#a855f7), so one hue means "agent" everywhere.
+ */
+.active-user-pill-agent {
+  flex: none;
+  font-size: 10px;
+  font-weight: var(--weight-semibold, 600);
+  line-height: 1;
+  padding: 2px 5px;
+  border-radius: 4px;
+  color: #f5f3ff;
+  background: color-mix(in oklab, #a855f7 82%, transparent);
+  white-space: nowrap;
+}
+
 .active-user-pill-action {
   font-size: 11px;
   color: var(--fg-3);

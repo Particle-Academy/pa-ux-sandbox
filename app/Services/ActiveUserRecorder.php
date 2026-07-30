@@ -24,6 +24,8 @@ class ActiveUserRecorder
         string $activityLabel,
         bool $isXp = false,
         bool $isAchievement = false,
+        string $actorKind = 'human',
+        ?string $actorName = null,
     ): ActiveUser {
         $now = now();
 
@@ -38,6 +40,12 @@ class ActiveUserRecorder
                 'cosmetic_slots' => $user->cosmetic_slots ?? [],
                 'activity_type' => $activityType,
                 'activity_label' => $activityLabel,
+                // Who DID it. The row is still keyed on the user — an agent acts
+                // on their behalf and in their session — but the feed has to say
+                // which of the two, or it reports the human doing things they
+                // did not do.
+                'actor_kind' => $actorKind,
+                'actor_name' => $actorKind === 'agent' ? $actorName : null,
                 'activity_at' => $now,
                 'is_xp' => $isXp,
                 'is_achievement' => $isAchievement,

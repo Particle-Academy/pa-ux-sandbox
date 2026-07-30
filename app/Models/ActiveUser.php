@@ -23,6 +23,8 @@ class ActiveUser extends Model
         'cosmetic_slots',
         'activity_type',
         'activity_label',
+        'actor_kind',
+        'actor_name',
         'activity_at',
         'is_xp',
         'is_achievement',

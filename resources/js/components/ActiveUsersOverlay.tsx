@@ -17,6 +17,10 @@ export type ActiveUserRow = {
     is_achievement: boolean;
     last_active_at: string | null;
     is_fake: boolean;
+    /** Who performed it: the person, or an agent acting on their behalf. */
+    actor_kind?: "human" | "agent" | null;
+    /** The agent's display name, when `actor_kind` is "agent". */
+    actor_name?: string | null;
 };
 
 const RISE_MS = 4200; // total time a pill is on screen (rise + fade, matches the CSS)
@@ -190,10 +194,32 @@ export function ActiveUsersOverlay() {
             {pills.map(({ key, row }) => {
                 const glow = glowFor(row);
                 return (
-                    <div key={key} className="active-user-pill" data-glow={glow || undefined}>
+                    <div
+                        key={key}
+                        className="active-user-pill"
+                        data-glow={glow || undefined}
+                        // Stable hook for tests and for anything that needs to
+                        // filter agent activity out of a human-only view.
+                        data-actor={row.actor_kind ?? "human"}
+                    >
                         <PlayerAvatar player={row.identity} size="sm" glow={glow} />
                         <span className="active-user-pill-body">
-                            <PlayerName player={row.identity} className="active-user-pill-name" />
+                            <span className="active-user-pill-who">
+                                <PlayerName player={row.identity} className="active-user-pill-name" />
+                                {/* The pill previously said the PERSON did this,
+                                    even when their agent did — a false audit
+                                    trail on their own screen. The badge is on
+                                    the name, not the action, because the
+                                    question it answers is "who", not "what". */}
+                                {row.actor_kind === "agent" ? (
+                                    <span
+                                        className="active-user-pill-agent"
+                                        title={`${row.actor_name ?? "Agent"} acted on your behalf`}
+                                    >
+                                        {row.actor_name ?? "Agent"}
+                                    </span>
+                                ) : null}
+                            </span>
                             <span className="active-user-pill-action">{actionLabel(row)}</span>
                         </span>
                     </div>

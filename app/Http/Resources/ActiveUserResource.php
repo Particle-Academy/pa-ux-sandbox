@@ -29,6 +29,11 @@ class ActiveUserResource extends JsonResource
             'identity' => PlayerIdentity::fromParts($this->name, $this->avatar_url, $this->cosmetic_slots),
             'activity_type' => $this->activity_type,
             'activity_label' => $this->activity_label,
+            // Who performed it. The row stays keyed on the user — an agent acts
+            // on their behalf — so without this the UI shows the human doing
+            // things they did not do, and gamification cannot tell the two apart.
+            'actor_kind' => $this->actor_kind ?? 'human',
+            'actor_name' => $this->actor_name,
             'activity_at' => $this->activity_at?->toIso8601String(),
             'is_xp' => (bool) $this->is_xp,
             'is_achievement' => (bool) $this->is_achievement,

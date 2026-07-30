@@ -189,11 +189,43 @@ function readCsrf(): string | undefined {
     return m ? decodeURIComponent(m[1]) : undefined;
 }
 
+/** Identity of the agent driving this session. Sent with every agent-caused request. */
+const AGENT = { id: "agent", name: "Agent", color: "#a855f7" } as const;
+
+/**
+ * How long after an agent tool call a resulting request still counts as the
+ * agent's.
+ *
+ * A click or submit does not navigate directly — it fires a DOM event, React or
+ * Inertia handles it, and the request leaves on a later tick. So attribution
+ * cannot hang off the navigation call itself; it has to be a short window around
+ * the action.
+ *
+ * Long enough to cover a handler that awaits something, short enough that a
+ * human clicking immediately afterwards is not credited to the agent. Wrong in
+ * the safe direction: a missed tag shows the human's own action as theirs, while
+ * an over-long window would put the agent's badge on a human's click.
+ */
+const AGENT_ACTION_WINDOW_MS = 1500;
+
 export function CoBrowseProvider({ children }: { children: ReactNode }) {
     const registryRef = useRef<Map<string, Element>>(new Map());
     const revisionRef = useRef(0);
     const agentNavigationRef = useRef(false);
     const [pending, setPending] = useState<PendingConfirm | null>(null);
+
+    /**
+     * Timestamp of the last agent action, for attributing the request it causes.
+     *
+     * Without this the server cannot tell the two apart at all: the agent drives
+     * through the real UI, so its navigation arrives as an ordinary Inertia
+     * visit from the same session as the human's. The activity feed credited
+     * every agent action to the signed-in person by name.
+     */
+    const agentActingUntilRef = useRef(0);
+    const markAgentAction = useCallback(() => {
+        agentActingUntilRef.current = Date.now() + AGENT_ACTION_WINDOW_MS;
+    }, []);
 
     const resolve = useCallback((handle: string): Element | null => {
         const hit = registryRef.current.get(handle);
@@ -229,6 +261,7 @@ export function CoBrowseProvider({ children }: { children: ReactNode }) {
             },
             visit: (url) => {
                 agentNavigationRef.current = true;
+                markAgentAction();
                 router.visit(url);
             },
             back: () => window.history.back(),
@@ -242,6 +275,7 @@ export function CoBrowseProvider({ children }: { children: ReactNode }) {
             },
             scrollBy: (dy) => window.scrollBy({ top: dy, behavior: "smooth" }),
             setField: (handle, value) => {
+                markAgentAction();
                 const el = resolve(handle);
                 if (!el) return { ok: false, error: `No element for handle "${handle}"` };
                 if (
@@ -257,6 +291,9 @@ export function CoBrowseProvider({ children }: { children: ReactNode }) {
             click: (handle) => {
                 const el = resolve(handle);
                 if (!el) return { ok: false, error: `No element for handle "${handle}"` };
+                // Marked BEFORE the click: an Inertia link fires its visit
+                // synchronously inside click(), so tagging afterwards is too late.
+                markAgentAction();
                 (el as HTMLElement).click();
                 return { ok: true };
             },
@@ -265,6 +302,7 @@ export function CoBrowseProvider({ children }: { children: ReactNode }) {
                 if (!el) return { ok: false, error: `No element for handle "${handle}"` };
                 const form = el instanceof HTMLFormElement ? el : el.closest("form");
                 if (!form) return { ok: false, error: `Handle "${handle}" is not inside a form` };
+                markAgentAction();
                 if (typeof form.requestSubmit === "function") form.requestSubmit();
                 else form.submit();
                 return { ok: true };
@@ -299,6 +337,38 @@ export function CoBrowseProvider({ children }: { children: ReactNode }) {
     const active = session.session != null;
     const observeRef = useRef(session.observeUser);
     observeRef.current = session.observeUser;
+
+    /**
+     * Tag every request the agent causes, so the server can tell who acted.
+     *
+     * On `before` rather than at the call site: `page_click` and `page_submit`
+     * do not navigate themselves — they fire a DOM event and Inertia sends the
+     * request on a later tick — so only a hook over ALL outgoing visits catches
+     * them. Tagging just `nav_visit` would credit the agent's explicit
+     * navigations and silently mis-attribute everything it did by clicking.
+     *
+     * Runs whenever the provider is mounted, not only while a session is
+     * `active`: an agent action can be in flight as a session ends, and a
+     * mis-attributed request is worse than a redundant listener.
+     */
+    useEffect(() => {
+        const offBefore = router.on("before", (event) => {
+            if (Date.now() > agentActingUntilRef.current) return;
+
+            const visit = (event as unknown as { detail?: { visit?: { headers?: Record<string, string> } } })
+                .detail?.visit;
+            if (!visit) return;
+
+            visit.headers = {
+                ...(visit.headers ?? {}),
+                "X-Fancy-Actor": "agent",
+                "X-Fancy-Agent-Id": AGENT.id,
+                "X-Fancy-Agent-Name": AGENT.name,
+            };
+        });
+
+        return () => offBefore();
+    }, []);
 
     useEffect(() => {
         if (!active) return;

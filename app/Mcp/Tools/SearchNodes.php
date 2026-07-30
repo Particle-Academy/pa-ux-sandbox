@@ -3,6 +3,7 @@
 namespace App\Mcp\Tools;
 
 use App\Models\FlowNodePackage;
+use App\Support\Registry\FirstPartyNodeSource;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Str;
 use Laravel\Mcp\Request;
@@ -13,6 +14,8 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Search fancy-flow MARKETPLACE nodes by concept before you build one. Ask this whenever a workflow needs a step you are about to hand-roll in app code ("upload to s3", "wait for approval", "route with an llm"). The expensive failure is not "could not install it" — it is not knowing a node existed and writing a worse version. Matches kind, title, description, and category. Core builtins are NOT listed: they ship with fancy-flow, so check the engine\'s own node kit too.')]
 class SearchNodes extends Tool
 {
+    public function __construct(private readonly FirstPartyNodeSource $firstParty) {}
+
     public function handle(Request $request): Response
     {
         $query = Str::lower(trim((string) $request->get('query', '')));
@@ -20,14 +23,20 @@ class SearchNodes extends Tool
             return Response::error('`query` is required.');
         }
 
+        // Database UNION compiled artifact — see ListNodes. Searching the
+        // database alone meant every first-party node was unfindable through
+        // the MCP, which is the surface an agent actually searches.
         $matches = FlowNodePackage::query()
             ->listed()
             ->get()
-            ->filter(fn (FlowNodePackage $p) => Str::contains(
-                Str::lower($p->kind.' '.$p->title.' '.$p->description.' '.$p->category),
+            ->map(fn (FlowNodePackage $p) => $p->toIndexEntry())
+            ->concat($this->firstParty->indexEntries())
+            ->unique('kind')
+            ->filter(fn (array $entry) => Str::contains(
+                Str::lower(($entry['kind'] ?? '').' '.($entry['title'] ?? '').' '.($entry['description'] ?? '').' '.($entry['category'] ?? '')),
                 $query,
             ))
-            ->map(fn (FlowNodePackage $p) => $p->toIndexEntry())
+            ->sortBy([['category', 'asc'], ['kind', 'asc']])
             ->values()
             ->all();
 

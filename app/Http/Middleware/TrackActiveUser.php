@@ -87,7 +87,7 @@ class TrackActiveUser
     private function describe(Request $request): array
     {
         $route = $request->route();
-        $name = $route?->getName() ?? 'browsing';
+        $name = $this->routeName($route?->getName());
 
         $package = $route?->parameter('package');
         $component = $route?->parameter('component');
@@ -100,6 +100,42 @@ class TrackActiveUser
             return ['package', "viewing the {$package} package"];
         }
 
-        return ['page', "on {$name}"];
+        if ($name === null) {
+            return ['page', 'browsing '.$this->readablePath($request)];
+        }
+
+        return ['page', 'on '.str_replace(['.', '-', '_'], [' ', ' ', ' '], $name)];
+    }
+
+    /**
+     * A route's name, or null when it genuinely has none.
+     *
+     * `Route::getName()` does NOT return null for an unnamed route — Laravel's
+     * router synthesises `'generated::'.Str::random()`
+     * (`AbstractRouteCollection::generateRouteName()`). So `?? 'browsing'` never
+     * fired, and the feed published lines like
+     * **"Wish Born — on generated::hDAoBhQKlhcWhD3X"**: a random string,
+     * different on every request, shown to the user as their own activity.
+     */
+    private function routeName(?string $name): ?string
+    {
+        if ($name === null || $name === '' || str_starts_with($name, 'generated::')) {
+            return null;
+        }
+
+        return $name;
+    }
+
+    /**
+     * Human-readable fallback for an unnamed route: the URL path.
+     *
+     * "browsing /docs/starter-kit" beats any internal identifier — the feed is
+     * read by people, and a path is what they recognise.
+     */
+    private function readablePath(Request $request): string
+    {
+        $path = trim($request->path(), '/');
+
+        return $path === '' ? 'the home page' : '/'.$path;
     }
 }

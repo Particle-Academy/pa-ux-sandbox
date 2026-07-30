@@ -16,7 +16,7 @@ use LaravelCatalog\Models\Product;
  * The public "Go Pro" surface.
  *
  * Renders the plans through the showcase's own `catalog-fms` block — the same
- * vendorable components anyone can `npx fancy-cli add`. Pro state comes from
+ * vendorable components anyone can `npx fancy-cli@latest add`. Pro state comes from
  * {@see Entitlements}, which is the single authority: a subscription, an earned
  * `sandbox-pro` prize, and an admin override all mean Pro, and the page has to
  * say WHICH — or someone who earned it gets told to buy what they already have.

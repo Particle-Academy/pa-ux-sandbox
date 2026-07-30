@@ -93,7 +93,7 @@ class StarterKitDownloadController extends Controller
     {
         $bundles = in_array($kit['slug'], self::BUNDLES_CATALOG_FMS, true);
         $headline = $bundles
-            ? 'This kit vendors the **catalog-fms** UI block — the same components you can drop into any project with `npx fancy-cli add catalog-fms`.'
+            ? 'This kit vendors the **catalog-fms** UI block — the same components you can drop into any project with `npx fancy-cli@latest add catalog-fms`.'
             : "Headline package: `@particle-academy/{$kit['pkg']}`.";
         $depLine = $bundles
             ? '- The **catalog-fms** components are vendored into `src/components/fancy/catalog-fms/` — edit them freely (they only need `@particle-academy/react-fancy`).'

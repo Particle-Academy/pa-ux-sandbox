@@ -44,7 +44,7 @@ Workflow:
    when the user names a UI concept ("calendar", "data grid", "modal").
 2. Use `install_instructions` to get the exact install commands for the
    chosen component — both the `npm install` path (default) and the
-   `npx fancy-cli add` vendor-source path.
+   `npx fancy-cli@latest add` vendor-source path.
 3. If you need the actual source code (e.g. to inline into an answer or to
    write files directly), call `get_component` to fetch the full registry
    bundle.
@@ -80,7 +80,7 @@ Two places a node can come from, and they are NOT the same:
 
 A node is installed once PER RUNTIME the project executes on. A node installed
 only for TS is invisible to a PHP runner, and the graph fails at that node with
-nothing visible beforehand — so prefer `npx fancy-cli add node <kind>`, which
+nothing visible beforehand — so prefer `npx fancy-cli@latest add node <kind>`, which
 reads the project's real runtimes and refuses a mismatch, over raw npm/composer.
 Call `get_node` before wiring one in: required capabilities, whether it pauses
 for a human, and whether it is unsafe to replay all change what the HOST must

@@ -39,7 +39,7 @@ class SearchNodes extends Tool
             // kit is the far more likely place to find it today.
             'note' => $matches === []
                 ? 'No marketplace node matched. Check fancy-flow\'s CORE builtins before hand-rolling one — triggers, branch/switch_case, merge, for_each, wait, transform, http, output, user_input, human_approval, subflow, llm_router and llm_call all ship with the engine.'
-                : 'Install with: npx fancy-cli add node <kind>',
+                : 'Install with: npx fancy-cli@latest add node <kind>',
         ]);
     }
 

@@ -68,7 +68,7 @@ class PackageRegistry
         'fancy-3d-three' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#6366f1'],
         'fancy-motion' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#f43f5e'],
         'fancy-cms-ui' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#0ea5e9'],
-        // Vendorable block (npx fancy-cli add) — not a published package.
+        // Vendorable block (npx fancy-cli@latest add) — not a published package.
         'catalog-fms' => ['group' => 'commerce', 'ecosystem' => 'ts', 'kind' => 'block', 'accent' => '#0ea5e9'],
 
         // ── Everything else, by theme ────────────────────────────────────────
@@ -536,7 +536,7 @@ class PackageRegistry
             [
                 'slug' => 'fancy-cli',
                 'name' => 'fancy-cli',
-                'tagline' => 'Source-vendoring CLI — `npx fancy-cli add <component>` copies component source from the registry into your project (the shadcn-style own-the-source path).',
+                'tagline' => 'Source-vendoring CLI — `npx fancy-cli@latest add <component>` copies component source from the registry into your project (the shadcn-style own-the-source path).',
                 'npm' => 'fancy-cli',
                 'repo' => 'Particle-Academy/fancy-ui-cli',
                 'language' => 'TypeScript',
@@ -840,7 +840,7 @@ class PackageRegistry
     }
 
     /**
-     * Catalog + FMS — a vendorable React UI block (`npx fancy-cli add
+     * Catalog + FMS — a vendorable React UI block (`npx fancy-cli@latest add
      * catalog-fms`) + the Shop-n-Sub starter kit. Not a published npm/Composer
      * package: the components are authored in this showcase and shipped through
      * the fancy-ui registry, so the entry carries `cli` (the add command) and
@@ -856,7 +856,7 @@ class PackageRegistry
             'name' => 'Catalog + FMS',
             'tagline' => 'Storefront + admin UI for subscriptions and metered features — pricing tables, a plan-comparison matrix, feature gating, and a plan/perks editor. Vendor the React block, or grab the Shop-n-Sub starter kit.',
             'language' => 'TypeScript',
-            'cli' => 'npx fancy-cli add catalog-fms',
+            'cli' => 'npx fancy-cli@latest add catalog-fms',
             'kit' => 'shop-n-sub',
             'pairs' => ['laravel-catalog', 'laravel-fms', 'fancy-catalog-js', 'fancy-features-js'],
             'components' => [

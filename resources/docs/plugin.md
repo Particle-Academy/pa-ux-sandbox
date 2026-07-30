@@ -35,7 +35,7 @@ Each plugin registers the hosted registry endpoint at `https://ui.particle.acade
 | `list-components` | (none) | The full registry index. |
 | `search-components` | `{ query }` | Components matching a UI concept ("calendar", "data grid", "modal"). |
 | `get-component` | `{ name }` | The full registry-item bundle (source + metadata) for one component. |
-| `install-instructions` | `{ name }` | A short recipe: `npm install` command, `npx fancy-cli add` command, and import line. |
+| `install-instructions` | `{ name }` | A short recipe: `npm install` command, `npx fancy-cli@latest add` command, and import line. |
 
 Plus `start-project` (pick a stack for a new app), the Inspiration Gallery blueprint tools, the fancy-flow workflow-node marketplace tools, and the Showcase registration tools. The full list is on the [MCP servers](/docs/mcp) page — this is the same **Install-MCP**; the plugin is just the no-config way to add it.
 

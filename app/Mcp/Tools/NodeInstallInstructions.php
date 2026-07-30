@@ -47,7 +47,7 @@ class NodeInstallInstructions extends Tool
             // The recommended path: it checks the node against the runtimes the
             // project ACTUALLY executes on and refuses a mismatch, which the
             // raw package-manager commands below cannot do.
-            'recommended' => "npx fancy-cli add node {$package->kind}",
+            'recommended' => "npx fancy-cli@latest add node {$package->kind}",
             'recommendedWhy' => 'fancy-cli reads the project\'s real runtimes from package.json / composer.json and refuses a node that cannot run there. Installing by hand skips that check, and the node then appears in the palette and fails at run time — which looks like it worked.',
 
             'perRuntime' => $commands,

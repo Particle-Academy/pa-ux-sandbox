@@ -35,7 +35,7 @@ This mode is the right call when:
 - You don't need to fork the component source.
 - You're fine getting updates via `npm update`.
 
-## Mode 2 — `npx fancy-cli add` (vendor the source)
+## Mode 2 — `npx fancy-cli@latest add` (vendor the source)
 
 For teams that want to **own the code** and treat Fancy UI as a starting point they'll modify, the CLI fetches the component source from our [hosted registry](/docs/registry) and writes the files directly into the host project.
 

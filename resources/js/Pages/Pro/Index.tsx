@@ -8,7 +8,7 @@ import { Layout } from "../Layout";
  * Go Pro.
  *
  * Rendered with the showcase's own `catalog-fms` block — the same components
- * anyone gets from `npx fancy-cli add catalog-fms`. If the kit can't dress its
+ * anyone gets from `npx fancy-cli@latest add catalog-fms`. If the kit can't dress its
  * own pricing page, it has no business selling one.
  *
  * The page has to answer "am I already Pro, and how?" before it sells anything:
@@ -227,7 +227,7 @@ export default function ProIndex({ plans, features, pro, subscriptions }: Props)
                     <strong>laravel-fms</strong> entitlements. The block also ships{" "}
                     <code className="text-xs">FeatureMatrix</code>, <code className="text-xs">FeatureGate</code>
                     , and <code className="text-xs">PlanFeaturesEditor</code> — vendor the lot with{" "}
-                    <code className="text-xs">npx fancy-cli add catalog-fms</code>.
+                    <code className="text-xs">npx fancy-cli@latest add catalog-fms</code>.
                 </Text>
             </section>
         </Layout>

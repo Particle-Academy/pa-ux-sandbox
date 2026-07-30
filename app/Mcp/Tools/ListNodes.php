@@ -38,7 +38,7 @@ class ListNodes extends Tool
             // broken tool rather than an empty marketplace.
             'note' => $items === []
                 ? 'No marketplace nodes are published yet. fancy-flow\'s core builtins ship with the engine and are not listed here — use them directly rather than installing anything.'
-                : 'Install with: npx fancy-cli add node <kind>',
+                : 'Install with: npx fancy-cli@latest add node <kind>',
         ]);
     }
 

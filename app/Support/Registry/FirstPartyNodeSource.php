@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\File;
  * and verification, and a moderator decides. It is the wrong mechanism for our
  * own nodes, and it failed exactly the way an undeclared manual step always
  * does: production served an empty marketplace while eight nodes sat in
- * `fancy-flow-nodes`, and nothing anywhere said so. `npx fancy-cli add node
+ * `fancy-flow-nodes`, and nothing anywhere said so. `npx fancy-cli@latest add node
  *
  * @particle-academy/ui_effect` resolved to nothing for every real consumer.
  *

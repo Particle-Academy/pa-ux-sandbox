@@ -101,7 +101,7 @@ The agent calls `search-components({ query: "navigation" })` and reports `navbar
 
 > "Add the navbar and sidebar to this project."
 
-The agent calls `get-component` for each, fetches the bundles, and writes the files (or invokes `npx fancy-cli add` on your behalf).
+The agent calls `get-component` for each, fetches the bundles, and writes the files (or invokes `npx fancy-cli@latest add` on your behalf).
 
 > "What does the Card component depend on?"
 

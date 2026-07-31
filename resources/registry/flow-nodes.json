@@ -1,5 +1,273 @@
 {
     "nodes": {
+        "particle-academy__git_branches": {
+            "manifest": {
+                "schemaVersion": 1,
+                "name": "particle-academy/fancy-flow-nodes",
+                "kind": "@particle-academy/git_branches",
+                "aliases": [
+                    "git_branches"
+                ],
+                "configVersion": 1,
+                "title": "Branches",
+                "category": "io",
+                "description": "List a working copy's branches and report which one is checked out.",
+                "ui": [
+                    "ui"
+                ],
+                "runtimes": {
+                    "ts": {
+                        "files": [
+                            "js"
+                        ],
+                        "engine": ">=0.30.0"
+                    },
+                    "php": {
+                        "files": [
+                            "php"
+                        ],
+                        "engine": ">=0.9.0"
+                    }
+                },
+                "capabilities": {
+                    "gitRepository": "required"
+                },
+                "fancyDependencies": [
+                    {
+                        "package": "fancy-git",
+                        "npm": "@particle-academy/fancy-git",
+                        "composer": "particle-academy/fancy-git",
+                        "reason": "provides the GitRepository the host resolves for this node",
+                        "requirement": "required"
+                    }
+                ],
+                "fixtures": "nodes/git-branches/fixtures/git-branches.json",
+                "sideEffects": "idempotent"
+            },
+            "files": [
+                {
+                    "target": "git-branches/ui/kind.ts",
+                    "content": "import type { NodeKindDefinition } from \"@particle-academy/fancy-flow/engine\";\nimport { gitBranchesExecutor } from \"../js/executor\";\n\nexport const GIT_BRANCHES_KIND = \"@particle-academy/git_branches\";\n\n/** `git_branches` — the branch list, with the current one lifted out. */\nexport const gitBranchesKind: NodeKindDefinition = {\n  name: GIT_BRANCHES_KIND,\n  aliases: [\"git_branches\"],\n  category: \"io\",\n  label: \"Branches\",\n  description: \"List a working copy's branches and report which one is checked out.\",\n  icon: \"⑂\",\n  accent: \"#f97316\",\n  inputs: [{ id: \"in\" }],\n  outputs: [{ id: \"out\" }],\n  configSchema: [\n    { key: \"repo\", label: \"Repository\", type: \"text\", placeholder: \"(host default)\" },\n    { key: \"includeRemote\", label: \"Include remote branches\", type: \"switch\", default: false },\n  ],\n  defaultConfig: { includeRemote: false },\n  executor: gitBranchesExecutor,\n};\n"
+                },
+                {
+                    "target": "git-branches/js/executor.ts",
+                    "content": "import type { NodeExecutor } from \"@particle-academy/fancy-flow/engine\";\nimport { resolveWorkingCopy } from \"./repo\";\n\n/**\n * Branches, with the current one lifted out.\n *\n * `current` is separated because almost every workflow that lists branches then\n * asks \"which one am I on\" — and finding it means scanning for `current: true`,\n * which is a loop each consumer would otherwise rewrite.\n */\nexport const gitBranchesExecutor: NodeExecutor = async (ctx) => {\n  const config = ((ctx.node.data as any)?.config ?? {}) as Record<string, unknown>;\n  const repo = resolveWorkingCopy(config);\n\n  const all = ((await repo.branches()) ?? []) as { name: string; current?: boolean; remote?: boolean }[];\n  const includeRemote = config.includeRemote === true;\n  const branches = includeRemote ? all : all.filter((b) => !b.remote);\n  const current = all.find((b) => b.current)?.name ?? null;\n\n  ctx.emit({\n    type: \"log\",\n    level: \"info\",\n    nodeId: ctx.node.id,\n    message: `${branches.length} branch(es), on ${current ?? \"(detached)\"}`,\n  });\n\n  return {\n    __port: \"out\",\n    value: { branches, count: branches.length, current, names: branches.map((b) => b.name) },\n  };\n};\n"
+                },
+                {
+                    "target": "git-branches/js/repo.ts",
+                    "content": "/**\n * The seam between a workflow node and a LOCAL git working copy.\n *\n * Distinct from the `git_pr_*` nodes' seam on purpose. Those act on a hosted\n * provider (a REST API and a token); these drive `git` in a checkout on disk.\n * The two have different failure modes, different credentials and different\n * blast radius, so they declare different capabilities — a host that wants to\n * read pull requests should not have to hand over a working copy, and a host\n * that hands over a working copy is agreeing to something much larger.\n *\n * ```ts\n * import { registerGitRepoHost } from \"@/components/fancy/flow-nodes/git-branches/js/repo\";\n * import { GitRepository } from \"@particle-academy/fancy-git\";\n *\n * registerGitRepoHost({\n *   resolve: (name) => new GitRepository(workspacePathFor(name)),\n * });\n * ```\n *\n * `resolve` takes the config's `repo` name rather than a path, so a graph never\n * carries a filesystem path an author could point anywhere. The host decides\n * what a name maps to; the node cannot reach outside what the host allows.\n *\n * This file is duplicated in each local-repo node. That is on purpose: a\n * vendored node is meant to be self-contained and editable in place, so a node\n * you copy in should not depend on another node you did not.\n */\n\n/** The subset of `fancy-git`'s `GitRepository` these nodes use. */\nexport type GitWorkingCopy = {\n  info(): Promise<unknown>;\n  status(): Promise<unknown>;\n  log(query?: { ref?: string; limit?: number; skip?: number }): Promise<unknown[]>;\n  diff(query?: { from?: string; to?: string; staged?: boolean; paths?: string[] }): Promise<unknown>;\n  branches(): Promise<unknown[]>;\n  checkout(target: string, options?: { propose?: boolean }): Promise<unknown>;\n  push(remote?: string, branch?: string, options?: { propose?: boolean }): Promise<unknown>;\n  pull(remote?: string, branch?: string, options?: { propose?: boolean }): Promise<unknown>;\n};\n\nexport type GitRepoHost = {\n  /** Map a config `repo` name to a working copy. Return null to refuse. */\n  resolve(repo: string | undefined): GitWorkingCopy | null;\n};\n\nlet host: GitRepoHost | null = null;\n\n/** Install the host. Returns an unregister function. */\nexport function registerGitRepoHost(next: GitRepoHost): () => void {\n  host = next;\n\n  return () => {\n    if (host === next) host = null;\n  };\n}\n\nexport function getGitRepoHost(): GitRepoHost | null {\n  return host;\n}\n\n/**\n * Resolve the working copy this node acts on.\n *\n * Fails loudly at every step. A node that cannot reach a repository must not\n * return \"nothing to do\" — on a queue worker that is a green run that never\n * pushed the branch someone was waiting for.\n */\nexport function resolveWorkingCopy(config: Record<string, unknown>): GitWorkingCopy {\n  const current = getGitRepoHost();\n  if (!current) {\n    throw new Error(\n      \"git: no repository host registered. Call registerGitRepoHost({ resolve }) with a \" +\n        \"fancy-git GitRepository factory — the node has no filesystem access of its own and must not invent any.\",\n    );\n  }\n\n  const repo = config.repo === undefined || config.repo === null ? undefined : String(config.repo);\n  const workingCopy = current.resolve(repo);\n\n  if (!workingCopy) {\n    throw new Error(\n      `git: the host refused to resolve repository ${repo ? `\"${repo}\"` : \"(default)\"}. ` +\n        \"Register it with the host, or correct the node's `repo`.\",\n    );\n  }\n\n  return workingCopy;\n}\n"
+                },
+                {
+                    "target": "git-branches/php/GitBranchesExecutor.php",
+                    "content": "<?php\n\ndeclare(strict_types=1);\n\nnamespace FancyFlow\\Nodes\\GitBranches;\n\nuse FancyFlow\\Contracts\\NodeExecutor;\nuse FancyFlow\\Runtime\\ExecutionContext;\nuse FancyFlow\\Runtime\\Port;\nuse FancyFlow\\Runtime\\RunEvent;\n\n/**\n * Branches, with the current one lifted out.\n *\n * Almost every workflow that lists branches then asks which one it is on, and\n * finding it means scanning for `current` — a loop each consumer would\n * otherwise rewrite.\n */\nfinal class GitBranchesExecutor implements NodeExecutor\n{\n    public function __construct(private readonly ?RepoHost $host = null) {}\n\n    public function execute(ExecutionContext $ctx): mixed\n    {\n        $config = $ctx->config();\n        $host = $this->host ?? throw new \\RuntimeException(\n            \"git: no repository host bound. Bind \".RepoHost::class.\" with a particle-academy/fancy-git GitRepository factory.\"\n        );\n\n        $all = array_map(fn ($b) => is_array($b) ? $b : (array) $b, $host->workingCopy($config)->branches());\n        $includeRemote = ($config[\"includeRemote\"] ?? false) === true;\n\n        $branches = $includeRemote ? $all : array_values(array_filter($all, fn ($b) => ! ($b[\"remote\"] ?? false)));\n        $currentRow = null;\n        foreach ($all as $b) {\n            if ($b[\"current\"] ?? false) {\n                $currentRow = $b;\n                break;\n            }\n        }\n        $current = $currentRow[\"name\"] ?? null;\n\n        $ctx->emit(RunEvent::log(\"info\", count($branches).\" branch(es), on \".($current ?? \"(detached)\"), $ctx->node->id));\n\n        return Port::only(\"out\", [\n            \"branches\" => $branches,\n            \"count\" => count($branches),\n            \"current\" => $current,\n            \"names\" => array_values(array_map(fn ($b) => $b[\"name\"] ?? null, $branches)),\n        ]);\n    }\n}\n"
+                },
+                {
+                    "target": "git-branches/php/RepoHost.php",
+                    "content": "<?php\n\ndeclare(strict_types=1);\n\nnamespace FancyFlow\\Nodes\\GitBranches;\n\n/**\n * The seam between a workflow node and a LOCAL git working copy.\n *\n * Distinct from the `git_pr_*` nodes' seam on purpose. Those act on a hosted\n * provider (a REST API and a token); these drive `git` in a checkout on disk.\n * Different failure modes, different credentials, different blast radius — so\n * they declare different capabilities. A host that wants to read pull requests\n * should not have to hand over a working copy.\n *\n * Bind it once, in a service provider:\n *\n * ```php\n * $this->app->bind(RepoHost::class, fn () => new RepoHost(\n *     resolve: fn (?string $repo) => new \\FancyGit\\GitRepository(workspace_path($repo)),\n * ));\n * ```\n *\n * `resolve` receives the config's `repo` NAME, never a path, so a graph cannot\n * carry a filesystem path an author could point anywhere. The host decides what\n * a name maps to; the node cannot reach outside what the host allows.\n */\nfinal class RepoHost\n{\n    /** @param  \\Closure(?string): ?object  $resolve */\n    public function __construct(private readonly \\Closure $resolve) {}\n\n    /**\n     * Resolve the working copy this node acts on.\n     *\n     * Throws rather than returning null on refusal. A node that cannot reach a\n     * repository must not report success — on a queue worker that is a green\n     * run that never pushed the branch someone was waiting for.\n     *\n     * @param  array<string,mixed>  $config\n     */\n    public function workingCopy(array $config): object\n    {\n        $repo = isset($config['repo']) ? (string) $config['repo'] : null;\n        $resolved = ($this->resolve)($repo);\n\n        if (! $resolved) {\n            throw new \\RuntimeException(\n                'git: the host refused to resolve repository '.($repo !== null ? \"\\\"{$repo}\\\"\" : '(default)').\n                '. Register it with the host, or correct the node\\'s `repo`.'\n            );\n        }\n\n        return $resolved;\n    }\n}\n"
+                }
+            ]
+        },
+        "particle-academy__git_checkout": {
+            "manifest": {
+                "schemaVersion": 1,
+                "name": "particle-academy/fancy-flow-nodes",
+                "kind": "@particle-academy/git_checkout",
+                "aliases": [
+                    "git_checkout"
+                ],
+                "configVersion": 1,
+                "title": "Checkout",
+                "category": "io",
+                "description": "Switch a working copy to a branch or revision — or propose it for approval.",
+                "ui": [
+                    "ui"
+                ],
+                "runtimes": {
+                    "ts": {
+                        "files": [
+                            "js"
+                        ],
+                        "engine": ">=0.30.0"
+                    },
+                    "php": {
+                        "files": [
+                            "php"
+                        ],
+                        "engine": ">=0.9.0"
+                    }
+                },
+                "capabilities": {
+                    "gitRepository": "required"
+                },
+                "fancyDependencies": [
+                    {
+                        "package": "fancy-git",
+                        "npm": "@particle-academy/fancy-git",
+                        "composer": "particle-academy/fancy-git",
+                        "reason": "provides the GitRepository the host resolves for this node",
+                        "requirement": "required"
+                    }
+                ],
+                "fixtures": "nodes/git-checkout/fixtures/git-checkout.json",
+                "sideEffects": "unsafe-to-replay"
+            },
+            "files": [
+                {
+                    "target": "git-checkout/ui/kind.ts",
+                    "content": "import type { NodeKindDefinition } from \"@particle-academy/fancy-flow/engine\";\nimport { gitCheckoutExecutor } from \"../js/executor\";\n\nexport const GIT_CHECKOUT_KIND = \"@particle-academy/git_checkout\";\n\n/**\n * `git_checkout` — switch branch or revision.\n *\n * `proposed` is a first-class port, not an error path: with `propose` on, the\n * node reports what it WOULD do and a human decides.\n */\nexport const gitCheckoutKind: NodeKindDefinition = {\n  name: GIT_CHECKOUT_KIND,\n  aliases: [\"git_checkout\"],\n  category: \"io\",\n  label: \"Checkout\",\n  description: \"Switch a working copy to a branch or revision — or propose it for approval.\",\n  icon: \"⤳\",\n  accent: \"#f97316\",\n  inputs: [{ id: \"in\" }],\n  outputs: [\n    { id: \"done\", label: \"done\" },\n    { id: \"proposed\", label: \"proposed\" },\n  ],\n  configSchema: [\n    { key: \"repo\", label: \"Repository\", type: \"text\", placeholder: \"(host default)\" },\n    { key: \"target\", label: \"Target\", type: \"text\", placeholder: \"main\", required: true },\n    { key: \"propose\", label: \"Propose only (do not perform)\", type: \"switch\", default: false },\n  ],\n  defaultConfig: { propose: false },\n  executor: gitCheckoutExecutor,\n};\n"
+                },
+                {
+                    "target": "git-checkout/js/executor.ts",
+                    "content": "import type { NodeExecutor } from \"@particle-academy/fancy-flow/engine\";\nimport { resolveWorkingCopy } from \"./repo\";\n\n/**\n * Switch the working copy to a branch or revision.\n *\n * Mutating, so it honours `propose`: fancy-git returns an OperationProposal\n * instead of performing the checkout, and the node routes it to `proposed` for\n * a human to approve. Agents propose, humans confirm — a workflow that moves\n * someone's working copy under them is exactly the case that wants a pause.\n */\nexport const gitCheckoutExecutor: NodeExecutor = async (ctx) => {\n  const config = ((ctx.node.data as any)?.config ?? {}) as Record<string, unknown>;\n  const repo = resolveWorkingCopy(config);\n\n  const target = String(config.target ?? \"\").trim();\n  if (!target) {\n    throw new Error(\"git_checkout: needs a `target` branch or revision. Refusing to guess.\");\n  }\n\n  const propose = config.propose === true;\n  const result = await repo.checkout(target, { propose });\n\n  // A proposal is the RESULT, not a failure: the node did its job, and the\n  // decision belongs to whoever reviews it.\n  if (propose) {\n    ctx.emit({\n      type: \"log\",\n      level: \"info\",\n      nodeId: ctx.node.id,\n      message: `proposed checkout of ${target} (not performed)`,\n    });\n    return { __port: \"proposed\", value: { target, proposal: result ?? null } };\n  }\n\n  ctx.emit({ type: \"log\", level: \"info\", nodeId: ctx.node.id, message: `checked out ${target}` });\n\n  return { __port: \"done\", value: { target } };\n};\n"
+                },
+                {
+                    "target": "git-checkout/js/repo.ts",
+                    "content": "/**\n * The seam between a workflow node and a LOCAL git working copy.\n *\n * Distinct from the `git_pr_*` nodes' seam on purpose. Those act on a hosted\n * provider (a REST API and a token); these drive `git` in a checkout on disk.\n * The two have different failure modes, different credentials and different\n * blast radius, so they declare different capabilities — a host that wants to\n * read pull requests should not have to hand over a working copy, and a host\n * that hands over a working copy is agreeing to something much larger.\n *\n * ```ts\n * import { registerGitRepoHost } from \"@/components/fancy/flow-nodes/git-checkout/js/repo\";\n * import { GitRepository } from \"@particle-academy/fancy-git\";\n *\n * registerGitRepoHost({\n *   resolve: (name) => new GitRepository(workspacePathFor(name)),\n * });\n * ```\n *\n * `resolve` takes the config's `repo` name rather than a path, so a graph never\n * carries a filesystem path an author could point anywhere. The host decides\n * what a name maps to; the node cannot reach outside what the host allows.\n *\n * This file is duplicated in each local-repo node. That is on purpose: a\n * vendored node is meant to be self-contained and editable in place, so a node\n * you copy in should not depend on another node you did not.\n */\n\n/** The subset of `fancy-git`'s `GitRepository` these nodes use. */\nexport type GitWorkingCopy = {\n  info(): Promise<unknown>;\n  status(): Promise<unknown>;\n  log(query?: { ref?: string; limit?: number; skip?: number }): Promise<unknown[]>;\n  diff(query?: { from?: string; to?: string; staged?: boolean; paths?: string[] }): Promise<unknown>;\n  branches(): Promise<unknown[]>;\n  checkout(target: string, options?: { propose?: boolean }): Promise<unknown>;\n  push(remote?: string, branch?: string, options?: { propose?: boolean }): Promise<unknown>;\n  pull(remote?: string, branch?: string, options?: { propose?: boolean }): Promise<unknown>;\n};\n\nexport type GitRepoHost = {\n  /** Map a config `repo` name to a working copy. Return null to refuse. */\n  resolve(repo: string | undefined): GitWorkingCopy | null;\n};\n\nlet host: GitRepoHost | null = null;\n\n/** Install the host. Returns an unregister function. */\nexport function registerGitRepoHost(next: GitRepoHost): () => void {\n  host = next;\n\n  return () => {\n    if (host === next) host = null;\n  };\n}\n\nexport function getGitRepoHost(): GitRepoHost | null {\n  return host;\n}\n\n/**\n * Resolve the working copy this node acts on.\n *\n * Fails loudly at every step. A node that cannot reach a repository must not\n * return \"nothing to do\" — on a queue worker that is a green run that never\n * pushed the branch someone was waiting for.\n */\nexport function resolveWorkingCopy(config: Record<string, unknown>): GitWorkingCopy {\n  const current = getGitRepoHost();\n  if (!current) {\n    throw new Error(\n      \"git: no repository host registered. Call registerGitRepoHost({ resolve }) with a \" +\n        \"fancy-git GitRepository factory — the node has no filesystem access of its own and must not invent any.\",\n    );\n  }\n\n  const repo = config.repo === undefined || config.repo === null ? undefined : String(config.repo);\n  const workingCopy = current.resolve(repo);\n\n  if (!workingCopy) {\n    throw new Error(\n      `git: the host refused to resolve repository ${repo ? `\"${repo}\"` : \"(default)\"}. ` +\n        \"Register it with the host, or correct the node's `repo`.\",\n    );\n  }\n\n  return workingCopy;\n}\n"
+                },
+                {
+                    "target": "git-checkout/php/GitCheckoutExecutor.php",
+                    "content": "<?php\n\ndeclare(strict_types=1);\n\nnamespace FancyFlow\\Nodes\\GitCheckout;\n\nuse FancyFlow\\Contracts\\NodeExecutor;\nuse FancyFlow\\Runtime\\ExecutionContext;\nuse FancyFlow\\Runtime\\Port;\nuse FancyFlow\\Runtime\\RunEvent;\n\n/**\n * Switch the working copy to a branch or revision.\n *\n * Honours `propose`: fancy-git returns an OperationProposal instead of\n * performing the checkout, and the node routes it to `proposed` for a human to\n * approve. A workflow that moves someone else working copy under them is\n * exactly the case that wants a pause.\n */\nfinal class GitCheckoutExecutor implements NodeExecutor\n{\n    public function __construct(private readonly ?RepoHost $host = null) {}\n\n    public function execute(ExecutionContext $ctx): mixed\n    {\n        $config = $ctx->config();\n        $host = $this->host ?? throw new \\RuntimeException(\n            \"git: no repository host bound. Bind \".RepoHost::class.\" with a particle-academy/fancy-git GitRepository factory.\"\n        );\n\n        $target = trim((string) ($config[\"target\"] ?? \"\"));\n        if ($target === \"\") {\n            throw new \\RuntimeException(\"git_checkout: needs a `target` branch or revision. Refusing to guess.\");\n        }\n\n        $propose = ($config[\"propose\"] ?? false) === true;\n        $result = $host->workingCopy($config)->checkout($target, $propose);\n\n        // A proposal is the RESULT, not a failure: the node did its job and the\n        // decision belongs to whoever reviews it.\n        if ($propose) {\n            $ctx->emit(RunEvent::log(\"info\", \"proposed checkout of {$target} (not performed)\", $ctx->node->id));\n\n            return Port::only(\"proposed\", [\"target\" => $target, \"proposal\" => $result]);\n        }\n\n        $ctx->emit(RunEvent::log(\"info\", \"checked out {$target}\", $ctx->node->id));\n\n        return Port::only(\"done\", [\"target\" => $target]);\n    }\n}\n"
+                },
+                {
+                    "target": "git-checkout/php/RepoHost.php",
+                    "content": "<?php\n\ndeclare(strict_types=1);\n\nnamespace FancyFlow\\Nodes\\GitCheckout;\n\n/**\n * The seam between a workflow node and a LOCAL git working copy.\n *\n * Distinct from the `git_pr_*` nodes' seam on purpose. Those act on a hosted\n * provider (a REST API and a token); these drive `git` in a checkout on disk.\n * Different failure modes, different credentials, different blast radius — so\n * they declare different capabilities. A host that wants to read pull requests\n * should not have to hand over a working copy.\n *\n * Bind it once, in a service provider:\n *\n * ```php\n * $this->app->bind(RepoHost::class, fn () => new RepoHost(\n *     resolve: fn (?string $repo) => new \\FancyGit\\GitRepository(workspace_path($repo)),\n * ));\n * ```\n *\n * `resolve` receives the config's `repo` NAME, never a path, so a graph cannot\n * carry a filesystem path an author could point anywhere. The host decides what\n * a name maps to; the node cannot reach outside what the host allows.\n */\nfinal class RepoHost\n{\n    /** @param  \\Closure(?string): ?object  $resolve */\n    public function __construct(private readonly \\Closure $resolve) {}\n\n    /**\n     * Resolve the working copy this node acts on.\n     *\n     * Throws rather than returning null on refusal. A node that cannot reach a\n     * repository must not report success — on a queue worker that is a green\n     * run that never pushed the branch someone was waiting for.\n     *\n     * @param  array<string,mixed>  $config\n     */\n    public function workingCopy(array $config): object\n    {\n        $repo = isset($config['repo']) ? (string) $config['repo'] : null;\n        $resolved = ($this->resolve)($repo);\n\n        if (! $resolved) {\n            throw new \\RuntimeException(\n                'git: the host refused to resolve repository '.($repo !== null ? \"\\\"{$repo}\\\"\" : '(default)').\n                '. Register it with the host, or correct the node\\'s `repo`.'\n            );\n        }\n\n        return $resolved;\n    }\n}\n"
+                }
+            ]
+        },
+        "particle-academy__git_diff": {
+            "manifest": {
+                "schemaVersion": 1,
+                "name": "particle-academy/fancy-flow-nodes",
+                "kind": "@particle-academy/git_diff",
+                "aliases": [
+                    "git_diff"
+                ],
+                "configVersion": 1,
+                "title": "Diff",
+                "category": "io",
+                "description": "Diff a working copy — working tree, staged, or between two revisions.",
+                "ui": [
+                    "ui"
+                ],
+                "runtimes": {
+                    "ts": {
+                        "files": [
+                            "js"
+                        ],
+                        "engine": ">=0.30.0"
+                    },
+                    "php": {
+                        "files": [
+                            "php"
+                        ],
+                        "engine": ">=0.9.0"
+                    }
+                },
+                "capabilities": {
+                    "gitRepository": "required"
+                },
+                "fancyDependencies": [
+                    {
+                        "package": "fancy-git",
+                        "npm": "@particle-academy/fancy-git",
+                        "composer": "particle-academy/fancy-git",
+                        "reason": "provides the GitRepository the host resolves for this node",
+                        "requirement": "required"
+                    }
+                ],
+                "fixtures": "nodes/git-diff/fixtures/git-diff.json",
+                "sideEffects": "idempotent"
+            },
+            "files": [
+                {
+                    "target": "git-diff/ui/kind.ts",
+                    "content": "import type { NodeKindDefinition } from \"@particle-academy/fancy-flow/engine\";\nimport { gitDiffExecutor } from \"../js/executor\";\n\nexport const GIT_DIFF_KIND = \"@particle-academy/git_diff\";\n\n/** `git_diff` — a diff, routed on whether it is empty. */\nexport const gitDiffKind: NodeKindDefinition = {\n  name: GIT_DIFF_KIND,\n  aliases: [\"git_diff\"],\n  category: \"io\",\n  label: \"Diff\",\n  description: \"Diff a working copy — working tree, staged, or between two revisions.\",\n  icon: \"±\",\n  accent: \"#f97316\",\n  inputs: [{ id: \"in\" }],\n  outputs: [\n    { id: \"changed\", label: \"changed\" },\n    { id: \"empty\", label: \"empty\" },\n  ],\n  configSchema: [\n    { key: \"repo\", label: \"Repository\", type: \"text\", placeholder: \"(host default)\" },\n    { key: \"from\", label: \"From\", type: \"text\", placeholder: \"(working tree)\" },\n    { key: \"to\", label: \"To\", type: \"text\", placeholder: \"(working tree)\" },\n    { key: \"staged\", label: \"Staged only\", type: \"switch\", default: false },\n  ],\n  defaultConfig: { staged: false },\n  executor: gitDiffExecutor,\n};\n"
+                },
+                {
+                    "target": "git-diff/js/executor.ts",
+                    "content": "import type { NodeExecutor } from \"@particle-academy/fancy-flow/engine\";\nimport { resolveWorkingCopy } from \"./repo\";\n\n/**\n * A diff, routed on whether it is empty.\n *\n * An empty diff is the common case in an automation that runs on a schedule,\n * and it is the one that must NOT continue into a commit or a pull request —\n * so it gets its own port rather than an empty string on the same one.\n */\nexport const gitDiffExecutor: NodeExecutor = async (ctx) => {\n  const config = ((ctx.node.data as any)?.config ?? {}) as Record<string, unknown>;\n  const repo = resolveWorkingCopy(config);\n\n  const text = (v: unknown) => (v === undefined || v === null || v === \"\" ? undefined : String(v));\n  const paths = Array.isArray(config.paths) ? config.paths.map(String) : undefined;\n\n  const diff = (await repo.diff({\n    from: text(config.from),\n    to: text(config.to),\n    staged: config.staged === true,\n    paths,\n  })) as { files?: unknown[]; patch?: string } | unknown[];\n\n  // fancy-git returns a Diff object on one runtime and an array of file changes\n  // on the other; normalize so a graph does not have to know which is running.\n  const files = Array.isArray(diff) ? diff : (diff?.files ?? []);\n  const patch = Array.isArray(diff) ? undefined : diff?.patch;\n\n  ctx.emit({\n    type: \"log\",\n    level: \"info\",\n    nodeId: ctx.node.id,\n    message: `${files.length} file(s) changed`,\n  });\n\n  return {\n    __port: files.length > 0 ? \"changed\" : \"empty\",\n    value: { files, count: files.length, patch: patch ?? null },\n  };\n};\n"
+                },
+                {
+                    "target": "git-diff/js/repo.ts",
+                    "content": "/**\n * The seam between a workflow node and a LOCAL git working copy.\n *\n * Distinct from the `git_pr_*` nodes' seam on purpose. Those act on a hosted\n * provider (a REST API and a token); these drive `git` in a checkout on disk.\n * The two have different failure modes, different credentials and different\n * blast radius, so they declare different capabilities — a host that wants to\n * read pull requests should not have to hand over a working copy, and a host\n * that hands over a working copy is agreeing to something much larger.\n *\n * ```ts\n * import { registerGitRepoHost } from \"@/components/fancy/flow-nodes/git-diff/js/repo\";\n * import { GitRepository } from \"@particle-academy/fancy-git\";\n *\n * registerGitRepoHost({\n *   resolve: (name) => new GitRepository(workspacePathFor(name)),\n * });\n * ```\n *\n * `resolve` takes the config's `repo` name rather than a path, so a graph never\n * carries a filesystem path an author could point anywhere. The host decides\n * what a name maps to; the node cannot reach outside what the host allows.\n *\n * This file is duplicated in each local-repo node. That is on purpose: a\n * vendored node is meant to be self-contained and editable in place, so a node\n * you copy in should not depend on another node you did not.\n */\n\n/** The subset of `fancy-git`'s `GitRepository` these nodes use. */\nexport type GitWorkingCopy = {\n  info(): Promise<unknown>;\n  status(): Promise<unknown>;\n  log(query?: { ref?: string; limit?: number; skip?: number }): Promise<unknown[]>;\n  diff(query?: { from?: string; to?: string; staged?: boolean; paths?: string[] }): Promise<unknown>;\n  branches(): Promise<unknown[]>;\n  checkout(target: string, options?: { propose?: boolean }): Promise<unknown>;\n  push(remote?: string, branch?: string, options?: { propose?: boolean }): Promise<unknown>;\n  pull(remote?: string, branch?: string, options?: { propose?: boolean }): Promise<unknown>;\n};\n\nexport type GitRepoHost = {\n  /** Map a config `repo` name to a working copy. Return null to refuse. */\n  resolve(repo: string | undefined): GitWorkingCopy | null;\n};\n\nlet host: GitRepoHost | null = null;\n\n/** Install the host. Returns an unregister function. */\nexport function registerGitRepoHost(next: GitRepoHost): () => void {\n  host = next;\n\n  return () => {\n    if (host === next) host = null;\n  };\n}\n\nexport function getGitRepoHost(): GitRepoHost | null {\n  return host;\n}\n\n/**\n * Resolve the working copy this node acts on.\n *\n * Fails loudly at every step. A node that cannot reach a repository must not\n * return \"nothing to do\" — on a queue worker that is a green run that never\n * pushed the branch someone was waiting for.\n */\nexport function resolveWorkingCopy(config: Record<string, unknown>): GitWorkingCopy {\n  const current = getGitRepoHost();\n  if (!current) {\n    throw new Error(\n      \"git: no repository host registered. Call registerGitRepoHost({ resolve }) with a \" +\n        \"fancy-git GitRepository factory — the node has no filesystem access of its own and must not invent any.\",\n    );\n  }\n\n  const repo = config.repo === undefined || config.repo === null ? undefined : String(config.repo);\n  const workingCopy = current.resolve(repo);\n\n  if (!workingCopy) {\n    throw new Error(\n      `git: the host refused to resolve repository ${repo ? `\"${repo}\"` : \"(default)\"}. ` +\n        \"Register it with the host, or correct the node's `repo`.\",\n    );\n  }\n\n  return workingCopy;\n}\n"
+                },
+                {
+                    "target": "git-diff/php/GitDiffExecutor.php",
+                    "content": "<?php\n\ndeclare(strict_types=1);\n\nnamespace FancyFlow\\Nodes\\GitDiff;\n\nuse FancyFlow\\Contracts\\NodeExecutor;\nuse FancyFlow\\Runtime\\ExecutionContext;\nuse FancyFlow\\Runtime\\Port;\nuse FancyFlow\\Runtime\\RunEvent;\n\n/**\n * A diff, routed on whether it is empty.\n *\n * An empty diff is the common case for a scheduled automation, and the one that\n * must NOT continue into a commit or a pull request — so it gets its own port\n * rather than an empty value on the same one.\n */\nfinal class GitDiffExecutor implements NodeExecutor\n{\n    public function __construct(private readonly ?RepoHost $host = null) {}\n\n    public function execute(ExecutionContext $ctx): mixed\n    {\n        $config = $ctx->config();\n        $host = $this->host ?? throw new \\RuntimeException(\n            \"git: no repository host bound. Bind \".RepoHost::class.\" with a particle-academy/fancy-git GitRepository factory.\"\n        );\n\n        $from = isset($config[\"from\"]) && $config[\"from\"] !== \"\" ? (string) $config[\"from\"] : null;\n        $to = isset($config[\"to\"]) && $config[\"to\"] !== \"\" ? (string) $config[\"to\"] : null;\n        $staged = ($config[\"staged\"] ?? false) === true;\n        $paths = array_map(\"strval\", (array) ($config[\"paths\"] ?? []));\n\n        $diff = $host->workingCopy($config)->diff($from, $to, $staged, $paths);\n\n        // The twins return a Diff object on one runtime and a list of file\n        // changes on the other; normalize so a graph need not know which runs.\n        $files = array_is_list((array) $diff) ? (array) $diff : (((array) $diff)[\"files\"] ?? []);\n        $patch = array_is_list((array) $diff) ? null : (((array) $diff)[\"patch\"] ?? null);\n        $count = count($files);\n\n        $ctx->emit(RunEvent::log(\"info\", \"{$count} file(s) changed\", $ctx->node->id));\n\n        return Port::only($count > 0 ? \"changed\" : \"empty\", [\n            \"files\" => $files,\n            \"count\" => $count,\n            \"patch\" => $patch,\n        ]);\n    }\n}\n"
+                },
+                {
+                    "target": "git-diff/php/RepoHost.php",
+                    "content": "<?php\n\ndeclare(strict_types=1);\n\nnamespace FancyFlow\\Nodes\\GitDiff;\n\n/**\n * The seam between a workflow node and a LOCAL git working copy.\n *\n * Distinct from the `git_pr_*` nodes' seam on purpose. Those act on a hosted\n * provider (a REST API and a token); these drive `git` in a checkout on disk.\n * Different failure modes, different credentials, different blast radius — so\n * they declare different capabilities. A host that wants to read pull requests\n * should not have to hand over a working copy.\n *\n * Bind it once, in a service provider:\n *\n * ```php\n * $this->app->bind(RepoHost::class, fn () => new RepoHost(\n *     resolve: fn (?string $repo) => new \\FancyGit\\GitRepository(workspace_path($repo)),\n * ));\n * ```\n *\n * `resolve` receives the config's `repo` NAME, never a path, so a graph cannot\n * carry a filesystem path an author could point anywhere. The host decides what\n * a name maps to; the node cannot reach outside what the host allows.\n */\nfinal class RepoHost\n{\n    /** @param  \\Closure(?string): ?object  $resolve */\n    public function __construct(private readonly \\Closure $resolve) {}\n\n    /**\n     * Resolve the working copy this node acts on.\n     *\n     * Throws rather than returning null on refusal. A node that cannot reach a\n     * repository must not report success — on a queue worker that is a green\n     * run that never pushed the branch someone was waiting for.\n     *\n     * @param  array<string,mixed>  $config\n     */\n    public function workingCopy(array $config): object\n    {\n        $repo = isset($config['repo']) ? (string) $config['repo'] : null;\n        $resolved = ($this->resolve)($repo);\n\n        if (! $resolved) {\n            throw new \\RuntimeException(\n                'git: the host refused to resolve repository '.($repo !== null ? \"\\\"{$repo}\\\"\" : '(default)').\n                '. Register it with the host, or correct the node\\'s `repo`.'\n            );\n        }\n\n        return $resolved;\n    }\n}\n"
+                }
+            ]
+        },
+        "particle-academy__git_log": {
+            "manifest": {
+                "schemaVersion": 1,
+                "name": "particle-academy/fancy-flow-nodes",
+                "kind": "@particle-academy/git_log",
+                "aliases": [
+                    "git_log"
+                ],
+                "configVersion": 1,
+                "title": "Commit Log",
+                "category": "io",
+                "description": "Read commits from a working copy, branching on whether any matched.",
+                "ui": [
+                    "ui"
+                ],
+                "runtimes": {
+                    "ts": {
+                        "files": [
+                            "js"
+                        ],
+                        "engine": ">=0.30.0"
+                    },
+                    "php": {
+                        "files": [
+                            "php"
+                        ],
+                        "engine": ">=0.9.0"
+                    }
+                },
+                "capabilities": {
+                    "gitRepository": "required"
+                },
+                "fancyDependencies": [
+                    {
+                        "package": "fancy-git",
+                        "npm": "@particle-academy/fancy-git",
+                        "composer": "particle-academy/fancy-git",
+                        "reason": "provides the GitRepository the host resolves for this node",
+                        "requirement": "required"
+                    }
+                ],
+                "fixtures": "nodes/git-log/fixtures/git-log.json",
+                "sideEffects": "idempotent"
+            },
+            "files": [
+                {
+                    "target": "git-log/ui/kind.ts",
+                    "content": "import type { NodeKindDefinition } from \"@particle-academy/fancy-flow/engine\";\nimport { gitLogExecutor } from \"../js/executor\";\n\nexport const GIT_LOG_KIND = \"@particle-academy/git_log\";\n\n/** `git_log` — commits, routed on whether any matched. */\nexport const gitLogKind: NodeKindDefinition = {\n  name: GIT_LOG_KIND,\n  aliases: [\"git_log\"],\n  category: \"io\",\n  label: \"Commit Log\",\n  description: \"Read commits from a working copy, branching on whether any matched.\",\n  icon: \"≡\",\n  accent: \"#f97316\",\n  inputs: [{ id: \"in\" }],\n  outputs: [\n    { id: \"found\", label: \"found\" },\n    { id: \"none\", label: \"none\" },\n  ],\n  configSchema: [\n    { key: \"repo\", label: \"Repository\", type: \"text\", placeholder: \"(host default)\" },\n    { key: \"ref\", label: \"Ref\", type: \"text\", placeholder: \"(current branch)\" },\n    { key: \"limit\", label: \"Limit\", type: \"number\", min: 1, max: 500, default: 20 },\n    { key: \"skip\", label: \"Skip\", type: \"number\", min: 0, default: 0 },\n  ],\n  defaultConfig: { limit: 20, skip: 0 },\n  executor: gitLogExecutor,\n};\n"
+                },
+                {
+                    "target": "git-log/js/executor.ts",
+                    "content": "import type { NodeExecutor } from \"@particle-academy/fancy-flow/engine\";\nimport { resolveWorkingCopy } from \"./repo\";\n\n/**\n * Commits, routed on whether any matched.\n *\n * `none` is a real answer, not an error: \"has anything landed on this branch\n * since the tag\" is a routing question, and an empty array on a single port is\n * a check somebody forgets downstream.\n */\nexport const gitLogExecutor: NodeExecutor = async (ctx) => {\n  const config = ((ctx.node.data as any)?.config ?? {}) as Record<string, unknown>;\n  const repo = resolveWorkingCopy(config);\n\n  const limit = Number(config.limit ?? 20) || 20;\n  const ref = config.ref === undefined || config.ref === null || config.ref === \"\" ? undefined : String(config.ref);\n  const skip = Number(config.skip ?? 0) || 0;\n\n  const commits = (await repo.log({ ref, limit, skip })) ?? [];\n\n  ctx.emit({\n    type: \"log\",\n    level: \"info\",\n    nodeId: ctx.node.id,\n    message: `${commits.length} commit(s)${ref ? ` on ${ref}` : \"\"}`,\n  });\n\n  return {\n    __port: commits.length > 0 ? \"found\" : \"none\",\n    value: { commits, count: commits.length, ref: ref ?? null },\n  };\n};\n"
+                },
+                {
+                    "target": "git-log/js/repo.ts",
+                    "content": "/**\n * The seam between a workflow node and a LOCAL git working copy.\n *\n * Distinct from the `git_pr_*` nodes' seam on purpose. Those act on a hosted\n * provider (a REST API and a token); these drive `git` in a checkout on disk.\n * The two have different failure modes, different credentials and different\n * blast radius, so they declare different capabilities — a host that wants to\n * read pull requests should not have to hand over a working copy, and a host\n * that hands over a working copy is agreeing to something much larger.\n *\n * ```ts\n * import { registerGitRepoHost } from \"@/components/fancy/flow-nodes/git-log/js/repo\";\n * import { GitRepository } from \"@particle-academy/fancy-git\";\n *\n * registerGitRepoHost({\n *   resolve: (name) => new GitRepository(workspacePathFor(name)),\n * });\n * ```\n *\n * `resolve` takes the config's `repo` name rather than a path, so a graph never\n * carries a filesystem path an author could point anywhere. The host decides\n * what a name maps to; the node cannot reach outside what the host allows.\n *\n * This file is duplicated in each local-repo node. That is on purpose: a\n * vendored node is meant to be self-contained and editable in place, so a node\n * you copy in should not depend on another node you did not.\n */\n\n/** The subset of `fancy-git`'s `GitRepository` these nodes use. */\nexport type GitWorkingCopy = {\n  info(): Promise<unknown>;\n  status(): Promise<unknown>;\n  log(query?: { ref?: string; limit?: number; skip?: number }): Promise<unknown[]>;\n  diff(query?: { from?: string; to?: string; staged?: boolean; paths?: string[] }): Promise<unknown>;\n  branches(): Promise<unknown[]>;\n  checkout(target: string, options?: { propose?: boolean }): Promise<unknown>;\n  push(remote?: string, branch?: string, options?: { propose?: boolean }): Promise<unknown>;\n  pull(remote?: string, branch?: string, options?: { propose?: boolean }): Promise<unknown>;\n};\n\nexport type GitRepoHost = {\n  /** Map a config `repo` name to a working copy. Return null to refuse. */\n  resolve(repo: string | undefined): GitWorkingCopy | null;\n};\n\nlet host: GitRepoHost | null = null;\n\n/** Install the host. Returns an unregister function. */\nexport function registerGitRepoHost(next: GitRepoHost): () => void {\n  host = next;\n\n  return () => {\n    if (host === next) host = null;\n  };\n}\n\nexport function getGitRepoHost(): GitRepoHost | null {\n  return host;\n}\n\n/**\n * Resolve the working copy this node acts on.\n *\n * Fails loudly at every step. A node that cannot reach a repository must not\n * return \"nothing to do\" — on a queue worker that is a green run that never\n * pushed the branch someone was waiting for.\n */\nexport function resolveWorkingCopy(config: Record<string, unknown>): GitWorkingCopy {\n  const current = getGitRepoHost();\n  if (!current) {\n    throw new Error(\n      \"git: no repository host registered. Call registerGitRepoHost({ resolve }) with a \" +\n        \"fancy-git GitRepository factory — the node has no filesystem access of its own and must not invent any.\",\n    );\n  }\n\n  const repo = config.repo === undefined || config.repo === null ? undefined : String(config.repo);\n  const workingCopy = current.resolve(repo);\n\n  if (!workingCopy) {\n    throw new Error(\n      `git: the host refused to resolve repository ${repo ? `\"${repo}\"` : \"(default)\"}. ` +\n        \"Register it with the host, or correct the node's `repo`.\",\n    );\n  }\n\n  return workingCopy;\n}\n"
+                },
+                {
+                    "target": "git-log/php/GitLogExecutor.php",
+                    "content": "<?php\n\ndeclare(strict_types=1);\n\nnamespace FancyFlow\\Nodes\\GitLog;\n\nuse FancyFlow\\Contracts\\NodeExecutor;\nuse FancyFlow\\Runtime\\ExecutionContext;\nuse FancyFlow\\Runtime\\Port;\nuse FancyFlow\\Runtime\\RunEvent;\n\n/**\n * Commits, routed on whether any matched.\n *\n * `none` is a real answer, not an error: \"has anything landed since the tag\" is\n * a routing question, and an empty array on a single port is a check somebody\n * forgets downstream.\n */\nfinal class GitLogExecutor implements NodeExecutor\n{\n    public function __construct(private readonly ?RepoHost $host = null) {}\n\n    public function execute(ExecutionContext $ctx): mixed\n    {\n        $config = $ctx->config();\n        $host = $this->host ?? throw new \\RuntimeException(\n            \"git: no repository host bound. Bind \".RepoHost::class.\" with a particle-academy/fancy-git GitRepository factory.\"\n        );\n\n        $ref = isset($config[\"ref\"]) && $config[\"ref\"] !== \"\" ? (string) $config[\"ref\"] : null;\n        $limit = (int) ($config[\"limit\"] ?? 20) ?: 20;\n        $skip = (int) ($config[\"skip\"] ?? 0);\n\n        $commits = $host->workingCopy($config)->log($ref, $limit, $skip);\n        $count = count($commits);\n\n        $ctx->emit(RunEvent::log(\"info\", \"{$count} commit(s)\".($ref ? \" on {$ref}\" : \"\"), $ctx->node->id));\n\n        return Port::only($count > 0 ? \"found\" : \"none\", [\n            \"commits\" => $commits,\n            \"count\" => $count,\n            \"ref\" => $ref,\n        ]);\n    }\n}\n"
+                },
+                {
+                    "target": "git-log/php/RepoHost.php",
+                    "content": "<?php\n\ndeclare(strict_types=1);\n\nnamespace FancyFlow\\Nodes\\GitLog;\n\n/**\n * The seam between a workflow node and a LOCAL git working copy.\n *\n * Distinct from the `git_pr_*` nodes' seam on purpose. Those act on a hosted\n * provider (a REST API and a token); these drive `git` in a checkout on disk.\n * Different failure modes, different credentials, different blast radius — so\n * they declare different capabilities. A host that wants to read pull requests\n * should not have to hand over a working copy.\n *\n * Bind it once, in a service provider:\n *\n * ```php\n * $this->app->bind(RepoHost::class, fn () => new RepoHost(\n *     resolve: fn (?string $repo) => new \\FancyGit\\GitRepository(workspace_path($repo)),\n * ));\n * ```\n *\n * `resolve` receives the config's `repo` NAME, never a path, so a graph cannot\n * carry a filesystem path an author could point anywhere. The host decides what\n * a name maps to; the node cannot reach outside what the host allows.\n */\nfinal class RepoHost\n{\n    /** @param  \\Closure(?string): ?object  $resolve */\n    public function __construct(private readonly \\Closure $resolve) {}\n\n    /**\n     * Resolve the working copy this node acts on.\n     *\n     * Throws rather than returning null on refusal. A node that cannot reach a\n     * repository must not report success — on a queue worker that is a green\n     * run that never pushed the branch someone was waiting for.\n     *\n     * @param  array<string,mixed>  $config\n     */\n    public function workingCopy(array $config): object\n    {\n        $repo = isset($config['repo']) ? (string) $config['repo'] : null;\n        $resolved = ($this->resolve)($repo);\n\n        if (! $resolved) {\n            throw new \\RuntimeException(\n                'git: the host refused to resolve repository '.($repo !== null ? \"\\\"{$repo}\\\"\" : '(default)').\n                '. Register it with the host, or correct the node\\'s `repo`.'\n            );\n        }\n\n        return $resolved;\n    }\n}\n"
+                }
+            ]
+        },
         "particle-academy__git_pr_checks": {
             "manifest": {
                 "schemaVersion": 1,
@@ -367,6 +635,274 @@
                 {
                     "target": "git-pr-open/php/GitPrOpenExecutor.php",
                     "content": "<?php\n\ndeclare(strict_types=1);\n\nnamespace FancyFlow\\Nodes\\GitPrOpen;\n\nuse FancyFlow\\Contracts\\NodeExecutor;\nuse FancyFlow\\Runtime\\ExecutionContext;\nuse FancyFlow\\Runtime\\RunEvent;\n\n/**\n * Open a pull request. The PHP twin of `../js/executor.ts`.\n *\n * Same validation in the same place on both runtimes, so a misconfigured node\n * produces the identical message whichever one runs it — which is exactly what\n * the shared golden fixtures check.\n *\n * The one node in this set with a side effect that re-running cannot take back,\n * which is why its manifest says `unsafe-to-replay`: a durable run retrying\n * after a network blip would open a second PR for the same branch, and nothing\n * downstream would notice.\n */\nfinal class GitPrOpenExecutor implements NodeExecutor\n{\n    public function __construct(private readonly ?GitHost $host = null) {}\n\n    public function execute(ExecutionContext $ctx): mixed\n    {\n        $config = $ctx->config();\n        $host = $this->host ?? throw new \\RuntimeException(\n            'git_pr: no Git host bound. Bind '.GitHost::class.' with a particle-academy/fancy-git ProviderRegistry — '\n            .'the node has no credentials of its own and must not invent any.'\n        );\n        [$provider, $ref] = $host->resolve($config);\n\n        $title = trim((string) ($config['title'] ?? ''));\n        $source = trim((string) ($config['sourceBranch'] ?? ''));\n        $target = trim((string) ($config['targetBranch'] ?? 'main'));\n\n        if ($title === '') {\n            throw new \\InvalidArgumentException('git_pr_open: needs a `title`.');\n        }\n        if ($source === '') {\n            throw new \\InvalidArgumentException('git_pr_open: needs a `sourceBranch` — the branch to merge FROM.');\n        }\n        if ($source === $target) {\n            // The provider would reject this too, but in its own words and only\n            // after a round trip that spends a token and a rate-limit unit.\n            throw new \\InvalidArgumentException(\"git_pr_open: sourceBranch and targetBranch are both \\\"{$source}\\\".\");\n        }\n\n        $ctx->emit(RunEvent::log('info', \"Opening {$ref['owner']}/{$ref['name']}: {$source} → {$target}\", $ctx->node->id));\n\n        $review = $provider->createReview($ref, array_filter([\n            'title' => $title,\n            'body' => $config['body'] ?? null,\n            'sourceBranch' => $source,\n            'targetBranch' => $target,\n            'draft' => (bool) ($config['draft'] ?? false),\n        ], fn ($v) => $v !== null));\n\n        return ['review' => $review, 'number' => $review['number'] ?? null, 'url' => $review['webUrl'] ?? null];\n    }\n}\n"
+                }
+            ]
+        },
+        "particle-academy__git_pull": {
+            "manifest": {
+                "schemaVersion": 1,
+                "name": "particle-academy/fancy-flow-nodes",
+                "kind": "@particle-academy/git_pull",
+                "aliases": [
+                    "git_pull"
+                ],
+                "configVersion": 1,
+                "title": "Pull",
+                "category": "io",
+                "description": "Pull a working copy from a remote — or propose it for approval.",
+                "ui": [
+                    "ui"
+                ],
+                "runtimes": {
+                    "ts": {
+                        "files": [
+                            "js"
+                        ],
+                        "engine": ">=0.30.0"
+                    },
+                    "php": {
+                        "files": [
+                            "php"
+                        ],
+                        "engine": ">=0.9.0"
+                    }
+                },
+                "capabilities": {
+                    "gitRepository": "required"
+                },
+                "fancyDependencies": [
+                    {
+                        "package": "fancy-git",
+                        "npm": "@particle-academy/fancy-git",
+                        "composer": "particle-academy/fancy-git",
+                        "reason": "provides the GitRepository the host resolves for this node",
+                        "requirement": "required"
+                    }
+                ],
+                "fixtures": "nodes/git-pull/fixtures/git-pull.json",
+                "sideEffects": "unsafe-to-replay"
+            },
+            "files": [
+                {
+                    "target": "git-pull/ui/kind.ts",
+                    "content": "import type { NodeKindDefinition } from \"@particle-academy/fancy-flow/engine\";\nimport { gitPullExecutor } from \"../js/executor\";\n\nexport const GIT_PULL_KIND = \"@particle-academy/git_pull\";\n\n/** `git_pull` — pull from a remote, or propose it. */\nexport const gitPullKind: NodeKindDefinition = {\n  name: GIT_PULL_KIND,\n  aliases: [\"git_pull\"],\n  category: \"io\",\n  label: \"Pull\",\n  description: \"Pull a working copy from a remote — or propose it for approval.\",\n  icon: \"↧\",\n  accent: \"#f97316\",\n  inputs: [{ id: \"in\" }],\n  outputs: [\n    { id: \"done\", label: \"done\" },\n    { id: \"proposed\", label: \"proposed\" },\n  ],\n  configSchema: [\n    { key: \"repo\", label: \"Repository\", type: \"text\", placeholder: \"(host default)\" },\n    { key: \"remote\", label: \"Remote\", type: \"text\", placeholder: \"origin\" },\n    { key: \"branch\", label: \"Branch\", type: \"text\", placeholder: \"(current)\" },\n    { key: \"propose\", label: \"Propose only (do not perform)\", type: \"switch\", default: false },\n  ],\n  defaultConfig: { propose: false },\n  executor: gitPullExecutor,\n};\n"
+                },
+                {
+                    "target": "git-pull/js/executor.ts",
+                    "content": "import type { NodeExecutor } from \"@particle-academy/fancy-flow/engine\";\nimport { resolveWorkingCopy } from \"./repo\";\n\n/**\n * Pull from a remote.\n *\n * Mutating and `propose`-aware for the same reason as push: a pull can conflict,\n * and a workflow that discovers that on a queue worker at 3am should have been\n * able to stage it for a human first.\n */\nexport const gitPullExecutor: NodeExecutor = async (ctx) => {\n  const config = ((ctx.node.data as any)?.config ?? {}) as Record<string, unknown>;\n  const repo = resolveWorkingCopy(config);\n\n  const remote = config.remote === undefined || config.remote === null || config.remote === \"\"\n    ? undefined\n    : String(config.remote);\n  const branch = config.branch === undefined || config.branch === null || config.branch === \"\"\n    ? undefined\n    : String(config.branch);\n  const propose = config.propose === true;\n\n  const result = await repo.pull(remote, branch, { propose });\n\n  if (propose) {\n    ctx.emit({\n      type: \"log\",\n      level: \"info\",\n      nodeId: ctx.node.id,\n      message: `proposed pull from ${remote ?? \"origin\"}${branch ? `/${branch}` : \"\"} (not performed)`,\n    });\n    return { __port: \"proposed\", value: { remote: remote ?? null, branch: branch ?? null, proposal: result ?? null } };\n  }\n\n  ctx.emit({\n    type: \"log\",\n    level: \"info\",\n    nodeId: ctx.node.id,\n    message: `pulled from ${remote ?? \"origin\"}${branch ? `/${branch}` : \"\"}`,\n  });\n\n  return { __port: \"done\", value: { remote: remote ?? null, branch: branch ?? null } };\n};\n"
+                },
+                {
+                    "target": "git-pull/js/repo.ts",
+                    "content": "/**\n * The seam between a workflow node and a LOCAL git working copy.\n *\n * Distinct from the `git_pr_*` nodes' seam on purpose. Those act on a hosted\n * provider (a REST API and a token); these drive `git` in a checkout on disk.\n * The two have different failure modes, different credentials and different\n * blast radius, so they declare different capabilities — a host that wants to\n * read pull requests should not have to hand over a working copy, and a host\n * that hands over a working copy is agreeing to something much larger.\n *\n * ```ts\n * import { registerGitRepoHost } from \"@/components/fancy/flow-nodes/git-pull/js/repo\";\n * import { GitRepository } from \"@particle-academy/fancy-git\";\n *\n * registerGitRepoHost({\n *   resolve: (name) => new GitRepository(workspacePathFor(name)),\n * });\n * ```\n *\n * `resolve` takes the config's `repo` name rather than a path, so a graph never\n * carries a filesystem path an author could point anywhere. The host decides\n * what a name maps to; the node cannot reach outside what the host allows.\n *\n * This file is duplicated in each local-repo node. That is on purpose: a\n * vendored node is meant to be self-contained and editable in place, so a node\n * you copy in should not depend on another node you did not.\n */\n\n/** The subset of `fancy-git`'s `GitRepository` these nodes use. */\nexport type GitWorkingCopy = {\n  info(): Promise<unknown>;\n  status(): Promise<unknown>;\n  log(query?: { ref?: string; limit?: number; skip?: number }): Promise<unknown[]>;\n  diff(query?: { from?: string; to?: string; staged?: boolean; paths?: string[] }): Promise<unknown>;\n  branches(): Promise<unknown[]>;\n  checkout(target: string, options?: { propose?: boolean }): Promise<unknown>;\n  push(remote?: string, branch?: string, options?: { propose?: boolean }): Promise<unknown>;\n  pull(remote?: string, branch?: string, options?: { propose?: boolean }): Promise<unknown>;\n};\n\nexport type GitRepoHost = {\n  /** Map a config `repo` name to a working copy. Return null to refuse. */\n  resolve(repo: string | undefined): GitWorkingCopy | null;\n};\n\nlet host: GitRepoHost | null = null;\n\n/** Install the host. Returns an unregister function. */\nexport function registerGitRepoHost(next: GitRepoHost): () => void {\n  host = next;\n\n  return () => {\n    if (host === next) host = null;\n  };\n}\n\nexport function getGitRepoHost(): GitRepoHost | null {\n  return host;\n}\n\n/**\n * Resolve the working copy this node acts on.\n *\n * Fails loudly at every step. A node that cannot reach a repository must not\n * return \"nothing to do\" — on a queue worker that is a green run that never\n * pushed the branch someone was waiting for.\n */\nexport function resolveWorkingCopy(config: Record<string, unknown>): GitWorkingCopy {\n  const current = getGitRepoHost();\n  if (!current) {\n    throw new Error(\n      \"git: no repository host registered. Call registerGitRepoHost({ resolve }) with a \" +\n        \"fancy-git GitRepository factory — the node has no filesystem access of its own and must not invent any.\",\n    );\n  }\n\n  const repo = config.repo === undefined || config.repo === null ? undefined : String(config.repo);\n  const workingCopy = current.resolve(repo);\n\n  if (!workingCopy) {\n    throw new Error(\n      `git: the host refused to resolve repository ${repo ? `\"${repo}\"` : \"(default)\"}. ` +\n        \"Register it with the host, or correct the node's `repo`.\",\n    );\n  }\n\n  return workingCopy;\n}\n"
+                },
+                {
+                    "target": "git-pull/php/GitPullExecutor.php",
+                    "content": "<?php\n\ndeclare(strict_types=1);\n\nnamespace FancyFlow\\Nodes\\GitPull;\n\nuse FancyFlow\\Contracts\\NodeExecutor;\nuse FancyFlow\\Runtime\\ExecutionContext;\nuse FancyFlow\\Runtime\\Port;\nuse FancyFlow\\Runtime\\RunEvent;\n\n/**\n * Pull from a remote.\n *\n * Mutating and propose-aware for the same reason as push: a pull can conflict,\n * and a workflow that discovers that on a queue worker at 3am should have been\n * able to stage it for a human first.\n */\nfinal class GitPullExecutor implements NodeExecutor\n{\n    public function __construct(private readonly ?RepoHost $host = null) {}\n\n    public function execute(ExecutionContext $ctx): mixed\n    {\n        $config = $ctx->config();\n        $host = $this->host ?? throw new \\RuntimeException(\n            \"git: no repository host bound. Bind \".RepoHost::class.\" with a particle-academy/fancy-git GitRepository factory.\"\n        );\n\n        $remote = isset($config[\"remote\"]) && $config[\"remote\"] !== \"\" ? (string) $config[\"remote\"] : null;\n        $branch = isset($config[\"branch\"]) && $config[\"branch\"] !== \"\" ? (string) $config[\"branch\"] : null;\n        $propose = ($config[\"propose\"] ?? false) === true;\n\n        $result = $host->workingCopy($config)->pull($remote, $branch, $propose);\n        $where = ($remote ?? \"origin\").($branch ? \"/{$branch}\" : \"\");\n\n        if ($propose) {\n            $ctx->emit(RunEvent::log(\"info\", \"proposed pull from {$where} (not performed)\", $ctx->node->id));\n\n            return Port::only(\"proposed\", [\"remote\" => $remote, \"branch\" => $branch, \"proposal\" => $result]);\n        }\n\n        $ctx->emit(RunEvent::log(\"info\", \"pulled from {$where}\", $ctx->node->id));\n\n        return Port::only(\"done\", [\"remote\" => $remote, \"branch\" => $branch]);\n    }\n}\n"
+                },
+                {
+                    "target": "git-pull/php/RepoHost.php",
+                    "content": "<?php\n\ndeclare(strict_types=1);\n\nnamespace FancyFlow\\Nodes\\GitPull;\n\n/**\n * The seam between a workflow node and a LOCAL git working copy.\n *\n * Distinct from the `git_pr_*` nodes' seam on purpose. Those act on a hosted\n * provider (a REST API and a token); these drive `git` in a checkout on disk.\n * Different failure modes, different credentials, different blast radius — so\n * they declare different capabilities. A host that wants to read pull requests\n * should not have to hand over a working copy.\n *\n * Bind it once, in a service provider:\n *\n * ```php\n * $this->app->bind(RepoHost::class, fn () => new RepoHost(\n *     resolve: fn (?string $repo) => new \\FancyGit\\GitRepository(workspace_path($repo)),\n * ));\n * ```\n *\n * `resolve` receives the config's `repo` NAME, never a path, so a graph cannot\n * carry a filesystem path an author could point anywhere. The host decides what\n * a name maps to; the node cannot reach outside what the host allows.\n */\nfinal class RepoHost\n{\n    /** @param  \\Closure(?string): ?object  $resolve */\n    public function __construct(private readonly \\Closure $resolve) {}\n\n    /**\n     * Resolve the working copy this node acts on.\n     *\n     * Throws rather than returning null on refusal. A node that cannot reach a\n     * repository must not report success — on a queue worker that is a green\n     * run that never pushed the branch someone was waiting for.\n     *\n     * @param  array<string,mixed>  $config\n     */\n    public function workingCopy(array $config): object\n    {\n        $repo = isset($config['repo']) ? (string) $config['repo'] : null;\n        $resolved = ($this->resolve)($repo);\n\n        if (! $resolved) {\n            throw new \\RuntimeException(\n                'git: the host refused to resolve repository '.($repo !== null ? \"\\\"{$repo}\\\"\" : '(default)').\n                '. Register it with the host, or correct the node\\'s `repo`.'\n            );\n        }\n\n        return $resolved;\n    }\n}\n"
+                }
+            ]
+        },
+        "particle-academy__git_push": {
+            "manifest": {
+                "schemaVersion": 1,
+                "name": "particle-academy/fancy-flow-nodes",
+                "kind": "@particle-academy/git_push",
+                "aliases": [
+                    "git_push"
+                ],
+                "configVersion": 1,
+                "title": "Push",
+                "category": "io",
+                "description": "Push a working copy to a remote — or propose it for approval.",
+                "ui": [
+                    "ui"
+                ],
+                "runtimes": {
+                    "ts": {
+                        "files": [
+                            "js"
+                        ],
+                        "engine": ">=0.30.0"
+                    },
+                    "php": {
+                        "files": [
+                            "php"
+                        ],
+                        "engine": ">=0.9.0"
+                    }
+                },
+                "capabilities": {
+                    "gitRepository": "required"
+                },
+                "fancyDependencies": [
+                    {
+                        "package": "fancy-git",
+                        "npm": "@particle-academy/fancy-git",
+                        "composer": "particle-academy/fancy-git",
+                        "reason": "provides the GitRepository the host resolves for this node",
+                        "requirement": "required"
+                    }
+                ],
+                "fixtures": "nodes/git-push/fixtures/git-push.json",
+                "sideEffects": "unsafe-to-replay"
+            },
+            "files": [
+                {
+                    "target": "git-push/ui/kind.ts",
+                    "content": "import type { NodeKindDefinition } from \"@particle-academy/fancy-flow/engine\";\nimport { gitPushExecutor } from \"../js/executor\";\n\nexport const GIT_PUSH_KIND = \"@particle-academy/git_push\";\n\n/** `git_push` — push to a remote, or propose it. */\nexport const gitPushKind: NodeKindDefinition = {\n  name: GIT_PUSH_KIND,\n  aliases: [\"git_push\"],\n  category: \"io\",\n  label: \"Push\",\n  description: \"Push a working copy to a remote — or propose it for approval.\",\n  icon: \"↥\",\n  accent: \"#f97316\",\n  inputs: [{ id: \"in\" }],\n  outputs: [\n    { id: \"done\", label: \"done\" },\n    { id: \"proposed\", label: \"proposed\" },\n  ],\n  configSchema: [\n    { key: \"repo\", label: \"Repository\", type: \"text\", placeholder: \"(host default)\" },\n    { key: \"remote\", label: \"Remote\", type: \"text\", default: \"origin\" },\n    { key: \"branch\", label: \"Branch\", type: \"text\", placeholder: \"(current)\" },\n    { key: \"propose\", label: \"Propose only (do not perform)\", type: \"switch\", default: false },\n  ],\n  defaultConfig: { remote: \"origin\", propose: false },\n  executor: gitPushExecutor,\n};\n"
+                },
+                {
+                    "target": "git-push/js/executor.ts",
+                    "content": "import type { NodeExecutor } from \"@particle-academy/fancy-flow/engine\";\nimport { resolveWorkingCopy } from \"./repo\";\n\n/**\n * Push to a remote.\n *\n * `unsafe-to-replay` in the manifest and `propose`-aware here. A durable run\n * retries, and a retried push is usually harmless but occasionally is not —\n * a force-push, or a push that races a colleague — so the manifest tells the\n * truth and lets the host scope the retry policy.\n */\nexport const gitPushExecutor: NodeExecutor = async (ctx) => {\n  const config = ((ctx.node.data as any)?.config ?? {}) as Record<string, unknown>;\n  const repo = resolveWorkingCopy(config);\n\n  const remote = String(config.remote ?? \"origin\") || \"origin\";\n  const branch = config.branch === undefined || config.branch === null || config.branch === \"\"\n    ? undefined\n    : String(config.branch);\n  const propose = config.propose === true;\n\n  const result = await repo.push(remote, branch, { propose });\n\n  if (propose) {\n    ctx.emit({\n      type: \"log\",\n      level: \"info\",\n      nodeId: ctx.node.id,\n      message: `proposed push to ${remote}${branch ? `/${branch}` : \"\"} (not performed)`,\n    });\n    return { __port: \"proposed\", value: { remote, branch: branch ?? null, proposal: result ?? null } };\n  }\n\n  ctx.emit({\n    type: \"log\",\n    level: \"info\",\n    nodeId: ctx.node.id,\n    message: `pushed to ${remote}${branch ? `/${branch}` : \"\"}`,\n  });\n\n  return { __port: \"done\", value: { remote, branch: branch ?? null } };\n};\n"
+                },
+                {
+                    "target": "git-push/js/repo.ts",
+                    "content": "/**\n * The seam between a workflow node and a LOCAL git working copy.\n *\n * Distinct from the `git_pr_*` nodes' seam on purpose. Those act on a hosted\n * provider (a REST API and a token); these drive `git` in a checkout on disk.\n * The two have different failure modes, different credentials and different\n * blast radius, so they declare different capabilities — a host that wants to\n * read pull requests should not have to hand over a working copy, and a host\n * that hands over a working copy is agreeing to something much larger.\n *\n * ```ts\n * import { registerGitRepoHost } from \"@/components/fancy/flow-nodes/git-push/js/repo\";\n * import { GitRepository } from \"@particle-academy/fancy-git\";\n *\n * registerGitRepoHost({\n *   resolve: (name) => new GitRepository(workspacePathFor(name)),\n * });\n * ```\n *\n * `resolve` takes the config's `repo` name rather than a path, so a graph never\n * carries a filesystem path an author could point anywhere. The host decides\n * what a name maps to; the node cannot reach outside what the host allows.\n *\n * This file is duplicated in each local-repo node. That is on purpose: a\n * vendored node is meant to be self-contained and editable in place, so a node\n * you copy in should not depend on another node you did not.\n */\n\n/** The subset of `fancy-git`'s `GitRepository` these nodes use. */\nexport type GitWorkingCopy = {\n  info(): Promise<unknown>;\n  status(): Promise<unknown>;\n  log(query?: { ref?: string; limit?: number; skip?: number }): Promise<unknown[]>;\n  diff(query?: { from?: string; to?: string; staged?: boolean; paths?: string[] }): Promise<unknown>;\n  branches(): Promise<unknown[]>;\n  checkout(target: string, options?: { propose?: boolean }): Promise<unknown>;\n  push(remote?: string, branch?: string, options?: { propose?: boolean }): Promise<unknown>;\n  pull(remote?: string, branch?: string, options?: { propose?: boolean }): Promise<unknown>;\n};\n\nexport type GitRepoHost = {\n  /** Map a config `repo` name to a working copy. Return null to refuse. */\n  resolve(repo: string | undefined): GitWorkingCopy | null;\n};\n\nlet host: GitRepoHost | null = null;\n\n/** Install the host. Returns an unregister function. */\nexport function registerGitRepoHost(next: GitRepoHost): () => void {\n  host = next;\n\n  return () => {\n    if (host === next) host = null;\n  };\n}\n\nexport function getGitRepoHost(): GitRepoHost | null {\n  return host;\n}\n\n/**\n * Resolve the working copy this node acts on.\n *\n * Fails loudly at every step. A node that cannot reach a repository must not\n * return \"nothing to do\" — on a queue worker that is a green run that never\n * pushed the branch someone was waiting for.\n */\nexport function resolveWorkingCopy(config: Record<string, unknown>): GitWorkingCopy {\n  const current = getGitRepoHost();\n  if (!current) {\n    throw new Error(\n      \"git: no repository host registered. Call registerGitRepoHost({ resolve }) with a \" +\n        \"fancy-git GitRepository factory — the node has no filesystem access of its own and must not invent any.\",\n    );\n  }\n\n  const repo = config.repo === undefined || config.repo === null ? undefined : String(config.repo);\n  const workingCopy = current.resolve(repo);\n\n  if (!workingCopy) {\n    throw new Error(\n      `git: the host refused to resolve repository ${repo ? `\"${repo}\"` : \"(default)\"}. ` +\n        \"Register it with the host, or correct the node's `repo`.\",\n    );\n  }\n\n  return workingCopy;\n}\n"
+                },
+                {
+                    "target": "git-push/php/GitPushExecutor.php",
+                    "content": "<?php\n\ndeclare(strict_types=1);\n\nnamespace FancyFlow\\Nodes\\GitPush;\n\nuse FancyFlow\\Contracts\\NodeExecutor;\nuse FancyFlow\\Runtime\\ExecutionContext;\nuse FancyFlow\\Runtime\\Port;\nuse FancyFlow\\Runtime\\RunEvent;\n\n/**\n * Push to a remote.\n *\n * Declared unsafe-to-replay, and propose-aware. A durable run retries, and a\n * retried push is usually harmless but occasionally is not — so the manifest\n * tells the truth and lets the host scope the retry policy.\n */\nfinal class GitPushExecutor implements NodeExecutor\n{\n    public function __construct(private readonly ?RepoHost $host = null) {}\n\n    public function execute(ExecutionContext $ctx): mixed\n    {\n        $config = $ctx->config();\n        $host = $this->host ?? throw new \\RuntimeException(\n            \"git: no repository host bound. Bind \".RepoHost::class.\" with a particle-academy/fancy-git GitRepository factory.\"\n        );\n\n        $remote = (string) ($config[\"remote\"] ?? \"origin\") ?: \"origin\";\n        $branch = isset($config[\"branch\"]) && $config[\"branch\"] !== \"\" ? (string) $config[\"branch\"] : null;\n        $propose = ($config[\"propose\"] ?? false) === true;\n\n        $result = $host->workingCopy($config)->push($remote, $branch, $propose);\n        $where = $remote.($branch ? \"/{$branch}\" : \"\");\n\n        if ($propose) {\n            $ctx->emit(RunEvent::log(\"info\", \"proposed push to {$where} (not performed)\", $ctx->node->id));\n\n            return Port::only(\"proposed\", [\"remote\" => $remote, \"branch\" => $branch, \"proposal\" => $result]);\n        }\n\n        $ctx->emit(RunEvent::log(\"info\", \"pushed to {$where}\", $ctx->node->id));\n\n        return Port::only(\"done\", [\"remote\" => $remote, \"branch\" => $branch]);\n    }\n}\n"
+                },
+                {
+                    "target": "git-push/php/RepoHost.php",
+                    "content": "<?php\n\ndeclare(strict_types=1);\n\nnamespace FancyFlow\\Nodes\\GitPush;\n\n/**\n * The seam between a workflow node and a LOCAL git working copy.\n *\n * Distinct from the `git_pr_*` nodes' seam on purpose. Those act on a hosted\n * provider (a REST API and a token); these drive `git` in a checkout on disk.\n * Different failure modes, different credentials, different blast radius — so\n * they declare different capabilities. A host that wants to read pull requests\n * should not have to hand over a working copy.\n *\n * Bind it once, in a service provider:\n *\n * ```php\n * $this->app->bind(RepoHost::class, fn () => new RepoHost(\n *     resolve: fn (?string $repo) => new \\FancyGit\\GitRepository(workspace_path($repo)),\n * ));\n * ```\n *\n * `resolve` receives the config's `repo` NAME, never a path, so a graph cannot\n * carry a filesystem path an author could point anywhere. The host decides what\n * a name maps to; the node cannot reach outside what the host allows.\n */\nfinal class RepoHost\n{\n    /** @param  \\Closure(?string): ?object  $resolve */\n    public function __construct(private readonly \\Closure $resolve) {}\n\n    /**\n     * Resolve the working copy this node acts on.\n     *\n     * Throws rather than returning null on refusal. A node that cannot reach a\n     * repository must not report success — on a queue worker that is a green\n     * run that never pushed the branch someone was waiting for.\n     *\n     * @param  array<string,mixed>  $config\n     */\n    public function workingCopy(array $config): object\n    {\n        $repo = isset($config['repo']) ? (string) $config['repo'] : null;\n        $resolved = ($this->resolve)($repo);\n\n        if (! $resolved) {\n            throw new \\RuntimeException(\n                'git: the host refused to resolve repository '.($repo !== null ? \"\\\"{$repo}\\\"\" : '(default)').\n                '. Register it with the host, or correct the node\\'s `repo`.'\n            );\n        }\n\n        return $resolved;\n    }\n}\n"
+                }
+            ]
+        },
+        "particle-academy__git_repo": {
+            "manifest": {
+                "schemaVersion": 1,
+                "name": "particle-academy/fancy-flow-nodes",
+                "kind": "@particle-academy/git_repo",
+                "aliases": [
+                    "git_repo"
+                ],
+                "configVersion": 1,
+                "title": "Repository",
+                "category": "io",
+                "description": "Hosted repository metadata — default branch, visibility, URLs.",
+                "ui": [
+                    "ui"
+                ],
+                "runtimes": {
+                    "ts": {
+                        "files": [
+                            "js"
+                        ],
+                        "engine": ">=0.30.0"
+                    },
+                    "php": {
+                        "files": [
+                            "php"
+                        ],
+                        "engine": ">=0.9.0"
+                    }
+                },
+                "capabilities": {
+                    "gitProvider": "required"
+                },
+                "fancyDependencies": [
+                    {
+                        "package": "fancy-git",
+                        "npm": "@particle-academy/fancy-git",
+                        "composer": "particle-academy/fancy-git",
+                        "reason": "provides the provider contract this node acts through",
+                        "requirement": "required"
+                    }
+                ],
+                "fixtures": "nodes/git-repo/fixtures/git-repo.json",
+                "sideEffects": "idempotent"
+            },
+            "files": [
+                {
+                    "target": "git-repo/ui/kind.ts",
+                    "content": "import type { NodeKindDefinition } from \"@particle-academy/fancy-flow/engine\";\nimport { gitRepoExecutor } from \"../js/executor\";\n\nexport const GIT_REPO_KIND = \"@particle-academy/git_repo\";\n\n/**\n * `git_repo` — hosted repository metadata.\n *\n * Exists mainly so a graph can read the DEFAULT BRANCH instead of hardcoding\n * \"main\". Every git_pr_* node takes a target branch, and a hardcoded one is how\n * a workflow silently targets the wrong branch on a repo using master or trunk.\n */\nexport const gitRepoKind: NodeKindDefinition = {\n  name: GIT_REPO_KIND,\n  aliases: [\"git_repo\"],\n  category: \"io\",\n  label: \"Repository\",\n  description: \"Hosted repository metadata — default branch, visibility, URLs.\",\n  icon: \"◈\",\n  accent: \"#6e5494\",\n  inputs: [{ id: \"in\" }],\n  outputs: [{ id: \"out\" }],\n  configSchema: [\n    {\n      key: \"provider\",\n      label: \"Provider\",\n      type: \"select\",\n      options: [\n        { value: \"github\", label: \"GitHub\" },\n        { value: \"gitlab\", label: \"GitLab\" },\n        { value: \"bitbucket\", label: \"Bitbucket\" },\n      ],\n      default: \"github\",\n    },\n    { key: \"owner\", label: \"Owner\", type: \"text\", placeholder: \"Particle-Academy\" },\n    { key: \"repo\", label: \"Repository\", type: \"text\", placeholder: \"fancy-flow\" },\n  ],\n  defaultConfig: { provider: \"github\" },\n  executor: gitRepoExecutor,\n};\n"
+                },
+                {
+                    "target": "git-repo/js/executor.ts",
+                    "content": "import type { NodeExecutor } from \"@particle-academy/fancy-flow/engine\";\nimport { resolveTarget } from \"./provider\";\n\n/**\n * Hosted repository metadata — default branch, visibility, URLs.\n *\n * The `git_pr_*` nodes all take a target branch, and hardcoding \"main\" in a\n * graph is how a workflow silently targets the wrong branch on a repo that uses\n * `master`, `develop` or `trunk`. This is the node that answers that, so a graph\n * can read the default branch instead of assuming it.\n */\nexport const gitRepoExecutor: NodeExecutor = async (ctx) => {\n  const config = ((ctx.node.data as any)?.config ?? {}) as Record<string, unknown>;\n  const { provider, ref } = resolveTarget(config);\n\n  const repository = (await provider.repository(ref)) as Record<string, unknown>;\n\n  ctx.emit({\n    type: \"log\",\n    level: \"info\",\n    nodeId: ctx.node.id,\n    message: `${ref.owner}/${ref.name} — default branch ${String(repository.defaultBranch ?? \"(unknown)\")}`,\n  });\n\n  return { __port: \"out\", value: repository };\n};\n"
+                },
+                {
+                    "target": "git-repo/js/provider.ts",
+                    "content": "/**\n * The seam between a workflow node and a hosted Git provider.\n *\n * `@particle-academy/fancy-git` models providers as a `ProviderRegistry` **instance** — it has\n * no module singleton, deliberately, because a host may serve several\n * installations with different credentials. So a node cannot reach for a\n * provider; the host has to hand one over, the same arrangement fancy-flow uses\n * for LLM clients.\n *\n * ```ts\n * import { registerGitHost } from \"@/components/fancy/flow-nodes/git-pr-open/js/provider\";\n * import { ProviderRegistry } from \"@particle-academy/fancy-git\";\n * import { githubProvider } from \"@particle-academy/fancy-git-github\";\n *\n * registerGitHost({\n *   registry: new ProviderRegistry().register(githubProvider({ token: env.GITHUB_TOKEN })),\n * });\n * ```\n *\n * This file is duplicated in each git-pr-* node. That is on purpose: a vendored\n * node is meant to be self-contained and editable in place, so a node you copy\n * in should not depend on another node you did not.\n */\n\n/** What the node needs from the host, narrowed to almost nothing. */\nexport type GitHost = {\n  /** A `ProviderRegistry` from `@particle-academy/fancy-git`. */\n  registry: {\n    get(kind: string): unknown;\n  };\n  /** Default repository, so a node's config can omit it. */\n  defaultRepo?: { provider?: string; owner?: string; name?: string; baseUrl?: string };\n};\n\nlet host: GitHost | null = null;\n\n/** Install the host's provider registry. Returns an unregister function. */\nexport function registerGitHost(next: GitHost): () => void {\n  host = next;\n\n  return () => {\n    if (host === next) host = null;\n  };\n}\n\nexport function getGitHost(): GitHost | null {\n  return host;\n}\n\n/** A repository, as `@particle-academy/fancy-git` identifies one. */\nexport type RepoRef = { provider: string; owner: string; name: string; baseUrl?: string };\n\n/**\n * Resolve the provider and repository a node should act on.\n *\n * Fails loudly at every step. A node that cannot reach a provider must not\n * return \"nothing to do\" — on a queue worker that is a green run that never\n * opened the pull request anyone was waiting for.\n */\nexport function resolveTarget(config: Record<string, unknown>): { provider: any; ref: RepoRef } {\n  const current = getGitHost();\n  if (!current) {\n    throw new Error(\n      \"git_pr: no Git host registered. Call registerGitHost({ registry }) with a @particle-academy/fancy-git \" +\n        \"ProviderRegistry — the node has no credentials of its own and must not invent any.\",\n    );\n  }\n\n  const ref: RepoRef = {\n    provider: String(config.provider ?? current.defaultRepo?.provider ?? \"github\"),\n    owner: String(config.owner ?? current.defaultRepo?.owner ?? \"\"),\n    name: String(config.repo ?? current.defaultRepo?.name ?? \"\"),\n  };\n  const baseUrl = config.baseUrl ?? current.defaultRepo?.baseUrl;\n  if (baseUrl) ref.baseUrl = String(baseUrl);\n\n  if (!ref.owner || !ref.name) {\n    throw new Error(\"git_pr: needs `owner` and `repo` — on the node, or as the host's defaultRepo.\");\n  }\n\n  const provider = current.registry.get(ref.provider);\n  if (!provider) {\n    throw new Error(\n      `git_pr: no \"${ref.provider}\" provider is registered. Register one on the ProviderRegistry ` +\n        \"you pass to registerGitHost.\",\n    );\n  }\n\n  return { provider, ref };\n}\n"
+                },
+                {
+                    "target": "git-repo/php/GitHost.php",
+                    "content": "<?php\n\ndeclare(strict_types=1);\n\nnamespace FancyFlow\\Nodes\\GitRepo;\n\n/**\n * The seam between a workflow node and a hosted Git provider.\n *\n * `particle-academy/fancy-git` models providers as a `ProviderRegistry` **instance**, not a\n * singleton — deliberately, because one app may serve several installations\n * with different credentials. So a node cannot reach for a provider; the host\n * hands one over, the same arrangement fancy-flow uses for LLM clients.\n *\n * Bind it once, in a service provider:\n *\n * ```php\n * $this->app->bind(GitHost::class, fn () => new GitHost(\n *     registry: (new ProviderRegistry)->register(new GitHubProvider(config('services.github.token'))),\n *     defaultRepo: ['provider' => 'github', 'owner' => 'Particle-Academy', 'name' => 'fancy-flow'],\n * ));\n * ```\n *\n * The PHP twin of `../js/provider.ts`, and duplicated in each git-pr-* node on\n * purpose: a vendored node should be self-contained and editable in place, not\n * dependent on another node you did not copy in.\n */\nfinal class GitHost\n{\n    /**\n     * @param  object  $registry  a `FancyGit\\Provider\\ProviderRegistry`\n     * @param  array<string,string>  $defaultRepo\n     */\n    public function __construct(\n        public readonly object $registry,\n        public readonly array $defaultRepo = [],\n    ) {}\n\n    /**\n     * Resolve the provider and repository a node should act on.\n     *\n     * Fails loudly at every step. A node that cannot reach a provider must not\n     * return \"nothing to do\" — on a queue worker that is a green run that never\n     * opened the pull request someone was waiting for.\n     *\n     * @param  array<string,mixed>  $config\n     * @return array{0: object, 1: array<string,string>}\n     */\n    public function resolve(array $config): array\n    {\n        $ref = array_filter([\n            'provider' => (string) ($config['provider'] ?? $this->defaultRepo['provider'] ?? 'github'),\n            'owner' => (string) ($config['owner'] ?? $this->defaultRepo['owner'] ?? ''),\n            'name' => (string) ($config['repo'] ?? $this->defaultRepo['name'] ?? ''),\n            'baseUrl' => (string) ($config['baseUrl'] ?? $this->defaultRepo['baseUrl'] ?? ''),\n        ], fn (string $v) => $v !== '');\n\n        if (($ref['owner'] ?? '') === '' || ($ref['name'] ?? '') === '') {\n            throw new \\InvalidArgumentException(\n                'git_pr: needs `owner` and `repo` — on the node, or as the host\\'s defaultRepo.'\n            );\n        }\n\n        $provider = $this->registry->get($ref['provider']);\n        if ($provider === null) {\n            throw new \\RuntimeException(\n                \"git_pr: no \\\"{$ref['provider']}\\\" provider is registered. Register one on the \"\n                .'ProviderRegistry you pass to GitHost.'\n            );\n        }\n\n        return [$provider, $ref];\n    }\n}\n"
+                },
+                {
+                    "target": "git-repo/php/GitRepoExecutor.php",
+                    "content": "<?php\n\ndeclare(strict_types=1);\n\nnamespace FancyFlow\\Nodes\\GitRepo;\n\nuse FancyFlow\\Contracts\\NodeExecutor;\nuse FancyFlow\\Runtime\\ExecutionContext;\nuse FancyFlow\\Runtime\\Port;\nuse FancyFlow\\Runtime\\RunEvent;\n\n/**\n * Hosted repository metadata — default branch, visibility, URLs.\n *\n * Every git_pr_* node takes a target branch, and hardcoding \"main\" in a graph is\n * how a workflow silently targets the wrong branch on a repo that uses master,\n * develop or trunk. This is the node that answers it, so a graph can read the\n * default branch instead of assuming it.\n */\nfinal class GitRepoExecutor implements NodeExecutor\n{\n    public function __construct(private readonly ?GitHost $host = null) {}\n\n    public function execute(ExecutionContext $ctx): mixed\n    {\n        $config = $ctx->config();\n        $host = $this->host ?? throw new \\RuntimeException(\n            \"git: no Git host bound. Bind \".GitHost::class.\" with a particle-academy/fancy-git ProviderRegistry.\"\n        );\n        [$provider, $ref] = $host->resolve($config);\n\n        $repository = $provider->repository($ref);\n        $default = $repository[\"defaultBranch\"] ?? \"(unknown)\";\n\n        $ctx->emit(RunEvent::log(\"info\", \"{$ref[\"owner\"]}/{$ref[\"name\"]} — default branch {$default}\", $ctx->node->id));\n\n        return Port::only(\"out\", $repository);\n    }\n}\n"
+                }
+            ]
+        },
+        "particle-academy__git_status": {
+            "manifest": {
+                "schemaVersion": 1,
+                "name": "particle-academy/fancy-flow-nodes",
+                "kind": "@particle-academy/git_status",
+                "aliases": [
+                    "git_status"
+                ],
+                "configVersion": 1,
+                "title": "Working Tree Status",
+                "category": "io",
+                "description": "Branch, ahead/behind and changed files — routes on whether the tree is clean.",
+                "ui": [
+                    "ui"
+                ],
+                "runtimes": {
+                    "ts": {
+                        "files": [
+                            "js"
+                        ],
+                        "engine": ">=0.30.0"
+                    },
+                    "php": {
+                        "files": [
+                            "php"
+                        ],
+                        "engine": ">=0.9.0"
+                    }
+                },
+                "capabilities": {
+                    "gitRepository": "required"
+                },
+                "fancyDependencies": [
+                    {
+                        "package": "fancy-git",
+                        "npm": "@particle-academy/fancy-git",
+                        "composer": "particle-academy/fancy-git",
+                        "reason": "provides the GitRepository the host resolves for this node",
+                        "requirement": "required"
+                    }
+                ],
+                "fixtures": "nodes/git-status/fixtures/git-status.json",
+                "sideEffects": "idempotent"
+            },
+            "files": [
+                {
+                    "target": "git-status/ui/kind.ts",
+                    "content": "import type { NodeKindDefinition } from \"@particle-academy/fancy-flow/engine\";\nimport { gitStatusExecutor } from \"../js/executor\";\n\nexport const GIT_STATUS_KIND = \"@particle-academy/git_status\";\n\n/**\n * `git_status` — working-tree state, routed clean/dirty.\n *\n * `repo` is a NAME the host resolves, never a path. A graph that carried a\n * filesystem path would let an author point a node anywhere the worker can\n * reach; the host decides what a name maps to.\n */\nexport const gitStatusKind: NodeKindDefinition = {\n  name: GIT_STATUS_KIND,\n  aliases: [\"git_status\"],\n  category: \"io\",\n  label: \"Working Tree Status\",\n  description: \"Branch, ahead/behind and changed files — routes on whether the tree is clean.\",\n  icon: \"◔\",\n  accent: \"#f97316\",\n  inputs: [{ id: \"in\" }],\n  outputs: [\n    { id: \"clean\", label: \"clean\" },\n    { id: \"dirty\", label: \"dirty\" },\n  ],\n  configSchema: [\n    {\n      key: \"repo\",\n      label: \"Repository\",\n      type: \"text\",\n      placeholder: \"(host default)\",\n    },\n  ],\n  defaultConfig: {},\n  executor: gitStatusExecutor,\n};\n"
+                },
+                {
+                    "target": "git-status/js/executor.ts",
+                    "content": "import type { NodeExecutor } from \"@particle-academy/fancy-flow/engine\";\nimport { resolveWorkingCopy } from \"./repo\";\n\n/**\n * Working-tree status, routed on whether there is anything to commit.\n *\n * Two ports rather than one flag: \"is the tree clean\" is the question every\n * automation asks before it does anything else, and a downstream test on\n * `files.length` is one somebody forgets to write. A workflow that commits\n * without checking creates empty commits; one that pushes without checking\n * pushes nothing and reports success.\n */\nexport const gitStatusExecutor: NodeExecutor = async (ctx) => {\n  const config = ((ctx.node.data as any)?.config ?? {}) as Record<string, unknown>;\n  const repo = resolveWorkingCopy(config);\n\n  const status = (await repo.status()) as {\n    branch: string | null;\n    upstream: string | null;\n    ahead: number;\n    behind: number;\n    files: unknown[];\n    clean: boolean;\n  };\n\n  const files = status.files ?? [];\n  // `clean` comes from fancy-git, but a status with no files IS clean whatever\n  // the flag says — trust the observable over the summary.\n  const clean = status.clean ?? files.length === 0;\n\n  ctx.emit({\n    type: \"log\",\n    level: \"info\",\n    nodeId: ctx.node.id,\n    message: clean\n      ? `working tree clean on ${status.branch ?? \"(detached)\"}`\n      : `${files.length} change(s) on ${status.branch ?? \"(detached)\"}`,\n  });\n\n  return {\n    __port: clean ? \"clean\" : \"dirty\",\n    value: {\n      branch: status.branch ?? null,\n      upstream: status.upstream ?? null,\n      ahead: status.ahead ?? 0,\n      behind: status.behind ?? 0,\n      files,\n      count: files.length,\n      clean,\n    },\n  };\n};\n"
+                },
+                {
+                    "target": "git-status/js/repo.ts",
+                    "content": "/**\n * The seam between a workflow node and a LOCAL git working copy.\n *\n * Distinct from the `git_pr_*` nodes' seam on purpose. Those act on a hosted\n * provider (a REST API and a token); these drive `git` in a checkout on disk.\n * The two have different failure modes, different credentials and different\n * blast radius, so they declare different capabilities — a host that wants to\n * read pull requests should not have to hand over a working copy, and a host\n * that hands over a working copy is agreeing to something much larger.\n *\n * ```ts\n * import { registerGitRepoHost } from \"@/components/fancy/flow-nodes/git-status/js/repo\";\n * import { GitRepository } from \"@particle-academy/fancy-git\";\n *\n * registerGitRepoHost({\n *   resolve: (name) => new GitRepository(workspacePathFor(name)),\n * });\n * ```\n *\n * `resolve` takes the config's `repo` name rather than a path, so a graph never\n * carries a filesystem path an author could point anywhere. The host decides\n * what a name maps to; the node cannot reach outside what the host allows.\n *\n * This file is duplicated in each local-repo node. That is on purpose: a\n * vendored node is meant to be self-contained and editable in place, so a node\n * you copy in should not depend on another node you did not.\n */\n\n/** The subset of `fancy-git`'s `GitRepository` these nodes use. */\nexport type GitWorkingCopy = {\n  info(): Promise<unknown>;\n  status(): Promise<unknown>;\n  log(query?: { ref?: string; limit?: number; skip?: number }): Promise<unknown[]>;\n  diff(query?: { from?: string; to?: string; staged?: boolean; paths?: string[] }): Promise<unknown>;\n  branches(): Promise<unknown[]>;\n  checkout(target: string, options?: { propose?: boolean }): Promise<unknown>;\n  push(remote?: string, branch?: string, options?: { propose?: boolean }): Promise<unknown>;\n  pull(remote?: string, branch?: string, options?: { propose?: boolean }): Promise<unknown>;\n};\n\nexport type GitRepoHost = {\n  /** Map a config `repo` name to a working copy. Return null to refuse. */\n  resolve(repo: string | undefined): GitWorkingCopy | null;\n};\n\nlet host: GitRepoHost | null = null;\n\n/** Install the host. Returns an unregister function. */\nexport function registerGitRepoHost(next: GitRepoHost): () => void {\n  host = next;\n\n  return () => {\n    if (host === next) host = null;\n  };\n}\n\nexport function getGitRepoHost(): GitRepoHost | null {\n  return host;\n}\n\n/**\n * Resolve the working copy this node acts on.\n *\n * Fails loudly at every step. A node that cannot reach a repository must not\n * return \"nothing to do\" — on a queue worker that is a green run that never\n * pushed the branch someone was waiting for.\n */\nexport function resolveWorkingCopy(config: Record<string, unknown>): GitWorkingCopy {\n  const current = getGitRepoHost();\n  if (!current) {\n    throw new Error(\n      \"git: no repository host registered. Call registerGitRepoHost({ resolve }) with a \" +\n        \"fancy-git GitRepository factory — the node has no filesystem access of its own and must not invent any.\",\n    );\n  }\n\n  const repo = config.repo === undefined || config.repo === null ? undefined : String(config.repo);\n  const workingCopy = current.resolve(repo);\n\n  if (!workingCopy) {\n    throw new Error(\n      `git: the host refused to resolve repository ${repo ? `\"${repo}\"` : \"(default)\"}. ` +\n        \"Register it with the host, or correct the node's `repo`.\",\n    );\n  }\n\n  return workingCopy;\n}\n"
+                },
+                {
+                    "target": "git-status/php/GitStatusExecutor.php",
+                    "content": "<?php\n\ndeclare(strict_types=1);\n\nnamespace FancyFlow\\Nodes\\GitStatus;\n\nuse FancyFlow\\Contracts\\NodeExecutor;\nuse FancyFlow\\Runtime\\ExecutionContext;\nuse FancyFlow\\Runtime\\Port;\nuse FancyFlow\\Runtime\\RunEvent;\n\n/**\n * Working-tree status, routed on whether there is anything to commit.\n *\n * Two ports rather than one flag: \"is the tree clean\" is the question every\n * automation asks first, and a downstream count check is one somebody forgets.\n * A workflow that commits without checking creates empty commits; one that\n * pushes without checking pushes nothing and reports success.\n */\nfinal class GitStatusExecutor implements NodeExecutor\n{\n    public function __construct(private readonly ?RepoHost $host = null) {}\n\n    public function execute(ExecutionContext $ctx): mixed\n    {\n        $config = $ctx->config();\n        $host = $this->host ?? throw new \\RuntimeException(\n            'git: no repository host bound. Bind '.RepoHost::class.' with a particle-academy/fancy-git '.\n            'GitRepository factory — the node has no filesystem access of its own and must not invent any.'\n        );\n\n        $status = $host->workingCopy($config)->status();\n        $status = is_array($status) ? $status : (array) $status;\n\n        $files = $status['files'] ?? [];\n        // `clean` comes from fancy-git, but a status with no files IS clean\n        // whatever the flag says — trust the observable over the summary.\n        $clean = $status['clean'] ?? (count($files) === 0);\n        $branch = $status['branch'] ?? null;\n\n        $ctx->emit(RunEvent::log(\n            'info',\n            $clean\n                ? 'working tree clean on '.($branch ?? '(detached)')\n                : count($files).' change(s) on '.($branch ?? '(detached)'),\n            $ctx->node->id\n        ));\n\n        return Port::only($clean ? 'clean' : 'dirty', [\n            'branch' => $branch,\n            'upstream' => $status['upstream'] ?? null,\n            'ahead' => $status['ahead'] ?? 0,\n            'behind' => $status['behind'] ?? 0,\n            'files' => $files,\n            'count' => count($files),\n            'clean' => $clean,\n        ]);\n    }\n}\n"
+                },
+                {
+                    "target": "git-status/php/RepoHost.php",
+                    "content": "<?php\n\ndeclare(strict_types=1);\n\nnamespace FancyFlow\\Nodes\\GitStatus;\n\n/**\n * The seam between a workflow node and a LOCAL git working copy.\n *\n * Distinct from the `git_pr_*` nodes' seam on purpose. Those act on a hosted\n * provider (a REST API and a token); these drive `git` in a checkout on disk.\n * Different failure modes, different credentials, different blast radius — so\n * they declare different capabilities. A host that wants to read pull requests\n * should not have to hand over a working copy.\n *\n * Bind it once, in a service provider:\n *\n * ```php\n * $this->app->bind(RepoHost::class, fn () => new RepoHost(\n *     resolve: fn (?string $repo) => new \\FancyGit\\GitRepository(workspace_path($repo)),\n * ));\n * ```\n *\n * `resolve` receives the config's `repo` NAME, never a path, so a graph cannot\n * carry a filesystem path an author could point anywhere. The host decides what\n * a name maps to; the node cannot reach outside what the host allows.\n */\nfinal class RepoHost\n{\n    /** @param  \\Closure(?string): ?object  $resolve */\n    public function __construct(private readonly \\Closure $resolve) {}\n\n    /**\n     * Resolve the working copy this node acts on.\n     *\n     * Throws rather than returning null on refusal. A node that cannot reach a\n     * repository must not report success — on a queue worker that is a green\n     * run that never pushed the branch someone was waiting for.\n     *\n     * @param  array<string,mixed>  $config\n     */\n    public function workingCopy(array $config): object\n    {\n        $repo = isset($config['repo']) ? (string) $config['repo'] : null;\n        $resolved = ($this->resolve)($repo);\n\n        if (! $resolved) {\n            throw new \\RuntimeException(\n                'git: the host refused to resolve repository '.($repo !== null ? \"\\\"{$repo}\\\"\" : '(default)').\n                '. Register it with the host, or correct the node\\'s `repo`.'\n            );\n        }\n\n        return $resolved;\n    }\n}\n"
                 }
             ]
         },

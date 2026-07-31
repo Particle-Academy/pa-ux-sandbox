@@ -1,6 +1,6 @@
-import { type ReactNode, useEffect, useState } from "react";
+import { Fragment, type ReactNode, useEffect, useState } from "react";
 import { Link, router, usePage } from "@inertiajs/react";
-import { Badge, Dropdown, Icon } from "@particle-academy/react-fancy";
+import { Badge, Dropdown, Icon, MobileMenu } from "@particle-academy/react-fancy";
 import { currentTheme, toggleTheme } from "../../showcase-theme";
 import { PlayerAvatar, type PlayerIdentityData } from "../../components/PlayerIdentity";
 import "../../../css/admin.css";
@@ -72,6 +72,38 @@ export function AdminLayout({ children }: { children: ReactNode }) {
 
     const [collapsed, setCollapsed] = useState(false);
     const [mobileOpen, setMobileOpen] = useState(false);
+
+    // `collapsed` (the desktop rail shrinking to icons) and `mobileOpen` (the
+    // drawer) are different features that happen to share one button, so the
+    // button has to know which viewport it is on. Start false — matching the
+    // server render — and sync after mount, same as `theme` below; reading
+    // matchMedia during render would mismatch on hydration.
+    const [isMobile, setIsMobile] = useState(false);
+    useEffect(() => {
+        // Keep in step with the `max-width: 860px` block in admin.css, which is
+        // what actually hides the rail.
+        const mq = window.matchMedia("(max-width: 860px)");
+        const sync = () => {
+            setIsMobile(mq.matches);
+            // Widening past the breakpoint must also close the drawer. The
+            // flyout is portalled and `position: fixed`, so a drawer left open
+            // does not tuck itself away with the layout — it hangs over the
+            // desktop admin with the body still scroll-locked.
+            if (!mq.matches) {
+                setMobileOpen(false);
+            }
+        };
+        sync();
+        mq.addEventListener("change", sync);
+        return () => mq.removeEventListener("change", sync);
+    }, []);
+
+    // Close on navigation. Belt and braces: the admin shell remounts on an
+    // Inertia visit today, but that is an implementation detail of how the
+    // pages attach their layout, not a guarantee — and a drawer left open
+    // hangs over the page you just arrived at.
+    useEffect(() => setMobileOpen(false), [path]);
+
     // Start "dark" so the server render and the client's FIRST render agree —
     // reading the real theme during render (currentTheme() → localStorage/media
     // query) mismatches on hydration whenever the user is in light mode, and a
@@ -88,9 +120,9 @@ export function AdminLayout({ children }: { children: ReactNode }) {
     const isActive = (href: string) => (href === "/admin" ? path === "/admin" : path.startsWith(href));
 
     return (
-        <div className={`admin-root${collapsed ? " collapsed" : ""}${mobileOpen ? " mobile-open" : ""}`}>
-            {mobileOpen && <div className="admin-mobile-scrim" onClick={() => setMobileOpen(false)} />}
-
+        <div className={`admin-root${collapsed ? " collapsed" : ""}`}>
+            {/* The rail. Hidden outright below 860px, where the drawer below
+                replaces it — so `collapsed` is now purely a desktop concern. */}
             <aside className="sb">
                 <Link href="/admin" className="sb-brand">
                     <span className="sb-mark">F</span>
@@ -126,14 +158,17 @@ export function AdminLayout({ children }: { children: ReactNode }) {
 
             <div className="admin-main">
                 <header className="tb">
+                    {/* One button, two jobs, decided by viewport. It used to do
+                        BOTH at once — `setCollapsed` and `setMobileOpen` fired
+                        together — so opening the drawer on a phone also
+                        collapsed it, and you got 256px of unlabelled icons. */}
                     <button
                         className="btn btn-ghost"
                         style={{ height: 34, width: 34, padding: 0, display: "grid", placeItems: "center" }}
-                        onClick={() => {
-                            setCollapsed((c) => !c);
-                            setMobileOpen((m) => !m);
-                        }}
-                        aria-label="Toggle sidebar"
+                        onClick={() => (isMobile ? setMobileOpen((m) => !m) : setCollapsed((c) => !c))}
+                        aria-label={isMobile ? (mobileOpen ? "Close menu" : "Open menu") : "Toggle sidebar"}
+                        aria-expanded={isMobile ? mobileOpen : undefined}
+                        aria-controls={isMobile ? "admin-mobile-nav" : undefined}
                     >
                         <Icon name="panel-left" size={17} />
                     </button>
@@ -178,6 +213,52 @@ export function AdminLayout({ children }: { children: ReactNode }) {
                 </header>
 
                 <main className="admin-content">{children}</main>
+            </div>
+
+            {/* The admin nav for every viewport too narrow to show the rail.
+                react-fancy's own MobileMenu, not a hand-rolled drawer — the
+                showcase should be running the kit it sells, and this brings the
+                body-scroll lock, Escape-to-close and backdrop the CSS-transform
+                version never had. Same NAV array as the rail, so a link added
+                there appears here too. */}
+            <div id="admin-mobile-nav">
+                <MobileMenu.Flyout
+                    open={mobileOpen}
+                    onClose={() => setMobileOpen(false)}
+                    side="left"
+                    title="Particle Academy · admin"
+                >
+                    {NAV.map((grp, gi) => (
+                        <Fragment key={gi}>
+                            {grp.section && <div className="admin-mm-section">{grp.section}</div>}
+                            {grp.items.map((it) => {
+                                const badge = it.href === "/admin/sites" && pending > 0 ? pending : it.badge;
+                                return (
+                                    <MobileMenu.Item
+                                        key={it.href}
+                                        href={it.href}
+                                        className="admin-mm-item"
+                                        active={isActive(it.href)}
+                                        icon={<Icon name={it.icon} size={18} />}
+                                        badge={badge ? <Badge color="violet" size="sm">{String(badge)}</Badge> : undefined}
+                                    >
+                                        {it.label}
+                                    </MobileMenu.Item>
+                                );
+                            })}
+                        </Fragment>
+                    ))}
+
+                    {/* The rail's footer link, kept reachable rather than lost. */}
+                    <div className="admin-mm-section">Help</div>
+                    <MobileMenu.Item
+                        href="/docs"
+                        className="admin-mm-item"
+                        icon={<Icon name="book-open" size={18} />}
+                    >
+                        Documentation
+                    </MobileMenu.Item>
+                </MobileMenu.Flyout>
             </div>
         </div>
     );

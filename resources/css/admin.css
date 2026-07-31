@@ -99,13 +99,29 @@
 }
 @media (max-width: 860px) {
   .admin-root { grid-template-columns: 1fr; }
-  .sb { position: fixed; left: 0; top: 0; z-index: 80; width: 256px; transform: translateX(-100%); box-shadow: var(--shadow-xl); transition: transform 0.24s var(--ease-out, ease); }
-  .admin-root.mobile-open .sb { transform: translateX(0); }
+  /* The rail is replaced below this width by react-fancy's MobileMenu.Flyout
+     (see AdminLayout.tsx), which portals its own panel + backdrop. The old
+     hand-rolled drawer lived here — a fixed .sb translated off-canvas plus an
+     .admin-mobile-scrim — and had no scroll lock, no Escape and no aria. */
+  .sb { display: none; }
   .admin-content { padding: 20px 18px 56px; }
   .admin-grid-2, .admin-grid-stats, .admin-form-grid { grid-template-columns: 1fr; }
-  .admin-mobile-scrim { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.4); z-index: 70; }
 }
-.admin-mobile-scrim { display: none; }
+
+/* MobileMenu.Flyout, dressed as the admin rail: the same violet active accent
+   and section headings, so the drawer reads as the same navigation and not as
+   a second, unrelated menu. MobileMenu.Item exposes `data-active`, which is
+   the stable handle to key the active treatment off. */
+.admin-mm-section {
+  font-size: 10px; text-transform: uppercase; letter-spacing: 0.07em;
+  font-weight: 600; color: var(--fg-4); padding: 14px 10px 6px;
+}
+.admin-mm-section:first-child { padding-top: 4px; }
+.admin-mm-item[data-active] {
+  background: color-mix(in oklch, #8b5cf6 11%, transparent);
+  color: var(--fg-1);
+}
+.admin-mm-item[data-active] svg { color: #8b5cf6; }
 
 .admin-attn-row { transition: background 0.12s; cursor: pointer; }
 .admin-attn-row:hover { background: var(--bg-1); }

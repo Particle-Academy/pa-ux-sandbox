@@ -1,0 +1,77 @@
+{
+  "kind": "@particle-academy/git_pr_get",
+  "cases": [
+    {
+      "name": "reads a pull request by number",
+      "config": {
+        "owner": "a",
+        "repo": "b",
+        "number": 41
+      },
+      "expect": {
+        "ports": [
+          "out"
+        ],
+        "value": {
+          "review": {
+            "id": "41",
+            "number": 41,
+            "state": "open",
+            "title": "t",
+            "webUrl": "https://example.test/pr/41",
+            "sourceBranch": "x",
+            "targetBranch": "main",
+            "author": "f",
+            "createdAt": "2026-01-01T00:00:00Z",
+            "updatedAt": "2026-01-01T00:00:00Z"
+          },
+          "number": 41,
+          "url": "https://example.test/pr/41",
+          "state": "open"
+        }
+      }
+    },
+    {
+      "name": "takes the number from its input, so it drops after list or open",
+      "config": {
+        "owner": "a",
+        "repo": "b"
+      },
+      "inputs": {
+        "number": 41
+      },
+      "expect": {
+        "ports": [
+          "out"
+        ],
+        "value": {
+          "review": {
+            "id": "41",
+            "number": 41,
+            "state": "open",
+            "title": "t",
+            "webUrl": "https://example.test/pr/41",
+            "sourceBranch": "x",
+            "targetBranch": "main",
+            "author": "f",
+            "createdAt": "2026-01-01T00:00:00Z",
+            "updatedAt": "2026-01-01T00:00:00Z"
+          },
+          "number": 41,
+          "url": "https://example.test/pr/41",
+          "state": "open"
+        }
+      }
+    },
+    {
+      "name": "rejects a run with no number anywhere",
+      "config": {
+        "owner": "a",
+        "repo": "b"
+      },
+      "expect": {
+        "error": "needs a pull request `number`"
+      }
+    }
+  ]
+}

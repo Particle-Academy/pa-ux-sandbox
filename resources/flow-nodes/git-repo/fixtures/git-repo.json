@@ -1,0 +1,25 @@
+{
+  "kind": "@particle-academy/git_repo",
+  "cases": [
+    {
+      "name": "returns hosted repository metadata",
+      "config": { "owner": "a", "repo": "b" },
+      "expect": {
+        "ports": ["out"],
+        "value": {
+          "provider": "github",
+          "owner": "a",
+          "name": "b",
+          "defaultBranch": "main",
+          "visibility": "public",
+          "webUrl": "https://example.test/a/b"
+        }
+      }
+    },
+    {
+      "name": "refuses without a repository",
+      "config": {},
+      "expect": { "error": "needs `owner` and `repo`" }
+    }
+  ]
+}

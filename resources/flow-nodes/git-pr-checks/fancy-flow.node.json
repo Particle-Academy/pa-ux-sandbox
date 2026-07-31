@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "name": "particle-academy/fancy-flow-nodes",
+  "kind": "@particle-academy/git_pr_checks",
+  "aliases": [
+    "git_pr_checks"
+  ],
+  "configVersion": 1,
+  "title": "Check Status",
+  "category": "logic",
+  "description": "CI state for a revision — routes on passing, failing, pending, or no checks at all.",
+  "ui": [
+    "ui"
+  ],
+  "runtimes": {
+    "ts": {
+      "files": [
+        "js"
+      ],
+      "engine": ">=0.30.0"
+    },
+    "php": {
+      "files": [
+        "php"
+      ],
+      "engine": ">=0.9.0"
+    }
+  },
+  "capabilities": {
+    "gitProvider": "required"
+  },
+  "fancyDependencies": [
+    {
+      "package": "fancy-git",
+      "npm": "@particle-academy/fancy-git",
+      "composer": "particle-academy/fancy-git",
+      "reason": "the provider contract this node acts through — the host hands it over as a ProviderRegistry",
+      "requirement": "required"
+    },
+    {
+      "package": "fancy-git-github",
+      "npm": "@particle-academy/fancy-git-github",
+      "composer": "particle-academy/fancy-git-github",
+      "reason": "one adapter per host you target — swap for fancy-git-gitlab or fancy-git-bitbucket",
+      "requirement": "optional"
+    }
+  ],
+  "fixtures": "nodes/git-pr-checks/fixtures/git-pr-checks.json",
+  "sideEffects": "none"
+}

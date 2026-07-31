@@ -1,0 +1,78 @@
+{
+  "kind": "@particle-academy/llm_input",
+  "cases": [
+    {
+      "name": "pauses on the generated form, in the shape the builtin user_input emits",
+      "config": {
+        "purpose": "Collect what is still missing before this refund can be approved.",
+        "title": "Refund details"
+      },
+      "expect": {
+        "pause": {
+          "awaiting": "input",
+          "detail": {
+            "title": "Refund details",
+            "generated": true,
+            "fields": [
+              { "key": "reason", "label": "Why the refund", "type": "textarea", "required": true },
+              { "key": "amount", "label": "Amount", "type": "number", "required": false }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "falls back to the model's own title when the author wrote none",
+      "config": {
+        "purpose": "Collect what is still missing before this refund can be approved."
+      },
+      "expect": {
+        "pause": {
+          "awaiting": "input",
+          "detail": {
+            "title": "Refund details",
+            "generated": true,
+            "fields": [
+              { "key": "reason", "label": "Why the refund", "type": "textarea", "required": true },
+              { "key": "amount", "label": "Amount", "type": "number", "required": false }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "still answers to the bare id",
+      "legacyKind": "llm_input",
+      "config": { "purpose": "Collect what is still missing before this refund can be approved." },
+      "expect": { "pause": { "awaiting": "input" } }
+    },
+    {
+      "name": "refuses a purpose it was never given",
+      "config": {},
+      "expect": { "error": "needs a `purpose`" }
+    },
+    {
+      "name": "refuses a form missing a key a downstream node reads",
+      "config": {
+        "purpose": "Collect what is still missing before this refund can be approved.",
+        "requiredKeys": ["email"]
+      },
+      "expect": { "error": "missing required key: email" }
+    },
+    {
+      "name": "refuses a form the model returned empty",
+      "config": { "purpose": "return nothing" },
+      "expect": { "error": "the model returned an empty form" }
+    },
+    {
+      "name": "refuses two fields sharing a key, which silently overwrite on submit",
+      "config": { "purpose": "return duplicates" },
+      "expect": { "error": "duplicate key \"reason\"" }
+    },
+    {
+      "name": "refuses more fields than the author allowed",
+      "config": { "purpose": "return three", "maxFields": 2 },
+      "expect": { "error": "over the 2 allowed" }
+    }
+  ]
+}

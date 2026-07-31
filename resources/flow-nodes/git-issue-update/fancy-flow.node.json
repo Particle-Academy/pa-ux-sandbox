@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "name": "particle-academy/fancy-flow-nodes",
+  "kind": "@particle-academy/git_issue_update",
+  "aliases": [
+    "git_issue_update"
+  ],
+  "configVersion": 1,
+  "title": "Update Issue",
+  "category": "io",
+  "description": "Change an issue's title, body, state or labels.",
+  "ui": [
+    "ui"
+  ],
+  "runtimes": {
+    "ts": {
+      "files": [
+        "js"
+      ],
+      "engine": ">=0.30.0"
+    },
+    "php": {
+      "files": [
+        "php"
+      ],
+      "engine": ">=0.9.0"
+    }
+  },
+  "capabilities": {
+    "gitProvider": "required"
+  },
+  "fancyDependencies": [
+    {
+      "package": "fancy-git",
+      "npm": "@particle-academy/fancy-git",
+      "composer": "particle-academy/fancy-git",
+      "reason": "the provider contract this node acts through — needs >=0.2 for IssueProvider",
+      "requirement": "required"
+    },
+    {
+      "package": "fancy-git-github",
+      "npm": "@particle-academy/fancy-git-github",
+      "composer": "particle-academy/fancy-git-github",
+      "reason": "the only adapter implementing IssueProvider today — GitLab and Bitbucket do not yet",
+      "requirement": "required"
+    }
+  ],
+  "fixtures": "nodes/git-issue-update/fixtures/git-issue-update.json",
+  "sideEffects": "idempotent"
+}

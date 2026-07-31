@@ -1,0 +1,12 @@
+{
+  "kind": "@particle-academy/git_log",
+  "cases": [
+    { "name": "routes to found when there are commits", "config": { "repo": "app", "limit": 5 }, "expect": { "ports": ["found"] } },
+    {
+      "name": "routes to none on an empty history",
+      "config": { "repo": "empty" },
+      "expect": { "ports": ["none"], "value": { "commits": [], "count": 0, "ref": null } }
+    },
+    { "name": "refuses when the host will not resolve the repository", "config": { "repo": "nope" }, "expect": { "error": "refused to resolve repository" } }
+  ]
+}

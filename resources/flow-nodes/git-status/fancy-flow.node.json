@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "name": "particle-academy/fancy-flow-nodes",
+  "kind": "@particle-academy/git_status",
+  "aliases": [
+    "git_status"
+  ],
+  "configVersion": 1,
+  "title": "Working Tree Status",
+  "category": "io",
+  "description": "Branch, ahead/behind and changed files — routes on whether the tree is clean.",
+  "ui": [
+    "ui"
+  ],
+  "runtimes": {
+    "ts": {
+      "files": [
+        "js"
+      ],
+      "engine": ">=0.30.0"
+    },
+    "php": {
+      "files": [
+        "php"
+      ],
+      "engine": ">=0.9.0"
+    }
+  },
+  "capabilities": {
+    "gitRepository": "required"
+  },
+  "fancyDependencies": [
+    {
+      "package": "fancy-git",
+      "npm": "@particle-academy/fancy-git",
+      "composer": "particle-academy/fancy-git",
+      "reason": "provides the GitRepository the host resolves for this node",
+      "requirement": "required"
+    }
+  ],
+  "fixtures": "nodes/git-status/fixtures/git-status.json",
+  "sideEffects": "idempotent"
+}

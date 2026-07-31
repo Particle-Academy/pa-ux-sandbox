@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "name": "particle-academy/fancy-flow-nodes",
+  "kind": "@particle-academy/llm_input",
+  "aliases": [
+    "llm_input"
+  ],
+  "configVersion": 1,
+  "title": "AI Form",
+  "category": "human",
+  "description": "Ask a model to write the form this step pauses on, from the run's own data — for the steps whose questions are not known in advance.",
+  "ui": [
+    "ui"
+  ],
+  "runtimes": {
+    "ts": {
+      "files": [
+        "js"
+      ],
+      "engine": ">=0.30.0"
+    },
+    "php": {
+      "files": [
+        "php"
+      ],
+      "engine": ">=0.9.0"
+    }
+  },
+  "capabilities": {
+    "llmForm": "required"
+  },
+  "pausesForHuman": "input",
+  "fixtures": "nodes/llm-input/fixtures/llm-input.json",
+  "sideEffects": "idempotent"
+}

@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "name": "particle-academy/fancy-flow-nodes",
+  "kind": "@particle-academy/llm_screen",
+  "aliases": [
+    "llm_screen"
+  ],
+  "configVersion": 1,
+  "title": "AI Screen",
+  "category": "io",
+  "description": "Let a model build the interface this step shows, from the components the host registered — rendered by fancy-screens' schema surface.",
+  "ui": [
+    "ui"
+  ],
+  "runtimes": {
+    "ts": {
+      "files": [
+        "js"
+      ],
+      "engine": ">=0.30.0"
+    },
+    "php": {
+      "files": [
+        "php"
+      ],
+      "engine": ">=0.9.0"
+    }
+  },
+  "capabilities": {
+    "llmScreen": "required"
+  },
+  "fancyDependencies": [
+    {
+      "package": "fancy-screens",
+      "npm": "@particle-academy/fancy-screens",
+      "reason": "renders the generated schema — <Screen schema={…}> is what this node emits for",
+      "requirement": "required"
+    },
+    {
+      "package": "react-fancy",
+      "npm": "@particle-academy/react-fancy",
+      "reason": "the component palette a generated screen usually draws from",
+      "requirement": "optional"
+    }
+  ],
+  "fixtures": "nodes/llm-screen/fixtures/llm-screen.json",
+  "sideEffects": "idempotent"
+}

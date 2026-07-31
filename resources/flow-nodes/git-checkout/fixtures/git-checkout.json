@@ -1,0 +1,8 @@
+{
+  "kind": "@particle-academy/git_checkout",
+  "cases": [
+    { "name": "checks out the target", "config": { "repo": "app", "target": "main" }, "expect": { "ports": ["done"], "value": { "target": "main" } } },
+    { "name": "proposes instead of performing when asked", "config": { "repo": "app", "target": "main", "propose": true }, "expect": { "ports": ["proposed"] } },
+    { "name": "refuses to guess a target", "config": { "repo": "app" }, "expect": { "error": "needs a `target`" } }
+  ]
+}

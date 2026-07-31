@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "name": "particle-academy/fancy-flow-nodes",
+  "kind": "@particle-academy/git_branches",
+  "aliases": ["git_branches"],
+  "configVersion": 1,
+  "title": "Branches",
+  "category": "io",
+  "description": "List a working copy's branches and report which one is checked out.",
+  "ui": ["ui"],
+  "runtimes": {
+    "ts": { "files": ["js"], "engine": ">=0.30.0" },
+    "php": { "files": ["php"], "engine": ">=0.9.0" }
+  },
+  "capabilities": { "gitRepository": "required" },
+  "fancyDependencies": [
+    {
+      "package": "fancy-git",
+      "npm": "@particle-academy/fancy-git",
+      "composer": "particle-academy/fancy-git",
+      "reason": "provides the GitRepository the host resolves for this node",
+      "requirement": "required"
+    }
+  ],
+  "fixtures": "nodes/git-branches/fixtures/git-branches.json",
+  "sideEffects": "idempotent"
+}

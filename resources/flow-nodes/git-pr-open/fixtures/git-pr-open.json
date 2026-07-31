@@ -1,0 +1,65 @@
+{
+  "kind": "@particle-academy/git_pr_open",
+  "cases": [
+    {
+      "name": "opens a pull request and reports its number and url",
+      "config": {
+        "provider": "github",
+        "owner": "Particle-Academy",
+        "repo": "fancy-flow",
+        "title": "Fix the merge point",
+        "sourceBranch": "fix/merge",
+        "targetBranch": "main"
+      },
+      "expect": {
+        "ports": ["out"],
+        "value": {
+          "review": {
+            "id": "1",
+            "number": 41,
+            "title": "Fix the merge point",
+            "state": "open",
+            "webUrl": "https://example.test/pr/41",
+            "sourceBranch": "fix/merge",
+            "targetBranch": "main",
+            "author": "fixture"
+          },
+          "number": 41,
+          "url": "https://example.test/pr/41"
+        }
+      }
+    },
+    {
+      "name": "still answers to the bare id",
+      "legacyKind": "git_pr_open",
+      "config": {
+        "owner": "a",
+        "repo": "b",
+        "title": "t",
+        "sourceBranch": "x",
+        "targetBranch": "main"
+      },
+      "expect": { "ports": ["out"] }
+    },
+    {
+      "name": "rejects a pull request with no title",
+      "config": { "owner": "a", "repo": "b", "sourceBranch": "x" },
+      "expect": { "error": "needs a `title`" }
+    },
+    {
+      "name": "rejects a pull request with no source branch",
+      "config": { "owner": "a", "repo": "b", "title": "t" },
+      "expect": { "error": "needs a `sourceBranch`" }
+    },
+    {
+      "name": "refuses to open a branch into itself before spending a round trip",
+      "config": { "owner": "a", "repo": "b", "title": "t", "sourceBranch": "main", "targetBranch": "main" },
+      "expect": { "error": "both \"main\"" }
+    },
+    {
+      "name": "refuses without a repository, rather than guessing one",
+      "config": { "title": "t", "sourceBranch": "x" },
+      "expect": { "error": "needs `owner` and `repo`" }
+    }
+  ]
+}

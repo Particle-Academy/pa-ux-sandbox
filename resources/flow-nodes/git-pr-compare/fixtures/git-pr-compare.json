@@ -1,0 +1,25 @@
+{
+  "kind": "@particle-academy/git_pr_compare",
+  "cases": [
+    {
+      "name": "routes to ahead when there is something to merge",
+      "config": { "owner": "a", "repo": "b", "base": "main", "head": "feature" },
+      "expect": { "ports": ["ahead"] }
+    },
+    {
+      "name": "routes to same when there is not",
+      "config": { "owner": "a", "repo": "b", "base": "main", "head": "identical" },
+      "expect": { "ports": ["same"] }
+    },
+    {
+      "name": "rejects a comparison with no head",
+      "config": { "owner": "a", "repo": "b", "base": "main" },
+      "expect": { "error": "needs a `head`" }
+    },
+    {
+      "name": "refuses to compare a ref with itself",
+      "config": { "owner": "a", "repo": "b", "base": "main", "head": "main" },
+      "expect": { "error": "both \"main\"" }
+    }
+  ]
+}

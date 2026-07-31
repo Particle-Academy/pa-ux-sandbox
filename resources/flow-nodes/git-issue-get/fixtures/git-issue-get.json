@@ -1,0 +1,41 @@
+{
+  "kind": "@particle-academy/git_issue_get",
+  "cases": [
+    {
+      "name": "routes an open issue",
+      "config": {
+        "owner": "a",
+        "repo": "b",
+        "number": 7
+      },
+      "expect": {
+        "ports": [
+          "open"
+        ]
+      }
+    },
+    {
+      "name": "routes a closed issue",
+      "config": {
+        "owner": "a",
+        "repo": "b",
+        "number": 99
+      },
+      "expect": {
+        "ports": [
+          "closed"
+        ]
+      }
+    },
+    {
+      "name": "refuses without a number",
+      "config": {
+        "owner": "a",
+        "repo": "b"
+      },
+      "expect": {
+        "error": "needs an issue \"number\""
+      }
+    }
+  ]
+}

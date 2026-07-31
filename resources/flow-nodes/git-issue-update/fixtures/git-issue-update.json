@@ -1,0 +1,41 @@
+{
+  "kind": "@particle-academy/git_issue_update",
+  "cases": [
+    {
+      "name": "closes an issue",
+      "config": {
+        "owner": "a",
+        "repo": "b",
+        "number": 7,
+        "state": "closed"
+      },
+      "expect": {
+        "ports": [
+          "out"
+        ]
+      }
+    },
+    {
+      "name": "refuses an update that changes nothing",
+      "config": {
+        "owner": "a",
+        "repo": "b",
+        "number": 7
+      },
+      "expect": {
+        "error": "nothing to change"
+      }
+    },
+    {
+      "name": "refuses without a number",
+      "config": {
+        "owner": "a",
+        "repo": "b",
+        "state": "closed"
+      },
+      "expect": {
+        "error": "needs an issue \"number\""
+      }
+    }
+  ]
+}

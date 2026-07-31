@@ -1,0 +1,111 @@
+{
+  "kind": "@particle-academy/ui_effect",
+  "cases": [
+    {
+      "name": "adds a class to a handle and passes the payload through",
+      "config": { "target": "deal-card", "op": "add-class", "value": "ff-fx-glow" },
+      "inputs": { "dealId": 41 },
+      "expect": {
+        "ports": ["out"],
+        "value": {
+          "dealId": 41,
+          "applied": true,
+          "uiEffect": {
+            "target": "deal-card",
+            "op": "add-class",
+            "value": "ff-fx-glow",
+            "name": "",
+            "durationMs": 0
+          }
+        }
+      }
+    },
+    {
+      "name": "sets a CSS variable on the page — a whole-page theme change",
+      "config": {
+        "target": "page",
+        "op": "set-var",
+        "name": "--fa-accent",
+        "value": "#a855f7"
+      },
+      "expect": {
+        "ports": ["out"],
+        "value": {
+          "applied": true,
+          "uiEffect": {
+            "target": "page",
+            "op": "set-var",
+            "value": "#a855f7",
+            "name": "--fa-accent",
+            "durationMs": 0
+          }
+        }
+      }
+    },
+    {
+      "name": "carries a duration through, which is what makes a pulse",
+      "config": {
+        "target": "deal-card",
+        "op": "add-class",
+        "value": "ff-fx-pulse",
+        "durationMs": 1200
+      },
+      "expect": {
+        "ports": ["out"],
+        "value": {
+          "applied": true,
+          "uiEffect": {
+            "target": "deal-card",
+            "op": "add-class",
+            "value": "ff-fx-pulse",
+            "name": "",
+            "durationMs": 1200
+          }
+        }
+      }
+    },
+    {
+      "name": "defaults the target to the page",
+      "config": { "op": "add-class", "value": "theme-dark" },
+      "expect": {
+        "ports": ["out"],
+        "value": {
+          "applied": true,
+          "uiEffect": {
+            "target": "page",
+            "op": "add-class",
+            "value": "theme-dark",
+            "name": "",
+            "durationMs": 0
+          }
+        }
+      }
+    },
+    {
+      "name": "still answers to the bare `ui_effect` id",
+      "legacyKind": "ui_effect",
+      "config": { "target": "page", "op": "add-class", "value": "theme-dark" },
+      "expect": { "ports": ["out"] }
+    },
+    {
+      "name": "rejects an unknown operation instead of doing nothing",
+      "config": { "target": "page", "op": "sparkle", "value": "x" },
+      "expect": { "error": "unknown op" }
+    },
+    {
+      "name": "rejects an operation with no value",
+      "config": { "target": "page", "op": "add-class", "value": "" },
+      "expect": { "error": "needs a value" }
+    },
+    {
+      "name": "rejects set-var with no property name",
+      "config": { "target": "page", "op": "set-var", "value": "#fff" },
+      "expect": { "error": "needs `name`" }
+    },
+    {
+      "name": "rejects replace-class with nothing to replace",
+      "config": { "target": "page", "op": "replace-class", "value": "theme-dark" },
+      "expect": { "error": "needs `name`" }
+    }
+  ]
+}

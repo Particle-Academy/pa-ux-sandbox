@@ -1,0 +1,30 @@
+{
+  "kind": "@particle-academy/git_pr_checks",
+  "cases": [
+    {
+      "name": "routes to passing when every check succeeded",
+      "config": { "owner": "a", "repo": "b", "revision": "all-green" },
+      "expect": { "ports": ["passing"] }
+    },
+    {
+      "name": "routes to failing when any check failed",
+      "config": { "owner": "a", "repo": "b", "revision": "one-red" },
+      "expect": { "ports": ["failing"] }
+    },
+    {
+      "name": "routes pending separately — still building is not broken",
+      "config": { "owner": "a", "repo": "b", "revision": "still-running" },
+      "expect": { "ports": ["pending"] }
+    },
+    {
+      "name": "routes no-checks separately — unconfigured CI is not a pass",
+      "config": { "owner": "a", "repo": "b", "revision": "no-ci" },
+      "expect": { "ports": ["none"], "value": { "checks": [], "revision": "no-ci", "failing": 0, "pending": 0 } }
+    },
+    {
+      "name": "rejects a run with no revision anywhere",
+      "config": { "owner": "a", "repo": "b" },
+      "expect": { "error": "needs a `revision`" }
+    }
+  ]
+}

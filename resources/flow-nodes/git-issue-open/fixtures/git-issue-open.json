@@ -1,0 +1,37 @@
+{
+  "kind": "@particle-academy/git_issue_open",
+  "cases": [
+    {
+      "name": "files an issue",
+      "config": {
+        "owner": "a",
+        "repo": "b",
+        "title": "Broken"
+      },
+      "expect": {
+        "ports": [
+          "out"
+        ]
+      }
+    },
+    {
+      "name": "refuses an untitled issue",
+      "config": {
+        "owner": "a",
+        "repo": "b"
+      },
+      "expect": {
+        "error": "needs a \"title\""
+      }
+    },
+    {
+      "name": "refuses without a repository",
+      "config": {
+        "title": "x"
+      },
+      "expect": {
+        "error": "needs `owner` and `repo`"
+      }
+    }
+  ]
+}

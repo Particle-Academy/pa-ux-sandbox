@@ -1,0 +1,23 @@
+{
+  "kind": "@particle-academy/git_status",
+  "cases": [
+    {
+      "name": "routes to dirty when there are changes",
+      "config": { "repo": "app" },
+      "expect": { "ports": ["dirty"] }
+    },
+    {
+      "name": "routes to clean when there are none",
+      "config": { "repo": "clean" },
+      "expect": {
+        "ports": ["clean"],
+        "value": { "branch": "main", "upstream": "origin/main", "ahead": 0, "behind": 0, "files": [], "count": 0, "clean": true }
+      }
+    },
+    {
+      "name": "refuses when the host will not resolve the repository",
+      "config": { "repo": "nope" },
+      "expect": { "error": "refused to resolve repository" }
+    }
+  ]
+}

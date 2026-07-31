@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "025a52fbee71826089f0db4c34627332",
+    "content-hash": "9922695e98a33c7cbca1bcd082676ce8",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -10823,6 +10823,44 @@
                 "source": "https://github.com/orchestral/workbench/tree/v11.1.0"
             },
             "time": "2026-03-24T23:09:55+00:00"
+        },
+        {
+            "name": "particle-academy/fancy-git",
+            "version": "v0.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Particle-Academy/fancy-git-php.git",
+                "reference": "dffdd0302c6584aeac7e5e4d22df4c4096f3d715"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Particle-Academy/fancy-git-php/zipball/dffdd0302c6584aeac7e5e4d22df4c4096f3d715",
+                "reference": "dffdd0302c6584aeac7e5e4d22df4c4096f3d715",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.3",
+                "symfony/process": "^7.2|^8.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^11.0|^12.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "FancyGit\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Framework-agnostic Git toolkit and normalized provider contracts for PHP.",
+            "support": {
+                "issues": "https://github.com/Particle-Academy/fancy-git-php/issues",
+                "source": "https://github.com/Particle-Academy/fancy-git-php"
+            },
+            "time": "2026-07-31T19:03:57+00:00"
         },
         {
             "name": "pestphp/pest",

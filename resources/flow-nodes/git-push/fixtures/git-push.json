@@ -1,0 +1,12 @@
+{
+  "kind": "@particle-academy/git_push",
+  "cases": [
+    {
+      "name": "pushes to the default remote",
+      "config": { "repo": "app" },
+      "expect": { "ports": ["done"], "value": { "remote": "origin", "branch": null } }
+    },
+    { "name": "proposes instead of performing when asked", "config": { "repo": "app", "propose": true }, "expect": { "ports": ["proposed"] } },
+    { "name": "refuses when the host will not resolve the repository", "config": { "repo": "nope" }, "expect": { "error": "refused to resolve repository" } }
+  ]
+}

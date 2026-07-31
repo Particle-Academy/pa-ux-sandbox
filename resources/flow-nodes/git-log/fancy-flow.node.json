@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "name": "particle-academy/fancy-flow-nodes",
+  "kind": "@particle-academy/git_log",
+  "aliases": ["git_log"],
+  "configVersion": 1,
+  "title": "Commit Log",
+  "category": "io",
+  "description": "Read commits from a working copy, branching on whether any matched.",
+  "ui": ["ui"],
+  "runtimes": {
+    "ts": { "files": ["js"], "engine": ">=0.30.0" },
+    "php": { "files": ["php"], "engine": ">=0.9.0" }
+  },
+  "capabilities": { "gitRepository": "required" },
+  "fancyDependencies": [
+    {
+      "package": "fancy-git",
+      "npm": "@particle-academy/fancy-git",
+      "composer": "particle-academy/fancy-git",
+      "reason": "provides the GitRepository the host resolves for this node",
+      "requirement": "required"
+    }
+  ],
+  "fixtures": "nodes/git-log/fixtures/git-log.json",
+  "sideEffects": "idempotent"
+}

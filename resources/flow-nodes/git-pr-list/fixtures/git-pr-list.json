@@ -1,0 +1,20 @@
+{
+  "kind": "@particle-academy/git_pr_list",
+  "cases": [
+    {
+      "name": "routes to found when there are pull requests",
+      "config": { "owner": "a", "repo": "b", "state": "open" },
+      "expect": { "ports": ["found"] }
+    },
+    {
+      "name": "routes to none when there are not",
+      "config": { "owner": "a", "repo": "b", "state": "merged" },
+      "expect": { "ports": ["none"], "value": { "reviews": [], "count": 0, "nextCursor": null } }
+    },
+    {
+      "name": "refuses without a repository",
+      "config": { "state": "open" },
+      "expect": { "error": "needs `owner` and `repo`" }
+    }
+  ]
+}

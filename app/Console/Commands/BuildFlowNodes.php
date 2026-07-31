@@ -40,7 +40,7 @@ class BuildFlowNodes extends Command
         $nodes = $source->fromRepo() ?? [];
 
         if ($nodes === []) {
-            $this->error("No node manifests under {$repo}/nodes.");
+            $this->error("No node manifests under {$repo}.");
 
             return self::FAILURE;
         }

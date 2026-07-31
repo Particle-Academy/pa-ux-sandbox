@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "name": "particle-academy/fancy-flow-nodes",
+  "kind": "@particle-academy/ui_effect",
+  "aliases": [
+    "ui_effect"
+  ],
+  "configVersion": 1,
+  "ui": [
+    "ui"
+  ],
+  "title": "UI Effect",
+  "category": "io",
+  "description": "Add, swap or remove a class, set a CSS variable, or flash a style on a live surface — theme a whole page or pulse one card from a workflow.",
+  "runtimes": {
+    "ts": {
+      "files": [
+        "js"
+      ],
+      "engine": ">=0.30.0"
+    },
+    "php": {
+      "files": [
+        "php"
+      ],
+      "engine": ">=0.9.0"
+    }
+  },
+  "capabilities": {
+    "uiEffect": "optional"
+  },
+  "fixtures": "nodes/ui-effect/fixtures/ui-effect.json",
+  "sideEffects": "unsafe-to-replay"
+}

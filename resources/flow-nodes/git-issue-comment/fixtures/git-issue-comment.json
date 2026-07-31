@@ -1,0 +1,41 @@
+{
+  "kind": "@particle-academy/git_issue_comment",
+  "cases": [
+    {
+      "name": "posts a comment",
+      "config": {
+        "owner": "a",
+        "repo": "b",
+        "number": 7,
+        "body": "looking"
+      },
+      "expect": {
+        "ports": [
+          "out"
+        ]
+      }
+    },
+    {
+      "name": "refuses an empty comment",
+      "config": {
+        "owner": "a",
+        "repo": "b",
+        "number": 7
+      },
+      "expect": {
+        "error": "needs a \"body\""
+      }
+    },
+    {
+      "name": "refuses without a number",
+      "config": {
+        "owner": "a",
+        "repo": "b",
+        "body": "x"
+      },
+      "expect": {
+        "error": "needs an issue \"number\""
+      }
+    }
+  ]
+}

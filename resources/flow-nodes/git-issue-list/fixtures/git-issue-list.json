@@ -1,0 +1,45 @@
+{
+  "kind": "@particle-academy/git_issue_list",
+  "cases": [
+    {
+      "name": "routes to found when there are issues",
+      "config": {
+        "owner": "a",
+        "repo": "b",
+        "state": "open"
+      },
+      "expect": {
+        "ports": [
+          "found"
+        ]
+      }
+    },
+    {
+      "name": "routes to none when there are not",
+      "config": {
+        "owner": "a",
+        "repo": "b",
+        "state": "closed"
+      },
+      "expect": {
+        "ports": [
+          "none"
+        ],
+        "value": {
+          "issues": [],
+          "count": 0,
+          "nextCursor": null
+        }
+      }
+    },
+    {
+      "name": "refuses without a repository",
+      "config": {
+        "state": "open"
+      },
+      "expect": {
+        "error": "needs `owner` and `repo`"
+      }
+    }
+  ]
+}

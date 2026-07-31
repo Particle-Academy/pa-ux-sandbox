@@ -13,7 +13,8 @@
         "tui-service": "node tui-service/run.mjs",
         "tm": "npx tsx .bots/lib/cli.ts",
         "tm:status": "npx tsx .bots/lib/cli.ts status",
-        "tm:jobs": "npx tsx .bots/lib/cli.ts jobs"
+        "tm:jobs": "npx tsx .bots/lib/cli.ts jobs",
+        "flow:manifests": "node tools/flow-node-manifests.mjs"
     },
     "devDependencies": {
         "@tailwindcss/vite": "^4.2.4",

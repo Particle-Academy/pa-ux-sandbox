@@ -1,0 +1,39 @@
+{
+  "kind": "@particle-academy/git_branches",
+  "cases": [
+    {
+      "name": "lists local branches and names the current one",
+      "config": { "repo": "app" },
+      "expect": {
+        "ports": ["out"],
+        "value": {
+          "branches": [
+            { "name": "main", "current": true, "remote": false, "target": "abc" },
+            { "name": "feature", "current": false, "remote": false, "target": "def" }
+          ],
+          "count": 2,
+          "current": "main",
+          "names": ["main", "feature"]
+        }
+      }
+    },
+    {
+      "name": "includes remotes when asked",
+      "config": { "repo": "app", "includeRemote": true },
+      "expect": {
+        "ports": ["out"],
+        "value": {
+          "branches": [
+            { "name": "main", "current": true, "remote": false, "target": "abc" },
+            { "name": "feature", "current": false, "remote": false, "target": "def" },
+            { "name": "origin/main", "current": false, "remote": true, "target": "abc" }
+          ],
+          "count": 3,
+          "current": "main",
+          "names": ["main", "feature", "origin/main"]
+        }
+      }
+    },
+    { "name": "refuses when the host will not resolve the repository", "config": { "repo": "nope" }, "expect": { "error": "refused to resolve repository" } }
+  ]
+}

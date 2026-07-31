@@ -1,0 +1,98 @@
+/**
+ * Optional effect classes, for when you'd rather not write your own.
+ *
+ * Import it, then point a `ui_effect` node at `add-class` with one of these and
+ * a `durationMs`. Nothing in the node depends on this file — it is a starting
+ * set, not an API, and your own class beats any of them.
+ *
+ *   import "@/components/fancy/flow-nodes/ui-effect/ui/effects.css";
+ *
+ * Every animation respects `prefers-reduced-motion`: the colour change still
+ * lands, the movement doesn't.
+ */
+
+.ff-fx-glow {
+  animation: ff-fx-glow 1.2s ease-in-out infinite;
+}
+
+.ff-fx-pulse {
+  animation: ff-fx-pulse 900ms ease-in-out infinite;
+}
+
+.ff-fx-flash {
+  animation: ff-fx-flash 600ms ease-out 1;
+}
+
+.ff-fx-shake {
+  animation: ff-fx-shake 420ms cubic-bezier(0.36, 0.07, 0.19, 0.97) 1;
+}
+
+/* An inner glow, so a card can light up without changing its footprint. */
+@keyframes ff-fx-glow {
+  0%,
+  100% {
+    box-shadow: inset 0 0 0 1px var(--ff-fx-color, #a855f7), inset 0 0 12px -4px var(--ff-fx-color, #a855f7);
+  }
+  50% {
+    box-shadow: inset 0 0 0 1px var(--ff-fx-color, #a855f7), inset 0 0 26px -2px var(--ff-fx-color, #a855f7);
+  }
+}
+
+@keyframes ff-fx-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+}
+
+@keyframes ff-fx-flash {
+  from {
+    background-color: var(--ff-fx-color, #a855f7);
+  }
+  to {
+    background-color: transparent;
+  }
+}
+
+@keyframes ff-fx-shake {
+  10%,
+  90% {
+    transform: translateX(-1px);
+  }
+  20%,
+  80% {
+    transform: translateX(2px);
+  }
+  30%,
+  50%,
+  70% {
+    transform: translateX(-4px);
+  }
+  40%,
+  60% {
+    transform: translateX(4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ff-fx-glow,
+  .ff-fx-pulse,
+  .ff-fx-shake {
+    animation: none;
+  }
+
+  /* Keep the signal, drop the motion — a highlight that never appears is a
+     failed notification, not an accessibility win. */
+  .ff-fx-glow,
+  .ff-fx-pulse {
+    box-shadow: inset 0 0 0 2px var(--ff-fx-color, #a855f7);
+  }
+
+  .ff-fx-flash {
+    animation-duration: 1ms;
+    background-color: var(--ff-fx-color, #a855f7);
+  }
+}

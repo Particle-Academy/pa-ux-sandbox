@@ -1,0 +1,8 @@
+{
+  "kind": "@particle-academy/git_pull",
+  "cases": [
+    { "name": "pulls from the default remote", "config": { "repo": "app" }, "expect": { "ports": ["done"] } },
+    { "name": "proposes instead of performing when asked", "config": { "repo": "app", "propose": true }, "expect": { "ports": ["proposed"] } },
+    { "name": "refuses when the host will not resolve the repository", "config": { "repo": "nope" }, "expect": { "error": "refused to resolve repository" } }
+  ]
+}

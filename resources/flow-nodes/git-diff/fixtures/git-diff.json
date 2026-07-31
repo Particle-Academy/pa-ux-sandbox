@@ -1,0 +1,12 @@
+{
+  "kind": "@particle-academy/git_diff",
+  "cases": [
+    { "name": "routes to changed when files differ", "config": { "repo": "app" }, "expect": { "ports": ["changed"] } },
+    {
+      "name": "routes to empty when nothing differs",
+      "config": { "repo": "clean" },
+      "expect": { "ports": ["empty"], "value": { "files": [], "count": 0, "patch": "" } }
+    },
+    { "name": "refuses when the host will not resolve the repository", "config": { "repo": "nope" }, "expect": { "error": "refused to resolve repository" } }
+  ]
+}

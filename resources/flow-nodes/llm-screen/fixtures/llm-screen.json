@@ -1,0 +1,77 @@
+{
+  "kind": "@particle-academy/llm_screen",
+  "cases": [
+    {
+      "name": "returns the generated schema for the named screen",
+      "config": {
+        "purpose": "Show the deploy result.",
+        "screenId": "deploy-summary",
+        "title": "Deploy summary"
+      },
+      "expect": {
+        "ports": ["out"],
+        "value": {
+          "screenId": "deploy-summary",
+          "title": "Deploy summary",
+          "schema": {
+            "type": "Card",
+            "props": { "title": "Deploy summary" },
+            "children": [{ "type": "Text", "children": ["3 services moved."] }]
+          }
+        }
+      }
+    },
+    {
+      "name": "takes the model's title when the author wrote none",
+      "config": { "purpose": "Show the deploy result.", "screenId": "deploy-summary" },
+      "expect": {
+        "ports": ["out"],
+        "value": {
+          "screenId": "deploy-summary",
+          "title": "Generated",
+          "schema": {
+            "type": "Card",
+            "props": { "title": "Deploy summary" },
+            "children": [{ "type": "Text", "children": ["3 services moved."] }]
+          }
+        }
+      }
+    },
+    {
+      "name": "still answers to the bare id",
+      "legacyKind": "llm_screen",
+      "config": { "purpose": "Show the deploy result.", "screenId": "deploy-summary" },
+      "expect": { "ports": ["out"] }
+    },
+    {
+      "name": "refuses a purpose it was never given",
+      "config": { "screenId": "deploy-summary" },
+      "expect": { "error": "needs a `purpose`" }
+    },
+    {
+      "name": "refuses a guessed screen id, which would collide with whatever holds it",
+      "config": { "purpose": "Show the deploy result." },
+      "expect": { "error": "needs a `screenId`" }
+    },
+    {
+      "name": "refuses a component the host never registered, which would render as a placeholder",
+      "config": { "purpose": "use an unknown component", "screenId": "deploy-summary" },
+      "expect": { "error": "unknown component \"DataGrid\"" }
+    },
+    {
+      "name": "names what IS registered, since the fix is usually the registry",
+      "config": { "purpose": "use an unknown component", "screenId": "deploy-summary" },
+      "expect": { "error": "registered components are: Card, Text, Stack" }
+    },
+    {
+      "name": "refuses a tree that nests past the limit",
+      "config": { "purpose": "nest forever", "screenId": "deploy-summary" },
+      "expect": { "error": "nested deeper than 12 levels" }
+    },
+    {
+      "name": "refuses a schema with no component type at all",
+      "config": { "purpose": "return junk", "screenId": "deploy-summary" },
+      "expect": { "error": "no component type" }
+    }
+  ]
+}

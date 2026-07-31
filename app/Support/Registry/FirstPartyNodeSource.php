@@ -19,19 +19,27 @@ use Illuminate\Support\Facades\File;
  *
  * @particle-academy/ui_effect` resolved to nothing for every real consumer.
  *
- * So first-party nodes are now BUILT, not registered. The same two-mode
- * arrangement as {@see ReadmeSource}, {@see TuiPreviewSource} and the component
- * registry: read the sibling repo where it exists, fall back to a compiled
- * artifact where it does not — which is production, since only this app deploys.
+ * So first-party nodes are now BUILT, not registered — and the source they are
+ * built from lives in THIS app, at `resources/flow-nodes/`, beside the registry
+ * it is served from.
+ *
+ * It used to be a separate repo, and that was the mistake underneath the one
+ * above: a repo of its own made a package-shaped thing out of something that
+ * must never look installable. Vendoring exists so a consumer can add a node
+ * WITHOUT taking on another dependency; a sibling repo kept inviting the
+ * opposite reading, including from agents, which tried to
+ * `composer require particle-academy/fancy-flow-nodes` and got a 404 — because
+ * no such package exists or should.
+ *
+ * With the source in-app there is no second mode to fall back from: it is
+ * present in development and in production alike. The compiled artifact remains
+ * as the served payload, not as a stand-in for a checkout that might be missing.
  *
  * The database still wins on a kind collision. A moderator's decision has to
  * beat a build artifact, or moderation means nothing.
  */
 class FirstPartyNodeSource
 {
-    /** Where the marketplace repo sits in a Genie / `.agi` workspace. */
-    private const REPO = 'fancy-flow-nodes';
-
     /** @var array<string,array<string,mixed>>|null */
     private ?array $nodes = null;
 
@@ -105,7 +113,7 @@ class FirstPartyNodeSource
 
         $nodes = [];
 
-        foreach (File::directories("{$repo}/nodes") as $dir) {
+        foreach (File::directories($repo) as $dir) {
             $manifestPath = "{$dir}/fancy-flow.node.json";
             if (! File::exists($manifestPath)) {
                 continue;
@@ -142,15 +150,17 @@ class FirstPartyNodeSource
         return resource_path('registry/flow-nodes.json');
     }
 
+    /**
+     * The directory holding node source, or null if it is somehow absent.
+     *
+     * Kept nullable rather than assumed: a deploy that dropped `resources/` would
+     * otherwise fail deep inside a directory read instead of at the check.
+     */
     public function repoPath(): ?string
     {
-        foreach ([dirname(base_path()).'/'.self::REPO, base_path('packages/'.self::REPO)] as $candidate) {
-            if (is_dir($candidate.'/nodes')) {
-                return $candidate;
-            }
-        }
+        $path = resource_path('flow-nodes');
 
-        return null;
+        return is_dir($path) ? $path : null;
     }
 
     /**

@@ -11,10 +11,23 @@ namespace App\Support\Registry;
  * `node_modules` or `vendor`.
  *
  * That is why this exists rather than the registry simply naming an npm package
- * and a Composer package: there is no package. One node, one source directory,
- * copied.
+ * and a Composer package: **there is no package.** One node, one source
+ * directory, copied.
  *
- * Layout it reads, in `repos/fancy-flow-nodes/nodes/<name>/`:
+ * ## Why the source lives in this app
+ *
+ * It used to live in a separate `fancy-flow-nodes` repo, compiled in from
+ * outside. That put a package-shaped thing in front of something that must never
+ * look installable: the whole point of vendoring is that a consumer adds a node
+ * WITHOUT taking on another dependency, and a repo of its own kept inviting the
+ * opposite reading — including from agents, which tried to
+ * `composer require particle-academy/fancy-flow-nodes` and got a 404, because no
+ * such package exists or should.
+ *
+ * The source now sits beside the registry it is served from. There is nothing
+ * to install, nothing to publish, and nothing to mistake for a package.
+ *
+ * Layout it reads, in `resources/flow-nodes/<name>/`:
  *
  *   fancy-flow.node.json   the manifest (declares `ui` + per-runtime `files`)
  *   ui/                    the React kind — copied whichever backend you pick
@@ -23,9 +36,6 @@ namespace App\Support\Registry;
  */
 class NodeSource
 {
-    /** Where the marketplace repo sits in a Genie/`.agi` workspace. */
-    private const REPO = 'fancy-flow-nodes';
-
     /**
      * Read every file a node publishes, keyed for the CLI.
      *
@@ -62,23 +72,17 @@ class NodeSource
     }
 
     /**
-     * Absolute path to a node's source, or null when the marketplace repo is
-     * not on disk.
+     * Absolute path to a node's source, or null if that node does not exist.
      *
-     * Production deploys only px-ui-sandbox, so there are no siblings there —
-     * the compiled artifact carries the file contents instead, the same
-     * arrangement the component registry uses.
+     * No longer a "is the sibling repo checked out" question: the source ships
+     * with this app, so it is present in development and production alike. Null
+     * here means the node is unknown, not that the environment is incomplete.
      */
     public function nodePath(string $node): ?string
     {
-        foreach ([dirname(base_path()).'/'.self::REPO, base_path('packages/'.self::REPO)] as $candidate) {
-            $path = $candidate.'/nodes/'.$node;
-            if (is_dir($path)) {
-                return $path;
-            }
-        }
+        $path = resource_path('flow-nodes/'.$node);
 
-        return null;
+        return is_dir($path) ? $path : null;
     }
 
     /**

@@ -53,14 +53,54 @@ describe("the main nav is reachable at every width", () => {
         expect(block).toMatch(/\.nav-burger \{ display: inline-flex/);
     });
 
-    it("keeps the burger on phones, where the row sheds other affordances", () => {
-        // The phone block drops the ⌘K palette, the transition toggle and the
-        // GitHub link. Dropping the burger too would leave the site with no
-        // route to its own nav — the original bug, one breakpoint lower.
+    it("hands the nav to the bottom bar on phones, and only then drops the burger", () => {
+        // The guarantee has never been "keep the burger" — it is that the site
+        // is always navigable. On phones that job moved to the bottom bar, so
+        // the burger goes: two routes to the same nav on one screen is clutter.
+        //
+        // The pairing is what matters. Hiding the burger WITHOUT showing the bar
+        // is the original bug wearing new clothes, so assert both in the same
+        // block rather than trusting them to be edited together.
         const block = mediaBlock(640);
 
-        expect(block).not.toMatch(/\.nav-burger[^{}]*\{[^}]*display:\s*none/);
-        expect(block).toMatch(/nav-burger/); // it is deliberately ordered first
+        expect(block).toMatch(/\.site-bottom-nav \{ display: block; \}/);
+        expect(block).toMatch(/\.nav-burger \{ display: none; \}/);
+    });
+
+    it("reserves space for the fixed bar so the page does not end under it", () => {
+        // A fixed bar overlaps the last of the content, and on a phone that is
+        // usually the footer or a submit button.
+        expect(mediaBlock(640)).toMatch(/body \{ padding-bottom: calc\(58px \+ env\(safe-area-inset-bottom\)\)/);
+    });
+
+    it("keeps the burger between phone and desktop, where a bar has no ergonomics", () => {
+        // The bar is a thumb-reach pattern. A tablet has the width for a drawer
+        // and not the grip for a bar, so 640–1180 keeps the burger.
+        const block = mediaBlock(1180);
+
+        expect(block).toMatch(/\.nav-burger \{ display: inline-flex/);
+        expect(block).not.toMatch(/site-bottom-nav/);
+    });
+
+    it("routes bottom-bar destinations through Inertia, not full page loads", () => {
+        // MobileMenu.Item renders a plain <a> unless given `as`. Without this
+        // every tap on the bar is a full page load — the site's own nav being
+        // the slowest way to move around it.
+        const bar = layout.slice(layout.indexOf("MobileMenu.BottomBar"));
+
+        expect(bar).toMatch(/as=\{Link\}\s+href="\/docs"/);
+        expect(bar).toMatch(/as=\{Link\}\s+href="\/packages"/);
+        expect(bar).toMatch(/as=\{Link\}\s+href="\/flow"/);
+    });
+
+    it("gives the profile menu a button, since the header avatar is unreachable", () => {
+        // The actions row sheds most of itself on a phone, taking the avatar
+        // dropdown's trigger with it. Without this the account menu simply has
+        // no route on the surface most people use.
+        expect(layout).toMatch(/setProfileOpen\(true\)/);
+        expect(layout).toMatch(/title="Your account"/);
+        // Signed out, the same slot offers the way in rather than sitting dead.
+        expect(layout).toMatch(/href="\/auth\/github" icon=\{<LogIn/);
     });
 
     it("puts every nav item in the flyout, not a hand-picked subset", () => {

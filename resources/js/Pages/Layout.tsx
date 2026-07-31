@@ -7,7 +7,21 @@ import {
     MobileMenu,
     Tooltip,
 } from "@particle-academy/react-fancy";
-import { Moon, Sun, Sparkles, Check, Bot, Menu, X } from "lucide-react";
+import {
+    Moon,
+    Sun,
+    Sparkles,
+    Check,
+    Bot,
+    Menu,
+    X,
+    BookOpen,
+    Boxes,
+    Workflow,
+    MoreHorizontal,
+    UserRound,
+    LogIn,
+} from "lucide-react";
 import {
     useFancyTransition,
     FANCY_TRANSITION_LABELS,
@@ -91,6 +105,7 @@ export function Layout({
     const isPro = auth?.player?.pro ?? false;
     const navItems = NAV_ITEMS;
     const [navOpen, setNavOpen] = useState(false);
+    const [profileOpen, setProfileOpen] = useState(false);
 
     // Close on navigation. Inertia swaps the page without unmounting the
     // layout, so a flyout left open would hang over the page you just
@@ -302,6 +317,104 @@ export function Layout({
                     {!auth && <MobileMenu.Item href="/auth/github">Sign in</MobileMenu.Item>}
                 </MobileMenu.Flyout>
             </div>
+
+            {/* Phones get a bottom bar, not a hamburger.
+                A drawer hides every destination behind a tap and puts the
+                control at the top of a screen held at the bottom. The bar keeps
+                the three most-visited places one thumb-reach away, hands the
+                long tail to More (the same flyout above), and gives the profile
+                menu its own button — the avatar in the header is unreachable on
+                a phone, where the actions row has already shed most of itself.
+
+                `as={Link}` is what keeps these client-side visits: MobileMenu.Item
+                renders a plain <a> otherwise, and every tap would be a full page
+                load. Needs react-fancy >= 4.18. */}
+            <div id="site-bottom-nav" className="site-bottom-nav">
+                <MobileMenu.BottomBar>
+                    <MobileMenu.Item
+                        as={Link}
+                        href="/docs"
+                        icon={<BookOpen size={18} />}
+                        active={path === "docs" || path.startsWith("docs/")}
+                    >
+                        Docs
+                    </MobileMenu.Item>
+                    <MobileMenu.Item
+                        as={Link}
+                        href="/packages"
+                        icon={<Boxes size={18} />}
+                        active={path === "packages" || path.startsWith("packages/")}
+                    >
+                        Packages
+                    </MobileMenu.Item>
+                    <MobileMenu.Item
+                        as={Link}
+                        href="/flow"
+                        icon={<Workflow size={18} />}
+                        active={path === "flow" || path.startsWith("flow/")}
+                    >
+                        Flow
+                    </MobileMenu.Item>
+                    <MobileMenu.Item
+                        icon={<MoreHorizontal size={18} />}
+                        active={navOpen}
+                        onClick={() => setNavOpen(true)}
+                    >
+                        More
+                    </MobileMenu.Item>
+                    {auth ? (
+                        <MobileMenu.Item
+                            icon={<UserRound size={18} />}
+                            active={profileOpen || path === "profile"}
+                            onClick={() => setProfileOpen(true)}
+                        >
+                            Profile
+                        </MobileMenu.Item>
+                    ) : (
+                        <MobileMenu.Item as={Link} href="/auth/github" icon={<LogIn size={18} />}>
+                            Sign in
+                        </MobileMenu.Item>
+                    )}
+                </MobileMenu.BottomBar>
+            </div>
+
+            {/* The profile menu, as a sheet rather than a dropdown. The header's
+                avatar Dropdown anchors to a trigger that is off-screen on a
+                phone, so the same actions get a surface that opens from the bar. */}
+            {auth && (
+                <MobileMenu.Flyout
+                    open={profileOpen}
+                    onClose={() => setProfileOpen(false)}
+                    side="right"
+                    title="Your account"
+                >
+                    <MobileMenu.Item as={Link} href="/profile" icon={<UserRound size={18} />}>
+                        Your profile
+                    </MobileMenu.Item>
+                    <MobileMenu.Item as={Link} href="/showcase/mine">
+                        My submissions
+                    </MobileMenu.Item>
+                    <MobileMenu.Item as={Link} href="/referrals">
+                        Refer a friend
+                    </MobileMenu.Item>
+                    <MobileMenu.Item as={Link} href="/shop">
+                        Coin shop
+                    </MobileMenu.Item>
+                    {adminLink && (
+                        <MobileMenu.Item as={Link} href={adminLink}>
+                            Admin
+                        </MobileMenu.Item>
+                    )}
+                    <MobileMenu.Item
+                        onClick={() => {
+                            setProfileOpen(false);
+                            router.post("/auth/logout");
+                        }}
+                    >
+                        Sign out
+                    </MobileMenu.Item>
+                </MobileMenu.Flyout>
+            )}
 
             {auth && <ActiveUsersOverlay />}
             <AgentAnalyticsSink />

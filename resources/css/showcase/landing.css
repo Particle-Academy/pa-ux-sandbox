@@ -1136,3 +1136,25 @@ section.ticker { padding: 0; background: var(--bg-1); }
 @media (max-width: 820px) {
   .qs-mcp .codeblock { border-left: none; border-top: 1px solid var(--border-1); }
 }
+
+/* ─────────── Bottom bar (phones) ───────────
+   The mobile nav on a phone is a bottom bar, not a drawer: destinations stay
+   visible and sit under the thumb, instead of behind a control at the top of a
+   screen held at the bottom.
+
+   It replaces the burger below 640px rather than joining it — two routes to the
+   same nav on one screen is clutter, and the bar's More item already opens the
+   flyout the burger opened. Between 640 and 1180 the burger still rules, which
+   is where a tablet has the width for a drawer and not the ergonomics for a bar. */
+.site-bottom-nav { display: none; }
+
+@media (max-width: 640px) {
+  .site-bottom-nav { display: block; }
+
+  /* The bar is fixed, so the last of the page would otherwise sit under it.
+     Includes the safe-area inset so it clears a home indicator too. */
+  body { padding-bottom: calc(58px + env(safe-area-inset-bottom)); }
+
+  /* The bar carries the nav now. */
+  .nav-burger { display: none; }
+}

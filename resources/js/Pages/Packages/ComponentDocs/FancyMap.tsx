@@ -247,7 +247,7 @@ const provider = googleProvider({ apiKey: import.meta.env.VITE_GOOGLE_MAPS_KEY }
                 <code>map_update_marker</code> / <code>map_remove_marker</code> / <code>map_select</code> /{" "}
                 <code>map_fit_bounds</code> / <code>map_start_track</code> / <code>map_stop_track</code> over the same
                 controlled state — every mutation broadcasts <code>AgentActivity</code> and is undoable. See the cohabited
-                map demo at <code>/react-demos/map-agent</code>.
+                map.
             </p>
         </div>
     ),

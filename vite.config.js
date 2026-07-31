@@ -78,8 +78,6 @@ export default defineConfig({
             input: [
                 'resources/css/app.css',
                 'resources/js/app.js',
-                'resources/css/react-demos.css',
-                'resources/js/react-demos.tsx',
                 'resources/css/showcase.css',
                 'resources/js/showcase-app.tsx',
             ],

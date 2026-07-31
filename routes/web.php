@@ -417,7 +417,6 @@ Route::prefix('admin')->name('admin.')->middleware(['web', 'auth', 'can:admin'])
 });
 
 // React demos (SPA catch-all)
-Route::get('/react-demos/{any?}', fn () => view('react-demos'))->where('any', '.*')->name('react-demos');
 
 // Shared whiteboard agent — proxies Anthropic messages so the browser
 // can drive an MCP-style tool-use loop against the local board state.

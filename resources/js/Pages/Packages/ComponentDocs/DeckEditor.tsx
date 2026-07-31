@@ -249,7 +249,6 @@ const [deck, setDeck] = useState({ /* … */ });
             description: "Pass `onOp` to tail every mutation as a typed `DeckOp` — feed an AgentPanel or audit log.",
             render: () => (
                 <div className="rounded-md border border-dashed border-zinc-300 p-3 text-xs text-zinc-500 dark:border-zinc-700">
-                    See <code>/react-demos/slides</code> for the full editor + activity stream side-by-side.
                 </div>
             ),
             code: `<DeckEditor

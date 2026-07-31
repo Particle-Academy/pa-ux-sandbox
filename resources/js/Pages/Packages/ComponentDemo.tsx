@@ -3056,7 +3056,7 @@ function SharedWhiteboardDemo() {
     return (
         <Explainer
             kind="server-side"
-            summary="One-line composite: renders fancy-whiteboard's Board, mounts the MCP server, registers the whiteboard bridge, and wires the SSE share relay. Demoed live at /react-demos/whiteboard-shared. Copy the share URL, paste into Claude Code, and the agent joins."
+            summary="One-line composite: renders fancy-whiteboard's Board, mounts the MCP server, registers the whiteboard bridge, and wires the SSE share relay. Copy the share URL, paste into Claude Code, and the agent joins."
             code={'import { SharedWhiteboard } from "@particle-academy/agent-integrations/components/shared-whiteboard";\nimport "@particle-academy/agent-integrations/styles.css";\nimport "@particle-academy/fancy-whiteboard/styles.css";\n\n<SharedWhiteboard\n  agent={{ id: "claude", name: "Claude", color: "#a855f7" }}\n  relayBaseUrl="https://relay.particle.academy"\n/>'}
         />
     );

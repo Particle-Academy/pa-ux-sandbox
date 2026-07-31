@@ -16,7 +16,6 @@ export const flowEditorDoc: ComponentDoc = {
             description: "FlowEditor is heavyweight — see the workflow-agent demo for a working integration. Sketch below.",
             render: () => (
                 <Text size="sm" className="!text-zinc-500">
-                    See <code>/react-demos/workflow-agent</code> for a live FlowEditor wired up with executors + the agent bridge.
                 </Text>
             ),
             code: `import { FlowEditor } from "@particle-academy/fancy-flow";

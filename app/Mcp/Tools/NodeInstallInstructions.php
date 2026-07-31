@@ -10,7 +10,7 @@ use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Attributes\Description;
 use Laravel\Mcp\Server\Tool;
 
-#[Description('Get the exact install commands for a marketplace node, plus the capability wiring it needs afterwards. Returns a command per runtime, because a node is installed once per runtime the project executes on — the TS package and the PHP package are separate artifacts.')]
+#[Description('Get the exact install command for a marketplace node, the suite packages its source needs, and the capability wiring to do afterwards. A node is VENDORED SOURCE, not a published package — it is copied into the project, once per runtime the project executes on, so there is nothing to `composer require` for the node itself. Its `dependencies` are a separate matter and those ARE real installs.')]
 class NodeInstallInstructions extends Tool
 {
     public function __construct(private readonly FirstPartyNodeSource $firstParty) {}
@@ -33,8 +33,16 @@ class NodeInstallInstructions extends Tool
 
         $package = FlowNodePackage::query()->listed()->where('kind', $kind)->first();
 
-        // A moderated row wins; otherwise fall back to the built artifact.
-        $manifest = $package?->manifest ?? $this->firstPartyManifest($kind);
+        // The built artifact wins for the MANIFEST; the row owns moderation.
+        //
+        // A row used to win outright, and it is a snapshot from whenever someone
+        // last ran `flow:register-node` — while `flow:build` regenerates the
+        // artifact from source. So a first-party node whose manifest gained a
+        // field served the old one indefinitely, with nothing to indicate it:
+        // the `fancyDependencies` these instructions read went missing exactly
+        // that way. Third-party kinds have no artifact entry, so their row still
+        // answers by absence.
+        $manifest = $this->firstPartyManifest($kind) ?? $package?->manifest;
         if ($manifest === null) {
             return Response::error("No marketplace node with kind \"{$kind}\". Run search_nodes first.");
         }
@@ -44,13 +52,47 @@ class NodeInstallInstructions extends Tool
         $runtimes = is_array($manifest['runtimes'] ?? null) ? $manifest['runtimes'] : [];
         $commands = [];
 
+        // A node is VENDORED SOURCE, not a published package: `fancy-cli add
+        // node` copies its files into the project the way `add <component>`
+        // copies a component's. This used to synthesize `composer require` /
+        // `npm install` from the manifest name, which was the package model the
+        // marketplace had already dropped — and `particle-academy/fancy-flow-nodes`
+        // is not on Packagist, so the PHP command 404'd for every node an agent
+        // asked about. The one command that works is the same for every runtime.
         foreach ($runtimes as $runtime => $spec) {
             $entry = is_array($spec) ? $spec : [];
             $commands[$runtime] = [
                 'engine' => $entry['engine'] ?? null,
-                'command' => $runtime === 'php'
-                    ? 'composer require '.($entry['package'] ?? $name)
-                    : 'npm install '.($entry['package'] ?? $name),
+                'command' => "npx fancy-cli@latest add node {$resolvedKind} --backend=".($runtime === 'php' ? 'php' : 'js'),
+                'lands' => 'Vendored into your project — the node is source you own, not a dependency.',
+            ];
+        }
+
+        // Suite packages the node's SOURCE imports, which ARE ordinary installs.
+        // Each names its own npm and/or Composer package, because the right
+        // route depends on the runtime: `npm install` is the wrong answer in a
+        // Laravel app that executes on PHP.
+        $fancyDeps = is_array($manifest['fancyDependencies'] ?? null) ? $manifest['fancyDependencies'] : [];
+        $dependencies = [];
+
+        foreach ($fancyDeps as $dep) {
+            if (! is_array($dep)) {
+                continue;
+            }
+
+            $routes = [];
+            if (is_string($dep['npm'] ?? null) && $dep['npm'] !== '') {
+                $routes['js'] = 'npm install '.$dep['npm'];
+            }
+            if (is_string($dep['composer'] ?? null) && $dep['composer'] !== '') {
+                $routes['php'] = 'composer require '.$dep['composer'];
+            }
+
+            $dependencies[] = [
+                'package' => $dep['package'] ?? null,
+                'requirement' => $dep['requirement'] ?? 'required',
+                'reason' => $dep['reason'] ?? null,
+                'install' => $routes,
             ];
         }
 
@@ -60,14 +102,19 @@ class NodeInstallInstructions extends Tool
         return Response::json([
             'kind' => $resolvedKind,
 
-            // The recommended path: it checks the node against the runtimes the
-            // project ACTUALLY executes on and refuses a mismatch, which the
-            // raw package-manager commands below cannot do.
+            // The recommended path: it detects the runtime the project ACTUALLY
+            // executes on and refuses a node that cannot run there.
             'recommended' => "npx fancy-cli@latest add node {$resolvedKind}",
-            'recommendedWhy' => 'fancy-cli reads the project\'s real runtimes from package.json / composer.json and refuses a node that cannot run there. Installing by hand skips that check, and the node then appears in the palette and fails at run time — which looks like it worked.',
+            'recommendedWhy' => 'fancy-cli reads the project\'s real runtimes from package.json / composer.json and refuses a node that cannot run there. Vendoring by hand skips that check, and the node then appears in the palette and fails at run time — which looks like it worked.',
 
             'perRuntime' => $commands,
-            'runtimeWarning' => 'Install for EVERY runtime the project executes on. A node installed only for TS is invisible to a PHP runner and the graph fails at that node.',
+            'runtimeNote' => 'Nodes are vendored source, not published packages — there is nothing to `composer require` or `npm install` for the node itself. Vendor it for EVERY runtime the project executes on: a node vendored only for TS is invisible to a PHP runner and the graph fails at that node. Omit --backend to let fancy-cli detect it.',
+
+            // Separate from the node itself: these ARE package installs.
+            'dependencies' => $dependencies === [] ? null : $dependencies,
+            'dependenciesNote' => $dependencies === []
+                ? null
+                : 'Suite packages this node\'s source imports. Install the route matching your runtime — the node is vendored, but these are not.',
 
             'wiring' => $required === []
                 ? null

@@ -1,8 +1,10 @@
 <?php
 
+use App\Mcp\Tools\GetNode;
 use App\Mcp\Tools\ListNodes;
 use App\Mcp\Tools\NodeInstallInstructions;
 use App\Mcp\Tools\SearchNodes;
+use App\Models\FlowNodePackage;
 use App\Support\Registry\FirstPartyNodeSource;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
@@ -95,6 +97,91 @@ it('node_install_instructions resolves a first-party kind', function () {
     expect($body['kind'] ?? null)->toBe($kind);
     // The recommended path must be the version-safe one.
     expect($body['recommended'] ?? '')->toContain('npx fancy-cli@latest add node');
+});
+
+it('get_node resolves every first-party kind without a database row', function () {
+    // `get_node` was left reading the database alone when the other three tools
+    // were taught to union in the built artifact. Production never had
+    // `flow:register-node` run against it, so this errored for every
+    // first-party kind — in the one tool whose own description says to call it
+    // BEFORE wiring a node into a graph.
+    expect(FlowNodePackage::count())->toBe(0);
+
+    foreach (firstPartyKinds() as $kind) {
+        $body = mcpBody(app(GetNode::class)->handle(new Request(['kind' => $kind])));
+
+        expect($body['kind'] ?? null)->toBe($kind);
+        expect($body['manifest'] ?? [])->not->toBeEmpty();
+    }
+});
+
+it('serves the built manifest over a stale database row', function () {
+    // A row is a snapshot from whenever someone last ran `flow:register-node`;
+    // the artifact is regenerated from source by `flow:build`. When the row won
+    // outright, a manifest that gained a field served the old one forever —
+    // which is how the git_pr nodes' `fancyDependencies` stayed invisible after
+    // they were declared.
+    $kind = '@particle-academy/git_pr_open';
+
+    FlowNodePackage::create([
+        'kind' => $kind,
+        'name' => 'particle-academy/fancy-flow-nodes',
+        'title' => 'Stale snapshot',
+        'category' => 'io',
+        'status' => FlowNodePackage::LISTED,
+        'verified' => true,
+        'runtimes' => ['ts', 'php'],
+        'manifest' => ['kind' => $kind, 'title' => 'Stale snapshot'], // no fancyDependencies
+    ]);
+
+    $body = mcpBody(app(NodeInstallInstructions::class)->handle(new Request(['kind' => $kind])));
+
+    expect($body['dependencies'] ?? null)->not->toBeNull();
+    expect(collect($body['dependencies'])->pluck('package'))->toContain('fancy-git');
+});
+
+it('never tells an agent to install a node as a package', function () {
+    // Nodes are VENDORED SOURCE. This tool used to synthesize `composer require
+    // <manifest name>` / `npm install <manifest name>` per runtime, and
+    // `particle-academy/fancy-flow-nodes` is not on Packagist — so the PHP
+    // instruction 404'd for every node an agent asked about, while the
+    // `recommended` line right above it was correct. An agent that follows the
+    // per-runtime command gets nothing and has no way to know why.
+    foreach (firstPartyKinds() as $kind) {
+        $body = mcpBody(app(NodeInstallInstructions::class)->handle(new Request(['kind' => $kind])));
+
+        foreach ($body['perRuntime'] ?? [] as $runtime => $spec) {
+            expect($spec['command'] ?? '')
+                ->toContain('fancy-cli')
+                ->not->toContain('composer require')
+                ->not->toContain('npm install');
+        }
+    }
+});
+
+it('offers each fancy dependency the install route matching the runtime', function () {
+    // A node's SOURCE dependencies are real packages, and the right route
+    // depends on where the project executes: `npm install` is the wrong answer
+    // in a Laravel app. Every declared dependency must name at least one route,
+    // or the agent is handed a package it cannot act on.
+    $withDeps = 0;
+
+    foreach (firstPartyKinds() as $kind) {
+        $body = mcpBody(app(NodeInstallInstructions::class)->handle(new Request(['kind' => $kind])));
+
+        foreach ($body['dependencies'] ?? [] as $dep) {
+            $withDeps++;
+            expect($dep['install'] ?? [])->not->toBeEmpty();
+
+            // A suffixed repo name is not a package name: the git engine
+            // publishes as `fancy-git`, never `fancy-git-js` / `fancy-git-php`.
+            foreach ($dep['install'] as $command) {
+                expect($command)->not->toMatch('/fancy-[a-z-]+-(js|php)\b/');
+            }
+        }
+    }
+
+    expect($withDeps)->toBeGreaterThan(0);
 });
 
 it('the MCP and the HTTP registry agree on what is published', function () {

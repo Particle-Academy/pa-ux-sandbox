@@ -116,11 +116,32 @@ class NodeInstallInstructions extends Tool
                 ? null
                 : 'Suite packages this node\'s source imports. Install the route matching your runtime — the node is vendored, but these are not.',
 
+            // Vendoring a node is not installing it. Until the host REGISTERS
+            // the kind, the files are source in a directory: no palette entry,
+            // and a graph naming the kind fails at run time. This used to say
+            // only "wire the capabilities" — which is the step AFTER this one —
+            // so an agent got the files and had nothing telling it what to do
+            // with them. The Moic Suite integration hand-patched three separate
+            // things before a vendored node ran.
+            'afterVendoring' => [
+                'php' => [
+                    'composer dump-autoload — the executor is PSR-4 under your configured node namespace',
+                    'php artisan flow:discover — reads the #[FlowNode] attribute and registers the kind',
+                    "Bind the node's *Host class (beside the executor) in a service provider",
+                    'The React kind under your components dir is for the EDITOR only and carries no executor: PHP runs the node, the browser draws it.',
+                ],
+                'ts' => [
+                    'Import the RUNNABLE kind from the node\'s js/kind.ts — that is the surface with the executor attached',
+                    'registerNodeKind(<name>RunnableKind) before the first run, or a graph naming the kind fails on an unknown kind',
+                    'ui/kind.ts is the surface WITHOUT an executor — import it only when something else executes the node.',
+                ],
+            ],
+
             'wiring' => $required === []
                 ? null
                 : [
                     'requiredCapabilities' => $required,
-                    'how' => 'Register these on the host before the first run — registerLlmClient() / registerWorkflowResolver() in TS, or the Capabilities seam in PHP. A required capability that is not registered means the node cannot run at all.',
+                    'how' => 'Register these on the host AFTER the kind is registered — registerLlmClient() / registerWorkflowResolver() in TS, or the Capabilities seam in PHP. A required capability that is not registered means the node cannot run at all.',
                 ],
 
             // First-party nodes are verified by construction — they come from a repo

@@ -55,7 +55,7 @@
         "@particle-academy/fancy-echarts": "^5.0.0",
         "@particle-academy/fancy-features": "^0.1.0",
         "@particle-academy/fancy-file-commons": "^0.2.0",
-        "@particle-academy/fancy-flow": "^0.33.3",
+        "@particle-academy/fancy-flow": "^0.35.0",
         "@particle-academy/fancy-git": "^0.1.2",
         "@particle-academy/fancy-git-ui": "^0.3.1",
         "@particle-academy/fancy-inertia": "^0.9.6",

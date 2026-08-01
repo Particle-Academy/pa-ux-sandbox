@@ -39,7 +39,7 @@ const NAV: NavGroup[] = [
     {
         section: "System",
         items: [
-            { label: "Settings", icon: "gear", href: "/admin/settings" },
+            { label: "Settings", icon: "settings", href: "/admin/settings" },
             { label: "Well-known files", icon: "file-text", href: "/admin/well-known-files" },
         ],
     },

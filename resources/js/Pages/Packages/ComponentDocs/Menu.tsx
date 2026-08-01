@@ -85,7 +85,7 @@ export const menuDoc: ComponentDoc = {
                 <div className="rounded-md border border-zinc-200 p-2 dark:border-zinc-800">
                     <Menu className="w-56">
                         <Menu.Item icon={<Icon name="home" />} active>Dashboard</Menu.Item>
-                        <Menu.Submenu label="Reports" icon={<Icon name="chart" />} defaultOpen>
+                        <Menu.Submenu label="Reports" icon={<Icon name="chart-column" />} defaultOpen>
                             <Menu.Item>Daily</Menu.Item>
                             <Menu.Item>Weekly</Menu.Item>
                             <Menu.Item>Monthly</Menu.Item>
@@ -95,7 +95,7 @@ export const menuDoc: ComponentDoc = {
             ),
             code: `<Menu>
     <Menu.Item icon={<Icon name="home" />} active>Dashboard</Menu.Item>
-    <Menu.Submenu label="Reports" icon={<Icon name="chart" />} defaultOpen>
+    <Menu.Submenu label="Reports" icon={<Icon name="chart-column" />} defaultOpen>
         <Menu.Item>Daily</Menu.Item>
         <Menu.Item>Weekly</Menu.Item>
         <Menu.Item>Monthly</Menu.Item>

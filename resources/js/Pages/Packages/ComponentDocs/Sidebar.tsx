@@ -72,7 +72,7 @@ export const sidebarDoc: ComponentDoc = {
                 <div className="rounded-md border border-zinc-200 p-2 dark:border-zinc-800">
                     <Sidebar className="w-56">
                         <Sidebar.Item icon={<Icon name="home" />} href="#" active>Dashboard</Sidebar.Item>
-                        <Sidebar.Submenu label="Reports" icon={<Icon name="chart" />} defaultOpen>
+                        <Sidebar.Submenu label="Reports" icon={<Icon name="chart-column" />} defaultOpen>
                             <Sidebar.Item href="#">Daily</Sidebar.Item>
                             <Sidebar.Item href="#">Weekly</Sidebar.Item>
                             <Sidebar.Item href="#">Monthly</Sidebar.Item>
@@ -82,7 +82,7 @@ export const sidebarDoc: ComponentDoc = {
             ),
             code: `<Sidebar>
     <Sidebar.Item icon={<Icon name="home" />} active>Dashboard</Sidebar.Item>
-    <Sidebar.Submenu label="Reports" icon={<Icon name="chart" />} defaultOpen>
+    <Sidebar.Submenu label="Reports" icon={<Icon name="chart-column" />} defaultOpen>
         <Sidebar.Item>Daily</Sidebar.Item>
         <Sidebar.Item>Weekly</Sidebar.Item>
         <Sidebar.Item>Monthly</Sidebar.Item>

@@ -48,6 +48,11 @@
         })();
     </script>
 
+    {{-- React Fast Refresh preamble. No-op in production; without it `npm run dev`
+         dies on "@vitejs/plugin-react can't detect preamble" and the whole app
+         renders nothing — a break only ever visible in dev, which is exactly why
+         it survived: `npm run build` never exercises this path. --}}
+    @viteReactRefresh
     @vite(['resources/css/showcase.css', 'resources/js/showcase-app.tsx'])
     @inertiaHead
 </head>

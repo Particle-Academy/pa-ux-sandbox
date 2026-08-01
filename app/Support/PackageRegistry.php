@@ -18,8 +18,28 @@ class PackageRegistry
      * either). Use this for packages that are still in preview and not yet
      * released; their definitions stay below, so re-listing one is just deleting
      * its slug from this list (and re-running `php artisan registry:build`).
+     *
+     * {@see PackageFamily} honors this too: a family whose members are all
+     * hidden shows no card and serves no page, so the listing can never invite
+     * someone to `composer require` something that 404s.
      */
-    public const HIDDEN = ['fancy-motion'];
+    public const HIDDEN = [
+        'fancy-motion',
+        // The passkey trio is BUILT but UNPUBLISHED — no npm release, no
+        // Packagist release, no tag. Their definitions (and the Fancy Passkeys
+        // family) are complete below so that publishing is a three-line
+        // deletion here plus `php artisan registry:build`, rather than a fresh
+        // round of registry archaeology months later.
+        'fancy-passkeys',
+        'fancy-passkeys-js',
+        'fancy-passkeys-ui',
+    ];
+
+    /** Whether a slug is hidden from every public surface. */
+    public static function isHidden(string $slug): bool
+    {
+        return in_array($slug, self::HIDDEN, true);
+    }
 
     /**
      * Per-package design classification — the source of truth for the
@@ -113,6 +133,10 @@ class PackageRegistry
         'fancy-git-gitlab-js' => ['group' => 'tooling', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#fc6d26'],
         'fancy-git-bitbucket-php' => ['group' => 'tooling', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#0052cc'],
         'fancy-git-bitbucket-js' => ['group' => 'tooling', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#0052cc'],
+        // Passkeys (WebAuthn) — a PHP + Node backend mirror plus a React UI.
+        'fancy-passkeys' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#0891b2'],
+        'fancy-passkeys-js' => ['group' => 'platform', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#0891b2'],
+        'fancy-passkeys-ui' => ['group' => 'platform', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#0891b2'],
         // Workflow runtime twin, relay transport, shared document core.
         'fancy-flow-php' => ['group' => 'surfaces', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#0ea5e9'],
         'fancy-cf-relay' => ['group' => 'tooling', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#f6821f'],
@@ -157,6 +181,7 @@ class PackageRegistry
             self::fancyPixel(),
             self::fancyEcharts(),
             self::fancyMlmUi(),
+            self::fancyPasskeysUi(),
             self::fancyGitUi(),
             self::fancyXFilesUi(),
             self::fancyScreens(),
@@ -276,6 +301,23 @@ class PackageRegistry
                 'tagline' => 'Node/TS mirror of particle-academy/fancy-mlm — the same CompensationPlan JSON + unilevel / binary / matrix trees yield identical rewards, isomorphic (browser or Node). Headless; no UI.',
                 'npm' => '@particle-academy/fancy-mlm',
                 'repo' => 'Particle-Academy/fancy-mlm-js',
+                'language' => 'TypeScript',
+            ],
+            [
+                'slug' => 'fancy-passkeys',
+                'name' => 'particle-academy/fancy-passkeys',
+                'tagline' => 'Passkey (WebAuthn) login for PHP — registration + authentication ceremonies, discoverable (usernameless) credentials, single-use server-side challenges, clone detection via the signature counter, and a Laravel bridge that augments Fortify rather than replacing it. A thin wrapper over web-auth/webauthn-lib: no cryptography of our own. Headless; pairs with @particle-academy/fancy-passkeys-ui.',
+                'composer' => 'particle-academy/fancy-passkeys',
+                'repo' => 'Particle-Academy/fancy-passkeys-php',
+                'packagist' => 'particle-academy/fancy-passkeys',
+                'language' => 'PHP',
+            ],
+            [
+                'slug' => 'fancy-passkeys-js',
+                'name' => '@particle-academy/fancy-passkeys',
+                'tagline' => 'Node/TS mirror of particle-academy/fancy-passkeys — the same four-endpoint wire contract, byte-compatible options payloads (pinned by shared fixtures), and the same challenge / counter / redaction policy, so one React UI works against either backend. Wraps @simplewebauthn/server. Headless; framework-free with a dependency-free HTTP adapter.',
+                'npm' => '@particle-academy/fancy-passkeys',
+                'repo' => 'Particle-Academy/fancy-passkeys-js',
                 'language' => 'TypeScript',
             ],
             [
@@ -986,6 +1028,25 @@ class PackageRegistry
                 ['slug' => 'downline-tree', 'name' => 'DownlineTree', 'blurb' => 'Controlled network tree — collapsible nodes, per-member tier/volume, selection + onChange. Renders unilevel, binary, and matrix shapes from a flat member list.'],
                 ['slug' => 'commission-statement', 'name' => 'CommissionStatement', 'blurb' => 'Per-period earnings ledger — level, source member, tier multiplier, and amount per row, with a paid/pending status and totals.'],
                 ['slug' => 'rank-progress', 'name' => 'RankProgress', 'blurb' => 'Progress toward the next rank/tier — current volume vs threshold, with the requirement gap.'],
+            ],
+        ];
+    }
+
+    /** @return array<string, mixed> */
+    private static function fancyPasskeysUi(): array
+    {
+        return [
+            'slug' => 'fancy-passkeys-ui',
+            'name' => 'fancy-passkeys-ui',
+            'tagline' => 'React surfaces for passkey (WebAuthn) sign-in and passkey management, plus a React-free /client subpath carrying the browser half of both ceremonies. Controlled, JSON-serializable, agent-bridgeable — and deliberately not agent-completable: no prop, export or MCP tool finishes a ceremony, because that needs a gesture and a biometric only the human has. Pairs with particle-academy/fancy-passkeys (PHP) or @particle-academy/fancy-passkeys (Node).',
+            'npm' => '@particle-academy/fancy-passkeys-ui',
+            'repo' => 'Particle-Academy/fancy-passkeys-ui',
+            'language' => 'TypeScript',
+            'pairs' => ['fancy-passkeys', 'fancy-passkeys-js'],
+            'components' => [
+                ['slug' => 'passkey-sign-in', 'name' => 'PasskeySignIn', 'blurb' => 'Controlled sign-in surface — discoverable (usernameless) by default, username-first with conditional-UI autofill on request. A dismissed prompt reads as "cancelled", not as an error.'],
+                ['slug' => 'passkey-manager', 'name' => 'PasskeyManager', 'blurb' => 'Controlled list of a user\'s passkeys with rename and revoke. Rows are handled by credential ID, revoke stages for human confirmation, and the last-passkey lockout is spelled out rather than implied.'],
+                ['slug' => 'passkey-status', 'name' => 'PasskeyStatus', 'blurb' => 'Read-only "can this browser do passkeys?" indicator — support, a built-in authenticator, and autofill sign-in.'],
             ],
         ];
     }

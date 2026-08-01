@@ -153,6 +153,28 @@ final class PackageFamily
             ],
         ],
         [
+            'slug' => 'fancy-passkeys',
+            'name' => 'Fancy Passkeys',
+            'tagline' => 'Passkey (WebAuthn) sign-in as a drop-in capability — a mirrored PHP + Node backend speaking one wire contract, and React surfaces for signing in and managing credentials. No cryptography of our own: web-auth/webauthn-lib and @simplewebauthn/server do it, as peers.',
+            'group' => 'platform',
+            'kind' => 'headless',
+            'sections' => [
+                [
+                    'label' => 'Backend',
+                    'capability' => 'Passkey (WebAuthn) registration + login',
+                    'members' => [
+                        ['language' => 'PHP', 'slug' => 'fancy-passkeys'],
+                        ['language' => 'Node / TypeScript', 'slug' => 'fancy-passkeys-js'],
+                    ],
+                ],
+                [
+                    'label' => 'React UI',
+                    'capability' => null,
+                    'members' => [['language' => 'React', 'slug' => 'fancy-passkeys-ui']],
+                ],
+            ],
+        ],
+        [
             'slug' => 'fancy-x-files',
             'name' => 'Fancy X-Files',
             'tagline' => 'Well-known + agent-facing files from one declarative registry — robots.txt, security.txt, humans, llms, sitemap, AGENTS — with a leak-safe protect() guard, plus an admin UI to edit them.',
@@ -327,6 +349,47 @@ final class PackageFamily
     ];
 
     /**
+     * The family table with every {@see PackageRegistry::HIDDEN} member removed,
+     * and any family left with no members dropped entirely.
+     *
+     * This is what every public read goes through, because the alternative is a
+     * card and a `/packages/family/{slug}` page for a product whose packages do
+     * not exist on npm or Packagist yet — install commands that 404, which is
+     * worse than no listing at all. HIDDEN already covered the flat listing, the
+     * per-package pages and the compiled registry; families were the one surface
+     * it did not reach, so a fully-unreleased family listed anyway.
+     *
+     * A PARTIALLY hidden family still lists — the released members are real, and
+     * the unreleased one simply is not shown. Deleting a slug from HIDDEN puts it
+     * back in its family automatically; nothing here needs a second edit.
+     *
+     * @return array<int, array<string,mixed>>
+     */
+    private static function visibleFamilies(): array
+    {
+        $families = [];
+
+        foreach (self::FAMILIES as $family) {
+            $sections = [];
+            foreach ($family['sections'] as $section) {
+                $members = array_values(array_filter(
+                    $section['members'],
+                    static fn (array $m): bool => ! PackageRegistry::isHidden($m['slug']),
+                ));
+                if ($members !== []) {
+                    $sections[] = ['label' => $section['label'], 'capability' => $section['capability'], 'members' => $members];
+                }
+            }
+
+            if ($sections !== []) {
+                $families[] = ['slug' => $family['slug'], 'name' => $family['name'], 'tagline' => $family['tagline'], 'group' => $family['group'], 'kind' => $family['kind'], 'sections' => $sections];
+            }
+        }
+
+        return $families;
+    }
+
+    /**
      * Every slug that belongs to a family — the set the flat listing drops
      * before injecting one card per family.
      *
@@ -335,7 +398,7 @@ final class PackageFamily
     public static function memberSlugs(): array
     {
         $slugs = [];
-        foreach (self::FAMILIES as $family) {
+        foreach (self::visibleFamilies() as $family) {
             foreach ($family['sections'] as $section) {
                 foreach ($section['members'] as $member) {
                     $slugs[] = $member['slug'];
@@ -353,7 +416,7 @@ final class PackageFamily
      */
     public static function find(string $slug): ?array
     {
-        foreach (self::FAMILIES as $family) {
+        foreach (self::visibleFamilies() as $family) {
             if ($family['slug'] === $slug) {
                 return $family;
             }
@@ -439,7 +502,7 @@ final class PackageFamily
     /** @return array<int, array<string,mixed>> */
     public static function all(): array
     {
-        return self::FAMILIES;
+        return self::visibleFamilies();
     }
 
     /**
@@ -454,7 +517,10 @@ final class PackageFamily
     {
         $pairs = [];
 
-        foreach (self::FAMILIES as $family) {
+        // Visible only: the MCP publishes these as "install this for that
+        // capability", so an unreleased mirror would be advice that cannot be
+        // followed.
+        foreach (self::visibleFamilies() as $family) {
             foreach ($family['sections'] as $section) {
                 if ($section['capability'] === null) {
                     continue;

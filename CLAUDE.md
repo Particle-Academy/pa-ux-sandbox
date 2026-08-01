@@ -146,7 +146,7 @@ The full **component contract** — the checklist every stateful *component* mus
 
 The Fancy UI strategic goal is **complete app surfaces where agents drive the UI and humans ride shotgun, trading control fluidly**. Two packages are the top-level entry points:
 
-- **`@particle-academy/agent-integrations`** — MCP server, presence layer, share relay, and **20** per-package bridges (see the table below). The full list lives in `agent-integrations/src/bridges/` and its `package.json` `exports` — check there before assuming a surface isn't bridged.
+- **`@particle-academy/agent-integrations`** — MCP server, presence layer, share relay, and **21** per-package bridges (see the table below). The full list lives in `agent-integrations/src/bridges/` and its `package.json` `exports` — check there before assuming a surface isn't bridged.
 - **`@particle-academy/fancy-screens`** — `<Screen>` containers + global `<ScreenSystem>` + ports + `ScreenMeta.agentActivity` field for cross-screen presence.
 
 **Pattern for adding a new surface to the Human+ UX vocabulary:**
@@ -191,6 +191,7 @@ The Fancy UI strategic goal is **complete app surfaces where agents drive the UI
 | `navigation` | `page_*` | site-wide co-browse — read / focus / navigate the app itself |
 | `catalog` | `catalog_*` | laravel-catalog / fancy-catalog products + prices |
 | `features` | `features_*` | laravel-fms / fancy-features flags + quotas |
+| `passkeys` | `passkey_*` | fancy-passkeys-ui `<PasskeyManager>` — list / rename / **propose** a revoke / open an enrollment prompt. Management ONLY: no tool completes a WebAuthn ceremony, and a closed-tool-list test fails CI if one is added |
 | (cross-cutting) | `agent_undo` / `agent_redo` / `agent_history` | per-agent undo stack |
 
 **Relay infrastructure** lives at `app/Http/Controllers/AgentRelayController.php` (generic — it carries any MCP frames: co-browse, whiteboard, flow, …). Routes in `routes/web.php` under `/agent-relay/*` (with `/whiteboard-share/*` kept as a back-compat alias — state is keyed by session id, not path). CSRF-exempt for external clients via `bootstrap/app.php`.

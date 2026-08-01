@@ -1,6 +1,7 @@
 <?php
 
 use App\Support\PackageFamily;
+use App\Support\PackageRegistry;
 use Tests\TestCase;
 
 uses(TestCase::class);
@@ -180,4 +181,67 @@ it('keeps a member page when it has real content, and folds the thin ones', func
                 return true;
             })
         );
+});
+
+it('never lists a family whose every member is unreleased', function () {
+    // fancy-passkeys is BUILT but unpublished: all three members sit in
+    // PackageRegistry::HIDDEN. A family card would send a visitor to a page
+    // telling them to `composer require` something that 404s, so the family is
+    // withheld along with its members — and comes back the moment they ship,
+    // with no second edit here.
+    foreach (['fancy-passkeys', 'fancy-passkeys-js', 'fancy-passkeys-ui'] as $slug) {
+        expect(PackageRegistry::isHidden($slug))->toBeTrue();
+    }
+
+    expect(collect(PackageFamily::all())->pluck('slug'))->not->toContain('fancy-passkeys');
+    expect(PackageFamily::find('fancy-passkeys'))->toBeNull();
+    expect(PackageFamily::find('fancy-passkeys-ui'))->toBeNull();
+    expect(PackageFamily::memberSlugs())->not->toContain('fancy-passkeys-ui');
+
+    // …and it publishes no MCP mirror pair, because "install this" has to be
+    // advice a reader can act on.
+    expect(collect(PackageFamily::mcpPairs())->pluck('php'))
+        ->not->toContain('particle-academy/fancy-passkeys');
+
+    $this->get('/packages')
+        ->assertOk()
+        ->assertInertia(function ($page) {
+            $slugs = collect($page->toArray()['props']['packages'])->pluck('slug');
+            foreach (['fancy-passkeys', 'fancy-passkeys-js', 'fancy-passkeys-ui'] as $slug) {
+                expect($slugs)->not->toContain($slug);
+            }
+        });
+
+    // No page anywhere — not the family path, not a member's own path.
+    $this->get('/packages/family/fancy-passkeys')->assertNotFound();
+    $this->get('/packages/fancy-passkeys-ui')->assertNotFound();
+});
+
+it('keeps the passkey definitions complete so publishing is a HIDDEN deletion', function () {
+    // The definitions live behind the hidden flags, not instead of them. If this
+    // fails, someone removed a definition rather than a flag — and the packages
+    // would go live invisible, which looks exactly like nothing being wrong.
+    $registry = new ReflectionClass(PackageRegistry::class);
+
+    $meta = $registry->getConstant('META');
+    foreach (['fancy-passkeys' => 'php', 'fancy-passkeys-js' => 'ts', 'fancy-passkeys-ui' => 'ts'] as $slug => $ecosystem) {
+        expect($meta)->toHaveKey($slug);
+        expect($meta[$slug]['ecosystem'])->toBe($ecosystem);
+        expect($meta[$slug]['group'])->toBe('platform');
+    }
+
+    $ui = $registry->getMethod('fancyPasskeysUi');
+    $ui->setAccessible(true);
+    $definition = $ui->invoke(null);
+    expect($definition['npm'])->toBe('@particle-academy/fancy-passkeys-ui');
+    expect(collect($definition['components'])->pluck('name'))
+        ->toContain('PasskeySignIn')->toContain('PasskeyManager')->toContain('PasskeyStatus');
+
+    // The family table still describes the whole product, both backends included.
+    $families = $registry = new ReflectionClass(PackageFamily::class);
+    $all = $families->getConstant('FAMILIES');
+    $passkeys = collect($all)->firstWhere('slug', 'fancy-passkeys');
+    expect($passkeys)->not->toBeNull();
+    expect(collect($passkeys['sections'])->flatMap(fn ($s) => $s['members'])->pluck('slug'))
+        ->toContain('fancy-passkeys')->toContain('fancy-passkeys-js')->toContain('fancy-passkeys-ui');
 });

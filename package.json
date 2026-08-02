@@ -39,6 +39,7 @@
         "@googlemaps/js-api-loader": "^2.1.1",
         "@inertiajs/react": "^3.1.1",
         "@particle-academy/agent-integrations": "^0.35.0",
+        "@particle-academy/classroom": "^0.2.0",
         "@particle-academy/dark-slide": "^0.5.2",
         "@particle-academy/fancy-3d": "^0.4.2",
         "@particle-academy/fancy-3d-babylon": "^0.1.2",

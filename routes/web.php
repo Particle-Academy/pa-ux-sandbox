@@ -22,6 +22,7 @@ use App\Http\Controllers\DarkSlideExportController;
 use App\Http\Controllers\DevLoginController;
 use App\Http\Controllers\EasterEggController;
 use App\Http\Controllers\HolySheetExportController;
+use App\Http\Controllers\LearnController;
 use App\Http\Controllers\OgImageController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ServiceWorkerController;
@@ -272,6 +273,16 @@ Route::get('/r/{slug}', [RegistryController::class, 'show'])
 // Codex) can browse, search, and install Fancy UI components conversationally.
 // Tools: list_components, search_components, get_component, install_instructions.
 Mcp::web('/mcp', FancyUiRegistry::class);
+
+// ─── Fancy UI Curriculum ─────────────────────────────────────────────
+// The kit teaching itself, on laravel-courses + @particle-academy/classroom —
+// both installed from real registries, like any external consumer. The
+// catalogue is public; enrolling and earning a certificate need an account,
+// because laravel-courses resolves the learner from the authenticated user.
+Route::get('/learn', [LearnController::class, 'index'])->name('learn.index');
+Route::get('/learn/{slug}', [LearnController::class, 'course'])
+    ->where('slug', '[a-z0-9\-]+')
+    ->name('learn.course');
 
 // ─── Docs hub ────────────────────────────────────────────────────────
 Route::get('/docs', [DocsController::class, 'show'])->name('docs.index');

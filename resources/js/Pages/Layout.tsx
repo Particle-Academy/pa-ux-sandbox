@@ -70,6 +70,7 @@ type SharedProps = { flash: Flash; auth: Auth; csrfToken: string };
 
 const NAV_ITEMS: Array<{ to: string; label: string; match: string }> = [
     { to: "/docs", label: "Docs", match: "docs" },
+    { to: "/learn", label: "Learn", match: "learn" },
     { to: "/packages", label: "Packages", match: "packages" },
     { to: "/fancy-tui", label: "TUI", match: "fancy-tui" },
     { to: "/flow", label: "Flow", match: "flow" },
@@ -515,6 +516,7 @@ export function Layout({
                             <h5>Learn</h5>
                             <ul>
                                 <li><Link href="/docs">Docs</Link></li>
+                                <li><Link href="/learn">Fancy UI Curriculum</Link></li>
                                 <li><Link href="/dreaming">Dreaming</Link></li>
                                 <li><a href="/docs/human-plus-ux.md">Human+ whitepaper</a></li>
                                 <li><Link href="/leaderboard">Leaderboard</Link></li>

@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Inertia\Ssr\Gateway;
 use ParticleAcademy\Fms\Services\FeatureManager;
+use ParticleAcademy\LaravelCourses\Contracts\AuthorizesCourseAdmin;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -76,6 +77,23 @@ class AppServiceProvider extends ServiceProvider
         // User::is_admin flag.
         Gate::define('admin', fn (User $user): bool => (bool) $user->is_admin);
         Gate::define('manageCatalog', fn (User $user): bool => (bool) $user->is_admin);
+
+        // laravel-courses ships AuthorizesCourseAdmin bound to DenyAllCourseAdmin,
+        // so its authoring + admin routes refuse EVERYONE until a host says
+        // otherwise. That default is deliberate: before it existed, an anonymous
+        // request to this API could create content, delete it, and mint a
+        // certificate for any user id. Bind it to the same is_admin flag as the
+        // rest of the showcase — never widen it to "allow unless configured".
+        $this->app->bind(
+            AuthorizesCourseAdmin::class,
+            fn (): AuthorizesCourseAdmin => new class implements AuthorizesCourseAdmin
+            {
+                public function allows(Request $request): bool
+                {
+                    return $request->user()?->can('admin') ?? false;
+                }
+            }
+        );
 
         // Server-rendered SEO meta for the Inertia root view is now owned by
         // particle-academy/fancy-seo: the <x-fancy-seo::head> component in

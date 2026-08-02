@@ -257,32 +257,77 @@ class BuildFancyCurriculum extends Command
             ],
         );
 
+        // Questions are keyed by their POSITION in the test, not their prompt.
+        // Keying on prompt meant editing the wording created a second question
+        // and orphaned the first — the test then rendered both, one of them
+        // stale. Found by sitting the test in a browser; the seeder's own counts
+        // could never show it, because it counts what it authors rather than
+        // what ends up in the table.
+        $authoredIds = [];
+
         foreach ($spec['questions'] ?? [] as $qIndex => $qSpec) {
             $counts['questions']++;
 
             $question = Question::updateOrCreate(
-                ['test_id' => $test->id, 'prompt' => $qSpec['prompt']],
+                ['test_id' => $test->id, 'sort_order' => $qIndex],
                 [
+                    // Rendered as PLAIN TEXT by classroom's QuestionRenderer —
+                    // deliberately, since arbitrary markup in a question is an
+                    // injection surface. So markdown is stripped here rather
+                    // than shipped for a renderer that will never interpret it.
+                    'prompt' => self::plain($qSpec['prompt']),
                     'type' => $qSpec['type'],
                     'points' => $qSpec['points'] ?? 1,
-                    'explanation' => $qSpec['explanation'] ?? null,
-                    'sort_order' => $qIndex,
+                    'explanation' => isset($qSpec['explanation']) ? self::plain($qSpec['explanation']) : null,
                 ],
             );
 
             // Options are replaced wholesale rather than reconciled: they have no
             // natural key beyond their label, and a half-updated option set is a
             // silently mis-graded question.
+            $authoredIds[] = $question->id;
+
             $question->options()->delete();
 
             foreach ($qSpec['options'] ?? [] as $oIndex => $oSpec) {
                 $question->options()->create([
-                    'label' => $oSpec['label'],
+                    'label' => self::plain($oSpec['label']),
                     'is_correct' => $oSpec['is_correct'],
                     'sort_order' => $oIndex,
                 ]);
             }
         }
+
+        // Prune by ID, not by position. A count- or sort_order-based filter
+        // cannot catch the case that actually happened: editing a prompt created
+        // a SECOND row at the same sort_order as a live question, so both
+        // rendered and neither looked out of range. Anything on this test that
+        // was not just authored is an orphan, by definition.
+        $orphans = $test->questions()->whereNotIn('id', $authoredIds)->get();
+        foreach ($orphans as $orphan) {
+            $orphan->options()->delete();
+            $orphan->delete();
+        }
+        if ($orphans->isNotEmpty()) {
+            $this->components->warn("  pruned {$orphans->count()} orphaned question(s) from {$test->slug}");
+        }
+    }
+
+    /**
+     * Markdown → plain text, for the fields classroom renders verbatim.
+     *
+     * Question prompts, option labels and explanations go through
+     * `QuestionRenderer`, which prints them as text. Backticks and asterisks
+     * left in place render literally, so a prompt about `<Action>` arrived on
+     * screen wearing its own backticks.
+     */
+    private static function plain(string $markdown): string
+    {
+        return preg_replace(
+            ['/\*\*([^*]+)\*\*/', '/(?<!\*)\*([^*]+)\*(?!\*)/', '/`([^`]+)`/'],
+            ['$1', '$1', '$1'],
+            $markdown,
+        );
     }
 
     private function purge(): void

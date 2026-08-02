@@ -30,13 +30,24 @@ class ServiceWorkerController extends Controller
 {
     public function __invoke(): Response
     {
+        // NOTE: no `fetch` listener, deliberately. The moment this worker
+        // activates it stops intercepting anything, so the client is already
+        // recovered — which is why it does NOT force a reload.
+        //
+        // It used to end with `clients.matchAll()` → `c.navigate(c.url)`, to
+        // hurry stale clients along. That re-navigated every controlled tab to
+        // the URL it was ALREADY on, and if it fired while someone was clicking
+        // a link, it cancelled their navigation and dumped them back where they
+        // started. Reported as "none of the buttons work" on the 404 page, which
+        // is exactly what it looks like from the outside. The tear-down does not
+        // need it: caches are deleted, the registration is gone, and this worker
+        // proxies nothing, so the visitor's next request is clean either way.
         $script = <<<'JS'
         self.addEventListener('install', () => self.skipWaiting());
         self.addEventListener('activate', (e) => {
           e.waitUntil((async () => {
             for (const k of await caches.keys()) { if (k.startsWith('fancy-pwa-')) await caches.delete(k); }
             await self.registration.unregister();
-            for (const c of await self.clients.matchAll()) { try { c.navigate(c.url); } catch (_) {} }
           })());
         });
         JS;

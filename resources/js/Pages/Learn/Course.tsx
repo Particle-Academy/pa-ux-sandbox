@@ -1,232 +1,125 @@
 import { useState } from "react";
-import { Head, Link } from "@inertiajs/react";
-import { Badge, Button, Card, Heading, Text } from "@particle-academy/react-fancy";
+import { Head, Link, router } from "@inertiajs/react";
+import {
+    CoursePlayer,
+    type AnswerInput,
+    type Course,
+    type Enrollment,
+    type Lesson,
+    type Test,
+    type TestAttempt,
+} from "@particle-academy/classroom";
+import { Button, Callout } from "@particle-academy/react-fancy";
 import { Layout } from "../Layout";
+import { post } from "./api";
 
 /**
- * /learn/{course} — modules, lessons, and the course's graded test.
+ * /learn/{course} — the course itself, played by classroom's `CoursePlayer`.
  *
- * Lesson content is markdown authored in `FancyCurriculumContent`. It is
- * rendered by a deliberately small renderer rather than pulled through a
- * markdown library: the content is ours, the subset used is narrow, and adding a
- * dependency to render our own prose is a poor trade. It escapes nothing into
- * `dangerouslySetInnerHTML` — every branch produces React elements.
+ * `CoursePlayer` owns modules, lessons, progress AND the graded test; this page
+ * supplies the data and the four handlers it asks for. Everything the learner
+ * sees is the package's UI, which is the whole point of the dogfood.
  */
-
-type Lesson = {
-    id: number;
-    slug: string;
-    title: string;
-    content: string | null;
-    estimatedMinutes: number | null;
-    completed: boolean;
-};
-
-type Module = { slug: string; title: string; lessons: Lesson[] };
-
 export default function LearnCourse({
     course,
-    modules,
-    test,
-    enrolled,
+    enrollment,
+    completedLessonIds,
+    authenticated,
 }: {
-    course: { slug: string; title: string; description: string | null; estimatedMinutes: number | null };
-    modules: Module[];
-    test: { slug: string; title: string; passing_score: number | null } | null;
-    enrolled: boolean;
-    enrollmentId: number | null;
+    course: Course;
+    curriculumSlug: string;
+    enrollment: Enrollment | null;
+    completedLessonIds: number[];
+    authenticated: boolean;
 }) {
-    const firstLesson = modules[0]?.lessons[0]?.slug ?? null;
-    const [open, setOpen] = useState<string | null>(firstLesson);
+    const [completed, setCompleted] = useState<Set<number>>(new Set(completedLessonIds));
+
+    async function handleEnroll() {
+        if (!authenticated) {
+            router.visit("/login");
+
+            return;
+        }
+
+        await post("/learn/enroll");
+        router.reload();
+    }
+
+    async function markLessonComplete(lesson: Lesson) {
+        const result = await post<{ completed_lesson_ids: number[] }>(
+            `/learn/lessons/${lesson.id}/complete`,
+        );
+        setCompleted(new Set(result.completed_lesson_ids));
+    }
+
+    const startAttempt = (test: Test) => post<TestAttempt>(`/learn/tests/${test.id}/attempts`);
+
+    const submitAttempt = (attempt: TestAttempt, answers: AnswerInput[]) =>
+        post<TestAttempt>(`/learn/attempts/${attempt.id}/submit`, { answers });
 
     return (
         <Layout>
             <Head title={`${course.title} — Fancy UI Curriculum`} />
 
-            <div className="mx-auto max-w-3xl" data-learn-course={course.slug}>
-                <Link href="/learn" className="text-sm text-violet-600 hover:underline dark:text-violet-400">
+            <div className="mx-auto max-w-4xl" data-learn-course={course.slug}>
+                <Link
+                    href="/learn"
+                    className="text-sm text-violet-600 hover:underline dark:text-violet-400"
+                >
                     ← Fancy UI Curriculum
                 </Link>
 
-                <Heading as="h1" size="2xl" className="mt-3">
-                    {course.title}
-                </Heading>
-                {course.description ? (
-                    <Text className="mt-3 text-lg text-zinc-600 dark:text-zinc-300">{course.description}</Text>
-                ) : null}
-
-                {modules.map((module) => (
-                    /*
-                     * A <div>, not a <section>, and deliberately.
-                     *
-                     * The showcase's landing CSS carries an UNLAYERED
-                     * `section, .section { padding: 96px 0 }` plus a
-                     * `section + section` border, for full-bleed marketing bands.
-                     * Tailwind v4 emits utilities inside `@layer utilities`, and
-                     * unlayered CSS beats layered CSS in the cascade regardless of
-                     * specificity — so `py-0` does NOT override it (measured: the
-                     * class applied and computed padding stayed 96px). Only
-                     * `!important` would win, which is a worse trade than not using
-                     * the element. Every other page here uses <section> only with a
-                     * landing class that wants that padding.
-                     */
-                    <div key={module.slug} className="mt-10" data-learn-module={module.slug}>
-                        <Heading as="h2" size="lg">{module.title}</Heading>
-
-                        <div className="mt-4 grid gap-3">
-                            {module.lessons.map((lesson) => {
-                                const isOpen = open === lesson.slug;
-
-                                return (
-                                    <Card key={lesson.slug} data-learn-lesson={lesson.slug}>
-                                        <button
-                                            type="button"
-                                            className="flex w-full items-center justify-between gap-4 text-left"
-                                            onClick={() => setOpen(isOpen ? null : lesson.slug)}
-                                            aria-expanded={isOpen}
-                                        >
-                                            <span className="flex min-w-0 items-center gap-3">
-                                                <span
-                                                    aria-hidden
-                                                    className={
-                                                        "inline-block size-2 shrink-0 rounded-full " +
-                                                        (lesson.completed ? "bg-emerald-500" : "bg-zinc-300 dark:bg-zinc-700")
-                                                    }
-                                                />
-                                                <span className="truncate font-medium">{lesson.title}</span>
-                                            </span>
-                                            <span className="shrink-0 text-sm text-zinc-500">
-                                                {lesson.estimatedMinutes ? `${lesson.estimatedMinutes} min` : ""}
-                                            </span>
-                                        </button>
-
-                                        {isOpen && lesson.content ? (
-                                            <div className="mt-4 border-t border-zinc-200 pt-4 dark:border-zinc-800">
-                                                <Markdown source={lesson.content} />
-                                            </div>
-                                        ) : null}
-                                    </Card>
-                                );
-                            })}
-                        </div>
+                {enrollment ? (
+                    <div className="mt-4">
+                        <CoursePlayer
+                            course={course}
+                            enrollment={enrollment}
+                            completedLessonIds={completed}
+                            onMarkLessonComplete={markLessonComplete}
+                            onStartAttempt={startAttempt}
+                            onSubmitAttempt={submitAttempt}
+                        />
                     </div>
-                ))}
+                ) : (
+                    <>
+                        <Callout className="mt-4">
+                            Reading is open to everyone. Enrol to record progress, sit the graded
+                            test and earn the certificate — the learner is resolved from your
+                            account, never from a value the browser supplies.
+                            <div className="mt-3">
+                                <Button onClick={handleEnroll}>
+                                    {authenticated ? "Enrol in the curriculum" : "Sign in to enrol"}
+                                </Button>
+                            </div>
+                        </Callout>
 
-                {test ? (
-                    <Card className="mt-10" data-learn-test={test.slug}>
-                        <Heading as="h3" size="md">{test.title}</Heading>
-                        <Text className="mt-2 text-zinc-600 dark:text-zinc-300">
-                            {test.passing_score
-                                ? `Pass mark ${test.passing_score}%.`
-                                : "Graded test."}{" "}
-                            {enrolled
-                                ? "Answers are graded on submission."
-                                : "Sign in to sit this test and record the result."}
-                        </Text>
-                        <div className="mt-4">
-                            <Badge color={enrolled ? "emerald" : "zinc"}>
-                                {enrolled ? "Available" : "Sign in required"}
-                            </Badge>
+                        {/*
+                         * Un-enrolled readers still get the real component, driven
+                         * against a throwaway enrollment so the lesson content is
+                         * public. The handlers reject rather than silently no-op —
+                         * the server would refuse anyway (403, not enrolled), and a
+                         * button that appears to work is worse than one that says no.
+                         */}
+                        <div className="mt-4 opacity-95">
+                            <CoursePlayer
+                                course={course}
+                                enrollment={{ id: 0 } as Enrollment}
+                                completedLessonIds={new Set()}
+                                onMarkLessonComplete={async () => {
+                                    await handleEnroll();
+                                }}
+                                onStartAttempt={async () => {
+                                    await handleEnroll();
+                                    throw new Error("Enrol first.");
+                                }}
+                                onSubmitAttempt={async () => {
+                                    throw new Error("Enrol first.");
+                                }}
+                            />
                         </div>
-                    </Card>
-                ) : null}
+                    </>
+                )}
             </div>
         </Layout>
     );
-}
-
-/**
- * The narrow markdown subset the curriculum actually uses: headings are avoided
- * inside lessons, so this handles fenced code, bold, inline code, and
- * paragraphs. Anything it does not recognise renders as plain text — which is
- * the right failure mode for prose.
- */
-function Markdown({ source }: { source: string }) {
-    const blocks: React.ReactNode[] = [];
-    const parts = source.split(/```\n?/);
-
-    parts.forEach((part, i) => {
-        if (i % 2 === 1) {
-            blocks.push(
-                <pre
-                    key={`code-${i}`}
-                    className="my-4 overflow-x-auto rounded-lg bg-zinc-900 p-4 text-sm text-zinc-100"
-                >
-                    <code>{part.replace(/\n$/, "")}</code>
-                </pre>,
-            );
-            return;
-        }
-
-        part
-            .split(/\n{2,}/)
-            .map((p) => p.trim())
-            .filter(Boolean)
-            .forEach((paragraph, j) => {
-                if (paragraph.startsWith("- ")) {
-                    blocks.push(
-                        <ul key={`ul-${i}-${j}`} className="my-3 list-disc space-y-1 pl-5">
-                            {paragraph.split(/\n(?=- )/).map((li, k) => (
-                                <li key={k} className="text-zinc-700 dark:text-zinc-300">
-                                    {inline(li.replace(/^- /, ""))}
-                                </li>
-                            ))}
-                        </ul>,
-                    );
-                    return;
-                }
-
-                // Ordered lists. Without this the numbered contract in the
-                // capstone renders as one run-on paragraph — the items are what
-                // is being taught, so losing the structure loses the lesson.
-                if (/^\d+\.\s/.test(paragraph)) {
-                    blocks.push(
-                        <ol key={`ol-${i}-${j}`} className="my-3 list-decimal space-y-2 pl-5">
-                            {paragraph.split(/\n(?=\d+\.\s)/).map((li, k) => (
-                                <li key={k} className="text-zinc-700 dark:text-zinc-300">
-                                    {inline(li.replace(/^\d+\.\s/, ""))}
-                                </li>
-                            ))}
-                        </ol>,
-                    );
-                    return;
-                }
-
-                blocks.push(
-                    <p key={`p-${i}-${j}`} className="my-3 leading-relaxed text-zinc-700 dark:text-zinc-300">
-                        {inline(paragraph)}
-                    </p>,
-                );
-            });
-    });
-
-    return <div data-learn-lesson-body="">{blocks}</div>;
-}
-
-/**
- * Bold, italic and inline code, as React nodes. Never HTML.
- *
- * `**bold**` must be matched before `*italic*` in the alternation, or the
- * single-asterisk branch eats the first two characters of every bold run.
- */
-function inline(text: string): React.ReactNode[] {
-    return text.split(/(\*\*[^*]+\*\*|\*[^*\n]+\*|`[^`]+`)/g).map((chunk, i) => {
-        if (chunk.startsWith("**") && chunk.endsWith("**")) {
-            return <strong key={i}>{chunk.slice(2, -2)}</strong>;
-        }
-        if (chunk.startsWith("*") && chunk.endsWith("*") && chunk.length > 2) {
-            return <em key={i}>{chunk.slice(1, -1)}</em>;
-        }
-        if (chunk.startsWith("`") && chunk.endsWith("`") && chunk.length > 2) {
-            return (
-                <code
-                    key={i}
-                    className="rounded bg-zinc-100 px-1 py-0.5 text-[0.9em] dark:bg-zinc-800"
-                >
-                    {chunk.slice(1, -1)}
-                </code>
-            );
-        }
-        return <span key={i}>{chunk.replace(/\n/g, " ")}</span>;
-    });
 }

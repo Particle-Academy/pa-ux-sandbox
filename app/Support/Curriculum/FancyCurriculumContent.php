@@ -90,7 +90,7 @@ MD,
                         ],
                         [
                             'slug' => 'polymorphic-as',
-                            'title' => 'Why components take an `as` prop',
+                            'title' => 'Why components take an "as" prop',
                             'estimated_minutes' => 7,
                             'content' => <<<'MD'
 A primitive that hardcodes its element decides things it has no business

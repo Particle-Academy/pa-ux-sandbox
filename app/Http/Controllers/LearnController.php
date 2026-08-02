@@ -5,28 +5,39 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Support\Curriculum\FancyCurriculumContent as Content;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 use ParticleAcademy\LaravelCourses\Models\Curriculum;
 use ParticleAcademy\LaravelCourses\Models\Enrollment;
+use ParticleAcademy\LaravelCourses\Models\Lesson;
+use ParticleAcademy\LaravelCourses\Models\Test;
+use ParticleAcademy\LaravelCourses\Models\TestAttempt;
+use ParticleAcademy\LaravelCourses\Services\EnrollmentService;
 use ParticleAcademy\LaravelCourses\Services\ProgressService;
+use ParticleAcademy\LaravelCourses\Services\ScoringService;
 
 /**
- * /learn — the Fancy UI Curriculum, running on laravel-courses + classroom.
+ * /learn — the Fancy UI Curriculum, rendered by @particle-academy/classroom.
  *
- * This is the kit dogfooding its own education stack: the curriculum teaches
- * Fancy UI, and it is served by two Fancy packages installed from real
- * registries the same way any external consumer would install them.
+ * The pages mount `CurriculumOverview` and `CoursePlayer` from the package
+ * rather than re-implementing a course UI. That is the entire point of the
+ * exercise: a dogfood that hand-rolls the surface it is meant to be dogfooding
+ * proves nothing about the package.
  *
- * The catalogue is public. Progress, enrollment and certificates require an
- * account — laravel-courses resolves the learner from the authenticated user,
- * and `allow_input_user_id` is left at its default of false, so a caller cannot
- * claim to be someone else.
+ * Payloads are therefore shaped as the package's OWN TypeScript interfaces
+ * expect — snake_case, nested `modules` / `lessons` / `tests`, matching what its
+ * API resources return. Do not "tidy" these into camelCase; the components read
+ * these exact keys.
  */
 class LearnController extends Controller
 {
-    public function __construct(private readonly ProgressService $progress) {}
+    public function __construct(
+        private readonly ProgressService $progress,
+        private readonly EnrollmentService $enrollments,
+        private readonly ScoringService $scoring,
+    ) {}
 
     public function index(Request $request): Response
     {
@@ -37,22 +48,25 @@ class LearnController extends Controller
 
         $enrollment = $this->enrollmentFor($request, $curriculum);
 
+        // CurriculumOverview reads `courseProgress` as course id => percent.
+        $courseProgress = [];
+        if ($enrollment) {
+            foreach ($curriculum->courses as $course) {
+                $lessonIds = $course->lessons()->pluck('id');
+                $total = $lessonIds->count();
+                $done = $total > 0
+                    ? $enrollment->lessonCompletions()->whereIn('lesson_id', $lessonIds)->count()
+                    : 0;
+                $courseProgress[$course->id] = $total > 0 ? (int) round($done / $total * 100) : 0;
+            }
+        }
+
         return Inertia::render('Learn/Index', [
-            'curriculum' => [
-                'slug' => $curriculum->slug,
-                'title' => $curriculum->title,
-                'description' => $curriculum->description,
-            ],
-            'courses' => $curriculum->courses->map(fn ($course) => [
-                'slug' => $course->slug,
-                'title' => $course->title,
-                'description' => $course->description,
-                'estimatedMinutes' => $course->estimated_minutes,
-                'lessonCount' => $course->lessons()->count(),
-                'hasTest' => $course->tests()->exists(),
-            ])->all(),
-            'progress' => $enrollment ? $this->progress->summary($enrollment) : null,
+            'curriculum' => $curriculum->toArray(),
+            'courseProgress' => (object) $courseProgress,
             'enrolled' => $enrollment !== null,
+            'authenticated' => $request->user() !== null,
+            'summary' => $enrollment ? $this->progress->summary($enrollment) : null,
         ]);
     }
 
@@ -64,41 +78,100 @@ class LearnController extends Controller
             ->where('courses.slug', $slug)
             ->with([
                 'modules' => fn ($q) => $q->orderBy('sort_order'),
+                'modules.lessons' => fn ($q) => $q->orderBy('sort_order'),
                 'lessons' => fn ($q) => $q->orderBy('sort_order'),
+                'tests.questions' => fn ($q) => $q->orderBy('sort_order'),
+                'tests.questions.options' => fn ($q) => $q->orderBy('sort_order'),
             ])
             ->firstOrFail();
 
         $enrollment = $this->enrollmentFor($request, $curriculum);
-        $completed = $enrollment
-            ? $enrollment->lessonCompletions()->pluck('lesson_id')->all()
-            : [];
 
         return Inertia::render('Learn/Course', [
-            'course' => [
-                'slug' => $course->slug,
-                'title' => $course->title,
-                'description' => $course->description,
-                'estimatedMinutes' => $course->estimated_minutes,
-            ],
-            'modules' => $course->modules->map(fn ($module) => [
-                'slug' => $module->slug,
-                'title' => $module->title,
-                'lessons' => $course->lessons
-                    ->where('module_id', $module->id)
-                    ->values()
-                    ->map(fn ($lesson) => [
-                        'id' => $lesson->id,
-                        'slug' => $lesson->slug,
-                        'title' => $lesson->title,
-                        'content' => $lesson->content,
-                        'estimatedMinutes' => $lesson->estimated_minutes,
-                        'completed' => in_array($lesson->id, $completed, true),
-                    ])->all(),
-            ])->all(),
-            'test' => $course->tests()->first()?->only(['slug', 'title', 'passing_score']),
-            'enrolled' => $enrollment !== null,
-            'enrollmentId' => $enrollment?->id,
+            'course' => $course->toArray(),
+            'curriculumSlug' => $curriculum->slug,
+            'enrollment' => $enrollment?->toArray(),
+            'completedLessonIds' => $enrollment
+                ? $enrollment->lessonCompletions()->pluck('lesson_id')->all()
+                : [],
+            'authenticated' => $request->user() !== null,
         ]);
+    }
+
+    /**
+     * The learner actions, as first-party `web` routes.
+     *
+     * classroom ships a `CoursesClient` that talks to the package's own
+     * `api/courses/*` routes. Those sit on the `api` middleware group, which in
+     * Laravel 11+ carries no session — so a browser session cannot authenticate
+     * against them, and `LearnerResolver` (correctly) refuses to take the
+     * learner id from the request body. An Inertia host therefore routes these
+     * through its own session-authenticated endpoints and calls the package's
+     * SERVICES directly, which is the layer they are designed for.
+     *
+     * The components are still the package's. That is what the dogfood is for.
+     */
+    public function enroll(Request $request): JsonResponse
+    {
+        $curriculum = Curriculum::where('slug', Content::CURRICULUM_SLUG)->firstOrFail();
+
+        $enrollment = $this->enrollments->enroll(
+            $request->user()->getAuthIdentifier(),
+            $curriculum,
+        );
+
+        return response()->json($enrollment->toArray(), 201);
+    }
+
+    public function completeLesson(Request $request, Lesson $lesson): JsonResponse
+    {
+        $enrollment = $this->requireEnrollment($request);
+
+        $this->progress->markLessonComplete($enrollment, $lesson);
+
+        return response()->json([
+            'completed_lesson_ids' => $enrollment->lessonCompletions()->pluck('lesson_id')->all(),
+            'summary' => $this->progress->summary($enrollment->refresh()),
+        ]);
+    }
+
+    public function startAttempt(Request $request, Test $test): JsonResponse
+    {
+        $enrollment = $this->requireEnrollment($request);
+
+        return response()->json(
+            $this->scoring->startAttempt($enrollment, $test)->toArray(),
+            201,
+        );
+    }
+
+    public function submitAttempt(Request $request, TestAttempt $attempt): JsonResponse
+    {
+        $enrollment = $this->requireEnrollment($request);
+
+        // An attempt belongs to an enrollment. Without this check a learner
+        // could submit answers against somebody else's attempt by guessing an
+        // id — the package's own controllers make the same comparison.
+        abort_unless((int) $attempt->enrollment_id === (int) $enrollment->getKey(), 403);
+
+        $answers = $request->validate([
+            'answers' => 'present|array',
+            'answers.*.question_id' => 'required|integer',
+        ])['answers'];
+
+        return response()->json(
+            $this->scoring->submitAnswers($attempt, $answers)->toArray(),
+        );
+    }
+
+    private function requireEnrollment(Request $request): Enrollment
+    {
+        $curriculum = Curriculum::where('slug', Content::CURRICULUM_SLUG)->firstOrFail();
+        $enrollment = $this->enrollmentFor($request, $curriculum);
+
+        abort_if($enrollment === null, 403, 'Not enrolled.');
+
+        return $enrollment;
     }
 
     private function enrollmentFor(Request $request, Curriculum $curriculum): ?Enrollment

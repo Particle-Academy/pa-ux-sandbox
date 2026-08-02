@@ -49,6 +49,10 @@
    etc. show up in the final CSS. We point at the compiled dist files (not
    src/) so this matches how a real consumer installs them. */
 @source '../../node_modules/@particle-academy/react-fancy/dist/**/*.{js,cjs,mjs}';
+/* These packages ship COMPILED. Scanning src — or not scanning at all — yields
+   correct markup with none of its classes generated, and no error anywhere.
+   GuardCard has hit that silent failure three times; it must be the dist. */
+@source '../../node_modules/@particle-academy/classroom/dist/**/*.{js,cjs,mjs}';
 @source '../../node_modules/@particle-academy/fancy-3d/dist/**/*.{js,cjs,mjs}';
 @source '../../node_modules/@particle-academy/fancy-code/dist/**/*.{js,cjs,mjs}';
 @source '../../node_modules/@particle-academy/fancy-echarts/dist/**/*.{js,cjs,mjs}';

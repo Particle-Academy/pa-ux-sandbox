@@ -284,6 +284,21 @@ Route::get('/learn/{slug}', [LearnController::class, 'course'])
     ->where('slug', '[a-z0-9\-]+')
     ->name('learn.course');
 
+// Learner actions. These are session-authenticated `web` routes rather than the
+// package's own `api/courses/*` ones: that group carries no session in Laravel
+// 11+, and laravel-courses correctly refuses to take a learner id from the
+// request body. They delegate to the package's services, which is the layer
+// those are built for.
+Route::middleware('auth')->group(function (): void {
+    Route::post('/learn/enroll', [LearnController::class, 'enroll'])->name('learn.enroll');
+    Route::post('/learn/lessons/{lesson}/complete', [LearnController::class, 'completeLesson'])
+        ->name('learn.lesson.complete');
+    Route::post('/learn/tests/{test}/attempts', [LearnController::class, 'startAttempt'])
+        ->name('learn.attempt.start');
+    Route::post('/learn/attempts/{attempt}/submit', [LearnController::class, 'submitAttempt'])
+        ->name('learn.attempt.submit');
+});
+
 // ─── Docs hub ────────────────────────────────────────────────────────
 Route::get('/docs', [DocsController::class, 'show'])->name('docs.index');
 Route::get('/docs/{slug}', [DocsController::class, 'show'])

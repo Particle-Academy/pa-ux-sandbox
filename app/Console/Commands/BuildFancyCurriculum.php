@@ -128,6 +128,13 @@ class BuildFancyCurriculum extends Command
      */
     private function authorModules(Course $course, array $modules, array &$counts): void
     {
+        // Lesson sort_order is sequential ACROSS the whole course, not restarted
+        // per module. classroom's CoursePlayer renders one flat lesson list
+        // ordered by this column, so per-module numbering gave four lessons the
+        // orders 0,1,0,1 and the sidebar interleaved two modules' worth of
+        // lessons into an arbitrary sequence.
+        $lessonOrder = 0;
+
         foreach ($modules as $mIndex => $mSpec) {
             $counts['modules']++;
 
@@ -136,7 +143,7 @@ class BuildFancyCurriculum extends Command
                 ['title' => $mSpec['title'], 'sort_order' => $mIndex],
             );
 
-            foreach ($mSpec['lessons'] ?? [] as $lIndex => $lSpec) {
+            foreach ($mSpec['lessons'] ?? [] as $lSpec) {
                 $counts['lessons']++;
 
                 Lesson::updateOrCreate(
@@ -144,14 +151,84 @@ class BuildFancyCurriculum extends Command
                     [
                         'module_id' => $module->id,
                         'title' => $lSpec['title'],
-                        'content' => $lSpec['content'],
+                        // LessonView renders content through ContentRenderer with
+                        // format="html", so markdown stored raw appears literally,
+                        // backticks and asterisks and all. The source stays
+                        // markdown because that is what is reviewable in a diff;
+                        // it is converted on the way into the database.
+                        'content' => self::markdownToHtml($lSpec['content']),
                         'content_type' => 'text',
                         'estimated_minutes' => $lSpec['estimated_minutes'] ?? null,
-                        'sort_order' => $lIndex,
+                        'sort_order' => $lessonOrder++,
                     ],
                 );
             }
         }
+    }
+
+    /**
+     * The narrow markdown subset the curriculum uses → HTML.
+     *
+     * Deliberately not a markdown library: the input is ours, the subset is
+     * small, and `ContentRenderer` sanitises what it receives anyway. Everything
+     * is escaped first, so an unrecognised construct degrades to visible text
+     * rather than markup.
+     */
+    public static function markdownToHtml(string $markdown): string
+    {
+        $out = [];
+
+        foreach (preg_split('/```\n?/', $markdown) as $i => $part) {
+            if ($i % 2 === 1) {
+                $out[] = '<pre><code>'.e(rtrim($part, "\n")).'</code></pre>';
+
+                continue;
+            }
+
+            foreach (preg_split('/\n{2,}/', trim($part)) as $block) {
+                $block = trim($block);
+
+                if ($block === '') {
+                    continue;
+                }
+
+                if (str_starts_with($block, '- ')) {
+                    $items = preg_split('/\n(?=- )/', $block);
+                    $out[] = '<ul>'.implode('', array_map(
+                        fn (string $li) => '<li>'.self::inline(preg_replace('/^- /', '', $li)).'</li>',
+                        $items,
+                    )).'</ul>';
+
+                    continue;
+                }
+
+                if (preg_match('/^\d+\.\s/', $block) === 1) {
+                    $items = preg_split('/\n(?=\d+\.\s)/', $block);
+                    $out[] = '<ol>'.implode('', array_map(
+                        fn (string $li) => '<li>'.self::inline(preg_replace('/^\d+\.\s/', '', $li)).'</li>',
+                        $items,
+                    )).'</ol>';
+
+                    continue;
+                }
+
+                $out[] = '<p>'.self::inline($block).'</p>';
+            }
+        }
+
+        return implode("\n", $out);
+    }
+
+    /** Bold, italic and inline code. `**` is matched before `*`, or it eats it. */
+    private static function inline(string $text): string
+    {
+        $escaped = e(preg_replace('/\s*\n\s*/', ' ', trim($text)));
+
+        return preg_replace(
+            ['/\*\*([^*]+)\*\*/', '/(?<!\*)\*([^*]+)\*(?!\*)/', '/`([^`]+)`/'],
+            ['<strong>$1</strong>', '<em>$1</em>', '<code>$1</code>'],
+            $escaped,
+        );
     }
 
     /**

@@ -75,8 +75,8 @@ final class FancyCurriculumContent
 `react-fancy` is roughly 70 Tailwind v4 primitives — the layer everything else
 in the suite composes against.
 
-The number that matters more is this one: the suite ships **245 installable
-registry entries**, but only **199** are attributed to a package. Those two
+The number that matters more is this one: the suite ships **261 installable
+registry entries**, but only **215** are attributed to a package. Those two
 counts measure different things, and quoting the wrong one makes you sound like
 you have not looked. The registry count includes package-qualified duplicates —
 `fancy-3d-babylon-stage` and `fancy-3d-three-stage` are the same component
@@ -170,13 +170,13 @@ MD,
                         ],
                     ],
                     [
-                        'prompt' => 'The suite has 245 installable registry entries but 199 components attributed to a package. Why the difference?',
+                        'prompt' => 'The suite has 261 installable registry entries but 215 components attributed to a package. Why the difference?',
                         'type' => 'multiple_choice',
                         'explanation' => 'The registry includes package-qualified duplicates — the same component backed by two engines appears twice in what you can install.',
                         'options' => [
                             ['label' => 'The registry counts package-qualified duplicates, like the Babylon and three.js versions of the same component', 'is_correct' => true],
                             ['label' => '46 components are unpublished', 'is_correct' => false],
-                            ['label' => '199 is out of date; the real number is 245', 'is_correct' => false],
+                            ['label' => '215 is out of date; the real number is 261', 'is_correct' => false],
                             ['label' => 'The registry counts each component once per framework it supports', 'is_correct' => false],
                         ],
                     ],

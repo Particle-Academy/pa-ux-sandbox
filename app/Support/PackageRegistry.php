@@ -137,6 +137,15 @@ class PackageRegistry
         'fancy-passkeys' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#0891b2'],
         'fancy-passkeys-js' => ['group' => 'platform', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#0891b2'],
         'fancy-passkeys-ui' => ['group' => 'platform', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#0891b2'],
+        // Education — courses, certification, and the authoring agent. A META
+        // entry is not optional: a slug missing from here falls through to the
+        // fallback bucket and silently reads as a second-class "companion".
+        'laravel-courses' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#8b5cf6'],
+        'classroom' => ['group' => 'platform', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#8b5cf6'],
+        'teachers-aid' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#a855f7'],
+        'teachers-aid-ui' => ['group' => 'platform', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#a855f7'],
+        'laravel-jobs' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#0d9488'],
+        'job-board' => ['group' => 'platform', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#0d9488'],
         // Workflow runtime twin, relay transport, shared document core.
         'fancy-flow-php' => ['group' => 'surfaces', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#0ea5e9'],
         'fancy-cf-relay' => ['group' => 'tooling', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#f6821f'],
@@ -182,6 +191,12 @@ class PackageRegistry
             self::fancyEcharts(),
             self::fancyMlmUi(),
             self::fancyPasskeysUi(),
+            self::laravelCourses(),
+            self::classroom(),
+            self::teachersAid(),
+            self::teachersAidUi(),
+            self::laravelJobs(),
+            self::jobBoard(),
             self::fancyGitUi(),
             self::fancyXFilesUi(),
             self::fancyScreens(),
@@ -1014,6 +1029,113 @@ class PackageRegistry
     }
 
     /** @return array<string, mixed> */
+    /** @return array<string,mixed> */
+    private static function laravelCourses(): array
+    {
+        return [
+            'slug' => 'laravel-courses',
+            'name' => 'laravel-courses',
+            'tagline' => 'Curriculums, courses, modules, lessons, tests, enrollments, attempts and certificates for Laravel. API-only — the host owns the user model and the UI. Writes are deny-by-default behind AuthorizesCourseAdmin; reading the catalogue and verifying a certificate stay public.',
+            'composer' => 'particle-academy/laravel-courses',
+            'repo' => 'Particle-Academy/laravel-courses',
+            'language' => 'PHP',
+            'pairs' => ['classroom', 'teachers-aid'],
+        ];
+    }
+
+    /** @return array<string,mixed> */
+    private static function classroom(): array
+    {
+        return [
+            'slug' => 'classroom',
+            'name' => 'classroom',
+            'tagline' => 'The learner surface for laravel-courses: browse a curriculum, work through a course, sit a graded test, collect a certificate. This is what the Fancy UI Curriculum at /learn runs on.',
+            'npm' => '@particle-academy/classroom',
+            'repo' => 'Particle-Academy/classroom',
+            'language' => 'TypeScript',
+            'pairs' => ['laravel-courses'],
+            'components' => [
+                ['slug' => 'curriculum-overview', 'name' => 'CurriculumOverview', 'blurb' => 'A curriculum and its courses, with per-course progress and enrollment state.'],
+                ['slug' => 'course-player', 'name' => 'CoursePlayer', 'blurb' => 'The course itself — modules, lessons, progress, what is next, and the graded test.'],
+                ['slug' => 'lesson-view', 'name' => 'LessonView', 'blurb' => 'One lesson: text, video or mixed, with a mark-complete action.'],
+                ['slug' => 'test-runner', 'name' => 'TestRunner', 'blurb' => 'An attempt end to end — questions, confirm-before-submit, and the result. Renders an ungraded attempt as awaiting grading rather than a failure.'],
+                ['slug' => 'question-renderer', 'name' => 'QuestionRenderer', 'blurb' => 'One question of any of the four types: multiple choice, multiple select, true/false, short answer.'],
+                ['slug' => 'certificate-view', 'name' => 'CertificateView', 'blurb' => 'An issued certificate and its verification code. Deliberately literal-coloured so it looks the same on every theme.'],
+            ],
+        ];
+    }
+
+    /** @return array<string,mixed> */
+    private static function teachersAid(): array
+    {
+        return [
+            'slug' => 'teachers-aid',
+            'name' => 'teachers-aid',
+            'tagline' => 'The TAC authoring agent: reads course material and PROPOSES curriculum, course and test changes. Propose-then-apply is structural — the tools hold no repository or connection, so there is no code path from a tool call to a write, and a prompt injection inside an uploaded handbook still cannot change anything. LLM-library agnostic behind one ChatDriver seam.',
+            'composer' => 'particle-academy/teachers-aid',
+            'repo' => 'Particle-Academy/teachers-aid',
+            'language' => 'PHP',
+            'pairs' => ['teachers-aid-ui', 'laravel-courses'],
+        ];
+    }
+
+    /** @return array<string,mixed> */
+    private static function teachersAidUi(): array
+    {
+        return [
+            'slug' => 'teachers-aid-ui',
+            'name' => 'teachers-aid-ui',
+            'tagline' => 'The React surface for the TAC authoring agent — chat transcript, a composer with file drop for handbooks and decks, and the plan-review approval surface where a human turns a proposal into a change. Transport-agnostic: no router, no HTTP client.',
+            'npm' => '@particle-academy/teachers-aid-ui',
+            'repo' => 'Particle-Academy/teachers-aid-ui',
+            'language' => 'TypeScript',
+            'pairs' => ['teachers-aid'],
+            'components' => [
+                ['slug' => 'teachers-aid-chat', 'name' => 'TeachersAidChat', 'blurb' => 'The whole surface — transcript, composer and plan review in one.'],
+                ['slug' => 'chat-transcript', 'name' => 'ChatTranscript', 'blurb' => 'The conversation. Agent output renders sanitised, because a reply is model output and an uploaded file can talk a model into emitting markup.'],
+                ['slug' => 'message-composer', 'name' => 'MessageComposer', 'blurb' => 'Input with file drop — handbooks, decks, question banks.'],
+                ['slug' => 'plan-review', 'name' => 'PlanReview', 'blurb' => 'The trust boundary made visible: per-operation accept/reject on a proposed change plan. Never auto-applies.'],
+            ],
+        ];
+    }
+
+    /** @return array<string,mixed> */
+    private static function laravelJobs(): array
+    {
+        return [
+            'slug' => 'laravel-jobs',
+            'name' => 'laravel-jobs',
+            'tagline' => 'Job postings and applications for Laravel. The host owns the user and employer models; two deny-by-default contracts mean removing a binding switches the feature off rather than opening it up. Publish denials carry a code and meta so your own UI can react.',
+            'composer' => 'particle-academy/laravel-jobs',
+            'repo' => 'Particle-Academy/laravel-jobs',
+            'language' => 'PHP',
+            'pairs' => ['job-board'],
+        ];
+    }
+
+    /** @return array<string,mixed> */
+    private static function jobBoard(): array
+    {
+        return [
+            'slug' => 'job-board',
+            'name' => 'job-board',
+            'tagline' => 'The React surface for laravel-jobs — a public board, employer posting management, and candidate applications. The UI is never the authorization: the backend gates deny-by-default, so assume every action a component renders will also be attempted directly against the API.',
+            'npm' => '@particle-academy/job-board',
+            'repo' => 'Particle-Academy/job-board',
+            'language' => 'TypeScript',
+            'pairs' => ['laravel-jobs'],
+            'components' => [
+                ['slug' => 'job-board', 'name' => 'JobBoard', 'blurb' => 'The public list, with filters.'],
+                ['slug' => 'job-detail', 'name' => 'JobDetail', 'blurb' => 'A single posting.'],
+                ['slug' => 'apply-form', 'name' => 'ApplyForm', 'blurb' => 'A candidate application. Anonymous applications are supported by the backend.'],
+                ['slug' => 'job-posting-form', 'name' => 'JobPostingForm', 'blurb' => 'Create or edit a posting, employer side.'],
+                ['slug' => 'employer-job-list', 'name' => 'EmployerJobList', 'blurb' => 'An employer\'s own postings and their draft / published / closed status.'],
+                ['slug' => 'application-list', 'name' => 'ApplicationList', 'blurb' => 'Applications against a posting, through the six-state status flow.'],
+            ],
+        ];
+    }
+
+    /** @return array<string,mixed> */
     private static function fancyMlmUi(): array
     {
         return [

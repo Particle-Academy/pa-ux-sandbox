@@ -139,7 +139,7 @@ export function Layout({
                             <head>, causing a hydration mismatch (#418). */}
                         <img src="/showcase-assets/fancy-ui-logo.jpg" alt="Fancy UI Kit" className="mark" style={{ objectFit: "cover" }} loading="lazy" />
                         <span>Fancy UI Kit</span>
-                        <span className="ver">v0.4</span>
+                        <span className="ver">v{__KIT_VERSION__}</span>
                     </Link>
 
                     <div className="nav-links">
@@ -552,7 +552,7 @@ export function Layout({
                             only place the browser/PHP/Node floors are written down, and
                             the version chip is where someone looks for them. */}
                         <span className="right">
-                            fancy-ui · <Link href="/docs/requirements" title="Supported browsers and versions">v0.4</Link> · react-fancy {__REACT_FANCY_VERSION__}
+                            fancy-ui · <Link href="/docs/requirements" title="Supported browsers and versions">v{__KIT_VERSION__}</Link> · react-fancy {__REACT_FANCY_VERSION__}
                         </span>
                     </div>
                 </div>

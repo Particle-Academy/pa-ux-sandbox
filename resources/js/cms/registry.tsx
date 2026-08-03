@@ -109,7 +109,7 @@ export const sandboxRegistry: ElementRegistry = {
   "hero-eyebrow": () => (
     <>
       <span className="dot" />
-      <span>v0.4 · Particle Academy</span>
+      <span>v{__KIT_VERSION__} · Particle Academy</span>
     </>
   ),
 

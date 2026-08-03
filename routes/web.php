@@ -301,6 +301,15 @@ Route::middleware('auth')->group(function (): void {
 
 // ─── Docs hub ────────────────────────────────────────────────────────
 Route::get('/docs', [DocsController::class, 'show'])->name('docs.index');
+
+// Frozen snapshots of older kit lines. Declared BEFORE /docs/{slug} for
+// clarity, though the two cannot collide: a version contains a dot and the
+// slug pattern does not allow one.
+Route::get('/docs/{version}/{slug?}', [DocsController::class, 'showVersioned'])
+    ->where('version', '\d+\.\d+')
+    ->where('slug', '[a-z0-9\-]+')
+    ->name('docs.versioned');
+
 Route::get('/docs/{slug}', [DocsController::class, 'show'])
     ->where('slug', '[a-z0-9\-]+')
     ->name('docs.show');

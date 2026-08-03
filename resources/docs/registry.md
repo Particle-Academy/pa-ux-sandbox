@@ -79,6 +79,46 @@ Each item carries enough to render in a list or run substring search against. Th
 | `type` | string | Same vocabulary as the top-level `type`. |
 | `target` | string | Where the file should land in the consumer's codebase. Relative to the `aliases.components` path in `fancy.json`. |
 
+## Kit versions — `?version=`
+
+Both endpoints accept a [kit version](/docs/versions) and answer for it:
+
+```bash
+curl -s "https://ui.particle.academy/r/index.json?version=0.4"
+```
+
+The index then contains only what existed in v0.4, and reports which version it describes:
+
+```json
+{
+  "name": "fancy-ui",
+  "version": "0.4",
+  "items": [ ... ]
+}
+```
+
+Omit the parameter and you get the current kit — which is what every existing consumer already gets, unchanged.
+
+Items carry two optional fields:
+
+| Field | Meaning |
+|---|---|
+| `since` | First kit version the item exists in. Absent = it has always been here. |
+| `until` | Last kit version the item exists in. Absent = still current. |
+
+Both are **omitted when unset**, so an item present in every version serializes exactly as it did before versioning existed.
+
+Asking for an item that did not exist in the requested version is a **404**, not a silent success:
+
+```bash
+curl -s "https://ui.particle.academy/r/some-new-thing.json?version=0.4"
+# {"error":"registry item 'some-new-thing' does not exist in kit version 0.4","since":"0.5","until":null}
+```
+
+That is deliberate. The CLI vendors whatever this returns straight into your project, so handing back source that cannot compile against your kit is a worse answer than handing back nothing.
+
+A malformed `version` is ignored rather than rejected — this endpoint is public and cached, and failing an install over a junk query string would be the wrong trade.
+
 ## How consumers use it
 
 The reference consumer is the [`fancy-cli` CLI](/docs/cli) but anything that speaks HTTP can use it.

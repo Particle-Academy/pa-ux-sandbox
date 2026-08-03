@@ -24,6 +24,20 @@ class RegistryItem
         public readonly array $dependencies = [],
         public readonly array $registryDependencies = [],
         public readonly string $type = 'registry:ui',
+        /**
+         * First kit version this item exists in. Null = it has always been here.
+         */
+        public readonly ?string $since = null,
+        /**
+         * Last kit version this item exists in. Null = still current.
+         *
+         * This is what a bare `since` cannot express, and the 0.5 cut will need
+         * it: without `until`, an item removed from the kit keeps being served
+         * to consumers of the version that removed it — the CLI vendors source
+         * for something that is gone, and an agent is told about an API it
+         * cannot call.
+         */
+        public readonly ?string $until = null,
     ) {}
 
     /** Clone this item with a different registry name (used to de-collide). */
@@ -38,6 +52,8 @@ class RegistryItem
             dependencies: $this->dependencies,
             registryDependencies: $this->registryDependencies,
             type: $this->type,
+            since: $this->since,
+            until: $this->until,
         );
     }
 
@@ -60,7 +76,25 @@ class RegistryItem
             dependencies: $data['dependencies'] ?? [],
             registryDependencies: $data['registryDependencies'] ?? [],
             type: (string) ($data['type'] ?? 'registry:ui'),
+            since: isset($data['since']) ? (string) $data['since'] : null,
+            until: isset($data['until']) ? (string) $data['until'] : null,
         );
+    }
+
+    /**
+     * Whether this item existed in kit version `$version`.
+     *
+     * Compared with {@see version_compare} rather than string equality so that
+     * "0.10" sorts after "0.9" — the point at which a lexical comparison would
+     * start quietly excluding everything.
+     */
+    public function existsIn(string $version): bool
+    {
+        if ($this->since !== null && version_compare($version, $this->since, '<')) {
+            return false;
+        }
+
+        return ! ($this->until !== null && version_compare($version, $this->until, '>'));
     }
 
     public function toArray(): array
@@ -75,6 +109,7 @@ class RegistryItem
             'dependencies' => $this->dependencies,
             'registryDependencies' => $this->registryDependencies,
             'files' => $this->files,
+            ...$this->versionFields(),
         ];
     }
 
@@ -89,6 +124,18 @@ class RegistryItem
             'package' => $this->package,
             'files' => count($this->files),
             'url' => "/r/{$this->name}.json",
+            ...$this->versionFields(),
         ];
+    }
+
+    /**
+     * Emitted only when set, so the common case — an item present in every
+     * version — stays exactly the payload it was before versioning existed.
+     *
+     * @return array<string, string>
+     */
+    private function versionFields(): array
+    {
+        return array_filter(['since' => $this->since, 'until' => $this->until], fn (?string $v): bool => $v !== null);
     }
 }

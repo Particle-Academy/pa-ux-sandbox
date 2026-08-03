@@ -65,6 +65,7 @@ class DocsRegistry
             'label' => 'Reference',
             'pages' => [
                 ['slug' => 'requirements', 'title' => 'Minimum requirements', 'description' => 'Supported browsers and versions, plus the PHP, Laravel and Node floors — and which layer of the stack sets each number.'],
+                ['slug' => 'versions', 'title' => 'Versions & support', 'description' => 'Kit versions vs package versions, how long each release line is supported, and what happens at end of life.'],
                 ['slug' => 'changelog', 'title' => 'Changelog', 'description' => 'Release notes across every Fancy UI package.'],
             ],
         ],

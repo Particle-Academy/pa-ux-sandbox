@@ -18,14 +18,40 @@ type Section = {
 
 type Neighbor = { slug: string; title: string } | null;
 
+type VersionOption = { version: string; current: boolean; supported: boolean };
+
+type VersionState = {
+    /** The kit version these docs describe. */
+    active: string;
+    /** The kit version the site itself is on. */
+    current: string;
+    isCurrent: boolean;
+    available: VersionOption[];
+};
+
 type Props = {
     page: Page;
     html: string;
     sections: Section[];
     neighbors: { prev: Neighbor; next: Neighbor };
+    version: VersionState;
 };
 
-export default function DocsShow({ page, html, sections, neighbors }: Props) {
+export default function DocsShow({ page, html, sections, neighbors, version }: Props) {
+    /**
+     * The current version lives at `/docs/{slug}` and older ones at
+     * `/docs/{version}/{slug}`. Every link on the page has to keep the reader
+     * in the version they chose — a sidebar that silently drops them back onto
+     * current docs is worse than no selector, because nothing tells them it
+     * happened.
+     */
+    const href = (slug: string) => (version.isCurrent ? `/docs/${slug}` : `/docs/${version.active}/${slug}`);
+
+    // Only offer versions that actually have this page. A page added in 0.5 has
+    // no 0.4 equivalent, so switching lands on the older version's index rather
+    // than a 404.
+    const switchTo = (option: VersionOption) => (option.current ? `/docs/${page.slug}` : `/docs/${option.version}`);
+
     return (
         <Layout>
             <Seo
@@ -36,6 +62,35 @@ export default function DocsShow({ page, html, sections, neighbors }: Props) {
 
             <div className="grid gap-8 lg:grid-cols-[14rem_1fr]">
                 <aside className="lg:sticky lg:top-20 lg:max-h-[calc(100vh-6rem)] lg:overflow-auto">
+                    {version.available.length > 1 && (
+                        <div className="mb-6">
+                            <Text size="xs" className="mb-2 font-semibold uppercase tracking-wider !text-zinc-500">
+                                Version
+                            </Text>
+                            <ul className="space-y-0.5 text-sm">
+                                {version.available.map((option) => {
+                                    const active = option.version === version.active;
+                                    return (
+                                        <li key={option.version}>
+                                            <Link
+                                                href={switchTo(option)}
+                                                className={`flex items-center justify-between rounded-md px-2 py-1 ${
+                                                    active
+                                                        ? "bg-violet-50 font-medium text-violet-900 dark:bg-violet-500/15 dark:text-violet-100"
+                                                        : "text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-900 dark:hover:text-zinc-100"
+                                                }`}
+                                            >
+                                                <span>v{option.version}</span>
+                                                <span className="text-[10px] uppercase tracking-wider text-zinc-500">
+                                                    {option.current ? "current" : option.supported ? "" : "end of life"}
+                                                </span>
+                                            </Link>
+                                        </li>
+                                    );
+                                })}
+                            </ul>
+                        </div>
+                    )}
                     <nav>
                         {sections.map((section) => (
                             <div key={section.label} className="mb-6">
@@ -48,7 +103,7 @@ export default function DocsShow({ page, html, sections, neighbors }: Props) {
                                         return (
                                             <li key={p.slug}>
                                                 <Link
-                                                    href={`/docs/${p.slug}`}
+                                                    href={href(p.slug)}
                                                     className={`block rounded-md px-2 py-1 ${
                                                         active
                                                             ? "bg-violet-50 font-medium text-violet-900 dark:bg-violet-500/15 dark:text-violet-100"
@@ -67,6 +122,17 @@ export default function DocsShow({ page, html, sections, neighbors }: Props) {
                 </aside>
 
                 <article className="min-w-0">
+                    {/* Landing here from a search result is the common case, and
+                        nothing else on the page would say which version it is. */}
+                    {!version.isCurrent && (
+                        <div className="mb-6 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-100">
+                            You are reading the docs for <strong>v{version.active}</strong>, which is not the current
+                            version.{" "}
+                            <Link href={`/docs/${page.slug}`} className="underline underline-offset-2">
+                                Read this page for v{version.current} →
+                            </Link>
+                        </div>
+                    )}
                     {page.section && (
                         <Text size="xs" className="font-semibold uppercase tracking-wider !text-violet-600 dark:!text-violet-300">
                             {page.section}
@@ -84,7 +150,7 @@ export default function DocsShow({ page, html, sections, neighbors }: Props) {
                     <div className="mt-6 flex flex-wrap items-stretch justify-between gap-3">
                         <div>
                             {neighbors.prev && (
-                                <Button as={Link} href={`/docs/${neighbors.prev.slug}`} variant="ghost" icon="arrow-left">
+                                <Button as={Link} href={href(neighbors.prev.slug)} variant="ghost" icon="arrow-left">
                                     <span>
                                         <span className="block text-[10px] uppercase tracking-wider text-zinc-500">Previous</span>
                                         <span>{neighbors.prev.title}</span>
@@ -94,7 +160,7 @@ export default function DocsShow({ page, html, sections, neighbors }: Props) {
                         </div>
                         <div>
                             {neighbors.next && (
-                                <Button as={Link} href={`/docs/${neighbors.next.slug}`} variant="ghost" iconTrailing="arrow-right">
+                                <Button as={Link} href={href(neighbors.next.slug)} variant="ghost" iconTrailing="arrow-right">
                                     <span>
                                         <span className="block text-[10px] uppercase tracking-wider text-zinc-500">Next</span>
                                         <span>{neighbors.next.title}</span>

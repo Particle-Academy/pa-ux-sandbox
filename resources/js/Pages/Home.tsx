@@ -143,7 +143,7 @@ function Hero({ packages, companions }: { packages: PackageRow[]; companions: Co
                 <div>
                     <div className="eyebrow-row">
                         <span className="dot" />
-                        <span>v0.4 · React · PHP · Node</span>
+                        <span>v{__KIT_VERSION__} · React · PHP · Node</span>
                     </div>
                     <h1 className="display">
                         Build the app, <span className="gradient-text">not the plumbing.</span>

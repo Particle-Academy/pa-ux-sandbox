@@ -54,7 +54,21 @@ php artisan registry:build   # compile component source     -> resources/registr
 php artisan readmes:build    # compile package READMEs      -> resources/registry/readmes.json
 php artisan tui:build        # compile fancy-tui ANSI frames -> resources/registry/tui-previews.json
 php artisan flow:build       # compile marketplace nodes    -> resources/registry/flow-nodes.json
+php artisan docs:snapshot    # freeze the docs for a kit cut -> resources/docs/{version}/
 ```
+
+`docs:snapshot` is the odd one out — it runs **once per kit cut**, not whenever
+its source changes, and it runs BEFORE `kit.json` is bumped (the snapshot is of
+the outgoing line). It copies `resources/docs/*.md` plus a `manifest.json`
+holding that version's sidebar, and the directory is committed. See
+[`.ai/plans/kit-versioning-and-support.md`](../../.ai/plans/kit-versioning-and-support.md).
+
+**The kit version lives in `kit.json`**, read by both `config/kit.php` and
+`vite.config.js` (`__KIT_VERSION__`). Never type it into a component — it was
+already duplicated across four files, which is how the react-fancy version in
+the footer once drifted twelve minor versions behind. Bumping it also means
+adding a row to `App\Support\Docs\SupportPolicy::LINES`; a test fails if you
+forget.
 
 Production deploys ONLY px-ui-sandbox, so neither the sibling repos nor most
 packages' `node_modules` entries exist there — every artifact is read in prod

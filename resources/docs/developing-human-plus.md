@@ -84,6 +84,12 @@ For anything irreversible or human-visible, turn on `pendingMode`. Mutations the
 
 This is the trust-but-verify loop from the [design guide](/docs/designing-human-plus), made literal. Design the staged state well; wire it here.
 
+A staged step is easiest to understand as a picture. Below is a real `<FlowViewer>` from `@particle-academy/fancy-flow` — the same component you would embed in your own app — showing a workflow mid-run: two steps done, and one **waiting on a human** before anything downstream happens.
+
+<!--EMBED:flow-viewer-->
+
+That is `pendingMode` at the workflow scale. The viewer is read-only by construction, so a diagram in your docs can never become an editor a reader accidentally mutates.
+
 ## Wire the bridge through your build
 
 A bridge that isn't exported is invisible. For a package, that's four edits (this trips everyone up once):

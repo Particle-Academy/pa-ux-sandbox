@@ -95,7 +95,7 @@ import { Board, StickyNote, CursorLayer, Shape, Connector, Drawing } from "@part
 import "@particle-academy/fancy-whiteboard/styles.css";
 import { ArtBoard, ArtPiece, type ArtBoardValue } from "@particle-academy/fancy-artboard";
 import "@particle-academy/fancy-artboard/styles.css";
-import { FlowEditor } from "@particle-academy/fancy-flow";
+import { FlowEditor, FlowViewer } from "@particle-academy/fancy-flow";
 import { useFlowRunnerUx, createFlowRunnerUx } from "@particle-academy/fancy-flow/ux";
 import { runFlow } from "@particle-academy/fancy-flow/engine";
 import "@particle-academy/fancy-flow/styles.css";
@@ -248,6 +248,7 @@ const REGISTRY: Record<string, DemoFn> = {
 
     // ── fancy-flow
     "fancy-flow/flow-editor": FlowEditorDemo,
+    "fancy-flow/flow-viewer": FlowViewerDemo,
     "fancy-flow/use-flow-state": FlowStateHookDemo,
     "fancy-flow/use-flow-run": FlowRunHookDemo,
     "fancy-flow/run-flow": RunFlowDemo,
@@ -2144,6 +2145,44 @@ function FlowEditorDemo() {
         >
             <div className="overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
                 <FlowEditor initial={FLOW_SEED_GRAPH} executors={executors} height={480} />
+            </div>
+        </DemoNote>
+    );
+}
+
+function FlowViewerDemo() {
+    // A plausible run: the first two nodes finished, the branch is executing,
+    // everything downstream is still pending. `statuses` is what lets one
+    // component answer both "what is this workflow" and "what happened".
+    const statuses = {
+        trigger: "ok",
+        fetch: "ok",
+        branch: "running",
+        summarize: "pending",
+        notify: "pending",
+        respond: "pending",
+    } as const;
+
+    return (
+        <DemoNote
+            outOfBox="Read-only by construction — there is no prop that makes FlowViewer editable. Drag a node and it doesn't move; drag between ports and no edge appears. The list variant is the half a canvas can't do: docs, narrow columns, print, an audit trail."
+            demo="The same seed graph as the editor demo above, annotated with a mid-run status so you can see both jobs at once. Node titles come from the registry, so an overrideNodeKind() rename shows up here too."
+        >
+            <div className="grid gap-6">
+                <div>
+                    <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-zinc-500">
+                        variant=&quot;list&quot;
+                    </p>
+                    <FlowViewer graph={FLOW_SEED_GRAPH as never} variant="list" statuses={statuses as never} />
+                </div>
+                <div>
+                    <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-zinc-500">
+                        variant=&quot;canvas&quot;
+                    </p>
+                    <div className="overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
+                        <FlowViewer graph={FLOW_SEED_GRAPH as never} height={360} />
+                    </div>
+                </div>
             </div>
         </DemoNote>
     );

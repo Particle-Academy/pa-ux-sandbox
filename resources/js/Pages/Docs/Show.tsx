@@ -2,6 +2,7 @@ import { Link } from "@inertiajs/react";
 import { Seo } from "@particle-academy/fancy-inertia/seo";
 import { Button, Heading, Separator, Text } from "@particle-academy/react-fancy";
 import { Layout } from "../Layout";
+import { DocsBody } from "./DocsEmbeds";
 
 type Page = {
     slug: string;
@@ -76,10 +77,7 @@ export default function DocsShow({ page, html, sections, neighbors }: Props) {
 
                     <Separator className="my-6" />
 
-                    <div
-                        className="docs-prose"
-                        dangerouslySetInnerHTML={{ __html: html }}
-                    />
+                    <DocsBody html={html} />
 
                     <Separator className="mt-12" />
 

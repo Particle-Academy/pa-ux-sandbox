@@ -831,6 +831,9 @@ class PackageRegistry
             'showcase' => '/flow',
             'components' => [
                 ['slug' => 'flow-editor', 'name' => 'FlowEditor', 'blurb' => 'Main editor canvas.'],
+                // Blurbs render as PLAIN TEXT on the package page — no markdown.
+                // Backticks here show up as backticks.
+                ['slug' => 'flow-viewer', 'name' => 'FlowViewer', 'blurb' => 'A workflow, read-only — by construction, not by a prop. The canvas variant draws the graph; the list variant renders nodes as rows for docs, narrow columns and print, where a pan-zoom surface cannot go. Pass statuses and the same component shows what a run did.'],
                 ['slug' => 'use-flow-state', 'name' => 'useFlowState', 'blurb' => 'Controlled state hook.'],
                 ['slug' => 'use-flow-run', 'name' => 'useFlowRun', 'blurb' => 'Executor hook.'],
                 ['slug' => 'run-flow', 'name' => 'runFlow', 'blurb' => 'Headless topological runner — /engine, zero React.'],

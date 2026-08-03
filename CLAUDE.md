@@ -58,17 +58,7 @@ php artisan docs:snapshot    # freeze the docs for a kit cut -> resources/docs/{
 ```
 
 `docs:snapshot` is the odd one out — it runs **once per kit cut**, not whenever
-its source changes, and it runs BEFORE `kit.json` is bumped (the snapshot is of
-the outgoing line). It copies `resources/docs/*.md` plus a `manifest.json`
-holding that version's sidebar, and the directory is committed. See
-[`.ai/plans/kit-versioning-and-support.md`](../../.ai/plans/kit-versioning-and-support.md).
-
-**The kit version lives in `kit.json`**, read by both `config/kit.php` and
-`vite.config.js` (`__KIT_VERSION__`). Never type it into a component — it was
-already duplicated across four files, which is how the react-fancy version in
-the footer once drifted twelve minor versions behind. Bumping it also means
-adding a row to `App\Support\Docs\SupportPolicy::LINES`; a test fails if you
-forget.
+its source changes. See "This app owns the kit version" below.
 
 Production deploys ONLY px-ui-sandbox, so neither the sibling repos nor most
 packages' `node_modules` entries exist there — every artifact is read in prod
@@ -106,6 +96,51 @@ Tests use Pest, SQLite in-memory, and `RefreshDatabase` (via `Tests\TestCase`).
 vendor/bin/pint --dirty   # Format only changed files (run before finalizing)
 vendor/bin/pint           # Format all files
 ```
+
+## This app owns the kit version
+
+The **kit version** (currently `0.4`) is the set of package releases that
+shipped and were *tested together* — as distinct from any one package's version,
+which moves on its own schedule. Packages sitting on different numbers is not
+drift and is not something to fix; the kit tag is the coordination mechanism.
+This app is where that number is declared, displayed, and served from.
+
+**`kit.json` at the project root is the single source.** Two runtimes read it:
+`config/kit.php` for PHP and `vite.config.js` for the client, where it becomes
+`__KIT_VERSION__`. **Never type the version into a component** — it was already
+duplicated across four files, and the `react-fancy` version in that same footer
+had previously drifted twelve minor versions behind before anyone noticed. A
+test in `tests/Feature/KitVersionTest.php` fails if you re-hardcode it.
+
+**Bumping `kit.json` is never a one-file change.** In the same commit:
+
+1. Run `php artisan docs:snapshot <outgoing>` **first**, on `main`, *before* the
+   bump — the snapshot is of the line you are leaving. It copies
+   `resources/docs/*.md` plus a `manifest.json` holding that version's sidebar,
+   into `resources/docs/<version>/`. Commit the directory; it is served from the
+   repo, not generated at deploy. **Snapshots live on `main`**, not on the
+   maintenance branch, so one deploy serves every version.
+2. Add the new line to `App\Support\Docs\SupportPolicy::LINES` and set
+   `superseded` on the outgoing one. A test fails if you skip this. Support
+   *dates* are derived from those release dates and never typed — three numbers
+   per line that can disagree is how a support table ends up wrong, and a wrong
+   support table is worse than none because people plan against it.
+
+**What is version-aware here:**
+
+| | |
+|---|---|
+| `/docs/{slug}` | Current version, from `resources/docs/`. |
+| `/docs/{version}/{slug}` | A frozen snapshot. Renders through *its own* manifest, so its sidebar links to the pages that existed then. Every link stays in-version, and a banner says which version is being read. |
+| `/docs/versions` | The public support policy — 6 months bug fixes, 12 months security, from the day the successor ships. |
+| `/r/index.json?version=0.4` | Registry narrowed to that version. Items carry optional `since` / `until`, omitted when unset so existing payloads are unchanged. Asking for an item that did not exist in that version is a **404**, because the CLI vendors whatever this returns. Comparison uses `version_compare`, not string equality. |
+
+Every repo in the suite has a **`0.4` maintenance branch**, protected against
+deletion and force-push with no bypass. A fix affecting a supported line lands
+on `main` first, then gets cherry-picked to the branch.
+
+Full spec, decisions and the cut record:
+[`.ai/plans/kit-versioning-and-support.md`](../../.ai/plans/kit-versioning-and-support.md).
 
 ## Architecture
 

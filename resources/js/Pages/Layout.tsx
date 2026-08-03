@@ -519,6 +519,7 @@ export function Layout({
                                 <li><Link href="/learn">Fancy UI Curriculum</Link></li>
                                 <li><Link href="/dreaming">Dreaming</Link></li>
                                 <li><a href="/docs/human-plus-ux.md">Human+ whitepaper</a></li>
+                                <li><Link href="/docs/requirements">Minimum requirements</Link></li>
                                 <li><Link href="/leaderboard">Leaderboard</Link></li>
                             </ul>
                         </div>
@@ -547,7 +548,12 @@ export function Layout({
 
                     <div className="footer-bottom">
                         <span>© Particle Academy · MIT</span>
-                        <span className="right">fancy-ui · v0.4 · react-fancy {__REACT_FANCY_VERSION__}</span>
+                        {/* The kit version links to what it supports — that page is the
+                            only place the browser/PHP/Node floors are written down, and
+                            the version chip is where someone looks for them. */}
+                        <span className="right">
+                            fancy-ui · <Link href="/docs/requirements" title="Supported browsers and versions">v0.4</Link> · react-fancy {__REACT_FANCY_VERSION__}
+                        </span>
                     </div>
                 </div>
             </footer>

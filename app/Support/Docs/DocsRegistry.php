@@ -64,6 +64,7 @@ class DocsRegistry
         [
             'label' => 'Reference',
             'pages' => [
+                ['slug' => 'requirements', 'title' => 'Minimum requirements', 'description' => 'Supported browsers and versions, plus the PHP, Laravel and Node floors — and which layer of the stack sets each number.'],
                 ['slug' => 'changelog', 'title' => 'Changelog', 'description' => 'Release notes across every Fancy UI package.'],
             ],
         ],

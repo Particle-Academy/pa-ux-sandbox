@@ -533,6 +533,7 @@ export function Layout({
                                     </a>
                                 </li>
                                 <li><Link href="/shop">Coin shop</Link></li>
+                                <li><Link href="/pw">Password generator</Link></li>
                                 {auth ? (
                                     <>
                                         <li><Link href="/showcase/mine">My submissions</Link></li>

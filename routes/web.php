@@ -230,6 +230,12 @@ Route::get('/api/leaderboard/contributors', [LeaderboardController::class, 'cont
 Route::get('/agent-playground', fn () => Inertia::render('AgentPlayground'))->name('agent-playground');
 Route::get('/fancy-tui', [FancyTuiController::class, 'index'])->name('fancy-tui.index');
 
+// /pw — a standalone password generator. Shell-less by design: no site header,
+// no nav, no footer, and the only Fancy branding is the Pixel badge the root
+// Blade view already injects on every page. Entirely client-side — this handler
+// passes no props and does no work, because the generator never talks to it.
+Route::get('/pw', fn () => Inertia::render('Pw'))->name('pw');
+
 // Fancy Flow showcase — the live <FlowEditor> (swimlanes, undo/redo, auto-layout,
 // headless engine) + why the fancy-flow package family matters.
 Route::get('/flow', fn () => Inertia::render('Flow/Index'))->name('flow.index');

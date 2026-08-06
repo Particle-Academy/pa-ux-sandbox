@@ -6,14 +6,21 @@ import {
     Card,
     Field,
     Heading,
+    Popover,
     Progress,
     Slider,
     Switch,
     Text,
     Tooltip,
 } from "@particle-academy/react-fancy";
+// Imported as components rather than via <Icon name="x" />. The brand pack
+// registers its X mark under the key "x", which is ALSO a lucide icon (the close
+// glyph) — and an addendum only fills gaps, so the base set wins and
+// <Icon name="x" /> silently renders a close cross instead of the X logo.
+// Importing the mark directly is unambiguous.
+import { XIcon, LinkedinIcon } from "@particle-academy/fancy-brand-icons";
 import { Seo } from "@particle-academy/fancy-inertia/seo";
-import { Copy, Check, RefreshCw } from "lucide-react";
+import { Copy, Check, RefreshCw, Share2, Mail, Link2 } from "lucide-react";
 
 /**
  * /pw — a standalone password generator.
@@ -118,6 +125,32 @@ function generate(
     return last;
 }
 
+/**
+ * What gets shared. Fixed copy plus the page URL — never the generated
+ * password, and never any of the current settings.
+ *
+ * This is the one place on the page where a value could leave the browser, so
+ * the share payload is built from constants and `location.origin` ONLY. It does
+ * not read component state, which is what makes "the password is never sent
+ * anywhere" true rather than merely intended: there is no code path from
+ * `password` to a share target.
+ */
+const SHARE_TEXT = "A fast, entirely client-side password generator — nothing you generate ever leaves your browser.";
+
+/**
+ * Built on click, not at module load: `location` does not exist during Inertia
+ * SSR, and origin is the only part that varies between environments.
+ */
+function shareUrl(): string {
+    return `${window.location.origin}/pw`;
+}
+
+function openShare(href: string): void {
+    // noopener/noreferrer: without them the opened tab gets a handle on
+    // window.opener and can navigate this page somewhere else.
+    window.open(href, "_blank", "noopener,noreferrer");
+}
+
 /** Shannon entropy of a uniform draw: length × log2(alphabet). */
 function entropyBits(length: number, alphabetSize: number): number {
     return alphabetSize > 1 ? length * Math.log2(alphabetSize) : 0;
@@ -134,6 +167,35 @@ function strengthOf(bits: number): { label: string; color: "red" | "amber" | "bl
     return { label: "Very strong", color: "green", pct };
 }
 
+/**
+ * One row of the share menu. A plain button rather than a react-fancy control so
+ * the `data-pw-share-target` handle actually reaches the DOM — see the note on
+ * the Switch handles below.
+ */
+function ShareItem({
+    label,
+    icon,
+    handle,
+    onSelect,
+}: {
+    label: string;
+    icon: React.ReactNode;
+    handle: string;
+    onSelect: () => void;
+}) {
+    return (
+        <button
+            type="button"
+            onClick={onSelect}
+            data-pw-share-target={handle}
+            className="flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-left text-sm text-zinc-700 transition-colors hover:bg-zinc-100 dark:text-zinc-200 dark:hover:bg-zinc-800"
+        >
+            <span className="flex h-4 w-4 shrink-0 items-center justify-center">{icon}</span>
+            {label}
+        </button>
+    );
+}
+
 export default function Pw() {
     const [length, setLength] = useState(20);
     const [enabled, setEnabled] = useState<Record<SetKey, boolean>>({
@@ -146,6 +208,15 @@ export default function Pw() {
     const [requireEach, setRequireEach] = useState(true);
     const [password, setPassword] = useState("");
     const [copied, setCopied] = useState(false);
+    const [linkCopied, setLinkCopied] = useState(false);
+    const [canNativeShare, setCanNativeShare] = useState(false);
+
+    // Feature-detected on mount rather than during render: navigator does not
+    // exist under SSR, and branching on it while rendering would change the
+    // markup between the server and client passes.
+    useEffect(() => {
+        setCanNativeShare(typeof navigator !== "undefined" && typeof navigator.share === "function");
+    }, []);
 
     const alphabet = useMemo(
         () => buildAlphabet(enabled, avoidAmbiguous),
@@ -183,6 +254,25 @@ export default function Pw() {
             setCopied(false);
         }
     }, [password]);
+
+    const copyLink = useCallback(async () => {
+        try {
+            await navigator.clipboard.writeText(shareUrl());
+            setLinkCopied(true);
+            window.setTimeout(() => setLinkCopied(false), 1600);
+        } catch {
+            setLinkCopied(false);
+        }
+    }, []);
+
+    const nativeShare = useCallback(async () => {
+        try {
+            await navigator.share({ title: "Password generator", text: SHARE_TEXT, url: shareUrl() });
+        } catch {
+            // Dismissing the OS share sheet rejects. That is a user choice, not
+            // an error, and there is nothing to report.
+        }
+    }, []);
 
     const bits = entropyBits(length, alphabet.length);
     const strength = strengthOf(bits);
@@ -310,6 +400,78 @@ export default function Pw() {
                                 checked={requireEach}
                                 onCheckedChange={setRequireEach}
                             />
+                        </div>
+
+                        <div className="flex justify-center border-t border-zinc-200 pt-4 dark:border-zinc-800">
+                            <Popover placement="top">
+                                <Popover.Trigger>
+                                    {/* Icon and label live in ONE span rather than as
+                                        two children of Button. Button is a flex
+                                        container, so a bare icon + text node are two
+                                        flex ITEMS — and when the trigger wrapper
+                                        constrains the width they wrap onto separate
+                                        lines, stacking the icon above the label.
+                                        `whitespace-nowrap` does not help, because the
+                                        text node was never what wrapped. */}
+                                    <Button variant="ghost" size="sm" data-pw-share>
+                                        <span className="inline-flex shrink-0 items-center gap-2 whitespace-nowrap">
+                                            <Share2 size={15} />
+                                            Share this tool
+                                        </span>
+                                    </Button>
+                                </Popover.Trigger>
+                                <Popover.Content>
+                                    <div className="grid w-56 gap-1 p-1">
+                                        <ShareItem
+                                            label="Share on X"
+                                            icon={<XIcon className="h-4 w-4" />}
+                                            handle="x"
+                                            onSelect={() =>
+                                                openShare(
+                                                    `https://x.com/intent/post?url=${encodeURIComponent(shareUrl())}&text=${encodeURIComponent(SHARE_TEXT)}`,
+                                                )
+                                            }
+                                        />
+                                        <ShareItem
+                                            label="Share on LinkedIn"
+                                            icon={<LinkedinIcon className="h-4 w-4" />}
+                                            handle="linkedin"
+                                            onSelect={() =>
+                                                openShare(
+                                                    `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl())}`,
+                                                )
+                                            }
+                                        />
+                                        <ShareItem
+                                            label="Share by email"
+                                            icon={<Mail size={16} />}
+                                            handle="email"
+                                            onSelect={() =>
+                                                openShare(
+                                                    `mailto:?subject=${encodeURIComponent("Password generator")}&body=${encodeURIComponent(`${SHARE_TEXT}\n\n${shareUrl()}`)}`,
+                                                )
+                                            }
+                                        />
+                                        <ShareItem
+                                            label={linkCopied ? "Link copied" : "Copy link"}
+                                            icon={linkCopied ? <Check size={16} /> : <Link2 size={16} />}
+                                            handle="copy-link"
+                                            onSelect={copyLink}
+                                        />
+                                        {/* Only where the OS sheet exists — an item
+                                            that silently does nothing is worse than
+                                            an absent one. */}
+                                        {canNativeShare && (
+                                            <ShareItem
+                                                label="More…"
+                                                icon={<Share2 size={16} />}
+                                                handle="native"
+                                                onSelect={nativeShare}
+                                            />
+                                        )}
+                                    </div>
+                                </Popover.Content>
+                            </Popover>
                         </div>
                     </div>
                 </Card>

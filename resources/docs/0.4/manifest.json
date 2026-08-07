@@ -1,0 +1,140 @@
+{
+    "version": "0.4",
+    "sections": [
+        {
+            "label": "Getting started",
+            "pages": [
+                {
+                    "slug": "introduction",
+                    "title": "Introduction",
+                    "description": "What Fancy UI is and the problem it solves."
+                },
+                {
+                    "slug": "installation",
+                    "title": "Installation",
+                    "description": "Add Fancy UI to a React or Laravel app."
+                },
+                {
+                    "slug": "starter-kit",
+                    "title": "Laravel starter kit",
+                    "description": "Scaffold a fresh Laravel + Inertia + React app with Fancy UI and Fortify auth preinstalled \u2014 one `laravel new --using=` command."
+                },
+                {
+                    "slug": "theming",
+                    "title": "Theming",
+                    "description": "Tailwind v4 design tokens, dark mode, custom palettes."
+                }
+            ]
+        },
+        {
+            "label": "Building with Fancy",
+            "pages": [
+                {
+                    "slug": "building",
+                    "title": "Building with Fancy",
+                    "description": "The stack, the loop, and how the tutorials fit together."
+                },
+                {
+                    "slug": "layouts",
+                    "title": "Layouts & app shell",
+                    "description": "Persistent layouts, navbars, sidebars, and multi-screen shells."
+                },
+                {
+                    "slug": "page-transitions",
+                    "title": "Page transitions",
+                    "description": "Animate Inertia navigation with fancy-inertia crossfades."
+                },
+                {
+                    "slug": "mobile",
+                    "title": "Mobile & responsive",
+                    "description": "Tailwind v4 breakpoints, touch, mobile nav, and SSR-safe rendering."
+                },
+                {
+                    "slug": "seo",
+                    "title": "SEO & SSR",
+                    "description": "Real content on the first byte \u2014 server-side rendering, per-page meta + Open Graph + JSON-LD, sitemap / robots / llms.txt."
+                },
+                {
+                    "slug": "end-user-optimization",
+                    "title": "EUO \u2014 End-User Optimization",
+                    "description": "The counterpart to SEO: optimize for what humans AND agents actually do in your UI, not just what bots crawl. Powered by fancy-heuristics + fancy-pixel."
+                },
+                {
+                    "slug": "designing-human-plus",
+                    "title": "Designing for Human+",
+                    "description": "Design surfaces humans and agents share \u2014 presence, trust, affordances."
+                },
+                {
+                    "slug": "developing-human-plus",
+                    "title": "Developing for Human+",
+                    "description": "The component contract in code \u2014 controlled state, handles, bridges."
+                }
+            ]
+        },
+        {
+            "label": "Wrapper packages",
+            "pages": [
+                {
+                    "slug": "wrapper-packages",
+                    "title": "Wrapping other libraries",
+                    "description": "The packages that wrap ECharts, React Flow, three.js, Babylon, xterm.js, TanStack Query & Inertia \u2014 with deep links."
+                }
+            ]
+        },
+        {
+            "label": "Distribution",
+            "pages": [
+                {
+                    "slug": "cli",
+                    "title": "CLI",
+                    "description": "fancy-ui CLI reference \u2014 init, add, list, search."
+                },
+                {
+                    "slug": "registry",
+                    "title": "Registry",
+                    "description": "The /r/index.json + /r/{slug}.json contract."
+                }
+            ]
+        },
+        {
+            "label": "Agents",
+            "pages": [
+                {
+                    "slug": "plugin",
+                    "title": "Agent plugins",
+                    "description": "One-step install of the registry MCP + the Fancy skills, for Claude Code and Codex."
+                },
+                {
+                    "slug": "mcp",
+                    "title": "MCP servers",
+                    "description": "Install-MCP, runtime bridges, and how agents drive the UI."
+                },
+                {
+                    "slug": "human-plus-ux",
+                    "title": "Human+ UX",
+                    "description": "The architectural framework \u2014 humans and agents in the same UI."
+                }
+            ]
+        },
+        {
+            "label": "Reference",
+            "pages": [
+                {
+                    "slug": "requirements",
+                    "title": "Minimum requirements",
+                    "description": "Supported browsers and versions, plus the PHP, Laravel and Node floors \u2014 and which layer of the stack sets each number."
+                },
+                {
+                    "slug": "versions",
+                    "title": "Versions & support",
+                    "description": "Kit versions vs package versions, how long each release line is supported, and what happens at end of life."
+                },
+                {
+                    "slug": "changelog",
+                    "title": "Changelog",
+                    "description": "Release notes across every Fancy UI package."
+                }
+            ]
+        }
+    ]
+}

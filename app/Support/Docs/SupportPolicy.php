@@ -33,7 +33,8 @@ class SupportPolicy
      * @var list<array{version: string, released: string, superseded: string|null}>
      */
     private const LINES = [
-        ['version' => '0.4', 'released' => '2026-06-14', 'superseded' => null],
+        ['version' => '0.4', 'released' => '2026-06-14', 'superseded' => '2026-08-07'],
+        ['version' => '0.5', 'released' => '2026-08-07', 'superseded' => null],
     ];
 
     /**

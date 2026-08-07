@@ -16,6 +16,7 @@ use App\Mcp\Tools\SearchComponents;
 use App\Mcp\Tools\SearchNodes;
 use App\Mcp\Tools\ShowcaseProjectStatus;
 use App\Mcp\Tools\StartProject;
+use App\Mcp\Tools\UpgradeKit;
 use Laravel\Mcp\Server;
 use Laravel\Mcp\Server\Attributes\Instructions;
 use Laravel\Mcp\Server\Attributes\Name;
@@ -131,6 +132,7 @@ class FancyUiRegistry extends Server
 {
     protected array $tools = [
         StartProject::class,
+        UpgradeKit::class,
         ListComponents::class,
         SearchComponents::class,
         GetComponent::class,

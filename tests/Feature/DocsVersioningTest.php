@@ -136,19 +136,40 @@ it('does not serve the current version under a version prefix, so a page has one
     dropSnapshot(config('kit.version'));
 });
 
-it('offers no selector when only one version exists', function () {
+it('always offers the current version, listed first and marked current', function () {
+    // Asserted about the CURRENT entry rather than the size of the list. These
+    // two tests used to pin the absolute set, which only held while no snapshot
+    // was committed — the 0.5 cut froze resources/docs/0.4 and both started
+    // failing on a correct archive.
     $selectable = DocsArchive::selectable();
 
-    expect($selectable)->toHaveCount(1);
+    expect($selectable[0]['version'])->toBe(config('kit.version'));
     expect($selectable[0]['current'])->toBeTrue();
 });
 
 it('offers the archived version alongside the current one once a snapshot exists', function () {
+    $before = collect(DocsArchive::selectable())->pluck('version')->all();
+
     snapshot('0.1');
 
-    $versions = collect(DocsArchive::selectable())->pluck('version');
+    $after = collect(DocsArchive::selectable())->pluck('version');
 
-    expect($versions->all())->toBe([config('kit.version'), '0.1']);
+    // The fixture appears, the current version stays at the head, and every
+    // version that was already archived is still there.
+    expect($after)->toContain('0.1');
+    expect($after->first())->toBe(config('kit.version'));
+    expect($after->all())->toBe([...$before, '0.1']);
+});
+
+it('lists archived versions newest first, under the current one', function () {
+    // The order the selector renders in. A user looking for the version they
+    // are on scans from the top.
+    snapshot('0.1');
+
+    $versions = collect(DocsArchive::selectable())->pluck('version')->all();
+    $archived = array_slice($versions, 1);
+
+    expect($archived)->toBe(array_values(array_reverse(collect($archived)->sort()->values()->all())));
 });
 
 // ─── The snapshot command ────────────────────────────────────────────────────

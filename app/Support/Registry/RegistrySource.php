@@ -333,6 +333,9 @@ class RegistrySource
             return null;
         }
 
+        $root = $source['kind'] === 'dir' ? $source['path'] : dirname($source['path']);
+        $files = $this->followRelativeImports($files, $root, (string) $component['slug']);
+
         $imports = $this->parseImports($files);
         $description = $component['blurb'] ?: $this->fallbackDescription($pkg, $component);
 
@@ -435,6 +438,110 @@ class RegistrySource
                         return ['kind' => 'file', 'path' => $file];
                     }
                 }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Pull in every sibling module the bundle imports, transitively.
+     *
+     * Without this the registry ships source that cannot compile, and nothing
+     * reports it: `readSourceFiles` reads one directory level with `is_file`,
+     * so a component whose folder contains SUBFOLDERS loses them, and
+     * `readSingleFile` vendors exactly one file, so a component that imports a
+     * `.types` or `.context` module beside it loses that. Both produce an entry
+     * whose own `index.ts` re-exports paths that were never copied.
+     *
+     * It was 23 of 262 items across 9 packages when this was added — `inputs`
+     * alone dropped 12 subdirectories — and it surfaced only because a consumer
+     * ran `npx fancy-cli add` and could not build the result.
+     *
+     * Only `./` imports are followed. A `../../utils/x` import leaves the
+     * component's own tree and is the job of a declared registry dependency;
+     * pulling those in here would duplicate shared code into every bundle.
+     *
+     * @param  list<array{path: string, content: string, type: string, target: string}>  $files
+     * @return list<array{path: string, content: string, type: string, target: string}>
+     */
+    private function followRelativeImports(array $files, string $root, string $slug): array
+    {
+        // Through realpath on BOTH sides: the root is assembled from string
+        // concatenation while resolved imports come back from realpath(), and
+        // on Windows those differ in separator and drive-letter case. Comparing
+        // them raw silently rejected every module that did resolve.
+        $realRoot = realpath($root);
+        $root = rtrim(str_replace('\\', '/', $realRoot === false ? $root : $realRoot), '/');
+        $byPath = [];
+        foreach ($files as $f) {
+            $byPath[$f['path']] = $f;
+        }
+
+        $queue = $files;
+        $guard = 0;
+
+        while ($queue !== [] && $guard++ < 500) {
+            $file = array_shift($queue);
+
+            // Where this file sits inside the bundle, so a relative import can
+            // be resolved against it.
+            $rel = Str::after($file['path'], "components/fancy/$slug/");
+            $dir = trim(dirname($rel), '.');
+            $baseDir = $dir === '' ? $root : "$root/$dir";
+
+            preg_match_all('/from\s+[\'"](\.\/[^\'"]+)[\'"]/', $file['content'], $matches);
+
+            foreach ($matches[1] ?? [] as $import) {
+                $resolved = $this->resolveModule($baseDir, $import);
+
+                if ($resolved === null || ! str_starts_with(str_replace('\\', '/', $resolved), $root.'/')) {
+                    continue;
+                }
+
+                $relPath = Str::after(str_replace('\\', '/', $resolved), $root.'/');
+                $bundlePath = "components/fancy/$slug/$relPath";
+
+                if (isset($byPath[$bundlePath])) {
+                    continue;
+                }
+
+                $added = [
+                    'path' => $bundlePath,
+                    'content' => (string) file_get_contents($resolved),
+                    'type' => 'registry:ui',
+                    'target' => $bundlePath,
+                ];
+                $byPath[$bundlePath] = $added;
+                $queue[] = $added;
+            }
+        }
+
+        return array_values($byPath);
+    }
+
+    /**
+     * Resolve a relative import the way a bundler would: exact file, then the
+     * TS/TSX extensions, then a directory index. Returns null when nothing on
+     * disk matches — a type-only import of something that does not exist is a
+     * problem for the package, not for this builder.
+     */
+    private function resolveModule(string $baseDir, string $import): ?string
+    {
+        // A published-style import writes `.js` for what is `.ts` on disk.
+        $target = str_replace('\\', '/', $baseDir.'/'.$import);
+        $target = preg_replace('/\.js$/', '', $target) ?? $target;
+
+        $candidates = [
+            $target.'.tsx', $target.'.ts',
+            $target.'/index.tsx', $target.'/index.ts',
+            $target,
+        ];
+
+        foreach ($candidates as $candidate) {
+            $real = realpath($candidate);
+            if ($real !== false && is_file($real)) {
+                return str_replace('\\', '/', $real);
             }
         }
 

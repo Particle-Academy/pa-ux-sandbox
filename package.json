@@ -74,7 +74,7 @@
         "@particle-academy/fancy-whiteboard": "^0.3.0",
         "@particle-academy/fancy-x-files-ui": "^0.2.0",
         "@particle-academy/last-word": "^0.3.0",
-        "@particle-academy/react-fancy": "^5.7.0",
+        "@particle-academy/react-fancy": "^5.14.0",
         "@tanstack/react-query": "^5.101.0",
         "@tsrx/vite-plugin-react": "^0.0.21",
         "@vitejs/plugin-react": "^6.0.1",

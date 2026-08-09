@@ -1,20 +1,36 @@
 /**
  * scene kind — registerSceneBridge over a fancy-3d SceneState.
  *
- * STATUS: STUB (bridge fully wired, surface is a placeholder visualizer).
+ * STATUS: fully wired — a real 3D viewport, not a placeholder.
  *
- * Why a stub: the scene bridge's `SceneState` is the engine-agnostic 3D
- * descriptor (boxes / spheres / screens at xyz). fancy-3d's actual renderers
- * (`Canvas` from /canvas, the Babylon adapter) are heavier mounts that don't
- * accept this SceneState shape directly, so a faithful live 3D viewport is
- * out of scope for this pass. The bridge is real — an agent can fully
- * read/write the scene via scene_* tools — and the surface renders the live
- * object list so the human sees every mutation land. Swap this Surface for a
- * fancy-3d/canvas or babylon mount to make it a fully-wired kind.
+ * The surface was a list for a while, because the bridge's `SceneState` is a
+ * flat descriptor of primitive solids (box / sphere / screen at an xyz) and
+ * fancy-3d's own `Scene` is a different model — widget nodes and edges — so no
+ * renderer took this shape. `<Stage>` from the Babylon adapter does hand over
+ * its scene, so `SceneViewport` owns the SceneObject → mesh mapping and the
+ * human now watches the agent build in 3D.
+ *
+ * The object list stays, beneath the viewport: it is the readable record of
+ * what the agent did, and a mesh you are looking at from the wrong angle is
+ * not one.
  */
+import { lazy, Suspense } from "react";
 import { Badge, Card, Heading, Text } from "@particle-academy/react-fancy";
 import { registerSceneBridge, type SceneState } from "@particle-academy/agent-integrations";
 import type { KindModule, SurfaceProps, KindBridgeContext } from "./types";
+
+/**
+ * LAZY on purpose. `scene-viewport` statically imports @babylonjs/core, and the
+ * playground bundles every kind into one chunk — so a static import here pulled
+ * a WebGL engine into the page for anyone opening the form or grid kind, and
+ * the chunk got heavy enough that the whole playground failed to render.
+ *
+ * Loading it only when the scene kind is on screen is both the fix and the
+ * correct shape: nobody should pay for Babylon to look at a form.
+ */
+const SceneViewport = lazy(() =>
+  import("./scene-viewport").then((m) => ({ default: m.SceneViewport })),
+);
 
 export type SceneKindState = { scene: SceneState };
 
@@ -34,12 +50,22 @@ function SceneSurface({ state }: SurfaceProps) {
   return (
     <div style={{ minHeight: 480 }} className="rounded-lg border border-zinc-200 p-4 dark:border-zinc-700">
       <div className="mb-3 flex items-center gap-2">
-        <Heading as="h3" size="md">Scene (placeholder visualizer)</Heading>
-        <Badge color="amber">stub surface · live bridge</Badge>
+        <Heading as="h3" size="md">Scene</Heading>
+        <Badge color="violet">live 3D · {s.scene.objects.length} object{s.scene.objects.length === 1 ? "" : "s"}</Badge>
       </div>
-      <Text className="mb-4 block text-sm text-zinc-500">
-        The scene_* bridge is fully wired — every agent mutation updates the object list below. Swap this for a
-        fancy-3d/canvas or Babylon mount to render a real 3D viewport.
+
+      <Suspense
+        fallback={
+          <div className="grid h-[480px] w-full place-items-center rounded-lg border border-dashed border-zinc-300 text-sm text-zinc-500 dark:border-zinc-700">
+            Loading the 3D viewport…
+          </div>
+        }
+      >
+        <SceneViewport scene={s.scene} />
+      </Suspense>
+
+      <Text className="mb-3 mt-4 block text-sm text-zinc-500">
+        Every scene_* mutation lands in the viewport above. The list below is the same scene as data — drag to orbit.
       </Text>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         {s.scene.objects.map((o) => (
@@ -71,8 +97,8 @@ function SceneSurface({ state }: SurfaceProps) {
 export const sceneKind: KindModule = {
   kind: "scene",
   label: "Scene (3D)",
-  description: "An engine-agnostic 3D scene (boxes / spheres / screens). Drive it with scene_* tools. Surface is a placeholder list.",
-  status: "stub",
+  description: "An engine-agnostic 3D scene (boxes / spheres / screens) rendered in a live Babylon viewport. Drive it with scene_* tools and watch it build.",
+  status: "wired",
   createState: seed,
   register: (server, ctx: KindBridgeContext) => {
     const read = () => (ctx.getActiveState() as SceneKindState) ?? seed();

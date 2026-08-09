@@ -11,6 +11,7 @@ import {
     Card,
     Composer,
     Heading,
+    Marquee,
     MoodMeter,
     Pagination,
     Pillbox,
@@ -170,16 +171,22 @@ export default function Dark({ style }: { style: Style }) {
                 </section>
 
                 {/* ── Client ticker ─────────────────────────────────────────── */}
-                <div className="dk-ticker" aria-label="Selected clients">
-                    <div className="dk-ticker__track">
-                        {[...CLIENTS, ...CLIENTS].map((c, i) => (
-                            <span key={`${c}-${i}`} className="dk-ticker__item">
-                                {c}
-                                <span className="dk-ticker__sep" aria-hidden> · </span>
-                            </span>
-                        ))}
-                    </div>
-                </div>
+                {/* The first-party <Marquee>, restyled. It duplicates the strip
+                    itself and keeps the loop copy out of the accessibility tree —
+                    the hand-rolled version spread CLIENTS twice under one
+                    aria-label, so every client was announced twice. */}
+                <Marquee
+                    className="dk-ticker"
+                    aria-label="Selected clients"
+                    decorative={false}
+                    duration={42}
+                    gap={0}
+                    fade={false}
+                    items={CLIENTS.map((c) => (
+                        <span key={c} className="dk-ticker__item">{c}</span>
+                    ))}
+                    separator={<span className="dk-ticker__sep" aria-hidden> · </span>}
+                />
 
                 {/* ── Figures band ──────────────────────────────────────────── */}
                 <section className="dk-section" aria-label="Studio in numbers">

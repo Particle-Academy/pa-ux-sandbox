@@ -241,11 +241,7 @@
   -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
           mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
 }
-.insp-cobrowse .cb-ticker__track {
-  display: inline-flex; align-items: center; gap: 0;
-  white-space: nowrap;
-  animation: cb-marquee 44s linear infinite;
-}
+/* Track, duplication and keyframe come from <Marquee>; this style only skins it. */
 .insp-cobrowse .cb-ticker__item {
   font-size: clamp(1.1rem, 2vw, 1.55rem);
   font-weight: 500; letter-spacing: -0.01em;
@@ -254,11 +250,6 @@
 }
 .insp-cobrowse .cb-ticker:hover .cb-ticker__item { color: var(--cb-ink-2); }
 .insp-cobrowse .cb-ticker__sep { color: var(--cb-presence); opacity: 0.6; }
-@keyframes cb-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-@media (prefers-reduced-motion: reduce) {
-  .insp-cobrowse .cb-ticker__track { animation: none; }
-}
-
 /* ── Figures band ─────────────────────────────────────────────────────────── */
 .insp-cobrowse .cb-figure { border-top: 1px solid var(--cb-line); padding-top: 18px; }
 .insp-cobrowse .cb-figure__num {

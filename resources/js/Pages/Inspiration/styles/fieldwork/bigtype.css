@@ -232,11 +232,7 @@
   border-bottom: 2px solid var(--bt-rule-ink);
   overflow: hidden;
 }
-.bt-band__track {
-  display: flex;
-  width: max-content;
-  animation: bt-marquee 26s linear infinite;
-}
+/* Track, duplication and keyframe come from <Marquee>; this style only skins it. */
 .bt-band__group { display: flex; flex: none; }
 .bt-band__word {
   display: inline-flex;
@@ -261,14 +257,6 @@
   margin-left: 0.32em;
   -webkit-text-stroke: 0;
 }
-@keyframes bt-marquee {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .bt-band__track { animation: none; }
-}
-
 /* ── Figures ─────────────────────────────────────────────────────────────── */
 .bt-figures {
   display: grid;

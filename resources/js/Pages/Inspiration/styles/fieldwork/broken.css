@@ -357,11 +357,7 @@
   width: 102%;
   margin-left: -1%;
 }
-.insp-broken .brk-band__track {
-  display: flex;
-  width: max-content;
-  animation: brk-marquee 30s linear infinite;
-}
+/* Track, duplication and keyframe come from <Marquee>; this style only skins it. */
 .insp-broken .brk-band__group { display: flex; flex: none; }
 .insp-broken .brk-band__word {
   display: inline-flex;
@@ -381,14 +377,6 @@
   -webkit-text-stroke: 1.4px var(--brk-ink);
 }
 .insp-broken .brk-band__star { color: var(--brk-accent); flex: none; }
-@keyframes brk-marquee {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .insp-broken .brk-band__track { animation: none; }
-}
-
 /* ── Figures — staggered, each tilted ───────────────────────────────────── */
 .insp-broken .brk-figures {
   display: grid;

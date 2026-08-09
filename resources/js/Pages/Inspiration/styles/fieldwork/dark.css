@@ -212,13 +212,7 @@
   -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
           mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
 }
-.insp-dark .dk-ticker__track {
-  display: inline-flex;
-  align-items: center;
-  gap: 0;
-  white-space: nowrap;
-  animation: dk-marquee 42s linear infinite;
-}
+/* Track, duplication and keyframe come from <Marquee>; this style only skins it. */
 .insp-dark .dk-ticker__item {
   font-size: clamp(1.1rem, 2vw, 1.6rem);
   font-weight: 500;
@@ -229,14 +223,6 @@
 }
 .insp-dark .dk-ticker:hover .dk-ticker__item { color: var(--d-ink-2); }
 .insp-dark .dk-ticker__sep { color: var(--d-accent); opacity: 0.6; }
-@keyframes dk-marquee {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .insp-dark .dk-ticker__track { animation: none; }
-}
-
 /* ── Figures band ─────────────────────────────────────────────────────────── */
 .insp-dark .dk-figure {
   border-top: 1px solid var(--d-line);

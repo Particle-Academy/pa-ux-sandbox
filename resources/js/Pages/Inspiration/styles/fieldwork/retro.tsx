@@ -11,6 +11,7 @@ import {
     Composer,
     FauxClient,
     Heading,
+    Marquee,
     Pillbox,
     Progress,
     Separator,
@@ -127,13 +128,19 @@ export default function Retro({ style }: { style: Style }) {
     return (
         <div className="insp-retro">
             <div className="rt-desktop">
-                {/* ── Marquee status strip — the OS "ticker" ─────────────────── */}
-                <div className="rt-marquee" role="presentation">
-                    <div className="rt-marquee__track">
-                        <span>★ WELCOME TO FIELDWORK.STUDIO ★ BEST VIEWED AT 1024×768 ★ EST. 2016 ★ NOW SERVING BRAND, EDITORIAL, PRODUCT &amp; MOTION ★ SIGN OUR GUESTBOOK ↓ ★ NO COOKIES, NO TRACKERS, JUST PIXELS ★ </span>
-                        <span aria-hidden>★ WELCOME TO FIELDWORK.STUDIO ★ BEST VIEWED AT 1024×768 ★ EST. 2016 ★ NOW SERVING BRAND, EDITORIAL, PRODUCT &amp; MOTION ★ SIGN OUR GUESTBOOK ↓ ★ NO COOKIES, NO TRACKERS, JUST PIXELS ★ </span>
-                    </div>
-                </div>
+                {/* ── Marquee status strip — the OS "ticker" ───────────────────
+                    The first-party <Marquee>, restyled to a 98-era status bar.
+                    It duplicates the content itself and keeps the loop copy out
+                    of the accessibility tree, which the hand-rolled version got
+                    wrong: role="presentation" on a wrapper does not hide its
+                    children, so the banner was read out twice. */}
+                <Marquee
+                    className="rt-marquee"
+                    duration={26}
+                    fade={false}
+                    gap="2rem"
+                    items={["★ WELCOME TO FIELDWORK.STUDIO ★ BEST VIEWED AT 1024×768 ★ EST. 2016 ★ NOW SERVING BRAND, EDITORIAL, PRODUCT & MOTION ★ SIGN OUR GUESTBOOK ↓ ★ NO COOKIES, NO TRACKERS, JUST PIXELS ★"]}
+                />
 
                 <div className="rt-shell">
                     {/* ── HERO — the main OS window ──────────────────────────── */}

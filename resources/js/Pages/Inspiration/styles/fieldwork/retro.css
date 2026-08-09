@@ -91,16 +91,8 @@
   padding: 4px 0;
   white-space: nowrap;
 }
-.insp-retro .rt-marquee__track {
-  display: inline-flex;
-  will-change: transform;
-  animation: rt-marquee 26s linear infinite;
-}
-.insp-retro .rt-marquee__track > span { padding-right: 2rem; }
-@keyframes rt-marquee {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
-}
+/* The track, duplication and keyframe now come from <Marquee> itself — this
+   style only restyles it. The hand-rolled copy that used to live here is gone. */
 
 /* ─────────────────────────────────────────────────────────────────────────
    FauxClient → literal OS window chrome
@@ -960,9 +952,11 @@
   box-shadow: 2px 2px 0 rgba(0,0,0,0.3) !important;
 }
 
-/* ── Reduced-motion: kill the gags ───────────────────────────────────────── */
+/* ── Reduced-motion: kill the gags ─────────────────────────────────────────
+   The ticker is absent from this list on purpose: <Marquee> stops itself under
+   prefers-reduced-motion, so a selector here would only be a dead one aimed at
+   a class this style no longer renders. */
 @media (prefers-reduced-motion: reduce) {
-  .insp-retro .rt-marquee__track,
   .insp-retro .rt-display__blink,
   .insp-retro .rt-construction__sign,
   .insp-retro .rt-online { animation: none !important; }

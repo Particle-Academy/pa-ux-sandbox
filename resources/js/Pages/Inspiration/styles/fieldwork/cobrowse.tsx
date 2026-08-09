@@ -12,6 +12,7 @@ import {
     Composer,
     FauxClient,
     Heading,
+    Marquee,
     MoodMeter,
     Pagination,
     Pillbox,
@@ -288,16 +289,22 @@ export default function CoBrowse({ style }: { style: Style }) {
                     </section>
 
                     {/* ── Client ticker ─────────────────────────────────────────── */}
-                    <div className="cb-ticker" aria-label="Selected clients">
-                        <div className="cb-ticker__track">
-                            {[...CLIENTS, ...CLIENTS].map((c, i) => (
-                                <span key={`${c}-${i}`} className="cb-ticker__item">
-                                    {c}
-                                    <span className="cb-ticker__sep" aria-hidden> · </span>
-                                </span>
-                            ))}
-                        </div>
-                    </div>
+                    {/* The first-party <Marquee>, restyled. It duplicates the strip
+                        itself and keeps the loop copy out of the accessibility tree —
+                        the hand-rolled version spread CLIENTS twice under one
+                        aria-label, so every client was announced twice. */}
+                    <Marquee
+                        className="cb-ticker"
+                        aria-label="Selected clients"
+                        decorative={false}
+                        duration={44}
+                        gap={0}
+                        fade={false}
+                        items={CLIENTS.map((c) => (
+                            <span key={c} className="cb-ticker__item">{c}</span>
+                        ))}
+                        separator={<span className="cb-ticker__sep" aria-hidden> · </span>}
+                    />
 
                     {/* ── Figures band ──────────────────────────────────────────── */}
                     <section className="cb-section" data-tour="cb-figures" aria-label="Studio in numbers">

@@ -10,6 +10,7 @@ import {
     Card,
     Composer,
     Heading,
+    Marquee,
     MoodMeter,
     MultiSwitch,
     Pagination,
@@ -157,18 +158,18 @@ export default function BigType({ style }: { style: Style }) {
 
                 {/* ── Kinetic word-band (hand-rolled marquee) ────────────────── */}
                 <section className="bt-band" aria-label="Studio in three words">
-                    <div className="bt-band__track" aria-hidden>
-                        {[0, 1].map((dup) => (
-                            <div className="bt-band__group" key={dup}>
-                                {MARQUEE.map((w, i) => (
-                                    <span className="bt-band__word" key={`${dup}-${i}`}>
-                                        {w}
-                                        <span className="bt-band__dot">●</span>
-                                    </span>
-                                ))}
-                            </div>
+                    <Marquee
+                        className="bt-band__strip"
+                        duration={26}
+                        gap={0}
+                        fade={false}
+                        items={MARQUEE.map((w, i) => (
+                            <span className="bt-band__word" key={i}>
+                                {w}
+                                <span className="bt-band__dot">●</span>
+                            </span>
                         ))}
-                    </div>
+                    />
                 </section>
 
                 {/* ── Figures ────────────────────────────────────────────────── */}

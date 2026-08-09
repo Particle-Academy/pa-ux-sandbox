@@ -13,6 +13,7 @@ import {
     Chart,
     Composer,
     Heading,
+    Marquee,
     MoodMeter,
     Pagination,
     Pillbox,
@@ -177,15 +178,13 @@ export default function Neobrutal({ style }: { style: Style }) {
                 </section>
 
                 {/* ── Marquee strip ─────────────────────────────────────────── */}
-                <div className="nb-strip" aria-hidden>
-                    <div className="nb-strip__track">
-                        {Array.from({ length: 2 }).map((_, dup) => (
-                            <span key={dup} className="nb-strip__group">
-                                LOUD · CHUNKY · LEGIBLE ★ NO INSIDE VOICE ★ BRAND THAT YELLS ★ FIELDWORK ★ EST. 2017 ★&nbsp;
-                            </span>
-                        ))}
-                    </div>
-                </div>
+                <Marquee
+                    className="nb-strip"
+                    duration={26}
+                    fade={false}
+                    gap={0}
+                    items={["LOUD · CHUNKY · LEGIBLE ★ NO INSIDE VOICE ★ BRAND THAT YELLS ★ FIELDWORK ★ EST. 2017 ★ "]}
+                />
 
                 {/* ── Figures band ──────────────────────────────────────────── */}
                 <section className="nb-section" aria-label="Studio in numbers">

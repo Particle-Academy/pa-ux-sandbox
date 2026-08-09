@@ -11,6 +11,7 @@ import {
     Card,
     Composer,
     Heading,
+    Marquee,
     MoodMeter,
     Pagination,
     Pillbox,
@@ -161,20 +162,18 @@ export default function Broken({ style }: { style: Style }) {
                 </section>
 
                 {/* ── Kinetic torn marquee ─────────────────────────────────── */}
-                <div className="brk-band" aria-hidden>
-                    <div className="brk-band__track">
-                        {[0, 1].map((g) => (
-                            <div className="brk-band__group" key={g}>
-                                {MARQUEE.map((w, i) => (
-                                    <span className="brk-band__word" key={`${g}-${i}`}>
-                                        {w}
-                                        <Asterisk className="brk-band__star" size={20} />
-                                    </span>
-                                ))}
-                            </div>
-                        ))}
-                    </div>
-                </div>
+                <Marquee
+                    className="brk-band"
+                    duration={30}
+                    gap={0}
+                    fade={false}
+                    items={MARQUEE.map((w, i) => (
+                        <span className="brk-band__word" key={i}>
+                            {w}
+                            <Asterisk className="brk-band__star" size={20} />
+                        </span>
+                    ))}
+                />
 
                 {/* ── Figures — staggered, each tilted ─────────────────────── */}
                 <section className="brk-figures" aria-label="Studio in numbers">

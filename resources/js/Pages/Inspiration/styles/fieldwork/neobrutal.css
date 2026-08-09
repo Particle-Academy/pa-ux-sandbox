@@ -312,13 +312,8 @@
     overflow: hidden;
     box-shadow: var(--nb-shadow);
 }
-.insp-neobrutal .nb-strip__track {
-    display: flex;
-    white-space: nowrap;
-    width: max-content;
-    animation: nb-marquee 26s linear infinite;
-}
-.insp-neobrutal .nb-strip__group {
+/* Track + duplication + keyframe come from <Marquee>. */
+.insp-neobrutal .nb-strip .fancy-marquee__group {
     display: inline-block;
     padding: 9px 0;
     font-family: var(--nb-font-mono);
@@ -326,11 +321,6 @@
     font-size: 13px;
     letter-spacing: 0.06em;
 }
-@keyframes nb-marquee {
-    from { transform: translateX(0); }
-    to { transform: translateX(-50%); }
-}
-
 /* ═══ Stats band ═══════════════════════════════════════════════════════════ */
 .insp-neobrutal .nb-stats {
     display: grid;
@@ -1259,5 +1249,4 @@
 }
 @media (prefers-reduced-motion: reduce) {
     .insp-neobrutal * { transition: none !important; animation: none !important; }
-    .insp-neobrutal .nb-strip__track { animation: none !important; }
 }

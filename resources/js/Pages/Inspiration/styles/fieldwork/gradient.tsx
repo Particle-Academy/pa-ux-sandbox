@@ -14,6 +14,7 @@ import {
     Chart,
     Composer,
     Heading,
+    Marquee,
     MoodMeter,
     Pagination,
     Pillbox,
@@ -168,20 +169,18 @@ export default function Gradient({ style }: { style: Style }) {
                 </section>
 
                 {/* ── Marquee of disciplines ────────────────────────────────── */}
-                <div className="ig-marquee" aria-hidden>
-                    <div className="ig-marquee-track">
-                        {[...Array(2)].map((_, r) => (
-                            <span className="ig-marquee-group" key={r}>
-                                {["Brand systems", "Product design", "Design systems", "Motion", "3D / WebGL", "Identity", "Type", "Design ops"].map((w) => (
-                                    <span className="ig-marquee-item" key={w}>
-                                        <span className="ig-marquee-dot" />
-                                        {w}
-                                    </span>
-                                ))}
-                            </span>
-                        ))}
-                    </div>
-                </div>
+                <Marquee
+                    className="ig-marquee"
+                    duration={30}
+                    fade="8%"
+                    gap={34}
+                    items={["Brand systems", "Product design", "Design systems", "Motion", "3D / WebGL", "Identity", "Type", "Design ops"].map((w) => (
+                        <span className="ig-marquee-item" key={w}>
+                            <span className="ig-marquee-dot" />
+                            {w}
+                        </span>
+                    ))}
+                />
 
                 {/* ── Selected work ─────────────────────────────────────────── */}
                 <section className="ig-section" id="work" aria-labelledby="ig-work-title">

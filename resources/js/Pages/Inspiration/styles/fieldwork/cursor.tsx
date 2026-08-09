@@ -11,6 +11,7 @@ import {
     Card,
     Composer,
     Heading,
+    Marquee,
     MoodMeter,
     Pagination,
     Pillbox,
@@ -274,16 +275,22 @@ export default function Cursor({ style }: { style: Style }) {
                 </section>
 
                 {/* ── Client ticker ─────────────────────────────────────────── */}
-                <div className="cs-ticker" aria-label="Selected clients">
-                    <div className="cs-ticker__track">
-                        {[...CLIENTS, ...CLIENTS].map((c, i) => (
-                            <span key={`${c}-${i}`} className="cs-ticker__item">
-                                {c}
-                                <span className="cs-ticker__sep" aria-hidden> ✦ </span>
-                            </span>
-                        ))}
-                    </div>
-                </div>
+                {/* The first-party <Marquee>, restyled. It duplicates the strip
+                    itself and keeps the loop copy out of the accessibility tree —
+                    the hand-rolled version spread CLIENTS twice under one
+                    aria-label, so every client was announced twice. */}
+                <Marquee
+                    className="cs-ticker"
+                    aria-label="Selected clients"
+                    decorative={false}
+                    duration={44}
+                    gap={0}
+                    fade={false}
+                    items={CLIENTS.map((c) => (
+                        <span key={c} className="cs-ticker__item">{c}</span>
+                    ))}
+                    separator={<span className="cs-ticker__sep" aria-hidden> ✦ </span>}
+                />
 
                 {/* ── Figures band ──────────────────────────────────────────── */}
                 <section className="cs-section" aria-label="Studio in numbers">

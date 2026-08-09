@@ -1,4 +1,5 @@
 import { Link } from "@inertiajs/react";
+import { Card } from "@particle-academy/react-fancy";
 import type { CSSProperties } from "react";
 import type { Collection, Style } from "./types";
 
@@ -12,9 +13,10 @@ import type { Collection, Style } from "./types";
 export function StyleCard({ style }: { style: Style }) {
     // Mono chip (dark-translucent + blur) so the num/mode read over any
     // thumbnail, light or dark.
+    // Positioning now comes from Card.Media's corner slots; this is purely the
+    // gallery's chip LOOK.
     const chip: CSSProperties = {
-        position: "absolute",
-        top: 8,
+        display: "inline-block",
         fontFamily: "var(--font-mono)",
         fontSize: 10.5,
         fontWeight: 600,
@@ -34,24 +36,22 @@ export function StyleCard({ style }: { style: Style }) {
             style={{ "--accent": "var(--accent)" } as CSSProperties}
             aria-label={`${style.name} — style ${style.num}`}
         >
-            <div
-                style={{
-                    position: "relative",
-                    height: 122,
-                    overflow: "hidden",
-                    // Swatch shows under the screenshot while it loads / as a fallback.
-                    background: style.swatch,
-                }}
-            >
-                <img
-                    src={style.thumb}
-                    alt={style.name}
-                    loading="lazy"
-                    style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "top center" }}
-                />
-                <span style={{ ...chip, left: 9 }}>{style.num}</span>
-                <span style={{ ...chip, right: 9 }}>{style.surface ?? style.mode}</span>
-            </div>
+            {/* react-fancy's Card.Media — the thumbnail region this card, the
+                package grid, the starter-kit grid and the showcase grid had
+                each rebuilt from tokens. The `background` is load/failure
+                fallback, not decoration: every style is keyed to a swatch, so a
+                missing screenshot degrades to the right colour rather than to a
+                hole. The wrapper stays `.insp-card`, which carries the gallery's
+                own border, radius and hover. */}
+            <Card.Media
+                src={style.thumb}
+                alt={style.name}
+                height={122}
+                background={style.swatch}
+                objectPosition="top center"
+                topLeft={<span style={chip}>{style.num}</span>}
+                topRight={<span style={chip}>{style.surface ?? style.mode}</span>}
+            />
 
             <div style={{ padding: "13px 15px 16px" }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 8 }}>

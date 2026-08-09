@@ -102,7 +102,7 @@
   display: grid;
   gap: 0;
 }
-.swiss-index__row {
+.swiss-index [data-react-fancy-index-row] {
   position: relative;
   display: grid;
   grid-template-columns: 3rem minmax(0, 1.6fr) minmax(0, 1fr) 5.5rem;
@@ -112,52 +112,49 @@
   border-top: 1px solid var(--sw-rule);
   transition: background var(--dur-base) var(--ease-out);
 }
-.swiss-index__row:last-child {
+.swiss-index [data-react-fancy-index-row]:last-child {
   border-bottom: 1px solid var(--sw-rule);
 }
-.swiss-index__row:hover {
+.swiss-index [data-react-fancy-index-row]:hover {
   background: var(--bg-1);
 }
-.swiss-index__num {
+.swiss-index [data-react-fancy-index-num] {
   font-family: var(--font-mono);
   font-size: 12px;
   color: var(--fg-3);
 }
-.swiss-index__title {
+.swiss-index [data-react-fancy-index-title] {
   font-size: clamp(1.25rem, 2.2vw, 1.65rem);
   font-weight: 600;
   letter-spacing: -0.015em;
   color: var(--fg-1);
 }
-.swiss-index__disc {
+.swiss-index [data-react-fancy-index-meta] {
   font-size: 13.5px;
   color: var(--fg-2);
   line-height: 1.45;
 }
-.swiss-index__year {
+.swiss-index [data-react-fancy-index-value] {
   font-family: var(--font-mono);
   font-size: 12px;
   color: var(--fg-3);
   text-align: right;
 }
-/* The stretched-link pattern — one Inertia <Link> covers the row, so the row's
-   inner spans never become nested anchors (avoids React #418 under SSR). */
-.swiss-index__stretch {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-}
-.swiss-index__row:hover .swiss-index__title {
+/* The stretched link is <IndexList>'s now: the title anchor's after:inset-0
+   covers the row, so there is still exactly one <a> per row (React #418) — and
+   the accessible name is the title rather than an aria-label on an empty
+   overlay, which is what this used to be. */
+.swiss-index [data-react-fancy-index-row]:hover [data-react-fancy-index-title] {
   color: var(--accent);
 }
 
 @media (max-width: 720px) {
-  .swiss-index__row {
+  .swiss-index [data-react-fancy-index-row] {
     grid-template-columns: 2.25rem 1fr;
     row-gap: 6px;
   }
-  .swiss-index__disc,
-  .swiss-index__year { grid-column: 2; text-align: left; }
+  .swiss-index [data-react-fancy-index-meta],
+  .swiss-index [data-react-fancy-index-value] { grid-column: 2; text-align: left; }
 }
 
 /* ── Capabilities columns ────────────────────────────────────────────────── */
@@ -189,14 +186,14 @@
   border-top: 1px solid var(--sw-rule);
   padding-top: 16px;
 }
-.swiss-figure__num {
+.swiss-figure [data-react-fancy-stat-value] {
   font-size: clamp(2rem, 4vw, 3rem);
   font-weight: 600;
   letter-spacing: -0.03em;
   color: var(--fg-1);
   font-variant-numeric: tabular-nums;
 }
-.swiss-figure__label {
+.swiss-figure [data-react-fancy-stat-label] {
   margin-top: 6px;
   font-family: var(--font-mono);
   font-size: 11.5px;

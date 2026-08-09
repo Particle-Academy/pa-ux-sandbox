@@ -9,6 +9,7 @@ import {
     Card,
     Composer,
     Eyebrow,
+    IndexList,
     Heading,
     MoodMeter,
     Pagination,
@@ -16,6 +17,7 @@ import {
     Progress,
     ReasonTag,
     Separator,
+    Stat,
     Table,
     Tabs,
     Text,
@@ -187,19 +189,16 @@ export default function Swiss({ style }: { style: Style }) {
 
                 {/* ── Figures band ──────────────────────────────────────────── */}
                 <section className="swiss-section" aria-label="Studio in numbers">
-                    <div className="swiss-grid" style={{ rowGap: 28 }}>
+                    <Stat.Band className="swiss-figures" columns={4} style={{ rowGap: 28 }}>
                         {[
                             { num: "2016", label: "Founded" },
                             { num: "120+", label: "Projects shipped" },
                             { num: "08", label: "People" },
                             { num: "14", label: "Awards" },
                         ].map((f) => (
-                            <div key={f.label} className="swiss-figure" style={{ gridColumn: "span 3" }}>
-                                <div className="swiss-figure__num">{f.num}</div>
-                                <div className="swiss-figure__label">{f.label}</div>
-                            </div>
+                            <Stat key={f.label} className="swiss-figure" value={f.num} label={f.label} />
                         ))}
-                    </div>
+                    </Stat.Band>
                 </section>
 
                 {/* ── Selected work — typographic index ─────────────────────── */}
@@ -229,21 +228,18 @@ export default function Swiss({ style }: { style: Style }) {
                         />
                     </div>
 
-                    <div className="swiss-index">
-                        {pageProjects.map((p) => (
-                            <div key={p.num} className="swiss-index__row">
-                                <Link
-                                    href="/inspiration/swiss#work"
-                                    className="swiss-index__stretch"
-                                    aria-label={`${p.title} — ${p.discipline}`}
-                                />
-                                <span className="swiss-index__num">{p.num}</span>
-                                <span className="swiss-index__title">{p.title}</span>
-                                <span className="swiss-index__disc">{p.discipline}</span>
-                                <span className="swiss-index__year">{p.year} ↗</span>
-                            </div>
-                        ))}
-                    </div>
+                    <IndexList
+                        className="swiss-index"
+                        linkAs={Link}
+                        items={pageProjects.map((p) => ({
+                            id: p.num,
+                            num: p.num,
+                            title: p.title,
+                            meta: p.discipline,
+                            value: `${p.year} ↗`,
+                            href: "/inspiration/swiss#work",
+                        }))}
+                    />
 
                     <div
                         style={{

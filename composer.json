@@ -19,7 +19,7 @@
         "laravel/socialite": "^5.27",
         "laravel/tinker": "^3.0",
         "particle-academy/dark-slide": "0.7.0",
-        "particle-academy/fancy-cms": "0.1.0",
+        "particle-academy/fancy-cms": "^0.3.0",
         "particle-academy/fancy-flow-php": "^0.11.0",
         "particle-academy/fancy-heuristics": "0.2.2",
         "particle-academy/fancy-mlm": "0.2.0",

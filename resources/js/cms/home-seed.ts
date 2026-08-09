@@ -38,14 +38,13 @@ export const homeDoc: PageDoc = {
   meta: { title: "Home", slug: "/", scrollMode: "smooth" },
   theme: { name: "default" },
   breakpoints: ["base", "md", "lg"],
-  sections: ["hero", "sec-packages", "sec-human-plus", "sec-components", "sec-philosophy", "sec-quickstart", "sec-explore"],
   nodes: {
     // ── Hero (fine-grained, editable + animatable) ──────────────────────────
     hero: { id: "hero", type: "section", parent: null, order: "a", className: "hero", props: {}, style: { base: {} } },
     grid: { id: "grid", type: "frame", parent: "hero", order: "a", className: "container hero-grid", props: {}, style: { base: {} } },
     left: { id: "left", type: "frame", parent: "grid", order: "a", props: {}, style: { base: {} } },
 
-    eyebrow: { id: "eyebrow", type: "richtext", parent: "left", order: "a", className: "eyebrow-row", props: { html: '<span class="dot"></span><span>v0.4 · React · PHP · Node</span>' }, style: { base: {} } },
+    eyebrow: { id: "eyebrow", type: "richtext", parent: "left", order: "a", className: "eyebrow-row", props: { html: { $bind: "heroEyebrow" } }, style: { base: {} } },
     heading: { id: "heading", type: "richtext", parent: "left", order: "b", className: "display", props: { html: 'Build the app, <span class="gradient-text">not the plumbing.</span>' }, style: { base: {} } },
     lede: {
       id: "lede",
@@ -53,14 +52,11 @@ export const homeDoc: PageDoc = {
       parent: "left",
       order: "c",
       className: "lede",
-      props: {
-        content:
-          "64 small packages covering the parts every real app needs and nobody wants to write twice — data grids, spreadsheets, workflow engines, xlsx/pptx/docx writers, Stripe catalogs, feature gating. Install one or take the whole stack; every server capability ships for PHP and Node. Agent-friendly throughout, so you can hand the boring half over and stay in flow.",
-      },
+      props: { content: { $bind: "heroLede" } },
       style: { base: {} },
     },
     cta: { id: "cta", type: "richtext", parent: "left", order: "d", className: "hero-cta", props: { html: '<a class="btn btn-primary" href="/docs">Install the kit</a><a class="btn btn-ghost" href="/agent-playground">See Human+ in action</a>' }, style: { base: {} } },
-    meta: { id: "meta", type: "richtext", parent: "left", order: "e", className: "hero-meta", props: { html: '<span class="meta-item">12 UI packages</span><span class="meta-item">MIT licensed</span><span class="meta-item"><code>tailwindcss &gt;= 4</code></span><span class="meta-item">React 19 · PHP 8.4</span>' }, style: { base: {} } },
+    meta: { id: "meta", type: "richtext", parent: "left", order: "e", className: "hero-meta", props: { html: { $bind: "heroMeta" } }, style: { base: {} } },
 
     card: { id: "card", type: "device", parent: "grid", order: "b", className: "hero-card", props: { variant: "browser", url: "resources/js/Pages/DesignReview.tsx", meta: "UTF-8 · TSX" }, style: { base: {} } },
     "card-code": { id: "card-code", type: "richtext", parent: "card", order: "a", className: "codeblock", props: { html: HERO_CODE_HTML }, style: { base: {} } },

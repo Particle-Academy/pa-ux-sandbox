@@ -1,8 +1,11 @@
 *.log
 .DS_Store
-.env
-.env.backup
-.env.production
+# Every env file EXCEPT the committed example. The list used to name three
+# variants individually, so any other one — .env.local, .env.staging, a
+# throwaway .env.<something> made while debugging — was untracked-but-not-
+# ignored, i.e. one `git add` away from committing real credentials.
+.env*
+!.env.example
 .phpactor.json
 .phpunit.result.cache
 /.fleet

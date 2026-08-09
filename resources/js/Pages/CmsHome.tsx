@@ -44,6 +44,9 @@ const seedTimeline: TimelineDoc = {
 };
 
 export default function CmsHome({ packages, companions, total_components }: CmsHomeProps) {
+  // The real size of the kit — the UI grid plus every companion package, the
+  // same sum `Home`'s Hero takes.
+  const packageCount = packages.length + companions.length;
   const [tl, setTl] = useState<TimelineDoc>(seedTimeline);
   const [kf, setKf] = useState<string | null>(null);
   const [progress, setProgress] = useState(0);
@@ -130,6 +133,24 @@ export default function CmsHome({ packages, companions, total_components }: CmsH
             })),
             total_components,
             packagesTitle: `${packages.length} small packages. Lift any one out.`,
+
+            // The hero's facts are BOUND, not written into the seed. They were
+            // duplicated there once and immediately went stale: the seed still
+            // said "v0.4" after the kit cut to 0.5, and "64 small packages" /
+            // "12 UI packages" — the same undercount `Home`'s Hero already
+            // carries a comment about fixing. A number typed into a document is
+            // a number nothing can keep true.
+            heroEyebrow: `<span class="dot"></span><span>v${__KIT_VERSION__} · React · PHP · Node</span>`,
+            heroLede:
+              `${packageCount} small packages covering the parts every real app needs and nobody wants to write twice ` +
+              `— data grids, spreadsheets, workflow engines, xlsx/pptx/docx writers, Stripe catalogs, feature gating. ` +
+              `Install one or take the whole stack; every server capability ships for PHP and Node. Agent-friendly ` +
+              `throughout, so you can hand the boring half over and stay in flow.`,
+            heroMeta:
+              `<span class="meta-item">${packageCount} packages</span>` +
+              `<span class="meta-item">MIT licensed</span>` +
+              `<span class="meta-item"><code>tailwindcss &gt;= 4</code></span>` +
+              `<span class="meta-item">React 19 · PHP 8.4</span>`,
             explore: EXPLORE_DATA,
           }}
           pinned={false}

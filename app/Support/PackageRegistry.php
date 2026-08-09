@@ -24,15 +24,21 @@ class PackageRegistry
      * someone to `composer require` something that 404s.
      */
     public const HIDDEN = [
-        'fancy-motion',
-        // The passkey trio is BUILT but UNPUBLISHED — no npm release, no
-        // Packagist release, no tag. Their definitions (and the Fancy Passkeys
-        // family) are complete below so that publishing is a three-line
-        // deletion here plus `php artisan registry:build`, rather than a fresh
-        // round of registry archaeology months later.
-        'fancy-passkeys',
-        'fancy-passkeys-js',
-        'fancy-passkeys-ui',
+        // Empty, and worth keeping the mechanism: it is how a built-but-unreleased
+        // package stays out of the grid, /packages, the docs, the sitemap and
+        // registry.json — and therefore out of `npx fancy-cli add` and the MCP —
+        // without deleting its definition.
+        //
+        // It held four slugs until 2026-08-09 on the grounds that they were
+        // "BUILT but UNPUBLISHED — no npm release, no Packagist release, no
+        // tag". Every one of them was live by then: fancy-motion 0.1.0,
+        // particle-academy/fancy-passkeys v0.2.0 on Packagist,
+        // @particle-academy/fancy-passkeys 0.2.0 and fancy-passkeys-ui 0.2.0 on
+        // npm. Four shipped packages were invisible to everyone.
+        //
+        // The lesson, since this list has no expiry: hiding is keyed on a claim
+        // about a REGISTRY, and nothing re-checks it. Verify against the
+        // registry before adding a slug, and again before believing one.
     ];
 
     /** Whether a slug is hidden from every public surface. */

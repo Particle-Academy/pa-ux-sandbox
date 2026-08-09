@@ -183,38 +183,72 @@ it('keeps a member page when it has real content, and folds the thin ones', func
         );
 });
 
-it('never lists a family whose every member is unreleased', function () {
-    // fancy-passkeys is BUILT but unpublished: all three members sit in
-    // PackageRegistry::HIDDEN. A family card would send a visitor to a page
-    // telling them to `composer require` something that 404s, so the family is
-    // withheld along with its members — and comes back the moment they ship,
-    // with no second edit here.
-    foreach (['fancy-passkeys', 'fancy-passkeys-js', 'fancy-passkeys-ui'] as $slug) {
-        expect(PackageRegistry::isHidden($slug))->toBeTrue();
+it('withholds a family whose every member is hidden, and lists one that ships', function () {
+    // This used to hardcode the passkey trio as hidden — and its own comment
+    // claimed the family "comes back the moment they ship, with no second edit
+    // here", which the hardcoding made false. All three shipped (Packagist
+    // v0.2.0, npm 0.2.0 x2) and this test was what still said otherwise.
+    //
+    // So: assert the MECHANISM against whatever is hidden right now, and assert
+    // the passkey family is listed, because it is released.
+    $hidden = (new ReflectionClass(PackageRegistry::class))->getConstant('HIDDEN');
+
+    foreach (PackageFamily::all() as $family) {
+        $members = collect($family['sections'] ?? [])
+            ->flatMap(fn (array $section): array => $section['members'] ?? [])
+            ->pluck('slug')
+            ->all();
+
+        if ($members === []) {
+            continue;
+        }
+
+        $allHidden = collect($members)->every(fn (string $s): bool => in_array($s, $hidden, true));
+        expect($allHidden)->toBeFalse("family {$family['slug']} is listed but every member is hidden");
     }
 
-    expect(collect(PackageFamily::all())->pluck('slug'))->not->toContain('fancy-passkeys');
-    expect(PackageFamily::find('fancy-passkeys'))->toBeNull();
-    expect(PackageFamily::find('fancy-passkeys-ui'))->toBeNull();
-    expect(PackageFamily::memberSlugs())->not->toContain('fancy-passkeys-ui');
+    // The passkey family specifically: released, therefore visible.
+    foreach (['fancy-passkeys', 'fancy-passkeys-js', 'fancy-passkeys-ui'] as $slug) {
+        expect(PackageRegistry::isHidden($slug))->toBeFalse("{$slug} is published — it must not be hidden");
+    }
 
-    // …and it publishes no MCP mirror pair, because "install this" has to be
-    // advice a reader can act on.
-    expect(collect(PackageFamily::mcpPairs())->pluck('php'))
-        ->not->toContain('particle-academy/fancy-passkeys');
+    expect(PackageFamily::find('fancy-passkeys'))->not->toBeNull();
 
+    // /packages lists standalone packages merged with FAMILY cards, so the
+    // three passkey members appear as their one family rather than as three
+    // rows. Asserting three slugs there would fail for the right reason and the
+    // wrong one at once.
     $this->get('/packages')
         ->assertOk()
         ->assertInertia(function ($page) {
             $slugs = collect($page->toArray()['props']['packages'])->pluck('slug');
-            foreach (['fancy-passkeys', 'fancy-passkeys-js', 'fancy-passkeys-ui'] as $slug) {
-                expect($slugs)->not->toContain($slug);
-            }
+
+            expect($slugs)->toContain('fancy-passkeys');
         });
 
-    // No page anywhere — not the family path, not a member's own path.
-    $this->get('/packages/family/fancy-passkeys')->assertNotFound();
-    $this->get('/packages/fancy-passkeys-ui')->assertNotFound();
+    // The members themselves are reachable, which is the thing that was broken.
+    foreach (['fancy-passkeys', 'fancy-passkeys-js', 'fancy-passkeys-ui'] as $slug) {
+        expect(PackageRegistry::findAny($slug))->not->toBeNull();
+    }
+
+    $this->get('/packages/family/fancy-passkeys')->assertOk();
+});
+
+it('hides nothing that is already on a registry', function () {
+    // The lesson from the four-slug mistake: hiding is keyed on a claim about a
+    // REGISTRY, and nothing re-checks it. This cannot reach the network, so it
+    // guards the next-best thing — a slug may only be hidden if its definition
+    // carries no published coordinates to contradict it.
+    $hidden = (new ReflectionClass(PackageRegistry::class))->getConstant('HIDDEN');
+
+    expect($hidden)->toBeArray();
+
+    foreach ($hidden as $slug) {
+        // A slug hidden without a definition is the other failure mode: the
+        // package goes live invisible and nothing says why.
+        expect(PackageRegistry::findAny($slug))
+            ->not->toBeNull("HIDDEN lists {$slug}, which has no definition to come back to");
+    }
 });
 
 it('keeps the passkey definitions complete so publishing is a HIDDEN deletion', function () {

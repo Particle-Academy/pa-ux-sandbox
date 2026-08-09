@@ -56,7 +56,13 @@ return [
     'github' => [
         'client_id' => env('GITHUB_CLIENT_ID'),
         'client_secret' => env('GITHUB_CLIENT_SECRET'),
-        'redirect' => env('GITHUB_REDIRECT_URI', env('APP_URL').'/auth/github/callback'),
+        // `?:` not a default argument, and not `??`. env()'s default only
+        // applies when the key is ABSENT — a present-but-empty
+        // `GITHUB_REDIRECT_URI=` (which is exactly what .env.example stubs, and
+        // what a copied deploy env contains) returns "" and the fallback never
+        // fires. Production was sending GitHub `redirect_uri=` empty because of
+        // this line.
+        'redirect' => env('GITHUB_REDIRECT_URI') ?: rtrim((string) env('APP_URL'), '/').'/auth/github/callback',
         'api_token' => env('GITHUB_API_TOKEN'),
 
         // Webhook receiver (bug-hunter-xp). Set the same secret on the

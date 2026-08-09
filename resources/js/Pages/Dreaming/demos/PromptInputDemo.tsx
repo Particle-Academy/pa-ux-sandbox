@@ -1,12 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import {
-  Button,
-  Card,
-  Badge,
-  Switch,
-  Select,
-  Tooltip,
-} from "@particle-academy/react-fancy";
+import { Badge, Button, Card, Kbd, Select, Switch, Tooltip } from "@particle-academy/react-fancy";
 
 /**
  * PromptInput — react-fancy primitive for the AI-app chat composer.
@@ -468,13 +461,13 @@ function PromptInput({
           <div className="ml-auto flex items-center gap-2">
             {showHint && (
               <span className="hidden text-[10px] text-zinc-500 sm:inline">
-                <kbd className="rounded border border-zinc-300 bg-zinc-50 px-1 py-0.5 font-mono text-[9px] text-zinc-700 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
+                <Kbd>
                   ⌘
-                </kbd>{" "}
+                </Kbd>{" "}
                 +{" "}
-                <kbd className="rounded border border-zinc-300 bg-zinc-50 px-1 py-0.5 font-mono text-[9px] text-zinc-700 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
+                <Kbd>
                   Enter
-                </kbd>{" "}
+                </Kbd>{" "}
                 to send
               </span>
             )}

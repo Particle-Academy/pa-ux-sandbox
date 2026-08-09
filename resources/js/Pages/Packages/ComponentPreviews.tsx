@@ -108,44 +108,7 @@ import {
     GIT_STATUS,
     GIT_TREE,
 } from "./gitFixtures";
-import {
-    Button,
-    Avatar,
-    Badge,
-    Breadcrumbs,
-    Calendar,
-    Callout,
-    Card,
-    Heading,
-    Marquee,
-    Pillbox,
-    StickyNote,
-    Switch,
-    Tabs,
-    Text,
-    TimeGrid,
-    Timeline,
-    Tooltip,
-    MediaViewer,
-    ImageViewer,
-    VideoViewer,
-    AudioViewer,
-    PdfViewer,
-    ColorPicker,
-    ContextMenu,
-    ContentRenderer,
-    Drawer,
-    Emoji,
-    FauxClient,
-    Kanban,
-    MoodMeter,
-    OtpInput,
-    Pagination,
-    Profile,
-    Progress,
-    Skeleton,
-    TimePicker,
-} from "@particle-academy/react-fancy";
+import { AudioViewer, Avatar, Badge, Breadcrumbs, Button, Calendar, Callout, Card, ColorPicker, ContentRenderer, ContextMenu, Drawer, Emoji, FauxClient, Heading, ImageViewer, Kanban, Kbd, Marquee, MediaViewer, MoodMeter, OtpInput, Pagination, PdfViewer, Pillbox, Profile, Progress, Skeleton, StickyNote, Switch, Tabs, Text, TimeGrid, TimePicker, Timeline, Tooltip, VideoViewer } from "@particle-academy/react-fancy";
 import { FileViewer } from "@particle-academy/fancy-code";
 import { EChart } from "@particle-academy/fancy-echarts";
 import { ArtBoard, ArtPiece } from "@particle-academy/fancy-artboard";
@@ -702,7 +665,7 @@ const PREVIEWS: Record<string, PreviewFn> = {
             <div className="flex items-center gap-2 border-b border-zinc-100 px-3 py-2 dark:border-zinc-800">
                 <Search size={14} className="text-zinc-400" />
                 <span className="text-xs text-zinc-500">Search…</span>
-                <kbd className="ml-auto rounded border border-zinc-300 px-1 font-mono text-[10px] text-zinc-500 dark:border-zinc-700">⌘K</kbd>
+                <Kbd className="ml-auto">⌘K</Kbd>
             </div>
             <ul className="text-xs">
                 <li className="flex items-center gap-2 bg-violet-50 px-3 py-1.5 text-violet-900 dark:bg-violet-500/15 dark:text-violet-100">

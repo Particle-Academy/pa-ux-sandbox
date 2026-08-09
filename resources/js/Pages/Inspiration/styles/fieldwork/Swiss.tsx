@@ -8,6 +8,7 @@ import {
     Button,
     Card,
     Composer,
+    Eyebrow,
     Heading,
     MoodMeter,
     Pagination,
@@ -141,10 +142,12 @@ export default function Swiss({ style }: { style: Style }) {
                 <section className="swiss-section" aria-labelledby="sw-hero">
                     <div className="swiss-grid">
                         <div style={{ gridColumn: "1 / span 8" }}>
-                            <div className="swiss-eyebrow">
-                                <span><b>00</b> — Index</span>
-                                <span>Graphic design studio</span>
-                            </div>
+                            <Eyebrow
+                                className="swiss-eyebrow"
+                                num="00"
+                                label="Index"
+                                aside="Graphic design studio"
+                            />
                             <h1 id="sw-hero" className="swiss-display" style={{ marginTop: 22 }}>
                                 A design studio for systems, type, and the spaces between.
                             </h1>
@@ -212,7 +215,7 @@ export default function Swiss({ style }: { style: Style }) {
                         }}
                     >
                         <div>
-                            <div className="swiss-eyebrow"><span><b>01</b> — Selected work</span></div>
+                            <Eyebrow className="swiss-eyebrow" num="01" label="Selected work" />
                             <Heading as="h2" size="2xl" weight="semibold" className="swiss-h2" style={{ marginTop: 10 }}>
                                 Six recent projects.
                             </Heading>
@@ -261,7 +264,7 @@ export default function Swiss({ style }: { style: Style }) {
 
                 {/* ── Capabilities (tabbed) ─────────────────────────────────── */}
                 <section className="swiss-section" aria-labelledby="sw-cap">
-                    <div className="swiss-eyebrow"><span><b>02</b> — Capabilities</span></div>
+                    <Eyebrow className="swiss-eyebrow" num="02" label="Capabilities" />
                     <Heading as="h2" size="2xl" weight="semibold" className="swiss-h2" style={{ margin: "10px 0 24px" }}>
                         What we do, and how we work.
                     </Heading>
@@ -318,7 +321,7 @@ export default function Swiss({ style }: { style: Style }) {
                 <section className="swiss-section" aria-labelledby="sw-about">
                     <div className="swiss-grid">
                         <div style={{ gridColumn: "1 / span 3" }}>
-                            <div className="swiss-eyebrow"><span><b>03</b> — About</span></div>
+                            <Eyebrow className="swiss-eyebrow" num="03" label="About" />
                         </div>
                         <div style={{ gridColumn: "4 / span 7" }}>
                             <p style={{ fontSize: "clamp(1.15rem, 2vw, 1.55rem)", lineHeight: 1.45, fontWeight: 500, letterSpacing: "-0.01em", color: "var(--fg-1)", margin: 0 }}>
@@ -337,7 +340,7 @@ export default function Swiss({ style }: { style: Style }) {
 
                 {/* ── Team ──────────────────────────────────────────────────── */}
                 <section className="swiss-section" aria-labelledby="sw-team">
-                    <div className="swiss-eyebrow"><span><b>04</b> — People</span></div>
+                    <Eyebrow className="swiss-eyebrow" num="04" label="People" />
                     <Heading as="h2" size="2xl" weight="semibold" className="swiss-h2" style={{ margin: "10px 0 26px" }}>
                         The studio.
                     </Heading>
@@ -358,7 +361,7 @@ export default function Swiss({ style }: { style: Style }) {
                 <section className="swiss-section" aria-labelledby="sw-recognition">
                     <div className="swiss-grid" style={{ rowGap: 32 }}>
                         <div style={{ gridColumn: "1 / span 7" }}>
-                            <div className="swiss-eyebrow"><span><b>05</b> — Recognition</span></div>
+                            <Eyebrow className="swiss-eyebrow" num="05" label="Recognition" />
                             <Heading as="h2" size="lg" weight="semibold" className="!mt-3 !mb-4">
                                 Selected awards
                             </Heading>
@@ -386,14 +389,14 @@ export default function Swiss({ style }: { style: Style }) {
                         </div>
 
                         <div style={{ gridColumn: "9 / span 4" }}>
-                            <div className="swiss-eyebrow"><span>Selected clients</span></div>
+                            <Eyebrow className="swiss-eyebrow" label="Selected clients" />
                             <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 14 }}>
                                 {CLIENTS.map((c) => (
                                     <Badge key={c} color="zinc" variant="soft" size="md">{c}</Badge>
                                 ))}
                             </div>
                             <Separator className="!my-6" />
-                            <div className="swiss-eyebrow"><span>Press</span></div>
+                            <Eyebrow className="swiss-eyebrow" label="Press" />
                             <ul style={{ listStyle: "none", margin: "14px 0 0", padding: 0 }}>
                                 <li className="swiss-meta swiss-meta--fg1">It&apos;s Nice That — Studio of the week</li>
                                 <li className="swiss-meta" style={{ marginTop: 6 }}>Eye Magazine №112</li>
@@ -407,7 +410,7 @@ export default function Swiss({ style }: { style: Style }) {
                 <section className="swiss-section" id="contact" aria-labelledby="sw-contact">
                     <div className="swiss-grid" style={{ rowGap: 32 }}>
                         <div style={{ gridColumn: "1 / span 5" }}>
-                            <div className="swiss-eyebrow"><span><b>06</b> — Contact</span></div>
+                            <Eyebrow className="swiss-eyebrow" num="06" label="Contact" />
                             <Heading as="h2" size="2xl" weight="semibold" className="swiss-h2" style={{ margin: "10px 0 18px" }}>
                                 Tell us about the work.
                             </Heading>
@@ -418,7 +421,7 @@ export default function Swiss({ style }: { style: Style }) {
                             <div className="swiss-meta" style={{ marginTop: 4 }}>+41 44 000 00 00</div>
 
                             <div style={{ marginTop: 26 }}>
-                                <div className="swiss-eyebrow"><span>Indicative budget</span></div>
+                                <Eyebrow className="swiss-eyebrow" label="Indicative budget" />
                                 <Text as="p" size="sm" color="muted" className="!mt-2 !mb-3 !max-w-[34ch]">
                                     Set a rough budget and how firm it is — drag along for the figure, up for confidence. It only
                                     helps us scope; nothing's binding.

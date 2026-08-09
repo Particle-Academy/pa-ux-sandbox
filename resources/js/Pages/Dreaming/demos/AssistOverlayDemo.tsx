@@ -1,3 +1,4 @@
+import { Kbd } from "@particle-academy/react-fancy";
 import { useEffect, useRef, useState } from "react";
 
 export const USAGE = `import { AssistOverlay } from "@particle-academy/agent-integrations";
@@ -132,10 +133,10 @@ export function AssistOverlayDemo() {
 
       <div className="rounded-lg border border-dashed border-zinc-300 px-4 py-3 text-[11px] text-zinc-500 dark:border-zinc-700">
         Focus the textarea to summon the overlay. Use{" "}
-        <kbd className="rounded bg-zinc-100 px-1 dark:bg-zinc-800">⌥↑</kbd> /{" "}
-        <kbd className="rounded bg-zinc-100 px-1 dark:bg-zinc-800">⌥↓</kbd> to
+        <Kbd>⌥↑</Kbd> /{" "}
+        <Kbd>⌥↓</Kbd> to
         navigate suggestions,{" "}
-        <kbd className="rounded bg-zinc-100 px-1 dark:bg-zinc-800">⌥↵</kbd> to
+        <Kbd>⌥↵</Kbd> to
         apply. Caret stays in the input.
       </div>
     </div>

@@ -1,3 +1,4 @@
+import { Kbd } from "@particle-academy/react-fancy";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 export const USAGE = `import { TourBeacon } from "@particle-academy/react-fancy";
@@ -169,9 +170,9 @@ export function TourBeaconDemo() {
         {running ? "Tour running…" : "Start product tour"}
       </button>
       <p className="text-[11px] text-zinc-500">
-        Keyboard: <kbd className="rounded bg-zinc-100 px-1 dark:bg-zinc-800">→</kbd> next /{" "}
-        <kbd className="rounded bg-zinc-100 px-1 dark:bg-zinc-800">←</kbd> prev /{" "}
-        <kbd className="rounded bg-zinc-100 px-1 dark:bg-zinc-800">Esc</kbd> dismiss.
+        Keyboard: <Kbd>→</Kbd> next /{" "}
+        <Kbd>←</Kbd> prev /{" "}
+        <Kbd>Esc</Kbd> dismiss.
       </p>
 
       {running && (

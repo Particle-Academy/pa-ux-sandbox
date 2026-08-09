@@ -1,3 +1,4 @@
+import { Kbd } from "@particle-academy/react-fancy";
 import { useEffect, useMemo, useState } from "react";
 
 export const USAGE = `import { KeymapExplorer, useKeymap } from "@particle-academy/react-fancy";
@@ -95,9 +96,9 @@ function KeymapExplorer({
       <div className="w-[560px] overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-2xl dark:border-zinc-700 dark:bg-zinc-900">
         <header className="flex items-center justify-between border-b border-zinc-100 px-3 py-2 dark:border-zinc-800">
           <div className="text-sm font-semibold">Keyboard shortcuts</div>
-          <kbd className="rounded bg-zinc-100 px-1.5 py-0.5 text-[10px] text-zinc-500 dark:bg-zinc-800">
+          <Kbd>
             Esc
-          </kbd>
+          </Kbd>
         </header>
         <input
           value={q}
@@ -138,8 +139,8 @@ function KeymapExplorer({
           )}
         </div>
         <div className="border-t border-zinc-100 bg-zinc-50 px-3 py-1.5 text-[10px] text-zinc-500 dark:border-zinc-800 dark:bg-zinc-950">
-          <kbd className="rounded bg-white px-1 dark:bg-zinc-900">?</kbd> toggle ·{" "}
-          <kbd className="rounded bg-white px-1 dark:bg-zinc-900">Esc</kbd> close
+          <Kbd>?</Kbd> toggle ·{" "}
+          <Kbd>Esc</Kbd> close
         </div>
       </div>
     </div>
@@ -181,7 +182,7 @@ export function KeymapExplorerDemo() {
     <div className="space-y-3">
       <div className="rounded-lg border border-zinc-200 bg-white p-4 text-sm dark:border-zinc-800 dark:bg-zinc-900">
         <p>
-          Press <kbd className="rounded bg-zinc-100 px-1 dark:bg-zinc-800">?</kbd> to open the
+          Press <Kbd>?</Kbd> to open the
           keyboard-shortcut explorer. Filter, click a row to invoke. An MCP bridge could
           enumerate this same registry as discoverable tools — an agent can ask "what can I
           drive?" without scraping menus.

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Select, Slider } from "@particle-academy/react-fancy";
+import { Kbd, Select, Slider } from "@particle-academy/react-fancy";
 
 /**
  * SuggestionGhost — react-fancy primitive for inline AI completion.
@@ -113,14 +113,6 @@ export function SuggestionGhostDemo() {
         )}
       </section>
     </div>
-  );
-}
-
-function Kbd({ children }: { children: React.ReactNode }) {
-  return (
-    <kbd className="rounded border border-zinc-300 bg-zinc-50 px-1 py-0.5 font-mono text-[10px] text-zinc-700 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-300">
-      {children}
-    </kbd>
   );
 }
 

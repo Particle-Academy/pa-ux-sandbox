@@ -182,6 +182,10 @@ Route::middleware(TrackPackageBrowsing::class)->group(function () {
 
 Route::get('/starter-kits', [StarterKitController::class, 'index'])->name('starter-kits.index');
 Route::get('/starter-kits/{slug}', [StarterKitController::class, 'show'])->name('starter-kits.show');
+// The CMS-authored twin of the page above. Declared BEFORE nothing in
+// particular — {slug} would not swallow it either way — but kept adjacent so
+// the two stay obviously paired.
+Route::get('/starter-kits/{slug}/cms', [StarterKitController::class, 'cmsShow'])->name('starter-kits.cms');
 Route::get('/starter-kits/{slug}/download.zip', StarterKitDownloadController::class)
     ->where('slug', '[a-z0-9\-]+')
     ->name('starter-kits.download');

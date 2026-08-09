@@ -36,4 +36,21 @@ class StarterKitController extends Controller
 
         return Inertia::render('StarterKits/Show', ['kit' => $kit]);
     }
+
+    /**
+     * The same kit page, authored as a CMS document instead of as JSX — the
+     * second beachhead surface for the Stages model.
+     *
+     * Kept as a separate route rather than replacing `show`, because the point
+     * is the COMPARISON: both render from the same `$kit`, so a divergence
+     * between them is visible side by side rather than only in a screenshot
+     * diff nobody runs.
+     */
+    public function cmsShow(string $slug): Response
+    {
+        $kit = collect(self::kits())->firstWhere('slug', $slug);
+        abort_if($kit === null, 404);
+
+        return Inertia::render('StarterKits/CmsShow', ['kit' => $kit]);
+    }
 }

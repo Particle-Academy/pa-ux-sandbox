@@ -135,11 +135,18 @@ export default function BigType({ style }: { style: Style }) {
                         <span>00 — Index</span>
                         <span>A type-first design studio</span>
                     </div>
-                    <h1 id="bt-hero-h" className="bt-display">
+                    {/* The hero used to be a hand-rolled <h1>, because <Heading>
+                        capped at "2xl" — the ask behind Tynn #236. It reaches
+                        display scale now, so this is the component. The size is
+                        still .bt-display's: this style wants FLUID type
+                        (clamp(4.2rem, 19vw, 17rem)), which no fixed step can be,
+                        and the rule is scoped under .insp-bigtype so it
+                        outranks the utility class rather than racing it. */}
+                    <Heading as="h1" size="7xl" id="bt-hero-h" className="bt-display">
                         <span className="bt-line">WE&nbsp;SET</span>
                         <span className="bt-line bt-line--accent">IT</span>
                         <span className="bt-line bt-line--outline">HUGE.</span>
-                    </h1>
+                    </Heading>
                     <div className="bt-hero__foot">
                         <p className="bt-lede">
                             FIELDWORK is a studio where typography <em>is</em> the design. Brand systems, custom

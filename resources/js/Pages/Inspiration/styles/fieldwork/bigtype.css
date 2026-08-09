@@ -134,7 +134,9 @@
   padding-bottom: 18px;
 }
 
-.bt-display {
+/* Scoped so its fluid font-size + tracking outrank <Heading>'s utility
+   classes deterministically, instead of depending on stylesheet order. */
+.insp-bigtype .bt-display {
   margin: 0;
   font-family: var(--bt-display);
   font-weight: 800;

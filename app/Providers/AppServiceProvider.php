@@ -68,9 +68,9 @@ class AppServiceProvider extends ServiceProvider
         // — so a stale/misconfigured http APP_URL can't reintroduce mixed content.
         // A genuine no-op for http-only local dev. (TrustProxies in
         // bootstrap/app.php additionally fixes scheme detection + secure cookies.)
-        if (str_starts_with((string) config('app.url'), 'https://') || request()->isSecure()) {
-            URL::forceScheme('https');
-        }
+        // Scheme forcing is per-REQUEST and lives in
+        // App\Http\Middleware\ForceCanonicalScheme. A provider boots once and
+        // cannot see the request it would be deciding for.
 
         // Gate definitions — both 'admin' (sandbox routes) and 'manageCatalog'
         // (the laravel-catalog admin's configured ability) resolve to the

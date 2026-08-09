@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\EnsureUserNotSuspended;
+use App\Http\Middleware\ForceCanonicalScheme;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\TrackActiveUser;
 use Illuminate\Foundation\Application;
@@ -36,6 +37,12 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // Inertia shared props + root view for the Showcase SPA. The suspension
         // gate runs after auth is resolved so a frozen account is bounced to login.
+        // Scheme first: URL generation for everything after it depends on the
+        // decision, and it must be made per REQUEST rather than once at boot.
+        $middleware->web(prepend: [
+            ForceCanonicalScheme::class,
+        ]);
+
         $middleware->web(append: [
             HandleInertiaRequests::class,
             EnsureUserNotSuspended::class,

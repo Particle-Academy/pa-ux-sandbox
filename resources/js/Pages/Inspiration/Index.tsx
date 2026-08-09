@@ -1,3 +1,4 @@
+import { StatList } from "@particle-academy/react-fancy";
 import { Head } from "@inertiajs/react";
 import { Layout } from "../Layout";
 import { CollectionHeading, GalleryFooter, StyleGrid } from "./cards";
@@ -61,19 +62,16 @@ export default function InspirationIndex({ collections }: { collections: Collect
                         </p>
                     </div>
 
-                    <div
-                        style={{
-                            textAlign: "right",
-                            fontFamily: "var(--font-mono)",
-                            fontSize: 12.5,
-                            lineHeight: 1.7,
-                            color: "var(--fg-3)",
-                        }}
-                    >
-                        <div style={{ color: "var(--fg-1)" }}>{total} designs</div>
-                        <div>{collections.length} collections</div>
-                        <div>Fancy UI Kit</div>
-                    </div>
+                    {/* react-fancy's StatList — built for exactly this stack
+                        (story #170, task 224). The hand-rolled copy is gone. */}
+                    <StatList
+                        items={[
+                            { value: total, label: "designs" },
+                            { value: collections.length, label: "collections" },
+                            { value: "Fancy", label: "UI Kit" },
+                        ]}
+                        style={{ fontSize: 12.5, lineHeight: 1.7 }}
+                    />
                 </header>
 
                 {collections.map((collection) => (

@@ -41,6 +41,9 @@ class AgentRelayController extends Controller
 {
     private const TTL_SECONDS = 3600;
 
+    /** Max frames held for a session nobody has joined yet. */
+    private const PENDING_CAP = 64;
+
     private const POLL_INTERVAL_MS = 200;
 
     /** Inbound frames from external MCP clients → forwarded to all browser subscribers. */
@@ -169,8 +172,24 @@ class AgentRelayController extends Controller
             // Register the subscriber so fanOut writes to its queue.
             $subsKey = $this->subscribersKey($session, $direction);
             $subs = $this->cache()->get($subsKey, []);
+            $isNew = ! isset($subs[$subscriberId]);
             $subs[$subscriberId] = time();
             $this->cache()->put($subsKey, $subs, self::TTL_SECONDS);
+
+            // A newly-arrived subscriber takes anything that was fanned out before
+            // it existed. `pull` so the SECOND subscriber does not get it too:
+            // redelivering an already-answered initialize is worse than dropping it.
+            if ($isNew) {
+                $held = $this->cache()->pull($this->pendingKey($session, $direction), []);
+                if ($held !== []) {
+                    $qKey = $this->queueKey($session, $direction, $subscriberId);
+                    $this->cache()->put(
+                        $qKey,
+                        array_merge($this->cache()->get($qKey, []), $held),
+                        self::TTL_SECONDS,
+                    );
+                }
+            }
 
             // Outbound subscribers are external agents reading frames from
             // the browser. Notify the browser (inbound side) when one joins.
@@ -275,6 +294,21 @@ class AgentRelayController extends Controller
         $subs[$subscriberId] = time();
         $this->cache()->put($subsKey, $subs, self::TTL_SECONDS);
 
+        // A newly-arrived subscriber takes anything that was fanned out before
+        // it existed. `pull` so the SECOND subscriber does not get it too:
+        // redelivering an already-answered initialize is worse than dropping it.
+        if ($isNew) {
+            $held = $this->cache()->pull($this->pendingKey($session, $direction), []);
+            if ($held !== []) {
+                $qKey = $this->queueKey($session, $direction, $subscriberId);
+                $this->cache()->put(
+                    $qKey,
+                    array_merge($this->cache()->get($qKey, []), $held),
+                    self::TTL_SECONDS,
+                );
+            }
+        }
+
         // A newly-arrived external (outbound) subscriber notifies the browser side,
         // mirroring the SSE handler.
         if ($isNew && $direction === 'outbound') {
@@ -337,6 +371,30 @@ class AgentRelayController extends Controller
         // long-poll on each ≤25s round-trip.
         $now = time();
         $subs = array_filter($subs, fn ($ts) => ($now - (int) $ts) < 60);
+
+        // Nobody is listening YET. Hold the frame for the first subscriber to
+        // arrive rather than discarding it: an external agent that posts
+        // `initialize` before the browser's receive leg has connected used to
+        // get a 200 for a frame that went nowhere, then wait for a reply that
+        // could never come. The caller sees a timeout, seconds later and in
+        // another process, with a success status on the write -- which is why
+        // this was first reported as a broken client.
+        if ($subs === []) {
+            $pendingKey = $this->pendingKey($session, $direction);
+            $pending = $this->cache()->get($pendingKey, []);
+            $pending[] = $payload;
+            // Bound it: a session that is shared and never joined must not grow
+            // without limit. Oldest frames go first -- a stale handshake is
+            // worth less than the call that follows it.
+            if (count($pending) > self::PENDING_CAP) {
+                $pending = array_slice($pending, -self::PENDING_CAP);
+            }
+            $this->cache()->put($pendingKey, $pending, self::TTL_SECONDS);
+            $this->cache()->put($subsKey, $subs, self::TTL_SECONDS);
+
+            return;
+        }
+
         foreach (array_keys($subs) as $subscriberId) {
             $key = $this->queueKey($session, $direction, $subscriberId);
             $existing = $this->cache()->get($key, []);
@@ -368,6 +426,17 @@ class AgentRelayController extends Controller
     private function cache(): Repository
     {
         return Cache::store(config('agent-relay.cache_store'));
+    }
+
+    /**
+     * Frames fanned out while no subscriber was registered.
+     *
+     * Per SESSION rather than per subscriber-at-send-time, which is the whole
+     * point: the subscriber it is for does not exist yet.
+     */
+    private function pendingKey(string $session, string $direction): string
+    {
+        return "wb-share:pending:{$session}:{$direction}";
     }
 
     private function subscribersKey(string $session, string $direction): string

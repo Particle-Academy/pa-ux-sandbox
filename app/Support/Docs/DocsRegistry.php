@@ -47,6 +47,12 @@ class DocsRegistry
             ],
         ],
         [
+            'label' => 'TanStack',
+            'pages' => [
+                ['slug' => 'tanstack', 'title' => 'TanStack in Fancy UI', 'description' => 'Where the suite adopts TanStack Query, Table and Virtual — always as optional peers, never as dependencies — plus the Live Contract that maps broadcast events to query keys, and what we deliberately did not adopt.'],
+            ],
+        ],
+        [
             'label' => 'Distribution',
             'pages' => [
                 ['slug' => 'cli', 'title' => 'CLI', 'description' => 'fancy-ui CLI reference — init, add, list, search.'],

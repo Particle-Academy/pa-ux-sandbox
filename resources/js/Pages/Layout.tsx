@@ -516,6 +516,7 @@ export function Layout({
                             <h5>Learn</h5>
                             <ul>
                                 <li><Link href="/docs">Docs</Link></li>
+                                <li><Link href="/docs/tanstack">TanStack</Link></li>
                                 <li><Link href="/learn">Fancy UI Curriculum</Link></li>
                                 <li><Link href="/dreaming">Dreaming</Link></li>
                                 <li><a href="/docs/human-plus-ux.md">Human+ whitepaper</a></li>

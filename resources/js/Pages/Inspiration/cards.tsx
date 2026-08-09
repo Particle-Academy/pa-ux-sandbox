@@ -1,5 +1,5 @@
 import { Link } from "@inertiajs/react";
-import { Card } from "@particle-academy/react-fancy";
+import { Brand, Card } from "@particle-academy/react-fancy";
 import type { CSSProperties } from "react";
 import type { Collection, Style } from "./types";
 
@@ -98,25 +98,14 @@ export function CollectionHeading({ collection, link = false }: { collection: Co
         >
             <div style={{ maxWidth: 680 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 11 }}>
-                    {/* Brand mark — the one place a gradient is allowed. */}
-                    <span
+                    {/* Brand mark — the one place a gradient is allowed.
+                        The GEOMETRY is Brand.Mark's; the gradient stays ours,
+                        because react-fancy ships no brand colour on purpose. */}
+                    <Brand.Mark
                         className="brand-gradient"
-                        style={{
-                            width: 30,
-                            height: 30,
-                            borderRadius: 8,
-                            display: "grid",
-                            placeItems: "center",
-                            color: "#fff",
-                            fontWeight: 700,
-                            fontSize: 16,
-                            lineHeight: 1,
-                            flexShrink: 0,
-                        }}
-                        aria-hidden
-                    >
-                        {collection.name.charAt(0)}
-                    </span>
+                        size={30}
+                        glyph={collection.name.charAt(0)}
+                    />
                     <span style={{ fontWeight: 600, fontSize: 15, color: "var(--fg-1)", letterSpacing: "-0.01em" }}>
                         {name}
                     </span>

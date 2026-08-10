@@ -450,7 +450,7 @@ class PackageRegistry
             [
                 'slug' => 'fancy-cms',
                 'name' => 'particle-academy/fancy-cms',
-                'tagline' => 'EARLY-RELEASE BETA — Laravel host + PHP page renderer for the Stages doc model: node tree → HTML with island hydration; backend pair of the fancy-cms-ui editor (still in preview). Expect rough edges and breaking 0.x changes — please report anything you hit at github.com/Particle-Academy/fancy-cms/issues.',
+                'tagline' => 'Laravel host + PHP page renderer for the Stages doc model: node tree → HTML with island hydration; backend pair of the fancy-cms-ui editor. Pre-1.0 — the API may still move between minors; issues at github.com/Particle-Academy/fancy-cms/issues.',
                 'composer' => 'particle-academy/fancy-cms',
                 'repo' => 'Particle-Academy/fancy-cms',
                 'packagist' => 'particle-academy/fancy-cms',
@@ -1380,7 +1380,7 @@ class PackageRegistry
         return [
             'slug' => 'fancy-cms-ui',
             'name' => 'fancy-cms-ui',
-            'tagline' => 'EARLY-RELEASE BETA — WYSIWYG CMS editor (React) for the Stages doc model: three-pane layers / canvas / inspector editing where every mutation is one PageOp through a pure reducer, plus the CmsPage / CmsRegion renderers with $bind data fields; pairs with the particle-academy/fancy-cms PHP renderer. Expect rough edges and breaking 0.x changes — please report anything you hit at github.com/Particle-Academy/fancy-cms-ui/issues.',
+            'tagline' => 'WYSIWYG CMS editor (React) for the Stages doc model: three-pane layers / canvas / inspector editing where every mutation is one PageOp through a pure reducer, plus the CmsPage / CmsRegion renderers with $bind data fields that name their live source. Pairs with the particle-academy/fancy-cms PHP renderer. Pre-1.0 — the API may still move between minors; issues at github.com/Particle-Academy/fancy-cms-ui/issues.',
             'npm' => '@particle-academy/fancy-cms-ui',
             'repo' => 'Particle-Academy/fancy-cms-ui',
             'language' => 'TypeScript',

@@ -29,6 +29,13 @@ class RegistrySource
             // Production (Forge deploys only px-ui-sandbox, no siblings) → load
             // the precompiled artifact committed via `php artisan registry:build`.
             $items = $this->liveSourceAvailable() ? $this->scanLive() : $this->loadCompiled();
+
+            // Stamp kit lifecycle in ONE place rather than at the four
+            // constructor call sites — and after loadCompiled() too, so a
+            // production deploy reading the artifact gets the same answer as a
+            // dev box scanning source.
+            $items = array_map(RegistryLifecycle::apply(...), $items);
+
             usort($items, fn (RegistryItem $a, RegistryItem $b) => $a->name <=> $b->name);
 
             return $items;

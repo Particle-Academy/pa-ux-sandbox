@@ -40,6 +40,29 @@ class RegistryItem
         public readonly ?string $until = null,
     ) {}
 
+    /**
+     * Clone this item with its kit lifecycle stamped on.
+     *
+     * Authored in {@see RegistryLifecycle}, not at the construction sites —
+     * "when did this arrive?" is a fact about the kit's history rather than
+     * about how the item happens to be built.
+     */
+    public function withLifecycle(?string $since, ?string $until): self
+    {
+        return new self(
+            name: $this->name,
+            title: $this->title,
+            description: $this->description,
+            package: $this->package,
+            files: $this->files,
+            dependencies: $this->dependencies,
+            registryDependencies: $this->registryDependencies,
+            type: $this->type,
+            since: $since,
+            until: $until,
+        );
+    }
+
     /** Clone this item with a different registry name (used to de-collide). */
     public function withName(string $name): self
     {

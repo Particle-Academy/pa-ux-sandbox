@@ -53,15 +53,40 @@ it('excludes them from a 0.4 registry request', function () {
 
 it('leaves everything else untouched', function () {
     // A lifecycle map that quietly stamped every item would break every older
-    // consumer at once, which is worse than the gap it fixes.
+    // consumer at once, which is worse than the gap it fixes. So the set of
+    // marked items is asserted EXACTLY, not merely bounded — an accidental
+    // stamp hides a component from a line that really had it, and that failure
+    // is invisible from this side of the registry.
+    //
+    // This assertion previously read "nothing outside fancy-cms is marked",
+    // which was true when written and became wrong the moment a component
+    // arrived inside an already-existing package. The list, not the rule, is
+    // what changed.
     $items = app(RegistrySource::class)->all();
 
-    $stamped = array_values(array_filter(
-        $items,
-        fn ($i): bool => $i->since !== null && ! str_starts_with($i->package, 'fancy-cms'),
-    ));
+    $stamped = array_map(
+        fn ($i): string => $i->name,
+        array_values(array_filter($items, fn ($i): bool => $i->since !== null || $i->until !== null)),
+    );
+    sort($stamped);
 
-    expect(array_map(fn ($i): string => $i->name, $stamped))->toBe([]);
+    $expected = array_merge(
+        array_keys(RegistryLifecycle::ITEMS),
+        array_map(
+            fn ($i): string => $i->name,
+            array_values(array_filter($items, fn ($i): bool => str_starts_with($i->package, 'fancy-cms'))),
+        ),
+    );
+    sort($expected);
+
+    expect($stamped)->toBe($expected);
+});
+
+it('marks an item, not its whole package', function () {
+    // The over-correction this guards against: stamping `react-fancy` itself
+    // would have hidden every component 0.4 genuinely shipped.
+    expect(RegistryLifecycle::PACKAGES)->not->toHaveKey('react-fancy');
+    expect(array_keys(RegistryLifecycle::ITEMS))->toContain('json-editor');
 });
 
 it('serves an unmarked item in every version', function () {
@@ -71,6 +96,48 @@ it('serves an unmarked item in every version', function () {
     expect($plain)->not->toBeEmpty();
     expect($plain[0]->existsIn('0.4'))->toBeTrue();
     expect($plain[0]->existsIn('0.5'))->toBeTrue();
+});
+
+/**
+ * A component can arrive inside a package that already existed.
+ *
+ * The first version of this file's subject keyed lifecycle on the PACKAGE only,
+ * reasoning that "components do not trickle in across versions". That was wrong
+ * within three days: `react-fancy` existed in 0.4, so the package map said
+ * nothing about it, while `Container`/`Section`/`Grid` (5.15.0) and
+ * `JsonEditor` (5.16.0) all landed during the 0.5 line — and every one of them
+ * was served to a consumer asking for 0.4.
+ *
+ * That is not cosmetic. The CLI vendors whatever the registry returns, so
+ * `npx fancy-cli add json-editor` on a 0.4 project copied in source requiring
+ * react-fancy 5.16.
+ */
+it('excludes a component that postdates the line, even from an old package', function () {
+    $items = app(RegistrySource::class)->all();
+
+    $late = array_values(array_filter(
+        $items,
+        fn ($i): bool => in_array($i->name, ['json-editor', 'container', 'section', 'grid'], true),
+    ));
+
+    expect($late)->toHaveCount(4, 'the four late react-fancy components should all be in the registry');
+
+    foreach ($late as $item) {
+        expect($item->package)->toBe('react-fancy', "{$item->name} should come from react-fancy");
+        expect($item->existsIn('0.4'))->toBeFalse("{$item->name} did not exist in 0.4 and must not be served for it");
+        expect($item->existsIn('0.5'))->toBeTrue("{$item->name} must be served for 0.5");
+    }
+});
+
+it('leaves the rest of react-fancy available on the old line', function () {
+    // The guard against over-correcting: marking the package would have hidden
+    // ~100 components that 0.4 genuinely had.
+    $items = app(RegistrySource::class)->all();
+
+    $reactFancy = array_values(array_filter($items, fn ($i): bool => $i->package === 'react-fancy'));
+    $onOldLine = array_values(array_filter($reactFancy, fn ($i): bool => $i->existsIn('0.4')));
+
+    expect(count($onOldLine))->toBeGreaterThan(50, 'react-fancy should still offer most of its components to 0.4');
 });
 
 it('keys the map on things that actually exist', function () {

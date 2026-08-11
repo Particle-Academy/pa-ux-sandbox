@@ -59,6 +59,8 @@ import {
     Tooltip,
     TreeNav,
     useToast,
+    JsonEditor,
+    type JsonValue,
 } from "@particle-academy/react-fancy";
 import { CodeEditor, MarkdownEditor } from "@particle-academy/fancy-code";
 import {
@@ -345,6 +347,7 @@ const REGISTRY: Record<string, DemoFn> = {
     "fancy-x-files-ui/robots-editor": XfRobotsEditorDemo,
     "fancy-x-files-ui/security-txt-editor": XfSecurityTxtEditorDemo,
     "fancy-x-files-ui/llms-txt-editor": XfLlmsTxtEditorDemo,
+    "react-fancy/json-editor": JsonEditorDemo,
     "fancy-x-files-ui/humans-txt-editor": XfHumansTxtEditorDemo,
     "fancy-x-files-ui/sitemap-editor": XfSitemapEditorDemo,
     "fancy-x-files-ui/agents-editor": XfAgentsEditorDemo,
@@ -353,12 +356,18 @@ const REGISTRY: Record<string, DemoFn> = {
 };
 
 export function ComponentDemo({ slug, name, pkg }: { slug: string; name: string; pkg: string }) {
-    const Demo = REGISTRY[`${pkg}/${slug}`];
+    // Falls back to the UNQUALIFIED slug for the same reason getComponentPreview
+    // does: the registry package-qualifies a name when it would collide across
+    // packages (`react-fancy-sticky-note`), while this map keys on the bare one.
+    const Demo =
+        REGISTRY[`${pkg}/${slug}`] ??
+        (slug.startsWith(`${pkg}-`) ? REGISTRY[`${pkg}/${slug.slice(pkg.length + 1)}`] : undefined);
     if (Demo) return <Demo />;
     return (
         <div className="grid place-items-center rounded-md border border-dashed border-zinc-300 bg-zinc-50 p-10 text-sm text-zinc-500 dark:border-zinc-700 dark:bg-zinc-950">
             Interactive demo for <code className="ml-1 font-mono">{name}</code> isn't wired yet.
-            See the import snippet below.
+            The <strong>Install</strong> and <strong>Source</strong> tabs above have the import
+            snippet and the component's source.
         </div>
     );
 }
@@ -770,6 +779,42 @@ function ReasonTagDemo() {
                 <ReasonTag value="Low" reason="No charge failures in the last 90 days; usage trending up." confidence={0.92} theme="chip" />
             </div>
         </div>
+    );
+}
+
+function JsonEditorDemo() {
+    const [value, setValue] = useState<JsonValue>({
+        service: "checkout",
+        retries: 3,
+        active: true,
+        tier: "pro",
+        webhook: "https://example.test/hooks/checkout",
+        limits: { rpm: 600, burst: 50 },
+        tags: ["billing", "stripe"],
+    });
+
+    // The keyMap is the point of the component, so the demo shows a real one —
+    // including a nested path and a wildcard, which is where a flat dotted map
+    // earns its keep over a nested mirror.
+    const keyMap = JSON.stringify({
+        retries: "integer",
+        active: "boolean",
+        tier: { type: "enum", options: ["free", "pro", "enterprise"] },
+        webhook: "url",
+        "limits.rpm": "integer",
+        "limits.burst": "integer",
+        "tags.*": "string",
+    });
+
+    return (
+        <DemoNote
+            outOfBox="Everything here is the component: the type badges, the per-type inputs, the conflict state, and add/remove."
+            demo="The keyMap and the starting document are demo data. `onChange` writes to local state, as a host would."
+        >
+            <div className="max-w-lg">
+                <JsonEditor value={value} onChange={(next) => setValue(next)} keyMap={keyMap} />
+            </div>
+        </DemoNote>
     );
 }
 

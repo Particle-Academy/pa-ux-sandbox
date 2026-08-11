@@ -402,7 +402,7 @@ export function Layout({
                         Coin shop
                     </MobileMenu.Item>
                     {adminLink && (
-                        <MobileMenu.Item as={Link} href={adminLink}>
+                        <MobileMenu.Item as={Link} href={adminLink.url}>
                             Admin
                         </MobileMenu.Item>
                     )}

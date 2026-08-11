@@ -58,7 +58,7 @@ export const popoverDoc: ComponentDoc = {
             name: "Placement",
             description: "Hint a preferred placement; Floating UI flips automatically if there isn't room.",
             render: () => (
-                <Popover placement="right-start" offset={8}>
+                <Popover placement="right" offset={8}>
                     <Popover.Trigger>
                         <Button variant="ghost">Open to the right</Button>
                     </Popover.Trigger>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Board, StickyNote } from "@particle-academy/fancy-whiteboard";
+import { Board, StickyNote, type StickyNoteItem} from "@particle-academy/fancy-whiteboard";
 import "@particle-academy/fancy-whiteboard/styles.css";
 import { Button } from "@particle-academy/react-fancy";
 
@@ -10,16 +10,10 @@ import { Button } from "@particle-academy/react-fancy";
  * world space; the Board applies the viewport transform once at the root.
  */
 
-type Note = {
-    id: string;
-    kind: "sticky";
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-    text: string;
-    color: string;
-};
+// The board owns this shape — a local copy drifted from it (colour became
+// an open string here, a token there) and could not round-trip through the
+// component's own onChange.
+type Note = StickyNoteItem;
 
 const COLORS = ["#fde68a", "#bef264", "#a5b4fc", "#fda4af", "#7dd3fc"];
 

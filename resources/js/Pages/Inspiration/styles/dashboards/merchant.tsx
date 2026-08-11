@@ -1,4 +1,5 @@
 import "./merchant.css";
+import type { BarSeriesOption } from "echarts";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import {
     Badge,
@@ -174,12 +175,16 @@ const funnelOption: EChartsOption = {
         {
             type: "bar",
             barWidth: "56%",
+            // `rate` is an extra key carried on each data item and read back by
+            // the label formatter. ECharts passes arbitrary item props through
+            // at runtime; its types only model the documented ones, so the cast
+            // is scoped to this array rather than the whole option.
             data: [
                 { value: 100, rate: "100%" },
                 { value: 56, rate: "45%" },
                 { value: 32, rate: "12%" },
                 { value: 16, rate: "3.1%" },
-            ],
+            ] as unknown as BarSeriesOption["data"],
             itemStyle: {
                 borderRadius: [7, 7, 0, 0],
                 color: {

@@ -1,4 +1,5 @@
 import "./roster.css";
+import type { EChartsOption } from "@particle-academy/fancy-echarts";
 import { Fragment, useState, type CSSProperties } from "react";
 import {
     Avatar,
@@ -141,7 +142,7 @@ const RAMP_BY_ID: Record<string, string> = Object.fromEntries(
 
 /* ── KPI strip + static trend sparklines (violet accent) ───────────────────── */
 
-const sparkOption = (data: number[]) => ({
+const sparkOption = (data: number[]): EChartsOption => ({
     animation: false,
     grid: { left: 1, right: 1, top: 6, bottom: 3 },
     xAxis: { type: "category", show: false, boundaryGap: false, data: data.map((_, i) => i) },

@@ -84,7 +84,7 @@ export function TrackedTextareaDemo() {
 
   const accept = useCallback((id: string) => {
     setSpans((cur) =>
-      cur.flatMap((s) => {
+      cur.flatMap((s): Span[] => {
         if (s.id !== id) return [s];
         if (s.op === "ins") return [{ id: s.id, op: "text" as const, value: s.value }];
         if (s.op === "del") return []; // delete commits to removal
@@ -95,7 +95,7 @@ export function TrackedTextareaDemo() {
 
   const reject = useCallback((id: string) => {
     setSpans((cur) =>
-      cur.flatMap((s) => {
+      cur.flatMap((s): Span[] => {
         if (s.id !== id) return [s];
         if (s.op === "ins") return []; // insertion rejected — discard
         if (s.op === "del") return [{ id: s.id, op: "text" as const, value: s.value }]; // delete rejected — restore
@@ -106,7 +106,7 @@ export function TrackedTextareaDemo() {
 
   const acceptAllBy = (author: string) => {
     setSpans((cur) =>
-      cur.flatMap((s) => {
+      cur.flatMap((s): Span[] => {
         if (s.op === "text") return [s];
         if (s.author !== author) return [s];
         if (s.op === "ins") return [{ id: s.id, op: "text" as const, value: s.value }];
@@ -117,7 +117,7 @@ export function TrackedTextareaDemo() {
 
   const rejectAllBy = (author: string) => {
     setSpans((cur) =>
-      cur.flatMap((s) => {
+      cur.flatMap((s): Span[] => {
         if (s.op === "text") return [s];
         if (s.author !== author) return [s];
         if (s.op === "ins") return [];

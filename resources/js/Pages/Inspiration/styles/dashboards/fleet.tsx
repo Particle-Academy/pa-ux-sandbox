@@ -140,8 +140,14 @@ export default function Fleet({ style }: { style: Style }) {
                 borderWidth: 1,
                 padding: [6, 9],
                 textStyle: { color: "#D3D8E0", fontSize: 11 },
-                formatter: (p: { data?: { plate?: string; statLabel?: string } }) =>
-                    p.data && p.data.plate ? `${p.data.plate} · ${p.data.statLabel}` : "",
+                formatter: (raw) => {
+                    // `trigger: "item"` hands over one params object, but ECharts
+                    // types the callback as either — narrow rather than assert.
+                    const p = (Array.isArray(raw) ? raw[0] : raw) as
+                        | { data?: { plate?: string; statLabel?: string } }
+                        | undefined;
+                    return p?.data?.plate ? `${p.data.plate} · ${p.data.statLabel}` : "";
+                },
             },
             series: [
                 {
@@ -171,7 +177,7 @@ export default function Fleet({ style }: { style: Style }) {
                         show: true,
                         position: "bottom",
                         distance: 7,
-                        formatter: (p: { data?: { plate?: string } }) => p.data?.plate ?? "",
+                        formatter: (p) => (p.data as { plate?: string } | undefined)?.plate ?? "",
                         color: "#D3D8E0",
                         backgroundColor: "rgba(0,0,0,0.6)",
                         padding: [1, 5],

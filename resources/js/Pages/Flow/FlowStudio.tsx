@@ -37,7 +37,7 @@ const note = (
     width,
     height,
     data: { kind: "note", label: title, config: { title, text, color } },
-  }) as FlowGraph["nodes"][number];
+  }) as unknown as FlowGraph["nodes"][number];
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Example 1 — Agentic content pipeline (User Input modal → LLM → shape → output)
@@ -307,7 +307,7 @@ const scene = (
       mode: "fields",
       fields: [{ key: "title", value: title }, { key: "text", value: text }],
     } },
-  }) as FlowGraph["nodes"][number];
+  }) as unknown as FlowGraph["nodes"][number];
 
 /**
  * An ending. Carries the `ending` slug the achievement API validates against —
@@ -331,7 +331,7 @@ const ending = (
         { key: "text", value: text },
       ],
     } },
-  }) as FlowGraph["nodes"][number];
+  }) as unknown as FlowGraph["nodes"][number];
 
 const choice = (
   id: string,
@@ -348,7 +348,7 @@ const choice = (
       title,
       fields: [{ key, label: "Choose", type: "select", required: true, options }],
     } },
-  }) as FlowGraph["nodes"][number];
+  }) as unknown as FlowGraph["nodes"][number];
 
 const ADVENTURE: FlowGraph = {
   nodes: [

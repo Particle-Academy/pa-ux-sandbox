@@ -18,7 +18,7 @@ import { clientOnly } from "../../lib/clientOnly";
 // Babylon, ECharts…), which can't render under synchronous SSR. Load it
 // client-only so the Component page SSRs its text (description, props, usage)
 // while the interactive demo hydrates in the browser.
-const ComponentDemo = clientOnly(() =>
+const ComponentDemo = clientOnly<{ slug: string; name: string; pkg: string }>(() =>
     import("./ComponentDemo").then((m) => ({ default: m.ComponentDemo })),
 );
 import { ContextCards } from "./ContextCards";

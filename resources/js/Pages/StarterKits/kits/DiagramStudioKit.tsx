@@ -99,7 +99,7 @@ function TrendsPanel() {
                         backgroundColor: "rgba(24,24,27,0.96)",
                         borderColor: "rgba(255,255,255,0.08)",
                         textStyle: { color: "#fff", fontSize: 11 },
-                        valueFormatter: (v: number) => "$" + v + "k",
+                        valueFormatter: (v) => "$" + Number(v) + "k",
                     },
                     xAxis: {
                         type: "category",
@@ -164,7 +164,7 @@ function CompositionPanel() {
                     title: { text: "Top customers by MRR", left: "center", top: 8, textStyle: { color: "#a1a1aa", fontSize: 12, fontWeight: 600 } },
                     color: ["#8b5cf6"],
                     grid: { left: 110, right: 24, top: 36, bottom: 16 },
-                    tooltip: { trigger: "axis", axisPointer: { type: "shadow" }, valueFormatter: (v: number) => "$" + v.toLocaleString() },
+                    tooltip: { trigger: "axis", axisPointer: { type: "shadow" }, valueFormatter: (v) => "$" + Number(v).toLocaleString() },
                     xAxis: { type: "value", axisLine: { show: false }, axisTick: { show: false }, axisLabel: { fontSize: 10, color: "#a1a1aa", formatter: (v: number) => "$" + (v / 1000) + "k" }, splitLine: { lineStyle: { color: "rgba(161,161,170,0.12)", type: "dashed" } } },
                     yAxis: { type: "category", data: ["Cobalt Studio", "Boreal Press", "Vector Foods", "Helios Energy", "Acme Robotics", "Solstice Labs", "Northwind Air"], axisLine: { show: false }, axisTick: { show: false }, axisLabel: { fontSize: 11, color: "#a1a1aa" } },
                     series: [{
@@ -172,7 +172,7 @@ function CompositionPanel() {
                         data: [990, 2490, 5800, 8400, 9990, 12900, 14900],
                         itemStyle: { color: "#8b5cf6", borderRadius: [0, 3, 3, 0] },
                         barWidth: "55%",
-                        label: { show: true, position: "right", color: "#a1a1aa", fontSize: 10, formatter: (p: { value: number }) => "$" + p.value.toLocaleString() },
+                        label: { show: true, position: "right", color: "#a1a1aa", fontSize: 10, formatter: (p: { value?: unknown }) => "$" + Number(p.value).toLocaleString() },
                     }],
                 }}
             />
@@ -188,9 +188,11 @@ function HierarchyPanel() {
             <EChart
                 style={{ width: "100%", height: "100%" }}
                 option={{
-                    tooltip: { trigger: "item", backgroundColor: "rgba(24,24,27,0.96)", textStyle: { color: "#fff", fontSize: 11 }, formatter: (p: { name: string; value: number; treePathInfo: { name: string }[] }) => {
-                        const path = p.treePathInfo.slice(1).map((n) => n.name).join(" › ");
-                        return `${path}<br/><b>$${p.value.toLocaleString()}</b>`;
+                    tooltip: { trigger: "item", backgroundColor: "rgba(24,24,27,0.96)", textStyle: { color: "#fff", fontSize: 11 }, formatter: (raw) => {
+                        const p = (Array.isArray(raw) ? raw[0] : raw) as unknown as
+                            { name?: string; value?: unknown; treePathInfo?: { name: string }[] };
+                        const path = (p.treePathInfo ?? []).slice(1).map((n) => n.name).join(" › ");
+                        return `${path}<br/><b>$${Number(p.value).toLocaleString()}</b>`;
                     } },
                     series: [{
                         type: "sunburst",

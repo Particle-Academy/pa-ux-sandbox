@@ -110,10 +110,10 @@ export function PptxExportControl({ deck }: { deck: AnyDeck }) {
                 </Button>
             </Dropdown.Trigger>
             <Dropdown.Items>
-                <Dropdown.Item icon="globe" onClick={exportNode}>
+                <Dropdown.Item onClick={exportNode}>
                     Node — browser (dark-slide-js)
                 </Dropdown.Item>
-                <Dropdown.Item icon="server" onClick={exportPhp}>
+                <Dropdown.Item onClick={exportPhp}>
                     PHP — server (dark-slide)
                 </Dropdown.Item>
             </Dropdown.Items>

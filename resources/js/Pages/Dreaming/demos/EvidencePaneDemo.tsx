@@ -287,7 +287,7 @@ function EvidenceDrawer({
       </div>
       {open && (
         <div className="bg-white p-3 dark:bg-zinc-950">
-          <Tabs defaultValue="citations">
+          <Tabs defaultTab="citations">
             <Tabs.List>
               <Tabs.Tab value="citations">Citations</Tabs.Tab>
               <Tabs.Tab value="retrievals">Retrieval</Tabs.Tab>

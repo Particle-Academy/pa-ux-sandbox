@@ -526,7 +526,6 @@ export const CMS_DEMO_DOC: PageDoc = {
     meta: { title: "Fancy Launch", slug: "/launch", scrollMode: "smooth" },
     theme: { name: "default" },
     breakpoints: ["base", "md", "lg"],
-    sections: [CMS_HERO_ID, CMS_STATS_ID],
     nodes: {
         [CMS_HERO_ID]: {
             id: CMS_HERO_ID,

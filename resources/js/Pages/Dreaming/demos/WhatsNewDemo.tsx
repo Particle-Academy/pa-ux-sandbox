@@ -259,7 +259,7 @@ function WhatsNewBody({
         </div>
       </div>
 
-      <Tabs value={tab} onValueChange={(v) => onTabChange(v as "surfaces" | "agents")}>
+      <Tabs activeTab={tab} onTabChange={(v) => onTabChange(v as "surfaces" | "agents")}>
         <Tabs.List>
           <Tabs.Tab value="surfaces">By surface</Tabs.Tab>
           <Tabs.Tab value="agents">By agent</Tabs.Tab>

@@ -1,4 +1,5 @@
 import { createFancyServer } from "@particle-academy/fancy-inertia/server";
+import type { ComponentType } from "react";
 import { SeoProvider, defineSeo } from "@particle-academy/fancy-inertia/seo";
 import type { ReactNode } from "react";
 import { Toast } from "@particle-academy/react-fancy";
@@ -71,7 +72,7 @@ createFancyServer({
     // (Inertia's graceful degradation), while text/content pages render into the
     // first byte.
     resolve: (name) => {
-        const pages = import.meta.glob<{ default: unknown }>("./Pages/**/*.tsx", { eager: false });
+        const pages = import.meta.glob<{ default: ComponentType }>("./Pages/**/*.tsx", { eager: false });
         const importer = pages[`./Pages/${name}.tsx`];
         if (!importer) {
             return Promise.reject(new Error(`Inertia page not found: ${name}`));

@@ -1,12 +1,13 @@
 import type { ComponentDoc } from "./types";
-import { Board, StickyNote } from "@particle-academy/fancy-whiteboard";
+import { Board, StickyNote, type StickyNoteItem} from "@particle-academy/fancy-whiteboard";
 import { useState } from "react";
 
 function BoardDemo() {
     const [viewport, setViewport] = useState({ x: 0, y: 0, zoom: 1 });
-    const [note, setNote] = useState({
+    const [note, setNote] = useState<StickyNoteItem>({
         id: "n1",
         kind: "sticky" as const,
+        z: 0,
         x: 80,
         y: 50,
         width: 140,

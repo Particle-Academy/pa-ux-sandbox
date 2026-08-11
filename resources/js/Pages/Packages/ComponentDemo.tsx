@@ -130,7 +130,7 @@ import "@particle-academy/fancy-flow/styles.css";
 import { FancyDiff, computeDiff, mergeResult, parseUnifiedDiff, setAllStatus, type AcceptanceState } from "@particle-academy/fancy-diff";
 import "@particle-academy/fancy-diff/styles.css";
 import { mountPixel, type PixelHandle, type PixelStyle } from "@particle-academy/fancy-pixel";
-import { SheetWorkbook, createEmptyWorkbook, createEmptySheet } from "@particle-academy/fancy-sheets";
+import { SheetWorkbook, createEmptyWorkbook, createEmptySheet, type WorkbookData} from "@particle-academy/fancy-sheets";
 import "@particle-academy/fancy-sheets/styles.css";
 import { EChart } from "@particle-academy/fancy-echarts";
 import {
@@ -3238,7 +3238,7 @@ function buildSheetsSeed() {
 }
 
 function SheetWorkbookDemo() {
-    const [wb, setWb] = useState(buildSheetsSeed);
+    const [wb, setWb] = useState<WorkbookData>(buildSheetsSeed);
     return (
         <DemoNote
             outOfBox="The formula engine (=SUM / =AVERAGE / …), multi-sheet tabs, bold / align / number + currency formatting, cell comments, copy-paste, undo, and the toolbar — all stock. Click a cell and type to edit; type = to start a formula."
@@ -3252,7 +3252,7 @@ function SheetWorkbookDemo() {
 }
 
 function EmptyWorkbookDemo() {
-    const [wb, setWb] = useState(() => createEmptyWorkbook());
+    const [wb, setWb] = useState<WorkbookData>(() => createEmptyWorkbook());
     return (
         <DemoNote
             outOfBox="createEmptyWorkbook() returns a single-sheet WorkbookData you hand straight to <SheetWorkbook data={…}>. Everything below — editing, formulas, formatting, extra sheets — is the live result."
@@ -3490,7 +3490,20 @@ function Fancy3DCanvasDemo() {
                 Engine-pluggable 3D canvas. <code>engine="dom"</code> renders a CSS-3D mode with no Babylon dep; <code>engine="babylon"</code> spins up a full WebGL scene. Same JSX inside.
             </Text>
             <div className="overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
-                <Canvas engine="dom" style={{ height: 280 }} />
+                <Canvas engine="dom" style={{ height: 280 }}>
+                    <Canvas.Node id="a" x={60} y={60} draggable>
+                        <Card padding="sm">
+                            <Text size="sm">Draggable node</Text>
+                        </Card>
+                    </Canvas.Node>
+                    <Canvas.Node id="b" x={300} y={150} draggable>
+                        <Card padding="sm">
+                            <Text size="sm">Wired to A</Text>
+                        </Card>
+                    </Canvas.Node>
+                    <Canvas.Edge from="a" to="b" curve="bezier" />
+                    <Canvas.Controls />
+                </Canvas>
             </div>
         </div>
     );
@@ -3725,12 +3738,14 @@ function UseFancyFormDemo() {
     // drop-in react-fancy <Input> props. Mocking a tiny version locally
     // keeps the demo working on Component pages even without a real
     // server-validated form context.
-    type Field = { value: string; onChange: (v: string) => void; error?: string };
+    type Field = { value: string; onValueChange: (v: string) => void; error?: string };
     const [data, setData] = useState({ url: "", title: "" });
     const [errors, setErrors] = useState<{ url?: string; title?: string }>({});
+    // `onValueChange` is <Input>'s string channel — `onChange` is the DOM
+    // event handler and typing it as (v: string) never matched.
     const field = (name: keyof typeof data): Field => ({
         value: data[name],
-        onChange: (v) => setData((d) => ({ ...d, [name]: v })),
+        onValueChange: (v: string) => setData((d) => ({ ...d, [name]: v })),
         error: errors[name],
     });
     const submit = (e: FormEvent) => {

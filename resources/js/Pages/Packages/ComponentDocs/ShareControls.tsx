@@ -3,11 +3,11 @@ import { ShareControls } from "@particle-academy/agent-integrations";
 import { useState } from "react";
 
 function ShareControlsDemo() {
-    const [session, setSession] = useState<{ id: string; token: string } | null>(null);
+    const [session, setSession] = useState<{ id: string; token: string; display: string } | null>(null);
     return (
         <ShareControls
             session={session}
-            onStart={() => setSession({ id: "demo-session-abc", token: "tok_xyz" })}
+            onStart={() => setSession({ id: "demo-session-abc", token: "tok_xyz", display: "tok_xyz1" })}
             onStop={() => setSession(null)}
             status={session ? "connected" : undefined}
             shareBaseUrl="https://fancy.app/agent-relay"

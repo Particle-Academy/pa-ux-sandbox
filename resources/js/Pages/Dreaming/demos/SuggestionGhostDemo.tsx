@@ -87,7 +87,7 @@ export function SuggestionGhostDemo() {
         <div className="mt-4 text-[11px] text-zinc-500">
           Try a few prefixes:
           {" "}
-          {SEED_PROMPTS[predictorKey].map((p, i) => (
+          {SEED_PROMPTS[predictorKey as keyof typeof SEED_PROMPTS].map((p: string, i: number) => (
             <code
               key={i}
               className="ml-1 rounded bg-zinc-100 px-1.5 py-0.5 dark:bg-zinc-800"

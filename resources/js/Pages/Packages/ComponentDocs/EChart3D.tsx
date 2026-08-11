@@ -1,11 +1,19 @@
 import type { ComponentDoc } from "./types";
 import { type EChartsOption, EChart3D } from "@particle-academy/fancy-echarts";
 
-const surfaceOption: EChartsOption = {
+/**
+ * Typed loosely on purpose: `surface`, `grid3D` and the `*Axis3D` components
+ * come from echarts-gl, whose types are not part of core ECharts' option union.
+ * `EChart3D` is the component that loads them, so the config is valid — the
+ * core `EChartsOption` type simply cannot describe it.
+ */
+const surfaceOption = {
     grid3D: { viewControl: { autoRotate: true, autoRotateSpeed: 5 } },
     xAxis3D: { type: "value" },
     yAxis3D: { type: "value" },
     zAxis3D: { type: "value" },
+    // `surface` is an echarts-gl series; core ECharts' SeriesOption union
+    // does not include the GL types, and EChart3D is the component that loads them.
     series: [
         {
             type: "surface",
@@ -18,7 +26,7 @@ const surfaceOption: EChartsOption = {
             itemStyle: { color: "#8b5cf6" },
         },
     ],
-};
+} as EChartsOption;
 
 export const echart3dDoc: ComponentDoc = {
     intro: (

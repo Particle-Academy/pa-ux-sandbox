@@ -1,4 +1,5 @@
 import { Canvas } from "@particle-academy/fancy-3d/canvas";
+import { babylonEngine } from "@particle-academy/fancy-3d-babylon/engine";
 import { Card, Heading } from "@particle-academy/react-fancy";
 
 /**
@@ -17,7 +18,7 @@ export default function Fancy3DCanvasDemo({ example }: { example: Fancy3DCanvasE
     if (example === "dom") {
         return (
             <div className="h-72 w-full overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-800">
-                <Canvas defaultViewport={{ x: 0, y: 0, zoom: 1 }} showGrid gridStyle="dots">
+                <Canvas defaultViewport={{ panX: 0, panY: 0, zoom: 1 }} showGrid gridStyle="dots">
                     <Canvas.Node id="a" x={80} y={60} draggable>
                         <Card padding="sm"><Heading size="xs">Node A</Heading></Card>
                     </Canvas.Node>
@@ -35,7 +36,7 @@ export default function Fancy3DCanvasDemo({ example }: { example: Fancy3DCanvasE
     if (example === "babylon") {
         return (
             <div className="h-64 w-full overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-800">
-                <Canvas engine="babylon" defaultViewport={{ x: 0, y: 0, zoom: 1 }}>
+                <Canvas engine={babylonEngine} defaultViewport={{ panX: 0, panY: 0, zoom: 1 }}>
                     <Canvas.Node id="overlay" x={40} y={40}>
                         <Card padding="sm"><Heading size="xs">DOM node over Babylon</Heading></Card>
                     </Canvas.Node>
@@ -46,7 +47,7 @@ export default function Fancy3DCanvasDemo({ example }: { example: Fancy3DCanvasE
 
     return (
         <div className="h-56 w-full overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-800">
-            <Canvas defaultViewport={{ x: 0, y: 0, zoom: 1 }} showGrid gridSize={32} snapToGrid>
+            <Canvas defaultViewport={{ panX: 0, panY: 0, zoom: 1 }} showGrid gridSize={32} snapToGrid>
                 <Canvas.Node id="a" x={64} y={64} draggable>
                     <Card padding="sm">snap me</Card>
                 </Canvas.Node>

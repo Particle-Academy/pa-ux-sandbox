@@ -205,8 +205,12 @@ const heatmapOption: EChartsOption = (() => {
                     show: true,
                     fontSize: 11,
                     fontFamily: MONO,
-                    formatter: (p: { value: [number, number, number | string] }) =>
-                        p.value[2] === "-" ? "—" : String(p.value[2]),
+                    formatter: (p) => {
+                        // Heatmap cells carry [x, y, value]; ECharts types the
+                        // label callback's params wider than that.
+                        const v = (p.value as [number, number, number | string])[2];
+                        return v === "-" ? "—" : String(v);
+                    },
                 },
                 itemStyle: { borderColor: SURFACE, borderWidth: 3, borderRadius: 5 },
                 emphasis: { itemStyle: { borderColor: "#EDEAF6", borderWidth: 1 } },

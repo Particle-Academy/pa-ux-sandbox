@@ -26,7 +26,7 @@ type Props = {
 
 function SiteShow({ site, owner, categories, kpis, topPaths, heatmap, heatmapShot, latestShot, recentSessions, eventsOverTime }: Props) {
     const base = `/admin/sites/${site.id}`;
-    const post = (action: string, data: Record<string, unknown> = {}) => router.post(`${base}/${action}`, data, { preserveScroll: true });
+    const post = (action: string, data: Record<string, string | number | boolean | null> = {}) => router.post(`${base}/${action}`, data, { preserveScroll: true });
     const [suspendReason, setSuspendReason] = useState("");
     const classForm = useForm({ category: site.category ?? "", made_for_children: site.made_for_children });
     const hasData = kpis.totalEvents > 0;

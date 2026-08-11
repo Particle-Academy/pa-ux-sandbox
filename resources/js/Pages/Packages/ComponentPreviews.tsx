@@ -8,6 +8,7 @@
  * just text-only pills.
  */
 import { useState, type ComponentType, type ReactNode } from "react";
+import { type TimelineDoc } from "@particle-academy/fancy-motion";
 import { SAMPLE_CODE_VIEW, SAMPLE_IMG, SAMPLE_PDF, SAMPLE_POSTER, SILENT_WAV } from "./showcase-fixtures";
 // The listing page renders these tiles directly, while the full demos live in
 // a client-only chunk — so the stylesheet has to be imported here too or the
@@ -67,9 +68,9 @@ const heavy = (name: HeavyTile, Fallback: PreviewFn): PreviewFn => {
 };
 
 /** A two-keyframe timeline — the shape TimelineDoc actually declares. */
-const PREVIEW_TIMELINE = {
+const PREVIEW_TIMELINE: TimelineDoc = {
     id: "preview",
-    axis: "y" as const,
+    axis: "vertical",
     frames: 3,
     keyframes: [
         { id: "k1", at: 0, mode: "snap" as const, snapshot: {} },
@@ -471,7 +472,7 @@ const PREVIEWS: Record<string, PreviewFn> = {
             <FeatureGate
                 feature="exports"
                 featureName="Exports"
-                entitlements={{ planId: "starter", features: { exports: { allowed: false } } }}
+                entitlements={{ planId: "starter", features: { exports: { access: false } } }}
             >
                 <div className="rounded border border-zinc-200 p-2 dark:border-zinc-700">Gated content</div>
             </FeatureGate>
@@ -484,7 +485,10 @@ const PREVIEWS: Record<string, PreviewFn> = {
                     { key: "seats", name: "Seats", type: "resource", unit: "seats" },
                     { key: "exports", name: "Exports", type: "boolean" },
                 ]}
-                value={{ seats: { limit: 5 }, exports: { enabled: true } }}
+                value={{
+                    seats: { type: "resource", enabled: true, limit: 5 },
+                    exports: { type: "boolean", enabled: true },
+                }}
                 onChange={() => {}}
             />
         </div>
@@ -974,7 +978,7 @@ const PREVIEWS: Record<string, PreviewFn> = {
         const [value, setValue] = useState<Date | null>(new Date());
         return (
             <div className="scale-[0.85]">
-                <Calendar value={value} onChange={setValue} />
+                <Calendar value={value} onChange={(v) => setValue(v instanceof Date ? v : null)} />
             </div>
         );
     },
@@ -1368,7 +1372,7 @@ const PREVIEWS: Record<string, PreviewFn> = {
         const [tags, setTags] = useState(["agent", "human+ux", "fancy-ui"]);
         return (
             <div className="w-full max-w-[18rem]">
-                <Pillbox value={tags} onChange={setTags} color="violet" size="sm" />
+                <Pillbox value={tags} onChange={setTags} />
             </div>
         );
     },
@@ -1727,7 +1731,7 @@ const PREVIEWS: Record<string, PreviewFn> = {
             </div>
             <div className="space-y-1 p-2 text-xs">
                 <div className="flex items-center justify-between text-zinc-700 dark:text-zinc-200">
-                    <span>Notifications</span><Switch checked={true} onChange={() => {}} />
+                    <span>Notifications</span><Switch checked onCheckedChange={() => {}} />
                 </div>
                 <div className="text-[10px] text-zinc-500 font-mono">storeKeys: [user, prefs]</div>
             </div>
@@ -2458,7 +2462,7 @@ const PREVIEWS: Record<string, PreviewFn> = {
     "agent-integrations/share-controls": () => (
         <div className="w-full max-w-[20rem] text-[11px]">
             <ShareControls
-                session={{ id: "demo-session-abc", token: "tok_xyz" }}
+                session={{ id: "demo-session-abc", token: "tok_xyz", display: "tok_xyz1" }}
                 onStart={() => {}}
                 onStop={() => {}}
                 status="connected"

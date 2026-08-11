@@ -1578,8 +1578,11 @@ function TreeNavDemo() {
 
 function FileBrowserDemo() {
     const [picked, setPicked] = useState<string | string[] | null>(null);
-    // Tiny fake FS with latency so the per-folder lazy loading is visible.
-    const fs: Record<string, { path: string; name: string; kind: "file" | "dir"; hasChildren?: boolean; size?: number }[]> = {
+
+    // A ref, not a fresh object each render: creating a folder mutates this, and
+    // a re-created map would drop the new folder on the next render — which
+    // would read as the create having failed.
+    const fs = useRef<Record<string, { path: string; name: string; kind: "file" | "dir"; hasChildren?: boolean; size?: number }[]>>({
         "/": [
             { path: "/deploys", name: "deploys", kind: "dir", hasChildren: true },
             { path: "/logs", name: "logs", kind: "dir", hasChildren: true },
@@ -1593,22 +1596,53 @@ function FileBrowserDemo() {
             { path: "/logs/app.log", name: "app.log", kind: "file", size: 52_400 },
             { path: "/logs/queue.log", name: "queue.log", kind: "file", size: 9_210 },
         ],
-    };
-    const provider = {
-        loadChildren: (path: string) =>
-            new Promise<(typeof fs)[string]>((resolve) => {
-                window.setTimeout(() => resolve(fs[path] ?? []), 350);
-            }),
-    };
+    });
+
+    const provider = useMemo(
+        () => ({
+            // Latency on purpose, so the per-folder lazy loading is visible.
+            loadChildren: (path: string) =>
+                new Promise<(typeof fs.current)[string]>((resolve) => {
+                    window.setTimeout(() => resolve(fs.current[path] ?? []), 350);
+                }),
+        }),
+        [],
+    );
+
     return (
-        <div className="grid max-w-md gap-2">
-            <FileBrowser provider={provider} select="directory" value={picked} onChange={setPicked} />
-            <div className="text-xs text-zinc-500">
-                picked directory: <code>{picked ? String(picked) : "none yet"}</code>
+        <DemoNote
+            outOfBox="Lazy per-folder loading, directory selection, and the New folder button — including its name validation, the inline input, and the reload that makes the folder appear."
+            demo="The fake filesystem. `onCreateFolder` writes to it instead of a real disk, and rejects the name `denied` so the error path is visible."
+        >
+            <div className="grid max-w-md gap-2">
+                <FileBrowser
+                    provider={provider}
+                    select="directory"
+                    value={picked}
+                    onChange={setPicked}
+                    // Supplying this IS the opt-in — the button appears because
+                    // of it, so it cannot be shown while wired to nothing.
+                    onCreateFolder={async ({ parentPath, name }) => {
+                        await new Promise((r) => window.setTimeout(r, 250));
+                        if (name === "denied") {
+                            throw new Error("EACCES: permission denied");
+                        }
+                        const full = parentPath === "/" ? `/${name}` : `${parentPath}/${name}`;
+                        fs.current[parentPath] = [
+                            ...(fs.current[parentPath] ?? []),
+                            { path: full, name, kind: "dir", hasChildren: false },
+                        ];
+                        fs.current[full] = [];
+                    }}
+                />
+                <div className="text-xs text-zinc-500">
+                    picked directory: <code>{picked ? String(picked) : "none yet"}</code>
+                </div>
             </div>
-        </div>
+        </DemoNote>
     );
 }
+
 
 // One OpenStreetMap provider + a deterministic delivery route, created at module
 // load (not per render) so the engine isn't rebuilt and SSR/hydration match.

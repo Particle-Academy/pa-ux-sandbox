@@ -79,18 +79,26 @@ final class RegistryLifecycle
         'container' => ['since' => '0.5'],
         'section' => ['since' => '0.5'],
         'grid' => ['since' => '0.5'],
+
+        // Also added 2026-08-09, across react-fancy 5.4.0–5.14.0. Dated from
+        // `git log --diff-filter=A` on each component directory and the first
+        // tag containing that commit, rather than guessed:
+        //
+        //   Eyebrow 5.4.0 · Kbd 5.5.0 · IndexList 5.6.0 · Stat 5.6.0
+        //   PullQuote 5.7.0 · StatList 5.14.0
+        //
+        // Every one lands AFTER the 0.5 cut (2026-08-07), so none of them
+        // existed on the 0.4 line. They were missing from the component list
+        // entirely until 2026-08-10, which is why they are only being dated now.
+        'eyebrow' => ['since' => '0.5'],
+        'kbd' => ['since' => '0.5'],
+        'index-list' => ['since' => '0.5'],
+        'stat' => ['since' => '0.5'],
+        'pull-quote' => ['since' => '0.5'],
+        'stat-list' => ['since' => '0.5'],
     ];
 
-    /**
-     * Stamp an item with its lifecycle: item-specific first, package second.
-     *
-     * NOT MARKED YET, and knowingly so: `eyebrow`, `kbd`, `pull-quote`,
-     * `index-list`, `stat` and `stat-list` were also missing from the component
-     * list until 2026-08-10, so they are newly installable, but the release they
-     * actually shipped in has not been established. They are left unmarked
-     * rather than guessed — a wrong `since` silently hides a component from a
-     * line that really had it, which is harder to notice than the reverse.
-     */
+    /** Stamp an item with its lifecycle: item-specific first, package second. */
     public static function apply(RegistryItem $item): RegistryItem
     {
         $entry = self::ITEMS[$item->name] ?? self::PACKAGES[$item->package] ?? null;

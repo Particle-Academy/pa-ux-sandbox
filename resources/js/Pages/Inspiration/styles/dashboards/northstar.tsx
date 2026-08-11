@@ -169,7 +169,8 @@ const heatmapOption: EChartsOption = (() => {
             borderWidth: 1,
             padding: [7, 10],
             textStyle: { color: "#EDEAF6", fontSize: 12 },
-            formatter: (p: { value: [number, number, number | string] }) => {
+            formatter: (raw) => {
+                const p = (Array.isArray(raw) ? raw[0] : raw) as unknown as { value: [number, number, number | string] };
                 const [x, y, val] = p.value;
                 const cohort = rows[y as number];
                 const wk = WEEKS[x as number];
@@ -237,8 +238,10 @@ const waterfallOption: EChartsOption = {
         borderWidth: 1,
         padding: [7, 10],
         textStyle: { color: "#EDEAF6", fontSize: 12 },
-        formatter: (p: { dataIndex: number }) =>
-            `${WF_LABELS[p.dataIndex]}<br/><b>${WF_TAGS[p.dataIndex]}</b>`,
+        formatter: (raw) => {
+            const p = (Array.isArray(raw) ? raw[0] : raw) as unknown as { dataIndex: number };
+            return `${WF_LABELS[p.dataIndex]}<br/><b>${WF_TAGS[p.dataIndex]}</b>`;
+        },
     },
     xAxis: {
         type: "category",

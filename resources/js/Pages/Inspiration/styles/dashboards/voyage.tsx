@@ -103,7 +103,10 @@ const travelOption: EChartsOption = {
         borderWidth: 0,
         padding: [6, 10] as [number, number],
         textStyle: { color: "#ffffff", fontSize: 12 },
-        formatter: (p: { dataIndex: number }) => MONTHS[p.dataIndex]?.name ?? "",
+        formatter: (raw) => {
+            const p = (Array.isArray(raw) ? raw[0] : raw) as unknown as { dataIndex: number };
+            return MONTHS[p.dataIndex]?.name ?? "";
+        },
     },
     xAxis: {
         type: "category" as const,

@@ -41,14 +41,14 @@ export const promptInputDoc: ComponentDoc = {
                         onSubmit={() => {}}
                         placeholder="Try typing / or @"
                         commands={[
-                            { name: "/summarize", description: "Summarize the current document" },
-                            { name: "/translate", description: "Translate selected text" },
-                            { name: "/explain", description: "Explain the highlighted code" },
+                            { name: "/summarize", hint: "Summarize the current document" },
+                            { name: "/translate", hint: "Translate selected text" },
+                            { name: "/explain", hint: "Explain the highlighted code" },
                         ]}
                         mentions={[
-                            { id: "agent:researcher", label: "Researcher", kind: "agent" },
-                            { id: "agent:coder", label: "Coder", kind: "agent" },
-                            { id: "file:README.md", label: "README.md", kind: "file" },
+                            { id: "agent:researcher", name: "Researcher", kind: "agent" },
+                            { id: "agent:coder", name: "Coder", kind: "agent" },
+                            { id: "file:README.md", name: "README.md", kind: "file" },
                         ]}
                     />
                 </div>
@@ -57,13 +57,13 @@ export const promptInputDoc: ComponentDoc = {
     budgetTokens={8000}
     onSubmit={handleSubmit}
     commands={[
-        { name: "/summarize", description: "Summarize the current document" },
-        { name: "/translate", description: "Translate selected text" },
+        { name: "/summarize", hint: "Summarize the current document" },
+        { name: "/translate", hint: "Translate selected text" },
     ]}
     mentions={[
-        { id: "agent:researcher", label: "Researcher", kind: "agent" },
-        { id: "agent:coder", label: "Coder", kind: "agent" },
-        { id: "file:README.md", label: "README.md", kind: "file" },
+        { id: "agent:researcher", name: "Researcher", kind: "agent" },
+        { id: "agent:coder", name: "Coder", kind: "agent" },
+        { id: "file:README.md", name: "README.md", kind: "file" },
     ]}
 />`,
         },

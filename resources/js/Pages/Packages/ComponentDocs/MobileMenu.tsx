@@ -7,14 +7,12 @@ function FlyoutDemo() {
     return (
         <>
             <Button onClick={() => setOpen(true)}>Open flyout</Button>
-            <MobileMenu>
                 <MobileMenu.Flyout open={open} onClose={() => setOpen(false)} title="Navigation">
                     <MobileMenu.Item icon={<Icon name="home" />} active>Home</MobileMenu.Item>
                     <MobileMenu.Item icon={<Icon name="rocket" />}>Launches</MobileMenu.Item>
                     <MobileMenu.Item icon={<Icon name="users" />}>Team</MobileMenu.Item>
                     <MobileMenu.Item icon={<Icon name="cog" />}>Settings</MobileMenu.Item>
                 </MobileMenu.Flyout>
-            </MobileMenu>
         </>
     );
 }
@@ -23,8 +21,7 @@ export const mobileMenuDoc: ComponentDoc = {
     intro: (
         <p>
             Mobile-specific navigation patterns — an off-canvas flyout (for primary nav) or a
-            fixed bottom-bar (for app-shell tabs). The root <code>MobileMenu</code> sets the
-            variant context; the child is either <code>Flyout</code> or <code>BottomBar</code>.
+            fixed bottom-bar (for app-shell tabs). Reach for <code>MobileMenu.Flyout</code> or <code>MobileMenu.BottomBar</code> directly — there is no root wrapper to mount.
         </p>
     ),
     examples: [
@@ -34,14 +31,12 @@ export const mobileMenuDoc: ComponentDoc = {
             render: () => <FlyoutDemo />,
             code: `const [open, setOpen] = useState(false);
 
-<MobileMenu>
     <MobileMenu.Flyout open={open} onClose={() => setOpen(false)} title="Navigation">
         <MobileMenu.Item icon={<Icon name="home" />} active>Home</MobileMenu.Item>
         <MobileMenu.Item icon={<Icon name="rocket" />}>Launches</MobileMenu.Item>
         <MobileMenu.Item icon={<Icon name="users" />}>Team</MobileMenu.Item>
         <MobileMenu.Item icon={<Icon name="cog" />}>Settings</MobileMenu.Item>
-    </MobileMenu.Flyout>
-</MobileMenu>`,
+</MobileMenu.Flyout>`,
         },
         {
             name: "Bottom bar",
@@ -49,25 +44,21 @@ export const mobileMenuDoc: ComponentDoc = {
             render: () => (
                 <div className="relative h-32 w-full max-w-sm rounded-lg border border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900">
                     <div className="absolute inset-x-0 bottom-0">
-                        <MobileMenu variant="bottom-bar">
                             <MobileMenu.BottomBar>
                                 <MobileMenu.Item icon={<Icon name="home" />} active>Home</MobileMenu.Item>
                                 <MobileMenu.Item icon={<Icon name="rocket" />}>Launches</MobileMenu.Item>
                                 <MobileMenu.Item icon={<Icon name="users" />}>Team</MobileMenu.Item>
                                 <MobileMenu.Item icon={<Icon name="cog" />}>Settings</MobileMenu.Item>
                             </MobileMenu.BottomBar>
-                        </MobileMenu>
                     </div>
                 </div>
             ),
-            code: `<MobileMenu variant="bottom-bar">
-    <MobileMenu.BottomBar>
+            code: `    <MobileMenu.BottomBar>
         <MobileMenu.Item icon={<Icon name="home" />} active>Home</MobileMenu.Item>
         <MobileMenu.Item icon={<Icon name="rocket" />}>Launches</MobileMenu.Item>
         <MobileMenu.Item icon={<Icon name="users" />}>Team</MobileMenu.Item>
         <MobileMenu.Item icon={<Icon name="cog" />}>Settings</MobileMenu.Item>
-    </MobileMenu.BottomBar>
-</MobileMenu>`,
+</MobileMenu.BottomBar>`,
         },
         {
             name: "Flyout from the right",
@@ -77,13 +68,11 @@ export const mobileMenuDoc: ComponentDoc = {
                 return (
                     <>
                         <Button onClick={() => setOpen(true)}>Open right flyout</Button>
-                        <MobileMenu>
                             <MobileMenu.Flyout open={open} onClose={() => setOpen(false)} side="right" title="Account">
                                 <MobileMenu.Item>Profile</MobileMenu.Item>
                                 <MobileMenu.Item>Settings</MobileMenu.Item>
                                 <MobileMenu.Item>Sign out</MobileMenu.Item>
                             </MobileMenu.Flyout>
-                        </MobileMenu>
                     </>
                 );
             },

@@ -139,7 +139,13 @@ const energyOption: EChartsOption = {
         backgroundColor: "#0B1416",
         borderColor: "#1D3438",
         textStyle: { color: "#DCE8E8", fontSize: 11 },
-        formatter: (p: { dataIndex: number }[]) => `${ENERGY[p[0].dataIndex]}% of peak`,
+        formatter: (raw) => {
+            // `trigger: "axis"` delivers an array and `"item"` a single params
+            // object; ECharts types the callback as both, so narrow rather than
+            // annotate only the shape this chart happens to produce.
+            const p = (Array.isArray(raw) ? raw : [raw]) as unknown as { dataIndex: number }[];
+            return `${ENERGY[p[0].dataIndex]}% of peak`;
+        },
     },
     xAxis: {
         type: "category",

@@ -64,18 +64,18 @@ export const emojiDoc: ComponentDoc = {
             description: "Slugs that support skin tones (hands, people) honor the `tone` prop.",
             render: () => (
                 <div className="flex items-center gap-3 text-2xl">
-                    <Emoji name="thumbs-up" tone={1} />
-                    <Emoji name="thumbs-up" tone={2} />
-                    <Emoji name="thumbs-up" tone={3} />
-                    <Emoji name="thumbs-up" tone={4} />
-                    <Emoji name="thumbs-up" tone={5} />
+                    <Emoji name="thumbs-up" tone="light" />
+                    <Emoji name="thumbs-up" tone="medium-light" />
+                    <Emoji name="thumbs-up" tone="medium" />
+                    <Emoji name="thumbs-up" tone="medium-dark" />
+                    <Emoji name="thumbs-up" tone="dark" />
                 </div>
             ),
-            code: `<Emoji name="thumbs-up" tone={1} />
-<Emoji name="thumbs-up" tone={2} />
-<Emoji name="thumbs-up" tone={3} />
-<Emoji name="thumbs-up" tone={4} />
-<Emoji name="thumbs-up" tone={5} />`,
+            code: `<Emoji name="thumbs-up" tone="light" />
+<Emoji name="thumbs-up" tone="medium-light" />
+<Emoji name="thumbs-up" tone="medium" />
+<Emoji name="thumbs-up" tone="medium-dark" />
+<Emoji name="thumbs-up" tone="dark" />`,
         },
         {
             name: "Inline with text",

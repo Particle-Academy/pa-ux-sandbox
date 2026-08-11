@@ -1,5 +1,5 @@
 import { Head, Link } from "@inertiajs/react";
-import { useState } from "react";
+import { useState, type ReactElement} from "react";
 import { Button, Badge, Breadcrumbs, Card, FauxClient, Heading, Text } from "@particle-academy/react-fancy";
 import { Layout } from "../Layout";
 import { ReactDashboardKit } from "./kits/ReactDashboardKit";
@@ -13,7 +13,7 @@ import { ShopNSubKit } from "./kits/ShopNSubKit";
 
 type Kit = { slug: string; name: string; pkg: string; blurb: string };
 
-const KITS: Record<string, () => JSX.Element> = {
+const KITS: Record<string, () => ReactElement> = {
     "fancy-query": RealtimeChatKit,
     "react-fancy": ReactDashboardKit,
     "fancy-flow": WorkflowStudioKit,

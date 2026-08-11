@@ -23,7 +23,9 @@ function CodeEditorDemo() {
     const [value, setValue] = useState(sampleJs);
     return (
         <div className="w-full max-w-2xl">
-            <CodeEditor value={value} onChange={setValue} language="javascript" />
+            <CodeEditor value={value} onChange={setValue} language="javascript">
+                        <CodeEditor.Panel />
+                    </CodeEditor>
         </div>
     );
 }
@@ -47,7 +49,9 @@ const [code, setCode] = useState(\`function hello() {
     return "world";
 }\`);
 
-<CodeEditor value={code} onChange={setCode} language="javascript" />`,
+<CodeEditor value={code} onChange={setCode} language="javascript">
+                        <CodeEditor.Panel />
+                    </CodeEditor>`,
         },
         {
             name: "Language switcher",
@@ -57,7 +61,9 @@ const [code, setCode] = useState(\`function hello() {
                 const [value, setValue] = useState(samplePy);
                 return (
                     <div className="w-full max-w-2xl">
-                        <CodeEditor value={value} onChange={setValue} language={lang} onLanguageChange={setLang} />
+                        <CodeEditor value={value} onChange={setValue} language={lang} onLanguageChange={setLang}>
+                        <CodeEditor.Panel />
+                    </CodeEditor>
                     </div>
                 );
             },
@@ -67,25 +73,32 @@ const [code, setCode] = useState(\`function hello() {
     value={code}
     onChange={setCode}
     language={lang}
-    onLanguageChange={setLang}
-/>`,
+    onLanguageChange={setLang}>
+                        <CodeEditor.Panel />
+                    </CodeEditor>`,
         },
         {
             name: "Read-only",
             description: "Useful for snippet display.",
             render: () => (
                 <div className="w-full max-w-2xl">
-                    <CodeEditor value={sampleJs} language="javascript" readOnly />
+                    <CodeEditor value={sampleJs} language="javascript" readOnly>
+                        <CodeEditor.Panel />
+                    </CodeEditor>
                 </div>
             ),
-            code: `<CodeEditor value={snippet} language="typescript" readOnly />`,
+            code: `<CodeEditor value={snippet} language="typescript" readOnly>
+                        <CodeEditor.Panel />
+                    </CodeEditor>`,
         },
         {
             name: "Themes + line numbers",
             description: "Toggle line numbers and pick a built-in or registered theme.",
             render: () => (
                 <div className="w-full max-w-2xl">
-                    <CodeEditor value={sampleJs} language="javascript" theme="dark" lineNumbers />
+                    <CodeEditor value={sampleJs} language="javascript" theme="dark" lineNumbers>
+                        <CodeEditor.Panel />
+                    </CodeEditor>
                 </div>
             ),
             code: `<CodeEditor
@@ -93,14 +106,17 @@ const [code, setCode] = useState(\`function hello() {
     onChange={setCode}
     language="javascript"
     theme="dark"
-    lineNumbers
-/>`,
+    lineNumbers>
+                        <CodeEditor.Panel />
+                    </CodeEditor>`,
         },
         {
             name: "Word wrap + height limits",
             render: () => (
                 <div className="w-full max-w-2xl">
-                    <CodeEditor value={sampleJs.repeat(3)} language="javascript" wordWrap maxHeight={180} />
+                    <CodeEditor value={sampleJs.repeat(3)} language="javascript" wordWrap maxHeight={180}>
+                        <CodeEditor.Panel />
+                    </CodeEditor>
                 </div>
             ),
             code: `<CodeEditor
@@ -109,8 +125,9 @@ const [code, setCode] = useState(\`function hello() {
     language="javascript"
     wordWrap
     minHeight={120}
-    maxHeight={400}
-/>`,
+    maxHeight={400}>
+                        <CodeEditor.Panel />
+                    </CodeEditor>`,
         },
     ],
     props: [

@@ -294,7 +294,7 @@ export default function DreamingIndex({ dreams, tallies: initialTallies, themes 
                                     ) : (
                                         <div className="flex items-center gap-1 text-xs">
                                             <Button
-                                                variant={mine === 1 ? "filled" : "ghost"}
+                                                variant={mine === 1 ? "default" : "ghost"}
                                                 color={mine === 1 ? "emerald" : "zinc"}
                                                 size="sm"
                                                 onClick={() => handleVote(d.slug, 1)}
@@ -302,7 +302,7 @@ export default function DreamingIndex({ dreams, tallies: initialTallies, themes 
                                                 👍 {tally.up}
                                             </Button>
                                             <Button
-                                                variant={mine === -1 ? "filled" : "ghost"}
+                                                variant={mine === -1 ? "default" : "ghost"}
                                                 color={mine === -1 ? "rose" : "zinc"}
                                                 size="sm"
                                                 onClick={() => handleVote(d.slug, -1)}

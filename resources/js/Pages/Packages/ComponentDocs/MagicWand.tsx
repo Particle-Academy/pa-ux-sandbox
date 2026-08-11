@@ -14,12 +14,12 @@ function MagicWandDemo() {
                     {
                         id: "rewrite",
                         label: "Rewrite",
-                        run: async (selection) => `[rewritten: ${selection.text}]`,
+                        run: async (selection) => `[rewritten: ${selection}]`,
                     },
                     {
                         id: "shorten",
                         label: "Shorten",
-                        run: async (selection) => selection.text.slice(0, Math.max(8, selection.text.length / 2)),
+                        run: async (selection) => selection.slice(0, Math.max(8, selection.length / 2)),
                     },
                 ]}
             />
@@ -73,11 +73,11 @@ export const magicWandDoc: ComponentDoc = {
                     <MagicWand
                         value="Selecting text shows an inline action row beneath the textarea."
                         onValueChange={() => {}}
-                        appearance="inline"
+                        appearance="pill"
                         rows={4}
                         actions={[
-                            { id: "rewrite", label: "Rewrite", run: async (s) => s.text },
-                            { id: "translate", label: "Translate", run: async (s) => s.text },
+                            { id: "rewrite", label: "Rewrite", run: async (s) => s },
+                            { id: "translate", label: "Translate", run: async (s) => s },
                         ]}
                     />
                 </div>
@@ -85,7 +85,7 @@ export const magicWandDoc: ComponentDoc = {
             code: `<MagicWand
     value={text}
     onValueChange={setText}
-    appearance="inline"
+    appearance="pill"
     actions={actions}
 />`,
         },

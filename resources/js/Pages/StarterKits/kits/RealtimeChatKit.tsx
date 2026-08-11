@@ -212,7 +212,7 @@ function Bubble({ msg }: { msg: Message }) {
     const isUser = msg.role === "user";
     return (
         <div className={`flex items-start gap-2 ${isUser ? "flex-row-reverse" : ""}`}>
-            <Avatar size="sm" name={isUser ? "You" : "AI"} />
+            <Avatar size="sm" fallback={isUser ? "You" : "AI"} alt={isUser ? "You" : "AI"} />
             <div
                 className={`max-w-[80%] rounded-2xl px-3 py-2 text-sm ${
                     isUser

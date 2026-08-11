@@ -1,3 +1,4 @@
+import type { ReactElement } from "react";
 import { Head } from "@inertiajs/react";
 import { CmsPage } from "@particle-academy/fancy-cms-ui/react";
 import { Layout } from "../Layout";
@@ -14,7 +15,7 @@ import { ShopNSubKit } from "./kits/ShopNSubKit";
 
 type Kit = { slug: string; name: string; pkg: string; blurb: string };
 
-const KITS: Record<string, () => JSX.Element> = {
+const KITS: Record<string, () => ReactElement> = {
   "fancy-query": RealtimeChatKit,
   "react-fancy": ReactDashboardKit,
   "fancy-flow": WorkflowStudioKit,

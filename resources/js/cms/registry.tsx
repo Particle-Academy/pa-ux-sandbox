@@ -1,3 +1,4 @@
+import type { ReactElement } from "react";
 /**
  * Sandbox CMS element registry — the host extends the CMS's default registry
  * with islands that render the existing bespoke markup, so a seeded CMS doc
@@ -48,7 +49,7 @@ export const HERO_CODE_HTML = `<span class="tok-c">// One surface. Two participa
 export function makeSandboxRegistry(data: SandboxData): ElementRegistry {
   // Host JSX islands — the escape hatch the `jsx` Element resolves by `island`
   // key. The ONE allowed place for non-Element React (live demos, server data).
-  const islands: Record<string, () => JSX.Element> = {
+  const islands: Record<string, () => ReactElement> = {
     "components-preview": () => <ComponentsShowcase total={data.total} />,
   };
   return {

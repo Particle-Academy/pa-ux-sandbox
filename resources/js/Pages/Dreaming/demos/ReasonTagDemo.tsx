@@ -202,7 +202,7 @@ export function ReasonTagDemo() {
                       <td className="px-3 py-2 text-right">
                         <Button
                           size="sm"
-                          variant={pins.includes(s.id) ? "filled" : "outline"}
+                          variant={pins.includes(s.id) ? "default" : "ghost"}
                           onClick={() => togglePin(s.id)}
                         >
                           {pins.includes(s.id) ? "unpin" : "pin"}

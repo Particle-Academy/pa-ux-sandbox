@@ -108,7 +108,7 @@ import {
     GIT_STATUS,
     GIT_TREE,
 } from "./gitFixtures";
-import { AudioViewer, Avatar, Badge, Breadcrumbs, Button, Calendar, Callout, Card, ColorPicker, ContentRenderer, ContextMenu, Drawer, Emoji, FauxClient, Heading, ImageViewer, Kanban, Kbd, Marquee, MediaViewer, MoodMeter, OtpInput, Pagination, PdfViewer, Pillbox, Profile, Progress, Skeleton, StickyNote, Switch, Tabs, Text, TimeGrid, TimePicker, Timeline, Tooltip, VideoViewer } from "@particle-academy/react-fancy";
+import { AudioViewer, Avatar, Badge, Breadcrumbs, Button, Calendar, Callout, Card, CodeView, ColorPicker, Container, ContentRenderer, ContextMenu, Drawer, Emoji, Eyebrow, FauxClient, FileBrowser, Grid, Heading, ImageViewer, IndexList, JsonEditor, Kanban, Kbd, Marquee, MediaViewer, MoodMeter, OtpInput, Pagination, PdfViewer, Pillbox, Profile, Progress, PullQuote, Section, Skeleton, Stat, StatList, StickyNote, Switch, Tabs, Text, TimeGrid, TimePicker, Timeline, Tooltip, VideoViewer } from "@particle-academy/react-fancy";
 import { FileViewer } from "@particle-academy/fancy-code";
 import { EChart } from "@particle-academy/fancy-echarts";
 import { ArtBoard, ArtPiece } from "@particle-academy/fancy-artboard";
@@ -173,6 +173,11 @@ type PreviewFn = () => ReactNode;
 
 // Sample media for the viewer previews — local assets + a tiny data-URI so the
 // cards render self-contained (no external network).
+/** Multi-line sample for the CodeView tile — a template literal so the newlines are real. */
+const SAMPLE_CODE_VIEW = `<Callout color="green">
+  Deploy succeeded
+</Callout>`;
+
 const SAMPLE_IMG = "/showcase-shots/fancy-echarts.png";
 const SAMPLE_POSTER = "/showcase-shots/fancy-slides.png";
 const SAMPLE_PDF = "/showcase-assets/file-viewer/sample.pdf";
@@ -526,6 +531,166 @@ const PREVIEWS: Record<string, PreviewFn> = {
         </div>
     ),
 
+    // ── The fourteen react-fancy items that rendered "Live preview coming soon".
+    // Ten of them (container, section, grid, stat, stat-list, kbd, eyebrow,
+    // pull-quote, index-list, json-editor) were only added to the catalog on
+    // 2026-08-10 — shipped-but-invisible before that, then advertised with
+    // nothing to look at, which is worse. Story #177.
+
+    // The registry calls this `react-fancy-sticky-note` (package-qualified,
+    // because `sticky-note` collides with fancy-whiteboard's). The preview
+    // below it is keyed on the BARE name, so the qualified item found nothing.
+    // Same class of bug as the fancy-tui `tui-` prefix mismatch.
+    "react-fancy/react-fancy-sticky-note": () => (
+        <div className="grid place-items-center">
+            <StickyNote color="amber" className="w-40 rotate-[-2deg] text-xs">
+                Ship the preview, not the placeholder.
+            </StickyNote>
+        </div>
+    ),
+    "react-fancy/container": () => (
+        // Shows what a Container DOES: caps the measure and centres it. The
+        // dashed edge is the viewport, the solid block is the container.
+        <div className="w-full rounded-md border border-dashed border-zinc-300 p-2 dark:border-zinc-700">
+            <Container size="sm" className="rounded bg-violet-50 px-3 py-2 text-center text-[11px] text-violet-900 ring-1 ring-violet-200 dark:bg-violet-500/15 dark:text-violet-100 dark:ring-violet-700">
+                max-width, centred, gutters
+            </Container>
+        </div>
+    ),
+    "react-fancy/section": () => (
+        // Two sections with a divider — the rhythm IS the component, so one
+        // section alone would show nothing.
+        <div className="w-full max-w-[18rem] text-[11px]">
+            <Section space="sm" divider className="text-zinc-600 dark:text-zinc-300">
+                First section
+            </Section>
+            <Section space="sm" divider className="text-zinc-600 dark:text-zinc-300">
+                Second, with rule
+            </Section>
+            <Section space="sm" className="text-zinc-600 dark:text-zinc-300">
+                Third
+            </Section>
+        </div>
+    ),
+    "react-fancy/grid": () => (
+        <Grid cols={3} gap="sm" className="w-full max-w-[18rem]">
+            {[1, 2, 3, 4, 5, 6].map((n) => (
+                <div key={n} className="grid h-8 place-items-center rounded bg-violet-100 text-[11px] font-medium text-violet-900 dark:bg-violet-500/20 dark:text-violet-100">
+                    {n}
+                </div>
+            ))}
+        </Grid>
+    ),
+    "react-fancy/stat": () => (
+        <div className="flex items-end gap-6">
+            <Stat value="2,431" label="Files synced" />
+            <Stat value="99.98%" label="Uptime" />
+        </div>
+    ),
+    "react-fancy/stat-list": () => (
+        <StatList
+            className="w-full max-w-[16rem]"
+            items={[
+                { value: "279", label: "Registry items" },
+                { value: "70", label: "Packages" },
+                { value: "0.5", label: "Kit version" },
+            ]}
+        />
+    ),
+    "react-fancy/index-list": () => (
+        <IndexList
+            className="w-full max-w-[18rem] text-[11px]"
+            items={[
+                { num: "01", title: "Fieldwork", meta: "20 styles" },
+                { num: "02", title: "Mom-n-Pops", meta: "20 styles" },
+                { num: "03", title: "Dashboards", meta: "20 styles" },
+            ]}
+        />
+    ),
+    "react-fancy/eyebrow": () => (
+        <div className="w-full max-w-[18rem]">
+            <Eyebrow num="03" label="Human+ UX" aside="2026" rule />
+            <Heading size="sm" className="mt-1">
+                Agents ride shotgun
+            </Heading>
+        </div>
+    ),
+    "react-fancy/pull-quote": () => (
+        <PullQuote className="max-w-[18rem] text-[12px]" attribution="Component contract" source="AGENTS.md" rule>
+            The component itself is the agent&apos;s affordance, not an external target.
+        </PullQuote>
+    ),
+    "react-fancy/kbd": () => (
+        <div className="flex flex-wrap items-center justify-center gap-3 text-[11px] text-zinc-500">
+            <span className="flex items-center gap-1.5">
+                <Kbd keys={["⌘", "K"]} /> search
+            </span>
+            <span className="flex items-center gap-1.5">
+                <Kbd keys={["Shift", "?"]} /> help
+            </span>
+        </div>
+    ),
+    "react-fancy/code-view": () => (
+        <div className="w-full max-w-[20rem] overflow-hidden rounded-md border border-zinc-200 text-left dark:border-zinc-800">
+            <CodeView value={SAMPLE_CODE_VIEW} language="html" readOnly minHeight={72} />
+        </div>
+    ),
+    "react-fancy/json-editor": () => (
+        // The point of JsonEditor is the keyMap imposing a TYPE on each path,
+        // so the preview passes one rather than showing untyped rows.
+        <div className="w-full max-w-[20rem] overflow-hidden rounded-md border border-zinc-200 text-left text-[11px] dark:border-zinc-800">
+            <JsonEditor
+                value={{ retries: 3, active: true, tier: "pro" }}
+                keyMap={'{"retries":"integer","active":"boolean","tier":{"type":"enum","options":["free","pro"]}}'}
+                onChange={() => {}}
+            />
+        </div>
+    ),
+    "react-fancy/file-browser": () => (
+        <div className="h-36 w-full max-w-[18rem] overflow-hidden rounded-md border border-zinc-200 text-left text-[11px] dark:border-zinc-800">
+            {/* `snapshot`, not `entries` — a nested JSON tree, which is the
+                shape an agent can emit in one call. The provider form is for
+                lazy loading and needs a live backend. */}
+            <FileBrowser
+                snapshot={[
+                    {
+                        path: "src",
+                        name: "src",
+                        kind: "dir" as const,
+                        children: [
+                            { path: "src/index.ts", name: "index.ts", kind: "file" as const, size: 2048 },
+                            { path: "src/styles.css", name: "styles.css", kind: "file" as const, size: 8192 },
+                        ],
+                    },
+                    { path: "README.md", name: "README.md", kind: "file" as const, size: 1024 },
+                ]}
+            />
+        </div>
+    ),
+    "react-fancy/catalog-fms": () => (
+        // A vendorable BLOCK, not one component: PricingTable + FeatureMatrix +
+        // FeatureGate + PlanFeaturesEditor. The tile shows the storefront half,
+        // which is what a consumer recognises.
+        <div className="flex w-full max-w-[20rem] gap-2 text-left">
+            {[
+                { name: "Free", price: "$0", feats: ["1 project"] },
+                { name: "Pro", price: "$29", feats: ["Unlimited", "MCP"] },
+            ].map((p, i) => (
+                <div
+                    key={p.name}
+                    className={`flex-1 rounded-md border p-2 text-[11px] ${i === 1 ? "border-violet-300 bg-violet-50 dark:border-violet-700 dark:bg-violet-500/15" : "border-zinc-200 dark:border-zinc-800"}`}
+                >
+                    <div className="font-medium">{p.name}</div>
+                    <div className="text-base font-semibold">{p.price}</div>
+                    <ul className="mt-1 space-y-0.5 text-zinc-500 dark:text-zinc-400">
+                        {p.feats.map((f) => (
+                            <li key={f}>{f}</li>
+                        ))}
+                    </ul>
+                </div>
+            ))}
+        </div>
+    ),
     "react-fancy/badge": () => (
         <div className="flex flex-wrap items-center justify-center gap-1.5">
             <Badge color="violet">new</Badge>

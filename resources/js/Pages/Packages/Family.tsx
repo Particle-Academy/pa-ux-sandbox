@@ -162,7 +162,7 @@ function MemberCard({ member: m }: { member: Member }) {
                         title={`${m.stars.toLocaleString()} GitHub stars`}
                         style={{ display: "inline-flex", alignItems: "center", gap: 3, color: "#f59e0b", fontWeight: 600, fontVariantNumeric: "tabular-nums", fontSize: 12 }}
                     >
-                        <Icon name="star" size={12} />
+                        <Icon name="star" size="xs" />
                         {m.stars >= 1000 ? `${(m.stars / 1000).toFixed(1)}k` : m.stars}
                     </span>
                 )}

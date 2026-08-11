@@ -9,12 +9,16 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "paths": {
-      "@/*": ["resources/js/*"],
-      "@particle-academy/react-fancy": ["../react-fancy/src"],
-      "@particle-academy/fancy-echarts": ["../fancy-echarts/src"],
-      "@particle-academy/fancy-code": ["../fancy-code/src"],
-      "@particle-academy/fancy-sheets": ["../fancy-sheets/src"]
-    }
+      "@/*": [
+        "resources/js/*"
+      ]
+    },
+    "types": [
+      "vite/client"
+    ]
   },
-  "include": ["resources/js/**/*.ts", "resources/js/**/*.tsx"]
+  "include": [
+    "resources/js/**/*.ts",
+    "resources/js/**/*.tsx"
+  ]
 }

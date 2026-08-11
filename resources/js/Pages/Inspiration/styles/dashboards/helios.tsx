@@ -2,7 +2,7 @@ import "./helios.css";
 import { Link } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 import { Badge, Card, Heading, Navbar, Text } from "@particle-academy/react-fancy";
-import { EChart, registerAll } from "@particle-academy/fancy-echarts";
+import { type EChartsOption, EChart, registerAll } from "@particle-academy/fancy-echarts";
 import { BatteryCharging, Home, Sun, Zap } from "lucide-react";
 import type { Style } from "../../types";
 
@@ -74,7 +74,7 @@ const CONSUMPTION = [64, 60, 56, 58, 62, 66];
 /* ── ECharts options ────────────────────────────────────────────────────── */
 
 /** Today's production — solar area line + dashed lime usage line. */
-const productionOption = {
+const productionOption: EChartsOption = {
     grid: { left: 4, right: 6, top: 12, bottom: 20, containLabel: true },
     tooltip: {
         trigger: "axis",
@@ -136,7 +136,7 @@ const productionOption = {
 
 /** Powerwall state-of-charge — a single round-cap gauge (value 82) on a dark
  *  #2A3416 track; ticks/labels/pointer hidden, the "82%" drawn as an overlay. */
-const batteryOption = {
+const batteryOption: EChartsOption = {
     series: [
         {
             type: "gauge",
@@ -165,7 +165,7 @@ const batteryOption = {
 };
 
 /** Monthly production vs consumption — thin top-rounded paired columns. */
-const monthlyOption = {
+const monthlyOption: EChartsOption = {
     grid: { left: 2, right: 2, top: 14, bottom: 20, containLabel: true },
     tooltip: {
         trigger: "axis",

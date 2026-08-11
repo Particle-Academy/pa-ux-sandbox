@@ -38,7 +38,7 @@ export default function ShopIndex({ items, balance, submissions, cosmeticSlots }
 
             <div className="flex flex-wrap items-end justify-between gap-4">
                 <div>
-                    <Heading level={1} size="xl">Coin Shop</Heading>
+                    <Heading as="h1" size="xl">Coin Shop</Heading>
                     <Text className="mt-2 max-w-3xl">
                         Spend the coins you've earned across the showcase on profile cosmetics and showcase boosts.
                         Coins are minted automatically as you earn XP, unlock achievements, and win prizes.
@@ -88,9 +88,9 @@ export default function ShopIndex({ items, balance, submissions, cosmeticSlots }
 function SectionHead({ icon, tone, title, sub }: { icon: string; tone: string; title: string; sub: string }) {
     return (
         <div>
-            <Heading level={2} size="lg">
+            <Heading as="h2" size="lg">
                 <span className="inline-flex items-center gap-2">
-                    <Icon name={icon} size={16} className={tone} />
+                    <Icon name={icon} size="sm" className={tone} />
                     {title}
                 </span>
             </Heading>
@@ -113,7 +113,7 @@ function Balance({ balance }: { balance: number | null }) {
     return (
         <div className="flex items-center gap-3 rounded-xl border border-amber-300/60 bg-amber-50/70 px-4 py-2.5 dark:border-amber-500/25 dark:bg-amber-500/10">
             <span className="grid h-9 w-9 place-items-center rounded-full bg-amber-400/20 text-amber-600 dark:text-amber-300">
-                <Icon name="coins" size={18} />
+                <Icon name="coins" size="sm" />
             </span>
             <span>
                 <span className="block font-mono text-xl font-semibold tabular-nums text-amber-700 dark:text-amber-200">
@@ -163,7 +163,7 @@ function CosmeticPreview({ item }: { item: Item }) {
             </span>
         );
     }
-    return <Icon name="sparkles" size={22} className="text-zinc-400" />;
+    return <Icon name="sparkles" size="md" className="text-zinc-400" />;
 }
 
 function CosmeticCard({ item, balance, owned }: { item: Item; balance: number | null; owned: boolean }) {
@@ -184,8 +184,8 @@ function CosmeticCard({ item, balance, owned }: { item: Item; balance: number | 
 
             <div className="flex flex-1 flex-col p-4">
                 <div className="flex items-center gap-1.5">
-                    <Heading level={3} size="sm">{item.name}</Heading>
-                    {owned && <Icon name="check-circle" size={14} className="text-emerald-500" />}
+                    <Heading as="h3" size="sm">{item.name}</Heading>
+                    {owned && <Icon name="check-circle" size="xs" className="text-emerald-500" />}
                 </div>
                 {item.description && <Text className="mt-1.5 flex-1 text-sm">{item.description}</Text>}
 
@@ -198,7 +198,7 @@ function CosmeticCard({ item, balance, owned }: { item: Item; balance: number | 
                                 affordable ? "text-amber-600 dark:text-amber-400" : "text-zinc-400 dark:text-zinc-500"
                             }`}
                         >
-                            <Icon name="coins" size={13} />
+                            <Icon name="coins" size="xs" />
                             {item.price.toLocaleString()}
                         </span>
                     )}
@@ -237,7 +237,7 @@ function ServiceCard({
         <Card className={`flex flex-col gap-4 p-5 ${affordable ? "" : "opacity-70"}`}>
             <div className="flex items-start justify-between gap-3">
                 <div>
-                    <Heading level={3} size="sm">{item.name}</Heading>
+                    <Heading as="h3" size="sm">{item.name}</Heading>
                     {item.description && <Text className="mt-1 text-sm">{item.description}</Text>}
                 </div>
                 <Badge color="violet" variant="soft">Service</Badge>
@@ -275,7 +275,7 @@ function ServiceCard({
                         affordable ? "text-amber-600 dark:text-amber-400" : "text-zinc-400 dark:text-zinc-500"
                     }`}
                 >
-                    <Icon name="coins" size={13} />
+                    <Icon name="coins" size="xs" />
                     {item.price.toLocaleString()}
                 </span>
                 <Button

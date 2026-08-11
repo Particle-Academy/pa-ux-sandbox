@@ -154,7 +154,7 @@ function SiteShow({ site, owner, categories, kpis, topPaths, heatmap, heatmapSho
                 <Card className="mt-6">
                     <Card.Header>
                         <div className="flex w-full items-center justify-between gap-3">
-                            <span className="inline-flex items-center gap-2"><Icon name="camera" size={16} /> Latest screenshot</span>
+                            <span className="inline-flex items-center gap-2"><Icon name="camera" size="sm" /> Latest screenshot</span>
                             {latestShot?.capturedAt && <Badge color="zinc" variant="soft">{latestShot.capturedAt}</Badge>}
                         </div>
                     </Card.Header>

@@ -45,7 +45,7 @@ export function FocusHeatmap({ heatmap, shot }: { heatmap: Heatmap; shot?: Heatm
             <Card.Header>
                 <div style={{ display: "flex", justifyContent: "space-between", width: "100%", alignItems: "center", gap: 12 }}>
                     <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
-                        <Icon name="flame" size={16} style={{ color: "var(--fg-3)" }} /> Focus heatmap
+                        <Icon name="flame" size="sm" style={{ color: "var(--fg-3)" }} /> Focus heatmap
                     </span>
                     {heatmap && <Badge color="amber">{heatmap.grid_size}×{heatmap.grid_size} grid</Badge>}
                 </div>
@@ -118,7 +118,7 @@ export function EventsOverTime({ data }: { data: DayBucket[] }) {
         <Card style={{ overflow: "hidden" }}>
             <Card.Header>
                 <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
-                    <Icon name="trending-up" size={16} style={{ color: "var(--fg-3)" }} /> Events over time
+                    <Icon name="trending-up" size="sm" style={{ color: "var(--fg-3)" }} /> Events over time
                 </span>
             </Card.Header>
             <Card.Body>
@@ -147,7 +147,7 @@ export function TopPathsTable({ rows }: { rows: TopPath[] }) {
         <Card style={{ overflow: "hidden" }}>
             <Card.Header>
                 <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
-                    <Icon name="list" size={16} style={{ color: "var(--fg-3)" }} /> Top paths
+                    <Icon name="list" size="sm" style={{ color: "var(--fg-3)" }} /> Top paths
                 </span>
             </Card.Header>
             {rows.length === 0 ? (
@@ -191,7 +191,7 @@ export function RecentSessions({ rows }: { rows: RecentSession[] }) {
         <Card style={{ overflow: "hidden" }}>
             <Card.Header>
                 <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
-                    <Icon name="history" size={16} style={{ color: "var(--fg-3)" }} /> Recent sessions
+                    <Icon name="history" size="sm" style={{ color: "var(--fg-3)" }} /> Recent sessions
                 </span>
             </Card.Header>
             {rows.length === 0 ? (

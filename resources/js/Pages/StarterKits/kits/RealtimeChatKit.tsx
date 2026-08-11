@@ -172,7 +172,7 @@ function ChatRoom({ server }: { server: ReturnType<typeof makeChatServer> }) {
         <Card className="overflow-hidden">
             <div className="flex items-center justify-between border-b border-zinc-200 px-4 py-2.5 dark:border-zinc-800">
                 <div className="flex items-center gap-2">
-                    <Heading level={3} size="sm">Support chat</Heading>
+                    <Heading as="h3" size="sm">Support chat</Heading>
                     <Badge color="emerald" size="sm">
                         <span className="mr-1 inline-block size-1.5 animate-pulse rounded-full bg-emerald-500 align-middle" />
                         live

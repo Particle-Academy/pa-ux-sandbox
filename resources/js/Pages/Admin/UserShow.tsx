@@ -420,7 +420,7 @@ function UserShow({ user, metrics, transactions, achievements, ownedSites, allMe
                                     {achievements.map((a, i) => (
                                         <div key={i} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
                                             <span style={{ display: "inline-flex", alignItems: "center", gap: 8, fontSize: 13, color: "var(--fg-1)" }}>
-                                                <Icon name="medal" size={14} style={{ color: "var(--fg-3)" }} />
+                                                <Icon name="medal" size="xs" style={{ color: "var(--fg-3)" }} />
                                                 {a.name}
                                             </span>
                                             {a.granted_at && <span style={{ fontSize: 12, color: "var(--fg-3)" }}>{a.granted_at}</span>}

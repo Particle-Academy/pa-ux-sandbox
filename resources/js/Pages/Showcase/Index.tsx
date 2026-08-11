@@ -150,7 +150,7 @@ export default function ShowcaseIndex({ submissions }: { submissions: Submission
 
             <div className="flex flex-wrap items-end justify-between gap-3">
                 <div>
-                    <Heading level={1} size="xl">Designer Showcase</Heading>
+                    <Heading as="h1" size="xl">Designer Showcase</Heading>
                     <Text className="mt-2 max-w-3xl">
                         Live sites and public repos built with Fancy UI
                         {submissions.length > 0 && <span className="text-zinc-400"> · {submissions.length} verified</span>}.

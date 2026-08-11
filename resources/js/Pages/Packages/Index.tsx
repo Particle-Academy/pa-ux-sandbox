@@ -147,7 +147,7 @@ export default function PackagesIndex({ packages }: { packages: Pkg[] }) {
 
             <div className="pkgs-toolbar">
                 <label className="pkgs-search">
-                    <Icon name="search" size={16} />
+                    <Icon name="search" size="sm" />
                     <input
                         type="search"
                         value={query}
@@ -301,7 +301,7 @@ function Stars({ count }: { count: number | null }) {
             title={`${count.toLocaleString()} GitHub stars`}
             style={{ display: "inline-flex", alignItems: "center", gap: 3, color: "#f59e0b", fontWeight: 600, fontVariantNumeric: "tabular-nums" }}
         >
-            <Icon name="star" size={12} />
+            <Icon name="star" size="xs" />
             {label}
         </span>
     );
@@ -359,7 +359,7 @@ function PkgPreview({ slug }: { slug: string }): ReactNode {
         // The Fancy Core family leads with react-fancy, so it reuses its visual.
         "fancy-core": (
             <div className="mp" style={{ gap: 6, flexWrap: "wrap", maxWidth: 280 }}>
-                <span style={{ background: VIOLET, color: "#fff", fontSize: 11, fontWeight: 600, padding: "5px 11px", borderRadius: 8, display: "inline-flex", gap: 5, alignItems: "center" }}><Icon name="plus" size={11} />Button</span>
+                <span style={{ background: VIOLET, color: "#fff", fontSize: 11, fontWeight: 600, padding: "5px 11px", borderRadius: 8, display: "inline-flex", gap: 5, alignItems: "center" }}><Icon name="plus" size="xs" />Button</span>
                 <Badge color="emerald" dot size="sm">live</Badge>
                 <Badge color="violet" size="sm">beta</Badge>
                 <span className="mp-box" style={{ padding: "5px 9px", fontSize: 10 }}>Card</span>
@@ -368,7 +368,7 @@ function PkgPreview({ slug }: { slug: string }): ReactNode {
         ),
         "agent-integrations": (
             <div className="mp" style={{ flexDirection: "column", gap: 7 }}>
-                <span style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 11, color: AMBER, fontWeight: 600 }}><Icon name="bot" size={14} />agent · MCP</span>
+                <span style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 11, color: AMBER, fontWeight: 600 }}><Icon name="bot" size="xs" />agent · MCP</span>
                 <span className="mp" style={{ gap: 5 }}>
                     <span style={{ width: 8, height: 8, borderRadius: 999, background: VIOLET }} />
                     <span style={{ width: 22, height: 3, background: "var(--border-2)" }} />
@@ -444,18 +444,18 @@ function PkgPreview({ slug }: { slug: string }): ReactNode {
             </div>
         ),
         "fancy-pixel": (
-            <span style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: 10, fontWeight: 600, color: AMBER, border: `1px solid color-mix(in oklch,${AMBER} 35%,transparent)`, padding: "3px 9px", borderRadius: 999 }}><Icon name="badge-check" size={12} />Verified</span>
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: 10, fontWeight: 600, color: AMBER, border: `1px solid color-mix(in oklch,${AMBER} 35%,transparent)`, padding: "3px 9px", borderRadius: 999 }}><Icon name="badge-check" size="xs" />Verified</span>
         ),
-        "fancy-3d": <Icon name="box" size={34} style={{ color: VIOLET }} />,
+        "fancy-3d": <Icon name="box" size="xl" style={{ color: VIOLET }} />,
         "fancy-3d-babylon": (
             <div className="mp" style={{ flexDirection: "column", gap: 4 }}>
-                <Icon name="box" size={28} style={{ color: VIOLET }} />
+                <Icon name="box" size="lg" style={{ color: VIOLET }} />
                 <span style={{ fontSize: 9, fontWeight: 600, color: "var(--fg-3)" }}>Babylon.js</span>
             </div>
         ),
         "fancy-3d-three": (
             <div className="mp" style={{ flexDirection: "column", gap: 4 }}>
-                <Icon name="box" size={28} style={{ color: AMBER }} />
+                <Icon name="box" size="lg" style={{ color: AMBER }} />
                 <span style={{ fontSize: 9, fontWeight: 600, color: "var(--fg-3)" }}>three.js</span>
             </div>
         ),
@@ -525,7 +525,7 @@ function PkgPreview({ slug }: { slug: string }): ReactNode {
         ),
     };
     map["react-fancy"] = map["fancy-core"];
-    return map[slug] ?? <Icon name="package" size={28} style={{ color: "var(--fg-4)" }} />;
+    return map[slug] ?? <Icon name="package" size="lg" style={{ color: "var(--fg-4)" }} />;
 }
 
 /** Headless package → install-snippet tile (glyph + $ npm install + links). */

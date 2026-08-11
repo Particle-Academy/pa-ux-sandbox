@@ -8,6 +8,7 @@
  * just text-only pills.
  */
 import { useState, type ComponentType, type ReactNode } from "react";
+import { SAMPLE_CODE_VIEW, SAMPLE_IMG, SAMPLE_PDF, SAMPLE_POSTER, SILENT_WAV } from "./showcase-fixtures";
 // The listing page renders these tiles directly, while the full demos live in
 // a client-only chunk — so the stylesheet has to be imported here too or the
 // grid shows unstyled git surfaces. Bundlers dedupe the second import.
@@ -267,15 +268,6 @@ const TA_PLAN = {
     ],
 };
 
-const SAMPLE_CODE_VIEW = `<Callout color="green">
-  Deploy succeeded
-</Callout>`;
-
-const SAMPLE_IMG = "/showcase-shots/fancy-echarts.png";
-const SAMPLE_POSTER = "/showcase-shots/fancy-slides.png";
-const SAMPLE_PDF = "/showcase-assets/file-viewer/sample.pdf";
-const SILENT_WAV =
-    "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=";
 const SAMPLE_TSX = `export function Button({ label }: { label: string }) {
   return <button className="btn">{label}</button>;
 }
@@ -1204,9 +1196,9 @@ const PREVIEWS: Record<string, PreviewFn> = {
 
     "react-fancy/heading": () => (
         <div className="w-full max-w-[18rem] space-y-1 text-left">
-            <Heading level={1} size="lg">Display</Heading>
-            <Heading level={2} size="md">Section title</Heading>
-            <Heading level={3} size="sm">Subsection</Heading>
+            <Heading as="h1" size="lg">Display</Heading>
+            <Heading as="h2" size="md">Section title</Heading>
+            <Heading as="h3" size="sm">Subsection</Heading>
         </div>
     ),
 

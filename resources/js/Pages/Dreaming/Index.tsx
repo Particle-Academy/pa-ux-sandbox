@@ -203,7 +203,7 @@ export default function DreamingIndex({ dreams, tallies: initialTallies, themes 
 
             <div className="flex flex-wrap items-end justify-between gap-3">
                 <div>
-                    <Heading level={1} size="xl">Dreaming</Heading>
+                    <Heading as="h1" size="xl">Dreaming</Heading>
                     <Text className="mt-2 max-w-3xl">
                         Speculative components proposed for inclusion in the Fancy UI kit.
                         Browse anonymously; vote when you sign in with GitHub. Components
@@ -266,7 +266,7 @@ export default function DreamingIndex({ dreams, tallies: initialTallies, themes 
                             <Card.Body>
                                 <DemoPreview slug={d.slug} />
                                 <div className="flex items-start justify-between gap-2">
-                                    <Heading level={3} size="sm">{d.title}</Heading>
+                                    <Heading as="h3" size="sm">{d.title}</Heading>
                                     <div className="flex flex-wrap items-center gap-1">
                                         {d.accepted && (
                                             <Badge color="emerald" size="sm">Shipped</Badge>

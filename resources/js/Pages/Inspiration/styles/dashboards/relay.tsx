@@ -14,7 +14,7 @@ import {
     Tabs,
     Text,
 } from "@particle-academy/react-fancy";
-import { EChart, registerAll } from "@particle-academy/fancy-echarts";
+import { type EChartsOption, EChart, registerAll } from "@particle-academy/fancy-echarts";
 import { Clock } from "lucide-react";
 import type { Style } from "../../types";
 
@@ -164,7 +164,7 @@ const WEEK = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const RESOLVED_WK = [58, 69, 55, 74, 80, 47, 33];
 const OPENED_WK = [64, 72, 58, 81, 77, 42, 29];
 
-const THROUGHPUT_OPTION = {
+const THROUGHPUT_OPTION: EChartsOption = {
     grid: { left: 6, right: 10, top: 34, bottom: 6, containLabel: true },
     tooltip: { trigger: "axis", axisPointer: { type: "shadow" } },
     legend: {

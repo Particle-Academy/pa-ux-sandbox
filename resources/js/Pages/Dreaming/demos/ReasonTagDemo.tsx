@@ -307,7 +307,7 @@ function ReasonTag({
         </div>
       )}
       <div className="flex justify-end pt-1">
-        <Button size="sm" variant="outline">
+        <Button size="sm">
           ask follow-up
         </Button>
       </div>

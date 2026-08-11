@@ -139,7 +139,7 @@ export function AdminLayout({ children }: { children: ReactNode }) {
                                 const badge = it.href === "/admin/sites" && pending > 0 ? pending : it.badge;
                                 return (
                                     <Link key={it.href} href={it.href} className={`sb-item${isActive(it.href) ? " active" : ""}`} title={collapsed ? it.label : undefined}>
-                                        <Icon name={it.icon} size={18} className="sb-ico" />
+                                        <Icon name={it.icon} size="sm" className="sb-ico" />
                                         <span className="label">{it.label}</span>
                                         {badge ? <span className="badge-slot"><Badge color="violet" size="sm">{String(badge)}</Badge></span> : null}
                                     </Link>
@@ -150,7 +150,7 @@ export function AdminLayout({ children }: { children: ReactNode }) {
                 </nav>
                 <div className="sb-foot">
                     <a className="sb-item" href="/docs">
-                        <Icon name="book-open" size={18} className="sb-ico" />
+                        <Icon name="book-open" size="sm" className="sb-ico" />
                         <span className="label">Documentation</span>
                     </a>
                 </div>
@@ -170,11 +170,11 @@ export function AdminLayout({ children }: { children: ReactNode }) {
                         aria-expanded={isMobile ? mobileOpen : undefined}
                         aria-controls={isMobile ? "admin-mobile-nav" : undefined}
                     >
-                        <Icon name="panel-left" size={17} />
+                        <Icon name="panel-left" size="sm" />
                     </button>
                     <div className="tb-crumb">
                         <span>{meta.group}</span>
-                        <Icon name="chevron-right" size={14} style={{ color: "var(--fg-4)" }} />
+                        <Icon name="chevron-right" size="xs" style={{ color: "var(--fg-4)" }} />
                         <b>{meta.crumb}</b>
                     </div>
                     <div style={{ flex: 1 }} />
@@ -182,7 +182,7 @@ export function AdminLayout({ children }: { children: ReactNode }) {
                         className="tb-search"
                         onClick={() => window.dispatchEvent(new KeyboardEvent("keydown", { key: "k", metaKey: true, ctrlKey: true }))}
                     >
-                        <Icon name="search" size={15} />
+                        <Icon name="search" size="sm" />
                         <span>Search…</span>
                         <span className="kbd">⌘K</span>
                     </div>
@@ -192,14 +192,14 @@ export function AdminLayout({ children }: { children: ReactNode }) {
                         onClick={() => setTheme(toggleTheme())}
                         aria-label="Toggle theme"
                     >
-                        <Icon name={theme === "dark" ? "sun" : "moon"} size={16} />
+                        <Icon name={theme === "dark" ? "sun" : "moon"} size="sm" />
                     </button>
                     {user && (
                         <Dropdown>
                             <Dropdown.Trigger>
                                 <button style={{ display: "flex", alignItems: "center", gap: 8, border: "none", background: "transparent", cursor: "pointer", padding: 2 }}>
                                     <PlayerAvatar player={user.identity} size="sm" />
-                                    <Icon name="chevron-down" size={14} style={{ color: "var(--fg-3)" }} />
+                                    <Icon name="chevron-down" size="xs" style={{ color: "var(--fg-3)" }} />
                                 </button>
                             </Dropdown.Trigger>
                             <Dropdown.Items>
@@ -239,7 +239,7 @@ export function AdminLayout({ children }: { children: ReactNode }) {
                                         href={it.href}
                                         className="admin-mm-item"
                                         active={isActive(it.href)}
-                                        icon={<Icon name={it.icon} size={18} />}
+                                        icon={<Icon name={it.icon} size="sm" />}
                                         badge={badge ? <Badge color="violet" size="sm">{String(badge)}</Badge> : undefined}
                                     >
                                         {it.label}
@@ -254,7 +254,7 @@ export function AdminLayout({ children }: { children: ReactNode }) {
                     <MobileMenu.Item
                         href="/docs"
                         className="admin-mm-item"
-                        icon={<Icon name="book-open" size={18} />}
+                        icon={<Icon name="book-open" size="sm" />}
                     >
                         Documentation
                     </MobileMenu.Item>

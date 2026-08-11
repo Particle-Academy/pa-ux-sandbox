@@ -107,7 +107,7 @@ export default function PackagesComponent({ package: pkg, component, usage, cont
             <div className="mt-3 flex flex-wrap items-start justify-between gap-3">
                 <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
-                        <Heading level={1} size="xl">{component.name}</Heading>
+                        <Heading as="h1" size="xl">{component.name}</Heading>
                         <Badge color="sky" size="sm">{pkg.name}</Badge>
                     </div>
                     {component.blurb && <Text className="mt-2 max-w-3xl">{component.blurb}</Text>}
@@ -255,7 +255,7 @@ function ExampleSection({ index, example }: { index: number; example: ComponentD
                     <div className="min-w-0">
                         <div className="flex items-baseline gap-2">
                             <Text size="xs" className="!font-mono !text-zinc-400">{String(index).padStart(2, "0")}</Text>
-                            <Heading level={3} size="sm" className="!text-zinc-900 dark:!text-zinc-100">{example.name}</Heading>
+                            <Heading as="h3" size="sm" className="!text-zinc-900 dark:!text-zinc-100">{example.name}</Heading>
                         </div>
                         {example.description && (
                             <Text
@@ -311,7 +311,7 @@ function PropsPanel({ doc, component }: { doc: ComponentDoc; component: { name: 
             <Card>
                 <Card.Body className="!p-0">
                     <div className="border-b border-zinc-100 px-5 py-3 dark:border-zinc-800">
-                        <Heading level={3} size="sm" className="!text-zinc-900 dark:!text-zinc-100">
+                        <Heading as="h3" size="sm" className="!text-zinc-900 dark:!text-zinc-100">
                             <code className="!font-mono">{component.name}</code> props
                         </Heading>
                         <Text size="xs" className="mt-0.5 !text-zinc-500">

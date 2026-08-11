@@ -53,7 +53,7 @@ function AdminDashboard({ stats, enabledFeatures, gamification: g }: Props) {
                     <Card.Header>
                         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", gap: 12 }}>
                             <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
-                                <Icon name="trophy" size={16} style={{ color: "var(--fg-3)" }} /> Top earners
+                                <Icon name="trophy" size="sm" style={{ color: "var(--fg-3)" }} /> Top earners
                             </span>
                             <MultiSwitch value={range} onValueChange={(v) => setRange(v as "all" | "week")} list={[{ value: "all", label: "All-time" }, { value: "week", label: "This week" }]} />
                         </div>
@@ -75,7 +75,7 @@ function AdminDashboard({ stats, enabledFeatures, gamification: g }: Props) {
 
                 <div className="admin-stack">
                     <Card>
-                        <Card.Header><Icon name="bell-ring" size={16} style={{ color: "var(--fg-3)" }} /> Needs attention</Card.Header>
+                        <Card.Header><Icon name="bell-ring" size="sm" style={{ color: "var(--fg-3)" }} /> Needs attention</Card.Header>
                         <div style={{ padding: 6 }}>
                             {attention.length === 0 ? (
                                 <EmptyRow>All clear — nothing needs review.</EmptyRow>
@@ -83,11 +83,11 @@ function AdminDashboard({ stats, enabledFeatures, gamification: g }: Props) {
                                 attention.map((r, i) => (
                                     <Link key={i} href={r.href} style={{ display: "flex", alignItems: "center", gap: 11, padding: "10px", borderRadius: 9, textDecoration: "none" }} className="admin-attn-row">
                                         <span style={{ width: 28, height: 28, borderRadius: 7, display: "grid", placeItems: "center", color: "#f59e0b" }}>
-                                            <Icon name={r.icon} size={14} />
+                                            <Icon name={r.icon} size="xs" />
                                         </span>
                                         <span style={{ flex: 1, fontSize: 13, color: "var(--fg-2)" }}>{r.label}</span>
                                         <Badge color="amber">{r.n}</Badge>
-                                        <Icon name="chevron-right" size={15} style={{ color: "var(--fg-4)" }} />
+                                        <Icon name="chevron-right" size="sm" style={{ color: "var(--fg-4)" }} />
                                     </Link>
                                 ))
                             )}
@@ -95,7 +95,7 @@ function AdminDashboard({ stats, enabledFeatures, gamification: g }: Props) {
                     </Card>
 
                     <Card>
-                        <Card.Header><Icon name="coins" size={16} style={{ color: "var(--fg-3)" }} /> Coin economy (today)</Card.Header>
+                        <Card.Header><Icon name="coins" size="sm" style={{ color: "var(--fg-3)" }} /> Coin economy (today)</Card.Header>
                         <Card.Body>
                             <div style={{ display: "flex", justifyContent: "space-between", gap: 12 }}>
                                 {[
@@ -114,7 +114,7 @@ function AdminDashboard({ stats, enabledFeatures, gamification: g }: Props) {
 
                     {enabledFeatures.length > 0 && (
                         <Card>
-                            <Card.Header><Icon name="toggle-right" size={16} style={{ color: "var(--fg-3)" }} /> Enabled features</Card.Header>
+                            <Card.Header><Icon name="toggle-right" size="sm" style={{ color: "var(--fg-3)" }} /> Enabled features</Card.Header>
                             <Card.Body>
                                 <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
                                     {enabledFeatures.map((f) => <Badge key={f} color="violet">{f}</Badge>)}

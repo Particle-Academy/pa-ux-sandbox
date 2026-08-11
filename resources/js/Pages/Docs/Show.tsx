@@ -138,7 +138,7 @@ export default function DocsShow({ page, html, sections, neighbors, version }: P
                             {page.section}
                         </Text>
                     )}
-                    <Heading level={1} size="xl" className="mt-1">{page.title}</Heading>
+                    <Heading as="h1" size="xl" className="mt-1">{page.title}</Heading>
                     {page.description && <Text className="mt-2 max-w-3xl !text-zinc-600 dark:!text-zinc-300">{page.description}</Text>}
 
                     <Separator className="my-6" />

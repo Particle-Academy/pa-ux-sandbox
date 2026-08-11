@@ -670,3 +670,25 @@ export const CMS_DATA_STUDIO = {
         cta: "Book a visit",
     },
 };
+
+// ─── Media + code fixtures (shared by the package-grid PREVIEW and the
+// detail-page DEMO — they were duplicated, which is how a tile and its own
+// demo end up showing different things) ────────────────────────────────────
+
+/** A real screenshot from this site, so the viewers show something recognisable. */
+export const SAMPLE_IMG = "/showcase-shots/fancy-echarts.png";
+export const SAMPLE_POSTER = "/showcase-shots/fancy-slides.png";
+export const SAMPLE_PDF = "/showcase-assets/file-viewer/sample.pdf";
+
+/**
+ * A valid, completely silent 44.1kHz wav.
+ *
+ * Inline rather than a file so the audio demo needs no asset and no network —
+ * it is there to show the transport and waveform chrome, not to play anything.
+ */
+export const SILENT_WAV =
+    "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=";
+
+export const SAMPLE_CODE_VIEW = `<Callout color="green">
+  Deploy succeeded
+</Callout>`;

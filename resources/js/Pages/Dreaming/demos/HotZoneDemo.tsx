@@ -151,7 +151,6 @@ export function HotZoneDemo() {
             <span className="text-sm font-medium">Change-detection (value-based)</span>
             <Button
               size="sm"
-              variant="outline"
               onClick={() => {
                 setCellA((cur) =>
                   ["Acme", "Globex", "Initech", "Hooli"][
@@ -165,7 +164,6 @@ export function HotZoneDemo() {
             </Button>
             <Button
               size="sm"
-              variant="outline"
               onClick={() => {
                 setCellB((cur) => {
                   const opts = ["$120k", "$140k", "$95k", "$200k"];
@@ -178,7 +176,6 @@ export function HotZoneDemo() {
             </Button>
             <Button
               size="sm"
-              variant="outline"
               onClick={() => {
                 setCellC((cur) =>
                   ["Active", "Renewal", "Trial", "Churned"][

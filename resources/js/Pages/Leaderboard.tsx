@@ -73,7 +73,7 @@ export default function Leaderboard({ scope, snapshot, rows, players }: Props) {
 
             <div className="flex flex-wrap items-end justify-between gap-4">
                 <div>
-                    <Heading level={1} size="xl">Leaderboard</Heading>
+                    <Heading as="h1" size="xl">Leaderboard</Heading>
                     <Text className="mt-2 max-w-3xl">
                         {view === "players"
                             ? "Top players by total XP earned across the showcase — exploring, tinkering, driving agents, and shipping projects."
@@ -120,7 +120,7 @@ function StatStrip({ players }: { players: Player[] }) {
                     className="rounded-xl border border-zinc-200 bg-zinc-50/60 px-4 py-3 dark:border-zinc-800 dark:bg-zinc-900/40"
                 >
                     <div className="flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
-                        <Icon name={s.icon} size={12} />
+                        <Icon name={s.icon} size="xs" />
                         {s.label}
                     </div>
                     <div
@@ -165,7 +165,7 @@ function Podium({ players }: { players: Player[] }) {
                         ].join(" ")}
                     >
                         <span className={`mb-3 inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide ${t.chip}`}>
-                            <Icon name={t.icon} size={12} />
+                            <Icon name={t.icon} size="xs" />
                             {t.label}
                         </span>
                         <PlayerAvatar
@@ -257,7 +257,7 @@ function PlayersBoard({ players }: { players: Player[] }) {
             )}
 
             <div className="mt-4 flex items-center gap-2 text-xs text-zinc-500 dark:text-zinc-400">
-                <Icon name="info" size={13} />
+                <Icon name="info" size="xs" />
                 XP comes from exploring packages, running agents, and shipping showcase submissions.
             </div>
         </>

@@ -91,7 +91,7 @@ export function MoodMeterDemo() {
             </span>
           </div>
           <div className="flex items-center justify-end gap-2 pt-4">
-            <Button size="sm" variant="outline" onClick={onAdoptAgent}>
+            <Button size="sm" onClick={onAdoptAgent}>
               adopt agent post
             </Button>
           </div>

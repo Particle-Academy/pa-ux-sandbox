@@ -13,7 +13,7 @@ import {
     Text,
     Tooltip,
 } from "@particle-academy/react-fancy";
-import { EChart, registerAll } from "@particle-academy/fancy-echarts";
+import { type EChartsOption, EChart, registerAll } from "@particle-academy/fancy-echarts";
 import { CreditCard, PiggyBank, Plus, TrendingUp, Wifi } from "lucide-react";
 import type { Style } from "../../types";
 
@@ -114,7 +114,7 @@ const NAV = [
 registerAll();
 
 /* ── Spending option builder — grouped bar, driven by legend visibility ──── */
-function spendingOption(showIn: boolean, showOut: boolean) {
+function spendingOption(showIn: boolean, showOut: boolean): EChartsOption {
     const series: Record<string, unknown>[] = [];
     if (showIn) {
         series.push({
@@ -178,7 +178,7 @@ export default function Meridian({ style }: { style: Style }) {
     const [payee, setPayee] = useState<string | null>(null);
     const [openTxn, setOpenTxn] = useState<string | null>(null);
 
-    const chartOption = useMemo(() => spendingOption(showIn, showOut), [showIn, showOut]);
+    const chartOption = useMemo<EChartsOption>(() => spendingOption(showIn, showOut), [showIn, showOut]);
 
     /** Toggle a spending series, but never let both go dark. */
     const toggleIn = () => setShowIn((v) => (v && !showOut ? v : !v));

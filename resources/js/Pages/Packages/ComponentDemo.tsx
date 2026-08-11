@@ -1,4 +1,5 @@
-import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from "react";
+import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode, type ReactElement} from "react";
+import { SAMPLE_CODE_VIEW, SAMPLE_IMG, SAMPLE_PDF, SAMPLE_POSTER, SILENT_WAV } from "./showcase-fixtures";
 import {
     Accordion,
     Button,
@@ -61,6 +62,30 @@ import {
     useToast,
     JsonEditor,
     type JsonValue,
+    Grid,
+    Container,
+    Section,
+    Kbd,
+    Eyebrow,
+    PullQuote,
+    Stat,
+    StatList,
+    IndexList,
+    TimeGrid,
+    CodeView,
+    MediaViewer,
+    ImageViewer,
+    VideoViewer,
+    AudioViewer,
+    PdfViewer,
+    // fancy-whiteboard exports a StickyNote too — the very collision the
+    // registry sidesteps by qualifying this slug as `react-fancy-sticky-note`.
+    StickyNote as RfStickyNote,
+    AccordionPanel,
+    AccordionPanelSection,
+    AccordionPanelTrigger,
+    AccordionPanelContent,
+    type TreeNodeData,
 } from "@particle-academy/react-fancy";
 import { CodeEditor, MarkdownEditor } from "@particle-academy/fancy-code";
 import {
@@ -97,7 +122,7 @@ import { Board, StickyNote, CursorLayer, Shape, Connector, Drawing } from "@part
 import "@particle-academy/fancy-whiteboard/styles.css";
 import { ArtBoard, ArtPiece, type ArtBoardValue } from "@particle-academy/fancy-artboard";
 import "@particle-academy/fancy-artboard/styles.css";
-import { FlowViewer } from "@particle-academy/fancy-flow";
+import { FlowViewer, type FlowGraph, type FlowNode} from "@particle-academy/fancy-flow";
 import { FlowEditor } from "../../components/FlowEditor";
 import { useFlowRunnerUx, createFlowRunnerUx } from "@particle-academy/fancy-flow/ux";
 import { runFlow } from "@particle-academy/fancy-flow/engine";
@@ -166,7 +191,7 @@ import {
     CMS_DATA_STUDIO,
 } from "./showcase-fixtures";
 
-type DemoFn = () => JSX.Element;
+type DemoFn = () => ReactElement;
 
 const REGISTRY: Record<string, DemoFn> = {
     // Buttons / actions
@@ -349,6 +374,24 @@ const REGISTRY: Record<string, DemoFn> = {
     "fancy-x-files-ui/security-txt-editor": XfSecurityTxtEditorDemo,
     "fancy-x-files-ui/llms-txt-editor": XfLlmsTxtEditorDemo,
     "react-fancy/json-editor": JsonEditorDemo,
+    "react-fancy/grid": GridDemo,
+    "react-fancy/container": ContainerDemo,
+    "react-fancy/section": SectionDemo,
+    "react-fancy/kbd": KbdDemo,
+    "react-fancy/eyebrow": EyebrowDemo,
+    "react-fancy/pull-quote": PullQuoteDemo,
+    "react-fancy/stat": StatDemo,
+    "react-fancy/stat-list": StatListDemo,
+    "react-fancy/index-list": IndexListDemo,
+    "react-fancy/time-grid": TimeGridDemo,
+    "react-fancy/code-view": CodeViewDemo,
+    "react-fancy/accordion-panel": AccordionPanelDemo,
+    "react-fancy/media-viewer": MediaViewerDemo,
+    "react-fancy/image-viewer": ImageViewerDemo,
+    "react-fancy/video-viewer": VideoViewerDemo,
+    "react-fancy/audio-viewer": AudioViewerDemo,
+    "react-fancy/pdf-viewer": PdfViewerDemo,
+    "react-fancy/sticky-note": StickyNoteDemo,
     "fancy-x-files-ui/humans-txt-editor": XfHumansTxtEditorDemo,
     "fancy-x-files-ui/sitemap-editor": XfSitemapEditorDemo,
     "fancy-x-files-ui/agents-editor": XfAgentsEditorDemo,
@@ -365,15 +408,406 @@ export function ComponentDemo({ slug, name, pkg }: { slug: string; name: string;
         (slug.startsWith(`${pkg}-`) ? REGISTRY[`${pkg}/${slug.slice(pkg.length + 1)}`] : undefined);
     if (Demo) return <Demo />;
     return (
-        <div className="grid place-items-center rounded-md border border-dashed border-zinc-300 bg-zinc-50 p-10 text-sm text-zinc-500 dark:border-zinc-700 dark:bg-zinc-950">
-            Interactive demo for <code className="ml-1 font-mono">{name}</code> isn't wired yet.
-            The <strong>Install</strong> and <strong>Source</strong> tabs above have the import
-            snippet and the component's source.
+        // `grid place-items-center` made every inline child its own grid item,
+        // so this sentence rendered one fragment per line — "Interactive demo
+        // for" / "Grid" / "isn't wired yet. The" / "Install" / … A flex row with
+        // a single text child keeps it a sentence.
+        <div className="flex min-h-[8rem] items-center justify-center rounded-md border border-dashed border-zinc-300 bg-zinc-50 p-10 dark:border-zinc-700 dark:bg-zinc-950">
+            <p className="max-w-prose text-center text-sm text-zinc-500">
+                Interactive demo for <code className="font-mono">{name}</code> isn&apos;t wired yet.
+                The <strong>Install</strong> and <strong>Source</strong> tabs above have the import
+                snippet and the component&apos;s source.
+            </p>
         </div>
     );
 }
 
 // ─── Demos ──────────────────────────────────────────────────────────────────
+
+// ─── react-fancy: layout, editorial, stat + media components ────────────────
+//
+// These nineteen were the largest block of "Interactive demo for X isn't wired
+// yet" on the site. Every one of them HAD a tile preview — that grid was made
+// complete and is test-enforced — but a tile is a thumbnail, and the detail
+// page is where someone decides whether to use the thing. Advertising a
+// component and then showing a dashed box on its own page costs a reader their
+// time and tells them the component is unfinished.
+
+function GridDemo() {
+    const [cols, setCols] = useState<2 | 3 | 4 | 6>(3);
+    const [gap, setGap] = useState<"sm" | "md" | "lg">("md");
+    return (
+        <DemoNote
+            outOfBox="The responsive grid, its column counts and its gap scale."
+            demo="The two pickers are demo scaffolding — a host sets cols and gap as props."
+        >
+            <div className="space-y-3">
+                <div className="flex flex-wrap items-center gap-4 text-xs">
+                    <span className="flex items-center gap-2">
+                        <span className="text-zinc-500">cols</span>
+                        {([2, 3, 4, 6] as const).map((n) => (
+                            <Button key={n} size="xs" color={cols === n ? "violet" : "zinc"} onClick={() => setCols(n)}>
+                                {n}
+                            </Button>
+                        ))}
+                    </span>
+                    <span className="flex items-center gap-2">
+                        <span className="text-zinc-500">gap</span>
+                        {(["sm", "md", "lg"] as const).map((g) => (
+                            <Button key={g} size="xs" color={gap === g ? "violet" : "zinc"} onClick={() => setGap(g)}>
+                                {g}
+                            </Button>
+                        ))}
+                    </span>
+                </div>
+                <Grid cols={cols} gap={gap}>
+                    {Array.from({ length: 12 }, (_, i) => (
+                        <div key={i} className="grid h-12 place-items-center rounded bg-violet-100 text-xs font-medium text-violet-900 dark:bg-violet-500/20 dark:text-violet-100">
+                            {i + 1}
+                        </div>
+                    ))}
+                </Grid>
+            </div>
+        </DemoNote>
+    );
+}
+
+function ContainerDemo() {
+    const [size, setSize] = useState<"sm" | "md" | "lg" | "full">("md");
+    return (
+        <DemoNote
+            outOfBox="The measure cap and the centring — Container is what stops a paragraph running the full width of a 4K monitor."
+            demo="The size picker; the dashed edge stands in for the viewport."
+        >
+            <div className="space-y-3">
+                <div className="flex items-center gap-2 text-xs">
+                    <span className="text-zinc-500">size</span>
+                    {(["sm", "md", "lg", "full"] as const).map((s) => (
+                        <Button key={s} size="xs" color={size === s ? "violet" : "zinc"} onClick={() => setSize(s)}>
+                            {s}
+                        </Button>
+                    ))}
+                </div>
+                <div className="rounded-md border border-dashed border-zinc-300 p-3 dark:border-zinc-700">
+                    <Container size={size} className="rounded bg-violet-50 px-4 py-3 text-sm text-violet-900 ring-1 ring-violet-200 dark:bg-violet-500/10 dark:text-violet-100 dark:ring-violet-500/30">
+                        A measure this wide stays readable. Past roughly 75 characters the eye loses
+                        the start of the next line, which is the whole reason this component exists.
+                    </Container>
+                </div>
+            </div>
+        </DemoNote>
+    );
+}
+
+function SectionDemo() {
+    const [divider, setDivider] = useState(true);
+    return (
+        <DemoNote
+            outOfBox="Vertical rhythm between blocks, and the optional rule between them."
+            demo="The divider toggle and the three blocks of copy."
+        >
+            <div className="space-y-3">
+                <label className="flex items-center gap-2 text-xs text-zinc-500">
+                    <input type="checkbox" checked={divider} onChange={(e) => setDivider(e.target.checked)} />
+                    divider
+                </label>
+                <div>
+                    {[
+                        ["Authoring surface", "Terse props, JSON-friendly inputs, sensible defaults."],
+                        ["Inhabited surface", "Agents read and write state through MCP bridges, not DOM scraping."],
+                        ["Trust but verify", "Destructive actions stage a proposal a human confirms."],
+                    ].map(([title, body]) => (
+                        <Section key={title} space="md" divider={divider}>
+                            <Heading size="sm">{title}</Heading>
+                            <Text size="sm" className="!text-zinc-500">{body}</Text>
+                        </Section>
+                    ))}
+                </div>
+            </div>
+        </DemoNote>
+    );
+}
+
+function KbdDemo() {
+    return (
+        <div className="space-y-2 text-sm">
+            {[
+                { keys: ["⌘", "K"], what: "Open the command palette" },
+                { keys: ["Shift", "?"], what: "Show every shortcut" },
+                { keys: ["g", "p"], what: "Go to packages" },
+                { keys: ["Esc"], what: "Dismiss the current layer" },
+            ].map((row) => (
+                <div key={row.what} className="flex items-center gap-3">
+                    <Kbd keys={row.keys} />
+                    <span className="text-zinc-500">{row.what}</span>
+                </div>
+            ))}
+        </div>
+    );
+}
+
+function EyebrowDemo() {
+    return (
+        <div className="max-w-prose space-y-8">
+            <div>
+                <Eyebrow num="01" label="Human+ UX" aside="2026" rule />
+                <Heading size="md" className="mt-2">Agents ride shotgun</Heading>
+                <Text size="sm" className="!text-zinc-500">
+                    With rule, an eyebrow doubles as the section break.
+                </Text>
+            </div>
+            <div>
+                <Eyebrow label="No number, no rule" />
+                <Heading size="md" className="mt-2">Every part is optional</Heading>
+            </div>
+        </div>
+    );
+}
+
+function PullQuoteDemo() {
+    return (
+        <div className="max-w-prose space-y-8">
+            <PullQuote attribution="Component contract" source="AGENTS.md" rule>
+                The component itself is the agent&apos;s affordance, not an external target.
+            </PullQuote>
+            <PullQuote>A quote with no attribution still sets its own measure.</PullQuote>
+        </div>
+    );
+}
+
+function StatDemo() {
+    return (
+        <div className="flex flex-wrap items-end gap-10">
+            <Stat value="2,431" label="Files synced" />
+            <Stat value="99.98%" label="Uptime" />
+            <Stat value="14ms" label="p50 latency" />
+        </div>
+    );
+}
+
+function StatListDemo() {
+    return (
+        <StatList
+            className="max-w-sm"
+            items={[
+                { value: "279", label: "Registry items" },
+                { value: "70", label: "Packages" },
+                { value: "0.5", label: "Kit version" },
+                { value: "21", label: "Agent bridges" },
+            ]}
+        />
+    );
+}
+
+function IndexListDemo() {
+    return (
+        <IndexList
+            className="max-w-md"
+            items={[
+                { num: "01", title: "Fieldwork", meta: "20 styles" },
+                { num: "02", title: "Mom-n-Pops", meta: "20 styles" },
+                { num: "03", title: "Dashboards", meta: "20 styles" },
+            ]}
+        />
+    );
+}
+
+function TimeGridDemo() {
+    const [value, setValue] = useState<boolean[][]>([
+        [false, true, false, true, false],
+        [true, true, false, false, true],
+        [false, false, true, true, false],
+        [true, false, true, false, true],
+        [false, true, true, false, false],
+    ]);
+    const on = value.flat().filter(Boolean).length;
+    return (
+        <DemoNote
+            outOfBox="The grid, the click/drag selection and the controlled value."
+            demo="The slot labels and the running count below."
+        >
+            <div className="space-y-3">
+                <TimeGrid
+                    rows={["9am", "11am", "1pm", "3pm", "5pm"]}
+                    cols={["Mon", "Tue", "Wed", "Thu", "Fri"]}
+                    toneOn="violet"
+                    value={value}
+                    onChange={setValue}
+                />
+                <Text size="sm" className="!text-zinc-500">
+                    {on} slot{on === 1 ? "" : "s"} selected — click or drag across the grid.
+                </Text>
+            </div>
+        </DemoNote>
+    );
+}
+
+function CodeViewDemo() {
+    return (
+        <div className="max-w-xl overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
+            <CodeView value={SAMPLE_CODE_VIEW} language="html" readOnly minHeight={120} />
+        </div>
+    );
+}
+
+function AccordionPanelDemo() {
+    const [open, setOpen] = useState<string[]>(["shipping"]);
+    return (
+        <DemoNote
+            outOfBox="The panel, its sections, the open-state tracking and the triggers."
+            demo="The three sections' copy and the open-id readout."
+        >
+            <div className="space-y-3">
+                <AccordionPanel
+                    value={open}
+                    onValueChange={setOpen}
+                    className="max-w-md rounded-md border border-zinc-200 dark:border-zinc-800"
+                >
+                    {[
+                        { id: "shipping", title: "Shipping & returns", body: "Ships in 2 business days. Returns accepted for 30." },
+                        { id: "sizing", title: "Sizing", body: "Runs true to size. Between sizes, size up." },
+                        { id: "care", title: "Care", body: "Cold wash, hang dry, do not tumble." },
+                    ].map((s) => (
+                        <AccordionPanelSection key={s.id} id={s.id}>
+                            <AccordionPanelTrigger>{s.title}</AccordionPanelTrigger>
+                            <AccordionPanelContent>
+                                <Text size="sm" className="!text-zinc-500">{s.body}</Text>
+                            </AccordionPanelContent>
+                        </AccordionPanelSection>
+                    ))}
+                </AccordionPanel>
+                <Text size="xs" className="!text-zinc-500">
+                    open: {open.length ? open.join(", ") : "(none)"} — controlled, so an agent can set it.
+                </Text>
+            </div>
+        </DemoNote>
+    );
+}
+
+/**
+ * The demo that answers "why are there so many media viewers?".
+ *
+ * There is ONE you reach for — MediaViewer — and it resolves the right
+ * specialised viewer from the source. The other four are what it delegates to,
+ * exported so you can skip the detection when you already know the type.
+ */
+function MediaViewerDemo() {
+    const sources = [
+        { label: "Image", src: SAMPLE_IMG, note: "resolves to ImageViewer" },
+        { label: "PDF", src: SAMPLE_PDF, note: "resolves to PdfViewer" },
+        { label: "Audio", src: SILENT_WAV, note: "resolves to AudioViewer" },
+    ];
+    const [i, setI] = useState(0);
+    const current = sources[i]!;
+    return (
+        <DemoNote
+            outOfBox="Type detection from the src, and the viewer it hands off to."
+            demo="The three sample files and the source switcher."
+        >
+            <div className="space-y-3">
+                <div className="flex flex-wrap items-center gap-2 text-xs">
+                    <span className="text-zinc-500">src</span>
+                    {sources.map((s, idx) => (
+                        <Button key={s.label} size="xs" color={i === idx ? "violet" : "zinc"} onClick={() => setI(idx)}>
+                            {s.label}
+                        </Button>
+                    ))}
+                    <span className="text-zinc-400">{current.note}</span>
+                </div>
+                <div className="h-64 max-w-xl overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
+                    <MediaViewer key={current.src} src={current.src} alt={current.label} style={{ height: "100%" }} />
+                </div>
+            </div>
+        </DemoNote>
+    );
+}
+
+function ImageViewerDemo() {
+    const [fit, setFit] = useState<"cover" | "contain">("contain");
+    return (
+        <DemoNote
+            outOfBox="Zoom, pan, and the fit modes."
+            demo="The fit picker and the sample screenshot."
+        >
+            <div className="space-y-3">
+                <div className="flex items-center gap-2 text-xs">
+                    <span className="text-zinc-500">fit</span>
+                    {(["contain", "cover"] as const).map((f) => (
+                        <Button key={f} size="xs" color={fit === f ? "violet" : "zinc"} onClick={() => setFit(f)}>
+                            {f}
+                        </Button>
+                    ))}
+                </div>
+                <div className="h-64 max-w-xl overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
+                    <ImageViewer src={SAMPLE_IMG} alt="Scroll to zoom, drag to pan" fit={fit} style={{ height: "100%" }} />
+                </div>
+            </div>
+        </DemoNote>
+    );
+}
+
+function VideoViewerDemo() {
+    return (
+        <DemoNote
+            outOfBox="The player chrome, poster handling and fit."
+            demo="The poster image — this demo ships no video file, so there is nothing to play."
+        >
+            <div className="h-64 max-w-xl overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
+                <VideoViewer src="" poster={SAMPLE_POSTER} controls muted fit="contain" />
+            </div>
+        </DemoNote>
+    );
+}
+
+function AudioViewerDemo() {
+    return (
+        <DemoNote
+            outOfBox="The transport, the scrubber and the title row."
+            demo="The clip is a valid but completely SILENT wav — it is here to show the chrome, not to play."
+        >
+            <div className="max-w-md">
+                <AudioViewer src={SILENT_WAV} title="podcast-ep-12.mp3" />
+            </div>
+        </DemoNote>
+    );
+}
+
+function PdfViewerDemo() {
+    return (
+        <div className="h-80 max-w-xl overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
+            <PdfViewer src={SAMPLE_PDF} title="sample.pdf" />
+        </div>
+    );
+}
+
+function StickyNoteDemo() {
+    const [notes, setNotes] = useState([
+        { id: 1, text: "Ship the dream", color: "yellow" as const, rotate: -4 },
+        { id: 2, text: "Review PR #42", color: "violet" as const, rotate: 3 },
+        { id: 3, text: "Edit me — I'm controlled", color: "green" as const, rotate: -1 },
+    ]);
+    return (
+        <DemoNote
+            outOfBox="The note, its colours, the rotation and in-place editing."
+            demo="The three starting notes. Editing writes to local state, as a host would."
+        >
+            <div className="flex flex-wrap items-center gap-8 p-2">
+                {notes.map((n) => (
+                    <RfStickyNote
+                        key={n.id}
+                        value={n.text}
+                        color={n.color}
+                        rotate={n.rotate}
+                        width={150}
+                        onChange={(text: string) =>
+                            setNotes((prev) => prev.map((p) => (p.id === n.id ? { ...p, text } : p)))
+                        }
+                    />
+                ))}
+            </div>
+        </DemoNote>
+    );
+}
 
 /**
  * Wraps a rich/interactive demo with a clear "what's stock vs what's demo
@@ -505,10 +939,10 @@ function CardDemo() {
 function HeadingDemo() {
     return (
         <div className="space-y-2">
-            <Heading level={1} size="xl">Heading XL</Heading>
-            <Heading level={2} size="lg">Heading LG</Heading>
-            <Heading level={3} size="md">Heading MD</Heading>
-            <Heading level={4} size="sm">Heading SM</Heading>
+            <Heading as="h1" size="xl">Heading XL</Heading>
+            <Heading as="h2" size="lg">Heading LG</Heading>
+            <Heading as="h3" size="md">Heading MD</Heading>
+            <Heading as="h4" size="sm">Heading SM</Heading>
         </div>
     );
 }
@@ -536,10 +970,10 @@ function SeparatorDemo() {
 function AvatarDemo() {
     return (
         <div className="flex items-center gap-3">
-            <Avatar name="Glenn Wagner" />
-            <Avatar name="Rita Kumar" />
-            <Avatar name="Sam Lin" />
-            <Avatar name="Ayodeji Adekola" />
+            <Avatar alt="Glenn Wagner" fallback="GW" />
+            <Avatar alt="Rita Kumar" fallback="RK" />
+            <Avatar alt="Sam Lin" fallback="SL" />
+            <Avatar alt="Ayodeji Adekola" fallback="AA" />
         </div>
     );
 }
@@ -642,14 +1076,14 @@ function CalloutDemo() {
 function TimelineDemo() {
     return (
         <Timeline>
-            <Timeline.Item date="May 16" title="v0.6.1 released" color="emerald">
-                Inertia + react-fancy chrome live across the showcase.
+            <Timeline.Item date="May 16" color="emerald">
+                <strong>v0.6.1 released</strong>{" — "}                Inertia + react-fancy chrome live across the showcase.
             </Timeline.Item>
-            <Timeline.Item date="May 15" title="v0.6.0 released" color="violet">
-                Showcase site Phase 1 → Phase 6 shipped.
+            <Timeline.Item date="May 15" color="violet">
+                <strong>v0.6.0 released</strong>{" — "}                Showcase site Phase 1 → Phase 6 shipped.
             </Timeline.Item>
-            <Timeline.Item date="May 11" title="Dreaming branch opened" color="sky">
-                First wave of speculative components: 24 ideas.
+            <Timeline.Item date="May 11" color="sky">
+                <strong>Dreaming branch opened</strong>{" — "}                First wave of speculative components: 24 ideas.
             </Timeline.Item>
         </Timeline>
     );
@@ -657,7 +1091,7 @@ function TimelineDemo() {
 
 function PaginationDemo() {
     const [page, setPage] = useState(3);
-    return <Pagination currentPage={page} totalPages={12} onPageChange={setPage} />;
+    return <Pagination page={page} totalPages={12} onPageChange={setPage} />;
 }
 
 function TooltipDemo() {
@@ -1070,7 +1504,7 @@ function SidebarDemo() {
 }
 
 function TreeNavDemo() {
-    const tree = [
+    const tree: TreeNodeData[] = [
         {
             id: "src", label: "src", type: "folder" as const,
             children: [
@@ -1090,7 +1524,7 @@ function TreeNavDemo() {
     ];
     return (
         <div className="max-w-xs rounded-md border border-zinc-200 bg-white p-2 dark:border-zinc-800 dark:bg-zinc-900">
-            <TreeNav nodes={tree} defaultExpanded={["src", "components"]} />
+            <TreeNav nodes={tree} defaultExpandedIds={["src", "components"]} />
         </div>
     );
 }
@@ -1486,8 +1920,8 @@ function MagicWandDemo() {
             value={v}
             onValueChange={setV}
             actions={[
-                { id: "shorten", label: "Shorten" },
-                { id: "upper", label: "Uppercase" },
+                { id: "shorten", label: "Shorten", run: (sel: string) => sel.split(/\s+/).slice(0, 6).join(" ") },
+                { id: "upper", label: "Uppercase", run: (sel: string) => sel.toUpperCase() },
             ]}
             onAction={(action, selection, _replacement) => {
                 const transform = action.id === "upper"
@@ -1524,8 +1958,8 @@ function ChatDrawerDemo() {
     return (
         <ChatDrawer
             tabs={[
-                { id: "inbox", label: "Inbox", badge: 3 },
-                { id: "agents", label: "Agents", badge: 1 },
+                { id: "inbox", label: "Inbox", number: 3 },
+                { id: "agents", label: "Agents", number: 1 },
                 { id: "notifications", label: "Activity" },
             ]}
             activeTabId={active}
@@ -2103,11 +2537,14 @@ function ArtboardNoteDemo() {
 // registry kind *names* (manual_trigger, api_request, branch, …) — that's how
 // FlowEditor itself shapes a node (see its palette-drop handler). The branch's
 // true/false output handles drive the two paths.
-const flowNode = (id: string, type: string, x: number, y: number, label: string, extra: Record<string, unknown> = {}) => ({
+// `FlowNodeData` is a discriminated union on `kind`, so an unannotated helper
+// widens it to `string` and every node it builds fails to typecheck at the
+// call site instead of here.
+const flowNode = (id: string, type: string, x: number, y: number, label: string, extra: Record<string, unknown> = {}): FlowNode => ({
     id,
     type,
     position: { x, y },
-    data: { kind: type, label, config: {}, ...extra },
+    data: { kind: type, label, config: {}, ...extra } as FlowNode["data"],
 });
 // Register the FlowRunnerUx palette node(s) once at module load — appearance
 // only; the real effect handlers are wired per-instance in the component below.
@@ -2127,7 +2564,7 @@ createFlowRunnerUx({
     },
 }).registerKinds();
 
-const FLOW_SEED_GRAPH = {
+const FLOW_SEED_GRAPH: FlowGraph = {
     nodes: [
         flowNode("trigger", "manual_trigger", 0, 150, "Start"),
         flowNode("fetch", "api_request", 220, 60, "Fetch order"),
@@ -3107,9 +3544,11 @@ function AgentPanelDemo() {
     return (
         <div className="max-w-sm">
             <AgentPanel
-                agents={[
-                    { id: "claude", name: "Claude", color: "#a855f7", status: "active" as const, lastActivity: { kind: "write", at: Date.now() - 1500, target: "Onboarding sticky" } },
-                    { id: "scribe", name: "Scribe", color: "#10b981", status: "idle" as const, lastActivity: { kind: "read", at: Date.now() - 28000, target: "deck-1 · slide 3" } },
+                agent={{ name: "Claude", color: "#a855f7" }}
+                activity={[
+                    { id: "a1", at: Date.now() - 1500, kind: "tool", source: "Claude", text: "Wrote “Onboarding sticky”" },
+                    { id: "a2", at: Date.now() - 28000, kind: "message", source: "Claude", text: "Read deck-1 · slide 3" },
+                    { id: "a3", at: Date.now() - 61000, kind: "info", source: "Claude", text: "Joined the board" },
                 ]}
             />
         </div>

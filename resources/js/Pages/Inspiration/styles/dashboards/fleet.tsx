@@ -11,7 +11,7 @@ import {
     Table,
     Text,
 } from "@particle-academy/react-fancy";
-import { EChart, registerAll } from "@particle-academy/fancy-echarts";
+import { type EChartsOption, EChart, registerAll } from "@particle-academy/fancy-echarts";
 import { BarChart3, Map as MapIcon, Package, Truck, Users } from "lucide-react";
 import type { Style } from "../../types";
 
@@ -126,7 +126,7 @@ export default function Fleet({ style }: { style: Style }) {
 
     const selectedTruck = selected ? (VEH_TO_TRUCK[selected] ?? null) : null;
 
-    const mapOption = useMemo(
+    const mapOption = useMemo<EChartsOption>(
         () => ({
             backgroundColor: "transparent",
             animationDuration: 600,
@@ -202,15 +202,18 @@ export default function Fleet({ style }: { style: Style }) {
         [selectedTruck],
     );
 
-    const onChartReady = (chart: {
-        on: (ev: string, cb: (p: { seriesType?: string; data?: { id?: string } }) => void) => void;
-    }) => {
-        chart.on("click", (params) => {
+    // Clicking a truck on the map selects it.
+    //
+    // This was wired through an `onChartReady` prop, which `EChart` does not
+    // have — so the handler was never installed and the map was inert. The real
+    // seam is `onEvents`, keyed by ECharts event name.
+    const chartEvents = {
+        click: (params: { seriesType?: string; data?: { id?: string } }) => {
             if (params.seriesType === "scatter" && params.data?.id) {
                 const veh = TRUCK_TO_VEH[params.data.id];
                 if (veh) setSelected((cur) => (cur === veh ? null : veh));
             }
-        });
+        },
     };
 
     return (
@@ -271,7 +274,7 @@ export default function Fleet({ style }: { style: Style }) {
                             <div className="dbfleet-map__grid" aria-hidden />
                             <div className="dbfleet-map__chart">
                                 {mounted ? (
-                                    <EChart option={mapOption} onChartReady={onChartReady} style={{ height: "100%", width: "100%" }} />
+                                    <EChart option={mapOption} onEvents={chartEvents} style={{ height: "100%", width: "100%" }} />
                                 ) : (
                                     <div className="dbfleet-map__placeholder" aria-hidden />
                                 )}

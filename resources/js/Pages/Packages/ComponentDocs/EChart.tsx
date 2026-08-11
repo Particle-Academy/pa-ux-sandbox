@@ -1,7 +1,7 @@
 import type { ComponentDoc } from "./types";
-import { EChart } from "@particle-academy/fancy-echarts";
+import { type EChartsOption, EChart } from "@particle-academy/fancy-echarts";
 
-const lineOption = {
+const lineOption: EChartsOption = {
     tooltip: { trigger: "axis" },
     legend: { data: ["Free", "Pro"], textStyle: { color: "#a1a1aa" } },
     xAxis: { type: "category", data: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"], axisLabel: { color: "#a1a1aa" } },
@@ -12,7 +12,7 @@ const lineOption = {
     ],
 };
 
-const pieOption = {
+const pieOption: EChartsOption = {
     tooltip: { trigger: "item" },
     series: [
         {

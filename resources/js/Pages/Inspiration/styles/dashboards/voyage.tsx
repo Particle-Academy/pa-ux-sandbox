@@ -12,7 +12,7 @@ import {
     Table,
     Text,
 } from "@particle-academy/react-fancy";
-import { EChart, registerAll } from "@particle-academy/fancy-echarts";
+import { type EChartsOption, EChart, registerAll } from "@particle-academy/fancy-echarts";
 import { ChevronRight, Plane } from "lucide-react";
 import type { Style } from "../../types";
 
@@ -94,7 +94,7 @@ const NAV = [
 ] as const;
 
 /* ── 2026 monthly flight-activity bar chart (the only real chart) ────────────── */
-const travelOption = {
+const travelOption: EChartsOption = {
     animationDuration: 650,
     grid: { left: 0, right: 0, top: 8, bottom: 20 },
     tooltip: {

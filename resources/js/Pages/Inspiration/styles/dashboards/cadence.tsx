@@ -14,7 +14,7 @@ import {
     Text,
     Tooltip,
 } from "@particle-academy/react-fancy";
-import { EChart, registerAll } from "@particle-academy/fancy-echarts";
+import { type EChartsOption, EChart, registerAll } from "@particle-academy/fancy-echarts";
 import { CalendarClock, PenLine, Search, Send } from "lucide-react";
 import type { Style } from "../../types";
 
@@ -274,7 +274,7 @@ export default function Cadence({ style }: { style: Style }) {
         return CAMPAIGNS.filter((c) => c.name.toLowerCase().includes(q));
     }, [query]);
 
-    const opensOption = useMemo(
+    const opensOption = useMemo<EChartsOption | null>(
         () =>
             detail.kind === "sent"
                 ? {

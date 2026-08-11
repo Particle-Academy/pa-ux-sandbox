@@ -11,7 +11,7 @@ import {
     Text,
     Timeline,
 } from "@particle-academy/react-fancy";
-import { EChart, registerAll } from "@particle-academy/fancy-echarts";
+import { type EChartsOption, EChart, registerAll } from "@particle-academy/fancy-echarts";
 import { AlertTriangle, Pause, Play, TrendingUp } from "lucide-react";
 import type { Style } from "../../types";
 
@@ -92,7 +92,7 @@ const MONO = "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace";
 const REVENUE_SERIES = [210, 640, 980, 1520, 2180, 3120, 4360, 5580, 6980, 8412];
 const REVENUE_HOURS = ["12a", "2a", "4a", "6a", "8a", "10a", "12p", "2p", "4p", "now"];
 
-const revenueOption = {
+const revenueOption: EChartsOption = {
     animationDuration: 700,
     grid: { left: 0, right: 2, top: 8, bottom: 22 },
     tooltip: {
@@ -148,7 +148,7 @@ const revenueOption = {
 };
 
 /** Today's conversion funnel — bar heights [100,56,32,16], rates as labels. */
-const funnelOption = {
+const funnelOption: EChartsOption = {
     animationDuration: 700,
     grid: { left: 0, right: 0, top: 22, bottom: 22 },
     tooltip: {

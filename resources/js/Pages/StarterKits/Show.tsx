@@ -41,7 +41,7 @@ export default function StarterKitsShow({ kit }: { kit: Kit }) {
             <div className="mt-3 mb-6 flex flex-wrap items-start justify-between gap-4">
                 <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
-                        <Heading level={1} size="xl" className="!text-zinc-900 dark:!text-zinc-100">{kit.name}</Heading>
+                        <Heading as="h1" size="xl" className="!text-zinc-900 dark:!text-zinc-100">{kit.name}</Heading>
                         <Badge color="violet" size="sm">starter kit</Badge>
                     </div>
                     <Text className="mt-2 max-w-3xl !text-zinc-600 dark:!text-zinc-300">{kit.blurb}</Text>

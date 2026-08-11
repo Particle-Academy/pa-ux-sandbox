@@ -171,7 +171,7 @@ export function TrackedTextareaDemo() {
             </span>
           </div>
           <div className="flex items-center justify-end gap-2 pt-4">
-            <Button variant="outline" size="sm" onClick={reset}>
+            <Button size="sm" onClick={reset}>
               reset seed
             </Button>
           </div>
@@ -300,7 +300,7 @@ function SpanView({
             <Button size="sm" color="emerald" onClick={onAccept}>
               ✓ accept
             </Button>
-            <Button size="sm" variant="outline" onClick={onReject}>
+            <Button size="sm" onClick={onReject}>
               ✕ reject
             </Button>
           </div>

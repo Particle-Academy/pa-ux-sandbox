@@ -22,7 +22,7 @@ function Gamification({ achievements, prizes }: Props) {
                     <Card.Header>
                         <div style={{ display: "flex", justifyContent: "space-between", width: "100%", alignItems: "center" }}>
                             <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
-                                <Icon name="trophy" size={16} style={{ color: "var(--fg-3)" }} /> Achievements
+                                <Icon name="trophy" size="sm" style={{ color: "var(--fg-3)" }} /> Achievements
                             </span>
                             <Button as={Link} variant="ghost" size="sm" icon="plus" href="/admin/gamification/achievements/create">New</Button>
                         </div>
@@ -44,7 +44,7 @@ function Gamification({ achievements, prizes }: Props) {
                                         <Table.Row key={a.id}>
                                             <Table.Cell>
                                                 <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                                                    {a.icon && <Icon name={a.icon} size={16} style={{ color: "var(--fg-3)" }} />}
+                                                    {a.icon && <Icon name={a.icon} size="sm" style={{ color: "var(--fg-3)" }} />}
                                                     <div>
                                                         <div style={{ fontSize: 13.5, fontWeight: 500, color: "var(--fg-1)" }}>{a.name}</div>
                                                         {a.description && <div style={{ fontSize: 12, color: "var(--fg-3)", marginTop: 2 }}>{a.description}</div>}
@@ -82,7 +82,7 @@ function Gamification({ achievements, prizes }: Props) {
                     <Card.Header>
                         <div style={{ display: "flex", justifyContent: "space-between", width: "100%", alignItems: "center" }}>
                             <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
-                                <Icon name="gift" size={16} style={{ color: "var(--fg-3)" }} /> Prizes
+                                <Icon name="gift" size="sm" style={{ color: "var(--fg-3)" }} /> Prizes
                             </span>
                             <Button as={Link} variant="ghost" size="sm" icon="plus" href="/admin/gamification/prizes/create">New prize</Button>
                         </div>

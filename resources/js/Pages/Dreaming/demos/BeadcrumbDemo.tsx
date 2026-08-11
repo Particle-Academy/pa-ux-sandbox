@@ -238,7 +238,6 @@ export function BeadcrumbDemo() {
           <div className="flex items-center justify-end gap-2 pt-4">
             <Button
               size="sm"
-              variant="outline"
               onClick={() => head && setActive(head)}
               disabled={!head || head === active}
             >
@@ -246,7 +245,6 @@ export function BeadcrumbDemo() {
             </Button>
             <Button
               size="sm"
-              variant="outline"
               onClick={() => setCompareWith(null)}
               disabled={!compareWith}
             >

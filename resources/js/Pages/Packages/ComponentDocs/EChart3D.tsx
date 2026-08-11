@@ -1,7 +1,7 @@
 import type { ComponentDoc } from "./types";
-import { EChart3D } from "@particle-academy/fancy-echarts";
+import { type EChartsOption, EChart3D } from "@particle-academy/fancy-echarts";
 
-const surfaceOption = {
+const surfaceOption: EChartsOption = {
     grid3D: { viewControl: { autoRotate: true, autoRotateSpeed: 5 } },
     xAxis3D: { type: "value" },
     yAxis3D: { type: "value" },

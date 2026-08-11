@@ -20,13 +20,13 @@ export function StatCard({ label, value, icon, delta, up, sub }: { label: string
         <Card style={{ padding: 15 }}>
             <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
                 <span className="admin-stat-label">{label}</span>
-                <span className="admin-statcard-ico"><Icon name={icon} size={16} /></span>
+                <span className="admin-statcard-ico"><Icon name={icon} size="sm" /></span>
             </div>
             <div className="admin-stat-value">{value}</div>
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 8 }}>
                 {up != null && delta && (
                     <span style={{ display: "inline-flex", alignItems: "center", gap: 3, fontSize: 12, fontWeight: 600, color: up ? "var(--emerald-600, #059669)" : "#dc2626" }}>
-                        <Icon name={up ? "trending-up" : "trending-down"} size={13} />
+                        <Icon name={up ? "trending-up" : "trending-down"} size="xs" />
                         {delta}
                     </span>
                 )}

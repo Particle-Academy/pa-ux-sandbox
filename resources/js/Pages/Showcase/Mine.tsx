@@ -162,7 +162,7 @@ function SubmissionsSummary({ submissions }: { submissions: Submission[] }) {
                     className="rounded-xl border border-zinc-200 bg-zinc-50/60 px-4 py-3 dark:border-zinc-800 dark:bg-zinc-900/40"
                 >
                     <div className="flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
-                        <Icon name={b.icon} size={12} />
+                        <Icon name={b.icon} size="xs" />
                         {b.label}
                     </div>
                     <div
@@ -231,7 +231,7 @@ export default function MySubmissions({
 
             <div className="flex flex-wrap items-end justify-between gap-4">
                 <div>
-                    <Heading level={1} size="xl">
+                    <Heading as="h1" size="xl">
                         Your submissions
                     </Heading>
                     <Text className="mt-2 max-w-2xl">
@@ -254,7 +254,7 @@ export default function MySubmissions({
                             <span className="grid h-12 w-12 place-items-center rounded-full bg-violet-100 text-violet-600 dark:bg-violet-900/40 dark:text-violet-300">
                                 <Icon name="sparkles" className="h-6 w-6" />
                             </span>
-                            <Heading level={2} size="md">
+                            <Heading as="h2" size="md">
                                 No submissions yet
                             </Heading>
                             <Text className="max-w-md">
@@ -292,7 +292,7 @@ export default function MySubmissions({
                                                     name={s.kind === "repo" ? "award" : "globe"}
                                                     className="h-4 w-4 text-violet-500"
                                                 />
-                                                <Heading level={2} size="sm" className="truncate">
+                                                <Heading as="h2" size="sm" className="truncate">
                                                     {s.title || host}
                                                 </Heading>
                                                 <Badge color="zinc" size="sm" variant="soft">
@@ -400,7 +400,7 @@ export default function MySubmissions({
             {/* Agent access — mint a key an AI agent presents to the showcase
                 MCP tools to register + verify projects on your behalf. */}
             <div className="mt-12">
-                <Heading level={2} size="lg">
+                <Heading as="h2" size="lg">
                     Agent access
                 </Heading>
                 <Text className="mt-2 max-w-2xl">

@@ -221,7 +221,7 @@ export default function StarterKitsIndex({ kits }: { kits: Kit[] }) {
 
             <div className="flex flex-wrap items-end justify-between gap-4">
                 <div>
-                    <Heading level={1} size="xl" className="!text-zinc-900 dark:!text-zinc-100">Starter Kits</Heading>
+                    <Heading as="h1" size="xl" className="!text-zinc-900 dark:!text-zinc-100">Starter Kits</Heading>
                     <Text className="mt-2 max-w-2xl !text-zinc-600 dark:!text-zinc-300">
                         Full-app demos built from Fancy UI pieces. Each is a vertical example you can clone, study, and
                         adapt — every kit is downloadable as a runnable Vite + React 19 + Tailwind v4 project.
@@ -229,7 +229,7 @@ export default function StarterKitsIndex({ kits }: { kits: Kit[] }) {
                 </div>
                 <div className="flex items-center gap-2.5">
                     <label className="flex min-w-[12rem] items-center gap-2 rounded-lg border border-zinc-200 bg-white px-3 py-2 dark:border-zinc-800 dark:bg-zinc-900">
-                        <Icon name="search" size={14} className="text-zinc-400" />
+                        <Icon name="search" size="xs" className="text-zinc-400" />
                         <input
                             value={query}
                             onChange={(e) => setQuery(e.target.value)}
@@ -247,7 +247,7 @@ export default function StarterKitsIndex({ kits }: { kits: Kit[] }) {
             {shown.length === 0 ? (
                 <Card className="mt-6">
                     <div className="flex flex-col items-center gap-3 p-10 text-center">
-                        <Icon name="search-x" size={22} className="text-zinc-400" />
+                        <Icon name="search-x" size="md" className="text-zinc-400" />
                         <Text className="text-sm font-medium">No kits match “{query}”.</Text>
                         <Button variant="ghost" size="sm" onClick={() => setQuery("")}>Clear filter</Button>
                     </div>
@@ -271,7 +271,7 @@ export default function StarterKitsIndex({ kits }: { kits: Kit[] }) {
 
                                 <Card.Body>
                                     <div className="flex items-start justify-between gap-2">
-                                        <Heading level={2} size="sm" className="!text-zinc-900 dark:!text-zinc-100">{k.name}</Heading>
+                                        <Heading as="h2" size="sm" className="!text-zinc-900 dark:!text-zinc-100">{k.name}</Heading>
                                         <Text size="xs" className="!font-mono !text-zinc-400 shrink-0 mt-0.5">{k.pkg}</Text>
                                     </div>
                                     <Text size="sm" className="mt-2 !text-zinc-600 dark:!text-zinc-300">{k.blurb}</Text>

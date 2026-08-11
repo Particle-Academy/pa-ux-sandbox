@@ -162,7 +162,7 @@ function PreviewPanel({ form }: { form: ReturnType<typeof useFancyForm<Form>> })
     return (
         <div className="lg:sticky lg:top-24">
             <div className="mb-2 flex items-center gap-2">
-                <Icon name="eye" size={15} className="text-violet-500" />
+                <Icon name="eye" size="sm" className="text-violet-500" />
                 <Text size="xs" weight="semibold" className="uppercase tracking-wider !text-zinc-500">
                     Live preview
                 </Text>
@@ -184,7 +184,7 @@ function PreviewPanel({ form }: { form: ReturnType<typeof useFancyForm<Form>> })
                         <div className="space-y-3 bg-white p-5 dark:bg-zinc-950">
                             <div className="h-4 w-40 rounded bg-zinc-300 dark:bg-zinc-700" />
                             <span className="inline-flex items-center gap-1.5 rounded-md bg-violet-600 px-2 py-1 text-[11px] font-semibold text-white">
-                                <Icon name="sparkles" size={12} /> Fancified
+                                <Icon name="sparkles" size="xs" /> Fancified
                             </span>
                             <div className="h-3 w-full rounded bg-zinc-200 dark:bg-zinc-800" />
                             <div className="h-3 w-5/6 rounded bg-zinc-200 dark:bg-zinc-800" />
@@ -222,7 +222,7 @@ export default function ShowcaseCreate() {
                 <Breadcrumbs.Item>Register</Breadcrumbs.Item>
             </Breadcrumbs>
 
-            <Heading level={1} size="xl" className="mt-3">
+            <Heading as="h1" size="xl" className="mt-3">
                 Register your site
             </Heading>
             <Text className="mt-2 max-w-2xl">

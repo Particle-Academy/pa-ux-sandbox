@@ -11,7 +11,7 @@ import {
     Table,
     Text,
 } from "@particle-academy/react-fancy";
-import { EChart, registerAll } from "@particle-academy/fancy-echarts";
+import { type EChartsOption, EChart, registerAll } from "@particle-academy/fancy-echarts";
 import {
     Cctv,
     Clapperboard,
@@ -106,7 +106,7 @@ const DEVICES: Device[] = [
 const ACCENT = "#22D3EE";
 
 /** Thermostat ring — a single-value gauge, cyan progress arc on a dark track. */
-const gaugeOption = {
+const gaugeOption: EChartsOption = {
     series: [
         {
             type: "gauge",
@@ -131,7 +131,7 @@ const gaugeOption = {
 };
 
 /** Energy today — 12 hourly bars, top-rounded vertical cyan gradient. */
-const energyOption = {
+const energyOption: EChartsOption = {
     grid: { left: 2, right: 2, top: 10, bottom: 22, containLabel: false },
     tooltip: {
         trigger: "axis",

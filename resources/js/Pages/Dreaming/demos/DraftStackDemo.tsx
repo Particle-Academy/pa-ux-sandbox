@@ -231,11 +231,10 @@ function DraftStack({
             />
           </div>
           <div className="mt-3 flex justify-between">
-            <Button variant="outline" size="sm" onClick={prev} disabled={safeIdx === 0}>
+            <Button size="sm" onClick={prev} disabled={safeIdx === 0}>
               ← shift
             </Button>
             <Button
-              variant="outline"
               size="sm"
               onClick={next}
               disabled={safeIdx >= drafts.length - 2}
@@ -302,11 +301,10 @@ function DraftStack({
         </div>
 
         <div className="mt-3 flex flex-wrap items-center gap-2">
-          <Button variant="outline" size="sm" onClick={prev} disabled={safeIdx === 0}>
+          <Button size="sm" onClick={prev} disabled={safeIdx === 0}>
             ← prev
           </Button>
           <Button
-            variant="outline"
             size="sm"
             onClick={next}
             disabled={safeIdx >= drafts.length - 1}

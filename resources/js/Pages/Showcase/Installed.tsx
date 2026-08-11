@@ -99,7 +99,7 @@ function Step({
                         {n}
                     </span>
                     <div className="min-w-0 flex-1">
-                        <Heading level={3} size="sm">
+                        <Heading as="h3" size="sm">
                             {title}
                         </Heading>
                         <div className="mt-2">{children}</div>
@@ -170,7 +170,7 @@ export default function ShowcaseInstalled({
                         <span className="grid h-8 w-8 place-items-center rounded-full bg-emerald-100 text-emerald-600 dark:bg-emerald-900/40 dark:text-emerald-300">
                             <Icon name="check" className="h-4 w-4" />
                         </span>
-                        <Heading level={1} size="xl">
+                        <Heading as="h1" size="xl">
                             {isRepo ? "Your repo is registered" : "Your site is registered"}
                         </Heading>
                     </div>
@@ -227,7 +227,7 @@ export default function ShowcaseInstalled({
                 <div className="space-y-4 lg:sticky lg:top-6">
                     <Card>
                         <Card.Body>
-                            <Heading level={2} size="sm">
+                            <Heading as="h2" size="sm">
                                 Verification status
                             </Heading>
                             <div className="mt-3 flex items-center gap-2">
@@ -330,7 +330,7 @@ function WebsiteGuide({
                     <div className="flex items-center justify-between gap-3">
                         <div className="flex items-center gap-2">
                             <Icon name="code" className="h-4 w-4 text-violet-500" />
-                            <Heading level={2} size="sm">
+                            <Heading as="h2" size="sm">
                                 Your Fancy Pixel
                             </Heading>
                         </div>
@@ -466,7 +466,7 @@ function RepoGuide({
                     <div className="flex items-center justify-between gap-3">
                         <div className="flex items-center gap-2">
                             <Icon name="award" className="h-4 w-4 text-violet-500" />
-                            <Heading level={2} size="sm">
+                            <Heading as="h2" size="sm">
                                 Your Fancified badge
                             </Heading>
                         </div>

@@ -75,7 +75,7 @@ function Heuristics({ rollups: r, sites }: Props) {
                 <Card>
                     <Card.Header>
                         <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
-                            <Icon name="globe" size={16} style={{ color: "var(--fg-3)" }} /> Registered sites
+                            <Icon name="globe" size="sm" style={{ color: "var(--fg-3)" }} /> Registered sites
                         </span>
                     </Card.Header>
                     {sites.length === 0 ? (

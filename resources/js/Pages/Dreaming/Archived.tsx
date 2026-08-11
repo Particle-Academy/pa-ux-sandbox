@@ -20,7 +20,7 @@ export default function DreamingArchived({ archives }: { archives: Archive[] }) 
         <Layout>
             <Head title="Archived dreams · Fancy UI" />
 
-            <Heading level={1} size="xl">Archived dreams</Heading>
+            <Heading as="h1" size="xl">Archived dreams</Heading>
             <Text className="mt-2 max-w-3xl">
                 Dreams whose net votes went negative are archived here. We keep them so
                 we know what's already been considered and rejected.
@@ -36,7 +36,7 @@ export default function DreamingArchived({ archives }: { archives: Archive[] }) 
                         {archives.map((a) => (
                             <li key={a.id} className="px-4 py-3">
                                 <div className="flex flex-wrap items-center gap-2">
-                                    <Heading level={2} size="sm">{a.title}</Heading>
+                                    <Heading as="h2" size="sm">{a.title}</Heading>
                                     {a.pkg && <Badge color="zinc" size="sm">{a.pkg}</Badge>}
                                     {a.theme && <Text size="xs" className="text-zinc-500">— {a.theme}</Text>}
                                 </div>

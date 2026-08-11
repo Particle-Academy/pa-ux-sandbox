@@ -167,7 +167,7 @@ export function ProgressBeamDemo() {
             <Button size="sm" color="violet" onClick={addJob}>
               + spawn job
             </Button>
-            <Button size="sm" variant="outline" onClick={clear}>
+            <Button size="sm" onClick={clear}>
               clear
             </Button>
             <span className="ml-2 text-[11px] text-zinc-500">

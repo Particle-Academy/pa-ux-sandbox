@@ -12,7 +12,7 @@ import {
     Table,
     Text,
 } from "@particle-academy/react-fancy";
-import { EChart, registerAll } from "@particle-academy/fancy-echarts";
+import { type EChartsOption, EChart, registerAll } from "@particle-academy/fancy-echarts";
 import { Check, Flame, HelpCircle, MessagesSquare, Play } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import type { Style } from "../../types";
@@ -77,7 +77,7 @@ const LESSONS: Lesson[] = [
 const HERO_PCT = 38;
 
 /* The weekly-XP spark bar — 7 day buckets, per-bar color, no axes/grid. */
-const weekOption = {
+const weekOption: EChartsOption = {
     animationDuration: 720,
     grid: { top: 6, right: 2, bottom: 20, left: 2 },
     xAxis: {

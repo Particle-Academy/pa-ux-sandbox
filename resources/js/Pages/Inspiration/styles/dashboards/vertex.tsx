@@ -12,7 +12,7 @@ import {
     Tabs,
     Text,
 } from "@particle-academy/react-fancy";
-import { EChart, registerAll } from "@particle-academy/fancy-echarts";
+import { type EChartsOption, EChart, registerAll } from "@particle-academy/fancy-echarts";
 import type { Style } from "../../types";
 
 /**
@@ -123,7 +123,7 @@ const RANGE_DELTA: Record<Range, { amt: string; pct: string; span: string }> = {
 
 /* ── ECharts option builders ────────────────────────────────────────────── */
 
-function areaOption(values: number[]) {
+function areaOption(values: number[]): EChartsOption {
     return {
         grid: { left: 0, right: 0, top: 12, bottom: 0 },
         tooltip: {
@@ -163,7 +163,7 @@ function areaOption(values: number[]) {
     };
 }
 
-const donutOption = {
+const donutOption: EChartsOption = {
     tooltip: {
         trigger: "item",
         backgroundColor: "#0B0F14",
@@ -188,7 +188,7 @@ const donutOption = {
     ],
 };
 
-function sparkOption(values: number[], color: string) {
+function sparkOption(values: number[], color: string): EChartsOption {
     return {
         grid: { left: 1, right: 1, top: 3, bottom: 3 },
         xAxis: { type: "category", show: false, boundaryGap: false, data: values.map((_, i) => i) },
@@ -223,7 +223,7 @@ function ChgChip({ dir, chg }: { dir: Dir; chg: string }) {
 export default function Vertex({ style }: { style: Style }) {
     const [range, setRange] = useState<Range>("1D");
 
-    const chartOption = useMemo(() => areaOption(RANGE_SERIES[range]), [range]);
+    const chartOption = useMemo<EChartsOption>(() => areaOption(RANGE_SERIES[range]), [range]);
     const delta = RANGE_DELTA[range];
 
     return (

@@ -11,7 +11,7 @@ import {
     Text,
     Tooltip,
 } from "@particle-academy/react-fancy";
-import { EChart, registerAll } from "@particle-academy/fancy-echarts";
+import { type EChartsOption, EChart, registerAll } from "@particle-academy/fancy-echarts";
 import { Car, Home, ShoppingCart, Sparkles, Target, Utensils, type LucideIcon } from "lucide-react";
 import type { Style } from "../../types";
 
@@ -82,7 +82,7 @@ const TXNS: Txn[] = [
 /** Budget-used ring: a 57% emerald gauge on a light track, rounded cap, arc
  *  starting at 12 o'clock going clockwise. The center label is an HTML overlay
  *  (crisper type + exact match to the mockup) so the gauge draws only the arc. */
-const gaugeOption = {
+const gaugeOption: EChartsOption = {
     series: [
         {
             type: "gauge",
@@ -108,7 +108,7 @@ const gaugeOption = {
 
 /** Cash flow: grouped vertical bars over the last 6 months, a green "in" column
  *  and a red "out" column per month, thin with 4px rounded tops. */
-const cashflowOption = {
+const cashflowOption: EChartsOption = {
     grid: { top: 12, right: 6, bottom: 22, left: 6 },
     tooltip: {
         trigger: "axis",

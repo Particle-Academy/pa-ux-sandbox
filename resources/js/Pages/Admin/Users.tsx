@@ -49,7 +49,7 @@ function Users({ users, search, sort, total }: Props) {
                                 if (e.key === "Enter") go({ q });
                             }}
                             placeholder="Name, email, or @github"
-                            leading={<Icon name="search" size={15} />}
+                            leading={<Icon name="search" size="sm" />}
                         />
                     </Field>
                 </div>

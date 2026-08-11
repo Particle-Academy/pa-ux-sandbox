@@ -154,7 +154,7 @@ export function WhatsNewDemo() {
             </span>
           </div>
           <div className="flex items-center justify-end gap-2 pt-4">
-            <Button size="sm" variant="outline" onClick={reset}>
+            <Button size="sm" onClick={reset}>
               reset seed
             </Button>
           </div>
@@ -173,7 +173,7 @@ export function WhatsNewDemo() {
               ) : (
                 <Popover>
                   <Popover.Trigger>
-                    <Button size="sm" variant="outline">
+                    <Button size="sm">
                       🔔{" "}
                       {fresh.length > 0 ? (
                         <Badge color="violet">{fresh.length}</Badge>

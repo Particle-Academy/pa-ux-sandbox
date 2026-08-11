@@ -1,5 +1,18 @@
 import type { ComponentDoc } from "./types";
+import type { ToastPosition } from "@particle-academy/react-fancy";
 import { Button, Toast, useToast } from "@particle-academy/react-fancy";
+
+/**
+ * Every corner the provider supports, typed against the package's own union so
+ * this list cannot drift: adding a fifth position to `ToastPosition` without
+ * adding it here is a type error, not a quietly incomplete example.
+ */
+const TOAST_POSITIONS: readonly ToastPosition[] = [
+    "top-left",
+    "top-right",
+    "bottom-left",
+    "bottom-right",
+] as const;
 
 function ToastDemo({ variant, label }: { variant?: "default" | "success" | "error" | "warning" | "info"; label: string }) {
     const { toast } = useToast();
@@ -102,20 +115,30 @@ toast({ title: "FYI", variant: "info" });`,
         },
         {
             name: "Position",
-            description: "Set the provider's `position` to corner-pin the toast stack.",
+            description:
+                "Set the provider's `position` to corner-pin the toast stack. Each button below mounts its own provider — fire them in turn and watch the stack move corner to corner.",
             render: () => (
-                <Toast.Provider position="bottom-right">
-                    <ToastDemo label="Bottom-right" />
-                </Toast.Provider>
+                // One provider PER corner, because `position` is a provider prop
+                // rather than an argument to `toast()`. A single provider could
+                // only ever demonstrate one corner — which is how this example
+                // previously showed `bottom-right`, the default, and so appeared
+                // to do nothing at all.
+                <div className="flex flex-wrap gap-2">
+                    {TOAST_POSITIONS.map((position) => (
+                        <Toast.Provider key={position} position={position}>
+                            <ToastDemo label={position} />
+                        </Toast.Provider>
+                    ))}
+                </div>
             ),
-            code: `<ToastProvider position="bottom-right" maxToasts={5}>
+            code: `<Toast.Provider position="top-left" maxToasts={5}>
     <App />
 </Toast.Provider>`,
         },
     ],
     props: [
         { name: "children", type: `ReactNode`, default: "—", description: "App tree. Mount the provider near the root." },
-        { name: "position", type: `"top-right" | "top-left" | "bottom-right" | "bottom-left"`, default: `"top-right"`, description: "Where the toast stack anchors on screen." },
+        { name: "position", type: `"top-right" | "top-left" | "bottom-right" | "bottom-left"`, default: `"bottom-right"`, description: "Where the toast stack anchors on screen." },
         { name: "maxToasts", type: `number`, default: `5`, description: "Maximum simultaneous toasts. Older ones drop off." },
     ],
     notes: (

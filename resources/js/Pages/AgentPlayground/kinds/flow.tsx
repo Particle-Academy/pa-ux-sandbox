@@ -1,7 +1,8 @@
 /**
  * flow kind — fancy-flow <FlowEditor> driven by registerFlowBridge.
  */
-import { FlowEditor, type FlowGraph } from "@particle-academy/fancy-flow";
+import { type FlowGraph } from "@particle-academy/fancy-flow";
+import { FlowEditor } from "../../../components/FlowEditor";
 import "@xyflow/react/dist/style.css";
 import "@particle-academy/fancy-flow/styles.css";
 import { registerFlowBridge } from "@particle-academy/agent-integrations/bridges/flow";

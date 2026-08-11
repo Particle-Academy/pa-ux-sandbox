@@ -97,7 +97,8 @@ import { Board, StickyNote, CursorLayer, Shape, Connector, Drawing } from "@part
 import "@particle-academy/fancy-whiteboard/styles.css";
 import { ArtBoard, ArtPiece, type ArtBoardValue } from "@particle-academy/fancy-artboard";
 import "@particle-academy/fancy-artboard/styles.css";
-import { FlowEditor, FlowViewer } from "@particle-academy/fancy-flow";
+import { FlowViewer } from "@particle-academy/fancy-flow";
+import { FlowEditor } from "../../components/FlowEditor";
 import { useFlowRunnerUx, createFlowRunnerUx } from "@particle-academy/fancy-flow/ux";
 import { runFlow } from "@particle-academy/fancy-flow/engine";
 import "@particle-academy/fancy-flow/styles.css";

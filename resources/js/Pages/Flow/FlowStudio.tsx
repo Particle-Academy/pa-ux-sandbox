@@ -1,5 +1,6 @@
 import { type ReactNode, useMemo, useState } from "react";
-import { FlowEditor, type ExecutorRegistry, type FlowGraph } from "@particle-academy/fancy-flow";
+import { type ExecutorRegistry, type FlowGraph } from "@particle-academy/fancy-flow";
+import { FlowEditor } from "../../components/FlowEditor";
 import { useToast } from "@particle-academy/react-fancy";
 import "@xyflow/react/dist/style.css";
 import "@particle-academy/fancy-flow/styles.css";

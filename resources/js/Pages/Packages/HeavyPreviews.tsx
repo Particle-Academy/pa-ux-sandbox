@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { MarkdownEditor } from "@particle-academy/fancy-code";
 import { SheetWorkbook } from "@particle-academy/fancy-sheets";
-import { FlowEditor, FlowViewer } from "@particle-academy/fancy-flow";
+import { FlowViewer } from "@particle-academy/fancy-flow";
+import { FlowEditor } from "../../components/FlowEditor";
 import { Canvas } from "@particle-academy/fancy-3d";
 import { Stage as BabylonStage, Monitor as BabylonMonitor } from "@particle-academy/fancy-3d-babylon/react";
 import { Stage as ThreeStage, Monitor as ThreeMonitor } from "@particle-academy/fancy-3d-three/react";

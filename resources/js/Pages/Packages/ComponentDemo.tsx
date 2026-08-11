@@ -1,4 +1,17 @@
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode, type ReactElement} from "react";
+import { threeEngine } from "@particle-academy/fancy-3d-three/engine";
+import { babylonEngine } from "@particle-academy/fancy-3d-babylon/engine";
+import { FeatureGate, PricingTable, FeatureMatrix, PlanFeaturesEditor, type PlanFeatureValue} from "../../components/fancy/catalog-fms";
+// Shared with the package-grid tiles, so a component's demo and its thumbnail
+// cannot drift apart.
+import { CR_LESSON, CR_CURRICULUM, CR_QUESTION, CR_TEST, CR_COURSE, CR_ENROLLMENT, CR_ATTEMPT, JB_POSTING, JB_APPLICATION, TA_HISTORY, TA_PLAN, SAMPLE_TSX, PREVIEW_TIMELINE } from "./ComponentPreviews";
+import { type TimelineDoc } from "@particle-academy/fancy-motion";
+import { MotionStage, TimelineDock } from "@particle-academy/fancy-motion/react";
+import { InstallBanner, OfflineBanner } from "@particle-academy/fancy-pwa";
+import { PasskeyStatus, PasskeyManager, PasskeySignIn, type PasskeyManagerState, type PasskeySignInState} from "@particle-academy/fancy-passkeys-ui";
+import { ChatTranscript, MessageComposer, PlanReview, TeachersAidChat } from "@particle-academy/teachers-aid-ui";
+import { ApplicationList, ApplyForm, EmployerJobList, JobDetail, JobPostingForm } from "@particle-academy/job-board";
+import { CertificateView, CoursePlayer, CurriculumOverview, LessonView, QuestionRenderer, TestRunner, type AnswerValue} from "@particle-academy/classroom";
 import { SAMPLE_CODE_VIEW, SAMPLE_IMG, SAMPLE_PDF, SAMPLE_POSTER, SILENT_WAV } from "./showcase-fixtures";
 import {
     Accordion,
@@ -87,7 +100,7 @@ import {
     AccordionPanelContent,
     type TreeNodeData,
 } from "@particle-academy/react-fancy";
-import { CodeEditor, MarkdownEditor } from "@particle-academy/fancy-code";
+import { CodeEditor, MarkdownEditor, FileViewer} from "@particle-academy/fancy-code";
 import {
     DownlineTree as MlmDownlineTree,
     CommissionStatement as MlmCommissionStatement,
@@ -132,7 +145,7 @@ import "@particle-academy/fancy-diff/styles.css";
 import { mountPixel, type PixelHandle, type PixelStyle } from "@particle-academy/fancy-pixel";
 import { SheetWorkbook, createEmptyWorkbook, createEmptySheet, type WorkbookData} from "@particle-academy/fancy-sheets";
 import "@particle-academy/fancy-sheets/styles.css";
-import { EChart } from "@particle-academy/fancy-echarts";
+import { EChart, EChart3D, EChartGraphic, type EChartsOption} from "@particle-academy/fancy-echarts";
 import {
     WorkingTree,
     CommitHistory,
@@ -157,7 +170,7 @@ import { Map as FancyMap, type MapMarker as FancyMapMarker, type MapView as Fanc
 import { leafletProvider } from "@particle-academy/fancy-map/leaflet";
 import "leaflet/dist/leaflet.css";
 import { Screen, ScreenSystem } from "@particle-academy/fancy-screens";
-import { Canvas } from "@particle-academy/fancy-3d";
+import { Canvas, type CanvasEngineSpec} from "@particle-academy/fancy-3d";
 import { AgentPanel } from "@particle-academy/agent-integrations";
 import {
     DeckEditor as FsDeckEditor,
@@ -374,6 +387,40 @@ const REGISTRY: Record<string, DemoFn> = {
     "fancy-x-files-ui/security-txt-editor": XfSecurityTxtEditorDemo,
     "fancy-x-files-ui/llms-txt-editor": XfLlmsTxtEditorDemo,
     "react-fancy/json-editor": JsonEditorDemo,
+    "catalog-fms/pricing-table": PricingTableDemo,
+    "catalog-fms/feature-matrix": FeatureMatrixDemo,
+    "catalog-fms/feature-gate": FeatureGateDemo,
+    "catalog-fms/plan-features-editor": PlanFeaturesEditorDemo,
+    "fancy-3d-babylon/engine": BabylonEngineDemo,
+    "fancy-3d-three/engine": ThreeEngineDemo,
+    "react-fancy/catalog-fms": CatalogFmsDemo,
+    "fancy-3d-babylon/fancy-3d-babylon-engine": BabylonEngineDemo,
+    "fancy-3d-three/fancy-3d-three-engine": ThreeEngineDemo,
+    "fancy-passkeys-ui/passkey-manager": PasskeyManagerDemo,
+    "fancy-passkeys-ui/passkey-sign-in": PasskeySignInDemo,
+    "fancy-echarts/echart-3d": EChart3DDemo,
+    "fancy-echarts/echart-graphic": EChartGraphicDemo,
+    "fancy-3d/scene": SceneDemo,
+    "classroom/curriculum-overview": CurriculumOverviewDemo,
+    "classroom/lesson-view": LessonViewDemo,
+    "classroom/question-renderer": QuestionRendererDemo,
+    "classroom/test-runner": TestRunnerDemo,
+    "classroom/course-player": CoursePlayerDemo,
+    "classroom/certificate-view": CertificateViewDemo,
+    "job-board/job-detail": JobDetailDemo,
+    "job-board/employer-job-list": EmployerJobListDemo,
+    "job-board/application-list": ApplicationListDemo,
+    "job-board/apply-form": ApplyFormDemo,
+    "job-board/job-posting-form": JobPostingFormDemo,
+    "teachers-aid-ui/chat-transcript": ChatTranscriptDemo,
+    "teachers-aid-ui/message-composer": MessageComposerDemo,
+    "teachers-aid-ui/plan-review": PlanReviewDemo,
+    "teachers-aid-ui/teachers-aid-chat": TeachersAidChatDemo,
+    "fancy-passkeys-ui/passkey-status": PasskeyStatusDemo,
+    "fancy-pwa/pwa": PwaBannersDemo,
+    "fancy-motion/motion-stage": MotionStageDemo,
+    "fancy-motion/timeline-dock": TimelineDockDemo,
+    "fancy-code/file-viewer": FileViewerDemo,
     "react-fancy/grid": GridDemo,
     "react-fancy/container": ContainerDemo,
     "react-fancy/section": SectionDemo,
@@ -4576,6 +4623,738 @@ function CmsRegionDemo() {
                         </div>
                     </div>
                 </div>
+            </div>
+        </DemoNote>
+    );
+}
+
+// ─── The remaining component families ──────────────────────────────────────
+//
+// Everything below had a tile preview and a dashed "isn't wired yet" box on its
+// own detail page. The tile proves a component renders; the detail page is where
+// someone decides whether to adopt it, so these lean on the interactive half —
+// answer a question, take a test, review an agent's proposal — rather than
+// re-rendering the thumbnail at four times the size.
+
+// ── @particle-academy/classroom ────────────────────────────────────────────
+
+function CurriculumOverviewDemo() {
+    return (
+        <div className="max-w-2xl">
+            <CurriculumOverview curriculum={CR_CURRICULUM} />
+        </div>
+    );
+}
+
+function LessonViewDemo() {
+    return (
+        <div className="max-w-2xl">
+            <LessonView lesson={CR_LESSON} />
+        </div>
+    );
+}
+
+function QuestionRendererDemo() {
+    const [value, setValue] = useState<AnswerValue | null>(null);
+    return (
+        <DemoNote
+            outOfBox="The control is chosen from the question's own type — the same component renders multiple choice, free text and the rest."
+            demo="One seeded question, and the answer readout below."
+        >
+            <div className="max-w-xl space-y-3">
+                <QuestionRenderer question={CR_QUESTION} value={value} onChange={setValue} />
+                <Text size="sm" className="!text-zinc-500">
+                    answer: <code className="font-mono">{JSON.stringify(value)}</code> — controlled,
+                    so an agent can read or set it.
+                </Text>
+            </div>
+        </DemoNote>
+    );
+}
+
+function TestRunnerDemo() {
+    const [submitted, setSubmitted] = useState(false);
+    return (
+        <DemoNote
+            outOfBox="Question sequencing, per-question state, and the submit lifecycle."
+            demo="The seeded test, and a stubbed submit that resolves to a fixed attempt instead of calling a backend."
+        >
+            <div className="max-w-2xl space-y-2">
+                <TestRunner
+                    test={CR_TEST}
+                    onSubmit={async () => {
+                        setSubmitted(true);
+                        return CR_ATTEMPT;
+                    }}
+                />
+                {submitted && (
+                    <Text size="sm" className="!text-emerald-600">Attempt submitted — the stub returned a graded result.</Text>
+                )}
+            </div>
+        </DemoNote>
+    );
+}
+
+function CoursePlayerDemo() {
+    const [done, setDone] = useState<Set<number>>(new Set());
+    return (
+        <DemoNote
+            outOfBox="The lesson rail, the player surface and the completion state."
+            demo="A seeded course. Completion is local state and the attempt handlers are stubs — no backend."
+        >
+            <div className="h-[26rem] max-w-3xl overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
+                <CoursePlayer
+                    course={CR_COURSE}
+                    enrollment={CR_ENROLLMENT}
+                    completedLessonIds={done}
+                    onMarkLessonComplete={(lesson) => setDone((prev) => new Set(prev).add(lesson.id))}
+                    onStartAttempt={async () => CR_ATTEMPT}
+                    onSubmitAttempt={async () => CR_ATTEMPT}
+                />
+            </div>
+        </DemoNote>
+    );
+}
+
+function CertificateViewDemo() {
+    return (
+        <div className="max-w-xl">
+            <CertificateView
+                certificate={{
+                    id: 1,
+                    enrollment_id: 1,
+                    verification_code: "FANCY-2026-0001",
+                    issued_at: "2026-08-11T00:00:00Z",
+                    pdf_path: null,
+                    metadata: { recipient_name: "Ada Lovelace", course_title: "Human+ UX Foundations" },
+                }}
+                // Required: the host resolves where the PDF lives. This demo
+                // mints no certificate, so the link points at the verification
+                // route rather than a file that does not exist.
+                pdfUrl="/verify/FANCY-2026-0001"
+            />
+        </div>
+    );
+}
+
+// ── @particle-academy/job-board ────────────────────────────────────────────
+
+function JobDetailDemo() {
+    return (
+        <div className="max-w-2xl">
+            <JobDetail posting={JB_POSTING} />
+        </div>
+    );
+}
+
+function EmployerJobListDemo() {
+    return (
+        <div className="max-w-2xl">
+            <EmployerJobList postings={[JB_POSTING]} />
+        </div>
+    );
+}
+
+function ApplicationListDemo() {
+    return (
+        <div className="max-w-2xl">
+            <ApplicationList applications={[JB_APPLICATION]} />
+        </div>
+    );
+}
+
+function ApplyFormDemo() {
+    const [sent, setSent] = useState(false);
+    return (
+        <DemoNote
+            outOfBox="The form, its validation and the submit shape."
+            demo="Submitting reports back here instead of posting anywhere."
+        >
+            <div className="max-w-2xl space-y-2">
+                <ApplyForm posting={JB_POSTING} onSubmit={() => setSent(true)} />
+                {sent && <Text size="sm" className="!text-emerald-600">Application submitted.</Text>}
+            </div>
+        </DemoNote>
+    );
+}
+
+function JobPostingFormDemo() {
+    const [saved, setSaved] = useState<string | null>(null);
+    return (
+        <DemoNote
+            outOfBox="The authoring form an employer fills in."
+            demo="Submitting shows the title back rather than saving it."
+        >
+            <div className="max-w-2xl space-y-2">
+                <JobPostingForm onSubmit={(posting: { title?: string }) => setSaved(posting?.title ?? "(untitled)")} />
+                {saved && <Text size="sm" className="!text-emerald-600">Saved: {saved}</Text>}
+            </div>
+        </DemoNote>
+    );
+}
+
+// ── @particle-academy/teachers-aid-ui ──────────────────────────────────────
+
+function ChatTranscriptDemo() {
+    return (
+        <div className="h-80 max-w-2xl overflow-auto rounded-md border border-zinc-200 p-2 dark:border-zinc-800">
+            <ChatTranscript history={TA_HISTORY} agentName="Teacher's Aid" />
+        </div>
+    );
+}
+
+function MessageComposerDemo() {
+    const [sent, setSent] = useState<string[]>([]);
+    return (
+        <DemoNote
+            outOfBox="The composer and its send affordance."
+            demo="Messages land in the list below instead of going to a model."
+        >
+            <div className="max-w-2xl space-y-3">
+                <MessageComposer agentName="Teacher's Aid" onSend={(m: string) => setSent((s) => [...s, m])} />
+                {sent.length > 0 && (
+                    <ul className="space-y-1 text-sm text-zinc-500">
+                        {sent.map((m, i) => <li key={i}>→ {m}</li>)}
+                    </ul>
+                )}
+            </div>
+        </DemoNote>
+    );
+}
+
+function PlanReviewDemo() {
+    const [outcome, setOutcome] = useState<string | null>(null);
+    return (
+        <DemoNote
+            outOfBox="The trust-but-verify surface: an agent PROPOSES a change set and a human applies or discards it. Nothing is written until someone says so."
+            demo="One seeded plan, and the outcome readout."
+        >
+            <div className="max-w-2xl space-y-2">
+                <PlanReview
+                    plan={TA_PLAN}
+                    onApply={() => setOutcome("applied")}
+                    onDiscard={() => setOutcome("discarded")}
+                />
+                {outcome && <Text size="sm" className="!text-zinc-500">Plan {outcome}.</Text>}
+            </div>
+        </DemoNote>
+    );
+}
+
+function TeachersAidChatDemo() {
+    return (
+        <DemoNote
+            outOfBox="Transcript, composer and plan review composed into one surface."
+            demo="Seeded history; send / apply / discard are stubs."
+        >
+            <div className="h-96 max-w-2xl overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
+                <TeachersAidChat
+                    agentName="Teacher's Aid"
+                    history={TA_HISTORY}
+                    onSend={() => {}}
+                    onApply={() => {}}
+                    onDiscard={() => {}}
+                />
+            </div>
+        </DemoNote>
+    );
+}
+
+// ── @particle-academy/fancy-passkeys-ui ────────────────────────────────────
+
+function PasskeyStatusDemo() {
+    const [supported, setSupported] = useState(true);
+    const [platform, setPlatform] = useState(true);
+    const [conditional, setConditional] = useState(false);
+    return (
+        <DemoNote
+            outOfBox="The capability readout — what this browser can actually do before you offer a passkey flow."
+            demo="The three toggles. In a real app these come from the browser, not from you."
+        >
+            <div className="max-w-md space-y-3">
+                <div className="flex flex-wrap gap-4 text-xs text-zinc-500">
+                    {([
+                        ["supported", supported, setSupported],
+                        ["platform authenticator", platform, setPlatform],
+                        ["conditional UI", conditional, setConditional],
+                    ] as const).map(([label, val, set]) => (
+                        <label key={label} className="flex items-center gap-2">
+                            <input type="checkbox" checked={val} onChange={(e) => set(e.target.checked)} />
+                            {label}
+                        </label>
+                    ))}
+                </div>
+                <PasskeyStatus supported={supported} platformAuthenticator={platform} conditionalUi={conditional} />
+            </div>
+        </DemoNote>
+    );
+}
+
+// ── @particle-academy/fancy-pwa ────────────────────────────────────────────
+
+function PwaBannersDemo() {
+    return (
+        <DemoNote
+            outOfBox="Both banners. They are the entire VISIBLE surface of fancy-pwa — the rest is hooks and a Vite plugin, which no demo can show."
+            demo="Rendered unconditionally. In an app each appears only when its condition holds."
+        >
+            <div className="max-w-md space-y-3">
+                <OfflineBanner color="amber">You are offline — changes will sync when you reconnect.</OfflineBanner>
+                <InstallBanner title="Install Fancy UI for offline access." />
+            </div>
+        </DemoNote>
+    );
+}
+
+// ── @particle-academy/fancy-motion ─────────────────────────────────────────
+
+function MotionStageDemo() {
+    return (
+        <DemoNote
+            outOfBox="The stage, and the keyframe interpolation driving anything with a `data-motion` handle."
+            demo="A two-keyframe timeline and one card to move."
+        >
+            <div className="relative h-64 max-w-2xl overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
+                <MotionStage timeline={PREVIEW_TIMELINE}>
+                    <div
+                        data-motion="card"
+                        className="absolute left-8 top-8 rounded-lg bg-violet-500 px-4 py-3 text-sm font-medium text-white shadow-lg"
+                    >
+                        Scroll the stage
+                    </div>
+                </MotionStage>
+            </div>
+        </DemoNote>
+    );
+}
+
+function TimelineDockDemo() {
+    const [timeline, setTimeline] = useState<TimelineDoc>(PREVIEW_TIMELINE);
+    const [progress, setProgress] = useState(0.45);
+    return (
+        <DemoNote
+            outOfBox="The keyframe track, its scrubber and the controlled document."
+            demo="The starting timeline and the progress slider."
+        >
+            <div className="max-w-2xl space-y-3">
+                <TimelineDock value={timeline} onChange={setTimeline} progress={progress} />
+                <label className="flex items-center gap-3 text-xs text-zinc-500">
+                    progress
+                    <input
+                        type="range"
+                        min={0}
+                        max={1}
+                        step={0.01}
+                        value={progress}
+                        onChange={(e) => setProgress(Number(e.target.value))}
+                        className="flex-1"
+                    />
+                    <code className="font-mono">{progress.toFixed(2)}</code>
+                </label>
+            </div>
+        </DemoNote>
+    );
+}
+
+// ── @particle-academy/fancy-code ───────────────────────────────────────────
+
+function FileViewerDemo() {
+    const [lineNumbers, setLineNumbers] = useState(true);
+    return (
+        <DemoNote
+            outOfBox="Language detection from the filename, syntax highlighting and the gutter."
+            demo="One sample file and the gutter toggle."
+        >
+            <div className="max-w-2xl space-y-3">
+                <label className="flex items-center gap-2 text-xs text-zinc-500">
+                    <input type="checkbox" checked={lineNumbers} onChange={(e) => setLineNumbers(e.target.checked)} />
+                    line numbers
+                </label>
+                <div className="h-72 overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
+                    <FileViewer filename="Button.tsx" value={SAMPLE_TSX} readOnly lineNumbers={lineNumbers} />
+                </div>
+            </div>
+        </DemoNote>
+    );
+}
+
+// ── @particle-academy/fancy-passkeys-ui ────────────────────────────────────
+//
+// Both surfaces are fully CONTROLLED and, by design, complete no ceremony here.
+// A passkey needs a gesture plus a biometric, which is precisely the thing only
+// the human at the keyboard can supply — the package's MCP bridge is
+// management-only for the same reason. So these demos drive the real state
+// machine with stubbed handlers rather than pretending to authenticate.
+
+function PasskeyManagerDemo() {
+    const [state, setState] = useState<PasskeyManagerState>({
+        passkeys: [
+            {
+                id: "pk_1",
+                name: "MacBook Touch ID",
+                createdAt: "2026-06-02T10:11:00Z",
+                lastUsedAt: "2026-08-10T21:04:00Z",
+                transports: ["internal", "hybrid"],
+                backedUp: true,
+                aaguid: "adce0002-35bc-c60a-648b-0b25f1f05503",
+                clonedAt: null,
+            },
+            {
+                id: "pk_2",
+                name: "YubiKey 5C",
+                createdAt: "2026-03-19T08:40:00Z",
+                lastUsedAt: null,
+                transports: ["usb", "nfc"],
+                backedUp: false,
+                aaguid: "cb69481e-8ff7-4039-93ec-0a2729a154a8",
+                clonedAt: null,
+            },
+        ],
+        pendingRevoke: null,
+        renamingId: null,
+        draftName: "",
+        status: "idle",
+        error: null,
+    });
+
+    return (
+        <DemoNote
+            outOfBox="The list, rename, the staged revoke (propose → confirm) and every status transition."
+            demo="Two seeded passkeys. Rename and revoke resolve locally; enrolling opens nothing, because a real ceremony needs a gesture this page cannot fake."
+        >
+            <div className="max-w-2xl">
+                <PasskeyManager
+                    value={state}
+                    onChange={setState}
+                    onRename={async ({ id, name }) =>
+                        setState((s) => ({
+                            ...s,
+                            passkeys: s.passkeys.map((p) => (p.id === id ? { ...p, name } : p)),
+                            renamingId: null,
+                        }))
+                    }
+                    onRevoke={async ({ id }) =>
+                        setState((s) => ({
+                            ...s,
+                            passkeys: s.passkeys.filter((p) => p.id !== id),
+                            pendingRevoke: null,
+                        }))
+                    }
+                    pendingMode
+                />
+            </div>
+        </DemoNote>
+    );
+}
+
+function PasskeySignInDemo() {
+    const [state, setState] = useState<PasskeySignInState>({ status: "idle", email: "", error: null });
+    return (
+        <DemoNote
+            outOfBox="The sign-in surface, its email + discoverable modes, and the status machine."
+            demo="`onAuthenticate` resolves after a short delay instead of running a WebAuthn ceremony — a real one needs a gesture and a biometric."
+        >
+            <div className="max-w-md">
+                <PasskeySignIn
+                    value={state}
+                    onChange={setState}
+                    onAuthenticate={async () => {
+                        await new Promise((r) => setTimeout(r, 600));
+                        setState((s) => ({ ...s, status: "success" }));
+                    }}
+                />
+            </div>
+        </DemoNote>
+    );
+}
+
+// ── @particle-academy/fancy-echarts (the two specialised charts) ────────────
+
+const ECHART_3D_OPTION = {
+    grid3D: { viewControl: { autoRotate: true, autoRotateSpeed: 8 } },
+    xAxis3D: { type: "value" },
+    yAxis3D: { type: "value" },
+    zAxis3D: { type: "value" },
+    series: [
+        {
+            type: "surface",
+            shading: "color",
+            equation: {
+                x: { step: 0.05, min: -3, max: 3 },
+                y: { step: 0.05, min: -3, max: 3 },
+                z: (x: number, y: number) => Math.sin(x * x + y * y) / (x * x + y * y),
+            },
+            itemStyle: { color: "#8b5cf6" },
+        },
+    ],
+} as EChartsOption;
+
+function EChart3DDemo() {
+    return (
+        <DemoNote
+            outOfBox="The GL renderer, the rotating view control and the surface series."
+            demo="The plotted equation."
+        >
+            <div className="h-80 max-w-2xl overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
+                <EChart3D option={ECHART_3D_OPTION} style={{ height: "100%", width: "100%" }} />
+            </div>
+        </DemoNote>
+    );
+}
+
+function EChartGraphicDemo() {
+    const [showCallout, setShowCallout] = useState(true);
+    return (
+        <DemoNote
+            outOfBox="The annotation layer: graphic elements drawn over the chart, positioned in chart space."
+            demo="The bar data and the toggle."
+        >
+            <div className="max-w-2xl space-y-3">
+                <label className="flex items-center gap-2 text-xs text-zinc-500">
+                    <input type="checkbox" checked={showCallout} onChange={(e) => setShowCallout(e.target.checked)} />
+                    show the callout
+                </label>
+                <div className="h-72 overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
+                    <EChartGraphic
+                        option={{
+                            xAxis: { type: "category", data: ["Q1", "Q2", "Q3", "Q4"] },
+                            yAxis: { type: "value", max: 60 },
+                            series: [{ type: "bar", data: [24, 38, 31, 47], itemStyle: { color: "#8b5cf6" } }],
+                        }}
+                        elements={
+                            showCallout
+                                ? [
+                                      {
+                                          type: "text",
+                                          x: "72%",
+                                          y: 28,
+                                          style: { text: "Best quarter", fill: "#a855f7", fontSize: 13, fontWeight: "bold" },
+                                      },
+                                  ]
+                                : []
+                        }
+                        style={{ height: "100%", width: "100%" }}
+                    />
+                </div>
+            </div>
+        </DemoNote>
+    );
+}
+
+// ── fancy-3d: the Scene document, and the two engine adapters ──────────────
+
+/**
+ * `Scene` is the JSON-friendly document every fancy-3d renderer consumes — the
+ * engine-agnostic part of the package, and the reason an agent can compose a 3D
+ * view without touching WebGL. The demo shows the document beside the render it
+ * produces, because the document IS the component here.
+ */
+function SceneDemo() {
+    const [spin, setSpin] = useState(true);
+    const scene = {
+        camera: { position: [0, 1.6, 4], target: [0, 0.5, 0] },
+        lights: [{ type: "ambient", intensity: 0.6 }],
+        objects: [
+            { id: "box", type: "box", position: [-1, 0.5, 0], color: "#8b5cf6" },
+            { id: "ball", type: "sphere", position: [1, 0.5, 0], color: "#10b981" },
+        ],
+    };
+    return (
+        <DemoNote
+            outOfBox="The Scene type itself — plain JSON, no engine imported. Any fancy-3d renderer accepts it."
+            demo="The two objects and the spin toggle."
+        >
+            <div className="grid max-w-3xl gap-3 md:grid-cols-2">
+                <div className="h-64 overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
+                    <Canvas engine="dom" style={{ height: "100%" }}>
+                        {scene.objects.map((o, i) => (
+                            <Canvas.Node key={o.id} id={o.id} x={60 + i * 160} y={80}>
+                                <div
+                                    className="grid h-16 w-16 place-items-center rounded-lg text-xs font-medium text-white shadow-lg transition-transform"
+                                    style={{ background: o.color, transform: spin ? "rotate(12deg)" : "none" }}
+                                >
+                                    {o.type}
+                                </div>
+                            </Canvas.Node>
+                        ))}
+                        <Canvas.Controls />
+                    </Canvas>
+                </div>
+                <div className="space-y-2">
+                    <label className="flex items-center gap-2 text-xs text-zinc-500">
+                        <input type="checkbox" checked={spin} onChange={(e) => setSpin(e.target.checked)} />
+                        tilt the objects
+                    </label>
+                    <pre className="max-h-52 overflow-auto rounded-md bg-zinc-950 p-3 font-mono text-[11px] leading-relaxed text-zinc-100">
+                        {JSON.stringify(scene, null, 2)}
+                    </pre>
+                </div>
+            </div>
+        </DemoNote>
+    );
+}
+
+// ── react-fancy/catalog-fms — the vendorable block ─────────────────────────
+
+/**
+ * `catalog-fms` is a BLOCK, not one component: PricingTable + FeatureMatrix +
+ * FeatureGate + PlanFeaturesEditor, vendored together by
+ * `npx fancy-cli add catalog-fms`. The demo shows the storefront half and the
+ * gate side by side, because the pairing is the point — you sell a plan, then
+ * you gate on it.
+ */
+function CatalogFmsDemo() {
+    const [pro, setPro] = useState(false);
+    return (
+        <DemoNote
+            outOfBox="The pricing table, the interval switch and the entitlement gate."
+            demo="Two plans, and the toggle standing in for the viewer's entitlement."
+        >
+            <div className="space-y-5">
+                <div className="max-w-2xl">
+                    <PricingTable
+                        plans={[
+                            { id: "starter", name: "Starter", prices: [{ id: "p1", amount: 900, currency: "usd", interval: "month" }], highlights: ["1 seat", "Community support"] },
+                            { id: "pro", name: "Pro", recommended: true, badge: "Most popular", prices: [{ id: "p2", amount: 2900, currency: "usd", interval: "month" }], highlights: ["5 seats", "Exports", "Priority support"] },
+                        ]}
+                        defaultInterval="month"
+                    />
+                </div>
+
+                <label className="flex items-center gap-2 text-xs text-zinc-500">
+                    <input type="checkbox" checked={pro} onChange={(e) => setPro(e.target.checked)} />
+                    viewer is on Pro
+                </label>
+
+                <div className="max-w-md">
+                    <FeatureGate
+                        feature="exports"
+                        featureName="Exports"
+                        entitlements={{ planId: pro ? "pro" : "starter", features: { exports: { access: pro } } }}
+                    >
+                        <div className="rounded border border-emerald-300 bg-emerald-50 p-3 text-sm text-emerald-800 dark:border-emerald-500/40 dark:bg-emerald-500/10 dark:text-emerald-200">
+                            Export to xlsx, pptx or docx.
+                        </div>
+                    </FeatureGate>
+                </div>
+            </div>
+        </DemoNote>
+    );
+}
+
+// ── The engine adapters ────────────────────────────────────────────────────
+//
+// `/engine` is the headless half of each adapter: one object you hand to
+// `<Canvas engine={…}>`. There is no component to render, so the demo shows the
+// swap itself — same Scene, same JSX, a different renderer underneath. That IS
+// the package's claim.
+
+function EngineAdapterDemo({ engine, name }: { engine: CanvasEngineSpec; name: string }) {
+    return (
+        <DemoNote
+            outOfBox={`The ${name} engine object. It is the whole export — pass it to <Canvas engine={…}> and the same scene renders through ${name}.`}
+            demo="The two nodes and the edge between them."
+        >
+            <div className="h-72 max-w-2xl overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
+                <Canvas engine={engine} style={{ height: "100%" }}>
+                    <Canvas.Node id="a" x={70} y={70} draggable>
+                        <Card padding="sm"><Text size="sm">Node A</Text></Card>
+                    </Canvas.Node>
+                    <Canvas.Node id="b" x={300} y={160} draggable>
+                        <Card padding="sm"><Text size="sm">Node B</Text></Card>
+                    </Canvas.Node>
+                    <Canvas.Edge from="a" to="b" curve="bezier" />
+                    <Canvas.Controls />
+                </Canvas>
+            </div>
+        </DemoNote>
+    );
+}
+
+function BabylonEngineDemo() {
+    return <EngineAdapterDemo engine={babylonEngine} name="Babylon" />;
+}
+
+function ThreeEngineDemo() {
+    return <EngineAdapterDemo engine={threeEngine} name="three.js" />;
+}
+
+// ── catalog-fms, component by component ────────────────────────────────────
+//
+// These four are the block's parts. `CatalogFmsDemo` above shows them working
+// together; these show each on its own, which is what someone lands on from the
+// package grid.
+
+const CFMS_PLANS = [
+    { id: "starter", name: "Starter", prices: [{ id: "p1", amount: 900, currency: "usd", interval: "month" as const }], highlights: ["1 seat", "Community support"] },
+    { id: "pro", name: "Pro", recommended: true, badge: "Most popular", prices: [{ id: "p2", amount: 2900, currency: "usd", interval: "month" as const }], highlights: ["5 seats", "Exports"] },
+    { id: "team", name: "Team", prices: [{ id: "p3", amount: 9900, currency: "usd", interval: "month" as const }], highlights: ["25 seats", "SSO"] },
+];
+
+const CFMS_FEATURES = [
+    { key: "seats", name: "Seats", type: "resource" as const, unit: "seats" },
+    { key: "exports", name: "Exports", type: "boolean" as const },
+    { key: "sso", name: "SSO", type: "boolean" as const },
+];
+
+function PricingTableDemo() {
+    return (
+        <div className="max-w-3xl">
+            <PricingTable plans={CFMS_PLANS} defaultInterval="month" />
+        </div>
+    );
+}
+
+function FeatureMatrixDemo() {
+    return (
+        <div className="max-w-3xl overflow-x-auto">
+            <FeatureMatrix plans={CFMS_PLANS} features={CFMS_FEATURES} />
+        </div>
+    );
+}
+
+function FeatureGateDemo() {
+    const [access, setAccess] = useState(false);
+    return (
+        <DemoNote
+            outOfBox="The gate: it renders its children only when the viewer's entitlement allows, and an upsell otherwise."
+            demo="The toggle standing in for the entitlement your server would supply."
+        >
+            <div className="max-w-md space-y-3">
+                <label className="flex items-center gap-2 text-xs text-zinc-500">
+                    <input type="checkbox" checked={access} onChange={(e) => setAccess(e.target.checked)} />
+                    viewer has the `exports` feature
+                </label>
+                <FeatureGate
+                    feature="exports"
+                    featureName="Exports"
+                    entitlements={{ planId: access ? "pro" : "starter", features: { exports: { access } } }}
+                >
+                    <div className="rounded border border-emerald-300 bg-emerald-50 p-3 text-sm text-emerald-800 dark:border-emerald-500/40 dark:bg-emerald-500/10 dark:text-emerald-200">
+                        Export to xlsx, pptx or docx.
+                    </div>
+                </FeatureGate>
+            </div>
+        </DemoNote>
+    );
+}
+
+function PlanFeaturesEditorDemo() {
+    const [value, setValue] = useState<Record<string, PlanFeatureValue>>({
+        seats: { type: "resource", enabled: true, limit: 5 },
+        exports: { type: "boolean", enabled: true },
+        sso: { type: "boolean", enabled: false },
+    });
+    return (
+        <DemoNote
+            outOfBox="The admin editor for what a plan includes — booleans, and resource caps where `null` means unlimited."
+            demo="Three seeded features and the JSON readout."
+        >
+            <div className="max-w-xl space-y-3">
+                <PlanFeaturesEditor features={CFMS_FEATURES} value={value} onChange={setValue} />
+                <pre className="overflow-auto rounded bg-zinc-950 p-3 font-mono text-[11px] text-zinc-100">
+                    {JSON.stringify(value, null, 2)}
+                </pre>
             </div>
         </DemoNote>
     );

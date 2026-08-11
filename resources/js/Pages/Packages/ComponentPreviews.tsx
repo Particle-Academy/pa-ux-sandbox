@@ -68,7 +68,7 @@ const heavy = (name: HeavyTile, Fallback: PreviewFn): PreviewFn => {
 };
 
 /** A two-keyframe timeline — the shape TimelineDoc actually declares. */
-const PREVIEW_TIMELINE: TimelineDoc = {
+export const PREVIEW_TIMELINE: TimelineDoc = {
     id: "preview",
     axis: "vertical",
     frames: 3,
@@ -189,20 +189,20 @@ type PreviewFn = () => ReactNode;
 // field rename upstream fails the typecheck here instead of rendering an empty
 // tile. Story #177.
 
-const CR_LESSON = {
+export const CR_LESSON = {
     id: 1, course_id: 1, module_id: null, slug: "what-is-human-plus",
     title: "What is Human+ UX?", content_type: "text" as const,
     content: "Agents and people share one surface, trading control fluidly.",
     video_url: null, sort_order: 1, estimated_minutes: 6,
 };
 
-const CR_CURRICULUM = {
+export const CR_CURRICULUM = {
     id: 1, slug: "fancy-ui", title: "Fancy UI Curriculum",
     description: "From primitives to agent-driven surfaces.",
     sort_order: 1, is_published: true, metadata: null,
 };
 
-const CR_QUESTION = {
+export const CR_QUESTION = {
     id: 1, test_id: 1, prompt: "Which prop pair makes a component controlled?",
     type: "multiple_choice" as const, points: 1, sort_order: 1,
     options: [
@@ -211,34 +211,34 @@ const CR_QUESTION = {
     ],
 };
 
-const CR_ATTEMPT = {
+export const CR_ATTEMPT = {
     id: 1, enrollment_id: 1, test_id: 1, attempt_number: 1,
     started_at: "2026-08-10T09:00:00Z", finished_at: "2026-08-10T09:05:00Z",
     score: 100, points_awarded: 1, max_score: 1, passed: true,
 };
 
-const CR_TEST = {
+export const CR_TEST = {
     id: 1, slug: "module-1-check", title: "Module 1 check", description: null,
     course_id: 1, module_id: null, lesson_id: null, passing_score: 80,
     time_limit_seconds: null, max_attempts: null, is_final: false,
     randomize_questions: false, questions: [CR_QUESTION],
 };
 
-const CR_COURSE = {
+export const CR_COURSE = {
     id: 1, slug: "human-plus", title: "Human+ UX",
     description: "Surfaces people and agents share.", sort_order: 1,
     is_published: true, estimated_minutes: 45, metadata: null,
     lessons: [CR_LESSON], modules: [],
 };
 
-const CR_ENROLLMENT = {
+export const CR_ENROLLMENT = {
     id: 1, user_id: 1, status: "active" as const,
     started_at: "2026-08-01T00:00:00Z", completed_at: null,
     enrollable_type: "course", enrollable_id: 1,
     target_kind: "course" as const, target: null, metadata: null,
 };
 
-const JB_POSTING = {
+export const JB_POSTING = {
     id: 1, employer_id: 1, title: "Senior React Engineer", slug: "senior-react-engineer",
     is_remote: true, status: "published" as const, status_label: "Published",
     openings: 2, applications_count: 14, is_visible: true, accepts_applications: true,
@@ -249,19 +249,19 @@ const JB_POSTING = {
     employer: { id: 1, name: "Particle Academy", slug: "particle-academy" },
 };
 
-const JB_APPLICATION = {
+export const JB_APPLICATION = {
     id: 1, job_posting_id: 1, user_id: 7, status: "reviewing" as const,
     status_label: "Reviewing", is_terminal: false,
     submitted_at: "2026-08-05T10:00:00Z",
     candidate: { id: 7, name: "Ada Lovelace", email: "ada@example.com" },
 };
 
-const TA_HISTORY = [
+export const TA_HISTORY = [
     { role: "user" as const, content: "Add a retake policy to the quiz." },
     { role: "assistant" as const, content: "Two retakes, 24h apart. Shall I apply it?" },
 ];
 
-const TA_PLAN = {
+export const TA_PLAN = {
     count: 1,
     summary: { update: 1 },
     operations: [
@@ -269,7 +269,7 @@ const TA_PLAN = {
     ],
 };
 
-const SAMPLE_TSX = `export function Button({ label }: { label: string }) {
+export const SAMPLE_TSX = `export function Button({ label }: { label: string }) {
   return <button className="btn">{label}</button>;
 }
 `;

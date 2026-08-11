@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { MarkdownEditor } from "@particle-academy/fancy-code";
 import { SheetWorkbook } from "@particle-academy/fancy-sheets";
-import { FlowEditor } from "@particle-academy/fancy-flow";
+import { FlowEditor, FlowViewer } from "@particle-academy/fancy-flow";
 import { Canvas } from "@particle-academy/fancy-3d";
 import { Stage as BabylonStage, Monitor as BabylonMonitor } from "@particle-academy/fancy-3d-babylon/react";
 import { Stage as ThreeStage, Monitor as ThreeMonitor } from "@particle-academy/fancy-3d-three/react";
 import { createEmptyWorkbook } from "@particle-academy/fancy-sheets";
+import { PasskeyManager, PasskeySignIn } from "@particle-academy/fancy-passkeys-ui";
+import "@particle-academy/fancy-passkeys-ui/styles.css";
 import "@particle-academy/fancy-flow/styles.css";
 import "@particle-academy/fancy-sheets/styles.css";
 
@@ -133,4 +135,63 @@ export function Canvas3DTile() {
       </Canvas>
     </div>
   );
+}
+
+/**
+ * A read-only run view of the same graph the editor tile shows. `FlowViewer`
+ * is React Flow underneath, so it needs a browser exactly like `FlowEditor`.
+ */
+export function FlowViewerTile() {
+    return (
+        <div className="h-36 w-full max-w-[20rem] overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
+            {/* Reuses TILE_GRAPH — the editor validates wiring, so one valid
+                graph serves both tiles and cannot drift from the other. The
+                `list` variant reads far better at tile size than a canvas
+                shrunk to 128px. */}
+            <FlowViewer graph={TILE_GRAPH as never} variant="list" height={144} />
+        </div>
+    );
+}
+
+/**
+ * The passkey surfaces are controlled, but the package reaches for the WebAuthn
+ * client on import — `navigator.credentials` does not exist during Inertia's
+ * synchronous SSR render, so importing them into ComponentPreviews would crash
+ * the whole page rather than one tile.
+ *
+ * Both tiles are READ-ONLY: no handler here starts a ceremony, which also
+ * matches the bridge's own rule that a gesture plus biometric is something only
+ * the human can supply.
+ */
+export function PasskeyManagerTile() {
+    return (
+        <div className="h-36 w-full max-w-[20rem] overflow-hidden text-left text-[11px]">
+            <PasskeyManager
+                value={{
+                    passkeys: [
+                        {
+                            id: "pk_1", name: "MacBook Touch ID", createdAt: "2026-07-01T10:00:00Z",
+                            lastUsedAt: "2026-08-10T08:00:00Z", transports: ["internal"],
+                            backedUp: true, aaguid: "adce0002-35bc-c60a-648b-0b25f1f05503", clonedAt: null,
+                        },
+                    ],
+                    pendingRevoke: null, renamingId: null, draftName: "",
+                    status: "idle", error: null,
+                }}
+                onChange={() => {}}
+            />
+        </div>
+    );
+}
+
+export function PasskeySignInTile() {
+    return (
+        <div className="w-full max-w-[18rem] text-left text-[11px]">
+            <PasskeySignIn
+                value={{ status: "idle", email: "ada@example.com", error: null }}
+                onChange={() => {}}
+                onAuthenticate={async () => {}}
+            />
+        </div>
+    );
 }

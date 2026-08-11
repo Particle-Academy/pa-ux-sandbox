@@ -128,6 +128,13 @@ import {
     XFilesManager,
 } from "@particle-academy/fancy-x-files-ui";
 import { CmsPage, CmsRegion } from "@particle-academy/fancy-cms-ui";
+import { CertificateView, CoursePlayer, CurriculumOverview, LessonView, QuestionRenderer, TestRunner } from "@particle-academy/classroom";
+import { ApplicationList, ApplyForm, EmployerJobList, JobBoard, JobDetail, JobPostingForm } from "@particle-academy/job-board";
+import { ChatTranscript, MessageComposer, PlanReview, TeachersAidChat } from "@particle-academy/teachers-aid-ui";
+import { InstallBanner, OfflineBanner } from "@particle-academy/fancy-pwa";
+import { PasskeyStatus } from "@particle-academy/fancy-passkeys-ui";
+import "@particle-academy/fancy-passkeys-ui/styles.css";
+
 import {
     CANONICAL_SLIDE,
     CANONICAL_DECK,
@@ -174,6 +181,92 @@ type PreviewFn = () => ReactNode;
 // Sample media for the viewer previews — local assets + a tiny data-URI so the
 // cards render self-contained (no external network).
 /** Multi-line sample for the CodeView tile — a template literal so the newlines are real. */
+
+// ─── fixtures for the education / hiring / teachers-aid tiles ──────────────
+// Shaped against each package's own exported types rather than invented, so a
+// field rename upstream fails the typecheck here instead of rendering an empty
+// tile. Story #177.
+
+const CR_LESSON = {
+    id: 1, course_id: 1, module_id: null, slug: "what-is-human-plus",
+    title: "What is Human+ UX?", content_type: "text" as const,
+    content: "Agents and people share one surface, trading control fluidly.",
+    video_url: null, sort_order: 1, estimated_minutes: 6,
+};
+
+const CR_CURRICULUM = {
+    id: 1, slug: "fancy-ui", title: "Fancy UI Curriculum",
+    description: "From primitives to agent-driven surfaces.",
+    sort_order: 1, is_published: true, metadata: null,
+};
+
+const CR_QUESTION = {
+    id: 1, test_id: 1, prompt: "Which prop pair makes a component controlled?",
+    type: "multiple_choice" as const, points: 1, sort_order: 1,
+    options: [
+        { id: 1, label: "value + onChange", sort_order: 1 },
+        { id: 2, label: "state + setState", sort_order: 2 },
+    ],
+};
+
+const CR_ATTEMPT = {
+    id: 1, enrollment_id: 1, test_id: 1, attempt_number: 1,
+    started_at: "2026-08-10T09:00:00Z", finished_at: "2026-08-10T09:05:00Z",
+    score: 100, points_awarded: 1, max_score: 1, passed: true,
+};
+
+const CR_TEST = {
+    id: 1, slug: "module-1-check", title: "Module 1 check", description: null,
+    course_id: 1, module_id: null, lesson_id: null, passing_score: 80,
+    time_limit_seconds: null, max_attempts: null, is_final: false,
+    randomize_questions: false, questions: [CR_QUESTION],
+};
+
+const CR_COURSE = {
+    id: 1, slug: "human-plus", title: "Human+ UX",
+    description: "Surfaces people and agents share.", sort_order: 1,
+    is_published: true, estimated_minutes: 45, metadata: null,
+    lessons: [CR_LESSON], modules: [],
+};
+
+const CR_ENROLLMENT = {
+    id: 1, user_id: 1, status: "active" as const,
+    started_at: "2026-08-01T00:00:00Z", completed_at: null,
+    enrollable_type: "course", enrollable_id: 1,
+    target_kind: "course" as const, target: null, metadata: null,
+};
+
+const JB_POSTING = {
+    id: 1, employer_id: 1, title: "Senior React Engineer", slug: "senior-react-engineer",
+    is_remote: true, status: "published" as const, status_label: "Published",
+    openings: 2, applications_count: 14, is_visible: true, accepts_applications: true,
+    location: "Remote — EU", employment_type: "full_time" as const,
+    pay_min: 90000, pay_max: 130000, pay_unit: "year" as const, pay_currency: "EUR",
+    description: "Build Human+ surfaces where agents are first-class participants.",
+    published_at: "2026-08-01T09:00:00Z",
+    employer: { id: 1, name: "Particle Academy", slug: "particle-academy" },
+};
+
+const JB_APPLICATION = {
+    id: 1, job_posting_id: 1, user_id: 7, status: "reviewing" as const,
+    status_label: "Reviewing", is_terminal: false,
+    submitted_at: "2026-08-05T10:00:00Z",
+    candidate: { id: 7, name: "Ada Lovelace", email: "ada@example.com" },
+};
+
+const TA_HISTORY = [
+    { role: "user" as const, content: "Add a retake policy to the quiz." },
+    { role: "assistant" as const, content: "Two retakes, 24h apart. Shall I apply it?" },
+];
+
+const TA_PLAN = {
+    count: 1,
+    summary: { update: 1 },
+    operations: [
+        { action: "update" as const, entity: "Quiz 1", description: "allow 2 retakes, 24h apart" },
+    ],
+};
+
 const SAMPLE_CODE_VIEW = `<Callout color="green">
   Deploy succeeded
 </Callout>`;
@@ -189,7 +282,31 @@ const SAMPLE_TSX = `export function Button({ label }: { label: string }) {
 `;
 
 export function getComponentPreview(pkg: string, slug: string): PreviewFn | null {
-    return PREVIEWS[`${pkg}/${slug}`] ?? null;
+    const direct = PREVIEWS[`${pkg}/${slug}`];
+    if (direct) return direct;
+
+    /**
+     * Fall back to the UNQUALIFIED slug.
+     *
+     * The registry package-qualifies a name whenever it would collide across
+     * packages — `stage` exists in both fancy-3d engines, `sticky-note` in both
+     * react-fancy and fancy-whiteboard — so those items arrive as
+     * `fancy-3d-babylon-stage` and `react-fancy-sticky-note`. The preview map is
+     * written per package and keys on the bare name, so every qualified item
+     * missed and rendered "Live preview coming soon" beside a working tile for
+     * the same component.
+     *
+     * Ten items were in that state. Aliasing each one would have worked and
+     * would have left the next collision to rediscover it, so the lookup
+     * handles the shape instead: strip the package prefix the registry added
+     * and try again. Only ever a fallback, so an intentional per-variant
+     * preview still wins.
+     */
+    if (slug.startsWith(`${pkg}-`)) {
+        return PREVIEWS[`${pkg}/${slug.slice(pkg.length + 1)}`] ?? null;
+    }
+
+    return null;
 }
 
 
@@ -691,6 +808,143 @@ const PREVIEWS: Record<string, PreviewFn> = {
             ))}
         </div>
     ),
+    // ── classroom · job-board · teachers-aid-ui ───────────────────────────
+    // The last of the packages advertising components with nothing to look at.
+    // Every tile mounts the REAL component against a typed fixture — a drawing
+    // would drift from the component the moment either changed, which is the
+    // same argument the fancy-tui frames are captured for. Story #177.
+
+    "classroom/curriculum-overview": () => (
+        <div className="w-full max-w-[20rem] text-left text-[11px]">
+            <CurriculumOverview curriculum={CR_CURRICULUM} />
+        </div>
+    ),
+    "classroom/lesson-view": () => (
+        <div className="h-36 w-full max-w-[20rem] overflow-hidden text-left text-[11px]">
+            <LessonView lesson={CR_LESSON} />
+        </div>
+    ),
+    "classroom/question-renderer": () => (
+        <div className="w-full max-w-[20rem] text-left text-[11px]">
+            <QuestionRenderer question={CR_QUESTION} value={null} onChange={() => {}} />
+        </div>
+    ),
+    "classroom/certificate-view": () => (
+        <div className="h-36 w-full max-w-[20rem] overflow-hidden text-left text-[11px]">
+            <CertificateView
+                certificate={{
+                    id: 1, enrollment_id: 1, verification_code: "FANCY-2026-0001",
+                    issued_at: "2026-08-01T00:00:00Z", pdf_path: null, metadata: null,
+                }}
+                pdfUrl="#"
+            />
+        </div>
+    ),
+    "classroom/test-runner": () => (
+        <div className="h-36 w-full max-w-[20rem] overflow-hidden text-left text-[11px]">
+            <TestRunner
+                test={CR_TEST}
+                onSubmit={async () => CR_ATTEMPT}
+            />
+        </div>
+    ),
+    "classroom/course-player": () => (
+        <div className="h-36 w-full max-w-[20rem] overflow-hidden text-left text-[11px]">
+            <CoursePlayer
+                course={CR_COURSE}
+                enrollment={CR_ENROLLMENT}
+                completedLessonIds={new Set<number>()}
+                onMarkLessonComplete={() => {}}
+                onStartAttempt={async () => CR_ATTEMPT}
+                onSubmitAttempt={async () => CR_ATTEMPT}
+            />
+        </div>
+    ),
+
+    "job-board/job-board": () => (
+        <div className="h-36 w-full max-w-[20rem] overflow-hidden text-left text-[11px]">
+            <JobBoard postings={[JB_POSTING]} />
+        </div>
+    ),
+    "job-board/job-detail": () => (
+        <div className="h-36 w-full max-w-[20rem] overflow-hidden text-left text-[11px]">
+            <JobDetail posting={JB_POSTING} />
+        </div>
+    ),
+    "job-board/apply-form": () => (
+        <div className="h-36 w-full max-w-[20rem] overflow-hidden text-left text-[11px]">
+            <ApplyForm posting={JB_POSTING} onSubmit={() => {}} />
+        </div>
+    ),
+    "job-board/job-posting-form": () => (
+        <div className="h-36 w-full max-w-[20rem] overflow-hidden text-left text-[11px]">
+            <JobPostingForm onSubmit={() => {}} />
+        </div>
+    ),
+    "job-board/application-list": () => (
+        <div className="w-full max-w-[20rem] text-left text-[11px]">
+            <ApplicationList applications={[JB_APPLICATION]} />
+        </div>
+    ),
+    "job-board/employer-job-list": () => (
+        <div className="w-full max-w-[20rem] text-left text-[11px]">
+            <EmployerJobList postings={[JB_POSTING]} />
+        </div>
+    ),
+
+    "teachers-aid-ui/chat-transcript": () => (
+        <div className="h-36 w-full max-w-[20rem] overflow-hidden text-left text-[11px]">
+            <ChatTranscript history={TA_HISTORY} agentName="Teacher's Aid" />
+        </div>
+    ),
+    "teachers-aid-ui/message-composer": () => (
+        <div className="w-full max-w-[20rem] text-left text-[11px]">
+            <MessageComposer agentName="Teacher's Aid" onSend={() => {}} />
+        </div>
+    ),
+    "teachers-aid-ui/plan-review": () => (
+        // The trust-but-verify surface: an agent proposes changes, a human
+        // applies or discards. Showing it empty would hide the entire point.
+        <div className="h-36 w-full max-w-[20rem] overflow-hidden text-left text-[11px]">
+            <PlanReview plan={TA_PLAN} onApply={() => {}} onDiscard={() => {}} />
+        </div>
+    ),
+    "teachers-aid-ui/teachers-aid-chat": () => (
+        <div className="h-36 w-full max-w-[20rem] overflow-hidden text-left text-[11px]">
+            <TeachersAidChat agentName="Teacher's Aid" history={TA_HISTORY} onSend={() => {}} onApply={() => {}} onDiscard={() => {}} />
+        </div>
+    ),
+    "fancy-pwa/pwa": () => (
+        // The two banners are the whole visible surface of the package — the
+        // rest is hooks and a Vite plugin, which a tile cannot show.
+        <div className="w-full max-w-[18rem] space-y-2 text-left text-[11px]">
+            <OfflineBanner color="amber">You are offline — changes will sync.</OfflineBanner>
+            <InstallBanner color="violet" title="Install Fancy UI" installLabel="Install" />
+        </div>
+    ),
+    // PasskeyStatus is pure presentation over three booleans — no ceremony, no
+    // navigator.credentials at render — so it stays inline. The manager and the
+    // sign-in surface reach for the WebAuthn client and live in HeavyPreviews.
+    "fancy-passkeys-ui/passkey-status": () => (
+        <div className="w-full max-w-[18rem] text-left text-[11px]">
+            <PasskeyStatus supported platformAuthenticator conditionalUi={false} />
+        </div>
+    ),
+    "fancy-flow/flow-viewer": heavy("FlowViewerTile", () => (
+        <div className="grid h-36 w-full max-w-[20rem] place-items-center rounded-md border border-zinc-200 text-[11px] text-zinc-500 dark:border-zinc-800">
+            Webhook → Summarise
+        </div>
+    )),
+    "fancy-passkeys-ui/passkey-manager": heavy("PasskeyManagerTile", () => (
+        <div className="grid h-36 w-full max-w-[20rem] place-items-center rounded-md border border-zinc-200 text-[11px] text-zinc-500 dark:border-zinc-800">
+            MacBook Touch ID
+        </div>
+    )),
+    "fancy-passkeys-ui/passkey-sign-in": heavy("PasskeySignInTile", () => (
+        <div className="grid h-24 w-full max-w-[18rem] place-items-center rounded-md border border-zinc-200 text-[11px] text-zinc-500 dark:border-zinc-800">
+            Sign in with a passkey
+        </div>
+    )),
     "react-fancy/badge": () => (
         <div className="flex flex-wrap items-center justify-center gap-1.5">
             <Badge color="violet">new</Badge>

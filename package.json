@@ -38,7 +38,7 @@
         "@babylonjs/core": "^9.4.1",
         "@googlemaps/js-api-loader": "^2.1.1",
         "@inertiajs/react": "^3.1.1",
-        "@particle-academy/agent-integrations": "^0.40.0",
+        "@particle-academy/agent-integrations": "^0.41.0",
         "@particle-academy/classroom": "^0.7.0",
         "@particle-academy/dark-slide": "^0.5.2",
         "@particle-academy/fancy-3d": "^0.5.0",

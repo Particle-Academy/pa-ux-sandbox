@@ -30,6 +30,10 @@ const NAV: NavGroup[] = [
         ],
     },
     {
+        section: "Learning",
+        items: [{ label: "Curriculum", icon: "graduation-cap", href: "/admin/curriculum" }],
+    },
+    {
         section: "Community",
         items: [
             { label: "Sites", icon: "activity", href: "/admin/sites" },

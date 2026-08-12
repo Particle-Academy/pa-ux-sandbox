@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ActiveUsersController;
+use App\Http\Controllers\Admin\AdminCurriculumController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminFeaturesController;
 use App\Http\Controllers\Admin\AdminGamificationController;
@@ -449,6 +450,11 @@ Route::prefix('admin')->name('admin.')->middleware(['web', 'auth', 'can:admin'])
     Route::get('heuristics', fn () => redirect()->route('admin.sites.index'))->name('heuristics.index');
     Route::get('heuristics/{site:site_key}', [AdminHeuristicsController::class, 'show'])->name('heuristics.show');
     Route::post('heuristics/{site:site_key}/verify', [AdminHeuristicsController::class, 'verify'])->name('heuristics.verify');
+
+    // Learning — the operator view of the curriculum: enrolment, progress,
+    // attempts, certificates. Read-only; lessons are authored in
+    // FancyCurriculumContent and reconciled by `fancy:build-curriculum`.
+    Route::get('curriculum', [AdminCurriculumController::class, 'index'])->name('curriculum.index');
 
     // App settings — admin-editable config (e.g. the tracker/pixel snippet).
     Route::get('settings', [AdminSettingsController::class, 'index'])->name('settings.index');

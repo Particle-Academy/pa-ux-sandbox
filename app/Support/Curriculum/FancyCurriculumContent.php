@@ -73,24 +73,24 @@ final class FancyCurriculumContent
                             'estimated_minutes' => 8,
                             'content' => <<<'MD'
 `react-fancy` is roughly 70 Tailwind v4 primitives — the layer everything else
-in the suite composes against.
+in the suite composes against. Buttons, inputs, tables, modals, and the layout
+shells that hold them.
 
-Two different component counts exist, and they measure different things:
+Two things about it shape how you use everything else.
 
-- **Installable registry entries** — what `npx fancy-cli add` and the MCP server
-  offer. Read from `resources/registry/registry.json`.
-- **Components attributed to a package** — what the packages page lists. Read
-  from `PackageRegistry`.
+**It stays raw React.** No Inertia import, no router, no data layer. That is why
+the same components work in a Laravel + Inertia app, a Node app, or a plain Vite
+SPA — the server story lives in `fancy-inertia` and `fancy-query`, not here.
 
-The first is always the larger, because the registry package-qualifies a slug
-whenever it would collide. `fancy-3d-babylon-stage` and `fancy-3d-three-stage`
-are the same component backed by two engines: twice in what you can install,
-once in what the packages page groups.
+**You can install it two ways, and they are not the same choice.**
 
-Which number you want depends on the question. "How much can I install?" is the
-registry. "How many components does this package document?" is the packages
-page. Read whichever you mean off the artifact — both move most weeks, so a
-figure quoted from memory is usually a figure that was true once.
+- `npm install @particle-academy/react-fancy` — the package. Upgrades arrive
+  with a version bump.
+- `npx fancy-cli@latest add <component>` — vendors that component's SOURCE into
+  your project. You own it, you can edit it, and upgrades no longer reach it.
+
+Vendor when you intend to diverge from the component; install when you want the
+component to keep improving underneath you.
 
 **`Action` is retired.** Emit `Button` and `ButtonColor`. `Action` survives as a
 `@deprecated` alias so existing code keeps working, but new code should not
@@ -179,14 +179,14 @@ MD,
                         ],
                     ],
                     [
-                        'prompt' => 'The installable registry lists MORE entries than the packages page lists components. Why?',
+                        'prompt' => 'You expect to restyle a component heavily and diverge from upstream. Install the package, or vendor the source with `fancy-cli add`?',
                         'type' => 'multiple_choice',
-                        'explanation' => 'The registry package-qualifies a slug when it would collide, so one component backed by two engines appears twice in what you can install and once in what the packages page groups.',
+                        'explanation' => 'Vendoring copies the source into your project: you own it and can edit it freely, but upgrades no longer reach it. That trade is right when you intend to diverge, and wrong when you want the component to keep improving underneath you.',
                         'options' => [
-                            ['label' => 'The registry counts package-qualified duplicates, like the Babylon and three.js versions of the same component', 'is_correct' => true],
-                            ['label' => 'The difference is components that are written but not yet published', 'is_correct' => false],
-                            ['label' => 'The packages page is out of date and the registry is authoritative', 'is_correct' => false],
-                            ['label' => 'The registry counts each component once per framework it supports', 'is_correct' => false],
+                            ['label' => 'Vendor it — you own the source and can edit it, accepting that upgrades no longer reach it', 'is_correct' => true],
+                            ['label' => 'Install the package and override everything with `!important` utilities', 'is_correct' => false],
+                            ['label' => 'Vendor it — vendored components still receive upstream upgrades', 'is_correct' => false],
+                            ['label' => 'Install the package; vendoring is only for components not published to npm', 'is_correct' => false],
                         ],
                     ],
                     [
@@ -549,8 +549,8 @@ Three document packages, each a PHP + Node pair:
 - **`last-word`** — docx writer and reader, with markdown bridges
 
 They are headless. There is no UI to inhabit, so the Human+ component contract
-does not apply to them — and holding a document writer to a bar it has no
-surface to clear is a good way to waste a review.
+does not apply to them: a document writer has no surface for an agent to share,
+and that is not a gap in it.
 
 `last-word`'s markdown bridges are the quiet win: without them, producing a docx
 from agent output meant a converter sandwich in every consumer. The shared cores

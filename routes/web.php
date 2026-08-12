@@ -47,6 +47,7 @@ use App\Http\Controllers\Showcase\StarterKitController;
 use App\Http\Controllers\Showcase\StarterKitDownloadController;
 use App\Http\Controllers\Showcase\VoteController;
 use App\Http\Controllers\SubscriptionController;
+use App\Http\Controllers\UseCaseController;
 use App\Http\Controllers\Webhooks\GitHubWebhookController;
 use App\Http\Controllers\WhiteboardAgentController;
 use App\Http\Middleware\TrackPackageBrowsing;
@@ -180,6 +181,14 @@ Route::middleware(TrackPackageBrowsing::class)->group(function () {
     Route::get('/packages/{package}', [PackagesController::class, 'show'])->name('packages.show');
     Route::get('/packages/{package}/{component}', [PackagesController::class, 'component'])->name('packages.component');
 });
+
+// "I have this problem" -> "here is how the suite solves it". The package list
+// only helps a reader who already knows the vocabulary; this is the entry point
+// for one who does not.
+Route::get('/use-cases', [UseCaseController::class, 'index'])->name('use-cases.index');
+Route::get('/use-cases/{slug}', [UseCaseController::class, 'show'])
+    ->where('slug', '[a-z0-9\-]+')
+    ->name('use-cases.show');
 
 Route::get('/starter-kits', [StarterKitController::class, 'index'])->name('starter-kits.index');
 Route::get('/starter-kits/{slug}', [StarterKitController::class, 'show'])->name('starter-kits.show');

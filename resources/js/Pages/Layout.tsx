@@ -74,7 +74,7 @@ const NAV_ITEMS: Array<{ to: string; label: string; match: string }> = [
     { to: "/packages", label: "Packages", match: "packages" },
     { to: "/fancy-tui", label: "TUI", match: "fancy-tui" },
     { to: "/flow", label: "Flow", match: "flow" },
-    { to: "/starter-kits", label: "Starter Kits", match: "starter-kits" },
+    { to: "/use-cases", label: "Use Cases", match: "use-cases" },
     { to: "/inspiration", label: "Inspiration", match: "inspiration" },
     { to: "/showcase", label: "Showcase", match: "showcase" },
     { to: "/leaderboard", label: "Leaderboard", match: "leaderboard" },

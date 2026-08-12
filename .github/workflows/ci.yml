@@ -101,16 +101,9 @@ jobs:
       # service container to wait on.
       - name: DIAGNOSTIC (temporary)
         run: |
-          echo "--- Pages tree:"
-          ls resources/js/Pages | head -30
-          echo "--- count of .tsx under Pages:"
-          find resources/js/Pages -name '*.tsx' | wc -l
-          echo "--- specific files:"
-          ls -la resources/js/Pages/Inspiration/Show.tsx resources/js/Pages/Packages/Show.tsx || true
-          echo "--- resource_path + finder paths:"
-          php artisan tinker --execute "echo resource_path('js/Pages').PHP_EOL; var_dump(is_dir(resource_path('js/Pages'))); var_dump(config('inertia.testing.page_paths'));"
-          echo "--- one request:"
-          php artisan tinker --execute "\$r = app('Illuminate\Contracts\Http\Kernel')->handle(Illuminate\Http\Request::create('/packages/react-fancy','GET')); echo \$r->getStatusCode().PHP_EOL; echo substr(strip_tags(\$r->getContent()),0,600).PHP_EOL;"
+          php artisan tinker --execute "app('Illuminate\Contracts\Http\Kernel')->handle(Illuminate\Http\Request::create('/packages/react-fancy','GET'));" || true
+          echo "=== laravel.log ==="
+          tail -n 60 storage/logs/laravel.log || echo "(no log)"
 
       - name: Run tests
         run: php artisan test --compact

@@ -680,13 +680,17 @@ export const SAMPLE_POSTER = "/showcase-shots/fancy-slides.png";
 export const SAMPLE_PDF = "/showcase-assets/file-viewer/sample.pdf";
 
 /**
- * A valid, completely silent 44.1kHz wav.
+ * A real track, so the audio surfaces can actually be played.
  *
- * Inline rather than a file so the audio demo needs no asset and no network —
- * it is there to show the transport and waveform chrome, not to play anything.
+ * "Make It Fancy" — first-party (wishborn), which is what makes it publishable
+ * here at all; a demo asset has to be something we own.
+ *
+ * This replaced a silent inline wav. That was defensible when the point was
+ * only to show the transport chrome, but a player you cannot hear is a player
+ * you cannot evaluate — pressing play and getting silence reads as broken.
  */
-export const SILENT_WAV =
-    "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=";
+export const SAMPLE_AUDIO = "/showcase-assets/audio/make-it-fancy.mp3";
+export const SAMPLE_AUDIO_TITLE = "Make It Fancy — wishborn";
 
 export const SAMPLE_CODE_VIEW = `<Callout color="green">
   Deploy succeeded

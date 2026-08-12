@@ -12,7 +12,7 @@ import { PasskeyStatus, PasskeyManager, PasskeySignIn, type PasskeyManagerState,
 import { ChatTranscript, MessageComposer, PlanReview, TeachersAidChat } from "@particle-academy/teachers-aid-ui";
 import { ApplicationList, ApplyForm, EmployerJobList, JobDetail, JobPostingForm } from "@particle-academy/job-board";
 import { CertificateView, CoursePlayer, CurriculumOverview, LessonView, QuestionRenderer, TestRunner, type AnswerValue} from "@particle-academy/classroom";
-import { SAMPLE_CODE_VIEW, SAMPLE_IMG, SAMPLE_PDF, SAMPLE_POSTER, SILENT_WAV } from "./showcase-fixtures";
+import { SAMPLE_CODE_VIEW, SAMPLE_IMG, SAMPLE_PDF, SAMPLE_AUDIO, SAMPLE_AUDIO_TITLE, SAMPLE_POSTER } from "./showcase-fixtures";
 import {
     Accordion,
     Button,
@@ -742,7 +742,7 @@ function MediaViewerDemo() {
     const sources = [
         { label: "Image", src: SAMPLE_IMG, note: "resolves to ImageViewer" },
         { label: "PDF", src: SAMPLE_PDF, note: "resolves to PdfViewer" },
-        { label: "Audio", src: SILENT_WAV, note: "resolves to AudioViewer" },
+        { label: "Audio", src: SAMPLE_AUDIO, note: "resolves to AudioViewer" },
     ];
     const [i, setI] = useState(0);
     const current = sources[i]!;
@@ -809,11 +809,11 @@ function VideoViewerDemo() {
 function AudioViewerDemo() {
     return (
         <DemoNote
-            outOfBox="The transport, the scrubber and the title row."
-            demo="The clip is a valid but completely SILENT wav — it is here to show the chrome, not to play."
+            outOfBox="The transport, the scrubber and the title row — the browser's own controls, themed by the card around them."
+            demo="The track. “Make It Fancy” is ours, which is the only reason it can ship here — press play, it really is audio."
         >
             <div className="max-w-md">
-                <AudioViewer src={SILENT_WAV} title="podcast-ep-12.mp3" />
+                <AudioViewer src={SAMPLE_AUDIO} title={SAMPLE_AUDIO_TITLE} />
             </div>
         </DemoNote>
     );

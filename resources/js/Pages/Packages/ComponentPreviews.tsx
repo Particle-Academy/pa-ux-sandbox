@@ -9,7 +9,7 @@
  */
 import { useState, type ComponentType, type ReactNode } from "react";
 import { type TimelineDoc } from "@particle-academy/fancy-motion";
-import { SAMPLE_CODE_VIEW, SAMPLE_IMG, SAMPLE_PDF, SAMPLE_POSTER, SILENT_WAV } from "./showcase-fixtures";
+import { SAMPLE_CODE_VIEW, SAMPLE_IMG, SAMPLE_PDF, SAMPLE_AUDIO, SAMPLE_AUDIO_TITLE, SAMPLE_POSTER } from "./showcase-fixtures";
 // The listing page renders these tiles directly, while the full demos live in
 // a client-only chunk — so the stylesheet has to be imported here too or the
 // grid shows unstyled git surfaces. Bundlers dedupe the second import.
@@ -534,7 +534,10 @@ const PREVIEWS: Record<string, PreviewFn> = {
     ),
     "react-fancy/audio-viewer": () => (
         <div className="w-full max-w-[20rem]">
-            <AudioViewer src={SILENT_WAV} title="podcast-ep-12.mp3" />
+            {/* `preload="none"`: this is a THUMBNAIL on a grid of ~90. Even metadata is
+                a request per visit for something nobody has asked to hear yet — the
+                detail page is where the file is worth fetching. */}
+            <AudioViewer src={SAMPLE_AUDIO} title={SAMPLE_AUDIO_TITLE} preload="none" />
         </div>
     ),
     "react-fancy/pdf-viewer": () => (

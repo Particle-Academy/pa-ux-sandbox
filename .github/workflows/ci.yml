@@ -1,0 +1,78 @@
+name: CI
+
+# Why this exists, and why it leads with the type-check.
+#
+# This app had no CI. 844 tests, a client and an SSR bundle, and nothing ran any
+# of it on push — the Laravel apps were deliberately left out when the suite's
+# packages got their canonical workflows, and the gap was never revisited.
+#
+# The type-check is first because of what it caught when someone finally read
+# it: **245 errors had accumulated**, and inside them were 57 icons rendering at
+# the wrong size, 35 headings rendering as the wrong element, a pagination
+# control stuck on page 1, blank avatars, a docs page demonstrating a prop that
+# does not exist, and a dashboard click handler that was never installed. Every
+# one was reported. Nobody read the output, which is the rational response to
+# 245 lines of noise.
+#
+# That is the failure mode this job prevents. Not the first error — the
+# hundredth, after the signal has already been abandoned. Keeping the count at
+# zero is what keeps it readable.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  frontend:
+    name: Type-check + build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      # `npm ci` rather than `install`: the lockfile is what a deploy resolves,
+      # so it is what CI should verify.
+      - name: Install
+        run: npm ci --no-audit --no-fund
+
+      - name: Type-check
+        run: npx tsc --noEmit -p tsconfig.json
+
+      # Both bundles. The SSR build fails on browser-only imports that the
+      # client build accepts, and Inertia renders SSR synchronously — a page
+      # that throws there degrades to client-side rendering silently.
+      - name: Build
+        run: npm run build
+
+  backend:
+    name: Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.4"
+          coverage: none
+          extensions: mbstring, sqlite3, pdo_sqlite
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Prepare environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
+      # Tests run against in-memory sqlite (see phpunit.xml), so there is no
+      # service container to wait on.
+      - name: Run tests
+        run: php artisan test --compact

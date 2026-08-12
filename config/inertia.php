@@ -51,7 +51,47 @@ return [
         'connect_timeout' => env('INERTIA_SSR_CONNECT_TIMEOUT', 2),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Page resolution
+    |--------------------------------------------------------------------------
+    |
+    | Where `app('inertia.view-finder')` looks for page components. This block
+    | is the one the installed inertia-laravel actually reads; the `testing`
+    | block below is the OLD key names and is kept only for
+    | `ensure_pages_exist`, which AssertableInertia still reads from there.
+    |
+    | Note the capital P. The vendor default is `resource_path('js/pages')`,
+    | lowercase, and this app's pages are in `js/Pages` — which is why leaving
+    | this block out was invisible on Windows and fatal on Linux. A
+    | case-insensitive filesystem resolves `js/pages` to the right directory, so
+    | every test passed locally; CI on Linux resolved it to nothing and 112
+    | assertions failed with "Inertia page component file [X] does not exist"
+    | for files sitting right there in the checkout.
+    |
+    | The `testing.page_paths` / `testing.page_extensions` keys below had
+    | already been written correctly — they are simply from an older version of
+    | the package and nothing reads them now. Two halves of the same assertion
+    | reading two different config sections is why this survived: the existence
+    | CHECK was enabled from one key while the FINDER was configured from
+    | another.
+    */
+    'pages' => [
+        'paths' => [
+            resource_path('js/Pages'),
+        ],
+        'extensions' => [
+            'tsx',
+            'jsx',
+            'ts',
+            'js',
+        ],
+    ],
+
     'testing' => [
+        // Still read by AssertableInertia. Leaving this true is the point: it
+        // is what makes a test fail when a controller renders a component that
+        // does not exist.
         'ensure_pages_exist' => true,
         'page_paths' => [
             resource_path('js/Pages'),

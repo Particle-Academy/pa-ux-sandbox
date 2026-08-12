@@ -37,7 +37,21 @@ it('serves the registry from the compiled artifact when sibling source is absent
     // Full bundles (with source files) survive the round-trip through the artifact.
     expect($items[0]->files)->toBeArray()->not->toBeEmpty();
     // The compiled set matches the live scan — same source of truth.
-    expect(count($items))->toBe(count($source->scanLive()));
+    //
+    // Only checkable where the sibling repos are actually on disk, i.e. inside
+    // the `.agi` envelope. This test simulates their absence, but `scanLive()`
+    // needs them PRESENT to have anything to compare against: on CI, which
+    // checks out this repo alone, the artifact's 279 items were being compared
+    // against a live scan of 42. That is not drift, it is the scan having
+    // nothing to scan — and asserting it turned a correct artifact into a
+    // failure.
+    // Ask a REAL instance, not `$source` — that mock is hard-wired to report
+    // the source absent, which is the very thing this test is simulating.
+    // Guarding on the mock would switch the assertion off everywhere,
+    // including where it can actually run.
+    if (app(RegistrySource::class)->liveSourceAvailable()) {
+        expect(count($items))->toBe(count($source->scanLive()));
+    }
 })->skip(
     fn () => ! is_file(RegistrySource::compiledPath()),
     'registry artifact not built — run `php artisan registry:build`',

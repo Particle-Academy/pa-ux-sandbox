@@ -5,6 +5,21 @@ use Tests\TestCase;
 uses(TestCase::class);
 
 /**
+ * Every test here is about how asset URLs behave RELATIVE to the canonical
+ * host, so pin the canonical host instead of inheriting it from whatever `.env`
+ * happens to be present.
+ *
+ * Without this the suite passed only on a machine whose `.env` had
+ * `APP_URL=https://fancy.test`. CI copies `.env.example`, where it is
+ * `http://localhost` — so "still forces https for the canonical host" failed,
+ * and the two tests above it passed VACUOUSLY, asserting the absence of https
+ * URLs in a config that could never have produced one.
+ */
+beforeEach(function () {
+    config(['app.url' => 'https://fancy.test']);
+});
+
+/**
  * Asset URLs must match the scheme the request actually arrived on.
  *
  * `AppServiceProvider` forced https whenever `config('app.url')` starts with

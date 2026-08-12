@@ -51,11 +51,36 @@ jobs:
       - name: Build
         run: npm run build
 
+      # The tests need these. Almost every feature test renders a Blade view
+      # that calls `@vite`, which throws ViteManifestNotFoundException without
+      # `public/build/manifest.json` — 230 of 855 failed on the first run of
+      # this workflow for exactly that reason, all of them green locally where
+      # a previous build had left the manifest lying around.
+      #
+      # Passing the real build across rather than rebuilding it: one build, and
+      # the tests run against the assets that were actually just verified.
+      - name: Upload build
+        uses: actions/upload-artifact@v4
+        with:
+          name: build
+          path: public/build
+          retention-days: 1
+
   backend:
     name: Tests
     runs-on: ubuntu-latest
+    # Only for the manifest. The trade is a serialized pipeline; the
+    # alternative is a second npm install + build in this job, which costs more
+    # wall-clock than the wait.
+    needs: frontend
     steps:
       - uses: actions/checkout@v4
+
+      - name: Download build
+        uses: actions/download-artifact@v4
+        with:
+          name: build
+          path: public/build
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2

@@ -92,6 +92,23 @@ jobs:
       - name: Install dependencies
         run: composer install --prefer-dist --no-interaction --no-progress
 
+      # Not only PHP dependencies. `ReactFancyComponentListTest` reads the
+      # installed `@particle-academy/react-fancy` to check that
+      # `PackageRegistry` still mirrors what the package actually exports —
+      # and it deliberately FAILS rather than skips when the package is
+      # absent, because a green tick over an unrun check is worse than a red
+      # one. It was right to; without this the check silently did not run.
+      #
+      # A second install rather than passing node_modules from the other job:
+      # the artifact would be hundreds of megabytes to upload and download,
+      # which costs more than installing it again.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install JS dependencies
+        run: npm ci --no-audit --no-fund
+
       - name: Prepare environment
         run: |
           cp .env.example .env

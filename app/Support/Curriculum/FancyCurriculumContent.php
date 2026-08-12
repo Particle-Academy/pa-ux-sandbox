@@ -75,17 +75,26 @@ final class FancyCurriculumContent
 `react-fancy` is roughly 70 Tailwind v4 primitives — the layer everything else
 in the suite composes against.
 
-The number that matters more is this one: the suite ships **261 installable
-registry entries**, but only **215** are attributed to a package. Those two
-counts measure different things, and quoting the wrong one makes you sound like
-you have not looked. The registry count includes package-qualified duplicates —
-`fancy-3d-babylon-stage` and `fancy-3d-three-stage` are the same component
-backed by two engines, so it appears twice in what you can install and once in
-what the packages page counts.
+Two different component counts exist, and they measure different things:
 
-**`Action` is retired.** Emit `Button` and `ButtonColor`. `Action` survives only
-as a `@deprecated` alias, and reaching for it in new code is the clearest signal
-that something was copied from an old example.
+- **Installable registry entries** — what `npx fancy-cli add` and the MCP server
+  offer. Read from `resources/registry/registry.json`.
+- **Components attributed to a package** — what the packages page lists. Read
+  from `PackageRegistry`.
+
+The first is always the larger, because the registry package-qualifies a slug
+whenever it would collide. `fancy-3d-babylon-stage` and `fancy-3d-three-stage`
+are the same component backed by two engines: twice in what you can install,
+once in what the packages page groups.
+
+Which number you want depends on the question. "How much can I install?" is the
+registry. "How many components does this package document?" is the packages
+page. Read whichever you mean off the artifact — both move most weeks, so a
+figure quoted from memory is usually a figure that was true once.
+
+**`Action` is retired.** Emit `Button` and `ButtonColor`. `Action` survives as a
+`@deprecated` alias so existing code keeps working, but new code should not
+reach for it.
 MD,
                         ],
                         [
@@ -170,13 +179,13 @@ MD,
                         ],
                     ],
                     [
-                        'prompt' => 'The suite has 261 installable registry entries but 215 components attributed to a package. Why the difference?',
+                        'prompt' => 'The installable registry lists MORE entries than the packages page lists components. Why?',
                         'type' => 'multiple_choice',
-                        'explanation' => 'The registry includes package-qualified duplicates — the same component backed by two engines appears twice in what you can install.',
+                        'explanation' => 'The registry package-qualifies a slug when it would collide, so one component backed by two engines appears twice in what you can install and once in what the packages page groups.',
                         'options' => [
                             ['label' => 'The registry counts package-qualified duplicates, like the Babylon and three.js versions of the same component', 'is_correct' => true],
-                            ['label' => '46 components are unpublished', 'is_correct' => false],
-                            ['label' => '215 is out of date; the real number is 261', 'is_correct' => false],
+                            ['label' => 'The difference is components that are written but not yet published', 'is_correct' => false],
+                            ['label' => 'The packages page is out of date and the registry is authoritative', 'is_correct' => false],
                             ['label' => 'The registry counts each component once per framework it supports', 'is_correct' => false],
                         ],
                     ],
@@ -605,9 +614,9 @@ The source-vendoring CLI is `npx fancy-cli@latest add <slug>`. The bare name
 `fancy-ui` is blocked on npm, so **only the MCP server keeps that name**, hosted
 at `https://ui.particle.academy/mcp`.
 
-This is the kind of detail that costs someone twenty minutes when a doc gets it
-wrong — an agent following a stale instruction runs `npx fancy-ui add` and gets
-a 404 with no clue why.
+The distinction is easy to lose and expensive to rediscover: following a stale
+instruction, `npx fancy-ui add` resolves to a 404 with nothing to explain why.
+When you see `fancy-ui` in a command, it is either the MCP endpoint or a typo.
 MD,
                         ],
                         [
@@ -621,10 +630,9 @@ JS backend and its PHP backend.
 
 **There is no node package, and there must never be one.** The entire point is
 that adding a node costs a consumer **no new dependency**. A package would imply
-the opposite, and that is not hypothetical: an agent following an earlier version
-of our own instructions once ran `composer require particle-academy/fancy-flow-nodes`
-and got a 404, because the thing it was told to install had deliberately never
-existed.
+the opposite — and that confusion is not hypothetical: `composer require
+particle-academy/fancy-flow-nodes` is a natural thing to reach for and returns a
+404, because the thing it names was deliberately never published.
 
 The lesson generalises past this repo. When a distribution model is unusual, the
 docs have to *say why*, or a reader will pattern-match to the usual one and be

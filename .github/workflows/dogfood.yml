@@ -1,0 +1,48 @@
+name: Dogfood
+
+# The showcase is part of the kit's end-to-end suite. A suite running versions
+# nobody ships is green about code consumers never receive — which is worse
+# than no suite, because it reads as coverage.
+#
+# This runs on a SCHEDULE rather than on push, deliberately. A package shipping
+# at 3pm should not retroactively redden an unrelated pull request; it should
+# raise its own signal. Blocking every push on it is how a check gets muted.
+on:
+  schedule:
+    - cron: "0 7 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  latest:
+    name: Running the latest of everything
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.4"
+          coverage: none
+          extensions: mbstring, sqlite3, pdo_sqlite
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      # Both installs: the check reads what is ACTUALLY installed, not what the
+      # constraints intended — they disagree exactly when this matters.
+      - name: Install dependencies
+        run: |
+          composer install --prefer-dist --no-interaction --no-progress
+          npm ci --no-audit --no-fund
+
+      - name: Prepare environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
+      - name: Check
+        run: php artisan kit:dogfood

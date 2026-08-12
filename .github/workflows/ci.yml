@@ -99,11 +99,5 @@ jobs:
 
       # Tests run against in-memory sqlite (see phpunit.xml), so there is no
       # service container to wait on.
-      - name: DIAGNOSTIC (temporary)
-        run: |
-          php artisan tinker --execute "app('Illuminate\Contracts\Http\Kernel')->handle(Illuminate\Http\Request::create('/packages/react-fancy','GET'));" || true
-          echo "=== laravel.log ==="
-          tail -n 60 storage/logs/laravel.log || echo "(no log)"
-
       - name: Run tests
         run: php artisan test --compact

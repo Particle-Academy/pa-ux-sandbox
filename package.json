@@ -50,7 +50,7 @@
         "@particle-academy/fancy-catalog": "^0.3.2",
         "@particle-academy/fancy-cf-relay": "^0.2.0",
         "@particle-academy/fancy-cms-ui": "^0.7.0",
-        "@particle-academy/fancy-code": "^0.10.0",
+        "@particle-academy/fancy-code": "^0.11.0",
         "@particle-academy/fancy-diff": "^0.4.0",
         "@particle-academy/fancy-doc-commons": "^0.4.0",
         "@particle-academy/fancy-echarts": "^6.0.0",

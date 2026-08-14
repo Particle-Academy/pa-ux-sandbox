@@ -31,6 +31,8 @@ import {
 } from "@particle-academy/agent-integrations";
 import { ensureSchemaComponents } from "./schemaComponents";
 import { KIND_MODULES, KIND_BY_NAME, type Agent } from "./kinds";
+import { registerPlaygroundBridges } from "./registerPlaygroundBridges";
+import { useCoBrowse } from "../../agent/CoBrowseProvider";
 
 export const PLAYGROUND_AGENT: Agent = { id: "claude", name: "Claude", color: "#a855f7" };
 
@@ -61,7 +63,7 @@ type PlaygroundStore = {
 let counter = 0;
 const nextId = (kind: string) => `${kind}-${++counter}`;
 
-function createPlaygroundStore() {
+export function createPlaygroundStore() {
   return createStore<PlaygroundStore>((set, get) => ({
     screens: [],
     activeId: null,
@@ -128,76 +130,42 @@ export function usePlaygroundServer() {
         "with { schema: { type, props, children } } to populate it. Undo with agent_undo / agent_redo / agent_history.",
     });
 
-    registerUndoTools(server, { defaultAgentId: PLAYGROUND_AGENT.id });
-
-    // Screens (navigation + dynamic authoring) bridge.
-    const screensBridge = registerScreensBridge(server, {
-      adapter: {
-        listScreens: () => {
-          const s = store.getState();
-          return s.screens.map((x) => ({
-            id: x.id,
-            title: x.title,
-            kind: x.kind,
-            active: x.id === s.activeId,
-            // Tells the agent a screen it created failed to render.
-            status: x.error ? "error" : "ok",
-            error: x.error ?? undefined,
-          }));
-        },
-        getActive: () => store.getState().activeId,
-        setActive: (id) => store.getState().setActive(id),
-        createScreen: (spec) => {
-          const id = store.getState().addScreen(spec.kind, spec.title, spec.id);
-          // Composition screens accept an initial schema via config.schema.
-          if (id && spec.kind === "composition" && spec.config && "schema" in spec.config) {
-            store.getState().setScreenState(id, { schema: (spec.config as { schema: unknown }).schema });
-          }
-        },
-        destroyScreen: (id) => store.getState().removeScreen(id),
-        updateScreenContent: (id, partial) => {
-          const entry = store.getState().screens.find((x) => x.id === id);
-          if (!entry) return;
-          // For composition screens, `partial` carries { schema }. For other
-          // kinds, shallow-merge into the existing state slice.
-          const cur = (entry.state as Record<string, unknown>) ?? {};
-          store.getState().setScreenState(id, { ...cur, ...partial });
-        },
-        listKinds: () =>
-          KIND_MODULES.map((k) => ({ kind: k.kind, label: k.label, description: k.description })),
-      },
-      agent: PLAYGROUND_AGENT,
-    });
-
-    // One bridge per kind. Each adapter resolves to the active screen of that
-    // kind so a single bridge drives whichever screen of that kind is current.
-    const kindBridges = KIND_MODULES.map((mod) =>
-      mod.register(server, {
-        agent: PLAYGROUND_AGENT,
-        getActiveScreenId: () => activeScreenIdOfKind(store, mod.kind),
-        getActiveState: () => {
-          const id = activeScreenIdOfKind(store, mod.kind);
-          return id ? store.getState().screens.find((x) => x.id === id)?.state : undefined;
-        },
-        setActiveState: (next) => {
-          const id = activeScreenIdOfKind(store, mod.kind);
-          if (id) store.getState().setScreenState(id, next);
-        },
-      }),
-    );
+    const disposeBridges = registerPlaygroundBridges(server, store, PLAYGROUND_AGENT);
 
     inProcRef.current = attachInProcess(server);
     serverRef.current = server;
     setServerReady(true);
 
     return () => {
-      screensBridge.dispose();
-      kindBridges.forEach((b) => b.dispose());
+      disposeBridges();
       if (inProcRef.current) server.detach(inProcRef.current);
       serverRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // ── Contribute the same surface to the SITE co-browse session ──
+  //
+  // agent-integrations#7: "site tools always; page tools while mounted". The
+  // playground kept its own server, console and share link above; this adds the
+  // same bridges to the site-wide session for as long as this page is mounted,
+  // so an agent handed the SITE link can drive these surfaces too, and loses
+  // them on navigate.
+  //
+  // Both registrations drive the same store, so neither session owns the
+  // screens. `contributeBridges` is safe to call before sharing has started —
+  // it applies the contribution as soon as a server exists.
+  const coBrowse = useCoBrowse();
+  const contributeBridges = coBrowse?.contributeBridges;
+
+  useEffect(() => {
+    // Rendered outside the provider (or on an older agent-integrations): the
+    // playground still works standalone, it just contributes nothing.
+    if (!contributeBridges) return;
+    return contributeBridges((siteServer) =>
+      registerPlaygroundBridges(siteServer, store, PLAYGROUND_AGENT),
+    );
+  }, [contributeBridges, store]);
 
   // ── Sharing (external agent over the relay) ──
   const [session, setSession] = useState<SessionDescriptor | null>(null);
@@ -287,10 +255,3 @@ export function usePlaygroundServer() {
  *  recently-added screen of that kind, else null. This lets a per-kind bridge
  *  target the screen the human is on, falling back sensibly when the active
  *  screen is a different kind. */
-function activeScreenIdOfKind(store: ReturnType<typeof createPlaygroundStore>, kind: string): string | null {
-  const s = store.getState();
-  const active = s.screens.find((x) => x.id === s.activeId);
-  if (active && active.kind === kind) return active.id;
-  const sameKind = s.screens.filter((x) => x.kind === kind);
-  return sameKind.length ? sameKind[sameKind.length - 1].id : null;
-}

@@ -191,3 +191,64 @@ it('is reachable from the top navigation', function () {
 
     expect($layout)->toContain('"/use-cases"');
 });
+
+/**
+ * The richer template — screens and code samples.
+ *
+ * These pages exist to show someone what they are about to build, and the two
+ * things that do that are the composed previews and real code. Both are keyed
+ * or typed by strings in PHP that only mean something to React, which is the
+ * classic silently-broken pairing: a `screens` key with no matching entry in
+ * `screens.tsx` renders NOTHING, on a page that still returns 200 with a
+ * perfectly good problem statement. Nobody notices until a reader does.
+ */
+it('names only screens the React registry actually implements', function () {
+    // The registry is the source of truth; parse the keys straight out of it so
+    // this cannot drift by being updated in one place.
+    $registry = file_get_contents(resource_path('js/Pages/UseCases/screens.tsx'));
+    preg_match_all('/^\s{4}"([a-z0-9-]+\/[a-z0-9-]+)":\s*\{/m', $registry, $m);
+    $implemented = $m[1];
+
+    expect($implemented)->not->toBeEmpty('parsed no screen keys — the regex no longer matches the registry');
+
+    foreach (UseCaseContent::all() as $useCase) {
+        foreach ($useCase['screens'] ?? [] as $key) {
+            // NOT `toContain($key, $message)` -- Pest reads extra arguments as
+            // further EXPECTED VALUES, so the message became a second thing the
+            // array had to contain and the test failed on its own wording.
+            expect(in_array($key, $implemented, true))->toBeTrue(
+                "use case [{$useCase['slug']}] names screen [{$key}], which screens.tsx does not implement",
+            );
+        }
+    }
+});
+
+it('gives every code sample a language and a label', function () {
+    // An unlabelled sample renders as an anonymous block, and one with no
+    // language renders unhighlighted — both look like a mistake to a reader
+    // deciding whether this kit is worth their afternoon.
+    foreach (UseCaseContent::all() as $useCase) {
+        foreach ($useCase['code'] ?? [] as $i => $sample) {
+            expect($sample)->toHaveKeys(['label', 'language', 'code'], "use case [{$useCase['slug']}] code sample #{$i}");
+            expect(trim($sample['code']))->not->toBe('', "use case [{$useCase['slug']}] code sample #{$i} is empty");
+            expect($sample['language'])->toBeIn(
+                ['php', 'ts', 'tsx', 'js', 'jsx', 'bash', 'json', 'blade'],
+                "use case [{$useCase['slug']}] code sample #{$i} has an unknown language",
+            );
+        }
+    }
+});
+
+it('carries the richer fields through to the page', function () {
+    $withScreens = collect(UseCaseContent::all())->first(fn ($u) => ! empty($u['screens']));
+
+    expect($withScreens)->not->toBeNull('no use case has screens yet');
+
+    $this->get("/use-cases/{$withScreens['slug']}")
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('UseCases/Show')
+            ->has('useCase.screens')
+            ->has('useCase.code')
+        );
+});

@@ -1,6 +1,8 @@
 import { Head, Link } from "@inertiajs/react";
 import { Badge, Card, ContentRenderer, Heading, Icon, Text } from "@particle-academy/react-fancy";
 import { Layout } from "../Layout";
+import { CodeSample, type CodeSampleData } from "./CodeSample";
+import { useCaseScreen } from "./screens";
 
 type PackageRef = { slug: string; name: string; href: string };
 type Step = { title: string; body: string; code?: string };
@@ -13,6 +15,10 @@ type UseCase = {
     summary: string;
     problem: string;
     steps: Step[];
+    /** Keys into the composed-screen registry in `screens.tsx`. */
+    screens: string[];
+    code: CodeSampleData[];
+    stack: string | null;
     packages: PackageRef[];
     link: string | null;
     link_label: string | null;
@@ -72,6 +78,54 @@ function UseCaseShow({ useCase, next, previous }: { useCase: UseCase; next: Neig
                     />
                 </Card>
 
+                {useCase.screens.length > 0 && (
+                    <div style={{ marginTop: 34 }}>
+                        <Heading as="h2" size="md">
+                            What you are building
+                        </Heading>
+                        <Text className="!mt-1.5 !max-w-[720px] !text-[15px] !text-zinc-600 dark:!text-zinc-400">
+                            Live surfaces, not screenshots — every one composed from the same components you would
+                            install{useCase.stack ? `. ${useCase.stack}` : "."}
+                        </Text>
+
+                        <div className="mt-4 grid gap-5 lg:grid-cols-2">
+                            {useCase.screens.map((key) => {
+                                const screen = useCaseScreen(key);
+                                // A key with no registry entry renders nothing at
+                                // all, which is why a test asserts every one
+                                // resolves rather than trusting this guard.
+                                if (!screen) return null;
+                                return (
+                                    <div key={key}>
+                                        <Heading as="h3" size="sm" style={{ margin: 0 }}>
+                                            {screen.label}
+                                        </Heading>
+                                        {screen.caption && (
+                                            <Text className="!mt-1 !mb-2 !text-[12.5px] !text-zinc-500">
+                                                {screen.caption}
+                                            </Text>
+                                        )}
+                                        <div className="mt-2">{screen.render()}</div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                )}
+
+                {useCase.code.length > 0 && (
+                    <div style={{ marginTop: 34, maxWidth: 860 }}>
+                        <Heading as="h2" size="md">
+                            The code
+                        </Heading>
+                        <div className="mt-4 space-y-4">
+                            {useCase.code.map((sample) => (
+                                <CodeSample key={sample.label} sample={sample} />
+                            ))}
+                        </div>
+                    </div>
+                )}
+
                 <div style={{ marginTop: 34, maxWidth: 720 }}>
                     <Heading as="h2" size="md">
                         How to solve it
@@ -96,9 +150,11 @@ function UseCaseShow({ useCase, next, previous }: { useCase: UseCase; next: Neig
                                         className="mt-1.5 text-[15px] leading-relaxed text-zinc-700 dark:text-zinc-300"
                                     />
                                     {step.code && (
-                                        <pre className="mt-2.5 overflow-x-auto rounded-lg border border-zinc-200 bg-zinc-50 p-3 text-xs leading-relaxed dark:border-zinc-800 dark:bg-zinc-900">
-                                            <code className="font-mono">{step.code}</code>
-                                        </pre>
+                                        <div className="mt-2.5">
+                                            <CodeSample
+                                                sample={{ label: "Run this", language: "bash", code: step.code }}
+                                            />
+                                        </div>
                                     )}
                                 </div>
                             </li>

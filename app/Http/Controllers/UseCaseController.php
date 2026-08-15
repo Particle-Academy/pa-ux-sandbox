@@ -60,6 +60,11 @@ class UseCaseController extends Controller
                 'summary' => $useCase['summary'],
                 'problem' => $useCase['problem'],
                 'steps' => $useCase['steps'],
+                // Composed previews + code samples. Both default to empty so a
+                // use case written before the richer template still renders.
+                'screens' => $useCase['screens'] ?? [],
+                'code' => $useCase['code'] ?? [],
+                'stack' => $useCase['stack'] ?? null,
                 'packages' => $this->resolvePackages($useCase['packages']),
                 'link' => $useCase['link'] ?? null,
                 'link_label' => $useCase['link_label'] ?? null,

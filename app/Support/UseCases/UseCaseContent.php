@@ -39,6 +39,7 @@ final class UseCaseContent
     public static function categories(): array
     {
         return [
+            'Build this app',
             'Agents in your app',
             'Automation',
             'Documents',
@@ -52,6 +53,7 @@ final class UseCaseContent
     public static function all(): array
     {
         return [
+            self::realEstatePortal(),
             self::agentDrivesUi(),
             self::agentFillsSpreadsheet(),
             self::terminalApp(),
@@ -903,6 +905,140 @@ MD,
             ],
             'link' => '/packages/fancy-heuristics',
             'link_label' => 'fancy-heuristics reference',
+        ];
+    }
+
+    // ------------------------------------------------------- app blueprints
+
+    /**
+     * Industry blueprints answer a different question from the capability use
+     * cases above: not "how do I solve X" but "what does MY app look like built
+     * on this". They lead with composed screens for that reason — a reader
+     * deciding on a stack wants to see the application, not a component.
+     *
+     * @return array<string,mixed>
+     */
+    private static function realEstatePortal(): array
+    {
+        return [
+            'slug' => 'real-estate-portal',
+            'title' => 'A real estate listing portal',
+            'category' => 'Build this app',
+            'summary' => 'Search, map, listing detail and enquiry capture — with the agent-facing side built in.',
+            'problem' => <<<'MD'
+Property search is a map and a grid showing the same result set, and they have
+to agree. Filters change both. Clicking a pin scrolls the list; hovering a card
+highlights the pin. Every portal rebuilds that from scratch, usually around a
+map library that owns its own state and disagrees with React about who is in
+charge.
+
+Then the agent side arrives: your sales team wants to hand a buyer a link and
+walk them through listings live, and an AI assistant should be able to shortlist
+properties against a brief without anyone screen-scraping the site.
+MD,
+            'stack' => 'React + Inertia on Laravel. The map is engine-agnostic, so OpenStreetMap in development and Google in production is a one-line swap.',
+            'packages' => ['react-fancy', 'fancy-map', 'agent-integrations', 'fancy-inertia', 'fancy-seo'],
+            // 'real-estate/map' is BUILT and lives in screens.tsx, but is held
+            // back: Leaflet paints its tiles against stale geometry in this
+            // layout (measured — 1 of 6 tiles lands inside the container), and
+            // fancy-map's MapHandle exposes no way to invalidate size after
+            // mount. Shipping a visibly broken map on the page that exists to
+            // prove the kit works would be worse than shipping two screens.
+            'screens' => ['real-estate/listings', 'real-estate/enquiry'],
+            'code' => [
+                [
+                    'label' => 'Map and list share one state',
+                    'language' => 'tsx',
+                    'code' => <<<'TSX'
+// `view`, `markers` and `selectedId` are all CONTROLLED, so the map never holds
+// state the list disagrees with. Selecting in either updates the same value.
+const [selectedId, setSelectedId] = useState<string | null>(null);
+const [view, setView] = useState({ center: { lat: 40.015, lng: -105.27 }, zoom: 12 });
+
+<Map
+  provider={leafletProvider()}          // googleProvider({ apiKey }) in production
+  view={view}
+  onViewChange={setView}
+  markers={listings.map((l) => ({
+    id: l.id,
+    position: { lat: l.lat, lng: l.lng },
+    label: formatPrice(l.price),
+  }))}
+  selectedId={selectedId}
+  onSelect={setSelectedId}
+/>
+TSX,
+                ],
+                [
+                    'label' => 'Filters run on the server',
+                    'language' => 'php',
+                    'code' => <<<'PHP'
+// Inertia hands the filtered set to the page; the map and the grid render from
+// the same array, so they cannot drift apart.
+public function index(Request $request): Response
+{
+    $filters = $request->validate([
+        'min_price' => ['nullable', 'integer'],
+        'beds'      => ['nullable', 'integer', 'min:0'],
+        'bounds'    => ['nullable', 'array'],
+    ]);
+
+    return Inertia::render('Listings/Index', [
+        'filters'  => $filters,
+        'listings' => Listing::query()
+            ->when($filters['min_price'] ?? null, fn ($q, $v) => $q->where('price', '>=', $v))
+            ->when($filters['beds'] ?? null, fn ($q, $v) => $q->where('beds', '>=', $v))
+            ->withinBounds($filters['bounds'] ?? null)
+            ->limit(200)
+            ->get(),
+    ]);
+}
+PHP,
+                ],
+                [
+                    'label' => 'Let an agent shortlist against a brief',
+                    'language' => 'ts',
+                    'code' => <<<'TS'
+// The map bridge exposes pan / fit / select as MCP tools, so an assistant works
+// the same controlled state a human does -- no DOM scraping, no Playwright.
+import { registerMapBridge } from "@particle-academy/agent-integrations";
+
+registerMapBridge(server, {
+  adapter: {
+    getView: () => view,
+    setView,
+    listMarkers: () => markers,
+    select: (id) => setSelectedId(id),
+  },
+});
+TS,
+                ],
+            ],
+            'steps' => [
+                [
+                    'title' => 'Install the map and the kit',
+                    'body' => 'The map core carries no engine, so you choose Leaflet or Google per environment without changing component code.',
+                    'code' => 'npm i @particle-academy/react-fancy @particle-academy/fancy-map',
+                ],
+                [
+                    'title' => 'Render the grid and the map from ONE array',
+                    'body' => 'Both read the same server-provided listings. This is the decision that stops the two views disagreeing — everything else follows from it.',
+                ],
+                [
+                    'title' => 'Make selection controlled',
+                    'body' => 'Hold `selectedId` in the page, not in the map. A pin click and a card click become the same state change, which is what makes hover-to-highlight fall out for free.',
+                ],
+                [
+                    'title' => 'Capture the enquiry',
+                    'body' => 'Controlled fields with stable handles. That is the Human+ requirement, and it is also what makes the form testable without selectors.',
+                ],
+                [
+                    'title' => 'Make it findable',
+                    'body' => 'Listings are the crawlable part of the business. `fancy-seo` server-renders the head and emits per-listing JSON-LD, so a property page arrives complete in the first byte.',
+                ],
+            ],
+            'link' => '/packages/fancy-map',
+            'link_label' => 'fancy-map reference',
         ];
     }
 }

@@ -15,7 +15,16 @@ import {
 } from "@particle-academy/react-fancy";
 import { CommissionStatement, DownlineTree, RankProgress } from "@particle-academy/fancy-mlm-ui";
 import "@particle-academy/fancy-mlm-ui/styles.css";
+import {
+    CertificateView,
+    CoursePlayer,
+    CurriculumOverview,
+} from "@particle-academy/classroom";
 import { PricingTable } from "../../components/fancy/catalog-fms";
+// The classroom fixtures already exist and are already exported for the package
+// preview tiles. Reusing them means these screens cannot drift from the shapes
+// the real components are known to accept.
+import { CR_ATTEMPT, CR_COURSE, CR_CURRICULUM, CR_ENROLLMENT } from "../Packages/ComponentPreviews";
 import { Map as FancyMap } from "@particle-academy/fancy-map";
 import { leafletProvider } from "@particle-academy/fancy-map/leaflet";
 import { clientOnly } from "../../lib/clientOnly";
@@ -270,38 +279,58 @@ function CartCheckout() {
 
 // ───────────────────────────────────────── coaching + online courses
 
-function CoursePlayer() {
-    const lessons = [
-        { title: "Positioning your offer", done: true },
-        { title: "Pricing without discounting", done: true },
-        { title: "The discovery call", done: false, current: true },
-        { title: "Handling objections", done: false },
-    ];
+/**
+ * The REAL `CoursePlayer` from `classroom`, not a lookalike.
+ *
+ * This screen was first built by hand out of `Icon` and `Progress` — which is
+ * precisely the mistake the Fancy Exclusive rule exists to catch. `classroom`
+ * ships `CoursePlayer`, `CurriculumOverview`, `LessonView`, `TestRunner`,
+ * `QuestionRenderer` and `CertificateView`; hand-rolling a course player next to
+ * them makes the page a drawing of the kit rather than a demonstration of it,
+ * and hides any gap in the real component instead of surfacing it.
+ */
+function CoursePlayerScreen() {
     return (
-        <Frame title="Course" action={<Badge size="sm" variant="soft" color="violet">2 / 4</Badge>}>
-            <div className="grid gap-3 sm:grid-cols-[1fr_180px]">
-                <div>
-                    <div className="flex h-[132px] items-center justify-center rounded-lg bg-zinc-900 dark:bg-black">
-                        <Icon name="play" className="text-white/70" />
-                    </div>
-                    <Heading as="h4" size="sm" style={{ marginTop: 8 }}>
-                        The discovery call
-                    </Heading>
-                    <div className="mt-1.5"><Progress value={38} size="sm" /></div>
-                </div>
-                <div className="space-y-1">
-                    {lessons.map((l) => (
-                        <div
-                            key={l.title}
-                            className={`flex items-center gap-1.5 rounded-md px-2 py-1.5 text-[11px] ${
-                                l.current ? "bg-violet-50 text-violet-700 dark:bg-violet-500/15 dark:text-violet-300" : "text-zinc-600 dark:text-zinc-400"
-                            }`}
-                        >
-                            <Icon name={l.done ? "circle-check" : "circle"} className={l.done ? "text-green-500" : "text-zinc-400"} />
-                            <span className="truncate">{l.title}</span>
-                        </div>
-                    ))}
-                </div>
+        <Frame title="Course" action={<Badge size="sm" variant="soft" color="violet">Enrolled</Badge>}>
+            <div className="max-h-[300px] overflow-auto text-[13px]">
+                <CoursePlayer
+                    course={CR_COURSE}
+                    enrollment={CR_ENROLLMENT}
+                    completedLessonIds={new Set<number>()}
+                    onMarkLessonComplete={() => {}}
+                    onStartAttempt={async () => CR_ATTEMPT}
+                    onSubmitAttempt={async () => CR_ATTEMPT}
+                />
+            </div>
+        </Frame>
+    );
+}
+
+function CurriculumScreen() {
+    return (
+        <Frame title="Curriculum" action={<Badge size="sm" variant="soft" color="zinc">4 courses</Badge>}>
+            <div className="max-h-[300px] overflow-auto text-[13px]">
+                <CurriculumOverview curriculum={CR_CURRICULUM} />
+            </div>
+        </Frame>
+    );
+}
+
+function CertificateScreen() {
+    return (
+        <Frame title="Certificate" action={<Badge size="sm" color="green">Issued</Badge>}>
+            <div className="max-h-[280px] overflow-auto text-[13px]">
+                <CertificateView
+                    certificate={{
+                        id: 1,
+                        enrollment_id: 1,
+                        verification_code: "FANCY-2026-0001",
+                        issued_at: "2026-08-01T00:00:00Z",
+                        pdf_path: null,
+                        metadata: null,
+                    }}
+                    pdfUrl="#"
+                />
             </div>
         </Frame>
     );
@@ -494,13 +523,27 @@ export const USE_CASE_SCREENS: Record<string, UseCaseScreen> = {
         render: () => <CartCheckout />,
     },
     "courses/player": {
-        label: "Lesson player",
-        caption: "Progress is per learner and per lesson, tracked by laravel-courses.",
-        render: () => <CoursePlayer />,
+        label: "Course player",
+        caption: "The real <CoursePlayer> from classroom — modules, lessons, progress and the graded test.",
+        render: () => <CoursePlayerScreen />,
+    },
+    "courses/curriculum": {
+        label: "Curriculum overview",
+        caption: "A curriculum and its courses, with enrollment state — classroom's <CurriculumOverview>.",
+        render: () => <CurriculumScreen />,
+    },
+    "courses/certificate": {
+        label: "Certificate",
+        caption: "An issued certificate and its verification code. Literal-coloured on purpose, so it looks the same on every theme.",
+        render: () => <CertificateScreen />,
     },
     "courses/gradebook": {
         label: "Cohort gradebook",
-        caption: "A real <Table> with avatars, progress bars and status badges.",
+        // Composed rather than a package component ON PURPOSE: classroom ships
+        // the learner-facing surfaces, and a coach-facing gradebook is not one
+        // of them. If that keeps coming up it is a gap to file against
+        // classroom, not a reason to keep hand-rolling it in more places.
+        caption: "Composed from <Table>, <Avatar> and <Progress> — the coach-facing view classroom does not ship.",
         render: () => <Gradebook />,
     },
     "saas/plans": {

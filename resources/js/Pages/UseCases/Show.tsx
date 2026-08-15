@@ -45,7 +45,14 @@ function UseCaseShow({ useCase, next, previous }: { useCase: UseCase; next: Neig
                 as the description, plus HowTo + BreadcrumbList JSON-LD). A raw
                 <Head title> here would DUPLICATE the fancy-seo Blade baseline's
                 <title> under SSR -- `clientOnly` covers <Seo>, not <Head>. */}
-            <Seo />
+            {/* The values are passed, NOT left to the provider defaults.
+                `<Seo />` bare falls back to defaultTitle/description, which on a
+                use-case page means the server sends the correct per-page head
+                and hydration immediately overwrites it with the generic one --
+                invisible to a server-HTML test, obvious in the browser tab.
+                The provider template is `%s — Fancy UI`, so this reproduces the
+                server string exactly and nothing flips on hydration. */}
+            <Seo title={`${useCase.title} — Use cases`} description={useCase.summary} />
 
             <div className="section">
                 <Link

@@ -53,6 +53,7 @@ final class UseCaseContent
     public static function all(): array
     {
         return [
+            self::onlineCoursePlatform(),
             self::realEstatePortal(),
             self::agentDrivesUi(),
             self::agentFillsSpreadsheet(),
@@ -909,6 +910,139 @@ MD,
     }
 
     // ------------------------------------------------------- app blueprints
+
+    /**
+     * The courses blueprint deliberately previews the REAL `classroom`
+     * components rather than lookalikes — a page that argues you should build
+     * from the kit, illustrated with hand-rolled copies of the kit, argues
+     * against itself.
+     *
+     * @return array<string,mixed>
+     */
+    private static function onlineCoursePlatform(): array
+    {
+        return [
+            'slug' => 'online-course-platform',
+            'title' => 'An online course and coaching platform',
+            'category' => 'Build this app',
+            'summary' => 'Curriculum, lessons, graded tests and certificates — with the selling side already attached.',
+            'problem' => <<<'MD'
+A course platform is two apps wearing one coat. There is the learning side —
+curriculum, lessons, progress, grading, certificates — and the commercial side,
+which is a subscription app with different nouns. Most builds do one well and
+bolt the other on, which is why so many course sites can tell you what you
+bought but not where you got to.
+
+Progress is the part that looks trivial and is not. It is per learner, per
+lesson, resumable, and it decides whether someone is certified — so it is also
+the thing you get support tickets about. Grading adds a second trap: an attempt
+that has not been marked yet is not a failure, and a UI that cannot tell those
+apart will tell a learner they failed a test nobody has looked at.
+MD,
+            'stack' => 'laravel-courses owns courses, lessons, attempts and certificates; classroom is the React surface over it. Access is gated by the same feature layer that runs billing.',
+            'packages' => ['laravel-courses', 'classroom', 'laravel-fms', 'react-fancy'],
+            'screens' => ['courses/curriculum', 'courses/player', 'courses/certificate', 'courses/gradebook'],
+            'code' => [
+                [
+                    'label' => 'The player is one controlled component',
+                    'language' => 'tsx',
+                    'code' => <<<'TSX'
+// classroom ships the whole learner surface -- modules, lessons, progress and
+// the graded test -- as controlled components. You supply the data and the
+// handlers; there is no course-player UI to rebuild.
+<CoursePlayer
+  course={course}
+  enrollment={enrollment}
+  completedLessonIds={completedLessonIds}
+  onMarkLessonComplete={(lessonId) => router.post(`/lessons/${lessonId}/complete`)}
+  onStartAttempt={() => api.post(`/tests/${test.id}/attempts`)}
+  onSubmitAttempt={(answers) => api.post(`/attempts/${attempt.id}/submit`, answers)}
+/>
+TSX,
+                ],
+                [
+                    'label' => 'Progress belongs to (learner, lesson)',
+                    'language' => 'php',
+                    'code' => <<<'PHP'
+// Not to a route and not to a video player -- that is what makes it resumable,
+// and what makes certification a query rather than a guess.
+public function complete(Request $request, Lesson $lesson): RedirectResponse
+{
+    $request->user()->progress()->updateOrCreate(
+        ['lesson_id' => $lesson->id],
+        ['completed_at' => now(), 'seconds' => $request->integer('seconds')],
+    );
+
+    return back();
+}
+PHP,
+                ],
+                [
+                    'label' => 'Ungraded is not failed',
+                    'language' => 'php',
+                    'code' => <<<'PHP'
+// An attempt with no score yet is AWAITING GRADING. Collapsing that into a
+// boolean pass/fail is how a learner gets told they failed a short-answer test
+// nobody has marked. The component renders the three states separately, so the
+// model has to keep them separate too.
+public function getStatusAttribute(): string
+{
+    return match (true) {
+        $this->graded_at === null => 'awaiting_grading',
+        $this->score >= $this->test->pass_mark => 'passed',
+        default => 'failed',
+    };
+}
+PHP,
+                ],
+                [
+                    'label' => 'Gate the course on the subscription',
+                    'language' => 'php',
+                    'code' => <<<'PHP'
+use ParticleAcademy\Fms\Facades\FMS;
+
+// The learning side asks the SAME question the billing side answers, so an
+// expired subscription closes the lessons without a second source of truth --
+// and without the content staying reachable by URL.
+'features' => [
+    'cohort-coaching' => [
+        'name'    => 'Live cohort coaching',
+        'type'    => 'boolean',
+        'enabled' => fn ($user) => $user->subscribedToProduct('coaching'),
+    ],
+],
+
+abort_unless(FMS::canAccess('cohort-coaching'), 403);
+PHP,
+                ],
+            ],
+            'steps' => [
+                [
+                    'title' => 'Install the engine and the surface',
+                    'body' => '`laravel-courses` owns the models — curriculum, courses, lessons, tests, attempts, certificates. `classroom` is the React surface over them, so the learner UI is not a rebuild.',
+                    'code' => 'composer require particle-academy/laravel-courses && npm i @particle-academy/classroom',
+                ],
+                [
+                    'title' => 'Model progress per learner and per lesson',
+                    'body' => 'Not per page, not per video. That is what makes it resumable and what turns certification into a query.',
+                ],
+                [
+                    'title' => 'Keep ungraded separate from failed',
+                    'body' => 'Short-answer questions need marking. An attempt awaiting grading is a third state, and the surface already renders it as one.',
+                ],
+                [
+                    'title' => 'Attach access to the subscription',
+                    'body' => 'One feature gate answers for the paywall, the lesson list and the route, so there is no second entitlement to keep in step.',
+                ],
+                [
+                    'title' => 'Issue certificates with a verification code',
+                    'body' => 'A certificate nobody can verify is a picture. The issued record carries a code, and the view renders it literal-coloured so it looks the same on every theme.',
+                ],
+            ],
+            'link' => '/learn',
+            'link_label' => 'See the curriculum',
+        ];
+    }
 
     /**
      * Industry blueprints answer a different question from the capability use

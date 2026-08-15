@@ -56,7 +56,12 @@ function UseCasesIndex({ categories, useCases }: { categories: string[]; useCase
             {/* Head owned server-side by SeoServiceProvider's `use-cases.index`
                 route. A raw <Head title> duplicates the fancy-seo Blade
                 baseline's <title> under SSR. */}
-            <Seo />
+            {/* Passed rather than bare -- see Show.tsx: a bare <Seo/> resets
+                the head to the provider defaults on hydration. */}
+            <Seo
+                title="Use cases"
+                description="Blueprints and how-tos for the apps people actually build: subscription SaaS, e-commerce, online courses, referral networks, dashboards and real-estate portals — each with live component previews and real code."
+            />
 
             <div className="section">
                 <div style={{ maxWidth: 760 }}>

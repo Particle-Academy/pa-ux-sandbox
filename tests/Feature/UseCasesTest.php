@@ -305,3 +305,38 @@ it('emits HowTo structured data for a use case with steps', function () {
     expect($html)->toContain('"@type":"HowToStep"');
     expect($html)->toContain('"@type":"BreadcrumbList"');
 });
+
+/**
+ * The CLIENT must agree with the server about the head.
+ *
+ * A bare `<Seo />` falls back to the provider's defaultTitle/description, so the
+ * server sends the correct per-page head and hydration immediately replaces it
+ * with the generic one. The server-HTML test above passes throughout — the only
+ * places it shows are the browser tab and any crawler that executes JS.
+ *
+ * A rendering test cannot hydrate here, so assert the contract that makes them
+ * agree: the page passes an explicit title through <Seo>, and the provider
+ * template `%s — Fancy UI` turns it into exactly what the server emitted.
+ */
+it('passes an explicit title to <Seo> rather than relying on the defaults', function () {
+    // Strip JSX comments first: these files DISCUSS `<Seo />` in prose
+    // explaining why the bare form is wrong, and a scan over raw source counts
+    // that explanation as the very thing it forbids.
+    $strip = static fn (string $src): string => (string) preg_replace('/\{\/\*.*?\*\/\}/s', '', $src);
+
+    $show = $strip(file_get_contents(resource_path('js/Pages/UseCases/Show.tsx')));
+    $index = $strip(file_get_contents(resource_path('js/Pages/UseCases/Index.tsx')));
+
+    foreach (['Show.tsx' => $show, 'Index.tsx' => $index] as $name => $source) {
+        // Boolean assertions throughout: `toContain($needle, $message)` reads the
+        // message as a SECOND needle, so the test fails on its own wording.
+        expect(str_contains($source, '<Seo'))->toBeTrue("{$name} no longer renders <Seo>");
+        expect((bool) preg_match('/<Seo\s*\/>/', $source))->toBeFalse(
+            "{$name} renders a bare <Seo />, which resets the head to the provider defaults on hydration",
+        );
+        expect(str_contains($source, 'title='))->toBeTrue("{$name} passes no title to <Seo>");
+    }
+
+    // And the shape has to match the server's, or the title flips on hydration.
+    expect($show)->toContain('— Use cases`');
+});

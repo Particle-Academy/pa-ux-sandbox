@@ -1,6 +1,7 @@
 <?php
 
 use App\Providers\SeoServiceProvider;
+use App\Support\UseCases\UseCaseContent;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
@@ -94,6 +95,29 @@ it('serves a clean markdown variant of a docs page for LLM fetchers', function (
 
 it('lists docs pages in the sitemap', function () {
     $this->get('/sitemap.xml')->assertOk()->assertSee('/docs/human-plus-ux', false);
+});
+
+/**
+ * Use cases were absent from the sitemap entirely -- the highest-INTENT content
+ * on the site, reachable only by following an internal link.
+ *
+ * This lives HERE rather than in `UseCasesTest` for a reason worth recording:
+ * the dynamic sitemap is filtered by fancy-x-files' admin controls, which are
+ * database-backed. Under `RefreshDatabase` those controls are empty and the
+ * rendered sitemap collapses to the home page, so the identical assertion fails
+ * there while the application is perfectly correct. This file does not refresh
+ * the database -- which is also why the docs assertion above passes.
+ */
+it('lists use-case pages in the sitemap', function () {
+    $xml = $this->get('/sitemap.xml')->assertOk()->getContent();
+
+    expect($xml)->toContain('/use-cases');
+
+    foreach (UseCaseContent::all() as $useCase) {
+        expect(str_contains($xml, "/use-cases/{$useCase['slug']}"))->toBeTrue(
+            "use case [{$useCase['slug']}] is missing from the sitemap, so nothing will crawl it",
+        );
+    }
 });
 
 it('serves real 1200x630 PNG OG cards (GD-drawn — no headless Chrome needed)', function () {

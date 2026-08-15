@@ -1,4 +1,5 @@
-import { Head, Link } from "@inertiajs/react";
+import { Link } from "@inertiajs/react";
+import { Seo } from "@particle-academy/fancy-inertia/seo";
 import { Badge, Card, ContentRenderer, Heading, Icon, Text } from "@particle-academy/react-fancy";
 import { Layout } from "../Layout";
 import { CodeSample, type CodeSampleData } from "./CodeSample";
@@ -39,9 +40,12 @@ type UseCase = {
 function UseCaseShow({ useCase, next, previous }: { useCase: UseCase; next: Neighbour; previous: Neighbour }) {
     return (
         <Layout>
-            <Head title={`${useCase.title} — Use cases`}>
-                <meta name="description" content={useCase.summary} />
-            </Head>
+            {/* The head is owned SERVER-side by SeoServiceProvider's
+                `use-cases.show` route (unique title, the use case's own summary
+                as the description, plus HowTo + BreadcrumbList JSON-LD). A raw
+                <Head title> here would DUPLICATE the fancy-seo Blade baseline's
+                <title> under SSR -- `clientOnly` covers <Seo>, not <Head>. */}
+            <Seo />
 
             <div className="section">
                 <Link

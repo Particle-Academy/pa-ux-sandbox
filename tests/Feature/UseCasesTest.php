@@ -252,3 +252,56 @@ it('carries the richer fields through to the page', function () {
             ->has('useCase.code')
         );
 });
+
+/**
+ * SEO — these pages are the highest-INTENT content on the site.
+ *
+ * Someone searching "how do I build a storefront" is further down the funnel
+ * than someone browsing packages, and every one of these pages shipped with the
+ * generic baseline title, no description, no JSON-LD, and no sitemap entry at
+ * all. That is exactly the defect already fixed once for /docs, repeated here
+ * because nothing asserted it.
+ *
+ * All three failures are invisible from inside the app: the page renders
+ * perfectly, and only a crawler ever notices.
+ */
+it('gives every use case a unique title and its own description', function () {
+    $titles = [];
+
+    foreach (UseCaseContent::all() as $useCase) {
+        $html = $this->get("/use-cases/{$useCase['slug']}")->assertOk()->getContent();
+
+        preg_match_all('#<title[^>]*>(.*?)</title>#s', $html, $m);
+
+        // Exactly one. Two is the fancy-seo baseline fighting a raw <Head>,
+        // which is the bug this replaced.
+        expect($m[1])->toHaveCount(1, "use case [{$useCase['slug']}] rendered ".count($m[1]).' <title> tags');
+
+        // Decode first: a title containing an apostrophe renders as `&#039;`,
+        // so a raw string comparison fails on correct output.
+        $title = trim(html_entity_decode($m[1][0], ENT_QUOTES | ENT_HTML5));
+        // `toContain($needle, $message)` reads the message as a SECOND needle --
+        // the same trap as the screens test above. Assert the boolean instead.
+        expect(str_contains($title, $useCase['title']))->toBeTrue(
+            "use case [{$useCase['slug']}] has a generic title: {$title}",
+        );
+        expect(in_array($title, $titles, true))->toBeFalse(
+            "use case [{$useCase['slug']}] shares its title with another page",
+        );
+        $titles[] = $title;
+
+        expect($html)->toContain('name="description"');
+    }
+});
+
+it('emits HowTo structured data for a use case with steps', function () {
+    $withSteps = collect(UseCaseContent::all())->first(fn ($u) => ! empty($u['steps']));
+
+    $html = $this->get("/use-cases/{$withSteps['slug']}")->assertOk()->getContent();
+
+    // These pages ARE numbered instructions, so HowTo is the accurate schema and
+    // the one eligible for a how-to rich result.
+    expect($html)->toContain('"@type":"HowTo"');
+    expect($html)->toContain('"@type":"HowToStep"');
+    expect($html)->toContain('"@type":"BreadcrumbList"');
+});

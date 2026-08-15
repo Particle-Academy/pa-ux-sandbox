@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Support\Docs\DocsRegistry;
 use App\Support\GalleryRegistry;
 use App\Support\PackageRegistry;
+use App\Support\UseCases\UseCaseContent;
 use App\Support\Usernames;
 use FancySeo\Facades\FancySeo;
 use FancySeo\JsonLd;
@@ -148,6 +149,17 @@ class SeoServiceProvider extends ServiceProvider
         FancySeo::route('packages.show', fn (array $params): array => $this->packageSeo($params['package'] ?? null, $base));
         FancySeo::route('packages.component', fn (array $params): array => $this->componentSeo($params['package'] ?? null, $params['component'] ?? null, $base));
         FancySeo::route('docs.show', fn (array $params): array => $this->docSeo($params['slug'] ?? 'introduction', $base));
+        // /use-cases is the highest-INTENT content on the site -- someone
+        // reading "how do I build a storefront" is further down the funnel than
+        // someone browsing packages -- and it had no per-page SEO at all. Every
+        // page shared the generic baseline title, exactly the defect that was
+        // already fixed for /docs.
+        FancySeo::route('use-cases.index', [
+            'title' => 'Use cases — what you can build with Fancy UI',
+            'description' => 'Blueprints and how-tos for the apps people actually build: subscription SaaS, e-commerce, online courses, referral networks, dashboards and real-estate portals — each with live component previews and real code.',
+            'type' => 'website',
+        ]);
+        FancySeo::route('use-cases.show', fn (array $params): array => $this->useCaseSeo($params['slug'] ?? null, $base));
         FancySeo::route('referrals.join', fn (array $params): array => $this->joinSeo($params['username'] ?? null, $base));
     }
 
@@ -207,6 +219,58 @@ class SeoServiceProvider extends ServiceProvider
             '/twitterbot|facebookexternalhit|facebot|linkedinbot|slackbot|slack-imgproxy|discordbot|telegrambot|whatsapp|pinterest|redditbot|embedly|skypeuripreview|vkshare|tumblr|mastodon|nuzzel|qwantify/i',
             $userAgent,
         );
+    }
+
+    /**
+     * Per-use-case SEO.
+     *
+     * `HowTo` rather than `Article` on purpose: these pages ARE numbered
+     * step-by-step instructions, which is what the schema describes and what
+     * makes them eligible for a how-to rich result. Claiming Article for
+     * something built as ordered steps is both less accurate and less useful.
+     *
+     * The description is the use case's own summary, so it is written once and
+     * cannot drift from what the page says.
+     *
+     * @return array<string,mixed>
+     */
+    private function useCaseSeo(mixed $slug, string $base): array
+    {
+        $slug = is_string($slug) ? $slug : '';
+        $useCase = UseCaseContent::find($slug);
+
+        if ($useCase === null) {
+            return ['title' => 'Use cases — Fancy UI', 'type' => 'article'];
+        }
+
+        $title = (string) $useCase['title'];
+        $summary = trim((string) ($useCase['summary'] ?? ''));
+        $url = $base.'/use-cases/'.$slug;
+
+        $steps = array_map(
+            static fn (array $step): array => [
+                'name' => (string) $step['title'],
+                // The step body is markdown; the schema wants prose, and a
+                // crawler reading literal asterisks learns nothing.
+                'text' => trim(strip_tags(str_replace(['**', '`'], '', (string) $step['body']))),
+                'url' => $url,
+            ],
+            $useCase['steps'] ?? [],
+        );
+
+        return [
+            'title' => "{$title} — Use cases — Fancy UI",
+            'description' => $summary !== '' ? $summary : "{$title} — built with the Fancy UI kit.",
+            'type' => 'article',
+            'image' => '/showcase-assets/fancy-ui-logo.jpg',
+            'jsonLd' => array_values(array_filter([
+                $steps === [] ? null : JsonLd::howTo($title, $steps, $summary ?: null),
+                JsonLd::breadcrumbList([
+                    ['name' => 'Use cases', 'url' => $base.'/use-cases'],
+                    ['name' => $title, 'url' => $url],
+                ]),
+            ])),
+        ];
     }
 
     /**
@@ -374,6 +438,7 @@ class SeoServiceProvider extends ServiceProvider
             $map->add('/', '1.0', 'daily')
                 ->add('packages', '0.9', 'weekly')
                 ->add('docs', '0.8', 'weekly')
+                ->add('use-cases', '0.85', 'weekly')
                 ->add('starter-kits', '0.7', 'weekly')
                 ->add('inspiration', '0.7', 'weekly')
                 ->add('agent-playground', '0.8', 'weekly')
@@ -392,6 +457,12 @@ class SeoServiceProvider extends ServiceProvider
             // Every docs page — the highest-volume indexable content.
             foreach (DocsRegistry::flat() as $doc) {
                 $map->add('docs/'.$doc['slug'], '0.7', 'monthly');
+            }
+
+            // Every use case — the highest-INTENT indexable content, and it was
+            // missing from the sitemap entirely.
+            foreach (UseCaseContent::all() as $useCase) {
+                $map->add('use-cases/'.$useCase['slug'], '0.75', 'monthly');
             }
 
             foreach (PackageRegistry::all() as $pkg) {

@@ -1,4 +1,5 @@
-import { Head, Link } from "@inertiajs/react";
+import { Link } from "@inertiajs/react";
+import { Seo } from "@particle-academy/fancy-inertia/seo";
 import { Badge, Card, Heading, Icon, Text } from "@particle-academy/react-fancy";
 import { useMemo, useState } from "react";
 import { Layout } from "../Layout";
@@ -52,12 +53,10 @@ function UseCasesIndex({ categories, useCases }: { categories: string[]; useCase
 
     return (
         <Layout>
-            <Head title="Use cases — Fancy UI">
-                <meta
-                    name="description"
-                    content="How the Fancy UI suite solves real problems: agents that operate your app, workflows with human approval, office documents, subscriptions, dashboards and more."
-                />
-            </Head>
+            {/* Head owned server-side by SeoServiceProvider's `use-cases.index`
+                route. A raw <Head title> duplicates the fancy-seo Blade
+                baseline's <title> under SSR. */}
+            <Seo />
 
             <div className="section">
                 <div style={{ maxWidth: 760 }}>

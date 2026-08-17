@@ -30,27 +30,54 @@ type Props = {
 
 const AVATAR_FALLBACK = "/showcase-assets/fancy-ui-logo.jpg";
 
-/** A segmented pill switch — the redesign's one navigation idiom for a page. */
+/**
+ * A segmented pill switch — the redesign's one navigation idiom for a page.
+ *
+ * The selected option was conveyed by BACKGROUND COLOUR ALONE: no `aria-checked`,
+ * no `aria-pressed`, no group role. A screen reader announced "Players, button.
+ * Contributors, button." with nothing to say which was active — a WCAG 2.2 4.1.2
+ * failure, and precisely the trap gamified UI walks into, because rank, tier and
+ * scope are exactly the states people reach for colour to express.
+ *
+ * The roles mirror react-fancy's `MultiSwitch` (`radiogroup` / `radio` /
+ * `aria-checked`) rather than inventing a third vocabulary — that component is
+ * the kit's answer to this control, and the only reason it is not used directly
+ * is the pill styling this page's design calls for. Arrow-key roving focus is
+ * deliberately NOT hand-rolled here; if this needs to become a full keyboard
+ * widget, adopt `MultiSwitch` instead of growing a second implementation.
+ */
 function PillTabs<T extends string>({
     value,
     onChange,
     options,
+    label,
 }: {
     value: T;
     onChange: (next: T) => void;
     options: { value: T; label: string }[];
+    /** Names the group for assistive tech — "Leaderboard scope", not "group". */
+    label: string;
 }) {
     return (
-        <div className="inline-flex rounded-full border border-zinc-200 bg-zinc-100/70 p-1 dark:border-zinc-800 dark:bg-zinc-900/70">
+        <div
+            role="radiogroup"
+            aria-label={label}
+            className="inline-flex rounded-full border border-zinc-200 bg-zinc-100/70 p-1 dark:border-zinc-800 dark:bg-zinc-900/70"
+        >
             {options.map((o) => {
                 const on = o.value === value;
                 return (
                     <button
                         key={o.value}
                         type="button"
+                        role="radio"
+                        aria-checked={on}
                         onClick={() => onChange(o.value)}
                         className={[
                             "rounded-full px-3.5 py-1.5 text-xs font-semibold transition",
+                            // Visible keyboard focus (WCAG 2.4.7). The tint alone
+                            // is invisible to a keyboard user tabbing through.
+                            "focus-visible:ring-2 focus-visible:ring-violet-500 focus-visible:ring-offset-1 focus-visible:outline-none dark:focus-visible:ring-offset-zinc-900",
                             on
                                 ? "bg-white text-zinc-900 shadow-sm dark:bg-zinc-800 dark:text-zinc-50"
                                 : "text-zinc-500 hover:text-zinc-800 dark:text-zinc-400 dark:hover:text-zinc-200",
@@ -81,6 +108,7 @@ export default function Leaderboard({ scope, snapshot, rows, players }: Props) {
                     </Text>
                 </div>
                 <PillTabs
+                    label="Leaderboard type"
                     value={view}
                     onChange={setView}
                     options={[
@@ -299,6 +327,7 @@ function ContributorsTable({ scope: initialScope, snapshot: initialSnapshot, row
         <>
             <div className="mt-5 inline-flex items-center gap-2">
                 <PillTabs
+                    label="Leaderboard period"
                     value={scope}
                     onChange={switchScope}
                     options={[

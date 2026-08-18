@@ -1,7 +1,13 @@
 import { Fragment, type ReactNode, useEffect, useState } from "react";
 import { Link, router, usePage } from "@inertiajs/react";
-import { Badge, Dropdown, Icon, MobileMenu } from "@particle-academy/react-fancy";
-import { currentTheme, toggleTheme } from "../../showcase-theme";
+import { Badge, Dropdown, Icon, MobileMenu, useTheme } from "@particle-academy/react-fancy";
+import { cycleTheme } from "../../showcase-theme";
+
+const THEME_LABEL = {
+    light: "Theme: light",
+    dark: "Theme: dark",
+    system: "Theme: system (follows your OS)",
+} as const;
 import { PlayerAvatar, type PlayerIdentityData } from "../../components/PlayerIdentity";
 import "../../../css/admin.css";
 
@@ -108,18 +114,11 @@ export function AdminLayout({ children }: { children: ReactNode }) {
     // hangs over the page you just arrived at.
     useEffect(() => setMobileOpen(false), [path]);
 
-    // Start "dark" so the server render and the client's FIRST render agree —
-    // reading the real theme during render (currentTheme() → localStorage/media
-    // query) mismatches on hydration whenever the user is in light mode, and a
-    // #418 here discards the whole server-rendered admin layout ("page breaks,
-    // then reforms"). Same pattern as Pages/Layout.tsx: sync post-mount.
-    const [theme, setTheme] = useState<"light" | "dark">("dark");
-    useEffect(() => {
-        setTheme(currentTheme());
-        const onChange = (e: Event) => setTheme((e as CustomEvent<"light" | "dark">).detail);
-        window.addEventListener("fancy-theme-change", onChange as EventListener);
-        return () => window.removeEventListener("fancy-theme-change", onChange as EventListener);
-    }, []);
+    // `useTheme` keeps the deterministic-first-render property this used to
+    // hand-roll -- server and client both start from the same value and sync
+    // after mount, so no #418 discards the server-rendered admin layout -- and
+    // adds the live OS listener the hand-rolled version never had.
+    const { preference, resolved: theme } = useTheme();
 
     const isActive = (href: string) => (href === "/admin" ? path === "/admin" : path.startsWith(href));
 
@@ -193,10 +192,10 @@ export function AdminLayout({ children }: { children: ReactNode }) {
                     <button
                         className="btn btn-ghost"
                         style={{ height: 34, width: 34, padding: 0, display: "grid", placeItems: "center" }}
-                        onClick={() => setTheme(toggleTheme())}
-                        aria-label="Toggle theme"
+                        onClick={() => cycleTheme()}
+                        aria-label={THEME_LABEL[preference]}
                     >
-                        <Icon name={theme === "dark" ? "sun" : "moon"} size="sm" />
+                        <Icon name={preference === "system" ? "monitor" : theme === "dark" ? "moon" : "sun"} size="sm" />
                     </button>
                     {user && (
                         <Dropdown>

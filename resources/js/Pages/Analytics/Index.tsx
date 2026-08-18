@@ -6,9 +6,10 @@ import {
     Lock, LogIn, LogOut, Megaphone, MonitorSmartphone, MousePointerClick, PieChart, Radio,
     Route, Smartphone, Sparkles, Split, Star, Tag, TrendingUp, User,
 } from "lucide-react";
+import { useTheme } from "@particle-academy/react-fancy";
 import { EChart } from "@particle-academy/fancy-echarts";
 import { Layout } from "../Layout";
-import { currentTheme } from "../../showcase-theme";
+
 import "../../../css/analytics.css";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
@@ -575,18 +576,14 @@ function RealtimeSection({ data }: { data: NonNullable<Realtime> }) {
 
 // ─── 6 · Attention ──────────────────────────────────────────────────────────
 
-function useTheme(): "light" | "dark" {
-    // Deterministic first render ("dark") on server AND client, then sync to the
-    // real theme post-mount — reading currentTheme() during render mismatches on
-    // hydration (React #418) for light-mode users. Same pattern as Layout.tsx.
-    const [theme, setTheme] = useState<"light" | "dark">("dark");
-    useEffect(() => {
-        setTheme(currentTheme());
-        const onChange = (e: Event) => setTheme((e as CustomEvent<"light" | "dark">).detail);
-        window.addEventListener("fancy-theme-change", onChange as EventListener);
-        return () => window.removeEventListener("fancy-theme-change", onChange as EventListener);
-    }, []);
-    return theme;
+/**
+ * The charts need the RESOLVED theme, not the preference -- `system` is not a
+ * colour. react-fancy's hook keeps the deterministic-first-render property this
+ * used to hand-roll and adds the live OS listener, so a chart repaints when the
+ * OS flips instead of staying on last hour's palette.
+ */
+function useChartTheme(): "light" | "dark" {
+    return useTheme().resolved;
 }
 
 function blobColor(weight: number): string {
@@ -596,7 +593,7 @@ function blobColor(weight: number): string {
 }
 
 function AttentionSection({ heatmap, shot }: { heatmap: Heatmap; shot: Shot | null }) {
-    useTheme();
+    useChartTheme();
     return (
         <section id="sec-attention" className="section fade-in">
             <SectionHead num="06" title="Attention" Icon={Flame}

@@ -6,8 +6,10 @@ import {
     Dropdown,
     MobileMenu,
     Tooltip,
+    useTheme,
 } from "@particle-academy/react-fancy";
 import {
+    Monitor,
     Moon,
     Sun,
     Sparkles,
@@ -28,7 +30,13 @@ import {
 } from "@particle-academy/fancy-inertia";
 import { FancyInertiaPwa } from "@particle-academy/fancy-inertia/pwa";
 import { CoBrowsePresence } from "@particle-academy/agent-integrations";
-import { currentTheme, toggleTheme } from "../showcase-theme";
+import { cycleTheme } from "../showcase-theme";
+
+const THEME_LABEL = {
+    light: "Theme: light",
+    dark: "Theme: dark",
+    system: "Theme: system (follows your OS)",
+} as const;
 import { CommandPalette } from "./CommandPalette";
 import { useCoBrowse } from "../agent/CoBrowseProvider";
 import { type CosmeticSlots } from "../lib/cosmetics";
@@ -113,19 +121,11 @@ export function Layout({
     // arrived at.
     useEffect(() => setNavOpen(false), [path]);
 
-    // Start "light" so the server render and the client's FIRST render agree —
-    // reading the real theme during render (the blade inline script may have set
-    // it to dark from localStorage/system) would mismatch on hydration. The page
-    // colors are already correct (the inline script sets the `dark` class on
-    // <html> before React); this state only drives the toggle icon, which we sync
-    // to the real theme right after mount.
-    const [theme, setTheme] = useState<"light" | "dark">("light");
-    useEffect(() => {
-        setTheme(currentTheme());
-        const onChange = (e: Event) => setTheme((e as CustomEvent<"light" | "dark">).detail);
-        window.addEventListener("fancy-theme-change", onChange as EventListener);
-        return () => window.removeEventListener("fancy-theme-change", onChange as EventListener);
-    }, []);
+    // `useTheme` keeps the hydration-safe shape this used to hand-roll -- it
+    // renders system/light on the server and syncs after mount -- and adds the
+    // part that was missing: it re-renders when the OS theme changes under a
+    // "system" preference, so the icon cannot go stale against the page.
+    const { preference, resolved: theme } = useTheme();
 
     return (
         <div className="min-h-screen flex flex-col">
@@ -199,14 +199,20 @@ export function Layout({
 
                         <CoBrowseControl />
 
-                        <Tooltip content={theme === "dark" ? "Light mode" : "Dark mode"}>
+                        <Tooltip content={THEME_LABEL[preference]}>
                             <button
-                                onClick={() => setTheme(toggleTheme())}
+                                onClick={() => cycleTheme()}
                                 className="btn btn-ghost"
                                 style={{ height: 34, padding: "0 10px" }}
-                                aria-label="Toggle theme"
+                                aria-label={THEME_LABEL[preference]}
                             >
-                                {theme === "dark" ? <Sun size={16} /> : <Moon size={16} />}
+                                {preference === "system" ? (
+                                    <Monitor size={16} />
+                                ) : theme === "dark" ? (
+                                    <Moon size={16} />
+                                ) : (
+                                    <Sun size={16} />
+                                )}
                             </button>
                         </Tooltip>
 

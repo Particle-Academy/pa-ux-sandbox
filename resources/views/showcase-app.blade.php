@@ -39,7 +39,12 @@
         (function () {
             try {
                 var saved = localStorage.getItem('fancy-ui.theme');
-                var dark = saved
+                // Only 'light'/'dark' count as an explicit choice. Anything
+                // else -- absent, or junk left by an older build -- means follow
+                // the system, which is exactly what react-fancy's initTheme()
+                // decides a moment later. If these two disagree the page paints
+                // one theme and then flips to the other.
+                var dark = (saved === 'light' || saved === 'dark')
                     ? saved === 'dark'
                     : window.matchMedia('(prefers-color-scheme: dark)').matches;
                 if (dark) document.documentElement.classList.add('dark');

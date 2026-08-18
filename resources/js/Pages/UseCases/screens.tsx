@@ -26,6 +26,7 @@ import "@particle-academy/fancy-git-ui/styles.css";
 import { PasskeyStatus } from "@particle-academy/fancy-passkeys-ui";
 import { AgentCursor, ShareControls } from "@particle-academy/agent-integrations";
 import { LlmsTxtEditor, RobotsEditor } from "@particle-academy/fancy-x-files-ui";
+import { FlowViewer } from "@particle-academy/fancy-flow";
 // Verified fixtures, already used by the package demos -- so these screens
 // cannot drift from the shapes the components are known to accept.
 import { GIT_COMMITS, GIT_STATUS } from "../Packages/gitFixtures";
@@ -781,6 +782,134 @@ const TerminalSession = clientOnly(async () => {
     return { default: TerminalSessionInner };
 });
 
+
+// ─────────────────────────────────────────────── workflows, analytics
+
+/**
+ * `FlowViewer`, not `FlowEditor`.
+ *
+ * The editor was the obvious first reach and the wrong one: it is a full
+ * authoring IDE — node palette, Run button, run feed, config inspector — and at
+ * an embedded height it renders all of that chrome with no room left for the
+ * graph. Measured: the canvas was invisible.
+ *
+ * The viewer is the read-only surface for exactly this, and `statuses` is what
+ * makes the point of the page: the approval node sits `pending` while every step
+ * before it is `ok`. It is SSR-safe (the docs embeds import it directly), so no
+ * client-only wrapper is needed.
+ */
+const APPROVAL_GRAPH = {
+    nodes: [
+        { id: "t", type: "webhook_trigger", position: { x: 0, y: 80 }, data: { kind: "webhook_trigger", label: "Expense filed", config: {} } },
+        { id: "d", type: "condition", position: { x: 220, y: 80 }, data: { kind: "condition", label: "Over £500?", config: {} } },
+        { id: "a", type: "human_approval", position: { x: 440, y: 80 }, data: { kind: "human_approval", label: "Manager approves", config: {} } },
+        { id: "o", type: "output", position: { x: 660, y: 80 }, data: { kind: "output", label: "Reimburse", config: {} } },
+    ],
+    edges: [
+        { id: "e1", source: "t", target: "d" },
+        { id: "e2", source: "d", target: "a" },
+        { id: "e3", source: "a", target: "o" },
+    ],
+} as never;
+
+function ApprovalFlow() {
+    return (
+        <Frame title="Workflow" action={<Badge size="sm" variant="soft" color="amber">paused at the gate</Badge>}>
+            <div className="text-[12px]">
+                <FlowViewer
+                    graph={APPROVAL_GRAPH}
+                    variant="list"
+                    statuses={{ t: "ok", d: "ok", a: "pending", o: "pending" } as never}
+                />
+            </div>
+            <Text className="!mt-2 !text-[11px] !text-zinc-500">
+                The run stops at the approval node and persists — no worker is held open while it waits.
+            </Text>
+        </Frame>
+    );
+}
+
+/**
+ * Durable runs are a LIST, not a canvas. The interesting state is which runs are
+ * paused, waiting on whom, and since when — a graph tells you none of that.
+ */
+function RunHistory() {
+    const runs = [
+        { id: "run_8f21", flow: "Expense approval", status: "Awaiting approval", who: "M. Iyer", age: "2h" },
+        { id: "run_8f19", flow: "Expense approval", status: "Completed", who: "—", age: "5h" },
+        { id: "run_8f04", flow: "Onboarding", status: "Resumed after restart", who: "—", age: "1d" },
+        { id: "run_8ef7", flow: "Nightly digest", status: "Failed · retrying", who: "—", age: "1d" },
+    ];
+    const tone = (s: string) =>
+        s.startsWith("Awaiting") ? "amber" : s.startsWith("Failed") ? "red" : s.startsWith("Resumed") ? "violet" : "green";
+
+    return (
+        <Frame title="Runs" action={<Badge size="sm" variant="soft" color="zinc">last 24h</Badge>}>
+            <Table>
+                <Table.Head>
+                    <Table.Row>
+                        <Table.Column label="Run" />
+                        <Table.Column label="Workflow" />
+                        <Table.Column label="State" />
+                        <Table.Column label="Waiting on" />
+                        <Table.Column label="Age" />
+                    </Table.Row>
+                </Table.Head>
+                <Table.Body>
+                    {runs.map((r) => (
+                        <Table.Row key={r.id} data-uc-handle={`run-${r.id}`}>
+                            <Table.Cell><span className="font-mono text-[11px]">{r.id}</span></Table.Cell>
+                            <Table.Cell>{r.flow}</Table.Cell>
+                            <Table.Cell>
+                                {/* Status carries its own words, not just a colour. */}
+                                <Badge size="sm" variant="soft" color={tone(r.status) as never}>{r.status}</Badge>
+                            </Table.Cell>
+                            <Table.Cell>{r.who}</Table.Cell>
+                            <Table.Cell>{r.age}</Table.Cell>
+                        </Table.Row>
+                    ))}
+                </Table.Body>
+            </Table>
+            <Text className="!mt-2 !text-[11px] !text-zinc-500">
+                A paused run is a database row, not a held process — which is why it survives a deploy.
+            </Text>
+        </Frame>
+    );
+}
+
+const UsageAnalytics = clientOnly(async () => {
+    const { EChart, registerAll } = await import("@particle-academy/fancy-echarts");
+    registerAll();
+    function UsageAnalyticsInner() {
+        return (
+            <Frame title="Interaction" action={<Badge size="sm" variant="soft" color="zinc">first-party</Badge>}>
+                <Stat.Band columns={3}>
+                    <Stat value="6.2k" label="Sessions" size="sm" />
+                    <Stat value="41%" label="Reached checkout" size="sm" />
+                    <Stat value="12%" label="Rage clicks" size="sm" />
+                </Stat.Band>
+                <div className="mt-2">
+                    <EChart
+                        style={{ height: 150 }}
+                        option={{
+                            grid: { left: 90, right: 10, top: 6, bottom: 18 },
+                            xAxis: { type: "value" },
+                            yAxis: { type: "category", data: ["Checkout", "Cart", "Product", "Search", "Home"] },
+                            series: [
+                                { type: "bar", data: [820, 1490, 2600, 3100, 6200], itemStyle: { color: "#8b5cf6", borderRadius: [0, 3, 3, 0] } },
+                            ],
+                        }}
+                    />
+                </div>
+                <Text className="!mt-1.5 !text-[11px] !text-zinc-500">
+                    Collected by your own server — no third-party pixel on an authenticated surface.
+                </Text>
+            </Frame>
+        );
+    }
+    return { default: UsageAnalyticsInner };
+});
+
 // ───────────────────────────────────────────────────────── the registry
 
 export const USE_CASE_SCREENS: Record<string, UseCaseScreen> = {
@@ -857,6 +986,21 @@ export const USE_CASE_SCREENS: Record<string, UseCaseScreen> = {
         label: "Usage and limits",
         caption: "Metered features from laravel-fms, showing remaining allowance before the gate denies.",
         render: () => <UsageAndLimits />,
+    },
+    "flow/approval": {
+        label: "Workflow with a human gate",
+        caption: "The real <FlowViewer> with live run statuses — every step OK until the approval node, which sits pending until a person decides.",
+        render: () => <ApprovalFlow />,
+    },
+    "flow/runs": {
+        label: "Durable runs",
+        caption: "A paused run is a database row, not a held process, so it survives a deploy.",
+        render: () => <RunHistory />,
+    },
+    "analytics/usage": {
+        label: "How the app is used",
+        caption: "First-party interaction analytics — collected by your own server, not a third-party pixel.",
+        render: () => <UsageAnalytics />,
     },
     "agent/cobrowse": {
         label: "Agents in your app",

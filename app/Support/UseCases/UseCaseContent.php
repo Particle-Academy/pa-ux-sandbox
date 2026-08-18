@@ -381,6 +381,34 @@ need is a run that *stops*, waits as long as it takes, and resumes with the
 decision recorded — without holding a worker open for three days.
 MD,
             'packages' => ['fancy-flow', 'fancy-flow-php'],
+            'screens' => ['flow/approval'],
+            'code' => [
+                [
+                    'label' => 'The approval node pauses the run',
+                    'language' => 'php',
+                    'code' => <<<'PHP'
+// `human_approval` does not poll or block a worker -- it PERSISTS the run as
+// awaiting_input and returns. The job finishes; the run does not.
+$run = Flow::dispatch($workflow, ['expense' => $expense->toArray()]);
+
+// Later, from the approval UI:
+Flow::resume($run, ['approved' => true, 'by' => $manager->id]);
+PHP,
+                ],
+                [
+                    'label' => 'Refuse to save a loop before it runs',
+                    'language' => 'php',
+                    'code' => <<<'PHP'
+use FancyFlow\Analysis\SubflowCycle;
+
+// The runtime depth cap catches a loop only AFTER every node above the subflow
+// has run on each pass, side effects included. This refuses it at the door.
+$loop = SubflowCycle::find($graph, $resolver, $name);
+
+abort_if($loop !== [], 422, 'That workflow loops: '.implode(' -> ', $loop));
+PHP,
+                ],
+            ],
             'steps' => [
                 [
                     'title' => 'Model the process as a graph',
@@ -423,6 +451,29 @@ a pull request or charged a card, the retry does it a second time. "Run it again
 is not a safe default once a step touches the outside world.
 MD,
             'packages' => ['fancy-flow-php', 'fancy-flow'],
+            'screens' => ['flow/runs'],
+            'code' => [
+                [
+                    'label' => 'A paused run is a row, not a process',
+                    'language' => 'php',
+                    'code' => <<<'PHP'
+// This is the whole trick. Nothing is held in memory between steps, so a deploy,
+// a crash or a queue restart cannot lose a run that is waiting on a person.
+Schema::create('flow_runs', function (Blueprint $table) {
+    $table->id();
+    $table->string('workflow');
+    $table->string('status');        // running | awaiting_input | done | failed
+    $table->json('state');           // everything needed to resume
+    $table->timestamps();
+});
+PHP,
+                ],
+                [
+                    'label' => 'Same graph, both runtimes',
+                    'language' => 'bash',
+                    'code' => 'composer require particle-academy/fancy-flow-php',
+                ],
+            ],
             'steps' => [
                 [
                     'title' => 'Install the PHP runtime',
@@ -1244,6 +1295,21 @@ The tools that do capture it are usually third-party scripts sending your users'
 behaviour somewhere else, which is a privacy decision made on your behalf.
 MD,
             'packages' => ['fancy-heuristics', 'fancy-heuristics-js', 'fancy-pixel'],
+            'screens' => ['analytics/usage'],
+            'code' => [
+                [
+                    'label' => 'Record intent, not page views',
+                    'language' => 'php',
+                    'code' => <<<'PHP'
+// A page view tells you someone arrived. This tells you whether the app did the
+// thing they came for -- which is the only number worth optimising.
+Heuristics::record('checkout.completed', [
+    'plan'  => $plan->slug,
+    'steps' => $session->stepCount(),
+]);
+PHP,
+                ],
+            ],
             'steps' => [
                 [
                     'title' => 'Install the collector and the server',

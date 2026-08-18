@@ -406,6 +406,43 @@ You want the catalog to live in your application, synced outward — one place t
 change a price, and checkout that follows from it.
 MD,
             'packages' => ['laravel-catalog', 'fancy-catalog-js'],
+            'screens' => ['saas/plans'],
+            'code' => [
+                [
+                    'label' => 'Create the plan and sync it outward',
+                    'language' => 'php',
+                    'code' => <<<'PHP'
+use LaravelCatalog\Facades\Catalog;
+
+// A plan is a product with a recurring price -- no second model to keep in step.
+$pro = Catalog::createProduct(['name' => 'Pro', 'description' => 'Professional features']);
+
+Catalog::createPrice($pro, [
+    'amount'    => 2999,
+    'currency'  => 'usd',
+    'recurring' => ['interval' => 'month'],
+]);
+
+Catalog::syncProductAndPrices($pro);
+PHP,
+                ],
+                [
+                    'label' => 'Send the customer to checkout',
+                    'language' => 'php',
+                    'code' => <<<'PHP'
+// One call for subscriptions and one-offs alike, so the purchase flow carries no
+// Stripe-specific branching into your controllers.
+$checkout = Catalog::createCheckoutSession($user, [
+    'price'       => $price->stripe_price_id,
+    'mode'        => 'subscription',
+    'success_url' => route('checkout.success'),
+    'cancel_url'  => route('pricing'),
+]);
+
+return redirect($checkout->url);
+PHP,
+                ],
+            ],
             'steps' => [
                 [
                     'title' => 'Install the catalog',
@@ -451,6 +488,50 @@ Metered limits are worse, because the failure is silent. A quota that is never
 checked does not error — it just never runs out, and you find out from the bill.
 MD,
             'packages' => ['laravel-fms', 'fancy-features-js'],
+            'screens' => ['saas/usage'],
+            'code' => [
+                [
+                    'label' => 'Define the feature once',
+                    'language' => 'php',
+                    'code' => <<<'PHP'
+// config/fms.php -- boolean for on/off, resource for anything metered. Both take
+// callables, so entitlement is DERIVED from the subscription rather than copied
+// onto the user record where it goes stale.
+'features' => [
+    'use-mcp' => [
+        'name'    => 'Use MCP',
+        'type'    => 'boolean',
+        'enabled' => fn ($user) => $user->subscribedToProduct('pro'),
+    ],
+
+    'ai-tokens' => [
+        'name'  => 'AI tokens',
+        'type'  => 'resource',
+        'limit' => 10_000,
+        'usage' => fn ($user) => $user->tokenUsage()->thisPeriod()->sum('tokens'),
+    ],
+],
+PHP,
+                ],
+                [
+                    'label' => 'Ask the same question everywhere',
+                    'language' => 'php',
+                    'code' => <<<'PHP'
+use ParticleAcademy\Fms\Facades\FMS;
+
+// Route boundary.
+Route::middleware(['auth', RequireFeature::class.':use-mcp'])->group(/* ... */);
+
+// UI hint, from the SAME source -- so the interface never offers something the
+// route will refuse, and a metered feature can show what is left before it
+// denies.
+return Inertia::render('Workspace', [
+    'can'       => ['useMcp' => FMS::canAccess('use-mcp')],
+    'remaining' => FMS::remaining('ai-tokens'),
+]);
+PHP,
+                ],
+            ],
             'steps' => [
                 [
                     'title' => 'Install feature management',
@@ -493,6 +574,33 @@ Get the arithmetic wrong and you are not fixing a bug, you are correcting
 people's money — which is a different kind of problem.
 MD,
             'packages' => ['fancy-mlm', 'fancy-mlm-js', 'fancy-mlm-ui'],
+            'screens' => ['mlm/downline', 'mlm/commissions'],
+            'code' => [
+                [
+                    'label' => 'Compute a reward per order',
+                    'language' => 'php',
+                    'code' => <<<'PHP'
+// One computation PER REWARD, carrying level, metric and recipient -- that
+// record is what a statement is rendered from months later, when somebody asks
+// why a specific number is what it is.
+$rewards = Mlm::computeRewards($order, [
+    'levels' => [1 => 0.10, 2 => 0.05],
+]);
+PHP,
+                ],
+                [
+                    'label' => 'Reverse, do not delete',
+                    'language' => 'php',
+                    'code' => <<<'PHP'
+// Refunds land after payout runs. A reversed row that stays visible -- struck
+// through and excluded from the paid total -- is the difference between a
+// statement someone trusts and one they dispute.
+Commission::where('order_id', $order->id)
+    ->where('status', '!=', 'paid')
+    ->update(['status' => 'reversed', 'reversed_at' => now()]);
+PHP,
+                ],
+            ],
             'steps' => [
                 [
                     'title' => 'Install the engine',
@@ -534,6 +642,40 @@ minutes old looks exactly like a number that is correct, and decisions get made
 on it.
 MD,
             'packages' => ['fancy-echarts', 'fancy-query', 'react-fancy'],
+            'screens' => ['dashboard/analytics'],
+            'code' => [
+                [
+                    'label' => 'The chart follows state',
+                    'language' => 'tsx',
+                    'code' => <<<'TSX'
+// An option object, not an imperative instance: no ref, no setOption, nothing to
+// forget on update. A charting library that owns its own DOM is how dashboards
+// end up stale without saying so.
+<EChart
+  style={{ height: 240 }}
+  option={{
+    xAxis: { type: "category", data: months },
+    yAxis: { type: "value" },
+    series: [{ type: "bar", data: revenue }],
+  }}
+/>
+TSX,
+                ],
+                [
+                    'label' => 'Hydrate, then invalidate on events',
+                    'language' => 'tsx',
+                    'code' => <<<'TSX'
+// First paint is server data rather than a spinner; the panel then refreshes
+// when its data actually changes. Polling is a tax you pay forever.
+const { data } = useHydratedQuery({
+  queryKey: ["revenue", period],
+  initialData: page.props.revenue,
+});
+
+useEchoInvalidation("orders", ["revenue"]);
+TSX,
+                ],
+            ],
             'steps' => [
                 [
                     'title' => 'Lay the page out with the primitives',

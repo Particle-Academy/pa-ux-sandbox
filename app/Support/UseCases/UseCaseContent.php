@@ -117,6 +117,38 @@ The problem is the interface: the agent is on the *outside*, guessing. It should
 be a participant, with the same access to state the UI has.
 MD,
             'packages' => ['agent-integrations', 'react-fancy', 'fancy-screens'],
+            'screens' => ['agent/cobrowse', 'agent/share'],
+            'code' => [
+                [
+                    'label' => 'Expose the surface as tools, not a DOM',
+                    'language' => 'ts',
+                    'code' => <<<'TS'
+// The adapter is the whole contract: getters and setters over the state the
+// human is already looking at. Every mutation broadcasts an AgentActivity
+// event, so presence, undo and coaching compose for free.
+registerFormBridge(server, {
+  adapter: {
+    getFields: () => fields,
+    setField: (handle, value) => update(handle, value),
+    submit: () => form.submit(),
+  },
+  pendingMode: true,   // destructive actions are PROPOSED, a human confirms
+});
+TS,
+                ],
+                [
+                    'label' => 'Hand an external agent the session',
+                    'language' => 'tsx',
+                    'code' => <<<'TSX'
+// One session, one tool surface. Site tools are always present; a page's tools
+// are contributed while it is mounted and withdrawn when it unmounts.
+const { contributeBridges } = useCoBrowse();
+
+useEffect(() => contributeBridges((server) =>
+  registerArtboardBridge(server, { adapter }).dispose), []);
+TSX,
+                ],
+            ],
             'steps' => [
                 [
                     'title' => 'Make the surface controlled',
@@ -231,6 +263,30 @@ A terminal UI fixes the human half. The agent half needs the same thing the web
 side needed: a way in that is not scraping the output.
 MD,
             'packages' => ['fancy-tui', 'fancy-term', 'fancy-term-host'],
+            'screens' => ['terminal/session'],
+            'code' => [
+                [
+                    'label' => 'The output buffer is controlled',
+                    'language' => 'tsx',
+                    'code' => <<<'TSX'
+// The component diffs `output` and writes only the appended delta, so a host can
+// drive it from React state -- which is what lets an agent and a human write to
+// the SAME session rather than two views of it.
+const [output, setOutput] = useState("");
+
+<Terminal
+  output={output}
+  shells={BUILTIN_SHELLS}
+  onInput={(data) => pty.write(data)}
+/>
+TSX,
+                ],
+                [
+                    'label' => 'The session outlives the browser',
+                    'language' => 'bash',
+                    'code' => 'npm i @particle-academy/fancy-term-host',
+                ],
+            ],
             'steps' => [
                 [
                     'title' => 'Build the interface from TUI components',
@@ -1084,6 +1140,34 @@ for to learn what your site is and what it permits. Missing them is not an error
 anywhere, it is simply an absence.
 MD,
             'packages' => ['fancy-seo', 'fancy-x-files', 'fancy-x-files-ui', 'fancy-inertia'],
+            'screens' => ['seo/well-known'],
+            'code' => [
+                [
+                    'label' => 'The files are structure, not strings',
+                    'language' => 'php',
+                    'code' => <<<'PHP'
+// robots.txt hand-edited in a textarea is how a site ends up disallowing the
+// path it meant to protect. Model the rules, render the file.
+XFiles::robots()
+    ->group(userAgents: ['*'], allow: ['/'], disallow: ['/admin', '/api'])
+    ->sitemap(route('sitemap'))
+    ->protect('/admin');           // refuses to emit a rule that exposes it
+PHP,
+                ],
+                [
+                    'label' => 'Server-render the head, not just the body',
+                    'language' => 'tsx',
+                    'code' => <<<'TSX'
+// A page that assembles its own head after hydration is a page crawlers see as
+// untitled. fancy-seo emits it in the first byte, with the JSON-LD alongside.
+<Seo
+  title={page.title}
+  description={page.summary}
+  jsonLd={{ "@context": "https://schema.org", "@type": "Article", headline: page.title }}
+/>
+TSX,
+                ],
+            ],
             'steps' => [
                 [
                     'title' => 'Render metadata on the server',

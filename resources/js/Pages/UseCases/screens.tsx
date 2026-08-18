@@ -24,6 +24,8 @@ import { FancyDiff } from "@particle-academy/fancy-diff";
 import { CommitHistory, WorkingTree } from "@particle-academy/fancy-git-ui";
 import "@particle-academy/fancy-git-ui/styles.css";
 import { PasskeyStatus } from "@particle-academy/fancy-passkeys-ui";
+import { AgentCursor, ShareControls } from "@particle-academy/agent-integrations";
+import { LlmsTxtEditor, RobotsEditor } from "@particle-academy/fancy-x-files-ui";
 // Verified fixtures, already used by the package demos -- so these screens
 // cannot drift from the shapes the components are known to accept.
 import { GIT_COMMITS, GIT_STATUS } from "../Packages/gitFixtures";
@@ -660,6 +662,125 @@ const Spreadsheet = clientOnly(async () => {
     return { default: SpreadsheetInner };
 });
 
+
+// ──────────────────────────────────── co-browse, well-known, terminal
+
+function CoBrowseSurface() {
+    return (
+        <Frame title="Your app, co-driven" action={<Badge size="sm" variant="soft" color="violet">2 agents</Badge>}>
+            {/* A stand-in page body: the point of this screen is the PRESENCE
+                layer over it, which is real. */}
+            <div className="relative h-[190px] overflow-hidden rounded-lg border border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900/60">
+                <div className="space-y-2 p-3">
+                    <div className="h-2.5 w-1/3 rounded bg-zinc-200 dark:bg-zinc-800" />
+                    <div className="h-2 w-2/3 rounded bg-zinc-200/70 dark:bg-zinc-800/70" />
+                    <div className="h-2 w-1/2 rounded bg-zinc-200/70 dark:bg-zinc-800/70" />
+                    <div className="mt-3 h-7 w-28 rounded-md bg-violet-200/70 dark:bg-violet-500/25" />
+                </div>
+                <AgentCursor x={132} y={54} name="Researcher" />
+                <AgentCursor x={224} y={124} name="Reviewer" />
+            </div>
+            <Text className="!mt-2.5 !text-[11px] !text-zinc-500">
+                Agents act through MCP tools on stable handles — never Playwright, never DOM scraping.
+            </Text>
+        </Frame>
+    );
+}
+
+function ShareSurface() {
+    return (
+        <Frame title="Hand over the session">
+            <div className="text-[12px]">
+                <ShareControls
+                    session={{ id: "SgzsLgbC", token: "tok_example", display: "tok_exam" }}
+                    onStart={() => {}}
+                    onStop={() => {}}
+                    status="connected"
+                    shareBaseUrl="https://fancy.gen/agent-relay"
+                />
+            </div>
+        </Frame>
+    );
+}
+
+/**
+ * The well-known files, edited as STRUCTURE rather than as text. That is the
+ * whole argument of the package: `robots.txt` hand-edited in a textarea is how a
+ * site ends up disallowing the path it meant to protect.
+ */
+function WellKnownFiles() {
+    return (
+        <Frame title="Crawlability" action={<Badge size="sm" variant="soft" color="zinc">robots · llms</Badge>}>
+            <div className="grid gap-3 text-[12px] lg:grid-cols-2">
+                <div className="max-h-[250px] overflow-auto rounded-lg border border-zinc-200 p-2 dark:border-zinc-800">
+                    <RobotsEditor
+                        value={{
+                            groups: [{ userAgents: ["*"], allow: ["/"], disallow: ["/admin", "/api"] }],
+                            sitemaps: ["https://acme.dev/sitemap.xml"],
+                            protectedPaths: ["/admin"],
+                        }}
+                        onChange={() => {}}
+                        hideIssues
+                    />
+                </div>
+                <div className="max-h-[250px] overflow-auto rounded-lg border border-zinc-200 p-2 dark:border-zinc-800">
+                    <LlmsTxtEditor
+                        value={{
+                            title: "Acme Docs",
+                            summary: "Everything an LLM needs to use Acme.",
+                            sections: [
+                                { name: "Guides", links: [{ title: "Quickstart", url: "https://acme.dev/quickstart" }] },
+                            ],
+                        }}
+                        onChange={() => {}}
+                        hideIssues
+                    />
+                </div>
+            </div>
+        </Frame>
+    );
+}
+
+/**
+ * The REAL `<Terminal>`, not the ASCII stand-in the package tile uses.
+ *
+ * `output` is a CONTROLLED buffer — the component diffs and writes only the
+ * appended delta — which is exactly what lets an agent and a human write to the
+ * same session. Client-only because xterm is CJS and does not survive the
+ * server pass; the same reason the other terminal surfaces on this site load
+ * that way.
+ */
+const TerminalSession = clientOnly(async () => {
+    const { Terminal } = await import("@particle-academy/fancy-term");
+    // NOT a fancy-term stylesheet -- it exports "." only. This is xterm's own
+    // CSS, and it is REQUIRED: without it xterm's character-measurement helper
+    // (a long run of "w") renders as visible text over the output.
+    await import("@xterm/xterm/css/xterm.css");
+
+    const OUTPUT = [
+        "\u001b[35mFancy Term\u001b[0m — a Human+ terminal.",
+        "",
+        "$ npm run build",
+        "\u001b[32m✓ built in 1.2s\u001b[0m",
+        "",
+        "\u001b[36m[agent]\u001b[0m running the suite…",
+        "$ php artisan test --compact",
+        "\u001b[32m880 passed\u001b[0m",
+        "$ ",
+    ].join("\r\n");
+
+    function TerminalSessionInner() {
+        return (
+            <Frame title="Shared session" action={<Badge size="sm" variant="soft" color="violet">agent + human</Badge>}>
+                <div style={{ height: 220 }} className="overflow-hidden rounded-lg">
+                    <Terminal output={OUTPUT} readOnly style={{ height: "100%" }} />
+                </div>
+            </Frame>
+        );
+    }
+    return { default: TerminalSessionInner };
+});
+
 // ───────────────────────────────────────────────────────── the registry
 
 export const USE_CASE_SCREENS: Record<string, UseCaseScreen> = {
@@ -736,6 +857,26 @@ export const USE_CASE_SCREENS: Record<string, UseCaseScreen> = {
         label: "Usage and limits",
         caption: "Metered features from laravel-fms, showing remaining allowance before the gate denies.",
         render: () => <UsageAndLimits />,
+    },
+    "agent/cobrowse": {
+        label: "Agents in your app",
+        caption: "Live presence over a real page — agents act through MCP tools on stable handles, not DOM scraping.",
+        render: () => <CoBrowseSurface />,
+    },
+    "agent/share": {
+        label: "Hand over a session",
+        caption: "The share surface an operator uses to bring an external agent into the running app.",
+        render: () => <ShareSurface />,
+    },
+    "seo/well-known": {
+        label: "robots.txt and llms.txt",
+        caption: "Edited as STRUCTURE, not text — which is what stops a site disallowing the path it meant to protect.",
+        render: () => <WellKnownFiles />,
+    },
+    "terminal/session": {
+        label: "Shared terminal",
+        caption: "The real xterm-backed <Terminal> with a controlled output buffer, so a human and an agent write to one session.",
+        render: () => <TerminalSession />,
     },
     "git/history": {
         label: "Repository surfaces",

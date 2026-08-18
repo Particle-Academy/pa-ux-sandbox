@@ -10,6 +10,8 @@ import {
     Input,
     Progress,
     Stat,
+    Callout,
+    FileBrowser,
     Table,
     Text,
 } from "@particle-academy/react-fancy";
@@ -21,6 +23,10 @@ import {
     CurriculumOverview,
 } from "@particle-academy/classroom";
 import { FancyDiff } from "@particle-academy/fancy-diff";
+import { EditablePage } from "@particle-academy/fancy-cms-ui/editor";
+// The canonical CMS document the package demos already render, so this screen
+// cannot drift from a shape the editor is known to accept.
+import { CMS_DEMO_DOC } from "../Packages/showcase-fixtures";
 import { CommitHistory, WorkingTree } from "@particle-academy/fancy-git-ui";
 import "@particle-academy/fancy-git-ui/styles.css";
 import { PasskeyStatus } from "@particle-academy/fancy-passkeys-ui";
@@ -910,6 +916,152 @@ const UsageAnalytics = clientOnly(async () => {
     return { default: UsageAnalyticsInner };
 });
 
+
+// ─────────────────────────────────────────── office documents, CMS
+
+/**
+ * The document writers are HEADLESS -- holy-sheet, dark-slide and last-word
+ * render nothing, they emit xlsx/pptx/docx bytes. So the honest screen is not a
+ * preview of a document; it is what the app has on disk after an agent has been
+ * asked for a quarterly pack.
+ *
+ * `FileBrowser` in snapshot mode is the right surface for that: JSON-friendly
+ * entries an agent can emit directly, no provider and no network.
+ */
+const GENERATED_DOCS = [
+    {
+        path: "/reports",
+        name: "reports",
+        kind: "dir" as const,
+        children: [
+            { path: "/reports/Q3-forecast.xlsx", name: "Q3-forecast.xlsx", kind: "file" as const, size: 48213, mtime: "2026-08-18T09:12:00Z" },
+            { path: "/reports/Revenue-by-region.xlsx", name: "Revenue-by-region.xlsx", kind: "file" as const, size: 31980, mtime: "2026-08-18T09:12:04Z" },
+            { path: "/reports/Board-review.pptx", name: "Board-review.pptx", kind: "file" as const, size: 184402, mtime: "2026-08-18T09:12:11Z" },
+            { path: "/reports/Statement-of-work.docx", name: "Statement-of-work.docx", kind: "file" as const, size: 27644, mtime: "2026-08-18T09:12:15Z" },
+        ],
+    },
+];
+
+/** Which package wrote which extension — the point of the pairing. */
+const WRITER_FOR: Record<string, string> = {
+    xlsx: "holy-sheet",
+    pptx: "dark-slide",
+    docx: "last-word",
+};
+
+function GeneratedDocuments() {
+    return (
+        <Frame
+            title="Generated this morning"
+            action={<Badge size="sm" variant="soft" color="emerald">4 files</Badge>}
+        >
+            <div className="grid gap-3 sm:grid-cols-[1fr_auto]">
+                <div style={{ height: 210 }} className="overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-800">
+                    <FileBrowser snapshot={GENERATED_DOCS} path="/reports" defaultValue="/reports/Q3-forecast.xlsx" />
+                </div>
+                <div className="flex flex-col gap-1.5 sm:w-40">
+                    {Object.entries(WRITER_FOR).map(([ext, pkg]) => (
+                        <div key={ext} className="flex items-center justify-between gap-2 rounded-md border border-zinc-200 px-2 py-1.5 dark:border-zinc-800">
+                            <Badge size="sm" variant="soft" color="zinc">.{ext}</Badge>
+                            <Text size="xs" color="muted">{pkg}</Text>
+                        </div>
+                    ))}
+                    <Text size="xs" color="muted" className="!mt-1">
+                        Each ships a PHP and a Node twin, same API.
+                    </Text>
+                </div>
+            </div>
+        </Frame>
+    );
+}
+
+/**
+ * `EditablePage`, NOT the full `Editor`.
+ *
+ * The three-pane editor (tree | canvas | inspector) is the authoring IDE, and it
+ * needs roughly 900px before the canvas is usable. Dropped into this ~500px
+ * column it renders the page one character per line -- which is how the first
+ * version of this screen shipped, and the same mistake `FlowEditor` made here
+ * before it became `FlowViewer`.
+ *
+ * `EditablePage` is also the better answer to the question the page is asking.
+ * "Let non-developers edit pages" is not "give marketing an IDE" -- it is edit
+ * the copy where it sits. That surface is single-pane and reads correctly small.
+ *
+ * `pinned={false}` because the default turns the page into a scroll canvas whose
+ * playhead is the window scroll; inside a preview that hijacks the page.
+ * No registry: this document uses built-in node types, and a registry is only
+ * needed to map CUSTOM kinds onto your own components.
+ */
+const PageEditor = clientOnly(async () => {
+    function PageEditorInner() {
+        return (
+            <Frame title="Marketing site" action={<Badge size="sm" variant="soft" color="violet">Edit in place</Badge>}>
+                <div style={{ height: 280 }} className="overflow-auto rounded-lg border border-zinc-200 dark:border-zinc-800">
+                    <EditablePage doc={CMS_DEMO_DOC} pinned={false} />
+                </div>
+            </Frame>
+        );
+    }
+    return { default: PageEditorInner };
+});
+
+
+// ─────────────────────────────────────────────────────────────── pwa
+
+/**
+ * The PWA surfaces are all CONDITION-GATED -- `AppUpdateAlert`, `InstallBanner`
+ * and `OfflineBanner` each return null until the real thing happens (a waiting
+ * service worker, a beforeinstallprompt, `navigator.onLine === false`). Dropping
+ * them in here would render an empty box, and faking a service worker in a
+ * preview would be a lie about what the reader is looking at.
+ *
+ * So this screen takes the packages' OWN documented custom-UX path instead:
+ * `useAppUpdate` is the detector, `AppUpdateAlert` exposes `render({ refresh,
+ * dismiss })` for hosts that want their own prompt, and this is what that prompt
+ * looks like when built from `Callout` -- which is exactly what `OfflineBanner`
+ * is built from too.
+ *
+ * The built-in drop-in is a FIXED-POSITION portal, which is right for an app and
+ * wrong for a 300px preview. That the gated components cannot be previewed or
+ * designed against without going offline for real is a genuine gap, logged
+ * rather than papered over.
+ */
+function PwaStates() {
+    return (
+        <Frame title="Running app" action={<Badge size="sm" variant="soft" color="violet">v2026.8.18</Badge>}>
+            <div className="flex flex-col gap-2.5">
+                <Callout color="violet">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                        <div>
+                            <Text size="sm" weight="semibold">Update available</Text>
+                            <Text size="xs" color="muted">
+                                A new version is available — refresh to get the latest.
+                            </Text>
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                            <Button size="sm" onClick={() => {}}>Refresh</Button>
+                            <Button size="sm" variant="ghost" onClick={() => {}}>Later</Button>
+                        </div>
+                    </div>
+                </Callout>
+
+                <Callout color="amber">
+                    <Text size="sm">
+                        You&rsquo;re offline. Some features may be unavailable until you reconnect.
+                    </Text>
+                </Callout>
+
+                <Text size="xs" color="muted">
+                    The detector is <code>useAppUpdate()</code>; the offline notice is
+                    {" "}<code>&lt;OfflineBanner /&gt;</code>. Both ship gated, so a real app shows
+                    neither until it should.
+                </Text>
+            </div>
+        </Frame>
+    );
+}
+
 // ───────────────────────────────────────────────────────── the registry
 
 export const USE_CASE_SCREENS: Record<string, UseCaseScreen> = {
@@ -1051,6 +1203,21 @@ export const USE_CASE_SCREENS: Record<string, UseCaseScreen> = {
         label: "Code surface",
         caption: "fancy-code's editor, driveable by an agent through the code bridge as well as by a keyboard.",
         render: () => <CodeSurface />,
+    },
+    "docs/artifacts": {
+        label: "Generated documents",
+        caption: "The writers are headless — this is what the app has on disk after an agent builds the quarterly pack.",
+        render: () => <GeneratedDocuments />,
+    },
+    "cms/editor": {
+        label: "Page editor",
+        caption: "fancy-cms-ui over a real page document, so marketing edits copy without a deploy.",
+        render: () => <PageEditor />,
+    },
+    "pwa/states": {
+        label: "Update + offline",
+        caption: "What the update prompt and offline notice look like — both gated, so a real app shows neither until it should.",
+        render: () => <PwaStates />,
     },
     "dashboard/analytics": {
         label: "Analytics dashboard",

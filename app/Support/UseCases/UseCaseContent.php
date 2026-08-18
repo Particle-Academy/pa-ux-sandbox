@@ -516,6 +516,43 @@ libraries either generate something Office opens with a repair prompt, or requir
 Office itself to be installed on your server.
 MD,
             'packages' => ['holy-sheet', 'last-word', 'dark-slide', 'holy-sheet-js', 'last-word-js', 'dark-slide-js'],
+            'screens' => ['docs/artifacts'],
+            'code' => [
+                [
+                    'label' => 'Write a real spreadsheet',
+                    'language' => 'php',
+                    'code' => <<<'PHP'
+use HolySheet\Workbook;
+
+// A declarative sheet, not a cell-by-cell API -- which is what makes it
+// something an AGENT can emit in one shot rather than drive imperatively.
+$workbook = Workbook::make()
+    ->sheet('Forecast', function ($sheet) use ($rows) {
+        $sheet->headers(['Region', 'Q3', 'Q4']);
+        $sheet->rows($rows);
+        $sheet->format('B:C', ['numberFormat' => '#,##0']);
+    });
+
+$workbook->write(storage_path('app/reports/Q3-forecast.xlsx'));
+PHP,
+                ],
+                [
+                    'label' => 'The same call from Node',
+                    'language' => 'ts',
+                    'code' => <<<'TS'
+// holy-sheet-js is a PORT, not a binding -- same shapes, same output, no PHP
+// in the process. Pick the one that matches the runtime you are already in.
+import { Workbook } from "@particle-academy/holy-sheet";
+
+await Workbook.make()
+  .sheet("Forecast", (sheet) => {
+    sheet.headers(["Region", "Q3", "Q4"]);
+    sheet.rows(rows);
+  })
+  .write("storage/reports/Q3-forecast.xlsx");
+TS,
+                ],
+            ],
             'steps' => [
                 [
                     'title' => 'Pick the writer for the format',
@@ -1149,6 +1186,37 @@ The requirement is narrower than "a CMS": editable content that still renders
 through the components you already ship.
 MD,
             'packages' => ['fancy-cms', 'fancy-cms-ui'],
+            'screens' => ['cms/editor'],
+            'code' => [
+                [
+                    'label' => 'Edit the page where it sits',
+                    'language' => 'tsx',
+                    'code' => <<<'TSX'
+import { EditablePage } from "@particle-academy/fancy-cms-ui/editor";
+
+// Inline edit mode over the LIVE page -- hold Ctrl+Shift to reveal the toggle,
+// then copy is edited in place with a floating toolbar. No IDE for marketing to
+// learn, and no second rendering path: what they edit is the page.
+//
+// The full three-pane `Editor` (tree | canvas | inspector) is the authoring IDE
+// for building layouts, and wants real width.
+<EditablePage doc={doc} registry={registry} />
+TSX,
+                ],
+                [
+                    'label' => 'Render it with your own components',
+                    'language' => 'tsx',
+                    'code' => <<<'TSX'
+import { CmsPage } from "@particle-academy/fancy-cms-ui/react";
+
+// The registry maps node kinds to YOUR components, so there is no second
+// rendering path and no second design system to keep in step.
+const registry = { hero: Hero, features: FeatureGrid, cta: CallToAction };
+
+<CmsPage doc={doc} registry={registry} />
+TSX,
+                ],
+            ],
             'steps' => [
                 [
                     'title' => 'Install the backend',
@@ -1259,6 +1327,39 @@ stuck on an old build with no way to know. The usual toolchains bring a large
 dependency and a build step that is difficult to reason about.
 MD,
             'packages' => ['fancy-pwa', 'fancy-app-update'],
+            'screens' => ['pwa/states'],
+            'code' => [
+                [
+                    'label' => 'Detect a new build',
+                    'language' => 'tsx',
+                    'code' => <<<'TSX'
+import { AppUpdateAlert } from "@particle-academy/fancy-app-update";
+
+// Mount once near the root. It renders NOTHING until a redeploy is detected,
+// which is why it is safe to leave in place -- there is no state to manage and
+// nothing to show on a normal load.
+<AppUpdateAlert position="bottom-right" />
+TSX,
+                ],
+                [
+                    'label' => 'Or bring your own prompt',
+                    'language' => 'tsx',
+                    'code' => <<<'TSX'
+// The built-in prompt is a fixed-position card. When you want it inline -- in
+// your own chrome, with your own components -- take the render prop and compose
+// it yourself; the detection stays the package's problem.
+<AppUpdateAlert
+  render={({ refresh, dismiss }) => (
+    <Callout color="violet">
+      <Text weight="semibold">Update available</Text>
+      <Button size="sm" onClick={refresh}>Refresh</Button>
+      <Button size="sm" variant="ghost" onClick={dismiss}>Later</Button>
+    </Callout>
+  )}
+/>
+TSX,
+                ],
+            ],
             'steps' => [
                 [
                     'title' => 'Add the PWA layer',

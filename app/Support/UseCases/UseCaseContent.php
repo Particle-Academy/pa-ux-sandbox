@@ -163,6 +163,34 @@ before it becomes a deliverable — and then to leave as a genuine xlsx, not a
 comma-separated approximation of one.
 MD,
             'packages' => ['fancy-sheets', 'holy-sheet', 'holy-sheet-js', 'agent-integrations'],
+            'screens' => ['sheets/workbook'],
+            'code' => [
+                [
+                    'label' => 'The agent writes cells, not a file',
+                    'language' => 'ts',
+                    'code' => <<<'TS'
+// The sheet bridge exposes the workbook as controlled state, so an agent edits
+// the SAME surface the human is looking at -- formulas recalculate live, and
+// nothing has to be re-opened to see the result.
+registerSheetsBridge(server, {
+  adapter: {
+    getWorkbook: () => workbook,
+    setWorkbook,
+  },
+});
+TS,
+                ],
+                [
+                    'label' => 'Export the finished thing server-side',
+                    'language' => 'php',
+                    'code' => <<<'PHP'
+// holy-sheet writes real xlsx from the same data -- no headless browser, no
+// spreadsheet application on the server. The Node twin (holy-sheet-js) writes
+// the identical file if your backend is not PHP.
+HolySheet::fromArray($rows)->write(storage_path('app/q1-sales.xlsx'));
+PHP,
+                ],
+            ],
             'steps' => [
                 [
                     'title' => 'Put a real workbook on the page',
@@ -890,6 +918,25 @@ Meanwhile anything that *writes* to a repository is a mutation on someone else's
 source of truth, which is not a thing to do on a model's say-so.
 MD,
             'packages' => ['fancy-git', 'fancy-git-ui', 'fancy-git-js'],
+            'screens' => ['git/history'],
+            'code' => [
+                [
+                    'label' => 'One contract, any host',
+                    'language' => 'php',
+                    'code' => <<<'PHP'
+// The provider adapters normalise GitHub, GitLab and Bitbucket to the SAME
+// shape, so the surface above does not branch on which host a repo lives at --
+// and adding a host is a package, not a rewrite.
+$prs = Git::provider($repo->host)->pullRequests($repo->fullName);
+
+return Inertia::render('Repo/Show', [
+    'commits' => Git::log($repo->path, limit: 50),
+    'status'  => Git::status($repo->path),
+    'reviews' => $prs,
+]);
+PHP,
+                ],
+            ],
             'steps' => [
                 [
                     'title' => 'Install the headless core',
@@ -932,6 +979,33 @@ tempting move — implementing the ceremony yourself — means writing cryptogra
 verification code, which is the last place you want to be original.
 MD,
             'packages' => ['fancy-passkeys', 'fancy-passkeys-js', 'fancy-passkeys-ui'],
+            'screens' => ['auth/passkeys'],
+            'code' => [
+                [
+                    'label' => 'Augment Fortify rather than replace it',
+                    'language' => 'php',
+                    'code' => <<<'PHP'
+// Passkeys are an ADDITIONAL factor route, not a parallel auth stack -- the
+// package wraps web-auth/webauthn-lib and adds routes beside Fortify's, so
+// password login, 2FA and recovery keep working exactly as before.
+Passkeys::routes();          // /passkeys/register, /passkeys/login
+
+// There is NO cryptography of our own here. That is deliberate: a hand-rolled
+// WebAuthn verifier is the last thing an application should own.
+PHP,
+                ],
+                [
+                    'label' => 'Detect capability before offering it',
+                    'language' => 'tsx',
+                    'code' => <<<'TSX'
+// Offering a passkey the device cannot produce is a dead end the user cannot
+// diagnose. Ask first, then render the prompt.
+const { supported, platformAuthenticator, conditionalUi } = usePasskeySupport();
+
+{supported ? <PasskeySignIn /> : <PasswordSignIn />}
+TSX,
+                ],
+            ],
             'steps' => [
                 [
                     'title' => 'Install the server side',

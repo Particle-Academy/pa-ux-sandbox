@@ -21,6 +21,12 @@ import {
     CurriculumOverview,
 } from "@particle-academy/classroom";
 import { FancyDiff } from "@particle-academy/fancy-diff";
+import { CommitHistory, WorkingTree } from "@particle-academy/fancy-git-ui";
+import "@particle-academy/fancy-git-ui/styles.css";
+import { PasskeyStatus } from "@particle-academy/fancy-passkeys-ui";
+// Verified fixtures, already used by the package demos -- so these screens
+// cannot drift from the shapes the components are known to accept.
+import { GIT_COMMITS, GIT_STATUS } from "../Packages/gitFixtures";
 import { Board, StickyNote as BoardStickyNote } from "@particle-academy/fancy-whiteboard";
 import { PricingTable } from "../../components/fancy/catalog-fms";
 // The classroom fixtures already exist and are already exported for the package
@@ -566,6 +572,94 @@ const CodeSurface = clientOnly(async () => {
     return { default: CodeSurfaceInner };
 });
 
+
+// ───────────────────────────────────────────── git, auth, spreadsheet
+
+function GitHistory() {
+    return (
+        <Frame title="Repository" action={<Badge size="sm" variant="soft" color="zinc">main</Badge>}>
+            <div className="grid gap-3 text-[12px] lg:grid-cols-2">
+                <div className="max-h-[260px] overflow-auto">
+                    <CommitHistory value={GIT_COMMITS} selectedId={GIT_COMMITS[0].id} />
+                </div>
+                <div className="max-h-[260px] overflow-auto">
+                    <WorkingTree value={GIT_STATUS} selectedPaths={[]} />
+                </div>
+            </div>
+        </Frame>
+    );
+}
+
+function PasskeySurface() {
+    return (
+        <Frame title="Sign in" action={<Badge size="sm" color="green">Supported</Badge>}>
+            <div className="text-[12px]">
+                <PasskeyStatus supported platformAuthenticator conditionalUi />
+            </div>
+            <Text className="!mt-3 !text-[11px] !text-zinc-500">
+                The management surface is bridgeable; the CEREMONY is not. No MCP tool completes a passkey
+                ceremony, because a gesture plus a biometric is something only the human has.
+            </Text>
+        </Frame>
+    );
+}
+
+/**
+ * The REAL `SheetWorkbook`, formulas and all — this is the surface an agent
+ * fills, so a picture of a grid would prove nothing.
+ *
+ * Two constraints, both learned from the package demo rather than guessed:
+ * it is heavy and DOM-bound, so it loads client-only; and the seed is built by
+ * CLONING `createEmptyWorkbook()`'s sheet rather than hand-writing `SheetData`,
+ * because a hand-built sheet is missing required fields (column widths, row
+ * heights) and crashes the renderer.
+ */
+const Spreadsheet = clientOnly(async () => {
+    const { SheetWorkbook, createEmptyWorkbook } = await import("@particle-academy/fancy-sheets");
+
+    const money = { displayFormat: "currency" as const };
+    const wb = createEmptyWorkbook();
+    const base = wb.sheets[0];
+    const seed = {
+        ...wb,
+        sheets: [
+            {
+                ...base,
+                name: "Q1 Sales",
+                cells: {
+                    A1: { value: "Region", format: { bold: true } },
+                    B1: { value: "Jan", format: { bold: true, textAlign: "right" as const } },
+                    C1: { value: "Feb", format: { bold: true, textAlign: "right" as const } },
+                    D1: { value: "Total", format: { bold: true, textAlign: "right" as const } },
+                    A2: { value: "North" },
+                    B2: { value: 1200, format: money },
+                    C2: { value: 1450, format: money },
+                    D2: { value: 0, formula: "SUM(B2:C2)", format: money },
+                    A3: { value: "South" },
+                    B3: { value: 980, format: money },
+                    C3: { value: 1100, format: money },
+                    D3: { value: 0, formula: "SUM(B3:C3)", format: money },
+                    A4: { value: "Total", format: { bold: true } },
+                    B4: { value: 0, formula: "SUM(B2:B3)", format: { bold: true, ...money } },
+                    C4: { value: 0, formula: "SUM(C2:C3)", format: { bold: true, ...money } },
+                    D4: { value: 0, formula: "SUM(D2:D3)", format: { bold: true, ...money } },
+                },
+            },
+        ],
+    };
+
+    function SpreadsheetInner() {
+        return (
+            <Frame title="Workbook" action={<Badge size="sm" variant="soft" color="violet">live formulas</Badge>}>
+                <div style={{ height: 260 }} className="overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-800">
+                    <SheetWorkbook data={seed} onChange={() => {}} rowCount={12} columnCount={6} />
+                </div>
+            </Frame>
+        );
+    }
+    return { default: SpreadsheetInner };
+});
+
 // ───────────────────────────────────────────────────────── the registry
 
 export const USE_CASE_SCREENS: Record<string, UseCaseScreen> = {
@@ -642,6 +736,21 @@ export const USE_CASE_SCREENS: Record<string, UseCaseScreen> = {
         label: "Usage and limits",
         caption: "Metered features from laravel-fms, showing remaining allowance before the gate denies.",
         render: () => <UsageAndLimits />,
+    },
+    "git/history": {
+        label: "Repository surfaces",
+        caption: "Commit history and working tree from fancy-git-ui — provider-neutral, so the same UI fronts GitHub, GitLab or Bitbucket.",
+        render: () => <GitHistory />,
+    },
+    "auth/passkeys": {
+        label: "Passkey sign-in",
+        caption: "Capability detection before the prompt, so the UI never offers a passkey the device cannot produce.",
+        render: () => <PasskeySurface />,
+    },
+    "sheets/workbook": {
+        label: "Live workbook",
+        caption: "The real SheetWorkbook with working SUM formulas — the surface an agent fills, not a picture of one.",
+        render: () => <Spreadsheet />,
     },
     "review/diff": {
         label: "Per-hunk review",

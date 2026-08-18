@@ -53,6 +53,10 @@ final class UseCaseContent
     public static function all(): array
     {
         return [
+            self::saasSubscriptionApp(),
+            self::ecommerceStorefront(),
+            self::mlmNetworkPlatform(),
+            self::analyticsDashboard(),
             self::onlineCoursePlatform(),
             self::realEstatePortal(),
             self::agentDrivesUi(),
@@ -910,6 +914,426 @@ MD,
     }
 
     // ------------------------------------------------------- app blueprints
+
+    /** @return array<string,mixed> */
+    private static function saasSubscriptionApp(): array
+    {
+        return [
+            'slug' => 'saas-subscription-app',
+            'title' => 'A subscription SaaS app',
+            'category' => 'Build this app',
+            'summary' => 'Plans, checkout, per-plan feature gating and metered usage — with the catalog in your database rather than the payment processor.',
+            'problem' => <<<'MD'
+Every subscription app rebuilds the same four things: a pricing page, a
+checkout, a way to ask "is this customer allowed to do this?", and a meter for
+whatever you sell by the unit. The first two are usually fine. The third leaks —
+plan checks end up as `if ($user->plan === 'pro')` scattered across controllers,
+so adding a plan means finding every one of them.
+
+The fourth is worse. Metered limits get enforced in three places with three
+different answers: the UI shows a quota, the API enforces a different one, and
+the invoice is computed from a third. The customer notices before you do.
+MD,
+            'stack' => 'Laravel + Inertia. The catalog and the gate are separate packages on purpose, so the pricing page and the enforcement can read the same source without one importing the other.',
+            'packages' => ['laravel-catalog', 'laravel-fms', 'fancy-catalog-js', 'fancy-features-js', 'react-fancy'],
+            'screens' => ['saas/plans', 'saas/usage'],
+            'code' => [
+                [
+                    'label' => 'A plan is a product with a recurring price',
+                    'language' => 'php',
+                    'code' => <<<'PHP'
+use LaravelCatalog\Facades\Catalog;
+
+// There is no separate Plan model to keep in step with the product -- which is
+// the usual source of drift between what you sell and what you charge.
+$team = Catalog::createProduct(['name' => 'Team', 'description' => 'For small teams']);
+
+Catalog::createPrice($team, [
+    'amount'    => 4900,                        // cents
+    'currency'  => 'usd',
+    'recurring' => ['interval' => 'month'],
+]);
+
+Catalog::syncProductAndPrices($team);           // outward to Stripe; queue it in production
+PHP,
+                ],
+                [
+                    'label' => 'Define entitlement once, in config',
+                    'language' => 'php',
+                    'code' => <<<'PHP'
+// config/fms.php -- one definition, so adding a plan is not a hunt for
+// `$user->plan === '...'` across the codebase.
+'features' => [
+    'audit-log' => [
+        'name'    => 'Audit log',
+        'type'    => 'boolean',
+        'enabled' => fn ($user) => $user->subscribedToProduct('team'),
+    ],
+
+    'api-calls' => [
+        'name'  => 'API calls',
+        'type'  => 'resource',
+        'limit' => fn ($user) => $user->onPlan('scale') ? 500_000 : 10_000,
+        'usage' => fn ($user) => $user->apiCalls()->thisPeriod()->count(),
+    ],
+],
+PHP,
+                ],
+                [
+                    'label' => 'Enforce at the edge, mirror in the UI',
+                    'language' => 'php',
+                    'code' => <<<'PHP'
+use ParticleAcademy\Fms\Facades\FMS;
+use ParticleAcademy\Fms\Http\Middleware\RequireFeature;
+
+Route::middleware(['auth', RequireFeature::class.':audit-log'])
+    ->get('/audit', [AuditController::class, 'index']);
+
+// The SAME question in the page payload, so the UI hides what the middleware
+// would refuse instead of offering a button that 403s.
+return Inertia::render('Dashboard', [
+    'can' => [
+        'auditLog'     => FMS::canAccess('audit-log'),
+        'apiRemaining' => FMS::remaining('api-calls'),
+    ],
+]);
+PHP,
+                ],
+            ],
+            'steps' => [
+                [
+                    'title' => 'Install the catalog and the gate',
+                    'body' => 'Two packages: one owns products and prices, the other owns "is this allowed?". Keeping them separate is what lets the pricing page and the enforcement agree without a circular dependency.',
+                    'code' => 'composer require particle-academy/laravel-catalog particle-academy/laravel-fms',
+                ],
+                [
+                    'title' => 'Model plans as products with recurring prices',
+                    'body' => 'Every product needs at least one price before it can sync. There is no second model to keep honest.',
+                ],
+                [
+                    'title' => 'Define features once',
+                    'body' => 'Boolean for on/off, resource for anything metered. Both take callables, so entitlement is derived from the subscription rather than copied onto the user record where it goes stale.',
+                ],
+                [
+                    'title' => 'Answer the question in one place',
+                    'body' => 'Middleware is the boundary; the payload is the hint. Because both call the same facade, the UI cannot offer something the route refuses.',
+                ],
+                [
+                    'title' => 'Build pricing from your own database',
+                    'body' => 'The catalog is local, so the pricing page needs no API call on load and cannot disagree with what checkout charges.',
+                ],
+            ],
+            'link' => '/catalog-demo',
+            'link_label' => 'See the catalog demo',
+        ];
+    }
+
+    /** @return array<string,mixed> */
+    private static function ecommerceStorefront(): array
+    {
+        return [
+            'slug' => 'ecommerce-storefront',
+            'title' => 'An e-commerce storefront',
+            'category' => 'Build this app',
+            'summary' => 'Catalog, cart and Stripe checkout, with the product data owned by your app instead of the payment processor.',
+            'problem' => <<<'MD'
+The tempting shortcut is to let Stripe hold the products. It works until you
+need a category page, a search filter, stock, or a price that depends on who is
+looking — none of which the payment processor knows about. Now every page load
+is an API call, and the catalog you actually query is a cache you have to keep
+honest.
+
+The other half is the storefront itself. A product grid, a cart and a checkout
+are not hard, but they are the surfaces customers judge you on, and they are
+usually where a project quietly stops using its design system.
+MD,
+            'stack' => 'The catalog lives in your database and syncs outward to Stripe. The storefront is composed from react-fancy, so it inherits the same tokens as the rest of the app.',
+            'packages' => ['laravel-catalog', 'fancy-catalog-js', 'react-fancy', 'fancy-inertia', 'fancy-seo'],
+            'screens' => ['ecommerce/storefront', 'ecommerce/checkout'],
+            'code' => [
+                [
+                    'label' => 'Query your own catalog, not an API',
+                    'language' => 'php',
+                    'code' => <<<'PHP'
+// Products are local models, so the storefront filters, sorts and paginates in
+// SQL -- no network call on page load, and no second copy of the prices.
+public function index(Request $request): Response
+{
+    return Inertia::render('Shop/Index', [
+        'products' => Product::query()
+            ->where('active', true)
+            ->when($request->string('q')->toString(), fn ($q, $term) =>
+                $q->where('name', 'like', "%{$term}%"))
+            ->with('prices')
+            ->paginate(24),
+    ]);
+}
+PHP,
+                ],
+                [
+                    'label' => 'One checkout call for subscriptions and one-offs',
+                    'language' => 'php',
+                    'code' => <<<'PHP'
+use LaravelCatalog\Facades\Catalog;
+
+// The same facade covers both modes, so the cart carries no Stripe-specific
+// branching into your controllers.
+$checkout = Catalog::createCheckoutSession($request->user(), [
+    'price'       => $price->stripe_price_id,
+    'mode'        => $price->isRecurring() ? 'subscription' : 'payment',
+    'success_url' => route('checkout.success'),
+    'cancel_url'  => route('shop.index'),
+]);
+
+return redirect($checkout->url);
+PHP,
+                ],
+                [
+                    'label' => 'A product page a crawler can read',
+                    'language' => 'tsx',
+                    'code' => <<<'TSX'
+// fancy-seo server-renders the head and emits Product JSON-LD, so the listing
+// arrives complete in the first byte rather than after hydration. A storefront
+// that only assembles itself in the browser is one search engines see as empty.
+<Seo
+  title={product.name}
+  description={product.description}
+  jsonLd={{
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    offers: {
+      "@type": "Offer",
+      price: (product.price.amount / 100).toFixed(2),
+      priceCurrency: product.price.currency.toUpperCase(),
+      availability: product.in_stock
+        ? "https://schema.org/InStock"
+        : "https://schema.org/OutOfStock",
+    },
+  }}
+/>
+TSX,
+                ],
+            ],
+            'steps' => [
+                [
+                    'title' => 'Install the catalog',
+                    'body' => 'Products and prices become models in your own database, synced outward to Stripe rather than read back from it.',
+                    'code' => 'composer require particle-academy/laravel-catalog',
+                ],
+                [
+                    'title' => 'Build the grid from your own query',
+                    'body' => 'Because the catalog is local, filtering and pagination are ordinary SQL. This is the decision that keeps category pages fast.',
+                ],
+                [
+                    'title' => 'Send the customer to checkout',
+                    'body' => 'One facade call covers subscriptions and one-off payments, so the cart does not branch on payment mode.',
+                ],
+                [
+                    'title' => 'Make product pages crawlable',
+                    'body' => 'Server-rendered head plus Product JSON-LD, with price and availability that match what checkout will actually charge.',
+                ],
+            ],
+            'link' => '/shop',
+            'link_label' => 'See the shop',
+        ];
+    }
+
+    /** @return array<string,mixed> */
+    private static function mlmNetworkPlatform(): array
+    {
+        return [
+            'slug' => 'mlm-network-platform',
+            'title' => 'A referral or network-marketing platform',
+            'category' => 'Build this app',
+            'summary' => 'Downline trees, commission runs and rank qualification — the parts that are hard to get right and expensive to get wrong.',
+            'problem' => <<<'MD'
+Network compensation is money arithmetic over a graph, and both halves are
+unforgiving. The graph has two different parent pointers — who enrolled you, and
+where you sit — and they are not the same edge. Drawing one when you meant the
+other is why so many downline views are quietly wrong.
+
+The money is worse. Commissions accrue per level, get held, and get reversed
+when an order refunds. Someone will ask you to explain a specific number months
+later, and a statement that cannot show a reversal is a statement that disagrees
+with the bank.
+MD,
+            'stack' => 'A PHP engine with a matching Node port, and a React surface. Unilevel, binary and matrix trees all render from the same JSON.',
+            'packages' => ['fancy-mlm', 'fancy-mlm-js', 'fancy-mlm-ui', 'react-fancy'],
+            'screens' => ['mlm/downline', 'mlm/commissions', 'mlm/rank'],
+            'code' => [
+                [
+                    'label' => 'Two pointers, because they answer two questions',
+                    'language' => 'tsx',
+                    'code' => <<<'TSX'
+// `sponsorId` is who enrolled you; `placementId` is where you sit in the tree.
+// They diverge constantly in binary and matrix plans, and the component takes
+// either -- so which tree you draw stays a data decision, not a rewrite.
+const members = [
+  { id: "m1", label: "Rosa Delgado", tier: "Director" },
+  { id: "m2", label: "Ken Mbeki",    tier: "Manager", sponsorId: "m1" },
+  { id: "m3", label: "Priya Raman",  tier: "Manager", sponsorId: "m1" },
+];
+
+<DownlineTree value={members} rootId="m1" edge="sponsor" />   // or edge="placement"
+TSX,
+                ],
+                [
+                    'label' => 'A commission run you can re-explain later',
+                    'language' => 'php',
+                    'code' => <<<'PHP'
+// The engine returns a computation PER REWARD rather than one total, so a
+// statement can show why a number is what it is: level, metric, recipient.
+$rewards = Mlm::computeRewards($order, [
+    'levels' => [1 => 0.10, 2 => 0.05, 3 => 0.02],
+]);
+
+foreach ($rewards as $reward) {
+    Commission::create([
+        'member_id' => $reward->recipientMemberId,
+        'level'     => $reward->level,
+        'amount'    => $reward->amount,
+        'status'    => 'pending',
+    ]);
+}
+PHP,
+                ],
+                [
+                    'label' => 'Reversal is a status, not a delete',
+                    'language' => 'php',
+                    'code' => <<<'PHP'
+// Refunds land after payout runs. Marking rather than deleting is what keeps the
+// statement explainable: the row is struck through and excluded from the paid
+// total instead of vanishing and leaving an unexplained gap.
+public function reverseFor(Order $order): void
+{
+    Commission::where('order_id', $order->id)
+        ->where('status', '!=', 'paid')
+        ->update(['status' => 'reversed', 'reversed_at' => now()]);
+}
+PHP,
+                ],
+            ],
+            'steps' => [
+                [
+                    'title' => 'Install the engine and the surface',
+                    'body' => 'The engine ships as a matched PHP and Node pair, so the same compensation rules run whichever backend you have.',
+                    'code' => 'composer require particle-academy/fancy-mlm',
+                ],
+                [
+                    'title' => 'Decide which edge your plan draws',
+                    'body' => 'Unilevel usually means sponsor; binary and matrix mean placement. Get this wrong and every downline view is subtly incorrect while looking fine.',
+                ],
+                [
+                    'title' => 'Compute rewards per order',
+                    'body' => 'One computation per reward, carrying level, metric and recipient. That record is what the statement is rendered from later.',
+                ],
+                [
+                    'title' => 'Model reversal as a status',
+                    'body' => 'A reversed row that stays visible is the difference between a statement someone trusts and one they dispute.',
+                ],
+                [
+                    'title' => 'Show rank against a real threshold',
+                    'body' => 'Qualification thresholds come from your compensation plan, not the component — so changing the plan is a config change.',
+                ],
+            ],
+            'link' => '/packages/fancy-mlm-ui',
+            'link_label' => 'fancy-mlm-ui reference',
+        ];
+    }
+
+    /** @return array<string,mixed> */
+    private static function analyticsDashboard(): array
+    {
+        return [
+            'slug' => 'analytics-dashboard',
+            'title' => 'An analytics dashboard or admin console',
+            'category' => 'Build this app',
+            'summary' => 'Charts, stat bands and tables over live data — the internal surface every product grows whether it was planned or not.',
+            'problem' => <<<'MD'
+Every product eventually grows an internal console, and it is usually the
+ugliest surface in the codebase because it was never anyone's project. It is
+also the one your team looks at daily, and the one where a wrong number does the
+most damage: a dashboard nobody trusts gets replaced by someone exporting to a
+spreadsheet.
+
+The technical trap is charts. A charting library that owns its own DOM will
+fight your framework about who re-renders, and the usual outcome is a panel that
+flickers or goes stale without saying so.
+MD,
+            'stack' => 'ECharts behind a React wrapper that keeps the option object declarative, so a chart is data rather than an imperative instance you have to remember to update.',
+            'packages' => ['fancy-echarts', 'react-fancy', 'fancy-query', 'fancy-heuristics'],
+            'screens' => ['dashboard/analytics'],
+            'code' => [
+                [
+                    'label' => 'A chart is an option object, not an instance',
+                    'language' => 'tsx',
+                    'code' => <<<'TSX'
+// The wrapper diffs and applies the option, so the chart follows state the way
+// any other component does -- no ref, no imperative setOption, nothing to forget
+// on update.
+<EChart
+  style={{ height: 240 }}
+  option={{
+    xAxis: { type: "category", data: months },
+    yAxis: { type: "value" },
+    series: [{ type: "bar", data: revenue }],
+  }}
+/>
+TSX,
+                ],
+                [
+                    'label' => 'Live without a refresh button',
+                    'language' => 'tsx',
+                    'code' => <<<'TSX'
+// Hydrate from the Inertia payload so the first paint is server data rather than
+// a spinner, then invalidate on a broadcast event. Polling is a tax you pay
+// forever; invalidation updates the panel that changed, when it changed.
+const { data } = useHydratedQuery({
+  queryKey: ["revenue", period],
+  initialData: page.props.revenue,
+});
+
+useEchoInvalidation("orders", ["revenue"]);
+TSX,
+                ],
+                [
+                    'label' => 'Measure the console itself',
+                    'language' => 'php',
+                    'code' => <<<'PHP'
+// An internal tool nobody opens is worth deleting, and you cannot tell without
+// measuring. fancy-heuristics records interaction server-side, with no
+// third-party pixel on an authenticated admin surface.
+Heuristics::record('dashboard.viewed', [
+    'panel'  => 'revenue',
+    'period' => $period,
+]);
+PHP,
+                ],
+            ],
+            'steps' => [
+                [
+                    'title' => 'Install the chart wrapper',
+                    'body' => 'ECharts is the engine; the wrapper makes it declarative. Register only the chart types you use so the bundle carries only those.',
+                    'code' => 'npm i @particle-academy/fancy-echarts',
+                ],
+                [
+                    'title' => 'Lead with the numbers, not the chart',
+                    'body' => 'The figures people came for should be readable before anything renders. Tabular numerals line up in a band; the chart is the explanation underneath.',
+                ],
+                [
+                    'title' => 'Hydrate from the server payload',
+                    'body' => 'First paint should be real data. A console that opens on skeletons trains people to distrust it.',
+                ],
+                [
+                    'title' => 'Invalidate on events, not on a timer',
+                    'body' => 'Broadcast invalidation refreshes the panel whose data actually changed, instead of re-fetching everything on a schedule.',
+                ],
+            ],
+            'link' => '/packages/fancy-echarts',
+            'link_label' => 'fancy-echarts reference',
+        ];
+    }
 
     /**
      * The courses blueprint deliberately previews the REAL `classroom`

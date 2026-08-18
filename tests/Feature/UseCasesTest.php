@@ -340,3 +340,31 @@ it('passes an explicit title to <Seo> rather than relying on the defaults', func
     // And the shape has to match the server's, or the title flips on hydration.
     expect($show)->toContain('— Use cases`');
 });
+
+/**
+ * A code sample must actually render its CODE.
+ *
+ * `CodeEditor` is a COMPOUND component: given no `<CodeEditor.Panel />` child it
+ * renders its chrome and no source whatsoever. That shipped — every sample on
+ * every use-case page was a 39px header with an empty body — and the test above
+ * passed the whole time, because it asserted the presence of the "The code"
+ * SECTION rather than any code inside it. Measured in a browser: 39px before,
+ * 235px after.
+ *
+ * PHP tests cannot see React output (phpunit sets INERTIA_SSR_ENABLED=false), so
+ * this pins the structural requirement that makes the code appear at all.
+ */
+it('renders code samples through a CodeEditor that has a Panel child', function () {
+    $source = file_get_contents(resource_path('js/Pages/UseCases/CodeSample.tsx'));
+
+    expect(str_contains($source, 'EditorPanel'))->toBeTrue(
+        'CodeSample no longer renders a CodeEditor.Panel, so every sample will '
+        .'render as a header with an empty body',
+    );
+
+    // And the SSR/first-frame fallback must stay: without it the page flashes
+    // empty where the code goes, and a crawler sees no code at all.
+    expect(str_contains($source, '<pre'))->toBeTrue(
+        'CodeSample lost its non-JS fallback, so code is invisible to crawlers',
+    );
+});

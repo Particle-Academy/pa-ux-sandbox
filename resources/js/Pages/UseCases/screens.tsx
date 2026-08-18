@@ -20,6 +20,8 @@ import {
     CoursePlayer,
     CurriculumOverview,
 } from "@particle-academy/classroom";
+import { FancyDiff } from "@particle-academy/fancy-diff";
+import { Board, StickyNote as BoardStickyNote } from "@particle-academy/fancy-whiteboard";
 import { PricingTable } from "../../components/fancy/catalog-fms";
 // The classroom fixtures already exist and are already exported for the package
 // preview tiles. Reusing them means these screens cannot drift from the shapes
@@ -479,6 +481,91 @@ const AnalyticsChart = clientOnly(async () => {
     return { default: AnalyticsChartInner };
 });
 
+
+// ──────────────────────────────────────────── review, canvas, code
+
+/**
+ * A real unified diff rather than a mocked one: `FancyDiff` parses git's own
+ * format, so the fixture is the thing a consumer would actually feed it. The
+ * `review` variant is the default and carries the per-hunk accept/reject UX --
+ * which is the entire point when an agent proposed the change.
+ */
+const PROPOSED_DIFF = `--- a/app/Support/Pricing.php
++++ b/app/Support/Pricing.php
+@@ -12,9 +12,11 @@ class Pricing
+     public function monthly(Plan $plan): int
+     {
+-        return $plan->amount;
++        // Annual plans quote a monthly-equivalent, so the page can compare
++        // like with like instead of showing a yearly figure beside a monthly one.
++        return $plan->interval === 'year'
++            ? intdiv($plan->amount, 12)
++            : $plan->amount;
+     }
+ }
+`;
+
+function DiffReview() {
+    return (
+        <Frame title="Proposed by agent" action={<Badge size="sm" variant="soft" color="amber">2 hunks</Badge>}>
+            <div className="max-h-[280px] overflow-auto text-[12px]">
+                <FancyDiff source={{ unified: PROPOSED_DIFF }} />
+            </div>
+        </Frame>
+    );
+}
+
+function SharedCanvas() {
+    return (
+        <Frame title="Shared board" action={<Badge size="sm" variant="soft" color="violet">2 present</Badge>}>
+            <div style={{ height: 240 }} className="overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-800">
+                <Board className="h-full w-full" viewport={{ x: 0, y: 0, zoom: 0.72 }} onViewportChange={() => {}}>
+                    <BoardStickyNote
+                        item={{ id: "a", kind: "sticky", x: 20, y: 16, width: 150, height: 84, text: "Cut scope to one surface", color: "#fef3c7" }}
+                        onChange={() => {}}
+                    />
+                    <BoardStickyNote
+                        item={{ id: "b", kind: "sticky", x: 200, y: 52, width: 150, height: 84, text: "Agent drafts, human approves", color: "#ede9fe" }}
+                        onChange={() => {}}
+                    />
+                    <BoardStickyNote
+                        item={{ id: "c", kind: "sticky", x: 90, y: 140, width: 150, height: 84, text: "Ship Thursday", color: "#d1fae5" }}
+                        onChange={() => {}}
+                    />
+                </Board>
+            </div>
+        </Frame>
+    );
+}
+
+/**
+ * `fancy-code`'s editor is CodeMirror-backed and touches the DOM at import, so
+ * it loads client-only with a plain `<pre>` standing in during SSR — the same
+ * shape `CodeSample` uses on this page's code blocks.
+ */
+const CodeSurface = clientOnly(async () => {
+    const { CodeEditor } = await import("@particle-academy/fancy-code");
+    function CodeSurfaceInner() {
+        return (
+            <Frame title="Editor" action={<Badge size="sm" variant="soft" color="zinc">TypeScript</Badge>}>
+                <div className="max-h-[260px] overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-800">
+                    <CodeEditor
+                        value={`export function total(items: LineItem[]): number {\n  return items.reduce((sum, i) => sum + i.amount * i.qty, 0);\n}`}
+                        language="typescript"
+                        readOnly
+                        lineNumbers
+                        minHeight={0}
+                        maxHeight={240}
+                    >
+                        <CodeEditor.Panel />
+                    </CodeEditor>
+                </div>
+            </Frame>
+        );
+    }
+    return { default: CodeSurfaceInner };
+});
+
 // ───────────────────────────────────────────────────────── the registry
 
 export const USE_CASE_SCREENS: Record<string, UseCaseScreen> = {
@@ -555,6 +642,21 @@ export const USE_CASE_SCREENS: Record<string, UseCaseScreen> = {
         label: "Usage and limits",
         caption: "Metered features from laravel-fms, showing remaining allowance before the gate denies.",
         render: () => <UsageAndLimits />,
+    },
+    "review/diff": {
+        label: "Per-hunk review",
+        caption: "A real git unified diff, with accept/reject per hunk — an agent proposes, a human decides.",
+        render: () => <DiffReview />,
+    },
+    "canvas/whiteboard": {
+        label: "Shared canvas",
+        caption: "fancy-whiteboard with controlled viewport and items, so a human and an agent move the same board.",
+        render: () => <SharedCanvas />,
+    },
+    "code/editor": {
+        label: "Code surface",
+        caption: "fancy-code's editor, driveable by an agent through the code bridge as well as by a keyboard.",
+        render: () => <CodeSurface />,
     },
     "dashboard/analytics": {
         label: "Analytics dashboard",

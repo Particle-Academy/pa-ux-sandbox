@@ -241,6 +241,24 @@ Rewriting is not the hard part. Reviewing is. What is missing is a way to see
 each change on its own and take the good ones.
 MD,
             'packages' => ['fancy-diff', 'fancy-doc-commons', 'fancy-file-commons'],
+            'screens' => ['review/diff'],
+            'code' => [
+                [
+                    'label' => 'Feed it the unified format git already produces',
+                    'language' => 'tsx',
+                    'code' => <<<'TSX'
+// `source` is a discriminated union: {before, after} to diff in-house,
+// {unified} for a git patch, {diff} for a pre-built structure. Accepting the
+// unified format matters because it is what your VCS and your agent already
+// produce -- no conversion step to get wrong.
+<FancyDiff
+  source={{ unified: patch }}
+  onAcceptHunk={(hunk) => apply(hunk)}
+  onRejectHunk={(hunk) => discard(hunk)}
+/>
+TSX,
+                ],
+            ],
             'steps' => [
                 [
                     'title' => 'Render the before and after as hunks',
@@ -759,6 +777,25 @@ Embedding one usually means an iframe you cannot read from, which makes the
 canvas a picture rather than part of your application.
 MD,
             'packages' => ['fancy-whiteboard', 'fancy-artboard', 'fancy-screens'],
+            'screens' => ['canvas/whiteboard'],
+            'code' => [
+                [
+                    'label' => 'Viewport and items are controlled',
+                    'language' => 'tsx',
+                    'code' => <<<'TSX'
+// The board holds no state of its own, which is what lets a human drag a note
+// and an agent move the same note through the bridge without the two fighting
+// over who is authoritative.
+const [viewport, setViewport] = useState({ x: 0, y: 0, zoom: 1 });
+
+<Board viewport={viewport} onViewportChange={setViewport}>
+  {items.map((item) => (
+    <StickyNote key={item.id} item={item} onChange={updateItem} />
+  ))}
+</Board>
+TSX,
+                ],
+            ],
             'steps' => [
                 [
                     'title' => 'Add the canvas',
@@ -798,6 +835,21 @@ And "show a file" quickly means several kinds of file — an image, a PDF, an
 audio clip — each of which becomes its own integration.
 MD,
             'packages' => ['fancy-code', 'react-fancy', 'fancy-file-commons'],
+            'screens' => ['code/editor'],
+            'code' => [
+                [
+                    'label' => 'An editor an agent can drive',
+                    'language' => 'tsx',
+                    'code' => <<<'TSX'
+// Controlled value + onChange, so `code_*` bridge tools edit exactly what the
+// human sees. The toolbar and panel are composable rather than baked in.
+<CodeEditor value={source} onChange={setSource} language="typescript" lineNumbers>
+  <CodeEditor.Toolbar />
+  <CodeEditor.Panel />
+</CodeEditor>
+TSX,
+                ],
+            ],
             'steps' => [
                 [
                     'title' => 'Add the editor',

@@ -43,11 +43,14 @@ export type CodeSampleData = {
 
 export function CodeSample({ sample }: { sample: CodeSampleData }) {
     const [Editor, setEditor] = useState<null | React.ComponentType<Record<string, unknown>>>(null);
+    const [EditorPanel, setEditorPanel] = useState<null | React.ComponentType<Record<string, unknown>>>(null);
 
     useEffect(() => {
         let active = true;
         void import("@particle-academy/fancy-code").then((m) => {
-            if (active) setEditor(() => m.CodeEditor as unknown as React.ComponentType<Record<string, unknown>>);
+            if (!active) return;
+            setEditor(() => m.CodeEditor as unknown as React.ComponentType<Record<string, unknown>>);
+            setEditorPanel(() => m.CodeEditor.Panel as unknown as React.ComponentType<Record<string, unknown>>);
         });
         return () => {
             active = false;
@@ -65,7 +68,12 @@ export function CodeSample({ sample }: { sample: CodeSampleData }) {
                 </Badge>
             </figcaption>
 
-            {Editor ? (
+            {Editor && EditorPanel ? (
+                // `CodeEditor` is a COMPOUND component: without `<Panel />` as a
+                // child it renders its chrome and no source at all. That shipped
+                // -- every sample on every use-case page was a 39px header with
+                // an empty body, and the test passed because it matched the
+                // section heading rather than the code.
                 <Editor
                     value={sample.code.trimEnd()}
                     language={GRAMMAR[sample.language] ?? "plaintext"}
@@ -73,7 +81,9 @@ export function CodeSample({ sample }: { sample: CodeSampleData }) {
                     lineNumbers={lines > 6}
                     minHeight={0}
                     maxHeight={420}
-                />
+                >
+                    <EditorPanel />
+                </Editor>
             ) : (
                 // The server pass, and the browser's first frame. Same text, no
                 // highlighting — so the page never flashes empty where code goes.

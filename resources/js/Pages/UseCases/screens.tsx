@@ -44,6 +44,9 @@ import { PricingTable } from "../../components/fancy/catalog-fms";
 import { CR_ATTEMPT, CR_COURSE, CR_CURRICULUM, CR_ENROLLMENT } from "../Packages/ComponentPreviews";
 import { Map as FancyMap } from "@particle-academy/fancy-map";
 import { leafletProvider } from "@particle-academy/fancy-map/leaflet";
+// Leaflet ships its own stylesheet and will not fetch it for you. Without this
+// the tiles stack 256px apart instead of tiling -- see ListingMap below.
+import "leaflet/dist/leaflet.css";
 import { clientOnly } from "../../lib/clientOnly";
 
 const listingMapProvider = leafletProvider();
@@ -142,15 +145,22 @@ function ListingGrid() {
 }
 
 /**
- * fancy-map is ALREADY SSR-safe by design — it renders a sized placeholder on
- * the server and mounts the provider inside an effect. Wrapping it in
- * `clientOnly` on top of that was the bug: it delayed the mount until after the
- * surrounding layout had settled, so Leaflet measured a container that then
- * changed underneath it and painted its tiles against stale geometry.
+ * This screen was held back for a while behind a "Leaflet measures stale
+ * container geometry" bug that did not exist. The container was 588x240 and
+ * Leaflet had computed the right tile count for it; the tiles' own transforms
+ * were a correct 3x2 grid. Only 1 of 6 landed inside the box because
+ * `leaflet/dist/leaflet.css` was never imported on this page, so
+ * `.leaflet-tile { position: absolute }` never applied and each tile laid out
+ * in normal flow, stacking 256px down the page.
  *
- * Imported directly, the placeholder reserves the box during SSR and the engine
- * measures the final size. `leafletProvider()` at module scope is the same shape
- * the package demo uses, and does not break the server pass.
+ * Tiles still load and paint without that stylesheet, which is what makes the
+ * failure read as geometry rather than CSS. fancy-map 0.2.1 now logs an error
+ * naming the import, so the next person does not lose the same afternoon.
+ *
+ * fancy-map is SSR-safe by design — it renders a sized placeholder on the
+ * server and mounts the provider in an effect — so it is imported directly
+ * rather than through `clientOnly`, and `leafletProvider()` sits at module
+ * scope exactly as the package demo has it.
  */
 function ListingMap() {
     return (
@@ -1062,6 +1072,43 @@ function PwaStates() {
     );
 }
 
+
+/**
+ * Live tracking, which is the thing maps are usually FOR and the thing most
+ * wrappers leave you to build. `follow` names a marker and the map recenters on
+ * it whenever its position changes -- so the moving part is a prop, not a
+ * subscription you wire yourself.
+ *
+ * Static here on purpose: these previews have to render the same on the server
+ * and in a cold browser, so the trail is a fixed set of breadcrumbs rather than
+ * a timer. In an app the positions come from `useGeolocationTrack` or your own
+ * socket, and only the `markers` array changes.
+ */
+const TRACK = [
+    { id: "t-3", position: { lat: 40.0182, lng: -105.2812 }, icon: "", color: "#a1a1aa" },
+    { id: "t-2", position: { lat: 40.0169, lng: -105.2764 }, icon: "", color: "#a1a1aa" },
+    { id: "t-1", position: { lat: 40.0157, lng: -105.2719 }, icon: "", color: "#a1a1aa" },
+    { id: "van", position: { lat: 40.0146, lng: -105.2668 }, label: "Van 12", icon: "V", color: "#2563eb" },
+];
+
+function LiveTracking() {
+    return (
+        <Frame
+            title="Van 12"
+            action={<Badge size="sm" variant="soft" color="emerald">Following</Badge>}
+        >
+            <div style={{ height: 240 }} className="overflow-hidden rounded-lg">
+                <FancyMap
+                    provider={listingMapProvider}
+                    view={{ center: { lat: 40.0164, lng: -105.274 }, zoom: 14 }}
+                    markers={TRACK}
+                    follow="van"
+                />
+            </div>
+        </Frame>
+    );
+}
+
 // ───────────────────────────────────────────────────────── the registry
 
 export const USE_CASE_SCREENS: Record<string, UseCaseScreen> = {
@@ -1074,6 +1121,11 @@ export const USE_CASE_SCREENS: Record<string, UseCaseScreen> = {
         label: "Map search",
         caption: "fancy-map over OpenStreetMap; the same component swaps to Google without touching your code.",
         render: () => <ListingMap />,
+    },
+    "map/tracking": {
+        label: "Live tracking",
+        caption: "Name a marker with the follow prop and the map recenters as it moves — the moving part is a prop, not a subscription you write.",
+        render: () => <LiveTracking />,
     },
     "real-estate/enquiry": {
         label: "Viewing request",

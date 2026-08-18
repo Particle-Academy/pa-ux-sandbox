@@ -910,6 +910,40 @@ And live tracking, the thing maps are usually for, is rarely included: you get a
 map and then build the moving part yourself.
 MD,
             'packages' => ['fancy-map'],
+            'screens' => ['map/tracking', 'real-estate/map'],
+            'code' => [
+                [
+                    'label' => 'One component, either engine',
+                    'language' => 'tsx',
+                    'code' => <<<'TSX'
+import { Map } from "@particle-academy/fancy-map";
+import { leafletProvider } from "@particle-academy/fancy-map/leaflet";
+import "leaflet/dist/leaflet.css";
+
+// Swapping to Google is this line and nothing else -- markers, events and view
+// are the package's shapes, not the vendor's, so no screen changes.
+const provider = leafletProvider();
+
+<Map provider={provider} view={view} onViewChange={setView} markers={markers} />
+TSX,
+                ],
+                [
+                    'label' => 'Follow a moving marker',
+                    'language' => 'tsx',
+                    'code' => <<<'TSX'
+// `follow` names a marker id; the map recenters whenever that marker's position
+// changes. Live tracking is then just keeping the markers array current --
+// from your own socket, or from the built-in geolocation hook.
+const position = useGeolocationTrack({ enabled: sharing });
+
+<Map
+  provider={provider}
+  markers={[{ id: "van", position, label: "Van 12", icon: "V" }]}
+  follow="van"
+/>
+TSX,
+                ],
+            ],
             'steps' => [
                 [
                     'title' => 'Install the map surface',
@@ -2015,13 +2049,7 @@ properties against a brief without anyone screen-scraping the site.
 MD,
             'stack' => 'React + Inertia on Laravel. The map is engine-agnostic, so OpenStreetMap in development and Google in production is a one-line swap.',
             'packages' => ['react-fancy', 'fancy-map', 'agent-integrations', 'fancy-inertia', 'fancy-seo'],
-            // 'real-estate/map' is BUILT and lives in screens.tsx, but is held
-            // back: Leaflet paints its tiles against stale geometry in this
-            // layout (measured — 1 of 6 tiles lands inside the container), and
-            // fancy-map's MapHandle exposes no way to invalidate size after
-            // mount. Shipping a visibly broken map on the page that exists to
-            // prove the kit works would be worse than shipping two screens.
-            'screens' => ['real-estate/listings', 'real-estate/enquiry'],
+            'screens' => ['real-estate/listings', 'real-estate/map', 'real-estate/enquiry'],
             'code' => [
                 [
                     'label' => 'Map and list share one state',

@@ -1,6 +1,36 @@
-import type { RunIdentity } from "@particle-academy/fancy-flow/engine";
+// GENERATED from @particle-academy/fancy-connectors — src/idempotency.ts
+// Do not edit here. Fix it in the package and re-run `php artisan flow:build`;
+// a test fails the build when this copy and the package disagree.
 
 import { ConnectorConfigError, type ConnectorErrorContext } from "./errors";
+
+/**
+ * A run, a position inside it, and how many times that position has been tried.
+ *
+ * Declared STRUCTURALLY rather than imported, and that is the whole point: this
+ * package must be usable by a host that has never heard of a workflow engine.
+ * `fancy-flow`'s `RunIdentity` class satisfies this shape exactly, so a flow
+ * node passes `ctx.run` straight in with no adapter and no dependency in either
+ * direction — and a host with its own notion of "the same logical attempt"
+ * implements five members and gets the same guarantees.
+ *
+ * The identity is more than `(run, step)` for a reason: a step legitimately runs
+ * many times in one run — once per loop iteration, once per nested invocation —
+ * so the key carries the PATH that led to it. `attempt` is carried and
+ * deliberately NOT part of the key, because a retry must produce the same key.
+ */
+export type RunIdentity = {
+  /** Stable for the whole run: same across retries, resumes, workers and hosts. */
+  readonly runKey: string;
+  /** 1-based attempt of THIS logical step. Never part of the key. */
+  readonly attempt: number;
+  /** ISO-8601 instant of attempt 1 of this step. */
+  readonly firstAttemptAt: string;
+  /** The identity of one execution of one step, stable across its retries. */
+  stepKey(stepId: string, occurrence?: number | null): string;
+  /** May this attempt reuse the key and still be deduplicated? */
+  isReplaySafe(windowSeconds: number | null | undefined, now?: Date | string): boolean;
+};
 
 /**
  * The idempotency key a writing connector sends, and when it must refuse to.

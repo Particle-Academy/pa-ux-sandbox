@@ -1,5 +1,9 @@
 <?php
 
+
+// GENERATED from particle-academy/fancy-connectors — php/src/CurlTransport.php
+// Do not edit here. Fix it in the package and re-run `php artisan flow:build`;
+// a test fails the build when this copy and the package disagree.
 declare(strict_types=1);
 
 namespace FancyFlow\Nodes\Connector;
@@ -7,10 +11,20 @@ namespace FancyFlow\Nodes\Connector;
 /**
  * A last-resort transport over ext-curl.
  *
- * Present so a vendored connector can make a real call in a plain PHP script
- * with nothing else installed. A Laravel host should bind its own adapter over
- * `Http::send()` instead — it gets the app's timeouts, proxy settings, logging
- * and test fakes, none of which this knows about.
+ * Present so a connector can make a real call in a plain PHP script with nothing
+ * else installed — no Guzzle, no framework, no dependency this package would
+ * otherwise have to carry into every consumer's tree. A Laravel host should bind
+ * its own adapter over `Http::send()` instead: it gets the app's timeouts, proxy
+ * settings, logging and test fakes, none of which this knows about.
+ *
+ * ## The one thing it does that a naive wrapper would not
+ *
+ * It classifies its own failure from the cURL errno, through
+ * {@see TransportException::fromCurlErrno()}. A transport that threw a bare
+ * exception would hand the retry ladder no way to tell a refused connection —
+ * which provably never arrived — from a timeout, which may already have charged
+ * someone. The previous runtime did exactly that, and the retry ladder guessed
+ * "transient, safe to repeat" for both.
  */
 final class CurlTransport implements Transport
 {
@@ -26,6 +40,7 @@ final class CurlTransport implements Transport
         }
 
         $headers = [];
+
         foreach ($request->headers as $name => $value) {
             $headers[] = $name.': '.$value;
         }
@@ -43,6 +58,7 @@ final class CurlTransport implements Transport
             CURLOPT_FOLLOWLOCATION => false,
             CURLOPT_HEADERFUNCTION => static function ($_, string $line) use (&$responseHeaders): int {
                 $parts = explode(':', $line, 2);
+
                 if (count($parts) === 2) {
                     $responseHeaders[strtolower(trim($parts[0]))] = trim($parts[1]);
                 }
@@ -57,11 +73,15 @@ final class CurlTransport implements Transport
 
         $body = curl_exec($handle);
         $status = (int) curl_getinfo($handle, CURLINFO_RESPONSE_CODE);
+        $errno = curl_errno($handle);
         $error = curl_error($handle);
         curl_close($handle);
 
         if ($body === false) {
-            throw new ConnectorTransientException('transport failed: '.$error);
+            // The errno decides unreachable vs ambiguous. A timeout (28) is
+            // ambiguous even though it feels identical to a refused connection
+            // from here — see TransportException::fromCurlErrno().
+            throw TransportException::fromCurlErrno($errno, $error);
         }
 
         return new TransportResponse($status, $responseHeaders, (string) $body);

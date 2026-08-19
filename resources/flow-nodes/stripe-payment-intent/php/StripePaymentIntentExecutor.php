@@ -83,6 +83,7 @@ final class StripePaymentIntentExecutor implements NodeExecutor
         // choosing between two ways of charging twice — see Idempotency.
         $idempotencyKey = Idempotency::keyFor(
             $ctx,
+            $ctx->node->id,
             service: 'stripe',
             operation: 'payment_intent_create',
         );

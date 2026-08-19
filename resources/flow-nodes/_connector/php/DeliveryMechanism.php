@@ -1,5 +1,9 @@
 <?php
 
+
+// GENERATED from particle-academy/fancy-connectors — php/src/DeliveryMechanism.php
+// Do not edit here. Fix it in the package and re-run `php artisan flow:build`;
+// a test fails the build when this copy and the package disagree.
 declare(strict_types=1);
 
 namespace FancyFlow\Nodes\Connector;
@@ -11,9 +15,9 @@ namespace FancyFlow\Nodes\Connector;
  * way a connector catalogue ends up lying.** Google Drive and Microsoft Graph
  * want a subscription you must renew before it expires. Salesforce wants a
  * Pub/Sub or CometD stream. S3 wants an event notification routed to
- * infrastructure the consumer provisions. Telegram and Reddit want you to poll.
- * Each is a different obligation on the host, and a node declaring "webhook" for
- * all of them would install cleanly and then never fire.
+ * infrastructure the consumer provisions. Reddit wants you to poll. Each is a
+ * different obligation on the host, and a trigger declaring "webhook" for all of
+ * them would install cleanly and then never fire.
  *
  * So a trigger declares its mechanism, and a host can refuse to mount one it has
  * no machinery for — at author time, not at 3am.

@@ -1,3 +1,7 @@
+// GENERATED from @particle-academy/fancy-connectors — src/mode.ts
+// Do not edit here. Fix it in the package and re-run `php artisan flow:build`;
+// a test fails the build when this copy and the package disagree.
+
 /**
  * Which copy of a provider a connector talks to — and who decides.
  *

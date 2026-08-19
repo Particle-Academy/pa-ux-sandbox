@@ -1,5 +1,9 @@
 <?php
 
+
+// GENERATED from particle-academy/fancy-connectors — php/src/ModeResolver.php
+// Do not edit here. Fix it in the package and re-run `php artisan flow:build`;
+// a test fails the build when this copy and the package disagree.
 declare(strict_types=1);
 
 namespace FancyFlow\Nodes\Connector;
@@ -8,8 +12,8 @@ namespace FancyFlow\Nodes\Connector;
  * Resolve the mode one connector call runs in.
  *
  * Pure, so a host can unit-test its own wiring without a network or a provider,
- * and so both runtimes can be compared case for case. The rule, in one line:
- * **explicit beats the connection, the connection beats the environment.**
+ * and so both runtimes can be held to the same table of cases. The rule, in one
+ * line: **explicit beats the connection, the connection beats the environment.**
  */
 final class ModeResolver
 {
@@ -46,8 +50,8 @@ final class ModeResolver
 
         // Local: prefer the provider's own test estate when it exists AND is
         // wired. Falling through to `fake` when it is not is what makes a freshly
-        // vendored node runnable with no setup at all — the difference between a
-        // marketplace you can try and one you can only read about.
+        // vendored connector runnable with no setup at all — the difference
+        // between a marketplace you can try and one you can only read about.
         return $sandbox !== SandboxKind::None && $hasSandboxCredentials ? Mode::Sandbox : Mode::Fake;
     }
 }

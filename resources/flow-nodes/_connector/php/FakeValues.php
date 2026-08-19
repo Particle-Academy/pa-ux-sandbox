@@ -1,5 +1,9 @@
 <?php
 
+
+// GENERATED from particle-academy/fancy-connectors — php/src/FakeValues.php
+// Do not edit here. Fix it in the package and re-run `php artisan flow:build`;
+// a test fails the build when this copy and the package disagree.
 declare(strict_types=1);
 
 namespace FancyFlow\Nodes\Connector;
@@ -7,7 +11,19 @@ namespace FancyFlow\Nodes\Connector;
 /**
  * Deterministic value helpers handed to a faker.
  *
- * ## Bit-for-bit identical to `../js/faker.ts`
+ * ## Why every connector ships one, not just the ones without a sandbox
+ *
+ * A sandbox still needs an account, a key, a network, and a provider that is up.
+ * That is four ways for someone evaluating the kit to get nothing working before
+ * they have learned anything about it. A faker removes all four: vendor a
+ * connector, press run, see a shaped result.
+ *
+ * It is also what makes the fixtures honest. Fixtures run on both runtimes and
+ * are the publish gate; if they needed a network they would either be skipped in
+ * CI or be flaky, and a flaky gate is one people learn to re-run rather than
+ * read.
+ *
+ * ## Bit-for-bit identical to the TypeScript faker
  *
  * Not "similar": the same FNV-1a seed and the same xorshift32 sequence, so a
  * golden fixture can assert the exact faked payload and BOTH runtimes have to
@@ -20,9 +36,13 @@ namespace FancyFlow\Nodes\Connector;
  * two runtimes diverge after a few hundred calls, which is the worst possible
  * way for this to fail.
  *
- * The values are obviously fake ON PURPOSE — `fake_`-prefixed ids,
- * `example.test` hosts, round numbers. Nobody should look at a faked result and
- * wonder whether it moved real money.
+ * ## Deterministic, and obviously fake
+ *
+ * Same inputs, same output — always. A faker returning a fresh uuid every call
+ * cannot be asserted on, so its fixtures degrade to "it did not throw", which is
+ * the assertion that catches nothing. And the values are obviously synthetic ON
+ * PURPOSE — `fake_`-prefixed ids, `example.test` hosts, round numbers. Nobody
+ * should ever look at a faked result and wonder whether it moved real money.
  */
 final class FakeValues
 {
@@ -44,13 +64,13 @@ final class FakeValues
     }
 
     /**
-     * The seed for one faked call: service, operation, and the node's config.
+     * The seed for one faked call: service, operation, and the caller's config.
      *
      * A dedicated entry point rather than a variadic one, because the config has
      * to be rendered as an OBJECT even when it is empty. PHP cannot tell an empty
      * map from an empty list, so `[]` would otherwise render as `[]` here and
      * `{}` in JavaScript — and the two runtimes would seed differently for every
-     * node whose config happens to be blank, which is exactly the case a first
+     * call whose config happens to be blank, which is exactly the case a first
      * fixture uses.
      *
      * @param  array<string,mixed>  $config
@@ -78,7 +98,7 @@ final class FakeValues
         return $hash;
     }
 
-    /** A stable id with the provider's usual prefix: `id('ch')` → `ch_fake_1a2b3c…`. */
+    /** A stable id with the provider's usual prefix: `id('ch')` gives `ch_fake_1a2b3c…`. */
     public function id(string $prefix): string
     {
         return $prefix.'_fake_'.$this->hex(12);
@@ -118,7 +138,7 @@ final class FakeValues
     /** A fixed ISO-8601 instant, offset by whole seconds. Never `now()`. */
     public function timestamp(int $offsetSeconds = 0): string
     {
-        return gmdate('Y-m-d\TH:i:s', strtotime(self::EPOCH) + $offsetSeconds).'.000Z';
+        return gmdate('Y-m-d\TH:i:s', (int) strtotime(self::EPOCH) + $offsetSeconds).'.000Z';
     }
 
     /** xorshift32, matching the JS generator step for step. */
@@ -148,9 +168,10 @@ final class FakeValues
             return json_encode($value, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?: 'null';
         }
 
-        // An empty PHP array renders as `[]`, matching an empty JavaScript array.
-        // The one shape PHP genuinely cannot distinguish — an empty MAP — is
-        // handled by `stableObject`, which callers use where they know it is one.
+        // An empty PHP array renders as `[]`, matching an empty JavaScript
+        // array. The one shape PHP genuinely cannot distinguish — an empty MAP —
+        // is handled by `stableObject`, which callers use where they know it is
+        // one.
         if (array_is_list($value)) {
             return '['.implode(',', array_map(self::stableJson(...), $value)).']';
         }
@@ -171,8 +192,10 @@ final class FakeValues
         ksort($value);
 
         $parts = [];
+
         foreach ($value as $key => $item) {
-            $parts[] = json_encode((string) $key, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE).':'.self::stableJson($item);
+            $parts[] = json_encode((string) $key, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)
+                .':'.self::stableJson($item);
         }
 
         return '{'.implode(',', $parts).'}';

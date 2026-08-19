@@ -74,7 +74,7 @@ final class ResendEmailSendExecutor implements NodeExecutor
             $config,
             ['method' => 'POST', 'path' => '/emails', 'json' => $json],
             $ctx->input('in'),
-            Idempotency::keyFor($ctx),
+            Idempotency::keyFor($ctx, $ctx->node->id),
         );
 
         $ctx->emit(RunEvent::log(

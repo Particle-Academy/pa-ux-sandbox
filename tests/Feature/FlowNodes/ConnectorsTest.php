@@ -364,24 +364,24 @@ describe('idempotency keys', function () {
     };
 
     it('derives a key from the run identity the engine supplies', function () use ($ctxFor) {
-        expect(Idempotency::keyFor($ctxFor(new RunIdentity('run_a'))))->toBe('run_a:pay');
+        expect(Idempotency::keyFor($ctxFor(new RunIdentity('run_a')), 'pay'))->toBe('run_a:pay');
     });
 
     it('sends the SAME key on a retry of the same step', function () use ($ctxFor) {
         // The money case. A key that moves with the attempt creates a second
         // charge on the first timeout, which is the failure it exists to prevent.
-        $first = Idempotency::keyFor($ctxFor(new RunIdentity('run_a', [], 1)));
-        $retry = Idempotency::keyFor($ctxFor(new RunIdentity('run_a', [], 4)));
+        $first = Idempotency::keyFor($ctxFor(new RunIdentity('run_a', [], 1)), 'pay');
+        $retry = Idempotency::keyFor($ctxFor(new RunIdentity('run_a', [], 4)), 'pay');
 
         expect($retry)->toBe($first);
     });
 
     it('sends a DIFFERENT key for a different execution of the same node', function () use ($ctxFor) {
         $keys = [
-            Idempotency::keyFor($ctxFor(new RunIdentity('run_a'))),
-            Idempotency::keyFor($ctxFor(new RunIdentity('run_b'))),
-            Idempotency::keyFor($ctxFor((new RunIdentity('run_a'))->descend('billing'))),
-            Idempotency::keyFor($ctxFor(new RunIdentity('run_a')), occurrence: 2),
+            Idempotency::keyFor($ctxFor(new RunIdentity('run_a')), 'pay'),
+            Idempotency::keyFor($ctxFor(new RunIdentity('run_b')), 'pay'),
+            Idempotency::keyFor($ctxFor((new RunIdentity('run_a'))->descend('billing')), 'pay'),
+            Idempotency::keyFor($ctxFor(new RunIdentity('run_a')), 'pay', occurrence: 2),
         ];
 
         expect(array_unique($keys))->toHaveCount(4);
@@ -392,7 +392,7 @@ describe('idempotency keys', function () {
         // minting a fresh one BOTH charge twice. Refusing is the only safe answer.
         $stale = new RunIdentity('run_a', [], 2, '2026-08-18T00:00:00Z');
 
-        Idempotency::keyFor($ctxFor($stale), now: '2026-08-19T01:00:00Z');
+        Idempotency::keyFor($ctxFor($stale), 'pay', now: '2026-08-19T01:00:00Z');
     })->throws(ConnectorIdempotencyExpiredException::class);
 
     it('never refuses a FIRST attempt, however long the run was parked', function () use ($ctxFor) {
@@ -400,25 +400,25 @@ describe('idempotency keys', function () {
         // writing node runs for the first time. Nothing was sent to forget.
         $parked = new RunIdentity('run_a', [], 1, '2026-08-01T00:00:00Z');
 
-        expect(Idempotency::keyFor($ctxFor($parked), now: '2026-08-19T00:00:00Z'))->toBe('run_a:pay');
+        expect(Idempotency::keyFor($ctxFor($parked), 'pay', now: '2026-08-19T00:00:00Z'))->toBe('run_a:pay');
     });
 
     it('returns null when the host published no identity at all', function () use ($ctxFor) {
         // A real answer: send no header rather than invent a key.
-        expect(Idempotency::keyFor($ctxFor(null)))->toBeNull();
+        expect(Idempotency::keyFor($ctxFor(null), 'pay'))->toBeNull();
     });
 
     it('still honours a host-seeded __runKey, for a consumer on an older engine', function () use ($ctxFor) {
-        expect(Idempotency::keyFor($ctxFor(null, ['__runKey' => 'run_seeded'])))->toBe('run_seeded:pay');
+        expect(Idempotency::keyFor($ctxFor(null, ['__runKey' => 'run_seeded']), 'pay'))->toBe('run_seeded:pay');
     });
 
     it('shortens an over-long key deterministically rather than letting Stripe 400', function () use ($ctxFor) {
         $path = array_map(static fn (int $i) => "segment-{$i}", range(0, 39));
         $deep = new RunIdentity('run_a', $path);
 
-        $key = Idempotency::keyFor($ctxFor($deep));
+        $key = Idempotency::keyFor($ctxFor($deep), 'pay');
 
         expect(strlen((string) $key))->toBeLessThanOrEqual(Idempotency::MAX_KEY_LENGTH)
-            ->and($key)->toBe(Idempotency::keyFor($ctxFor($deep)));
+            ->and($key)->toBe(Idempotency::keyFor($ctxFor($deep), 'pay'));
     });
 });

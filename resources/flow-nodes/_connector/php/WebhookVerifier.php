@@ -1,5 +1,9 @@
 <?php
 
+
+// GENERATED from particle-academy/fancy-connectors — php/src/WebhookVerifier.php
+// Do not edit here. Fix it in the package and re-run `php artisan flow:build`;
+// a test fails the build when this copy and the package disagree.
 declare(strict_types=1);
 
 namespace FancyFlow\Nodes\Connector;
@@ -9,27 +13,42 @@ namespace FancyFlow\Nodes\Connector;
  *
  * An unverified webhook endpoint is a public, unauthenticated way to start a
  * workflow in someone's account — which is to say, a way for a stranger to make
- * your app refund an order. So verification is part of the connector pattern
- * rather than an exercise left to the host.
+ * your app refund an order or post to your Slack. So verification is part of the
+ * connector pattern rather than an exercise for the host: a trigger that cannot
+ * verify its deliveries must say so, and a host must not be able to mount one by
+ * accident.
  *
- * The three things every provider's scheme actually needs, and almost nothing
- * else differs but header names:
+ * ## The three things every provider's scheme actually needs
+ *
+ * Providers differ in header names and in what exactly gets signed, and almost
+ * nothing else:
  *
  * 1. **The RAW body.** Signatures are computed over bytes. Re-serialising parsed
- *    JSON changes key order and whitespace and produces a mismatch that looks
- *    exactly like a wrong secret.
+ *    JSON changes key order and whitespace and produces a signature mismatch
+ *    that looks exactly like a wrong secret. The host must pass the body it
+ *    received.
  * 2. **A constant-time comparison.** `===` on a signature leaks, through timing,
- *    which prefix was right. `hash_equals` exists for this.
- * 3. **A timestamp tolerance.** Without one a valid signature is valid forever,
- *    so anyone who ever saw a delivery can replay it whenever they like.
- *
- * The twin of `../js/webhook.ts`.
+ *    which prefix was right. That is a real forgery path, not a theoretical one,
+ *    and `hash_equals` exists for exactly this.
+ * 3. **A timestamp tolerance.** Without it a valid signature is valid forever,
+ *    so anyone who ever saw one delivery can replay it whenever they like.
  */
 final class WebhookVerifier
 {
     /**
+     * Verify an HMAC-signed delivery.
+     *
+     * Returns a RESULT rather than throwing, and the failure carries a reason: a
+     * host wants to log which check failed — stale? wrong secret? no header? —
+     * while still answering the provider with an opaque 400.
+     *
      * @param  string  $raw  the body EXACTLY as received
-     * @param  callable(string, ?string): string  $payload  builds the signed string
+     * @param  callable(string, ?string): string  $payload  builds the string that gets
+     *                                                      signed. Providers differ here more than anywhere else — Stripe signs
+     *                                                      `{timestamp}.{body}`, Slack signs `v0:{timestamp}:{body}`, GitHub signs the
+     *                                                      body alone.
+     * @param  int|null  $now  seconds since the epoch. Injected so tests are not
+     *                         clock-dependent.
      * @return array{ok: bool, reason: ?string}
      */
     public static function verify(
@@ -46,7 +65,7 @@ final class WebhookVerifier
         if ($secret === null || $secret === '') {
             // Never "accept when unconfigured". An endpoint that verifies
             // nothing because nobody set a secret is strictly worse than one
-            // that is off: it looks protected.
+            // that is off: it LOOKS protected.
             return self::fail('no signing secret configured for this trigger');
         }
 
@@ -66,8 +85,8 @@ final class WebhookVerifier
             }
         }
 
-        $raw_hmac = hash_hmac($algorithm, $payload($raw, $timestamp), $secret, $encoding === 'base64');
-        $expected = $encoding === 'base64' ? base64_encode($raw_hmac) : $raw_hmac;
+        $computed = hash_hmac($algorithm, $payload($raw, $timestamp), $secret, $encoding === 'base64');
+        $expected = $encoding === 'base64' ? base64_encode($computed) : $computed;
 
         return hash_equals($expected, $signature)
             ? ['ok' => true, 'reason' => null]

@@ -1,5 +1,9 @@
 <?php
 
+
+// GENERATED from particle-academy/fancy-connectors — php/src/ConnectorIdempotencyExpiredException.php
+// Do not edit here. Fix it in the package and re-run `php artisan flow:build`;
+// a test fails the build when this copy and the package disagree.
 declare(strict_types=1);
 
 namespace FancyFlow\Nodes\Connector;
@@ -12,7 +16,7 @@ namespace FancyFlow\Nodes\Connector;
  * longer recognises it, and sending a fresh key writes twice by construction.
  *
  * Never retryable — a later attempt is further outside the window, not nearer
- * the inside of it. This is deliberately loud: a stuck run a person reconciles
- * is a far better outcome than a duplicate charge nobody ever sees.
+ * the inside of it. Deliberately loud: a stuck run a person reconciles is a far
+ * better outcome than a duplicate charge nobody ever sees.
  */
-final class ConnectorIdempotencyExpiredException extends ConnectorException {}
+final class ConnectorIdempotencyExpiredException extends ConnectorConfigException {}

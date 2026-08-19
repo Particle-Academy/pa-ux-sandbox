@@ -1,3 +1,7 @@
+// GENERATED from @particle-academy/fancy-connectors — src/trigger.ts
+// Do not edit here. Fix it in the package and re-run `php artisan flow:build`;
+// a test fails the build when this copy and the package disagree.
+
 /**
  * How a connector trigger learns that something happened.
  *

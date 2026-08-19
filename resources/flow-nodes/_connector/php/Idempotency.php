@@ -1,43 +1,38 @@
 <?php
 
+
+// GENERATED from particle-academy/fancy-connectors — php/src/Idempotency.php
+// Do not edit here. Fix it in the package and re-run `php artisan flow:build`;
+// a test fails the build when this copy and the package disagree.
 declare(strict_types=1);
 
 namespace FancyFlow\Nodes\Connector;
 
 use DateTimeImmutable;
 use DateTimeInterface;
-use FancyFlow\Runtime\ExecutionContext;
-use FancyFlow\Runtime\RunIdentity;
 
 /**
  * The idempotency key a writing connector sends, and when it must refuse to.
  *
- * ## What the engine now provides
+ * ## What a host has to provide
  *
- * `fancy-flow-php` 0.19.0 carries a **run identity** on the execution context,
- * so a node can derive a key that is the same on every retry of one logical
- * step and different for every other execution of the same node.
- * `$ctx->run->stepKey($ctx->node->id)` is that key. The equivalent landed in
- * `@particle-academy/fancy-flow` 0.46.0 and the Python runtime, all three
- * pinned by `shared/flow-run-identity` in `particle-academy/fancy-conformance`.
+ * A key that is the SAME on every retry of one logical step and DIFFERENT for
+ * every other execution of the same step. A run identity gives exactly that —
+ * see {@see RunIdentity}, which is declared structurally so a flow engine's own
+ * identity object satisfies it with no dependency in either direction.
  *
- * Before that, neither engine could produce one, and both obvious substitutes
- * were worse than sending nothing:
+ * Both obvious substitutes are worse than sending nothing:
  *
- *   - the **node id alone** is stable across retries and also across RUNS, so
- *     two legitimate payments share a key and the provider silently collapses
- *     the second into the first — a payment that never happened, reported as
- *     success;
- *   - a **fresh random value** is unique per run and also per ATTEMPT, so a
- *     retry creates a second charge.
+ * - **the step id alone** is stable across retries and also across RUNS, so two
+ *   legitimate payments share a key and the provider silently collapses the
+ *   second into the first — a payment that never happened, reported as success;
+ * - **a fresh random value** is unique per run and also per ATTEMPT, so a retry
+ *   creates a second charge.
  *
- * So this used to return null and every writing node emitted a warning and sent
- * no key, staying pinned to one attempt. That is no longer the case where a host
- * supplies an identity — which durable runs do automatically, and where the
- * `per_node` driver makes the attempt and the first-attempt clock EXACT because
- * it reads them off the node's own claim row.
+ * With no identity at all this returns null, and the caller sends no header and
+ * stays pinned to one attempt. That is the honest outcome.
  *
- * ## The part that is still a judgement call: the provider's window
+ * ## The part that is a judgement call: the provider's window
  *
  * Providers forget idempotency keys. Stripe's window is **24 hours**. Past it,
  * resending the key creates a second charge and sending a fresh one creates a
@@ -57,80 +52,127 @@ final class Idempotency
     /**
      * Longest key the strictest provider in the catalogue accepts.
      *
-     * Stripe caps `Idempotency-Key` at 255 characters. A deep subflow path could
+     * Stripe caps `Idempotency-Key` at 255 characters. A deep nested path could
      * exceed that, and a provider rejecting the header is a 400 that looks like
      * a bug in the request body.
      */
     public const MAX_KEY_LENGTH = 255;
 
     /**
-     * The warning a node emits when it is about to write without a key.
+     * The warning a caller emits when it is about to write without a key.
      *
      * Said out loud, at the moment it matters, because the failure it precedes
      * is invisible: the run succeeds, the retry succeeds, there are two charges.
      */
     public const NO_KEY_WARNING = 'no run identity available, so this write is being sent WITHOUT an '
-        .'idempotency key. A retry would repeat the effect rather than recover from it — the node is '
-        .'marked unsafe-to-replay, so a durable runner will give it one attempt. Durable runs supply an '
-        .'identity automatically; for a synchronous run, pass `run` in RunOptions.';
+        .'idempotency key. A retry would repeat the effect rather than recover from it — treat the step as '
+        .'unsafe-to-replay and give it one attempt. A durable runner supplies an identity automatically.';
 
-    /** The run identity a host published, or null. */
-    public static function identity(ExecutionContext $ctx): ?RunIdentity
+    /**
+     * The run identity a host published, or null.
+     *
+     * Accepts the identity itself, or a context object carrying it as `run` —
+     * which is where every flow engine in the suite puts it.
+     *
+     * The order matters. A `run` PROPERTY makes something a context, even when
+     * its value is null: a context on a run that published no identity is the
+     * ordinary case, and reading the context itself as the identity would turn
+     * "no identity here" into a loud failure about the wrong object.
+     *
+     * A bare object is treated as an identity only when it carries `runKey`,
+     * which is the discriminator. That keeps the loud refusal for the case that
+     * matters — something claiming to be an identity while missing a member —
+     * and answers null for anything not claiming to be one at all.
+     */
+    public static function identity(mixed $source): ?RunIdentity
     {
-        return $ctx->run;
+        if ($source instanceof RunIdentity) {
+            return $source;
+        }
+
+        if (is_array($source)) {
+            $run = $source['run'] ?? null;
+
+            return is_object($run) ? ForeignRunIdentity::adapt($run) : null;
+        }
+
+        if (! is_object($source)) {
+            return null;
+        }
+
+        if (property_exists($source, 'run')) {
+            return is_object($source->run) ? ForeignRunIdentity::adapt($source->run) : null;
+        }
+
+        return property_exists($source, 'runKey') ? ForeignRunIdentity::adapt($source) : null;
     }
 
     /**
-     * The run key, from the identity or from the legacy seeded input.
+     * The run key, from the identity or from a seeded input.
      *
-     * `__runKey` in the run's initial inputs is kept because a consumer on an
-     * older `fancy-flow-php` has no `$ctx->run`. It gives a per-run key with no
-     * attempt information, so the window check treats it as a first attempt —
-     * correct for a host that does not retry, and the reason the
+     * The `__runKey` fallback exists because a host on an older engine has no
+     * run identity to publish. It gives a per-run key with NO attempt
+     * information, so the window check below treats it as a first attempt —
+     * correct for a host that does not retry, and the reason an
      * engine-supplied identity is strictly better.
+     *
+     * @param  array<string,mixed>  $seededInputs
      */
-    public static function runKey(ExecutionContext $ctx): ?string
+    public static function runKey(mixed $source, array $seededInputs = []): ?string
     {
-        if ($ctx->run !== null) {
-            return $ctx->run->runKey;
+        $identity = self::identity($source);
+
+        if ($identity !== null) {
+            return $identity->runKey;
         }
 
-        $seeded = $ctx->inputs['__runKey'] ?? null;
+        $seeded = $seededInputs['__runKey'] ?? null;
+
+        if ($seeded === null && is_object($source) && isset($source->inputs) && is_array($source->inputs)) {
+            $seeded = $source->inputs['__runKey'] ?? null;
+        }
 
         return is_string($seeded) && trim($seeded) !== '' ? trim($seeded) : null;
     }
 
     /**
-     * The idempotency key for this execution of this node, or null.
+     * The idempotency key for this execution of this step, or null.
      *
      * Null means the host published no run identity at all — send no header
-     * rather than inventing one, and keep the node `unsafe-to-replay`.
+     * rather than inventing one, and keep the step unsafe-to-replay.
      *
-     * @param  int|null  $windowSeconds  how long the provider remembers a key. `null` never
-     *                                   forgets; `0` does not dedupe at all, so no retry may reuse one.
-     * @param  int|null  $occurrence     distinguishes repeated executions of one node at the same level.
+     * @param  mixed  $source  a run identity, or a context carrying one as `run`
+     * @param  int|null  $windowSeconds  how long the provider remembers a key. Null never
+     *                                   forgets; `0` does not dedupe at all, so no retry may reuse one — and reading
+     *                                   `0` as null turns "this provider does not dedupe" into "this provider dedupes
+     *                                   forever".
+     * @param  int|null  $occurrence  distinguishes repeated executions of one step at the
+     *                                same level
+     * @param  array<string,mixed>  $seededInputs  the legacy `__runKey` fallback
      *
-     * @throws ConnectorIdempotencyExpiredException when this is a RETRY and the provider's window has
-     *   elapsed. Not a defensive check — it is the only correct answer, because both alternatives
-     *   write twice.
+     * @throws ConnectorIdempotencyExpiredException when this is a RETRY and the provider's
+     *                                              window has elapsed. Not a defensive check — it is the only correct answer,
+     *                                              because both alternatives write twice.
      */
     public static function keyFor(
-        ExecutionContext $ctx,
+        mixed $source,
+        string $stepId,
         ?int $windowSeconds = self::DEFAULT_WINDOW_SECONDS,
         ?int $occurrence = null,
         DateTimeInterface|string|null $now = null,
         string $service = '',
         string $operation = '',
+        array $seededInputs = [],
     ): ?string {
-        $identity = $ctx->run;
+        $identity = self::identity($source);
 
         if ($identity === null) {
-            $runKey = self::runKey($ctx);
+            $runKey = self::runKey($source, $seededInputs);
 
-            return $runKey === null ? null : self::fit($runKey.':'.$ctx->node->id);
+            return $runKey === null ? null : self::fit($runKey.':'.$stepId);
         }
 
-        if (! $identity->isReplaySafe($windowSeconds, $now ?? new DateTimeImmutable())) {
+        if (! $identity->isReplaySafe($windowSeconds, $now ?? new DateTimeImmutable)) {
             throw new ConnectorIdempotencyExpiredException(
                 sprintf(
                     'attempt %d of this step began at %s, which is outside the provider\'s %s idempotency '
@@ -146,15 +188,15 @@ final class Idempotency
             );
         }
 
-        return self::fit($identity->stepKey($ctx->node->id, $occurrence));
+        return self::fit($identity->stepKey($stepId, $occurrence));
     }
 
     /**
      * Shorten an over-long key deterministically.
      *
      * The hash has to be stable across attempts AND across runtimes, so it is a
-     * plain FNV-1a over the key rather than anything host-provided. The prefix
-     * is kept so a key remains greppable against a run.
+     * plain FNV-1a over the key rather than anything host-provided. The prefix is
+     * kept so a key remains greppable against a run.
      */
     private static function fit(string $key): string
     {
@@ -176,7 +218,8 @@ final class Idempotency
             $hash ^= ord($value[$i]);
             // 32-bit FNV prime as shifts, masked back to 32 bits so a 64-bit PHP
             // produces the same digest a 32-bit JavaScript bitwise op does.
-            $hash = ($hash + (($hash << 1) + ($hash << 4) + ($hash << 7) + ($hash << 8) + ($hash << 24))) & 0xFFFFFFFF;
+            $hash = ($hash + (($hash << 1) + ($hash << 4) + ($hash << 7) + ($hash << 8) + ($hash << 24)))
+                & 0xFFFFFFFF;
         }
 
         return str_pad(dechex($hash), 8, '0', STR_PAD_LEFT);

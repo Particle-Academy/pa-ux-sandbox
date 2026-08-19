@@ -1,3 +1,7 @@
+// GENERATED from @particle-academy/fancy-connectors — src/connection.ts
+// Do not edit here. Fix it in the package and re-run `php artisan flow:build`;
+// a test fails the build when this copy and the package disagree.
+
 /**
  * A CONNECTION — credentials plus an environment choice — configured once per
  * service and referenced by every node that uses it.
@@ -125,10 +129,24 @@ export type ResolvedConnection = {
 export type ResolveOptions = {
   service: string;
   operation: string;
-  /** The connection id from node config. Defaults to the service name. */
+  /** The connection id from host config. Defaults to the service name. */
   connectionId?: string | null;
-  /** The `mode` field from node config. */
+  /** The mode the caller asked for. */
   requested?: RequestedMode | null;
+  /**
+   * Credentials handed straight in, bypassing the registry entirely.
+   *
+   * The primary path for a host that already owns credential storage and has no
+   * wish to hand a package a second copy: it passes them per call, this resolver
+   * does not consult any global, and there is nothing to initialise. The
+   * registry below remains for hosts that prefer to configure once.
+   *
+   * An EMPTY object is not the same as `null`: it means "the caller supplied
+   * credentials and there are none", which fails the `requires` check loudly
+   * rather than falling through to the registry and silently using someone
+   * else's.
+   */
+  credentials?: ConnectionCredentials | null;
   sandbox: SandboxKind;
   /** Base URL per mode, from the node's service descriptor. */
   baseUrls?: Partial<Record<ConnectorMode, string>>;
@@ -165,6 +183,43 @@ export function resolveConnection(options: ResolveOptions): ResolvedConnection {
   }
 
   const id = options.connectionId?.trim() || service;
+
+  // Explicit credentials win over everything. A host that passes them has
+  // already made every decision this resolver would otherwise make, and reading
+  // a global on top of that is how two sources of truth start disagreeing.
+  if (options.credentials) {
+    // Asking for the faker wins even here — an explicit `fake` is a statement,
+    // and credentials sitting in the same call do not override it. Nothing
+    // secret is carried into the fake path.
+    if (requestedMode === "fake") return { id, service, mode: "fake", credentials: {} };
+
+    // Otherwise: supplying credentials IS the statement that a real call is
+    // intended, so `auto` resolves to `live` rather than consulting an
+    // environment this resolver was told nothing about. `sandbox` is honoured
+    // as asked.
+    const mode: ConnectorMode = requestedMode === "auto" ? "live" : requestedMode;
+    const missing = (options.requires ?? []).filter((key) => !options.credentials?.[key]);
+
+    if (missing.length > 0) {
+      throw new ConnectorConfigError(
+        `${service}.${operation} was given credentials with no ${missing.join(", ")}. ` +
+          "Nothing is inferred from an incomplete credential set — a partial one is a configuration mistake, " +
+          "and quietly falling back to another source is how the wrong account gets written to.",
+        { service, operation },
+      );
+    }
+
+    const explicitBase = options.baseUrls?.[mode];
+
+    return {
+      id,
+      service,
+      mode,
+      credentials: options.credentials,
+      ...(explicitBase ? { baseUrl: explicitBase } : {}),
+    };
+  }
+
   const current = getConnectionHost();
   const spec = current?.connections[id];
 

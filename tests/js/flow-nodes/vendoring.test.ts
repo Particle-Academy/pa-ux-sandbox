@@ -122,3 +122,49 @@ describe.each(dirs)("%s", (dir) => {
     }
   });
 });
+
+/**
+ * `_connector` is GENERATED, and a hand edit here is a fix that disappears.
+ *
+ * The shared connector runtime is one source with two distribution channels: it
+ * ships as `@particle-academy/fancy-connectors` for a host that installs things,
+ * and it is copied in here so a flow node still costs a consumer no dependency.
+ * The copy is produced by `scripts/vendor.mjs` in that repo and overwritten on
+ * every run.
+ *
+ * So the failure this guards is specific and quiet: someone opens
+ * `_connector/js/delivery.ts`, fixes a real bug, and the fix is gone at the next
+ * build with nothing to say it ever existed. Every generated file carries a
+ * banner saying so, and this fails the build when one does not.
+ *
+ * The stronger check — regenerating and diffing — lives in the package's own CI,
+ * because it needs the package's source, which this repository deliberately does
+ * not have.
+ */
+describe("_connector is generated, not maintained here", () => {
+  const shared = resolve(NODES, "_connector");
+
+  for (const part of ["js", "php"]) {
+    const dir = resolve(shared, part);
+    if (!existsSync(dir)) continue;
+
+    const files = readdirSync(dir).filter((f) => f.endsWith(".ts") || f.endsWith(".php"));
+
+    it(`every ${part}/ file says where it came from (${files.length} files)`, () => {
+      for (const file of files) {
+        const src = readFileSync(resolve(dir, file), "utf8");
+        expect(src, `${part}/${file} has no GENERATED banner — either it was hand-written here, or someone edited a generated file and stripped it. Both mean the next \`vendor.mjs\` run silently discards the change.`)
+          .toMatch(/GENERATED from [^\n]*fancy-connectors/);
+      }
+    });
+  }
+
+  it("the authoring surface is NOT generated — it is fancy-flow's, and stays here", () => {
+    // `ui/connector.ts` imports the flow engine to build a node's config schema.
+    // A general connector package has no business with that, so it is the one
+    // part of `_connector` that is genuinely maintained in this repository.
+    const ui = resolve(shared, "ui", "connector.ts");
+    expect(existsSync(ui)).toBe(true);
+    expect(readFileSync(ui, "utf8")).not.toMatch(/GENERATED from/);
+  });
+});

@@ -1,4 +1,4 @@
-// GENERATED from @particle-academy/fancy-connectors — src/seam.ts
+// GENERATED from @particle-academy/fancy-connector-core — src/seam.ts
 // Do not edit here. Fix it in the package and re-run `php artisan flow:build`;
 // a test fails the build when this copy and the package disagree.
 
@@ -214,6 +214,17 @@ export type Connector<Target = unknown> = {
   label: string;
   /** Which `ProviderAdapter` stands this up. */
   provider: string;
+  /**
+   * The connector API version this was written against.
+   *
+   * Required, and checked at registration by `assertConnectorApi`. The core and
+   * the catalogue release on separate clocks, and a connector is VENDORED — a
+   * copy in someone else's repository, with no manifest of its own to carry a
+   * version range. This number is the only thing that can say "this copy was
+   * written for a core you no longer have", and it says it at build time rather
+   * than in production. See `compat.ts`.
+   */
+  connectorApi: number;
   capabilities: Capabilities;
   /**
    * How this behaves when a call goes wrong, and how fast it may be used.

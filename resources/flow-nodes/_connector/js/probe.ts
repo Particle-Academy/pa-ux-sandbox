@@ -1,4 +1,4 @@
-// GENERATED from @particle-academy/fancy-connectors — src/probe.ts
+// GENERATED from @particle-academy/fancy-connector-core — src/probe.ts
 // Do not edit here. Fix it in the package and re-run `php artisan flow:build`;
 // a test fails the build when this copy and the package disagree.
 

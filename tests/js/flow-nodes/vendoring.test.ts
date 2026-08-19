@@ -127,9 +127,10 @@ describe.each(dirs)("%s", (dir) => {
  * `_connector` is GENERATED, and a hand edit here is a fix that disappears.
  *
  * The shared connector runtime is one source with two distribution channels: it
- * ships as `@particle-academy/fancy-connectors` for a host that installs things,
+ * ships as `@particle-academy/fancy-connector-core` for a host that installs
+ * things,
  * and it is copied in here so a flow node still costs a consumer no dependency.
- * The copy is produced by `scripts/vendor.mjs` in that repo and overwritten on
+ * The copy is produced by `scripts/vendor.mjs` in the CORE repo and overwritten on
  * every run.
  *
  * So the failure this guards is specific and quiet: someone opens
@@ -154,7 +155,7 @@ describe("_connector is generated, not maintained here", () => {
       for (const file of files) {
         const src = readFileSync(resolve(dir, file), "utf8");
         expect(src, `${part}/${file} has no GENERATED banner — either it was hand-written here, or someone edited a generated file and stripped it. Both mean the next \`vendor.mjs\` run silently discards the change.`)
-          .toMatch(/GENERATED from [^\n]*fancy-connectors/);
+          .toMatch(/GENERATED from [^\n]*fancy-connector-core/);
       }
     });
   }

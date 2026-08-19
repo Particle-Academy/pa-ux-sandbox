@@ -27,7 +27,11 @@ export const stripePaymentIntentExecutor: NodeExecutor = async (ctx) => {
     );
   }
 
-  const idempotencyKey = idempotencyKeyFor(ctx, ctx.node.id);
+  // Stripe's window is 24 hours. Past it, `idempotencyKeyFor` THROWS rather
+  // than choosing between two ways of charging twice — see idempotency.ts.
+  const idempotencyKey = idempotencyKeyFor(ctx, ctx.node.id, {
+    context: { service: "stripe", operation: "payment_intent_create" },
+  });
   if (idempotencyKey === null) {
     ctx.emit({
       type: "log",

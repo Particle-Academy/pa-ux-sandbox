@@ -18,6 +18,12 @@ import {
   STRIPE_SIGNATURE_SCHEME,
 } from "../../../../resources/flow-nodes/_stripe/js/service";
 import { verifyStripeDelivery } from "../../../../resources/flow-nodes/_stripe/js/trigger";
+import {
+  ConnectorIdempotencyExpiredError,
+  idempotencyKeyFor,
+  MAX_IDEMPOTENCY_KEY_LENGTH,
+} from "../../../../resources/flow-nodes/_connector/js/idempotency";
+import { RunIdentity } from "@particle-academy/fancy-flow/engine";
 
 afterEach(() => registerConnectionHost(null));
 
@@ -294,5 +300,80 @@ describe("error classification decides whether a durable run may retry", () => {
 
   it("names the mode mismatch on an auth failure, because that is the usual cause", () => {
     expect(classifyHttp(401, ctx, "").message).toMatch(/live key in sandbox, or the reverse/);
+  });
+});
+
+/**
+ * The idempotency key, and the one case where a connector must refuse to write.
+ *
+ * Asserted line for line against `ConnectorsTest.php`, because a divergence here
+ * means one backend deduplicates a retried payment and the other charges twice.
+ */
+describe("idempotency keys", () => {
+  const ctxFor = (identity: RunIdentity | undefined, nodeId = "pay") => ({
+    node: { id: nodeId, type: "stripe_payment_intent", position: { x: 0, y: 0 }, data: {} },
+    inputs: {},
+    run: identity,
+  });
+
+  it("derives a key from the run identity the engine supplies", () => {
+    expect(idempotencyKeyFor(ctxFor(new RunIdentity("run_a")), "pay")).toBe("run_a:pay");
+  });
+
+  it("sends the SAME key on a retry of the same step", () => {
+    // The money case. A key that moves with the attempt creates a second charge
+    // on the first timeout, which is the failure the key exists to prevent.
+    const first = idempotencyKeyFor(ctxFor(new RunIdentity("run_a", [], 1)), "pay");
+    const retry = idempotencyKeyFor(ctxFor(new RunIdentity("run_a", [], 4)), "pay");
+
+    expect(retry).toBe(first);
+  });
+
+  it("sends a DIFFERENT key for a different execution of the same node", () => {
+    const a = idempotencyKeyFor(ctxFor(new RunIdentity("run_a")), "pay");
+    const b = idempotencyKeyFor(ctxFor(new RunIdentity("run_b")), "pay");
+    const nested = idempotencyKeyFor(ctxFor(new RunIdentity("run_a").descend("billing")), "pay");
+    const looped = idempotencyKeyFor(ctxFor(new RunIdentity("run_a")), "pay", { occurrence: 2 });
+
+    expect(new Set([a, b, nested, looped]).size).toBe(4);
+  });
+
+  it("REFUSES a retry once the provider's window has elapsed", () => {
+    // Past the window Stripe has forgotten the key, so resending it and minting
+    // a fresh one BOTH charge twice. Refusing is the only safe answer.
+    const stale = new RunIdentity("run_a", [], 2, "2026-08-18T00:00:00Z");
+
+    expect(() =>
+      idempotencyKeyFor(ctxFor(stale), "pay", { now: new Date("2026-08-19T01:00:00Z") }),
+    ).toThrow(ConnectorIdempotencyExpiredError);
+  });
+
+  it("never refuses a FIRST attempt, however long the run was parked", () => {
+    // The human-gate case: an approval sits for eighteen days, then the writing
+    // node runs for the first time. Nothing was sent for Stripe to forget.
+    const parked = new RunIdentity("run_a", [], 1, "2026-08-01T00:00:00Z");
+
+    expect(
+      idempotencyKeyFor(ctxFor(parked), "pay", { now: new Date("2026-08-19T00:00:00Z") }),
+    ).toBe("run_a:pay");
+  });
+
+  it("returns null when the host published no identity at all", () => {
+    // A real answer: send no header rather than invent a key.
+    expect(idempotencyKeyFor(ctxFor(undefined), "pay")).toBeNull();
+  });
+
+  it("still honours a host-seeded __runKey, for a consumer on an older engine", () => {
+    const ctx = { node: { id: "pay" }, inputs: { __runKey: "run_seeded" } };
+
+    expect(idempotencyKeyFor(ctx, "pay")).toBe("run_seeded:pay");
+  });
+
+  it("shortens an over-long key deterministically rather than letting Stripe 400", () => {
+    const deep = new RunIdentity("run_a", Array.from({ length: 40 }, (_, i) => `segment-${i}`));
+    const key = idempotencyKeyFor(ctxFor(deep), "pay")!;
+
+    expect(key.length).toBeLessThanOrEqual(MAX_IDEMPOTENCY_KEY_LENGTH);
+    expect(key).toBe(idempotencyKeyFor(ctxFor(deep), "pay"));
   });
 });

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d8de31334ba6f7828aa5ce8e412c67ba",
+    "content-hash": "f5e84bab38a05681a4998705f38e703c",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -4168,16 +4168,16 @@
         },
         {
             "name": "particle-academy/fancy-flow-php",
-            "version": "v0.18.0",
+            "version": "v0.19.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/fancy-flow-php.git",
-                "reference": "1b3bc7e3ca6f3517dcc582e5fc36e935294e5c2b"
+                "reference": "c845fadba07a84c1c6db79ce787d6d847e87776b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/fancy-flow-php/zipball/1b3bc7e3ca6f3517dcc582e5fc36e935294e5c2b",
-                "reference": "1b3bc7e3ca6f3517dcc582e5fc36e935294e5c2b",
+                "url": "https://api.github.com/repos/Particle-Academy/fancy-flow-php/zipball/c845fadba07a84c1c6db79ce787d6d847e87776b",
+                "reference": "c845fadba07a84c1c6db79ce787d6d847e87776b",
                 "shasum": ""
             },
             "require": {
@@ -4186,7 +4186,7 @@
             "require-dev": {
                 "laravel/ai": "^0.9",
                 "orchestra/testbench": "^8.0|^9.0|^10.0|^11.0",
-                "particle-academy/fancy-conformance": "^0.2.0",
+                "particle-academy/fancy-conformance": "^0.4.0",
                 "particle-academy/prism": "0.111",
                 "pestphp/pest": "^2.0|^3.0|^4.0",
                 "phpunit/phpunit": "^10.0|^11.0|^12.0"
@@ -4239,7 +4239,7 @@
                 "issues": "https://github.com/Particle-Academy/fancy-flow-php/issues",
                 "source": "https://github.com/Particle-Academy/fancy-flow-php"
             },
-            "time": "2026-08-19T02:16:01+00:00"
+            "time": "2026-08-19T07:33:36+00:00"
         },
         {
             "name": "particle-academy/fancy-heuristics",
@@ -4597,16 +4597,16 @@
         },
         {
             "name": "particle-academy/laravel-catalog",
-            "version": "v0.12.0",
+            "version": "v0.13.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/laravel-catalog.git",
-                "reference": "bafdb8aa89d1b2af3e4d51cabb623cbe00e5060f"
+                "reference": "ec3fb2245976fdadd78d99bfd11146135343b32b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/laravel-catalog/zipball/bafdb8aa89d1b2af3e4d51cabb623cbe00e5060f",
-                "reference": "bafdb8aa89d1b2af3e4d51cabb623cbe00e5060f",
+                "url": "https://api.github.com/repos/Particle-Academy/laravel-catalog/zipball/ec3fb2245976fdadd78d99bfd11146135343b32b",
+                "reference": "ec3fb2245976fdadd78d99bfd11146135343b32b",
                 "shasum": ""
             },
             "require": {
@@ -4641,9 +4641,9 @@
             "description": "Laravel package for managing Stripe catalog (Products, Prices) via a facade API",
             "support": {
                 "issues": "https://github.com/Particle-Academy/laravel-catalog/issues",
-                "source": "https://github.com/Particle-Academy/laravel-catalog/tree/v0.12.0"
+                "source": "https://github.com/Particle-Academy/laravel-catalog/tree/v0.13.0"
             },
-            "time": "2026-08-19T03:53:17+00:00"
+            "time": "2026-08-19T06:59:02+00:00"
         },
         {
             "name": "particle-academy/laravel-courses",
@@ -4700,16 +4700,16 @@
         },
         {
             "name": "particle-academy/laravel-fms",
-            "version": "v0.10.0",
+            "version": "v0.11.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/laravel-feature-management-system.git",
-                "reference": "3f1f4f7cb49b4d1b787e6927c495860cbcb55afc"
+                "reference": "0688b97f7fa7e2230dcd2cf68f202d24977e07f4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/laravel-feature-management-system/zipball/3f1f4f7cb49b4d1b787e6927c495860cbcb55afc",
-                "reference": "3f1f4f7cb49b4d1b787e6927c495860cbcb55afc",
+                "url": "https://api.github.com/repos/Particle-Academy/laravel-feature-management-system/zipball/0688b97f7fa7e2230dcd2cf68f202d24977e07f4",
+                "reference": "0688b97f7fa7e2230dcd2cf68f202d24977e07f4",
                 "shasum": ""
             },
             "require": {
@@ -4719,6 +4719,7 @@
             },
             "require-dev": {
                 "orchestra/testbench": "^9.0|^10.0|^11.0",
+                "particle-academy/fancy-conformance": "0.2.0",
                 "pestphp/pest": "^3.0|^4.0",
                 "pestphp/pest-plugin-laravel": "^3.0|^4.0"
             },
@@ -4751,9 +4752,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Particle-Academy/laravel-feature-management-system/issues",
-                "source": "https://github.com/Particle-Academy/laravel-feature-management-system/tree/v0.10.0"
+                "source": "https://github.com/Particle-Academy/laravel-feature-management-system/tree/v0.11.0"
             },
-            "time": "2026-08-19T03:46:36+00:00"
+            "time": "2026-08-19T06:44:24+00:00"
         },
         {
             "name": "particle-academy/laravel-fun-lab",

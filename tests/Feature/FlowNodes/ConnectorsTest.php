@@ -6,20 +6,23 @@ use FancyFlow\Nodes\Connector\ConnectionHost;
 use FancyFlow\Nodes\Connector\ConnectionSpec;
 use FancyFlow\Nodes\Connector\ConnectorClient;
 use FancyFlow\Nodes\Connector\ConnectorConfigException;
+use FancyFlow\Nodes\Connector\ConnectorIdempotencyExpiredException;
 use FancyFlow\Nodes\Connector\ConnectorModeException;
+use FancyFlow\Nodes\Connector\Idempotency;
 use FancyFlow\Nodes\Connector\FakeValues;
 use FancyFlow\Nodes\Connector\HttpErrors;
 use FancyFlow\Nodes\Connector\Mode;
 use FancyFlow\Nodes\Connector\ModeResolver;
 use FancyFlow\Nodes\Connector\SandboxKind;
+use FancyFlow\Runtime\ExecutionContext;
+use FancyFlow\Runtime\RunIdentity;
+use FancyFlow\Schema\FlowNode;
 use FancyFlow\Nodes\ResendEmailSend\ResendEmailSendExecutor;
 use FancyFlow\Nodes\Stripe\Stripe;
 use FancyFlow\Nodes\Stripe\StripeTrigger;
 use FancyFlow\Nodes\StripePaymentIntent\StripePaymentIntentExecutor;
 use FancyFlow\Nodes\StripeWebhookTrigger\StripeWebhookTriggerExecutor;
 use FancyFlow\Nodes\TelegramUpdatesTrigger\TelegramUpdatesTriggerExecutor;
-use FancyFlow\Runtime\ExecutionContext;
-use FancyFlow\Schema\FlowNode;
 
 /**
  * The PHP backends of the connector exemplars, against the SAME golden fixtures
@@ -339,5 +342,83 @@ describe('error classification decides whether a durable run may retry', functio
     it('names the mode mismatch on an auth failure, because that is the usual cause', function () {
         expect(HttpErrors::classify(401, 'stripe', 'op', '')->getMessage())
             ->toContain('live key in sandbox, or the reverse');
+    });
+});
+
+/**
+ * The idempotency key, and the one case where a connector must refuse to write.
+ *
+ * Asserted line for line against `tests/js/flow-nodes/connectors/core.test.ts`,
+ * because a divergence here means one backend deduplicates a retried payment
+ * and the other charges twice.
+ */
+describe('idempotency keys', function () {
+    $ctxFor = function (?RunIdentity $identity, array $inputs = []): ExecutionContext {
+        return new ExecutionContext(
+            new FlowNode(id: 'pay', type: 'stripe_payment_intent'),
+            $inputs,
+            static fn ($event) => null,
+            0,
+            $identity,
+        );
+    };
+
+    it('derives a key from the run identity the engine supplies', function () use ($ctxFor) {
+        expect(Idempotency::keyFor($ctxFor(new RunIdentity('run_a'))))->toBe('run_a:pay');
+    });
+
+    it('sends the SAME key on a retry of the same step', function () use ($ctxFor) {
+        // The money case. A key that moves with the attempt creates a second
+        // charge on the first timeout, which is the failure it exists to prevent.
+        $first = Idempotency::keyFor($ctxFor(new RunIdentity('run_a', [], 1)));
+        $retry = Idempotency::keyFor($ctxFor(new RunIdentity('run_a', [], 4)));
+
+        expect($retry)->toBe($first);
+    });
+
+    it('sends a DIFFERENT key for a different execution of the same node', function () use ($ctxFor) {
+        $keys = [
+            Idempotency::keyFor($ctxFor(new RunIdentity('run_a'))),
+            Idempotency::keyFor($ctxFor(new RunIdentity('run_b'))),
+            Idempotency::keyFor($ctxFor((new RunIdentity('run_a'))->descend('billing'))),
+            Idempotency::keyFor($ctxFor(new RunIdentity('run_a')), occurrence: 2),
+        ];
+
+        expect(array_unique($keys))->toHaveCount(4);
+    });
+
+    it('REFUSES a retry once the provider window has elapsed', function () use ($ctxFor) {
+        // Past the window Stripe has forgotten the key, so resending it and
+        // minting a fresh one BOTH charge twice. Refusing is the only safe answer.
+        $stale = new RunIdentity('run_a', [], 2, '2026-08-18T00:00:00Z');
+
+        Idempotency::keyFor($ctxFor($stale), now: '2026-08-19T01:00:00Z');
+    })->throws(ConnectorIdempotencyExpiredException::class);
+
+    it('never refuses a FIRST attempt, however long the run was parked', function () use ($ctxFor) {
+        // The human-gate case: an approval sits for eighteen days, then the
+        // writing node runs for the first time. Nothing was sent to forget.
+        $parked = new RunIdentity('run_a', [], 1, '2026-08-01T00:00:00Z');
+
+        expect(Idempotency::keyFor($ctxFor($parked), now: '2026-08-19T00:00:00Z'))->toBe('run_a:pay');
+    });
+
+    it('returns null when the host published no identity at all', function () use ($ctxFor) {
+        // A real answer: send no header rather than invent a key.
+        expect(Idempotency::keyFor($ctxFor(null)))->toBeNull();
+    });
+
+    it('still honours a host-seeded __runKey, for a consumer on an older engine', function () use ($ctxFor) {
+        expect(Idempotency::keyFor($ctxFor(null, ['__runKey' => 'run_seeded'])))->toBe('run_seeded:pay');
+    });
+
+    it('shortens an over-long key deterministically rather than letting Stripe 400', function () use ($ctxFor) {
+        $path = array_map(static fn (int $i) => "segment-{$i}", range(0, 39));
+        $deep = new RunIdentity('run_a', $path);
+
+        $key = Idempotency::keyFor($ctxFor($deep));
+
+        expect(strlen((string) $key))->toBeLessThanOrEqual(Idempotency::MAX_KEY_LENGTH)
+            ->and($key)->toBe(Idempotency::keyFor($ctxFor($deep)));
     });
 });

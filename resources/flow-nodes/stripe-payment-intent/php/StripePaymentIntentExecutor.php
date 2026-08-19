@@ -79,7 +79,13 @@ final class StripePaymentIntentExecutor implements NodeExecutor
         // must send the same key or Stripe creates a second payment — the exact
         // failure `unsafe-to-replay` exists to prevent, and the key is what turns
         // "never retry" into "retry safely".
-        $idempotencyKey = Idempotency::keyFor($ctx);
+        // Stripe's window is 24 hours. Past it, `keyFor()` THROWS rather than
+        // choosing between two ways of charging twice — see Idempotency.
+        $idempotencyKey = Idempotency::keyFor(
+            $ctx,
+            service: 'stripe',
+            operation: 'payment_intent_create',
+        );
 
         if ($idempotencyKey === null) {
             $ctx->emit(RunEvent::log('warn', 'stripe_payment_intent: '.Idempotency::NO_KEY_WARNING, $ctx->node->id));

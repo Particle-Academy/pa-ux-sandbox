@@ -695,3 +695,37 @@ export const SAMPLE_AUDIO_TITLE = "Make It Fancy — wishborn";
 export const SAMPLE_CODE_VIEW = `<Callout color="green">
   Deploy succeeded
 </Callout>`;
+
+/**
+ * A real delivery route: a 6.2km driving loop through downtown Milwaukee,
+ * sampled to 48 points from actual road geometry and frozen here.
+ *
+ * It used to be a sine/cosine ring around a centre point, which draws a perfect
+ * ellipse -- so the truck sailed straight over the Milwaukee River, through the
+ * Third Ward and out into Lake Michigan. Cheap to generate, and instantly wrong
+ * to anyone who knows the city, which is most people looking at a map of a place
+ * they recognise.
+ *
+ * Static on purpose. The demo has to render identically on the server and in a
+ * cold browser, so there is no Math.random, no Date.now, and no routing request
+ * at runtime -- the route was resolved once, offline, and committed.
+ */
+export const DELIVERY_ROUTE = (
+    [
+    [43.03478, -87.91062], [43.03497, -87.90891], [43.03507, -87.90716], [43.03518, -87.90549],
+    [43.03528, -87.90374], [43.03535, -87.90238], [43.03604, -87.90242], [43.03649, -87.90095],
+    [43.03657, -87.8997], [43.03744, -87.89877], [43.03875, -87.89819], [43.03969, -87.89821],
+    [43.0399, -87.89816], [43.03916, -87.89832], [43.03769, -87.89882], [43.0367, -87.89943],
+    [43.03494, -87.9001], [43.03437, -87.90031], [43.03307, -87.90044], [43.03264, -87.90048],
+    [43.03185, -87.90088], [43.03106, -87.90106], [43.02987, -87.90128], [43.02898, -87.90267],
+    [43.02884, -87.9032], [43.02832, -87.90364], [43.02695, -87.90248], [43.02582, -87.90151],
+    [43.0258, -87.90072], [43.02597, -87.89859], [43.02626, -87.89654], [43.02799, -87.89617],
+    [43.02829, -87.89625], [43.02674, -87.89615], [43.02608, -87.89696], [43.02586, -87.89942],
+    [43.02578, -87.90144], [43.02643, -87.90204], [43.02745, -87.9029], [43.02855, -87.90384],
+    [43.02975, -87.90535], [43.03084, -87.90699], [43.0313, -87.90808], [43.03177, -87.90918],
+    [43.03261, -87.90934], [43.03331, -87.90916], [43.03452, -87.90886], [43.03497, -87.90891],
+    ] as const
+).map(([lat, lng]) => ({ lat, lng }));
+
+/** The customer sits ON the route rather than in the middle of it. */
+export const DELIVERY_ROUTE_START = DELIVERY_ROUTE[0];

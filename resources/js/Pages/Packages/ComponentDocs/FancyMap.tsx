@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import "leaflet/dist/leaflet.css"; // Leaflet's stylesheet — required once, anywhere in the app.
 import { Map, type MapMarker, type MapView } from "@particle-academy/fancy-map";
 import { leafletProvider } from "@particle-academy/fancy-map/leaflet";
+import { DELIVERY_ROUTE, DELIVERY_ROUTE_START as ROUTE_CENTER } from "../showcase-fixtures";
 import { Badge, Text } from "@particle-academy/react-fancy";
 
 /**
@@ -49,20 +50,15 @@ function StoreLocatorDemo() {
 }
 
 // ── (b) Live tracking ────────────────────────────────────────────────────────
-/**
- * A deterministic delivery route — a ring of points computed once at module
- * load (no Math.random / Date.now, so SSR + hydration are identical). The demo
- * steps an index along this array on an interval to move the marker.
- */
-const ROUTE_CENTER = { lat: 43.0389, lng: -87.9065 };
-const DELIVERY_ROUTE = Array.from({ length: 48 }, (_, i) => {
-    const t = (i / 48) * Math.PI * 2;
-    return { lat: ROUTE_CENTER.lat + Math.sin(t) * 0.02, lng: ROUTE_CENTER.lng + Math.cos(t) * 0.03 };
-});
+// The route lives in showcase-fixtures because the package PREVIEW renders its
+// own copy of this demo. It was duplicated, and the duplicate kept the old
+// sine/cosine ring long after this one was fixed -- so the docs showed a truck
+// on real streets while the preview beside it still drove through the lake.
+
 
 function LiveTrackingDemo() {
     const [step, setStep] = useState(0);
-    const [view, setView] = useState<MapView>({ center: ROUTE_CENTER, zoom: 13 });
+    const [view, setView] = useState<MapView>({ center: ROUTE_CENTER, zoom: 14 });
 
     // SSR-safe: the timer only runs in the browser (inside an effect) and is
     // cleared on unmount. Nothing time-dependent happens during render.

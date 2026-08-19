@@ -13,7 +13,7 @@ import "@particle-academy/fancy-passkeys-ui/styles.css";
 import { ChatTranscript, MessageComposer, PlanReview, TeachersAidChat } from "@particle-academy/teachers-aid-ui";
 import { ApplicationList, ApplyForm, EmployerJobList, JobDetail, JobPostingForm } from "@particle-academy/job-board";
 import { CertificateView, CoursePlayer, CurriculumOverview, LessonView, QuestionRenderer, TestRunner, type AnswerValue} from "@particle-academy/classroom";
-import { SAMPLE_CODE_VIEW, SAMPLE_IMG, SAMPLE_PDF, SAMPLE_AUDIO, SAMPLE_AUDIO_TITLE, SAMPLE_POSTER } from "./showcase-fixtures";
+import { SAMPLE_CODE_VIEW, SAMPLE_IMG, SAMPLE_PDF, SAMPLE_AUDIO, SAMPLE_AUDIO_TITLE, SAMPLE_POSTER, DELIVERY_ROUTE, DELIVERY_ROUTE_START } from "./showcase-fixtures";
 import {
     Accordion,
     Button,
@@ -1649,11 +1649,12 @@ function FileBrowserDemo() {
 // One OpenStreetMap provider + a deterministic delivery route, created at module
 // load (not per render) so the engine isn't rebuilt and SSR/hydration match.
 const fancyMapProvider = leafletProvider();
-const FANCY_MAP_CENTER = { lat: 43.0389, lng: -87.9065 };
-const FANCY_MAP_ROUTE = Array.from({ length: 48 }, (_, i) => {
-    const t = (i / 48) * Math.PI * 2;
-    return { lat: FANCY_MAP_CENTER.lat + Math.sin(t) * 0.02, lng: FANCY_MAP_CENTER.lng + Math.cos(t) * 0.03 };
-});
+// The route is SHARED with the docs demo. It used to be a second sine/cosine
+// ring defined here, which drew a perfect ellipse straight over the Milwaukee
+// River and out into Lake Michigan -- and being a copy, it stayed wrong after
+// the docs version was fixed. One route, imported by both.
+const FANCY_MAP_CENTER = DELIVERY_ROUTE_START;
+const FANCY_MAP_ROUTE = DELIVERY_ROUTE;
 
 
 // ── fancy-git-ui ────────────────────────────────────────────────────────────
@@ -1870,7 +1871,7 @@ function GitCreateReviewFormDemo() {
 
 function FancyMapDemo() {
     const [step, setStep] = useState(0);
-    const [view, setView] = useState<FancyMapView>({ center: FANCY_MAP_CENTER, zoom: 13 });
+    const [view, setView] = useState<FancyMapView>({ center: FANCY_MAP_CENTER, zoom: 14 });
     const [selected, setSelected] = useState<string | null>(null);
 
     // SSR-safe: the timer only runs in the browser and is cleared on unmount.

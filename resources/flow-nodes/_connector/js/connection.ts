@@ -47,6 +47,8 @@ import { ConnectorConfigError } from "./errors";
 import {
   ConnectorModeError,
   resolveConnectorMode,
+  sandboxIsSelectable,
+  sandboxRefusal,
   type ConnectorMode,
   type HostEnvironment,
   type RequestedMode,
@@ -175,11 +177,8 @@ export function resolveConnection(options: ResolveOptions): ResolvedConnection {
   // whether or not a connection happens to be configured — otherwise the same
   // mistake produces two different errors depending on unrelated state, and the
   // more useful one is the one you never see.
-  if (requestedMode === "sandbox" && sandbox === "none") {
-    throw new ConnectorModeError(
-      `${service} has no sandbox estate, so "sandbox" cannot be honoured. ` +
-        'Use "fake" to develop without credentials, or "live" to talk to the provider.',
-    );
+  if (requestedMode === "sandbox" && !sandboxIsSelectable(sandbox)) {
+    throw new ConnectorModeError(sandboxRefusal(service, sandbox));
   }
 
   const id = options.connectionId?.trim() || service;

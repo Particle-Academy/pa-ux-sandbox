@@ -27,11 +27,8 @@ final class ModeResolver
         // 1. An explicit ask wins everywhere. This is the rule that makes the
         //    environment a default rather than a cage.
         if ($requested !== null) {
-            if ($requested === Mode::Sandbox && $sandbox === SandboxKind::None) {
-                throw new ConnectorModeException(
-                    'This connector\'s provider has no sandbox estate, so "sandbox" cannot be honoured. '
-                    .'Use "fake" to develop without credentials, or "live" to talk to the provider.'
-                );
+            if ($requested === Mode::Sandbox && ! $sandbox->isSelectable()) {
+                throw new ConnectorModeException($sandbox->refusal("This connector's provider"));
             }
 
             return $requested;
@@ -52,6 +49,6 @@ final class ModeResolver
         // wired. Falling through to `fake` when it is not is what makes a freshly
         // vendored connector runnable with no setup at all — the difference
         // between a marketplace you can try and one you can only read about.
-        return $sandbox !== SandboxKind::None && $hasSandboxCredentials ? Mode::Sandbox : Mode::Fake;
+        return $sandbox->isSelectable() && $hasSandboxCredentials ? Mode::Sandbox : Mode::Fake;
     }
 }

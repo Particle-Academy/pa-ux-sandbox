@@ -169,3 +169,41 @@ describe("_connector is generated, not maintained here", () => {
     expect(readFileSync(ui, "utf8")).not.toMatch(/GENERATED from/);
   });
 });
+
+/**
+ * `ui/connector.ts` is the ONE part of `_connector` maintained here, because it
+ * imports the flow engine. That is also what makes it the one part that can
+ * drift from the generated runtime beside it — and it re-declares `SandboxKind`,
+ * which is the field where being wrong sends someone to a live estate believing
+ * it is a test one.
+ *
+ * So the two declarations are compared. A hand-maintained mirror with nothing
+ * checking it is the shape this repository keeps finding.
+ */
+describe("the authoring surface and the generated runtime agree", () => {
+  const kinds = (source: string): string[] =>
+    [...source.matchAll(/"(credential|base-url|separate-account|restricted-reach|none|unverified)"/g)]
+      .map((m) => m[1]!)
+      .filter((value, index, all) => all.indexOf(value) === index)
+      .sort();
+
+  it("declares the same SandboxKind values", () => {
+    const runtime = readFileSync(resolve(NODES, "_connector", "js", "mode.ts"), "utf8");
+    const ui = readFileSync(resolve(NODES, "_connector", "ui", "connector.ts"), "utf8");
+
+    const fromRuntime = kinds(runtime.slice(runtime.indexOf("export type SandboxKind"), runtime.indexOf("export const SANDBOX_KINDS")));
+    const fromUi = kinds(ui.slice(ui.indexOf("export type SandboxKind"), ui.indexOf("const SELECTABLE_SANDBOX")));
+
+    expect(fromUi, "the authoring surface offers a different set of sandbox shapes than the runtime resolves")
+      .toEqual(fromRuntime);
+  });
+
+  it("offers `sandbox` as a mode only for the kinds the runtime can actually select", () => {
+    // Offering a mode the resolver refuses is an invitation to pick it and read
+    // an error; NOT offering one it would honour hides a real estate.
+    const ui = readFileSync(resolve(NODES, "_connector", "ui", "connector.ts"), "utf8");
+    const selectable = kinds(ui.slice(ui.indexOf("const SELECTABLE_SANDBOX"), ui.indexOf("export type ConnectorMeta")));
+
+    expect(selectable).toEqual(["base-url", "credential", "separate-account"]);
+  });
+});

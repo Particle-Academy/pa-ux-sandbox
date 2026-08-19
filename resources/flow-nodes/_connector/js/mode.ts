@@ -56,10 +56,105 @@ export const CONNECTOR_MODES: ConnectorMode[] = ["fake", "sandbox", "live"];
  * - `base-url` — a different host entirely (PayPal's `api-m.sandbox.paypal.com`).
  * - `separate-account` — a distinct tenant you must create, often with its own
  *   login host (Salesforce sandbox orgs on `test.salesforce.com`).
+ * - `restricted-reach` — there is no separate estate at all; what the provider
+ *   offers instead is an **account-level restriction on who can see the
+ *   result**. A Meta app in Development Mode; an unaudited TikTok app that can
+ *   only post `SELF_ONLY`. Same credentials, same endpoints, same estate — only
+ *   the audience changes, and nothing in a request selects it.
+ *
+ *   **This is the dangerous one**, and it is why it is not folded into `none`.
+ *   It is the shape most likely to be mistaken for a sandbox, because it looks
+ *   exactly like a successful post that nobody can see: `ok: true`, a real id,
+ *   no audience. `none` says "there is nothing"; this says "there is something,
+ *   it is not selectable from here, and success does not mean reach".
  * - `none` — the provider has no test estate. `sandbox` is then not offered at
- *   all, and the node's honest choices are `fake` and `live`.
+ *   all, and the honest choices are `fake` and `live`.
+ * - `unverified` — **nobody has checked yet.** A real state, and the type has to
+ *   carry it: this is the field where being wrong sends someone to a live
+ *   estate believing it is a test one, so "researched but not verified" must not
+ *   be forced to pick one of the other five. It belongs on a provider declared
+ *   `implemented: false`; on one declared `implemented: true` it is a finding,
+ *   and `providerProblems()` reports it.
  */
-export type SandboxKind = "credential" | "base-url" | "separate-account" | "none";
+export type SandboxKind =
+  | "credential"
+  | "base-url"
+  | "separate-account"
+  | "restricted-reach"
+  | "none"
+  | "unverified";
+
+/** Every value, as data, for a host validating input that crossed a JSON boundary. */
+export const SANDBOX_KINDS: readonly SandboxKind[] = [
+  "credential",
+  "base-url",
+  "separate-account",
+  "restricted-reach",
+  "none",
+  "unverified",
+];
+
+/**
+ * Kinds a caller can actually SELECT with `mode: "sandbox"`.
+ *
+ * The other three are not a smaller version of the same thing - each is a
+ * different answer to "what test estate is there", and none of them gives the
+ * resolver anything to point at:
+ *
+ * - `none` - the provider has no test estate. Honest, and common.
+ * - `restricted-reach` - there IS a safer way to run, but it is an
+ *   account-level setting on the provider's side, not something a request can
+ *   choose. Selecting it here would be a lie.
+ * - `unverified` - nobody has checked. Refusing is the safe direction, because
+ *   the cost of guessing wrong is a workflow pointed at a live estate.
+ */
+const SELECTABLE_SANDBOX: ReadonlySet<SandboxKind> = new Set<SandboxKind>([
+  "credential",
+  "base-url",
+  "separate-account",
+]);
+
+export function sandboxIsSelectable(kind: SandboxKind): boolean {
+  return SELECTABLE_SANDBOX.has(kind);
+}
+
+/**
+ * Why `mode: "sandbox"` cannot be honoured for this kind, in the words the
+ * person reading it needs.
+ *
+ * Three reasons, three messages. Collapsing them into "no sandbox available"
+ * would hide the one that matters: `restricted-reach` is not an absence, it is
+ * a different mechanism with a trap in it.
+ */
+export function sandboxRefusal(service: string, kind: SandboxKind): string {
+  if (kind === "restricted-reach") {
+    return (
+      service +
+      " has no separate test estate. What it has instead is an ACCOUNT-LEVEL reach restriction - an unreviewed " +
+      "app that posts only to its own developers, or only privately. Same credentials, same endpoints, same " +
+      "estate: only the audience changes, and nothing in a request selects it. That makes it the sandbox shape " +
+      "most likely to be mistaken for a real one, because a restricted call looks exactly like a successful " +
+      'one - ok, a real id, and no audience. Use "fake" to develop without touching the provider, or "live" ' +
+      "and confirm reach on the provider's own surface, which is the only place it is visible."
+    );
+  }
+
+  if (kind === "unverified") {
+    return (
+      "Nobody has verified what test estate " +
+      service +
+      ' offers, so "sandbox" cannot be honoured - the resolver would be guessing, and the cost of guessing ' +
+      "wrong here is a workflow pointed at a live estate while somebody believes it is a test one. Find out " +
+      'and declare it, or use "fake".'
+    );
+  }
+
+  return (
+    service +
+    ' has no sandbox estate, so "sandbox" cannot be honoured. ' +
+    'Use "fake" to develop without credentials, or "live" to talk to the provider.'
+  );
+}
 
 /** The host's view of where it is running. Kept tiny so it is trivial to fake. */
 export type HostEnvironment = {
@@ -92,11 +187,8 @@ export function resolveConnectorMode(inputs: ModeInputs): ConnectorMode {
   // 1. An explicit ask wins everywhere. This is the rule that makes the
   //    environment a default rather than a cage.
   if (requested && requested !== "auto") {
-    if (requested === "sandbox" && sandbox === "none") {
-      throw new ConnectorModeError(
-        'This connector\'s provider has no sandbox estate, so "sandbox" cannot be honoured. ' +
-          'Use "fake" to develop without credentials, or "live" to talk to the provider.',
-      );
+    if (requested === "sandbox" && !sandboxIsSelectable(sandbox)) {
+      throw new ConnectorModeError(sandboxRefusal("This connector's provider", sandbox));
     }
 
     return requested;
@@ -113,7 +205,7 @@ export function resolveConnectorMode(inputs: ModeInputs): ConnectorMode {
   // Falling through to `fake` when it is not is what makes a freshly vendored
   // node runnable with no setup at all — the difference between a marketplace
   // you can try and one you can only read about.
-  return sandbox !== "none" && hasSandboxCredentials ? "sandbox" : "fake";
+  return sandboxIsSelectable(sandbox) && hasSandboxCredentials ? "sandbox" : "fake";
 }
 
 /** Raised when a requested mode cannot be honoured. Never downgraded silently. */

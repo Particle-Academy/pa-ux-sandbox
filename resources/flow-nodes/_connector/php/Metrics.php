@@ -149,4 +149,65 @@ final class Metrics
 
         return $out;
     }
+
+    /**
+     * Every way a PROVIDER's declaration can outrun what anyone actually checked.
+     *
+     * The sibling of {@see self::capabilityProblems()}, one level up.
+     * `metrics: true` with no shape turns an unimplemented feature into a
+     * reported zero; the equivalent here turns *nobody looked* into a statement
+     * about a test estate — and that field is the one where being wrong sends a
+     * person to a live estate believing it is a test one.
+     *
+     * Strings rather than a throw, so a host reports all of them at once. A
+     * check that stops at the first problem trains people to fix one thing and
+     * re-run, which is how a list of six becomes six rounds.
+     *
+     * @return list<string>
+     */
+    public static function providerProblems(ProviderAdapter $provider): array
+    {
+        $problems = [];
+
+        if ($provider->implemented && $provider->sandbox === SandboxKind::Unverified) {
+            $problems[] = $provider->id.' says it is implemented while its sandbox shape is still "unverified". '
+                .'Something a person can run today must not be ambiguous about which estate it reaches - verify '
+                .'it, or set implemented: false.';
+        }
+
+        if ($provider->implemented && $provider->fields === []) {
+            $problems[] = $provider->id.' says it is implemented but declares no credential fields.';
+        }
+
+        if ($provider->implemented && $provider->setup === []) {
+            $problems[] = $provider->id.' says it is implemented and names no setup steps. The code is never the '
+                .'expensive part; the setup is, and a provider whose setup is undocumented is one nobody can '
+                .'stand up.';
+        }
+
+        foreach ($provider->fields as $field) {
+            if (mb_strlen(trim($field->help)) < 10) {
+                $problems[] = $provider->id.'.'.$field->key.' has no help text worth reading.';
+            }
+        }
+
+        // Unconditional here, where the TypeScript twin asks only when a verify
+        // exists. The interfaces genuinely differ: `verify()` is always declared
+        // on this one and may return null at run time, so there is nothing
+        // static to branch on — and a provider with no read to check against can
+        // still say so in one sentence, which is more useful than silence.
+        if ($provider->proves === null || trim($provider->proves) === '') {
+            $problems[] = $provider->id.' does not say what its verify PROVES. A green tick that means more than '
+                .'it should is worse than no tick - name the step it does not cover.';
+        }
+
+        if ($provider->sandbox === SandboxKind::RestrictedReach
+            && ! str_contains(mb_strtolower($provider->summary), 'reach')) {
+            $problems[] = $provider->id.' is declared restricted-reach and its summary never mentions reach. That '
+                .'shape looks exactly like a successful post nobody can see, so the surface has to say so before '
+                .'anyone runs it.';
+        }
+
+        return $problems;
+    }
 }

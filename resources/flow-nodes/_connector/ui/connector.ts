@@ -62,8 +62,28 @@ export type ConnectorDomain =
 /** What a connector node does in the graph — IFTTT's "this" versus "that". */
 export type ConnectorRole = "trigger" | "action" | "search";
 
-/** How the provider exposes a test estate. Kept in step with the runtime's `SandboxKind`. */
-export type SandboxKind = "credential" | "base-url" | "separate-account" | "none";
+/**
+ * How the provider exposes a test estate. Kept in step with the runtime's
+ * `SandboxKind`, and `vendoring.test.ts` compares the two declarations — a
+ * hand-maintained mirror with nothing checking it is the shape this repository
+ * keeps finding.
+ *
+ * Two of these are answers people skip. `unverified` means NOBODY HAS CHECKED —
+ * a real state, and the right one until somebody has. `restricted-reach` is the
+ * dangerous one: same credentials, same endpoints, same estate, and only the
+ * AUDIENCE restricted, so it looks exactly like a successful post nobody can
+ * see. Neither is `none`, and neither can be selected as a mode.
+ */
+export type SandboxKind =
+  | "credential"
+  | "base-url"
+  | "separate-account"
+  | "restricted-reach"
+  | "none"
+  | "unverified";
+
+/** The kinds a `sandbox` mode can actually point at. Mirrors `sandboxIsSelectable`. */
+const SELECTABLE_SANDBOX: readonly SandboxKind[] = ["credential", "base-url", "separate-account"];
 
 export type ConnectorMeta = {
   service: string;
@@ -93,7 +113,7 @@ export function connectionFields(meta: ConnectorMeta): ConfigField[] {
 
   // Only offer sandbox where one exists. A select listing a mode the provider
   // does not have is an invitation to pick it and then read an error.
-  if (meta.sandbox !== "none") {
+  if (SELECTABLE_SANDBOX.includes(meta.sandbox)) {
     modes.push({ value: "sandbox", label: sandboxLabel(meta.sandbox) });
   }
   modes.push({ value: "live", label: "Live — the real account" });
@@ -114,10 +134,7 @@ export function connectionFields(meta: ConnectorMeta): ConfigField[] {
       label: "Environment",
       options: modes,
       default: "auto",
-      description:
-        meta.sandbox === "none"
-          ? `${meta.serviceTitle} has no sandbox estate, so "auto" means fake locally and live in production.`
-          : "Auto follows the environment. Setting this explicitly overrides it everywhere, including in production.",
+      description: sandboxNote(meta),
     },
   ];
 }
@@ -128,6 +145,38 @@ function sandboxLabel(kind: SandboxKind): string {
     : kind === "separate-account"
       ? "Sandbox — your separate test account"
       : "Sandbox — the provider's test estate";
+}
+
+/**
+ * What "auto" means for this provider, said where the author is choosing.
+ *
+ * The two non-selectable kinds get their own sentence rather than sharing
+ * `none`'s. `restricted-reach` in particular has to be said HERE — on the field
+ * somebody is filling in — because the failure it produces is a run that looks
+ * completely successful and reached nobody, and by the time that is visible the
+ * author has stopped looking at this screen.
+ */
+function sandboxNote(meta: ConnectorMeta): string {
+  if (meta.sandbox === "restricted-reach") {
+    return (
+      `${meta.serviceTitle} has no separate test estate — an unreviewed app posts only to its own developers, ` +
+      "or privately. Same credentials, same endpoints: only the audience changes, and nothing here selects it. " +
+      "A restricted run looks exactly like a successful one, so confirm reach on the provider's own surface."
+    );
+  }
+
+  if (meta.sandbox === "unverified") {
+    return (
+      `Nobody has verified what test estate ${meta.serviceTitle} offers, so "sandbox" is not offered — and ` +
+      '"auto" means fake locally and live in production. Find out before pointing a workflow at it.'
+    );
+  }
+
+  if (meta.sandbox === "none") {
+    return `${meta.serviceTitle} has no sandbox estate, so "auto" means fake locally and live in production.`;
+  }
+
+  return "Auto follows the environment. Setting this explicitly overrides it everywhere, including in production.";
 }
 
 /**

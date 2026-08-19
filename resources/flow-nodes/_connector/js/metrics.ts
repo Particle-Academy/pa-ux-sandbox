@@ -29,7 +29,8 @@
  * confusion is one `?? 0` away.
  */
 
-import type { Connector, MetricDescriptor } from "./seam";
+import { sandboxIsSelectable } from "./mode";
+import type { Connector, MetricDescriptor, ProviderAdapter } from "./seam";
 
 export type ShapeMismatch = {
   connector: string;
@@ -140,4 +141,68 @@ export function reported(values: Record<string, unknown>): Record<string, number
   }
 
   return out;
+}
+
+/**
+ * Every way a PROVIDER's declaration can outrun what anyone actually checked.
+ *
+ * The sibling of `capabilityProblems`, one level up. `capabilities.metrics: true`
+ * with no shape turns an unimplemented feature into a reported zero; the
+ * equivalent here turns *nobody looked* into a statement about a test estate —
+ * and that field is the one where being wrong sends a person to a live estate
+ * believing it is a test one.
+ *
+ * Strings rather than a throw, so a host reports all of them at once. A check
+ * that stops at the first problem trains people to fix one thing and re-run,
+ * which is how a list of six becomes six rounds.
+ */
+export function providerProblems(provider: ProviderAdapter): string[] {
+  const problems: string[] = [];
+
+  if (provider.implemented && provider.sandbox === "unverified") {
+    problems.push(
+      `${provider.id} says it is implemented while its sandbox shape is still "unverified". Something a person ` +
+        "can run today must not be ambiguous about which estate it reaches — verify it, or set implemented: false.",
+    );
+  }
+
+  if (provider.implemented && provider.fields.length === 0) {
+    problems.push(`${provider.id} says it is implemented but declares no credential fields.`);
+  }
+
+  if (provider.implemented && provider.setup.length === 0) {
+    problems.push(
+      `${provider.id} says it is implemented and names no setup steps. The code is never the expensive part; ` +
+        "the setup is, and a provider whose setup is undocumented is one nobody can stand up.",
+    );
+  }
+
+  for (const field of provider.fields) {
+    if (field.help.trim().length < 10) {
+      problems.push(`${provider.id}.${field.key} has no help text worth reading.`);
+    }
+  }
+
+  // A verify that proves less than it appears to is worse than no verify, so a
+  // provider that ships one has to say what it does NOT cover.
+  if (provider.verify && !provider.proves) {
+    problems.push(
+      `${provider.id} ships a verify but does not say what it PROVES. A green tick that means more than it ` +
+        "should is worse than no tick — name the step it does not cover.",
+    );
+  }
+
+  if (provider.sandbox === "restricted-reach" && !provider.summary.toLowerCase().includes("reach")) {
+    problems.push(
+      `${provider.id} is declared restricted-reach and its summary never mentions reach. That shape looks ` +
+        "exactly like a successful post nobody can see, so the surface has to say so before anyone runs it.",
+    );
+  }
+
+  return problems;
+}
+
+/** True when a provider's declared sandbox can actually be selected at run time. */
+export function providerSandboxIsSelectable(provider: ProviderAdapter): boolean {
+  return sandboxIsSelectable(provider.sandbox);
 }

@@ -54,6 +54,32 @@ import type { ConnectorMode, SandboxKind } from "./mode";
  * path — and the reference implementation very nearly stored it as
  * configuration because it looked like a URL.
  */
+/**
+ * Who a credential belongs to.
+ *
+ * Exported as a runtime constant as well as a type — see `CREDENTIAL_SCOPES`.
+ */
+export type CredentialScope = "provider" | "account";
+
+/**
+ * The scopes, as DATA.
+ *
+ * Because this union crosses a JSON boundary and the compiler cannot follow it
+ * there. When these values were renamed from `app`/`brand`, a consumer that
+ * re-declared the field shape on its client kept compiling — their
+ * `f.scope === "brand"` silently became never-true, and every credential field
+ * would have rendered as shared. `tsc` gives a host mirroring these types no
+ * help at all, so the values ship as data a host can validate against at the
+ * boundary where the compiler stops.
+ */
+export const CREDENTIAL_SCOPES: readonly CredentialScope[] = ["provider", "account"];
+
+/** Severities, as data, for the same reason. */
+export const PROBLEM_SEVERITIES = ["block", "warn"] as const;
+
+/** Canonical metric names, as data, for the same reason. */
+export const CANONICAL_METRICS = ["like", "share", "reply", "quote", "view"] as const;
+
 export type CredentialField = {
   /** Stable key. The host maps it to wherever it keeps values. */
   key: string;
@@ -67,7 +93,7 @@ export type CredentialField = {
    * The distinction exists because getting it wrong means either asking for the
    * same app secret five times or letting one account's token reach another's.
    */
-  scope: "provider" | "account";
+  scope: CredentialScope;
   secret: boolean;
   required: boolean;
   /** A hint for an empty field. NEVER a real value. */
@@ -123,8 +149,26 @@ export type ProviderAdapter = {
    * that anything can be revoked. "No known expiry" is not "cannot stop working".
    */
   credentialLifetimeDays?: number;
-  /** How the provider exposes a test estate, in the four shapes that exist. */
+  /**
+   * How the provider exposes a test estate.
+   *
+   * **`"unverified"` is a real answer and is the right one until somebody has
+   * actually checked.** Being wrong here points a workflow at a live estate
+   * while a person believes it is a test one, so the type carries "nobody
+   * looked" rather than forcing a guess — a comment saying so is not a type, and
+   * `providerProblems()` reports the combination `implemented: true` +
+   * `unverified`.
+   */
   sandbox: SandboxKind;
+  /**
+   * What `verify` proves, and what it does NOT.
+   *
+   * Required whenever `verify` exists, and checked by `providerProblems()`.
+   * Telegram's `getMe` validates the token and says nothing about whether the
+   * bot was added to the target chat — which is the step everyone actually gets
+   * stuck on. A green tick that means more than it should is worse than no tick.
+   */
+  proves?: string;
   /**
    * A read-only call proving the credential works AND reaches the right account.
    *

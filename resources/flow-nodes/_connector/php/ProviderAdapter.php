@@ -63,8 +63,28 @@ interface ProviderAdapter
      */
     public ?int $credentialLifetimeDays { get; }
 
-    /** How the provider exposes a test estate, in the four shapes that exist. */
+    /**
+     * How the provider exposes a test estate.
+     *
+     * **{@see SandboxKind::Unverified} is a real answer** and is the right one
+     * until somebody has actually checked. Being wrong here points a workflow at
+     * a live estate while a person believes it is a test one, so the type
+     * carries "nobody looked" rather than forcing a guess — a comment saying so
+     * is not a type. {@see Metrics::providerProblems()} reports the combination
+     * `implemented` + `Unverified`.
+     */
     public SandboxKind $sandbox { get; }
+
+    /**
+     * What {@see self::verify()} proves, and what it does NOT.
+     *
+     * Required wherever a verify exists, and checked by
+     * {@see Metrics::providerProblems()}. Telegram's `getMe` validates the token
+     * and says nothing about whether the bot was added to the target chat, which
+     * is the step everyone actually gets stuck on. A green tick that means more
+     * than it should is worse than no tick.
+     */
+    public ?string $proves { get; }
 
     /**
      * A read-only call proving the credential works AND reaches the right

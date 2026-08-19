@@ -307,4 +307,32 @@ final class Render
             $rules->links ? Text::linkRanges($text) : null,
         );
     }
+
+    /**
+     * Apply a per-connection limit over a connector's declared rules.
+     *
+     * The one supported way to do what {@see RenderRules::$limit} insists on: a
+     * Mastodon instance publishes its own `max_toot_chars`, a Discord webhook
+     * does not, and the same connector serves both. Resolving happens at the
+     * call site with the connection in hand, and the resolved value travels INTO
+     * render, so it is part of the payload the approver saw.
+     *
+     * Passing no limit at all keeps whatever the connector declared: "I did not
+     * look" is not the same as "there is no limit", and only the second is null.
+     */
+    public static function withResolvedLimit(RenderRules $rules, int|null|false $limit = false): RenderRules
+    {
+        if ($limit === false) {
+            return $rules;
+        }
+
+        return new RenderRules(
+            limit: $limit,
+            unit: $rules->unit,
+            thread: $rules->thread,
+            label: $rules->label,
+            links: $rules->links,
+            numbering: $rules->numbering,
+        );
+    }
 }

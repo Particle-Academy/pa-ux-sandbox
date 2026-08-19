@@ -145,6 +145,24 @@ const AMBIGUOUS_NAMES = new Set(["AbortError", "TimeoutError"]);
  * for. Guessing in the safe-looking direction is how this goes wrong.
  */
 export function classifyError(error: unknown): Classified {
+  // An error that already CARRIES a classification is authoritative, and this
+  // check has to be first.
+  //
+  // `httpFailure()` attaches one so a connector can declare what counts as a
+  // failure for its provider — Telegram's `200 OK` with `{"ok": false}` is a
+  // real refusal, and only the connector knows that. Re-deriving from scratch
+  // finds no Node error code on such an error and answers `ambiguous`: "nobody
+  // can tell", about a `400` the provider was explicit about.
+  //
+  // `deliver()` has always read `error.classified` before falling back here, so
+  // the retry path was never wrong. This was worse in a quieter way — a host
+  // calling `classifyError` DIRECTLY, which is a reasonable thing to do with an
+  // exported classifier, was told nobody could tell. Reported by the reference
+  // consumer, who was careful to distinguish the two and nearly filed it as a
+  // retry bug. The PHP twin already did this; the two runtimes disagreed.
+  const attached = (error as { classified?: Classified } | null)?.classified;
+  if (attached && typeof attached === "object" && typeof attached.kind === "string") return attached;
+
   const detail = error instanceof Error ? error.message : String(error);
   const code =
     (error as { code?: string })?.code ?? (error as { cause?: { code?: string } })?.cause?.code ?? "";

@@ -22,7 +22,14 @@ use Closure;
 final readonly class RenderRules
 {
     /**
-     * @param  int|null  $limit  the provider's limit per message, or null where it has none
+     * @param  int|null  $limit  the provider's limit per message, or NULL where it imposes
+     *                            none. Null means UNCOUNTED and is a real answer, distinct
+     *                            from "we do not know" — which is not a renderable state at
+     *                            all. This must stay RESOLVABLE PER CONNECTION and never
+     *                            become static: a Mastodon instance's limit comes from the
+     *                            server, so baking it in renders to 500 on an instance
+     *                            allowing 5000, or to 5000 on one allowing 500, and both
+     *                            fail silently. {@see Render::withResolvedLimit()}
      * @param  bool  $thread  whether this provider can carry a sequence of connected
      *                        messages. FALSE means over-length content is REFUSED rather
      *                        than split — splitting would invent a structure the provider

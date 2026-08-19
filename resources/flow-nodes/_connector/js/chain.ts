@@ -42,8 +42,22 @@
  * one status id, Telegram needs a message id and a chat. A shape naming one
  * provider's model would be wrong for the next one, so the chain carries
  * whatever the poster returned and never reads inside it.
+ *
+ * **`object`, not `Record<string, string | number>`** — and the difference is
+ * not pedantry. An ordinary interface does not satisfy an index signature
+ * unless it declares one, so `interface PostRef { uri: string; cid: string }`
+ * did NOT satisfy the old constraint. The reference consumer worked around it
+ * with `postChain<T & ChainRef>` plus two `as unknown as` casts, and could not
+ * use `ChainOutcome<T>` in their own signatures at all — because the only other
+ * fix was to add an index signature to a type used across their codebase in
+ * order to satisfy a generic used in one place, which weakens the type
+ * everywhere to please one call site.
+ *
+ * A constraint everyone casts past is not enforcing anything; it is just making
+ * the casts. `object` still rejects the mistake worth rejecting — a primitive
+ * as a reference — and accepts every real one.
  */
-export type ChainRef = Record<string, string | number>;
+export type ChainRef = object;
 
 export type ChainLinks<Ref extends ChainRef> = {
   /** The top of the conversation. Fixed for the whole chain. */

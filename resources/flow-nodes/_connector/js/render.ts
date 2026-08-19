@@ -87,7 +87,29 @@ export type RenderedPayload = {
  * ignores this; the point of the rule set is that most do not have to.
  */
 export type RenderRules = {
-  /** The provider's limit per message, or null where it has none. */
+  /**
+   * The provider's limit per message, or `null` where it imposes none.
+   *
+   * **`null` means UNCOUNTED, and it is a real answer** — distinct from "we do
+   * not know", which is not a renderable state at all. A caller that does not
+   * know the limit must find out before rendering, because every alternative
+   * silently produces the wrong bytes.
+   *
+   * ## This must stay RESOLVABLE PER CONNECTION, and never become static
+   *
+   * A Mastodon instance's character limit comes from the server it is running:
+   * one instance allows 500, another 5000, and the same connector talks to
+   * both. Baking the limit into the connector breaks in the quietest way
+   * available — rendering to 500 on an instance that allows 5000 wastes most of
+   * a post, and rendering to 5000 on one that allows 500 produces a refusal the
+   * author cannot see coming from the preview.
+   *
+   * So the limit is resolved by the CALLER, from the connection, and passed IN
+   * — which is also what makes it part of what was approved rather than
+   * something decided later behind the approver's back. `withResolvedLimit()`
+   * is the supported way to do that, and a test pins that per-call rules beat
+   * declared ones.
+   */
   limit: number | null;
   unit: TextUnit;
   /**
@@ -322,4 +344,20 @@ export async function payloadHash(payload: RenderedPayload): Promise<string> {
  */
 export function isEmptyPayload(payload: RenderedPayload): boolean {
   return payload.segments.every((segment) => segment.text.trim() === "");
+}
+
+/**
+ * Apply a per-connection limit over a connector's declared rules.
+ *
+ * The one supported way to do the thing `RenderRules.limit` insists on: a
+ * Mastodon instance publishes its own `max_toot_chars`, a Discord webhook does
+ * not, and the same connector serves both. Resolving happens at the call site,
+ * with the connection in hand, and the resolved value travels INTO `render` so
+ * it is part of the payload the approver saw.
+ *
+ * `undefined` keeps whatever the connector declared — "I did not look" is not
+ * the same as "there is no limit", and only the second is `null`.
+ */
+export function withResolvedLimit(rules: RenderRules, limit: number | null | undefined): RenderRules {
+  return limit === undefined ? rules : { ...rules, limit };
 }

@@ -116,13 +116,8 @@ final class ConnectionHost
         // to be configured — otherwise the same mistake produces two different
         // errors depending on unrelated state, and the more useful one is the
         // one you never see.
-        if ($requested === Mode::Sandbox && $sandbox === SandboxKind::None) {
-            throw new ConnectorModeException(
-                "{$service} has no sandbox estate, so \"sandbox\" cannot be honoured. "
-                .'Use "fake" to develop without credentials, or "live" to talk to the provider.',
-                $service,
-                $operation,
-            );
+        if ($requested === Mode::Sandbox && ! $sandbox->isSelectable()) {
+            throw new ConnectorModeException($sandbox->refusal($service), $service, $operation);
         }
 
         $id = trim((string) ($config['connection'] ?? '')) ?: $service;

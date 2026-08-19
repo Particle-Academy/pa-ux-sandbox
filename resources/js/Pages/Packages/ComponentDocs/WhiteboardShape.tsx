@@ -1,6 +1,7 @@
 import type { ComponentDoc } from "./types";
 import { useState } from "react";
 import { Shape, type ShapeItem } from "@particle-academy/fancy-whiteboard";
+import "@particle-academy/fancy-whiteboard/styles.css";
 
 function ShapeDemo({ kind, x }: { kind: "rect" | "rounded-rect" | "ellipse" | "diamond" | "triangle"; x: number }) {
     const [item, setItem] = useState<ShapeItem>({

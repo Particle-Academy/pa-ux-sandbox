@@ -23,6 +23,10 @@ import {
     CurriculumOverview,
 } from "@particle-academy/classroom";
 import { FancyDiff } from "@particle-academy/fancy-diff";
+// Without this the diff loses `[data-fancy-diff-body] { overflow-x: auto }` and
+// long code lines WRAP mid-token instead of scrolling, which destroys the
+// line-for-line correspondence a diff exists to show.
+import "@particle-academy/fancy-diff/styles.css";
 import { EditablePage } from "@particle-academy/fancy-cms-ui/editor";
 // The canonical CMS document the package demos already render, so this screen
 // cannot drift from a shape the editor is known to accept.
@@ -30,13 +34,16 @@ import { CMS_DEMO_DOC } from "../Packages/showcase-fixtures";
 import { CommitHistory, WorkingTree } from "@particle-academy/fancy-git-ui";
 import "@particle-academy/fancy-git-ui/styles.css";
 import { PasskeyStatus } from "@particle-academy/fancy-passkeys-ui";
+import "@particle-academy/fancy-passkeys-ui/styles.css";
 import { AgentCursor, ShareControls } from "@particle-academy/agent-integrations";
+import "@particle-academy/agent-integrations/styles.css";
 import { LlmsTxtEditor, RobotsEditor } from "@particle-academy/fancy-x-files-ui";
 import { FlowViewer } from "@particle-academy/fancy-flow";
 // Verified fixtures, already used by the package demos -- so these screens
 // cannot drift from the shapes the components are known to accept.
 import { GIT_COMMITS, GIT_STATUS } from "../Packages/gitFixtures";
 import { Board, StickyNote as BoardStickyNote } from "@particle-academy/fancy-whiteboard";
+import "@particle-academy/fancy-whiteboard/styles.css";
 import { PricingTable } from "../../components/fancy/catalog-fms";
 // The classroom fixtures already exist and are already exported for the package
 // preview tiles. Reusing them means these screens cannot drift from the shapes
@@ -635,6 +642,11 @@ function PasskeySurface() {
  */
 const Spreadsheet = clientOnly(async () => {
     const { SheetWorkbook, createEmptyWorkbook } = await import("@particle-academy/fancy-sheets");
+    // Loaded here rather than at module scope because the component is, and for
+    // the same reason the terminal below imports xterm's CSS in its own loader:
+    // the stylesheet has to travel with the chunk that renders the component,
+    // not with whichever page happened to import it first.
+    await import("@particle-academy/fancy-sheets/styles.css");
 
     const money = { displayFormat: "currency" as const };
     const wb = createEmptyWorkbook();

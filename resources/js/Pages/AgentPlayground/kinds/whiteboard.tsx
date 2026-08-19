@@ -11,6 +11,7 @@ import {
 } from "@particle-academy/fancy-whiteboard";
 import "@particle-academy/fancy-whiteboard/styles.css";
 import { AgentCursor } from "@particle-academy/agent-integrations";
+import "@particle-academy/agent-integrations/styles.css";
 import { registerWhiteboardBridge } from "@particle-academy/agent-integrations/bridges/whiteboard";
 import type { KindModule, SurfaceProps, KindBridgeContext } from "./types";
 

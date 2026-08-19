@@ -1,5 +1,6 @@
 import type { ComponentDoc } from "./types";
 import { SheetWorkbook, createEmptyWorkbook } from "@particle-academy/fancy-sheets";
+import "@particle-academy/fancy-sheets/styles.css";
 import { useState } from "react";
 
 function SheetDemo() {

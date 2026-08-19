@@ -32,6 +32,7 @@ import {
     AgentPanel,
     type AgentActivity,
 } from "@particle-academy/agent-integrations";
+import "@particle-academy/agent-integrations/styles.css";
 import { ArrowLeft, ArrowUpRight, Pause, Play, SkipForward } from "lucide-react";
 import type { Style } from "../../types";
 

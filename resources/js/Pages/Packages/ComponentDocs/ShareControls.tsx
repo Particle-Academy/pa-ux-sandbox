@@ -1,5 +1,6 @@
 import type { ComponentDoc } from "./types";
 import { ShareControls } from "@particle-academy/agent-integrations";
+import "@particle-academy/agent-integrations/styles.css";
 import { useState } from "react";
 
 function ShareControlsDemo() {

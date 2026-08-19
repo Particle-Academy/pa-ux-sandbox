@@ -1,5 +1,6 @@
 import type { ComponentDoc } from "./types";
 import { Cursor, CursorLayer } from "@particle-academy/fancy-whiteboard";
+import "@particle-academy/fancy-whiteboard/styles.css";
 
 const cursors = [
     { userId: "u1", name: "Glenn", color: "#8b5cf6", x: 80, y: 40 },

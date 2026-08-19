@@ -1,5 +1,6 @@
 import type { ComponentDoc } from "./types";
 import { AgentPanel } from "@particle-academy/agent-integrations";
+import "@particle-academy/agent-integrations/styles.css";
 
 const sampleActivity = [
     { id: "1", at: Date.now() - 60_000, kind: "info" as const, source: "Researcher", text: "Connected to the workspace." },

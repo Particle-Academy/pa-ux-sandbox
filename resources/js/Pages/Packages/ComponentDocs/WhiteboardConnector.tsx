@@ -1,5 +1,6 @@
 import type { ComponentDoc } from "./types";
 import { Connector } from "@particle-academy/fancy-whiteboard";
+import "@particle-academy/fancy-whiteboard/styles.css";
 
 export const whiteboardConnectorDoc: ComponentDoc = {
     intro: (

@@ -1,6 +1,7 @@
 import type { ComponentDoc } from "./types";
 import { useState } from "react";
 import { Drawing } from "@particle-academy/fancy-whiteboard";
+import "@particle-academy/fancy-whiteboard/styles.css";
 
 type Stroke = { id: string; points: { x: number; y: number }[]; color: string; size: number };
 

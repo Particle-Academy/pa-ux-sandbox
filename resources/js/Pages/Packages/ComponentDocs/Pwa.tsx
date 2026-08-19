@@ -5,6 +5,7 @@ import {
     useInstallPrompt,
     useOnline,
 } from "@particle-academy/fancy-pwa";
+import "@particle-academy/fancy-pwa/styles.css";
 
 /**
  * Contained, SEO-safe fancy-pwa demo.

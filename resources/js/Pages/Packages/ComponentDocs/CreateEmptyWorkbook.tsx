@@ -20,6 +20,7 @@ export const createEmptyWorkbookDoc: ComponentDoc = {
                 </Text>
             ),
             code: `import { SheetWorkbook, createEmptyWorkbook } from "@particle-academy/fancy-sheets";
+import "@particle-academy/fancy-sheets/styles.css";
 
 const [workbook, setWorkbook] = useState(() => {
     const wb = createEmptyWorkbook();

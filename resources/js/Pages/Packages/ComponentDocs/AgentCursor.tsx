@@ -1,5 +1,6 @@
 import type { ComponentDoc } from "./types";
 import { AgentCursor } from "@particle-academy/agent-integrations";
+import "@particle-academy/agent-integrations/styles.css";
 
 export const agentCursorDoc: ComponentDoc = {
     intro: (

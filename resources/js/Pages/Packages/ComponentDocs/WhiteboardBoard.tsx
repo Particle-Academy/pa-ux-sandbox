@@ -1,5 +1,6 @@
 import type { ComponentDoc } from "./types";
 import { Board, StickyNote, type StickyNoteItem} from "@particle-academy/fancy-whiteboard";
+import "@particle-academy/fancy-whiteboard/styles.css";
 import { useState } from "react";
 
 function BoardDemo() {

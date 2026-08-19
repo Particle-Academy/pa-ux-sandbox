@@ -18,7 +18,9 @@ import "@particle-academy/fancy-git-ui/styles.css";
 // to the whiteboard's board item. Aliased rather than renamed so each tile
 // still shows the component its own package ships.
 import { FancyDiff } from "@particle-academy/fancy-diff";
+import "@particle-academy/fancy-diff/styles.css";
 import { AgentCursor, ShareControls } from "@particle-academy/agent-integrations";
+import "@particle-academy/agent-integrations/styles.css";
 import { MotionStage, TimelineDock } from "@particle-academy/fancy-motion/react";
 import { Screen, ScreenSystem } from "@particle-academy/fancy-screens";
 // A VENDORED block, not an npm package — its source lives in this app, which is
@@ -33,6 +35,7 @@ import {
     Shape as BoardShape,
     StickyNote as BoardStickyNote,
 } from "@particle-academy/fancy-whiteboard";
+import "@particle-academy/fancy-whiteboard/styles.css";
 import {
     BranchPicker,
     CommitComposer,
@@ -134,6 +137,7 @@ import { CertificateView, CoursePlayer, CurriculumOverview, LessonView, Question
 import { ApplicationList, ApplyForm, EmployerJobList, JobBoard, JobDetail, JobPostingForm } from "@particle-academy/job-board";
 import { ChatTranscript, MessageComposer, PlanReview, TeachersAidChat } from "@particle-academy/teachers-aid-ui";
 import { InstallBanner, OfflineBanner } from "@particle-academy/fancy-pwa";
+import "@particle-academy/fancy-pwa/styles.css";
 import { PasskeyStatus } from "@particle-academy/fancy-passkeys-ui";
 import "@particle-academy/fancy-passkeys-ui/styles.css";
 

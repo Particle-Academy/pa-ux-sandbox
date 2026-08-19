@@ -77,7 +77,7 @@ class FirstPartyNodeSource
         foreach ($this->all() as $slug => $node) {
             $manifest = $node['manifest'];
 
-            $entries[] = [
+            $entries[] = array_merge([
                 'kind' => $manifest['kind'],
                 'name' => $manifest['name'],
                 'title' => $manifest['title'] ?? $manifest['kind'],
@@ -86,7 +86,7 @@ class FirstPartyNodeSource
                 'runtimes' => array_keys((array) ($manifest['runtimes'] ?? [])),
                 'verified' => true,
                 'url' => "/r/nodes/{$slug}.json",
-            ];
+            ], ConnectorFacet::from($manifest));
         }
 
         usort($entries, fn (array $a, array $b) => [$a['category'], $a['kind']] <=> [$b['category'], $b['kind']]);

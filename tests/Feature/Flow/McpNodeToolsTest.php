@@ -59,7 +59,12 @@ it('has first-party nodes to test against', function () {
 });
 
 it('list_nodes returns the first-party nodes, not an empty marketplace', function () {
-    $response = app(ListNodes::class)->handle(new Request([]));
+    // `connectors: include` asks for the WHOLE registry. Vendor connector nodes
+    // are hidden from the default listing so the core vocabulary stays legible
+    // (see `ConnectorListingTest`), and this test is about a different failure:
+    // the marketplace reading as empty when it is not. Asking for everything is
+    // what keeps it testing that, rather than quietly testing the filter.
+    $response = app(ListNodes::class)->handle(new Request(['connectors' => 'include']));
     $body = mcpBody($response);
 
     $kinds = collect($body['items'] ?? [])->pluck('kind')->all();
@@ -70,6 +75,21 @@ it('list_nodes returns the first-party nodes, not an empty marketplace', functio
     }
     // The "nothing published yet" note is the exact string an agent acted on.
     expect($body['note'] ?? '')->not->toContain('No marketplace nodes are published yet');
+});
+
+it('the DEFAULT listing is never empty either, and says what it withheld', function () {
+    // The half of the original bug that the filter could re-create: an agent
+    // calling list_nodes with no arguments must still see a marketplace, and
+    // must be told anything was held back.
+    $body = mcpBody(app(ListNodes::class)->handle(new Request([])));
+
+    expect($body['count'] ?? 0)->toBeGreaterThan(0);
+    expect($body['note'] ?? '')->not->toContain('No marketplace nodes are published yet');
+
+    if (($body['connectorsHidden'] ?? 0) > 0) {
+        expect($body['note'])->toContain('connector');
+        expect($body['services'] ?? [])->not->toBeEmpty();
+    }
 });
 
 it('search_nodes can find a first-party node', function () {
@@ -187,10 +207,16 @@ it('offers each fancy dependency the install route matching the runtime', functi
 it('the MCP and the HTTP registry agree on what is published', function () {
     // The actual invariant. Two surfaces reading two sources is how this
     // diverged twice; asserting them equal is what stops a third time.
+    //
+    // The two surfaces now DEFAULT differently — the MCP hides vendor
+    // connectors so an agent browsing sees the core vocabulary, the HTTP index
+    // includes them because `fancy-cli add node` resolves a kind's URL through
+    // it. That is a difference in defaults, and it must never become a
+    // difference in CONTENTS, so both sides are asked for everything here.
     $http = collect(json_decode($this->get('/r/nodes/index.json')->getContent(), true)['items'] ?? [])
         ->pluck('kind')->sort()->values()->all();
 
-    $response = app(ListNodes::class)->handle(new Request([]));
+    $response = app(ListNodes::class)->handle(new Request(['connectors' => 'include']));
     $mcp = collect(mcpBody($response)['items'] ?? [])
         ->pluck('kind')->sort()->values()->all();
 

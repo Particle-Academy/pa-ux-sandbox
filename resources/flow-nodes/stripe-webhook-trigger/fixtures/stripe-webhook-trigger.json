@@ -1,0 +1,100 @@
+{
+  "kind": "@particle-academy/stripe_webhook_trigger",
+  "cases": [
+    {
+      "name": "emits a sample event in fake mode, so a canvas is runnable before Stripe is wired",
+      "config": {
+        "mode": "fake",
+        "sample": "payment_intent.succeeded"
+      },
+      "ports": [
+        "out",
+        "ignored"
+      ],
+      "expect": {
+        "ports": [
+          "out"
+        ]
+      }
+    },
+    {
+      "name": "the sample event is identical on both runtimes",
+      "config": {
+        "mode": "fake",
+        "sample": "charge.refunded"
+      },
+      "ports": [
+        "out",
+        "ignored"
+      ],
+      "expect": {
+        "value": {
+          "id": "evt_fake_ee6a3e099cc2",
+          "object": "event",
+          "type": "charge.refunded",
+          "api_version": "2026-01-01",
+          "created": 1767225600,
+          "livemode": false,
+          "data": {
+            "object": {
+              "id": "ch_fake_c39b3f152b40",
+              "object": "charge",
+              "amount": 2500,
+              "amount_refunded": 2500,
+              "currency": "usd",
+              "status": "succeeded",
+              "refunded": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "a delivery whose type is not configured settles on the ignored port instead of failing the run",
+      "config": {
+        "mode": "fake",
+        "sample": "charge.refunded",
+        "eventTypes": "payment_intent.succeeded"
+      },
+      "ports": [
+        "out",
+        "ignored"
+      ],
+      "expect": {
+        "ports": [
+          "ignored"
+        ]
+      }
+    },
+    {
+      "name": "a configured type still routes to out",
+      "config": {
+        "mode": "fake",
+        "sample": "checkout.session.completed",
+        "eventTypes": "checkout.session.completed, charge.refunded"
+      },
+      "ports": [
+        "out",
+        "ignored"
+      ],
+      "expect": {
+        "ports": [
+          "out"
+        ]
+      }
+    },
+    {
+      "name": "refuses to invent an event when the connection is live and nothing was delivered",
+      "config": {
+        "mode": "live"
+      },
+      "ports": [
+        "out",
+        "ignored"
+      ],
+      "expect": {
+        "error": "no \"stripe\" connection is registered"
+      }
+    }
+  ]
+}

@@ -1,0 +1,100 @@
+{
+  "schemaVersion": 1,
+  "name": "particle-academy/fancy-flow-nodes",
+  "kind": "@particle-academy/stripe_webhook_trigger",
+  "aliases": [
+    "stripe_webhook_trigger"
+  ],
+  "configVersion": 1,
+  "title": "Stripe event",
+  "category": "trigger",
+  "description": "Start a run when Stripe reports an event (verified webhook delivery).",
+  "connector": {
+    "service": "stripe",
+    "serviceTitle": "Stripe",
+    "domain": "payments",
+    "role": "trigger",
+    "operation": "webhook",
+    "auth": "api_key",
+    "sandbox": "credential",
+    "environments": [
+      "fake",
+      "sandbox",
+      "live"
+    ],
+    "delivery": "webhook",
+    "verification": "hmac-sha256",
+    "setup": "Add an endpoint in the Stripe dashboard (or via POST /v1/webhook_endpoints) pointing at the route your host mounts for this trigger, then put the endpoint's signing secret on the connection as `webhookSecret`.",
+    "docs": "https://docs.stripe.com/webhooks"
+  },
+  "outputShape": [
+    {
+      "path": "id",
+      "type": "string",
+      "description": "Event id (evt_…). Use it to deduplicate redeliveries."
+    },
+    {
+      "path": "type",
+      "type": "string",
+      "description": "Event type — payment_intent.succeeded, charge.refunded, …"
+    },
+    {
+      "path": "created",
+      "type": "number",
+      "description": "Unix timestamp the event was created."
+    },
+    {
+      "path": "livemode",
+      "type": "boolean",
+      "description": "FALSE for events from Stripe's test estate. Branch on it before acting on money."
+    },
+    {
+      "path": "data.object.id",
+      "type": "string",
+      "description": "The id of the object the event is about."
+    },
+    {
+      "path": "data.object.object",
+      "type": "string",
+      "description": "Its type — payment_intent, charge, …"
+    },
+    {
+      "path": "data.object.amount",
+      "type": "number",
+      "description": "Amount, on the objects that carry one."
+    },
+    {
+      "path": "data.object.currency",
+      "type": "string",
+      "description": "Currency, on the objects that carry one."
+    },
+    {
+      "path": "data.object.status",
+      "type": "string",
+      "description": "Status, on the objects that carry one."
+    }
+  ],
+  "ui": [
+    "ui"
+  ],
+  "shared": [
+    "_connector",
+    "_stripe"
+  ],
+  "runtimes": {
+    "ts": {
+      "files": [
+        "js"
+      ],
+      "engine": ">=0.44.0"
+    },
+    "php": {
+      "files": [
+        "php"
+      ],
+      "engine": ">=0.16.0"
+    }
+  },
+  "fixtures": "nodes/stripe-webhook-trigger/fixtures/stripe-webhook-trigger.json",
+  "sideEffects": "none"
+}

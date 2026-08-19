@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Showcase;
 
 use App\Http\Controllers\Controller;
 use App\Models\FlowNodePackage;
+use App\Support\Registry\ConnectorFacet;
 use App\Support\Registry\FirstPartyNodeSource;
 use App\Support\Registry\NodeSource;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 /**
  * The public node marketplace registry, read side.
@@ -46,16 +48,36 @@ class NodeRegistryController extends Controller
      * The database wins a kind collision: a moderator's decision has to beat a
      * build artifact, or moderation means nothing.
      */
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
         $rows = FlowNodePackage::query()
             ->listed()
             ->get()
             ->map(fn (FlowNodePackage $p) => $p->toIndexEntry());
 
-        $items = $rows
+        $all = $rows
             ->concat($this->firstParty->indexEntries())
             ->unique('kind')
+            ->values();
+
+        // ## Connectors are INCLUDED here by default, unlike in the MCP
+        //
+        // Deliberately different, because the two surfaces answer different
+        // questions. The MCP is browsed by an agent choosing what to build with,
+        // so a catalogue of vendor nodes buries the twenty-seven kinds that
+        // matter most and it hides them by default. This endpoint is the
+        // machine index the CLI RESOLVES through — `add node <kind>` finds a
+        // node's URL here — so a default that omitted anything would make those
+        // nodes uninstallable while looking exactly like a working registry.
+        //
+        // Both filters are available on both surfaces; only the default differs,
+        // and the difference is pinned by a test.
+        $service = trim((string) $request->query('service', ''));
+        $items = ConnectorFacet::filter(
+            $all,
+            (string) $request->query('connectors', 'include'),
+            $service === '' ? null : $service,
+        )
             ->sortBy([['category', 'asc'], ['kind', 'asc']])
             ->values()
             ->all();
@@ -65,6 +87,9 @@ class NodeRegistryController extends Controller
             'name' => 'fancy-flow-nodes',
             'homepage' => 'https://ui.particle.academy',
             'items' => $items,
+            // The service directory travels with the index so a client can
+            // offer the two-step browse without a second request.
+            'services' => ConnectorFacet::services($all),
         ], 200, self::HEADERS);
     }
 

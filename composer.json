@@ -57,6 +57,14 @@
     "autoload-dev": {
         "psr-4": {
             "Tests\\": "tests/",
+            "FancyFlow\\Nodes\\Connector\\": "resources/flow-nodes/_connector/php/",
+            "FancyFlow\\Nodes\\Stripe\\": "resources/flow-nodes/_stripe/php/",
+            "FancyFlow\\Nodes\\Resend\\": "resources/flow-nodes/_resend/php/",
+            "FancyFlow\\Nodes\\Telegram\\": "resources/flow-nodes/_telegram/php/",
+            "FancyFlow\\Nodes\\StripePaymentIntent\\": "resources/flow-nodes/stripe-payment-intent/php/",
+            "FancyFlow\\Nodes\\StripeWebhookTrigger\\": "resources/flow-nodes/stripe-webhook-trigger/php/",
+            "FancyFlow\\Nodes\\ResendEmailSend\\": "resources/flow-nodes/resend-email-send/php/",
+            "FancyFlow\\Nodes\\TelegramUpdatesTrigger\\": "resources/flow-nodes/telegram-updates-trigger/php/",
             "FancyFlow\\Nodes\\UiEffect\\": "resources/flow-nodes/ui-effect/php/",
             "FancyFlow\\Nodes\\GitPrOpen\\": "resources/flow-nodes/git-pr-open/php/",
             "FancyFlow\\Nodes\\GitPrList\\": "resources/flow-nodes/git-pr-list/php/",

@@ -1,0 +1,82 @@
+{
+  "kind": "@particle-academy/resend_email_send",
+  "cases": [
+    {
+      "name": "sends in fake mode with no credentials and no network",
+      "config": {
+        "mode": "fake",
+        "from": "Team <team@example.test>",
+        "to": "ada@example.test",
+        "subject": "Hello",
+        "text": "Hi there"
+      },
+      "expect": {
+        "ports": [
+          "out"
+        ]
+      }
+    },
+    {
+      "name": "splits a comma-separated recipient list",
+      "config": {
+        "mode": "fake",
+        "from": "Team <team@example.test>",
+        "to": "ada@example.test, grace@example.test",
+        "subject": "Hello",
+        "text": "Hi there"
+      },
+      "expect": {
+        "ports": [
+          "out"
+        ]
+      }
+    },
+    {
+      "name": "refuses an email with no body rather than letting Resend reject it",
+      "config": {
+        "mode": "fake",
+        "from": "Team <team@example.test>",
+        "to": "ada@example.test",
+        "subject": "Hello"
+      },
+      "expect": {
+        "error": "an empty email is never intended"
+      }
+    },
+    {
+      "name": "refuses with no recipient",
+      "config": {
+        "mode": "fake",
+        "from": "Team <team@example.test>",
+        "text": "Hi"
+      },
+      "expect": {
+        "error": "at least one \"to\" address"
+      }
+    },
+    {
+      "name": "cannot be asked for a sandbox that does not exist",
+      "config": {
+        "mode": "sandbox",
+        "from": "Team <team@example.test>",
+        "to": "ada@example.test",
+        "text": "Hi"
+      },
+      "expect": {
+        "error": "has no sandbox estate"
+      }
+    },
+    {
+      "name": "refuses live mode when no connection is registered",
+      "config": {
+        "mode": "live",
+        "from": "Team <team@example.test>",
+        "to": "ada@example.test",
+        "text": "Hi"
+      },
+      "expect": {
+        "error": "no \"resend\" connection is registered"
+      }
+    }
+  ]
+}

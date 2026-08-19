@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\Registry\ConnectorFacet;
 use FancyFlow\Marketplace\NodeManifest;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -127,7 +128,12 @@ class FlowNodePackage extends Model
     /** The shape the public index serves, and what `list_nodes` returns. */
     public function toIndexEntry(): array
     {
-        return [
+        // The connector facet is read from the MANIFEST, not from a column.
+        // A third-party submission declares it the same way a first-party node
+        // does, and deriving it in one place is what keeps the two sources of
+        // the index answering the same question — the divergence this registry
+        // has already shipped twice.
+        return array_merge([
             'kind' => $this->kind,
             'name' => $this->name,
             'title' => $this->title,
@@ -136,7 +142,7 @@ class FlowNodePackage extends Model
             'runtimes' => $this->runtimes ?? [],
             'verified' => (bool) $this->verified,
             'url' => "/r/nodes/{$this->slug()}.json",
-        ];
+        ], ConnectorFacet::from($this->manifest ?? []));
     }
 
     /**

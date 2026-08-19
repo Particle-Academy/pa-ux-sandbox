@@ -70,4 +70,55 @@ describe.each(dirs)("%s", (dir) => {
     expect(existsSync(runnable), `${dir}/js/kind.ts missing`).toBe(true);
     expect(readFileSync(runnable, "utf8")).toContain("executor:");
   });
+
+  it("declares every shared directory it reaches into", () => {
+    // A connector node imports the shared runtime with `../../_connector/…`.
+    // That path resolves here because the whole marketplace is on disk; in a
+    // consumer's project it resolves only if the registry ALSO copied that
+    // directory, which happens only because the manifest named it in `shared`.
+    //
+    // Miss the declaration and the node installs cleanly, looks complete in the
+    // file list, and fails at the consumer's first build with a module that is
+    // not there. Exactly the shape of the PSR-4 bug the Moic Suite hit.
+    const declared: string[] = manifest.shared ?? [];
+    const parts = [
+      ...(manifest.ui ?? []),
+      ...Object.values(manifest.runtimes ?? {}).flatMap((r: any) => r.files ?? []),
+    ];
+
+    for (const part of new Set<string>(parts as string[])) {
+      const dirPath = resolve(node, part);
+      if (!existsSync(dirPath)) continue;
+
+      for (const file of readdirSync(dirPath).filter((f) => /\.(ts|tsx)$/.test(f))) {
+        const src = readFileSync(resolve(dirPath, file), "utf8");
+        for (const [, target] of src.matchAll(/from "\.\.\/\.\.\/(_[a-z0-9-]+)\//g)) {
+          expect(declared, `${dir}/${part}/${file} imports ${target}`).toContain(target);
+        }
+      }
+
+      for (const file of readdirSync(dirPath).filter((f) => f.endsWith(".php"))) {
+        const src = readFileSync(resolve(dirPath, file), "utf8");
+        for (const [, ns] of src.matchAll(/^use FancyFlow\\Nodes\\(\w+)\\/gm)) {
+          // A node's own namespace is itself; anything else must be a declared
+          // shared root, spelled as its directory.
+          const own = dir.split(/[-_]/).map((s) => s[0].toUpperCase() + s.slice(1)).join("");
+          if (ns === own) continue;
+
+          const asDirectory = "_" + ns.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
+          expect(declared, `${dir}/${part}/${file} uses FancyFlow\Nodes\${ns}`).toContain(asDirectory);
+        }
+      }
+    }
+  });
+
+  it("keeps its shared directories out of the node's own tree", () => {
+    // A shared root is a SIBLING of the node once vendored, never a child. The
+    // relative depth is what makes `../../_connector/js/mode` resolve after the
+    // copy as well as before it.
+    for (const shared of manifest.shared ?? []) {
+      expect(shared).toMatch(/^_[a-z0-9-]+$/);
+      expect(existsSync(resolve(NODES, shared)), `${shared} is declared but not on disk`).toBe(true);
+    }
+  });
 });

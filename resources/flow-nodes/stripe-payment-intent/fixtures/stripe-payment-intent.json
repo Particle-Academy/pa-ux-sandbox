@@ -1,0 +1,76 @@
+{
+  "kind": "@particle-academy/stripe_payment_intent",
+  "cases": [
+    {
+      "name": "takes a payment in fake mode with no credentials at all",
+      "config": {
+        "mode": "fake",
+        "amount": 2500,
+        "currency": "usd",
+        "description": "Order 7"
+      },
+      "expect": {
+        "ports": [
+          "out"
+        ]
+      }
+    },
+    {
+      "name": "emits the same faked payload on both runtimes",
+      "config": {
+        "mode": "fake",
+        "amount": 2500,
+        "currency": "usd"
+      },
+      "expect": {
+        "value": {
+          "data": {
+            "id": "pi_fake_7b39cc5814ef",
+            "object": "payment_intent",
+            "amount": 2500,
+            "amount_received": 2500,
+            "currency": "usd",
+            "customer": null,
+            "description": null,
+            "status": "succeeded",
+            "livemode": false,
+            "created": 1767225600,
+            "latest_charge": "ch_fake_542963047172",
+            "receipt_email": null
+          },
+          "mode": "fake",
+          "connection": "stripe"
+        }
+      }
+    },
+    {
+      "name": "refuses a fractional amount rather than letting Stripe reject it",
+      "config": {
+        "mode": "fake",
+        "amount": 25.5
+      },
+      "expect": {
+        "error": "smallest"
+      }
+    },
+    {
+      "name": "refuses a missing amount",
+      "config": {
+        "mode": "fake"
+      },
+      "expect": {
+        "error": "must be a positive whole number"
+      }
+    },
+    {
+      "name": "refuses live mode when no connection is registered",
+      "config": {
+        "mode": "live",
+        "amount": 2500
+      },
+      "expect": {
+        "error": "no \"stripe\" connection is registered"
+      }
+    }
+  ]
+}

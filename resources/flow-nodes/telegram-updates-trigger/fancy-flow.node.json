@@ -1,0 +1,96 @@
+{
+  "schemaVersion": 1,
+  "name": "particle-academy/fancy-flow-nodes",
+  "kind": "@particle-academy/telegram_updates_trigger",
+  "aliases": [
+    "telegram_updates_trigger"
+  ],
+  "configVersion": 1,
+  "title": "Telegram message",
+  "category": "trigger",
+  "description": "Start a run when a Telegram bot receives an update (long polling, not a webhook).",
+  "connector": {
+    "service": "telegram",
+    "serviceTitle": "Telegram",
+    "domain": "messaging",
+    "role": "trigger",
+    "operation": "get_updates",
+    "auth": "token_in_path",
+    "sandbox": "separate-account",
+    "environments": [
+      "fake",
+      "sandbox",
+      "live"
+    ],
+    "delivery": "poll",
+    "minPollSeconds": 1,
+    "setup": "The host polls getUpdates on a schedule and persists the `offset` cursor between calls — Telegram queues nothing once you have acknowledged it. getUpdates and setWebhook are mutually exclusive for a bot, so do not also register a webhook for the same token.",
+    "sandboxNote": "Telegram's test environment needs a NEW account created inside it and a NEW bot registered there; it is reached with a `/test` path segment after the bot token. Flood limits are not relaxed.",
+    "docs": "https://core.telegram.org/bots/api#getupdates"
+  },
+  "outputShape": [
+    {
+      "path": "mode",
+      "type": "string",
+      "description": "Which estate this ran against: fake, sandbox or live."
+    },
+    {
+      "path": "cursor",
+      "type": "number",
+      "description": "The next `offset` to poll with. The host must persist it."
+    },
+    {
+      "path": "count",
+      "type": "number",
+      "description": "How many updates this poll returned."
+    },
+    {
+      "path": "updates",
+      "type": "array",
+      "description": "The raw update envelopes, newest last."
+    },
+    {
+      "path": "update.update_id",
+      "type": "number",
+      "description": "Id of the first update in this batch."
+    },
+    {
+      "path": "update.message.text",
+      "type": "string",
+      "description": "Message text, when the update is a message."
+    },
+    {
+      "path": "update.message.chat.id",
+      "type": "number",
+      "description": "Chat to reply into."
+    },
+    {
+      "path": "update.message.from.username",
+      "type": "string",
+      "description": "Who sent it."
+    }
+  ],
+  "ui": [
+    "ui"
+  ],
+  "shared": [
+    "_connector",
+    "_telegram"
+  ],
+  "runtimes": {
+    "ts": {
+      "files": [
+        "js"
+      ],
+      "engine": ">=0.44.0"
+    },
+    "php": {
+      "files": [
+        "php"
+      ],
+      "engine": ">=0.16.0"
+    }
+  },
+  "fixtures": "nodes/telegram-updates-trigger/fixtures/telegram-updates-trigger.json",
+  "sideEffects": "none"
+}

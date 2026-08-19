@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "name": "particle-academy/fancy-flow-nodes",
+  "kind": "@particle-academy/resend_email_send",
+  "aliases": [
+    "resend_email_send"
+  ],
+  "configVersion": 1,
+  "title": "Send email",
+  "category": "io",
+  "description": "Send an email through Resend.",
+  "connector": {
+    "service": "resend",
+    "serviceTitle": "Resend",
+    "domain": "email",
+    "role": "action",
+    "operation": "email_send",
+    "auth": "api_key",
+    "sandbox": "none",
+    "environments": [
+      "fake",
+      "live"
+    ],
+    "sandboxNote": "Resend has NO test estate. Its simulator recipients (delivered@resend.dev, …) are live sends that are billed and counted — modelling them as a sandbox would put a real send behind a control labelled test.",
+    "docs": "https://resend.com/docs/api-reference/emails/send-email"
+  },
+  "outputShape": [
+    {
+      "path": "mode",
+      "type": "string",
+      "description": "Which estate this ran against: fake or live."
+    },
+    {
+      "path": "connection",
+      "type": "string",
+      "description": "The connection id that was used."
+    },
+    {
+      "path": "data.id",
+      "type": "string",
+      "description": "Resend's id for the email. Use it to look the send up."
+    },
+    {
+      "path": "data.to",
+      "type": "array",
+      "description": "The recipients it was sent to."
+    },
+    {
+      "path": "data.subject",
+      "type": "string",
+      "description": "The subject line as sent."
+    }
+  ],
+  "ui": [
+    "ui"
+  ],
+  "shared": [
+    "_connector",
+    "_resend"
+  ],
+  "runtimes": {
+    "ts": {
+      "files": [
+        "js"
+      ],
+      "engine": ">=0.44.0"
+    },
+    "php": {
+      "files": [
+        "php"
+      ],
+      "engine": ">=0.16.0"
+    }
+  },
+  "fixtures": "nodes/resend-email-send/fixtures/resend-email-send.json",
+  "sideEffects": "idempotent"
+}

@@ -1,0 +1,99 @@
+{
+  "kind": "@particle-academy/telegram_updates_trigger",
+  "cases": [
+    {
+      "name": "polls in fake mode with no bot and no network",
+      "config": {
+        "mode": "fake",
+        "limit": 100,
+        "sampleText": "hello from the faker"
+      },
+      "ports": [
+        "out",
+        "empty"
+      ],
+      "expect": {
+        "ports": [
+          "out"
+        ]
+      }
+    },
+    {
+      "name": "the faked update envelope is identical on both runtimes",
+      "config": {
+        "mode": "fake",
+        "limit": 100,
+        "sampleText": "ship it"
+      },
+      "ports": [
+        "out",
+        "empty"
+      ],
+      "expect": {
+        "value": {
+          "mode": "fake",
+          "connection": "telegram",
+          "cursor": 844179,
+          "count": 1,
+          "updates": [
+            {
+              "update_id": 844178,
+              "message": {
+                "message_id": 5561,
+                "date": 1767225600,
+                "text": "ship it",
+                "chat": {
+                  "id": 663440491,
+                  "type": "private",
+                  "first_name": "Ada",
+                  "username": "ada_example"
+                },
+                "from": {
+                  "id": 663440491,
+                  "is_bot": false,
+                  "first_name": "Ada",
+                  "username": "ada_example",
+                  "language_code": "en"
+                }
+              }
+            }
+          ],
+          "update": {
+            "update_id": 844178,
+            "message": {
+              "message_id": 5561,
+              "date": 1767225600,
+              "text": "ship it",
+              "chat": {
+                "id": 663440491,
+                "type": "private",
+                "first_name": "Ada",
+                "username": "ada_example"
+              },
+              "from": {
+                "id": 663440491,
+                "is_bot": false,
+                "first_name": "Ada",
+                "username": "ada_example",
+                "language_code": "en"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "refuses live mode when no connection is registered",
+      "config": {
+        "mode": "live"
+      },
+      "ports": [
+        "out",
+        "empty"
+      ],
+      "expect": {
+        "error": "no \"telegram\" connection is registered"
+      }
+    }
+  ]
+}

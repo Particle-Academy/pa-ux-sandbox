@@ -8,6 +8,7 @@ use App\Mcp\Tools\GetComponent;
 use App\Mcp\Tools\GetNode;
 use App\Mcp\Tools\InstallInstructions;
 use App\Mcp\Tools\ListComponents;
+use App\Mcp\Tools\ListConnectorServices;
 use App\Mcp\Tools\ListNodes;
 use App\Mcp\Tools\NodeInstallInstructions;
 use App\Mcp\Tools\RegisterShowcaseProject;
@@ -79,6 +80,25 @@ Two places a node can come from, and they are NOT the same:
    `search_nodes` / `get_node` / `node_install_instructions` cover. It may well
    be empty; that is not an error.
 
+VENDOR CONNECTORS are a THIRD thing, and they are hidden by default. Nodes that
+talk to a third-party service (Stripe, Slack, Telegram, …) are excluded from
+`list_nodes` and `search_nodes` unless you ask for them, because the catalogue
+is unbounded and would otherwise bury the core vocabulary. Browse them in two
+steps, the way you would pick an integration anywhere else:
+1. `list_connector_services` — which services exist, by domain, with trigger
+   and action counts.
+2. `list_nodes` with `service: "stripe"` — that service's triggers and actions.
+`search_nodes` matches service names too and ALWAYS reports how many connector
+nodes matched even while hiding them, so a search never dead-ends. Pass
+`connectors: "include"` (or `"only"`) anywhere you want them inline.
+
+Every connector runs in one of three ENVIRONMENTS, set by its `mode` field:
+`fake` (the node's own faker — no credentials, no network, and the default on a
+local project whose connection is unconfigured), `sandbox` (the provider's test
+estate, where it has one), and `live`. `auto` follows the environment; setting
+it explicitly overrides that everywhere, including in production. Credentials
+never live in the graph — a node stores a CONNECTION id and the host resolves it.
+
 A node is installed once PER RUNTIME the project executes on. A node installed
 only for TS is invisible to a PHP runner, and the graph fails at that node with
 nothing visible beforehand — so prefer `npx fancy-cli@latest add node <kind>`, which
@@ -144,6 +164,7 @@ class FancyUiRegistry extends Server
         RescanShowcaseProject::class,
         ListNodes::class,
         SearchNodes::class,
+        ListConnectorServices::class,
         GetNode::class,
         NodeInstallInstructions::class,
     ];

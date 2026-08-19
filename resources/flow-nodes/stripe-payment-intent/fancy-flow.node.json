@@ -1,0 +1,97 @@
+{
+  "schemaVersion": 1,
+  "name": "particle-academy/fancy-flow-nodes",
+  "kind": "@particle-academy/stripe_payment_intent",
+  "aliases": [
+    "stripe_payment_intent"
+  ],
+  "configVersion": 1,
+  "title": "Stripe payment",
+  "category": "io",
+  "description": "Create a Stripe PaymentIntent — take a payment.",
+  "connector": {
+    "service": "stripe",
+    "serviceTitle": "Stripe",
+    "domain": "payments",
+    "role": "action",
+    "operation": "payment_intent_create",
+    "auth": "api_key",
+    "sandbox": "credential",
+    "environments": [
+      "fake",
+      "sandbox",
+      "live"
+    ],
+    "docs": "https://docs.stripe.com/api/payment_intents/create"
+  },
+  "outputShape": [
+    {
+      "path": "mode",
+      "type": "string",
+      "description": "Which estate this ran against: fake, sandbox or live."
+    },
+    {
+      "path": "connection",
+      "type": "string",
+      "description": "The connection id that was used."
+    },
+    {
+      "path": "data.id",
+      "type": "string",
+      "description": "Payment intent id (pi_…)."
+    },
+    {
+      "path": "data.status",
+      "type": "string",
+      "description": "succeeded, requires_action, requires_payment_method, …"
+    },
+    {
+      "path": "data.amount",
+      "type": "number",
+      "description": "Amount in the currency's smallest unit."
+    },
+    {
+      "path": "data.currency",
+      "type": "string",
+      "description": "Three-letter ISO currency code."
+    },
+    {
+      "path": "data.customer",
+      "type": "string",
+      "description": "Customer id, when one was given."
+    },
+    {
+      "path": "data.latest_charge",
+      "type": "string",
+      "description": "The charge this intent produced."
+    },
+    {
+      "path": "data.livemode",
+      "type": "boolean",
+      "description": "FALSE for test-mode money. Branch on this before acting on a payment."
+    }
+  ],
+  "ui": [
+    "ui"
+  ],
+  "shared": [
+    "_connector",
+    "_stripe"
+  ],
+  "runtimes": {
+    "ts": {
+      "files": [
+        "js"
+      ],
+      "engine": ">=0.44.0"
+    },
+    "php": {
+      "files": [
+        "php"
+      ],
+      "engine": ">=0.16.0"
+    }
+  },
+  "fixtures": "nodes/stripe-payment-intent/fixtures/stripe-payment-intent.json",
+  "sideEffects": "unsafe-to-replay"
+}

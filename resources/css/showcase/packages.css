@@ -187,7 +187,9 @@ section.pkg-section-head + section.pkg-section-head {
 }
 .pkgs-search { flex: 1 1 16rem; min-width: 12rem; }
 .pkgs-toolbar__grow { flex: 1 1 0; min-width: 0; }
-.pkgs-switch-slot { display: inline-flex; }
+/* MultiSwitch wraps itself in a <Field> when it carries a label, and the
+   sr-only label is out of flow, so the wrapper needs no rhythm of its own. */
+.pkgs-toolbar [data-react-fancy-field] { gap: 0; }
 
 /* MultiSwitch restyle: the primitive draws a segmented pill with a sliding
    indicator; the design wants that indicator in the LANE colour rather than the
@@ -326,19 +328,13 @@ section.pkg-section-head + section.pkg-section-head {
 .pkg-group__count { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--fg-4); }
 .pkg-group__mix { margin-left: auto; display: flex; gap: var(--space-2); flex-wrap: wrap; }
 .pkg-group__blurb { margin-top: var(--space-1); max-width: 46rem; color: var(--fg-3); }
-/* <Grid cols={3}> sets grid-template-columns INLINE, so the `cols` prop has no
-   effect while `responsive` is on (it becomes auto-fit/16rem, which lands 4-up
-   at this page width). The primitive publishes --fancy-grid-cols for exactly
-   this override, but an inline style beats a stylesheet, so reclaiming it needs
-   `!important`. Logged as a react-fancy gap rather than worked around with a
-   hand-rolled grid. */
+/* The 3-up card grid comes from <Grid cols={3}> itself as of react-fancy
+   5.23.0. This used to carry an `!important` media-query override reclaiming
+   --fancy-grid-cols, because `cols` did nothing while `responsive` was on and
+   the property the component published was read by nothing (react-fancy#23).
+   The fix landed upstream, so the workaround is gone — if this grid ever goes
+   4-up again, that is the regression, not a styling problem here. */
 .pkg-grid { margin-top: var(--space-5); }
-@media (min-width: 640px) {
-  .pkg-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
-}
-@media (min-width: 1024px) {
-  .pkg-grid { grid-template-columns: repeat(var(--fancy-grid-cols, 3), minmax(0, 1fr)) !important; }
-}
 
 /* ══════════════════════════════════════════════════════════════════════════
    LISTING — the card (on <Card interactive>)

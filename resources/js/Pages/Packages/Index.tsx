@@ -256,42 +256,39 @@ export default function PackagesIndex({ packages }: { packages: Pkg[] }) {
                     leading={<Icon name="search" size="sm" />}
                 />
                 <span className="pkgs-toolbar__grow" />
-                {/* The lane colour rides on a wrapper, not on <MultiSwitch>:
-                    the primitive spreads its rest props onto the container at
-                    runtime, but MultiSwitchProps extends InputBaseProps only, so
-                    `style` is not in its type. Filed in the concerns log as a
-                    react-fancy gap rather than cast around. */}
-                <span
-                    className="pkgs-switch-slot"
-                    role="group"
-                    aria-label="Filter by basket"
+                {/* react-fancy 5.23.0 (#24, #25): `style` is typeable on
+                    MultiSwitch now, so the lane colour goes on the control
+                    itself instead of a wrapper, and `labelHidden` names the
+                    radiogroup for screen readers without the design having to
+                    draw a label. Both of these were workarounds here until
+                    that release. */}
+                <MultiSwitch
+                    size="sm"
+                    className="pkgs-switch"
+                    label="Filter by basket"
+                    labelHidden
                     style={{ "--acc": basket === "backend" ? BASKETS.backend.cssAccent : BASKETS.ui.cssAccent } as CSSProperties}
-                >
-                    <MultiSwitch
-                        size="sm"
-                        className="pkgs-switch"
-                        value={basket}
-                        onValueChange={(v) => setBasket(v as KindFilter)}
-                        list={[
-                            { value: "all", label: "All kinds" },
-                            { value: "ui", label: "UI" },
-                            { value: "backend", label: "Headless" },
-                        ]}
-                    />
-                </span>
-                <span className="pkgs-switch-slot" role="group" aria-label="Filter by ecosystem">
-                    <MultiSwitch
-                        size="sm"
-                        className="pkgs-switch"
-                        value={eco}
-                        onValueChange={(v) => setEco(v as EcoFilter)}
-                        list={[
-                            { value: "all", label: "All" },
-                            { value: "ts", label: "TypeScript" },
-                            { value: "php", label: "PHP" },
-                        ]}
-                    />
-                </span>
+                    value={basket}
+                    onValueChange={(v) => setBasket(v as KindFilter)}
+                    list={[
+                        { value: "all", label: "All kinds" },
+                        { value: "ui", label: "UI" },
+                        { value: "backend", label: "Headless" },
+                    ]}
+                />
+                <MultiSwitch
+                    size="sm"
+                    className="pkgs-switch"
+                    label="Filter by ecosystem"
+                    labelHidden
+                    value={eco}
+                    onValueChange={(v) => setEco(v as EcoFilter)}
+                    list={[
+                        { value: "all", label: "All" },
+                        { value: "ts", label: "TypeScript" },
+                        { value: "php", label: "PHP" },
+                    ]}
+                />
             </div>
 
             {!filtering && core.map((p) => <StartBand key={p.slug} pkg={p} />)}

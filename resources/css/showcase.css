@@ -142,3 +142,12 @@ pre {
     background-position: 200% center;
   }
 }
+
+/* ── reduced motion ───────────────────────────────────────────────────── */
+/* `.cosmetic-name-rainbow` is doubled to match the specificity it is declared
+   with. The gradient stays — the purchased cosmetic still reads as a rainbow
+   name, it just stops scrolling. */
+@media (prefers-reduced-motion: reduce) {
+  .fancy-fade-in { animation: none; }
+  .cosmetic-name-rainbow.cosmetic-name-rainbow { animation: none; }
+}

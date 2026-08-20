@@ -146,4 +146,9 @@
 @media (prefers-reduced-motion: reduce) {
   .co-browse-trigger-dot[data-state="open"],
   [data-co-browse-dot][data-state="open"] { animation: none; }
+
+  /* Both of these only fade+rise on entry, so stopping the animation leaves
+     them exactly where it would have finished — fully opaque, unoffset. */
+  .co-browse-popover,
+  .co-browse-confirm-backdrop { animation: none; }
 }

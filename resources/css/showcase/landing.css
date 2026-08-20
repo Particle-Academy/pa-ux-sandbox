@@ -1158,3 +1158,18 @@ section.ticker { padding: 0; background: var(--bg-1); }
   /* The bar carries the nav now. */
   .nav-burger { display: none; }
 }
+
+/* ── reduced motion ───────────────────────────────────────────────────── */
+/* Appended at the END deliberately: these selectors are declared LATER in this
+   file than the guard further up, so a rule placed there would lose the
+   cascade to them at equal specificity and silently do nothing.
+
+   `.active-user-pill` is absent on purpose. It is a timed auto-dismiss, and it
+   is handled above by redefining its keyframes — that keeps the 4.2s dismissal
+   while dropping the travel. Switching it off would strand it on screen. */
+@media (prefers-reduced-motion: reduce) {
+  .sticky-note,
+  .sticky-note.highlight,
+  .agent-cursor .label .dot,
+  .activity-row { animation: none; }
+}

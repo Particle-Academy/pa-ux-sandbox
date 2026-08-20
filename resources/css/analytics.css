@@ -195,3 +195,14 @@
   .fancy-analytics .rt-count { font-size: 30px; }
   .fancy-analytics .section.hero-section, .fancy-analytics .section.moat { padding: 16px; }
 }
+
+/* ── reduced motion ───────────────────────────────────────────────────── */
+/* Written as full descendant selectors because the rules above are nested
+   inside `.fancy-analytics`; a bare `.fa-skel` here would lose on specificity.
+   Each stops at a resting state that the running animation also passes
+   through — a static ring, an unshimmered skeleton, a settled row. */
+@media (prefers-reduced-motion: reduce) {
+  .fancy-analytics .rt-pulse::after,
+  .fancy-analytics .fa-skel,
+  .fancy-analytics .fade-in { animation: none; }
+}

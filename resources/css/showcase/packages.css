@@ -1031,3 +1031,10 @@ section.pkg-section-head + section.pkg-section-head {
   .pkg-api__row { grid-template-columns: 1fr; gap: var(--space-1); }
   .pkg-group__mix { margin-left: 0; }
 }
+
+/* ── reduced motion ───────────────────────────────────────────────────── */
+/* A caret that blinks forever. Stopping it leaves the caret fully visible —
+   its natural state, and the more legible of the two. */
+@media (prefers-reduced-motion: reduce) {
+  .mp-caret { animation: none; }
+}

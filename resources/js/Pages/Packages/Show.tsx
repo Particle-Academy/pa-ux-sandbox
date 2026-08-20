@@ -1,6 +1,6 @@
 import { Link } from "@inertiajs/react";
 import { Seo } from "@particle-academy/fancy-inertia/seo";
-import { Badge, Breadcrumbs, Button, Card, Heading, Icon, Text } from "@particle-academy/react-fancy";
+import { Breadcrumbs, Button, Card, Heading, Icon, Text } from "@particle-academy/react-fancy";
 import { useState, type CSSProperties } from "react";
 import { Layout } from "../Layout";
 import { BASKETS, BasketTag, ECO_LABEL, basketOfKind, initials, type Eco } from "./basket";
@@ -20,8 +20,8 @@ import TuiFrame from "./TuiFrame";
  * fold, and a visitor had to read the tagline to find out whether there was
  * anything to look at.
  *
- * Composed from react-fancy (Card / Button / Badge / Heading / Text /
- * Breadcrumbs / Icon), restyled through showcase/packages.css.
+ * Composed from react-fancy (Card / Button / Heading / Text / Breadcrumbs /
+ * Icon, plus Badge via BasketTag), restyled through showcase/packages.css.
  */
 
 type Component = {
@@ -382,7 +382,9 @@ function McpProof({ tools }: { tools: string[] }) {
                 <div className="pkg-mcp__col pkg-mcp__col--human">
                     <div className="pkg-mcp__eyebrow"><Icon name="user" size="xs" /> Human — keystroke</div>
                     <pre className="pkg-mcp__code">
-                        <span className="k">&lt;Table</span>{"\n  rows={rows}\n  onChange={"}<span className="k">setRows</span>{"}\n/&gt;"}
+                        {/* Entities decode in JSX TEXT, not inside a string
+                            expression -- "/&gt;" would render literally. */}
+                        <span className="k">&lt;Table</span>{"\n  rows={rows}\n  onChange={"}<span className="k">setRows</span>{"}\n/>"}
                     </pre>
                 </div>
                 <div className="pkg-mcp__col pkg-mcp__col--agent">

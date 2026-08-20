@@ -41,6 +41,21 @@
   --lane-agent-ink: var(--amber-300);
 }
 
+/* landing.css styles the BARE `section` element globally — `padding: 96px 0`
+   plus a `section + section` rule. These pages use <section> for its landmark
+   semantics, not for that rhythm, and inherited it silently: 96px of dead space
+   above every group and a hairline the design does not draw. Reclaim it here
+   rather than downgrading the markup to <div>, which is what the old page did
+   and is why nobody noticed the global was that greedy. */
+section.pkg-group,
+section.pkg-section-head {
+  padding: 0;
+}
+section.pkg-group + section.pkg-group,
+section.pkg-section-head + section.pkg-section-head {
+  border-top: 0;
+}
+
 /* ══════════════════════════════════════════════════════════════════════════
    LISTING — header
    ══════════════════════════════════════════════════════════════════════════ */
@@ -311,7 +326,19 @@
 .pkg-group__count { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--fg-4); }
 .pkg-group__mix { margin-left: auto; display: flex; gap: var(--space-2); flex-wrap: wrap; }
 .pkg-group__blurb { margin-top: var(--space-1); max-width: 46rem; color: var(--fg-3); }
+/* <Grid cols={3}> sets grid-template-columns INLINE, so the `cols` prop has no
+   effect while `responsive` is on (it becomes auto-fit/16rem, which lands 4-up
+   at this page width). The primitive publishes --fancy-grid-cols for exactly
+   this override, but an inline style beats a stylesheet, so reclaiming it needs
+   `!important`. Logged as a react-fancy gap rather than worked around with a
+   hand-rolled grid. */
 .pkg-grid { margin-top: var(--space-5); }
+@media (min-width: 640px) {
+  .pkg-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+}
+@media (min-width: 1024px) {
+  .pkg-grid { grid-template-columns: repeat(var(--fancy-grid-cols, 3), minmax(0, 1fr)) !important; }
+}
 
 /* ══════════════════════════════════════════════════════════════════════════
    LISTING — the card (on <Card interactive>)

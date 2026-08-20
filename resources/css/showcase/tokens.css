@@ -42,6 +42,16 @@
   --amber-50:#fffbeb; --amber-100:#fef3c7; --amber-300:#fcd34d;
   --amber-500:#f59e0b; --amber-600:#d97706; --amber-700:#b45309;
 
+  /* Teal carries the BACKEND lane on /packages (violet carries UI). It is a
+     ramp, not a one-off hex, because the lane needs a light AND a dark reading
+     of the same hue -- the single literal it replaced could only be right in
+     one theme. */
+  --teal-50:#f0fdfa; --teal-100:#ccfbf1; --teal-200:#99f6e4; --teal-300:#5eead4;
+  --teal-400:#2dd4bf; --teal-500:#14b8a6; --teal-600:#0d9488; --teal-700:#0f766e;
+  --teal-800:#115e59; --teal-900:#134e4a;
+
+  --fuchsia-300:#f0abfc; --fuchsia-400:#e879f9; --fuchsia-500:#d946ef; --fuchsia-600:#c026d3;
+
   --rose-50:#fff1f2; --rose-300:#fda4af; --rose-500:#f43f5e; --rose-600:#e11d48;
 
   --orange-50:#fff7ed; --orange-500:#f97316; --orange-600:#ea580c;

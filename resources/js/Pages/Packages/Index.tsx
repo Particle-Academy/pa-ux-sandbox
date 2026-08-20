@@ -1,12 +1,67 @@
 import { Head, Link } from "@inertiajs/react";
-import { Badge, Icon } from "@particle-academy/react-fancy";
-import { Fragment, useMemo, useState, type CSSProperties, type ReactNode } from "react";
+import {
+    Button,
+    Card,
+    Eyebrow,
+    Grid,
+    Heading,
+    Icon,
+    Input,
+    MultiSwitch,
+    StatList,
+    Text,
+} from "@particle-academy/react-fancy";
+import { useMemo, useState, type CSSProperties } from "react";
 import { Layout } from "../Layout";
+import {
+    BASKETS,
+    BasketTag,
+    ECO_LABEL,
+    LaneChip,
+    Snippet,
+    deScope,
+    initials,
+    type Basket,
+    type Eco,
+} from "./basket";
+import { PkgPreview } from "./PkgPreview";
+
+/**
+ * The /packages listing.
+ *
+ * ── The basket language ─────────────────────────────────────────────────
+ * The redesign's load-bearing device, repeated on every card: a package is
+ * either a UI SURFACE you can look at (violet) or a BACKEND that renders
+ * nothing (teal). The two cards at the top of the page state the split AND act
+ * as the primary filter, so the distinction is a control rather than a caption.
+ * `basket` comes from the server (derived from `kind`) — see PackagesController.
+ *
+ * ── Composition ─────────────────────────────────────────────────────────
+ * Everything here is react-fancy: Card / Button / Badge / Input / MultiSwitch /
+ * Heading / Text / StatList / Eyebrow / Grid / Icon, restyled through
+ * showcase/packages.css. This page is the kit's own catalogue — a hand-rolled
+ * card here would be the page that sells the kit not using it, and the gap it
+ * papers over would never get filed.
+ */
+
+/** One package inside a family card. */
+type Member = {
+    slug: string;
+    name: string;
+    tagline: string;
+    role: string;
+    basket: Basket;
+    language: string;
+    ecosystem: Eco;
+    components_count: number;
+    href: string | null;
+    accent: string;
+};
 
 /**
  * One merged catalog entry — emitted by PackagesController::index(). Every
  * package (UI grid + companions) carries the design classification
- * (group / accent / ecosystem / kind) the listing groups + styles by.
+ * (group / accent / ecosystem / kind / basket) the listing groups + styles by.
  */
 type Pkg = {
     slug: string;
@@ -14,17 +69,22 @@ type Pkg = {
     tagline: string;
     language: string;
     core: boolean;
-    group: "core" | "surfaces" | "documents" | "commerce" | "platform" | "tooling";
+    group: Group;
     accent: string;
-    ecosystem: "ts" | "php" | "py" | "polyglot";
-    kind: "ui" | "bridge" | "headless";
+    ecosystem: Eco;
+    kind: "ui" | "bridge" | "headless" | "block";
+    /** Which lane this listing sits in — "both" only ever for a family. */
+    basket: Basket;
+    /** How many of a family's members are UI surfaces / headless backends. */
+    ui_count: number;
+    backend_count: number;
     components_count: number;
     stars: number | null;
     npm: string | null;
     composer: string | null;
     pypi?: string | null;
     download: string | null;
-    repoUrl: string;
+    repoUrl: string | null;
     npmUrl: string | null;
     packagistUrl: string | null;
     /** True for a consolidated family card (related packages shown as one). */
@@ -33,20 +93,21 @@ type Pkg = {
     languages?: string[] | null;
     /** How many packages the family contains. */
     member_count?: number;
-    /** The family's member slugs, in declaration order. */
-    members?: string[];
+    /** The family's members, in declaration order. */
+    members?: Member[];
     /** Where this card links — a package page, or the family page. */
     href: string;
 };
 
-type KindFilter = "all" | "ui" | "headless";
-type EcoFilter = "all" | "ts" | "php" | "py" | "polyglot";
+type Group = "core" | "surfaces" | "documents" | "commerce" | "platform" | "tooling";
+type KindFilter = "all" | "ui" | "backend";
+type EcoFilter = "all" | "ts" | "php" | "polyglot";
 
-const GROUP_ORDER: Pkg["group"][] = ["core", "surfaces", "documents", "commerce", "platform", "tooling"];
-const GROUP_META: Record<Pkg["group"], { title: string; blurb: string }> = {
+const GROUP_ORDER: Group[] = ["core", "surfaces", "documents", "commerce", "platform", "tooling"];
+const GROUP_META: Record<Group, { title: string; blurb: string }> = {
     core: {
-        title: "Core",
-        blurb: "Start here — the components, the Inertia bridge, server-state, live-update detection, and the agent backbone every Fancy app is built on.",
+        title: "Start here",
+        blurb: "The stack every Fancy app begins with.",
     },
     surfaces: {
         title: "Surfaces",
@@ -70,19 +131,10 @@ const GROUP_META: Record<Pkg["group"], { title: string; blurb: string }> = {
     },
 };
 
-const ECO_LABEL: Record<Pkg["ecosystem"], string> = { ts: "TS", php: "PHP", py: "Py", polyglot: "Poly" };
-
-/** Mono initials for the glyph — first letters of the de-scoped name parts. */
-function initials(name: string): string {
-    const base = name.replace(/^@[^/]+\//, "").replace(/^particle-academy\//, "");
-    const parts = base.split(/[-/]/).filter(Boolean);
-    return ((parts[0]?.[0] ?? "") + (parts[1]?.[0] ?? parts[0]?.[1] ?? "")).toUpperCase();
-}
-
 /** Tile title — de-scoped so "@particle-academy/x" reads as "x" beside the
  *  family display names, instead of a ragged mix of both. */
-function displayName(p: Pkg): string {
-    return p.family ? p.name : p.name.replace(/^@?particle-academy\//, "");
+function displayName(p: Pkg | Member): string {
+    return "family" in p && p.family ? p.name : deScope(p.name);
 }
 
 function installCmd(p: Pkg): string {
@@ -92,39 +144,70 @@ function installCmd(p: Pkg): string {
     return p.name;
 }
 
+/** The slug whose thumbnail stands for this listing — a family shows its
+ *  flagship surface, because "fancy-git" has no picture but fancy-git-ui does. */
+function previewSlug(p: Pkg): string {
+    if (!p.family) return p.slug;
+    return (p.members ?? []).find((m) => m.basket === "ui" && m.components_count > 0)?.slug
+        ?? (p.members ?? []).find((m) => m.basket === "ui")?.slug
+        ?? p.slug;
+}
+
 export default function PackagesIndex({ packages }: { packages: Pkg[] }) {
     const [query, setQuery] = useState("");
-    const [kind, setKind] = useState<KindFilter>("all");
+    const [basket, setBasket] = useState<KindFilter>("all");
     const [eco, setEco] = useState<EcoFilter>("all");
 
     const totalComponents = packages.reduce((s, p) => s + p.components_count, 0);
     // Families collapse several packages into one card, so count the members —
-    // "37 packages" would undercount the ~65 we actually publish.
+    // "37 packages" would undercount the ~70 we actually publish.
     const totalPackages = packages.reduce((s, p) => s + (p.member_count ?? 1), 0);
+
+    // Basket totals count LISTINGS, and a family that spans both is counted in
+    // each — it genuinely offers you both, and dropping it from one lane would
+    // make the two numbers describe a suite that does not exist.
+    const basketTotals = {
+        ui: packages.filter((p) => p.basket !== "backend").length,
+        backend: packages.filter((p) => p.basket !== "ui").length,
+    };
+
+    const filtering = query.trim() !== "" || basket !== "all" || eco !== "all";
 
     const filtered = useMemo(() => {
         const q = query.trim().toLowerCase();
         return packages.filter((p) => {
-            if (kind === "ui" && p.kind === "headless") return false;
-            if (kind === "headless" && p.kind !== "headless") return false;
-            if (eco !== "all" && p.ecosystem !== eco) return false;
-            if (q && !(`${p.name} ${p.slug} ${p.tagline}`.toLowerCase().includes(q))) return false;
+            if (basket !== "all" && p.basket !== basket && p.basket !== "both") return false;
+            if (eco !== "all") {
+                const memberMatch = (p.members ?? []).some((m) => m.ecosystem === eco);
+                if (p.ecosystem !== eco && !memberMatch) return false;
+            }
+            if (q) {
+                const hay = `${p.name} ${p.slug} ${p.tagline} ${(p.members ?? []).map((m) => m.name).join(" ")}`;
+                if (!hay.toLowerCase().includes(q)) return false;
+            }
             return true;
         });
-    }, [packages, query, kind, eco]);
+    }, [packages, query, basket, eco]);
 
-    // Core is a single "start here" bundle, so it gets a full-width featured
-    // band instead of a section header + blurb wrapped around one lonely tile.
-    const featured = filtered.filter((p) => p.group === "core");
+    // Fancy Core leads the page as a full-width band rather than a lone tile in
+    // an otherwise-empty grid — until a filter is on, at which point it is just
+    // another result and lists as a card like everything else.
+    const core = filtered.filter((p) => p.group === "core");
 
-    const groups = GROUP_ORDER.filter((g) => g !== "core").map((g) => {
-        // Every section lists alphabetically by slug (the clean, de-scoped id),
-        // so the catalog is scannable A→Z within each theme.
-        const items = filtered
-            .filter((p) => p.group === g)
-            .sort((a, b) => a.slug.localeCompare(b.slug));
-        return { group: g, meta: GROUP_META[g], items };
-    }).filter((s) => s.items.length > 0);
+    const groups = GROUP_ORDER.filter((g) => g !== "core" || filtering)
+        .map((g) => {
+            // Every section lists alphabetically by slug (the clean, de-scoped
+            // id), so the catalog is scannable A→Z within each theme.
+            const items = filtered.filter((p) => p.group === g).sort((a, b) => a.slug.localeCompare(b.slug));
+            return { group: g, meta: GROUP_META[g], items };
+        })
+        .filter((s) => s.items.length > 0);
+
+    const clear = () => {
+        setQuery("");
+        setBasket("all");
+        setEco("all");
+    };
 
     return (
         <Layout>
@@ -132,467 +215,336 @@ export default function PackagesIndex({ packages }: { packages: Pkg[] }) {
 
             <header className="pkgs-head">
                 <div>
-                    <h1 className="pkgs-head__title">Packages</h1>
-                    <p className="pkgs-head__sub">
-                        Every Fancy UI package — UI surfaces with a live preview, headless backends with a one-line install.
-                        Related packages are grouped as one family; each tile opens its full page, with per-component demos.
-                    </p>
+                    <Heading as="h1" size="2xl" className="pkgs-head__title">Packages</Heading>
+                    <Text className="pkgs-head__sub">
+                        Every Fancy UI package — UI surfaces with a live preview, headless backends with a one-line
+                        install. Related packages are grouped as one family; each card opens its full page, with
+                        per-component demos.
+                    </Text>
                 </div>
-                <div className="pkgs-stats">
-                    <span className="pkgs-stat"><b>{totalPackages}</b> packages</span>
-                    <span className="pkgs-stat"><b>{packages.length}</b> listings</span>
-                    <span className="pkgs-stat"><b>{totalComponents}</b> components</span>
-                    <span className="pkgs-stat"><b>MIT</b> licensed</span>
-                </div>
+                <StatList
+                    className="pkgs-stats"
+                    items={[
+                        { key: "packages", value: totalPackages, label: "packages" },
+                        { key: "listings", value: packages.length, label: "listings" },
+                        { key: "components", value: totalComponents, label: "components" },
+                        { key: "licence", value: "MIT", label: "licensed" },
+                    ]}
+                />
             </header>
 
-            <div className="pkgs-toolbar">
-                <label className="pkgs-search">
-                    <Icon name="search" size="sm" />
-                    <input
-                        type="search"
-                        value={query}
-                        onChange={(e) => setQuery(e.target.value)}
-                        placeholder="Search packages…"
-                        aria-label="Search packages"
+            <div className="basket-band">
+                {(["ui", "backend"] as const).map((k) => (
+                    <BasketCard
+                        key={k}
+                        basket={k}
+                        count={basketTotals[k]}
+                        on={basket === k}
+                        onPick={() => setBasket(basket === k ? "all" : k)}
                     />
-                </label>
-                <div className="pkgs-chips" role="group" aria-label="Filter by kind">
-                    {(["all", "ui", "headless"] as KindFilter[]).map((k) => (
-                        <button
-                            key={k}
-                            type="button"
-                            className="pkgs-chip"
-                            aria-pressed={kind === k}
-                            onClick={() => setKind(k)}
-                        >
-                            {k === "all" ? "All kinds" : k === "ui" ? "UI" : "Headless"}
-                        </button>
-                    ))}
-                </div>
-                <div className="pkgs-chips" role="group" aria-label="Filter by ecosystem">
-                    {(["all", "ts", "php", "polyglot"] as EcoFilter[]).map((e) => (
-                        <button
-                            key={e}
-                            type="button"
-                            className="pkgs-chip"
-                            aria-pressed={eco === e}
-                            onClick={() => setEco(e)}
-                        >
-                            {e === "all" ? "All" : e === "ts" ? "TypeScript" : e === "php" ? "PHP" : "Polyglot"}
-                        </button>
-                    ))}
-                </div>
+                ))}
             </div>
 
-            {featured.map((p) => (
-                <CoreHero key={p.slug} pkg={p} />
-            ))}
+            <div className="pkgs-toolbar">
+                <Input
+                    type="search"
+                    className="pkgs-search"
+                    value={query}
+                    onValueChange={setQuery}
+                    placeholder="Search packages and families…"
+                    aria-label="Search packages"
+                    leading={<Icon name="search" size="sm" />}
+                />
+                <span className="pkgs-toolbar__grow" />
+                {/* The lane colour rides on a wrapper, not on <MultiSwitch>:
+                    the primitive spreads its rest props onto the container at
+                    runtime, but MultiSwitchProps extends InputBaseProps only, so
+                    `style` is not in its type. Filed in the concerns log as a
+                    react-fancy gap rather than cast around. */}
+                <span
+                    className="pkgs-switch-slot"
+                    role="group"
+                    aria-label="Filter by basket"
+                    style={{ "--acc": basket === "backend" ? BASKETS.backend.cssAccent : BASKETS.ui.cssAccent } as CSSProperties}
+                >
+                    <MultiSwitch
+                        size="sm"
+                        className="pkgs-switch"
+                        value={basket}
+                        onValueChange={(v) => setBasket(v as KindFilter)}
+                        list={[
+                            { value: "all", label: "All kinds" },
+                            { value: "ui", label: "UI" },
+                            { value: "backend", label: "Headless" },
+                        ]}
+                    />
+                </span>
+                <span className="pkgs-switch-slot" role="group" aria-label="Filter by ecosystem">
+                    <MultiSwitch
+                        size="sm"
+                        className="pkgs-switch"
+                        value={eco}
+                        onValueChange={(v) => setEco(v as EcoFilter)}
+                        list={[
+                            { value: "all", label: "All" },
+                            { value: "ts", label: "TypeScript" },
+                            { value: "php", label: "PHP" },
+                        ]}
+                    />
+                </span>
+            </div>
 
-            {groups.length === 0 && featured.length === 0 ? (
+            {!filtering && core.map((p) => <StartBand key={p.slug} pkg={p} />)}
+
+            {groups.length === 0 && core.length === 0 && (
                 <div className="pkgs-empty">
-                    No packages match <b>{query || `${kind}/${eco}`}</b>. Try clearing a filter.
+                    <Icon name="search-x" size="xl" />
+                    <Text weight="semibold">No packages match your filters.</Text>
+                    <Button variant="ghost" size="sm" icon="x" onClick={clear}>Clear filters</Button>
                 </div>
-            ) : (
-                groups.map(({ group, meta, items }) => (
+            )}
+
+            {groups.map(({ group, meta, items }) => {
+                const ui = items.filter((p) => p.basket !== "backend").length;
+                const be = items.filter((p) => p.basket !== "ui").length;
+                return (
                     <section key={group} className="pkg-group">
                         <div className="pkg-group__head">
-                            <h2 className="pkg-group__title">{meta.title}</h2>
+                            <Heading as="h2" size="lg" className="pkg-group__title">{meta.title}</Heading>
                             <span className="pkg-group__count">{items.length}</span>
+                            <span className="pkg-group__mix">
+                                {ui > 0 && <LaneChip basket="ui" label={`${ui} UI`} />}
+                                {be > 0 && <LaneChip basket="backend" label={`${be} backend`} />}
+                            </span>
                         </div>
-                        <p className="pkg-group__blurb">{meta.blurb}</p>
-                        <div className="pkg-grid">
-                            {items.map((p) =>
-                                p.kind === "headless" ? (
-                                    <HeadlessTile key={p.slug} pkg={p} />
-                                ) : (
-                                    <PreviewTile key={p.slug} pkg={p} />
-                                ),
-                            )}
-                        </div>
+                        <Text size="sm" className="pkg-group__blurb">{meta.blurb}</Text>
+                        <Grid cols={3} gap="sm" className="pkg-grid">
+                            {items.map((p) => <ListingCard key={p.slug} pkg={p} />)}
+                        </Grid>
                     </section>
-                ))
-            )}
+                );
+            })}
         </Layout>
     );
 }
 
 /**
- * The Core bundle — the one set every app starts from, so it leads the page as
- * a full-width hero rather than a lone tile in an otherwise-empty grid.
+ * One of the two baskets, as a control.
+ *
+ * A <Card interactive> in button clothing rather than a <button> wrapping a
+ * card: the card IS the affordance, and `aria-pressed` + the keyboard handler
+ * are what make a div-rooted primitive an honest toggle.
  */
-function CoreHero({ pkg }: { pkg: Pkg }) {
+function BasketCard({
+    basket,
+    count,
+    on,
+    onPick,
+}: {
+    basket: "ui" | "backend";
+    count: number;
+    on: boolean;
+    onPick: () => void;
+}) {
+    const b = BASKETS[basket];
     return (
-        <Link
-            href={pkg.href}
-            className="pkg-tile pkg-hero-tile"
-            style={{
-                "--accent": pkg.accent,
-                display: "flex",
-                flexDirection: "column",
-                marginBottom: 32,
-                overflow: "hidden",
-            } as CSSProperties}
+        <Card
+            interactive
+            className="basket-card"
+            role="button"
+            tabIndex={0}
+            aria-pressed={on}
+            onClick={onPick}
+            onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    onPick();
+                }
+            }}
+            style={{ "--acc": b.cssAccent } as CSSProperties}
         >
-            <div className="flex flex-col md:flex-row md:items-stretch">
-                <div className="pkg-tile__preview" style={{ flex: "0 0 40%", minHeight: 200 }}>
-                    <PkgPreview slug={pkg.slug} />
-                </div>
-                <div className="pkg-tile__body" style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", gap: 10 }}>
-                    <span
-                        style={{
-                            alignSelf: "flex-start",
-                            fontSize: 10.5,
-                            fontWeight: 700,
-                            letterSpacing: "0.08em",
-                            textTransform: "uppercase",
-                            color: "color-mix(in oklch, var(--accent) 85%, var(--fg-1))",
-                            border: "1px solid color-mix(in oklch, var(--accent) 35%, transparent)",
-                            borderRadius: 999,
-                            padding: "3px 10px",
-                        }}
-                    >
-                        Start here
-                    </span>
-
-                    <h3 className="pkg-tile__name" style={{ fontSize: 22, lineHeight: 1.2 }}>{pkg.name}</h3>
-                    <p className="pkg-tile__tagline" style={{ WebkitLineClamp: "unset", fontSize: 13.5 }}>{pkg.tagline}</p>
-
-                    {(pkg.members ?? []).length > 0 && (
-                        <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: 2 }}>
-                            {(pkg.members ?? []).map((m) => (
-                                <span
-                                    key={m}
-                                    style={{
-                                        fontFamily: "var(--font-mono)",
-                                        fontSize: 11,
-                                        padding: "3px 8px",
-                                        borderRadius: 6,
-                                        background: "var(--bg-2)",
-                                        border: "1px solid var(--border-1)",
-                                        color: "var(--fg-2)",
-                                    }}
-                                >
-                                    {m}
-                                </span>
-                            ))}
-                        </div>
-                    )}
-
-                    <div className="pkg-tile__foot" style={{ marginTop: 4 }}>
-                        <span style={{ display: "inline-flex", alignItems: "center", gap: 10 }}>
-                            <span>{pkg.member_count ?? 0} packages</span>
-                            <Stars count={pkg.stars} />
-                        </span>
-                        <span className="pkg-tile__explore" style={{ opacity: 1 }}>Explore Fancy Core →</span>
-                    </div>
-                </div>
+            <div className="bc-head">
+                <span className="bc-ic"><Icon name={b.icon} size="md" /></span>
+                <span className="bc-title">{b.label}</span>
+                <span className="bc-n">{count} listings</span>
             </div>
-        </Link>
-    );
-}
-
-/** GitHub star count — synced from the API + nudged live by the star webhook. */
-function Stars({ count }: { count: number | null }) {
-    // A zero is noise, not information — show nothing until a repo has stars.
-    if (count == null || count === 0) return null;
-    const label = count >= 1000 ? `${(count / 1000).toFixed(count >= 10000 ? 0 : 1)}k` : String(count);
-    return (
-        <span
-            title={`${count.toLocaleString()} GitHub stars`}
-            style={{ display: "inline-flex", alignItems: "center", gap: 3, color: "#f59e0b", fontWeight: 600, fontVariantNumeric: "tabular-nums" }}
-        >
-            <Icon name="star" size="xs" />
-            {label}
-        </span>
-    );
-}
-
-/** UI / bridge package → preview tile (mini visual + Explore →). */
-function PreviewTile({ pkg }: { pkg: Pkg }) {
-    return (
-        <Link href={pkg.href} className="pkg-tile" style={{ "--accent": pkg.accent } as CSSProperties}>
-            <PreviewVisual pkg={pkg} />
-            <div className="pkg-tile__body">
-                <div className="pkg-tile__row">
-                    <h3 className="pkg-tile__name">{displayName(pkg)}</h3>
-                    <span className="pkg-eco" data-eco={pkg.ecosystem}>{ECO_LABEL[pkg.ecosystem]}</span>
+            <p className="bc-line">{b.line}</p>
+            {basket === "ui" ? (
+                <div className="bc-thumbs">
+                    {["react-fancy", "fancy-sheets", "fancy-echarts", "fancy-whiteboard"].map((s) => (
+                        <span className="bc-thumb" key={s}><PkgPreview slug={s} /></span>
+                    ))}
                 </div>
-                <p className="pkg-tile__tagline">{pkg.tagline}</p>
-                <div className="pkg-tile__foot">
-                    <span style={{ display: "inline-flex", alignItems: "center", gap: 10 }}>
-                        <span>
-                            {pkg.family
-                                ? `${pkg.member_count ?? 0} packages`
-                                : pkg.components_count > 0
-                                    ? `${pkg.components_count} component${pkg.components_count === 1 ? "" : "s"}`
-                                    : pkg.kind === "bridge" ? "bridge" : "surface"}
-                        </span>
-                        <Stars count={pkg.stars} />
-                    </span>
-                    <span className="pkg-tile__explore">{pkg.family ? "Explore family →" : "Explore →"}</span>
+            ) : (
+                <div className="bc-thumbs bc-thumbs--be">
+                    <Snippet cmd="composer require particle-academy/holy-sheet" />
+                    <Snippet cmd="npm install @particle-academy/fancy-query" />
                 </div>
-            </div>
-        </Link>
+            )}
+            <span className="bc-act">
+                {on ? "Showing" : "Show"} {b.label} only
+                <Icon name={on ? "check" : "arrow-right"} size="xs" />
+            </span>
+        </Card>
     );
 }
-
-/** The visual at the top of a preview tile — a per-package inline mini-preview. */
-function PreviewVisual({ pkg }: { pkg: Pkg }) {
-    return (
-        <div className="pkg-tile__preview">
-            <PkgPreview slug={pkg.slug} />
-        </div>
-    );
-}
-
-const VIOLET = "#8b5cf6";
-const AMBER = "#f59e0b";
-const SKY = "#0ea5e9";
 
 /**
- * Per-package mini-visual — a tiny, recognizable thumbnail of what the package
- * does, rendered from primitives (no external screenshots). Ported from the
- * design mockup's `PkgPreview`. Unmapped UI packages fall back to a package glyph.
+ * Fancy Core, opened up — the one listing that leads with its members rather
+ * than a thumbnail, because "start here" is only useful if you can see what
+ * "here" contains.
  */
-function PkgPreview({ slug }: { slug: string }): ReactNode {
-    const map: Record<string, ReactNode> = {
-        // The Fancy Core family leads with react-fancy, so it reuses its visual.
-        "fancy-core": (
-            <div className="mp" style={{ gap: 6, flexWrap: "wrap", maxWidth: 280 }}>
-                <span style={{ background: VIOLET, color: "#fff", fontSize: 11, fontWeight: 600, padding: "5px 11px", borderRadius: 8, display: "inline-flex", gap: 5, alignItems: "center" }}><Icon name="plus" size="xs" />Button</span>
-                <Badge color="emerald" dot size="sm">live</Badge>
-                <Badge color="violet" size="sm">beta</Badge>
-                <span className="mp-box" style={{ padding: "5px 9px", fontSize: 10 }}>Card</span>
-                <span style={{ width: 26, height: 26, borderRadius: 999, background: VIOLET, color: "#fff", display: "grid", placeItems: "center", fontSize: 10, fontWeight: 600 }}>RK</span>
-            </div>
-        ),
-        "agent-integrations": (
-            <div className="mp" style={{ flexDirection: "column", gap: 7 }}>
-                <span style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: 11, color: AMBER, fontWeight: 600 }}><Icon name="bot" size="xs" />agent · MCP</span>
-                <span className="mp" style={{ gap: 5 }}>
-                    <span style={{ width: 8, height: 8, borderRadius: 999, background: VIOLET }} />
-                    <span style={{ width: 22, height: 3, background: "var(--border-2)" }} />
-                    <span style={{ width: 8, height: 8, borderRadius: 999, background: AMBER }} />
-                </span>
-            </div>
-        ),
-        "fancy-whiteboard": (
-            <div className="mp" style={{ gap: 6 }}>
-                <span style={{ width: 50, height: 50, background: "#fde68a", borderRadius: 5, transform: "rotate(-5deg)", padding: 6, fontSize: 8, color: "#713f12" }}>Ship ✨</span>
-                <span style={{ width: 50, height: 50, background: "#bae6fd", borderRadius: 5, transform: "rotate(4deg)", padding: 6, fontSize: 8, color: "#0c4a6e" }}>Review</span>
-            </div>
-        ),
-        "fancy-flow": (
-            <div className="mp" style={{ gap: 5 }}>
-                {[0, 1, 2].map((i) => (
-                    <Fragment key={i}>
-                        <span className="mp-box" style={{ width: 26, height: 18 }} />
-                        {i < 2 && <span style={{ width: 10, height: 2, background: "var(--border-2)" }} />}
-                    </Fragment>
-                ))}
-            </div>
-        ),
-        "fancy-sheets": (
-            <span className="mp-box" style={{ padding: 0, overflow: "hidden" }}>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 22px)" }}>
-                    {Array.from({ length: 12 }, (_, i) => (
-                        <span key={i} style={{ height: 16, borderRight: "1px solid var(--border-1)", borderBottom: "1px solid var(--border-1)", fontSize: 7, color: "var(--fg-4)", display: "grid", placeItems: "center" }}>{i === 5 ? "=Σ" : ""}</span>
-                    ))}
-                </div>
-            </span>
-        ),
-        "fancy-slides": (
-            <span className="mp-box" style={{ width: 90, height: 54, padding: 8 }}>
-                <div style={{ width: "60%", height: 6, background: VIOLET, borderRadius: 2, marginBottom: 5 }} />
-                <div style={{ width: "90%", height: 4, background: "var(--bg-3)", borderRadius: 2, marginBottom: 3 }} />
-                <div style={{ width: "75%", height: 4, background: "var(--bg-3)", borderRadius: 2 }} />
-            </span>
-        ),
-        "fancy-code": (
-            <span className="mp-box" style={{ width: 110, padding: 8, fontFamily: "var(--font-mono)", fontSize: 8.5, lineHeight: 1.5 }}>
-                <div><span style={{ color: VIOLET }}>const</span> <span style={{ color: AMBER }}>x</span> = <span style={{ color: "#10b981" }}>42</span>;</div>
-                <div style={{ color: "var(--fg-4)" }}>// fancy-code</div>
-            </span>
-        ),
-        "fancy-echarts": (
-            <span className="mp" style={{ alignItems: "flex-end", gap: 3, height: 44 }}>
-                {[40, 70, 35, 85, 55, 65, 45].map((h, i) => (
-                    <span key={i} style={{ width: 7, height: `${h}%`, borderRadius: 2, background: i === 3 ? VIOLET : "var(--bg-3)" }} />
-                ))}
-            </span>
-        ),
-        "fancy-term": (
-            <span className="mp-box" style={{ width: 120, padding: 8, fontFamily: "var(--font-mono)", fontSize: 9, background: "#0a0a0c", border: "1px solid #27272a", color: "#86efac" }}>
-                <span style={{ color: "#71717a" }}>$</span> fancy --help<span className="mp-caret">▋</span>
-            </span>
-        ),
-        "fancy-diff": (
-            <span className="mp-box" style={{ width: 120, padding: 0, overflow: "hidden", fontFamily: "var(--font-mono)", fontSize: 8.5 }}>
-                <div style={{ padding: "2px 7px", background: "color-mix(in oklch,#ef4444 12%,transparent)", color: "#dc2626" }}>- old line</div>
-                <div style={{ padding: "2px 7px", background: "color-mix(in oklch,#10b981 12%,transparent)", color: "#059669" }}>+ new line</div>
-            </span>
-        ),
-        "fancy-artboard": (
-            <div className="mp" style={{ gap: 5 }}>
-                {[0, 1, 2].map((i) => <span key={i} className="mp-box" style={{ width: 26, height: 34, transform: `rotate(${(i - 1) * 4}deg)` }} />)}
-            </div>
-        ),
-        "fancy-screens": (
-            <div className="mp" style={{ gap: 5 }}>
-                <span className="mp-box" style={{ width: 36, height: 28 }} />
-                <span className="mp-box" style={{ width: 36, height: 28 }} />
-            </div>
-        ),
-        "fancy-pixel": (
-            <span style={{ display: "inline-flex", alignItems: "center", gap: 5, fontSize: 10, fontWeight: 600, color: AMBER, border: `1px solid color-mix(in oklch,${AMBER} 35%,transparent)`, padding: "3px 9px", borderRadius: 999 }}><Icon name="badge-check" size="xs" />Verified</span>
-        ),
-        "fancy-3d": <Icon name="box" size="xl" style={{ color: VIOLET }} />,
-        "fancy-3d-babylon": (
-            <div className="mp" style={{ flexDirection: "column", gap: 4 }}>
-                <Icon name="box" size="lg" style={{ color: VIOLET }} />
-                <span style={{ fontSize: 9, fontWeight: 600, color: "var(--fg-3)" }}>Babylon.js</span>
-            </div>
-        ),
-        "fancy-3d-three": (
-            <div className="mp" style={{ flexDirection: "column", gap: 4 }}>
-                <Icon name="box" size="lg" style={{ color: AMBER }} />
-                <span style={{ fontSize: 9, fontWeight: 600, color: "var(--fg-3)" }}>three.js</span>
-            </div>
-        ),
-        "fancy-mlm-ui": (
-            // A tiny downline tree: root → two legs, tier-colored.
-            <div className="mp" style={{ flexDirection: "column", gap: 3 }}>
-                <span style={{ width: 12, height: 12, borderRadius: 999, background: "#14b8a6" }} />
-                <span className="mp" style={{ gap: 0 }}>
-                    <span style={{ width: 14, height: 2, background: "var(--border-2)", transform: "rotate(35deg)" }} />
-                    <span style={{ width: 14, height: 2, background: "var(--border-2)", transform: "rotate(-35deg)" }} />
-                </span>
-                <span className="mp" style={{ gap: 14 }}>
-                    <span style={{ width: 10, height: 10, borderRadius: 999, background: AMBER }} />
-                    <span style={{ width: 10, height: 10, borderRadius: 999, background: VIOLET }} />
-                </span>
-                <span style={{ fontSize: 8.5, fontWeight: 600, color: "#14b8a6" }}>+150 pts · L1</span>
-            </div>
-        ),
-        "fancy-x-files-ui": (
-            <span className="mp-box" style={{ width: 120, padding: 8, fontFamily: "var(--font-mono)", fontSize: 8.5, lineHeight: 1.6, textAlign: "left" }}>
-                <div style={{ color: "var(--fg-4)" }}># robots.txt</div>
-                <div>User-agent: <span style={{ color: VIOLET }}>*</span></div>
-                <div>Disallow: <span style={{ color: "#dc2626" }}>/admin</span></div>
-            </span>
-        ),
-        "fancy-cms-ui": (
-            // The editor's three panes in miniature: layers | canvas | inspector.
-            <div className="mp" style={{ gap: 4, alignItems: "stretch" }}>
-                <span className="mp-box" style={{ width: 24, height: 56, padding: 4, display: "flex", flexDirection: "column", gap: 3 }}>
-                    {[0, 1, 2, 3].map((i) => (
-                        <span key={i} style={{ height: 4, borderRadius: 2, background: i === 0 ? SKY : "var(--bg-3)", marginLeft: i === 0 ? 0 : 4 }} />
-                    ))}
-                </span>
-                <span className="mp-box" style={{ width: 62, height: 56, padding: 7, textAlign: "center" }}>
-                    <div style={{ width: "72%", height: 6, background: "var(--fg-3)", borderRadius: 2, margin: "2px auto 4px" }} />
-                    <div style={{ width: "88%", height: 4, background: "var(--bg-3)", borderRadius: 2, margin: "0 auto 3px" }} />
-                    <div style={{ width: 26, height: 9, background: SKY, borderRadius: 3, margin: "4px auto 0" }} />
-                </span>
-                <span className="mp-box" style={{ width: 24, height: 56, padding: 4, display: "flex", flexDirection: "column", gap: 3 }}>
-                    {[0, 1, 2].map((i) => (
-                        <Fragment key={i}>
-                            <span style={{ height: 2.5, width: "60%", borderRadius: 2, background: "var(--bg-3)" }} />
-                            <span style={{ height: 4, borderRadius: 2, border: "1px solid var(--border-2)" }} />
-                        </Fragment>
-                    ))}
-                </span>
-            </div>
-        ),
-        "catalog-fms": (
-            <div className="mp" style={{ gap: 6 }}>
-                <span className="mp-box" style={{ padding: "6px 9px", textAlign: "center" }}>
-                    <div style={{ fontSize: 11, fontWeight: 700 }}>$29</div>
-                    <div style={{ fontSize: 7.5, color: "var(--fg-4)" }}>/month</div>
-                </span>
-                <span className="mp-box" style={{ padding: "6px 9px", textAlign: "center", borderColor: VIOLET }}>
-                    <div style={{ fontSize: 11, fontWeight: 700, color: VIOLET }}>$99</div>
-                    <div style={{ fontSize: 7.5, color: "var(--fg-4)" }}>/month</div>
-                </span>
-            </div>
-        ),
-        "fancy-inertia": (
-            <span className="mp-box" style={{ width: 130, padding: 9 }}>
-                <div style={{ fontSize: 9, color: "var(--fg-3)", marginBottom: 5 }}>useFancyForm()</div>
-                <div className="mp-line" style={{ width: "100%", marginBottom: 4 }} />
-                <span style={{ fontSize: 8, padding: "2px 7px", borderRadius: 5, background: VIOLET, color: "#fff" }}>Submit</span>
-            </span>
-        ),
-    };
-    map["react-fancy"] = map["fancy-core"];
-    return map[slug] ?? <Icon name="package" size="lg" style={{ color: "var(--fg-4)" }} />;
-}
-
-/** Headless package → install-snippet tile (glyph + $ npm install + links). */
-function HeadlessTile({ pkg }: { pkg: Pkg }) {
-    const cmd = installCmd(pkg);
-    const verb = pkg.npm ? "npm install" : pkg.composer ? "composer require" : "$";
-    const target = pkg.npm ?? pkg.composer ?? "";
+function StartBand({ pkg }: { pkg: Pkg }) {
+    const members = pkg.members ?? [];
+    const flagship = members.find((m) => m.components_count > 0) ?? members[0];
     return (
-        <div
-            className="pkg-tile pkg-tile--headless"
-            style={{ "--accent": pkg.accent } as CSSProperties}
-        >
-            {/* Stretched link — the whole tile navigates to the detail page
-                WITHOUT nesting <a> in <a>. The GitHub/npm/Packagist anchors below
-                are real links; wrapping the tile in a single <Link> would nest
-                them → invalid HTML the browser un-nests → React #418 hydration
-                mismatch. This overlay covers the tile; the external links sit
-                above it via z-index (.pkg-link). */}
-            <Link href={pkg.href} className="pkg-tile__stretch" aria-label={pkg.name} />
-            <div className="pkg-tile__body">
-                <div className="pkg-tile__head">
-                    <span className="pkg-glyph">{initials(pkg.name)}</span>
-                    <div className="min-w-0">
-                        <h3 className="pkg-tile__name">{displayName(pkg)}</h3>
+        <Card className="start-card" style={{ "--acc": pkg.accent } as CSSProperties}>
+            <div className="start-card__grid">
+                <div>
+                    <Eyebrow className="start-card__eyebrow" label="Start here" />
+                    <Heading as="h2" size="xl" className="start-card__title">{pkg.name}</Heading>
+                    <Text size="sm" className="start-card__blurb">{pkg.tagline}</Text>
+                    <div style={{ marginTop: "var(--space-4)" }}>
+                        <BasketTag basket={pkg.basket} languages={pkg.languages} />
                     </div>
-                    <span className="pkg-eco" data-eco={pkg.ecosystem} style={{ marginLeft: "auto" }}>
-                        {ECO_LABEL[pkg.ecosystem]}
-                    </span>
+                    <div className="start-card__cta">
+                        {flagship?.href && (
+                            <Button as={Link} href={flagship.href} color="violet" icon="layout-grid" iconTrailing="arrow-right">
+                                {flagship.components_count > 0
+                                    ? `Browse ${flagship.components_count} component previews`
+                                    : "Open the surface"}
+                            </Button>
+                        )}
+                        <Button as={Link} href={pkg.href} variant="ghost" icon="layers">
+                            See all {pkg.member_count ?? members.length} packages
+                        </Button>
+                    </div>
                 </div>
-                {pkg.family ? (
-                    // A language-mirror capability — show the languages it ships
-                    // in, not a single install line (each mirror installs its own
-                    // way; the detail page has a per-language card for each).
-                    <div style={{ display: "flex", gap: 6, flexWrap: "wrap", alignItems: "center", margin: "2px 0 6px" }}>
-                        {(pkg.languages ?? []).map((l) => (
-                            <span key={l} className="pkg-eco" data-eco={l === "PHP" ? "php" : "ts"}>
-                                {l === "PHP" ? "PHP" : "TS"}
+                <div className="start-rows">
+                    {members.map((m) => (
+                        <Link
+                            key={m.slug}
+                            href={m.href ?? pkg.href}
+                            className="start-row"
+                            data-basket={m.basket}
+                        >
+                            <span className={`row-dot row-dot--${m.basket}`} />
+                            <span className="start-row__name">{displayName(m)}</span>
+                            <span className="start-row__role">{m.role}</span>
+                            <span className="start-row__act">
+                                {m.components_count > 0 ? `${m.components_count} previews →` : "API →"}
                             </span>
-                        ))}
-                        <span style={{ fontSize: 11, color: "var(--fg-3)", fontWeight: 500 }}>
-                            {pkg.member_count ?? 0} packages · one product
-                        </span>
-                    </div>
-                ) : (
-                    <div className="pkg-snippet">
-                        <span className="pkg-snippet__sigil">$</span>
-                        <span className="pkg-snippet__cmd">
-                            {target ? <>{verb} <b>{target}</b></> : cmd}
-                        </span>
-                    </div>
-                )}
-                <p className="pkg-tile__tagline">{pkg.tagline}</p>
-                <div className="pkg-links">
-                    <span className="pkg-tile__explore" style={{ opacity: 1, color: "color-mix(in oklch, var(--accent) 80%, var(--fg-1))" }}>
-                        {pkg.family ? "Explore family →" : "Docs →"}
-                    </span>
-                    <Stars count={pkg.stars} />
-                    {!pkg.family && (
-                        <>
-                            <a className="pkg-link" href={pkg.repoUrl} target="_blank" rel="noreferrer">GitHub →</a>
-                            {pkg.npmUrl && <a className="pkg-link" href={pkg.npmUrl} target="_blank" rel="noreferrer">npm →</a>}
-                            {pkg.packagistUrl && <a className="pkg-link" href={pkg.packagistUrl} target="_blank" rel="noreferrer">Packagist →</a>}
-                        </>
-                    )}
+                        </Link>
+                    ))}
                 </div>
             </div>
-        </div>
+        </Card>
     );
 }
+
+/**
+ * One listing — a single package or a whole family.
+ *
+ * UI listings lead with a preview thumbnail and a "browse the previews" step;
+ * headless ones lead with the install line and a "read the API surface" step.
+ * Same card, same footer, opposite lane.
+ */
+function ListingCard({ pkg }: { pkg: Pkg }) {
+    const ui = pkg.basket !== "backend";
+    const isFamily = !!pkg.family;
+    const lane = ui ? "ui" : "backend";
+    const cta = ctaLabel(pkg);
+
+    return (
+        <Card
+            interactive
+            padding="none"
+            className="lcard"
+            style={{ "--acc": pkg.accent } as CSSProperties}
+        >
+            {/* Stretched link — the whole card navigates WITHOUT nesting <a> in
+                <a>. The external links in the footer are real anchors; wrapping
+                the card in a single <Link> would nest them → invalid HTML the
+                browser un-nests → React #418 hydration mismatch. */}
+            <Link href={pkg.href} className="lcard__stretch" aria-label={displayName(pkg)} />
+
+            <div className="lcard__tag">
+                <BasketTag basket={pkg.basket} languages={isFamily ? pkg.languages : null} />
+            </div>
+
+            {ui ? (
+                <Card.Media height={108} className="lcard__pv">
+                    <span className="mp-slot"><PkgPreview slug={previewSlug(pkg)} /></span>
+                    {isFamily && <span className="lcard__pv-stack" />}
+                </Card.Media>
+            ) : (
+                <Card.Media height={72} className="lcard__pv lcard__pv--be">
+                    <Snippet cmd={installCmd(pkg)} />
+                    {isFamily && <span className="lcard__pv-stack" />}
+                </Card.Media>
+            )}
+
+            <Card.Body className="lcard__body">
+                <div className="lcard__row">
+                    <span className="pkg-glyph pkg-glyph--sm">
+                        {initials(pkg.name)}
+                    </span>
+                    <h3 className={`lcard__name${ui ? "" : " lcard__name--mono"}`}>{displayName(pkg)}</h3>
+                    <span className="pkg-eco" data-eco={pkg.ecosystem}>{ECO_LABEL[pkg.ecosystem]}</span>
+                    {isFamily && (
+                        <span className="fam-count">{pkg.member_count} packages · one product</span>
+                    )}
+                </div>
+                <p className="lcard__tagline">{pkg.tagline}</p>
+                {isFamily && (
+                    <div className="fam-split">
+                        {pkg.ui_count > 0 && (
+                            <span className="fam-lane" data-basket="ui">
+                                <Icon name="monitor-play" size="xs" />
+                                {pkg.ui_count} UI{pkg.components_count > 0 ? ` · ${pkg.components_count} previews` : ""}
+                            </span>
+                        )}
+                        {pkg.backend_count > 0 && (
+                            <span className="fam-lane" data-basket="backend">
+                                <Icon name="server" size="xs" />
+                                {pkg.backend_count} backend
+                            </span>
+                        )}
+                    </div>
+                )}
+            </Card.Body>
+
+            <Card.Footer className="lcard__cta">
+                <Button
+                    size="sm"
+                    color={BASKETS[lane].color}
+                    className="lcard__go"
+                    icon={cta.icon}
+                    iconTrailing="arrow-right"
+                    tabIndex={-1}
+                    aria-hidden
+                >
+                    {cta.label}
+                </Button>
+                {pkg.repoUrl && !isFamily ? (
+                    <a className="lcard__second pkg-link" href={pkg.repoUrl} target="_blank" rel="noreferrer">
+                        GitHub →
+                    </a>
+                ) : (
+                    <span className="lcard__second">Docs</span>
+                )}
+            </Card.Footer>
+        </Card>
+    );
+}
+
+/** The one obvious next step for this listing, worded for its lane. */
+function ctaLabel(pkg: Pkg): { label: string; icon: string } {
+    if (pkg.family) return { label: `Explore ${pkg.name}`, icon: "layers" };
+    if (pkg.basket === "backend") return { label: "Read the API surface", icon: "terminal" };
+    return pkg.components_count > 0
+        ? { label: `Browse ${pkg.components_count} preview${pkg.components_count === 1 ? "" : "s"}`, icon: "layout-grid" }
+        : { label: "Open package", icon: "layout-grid" };
+}
+
+export type { Member, Pkg };

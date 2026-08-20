@@ -410,6 +410,32 @@ final class PackageFamily
     }
 
     /**
+     * The member slugs of ONE family, in declaration order.
+     *
+     * {@see memberSlugs()} flattens EVERY family — asking it "how big is this
+     * family" gives the size of the whole suite, which reads plausible and is
+     * wrong. Two names because they answer two questions.
+     *
+     * @return list<string>
+     */
+    public static function memberSlugsOf(string $slug): array
+    {
+        $family = self::find($slug);
+        if ($family === null) {
+            return [];
+        }
+
+        $slugs = [];
+        foreach ($family['sections'] as $section) {
+            foreach ($section['members'] as $member) {
+                $slugs[] = $member['slug'];
+            }
+        }
+
+        return $slugs;
+    }
+
+    /**
      * The family whose slug OR any member slug is $slug, or null.
      *
      * @return array<string,mixed>|null

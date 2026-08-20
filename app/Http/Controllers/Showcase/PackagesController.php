@@ -59,6 +59,30 @@ class PackagesController extends Controller
     }
 
     /**
+     * The BASKET a package sits in — the redesign's primary device.
+     *
+     * Two baskets, not three: a surface you can look at, and a backend that
+     * renders nothing. It is DERIVED from `kind` rather than typed into
+     * {@see PackageRegistry::META}, because a third hand-maintained axis is a
+     * third thing that can silently disagree with the other two — and this one
+     * has exactly one right answer for every value `kind` can take.
+     */
+    private static function basketOfKind(string $kind): string
+    {
+        return $kind === 'headless' ? 'backend' : 'ui';
+    }
+
+    /** A family spans both baskets when it has members on each side. */
+    private static function basketOf(int $uiCount, int $backendCount): string
+    {
+        if ($uiCount > 0 && $backendCount > 0) {
+            return 'both';
+        }
+
+        return $uiCount > 0 ? 'ui' : 'backend';
+    }
+
+    /**
      * Shape a family as one consolidated listing card — the product, the
      * languages its members ship in, its member count, and the best star count
      * across their repos. Links to the single family page.
@@ -70,9 +94,11 @@ class PackagesController extends Controller
     private function presentFamilyCard(array $family, array $stars = []): array
     {
         $slugs = [];
+        $members = [];
         foreach ($family['sections'] as $section) {
             foreach ($section['members'] as $member) {
                 $slugs[] = $member['slug'];
+                $members[] = $this->presentFamilyMember($member, $stars) + ['role' => $section['label']];
             }
         }
 
@@ -95,6 +121,9 @@ class PackagesController extends Controller
         }
 
         $languages = PackageFamily::languagesFor($family['slug']);
+
+        $uiCount = count(array_filter($members, fn (array $m): bool => $m['basket'] === 'ui'));
+        $backendCount = count($members) - $uiCount;
 
         return [
             'slug' => $family['slug'],
@@ -119,7 +148,10 @@ class PackagesController extends Controller
             'family' => true,
             'languages' => $languages,
             'member_count' => count($slugs),
-            'members' => $slugs,
+            'members' => $members,
+            'basket' => self::basketOf($uiCount, $backendCount),
+            'ui_count' => $uiCount,
+            'backend_count' => $backendCount,
         ];
     }
 
@@ -156,6 +188,9 @@ class PackagesController extends Controller
             'family' => false,
             'languages' => null,
             'member_count' => 1,
+            'basket' => self::basketOfKind($p['kind']),
+            'ui_count' => $p['kind'] === 'headless' ? 0 : 1,
+            'backend_count' => $p['kind'] === 'headless' ? 1 : 0,
         ];
     }
 
@@ -213,6 +248,7 @@ class PackagesController extends Controller
                 'slug' => $family['slug'],
                 'name' => $family['name'],
                 'href' => "/packages/family/{$family['slug']}",
+                'member_count' => count(PackageFamily::memberSlugsOf($family['slug'])),
             ],
         ]);
     }
@@ -251,12 +287,25 @@ class PackagesController extends Controller
             }
         }
 
+        $members = array_merge(...array_map(fn (array $s): array => $s['members'], $sections)) ?: [];
+        $uiCount = count(array_filter($members, fn (array $m): bool => $m['basket'] === 'ui'));
+        $primary = PackageRegistry::findAny($family['slug'])
+            ?? PackageRegistry::findAny($members[0]['slug'] ?? '')
+            ?? [];
+
         return Inertia::render('Packages/Family', [
             'family' => [
                 'slug' => $family['slug'],
                 'name' => $family['name'],
                 'tagline' => $family['tagline'],
                 'sections' => $sections,
+                'accent' => $primary['accent'] ?? '#8b5cf6',
+                'group' => $family['group'],
+                'languages' => PackageFamily::languagesFor($family['slug']),
+                'basket' => self::basketOf($uiCount, count($members) - $uiCount),
+                'ui_count' => $uiCount,
+                'backend_count' => count($members) - $uiCount,
+                'previews' => array_sum(array_column($members, 'components_count')),
             ],
             'context' => PackageContext::find($family['slug']),
             'readmeHtml' => $readmeHtml,
@@ -296,6 +345,8 @@ class PackagesController extends Controller
             'slug' => $m['slug'],
             'name' => $rec['name'] ?? $m['slug'],
             'tagline' => $rec['tagline'] ?? '',
+            'basket' => self::basketOfKind($rec['kind'] ?? 'headless'),
+            'accent' => $rec['accent'] ?? '#8b5cf6',
             'ecosystem' => $rec['ecosystem'] ?? (($rec['language'] ?? '') === 'PHP' ? 'php' : 'ts'),
             'npm' => $rec['npm'] ?? null,
             'composer' => $rec['composer'] ?? null,

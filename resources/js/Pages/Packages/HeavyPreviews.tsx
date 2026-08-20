@@ -81,7 +81,7 @@ export function SheetWorkbookTile() {
 const TILE_GRAPH = {
   nodes: [
     { id: "t", type: "@particle-academy/manual_trigger", position: { x: 0, y: 40 }, data: { kind: "@particle-academy/manual_trigger", label: "Manual" } },
-    { id: "a", type: "@particle-academy/http_request", position: { x: 170, y: 40 }, data: { kind: "@particle-academy/http_request", label: "Fetch" } },
+    { id: "a", type: "@particle-academy/api_request", position: { x: 170, y: 40 }, data: { kind: "@particle-academy/api_request", label: "Fetch" } },
   ],
   edges: [{ id: "t-a", source: "t", target: "a" }],
 };

@@ -30,6 +30,7 @@ type Pkg = {
     language: string;
     npm?: string | null;
     composer?: string | null;
+    pypi?: string | null;
     download?: string | null;
     /** Vendorable-block install command, e.g. `npx fancy-cli@latest add catalog-fms`. */
     cli?: string | null;
@@ -37,7 +38,7 @@ type Pkg = {
     core?: boolean;
     group?: "core" | "surfaces" | "documents" | "commerce" | "platform" | "tooling";
     accent?: string;
-    ecosystem?: "ts" | "php" | "polyglot";
+    ecosystem?: "ts" | "php" | "py" | "polyglot";
     kind?: "ui" | "bridge" | "headless" | "block";
     components?: Component[];
     peers?: string[];
@@ -51,7 +52,7 @@ type Pkg = {
 
 type Context = { why: string; what: string; how: string };
 
-const ECO_LABEL: Record<NonNullable<Pkg["ecosystem"]>, string> = { ts: "TS", php: "PHP", polyglot: "Poly" };
+const ECO_LABEL: Record<NonNullable<Pkg["ecosystem"]>, string> = { ts: "TS", php: "PHP", py: "Py", polyglot: "Poly" };
 
 /**
  * The MCP tool prefixes each agent-bridgeable surface exposes (mirrors the
@@ -123,7 +124,7 @@ export default function PackagesShow({
                     <span className="pkg-glyph pkg-hero__glyph">{initials(pkg.name)}</span>
                     <div className="pkg-hero__main">
                         <h1 className="pkg-hero__name">{pkg.name}</h1>
-                        <div className="pkg-hero__id">{pkg.npm ?? pkg.composer ?? pkg.cli ?? pkg.repo}</div>
+                        <div className="pkg-hero__id">{pkg.npm ?? pkg.composer ?? pkg.pypi ?? pkg.cli ?? pkg.repo}</div>
                         <p className="pkg-hero__tagline">{pkg.tagline}</p>
                         <div className="pkg-hero__meta">
                             <span className="pkg-eco" data-eco={eco}>{ECO_LABEL[eco]}</span>
@@ -159,6 +160,7 @@ export default function PackagesShow({
                     {pkg.repo && <a className="pkg-doclink" href={`https://github.com/${pkg.repo}`} target="_blank" rel="noopener">GitHub →</a>}
                     {pkg.npm && <a className="pkg-doclink" href={`https://www.npmjs.com/package/${pkg.npm}`} target="_blank" rel="noopener">npm →</a>}
                     {pkg.composer && <a className="pkg-doclink" href={`https://packagist.org/packages/${pkg.composer}`} target="_blank" rel="noopener">Packagist →</a>}
+                    {pkg.pypi && <a className="pkg-doclink" href={`https://pypi.org/project/${pkg.pypi}`} target="_blank" rel="noopener">PyPI →</a>}
                     {pkg.repo && <a className="pkg-doclink" href={`https://github.com/${pkg.repo}/issues`} target="_blank" rel="noopener">Issues →</a>}
                     {pkg.cli && <a className="pkg-doclink" href={`/r/${pkg.slug}.json`} target="_blank" rel="noopener">Registry JSON →</a>}
                 </div>
@@ -234,6 +236,10 @@ function InstallCard({ pkg, eco }: { pkg: Pkg; eco: NonNullable<Pkg["ecosystem"]
         tabs.push({ id: "yarn", cmd: `yarn add ${pkg.npm}` });
     }
     if (pkg.composer) tabs.push({ id: "composer", cmd: `composer require ${pkg.composer}` });
+    if (pkg.pypi) {
+        tabs.push({ id: "pip", cmd: `pip install ${pkg.pypi}` });
+        tabs.push({ id: "uv", cmd: `uv add ${pkg.pypi}` });
+    }
     if (pkg.download) tabs.push({ id: "curl", cmd: pkg.download });
     if (eco === "polyglot" && pkg.npm && !pkg.download) {
         tabs.push({ id: "npx", cmd: `npx ${pkg.npm}` });

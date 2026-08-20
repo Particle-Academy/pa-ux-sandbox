@@ -12,7 +12,7 @@ type Member = {
     slug: string;
     name: string;
     tagline: string;
-    ecosystem: "ts" | "php" | "polyglot";
+    ecosystem: "ts" | "php" | "py" | "polyglot";
     npm: string | null;
     composer: string | null;
     install: string | null;
@@ -31,7 +31,7 @@ type Section = { label: string; capability: string | null; members: Member[] };
 type Family = { slug: string; name: string; tagline: string; sections: Section[] };
 type Context = { why: string; what: string; how: string };
 
-const ECO_LABEL: Record<Member["ecosystem"], string> = { ts: "TS", php: "PHP", polyglot: "Poly" };
+const ECO_LABEL: Record<Member["ecosystem"], string> = { ts: "TS", php: "PHP", py: "Py", polyglot: "Poly" };
 
 const ACCENT = "#8b5cf6";
 

@@ -17,7 +17,7 @@ it('emits one merged catalog with the design classification on /packages', funct
             $pkgs->each(function (array $p) {
                 expect($p)->toHaveKeys(['group', 'accent', 'ecosystem', 'kind']);
                 expect($p['group'])->toBeIn(['core', 'surfaces', 'documents', 'commerce', 'platform', 'tooling']);
-                expect($p['ecosystem'])->toBeIn(['ts', 'php', 'polyglot']);
+                expect($p['ecosystem'])->toBeIn(['ts', 'php', 'py', 'polyglot']);
                 expect($p['kind'])->toBeIn(['ui', 'bridge', 'headless', 'block']);
             });
 

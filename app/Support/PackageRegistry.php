@@ -158,6 +158,20 @@ class PackageRegistry
         'fancy-doc-commons' => ['group' => 'documents', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#2563eb'],
         // Polyglot single-file client.
         'mcp-relay-client' => ['group' => 'tooling', 'ecosystem' => 'polyglot', 'kind' => 'headless', 'accent' => '#22c55e'],
+        // Cross-language conformance fixtures -- parity as a test result.
+        'fancy-conformance' => ['group' => 'tooling', 'ecosystem' => 'polyglot', 'kind' => 'headless', 'accent' => '#14b8a6'],
+        // Connector runtime + the installable connector set.
+        'fancy-connector-core' => ['group' => 'platform', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#f97316'],
+        'fancy-connectors' => ['group' => 'platform', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#f97316'],
+        // Trading.
+        'fancy-trading-js' => ['group' => 'commerce', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#22c55e'],
+        // Python backends -- each the third runtime of an existing pair.
+        'fancy-flow-py' => ['group' => 'surfaces', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#0ea5e9'],
+        'fancy-features-py' => ['group' => 'commerce', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#f59e0b'],
+        'fancy-catalog-py' => ['group' => 'commerce', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#0ea5e9'],
+        'holy-sheet-py' => ['group' => 'documents', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#16a34a'],
+        'dark-slide-py' => ['group' => 'documents', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#dc2626'],
+        'last-word-py' => ['group' => 'documents', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#2563eb'],
     ];
 
     /** Fallback classification for any slug missing from {@see META}. */
@@ -603,6 +617,86 @@ class PackageRegistry
                 'npm' => 'fancy-cli',
                 'repo' => 'Particle-Academy/fancy-ui-cli',
                 'language' => 'TypeScript',
+            ],
+            [
+                'slug' => 'fancy-conformance',
+                'name' => '@particle-academy/fancy-conformance',
+                'tagline' => 'Shared cross-language fixture tables, so parity between a PHP twin and its Node/Python siblings is a TEST RESULT rather than a claim in a README.',
+                'npm' => '@particle-academy/fancy-conformance',
+                'repo' => 'Particle-Academy/fancy-conformance',
+                'language' => 'Polyglot',
+            ],
+            [
+                'slug' => 'fancy-connector-core',
+                'name' => '@particle-academy/fancy-connector-core',
+                'tagline' => 'The connector runtime: typed delivery, failure classification (unreachable / refused / ambiguous / rejected), retries, and sandbox-vs-live selection. Every connector is built on it.',
+                'npm' => '@particle-academy/fancy-connector-core',
+                'repo' => 'Particle-Academy/fancy-connector-core',
+                'language' => 'TypeScript',
+            ],
+            [
+                'slug' => 'fancy-connectors',
+                'name' => '@particle-academy/fancy-connectors',
+                'tagline' => 'Installable connectors for third-party APIs -- triggers, actions, sandbox endpoints where a provider offers one, and a faker for every connector regardless.',
+                'npm' => '@particle-academy/fancy-connectors',
+                'repo' => 'Particle-Academy/fancy-connectors',
+                'language' => 'TypeScript',
+            ],
+            [
+                'slug' => 'fancy-trading-js',
+                'name' => '@particle-academy/fancy-trading',
+                'tagline' => 'Plumbing for stock / futures / crypto / event trading apps -- market data, order and position models, and chart surfaces. Deliberately unopinionated about how you build a strategy.',
+                'npm' => '@particle-academy/fancy-trading',
+                'repo' => 'Particle-Academy/fancy-trading-js',
+                'language' => 'TypeScript',
+            ],
+            [
+                'slug' => 'fancy-flow-py',
+                'name' => 'fancy-flow',
+                'tagline' => 'Python runtime twin of the fancy-flow engine -- the same graph, the same node kinds, durable and queued runs. Pairs with fancy-flow (TS) and fancy-flow-php.',
+                'pypi' => 'fancy-flow',
+                'repo' => 'Particle-Academy/fancy-flow-py',
+                'language' => 'Python',
+            ],
+            [
+                'slug' => 'fancy-features-py',
+                'name' => 'fancy-features',
+                'tagline' => 'Python twin of laravel-fms -- feature flags and metered-resource gating, framework-free. Same FeatureSource contract as the PHP and Node siblings.',
+                'pypi' => 'fancy-features',
+                'repo' => 'Particle-Academy/fancy-features-py',
+                'language' => 'Python',
+            ],
+            [
+                'slug' => 'fancy-catalog-py',
+                'name' => 'fancy-catalog',
+                'tagline' => 'Python twin of laravel-catalog -- Stripe products, prices, plans and checkout, framework-free.',
+                'pypi' => 'fancy-catalog',
+                'repo' => 'Particle-Academy/fancy-catalog-py',
+                'language' => 'Python',
+            ],
+            [
+                'slug' => 'holy-sheet-py',
+                'name' => 'fancy-holy-sheet',
+                'tagline' => 'Python port of holy-sheet -- xlsx writer/reader for agentic documents. Headless; no UI.',
+                'pypi' => 'fancy-holy-sheet',
+                'repo' => 'Particle-Academy/holy-sheet-py',
+                'language' => 'Python',
+            ],
+            [
+                'slug' => 'dark-slide-py',
+                'name' => 'fancy-dark-slide',
+                'tagline' => 'Python port of dark-slide -- pptx writer/reader for agentic documents. Headless; no UI.',
+                'pypi' => 'fancy-dark-slide',
+                'repo' => 'Particle-Academy/dark-slide-py',
+                'language' => 'Python',
+            ],
+            [
+                'slug' => 'last-word-py',
+                'name' => 'fancy-last-word',
+                'tagline' => 'Python port of last-word -- docx writer/reader for agentic documents, with markdown bridges. Headless; no UI.',
+                'pypi' => 'fancy-last-word',
+                'repo' => 'Particle-Academy/last-word-py',
+                'language' => 'Python',
             ],
         ]));
     }

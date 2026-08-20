@@ -16,12 +16,13 @@ type Pkg = {
     core: boolean;
     group: "core" | "surfaces" | "documents" | "commerce" | "platform" | "tooling";
     accent: string;
-    ecosystem: "ts" | "php" | "polyglot";
+    ecosystem: "ts" | "php" | "py" | "polyglot";
     kind: "ui" | "bridge" | "headless";
     components_count: number;
     stars: number | null;
     npm: string | null;
     composer: string | null;
+    pypi?: string | null;
     download: string | null;
     repoUrl: string;
     npmUrl: string | null;
@@ -39,7 +40,7 @@ type Pkg = {
 };
 
 type KindFilter = "all" | "ui" | "headless";
-type EcoFilter = "all" | "ts" | "php" | "polyglot";
+type EcoFilter = "all" | "ts" | "php" | "py" | "polyglot";
 
 const GROUP_ORDER: Pkg["group"][] = ["core", "surfaces", "documents", "commerce", "platform", "tooling"];
 const GROUP_META: Record<Pkg["group"], { title: string; blurb: string }> = {
@@ -69,7 +70,7 @@ const GROUP_META: Record<Pkg["group"], { title: string; blurb: string }> = {
     },
 };
 
-const ECO_LABEL: Record<Pkg["ecosystem"], string> = { ts: "TS", php: "PHP", polyglot: "Poly" };
+const ECO_LABEL: Record<Pkg["ecosystem"], string> = { ts: "TS", php: "PHP", py: "Py", polyglot: "Poly" };
 
 /** Mono initials for the glyph — first letters of the de-scoped name parts. */
 function initials(name: string): string {

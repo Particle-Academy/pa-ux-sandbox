@@ -202,7 +202,7 @@ export default function PackagesShow({
                                 </div>
                             </div>
                         )}
-                        {mcpTools && <McpProof tools={mcpTools} />}
+                        {mcpTools && <McpProof tools={mcpTools} components={components} />}
                     </div>
                 </div>
 
@@ -370,7 +370,17 @@ function MetaLinks({ pkg }: { pkg: Pkg }) {
  * drives over MCP. Side by side is the only way that reads as one mechanism
  * instead of two features.
  */
-function McpProof({ tools }: { tools: string[] }) {
+function McpProof({ tools, components }: { tools: string[]; components: Component[] }) {
+    // The HUMAN side was a hardcoded `<Table rows onChange>` — the same snippet
+    // on every package page, including packages with no Table in them. It read
+    // as an illustration when the section's entire claim is that these are the
+    // SAME handler, so the example has to come from THIS package.
+    //
+    // `value` / `onChange` is not a guess: the Human+ contract requires
+    // controlled state on every stateful component, which is exactly what makes
+    // the agent tool beside it able to drive the same state.
+    const component = components[0]?.name ?? null;
+
     return (
         <div className="pkg-mcp">
             <div className="pkg-mcp__head">
@@ -381,11 +391,21 @@ function McpProof({ tools }: { tools: string[] }) {
             <div className="pkg-mcp__grid">
                 <div className="pkg-mcp__col pkg-mcp__col--human">
                     <div className="pkg-mcp__eyebrow"><Icon name="user" size="xs" /> Human — keystroke</div>
-                    <pre className="pkg-mcp__code">
-                        {/* Entities decode in JSX TEXT, not inside a string
-                            expression -- "/&gt;" would render literally. */}
-                        <span className="k">&lt;Table</span>{"\n  rows={rows}\n  onChange={"}<span className="k">setRows</span>{"}\n/>"}
-                    </pre>
+                    {component ? (
+                        <pre className="pkg-mcp__code">
+                            {/* Entities decode in JSX TEXT, not inside a string
+                                expression -- "/&gt;" would render literally. */}
+                            <span className="k">&lt;{component}</span>{"\n  value={value}\n  onChange={"}<span className="k">setValue</span>{"}\n/>"}
+                        </pre>
+                    ) : (
+                        // A headless package has no component to show. Saying so
+                        // beats inventing one: the tools on the right are still
+                        // the real surface, and a fabricated JSX example here
+                        // would be the only untrue thing on the page.
+                        <p className="pkg-mcp__none">
+                            Headless — the same functions the tools call are the ones your code calls.
+                        </p>
+                    )}
                 </div>
                 <div className="pkg-mcp__col pkg-mcp__col--agent">
                     <div className="pkg-mcp__eyebrow"><Icon name="bot" size="xs" /> Agent — MCP tool call</div>

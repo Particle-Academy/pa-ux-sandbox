@@ -62,10 +62,17 @@ section.pkg-section-head + section.pkg-section-head {
 .pkgs-head {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-end;
+  /* NOT flex-end. The stats are a short block beside a three-line intro, so
+     bottom-aligning them dropped them ~90px below the heading and left an
+     obvious void in the top-right of the page. Aligning to the start puts them
+     level with the title, which is where a reader looks for them. */
+  align-items: flex-start;
   justify-content: space-between;
   gap: var(--space-4);
 }
+/* Optical alignment: the title has tight leading, so a flush top edge sits a
+   little high against the cap height. */
+.pkgs-stats { margin-top: var(--space-2); }
 .pkgs-head__title {
   font-family: var(--font-display);
   letter-spacing: var(--tracking-tight);
@@ -623,7 +630,14 @@ section.pkg-section-head + section.pkg-section-head {
 .nextstep > button, .nextstep > a { align-self: flex-start; }
 
 /* ── Install card ────────────────────────────────────────────────────────── */
-.pkg-install { margin-top: 0; }
+.pkg-install {
+  margin-top: 0;
+  /* The command row scrolls, and a scroll container does not inherit its
+     parent's rounding -- so the card's bottom corners rendered square and the
+     scrollbar ran the full width, corner to corner. Clipping here rounds the
+     scroll area with the card. */
+  overflow: hidden;
+}
 .pkg-tabbar { display: flex; gap: 0; border-bottom: 1px solid var(--border-1); background: var(--bg-1); padding: 0 var(--space-2); }
 .pkg-tab {
   appearance: none;
@@ -651,6 +665,20 @@ section.pkg-section-head + section.pkg-section-head {
   color: var(--fg-1);
   overflow-x: auto;
 }
+/* Firefox + the standards property. */
+.pkg-install__cmd {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-2) transparent;
+}
+/* WebKit/Blink still needs the vendor pseudo-elements. */
+.pkg-install__cmd::-webkit-scrollbar { height: 6px; }
+.pkg-install__cmd::-webkit-scrollbar-track { background: transparent; }
+.pkg-install__cmd::-webkit-scrollbar-thumb {
+  background: var(--border-2);
+  border-radius: var(--radius-full, 999px);
+}
+.pkg-install__cmd::-webkit-scrollbar-thumb:hover { background: var(--fg-4); }
+
 .pkg-install__cmd .sigil { color: var(--fg-4); }
 .pkg-install__cmd code { flex: 1; white-space: nowrap; }
 .pkg-copy {
@@ -754,6 +782,12 @@ section.pkg-section-head + section.pkg-section-head {
 .pkg-mcp__code .s { color: var(--emerald-600); }
 .dark .pkg-mcp__code .s { color: var(--emerald-400); }
 .pkg-mcp__code .a { color: var(--lane-agent-ink); }
+.pkg-mcp__none {
+  margin: 0;
+  font-size: var(--text-xs);
+  line-height: var(--leading-normal);
+  color: var(--fg-3);
+}
 .pkg-mcp__tools { margin-top: var(--space-3); display: flex; flex-wrap: wrap; gap: var(--space-1); }
 .pkg-mcp__tool {
   font-family: var(--font-mono);

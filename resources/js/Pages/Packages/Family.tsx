@@ -1,10 +1,24 @@
 import { Link } from "@inertiajs/react";
 import { Seo } from "@particle-academy/fancy-inertia/seo";
-import { Breadcrumbs, Icon } from "@particle-academy/react-fancy";
+import { Breadcrumbs, Button, Card, Eyebrow, Heading, Icon, Text } from "@particle-academy/react-fancy";
 import { useState, type CSSProperties } from "react";
 import { Layout } from "../Layout";
+import { BASKETS, BasketTag, ECO_LABEL, Snippet, deScope, initials, type Basket, type Eco } from "./basket";
 import { ContextCards } from "./ContextCards";
+import { PkgPreview } from "./PkgPreview";
 import { Prose } from "./Prose";
+
+/**
+ * A family page — several packages, one product.
+ *
+ * It leads with the BASKET SPLIT rather than a flat list: which of these
+ * packages you can look at, and which render nothing. For `fancy-git` that is
+ * one React surface against eight headless engines and adapters, and a flat
+ * list of nine mono package names says none of it.
+ *
+ * Composed from react-fancy (Card / Button / Heading / Text / Eyebrow /
+ * Breadcrumbs / Badge via BasketTag), restyled through showcase/packages.css.
+ */
 
 /** One package inside a family. */
 type Member = {
@@ -12,7 +26,9 @@ type Member = {
     slug: string;
     name: string;
     tagline: string;
-    ecosystem: "ts" | "php" | "py" | "polyglot";
+    basket: "ui" | "backend";
+    accent: string;
+    ecosystem: Eco;
     npm: string | null;
     composer: string | null;
     install: string | null;
@@ -28,17 +44,27 @@ type Member = {
 /** A labelled group of members — Engine, React UI, GitHub provider, … */
 type Section = { label: string; capability: string | null; members: Member[] };
 
-type Family = { slug: string; name: string; tagline: string; sections: Section[] };
+type Family = {
+    slug: string;
+    name: string;
+    tagline: string;
+    sections: Section[];
+    accent: string;
+    languages: string[];
+    basket: Basket;
+    ui_count: number;
+    backend_count: number;
+    previews: number;
+};
 type Context = { why: string; what: string; how: string };
 
-const ECO_LABEL: Record<Member["ecosystem"], string> = { ts: "TS", php: "PHP", py: "Py", polyglot: "Poly" };
+const CONTRACT =
+    "Everything in this family ships against one shared contract — install only the pieces your stack needs. " +
+    "Language mirrors behave identically, so you pick your backend and get the same product.";
 
-const ACCENT = "#8b5cf6";
-
-function initials(name: string): string {
-    const base = name.replace(/^@[^/]+\//, "").replace(/^particle-academy\//, "");
-    const parts = base.split(/[-/ ]/).filter(Boolean);
-    return ((parts[0]?.[0] ?? "") + (parts[1]?.[0] ?? parts[0]?.[1] ?? "")).toUpperCase();
+/** Scroll to the per-role listing the hero's second button promises. */
+function jumpRoles() {
+    document.getElementById("fam-roles")?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 export default function PackagesFamily({
@@ -51,74 +77,106 @@ export default function PackagesFamily({
     readmeHtml?: string | null;
 }) {
     const members = family.sections.flatMap((s) => s.members);
-    const languages = [...new Set(members.map((m) => m.language))];
+    // The flagship is what the hero's primary button opens: the surface with
+    // the most to look at, falling back to anything with a page of its own.
+    const flagship =
+        members.find((m) => m.basket === "ui" && m.components_count > 0 && m.href)
+        ?? members.find((m) => m.href)
+        ?? members[0];
 
     return (
         <Layout>
             <Seo title={family.name} description={family.tagline} />
 
             <Breadcrumbs>
-                <Breadcrumbs.Item href="/packages">Packages</Breadcrumbs.Item>
+                <Breadcrumbs.Item as={Link} href="/packages">Packages</Breadcrumbs.Item>
                 <Breadcrumbs.Item>{family.name}</Breadcrumbs.Item>
             </Breadcrumbs>
 
-            <div style={{ "--accent": ACCENT } as CSSProperties}>
-                {/* ── Hero ─────────────────────────────────────────────── */}
-                <header className="pkg-hero">
-                    <span className="pkg-glyph pkg-hero__glyph">{initials(family.name)}</span>
-                    <div className="pkg-hero__main">
-                        <h1 className="pkg-hero__name">{family.name}</h1>
-                        <p className="pkg-hero__tagline">{family.tagline}</p>
+            <div style={{ "--accent": family.accent, "--acc": family.accent } as CSSProperties}>
+                <div className="fam-hero">
+                    <div>
+                        <Eyebrow
+                            className="fam-eyebrow"
+                            label={`Family · ${members.length} packages, one product`}
+                        />
+                        <header className="pkg-hero">
+                            <span className="pkg-glyph pkg-hero__glyph">{initials(family.name)}</span>
+                            <div className="pkg-hero__main">
+                                <Heading as="h1" className="pkg-hero__name">{family.name}</Heading>
+                                <div className="pkg-hero__id">
+                                    {family.languages.join(" + ")} · {members.length} packages
+                                </div>
+                            </div>
+                        </header>
+
+                        <Text size="lg" className="pkg-hero__tagline">{family.tagline}</Text>
+
                         <div className="pkg-hero__meta">
-                            <span className="pkg-eco" data-eco={languages.length > 1 ? "polyglot" : "ts"}>
-                                {languages.length > 1 ? "Poly" : ECO_LABEL[members[0]?.ecosystem ?? "ts"]}
-                            </span>
-                            <span className="pkg-kind">
-                                {members.length} package{members.length === 1 ? "" : "s"} · one product
-                            </span>
-                            {languages.map((l) => (
-                                <span key={l} className="pkg-meta-chip">{l}</span>
-                            ))}
+                            <BasketTag basket={family.basket} languages={family.languages} />
+                        </div>
+
+                        <div className="start-card__cta">
+                            {family.ui_count > 0 && flagship?.href ? (
+                                <>
+                                    <Button as={Link} href={flagship.href} color="violet" icon="layout-grid" iconTrailing="arrow-right">
+                                        {flagship.components_count > 0
+                                            ? `Browse ${flagship.components_count} previews`
+                                            : "Open the surface"}
+                                    </Button>
+                                    <Button variant="ghost" icon="list" onClick={jumpRoles}>
+                                        All {members.length} packages
+                                    </Button>
+                                </>
+                            ) : (
+                                <Button color="teal" icon="terminal" iconTrailing="arrow-down" onClick={jumpRoles}>
+                                    Install · all {members.length} packages
+                                </Button>
+                            )}
                         </div>
                     </div>
-                </header>
 
-                <p className="mt-2 text-sm text-[var(--fg-3)]" style={{ maxWidth: "68ch" }}>
-                    Everything in this family ships against one shared contract — install only the pieces your stack
-                    needs. Language mirrors behave identically, so you pick your backend and get the same product.
-                </p>
-
-                {/* ── Sections ─────────────────────────────────────────── */}
-                {family.sections.map((section) => (
-                    <section
-                        key={section.label}
-                        style={{ marginTop: 24, paddingTop: 20, borderTop: "1px solid var(--border-1)" }}
-                    >
-                        <h2 style={{ fontSize: 15, fontWeight: 700, letterSpacing: "-0.01em" }}>{section.label}</h2>
-                        {section.capability && (
-                            <p style={{ fontSize: 12.5, color: "var(--fg-3)", margin: "2px 0 0" }}>{section.capability}</p>
-                        )}
-                        <div
-                            className={section.members.length === 1 ? "grid gap-4" : "grid gap-4 sm:grid-cols-2"}
-                            style={{ marginTop: 12 }}
-                        >
-                            {section.members.map((m) => (
-                                <MemberCard key={m.slug} member={m} />
-                            ))}
+                    <div className="fam-hero__side">
+                        <BasketMap family={family} members={members} />
+                        <div className="fam-contract">
+                            <Icon name="link-2" size="sm" />
+                            <span>{CONTRACT}</span>
                         </div>
-                    </section>
-                ))}
+                    </div>
+                </div>
 
-                {/* ── Why / What / How ─────────────────────────────────── */}
+                {/* ── One section per role ─────────────────────────────────── */}
+                <div id="fam-roles">
+                    {family.sections.map((section) => (
+                        <section key={section.label} className="pkg-section-head">
+                            <Heading as="h2" size="lg">
+                                <Icon name={section.members[0]?.basket === "ui" ? "monitor-play" : "server"} size="md" />
+                                {section.label}
+                            </Heading>
+                            <p>
+                                {section.members.length} package{section.members.length === 1 ? "" : "s"} ·{" "}
+                                {section.members[0]?.basket === "ui"
+                                    ? "component previews inside"
+                                    : "headless — install and call it"}
+                                {section.capability ? ` · ${section.capability}` : ""}
+                            </p>
+                            <div className="mem-list">
+                                {section.members.map((m) => <MemberRow key={m.slug} member={m} />)}
+                            </div>
+                        </section>
+                    ))}
+                </div>
+
+                {/* ── Why / What / How ─────────────────────────────────────── */}
                 {context && (
                     <div className="mt-10">
                         <ContextCards why={context.why} what={context.what} how={context.how} />
                     </div>
                 )}
 
-                {/* ── Shared docs ──────────────────────────────────────── */}
+                {/* ── Shared docs ──────────────────────────────────────────── */}
                 {readmeHtml && (
-                    <div className="mt-10 fancy-card overflow-hidden">
+                    <Card padding="none" className="mt-10 overflow-hidden">
                         <div className="flex items-center gap-2 border-b border-[var(--border-1)] px-4 py-2.5">
                             <span className="pkg-eco" data-eco="polyglot">readme</span>
                             <span className="font-mono text-xs font-semibold text-[var(--fg-2)]">
@@ -128,17 +186,105 @@ export default function PackagesFamily({
                         <div className="px-4 py-6">
                             <Prose html={readmeHtml} />
                         </div>
-                    </div>
+                    </Card>
                 )}
+
+                <div className="nextbar">
+                    <div>
+                        <div className="nextbar__label">What next</div>
+                        <div className="nextbar__text">
+                            {family.ui_count > 0
+                                ? "Open a surface and click any component for a live demo with source."
+                                : "Install a package and drive it from code or an agent."}
+                        </div>
+                    </div>
+                    <div className="nextbar__acts">
+                        {family.ui_count > 0 && flagship?.href && (
+                            <Button as={Link} href={flagship.href} variant="ghost" icon="layout-grid">
+                                Component previews
+                            </Button>
+                        )}
+                        <Button as={Link} href="/packages" variant="ghost" icon="arrow-left">All packages</Button>
+                    </div>
+                </div>
             </div>
         </Layout>
     );
 }
 
-/** One package in the family — install command + links. */
-function MemberCard({ member: m }: { member: Member }) {
+/**
+ * The at-a-glance map: which packages are UI, which are backend.
+ *
+ * The join between the two lanes is labelled "one shared contract" because that
+ * is the family's actual claim — otherwise the split reads as two unrelated
+ * halves rather than one product with two faces.
+ */
+function BasketMap({ family, members }: { family: Family; members: Member[] }) {
+    const lanes = (["ui", "backend"] as const)
+        .map((k) => ({
+            key: k,
+            title: k === "ui" ? "UI surfaces" : "Backend · renders no UI",
+            icon: BASKETS[k].icon,
+            accent: k === "ui" ? "var(--acc)" : "var(--lane-be)",
+            note:
+                k === "ui"
+                    ? family.previews > 0
+                        ? `${family.previews} component previews across ${family.ui_count} package${family.ui_count === 1 ? "" : "s"}`
+                        : "React components"
+                    : "install, then call the API",
+            members: members.filter((m) => m.basket === k),
+        }))
+        .filter((l) => l.members.length > 0);
+
+    return (
+        <div className="bmap">
+            {lanes.map((lane, i) => (
+                <div key={lane.key}>
+                    <div className="bmap__lane" style={{ "--acc": lane.accent } as CSSProperties}>
+                        <div className="bmap__head">
+                            <span className="bmap__ic"><Icon name={lane.icon} size="sm" /></span>
+                            <span className="bmap__title">{lane.title}</span>
+                            <span className="bmap__n">{lane.members.length}</span>
+                        </div>
+                        <div className="bmap__note">{lane.note}</div>
+                        <div className="bmap__list">
+                            {lane.members.map((m) => {
+                                const body = (
+                                    <>
+                                        <span className={`row-dot row-dot--${m.basket}`} />
+                                        <span className="mono">{deScope(m.name)}</span>
+                                        <span className="lang-chip" data-eco={m.ecosystem}>{ECO_LABEL[m.ecosystem]}</span>
+                                        <span className="bmap__go">
+                                            {m.components_count > 0 ? `${m.components_count} previews` : "API"}
+                                            <Icon name="arrow-right" size="xs" />
+                                        </span>
+                                    </>
+                                );
+                                return m.href ? (
+                                    <Link key={m.slug} href={m.href} className="bmap__item">{body}</Link>
+                                ) : (
+                                    <span key={m.slug} className="bmap__item">{body}</span>
+                                );
+                            })}
+                        </div>
+                    </div>
+                    {i === 0 && lanes.length > 1 && (
+                        <div className="bmap__join">
+                            <hr />
+                            <span>one shared contract</span>
+                            <hr />
+                        </div>
+                    )}
+                </div>
+            ))}
+        </div>
+    );
+}
+
+/** One package in the family — preview or install line, then its next step. */
+function MemberRow({ member: m }: { member: Member }) {
     const [copied, setCopied] = useState(false);
-    const id = m.npm ?? m.composer ?? m.name;
+    const ui = m.basket === "ui";
 
     const copy = () => {
         if (!m.install) return;
@@ -149,49 +295,62 @@ function MemberCard({ member: m }: { member: Member }) {
     };
 
     return (
-        <div className="pkg-install fancy-card" style={{ display: "flex", flexDirection: "column" }}>
-            <div className="flex items-center gap-2 border-b border-[var(--border-1)] px-4 py-2.5">
-                <span className="pkg-eco" data-eco={m.ecosystem}>{ECO_LABEL[m.ecosystem]}</span>
-                <span className="font-semibold text-[var(--fg-1)]">{m.language}</span>
-                <span className="flex-1" />
-                {m.components_count > 0 && (
-                    <span className="text-xs text-[var(--fg-3)]">{m.components_count} components</span>
-                )}
-                {m.stars != null && m.stars > 0 && (
-                    <span
-                        title={`${m.stars.toLocaleString()} GitHub stars`}
-                        style={{ display: "inline-flex", alignItems: "center", gap: 3, color: "#f59e0b", fontWeight: 600, fontVariantNumeric: "tabular-nums", fontSize: 12 }}
-                    >
-                        <Icon name="star" size="xs" />
-                        {m.stars >= 1000 ? `${(m.stars / 1000).toFixed(1)}k` : m.stars}
+        <Card
+            className="mem-row"
+            data-basket={m.basket}
+            style={{ "--acc": ui ? m.accent : "var(--lane-be)" } as CSSProperties}
+        >
+            {ui && <div className="mem-pv"><PkgPreview slug={m.slug} /></div>}
+            <div>
+                <div className="mem-head">
+                    <span className="mem-name">{deScope(m.name)}</span>
+                    <span className="lang-chip" data-eco={m.ecosystem}>{m.language}</span>
+                    <BasketTag basket={m.basket} />
+                    {m.components_count > 0 && (
+                        <span className="mem-cc">
+                            <Icon name="component" size="xs" /> {m.components_count} component
+                            {m.components_count === 1 ? "" : "s"}
+                        </span>
+                    )}
+                </div>
+                {m.tagline && <p className="mem-tag">{m.tagline}</p>}
+                {m.install && (
+                    <span className="snippet" style={{ maxWidth: "28rem" }}>
+                        <span className="snippet__sigil">$</span>
+                        <span className="snippet__cmd">{m.install}</span>
+                        <button type="button" className="pkg-copy" onClick={copy} style={{ marginLeft: "auto" }}>
+                            {copied ? "copied" : "copy"}
+                        </button>
                     </span>
                 )}
             </div>
-
-            <div className="px-4 pt-3 font-mono text-xs text-[var(--fg-3)]">{id}</div>
-
-            {m.install && (
-                <div className="pkg-install__cmd">
-                    <span className="sigil">$</span>
-                    <code>{m.install}</code>
-                    <button type="button" className="pkg-copy" onClick={copy}>{copied ? "copied" : "copy"}</button>
-                </div>
-            )}
-
-            {m.tagline && (
-                <p className="px-4 pt-1 text-xs leading-relaxed text-[var(--fg-3)]">{m.tagline}</p>
-            )}
-
-            <div className="mt-auto flex flex-wrap items-center gap-x-4 gap-y-1 px-4 pb-3 pt-2 text-xs">
-                {m.href && (
-                    <Link href={m.href} className="font-medium" style={{ color: "color-mix(in oklch, var(--accent) 80%, var(--fg-1))" }}>
-                        {m.components_count > 0 ? `${m.components_count} components →` : "Docs →"}
-                    </Link>
+            <div className="mem-act">
+                {m.href ? (
+                    <Button
+                        as={Link}
+                        href={m.href}
+                        size="sm"
+                        color={BASKETS[m.basket].color}
+                        icon={ui ? "layout-grid" : "terminal"}
+                        iconTrailing="arrow-right"
+                    >
+                        {ui
+                            ? m.components_count > 0
+                                ? `Browse ${m.components_count} preview${m.components_count === 1 ? "" : "s"}`
+                                : "Open package"
+                            : "Read the API"}
+                    </Button>
+                ) : (
+                    <span className="mem-cc">Documented in this family</span>
                 )}
-                {m.repoUrl && <a className="pkg-link" href={m.repoUrl} target="_blank" rel="noreferrer">GitHub →</a>}
-                {m.npmUrl && <a className="pkg-link" href={m.npmUrl} target="_blank" rel="noreferrer">npm →</a>}
-                {m.packagistUrl && <a className="pkg-link" href={m.packagistUrl} target="_blank" rel="noreferrer">Packagist →</a>}
+                <div className="mem-links">
+                    {m.repoUrl && <a href={m.repoUrl} target="_blank" rel="noreferrer">GitHub <Icon name="arrow-up-right" size="xs" /></a>}
+                    {m.npmUrl && <a href={m.npmUrl} target="_blank" rel="noreferrer">npm <Icon name="arrow-up-right" size="xs" /></a>}
+                    {m.packagistUrl && <a href={m.packagistUrl} target="_blank" rel="noreferrer">Packagist <Icon name="arrow-up-right" size="xs" /></a>}
+                </div>
             </div>
-        </div>
+        </Card>
     );
 }
+
+export type { Family, Member, Section };

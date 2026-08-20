@@ -116,7 +116,7 @@ export default function ProfileShow({ profile, username, usernameSuggestion }: P
                     {/* Level meter */}
                     <div className="pf-meter">
                         <div className="pf-meter-head">
-                            <span className="lbl">
+                            <span className="lbl" id="pf-level-label">
                                 <Icon name="trending-up" className="h-4 w-4 text-violet-500" />
                                 {profile.nextThreshold ? `Progress to Level ${profile.level + 1}` : "Max tier reached"}
                             </span>
@@ -135,21 +135,29 @@ export default function ProfileShow({ profile, username, usernameSuggestion }: P
                           * would look equivalent and is not: it would both redraw the bar at a
                           * different width and announce a number that does not match it.
                           */}
+                        {/*
+                          * react-fancy 5.24.0 (#26, #27) opened this up. Before it, the bar
+                          * announced as "progress bar, N%" with no way to say what was
+                          * progressing, and the brand gradient was not expressible so the
+                          * meter shipped a solid indigo.
+                          *
+                          * `aria-labelledby` reuses the heading already on the page rather
+                          * than duplicating it, and `aria-valuetext` says what the number
+                          * MEANS — a percentage is the wrong unit for an XP meter.
+                          */}
                         <Progress
                             value={Math.min(100, profile.progress)}
                             max={100}
                             color="indigo"
                             size="md"
+                            aria-labelledby="pf-level-label"
+                            aria-valuetext={
+                                profile.nextThreshold
+                                    ? `${profile.totalXp.toLocaleString()} of ${profile.nextThreshold.toLocaleString()} XP to Level ${profile.level + 1}`
+                                    : `${profile.totalXp.toLocaleString()} XP — max tier reached`
+                            }
+                            fillClassName="bg-[linear-gradient(90deg,var(--brand-grad-from),var(--brand-grad-via)_55%,var(--brand-grad-to))]"
                         />
-                        {/*
-                          * NOTE: `Progress` takes no `aria-label`/`aria-labelledby`/`aria-valuetext`
-                          * — its props are a closed interface. So this announces as
-                          * "progress bar, N%" with no indication of WHAT is progressing; the
-                          * "Progress to Level N" / "x / y XP" text above supplies that visually
-                          * and to a screen reader reading in order, but the bar is not
-                          * programmatically named. Filed as a react-fancy gap rather than
-                          * hand-rolled around here — see .ai/plans/gamification-canon.md §4.4b.
-                          */}
                         <div className="pf-bar-ticks">
                             <span>Level {profile.level}</span>
                             {profile.nextThreshold && (

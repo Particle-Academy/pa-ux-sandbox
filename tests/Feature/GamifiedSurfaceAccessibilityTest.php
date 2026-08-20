@@ -96,3 +96,75 @@ it('gives the leaderboard table real column headers', function () {
         'the leaderboard table no longer declares columns, so it renders without <th> headers',
     );
 });
+
+/**
+ * ── Profile surface ──────────────────────────────────────────────────────
+ *
+ * The audit above covered `/leaderboard` and stopped there. The player's own
+ * profile is the primary gamified surface and had never been looked at, so it
+ * repeated the leaderboard's exact defect shape: a control whose meaning lives
+ * entirely in pixels.
+ *
+ * Same method as above — these read SOURCE, not rendered HTML, because
+ * `phpunit.xml` sets `INERTIA_SSR_ENABLED=false` and a PHP feature test
+ * receives an empty `<div id="app">`.
+ */
+it('renders the profile level meter with the kit Progress, not a hand-rolled bar', function () {
+    $source = file_get_contents(resource_path('js/Pages/Profile/Show.tsx'));
+
+    // The meter was `<div class="pf-bar"><span style={{width:'…%'}} /></div>`:
+    // no role, no value, nothing for assistive tech. react-fancy's `Progress`
+    // ships role="progressbar" + aria-valuenow/min/max, so this is the same
+    // "the a11y gap and the Fancy Exclusive violation are one defect" finding
+    // the leaderboard switcher produced.
+    expect(str_contains($source, '<Progress'))->toBeTrue(
+        'the profile level meter no longer uses the kit Progress component',
+    );
+
+    expect(preg_match('/import\s*\{[^}]*\bProgress\b[^}]*\}\s*from\s*"@particle-academy\/react-fancy"/s', $source))
+        ->toBe(1, 'Progress is used but not imported from react-fancy');
+
+    expect(str_contains($source, 'className="pf-bar"'))->toBeFalse(
+        'the hand-rolled pf-bar div is still present — the swap left the old markup behind',
+    );
+});
+
+it('gives the opt-out control a visible keyboard focus style', function () {
+    $source = file_get_contents(resource_path('js/Pages/Profile/Show.tsx'));
+
+    // `.optout` in showcase/profile.css styles only :hover — that file contains
+    // no focus rule at all, so the control governing a user's own data was
+    // invisible when tabbed to (WCAG 2.4.7). The kit's Button carries
+    // `focus:ring-2`, so routing through it fixes the defect at the source
+    // rather than bolting a focus ring onto a bespoke class.
+    expect(str_contains($source, 'className="optout"'))->toBeFalse(
+        'the opt-out is still a bare <button className="optout"> with no focus style',
+    );
+});
+
+it('tells the user what opting out stops and what it keeps', function () {
+    $source = file_get_contents(resource_path('js/Pages/Profile/Show.tsx'));
+
+    // The control read "Opt out of gamification" and said nothing else. From
+    // the code, opting out stops future awards and hides you from the
+    // leaderboard (LeaderboardBuilder::optedIn), but coins, achievements,
+    // prizes and earned Pro all survive — Entitlements::proSource never checks
+    // opt-out. A user could reasonably read the old link as "delete my data".
+    foreach (['leaderboard', 'keep'] as $concept) {
+        expect(stripos($source, $concept))->not->toBeFalse(
+            "the opt-out copy never mentions '{$concept}', so the user cannot tell what actually happens",
+        );
+    }
+});
+
+it('requires a confirmation before opting out', function () {
+    $source = file_get_contents(resource_path('js/Pages/Profile/Show.tsx'));
+
+    // Opting out silently zeroes a user's future earning on a single click.
+    // Per the component contract's trust-but-verify hook, a human-visible
+    // consequence gets a staged confirm. Opting back IN needs no confirmation
+    // — it is not the destructive direction.
+    expect(stripos($source, 'confirm'))->not->toBeFalse(
+        'opting out is still a single unconfirmed click',
+    );
+});

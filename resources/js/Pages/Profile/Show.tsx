@@ -1,5 +1,6 @@
+import { useState } from "react";
 import { Head, Link, useForm } from "@inertiajs/react";
-import { Badge, Button, Card, Icon, Input } from "@particle-academy/react-fancy";
+import { Badge, Button, Card, Icon, Input, Progress } from "@particle-academy/react-fancy";
 import { Layout } from "../Layout";
 import { type CosmeticSlots } from "../../lib/cosmetics";
 import {
@@ -49,6 +50,8 @@ type Props = {
 export default function ProfileShow({ profile, username, usernameSuggestion }: Props) {
     const displayName = profile.identity.name;
     const optOutForm = useForm({});
+    /** Staged confirm for opting OUT only — opting back in needs no gate. */
+    const [confirmingOptOut, setConfirmingOptOut] = useState(false);
     const usernameForm = useForm({ username: username ?? usernameSuggestion ?? "" });
     const maxXp = Math.max(1, ...profile.metrics.map((m) => m.xp));
 
@@ -123,9 +126,30 @@ export default function ProfileShow({ profile, username, usernameSuggestion }: P
                                     : `${profile.totalXp.toLocaleString()} XP`}
                             </span>
                         </div>
-                        <div className="pf-bar">
-                            <span style={{ width: `${Math.min(100, profile.progress)}%` }} />
-                        </div>
+                        {/*
+                          * `profile.progress` is ALREADY a percentage, and it is measured from
+                          * the CURRENT level's floor — not from zero (see
+                          * MetricLevelGroupService::getProgressPercentage, which computes
+                          * `(totalXp - currentLevelThreshold) / (next - current)`). So it is
+                          * passed as value-out-of-100. Passing `value={totalXp} max={nextThreshold}`
+                          * would look equivalent and is not: it would both redraw the bar at a
+                          * different width and announce a number that does not match it.
+                          */}
+                        <Progress
+                            value={Math.min(100, profile.progress)}
+                            max={100}
+                            color="indigo"
+                            size="md"
+                        />
+                        {/*
+                          * NOTE: `Progress` takes no `aria-label`/`aria-labelledby`/`aria-valuetext`
+                          * — its props are a closed interface. So this announces as
+                          * "progress bar, N%" with no indication of WHAT is progressing; the
+                          * "Progress to Level N" / "x / y XP" text above supplies that visually
+                          * and to a screen reader reading in order, but the bar is not
+                          * programmatically named. Filed as a react-fancy gap rather than
+                          * hand-rolled around here — see .ai/plans/gamification-canon.md §4.4b.
+                          */}
                         <div className="pf-bar-ticks">
                             <span>Level {profile.level}</span>
                             {profile.nextThreshold && (
@@ -364,19 +388,90 @@ export default function ProfileShow({ profile, username, usernameSuggestion }: P
                     </Card>
                 </div>
 
-                {/* ── Footer ────────────────────────────────────────────── */}
+                {/*
+                  * ── Footer: gamification consent ───────────────────────────
+                  *
+                  * This was a single unexplained footer link. Every claim below is
+                  * checked against the code, because it is a statement about what we do
+                  * with someone's data:
+                  *   - future awards stop            → AwardEngine.php:255,324
+                  *   - you leave the leaderboard     → LeaderboardBuilder.php:187 (->optedIn())
+                  *   - new event logging stops       → EventLog only writes on award events
+                  *   - coins survive                 → HasWallet never consults opt-out
+                  *   - achievements/prizes survive   → grants are not revoked
+                  *   - earned Pro survives           → Entitlements::proSource() never checks opt-out
+                  * If any of those change, this copy is wrong and must change with it.
+                  */}
                 <div className="pf-foot">
-                    <form
-                        onSubmit={(e) => {
-                            e.preventDefault();
-                            optOutForm.post("/profile/opt-out");
-                        }}
-                    >
-                        <button type="submit" disabled={optOutForm.processing} className="optout">
-                            <Icon name="eye" className="h-3.5 w-3.5" />
-                            {profile.optedOut ? "Opt back in to gamification" : "Opt out of gamification"}
-                        </button>
-                    </form>
+                    <div className="flex max-w-prose flex-col items-start gap-2">
+                        <p className="text-xs leading-relaxed text-zinc-500 dark:text-zinc-400">
+                            {profile.optedOut ? (
+                                <>
+                                    Gamification is <b>off</b>. You are not earning XP or coins, and you
+                                    do not appear on the public leaderboard. Everything you earned
+                                    before is still yours — we keep your coins, achievements and prizes.
+                                </>
+                            ) : (
+                                <>
+                                    You earn XP and coins as you use the site, and you appear on the
+                                    public leaderboard. Opting out stops all future tracking and removes
+                                    you from the leaderboard. We keep the coins, achievements and prizes
+                                    you have already earned — including Pro access, if you earned it.
+                                </>
+                            )}
+                        </p>
+
+                        <form
+                            onSubmit={(e) => {
+                                e.preventDefault();
+                                optOutForm.post("/profile/opt-out");
+                            }}
+                        >
+                            {profile.optedOut ? (
+                                /* Opting back IN is not the destructive direction — no confirm step. */
+                                <Button
+                                    type="submit"
+                                    size="sm"
+                                    variant="ghost"
+                                    icon="eye"
+                                    disabled={optOutForm.processing}
+                                >
+                                    Opt back in to gamification
+                                </Button>
+                            ) : confirmingOptOut ? (
+                                <span className="flex flex-wrap items-center gap-2">
+                                    <Button
+                                        type="submit"
+                                        size="sm"
+                                        color="red"
+                                        icon="eye-off"
+                                        disabled={optOutForm.processing}
+                                    >
+                                        Confirm opt-out
+                                    </Button>
+                                    <Button
+                                        type="button"
+                                        size="sm"
+                                        variant="ghost"
+                                        onClick={() => setConfirmingOptOut(false)}
+                                        disabled={optOutForm.processing}
+                                    >
+                                        Cancel
+                                    </Button>
+                                </span>
+                            ) : (
+                                <Button
+                                    type="button"
+                                    size="sm"
+                                    variant="ghost"
+                                    icon="eye-off"
+                                    onClick={() => setConfirmingOptOut(true)}
+                                >
+                                    Opt out of gamification
+                                </Button>
+                            )}
+                        </form>
+                    </div>
                     {profile.memberSince && <span className="since">member since {profile.memberSince}</span>}
                 </div>
             </div>

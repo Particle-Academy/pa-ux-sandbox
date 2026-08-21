@@ -41,6 +41,78 @@ class PackageRegistry
         // registry before adding a slug, and again before believing one.
     ];
 
+    /**
+     * Packages that are DECIDED but do not exist yet.
+     *
+     * ## Why this list exists
+     *
+     * `fancy-trading` was designed in full — a 1,900-line plan, a seven-package
+     * split approved by the owner, measured evidence behind every decision — and
+     * then ONE package was built. The other six were not cancelled, deferred or
+     * rejected. They were simply never started, and **nothing anywhere said so**,
+     * because a package that does not exist appears in no registry, no repo
+     * list, and no listing. It was found by someone asking "what happened to the
+     * trading UI?" months later.
+     *
+     * A backlog held only in a plan document is a backlog nobody reads. This
+     * list is the one place a decided-but-unbuilt package is visible, and
+     * `php artisan kit:status` reports it beside the built ones so the gap is
+     * impossible to miss.
+     *
+     * ## The rule
+     *
+     * **Add the entry BEFORE the work starts, not when the package ships.** An
+     * entry added at publish time records history; an entry added at decision
+     * time is what stops the package being lost between the two.
+     *
+     * Remove a slug from here in the same commit that adds its real entry to
+     * {@see META} and {@see all()}. `PackageStatusTest` fails if a slug is in
+     * both, because a package that is both planned and built is a list that has
+     * stopped being maintained.
+     *
+     * Planned packages appear on NO public surface — not the grid, not the docs,
+     * not `registry.json`, not the MCP. They are a development-status record, and
+     * announcing something that cannot be installed is worse than saying nothing.
+     *
+     * @var array<string, array{name: string, repo: string, why: string}>
+     */
+    public const PLANNED = [
+        'fancy-trading-ui' => [
+            'name' => '@particle-academy/fancy-trading-ui',
+            'repo' => 'Particle-Academy/fancy-trading-ui',
+            'why' => 'The trading UX surfaces AND the chart on lightweight-charts — ladder/DOM, order ticket, book, depth, tape, blotter, positions, watchlist, alerts. Owner folded the separate fancy-chart package into this one (plan §4.0).',
+        ],
+        'fancy-trading-php' => [
+            'name' => 'particle-academy/fancy-trading-php',
+            'repo' => 'Particle-Academy/fancy-trading-php',
+            'why' => 'The domain core in PHP, asserted against the same fancy-conformance table as the TS one.',
+        ],
+        'fancy-trading-py' => [
+            'name' => 'fancy-trading',
+            'repo' => 'Particle-Academy/fancy-trading-py',
+            'why' => 'The domain core in Python. Quants live in Python; it is the runtime they reach for.',
+        ],
+        'fancy-trading-connect-js' => [
+            'name' => '@particle-academy/fancy-trading-connect',
+            'repo' => 'Particle-Academy/fancy-trading-connect-js',
+            'why' => 'Venue sessions: book sync, private-state reconciliation, the fake/sandbox/live rule, per-venue adapters.',
+        ],
+        'fancy-trading-connect-php' => [
+            'name' => 'particle-academy/fancy-trading-connect-php',
+            'repo' => 'Particle-Academy/fancy-trading-connect-php',
+            'why' => 'The same, for a Laravel backend.',
+        ],
+    ];
+
+    /** Decided-but-unbuilt packages, for `kit:status`. Never a public surface. */
+    public static function planned(): array
+    {
+        return collect(self::PLANNED)
+            ->map(fn (array $row, string $slug) => ['slug' => $slug] + $row)
+            ->values()
+            ->all();
+    }
+
     /** Whether a slug is hidden from every public surface. */
     public static function isHidden(string $slug): bool
     {

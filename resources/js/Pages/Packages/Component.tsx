@@ -1,4 +1,5 @@
 import { Link } from "@inertiajs/react";
+import { demoIsFullBleed } from "./component-full-bleed";
 import { Seo } from "@particle-academy/fancy-inertia/seo";
 import { useRef, useState, type ReactNode } from "react";
 import {
@@ -87,6 +88,9 @@ export default function PackagesComponent({ package: pkg, component, usage, cont
         ? `import { ${component.name} } from "${pkg.npm}";`
         : `// ${component.name} ships in ${pkg.composer ?? pkg.slug}`;
 
+    // A canvas sizes to its CONTAINER, so the preview card's padding does not
+    // frame it -- it shrinks it.
+    const fullBleed = demoIsFullBleed(pkg.slug, component.slug);
     const hasSource = source !== null && source.files.length > 0;
     const doc = getComponentDoc(pkg.slug, component.slug);
     const hasDocs = doc !== null;
@@ -144,8 +148,10 @@ export default function PackagesComponent({ package: pkg, component, usage, cont
 
                     <Tabs.Panels>
                         <Tabs.Panel value="preview">
-                            <Card className="mt-4">
-                                <Card.Body>
+                            {/* A canvas sizes to its CONTAINER, so the card's
+                                padding does not frame it -- it shrinks it. */}
+                            <Card className="mt-4" padding={fullBleed ? "none" : undefined}>
+                                <Card.Body className={fullBleed ? "p-0" : undefined}>
                                     {component.frame ? (
                                         // A terminal component has no React demo to drive — the
                                         // preview IS the captured render. Pointed at the live TUI

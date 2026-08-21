@@ -59,3 +59,33 @@ it('covers the whole kit, not just the featured half', function () {
 
     expect($everything)->toBeGreaterThan($featured);
 });
+
+it('reports HIDDEN packages too, because that is how built-but-unpublished is marked', function () {
+    // The failure this pins: `all()` and `companions()` apply the visibility
+    // filter, so reading them in kit:status silently drops every hidden slug —
+    // and a slug is hidden precisely BECAUSE it is built and not yet published.
+    // The command would then have gone quiet about the one state it exists to
+    // report, over a package nobody could install.
+    $visible = collect([...PackageRegistry::all(), ...PackageRegistry::companions()])->pluck('slug');
+    $everything = collect(PackageRegistry::everything())->pluck('slug');
+
+    foreach (PackageRegistry::HIDDEN as $slug) {
+        // `toContain` takes NEEDLES, not a message -- a second string argument
+        // is asserted as another needle. The file's own note above says so, and
+        // it caught this on the first run.
+        expect($visible->contains($slug))->toBeFalse("hidden '{$slug}' leaked onto a public surface");
+        expect($everything->contains($slug))->toBeTrue("hidden '{$slug}' is invisible to kit:status");
+    }
+
+    // And the union is still the whole kit when nothing is hidden.
+    expect($everything->count())->toBe($visible->count() + count(PackageRegistry::HIDDEN));
+});
+
+it('keeps a hidden package out of the compiled registry a consumer installs from', function () {
+    // `npx fancy-cli add` and the MCP both read registry.json, and both are an
+    // invitation to install. A hidden slug reaching either is a 404 with our
+    // name on it.
+    foreach (PackageRegistry::HIDDEN as $slug) {
+        expect(PackageRegistry::find($slug))->toBeNull("hidden '{$slug}' is still findable");
+    }
+});

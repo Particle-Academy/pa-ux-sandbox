@@ -246,8 +246,18 @@ it('hides nothing that is already on a registry', function () {
     foreach ($hidden as $slug) {
         // A slug hidden without a definition is the other failure mode: the
         // package goes live invisible and nothing says why.
-        expect(PackageRegistry::findAny($slug))
+        //
+        // `definitionFor()`, not `findAny()`. findAny() is what the packages
+        // controller and the install-instructions MCP tool call, so it stays
+        // FILTERED -- and being filtered, it can never see a hidden slug, which
+        // meant this assertion could only pass while HIDDEN was empty. It went
+        // green for a year and failed the first time something was hidden.
+        expect(PackageRegistry::definitionFor($slug))
             ->not->toBeNull("HIDDEN lists {$slug}, which has no definition to come back to");
+
+        // And the public lookups still refuse it, which is the other half.
+        expect(PackageRegistry::findAny($slug))
+            ->toBeNull("HIDDEN lists {$slug}, but findAny() still returns it to a public surface");
     }
 });
 

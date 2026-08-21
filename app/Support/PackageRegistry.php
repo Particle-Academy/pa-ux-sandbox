@@ -24,7 +24,17 @@ class PackageRegistry
      * someone to `composer require` something that 404s.
      */
     public const HIDDEN = [
-        // Empty, and worth keeping the mechanism: it is how a built-but-unreleased
+        // BUILT, NOT PUBLISHED. Verified against the registry on 2026-08-20:
+        // `npm view @particle-academy/fancy-trading-ui` is a 404. Remove this
+        // slug in the same change that tags the release, and re-run
+        // `php artisan registry:build` -- until then the package must not reach
+        // the grid, the docs, the sitemap, registry.json, `npx fancy-cli add`
+        // or the MCP, because every one of those is an invitation to install
+        // something that does not exist.
+        'fancy-trading-ui',
+
+        // The mechanism, and why it is kept even when empty: it is how a
+        // built-but-unreleased
         // package stays out of the grid, /packages, the docs, the sitemap and
         // registry.json — and therefore out of `npx fancy-cli add` and the MCP —
         // without deleting its definition.
@@ -77,11 +87,6 @@ class PackageRegistry
      * @var array<string, array{name: string, repo: string, why: string}>
      */
     public const PLANNED = [
-        'fancy-trading-ui' => [
-            'name' => '@particle-academy/fancy-trading-ui',
-            'repo' => 'Particle-Academy/fancy-trading-ui',
-            'why' => 'The trading UX surfaces AND the chart on lightweight-charts — ladder/DOM, order ticket, book, depth, tape, blotter, positions, watchlist, alerts. Owner folded the separate fancy-chart package into this one (plan §4.0).',
-        ],
         'fancy-trading-php' => [
             'name' => 'particle-academy/fancy-trading-php',
             'repo' => 'Particle-Academy/fancy-trading-php',
@@ -103,6 +108,24 @@ class PackageRegistry
             'why' => 'The same, for a Laravel backend.',
         ],
     ];
+
+    /**
+     * Every package the kit knows about, HIDDEN included, featured + companion.
+     *
+     * `kit:status` reads THIS rather than `all()` + `companions()`. Those two
+     * apply {@see visible()}, so a slug in {@see HIDDEN} — which is exactly how
+     * a BUILT-BUT-UNPUBLISHED package is marked — would have been dropped from
+     * the one report that exists to surface it, and the command would have
+     * reported a clean run over a package nobody could install.
+     *
+     * Never a public surface. `all()` and `companions()` remain the public ones.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public static function everything(): array
+    {
+        return [...self::allRows(), ...self::companionRows()];
+    }
 
     /** Decided-but-unbuilt packages, for `kit:status`. Never a public surface. */
     public static function planned(): array
@@ -237,6 +260,7 @@ class PackageRegistry
         'fancy-connectors' => ['group' => 'platform', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#f97316'],
         // Trading.
         'fancy-trading-js' => ['group' => 'commerce', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#22c55e'],
+        'fancy-trading-ui' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'react', 'accent' => '#22c55e'],
         // Python backends -- each the third runtime of an existing pair.
         'fancy-flow-py' => ['group' => 'surfaces', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#0ea5e9'],
         'fancy-features-py' => ['group' => 'commerce', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#f59e0b'],
@@ -267,7 +291,23 @@ class PackageRegistry
     /** @return array<int, array<string, mixed>> */
     public static function all(): array
     {
-        return self::visible(array_map(self::classify(...), [
+        return self::visible(self::allRows());
+    }
+
+    /**
+     * Every featured package, {@see HIDDEN} INCLUDED.
+     *
+     * For release tooling only — never a public surface. `kit:status` needs it
+     * because hiding and not-existing are different states and the command's
+     * whole job is to tell them apart: a built-but-unpublished package is
+     * hidden from the grid ON PURPOSE, and reading `all()` there would have
+     * dropped it from the one report that exists to surface it.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    private static function allRows(): array
+    {
+        return array_map(self::classify(...), [
             self::reactFancy(),
             self::fancyWhiteboard(),
             self::fancyArtboard(),
@@ -301,7 +341,7 @@ class PackageRegistry
             self::fancyPwa(),
             self::fancyMotion(),
             self::fancyCmsUi(),
-        ]));
+        ]);
     }
 
     /**
@@ -330,7 +370,17 @@ class PackageRegistry
      */
     public static function companions(): array
     {
-        return self::visible(array_map(self::classify(...), [
+        return self::visible(self::companionRows());
+    }
+
+    /**
+     * Every companion package, {@see HIDDEN} included. See {@see allRows()}.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    private static function companionRows(): array
+    {
+        return array_map(self::classify(...), [
             [
                 'slug' => 'holy-sheet',
                 'name' => 'particle-academy/holy-sheet',
@@ -723,6 +773,14 @@ class PackageRegistry
                 'language' => 'TypeScript',
             ],
             [
+                'slug' => 'fancy-trading-ui',
+                'name' => '@particle-academy/fancy-trading-ui',
+                'tagline' => 'Trading surfaces -- order ticket, price ladder/DOM, book, depth, tape, blotter, positions, watchlist, alerts, and a session-aware chart on lightweight-charts. Controlled, agent-bridgeable, and built around a safety floor a prop cannot switch off.',
+                'npm' => '@particle-academy/fancy-trading-ui',
+                'repo' => 'Particle-Academy/fancy-trading-ui',
+                'language' => 'TypeScript',
+            ],
+            [
                 'slug' => 'fancy-flow-py',
                 'name' => 'fancy-flow',
                 'tagline' => 'Python runtime twin of the fancy-flow engine -- the same graph, the same node kinds, durable and queued runs. Pairs with fancy-flow (TS) and fancy-flow-php.',
@@ -770,7 +828,7 @@ class PackageRegistry
                 'repo' => 'Particle-Academy/last-word-py',
                 'language' => 'Python',
             ],
-        ]));
+        ]);
     }
 
     public static function find(string $slug): ?array
@@ -794,6 +852,27 @@ class PackageRegistry
     public static function findAny(string $slug): ?array
     {
         return self::find($slug) ?? collect(self::companions())->firstWhere('slug', $slug);
+    }
+
+    /**
+     * The definition behind a slug, {@see HIDDEN} INCLUDED.
+     *
+     * NOT a lookup for any public surface — `find()` and `findAny()` remain
+     * that, and both stay filtered, because `findAny()` is what
+     * `PackagesController`, `UseCaseController` and the install-instructions MCP
+     * tool call. Widening it would put a hidden package on the page, in the
+     * docs and in an install command, which is the whole thing hiding prevents.
+     *
+     * This exists for the opposite check: a slug may only be hidden if there is
+     * a definition to come BACK to, so that publishing is a one-line deletion
+     * rather than an archaeology exercise. `PackageFamilyTest` asserts it, and
+     * could only ever pass while HIDDEN was empty until this existed.
+     *
+     * @return array<string, mixed>|null
+     */
+    public static function definitionFor(string $slug): ?array
+    {
+        return collect(self::everything())->firstWhere('slug', $slug);
     }
 
     /** @return array<string, mixed> */

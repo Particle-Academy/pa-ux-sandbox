@@ -56,11 +56,15 @@ final class KitStatus extends Command
     {
         $rows = [];
 
-        // BOTH lists. `all()` is the featured set and `companions()` is the rest
-        // -- 33 and 51. Checking only the first would have covered under half the
-        // kit while reporting a clean run, which is the exact failure this
-        // command exists to catch.
-        foreach ([...PackageRegistry::all(), ...PackageRegistry::companions()] as $pkg) {
+        // BOTH lists, and HIDDEN ones INCLUDED -- `everything()` is the featured
+        // set plus the companions before the visibility filter runs.
+        //
+        // Two ways to under-report, and both have happened. Checking only the
+        // featured set would cover under half the kit while reporting a clean
+        // run. And reading the PUBLIC accessors would drop every hidden slug --
+        // which is precisely how a built-but-unpublished package is marked, so
+        // the command would go quiet about the exact state it exists to report.
+        foreach (PackageRegistry::everything() as $pkg) {
             $rows[] = $this->inspect($pkg);
         }
 

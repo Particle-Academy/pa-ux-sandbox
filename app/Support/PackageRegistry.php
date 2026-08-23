@@ -87,6 +87,11 @@ class PackageRegistry
      * @var array<string, array{name: string, repo: string, why: string}>
      */
     public const PLANNED = [
+        'fancy-connector-core-py' => [
+            'name' => 'fancy-connector-core',
+            'repo' => 'Particle-Academy/fancy-connector-core-py',
+            'why' => 'Python twin of the connector runtime -- the third after TS and PHP. Today every generated fancy-<provider> package carries its own urllib + hmac shim, which is the copy-cannot-be-upgraded problem the connector pivot exists to kill, reproduced once per provider. Seed exists: Weaver`s template/embed/py/_fake.py + _runtime.py, already proven byte-identical against the PHP and TS fakers by a suite that spawns all three. PyPI name verified free 2026-08-23.',
+        ],
         'fancy-json-rs' => [
             'name' => 'fancy-json',
             'repo' => 'Particle-Academy/fancy-json-rs',

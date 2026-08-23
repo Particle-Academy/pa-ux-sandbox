@@ -87,6 +87,11 @@ class PackageRegistry
      * @var array<string, array{name: string, repo: string, why: string}>
      */
     public const PLANNED = [
+        'fancy-json-rs' => [
+            'name' => 'fancy-json',
+            'repo' => 'Particle-Academy/fancy-json-rs',
+            'why' => 'A lightweight, zero-dependency JSON parser + serializer in Rust, split out of fancy-flow-rs as its own crate on the owner\'s decision (2026-08-23). Rust has no JSON in its standard library -- the one thing PHP and Python ports get free -- and the consumer is the Impactium blockchain agent building it directly into the chain, where every third-party crate is audit surface in a node. Own it rather than depend on it. no_std + alloc, exact-integer/float split so money-shaped numbers never touch f64. Crate name `fancy-json` verified free on crates.io 2026-08-23 (a UA-less request 403s -- send a User-Agent and keep a known-published control, or every name looks taken).',
+        ],
         'fancy-flow-rs' => [
             'name' => 'fancy-flow',
             'repo' => 'Particle-Academy/fancy-flow-rs',

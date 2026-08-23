@@ -87,6 +87,11 @@ class PackageRegistry
      * @var array<string, array{name: string, repo: string, why: string}>
      */
     public const PLANNED = [
+        'fancy-flow-rs' => [
+            'name' => 'fancy-flow',
+            'repo' => 'Particle-Academy/fancy-flow-rs',
+            'why' => 'Rust runtime twin of the fancy-flow engine -- the fourth language after TS, PHP and Python. Driven by a blockchain consumer that needs the engine in-process. Asserted against the same fancy-conformance tables, so parity is a test result rather than a claim. Crate name `fancy-flow` verified free on crates.io 2026-08-23 (a UA-less request 403s -- send a User-Agent or every name looks taken).',
+        ],
         'fancy-trading-php' => [
             'name' => 'particle-academy/fancy-trading-php',
             'repo' => 'Particle-Academy/fancy-trading-php',

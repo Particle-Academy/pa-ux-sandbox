@@ -29,7 +29,17 @@ namespace App\Support;
 final class PackageFamily
 {
     /** Language labels that map onto the MCP mirror columns. */
-    private const MCP_LANGUAGES = ['PHP' => 'php', 'Node / TypeScript' => 'node'];
+    /**
+     * Languages the MCP publishes as server-side mirrors, keyed by the label a
+     * family member uses.
+     *
+     * Python joined on 2026-08-22. Six packages had been live on PyPI for days
+     * while `start_project` still bucketed Python under "other" and advised
+     * running the Node packages from a JS sidecar -- advice that was true when
+     * written and false by the time anyone read it. A language ships here in the
+     * same change that publishes its first package.
+     */
+    private const MCP_LANGUAGES = ['PHP' => 'php', 'Node / TypeScript' => 'node', 'Python' => 'python'];
 
     /**
      * @var array<int, array{slug:string, name:string, tagline:string, group:string, kind:string, sections:array<int, array{label:string, capability:?string, members:array<int, array{language:string, slug:string}>}>}>
@@ -126,6 +136,7 @@ final class PackageFamily
                     'members' => [
                         ['language' => 'Node / TypeScript', 'slug' => 'fancy-flow'],
                         ['language' => 'PHP', 'slug' => 'fancy-flow-php'],
+                        ['language' => 'Python', 'slug' => 'fancy-flow-py'],
                     ],
                 ],
             ],
@@ -267,6 +278,7 @@ final class PackageFamily
                 'capability' => 'xlsx writer/reader (+ formula engine)',
                 'members' => [
                     ['language' => 'PHP', 'slug' => 'holy-sheet'],
+                    ['language' => 'Python', 'slug' => 'holy-sheet-py'],
                     ['language' => 'Node / TypeScript', 'slug' => 'holy-sheet-js'],
                 ],
             ]],
@@ -282,6 +294,7 @@ final class PackageFamily
                 'capability' => 'pptx writer/reader',
                 'members' => [
                     ['language' => 'PHP', 'slug' => 'dark-slide'],
+                    ['language' => 'Python', 'slug' => 'dark-slide-py'],
                     ['language' => 'Node / TypeScript', 'slug' => 'dark-slide-js'],
                 ],
             ]],
@@ -297,6 +310,7 @@ final class PackageFamily
                 'capability' => 'docx writer/reader (+ markdown bridges)',
                 'members' => [
                     ['language' => 'PHP', 'slug' => 'last-word'],
+                    ['language' => 'Python', 'slug' => 'last-word-py'],
                     ['language' => 'Node / TypeScript', 'slug' => 'last-word-js'],
                 ],
             ]],
@@ -312,6 +326,7 @@ final class PackageFamily
                 'capability' => 'Stripe catalog (products / prices / plans / checkout)',
                 'members' => [
                     ['language' => 'PHP', 'slug' => 'laravel-catalog'],
+                    ['language' => 'Python', 'slug' => 'fancy-catalog-py'],
                     ['language' => 'Node / TypeScript', 'slug' => 'fancy-catalog-js'],
                 ],
             ]],
@@ -327,6 +342,7 @@ final class PackageFamily
                 'capability' => 'Feature management (gates, quotas, metered features)',
                 'members' => [
                     ['language' => 'PHP', 'slug' => 'laravel-fms'],
+                    ['language' => 'Python', 'slug' => 'fancy-features-py'],
                     ['language' => 'Node / TypeScript', 'slug' => 'fancy-features-js'],
                 ],
             ]],
@@ -552,21 +568,21 @@ final class PackageFamily
                     continue;
                 }
 
-                $ids = ['php' => null, 'node' => null];
+                $ids = ['php' => null, 'node' => null, 'python' => null];
                 foreach ($section['members'] as $member) {
                     $column = self::MCP_LANGUAGES[$member['language']] ?? null;
                     if ($column === null) {
                         continue; // React UI companions are not a server mirror.
                     }
                     $record = PackageRegistry::findAny($member['slug']) ?? [];
-                    $ids[$column] = $record['composer'] ?? $record['npm'] ?? null;
+                    $ids[$column] = $record['composer'] ?? $record['npm'] ?? $record['pypi'] ?? null;
                 }
 
-                if ($ids['php'] === null && $ids['node'] === null) {
+                if ($ids['php'] === null && $ids['node'] === null && $ids['python'] === null) {
                     continue;
                 }
 
-                $pairs[] = ['capability' => $section['capability'], 'php' => $ids['php'], 'node' => $ids['node']];
+                $pairs[] = ['capability' => $section['capability'], 'php' => $ids['php'], 'node' => $ids['node'], 'python' => $ids['python']];
             }
         }
 

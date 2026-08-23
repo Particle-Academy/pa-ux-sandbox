@@ -9,7 +9,7 @@ use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Attributes\Description;
 use Laravel\Mcp\Server\Tool;
 
-#[Description('Start a NEW Fancy UI project — call this FIRST, before picking components. The first decision is your BACKEND: PHP (Laravel + Inertia), Node / TypeScript, or another language (Go, Python, Rails, .NET, …). The React UI is identical on every backend; only the server layer differs. Returns the recommended stack, the right server-side packages for your backend (each capability is mirrored per language), scaffold steps, and what to do next. Pass `backend` to focus the guide, or omit it for the full decision tree.')]
+#[Description('Start a NEW Fancy UI project — call this FIRST, before picking components. The first decision is your BACKEND: PHP (Laravel + Inertia), Node / TypeScript, Python (FastAPI / Django / Flask), or another language (Go, Rails, .NET, …). The React UI is identical on every backend; only the server layer differs. Returns the recommended stack, the right server-side packages for your backend (each capability is mirrored per language), scaffold steps, and what to do next. Pass `backend` to focus the guide, or omit it for the full decision tree.')]
 class StartProject extends Tool
 {
     public function handle(Request $request): Response
@@ -19,6 +19,7 @@ class StartProject extends Tool
         $backends = [
             'php' => $this->php(),
             'node' => $this->node(),
+            'python' => $this->python(),
             'other' => $this->other(),
         ];
 
@@ -31,7 +32,7 @@ class StartProject extends Tool
                 'agents' => '@particle-academy/agent-integrations — MCP bridges so an embedded agent co-drives the SAME UI. Backend-agnostic.',
             ],
             'mirror_strategy' => [
-                'idea' => 'Every server-side capability is a language-agnostic CONTRACT shipped as per-language "mirror" packages, so you get the same feature behind the same UI no matter your backend. PHP + Node ship today; native mirrors for more modern languages are on the roadmap (same contract → behavior-identical across languages).',
+                'idea' => 'Every server-side capability is a language-agnostic CONTRACT shipped as per-language "mirror" packages, so you get the same feature behind the same UI no matter your backend. PHP and Node ship the full set; PYTHON ships the framework-free cores (workflow, catalog, features, xlsx/pptx/docx) and is filling in the rest. Parity is asserted against shared conformance fixtures, not claimed.',
                 'pairs' => $this->mirrorPairs(),
             ],
             // When focused, return just that backend; otherwise the full tree.
@@ -53,7 +54,8 @@ class StartProject extends Tool
         return match (strtolower(trim($raw))) {
             'php', 'laravel', 'inertia' => 'php',
             'node', 'nodejs', 'ts', 'typescript', 'js', 'javascript', 'next', 'nextjs', 'remix', 'vite', 'express' => 'node',
-            'other', 'go', 'golang', 'python', 'django', 'fastapi', 'ruby', 'rails', 'dotnet', '.net', 'csharp', 'elixir', 'phoenix', 'rust' => 'other',
+            'python', 'py', 'django', 'fastapi', 'flask', 'starlette', 'litestar' => 'python',
+            'other', 'go', 'golang', 'ruby', 'rails', 'dotnet', '.net', 'csharp', 'elixir', 'phoenix', 'rust' => 'other',
             default => '',
         };
     }
@@ -123,14 +125,48 @@ class StartProject extends Tool
         ];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
+    private function python(): array
+    {
+        return [
+            'label' => 'Python — FastAPI, Django, Flask, or any ASGI/WSGI server',
+            'pick_when' => 'Your server is Python. The framework-free cores ship natively on PyPI, so you do not need a JS sidecar for them.',
+            'fancy_core' => [
+                '@particle-academy/react-fancy — UI primitives. Plain React 19 + Tailwind v4; serve it from a Vite SPA or any bundle your app can host.',
+                'your own data layer — fetch / HTMX / an Inertia adapter. fancy-inertia + fancy-query need INERTIA, not Laravel, so they work with a Python Inertia adapter.',
+            ],
+            'server_packages' => [
+                'workflow graphs (engine + durable runs)' => 'fancy-flow',
+                'catalog (Stripe products/prices/checkout)' => 'fancy-catalog',
+                'feature management (gates / quotas)' => 'fancy-features',
+                'xlsx writer/reader' => 'fancy-holy-sheet',
+                'pptx writer/reader' => 'fancy-dark-slide',
+                'docx writer/reader (+ markdown bridges)' => 'fancy-last-word',
+            ],
+            'notes' => [
+                'These are FRAMEWORK-FREE libraries, not Django/FastAPI plugins — instantiate them in your handlers; they take injected clients (a Stripe client, an LLM client) rather than owning the framework.',
+                'Behaviour is asserted against the SAME cross-language fixture tables as the PHP and Node twins (particle-academy/fancy-conformance), so parity is a test result rather than a claim. Money is integer minor units in every runtime.',
+                'NOT YET on PyPI: the framework-coupled capabilities — interaction analytics, well-known files, SEO, MLM, passkeys, git, CMS. For those, run the `-js` package from a small sidecar or call it over HTTP, exactly as the "other" path describes.',
+            ],
+            'scaffold' => [
+                'pip install fancy-flow                 # or: uv add fancy-flow',
+                'pip install fancy-catalog fancy-features   # only the mirrors you need',
+                'npm create vite@latest my-app -- --template react-ts && npm install @particle-academy/react-fancy',
+            ],
+            'docs' => 'https://ui.particle.academy/docs/installation',
+        ];
+    }
+
     /** @return array<string, mixed> */
     private function other(): array
     {
         return [
-            'label' => 'Another backend — Go, Python, Ruby/Rails, .NET, Elixir, Rust, …',
-            'pick_when' => 'Your server is in a language other than PHP or Node.',
+            'label' => 'Another backend — Go, Ruby/Rails, .NET, Elixir, Rust, … (Python has its OWN path: pass backend="python")',
+            'pick_when' => 'Your server is in a language other than PHP, Node or Python.',
             'ui' => 'The Fancy UI React kit is framework-agnostic (plain React 19 + Tailwind v4). Serve it from any backend that can host a JS frontend — a Vite SPA, an inertia-style adapter for your framework, or an embedded bundle. The components + agent bridges work unchanged.',
-            'server_side_today' => 'Server-side capabilities (catalog, feature gating, xlsx/pptx, analytics, well-known files) ship as PHP + Node mirrors today. Until a native mirror for your language lands, run the Node (`-js`) packages from a small JS sidecar service, or call them over HTTP/RPC from your app — the contracts are stable and JSON-friendly.',
+            'server_side_today' => 'Server-side capabilities (catalog, feature gating, xlsx/pptx, analytics, well-known files) ship as PHP + Node mirrors today, with the framework-free cores also on PyPI for Python. Until a native mirror for your language lands, run the Node (`-js`) packages from a small JS sidecar service, or call them over HTTP/RPC from your app — the contracts are stable and JSON-friendly.',
             'roadmap' => 'Native mirrors for more modern languages are on the roadmap. Each capability is defined by a language-agnostic contract, so the per-language packages stay behavior-identical. Want your language prioritized? Open an issue at github.com/Particle-Academy on the relevant package.',
             'docs' => 'https://ui.particle.academy/docs/installation',
         ];
@@ -161,7 +197,7 @@ class StartProject extends Tool
     {
         return [
             'backend' => $schema->string()
-                ->description('Optional. Your backend: "php" (Laravel + Inertia), "node" (any React framework / JS server), or "other" (Go, Python, Rails, .NET, …). Omit to get the full decision guide for all three.'),
+                ->description('Optional. Your backend: "php" (Laravel + Inertia), "node" (any React framework / JS server), "python" (FastAPI / Django / Flask), or "other" (Go, Rails, .NET, …). Omit to get the full decision guide.'),
         ];
     }
 }

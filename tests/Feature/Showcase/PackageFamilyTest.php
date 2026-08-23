@@ -58,7 +58,10 @@ it('folds related packages into one family card on /packages', function () {
             $flow = $pkgs->firstWhere('slug', 'fancy-flow');
             expect($flow['group'])->toBe('surfaces');
             expect($flow['kind'])->toBe('ui');
-            expect($flow['member_count'])->toBe(2);
+            // THREE since 2026-08-22: the TS engine, the PHP twin, and fancy-flow-py.
+            // This assertion earned its keep -- it caught the family growing when
+            // Python joined the mirror languages, which is exactly what it is for.
+            expect($flow['member_count'])->toBe(3);
 
             // Themes replace the old core/human/companion tiers entirely.
             $unknown = $pkgs->pluck('group')->unique()

@@ -13,6 +13,7 @@ use App\Mcp\Tools\ListNodes;
 use App\Mcp\Tools\NodeInstallInstructions;
 use App\Mcp\Tools\RegisterShowcaseProject;
 use App\Mcp\Tools\RescanShowcaseProject;
+use App\Mcp\Tools\SearchBackendPackages;
 use App\Mcp\Tools\SearchComponents;
 use App\Mcp\Tools\SearchNodes;
 use App\Mcp\Tools\ShowcaseProjectStatus;
@@ -165,6 +166,7 @@ class FancyUiRegistry extends Server
         ListNodes::class,
         SearchNodes::class,
         ListConnectorServices::class,
+        SearchBackendPackages::class,
         GetNode::class,
         NodeInstallInstructions::class,
     ];

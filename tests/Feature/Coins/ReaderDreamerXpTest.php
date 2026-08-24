@@ -39,7 +39,10 @@ it('awards dreamer-xp when a vote is cast', function () {
     $user = User::factory()->create();
 
     $this->actingAs($user)
-        ->postJson('/api/votes', ['type' => 'dream', 'slug' => 'some-dream', 'value' => 1])
+        // Real registry slugs, not invented ones: the subject is allowlisted
+        // against DreamRegistry now, because it keys an updateOrCreate and a
+        // free string let a signed-in user write unbounded rows.
+        ->postJson('/api/votes', ['type' => 'dream', 'slug' => 'control-baton', 'value' => 1])
         ->assertOk();
 
     expect($user->getProfile()->getXpFor('dreamer-xp'))->toBe(5);
@@ -48,7 +51,7 @@ it('awards dreamer-xp when a vote is cast', function () {
 it('does not award dreamer-xp when clearing a vote', function () {
     $user = User::factory()->create();
 
-    $this->actingAs($user)->postJson('/api/votes', ['type' => 'dream', 'slug' => 'd', 'value' => 0])->assertOk();
+    $this->actingAs($user)->postJson('/api/votes', ['type' => 'dream', 'slug' => 'intent-trail', 'value' => 0])->assertOk();
 
     expect($user->getProfile()->getXpFor('dreamer-xp'))->toBe(0);
 });

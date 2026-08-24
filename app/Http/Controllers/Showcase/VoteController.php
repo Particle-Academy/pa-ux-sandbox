@@ -4,18 +4,40 @@ namespace App\Http\Controllers\Showcase;
 
 use App\Http\Controllers\Controller;
 use App\Models\Vote;
+use App\Support\DreamRegistry;
+use App\Support\XpAwarder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class VoteController extends Controller
 {
     private const ALLOWED_TYPES = ['dream'];
 
+    /**
+     * Every subject slug a vote may name.
+     *
+     * @return list<string>
+     */
+    private static function votableSlugs(): array
+    {
+        return array_values(array_filter(array_map(
+            static fn (array $dream): ?string => is_string($dream['slug'] ?? null) ? $dream['slug'] : null,
+            DreamRegistry::all(),
+        )));
+    }
+
     public function cast(Request $request): JsonResponse
     {
         $data = $request->validate([
             'type' => 'required|string|in:'.implode(',', self::ALLOWED_TYPES),
-            'slug' => 'required|string|max:120',
+            // Allowlisted against the gallery, not merely length-capped. This
+            // slug is the subject key of an `updateOrCreate`, so a free string
+            // meant a signed-in user could write unbounded rows by varying it
+            // -- and this endpoint carries no route rate limit, only `auth`.
+            // A vote for a dream that does not exist was never meaningful
+            // either, which is why the allowlist costs nothing.
+            'slug' => ['required', 'string', 'max:120', Rule::in(self::votableSlugs())],
             'value' => 'required|integer|in:-1,0,1',
         ]);
 
@@ -39,7 +61,7 @@ class VoteController extends Controller
 
             // dreamer-xp for engaging with the dreaming gallery. Throttled
             // per (user, subject) so toggling a vote can't farm.
-            \App\Support\XpAwarder::award(
+            XpAwarder::award(
                 user: $request->user(),
                 metric: 'dreamer-xp',
                 amount: 5,
@@ -65,6 +87,7 @@ class VoteController extends Controller
         foreach ($slugs as $slug) {
             $out[$slug] = $this->talliesFor($type, $slug);
         }
+
         return response()->json(['tallies' => $out]);
     }
 

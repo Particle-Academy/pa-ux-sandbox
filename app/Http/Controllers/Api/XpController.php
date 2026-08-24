@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Support\Registry\RegistrySource;
 use App\Support\XpAwarder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 /**
  * Endpoints the front-end pings to credit demo interactions + agent
@@ -27,8 +29,14 @@ class XpController extends Controller
      */
     public function demo(Request $request): JsonResponse
     {
+        // `demo` is a COMPONENT SLUG, and the registry is the vocabulary. It
+        // was validated as `string|max:80`, which meant the anti-farm throttle
+        // key below was chosen by the caller -- so varying it opened unbounded
+        // buckets and the hour cooldown bounded nothing. An unknown slug is
+        // also meaningless on its own terms: there is no such demo to interact
+        // with, so there was never anything to credit.
         $data = $request->validate([
-            'demo' => 'required|string|max:80',
+            'demo' => ['required', 'string', 'max:80', Rule::in($this->demoSlugs())],
             'kind' => 'sometimes|string|in:interaction,first-use,completion',
         ]);
 
@@ -49,6 +57,19 @@ class XpController extends Controller
         );
 
         return response()->json(['awarded' => $awarded, 'amount' => $awarded ? $amount : 0]);
+    }
+
+    /**
+     * Every component slug the registry knows, cached for the request.
+     *
+     * @return list<string>
+     */
+    private function demoSlugs(): array
+    {
+        return array_map(
+            static fn ($item): string => $item->name,
+            app(RegistrySource::class)->all(),
+        );
     }
 
     /**

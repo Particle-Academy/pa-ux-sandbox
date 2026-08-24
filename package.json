@@ -76,7 +76,7 @@
         "@particle-academy/fancy-x-files-ui": "^0.2.0",
         "@particle-academy/job-board": "^0.2.0",
         "@particle-academy/last-word": "^0.3.0",
-        "@particle-academy/react-fancy": "^5.24.0",
+        "@particle-academy/react-fancy": "^5.25.0",
         "@particle-academy/teachers-aid-ui": "^0.2.0",
         "@simplewebauthn/browser": "^13.3.0",
         "@tanstack/react-query": "^5.101.0",

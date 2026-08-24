@@ -119,6 +119,11 @@ section.pkg-section-head + section.pkg-section-head {
 }
 /* On <Card interactive role="button"> — the accent bar, the pressed state and
    the internal rhythm; Card itself keeps the surface, border and hover lift. */
+/* No `gap` here on purpose. react-fancy 5.25.0 pads EVERY direct child of a
+   Card (it used to pad only the div ones, which left this card's description
+   <p> and its footer <span> hard against the border). Now that each child
+   carries its own 12px block padding, a gap on top of it would count the
+   rhythm twice and space the card out to no purpose. */
 .basket-card {
   position: relative;
   overflow: hidden;
@@ -126,7 +131,6 @@ section.pkg-section-head + section.pkg-section-head {
   text-align: left;
   display: flex;
   flex-direction: column;
-  gap: var(--space-3);
 }
 .basket-card::before {
   content: "";

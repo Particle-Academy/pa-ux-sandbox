@@ -231,7 +231,7 @@ class PackageRegistry
         'fancy-x-files' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#64748b'],
         'fancy-cms' => ['group' => 'surfaces', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#0ea5e9'],
         'laravel-catalog' => ['group' => 'commerce', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#0ea5e9'],
-        'laravel-fms' => ['group' => 'commerce', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#f59e0b'],
+        'laravel-fms' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#f59e0b'],
         'laravel-fun-lab' => ['group' => 'commerce', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#f43f5e'],
         'fancy-mlm' => ['group' => 'commerce', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#14b8a6'],
         'fancy-mlm-js' => ['group' => 'commerce', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#14b8a6'],
@@ -241,7 +241,7 @@ class PackageRegistry
         // and looked like second-class "companions" despite being first-class.
         'fancy-map' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#10b981'],
         'fancy-catalog-js' => ['group' => 'commerce', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#0ea5e9'],
-        'fancy-features-js' => ['group' => 'commerce', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#f59e0b'],
+        'fancy-features-js' => ['group' => 'platform', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#f59e0b'],
         // Git provider adapters — a PHP + Node mirror per host (brand accents).
         'fancy-git-github-php' => ['group' => 'tooling', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#6e5494'],
         'fancy-git-github-js' => ['group' => 'tooling', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#6e5494'],
@@ -292,7 +292,7 @@ class PackageRegistry
         'fancy-trading-ui' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#22c55e'],
         // Python backends -- each the third runtime of an existing pair.
         'fancy-flow-py' => ['group' => 'surfaces', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#0ea5e9'],
-        'fancy-features-py' => ['group' => 'commerce', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#f59e0b'],
+        'fancy-features-py' => ['group' => 'platform', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#f59e0b'],
         'fancy-catalog-py' => ['group' => 'commerce', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#0ea5e9'],
         'holy-sheet-py' => ['group' => 'documents', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#16a34a'],
         'dark-slide-py' => ['group' => 'documents', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#dc2626'],
@@ -457,7 +457,7 @@ class PackageRegistry
             [
                 'slug' => 'laravel-fms',
                 'name' => 'particle-academy/laravel-fms',
-                'tagline' => 'Feature Management System — gate/policy/config/registry-driven feature access. Pairs with laravel-catalog for entitlement-based UI.',
+                'tagline' => 'Feature Management System — gate features, access and metered quotas in ANY Laravel app. Gate / policy / config / registry strategies. Standalone: laravel-catalog depends on FMS, never the reverse.',
                 'composer' => 'particle-academy/laravel-fms',
                 'repo' => 'Particle-Academy/laravel-feature-management-system',
                 'packagist' => 'particle-academy/laravel-fms',
@@ -738,7 +738,7 @@ class PackageRegistry
             [
                 'slug' => 'fancy-features-js',
                 'name' => '@particle-academy/fancy-features',
-                'tagline' => 'Node/TS port of laravel-fms — headless, framework-agnostic feature management: gate / registry / config / group strategies + metered quotas. Owns the FeatureSource contract @particle-academy/fancy-catalog plugs into. No UI.',
+                'tagline' => 'Node/TS port of laravel-fms — headless, framework-agnostic gating of features, access and metered quotas for any app: gate / registry / config / group strategies. Owns the FeatureSource contract that @particle-academy/fancy-catalog plugs INTO. No UI.',
                 'npm' => '@particle-academy/fancy-features',
                 'repo' => 'Particle-Academy/fancy-features-js',
                 'language' => 'TypeScript',
@@ -820,7 +820,7 @@ class PackageRegistry
             [
                 'slug' => 'fancy-features-py',
                 'name' => 'fancy-features',
-                'tagline' => 'Python twin of laravel-fms -- feature flags and metered-resource gating, framework-free. Same FeatureSource contract as the PHP and Node siblings.',
+                'tagline' => 'Python twin of laravel-fms -- gate features, access and metered resources in any app, framework-free. Same FeatureSource contract as the PHP and Node siblings; commerce is one consumer of it, not a requirement.',
                 'pypi' => 'fancy-features',
                 'repo' => 'Particle-Academy/fancy-features-py',
                 'language' => 'Python',

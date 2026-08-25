@@ -334,8 +334,8 @@ final class PackageFamily
         [
             'slug' => 'laravel-fms',
             'name' => 'Fancy Features',
-            'tagline' => 'Headless feature management — gate / registry / config / group strategies plus metered quotas. Owns the FeatureSource contract catalog plugs into.',
-            'group' => 'commerce',
+            'tagline' => 'Headless feature and access gating for ANY app — gate / registry / config / group strategies plus metered quotas. Owns the FeatureSource contract; catalog plugs into it, not the other way round.',
+            'group' => 'platform',
             'kind' => 'headless',
             'sections' => [[
                 'label' => 'Feature management',

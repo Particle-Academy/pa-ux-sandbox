@@ -73,7 +73,7 @@ class StartProject extends Tool
             ],
             'server_packages' => [
                 'catalog (Stripe products/prices/checkout)' => 'particle-academy/laravel-catalog',
-                'feature management (gates / quotas)' => 'particle-academy/laravel-fms',
+                'feature + access gating (flags, permissions, metered quotas)' => 'particle-academy/laravel-fms',
                 'server SEO (meta / OG / JSON-LD / sitemap)' => 'particle-academy/fancy-seo',
                 'interaction analytics (EUO)' => 'particle-academy/fancy-heuristics',
                 'well-known files (robots / security / llms / AGENTS)' => 'particle-academy/fancy-x-files',
@@ -104,7 +104,7 @@ class StartProject extends Tool
             ],
             'server_packages' => [
                 'catalog (Stripe products/prices/checkout)' => '@particle-academy/fancy-catalog',
-                'feature management (gates / quotas)' => '@particle-academy/fancy-features',
+                'feature + access gating (flags, permissions, metered quotas)' => '@particle-academy/fancy-features',
                 'interaction analytics (EUO)' => '@particle-academy/fancy-heuristics-js',
                 'well-known files (robots / security / llms / AGENTS)' => '@particle-academy/fancy-x-files',
                 'xlsx writer/reader' => '@particle-academy/holy-sheet',
@@ -114,7 +114,7 @@ class StartProject extends Tool
             ],
             'notes' => [
                 'The `-js` server packages are framework-agnostic HEADLESS libraries — instantiate them in your API routes / server actions; they take an injected client (e.g. a Stripe client) rather than owning the framework.',
-                'fancy-catalog composes with fancy-features for entitlements via its ./features bridge — the Node mirror of the laravel-catalog ↔ laravel-fms integration.',
+                'fancy-features gates features, access and metered quotas in ANY app and depends on nothing else of ours — install it on its own. fancy-catalog is one CONSUMER of it: catalog plugs into the FeatureSource contract features owns, via its ./features bridge. The dependency runs catalog -> features, never the reverse.',
             ],
             'scaffold' => [
                 'npm create vite@latest my-app -- --template react-ts   # or Next.js / Remix',
@@ -140,7 +140,7 @@ class StartProject extends Tool
             'server_packages' => [
                 'workflow graphs (engine + durable runs)' => 'fancy-flow',
                 'catalog (Stripe products/prices/checkout)' => 'fancy-catalog',
-                'feature management (gates / quotas)' => 'fancy-features',
+                'feature + access gating (flags, permissions, metered quotas)' => 'fancy-features',
                 'xlsx writer/reader' => 'fancy-holy-sheet',
                 'pptx writer/reader' => 'fancy-dark-slide',
                 'docx writer/reader (+ markdown bridges)' => 'fancy-last-word',

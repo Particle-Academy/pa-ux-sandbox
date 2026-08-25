@@ -266,6 +266,13 @@ class PackageRegistry
         'fancy-flow-php' => ['group' => 'surfaces', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#0ea5e9'],
         'fancy-cf-relay' => ['group' => 'tooling', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#f6821f'],
         'fancy-doc-commons' => ['group' => 'documents', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#2563eb'],
+        // Laravel MCP server for building fancy-flow workflows headlessly.
+        // FOUND BY SubmodulesAreRegisteredTest on its first run -- the third
+        // package in three days to be published and listed nowhere.
+        'fancy-flow-mcp' => ['group' => 'tooling', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#0ea5e9'],
+        // Data grid. Published since 0.2.0 and registered nowhere until now --
+        // see the row below for how a half-finished fix produced that.
+        'fancy-grid' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#0ea5e9'],
         // The Laravel LLM layer the kit builds on -- a maintained fork.
         'prism' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#a855f7'],
         // Polyglot single-file client.
@@ -277,7 +284,12 @@ class PackageRegistry
         'fancy-connectors' => ['group' => 'platform', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#f97316'],
         // Trading.
         'fancy-trading-js' => ['group' => 'commerce', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#22c55e'],
-        'fancy-trading-ui' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'react', 'accent' => '#22c55e'],
+        // `kind` was 'react', which is not one of ui|bridge|headless|block.
+        // It never failed because HIDDEN excludes this package from the merged
+        // catalogue that validates the field -- so the error sat waiting for the
+        // publish that removes it from HIDDEN. A HIDDEN package's metadata is
+        // NOT validated, which makes hiding a way to bank a latent failure.
+        'fancy-trading-ui' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#22c55e'],
         // Python backends -- each the third runtime of an existing pair.
         'fancy-flow-py' => ['group' => 'surfaces', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#0ea5e9'],
         'fancy-features-py' => ['group' => 'commerce', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#f59e0b'],
@@ -844,6 +856,44 @@ class PackageRegistry
                 'pypi' => 'fancy-last-word',
                 'repo' => 'Particle-Academy/last-word-py',
                 'language' => 'Python',
+            ],
+            // FOUND BY THE TEST THIS CHANGE ADDED, on its first run. Published
+            // to Packagist since v0.1.0 and in no registry here -- the third
+            // instance in three days, after `prism` and `fancy-grid`, which is
+            // what turned "add the missing entry" into "add the check".
+            [
+                'slug' => 'fancy-flow-mcp',
+                'name' => 'particle-academy/fancy-flow-mcp',
+                'tagline' => 'A Laravel MCP server that lets an agent build fancy-flow workflows HEADLESSLY -- list node kinds, add and connect nodes, configure them, validate and export a WorkflowSchema, without a canvas. Wraps fancy-flow-php, so the graph an agent composes here is the same document <FlowEditor> opens and the same one the PHP, TypeScript and Python runtimes execute.',
+                'composer' => 'particle-academy/fancy-flow-mcp',
+                'repo' => 'Particle-Academy/fancy-flow-mcp',
+                'packagist' => 'particle-academy/fancy-flow-mcp',
+                'language' => 'PHP',
+                'pairs' => ['fancy-flow'],
+            ],
+            // PUBLISHED SINCE 0.2.0 AND LISTED NOWHERE, and the reason is worth
+            // keeping because it was not forgetfulness.
+            //
+            // Commit 93da23a (2026-08-09) found this package on disk and in the
+            // org but absent from the envelope, and fixed exactly that: three
+            // files, `.gitmodules` + `project.json` + the submodule pointer. It
+            // never touched THIS file.
+            //
+            // There are TWO registries and that fix updated one. project.json
+            // answers "does a clone get this repo"; PackageRegistry answers
+            // "does the kit list and serve this package". The commit's own
+            // reasoning -- "an untracked directory looks identical to one nobody
+            // has touched yet" -- applies word for word to the registry it
+            // missed, which is why `SubmodulesAreRegisteredTest` now walks
+            // `.gitmodules` and fails on the next one instead of waiting for
+            // somebody to notice.
+            [
+                'slug' => 'fancy-grid',
+                'name' => '@particle-academy/fancy-grid',
+                'tagline' => 'Data grid for Human+ UX -- TanStack Table (and optionally TanStack Virtual) under a controlled, JSON-serializable, agent-bridgeable Fancy surface. State is JSON and every element carries a stable handle, so an agent reads and writes the grid through the same surface a person sees rather than through the DOM. The engines stay PEERS: the grid never bundles them, so you pin the TanStack version.',
+                'npm' => '@particle-academy/fancy-grid',
+                'repo' => 'Particle-Academy/fancy-grid',
+                'language' => 'TypeScript',
             ],
             // A MAINTAINED FORK, not a package we authored -- and registered
             // for exactly that reason. It was published, consumed and released

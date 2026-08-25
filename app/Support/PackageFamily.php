@@ -541,6 +541,51 @@ final class PackageFamily
         return $languages;
     }
 
+    /**
+     * Every package this capability ships as, keyed by install ecosystem.
+     *
+     * The thing `install_instructions` needed and did not have. It read the
+     * COMPONENT's own package for a `composer` key — but a capability's PHP
+     * twin is a DIFFERENT package (`fancy-flow` on npm, `fancy-flow-php` on
+     * Packagist, `fancy-flow` on PyPI), so the key was never there and the tool
+     * reported `composer_path: null` for a capability with two server twins.
+     *
+     * Derived from the same family sections `mcpPairs()` reads, so a capability
+     * cannot be described one way by the MCP's project planner and another way
+     * by its installer.
+     *
+     * @return array{npm?:string, composer?:string, pypi?:string}
+     */
+    public static function twinsFor(string $slug): array
+    {
+        $family = self::find($slug);
+        if ($family === null) {
+            return [];
+        }
+
+        $twins = [];
+
+        foreach ($family['sections'] as $section) {
+            foreach ($section['members'] as $member) {
+                // Visible only: the installer publishes these as "run this", so
+                // an unreleased twin would be advice that cannot be followed.
+                if (PackageRegistry::isHidden($member['slug'])) {
+                    continue;
+                }
+
+                $record = PackageRegistry::findAny($member['slug']) ?? [];
+
+                foreach (['npm', 'composer', 'pypi'] as $ecosystem) {
+                    if (is_string($record[$ecosystem] ?? null) && ! isset($twins[$ecosystem])) {
+                        $twins[$ecosystem] = $record[$ecosystem];
+                    }
+                }
+            }
+        }
+
+        return $twins;
+    }
+
     /** @return array<int, array<string,mixed>> */
     public static function all(): array
     {

@@ -266,6 +266,8 @@ class PackageRegistry
         'fancy-flow-php' => ['group' => 'surfaces', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#0ea5e9'],
         'fancy-cf-relay' => ['group' => 'tooling', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#f6821f'],
         'fancy-doc-commons' => ['group' => 'documents', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#2563eb'],
+        // The Laravel LLM layer the kit builds on -- a maintained fork.
+        'prism' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#a855f7'],
         // Polyglot single-file client.
         'mcp-relay-client' => ['group' => 'tooling', 'ecosystem' => 'polyglot', 'kind' => 'headless', 'accent' => '#22c55e'],
         // Cross-language conformance fixtures -- parity as a test result.
@@ -842,6 +844,29 @@ class PackageRegistry
                 'pypi' => 'fancy-last-word',
                 'repo' => 'Particle-Academy/last-word-py',
                 'language' => 'Python',
+            ],
+            // A MAINTAINED FORK, not a package we authored -- and registered
+            // for exactly that reason. It was published, consumed and released
+            // for months while appearing in no registry of ours: `kit:status`
+            // could not see it, `/packages` did not list it, the MCP did not
+            // serve it. Nothing tracked the package, so nothing tracked what
+            // the package depended on, and a provider inside it was found to
+            // be five weeks from a vendor deprecation that no surface here
+            // could have surfaced.
+            //
+            // That is the same blind spot as `fancy-trading` (six approved
+            // packages never started, nothing said so) and `HIDDEN` (four
+            // shipped packages hidden by a stale claim). Registration is what
+            // makes a package's releases visible to a check rather than to
+            // somebody's memory.
+            [
+                'slug' => 'prism',
+                'name' => 'particle-academy/prism',
+                'tagline' => 'Maintained fork of prism-php/prism -- the Laravel LLM integration layer the kit builds on. Unified text / structured / streaming across providers, with the telemetry that makes per-run AI spend attributable. fancy-flow-php\'s PrismLlmClient adapter targets it, and credentials resolve at call time rather than from env, so DB-backed provider rows and queue workers are first-class.',
+                'composer' => 'particle-academy/prism',
+                'repo' => 'Particle-Academy/prism',
+                'packagist' => 'particle-academy/prism',
+                'language' => 'PHP',
             ],
         ]);
     }

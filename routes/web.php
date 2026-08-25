@@ -28,6 +28,7 @@ use App\Http\Controllers\OgImageController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ServiceWorkerController;
 use App\Http\Controllers\Showcase\AgentKeyController;
+use App\Http\Controllers\Showcase\ConnectorRegistryController;
 use App\Http\Controllers\Showcase\DocsController;
 use App\Http\Controllers\Showcase\DreamingController;
 use App\Http\Controllers\Showcase\FancifiedBadgeController;
@@ -280,6 +281,7 @@ Route::get('/r/index.json', [RegistryController::class, 'index'])->name('registr
 // Core builtins are absent on purpose: they ship with fancy-flow and are not
 // installable.
 Route::get('/r/nodes/index.json', [NodeRegistryController::class, 'index'])->name('registry.nodes.index');
+Route::get('/r/connectors/index.json', [ConnectorRegistryController::class, 'index'])->name('registry.connectors.index');
 Route::get('/r/nodes/{slug}', [NodeRegistryController::class, 'show'])
     ->where('slug', '[a-z0-9_\-\.]+')
     ->name('registry.nodes.show');

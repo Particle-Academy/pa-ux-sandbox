@@ -1,0 +1,1478 @@
+{
+  "$generatedBy": "weaver.agi — scripts/emit-registry.mjs. Do not hand-edit; regenerate.",
+  "$source": "friends.json and each providers/<slug>/provider/manifest.json",
+  "connectorApi": 1,
+  "org": "Fancy-Friends",
+  "connectors": [
+    {
+      "slug": "amazon-ses",
+      "service": "amazon_ses",
+      "serviceTitle": "Amazon SES",
+      "domain": "email",
+      "docs": "https://docs.aws.amazon.com/ses/latest/APIReference-V2/API_SendEmail.html",
+      "repo": "Fancy-Friends/amazon-ses",
+      "status": "alpha",
+      "packages": {
+        "ui": {
+          "name": "@particle-academy/amazon-ses-ui",
+          "version": "0.3.1",
+          "registry": "npm",
+          "installFirst": true
+        },
+        "js": {
+          "name": "@particle-academy/amazon-ses-js",
+          "version": "0.3.1",
+          "registry": "npm",
+          "installFirst": false
+        },
+        "php": {
+          "name": "particle-academy/amazon-ses-php",
+          "version": "0.3.1",
+          "registry": "packagist",
+          "installFirst": false
+        },
+        "py": {
+          "name": "fancy-amazon-ses",
+          "version": "0.3.1",
+          "registry": "pypi",
+          "installFirst": false
+        }
+      },
+      "auth": {
+        "kind": "aws_sigv4",
+        "authorize": "aws-sigv4",
+        "scopes": null,
+        "refreshTokenRotates": null,
+        "pkce": null,
+        "credentials": [
+          {
+            "key": "accessKeyId",
+            "label": "Access key ID",
+            "scope": "account",
+            "secret": false,
+            "optional": false,
+            "help": "AKIA... from an IAM user or role with ses:SendEmail. Not secret on its own -- it identifies the key, and the secret below is what proves it."
+          },
+          {
+            "key": "secretAccessKey",
+            "label": "Secret access key",
+            "scope": "account",
+            "secret": true,
+            "optional": false,
+            "help": "Shown ONCE when the key is created. It is never sent: it derives the signing key, and only the signature goes over the wire."
+          },
+          {
+            "key": "region",
+            "label": "Region",
+            "scope": "account",
+            "secret": false,
+            "optional": false,
+            "help": "Part of the HOST and part of the SIGNATURE, so a mismatch fails as a signature error rather than as a wrong-endpoint one. Verified identities are per-region: a domain verified in us-east-1 does not exist in eu-west-1."
+          }
+        ]
+      },
+      "sandbox": {
+        "kind": "restricted-reach",
+        "selectable": false,
+        "warning": "NOT a sandbox and must not be offered as one. Same credentials, same endpoints, same estate — only the AUDIENCE is restricted. A run against it looks completely successful and reaches nobody.",
+        "note": "A new SES account is in the SANDBOX, and it is the reason `restricted-reach` exists as a value. The endpoint is identical, the credentials are identical, the request is identical, and the API answers 200 with a MessageId -- but the mail only reaches addresses you have verified. Anyone else is silently discarded. So a sandbox run looks completely successful and reached nobody, which is why `restricted-reach` cannot be selected as a mode: there is nothing to select. You leave the sandbox by asking AWS for production access, not by pointing at a different host."
+      },
+      "environments": [
+        "fake",
+        "live"
+      ],
+      "idempotency": null,
+      "needsWebhookEndpoint": false,
+      "operations": [
+        {
+          "operation": "email_send",
+          "kind": "@particle-academy/amazon_ses_email_send",
+          "kindAlias": "amazon_ses_email_send",
+          "role": "action",
+          "title": "Send email",
+          "summary": "send an email",
+          "docs": "https://docs.aws.amazon.com/ses/latest/APIReference-V2/API_SendEmail.html",
+          "method": "POST",
+          "path": "/v2/email/outbound-emails",
+          "sideEffects": "unsafe-to-replay"
+        }
+      ]
+    },
+    {
+      "slug": "facebook-pages",
+      "service": "facebook_pages",
+      "serviceTitle": "Facebook Pages",
+      "domain": "marketing",
+      "docs": "https://developers.facebook.com/docs/graph-api/reference/page/feed/",
+      "repo": "Fancy-Friends/facebook-pages",
+      "status": "alpha",
+      "packages": {
+        "ui": {
+          "name": "@particle-academy/facebook-pages-ui",
+          "version": "0.3.1",
+          "registry": "npm",
+          "installFirst": true
+        },
+        "js": {
+          "name": "@particle-academy/facebook-pages-js",
+          "version": "0.3.1",
+          "registry": "npm",
+          "installFirst": false
+        },
+        "php": {
+          "name": "particle-academy/facebook-pages-php",
+          "version": "0.3.1",
+          "registry": "packagist",
+          "installFirst": false
+        },
+        "py": {
+          "name": "fancy-facebook-pages",
+          "version": "0.3.1",
+          "registry": "pypi",
+          "installFirst": false
+        }
+      },
+      "auth": {
+        "kind": "oauth2",
+        "authorize": "query",
+        "scopes": [
+          "pages_manage_posts",
+          "pages_read_engagement"
+        ],
+        "refreshTokenRotates": null,
+        "pkce": null,
+        "credentials": [
+          {
+            "key": "clientId",
+            "label": "App ID",
+            "scope": "provider",
+            "secret": false,
+            "optional": false,
+            "help": "From the Meta app dashboard. ONE value for the whole installation."
+          },
+          {
+            "key": "clientSecret",
+            "label": "App secret (OAuth)",
+            "scope": "provider",
+            "secret": true,
+            "optional": false,
+            "help": "The same app's client secret, used to exchange the authorization code."
+          },
+          {
+            "key": "appSecret",
+            "label": "App secret (proof)",
+            "scope": "provider",
+            "secret": true,
+            "optional": false,
+            "help": "Keys the appsecret_proof HMAC. It is never sent -- it proves the token rather than accompanying it. For a standard Meta app this is the same value as the OAuth client secret; it is declared separately because they are different ROLES, and an app that rotates one without the other should not silently break the other."
+          },
+          {
+            "key": "pageAccessToken",
+            "label": "Page access token",
+            "scope": "account",
+            "secret": true,
+            "optional": false,
+            "help": "PER PAGE, not per user. Obtained by exchanging a user token for a page token; a long-lived one lasts about 60 days and is re-authorised rather than refreshed."
+          }
+        ]
+      },
+      "sandbox": {
+        "kind": "none",
+        "selectable": false,
+        "warning": "No test estate, and somebody checked. Everything this connector does is real. Use the faker.",
+        "note": "Facebook has no sandbox for Pages. Anything this publishes appears on a real Page to real followers, and deleting it afterwards does not un-notify them. Point it at a Page you own and have muted before pointing it at anything else."
+      },
+      "environments": [
+        "fake",
+        "live"
+      ],
+      "idempotency": null,
+      "needsWebhookEndpoint": false,
+      "operations": [
+        {
+          "operation": "post_create",
+          "kind": "@particle-academy/facebook_pages_post",
+          "kindAlias": "facebook_pages_post",
+          "role": "action",
+          "title": "Facebook Page post",
+          "summary": "publish a post",
+          "docs": "https://developers.facebook.com/docs/graph-api/reference/page/feed/#publish",
+          "method": "POST",
+          "path": "/{pageId}/feed",
+          "sideEffects": "unsafe-to-replay"
+        }
+      ]
+    },
+    {
+      "slug": "gmail",
+      "service": "gmail",
+      "serviceTitle": "Gmail",
+      "domain": "email",
+      "docs": "https://developers.google.com/workspace/gmail/api/reference/rest/v1/users.messages/send",
+      "repo": "Fancy-Friends/gmail",
+      "status": "alpha",
+      "packages": {
+        "ui": {
+          "name": "@particle-academy/gmail-ui",
+          "version": "0.3.1",
+          "registry": "npm",
+          "installFirst": true
+        },
+        "js": {
+          "name": "@particle-academy/gmail-js",
+          "version": "0.3.1",
+          "registry": "npm",
+          "installFirst": false
+        },
+        "php": {
+          "name": "particle-academy/gmail-php",
+          "version": "0.3.1",
+          "registry": "packagist",
+          "installFirst": false
+        },
+        "py": {
+          "name": "fancy-gmail",
+          "version": "0.3.1",
+          "registry": "pypi",
+          "installFirst": false
+        }
+      },
+      "auth": {
+        "kind": "oauth2",
+        "authorize": "bearer",
+        "scopes": [
+          "https://www.googleapis.com/auth/gmail.send"
+        ],
+        "refreshTokenRotates": false,
+        "pkce": null,
+        "credentials": [
+          {
+            "key": "clientId",
+            "label": "OAuth client ID",
+            "scope": "provider",
+            "secret": false,
+            "optional": false,
+            "help": "From Google Cloud Console -> APIs & Services -> Credentials. ONE value for the whole installation, not per connected account."
+          },
+          {
+            "key": "clientSecret",
+            "label": "OAuth client secret",
+            "scope": "provider",
+            "secret": true,
+            "optional": false,
+            "help": "The client secret for the same OAuth app. One value for the whole installation."
+          },
+          {
+            "key": "accessToken",
+            "label": "Access token",
+            "scope": "account",
+            "secret": true,
+            "optional": false,
+            "help": "Per connected Google account, and it expires after ONE HOUR. The host refreshes it with the refresh token."
+          },
+          {
+            "key": "refreshToken",
+            "label": "Refresh token",
+            "scope": "account",
+            "secret": true,
+            "optional": false,
+            "help": "Per connected Google account. Google issues one only when the consent request asks for offline access; without it the connection dies within the hour."
+          }
+        ]
+      },
+      "sandbox": {
+        "kind": "none",
+        "selectable": false,
+        "warning": "No test estate, and somebody checked. Everything this connector does is real. Use the faker.",
+        "note": "Gmail has no sandbox. A send is a real email to a real address -- point this at your own inbox before pointing it at anybody else's. The faker is the only way to develop against it without delivering mail."
+      },
+      "environments": [
+        "fake",
+        "live"
+      ],
+      "idempotency": null,
+      "needsWebhookEndpoint": false,
+      "operations": [
+        {
+          "operation": "message_send",
+          "kind": "@particle-academy/gmail_message",
+          "kindAlias": "gmail_message",
+          "role": "action",
+          "title": "Gmail message",
+          "summary": "send an email",
+          "docs": "https://developers.google.com/workspace/gmail/api/reference/rest/v1/users.messages/send",
+          "method": "POST",
+          "path": "/gmail/v1/users/{userId}/messages/send",
+          "sideEffects": "unsafe-to-replay"
+        }
+      ]
+    },
+    {
+      "slug": "google-analytics",
+      "service": "google_analytics",
+      "serviceTitle": "Google Analytics",
+      "domain": "analytics",
+      "docs": "https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/properties/runReport",
+      "repo": "Fancy-Friends/google-analytics",
+      "status": "alpha",
+      "packages": {
+        "ui": {
+          "name": "@particle-academy/google-analytics-ui",
+          "version": "0.3.1",
+          "registry": "npm",
+          "installFirst": true
+        },
+        "js": {
+          "name": "@particle-academy/google-analytics-js",
+          "version": "0.3.1",
+          "registry": "npm",
+          "installFirst": false
+        },
+        "php": {
+          "name": "particle-academy/google-analytics-php",
+          "version": "0.3.1",
+          "registry": "packagist",
+          "installFirst": false
+        },
+        "py": {
+          "name": "fancy-google-analytics",
+          "version": "0.3.1",
+          "registry": "pypi",
+          "installFirst": false
+        }
+      },
+      "auth": {
+        "kind": "oauth2",
+        "authorize": "bearer",
+        "scopes": [
+          "https://www.googleapis.com/auth/analytics.readonly"
+        ],
+        "refreshTokenRotates": false,
+        "pkce": null,
+        "credentials": [
+          {
+            "key": "clientId",
+            "label": "OAuth client ID",
+            "scope": "provider",
+            "secret": false,
+            "optional": false,
+            "help": "From Google Cloud Console -> APIs & Services -> Credentials. ONE value for the whole installation, not per connected account."
+          },
+          {
+            "key": "clientSecret",
+            "label": "OAuth client secret",
+            "scope": "provider",
+            "secret": true,
+            "optional": false,
+            "help": "The client secret for the same OAuth app. One value for the whole installation."
+          },
+          {
+            "key": "accessToken",
+            "label": "Access token",
+            "scope": "account",
+            "secret": true,
+            "optional": false,
+            "help": "Per connected Google account, and it expires after ONE HOUR. The host refreshes it with the refresh token."
+          },
+          {
+            "key": "refreshToken",
+            "label": "Refresh token",
+            "scope": "account",
+            "secret": true,
+            "optional": false,
+            "help": "Per connected Google account. Google issues one only when the consent request asks for offline access."
+          }
+        ]
+      },
+      "sandbox": {
+        "kind": "none",
+        "selectable": false,
+        "warning": "No test estate, and somebody checked. Everything this connector does is real. Use the faker.",
+        "note": "Google Analytics has no sandbox. A report reads a real property's real data and spends real quota. The faker returns a plausibly-shaped report so a flow can be built without a Google account."
+      },
+      "environments": [
+        "fake",
+        "live"
+      ],
+      "idempotency": null,
+      "needsWebhookEndpoint": false,
+      "operations": [
+        {
+          "operation": "report_run",
+          "kind": "@particle-academy/google_analytics_report",
+          "kindAlias": "google_analytics_report",
+          "role": "action",
+          "title": "Google Analytics report",
+          "summary": "run a report",
+          "docs": "https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/properties/runReport",
+          "method": "POST",
+          "path": "/v1beta/{+property}:runReport",
+          "sideEffects": "none"
+        }
+      ]
+    },
+    {
+      "slug": "google-docs",
+      "service": "google_docs",
+      "serviceTitle": "Google Docs",
+      "domain": "productivity",
+      "docs": "https://developers.google.com/workspace/docs/api/reference/rest/v1/documents/create",
+      "repo": "Fancy-Friends/google-docs",
+      "status": "alpha",
+      "packages": {
+        "ui": {
+          "name": "@particle-academy/google-docs-ui",
+          "version": "0.3.1",
+          "registry": "npm",
+          "installFirst": true
+        },
+        "js": {
+          "name": "@particle-academy/google-docs-js",
+          "version": "0.3.1",
+          "registry": "npm",
+          "installFirst": false
+        },
+        "php": {
+          "name": "particle-academy/google-docs-php",
+          "version": "0.3.1",
+          "registry": "packagist",
+          "installFirst": false
+        },
+        "py": {
+          "name": "fancy-google-docs",
+          "version": "0.3.1",
+          "registry": "pypi",
+          "installFirst": false
+        }
+      },
+      "auth": {
+        "kind": "oauth2",
+        "authorize": "bearer",
+        "scopes": [
+          "https://www.googleapis.com/auth/documents"
+        ],
+        "refreshTokenRotates": false,
+        "pkce": null,
+        "credentials": [
+          {
+            "key": "clientId",
+            "label": "OAuth client ID",
+            "scope": "provider",
+            "secret": false,
+            "optional": false,
+            "help": "From Google Cloud Console -> APIs & Services -> Credentials. ONE value for the whole installation, not per connected account."
+          },
+          {
+            "key": "clientSecret",
+            "label": "OAuth client secret",
+            "scope": "provider",
+            "secret": true,
+            "optional": false,
+            "help": "The client secret for the same OAuth app. One value for the whole installation."
+          },
+          {
+            "key": "accessToken",
+            "label": "Access token",
+            "scope": "account",
+            "secret": true,
+            "optional": false,
+            "help": "Per connected Google account, and it expires after ONE HOUR. The host refreshes it with the refresh token."
+          },
+          {
+            "key": "refreshToken",
+            "label": "Refresh token",
+            "scope": "account",
+            "secret": true,
+            "optional": false,
+            "help": "Per connected Google account. Google issues one only when the consent request asks for offline access; without it the connection dies within the hour."
+          }
+        ]
+      },
+      "sandbox": {
+        "kind": "none",
+        "selectable": false,
+        "warning": "No test estate, and somebody checked. Everything this connector does is real. Use the faker.",
+        "note": "Google has no sandbox for Docs. A test document is a real one in a real Drive, so every create is real -- use the faker while developing and clean up any live test documents."
+      },
+      "environments": [
+        "fake",
+        "live"
+      ],
+      "idempotency": null,
+      "needsWebhookEndpoint": false,
+      "operations": [
+        {
+          "operation": "document_create",
+          "kind": "@particle-academy/google_docs_document",
+          "kindAlias": "google_docs_document",
+          "role": "action",
+          "title": "Google Docs document",
+          "summary": "create a blank document",
+          "docs": "https://developers.google.com/workspace/docs/api/reference/rest/v1/documents/create",
+          "method": "POST",
+          "path": "/v1/documents",
+          "sideEffects": "unsafe-to-replay"
+        }
+      ]
+    },
+    {
+      "slug": "google-drive",
+      "service": "google_drive",
+      "serviceTitle": "Google Drive",
+      "domain": "productivity",
+      "docs": "https://developers.google.com/workspace/drive/api/reference/rest/v3/files/create",
+      "repo": "Fancy-Friends/google-drive",
+      "status": "alpha",
+      "packages": {
+        "ui": {
+          "name": "@particle-academy/google-drive-ui",
+          "version": "0.3.1",
+          "registry": "npm",
+          "installFirst": true
+        },
+        "js": {
+          "name": "@particle-academy/google-drive-js",
+          "version": "0.3.1",
+          "registry": "npm",
+          "installFirst": false
+        },
+        "php": {
+          "name": "particle-academy/google-drive-php",
+          "version": "0.3.1",
+          "registry": "packagist",
+          "installFirst": false
+        },
+        "py": {
+          "name": "fancy-google-drive",
+          "version": "0.3.1",
+          "registry": "pypi",
+          "installFirst": false
+        }
+      },
+      "auth": {
+        "kind": "oauth2",
+        "authorize": "bearer",
+        "scopes": [
+          "https://www.googleapis.com/auth/drive.file"
+        ],
+        "refreshTokenRotates": false,
+        "pkce": null,
+        "credentials": [
+          {
+            "key": "clientId",
+            "label": "OAuth client ID",
+            "scope": "provider",
+            "secret": false,
+            "optional": false,
+            "help": "From Google Cloud Console. One value for the whole installation."
+          },
+          {
+            "key": "clientSecret",
+            "label": "OAuth client secret",
+            "scope": "provider",
+            "secret": true,
+            "optional": false,
+            "help": "The client secret for the same OAuth app."
+          },
+          {
+            "key": "accessToken",
+            "label": "Access token",
+            "scope": "account",
+            "secret": true,
+            "optional": false,
+            "help": "Per connected Google account; expires after one hour."
+          },
+          {
+            "key": "refreshToken",
+            "label": "Refresh token",
+            "scope": "account",
+            "secret": true,
+            "optional": false,
+            "help": "Per connected Google account; the host uses it to refresh the access token."
+          }
+        ]
+      },
+      "sandbox": {
+        "kind": "none",
+        "selectable": false,
+        "warning": "No test estate, and somebody checked. Everything this connector does is real. Use the faker.",
+        "note": "Google Drive has no sandbox. Every folder created in live mode is real; use the faker during development and delete live test folders afterward."
+      },
+      "environments": [
+        "fake",
+        "live"
+      ],
+      "idempotency": null,
+      "needsWebhookEndpoint": false,
+      "operations": [
+        {
+          "operation": "folder_create",
+          "kind": "@particle-academy/google_drive_folder",
+          "kindAlias": "google_drive_folder",
+          "role": "action",
+          "title": "Google Drive folder",
+          "summary": "create a folder",
+          "docs": "https://developers.google.com/workspace/drive/api/reference/rest/v3/files/create",
+          "method": "POST",
+          "path": "/drive/v3/files",
+          "sideEffects": "unsafe-to-replay"
+        }
+      ]
+    },
+    {
+      "slug": "google-sheets",
+      "service": "google_sheets",
+      "serviceTitle": "Google Sheets",
+      "domain": "productivity",
+      "docs": "https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values/append",
+      "repo": "Fancy-Friends/google-sheets",
+      "status": "alpha",
+      "packages": {
+        "ui": {
+          "name": "@particle-academy/google-sheets-ui",
+          "version": "0.3.1",
+          "registry": "npm",
+          "installFirst": true
+        },
+        "js": {
+          "name": "@particle-academy/google-sheets-js",
+          "version": "0.3.1",
+          "registry": "npm",
+          "installFirst": false
+        },
+        "php": {
+          "name": "particle-academy/google-sheets-php",
+          "version": "0.3.1",
+          "registry": "packagist",
+          "installFirst": false
+        },
+        "py": {
+          "name": "fancy-google-sheets",
+          "version": "0.3.1",
+          "registry": "pypi",
+          "installFirst": false
+        }
+      },
+      "auth": {
+        "kind": "oauth2",
+        "authorize": "bearer",
+        "scopes": [
+          "https://www.googleapis.com/auth/spreadsheets"
+        ],
+        "refreshTokenRotates": false,
+        "pkce": null,
+        "credentials": [
+          {
+            "key": "clientId",
+            "label": "OAuth client ID",
+            "scope": "provider",
+            "secret": false,
+            "optional": false,
+            "help": "From Google Cloud Console -> APIs & Services -> Credentials. ONE value for the whole installation, not per connected account."
+          },
+          {
+            "key": "clientSecret",
+            "label": "OAuth client secret",
+            "scope": "provider",
+            "secret": true,
+            "optional": false,
+            "help": "The client secret for the same OAuth app. One value for the whole installation."
+          },
+          {
+            "key": "accessToken",
+            "label": "Access token",
+            "scope": "account",
+            "secret": true,
+            "optional": false,
+            "help": "Per connected Google account, and it expires after ONE HOUR. The host refreshes it with the refresh token."
+          },
+          {
+            "key": "refreshToken",
+            "label": "Refresh token",
+            "scope": "account",
+            "secret": true,
+            "optional": false,
+            "help": "Per connected Google account. Google issues one only when the consent request asks for offline access; without it the connection dies within the hour."
+          }
+        ]
+      },
+      "sandbox": {
+        "kind": "none",
+        "selectable": false,
+        "warning": "No test estate, and somebody checked. Everything this connector does is real. Use the faker.",
+        "note": "Google has no sandbox for Sheets. A test spreadsheet is a real one in a real Drive, so every append is real -- point this at a scratch sheet, not a production one. The faker is the only way to develop against it without touching a document."
+      },
+      "environments": [
+        "fake",
+        "live"
+      ],
+      "idempotency": null,
+      "needsWebhookEndpoint": false,
+      "operations": [
+        {
+          "operation": "row_append",
+          "kind": "@particle-academy/google_sheets_row",
+          "kindAlias": "google_sheets_row",
+          "role": "action",
+          "title": "Google Sheets row",
+          "summary": "append a row",
+          "docs": "https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values/append",
+          "method": "POST",
+          "path": "/v4/spreadsheets/{spreadsheetId}/values/{range}:append",
+          "sideEffects": "unsafe-to-replay"
+        }
+      ]
+    },
+    {
+      "slug": "google-slides",
+      "service": "google_slides",
+      "serviceTitle": "Google Slides",
+      "domain": "productivity",
+      "docs": "https://developers.google.com/workspace/slides/api/reference/rest/v1/presentations/create",
+      "repo": "Fancy-Friends/google-slides",
+      "status": "alpha",
+      "packages": {
+        "ui": {
+          "name": "@particle-academy/google-slides-ui",
+          "version": "0.3.1",
+          "registry": "npm",
+          "installFirst": true
+        },
+        "js": {
+          "name": "@particle-academy/google-slides-js",
+          "version": "0.3.1",
+          "registry": "npm",
+          "installFirst": false
+        },
+        "php": {
+          "name": "particle-academy/google-slides-php",
+          "version": "0.3.1",
+          "registry": "packagist",
+          "installFirst": false
+        },
+        "py": {
+          "name": "fancy-google-slides",
+          "version": "0.3.1",
+          "registry": "pypi",
+          "installFirst": false
+        }
+      },
+      "auth": {
+        "kind": "oauth2",
+        "authorize": "bearer",
+        "scopes": [
+          "https://www.googleapis.com/auth/presentations"
+        ],
+        "refreshTokenRotates": false,
+        "pkce": null,
+        "credentials": [
+          {
+            "key": "clientId",
+            "label": "OAuth client ID",
+            "scope": "provider",
+            "secret": false,
+            "optional": false,
+            "help": "From Google Cloud Console -> APIs & Services -> Credentials. ONE value for the whole installation, not per connected account."
+          },
+          {
+            "key": "clientSecret",
+            "label": "OAuth client secret",
+            "scope": "provider",
+            "secret": true,
+            "optional": false,
+            "help": "The client secret for the same OAuth app. One value for the whole installation."
+          },
+          {
+            "key": "accessToken",
+            "label": "Access token",
+            "scope": "account",
+            "secret": true,
+            "optional": false,
+            "help": "Per connected Google account, and it expires after ONE HOUR. The host refreshes it with the refresh token."
+          },
+          {
+            "key": "refreshToken",
+            "label": "Refresh token",
+            "scope": "account",
+            "secret": true,
+            "optional": false,
+            "help": "Per connected Google account. Google issues one only when the consent request asks for offline access; without it the connection dies within the hour."
+          }
+        ]
+      },
+      "sandbox": {
+        "kind": "none",
+        "selectable": false,
+        "warning": "No test estate, and somebody checked. Everything this connector does is real. Use the faker.",
+        "note": "Google has no sandbox for Slides. A test presentation is a real one in a real Drive, so every create is real -- use the faker while developing and clean up any live test presentations."
+      },
+      "environments": [
+        "fake",
+        "live"
+      ],
+      "idempotency": null,
+      "needsWebhookEndpoint": false,
+      "operations": [
+        {
+          "operation": "presentation_create",
+          "kind": "@particle-academy/google_slides_presentation",
+          "kindAlias": "google_slides_presentation",
+          "role": "action",
+          "title": "Google Slides presentation",
+          "summary": "create a blank presentation",
+          "docs": "https://developers.google.com/workspace/slides/api/reference/rest/v1/presentations/create",
+          "method": "POST",
+          "path": "/v1/presentations",
+          "sideEffects": "unsafe-to-replay"
+        }
+      ]
+    },
+    {
+      "slug": "hubspot",
+      "service": "hubspot",
+      "serviceTitle": "HubSpot",
+      "domain": "crm",
+      "docs": "https://developers.hubspot.com/docs/reference/api/crm/objects/contacts",
+      "repo": "Fancy-Friends/hubspot",
+      "status": "alpha",
+      "packages": {
+        "ui": {
+          "name": "@particle-academy/hubspot-ui",
+          "version": "0.3.1",
+          "registry": "npm",
+          "installFirst": true
+        },
+        "js": {
+          "name": "@particle-academy/hubspot-js",
+          "version": "0.3.1",
+          "registry": "npm",
+          "installFirst": false
+        },
+        "php": {
+          "name": "particle-academy/hubspot-php",
+          "version": "0.3.1",
+          "registry": "packagist",
+          "installFirst": false
+        },
+        "py": {
+          "name": "fancy-hubspot",
+          "version": "0.3.1",
+          "registry": "pypi",
+          "installFirst": false
+        }
+      },
+      "auth": {
+        "kind": "oauth2",
+        "authorize": "bearer",
+        "scopes": [
+          "crm.objects.contacts.write"
+        ],
+        "refreshTokenRotates": false,
+        "pkce": null,
+        "credentials": [
+          {
+            "key": "clientId",
+            "label": "App client ID",
+            "scope": "provider",
+            "secret": false,
+            "optional": false,
+            "help": "From your HubSpot app's Auth tab. ONE value for the whole installation -- the same app serves every connected account."
+          },
+          {
+            "key": "clientSecret",
+            "label": "App client secret",
+            "scope": "provider",
+            "secret": true,
+            "optional": false,
+            "help": "From the same Auth tab. Used to exchange the code and to refresh; never sent with an API request."
+          },
+          {
+            "key": "accessToken",
+            "label": "Access token",
+            "scope": "account",
+            "secret": true,
+            "optional": false,
+            "help": "Obtained by the host's OAuth exchange, PER CONNECTED ACCOUNT. Expires after 30 minutes -- a host that does not refresh will work all afternoon and be broken by morning."
+          },
+          {
+            "key": "refreshToken",
+            "label": "Refresh token",
+            "scope": "account",
+            "secret": true,
+            "optional": true,
+            "help": "Also per account. Does not expire, so it is the credential worth protecting most: it mints access tokens indefinitely until the install is revoked."
+          }
+        ]
+      },
+      "sandbox": {
+        "kind": "separate-account",
+        "selectable": true,
+        "warning": "A test estate on the same host, reached with credentials from a separate test account somebody has to register first.",
+        "note": "HubSpot's test estate is a DEVELOPER TEST ACCOUNT: a separate portal you create from the developer account, with its own portal id, its own data and its own OAuth install. Same API host, different account -- so the credential is different and the URL is not. Test accounts expire if unused and carry reduced limits, which is why they are a place to test rather than a place to build against."
+      },
+      "environments": [
+        "fake",
+        "sandbox",
+        "live"
+      ],
+      "idempotency": null,
+      "needsWebhookEndpoint": false,
+      "operations": [
+        {
+          "operation": "contact_create",
+          "kind": "@particle-academy/hubspot_contact_create",
+          "kindAlias": "hubspot_contact_create",
+          "role": "action",
+          "title": "Create contact",
+          "summary": "create a contact",
+          "docs": "https://developers.hubspot.com/docs/reference/api/crm/objects/contacts",
+          "method": "POST",
+          "path": "/crm/v3/objects/contacts",
+          "sideEffects": "unsafe-to-replay"
+        }
+      ]
+    },
+    {
+      "slug": "monday",
+      "service": "monday",
+      "serviceTitle": "monday.com",
+      "domain": "productivity",
+      "docs": "https://developer.monday.com/api-reference/reference/items",
+      "repo": "Fancy-Friends/monday",
+      "status": "alpha",
+      "packages": {
+        "ui": {
+          "name": "@particle-academy/monday-ui",
+          "version": "0.3.1",
+          "registry": "npm",
+          "installFirst": true
+        },
+        "js": {
+          "name": "@particle-academy/monday-js",
+          "version": "0.3.1",
+          "registry": "npm",
+          "installFirst": false
+        },
+        "php": {
+          "name": "particle-academy/monday-php",
+          "version": "0.3.1",
+          "registry": "packagist",
+          "installFirst": false
+        },
+        "py": {
+          "name": "fancy-monday",
+          "version": "0.3.1",
+          "registry": "pypi",
+          "installFirst": false
+        }
+      },
+      "auth": {
+        "kind": "api_key",
+        "authorize": "header",
+        "scopes": null,
+        "refreshTokenRotates": null,
+        "pkce": null,
+        "credentials": [
+          {
+            "key": "apiToken",
+            "label": "API token",
+            "scope": "account",
+            "secret": true,
+            "optional": false,
+            "help": "From monday.com: your avatar -> Developers -> My Access Tokens. It carries YOUR permissions and every board you can see, so a personal token grants an automation everything you have."
+          }
+        ]
+      },
+      "sandbox": {
+        "kind": "none",
+        "selectable": false,
+        "warning": "No test estate, and somebody checked. Everything this connector does is real. Use the faker.",
+        "note": "monday has no test estate. A developer plan is a real account with real boards, so anything an action creates is created for real. The faker is the only safe way to develop against this connector, which is why every action ships with one."
+      },
+      "environments": [
+        "fake",
+        "live"
+      ],
+      "idempotency": null,
+      "needsWebhookEndpoint": false,
+      "operations": [
+        {
+          "operation": "item_create",
+          "kind": "@particle-academy/monday_item",
+          "kindAlias": "monday_item",
+          "role": "action",
+          "title": "monday.com item",
+          "summary": "create an item",
+          "docs": "https://developer.monday.com/api-reference/reference/items#create-an-item",
+          "method": "POST",
+          "path": "/v2",
+          "sideEffects": "unsafe-to-replay"
+        }
+      ]
+    },
+    {
+      "slug": "resend",
+      "service": "resend",
+      "serviceTitle": "Resend",
+      "domain": "email",
+      "docs": "https://resend.com/docs/api-reference/introduction",
+      "repo": "Fancy-Friends/resend",
+      "status": "alpha",
+      "packages": {
+        "ui": {
+          "name": "@particle-academy/resend-ui",
+          "version": "0.3.1",
+          "registry": "npm",
+          "installFirst": true
+        },
+        "js": {
+          "name": "@particle-academy/resend-js",
+          "version": "0.3.1",
+          "registry": "npm",
+          "installFirst": false
+        },
+        "php": {
+          "name": "particle-academy/resend-php",
+          "version": "0.3.1",
+          "registry": "packagist",
+          "installFirst": false
+        },
+        "py": {
+          "name": "fancy-resend",
+          "version": "0.3.1",
+          "registry": "pypi",
+          "installFirst": false
+        }
+      },
+      "auth": {
+        "kind": "api_key",
+        "authorize": "bearer",
+        "scopes": null,
+        "refreshTokenRotates": null,
+        "pkce": null,
+        "credentials": [
+          {
+            "key": "apiKey",
+            "label": "API key",
+            "scope": "account",
+            "secret": true,
+            "optional": false,
+            "help": "re_... from the Resend dashboard. There is only one estate, so this key sends real email."
+          }
+        ]
+      },
+      "sandbox": {
+        "kind": "none",
+        "selectable": false,
+        "warning": "No test estate, and somebody checked. Everything this connector does is real. Use the faker.",
+        "note": "Resend has NO test estate, and somebody checked. Its simulator RECIPIENTS -- delivered@resend.dev, bounced@resend.dev, complained@resend.dev, suppressed@resend.dev -- are not one: the send is real, it is billed, and it counts against the quota. Modelling them as a sandbox would put a live send behind a control labelled \"test\", so `mode` does not offer sandbox at all and `fake` is the primary development mode rather than the fallback."
+      },
+      "environments": [
+        "fake",
+        "live"
+      ],
+      "idempotency": "header",
+      "needsWebhookEndpoint": false,
+      "operations": [
+        {
+          "operation": "email_send",
+          "kind": "@particle-academy/resend_email_send",
+          "kindAlias": "resend_email_send",
+          "role": "action",
+          "title": "Send email",
+          "summary": "send an email",
+          "docs": "https://resend.com/docs/api-reference/emails/send-email",
+          "method": "POST",
+          "path": "/emails",
+          "sideEffects": "idempotent"
+        }
+      ]
+    },
+    {
+      "slug": "square",
+      "service": "square",
+      "serviceTitle": "Square",
+      "domain": "payments",
+      "docs": "https://developer.squareup.com/reference/square/payments-api/create-payment",
+      "repo": "Fancy-Friends/square",
+      "status": "alpha",
+      "packages": {
+        "ui": {
+          "name": "@particle-academy/square-ui",
+          "version": "0.3.1",
+          "registry": "npm",
+          "installFirst": true
+        },
+        "js": {
+          "name": "@particle-academy/square-js",
+          "version": "0.3.1",
+          "registry": "npm",
+          "installFirst": false
+        },
+        "php": {
+          "name": "particle-academy/square-php",
+          "version": "0.3.1",
+          "registry": "packagist",
+          "installFirst": false
+        },
+        "py": {
+          "name": "fancy-square",
+          "version": "0.3.1",
+          "registry": "pypi",
+          "installFirst": false
+        }
+      },
+      "auth": {
+        "kind": "api_key",
+        "authorize": "bearer",
+        "scopes": null,
+        "refreshTokenRotates": null,
+        "pkce": null,
+        "credentials": [
+          {
+            "key": "accessToken",
+            "label": "Access token",
+            "scope": "account",
+            "secret": true,
+            "optional": false,
+            "help": "From the Square developer dashboard. SANDBOX and PRODUCTION tokens are different values for different hosts -- a sandbox token is refused by the production host rather than accepted, which is the whole reason this provider's estates cannot be confused."
+          }
+        ]
+      },
+      "sandbox": {
+        "kind": "base-url",
+        "selectable": true,
+        "warning": "A separate test host. Selecting sandbox mode changes the base URL.",
+        "note": "The one sandbox kind that is genuinely a DIFFERENT PLACE. Stripe's estate is chosen by the key, Telegram's and HubSpot's by the account, SES's not at all -- Square's is another host, with its own data and its own credentials. A sandbox access token sent to the production host is refused rather than silently reaching the real ledger, which makes this the SAFEST of the four kinds and worth saying so: the failure mode is a 401, not a charge."
+      },
+      "environments": [
+        "fake",
+        "sandbox",
+        "live"
+      ],
+      "idempotency": "body",
+      "needsWebhookEndpoint": false,
+      "operations": [
+        {
+          "operation": "payment_create",
+          "kind": "@particle-academy/square_payment_create",
+          "kindAlias": "square_payment_create",
+          "role": "action",
+          "title": "Take payment",
+          "summary": "take a payment",
+          "docs": "https://developer.squareup.com/reference/square/payments-api/create-payment",
+          "method": "POST",
+          "path": "/v2/payments",
+          "sideEffects": "unsafe-to-replay"
+        }
+      ]
+    },
+    {
+      "slug": "stripe",
+      "service": "stripe",
+      "serviceTitle": "Stripe",
+      "domain": "payments",
+      "docs": "https://docs.stripe.com/api",
+      "repo": "Fancy-Friends/stripe",
+      "status": "alpha",
+      "packages": {
+        "ui": {
+          "name": "@particle-academy/stripe-ui",
+          "version": "0.3.1",
+          "registry": "npm",
+          "installFirst": true
+        },
+        "js": {
+          "name": "@particle-academy/stripe-js",
+          "version": "0.3.1",
+          "registry": "npm",
+          "installFirst": false
+        },
+        "php": {
+          "name": "particle-academy/stripe-php",
+          "version": "0.3.1",
+          "registry": "packagist",
+          "installFirst": false
+        },
+        "py": {
+          "name": "fancy-stripe",
+          "version": "0.3.1",
+          "registry": "pypi",
+          "installFirst": false
+        }
+      },
+      "auth": {
+        "kind": "api_key",
+        "authorize": "bearer",
+        "scopes": null,
+        "refreshTokenRotates": null,
+        "pkce": null,
+        "credentials": [
+          {
+            "key": "secretKey",
+            "label": "Secret key",
+            "scope": "account",
+            "secret": true,
+            "optional": false,
+            "help": "sk_test_... for the test estate, sk_live_... for the real ledger. The key -- not the URL -- decides which one you reach."
+          },
+          {
+            "key": "webhookSecret",
+            "label": "Webhook signing secret",
+            "scope": "account",
+            "secret": true,
+            "optional": true,
+            "help": "whsec_... from the endpoint you added in the Stripe dashboard. Required only by the webhook trigger."
+          }
+        ]
+      },
+      "sandbox": {
+        "kind": "credential",
+        "selectable": true,
+        "warning": "The KEY decides live-or-test, not the endpoint — the same host serves both. A live key pointed at a node marked “sandbox” reaches the real estate and SUCCEEDS. Nothing in the request distinguishes them, which is why the credential sits on the connection.",
+        "note": "Stripe's test estate is selected by the KEY, not the URL -- api.stripe.com serves both. A live key sent to a node whose mode says \"sandbox\" reaches the real ledger and succeeds. Nothing in the request distinguishes them, which is exactly why credentials sit on the connection rather than on twelve separate nodes."
+      },
+      "environments": [
+        "fake",
+        "sandbox",
+        "live"
+      ],
+      "idempotency": "header",
+      "needsWebhookEndpoint": true,
+      "operations": [
+        {
+          "operation": "customer_create",
+          "kind": "@particle-academy/stripe_customer",
+          "kindAlias": "stripe_customer",
+          "role": "action",
+          "title": "Stripe customer",
+          "summary": "create a customer",
+          "docs": "https://docs.stripe.com/api/customers/create",
+          "method": "POST",
+          "path": "/v1/customers",
+          "sideEffects": "unsafe-to-replay"
+        },
+        {
+          "operation": "payment_intent_create",
+          "kind": "@particle-academy/stripe_payment_intent",
+          "kindAlias": "stripe_payment_intent",
+          "role": "action",
+          "title": "Stripe payment",
+          "summary": "take a payment",
+          "docs": "https://docs.stripe.com/api/payment_intents/create",
+          "method": "POST",
+          "path": "/v1/payment_intents",
+          "sideEffects": "unsafe-to-replay"
+        },
+        {
+          "operation": "refund_create",
+          "kind": "@particle-academy/stripe_refund",
+          "kindAlias": "stripe_refund",
+          "role": "action",
+          "title": "Stripe refund",
+          "summary": "refund a payment",
+          "docs": "https://docs.stripe.com/api/refunds/create",
+          "method": "POST",
+          "path": "/v1/refunds",
+          "sideEffects": "unsafe-to-replay"
+        },
+        {
+          "operation": "webhook",
+          "kind": "@particle-academy/stripe_webhook_trigger",
+          "kindAlias": "stripe_webhook_trigger",
+          "role": "trigger",
+          "title": "Stripe event",
+          "summary": "an event",
+          "docs": "https://docs.stripe.com/webhooks",
+          "delivery": "webhook",
+          "setup": "Add an endpoint in the Stripe dashboard (or via POST /v1/webhook_endpoints) pointing at the route your host mounts for this trigger, then put the endpoint's signing secret on the connection as `webhookSecret`.",
+          "verifiesSignature": true
+        }
+      ]
+    },
+    {
+      "slug": "telegram",
+      "service": "telegram",
+      "serviceTitle": "Telegram",
+      "domain": "messaging",
+      "docs": "https://core.telegram.org/bots/api",
+      "repo": "Fancy-Friends/telegram",
+      "status": "alpha",
+      "packages": {
+        "ui": {
+          "name": "@particle-academy/telegram-ui",
+          "version": "0.3.1",
+          "registry": "npm",
+          "installFirst": true
+        },
+        "js": {
+          "name": "@particle-academy/telegram-js",
+          "version": "0.3.1",
+          "registry": "npm",
+          "installFirst": false
+        },
+        "php": {
+          "name": "particle-academy/telegram-php",
+          "version": "0.3.1",
+          "registry": "packagist",
+          "installFirst": false
+        },
+        "py": {
+          "name": "fancy-telegram",
+          "version": "0.3.1",
+          "registry": "pypi",
+          "installFirst": false
+        }
+      },
+      "auth": {
+        "kind": "token_in_path",
+        "authorize": "path",
+        "scopes": null,
+        "refreshTokenRotates": null,
+        "pkce": null,
+        "credentials": [
+          {
+            "key": "botToken",
+            "label": "Bot token",
+            "scope": "account",
+            "secret": true,
+            "optional": false,
+            "help": "From @BotFather — 123456:ABC-DEF… . A bot registered in the test environment is a DIFFERENT bot with a different token; the same token does not reach both."
+          }
+        ]
+      },
+      "sandbox": {
+        "kind": "separate-account",
+        "selectable": true,
+        "warning": "A test estate on the same host, reached with credentials from a separate test account somebody has to register first.",
+        "note": "Telegram's test environment is a genuinely SEPARATE ACCOUNT: you create a new account inside it and register a new bot there, so the sandbox credential is a different token rather than the same one pointed elsewhere. The `/test` path segment is how you reach it; the account is what makes it separate. Flood limits are NOT relaxed there, so it is a place to test, not a place to hammer."
+      },
+      "environments": [
+        "fake",
+        "sandbox",
+        "live"
+      ],
+      "idempotency": null,
+      "needsWebhookEndpoint": false,
+      "operations": [
+        {
+          "operation": "get_updates",
+          "kind": "@particle-academy/telegram_updates_trigger",
+          "kindAlias": "telegram_updates_trigger",
+          "role": "trigger",
+          "title": "Telegram message",
+          "summary": "a new message",
+          "docs": "https://core.telegram.org/bots/api#getupdates",
+          "delivery": "poll",
+          "setup": "The host polls getUpdates on a schedule and persists the `offset` cursor between calls, passing the last `cursor` back in — Telegram queues nothing once an offset has acknowledged it, so a lost cursor is lost updates. getUpdates and setWebhook are MUTUALLY EXCLUSIVE for one bot: a host running both gets neither.",
+          "verifiesSignature": false
+        }
+      ]
+    },
+    {
+      "slug": "youtube",
+      "service": "youtube",
+      "serviceTitle": "YouTube",
+      "domain": "marketing",
+      "docs": "https://developers.google.com/youtube/v3/docs/playlistItems/insert",
+      "repo": "Fancy-Friends/youtube",
+      "status": "alpha",
+      "packages": {
+        "ui": {
+          "name": "@particle-academy/youtube-ui",
+          "version": "0.2.1",
+          "registry": "npm",
+          "installFirst": true
+        },
+        "js": {
+          "name": "@particle-academy/youtube-js",
+          "version": "0.2.1",
+          "registry": "npm",
+          "installFirst": false
+        },
+        "php": {
+          "name": "particle-academy/youtube-php",
+          "version": "0.2.1",
+          "registry": "packagist",
+          "installFirst": false
+        },
+        "py": {
+          "name": "fancy-youtube",
+          "version": "0.2.1",
+          "registry": "pypi",
+          "installFirst": false
+        }
+      },
+      "auth": {
+        "kind": "oauth2",
+        "authorize": "bearer",
+        "scopes": [
+          "https://www.googleapis.com/auth/youtube.force-ssl"
+        ],
+        "refreshTokenRotates": false,
+        "pkce": null,
+        "credentials": [
+          {
+            "key": "clientId",
+            "label": "OAuth client ID",
+            "scope": "provider",
+            "secret": false,
+            "optional": false,
+            "help": "From Google Cloud Console. One value for the whole installation."
+          },
+          {
+            "key": "clientSecret",
+            "label": "OAuth client secret",
+            "scope": "provider",
+            "secret": true,
+            "optional": false,
+            "help": "The client secret for the same OAuth app."
+          },
+          {
+            "key": "accessToken",
+            "label": "Access token",
+            "scope": "account",
+            "secret": true,
+            "optional": false,
+            "help": "Per connected YouTube account; expires after one hour."
+          },
+          {
+            "key": "refreshToken",
+            "label": "Refresh token",
+            "scope": "account",
+            "secret": true,
+            "optional": false,
+            "help": "Per connected YouTube account; the host uses it to refresh the access token."
+          }
+        ]
+      },
+      "sandbox": {
+        "kind": "none",
+        "selectable": false,
+        "warning": "No test estate, and somebody checked. Everything this connector does is real. Use the faker.",
+        "note": "YouTube has no sandbox. Every live-mode add changes a real playlist; use the faker during development and remove live test items afterward."
+      },
+      "environments": [
+        "fake",
+        "live"
+      ],
+      "idempotency": null,
+      "needsWebhookEndpoint": false,
+      "operations": [
+        {
+          "operation": "playlist_item_insert",
+          "kind": "@particle-academy/youtube_playlist_item",
+          "kindAlias": "youtube_playlist_item",
+          "role": "action",
+          "title": "YouTube playlist item",
+          "summary": "add a video to a playlist",
+          "docs": "https://developers.google.com/youtube/v3/docs/playlistItems/insert",
+          "method": "POST",
+          "path": "/youtube/v3/playlistItems",
+          "sideEffects": "unsafe-to-replay"
+        }
+      ]
+    }
+  ],
+  "$verified": "every package below was resolved on its registry at the version stated"
+}

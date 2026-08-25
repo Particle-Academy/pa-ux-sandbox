@@ -1,0 +1,392 @@
+{
+  "$generatedBy": "weaver.agi \u2014 scripts/emit-registry.mjs. Do not hand-edit; regenerate.",
+  "$source": "friends.json and each providers/<slug>/provider/manifest.json",
+  "connectorApi": 1,
+  "org": "Fancy-Friends",
+  "connectors": [
+    {
+      "slug": "gmail",
+      "service": "gmail",
+      "serviceTitle": "Gmail",
+      "domain": "email",
+      "docs": "https://developers.google.com/workspace/gmail/api/reference/rest/v1/users.messages/send",
+      "repo": "Fancy-Friends/gmail",
+      "status": "alpha",
+      "packages": {
+        "ui": {
+          "name": "@particle-academy/gmail-ui",
+          "version": "0.3.0",
+          "registry": "npm",
+          "installFirst": true
+        },
+        "js": {
+          "name": "@particle-academy/gmail-js",
+          "version": "0.3.0",
+          "registry": "npm",
+          "installFirst": false
+        },
+        "php": {
+          "name": "particle-academy/gmail-php",
+          "version": "0.3.0",
+          "registry": "packagist",
+          "installFirst": false
+        },
+        "py": {
+          "name": "fancy-gmail",
+          "version": "0.3.0",
+          "registry": "pypi",
+          "installFirst": false
+        }
+      },
+      "auth": {
+        "kind": "oauth2",
+        "authorize": "bearer",
+        "scopes": [
+          "https://www.googleapis.com/auth/gmail.send"
+        ],
+        "refreshTokenRotates": false,
+        "pkce": null,
+        "credentials": [
+          {
+            "key": "clientId",
+            "label": "OAuth client ID",
+            "scope": "provider",
+            "secret": false,
+            "optional": false,
+            "help": "From Google Cloud Console -> APIs & Services -> Credentials. ONE value for the whole installation, not per connected account."
+          },
+          {
+            "key": "clientSecret",
+            "label": "OAuth client secret",
+            "scope": "provider",
+            "secret": true,
+            "optional": false,
+            "help": "The client secret for the same OAuth app. One value for the whole installation."
+          },
+          {
+            "key": "accessToken",
+            "label": "Access token",
+            "scope": "account",
+            "secret": true,
+            "optional": false,
+            "help": "Per connected Google account, and it expires after ONE HOUR. The host refreshes it with the refresh token."
+          },
+          {
+            "key": "refreshToken",
+            "label": "Refresh token",
+            "scope": "account",
+            "secret": true,
+            "optional": false,
+            "help": "Per connected Google account. Google issues one only when the consent request asks for offline access; without it the connection dies within the hour."
+          }
+        ]
+      },
+      "sandbox": {
+        "kind": "none",
+        "selectable": false,
+        "warning": "No test estate, and somebody checked. Everything this connector does is real. Use the faker.",
+        "note": "Gmail has no sandbox. A send is a real email to a real address -- point this at your own inbox before pointing it at anybody else's. The faker is the only way to develop against it without delivering mail."
+      },
+      "environments": [
+        "fake",
+        "live"
+      ],
+      "idempotency": null,
+      "needsWebhookEndpoint": false,
+      "operations": [
+        {
+          "operation": "message_send",
+          "kind": "@particle-academy/gmail_message",
+          "kindAlias": "gmail_message",
+          "role": "action",
+          "title": "Gmail message",
+          "summary": "send an email",
+          "docs": "https://developers.google.com/workspace/gmail/api/reference/rest/v1/users.messages/send",
+          "method": "POST",
+          "path": "/gmail/v1/users/{userId}/messages/send",
+          "sideEffects": "unsafe-to-replay"
+        }
+      ]
+    },
+    {
+      "slug": "resend",
+      "service": "resend",
+      "serviceTitle": "Resend",
+      "domain": "email",
+      "docs": "https://resend.com/docs/api-reference/introduction",
+      "repo": "Fancy-Friends/resend",
+      "status": "alpha",
+      "packages": {
+        "ui": {
+          "name": "@particle-academy/resend-ui",
+          "version": "0.3.0",
+          "registry": "npm",
+          "installFirst": true
+        },
+        "js": {
+          "name": "@particle-academy/resend-js",
+          "version": "0.3.0",
+          "registry": "npm",
+          "installFirst": false
+        },
+        "php": {
+          "name": "particle-academy/resend-php",
+          "version": "0.3.0",
+          "registry": "packagist",
+          "installFirst": false
+        },
+        "py": {
+          "name": "fancy-resend",
+          "version": "0.3.0",
+          "registry": "pypi",
+          "installFirst": false
+        }
+      },
+      "auth": {
+        "kind": "api_key",
+        "authorize": "bearer",
+        "scopes": null,
+        "refreshTokenRotates": null,
+        "pkce": null,
+        "credentials": [
+          {
+            "key": "apiKey",
+            "label": "API key",
+            "scope": "account",
+            "secret": true,
+            "optional": false,
+            "help": "re_... from the Resend dashboard. There is only one estate, so this key sends real email."
+          }
+        ]
+      },
+      "sandbox": {
+        "kind": "none",
+        "selectable": false,
+        "warning": "No test estate, and somebody checked. Everything this connector does is real. Use the faker.",
+        "note": "Resend has NO test estate, and somebody checked. Its simulator RECIPIENTS -- delivered@resend.dev, bounced@resend.dev, complained@resend.dev, suppressed@resend.dev -- are not one: the send is real, it is billed, and it counts against the quota. Modelling them as a sandbox would put a live send behind a control labelled \"test\", so `mode` does not offer sandbox at all and `fake` is the primary development mode rather than the fallback."
+      },
+      "environments": [
+        "fake",
+        "live"
+      ],
+      "idempotency": "header",
+      "needsWebhookEndpoint": false,
+      "operations": [
+        {
+          "operation": "email_send",
+          "kind": "@particle-academy/resend_email_send",
+          "kindAlias": "resend_email_send",
+          "role": "action",
+          "title": "Send email",
+          "summary": "send an email",
+          "docs": "https://resend.com/docs/api-reference/emails/send-email",
+          "method": "POST",
+          "path": "/emails",
+          "sideEffects": "idempotent"
+        }
+      ]
+    },
+    {
+      "slug": "stripe",
+      "service": "stripe",
+      "serviceTitle": "Stripe",
+      "domain": "payments",
+      "docs": "https://docs.stripe.com/api",
+      "repo": "Fancy-Friends/stripe",
+      "status": "alpha",
+      "packages": {
+        "ui": {
+          "name": "@particle-academy/stripe-ui",
+          "version": "0.3.0",
+          "registry": "npm",
+          "installFirst": true
+        },
+        "js": {
+          "name": "@particle-academy/stripe-js",
+          "version": "0.3.0",
+          "registry": "npm",
+          "installFirst": false
+        },
+        "php": {
+          "name": "particle-academy/stripe-php",
+          "version": "0.3.0",
+          "registry": "packagist",
+          "installFirst": false
+        },
+        "py": {
+          "name": "fancy-stripe",
+          "version": "0.3.0",
+          "registry": "pypi",
+          "installFirst": false
+        }
+      },
+      "auth": {
+        "kind": "api_key",
+        "authorize": "bearer",
+        "scopes": null,
+        "refreshTokenRotates": null,
+        "pkce": null,
+        "credentials": [
+          {
+            "key": "secretKey",
+            "label": "Secret key",
+            "scope": "account",
+            "secret": true,
+            "optional": false,
+            "help": "sk_test_... for the test estate, sk_live_... for the real ledger. The key -- not the URL -- decides which one you reach."
+          },
+          {
+            "key": "webhookSecret",
+            "label": "Webhook signing secret",
+            "scope": "account",
+            "secret": true,
+            "optional": true,
+            "help": "whsec_... from the endpoint you added in the Stripe dashboard. Required only by the webhook trigger."
+          }
+        ]
+      },
+      "sandbox": {
+        "kind": "credential",
+        "selectable": true,
+        "warning": "The KEY decides live-or-test, not the endpoint \u2014 the same host serves both. A live key pointed at a node marked \u201csandbox\u201d reaches the real estate and SUCCEEDS. Nothing in the request distinguishes them, which is why the credential sits on the connection.",
+        "note": "Stripe's test estate is selected by the KEY, not the URL -- api.stripe.com serves both. A live key sent to a node whose mode says \"sandbox\" reaches the real ledger and succeeds. Nothing in the request distinguishes them, which is exactly why credentials sit on the connection rather than on twelve separate nodes."
+      },
+      "environments": [
+        "fake",
+        "sandbox",
+        "live"
+      ],
+      "idempotency": "header",
+      "needsWebhookEndpoint": true,
+      "operations": [
+        {
+          "operation": "customer_create",
+          "kind": "@particle-academy/stripe_customer",
+          "kindAlias": "stripe_customer",
+          "role": "action",
+          "title": "Stripe customer",
+          "summary": "create a customer",
+          "docs": "https://docs.stripe.com/api/customers/create",
+          "method": "POST",
+          "path": "/v1/customers",
+          "sideEffects": "unsafe-to-replay"
+        },
+        {
+          "operation": "payment_intent_create",
+          "kind": "@particle-academy/stripe_payment_intent",
+          "kindAlias": "stripe_payment_intent",
+          "role": "action",
+          "title": "Stripe payment",
+          "summary": "take a payment",
+          "docs": "https://docs.stripe.com/api/payment_intents/create",
+          "method": "POST",
+          "path": "/v1/payment_intents",
+          "sideEffects": "unsafe-to-replay"
+        },
+        {
+          "operation": "refund_create",
+          "kind": "@particle-academy/stripe_refund",
+          "kindAlias": "stripe_refund",
+          "role": "action",
+          "title": "Stripe refund",
+          "summary": "refund a payment",
+          "docs": "https://docs.stripe.com/api/refunds/create",
+          "method": "POST",
+          "path": "/v1/refunds",
+          "sideEffects": "unsafe-to-replay"
+        },
+        {
+          "operation": "webhook",
+          "kind": "@particle-academy/stripe_webhook_trigger",
+          "kindAlias": "stripe_webhook_trigger",
+          "role": "trigger",
+          "title": "Stripe event",
+          "summary": "an event",
+          "docs": "https://docs.stripe.com/webhooks",
+          "delivery": "webhook",
+          "setup": "Add an endpoint in the Stripe dashboard (or via POST /v1/webhook_endpoints) pointing at the route your host mounts for this trigger, then put the endpoint's signing secret on the connection as `webhookSecret`.",
+          "verifiesSignature": true
+        }
+      ]
+    },
+    {
+      "slug": "telegram",
+      "service": "telegram",
+      "serviceTitle": "Telegram",
+      "domain": "messaging",
+      "docs": "https://core.telegram.org/bots/api",
+      "repo": "Fancy-Friends/telegram",
+      "status": "alpha",
+      "packages": {
+        "ui": {
+          "name": "@particle-academy/telegram-ui",
+          "version": "0.3.0",
+          "registry": "npm",
+          "installFirst": true
+        },
+        "js": {
+          "name": "@particle-academy/telegram-js",
+          "version": "0.3.0",
+          "registry": "npm",
+          "installFirst": false
+        },
+        "php": {
+          "name": "particle-academy/telegram-php",
+          "version": "0.3.0",
+          "registry": "packagist",
+          "installFirst": false
+        },
+        "py": {
+          "name": "fancy-telegram",
+          "version": "0.3.0",
+          "registry": "pypi",
+          "installFirst": false
+        }
+      },
+      "auth": {
+        "kind": "token_in_path",
+        "authorize": "path",
+        "scopes": null,
+        "refreshTokenRotates": null,
+        "pkce": null,
+        "credentials": [
+          {
+            "key": "botToken",
+            "label": "Bot token",
+            "scope": "account",
+            "secret": true,
+            "optional": false,
+            "help": "From @BotFather \u2014 123456:ABC-DEF\u2026 . A bot registered in the test environment is a DIFFERENT bot with a different token; the same token does not reach both."
+          }
+        ]
+      },
+      "sandbox": {
+        "kind": "separate-account",
+        "selectable": true,
+        "warning": "A test estate on the same host, reached with credentials from a separate test account somebody has to register first.",
+        "note": "Telegram's test environment is a genuinely SEPARATE ACCOUNT: you create a new account inside it and register a new bot there, so the sandbox credential is a different token rather than the same one pointed elsewhere. The `/test` path segment is how you reach it; the account is what makes it separate. Flood limits are NOT relaxed there, so it is a place to test, not a place to hammer."
+      },
+      "environments": [
+        "fake",
+        "sandbox",
+        "live"
+      ],
+      "idempotency": null,
+      "needsWebhookEndpoint": false,
+      "operations": [
+        {
+          "operation": "get_updates",
+          "kind": "@particle-academy/telegram_updates_trigger",
+          "kindAlias": "telegram_updates_trigger",
+          "role": "trigger",
+          "title": "Telegram message",
+          "summary": "a new message",
+          "docs": "https://core.telegram.org/bots/api#getupdates",
+          "delivery": "poll",
+          "setup": "The host polls getUpdates on a schedule and persists the `offset` cursor between calls, passing the last `cursor` back in \u2014 Telegram queues nothing once an offset has acknowledged it, so a lost cursor is lost updates. getUpdates and setWebhook are MUTUALLY EXCLUSIVE for one bot: a host running both gets neither.",
+          "verifiesSignature": false
+        }
+      ]
+    }
+  ]
+}

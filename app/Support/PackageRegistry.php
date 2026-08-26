@@ -87,6 +87,23 @@ class PackageRegistry
      * @var array<string, array{name: string, repo: string, why: string}>
      */
     public const PLANNED = [
+        'fancy-expr' => [
+            'name' => 'fancy-expr',
+            'repo' => 'Particle-Academy/fancy-expr',
+            'why' => 'A small, sandboxed EXPRESSION EVALUATOR with one grammar and three implementations (TypeScript, PHP, Python), shipped from one repo the way fancy-conformance is. Owner decision 2026-08-25: hand-written parser rather than a third-party library per language. NOT YET STARTED -- registered first per the rule, so it cannot become a decided-but-invisible package.
+
+WHY IT EXISTS. fancy-flow`s `{{ }}` resolves dot-paths ONLY. Anything else -- `&&`, `||`, a ternary, a comparison, an object literal -- returns null, and null is also what a real-but-absent path returns. Nothing downstream can tell the two apart, so one root cause wore three faces: `transform` emitted the null and the run went green, interpolation printed it as an empty string, and `branch` ROUTED on it (`truthy(null)` is false, so a condition the engine could not evaluate silently took the false road on every run). A consumer lost a production Op to exactly that -- both branches always false, the run reporting completed, no error or log line anywhere. Reproduced on current source in BOTH the PHP and TypeScript runtimes 2026-08-25; it is not a stale-version problem.
+
+WHY A SEPARATE REPO, against the owner`s own test -- "only if this actually replaces a 3rd party repo that would otherwise be used". It does. Without a first-party evaluator the reach is for `symfony/expression-language` (v8.1.1, live) in PHP, `expr-eval` (2.0.2) in TypeScript, `simpleeval` (1.0.7) in Python. All three are real, current, and the standard answer.
+
+AND THAT IS PRECISELY THE ARGUMENT AGAINST USING THEM. Those three libraries do not agree with each other on operator semantics, coercion or truthiness. Adopting them would ship three subtly different languages under one syntax -- manufacturing the exact divergence fancy-conformance exists to catch, on a surface where we would own neither side and so could not fix it. One grammar written three times against a shared fixture table is the only version of this that can be held to a contract.
+
+WHO ELSE BENEFITS (the second half of the owner`s test): any package needing user-authored conditions with no `eval`. laravel-fms feature `enabled` / `limit` predicates, x-files rules, connector mapping, and anything embedding fancy-flow. Sandboxed by construction -- no host property access, no calls, no assignment -- which is what makes it safe to hand a value authored by an agent or an end user.
+
+SCOPE: paths, literals, `&& || !`, comparisons, ternary, object and array literals. Deliberately NOT a programming language: no user functions, no loops, no assignment.
+
+BEFORE IT CAN SHIP: three registry names that do not exist yet (npm scoped, Packagist, PyPI), so the first publish of each needs the owner -- npm cannot be claimed by OIDC, Packagist needs a one-time submit AFTER the first tag, PyPI needs a pending publisher BEFORE it. Run `.claude/skills/ship-it/preflight.py` and hand over the numbered steps rather than improvising them.',
+        ],
         'fancy-connector-core-py' => [
             'name' => 'fancy-connector-core',
             'repo' => 'Particle-Academy/fancy-connector-core-py',

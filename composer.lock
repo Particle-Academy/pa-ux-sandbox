@@ -4170,16 +4170,16 @@
         },
         {
             "name": "particle-academy/fancy-flow-php",
-            "version": "v0.32.0",
+            "version": "v0.44.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/fancy-flow-php.git",
-                "reference": "96961864566bd2c7966f89ba84b6eca9584bf290"
+                "reference": "12aa67fce6b1660ad570ef1a0e87fa91b1368d9a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/fancy-flow-php/zipball/96961864566bd2c7966f89ba84b6eca9584bf290",
-                "reference": "96961864566bd2c7966f89ba84b6eca9584bf290",
+                "url": "https://api.github.com/repos/Particle-Academy/fancy-flow-php/zipball/12aa67fce6b1660ad570ef1a0e87fa91b1368d9a",
+                "reference": "12aa67fce6b1660ad570ef1a0e87fa91b1368d9a",
                 "shasum": ""
             },
             "require": {
@@ -4188,8 +4188,8 @@
             "require-dev": {
                 "laravel/ai": "^0.9",
                 "orchestra/testbench": "^8.0|^9.0|^10.0|^11.0",
-                "particle-academy/fancy-conformance": "^0.13.0",
-                "particle-academy/prism": "0.111",
+                "particle-academy/fancy-conformance": "^0.20.0",
+                "particle-academy/prism": ">=0.114 <1.0",
                 "pestphp/pest": "^2.0|^3.0|^4.0",
                 "phpunit/phpunit": "^10.0|^11.0|^12.0"
             },
@@ -4241,7 +4241,7 @@
                 "issues": "https://github.com/Particle-Academy/fancy-flow-php/issues",
                 "source": "https://github.com/Particle-Academy/fancy-flow-php"
             },
-            "time": "2026-08-26T03:01:09+00:00"
+            "time": "2026-08-26T22:41:43+00:00"
         },
         {
             "name": "particle-academy/fancy-heuristics",

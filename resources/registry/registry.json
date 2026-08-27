@@ -1,6 +1,6 @@
 {
     "$schema": "https://ui.particle.academy/schema/registry-compiled.json",
-    "count": 287,
+    "count": 286,
     "items": [
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
@@ -3009,17 +3009,6 @@
             "title": "@particle-academy/fancy-trading",
             "description": "Plumbing for stock / futures / crypto / event trading apps -- market data, order and position models, and chart surfaces. Deliberately unopinionated about how you build a strategy.",
             "package": "fancy-trading-js",
-            "dependencies": [],
-            "registryDependencies": [],
-            "files": []
-        },
-        {
-            "$schema": "https://ui.particle.academy/schema/registry-item.json",
-            "name": "fancy-trading-ui",
-            "type": "registry:ui",
-            "title": "@particle-academy/fancy-trading-ui",
-            "description": "Trading surfaces -- order ticket, price ladder/DOM, book, depth, tape, blotter, positions, watchlist, alerts, and a session-aware chart on lightweight-charts. Controlled, agent-bridgeable, and built around a safety floor a prop cannot switch off.",
-            "package": "fancy-trading-ui",
             "dependencies": [],
             "registryDependencies": [],
             "files": []

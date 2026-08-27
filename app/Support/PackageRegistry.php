@@ -24,9 +24,22 @@ class PackageRegistry
      * someone to `composer require` something that 404s.
      */
     public const HIDDEN = [
-        // fancy-trading-ui was here until 2026-08-27, when it was published as
-        // 0.1.0. The slug was removed in the same change that tagged the
-        // release, which is what this comment asked for.
+        // BUILT AND TAGGED (v0.1.0, 2026-08-27) BUT NOT ON npm.
+        //
+        // It was un-hidden and deployed on the strength of the tag, and that
+        // was wrong: the tag is not the release. `publish.yml` refused it
+        // because **OIDC can publish to an existing name but cannot create
+        // one** -- npm has no pending-publisher equivalent -- so for a few
+        // minutes the live site offered `npm install
+        // @particle-academy/fancy-trading-ui` for a name that 404s. Exactly the
+        // invitation this list exists to prevent, made by the person who wrote
+        // that down.
+        //
+        // Remove this slug ONLY after `npm view @particle-academy/fancy-trading-ui
+        // version` returns something, then re-run `php artisan registry:build`.
+        // The one-time owner bootstrap is in `.ai/knowledge/publishing.md`,
+        // 'Bootstrapping a brand-new package'.
+        'fancy-trading-ui',
 
         // The mechanism, and why it is kept even when empty: it is how a
         // built-but-unreleased

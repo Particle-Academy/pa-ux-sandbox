@@ -83,7 +83,25 @@ it('excludes an unreleased twin, because an install command must be runnable', f
     // rule HIDDEN exists to enforce everywhere else.
     $hidden = PackageRegistry::HIDDEN;
 
-    expect($hidden)->not->toBeEmpty('this test is vacuous if nothing is hidden');
+    // An EMPTY `HIDDEN` is the good state, not a failure.
+    //
+    // This used to assert non-empty, because a loop over an empty list passes
+    // while checking nothing -- a real hazard worth guarding. But the guard
+    // turned "everything we built has shipped" into a red build, which is the
+    // opposite of what it meant to say. `fancy-trading-ui` was the last entry
+    // and it was published on 2026-08-27.
+    //
+    // So: SKIP, loudly. Skipping keeps the anti-vacuity property -- the test
+    // still never passes without asserting -- while letting the empty state be
+    // reported as what it is. A silent pass over an empty list is the thing
+    // being avoided; a named skip is not that.
+    if ($hidden === []) {
+        test()->markTestSkipped(
+            'PackageRegistry::HIDDEN is empty -- nothing is built-but-unreleased, so there is no '
+            .'unreleased twin to exclude. This test asserts nothing today BY DESIGN, and says so '
+            .'rather than passing over an empty loop.',
+        );
+    }
 
     foreach ($hidden as $slug) {
         $record = PackageRegistry::findAny($slug) ?? [];

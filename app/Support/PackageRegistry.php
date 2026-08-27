@@ -24,14 +24,9 @@ class PackageRegistry
      * someone to `composer require` something that 404s.
      */
     public const HIDDEN = [
-        // BUILT, NOT PUBLISHED. Verified against the registry on 2026-08-20:
-        // `npm view @particle-academy/fancy-trading-ui` is a 404. Remove this
-        // slug in the same change that tags the release, and re-run
-        // `php artisan registry:build` -- until then the package must not reach
-        // the grid, the docs, the sitemap, registry.json, `npx fancy-cli add`
-        // or the MCP, because every one of those is an invitation to install
-        // something that does not exist.
-        'fancy-trading-ui',
+        // fancy-trading-ui was here until 2026-08-27, when it was published as
+        // 0.1.0. The slug was removed in the same change that tagged the
+        // release, which is what this comment asked for.
 
         // The mechanism, and why it is kept even when empty: it is how a
         // built-but-unreleased
@@ -302,10 +297,11 @@ BEFORE IT CAN SHIP: three registry names that do not exist yet (npm scoped, Pack
         // Trading.
         'fancy-trading-js' => ['group' => 'commerce', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#22c55e'],
         // `kind` was 'react', which is not one of ui|bridge|headless|block.
-        // It never failed because HIDDEN excludes this package from the merged
+        // It never failed because HIDDEN excluded this package from the merged
         // catalogue that validates the field -- so the error sat waiting for the
         // publish that removes it from HIDDEN. A HIDDEN package's metadata is
         // NOT validated, which makes hiding a way to bank a latent failure.
+        // That publish happened on 2026-08-27 and the field is now validated.
         'fancy-trading-ui' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#22c55e'],
         // Python backends -- each the third runtime of an existing pair.
         'fancy-flow-py' => ['group' => 'surfaces', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#0ea5e9'],

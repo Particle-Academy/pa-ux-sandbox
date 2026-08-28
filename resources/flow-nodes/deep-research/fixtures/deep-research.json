@@ -1,0 +1,13 @@
+{
+  "kind": "@particle-academy/deep_research",
+  "cases": [
+    {
+      "name": "returns a normalized cited report",
+      "config": { "query": "How do durable workflows recover?", "depth": "deep", "maxSources": 8, "includeContext": true },
+      "inputs": { "topic": "workflow engines" },
+      "expect": { "ports": ["out"], "value": { "answer": "Researched: How do durable workflows recover?", "citations": [{ "url": "https://example.test/source", "title": "Primary source", "excerpt": "Evidence" }], "provider": "perplexity", "model": "sonar-deep-research", "usage": { "inputTokens": 12, "outputTokens": 34 } } }
+    },
+    { "name": "still answers to the bare id", "legacyKind": "deep_research", "config": { "query": "Aliases?" }, "expect": { "ports": ["out"], "value": { "answer": "Researched: Aliases?", "citations": [{ "url": "https://example.test/source", "title": "Primary source", "excerpt": "Evidence" }], "provider": "perplexity", "model": "sonar-deep-research", "usage": { "inputTokens": 12, "outputTokens": 34 } } } },
+    { "name": "rejects a missing question before provider work", "config": {}, "expect": { "error": "needs a `query`" } }
+  ]
+}

@@ -1,5 +1,98 @@
 {
     "nodes": {
+        "particle-academy__deep_research": {
+            "manifest": {
+                "schemaVersion": 1,
+                "name": "particle-academy/fancy-flow-nodes",
+                "kind": "@particle-academy/deep_research",
+                "aliases": [
+                    "deep_research"
+                ],
+                "configVersion": 1,
+                "title": "Deep Research",
+                "category": "ai",
+                "description": "Run a long-form, cited research task through a provider-neutral host adapter.",
+                "outputShape": [
+                    {
+                        "path": "answer",
+                        "type": "string",
+                        "description": "The synthesized research report."
+                    },
+                    {
+                        "path": "citations",
+                        "type": "array",
+                        "description": "Normalized sources cited by the report."
+                    },
+                    {
+                        "path": "provider",
+                        "type": "string",
+                        "description": "Provider that completed the task."
+                    },
+                    {
+                        "path": "model",
+                        "type": "string",
+                        "description": "Model that completed the task."
+                    },
+                    {
+                        "path": "usage",
+                        "type": "object",
+                        "description": "Provider-normalized usage metadata, when available."
+                    }
+                ],
+                "ui": [
+                    "ui"
+                ],
+                "runtimes": {
+                    "ts": {
+                        "files": [
+                            "js"
+                        ],
+                        "engine": ">=0.30.0"
+                    },
+                    "php": {
+                        "files": [
+                            "php"
+                        ],
+                        "engine": ">=0.9.0"
+                    }
+                },
+                "capabilities": {
+                    "deepResearch": "required"
+                },
+                "fixtures": "nodes/deep-research/fixtures/deep-research.json",
+                "sideEffects": "idempotent"
+            },
+            "files": [
+                {
+                    "target": "deep-research/ui/kind.ts",
+                    "content": "import type { NodeKindDefinition } from \"@particle-academy/fancy-flow/engine\";\n\nexport const DEEP_RESEARCH_KIND = \"@particle-academy/deep_research\";\n\nexport const deepResearchKind: NodeKindDefinition = {\n  name: DEEP_RESEARCH_KIND,\n  aliases: [\"deep_research\"],\n  sideEffects: \"idempotent\",\n  category: \"ai\",\n  label: \"Deep Research\",\n  description: \"Run a long-form, cited research task through the host's research provider.\",\n  icon: \"⌕\",\n  accent: \"#06b6d4\",\n  inputs: [{ id: \"in\", label: \"context\" }],\n  outputs: [{ id: \"out\", label: \"research\" }],\n  outputShape: [\n    { path: \"answer\", type: \"string\", description: \"The synthesized research report.\" },\n    { path: \"citations\", type: \"array\", description: \"Normalized sources cited by the report.\" },\n    { path: \"provider\", type: \"string\", description: \"Provider that completed the task.\" },\n    { path: \"model\", type: \"string\", description: \"Model that completed the task.\" },\n    { path: \"usage\", type: \"object\", description: \"Provider-normalized usage metadata, when available.\" },\n  ],\n  configSchema: [\n    { key: \"query\", label: \"Research question\", type: \"textarea\", rows: 4, required: true, placeholder: \"What should be investigated and synthesized?\" },\n    { key: \"instructions\", label: \"Instructions\", type: \"textarea\", rows: 3, placeholder: \"Prioritize primary sources and explain disagreements.\" },\n    { key: \"depth\", label: \"Depth\", type: \"select\", default: \"deep\", options: [\n      { value: \"quick\", label: \"Quick\" }, { value: \"standard\", label: \"Standard\" }, { value: \"deep\", label: \"Deep\" }\n    ] },\n    { key: \"maxSources\", label: \"Maximum sources\", type: \"number\", default: 8 },\n    { key: \"includeContext\", label: \"Include incoming context\", type: \"switch\", default: true },\n    { key: \"provider\", label: \"Provider\", type: \"text\", placeholder: \"perplexity\" },\n    { key: \"model\", label: \"Model\", type: \"text\", placeholder: \"sonar-deep-research\" },\n    { key: \"credential\", label: \"Credential reference\", type: \"text\", description: \"Resolved by the host; never store a raw API key here.\" },\n  ],\n  defaultConfig: { depth: \"deep\", maxSources: 8, includeContext: true },\n};\n"
+                },
+                {
+                    "target": "deep-research/js/executor.ts",
+                    "content": "import type { NodeExecutor } from \"@particle-academy/fancy-flow/engine\";\nimport { getDeepResearchHost } from \"./host\";\nimport type { ResearchDepth } from \"./types\";\n\nexport const deepResearchExecutor: NodeExecutor = async (ctx) => {\n  const config = ((ctx.node.data as any)?.config ?? {}) as Record<string, unknown>;\n  const query = String(config.query ?? \"\").trim();\n  if (!query) throw new Error(\"deep_research: needs a `query` to investigate.\");\n\n  const host = getDeepResearchHost();\n  if (!host) throw new Error(\"deep_research: no research host registered. Call registerDeepResearchHost() with a provider adapter.\");\n\n  const maxSources = Number(config.maxSources ?? 8);\n  if (!Number.isInteger(maxSources) || maxSources < 1) throw new Error(\"deep_research: `maxSources` must be a positive integer.\");\n\n  ctx.emit({ type: \"log\", level: \"info\", nodeId: ctx.node.id, message: `Researching: ${query}` });\n  const result = await host.research({\n    query,\n    instructions: optionalString(config.instructions),\n    context: config.includeContext === false ? undefined : (ctx.inputs as any)?.in,\n    depth: String(config.depth ?? \"deep\") as ResearchDepth,\n    maxSources,\n    provider: optionalString(config.provider),\n    model: optionalString(config.model),\n    credential: optionalString(config.credential),\n  });\n\n  const answer = String(result?.answer ?? \"\").trim();\n  if (!answer) throw new Error(\"deep_research: the host returned no answer.\");\n  const citations = Array.isArray(result.citations) ? result.citations.filter((citation) => citation && typeof citation.url === \"string\" && citation.url.trim() !== \"\") : [];\n  return { ...result, answer, citations };\n};\n\nfunction optionalString(value: unknown): string | undefined {\n  if (value === undefined || value === null) return undefined;\n  const resolved = String(value).trim();\n  return resolved || undefined;\n}\n"
+                },
+                {
+                    "target": "deep-research/js/host.ts",
+                    "content": "import type { DeepResearchHost } from \"./types\";\n\nlet host: DeepResearchHost | null = null;\n\nexport function registerDeepResearchHost(next: DeepResearchHost): () => void {\n  host = next;\n  return () => { if (host === next) host = null; };\n}\n\nexport function getDeepResearchHost(): DeepResearchHost | null { return host; }\n"
+                },
+                {
+                    "target": "deep-research/js/kind.ts",
+                    "content": "import type { NodeKindDefinition } from \"@particle-academy/fancy-flow/engine\";\nimport { deepResearchKind } from \"../ui/kind\";\nimport { deepResearchExecutor } from \"./executor\";\n\nexport const deepResearchRunnableKind: NodeKindDefinition = { ...deepResearchKind, executor: deepResearchExecutor };\n"
+                },
+                {
+                    "target": "deep-research/js/types.ts",
+                    "content": "export type ResearchDepth = \"quick\" | \"standard\" | \"deep\";\n\nexport type DeepResearchRequest = {\n  query: string;\n  instructions?: string;\n  context?: unknown;\n  depth?: ResearchDepth;\n  maxSources?: number;\n  provider?: string;\n  model?: string;\n  credential?: string;\n};\n\nexport type ResearchCitation = { url: string; title?: string; excerpt?: string; publishedAt?: string };\n\nexport type DeepResearchResult = {\n  answer: string;\n  citations: ResearchCitation[];\n  provider?: string;\n  model?: string;\n  usage?: Record<string, number>;\n  metadata?: Record<string, unknown>;\n};\n\n/** Provider-neutral seam. A Prism/Perplexity adapter can implement this without becoming a node dependency. */\nexport type DeepResearchHost = {\n  research: (request: DeepResearchRequest) => Promise<DeepResearchResult> | DeepResearchResult;\n};\n"
+                },
+                {
+                    "target": "deep-research/php/DeepResearchExecutor.php",
+                    "content": "<?php\n\ndeclare(strict_types=1);\n\nnamespace FancyFlow\\Nodes\\DeepResearch;\n\nuse FancyFlow\\Attributes\\FlowNode;\nuse FancyFlow\\Contracts\\NodeExecutor;\nuse FancyFlow\\Runtime\\ExecutionContext;\nuse FancyFlow\\Runtime\\RunEvent;\n\n#[FlowNode(\n    name: '@particle-academy/deep_research',\n    category: 'ai',\n    label: 'Deep Research',\n    description: 'Run a long-form, cited research task through the host research provider.',\n    icon: '⌕',\n    inputs: [['id' => 'in', 'label' => 'context']],\n    outputs: [['id' => 'out', 'label' => 'research']],\n    aliases: ['deep_research'],\n)]\nfinal class DeepResearchExecutor implements NodeExecutor\n{\n    public function __construct(private readonly ?DeepResearchHost $host = null) {}\n\n    public function execute(ExecutionContext $ctx): mixed\n    {\n        $config = $ctx->config();\n        $query = trim((string) ($config['query'] ?? ''));\n        if ($query === '') {\n            throw new \\InvalidArgumentException('deep_research: needs a `query` to investigate.');\n        }\n\n        $host = $this->host ?? throw new \\RuntimeException(\n            'deep_research: no research host bound. Bind '.DeepResearchHost::class.' to a provider adapter.'\n        );\n        $maxSources = (int) ($config['maxSources'] ?? 8);\n        if ($maxSources < 1) {\n            throw new \\InvalidArgumentException('deep_research: `maxSources` must be a positive integer.');\n        }\n\n        $ctx->emit(RunEvent::log('info', \"Researching: {$query}\", $ctx->node->id));\n        $result = $host->research([\n            'query' => $query,\n            'instructions' => self::optionalString($config['instructions'] ?? null),\n            'context' => ($config['includeContext'] ?? true) === false ? null : $ctx->input(),\n            'depth' => (string) ($config['depth'] ?? 'deep'),\n            'maxSources' => $maxSources,\n            'provider' => self::optionalString($config['provider'] ?? null),\n            'model' => self::optionalString($config['model'] ?? null),\n            'credential' => self::optionalString($config['credential'] ?? null),\n        ]);\n        $answer = trim((string) ($result['answer'] ?? ''));\n        if ($answer === '') {\n            throw new \\RuntimeException('deep_research: the host returned no answer.');\n        }\n\n        $result['answer'] = $answer;\n        $result['citations'] = array_values(array_filter(\n            is_array($result['citations'] ?? null) ? $result['citations'] : [],\n            static fn ($citation): bool => is_array($citation) && trim((string) ($citation['url'] ?? '')) !== '',\n        ));\n\n        return $result;\n    }\n\n    private static function optionalString(mixed $value): ?string\n    {\n        $resolved = trim((string) ($value ?? ''));\n\n        return $resolved === '' ? null : $resolved;\n    }\n}\n"
+                },
+                {
+                    "target": "deep-research/php/DeepResearchHost.php",
+                    "content": "<?php\n\ndeclare(strict_types=1);\n\nnamespace FancyFlow\\Nodes\\DeepResearch;\n\ninterface DeepResearchHost\n{\n    /**\n     * @param  array{query:string,instructions?:string|null,context?:mixed,depth?:string,maxSources?:int,provider?:string|null,model?:string|null,credential?:string|null}  $request\n     * @return array{answer:string,citations:list<array{url:string,title?:string,excerpt?:string,publishedAt?:string}>,provider?:string,model?:string,usage?:array<string,int|float>,metadata?:array<string,mixed>}\n     */\n    public function research(array $request): array;\n}\n"
+                }
+            ]
+        },
         "particle-academy__git_branches": {
             "manifest": {
                 "schemaVersion": 1,

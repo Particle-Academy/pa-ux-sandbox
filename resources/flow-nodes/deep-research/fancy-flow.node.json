@@ -1,0 +1,25 @@
+{
+  "schemaVersion": 1,
+  "name": "particle-academy/fancy-flow-nodes",
+  "kind": "@particle-academy/deep_research",
+  "aliases": ["deep_research"],
+  "configVersion": 1,
+  "title": "Deep Research",
+  "category": "ai",
+  "description": "Run a long-form, cited research task through a provider-neutral host adapter.",
+  "outputShape": [
+    { "path": "answer", "type": "string", "description": "The synthesized research report." },
+    { "path": "citations", "type": "array", "description": "Normalized sources cited by the report." },
+    { "path": "provider", "type": "string", "description": "Provider that completed the task." },
+    { "path": "model", "type": "string", "description": "Model that completed the task." },
+    { "path": "usage", "type": "object", "description": "Provider-normalized usage metadata, when available." }
+  ],
+  "ui": ["ui"],
+  "runtimes": {
+    "ts": { "files": ["js"], "engine": ">=0.30.0" },
+    "php": { "files": ["php"], "engine": ">=0.9.0" }
+  },
+  "capabilities": { "deepResearch": "required" },
+  "fixtures": "nodes/deep-research/fixtures/deep-research.json",
+  "sideEffects": "idempotent"
+}

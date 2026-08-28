@@ -81,6 +81,7 @@
             "FancyFlow\\Nodes\\GitPull\\": "resources/flow-nodes/git-pull/php/",
             "FancyFlow\\Nodes\\LlmInput\\": "resources/flow-nodes/llm-input/php/",
             "FancyFlow\\Nodes\\LlmScreen\\": "resources/flow-nodes/llm-screen/php/",
+            "FancyFlow\\Nodes\\DeepResearch\\": "resources/flow-nodes/deep-research/php/",
             "FancyFlow\\Nodes\\GitIssueOpen\\": "resources/flow-nodes/git-issue-open/php/",
             "FancyFlow\\Nodes\\GitIssueGet\\": "resources/flow-nodes/git-issue-get/php/",
             "FancyFlow\\Nodes\\GitIssueList\\": "resources/flow-nodes/git-issue-list/php/",

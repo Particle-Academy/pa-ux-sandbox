@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use FancyFlow\Attributes\FlowNode as FlowNodeAttribute;
 use FancyFlow\Nodes\DeepResearch\DeepResearchExecutor;
 use FancyFlow\Nodes\DeepResearch\DeepResearchHost;
 use FancyFlow\Runtime\ExecutionContext;
@@ -65,4 +66,23 @@ it('fails before calling a host when no research question exists', function () {
 it('requires an explicitly bound research host', function () {
     expect(fn () => (new DeepResearchExecutor)->execute(deepResearchContext(['query' => 'Anything'])))
         ->toThrow(RuntimeException::class, 'no research host bound');
+});
+
+it('advertises the complete authoring schema through PHP discovery', function () {
+    $attribute = (new ReflectionClass(DeepResearchExecutor::class))
+        ->getAttributes(FlowNodeAttribute::class)[0]
+        ->newInstance();
+
+    expect(array_column($attribute->configSchema, 'key'))->toBe([
+        'query',
+        'instructions',
+        'depth',
+        'maxSources',
+        'includeContext',
+        'provider',
+        'model',
+        'credential',
+    ])->and(collect($attribute->configSchema)->keyBy('key')->get('depth')['default'])->toBe('deep')
+        ->and(collect($attribute->configSchema)->keyBy('key')->get('maxSources')['default'])->toBe(8)
+        ->and(collect($attribute->configSchema)->keyBy('key')->get('includeContext')['default'])->toBeTrue();
 });

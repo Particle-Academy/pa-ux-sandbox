@@ -9,6 +9,15 @@
   "title": "Working Tree Status",
   "category": "io",
   "description": "Branch, ahead/behind and changed files — routes on whether the tree is clean.",
+  "outputShape": [
+    { "path": "branch", "type": "string", "description": "branch returned by this node." },
+    { "path": "upstream", "type": "string", "description": "upstream returned by this node." },
+    { "path": "ahead", "type": "number", "description": "ahead returned by this node." },
+    { "path": "behind", "type": "number", "description": "behind returned by this node." },
+    { "path": "files", "type": "array", "description": "files returned by this node." },
+    { "path": "count", "type": "number", "description": "count returned by this node." },
+    { "path": "clean", "type": "boolean", "description": "clean returned by this node." }
+  ],
   "ui": [
     "ui"
   ],

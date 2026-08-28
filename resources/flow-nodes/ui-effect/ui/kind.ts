@@ -23,6 +23,7 @@ export const UI_EFFECT_KIND = "@particle-academy/ui_effect";
 export const uiEffectKind: NodeKindDefinition = {
   name: UI_EFFECT_KIND,
   aliases: ["ui_effect"],
+  sideEffects: "unsafe-to-replay",
   category: "io",
   label: "UI Effect",
   description: "Add, swap or remove a class, set a CSS variable, or flash a style on a live surface.",
@@ -31,7 +32,12 @@ export const uiEffectKind: NodeKindDefinition = {
 
   inputs: [{ id: "in" }],
   outputs: [{ id: "out" }],
+  emits: "input",
 
+  outputShape: [
+    { path: "uiEffect", type: "object", description: "uiEffect returned by this node." },
+    { path: "applied", type: "boolean", description: "applied returned by this node." },
+  ],
   configSchema: [
     {
       key: "target",

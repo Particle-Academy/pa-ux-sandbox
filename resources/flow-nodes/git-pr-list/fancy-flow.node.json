@@ -9,6 +9,11 @@
   "title": "List Pull Requests",
   "category": "io",
   "description": "List a repository's pull requests, branching on whether any matched.",
+  "outputShape": [
+    { "path": "reviews", "type": "array", "description": "reviews returned by this node." },
+    { "path": "count", "type": "number", "description": "count returned by this node." },
+    { "path": "nextCursor", "type": "string", "description": "nextCursor returned by this node." }
+  ],
   "ui": [
     "ui"
   ],

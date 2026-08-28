@@ -11,6 +11,7 @@ export const GIT_CHECKOUT_KIND = "@particle-academy/git_checkout";
 export const gitCheckoutKind: NodeKindDefinition = {
   name: GIT_CHECKOUT_KIND,
   aliases: ["git_checkout"],
+  sideEffects: "unsafe-to-replay",
   category: "io",
   label: "Checkout",
   description: "Switch a working copy to a branch or revision — or propose it for approval.",
@@ -20,6 +21,10 @@ export const gitCheckoutKind: NodeKindDefinition = {
   outputs: [
     { id: "done", label: "done" },
     { id: "proposed", label: "proposed" },
+  ],
+  outputShape: [
+    { path: "target", type: "string", description: "target returned by this node." },
+    { path: "proposal", type: "object", description: "proposal returned by this node." },
   ],
   configSchema: [
     { key: "repo", label: "Repository", type: "text", placeholder: "(host default)" },

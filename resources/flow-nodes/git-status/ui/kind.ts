@@ -12,6 +12,7 @@ export const GIT_STATUS_KIND = "@particle-academy/git_status";
 export const gitStatusKind: NodeKindDefinition = {
   name: GIT_STATUS_KIND,
   aliases: ["git_status"],
+  sideEffects: "idempotent",
   category: "io",
   label: "Working Tree Status",
   description: "Branch, ahead/behind and changed files — routes on whether the tree is clean.",
@@ -21,6 +22,15 @@ export const gitStatusKind: NodeKindDefinition = {
   outputs: [
     { id: "clean", label: "clean" },
     { id: "dirty", label: "dirty" },
+  ],
+  outputShape: [
+    { path: "branch", type: "string", description: "branch returned by this node." },
+    { path: "upstream", type: "string", description: "upstream returned by this node." },
+    { path: "ahead", type: "number", description: "ahead returned by this node." },
+    { path: "behind", type: "number", description: "behind returned by this node." },
+    { path: "files", type: "array", description: "files returned by this node." },
+    { path: "count", type: "number", description: "count returned by this node." },
+    { path: "clean", type: "boolean", description: "clean returned by this node." },
   ],
   configSchema: [
     {

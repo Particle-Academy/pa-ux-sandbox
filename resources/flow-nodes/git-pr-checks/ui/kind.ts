@@ -28,6 +28,7 @@ export const GIT_PR_CHECKS_KIND = "@particle-academy/git_pr_checks";
 export const gitPrChecksKind: NodeKindDefinition = {
   name: GIT_PR_CHECKS_KIND,
   aliases: ["git_pr_checks"],
+  sideEffects: "none",
   category: "logic",
   label: "Check Status",
   description: "CI state for a revision — routes on passing, failing, pending, or no checks at all.",
@@ -39,6 +40,12 @@ export const gitPrChecksKind: NodeKindDefinition = {
     { id: "failing", label: "failing" },
     { id: "pending", label: "pending" },
     { id: "none", label: "no checks" },
+  ],
+  outputShape: [
+    { path: "checks", type: "array", description: "checks returned by this node." },
+    { path: "revision", type: "string", description: "revision returned by this node." },
+    { path: "failing", type: "number", description: "failing returned by this node." },
+    { path: "pending", type: "number", description: "pending returned by this node." },
   ],
   configSchema: [
     ...REPO_FIELDS,

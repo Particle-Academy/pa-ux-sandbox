@@ -6,6 +6,7 @@ export const GIT_PULL_KIND = "@particle-academy/git_pull";
 export const gitPullKind: NodeKindDefinition = {
   name: GIT_PULL_KIND,
   aliases: ["git_pull"],
+  sideEffects: "unsafe-to-replay",
   category: "io",
   label: "Pull",
   description: "Pull a working copy from a remote — or propose it for approval.",
@@ -15,6 +16,11 @@ export const gitPullKind: NodeKindDefinition = {
   outputs: [
     { id: "done", label: "done" },
     { id: "proposed", label: "proposed" },
+  ],
+  outputShape: [
+    { path: "remote", type: "string", description: "remote returned by this node." },
+    { path: "branch", type: "string", description: "branch returned by this node." },
+    { path: "proposal", type: "object", description: "proposal returned by this node." },
   ],
   configSchema: [
     { key: "repo", label: "Repository", type: "text", placeholder: "(host default)" },

@@ -6,6 +6,7 @@ export const GIT_LOG_KIND = "@particle-academy/git_log";
 export const gitLogKind: NodeKindDefinition = {
   name: GIT_LOG_KIND,
   aliases: ["git_log"],
+  sideEffects: "idempotent",
   category: "io",
   label: "Commit Log",
   description: "Read commits from a working copy, branching on whether any matched.",
@@ -15,6 +16,11 @@ export const gitLogKind: NodeKindDefinition = {
   outputs: [
     { id: "found", label: "found" },
     { id: "none", label: "none" },
+  ],
+  outputShape: [
+    { path: "commits", type: "array", description: "commits returned by this node." },
+    { path: "count", type: "number", description: "count returned by this node." },
+    { path: "ref", type: "string", description: "ref returned by this node." },
   ],
   configSchema: [
     { key: "repo", label: "Repository", type: "text", placeholder: "(host default)" },

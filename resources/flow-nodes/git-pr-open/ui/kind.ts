@@ -31,6 +31,7 @@ export const GIT_PR_OPEN_KIND = "@particle-academy/git_pr_open";
 export const gitPrOpenKind: NodeKindDefinition = {
   name: GIT_PR_OPEN_KIND,
   aliases: ["git_pr_open"],
+  sideEffects: "unsafe-to-replay",
   category: "io",
   label: "Open Pull Request",
   description: "Open a pull request from one branch into another, on GitHub, GitLab or Bitbucket.",
@@ -38,6 +39,11 @@ export const gitPrOpenKind: NodeKindDefinition = {
   accent: "#22c55e",
   inputs: [{ id: "in" }],
   outputs: [{ id: "out" }],
+  outputShape: [
+    { path: "review", type: "object", description: "review returned by this node." },
+    { path: "number", type: "number", description: "number returned by this node." },
+    { path: "url", type: "string", description: "url returned by this node." },
+  ],
   configSchema: [
     ...REPO_FIELDS,
     { key: "title", label: "Title", type: "text", required: true, placeholder: "Fix the merge point" },

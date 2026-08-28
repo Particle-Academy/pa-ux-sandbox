@@ -9,6 +9,11 @@
   "title": "AI Screen",
   "category": "io",
   "description": "Let a model build the interface this step shows, from the components the host registered — rendered by fancy-screens' schema surface.",
+  "outputShape": [
+    { "path": "screenId", "type": "string", "description": "screenId returned by this node." },
+    { "path": "title", "type": "string", "description": "title returned by this node." },
+    { "path": "schema", "type": "object", "description": "schema returned by this node." }
+  ],
   "ui": [
     "ui"
   ],

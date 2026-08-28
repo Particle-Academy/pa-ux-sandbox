@@ -27,6 +27,7 @@ export const GIT_ISSUE_COMMENT_KIND = "@particle-academy/git_issue_comment";
 export const gitIssueCommentKind: NodeKindDefinition = {
   name: GIT_ISSUE_COMMENT_KIND,
   aliases: ["git_issue_comment"],
+  sideEffects: "unsafe-to-replay",
   category: "io",
   label: "Comment on Issue",
   description: "Post a comment on an issue.",
@@ -34,6 +35,11 @@ export const gitIssueCommentKind: NodeKindDefinition = {
   accent: "#8b5cf6",
   inputs: [{ id: "in" }],
   outputs: [{"id":"out"}],
+  outputShape: [
+    { path: "number", type: "number", description: "number returned by this node." },
+    { path: "id", type: "string", description: "id returned by this node." },
+    { path: "webUrl", type: "string", description: "webUrl returned by this node." },
+  ],
   configSchema: [
     ...REPO_FIELDS,
     {"key":"number","label":"Issue number","type":"number","min":1},

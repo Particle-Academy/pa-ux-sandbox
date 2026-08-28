@@ -7,6 +7,11 @@
   "title": "Commit Log",
   "category": "io",
   "description": "Read commits from a working copy, branching on whether any matched.",
+  "outputShape": [
+    { "path": "commits", "type": "array", "description": "commits returned by this node." },
+    { "path": "count", "type": "number", "description": "count returned by this node." },
+    { "path": "ref", "type": "string", "description": "ref returned by this node." }
+  ],
   "ui": ["ui"],
   "runtimes": {
     "ts": { "files": ["js"], "engine": ">=0.30.0" },

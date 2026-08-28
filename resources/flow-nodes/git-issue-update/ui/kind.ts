@@ -27,6 +27,7 @@ export const GIT_ISSUE_UPDATE_KIND = "@particle-academy/git_issue_update";
 export const gitIssueUpdateKind: NodeKindDefinition = {
   name: GIT_ISSUE_UPDATE_KIND,
   aliases: ["git_issue_update"],
+  sideEffects: "idempotent",
   category: "io",
   label: "Update Issue",
   description: "Change an issue's title, body, state or labels.",
@@ -34,6 +35,16 @@ export const gitIssueUpdateKind: NodeKindDefinition = {
   accent: "#8b5cf6",
   inputs: [{ id: "in" }],
   outputs: [{"id":"out"}],
+  outputShape: [
+    { path: "id", type: "string", description: "id returned by this node." },
+    { path: "number", type: "number", description: "number returned by this node." },
+    { path: "title", type: "string", description: "title returned by this node." },
+    { path: "state", type: "string", description: "state returned by this node." },
+    { path: "webUrl", type: "string", description: "webUrl returned by this node." },
+    { path: "author", type: "string", description: "author returned by this node." },
+    { path: "labels", type: "array", description: "labels returned by this node." },
+    { path: "assignees", type: "array", description: "assignees returned by this node." },
+  ],
   configSchema: [
     ...REPO_FIELDS,
     {"key":"number","label":"Issue number","type":"number","min":1},

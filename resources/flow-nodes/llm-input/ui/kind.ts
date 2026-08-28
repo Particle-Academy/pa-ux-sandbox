@@ -17,6 +17,7 @@ export const LLM_INPUT_KIND = "@particle-academy/llm_input";
 export const llmInputKind: NodeKindDefinition = {
   name: LLM_INPUT_KIND,
   aliases: ["llm_input"],
+  sideEffects: "idempotent",
   pausesForHuman: "input",
   category: "human",
   label: "AI Form",

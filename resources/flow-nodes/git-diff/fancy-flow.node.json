@@ -7,6 +7,11 @@
   "title": "Diff",
   "category": "io",
   "description": "Diff a working copy — working tree, staged, or between two revisions.",
+  "outputShape": [
+    { "path": "files", "type": "array", "description": "files returned by this node." },
+    { "path": "count", "type": "number", "description": "count returned by this node." },
+    { "path": "patch", "type": "string", "description": "patch returned by this node." }
+  ],
   "ui": ["ui"],
   "runtimes": {
     "ts": { "files": ["js"], "engine": ">=0.30.0" },

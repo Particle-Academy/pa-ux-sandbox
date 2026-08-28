@@ -7,6 +7,11 @@
   "title": "Pull",
   "category": "io",
   "description": "Pull a working copy from a remote — or propose it for approval.",
+  "outputShape": [
+    { "path": "remote", "type": "string", "description": "remote returned by this node." },
+    { "path": "branch", "type": "string", "description": "branch returned by this node." },
+    { "path": "proposal", "type": "object", "description": "proposal returned by this node." }
+  ],
   "ui": ["ui"],
   "runtimes": {
     "ts": { "files": ["js"], "engine": ">=0.30.0" },

@@ -27,6 +27,7 @@ export const GIT_ISSUE_LIST_KIND = "@particle-academy/git_issue_list";
 export const gitIssueListKind: NodeKindDefinition = {
   name: GIT_ISSUE_LIST_KIND,
   aliases: ["git_issue_list"],
+  sideEffects: "idempotent",
   category: "io",
   label: "List Issues",
   description: "List a repository's issues, branching on whether any matched.",
@@ -34,6 +35,11 @@ export const gitIssueListKind: NodeKindDefinition = {
   accent: "#8b5cf6",
   inputs: [{ id: "in" }],
   outputs: [{"id":"found","label":"found"},{"id":"none","label":"none"}],
+  outputShape: [
+    { path: "issues", type: "array", description: "issues returned by this node." },
+    { path: "count", type: "number", description: "count returned by this node." },
+    { path: "nextCursor", type: "string", description: "nextCursor returned by this node." },
+  ],
   configSchema: [
     ...REPO_FIELDS,
     {"key":"state","label":"State","type":"select","options":[{"value":"open","label":"Open"},{"value":"closed","label":"Closed"}],"default":"open"},

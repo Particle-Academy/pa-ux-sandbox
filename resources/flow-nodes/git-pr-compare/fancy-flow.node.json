@@ -9,6 +9,13 @@
   "title": "Compare Refs",
   "category": "logic",
   "description": "Compare two branches or SHAs — commits between them, and which way they diverge.",
+  "outputShape": [
+    { "path": "comparison", "type": "object", "description": "comparison returned by this node." },
+    { "path": "base", "type": "string", "description": "base returned by this node." },
+    { "path": "head", "type": "string", "description": "head returned by this node." },
+    { "path": "aheadBy", "type": "number", "description": "aheadBy returned by this node." },
+    { "path": "behindBy", "type": "number", "description": "behindBy returned by this node." }
+  ],
   "ui": [
     "ui"
   ],

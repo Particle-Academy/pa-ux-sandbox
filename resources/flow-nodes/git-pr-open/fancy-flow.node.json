@@ -9,6 +9,11 @@
   "title": "Open Pull Request",
   "category": "io",
   "description": "Open a pull request from one branch into another, on GitHub, GitLab or Bitbucket.",
+  "outputShape": [
+    { "path": "review", "type": "object", "description": "review returned by this node." },
+    { "path": "number", "type": "number", "description": "number returned by this node." },
+    { "path": "url", "type": "string", "description": "url returned by this node." }
+  ],
   "ui": [
     "ui"
   ],

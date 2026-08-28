@@ -9,6 +9,11 @@
   "title": "Comment on Issue",
   "category": "io",
   "description": "Post a comment on an issue.",
+  "outputShape": [
+    { "path": "number", "type": "number", "description": "number returned by this node." },
+    { "path": "id", "type": "string", "description": "id returned by this node." },
+    { "path": "webUrl", "type": "string", "description": "webUrl returned by this node." }
+  ],
   "ui": [
     "ui"
   ],

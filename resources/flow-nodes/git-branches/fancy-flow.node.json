@@ -7,6 +7,12 @@
   "title": "Branches",
   "category": "io",
   "description": "List a working copy's branches and report which one is checked out.",
+  "outputShape": [
+    { "path": "branches", "type": "array", "description": "branches returned by this node." },
+    { "path": "count", "type": "number", "description": "count returned by this node." },
+    { "path": "current", "type": "string", "description": "current returned by this node." },
+    { "path": "names", "type": "array", "description": "names returned by this node." }
+  ],
   "ui": ["ui"],
   "runtimes": {
     "ts": { "files": ["js"], "engine": ">=0.30.0" },

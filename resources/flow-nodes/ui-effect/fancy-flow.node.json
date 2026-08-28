@@ -6,6 +6,11 @@
     "ui_effect"
   ],
   "configVersion": 1,
+  "outputShape": [
+    { "path": "uiEffect", "type": "object", "description": "uiEffect returned by this node." },
+    { "path": "applied", "type": "boolean", "description": "applied returned by this node." }
+  ],
+  "emits": "input",
   "ui": [
     "ui"
   ],

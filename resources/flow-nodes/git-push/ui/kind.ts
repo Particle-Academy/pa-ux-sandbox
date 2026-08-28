@@ -6,6 +6,7 @@ export const GIT_PUSH_KIND = "@particle-academy/git_push";
 export const gitPushKind: NodeKindDefinition = {
   name: GIT_PUSH_KIND,
   aliases: ["git_push"],
+  sideEffects: "unsafe-to-replay",
   category: "io",
   label: "Push",
   description: "Push a working copy to a remote — or propose it for approval.",
@@ -15,6 +16,11 @@ export const gitPushKind: NodeKindDefinition = {
   outputs: [
     { id: "done", label: "done" },
     { id: "proposed", label: "proposed" },
+  ],
+  outputShape: [
+    { path: "remote", type: "string", description: "remote returned by this node." },
+    { path: "branch", type: "string", description: "branch returned by this node." },
+    { path: "proposal", type: "object", description: "proposal returned by this node." },
   ],
   configSchema: [
     { key: "repo", label: "Repository", type: "text", placeholder: "(host default)" },

@@ -14,6 +14,7 @@ export const LLM_SCREEN_KIND = "@particle-academy/llm_screen";
 export const llmScreenKind: NodeKindDefinition = {
   name: LLM_SCREEN_KIND,
   aliases: ["llm_screen"],
+  sideEffects: "idempotent",
   category: "io",
   label: "AI Screen",
   description: "Let a model build the interface this step shows, from the components the host registered.",
@@ -21,6 +22,11 @@ export const llmScreenKind: NodeKindDefinition = {
   accent: "#8b5cf6",
   inputs: [{ id: "in" }],
   outputs: [{ id: "out", label: "schema" }],
+  outputShape: [
+    { path: "screenId", type: "string", description: "screenId returned by this node." },
+    { path: "title", type: "string", description: "title returned by this node." },
+    { path: "schema", type: "object", description: "schema returned by this node." },
+  ],
   configSchema: [
     {
       key: "purpose",

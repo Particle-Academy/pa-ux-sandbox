@@ -27,6 +27,7 @@ export const GIT_PR_GET_KIND = "@particle-academy/git_pr_get";
 export const gitPrGetKind: NodeKindDefinition = {
   name: GIT_PR_GET_KIND,
   aliases: ["git_pr_get"],
+  sideEffects: "none",
   category: "io",
   label: "Get Pull Request",
   description: "Read one pull request — body, state, mergeability, timestamps.",
@@ -34,6 +35,12 @@ export const gitPrGetKind: NodeKindDefinition = {
   accent: "#0ea5e9",
   inputs: [{ id: "in" }],
   outputs: [{ id: "out" }],
+  outputShape: [
+    { path: "review", type: "object", description: "review returned by this node." },
+    { path: "number", type: "number", description: "number returned by this node." },
+    { path: "url", type: "string", description: "url returned by this node." },
+    { path: "state", type: "string", description: "state returned by this node." },
+  ],
   configSchema: [
     ...REPO_FIELDS,
     {

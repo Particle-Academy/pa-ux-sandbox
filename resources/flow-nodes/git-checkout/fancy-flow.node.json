@@ -7,6 +7,10 @@
   "title": "Checkout",
   "category": "io",
   "description": "Switch a working copy to a branch or revision — or propose it for approval.",
+  "outputShape": [
+    { "path": "target", "type": "string", "description": "target returned by this node." },
+    { "path": "proposal", "type": "object", "description": "proposal returned by this node." }
+  ],
   "ui": ["ui"],
   "runtimes": {
     "ts": { "files": ["js"], "engine": ">=0.30.0" },

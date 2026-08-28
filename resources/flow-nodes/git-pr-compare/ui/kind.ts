@@ -27,6 +27,7 @@ export const GIT_PR_COMPARE_KIND = "@particle-academy/git_pr_compare";
 export const gitPrCompareKind: NodeKindDefinition = {
   name: GIT_PR_COMPARE_KIND,
   aliases: ["git_pr_compare"],
+  sideEffects: "none",
   category: "logic",
   label: "Compare Refs",
   description: "Compare two branches or SHAs — commits between them, and which way they diverge.",
@@ -36,6 +37,13 @@ export const gitPrCompareKind: NodeKindDefinition = {
   outputs: [
     { id: "ahead", label: "ahead" },
     { id: "same", label: "nothing to merge" },
+  ],
+  outputShape: [
+    { path: "comparison", type: "object", description: "comparison returned by this node." },
+    { path: "base", type: "string", description: "base returned by this node." },
+    { path: "head", type: "string", description: "head returned by this node." },
+    { path: "aheadBy", type: "number", description: "aheadBy returned by this node." },
+    { path: "behindBy", type: "number", description: "behindBy returned by this node." },
   ],
   configSchema: [
     ...REPO_FIELDS,

@@ -12,6 +12,7 @@ export const GIT_REPO_KIND = "@particle-academy/git_repo";
 export const gitRepoKind: NodeKindDefinition = {
   name: GIT_REPO_KIND,
   aliases: ["git_repo"],
+  sideEffects: "idempotent",
   category: "io",
   label: "Repository",
   description: "Hosted repository metadata — default branch, visibility, URLs.",
@@ -19,6 +20,14 @@ export const gitRepoKind: NodeKindDefinition = {
   accent: "#6e5494",
   inputs: [{ id: "in" }],
   outputs: [{ id: "out" }],
+  outputShape: [
+    { path: "provider", type: "string", description: "provider returned by this node." },
+    { path: "owner", type: "string", description: "owner returned by this node." },
+    { path: "name", type: "string", description: "name returned by this node." },
+    { path: "defaultBranch", type: "string", description: "defaultBranch returned by this node." },
+    { path: "visibility", type: "string", description: "visibility returned by this node." },
+    { path: "webUrl", type: "string", description: "webUrl returned by this node." },
+  ],
   configSchema: [
     {
       key: "provider",

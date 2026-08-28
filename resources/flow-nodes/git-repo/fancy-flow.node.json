@@ -7,6 +7,14 @@
   "title": "Repository",
   "category": "io",
   "description": "Hosted repository metadata — default branch, visibility, URLs.",
+  "outputShape": [
+    { "path": "provider", "type": "string", "description": "provider returned by this node." },
+    { "path": "owner", "type": "string", "description": "owner returned by this node." },
+    { "path": "name", "type": "string", "description": "name returned by this node." },
+    { "path": "defaultBranch", "type": "string", "description": "defaultBranch returned by this node." },
+    { "path": "visibility", "type": "string", "description": "visibility returned by this node." },
+    { "path": "webUrl", "type": "string", "description": "webUrl returned by this node." }
+  ],
   "ui": ["ui"],
   "runtimes": {
     "ts": { "files": ["js"], "engine": ">=0.30.0" },

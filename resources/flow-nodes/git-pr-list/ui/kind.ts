@@ -28,6 +28,7 @@ export const GIT_PR_LIST_KIND = "@particle-academy/git_pr_list";
 export const gitPrListKind: NodeKindDefinition = {
   name: GIT_PR_LIST_KIND,
   aliases: ["git_pr_list"],
+  sideEffects: "none",
   category: "io",
   label: "List Pull Requests",
   description: "List a repository's pull requests, branching on whether any matched.",
@@ -37,6 +38,11 @@ export const gitPrListKind: NodeKindDefinition = {
   outputs: [
     { id: "found", label: "found" },
     { id: "none", label: "none" },
+  ],
+  outputShape: [
+    { path: "reviews", type: "array", description: "reviews returned by this node." },
+    { path: "count", type: "number", description: "count returned by this node." },
+    { path: "nextCursor", type: "string", description: "nextCursor returned by this node." },
   ],
   configSchema: [
     ...REPO_FIELDS,

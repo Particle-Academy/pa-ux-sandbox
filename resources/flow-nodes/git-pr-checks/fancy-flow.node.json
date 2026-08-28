@@ -9,6 +9,12 @@
   "title": "Check Status",
   "category": "logic",
   "description": "CI state for a revision — routes on passing, failing, pending, or no checks at all.",
+  "outputShape": [
+    { "path": "checks", "type": "array", "description": "checks returned by this node." },
+    { "path": "revision", "type": "string", "description": "revision returned by this node." },
+    { "path": "failing", "type": "number", "description": "failing returned by this node." },
+    { "path": "pending", "type": "number", "description": "pending returned by this node." }
+  ],
   "ui": [
     "ui"
   ],

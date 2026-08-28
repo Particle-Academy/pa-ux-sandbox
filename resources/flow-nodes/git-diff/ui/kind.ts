@@ -6,6 +6,7 @@ export const GIT_DIFF_KIND = "@particle-academy/git_diff";
 export const gitDiffKind: NodeKindDefinition = {
   name: GIT_DIFF_KIND,
   aliases: ["git_diff"],
+  sideEffects: "idempotent",
   category: "io",
   label: "Diff",
   description: "Diff a working copy — working tree, staged, or between two revisions.",
@@ -15,6 +16,11 @@ export const gitDiffKind: NodeKindDefinition = {
   outputs: [
     { id: "changed", label: "changed" },
     { id: "empty", label: "empty" },
+  ],
+  outputShape: [
+    { path: "files", type: "array", description: "files returned by this node." },
+    { path: "count", type: "number", description: "count returned by this node." },
+    { path: "patch", type: "string", description: "patch returned by this node." },
   ],
   configSchema: [
     { key: "repo", label: "Repository", type: "text", placeholder: "(host default)" },

@@ -9,6 +9,12 @@
   "title": "Get Pull Request",
   "category": "io",
   "description": "Read one pull request — body, state, mergeability, timestamps.",
+  "outputShape": [
+    { "path": "review", "type": "object", "description": "review returned by this node." },
+    { "path": "number", "type": "number", "description": "number returned by this node." },
+    { "path": "url", "type": "string", "description": "url returned by this node." },
+    { "path": "state", "type": "string", "description": "state returned by this node." }
+  ],
   "ui": [
     "ui"
   ],

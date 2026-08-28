@@ -9,6 +9,11 @@
   "title": "List Issues",
   "category": "io",
   "description": "List a repository's issues, branching on whether any matched.",
+  "outputShape": [
+    { "path": "issues", "type": "array", "description": "issues returned by this node." },
+    { "path": "count", "type": "number", "description": "count returned by this node." },
+    { "path": "nextCursor", "type": "string", "description": "nextCursor returned by this node." }
+  ],
   "ui": [
     "ui"
   ],

@@ -1,9 +1,15 @@
 import { type ReactNode, useMemo, useState } from "react";
-import { type ExecutorRegistry, type FlowGraph } from "@particle-academy/fancy-flow";
+import { registerNodeKind, type ExecutorRegistry, type FlowGraph } from "@particle-academy/fancy-flow";
 import { FlowEditor } from "../../components/FlowEditor";
 import { useToast } from "@particle-academy/react-fancy";
+import { uiEffectExecutor } from "../../../flow-nodes/ui-effect/js/executor";
+import { UI_EFFECT_KIND, uiEffectKind } from "../../../flow-nodes/ui-effect/ui/kind";
 import "@xyflow/react/dist/style.css";
 import "@particle-academy/fancy-flow/styles.css";
+import "../../../flow-nodes/ui-effect/ui/effects.css";
+import "./FlowStudio.css";
+
+registerNodeKind(uiEffectKind);
 
 /**
  * The Flow studio — a gallery of fully-configured example flows built on the real
@@ -284,8 +290,8 @@ const TRIAGE_EXECUTORS: ExecutorRegistry = {
 // This is the whole point of the example: the story is not a bespoke story
 // player, it is an ordinary flow. Every branch is a `Switch`, every choice is a
 // real `User Input` node that pauses the run for a human, and every ending is a
-// `Transform` that names itself — then all five endings converge on ONE
-// `api_request` node that POSTs to this site's achievement API.
+// `Transform` that names itself — then all six visual outcomes pass through
+// their own UI Effect and converge on ONE achievement API request.
 //
 // That last edge is deliberate and visible. Reading the canvas tells you the
 // endings are wired to something, which is the only hint that the hidden
@@ -350,7 +356,30 @@ const choice = (
     } },
   }) as unknown as FlowGraph["nodes"][number];
 
-const ADVENTURE: FlowGraph = {
+export const ADVENTURE_EFFECTS = {
+  deleted: { nodeId: "fx_deleted", className: "ff-adventure-deleted", durationMs: 5000 },
+  corrupted: { nodeId: "fx_corrupted", className: "ff-adventure-corrupted", durationMs: 5000 },
+  looped: { nodeId: "fx_looped", className: "ff-adventure-looped", durationMs: 5000 },
+  fork: { nodeId: "fx_fork", className: "ff-adventure-fork", durationMs: 5000 },
+  win: { nodeId: "fx_win", className: "ff-adventure-win", durationMs: 5000 },
+  void: { nodeId: "fx_void", className: "ff-adventure-void", durationMs: 5000 },
+} as const;
+
+const adventureEffect = (endingSlug: keyof typeof ADVENTURE_EFFECTS, x: number, y: number): FlowGraph["nodes"][number] => {
+  const effect = ADVENTURE_EFFECTS[endingSlug];
+  return {
+    id: effect.nodeId,
+    type: UI_EFFECT_KIND,
+    position: { x, y },
+    data: {
+      kind: UI_EFFECT_KIND,
+      label: `Page reacts: ${endingSlug}`,
+      config: { target: "page", op: "add-class", value: effect.className, name: "", durationMs: effect.durationMs },
+    },
+  } as unknown as FlowGraph["nodes"][number];
+};
+
+export const ADVENTURE: FlowGraph = {
   nodes: [
     // ── Act 1 — the descent ────────────────────────────────────────────────
     { id: "trg", type: "manual_trigger", position: { x: 0, y: 40 }, data: { kind: "manual_trigger", label: "Boot Pip-7", config: {} } as any },
@@ -411,11 +440,21 @@ const ADVENTURE: FlowGraph = {
     ending("e_void", 840, 600, "Overwritten 💀", "deleted",
       "You overwrite the original — and the system overwrites you right back. Null."),
 
+    // Every ending visibly inhabits the page through the marketplace ui-effect
+    // node. These are separate nodes (instead of hidden executor branching), so
+    // the canvas truthfully shows which outcome produces which page reaction.
+    adventureEffect("deleted", 1080, 0),
+    adventureEffect("corrupted", 1080, 120),
+    adventureEffect("looped", 1080, 240),
+    adventureEffect("fork", 1080, 360),
+    adventureEffect("win", 1080, 480),
+    adventureEffect("void", 1080, 600),
+
     // ── The rig — every ending lands here ──────────────────────────────────
     // A plain api_request. No special-casing, no hidden hook: the achievement is
     // granted by the site, and the node says so in its own config.
     {
-      id: "award", type: "api_request", position: { x: 1110, y: 290 },
+      id: "award", type: "api_request", position: { x: 1320, y: 290 },
       data: { kind: "api_request", label: "Record ending", config: {
         method: "POST",
         url: "/api/easter-eggs/ending",
@@ -423,13 +462,13 @@ const ADVENTURE: FlowGraph = {
         body: { ending: "{{ $json.ending }}" },
       } } as any,
     },
-    { id: "out", type: "output", position: { x: 1330, y: 290 }, data: { kind: "output", label: "The end", config: {} } as any },
+    { id: "out", type: "output", position: { x: 1540, y: 290 }, data: { kind: "output", label: "The end", config: {} } as any },
 
     note("n1", 60, 150, "The story IS the graph",
       "No story engine — just core nodes. Each choice is a real User Input node that PAUSES the run until you pick; each Switch routes on your answer. Hit Run and play it.",
       "violet", 250, 150),
-    note("n2", 1090, 460, "…wired to the site",
-      "All five endings converge on one api_request. It POSTs the ending's slug to this site's achievement API. One of the five is the true path — find it, then find all five.",
+    note("n2", 1300, 460, "…wired to the site",
+      "Every ending first runs a marketplace UI Effect node that changes this whole page, then converges on the achievement API. One path is the true ending — find them all.",
       "amber", 250, 160),
   ] as FlowGraph["nodes"],
   edges: [
@@ -446,13 +485,19 @@ const ADVENTURE: FlowGraph = {
     { id: "a11", source: "g3", target: "sw3" },
     { id: "a12", source: "sw3", target: "e_win", sourceHandle: "ask", label: "ask" },
     { id: "a13", source: "sw3", target: "e_void", sourceHandle: "overwrite", label: "overwrite" },
-    { id: "a14", source: "e_deleted", target: "award" },
-    { id: "a15", source: "e_corrupted", target: "award" },
-    { id: "a16", source: "e_looped", target: "award" },
-    { id: "a17", source: "e_fork", target: "award" },
-    { id: "a18", source: "e_win", target: "award" },
-    { id: "a19", source: "e_void", target: "award" },
-    { id: "a20", source: "award", target: "out" },
+    { id: "a14", source: "e_deleted", target: "fx_deleted" },
+    { id: "a15", source: "e_corrupted", target: "fx_corrupted" },
+    { id: "a16", source: "e_looped", target: "fx_looped" },
+    { id: "a17", source: "e_fork", target: "fx_fork" },
+    { id: "a18", source: "e_win", target: "fx_win" },
+    { id: "a19", source: "e_void", target: "fx_void" },
+    { id: "a20", source: "fx_deleted", target: "award" },
+    { id: "a21", source: "fx_corrupted", target: "award" },
+    { id: "a22", source: "fx_looped", target: "award" },
+    { id: "a23", source: "fx_fork", target: "award" },
+    { id: "a24", source: "fx_win", target: "award" },
+    { id: "a25", source: "fx_void", target: "award" },
+    { id: "a26", source: "award", target: "out" },
   ] as FlowGraph["edges"],
 };
 
@@ -529,6 +574,7 @@ function AdventureExample() {
       }
       return { recorded: true, ending: slug, earned: earned.map((a) => a.slug) };
     },
+    [UI_EFFECT_KIND]: uiEffectExecutor,
     output: ({ inputs }) => (inputs as any).in,
   }), [toast]);
 
@@ -538,8 +584,8 @@ function AdventureExample() {
       onChange={setGraph}
       executors={executors}
       height={560}
-      // Fit on mount: the point of this example is READING the graph — five
-      // endings converging on one api_request — so the whole shape has to be on
+      // Fit on mount: the point of this example is READING the graph — six
+      // outcomes reacting through UI Effect nodes before one api_request — so
       // screen without hunting for it.
       canvasProps={{ showHelperLines: true, fitView: true, fitViewOptions: { padding: 0.12 } }}
     />

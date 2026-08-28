@@ -1,5 +1,6 @@
-import { type ReactNode, useMemo, useState } from "react";
+import { type ReactNode, useMemo, useRef, useState } from "react";
 import { registerNodeKind, type ExecutorRegistry, type FlowGraph } from "@particle-academy/fancy-flow";
+import { createFlowRunnerUx } from "@particle-academy/fancy-flow/ux";
 import { FlowEditor } from "../../components/FlowEditor";
 import { Button, Heading, Modal, Text, useToast } from "@particle-academy/react-fancy";
 import { uiEffectExecutor } from "../../../flow-nodes/ui-effect/js/executor";
@@ -333,6 +334,7 @@ const ending = (
       mode: "fields",
       fields: [
         { key: "ending", value: slug },
+        { key: "outcome", value: id.replace(/^e_/, "") },
         { key: "title", value: label },
         { key: "text", value: text },
       ],
@@ -357,12 +359,12 @@ const choice = (
   }) as unknown as FlowGraph["nodes"][number];
 
 export const ADVENTURE_EFFECTS = {
-  deleted: { nodeId: "fx_deleted", className: "ff-adventure-deleted", durationMs: 5000 },
-  corrupted: { nodeId: "fx_corrupted", className: "ff-adventure-corrupted", durationMs: 5000 },
-  looped: { nodeId: "fx_looped", className: "ff-adventure-looped", durationMs: 5000 },
-  fork: { nodeId: "fx_fork", className: "ff-adventure-fork", durationMs: 5000 },
-  win: { nodeId: "fx_win", className: "ff-adventure-win", durationMs: 5000 },
-  void: { nodeId: "fx_void", className: "ff-adventure-void", durationMs: 5000 },
+  deleted: { nodeId: "fx_deleted", clearNodeId: "clear_deleted", className: "ff-adventure-deleted", durationMs: 0 },
+  corrupted: { nodeId: "fx_corrupted", clearNodeId: "clear_corrupted", className: "ff-adventure-corrupted", durationMs: 0 },
+  looped: { nodeId: "fx_looped", clearNodeId: "clear_looped", className: "ff-adventure-looped", durationMs: 0 },
+  fork: { nodeId: "fx_fork", clearNodeId: "clear_fork", className: "ff-adventure-fork", durationMs: 0 },
+  win: { nodeId: "fx_win", clearNodeId: "clear_win", className: "ff-adventure-win", durationMs: 0 },
+  void: { nodeId: "fx_void", clearNodeId: "clear_void", className: "ff-adventure-void", durationMs: 0 },
 } as const;
 
 const adventureEffect = (endingSlug: keyof typeof ADVENTURE_EFFECTS, x: number, y: number): FlowGraph["nodes"][number] => {
@@ -375,6 +377,20 @@ const adventureEffect = (endingSlug: keyof typeof ADVENTURE_EFFECTS, x: number, 
       kind: UI_EFFECT_KIND,
       label: `Page reacts: ${endingSlug}`,
       config: { target: "page", op: "add-class", value: effect.className, name: "", durationMs: effect.durationMs },
+    },
+  } as unknown as FlowGraph["nodes"][number];
+};
+
+const adventureClearEffect = (endingSlug: keyof typeof ADVENTURE_EFFECTS, x: number, y: number): FlowGraph["nodes"][number] => {
+  const effect = ADVENTURE_EFFECTS[endingSlug];
+  return {
+    id: effect.clearNodeId,
+    type: UI_EFFECT_KIND,
+    position: { x, y },
+    data: {
+      kind: UI_EFFECT_KIND,
+      label: `Clear: ${endingSlug}`,
+      config: { target: "page", op: "remove-class", value: effect.className, name: "", durationMs: 0 },
     },
   } as unknown as FlowGraph["nodes"][number];
 };
@@ -450,11 +466,27 @@ export const ADVENTURE: FlowGraph = {
     adventureEffect("win", 1080, 480),
     adventureEffect("void", 1080, 600),
 
+    { id: "ux_adventure_outcome", type: "ux_adventure_outcome", position: { x: 1300, y: 290 }, data: {
+      kind: "ux_adventure_outcome", label: "Show outcome", config: {},
+    } } as any,
+    { id: "clear_route", type: "switch_case", position: { x: 1520, y: 290 }, data: {
+      kind: "switch_case", label: "Clear which effect?", config: {
+        value: "{{ $json.outcome }}",
+        cases: Object.fromEntries(Object.keys(ADVENTURE_EFFECTS).map((key) => [key, key])),
+      },
+    } } as any,
+    adventureClearEffect("deleted", 1740, 0),
+    adventureClearEffect("corrupted", 1740, 120),
+    adventureClearEffect("looped", 1740, 240),
+    adventureClearEffect("fork", 1740, 360),
+    adventureClearEffect("win", 1740, 480),
+    adventureClearEffect("void", 1740, 600),
+
     // ── The rig — every ending lands here ──────────────────────────────────
     // A plain api_request. No special-casing, no hidden hook: the achievement is
     // granted by the site, and the node says so in its own config.
     {
-      id: "award", type: "api_request", position: { x: 1320, y: 290 },
+      id: "award", type: "api_request", position: { x: 1960, y: 290 },
       data: { kind: "api_request", label: "Record ending", config: {
         method: "POST",
         url: "/api/easter-eggs/ending",
@@ -462,13 +494,13 @@ export const ADVENTURE: FlowGraph = {
         body: { ending: "{{ $json.ending }}" },
       } } as any,
     },
-    { id: "out", type: "output", position: { x: 1540, y: 290 }, data: { kind: "output", label: "The end", config: {} } as any },
+    { id: "out", type: "output", position: { x: 2180, y: 290 }, data: { kind: "output", label: "The end", config: {} } as any },
 
     note("n1", 60, 150, "The story IS the graph",
       "No story engine — just core nodes. Each choice is a real User Input node that PAUSES the run until you pick; each Switch routes on your answer. Hit Run and play it.",
       "violet", 250, 150),
-    note("n2", 1300, 460, "…wired to the site",
-      "Every ending first runs a marketplace UI Effect node that changes this whole page, then converges on the achievement API. One path is the true ending — find them all.",
+    note("n2", 1940, 460, "…wired to the site",
+      "UI Effect starts the page animation. Native FlowRunnerUx keeps the run waiting while the outcome is open; closing it resumes the graph, clears the animation, and records the ending.",
       "amber", 250, 160),
   ] as FlowGraph["nodes"],
   edges: [
@@ -491,45 +523,34 @@ export const ADVENTURE: FlowGraph = {
     { id: "a17", source: "e_fork", target: "fx_fork" },
     { id: "a18", source: "e_win", target: "fx_win" },
     { id: "a19", source: "e_void", target: "fx_void" },
-    { id: "a20", source: "fx_deleted", target: "award" },
-    { id: "a21", source: "fx_corrupted", target: "award" },
-    { id: "a22", source: "fx_looped", target: "award" },
-    { id: "a23", source: "fx_fork", target: "award" },
-    { id: "a24", source: "fx_win", target: "award" },
-    { id: "a25", source: "fx_void", target: "award" },
-    { id: "a26", source: "award", target: "out" },
+    { id: "a20", source: "fx_deleted", target: "ux_adventure_outcome" },
+    { id: "a21", source: "fx_corrupted", target: "ux_adventure_outcome" },
+    { id: "a22", source: "fx_looped", target: "ux_adventure_outcome" },
+    { id: "a23", source: "fx_fork", target: "ux_adventure_outcome" },
+    { id: "a24", source: "fx_win", target: "ux_adventure_outcome" },
+    { id: "a25", source: "fx_void", target: "ux_adventure_outcome" },
+    { id: "a26", source: "ux_adventure_outcome", target: "clear_route" },
+    { id: "a27", source: "clear_route", target: "clear_deleted", sourceHandle: "deleted" },
+    { id: "a28", source: "clear_route", target: "clear_corrupted", sourceHandle: "corrupted" },
+    { id: "a29", source: "clear_route", target: "clear_looped", sourceHandle: "looped" },
+    { id: "a30", source: "clear_route", target: "clear_fork", sourceHandle: "fork" },
+    { id: "a31", source: "clear_route", target: "clear_win", sourceHandle: "win" },
+    { id: "a32", source: "clear_route", target: "clear_void", sourceHandle: "void" },
+    { id: "a33", source: "clear_deleted", target: "award" },
+    { id: "a34", source: "clear_corrupted", target: "award" },
+    { id: "a35", source: "clear_looped", target: "award" },
+    { id: "a36", source: "clear_fork", target: "award" },
+    { id: "a37", source: "clear_win", target: "award" },
+    { id: "a38", source: "clear_void", target: "award" },
+    { id: "a39", source: "award", target: "out" },
   ] as FlowGraph["edges"],
 };
 
-export type AdventureOutcome = {
+type AdventureOutcome = {
   key: keyof typeof ADVENTURE_EFFECTS;
   title: string;
   text: string;
 };
-
-/** Run the real marketplace executor and expose the same resolved payload to the overlay. */
-export async function executeAdventureEffect(
-  ctx: Parameters<typeof uiEffectExecutor>[0],
-  publish: (outcome: AdventureOutcome) => void,
-) {
-  const entry = Object.entries(ADVENTURE_EFFECTS).find(([, effect]) => effect.nodeId === ctx.node.id);
-  if (!entry) throw new Error(`Unknown adventure UI Effect node: ${ctx.node.id}`);
-
-  const input = ((ctx.inputs as any)?.in ?? {}) as Record<string, unknown>;
-  publish({
-    key: entry[0] as keyof typeof ADVENTURE_EFFECTS,
-    title: String(input.title ?? "The story ends"),
-    text: String(input.text ?? "Your choice has changed the system."),
-  });
-
-  return uiEffectExecutor(ctx);
-}
-
-function clearAdventureEffects() {
-  for (const effect of Object.values(ADVENTURE_EFFECTS)) {
-    document.documentElement.classList.remove(effect.className);
-  }
-}
 
 /**
  * Grants the hidden achievements. Unlike the other examples' stubs this one is
@@ -565,13 +586,40 @@ function AdventureExample() {
   const { toast } = useToast();
   const [graph, setGraph] = useState<FlowGraph>(ADVENTURE);
   const [outcome, setOutcome] = useState<AdventureOutcome | null>(null);
-  const [runKey, setRunKey] = useState(0);
+  const dismissOutcome = useRef<(() => void) | null>(null);
 
-  const goAgain = () => {
-    clearAdventureEffects();
+  const ux = useMemo(() => {
+    const runnerUx = createFlowRunnerUx({
+      effects: {
+        adventure_outcome: (params: any) => {
+          const input = params.$inputs?.in ?? {};
+          const key = String(input.outcome ?? "deleted") as keyof typeof ADVENTURE_EFFECTS;
+          setOutcome({
+            key,
+            title: String(input.title ?? "The story ends"),
+            text: String(input.text ?? "Your choice has changed the system."),
+          });
+          return new Promise<void>((resolve) => { dismissOutcome.current = resolve; });
+        },
+      },
+      meta: {
+        adventure_outcome: {
+          label: "Show outcome",
+          description: "Show the resolved ending and wait until the person closes it.",
+          icon: "🎭",
+          includeInputs: true,
+          passThrough: true,
+        },
+      },
+    });
+    runnerUx.registerKinds();
+    return runnerUx;
+  }, []);
+
+  const closeOutcome = () => {
     setOutcome(null);
-    setGraph(ADVENTURE);
-    setRunKey((key) => key + 1);
+    dismissOutcome.current?.();
+    dismissOutcome.current = null;
   };
 
   const executors: ExecutorRegistry = useMemo(() => ({
@@ -613,14 +661,14 @@ function AdventureExample() {
       }
       return { recorded: true, ending: slug, earned: earned.map((a) => a.slug) };
     },
-    [UI_EFFECT_KIND]: (ctx) => executeAdventureEffect(ctx, setOutcome),
+    [UI_EFFECT_KIND]: uiEffectExecutor,
+    ...ux.executors,
     output: ({ inputs }) => (inputs as any).in,
-  }), [toast]);
+  }), [toast, ux]);
 
   return (
     <>
       <FlowEditor
-        key={runKey}
         value={graph}
         onChange={setGraph}
         executors={executors}
@@ -631,7 +679,7 @@ function AdventureExample() {
         canvasProps={{ showHelperLines: true, fitView: true, fitViewOptions: { padding: 0.12 } }}
       />
 
-      <Modal open={outcome !== null} onClose={goAgain} size="xl" className="ff-adventure-outcome">
+      <Modal open={outcome !== null} onClose={closeOutcome} size="xl" className="ff-adventure-outcome">
         {outcome && (
           <div data-fancy-id="adventure-outcome" data-outcome={outcome.key}>
             <Modal.Header>
@@ -643,13 +691,13 @@ function AdventureExample() {
             <Modal.Body>
               <Text size="lg" className="max-w-3xl leading-relaxed">{outcome.text}</Text>
               <Text size="sm" className="mt-6 opacity-70">
-                The UI Effect node fired this overlay and changed the page. Resetting clears the effect and starts a fresh run.
+                The flow is paused here. Closing this outcome resumes it, clears the page effect, and leaves the editor ready to run again.
               </Text>
             </Modal.Body>
             <Modal.Footer>
               <div className="flex w-full items-center justify-between gap-4">
                 <Text size="sm" className="opacity-60">Try another path—or see whether you can find the true ending.</Text>
-                <Button color="violet" onClick={goAgain}>Reset and go again</Button>
+                <Button color="violet" onClick={closeOutcome}>Close and go again</Button>
               </div>
             </Modal.Footer>
           </div>

@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { ADVENTURE, ADVENTURE_EFFECTS, executeAdventureEffect } from "../../resources/js/Pages/Flow/FlowStudio";
+import { ADVENTURE, ADVENTURE_EFFECTS } from "../../resources/js/Pages/Flow/FlowStudio";
 import { uiEffectExecutor } from "../../resources/flow-nodes/ui-effect/js/executor";
 
 describe("Choose-your-own-adventure UI effects", () => {
@@ -10,23 +10,32 @@ describe("Choose-your-own-adventure UI effects", () => {
     document.documentElement.className = "";
   });
 
-  it("routes every ending through its own page-level ui_effect before recording it", () => {
+  it("keeps each page effect active across the native outcome UX step, then removes it", () => {
     for (const [ending, effect] of Object.entries(ADVENTURE_EFFECTS)) {
       expect(ADVENTURE.nodes).toContainEqual(expect.objectContaining({
         id: effect.nodeId,
         type: "@particle-academy/ui_effect",
         data: expect.objectContaining({
           kind: "@particle-academy/ui_effect",
-          config: expect.objectContaining({ target: "page", op: "add-class", value: effect.className }),
+          config: expect.objectContaining({ target: "page", op: "add-class", value: effect.className, durationMs: 0 }),
         }),
       }));
       expect(ADVENTURE.edges).toContainEqual(expect.objectContaining({ source: `e_${ending}`, target: effect.nodeId }));
-      expect(ADVENTURE.edges).toContainEqual(expect.objectContaining({ source: effect.nodeId, target: "award" }));
+      expect(ADVENTURE.edges).toContainEqual(expect.objectContaining({ source: effect.nodeId, target: "ux_adventure_outcome" }));
+      expect(ADVENTURE.nodes).toContainEqual(expect.objectContaining({
+        id: effect.clearNodeId,
+        type: "@particle-academy/ui_effect",
+        data: expect.objectContaining({ config: expect.objectContaining({ op: "remove-class", value: effect.className }) }),
+      }));
+      expect(ADVENTURE.edges).toContainEqual(expect.objectContaining({ source: "clear_route", target: effect.clearNodeId, sourceHandle: ending }));
+      expect(ADVENTURE.edges).toContainEqual(expect.objectContaining({ source: effect.clearNodeId, target: "award" }));
       expect(ADVENTURE.edges).not.toContainEqual(expect.objectContaining({ source: `e_${ending}`, target: "award" }));
     }
+    expect(ADVENTURE.nodes).toContainEqual(expect.objectContaining({ id: "ux_adventure_outcome", type: "ux_adventure_outcome" }));
+    expect(ADVENTURE.edges).toContainEqual(expect.objectContaining({ source: "ux_adventure_outcome", target: "clear_route" }));
   });
 
-  it("uses the vendored executor to affect the whole page and then restore it", async () => {
+  it("uses the vendored executor with no timer so the page effect stays active", async () => {
     vi.useFakeTimers();
     const effect = ADVENTURE_EFFECTS.win;
     const node = ADVENTURE.nodes.find((candidate) => candidate.id === effect.nodeId)!;
@@ -38,27 +47,8 @@ describe("Choose-your-own-adventure UI effects", () => {
     } as any);
 
     expect(document.documentElement.classList.contains(effect.className)).toBe(true);
-    await vi.advanceTimersByTimeAsync(effect.durationMs);
+    await vi.advanceTimersByTimeAsync(5000);
     await expect(pending).resolves.toEqual(expect.objectContaining({ ending: "win", applied: true }));
-    expect(document.documentElement.classList.contains(effect.className)).toBe(false);
-  });
-
-  it("publishes the resolved outcome when the flow reaches its UI Effect node", async () => {
-    const publish = vi.fn();
-    const effect = ADVENTURE_EFFECTS.fork;
-    const node = ADVENTURE.nodes.find((candidate) => candidate.id === effect.nodeId)!;
-
-    await executeAdventureEffect({
-      node,
-      inputs: { in: { ending: "fork", title: "Fork bomb 💥", text: "You split into a thousand copies." } },
-      emit: vi.fn(),
-    } as any, publish);
-
-    expect(publish).toHaveBeenCalledWith({
-      key: "fork",
-      title: "Fork bomb 💥",
-      text: "You split into a thousand copies.",
-    });
     expect(document.documentElement.classList.contains(effect.className)).toBe(true);
   });
 });

@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { ADVENTURE, ADVENTURE_EFFECTS } from "../../resources/js/Pages/Flow/FlowStudio";
+import { ADVENTURE, ADVENTURE_EFFECTS, executeAdventureEffect } from "../../resources/js/Pages/Flow/FlowStudio";
 import { uiEffectExecutor } from "../../resources/flow-nodes/ui-effect/js/executor";
 
 describe("Choose-your-own-adventure UI effects", () => {
@@ -41,5 +41,24 @@ describe("Choose-your-own-adventure UI effects", () => {
     await vi.advanceTimersByTimeAsync(effect.durationMs);
     await expect(pending).resolves.toEqual(expect.objectContaining({ ending: "win", applied: true }));
     expect(document.documentElement.classList.contains(effect.className)).toBe(false);
+  });
+
+  it("publishes the resolved outcome when the flow reaches its UI Effect node", async () => {
+    const publish = vi.fn();
+    const effect = ADVENTURE_EFFECTS.fork;
+    const node = ADVENTURE.nodes.find((candidate) => candidate.id === effect.nodeId)!;
+
+    await executeAdventureEffect({
+      node,
+      inputs: { in: { ending: "fork", title: "Fork bomb 💥", text: "You split into a thousand copies." } },
+      emit: vi.fn(),
+    } as any, publish);
+
+    expect(publish).toHaveBeenCalledWith({
+      key: "fork",
+      title: "Fork bomb 💥",
+      text: "You split into a thousand copies.",
+    });
+    expect(document.documentElement.classList.contains(effect.className)).toBe(true);
   });
 });

@@ -48,3 +48,21 @@ html.ff-adventure-void body {
     animation: none;
   }
 }
+
+.ff-adventure-outcome {
+  overflow: hidden;
+  border-color: color-mix(in srgb, currentColor 24%, transparent);
+  box-shadow: 0 28px 100px rgb(0 0 0 / 45%);
+}
+
+.ff-adventure-outcome [data-fancy-id="adventure-outcome"] {
+  min-height: min(58vh, 34rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.ff-adventure-outcome [data-outcome="win"] { color: #a16207; }
+.ff-adventure-outcome [data-outcome="corrupted"] { color: #7c3aed; }
+.ff-adventure-outcome [data-outcome="fork"] { color: #0369a1; }
+.ff-adventure-outcome [data-outcome="void"] { color: #71717a; }

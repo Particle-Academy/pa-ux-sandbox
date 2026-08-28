@@ -1,7 +1,7 @@
 import { type ReactNode, useMemo, useState } from "react";
 import { registerNodeKind, type ExecutorRegistry, type FlowGraph } from "@particle-academy/fancy-flow";
 import { FlowEditor } from "../../components/FlowEditor";
-import { useToast } from "@particle-academy/react-fancy";
+import { Button, Heading, Modal, Text, useToast } from "@particle-academy/react-fancy";
 import { uiEffectExecutor } from "../../../flow-nodes/ui-effect/js/executor";
 import { UI_EFFECT_KIND, uiEffectKind } from "../../../flow-nodes/ui-effect/ui/kind";
 import "@xyflow/react/dist/style.css";
@@ -501,6 +501,36 @@ export const ADVENTURE: FlowGraph = {
   ] as FlowGraph["edges"],
 };
 
+export type AdventureOutcome = {
+  key: keyof typeof ADVENTURE_EFFECTS;
+  title: string;
+  text: string;
+};
+
+/** Run the real marketplace executor and expose the same resolved payload to the overlay. */
+export async function executeAdventureEffect(
+  ctx: Parameters<typeof uiEffectExecutor>[0],
+  publish: (outcome: AdventureOutcome) => void,
+) {
+  const entry = Object.entries(ADVENTURE_EFFECTS).find(([, effect]) => effect.nodeId === ctx.node.id);
+  if (!entry) throw new Error(`Unknown adventure UI Effect node: ${ctx.node.id}`);
+
+  const input = ((ctx.inputs as any)?.in ?? {}) as Record<string, unknown>;
+  publish({
+    key: entry[0] as keyof typeof ADVENTURE_EFFECTS,
+    title: String(input.title ?? "The story ends"),
+    text: String(input.text ?? "Your choice has changed the system."),
+  });
+
+  return uiEffectExecutor(ctx);
+}
+
+function clearAdventureEffects() {
+  for (const effect of Object.values(ADVENTURE_EFFECTS)) {
+    document.documentElement.classList.remove(effect.className);
+  }
+}
+
 /**
  * Grants the hidden achievements. Unlike the other examples' stubs this one is
  * REAL — it is the same POST the canvas advertises, so playing the story in the
@@ -534,6 +564,15 @@ const resolveExpr = (value: unknown, data: any): unknown => {
 function AdventureExample() {
   const { toast } = useToast();
   const [graph, setGraph] = useState<FlowGraph>(ADVENTURE);
+  const [outcome, setOutcome] = useState<AdventureOutcome | null>(null);
+  const [runKey, setRunKey] = useState(0);
+
+  const goAgain = () => {
+    clearAdventureEffects();
+    setOutcome(null);
+    setGraph(ADVENTURE);
+    setRunKey((key) => key + 1);
+  };
 
   const executors: ExecutorRegistry = useMemo(() => ({
     manual_trigger: () => ({ booted: true }),
@@ -574,21 +613,49 @@ function AdventureExample() {
       }
       return { recorded: true, ending: slug, earned: earned.map((a) => a.slug) };
     },
-    [UI_EFFECT_KIND]: uiEffectExecutor,
+    [UI_EFFECT_KIND]: (ctx) => executeAdventureEffect(ctx, setOutcome),
     output: ({ inputs }) => (inputs as any).in,
   }), [toast]);
 
   return (
-    <FlowEditor
-      value={graph}
-      onChange={setGraph}
-      executors={executors}
-      height={560}
-      // Fit on mount: the point of this example is READING the graph — six
-      // outcomes reacting through UI Effect nodes before one api_request — so
-      // screen without hunting for it.
-      canvasProps={{ showHelperLines: true, fitView: true, fitViewOptions: { padding: 0.12 } }}
-    />
+    <>
+      <FlowEditor
+        key={runKey}
+        value={graph}
+        onChange={setGraph}
+        executors={executors}
+        height={560}
+        // Fit on mount: the point of this example is READING the graph — six
+        // outcomes reacting through UI Effect nodes before one api_request — so
+        // the whole shape has to be on screen without hunting for it.
+        canvasProps={{ showHelperLines: true, fitView: true, fitViewOptions: { padding: 0.12 } }}
+      />
+
+      <Modal open={outcome !== null} onClose={goAgain} size="xl" className="ff-adventure-outcome">
+        {outcome && (
+          <div data-fancy-id="adventure-outcome" data-outcome={outcome.key}>
+            <Modal.Header>
+              <div>
+                <Text size="sm" className="uppercase tracking-[0.24em] opacity-70">Your outcome</Text>
+                <Heading size="xl" className="mt-2">{outcome.title}</Heading>
+              </div>
+            </Modal.Header>
+            <Modal.Body>
+              <Text size="lg" className="max-w-3xl leading-relaxed">{outcome.text}</Text>
+              <Text size="sm" className="mt-6 opacity-70">
+                The UI Effect node fired this overlay and changed the page. Resetting clears the effect and starts a fresh run.
+              </Text>
+            </Modal.Body>
+            <Modal.Footer>
+              <div className="flex w-full items-center justify-between gap-4">
+                <Text size="sm" className="opacity-60">Try another path—or see whether you can find the true ending.</Text>
+                <Button color="violet" onClick={goAgain}>Reset and go again</Button>
+              </div>
+            </Modal.Footer>
+          </div>
+        )}
+      </Modal>
+    </>
   );
 }
 

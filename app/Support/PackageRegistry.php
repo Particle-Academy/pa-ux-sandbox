@@ -95,6 +95,11 @@ class PackageRegistry
      * @var array<string, array{name: string, repo: string, why: string}>
      */
     public const PLANNED = [
+        'fancy-devtools' => [
+            'name' => '@particle-academy/fancy-devtools',
+            'repo' => 'Particle-Academy/fancy-devtools',
+            'why' => 'A development-only, suite-aware React diagnostics console for Fancy applications. It complements browser and React DevTools with the context only Fancy owns: structured runtime problems, installed kit/package health, component-contract findings, query and Inertia activity, Human+ bridge/tool activity, redacted diagnostic exports, and the same machine-readable snapshot exposed to agents. The core is an adapter-driven diagnostics bus with floating and embedded panels; participating Fancy packages contribute adapters rather than exposing private state. Owner approved the build on 2026-08-30 after review of Next.js DevTools, React DevTools and browser tooling. REGISTERED BEFORE REPOSITORY CREATION per the package rule.',
+        ],
         'fancy-expr' => [
             'name' => 'fancy-expr',
             'repo' => 'Particle-Academy/fancy-expr',

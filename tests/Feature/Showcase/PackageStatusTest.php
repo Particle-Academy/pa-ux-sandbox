@@ -39,6 +39,12 @@ it('gives every planned package a name, a repo and a reason', function () {
     }
 });
 
+it('records fancy devtools before its repository is created', function () {
+    expect(PackageRegistry::PLANNED)->toHaveKey('fancy-devtools')
+        ->and(PackageRegistry::PLANNED['fancy-devtools']['name'])->toBe('@particle-academy/fancy-devtools')
+        ->and(PackageRegistry::PLANNED['fancy-devtools']['repo'])->toBe('Particle-Academy/fancy-devtools');
+});
+
 it('keeps planned packages off every public surface', function () {
     // They cannot be installed. Announcing one is worse than saying nothing —
     // the same reason HIDDEN exists.

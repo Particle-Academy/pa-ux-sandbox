@@ -39,10 +39,15 @@ it('gives every planned package a name, a repo and a reason', function () {
     }
 });
 
-it('records fancy devtools before its repository is created', function () {
-    expect(PackageRegistry::PLANNED)->toHaveKey('fancy-devtools')
-        ->and(PackageRegistry::PLANNED['fancy-devtools']['name'])->toBe('@particle-academy/fancy-devtools')
-        ->and(PackageRegistry::PLANNED['fancy-devtools']['repo'])->toBe('Particle-Academy/fancy-devtools');
+it('moves fancy devtools from planned to built while keeping it hidden until npm exists', function () {
+    $built = collect(PackageRegistry::everything())->firstWhere('slug', 'fancy-devtools');
+
+    expect(PackageRegistry::PLANNED)->not->toHaveKey('fancy-devtools')
+        ->and(PackageRegistry::HIDDEN)->toContain('fancy-devtools')
+        ->and($built)->toMatchArray([
+            'name' => '@particle-academy/fancy-devtools',
+            'repo' => 'Particle-Academy/fancy-devtools',
+        ]);
 });
 
 it('keeps planned packages off every public surface', function () {

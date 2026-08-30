@@ -24,6 +24,11 @@ class PackageRegistry
      * someone to `composer require` something that 404s.
      */
     public const HIDDEN = [
+        // Built at v0.1.0 but a brand-new scoped npm name cannot be claimed by
+        // OIDC. Remove only after the owner's one-time bootstrap publish and
+        // `npm view @particle-academy/fancy-devtools version` succeeds.
+        'fancy-devtools',
+
         // BUILT AND TAGGED (v0.1.0, 2026-08-27) BUT NOT ON npm.
         //
         // It was un-hidden and deployed on the strength of the tag, and that
@@ -95,11 +100,6 @@ class PackageRegistry
      * @var array<string, array{name: string, repo: string, why: string}>
      */
     public const PLANNED = [
-        'fancy-devtools' => [
-            'name' => '@particle-academy/fancy-devtools',
-            'repo' => 'Particle-Academy/fancy-devtools',
-            'why' => 'A development-only, suite-aware React diagnostics console for Fancy applications. It complements browser and React DevTools with the context only Fancy owns: structured runtime problems, installed kit/package health, component-contract findings, query and Inertia activity, Human+ bridge/tool activity, redacted diagnostic exports, and the same machine-readable snapshot exposed to agents. The core is an adapter-driven diagnostics bus with floating and embedded panels; participating Fancy packages contribute adapters rather than exposing private state. Owner approved the build on 2026-08-30 after review of Next.js DevTools, React DevTools and browser tooling. REGISTERED BEFORE REPOSITORY CREATION per the package rule.',
-        ],
         'fancy-expr' => [
             'name' => 'fancy-expr',
             'repo' => 'Particle-Academy/fancy-expr',
@@ -309,6 +309,8 @@ BEFORE IT CAN SHIP: three registry names that do not exist yet (npm scoped, Pack
         'mcp-relay-client' => ['group' => 'tooling', 'ecosystem' => 'polyglot', 'kind' => 'headless', 'accent' => '#22c55e'],
         // Cross-language conformance fixtures -- parity as a test result.
         'fancy-conformance' => ['group' => 'tooling', 'ecosystem' => 'polyglot', 'kind' => 'headless', 'accent' => '#14b8a6'],
+        // Suite-aware development diagnostics for React applications.
+        'fancy-devtools' => ['group' => 'tooling', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#8b5cf6'],
         // Connector runtime + the installable connector set.
         'fancy-connector-core' => ['group' => 'platform', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#f97316'],
         'fancy-connectors' => ['group' => 'platform', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#f97316'],
@@ -807,6 +809,14 @@ BEFORE IT CAN SHIP: three registry names that do not exist yet (npm scoped, Pack
                 'npm' => '@particle-academy/fancy-conformance',
                 'repo' => 'Particle-Academy/fancy-conformance',
                 'language' => 'Polyglot',
+            ],
+            [
+                'slug' => 'fancy-devtools',
+                'name' => '@particle-academy/fancy-devtools',
+                'tagline' => 'Suite-aware React diagnostics — structured runtime problems, query and Human+ timelines, redacted exports, and one shared snapshot for humans and agents.',
+                'npm' => '@particle-academy/fancy-devtools',
+                'repo' => 'Particle-Academy/fancy-devtools',
+                'language' => 'TypeScript',
             ],
             [
                 'slug' => 'fancy-connector-core',

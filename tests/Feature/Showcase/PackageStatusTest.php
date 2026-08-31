@@ -39,15 +39,17 @@ it('gives every planned package a name, a repo and a reason', function () {
     }
 });
 
-it('moves fancy devtools from planned to built while keeping it hidden until npm exists', function () {
+it('lists published fancy devtools as built and public', function () {
     $built = collect(PackageRegistry::everything())->firstWhere('slug', 'fancy-devtools');
 
     expect(PackageRegistry::PLANNED)->not->toHaveKey('fancy-devtools')
-        ->and(PackageRegistry::HIDDEN)->toContain('fancy-devtools')
+        ->and(PackageRegistry::HIDDEN)->not->toContain('fancy-devtools')
         ->and($built)->toMatchArray([
-            'name' => '@particle-academy/fancy-devtools',
+            'name' => 'fancy-devtools',
+            'npm' => '@particle-academy/fancy-devtools',
             'repo' => 'Particle-Academy/fancy-devtools',
-        ]);
+        ])
+        ->and(PackageRegistry::find('fancy-devtools'))->not->toBeNull();
 });
 
 it('keeps planned packages off every public surface', function () {

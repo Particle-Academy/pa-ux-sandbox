@@ -24,11 +24,6 @@ class PackageRegistry
      * someone to `composer require` something that 404s.
      */
     public const HIDDEN = [
-        // Built at v0.1.0 but a brand-new scoped npm name cannot be claimed by
-        // OIDC. Remove only after the owner's one-time bootstrap publish and
-        // `npm view @particle-academy/fancy-devtools version` succeeds.
-        'fancy-devtools',
-
         // BUILT AND TAGGED (v0.1.0, 2026-08-27) BUT NOT ON npm.
         //
         // It was un-hidden and deployed on the strength of the tag, and that
@@ -402,6 +397,7 @@ BEFORE IT CAN SHIP: three registry names that do not exist yet (npm scoped, Pack
             self::fancyInertia(),
             self::fancyPwa(),
             self::fancyMotion(),
+            self::fancyDevtools(),
             self::fancyCmsUi(),
         ]);
     }
@@ -809,14 +805,6 @@ BEFORE IT CAN SHIP: three registry names that do not exist yet (npm scoped, Pack
                 'npm' => '@particle-academy/fancy-conformance',
                 'repo' => 'Particle-Academy/fancy-conformance',
                 'language' => 'Polyglot',
-            ],
-            [
-                'slug' => 'fancy-devtools',
-                'name' => '@particle-academy/fancy-devtools',
-                'tagline' => 'Suite-aware React diagnostics — structured runtime problems, query and Human+ timelines, redacted exports, and one shared snapshot for humans and agents.',
-                'npm' => '@particle-academy/fancy-devtools',
-                'repo' => 'Particle-Academy/fancy-devtools',
-                'language' => 'TypeScript',
             ],
             [
                 'slug' => 'fancy-connector-core',
@@ -1757,6 +1745,20 @@ BEFORE IT CAN SHIP: three registry names that do not exist yet (npm scoped, Pack
                 ['slug' => 'motion-stage', 'name' => 'MotionStage', 'blurb' => 'React stage that plays a timeline against its children.'],
                 ['slug' => 'timeline-dock', 'name' => 'TimelineDock', 'blurb' => 'Scrub/play dock for authoring + previewing a timeline.'],
             ],
+        ];
+    }
+
+    /** @return array<string, mixed> */
+    private static function fancyDevtools(): array
+    {
+        return [
+            'slug' => 'fancy-devtools',
+            'name' => 'fancy-devtools',
+            'tagline' => 'Suite-aware React diagnostics — structured runtime problems, query and Human+ timelines, redacted exports, and one shared snapshot for humans and agents.',
+            'npm' => '@particle-academy/fancy-devtools',
+            'repo' => 'Particle-Academy/fancy-devtools',
+            'language' => 'TypeScript',
+            'components' => [],
         ];
     }
 

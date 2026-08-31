@@ -76,7 +76,21 @@ createInertiaApp({
     // setupFancyApp builds the same providers → transition → page tree as
     // createFancyServer (resources/js/ssr.tsx) and auto-detects hydrateRoot vs
     // createRoot, so flipping Inertia SSR on/off is a no-op here.
-    setup: ({ App, props, el }) => setupFancyApp({ el, App, props, providers, appRoot: false }),
+    setup: async ({ App, props, el }) => {
+        if (!import.meta.env.DEV) {
+            return setupFancyApp({ el, App, props, providers, appRoot: false });
+        }
+
+        const { SandboxDevtools } = await import("./lib/devtools");
+        const developmentProviders = (outlet: ReactNode): ReactNode => (
+            <>
+                {providers(outlet)}
+                <SandboxDevtools />
+            </>
+        );
+
+        return setupFancyApp({ el, App, props, providers: developmentProviders, appRoot: false });
+    },
 });
 
 // The showcase dogfoods its own Fancy Pixel through the *real* flow: register

@@ -1,4 +1,10 @@
+import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
 import { defineConfig } from "vitest/config";
+
+const kitVersion = JSON.parse(
+    readFileSync(fileURLToPath(new URL("./kit.json", import.meta.url)), "utf8"),
+).version;
 
 /**
  * JS-side unit tests. Deliberately a SEPARATE config from `vite.config.ts` —
@@ -10,6 +16,9 @@ import { defineConfig } from "vitest/config";
  * two to `<Terminal>`.
  */
 export default defineConfig({
+    define: {
+        __KIT_VERSION__: JSON.stringify(kitVersion),
+    },
     test: {
         include: ["tests/js/**/*.test.ts", "tests/js/**/*.test.tsx"],
         // Node by default — the model + renderer are pure. The component test

@@ -2,6 +2,7 @@
 
 namespace App\Mcp\Servers;
 
+use App\Mcp\Tools\CheckVersions;
 use App\Mcp\Tools\GalleryGetBlueprint;
 use App\Mcp\Tools\GalleryListStyles;
 use App\Mcp\Tools\GetComponent;
@@ -108,6 +109,19 @@ Call `get_node` before wiring one in: required capabilities, whether it pauses
 for a human, and whether it is unsafe to replay all change what the HOST must
 provide, and none of that is visible from a listing.
 
+ALREADY BUILDING with Fancy? `check_versions` takes the packages a project is
+using and returns the latest version of each, plus any first-party dependency
+MISSING from the list. That second half is the part no registry answers: a Fancy
+package pulled in transitively never appears in the consumer's own manifest, so
+an agent reading that manifest to plan an upgrade cannot see it — and a shared
+core left behind while its dependants move puts two copies in one tree, silently.
+Pass `lang` (php | node | python): most capabilities ship as a matched PHP+Node
+pair under DIFFERENT names, so the language decides which distribution resolves.
+It covers prism and marketplace nodes too — a node has no version, but it does
+have an engine floor, and a graph below that floor fails at the node with
+nothing visible beforehand. An unreachable registry comes back as `unknown`,
+never as "up to date".
+
 This server is registry/install-time only. It does NOT operate a running
 Fancy UI app. For that, register the runtime bridges from
 @particle-academy/agent-integrations inside the host app.
@@ -154,6 +168,7 @@ class FancyUiRegistry extends Server
     protected array $tools = [
         StartProject::class,
         UpgradeKit::class,
+        CheckVersions::class,
         ListComponents::class,
         SearchComponents::class,
         GetComponent::class,

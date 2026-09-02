@@ -20,6 +20,10 @@ The Install-MCP server is a hosted streamable-HTTP MCP endpoint that any MCP-cap
 | `install-instructions` | `{ name: string }` | A short text recipe: the npm command + CLI command + import line. |
 | `gallery-list-styles` | (none) | The [Inspiration Gallery](/inspiration) collections — design blueprints to pick a direction from. |
 | `gallery-get-blueprint` | `{ style }` | One style's design recipe: tokens, layout, restyled-component palette. |
+| `check-versions` | `{ packages, lang }` | The Fancy packages a project uses -> the latest version of each, **plus any first-party dependency missing from the list**. Covers prism and marketplace nodes. |
+| `upgrade-kit` | `{ from? }` | Moving an app to a newer kit line: why the release exists, what breaks, the ordered commands. |
+| `search-backend-packages` | `{ query?, stack? }` | A server-side package for a capability, filtered to the stack you are already on. |
+| `list-connector-services` | (none) | Which vendor services have connector nodes, by domain, with trigger + action counts. |
 | `list-nodes` / `search-nodes` | (none) / `{ query }` | The **fancy-flow workflow-node marketplace** (third-party node packages). |
 | `get-node` | `{ kind }` | One node's capabilities, whether it pauses for a human, whether it's replay-safe. |
 | `node-install-instructions` | `{ kind }` | The per-runtime install command for a node package. |

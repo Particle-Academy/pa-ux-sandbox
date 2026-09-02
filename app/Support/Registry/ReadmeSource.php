@@ -83,7 +83,7 @@ class ReadmeSource
 
         foreach (self::FILENAMES as $name) {
             if (File::exists("{$dir}/{$name}")) {
-                return File::get("{$dir}/{$name}");
+                return SourceText::lf(File::get("{$dir}/{$name}"));
             }
         }
 
@@ -203,7 +203,7 @@ class ReadmeSource
         foreach ($dirs as $dir) {
             foreach (self::FILENAMES as $name) {
                 if (File::exists("{$dir}/{$name}")) {
-                    return File::get("{$dir}/{$name}");
+                    return SourceText::lf(File::get("{$dir}/{$name}"));
                 }
             }
         }

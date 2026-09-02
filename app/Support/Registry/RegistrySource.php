@@ -384,6 +384,65 @@ class RegistrySource
      *
      * @return array{kind: 'dir'|'file', path: string}|null
      */
+    /**
+     * Resolve `$parent/$name` to the entry that actually exists on disk,
+     * matching case-insensitively when there is no exact match, and returning
+     * the REAL on-disk spelling.
+     *
+     * ## Why this is not just `is_dir()` / `is_file()`
+     *
+     * Windows resolves paths case-insensitively and Linux does not, so a bare
+     * probe made the compiled registry a property of the BUILDER'S OPERATING
+     * SYSTEM rather than of the source. `is_dir('fancy-tui/src/Markdown')` is
+     * true on Windows when only `src/markdown` exists, and false on Linux.
+     *
+     * The same pinned commits therefore compiled differently: `tui-markdown`
+     * found 2 vendorable files on Windows and **0** on Linux, silently
+     * degrading to an npm-install pointer; `cms-editor` 12 files versus 8;
+     * `canvas` 11 versus 10. Nothing reported it, because a thinner artifact
+     * looks exactly like a correct one — and the failure direction is the bad
+     * one: regenerating on Linux and committing would have stripped source that
+     * `npx fancy-cli add` is supposed to vendor.
+     *
+     * Matching explicitly makes both platforms agree. Returning the real
+     * spelling means the chosen path does not vary either, so the artifact is
+     * reproducible and can therefore be checked — see
+     * `CompiledArtifactsAreCurrentTest`.
+     *
+     * @param  'dir'|'file'  $type
+     */
+    private function resolveEntry(string $parent, string $name, string $type): ?string
+    {
+        if (! is_dir($parent)) {
+            return null;
+        }
+
+        $match = null;
+        foreach (scandir($parent) ?: [] as $entry) {
+            if ($entry === '.' || $entry === '..') {
+                continue;
+            }
+            // An exact match always wins, even if a case-variant was seen
+            // first — two entries differing only by case can coexist on a
+            // case-sensitive filesystem, and the exact one is what was meant.
+            if ($entry === $name) {
+                $match = $entry;
+                break;
+            }
+            if ($match === null && strcasecmp($entry, $name) === 0) {
+                $match = $entry;
+            }
+        }
+
+        if ($match === null) {
+            return null;
+        }
+
+        $path = "$parent/$match";
+
+        return ($type === 'dir' ? is_dir($path) : is_file($path)) ? $path : null;
+    }
+
     private function locateComponentSource(string $pkgDir, string $componentName, string $slug): ?array
     {
         $kebab = Str::kebab($componentName);
@@ -391,12 +450,12 @@ class RegistrySource
 
         // 1) Component folder (TitleCase / kebab / camel) directly under src.
         foreach ([
-            "$pkgDir/src/components/$componentName",
-            "$pkgDir/src/$componentName",
-            "$pkgDir/src/components/$kebab",
-            "$pkgDir/src/components/$camel",
-        ] as $dir) {
-            if (is_dir($dir)) {
+            ["$pkgDir/src/components", $componentName],
+            ["$pkgDir/src", $componentName],
+            ["$pkgDir/src/components", $kebab],
+            ["$pkgDir/src/components", $camel],
+        ] as [$parent, $name]) {
+            if ($dir = $this->resolveEntry($parent, $name, 'dir')) {
                 return ['kind' => 'dir', 'path' => $dir];
             }
         }
@@ -408,8 +467,8 @@ class RegistrySource
                     continue;
                 }
                 // 2) Nested component folder (e.g. components/elements/TextElement).
-                if (is_dir("$componentsDir/$sub/$componentName")) {
-                    return ['kind' => 'dir', 'path' => "$componentsDir/$sub/$componentName"];
+                if ($nested = $this->resolveEntry("$componentsDir/$sub", $componentName, 'dir')) {
+                    return ['kind' => 'dir', 'path' => $nested];
                 }
                 // 3) Case-insensitive direct folder match.
                 if (strcasecmp($sub, $componentName) === 0 && is_dir("$componentsDir/$sub")) {
@@ -420,12 +479,12 @@ class RegistrySource
 
         // 4) Single-file component, by component name or by slug.
         foreach ([
-            "$pkgDir/src/components/$componentName.tsx", "$pkgDir/src/components/$componentName.ts",
-            "$pkgDir/src/$componentName.tsx", "$pkgDir/src/$componentName.ts",
-            "$pkgDir/src/$slug.ts", "$pkgDir/src/$slug.tsx",
-            "$pkgDir/src/components/$slug.tsx", "$pkgDir/src/components/$slug.ts",
-        ] as $file) {
-            if (is_file($file)) {
+            ["$pkgDir/src/components", "$componentName.tsx"], ["$pkgDir/src/components", "$componentName.ts"],
+            ["$pkgDir/src", "$componentName.tsx"], ["$pkgDir/src", "$componentName.ts"],
+            ["$pkgDir/src", "$slug.ts"], ["$pkgDir/src", "$slug.tsx"],
+            ["$pkgDir/src/components", "$slug.tsx"], ["$pkgDir/src/components", "$slug.ts"],
+        ] as [$parent, $name]) {
+            if ($file = $this->resolveEntry($parent, $name, 'file')) {
                 return ['kind' => 'file', 'path' => $file];
             }
         }
@@ -438,10 +497,10 @@ class RegistrySource
                     continue;
                 }
                 foreach ([
-                    "$srcDir/$sub/$slug.ts", "$srcDir/$sub/$slug.tsx",
-                    "$srcDir/$sub/$componentName.tsx", "$srcDir/$sub/$componentName.ts",
-                ] as $file) {
-                    if (is_file($file)) {
+                    "$slug.ts", "$slug.tsx",
+                    "$componentName.tsx", "$componentName.ts",
+                ] as $name) {
+                    if ($file = $this->resolveEntry("$srcDir/$sub", $name, 'file')) {
                         return ['kind' => 'file', 'path' => $file];
                     }
                 }
@@ -515,7 +574,7 @@ class RegistrySource
 
                 $added = [
                     'path' => $bundlePath,
-                    'content' => (string) file_get_contents($resolved),
+                    'content' => SourceText::lf((string) file_get_contents($resolved)),
                     'type' => 'registry:ui',
                     'target' => $bundlePath,
                 ];
@@ -569,7 +628,7 @@ class RegistrySource
 
         return [[
             'path' => "components/fancy/$slug/$name",
-            'content' => (string) file_get_contents($file),
+            'content' => SourceText::lf((string) file_get_contents($file)),
             'type' => 'registry:ui',
             'target' => "components/fancy/$slug/$name",
         ]];
@@ -600,7 +659,7 @@ class RegistrySource
                 continue;
             }
 
-            $content = (string) file_get_contents($abs);
+            $content = SourceText::lf((string) file_get_contents($abs));
             $files[] = [
                 'path' => "components/fancy/$slug/$entry",
                 'content' => $content,

@@ -177,7 +177,7 @@ class NodeSource
                 continue;
             }
             $relative = str_replace('\\', '/', substr($file->getPathname(), strlen($dir) + 1));
-            $files[$relative] = (string) file_get_contents($file->getPathname());
+            $files[$relative] = SourceText::lf((string) file_get_contents($file->getPathname()));
         }
 
         // Deterministic order: the CLI prints what it wrote, and a listing that

@@ -137,5 +137,22 @@ jobs:
 
       # Tests run against in-memory sqlite (see phpunit.xml), so there is no
       # service container to wait on.
+      #
+      # `--exclude-group=envelope` skips the checks whose inputs live ABOVE this
+      # repo — the envelope's `.gitmodules` and every sibling submodule's
+      # manifest on disk. A single-repo checkout cannot see them, and no amount
+      # of fetching fixes it: the envelope is PRIVATE, this app is PUBLIC and
+      # holds no secrets, so the default GITHUB_TOKEN cannot read it; and even
+      # with the file, the checks stat sibling working trees that are not here.
+      #
+      # This is a relocation, not a suppression. Those checks run from the
+      # envelope, where their inputs exist — Particle-Academy/fancy.agi,
+      # `.github/workflows/submodule-registry.yml` — and they still run by
+      # default for anyone working inside the envelope locally.
+      #
+      # Do not remove this flag to "fix" a red build. It was added because the
+      # group failed on every push for six days (~33 runs) and was read as
+      # noise, which is the more expensive failure: a job nobody trusts stops
+      # reporting the 1010 tests that DO run here.
       - name: Run tests
-        run: php artisan test --compact
+        run: php artisan test --compact --exclude-group=envelope

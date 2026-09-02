@@ -40,6 +40,33 @@ uses(TestCase::class);
  * publish nothing: the `.github` profile repo, the plugins, the apps. The test
  * keys on evidence of PUBLISHING — a manifest declaring a distribution name —
  * because that is the thing that makes absence from the registry consequential.
+ *
+ * ## Where it runs — group('envelope'), and why that is not a cop-out
+ *
+ * Its inputs live ABOVE this repo: the envelope's `.gitmodules`, and every
+ * sibling submodule's manifest on disk. A single-repo checkout cannot see
+ * either, so this test is excluded from this app's own CI
+ * (`--exclude-group=envelope` in `.github/workflows/ci.yml`) and runs instead
+ * from the envelope, where its inputs actually exist:
+ * `Particle-Academy/fancy.agi` → `.github/workflows/submodule-registry.yml`.
+ *
+ * It still runs by default for anyone working inside the envelope — which is
+ * everyone, since that is the only place this app is developed.
+ *
+ * **This exclusion is load-bearing. Do not "fix" CI by deleting the group.**
+ * The test ran in CI for six days and failed every push, ~33 of them, for
+ * exactly this reason; the failure was read as noise because sibling jobs
+ * stayed green. Two earlier attempts to repair it in place do not work, and
+ * both look plausible:
+ *
+ * - **Fetching the envelope's `.gitmodules` alone.** Not enough — the loop
+ *   below also stats each submodule's manifest, so with no submodule
+ *   directories `$checked` is 0 and the vacuity guard fails instead. It moves
+ *   the red, it does not remove it.
+ * - **Mirroring the "third-party allowlist" sparse-checkout in `ci.yml`.**
+ *   That precedent works because `Particle-Academy/.github` is PUBLIC. The
+ *   envelope is PRIVATE, this app is PUBLIC, and it holds no secrets — the
+ *   default `GITHUB_TOKEN` cannot read the envelope at all.
  */
 
 /**
@@ -154,4 +181,4 @@ it('registers every submodule that publishes a package', function () {
         'because a package missing from the registry looks exactly like one that was',
         'never built.',
     ]));
-});
+})->group('envelope');

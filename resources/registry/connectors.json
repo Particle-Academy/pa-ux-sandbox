@@ -42,6 +42,7 @@
         "kind": "aws_sigv4",
         "authorize": "aws-sigv4",
         "scopes": null,
+        "capabilities": null,
         "refreshTokenRotates": null,
         "pkce": null,
         "credentials": [
@@ -99,6 +100,233 @@
       ]
     },
     {
+      "slug": "buffer",
+      "service": "buffer",
+      "serviceTitle": "Buffer",
+      "domain": "marketing",
+      "docs": "https://developers.buffer.com/examples/create-text-post.html",
+      "repo": "Fancy-Friends/buffer",
+      "status": "alpha",
+      "packages": {
+        "ui": {
+          "name": "@particle-academy/buffer-ui",
+          "version": "0.1.0",
+          "registry": "npm",
+          "installFirst": true
+        },
+        "js": {
+          "name": "@particle-academy/buffer-js",
+          "version": "0.1.0",
+          "registry": "npm",
+          "installFirst": false
+        },
+        "php": {
+          "name": "particle-academy/buffer-php",
+          "version": "0.1.0",
+          "registry": "packagist",
+          "installFirst": false
+        },
+        "py": {
+          "name": "fancy-buffer",
+          "version": "0.1.0",
+          "registry": "pypi",
+          "installFirst": false
+        }
+      },
+      "auth": {
+        "kind": "oauth2",
+        "authorize": "bearer",
+        "scopes": [
+          "posts:write",
+          "offline_access"
+        ],
+        "capabilities": null,
+        "refreshTokenRotates": true,
+        "pkce": "S256",
+        "credentials": [
+          {
+            "key": "clientId",
+            "label": "OAuth client ID",
+            "scope": "provider",
+            "secret": false,
+            "optional": false,
+            "help": "From the Buffer App Client registered under Settings -> API; one value for the whole installation."
+          },
+          {
+            "key": "clientSecret",
+            "label": "OAuth client secret",
+            "scope": "provider",
+            "secret": true,
+            "optional": false,
+            "help": "For a confidential App Client. Buffer still requires PKCE in addition to this secret, not instead of it."
+          },
+          {
+            "key": "accessToken",
+            "label": "Access token",
+            "scope": "account",
+            "secret": true,
+            "optional": false,
+            "help": "Per connected Buffer user. It expires after one hour and is sent as a Bearer token."
+          },
+          {
+            "key": "refreshToken",
+            "label": "Rotating refresh token",
+            "scope": "account",
+            "secret": true,
+            "optional": false,
+            "help": "Per connected user and single-use. Replace it atomically after every refresh; replaying an old value revokes the grant."
+          }
+        ]
+      },
+      "sandbox": {
+        "kind": "none",
+        "selectable": false,
+        "warning": "No test estate, and somebody checked. Everything this connector does is real. Use the faker.",
+        "note": "Buffer has no separate test estate. createPost writes to a real Buffer channel and can publish to the connected social account. Use fake mode while building, then test against a deliberately private or disposable real channel."
+      },
+      "environments": [
+        "fake",
+        "live"
+      ],
+      "idempotency": null,
+      "needsWebhookEndpoint": false,
+      "operations": [
+        {
+          "operation": "post_create",
+          "kind": "@particle-academy/buffer_post",
+          "kindAlias": "buffer_post",
+          "role": "action",
+          "title": "Buffer post",
+          "summary": "create a Buffer post",
+          "docs": "https://developers.buffer.com/examples/create-text-post.html",
+          "method": "POST",
+          "path": "/",
+          "sideEffects": "unsafe-to-replay"
+        }
+      ]
+    },
+    {
+      "slug": "facebook-lead-ads",
+      "service": "facebook_lead_ads",
+      "serviceTitle": "Facebook Lead Ads",
+      "domain": "marketing",
+      "docs": "https://developers.facebook.com/docs/marketing-api/guides/lead-ads/retrieving",
+      "repo": "Fancy-Friends/facebook-lead-ads",
+      "status": "alpha",
+      "packages": {
+        "ui": {
+          "name": "@particle-academy/facebook-lead-ads-ui",
+          "version": "0.1.0",
+          "registry": "npm",
+          "installFirst": true
+        },
+        "js": {
+          "name": "@particle-academy/facebook-lead-ads-js",
+          "version": "0.1.0",
+          "registry": "npm",
+          "installFirst": false
+        },
+        "php": {
+          "name": "particle-academy/facebook-lead-ads-php",
+          "version": "0.1.0",
+          "registry": "packagist",
+          "installFirst": false
+        },
+        "py": {
+          "name": "fancy-facebook-lead-ads",
+          "version": "0.1.0",
+          "registry": "pypi",
+          "installFirst": false
+        }
+      },
+      "auth": {
+        "kind": "oauth2",
+        "authorize": "query",
+        "scopes": [
+          "leads_retrieval",
+          "pages_manage_ads",
+          "pages_show_list",
+          "pages_read_engagement",
+          "pages_manage_metadata"
+        ],
+        "capabilities": null,
+        "refreshTokenRotates": false,
+        "pkce": null,
+        "credentials": [
+          {
+            "key": "clientId",
+            "label": "App ID",
+            "scope": "provider",
+            "secret": false,
+            "optional": false,
+            "help": "From the Meta app dashboard. ONE value for the whole installation."
+          },
+          {
+            "key": "clientSecret",
+            "label": "App secret (OAuth)",
+            "scope": "provider",
+            "secret": true,
+            "optional": false,
+            "help": "The same app's client secret, used to exchange the authorization code."
+          },
+          {
+            "key": "appSecret",
+            "label": "App secret (proof and webhook signature)",
+            "scope": "provider",
+            "secret": true,
+            "optional": false,
+            "help": "TWO roles, one value. It keys the appsecret_proof HMAC on outgoing calls, and it is also what Meta signs INCOMING webhook deliveries with -- there is no per-endpoint webhook secret in the Graph API the way there is in Stripe. It is never sent in either direction. For a standard Meta app this is the same value as the OAuth client secret; it is declared separately because they are different roles, and an app that rotates one without the other should not silently break the other."
+          },
+          {
+            "key": "pageAccessToken",
+            "label": "Page access token",
+            "scope": "account",
+            "secret": true,
+            "optional": false,
+            "help": "PER PAGE, not per user. Leads belong to a Page's forms, and Meta requires the token to be held by somebody who can advertise on the ad account. A long-lived page token lasts about 60 days and is re-authorised rather than refreshed."
+          }
+        ]
+      },
+      "sandbox": {
+        "kind": "none",
+        "selectable": false,
+        "warning": "No test estate, and somebody checked. Everything this connector does is real. Use the faker.",
+        "note": "Facebook Lead Ads has no sandbox. Meta's Lead Ads Testing Tool creates a test lead on the REAL form, which fires the real webhook and appears alongside real leads until somebody deletes it. Anything this reads is real customer data belonging to a real advertiser."
+      },
+      "environments": [
+        "fake",
+        "live"
+      ],
+      "idempotency": null,
+      "needsWebhookEndpoint": true,
+      "operations": [
+        {
+          "operation": "lead_get",
+          "kind": "@particle-academy/facebook_lead_ads_lead",
+          "kindAlias": "facebook_lead_ads_lead",
+          "role": "action",
+          "title": "Facebook lead",
+          "summary": "read a lead",
+          "docs": "https://developers.facebook.com/docs/marketing-api/guides/lead-ads/retrieving",
+          "method": "GET",
+          "path": "/{leadId}",
+          "sideEffects": "none"
+        },
+        {
+          "operation": "leadgen",
+          "kind": "@particle-academy/facebook_lead_ads_webhook_trigger",
+          "kindAlias": "facebook_lead_ads_webhook_trigger",
+          "role": "trigger",
+          "title": "Facebook lead",
+          "summary": "a new lead",
+          "docs": "https://developers.facebook.com/docs/graph-api/webhooks/getting-started/webhooks-for-leadgen/",
+          "delivery": "webhook",
+          "setup": "In the Meta app dashboard, add a Webhooks product, subscribe to the PAGE object and tick the `leadgen` field, and point the callback URL at the route your host mounts for this trigger. Meta first sends a GET carrying `hub.mode=subscribe`, `hub.verify_token` and `hub.challenge` -- the host must echo `hub.challenge` back as the body and check `hub.verify_token` against the value set in the dashboard, or the subscription is never activated. Then subscribe the app to each Page (`POST /{pageId}/subscribed_apps` with `subscribed_fields=leadgen`), which is a SEPARATE step: a webhook configured but not subscribed per Page delivers nothing and reports nothing.",
+          "verifiesSignature": true
+        }
+      ]
+    },
+    {
       "slug": "facebook-pages",
       "service": "facebook_pages",
       "serviceTitle": "Facebook Pages",
@@ -139,6 +367,7 @@
           "pages_manage_posts",
           "pages_read_engagement"
         ],
+        "capabilities": null,
         "refreshTokenRotates": null,
         "pkce": null,
         "credentials": [
@@ -243,6 +472,7 @@
         "scopes": [
           "https://www.googleapis.com/auth/gmail.send"
         ],
+        "capabilities": null,
         "refreshTokenRotates": false,
         "pkce": null,
         "credentials": [
@@ -308,6 +538,128 @@
       ]
     },
     {
+      "slug": "google-ads",
+      "service": "google_ads",
+      "serviceTitle": "Google Ads",
+      "domain": "marketing",
+      "docs": "https://developers.google.com/google-ads/api/rest/auth",
+      "repo": "Fancy-Friends/google-ads",
+      "status": "alpha",
+      "packages": {
+        "ui": {
+          "name": "@particle-academy/google-ads-ui",
+          "version": "0.1.0",
+          "registry": "npm",
+          "installFirst": true
+        },
+        "js": {
+          "name": "@particle-academy/google-ads-js",
+          "version": "0.1.0",
+          "registry": "npm",
+          "installFirst": false
+        },
+        "php": {
+          "name": "particle-academy/google-ads-php",
+          "version": "0.1.0",
+          "registry": "packagist",
+          "installFirst": false
+        },
+        "py": {
+          "name": "fancy-google-ads",
+          "version": "0.1.0",
+          "registry": "pypi",
+          "installFirst": false
+        }
+      },
+      "auth": {
+        "kind": "oauth2",
+        "authorize": "bearer",
+        "scopes": [
+          "https://www.googleapis.com/auth/adwords"
+        ],
+        "capabilities": null,
+        "refreshTokenRotates": false,
+        "pkce": null,
+        "credentials": [
+          {
+            "key": "clientId",
+            "label": "OAuth client ID",
+            "scope": "provider",
+            "secret": false,
+            "optional": false,
+            "help": "The Google Cloud OAuth client shared by the installation."
+          },
+          {
+            "key": "clientSecret",
+            "label": "OAuth client secret",
+            "scope": "provider",
+            "secret": true,
+            "optional": false,
+            "help": "The matching Google Cloud OAuth client secret."
+          },
+          {
+            "key": "developerToken",
+            "label": "Developer token",
+            "scope": "provider",
+            "secret": true,
+            "optional": false,
+            "help": "The 22-character Google Ads API developer token from the manager account's API Center. Google says to treat it like a password; one token identifies the installed application."
+          },
+          {
+            "key": "accessToken",
+            "label": "Access token",
+            "scope": "account",
+            "secret": true,
+            "optional": false,
+            "help": "The connected Google user's one-hour OAuth access token."
+          },
+          {
+            "key": "refreshToken",
+            "label": "Refresh token",
+            "scope": "account",
+            "secret": true,
+            "optional": false,
+            "help": "The reusable offline token used to replace expired access tokens."
+          },
+          {
+            "key": "loginCustomerId",
+            "label": "Manager customer ID",
+            "scope": "account",
+            "secret": false,
+            "optional": true,
+            "help": "Optional. The manager account's 10-digit customer ID without hyphens. Required when the OAuth user reaches a client through that manager; omit it for direct access."
+          }
+        ]
+      },
+      "sandbox": {
+        "kind": "separate-account",
+        "selectable": true,
+        "warning": "A test estate on the same host, reached with credentials from a separate test account somebody has to register first.",
+        "note": "Use a dedicated Google Ads test manager and test client account. Test and production hierarchies cannot interact; test ads never serve or incur cost, but some features such as billing, conversion uploads and serving reports cannot be exercised there."
+      },
+      "environments": [
+        "fake",
+        "sandbox",
+        "live"
+      ],
+      "idempotency": null,
+      "needsWebhookEndpoint": false,
+      "operations": [
+        {
+          "operation": "customer_list_accessible",
+          "kind": "@particle-academy/google_ads_customer_list",
+          "kindAlias": "google_ads_customer_list",
+          "role": "action",
+          "title": "Accessible Google Ads customers",
+          "summary": "list directly accessible customers",
+          "docs": "https://developers.google.com/google-ads/api/rest/reference/rest/v25/customers/listAccessibleCustomers",
+          "method": "GET",
+          "path": "/v25/customers:listAccessibleCustomers",
+          "sideEffects": "none"
+        }
+      ]
+    },
+    {
       "slug": "google-analytics",
       "service": "google_analytics",
       "serviceTitle": "Google Analytics",
@@ -347,6 +699,7 @@
         "scopes": [
           "https://www.googleapis.com/auth/analytics.readonly"
         ],
+        "capabilities": null,
         "refreshTokenRotates": false,
         "pkce": null,
         "credentials": [
@@ -451,6 +804,7 @@
         "scopes": [
           "https://www.googleapis.com/auth/documents"
         ],
+        "capabilities": null,
         "refreshTokenRotates": false,
         "pkce": null,
         "credentials": [
@@ -555,6 +909,7 @@
         "scopes": [
           "https://www.googleapis.com/auth/drive.file"
         ],
+        "capabilities": null,
         "refreshTokenRotates": false,
         "pkce": null,
         "credentials": [
@@ -659,6 +1014,7 @@
         "scopes": [
           "https://www.googleapis.com/auth/spreadsheets"
         ],
+        "capabilities": null,
         "refreshTokenRotates": false,
         "pkce": null,
         "credentials": [
@@ -763,6 +1119,7 @@
         "scopes": [
           "https://www.googleapis.com/auth/presentations"
         ],
+        "capabilities": null,
         "refreshTokenRotates": false,
         "pkce": null,
         "credentials": [
@@ -867,6 +1224,7 @@
         "scopes": [
           "crm.objects.contacts.write"
         ],
+        "capabilities": null,
         "refreshTokenRotates": false,
         "pkce": null,
         "credentials": [
@@ -933,6 +1291,231 @@
       ]
     },
     {
+      "slug": "instagram-business",
+      "service": "instagram_business",
+      "serviceTitle": "Instagram for Business",
+      "domain": "marketing",
+      "docs": "https://developers.facebook.com/docs/instagram-platform/content-publishing/",
+      "repo": "Fancy-Friends/instagram-business",
+      "status": "alpha",
+      "packages": {
+        "ui": {
+          "name": "@particle-academy/instagram-business-ui",
+          "version": "0.1.0",
+          "registry": "npm",
+          "installFirst": true
+        },
+        "js": {
+          "name": "@particle-academy/instagram-business-js",
+          "version": "0.1.0",
+          "registry": "npm",
+          "installFirst": false
+        },
+        "php": {
+          "name": "particle-academy/instagram-business-php",
+          "version": "0.1.0",
+          "registry": "packagist",
+          "installFirst": false
+        },
+        "py": {
+          "name": "fancy-instagram-business",
+          "version": "0.1.0",
+          "registry": "pypi",
+          "installFirst": false
+        }
+      },
+      "auth": {
+        "kind": "oauth2",
+        "authorize": "query",
+        "scopes": [
+          "instagram_basic",
+          "instagram_content_publish",
+          "pages_read_engagement"
+        ],
+        "capabilities": null,
+        "refreshTokenRotates": false,
+        "pkce": null,
+        "credentials": [
+          {
+            "key": "clientId",
+            "label": "App ID",
+            "scope": "provider",
+            "secret": false,
+            "optional": false,
+            "help": "From the Meta app dashboard. One value serves the installation."
+          },
+          {
+            "key": "clientSecret",
+            "label": "App secret (OAuth)",
+            "scope": "provider",
+            "secret": true,
+            "optional": false,
+            "help": "Used for the authorization-code exchange."
+          },
+          {
+            "key": "appSecret",
+            "label": "App secret (proof)",
+            "scope": "provider",
+            "secret": true,
+            "optional": false,
+            "help": "Keys appsecret_proof on outgoing Graph API calls."
+          },
+          {
+            "key": "accessToken",
+            "label": "Instagram access token",
+            "scope": "account",
+            "secret": true,
+            "optional": false,
+            "help": "The connected professional account's long-lived Meta access token."
+          }
+        ]
+      },
+      "sandbox": {
+        "kind": "none",
+        "selectable": false,
+        "warning": "No test estate, and somebody checked. Everything this connector does is real. Use the faker.",
+        "note": "Instagram publishing has no sandbox. Publishing creates a real post on a real professional account, and an unpublished container expires after 24 hours."
+      },
+      "environments": [
+        "fake",
+        "live"
+      ],
+      "idempotency": null,
+      "needsWebhookEndpoint": false,
+      "operations": [
+        {
+          "operation": "media_container_create",
+          "kind": "@particle-academy/instagram_business_media_container",
+          "kindAlias": "instagram_business_media_container",
+          "role": "action",
+          "title": "Instagram media container",
+          "summary": "create an Instagram image container",
+          "docs": "https://developers.facebook.com/docs/instagram-platform/content-publishing/#create-a-container",
+          "method": "POST",
+          "path": "/{igUserId}/media",
+          "sideEffects": "unsafe-to-replay"
+        },
+        {
+          "operation": "media_publish",
+          "kind": "@particle-academy/instagram_business_media_publish",
+          "kindAlias": "instagram_business_media_publish",
+          "role": "action",
+          "title": "Publish Instagram media",
+          "summary": "publish an Instagram media container",
+          "docs": "https://developers.facebook.com/docs/instagram-platform/content-publishing/#publish-the-container",
+          "method": "POST",
+          "path": "/{igUserId}/media_publish",
+          "sideEffects": "unsafe-to-replay"
+        }
+      ]
+    },
+    {
+      "slug": "linkedin-ads",
+      "service": "linkedin_ads",
+      "serviceTitle": "LinkedIn Ads",
+      "domain": "marketing",
+      "docs": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads/account-structure/create-and-manage-campaigns?view=li-lms-2026-07",
+      "repo": "Fancy-Friends/linkedin-ads",
+      "status": "alpha",
+      "packages": {
+        "ui": {
+          "name": "@particle-academy/linkedin-ads-ui",
+          "version": "0.1.0",
+          "registry": "npm",
+          "installFirst": true
+        },
+        "js": {
+          "name": "@particle-academy/linkedin-ads-js",
+          "version": "0.1.0",
+          "registry": "npm",
+          "installFirst": false
+        },
+        "php": {
+          "name": "particle-academy/linkedin-ads-php",
+          "version": "0.1.0",
+          "registry": "packagist",
+          "installFirst": false
+        },
+        "py": {
+          "name": "fancy-linkedin-ads",
+          "version": "0.1.0",
+          "registry": "pypi",
+          "installFirst": false
+        }
+      },
+      "auth": {
+        "kind": "oauth2",
+        "authorize": "bearer",
+        "scopes": [
+          "r_ads"
+        ],
+        "capabilities": null,
+        "refreshTokenRotates": false,
+        "pkce": null,
+        "credentials": [
+          {
+            "key": "clientId",
+            "label": "OAuth client ID",
+            "scope": "provider",
+            "secret": false,
+            "optional": false,
+            "help": "From the LinkedIn Developer application's Auth tab; one value for the whole installation."
+          },
+          {
+            "key": "clientSecret",
+            "label": "OAuth client secret",
+            "scope": "provider",
+            "secret": true,
+            "optional": false,
+            "help": "From the same application. Used by the host for code exchange and programmatic refresh, never sent to the Marketing API."
+          },
+          {
+            "key": "accessToken",
+            "label": "Member access token",
+            "scope": "account",
+            "secret": true,
+            "optional": false,
+            "help": "Per connected LinkedIn member. It expires after 60 days and only reaches Ad Accounts where that member has a sufficient role."
+          },
+          {
+            "key": "refreshToken",
+            "label": "Programmatic refresh token",
+            "scope": "account",
+            "secret": true,
+            "optional": false,
+            "help": "Per connected member, available to approved Marketing Developer Platform partners. It keeps its original one-year expiry when reused."
+          }
+        ]
+      },
+      "sandbox": {
+        "kind": "separate-account",
+        "selectable": true,
+        "warning": "A test estate on the same host, reached with credentials from a separate test account somebody has to register first.",
+        "note": "LinkedIn's test estate is one API-created test Ad Account per developer application. It uses the same host and member OAuth flow, but every child campaign and creative inherits the account's test flag, creatives are never served, and campaigns are not billed. The account cannot later be converted between test and production."
+      },
+      "environments": [
+        "fake",
+        "sandbox",
+        "live"
+      ],
+      "idempotency": null,
+      "needsWebhookEndpoint": false,
+      "operations": [
+        {
+          "operation": "campaign_get",
+          "kind": "@particle-academy/linkedin_ads_campaign",
+          "kindAlias": "linkedin_ads_campaign",
+          "role": "action",
+          "title": "LinkedIn ad campaign",
+          "summary": "retrieve a campaign",
+          "docs": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads/account-structure/create-and-manage-campaigns?view=li-lms-2026-07#get-a-campaign",
+          "method": "GET",
+          "path": "/rest/adAccounts/{adAccountId}/adCampaigns/{campaignId}",
+          "sideEffects": "none"
+        }
+      ]
+    },
+    {
       "slug": "monday",
       "service": "monday",
       "serviceTitle": "monday.com",
@@ -970,6 +1553,7 @@
         "kind": "api_key",
         "authorize": "header",
         "scopes": null,
+        "capabilities": null,
         "refreshTokenRotates": null,
         "pkce": null,
         "credentials": [
@@ -1048,6 +1632,7 @@
         "kind": "api_key",
         "authorize": "bearer",
         "scopes": null,
+        "capabilities": null,
         "refreshTokenRotates": null,
         "pkce": null,
         "credentials": [
@@ -1089,6 +1674,112 @@
       ]
     },
     {
+      "slug": "slack",
+      "service": "slack",
+      "serviceTitle": "Slack",
+      "domain": "messaging",
+      "docs": "https://docs.slack.dev/apis/web-api/",
+      "repo": "Fancy-Friends/slack",
+      "status": "alpha",
+      "packages": {
+        "ui": {
+          "name": "@particle-academy/slack-ui",
+          "version": "0.1.0",
+          "registry": "npm",
+          "installFirst": true
+        },
+        "js": {
+          "name": "@particle-academy/slack-js",
+          "version": "0.1.0",
+          "registry": "npm",
+          "installFirst": false
+        },
+        "php": {
+          "name": "particle-academy/slack-php",
+          "version": "0.1.0",
+          "registry": "packagist",
+          "installFirst": false
+        },
+        "py": {
+          "name": "fancy-slack",
+          "version": "0.1.0",
+          "registry": "pypi",
+          "installFirst": false
+        }
+      },
+      "auth": {
+        "kind": "oauth2",
+        "authorize": "bearer",
+        "scopes": [
+          "chat:write"
+        ],
+        "capabilities": null,
+        "refreshTokenRotates": true,
+        "pkce": null,
+        "credentials": [
+          {
+            "key": "clientId",
+            "label": "Client ID",
+            "scope": "provider",
+            "secret": false,
+            "optional": false,
+            "help": "The Slack app client ID shared by the installation."
+          },
+          {
+            "key": "clientSecret",
+            "label": "Client secret",
+            "scope": "provider",
+            "secret": true,
+            "optional": false,
+            "help": "The matching Slack app client secret used by OAuth V2."
+          },
+          {
+            "key": "accessToken",
+            "label": "Bot access token",
+            "scope": "account",
+            "secret": true,
+            "optional": false,
+            "help": "The workspace installation's rotating bot token. Token rotation must be enabled; the token expires after 12 hours."
+          },
+          {
+            "key": "refreshToken",
+            "label": "Refresh token",
+            "scope": "account",
+            "secret": true,
+            "optional": false,
+            "help": "The workspace installation's single-use refresh token. Persist Slack's replacement after every refresh."
+          }
+        ]
+      },
+      "sandbox": {
+        "kind": "separate-account",
+        "selectable": true,
+        "warning": "A test estate on the same host, reached with credentials from a separate test account somebody has to register first.",
+        "note": "Install the app into a dedicated development workspace or Slack developer sandbox. Messages are real inside that workspace, but its users and data are separate from production. Developer sandboxes expire by default and have feature and integration limits."
+      },
+      "environments": [
+        "fake",
+        "sandbox",
+        "live"
+      ],
+      "idempotency": null,
+      "needsWebhookEndpoint": false,
+      "operations": [
+        {
+          "operation": "message_post",
+          "kind": "@particle-academy/slack_message",
+          "kindAlias": "slack_message",
+          "role": "action",
+          "title": "Slack message",
+          "summary": "post a Slack message",
+          "docs": "https://docs.slack.dev/reference/methods/chat.postMessage",
+          "method": "POST",
+          "path": "/api/chat.postMessage",
+          "sideEffects": "unsafe-to-replay"
+        }
+      ]
+    },
+    {
       "slug": "square",
       "service": "square",
       "serviceTitle": "Square",
@@ -1126,6 +1817,7 @@
         "kind": "api_key",
         "authorize": "bearer",
         "scopes": null,
+        "capabilities": null,
         "refreshTokenRotates": null,
         "pkce": null,
         "credentials": [
@@ -1205,6 +1897,7 @@
         "kind": "api_key",
         "authorize": "bearer",
         "scopes": null,
+        "capabilities": null,
         "refreshTokenRotates": null,
         "pkce": null,
         "credentials": [
@@ -1328,6 +2021,7 @@
         "kind": "token_in_path",
         "authorize": "path",
         "scopes": null,
+        "capabilities": null,
         "refreshTokenRotates": null,
         "pkce": null,
         "credentials": [
@@ -1409,6 +2103,7 @@
         "scopes": [
           "https://www.googleapis.com/auth/youtube.force-ssl"
         ],
+        "capabilities": null,
         "refreshTokenRotates": false,
         "pkce": null,
         "credentials": [
@@ -1474,5 +2169,5 @@
       ]
     }
   ],
-  "$verified": "every package below was resolved on its registry at the version stated"
+  "$verified": "Every package below resolved on its registry at the version stated, AT THE MOMENT THIS FILE WAS WRITTEN. It is not a claim about now — a version can be yanked. Absence is not evidence of a failure either: a connector missing here may simply never have been published."
 }

@@ -206,6 +206,86 @@
       ]
     },
     {
+      "slug": "discord",
+      "service": "discord",
+      "serviceTitle": "Discord",
+      "domain": "messaging",
+      "docs": "https://docs.discord.com/developers/reference",
+      "repo": "Fancy-Friends/discord",
+      "status": "alpha",
+      "packages": {
+        "ui": {
+          "name": "@particle-academy/discord-ui",
+          "version": "0.1.0",
+          "registry": "npm",
+          "installFirst": true
+        },
+        "js": {
+          "name": "@particle-academy/discord-js",
+          "version": "0.1.0",
+          "registry": "npm",
+          "installFirst": false
+        },
+        "php": {
+          "name": "particle-academy/discord-php",
+          "version": "0.1.0",
+          "registry": "packagist",
+          "installFirst": false
+        },
+        "py": {
+          "name": "fancy-discord",
+          "version": "0.1.0",
+          "registry": "pypi",
+          "installFirst": false
+        }
+      },
+      "auth": {
+        "kind": "api_key",
+        "authorize": "header",
+        "scopes": null,
+        "capabilities": null,
+        "refreshTokenRotates": null,
+        "pkce": null,
+        "credentials": [
+          {
+            "key": "botToken",
+            "label": "Bot token",
+            "scope": "account",
+            "secret": true,
+            "optional": false,
+            "help": "The token from the application's Bot page. Treat it as a password and install that bot into the target server with Send Messages permission."
+          }
+        ]
+      },
+      "sandbox": {
+        "kind": "separate-account",
+        "selectable": true,
+        "warning": "A test estate on the same host, reached with credentials from a separate test account somebody has to register first.",
+        "note": "Create a development-only Discord application, install its bot into a dedicated test server, and use a test channel id. Messages are real and can notify members of that server; production credentials sent in sandbox mode are not technically rejected."
+      },
+      "environments": [
+        "fake",
+        "sandbox",
+        "live"
+      ],
+      "idempotency": "body",
+      "needsWebhookEndpoint": false,
+      "operations": [
+        {
+          "operation": "message_create",
+          "kind": "@particle-academy/discord_message",
+          "kindAlias": "discord_message",
+          "role": "action",
+          "title": "Discord message",
+          "summary": "send a Discord message",
+          "docs": "https://docs.discord.com/developers/resources/message#create-message",
+          "method": "POST",
+          "path": "/channels/{channelId}/messages",
+          "sideEffects": "idempotent"
+        }
+      ]
+    },
+    {
       "slug": "facebook-lead-ads",
       "service": "facebook_lead_ads",
       "serviceTitle": "Facebook Lead Ads",
@@ -337,25 +417,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/facebook-pages-ui",
-          "version": "0.3.1",
+          "version": "0.4.0",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/facebook-pages-js",
-          "version": "0.3.1",
+          "version": "0.4.0",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/facebook-pages-php",
-          "version": "0.3.1",
+          "version": "0.4.0",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-facebook-pages",
-          "version": "0.3.1",
+          "version": "0.4.0",
           "registry": "pypi",
           "installFirst": false
         }
@@ -365,7 +445,8 @@
         "authorize": "query",
         "scopes": [
           "pages_manage_posts",
-          "pages_read_engagement"
+          "pages_read_engagement",
+          "pages_show_list"
         ],
         "capabilities": null,
         "refreshTokenRotates": null,
@@ -1591,6 +1672,112 @@
           "method": "POST",
           "path": "/v2",
           "sideEffects": "unsafe-to-replay"
+        }
+      ]
+    },
+    {
+      "slug": "notion",
+      "service": "notion",
+      "serviceTitle": "Notion",
+      "domain": "productivity",
+      "docs": "https://developers.notion.com/reference/intro",
+      "repo": "Fancy-Friends/notion",
+      "status": "alpha",
+      "packages": {
+        "ui": {
+          "name": "@particle-academy/notion-ui",
+          "version": "0.1.0",
+          "registry": "npm",
+          "installFirst": true
+        },
+        "js": {
+          "name": "@particle-academy/notion-js",
+          "version": "0.1.0",
+          "registry": "npm",
+          "installFirst": false
+        },
+        "php": {
+          "name": "particle-academy/notion-php",
+          "version": "0.1.0",
+          "registry": "packagist",
+          "installFirst": false
+        },
+        "py": {
+          "name": "fancy-notion",
+          "version": "0.1.0",
+          "registry": "pypi",
+          "installFirst": false
+        }
+      },
+      "auth": {
+        "kind": "oauth2",
+        "authorize": "bearer",
+        "scopes": null,
+        "capabilities": [
+          "Read content"
+        ],
+        "refreshTokenRotates": true,
+        "pkce": null,
+        "credentials": [
+          {
+            "key": "clientId",
+            "label": "OAuth client ID",
+            "scope": "provider",
+            "secret": false,
+            "optional": false,
+            "help": "The public connection's OAuth client ID from its Configuration tab."
+          },
+          {
+            "key": "clientSecret",
+            "label": "OAuth client secret",
+            "scope": "provider",
+            "secret": true,
+            "optional": false,
+            "help": "The matching secret used by the host for code exchange and token refresh."
+          },
+          {
+            "key": "accessToken",
+            "label": "Access token",
+            "scope": "account",
+            "secret": true,
+            "optional": false,
+            "help": "The bearer token for one user's installation in one Notion workspace."
+          },
+          {
+            "key": "refreshToken",
+            "label": "Refresh token",
+            "scope": "account",
+            "secret": true,
+            "optional": false,
+            "help": "The rotating refresh token. Replace it atomically with the new value returned by every refresh."
+          }
+        ]
+      },
+      "sandbox": {
+        "kind": "separate-account",
+        "selectable": true,
+        "warning": "A test estate on the same host, reached with credentials from a separate test account somebody has to register first.",
+        "note": "Install the public connection into a dedicated Notion development workspace and grant it only test pages. Calls use the live API and create or read real content inside that workspace."
+      },
+      "environments": [
+        "fake",
+        "sandbox",
+        "live"
+      ],
+      "idempotency": null,
+      "needsWebhookEndpoint": false,
+      "operations": [
+        {
+          "operation": "page_markdown_get",
+          "kind": "@particle-academy/notion_page",
+          "kindAlias": "notion_page",
+          "role": "action",
+          "title": "Notion page Markdown",
+          "summary": "retrieve page Markdown",
+          "docs": "https://developers.notion.com/reference/retrieve-page-markdown",
+          "method": "GET",
+          "path": "/v1/pages/{pageId}/markdown",
+          "sideEffects": "none"
         }
       ]
     },

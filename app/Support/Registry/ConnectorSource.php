@@ -182,6 +182,33 @@ class ConnectorSource
      * @param  array<string,mixed>  $operation
      * @return array<string,mixed>|null
      */
+    /**
+     * The host-actionable half of a connector's auth block.
+     *
+     * @param  array<string,mixed>  $connector
+     * @return array<string,mixed>
+     */
+    private function authFor(array $connector): array
+    {
+        $auth = is_array($connector['auth'] ?? null) ? $connector['auth'] : [];
+
+        $keys = [
+            'kind', 'scopes', 'capabilities', 'pkce', 'refreshTokenRotates',
+            'authorizeUrl', 'tokenUrl', 'flow',
+            'accessTokenCredential', 'refreshTokenCredential', 'accessTokenTtlSeconds',
+        ];
+
+        $out = [];
+        foreach ($keys as $key) {
+            // `??` rather than a presence check: absent and null mean the same
+            // thing to a reader, and emitting both as null is what keeps
+            // "checked, and there is none" distinguishable from "not carried".
+            $out[$key] = $auth[$key] ?? null;
+        }
+
+        return $out;
+    }
+
     private function entryFor(array $connector, array $operation): ?array
     {
         $kind = $operation['kind'] ?? null;
@@ -227,6 +254,35 @@ class ConnectorSource
             'idempotencyMaxLength' => is_int($connector['idempotencyMaxLength'] ?? null)
                 ? $connector['idempotencyMaxLength']
                 : null,
+
+            // The qualifier travels with the mechanism it qualifies. "Discord
+            // deduplicates for a few minutes" and "Stripe guarantees no second
+            // charge" are different promises, and no other field distinguishes
+            // a retry key from a uniqueness guarantee.
+            'idempotencyNote' => is_string($connector['idempotencyNote'] ?? null)
+                ? $connector['idempotencyNote']
+                : null,
+
+            // What a host needs to AUTHORISE this connector.
+            //
+            // The index once carried `scopes` and `pkce` without `authorizeUrl`
+            // or `tokenUrl`, so a scope fix reached consumers and the endpoint
+            // to request it from did not — half a fact, worse than none,
+            // because the half that arrives looks complete. The only remaining
+            // option was hardcoding sixteen providers' authorize URLs: one fact
+            // in two places, done by the registry meant to prevent that.
+            //
+            // The test for inclusion is whether a HOST acts on it. Endpoints,
+            // credential field names, token lifetimes and scopes change what a
+            // host builds or shows. Base URLs, encoding and header placement
+            // are wire concerns the package owns, and stay out.
+            //
+            // Every key is emitted even when null, because a vanished key reads
+            // as "not applicable" — and `refreshTokenCredential: null` on
+            // facebook-pages is a considered fact (that flow mints no refresh
+            // token; a connection is re-authorised on a 60-day access token),
+            // not an absent one. A host that inferred otherwise waits forever.
+            'auth' => $this->authFor($connector),
 
             // Assigned by the registry, never read from the index. These are
             // first-party packages built and released by the suite's own CI,

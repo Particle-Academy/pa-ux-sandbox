@@ -45,6 +45,12 @@
         "capabilities": null,
         "refreshTokenRotates": null,
         "pkce": null,
+        "authorizeUrl": null,
+        "tokenUrl": null,
+        "flow": null,
+        "accessTokenCredential": null,
+        "refreshTokenCredential": null,
+        "accessTokenTtlSeconds": null,
         "credentials": [
           {
             "key": "accessKeyId",
@@ -84,6 +90,7 @@
       ],
       "idempotency": null,
       "idempotencyMaxLength": null,
+      "idempotencyNote": null,
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -144,6 +151,12 @@
         "capabilities": null,
         "refreshTokenRotates": true,
         "pkce": "S256",
+        "authorizeUrl": "https://auth.buffer.com/auth",
+        "tokenUrl": "https://auth.buffer.com/token",
+        "flow": "authorization_code",
+        "accessTokenCredential": "accessToken",
+        "refreshTokenCredential": "refreshToken",
+        "accessTokenTtlSeconds": 3600,
         "credentials": [
           {
             "key": "clientId",
@@ -191,6 +204,7 @@
       ],
       "idempotency": null,
       "idempotencyMaxLength": null,
+      "idempotencyNote": null,
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -248,6 +262,12 @@
         "capabilities": null,
         "refreshTokenRotates": null,
         "pkce": null,
+        "authorizeUrl": null,
+        "tokenUrl": null,
+        "flow": null,
+        "accessTokenCredential": null,
+        "refreshTokenCredential": null,
+        "accessTokenTtlSeconds": null,
         "credentials": [
           {
             "key": "botToken",
@@ -272,6 +292,7 @@
       ],
       "idempotency": "body",
       "idempotencyMaxLength": 25,
+      "idempotencyNote": "Discord accepts a string nonce of at most 25 characters. With enforce_nonce true it deduplicates messages from the same author only within the past few minutes, returning the original message; this is a short retry window, not a permanent uniqueness guarantee.",
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -335,6 +356,12 @@
         "capabilities": null,
         "refreshTokenRotates": false,
         "pkce": null,
+        "authorizeUrl": "https://www.facebook.com/v25.0/dialog/oauth",
+        "tokenUrl": "https://graph.facebook.com/v25.0/oauth/access_token",
+        "flow": "authorization_code",
+        "accessTokenCredential": "pageAccessToken",
+        "refreshTokenCredential": null,
+        "accessTokenTtlSeconds": 5184000,
         "credentials": [
           {
             "key": "clientId",
@@ -382,6 +409,7 @@
       ],
       "idempotency": null,
       "idempotencyMaxLength": null,
+      "idempotencyNote": null,
       "needsWebhookEndpoint": true,
       "operations": [
         {
@@ -455,6 +483,12 @@
         "capabilities": null,
         "refreshTokenRotates": null,
         "pkce": null,
+        "authorizeUrl": "https://www.facebook.com/v25.0/dialog/oauth",
+        "tokenUrl": "https://graph.facebook.com/v25.0/oauth/access_token",
+        "flow": "authorization_code",
+        "accessTokenCredential": "pageAccessToken",
+        "refreshTokenCredential": null,
+        "accessTokenTtlSeconds": 5184000,
         "credentials": [
           {
             "key": "clientId",
@@ -502,6 +536,7 @@
       ],
       "idempotency": null,
       "idempotencyMaxLength": null,
+      "idempotencyNote": null,
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -561,6 +596,12 @@
         "capabilities": null,
         "refreshTokenRotates": false,
         "pkce": null,
+        "authorizeUrl": "https://accounts.google.com/o/oauth2/v2/auth",
+        "tokenUrl": "https://oauth2.googleapis.com/token",
+        "flow": "authorization_code",
+        "accessTokenCredential": "accessToken",
+        "refreshTokenCredential": "refreshToken",
+        "accessTokenTtlSeconds": 3600,
         "credentials": [
           {
             "key": "clientId",
@@ -608,6 +649,7 @@
       ],
       "idempotency": null,
       "idempotencyMaxLength": null,
+      "idempotencyNote": null,
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -667,6 +709,12 @@
         "capabilities": null,
         "refreshTokenRotates": false,
         "pkce": null,
+        "authorizeUrl": "https://accounts.google.com/o/oauth2/v2/auth",
+        "tokenUrl": "https://oauth2.googleapis.com/token",
+        "flow": "authorization_code",
+        "accessTokenCredential": "accessToken",
+        "refreshTokenCredential": "refreshToken",
+        "accessTokenTtlSeconds": 3600,
         "credentials": [
           {
             "key": "clientId",
@@ -731,6 +779,7 @@
       ],
       "idempotency": null,
       "idempotencyMaxLength": null,
+      "idempotencyNote": null,
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -790,6 +839,12 @@
         "capabilities": null,
         "refreshTokenRotates": false,
         "pkce": null,
+        "authorizeUrl": "https://accounts.google.com/o/oauth2/v2/auth",
+        "tokenUrl": "https://oauth2.googleapis.com/token",
+        "flow": "authorization_code",
+        "accessTokenCredential": "accessToken",
+        "refreshTokenCredential": "refreshToken",
+        "accessTokenTtlSeconds": 3600,
         "credentials": [
           {
             "key": "clientId",
@@ -837,6 +892,7 @@
       ],
       "idempotency": null,
       "idempotencyMaxLength": null,
+      "idempotencyNote": null,
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -896,6 +952,12 @@
         "capabilities": null,
         "refreshTokenRotates": false,
         "pkce": null,
+        "authorizeUrl": "https://accounts.google.com/o/oauth2/v2/auth",
+        "tokenUrl": "https://oauth2.googleapis.com/token",
+        "flow": "authorization_code",
+        "accessTokenCredential": "accessToken",
+        "refreshTokenCredential": "refreshToken",
+        "accessTokenTtlSeconds": 3600,
         "credentials": [
           {
             "key": "clientId",
@@ -943,6 +1005,7 @@
       ],
       "idempotency": null,
       "idempotencyMaxLength": null,
+      "idempotencyNote": null,
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -1002,6 +1065,12 @@
         "capabilities": null,
         "refreshTokenRotates": false,
         "pkce": null,
+        "authorizeUrl": "https://accounts.google.com/o/oauth2/v2/auth",
+        "tokenUrl": "https://oauth2.googleapis.com/token",
+        "flow": "authorization_code",
+        "accessTokenCredential": "accessToken",
+        "refreshTokenCredential": "refreshToken",
+        "accessTokenTtlSeconds": 3600,
         "credentials": [
           {
             "key": "clientId",
@@ -1049,6 +1118,7 @@
       ],
       "idempotency": null,
       "idempotencyMaxLength": null,
+      "idempotencyNote": null,
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -1108,6 +1178,12 @@
         "capabilities": null,
         "refreshTokenRotates": false,
         "pkce": null,
+        "authorizeUrl": "https://accounts.google.com/o/oauth2/v2/auth",
+        "tokenUrl": "https://oauth2.googleapis.com/token",
+        "flow": "authorization_code",
+        "accessTokenCredential": "accessToken",
+        "refreshTokenCredential": "refreshToken",
+        "accessTokenTtlSeconds": 3600,
         "credentials": [
           {
             "key": "clientId",
@@ -1155,6 +1231,7 @@
       ],
       "idempotency": null,
       "idempotencyMaxLength": null,
+      "idempotencyNote": null,
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -1214,6 +1291,12 @@
         "capabilities": null,
         "refreshTokenRotates": false,
         "pkce": null,
+        "authorizeUrl": "https://accounts.google.com/o/oauth2/v2/auth",
+        "tokenUrl": "https://oauth2.googleapis.com/token",
+        "flow": "authorization_code",
+        "accessTokenCredential": "accessToken",
+        "refreshTokenCredential": "refreshToken",
+        "accessTokenTtlSeconds": 3600,
         "credentials": [
           {
             "key": "clientId",
@@ -1261,6 +1344,7 @@
       ],
       "idempotency": null,
       "idempotencyMaxLength": null,
+      "idempotencyNote": null,
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -1320,6 +1404,12 @@
         "capabilities": null,
         "refreshTokenRotates": false,
         "pkce": null,
+        "authorizeUrl": "https://app.hubspot.com/oauth/authorize",
+        "tokenUrl": "https://api.hubapi.com/oauth/v1/token",
+        "flow": "authorization_code",
+        "accessTokenCredential": "accessToken",
+        "refreshTokenCredential": "refreshToken",
+        "accessTokenTtlSeconds": 1800,
         "credentials": [
           {
             "key": "clientId",
@@ -1368,6 +1458,7 @@
       ],
       "idempotency": null,
       "idempotencyMaxLength": null,
+      "idempotencyNote": null,
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -1429,6 +1520,12 @@
         "capabilities": null,
         "refreshTokenRotates": false,
         "pkce": null,
+        "authorizeUrl": "https://www.facebook.com/v25.0/dialog/oauth",
+        "tokenUrl": "https://graph.facebook.com/v25.0/oauth/access_token",
+        "flow": "authorization_code",
+        "accessTokenCredential": "accessToken",
+        "refreshTokenCredential": null,
+        "accessTokenTtlSeconds": 5184000,
         "credentials": [
           {
             "key": "clientId",
@@ -1476,6 +1573,7 @@
       ],
       "idempotency": null,
       "idempotencyMaxLength": null,
+      "idempotencyNote": null,
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -1547,6 +1645,12 @@
         "capabilities": null,
         "refreshTokenRotates": false,
         "pkce": null,
+        "authorizeUrl": "https://www.linkedin.com/oauth/v2/authorization",
+        "tokenUrl": "https://www.linkedin.com/oauth/v2/accessToken",
+        "flow": "authorization_code",
+        "accessTokenCredential": "accessToken",
+        "refreshTokenCredential": "refreshToken",
+        "accessTokenTtlSeconds": 5184000,
         "credentials": [
           {
             "key": "clientId",
@@ -1595,6 +1699,7 @@
       ],
       "idempotency": null,
       "idempotencyMaxLength": null,
+      "idempotencyNote": null,
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -1652,6 +1757,12 @@
         "capabilities": null,
         "refreshTokenRotates": null,
         "pkce": null,
+        "authorizeUrl": null,
+        "tokenUrl": null,
+        "flow": null,
+        "accessTokenCredential": null,
+        "refreshTokenCredential": null,
+        "accessTokenTtlSeconds": null,
         "credentials": [
           {
             "key": "apiToken",
@@ -1675,6 +1786,7 @@
       ],
       "idempotency": null,
       "idempotencyMaxLength": null,
+      "idempotencyNote": null,
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -1734,6 +1846,12 @@
         ],
         "refreshTokenRotates": true,
         "pkce": null,
+        "authorizeUrl": "https://api.notion.com/v1/oauth/authorize",
+        "tokenUrl": "https://api.notion.com/v1/oauth/token",
+        "flow": "authorization_code",
+        "accessTokenCredential": "accessToken",
+        "refreshTokenCredential": "refreshToken",
+        "accessTokenTtlSeconds": null,
         "credentials": [
           {
             "key": "clientId",
@@ -1782,6 +1900,7 @@
       ],
       "idempotency": null,
       "idempotencyMaxLength": null,
+      "idempotencyNote": null,
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -1839,6 +1958,12 @@
         "capabilities": null,
         "refreshTokenRotates": null,
         "pkce": null,
+        "authorizeUrl": null,
+        "tokenUrl": null,
+        "flow": null,
+        "accessTokenCredential": null,
+        "refreshTokenCredential": null,
+        "accessTokenTtlSeconds": null,
         "credentials": [
           {
             "key": "apiKey",
@@ -1862,6 +1987,7 @@
       ],
       "idempotency": "header",
       "idempotencyMaxLength": null,
+      "idempotencyNote": "Resend honours this for 24 hours. It is what makes a retried durable run resend nothing instead of mailing the recipient twice -- the difference between `idempotent` and `unsafe-to-replay` is that this one is merely embarrassing, not financial, but the header costs nothing and removes it entirely.",
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -1921,6 +2047,12 @@
         "capabilities": null,
         "refreshTokenRotates": true,
         "pkce": null,
+        "authorizeUrl": "https://slack.com/oauth/v2/authorize",
+        "tokenUrl": "https://slack.com/api/oauth.v2.access",
+        "flow": "authorization_code",
+        "accessTokenCredential": "accessToken",
+        "refreshTokenCredential": "refreshToken",
+        "accessTokenTtlSeconds": 43200,
         "credentials": [
           {
             "key": "clientId",
@@ -1969,6 +2101,7 @@
       ],
       "idempotency": null,
       "idempotencyMaxLength": null,
+      "idempotencyNote": null,
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -2026,6 +2159,12 @@
         "capabilities": null,
         "refreshTokenRotates": null,
         "pkce": null,
+        "authorizeUrl": null,
+        "tokenUrl": null,
+        "flow": null,
+        "accessTokenCredential": null,
+        "refreshTokenCredential": null,
+        "accessTokenTtlSeconds": null,
         "credentials": [
           {
             "key": "accessToken",
@@ -2050,6 +2189,7 @@
       ],
       "idempotency": "body",
       "idempotencyMaxLength": null,
+      "idempotencyNote": "Square takes the key in the BODY, not in a header, and lists it as REQUIRED. Every provider before this one that supported idempotency used a header, so the generator had exactly one place to put a key. The distinction is not cosmetic: it is the difference between a retried durable run charging once and charging twice.",
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -2107,6 +2247,12 @@
         "capabilities": null,
         "refreshTokenRotates": null,
         "pkce": null,
+        "authorizeUrl": null,
+        "tokenUrl": null,
+        "flow": null,
+        "accessTokenCredential": null,
+        "refreshTokenCredential": null,
+        "accessTokenTtlSeconds": null,
         "credentials": [
           {
             "key": "secretKey",
@@ -2139,6 +2285,7 @@
       ],
       "idempotency": "header",
       "idempotencyMaxLength": null,
+      "idempotencyNote": "Retried durable runs MUST not create a second charge. This header is what makes `unsafe-to-replay` recoverable rather than merely forbidden.",
       "needsWebhookEndpoint": true,
       "operations": [
         {
@@ -2232,6 +2379,12 @@
         "capabilities": null,
         "refreshTokenRotates": null,
         "pkce": null,
+        "authorizeUrl": null,
+        "tokenUrl": null,
+        "flow": null,
+        "accessTokenCredential": null,
+        "refreshTokenCredential": null,
+        "accessTokenTtlSeconds": null,
         "credentials": [
           {
             "key": "botToken",
@@ -2256,6 +2409,7 @@
       ],
       "idempotency": null,
       "idempotencyMaxLength": null,
+      "idempotencyNote": null,
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -2315,6 +2469,12 @@
         "capabilities": null,
         "refreshTokenRotates": false,
         "pkce": null,
+        "authorizeUrl": "https://accounts.google.com/o/oauth2/v2/auth",
+        "tokenUrl": "https://oauth2.googleapis.com/token",
+        "flow": "authorization_code",
+        "accessTokenCredential": "accessToken",
+        "refreshTokenCredential": "refreshToken",
+        "accessTokenTtlSeconds": 3600,
         "credentials": [
           {
             "key": "clientId",
@@ -2362,6 +2522,7 @@
       ],
       "idempotency": null,
       "idempotencyMaxLength": null,
+      "idempotencyNote": null,
       "needsWebhookEndpoint": false,
       "operations": [
         {

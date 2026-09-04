@@ -205,6 +205,29 @@ class ConnectorSource
             'category' => self::CATEGORY_FOR_ROLE[$role],
             'runtimes' => $this->runtimesFor($connector),
 
+            // Connector-level, repeated per operation because a host holds one
+            // ENTRY when it builds a key, not the connector.
+            //
+            // The cap has to arrive BEFORE the call. A host derives an
+            // idempotency key from a run id plus a step id, which is
+            // comfortably longer than Discord's 25-character `nonce` limit, so
+            // the choice is made where the key is built. An exception during
+            // the call is too late, and truncating blindly produces a key that
+            // still looks like a key.
+            //
+            // `null` means "checked, and there is no cap" — the same thing
+            // `scopes`, `capabilities` and `pkce` already mean here. Omitting
+            // the key would read as "not applicable", which is the one answer a
+            // host must not infer. This field reached connectors.json and
+            // stopped at this whitelist, which is the same drop it had already
+            // survived one layer up.
+            'idempotency' => is_string($connector['idempotency'] ?? null)
+                ? $connector['idempotency']
+                : null,
+            'idempotencyMaxLength' => is_int($connector['idempotencyMaxLength'] ?? null)
+                ? $connector['idempotencyMaxLength']
+                : null,
+
             // Assigned by the registry, never read from the index. These are
             // first-party packages built and released by the suite's own CI,
             // which is the evidence the flag is supposed to represent — a

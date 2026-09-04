@@ -83,6 +83,7 @@
         "live"
       ],
       "idempotency": null,
+      "idempotencyMaxLength": null,
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -189,6 +190,7 @@
         "live"
       ],
       "idempotency": null,
+      "idempotencyMaxLength": null,
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -269,6 +271,7 @@
         "live"
       ],
       "idempotency": "body",
+      "idempotencyMaxLength": 25,
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -378,6 +381,7 @@
         "live"
       ],
       "idempotency": null,
+      "idempotencyMaxLength": null,
       "needsWebhookEndpoint": true,
       "operations": [
         {
@@ -497,6 +501,7 @@
         "live"
       ],
       "idempotency": null,
+      "idempotencyMaxLength": null,
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -602,6 +607,7 @@
         "live"
       ],
       "idempotency": null,
+      "idempotencyMaxLength": null,
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -724,6 +730,7 @@
         "live"
       ],
       "idempotency": null,
+      "idempotencyMaxLength": null,
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -829,6 +836,7 @@
         "live"
       ],
       "idempotency": null,
+      "idempotencyMaxLength": null,
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -934,6 +942,7 @@
         "live"
       ],
       "idempotency": null,
+      "idempotencyMaxLength": null,
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -1039,6 +1048,7 @@
         "live"
       ],
       "idempotency": null,
+      "idempotencyMaxLength": null,
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -1144,6 +1154,7 @@
         "live"
       ],
       "idempotency": null,
+      "idempotencyMaxLength": null,
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -1249,6 +1260,7 @@
         "live"
       ],
       "idempotency": null,
+      "idempotencyMaxLength": null,
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -1355,6 +1367,7 @@
         "live"
       ],
       "idempotency": null,
+      "idempotencyMaxLength": null,
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -1462,6 +1475,7 @@
         "live"
       ],
       "idempotency": null,
+      "idempotencyMaxLength": null,
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -1580,6 +1594,7 @@
         "live"
       ],
       "idempotency": null,
+      "idempotencyMaxLength": null,
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -1659,6 +1674,7 @@
         "live"
       ],
       "idempotency": null,
+      "idempotencyMaxLength": null,
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -1765,6 +1781,7 @@
         "live"
       ],
       "idempotency": null,
+      "idempotencyMaxLength": null,
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -1844,6 +1861,7 @@
         "live"
       ],
       "idempotency": "header",
+      "idempotencyMaxLength": null,
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -1950,6 +1968,7 @@
         "live"
       ],
       "idempotency": null,
+      "idempotencyMaxLength": null,
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -2030,6 +2049,7 @@
         "live"
       ],
       "idempotency": "body",
+      "idempotencyMaxLength": null,
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -2118,6 +2138,7 @@
         "live"
       ],
       "idempotency": "header",
+      "idempotencyMaxLength": null,
       "needsWebhookEndpoint": true,
       "operations": [
         {
@@ -2234,6 +2255,7 @@
         "live"
       ],
       "idempotency": null,
+      "idempotencyMaxLength": null,
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -2339,6 +2361,7 @@
         "live"
       ],
       "idempotency": null,
+      "idempotencyMaxLength": null,
       "needsWebhookEndpoint": false,
       "operations": [
         {

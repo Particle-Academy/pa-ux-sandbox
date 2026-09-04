@@ -1,6 +1,6 @@
 {
     "$schema": "https://ui.particle.academy/schema/registry-compiled.json",
-    "count": 292,
+    "count": 297,
     "items": [
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
@@ -5159,6 +5159,61 @@
             "title": "particle-academy/prism",
             "description": "Maintained fork of prism-php/prism -- the Laravel LLM integration layer the kit builds on. Unified text / structured / streaming across providers, with the telemetry that makes per-run AI spend attributable. fancy-flow-php's PrismLlmClient adapter targets it, and credentials resolve at call time rather than from env, so DB-backed provider rows and queue workers are first-class.",
             "package": "prism",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "prism-harness",
+            "type": "registry:ui",
+            "title": "particle-academy/prism-harness",
+            "description": "Durable agent sessions for Laravel -- threads, modes, tool permissions and subagents on top of Prism. Where a conversation with an agent stops being one request and becomes state you can resume, inspect and govern.",
+            "package": "prism-harness",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "prism-human-plus",
+            "type": "registry:ui",
+            "title": "particle-academy/prism-human-plus",
+            "description": "Human+ participant presence for Prism Harness -- an agent session joins live Fancy surfaces through trusted MCP relay attachments, so the human and the agent are on the same surface rather than trading turns through a transcript.",
+            "package": "prism-human-plus",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "prism-mcp",
+            "type": "registry:ui",
+            "title": "particle-academy/prism-mcp",
+            "description": "Model Context Protocol for Prism -- consume remote MCP tools as ordinary Prism tools, across a trust boundary you can see. The boundary is the point: a remote tool is not quietly indistinguishable from a local one.",
+            "package": "prism-mcp",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "prism-opentelemetry",
+            "type": "registry:ui",
+            "title": "particle-academy/prism-opentelemetry",
+            "description": "OpenTelemetry bridge for Prism -- turns Prism telemetry events into GenAI-convention spans for Arize Phoenix and any OTLP backend, so agent runs are readable in the tracing you already operate rather than a second place to look.",
+            "package": "prism-opentelemetry",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "prism-perplexity",
+            "type": "registry:ui",
+            "title": "particle-academy/prism-perplexity",
+            "description": "The rest of the Perplexity API for Prism -- embeddings, direct search, and async deep research beyond the Agent API chat surface.",
+            "package": "prism-perplexity",
             "dependencies": [],
             "registryDependencies": [],
             "files": []

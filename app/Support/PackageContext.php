@@ -30,6 +30,36 @@ class PackageContext
             'how' => '<code>composer require particle-academy/prism</code>. The kit reaches it through a seam rather than directly: <code>FancyFlow\\Capabilities\\Adapters\\PrismLlmClient</code> implements fancy-flow-php&apos;s <code>LlmClient</code> contract, and <code>prism-php/prism</code> stays under composer <code>suggest</code> with every entry point <code>isAvailable()</code>-guarded — so fancy-flow&apos;s core keeps its no-runtime-dependencies rule and an app that already uses Prism gets a working <code>llm_router</code> with no glue. <strong>Credentials resolve at call time, not at boot.</strong> <code>PrismLlmClient</code> takes a callable mapping a host credential <em>reference</em> to provider config, applied through <code>-&gt;using($provider, $model, $config)</code>, so API keys living on a database row rather than in <code>.env</code> — and queue workers with no request-scoped config — are the supported case rather than the awkward one.',
         ],
 
+        'prism-harness' => [
+            'why' => 'A single model call is stateless, and an agent that is genuinely useful is not. Threads, the mode it is operating in, which tools it may reach for, and the subagents it spawns are all state — and state that lives only in a controller is state nobody can resume, inspect or govern. This is the layer that makes an agent conversation a durable thing rather than one request that happened to work.',
+            'what' => 'Durable agent sessions for Laravel, built on <a href="/packages/prism">Prism</a>: threads, modes, tool permissions and subagents. Tool <em>permissions</em> are the part worth reading twice — what an agent may do is declared rather than implied by whatever happens to be registered.',
+            'how' => '<code>composer require particle-academy/prism-harness</code>. It sits on top of Prism, so the provider layer, telemetry and credential resolution are the ones already described on <a href="/packages/prism">that page</a>.',
+        ],
+
+        'prism-human-plus' => [
+            'why' => 'Human+ UX is the suite&apos;s claim that humans and agents share one surface rather than trading turns through a transcript. An agent session that cannot join the surface the human is looking at is back to passing messages, which is the thing the contract exists to replace.',
+            'what' => 'Human+ participant presence for Prism Harness: an agent session joins live Fancy surfaces through trusted MCP relay attachments. <strong>Trusted</strong> is the operative word — the attachment is a boundary that is declared, not an ambient capability.',
+            'how' => '<code>composer require particle-academy/prism-human-plus</code>. Pairs with <a href="/packages/prism-harness">prism-harness</a> for the session and <code>@particle-academy/agent-integrations</code> for the surface bridges on the browser side.',
+        ],
+
+        'prism-mcp' => [
+            'why' => 'MCP is how an agent reaches tools it does not own, and that is exactly why the seam matters. A remote tool that is indistinguishable from a local one is a trust boundary you cannot see, and a boundary nobody can see is one nobody reviews.',
+            'what' => 'Model Context Protocol for Prism: consume remote MCP tools as ordinary Prism tools, across a trust boundary you can see. The tools compose with Prism&apos;s own tool use rather than sitting beside it.',
+            'how' => '<code>composer require particle-academy/prism-mcp</code>. Note the direction: this CONSUMES remote MCP servers from a Prism app. To expose a fancy-flow graph as an MCP server, that is <a href="/packages/fancy-flow-mcp">fancy-flow-mcp</a> instead.',
+        ],
+
+        'prism-opentelemetry' => [
+            'why' => 'Prism already emits the telemetry that makes AI spend attributable, but telemetry in its own format is a second place to look. Agent runs belong in the tracing you already operate, next to the HTTP request and the database call that surrounded them — otherwise the expensive question, "what did this run actually do", is answered by correlating two systems by hand.',
+            'what' => 'An OpenTelemetry bridge for Prism: turns Prism telemetry events into <strong>GenAI-convention</strong> spans, for Arize Phoenix and any OTLP backend. Following the shared convention rather than inventing attribute names is what lets a backend understand the spans without bespoke configuration.',
+            'how' => '<code>composer require particle-academy/prism-opentelemetry</code>, then point it at whatever OTLP endpoint you already run.',
+        ],
+
+        'prism-perplexity' => [
+            'why' => 'Prism&apos;s provider layer covers the chat surface. Perplexity offers more than that, and a capability reachable only by dropping out of Prism into a hand-rolled HTTP call is a capability that loses the telemetry, the credential resolution and the error handling the rest of the estate depends on.',
+            'what' => 'The rest of the Perplexity API for Prism: embeddings, direct search, and asynchronous deep research beyond the Agent API chat surface. Deep research is asynchronous by nature — it is a job that returns later, not a request that blocks.',
+            'how' => '<code>composer require particle-academy/prism-perplexity</code>. Credentials resolve through Prism the same way every other provider does, so a key on a database row rather than in <code>.env</code> is the supported case.',
+        ],
+
         'fancy-tui' => [
             'why' => 'Agent CLIs repeatedly rebuild the same hard terminal UX: Yoga layouts, scrollback that does not repaint, multiline editing, capability-sensitive keyboard handling, and status vocabulary for users, agents, and tools. <code>fancy-tui</code> gives Ink apps the same compositional and Human+ conventions as Fancy UI browser surfaces without pretending a terminal is a browser.',
             'what' => 'A React 19 + Ink 7 component library built on Ink&apos;s Yoga layout engine. It includes themed layout shells, controlled inputs, navigation, tables and trees, ANSI Markdown and highlighted code, <code>&lt;Static&gt;</code>-backed message history, a separate live region, and a grapheme-aware multiline composer. Interactive components register stable surface handles so <code>registerTuiBridge</code> can expose reads and mutations over MCP. Human+ events persist before push notification and remain available through a per-consumer inbox with acknowledgement and staged confirmation.',

@@ -300,6 +300,11 @@ BEFORE IT CAN SHIP: three registry names that do not exist yet (npm scoped, Pack
         'fancy-grid' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#0ea5e9'],
         // The Laravel LLM layer the kit builds on -- a maintained fork.
         'prism' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#a855f7'],
+        'prism-harness' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#a855f7'],
+        'prism-human-plus' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#a855f7'],
+        'prism-mcp' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#a855f7'],
+        'prism-opentelemetry' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#a855f7'],
+        'prism-perplexity' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#a855f7'],
         // Polyglot single-file client.
         'mcp-relay-client' => ['group' => 'tooling', 'ecosystem' => 'polyglot', 'kind' => 'headless', 'accent' => '#22c55e'],
         // Cross-language conformance fixtures -- parity as a test result.
@@ -803,6 +808,7 @@ BEFORE IT CAN SHIP: three registry names that do not exist yet (npm scoped, Pack
                 'name' => '@particle-academy/fancy-conformance',
                 'tagline' => 'Shared cross-language fixture tables, so parity between a PHP twin and its Node/Python siblings is a TEST RESULT rather than a claim in a README.',
                 'npm' => '@particle-academy/fancy-conformance',
+                'composer' => 'particle-academy/fancy-conformance',
                 'repo' => 'Particle-Academy/fancy-conformance',
                 'language' => 'Polyglot',
             ],
@@ -811,6 +817,7 @@ BEFORE IT CAN SHIP: three registry names that do not exist yet (npm scoped, Pack
                 'name' => '@particle-academy/fancy-connector-core',
                 'tagline' => 'The connector runtime: typed delivery, failure classification (unreachable / refused / ambiguous / rejected), retries, and sandbox-vs-live selection. Every connector is built on it.',
                 'npm' => '@particle-academy/fancy-connector-core',
+                'composer' => 'particle-academy/fancy-connector-core',
                 'repo' => 'Particle-Academy/fancy-connector-core',
                 'language' => 'TypeScript',
             ],
@@ -945,6 +952,55 @@ BEFORE IT CAN SHIP: three registry names that do not exist yet (npm scoped, Pack
                 'composer' => 'particle-academy/prism',
                 'repo' => 'Particle-Academy/prism',
                 'packagist' => 'particle-academy/prism',
+                'language' => 'PHP',
+            ],
+            // The rest of the Prism family. Published on Packagist and absent
+            // from here, so `prism` was the only one an agent could find --
+            // which reads as "that is all there is", not as "the others are
+            // undiscoverable".
+            [
+                'slug' => 'prism-harness',
+                'name' => 'particle-academy/prism-harness',
+                'tagline' => 'Durable agent sessions for Laravel -- threads, modes, tool permissions and subagents on top of Prism. Where a conversation with an agent stops being one request and becomes state you can resume, inspect and govern.',
+                'composer' => 'particle-academy/prism-harness',
+                'repo' => 'Particle-Academy/prism-harness',
+                'packagist' => 'particle-academy/prism-harness',
+                'language' => 'PHP',
+            ],
+            [
+                'slug' => 'prism-human-plus',
+                'name' => 'particle-academy/prism-human-plus',
+                'tagline' => 'Human+ participant presence for Prism Harness -- an agent session joins live Fancy surfaces through trusted MCP relay attachments, so the human and the agent are on the same surface rather than trading turns through a transcript.',
+                'composer' => 'particle-academy/prism-human-plus',
+                'repo' => 'Particle-Academy/prism-human-plus',
+                'packagist' => 'particle-academy/prism-human-plus',
+                'language' => 'PHP',
+            ],
+            [
+                'slug' => 'prism-mcp',
+                'name' => 'particle-academy/prism-mcp',
+                'tagline' => 'Model Context Protocol for Prism -- consume remote MCP tools as ordinary Prism tools, across a trust boundary you can see. The boundary is the point: a remote tool is not quietly indistinguishable from a local one.',
+                'composer' => 'particle-academy/prism-mcp',
+                'repo' => 'Particle-Academy/prism-mcp',
+                'packagist' => 'particle-academy/prism-mcp',
+                'language' => 'PHP',
+            ],
+            [
+                'slug' => 'prism-opentelemetry',
+                'name' => 'particle-academy/prism-opentelemetry',
+                'tagline' => 'OpenTelemetry bridge for Prism -- turns Prism telemetry events into GenAI-convention spans for Arize Phoenix and any OTLP backend, so agent runs are readable in the tracing you already operate rather than a second place to look.',
+                'composer' => 'particle-academy/prism-opentelemetry',
+                'repo' => 'Particle-Academy/prism-opentelemetry',
+                'packagist' => 'particle-academy/prism-opentelemetry',
+                'language' => 'PHP',
+            ],
+            [
+                'slug' => 'prism-perplexity',
+                'name' => 'particle-academy/prism-perplexity',
+                'tagline' => 'The rest of the Perplexity API for Prism -- embeddings, direct search, and async deep research beyond the Agent API chat surface.',
+                'composer' => 'particle-academy/prism-perplexity',
+                'repo' => 'Particle-Academy/prism-perplexity',
+                'packagist' => 'particle-academy/prism-perplexity',
                 'language' => 'PHP',
             ],
         ]);

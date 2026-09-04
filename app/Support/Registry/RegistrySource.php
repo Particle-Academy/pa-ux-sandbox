@@ -308,7 +308,19 @@ class RegistrySource
      */
     private function companionItem(array $pkg): ?RegistryItem
     {
-        if (empty($pkg['npm']) && empty($pkg['composer'])) {
+        // Evidence of publishing on ANY registry — the question is "can a
+        // consumer install this", not "which ecosystem did we think of first".
+        //
+        // `pypi` was missing here, so all six Python-only packages compiled to
+        // nothing: registered, published, and absent from registry.json, which
+        // made them invisible to list_components, search_components,
+        // /r/index.json and `npx fancy-cli add`. It surfaced from outside, as
+        // fancy-flow#7 — a consumer asking whether the Python runtime existed,
+        // while `pip install fancy-flow` had been live the whole time.
+        //
+        // The gate was not wrong when written; PyPI arrived later and nothing
+        // re-checked it. `EveryPublishedCompanionIsInTheRegistryTest` now does.
+        if (empty($pkg['npm']) && empty($pkg['composer']) && empty($pkg['pypi'])) {
             return null;
         }
         $tagline = (string) ($pkg['tagline'] ?? '');

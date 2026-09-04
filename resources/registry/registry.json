@@ -1,6 +1,6 @@
 {
     "$schema": "https://ui.particle.academy/schema/registry-compiled.json",
-    "count": 286,
+    "count": 292,
     "items": [
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
@@ -1888,6 +1888,17 @@
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "dark-slide-py",
+            "type": "registry:ui",
+            "title": "fancy-dark-slide",
+            "description": "Python port of dark-slide -- pptx writer/reader for agentic documents. Headless; no UI.",
+            "package": "dark-slide-py",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
             "name": "deck-editor",
             "type": "registry:ui",
             "title": "DeckEditor",
@@ -2612,6 +2623,17 @@
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "fancy-catalog-py",
+            "type": "registry:ui",
+            "title": "fancy-catalog",
+            "description": "Python twin of laravel-catalog -- Stripe products, prices, plans and checkout, framework-free.",
+            "package": "fancy-catalog-py",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
             "name": "fancy-cf-relay",
             "type": "registry:ui",
             "title": "@particle-academy/fancy-cf-relay",
@@ -2729,6 +2751,17 @@
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "fancy-features-py",
+            "type": "registry:ui",
+            "title": "fancy-features",
+            "description": "Python twin of laravel-fms -- gate features, access and metered resources in any app, framework-free. Same FeatureSource contract as the PHP and Node siblings; commerce is one consumer of it, not a requirement.",
+            "package": "fancy-features-py",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
             "name": "fancy-file-commons",
             "type": "registry:ui",
             "title": "@particle-academy/fancy-file-commons",
@@ -2767,6 +2800,17 @@
             "title": "particle-academy/fancy-flow-php",
             "description": "PHP runtime for fancy-flow workflow graphs \u2014 the framework-free twin of @particle-academy/fancy-flow's engine. Same WorkflowSchema JSON in, same outputs out; author in <FlowEditor>, run on PHP. Adds a Laravel layer: queued durable runs with resume-from-checkpoint, human approval + user_input pauses, and an agent node. Headless; no UI.",
             "package": "fancy-flow-php",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "fancy-flow-py",
+            "type": "registry:ui",
+            "title": "fancy-flow",
+            "description": "Python runtime twin of the fancy-flow engine -- the same graph, the same node kinds, durable and queued runs. Pairs with fancy-flow (TS) and fancy-flow-php.",
+            "package": "fancy-flow-py",
             "dependencies": [],
             "registryDependencies": [],
             "files": []
@@ -3452,6 +3496,17 @@
             "title": "@particle-academy/holy-sheet",
             "description": "Node/TS port of holy-sheet \u2014 xlsx writer/reader + formula linter, isomorphic. Headless Agent API; no UI.",
             "package": "holy-sheet-js",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "holy-sheet-py",
+            "type": "registry:ui",
+            "title": "fancy-holy-sheet",
+            "description": "Python port of holy-sheet -- xlsx writer/reader for agentic documents. Headless; no UI.",
+            "package": "holy-sheet-py",
             "dependencies": [],
             "registryDependencies": [],
             "files": []
@@ -4200,6 +4255,17 @@
             "title": "@particle-academy/last-word",
             "description": "Node/TS mirror of particle-academy/last-word \u2014 zero-dependency, isomorphic docx writer/reader with the same JSON Doc model + markdown bridges, so react-fancy Editor consumers round-trip Word files without a mammoth/turndown/docx converter sandwich. Headless; no UI.",
             "package": "last-word-js",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "last-word-py",
+            "type": "registry:ui",
+            "title": "fancy-last-word",
+            "description": "Python port of last-word -- docx writer/reader for agentic documents, with markdown bridges. Headless; no UI.",
+            "package": "last-word-py",
             "dependencies": [],
             "registryDependencies": [],
             "files": []

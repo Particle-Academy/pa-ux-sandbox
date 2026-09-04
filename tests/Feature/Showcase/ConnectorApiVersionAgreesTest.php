@@ -24,8 +24,32 @@ uses(TestCase::class);
  *
  * The base URL is deliberately absent from the index (a wire concern the
  * package owns), so a full three-way check is only possible upstream. Weaver
- * pins it there. This is defence in depth at the boundary a host actually
- * reads.
+ * pins it there as a VALIDATOR rule, so a half-bumped manifest is refused at
+ * load rather than caught by a suite. This is defence in depth at the boundary
+ * a host actually reads.
+ *
+ * ## The false positive this will eventually hit
+ *
+ * An authorize URL and a token URL can carry versions from DIFFERENT
+ * namespaces, legitimately disagreeing. Google's authorize is
+ * `accounts.google.com/o/oauth2/v2/auth` — that `v2` is the version of
+ * Google's OAuth ENDPOINT, not of Sheets or Drive, whose APIs carry no version
+ * in the base URL at all. It is safe here only because their token URL
+ * (`oauth2.googleapis.com/token`) carries no version, so there is nothing to
+ * compare. Slack is the same shape: `/oauth/v2/authorize` against
+ * `oauth.v2.access`, where the second is not a path segment.
+ *
+ * Weaver hit this building the upstream rule — a blanket "all versions in a
+ * manifest must agree" refused eight correct manifests. Theirs fires only when
+ * the BASE URL pins a version, which is the anchor that establishes the API's
+ * own version. We do not receive the base URL, so we cannot use that anchor.
+ *
+ * Verified against all sixteen oauth2 connectors: five carry a version on both
+ * URLs and all five agree; the rest carry one or none, so nothing is compared.
+ * WHEN a provider appears whose authorize pins an OAuth-endpoint version and
+ * whose token pins an API version, this will call it a defect and be wrong.
+ * The fix then is Weaver's: anchor to something that establishes which version
+ * belongs to the API, rather than comparing every version-shaped segment.
  */
 
 it('never lets one connector name two API versions', function () {
@@ -36,7 +60,11 @@ it('never lets one connector name two API versions', function () {
             return null;
         }
 
-        return preg_match('#/v(\d+\.\d+)/#', $url, $m) === 1 ? $m[1] : null;
+        // Undotted forms count. Requiring `vNN.N` matched Meta and silently
+        // skipped linkedin-ads (`/oauth/v2/`) and notion (`/v1/`) — and would
+        // miss a provider that versions its API as `/v3/` entirely, which is
+        // the very bump this guards.
+        return preg_match('#/v(\d+(?:\.\d+)?)(?:/|$)#', $url, $m) === 1 ? $m[1] : null;
     };
 
     $versioned = [];

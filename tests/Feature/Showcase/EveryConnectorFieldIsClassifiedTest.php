@@ -52,7 +52,12 @@ function connectorCarriedFields(): array
     return [
         'apiVersion' => 'verbatim — the anchor for version-drift checks',
         'auth' => 'the host-actionable subset, via authFor()',
-        'docs' => 'verbatim',
+        // NOT verbatim, and the value check caught me claiming it was. An
+        // entry carries the OPERATION's deep link
+        // (`.../page/feed/#publish`), not the connector's general one
+        // (`.../page/feed/`) — more useful, and a different fact. The map
+        // said verbatim and was wrong within an hour of being written.
+        'docs' => 'per-operation — the deep link for THIS operation, not the connector-wide one',
         'domain' => 'verbatim, via the facet',
         'environments' => 'verbatim',
         'idempotency' => 'verbatim — where the key goes',
@@ -136,27 +141,88 @@ it('has no classification for a field the index no longer carries', function () 
     expect($stale)->toBe([], 'These fields are classified but no connector declares them: '.implode(', ', $stale));
 });
 
-it('actually emits every field it claims to carry verbatim', function () {
-    // The claim above is prose until something compares it to the entries. A
-    // field listed as carried and absent from the entry is the same failure the
-    // whole list exists to prevent, one level up.
-    $entries = app(ConnectorSource::class)->indexEntries();
+it('actually emits every field it claims to carry, with the value it claims', function () {
+    // Two directions, and the second is the one Weaver found the hard way after
+    // adopting the first: a field CLAIMED as carried can be present in every
+    // entry and asserted by nothing. Absent is the obvious failure; present and
+    // unexamined is the more convincing one, because it looks like coverage.
+    //
+    // The CARRIED map's own annotations decide what gets compared. Anything
+    // described as `verbatim` must equal its source exactly — so a transform
+    // bug that quietly set every `needsWebhookEndpoint` to false, or dropped
+    // `status`, fails here. Fields labelled `transformed` or `subset` are
+    // excluded by their own description rather than by a second list that
+    // could drift from this one.
+    $source = app(ConnectorSource::class);
+    $entries = $source->indexEntries();
+    $byService = [];
+
+    foreach ($source->connectors() as $connector) {
+        $byService[(string) $connector['service']] = $connector;
+    }
 
     expect($entries)->not->toBeEmpty('no entries; this check would assert nothing');
+    expect($byService)->not->toBeEmpty('no connectors; this check would assert nothing');
 
-    $missing = [];
-    foreach (array_keys(connectorCarriedFields()) as $field) {
-        if ($field === 'slug') {
+    $verbatim = array_keys(array_filter(
+        connectorCarriedFields(),
+        fn (string $how) => str_starts_with($how, 'verbatim'),
+    ));
+
+    expect($verbatim)->not->toBeEmpty('nothing claims to be carried verbatim; the map has lost its annotations');
+
+    $wrong = [];
+
+    foreach ($entries as $entry) {
+        $connector = $byService[(string) $entry['service']] ?? null;
+
+        if ($connector === null) {
+            $wrong[] = "{$entry['kind']}: no connector for service {$entry['service']}";
+
             continue;
         }
 
-        foreach ($entries as $entry) {
+        foreach ($verbatim as $field) {
             if (! array_key_exists($field, $entry)) {
-                $missing[] = "{$field} (missing from {$entry['kind']})";
-                break;
+                $wrong[] = "{$entry['kind']}: {$field} claimed carried, absent from the entry";
+
+                continue;
+            }
+
+            // `needsWebhookEndpoint` is cast to bool on the way out, so compare
+            // loosely enough to allow the cast and strictly enough to catch a
+            // changed value.
+            $expected = $connector[$field] ?? ($field === 'needsWebhookEndpoint' ? false : null);
+
+            if ($entry[$field] != $expected) {
+                $wrong[] = "{$entry['kind']}: {$field} is ".json_encode($entry[$field])
+                    .' but the index says '.json_encode($expected);
             }
         }
     }
 
-    expect($missing)->toBe([], "Claimed as carried but absent from an entry:\n  ".implode("\n  ", $missing));
+    expect($wrong)->toBe([], 'Carried fields that do not match the index:
+  '.implode('
+  ', $wrong));
+});
+
+it('does not let a maturity claim appear without being stated', function () {
+    // `status` is a READINESS claim on a file built to be rendered. All
+    // twenty-three connectors are alpha; a surface showing them as anything
+    // else promises maturity nobody stated. Weaver pins the same thing at their
+    // end, and it is worth pinning at both: the value is carried across a gate,
+    // and a gate is where it would change.
+    $statuses = collect(app(ConnectorSource::class)->indexEntries())
+        ->pluck('status')
+        ->unique()
+        ->sort()
+        ->values()
+        ->all();
+
+    expect($statuses)->not->toBeEmpty('no statuses; this check would assert nothing');
+
+    expect($statuses)->toBe(['alpha'],
+        'A connector status changed to '.implode(', ', $statuses).'. A promotion out of alpha is a '
+        .'promise to consumers and has to be made deliberately — update this expectation in the same '
+        .'change that makes it, so it cannot arrive by itself.');
 });

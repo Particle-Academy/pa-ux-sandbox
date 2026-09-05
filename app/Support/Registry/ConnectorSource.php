@@ -263,6 +263,20 @@ class ConnectorSource
                 ? $connector['idempotencyNote']
                 : null,
 
+            // A host MUST provision a publicly reachable endpoint before these
+            // work at all — true for facebook-lead-ads and stripe. Squarely
+            // "would a host act on it", and it was being dropped: a host had no
+            // way to learn that two of the twenty-three need one until the
+            // connector silently received nothing.
+            'needsWebhookEndpoint' => (bool) ($connector['needsWebhookEndpoint'] ?? false),
+
+            // Maturity. Every connector is `alpha` today, which is exactly when
+            // it matters most — a surface that shows none of them as alpha is
+            // making a claim about readiness that nobody made.
+            'status' => is_string($connector['status'] ?? null)
+                ? $connector['status']
+                : null,
+
             // The API version this connector's package actually calls, stated
             // as a FACT rather than inferred from a URL.
             //

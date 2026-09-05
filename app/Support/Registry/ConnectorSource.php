@@ -263,6 +263,19 @@ class ConnectorSource
                 ? $connector['idempotencyNote']
                 : null,
 
+            // The API version this connector's package actually calls, stated
+            // as a FACT rather than inferred from a URL.
+            //
+            // We are not sent base URLs — a wire concern the package owns — so
+            // the version could previously only be guessed from an OAuth
+            // endpoint, and an OAuth endpoint may be versioned on its own
+            // schedule (Google's `/o/oauth2/v2/auth` is the version of Google's
+            // OAuth endpoint, not of Sheets). This is the anchor that makes the
+            // difference, and `null` means the provider pins no version.
+            'apiVersion' => is_string($connector['apiVersion'] ?? null)
+                ? $connector['apiVersion']
+                : null,
+
             // What a host needs to AUTHORISE this connector.
             //
             // The index once carried `scopes` and `pkce` without `authorizeUrl`

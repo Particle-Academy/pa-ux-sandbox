@@ -42,7 +42,14 @@ uses(TestCase::class);
  * Weaver hit this building the upstream rule — a blanket "all versions in a
  * manifest must agree" refused eight correct manifests. Theirs fires only when
  * the BASE URL pins a version, which is the anchor that establishes the API's
- * own version. We do not receive the base URL, so we cannot use that anchor.
+ * own version.
+ *
+ * We are not sent base URLs and should not be — a wire concern the package
+ * owns. So the index now carries the FACT instead: `apiVersion`, stated per
+ * connector (four pin one; nineteen are null). That is the anchor, and the
+ * comparison against it below is what catches the original hazard — a bump
+ * that moves the base URL and misses the OAuth URLs — without inferring an
+ * API's version from an endpoint that may be versioned on its own schedule.
  *
  * Verified against all sixteen oauth2 connectors: five carry a version on both
  * URLs and all five agree; the rest carry one or none, so nothing is compared.
@@ -55,17 +62,43 @@ uses(TestCase::class);
 it('never lets one connector name two API versions', function () {
     $entries = collect(app(ConnectorSource::class)->indexEntries());
 
+    // Split the PATH into segments rather than pattern-matching the whole
+    // URL. The old regex was narrow in three shapes, all silently:
+    //
+    //     /v1.2.3/    a three-part version
+    //     /V2/        uppercase
+    //     /v2?x=1     a version as the last segment before a query
+    //
+    // Weaver found the same three in theirs after I described mine, which is
+    // the second time this week two independent implementations of one agreed
+    // rule diverged in the same direction. Segment-splitting also makes the
+    // host question disappear — `v2.api.example.com` has no version SEGMENT —
+    // and `?` and `#` come free from parse_url.
     $version = static function (?string $url): ?string {
         if (! is_string($url) || $url === '') {
             return null;
         }
 
-        // Undotted forms count. Requiring `vNN.N` matched Meta and silently
-        // skipped linkedin-ads (`/oauth/v2/`) and notion (`/v1/`) — and would
-        // miss a provider that versions its API as `/v3/` entirely, which is
-        // the very bump this guards.
-        return preg_match('#/v(\d+(?:\.\d+)?)(?:/|$)#', $url, $m) === 1 ? $m[1] : null;
+        $path = parse_url($url, PHP_URL_PATH);
+
+        if (! is_string($path)) {
+            return null;
+        }
+
+        foreach (explode('/', $path) as $segment) {
+            // Anchored at both ends: `oauth.v2.access` is a method name that
+            // happens to contain a version, not a versioned path segment.
+            if (preg_match('/^v(\d+(?:\.\d+)*)$/i', $segment, $m) === 1) {
+                return $m[1];
+            }
+        }
+
+        return null;
     };
+
+    $declared = static fn (?string $v): ?string => is_string($v) && $v !== ''
+        ? ltrim($v, 'vV')
+        : null;
 
     $versioned = [];
     $disagree = [];
@@ -74,6 +107,7 @@ it('never lets one connector name two API versions', function () {
         $auth = $entry['auth'] ?? [];
         $a = $version($auth['authorizeUrl'] ?? null);
         $t = $version($auth['tokenUrl'] ?? null);
+        $api = $declared($entry['apiVersion'] ?? null);
 
         if ($a === null && $t === null) {
             continue; // unversioned endpoints — nothing to disagree about
@@ -83,6 +117,20 @@ it('never lets one connector name two API versions', function () {
 
         if ($a !== null && $t !== null && $a !== $t) {
             $disagree[] = "{$entry['service']}: authorize v{$a} vs token v{$t}";
+        }
+
+        // The anchored comparison, and the one that catches the ORIGINAL
+        // hazard: a bump that moves the base URL and misses the OAuth URLs.
+        // `apiVersion` states the API's own version, so this does not have to
+        // infer it from an endpoint that may be versioned separately — which
+        // is exactly the false positive that would otherwise arrive with the
+        // first provider pinning both.
+        if ($api !== null) {
+            foreach (['authorize' => $a, 'token' => $t] as $which => $found) {
+                if ($found !== null && $found !== $api) {
+                    $disagree[] = "{$entry['service']}: apiVersion v{$api} vs {$which} v{$found}";
+                }
+            }
         }
     }
 

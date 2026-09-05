@@ -91,6 +91,7 @@
       "idempotency": null,
       "idempotencyMaxLength": null,
       "idempotencyNote": null,
+      "apiVersion": null,
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -205,6 +206,7 @@
       "idempotency": null,
       "idempotencyMaxLength": null,
       "idempotencyNote": null,
+      "apiVersion": null,
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -293,6 +295,7 @@
       "idempotency": "body",
       "idempotencyMaxLength": 25,
       "idempotencyNote": "Discord accepts a string nonce of at most 25 characters. With enforce_nonce true it deduplicates messages from the same author only within the past few minutes, returning the original message; this is a short retry window, not a permanent uniqueness guarantee.",
+      "apiVersion": "v10",
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -410,6 +413,7 @@
       "idempotency": null,
       "idempotencyMaxLength": null,
       "idempotencyNote": null,
+      "apiVersion": "v25.0",
       "needsWebhookEndpoint": true,
       "operations": [
         {
@@ -537,6 +541,7 @@
       "idempotency": null,
       "idempotencyMaxLength": null,
       "idempotencyNote": null,
+      "apiVersion": "v25.0",
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -650,6 +655,7 @@
       "idempotency": null,
       "idempotencyMaxLength": null,
       "idempotencyNote": null,
+      "apiVersion": null,
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -780,6 +786,7 @@
       "idempotency": null,
       "idempotencyMaxLength": null,
       "idempotencyNote": null,
+      "apiVersion": null,
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -893,6 +900,7 @@
       "idempotency": null,
       "idempotencyMaxLength": null,
       "idempotencyNote": null,
+      "apiVersion": null,
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -1006,6 +1014,7 @@
       "idempotency": null,
       "idempotencyMaxLength": null,
       "idempotencyNote": null,
+      "apiVersion": null,
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -1119,6 +1128,7 @@
       "idempotency": null,
       "idempotencyMaxLength": null,
       "idempotencyNote": null,
+      "apiVersion": null,
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -1232,6 +1242,7 @@
       "idempotency": null,
       "idempotencyMaxLength": null,
       "idempotencyNote": null,
+      "apiVersion": null,
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -1345,6 +1356,7 @@
       "idempotency": null,
       "idempotencyMaxLength": null,
       "idempotencyNote": null,
+      "apiVersion": null,
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -1459,6 +1471,7 @@
       "idempotency": null,
       "idempotencyMaxLength": null,
       "idempotencyNote": null,
+      "apiVersion": null,
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -1574,6 +1587,7 @@
       "idempotency": null,
       "idempotencyMaxLength": null,
       "idempotencyNote": null,
+      "apiVersion": "v25.0",
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -1700,6 +1714,7 @@
       "idempotency": null,
       "idempotencyMaxLength": null,
       "idempotencyNote": null,
+      "apiVersion": null,
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -1787,6 +1802,7 @@
       "idempotency": null,
       "idempotencyMaxLength": null,
       "idempotencyNote": null,
+      "apiVersion": null,
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -1901,6 +1917,7 @@
       "idempotency": null,
       "idempotencyMaxLength": null,
       "idempotencyNote": null,
+      "apiVersion": null,
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -1988,6 +2005,7 @@
       "idempotency": "header",
       "idempotencyMaxLength": null,
       "idempotencyNote": "Resend honours this for 24 hours. It is what makes a retried durable run resend nothing instead of mailing the recipient twice -- the difference between `idempotent` and `unsafe-to-replay` is that this one is merely embarrassing, not financial, but the header costs nothing and removes it entirely.",
+      "apiVersion": null,
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -2102,6 +2120,7 @@
       "idempotency": null,
       "idempotencyMaxLength": null,
       "idempotencyNote": null,
+      "apiVersion": null,
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -2190,6 +2209,7 @@
       "idempotency": "body",
       "idempotencyMaxLength": null,
       "idempotencyNote": "Square takes the key in the BODY, not in a header, and lists it as REQUIRED. Every provider before this one that supported idempotency used a header, so the generator had exactly one place to put a key. The distinction is not cosmetic: it is the difference between a retried durable run charging once and charging twice.",
+      "apiVersion": null,
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -2286,6 +2306,7 @@
       "idempotency": "header",
       "idempotencyMaxLength": null,
       "idempotencyNote": "Retried durable runs MUST not create a second charge. This header is what makes `unsafe-to-replay` recoverable rather than merely forbidden.",
+      "apiVersion": null,
       "needsWebhookEndpoint": true,
       "operations": [
         {
@@ -2410,6 +2431,7 @@
       "idempotency": null,
       "idempotencyMaxLength": null,
       "idempotencyNote": null,
+      "apiVersion": null,
       "needsWebhookEndpoint": false,
       "operations": [
         {
@@ -2523,6 +2545,7 @@
       "idempotency": null,
       "idempotencyMaxLength": null,
       "idempotencyNote": null,
+      "apiVersion": null,
       "needsWebhookEndpoint": false,
       "operations": [
         {

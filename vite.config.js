@@ -124,11 +124,29 @@ export default defineConfig({
     },
     build: {
         // Keep peak build memory down so the production build isn't OOM-killed
-        // on the RAM-limited Forge box during "rendering chunks".
+        // on the RAM-limited Forge box.
         // `reportCompressedSize` gzip/brotli-compresses every emitted chunk just
         // to print sizes — for the ~13MB Babylon barrel that's a large transient
         // buffer we don't need. Sourcemaps roughly double the in-memory output.
-        // Pair with swap on the server (the durable fix); see deploy notes.
+        //
+        // MEASURED 2026-09-05, and it corrects what this comment used to claim.
+        // It said the kill happens "during rendering chunks", which is where the
+        // log stops but NOT what drives the memory:
+        //
+        //   default (oxc minify) ... 1,571 MB peak      client build
+        //   minify: 'esbuild' ...... 1,408 MB
+        //   minify: false .......... 1,479 MB   <- minification is NOT the cost
+        //   --max-old-space-size ... ~1,330 MB, and 768MB vs 384MB is identical
+        //   ssr build .............. 405 MB
+        //
+        // Minifying nothing at all saves ~90MB of 1,571, and capping V8's heap
+        // plateaus at ~1.3GB — so most of the peak is rolldown's NATIVE (Rust)
+        // memory holding the whole 6,890-module graph through the emit phase.
+        // It scales with how much is in the build, not with any one chunk.
+        //
+        // So chunking changes and minifier swaps are measured dead ends here.
+        // ~1.3GB is the floor; the box needs to be able to spare it. See
+        // ../../.ai/knowledge/sandbox-deploy-memory.md.
         reportCompressedSize: false,
         sourcemap: false,
         // No manual codeSplitting `groups`. They were COUNTERPRODUCTIVE: a

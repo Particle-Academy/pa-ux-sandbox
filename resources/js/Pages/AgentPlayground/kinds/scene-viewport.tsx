@@ -1,12 +1,23 @@
 import { useEffect, useRef } from "react";
-import {
-    Color3,
-    Mesh,
-    MeshBuilder,
-    StandardMaterial,
-    type AbstractMesh,
-    type Scene as BabylonScene,
-} from "@babylonjs/core";
+// GRANULAR, never the `@babylonjs/core` barrel — and the barrel is what this
+// file used to import.
+//
+// The cost is not what ships. Tree-shaking kept the emitted chunk small either
+// way, so the bundle looked fine and the vite config even said Babylon was
+// "already handled". The cost is what the BUILD has to hold: the barrel pulled
+// 3,063 modules and 19.2MB of source into the graph — 49% of every byte the
+// whole app transforms — and rolldown parses and retains all of it in order to
+// tree-shake it. That is paid at build time whatever the output looks like,
+// which is why it was invisible in the bundle report and fatal on the deploy
+// box.
+//
+// Six symbols. Import each from its own module and none of the rest arrives.
+import { Color3 } from "@babylonjs/core/Maths/math.color";
+import { Mesh } from "@babylonjs/core/Meshes/mesh";
+import { MeshBuilder } from "@babylonjs/core/Meshes/meshBuilder";
+import { StandardMaterial } from "@babylonjs/core/Materials/standardMaterial";
+import type { AbstractMesh } from "@babylonjs/core/Meshes/abstractMesh";
+import type { Scene as BabylonScene } from "@babylonjs/core/scene";
 import { Stage, useStage } from "@particle-academy/fancy-3d-babylon/react";
 import type { SceneObject, SceneState } from "@particle-academy/agent-integrations";
 

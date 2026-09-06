@@ -141,6 +141,12 @@ it('names only artisan commands that exist', function () {
     }
 
     expect($missing)->toBe([], implode("\n", [
+        // The denominator FIRST. "These 24 commands do not exist" reads as the
+        // app having lost its commands; "checked 24 named against 185
+        // registered" says the kernel did not boot. Same colour, opposite
+        // remedy — and the count says which without a second run.
+        sprintf('Checked %d named commands against %d registered.', count($named), count($registered)),
+        '',
         'These `php artisan` commands are NAMED in tracked files and do not exist:',
         '',
         ...$missing,

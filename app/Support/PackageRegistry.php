@@ -95,6 +95,19 @@ class PackageRegistry
      * @var array<string, array{name: string, repo: string, why: string}>
      */
     public const PLANNED = [
+        'fancy-flow-mcp-js' => [
+            'name' => 'fancy-flow-mcp-js',
+            'repo' => 'Particle-Academy/fancy-flow-mcp-js',
+            'why' => 'Node twin of fancy-flow-mcp -- the MCP server that lets an agent AUTHOR fancy-flow graphs headlessly. Today that surface is Composer-only, so a TypeScript host cannot offer it at all. Requested as fancy-flow#12 by the Genie team, whose primary use is precisely this: flows there are mostly agent-written rather than drawn, so a Node host with no way to author graphs headlessly has the editor and none of the point of it. Owner decision 2026-09-05: BUILD IT. NOT YET STARTED -- registered first per the rule, so it cannot become a decided-but-invisible package.
+
+WHY A TWIN RATHER THAN A SHARED SERVER: the MCP server has to run in the host`s own process to reach the host`s registry -- the kinds a host registered itself and the marketplace nodes it vendored in. A PHP server cannot see a Node registry, so this is the same shape as every other matched pair in the kit (holy-sheet/holy-sheet-js, fancy-mlm-php/fancy-mlm-js) and not a duplication that could be collapsed.
+
+SEED OFFERED: the Genie team built a graph-authoring MCP shape on the Node side already and offered to share it (fancy-flow#12). Take that before designing one -- it is a working consumer`s answer to the same problem.
+
+SCOPE: the authoring tools (create/list/inspect graph, add/remove node, connect, set config, validate) over @particle-academy/fancy-flow`s existing schema + registry. It should NOT re-implement validation -- importWorkflow already reports issues, and a second validator is the divergence fancy-conformance exists to catch.
+
+BEFORE IT CAN SHIP: the npm name does not exist yet, so the first publish needs the owner (npm cannot be claimed by OIDC). Run the ship-it preflight and hand over the numbered steps rather than improvising them.',
+        ],
         'fancy-expr' => [
             'name' => 'fancy-expr',
             'repo' => 'Particle-Academy/fancy-expr',

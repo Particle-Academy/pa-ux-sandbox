@@ -300,7 +300,7 @@ BEFORE IT CAN SHIP: three registry names that do not exist yet (npm scoped, Pack
         // FOUND BY SubmodulesAreRegisteredTest on its first run -- the third
         // package in three days to be published and listed nowhere.
         'fancy-flow-mcp' => ['group' => 'tooling', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#0ea5e9'],
-        'fancy-flow-mcp-js' => ['group' => 'tooling', 'ecosystem' => 'node', 'kind' => 'headless', 'accent' => '#0ea5e9'],
+        'fancy-flow-mcp-js' => ['group' => 'tooling', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#0ea5e9'],
         // Data grid. Published since 0.2.0 and registered nowhere until now --
         // see the row below for how a half-finished fix produced that.
         'fancy-grid' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#0ea5e9'],

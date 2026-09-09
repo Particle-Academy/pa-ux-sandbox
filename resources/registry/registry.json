@@ -3062,7 +3062,7 @@
             "name": "fancy-trading-ui",
             "type": "registry:ui",
             "title": "@particle-academy/fancy-trading-ui",
-            "description": "Trading surfaces -- order ticket, price ladder/DOM, book, depth, tape, blotter, positions, watchlist, alerts, and a session-aware chart on lightweight-charts. Controlled, agent-bridgeable, and built around a safety floor a prop cannot switch off.",
+            "description": "Trading surfaces -- order ticket, price ladder/DOM, book, depth, tape, blotter, positions, watchlist, alerts, and a session-aware candlestick / OHLC chart on lightweight-charts. Controlled, agent-bridgeable, and built around a safety floor a prop cannot switch off.",
             "package": "fancy-trading-ui",
             "dependencies": [],
             "registryDependencies": [],

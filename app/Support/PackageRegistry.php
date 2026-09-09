@@ -858,7 +858,7 @@ BEFORE IT CAN SHIP: three registry names that do not exist yet (npm scoped, Pack
             [
                 'slug' => 'fancy-trading-ui',
                 'name' => '@particle-academy/fancy-trading-ui',
-                'tagline' => 'Trading surfaces -- order ticket, price ladder/DOM, book, depth, tape, blotter, positions, watchlist, alerts, and a session-aware chart on lightweight-charts. Controlled, agent-bridgeable, and built around a safety floor a prop cannot switch off.',
+                'tagline' => 'Trading surfaces -- order ticket, price ladder/DOM, book, depth, tape, blotter, positions, watchlist, alerts, and a session-aware candlestick / OHLC chart on lightweight-charts. Controlled, agent-bridgeable, and built around a safety floor a prop cannot switch off.',
                 'npm' => '@particle-academy/fancy-trading-ui',
                 'repo' => 'Particle-Academy/fancy-trading-ui',
                 'language' => 'TypeScript',

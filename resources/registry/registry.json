@@ -1,6 +1,6 @@
 {
     "$schema": "https://ui.particle.academy/schema/registry-compiled.json",
-    "count": 298,
+    "count": 299,
     "items": [
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
@@ -2789,6 +2789,17 @@
             "title": "particle-academy/fancy-flow-mcp",
             "description": "A Laravel MCP server that lets an agent build fancy-flow workflows HEADLESSLY -- list node kinds, add and connect nodes, configure them, validate and export a WorkflowSchema, without a canvas. Wraps fancy-flow-php, so the graph an agent composes here is the same document <FlowEditor> opens and the same one the PHP, TypeScript and Python runtimes execute.",
             "package": "fancy-flow-mcp",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "fancy-flow-mcp-js",
+            "type": "registry:ui",
+            "title": "@particle-academy/fancy-flow-mcp-js",
+            "description": "The Node twin of fancy-flow-mcp -- an MCP server that lets an agent build fancy-flow workflows HEADLESSLY on a TypeScript host: list node kinds, add and connect nodes, configure them, validate and export a WorkflowSchema, without a canvas. Same 15 tools as the PHP twin, name for name, asserted by a test that reads them out of the PHP source rather than mirroring them.",
+            "package": "fancy-flow-mcp-js",
             "dependencies": [],
             "registryDependencies": [],
             "files": []

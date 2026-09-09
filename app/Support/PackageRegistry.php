@@ -100,19 +100,6 @@ class PackageRegistry
      * @var array<string, array{name: string, repo: string, why: string}>
      */
     public const PLANNED = [
-        'fancy-flow-mcp-js' => [
-            'name' => 'fancy-flow-mcp-js',
-            'repo' => 'Particle-Academy/fancy-flow-mcp-js',
-            'why' => 'Node twin of fancy-flow-mcp -- the MCP server that lets an agent AUTHOR fancy-flow graphs headlessly. Today that surface is Composer-only, so a TypeScript host cannot offer it at all. Requested as fancy-flow#12 by the Genie team, whose primary use is precisely this: flows there are mostly agent-written rather than drawn, so a Node host with no way to author graphs headlessly has the editor and none of the point of it. Owner decision 2026-09-05: BUILD IT. BUILT 2026-09-07 and pushed to Particle-Academy/fancy-flow-mcp-js on 2026-09-09: 15 MCP tools matching the PHP twin name for name, 31 tests, tsc clean, and the built stdio binary verified over a real MCP handshake. Still PLANNED rather than META because it is UNPUBLISHED -- the npm name does not exist, and PLANNED vs shipped is about what a consumer can install, not about what has been written.
-
-WHY A TWIN RATHER THAN A SHARED SERVER: the MCP server has to run in the host`s own process to reach the host`s registry -- the kinds a host registered itself and the marketplace nodes it vendored in. A PHP server cannot see a Node registry, so this is the same shape as every other matched pair in the kit (holy-sheet/holy-sheet-js, fancy-mlm-php/fancy-mlm-js) and not a duplication that could be collapsed.
-
-SEED OFFERED: the Genie team built a graph-authoring MCP shape on the Node side already and offered to share it (fancy-flow#12). Take that before designing one -- it is a working consumer`s answer to the same problem.
-
-SCOPE: the authoring tools (create/list/inspect graph, add/remove node, connect, set config, validate) over @particle-academy/fancy-flow`s existing schema + registry. It should NOT re-implement validation -- importWorkflow already reports issues, and a second validator is the divergence fancy-conformance exists to catch.
-
-BEFORE IT CAN SHIP, and this is the ONLY thing left: the npm name does not exist, so the first publish needs the owner -- npm cannot claim a name by OIDC. The GitHub repo, the submodule and the project.json entry are DONE (those are the agent`s job per publishing.md, not the owner`s -- an earlier run wrongly held them back and left the package sitting on a single disk through a crash). Run the ship-it preflight and hand over the numbered steps rather than improvising them.',
-        ],
         'fancy-expr' => [
             'name' => 'fancy-expr',
             'repo' => 'Particle-Academy/fancy-expr',
@@ -313,6 +300,7 @@ BEFORE IT CAN SHIP: three registry names that do not exist yet (npm scoped, Pack
         // FOUND BY SubmodulesAreRegisteredTest on its first run -- the third
         // package in three days to be published and listed nowhere.
         'fancy-flow-mcp' => ['group' => 'tooling', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#0ea5e9'],
+        'fancy-flow-mcp-js' => ['group' => 'tooling', 'ecosystem' => 'node', 'kind' => 'headless', 'accent' => '#0ea5e9'],
         // Data grid. Published since 0.2.0 and registered nowhere until now --
         // see the row below for how a half-finished fix produced that.
         'fancy-grid' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#0ea5e9'],
@@ -924,6 +912,15 @@ BEFORE IT CAN SHIP: three registry names that do not exist yet (npm scoped, Pack
                 'packagist' => 'particle-academy/fancy-flow-mcp',
                 'language' => 'PHP',
                 'pairs' => ['fancy-flow'],
+            ],
+            [
+                'slug' => 'fancy-flow-mcp-js',
+                'name' => '@particle-academy/fancy-flow-mcp-js',
+                'tagline' => 'The Node twin of fancy-flow-mcp -- an MCP server that lets an agent build fancy-flow workflows HEADLESSLY on a TypeScript host: list node kinds, add and connect nodes, configure them, validate and export a WorkflowSchema, without a canvas. Same 15 tools as the PHP twin, name for name, asserted by a test that reads them out of the PHP source rather than mirroring them.',
+                'npm' => '@particle-academy/fancy-flow-mcp-js',
+                'repo' => 'Particle-Academy/fancy-flow-mcp-js',
+                'language' => 'TypeScript',
+                'pairs' => ['fancy-flow', 'fancy-flow-mcp'],
             ],
             // PUBLISHED SINCE 0.2.0 AND LISTED NOWHERE, and the reason is worth
             // keeping because it was not forgetfulness.

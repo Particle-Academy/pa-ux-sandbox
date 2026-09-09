@@ -24,22 +24,27 @@ class PackageRegistry
      * someone to `composer require` something that 404s.
      */
     public const HIDDEN = [
-        // BUILT AND TAGGED (v0.1.0, 2026-08-27) BUT NOT ON npm.
+        // EMPTY, and the last removal is the lesson worth keeping.
         //
-        // It was un-hidden and deployed on the strength of the tag, and that
-        // was wrong: the tag is not the release. `publish.yml` refused it
-        // because **OIDC can publish to an existing name but cannot create
-        // one** -- npm has no pending-publisher equivalent -- so for a few
-        // minutes the live site offered `npm install
-        // @particle-academy/fancy-trading-ui` for a name that 404s. Exactly the
-        // invitation this list exists to prevent, made by the person who wrote
-        // that down.
+        // `fancy-trading-ui` sat here from 2026-08-27. It was hidden for a
+        // GOOD reason -- it had been un-hidden once on the strength of a tag,
+        // and the live site briefly offered `npm install
+        // @particle-academy/fancy-trading-ui` for a name that 404s.
         //
-        // Remove this slug ONLY after `npm view @particle-academy/fancy-trading-ui
-        // version` returns something, then re-run `php artisan registry:build`.
-        // The one-time owner bootstrap is in `.ai/knowledge/publishing.md`,
-        // 'Bootstrapping a brand-new package'.
-        'fancy-trading-ui',
+        // The comment then said: remove this slug ONLY after `npm view` returns
+        // a version. **It returned 0.1.0, and nobody re-checked for weeks.** So
+        // a PUBLISHED, installable package stayed invisible to /packages, the
+        // MCP and `npx fancy-cli add` -- a correct guard whose subject had
+        // moved out from under it.
+        //
+        // It cost a real consumer a planning cycle: they searched the registry
+        // for "candlestick" and "chart", found nothing that could draw one, and
+        // concluded TWICE IN WRITING that Fancy had no trading chart surface.
+        // They only learned otherwise when their owner named the package.
+        //
+        // **If you add a slug here, the condition for removing it is a fact
+        // about a registry, and nothing re-checks facts. `HiddenPackagesAreNotPublishedTest`
+        // now does.**
 
         // The mechanism, and why it is kept even when empty: it is how a
         // built-but-unreleased
@@ -845,7 +850,7 @@ BEFORE IT CAN SHIP: three registry names that do not exist yet (npm scoped, Pack
             [
                 'slug' => 'fancy-trading-js',
                 'name' => '@particle-academy/fancy-trading',
-                'tagline' => 'Plumbing for stock / futures / crypto / event trading apps -- market data, order and position models, and chart surfaces. Deliberately unopinionated about how you build a strategy.',
+                'tagline' => 'HEADLESS plumbing for stock / futures / crypto / event trading apps -- market data, order and position models, decimal-safe maths. No UI: the chart, order ticket and depth surfaces are `fancy-trading-ui`. Deliberately unopinionated about how you build a strategy.',
                 'npm' => '@particle-academy/fancy-trading',
                 'repo' => 'Particle-Academy/fancy-trading-js',
                 'language' => 'TypeScript',

@@ -23,6 +23,7 @@ use App\Http\Controllers\DarkSlideExportController;
 use App\Http\Controllers\DevLoginController;
 use App\Http\Controllers\EasterEggController;
 use App\Http\Controllers\HolySheetExportController;
+use App\Http\Controllers\LastWordExportController;
 use App\Http\Controllers\LearnController;
 use App\Http\Controllers\OgImageController;
 use App\Http\Controllers\ProductController;
@@ -145,6 +146,16 @@ Route::post('/holy-sheet/export', HolySheetExportController::class)
 Route::post('/dark-slide/export', DarkSlideExportController::class)
     ->withoutMiddleware([PreventRequestForgery::class])
     ->name('dark-slide.export');
+
+// docx export endpoint. The third of three, and the one that was missing:
+// last-word was listed in the registry, in a package family and in a use case
+// while being wired to no surface at all, so every route into it dead-ended.
+//
+// Calls `LastWord\Agent` directly rather than a facade, because unlike its two
+// siblings last-word ships no Laravel integration. See the controller.
+Route::post('/last-word/export', LastWordExportController::class)
+    ->withoutMiddleware([PreventRequestForgery::class])
+    ->name('last-word.export');
 
 // GitHub issues webhook → bug-hunter-xp. HMAC-verified in the controller;
 // CSRF-exempt (see bootstrap/app.php). No auth — GitHub posts server-to-server.

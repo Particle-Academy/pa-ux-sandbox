@@ -15,25 +15,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/amazon-ses-ui",
-          "version": "0.3.1",
+          "version": "0.3.3",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/amazon-ses-js",
-          "version": "0.3.1",
+          "version": "0.3.3",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/amazon-ses-php",
-          "version": "0.3.1",
+          "version": "0.3.3",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-amazon-ses",
-          "version": "0.3.1",
+          "version": "0.3.3",
           "registry": "pypi",
           "installFirst": false
         }
@@ -119,25 +119,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/buffer-ui",
-          "version": "0.1.0",
+          "version": "0.1.2",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/buffer-js",
-          "version": "0.1.0",
+          "version": "0.1.2",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/buffer-php",
-          "version": "0.1.0",
+          "version": "0.1.2",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-buffer",
-          "version": "0.1.0",
+          "version": "0.1.2",
           "registry": "pypi",
           "installFirst": false
         }
@@ -234,25 +234,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/discord-ui",
-          "version": "0.1.0",
+          "version": "0.1.2",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/discord-js",
-          "version": "0.1.0",
+          "version": "0.1.2",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/discord-php",
-          "version": "0.1.0",
+          "version": "0.1.2",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-discord",
-          "version": "0.1.0",
+          "version": "0.1.2",
           "registry": "pypi",
           "installFirst": false
         }
@@ -323,25 +323,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/facebook-lead-ads-ui",
-          "version": "0.1.0",
+          "version": "0.1.2",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/facebook-lead-ads-js",
-          "version": "0.1.0",
+          "version": "0.1.2",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/facebook-lead-ads-php",
-          "version": "0.1.0",
+          "version": "0.1.2",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-facebook-lead-ads",
-          "version": "0.1.0",
+          "version": "0.1.2",
           "registry": "pypi",
           "installFirst": false
         }
@@ -453,25 +453,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/facebook-pages-ui",
-          "version": "0.4.0",
+          "version": "0.4.2",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/facebook-pages-js",
-          "version": "0.4.0",
+          "version": "0.4.2",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/facebook-pages-php",
-          "version": "0.4.0",
+          "version": "0.4.2",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-facebook-pages",
-          "version": "0.4.0",
+          "version": "0.4.2",
           "registry": "pypi",
           "installFirst": false
         }
@@ -569,25 +569,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/gmail-ui",
-          "version": "0.3.1",
+          "version": "0.3.3",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/gmail-js",
-          "version": "0.3.1",
+          "version": "0.3.3",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/gmail-php",
-          "version": "0.3.1",
+          "version": "0.3.3",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-gmail",
-          "version": "0.3.1",
+          "version": "0.3.3",
           "registry": "pypi",
           "installFirst": false
         }
@@ -683,25 +683,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/google-ads-ui",
-          "version": "0.1.0",
+          "version": "0.1.2",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/google-ads-js",
-          "version": "0.1.0",
+          "version": "0.1.2",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/google-ads-php",
-          "version": "0.1.0",
+          "version": "0.1.2",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-google-ads",
-          "version": "0.1.0",
+          "version": "0.1.2",
           "registry": "pypi",
           "installFirst": false
         }
@@ -814,25 +814,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/google-analytics-ui",
-          "version": "0.3.1",
+          "version": "0.3.3",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/google-analytics-js",
-          "version": "0.3.1",
+          "version": "0.3.3",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/google-analytics-php",
-          "version": "0.3.1",
+          "version": "0.3.3",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-google-analytics",
-          "version": "0.3.1",
+          "version": "0.3.3",
           "registry": "pypi",
           "installFirst": false
         }
@@ -928,25 +928,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/google-docs-ui",
-          "version": "0.3.1",
+          "version": "0.3.3",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/google-docs-js",
-          "version": "0.3.1",
+          "version": "0.3.3",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/google-docs-php",
-          "version": "0.3.1",
+          "version": "0.3.3",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-google-docs",
-          "version": "0.3.1",
+          "version": "0.3.3",
           "registry": "pypi",
           "installFirst": false
         }
@@ -1042,25 +1042,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/google-drive-ui",
-          "version": "0.3.1",
+          "version": "0.3.3",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/google-drive-js",
-          "version": "0.3.1",
+          "version": "0.3.3",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/google-drive-php",
-          "version": "0.3.1",
+          "version": "0.3.3",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-google-drive",
-          "version": "0.3.1",
+          "version": "0.3.3",
           "registry": "pypi",
           "installFirst": false
         }
@@ -1156,25 +1156,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/google-sheets-ui",
-          "version": "0.3.1",
+          "version": "0.3.3",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/google-sheets-js",
-          "version": "0.3.1",
+          "version": "0.3.3",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/google-sheets-php",
-          "version": "0.3.1",
+          "version": "0.3.3",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-google-sheets",
-          "version": "0.3.1",
+          "version": "0.3.3",
           "registry": "pypi",
           "installFirst": false
         }
@@ -1270,25 +1270,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/google-slides-ui",
-          "version": "0.3.1",
+          "version": "0.3.3",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/google-slides-js",
-          "version": "0.3.1",
+          "version": "0.3.3",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/google-slides-php",
-          "version": "0.3.1",
+          "version": "0.3.3",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-google-slides",
-          "version": "0.3.1",
+          "version": "0.3.3",
           "registry": "pypi",
           "installFirst": false
         }
@@ -1384,25 +1384,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/hubspot-ui",
-          "version": "0.3.1",
+          "version": "0.3.3",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/hubspot-js",
-          "version": "0.3.1",
+          "version": "0.3.3",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/hubspot-php",
-          "version": "0.3.1",
+          "version": "0.3.3",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-hubspot",
-          "version": "0.3.1",
+          "version": "0.3.3",
           "registry": "pypi",
           "installFirst": false
         }
@@ -1499,25 +1499,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/instagram-business-ui",
-          "version": "0.1.0",
+          "version": "0.1.2",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/instagram-business-js",
-          "version": "0.1.0",
+          "version": "0.1.2",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/instagram-business-php",
-          "version": "0.1.0",
+          "version": "0.1.2",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-instagram-business",
-          "version": "0.1.0",
+          "version": "0.1.2",
           "registry": "pypi",
           "installFirst": false
         }
@@ -1627,25 +1627,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/linkedin-ads-ui",
-          "version": "0.1.0",
+          "version": "0.1.2",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/linkedin-ads-js",
-          "version": "0.1.0",
+          "version": "0.1.2",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/linkedin-ads-php",
-          "version": "0.1.0",
+          "version": "0.1.2",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-linkedin-ads",
-          "version": "0.1.0",
+          "version": "0.1.2",
           "registry": "pypi",
           "installFirst": false
         }
@@ -1742,25 +1742,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/monday-ui",
-          "version": "0.3.1",
+          "version": "0.3.3",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/monday-js",
-          "version": "0.3.1",
+          "version": "0.3.3",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/monday-php",
-          "version": "0.3.1",
+          "version": "0.3.3",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-monday",
-          "version": "0.3.1",
+          "version": "0.3.3",
           "registry": "pypi",
           "installFirst": false
         }
@@ -1830,25 +1830,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/notion-ui",
-          "version": "0.1.0",
+          "version": "0.1.2",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/notion-js",
-          "version": "0.1.0",
+          "version": "0.1.2",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/notion-php",
-          "version": "0.1.0",
+          "version": "0.1.2",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-notion",
-          "version": "0.1.0",
+          "version": "0.1.2",
           "registry": "pypi",
           "installFirst": false
         }
@@ -1945,25 +1945,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/resend-ui",
-          "version": "0.3.1",
+          "version": "0.3.3",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/resend-js",
-          "version": "0.3.1",
+          "version": "0.3.3",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/resend-php",
-          "version": "0.3.1",
+          "version": "0.3.3",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-resend",
-          "version": "0.3.1",
+          "version": "0.3.3",
           "registry": "pypi",
           "installFirst": false
         }
@@ -2033,25 +2033,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/slack-ui",
-          "version": "0.1.0",
+          "version": "0.1.2",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/slack-js",
-          "version": "0.1.0",
+          "version": "0.1.2",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/slack-php",
-          "version": "0.1.0",
+          "version": "0.1.2",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-slack",
-          "version": "0.1.0",
+          "version": "0.1.2",
           "registry": "pypi",
           "installFirst": false
         }
@@ -2148,25 +2148,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/square-ui",
-          "version": "0.3.1",
+          "version": "0.3.3",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/square-js",
-          "version": "0.3.1",
+          "version": "0.3.3",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/square-php",
-          "version": "0.3.1",
+          "version": "0.3.3",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-square",
-          "version": "0.3.1",
+          "version": "0.3.3",
           "registry": "pypi",
           "installFirst": false
         }
@@ -2237,25 +2237,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/stripe-ui",
-          "version": "0.3.1",
+          "version": "0.3.3",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/stripe-js",
-          "version": "0.3.1",
+          "version": "0.3.3",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/stripe-php",
-          "version": "0.3.1",
+          "version": "0.3.3",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-stripe",
-          "version": "0.3.1",
+          "version": "0.3.3",
           "registry": "pypi",
           "installFirst": false
         }
@@ -2370,25 +2370,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/telegram-ui",
-          "version": "0.3.1",
+          "version": "0.3.3",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/telegram-js",
-          "version": "0.3.1",
+          "version": "0.3.3",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/telegram-php",
-          "version": "0.3.1",
+          "version": "0.3.3",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-telegram",
-          "version": "0.3.1",
+          "version": "0.3.3",
           "registry": "pypi",
           "installFirst": false
         }
@@ -2459,25 +2459,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/youtube-ui",
-          "version": "0.2.1",
+          "version": "0.2.3",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/youtube-js",
-          "version": "0.2.1",
+          "version": "0.2.3",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/youtube-php",
-          "version": "0.2.1",
+          "version": "0.2.3",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-youtube",
-          "version": "0.2.1",
+          "version": "0.2.3",
           "registry": "pypi",
           "installFirst": false
         }

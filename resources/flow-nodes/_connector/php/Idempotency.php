@@ -149,6 +149,11 @@ final class Idempotency
      * @param  int|null  $occurrence  distinguishes repeated executions of one step at the
      *                                same level
      * @param  array<string,mixed>  $seededInputs  the legacy `__runKey` fallback
+     * @param  int|null  $maxLength  the PROVIDER'S own limit, when it declares one
+     *                               (`idempotencyMaxLength` in the connector index). Null uses the
+     *                               catalogue ceiling. The smaller of the two always applies — a key
+     *                               fitted to 255 that the provider refuses at 25 fails the run at
+     *                               the node, with nothing the host can do about it.
      *
      * @throws ConnectorIdempotencyExpiredException when this is a RETRY and the provider's
      *                                              window has elapsed. Not a defensive check — it is the only correct answer,
@@ -163,13 +168,14 @@ final class Idempotency
         string $service = '',
         string $operation = '',
         array $seededInputs = [],
+        ?int $maxLength = null,
     ): ?string {
         $identity = self::identity($source);
 
         if ($identity === null) {
             $runKey = self::runKey($source, $seededInputs);
 
-            return $runKey === null ? null : self::fit($runKey.':'.$stepId);
+            return $runKey === null ? null : self::fit($runKey.':'.$stepId, $maxLength);
         }
 
         if (! $identity->isReplaySafe($windowSeconds, $now ?? new DateTimeImmutable)) {
@@ -188,7 +194,7 @@ final class Idempotency
             );
         }
 
-        return self::fit($identity->stepKey($stepId, $occurrence));
+        return self::fit($identity->stepKey($stepId, $occurrence), $maxLength);
     }
 
     /**
@@ -198,14 +204,47 @@ final class Idempotency
      * plain FNV-1a over the key rather than anything host-provided. The prefix is
      * kept so a key remains greppable against a run.
      */
-    private static function fit(string $key): string
+    /**
+     * Shorten an over-long key deterministically, to the PROVIDER'S limit.
+     *
+     * `MAX_KEY_LENGTH` is the catalogue CEILING — the widest any provider
+     * accepts — and for years it was the only bound applied. A provider
+     * declares its own limit (the connector index carries it as
+     * `idempotencyMaxLength`, and Discord's `discord_message` declares 25), so
+     * an engine-derived key like `lane_<16 hex>:subject` came back at 29
+     * characters and the connector's own validation refused it. The key was not
+     * malformed and the validation was not wrong; this package simply never
+     * asked how long the key was allowed to be.
+     *
+     * The smaller of the two always wins. A descriptor claiming more than the
+     * ceiling is a descriptor to distrust rather than obey.
+     *
+     * The digest keeps the key STABLE ACROSS ATTEMPTS, which is the entire point
+     * of an idempotency key — a shortened key that varied per attempt would
+     * defeat the dedupe it exists to provide, and the retry would write twice.
+     */
+    private static function fit(string $key, ?int $maxLength = null): string
     {
-        if (strlen($key) <= self::MAX_KEY_LENGTH) {
+        $limit = $maxLength === null
+            ? self::MAX_KEY_LENGTH
+            : max(1, min($maxLength, self::MAX_KEY_LENGTH));
+
+        if (strlen($key) <= $limit) {
             return $key;
         }
 
         $digest = self::fnv1a($key);
-        $head = substr($key, 0, self::MAX_KEY_LENGTH - strlen($digest) - 1);
+
+        // A limit too small to carry `<head>~<digest>` gets the digest alone,
+        // truncated. It loses the greppable prefix, which is a real cost — but
+        // the alternative is a negative substring length, and a key that is
+        // merely hard to trace still dedupes, while one that throws stops the
+        // run at a node the host cannot fix.
+        if ($limit <= strlen($digest) + 1) {
+            return substr($digest, 0, $limit);
+        }
+
+        $head = substr($key, 0, $limit - strlen($digest) - 1);
 
         return $head.'~'.$digest;
     }

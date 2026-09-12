@@ -123,6 +123,17 @@ export type IdempotencyOptions = {
   now?: Date;
   /** For the error message when a key cannot be made safe. */
   context?: Partial<ConnectorErrorContext>;
+  /**
+   * The PROVIDER'S own limit, when it declares one — `idempotencyMaxLength` in
+   * the connector index. Omitted uses {@link MAX_IDEMPOTENCY_KEY_LENGTH}, which
+   * is the catalogue CEILING rather than any one provider's limit.
+   *
+   * Discord's `discord_message` declares 25, and for years only the ceiling was
+   * applied — so a legitimate engine-derived key came back at 29 characters and
+   * the connector's own validation refused it, failing the run at a node the
+   * host had no way to fix.
+   */
+  maxLength?: number | null;
 };
 
 /**
@@ -148,7 +159,7 @@ export function idempotencyKeyFor(
     // The legacy seeded-key path. No attempt information exists, so there is
     // nothing to window-check; a host on this path is one that does not retry.
     const runKey = runKeyFrom(ctx);
-    return runKey === null ? null : fit(`${runKey}:${nodeId}`);
+    return runKey === null ? null : fit(`${runKey}:${nodeId}`, options.maxLength);
   }
 
   if (!identity.isReplaySafe(windowSeconds, options.now ?? new Date())) {
@@ -165,7 +176,7 @@ export function idempotencyKeyFor(
     );
   }
 
-  return fit(identity.stepKey(nodeId, options.occurrence));
+  return fit(identity.stepKey(nodeId, options.occurrence), options.maxLength);
 }
 
 /**
@@ -187,11 +198,24 @@ export const NO_IDEMPOTENCY_KEY_WARNING =
  * plain FNV-1a over the key rather than anything host-provided. The prefix is
  * kept so a key remains greppable against a run.
  */
-function fit(key: string): string {
-  if (key.length <= MAX_IDEMPOTENCY_KEY_LENGTH) return key;
+function fit(key: string, maxLength?: number | null): string {
+  // The SMALLER of the provider's limit and the catalogue ceiling. A descriptor
+  // claiming more than any provider accepts is one to distrust, not obey.
+  const limit =
+    maxLength === undefined || maxLength === null
+      ? MAX_IDEMPOTENCY_KEY_LENGTH
+      : Math.max(1, Math.min(maxLength, MAX_IDEMPOTENCY_KEY_LENGTH));
+
+  if (key.length <= limit) return key;
 
   const digest = fnv1a(key);
-  const head = key.slice(0, MAX_IDEMPOTENCY_KEY_LENGTH - digest.length - 1);
+
+  // A limit too small to carry `<head>~<digest>` gets the digest alone. That
+  // loses the greppable prefix, which is a real cost — but a key that is hard
+  // to trace still dedupes, while a negative slice length produces nonsense.
+  if (limit <= digest.length + 1) return digest.slice(0, limit);
+
+  const head = key.slice(0, limit - digest.length - 1);
 
   return `${head}~${digest}`;
 }

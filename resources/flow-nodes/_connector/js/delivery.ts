@@ -116,18 +116,35 @@ export type Classified = {
  * and differs between Node, Bun, Deno and an edge runtime.
  */
 const UNREACHABLE_CODES = new Set([
+  // Every code here must PROVE the request never reached an application:
+  // nothing listening, no route, or a name that never resolved. If a code can
+  // also occur after the peer received and acted on the request, it belongs in
+  // AMBIGUOUS_CODES -- `shouldRetry` retries `unreachable` without consulting
+  // `idempotent`, so a wrong entry here is a duplicate send, not a slow one.
   "ECONNREFUSED",
   "ENOTFOUND",
   "EAI_AGAIN",
   "EHOSTUNREACH",
   "ENETUNREACH",
-  "ECONNRESET",
-  "EPIPE",
   "ERR_SOCKET_CONNECTION_TIMEOUT",
 ]);
 
 /** Codes and names that mean *we stopped waiting*, which is not the same as *it did not happen*. */
 const AMBIGUOUS_CODES = new Set([
+  // A peer sends RST whenever it tears the connection down -- INCLUDING after
+  // it has received and acted on the request but before the response comes
+  // back. EPIPE is the same story from our side: we wrote to a socket the peer
+  // had already closed, and whether an earlier complete request was processed
+  // first is not knowable from here. Node surfaces the safe case and the unsafe
+  // case as the same code, so the code cannot carry the claim.
+  //
+  // These two sat in UNREACHABLE_CODES until 0.3.0, which made them
+  // unconditionally retryable and produced three sends of connectors that had
+  // declared `idempotent: false`. Same defect as the 5xx / thrown-transport
+  // split this module already fixed once, and a stated exception to a rule that
+  // should have covered them.
+  "ECONNRESET",
+  "EPIPE",
   "ETIMEDOUT",
   "UND_ERR_HEADERS_TIMEOUT",
   "UND_ERR_BODY_TIMEOUT",

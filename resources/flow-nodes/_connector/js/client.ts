@@ -140,7 +140,12 @@ export type CallOptions = {
    */
   credentials?: ConnectionCredentials;
   /** Which estate to use. Resolved from the connection host when omitted. */
-  mode?: ConnectorMode;
+  // `RequestedMode`, not `ConnectorMode`: this value is passed straight to
+  // `resolveConnection`, which takes the wider type, and `resolveConnectorMode`
+  // handles `"auto"` explicitly. Typed narrowly, the most common value a caller
+  // has -- `"auto"` is the defaultConfig of every connector node -- was the one
+  // it could not pass, while working perfectly at runtime.
+  mode?: RequestedMode;
   /** Connection id, for the registered-host path. */
   connectionId?: string | null;
   /**

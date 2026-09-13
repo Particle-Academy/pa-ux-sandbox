@@ -98,7 +98,37 @@ it('keeps a hidden package out of the compiled registry a consumer installs from
     // `npx fancy-cli add` and the MCP both read registry.json, and both are an
     // invitation to install. A hidden slug reaching either is a 404 with our
     // name on it.
-    foreach (PackageRegistry::HIDDEN as $slug) {
-        expect(PackageRegistry::find($slug))->toBeNull("hidden '{$slug}' is still findable");
+    //
+    // This used to be only the loop at the bottom. HIDDEN is empty, so it
+    // asserted nothing and passed; PHPUnit reported it risky on every run. The
+    // two halves below hold whatever HIDDEN contains.
+
+    // 1. The filter drops a hidden slug. A real slug, hidden for this test.
+    $rows = PackageRegistry::everything();
+    $slug = $rows[0]['slug'];
+    $kept = array_column(PackageRegistry::withoutHidden($rows, [$slug]), 'slug');
+
+    expect($kept)->not->toContain($slug);
+    expect(count($kept))->toBe(count($rows) - 1);
+
+    // 2. The compiled registry is built from the FILTERED lists. With HIDDEN
+    // empty the filtered and unfiltered lists are identical, so no behavioural
+    // check can tell whether the build reads the right one; the source can.
+    // `registry:build` compiles `RegistrySource::scanLive()`.
+    $source = (string) file_get_contents(dirname(__DIR__, 3).'/app/Support/Registry/RegistrySource.php');
+    $scanLive = substr($source, (int) strpos($source, 'public function scanLive'));
+    $scanLive = substr($scanLive, 0, (int) strpos($scanLive, 'return $this->ensureUniqueNames'));
+
+    expect($scanLive)->toContain('PackageRegistry::all()');
+    expect($scanLive)->toContain('PackageRegistry::companions()');
+    expect($scanLive)->not->toContain('everything()');
+    expect($scanLive)->not->toContain('definitionFor(');
+
+    $registry = (string) file_get_contents(dirname(__DIR__, 3).'/app/Support/PackageRegistry.php');
+    expect($registry)->toContain('return self::visible(self::allRows());');
+    expect($registry)->toContain('return self::visible(self::companionRows());');
+
+    foreach (PackageRegistry::HIDDEN as $hidden) {
+        expect(PackageRegistry::find($hidden))->toBeNull("hidden '{$hidden}' is still findable");
     }
 });

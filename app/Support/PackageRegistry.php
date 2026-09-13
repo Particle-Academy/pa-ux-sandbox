@@ -424,9 +424,26 @@ BEFORE IT CAN SHIP: three registry names that do not exist yet (npm scoped, Pack
      */
     private static function visible(array $packages): array
     {
+        return self::withoutHidden($packages, self::HIDDEN);
+    }
+
+    /**
+     * Drop the given hidden slugs from a list — the filter {@see visible()} applies.
+     *
+     * Public so the filter can be exercised with a slug hidden FOR THE TEST.
+     * `HIDDEN` is usually empty, and a test that only loops over it asserts
+     * nothing and passes, which is what `PackageStatusTest` did until PHPUnit
+     * flagged it risky.
+     *
+     * @param  array<int, array<string, mixed>>  $packages
+     * @param  list<string>  $hidden
+     * @return array<int, array<string, mixed>>
+     */
+    public static function withoutHidden(array $packages, array $hidden): array
+    {
         return array_values(array_filter(
             $packages,
-            static fn (array $p): bool => ! in_array($p['slug'] ?? null, self::HIDDEN, true),
+            static fn (array $p): bool => ! in_array($p['slug'] ?? null, $hidden, true),
         ));
     }
 

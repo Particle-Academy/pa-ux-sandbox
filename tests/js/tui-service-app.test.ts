@@ -30,14 +30,19 @@ describe("docs app — the component list is exactly the showcase", () => {
 });
 
 describe("docs app — selecting a component shows its source", () => {
-    it("renders the selected example's name, a LIVE view, and its SOURCE", () => {
-        for (const example of SHOWCASE_EXAMPLES) {
+    // One test per example rather than one loop over all of them. The loop
+    // rendered every example inside a single 5s test budget, and on the CI
+    // runner it ran out of time (2026-09-13): a slow machine, not a broken
+    // render, failing the build and naming no example.
+    it.each(SHOWCASE_EXAMPLES.map((example) => [example.slug, example] as const))(
+        "renders %s: its name, a LIVE view, and its SOURCE",
+        (_slug, example) => {
             const frame = strip(renderAppFrame(140, 50, { initialSlug: example.slug }));
             expect(frame, `${example.slug} name`).toContain(example.name);
             expect(frame, `${example.slug} LIVE label`).toContain("LIVE");
             expect(frame, `${example.slug} SOURCE label`).toContain("SOURCE");
-        }
-    });
+        },
+    );
 
     it("puts a distinctive line of the source on screen", () => {
         // `id="branch"` is unique to the Input example's source snippet.

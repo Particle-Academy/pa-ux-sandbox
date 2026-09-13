@@ -48,6 +48,24 @@ class PackageContext
             'how' => '<code>composer require particle-academy/prism-mcp</code>. Note the direction: this CONSUMES remote MCP servers from a Prism app. To expose a fancy-flow graph as an MCP server, that is <a href="/packages/fancy-flow-mcp">fancy-flow-mcp</a> instead.',
         ],
 
+        'prism-workspace' => [
+            'why' => 'An agent that can write is an agent that can write anywhere, unless something says otherwise. The interesting failure is not a malicious one — it is an agent following a perfectly reasonable instruction into a path nobody meant it to reach, and a boundary that was assumed rather than enforced offering no resistance at all.',
+            'what' => 'Sandboxed, session-scoped agent workspaces for Laravel: a scoped Storage disk behind a path guard. It ships with the <strong>adversarial corpus that proves the boundary holds</strong> — which is the part worth reading, because a guard nobody attacked is a guard nobody has tested.',
+            'how' => '<code>composer require particle-academy/prism-workspace</code>. Scoped per session, so a workspace ends when the session does rather than accumulating.',
+        ],
+
+        'prism-memory' => [
+            'why' => 'A bounded context window needs somewhere for what leaves it to go. Truncating without storing is the configuration the harness itself calls the worst available — the window is cheap and the agent is blind to its own earlier work, which reads to a user as an agent that forgets things it plainly said.',
+            'what' => 'Persistent context and semantic recall for Laravel: vector storage, remember / recall, and <strong>token-budget-aware</strong> retrieval on top of <a href="/packages/prism">Prism</a>. Budget-aware is the load-bearing word — recall that returns everything relevant re-expands the window compaction just shrank.',
+            'how' => '<code>composer require particle-academy/prism-memory</code>. Pairs with <a href="/packages/prism-harness">prism-harness</a>: bind it as the eviction sink AND the recall in the same breath, never one without the other.',
+        ],
+
+        'prism-browser' => [
+            'why' => 'Driving a browser is one of the most useful things an agent can do and one of the easiest to do badly: an unbounded observation floods the context window, and navigation with no policy is an agent going wherever a page tells it to. Reaching for a third-party driver also starts a dependency conversation for something the estate already ships.',
+            'what' => 'Guarded browser automation for Prism agents: <strong>bounded observations</strong>, policy-first navigation, and durable sessions. Bounded and policy-first are both about the same thing — what the agent is allowed to see and where it is allowed to go are declared rather than emergent.',
+            'how' => '<code>composer require particle-academy/prism-browser</code>. For asserting a Fancy surface from an agent rather than driving a page, the MCP bridges in <code>@particle-academy/agent-integrations</code> are the closer fit — the component is the affordance, not a DOM target.',
+        ],
+
         'prism-opentelemetry' => [
             'why' => 'Prism already emits the telemetry that makes AI spend attributable, but telemetry in its own format is a second place to look. Agent runs belong in the tracing you already operate, next to the HTTP request and the database call that surrounded them — otherwise the expensive question, "what did this run actually do", is answered by correlating two systems by hand.',
             'what' => 'An OpenTelemetry bridge for Prism: turns Prism telemetry events into <strong>GenAI-convention</strong> spans, for Arize Phoenix and any OTLP backend. Following the shared convention rather than inventing attribute names is what lets a backend understand the spans without bespoke configuration.',

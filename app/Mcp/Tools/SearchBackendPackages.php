@@ -80,10 +80,19 @@ class SearchBackendPackages extends Tool
             }
         }
 
+        // THE HINT LIST IS PART OF THE ANSWER, not decoration.
+        //
+        // It omitted the entire AI/agent domain, so an agent searching for "LLM
+        // harness agent sessions" got an empty result AND a list of words that
+        // confirmed there was nothing to look for. It then proposed a
+        // third-party library — which is the cost of a miss here: not a missing
+        // row, but a dependency somebody adds because we appeared not to have
+        // one. Whatever this list omits is what callers conclude we lack.
         if ($payload['packages'] === [] && ! isset($payload['not_in_your_stack'])) {
             $payload['note'] = $query === ''
                 ? 'No server-side packages matched.'
-                : "Nothing matched \"{$query}\". Try a capability word — catalog, features, workflow, xlsx, pptx, docx, analytics, seo, git, passkeys, referral, courses.";
+                : "Nothing matched \"{$query}\". Try a capability word — agents, llm, memory, browser, mcp, "
+                    ."catalog, features, workflow, xlsx, pptx, docx, analytics, seo, git, passkeys, referral, courses.";
         }
 
         return Response::json($payload);

@@ -311,6 +311,9 @@ BEFORE IT CAN SHIP: three registry names that do not exist yet (npm scoped, Pack
         'prism-mcp' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#a855f7'],
         'prism-opentelemetry' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#a855f7'],
         'prism-perplexity' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#a855f7'],
+        'prism-workspace' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#a855f7'],
+        'prism-memory' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#a855f7'],
+        'prism-browser' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#a855f7'],
         // Polyglot single-file client.
         'mcp-relay-client' => ['group' => 'tooling', 'ecosystem' => 'polyglot', 'kind' => 'headless', 'accent' => '#22c55e'],
         // Cross-language conformance fixtures -- parity as a test result.
@@ -1016,6 +1019,45 @@ BEFORE IT CAN SHIP: three registry names that do not exist yet (npm scoped, Pack
                 'composer' => 'particle-academy/prism-perplexity',
                 'repo' => 'Particle-Academy/prism-perplexity',
                 'packagist' => 'particle-academy/prism-perplexity',
+                'language' => 'PHP',
+            ],
+            // Added 2026-09-12. The comment above says the rest of the family
+            // was absent so `prism` "was the only one an agent could find" —
+            // and then three MORE shipped and were not registered, so the same
+            // failure recurred against a note describing it. A registry that is
+            // corrected by hand each time a package ships is a registry that is
+            // wrong between ships.
+            //
+            // Found because an agent in another workspace searched this MCP for
+            // an LLM harness, a browser package and a human+ package, got
+            // nothing usable back, and proposed a THIRD-PARTY library instead.
+            // The cost of an absence here is not a missing row; it is a
+            // dependency somebody adds because we appeared not to have one.
+            [
+                'slug' => 'prism-workspace',
+                'name' => 'particle-academy/prism-workspace',
+                'tagline' => 'Sandboxed, session-scoped agent workspaces for Laravel -- a scoped Storage disk behind a path guard, shipped with the adversarial corpus that proves the boundary holds. Where an agent gets somewhere to write without getting everywhere to write.',
+                'composer' => 'particle-academy/prism-workspace',
+                'repo' => 'Particle-Academy/prism-workspace',
+                'packagist' => 'particle-academy/prism-workspace',
+                'language' => 'PHP',
+            ],
+            [
+                'slug' => 'prism-memory',
+                'name' => 'particle-academy/prism-memory',
+                'tagline' => 'Persistent context and semantic recall for Laravel -- vector storage, remember / recall, and token-budget-aware retrieval on top of Prism. The other half of a bounded context window: somewhere for what leaves it to go, so a compacted agent is not simply blind to its own earlier work.',
+                'composer' => 'particle-academy/prism-memory',
+                'repo' => 'Particle-Academy/prism-memory',
+                'packagist' => 'particle-academy/prism-memory',
+                'language' => 'PHP',
+            ],
+            [
+                'slug' => 'prism-browser',
+                'name' => 'particle-academy/prism-browser',
+                'tagline' => 'Guarded browser automation for Prism agents -- bounded observations, policy-first navigation, and durable sessions. First-party, so driving a browser from an agent does not start with a third-party approval conversation.',
+                'composer' => 'particle-academy/prism-browser',
+                'repo' => 'Particle-Academy/prism-browser',
+                'packagist' => 'particle-academy/prism-browser',
                 'language' => 'PHP',
             ],
         ]);

@@ -1,6 +1,6 @@
 {
     "$schema": "https://ui.particle.academy/schema/registry-compiled.json",
-    "count": 299,
+    "count": 302,
     "items": [
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
@@ -5187,6 +5187,17 @@
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "prism-browser",
+            "type": "registry:ui",
+            "title": "particle-academy/prism-browser",
+            "description": "Guarded browser automation for Prism agents -- bounded observations, policy-first navigation, and durable sessions. First-party, so driving a browser from an agent does not start with a third-party approval conversation.",
+            "package": "prism-browser",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
             "name": "prism-harness",
             "type": "registry:ui",
             "title": "particle-academy/prism-harness",
@@ -5220,6 +5231,17 @@
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "prism-memory",
+            "type": "registry:ui",
+            "title": "particle-academy/prism-memory",
+            "description": "Persistent context and semantic recall for Laravel -- vector storage, remember / recall, and token-budget-aware retrieval on top of Prism. The other half of a bounded context window: somewhere for what leaves it to go, so a compacted agent is not simply blind to its own earlier work.",
+            "package": "prism-memory",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
             "name": "prism-opentelemetry",
             "type": "registry:ui",
             "title": "particle-academy/prism-opentelemetry",
@@ -5236,6 +5258,17 @@
             "title": "particle-academy/prism-perplexity",
             "description": "The rest of the Perplexity API for Prism -- embeddings, direct search, and async deep research beyond the Agent API chat surface.",
             "package": "prism-perplexity",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "prism-workspace",
+            "type": "registry:ui",
+            "title": "particle-academy/prism-workspace",
+            "description": "Sandboxed, session-scoped agent workspaces for Laravel -- a scoped Storage disk behind a path guard, shipped with the adversarial corpus that proves the boundary holds. Where an agent gets somewhere to write without getting everywhere to write.",
+            "package": "prism-workspace",
             "dependencies": [],
             "registryDependencies": [],
             "files": []

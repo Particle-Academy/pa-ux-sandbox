@@ -4529,16 +4529,16 @@
         },
         {
             "name": "particle-academy/holy-sheet",
-            "version": "v2.1.1",
+            "version": "v2.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/holy-sheet.git",
-                "reference": "e2bb9267a17c2c4d87c8e8d8f0397d666500786c"
+                "reference": "ee525342b96995d095e9d152ef1948480259f7b2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/holy-sheet/zipball/e2bb9267a17c2c4d87c8e8d8f0397d666500786c",
-                "reference": "e2bb9267a17c2c4d87c8e8d8f0397d666500786c",
+                "url": "https://api.github.com/repos/Particle-Academy/holy-sheet/zipball/ee525342b96995d095e9d152ef1948480259f7b2",
+                "reference": "ee525342b96995d095e9d152ef1948480259f7b2",
                 "shasum": ""
             },
             "require": {
@@ -4582,11 +4582,13 @@
             "description": "Standalone spreadsheet writing tool for agentic document creation. Framework-agnostic core with optional Laravel 10-13 integration.",
             "homepage": "https://github.com/Particle-Academy/holy-sheet",
             "keywords": [
+                "OpenDocument",
                 "agentic",
                 "ai",
                 "csv",
                 "document-creation",
                 "excel",
+                "ods",
                 "particle-academy",
                 "spreadsheet",
                 "xlsx"
@@ -4595,7 +4597,7 @@
                 "issues": "https://github.com/Particle-Academy/holy-sheet/issues",
                 "source": "https://github.com/Particle-Academy/holy-sheet"
             },
-            "time": "2026-09-10T05:12:28+00:00"
+            "time": "2026-09-13T20:31:44+00:00"
         },
         {
             "name": "particle-academy/laravel-catalog",

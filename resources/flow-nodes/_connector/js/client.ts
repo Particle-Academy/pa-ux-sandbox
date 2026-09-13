@@ -44,8 +44,14 @@ import {
 import {
   classifyHttp,
   classifyThrown,
+  ConnectorAmbiguous,
+  ConnectorAuthError,
   ConnectorConfigError,
   ConnectorError,
+  ConnectorRateLimited,
+  ConnectorRequestError,
+  ConnectorTransient,
+  ConnectorUnreachable,
   type ConnectorErrorContext,
 } from "./errors";
 import { fakeRequest, type ConnectorFaker } from "./faker";
@@ -95,6 +101,26 @@ export type ServiceDescriptor = {
   faker: ConnectorFaker;
   /** Header the provider uses for idempotency, when it has one. */
   idempotencyHeader?: string;
+  /**
+   * Where this provider puts its OWN error code on a failed response, when it
+   * publishes one — read only for a status of 400 or above, and carried as
+   * `error.providerCode`.
+   *
+   * **Declared per service, never guessed.** The shapes do not agree, and the
+   * near-misses are the dangerous part: Bluesky's `error` is a code
+   * (`"AuthenticationRequired"`), Mastodon's `error` is a sentence
+   * (`"The access token is invalid"`), Discord's code is a number under `code`,
+   * and some providers use a header. A generic reader would publish Mastodon's
+   * sentence as a code — the plausible answer that is wrong. With no
+   * declaration the field is absent, which says *nobody said where to look*.
+   *
+   * Return a string or an integer (carried as its decimal string); anything
+   * else, a blank string, or a throw, leaves the code absent. **A throw never
+   * reaches the call**: a code is a detail on an answer the status already gave,
+   * and a reader choking on an HTML error page must not turn an explicit `401`
+   * into an unclassified failure.
+   */
+  providerCodeFrom?: (response: TransportResponse) => string | number | null | undefined;
 };
 
 export type ConnectorRequest = {
@@ -266,7 +292,14 @@ export async function callConnector<T = unknown>(
         return response.body.trim() === "" ? null : parseJson(response.body, ctx);
       }
 
-      throw classifyHttp(response.status, ctx, response.body, readRetryAfter(response.headers));
+      const providerCode = readProviderCode(service, response);
+
+      throw classifyHttp(
+        response.status,
+        providerCode === undefined ? ctx : { ...ctx, providerCode },
+        response.body,
+        readRetryAfter(response.headers),
+      );
     },
     {
       ...DEFAULT_RETRY,
@@ -292,6 +325,30 @@ export async function callConnector<T = unknown>(
  * An ambiguous failure on a non-idempotent connector gets a message that says
  * *go and look*, because that is the action. "Request failed" would send someone
  * to re-run it, which is the one thing that must not happen.
+ *
+ * ## What the provider said survives the rewrite
+ *
+ * The message is rewritten for a person; nothing else is. The last failure's
+ * HTTP `status` and `providerCode` are copied across, and the failure itself is
+ * the standard `cause`.
+ *
+ * Until 0.5.0 this built a bare `ConnectorError` from `ctx` alone, because the
+ * outcome never carried the error — so every failed call, on every host, arrived
+ * with no status while its message quoted one. `fancy-connectors`' probes ask a
+ * real provider to refuse an impossible credential and read `error.status` to
+ * see the refusal; they reported "failed before any status arrived" for every
+ * provider, every night, against providers that had answered exactly right.
+ *
+ * ## The class is the one the failure was classified as
+ *
+ * A `401` throws `ConnectorAuthError`, a `429` throws `ConnectorRateLimited`
+ * with its `retryAfter`, and every other failure the class its `kind` names —
+ * the table at the top of `errors.ts`, which a host catching by class was
+ * already entitled to. `kind` alone cannot tell an auth failure from any other
+ * `rejected`, or a throttle from a 5xx, so those two come from the classified
+ * error; the rest are the same answer either way. This is exactly what the PHP
+ * twin's `failureFrom()` does, which until 0.5.0 mapped by kind alone and threw
+ * a `ConnectorRequestException` for a `401`.
  */
 function failureFrom(
   outcome: DeliveryOutcome<unknown>,
@@ -300,7 +357,15 @@ function failureFrom(
 ): ConnectorError {
   const last = outcome.attempts.at(-1);
   const kind: FailureKind = outcome.kind ?? last?.kind ?? "ambiguous";
-  const error = new ConnectorError(outcome.gaveUp ?? `${ctx.service}.${ctx.operation} failed.`, ctx);
+  const message = outcome.gaveUp ?? `${ctx.service}.${ctx.operation} failed.`;
+  const cause = outcome.error;
+  const said = cause instanceof ConnectorError ? cause : undefined;
+  const context: ConnectorErrorContext = {
+    ...ctx,
+    ...(said?.status === undefined ? {} : { status: said.status }),
+    ...(said?.providerCode === undefined ? {} : { providerCode: said.providerCode }),
+  };
+  const error = failureOfClass(kind, said, message, context, cause === undefined ? undefined : { cause });
 
   // `kind` is readonly on the class; this is the one place that knows the
   // aggregate answer across attempts, so it is set here rather than guessed.
@@ -309,6 +374,43 @@ function failureFrom(
   Object.defineProperty(error, "idempotent", { value: idempotent, enumerable: false });
 
   return error;
+}
+
+/**
+ * The taxonomy class for a failure: the classified error's own class where
+ * `kind` cannot express it (auth, rate limit), the class `kind` names otherwise.
+ *
+ * The subclass is trusted only when it AGREES with the aggregate kind. It always
+ * does for anything `callConnector` raises; a disagreement would mean the class
+ * describes a different failure from the one being reported.
+ */
+function failureOfClass(
+  kind: FailureKind,
+  said: ConnectorError | undefined,
+  message: string,
+  context: ConnectorErrorContext,
+  options: ErrorOptions | undefined,
+): ConnectorError {
+  if (said?.kind === kind && said instanceof ConnectorAuthError) {
+    return new ConnectorAuthError(message, context, options);
+  }
+
+  if (said?.kind === kind && said instanceof ConnectorRateLimited) {
+    const retryAfter = said.retryAfter === undefined ? {} : { retryAfter: said.retryAfter };
+
+    return new ConnectorRateLimited(message, { ...context, ...retryAfter }, options);
+  }
+
+  switch (kind) {
+    case "unreachable":
+      return new ConnectorUnreachable(message, context, options);
+    case "refused-explicitly":
+      return new ConnectorTransient(message, context, options);
+    case "rejected":
+      return new ConnectorRequestError(message, context, options);
+    case "ambiguous":
+      return new ConnectorAmbiguous(message, context, options);
+  }
 }
 
 async function prepare(
@@ -425,6 +527,27 @@ function parseJson(body: string, ctx: ConnectorErrorContext): unknown {
 
     throw error;
   }
+}
+
+/**
+ * The service's declared provider code, or absent. Never throws — see
+ * `ServiceDescriptor.providerCodeFrom` for why a reader's failure must not
+ * become the call's.
+ */
+function readProviderCode(service: ServiceDescriptor, response: TransportResponse): string | undefined {
+  if (!service.providerCodeFrom) return undefined;
+
+  let code: unknown;
+
+  try {
+    code = service.providerCodeFrom(response);
+  } catch {
+    return undefined;
+  }
+
+  if (typeof code === "number") return Number.isSafeInteger(code) ? String(code) : undefined;
+
+  return typeof code === "string" && code.trim() !== "" ? code : undefined;
 }
 
 function readRetryAfter(headers: Record<string, string>): number | undefined {

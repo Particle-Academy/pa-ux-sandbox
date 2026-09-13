@@ -8,6 +8,8 @@ declare(strict_types=1);
 
 namespace FancyFlow\Nodes\Connector;
 
+use Throwable;
+
 /**
  * What {@see Delivery::deliver()} produced.
  *
@@ -25,6 +27,14 @@ final readonly class DeliveryOutcome
      *                               has to act, not for a log grep.
      * @param  FailureKind|null  $kind  the classification of the last failure, so a host can
      *                                  route on it without re-parsing a message.
+     * @param  Throwable|null  $error  the last failure AS IT WAS THROWN; null when the call
+     *                                 worked. `kind` and `gaveUp` are what was concluded;
+     *                                 this is what it was concluded FROM. Until 0.5.0 an
+     *                                 outcome carried only the conclusions, so the HTTP
+     *                                 status, the provider's own code and the exception
+     *                                 class all stopped here, and every failed call reached
+     *                                 its host with none of them. See
+     *                                 {@see ConnectorClient::failureFrom()}.
      */
     public function __construct(
         public bool $ok,
@@ -32,5 +42,6 @@ final readonly class DeliveryOutcome
         public array $attempts = [],
         public ?string $gaveUp = null,
         public ?FailureKind $kind = null,
+        public ?Throwable $error = null,
     ) {}
 }

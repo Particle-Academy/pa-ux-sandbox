@@ -37,6 +37,18 @@ final class ServiceDescriptor
      * @param  callable(string, array<string,mixed>, FakeValues, mixed): mixed  $faker
      *                                                                                  Required. Every connector ships one — see {@see FakeValues}.
      * @param  string|null  $idempotencyHeader  header the provider uses for idempotency
+     * @param  (callable(TransportResponse): (string|int|null))|null  $providerCodeFrom
+     *                                                                                   Where this provider puts its OWN error code on a failed response, when it
+     *                                                                                   publishes one — read only for a status of 400 or above, and carried as the
+     *                                                                                   exception's `providerCode`. DECLARED PER SERVICE, NEVER GUESSED: Bluesky's
+     *                                                                                   `error` is a code, Mastodon's `error` is a sentence, Discord's code is an
+     *                                                                                   integer under `code`, and some providers use a header — a generic reader
+     *                                                                                   would publish Mastodon's sentence as a code. Undeclared, the code is null,
+     *                                                                                   which says nobody said where to look. Return a string or an integer (carried
+     *                                                                                   as its decimal string); anything else, a blank string, or a throw leaves it
+     *                                                                                   null. A THROW NEVER REACHES THE CALL: a code is a detail on an answer the
+     *                                                                                   status already gave, and a reader choking on an HTML error page must not
+     *                                                                                   turn an explicit 401 into an unclassified failure.
      */
     public function __construct(
         public readonly string $service,
@@ -47,5 +59,6 @@ final class ServiceDescriptor
         public readonly mixed $authorize,
         public readonly mixed $faker,
         public readonly ?string $idempotencyHeader = null,
+        public readonly mixed $providerCodeFrom = null,
     ) {}
 }

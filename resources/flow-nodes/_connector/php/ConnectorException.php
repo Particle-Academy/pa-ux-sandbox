@@ -46,6 +46,21 @@ use Throwable;
  */
 class ConnectorException extends RuntimeException implements ClassifiedFailure
 {
+    /**
+     * @param  list<Attempt>|null  $attempts  every FAILED attempt of the call this exception
+     *                                        ended, in order — set only on the exception
+     *                                        {@see ConnectorClient::call()} throws, as the
+     *                                        TypeScript twin sets `error.attempts`. NULL on
+     *                                        any other exception, including the classified one
+     *                                        chained as `previous`: "this did not end a call"
+     *                                        is a different fact from "nothing was tried",
+     *                                        and an empty list would say the second.
+     * @param  bool|null  $idempotent  whether that call declared repeating the request
+     *                                 harmless — the declaration its retry decisions read, so a
+     *                                 host can tell "retrying was never allowed" from "retries
+     *                                 ran out". NULL where there was no call, for the same
+     *                                 reason: `false` would claim a declaration nobody made.
+     */
     public function __construct(
         string $message,
         public readonly string $service = '',
@@ -53,6 +68,8 @@ class ConnectorException extends RuntimeException implements ClassifiedFailure
         public readonly ?int $status = null,
         public readonly ?string $providerCode = null,
         ?Throwable $previous = null,
+        public readonly ?array $attempts = null,
+        public readonly ?bool $idempotent = null,
     ) {
         // The code is always 0: a provider's own error code is a STRING for
         // most providers and is carried as `providerCode`. Squeezing it into

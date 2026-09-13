@@ -286,6 +286,19 @@ export type DeliveryOutcome<T> = {
   gaveUp?: string;
   /** The classification of the last failure, so a host can route on it. */
   kind?: FailureKind;
+  /**
+   * The last failure **as it was thrown** — absent when the call worked.
+   *
+   * `kind` and `gaveUp` are what `deliver()` concluded; this is what it
+   * concluded it FROM. Until 0.5.0 an outcome carried only the conclusions, so
+   * everything the error knew beyond them — the HTTP status, the provider's own
+   * code, the class it was raised as — stopped here, and every failed
+   * `callConnector` reached its host with none of it. See `failureFrom()` in
+   * `client.ts`.
+   *
+   * `unknown`, because `send` may throw anything.
+   */
+  error?: unknown;
 };
 
 /**
@@ -347,6 +360,7 @@ export async function deliver<T>(
             classified.kind === "ambiguous"
               ? `${AMBIGUOUS_REFUSAL} (${classified.detail})`
               : classified.detail,
+          error,
         };
       }
 
@@ -358,6 +372,7 @@ export async function deliver<T>(
           attempts,
           kind: classified.kind,
           gaveUp: `Gave up after ${attempt} attempts. ${classified.detail}`,
+          error,
         };
       }
 

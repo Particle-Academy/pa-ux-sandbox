@@ -138,9 +138,12 @@ describe.each(dirs)("%s", (dir) => {
  * build with nothing to say it ever existed. Every generated file carries a
  * banner saying so, and this fails the build when one does not.
  *
- * The stronger check — regenerating and diffing — lives in the package's own CI,
- * because it needs the package's source, which this repository deliberately does
- * not have.
+ * The stronger check, regenerating and diffing, needs the package's source, which
+ * this repository deliberately does not carry. This comment used to say it lived
+ * in the package's CI; it lived nowhere, and the copy went two releases stale
+ * under a green build. It now runs in this repository's `ci.yml` and nightly
+ * `dogfood.yml`, which check out the newest fancy-connector-core tag and run
+ * `scripts/vendor.mjs --check` against this directory.
  */
 describe("_connector is generated, not maintained here", () => {
   const shared = resolve(NODES, "_connector");

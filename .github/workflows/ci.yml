@@ -54,6 +54,33 @@ jobs:
           # multi-line run: block is PowerShell and rm -rf is not a command.
           node -e "require('node:fs').rmSync('.third-party-allowlist',{recursive:true,force:true})"
 
+      # resources/flow-nodes/_connector is GENERATED from the latest
+      # fancy-connector-core release by that package's scripts/vendor.mjs. The
+      # sandbox test only checks each file carries a GENERATED banner; its
+      # comment said the regenerate-and-diff check lived in the package's CI,
+      # and no CI anywhere ran it. The copy sat two releases stale (0.4 source
+      # under 0.6.1) with every check green. This is that check, against the
+      # newest release tag, since the showcase must run the latest of everything.
+      - name: Latest fancy-connector-core release
+        id: connector_core
+        run: |
+          tag=$(git ls-remote --tags --refs https://github.com/Particle-Academy/fancy-connector-core.git 'v*' | sed 's#.*refs/tags/##' | sort -V | tail -1)
+          test -n "$tag"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+      - name: Check out fancy-connector-core ${{ steps.connector_core.outputs.tag }}
+        uses: actions/checkout@v4
+        with:
+          repository: Particle-Academy/fancy-connector-core
+          ref: ${{ steps.connector_core.outputs.tag }}
+          path: .fancy-connector-core
+          persist-credentials: false
+
+      - name: Vendored connector runtime matches that release
+        run: |
+          node .fancy-connector-core/scripts/vendor.mjs --target resources/flow-nodes/_connector --check
+          node -e "require('node:fs').rmSync('.fancy-connector-core',{recursive:true,force:true})"
+
       - uses: actions/setup-node@v4
         with:
           node-version: "22"

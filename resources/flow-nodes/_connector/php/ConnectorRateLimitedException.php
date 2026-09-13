@@ -8,6 +8,8 @@ declare(strict_types=1);
 
 namespace FancyFlow\Nodes\Connector;
 
+use Throwable;
+
 /**
  * The provider asked us to slow down. It did nothing, and said so.
  *
@@ -17,6 +19,10 @@ namespace FancyFlow\Nodes\Connector;
  */
 final class ConnectorRateLimitedException extends ConnectorException
 {
+    /**
+     * @param  list<Attempt>|null  $attempts  see {@see ConnectorException::__construct()}
+     * @param  bool|null  $idempotent  see {@see ConnectorException::__construct()}
+     */
     public function __construct(
         string $message,
         string $service = '',
@@ -25,8 +31,11 @@ final class ConnectorRateLimitedException extends ConnectorException
         ?string $providerCode = null,
         /** Seconds to wait, when the provider said. */
         public readonly ?int $retryAfter = null,
+        ?Throwable $previous = null,
+        ?array $attempts = null,
+        ?bool $idempotent = null,
     ) {
-        parent::__construct($message, $service, $operation, $status, $providerCode);
+        parent::__construct($message, $service, $operation, $status, $providerCode, $previous, $attempts, $idempotent);
     }
 
     public function kind(): FailureKind

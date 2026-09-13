@@ -14,7 +14,7 @@ registerNodeKind(uiEffectKind);
 
 /**
  * The Flow studio — a gallery of fully-configured example flows built on the real
- * @particle-academy/fancy-flow <FlowEditor> (v0.26). Each example is a different
+ * @particle-academy/fancy-flow <FlowEditor>. Each example is a different
  * common use case; EVERY node is configured, and each canvas is documented with
  * real `note` nodes (the sticky notes — visual-only, never fed to a runner).
  *

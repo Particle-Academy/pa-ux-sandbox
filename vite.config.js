@@ -67,6 +67,12 @@ const reactFancyVersion = JSON.parse(
     readFileSync(fileURLToPath(new URL('./node_modules/@particle-academy/react-fancy/package.json', import.meta.url)), 'utf8'),
 ).version;
 
+// Same reasoning for the /flow page hero, which typed "v0.29" and was still
+// saying it at fancy-flow 0.70.0. PackageHeroVersionIsNotTypedTest guards it.
+const fancyFlowVersion = JSON.parse(
+    readFileSync(fileURLToPath(new URL('./node_modules/@particle-academy/fancy-flow/package.json', import.meta.url)), 'utf8'),
+).version;
+
 // The KIT version — the set of package releases that shipped together, which no
 // single package's version can tell you. Same file `config/kit.php` reads, so
 // the number the chrome shows and the number the server serves cannot disagree.
@@ -77,6 +83,7 @@ const kitVersion = JSON.parse(
 export default defineConfig({
     define: {
         __REACT_FANCY_VERSION__: JSON.stringify(reactFancyVersion),
+        __FANCY_FLOW_VERSION__: JSON.stringify(fancyFlowVersion),
         __KIT_VERSION__: JSON.stringify(kitVersion),
     },
     plugins: [

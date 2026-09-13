@@ -115,7 +115,7 @@ export default function FlowIndex() {
                             <span className="pkg-eco" data-eco="ts">TypeScript</span>
                             <span className="pkg-kind">Workflow canvas</span>
                             <Badge color="green">MCP ready</Badge>
-                            <Badge color="blue">v0.29</Badge>
+                            <Badge color="blue">v{__FANCY_FLOW_VERSION__}</Badge>
                         </div>
                     </div>
                 </header>

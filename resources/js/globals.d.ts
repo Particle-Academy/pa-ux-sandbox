@@ -5,6 +5,9 @@
 /** Version of the installed `@particle-academy/react-fancy`, read at build time. */
 declare const __REACT_FANCY_VERSION__: string;
 
+/** Version of the installed `@particle-academy/fancy-flow`, read at build time (the /flow hero). */
+declare const __FANCY_FLOW_VERSION__: string;
+
 /**
  * The kit version — the set of package releases that shipped together, e.g.
  * `"0.4"`. Read from `kit.json`, the same file `config/kit.php` reads. Note it

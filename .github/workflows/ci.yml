@@ -66,6 +66,12 @@ jobs:
       - name: Type-check
         run: npx tsc --noEmit -p tsconfig.json
 
+      # The vitest suite (tests/js: the TUI model and renderer, the flow studio
+      # effects, and the rest) ran nowhere. PHP tests cannot see React, so
+      # these are the only checks on that code, and CI never executed them.
+      - name: JS tests
+        run: npm test
+
       # Both bundles. The SSR build fails on browser-only imports that the
       # client build accepts, and Inertia renders SSR synchronously — a page
       # that throws there degrades to client-side rendering silently.

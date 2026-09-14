@@ -314,9 +314,9 @@ class PackagesController extends Controller
 
     /**
      * Does this family member warrant its own page? Yes when it has real
-     * content of its own — live component demos or a shipped README. Members
-     * with neither would be a thin stub, so those 301 to the family page and we
-     * never link them. Nothing is lost by grouping.
+     * content of its own — live component demos, a shipped README, or curated
+     * context. Members with none would be a thin stub, so those 301 to the
+     * family page and we never link them. Nothing is lost by grouping.
      *
      * @param  array<string, mixed>|null  $rec
      */
@@ -326,7 +326,12 @@ class PackagesController extends Controller
             return false;
         }
 
-        return ($rec['components'] ?? []) !== [] || $this->readmeHtmlFor($rec) !== null;
+        // Curated context is content too. The Prism packages ship no README the
+        // registry can read and no components; their context IS the page, and
+        // without this, joining a family 301'd all nine pages into it.
+        return ($rec['components'] ?? []) !== []
+            || $this->readmeHtmlFor($rec) !== null
+            || PackageContext::find((string) ($rec['slug'] ?? '')) !== null;
     }
 
     /**

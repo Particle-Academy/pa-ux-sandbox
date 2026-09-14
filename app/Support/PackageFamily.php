@@ -362,6 +362,66 @@ final class PackageFamily
                 ],
             ]],
         ],
+        // Added 2026-09-13 (owner-approved). The nine Prism packages were
+        // registered with no family, so none had a capability label and search
+        // matched only words that happened to be in a tagline: "llm harness"
+        // missed prism-harness. Each section's `capability` is what an agent
+        // types when it needs the package; PrismFamilyListingTest pins the
+        // queries. PHP only: the TypeScript ports on npm are not registered.
+        [
+            'slug' => 'prism',
+            'name' => 'Prism',
+            'tagline' => 'The Laravel LLM layer the kit builds on, and what makes it an agent platform: durable agent sessions, MCP tools, memory, a guarded browser, sandboxed workspaces, Human+ presence, tracing, and the rest of the Perplexity API.',
+            'group' => 'platform',
+            'kind' => 'headless',
+            'sections' => [
+                [
+                    'label' => 'LLM layer',
+                    'capability' => 'LLM providers for Laravel: text, structured output, streaming and tool calling',
+                    'members' => [['language' => 'PHP', 'slug' => 'prism']],
+                ],
+                [
+                    'label' => 'Agent sessions',
+                    'capability' => 'LLM agent harness: durable sessions, modes, tool permissions and subagents',
+                    'members' => [['language' => 'PHP', 'slug' => 'prism-harness']],
+                ],
+                [
+                    'label' => 'Tools',
+                    'capability' => 'MCP client: remote MCP tools as Prism tools, across a visible trust boundary',
+                    'members' => [['language' => 'PHP', 'slug' => 'prism-mcp']],
+                ],
+                [
+                    'label' => 'Memory',
+                    'capability' => 'Agent memory: vector store, semantic recall and token-budget-aware retrieval',
+                    'members' => [['language' => 'PHP', 'slug' => 'prism-memory']],
+                ],
+                [
+                    'label' => 'Browser',
+                    'capability' => 'Web browsing for agents: guarded, policy-first browser automation',
+                    'members' => [['language' => 'PHP', 'slug' => 'prism-browser']],
+                ],
+                [
+                    'label' => 'Workspace',
+                    'capability' => 'Agent sandbox: a session-scoped filesystem behind a path guard',
+                    'members' => [['language' => 'PHP', 'slug' => 'prism-workspace']],
+                ],
+                [
+                    'label' => 'Human+',
+                    'capability' => 'Human+ presence: agent sessions joining live Fancy surfaces over MCP relay',
+                    'members' => [['language' => 'PHP', 'slug' => 'prism-human-plus']],
+                ],
+                [
+                    'label' => 'Tracing',
+                    'capability' => 'LLM tracing: OpenTelemetry GenAI spans for agent runs',
+                    'members' => [['language' => 'PHP', 'slug' => 'prism-opentelemetry']],
+                ],
+                [
+                    'label' => 'Perplexity',
+                    'capability' => 'Perplexity search, embeddings and async deep research',
+                    'members' => [['language' => 'PHP', 'slug' => 'prism-perplexity']],
+                ],
+            ],
+        ],
     ];
 
     /**

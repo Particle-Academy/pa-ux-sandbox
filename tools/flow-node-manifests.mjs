@@ -20,6 +20,10 @@ let failed = false;
 
 for (const dir of readdirSync(NODES, { withFileTypes: true })) {
   if (!dir.isDirectory()) continue;
+  // `_connector`, `_stripe`, … are SHARED parts copied alongside the nodes that
+  // declare them (see `NodeSource`), not nodes, so they carry no manifest. This
+  // reported each as a missing one and exited 1 on every run.
+  if (dir.name.startsWith("_")) continue;
 
   const path = join(NODES, dir.name, "fancy-flow.node.json");
   if (!existsSync(path)) {

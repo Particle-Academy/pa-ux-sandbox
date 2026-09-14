@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { SessionManager, MAX_SESSIONS } from "../../tui-service/src/session.js";
 
 const CR = "\r";
@@ -138,16 +138,26 @@ describe("live sessions — the frame fits the pane", () => {
 
 describe("live sessions — the resource fence", () => {
     it("caps concurrent sessions and refuses past the ceiling", () => {
-        mgr = new SessionManager();
-        // Default selection is the static Hero (no timers), so this stays cheap.
-        for (let i = 0; i < MAX_SESSIONS; i++) {
-            expect("error" in mgr.start("docs", 40, 8)).toBe(false);
+        // The clock is held still. "Fresh" means younger than the 1s eviction
+        // grace, and starting 24 Ink sessions can itself take longer than that
+        // under a full parallel run, which let the first one age into eviction
+        // and admitted the overflow. The property is "a fresh session is never
+        // evicted", not "this machine renders 24 sessions inside a second".
+        const now = vi.spyOn(Date, "now").mockReturnValue(Date.now());
+        try {
+            mgr = new SessionManager();
+            // Default selection is the static Hero (no timers), so this stays cheap.
+            for (let i = 0; i < MAX_SESSIONS; i++) {
+                expect("error" in mgr.start("docs", 40, 8)).toBe(false);
+            }
+            expect(mgr.size).toBe(MAX_SESSIONS);
+            // All are fresh (< the idle grace), so none can be evicted → refused.
+            const overflow = mgr.start("docs", 40, 8);
+            expect("error" in overflow).toBe(true);
+            expect(mgr.size).toBe(MAX_SESSIONS);
+        } finally {
+            now.mockRestore();
         }
-        expect(mgr.size).toBe(MAX_SESSIONS);
-        // All are fresh (< the idle grace), so none can be evicted → refused.
-        const overflow = mgr.start("docs", 40, 8);
-        expect("error" in overflow).toBe(true);
-        expect(mgr.size).toBe(MAX_SESSIONS);
     });
 
     it("evicts an idle session to admit a new one", async () => {

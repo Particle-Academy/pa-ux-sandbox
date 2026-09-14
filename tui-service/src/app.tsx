@@ -21,6 +21,7 @@ import {
 import { SHOWCASE_EXAMPLES, type ShowcaseExample } from "@particle-academy/fancy-tui/showcase";
 import type { MouseRegistry, TuiTheme, TuiTone } from "@particle-academy/fancy-tui";
 import { SourceView } from "./highlight.js";
+import { installedFancyTuiVersion } from "./version.js";
 
 /**
  * The Fancy TUI docs — the whole page as ONE live Ink app.
@@ -58,8 +59,8 @@ export type AppEffect = { type: "quit" } | { type: "open"; url: string };
  *  preview's own auto-focus never steals it. */
 const LIST_FOCUS_ID = "docs:list";
 
-/** Shown in the brand bar. Bumped with the installed fancy-tui. */
-const FANCY_TUI_VERSION = "fancy-tui v0.9.0";
+/** Shown in the brand bar — read from the installed package, never typed. */
+const FANCY_TUI_VERSION = `fancy-tui v${installedFancyTuiVersion()}`;
 
 // ── the two looks ──────────────────────────────────────────────────────────
 //

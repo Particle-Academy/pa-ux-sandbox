@@ -1,6 +1,6 @@
 The `fancy-cli` CLI is the **vendor path** — it fetches component source from the [hosted registry](/docs/registry) and writes the files into your project so you own the code.
 
-> **Available now** — published as [`fancy-cli`](https://www.npmjs.com/package/fancy-cli). Run it with `npx fancy-cli …`; the installed binary is named `fancy-cli` (it uses the name `fancy-cli` because the bare `fancy-ui` name is blocked on npm). Source: [Particle-Academy/fancy-ui-cli](https://github.com/Particle-Academy/fancy-ui-cli).
+> **Available now** — published as [`fancy-cli`](https://www.npmjs.com/package/fancy-cli). Run it with `npx fancy-cli@latest …`; the installed binary is named `fancy-cli` (it uses the name `fancy-cli` because the bare `fancy-ui` name is blocked on npm). Source: [Particle-Academy/fancy-ui-cli](https://github.com/Particle-Academy/fancy-ui-cli).
 
 ## Installation
 
@@ -11,10 +11,10 @@ The CLI is meant to be run with `npx` — no global install required, and the `@
 npx fancy-cli@latest init
 ```
 
-You can pin a specific version if you need reproducibility:
+You can pin a specific version if you need reproducibility. Pin 0.8.2 or newer: 0.8.1 and older print `undefined` beside a first-party node, and releases before 0.6 have no update check to tell you they are stale.
 
 ```bash
-npx fancy-cli@0.1.0 init
+npx fancy-cli@0.8.2 init
 ```
 
 ## `init`

@@ -1,0 +1,176 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ui.particle.academy/schema/node-registry.json",
+  "title": "Fancy Flow node marketplace index",
+  "description": "The document served at /r/nodes/index.json: every vendorable fancy-flow marketplace node. A node is source, not a package: `npx fancy-cli@latest add node <kind>` resolves the kind here and copies the files served at its `url` into the project.",
+  "type": "object",
+  "required": [
+    "$schema",
+    "name",
+    "homepage",
+    "items",
+    "services"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "const": "https://ui.particle.academy/schema/node-registry.json"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "homepage": {
+      "type": "string",
+      "pattern": "^https?://"
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/item"
+      }
+    },
+    "services": {
+      "type": "array",
+      "description": "The connector services present in the unfiltered index, so a client can offer browse-by-service without a second request.",
+      "items": {
+        "type": "object",
+        "required": [
+          "service",
+          "title",
+          "domain",
+          "nodes",
+          "triggers",
+          "actions"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "service": {
+            "type": "string",
+            "minLength": 1
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1
+          },
+          "domain": {
+            "$ref": "#/$defs/domain"
+          },
+          "nodes": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "triggers": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "actions": {
+            "type": "integer",
+            "minimum": 0
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "domain": {
+      "enum": [
+        "payments",
+        "commerce",
+        "messaging",
+        "email",
+        "crm",
+        "support",
+        "storage",
+        "calendar",
+        "productivity",
+        "database",
+        "devtools",
+        "analytics",
+        "marketing",
+        "ai",
+        "forms",
+        "hr",
+        "geo",
+        "other"
+      ]
+    },
+    "item": {
+      "type": "object",
+      "required": [
+        "kind",
+        "title",
+        "description",
+        "category",
+        "runtimes",
+        "verified",
+        "url"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "type": "string",
+          "pattern": "^@[A-Za-z0-9][A-Za-z0-9._-]*/[A-Za-z0-9][A-Za-z0-9._-]*$",
+          "$comment": "fancy-flow's NAMESPACED_KIND (src/marketplace/manifest.ts), written without its case-insensitive flag.",
+          "description": "The namespaced kind id, e.g. `@particle-academy/ui_effect`."
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The package a community node is published from. Absent on first-party nodes, which have none."
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string"
+        },
+        "category": {
+          "type": "string",
+          "minLength": 1,
+          "description": "What the node does to the graph: trigger, logic, data, ai, io, human, output and so on."
+        },
+        "runtimes": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": "Runtime ids the node implements (`ts`, `php`, ...). `add node` checks the project against these."
+        },
+        "verified": {
+          "type": "boolean",
+          "description": "Assigned by the registry, never by the package."
+        },
+        "url": {
+          "type": "string",
+          "pattern": "^/r/nodes/[a-z0-9_.-]+\\.json$",
+          "description": "The node's manifest and source files, relative to the registry's origin."
+        },
+        "connector": {
+          "const": true,
+          "description": "Present only on connector nodes."
+        },
+        "service": {
+          "type": "string",
+          "minLength": 1
+        },
+        "serviceTitle": {
+          "type": "string",
+          "minLength": 1
+        },
+        "domain": {
+          "$ref": "#/$defs/domain"
+        },
+        "role": {
+          "enum": [
+            "trigger",
+            "action",
+            "search"
+          ]
+        }
+      }
+    }
+  }
+}

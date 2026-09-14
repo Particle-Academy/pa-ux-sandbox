@@ -33,7 +33,8 @@ class GalleryController extends Controller
         $index = $this->source->index();
 
         return response()->json([
-            '$schema' => 'https://ui.particle.academy/schema/gallery.json',
+            // No `$schema`: none is maintained for the gallery index, and the one
+            // named here was a 404. See PublishedSchemasTest.
             'name' => 'fancy-ui-inspiration',
             'homepage' => 'https://ui.particle.academy/inspiration',
             'kind' => 'design-blueprints',

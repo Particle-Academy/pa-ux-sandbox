@@ -1,5 +1,4 @@
 {
-    "$schema": "https://ui.particle.academy/schema/tui-previews.json",
     "components": {
         "accordion": {
             "frame": "\u001b[7m\u001b[90m[ ▾ Build ]\u001b[39m\u001b[27m\n  Compiles the workspace.\n\u001b[90m[ ▸ Test ]\u001b[39m",

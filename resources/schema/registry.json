@@ -1,0 +1,110 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ui.particle.academy/schema/registry.json",
+  "title": "Fancy UI registry index",
+  "description": "The document served at /r/index.json: every installable component as a lightweight summary. Each item's `url` resolves to a document described by https://ui.particle.academy/schema/registry-item.json. Reference: https://ui.particle.academy/docs/registry",
+  "type": "object",
+  "required": [
+    "$schema",
+    "name",
+    "homepage",
+    "version",
+    "items"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "const": "https://ui.particle.academy/schema/registry.json"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The registry's name."
+    },
+    "homepage": {
+      "type": "string",
+      "pattern": "^https?://",
+      "description": "Where the registry's human documentation lives."
+    },
+    "version": {
+      "$ref": "#/$defs/kitVersion",
+      "description": "The kit version this index describes: the one asked for with `?version=`, or the current kit when omitted."
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/item"
+      }
+    }
+  },
+  "$defs": {
+    "kitVersion": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+$",
+      "description": "A kit version, e.g. `0.5`. See https://ui.particle.academy/docs/versions."
+    },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$",
+      "description": "A registry item name: lower-case kebab-case, unique across the registry."
+    },
+    "item": {
+      "type": "object",
+      "required": [
+        "name",
+        "type",
+        "title",
+        "description",
+        "package",
+        "files",
+        "url"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "$ref": "#/$defs/slug"
+        },
+        "type": {
+          "enum": [
+            "registry:ui",
+            "registry:hook",
+            "registry:lib",
+            "registry:block"
+          ]
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Display name."
+        },
+        "description": {
+          "type": "string",
+          "description": "One-line summary."
+        },
+        "package": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The Fancy package the item comes from. Informational: the bundle is self-contained."
+        },
+        "files": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "How many source files the item's bundle vendors. Zero means it vendors none and is installed as a package instead."
+        },
+        "url": {
+          "type": "string",
+          "pattern": "^/r/[a-z0-9]+(-[a-z0-9]+)*\\.json$",
+          "description": "The item's full bundle, relative to the registry's origin."
+        },
+        "since": {
+          "$ref": "#/$defs/kitVersion",
+          "description": "First kit version the item exists in. Absent: it has always been here."
+        },
+        "until": {
+          "$ref": "#/$defs/kitVersion",
+          "description": "Last kit version the item exists in. Absent: still current."
+        }
+      }
+    }
+  }
+}

@@ -60,7 +60,9 @@ class BuildReadmes extends Command
         File::put(
             ReadmeSource::compiledPath(),
             json_encode(
-                ['$schema' => 'https://ui.particle.academy/schema/readmes-compiled.json', 'readmes' => $compiled],
+                // No `$schema`: none is maintained for this internal artifact,
+                // and the one it named was a 404. See PublishedSchemasTest.
+                ['readmes' => $compiled],
                 JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
             )."\n",
         );

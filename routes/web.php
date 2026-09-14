@@ -43,6 +43,7 @@ use App\Http\Controllers\Showcase\PackagesController;
 use App\Http\Controllers\Showcase\ProfileController;
 use App\Http\Controllers\Showcase\ReferralController;
 use App\Http\Controllers\Showcase\RegistryController;
+use App\Http\Controllers\Showcase\SchemaController;
 use App\Http\Controllers\Showcase\ShopController;
 use App\Http\Controllers\Showcase\ShowcaseSubmissionController;
 use App\Http\Controllers\Showcase\StarterKitController;
@@ -300,6 +301,12 @@ Route::get('/r/nodes/{slug}', [NodeRegistryController::class, 'show'])
 Route::get('/r/{slug}', [RegistryController::class, 'show'])
     ->where('slug', '[a-z0-9\-\.]+')
     ->name('registry.show');
+
+// JSON Schemas for the documents above, at the `$schema` URLs they declare.
+// Served from resources/schema/ and validated against the live responses.
+Route::get('/schema/{name}', [SchemaController::class, 'show'])
+    ->where('name', '[a-z0-9\-]+\.json')
+    ->name('schema.show');
 
 // ─── Install-MCP server ──────────────────────────────────────────────
 // Hosted MCP endpoint so any MCP-capable IDE (Claude Code, Cursor, VS Code,

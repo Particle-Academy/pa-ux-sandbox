@@ -36,15 +36,17 @@ class BuildRegistry extends Command
         $items = $registry->scanLive();
         usort($items, fn ($a, $b) => $a->name <=> $b->name);
 
+        // No top-level `$schema`: this is an internal artifact with no schema
+        // maintained for it, and it named one that 404'd. Each item still names
+        // registry-item.json, which is published — see PublishedSchemasTest.
         $payload = [
-            '$schema' => 'https://ui.particle.academy/schema/registry-compiled.json',
             'count' => count($items),
             'items' => array_map(fn ($item) => $item->toArray(), $items),
         ];
 
         $path = RegistrySource::compiledPath();
         File::ensureDirectoryExists(dirname($path));
-        File::put($path, json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n");
+        File::put($path, json_encode($payload, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)."\n");
 
         $this->info("Compiled {$payload['count']} components → {$path}");
         $this->line('Commit the artifact so production serves a populated registry.');

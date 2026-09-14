@@ -1,0 +1,74 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://ui.particle.academy/schema/fancy.json",
+  "title": "fancy-cli project config (fancy.json)",
+  "description": "The fancy.json that `npx fancy-cli@latest init` writes at a project's root. Every field is optional: the CLI uses its default for anything omitted. Reference: https://ui.particle.academy/docs/cli",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "registry": {
+      "type": "string",
+      "pattern": "^https?://",
+      "description": "The registry origin components and nodes are fetched from."
+    },
+    "aliases": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "components": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The import alias for the components directory, e.g. `@/components/fancy`."
+        },
+        "utils": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The import alias for shared utilities, e.g. `@/lib/utils`."
+        }
+      }
+    },
+    "rsc": {
+      "type": "boolean",
+      "description": "Whether the project uses React Server Components."
+    },
+    "tsx": {
+      "type": "boolean",
+      "description": "Whether the project writes TypeScript."
+    },
+    "tailwind": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "css": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The Tailwind v4 stylesheet a component extends when it ships CSS."
+        }
+      }
+    },
+    "dirs": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "components": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Where component files are written on disk. Derived from `aliases.components` when omitted."
+        },
+        "flowNodes": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Where a workflow node's TypeScript (its UI and JS backend) is written. Defaults to `<components>/flow-nodes`."
+        },
+        "flowNodesPhp": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Where a workflow node's PHP backend is written. Defaults to `app/Flow/Nodes`."
+        }
+      }
+    }
+  }
+}

@@ -40,7 +40,9 @@ class BuildTuiPreviews extends Command
         File::put(
             TuiPreviewSource::compiledPath(),
             json_encode(
-                ['$schema' => 'https://ui.particle.academy/schema/tui-previews.json', 'components' => $frames],
+                // No `$schema`: none is maintained for this internal artifact,
+                // and the one it named was a 404. See PublishedSchemasTest.
+                ['components' => $frames],
                 JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
             )."\n",
         );

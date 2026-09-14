@@ -4529,16 +4529,16 @@
         },
         {
             "name": "particle-academy/holy-sheet",
-            "version": "v2.3.0",
+            "version": "v2.3.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/holy-sheet.git",
-                "reference": "615a6818e7524be4f3bfeee47bc72610fe6e7519"
+                "reference": "fc41c65e13c0e65424a2afc0f768a2ec4155a081"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/holy-sheet/zipball/615a6818e7524be4f3bfeee47bc72610fe6e7519",
-                "reference": "615a6818e7524be4f3bfeee47bc72610fe6e7519",
+                "url": "https://api.github.com/repos/Particle-Academy/holy-sheet/zipball/fc41c65e13c0e65424a2afc0f768a2ec4155a081",
+                "reference": "fc41c65e13c0e65424a2afc0f768a2ec4155a081",
                 "shasum": ""
             },
             "require": {
@@ -4597,7 +4597,7 @@
                 "issues": "https://github.com/Particle-Academy/holy-sheet/issues",
                 "source": "https://github.com/Particle-Academy/holy-sheet"
             },
-            "time": "2026-09-14T16:57:22+00:00"
+            "time": "2026-09-14T18:28:48+00:00"
         },
         {
             "name": "particle-academy/laravel-catalog",
@@ -4838,16 +4838,16 @@
         },
         {
             "name": "particle-academy/last-word",
-            "version": "v0.6.0",
+            "version": "v0.6.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/last-word.git",
-                "reference": "9eefdd34f0d49251efaf8ffb24fd14533f1e0beb"
+                "reference": "4a9d0377cdfd918a9cf63a9f9b59218abf52a173"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/last-word/zipball/9eefdd34f0d49251efaf8ffb24fd14533f1e0beb",
-                "reference": "9eefdd34f0d49251efaf8ffb24fd14533f1e0beb",
+                "url": "https://api.github.com/repos/Particle-Academy/last-word/zipball/4a9d0377cdfd918a9cf63a9f9b59218abf52a173",
+                "reference": "4a9d0377cdfd918a9cf63a9f9b59218abf52a173",
                 "shasum": ""
             },
             "require": {
@@ -4893,7 +4893,7 @@
                 "issues": "https://github.com/Particle-Academy/last-word/issues",
                 "source": "https://github.com/Particle-Academy/last-word"
             },
-            "time": "2026-09-14T17:03:54+00:00"
+            "time": "2026-09-14T17:58:12+00:00"
         },
         {
             "name": "phpoption/phpoption",

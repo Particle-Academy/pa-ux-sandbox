@@ -1,5 +1,7 @@
 <?php
 
+use Database\Factories\Catalog\PriceFactory;
+use Database\Factories\Catalog\ProductFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Queue;
 use LaravelCatalog\Facades\Catalog;
@@ -34,7 +36,7 @@ it('facade resolves to catalog manager', function () {
 });
 
 it('can call sync product method via facade', function () {
-    $product = Product::factory()->create([
+    $product = ProductFactory::new()->create([
         'name' => 'Test Product',
         'active' => true,
     ]);
@@ -45,8 +47,8 @@ it('can call sync product method via facade', function () {
 });
 
 it('can call sync price method via facade', function () {
-    $product = Product::factory()->create();
-    $price = Price::factory()
+    $product = ProductFactory::new()->create();
+    $price = PriceFactory::new()
         ->for($product)
         ->create([
             'unit_amount' => 2900,
@@ -60,8 +62,8 @@ it('can call sync price method via facade', function () {
 });
 
 it('can call sync product and prices method via facade', function () {
-    $product = Product::factory()->create();
-    $price = Price::factory()
+    $product = ProductFactory::new()->create();
+    $price = PriceFactory::new()
         ->for($product)
         ->create();
 
@@ -78,8 +80,8 @@ it('can call test connection method via facade', function () {
 
 it('can call subscription checkout method via facade', function () {
     $user = \App\Models\User::factory()->create();
-    $product = Product::factory()->create();
-    $price = Price::factory()
+    $product = ProductFactory::new()->create();
+    $price = PriceFactory::new()
         ->for($product)
         ->create([
             'external_id' => 'price_test123',
@@ -93,8 +95,8 @@ it('can call subscription checkout method via facade', function () {
 
 it('can call one-time checkout method via facade', function () {
     $user = \App\Models\User::factory()->create();
-    $product = Product::factory()->create();
-    $price = Price::factory()
+    $product = ProductFactory::new()->create();
+    $price = PriceFactory::new()
         ->for($product)
         ->oneTime()
         ->create([
@@ -108,8 +110,8 @@ it('can call one-time checkout method via facade', function () {
 
 it('can call get subscription checkout URL method via facade', function () {
     $user = \App\Models\User::factory()->create();
-    $product = Product::factory()->create();
-    $price = Price::factory()
+    $product = ProductFactory::new()->create();
+    $price = PriceFactory::new()
         ->for($product)
         ->create([
             'external_id' => 'price_test123',
@@ -123,8 +125,8 @@ it('can call get subscription checkout URL method via facade', function () {
 
 it('can call get one-time checkout URL method via facade', function () {
     $user = \App\Models\User::factory()->create();
-    $product = Product::factory()->create();
-    $price = Price::factory()
+    $product = ProductFactory::new()->create();
+    $price = PriceFactory::new()
         ->for($product)
         ->oneTime()
         ->create([

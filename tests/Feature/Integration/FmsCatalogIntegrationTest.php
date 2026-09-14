@@ -1,5 +1,6 @@
 <?php
 
+use Database\Factories\Catalog\ProductFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use LaravelCatalog\Models\Product;
 use LaravelCatalog\Models\ProductFeature;
@@ -36,7 +37,7 @@ it('can sync FMS features to ProductFeature model', function () {
 });
 
 it('can attach ProductFeature to Product', function () {
-    $product = Product::factory()->create();
+    $product = ProductFactory::new()->create();
     $feature = ProductFeature::create([
         'key' => 'product-feature-test',
         'name' => 'Product Feature Test',

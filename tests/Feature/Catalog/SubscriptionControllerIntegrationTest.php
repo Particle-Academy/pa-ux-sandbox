@@ -1,10 +1,11 @@
 <?php
 
+use Database\Factories\Catalog\PriceFactory;
+use Database\Factories\Catalog\ProductFactory;
 use App\Models\User;
 use Laravel\Cashier\Checkout;
 use LaravelCatalog\Facades\Catalog;
 use LaravelCatalog\Models\Price;
-use LaravelCatalog\Models\Product;
 use Tests\TestCase;
 
 uses(TestCase::class);
@@ -18,8 +19,8 @@ it('subscription controller uses catalog facade', function () {
     $user = User::factory()->create();
     $this->actingAs($user);
 
-    $product = Product::factory()->create();
-    $price = Price::factory()
+    $product = ProductFactory::new()->create();
+    $price = PriceFactory::new()
         ->for($product)
         ->create([
             'external_id' => 'price_test123',
@@ -55,8 +56,8 @@ it('subscription controller validates recurring price', function () {
     $user = User::factory()->create();
     $this->actingAs($user);
 
-    $product = Product::factory()->create();
-    $price = Price::factory()
+    $product = ProductFactory::new()->create();
+    $price = PriceFactory::new()
         ->for($product)
         ->oneTime()
         ->create();
@@ -71,8 +72,8 @@ it('subscription controller validates price is synced to stripe', function () {
     $user = User::factory()->create();
     $this->actingAs($user);
 
-    $product = Product::factory()->create();
-    $price = Price::factory()
+    $product = ProductFactory::new()->create();
+    $price = PriceFactory::new()
         ->for($product)
         ->create([
             'external_id' => null,

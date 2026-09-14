@@ -1,9 +1,10 @@
 <?php
 
+use Database\Factories\Catalog\PriceFactory;
+use Database\Factories\Catalog\ProductFactory;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use LaravelCatalog\Models\Price;
-use LaravelCatalog\Models\Product;
 use LaravelCatalog\Services\StripeCheckoutService;
 
 use Tests\TestCase;
@@ -11,16 +12,16 @@ use Tests\TestCase;
 uses(TestCase::class);
 
 it('can create multiple prices for a product', function () {
-    $product = Product::factory()->create();
+    $product = ProductFactory::new()->create();
     
-    $monthlyPrice = Price::factory()
+    $monthlyPrice = PriceFactory::new()
         ->for($product)
         ->create([
             'recurring_interval' => 'month',
             'unit_amount' => 1000,
         ]);
     
-    $yearlyPrice = Price::factory()
+    $yearlyPrice = PriceFactory::new()
         ->for($product)
         ->yearly()
         ->create([
@@ -35,7 +36,7 @@ it('can create multiple prices for a product', function () {
 });
 
 it('can update price attributes', function () {
-    $price = Price::factory()->create([
+    $price = PriceFactory::new()->create([
         'unit_amount' => 1000,
         'active' => true,
     ]);
@@ -51,7 +52,7 @@ it('can update price attributes', function () {
 
 it('throws exception when creating subscription checkout without Stripe price ID', function () {
     $user = User::factory()->create();
-    $price = Price::factory()->create([
+    $price = PriceFactory::new()->create([
         'external_id' => null,
     ]);
 
@@ -67,7 +68,7 @@ it('throws exception when creating subscription checkout without Stripe price ID
 
 it('throws exception when creating subscription checkout for one-time price', function () {
     $user = User::factory()->create();
-    $price = Price::factory()
+    $price = PriceFactory::new()
         ->oneTime()
         ->create([
             'external_id' => 'price_test123',
@@ -85,7 +86,7 @@ it('throws exception when creating subscription checkout for one-time price', fu
 
 it('throws exception when creating one-time checkout for recurring price', function () {
     $user = User::factory()->create();
-    $price = Price::factory()->create([
+    $price = PriceFactory::new()->create([
         'external_id' => 'price_test123',
     ]);
 
@@ -101,7 +102,7 @@ it('throws exception when creating one-time checkout for recurring price', funct
 });
 
 it('can create prices with trial periods', function () {
-    $price = Price::factory()->create([
+    $price = PriceFactory::new()->create([
         'recurring_trial_period_days' => 14,
     ]);
 
@@ -109,11 +110,11 @@ it('can create prices with trial periods', function () {
 });
 
 it('can filter active prices', function () {
-    $product = Product::factory()->create();
+    $product = ProductFactory::new()->create();
     
-    Price::factory()->for($product)->create(['active' => true]);
-    Price::factory()->for($product)->create(['active' => true]);
-    Price::factory()->for($product)->create(['active' => false]);
+    PriceFactory::new()->for($product)->create(['active' => true]);
+    PriceFactory::new()->for($product)->create(['active' => true]);
+    PriceFactory::new()->for($product)->create(['active' => false]);
 
     expect($product->activePrices()->count())->toBe(2);
 });

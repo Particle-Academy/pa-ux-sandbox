@@ -1,5 +1,7 @@
 <?php
 
+use Database\Factories\Catalog\PriceFactory;
+use Database\Factories\Catalog\ProductFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Queue;
 use LaravelCatalog\Jobs\SyncProductToStripe;
@@ -13,7 +15,7 @@ use Illuminate\Support\Facades\DB;
 uses(TestCase::class);
 
 it('can create a product using the factory', function () {
-    $product = Product::factory()->create();
+    $product = ProductFactory::new()->create();
 
     expect($product)->toBeInstanceOf(Product::class)
         ->and($product->id)->not->toBeNull()
@@ -23,8 +25,8 @@ it('can create a product using the factory', function () {
 });
 
 it('can create a product with prices', function () {
-    $product = Product::factory()->create();
-    $price = Price::factory()->for($product)->create();
+    $product = ProductFactory::new()->create();
+    $price = PriceFactory::new()->for($product)->create();
 
     expect($product->prices)->toHaveCount(1)
         ->and($price->product_id)->toBe($product->id);
@@ -35,7 +37,7 @@ it('can create a product with prices', function () {
 it('can dispatch sync job for a product', function () {
     Queue::fake();
 
-    $product = Product::factory()->create();
+    $product = ProductFactory::new()->create();
 
     SyncProductToStripe::dispatch($product->id);
 
@@ -45,7 +47,7 @@ it('can dispatch sync job for a product', function () {
 });
 
 it('can access sync product method via catalog facade', function () {
-    $product = Product::factory()->create([
+    $product = ProductFactory::new()->create([
         'name' => 'Test Product',
         'active' => true,
     ]);
@@ -56,8 +58,8 @@ it('can access sync product method via catalog facade', function () {
 });
 
 it('can create a recurring price', function () {
-    $product = Product::factory()->create();
-    $price = Price::factory()
+    $product = ProductFactory::new()->create();
+    $price = PriceFactory::new()
         ->for($product)
         ->create([
             'type' => Price::TYPE_RECURRING,
@@ -69,8 +71,8 @@ it('can create a recurring price', function () {
 });
 
 it('can create a one-time price', function () {
-    $product = Product::factory()->create();
-    $price = Price::factory()
+    $product = ProductFactory::new()->create();
+    $price = PriceFactory::new()
         ->for($product)
         ->oneTime()
         ->create();

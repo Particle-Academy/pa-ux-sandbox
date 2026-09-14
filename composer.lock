@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "dc645987a561b6861b3695a3bce35179",
+    "content-hash": "3bae89341a830b1e17ba72da258a13ae",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -4170,16 +4170,16 @@
         },
         {
             "name": "particle-academy/fancy-flow-php",
-            "version": "v0.52.1",
+            "version": "v0.52.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/fancy-flow-php.git",
-                "reference": "4caec275b81ff156dc9356f3c92874e980b03f88"
+                "reference": "8c612f8be39086d76237180bd3ab44dcef815c4d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/fancy-flow-php/zipball/4caec275b81ff156dc9356f3c92874e980b03f88",
-                "reference": "4caec275b81ff156dc9356f3c92874e980b03f88",
+                "url": "https://api.github.com/repos/Particle-Academy/fancy-flow-php/zipball/8c612f8be39086d76237180bd3ab44dcef815c4d",
+                "reference": "8c612f8be39086d76237180bd3ab44dcef815c4d",
                 "shasum": ""
             },
             "require": {
@@ -4241,7 +4241,7 @@
                 "issues": "https://github.com/Particle-Academy/fancy-flow-php/issues",
                 "source": "https://github.com/Particle-Academy/fancy-flow-php"
             },
-            "time": "2026-09-14T02:32:27+00:00"
+            "time": "2026-09-14T19:06:04+00:00"
         },
         {
             "name": "particle-academy/fancy-heuristics",

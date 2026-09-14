@@ -2,7 +2,7 @@
 
 Ask a model to write the form this step pauses on.
 
-One of the nodes in [`fancy-flow-nodes`](../../README.md). `fancy-cli` **copies** it into your
+One of the nodes in the first-party node marketplace. `fancy-cli` **copies** it into your
 project — source you can read, edit and diff, not a dependency in `node_modules`:
 
 ```bash

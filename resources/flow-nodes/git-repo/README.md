@@ -2,7 +2,7 @@
 
 Hosted repository metadata — default branch, visibility, URLs.
 
-One of the **hosted-provider** nodes in [`fancy-flow-nodes`](../../README.md),
+One of the **hosted-provider** nodes in the first-party node marketplace,
 alongside the `git_pr_*` family. They wrap
 [`@particle-academy/fancy-git`](https://github.com/Particle-Academy/fancy-git-js) /
 [`particle-academy/fancy-git`](https://github.com/Particle-Academy/fancy-git-php),

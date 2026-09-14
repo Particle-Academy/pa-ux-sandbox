@@ -133,7 +133,7 @@ class FlowNodePackage extends Model
         // does, and deriving it in one place is what keeps the two sources of
         // the index answering the same question — the divergence this registry
         // has already shipped twice.
-        return array_merge([
+        $entry = [
             'kind' => $this->kind,
             'name' => $this->name,
             'title' => $this->title,
@@ -142,7 +142,16 @@ class FlowNodePackage extends Model
             'runtimes' => $this->runtimes ?? [],
             'verified' => (bool) $this->verified,
             'url' => "/r/nodes/{$this->slug()}.json",
-        ], ConnectorFacet::from($this->manifest ?? []));
+        ];
+
+        // `name` is the package a node is published from, optional since
+        // fancy-flow 0.70.1. A submission naming none is listed without one,
+        // the way a first-party node is, not with an empty string posing as one.
+        if ((string) $this->name === '') {
+            unset($entry['name']);
+        }
+
+        return array_merge($entry, ConnectorFacet::from($this->manifest ?? []));
     }
 
     /**

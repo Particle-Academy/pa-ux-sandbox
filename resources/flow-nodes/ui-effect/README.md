@@ -2,7 +2,7 @@
 
 `@particle-academy/ui_effect` — change how a **live surface** looks, from a workflow.
 
-One of the nodes in [`fancy-flow-nodes`](../../README.md). `fancy-cli` **copies** it into your
+One of the nodes in the first-party node marketplace. `fancy-cli` **copies** it into your
 project — source you can read, edit and diff, not a dependency in `node_modules`:
 
 ```bash

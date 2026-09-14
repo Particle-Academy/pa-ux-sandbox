@@ -3,7 +3,6 @@
         "particle-academy__deep_research": {
             "manifest": {
                 "schemaVersion": 1,
-                "name": "particle-academy/fancy-flow-nodes",
                 "kind": "@particle-academy/deep_research",
                 "aliases": [
                     "deep_research"
@@ -96,7 +95,6 @@
         "particle-academy__git_branches": {
             "manifest": {
                 "schemaVersion": 1,
-                "name": "particle-academy/fancy-flow-nodes",
                 "kind": "@particle-academy/git_branches",
                 "aliases": [
                     "git_branches"
@@ -189,7 +187,6 @@
         "particle-academy__git_checkout": {
             "manifest": {
                 "schemaVersion": 1,
-                "name": "particle-academy/fancy-flow-nodes",
                 "kind": "@particle-academy/git_checkout",
                 "aliases": [
                     "git_checkout"
@@ -272,7 +269,6 @@
         "particle-academy__git_diff": {
             "manifest": {
                 "schemaVersion": 1,
-                "name": "particle-academy/fancy-flow-nodes",
                 "kind": "@particle-academy/git_diff",
                 "aliases": [
                     "git_diff"
@@ -360,7 +356,6 @@
         "particle-academy__git_issue_comment": {
             "manifest": {
                 "schemaVersion": 1,
-                "name": "particle-academy/fancy-flow-nodes",
                 "kind": "@particle-academy/git_issue_comment",
                 "aliases": [
                     "git_issue_comment"
@@ -455,7 +450,6 @@
         "particle-academy__git_issue_get": {
             "manifest": {
                 "schemaVersion": 1,
-                "name": "particle-academy/fancy-flow-nodes",
                 "kind": "@particle-academy/git_issue_get",
                 "aliases": [
                     "git_issue_get"
@@ -585,7 +579,6 @@
         "particle-academy__git_issue_list": {
             "manifest": {
                 "schemaVersion": 1,
-                "name": "particle-academy/fancy-flow-nodes",
                 "kind": "@particle-academy/git_issue_list",
                 "aliases": [
                     "git_issue_list"
@@ -680,7 +673,6 @@
         "particle-academy__git_issue_open": {
             "manifest": {
                 "schemaVersion": 1,
-                "name": "particle-academy/fancy-flow-nodes",
                 "kind": "@particle-academy/git_issue_open",
                 "aliases": [
                     "git_issue_open"
@@ -800,7 +792,6 @@
         "particle-academy__git_issue_update": {
             "manifest": {
                 "schemaVersion": 1,
-                "name": "particle-academy/fancy-flow-nodes",
                 "kind": "@particle-academy/git_issue_update",
                 "aliases": [
                     "git_issue_update"
@@ -920,7 +911,6 @@
         "particle-academy__git_log": {
             "manifest": {
                 "schemaVersion": 1,
-                "name": "particle-academy/fancy-flow-nodes",
                 "kind": "@particle-academy/git_log",
                 "aliases": [
                     "git_log"
@@ -1008,7 +998,6 @@
         "particle-academy__git_pr_checks": {
             "manifest": {
                 "schemaVersion": 1,
-                "name": "particle-academy/fancy-flow-nodes",
                 "kind": "@particle-academy/git_pr_checks",
                 "aliases": [
                     "git_pr_checks"
@@ -1108,7 +1097,6 @@
         "particle-academy__git_pr_compare": {
             "manifest": {
                 "schemaVersion": 1,
-                "name": "particle-academy/fancy-flow-nodes",
                 "kind": "@particle-academy/git_pr_compare",
                 "aliases": [
                     "git_pr_compare"
@@ -1213,7 +1201,6 @@
         "particle-academy__git_pr_get": {
             "manifest": {
                 "schemaVersion": 1,
-                "name": "particle-academy/fancy-flow-nodes",
                 "kind": "@particle-academy/git_pr_get",
                 "aliases": [
                     "git_pr_get"
@@ -1313,7 +1300,6 @@
         "particle-academy__git_pr_list": {
             "manifest": {
                 "schemaVersion": 1,
-                "name": "particle-academy/fancy-flow-nodes",
                 "kind": "@particle-academy/git_pr_list",
                 "aliases": [
                     "git_pr_list"
@@ -1408,7 +1394,6 @@
         "particle-academy__git_pr_open": {
             "manifest": {
                 "schemaVersion": 1,
-                "name": "particle-academy/fancy-flow-nodes",
                 "kind": "@particle-academy/git_pr_open",
                 "aliases": [
                     "git_pr_open"
@@ -1503,7 +1488,6 @@
         "particle-academy__git_pull": {
             "manifest": {
                 "schemaVersion": 1,
-                "name": "particle-academy/fancy-flow-nodes",
                 "kind": "@particle-academy/git_pull",
                 "aliases": [
                     "git_pull"
@@ -1591,7 +1575,6 @@
         "particle-academy__git_push": {
             "manifest": {
                 "schemaVersion": 1,
-                "name": "particle-academy/fancy-flow-nodes",
                 "kind": "@particle-academy/git_push",
                 "aliases": [
                     "git_push"
@@ -1679,7 +1662,6 @@
         "particle-academy__git_repo": {
             "manifest": {
                 "schemaVersion": 1,
-                "name": "particle-academy/fancy-flow-nodes",
                 "kind": "@particle-academy/git_repo",
                 "aliases": [
                     "git_repo"
@@ -1782,7 +1764,6 @@
         "particle-academy__git_status": {
             "manifest": {
                 "schemaVersion": 1,
-                "name": "particle-academy/fancy-flow-nodes",
                 "kind": "@particle-academy/git_status",
                 "aliases": [
                     "git_status"
@@ -1890,7 +1871,6 @@
         "particle-academy__llm_input": {
             "manifest": {
                 "schemaVersion": 1,
-                "name": "particle-academy/fancy-flow-nodes",
                 "kind": "@particle-academy/llm_input",
                 "aliases": [
                     "llm_input"
@@ -1965,7 +1945,6 @@
         "particle-academy__llm_screen": {
             "manifest": {
                 "schemaVersion": 1,
-                "name": "particle-academy/fancy-flow-nodes",
                 "kind": "@particle-academy/llm_screen",
                 "aliases": [
                     "llm_screen"
@@ -2070,7 +2049,6 @@
         "particle-academy__resend_email_send": {
             "manifest": {
                 "schemaVersion": 1,
-                "name": "particle-academy/fancy-flow-nodes",
                 "kind": "@particle-academy/resend_email_send",
                 "aliases": [
                     "resend_email_send"
@@ -2647,7 +2625,6 @@
         "particle-academy__stripe_payment_intent": {
             "manifest": {
                 "schemaVersion": 1,
-                "name": "particle-academy/fancy-flow-nodes",
                 "kind": "@particle-academy/stripe_payment_intent",
                 "aliases": [
                     "stripe_payment_intent"
@@ -3256,7 +3233,6 @@
         "particle-academy__stripe_webhook_trigger": {
             "manifest": {
                 "schemaVersion": 1,
-                "name": "particle-academy/fancy-flow-nodes",
                 "kind": "@particle-academy/stripe_webhook_trigger",
                 "aliases": [
                     "stripe_webhook_trigger"
@@ -3868,7 +3844,6 @@
         "particle-academy__telegram_updates_trigger": {
             "manifest": {
                 "schemaVersion": 1,
-                "name": "particle-academy/fancy-flow-nodes",
                 "kind": "@particle-academy/telegram_updates_trigger",
                 "aliases": [
                     "telegram_updates_trigger"
@@ -4468,7 +4443,6 @@
         "particle-academy__ui_effect": {
             "manifest": {
                 "schemaVersion": 1,
-                "name": "particle-academy/fancy-flow-nodes",
                 "kind": "@particle-academy/ui_effect",
                 "aliases": [
                     "ui_effect"

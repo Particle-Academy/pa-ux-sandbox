@@ -81,15 +81,17 @@ describe("executor", () => {
 });
 
 describe("packaging", () => {
-  // Every node in this repo ships in ONE npm package, so `fancy-cli add node`
-  // resolves to the same install whichever node you ask for. A manifest naming
-  // anything else sends the CLI to install something that does not contain it.
+  // A first-party node is vendored source served by this app's registry. There
+  // is no package behind it, on any registry, and there must never be one.
   const manifest = JSON.parse(readFileSync(resolve(process.cwd(), "resources/flow-nodes/ui-effect/fancy-flow.node.json"), "utf8"));
   const pkg = JSON.parse(readFileSync(resolve(process.cwd(), "package.json"), "utf8"));
 
-  it("names the source it is vendored from, not a package to install", () => {
-    // Nothing installs this. The name identifies where the files came from.
-    expect(manifest.name).toBe("particle-academy/fancy-flow-nodes");
+  it("names no package, because there is none to install", () => {
+    // `name` means "the package this node is published from". This test used
+    // to pin it to `particle-academy/fancy-flow-nodes`, which never existed:
+    // fancy-cli printed it beside the kind and an agent ran `composer require`
+    // on it into a 404. Optional since fancy-flow 0.70.1, and absent here.
+    expect(manifest).not.toHaveProperty("name");
     expect(pkg.private).toBe(true);
   });
 

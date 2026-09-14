@@ -47,7 +47,6 @@ class NodeInstallInstructions extends Tool
             return Response::error("No marketplace node with kind \"{$kind}\". Run search_nodes first.");
         }
 
-        $name = $package?->name ?? ($manifest['name'] ?? $kind);
         $resolvedKind = $package?->kind ?? ($manifest['kind'] ?? $kind);
         $runtimes = is_array($manifest['runtimes'] ?? null) ? $manifest['runtimes'] : [];
         $commands = [];

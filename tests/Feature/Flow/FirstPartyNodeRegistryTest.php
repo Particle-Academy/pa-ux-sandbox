@@ -62,7 +62,7 @@ it('lets a moderated row win over the build artifact', function () {
     // artifact could override that, moderation would mean nothing.
     FlowNodePackage::create([
         'kind' => '@particle-academy/ui_effect',
-        'name' => 'particle-academy/fancy-flow-nodes',
+        'name' => '',
         'title' => 'Moderated title',
         'description' => 'set by a moderator',
         'category' => 'io',

@@ -2,7 +2,7 @@
 
 List a repository's pull requests, branching on whether any matched.
 
-One of the **PR-lifecycle** nodes in [`fancy-flow-nodes`](../../README.md). They wrap
+One of the **PR-lifecycle** nodes in the first-party node marketplace. They wrap
 [`@particle-academy/fancy-git`](https://github.com/Particle-Academy/fancy-git-js) /
 [`particle-academy/fancy-git`](https://github.com/Particle-Academy/fancy-git-php), whose provider contract is
 **neutral across GitHub, GitLab and Bitbucket** — so the same graph runs against any of them.

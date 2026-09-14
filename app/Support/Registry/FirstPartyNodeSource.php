@@ -68,6 +68,11 @@ class FirstPartyNodeSource
      * makes: these come from a repo we control, with fixtures that run on both
      * runtimes in its own CI. That is precisely the evidence the flag means.
      *
+     * No `name`. It means the package a node is published from, and a
+     * first-party node has none: it is source served from this app. Every entry
+     * used to carry `particle-academy/fancy-flow-nodes`, which never existed, and
+     * an agent reading it ran `composer require` into a 404.
+     *
      * @return list<array<string,mixed>>
      */
     public function indexEntries(): array
@@ -79,7 +84,6 @@ class FirstPartyNodeSource
 
             $entries[] = array_merge([
                 'kind' => $manifest['kind'],
-                'name' => $manifest['name'],
                 'title' => $manifest['title'] ?? $manifest['kind'],
                 'description' => (string) ($manifest['description'] ?? ''),
                 'category' => $manifest['category'] ?? 'io',

@@ -10,10 +10,11 @@ use Illuminate\Support\Facades\File;
 /**
  * Compile the first-party marketplace nodes into an artifact prod can read.
  *
- * Production deploys only this app, so `repos/fancy-flow-nodes` is not there and
- * neither is any node's source. Without this the public registry serves an empty
- * marketplace — which is exactly what it did, silently, while eight nodes sat in
- * the repo. Same arrangement as `registry:build`, `readmes:build` and `tui:build`.
+ * The node source lives in this app at `resources/flow-nodes/`, and this compiles
+ * it into the artifact the registry serves. Before that artifact existed the
+ * public registry served an empty marketplace — silently, while eight nodes sat
+ * in a sibling repo production never had. Same arrangement as `registry:build`,
+ * `readmes:build` and `tui:build`.
  *
  * **Run this and commit the artifact whenever a node changes**, or the CLI hands
  * consumers a stale copy of its source with nothing to say so.
@@ -32,7 +33,7 @@ class BuildFlowNodes extends Command
             // Refuse rather than write an empty artifact. Overwriting a good
             // artifact with nothing, because a checkout was missing, would
             // deploy an empty marketplace and report success.
-            $this->error('fancy-flow-nodes is not on disk. Run this in a workspace that has the marketplace repo checked out.');
+            $this->error('resources/flow-nodes is missing, so there is no node source to compile.');
 
             return self::FAILURE;
         }

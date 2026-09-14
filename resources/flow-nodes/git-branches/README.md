@@ -2,7 +2,7 @@
 
 List a working copy's branches and report which one is checked out.
 
-One of the **local working-copy** nodes in [`fancy-flow-nodes`](../../README.md).
+One of the **local working-copy** nodes in the first-party node marketplace.
 They drive [`@particle-academy/fancy-git`](https://github.com/Particle-Academy/fancy-git-js) /
 [`particle-academy/fancy-git`](https://github.com/Particle-Academy/fancy-git-php)
 against a checkout on disk — distinct from the `git_pr_*` nodes, which talk to a

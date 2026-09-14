@@ -75,7 +75,7 @@ it('serves a well-formed index with no third-party submissions at all', function
     $response = $this->getJson('/r/nodes/index.json')->assertOk();
 
     expect($response->json('items'))->toBeArray();
-    expect($response->json('name'))->toBe('fancy-flow-nodes');
+    expect($response->json('name'))->toBe('Fancy Flow node marketplace');
 });
 
 it('lists a published package with its runtimes', function () {

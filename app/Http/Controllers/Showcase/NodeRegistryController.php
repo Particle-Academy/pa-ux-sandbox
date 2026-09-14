@@ -84,7 +84,11 @@ class NodeRegistryController extends Controller
 
         return response()->json([
             '$schema' => 'https://ui.particle.academy/schema/node-registry.json',
-            'name' => 'fancy-flow-nodes',
+            // Not `fancy-flow-nodes`, which it was: the archived repo's name, a
+            // package that exists on no registry (unscoped on npm, anyone could
+            // claim it), and the bare half of the `particle-academy/fancy-flow-nodes`
+            // an agent tried to `composer require`. Nodes are vendored source.
+            'name' => 'Fancy Flow node marketplace',
             'homepage' => 'https://ui.particle.academy',
             'items' => $items,
             // The service directory travels with the index so a client can

@@ -2,7 +2,7 @@
 
 Read one issue — body, state, labels, assignees.
 
-One of the **issue** nodes in [fancy-flow-nodes](../../README.md). They act on a
+One of the **issue** nodes in the first-party node marketplace. They act on a
 hosted provider's issue tracker through
 [@particle-academy/fancy-git](https://github.com/Particle-Academy/fancy-git-js) /
 [particle-academy/fancy-git](https://github.com/Particle-Academy/fancy-git-php).

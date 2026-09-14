@@ -1,6 +1,5 @@
 {
   "schemaVersion": 1,
-  "name": "particle-academy/fancy-flow-nodes",
   "kind": "@particle-academy/resend_email_send",
   "aliases": [
     "resend_email_send"

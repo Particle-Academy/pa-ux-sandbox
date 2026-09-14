@@ -62,7 +62,11 @@ class GetNode extends Tool
 
         return Response::json([
             'kind' => $manifest['kind'] ?? $package?->kind ?? $kind,
-            'name' => $package?->name ?? ($manifest['name'] ?? null),
+            // From the manifest, which is the built artifact for a first-party
+            // kind: the package a node is published from is a manifest fact, and
+            // a first-party node has none. A stale row still carries the invented
+            // `particle-academy/fancy-flow-nodes` an agent once tried to install.
+            'name' => ($manifest['name'] ?? null) ?: null,
             'title' => $package?->title ?? ($manifest['title'] ?? null),
             'description' => $package?->description ?? ($manifest['description'] ?? null),
             'category' => $package?->category ?? ($manifest['category'] ?? null),

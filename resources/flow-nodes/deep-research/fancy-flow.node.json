@@ -1,6 +1,5 @@
 {
   "schemaVersion": 1,
-  "name": "particle-academy/fancy-flow-nodes",
   "kind": "@particle-academy/deep_research",
   "aliases": ["deep_research"],
   "configVersion": 1,

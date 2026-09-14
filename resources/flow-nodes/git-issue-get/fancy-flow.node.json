@@ -1,6 +1,5 @@
 {
   "schemaVersion": 1,
-  "name": "particle-academy/fancy-flow-nodes",
   "kind": "@particle-academy/git_issue_get",
   "aliases": [
     "git_issue_get"

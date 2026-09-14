@@ -26,6 +26,6 @@
       "requirement": "required"
     }
   ],
-  "fixtures": "nodes/git-push/fixtures/git-push.json",
+  "fixtures": "fixtures/git-push.json",
   "sideEffects": "unsafe-to-replay"
 }

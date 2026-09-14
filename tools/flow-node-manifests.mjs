@@ -51,6 +51,14 @@ for (const dir of readdirSync(NODES, { withFileTypes: true })) {
     }
   }
 
+  // `fixtures` resolves against the node directory, like the parts above. It
+  // named the archived fancy-flow-nodes layout (`nodes/<name>/…`) for every
+  // first-party node, a path that existed nowhere once the source moved here.
+  if (typeof manifest.fixtures === "string" && !existsSync(join(NODES, dir.name, manifest.fixtures))) {
+    console.error(`✗ ${dir.name}: fixtures "${manifest.fixtures}" does not exist in the node directory`);
+    failed = true;
+  }
+
   if (declared.length === 0) {
     console.error(`✗ ${dir.name}: declares no source at all — nothing would be copied`);
     failed = true;

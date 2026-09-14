@@ -33,6 +33,6 @@
   "capabilities": {
     "uiEffect": "optional"
   },
-  "fixtures": "nodes/ui-effect/fixtures/ui-effect.json",
+  "fixtures": "fixtures/ui-effect.json",
   "sideEffects": "unsafe-to-replay"
 }

@@ -29,6 +29,6 @@
     "llmForm": "required"
   },
   "pausesForHuman": "input",
-  "fixtures": "nodes/llm-input/fixtures/llm-input.json",
+  "fixtures": "fixtures/llm-input.json",
   "sideEffects": "idempotent"
 }

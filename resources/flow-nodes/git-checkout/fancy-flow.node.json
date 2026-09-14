@@ -25,6 +25,6 @@
       "requirement": "required"
     }
   ],
-  "fixtures": "nodes/git-checkout/fixtures/git-checkout.json",
+  "fixtures": "fixtures/git-checkout.json",
   "sideEffects": "unsafe-to-replay"
 }

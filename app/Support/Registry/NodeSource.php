@@ -33,6 +33,8 @@ namespace App\Support\Registry;
  *   ui/                    the React kind — copied whichever backend you pick
  *   js/                    the TypeScript executor
  *   php/                   the PHP executor
+ *   fixtures/<name>.json   golden fixtures, named by the manifest's `fixtures`
+ *                          relative to this directory — never vendored
  *
  * ## Shared parts
  *

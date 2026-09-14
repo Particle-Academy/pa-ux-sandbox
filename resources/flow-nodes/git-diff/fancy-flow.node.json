@@ -26,6 +26,6 @@
       "requirement": "required"
     }
   ],
-  "fixtures": "nodes/git-diff/fixtures/git-diff.json",
+  "fixtures": "fixtures/git-diff.json",
   "sideEffects": "idempotent"
 }

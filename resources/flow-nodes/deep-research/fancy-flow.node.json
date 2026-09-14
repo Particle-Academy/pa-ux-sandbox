@@ -19,6 +19,6 @@
     "php": { "files": ["php"], "engine": ">=0.9.0" }
   },
   "capabilities": { "deepResearch": "required" },
-  "fixtures": "nodes/deep-research/fixtures/deep-research.json",
+  "fixtures": "fixtures/deep-research.json",
   "sideEffects": "idempotent"
 }

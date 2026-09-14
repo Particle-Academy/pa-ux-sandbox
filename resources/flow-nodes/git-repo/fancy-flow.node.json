@@ -29,6 +29,6 @@
       "requirement": "required"
     }
   ],
-  "fixtures": "nodes/git-repo/fixtures/git-repo.json",
+  "fixtures": "fixtures/git-repo.json",
   "sideEffects": "idempotent"
 }

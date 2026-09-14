@@ -49,6 +49,6 @@
       "requirement": "required"
     }
   ],
-  "fixtures": "nodes/git-issue-comment/fixtures/git-issue-comment.json",
+  "fixtures": "fixtures/git-issue-comment.json",
   "sideEffects": "unsafe-to-replay"
 }

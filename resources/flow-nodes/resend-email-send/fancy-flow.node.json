@@ -71,6 +71,6 @@
       "engine": ">=0.16.0"
     }
   },
-  "fixtures": "nodes/resend-email-send/fixtures/resend-email-send.json",
+  "fixtures": "fixtures/resend-email-send.json",
   "sideEffects": "idempotent"
 }

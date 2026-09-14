@@ -24,7 +24,7 @@ const manifest = JSON.parse(
   readFileSync(resolve(process.cwd(), "resources/flow-nodes/llm-screen/fancy-flow.node.json"), "utf8"),
 ) as { kind: string; fixtures: string };
 
-const file = JSON.parse(readFileSync(resolve(process.cwd(), "resources/flow-nodes", manifest.fixtures.replace(/^nodes\//, "")), "utf8")) as FixtureFile;
+const file = JSON.parse(readFileSync(resolve(process.cwd(), "resources/flow-nodes/llm-screen", manifest.fixtures), "utf8")) as FixtureFile;
 
 const COMPONENTS = ["Card", "Text", "Stack"];
 

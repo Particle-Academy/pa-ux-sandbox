@@ -119,7 +119,7 @@ describe("packaging", () => {
     expect(manifest.runtimes.php.files).toEqual(["php"]);
   });
 
-  it("points at fixtures that exist from the repo root", () => {
-    expect(() => readFileSync(resolve(process.cwd(), "resources/flow-nodes", manifest.fixtures.replace(/^nodes\//, "")), "utf8")).not.toThrow();
+  it("points at fixtures that exist relative to the node directory", () => {
+    expect(() => readFileSync(resolve(process.cwd(), "resources/flow-nodes/ui-effect", manifest.fixtures), "utf8")).not.toThrow();
   });
 });

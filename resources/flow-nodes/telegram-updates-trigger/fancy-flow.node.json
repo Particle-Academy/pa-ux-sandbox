@@ -90,6 +90,6 @@
       "engine": ">=0.16.0"
     }
   },
-  "fixtures": "nodes/telegram-updates-trigger/fixtures/telegram-updates-trigger.json",
+  "fixtures": "fixtures/telegram-updates-trigger.json",
   "sideEffects": "none"
 }

@@ -56,6 +56,6 @@
       "requirement": "required"
     }
   ],
-  "fixtures": "nodes/git-issue-get/fixtures/git-issue-get.json",
+  "fixtures": "fixtures/git-issue-get.json",
   "sideEffects": "idempotent"
 }

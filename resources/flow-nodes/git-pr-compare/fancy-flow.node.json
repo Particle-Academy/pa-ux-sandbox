@@ -51,6 +51,6 @@
       "requirement": "optional"
     }
   ],
-  "fixtures": "nodes/git-pr-compare/fixtures/git-pr-compare.json",
+  "fixtures": "fixtures/git-pr-compare.json",
   "sideEffects": "none"
 }

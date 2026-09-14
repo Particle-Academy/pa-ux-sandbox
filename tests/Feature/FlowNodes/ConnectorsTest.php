@@ -62,7 +62,7 @@ dataset('connector nodes', [
 
 it('runs every golden fixture the TypeScript backend runs', function (string $dir, string $executorClass) {
     $manifest = json_decode((string) file_get_contents(__DIR__."/../../../resources/flow-nodes/{$dir}/fancy-flow.node.json"), true);
-    $file = json_decode((string) file_get_contents(__DIR__.'/../../../resources/flow-nodes/'.preg_replace('#^nodes/#', '', $manifest['fixtures'])), true);
+    $file = json_decode((string) file_get_contents(__DIR__."/../../../resources/flow-nodes/{$dir}/{$manifest['fixtures']}"), true);
 
     // The webhook trigger takes a ConnectionHost; the others take a
     // ConnectorClient. Both are unconfigured, which is the point: `fake` needs

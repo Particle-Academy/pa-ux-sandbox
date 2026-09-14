@@ -94,6 +94,6 @@
       "engine": ">=0.16.0"
     }
   },
-  "fixtures": "nodes/stripe-webhook-trigger/fixtures/stripe-webhook-trigger.json",
+  "fixtures": "fixtures/stripe-webhook-trigger.json",
   "sideEffects": "none"
 }

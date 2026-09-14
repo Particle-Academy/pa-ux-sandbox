@@ -26,6 +26,6 @@
       "requirement": "required"
     }
   ],
-  "fixtures": "nodes/git-log/fixtures/git-log.json",
+  "fixtures": "fixtures/git-log.json",
   "sideEffects": "idempotent"
 }

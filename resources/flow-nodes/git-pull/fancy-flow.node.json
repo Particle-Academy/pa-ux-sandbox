@@ -26,6 +26,6 @@
       "requirement": "required"
     }
   ],
-  "fixtures": "nodes/git-pull/fixtures/git-pull.json",
+  "fixtures": "fixtures/git-pull.json",
   "sideEffects": "unsafe-to-replay"
 }

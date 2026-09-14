@@ -50,6 +50,6 @@
       "requirement": "optional"
     }
   ],
-  "fixtures": "nodes/git-pr-checks/fixtures/git-pr-checks.json",
+  "fixtures": "fixtures/git-pr-checks.json",
   "sideEffects": "none"
 }

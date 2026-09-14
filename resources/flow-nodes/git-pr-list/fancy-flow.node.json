@@ -49,6 +49,6 @@
       "requirement": "optional"
     }
   ],
-  "fixtures": "nodes/git-pr-list/fixtures/git-pr-list.json",
+  "fixtures": "fixtures/git-pr-list.json",
   "sideEffects": "none"
 }

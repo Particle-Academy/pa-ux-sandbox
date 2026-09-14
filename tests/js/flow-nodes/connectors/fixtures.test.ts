@@ -73,7 +73,7 @@ describe.each(NODES)("$dir", ({ dir, kind, executor }) => {
   const manifest = manifestFor(dir);
   const file = JSON.parse(
     readFileSync(
-      resolve(process.cwd(), "resources/flow-nodes", manifest.fixtures.replace(/^nodes\//, "")),
+      resolve(process.cwd(), "resources/flow-nodes", dir, manifest.fixtures),
       "utf8",
     ),
   ) as FixtureFile;

@@ -58,7 +58,7 @@
                 "capabilities": {
                     "deepResearch": "required"
                 },
-                "fixtures": "nodes/deep-research/fixtures/deep-research.json",
+                "fixtures": "fixtures/deep-research.json",
                 "sideEffects": "idempotent"
             },
             "files": [
@@ -154,7 +154,7 @@
                         "requirement": "required"
                     }
                 ],
-                "fixtures": "nodes/git-branches/fixtures/git-branches.json",
+                "fixtures": "fixtures/git-branches.json",
                 "sideEffects": "idempotent"
             },
             "files": [
@@ -236,7 +236,7 @@
                         "requirement": "required"
                     }
                 ],
-                "fixtures": "nodes/git-checkout/fixtures/git-checkout.json",
+                "fixtures": "fixtures/git-checkout.json",
                 "sideEffects": "unsafe-to-replay"
             },
             "files": [
@@ -323,7 +323,7 @@
                         "requirement": "required"
                     }
                 ],
-                "fixtures": "nodes/git-diff/fixtures/git-diff.json",
+                "fixtures": "fixtures/git-diff.json",
                 "sideEffects": "idempotent"
             },
             "files": [
@@ -417,7 +417,7 @@
                         "requirement": "required"
                     }
                 ],
-                "fixtures": "nodes/git-issue-comment/fixtures/git-issue-comment.json",
+                "fixtures": "fixtures/git-issue-comment.json",
                 "sideEffects": "unsafe-to-replay"
             },
             "files": [
@@ -546,7 +546,7 @@
                         "requirement": "required"
                     }
                 ],
-                "fixtures": "nodes/git-issue-get/fixtures/git-issue-get.json",
+                "fixtures": "fixtures/git-issue-get.json",
                 "sideEffects": "idempotent"
             },
             "files": [
@@ -640,7 +640,7 @@
                         "requirement": "required"
                     }
                 ],
-                "fixtures": "nodes/git-issue-list/fixtures/git-issue-list.json",
+                "fixtures": "fixtures/git-issue-list.json",
                 "sideEffects": "idempotent"
             },
             "files": [
@@ -759,7 +759,7 @@
                         "requirement": "required"
                     }
                 ],
-                "fixtures": "nodes/git-issue-open/fixtures/git-issue-open.json",
+                "fixtures": "fixtures/git-issue-open.json",
                 "sideEffects": "unsafe-to-replay"
             },
             "files": [
@@ -878,7 +878,7 @@
                         "requirement": "required"
                     }
                 ],
-                "fixtures": "nodes/git-issue-update/fixtures/git-issue-update.json",
+                "fixtures": "fixtures/git-issue-update.json",
                 "sideEffects": "idempotent"
             },
             "files": [
@@ -965,7 +965,7 @@
                         "requirement": "required"
                     }
                 ],
-                "fixtures": "nodes/git-log/fixtures/git-log.json",
+                "fixtures": "fixtures/git-log.json",
                 "sideEffects": "idempotent"
             },
             "files": [
@@ -1064,7 +1064,7 @@
                         "requirement": "optional"
                     }
                 ],
-                "fixtures": "nodes/git-pr-checks/fixtures/git-pr-checks.json",
+                "fixtures": "fixtures/git-pr-checks.json",
                 "sideEffects": "none"
             },
             "files": [
@@ -1168,7 +1168,7 @@
                         "requirement": "optional"
                     }
                 ],
-                "fixtures": "nodes/git-pr-compare/fixtures/git-pr-compare.json",
+                "fixtures": "fixtures/git-pr-compare.json",
                 "sideEffects": "none"
             },
             "files": [
@@ -1267,7 +1267,7 @@
                         "requirement": "optional"
                     }
                 ],
-                "fixtures": "nodes/git-pr-get/fixtures/git-pr-get.json",
+                "fixtures": "fixtures/git-pr-get.json",
                 "sideEffects": "none"
             },
             "files": [
@@ -1361,7 +1361,7 @@
                         "requirement": "optional"
                     }
                 ],
-                "fixtures": "nodes/git-pr-list/fixtures/git-pr-list.json",
+                "fixtures": "fixtures/git-pr-list.json",
                 "sideEffects": "none"
             },
             "files": [
@@ -1455,7 +1455,7 @@
                         "requirement": "optional"
                     }
                 ],
-                "fixtures": "nodes/git-pr-open/fixtures/git-pr-open.json",
+                "fixtures": "fixtures/git-pr-open.json",
                 "sideEffects": "unsafe-to-replay"
             },
             "files": [
@@ -1542,7 +1542,7 @@
                         "requirement": "required"
                     }
                 ],
-                "fixtures": "nodes/git-pull/fixtures/git-pull.json",
+                "fixtures": "fixtures/git-pull.json",
                 "sideEffects": "unsafe-to-replay"
             },
             "files": [
@@ -1629,7 +1629,7 @@
                         "requirement": "required"
                     }
                 ],
-                "fixtures": "nodes/git-push/fixtures/git-push.json",
+                "fixtures": "fixtures/git-push.json",
                 "sideEffects": "unsafe-to-replay"
             },
             "files": [
@@ -1731,7 +1731,7 @@
                         "requirement": "required"
                     }
                 ],
-                "fixtures": "nodes/git-repo/fixtures/git-repo.json",
+                "fixtures": "fixtures/git-repo.json",
                 "sideEffects": "idempotent"
             },
             "files": [
@@ -1838,7 +1838,7 @@
                         "requirement": "required"
                     }
                 ],
-                "fixtures": "nodes/git-status/fixtures/git-status.json",
+                "fixtures": "fixtures/git-status.json",
                 "sideEffects": "idempotent"
             },
             "files": [
@@ -1900,7 +1900,7 @@
                     "llmForm": "required"
                 },
                 "pausesForHuman": "input",
-                "fixtures": "nodes/llm-input/fixtures/llm-input.json",
+                "fixtures": "fixtures/llm-input.json",
                 "sideEffects": "idempotent"
             },
             "files": [
@@ -2004,7 +2004,7 @@
                         "requirement": "optional"
                     }
                 ],
-                "fixtures": "nodes/llm-screen/fixtures/llm-screen.json",
+                "fixtures": "fixtures/llm-screen.json",
                 "sideEffects": "idempotent"
             },
             "files": [
@@ -2120,7 +2120,7 @@
                         "engine": ">=0.16.0"
                     }
                 },
-                "fixtures": "nodes/resend-email-send/fixtures/resend-email-send.json",
+                "fixtures": "fixtures/resend-email-send.json",
                 "sideEffects": "idempotent"
             },
             "files": [
@@ -2716,7 +2716,7 @@
                         "engine": ">=0.16.0"
                     }
                 },
-                "fixtures": "nodes/stripe-payment-intent/fixtures/stripe-payment-intent.json",
+                "fixtures": "fixtures/stripe-payment-intent.json",
                 "sideEffects": "unsafe-to-replay"
             },
             "files": [
@@ -3327,7 +3327,7 @@
                         "engine": ">=0.16.0"
                     }
                 },
-                "fixtures": "nodes/stripe-webhook-trigger/fixtures/stripe-webhook-trigger.json",
+                "fixtures": "fixtures/stripe-webhook-trigger.json",
                 "sideEffects": "none"
             },
             "files": [
@@ -3934,7 +3934,7 @@
                         "engine": ">=0.16.0"
                     }
                 },
-                "fixtures": "nodes/telegram-updates-trigger/fixtures/telegram-updates-trigger.json",
+                "fixtures": "fixtures/telegram-updates-trigger.json",
                 "sideEffects": "none"
             },
             "files": [
@@ -4484,7 +4484,7 @@
                 "capabilities": {
                     "uiEffect": "optional"
                 },
-                "fixtures": "nodes/ui-effect/fixtures/ui-effect.json",
+                "fixtures": "fixtures/ui-effect.json",
                 "sideEffects": "unsafe-to-replay"
             },
             "files": [

@@ -91,6 +91,6 @@
       "engine": ">=0.16.0"
     }
   },
-  "fixtures": "nodes/stripe-payment-intent/fixtures/stripe-payment-intent.json",
+  "fixtures": "fixtures/stripe-payment-intent.json",
   "sideEffects": "unsafe-to-replay"
 }

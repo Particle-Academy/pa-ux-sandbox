@@ -47,6 +47,6 @@
       "requirement": "optional"
     }
   ],
-  "fixtures": "nodes/llm-screen/fixtures/llm-screen.json",
+  "fixtures": "fixtures/llm-screen.json",
   "sideEffects": "idempotent"
 }

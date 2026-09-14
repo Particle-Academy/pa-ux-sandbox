@@ -49,6 +49,6 @@
       "requirement": "optional"
     }
   ],
-  "fixtures": "nodes/git-pr-open/fixtures/git-pr-open.json",
+  "fixtures": "fixtures/git-pr-open.json",
   "sideEffects": "unsafe-to-replay"
 }

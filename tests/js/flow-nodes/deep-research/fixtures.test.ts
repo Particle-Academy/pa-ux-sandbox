@@ -10,7 +10,7 @@ import type { DeepResearchRequest } from "../../../../resources/flow-nodes/deep-
 registerNodeKind(deepResearchKind);
 
 const manifest = JSON.parse(readFileSync(resolve(process.cwd(), "resources/flow-nodes/deep-research/fancy-flow.node.json"), "utf8"));
-const fixtures = JSON.parse(readFileSync(resolve(process.cwd(), "resources/flow-nodes", manifest.fixtures.replace(/^nodes\//, "")), "utf8")) as FixtureFile;
+const fixtures = JSON.parse(readFileSync(resolve(process.cwd(), "resources/flow-nodes/deep-research", manifest.fixtures), "utf8")) as FixtureFile;
 
 describe("deep research golden fixtures", () => {
   const requests: DeepResearchRequest[] = [];

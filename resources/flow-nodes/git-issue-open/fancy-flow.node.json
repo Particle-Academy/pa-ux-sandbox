@@ -54,6 +54,6 @@
       "requirement": "required"
     }
   ],
-  "fixtures": "nodes/git-issue-open/fixtures/git-issue-open.json",
+  "fixtures": "fixtures/git-issue-open.json",
   "sideEffects": "unsafe-to-replay"
 }

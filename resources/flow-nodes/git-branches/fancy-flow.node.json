@@ -27,6 +27,6 @@
       "requirement": "required"
     }
   ],
-  "fixtures": "nodes/git-branches/fixtures/git-branches.json",
+  "fixtures": "fixtures/git-branches.json",
   "sideEffects": "idempotent"
 }

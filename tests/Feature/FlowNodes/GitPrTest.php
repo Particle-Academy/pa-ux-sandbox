@@ -125,7 +125,7 @@ dataset('pr nodes', [
 
 it('runs every golden fixture the TypeScript backend runs', function (string $dir, string $executorClass, string $hostClass) {
     $manifest = json_decode((string) file_get_contents(__DIR__."/../../../resources/flow-nodes/{$dir}/fancy-flow.node.json"), true);
-    $file = json_decode((string) file_get_contents(__DIR__.'/../../../resources/flow-nodes/'.preg_replace('#^nodes/#', '', $manifest['fixtures'])), true);
+    $file = json_decode((string) file_get_contents(__DIR__."/../../../resources/flow-nodes/{$dir}/{$manifest['fixtures']}"), true);
 
     $host = new $hostClass(registry: fakeRegistry());
     $executor = new $executorClass($host);

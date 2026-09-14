@@ -108,7 +108,7 @@ describe.each(NODES)("$dir", ({ dir, kind, executor, register }) => {
   const manifest = JSON.parse(
     readFileSync(resolve(process.cwd(), "resources/flow-nodes", dir, "fancy-flow.node.json"), "utf8"),
   );
-  const file = JSON.parse(readFileSync(resolve(process.cwd(), "resources/flow-nodes", manifest.fixtures.replace(/^nodes\//, "")), "utf8")) as FixtureFile;
+  const file = JSON.parse(readFileSync(resolve(process.cwd(), "resources/flow-nodes", dir, manifest.fixtures), "utf8")) as FixtureFile;
 
   it("declares the kind it registers", () => {
     expect(manifest.kind).toBe(kind.name);

@@ -1,8 +1,8 @@
 <?php
 
+use App\Models\User;
 use Database\Factories\Catalog\PriceFactory;
 use Database\Factories\Catalog\ProductFactory;
-use App\Models\User;
 use Laravel\Cashier\Checkout;
 use LaravelCatalog\Facades\Catalog;
 use LaravelCatalog\Models\Price;

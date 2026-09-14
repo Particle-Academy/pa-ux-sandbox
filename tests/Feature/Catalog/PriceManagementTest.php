@@ -1,26 +1,23 @@
 <?php
 
+use App\Models\User;
 use Database\Factories\Catalog\PriceFactory;
 use Database\Factories\Catalog\ProductFactory;
-use App\Models\User;
-use Illuminate\Support\Facades\DB;
-use LaravelCatalog\Models\Price;
 use LaravelCatalog\Services\StripeCheckoutService;
-
 use Tests\TestCase;
 
 uses(TestCase::class);
 
 it('can create multiple prices for a product', function () {
     $product = ProductFactory::new()->create();
-    
+
     $monthlyPrice = PriceFactory::new()
         ->for($product)
         ->create([
             'recurring_interval' => 'month',
             'unit_amount' => 1000,
         ]);
-    
+
     $yearlyPrice = PriceFactory::new()
         ->for($product)
         ->yearly()
@@ -63,7 +60,7 @@ it('throws exception when creating subscription checkout without Stripe price ID
         $price,
         'https://example.com/success',
         'https://example.com/cancel'
-    ))->toThrow(\InvalidArgumentException::class, 'Price does not have a Stripe price ID');
+    ))->toThrow(InvalidArgumentException::class, 'Price does not have a Stripe price ID');
 });
 
 it('throws exception when creating subscription checkout for one-time price', function () {
@@ -81,7 +78,7 @@ it('throws exception when creating subscription checkout for one-time price', fu
         $price,
         'https://example.com/success',
         'https://example.com/cancel'
-    ))->toThrow(\InvalidArgumentException::class, 'Cannot create subscription checkout for a one-time price');
+    ))->toThrow(InvalidArgumentException::class, 'Cannot create subscription checkout for a one-time price');
 });
 
 it('throws exception when creating one-time checkout for recurring price', function () {
@@ -98,7 +95,7 @@ it('throws exception when creating one-time checkout for recurring price', funct
         1,
         'https://example.com/success',
         'https://example.com/cancel'
-    ))->toThrow(\InvalidArgumentException::class, 'Cannot create one-time checkout for a recurring price');
+    ))->toThrow(InvalidArgumentException::class, 'Cannot create one-time checkout for a recurring price');
 });
 
 it('can create prices with trial periods', function () {
@@ -111,7 +108,7 @@ it('can create prices with trial periods', function () {
 
 it('can filter active prices', function () {
     $product = ProductFactory::new()->create();
-    
+
     PriceFactory::new()->for($product)->create(['active' => true]);
     PriceFactory::new()->for($product)->create(['active' => true]);
     PriceFactory::new()->for($product)->create(['active' => false]);

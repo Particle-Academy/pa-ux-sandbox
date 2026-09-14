@@ -1,13 +1,13 @@
 <?php
 
+use App\Models\User;
 use Database\Factories\Catalog\PriceFactory;
 use Database\Factories\Catalog\ProductFactory;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Queue;
+use LaravelCatalog\CatalogManager;
 use LaravelCatalog\Facades\Catalog;
-use LaravelCatalog\Jobs\SyncProductToStripe;
-use LaravelCatalog\Models\Product;
 use LaravelCatalog\Models\Price;
+use LaravelCatalog\Services\StripeCatalogService;
+use LaravelCatalog\Services\StripeCheckoutService;
 use Tests\TestCase;
 
 uses(TestCase::class);
@@ -20,19 +20,19 @@ beforeEach(function () {
 it('can access catalog service via facade', function () {
     $service = Catalog::catalogService();
 
-    expect($service)->toBeInstanceOf(\LaravelCatalog\Services\StripeCatalogService::class);
+    expect($service)->toBeInstanceOf(StripeCatalogService::class);
 });
 
 it('can access checkout service via facade', function () {
     $service = Catalog::checkoutService();
 
-    expect($service)->toBeInstanceOf(\LaravelCatalog\Services\StripeCheckoutService::class);
+    expect($service)->toBeInstanceOf(StripeCheckoutService::class);
 });
 
 it('facade resolves to catalog manager', function () {
     $manager = Catalog::getFacadeRoot();
 
-    expect($manager)->toBeInstanceOf(\LaravelCatalog\CatalogManager::class);
+    expect($manager)->toBeInstanceOf(CatalogManager::class);
 });
 
 it('can call sync product method via facade', function () {
@@ -79,7 +79,7 @@ it('can call test connection method via facade', function () {
 });
 
 it('can call subscription checkout method via facade', function () {
-    $user = \App\Models\User::factory()->create();
+    $user = User::factory()->create();
     $product = ProductFactory::new()->create();
     $price = PriceFactory::new()
         ->for($product)
@@ -94,7 +94,7 @@ it('can call subscription checkout method via facade', function () {
 });
 
 it('can call one-time checkout method via facade', function () {
-    $user = \App\Models\User::factory()->create();
+    $user = User::factory()->create();
     $product = ProductFactory::new()->create();
     $price = PriceFactory::new()
         ->for($product)
@@ -109,7 +109,7 @@ it('can call one-time checkout method via facade', function () {
 });
 
 it('can call get subscription checkout URL method via facade', function () {
-    $user = \App\Models\User::factory()->create();
+    $user = User::factory()->create();
     $product = ProductFactory::new()->create();
     $price = PriceFactory::new()
         ->for($product)
@@ -124,7 +124,7 @@ it('can call get subscription checkout URL method via facade', function () {
 });
 
 it('can call get one-time checkout URL method via facade', function () {
-    $user = \App\Models\User::factory()->create();
+    $user = User::factory()->create();
     $product = ProductFactory::new()->create();
     $price = PriceFactory::new()
         ->for($product)
@@ -137,4 +137,3 @@ it('can call get one-time checkout URL method via facade', function () {
     $manager = Catalog::getFacadeRoot();
     expect(method_exists($manager, 'getOneTimeCheckoutUrl'))->toBeTrue();
 });
-

@@ -2,15 +2,13 @@
 
 use Database\Factories\Catalog\PriceFactory;
 use Database\Factories\Catalog\ProductFactory;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Queue;
-use LaravelCatalog\Jobs\SyncProductToStripe;
-use LaravelCatalog\Models\Product;
-use LaravelCatalog\Models\Price;
-
-use Tests\TestCase;
-
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Queue;
+use LaravelCatalog\Facades\Catalog;
+use LaravelCatalog\Jobs\SyncProductToStripe;
+use LaravelCatalog\Models\Price;
+use LaravelCatalog\Models\Product;
+use Tests\TestCase;
 
 uses(TestCase::class);
 
@@ -53,7 +51,7 @@ it('can access sync product method via catalog facade', function () {
     ]);
 
     // Verify facade has the method
-    $manager = \LaravelCatalog\Facades\Catalog::getFacadeRoot();
+    $manager = Catalog::getFacadeRoot();
     expect(method_exists($manager, 'syncProduct'))->toBeTrue();
 });
 

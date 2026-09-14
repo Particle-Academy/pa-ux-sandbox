@@ -78,9 +78,10 @@ Two places a node can come from, and they are NOT the same:
    llm_branch), tool_use, embed_search, api_request, webhook_out, notify, log,
    subflow, lane, note, output. Check these FIRST; `search_nodes` does not list
    them. NOTE: there is no `http` kind — the HTTP node is `api_request`.
-2. The MARKETPLACE — third-party node packages, which is what `list_nodes` /
-   `search_nodes` / `get_node` / `node_install_instructions` cover. It may well
-   be empty; that is not an error.
+2. The MARKETPLACE, which is what `list_nodes` / `search_nodes` / `get_node` /
+   `node_install_instructions` cover. A marketplace node is VENDORED SOURCE:
+   `npx fancy-cli@latest add node <kind>` copies it into the project. There is
+   no package for a node, so never `composer require` or `npm install` one.
 
 VENDOR CONNECTORS are a THIRD thing, and they are hidden by default. Nodes that
 talk to a third-party service (Stripe, Slack, Telegram, …) are excluded from

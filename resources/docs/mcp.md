@@ -24,9 +24,9 @@ The Install-MCP server is a hosted streamable-HTTP MCP endpoint that any MCP-cap
 | `upgrade-kit` | `{ from? }` | Moving an app to a newer kit line: why the release exists, what breaks, the ordered commands. |
 | `search-backend-packages` | `{ query?, stack? }` | A server-side package for a capability, filtered to the stack you are already on. |
 | `list-connector-services` | (none) | Which vendor services have connector nodes, by domain, with trigger + action counts. |
-| `list-nodes` / `search-nodes` | (none) / `{ query }` | The **fancy-flow workflow-node marketplace** (third-party node packages). |
+| `list-nodes` / `search-nodes` | (none) / `{ query }` | The **fancy-flow workflow-node marketplace**. Nodes are vendored source, not packages. |
 | `get-node` | `{ kind }` | One node's capabilities, whether it pauses for a human, whether it's replay-safe. |
-| `node-install-instructions` | `{ kind }` | The per-runtime install command for a node package. |
+| `node-install-instructions` | `{ kind }` | The `fancy-cli add node` command for a node, per runtime, plus the suite packages its source imports. |
 | `register-showcase-project` | `{ … }` | Register a project you built for the public [Showcase](/showcase) (asks the human first). |
 | `showcase-project-status` / `rescan-showcase-project` | `{ … }` | Verification status + re-scan. |
 

@@ -88,7 +88,7 @@ npx fancy-cli@latest list
 
 ## Workflow nodes — `add node` / `list nodes` / `search nodes`
 
-A [fancy-flow](/packages/fancy-flow) graph runs on node **kinds**. The engine ships 27 builtins that need no install; the rest come from the node marketplace, and the CLI installs them per runtime.
+A [fancy-flow](/packages/fancy-flow) graph runs on node **kinds**. The engine ships 27 builtins that need no install; the rest come from the node marketplace, and the CLI copies each one's source into your project.
 
 ```bash
 # Find one by concept before you hand-roll a step in app code.
@@ -97,11 +97,11 @@ npx fancy-cli@latest search nodes "route with an llm"
 # Every published node, grouped by category.
 npx fancy-cli@latest list nodes
 
-# Install — checks the node runs on the runtimes your project actually executes on.
+# Add — checks the node runs on the runtimes your project actually executes on, then copies its source in.
 npx fancy-cli@latest add node @acme/salesforce_upsert
 ```
 
-`add node` is a subcommand rather than a flag because it installs something different from a component: components vendor source files; nodes install per-runtime packages after a compatibility check. A node installed only for TypeScript is invisible to a PHP runner and the graph fails at that node — `add node` reads the project's real runtimes and refuses a mismatch, which raw `npm install` / `composer require` cannot.
+`add node` is a subcommand rather than a flag because a node is more than a component: a React kind plus a backend per runtime. It is still **vendored source** — nothing is installed for the node itself, and there is no node package to `npm install` or `composer require`. The CLI copies the kind and the backend your project executes on, after a compatibility check: a node vendored only for TypeScript is invisible to a PHP runner and the graph fails at that node, so `add node` reads the project's real runtimes and refuses a mismatch. The first line it prints names the registry the node came from.
 
 ## `search <query>`
 

@@ -11,7 +11,7 @@ use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Attributes\Description;
 use Laravel\Mcp\Server\Tool;
 
-#[Description('List every published fancy-flow MARKETPLACE node package, grouped by category. These are installable third-party nodes — fancy-flow\'s ~25 core builtins are NOT here, because they ship with the engine and need no installation. Each entry shows which runtimes it implements (ts / php): a node that does not implement the runtime the project executes on cannot run there. VENDOR CONNECTOR nodes (Stripe, Slack, …) are EXCLUDED by default so the core vocabulary is legible — the response tells you how many were hidden and which services they belong to. Pass `service` to see one vendor\'s nodes, or `connectors: "include"` / `"only"`.')]
+#[Description('List every published fancy-flow MARKETPLACE node, grouped by category. A node is vendored source that `fancy-cli add node` copies into the project; there is no package to install for it. fancy-flow\'s ~25 core builtins are NOT here, because they ship with the engine. Each entry shows which runtimes it implements (ts / php): a node that does not implement the runtime the project executes on cannot run there. VENDOR CONNECTOR nodes (Stripe, Slack, …) are EXCLUDED by default so the core vocabulary is legible — the response tells you how many were hidden and which services they belong to. Pass `service` to see one vendor\'s nodes, or `connectors: "include"` / `"only"`.')]
 class ListNodes extends Tool
 {
     public function __construct(private readonly FirstPartyNodeSource $firstParty) {}

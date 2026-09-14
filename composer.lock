@@ -4529,16 +4529,16 @@
         },
         {
             "name": "particle-academy/holy-sheet",
-            "version": "v2.2.0",
+            "version": "v2.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/holy-sheet.git",
-                "reference": "ee525342b96995d095e9d152ef1948480259f7b2"
+                "reference": "12384a5a663e7c5a01a75928df14c3782ab4cb8f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/holy-sheet/zipball/ee525342b96995d095e9d152ef1948480259f7b2",
-                "reference": "ee525342b96995d095e9d152ef1948480259f7b2",
+                "url": "https://api.github.com/repos/Particle-Academy/holy-sheet/zipball/12384a5a663e7c5a01a75928df14c3782ab4cb8f",
+                "reference": "12384a5a663e7c5a01a75928df14c3782ab4cb8f",
                 "shasum": ""
             },
             "require": {
@@ -4597,7 +4597,7 @@
                 "issues": "https://github.com/Particle-Academy/holy-sheet/issues",
                 "source": "https://github.com/Particle-Academy/holy-sheet"
             },
-            "time": "2026-09-13T20:31:44+00:00"
+            "time": "2026-09-14T06:26:59+00:00"
         },
         {
             "name": "particle-academy/laravel-catalog",

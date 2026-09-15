@@ -1,5 +1,5 @@
 {
-    "count": 302,
+    "count": 301,
     "items": [
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
@@ -2682,17 +2682,6 @@
             "title": "@particle-academy/fancy-connector-core",
             "description": "The connector runtime: typed delivery, failure classification (unreachable / refused / ambiguous / rejected), retries, and sandbox-vs-live selection. Every connector is built on it.",
             "package": "fancy-connector-core",
-            "dependencies": [],
-            "registryDependencies": [],
-            "files": []
-        },
-        {
-            "$schema": "https://ui.particle.academy/schema/registry-item.json",
-            "name": "fancy-connectors",
-            "type": "registry:ui",
-            "title": "@particle-academy/fancy-connectors",
-            "description": "Installable connectors for third-party APIs -- triggers, actions, sandbox endpoints where a provider offers one, and a faker for every connector regardless.",
-            "package": "fancy-connectors",
             "dependencies": [],
             "registryDependencies": [],
             "files": []

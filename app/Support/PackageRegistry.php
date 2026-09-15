@@ -320,9 +320,11 @@ BEFORE IT CAN SHIP: three registry names that do not exist yet (npm scoped, Pack
         'fancy-conformance' => ['group' => 'tooling', 'ecosystem' => 'polyglot', 'kind' => 'headless', 'accent' => '#14b8a6'],
         // Suite-aware development diagnostics for React applications.
         'fancy-devtools' => ['group' => 'tooling', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#8b5cf6'],
-        // Connector runtime + the installable connector set.
+        // Connector runtime. The installable connectors are generated per
+        // provider by Weaver and listed through connectors.json, not here; the
+        // vendored `fancy-connectors` catalogue was never published and was
+        // retired on 2026-09-14.
         'fancy-connector-core' => ['group' => 'platform', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#f97316'],
-        'fancy-connectors' => ['group' => 'platform', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#f97316'],
         // Trading.
         'fancy-trading-js' => ['group' => 'commerce', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#22c55e'],
         // `kind` was 'react', which is not one of ui|bridge|headless|block.
@@ -845,14 +847,6 @@ BEFORE IT CAN SHIP: three registry names that do not exist yet (npm scoped, Pack
                 'npm' => '@particle-academy/fancy-connector-core',
                 'composer' => 'particle-academy/fancy-connector-core',
                 'repo' => 'Particle-Academy/fancy-connector-core',
-                'language' => 'TypeScript',
-            ],
-            [
-                'slug' => 'fancy-connectors',
-                'name' => '@particle-academy/fancy-connectors',
-                'tagline' => 'Installable connectors for third-party APIs -- triggers, actions, sandbox endpoints where a provider offers one, and a faker for every connector regardless.',
-                'npm' => '@particle-academy/fancy-connectors',
-                'repo' => 'Particle-Academy/fancy-connectors',
                 'language' => 'TypeScript',
             ],
             [

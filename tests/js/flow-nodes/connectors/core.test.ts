@@ -260,7 +260,42 @@ describe("webhook verification", () => {
     expect(parseStripeSignature("t=123,v1=abc,v0=ignored")).toEqual({
       timestamp: "123",
       signature: "abc",
+      signatures: ["abc"],
     });
+  });
+
+  it("accepts a delivery signed during a secret roll when only the SECOND v1 is ours", async () => {
+    // While a Stripe secret is rolled, Stripe sends one v1 per active secret and
+    // the receiver must accept a match against any of them. Taking only the
+    // first refused every such delivery for up to 24 hours as "signature did
+    // not match" -- the same message as a wrong secret.
+    const timestamp = "1767225600";
+    const other = await hmac("whsec-the-other-active-secret", `${timestamp}.${body}`, "SHA-256");
+    const ours = await hmac(secret, `${timestamp}.${body}`, "SHA-256");
+
+    expect(parseStripeSignature(`t=${timestamp},v1=${other},v1=${ours}`).signatures).toEqual([other, ours]);
+
+    const result = await verifyStripeDelivery(
+      { raw: body, headers: { "stripe-signature": `t=${timestamp},v1=${other},v1=${ours}` } },
+      secret,
+      Number(timestamp),
+    );
+
+    expect(result).toEqual({ ok: true });
+  });
+
+  it("still refuses a roll where no v1 is ours", async () => {
+    const timestamp = "1767225600";
+    const a = await hmac("whsec-a", `${timestamp}.${body}`, "SHA-256");
+    const b = await hmac("whsec-b", `${timestamp}.${body}`, "SHA-256");
+
+    const result = await verifyStripeDelivery(
+      { raw: body, headers: { "stripe-signature": `t=${timestamp},v1=${a},v1=${b}` } },
+      secret,
+      Number(timestamp),
+    );
+
+    expect(result).toEqual({ ok: false, reason: "signature did not match" });
   });
 
   it("declares a 300 second window and signs {timestamp}.{body}", () => {

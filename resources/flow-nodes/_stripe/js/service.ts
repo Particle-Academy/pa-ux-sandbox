@@ -44,19 +44,28 @@ export const STRIPE_SIGNATURE_SCHEME: HmacScheme = {
   encoding: "hex",
 };
 
-/** Split `t=…,v1=…` into its parts. Unknown schemes (`v0=…`) are ignored. */
-export function parseStripeSignature(raw: string): { signature?: string; timestamp?: string } {
+/**
+ * Split `t=…,v1=…` into its parts. Unknown schemes (`v0=…`) are ignored.
+ *
+ * EVERY `v1` is kept. While a secret is rolled Stripe sends one signature per
+ * active secret, and a receiver must accept a match against any of them
+ * (docs.stripe.com/webhooks, "Verify manually", step 4). Taking only the first
+ * refused every delivery whose first `v1` came from the other secret, for up to
+ * 24 hours, as "signature did not match" -- the message a wrong secret gives.
+ * fancy-connector-core 0.9.0 verifies a `signatures` list against any match;
+ * `signature` stays for 0.8.x readers.
+ */
+export function parseStripeSignature(raw: string): { signature?: string; signatures: string[]; timestamp?: string } {
   const parts = raw.split(",").map((part) => part.trim());
-  const result: { signature?: string; timestamp?: string } = {};
+  const result: { signature?: string; signatures: string[]; timestamp?: string } = { signatures: [] };
 
   for (const part of parts) {
     const [key, value] = part.split("=", 2);
     if (key === "t") result.timestamp = value;
-    // Stripe may send several `v1` signatures during a secret rotation. Taking
-    // the first is what the verification loop expects; a rotation window is
-    // rare enough that failing over to a second is not worth the ambiguity of
-    // "which one matched".
-    if (key === "v1" && !result.signature) result.signature = value;
+    if (key === "v1" && value) {
+      result.signatures.push(value);
+      result.signature ??= value;
+    }
   }
 
   return result;

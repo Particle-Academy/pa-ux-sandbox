@@ -43,17 +43,23 @@ final class WebhookVerifier
      * while still answering the provider with an opaque 400.
      *
      * @param  string  $raw  the body EXACTLY as received
-     * @param  callable(string, ?string): string  $payload  builds the string that gets
-     *                                                      signed. Providers differ here more than anywhere else — Stripe signs
-     *                                                      `{timestamp}.{body}`, Slack signs `v0:{timestamp}:{body}`, GitHub signs the
-     *                                                      body alone.
+     * @param  callable(string, ?string, ?string): string  $payload  builds the string that gets
+     *                                                               signed. Providers differ here more than anywhere else — Stripe signs
+     *                                                               `{timestamp}.{body}`, Slack signs `v0:{timestamp}:{body}`, GitHub signs the
+     *                                                               body alone, Svix signs `{id}.{timestamp}.{body}` (the third argument).
      * @param  int|null  $now  seconds since the epoch. Injected so tests are not
      *                         clock-dependent.
+     * @param  string  $secretEncoding  how the SECRET is spelled: `utf8` (the default, every
+     *                                  provider before Svix — the key is the text's bytes) or
+     *                                  `base64` (the key is the DECODED bytes; Svix's
+     *                                  `whsec_<base64>`, half of whose bytes are not UTF-8)
+     * @param  string|null  $secretPrefix  a prefix to strip before decoding (`whsec_`); its
+     *                                     absence is a refusal, never a guess
      * @return array{ok: bool, reason: ?string}
      */
     public static function verify(
         string $raw,
-        ?string $signature,
+        string|array|null $signature,
         ?string $secret,
         callable $payload,
         string $algorithm = 'sha256',
@@ -61,6 +67,9 @@ final class WebhookVerifier
         ?string $timestamp = null,
         ?int $now = null,
         string $encoding = 'hex',
+        string $secretEncoding = 'utf8',
+        ?string $secretPrefix = null,
+        ?string $id = null,
     ): array {
         if ($secret === null || $secret === '') {
             // Never "accept when unconfigured". An endpoint that verifies
@@ -69,8 +78,26 @@ final class WebhookVerifier
             return self::fail('no signing secret configured for this trigger');
         }
 
-        if ($signature === null || $signature === '') {
+        // A LIST when the provider sends several — Stripe signs once per
+        // active secret while a secret is rolled, Svix's header "could be any
+        // number of signatures" — and the delivery is accepted when ANY
+        // matches. A first-only rule fails every delivery whose first
+        // signature came from the new secret, for the whole roll.
+        $signatures = array_values(array_filter(
+            \is_array($signature) ? $signature : [$signature],
+            fn (mixed $s): bool => \is_string($s) && $s !== '',
+        ));
+
+        if ($signatures === []) {
             return self::fail('delivery carried no signature header');
+        }
+
+        // The key is checked BEFORE anything is signed, so a secret that cannot
+        // be a key is named as such rather than producing a mismatch that reads
+        // like a wrong secret.
+        $key = self::secretKeyBytes($secret, $secretEncoding, $secretPrefix);
+        if (\is_array($key)) {
+            return $key;
         }
 
         if ($tolerance !== null) {
@@ -85,12 +112,50 @@ final class WebhookVerifier
             }
         }
 
-        $computed = hash_hmac($algorithm, $payload($raw, $timestamp), $secret, $encoding === 'base64');
+        // A payload that signs the delivery's ID (Svix) takes it as a third
+        // argument; the two-argument payloads every earlier scheme wrote
+        // ignore an extra argument, as PHP lets a user function do.
+        $computed = hash_hmac($algorithm, $payload($raw, $timestamp, $id), $key, $encoding === 'base64');
         $expected = $encoding === 'base64' ? base64_encode($computed) : $computed;
 
-        return hash_equals($expected, $signature)
-            ? ['ok' => true, 'reason' => null]
-            : self::fail('signature did not match');
+        // Each candidate is compared in constant time; which of them matched
+        // is not a secret, so stopping at the first match leaks nothing.
+        foreach ($signatures as $candidate) {
+            if (hash_equals($expected, $candidate)) {
+                return ['ok' => true, 'reason' => null];
+            }
+        }
+
+        return self::fail('signature did not match');
+    }
+
+    /**
+     * The HMAC key a scheme's secret spells, or the refusal it earns.
+     *
+     * @return string|array{ok: bool, reason: ?string}
+     */
+    public static function secretKeyBytes(string $secret, string $secretEncoding = 'utf8', ?string $secretPrefix = null): string|array
+    {
+        $material = $secret;
+
+        if ($secretPrefix !== null) {
+            if (! str_starts_with($material, $secretPrefix)) {
+                return self::fail('signing secret does not start with '.json_encode($secretPrefix));
+            }
+            $material = substr($material, \strlen($secretPrefix));
+        }
+
+        if ($secretEncoding === 'base64') {
+            // Strict: a lenient decode of a KEY is a key nobody can reason about.
+            $decoded = base64_decode($material, true);
+            if ($decoded === false || $material === '' || preg_match('/^[A-Za-z0-9+\/]*={0,2}$/', $material) !== 1 || \strlen($material) % 4 !== 0) {
+                return self::fail('signing secret is not valid base64');
+            }
+
+            return $decoded;
+        }
+
+        return $material;
     }
 
     /**

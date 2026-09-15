@@ -72,12 +72,21 @@ export type HmacVerificationSpec = {
   signatureHeader: string;
   /** Header carrying the timestamp, when the scheme signs one. */
   timestampHeader?: string;
+  /**
+   * Header carrying the delivery's ID, when the scheme signs one — Svix
+   * signs `${svix-id}.${svix-timestamp}.${body}`. A declared id header the
+   * delivery does not carry is a refusal, never a payload with a hole in it.
+   */
+  idHeader?: string;
   scheme: HmacScheme;
   /**
    * Some schemes pack the timestamp INTO the signature header
    * (Stripe: `t=…,v1=…`). Given the raw header value, return the parts.
+   * `signatures` carries EVERY signature the header held (a provider rolling
+   * a secret sends one per active secret); `signature` alone is the 0.8.x
+   * shape and still means one.
    */
-  parse?: (raw: string) => { signature?: string; timestamp?: string };
+  parse?: (raw: string) => { signature?: string; signatures?: string[]; timestamp?: string };
   /** A challenge the provider makes before it will deliver anything. */
   handshake?: ChallengeHandshake;
 };
@@ -147,12 +156,16 @@ export async function verifyDelivery(
   const timestamp = parsed.timestamp
     ?? (spec.timestampHeader ? header(delivery.headers, spec.timestampHeader) : undefined);
 
+  const id = spec.idHeader ? header(delivery.headers, spec.idHeader) : undefined;
+  if (spec.idHeader && !id) return { ok: false, reason: "delivery carried no id header" };
+
   return verifyHmac({
     raw: delivery.raw,
-    signature: parsed.signature,
+    signature: parsed.signatures ?? parsed.signature,
     secret,
     scheme: spec.scheme,
     timestamp,
+    id,
     ...(now === undefined ? {} : { now }),
   });
 }

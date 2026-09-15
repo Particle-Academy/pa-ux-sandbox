@@ -48,14 +48,55 @@ export type HmacScheme = {
   /**
    * Build the exact string that gets signed. Providers differ here more than
    * anywhere else — Stripe signs `${timestamp}.${body}`, Slack signs
-   * `v0:${timestamp}:${body}`, GitHub signs the body alone.
+   * `v0:${timestamp}:${body}`, GitHub signs the body alone, and Svix signs
+   * `${id}.${timestamp}.${body}` where `id` is the delivery's own id header.
    */
-  payload: (raw: string, timestamp?: string) => string;
+  payload: (raw: string, timestamp?: string, id?: string) => string;
   /** Seconds a delivery stays acceptable. */
   tolerance?: number;
   /** Encoding of the signature the provider sends. */
   encoding?: "hex" | "base64";
+  /**
+   * How the SECRET is spelled. `utf8` (the default, and every provider before
+   * Svix): the key is the text's bytes. `base64`: the key is the DECODED
+   * bytes — Svix hands out `whsec_<base64>`, and half of the decoded bytes are
+   * not valid UTF-8, so encoding the text would sign with the wrong key and
+   * fail exactly like a wrong secret.
+   */
+  secretEncoding?: "utf8" | "base64";
+  /** A prefix to strip before decoding (`whsec_`). Its absence is a refusal, never a guess. */
+  secretPrefix?: string;
 };
+
+/** The HMAC key a scheme's secret spells, or the reason it cannot be one. */
+export function secretKeyBytes(
+  secret: string,
+  options: { secretEncoding?: "utf8" | "base64"; secretPrefix?: string } = {},
+): { bytes: Uint8Array } | { reason: string } {
+  let material = secret;
+
+  if (options.secretPrefix !== undefined) {
+    if (!material.startsWith(options.secretPrefix)) {
+      return { reason: `signing secret does not start with ${JSON.stringify(options.secretPrefix)}` };
+    }
+    material = material.slice(options.secretPrefix.length);
+  }
+
+  if ((options.secretEncoding ?? "utf8") === "base64") {
+    // Strict: `atob` is lenient about whitespace and a trailing `=` or two,
+    // and lenient decoding of a key is a key nobody can reason about.
+    if (!/^[A-Za-z0-9+/]*={0,2}$/.test(material) || material.length % 4 !== 0) {
+      return { reason: "signing secret is not valid base64" };
+    }
+    try {
+      return { bytes: Uint8Array.from(atob(material), (c) => c.charCodeAt(0)) };
+    } catch {
+      return { reason: "signing secret is not valid base64" };
+    }
+  }
+
+  return { bytes: new TextEncoder().encode(material) };
+}
 
 /**
  * Verify an HMAC-signed delivery.
@@ -66,14 +107,27 @@ export type HmacScheme = {
  */
 export async function verifyHmac(options: {
   raw: string;
-  signature: string | undefined;
+  /**
+   * The signature(s) the delivery carried. A LIST when the provider sends
+   * several — Stripe signs once per active secret while a secret is rolled
+   * and Svix's header "could be any number of signatures" — and the delivery
+   * is accepted when ANY matches. A first-only rule fails every delivery
+   * whose first signature came from the new secret, for the whole roll, and
+   * it reads exactly like a wrong secret.
+   */
+  signature: string | string[] | undefined;
   secret: string | undefined;
   scheme: HmacScheme;
   timestamp?: string;
+  /** The delivery's id, when the scheme signs one (Svix's `svix-id`). */
+  id?: string;
   /** Seconds since the epoch. Injected so tests are not clock-dependent. */
   now?: number;
 }): Promise<WebhookVerification> {
-  const { raw, signature, secret, scheme, timestamp } = options;
+  const { raw, secret, scheme, timestamp, id } = options;
+  const signatures = (Array.isArray(options.signature) ? options.signature : [options.signature]).filter(
+    (s): s is string => typeof s === "string" && s !== "",
+  );
 
   if (!secret) {
     // Never "accept when unconfigured". An endpoint that verifies nothing
@@ -81,7 +135,7 @@ export async function verifyHmac(options: {
     // looks protected.
     return { ok: false, reason: "no signing secret configured for this trigger" };
   }
-  if (!signature) return { ok: false, reason: "delivery carried no signature header" };
+  if (signatures.length === 0) return { ok: false, reason: "delivery carried no signature header" };
 
   if (scheme.tolerance !== undefined) {
     if (!timestamp) return { ok: false, reason: "delivery carried no timestamp header" };
@@ -95,19 +149,33 @@ export async function verifyHmac(options: {
     }
   }
 
-  const expected = await hmac(secret, scheme.payload(raw, timestamp), scheme.algorithm, scheme.encoding ?? "hex");
+  // The key is checked BEFORE anything is signed, so a secret that cannot be
+  // a key is named as such rather than producing a mismatch that reads like
+  // a wrong secret.
+  const key = secretKeyBytes(secret, scheme);
+  if ("reason" in key) return { ok: false, reason: key.reason };
 
-  return constantTimeEquals(expected, signature)
+  const expected = await hmac(secret, scheme.payload(raw, timestamp, id), scheme.algorithm, scheme.encoding ?? "hex", scheme);
+
+  // Each candidate is compared in constant time; which of them matched is not
+  // a secret, so stopping at the first match leaks nothing.
+  return signatures.some((candidate) => constantTimeEquals(expected, candidate))
     ? { ok: true }
     : { ok: false, reason: "signature did not match" };
 }
 
-/** HMAC of `payload` under `secret`, hex or base64 encoded. */
+/**
+ * HMAC of `payload` under `secret`, hex or base64 encoded. `options` says how
+ * the secret is spelled (see `HmacScheme.secretEncoding`); a secret that
+ * cannot be a key THROWS here — signing has no result to carry a reason in —
+ * while `verifyHmac` names it in its result before ever calling this.
+ */
 export async function hmac(
   secret: string,
   payload: string,
   algorithm: HmacScheme["algorithm"],
   encoding: "hex" | "base64" = "hex",
+  options: { secretEncoding?: "utf8" | "base64"; secretPrefix?: string } = {},
 ): Promise<string> {
   const subtle = globalThis.crypto?.subtle;
 
@@ -118,10 +186,13 @@ export async function hmac(
     );
   }
 
+  const material = secretKeyBytes(secret, options);
+  if ("reason" in material) throw new Error(material.reason);
+
   const encoder = new TextEncoder();
   const key = await subtle.importKey(
     "raw",
-    encoder.encode(secret),
+    material.bytes as BufferSource,
     { name: "HMAC", hash: algorithm },
     false,
     ["sign"],

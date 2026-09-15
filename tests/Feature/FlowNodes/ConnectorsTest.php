@@ -8,21 +8,21 @@ use FancyFlow\Nodes\Connector\ConnectorClient;
 use FancyFlow\Nodes\Connector\ConnectorConfigException;
 use FancyFlow\Nodes\Connector\ConnectorIdempotencyExpiredException;
 use FancyFlow\Nodes\Connector\ConnectorModeException;
-use FancyFlow\Nodes\Connector\Idempotency;
 use FancyFlow\Nodes\Connector\FakeValues;
 use FancyFlow\Nodes\Connector\HttpErrors;
+use FancyFlow\Nodes\Connector\Idempotency;
 use FancyFlow\Nodes\Connector\Mode;
 use FancyFlow\Nodes\Connector\ModeResolver;
 use FancyFlow\Nodes\Connector\SandboxKind;
-use FancyFlow\Runtime\ExecutionContext;
-use FancyFlow\Runtime\RunIdentity;
-use FancyFlow\Schema\FlowNode;
 use FancyFlow\Nodes\ResendEmailSend\ResendEmailSendExecutor;
 use FancyFlow\Nodes\Stripe\Stripe;
 use FancyFlow\Nodes\Stripe\StripeTrigger;
 use FancyFlow\Nodes\StripePaymentIntent\StripePaymentIntentExecutor;
 use FancyFlow\Nodes\StripeWebhookTrigger\StripeWebhookTriggerExecutor;
 use FancyFlow\Nodes\TelegramUpdatesTrigger\TelegramUpdatesTriggerExecutor;
+use FancyFlow\Runtime\ExecutionContext;
+use FancyFlow\Runtime\RunIdentity;
+use FancyFlow\Schema\FlowNode;
 
 /**
  * The PHP backends of the connector exemplars, against the SAME golden fixtures
@@ -309,7 +309,39 @@ describe('Stripe webhook verification', function () {
 
     it('parses the packed signature header and ignores non-v1 schemes', function () {
         expect(Stripe::parseSignature('t=123,v1=abc,v0=ignored'))
-            ->toBe(['signature' => 'abc', 'timestamp' => '123']);
+            ->toBe(['signature' => 'abc', 'signatures' => ['abc'], 'timestamp' => '123']);
+    });
+
+    it('accepts a delivery signed during a secret roll when only the SECOND v1 is ours', function () use ($secret, $body) {
+        // While a Stripe secret is rolled, Stripe sends one v1 per active secret
+        // and the receiver must accept a match against any of them. Taking only
+        // the first refused every such delivery for up to 24 hours as "signature
+        // did not match" -- the same message as a wrong secret.
+        $timestamp = '1767225600';
+        $other = hash_hmac('sha256', $timestamp.'.'.$body, 'whsec-the-other-active-secret');
+        $ours = hash_hmac('sha256', $timestamp.'.'.$body, $secret);
+
+        $result = StripeTrigger::verifyDelivery(
+            $body,
+            ['stripe-signature' => "t={$timestamp},v1={$other},v1={$ours}"],
+            $secret,
+            (int) $timestamp,
+        );
+
+        expect($result['ok'])->toBeTrue();
+    });
+
+    it('still refuses a roll where no v1 is ours', function () use ($secret, $body) {
+        $timestamp = '1767225600';
+
+        $result = StripeTrigger::verifyDelivery(
+            $body,
+            ['stripe-signature' => "t={$timestamp},v1=".hash_hmac('sha256', $timestamp.'.'.$body, 'whsec-a').',v1='.hash_hmac('sha256', $timestamp.'.'.$body, 'whsec-b')],
+            $secret,
+            (int) $timestamp,
+        );
+
+        expect($result)->toBe(['ok' => false, 'reason' => 'signature did not match']);
     });
 
     it('signs {timestamp}.{body} with a 300 second window', function () {

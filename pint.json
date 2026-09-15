@@ -1,0 +1,6 @@
+{
+    "preset": "laravel",
+    "exclude": [
+        "resources/flow-nodes/_connector/php"
+    ]
+}

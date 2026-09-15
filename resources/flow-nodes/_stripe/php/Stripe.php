@@ -63,15 +63,18 @@ final class Stripe
      *
      * The timestamp travels INSIDE the signature header rather than in one of
      * its own, so it has to be parsed out before the HMAC can be checked.
-     * Stripe may send several `v1` values during a secret rotation; the first is
-     * taken, because failing over to a second makes "which one matched"
-     * ambiguous for a window that is rare and short.
+     * EVERY `v1` is kept. While a secret is rolled Stripe sends one signature
+     * per active secret, and a receiver must accept a match against any of them
+     * (docs.stripe.com/webhooks, "Verify manually", step 4). Taking only the
+     * first refused every delivery whose first `v1` came from the other secret,
+     * for up to 24 hours, as "signature did not match". fancy-connector-core
+     * 0.9.0's verifier takes the list; `signature` stays for 0.8.x readers.
      *
-     * @return array{signature: ?string, timestamp: ?string}
+     * @return array{signature: ?string, signatures: list<string>, timestamp: ?string}
      */
     public static function parseSignature(string $raw): array
     {
-        $result = ['signature' => null, 'timestamp' => null];
+        $result = ['signature' => null, 'signatures' => [], 'timestamp' => null];
 
         foreach (explode(',', $raw) as $part) {
             $pair = explode('=', trim($part), 2);
@@ -82,8 +85,9 @@ final class Stripe
             if ($pair[0] === 't') {
                 $result['timestamp'] = $pair[1];
             }
-            if ($pair[0] === 'v1' && $result['signature'] === null) {
-                $result['signature'] = $pair[1];
+            if ($pair[0] === 'v1' && $pair[1] !== '') {
+                $result['signatures'][] = $pair[1];
+                $result['signature'] ??= $pair[1];
             }
         }
 

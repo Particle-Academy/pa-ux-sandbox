@@ -43,12 +43,14 @@ final class StripeTrigger
     ): array {
         $header = WebhookVerifier::header($headers, Stripe::SIGNATURE_HEADER);
         $parsed = $header === null
-            ? ['signature' => null, 'timestamp' => null]
+            ? ['signature' => null, 'signatures' => [], 'timestamp' => null]
             : Stripe::parseSignature($header);
 
         return WebhookVerifier::verify(
             raw: $raw,
-            signature: $parsed['signature'],
+            // Every v1: a secret roll sends one per active secret, and any match
+            // is a valid delivery. An empty list is "no signature", never a match.
+            signature: $parsed['signatures'] === [] ? null : $parsed['signatures'],
             secret: $webhookSecret,
             payload: Stripe::signedPayload(...),
             algorithm: 'sha256',

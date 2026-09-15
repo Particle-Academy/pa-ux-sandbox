@@ -20,8 +20,9 @@
 import type { ResolvedConnection } from "./connection";
 import type { ConnectorFaker } from "./faker";
 import { fakeRequest } from "./faker";
-import type { HmacScheme, WebhookVerification } from "./webhook";
-import { header, verifyHmac } from "./webhook";
+import type { LeaseDeclaration } from "./lease";
+import type { ChallengeHandshake, HmacScheme, SharedTokenScheme, WebhookVerification } from "./webhook";
+import { header, isSharedTokenScheme, verifyHmac, verifySharedToken } from "./webhook";
 
 /**
  * The delivery mechanisms that actually exist in the wild.
@@ -50,6 +51,13 @@ export type TriggerDescriptor = {
   setup: string;
   /** For `subscription`: how long the provider keeps it alive, in seconds. */
   subscriptionTtl?: number;
+  /**
+   * For `subscription`: where the provider's expiry sits in the create/renew
+   * response and how it is spelled, so a host builds the `SubscriptionLease`
+   * with `leaseFromResponse` and runs ONE renewal scheduler for every
+   * expiring trigger.
+   */
+  lease?: LeaseDeclaration;
   /** For `webhook` / `subscription`: how a delivery is authenticated. */
   verification?: WebhookVerificationSpec;
   /** For `poll`: the provider's smallest sane interval, in seconds. */
@@ -58,7 +66,8 @@ export type TriggerDescriptor = {
   faker: ConnectorFaker;
 };
 
-export type WebhookVerificationSpec = {
+/** The provider SIGNS each delivery. */
+export type HmacVerificationSpec = {
   /** Header carrying the signature. */
   signatureHeader: string;
   /** Header carrying the timestamp, when the scheme signs one. */
@@ -69,7 +78,25 @@ export type WebhookVerificationSpec = {
    * (Stripe: `t=…,v1=…`). Given the raw header value, return the parts.
    */
   parse?: (raw: string) => { signature?: string; timestamp?: string };
+  /** A challenge the provider makes before it will deliver anything. */
+  handshake?: ChallengeHandshake;
 };
+
+/**
+ * The provider ECHOES a token the subscriber chose. Google Calendar's channel
+ * token, Graph's `clientState`. See `SharedTokenScheme`.
+ */
+export type SharedTokenVerificationSpec = {
+  scheme: SharedTokenScheme;
+  /** A challenge the provider makes before it will deliver anything. */
+  handshake?: ChallengeHandshake;
+};
+
+export type WebhookVerificationSpec = HmacVerificationSpec | SharedTokenVerificationSpec;
+
+export function isSharedTokenSpec(spec: WebhookVerificationSpec): spec is SharedTokenVerificationSpec {
+  return isSharedTokenScheme(spec.scheme);
+}
 
 export type InboundDelivery = {
   /** The body EXACTLY as received. Not re-serialised. See `webhook.ts`. */
@@ -98,6 +125,10 @@ export async function verifyDelivery(
       ok: false,
       reason: `${trigger.service}.${trigger.operation} declares no signature scheme, so a delivery cannot be trusted.`,
     };
+  }
+
+  if (isSharedTokenSpec(spec)) {
+    return verifySharedToken({ raw: delivery.raw, headers: delivery.headers, secret, scheme: spec.scheme });
   }
 
   const rawHeader = header(delivery.headers, spec.signatureHeader);

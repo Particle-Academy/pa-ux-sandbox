@@ -34,7 +34,8 @@
  *   the host must re-list (sync token or full) AND re-subscribe.
  *
  * The boundaries are DECIDED, not measured, and they are pinned in
- * `fixtures/subscription-lease/cases.json`, which the PHP twin reads too.
+ * fancy-conformance's `shared/subscription-lease` suite, which drives the PHP
+ * twin too (`tests/subscription-lease.test.ts` and its Pest mirror).
  */
 import { ConnectorConfigError, type ConnectorErrorContext } from "./errors";
 
@@ -51,6 +52,35 @@ export type LeaseState = "active" | "due" | "expired";
 
 export type LeaseAction = "none" | "renew" | "resync";
 
+/**
+ * How a provider spells its expiry. Two, because two providers: Google
+ * Calendar's channel `expiration` is epoch MILLISECONDS (as a JSON string, and
+ * a number is accepted too); Microsoft Graph's `expirationDateTime` is ISO
+ * 8601 with a seven-digit fraction. A unit no shipped provider spells is not
+ * here — a vocabulary with no provider is a claim that outruns the code.
+ *
+ * Data as well as a type: a host validates a definition at the JSON boundary,
+ * where `tsc` cannot see.
+ */
+export const EXPIRES_AT_UNITS = ["rfc3339", "epoch-ms"] as const;
+
+export type ExpiresAtUnit = (typeof EXPIRES_AT_UNITS)[number];
+
+/**
+ * What a subscription trigger DECLARES about its lease, so a host can build
+ * the value from the provider's create (or renew) response without knowing
+ * the provider.
+ */
+export type LeaseDeclaration = {
+  /** Dotted path to the expiry in the create/renew response, e.g. `expiration` or `channel.expiration`. */
+  expiresAtFrom: string;
+  expiresAtUnit: ExpiresAtUnit;
+  /** How early the host renews, in seconds. Positive. */
+  renewBeforeSeconds: number;
+  /** The operation the host calls when the lease is due. */
+  renewOperation: string;
+};
+
 /** RFC 3339: date, `T`, time, optional fraction, `Z` or a numeric offset. */
 const INSTANT = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,9})?(?:Z|[+-]\d{2}:\d{2})$/;
 
@@ -64,11 +94,84 @@ function instantMs(value: unknown, field: string, at: ConnectorErrorContext): nu
       at,
     );
   }
-  const ms = Date.parse(value);
+  // Millisecond precision, TRUNCATED. Graph writes seven fractional digits;
+  // the lease keeps three in both runtimes, so a boundary cannot fall between
+  // them, and an expiry a fraction early is the safe direction.
+  const ms = Date.parse(value.replace(/(\.\d{3})\d+/, "$1"));
   if (Number.isNaN(ms)) {
     throw new ConnectorConfigError(`${field} is not a real instant: ${JSON.stringify(value)}`, at);
   }
   return ms;
+}
+
+/**
+ * Build the lease from the provider's create (or renew) response, by
+ * declaration. The declared unit is never guessed around: digits under
+ * `rfc3339`, or an instant under `epoch-ms`, are refused — a lease built from
+ * a misread expiry is one that expires unannounced.
+ *
+ * The expiry is stored as an RFC 3339 instant in UTC at millisecond
+ * precision; the lease's own refusals (margin, operation) still apply.
+ */
+export function leaseFromResponse(
+  declaration: LeaseDeclaration,
+  response: unknown,
+  at: ConnectorErrorContext = DEFAULT_CONTEXT,
+): SubscriptionLease {
+  const { expiresAtFrom: path, expiresAtUnit: unit } = declaration;
+
+  if (!(EXPIRES_AT_UNITS as readonly string[]).includes(unit)) {
+    throw new ConnectorConfigError(
+      `expiresAtUnit must be one of ${EXPIRES_AT_UNITS.join(" | ")}, got ${JSON.stringify(unit)}.`,
+      at,
+    );
+  }
+
+  const value = readPath(response, path);
+  if (value === undefined || value === null) {
+    throw new ConnectorConfigError(
+      `${path} is not present in the response, so no lease can be built — a subscription with no known expiry is one nobody renews.`,
+      at,
+    );
+  }
+
+  let expiresAt: string;
+  if (unit === "epoch-ms") {
+    const ms =
+      typeof value === "number" ? value
+      : typeof value === "string" && /^\d+$/.test(value) ? Number(value)
+      : Number.NaN;
+    if (!Number.isSafeInteger(ms)) {
+      throw new ConnectorConfigError(
+        `${path} must be epoch milliseconds as digits under "epoch-ms", got ${JSON.stringify(value)}.`,
+        at,
+      );
+    }
+    expiresAt = new Date(ms).toISOString();
+  } else {
+    if (typeof value !== "string" || !INSTANT.test(value)) {
+      throw new ConnectorConfigError(
+        `${path} must be an RFC 3339 instant under "rfc3339", got ${JSON.stringify(value)}.`,
+        at,
+      );
+    }
+    expiresAt = new Date(instantMs(value, path, at)).toISOString();
+  }
+
+  return subscriptionLease(
+    { expiresAt, renewBeforeSeconds: declaration.renewBeforeSeconds, renewOperation: declaration.renewOperation },
+    at,
+  );
+}
+
+/** Walk a dotted path into a parsed response. Absent anywhere along it is `undefined`. */
+function readPath(value: unknown, path: string): unknown {
+  let current = value;
+  for (const segment of path.split(".")) {
+    if (current === null || typeof current !== "object") return undefined;
+    current = (current as Record<string, unknown>)[segment];
+  }
+  return current;
 }
 
 /**

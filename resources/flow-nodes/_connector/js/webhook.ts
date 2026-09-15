@@ -150,6 +150,116 @@ export function constantTimeEquals(a: string, b: string): boolean {
 }
 
 /**
+ * A delivery verified by a token the provider ECHOES rather than a signature
+ * it computes.
+ *
+ * Google Calendar sends the channel's `token` back in `X-Goog-Channel-Token`
+ * on every notification — with an EMPTY body, so there is nothing to sign.
+ * Microsoft Graph sends `clientState` inside every item of the notification's
+ * `value` array. Same refusal-by-default as HMAC, same result shape, and a
+ * constant-time comparison: a token is a secret, and `===` leaks which prefix
+ * was right.
+ *
+ * A body `path` is dotted; a segment ending in `[]` means EVERY element of that
+ * array, all of which must match — one wrong item refuses the whole delivery.
+ */
+export type SharedTokenScheme =
+  | { kind: "shared-token"; in: "header"; name: string }
+  | { kind: "shared-token"; in: "body"; path: string };
+
+export function isSharedTokenScheme(scheme: HmacScheme | SharedTokenScheme): scheme is SharedTokenScheme {
+  return "kind" in scheme && scheme.kind === "shared-token";
+}
+
+export function verifySharedToken(options: {
+  raw: string;
+  headers: Record<string, string | string[] | undefined>;
+  secret: string | undefined;
+  scheme: SharedTokenScheme;
+}): WebhookVerification {
+  const { raw, headers, secret, scheme } = options;
+
+  if (!secret) {
+    // Never "accept when unconfigured" — the same rule as verifyHmac, for the
+    // same reason: an endpoint that verifies nothing LOOKS protected.
+    return { ok: false, reason: "no shared token configured for this trigger" };
+  }
+
+  let tokens: unknown[];
+  if (scheme.in === "header") {
+    tokens = [header(headers, scheme.name)];
+  } else {
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(raw);
+    } catch {
+      return { ok: false, reason: "delivery body is not JSON" };
+    }
+    tokens = readTokens(parsed, scheme.path.split("."));
+  }
+
+  const present = tokens.filter((t) => t !== undefined && t !== null && t !== "");
+  if (present.length === 0) return { ok: false, reason: "delivery carried no token" };
+
+  // Every element is compared, none is skipped: a batch is accepted as a whole
+  // or refused as a whole.
+  let matched = present.length === tokens.length;
+  for (const token of present) {
+    matched = (typeof token === "string" && constantTimeEquals(secret, token)) && matched;
+  }
+
+  return matched ? { ok: true } : { ok: false, reason: "token did not match" };
+}
+
+/** Every value at a dotted path; a `[]` segment fans out over an array. Absent is `undefined`. */
+function readTokens(value: unknown, segments: string[]): unknown[] {
+  if (segments.length === 0) return [value];
+
+  const [head, ...rest] = segments as [string, ...string[]];
+  const eachElement = head.endsWith("[]");
+  const key = eachElement ? head.slice(0, -2) : head;
+
+  if (value === null || typeof value !== "object") return [undefined];
+  const next = (value as Record<string, unknown>)[key];
+
+  if (!eachElement) return readTokens(next, rest);
+  if (!Array.isArray(next)) return [undefined];
+
+  return next.flatMap((element) => readTokens(element, rest));
+}
+
+/**
+ * A challenge the provider makes BEFORE it will deliver anything, answered by
+ * echoing a query parameter as plain text. Microsoft Graph POSTs
+ * `?validationToken=…` to the notification URL when a subscription is created
+ * and refuses to create it unless the token comes back, decoded, as
+ * `text/plain` within ten seconds.
+ *
+ * Declared as data on the trigger so a host can answer it in its own routing
+ * layer; `handshakeResponse` is the pure half — what to send, or `undefined`
+ * when the request is not a challenge at all.
+ */
+export type ChallengeHandshake = {
+  kind: "echo-query";
+  /** The query parameter carrying the challenge. */
+  param: string;
+  contentType?: "text/plain";
+};
+
+export function handshakeResponse(
+  handshake: ChallengeHandshake | undefined,
+  query: Record<string, string | string[] | undefined>,
+): { status: 200; contentType: string; body: string } | undefined {
+  if (!handshake) return undefined;
+
+  const raw = query[handshake.param];
+  const token = Array.isArray(raw) ? raw[0] : raw;
+  if (!token) return undefined;
+
+  return { status: 200, contentType: handshake.contentType ?? "text/plain", body: token };
+}
+
+/**
  * Pull one header case-insensitively.
  *
  * Header case is not preserved consistently across proxies, frameworks and

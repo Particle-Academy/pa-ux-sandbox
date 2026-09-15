@@ -2313,25 +2313,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/resend-ui",
-          "version": "0.3.4",
+          "version": "0.4.0",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/resend-js",
-          "version": "0.3.4",
+          "version": "0.4.0",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/resend-php",
-          "version": "0.3.4",
+          "version": "0.4.0",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-resend",
-          "version": "0.3.4",
+          "version": "0.4.0",
           "registry": "pypi",
           "installFirst": false
         }
@@ -2357,6 +2357,14 @@
             "secret": true,
             "optional": false,
             "help": "re_... from the Resend dashboard. There is only one estate, so this key sends real email."
+          },
+          {
+            "key": "webhookSecret",
+            "label": "Webhook signing secret",
+            "scope": "account",
+            "secret": true,
+            "optional": true,
+            "help": "whsec_... from the webhook endpoint you added in the Resend dashboard, exactly as shown -- the prefix stays. Required only by the email_received trigger."
           }
         ]
       },
@@ -2374,8 +2382,44 @@
       "idempotencyMaxLength": null,
       "idempotencyNote": "Resend honours this for 24 hours. It is what makes a retried durable run resend nothing instead of mailing the recipient twice -- the difference between `idempotent` and `unsafe-to-replay` is that this one is merely embarrassing, not financial, but the header costs nothing and removes it entirely.",
       "apiVersion": null,
-      "needsWebhookEndpoint": false,
+      "needsWebhookEndpoint": true,
       "operations": [
+        {
+          "operation": "attachment_get",
+          "kind": "@particle-academy/resend_attachment_get",
+          "kindAlias": "resend_attachment_get",
+          "role": "action",
+          "title": "Get attachment",
+          "summary": "an attachment download URL",
+          "docs": "https://resend.com/docs/api-reference/emails/retrieve-received-email-attachment",
+          "method": "GET",
+          "path": "/emails/receiving/{emailId}/attachments/{attachmentId}",
+          "sideEffects": "none"
+        },
+        {
+          "operation": "attachment_list",
+          "kind": "@particle-academy/resend_attachment_list",
+          "kindAlias": "resend_attachment_list",
+          "role": "action",
+          "title": "List attachments",
+          "summary": "an email's attachments",
+          "docs": "https://resend.com/docs/api-reference/emails/list-received-email-attachments",
+          "method": "GET",
+          "path": "/emails/receiving/{emailId}/attachments",
+          "sideEffects": "none"
+        },
+        {
+          "operation": "email_get",
+          "kind": "@particle-academy/resend_email_get",
+          "kindAlias": "resend_email_get",
+          "role": "action",
+          "title": "Get received email",
+          "summary": "a received email",
+          "docs": "https://resend.com/docs/api-reference/emails/retrieve-received-email",
+          "method": "GET",
+          "path": "/emails/receiving/{emailId}",
+          "sideEffects": "none"
+        },
         {
           "operation": "email_send",
           "kind": "@particle-academy/resend_email_send",
@@ -2387,6 +2431,20 @@
           "method": "POST",
           "path": "/emails",
           "sideEffects": "idempotent"
+        },
+        {
+          "operation": "email_received",
+          "kind": "@particle-academy/resend_email_received_trigger",
+          "kindAlias": "resend_email_received_trigger",
+          "role": "trigger",
+          "title": "Email received",
+          "summary": "an inbound email",
+          "docs": "https://resend.com/docs/webhooks/emails/received",
+          "delivery": "webhook",
+          "setup": "Point a receiving domain's MX record at Resend, then in the Resend dashboard (Webhooks → Add webhook) point an endpoint at the route your host mounts for this trigger and subscribe it to email.received. Put the endpoint's signing secret -- shown as whsec_… -- on the connection as `webhookSecret`, exactly as shown.",
+          "verification": "hmac",
+          "handshake": null,
+          "subscription": null
         }
       ]
     },
@@ -2605,25 +2663,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/stripe-ui",
-          "version": "0.3.4",
+          "version": "0.3.5",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/stripe-js",
-          "version": "0.3.4",
+          "version": "0.3.5",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/stripe-php",
-          "version": "0.3.4",
+          "version": "0.3.5",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-stripe",
-          "version": "0.3.4",
+          "version": "0.3.5",
           "registry": "pypi",
           "installFirst": false
         }

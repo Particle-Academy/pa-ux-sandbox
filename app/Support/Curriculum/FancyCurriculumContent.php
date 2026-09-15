@@ -266,9 +266,10 @@ For a pure computation that is wasted time. For a node declaring
 pull request.**
 
 The fix was one queued job per node: `AdvanceWorkflowJob` computes the ready
-frontier and dispatches it, `RunNodeJob` claims one node and checkpoints it. The
-claim is a **unique constraint, not a check** — a lost race is a no-op rather
-than a duplicate run.
+frontier and dispatches what the run's limit allows — **one node at a time by
+default**, the next only once the one before it settles — and `RunNodeJob`
+claims one node and checkpoints it. The claim is a **unique constraint, not a
+check** — a lost race is a no-op rather than a duplicate run.
 
 Three rules hold it together, and each exists because the alternative fails
 *silently*: the engine is never reimplemented (a node runs by replaying the graph

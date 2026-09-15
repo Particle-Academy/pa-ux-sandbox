@@ -131,6 +131,17 @@ export async function verifyDelivery(
     return verifySharedToken({ raw: delivery.raw, headers: delivery.headers, secret, scheme: spec.scheme });
   }
 
+  // Dispatch on a NAMED kind, and refuse a name nobody serves. "Has no kind"
+  // means HMAC only because every pre-0.8.0 scheme was one; a scheme that
+  // names anything else must not be verified as if it were.
+  const kind = (spec.scheme as { kind?: string }).kind ?? "hmac";
+  if (kind !== "hmac") {
+    return {
+      ok: false,
+      reason: `${trigger.service}.${trigger.operation} declares a verification scheme "${kind}" this runtime does not know — refusing rather than guessing.`,
+    };
+  }
+
   const rawHeader = header(delivery.headers, spec.signatureHeader);
   const parsed = spec.parse && rawHeader ? spec.parse(rawHeader) : { signature: rawHeader };
   const timestamp = parsed.timestamp

@@ -34,6 +34,15 @@ export type WebhookVerification =
   | { ok: false; reason: string };
 
 export type HmacScheme = {
+  /**
+   * Optional and always `"hmac"`: every scheme written before 0.8.0 omits it
+   * and still means HMAC. It exists so `verifyDelivery` dispatches on a NAMED
+   * kind — `"shared-token"`, `"hmac"` or absent — and refuses any other value
+   * by name, rather than treating "has no kind" as HMAC forever. (Fancy's
+   * alignment review of 0.8.0: a third scheme that forgot its kind would
+   * otherwise be verified as HMAC, silently.)
+   */
+  kind?: "hmac";
   /** Hash to use. */
   algorithm: "SHA-256" | "SHA-1" | "SHA-512";
   /**

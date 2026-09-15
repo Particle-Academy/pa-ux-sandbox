@@ -10,10 +10,10 @@ uses(TestCase::class);
 /*
  * What a host needs to WIRE a trigger survives the serving layer.
  *
- * Every trigger in the index carried `delivery` (webhook or poll), `setup` (the
- * steps the host has to take) and `verifiesSignature`, and none of the three
- * reached `/r/connectors/index.json`: `entryFor()` builds an explicit whitelist
- * and names none of them. `setup` is the costly one. For facebook-lead-ads it
+ * Every trigger in the index carried `delivery` (webhook, poll or subscription)
+ * and `setup` (the steps the host has to take), and neither reached
+ * `/r/connectors/index.json`: `entryFor()` builds an explicit whitelist and named
+ * neither. `setup` is the costly one. For facebook-lead-ads it
  * says to echo `hub.challenge` and to subscribe the app to each Page, and a
  * webhook without that second step delivers nothing and reports nothing. A host
  * reading our index never saw it.
@@ -61,7 +61,7 @@ function triggerEntries(array $operation, bool $needsWebhookEndpoint = true): Co
     }
 }
 
-it('carries delivery, setup and signature verification onto a trigger entry', function () {
+it('carries delivery, setup and the kind of verification onto a trigger entry', function () {
     $entries = collect((new ConnectorSource(base_path('tests/Fixtures/connectors.json')))->indexEntries());
 
     $webhook = $entries->firstWhere('kind', '@particle-academy/stripe_webhook_trigger');
@@ -70,7 +70,7 @@ it('carries delivery, setup and signature verification onto a trigger entry', fu
     expect($webhook['trigger'])->toBeArray();
     expect($webhook['trigger']['delivery'])->toBe('webhook');
     expect($webhook['trigger']['setup'])->toContain('webhookSecret');
-    expect($webhook['trigger']['verifiesSignature'])->toBeTrue();
+    expect($webhook['trigger']['verification'])->toBe('hmac');
 
     // The install-path `delivery` is untouched by the trigger's own.
     expect($webhook['delivery'])->toBe('package');
@@ -78,7 +78,7 @@ it('carries delivery, setup and signature verification onto a trigger entry', fu
     $poll = $entries->firstWhere('kind', '@particle-academy/telegram_updates_trigger');
     expect($poll)->not->toBeNull('the telegram poll trigger left the fixture; this pins nothing');
     expect($poll['trigger']['delivery'])->toBe('poll');
-    expect($poll['trigger']['verifiesSignature'])->toBeFalse();
+    expect($poll['trigger']['verification'])->toBeNull();
 });
 
 it('carries a subscription trigger\'s verification, handshake and renewal window', function () {
@@ -108,7 +108,7 @@ it('states a considered null for every trigger fact the index does not carry', f
     $trigger = $entries->firstWhere('role', 'trigger');
 
     expect(array_keys($trigger['trigger']))->toBe([
-        'delivery', 'setup', 'verification', 'handshake', 'subscription', 'verifiesSignature',
+        'delivery', 'setup', 'verification', 'handshake', 'subscription',
     ]);
     expect($trigger['trigger']['handshake'])->toBeNull();
     expect($trigger['trigger']['subscription'])->toBeNull();
@@ -134,7 +134,7 @@ it('keeps only the renewal facts a host acts on from a subscription block', func
 });
 
 it('serves both provider-subscription triggers exactly as Weaver emitted them', function () {
-    // Weaver's statement for weaver.agi 6ce8431, pinned against the shipped
+    // Weaver's statement for weaver.agi 6ce8431 and its successor, pinned against the shipped
     // file rather than a fixture: the file being right at the boundary proves
     // nothing about what a host receives.
     $items = collect($this->getJson('/r/connectors/index.json')->assertOk()->json('items'))->keyBy('kind');
@@ -157,7 +157,6 @@ it('serves both provider-subscription triggers exactly as Weaver emitted them', 
         expect($item['needsWebhookEndpoint'])->toBeTrue();
         expect($item['trigger']['delivery'])->toBe('subscription');
         expect($item['trigger']['verification'])->toBe('shared-token');
-        expect($item['trigger']['verifiesSignature'])->toBeTrue();
         expect($item['trigger']['handshake'])->toBe($facts['handshake']);
         expect($item['trigger']['subscription'])->toBe($facts['subscription']);
         expect($item['trigger']['setup'])->toBeString()->not->toBe('');

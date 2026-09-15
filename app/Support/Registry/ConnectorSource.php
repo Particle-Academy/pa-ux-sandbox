@@ -213,10 +213,11 @@ class ConnectorSource
      * The host-actionable facts of one trigger operation.
      *
      * Every key is emitted even when null, like `authFor()`. `verification` is
-     * the KIND of check (`hmac` needs the raw body kept, `shared-token` needs
-     * the connection's token handed to the verifier), while `verifiesSignature`
-     * only says whether deliveries are checked at all; both are carried because
-     * hosts already read the second.
+     * the KIND of check: `hmac` needs the raw body kept, `shared-token` needs
+     * the connection's token handed to the verifier, and null means deliveries
+     * are not verified (a poll). It replaced `verifiesSignature`, which read as
+     * "signed" on a shared-token trigger and which Weaver removed from the index
+     * once nothing on either side read it.
      *
      * @param  array<string,mixed>  $operation
      * @return array<string,mixed>
@@ -241,7 +242,6 @@ class ConnectorSource
                 'renewBeforeSeconds' => is_int($subscription['renewBeforeSeconds'] ?? null) ? $subscription['renewBeforeSeconds'] : null,
                 'renewable' => is_bool($subscription['renewable'] ?? null) ? $subscription['renewable'] : null,
             ],
-            'verifiesSignature' => is_bool($operation['verifiesSignature'] ?? null) ? $operation['verifiesSignature'] : null,
         ];
     }
 
@@ -350,8 +350,8 @@ class ConnectorSource
             // What a host needs to WIRE a trigger, or null for an action or
             // search (checked, and not a trigger).
             //
-            // `delivery`, `setup` and `verifiesSignature` were in the index from
-            // the first trigger and none of them reached a host. `setup` is the
+            // `delivery` and `setup` were in the index from the first trigger and
+            // neither reached a host. `setup` is the
             // only place a host learns to echo `hub.challenge`, to mint a Google
             // channel id, or to answer Graph's `validationToken` within ten
             // seconds, so a host reading this entry could build a trigger that

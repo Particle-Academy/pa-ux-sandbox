@@ -305,7 +305,9 @@
           "docs": "https://docs.stripe.com/webhooks",
           "delivery": "webhook",
           "setup": "Add an endpoint in the Stripe dashboard (or via POST /v1/webhook_endpoints) pointing at the route your host mounts for this trigger, then put the endpoint's signing secret on the connection as `webhookSecret`.",
-          "verifiesSignature": true
+          "verification": "hmac",
+          "handshake": null,
+          "subscription": null
         }
       ]
     },
@@ -384,7 +386,9 @@
           "docs": "https://core.telegram.org/bots/api#getupdates",
           "delivery": "poll",
           "setup": "The host polls getUpdates on a schedule and persists the `offset` cursor between calls, passing the last `cursor` back in \u2014 Telegram queues nothing once an offset has acknowledged it, so a lost cursor is lost updates. getUpdates and setWebhook are MUTUALLY EXCLUSIVE for one bot: a host running both gets neither.",
-          "verifiesSignature": false
+          "verification": null,
+          "handshake": null,
+          "subscription": null
         }
       ]
     }

@@ -1,4 +1,4 @@
-import { Seo } from "@particle-academy/fancy-inertia/seo";
+import { ServerSeo } from "@/lib/ServerSeo";
 import { Badge, Breadcrumbs, Button } from "@particle-academy/react-fancy";
 import { Check, Code2, Copy, LayoutPanelTop, Monitor, TerminalSquare } from "lucide-react";
 import { useMemo, useState } from "react";
@@ -94,7 +94,7 @@ export default function FancyTuiIndex() {
     if (surface === "console") {
         return (
             <>
-                <Seo title="Fancy TUI — live components in your terminal" description="Browse every fancy-tui component as a real, live, animated terminal app." />
+                <ServerSeo />
                 <DocsTui onExit={() => setSurface("html")} />
             </>
         );
@@ -102,7 +102,7 @@ export default function FancyTuiIndex() {
 
     return (
         <Layout>
-            <Seo title="Fancy TUI — terminal UI components for Human+ apps" description="Browse Fancy TUI documentation and examples as equivalent HTML and terminal surfaces." />
+            <ServerSeo />
             <Breadcrumbs>
                 <Breadcrumbs.Item href="/packages">Packages</Breadcrumbs.Item>
                 <Breadcrumbs.Item>fancy-tui</Breadcrumbs.Item>

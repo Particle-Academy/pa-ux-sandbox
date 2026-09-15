@@ -1,8 +1,8 @@
-Fancy is an ecosystem of **64 small, independent packages** from **Particle Academy** — 47 TypeScript and 16 PHP — for building React and Laravel applications. It is not a component library with extras bolted on: roughly half of it is **headless**, and renders nothing at all. Spreadsheet, deck and document writers. A Stripe catalog and feature gating. Workflow engines. Git. Analytics. A CMS.
+Fancy is an ecosystem of **small, independent packages** from **Particle Academy** for building applications with React, PHP, Node and Python — the [package index](/packages) lists every one. It is not a component library with extras bolted on: roughly half of it is **headless**, and renders nothing at all. Spreadsheet, deck and document writers. A Stripe catalog and feature gating. Workflow engines. Git. Analytics. A CMS.
 
-The organising idea is that you should be able to **build the app, not the plumbing** — reach for the piece you need, own it outright, and never take the other 63 unless you want them. Every package ships on its own, via npm or Packagist.
+The organising idea is that you should be able to **build the app, not the plumbing** — reach for the piece you need, own it outright, and never take the rest unless you want them. Every package ships on its own, via npm, Packagist or PyPI.
 
-**Most server capabilities ship as a matched PHP *and* Node pair**, so the same feature works behind the same UI whichever backend you run: `holy-sheet`/`holy-sheet-js`, `laravel-catalog`/`fancy-catalog-js`, `fancy-flow`/`fancy-flow-php`, and so on. Pick the one matching your runtime; the contract is identical.
+**Many server capabilities ship as a matched PHP *and* Node pair**, several with a Python twin as well, so the same feature works behind the same UI whichever backend you run: `holy-sheet`/`holy-sheet-js`, `laravel-catalog`/`fancy-catalog-js`, `fancy-flow`/`fancy-flow-php`/`fancy-flow-py`, and so on. Pick the one matching your runtime; the contract is identical.
 
 Where a package **does** own a UI, it's held to **[Human+ UX](/docs/human-plus-ux)**: the surface has to be a great primitive for humans to author with *and* one an embedded agent can drive directly over MCP — never via DOM scraping. That's a headline capability of the interactive half, not an entry fee the headless half could ever pay.
 

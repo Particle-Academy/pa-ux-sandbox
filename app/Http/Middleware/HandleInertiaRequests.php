@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Services\PlayerProfile;
 use App\Support\PlayerIdentity;
 use App\Support\SelfSite;
+use FancySeo\Facades\FancySeo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Middleware;
@@ -76,6 +77,25 @@ class HandleInertiaRequests extends Middleware
                 'siteKey' => $key,
                 'endpoint' => SelfSite::endpoint(),
             ],
+            // The head SeoServiceProvider resolved for this page, for the client
+            // <ServerSeo> to replay after hydration and on SPA navigation. Pages
+            // used to pass their own title and description to <Seo>, and the
+            // browser then showed a different head than the one the server sent.
+            'seo' => function () use ($request): array {
+                $seo = FancySeo::forRequest($request);
+
+                return [
+                    'title' => $seo->title,
+                    'description' => $seo->description,
+                    'canonical' => $seo->canonical,
+                    'image' => $seo->image,
+                    'type' => $seo->type,
+                    // The robots value itself, not a derived flag: the invite page
+                    // serves indexable meta to card scrapers, and a `noindex` key
+                    // in the page payload would read as the directive it is not.
+                    'robots' => $seo->robots,
+                ];
+            },
         ];
     }
 }

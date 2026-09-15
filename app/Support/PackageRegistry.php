@@ -475,7 +475,7 @@ BEFORE IT CAN SHIP: three registry names that do not exist yet (npm scoped, Pack
             [
                 'slug' => 'holy-sheet',
                 'name' => 'particle-academy/holy-sheet',
-                'tagline' => 'PHP 8.2+ xlsx writer for agentic document creation. Headless — top-level Agent write/describe/lint API, optional Laravel adapter.',
+                'tagline' => 'PHP 8.4+ xlsx writer for agentic document creation. Headless — top-level Agent write/describe/lint API, optional Laravel adapter.',
                 'composer' => 'particle-academy/holy-sheet',
                 'repo' => 'Particle-Academy/holy-sheet',
                 'packagist' => 'particle-academy/holy-sheet',
@@ -484,7 +484,7 @@ BEFORE IT CAN SHIP: three registry names that do not exist yet (npm scoped, Pack
             [
                 'slug' => 'dark-slide',
                 'name' => 'particle-academy/dark-slide',
-                'tagline' => 'PHP 8.2+ pptx writer/reader for agentic deck creation — markdown headings, highlighted code, tables, gradients, high-fidelity reader. Sister to holy-sheet.',
+                'tagline' => 'PHP 8.4+ pptx writer/reader for agentic deck creation — markdown headings, highlighted code, tables, gradients, high-fidelity reader. Sister to holy-sheet.',
                 'composer' => 'particle-academy/dark-slide',
                 'repo' => 'Particle-Academy/dark-slide',
                 'packagist' => 'particle-academy/dark-slide',
@@ -493,7 +493,7 @@ BEFORE IT CAN SHIP: three registry names that do not exist yet (npm scoped, Pack
             [
                 'slug' => 'last-word',
                 'name' => 'particle-academy/last-word',
-                'tagline' => 'PHP 8.2+ docx writer/reader for agentic word-processing documents — a JSON Doc model (headings / styled runs / nested lists / tables / code / quotes / images), markdown bridges both ways, and Agent read/write/describe. Sister to holy-sheet (xlsx) and dark-slide (pptx).',
+                'tagline' => 'PHP 8.4+ docx writer/reader for agentic word-processing documents — a JSON Doc model (headings / styled runs / nested lists / tables / code / quotes / images), markdown bridges both ways, and Agent read/write/describe. Sister to holy-sheet (xlsx) and dark-slide (pptx).',
                 'composer' => 'particle-academy/last-word',
                 'repo' => 'Particle-Academy/last-word',
                 'packagist' => 'particle-academy/last-word',
@@ -1124,7 +1124,8 @@ BEFORE IT CAN SHIP: three registry names that do not exist yet (npm scoped, Pack
         return [
             'slug' => 'react-fancy',
             'name' => 'react-fancy',
-            'tagline' => 'Tailwind v4 + React component library — about 70 primitives.',
+            // Counted from the list below. "About 70" stood here at 77.
+            'tagline' => 'Tailwind v4 + React component library — '.count(self::componentsForReactFancy()).' components.',
             'npm' => '@particle-academy/react-fancy',
             'repo' => 'Particle-Academy/react-fancy',
             'language' => 'TypeScript',
@@ -1328,7 +1329,7 @@ BEFORE IT CAN SHIP: three registry names that do not exist yet (npm scoped, Pack
         return [
             'slug' => 'fancy-flow',
             'name' => 'fancy-flow',
-            'tagline' => 'Headless workflow engine + an optional React Flow editor — six node kits, topological executor, and a FlowRunnerUx flow→UX bridge. The editor designs graphs; `/engine` runs them with zero React on a server, worker, or CLI (PHP twin: fancy-flow-php).',
+            'tagline' => 'Headless workflow engine + an optional React Flow editor — built-in trigger, logic, data, AI, human-in-the-loop and terminal nodes, a topological executor, and a FlowRunnerUx flow→UX bridge. The editor designs graphs; `/engine` runs them with zero React on a server, worker, or CLI (runtime twins: fancy-flow-php, fancy-flow-py).',
             'npm' => '@particle-academy/fancy-flow',
             'repo' => 'Particle-Academy/fancy-flow',
             'language' => 'TypeScript',
@@ -1861,7 +1862,7 @@ BEFORE IT CAN SHIP: three registry names that do not exist yet (npm scoped, Pack
         return [
             'slug' => 'fancy-motion',
             'name' => 'fancy-motion',
-            'tagline' => 'Timeline / animation primitives — a headless keyframe engine plus a React MotionStage + TimelineDock for scrubbing and orchestrating motion. (preview — 0.0.x)',
+            'tagline' => 'Timeline / animation primitives — a headless keyframe engine plus a React MotionStage + TimelineDock for scrubbing and orchestrating motion. (preview, pre-1.0)',
             'npm' => '@particle-academy/fancy-motion',
             'repo' => 'Particle-Academy/fancy-motion',
             'language' => 'TypeScript',

@@ -33,8 +33,10 @@ registerBrandIcons();
 // title/description in sync. `siteUrl` is window-guarded (SSR-safe).
 const seoDefaults = defineSeo({
     siteName: "Fancy UI",
-    titleTemplate: "%s — Fancy UI",
-    defaultTitle: "Fancy UI for React, Inertia, and Laravel | Human-Agent UI",
+    // `%s`: every page replays the server's already-complete title through
+    // <ServerSeo>, so templating it again would say "— Fancy UI — Fancy UI".
+    titleTemplate: "%s",
+    defaultTitle: "Fancy UI",
     defaultDescription: "Components for the surfaces where humans and agents work together.",
     defaultImage: "/showcase-assets/fancy-ui-logo.jpg",
     locale: "en_US",

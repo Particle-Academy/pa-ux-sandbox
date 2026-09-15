@@ -25,8 +25,9 @@ registerBrandIcons();
 // client <Seo> auto-canonical kicks in after hydration.
 const seoDefaults = defineSeo({
     siteName: "Fancy UI",
-    titleTemplate: "%s — Fancy UI",
-    defaultTitle: "Fancy UI for React, Inertia, and Laravel | Human-Agent UI",
+    // `%s`: see showcase-app.tsx — titles arrive complete from the server.
+    titleTemplate: "%s",
+    defaultTitle: "Fancy UI",
     defaultDescription: "Components for the surfaces where humans and agents work together.",
     defaultImage: "/showcase-assets/fancy-ui-logo.jpg",
     locale: "en_US",

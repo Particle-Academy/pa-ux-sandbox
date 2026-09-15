@@ -75,6 +75,12 @@ Route::get('/og/packages/{package}.png', [OgImageController::class, 'package'])
 Route::get('/og/join/{username}.png', [OgImageController::class, 'join'])
     ->where('username', '[A-Za-z0-9\-]+')
     ->name('og.join');
+// Every other page's own card, keyed the way App\Support\Seo\PageSeo keys it.
+// The key may hold one slash (`fieldwork/swiss`, `react-fancy/button`, `0.4/theming`).
+Route::get('/og/{kind}/{key}.png', [OgImageController::class, 'page'])
+    ->where('kind', 'pages|families|docs|docs-archive|components|use-cases|starter-kits|inspiration|learn')
+    ->where('key', '[A-Za-z0-9._\-]+(/[A-Za-z0-9._\-]+)?')
+    ->name('og.page');
 
 // Authentication routes
 Route::middleware('guest')->group(function () {

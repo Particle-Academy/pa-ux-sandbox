@@ -1,5 +1,5 @@
-import { Link } from "@inertiajs/react";
-import { Seo } from "@particle-academy/fancy-inertia/seo";
+import { Link, usePage } from "@inertiajs/react";
+import { ServerSeo } from "@/lib/ServerSeo";
 import { Component, useEffect, useState, type ComponentType, type ErrorInfo, type ReactNode } from "react";
 import {
     Button,
@@ -76,6 +76,7 @@ export type CompanionRow = {
     tagline: string;
     composer: string | null;
     npm?: string | null;
+    pypi?: string | null;
     language: string;
 };
 
@@ -83,7 +84,15 @@ type HomeProps = {
     packages: PackageRow[];
     companions: CompanionRow[];
     total_components: number;
+    /** Derived from the registry (App\Support\Seo\KitFacts), never typed. */
+    languages: string[];
+    registries: string[];
 };
+
+/** "npm, Packagist or PyPI" — a list as prose, ending in `last`. */
+export function listSentence(items: string[], last = "and"): string {
+    return items.length <= 1 ? items.join("") : `${items.slice(0, -1).join(", ")} ${last} ${items[items.length - 1]}`;
+}
 
 // Spell small counts for the editorial section title; fall back to the digits.
 const NUMBER_WORDS: Record<number, string> = {
@@ -104,21 +113,23 @@ export function langTag(language: string): { label: string; color: BadgeColor } 
     if (language === "PHP" || language === "PHP/Blade") {
         return { label: "php", color: "violet" };
     }
+    if (language === "Python") {
+        return { label: "python", color: "amber" };
+    }
     return { label: "typescript", color: "blue" };
 }
 
-export default function Home({ packages, companions, total_components }: HomeProps) {
+export default function Home({ packages, companions, total_components, languages, registries }: HomeProps) {
     return (
         <Toast.Provider position="bottom-right">
             <Layout bleed>
-                {/* <Seo> (client-only via provider) — single source for the head.
+                {/* Replays the head the server resolved (see lib/ServerSeo).
                     A raw <Head title> here would duplicate the fancy-seo Blade
-                    baseline's <title> under SSR. <Seo/> with no title uses the
-                    provider defaultTitle, which matches the home baseline. */}
-                <Seo />
-                <Hero packages={packages} companions={companions} />
+                    baseline's <title> under SSR. */}
+                <ServerSeo />
+                <Hero packages={packages} companions={companions} languages={languages} />
                 <PackageTicker packages={packages} />
-                <Packages packages={packages} companions={companions} />
+                <Packages packages={packages} companions={companions} registries={registries} />
                 <HumanPlus />
                 <ComponentsShowcase total={total_components} />
                 <Philosophy />
@@ -131,7 +142,7 @@ export default function Home({ packages, companions, total_components }: HomePro
 
 // ─── Hero ──────────────────────────────────────────────────────────────────
 
-function Hero({ packages, companions }: { packages: PackageRow[]; companions: CompanionRow[] }) {
+function Hero({ packages, companions, languages }: { packages: PackageRow[]; companions: CompanionRow[]; languages: string[] }) {
     // The real size of the kit — the UI grid plus every companion package. The
     // hero used to say "N UI packages" off the grid alone, which undercounted
     // the ecosystem by more than half.
@@ -143,7 +154,7 @@ function Hero({ packages, companions }: { packages: PackageRow[]; companions: Co
                 <div>
                     <div className="eyebrow-row">
                         <span className="dot" />
-                        <span>v{__KIT_VERSION__} · React · PHP · Node</span>
+                        <span>v{__KIT_VERSION__} · {languages.join(" · ")}</span>
                     </div>
                     <h1 className="display">
                         Build the app, <span className="gradient-text">not the plumbing.</span>
@@ -151,8 +162,8 @@ function Hero({ packages, companions }: { packages: PackageRow[]; companions: Co
                     <p className="lede">
                         {packageCount} small packages covering the parts every real app needs and nobody wants
                         to write twice — data grids, spreadsheets, workflow engines, xlsx/pptx/docx writers,
-                        Stripe catalogs, feature gating. Install one or take the whole stack; every server
-                        capability ships for PHP <em>and</em> Node. Agent-friendly throughout, so you can hand
+                        Stripe catalogs, feature gating. Install one or take the whole stack; many server
+                        capabilities ship for PHP <em>and</em> Node. Agent-friendly throughout, so you can hand
                         the boring half over and stay in flow.
                     </p>
                     <div className="hero-cta">
@@ -272,7 +283,15 @@ function PackageTicker({ packages }: { packages: PackageRow[] }) {
 
 // ─── Packages ────────────────────────────────────────────────────────────────
 
-export function Packages({ packages, companions }: { packages: PackageRow[]; companions: CompanionRow[] }) {
+export function Packages({
+    packages,
+    companions,
+    registries = ["npm", "Packagist"],
+}: {
+    packages: PackageRow[];
+    companions: CompanionRow[];
+    registries?: string[];
+}) {
     const count = NUMBER_WORDS[packages.length] ?? String(packages.length);
     return (
         <section className="section">
@@ -282,7 +301,7 @@ export function Packages({ packages, companions }: { packages: PackageRow[]; com
                 </div>
                 <h2 className="section-title">{count} UI packages. Lift any one out.</h2>
                 <p className="section-sub">
-                    Not a monolith. Each ships on its own — npm or Packagist — and composes with the
+                    Not a monolith. Each ships on its own — {listSentence(registries, "or")} — and composes with the
                     rest. Most apps reach for two or three. The companions below take the kit to{" "}
                     {packages.length + companions.length} in total.
                 </p>
@@ -311,15 +330,17 @@ export function Packages({ packages, companions }: { packages: PackageRow[]; com
                 <div className="companions">
                     <span className="companions-label">+ Companions</span>
                     <span className="companions-note">
-                        Headless packages — the agentic document writers, the sandbox's Laravel infra, and JS utilities (Packagist + npm):
+                        Headless packages — the agentic document writers, the server engines and their runtime twins, and JS utilities ({registries.join(" + ")}):
                     </span>
                     {companions.map((c, i) => {
                         const href = c.composer
                             ? `https://packagist.org/packages/${c.composer}`
                             : c.npm
                               ? `https://www.npmjs.com/package/${c.npm}`
-                              : `https://github.com/Particle-Academy/${c.slug}`;
-                        const label = c.composer ?? c.npm ?? c.name;
+                              : c.pypi
+                                ? `https://pypi.org/project/${c.pypi}/`
+                                : `https://github.com/Particle-Academy/${c.slug}`;
+                        const label = c.composer ?? c.npm ?? c.pypi ?? c.name;
                         return (
                             <span key={c.slug} className="companion-item">
                                 <a href={href} target="_blank" rel="noopener noreferrer" title={c.tagline}>
@@ -1234,9 +1255,9 @@ codex plugin add <span class="tok-s">fancy-ui@fancy-ui</span>
 // the registry MCP. Deliberately NOT the agent-driving pitch — this one just
 // gets an agent oriented so it looks things up instead of writing from memory.
 // Plain ASCII so it pastes cleanly into any client.
-export const AGENT_PROMPT = `Get to know the Fancy UI suite from Particle Academy before we build anything.
+export const agentPrompt = (packageCount: number, languages: string[]) => `Get to know the Fancy UI suite from Particle Academy before we build anything.
 
-It is a kit of ~64 small, independent packages for React, PHP and Node — UI
+It is a kit of ${packageCount} small, independent packages for ${listSentence(languages)} — UI
 primitives, data grids, spreadsheets, workflow engines, whiteboards, xlsx/pptx/docx
 writers, Stripe catalogs, feature gating, analytics. Most server capabilities ship
 as a matched PHP and Node pair, so it fits whatever backend we are on.
@@ -1275,8 +1296,13 @@ https://ui.particle.academy/packages`;
  *  agent the plugin + hosted-MCP entry points. */
 export function AgentPrompt() {
     const [copied, setCopied] = useState(false);
+    // The count and languages come from the page, so the prompt an agent is
+    // handed agrees with the hero above it. It said "~64 packages for React,
+    // PHP and Node" long after both stopped being true.
+    const { packages = [], companions = [], languages = [] } = usePage<Partial<HomeProps>>().props;
+    const prompt = agentPrompt(packages.length + companions.length, languages);
     const copy = () => {
-        navigator.clipboard.writeText(AGENT_PROMPT).then(() => {
+        navigator.clipboard.writeText(prompt).then(() => {
             setCopied(true);
             window.setTimeout(() => setCopied(false), 1600);
         });
@@ -1312,7 +1338,7 @@ export function AgentPrompt() {
                     background: "var(--bg-2)",
                 }}
             >
-                {AGENT_PROMPT}
+                {prompt}
             </pre>
         </div>
     );

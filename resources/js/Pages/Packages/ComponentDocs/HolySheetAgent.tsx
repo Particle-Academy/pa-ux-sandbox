@@ -4,7 +4,7 @@ import { Text } from "@particle-academy/react-fancy";
 export const holySheetAgentDoc: ComponentDoc = {
     intro: (
         <p>
-            The top-level API for <code>holy-sheet</code> — a PHP 8.2+ xlsx writer designed
+            The top-level API for <code>holy-sheet</code> — a PHP 8.4+ xlsx writer designed
             for agentic document creation. <code>Agent</code> handles schema validation,
             cell + chart + style emission, and writes a final xlsx workbook to disk or to a
             byte stream. The full surface is exposed both as static methods and via the

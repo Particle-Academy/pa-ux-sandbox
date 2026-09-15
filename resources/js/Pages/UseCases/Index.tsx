@@ -1,5 +1,5 @@
 import { Link } from "@inertiajs/react";
-import { Seo } from "@particle-academy/fancy-inertia/seo";
+import { ServerSeo } from "@/lib/ServerSeo";
 import { Badge, Card, Heading, Icon, Text } from "@particle-academy/react-fancy";
 import { useMemo, useState } from "react";
 import { Layout } from "../Layout";
@@ -56,12 +56,8 @@ function UseCasesIndex({ categories, useCases }: { categories: string[]; useCase
             {/* Head owned server-side by SeoServiceProvider's `use-cases.index`
                 route. A raw <Head title> duplicates the fancy-seo Blade
                 baseline's <title> under SSR. */}
-            {/* Passed rather than bare -- see Show.tsx: a bare <Seo/> resets
-                the head to the provider defaults on hydration. */}
-            <Seo
-                title="Use cases"
-                description="Blueprints and how-tos for the apps people actually build: subscription SaaS, e-commerce, online courses, referral networks, dashboards and real-estate portals — each with live component previews and real code."
-            />
+            {/* Replays the server's head on hydration -- see Show.tsx. */}
+            <ServerSeo />
 
             <div className="section">
                 <div style={{ maxWidth: 760 }}>

@@ -181,7 +181,7 @@ class ComponentContext
 
         'holy-sheet/agent' => [
             'why' => 'Generating real xlsx files from PHP usually means shelling out to phpoffice/phpspreadsheet — a 50MB library with its own DSL — or producing crappy CSV. For agent-authored documents (an LLM writes a report, your app writes the xlsx), you want a small writer that round-trips.',
-            'what' => 'A schema-first xlsx writer for PHP 8.2+ with three methods: <code>write($schema, $path)</code>, <code>describe($path)</code>, <code>lint($schema)</code>. Round-trip safe — <code>describe()</code> returns the same shape <code>write()</code> consumed. Zero third-party deps; only requires ext-zip.',
+            'what' => 'A schema-first xlsx writer for PHP 8.4+ with three methods: <code>write($schema, $path)</code>, <code>describe($path)</code>, <code>lint($schema)</code>. Round-trip safe — <code>describe()</code> returns the same shape <code>write()</code> consumed. Zero third-party deps; only requires ext-zip.',
             'how' => 'Build a schema array (sheets / rows / headers), call <code>Agent::write($schema, $path)</code>. To inspect an existing xlsx, call <code>Agent::describe($path)</code> — same shape back. Optional Laravel adapter mounts it on a facade.',
         ],
 

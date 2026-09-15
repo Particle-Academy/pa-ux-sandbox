@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Support\OgCardRenderer;
 use App\Support\PackageRegistry;
+use App\Support\Seo\PageSeo;
 use App\Support\Usernames;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Http;
@@ -34,7 +35,8 @@ class OgImageController extends Controller
 
     public function package(string $package): Response
     {
-        $pkg = PackageRegistry::find($package);
+        // findAny: companion packages have pages, so they have cards.
+        $pkg = PackageRegistry::findAny($package);
         abort_if($pkg === null, 404);
 
         return $this->card("packages/{$package}", [
@@ -42,6 +44,19 @@ class OgImageController extends Controller
             'title' => (string) ($pkg['name'] ?? $package),
             'subtitle' => (string) ($pkg['tagline'] ?? ''),
         ]);
+    }
+
+    /**
+     * The card for any page PageSeo describes: a family, a docs page, a course, a
+     * starter kit, a static page. The text is the same call that wrote the page's
+     * meta, so the picture and the preview text describe the same page.
+     */
+    public function page(string $kind, string $key): Response
+    {
+        $seo = PageSeo::for($kind, $key);
+        abort_if($seo === null, 404);
+
+        return $this->card("{$kind}/{$key}", $seo['card']);
     }
 
     /**

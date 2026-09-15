@@ -314,11 +314,14 @@ it('emits HowTo structured data for a use case with steps', function () {
  * with the generic one. The server-HTML test above passes throughout — the only
  * places it shows are the browser tab and any crawler that executes JS.
  *
- * A rendering test cannot hydrate here, so assert the contract that makes them
- * agree: the page passes an explicit title through <Seo>, and the provider
- * template `%s — Fancy UI` turns it into exactly what the server emitted.
+ * This first held by each page passing <Seo> a title shaped to match the
+ * server's. Every page now replays the head the server resolved, through
+ * `<ServerSeo />` and the shared `seo` prop, which holds the same line without a
+ * second copy of each title to keep in step (see EveryPageHasItsOwnSeoTest,
+ * which checks the prop against the rendered head). What stays pinned here is
+ * that the use-case pages are on that path and not back on a bare <Seo />.
  */
-it('passes an explicit title to <Seo> rather than relying on the defaults', function () {
+it('replays the server head through <ServerSeo> rather than relying on the defaults', function () {
     // Strip JSX comments first: these files DISCUSS `<Seo />` in prose
     // explaining why the bare form is wrong, and a scan over raw source counts
     // that explanation as the very thing it forbids.
@@ -330,15 +333,16 @@ it('passes an explicit title to <Seo> rather than relying on the defaults', func
     foreach (['Show.tsx' => $show, 'Index.tsx' => $index] as $name => $source) {
         // Boolean assertions throughout: `toContain($needle, $message)` reads the
         // message as a SECOND needle, so the test fails on its own wording.
-        expect(str_contains($source, '<Seo'))->toBeTrue("{$name} no longer renders <Seo>");
-        expect((bool) preg_match('/<Seo\s*\/>/', $source))->toBeFalse(
-            "{$name} renders a bare <Seo />, which resets the head to the provider defaults on hydration",
+        expect(str_contains($source, '<ServerSeo />'))->toBeTrue("{$name} no longer renders <ServerSeo />");
+        expect((bool) preg_match('/<Seo[\s\/>]/', $source))->toBeFalse(
+            "{$name} renders <Seo> directly, which sets a head the server did not resolve",
         );
-        expect(str_contains($source, 'title='))->toBeTrue("{$name} passes no title to <Seo>");
     }
 
-    // And the shape has to match the server's, or the title flips on hydration.
-    expect($show)->toContain('— Use cases`');
+    // And the server's head for a use case is its own, which is what gets replayed.
+    $useCase = UseCaseContent::all()[0];
+    expect($this->get('/use-cases/'.$useCase['slug'])->getContent())
+        ->toContain('<title inertia>'.e($useCase['title']).' — Use cases — Fancy UI</title>');
 });
 
 /**

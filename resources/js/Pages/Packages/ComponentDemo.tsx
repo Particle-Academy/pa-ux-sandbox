@@ -3717,7 +3717,7 @@ function HolySheetAgentDemo() {
         <Explainer
             kind="php"
             language="php"
-            summary="PHP 8.2+ xlsx writer for agentic document creation — framework-agnostic core with an optional Laravel adapter. The Agent class is the top-level write / describe / validateAndRepair / lint entry point."
+            summary="PHP 8.4+ xlsx writer for agentic document creation — framework-agnostic core with an optional Laravel adapter. The Agent class is the top-level write / describe / validateAndRepair / lint entry point."
             code={`<?php
 
 use HolySheet\\Agent;

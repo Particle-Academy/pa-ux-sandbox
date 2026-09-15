@@ -1,4 +1,4 @@
-import { Seo } from "@particle-academy/fancy-inertia/seo";
+import { ServerSeo } from "@/lib/ServerSeo";
 import { Badge, Breadcrumbs } from "@particle-academy/react-fancy";
 import { Link } from "@inertiajs/react";
 import {
@@ -90,10 +90,7 @@ const HIGHLIGHTS: Highlight[] = [
 export default function FlowIndex() {
     return (
         <Layout>
-            <Seo
-                title="Fancy Flow — the Human+ workflow editor + engine"
-                description="Build agentic workflows on a live node canvas: swimlanes, undo/redo, auto-layout, validated edges, a headless engine, and an MCP bridge so agents drive the same surface."
-            />
+            <ServerSeo />
             <Breadcrumbs>
                 <Breadcrumbs.Item href="/packages">Packages</Breadcrumbs.Item>
                 <Breadcrumbs.Item>fancy-flow</Breadcrumbs.Item>

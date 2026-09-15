@@ -13,6 +13,8 @@ type CmsHomeProps = {
   packages: PackageRow[];
   companions: CompanionRow[];
   total_components: number;
+  languages: string[];
+  registries: string[];
 };
 
 /**
@@ -43,7 +45,7 @@ const seedTimeline: TimelineDoc = {
   scenes: [],
 };
 
-export default function CmsHome({ packages, companions, total_components }: CmsHomeProps) {
+export default function CmsHome({ packages, companions, total_components, languages }: CmsHomeProps) {
   // The real size of the kit — the UI grid plus every companion package, the
   // same sum `Home`'s Hero takes.
   const packageCount = packages.length + companions.length;
@@ -129,7 +131,11 @@ export default function CmsHome({ packages, companions, total_components }: CmsH
               ...c,
               url: c.npm
                 ? `https://www.npmjs.com/package/${c.npm}`
-                : `https://packagist.org/packages/${c.composer}`,
+                : c.composer
+                  ? `https://packagist.org/packages/${c.composer}`
+                  : c.pypi
+                    ? `https://pypi.org/project/${c.pypi}/`
+                    : `https://github.com/Particle-Academy/${c.slug}`,
             })),
             total_components,
             packagesTitle: `${packages.length} small packages. Lift any one out.`,
@@ -140,11 +146,11 @@ export default function CmsHome({ packages, companions, total_components }: CmsH
             // "12 UI packages" — the same undercount `Home`'s Hero already
             // carries a comment about fixing. A number typed into a document is
             // a number nothing can keep true.
-            heroEyebrow: `<span class="dot"></span><span>v${__KIT_VERSION__} · React · PHP · Node</span>`,
+            heroEyebrow: `<span class="dot"></span><span>v${__KIT_VERSION__} · ${languages.join(" · ")}</span>`,
             heroLede:
               `${packageCount} small packages covering the parts every real app needs and nobody wants to write twice ` +
               `— data grids, spreadsheets, workflow engines, xlsx/pptx/docx writers, Stripe catalogs, feature gating. ` +
-              `Install one or take the whole stack; every server capability ships for PHP and Node. Agent-friendly ` +
+              `Install one or take the whole stack; many server capabilities ship for PHP and Node. Agent-friendly ` +
               `throughout, so you can hand the boring half over and stay in flow.`,
             heroMeta:
               `<span class="meta-item">${packageCount} packages</span>` +

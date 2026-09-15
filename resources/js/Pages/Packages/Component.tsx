@@ -1,6 +1,6 @@
 import { Link } from "@inertiajs/react";
 import { demoIsFullBleed } from "./component-full-bleed";
-import { Seo } from "@particle-academy/fancy-inertia/seo";
+import { ServerSeo } from "@/lib/ServerSeo";
 import { useRef, useState, type ReactNode } from "react";
 import {
     Button,
@@ -97,10 +97,7 @@ export default function PackagesComponent({ package: pkg, component, usage, cont
 
     return (
         <Layout>
-            <Seo
-                title={`${component.name} — ${pkg.name}`}
-                description={component.blurb ?? `A ${pkg.name} component for Human+ UX — controlled state, stable handles, agent-bridgeable.`}
-            />
+            <ServerSeo />
 
             <Breadcrumbs>
                 <Breadcrumbs.Item href="/packages">Packages</Breadcrumbs.Item>

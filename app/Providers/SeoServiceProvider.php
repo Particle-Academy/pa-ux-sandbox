@@ -2,16 +2,22 @@
 
 namespace App\Providers;
 
+use App\Http\Controllers\Showcase\StarterKitController;
 use App\Models\User;
+use App\Support\Curriculum\FancyCurriculumContent;
 use App\Support\Docs\DocsRegistry;
 use App\Support\GalleryRegistry;
+use App\Support\PackageFamily;
 use App\Support\PackageRegistry;
+use App\Support\Seo\KitFacts;
+use App\Support\Seo\PageSeo;
 use App\Support\UseCases\UseCaseContent;
 use App\Support\Usernames;
 use FancySeo\Facades\FancySeo;
 use FancySeo\JsonLd;
 use FancySeo\SitemapBuilder;
 use Illuminate\Support\ServiceProvider;
+use LaravelCatalog\Models\Product;
 
 /**
  * Server-rendered SEO for the showcase, expressed through the shipped
@@ -28,9 +34,6 @@ use Illuminate\Support\ServiceProvider;
  */
 class SeoServiceProvider extends ServiceProvider
 {
-    /** Public showcase version surfaced in the llms.txt index. */
-    public const VERSION = '0.2';
-
     private const TAGLINE = 'Components for the surfaces where humans and agents work together.';
 
     public function boot(): void
@@ -81,7 +84,9 @@ class SeoServiceProvider extends ServiceProvider
                 JsonLd::softwareApplication('Fancy UI', $base.'/', [
                     'applicationCategory' => 'DeveloperApplication',
                     'operatingSystem' => 'Web',
-                    'softwareVersion' => self::VERSION,
+                    // The kit version from kit.json. This was a typed '0.2' that
+                    // nothing updated when the kit cut 0.5.
+                    'softwareVersion' => KitFacts::kitVersion(),
                     'description' => self::TAGLINE,
                     'price' => '0',
                 ]),
@@ -91,75 +96,48 @@ class SeoServiceProvider extends ServiceProvider
 
     private function registerRouteResolvers(string $base): void
     {
-        FancySeo::route('home', [
-            'title' => 'Fancy UI — build the app, not the plumbing | React, PHP, Node',
-            'description' => 'A kit of small, independent packages for React, PHP and Node: UI primitives, data grids, spreadsheets, workflow engines, xlsx/pptx/docx writers, Stripe catalogs, feature gating. Take one or take the stack — and every server capability ships for both PHP and Node.',
+        // The languages and the count come from the registry. Both were typed,
+        // and the preview this renders said "React, PHP, Node" and "every server
+        // capability ships for both PHP and Node" while six Python packages were
+        // on PyPI and most PHP packages had no Node twin.
+        FancySeo::route('home', fn (): array => [
+            'title' => 'Fancy UI — build the app, not the plumbing | '.implode(', ', KitFacts::languages()),
+            'description' => KitFacts::packageCount().' small, independent packages for '.KitFacts::sentence(KitFacts::languages())
+                .': UI primitives, data grids, spreadsheets, workflow engines, xlsx/pptx/docx writers, Stripe catalogs, feature gating. '
+                .'Take one or take the stack — many server capabilities ship as matched PHP and Node packages.',
         ]);
 
-        FancySeo::route('packages.index', [
-            'title' => 'Packages — Fancy UI',
-            'description' => 'Every package in the Fancy UI suite: react-fancy, fancy-3d, fancy-slides, fancy-whiteboard, fancy-flow, fancy-sheets, fancy-echarts, fancy-code, fancy-screens, agent-integrations, and more.',
-        ]);
+        // Every other page names itself through PageSeo, which is also what
+        // draws its share card. A page with no resolver unfurls as the whole
+        // site: the family pages, the starter kits, the courses and the flow
+        // editor all did, with the site's default card, until this listed them.
+        foreach (['packages.index', 'agent-playground', 'dreaming.index', 'dreaming.archived', 'leaderboard', 'showcase.showcase.index', 'shop.index', 'flow.index', 'fancy-tui.index', 'pw', 'subscriptions.index', 'products.index'] as $route) {
+            FancySeo::route($route, fn (): array => PageSeo::meta('pages', $route));
+        }
+        FancySeo::route('docs.index', fn (): array => PageSeo::meta('pages', 'docs.index', ['type' => 'article']));
+        FancySeo::route('use-cases.index', fn (): array => PageSeo::meta('pages', 'use-cases.index', ['type' => 'website']));
+        FancySeo::route('starter-kits.index', fn (): array => PageSeo::meta('starter-kits', 'index'));
+        FancySeo::route('inspiration.index', fn (): array => PageSeo::meta('inspiration', 'index'));
+        FancySeo::route('learn.index', fn (): array => PageSeo::meta('learn', 'index'));
 
-        FancySeo::route('docs.index', [
-            'title' => 'Docs — Fancy UI',
-            'description' => 'Documentation for the Fancy UI suite — installation, the Human+ UX contract, MCP agent bridges, and per-package guides.',
-            'type' => 'article',
-        ]);
+        // The same storefront answers on two paths, and the CMS demo re-renders
+        // the home page. A page that is a copy says which page it copies, so the
+        // copy never competes with the original.
+        FancySeo::route('catalog-demo.home', fn (): array => PageSeo::meta('pages', 'products.index', ['canonical' => $base.'/products']));
+        FancySeo::route('cms.home', fn (): array => PageSeo::meta('pages', 'cms.home', ['canonical' => $base.'/']));
 
-        FancySeo::route('starter-kits.index', [
-            'title' => 'Starter Kits — Fancy UI',
-            'description' => 'Production-ready starter kits built on Fancy UI — clone, install, and ship a Human+ UX app in minutes.',
-        ]);
-
-        FancySeo::route('inspiration.index', [
-            'title' => 'Inspiration Gallery — Fancy UI',
-            'description' => 'Fictional businesses, each designed twenty ways — a creative-studio portfolio from quiet Swiss grids to agent-native surfaces, and a family food truck from warm storefronts to live data surfaces. Self-contained, forkable starting points built on the Fancy UI Kit.',
-        ]);
-
-        FancySeo::route('inspiration.collection', fn (array $params): array => $this->inspirationCollectionSeo($params['collection'] ?? null));
-
-        FancySeo::route('inspiration.show', fn (array $params): array => $this->inspirationSeo($params['collection'] ?? null, $params['style'] ?? null, $base));
-
-        FancySeo::route('agent-playground', [
-            'title' => 'Agent Playground — Fancy UI',
-            'description' => 'A live playground where you connect your own agent over MCP and watch it author Fancy UI screens and drive live data — humans and agents sharing one UI surface.',
-        ]);
-
-        FancySeo::route('dreaming.index', [
-            'title' => 'Dreaming — Fancy UI',
-            'description' => 'Speculative, in-progress UI primitives on the Fancy UI dreaming branch — vote on what gets manifested into the kit.',
-        ]);
-
-        FancySeo::route('leaderboard', [
-            'title' => 'Leaderboard — Fancy UI',
-            'description' => 'The Fancy UI community leaderboard — XP, achievements, and prizes for building with the kit.',
-        ]);
-
-        FancySeo::route('showcase.showcase.index', [
-            'title' => 'Showcase — Fancy UI',
-            'description' => 'Apps and experiments built with Fancy UI by the community.',
-        ]);
-
-        FancySeo::route('shop.index', [
-            'title' => 'Shop — Fancy UI',
-            'description' => 'Cosmetics and perks for your Fancy UI profile.',
-        ]);
-
+        FancySeo::route('inspiration.collection', fn (array $params): array => $this->inspirationSeo((string) ($params['collection'] ?? ''), null, $base));
+        FancySeo::route('inspiration.show', fn (array $params): array => $this->inspirationSeo((string) ($params['collection'] ?? ''), (string) ($params['style'] ?? ''), $base));
         FancySeo::route('packages.show', fn (array $params): array => $this->packageSeo($params['package'] ?? null, $base));
-        FancySeo::route('packages.component', fn (array $params): array => $this->componentSeo($params['package'] ?? null, $params['component'] ?? null, $base));
-        FancySeo::route('docs.show', fn (array $params): array => $this->docSeo($params['slug'] ?? 'introduction', $base));
-        // /use-cases is the highest-INTENT content on the site -- someone
-        // reading "how do I build a storefront" is further down the funnel than
-        // someone browsing packages -- and it had no per-page SEO at all. Every
-        // page shared the generic baseline title, exactly the defect that was
-        // already fixed for /docs.
-        FancySeo::route('use-cases.index', [
-            'title' => 'Use cases — what you can build with Fancy UI',
-            'description' => 'Blueprints and how-tos for the apps people actually build: subscription SaaS, e-commerce, online courses, referral networks, dashboards and real-estate portals — each with live component previews and real code.',
-            'type' => 'website',
-        ]);
-        FancySeo::route('use-cases.show', fn (array $params): array => $this->useCaseSeo($params['slug'] ?? null, $base));
+        FancySeo::route('packages.family', fn (array $params): array => $this->familySeo((string) ($params['family'] ?? ''), $base));
+        FancySeo::route('packages.component', fn (array $params): array => $this->componentSeo((string) ($params['package'] ?? ''), (string) ($params['component'] ?? ''), $base));
+        FancySeo::route('docs.show', fn (array $params): array => $this->docSeo((string) ($params['slug'] ?? 'introduction'), $base));
+        FancySeo::route('docs.versioned', fn (array $params): array => $this->archivedDocSeo((string) ($params['version'] ?? ''), (string) ($params['slug'] ?? 'introduction'), $base));
+        FancySeo::route('use-cases.show', fn (array $params): array => $this->useCaseSeo((string) ($params['slug'] ?? ''), $base));
+        FancySeo::route('starter-kits.show', fn (array $params): array => PageSeo::meta('starter-kits', (string) ($params['slug'] ?? '')));
+        FancySeo::route('starter-kits.cms', fn (array $params): array => $this->starterKitCmsSeo((string) ($params['slug'] ?? ''), $base));
+        FancySeo::route('learn.course', fn (array $params): array => PageSeo::meta('learn', (string) ($params['slug'] ?? '')));
+        FancySeo::route('products.show', fn (array $params): array => $this->productSeo($params['product'] ?? null));
         FancySeo::route('referrals.join', fn (array $params): array => $this->joinSeo($params['username'] ?? null, $base));
     }
 
@@ -229,14 +207,10 @@ class SeoServiceProvider extends ServiceProvider
      * makes them eligible for a how-to rich result. Claiming Article for
      * something built as ordered steps is both less accurate and less useful.
      *
-     * The description is the use case's own summary, so it is written once and
-     * cannot drift from what the page says.
-     *
      * @return array<string,mixed>
      */
-    private function useCaseSeo(mixed $slug, string $base): array
+    private function useCaseSeo(string $slug, string $base): array
     {
-        $slug = is_string($slug) ? $slug : '';
         $useCase = UseCaseContent::find($slug);
 
         if ($useCase === null) {
@@ -258,11 +232,8 @@ class SeoServiceProvider extends ServiceProvider
             $useCase['steps'] ?? [],
         );
 
-        return [
-            'title' => "{$title} — Use cases — Fancy UI",
-            'description' => $summary !== '' ? $summary : "{$title} — built with the Fancy UI kit.",
+        return PageSeo::meta('use-cases', $slug, [
             'type' => 'article',
-            'image' => '/showcase-assets/fancy-ui-logo.jpg',
             'jsonLd' => array_values(array_filter([
                 $steps === [] ? null : JsonLd::howTo($title, $steps, $summary ?: null),
                 JsonLd::breadcrumbList([
@@ -270,20 +241,18 @@ class SeoServiceProvider extends ServiceProvider
                     ['name' => $title, 'url' => $url],
                 ]),
             ])),
-        ];
+        ]);
     }
 
     /**
-     * Per-doc-page SEO: a unique title + the page's own description from the docs
-     * registry, plus Article + BreadcrumbList JSON-LD. Without this every
-     * /docs/{slug} page shared one generic title — the highest-volume content on
-     * the site, left un-targeted.
+     * Per-doc-page SEO: the page's own title, description and card, plus Article
+     * + BreadcrumbList JSON-LD. Every docs page had its own title and the SAME
+     * card, so a shared docs link showed the site and not the page.
      *
      * @return array<string,mixed>
      */
-    private function docSeo(mixed $slug, string $base): array
+    private function docSeo(string $slug, string $base): array
     {
-        $slug = is_string($slug) ? $slug : 'introduction';
         $page = DocsRegistry::find($slug);
         if ($page === null) {
             return ['title' => 'Docs — Fancy UI', 'type' => 'article'];
@@ -292,83 +261,152 @@ class SeoServiceProvider extends ServiceProvider
         $description = trim((string) ($page['description'] ?? ''));
         $url = $base.'/docs/'.$slug;
 
-        return [
-            'title' => "{$title} — Docs — Fancy UI",
-            'description' => $description !== '' ? $description : "{$title} — Fancy UI documentation.",
+        return PageSeo::meta('docs', $slug, [
             'type' => 'article',
             'jsonLd' => [
                 JsonLd::article("{$title} — Fancy UI", $url, array_filter([
                     'description' => $description ?: null,
-                    'image' => $base.'/showcase-assets/fancy-ui-logo.jpg',
+                    'image' => $base.PageSeo::image('docs', $slug),
                 ])),
                 JsonLd::breadcrumbList([
                     ['name' => 'Docs', 'url' => $base.'/docs'],
                     ['name' => $title, 'url' => $url],
                 ]),
             ],
+        ]);
+    }
+
+    /**
+     * A frozen docs page from an older kit line.
+     *
+     * Its own title and card say which line it is. The canonical points at the
+     * current page of the same name when there is one: the snapshot exists so a
+     * reader on that line can look something up, not to compete in search with
+     * the page that replaced it.
+     *
+     * @return array<string,mixed>
+     */
+    private function archivedDocSeo(string $version, string $slug, string $base): array
+    {
+        $current = DocsRegistry::find($slug) !== null ? $base.'/docs/'.$slug : null;
+
+        return PageSeo::meta('docs-archive', "{$version}/{$slug}", array_filter([
+            'type' => 'article',
+            'canonical' => $current,
+        ]));
+    }
+
+    /**
+     * A package family page, which is where most packages live: a member's own
+     * URL 301s here. It had no SEO at all and unfurled as the whole site.
+     *
+     * A member slug also opens the family (`PackageFamily::find()` matches
+     * both), so the canonical names the family's own URL.
+     *
+     * @return array<string,mixed>
+     */
+    private function familySeo(string $slug, string $base): array
+    {
+        $family = PackageFamily::find($slug);
+        if ($family === null) {
+            return [];
+        }
+        $url = $base.'/packages/family/'.$family['slug'];
+
+        return PageSeo::meta('families', (string) $family['slug'], [
+            'canonical' => $url,
+            'jsonLd' => [
+                JsonLd::breadcrumbList([
+                    ['name' => 'Packages', 'url' => $base.'/packages'],
+                    ['name' => (string) $family['name'], 'url' => $url],
+                ]),
+            ],
+        ]);
+    }
+
+    /**
+     * The same starter kit, authored as a CMS document. It is a comparison of
+     * the JSX page, so it says so in its title and points at that page.
+     *
+     * @return array<string,mixed>
+     */
+    private function starterKitCmsSeo(string $slug, string $base): array
+    {
+        $seo = PageSeo::meta('starter-kits', $slug);
+        if ($seo === []) {
+            return [];
+        }
+
+        return [
+            ...$seo,
+            'title' => str_replace(' — Starter kits — ', ' (CMS rendering) — Starter kits — ', (string) $seo['title']),
+            'canonical' => $base.'/starter-kits/'.$slug,
         ];
     }
 
     /**
-     * Per-collection SEO for the Inspiration Gallery catalogs.
+     * A product on the laravel-catalog demo storefront. Demo data from the
+     * database, so its name and description are the page.
      *
      * @return array<string,mixed>
      */
-    private function inspirationCollectionSeo(mixed $collection): array
+    private function productSeo(mixed $product): array
     {
-        $meta = is_string($collection) ? GalleryRegistry::collection($collection) : null;
-        if ($meta === null) {
-            return [
-                'title' => 'Inspiration Gallery — Fancy UI',
-                'description' => 'Fictional businesses, each designed twenty ways with the Fancy UI Kit.',
-            ];
+        $product = $product instanceof Product ? $product : Product::query()->find($product);
+        if ($product === null) {
+            return [];
         }
+        $description = trim((string) $product->description);
 
         return [
-            'title' => "{$meta['name']} — Inspiration Gallery — Fancy UI",
-            'description' => "{$meta['name']} — {$meta['subject']}, designed {$meta['count']} ways with restyled Fancy UI primitives. {$meta['title']}",
+            'title' => "{$product->name} — demo storefront — Fancy UI",
+            'description' => $description !== ''
+                ? "{$description} A product on the laravel-catalog demo storefront."
+                : "{$product->name}, a product on the laravel-catalog demo storefront.",
         ];
     }
 
     /**
-     * Per-style SEO for the Inspiration Gallery: a unique title + the style's
-     * own one-line note, plus a BreadcrumbList back to its collection catalog.
+     * An inspiration collection catalog (`$style` null) or one of its styles.
      *
      * @return array<string,mixed>
      */
-    private function inspirationSeo(mixed $collection, mixed $id, string $base): array
+    private function inspirationSeo(string $collection, ?string $style, string $base): array
     {
-        $style = is_string($collection) && is_string($id) ? GalleryRegistry::find($collection, $id) : null;
-        $meta = is_string($collection) ? GalleryRegistry::collection($collection) : null;
-        if ($style === null || $meta === null) {
-            return [
-                'title' => 'Inspiration Gallery — Fancy UI',
-                'description' => 'Fictional businesses, each designed twenty ways with the Fancy UI Kit.',
-            ];
+        $key = $style === null ? $collection : "{$collection}/{$style}";
+        $seo = PageSeo::meta('inspiration', $key);
+        if ($seo === [] || $style === null) {
+            return $seo === [] ? PageSeo::meta('inspiration', 'index') : $seo;
         }
-        $name = (string) $style['name'];
-        $note = trim((string) $style['note']);
-        $url = $base.'/inspiration/'.$style['collection'].'/'.$style['id'];
+
+        $meta = GalleryRegistry::collection($collection);
+        $found = GalleryRegistry::find($collection, $style);
 
         return [
-            'title' => "{$name} — {$meta['name']} — Inspiration Gallery — Fancy UI",
-            'description' => trim("{$meta['name']}, designed as {$name}. {$note} A self-contained, forkable starting point built on the Fancy UI Kit."),
+            ...$seo,
             'jsonLd' => [
                 JsonLd::breadcrumbList([
                     ['name' => 'Inspiration', 'url' => $base.'/inspiration'],
-                    ['name' => $meta['name'], 'url' => $base.'/inspiration/'.$style['collection']],
-                    ['name' => $name, 'url' => $url],
+                    ['name' => (string) $meta['name'], 'url' => $base.'/inspiration/'.$collection],
+                    ['name' => (string) $found['name'], 'url' => $base.'/inspiration/'.$collection.'/'.$style],
                 ]),
             ],
         ];
     }
 
     /**
+     * Every package page, companions included.
+     *
+     * This used `PackageRegistry::find()`, which does not see the companion
+     * packages, so all of them (holy-sheet, laravel-fms, the Python and Node
+     * twins) were titled "Package — Fancy UI" with the description "A Fancy UI
+     * package." The page itself resolves them with `findAny()`; so does this.
+     *
      * @return array<string,mixed>
      */
     private function packageSeo(mixed $slug, string $base): array
     {
-        $pkg = is_string($slug) ? PackageRegistry::find($slug) : null;
+        $pkg = is_string($slug) ? PackageRegistry::findAny($slug) : null;
         if (! $pkg) {
             return ['title' => 'Package — Fancy UI', 'description' => 'A Fancy UI package.'];
         }
@@ -389,11 +427,19 @@ class SeoServiceProvider extends ServiceProvider
             ]));
         }
 
+        // Several twins share a display name (`fancy-flow` is the npm package
+        // AND the PyPI one), so the title carries the language when the name is
+        // not unique to this slug.
+        $sharesName = collect(KitFacts::packages())->where('name', $name)->count() > 1;
+        $title = $sharesName && ! empty($pkg['language']) ? "{$name} ({$pkg['language']}) — Fancy UI" : "{$name} — Fancy UI";
+
         return [
-            'title' => "{$name} — Fancy UI",
-            'description' => trim("{$tagline} Part of the Fancy UI suite — authorable by humans and agents, bridgeable over MCP."),
+            'title' => $title,
+            // No blanket "bridgeable over MCP": it was stamped on holy-sheet and
+            // laravel-fms, which render nothing and have no surface to bridge.
+            'description' => trim("{$tagline} Part of the Fancy UI suite."),
             'image' => "/og/packages/{$slug}.png",
-            'imageAlt' => "{$name} — Fancy UI",
+            'imageAlt' => $title,
             'jsonLd' => $jsonLd,
         ];
     }
@@ -401,34 +447,24 @@ class SeoServiceProvider extends ServiceProvider
     /**
      * @return array<string,mixed>
      */
-    private function componentSeo(mixed $pkgSlug, mixed $componentSlug, string $base): array
+    private function componentSeo(string $pkgSlug, string $componentSlug, string $base): array
     {
-        $pkg = is_string($pkgSlug) ? PackageRegistry::find($pkgSlug) : null;
-        $pkgName = (string) ($pkg['name'] ?? $pkgSlug);
-        $componentName = is_string($componentSlug) ? $componentSlug : 'component';
-        $blurb = '';
-        if ($pkg && is_string($componentSlug)) {
-            foreach ($pkg['components'] ?? [] as $c) {
-                if (($c['slug'] ?? null) === $componentSlug) {
-                    $componentName = (string) ($c['name'] ?? $componentName);
-                    $blurb = (string) ($c['blurb'] ?? '');
-                    break;
-                }
-            }
+        $seo = PageSeo::for('components', "{$pkgSlug}/{$componentSlug}");
+        if ($seo === null) {
+            return [];
         }
+        $pkgName = (string) (PackageRegistry::findAny($pkgSlug)['name'] ?? $pkgSlug);
         $url = $base.'/packages/'.$pkgSlug.'/'.$componentSlug;
 
-        return [
-            'title' => "{$componentName} — {$pkgName} — Fancy UI",
-            'description' => trim("{$blurb} A {$pkgName} component for Human+ UX — controlled state, stable handles, agent-bridgeable."),
+        return PageSeo::meta('components', "{$pkgSlug}/{$componentSlug}", [
             'jsonLd' => [
                 JsonLd::breadcrumbList([
                     ['name' => 'Packages', 'url' => $base.'/packages'],
                     ['name' => $pkgName, 'url' => $base.'/packages/'.$pkgSlug],
-                    ['name' => $componentName, 'url' => $url],
+                    ['name' => (string) $seo['card']['title'], 'url' => $url],
                 ]),
             ],
-        ];
+        ]);
     }
 
     /** Dynamic sitemap: top-level pages + every package + every component. */
@@ -444,7 +480,30 @@ class SeoServiceProvider extends ServiceProvider
                 ->add('agent-playground', '0.8', 'weekly')
                 ->add('dreaming', '0.6', 'weekly')
                 ->add('showcase', '0.6', 'weekly')
-                ->add('leaderboard', '0.5', 'daily');
+                ->add('leaderboard', '0.5', 'daily')
+                ->add('flow', '0.7', 'weekly')
+                ->add('fancy-tui', '0.6', 'weekly')
+                ->add('learn', '0.7', 'weekly');
+
+            // Pages that existed and were listed nowhere. The family pages matter
+            // most: a family member's own URL 301s to its family, so the family
+            // page IS where those packages are, and no crawler was told.
+            foreach (PackageFamily::all() as $family) {
+                $map->add('packages/family/'.$family['slug'], '0.85', 'weekly');
+            }
+            foreach (StarterKitController::kits() as $kit) {
+                $map->add('starter-kits/'.$kit['slug'], '0.6', 'monthly');
+            }
+            foreach (FancyCurriculumContent::courses() as $course) {
+                $map->add('learn/'.$course['slug'], '0.6', 'monthly');
+            }
+            // A companion outside any family keeps its own page; one inside a
+            // family is reached through the family page above.
+            foreach (PackageRegistry::companions() as $pkg) {
+                if (PackageFamily::find((string) $pkg['slug']) === null) {
+                    $map->add('packages/'.$pkg['slug'], '0.6', 'weekly');
+                }
+            }
 
             // Every inspiration-gallery collection catalog + style page.
             foreach (GalleryRegistry::collections() as $collection) {
@@ -484,15 +543,16 @@ class SeoServiceProvider extends ServiceProvider
     /** llmstxt.org index (curated) + full index (every package/component + the Human+ contract). */
     private function registerLlms(string $base): void
     {
-        $v = self::VERSION;
+        $v = KitFacts::kitVersion();
 
         FancySeo::llms(function () use ($base, $v): string {
             $out = [];
             $out[] = '# Fancy UI';
             $out[] = '';
-            $out[] = "> A suite of React + Laravel UI primitives engineered for **Human+ UX** — applications where humans and AI agents share the same UI surface and trade control fluidly. Every component is both an *authoring surface* (terse, JSON-friendly props humans and agents compose) and an *inhabited surface* (agents drive it over MCP tool bridges with stable handles — never DOM scraping). Public showcase version {$v}.";
+            $out[] = '> An ecosystem of '.KitFacts::packageCount().' small, independent packages from Particle Academy for '.KitFacts::sentence(KitFacts::languages())
+                .': UI primitives and surfaces, plus headless engines, document writers, commerce, analytics and tooling. Interactive components are held to **Human+ UX**: humans and AI agents share the same UI surface, and agents drive it over MCP tool bridges with stable handles, never DOM scraping. Kit version '.$v.'.';
             $out[] = '';
-            $out[] = 'Fancy UI ships JS/TS packages on npm and PHP packages on Packagist. The showcase is a Laravel + Inertia + React app that consumes them like any external app would. Agents inhabit running apps through `@particle-academy/agent-integrations` — a per-session MCP server with one bridge per surface (whiteboard, flow, sheets, slides, charts, code, screens, scene).';
+            $out[] = 'Fancy UI publishes to '.KitFacts::sentence(KitFacts::registries()).'. The showcase is a Laravel + Inertia + React app that consumes them like any external app would. Agents inhabit running apps through `@particle-academy/agent-integrations`, a per-session MCP server with a bridge for each interactive surface.';
             $out[] = '';
             $out[] = '## Packages';
             $out[] = '';
@@ -503,7 +563,9 @@ class SeoServiceProvider extends ServiceProvider
                 $out[] = "- [{$name}]({$base}/packages/{$slug}): {$tagline}";
             }
             $out[] = '';
-            $out[] = '## Companion PHP packages';
+            // Not only PHP: the Node and Python twins and the headless tooling
+            // are listed here too, and the heading said otherwise.
+            $out[] = '## Companion packages (headless and server)';
             $out[] = '';
             foreach (PackageRegistry::companions() as $pkg) {
                 $name = $pkg['name'] ?? ($pkg['slug'] ?? '');
@@ -529,7 +591,7 @@ class SeoServiceProvider extends ServiceProvider
             $out = [];
             $out[] = '# Fancy UI — full index';
             $out[] = '';
-            $out[] = "> Public showcase version {$v}. The complete package + component map plus the Human+ UX contract every component satisfies. Pure public metadata.";
+            $out[] = "> Kit version {$v}. The complete package + component map plus the Human+ UX contract that every stateful or interactive component satisfies. Pure public metadata.";
             $out[] = '';
             $out[] = '## The Human+ UX contract';
             $out[] = '';

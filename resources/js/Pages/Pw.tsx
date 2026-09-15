@@ -19,7 +19,7 @@ import {
 // <Icon name="x" /> silently renders a close cross instead of the X logo.
 // Importing the mark directly is unambiguous.
 import { XIcon, LinkedinIcon } from "@particle-academy/fancy-brand-icons";
-import { Seo } from "@particle-academy/fancy-inertia/seo";
+import { ServerSeo } from "@/lib/ServerSeo";
 import { Copy, Check, RefreshCw, Share2, Mail, Link2 } from "lucide-react";
 
 /**
@@ -279,10 +279,7 @@ export default function Pw() {
 
     return (
         <div className="flex min-h-screen flex-col items-center justify-center px-4 py-12">
-            <Seo
-                title="Password generator"
-                description="A fast, entirely client-side password generator. Nothing you generate is ever sent anywhere."
-            />
+            <ServerSeo />
 
             <main className="w-full max-w-xl">
                 <Card>

@@ -1,5 +1,5 @@
 import { Link } from "@inertiajs/react";
-import { Seo } from "@particle-academy/fancy-inertia/seo";
+import { ServerSeo } from "@/lib/ServerSeo";
 import { Breadcrumbs, Button, Card, Eyebrow, Heading, Icon, Text } from "@particle-academy/react-fancy";
 import { useState, type CSSProperties } from "react";
 import { Layout } from "../Layout";
@@ -86,7 +86,7 @@ export default function PackagesFamily({
 
     return (
         <Layout>
-            <Seo title={family.name} description={family.tagline} />
+            <ServerSeo />
 
             <Breadcrumbs>
                 <Breadcrumbs.Item as={Link} href="/packages">Packages</Breadcrumbs.Item>

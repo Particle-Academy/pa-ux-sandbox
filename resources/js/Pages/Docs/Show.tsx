@@ -1,5 +1,5 @@
 import { Link } from "@inertiajs/react";
-import { Seo } from "@particle-academy/fancy-inertia/seo";
+import { ServerSeo } from "@/lib/ServerSeo";
 import { Button, Heading, Separator, Text } from "@particle-academy/react-fancy";
 import { Layout } from "../Layout";
 import { DocsBody } from "./DocsEmbeds";
@@ -54,11 +54,7 @@ export default function DocsShow({ page, html, sections, neighbors, version }: P
 
     return (
         <Layout>
-            <Seo
-                title={`${page.title} — Docs`}
-                description={page.description ?? `${page.title} — Fancy UI documentation.`}
-                type="article"
-            />
+            <ServerSeo />
 
             <div className="grid gap-8 lg:grid-cols-[14rem_1fr]">
                 <aside className="lg:sticky lg:top-20 lg:max-h-[calc(100vh-6rem)] lg:overflow-auto">

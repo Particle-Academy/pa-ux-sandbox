@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Showcase;
 
 use App\Http\Controllers\Controller;
 use App\Support\PackageRegistry;
+use App\Support\Seo\KitFacts;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -27,7 +28,7 @@ class HomeController extends Controller
      * component count. Exposed so the CMS demo (`/cms/home`) can re-author the
      * exact same page from the exact same data.
      *
-     * @return array{packages: array<int, array<string, mixed>>, companions: array<int, array<string, mixed>>, total_components: int}
+     * @return array{packages: array<int, array<string, mixed>>, companions: array<int, array<string, mixed>>, total_components: int, languages: list<string>, registries: list<string>}
      */
     public function props(): array
     {
@@ -67,6 +68,7 @@ class HomeController extends Controller
                 'tagline' => $c['tagline'],
                 'composer' => $c['composer'] ?? null,
                 'npm' => $c['npm'] ?? null,
+                'pypi' => $c['pypi'] ?? null,
                 'language' => $c['language'],
             ]))
             ->values()
@@ -78,6 +80,11 @@ class HomeController extends Controller
             'total_components' => $all
                 ->reject(fn (array $p) => in_array($p['slug'], self::NON_UI, true))
                 ->sum(fn (array $p) => count($p['components'] ?? [])),
+            // The same derived facts the page's meta states, so the hero and the
+            // link preview cannot disagree. Both once said "React · PHP · Node"
+            // while six Python packages were published.
+            'languages' => KitFacts::languages(),
+            'registries' => KitFacts::registries(),
         ];
     }
 

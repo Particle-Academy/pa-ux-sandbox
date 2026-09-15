@@ -1,6 +1,6 @@
 <?php
 
-use App\Providers\SeoServiceProvider;
+use App\Support\Seo\KitFacts;
 use App\Support\UseCases\UseCaseContent;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
@@ -34,7 +34,7 @@ it('serves an llms.txt in the llmstxt.org shape with the package index', functio
     $res->assertSee('# Fancy UI', false);
     $res->assertSee('## Packages', false);
     $res->assertSee('/packages/fancy-slides', false);
-    $res->assertSee('version '.SeoServiceProvider::VERSION, false);
+    $res->assertSee('Kit version '.KitFacts::kitVersion(), false);
 });
 
 it('serves llms-full.txt with the Human+ UX contract', function () {

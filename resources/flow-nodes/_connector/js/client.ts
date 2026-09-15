@@ -1,5 +1,5 @@
 // GENERATED from @particle-academy/fancy-connector-core — src/client.ts
-// Do not edit here. Fix it in the package and re-run `php artisan flow:build`;
+// Do not edit here. Fix it in the package and re-run `node scripts/vendor.mjs --target <this directory>` there;
 // a test fails the build when this copy and the package disagree.
 
 /**
@@ -334,7 +334,7 @@ export async function callConnector<T = unknown>(
  *
  * Until 0.5.0 this built a bare `ConnectorError` from `ctx` alone, because the
  * outcome never carried the error — so every failed call, on every host, arrived
- * with no status while its message quoted one. `fancy-connectors`' probes ask a
+ * with no status while its message quoted one. The nightly connector probes ask a
  * real provider to refuse an impossible credential and read `error.status` to
  * see the refusal; they reported "failed before any status arrived" for every
  * provider, every night, against providers that had answered exactly right.

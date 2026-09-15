@@ -1,5 +1,5 @@
 // GENERATED from @particle-academy/fancy-connector-core — src/errors.ts
-// Do not edit here. Fix it in the package and re-run `php artisan flow:build`;
+// Do not edit here. Fix it in the package and re-run `node scripts/vendor.mjs --target <this directory>` there;
 // a test fails the build when this copy and the package disagree.
 
 /**

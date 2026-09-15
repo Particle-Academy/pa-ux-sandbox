@@ -1,5 +1,5 @@
 // GENERATED from @particle-academy/fancy-connector-core — src/compat.ts
-// Do not edit here. Fix it in the package and re-run `php artisan flow:build`;
+// Do not edit here. Fix it in the package and re-run `node scripts/vendor.mjs --target <this directory>` there;
 // a test fails the build when this copy and the package disagree.
 
 /**
@@ -104,8 +104,9 @@ export function assertConnectorApi(connectorId: string, declared: number): void 
         "The CONNECTOR is newer: upgrade @particle-academy/fancy-connector-core. Vendoring a connector ahead of " +
         "the core it needs is the one direction that cannot be made to work by trying."
       : `"${connectorId}" was written against connector API ${declared}, which is older than anything this core ` +
-        `still runs (${supported}). The CONNECTOR is behind: re-vendor it — ` +
-        `\`npx fancy-cli@latest add connector ${connectorId}\` — which fetches the copy written for this core. ` +
+        `still runs (${supported}). The CONNECTOR is behind: move it to a release written for this core — ` +
+        `upgrade its package (@particle-academy/${connectorId}-js, particle-academy/${connectorId}-php), or ` +
+        "regenerate a vendored copy from that release; its CHANGELOG names the connector API each release targets. " +
         "Nothing is adapted automatically, because guessing what a two-version-old connector meant is how a " +
         "connector quietly starts doing something else.",
     connectorId,

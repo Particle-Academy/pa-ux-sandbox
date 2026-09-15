@@ -209,6 +209,42 @@ class ConnectorSource
         return $out;
     }
 
+    /**
+     * The host-actionable facts of one trigger operation.
+     *
+     * Every key is emitted even when null, like `authFor()`. `verification` is
+     * the KIND of check (`hmac` needs the raw body kept, `shared-token` needs
+     * the connection's token handed to the verifier), while `verifiesSignature`
+     * only says whether deliveries are checked at all; both are carried because
+     * hosts already read the second.
+     *
+     * @param  array<string,mixed>  $operation
+     * @return array<string,mixed>
+     */
+    private function triggerFor(array $operation): array
+    {
+        $string = fn (string $key): ?string => is_string($operation[$key] ?? null) ? $operation[$key] : null;
+        $subscription = is_array($operation['subscription'] ?? null) ? $operation['subscription'] : null;
+
+        return [
+            'delivery' => $string('delivery'),
+            'setup' => $string('setup'),
+            'verification' => $string('verification'),
+            'handshake' => $string('handshake'),
+
+            // The renewal duty: how long a provider subscription lives, how
+            // early to renew it, and whether it can be renewed in place or must
+            // be stopped and re-created. A host that misses this stops receiving
+            // events a week later, with no error anywhere.
+            'subscription' => $subscription === null ? null : [
+                'ttlSeconds' => is_int($subscription['ttlSeconds'] ?? null) ? $subscription['ttlSeconds'] : null,
+                'renewBeforeSeconds' => is_int($subscription['renewBeforeSeconds'] ?? null) ? $subscription['renewBeforeSeconds'] : null,
+                'renewable' => is_bool($subscription['renewable'] ?? null) ? $subscription['renewable'] : null,
+            ],
+            'verifiesSignature' => is_bool($operation['verifiesSignature'] ?? null) ? $operation['verifiesSignature'] : null,
+        ];
+    }
+
     private function entryFor(array $connector, array $operation): ?array
     {
         $kind = $operation['kind'] ?? null;
@@ -310,6 +346,21 @@ class ConnectorSource
             // token; a connection is re-authorised on a 60-day access token),
             // not an absent one. A host that inferred otherwise waits forever.
             'auth' => $this->authFor($connector),
+
+            // What a host needs to WIRE a trigger, or null for an action or
+            // search (checked, and not a trigger).
+            //
+            // `delivery`, `setup` and `verifiesSignature` were in the index from
+            // the first trigger and none of them reached a host. `setup` is the
+            // only place a host learns to echo `hub.challenge`, to mint a Google
+            // channel id, or to answer Graph's `validationToken` within ten
+            // seconds, so a host reading this entry could build a trigger that
+            // never received anything.
+            //
+            // Nested rather than flat because this entry's own `delivery` means
+            // the INSTALL path (package / vendor / both), and a flat trigger
+            // `delivery` would overwrite it.
+            'trigger' => $role === 'trigger' ? $this->triggerFor($operation) : null,
 
             // Assigned by the registry, never read from the index. These are
             // first-party packages built and released by the suite's own CI,

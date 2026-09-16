@@ -245,6 +245,57 @@ class ConnectorSource
         ];
     }
 
+    /**
+     * The connector's setup steps, or null when it needs nothing beyond auth.
+     *
+     * Each step is `{title, detail, url}` and all three are required upstream —
+     * Weaver's `checkSetup()` refuses a step without a `url`, because a
+     * precondition a host cannot verify against the provider's own
+     * documentation is a precondition it has to take on faith.
+     *
+     * A malformed step is DROPPED rather than half-emitted. A step missing its
+     * `url` would read as a complete instruction with the citation quietly
+     * absent, which is worse than not showing it: the host follows it and has
+     * nowhere to check when it does not work.
+     *
+     * @param  array<string,mixed>  $connector
+     * @return list<array{title:string,detail:string,url:string}>|null
+     */
+    private function setupFor(array $connector): ?array
+    {
+        $setup = $connector['setup'] ?? null;
+
+        if (! is_array($setup) || $setup === []) {
+            return null;
+        }
+
+        $steps = [];
+
+        foreach ($setup as $step) {
+            if (! is_array($step)) {
+                continue;
+            }
+
+            $title = $step['title'] ?? null;
+            $detail = $step['detail'] ?? null;
+            $url = $step['url'] ?? null;
+
+            if (! is_string($title) || ! is_string($detail) || ! is_string($url)) {
+                continue;
+            }
+
+            if ($title === '' || $detail === '' || $url === '') {
+                continue;
+            }
+
+            // `detail` verbatim: it carries host tokens like
+            // `{host.oauthRedirectUrl}` that the CONSUMER substitutes.
+            $steps[] = ['title' => $title, 'detail' => $detail, 'url' => $url];
+        }
+
+        return $steps === [] ? null : $steps;
+    }
+
     private function entryFor(array $connector, array $operation): ?array
     {
         $kind = $operation['kind'] ?? null;
@@ -305,6 +356,54 @@ class ConnectorSource
             // way to learn that two of the twenty-three need one until the
             // connector silently received nothing.
             'needsWebhookEndpoint' => (bool) ($connector['needsWebhookEndpoint'] ?? false),
+
+            // SETUP STEPS A HOST MUST PERFORM BEYOND THE AUTH DANCE ITSELF.
+            //
+            // `needsWebhookEndpoint` above is the same shape, narrowed to one
+            // case, and that narrowness is why this exists: microsoft-teams
+            // needs a TENANT ADMINISTRATOR to grant an application access
+            // policy naming the target user — beyond ordinary OAuth consent,
+            // and beyond anything a boolean can say. Without it every operation
+            // returns empty, so a host reads "OAuth configured" as "ready" and
+            // gets nothing, with no error to explain it.
+            //
+            // Carried for the CLASS rather than for that one provider. Weaver's
+            // manifest already had a validated `setup` vocabulary nobody had
+            // used; the fact was living in a `$`-prefixed comment key, which is
+            // commentary and carried nowhere by design.
+            //
+            // `detail` arrives with host tokens like `{host.oauthRedirectUrl}`
+            // UNSUBSTITUTED — the consumer fills in its own value, because we do
+            // not know it. Passed through verbatim for the same reason a pause
+            // reason is: a string this layer rewrites is a string the other side
+            // can no longer parse.
+            //
+            // `null` means "checked, and there is nothing beyond auth" — true
+            // for every connector today. It is emitted as an explicit null
+            // rather than omitted, because a vanished key reads as "not carried"
+            // and that is the one answer a host must not infer.
+            //
+            // ⚠ THERE ARE NOW TWO `setup`s IN AN ENTRY, and they differ in
+            // scope AND in type:
+            //
+            //   entry.setup          list<{title,detail,url}> | null   CONNECTOR-level
+            //   entry.trigger.setup  string | null                     OPERATION-level
+            //
+            // They do not collide — different nesting — but a consumer writing
+            // one handler for "the setup field" will meet an array on one path
+            // and a string on the other. Flagged upstream; if the names are
+            // reconciled, this is the line that changes. It is the same hazard
+            // the `trigger` block was nested to avoid for `delivery`, which
+            // means "install path" at the top and "webhook/poll/subscription"
+            // inside.
+            'setup' => $this->setupFor($connector),
+
+            // The connector-level one-liner, distinct from the per-OPERATION
+            // `summary` that becomes `description` above. One says what Stripe
+            // is; the other says what this one operation does.
+            'summary' => is_string($connector['summary'] ?? null)
+                ? $connector['summary']
+                : null,
 
             // Maturity. Every connector is `alpha` today, which is exactly when
             // it matters most — a surface that shows none of them as alpha is

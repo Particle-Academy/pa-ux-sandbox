@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1ec70891091951c5de20385c3aabdc3c",
+    "content-hash": "20cb3da5959e8b54a113e021b5d4b49f",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -4170,16 +4170,16 @@
         },
         {
             "name": "particle-academy/fancy-flow-php",
-            "version": "v0.55.0",
+            "version": "v0.56.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/fancy-flow-php.git",
-                "reference": "ab2581d5c016ea2ea2a46c4f6254239d3d79fe82"
+                "reference": "ad59a88a61ccc5708d835c64553891591591f565"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/fancy-flow-php/zipball/ab2581d5c016ea2ea2a46c4f6254239d3d79fe82",
-                "reference": "ab2581d5c016ea2ea2a46c4f6254239d3d79fe82",
+                "url": "https://api.github.com/repos/Particle-Academy/fancy-flow-php/zipball/ad59a88a61ccc5708d835c64553891591591f565",
+                "reference": "ad59a88a61ccc5708d835c64553891591591f565",
                 "shasum": ""
             },
             "require": {
@@ -4188,7 +4188,7 @@
             "require-dev": {
                 "laravel/ai": "^0.9",
                 "orchestra/testbench": "^8.0|^9.0|^10.0|^11.0",
-                "particle-academy/fancy-conformance": "0.27",
+                "particle-academy/fancy-conformance": "0.29",
                 "particle-academy/prism": ">=0.114 <1.0",
                 "pestphp/pest": "^2.0|^3.0|^4.0",
                 "phpunit/phpunit": "^10.0|^11.0|^12.0"
@@ -4241,7 +4241,7 @@
                 "issues": "https://github.com/Particle-Academy/fancy-flow-php/issues",
                 "source": "https://github.com/Particle-Academy/fancy-flow-php"
             },
-            "time": "2026-09-16T02:44:37+00:00"
+            "time": "2026-09-16T03:48:04+00:00"
         },
         {
             "name": "particle-academy/fancy-heuristics",

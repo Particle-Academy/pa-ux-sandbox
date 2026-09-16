@@ -248,18 +248,25 @@ class ConnectorSource
     /**
      * The connector's setup steps, or null when it needs nothing beyond auth.
      *
-     * Each step is `{title, detail, url}` and all three are required upstream —
-     * Weaver's `checkSetup()` refuses a step without a `url`, because a
-     * precondition a host cannot verify against the provider's own
-     * documentation is a precondition it has to take on faith.
+     * A step is `{title, detail, url}`. **`title` and `detail` are required;
+     * `url` is NOT** — `fancy-connector-core`'s own `SetupStep` type declares it
+     * `url?: string`. The connector lab's `checkSetup()` does require one, but
+     * that is a stricter HOUSE RULE sitting on a looser core type, not a
+     * guarantee this layer may rely on.
      *
-     * A malformed step is DROPPED rather than half-emitted. A step missing its
-     * `url` would read as a complete instruction with the citation quietly
-     * absent, which is worse than not showing it: the host follows it and has
-     * nowhere to check when it does not work.
+     * This method dropped a url-less step until that was pointed out, on the
+     * reasoning that an instruction whose citation is quietly absent is worse
+     * than no instruction. **That reasoning inverts once the field is optional
+     * by contract:** such a step is VALID, and dropping it means a host never
+     * learns about a setup action it must perform. A host that knows the step
+     * but has no doc link can still act; a host that never sees it gets empty
+     * results forever and no way to find out why. Carry it, with `url` null.
+     *
+     * A step with no `title` or no `detail` is still dropped — it conveys
+     * nothing, and half a row is not a row.
      *
      * @param  array<string,mixed>  $connector
-     * @return list<array{title:string,detail:string,url:string}>|null
+     * @return list<array{title:string,detail:string,url:string|null}>|null
      */
     private function setupFor(array $connector): ?array
     {
@@ -280,17 +287,21 @@ class ConnectorSource
             $detail = $step['detail'] ?? null;
             $url = $step['url'] ?? null;
 
-            if (! is_string($title) || ! is_string($detail) || ! is_string($url)) {
-                continue;
-            }
-
-            if ($title === '' || $detail === '' || $url === '') {
+            if (! is_string($title) || ! is_string($detail) || $title === '' || $detail === '') {
                 continue;
             }
 
             // `detail` verbatim: it carries host tokens like
             // `{host.oauthRedirectUrl}` that the CONSUMER substitutes.
-            $steps[] = ['title' => $title, 'detail' => $detail, 'url' => $url];
+            //
+            // `url` null rather than absent, for the same reason every other
+            // nullable here is: a vanished key reads as "not carried", and
+            // "checked, and there is none" is a different answer.
+            $steps[] = [
+                'title' => $title,
+                'detail' => $detail,
+                'url' => is_string($url) && $url !== '' ? $url : null,
+            ];
         }
 
         return $steps === [] ? null : $steps;

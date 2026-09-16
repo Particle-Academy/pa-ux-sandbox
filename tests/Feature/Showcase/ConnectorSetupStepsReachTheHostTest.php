@@ -117,15 +117,34 @@ it('emits an explicit null when a connector needs nothing beyond auth', function
     expect(setupEntries([])->first()['setup'])->toBeNull();
 });
 
-it('DROPS a malformed step rather than emitting half of one', function () {
-    // A step missing its `url` reads as a complete instruction whose citation
-    // happens to be absent — worse than not showing it, because the host
-    // follows it and has nowhere to check when it does not work. Weaver's
-    // checkSetup() refuses these upstream; this is the second gate saying the
-    // same thing rather than trusting the first.
+it('KEEPS a step that has no url, carrying url as null', function () {
+    // `fancy-connector-core`'s own `SetupStep` declares `url?: string` —
+    // OPTIONAL. The connector lab's checkSetup() requires one, but that is a
+    // stricter house rule on a looser core type, not a guarantee this layer may
+    // rely on.
+    //
+    // This dropped such a step until that was pointed out, reasoning that an
+    // instruction with a quietly absent citation is worse than none. The
+    // reasoning inverts once the field is optional BY CONTRACT: the step is
+    // valid, and dropping it means a host never learns about a setup action it
+    // must perform — empty results forever, with no way to find out why. A host
+    // that has the step but no link can still act.
     $entry = setupEntries([
-        ['title' => 'No url here', 'detail' => 'something'],
+        ['title' => 'Grant the policy', 'detail' => 'a tenant admin must do this'],
+    ])->first();
+
+    expect($entry['setup'])->toHaveCount(1);
+    expect($entry['setup'][0]['title'])->toBe('Grant the policy');
+    expect($entry['setup'][0]['url'])->toBeNull();
+});
+
+it('DROPS a step with no title or no detail', function () {
+    // Still dropped, and for a reason that did not invert: a step with no title
+    // or no detail conveys nothing at all. Half a row is not a row.
+    $entry = setupEntries([
         ['title' => '', 'detail' => 'empty title', 'url' => 'https://example.com'],
+        ['title' => 'no detail', 'detail' => '', 'url' => 'https://example.com'],
+        ['detail' => 'no title key at all', 'url' => 'https://example.com'],
         ['title' => 'Good one', 'detail' => 'with a citation', 'url' => 'https://learn.microsoft.com/y'],
     ])->first();
 

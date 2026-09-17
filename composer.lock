@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0739c5c3d003178cca4c29d3d13e0225",
+    "content-hash": "b75d3c13c6fe0c00df0520e739640c9a",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -4044,16 +4044,16 @@
         },
         {
             "name": "particle-academy/dark-slide",
-            "version": "v0.10.0",
+            "version": "v0.10.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/dark-slide.git",
-                "reference": "107dc7554108a55b772f4ce6722aa188c7ce0275"
+                "reference": "b3b636e96b8686fe37175025787ad46249d64f55"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/dark-slide/zipball/107dc7554108a55b772f4ce6722aa188c7ce0275",
-                "reference": "107dc7554108a55b772f4ce6722aa188c7ce0275",
+                "url": "https://api.github.com/repos/Particle-Academy/dark-slide/zipball/b3b636e96b8686fe37175025787ad46249d64f55",
+                "reference": "b3b636e96b8686fe37175025787ad46249d64f55",
                 "shasum": ""
             },
             "require": {
@@ -4113,7 +4113,7 @@
                 "issues": "https://github.com/Particle-Academy/dark-slide/issues",
                 "source": "https://github.com/Particle-Academy/dark-slide"
             },
-            "time": "2026-09-13T19:35:27+00:00"
+            "time": "2026-09-16T23:59:52+00:00"
         },
         {
             "name": "particle-academy/fancy-cms",
@@ -4170,16 +4170,16 @@
         },
         {
             "name": "particle-academy/fancy-flow-php",
-            "version": "v0.57.1",
+            "version": "v0.57.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/fancy-flow-php.git",
-                "reference": "7fa0b610e31f961138e59a5f56bdae559f05d512"
+                "reference": "3cebce95108762fcf740b102c827c3b99ab0bbaa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/fancy-flow-php/zipball/7fa0b610e31f961138e59a5f56bdae559f05d512",
-                "reference": "7fa0b610e31f961138e59a5f56bdae559f05d512",
+                "url": "https://api.github.com/repos/Particle-Academy/fancy-flow-php/zipball/3cebce95108762fcf740b102c827c3b99ab0bbaa",
+                "reference": "3cebce95108762fcf740b102c827c3b99ab0bbaa",
                 "shasum": ""
             },
             "require": {
@@ -4241,7 +4241,7 @@
                 "issues": "https://github.com/Particle-Academy/fancy-flow-php/issues",
                 "source": "https://github.com/Particle-Academy/fancy-flow-php"
             },
-            "time": "2026-09-16T06:09:44+00:00"
+            "time": "2026-09-16T23:49:57+00:00"
         },
         {
             "name": "particle-academy/fancy-heuristics",

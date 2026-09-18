@@ -1,7 +1,7 @@
 import type { ComponentDoc } from "./types";
 import { Checkbox, CheckboxGroup, DatePicker, Field, Input, MultiSwitch, RadioGroup, Select, Slider, Switch, Textarea } from "@particle-academy/react-fancy";
 
-export const inputsDoc: ComponentDoc = {
+const inputFamilyDoc: ComponentDoc = {
     intro: (
         <p>
             The form-input family. Every input shares a common base (<code>label</code>,
@@ -307,9 +307,9 @@ function componentDoc(
                 <code>{name}</code> {description}
             </p>
         ),
-        examples: inputsDoc.examples.filter((example) => exampleNames.includes(example.name)),
-        props: inputsDoc.props.filter((prop) => prop.name === name),
-        notes: inputsDoc.notes,
+        examples: inputFamilyDoc.examples.filter((example) => exampleNames.includes(example.name)),
+        props: inputFamilyDoc.props.filter((prop) => prop.name === name),
+        notes: inputFamilyDoc.notes,
     };
 }
 

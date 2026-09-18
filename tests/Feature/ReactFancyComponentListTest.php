@@ -37,9 +37,8 @@ uses(TestCase::class);
  * Subpaths that are deliberately NOT standalone registry entries.
  *
  * Every public component subpath gets its own searchable registry entry and
- * showcase page. Family bundles such as `inputs` may remain as convenience
- * entries, but they must not hide the individual controls from agents searching
- * for a component by name.
+ * showcase page. `inputs` is only a package-level convenience barrel: the
+ * controls it re-exports are the public registry entries, not the barrel itself.
  *
  * `mode` and `icons` are not components at all: a context helper and an asset
  * barrel.
@@ -48,7 +47,7 @@ uses(TestCase::class);
  * sweep new components into when this test goes red.
  */
 const IGNORED_SUBPATHS = [
-    'mode', 'icons',
+    'mode', 'icons', 'inputs',
 ];
 
 /** Registry entries with no matching subpath. There should be none. */
@@ -126,4 +125,38 @@ it('includes JsonEditor specifically', function () {
         ->firstWhere('slug', 'react-fancy')['components'] ?? [];
 
     expect(array_column($listed, 'slug'))->toContain('json-editor');
+});
+
+it('publishes input controls individually without an aggregate inputs entry', function () {
+    $inputSlugs = [
+        'field',
+        'input',
+        'textarea',
+        'select',
+        'checkbox',
+        'checkbox-group',
+        'radio-group',
+        'switch',
+        'slider',
+        'multi-switch',
+        'date-picker',
+    ];
+
+    $listed = collect(PackageRegistry::all())
+        ->firstWhere('slug', 'react-fancy')['components'] ?? [];
+    $listedSlugs = array_column($listed, 'slug');
+
+    expect($listedSlugs)
+        ->not->toContain('inputs')
+        ->and(array_values(array_diff($inputSlugs, $listedSlugs)))->toBe([]);
+
+    foreach ($inputSlugs as $slug) {
+        $this->get("/packages/react-fancy/{$slug}")->assertOk();
+        $this->getJson("/r/{$slug}.json")
+            ->assertOk()
+            ->assertJsonPath('name', $slug);
+    }
+
+    $this->get('/packages/react-fancy/inputs')->assertNotFound();
+    $this->getJson('/r/inputs.json')->assertNotFound();
 });

@@ -261,7 +261,6 @@ const REGISTRY: Record<string, DemoFn> = {
     "react-fancy/command": CommandDemo,
     "react-fancy/portal": PortalDemo,
     // Inputs / pickers
-    "react-fancy/inputs": InputsDemo,
     "react-fancy/field": FieldDemo,
     "react-fancy/input": InputDemo,
     "react-fancy/textarea": TextareaDemo,
@@ -1928,45 +1927,6 @@ function FancyMapDemo() {
                 </Text>
             </div>
         </DemoNote>
-    );
-}
-
-function InputsDemo() {
-    const [email, setEmail] = useState("agent@particle.academy");
-    const [role, setRole] = useState("builder");
-    const [notifications, setNotifications] = useState(true);
-    const [layout, setLayout] = useState("grid");
-
-    return (
-        <div className="grid w-full max-w-xl gap-4 sm:grid-cols-2">
-            <Input label="Email" value={email} onValueChange={setEmail} />
-            <Select
-                label="Role"
-                list={[
-                    { value: "builder", label: "Builder" },
-                    { value: "designer", label: "Designer" },
-                    { value: "operator", label: "Operator" },
-                ]}
-                value={role}
-                onValueChange={setRole}
-            />
-            <Switch
-                label="Notifications"
-                checked={notifications}
-                onCheckedChange={setNotifications}
-                color="violet"
-            />
-            <MultiSwitch
-                label="Layout"
-                list={[
-                    { value: "list", label: "List" },
-                    { value: "grid", label: "Grid" },
-                    { value: "board", label: "Board" },
-                ]}
-                value={layout}
-                onValueChange={setLayout}
-            />
-        </div>
     );
 }
 

@@ -1188,7 +1188,6 @@ BEFORE IT CAN SHIP: three registry names that do not exist yet (npm scoped, Pack
             ['slug' => 'icon', 'name' => 'Icon'],
             ['slug' => 'index-list', 'name' => 'IndexList', 'blurb' => 'Numbered index list for directories and tables of contents.'],
             ['slug' => 'input-tag', 'name' => 'InputTag'],
-            ['slug' => 'inputs', 'name' => 'Inputs', 'blurb' => 'The complete react-fancy form-input family in one convenience bundle.'],
             ['slug' => 'field', 'name' => 'Field', 'blurb' => 'Accessible label, description and validation shell for custom form controls.', 'vendor' => false],
             ['slug' => 'input', 'name' => 'Input', 'blurb' => 'Text input with labels, validation, affixes and controlled value helpers.', 'vendor' => false],
             ['slug' => 'textarea', 'name' => 'Textarea', 'blurb' => 'Multi-line input with validation, controlled values and optional auto-resize.', 'vendor' => false],

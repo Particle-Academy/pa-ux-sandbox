@@ -1311,15 +1311,6 @@ const PREVIEWS: Record<string, PreviewFn> = {
         <DatePicker size="sm" label="Launch date" defaultValue="2026-10-01" />
     ),
 
-    "react-fancy/inputs": () => (
-        <div className="grid w-full max-w-[20rem] grid-cols-2 gap-3 text-left">
-            <Input size="sm" label="Email" defaultValue="agent@fancy.dev" />
-            <Select size="sm" label="Role" list={["Builder", "Designer"]} defaultValue="Builder" />
-            <Switch size="sm" label="Suggestions" color="violet" defaultChecked />
-            <MultiSwitch size="sm" label="View" list={["List", "Grid"]} defaultValue="Grid" />
-        </div>
-    ),
-
     "react-fancy/kanban": () => (
         <div className="w-full max-w-[20rem] text-[10px]">
             <Kanban>

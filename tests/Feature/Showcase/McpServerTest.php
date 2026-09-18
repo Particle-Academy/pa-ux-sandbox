@@ -55,6 +55,30 @@ it('search-components filters by substring', function () {
     expect($names)->toContain('calendar');
 });
 
+it('finds the react-fancy switch controls by component name and concept', function () {
+    $switchBody = rpc([
+        'jsonrpc' => '2.0',
+        'id' => 31,
+        'method' => 'tools/call',
+        'params' => ['name' => 'search-components', 'arguments' => ['query' => 'switch']],
+    ]);
+    $switchPayload = json_decode($switchBody['result']['content'][0]['text'], true);
+    $switches = collect($switchPayload['items'])->where('package', 'react-fancy')->pluck('name');
+
+    expect($switches)->toContain('switch')->toContain('multi-switch');
+
+    $toggleBody = rpc([
+        'jsonrpc' => '2.0',
+        'id' => 32,
+        'method' => 'tools/call',
+        'params' => ['name' => 'search-components', 'arguments' => ['query' => 'toggle']],
+    ]);
+    $togglePayload = json_decode($toggleBody['result']['content'][0]['text'], true);
+    $toggles = collect($togglePayload['items'])->where('package', 'react-fancy')->pluck('name');
+
+    expect($toggles)->toContain('switch')->toContain('multi-switch');
+});
+
 it('get-component returns the full bundle for a real slug', function () {
     $body = rpc([
         'jsonrpc' => '2.0',

@@ -114,6 +114,7 @@ import {
     GIT_TREE,
 } from "./gitFixtures";
 import { AudioViewer, Avatar, Badge, Breadcrumbs, Button, Calendar, Callout, Card, CodeView, ColorPicker, Container, ContentRenderer, ContextMenu, Drawer, Emoji, Eyebrow, FauxClient, FileBrowser, Grid, Heading, ImageViewer, IndexList, JsonEditor, Kanban, Kbd, Marquee, MediaViewer, MoodMeter, OtpInput, Pagination, PdfViewer, Pillbox, Profile, Progress, PullQuote, Section, Skeleton, Stat, StatList, StickyNote, Switch, Tabs, Text, TimeGrid, TimePicker, Timeline, Tooltip, VideoViewer } from "@particle-academy/react-fancy";
+import { Checkbox, CheckboxGroup, DatePicker, Field, Input, MultiSwitch, RadioGroup, Select, Slider, Textarea } from "@particle-academy/react-fancy";
 import { FileViewer } from "@particle-academy/fancy-code";
 import { EChart } from "@particle-academy/fancy-echarts";
 import { ArtBoard, ArtPiece } from "@particle-academy/fancy-artboard";
@@ -1229,18 +1230,93 @@ const PREVIEWS: Record<string, PreviewFn> = {
         </div>
     ),
 
+    "react-fancy/field": () => (
+        <Field label="Workspace" description="Visible to collaborators" htmlFor="field-preview">
+            <input id="field-preview" defaultValue="Fancy UI" className="w-full rounded-md border border-zinc-300 bg-transparent px-2 py-1.5 text-xs dark:border-zinc-700" />
+        </Field>
+    ),
+
+    "react-fancy/input": () => (
+        <Input size="sm" label="Email" type="email" defaultValue="agent@fancy.dev" />
+    ),
+
+    "react-fancy/textarea": () => (
+        <Textarea size="sm" label="Brief" defaultValue="Build a shared Human+ surface." rows={3} />
+    ),
+
+    "react-fancy/select": () => (
+        <Select
+            size="sm"
+            label="Role"
+            list={[
+                { value: "builder", label: "Builder" },
+                { value: "designer", label: "Designer" },
+                { value: "operator", label: "Operator" },
+            ]}
+            defaultValue="builder"
+        />
+    ),
+
+    "react-fancy/checkbox": () => (
+        <Checkbox size="sm" label="Share agent activity" defaultChecked />
+    ),
+
+    "react-fancy/checkbox-group": () => (
+        <CheckboxGroup
+            size="sm"
+            label="Notifications"
+            orientation="horizontal"
+            list={[
+                { value: "email", label: "Email" },
+                { value: "push", label: "Push" },
+            ]}
+            defaultValue={["email"]}
+        />
+    ),
+
+    "react-fancy/radio-group": () => (
+        <RadioGroup
+            size="sm"
+            label="Theme"
+            orientation="horizontal"
+            list={["Light", "Dark", "System"]}
+            defaultValue="System"
+        />
+    ),
+
+    "react-fancy/switch": () => (
+        <Switch size="sm" label="Agent suggestions" color="violet" defaultChecked />
+    ),
+
+    "react-fancy/slider": () => (
+        <div className="w-full max-w-[16rem]">
+            <Slider size="sm" label="Confidence" defaultValue={72} showValue suffix="%" />
+        </div>
+    ),
+
+    "react-fancy/multi-switch": () => (
+        <MultiSwitch
+            size="sm"
+            label="View"
+            list={[
+                { value: "list", label: "List" },
+                { value: "grid", label: "Grid" },
+                { value: "board", label: "Board" },
+            ]}
+            defaultValue="grid"
+        />
+    ),
+
+    "react-fancy/date-picker": () => (
+        <DatePicker size="sm" label="Launch date" defaultValue="2026-10-01" />
+    ),
+
     "react-fancy/inputs": () => (
-        <div className="w-full max-w-[18rem] space-y-2 text-left">
-            <div>
-                <div className="mb-0.5 text-[10px] font-medium text-zinc-500">Email</div>
-                <div className="rounded-md border border-zinc-200 bg-white px-3 py-1.5 text-xs text-zinc-700 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-200">user@example.com</div>
-            </div>
-            <div>
-                <div className="mb-0.5 text-[10px] font-medium text-zinc-500">Role</div>
-                <div className="flex items-center justify-between rounded-md border border-zinc-200 bg-white px-3 py-1.5 text-xs text-zinc-700 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-200">
-                    Admin <ChevronDown size={12} className="text-zinc-400" />
-                </div>
-            </div>
+        <div className="grid w-full max-w-[20rem] grid-cols-2 gap-3 text-left">
+            <Input size="sm" label="Email" defaultValue="agent@fancy.dev" />
+            <Select size="sm" label="Role" list={["Builder", "Designer"]} defaultValue="Builder" />
+            <Switch size="sm" label="Suggestions" color="violet" defaultChecked />
+            <MultiSwitch size="sm" label="View" list={["List", "Grid"]} defaultValue="Grid" />
         </div>
     ),
 

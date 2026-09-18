@@ -36,9 +36,11 @@ uses(TestCase::class);
 /**
  * Subpaths that are deliberately NOT standalone registry entries.
  *
- * The eleven input primitives are reachable as one `inputs` entry, which is how
- * they are documented and how a consumer vendors them — splitting them would
- * put eleven near-identical cards on the packages page for one coherent family.
+ * Every public component subpath gets its own searchable registry entry and
+ * showcase page. Family bundles such as `inputs` may remain as convenience
+ * entries, but they must not hide the individual controls from agents searching
+ * for a component by name.
+ *
  * `mode` and `icons` are not components at all: a context helper and an asset
  * barrel.
  *
@@ -46,8 +48,6 @@ uses(TestCase::class);
  * sweep new components into when this test goes red.
  */
 const IGNORED_SUBPATHS = [
-    'checkbox', 'checkbox-group', 'date-picker', 'field', 'input', 'multi-switch',
-    'radio-group', 'select', 'slider', 'switch', 'textarea',
     'mode', 'icons',
 ];
 

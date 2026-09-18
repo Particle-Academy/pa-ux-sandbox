@@ -1,5 +1,5 @@
 {
-    "count": 301,
+    "count": 313,
     "items": [
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
@@ -1131,6 +1131,28 @@
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "checkbox",
+            "type": "registry:ui",
+            "title": "Checkbox",
+            "description": "Accessible boolean checkbox with controlled, indeterminate and validation states.",
+            "package": "react-fancy",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "checkbox-group",
+            "type": "registry:ui",
+            "title": "CheckboxGroup",
+            "description": "Controlled multiple-choice checkbox group with horizontal and vertical layouts.",
+            "package": "react-fancy",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
             "name": "cms-editor",
             "type": "registry:ui",
             "title": "Editor",
@@ -1892,6 +1914,17 @@
             "title": "fancy-dark-slide",
             "description": "Python port of dark-slide -- pptx writer/reader for agentic documents. Headless; no UI.",
             "package": "dark-slide-py",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "date-picker",
+            "type": "registry:ui",
+            "title": "DatePicker",
+            "description": "Single-date, date-time or date-range input with controlled values.",
+            "package": "react-fancy",
             "dependencies": [],
             "registryDependencies": [],
             "files": []
@@ -3171,6 +3204,17 @@
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "field",
+            "type": "registry:ui",
+            "title": "Field",
+            "description": "Accessible label, description and validation shell for custom form controls.",
+            "package": "react-fancy",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
             "name": "file-browser",
             "type": "registry:ui",
             "title": "FileBrowser",
@@ -3682,6 +3726,17 @@
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "input",
+            "type": "registry:ui",
+            "title": "Input",
+            "description": "Text input with labels, validation, affixes and controlled value helpers.",
+            "package": "react-fancy",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
             "name": "input-tag",
             "type": "registry:ui",
             "title": "InputTag",
@@ -3715,7 +3770,7 @@
             "name": "inputs",
             "type": "registry:ui",
             "title": "Inputs",
-            "description": "Inputs from react-fancy",
+            "description": "The complete react-fancy form-input family in one convenience bundle.",
             "package": "react-fancy",
             "dependencies": [],
             "registryDependencies": [
@@ -4743,6 +4798,17 @@
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "multi-switch",
+            "type": "registry:ui",
+            "title": "MultiSwitch",
+            "description": "Segmented toggle switch for selecting one value from multiple options.",
+            "package": "react-fancy",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
             "name": "navbar",
             "type": "registry:ui",
             "title": "Navbar",
@@ -5421,6 +5487,17 @@
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "radio-group",
+            "type": "registry:ui",
+            "title": "RadioGroup",
+            "description": "Controlled single-choice radio group with accessible labels and descriptions.",
+            "package": "react-fancy",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
             "name": "rank-progress",
             "type": "registry:ui",
             "title": "RankProgress",
@@ -5438,6 +5515,17 @@
                     "target": "components/fancy/rank-progress/RankProgress.tsx"
                 }
             ]
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "react-fancy",
+            "type": "registry:ui",
+            "title": "react-fancy",
+            "description": "Tailwind v4 + React component library \u2014 88 components.",
+            "package": "react-fancy",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
@@ -5805,6 +5893,17 @@
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "select",
+            "type": "registry:ui",
+            "title": "Select",
+            "description": "Native or searchable listbox selection, including grouped and multi-select options.",
+            "package": "react-fancy",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
             "name": "separator",
             "type": "registry:ui",
             "title": "Separator",
@@ -6162,6 +6261,17 @@
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "slider",
+            "type": "registry:ui",
+            "title": "Slider",
+            "description": "Single-value or range slider with marks and visible value formatting.",
+            "package": "react-fancy",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
             "name": "stat",
             "type": "registry:ui",
             "title": "Stat",
@@ -6225,6 +6335,17 @@
                     "target": "components/fancy/stat-list/index.ts"
                 }
             ]
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "switch",
+            "type": "registry:ui",
+            "title": "Switch",
+            "description": "Boolean toggle switch with controlled state, colors, labels and form support.",
+            "package": "react-fancy",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
@@ -6547,6 +6668,17 @@
                     "target": "components/fancy/text-element/index.ts"
                 }
             ]
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "textarea",
+            "type": "registry:ui",
+            "title": "Textarea",
+            "description": "Multi-line input with validation, controlled values and optional auto-resize.",
+            "package": "react-fancy",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",

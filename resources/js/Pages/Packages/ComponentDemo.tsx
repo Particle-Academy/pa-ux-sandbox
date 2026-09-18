@@ -42,7 +42,17 @@ import {
     FileUpload,
     Heading,
     Icon,
+    Field,
     Input,
+    Textarea,
+    Select,
+    Checkbox,
+    CheckboxGroup,
+    RadioGroup,
+    Switch,
+    Slider,
+    MultiSwitch,
+    DatePicker,
     InputTag,
     Kanban,
     MagicWand,
@@ -252,6 +262,17 @@ const REGISTRY: Record<string, DemoFn> = {
     "react-fancy/portal": PortalDemo,
     // Inputs / pickers
     "react-fancy/inputs": InputsDemo,
+    "react-fancy/field": FieldDemo,
+    "react-fancy/input": InputDemo,
+    "react-fancy/textarea": TextareaDemo,
+    "react-fancy/select": SelectDemo,
+    "react-fancy/checkbox": CheckboxDemo,
+    "react-fancy/checkbox-group": CheckboxGroupDemo,
+    "react-fancy/radio-group": RadioGroupDemo,
+    "react-fancy/switch": SwitchDemo,
+    "react-fancy/slider": SliderDemo,
+    "react-fancy/multi-switch": MultiSwitchDemo,
+    "react-fancy/date-picker": DatePickerDemo,
     "react-fancy/input-tag": InputTagDemo,
     "react-fancy/pillbox": PillboxDemo,
     "react-fancy/autocomplete": AutocompleteDemo,
@@ -1911,33 +1932,165 @@ function FancyMapDemo() {
 }
 
 function InputsDemo() {
-    const [text, setText] = useState("");
-    const [check, setCheck] = useState(true);
+    const [email, setEmail] = useState("agent@particle.academy");
+    const [role, setRole] = useState("builder");
+    const [notifications, setNotifications] = useState(true);
+    const [layout, setLayout] = useState("grid");
+
     return (
-        <div className="grid max-w-md gap-3">
-            <label className="grid gap-1 text-sm">
-                <span className="text-xs text-zinc-500 uppercase tracking-wider">Text input</span>
-                <input
-                    value={text}
-                    onChange={(e) => setText(e.target.value)}
-                    placeholder="Type something…"
-                    className="rounded-md border border-zinc-300 bg-transparent px-3 py-2 outline-none focus:border-violet-500 dark:border-zinc-700"
-                />
-            </label>
-            <label className="grid gap-1 text-sm">
-                <span className="text-xs text-zinc-500 uppercase tracking-wider">Select</span>
-                <select className="rounded-md border border-zinc-300 bg-transparent px-3 py-2 outline-none focus:border-violet-500 dark:border-zinc-700 dark:bg-zinc-900">
-                    <option>Founder</option>
-                    <option>Designer</option>
-                    <option>Engineer</option>
-                </select>
-            </label>
-            <label className="flex items-center gap-2 text-sm">
-                <input type="checkbox" checked={check} onChange={(e) => setCheck(e.target.checked)} className="h-4 w-4 accent-violet-600" />
-                Subscribe to the changelog
-            </label>
+        <div className="grid w-full max-w-xl gap-4 sm:grid-cols-2">
+            <Input label="Email" value={email} onValueChange={setEmail} />
+            <Select
+                label="Role"
+                list={[
+                    { value: "builder", label: "Builder" },
+                    { value: "designer", label: "Designer" },
+                    { value: "operator", label: "Operator" },
+                ]}
+                value={role}
+                onValueChange={setRole}
+            />
+            <Switch
+                label="Notifications"
+                checked={notifications}
+                onCheckedChange={setNotifications}
+                color="violet"
+            />
+            <MultiSwitch
+                label="Layout"
+                list={[
+                    { value: "list", label: "List" },
+                    { value: "grid", label: "Grid" },
+                    { value: "board", label: "Board" },
+                ]}
+                value={layout}
+                onValueChange={setLayout}
+            />
         </div>
     );
+}
+
+function FieldDemo() {
+    return (
+        <Field label="Workspace name" description="Shown to everyone in this workspace." htmlFor="field-demo-name">
+            <input
+                id="field-demo-name"
+                defaultValue="Fancy UI"
+                className="w-full rounded-md border border-zinc-300 bg-transparent px-3 py-2 outline-none focus:border-violet-500 dark:border-zinc-700"
+            />
+        </Field>
+    );
+}
+
+function InputDemo() {
+    const [value, setValue] = useState("agent@particle.academy");
+
+    return <Input label="Email" type="email" value={value} onValueChange={setValue} leading="@" />;
+}
+
+function TextareaDemo() {
+    const [value, setValue] = useState("Humans and agents share this surface.");
+
+    return <Textarea label="Description" value={value} onValueChange={setValue} autoResize minRows={3} />;
+}
+
+function SelectDemo() {
+    const [value, setValue] = useState("React");
+
+    return (
+        <Select
+            label="Framework"
+            variant="listbox"
+            searchable
+            list={["React", "Vue", "Svelte", "Solid"]}
+            value={value}
+            onValueChange={setValue}
+        />
+    );
+}
+
+function CheckboxDemo() {
+    const [checked, setChecked] = useState(true);
+
+    return <Checkbox label="Share agent activity" checked={checked} onCheckedChange={setChecked} />;
+}
+
+function CheckboxGroupDemo() {
+    const [value, setValue] = useState(["email", "in-app"]);
+
+    return (
+        <CheckboxGroup
+            label="Notifications"
+            list={[
+                { value: "email", label: "Email" },
+                { value: "in-app", label: "In-app" },
+                { value: "push", label: "Push" },
+            ]}
+            value={value}
+            onValueChange={setValue}
+        />
+    );
+}
+
+function RadioGroupDemo() {
+    const [value, setValue] = useState("system");
+
+    return (
+        <RadioGroup
+            label="Theme"
+            orientation="horizontal"
+            list={[
+                { value: "light", label: "Light" },
+                { value: "dark", label: "Dark" },
+                { value: "system", label: "System" },
+            ]}
+            value={value}
+            onValueChange={setValue}
+        />
+    );
+}
+
+function SwitchDemo() {
+    const [checked, setChecked] = useState(true);
+
+    return (
+        <Switch
+            label="Agent suggestions"
+            description="Allow agents to propose edits on this surface."
+            color="violet"
+            checked={checked}
+            onCheckedChange={setChecked}
+        />
+    );
+}
+
+function SliderDemo() {
+    const [value, setValue] = useState(65);
+
+    return <Slider label="Confidence threshold" value={value} onValueChange={setValue} showValue suffix="%" />;
+}
+
+function MultiSwitchDemo() {
+    const [value, setValue] = useState("grid");
+
+    return (
+        <MultiSwitch
+            label="View"
+            list={[
+                { value: "list", label: "List" },
+                { value: "grid", label: "Grid" },
+                { value: "board", label: "Board" },
+            ]}
+            value={value}
+            onValueChange={setValue}
+        />
+    );
+}
+
+function DatePickerDemo() {
+    const [value, setValue] = useState("2026-10-01");
+
+    return <DatePicker label="Launch date" value={value} onValueChange={setValue} min="2026-01-01" />;
 }
 
 function InputTagDemo() {

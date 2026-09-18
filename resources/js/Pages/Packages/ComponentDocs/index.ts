@@ -59,7 +59,20 @@ import { headingDoc } from "./Heading";
 import { holySheetAgentDoc } from "./HolySheetAgent";
 import { iconDoc } from "./Icon";
 import { inputTagDoc } from "./InputTag";
-import { inputsDoc } from "./Inputs";
+import {
+    checkboxDoc,
+    checkboxGroupDoc,
+    datePickerDoc,
+    fieldDoc,
+    inputDoc,
+    inputsDoc,
+    multiSwitchDoc,
+    radioGroupDoc,
+    selectDoc,
+    sliderDoc,
+    switchDoc,
+    textareaDoc,
+} from "./Inputs";
 import { kanbanDoc } from "./Kanban";
 import { magicWandDoc } from "./MagicWand";
 import { menuDoc } from "./Menu";
@@ -147,6 +160,17 @@ const DOCS: Record<string, ComponentDoc> = {
     "react-fancy/icon": iconDoc,
     "react-fancy/input-tag": inputTagDoc,
     "react-fancy/inputs": inputsDoc,
+    "react-fancy/field": fieldDoc,
+    "react-fancy/input": inputDoc,
+    "react-fancy/textarea": textareaDoc,
+    "react-fancy/select": selectDoc,
+    "react-fancy/checkbox": checkboxDoc,
+    "react-fancy/checkbox-group": checkboxGroupDoc,
+    "react-fancy/radio-group": radioGroupDoc,
+    "react-fancy/switch": switchDoc,
+    "react-fancy/slider": sliderDoc,
+    "react-fancy/multi-switch": multiSwitchDoc,
+    "react-fancy/date-picker": datePickerDoc,
     "react-fancy/kanban": kanbanDoc,
     "react-fancy/magic-wand": magicWandDoc,
     "react-fancy/menu": menuDoc,

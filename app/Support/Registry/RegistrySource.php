@@ -210,7 +210,13 @@ class RegistrySource
         $items = [];
         $hasNpmPointer = false;
         foreach ($pkg['components'] ?? [] as $component) {
-            $item = $this->buildItem($pkg, $component, $pkgDir);
+            // Some public components live inside a shared source tree whose
+            // relative imports only work as one bundle. They remain fully
+            // discoverable and installable from the published package, while
+            // the family-level entry owns the copy-source path.
+            $item = ($component['vendor'] ?? true)
+                ? $this->buildItem($pkg, $component, $pkgDir)
+                : null;
             if ($item) {
                 $items[] = $item;
 

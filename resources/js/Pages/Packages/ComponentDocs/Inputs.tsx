@@ -1,5 +1,5 @@
 import type { ComponentDoc } from "./types";
-import { Checkbox, CheckboxGroup, Field, Input, MultiSwitch, RadioGroup, Select, Slider, Switch, Textarea } from "@particle-academy/react-fancy";
+import { Checkbox, CheckboxGroup, DatePicker, Field, Input, MultiSwitch, RadioGroup, Select, Slider, Switch, Textarea } from "@particle-academy/react-fancy";
 
 export const inputsDoc: ComponentDoc = {
     intro: (
@@ -236,6 +236,28 @@ export const inputsDoc: ComponentDoc = {
 />`,
         },
         {
+            name: "DatePicker",
+            description: "Single dates and ranges use the same controlled value API.",
+            render: () => (
+                <div className="w-full max-w-sm space-y-3">
+                    <DatePicker label="Launch date" defaultValue="2026-10-01" />
+                    <DatePicker label="Campaign window" range defaultValue={["2026-10-01", "2026-10-14"]} />
+                </div>
+            ),
+            code: `<DatePicker
+    label="Launch date"
+    value={launchDate}
+    onValueChange={setLaunchDate}
+/>
+
+<DatePicker
+    label="Campaign window"
+    range
+    value={window}
+    onValueChange={setWindow}
+/>`,
+        },
+        {
             name: "Field (custom input shell)",
             description: "Use `Field` directly when you have a custom input that needs the same label + description + error treatment.",
             render: () => (
@@ -273,3 +295,32 @@ export const inputsDoc: ComponentDoc = {
         </p>
     ),
 };
+
+function componentDoc(
+    name: string,
+    description: string,
+    exampleNames: string[],
+): ComponentDoc {
+    return {
+        intro: (
+            <p>
+                <code>{name}</code> {description}
+            </p>
+        ),
+        examples: inputsDoc.examples.filter((example) => exampleNames.includes(example.name)),
+        props: inputsDoc.props.filter((prop) => prop.name === name),
+        notes: inputsDoc.notes,
+    };
+}
+
+export const fieldDoc = componentDoc("Field", "provides the shared accessible label, description and validation shell.", ["Field (custom input shell)"]);
+export const inputDoc = componentDoc("Input", "is the controlled single-line text primitive.", ["Input", "Error state", "Affixes"]);
+export const textareaDoc = componentDoc("Textarea", "is the controlled multi-line text primitive with optional auto-resize.", ["Textarea"]);
+export const selectDoc = componentDoc("Select", "provides native and searchable listbox selection.", ["Select"]);
+export const checkboxDoc = componentDoc("Checkbox", "represents one controlled boolean choice.", ["Checkbox & CheckboxGroup"]);
+export const checkboxGroupDoc = componentDoc("CheckboxGroup", "manages a controlled set of boolean choices.", ["Checkbox & CheckboxGroup"]);
+export const radioGroupDoc = componentDoc("RadioGroup", "manages one selected value from an accessible option group.", ["RadioGroup"]);
+export const switchDoc = componentDoc("Switch", "is the controlled on/off toggle control.", ["Switch & MultiSwitch"]);
+export const sliderDoc = componentDoc("Slider", "supports both single-value and two-thumb range selection.", ["Slider"]);
+export const multiSwitchDoc = componentDoc("MultiSwitch", "is the segmented toggle for one value among several options.", ["Switch & MultiSwitch"]);
+export const datePickerDoc = componentDoc("DatePicker", "supports controlled single dates, date-times and date ranges.", ["DatePicker"]);

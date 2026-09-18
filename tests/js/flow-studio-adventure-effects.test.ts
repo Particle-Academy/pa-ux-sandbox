@@ -1,6 +1,8 @@
 // @vitest-environment jsdom
 
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { ADVENTURE, ADVENTURE_EFFECTS } from "../../resources/js/Pages/Flow/FlowStudio";
 import { uiEffectExecutor } from "../../resources/flow-nodes/ui-effect/js/executor";
 
@@ -50,5 +52,15 @@ describe("Choose-your-own-adventure UI effects", () => {
     await vi.advanceTimersByTimeAsync(5000);
     await expect(pending).resolves.toEqual(expect.objectContaining({ ending: "win", applied: true }));
     expect(document.documentElement.classList.contains(effect.className)).toBe(true);
+  });
+
+  it("keeps page effects off body so fixed portal modals stay viewport-relative", () => {
+    const css = readFileSync(
+      resolve(__dirname, "../../resources/js/Pages/Flow/FlowStudio.css"),
+      "utf8",
+    );
+
+    expect(css).toContain('html[class*="ff-adventure-"] body > #app');
+    expect(css).not.toMatch(/html\.ff-adventure-[^{]+ body\s*\{/);
   });
 });

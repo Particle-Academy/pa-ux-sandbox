@@ -577,7 +577,7 @@ function SectionDemo() {
         >
             <div className="space-y-3">
                 <label className="flex items-center gap-2 text-xs text-zinc-500">
-                    <input type="checkbox" checked={divider} onChange={(e) => setDivider(e.target.checked)} />
+                    <Checkbox checked={divider} onCheckedChange={setDivider} />
                     divider
                 </label>
                 <div>
@@ -1039,7 +1039,7 @@ function SeparatorDemo() {
 function AvatarDemo() {
     return (
         <div className="flex items-center gap-3">
-            <Avatar alt="Glenn Wagner" fallback="GW" />
+            <Avatar alt="Avery Chen" fallback="AC" />
             <Avatar alt="Rita Kumar" fallback="RK" />
             <Avatar alt="Sam Lin" fallback="SL" />
             <Avatar alt="Ayodeji Adekola" fallback="AA" />
@@ -1204,7 +1204,7 @@ function AutocompleteDemo() {
             value={v}
             onChange={setV}
             options={[
-                { value: "glenn", label: "Glenn Wagner" },
+                { value: "avery", label: "Avery Chen" },
                 { value: "rita", label: "Rita Kumar" },
                 { value: "sam", label: "Sam Lin" },
                 { value: "ayodeji", label: "Ayodeji Adekola" },
@@ -1263,7 +1263,7 @@ function EmojiDemo() {
 function ProfileDemo() {
     return (
         <div className="grid gap-3 sm:grid-cols-2">
-            <Profile name="Glenn Wagner" subtitle="Founder · @glenn" status="online" />
+            <Profile name="Avery Chen" subtitle="Founder · @avery" status="online" />
             <Profile name="Claude" subtitle="AI agent" status="busy" />
             <Profile name="Rita Kumar" subtitle="Designer" status="away" />
             <Profile name="Sam Lin" subtitle="Engineer" status="offline" />
@@ -1933,11 +1933,7 @@ function FancyMapDemo() {
 function FieldDemo() {
     return (
         <Field label="Workspace name" description="Shown to everyone in this workspace." htmlFor="field-demo-name">
-            <input
-                id="field-demo-name"
-                defaultValue="Fancy UI"
-                className="w-full rounded-md border border-zinc-300 bg-transparent px-3 py-2 outline-none focus:border-violet-500 dark:border-zinc-700"
-            />
+            <Input id="field-demo-name" defaultValue="Fancy UI" labelHidden />
         </Field>
     );
 }
@@ -2080,7 +2076,7 @@ function InputTagDemo() {
                     },
                     "@": {
                         items: [
-                            { id: "glenn", name: "Glenn Wagner" },
+                            { id: "avery", name: "Avery Chen" },
                             { id: "rita", name: "Rita Kumar" },
                             { id: "sam", name: "Sam Lin" },
                         ],
@@ -2101,7 +2097,7 @@ function PromptInputDemo() {
                 { name: "/tldr", hint: "One-paragraph TL;DR" },
             ]}
             mentions={[
-                { id: "glenn", name: "Glenn Wagner", kind: "person" },
+                { id: "avery", name: "Avery Chen", kind: "person" },
                 { id: "rita", name: "Rita Kumar", kind: "person" },
                 { id: "claude", name: "Claude", kind: "agent" },
             ]}
@@ -2476,7 +2472,7 @@ function WhiteboardCursorDemo() {
         >
             <div className="relative h-40 overflow-hidden rounded-md border border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-950">
                 <CursorLayer cursors={[
-                    { userId: "glenn", name: "Glenn", color: "#a855f7", x: 70, y: 50 },
+                    { userId: "avery", name: "Avery", color: "#a855f7", x: 70, y: 50 },
                     { userId: "rita", name: "Rita", color: "#10b981", x: 240, y: 120 },
                     { userId: "claude", name: "Claude", color: "#3b82f6", x: 340, y: 44 },
                 ]} />
@@ -5029,7 +5025,7 @@ function PasskeyStatusDemo() {
                         ["conditional UI", conditional, setConditional],
                     ] as const).map(([label, val, set]) => (
                         <label key={label} className="flex items-center gap-2">
-                            <input type="checkbox" checked={val} onChange={(e) => set(e.target.checked)} />
+                            <Checkbox checked={val} onCheckedChange={set} />
                             {label}
                         </label>
                     ))}
@@ -5117,7 +5113,7 @@ function FileViewerDemo() {
         >
             <div className="max-w-2xl space-y-3">
                 <label className="flex items-center gap-2 text-xs text-zinc-500">
-                    <input type="checkbox" checked={lineNumbers} onChange={(e) => setLineNumbers(e.target.checked)} />
+                    <Checkbox checked={lineNumbers} onCheckedChange={setLineNumbers} />
                     line numbers
                 </label>
                 <div className="h-72 overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
@@ -5261,7 +5257,7 @@ function EChartGraphicDemo() {
         >
             <div className="max-w-2xl space-y-3">
                 <label className="flex items-center gap-2 text-xs text-zinc-500">
-                    <input type="checkbox" checked={showCallout} onChange={(e) => setShowCallout(e.target.checked)} />
+                    <Checkbox checked={showCallout} onCheckedChange={setShowCallout} />
                     show the callout
                 </label>
                 <div className="h-72 overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
@@ -5332,7 +5328,7 @@ function SceneDemo() {
                 </div>
                 <div className="space-y-2">
                     <label className="flex items-center gap-2 text-xs text-zinc-500">
-                        <input type="checkbox" checked={spin} onChange={(e) => setSpin(e.target.checked)} />
+                        <Checkbox checked={spin} onCheckedChange={setSpin} />
                         tilt the objects
                     </label>
                     <pre className="max-h-52 overflow-auto rounded-md bg-zinc-950 p-3 font-mono text-[11px] leading-relaxed text-zinc-100">
@@ -5372,7 +5368,7 @@ function CatalogFmsDemo() {
                 </div>
 
                 <label className="flex items-center gap-2 text-xs text-zinc-500">
-                    <input type="checkbox" checked={pro} onChange={(e) => setPro(e.target.checked)} />
+                    <Checkbox checked={pro} onCheckedChange={setPro} />
                     viewer is on Pro
                 </label>
 
@@ -5472,7 +5468,7 @@ function FeatureGateDemo() {
         >
             <div className="max-w-md space-y-3">
                 <label className="flex items-center gap-2 text-xs text-zinc-500">
-                    <input type="checkbox" checked={access} onChange={(e) => setAccess(e.target.checked)} />
+                    <Checkbox checked={access} onCheckedChange={setAccess} />
                     viewer has the `exports` feature
                 </label>
                 <FeatureGate

@@ -3,7 +3,7 @@ import { Cursor, CursorLayer } from "@particle-academy/fancy-whiteboard";
 import "@particle-academy/fancy-whiteboard/styles.css";
 
 const cursors = [
-    { userId: "u1", name: "Glenn", color: "#8b5cf6", x: 80, y: 40 },
+    { userId: "u1", name: "Avery", color: "#8b5cf6", x: 80, y: 40 },
     { userId: "u2", name: "Amy", color: "#10b981", x: 220, y: 80 },
     { userId: "u3", name: "Researcher", color: "#a855f7", x: 360, y: 110 },
 ];

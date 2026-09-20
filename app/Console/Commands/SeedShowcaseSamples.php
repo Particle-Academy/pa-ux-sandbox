@@ -98,7 +98,7 @@ class SeedShowcaseSamples extends Command
     private function seedLeaderboard(): void
     {
         $rows = [
-            ['github_username' => 'glenn-wagner',     'merged_prs' => 87, 'votes_cast' => 142, 'score' => 87 * 3 + 142, 'seeded' => true],
+            ['github_username' => 'avery-chen',     'merged_prs' => 87, 'votes_cast' => 142, 'score' => 87 * 3 + 142, 'seeded' => true],
             ['github_username' => 'claude',           'merged_prs' => 64, 'votes_cast' => 96,  'score' => 64 * 3 + 96,  'seeded' => true],
             ['github_username' => 'rita-kumar',       'merged_prs' => 41, 'votes_cast' => 73,  'score' => 41 * 3 + 73,  'seeded' => true],
             ['github_username' => 'sam-lin',          'merged_prs' => 33, 'votes_cast' => 58,  'score' => 33 * 3 + 58,  'seeded' => true],

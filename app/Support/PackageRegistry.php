@@ -1150,7 +1150,15 @@ BEFORE IT CAN SHIP: three registry names that do not exist yet (npm scoped, Pack
     private static function componentsForReactFancy(): array
     {
         // Mirrors packages/react-fancy/src/components/ — hand-listed for Phase 1.
-        return array_map(fn (array $r) => $r + [
+        //
+        // SORTED BY DISPLAY NAME AT THE END OF THIS METHOD, not by hand. The
+        // literal below drifted out of order the moment a rename moved one
+        // entry (Action -> Button landed third, ahead of Autocomplete and
+        // Avatar) and nothing noticed, because a hand-ordered list has nothing
+        // that can notice. Sorting here means every consumer -- the site, the
+        // MCP, the registry -- gets one order, and `PackageRegistryOrderTest`
+        // fails if this sort is ever removed.
+        $components = array_map(fn (array $r) => $r + [
             'blurb' => '',
             'inlineEdit' => in_array($r['slug'], self::INLINE_EDIT_COMPONENTS, true),
         ], [
@@ -1243,6 +1251,10 @@ BEFORE IT CAN SHIP: three registry names that do not exist yet (npm scoped, Pack
             ['slug' => 'tooltip', 'name' => 'Tooltip'],
             ['slug' => 'tree-nav', 'name' => 'TreeNav'],
         ]);
+
+        usort($components, static fn (array $a, array $b): int => strcasecmp($a['name'], $b['name']));
+
+        return $components;
     }
 
     /** @return array<string, mixed> */

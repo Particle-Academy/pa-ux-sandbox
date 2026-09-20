@@ -1,5 +1,5 @@
 import type { ComponentDoc } from "./types";
-import { Text } from "@particle-academy/react-fancy";
+import { Checkbox, Text } from "@particle-academy/react-fancy";
 
 export const textDoc: ComponentDoc = {
     intro: (
@@ -72,7 +72,7 @@ export const textDoc: ComponentDoc = {
             render: () => (
                 <div className="space-y-2">
                     <label className="flex items-center gap-2">
-                        <input type="checkbox" className="size-4 rounded border-zinc-300" />
+                        <Checkbox />
                         <Text as="span" size="sm">A label using <code>Text as="span"</code></Text>
                     </label>
                     <Text as="label" size="xs" color="muted">A label using <code>Text as="label"</code></Text>

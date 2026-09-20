@@ -13,11 +13,11 @@ export const profileDoc: ComponentDoc = {
     examples: [
         {
             name: "Default",
-            render: () => <Profile name="Glenn Watson" subtitle="glenn@impactivism.net" fallback="GW" />,
+            render: () => <Profile name="Avery Chen" subtitle="avery@example.com" fallback="AC" />,
             code: `<Profile
-    name="Glenn Watson"
-    subtitle="glenn@impactivism.net"
-    fallback="GW"
+    name="Avery Chen"
+    subtitle="avery@example.com"
+    fallback="AC"
 />`,
         },
         {
@@ -25,15 +25,15 @@ export const profileDoc: ComponentDoc = {
             render: () => (
                 <Profile
                     src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=identicon&s=80"
-                    alt="Glenn"
-                    name="Glenn Watson"
+                    alt="Avery"
+                    name="Avery Chen"
                     subtitle="Engineer · Anthropic"
                 />
             ),
             code: `<Profile
     src="/me.jpg"
-    alt="Glenn Watson"
-    name="Glenn Watson"
+    alt="Avery Chen"
+    name="Avery Chen"
     subtitle="Engineer · Anthropic"
 />`,
         },
@@ -42,14 +42,14 @@ export const profileDoc: ComponentDoc = {
             description: "Three preset sizes — sm for chip rows, lg for hero / profile.",
             render: () => (
                 <div className="flex flex-col gap-3">
-                    <Profile name="Glenn" subtitle="online" fallback="GW" size="sm" status="online" />
-                    <Profile name="Glenn Watson" subtitle="online" fallback="GW" size="md" status="online" />
-                    <Profile name="Glenn Watson" subtitle="online · last seen 2m ago" fallback="GW" size="lg" status="online" />
+                    <Profile name="Avery" subtitle="online" fallback="AC" size="sm" status="online" />
+                    <Profile name="Avery Chen" subtitle="online" fallback="AC" size="md" status="online" />
+                    <Profile name="Avery Chen" subtitle="online · last seen 2m ago" fallback="AC" size="lg" status="online" />
                 </div>
             ),
-            code: `<Profile name="Glenn" fallback="GW" size="sm" status="online" />
-<Profile name="Glenn Watson" fallback="GW" size="md" status="online" />
-<Profile name="Glenn Watson" fallback="GW" size="lg" status="online" />`,
+            code: `<Profile name="Avery" fallback="AC" size="sm" status="online" />
+<Profile name="Avery Chen" fallback="AC" size="md" status="online" />
+<Profile name="Avery Chen" fallback="AC" size="lg" status="online" />`,
         },
         {
             name: "Status indicator",

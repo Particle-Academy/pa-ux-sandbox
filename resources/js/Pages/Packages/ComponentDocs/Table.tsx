@@ -2,7 +2,7 @@ import type { ComponentDoc } from "./types";
 import { Badge, Table, Text } from "@particle-academy/react-fancy";
 
 const rows = [
-    { id: 1, name: "Liftoff briefing", owner: "Glenn", status: "active" as const, value: 2400 },
+    { id: 1, name: "Liftoff briefing", owner: "Avery", status: "active" as const, value: 2400 },
     { id: 2, name: "Booster recovery", owner: "Amy", status: "active" as const, value: 8800 },
     { id: 3, name: "Payload doc", owner: "Tomas", status: "draft" as const, value: 0 },
     { id: 4, name: "Mission report", owner: "Liz", status: "archived" as const, value: 0 },
@@ -137,7 +137,7 @@ export const tableDoc: ComponentDoc = {
     }
 >
     <Table.Cell>Liftoff briefing</Table.Cell>
-    <Table.Cell>Glenn</Table.Cell>
+    <Table.Cell>Avery</Table.Cell>
 </Table.Row>`,
         },
     ],

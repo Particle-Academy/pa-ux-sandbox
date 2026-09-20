@@ -66,9 +66,9 @@ export const headingDoc: ComponentDoc = {
         {
             name: "Decoupled — h2 at xl",
             description: "Semantic h2 (good for screen readers + outline) rendered at the xl visual size.",
-            render: () => <Heading as="h2" size="xl" weight="bold">Welcome back, Glenn</Heading>,
+            render: () => <Heading as="h2" size="xl" weight="bold">Welcome back, Avery</Heading>,
             code: `<Heading as="h2" size="xl" weight="bold">
-    Welcome back, Glenn
+    Welcome back, Avery
 </Heading>`,
         },
     ],

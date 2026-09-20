@@ -1,5 +1,5 @@
 import type { ComponentDoc } from "./types";
-import { Checkbox, CheckboxGroup, DatePicker, Field, Input, MultiSwitch, RadioGroup, Select, Slider, Switch, Textarea } from "@particle-academy/react-fancy";
+import { Checkbox, CheckboxGroup, ColorPicker, DatePicker, Field, Input, MultiSwitch, RadioGroup, Select, Slider, Switch, Textarea } from "@particle-academy/react-fancy";
 
 const inputFamilyDoc: ComponentDoc = {
     intro: (
@@ -40,7 +40,7 @@ const inputFamilyDoc: ComponentDoc = {
             description: "Pass `error` to any input to red the border and show an inline message.",
             render: () => (
                 <div className="w-full max-w-sm">
-                    <Input label="Username" error="That username is taken." defaultValue="glenn" required />
+                    <Input label="Username" error="That username is taken." defaultValue="avery" required />
                 </div>
             ),
             code: `<Input
@@ -258,17 +258,17 @@ const inputFamilyDoc: ComponentDoc = {
 />`,
         },
         {
-            name: "Field (custom input shell)",
-            description: "Use `Field` directly when you have a custom input that needs the same label + description + error treatment.",
+            name: "Field (wrapping another control)",
+            description: "Use `Field` directly to give any control the same label + description + error treatment. It wraps Fancy components — reach for a raw `<input>` only when the kit genuinely has nothing, which is a gap worth reporting rather than routing around.",
             render: () => (
                 <div className="w-full max-w-sm">
                     <Field label="Color" description="Hex value">
-                        <input type="color" defaultValue="#8b5cf6" className="h-9 w-full rounded-md border border-zinc-300" />
+                        <ColorPicker defaultValue="#8b5cf6" presets={["#8b5cf6", "#3b82f6", "#10b981", "#f59e0b", "#ef4444"]} />
                     </Field>
                 </div>
             ),
-            code: `<Field label="Color" description="Hex value" htmlFor="color-input">
-    <input id="color-input" type="color" value={color} onChange={(e) => setColor(e.target.value)} />
+            code: `<Field label="Color" description="Hex value">
+    <ColorPicker value={color} onChange={setColor} />
 </Field>`,
         },
     ],

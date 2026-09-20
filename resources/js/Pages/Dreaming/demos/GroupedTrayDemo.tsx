@@ -149,7 +149,7 @@ const SEED: N[] = [
   { id: "n1", source: "GitHub", icon: "⎇", title: "PR #421 reviewed",   body: "Approved by @rita.",                       ts: "2m",  unread: true },
   { id: "n2", source: "GitHub", icon: "⎇", title: "PR #418 conflicts",  body: "Rebase on main.",                          ts: "14m", unread: true },
   { id: "n3", source: "Linear", icon: "↗", title: "ENG-1284 assigned",  body: "'Quote-resolution UX'",                    ts: "32m", unread: true },
-  { id: "n4", source: "Slack",  icon: "✦", title: "Glenn mentioned you", body: "in #design — 'thoughts on the new tray?'", ts: "1h",  unread: true },
+  { id: "n4", source: "Slack",  icon: "✦", title: "Avery mentioned you", body: "in #design — 'thoughts on the new tray?'", ts: "1h",  unread: true },
   { id: "n5", source: "Stripe", icon: "$", title: "Charge succeeded",   body: "$29.00 from acme-robotics",                ts: "3h",  unread: false },
   { id: "n6", source: "Linear", icon: "↗", title: "ENG-1190 closed",    body: "by @sam — 'fixed via #1283'",              ts: "5h",  unread: false },
 ];

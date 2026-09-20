@@ -1133,7 +1133,7 @@ function TableDemo() {
 function AvatarDemo() {
     return (
         <div className="stage-row" style={{ alignItems: "center" }}>
-            <Avatar fallback="GB" status="online" />
+            <Avatar fallback="AC" status="online" />
             <Avatar fallback="AI" size="lg" status="busy" />
             <Avatar fallback="QA" size="sm" status="away" />
             <Avatar fallback="42" size="xl" />
@@ -1144,7 +1144,7 @@ function AvatarDemo() {
 function ProfileDemo() {
     return (
         <div className="stage-row col">
-            <Profile name="Glenn Born" subtitle="Maintainer · Particle Academy" fallback="GB" status="online" />
+            <Profile name="Avery Chen" subtitle="Maintainer · Particle Academy" fallback="AC" status="online" />
             <Profile name="Claude" subtitle="Agent · fancy-ui.mcp" fallback="C" status="busy" />
         </div>
     );

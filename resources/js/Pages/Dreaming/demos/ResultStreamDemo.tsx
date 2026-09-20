@@ -114,7 +114,7 @@ function ResultStream<T extends Result>({
 type Item = Result & { title: string; subtitle: string };
 
 const ALL: Item[] = [
-  { id: "r1", group: "Documents", title: "Q4 board memo",          subtitle: "edited 2h ago by Glenn" },
+  { id: "r1", group: "Documents", title: "Q4 board memo",          subtitle: "edited 2h ago by Avery" },
   { id: "r2", group: "Documents", title: "Roadmap — Human+ kit",   subtitle: "edited yesterday by Sam" },
   { id: "r3", group: "People",    title: "Rita Kumar",             subtitle: "rita@particle.academy" },
   { id: "r4", group: "People",    title: "Sam Lin",                subtitle: "sam@particle.academy" },

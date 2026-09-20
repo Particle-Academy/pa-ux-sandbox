@@ -313,7 +313,7 @@ function componentDoc(
     };
 }
 
-export const fieldDoc = componentDoc("Field", "provides the shared accessible label, description and validation shell.", ["Field (custom input shell)"]);
+export const fieldDoc = componentDoc("Field", "provides the shared accessible label, description and validation shell.", ["Field (wrapping another control)"]);
 export const inputDoc = componentDoc("Input", "is the controlled single-line text primitive.", ["Input", "Error state", "Affixes"]);
 export const textareaDoc = componentDoc("Textarea", "is the controlled multi-line text primitive with optional auto-resize.", ["Textarea"]);
 export const selectDoc = componentDoc("Select", "provides native and searchable listbox selection.", ["Select"]);

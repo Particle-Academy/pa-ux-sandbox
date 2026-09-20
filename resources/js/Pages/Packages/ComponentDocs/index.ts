@@ -125,7 +125,13 @@ import { whiteboardStickyNoteDoc } from "./WhiteboardStickyNote";
  * Roll out incrementally — adding an entry here lights up the docs tabs
  * for that component automatically.
  */
-const DOCS: Record<string, ComponentDoc> = {
+/**
+ * Exported so a test can walk every entry. `componentDoc()` selects its
+ * examples by FILTERING on display name, so a name that matches nothing yields
+ * an empty Examples tab with no error anywhere — see
+ * `tests/js/component-docs-examples-resolve.test.ts`.
+ */
+export const DOCS: Record<string, ComponentDoc> = {
     // react-fancy
     "react-fancy/accordion": accordionDoc,
     "react-fancy/accordion-panel": accordionPanelDoc,

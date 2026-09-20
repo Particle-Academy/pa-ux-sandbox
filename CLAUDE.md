@@ -214,7 +214,7 @@ The Fancy UI strategic goal is **complete app surfaces where agents drive the UI
    - `agent-integrations/tsup.config.ts` — add `"bridges-X": "src/bridges/X.ts"` to both `entry` and the DTS `entry` array; add the package to `external` if it's an optional peer
    - `agent-integrations/package.json` — add `./bridges/X` to `exports` + add the peer to `peerDependencies` (optional) + to `devDependencies` for build-time type resolution
    - Bump the version (additive → minor or patch) and ship. Skipping any of these four lands the bridge in source but invisible to consumers — exactly how `registerSlidesBridge` sat un-shipped until v0.6.3.
-5. **Add a sandbox demo page** under `resources/js/react-demos/pages/` mounting the surface + bridge + share controls. Reuse `WhiteboardSharedDemo.tsx` / `WorkflowAgentDemo.tsx` / `HumanPlusDemo.tsx` as templates.
+5. **Give the surface a page here.** A component gets one file at `resources/js/Pages/Packages/ComponentDocs/<ComponentName>.tsx`, which is what `/packages/<pkg>/<component>` renders; a whole-app Human+ surface gets its own page under `resources/js/Pages/`. (The old `resources/js/react-demos/pages/` tree is GONE — it was replaced by the per-component pages and deleted. Do not recreate it.)
 
 **Existing surfaces / tool prefixes:**
 
@@ -245,7 +245,7 @@ The Fancy UI strategic goal is **complete app surfaces where agents drive the UI
 
 **Relay infrastructure** lives at `app/Http/Controllers/AgentRelayController.php` (generic — it carries any MCP frames: co-browse, whiteboard, flow, …). Routes in `routes/web.php` under `/agent-relay/*` (with `/whiteboard-share/*` kept as a back-compat alias — state is keyed by session id, not path). CSRF-exempt for external clients via `bootstrap/app.php`.
 
-**Demos:** `/react-demos/whiteboard-shared` (whiteboard only), `/react-demos/workflow-agent` (fancy-flow), `/react-demos/human-plus` (full Human+ UX with all bridges).
+**Demos:** there is no separate demos area. Every component is exercised on its own page at `/packages/<pkg>/<component>`, built from `resources/js/Pages/Packages/ComponentDocs/`. The `/react-demos/*` routes (`whiteboard-shared`, `workflow-agent`, `human-plus`) were removed along with the tree that served them.
 
 ## Conventions
 

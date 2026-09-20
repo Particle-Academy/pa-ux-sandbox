@@ -47,7 +47,7 @@ composer run setup    # install, env, key, migrate, npm install
 composer run dev      # Starts server, queue, logs (pail), and Vite concurrently
 ```
 
-Showcase routes are served by Inertia + React from `resources/js/`. The `/react-demos` page exercises every fancy-* package's components.
+Showcase routes are served by Inertia + React from `resources/js/`. Every component has its own page at `/packages/<pkg>/<component>`, built from one file per component in `resources/js/Pages/Packages/ComponentDocs/`; packages are grouped into families at `/packages`.
 
 ## Testing
 

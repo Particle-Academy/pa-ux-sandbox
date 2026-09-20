@@ -29,13 +29,27 @@ use Illuminate\Support\Facades\File;
  *
  *  1. **Live** — the package's own repo, a sibling of `px-ui-sandbox` in the
  *     `.agi` workspace. Every package has one, installed or not.
- *  2. **Compiled** — `resources/registry/readmes.json`, built by
+ *  2. **Installed** — `node_modules/<npm>` / `vendor/<composer>`. Every
+ *     published package ships its README, so for anything the showcase depends
+ *     on this is the real file, at exactly the version consumers have.
+ *  3. **Compiled** — `resources/registry/readmes.json`, built by
  *     `readmes:build` and committed, because production deploys only this app.
- *  3. **Installed** — `node_modules` / `vendor`, kept last as a fallback for a
- *     checkout with neither.
  *
  * Docs stop depending on what the showcase installs, which was never a fact
  * about the package being documented.
+ *
+ * ## Why INSTALLED comes before COMPILED
+ *
+ * The compiled artifact is a COPY of content that already exists, and a copy
+ * goes stale the moment a package ships — silently, because nothing compares
+ * them. Reading the installed package instead means an installed package's docs
+ * cannot be stale: the file is the one shipped with the version in use.
+ *
+ * The order is what matters, not the artifact's existence. The bug above was
+ * `fromInstalled` being the ONLY source, which left uninstalled packages with
+ * no docs at all. Putting it FIRST cannot bring that back: an uninstalled
+ * package returns null here and falls straight through to the artifact, so
+ * coverage is identical and only the authority changes.
  */
 class ReadmeSource
 {
@@ -63,8 +77,8 @@ class ReadmeSource
         }
 
         $markdown = $this->fromRepo($slug, $pkg)
-            ?? $this->fromCompiled($slug)
-            ?? $this->fromInstalled($pkg);
+            ?? $this->fromInstalled($pkg)
+            ?? $this->fromCompiled($slug);
 
         return $this->memo[$slug] = ($markdown !== null && trim($markdown) !== '') ? $markdown : null;
     }
@@ -185,11 +199,12 @@ class ReadmeSource
     }
 
     /**
-     * The old path, kept last.
+     * The package as the showcase actually consumes it.
      *
-     * Harmless as a fallback, and it covers a checkout with no sibling repos and
-     * no compiled artifact — but it must never be the FIRST answer, or the bug
-     * above comes straight back for anything the showcase does not install.
+     * Preferred over the compiled artifact because it is the same file, at the
+     * installed version, with no copy to go stale. Returns null for a package
+     * the showcase does not install, which is what lets the artifact remain the
+     * answer for those without being the answer for these.
      *
      * @param  array<string,mixed>  $pkg
      */

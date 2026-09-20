@@ -63,3 +63,59 @@ it('compiles every package that has one', function () {
     expect(count($compiled))->toBeGreaterThan(40);
     expect($compiled)->toHaveKey('fancy-git-js');
 })->skip(fn () => ! app(ReadmeSource::class)->liveSourceAvailable(), 'needs the sibling repos');
+
+/**
+ * An INSTALLED package's README comes from the package, not from a copy of it.
+ *
+ * `readmes.json` is a 695KB duplicate of content that already exists on disk.
+ * A duplicate goes stale the moment a package ships, silently, because nothing
+ * compares the two. For anything the showcase actually installs, the real file
+ * is right there in `node_modules` / `vendor` at exactly the version in use.
+ *
+ * So the artifact is the fallback for packages the showcase does NOT install —
+ * which is the case it was added for — and not the answer for the ones it does.
+ */
+it('prefers the installed package over the compiled copy', function () {
+    // A package with no sibling repo on disk, so `fromRepo` cannot answer and
+    // the test is genuinely about installed-vs-compiled.
+    $pkg = ['slug' => 'readme-order-probe', 'npm' => '@particle-academy/react-fancy'];
+
+    $installed = base_path('node_modules/@particle-academy/react-fancy/README.md');
+    expect(File::exists($installed))->toBeTrue('react-fancy must be installed for this test to mean anything');
+
+    File::ensureDirectoryExists(dirname(ReadmeSource::compiledPath()));
+    $original = File::exists(ReadmeSource::compiledPath()) ? File::get(ReadmeSource::compiledPath()) : null;
+    File::put(ReadmeSource::compiledPath(), json_encode([
+        'readmes' => ['readme-order-probe' => '# STALE COPY — must not win'],
+    ]));
+
+    $markdown = (new ReadmeSource)->markdownFor($pkg);
+
+    $original === null ? File::delete(ReadmeSource::compiledPath()) : File::put(ReadmeSource::compiledPath(), $original);
+
+    expect($markdown)->not->toBeNull()
+        ->and($markdown)->not->toContain('STALE COPY')
+        ->and($markdown)->toBe(File::get($installed));
+});
+
+/**
+ * The other half, stated separately so a failure names which rule broke: an
+ * UNINSTALLED package still reads from the artifact. This is the bug the
+ * artifact exists to prevent — production deploys only this app, so without it
+ * every package the showcase does not depend on loses its docs there.
+ */
+it('still serves an uninstalled package from the compiled copy', function () {
+    $pkg = ['slug' => 'readme-order-probe-absent', 'npm' => '@particle-academy/not-installed-anywhere'];
+
+    File::ensureDirectoryExists(dirname(ReadmeSource::compiledPath()));
+    $original = File::exists(ReadmeSource::compiledPath()) ? File::get(ReadmeSource::compiledPath()) : null;
+    File::put(ReadmeSource::compiledPath(), json_encode([
+        'readmes' => ['readme-order-probe-absent' => '# From the artifact'],
+    ]));
+
+    $markdown = (new ReadmeSource)->markdownFor($pkg);
+
+    $original === null ? File::delete(ReadmeSource::compiledPath()) : File::put(ReadmeSource::compiledPath(), $original);
+
+    expect($markdown)->toBe('# From the artifact');
+});

@@ -53,15 +53,43 @@ it('reports no README rather than inventing one', function () {
     expect((new ReadmeSource)->markdownFor(['slug' => 'definitely-not-a-package']))->toBeNull();
 });
 
-it('compiles every package that has one', function () {
+it('compiles exactly the packages production cannot read any other way', function () {
     $this->artisan('readmes:build')->assertSuccessful();
 
     $compiled = json_decode(File::get(ReadmeSource::compiledPath()), true)['readmes'] ?? [];
+    $readmes = new ReadmeSource;
 
-    // The artifact is what production reads. A build that quietly produces an
-    // empty one would look like a successful deploy and read like a dead site.
-    expect(count($compiled))->toBeGreaterThan(40);
-    expect($compiled)->toHaveKey('fancy-git-js');
+    // Non-empty: a build that quietly produced an empty artifact would look
+    // like a successful deploy and read like a dead site for every uninstalled
+    // package. This used to assert `> 40`, back when the artifact held EVERY
+    // package; it now holds only the ones with no other source, so the number
+    // moved for a reason rather than because something shrank unexpectedly.
+    expect(count($compiled))->toBeGreaterThan(10);
+
+    // The shape the whole artifact exists for: real, published packages the
+    // showcase does NOT install, so nothing else can serve their docs on prod.
+    //
+    // Named individually rather than counted, because the count is what went
+    // stale last time. `fancy-git-js` used to be the example here and no longer
+    // qualifies -- its slug differs from its npm name (`@particle-academy/
+    // fancy-git`), which IS installed, so it reads from the package now. That
+    // is the correct outcome and the old assertion had simply stopped
+    // describing reality.
+    expect($compiled)->toHaveKey('fancy-term-host')
+        ->and($compiled)->toHaveKey('holy-sheet-js')
+        ->and($compiled)->toHaveKey('fancy-git-github-js');
+
+    // And the other half of the new rule: an INSTALLED package must not be
+    // copied in here at all. Its README ships with it, `ReadmeSource` reads
+    // that first, and a copy could only ever be a stale duplicate.
+    $installedButCopied = array_values(array_filter(
+        array_keys($compiled),
+        fn (string $slug) => $readmes->isInstalled(
+            collect($readmes->everyPackage())->firstWhere('slug', $slug) ?? []
+        ),
+    ));
+
+    expect($installedButCopied)->toBe([], 'these are installed, so the artifact is duplicating a file that already ships with the package');
 })->skip(fn () => ! app(ReadmeSource::class)->liveSourceAvailable(), 'needs the sibling repos');
 
 /**
@@ -118,4 +146,52 @@ it('still serves an uninstalled package from the compiled copy', function () {
     $original === null ? File::delete(ReadmeSource::compiledPath()) : File::put(ReadmeSource::compiledPath(), $original);
 
     expect($markdown)->toBe('# From the artifact');
+});
+
+/**
+ * PRODUCTION SHAPE: every package must resolve without a sibling repo on disk.
+ *
+ * This is the test that makes shrinking the artifact safe, and it deliberately
+ * does NOT go through `markdownFor()` — that would consult `fromRepo()` first,
+ * which succeeds locally and in CI because the sibling repos are checked out,
+ * and would therefore pass while production had nothing. A check that can only
+ * pass is not a check.
+ *
+ * So it asks the question production asks: is this package INSTALLED, or is it
+ * in the COMPILED artifact? Those are the only two sources on the server.
+ *
+ * It fails if a dependency is dropped without rebuilding the artifact — which
+ * is exactly how this could silently lose a package's docs now that
+ * `readmes:build` skips installed packages.
+ */
+it('resolves every package through a source that exists in production', function () {
+    $readmes = new ReadmeSource;
+    $compiled = $readmes->compiled();
+
+    $unreachable = [];
+
+    foreach ($readmes->everyPackage() as $pkg) {
+        $slug = (string) ($pkg['slug'] ?? '');
+        if ($slug === '') {
+            continue;
+        }
+
+        // A package with no README anywhere is a documented state, not a bug —
+        // it is only a problem when the repo HAS one that production cannot see.
+        if ($readmes->fromRepo($slug, $pkg) === null) {
+            continue;
+        }
+
+        if ($readmes->isInstalled($pkg)) {
+            continue;
+        }
+
+        if (isset($compiled[$slug]) && trim((string) $compiled[$slug]) !== '') {
+            continue;
+        }
+
+        $unreachable[] = $slug;
+    }
+
+    expect($unreachable)->toBe([], 'these have a README in their repo but no source production can reach — run `php artisan readmes:build` and commit the artifact');
 });

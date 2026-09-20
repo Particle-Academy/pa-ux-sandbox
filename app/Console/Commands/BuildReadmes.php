@@ -37,10 +37,30 @@ class BuildReadmes extends Command
 
         $compiled = [];
         $missing = [];
+        $skipped = [];
 
         foreach ($readmes->everyPackage() as $pkg) {
             $slug = (string) ($pkg['slug'] ?? '');
             if ($slug === '') {
+                continue;
+            }
+
+            // SKIP anything the showcase installs. Its README ships inside the
+            // package, at exactly the version in use, so a compiled copy would
+            // be a duplicate that can only go stale -- and `ReadmeSource` reads
+            // the installed file before this artifact anyway, so the copy would
+            // never be used.
+            //
+            // This is what keeps the artifact to the packages that genuinely
+            // have no other source in production. It also means the artifact
+            // DEPENDS on `node_modules` / `vendor` being present on the server:
+            // they are (the deploy installs the full tree -- see tui-service's
+            // README on why `--omit=dev` is not used), and
+            // `ReadmeSourceTest`'s production-shaped case fails if any package
+            // would resolve through neither path.
+            if ($readmes->isInstalled($pkg)) {
+                $skipped[] = $slug;
+
                 continue;
             }
 
@@ -68,6 +88,9 @@ class BuildReadmes extends Command
         );
 
         $this->info(count($compiled).' README(s) compiled → '.ReadmeSource::compiledPath());
+        if ($skipped !== []) {
+            $this->line(count($skipped).' skipped — installed, so read from the package itself.');
+        }
 
         if ($missing !== []) {
             $this->warn(count($missing).' package(s) have a repo but no README: '.implode(', ', $missing));

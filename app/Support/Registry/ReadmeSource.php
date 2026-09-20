@@ -208,6 +208,19 @@ class ReadmeSource
      *
      * @param  array<string,mixed>  $pkg
      */
+    /**
+     * Whether this package's README can be read from the installed tree.
+     *
+     * Public so `readmes:build` can SKIP these: a package the showcase installs
+     * needs no compiled copy, because the real file ships with it.
+     *
+     * @param  array<string,mixed>  $pkg
+     */
+    public function isInstalled(array $pkg): bool
+    {
+        return $this->fromInstalled($pkg) !== null;
+    }
+
     private function fromInstalled(array $pkg): ?string
     {
         $dirs = array_filter([

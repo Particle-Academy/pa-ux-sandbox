@@ -21,6 +21,7 @@ uses(TestCase::class);
 
 it('passes when every package resolves at the claimed version', function () {
     Http::fake([
+        '*packages/list.json*' => Http::response(['packageNames' => vendorListingFromIndex()], 200),
         'registry.npmjs.org/*' => Http::response(['name' => 'x'], 200),
         'pypi.org/*' => Http::response(['info' => []], 200),
         'repo.packagist.org/*' => fn ($request) => Http::response([
@@ -35,6 +36,7 @@ it('passes when every package resolves at the claimed version', function () {
 
 it('FAILS when a claimed version 404s', function () {
     Http::fake([
+        '*packages/list.json*' => Http::response(['packageNames' => vendorListingFromIndex()], 200),
         'registry.npmjs.org/*' => Http::response([], 404),
         'pypi.org/*' => Http::response(['info' => []], 200),
         'repo.packagist.org/*' => fn ($request) => Http::response([
@@ -50,6 +52,7 @@ it('FAILS on an unreachable registry rather than counting it as current', functi
     // certainly not a "yes" — it is the absence of an answer, and the command
     // has to say so.
     Http::fake([
+        '*packages/list.json*' => Http::response(['packageNames' => vendorListingFromIndex()], 200),
         'registry.npmjs.org/*' => Http::response('upstream exploded', 500),
         'pypi.org/*' => Http::response(['info' => []], 200),
         'repo.packagist.org/*' => fn ($request) => Http::response([
@@ -65,6 +68,7 @@ it('FAILS a Packagist package that answers 200 while carrying no such version', 
     // release, so a status check alone would pass a package with no versions at
     // all. The version has to be looked for inside the document.
     Http::fake([
+        '*packages/list.json*' => Http::response(['packageNames' => vendorListingFromIndex()], 200),
         'registry.npmjs.org/*' => Http::response(['name' => 'x'], 200),
         'pypi.org/*' => Http::response(['info' => []], 200),
         'repo.packagist.org/*' => fn ($request) => Http::response([
@@ -77,6 +81,7 @@ it('FAILS a Packagist package that answers 200 while carrying no such version', 
 
 it('accepts a Packagist tag with or without the v prefix', function () {
     Http::fake([
+        '*packages/list.json*' => Http::response(['packageNames' => vendorListingFromIndex()], 200),
         'registry.npmjs.org/*' => Http::response(['name' => 'x'], 200),
         'pypi.org/*' => Http::response(['info' => []], 200),
         'repo.packagist.org/*' => fn ($request) => Http::response([
@@ -94,6 +99,7 @@ it('asks the per-VERSION endpoint, not the packument', function () {
     // Asking `/<name>` would check that the package EXISTS, which it does, and
     // would therefore pass every stale version forever.
     Http::fake([
+        '*packages/list.json*' => Http::response(['packageNames' => vendorListingFromIndex()], 200),
         'registry.npmjs.org/*' => Http::response(['name' => 'x'], 200),
         'pypi.org/*' => Http::response(['info' => []], 200),
         'repo.packagist.org/*' => fn ($request) => Http::response([
@@ -122,6 +128,127 @@ it('asks the per-VERSION endpoint, not the packument', function () {
             && (bool) preg_match('#/pypi/[^/]+/\d+\.\d+\.\d+/json$#', $request->url());
     });
 });
+
+/*
+ * Completeness — is the index SHORT?
+ *
+ * The tests above ask whether everything LISTED resolves. Nothing asked whether
+ * the list was complete, and that gap was not hypothetical: `zoom` shipped on
+ * 2026-09-21 and sat unlisted while this command reported all 100 packages fine.
+ * It surfaced only because the catalogue's author mentioned the count in a
+ * message. The index had gone stale twice before, the same way, each time with
+ * every check green.
+ */
+
+it('FAILS when a published connector is missing from the index', function () {
+    Http::fake([
+        '*packages/list.json*' => Http::response([
+            'packageNames' => [...vendorListingFromIndex(), 'particle-academy/zoom-php'],
+        ], 200),
+        'registry.npmjs.org/*' => Http::response(['name' => 'x'], 200),
+        'pypi.org/*' => Http::response(['info' => []], 200),
+        'repo.packagist.org/*' => fn ($request) => Http::response([
+            'packages' => [packagistNameFrom($request->url()) => claimedPackagistVersions()],
+        ], 200),
+    ]);
+
+    $this->artisan('connectors:check')
+        ->expectsOutputToContain('zoom')
+        ->assertFailed();
+});
+
+it('does not mistake a non-connector `-php` package for a connector', function () {
+    // `particle-academy/fancy-flow-php` is the workflow runtime, not a
+    // connector, and it really is in that vendor listing. Any rule keyed on the
+    // `-php` suffix alone reports it as a missing connector forever. The whole
+    // QUARTET has to exist — here the npm and PyPI halves 404.
+    Http::fake([
+        '*packages/list.json*' => Http::response([
+            'packageNames' => [...vendorListingFromIndex(), 'particle-academy/fancy-flow-php'],
+        ], 200),
+        'registry.npmjs.org/@particle-academy%2ffancy-flow*' => Http::response([], 404),
+        'pypi.org/pypi/fancy-fancy-flow/*' => Http::response([], 404),
+        'registry.npmjs.org/*' => Http::response(['name' => 'x'], 200),
+        'pypi.org/*' => Http::response(['info' => []], 200),
+        'repo.packagist.org/*' => fn ($request) => Http::response([
+            'packages' => [packagistNameFrom($request->url()) => claimedPackagistVersions()],
+        ], 200),
+    ]);
+
+    $this->artisan('connectors:check')->assertSuccessful();
+});
+
+it('FAILS on an empty vendor listing rather than reporting nothing missing', function () {
+    // An empty answer is not an answer. Reading it as "no connectors exist that
+    // we lack" is the vacuous pass this command exists to refuse.
+    Http::fake([
+        '*packages/list.json*' => Http::response(['packageNames' => []], 200),
+        'registry.npmjs.org/*' => Http::response(['name' => 'x'], 200),
+        'pypi.org/*' => Http::response(['info' => []], 200),
+        'repo.packagist.org/*' => fn ($request) => Http::response([
+            'packages' => [packagistNameFrom($request->url()) => claimedPackagistVersions()],
+        ], 200),
+    ]);
+
+    $this->artisan('connectors:check')->assertFailed();
+});
+
+it('FAILS when it cannot tell whether a candidate is a connector', function () {
+    // The first version of this returned "not a connector" when a probe failed,
+    // so an unreachable npm would have reported the index complete. Same rule as
+    // the version check above, applied to the question it did not used to ask.
+    Http::fake([
+        '*packages/list.json*' => Http::response([
+            'packageNames' => [...vendorListingFromIndex(), 'particle-academy/zoom-php'],
+        ], 200),
+        'registry.npmjs.org/@particle-academy%2fzoom*' => Http::response('upstream exploded', 500),
+        'registry.npmjs.org/*' => Http::response(['name' => 'x'], 200),
+        'pypi.org/*' => Http::response(['info' => []], 200),
+        'repo.packagist.org/*' => fn ($request) => Http::response([
+            'packages' => [packagistNameFrom($request->url()) => claimedPackagistVersions()],
+        ], 200),
+    ]);
+
+    $this->artisan('connectors:check')->assertFailed();
+});
+
+/**
+ * The index's own Packagist package names, as the vendor listing returns them.
+ *
+ * Derived rather than hand-listed, for the reason the version fixture below
+ * gives: a hand-listed set encodes a property of the fixture, and rots the first
+ * time a connector is added.
+ *
+ * Note this is keyed on the package NAME, not on `slug` or `service`. The index
+ * carries all three and they disagree — `amazon_ses` / `amazon-ses` /
+ * `particle-academy/amazon-ses-php` — but they AGREE for `buffer`, `discord`,
+ * `gmail`, `stripe` and a dozen more, so comparing the wrong one passes a
+ * spot-check and reports every multi-word connector as missing.
+ *
+ * @return list<string>
+ */
+function vendorListingFromIndex(): array
+{
+    $index = json_decode(
+        (string) file_get_contents(resource_path('registry/connectors.json')),
+        true,
+    );
+
+    $names = [];
+    foreach ($index['connectors'] ?? [] as $connector) {
+        $name = $connector['packages']['php']['name'] ?? null;
+
+        if (is_string($name) && $name !== '') {
+            $names[] = $name;
+        }
+    }
+
+    // Guard the guard, same as below: an empty listing would trip the command's
+    // own vacuity check and fail every test here for the wrong reason.
+    expect($names)->not->toBeEmpty('no packagist package names found in the connector index');
+
+    return $names;
+}
 
 /** The Packagist package name embedded in a `p2` url. */
 function packagistNameFrom(string $url): string

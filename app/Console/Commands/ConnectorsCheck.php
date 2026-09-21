@@ -90,9 +90,11 @@ class ConnectorsCheck extends Command
             $this->render($rows, $behind, $unknown);
         }
 
+        $short = $this->completeness($connectors);
+
         // UNKNOWN fails alongside MISSING. "I could not tell" quietly meaning
         // "fine" is the exact shape this command exists to remove.
-        return ($behind + $unknown) === 0 ? self::SUCCESS : self::FAILURE;
+        return ($behind + $unknown + count($short)) === 0 ? self::SUCCESS : self::FAILURE;
     }
 
     /**
@@ -160,6 +162,162 @@ class ConnectorsCheck extends Command
         return in_array($version, $versions, true) || in_array("v{$version}", $versions, true)
             ? 'OK'
             : 'MISSING';
+    }
+
+    /**
+     * Is the index SHORT — has a connector been published that it never got?
+     *
+     * The check above asks whether everything listed resolves. It cannot ask
+     * whether the list is complete, so a connector that was never added is
+     * invisible to it permanently. That gap is not hypothetical: this file's own
+     * history records the index going stale twice, "pointing consumers at
+     * pre-fix builds while every check stayed green", and `zoom` shipped on
+     * 2026-09-21 and sat unlisted while this command reported all 100 packages
+     * fine. It surfaced only because the catalogue's author mentioned the count
+     * in a message. Nothing polled, nothing compared.
+     *
+     * The class docblock rules out PULLING the generator's index, and rightly —
+     * its workspace is private. This asks a different question that needs no
+     * access to it: **which connectors exist on the public registries?**
+     *
+     * Enumeration comes from Packagist's vendor listing, which is complete and
+     * uncapped. npm's search endpoint is not usable here: it reported a total of
+     * 2417 and returned 250, so a candidate could be missing from the answer
+     * rather than from the registry.
+     *
+     * A candidate is a connector only if the whole QUARTET is published —
+     * `<slug>-ui` and `<slug>-js` on npm, `<slug>-php` on Packagist, and
+     * `fancy-<slug>` on PyPI. That is the shape the catalogue emits, so it needs
+     * no guess about naming. It matters: `particle-academy/fancy-flow-php` and
+     * `teachers-aid-ui` both look like connectors under any single-suffix rule
+     * and are not, and both were checked — neither has the other three.
+     *
+     * @return list<string> slugs published as connectors but absent from the index
+     */
+    private function completeness(ConnectorSource $connectors): array
+    {
+        // Keyed on the Packagist package NAME, not on a slug.
+        //
+        // The index carries three near-identities per connector — `service`
+        // (`amazon_ses`), `slug` (`amazon-ses`), and the package name
+        // (`particle-academy/amazon-ses-php`). Comparing a listing against the
+        // wrong one reports every multi-word connector as missing, and the two
+        // spellings agree for `buffer`, `discord`, `gmail`, `stripe` and a dozen
+        // others, so a spot-check passes. Matching the package name against
+        // itself removes the question rather than answering it carefully.
+        $known = [];
+
+        foreach ($connectors->connectors() as $connector) {
+            $name = $connector['packages']['php']['name'] ?? null;
+
+            if (is_string($name) && $name !== '') {
+                $known[] = $name;
+            }
+        }
+
+        try {
+            $response = Http::timeout(30)->get('https://packagist.org/packages/list.json', [
+                'vendor' => 'particle-academy',
+            ]);
+        } catch (ConnectionException) {
+            $this->error('Could not reach Packagist, so the index could not be checked for completeness.');
+            $this->line('That is a FAILURE, not a pass: an unanswered question is not a clean answer.');
+
+            return ['<unreachable>'];
+        }
+
+        $names = (array) ($response->json('packageNames') ?? []);
+
+        // A listing that comes back empty means the question was not answered,
+        // whatever the status code said. Reporting "nothing missing" from it
+        // would be the vacuous pass this whole command exists to refuse.
+        if ($names === []) {
+            $this->error('Packagist returned no packages for the vendor, which cannot be right.');
+            $this->line('Treating an empty listing as "nothing missing" is how a check starts asserting nothing.');
+
+            return ['<empty-listing>'];
+        }
+
+        $short = [];
+
+        foreach ($names as $name) {
+            if (! is_string($name) || ! str_ends_with($name, '-php') || in_array($name, $known, true)) {
+                continue;
+            }
+
+            $slug = substr(explode('/', $name, 2)[1] ?? '', 0, -4);
+
+            if ($slug === '') {
+                continue;
+            }
+
+            $verdict = $this->isConnectorQuartet($slug);
+
+            // `null` is "could not tell", and it must FAIL rather than resolve
+            // to "not a connector". Reading an unreachable registry as absence
+            // would make a network blip look like a complete index — rule 1 of
+            // this command, applied to the question it did not used to ask.
+            if ($verdict === null) {
+                $this->error("Could not determine whether {$slug} is a published connector.");
+                $short[] = $slug.' (unreachable)';
+
+                continue;
+            }
+
+            if ($verdict) {
+                $short[] = $slug;
+            }
+        }
+
+        if ($short !== []) {
+            $this->newLine();
+            $this->error(sprintf(
+                '%d connector(s) are published but missing from the index: %s',
+                count($short),
+                implode(', ', $short),
+            ));
+            $this->line('The index is SHORT, not wrong — every package it lists still resolves.');
+            $this->line('Ask the connector catalogue for a regenerated index and refresh it here.');
+        }
+
+        return $short;
+    }
+
+    /**
+     * Does every package of the connector quartet exist for this slug?
+     *
+     * Only the three the index does not already imply are asked for; the
+     * Packagist half is what produced the candidate.
+     *
+     * Returns `null` for "could not tell", which the caller FAILS on. Collapsing
+     * an unreachable registry into `false` would report a blip as a complete
+     * index, and a check that reassures on failure is worse than no check.
+     */
+    private function isConnectorQuartet(string $slug): ?bool
+    {
+        $probes = [
+            'https://registry.npmjs.org/@particle-academy%2f'.$slug.'-ui',
+            'https://registry.npmjs.org/@particle-academy%2f'.$slug.'-js',
+            'https://pypi.org/pypi/fancy-'.$slug.'/json',
+        ];
+
+        foreach ($probes as $url) {
+            try {
+                $status = Http::timeout(20)->get($url)->status();
+            } catch (ConnectionException) {
+                return null;
+            }
+
+            if ($status === 404) {
+                return false;
+            }
+
+            if ($status < 200 || $status >= 300) {
+                return null;
+            }
+        }
+
+        return true;
     }
 
     /** A 404 is a real answer; anything else unexpected is not an answer at all. */

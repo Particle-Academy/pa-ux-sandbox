@@ -10,6 +10,7 @@
       "serviceTitle": "Amazon SES",
       "domain": "email",
       "docs": "https://docs.aws.amazon.com/ses/latest/APIReference-V2/API_SendEmail.html",
+      "summary": null,
       "repo": "Fancy-Friends/amazon-ses",
       "status": "alpha",
       "packages": {
@@ -84,6 +85,7 @@
         "warning": "NOT a sandbox and must not be offered as one. Same credentials, same endpoints, same estate — only the AUDIENCE is restricted. A run against it looks completely successful and reaches nobody.",
         "note": "A new SES account is in the SANDBOX, and it is the reason `restricted-reach` exists as a value. The endpoint is identical, the credentials are identical, the request is identical, and the API answers 200 with a MessageId -- but the mail only reaches addresses you have verified. Anyone else is silently discarded. So a sandbox run looks completely successful and reached nobody, which is why `restricted-reach` cannot be selected as a mode: there is nothing to select. You leave the sandbox by asking AWS for production access, not by pointing at a different host."
       },
+      "setup": null,
       "environments": [
         "fake",
         "live"
@@ -114,6 +116,7 @@
       "serviceTitle": "Buffer",
       "domain": "marketing",
       "docs": "https://developers.buffer.com/examples/create-text-post.html",
+      "summary": null,
       "repo": "Fancy-Friends/buffer",
       "status": "alpha",
       "packages": {
@@ -199,6 +202,7 @@
         "warning": "No test estate, and somebody checked. Everything this connector does is real. Use the faker.",
         "note": "Buffer has no separate test estate. createPost writes to a real Buffer channel and can publish to the connected social account. Use fake mode while building, then test against a deliberately private or disposable real channel."
       },
+      "setup": null,
       "environments": [
         "fake",
         "live"
@@ -229,6 +233,7 @@
       "serviceTitle": "Discord",
       "domain": "messaging",
       "docs": "https://docs.discord.com/developers/reference",
+      "summary": null,
       "repo": "Fancy-Friends/discord",
       "status": "alpha",
       "packages": {
@@ -287,6 +292,7 @@
         "warning": "A test estate on the same host, reached with credentials from a separate test account somebody has to register first.",
         "note": "Create a development-only Discord application, install its bot into a dedicated test server, and use a test channel id. Messages are real and can notify members of that server; production credentials sent in sandbox mode are not technically rejected."
       },
+      "setup": null,
       "environments": [
         "fake",
         "sandbox",
@@ -318,6 +324,7 @@
       "serviceTitle": "Facebook Lead Ads",
       "domain": "marketing",
       "docs": "https://developers.facebook.com/docs/marketing-api/guides/lead-ads/retrieving",
+      "summary": null,
       "repo": "Fancy-Friends/facebook-lead-ads",
       "status": "alpha",
       "packages": {
@@ -406,6 +413,7 @@
         "warning": "No test estate, and somebody checked. Everything this connector does is real. Use the faker.",
         "note": "Facebook Lead Ads has no sandbox. Meta's Lead Ads Testing Tool creates a test lead on the REAL form, which fires the real webhook and appears alongside real leads until somebody deletes it. Anything this reads is real customer data belonging to a real advertiser."
       },
+      "setup": null,
       "environments": [
         "fake",
         "live"
@@ -450,6 +458,7 @@
       "serviceTitle": "Facebook Pages",
       "domain": "marketing",
       "docs": "https://developers.facebook.com/docs/graph-api/reference/page/feed/",
+      "summary": null,
       "repo": "Fancy-Friends/facebook-pages",
       "status": "alpha",
       "packages": {
@@ -536,6 +545,7 @@
         "warning": "No test estate, and somebody checked. Everything this connector does is real. Use the faker.",
         "note": "Facebook has no sandbox for Pages. Anything this publishes appears on a real Page to real followers, and deleting it afterwards does not un-notify them. Point it at a Page you own and have muted before pointing it at anything else."
       },
+      "setup": null,
       "environments": [
         "fake",
         "live"
@@ -566,6 +576,7 @@
       "serviceTitle": "Gmail",
       "domain": "email",
       "docs": "https://developers.google.com/workspace/gmail/api/reference/rest/v1/users.messages/send",
+      "summary": null,
       "repo": "Fancy-Friends/gmail",
       "status": "alpha",
       "packages": {
@@ -650,6 +661,7 @@
         "warning": "No test estate, and somebody checked. Everything this connector does is real. Use the faker.",
         "note": "Gmail has no sandbox. A send is a real email to a real address -- point this at your own inbox before pointing it at anybody else's. The faker is the only way to develop against it without delivering mail."
       },
+      "setup": null,
       "environments": [
         "fake",
         "live"
@@ -680,6 +692,7 @@
       "serviceTitle": "Google Ads",
       "domain": "marketing",
       "docs": "https://developers.google.com/google-ads/api/rest/auth",
+      "summary": null,
       "repo": "Fancy-Friends/google-ads",
       "status": "alpha",
       "packages": {
@@ -780,6 +793,7 @@
         "warning": "A test estate on the same host, reached with credentials from a separate test account somebody has to register first.",
         "note": "Use a dedicated Google Ads test manager and test client account. Test and production hierarchies cannot interact; test ads never serve or incur cost, but some features such as billing, conversion uploads and serving reports cannot be exercised there."
       },
+      "setup": null,
       "environments": [
         "fake",
         "sandbox",
@@ -811,6 +825,7 @@
       "serviceTitle": "Google Analytics",
       "domain": "analytics",
       "docs": "https://developers.google.com/analytics/devguides/reporting/data/v1/rest/v1beta/properties/runReport",
+      "summary": null,
       "repo": "Fancy-Friends/google-analytics",
       "status": "alpha",
       "packages": {
@@ -895,6 +910,7 @@
         "warning": "No test estate, and somebody checked. Everything this connector does is real. Use the faker.",
         "note": "Google Analytics has no sandbox. A report reads a real property's real data and spends real quota. The faker returns a plausibly-shaped report so a flow can be built without a Google account."
       },
+      "setup": null,
       "environments": [
         "fake",
         "live"
@@ -925,6 +941,7 @@
       "serviceTitle": "Google Calendar",
       "domain": "calendar",
       "docs": "https://developers.google.com/workspace/calendar/api/v3/reference",
+      "summary": null,
       "repo": "Fancy-Friends/google-calendar",
       "status": "alpha",
       "packages": {
@@ -1017,6 +1034,7 @@
         "warning": "No test estate, and somebody checked. Everything this connector does is real. Use the faker.",
         "note": "Google has no sandbox for Calendar. A test calendar is a real one in a real account, so every watch and every read is real -- point this at a scratch calendar, not a production one. The faker is the only way to develop against it without touching an account."
       },
+      "setup": null,
       "environments": [
         "fake",
         "live"
@@ -1101,6 +1119,7 @@
       "serviceTitle": "Google Docs",
       "domain": "productivity",
       "docs": "https://developers.google.com/workspace/docs/api/reference/rest/v1/documents/create",
+      "summary": null,
       "repo": "Fancy-Friends/google-docs",
       "status": "alpha",
       "packages": {
@@ -1185,6 +1204,7 @@
         "warning": "No test estate, and somebody checked. Everything this connector does is real. Use the faker.",
         "note": "Google has no sandbox for Docs. A test document is a real one in a real Drive, so every create is real -- use the faker while developing and clean up any live test documents."
       },
+      "setup": null,
       "environments": [
         "fake",
         "live"
@@ -1215,6 +1235,7 @@
       "serviceTitle": "Google Drive",
       "domain": "productivity",
       "docs": "https://developers.google.com/workspace/drive/api/reference/rest/v3/files/create",
+      "summary": null,
       "repo": "Fancy-Friends/google-drive",
       "status": "alpha",
       "packages": {
@@ -1299,6 +1320,7 @@
         "warning": "No test estate, and somebody checked. Everything this connector does is real. Use the faker.",
         "note": "Google Drive has no sandbox. Every folder created in live mode is real; use the faker during development and delete live test folders afterward."
       },
+      "setup": null,
       "environments": [
         "fake",
         "live"
@@ -1329,6 +1351,7 @@
       "serviceTitle": "Google Sheets",
       "domain": "productivity",
       "docs": "https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets.values/append",
+      "summary": null,
       "repo": "Fancy-Friends/google-sheets",
       "status": "alpha",
       "packages": {
@@ -1413,6 +1436,7 @@
         "warning": "No test estate, and somebody checked. Everything this connector does is real. Use the faker.",
         "note": "Google has no sandbox for Sheets. A test spreadsheet is a real one in a real Drive, so every append is real -- point this at a scratch sheet, not a production one. The faker is the only way to develop against it without touching a document."
       },
+      "setup": null,
       "environments": [
         "fake",
         "live"
@@ -1443,6 +1467,7 @@
       "serviceTitle": "Google Slides",
       "domain": "productivity",
       "docs": "https://developers.google.com/workspace/slides/api/reference/rest/v1/presentations/create",
+      "summary": null,
       "repo": "Fancy-Friends/google-slides",
       "status": "alpha",
       "packages": {
@@ -1527,6 +1552,7 @@
         "warning": "No test estate, and somebody checked. Everything this connector does is real. Use the faker.",
         "note": "Google has no sandbox for Slides. A test presentation is a real one in a real Drive, so every create is real -- use the faker while developing and clean up any live test presentations."
       },
+      "setup": null,
       "environments": [
         "fake",
         "live"
@@ -1557,6 +1583,7 @@
       "serviceTitle": "HubSpot",
       "domain": "crm",
       "docs": "https://developers.hubspot.com/docs/reference/api/crm/objects/contacts",
+      "summary": null,
       "repo": "Fancy-Friends/hubspot",
       "status": "alpha",
       "packages": {
@@ -1641,6 +1668,7 @@
         "warning": "A test estate on the same host, reached with credentials from a separate test account somebody has to register first.",
         "note": "HubSpot's test estate is a DEVELOPER TEST ACCOUNT: a separate portal you create from the developer account, with its own portal id, its own data and its own OAuth install. Same API host, different account -- so the credential is different and the URL is not. Test accounts expire if unused and carry reduced limits, which is why they are a place to test rather than a place to build against."
       },
+      "setup": null,
       "environments": [
         "fake",
         "sandbox",
@@ -1672,6 +1700,7 @@
       "serviceTitle": "Instagram for Business",
       "domain": "marketing",
       "docs": "https://developers.facebook.com/docs/instagram-platform/content-publishing/",
+      "summary": null,
       "repo": "Fancy-Friends/instagram-business",
       "status": "alpha",
       "packages": {
@@ -1758,6 +1787,7 @@
         "warning": "No test estate, and somebody checked. Everything this connector does is real. Use the faker.",
         "note": "Instagram publishing has no sandbox. Publishing creates a real post on a real professional account, and an unpublished container expires after 24 hours."
       },
+      "setup": null,
       "environments": [
         "fake",
         "live"
@@ -1800,6 +1830,7 @@
       "serviceTitle": "LinkedIn Ads",
       "domain": "marketing",
       "docs": "https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads/account-structure/create-and-manage-campaigns?view=li-lms-2026-07",
+      "summary": null,
       "repo": "Fancy-Friends/linkedin-ads",
       "status": "alpha",
       "packages": {
@@ -1884,6 +1915,7 @@
         "warning": "A test estate on the same host, reached with credentials from a separate test account somebody has to register first.",
         "note": "LinkedIn's test estate is one API-created test Ad Account per developer application. It uses the same host and member OAuth flow, but every child campaign and creative inherits the account's test flag, creatives are never served, and campaigns are not billed. The account cannot later be converted between test and production."
       },
+      "setup": null,
       "environments": [
         "fake",
         "sandbox",
@@ -1915,6 +1947,7 @@
       "serviceTitle": "Microsoft Outlook",
       "domain": "calendar",
       "docs": "https://learn.microsoft.com/en-us/graph/api/resources/event?view=graph-rest-1.0",
+      "summary": null,
       "repo": "Fancy-Friends/microsoft-outlook",
       "status": "alpha",
       "packages": {
@@ -2008,6 +2041,7 @@
         "warning": "A test estate on the same host, reached with credentials from a separate test account somebody has to register first.",
         "note": "Microsoft's test estate is a Microsoft 365 Developer Program sandbox: a separate E5 tenant with its own users, its own calendars and its own OAuth consent, on the SAME host. Eligibility is limited -- Visual Studio Professional or Enterprise subscribers, ISV Success / Microsoft AI Cloud Partner Program members, or Premier/Unified Support customers -- and the tenant expires after 90 days of no development activity. Without one, every call reaches a real mailbox."
       },
+      "setup": null,
       "environments": [
         "fake",
         "sandbox",
@@ -2105,6 +2139,7 @@
       "serviceTitle": "monday.com",
       "domain": "productivity",
       "docs": "https://developer.monday.com/api-reference/reference/items",
+      "summary": null,
       "repo": "Fancy-Friends/monday",
       "status": "alpha",
       "packages": {
@@ -2163,6 +2198,7 @@
         "warning": "No test estate, and somebody checked. Everything this connector does is real. Use the faker.",
         "note": "monday has no test estate. A developer plan is a real account with real boards, so anything an action creates is created for real. The faker is the only safe way to develop against this connector, which is why every action ships with one."
       },
+      "setup": null,
       "environments": [
         "fake",
         "live"
@@ -2193,6 +2229,7 @@
       "serviceTitle": "Notion",
       "domain": "productivity",
       "docs": "https://developers.notion.com/reference/intro",
+      "summary": null,
       "repo": "Fancy-Friends/notion",
       "status": "alpha",
       "packages": {
@@ -2277,6 +2314,7 @@
         "warning": "A test estate on the same host, reached with credentials from a separate test account somebody has to register first.",
         "note": "Install the public connection into a dedicated Notion development workspace and grant it only test pages. Calls use the live API and create or read real content inside that workspace."
       },
+      "setup": null,
       "environments": [
         "fake",
         "sandbox",
@@ -2308,6 +2346,7 @@
       "serviceTitle": "Resend",
       "domain": "email",
       "docs": "https://resend.com/docs/api-reference/introduction",
+      "summary": null,
       "repo": "Fancy-Friends/resend",
       "status": "alpha",
       "packages": {
@@ -2374,6 +2413,7 @@
         "warning": "No test estate, and somebody checked. Everything this connector does is real. Use the faker.",
         "note": "Resend has NO test estate, and somebody checked. Its simulator RECIPIENTS -- delivered@resend.dev, bounced@resend.dev, complained@resend.dev, suppressed@resend.dev -- are not one: the send is real, it is billed, and it counts against the quota. Modelling them as a sandbox would put a live send behind a control labelled \"test\", so `mode` does not offer sandbox at all and `fake` is the primary development mode rather than the fallback."
       },
+      "setup": null,
       "environments": [
         "fake",
         "live"
@@ -2454,6 +2494,7 @@
       "serviceTitle": "Slack",
       "domain": "messaging",
       "docs": "https://docs.slack.dev/apis/web-api/",
+      "summary": null,
       "repo": "Fancy-Friends/slack",
       "status": "alpha",
       "packages": {
@@ -2538,6 +2579,7 @@
         "warning": "A test estate on the same host, reached with credentials from a separate test account somebody has to register first.",
         "note": "Install the app into a dedicated development workspace or Slack developer sandbox. Messages are real inside that workspace, but its users and data are separate from production. Developer sandboxes expire by default and have feature and integration limits."
       },
+      "setup": null,
       "environments": [
         "fake",
         "sandbox",
@@ -2569,6 +2611,7 @@
       "serviceTitle": "Square",
       "domain": "payments",
       "docs": "https://developer.squareup.com/reference/square/payments-api/create-payment",
+      "summary": null,
       "repo": "Fancy-Friends/square",
       "status": "alpha",
       "packages": {
@@ -2627,6 +2670,7 @@
         "warning": "A separate test host. Selecting sandbox mode changes the base URL.",
         "note": "The one sandbox kind that is genuinely a DIFFERENT PLACE. Stripe's estate is chosen by the key, Telegram's and HubSpot's by the account, SES's not at all -- Square's is another host, with its own data and its own credentials. A sandbox access token sent to the production host is refused rather than silently reaching the real ledger, which makes this the SAFEST of the four kinds and worth saying so: the failure mode is a 401, not a charge."
       },
+      "setup": null,
       "environments": [
         "fake",
         "sandbox",
@@ -2658,6 +2702,7 @@
       "serviceTitle": "Stripe",
       "domain": "payments",
       "docs": "https://docs.stripe.com/api",
+      "summary": null,
       "repo": "Fancy-Friends/stripe",
       "status": "alpha",
       "packages": {
@@ -2724,6 +2769,7 @@
         "warning": "The KEY decides live-or-test, not the endpoint — the same host serves both. A live key pointed at a node marked “sandbox” reaches the real estate and SUCCEEDS. Nothing in the request distinguishes them, which is why the credential sits on the connection.",
         "note": "Stripe's test estate is selected by the KEY, not the URL -- api.stripe.com serves both. A live key sent to a node whose mode says \"sandbox\" reaches the real ledger and succeeds. Nothing in the request distinguishes them, which is exactly why credentials sit on the connection rather than on twelve separate nodes."
       },
+      "setup": null,
       "environments": [
         "fake",
         "sandbox",
@@ -2793,6 +2839,7 @@
       "serviceTitle": "Telegram",
       "domain": "messaging",
       "docs": "https://core.telegram.org/bots/api",
+      "summary": null,
       "repo": "Fancy-Friends/telegram",
       "status": "alpha",
       "packages": {
@@ -2851,6 +2898,7 @@
         "warning": "A test estate on the same host, reached with credentials from a separate test account somebody has to register first.",
         "note": "Telegram's test environment is a genuinely SEPARATE ACCOUNT: you create a new account inside it and register a new bot there, so the sandbox credential is a different token rather than the same one pointed elsewhere. The `/test` path segment is how you reach it; the account is what makes it separate. Flood limits are NOT relaxed there, so it is a place to test, not a place to hammer."
       },
+      "setup": null,
       "environments": [
         "fake",
         "sandbox",
@@ -2884,6 +2932,7 @@
       "serviceTitle": "YouTube",
       "domain": "marketing",
       "docs": "https://developers.google.com/youtube/v3/docs/playlistItems/insert",
+      "summary": null,
       "repo": "Fancy-Friends/youtube",
       "status": "alpha",
       "packages": {
@@ -2968,6 +3017,7 @@
         "warning": "No test estate, and somebody checked. Everything this connector does is real. Use the faker.",
         "note": "YouTube has no sandbox. Every live-mode add changes a real playlist; use the faker during development and remove live test items afterward."
       },
+      "setup": null,
       "environments": [
         "fake",
         "live"
@@ -2988,6 +3038,135 @@
           "docs": "https://developers.google.com/youtube/v3/docs/playlistItems/insert",
           "method": "POST",
           "path": "/youtube/v3/playlistItems",
+          "sideEffects": "unsafe-to-replay"
+        }
+      ]
+    },
+    {
+      "slug": "zoom",
+      "service": "zoom",
+      "serviceTitle": "Zoom",
+      "domain": "messaging",
+      "docs": "https://developers.zoom.us/docs/api/",
+      "summary": null,
+      "repo": "Fancy-Friends/zoom",
+      "status": "alpha",
+      "packages": {
+        "ui": {
+          "name": "@particle-academy/zoom-ui",
+          "version": "0.1.0",
+          "registry": "npm",
+          "installFirst": true
+        },
+        "js": {
+          "name": "@particle-academy/zoom-js",
+          "version": "0.1.0",
+          "registry": "npm",
+          "installFirst": false
+        },
+        "php": {
+          "name": "particle-academy/zoom-php",
+          "version": "0.1.0",
+          "registry": "packagist",
+          "installFirst": false
+        },
+        "py": {
+          "name": "fancy-zoom",
+          "version": "0.1.0",
+          "registry": "pypi",
+          "installFirst": false
+        }
+      },
+      "auth": {
+        "kind": "oauth2",
+        "authorize": "bearer",
+        "scopes": [
+          "meeting:read:meeting",
+          "user:read:token"
+        ],
+        "capabilities": null,
+        "refreshTokenRotates": true,
+        "pkce": null,
+        "authorizeUrl": "https://zoom.us/oauth/authorize",
+        "tokenUrl": "https://zoom.us/oauth/token",
+        "flow": "authorization_code",
+        "accessTokenCredential": "accessToken",
+        "refreshTokenCredential": "refreshToken",
+        "accessTokenTtlSeconds": 3600,
+        "credentials": [
+          {
+            "key": "clientId",
+            "label": "OAuth client ID",
+            "scope": "provider",
+            "secret": false,
+            "optional": false,
+            "help": "From the Zoom app you registered at marketplace.zoom.us. One value for the whole installation -- the same app serves every connected Zoom account."
+          },
+          {
+            "key": "clientSecret",
+            "label": "OAuth client secret",
+            "scope": "provider",
+            "secret": true,
+            "optional": false,
+            "help": "From the same app. Used to exchange the code and to refresh; never sent with an API request."
+          },
+          {
+            "key": "accessToken",
+            "label": "Access token",
+            "scope": "account",
+            "secret": true,
+            "optional": false,
+            "help": "Obtained by the host's OAuth exchange, PER CONNECTED ZOOM ACCOUNT. Expires after one hour -- a host that does not refresh will work for a while and then fail with no warning."
+          },
+          {
+            "key": "refreshToken",
+            "label": "Refresh token",
+            "scope": "account",
+            "secret": true,
+            "optional": false,
+            "help": "Also per account. A NEW one is issued on every refresh -- persist the replacement atomically, and never retry a refresh that may have already succeeded: replaying an old refresh token is Zoom's own reported failure mode for a rotating grant."
+          }
+        ]
+      },
+      "sandbox": {
+        "kind": "unverified",
+        "selectable": false,
+        "warning": "NOBODY HAS CHECKED whether a test estate exists. Not the same as “no”. Treat every call as real.",
+        "note": "Zoom has no test estate distinct from a real account, as far as this review found (2026-09-15) -- but it is UNVERIFIED, not confirmed. Every call authorizes against the caller's own Zoom account and can read real meeting data. Use fake mode while building."
+      },
+      "setup": null,
+      "environments": [
+        "fake",
+        "live"
+      ],
+      "idempotency": null,
+      "idempotencyMaxLength": null,
+      "idempotencyNote": null,
+      "apiVersion": "v2",
+      "needsWebhookEndpoint": false,
+      "operations": [
+        {
+          "operation": "meeting_get",
+          "kind": "@particle-academy/zoom_meeting_get",
+          "kindAlias": "zoom_meeting_get",
+          "role": "action",
+          "title": "Get meeting",
+          "summary": "a Zoom meeting",
+          "docs": "https://developers.zoom.us/docs/api/meetings/",
+          "method": "GET",
+          "path": "/meetings/{meetingId}",
+          "sideEffects": "none"
+        },
+        {
+          "operation": "obf_token_create",
+          "kind": "@particle-academy/zoom_obf_token_create",
+          "kindAlias": "zoom_obf_token_create",
+          "role": "action",
+          "title": "Mint on-behalf-of token",
+          "summary": "an on-behalf-of token",
+          "docs": "https://developers.zoom.us/blog/transition-to-obf-token-meetingsdk-apps/",
+          "method": "GET",
+          "path": "/users/me/token",
           "sideEffects": "unsafe-to-replay"
         }
       ]

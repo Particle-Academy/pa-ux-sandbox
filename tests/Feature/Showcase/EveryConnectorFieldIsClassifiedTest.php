@@ -68,6 +68,18 @@ function connectorCarriedFields(): array
         'sandbox' => 'verbatim, including its note',
         'service' => 'transformed — underscored, derived from the node kind',
         'serviceTitle' => 'verbatim',
+        // Both arrived in the 26-connector index (weaver.agi cf73117) and are
+        // NULL on all 26 today. `ConnectorSource` already carried them — this
+        // map did not, which is the half of the two-gate problem that lives
+        // here: a fact passes the emitter AND this whitelist, and a fix at one
+        // is half a fix. The code was ahead of the classification, so the test
+        // was right to fail and the entryFor side needed nothing.
+        'setup' => 'shaped — list<{title,detail,url}> via setupFor(), CONNECTOR-level. '
+            .'Note `entry.trigger.setup` is a STRING at operation level; they do not '
+            .'collide but a single handler for "the setup field" would meet both.',
+        'summary' => 'verbatim — the connector-level one-liner. Distinct from the '
+            .'per-operation `summary`, which becomes `description`: one says what '
+            .'Stripe is, the other says what this one operation does.',
         'status' => 'verbatim — maturity',
     ];
 }

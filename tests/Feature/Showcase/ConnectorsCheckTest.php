@@ -140,10 +140,25 @@ it('asks the per-VERSION endpoint, not the packument', function () {
  * every check green.
  */
 
+/*
+ * A NOTE ON THE FIXTURE SLUG BELOW.
+ *
+ * These originally appended `particle-academy/zoom-php`, which was a real
+ * connector missing from the index at the time. Then the index was refreshed
+ * to 26 and zoom joined it — so the fixture appended a name the index already
+ * knew, the check correctly found nothing missing, and the test asserting a
+ * FAILURE went red. It had encoded a property of that week's index rather than
+ * of the command.
+ *
+ * A synthetic slug cannot be overtaken by a refresh. `particle-academy/`
+ * prefixed so it still looks like the vendor listing it is standing in for.
+ */
+const ABSENT_CONNECTOR = 'particle-academy/notaconnector-php';
+
 it('FAILS when a published connector is missing from the index', function () {
     Http::fake([
         '*packages/list.json*' => Http::response([
-            'packageNames' => [...vendorListingFromIndex(), 'particle-academy/zoom-php'],
+            'packageNames' => [...vendorListingFromIndex(), ABSENT_CONNECTOR],
         ], 200),
         'registry.npmjs.org/*' => Http::response(['name' => 'x'], 200),
         'pypi.org/*' => Http::response(['info' => []], 200),
@@ -153,7 +168,7 @@ it('FAILS when a published connector is missing from the index', function () {
     ]);
 
     $this->artisan('connectors:check')
-        ->expectsOutputToContain('zoom')
+        ->expectsOutputToContain('notaconnector')
         ->assertFailed();
 });
 
@@ -199,9 +214,9 @@ it('FAILS when it cannot tell whether a candidate is a connector', function () {
     // the version check above, applied to the question it did not used to ask.
     Http::fake([
         '*packages/list.json*' => Http::response([
-            'packageNames' => [...vendorListingFromIndex(), 'particle-academy/zoom-php'],
+            'packageNames' => [...vendorListingFromIndex(), ABSENT_CONNECTOR],
         ], 200),
-        'registry.npmjs.org/@particle-academy%2fzoom*' => Http::response('upstream exploded', 500),
+        'registry.npmjs.org/@particle-academy%2fnotaconnector*' => Http::response('upstream exploded', 500),
         'registry.npmjs.org/*' => Http::response(['name' => 'x'], 200),
         'pypi.org/*' => Http::response(['info' => []], 200),
         'repo.packagist.org/*' => fn ($request) => Http::response([

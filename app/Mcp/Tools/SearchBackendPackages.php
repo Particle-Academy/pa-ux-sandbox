@@ -51,12 +51,12 @@ class SearchBackendPackages extends Tool
 
         $inStack = $stack === ''
             ? $matches
-            : array_values(array_filter($matches, fn (array $p) => ($p['stack'] ?? null) === $stack));
+            : array_values(array_filter($matches, fn (array $p) => in_array($stack, $p['stacks'] ?? [], true)));
 
         $payload = [
             'stack' => $stack === '' ? 'any' : $stack,
             'query' => $query === '' ? null : $query,
-            'packages' => array_map($this->present(...), $inStack),
+            'packages' => array_map(fn (array $p) => $this->present($p, $stack), $inStack),
         ];
 
         // The important half: a capability we HAVE, just not here. Returning an
@@ -92,7 +92,7 @@ class SearchBackendPackages extends Tool
             $payload['note'] = $query === ''
                 ? 'No server-side packages matched.'
                 : "Nothing matched \"{$query}\". Try a capability word — agents, llm, memory, browser, mcp, "
-                    ."catalog, features, workflow, xlsx, pptx, docx, analytics, seo, git, passkeys, referral, courses.";
+                    .'catalog, features, workflow, xlsx, pptx, docx, analytics, seo, git, passkeys, referral, courses.';
         }
 
         return Response::json($payload);
@@ -114,8 +114,31 @@ class SearchBackendPackages extends Tool
         return collect([...PackageRegistry::all(), ...PackageRegistry::companions()])
             ->filter(fn (array $p) => ($p['kind'] ?? '') === 'headless')
             ->map(function (array $p) use ($capabilities): array {
+                // A package belongs to every stack it actually PUBLISHES for,
+                // read off the names it carries rather than from a single
+                // ecosystem label.
+                //
+                // `ecosystem` is one value, so `polyglot` mapped to null and a
+                // polyglot package belonged to NO stack — invisible to every
+                // filter this tool offers. `fancy-conformance` had been in that
+                // hole since it was classified; reclassifying the nine Prism
+                // packages as polyglot on 2026-09-21 would have dropped them in
+                // beside it, which is how it was noticed.
+                //
+                // The ecosystem map stays as the fallback for a record carrying
+                // no package name at all.
+                $byStack = array_filter([
+                    'php' => $p['composer'] ?? null,
+                    'node' => $p['npm'] ?? null,
+                    'python' => $p['pypi'] ?? null,
+                ]);
+                if ($byStack === [] && ($fallback = self::STACKS[$p['ecosystem'] ?? ''] ?? null)) {
+                    $byStack = [$fallback => null];
+                }
+
                 $name = $p['composer'] ?? $p['npm'] ?? $p['pypi'] ?? null;
-                $p['stack'] = self::STACKS[$p['ecosystem'] ?? ''] ?? null;
+                $p['names_by_stack'] = $byStack;
+                $p['stacks'] = array_keys($byStack);
                 $p['install_name'] = $name;
                 $p['capability'] = $name !== null ? ($capabilities[$name] ?? null) : null;
 
@@ -182,14 +205,16 @@ class SearchBackendPackages extends Tool
         $out = [];
 
         foreach ($matches as $p) {
-            if (($p['stack'] ?? null) === $stack || ($p['capability'] ?? null) === null) {
+            if (in_array($stack, $p['stacks'] ?? [], true) || ($p['capability'] ?? null) === null) {
                 continue;
             }
 
             $capability = $p['capability'];
             $out[$capability] ??= ['capability' => $capability, 'available_in' => []];
-            if ($p['stack'] !== null && $p['install_name'] !== null) {
-                $out[$capability]['available_in'][$p['stack']] = $p['install_name'];
+            foreach (($p['names_by_stack'] ?? []) as $other => $otherName) {
+                if ($otherName !== null) {
+                    $out[$capability]['available_in'][$other] = $otherName;
+                }
             }
         }
 
@@ -197,24 +222,38 @@ class SearchBackendPackages extends Tool
     }
 
     /** @return array<string, mixed> */
-    private function present(array $p): array
+    private function present(array $p, string $stack = ''): array
     {
+        // Name and command follow the stack the caller ASKED for. A polyglot
+        // package carries several names, and handing a Node caller a `composer
+        // require` line is worse than saying nothing -- it looks like an answer.
+        $chosen = $stack !== '' && isset($p['names_by_stack'][$stack])
+            ? $stack
+            : (array_key_first($p['names_by_stack'] ?? []) ?: null);
+
         return array_filter([
-            'name' => $p['install_name'],
-            'stack' => $p['stack'],
+            'name' => $chosen === null ? $p['install_name'] : ($p['names_by_stack'][$chosen] ?? $p['install_name']),
+            'stack' => $chosen,
             'capability' => $p['capability'],
             'what_it_does' => $p['tagline'] ?? null,
-            'install' => $this->installCommand($p),
+            'install' => $this->installCommand($p, $chosen),
             'docs' => 'https://ui.particle.academy/packages/'.($p['slug'] ?? ''),
         ], fn ($v) => $v !== null);
     }
 
-    private function installCommand(array $p): ?string
+    private function installCommand(array $p, ?string $stack = null): ?string
     {
-        return match ($p['stack'] ?? null) {
-            'php' => 'composer require '.$p['install_name'],
-            'node' => 'npm install '.$p['install_name'],
-            'python' => 'pip install '.$p['install_name'].'   # or: uv add '.$p['install_name'],
+        $stack ??= $p['stacks'][0] ?? null;
+        $name = $p['names_by_stack'][$stack] ?? $p['install_name'] ?? null;
+
+        if ($name === null) {
+            return null;
+        }
+
+        return match ($stack) {
+            'php' => 'composer require '.$name,
+            'node' => 'npm install '.$name,
+            'python' => 'pip install '.$name.'   # or: uv add '.$name,
             default => null,
         };
     }

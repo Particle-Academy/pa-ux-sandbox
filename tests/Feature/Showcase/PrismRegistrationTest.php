@@ -41,7 +41,17 @@ it('keeps the prism fork in the registry', function () {
     expect($prism['composer'])->toBe('particle-academy/prism');
     expect($prism['packagist'])->toBe('particle-academy/prism');
     expect($prism['repo'])->toBe('Particle-Academy/prism');
-    expect($prism['language'])->toBe('PHP');
+
+    // `Polyglot`, not `PHP`. This said PHP until 2026-09-21, which was true
+    // when written and had quietly stopped being true: all nine Prism packages
+    // publish on npm as well, and the catalogue listed only the Composer half.
+    // The same blind spot as the one this file exists for, one level in —
+    // registered, but registered as less than it is.
+    expect($prism['language'])->toBe('Polyglot');
+
+    // The node half, asserted rather than assumed. Without this the entry can
+    // slide back to PHP-only and every check here still passes.
+    expect($prism['npm'])->toBe('@particle-academy/prism');
 });
 
 it('does not hide it, and does not leave it stranded in PLANNED', function () {

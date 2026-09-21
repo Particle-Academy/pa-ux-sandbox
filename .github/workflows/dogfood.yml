@@ -22,6 +22,29 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Third-party dependency allowlist. This job INSTALLS -- composer install
+      # and npm ci below -- so it needs the same gate ci.yml carries, and it did
+      # not have it. Found 2026-09-21 by the org gate audit, once that audit
+      # started asking what a workflow DOES rather than what it is named:
+      # matching on filename, it only ever looked at publish/ci/test/third-party
+      # and this file was invisible to it.
+      #
+      # The allowlist is FETCHED, never vendored: one source, no copies to drift.
+      - name: Fetch the third-party allowlist
+        uses: actions/checkout@v4
+        with:
+          repository: Particle-Academy/.github
+          path: .third-party-allowlist
+          persist-credentials: false
+
+      - name: Third-party dependency allowlist
+        run: |
+          node .third-party-allowlist/third-party/check.mjs --repo .
+          # Delete it. A fetched checkout left lying in the workspace is not
+          # inert -- vitest globbed the checker's own tests out of it and failed
+          # a package whose code was fine.
+          node -e "require('node:fs').rmSync('.third-party-allowlist',{recursive:true,force:true})"
+
       - uses: shivammathur/setup-php@v2
         with:
           php-version: "8.4"

@@ -378,47 +378,78 @@ final class PackageFamily
                 [
                     'label' => 'LLM layer',
                     'capability' => 'LLM providers for Laravel: text, structured output, streaming and tool calling',
-                    'members' => [['language' => 'PHP', 'slug' => 'prism']],
+                    'members' => [
+                        ['language' => 'PHP', 'slug' => 'prism'],
+                        ['language' => 'Python', 'slug' => 'prism-py'],
+                        ['language' => 'Node / TypeScript', 'slug' => 'prism-ts'],
+                    ],
                 ],
                 [
                     'label' => 'Agent sessions',
                     'capability' => 'LLM agent harness: durable sessions, modes, tool permissions and subagents',
-                    'members' => [['language' => 'PHP', 'slug' => 'prism-harness']],
+                    'members' => [
+                        ['language' => 'PHP', 'slug' => 'prism-harness'],
+                        ['language' => 'Python', 'slug' => 'prism-harness-py'],
+                        ['language' => 'Node / TypeScript', 'slug' => 'prism-harness-ts'],
+                    ],
                 ],
                 [
                     'label' => 'Tools',
                     'capability' => 'MCP client: remote MCP tools as Prism tools, across a visible trust boundary',
-                    'members' => [['language' => 'PHP', 'slug' => 'prism-mcp']],
+                    'members' => [
+                        ['language' => 'PHP', 'slug' => 'prism-mcp'],
+                        ['language' => 'Node / TypeScript', 'slug' => 'prism-mcp-ts'],
+                    ],
                 ],
                 [
                     'label' => 'Memory',
                     'capability' => 'Agent memory: vector store, semantic recall and token-budget-aware retrieval',
-                    'members' => [['language' => 'PHP', 'slug' => 'prism-memory']],
+                    'members' => [
+                        ['language' => 'PHP', 'slug' => 'prism-memory'],
+                        ['language' => 'Python', 'slug' => 'prism-memory-py'],
+                        ['language' => 'Node / TypeScript', 'slug' => 'prism-memory-ts'],
+                    ],
                 ],
                 [
                     'label' => 'Browser',
                     'capability' => 'Web browsing for agents: guarded, policy-first browser automation',
-                    'members' => [['language' => 'PHP', 'slug' => 'prism-browser']],
+                    'members' => [
+                        ['language' => 'PHP', 'slug' => 'prism-browser'],
+                        ['language' => 'Python', 'slug' => 'prism-browser-py'],
+                        ['language' => 'Node / TypeScript', 'slug' => 'prism-browser-ts'],
+                    ],
                 ],
                 [
                     'label' => 'Workspace',
                     'capability' => 'Agent sandbox: a session-scoped filesystem behind a path guard',
-                    'members' => [['language' => 'PHP', 'slug' => 'prism-workspace']],
+                    'members' => [
+                        ['language' => 'PHP', 'slug' => 'prism-workspace'],
+                        ['language' => 'Node / TypeScript', 'slug' => 'prism-workspace-ts'],
+                    ],
                 ],
                 [
                     'label' => 'Human+',
                     'capability' => 'Human+ presence: agent sessions joining live Fancy surfaces over MCP relay',
-                    'members' => [['language' => 'PHP', 'slug' => 'prism-human-plus']],
+                    'members' => [
+                        ['language' => 'PHP', 'slug' => 'prism-human-plus'],
+                        ['language' => 'Node / TypeScript', 'slug' => 'prism-human-plus-ts'],
+                    ],
                 ],
                 [
                     'label' => 'Tracing',
                     'capability' => 'LLM tracing: OpenTelemetry GenAI spans for agent runs',
-                    'members' => [['language' => 'PHP', 'slug' => 'prism-opentelemetry']],
+                    'members' => [
+                        ['language' => 'PHP', 'slug' => 'prism-opentelemetry'],
+                        ['language' => 'Node / TypeScript', 'slug' => 'prism-opentelemetry-ts'],
+                    ],
                 ],
                 [
                     'label' => 'Perplexity',
                     'capability' => 'Perplexity search, embeddings and async deep research',
-                    'members' => [['language' => 'PHP', 'slug' => 'prism-perplexity']],
+                    'members' => [
+                        ['language' => 'PHP', 'slug' => 'prism-perplexity'],
+                        ['language' => 'Node / TypeScript', 'slug' => 'prism-perplexity-ts'],
+                    ],
                 ],
             ],
         ],

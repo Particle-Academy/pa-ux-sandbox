@@ -30,6 +30,90 @@ class PackageContext
             'how' => '<code>composer require particle-academy/prism</code>. The kit reaches it through a seam rather than directly: <code>FancyFlow\\Capabilities\\Adapters\\PrismLlmClient</code> implements fancy-flow-php&apos;s <code>LlmClient</code> contract, and <code>prism-php/prism</code> stays under composer <code>suggest</code> with every entry point <code>isAvailable()</code>-guarded — so fancy-flow&apos;s core keeps its no-runtime-dependencies rule and an app that already uses Prism gets a working <code>llm_router</code> with no glue. <strong>Credentials resolve at call time, not at boot.</strong> <code>PrismLlmClient</code> takes a callable mapping a host credential <em>reference</em> to provider config, applied through <code>-&gt;using($provider, $model, $config)</code>, so API keys living on a database row rather than in <code>.env</code> — and queue workers with no request-scoped config — are the supported case rather than the awkward one.',
         ],
 
+        // The Prism PORTS. Each has no README this registry can read and no
+        // components, exactly like the PHP nine above -- so this context IS
+        // the page. Without it `memberKeepsOwnPage()` is false and joining
+        // the family 301s every port into it, which is the same disappearance
+        // the PHP nine already had once.
+
+        'prism-ts' => [
+            'why' => 'The contract is the same in every runtime; only the host differs. A team on Node or Python should not have to reimplement the provider layer itself -- unified text, structured and streaming calls across providers, with per-run spend attribution, or route through a PHP service to reach it, because the capability happens to have been written in Laravel first. This is that port -- the same behaviour, held to the same shared fixtures rather than to a README that claims parity.',
+            'what' => 'Node / TypeScript port of <a href="/packages/prism">prism</a> -- the provider layer itself -- unified text, structured and streaming calls across providers, with per-run spend attribution.',
+            'how' => '<code>npm install @particle-academy/prism</code>. Same shapes in and out as the PHP twin; the reasoning behind the capability is on <a href="/packages/prism">that page</a>.',
+        ],
+
+        'prism-py' => [
+            'why' => 'The contract is the same in every runtime; only the host differs. A team on Node or Python should not have to reimplement the provider layer itself -- unified text, structured and streaming calls across providers, with per-run spend attribution, or route through a PHP service to reach it, because the capability happens to have been written in Laravel first. This is that port -- the same behaviour, held to the same shared fixtures rather than to a README that claims parity.',
+            'what' => 'Python port of <a href="/packages/prism">prism</a> -- the provider layer itself -- unified text, structured and streaming calls across providers, with per-run spend attribution.',
+            'how' => '<code>pip install prism-ai-core</code> (or <code>uv add prism-ai-core</code>). Published as <code>prism-ai-core</code>, not as the repo name -- the PyPI namespace is global, so the Prism ports carry a <code>prism-ai-</code> prefix.',
+        ],
+
+        'prism-browser-ts' => [
+            'why' => 'The contract is the same in every runtime; only the host differs. A team on Node or Python should not have to reimplement guarded browser automation: bounded observations and policy-first navigation, so an agent&apos;s reach is declared rather than discovered, or route through a PHP service to reach it, because the capability happens to have been written in Laravel first. This is that port -- the same behaviour, held to the same shared fixtures rather than to a README that claims parity.',
+            'what' => 'Node / TypeScript port of <a href="/packages/prism-browser">prism-browser</a> -- guarded browser automation: bounded observations and policy-first navigation, so an agent&apos;s reach is declared rather than discovered.',
+            'how' => '<code>npm install @particle-academy/prism-browser</code>. Same shapes in and out as the PHP twin; the reasoning behind the capability is on <a href="/packages/prism-browser">that page</a>.',
+        ],
+
+        'prism-browser-py' => [
+            'why' => 'The contract is the same in every runtime; only the host differs. A team on Node or Python should not have to reimplement guarded browser automation: bounded observations and policy-first navigation, so an agent&apos;s reach is declared rather than discovered, or route through a PHP service to reach it, because the capability happens to have been written in Laravel first. This is that port -- the same behaviour, held to the same shared fixtures rather than to a README that claims parity.',
+            'what' => 'Python port of <a href="/packages/prism-browser">prism-browser</a> -- guarded browser automation: bounded observations and policy-first navigation, so an agent&apos;s reach is declared rather than discovered.',
+            'how' => '<code>pip install prism-ai-browser</code> (or <code>uv add prism-ai-browser</code>). Published as <code>prism-ai-browser</code>, not as the repo name -- the PyPI namespace is global, so the Prism ports carry a <code>prism-ai-</code> prefix.',
+        ],
+
+        'prism-harness-ts' => [
+            'why' => 'The contract is the same in every runtime; only the host differs. A team on Node or Python should not have to reimplement durable agent sessions -- threads, modes, tool permissions and subagents, or route through a PHP service to reach it, because the capability happens to have been written in Laravel first. This is that port -- the same behaviour, held to the same shared fixtures rather than to a README that claims parity.',
+            'what' => 'Node / TypeScript port of <a href="/packages/prism-harness">prism-harness</a> -- durable agent sessions -- threads, modes, tool permissions and subagents.',
+            'how' => '<code>npm install @particle-academy/prism-harness</code>. Same shapes in and out as the PHP twin; the reasoning behind the capability is on <a href="/packages/prism-harness">that page</a>.',
+        ],
+
+        'prism-harness-py' => [
+            'why' => 'The contract is the same in every runtime; only the host differs. A team on Node or Python should not have to reimplement durable agent sessions -- threads, modes, tool permissions and subagents, or route through a PHP service to reach it, because the capability happens to have been written in Laravel first. This is that port -- the same behaviour, held to the same shared fixtures rather than to a README that claims parity.',
+            'what' => 'Python port of <a href="/packages/prism-harness">prism-harness</a> -- durable agent sessions -- threads, modes, tool permissions and subagents.',
+            'how' => '<code>pip install prism-ai-harness</code> (or <code>uv add prism-ai-harness</code>). Published as <code>prism-ai-harness</code>, not as the repo name -- the PyPI namespace is global, so the Prism ports carry a <code>prism-ai-</code> prefix.',
+        ],
+
+        'prism-memory-ts' => [
+            'why' => 'The contract is the same in every runtime; only the host differs. A team on Node or Python should not have to reimplement persistent context and semantic recall -- vector storage behind remember / recall, with token-budgeted retrieval, or route through a PHP service to reach it, because the capability happens to have been written in Laravel first. This is that port -- the same behaviour, held to the same shared fixtures rather than to a README that claims parity.',
+            'what' => 'Node / TypeScript port of <a href="/packages/prism-memory">prism-memory</a> -- persistent context and semantic recall -- vector storage behind remember / recall, with token-budgeted retrieval.',
+            'how' => '<code>npm install @particle-academy/prism-memory</code>. Same shapes in and out as the PHP twin; the reasoning behind the capability is on <a href="/packages/prism-memory">that page</a>.',
+        ],
+
+        'prism-memory-py' => [
+            'why' => 'The contract is the same in every runtime; only the host differs. A team on Node or Python should not have to reimplement persistent context and semantic recall -- vector storage behind remember / recall, with token-budgeted retrieval, or route through a PHP service to reach it, because the capability happens to have been written in Laravel first. This is that port -- the same behaviour, held to the same shared fixtures rather than to a README that claims parity.',
+            'what' => 'Python port of <a href="/packages/prism-memory">prism-memory</a> -- persistent context and semantic recall -- vector storage behind remember / recall, with token-budgeted retrieval.',
+            'how' => '<code>pip install prism-ai-memory</code> (or <code>uv add prism-ai-memory</code>). Published as <code>prism-ai-memory</code>, not as the repo name -- the PyPI namespace is global, so the Prism ports carry a <code>prism-ai-</code> prefix.',
+        ],
+
+        'prism-mcp-ts' => [
+            'why' => 'The contract is the same in every runtime; only the host differs. A team on Node or Python should not have to reimplement the Model Context Protocol client: remote MCP tools consumed as ordinary tools, across a visible trust boundary, or route through a PHP service to reach it, because the capability happens to have been written in Laravel first. This is that port -- the same behaviour, held to the same shared fixtures rather than to a README that claims parity.',
+            'what' => 'Node / TypeScript port of <a href="/packages/prism-mcp">prism-mcp</a> -- the Model Context Protocol client: remote MCP tools consumed as ordinary tools, across a visible trust boundary.',
+            'how' => '<code>npm install @particle-academy/prism-mcp</code>. Same shapes in and out as the PHP twin; the reasoning behind the capability is on <a href="/packages/prism-mcp">that page</a>.',
+        ],
+
+        'prism-workspace-ts' => [
+            'why' => 'The contract is the same in every runtime; only the host differs. A team on Node or Python should not have to reimplement sandboxed, session-scoped agent workspaces -- a scoped disk behind a path guard, or route through a PHP service to reach it, because the capability happens to have been written in Laravel first. This is that port -- the same behaviour, held to the same shared fixtures rather than to a README that claims parity.',
+            'what' => 'Node / TypeScript port of <a href="/packages/prism-workspace">prism-workspace</a> -- sandboxed, session-scoped agent workspaces -- a scoped disk behind a path guard.',
+            'how' => '<code>npm install @particle-academy/prism-workspace</code>. Same shapes in and out as the PHP twin; the reasoning behind the capability is on <a href="/packages/prism-workspace">that page</a>.',
+        ],
+
+        'prism-human-plus-ts' => [
+            'why' => 'The contract is the same in every runtime; only the host differs. A team on Node or Python should not have to reimplement Human+ participant presence: an agent session joins live Fancy surfaces as a participant rather than scraping them, or route through a PHP service to reach it, because the capability happens to have been written in Laravel first. This is that port -- the same behaviour, held to the same shared fixtures rather than to a README that claims parity.',
+            'what' => 'Node / TypeScript port of <a href="/packages/prism-human-plus">prism-human-plus</a> -- Human+ participant presence: an agent session joins live Fancy surfaces as a participant rather than scraping them.',
+            'how' => '<code>npm install @particle-academy/prism-human-plus</code>. Same shapes in and out as the PHP twin; the reasoning behind the capability is on <a href="/packages/prism-human-plus">that page</a>.',
+        ],
+
+        'prism-opentelemetry-ts' => [
+            'why' => 'The contract is the same in every runtime; only the host differs. A team on Node or Python should not have to reimplement the OpenTelemetry bridge -- telemetry events as GenAI-convention spans, or route through a PHP service to reach it, because the capability happens to have been written in Laravel first. This is that port -- the same behaviour, held to the same shared fixtures rather than to a README that claims parity.',
+            'what' => 'Node / TypeScript port of <a href="/packages/prism-opentelemetry">prism-opentelemetry</a> -- the OpenTelemetry bridge -- telemetry events as GenAI-convention spans.',
+            'how' => '<code>npm install @particle-academy/prism-opentelemetry</code>. Same shapes in and out as the PHP twin; the reasoning behind the capability is on <a href="/packages/prism-opentelemetry">that page</a>.',
+        ],
+
+        'prism-perplexity-ts' => [
+            'why' => 'The contract is the same in every runtime; only the host differs. A team on Node or Python should not have to reimplement the rest of the Perplexity API -- embeddings, direct search and async deep research, or route through a PHP service to reach it, because the capability happens to have been written in Laravel first. This is that port -- the same behaviour, held to the same shared fixtures rather than to a README that claims parity.',
+            'what' => 'Node / TypeScript port of <a href="/packages/prism-perplexity">prism-perplexity</a> -- the rest of the Perplexity API -- embeddings, direct search and async deep research.',
+            'how' => '<code>npm install @particle-academy/prism-perplexity</code>. Same shapes in and out as the PHP twin; the reasoning behind the capability is on <a href="/packages/prism-perplexity">that page</a>.',
+        ],
+
         'prism-harness' => [
             'why' => 'A single model call is stateless, and an agent that is genuinely useful is not. Threads, the mode it is operating in, which tools it may reach for, and the subagents it spawns are all state — and state that lives only in a controller is state nobody can resume, inspect or govern. This is the layer that makes an agent conversation a durable thing rather than one request that happened to work.',
             'what' => 'Durable agent sessions for Laravel, built on <a href="/packages/prism">Prism</a>: threads, modes, tool permissions and subagents. Tool <em>permissions</em> are the part worth reading twice — what an agent may do is declared rather than implied by whatever happens to be registered.',

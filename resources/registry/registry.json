@@ -1,5 +1,5 @@
 {
-    "count": 312,
+    "count": 325,
     "items": [
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
@@ -4975,11 +4975,55 @@
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "prism-browser-py",
+            "type": "registry:ui",
+            "title": "prism-ai-browser",
+            "description": "Python port of prism-browser -- Guarded browser automation -- bounded observations and policy-first navigation.",
+            "package": "prism-browser-py",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "prism-browser-ts",
+            "type": "registry:ui",
+            "title": "@particle-academy/prism-browser",
+            "description": "Node/TS port of prism-browser -- Guarded browser automation -- bounded observations and policy-first navigation.",
+            "package": "prism-browser-ts",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
             "name": "prism-harness",
             "type": "registry:ui",
             "title": "particle-academy/prism-harness",
             "description": "Durable agent sessions for Laravel -- threads, modes, tool permissions and subagents on top of Prism. Where a conversation with an agent stops being one request and becomes state you can resume, inspect and govern.",
             "package": "prism-harness",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "prism-harness-py",
+            "type": "registry:ui",
+            "title": "prism-ai-harness",
+            "description": "Python port of prism-harness -- Durable agent sessions -- threads, modes, tool permissions and subagents.",
+            "package": "prism-harness-py",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "prism-harness-ts",
+            "type": "registry:ui",
+            "title": "@particle-academy/prism-harness",
+            "description": "Node/TS port of prism-harness -- Durable agent sessions -- threads, modes, tool permissions and subagents.",
+            "package": "prism-harness-ts",
             "dependencies": [],
             "registryDependencies": [],
             "files": []
@@ -4997,11 +5041,33 @@
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "prism-human-plus-ts",
+            "type": "registry:ui",
+            "title": "@particle-academy/prism-human-plus",
+            "description": "Node/TS port of prism-human-plus -- Human+ participant presence -- an agent session joins live Fancy surfaces.",
+            "package": "prism-human-plus-ts",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
             "name": "prism-mcp",
             "type": "registry:ui",
             "title": "particle-academy/prism-mcp",
             "description": "Model Context Protocol for Prism -- consume remote MCP tools as ordinary Prism tools, across a trust boundary you can see. The boundary is the point: a remote tool is not quietly indistinguishable from a local one.",
             "package": "prism-mcp",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "prism-mcp-ts",
+            "type": "registry:ui",
+            "title": "@particle-academy/prism-mcp",
+            "description": "Node/TS port of prism-mcp -- Model Context Protocol -- consume remote MCP tools as ordinary Prism tools.",
+            "package": "prism-mcp-ts",
             "dependencies": [],
             "registryDependencies": [],
             "files": []
@@ -5019,11 +5085,44 @@
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "prism-memory-py",
+            "type": "registry:ui",
+            "title": "prism-ai-memory",
+            "description": "Python port of prism-memory -- Persistent context and semantic recall -- vector storage, remember / recall.",
+            "package": "prism-memory-py",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "prism-memory-ts",
+            "type": "registry:ui",
+            "title": "@particle-academy/prism-memory",
+            "description": "Node/TS port of prism-memory -- Persistent context and semantic recall -- vector storage, remember / recall.",
+            "package": "prism-memory-ts",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
             "name": "prism-opentelemetry",
             "type": "registry:ui",
             "title": "particle-academy/prism-opentelemetry",
             "description": "OpenTelemetry bridge for Prism -- turns Prism telemetry events into GenAI-convention spans for Arize Phoenix and any OTLP backend, so agent runs are readable in the tracing you already operate rather than a second place to look.",
             "package": "prism-opentelemetry",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "prism-opentelemetry-ts",
+            "type": "registry:ui",
+            "title": "@particle-academy/prism-opentelemetry",
+            "description": "Node/TS port of prism-opentelemetry -- OpenTelemetry bridge -- Prism telemetry as GenAI-convention spans.",
+            "package": "prism-opentelemetry-ts",
             "dependencies": [],
             "registryDependencies": [],
             "files": []
@@ -5041,11 +5140,55 @@
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "prism-perplexity-ts",
+            "type": "registry:ui",
+            "title": "@particle-academy/prism-perplexity",
+            "description": "Node/TS port of prism-perplexity -- The rest of the Perplexity API -- embeddings, direct search, deep research.",
+            "package": "prism-perplexity-ts",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "prism-py",
+            "type": "registry:ui",
+            "title": "prism-ai-core",
+            "description": "Python port of prism -- Unified text / structured / streaming across providers, with per-run spend attribution.",
+            "package": "prism-py",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "prism-ts",
+            "type": "registry:ui",
+            "title": "@particle-academy/prism",
+            "description": "Node/TS port of prism -- Unified text / structured / streaming across providers, with per-run spend attribution.",
+            "package": "prism-ts",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
             "name": "prism-workspace",
             "type": "registry:ui",
             "title": "particle-academy/prism-workspace",
             "description": "Sandboxed, session-scoped agent workspaces for Laravel -- a scoped Storage disk behind a path guard, shipped with the adversarial corpus that proves the boundary holds. Where an agent gets somewhere to write without getting everywhere to write.",
             "package": "prism-workspace",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "prism-workspace-ts",
+            "type": "registry:ui",
+            "title": "@particle-academy/prism-workspace",
+            "description": "Node/TS port of prism-workspace -- Sandboxed, session-scoped agent workspaces behind a path guard.",
+            "package": "prism-workspace-ts",
             "dependencies": [],
             "registryDependencies": [],
             "files": []

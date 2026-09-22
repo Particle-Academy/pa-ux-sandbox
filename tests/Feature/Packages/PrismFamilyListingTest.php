@@ -18,9 +18,25 @@ uses(TestCase::class);
  *
  * The family is also a public section of /packages (owner-approved 2026-09-13).
  */
+/*
+ * Twenty-two, not nine.
+ *
+ * Each capability is three repos -- `prism-harness`, `prism-harness-ts`,
+ * `prism-harness-py` -- and until 2026-09-21 only the PHP nine were registered
+ * or in the family. Nine TS ports are published; four of the nine Python ports
+ * are, and the other five 404 on PyPI, so they are deliberately absent rather
+ * than listed as something nobody can install.
+ *
+ * Hand-listed on purpose. Deriving this from PackageFamily would compare the
+ * family against itself and assert nothing.
+ */
 const PRISM_MEMBERS = [
     'prism', 'prism-harness', 'prism-human-plus', 'prism-mcp', 'prism-opentelemetry',
     'prism-perplexity', 'prism-workspace', 'prism-memory', 'prism-browser',
+    'prism-ts', 'prism-harness-ts', 'prism-human-plus-ts', 'prism-mcp-ts',
+    'prism-opentelemetry-ts', 'prism-perplexity-ts', 'prism-workspace-ts',
+    'prism-memory-ts', 'prism-browser-ts',
+    'prism-py', 'prism-harness-py', 'prism-memory-py', 'prism-browser-py',
 ];
 
 function prismBackendSearch(string $query): array

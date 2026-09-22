@@ -42,16 +42,33 @@ it('keeps the prism fork in the registry', function () {
     expect($prism['packagist'])->toBe('particle-academy/prism');
     expect($prism['repo'])->toBe('Particle-Academy/prism');
 
-    // `Polyglot`, not `PHP`. This said PHP until 2026-09-21, which was true
-    // when written and had quietly stopped being true: all nine Prism packages
-    // publish on npm as well, and the catalogue listed only the Composer half.
-    // The same blind spot as the one this file exists for, one level in —
-    // registered, but registered as less than it is.
-    expect($prism['language'])->toBe('Polyglot');
+    expect($prism['language'])->toBe('PHP');
+});
 
-    // The node half, asserted rather than assumed. Without this the entry can
-    // slide back to PHP-only and every check here still passes.
-    expect($prism['npm'])->toBe('@particle-academy/prism');
+it('registers the TypeScript and Python ports as packages, not as fields', function () {
+    // Each Prism capability is THREE repos -- prism / prism-ts / prism-py --
+    // and until 2026-09-21 only the PHP one was registered. The first attempt
+    // at fixing that hung `npm` and `pypi` onto the PHP entry, which makes the
+    // PHP package MENTION a Node package without listing it: absent from
+    // /packages, from kit:status and from every MCP search, exactly as before.
+    //
+    // A port is its own package with its own repo and release cadence, so it
+    // is its own entry -- the shape holy-sheet / holy-sheet-js / holy-sheet-py
+    // already used.
+    $ts = PackageRegistry::findAny('prism-ts');
+    expect($ts)->not->toBeNull('the TypeScript port is published and must be listed as a package');
+    expect($ts['npm'])->toBe('@particle-academy/prism');
+    expect($ts['language'])->toBe('TypeScript');
+
+    $py = PackageRegistry::findAny('prism-py');
+    expect($py)->not->toBeNull();
+    expect($py['pypi'])->toBe('prism-ai-core');
+
+    // Named `prism-ai-*` on PyPI, which no naming pattern here would predict.
+    // Guessing it from the `fancy-<slug>` convention found an unrelated MCMC
+    // tool, and reading that 200 as "ours" then as "no Python side" is how the
+    // ports stayed missing. The name is asserted because it cannot be derived.
+    expect($py['language'])->toBe('Python');
 });
 
 it('does not hide it, and does not leave it stranded in PLANNED', function () {

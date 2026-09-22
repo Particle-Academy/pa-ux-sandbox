@@ -24,7 +24,14 @@ class PackageRegistry
      * someone to `composer require` something that 404s.
      */
     public const HIDDEN = [
-        // EMPTY, and the last removal is the lesson worth keeping.
+        // Built, tested and browser-verified 2026-09-22; UNPUBLISHED. The npm
+        // name does not exist yet, so the first publish is the owner's (OIDC
+        // cannot claim a new name). Remove this slug the moment
+        // `npm view @particle-academy/fancy-walkthrough version` returns one --
+        // HiddenPackagesAreNotPublishedTest fails if it is still here then.
+        'fancy-walkthrough',
+
+        // It was EMPTY before that, and the last removal is the lesson worth keeping.
         //
         // `fancy-trading-ui` sat here from 2026-08-27. It was hidden for a
         // GOOD reason -- it had been un-hidden once on the strength of a tag,
@@ -116,31 +123,6 @@ WHO ELSE BENEFITS (the second half of the owner`s test): any package needing use
 SCOPE: paths, literals, `&& || !`, comparisons, ternary, object and array literals. Deliberately NOT a programming language: no user functions, no loops, no assignment.
 
 BEFORE IT CAN SHIP: three registry names that do not exist yet (npm scoped, Packagist, PyPI), so the first publish of each needs the owner -- npm cannot be claimed by OIDC, Packagist needs a one-time submit AFTER the first tag, PyPI needs a pending publisher BEFORE it. Run `.claude/skills/ship-it/preflight.py` and hand over the numbered steps rather than improvising them.',
-        ],
-        'fancy-walkthrough' => [
-            'name' => '@particle-academy/fancy-walkthrough',
-            'repo' => 'Particle-Academy/fancy-walkthrough',
-            'why' => 'Guided walkthroughs that onboard a user THROUGH the real interface -- authored by a developer or by an agent, and driveable by an agent. NOT YET STARTED; registered first per the rule, so it cannot become a decided-but-invisible package.
-
-WHY IT EXISTS, AND WHY IT IS NOT A PRODUCT TOUR. The research base in .ai/knowledge/best-onboarding-processes.md is blunt in the other direction: NN/g finds contextual help beats pre-use tutorials, Baymard finds premature account creation depresses conversion, and the recurring finding across Apple, Android and HEART is that onboarding should teach INSIDE real work rather than in a detached slideshow. A package that made "a modal carousel of feature highlights" the easy thing would be shipping the exact pattern the evidence warns about. So the shape is the First-Value Ladder: route lightly, guide ONE meaningful action against real UI, show proof, then defer the commitment asks. Front-loaded tours are the anti-pattern this package exists to make harder to build than the good thing.
-
-WHY IT IS A PACKAGE RATHER THAN A PAGE. Every consumer app re-implements the same four hard parts: anchoring a step to an element that may not be mounted yet, surviving route changes and re-renders mid-walkthrough, resuming where a user left off, and instrumenting activation rather than step-completion. Those are the parts people get wrong, and they are identical across apps.
-
-THE HUMAN+ HALF, which is the differentiated part. A walkthrough is the rare artifact BOTH audiences need: a human learning an interface, and an agent learning the same interface. So it is bidirectional -- an agent can AUTHOR a walkthrough (steps are JSON, not JSX children), and an agent can DRIVE one through an MCP bridge, which is a far better onboarding surface for an agent than DOM scraping. Same steps, same handles, both readers.
-
-MEASUREMENT IS PART OF THE PACKAGE, not left to the host. The report is emphatic that tutorial completion is a shell metric; the real ones are activation, time-to-first-value and first-task success. The package emits those events by construction, so a host cannot accidentally instrument only the vanity number.
-
-THIRD-PARTY WAS EVALUATED AND DECLINED -- owner ruling 2026-09-21, build first-party. Recorded with its reasoning because it was not a reflex: driver.js was explicitly put back on the table (`not opposed if it makes sense, so long as the fancy flare goes on and devs can customise it`), read from its published types, and declined on the content seam -- `title` and `description` are STRINGS, so rendering Fancy components inside a step means createRoot() into a DOM node driver.js owns, and customising means mutating its DOM rather than composing our components. Its SVG stage cutout and scroll-into-view ARE good, and owning that is the accepted cost. driver.js stays the named fallback rather than a fresh discovery if the stage proves harder than it looks. The rest of this paragraph is the evidence that framed the ruling. Owner 2026-09-21: intro.js and its kind are too clunky and not fancy, and the point is to replace that category -- but driver.js is acceptable IF it makes sense, provided the fancy flare goes on and devs can customise it. Measured against npm that day: intro.js 8.6.0 and shepherd.js 15.3.0 are both AGPL-3.0 against react-fancy`s MIT, which would hand every consumer a licence question they did not ask for; reactour last published 2024-05-31, stale by sixteen months, so it fails the freshness bar before licence is discussed. driver.js 1.8.0 is MIT with ZERO dependencies and current, so it is the only real candidate.
-
-WHAT driver.js ACTUALLY OFFERS, from its published types rather than impression: `element` takes `string | Element | (() => Element)`, so it is not selector-only; `stagePadding` / `stageRadius` / `popoverClass` are genuine theming hooks; and its SVG stage cutout plus scroll-into-view is the HARD part, done well. The cost is the half the owner cares most about: `title` and `description` are STRINGS, and the only way to render Fancy components inside is `createRoot()` into a DOM node driver.js owns, via `onPopoverRender`. Customising means mutating their DOM imperatively rather than composing our components, which is the definition of not-fancy in this kit.
-
-THE CLUNKY PART IS ARCHITECTURAL wherever it appears: string selectors plus runtime rect measurement plus a global imperative singleton produce the silent no-match, the step that breaks before mount, the z-index and scroll fights, restyling by CSS override, restart-from-zero, and broken focus. The fancy inversion is that TARGETS REGISTER THEMSELVES by stable id and the walkthrough never queries the DOM.
-
-AN EARLIER DRAFT OF THIS ENTRY CLAIMED A GAP IN react-fancy -- that Popover only anchors through a PopoverTrigger child, so an external-anchor prop would have to be filed. THAT WAS WRONG and is retracted. Drawer attach="container" already anchors to an element it does not own and never measures it: it positions absolute and lets the nearest positioned ancestor define the box -- containment rather than measurement. Underneath, useFloatingPosition already takes an anchor RefObject and useNodeRegistry already keeps a Map of stable ids to rects. All three primitives ship today; there is no gap and nothing to file. Full design record: .ai/plans/fancy-walkthrough.md.
-
-SCOPE: step definitions as JSON, element anchoring by stable handle, spotlight/scrim, skip and resume, route-aware steps, branching by segment, activation instrumentation, an authoring surface, and an MCP bridge. Deliberately NOT: a CMS, analytics storage, or a hosted service.
-
-BEFORE IT CAN SHIP: the npm name does not exist yet, so the first publish needs the owner -- npm cannot be claimed by OIDC. Run .claude/skills/ship-it/preflight.py and hand over the numbered steps rather than improvising them.',
         ],
         'fancy-connector-core-py' => [
             'name' => 'fancy-connector-core',
@@ -372,6 +354,8 @@ BEFORE IT CAN SHIP: the npm name does not exist yet, so the first publish needs 
         // NOT validated, which makes hiding a way to bank a latent failure.
         // That publish happened on 2026-08-27 and the field is now validated.
         'fancy-trading-ui' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#22c55e'],
+        // Onboarding.
+        'fancy-walkthrough' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#6366f1'],
         // Python backends -- each the third runtime of an existing pair.
         'fancy-flow-py' => ['group' => 'surfaces', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#0ea5e9'],
         'fancy-features-py' => ['group' => 'platform', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#f59e0b'],
@@ -1017,6 +1001,14 @@ BEFORE IT CAN SHIP: the npm name does not exist yet, so the first publish needs 
                 'tagline' => 'Trading surfaces -- order ticket, price ladder/DOM, book, depth, tape, blotter, positions, watchlist, alerts, and a session-aware candlestick / OHLC chart on lightweight-charts. Controlled, agent-bridgeable, and built around a safety floor a prop cannot switch off.',
                 'npm' => '@particle-academy/fancy-trading-ui',
                 'repo' => 'Particle-Academy/fancy-trading-ui',
+                'language' => 'TypeScript',
+            ],
+            [
+                'slug' => 'fancy-walkthrough',
+                'name' => '@particle-academy/fancy-walkthrough',
+                'tagline' => 'Guided walkthroughs that onboard a user THROUGH the real interface -- self-registering targets, a spotlight over the visible part of the target that survives scroll, overflow and resize, steps that advance when the person actually does the thing, and first-value activation events built in. The first-party replacement for intro.js-style tours.',
+                'npm' => '@particle-academy/fancy-walkthrough',
+                'repo' => 'Particle-Academy/fancy-walkthrough',
                 'language' => 'TypeScript',
             ],
             [

@@ -104,8 +104,18 @@ it('excludes an unreleased twin, because an install command must be runnable', f
     }
 
     foreach ($hidden as $slug) {
-        $record = PackageRegistry::findAny($slug) ?? [];
+        // `definitionFor`, NOT `findAny`. `findAny` reads the public lists, which
+        // EXCLUDE hidden packages -- so for every hidden slug it returned null,
+        // `$names` came back empty, and this loop asserted nothing. It went
+        // unnoticed because HIDDEN was empty (skipped, above) until
+        // fancy-walkthrough was hidden on 2026-09-22, when the test turned
+        // risky instead of red: the anti-vacuity guard covered the empty list
+        // and not the empty lookup.
+        $record = PackageRegistry::definitionFor($slug);
+        expect($record)->not->toBeNull("{$slug} is in HIDDEN but has no definition to hide");
+
         $names = array_filter([$record['npm'] ?? null, $record['composer'] ?? null, $record['pypi'] ?? null]);
+        expect($names)->not->toBeEmpty("{$slug} is HIDDEN but declares no distribution name, so nothing here can check it");
 
         foreach (PackageFamily::all() as $family) {
             $twins = PackageFamily::twinsFor($family['slug']);

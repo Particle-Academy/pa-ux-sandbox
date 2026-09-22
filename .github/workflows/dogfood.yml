@@ -70,6 +70,22 @@ jobs:
       - name: Check
         run: php artisan kit:dogfood
 
+      # Does the LIVE endpoint serve every tool this server declares?
+      #
+      # `search-backend-packages` was committed 2026-08-22, merged, deployed,
+      # and never served -- a month later the public tools/list returned 15
+      # against the 18 declared. Nothing caught it because nothing compared the
+      # two, and every signal anyone would think to check said "deployed": the
+      # site was current and the MCP's own DATA was current.
+      #
+      # Here rather than in `php artisan test` on purpose. It asks PRODUCTION a
+      # question, so it belongs with the other checks that measure what
+      # consumers actually receive -- and on a schedule, where a deploy that
+      # goes stale at 3pm raises its own signal instead of reddening an
+      # unrelated pull request.
+      - name: Every declared MCP tool is actually served
+        run: php artisan mcp:served
+
       # resources/flow-nodes/_connector is GENERATED from the latest
       # fancy-connector-core release by that package's scripts/vendor.mjs. The
       # sandbox test only checks each file carries a GENERATED banner; its

@@ -4170,16 +4170,16 @@
         },
         {
             "name": "particle-academy/fancy-flow-php",
-            "version": "v0.62.0",
+            "version": "v0.63.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/fancy-flow-php.git",
-                "reference": "fc6e5e5a53631aad188223db49b6032c10011477"
+                "reference": "e99e2fe3bd1df9114476bf629da4f3ed154a5ca6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/fancy-flow-php/zipball/fc6e5e5a53631aad188223db49b6032c10011477",
-                "reference": "fc6e5e5a53631aad188223db49b6032c10011477",
+                "url": "https://api.github.com/repos/Particle-Academy/fancy-flow-php/zipball/e99e2fe3bd1df9114476bf629da4f3ed154a5ca6",
+                "reference": "e99e2fe3bd1df9114476bf629da4f3ed154a5ca6",
                 "shasum": ""
             },
             "require": {
@@ -4241,7 +4241,7 @@
                 "issues": "https://github.com/Particle-Academy/fancy-flow-php/issues",
                 "source": "https://github.com/Particle-Academy/fancy-flow-php"
             },
-            "time": "2026-09-29T00:11:52+00:00"
+            "time": "2026-09-29T02:44:29+00:00"
         },
         {
             "name": "particle-academy/fancy-heuristics",

@@ -24,14 +24,11 @@ class PackageRegistry
      * someone to `composer require` something that 404s.
      */
     public const HIDDEN = [
-        // Built, tested and browser-verified 2026-09-22; UNPUBLISHED. The npm
-        // name does not exist yet, so the first publish is the owner's (OIDC
-        // cannot claim a new name). Remove this slug the moment
-        // `npm view @particle-academy/fancy-walkthrough version` returns one --
-        // HiddenPackagesAreNotPublishedTest fails if it is still here then.
-        'fancy-walkthrough',
-
-        // It was EMPTY before that, and the last removal is the lesson worth keeping.
+        // EMPTY -- and the two removals behind it are the lesson worth keeping.
+        //
+        // `fancy-walkthrough` was removed 2026-09-29, the day it published.
+        // It had sat here correctly: the npm name did not exist, and OIDC
+        // cannot claim a new one, so the first publish had to be the owner's.
         //
         // `fancy-trading-ui` sat here from 2026-08-27. It was hidden for a
         // GOOD reason -- it had been un-hidden once on the strength of a tag,

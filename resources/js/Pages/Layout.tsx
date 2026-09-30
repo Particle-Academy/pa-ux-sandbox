@@ -30,6 +30,8 @@ import {
 } from "@particle-academy/fancy-inertia";
 import { FancyInertiaPwa } from "@particle-academy/fancy-inertia/pwa";
 import { CoBrowsePresence } from "@particle-academy/agent-integrations";
+import { WalkthroughTarget } from "@particle-academy/fancy-walkthrough";
+import { SiteWalkthrough, TakeTheTourButton } from "../components/SiteWalkthrough";
 import { cycleTheme } from "../showcase-theme";
 
 const THEME_LABEL = {
@@ -128,6 +130,7 @@ export function Layout({
     const { preference, resolved: theme } = useTheme();
 
     return (
+        <SiteWalkthrough>
         <div className="min-h-screen flex flex-col">
             <header className="nav">
                 <div className="nav-inner">
@@ -146,8 +149,8 @@ export function Layout({
                         {navItems.map((item) => {
                             const active = path === item.match || path.startsWith(item.match + "/");
                             return (
+                                <WalkthroughTarget key={item.to} id={`nav-${item.match}`}>
                                 <Link
-                                    key={item.to}
                                     href={item.to}
                                     className="nav-link"
                                     style={
@@ -159,6 +162,7 @@ export function Layout({
                                 >
                                     {item.label}
                                 </Link>
+                                </WalkthroughTarget>
                             );
                         })}
                     </div>
@@ -182,6 +186,7 @@ export function Layout({
                             {navOpen ? <X size={18} /> : <Menu size={18} />}
                         </button>
 
+                        <WalkthroughTarget id="nav-search">
                         <button
                             onClick={() =>
                                 window.dispatchEvent(
@@ -194,11 +199,15 @@ export function Layout({
                         >
                             <span className="kbd">⌘K</span>
                         </button>
+                        </WalkthroughTarget>
 
                         <TransitionSwitcher />
 
-                        <CoBrowseControl />
+                        <WalkthroughTarget id="nav-cobrowse">
+                            <CoBrowseControl />
+                        </WalkthroughTarget>
 
+                        <WalkthroughTarget id="nav-theme">
                         <Tooltip content={THEME_LABEL[preference]}>
                             <button
                                 onClick={() => cycleTheme()}
@@ -215,6 +224,7 @@ export function Layout({
                                 )}
                             </button>
                         </Tooltip>
+                        </WalkthroughTarget>
 
                         <a
                             className="btn btn-ghost nav-gh"
@@ -555,7 +565,11 @@ export function Layout({
                     </div>
 
                     <div className="footer-bottom">
-                        <span>© Particle Academy · MIT</span>
+                        <span>
+                            © Particle Academy · MIT
+                            {" · "}
+                            <TakeTheTourButton className="as-link" />
+                        </span>
                         {/* The kit version links to what it supports — that page is the
                             only place the browser/PHP/Node floors are written down, and
                             the version chip is where someone looks for them. */}
@@ -576,6 +590,7 @@ export function Layout({
                 updateDescription="Refresh to get the latest build."
             />
         </div>
+        </SiteWalkthrough>
     );
 }
 

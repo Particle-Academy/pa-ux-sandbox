@@ -811,6 +811,14 @@ section.ticker { padding: 0; background: var(--bg-1); }
   font-size: 12px; color: var(--fg-3); flex-wrap: wrap; gap: 12px;
 }
 .footer-bottom .right { font-family: var(--font-mono); }
+/* The site tour trigger. A <button> so it is keyboard-reachable and does
+   not pretend to be a destination -- styled as a link because that is what
+   it reads as beside the copyright. */
+.as-link {
+  background: none; border: 0; padding: 0; font: inherit; cursor: pointer;
+  color: var(--fg-2); text-decoration: underline; text-underline-offset: 2px;
+}
+.as-link:hover { color: var(--fg-1); }
 
 /* ─────────── Small utility ─────────── */
 .divider { height: 1px; background: var(--border-1); margin: 28px 0; }

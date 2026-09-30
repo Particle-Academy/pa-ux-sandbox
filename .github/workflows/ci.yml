@@ -110,13 +110,22 @@ jobs:
       # RAM, so this class used to reach production and announce itself as an
       # outage.
       #
-      # The budget sits between two MEASURED points, not a guess:
-      #   barrel import of @babylonjs/core  1571 MB  -> OOM-killed the deploy
-      #   the same build, granular imports  1197 MB  -> deploys in 90s
-      # 1400 MB leaves the healthy build ~200 MB of headroom and still catches a
-      # regression of that shape. Both numbers were taken on a developer machine;
-      # if CI's own baseline turns out to sit elsewhere, move this ONE number and
-      # say why — do not delete the check.
+      # The budget sits between MEASURED points, not a guess:
+      #   barrel import of @babylonjs/core  1571 MB (local)  -> OOM-killed the deploy
+      #   the same build, granular imports  1197 MB (local)  -> deploys in 90s
+      #   this runner, healthy build        1352 MB (CI)     -> the real baseline
+      #
+      # The first budget was 1400 MB, from the local figures. THIS RUNNER measured
+      # 1352 MB on the first green run — 48 MB of headroom, 3.4%. That is a check
+      # that goes red on variance, and one that cries wolf gets ignored, which is
+      # worse than not having it. Linux CI runs ~13% heavier than the machine the
+      # local numbers came from.
+      #
+      # 1550 MB gives the healthy build ~200 MB (15%) of headroom and still sits
+      # well under the barrel shape, which scaled onto this runner would be
+      # ~1775 MB. Move this ONE number if the baseline genuinely shifts, and say
+      # why — do not delete the check, and do not raise it to accommodate a
+      # regression rather than fixing the regression.
       #
       # Peak RSS scales with the whole module graph, not with any one chunk, so
       # BUILD_MASS=1 prints the per-package tally next to it: a failure names the
@@ -124,7 +133,7 @@ jobs:
       - name: Build (peak memory is budgeted)
         env:
           BUILD_MASS: "1"
-          BUILD_PEAK_BUDGET_MB: "1400"
+          BUILD_PEAK_BUDGET_MB: "1550"
         run: |
           set -o pipefail
           /usr/bin/time -v -o build-mem.txt npm run build 2>&1 | tee build-log.txt

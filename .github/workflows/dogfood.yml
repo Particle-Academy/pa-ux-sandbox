@@ -86,6 +86,30 @@ jobs:
       - name: Every declared MCP tool is actually served
         run: php artisan mcp:served
 
+      # Does every package version the connector catalogue CLAIMS still resolve?
+      #
+      # `connectors:check` was written for exactly this and was then wired into
+      # nothing -- it ran only when a person typed it, which over 26 connectors
+      # and 104 packages across npm, Packagist and PyPI means it effectively did
+      # not run. Its own docblock says staleness "has to be a red build rather
+      # than something someone remembers", and it was the second thing.
+      #
+      # The failure it catches is silent by construction: the catalogue is
+      # GENERATED in another workspace and pushed here, so a version moves,
+      # nobody re-sends the file, and a stale catalogue parses exactly like a
+      # fresh one. Nothing goes red. `kit:dogfood` does not cover it -- that
+      # checks what the SHOWCASE installs, and no connector is a dependency of
+      # this app.
+      #
+      # Here and not in ci.yml deliberately: it asks three public registries a
+      # question, so putting it on every pull request would make unrelated work
+      # depend on their availability. Nightly is where a check that can fail for
+      # someone else's reasons belongs. A failed lookup FAILS the check rather
+      # than counting as current -- a network blip that reads as "published" is
+      # worse than no check, because it is a check people trust.
+      - name: Every connector package version still resolves
+        run: php artisan connectors:check
+
       # resources/flow-nodes/_connector is GENERATED from the latest
       # fancy-connector-core release by that package's scripts/vendor.mjs. The
       # sandbox test only checks each file carries a GENERATED banner; its

@@ -402,11 +402,25 @@ class ConnectorSource
             //
             // They do not collide — different nesting — but a consumer writing
             // one handler for "the setup field" will meet an array on one path
-            // and a string on the other. Flagged upstream; if the names are
-            // reconciled, this is the line that changes. It is the same hazard
-            // the `trigger` block was nested to avoid for `delivery`, which
-            // means "install path" at the top and "webhook/poll/subscription"
-            // inside.
+            // and a string on the other. It is the same hazard the `trigger`
+            // block was nested to avoid for `delivery`, which means "install
+            // path" at the top and "webhook/poll/subscription" inside.
+            //
+            // SETTLED 2026-09-16, AND SETTLED AGAIN 2026-09-30 — DO NOT RE-RAISE.
+            // `TriggerDescriptor.setup: string` and `ProviderAdapter.setup:
+            // SetupStep[]` are two separate typed interfaces in
+            // fancy-connector-core, each with its own doc comment. Neither side
+            // introduced the clash by accident, and reshaping the trigger one is
+            // a BREAKING change to a published core type that six live
+            // connectors depend on. Both stay.
+            //
+            // This note exists because the previous one said only "flagged
+            // upstream", which records that a question was asked and not that it
+            // was answered — so it read as open and I re-opened it with Weaver
+            // two weeks later, who had to go and re-check their own decision to
+            // tell me I had already agreed with it. A comment that carries the
+            // question but not the verdict costs somebody else the same work
+            // twice.
             'setup' => $this->setupFor($connector),
 
             // The connector-level one-liner, distinct from the per-OPERATION

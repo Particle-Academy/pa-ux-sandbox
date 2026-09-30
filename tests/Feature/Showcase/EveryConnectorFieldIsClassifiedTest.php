@@ -85,6 +85,74 @@ function connectorCarriedFields(): array
 }
 
 /**
+ * OPERATION-level fields, each classified the same way.
+ *
+ * ## Why this exists separately
+ *
+ * The connector-level guard below walked `array_keys($connector)` and stopped
+ * there — so for two weeks the mechanism that was written to end silent
+ * gate-2 drops covered only HALF the surface it was protecting. `operations` was
+ * classified as "EXPANDED rather than dropped" and nothing then looked inside
+ * the expansion, even though an index entry is built per operation and most of
+ * what a host reads about a CALL comes from the operation, not the connector.
+ *
+ * A field added to an operation upstream would have been dropped in exactly the
+ * place, and exactly as quietly, as the seven connector-level ones that
+ * prompted this file. The classification map was ahead of nothing; it simply
+ * had no opinion.
+ *
+ * Found by Weaver fixing trigger `method`/`path` to be explicit nulls and me
+ * checking whether that would redden our build. It would not have — which is
+ * the finding. A guard that cannot go red for a whole class of change is not
+ * protecting that class.
+ *
+ * @return array<string,string>
+ */
+function operationCarriedFields(): array
+{
+    return [
+        'delivery' => 'shaped — the install path (package/vendor/both), via deliveryFor()',
+        'docs' => 'verbatim — the deep link for THIS operation',
+        'kind' => 'verbatim — the identity everything is keyed on; a missing one SKIPS the entry',
+        'kindAlias' => 'shaped into the `aliases` list',
+        'role' => 'verbatim, and mapped again into `category` via CATEGORY_FOR_ROLE',
+        'sideEffects' => 'verbatim — whether a host may safely replay the call',
+        'summary' => 'renamed to `description` — what THIS operation does',
+        'title' => 'verbatim, falling back to the kind',
+        // The trigger block is nested precisely because these three mean
+        // something different from their connector-level namesakes.
+        'handshake' => 'inside the nested `trigger` block',
+        'setup' => 'inside the nested `trigger` block, where it is a STRING',
+        'subscription' => 'inside the nested `trigger` block',
+        'verification' => 'inside the nested `trigger` block — hmac / shared-token / null',
+    ];
+}
+
+/**
+ * OPERATION-level fields deliberately not carried, each with the reason.
+ *
+ * @return array<string,string>
+ */
+function operationNotCarriedFields(): array
+{
+    return [
+        'operation' => 'The generator\'s own short name (`message_send`). `kind` is the '
+            .'identity a host keys on, and carrying a second near-identical name invites '
+            .'a lookup against the wrong one — the same trap `service` against `slug` '
+            .'already sets at connector level.',
+        'method' => 'WIRE CONCERN the package owns. A host calls the node, never the HTTP '
+            .'endpoint, so the verb changes nothing it builds or shows. Both estates drew '
+            .'this line independently for `baseUrls`, `headers` and `encoding`. Carried as '
+            .'an explicit null on triggers upstream (weaver.agi 911e23c) because a '
+            .'webhook-delivered trigger is not a call — null means checked, absent would '
+            .'mean nobody decided.',
+        'path' => 'WIRE CONCERN, as `method`. Also the one field that would embed a '
+            .'provider API version we are deliberately not sent — see '
+            .'ConnectorApiVersionAgreesTest for why anchoring on it is the thing we cannot do.',
+    ];
+}
+
+/**
  * Fields deliberately not carried, each with the reason.
  *
  * @return array<string,string>
@@ -130,6 +198,44 @@ it('classifies every field the index actually carries', function () {
         'If no, add it to connectorNotCarriedFields() WITH THE REASON — an',
         'unexplained exclusion is indistinguishable from an oversight, which is',
         'how the last seven were lost.',
+    ]));
+});
+
+it('classifies every OPERATION field the index actually carries', function () {
+    $connectors = app(ConnectorSource::class)->connectors();
+
+    $present = [];
+    $operationCount = 0;
+
+    foreach ($connectors as $connector) {
+        foreach (($connector['operations'] ?? []) as $operation) {
+            $operationCount++;
+            foreach (array_keys($operation) as $key) {
+                if (! str_starts_with((string) $key, '$')) {
+                    $present[(string) $key] = true;
+                }
+            }
+        }
+    }
+
+    // Vacuity guard. Walking zero operations would pass this silently, and an
+    // empty discovery reporting success is the failure this whole file exists
+    // to prevent — see the connector-level check's own `not->toBeEmpty`.
+    expect($operationCount)->toBeGreaterThan(0, 'no operations walked; this check would assert nothing');
+
+    $classified = array_merge(operationCarriedFields(), operationNotCarriedFields());
+
+    $unclassified = array_values(array_diff(array_keys($present), array_keys($classified)));
+
+    expect($unclassified)->toBe([], implode("\n", [
+        'These OPERATION fields are in the index and classified nowhere:',
+        '  '.implode("\n  ", $unclassified),
+        '',
+        'An index entry is built PER OPERATION, so a field here is as host-facing',
+        'as a connector-level one. Decide whether a HOST would act on it. If yes,',
+        'carry it in ConnectorSource::entryFor() and add it to',
+        'operationCarriedFields(). If no, add it to operationNotCarriedFields()',
+        'WITH THE REASON.',
     ]));
 });
 

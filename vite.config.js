@@ -87,6 +87,49 @@ export default defineConfig({
         __KIT_VERSION__: JSON.stringify(kitVersion),
     },
     plugins: [
+        // Opt-in build-mass report: `BUILD_MASS=1 npm run build`.
+        //
+        // Peak build memory scales with the whole MODULE GRAPH, not with any
+        // one chunk, and the cost is paid even when tree-shaking keeps the
+        // emitted bundle small -- a barrel import of @babylonjs/core was once
+        // 49% of every byte transformed while its chunk looked healthy, and it
+        // OOM-killed the Forge deploy. The bundle report cannot show that; this
+        // can. CI prints it beside the peak RSS so a budget failure names the
+        // package that grew instead of just going red.
+        ...(process.env.BUILD_MASS
+            ? [
+                  (() => {
+                      const mods = new Map();
+                      return {
+                          name: "build-mass-report",
+                          apply: "build",
+                          transform(code, id) {
+                              const norm = id.split("\\").join("/");
+                              const i = norm.lastIndexOf("node_modules/");
+                              let key = "(app source)";
+                              if (i >= 0) {
+                                  const parts = norm.slice(i + "node_modules/".length).split("/");
+                                  key = parts[0].startsWith("@") ? parts[0] + "/" + parts[1] : parts[0];
+                              }
+                              const cur = mods.get(key) || { n: 0, bytes: 0 };
+                              cur.n += 1;
+                              cur.bytes += code.length;
+                              mods.set(key, cur);
+                              return null;
+                          },
+                          buildEnd() {
+                              const rows = [...mods.entries()].sort((a, b) => b[1].bytes - a[1].bytes);
+                              const tn = rows.reduce((a, r) => a + r[1].n, 0);
+                              const tb = rows.reduce((a, r) => a + r[1].bytes, 0);
+                              console.log("BUILD-MASS total modules=" + tn + " source=" + (tb / 1048576).toFixed(1) + "MB");
+                              for (const [k, v] of rows.slice(0, 12)) {
+                                  console.log("BUILD-MASS   " + k + " " + v.n + " modules " + (v.bytes / 1048576).toFixed(2) + "MB " + ((v.bytes / tb) * 100).toFixed(1) + "%");
+                              }
+                          },
+                      };
+                  })(),
+              ]
+            : []),
         useSyncExternalStoreShim,
         nodeBuiltinBrowserShim,
         laravel({

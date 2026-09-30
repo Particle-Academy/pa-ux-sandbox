@@ -102,8 +102,56 @@ jobs:
       # Both bundles. The SSR build fails on browser-only imports that the
       # client build accepts, and Inertia renders SSR synchronously — a page
       # that throws there degrades to client-side rendering silently.
-      - name: Build
-        run: npm run build
+      #
+      # MEASURED, against a budget. Forge runs this same build ON the production
+      # box, so a memory regression here does not fail a test — it OOM-kills the
+      # deploy, and because Forge prunes only SUCCESSFUL deploys the dead release
+      # is also left on disk forever. Nothing else in CI has an opinion about
+      # RAM, so this class used to reach production and announce itself as an
+      # outage.
+      #
+      # The budget sits between two MEASURED points, not a guess:
+      #   barrel import of @babylonjs/core  1571 MB  -> OOM-killed the deploy
+      #   the same build, granular imports  1197 MB  -> deploys in 90s
+      # 1400 MB leaves the healthy build ~200 MB of headroom and still catches a
+      # regression of that shape. Both numbers were taken on a developer machine;
+      # if CI's own baseline turns out to sit elsewhere, move this ONE number and
+      # say why — do not delete the check.
+      #
+      # Peak RSS scales with the whole module graph, not with any one chunk, so
+      # BUILD_MASS=1 prints the per-package tally next to it: a failure names the
+      # package that grew instead of only going red.
+      - name: Build (peak memory is budgeted)
+        env:
+          BUILD_MASS: "1"
+          BUILD_PEAK_BUDGET_MB: "1400"
+        run: |
+          set -o pipefail
+          /usr/bin/time -v -o build-mem.txt npm run build 2>&1 | tee build-log.txt
+
+          peak_kb=$(awk '/Maximum resident set size/ {print $NF}' build-mem.txt)
+          if [ -z "$peak_kb" ]; then
+            echo "::warning::could not read peak RSS from /usr/bin/time; budget not enforced"
+            exit 0
+          fi
+          peak_mb=$(( peak_kb / 1024 ))
+
+          echo "### Build peak memory: ${peak_mb} MB (budget ${BUILD_PEAK_BUDGET_MB} MB)" >> "$GITHUB_STEP_SUMMARY"
+          grep '^BUILD-MASS' build-log.txt | sed 's/^/    /' >> "$GITHUB_STEP_SUMMARY" || true
+
+          if [ "$peak_mb" -gt "$BUILD_PEAK_BUDGET_MB" ]; then
+            echo "::error::Build peak memory ${peak_mb} MB exceeds the ${BUILD_PEAK_BUDGET_MB} MB budget."
+            echo
+            echo "This is the shape that OOM-kills the Forge deploy. The module graph below"
+            echo "is sorted by source bytes transformed — the top entry that moved is the cause."
+            echo "A barrel import costs this memory even when the emitted chunk stays small;"
+            echo "importing each symbol from its own module is usually the whole fix."
+            echo
+            grep '^BUILD-MASS' build-log.txt || true
+            exit 1
+          fi
+
+          echo "Build peak memory ${peak_mb} MB is within the ${BUILD_PEAK_BUDGET_MB} MB budget."
 
       # The tests need these. Almost every feature test renders a Blade view
       # that calls `@vite`, which throws ViteManifestNotFoundException without

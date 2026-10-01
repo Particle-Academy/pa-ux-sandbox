@@ -104,6 +104,25 @@ class PackageRegistry
      * @var array<string, array{name: string, repo: string, why: string}>
      */
     public const PLANNED = [
+        'fancy-inertia-server' => [
+            'name' => 'fancy-inertia-server',
+            'repo' => 'Particle-Academy/fancy-inertia-server',
+            'why' => 'ASGI middleware (Starlette/FastAPI) speaking the Inertia SERVER protocol, so a Python backend can run fancy-inertia. fancy-inertia is the CLIENT half only; Laravel has inertia-laravel and Python has had nothing, which left the registry`s own Python start guide pointing at a Python Inertia adapter that does not exist in this kit.
+
+DECIDED 2026-09-30 by the owner, answering a gate THIS ESTATE SET ITSELF. `.ai/plans/polyglot/parity/bridges.md:70-73` scoped the package and then blocked it: \"Do not create these repos yet -- the adapter is the one piece with a credible `adopt, don`t build` answer, and that should be tested before a repo exists.\" That test now has a result, which is why this moved rather than drifting.
+
+THE GATE`S ANSWER. For FastAPI there is nothing to adopt. The only candidate, `fastapi-inertia` (hxjo, MIT), last released 1.1.0 on 2025-05-25 with its last push the same day -- SIXTEEN MONTHS stale, disqualified by the three-month freshness bar before evaluation, confirmed independently by the consumer from PyPI and GitHub. And the plan already said so itself (`specs/fancy-inertia.md:591`): the mature non-PHP adapters are Django/Flask-shaped WSGI, and \"async frameworks (FastAPI/Starlette) need the middleware written fresh.\" So adoption was never live for this stack.
+
+NAMED `fancy-inertia-server`, NOT `fancy-inertia-py` (`bridges.md:61-66`). The -py/-rs/-go suffix convention reads as \"a port of the React package\", which is the wrong mental model: the suffix should say WHAT IT IS, and the language is already implied by the registry. Anyone searching for either name finds nothing today, which is how this looked absent rather than unstarted.
+
+FIRST CONSUMER: YouGene (gene) -- a local, private, single-user genome-data app on FastAPI with React 19 + Fancy Core. Their requirements, recorded as the first consumer`s rather than as the spec: async ASGI for FastAPI/Starlette (NO Django needed -- defer it to a consumer who wants it); client pinned to @inertiajs/react ^2; no SSR; fixtures A1-A7 green; root HTML from the Vite manifest in production and the Vite dev server in development, with a configurable root template; a shared-props hook; local-first with no network calls and no telemetry; Python >=3.11 floor.
+
+THE CONTRACT IS ALREADY WRITTEN. `.ai/plans/polyglot/specs/fancy-inertia.md` section 7 is a language-agnostic 8-fixture HTTP conformance suite for exactly this adapter, and it was corroborated independently by reading the client source rather than the Inertia docs. Section 8 prices every row trivial or easy EXCEPT the v2/v3 props (deferred / merge / once / encrypt history), rated moderate-hard. PINNING @inertiajs/react ^2 DELETES THAT ROW, and no-SSR removes the other expensive half -- which is what makes this small.
+
+TWO TRAPS, both documented and both silent. (1) `useAppUpdate` pings with `X-Inertia-Partial-Data: __app_update_ping__`, A PROP NO PAGE DECLARES; the server must answer 200 with near-empty props, not 500. Section 8 calls it the most likely silent breakage -- the banner never appears, or every deploy 500s the ping. Write that test first. (2) `props.errors` must be a FLAT Record<string,string> with dotted keys surviving, NOT Laravel`s nested bag. (3) Stale asset version returns a BARE 409 with no `X-Inertia-Location`, so useAppUpdate shows a banner instead of yanking the page: 409 + Location is the EXTERNAL-redirect branch and 409 + X-Inertia-redirect is a router GET. Conflating them is the documented-protocol reading and it is wrong here.
+
+BEFORE IT CAN SHIP: PyPI `fancy-inertia-server` returned 404 on 2026-09-30, AND so did the separator-removed variants `fancyinertiaserver`, `fancyinertia` and `inertiaserver` -- checked because a 404 answers \"is this taken exactly\" and NOT \"may I create it\": PyPI refuses a name merely SIMILAR to an existing one, and `holy-sheet` 404d and was still refused because `holysheet` exists. Checked against a known-published control, since a checker that 404s on everything looks identical to a free name. The creation form remains the final authority -- there is no API that answers the second question. PyPI needs a PENDING PUBLISHER configured BEFORE the first publish, which only the owner can do. Run `.claude/skills/ship-it/preflight.py` and hand over numbered steps rather than improvising them.',
+        ],
         'fancy-expr' => [
             'name' => 'fancy-expr',
             'repo' => 'Particle-Academy/fancy-expr',

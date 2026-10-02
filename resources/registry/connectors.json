@@ -689,6 +689,158 @@
       ]
     },
     {
+      "slug": "gmail-inbox",
+      "service": "gmail_inbox",
+      "serviceTitle": "Gmail Inbox",
+      "domain": "email",
+      "docs": "https://developers.google.com/workspace/gmail/api/reference/rest/v1/users.messages/get",
+      "summary": null,
+      "repo": "Fancy-Friends/gmail-inbox",
+      "status": "alpha",
+      "packages": {
+        "ui": {
+          "name": "@particle-academy/gmail-inbox-ui",
+          "version": "0.1.0",
+          "registry": "npm",
+          "installFirst": true
+        },
+        "js": {
+          "name": "@particle-academy/gmail-inbox-js",
+          "version": "0.1.0",
+          "registry": "npm",
+          "installFirst": false
+        },
+        "php": {
+          "name": "particle-academy/gmail-inbox-php",
+          "version": "0.1.0",
+          "registry": "packagist",
+          "installFirst": false
+        },
+        "py": {
+          "name": "fancy-gmail-inbox",
+          "version": "0.1.0",
+          "registry": "pypi",
+          "installFirst": false
+        }
+      },
+      "auth": {
+        "kind": "oauth2",
+        "authorize": "bearer",
+        "scopes": [
+          "https://www.googleapis.com/auth/gmail.readonly"
+        ],
+        "capabilities": null,
+        "refreshTokenRotates": false,
+        "pkce": null,
+        "authorizeUrl": "https://accounts.google.com/o/oauth2/v2/auth",
+        "tokenUrl": "https://oauth2.googleapis.com/token",
+        "flow": "authorization_code",
+        "accessTokenCredential": "accessToken",
+        "refreshTokenCredential": "refreshToken",
+        "accessTokenTtlSeconds": 3600,
+        "credentials": [
+          {
+            "key": "clientId",
+            "label": "OAuth client ID",
+            "scope": "provider",
+            "secret": false,
+            "optional": false,
+            "help": "A DIFFERENT OAuth app than `gmail`'s, from Google Cloud Console -> APIs & Services -> Credentials. This one requests a restricted scope and carries Google's annual CASA assessment; `gmail`'s does not. Do not reuse the same client for both."
+          },
+          {
+            "key": "clientSecret",
+            "label": "OAuth client secret",
+            "scope": "provider",
+            "secret": true,
+            "optional": false,
+            "help": "The client secret for the same OAuth app. One value for the whole installation."
+          },
+          {
+            "key": "accessToken",
+            "label": "Access token",
+            "scope": "account",
+            "secret": true,
+            "optional": false,
+            "help": "Per connected Google account, and it expires after ONE HOUR. The host refreshes it with the refresh token."
+          },
+          {
+            "key": "refreshToken",
+            "label": "Refresh token",
+            "scope": "account",
+            "secret": true,
+            "optional": false,
+            "help": "Per connected Google account. Google issues one only when the consent request asks for offline access; without it the connection dies within the hour."
+          }
+        ]
+      },
+      "sandbox": {
+        "kind": "none",
+        "selectable": false,
+        "warning": "No test estate, and somebody checked. Everything this connector does is real. Use the faker.",
+        "note": "Gmail has no sandbox. Every read reaches the connected account's real mail. The faker is the only way to develop against it without touching a real mailbox."
+      },
+      "setup": null,
+      "environments": [
+        "fake",
+        "live"
+      ],
+      "idempotency": null,
+      "idempotencyMaxLength": null,
+      "idempotencyNote": null,
+      "apiVersion": null,
+      "needsWebhookEndpoint": false,
+      "operations": [
+        {
+          "operation": "label_list",
+          "kind": "@particle-academy/gmail_inbox_label_list",
+          "kindAlias": "gmail_inbox_label_list",
+          "role": "action",
+          "title": "List Gmail labels",
+          "summary": "list labels",
+          "docs": "https://developers.google.com/workspace/gmail/api/reference/rest/v1/users.labels/list",
+          "method": "GET",
+          "path": "/gmail/v1/users/{userId}/labels",
+          "sideEffects": "none"
+        },
+        {
+          "operation": "message_get",
+          "kind": "@particle-academy/gmail_inbox_message_get",
+          "kindAlias": "gmail_inbox_message_get",
+          "role": "action",
+          "title": "Gmail message",
+          "summary": "read a message",
+          "docs": "https://developers.google.com/workspace/gmail/api/reference/rest/v1/users.messages/get",
+          "method": "GET",
+          "path": "/gmail/v1/users/{userId}/messages/{id}",
+          "sideEffects": "none"
+        },
+        {
+          "operation": "message_list",
+          "kind": "@particle-academy/gmail_inbox_message_list",
+          "kindAlias": "gmail_inbox_message_list",
+          "role": "action",
+          "title": "List Gmail messages",
+          "summary": "list messages",
+          "docs": "https://developers.google.com/workspace/gmail/api/reference/rest/v1/users.messages/list",
+          "method": "GET",
+          "path": "/gmail/v1/users/{userId}/messages",
+          "sideEffects": "none"
+        },
+        {
+          "operation": "thread_get",
+          "kind": "@particle-academy/gmail_inbox_thread_get",
+          "kindAlias": "gmail_inbox_thread_get",
+          "role": "action",
+          "title": "Gmail thread",
+          "summary": "read a thread",
+          "docs": "https://developers.google.com/workspace/gmail/api/reference/rest/v1/users.threads/get",
+          "method": "GET",
+          "path": "/gmail/v1/users/{userId}/threads/{id}",
+          "sideEffects": "none"
+        }
+      ]
+    },
+    {
       "slug": "google-ads",
       "service": "google_ads",
       "serviceTitle": "Google Ads",
@@ -1165,25 +1317,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/google-docs-ui",
-          "version": "0.3.4",
+          "version": "0.4.0",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/google-docs-js",
-          "version": "0.3.4",
+          "version": "0.4.0",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/google-docs-php",
-          "version": "0.3.4",
+          "version": "0.4.0",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-google-docs",
-          "version": "0.3.4",
+          "version": "0.4.0",
           "registry": "pypi",
           "installFirst": false
         }
@@ -1265,6 +1417,18 @@
           "docs": "https://developers.google.com/workspace/docs/api/reference/rest/v1/documents/create",
           "method": "POST",
           "path": "/v1/documents",
+          "sideEffects": "unsafe-to-replay"
+        },
+        {
+          "operation": "text_insert",
+          "kind": "@particle-academy/google_docs_text_insert",
+          "kindAlias": "google_docs_text_insert",
+          "role": "action",
+          "title": "Insert text into a Google Doc",
+          "summary": "insert text",
+          "docs": "https://developers.google.com/workspace/docs/api/reference/rest/v1/documents/batchUpdate",
+          "method": "POST",
+          "path": "/v1/documents/{documentId}:batchUpdate",
           "sideEffects": "unsafe-to-replay"
         }
       ]
@@ -1433,25 +1597,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/google-sheets-ui",
-          "version": "0.3.4",
+          "version": "0.4.0",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/google-sheets-js",
-          "version": "0.3.4",
+          "version": "0.4.0",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/google-sheets-php",
-          "version": "0.3.4",
+          "version": "0.4.0",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-google-sheets",
-          "version": "0.3.4",
+          "version": "0.4.0",
           "registry": "pypi",
           "installFirst": false
         }
@@ -1534,6 +1698,30 @@
           "method": "POST",
           "path": "/v4/spreadsheets/{spreadsheetId}/values/{range}:append",
           "sideEffects": "unsafe-to-replay"
+        },
+        {
+          "operation": "values_get",
+          "kind": "@particle-academy/google_sheets_values_get",
+          "kindAlias": "google_sheets_values_get",
+          "role": "action",
+          "title": "Read Google Sheets values",
+          "summary": "read a range",
+          "docs": "https://developers.google.com/workspace/sheets/api/reference/rest/v4/spreadsheets.values/get",
+          "method": "GET",
+          "path": "/v4/spreadsheets/{spreadsheetId}/values/{range}",
+          "sideEffects": "none"
+        },
+        {
+          "operation": "values_update",
+          "kind": "@particle-academy/google_sheets_values_update",
+          "kindAlias": "google_sheets_values_update",
+          "role": "action",
+          "title": "Write Google Sheets values",
+          "summary": "write a range",
+          "docs": "https://developers.google.com/workspace/sheets/api/reference/rest/v4/spreadsheets.values/update",
+          "method": "PUT",
+          "path": "/v4/spreadsheets/{spreadsheetId}/values/{range}",
+          "sideEffects": "idempotent"
         }
       ]
     },
@@ -1549,25 +1737,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/google-slides-ui",
-          "version": "0.3.4",
+          "version": "0.4.0",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/google-slides-js",
-          "version": "0.3.4",
+          "version": "0.4.0",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/google-slides-php",
-          "version": "0.3.4",
+          "version": "0.4.0",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-google-slides",
-          "version": "0.3.4",
+          "version": "0.4.0",
           "registry": "pypi",
           "installFirst": false
         }
@@ -1650,6 +1838,18 @@
           "method": "POST",
           "path": "/v1/presentations",
           "sideEffects": "unsafe-to-replay"
+        },
+        {
+          "operation": "presentation_get",
+          "kind": "@particle-academy/google_slides_presentation_get",
+          "kindAlias": "google_slides_presentation_get",
+          "role": "action",
+          "title": "Google Slides presentation",
+          "summary": "read a presentation",
+          "docs": "https://developers.google.com/workspace/slides/api/reference/rest/v1/presentations/get",
+          "method": "GET",
+          "path": "/v1/presentations/{presentationId}",
+          "sideEffects": "none"
         }
       ]
     },

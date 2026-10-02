@@ -24,7 +24,23 @@ class PackageRegistry
      * someone to `composer require` something that 404s.
      */
     public const HIDDEN = [
-        // EMPTY -- and the two removals behind it are the lesson worth keeping.
+        // `fancy-schema` -- BUILT and TAGGED (v0.2.0), not installable.
+        //
+        // The npm name `@particle-academy/fancy-schema` does not exist yet, and
+        // OIDC cannot claim a new one: the first publish has to be a throwaway
+        // `0.0.0` from the owner's own machine before a Trusted Publisher can be
+        // attached. Until that happens the package is real, tested and
+        // consumable FROM THE TAG -- which is how Prism consumes it today -- and
+        // offering `npm install` for a name that 404s is the precise mistake
+        // `fancy-trading-ui` made from this list.
+        //
+        // REMOVE THIS SLUG when `npm view @particle-academy/fancy-schema
+        // version` returns a version -- and read the trading-ui note below
+        // first, because that condition is a fact about a registry and the last
+        // person to rely on it left a shipped package invisible for weeks.
+        'fancy-schema',
+
+        // The two removals behind this list are the lesson worth keeping.
         //
         // `fancy-walkthrough` was removed 2026-09-29, the day it published.
         // It had sat here correctly: the npm name did not exist, and OIDC
@@ -332,6 +348,7 @@ BEFORE IT CAN SHIP: three registry names that do not exist yet (npm scoped, Pack
         'fancy-flow-php' => ['group' => 'surfaces', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#0ea5e9'],
         'fancy-cf-relay' => ['group' => 'tooling', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#f6821f'],
         'fancy-doc-commons' => ['group' => 'documents', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#2563eb'],
+        'fancy-schema' => ['group' => 'platform', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#7c3aed'],
         // Laravel MCP server for building fancy-flow workflows headlessly.
         // FOUND BY SubmodulesAreRegisteredTest on its first run -- the third
         // package in three days to be published and listed nowhere.
@@ -694,6 +711,14 @@ BEFORE IT CAN SHIP: three registry names that do not exist yet (npm scoped, Pack
                 'repo' => 'Particle-Academy/fancy-cf-relay',
                 'language' => 'TypeScript',
                 'pairs' => ['agent-integrations'],
+            ],
+            [
+                'slug' => 'fancy-schema',
+                'name' => '@particle-academy/fancy-schema',
+                'tagline' => 'Zero-dependency JSON Schema Draft 2020-12 validator for TypeScript: $ref / $defs, oneOf / anyOf / allOf, if / then / else, propertyNames, patternProperties, additionalProperties: false — with errors that name the document AND the failing path. Built because the kit authors Draft 2020-12 schemas (fancy-conformance ships three) and could not check its own.',
+                'npm' => '@particle-academy/fancy-schema',
+                'repo' => 'Particle-Academy/fancy-schema',
+                'language' => 'TypeScript',
             ],
             [
                 'slug' => 'fancy-doc-commons',

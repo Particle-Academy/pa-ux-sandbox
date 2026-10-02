@@ -4394,16 +4394,16 @@
         },
         {
             "name": "particle-academy/fancy-seo",
-            "version": "v0.5.0",
+            "version": "v0.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/fancy-seo.git",
-                "reference": "432e02b8f0ef8252210ad6a5d564ddbec503b4c6"
+                "reference": "f9fb951b09536bc653325e2bd234bd00892426de"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/fancy-seo/zipball/432e02b8f0ef8252210ad6a5d564ddbec503b4c6",
-                "reference": "432e02b8f0ef8252210ad6a5d564ddbec503b4c6",
+                "url": "https://api.github.com/repos/Particle-Academy/fancy-seo/zipball/f9fb951b09536bc653325e2bd234bd00892426de",
+                "reference": "f9fb951b09536bc653325e2bd234bd00892426de",
                 "shasum": ""
             },
             "require": {
@@ -4463,7 +4463,7 @@
                 "issues": "https://github.com/Particle-Academy/fancy-seo/issues",
                 "source": "https://github.com/Particle-Academy/fancy-seo"
             },
-            "time": "2026-08-07T15:05:36+00:00"
+            "time": "2026-10-02T06:07:08+00:00"
         },
         {
             "name": "particle-academy/fancy-x-files",

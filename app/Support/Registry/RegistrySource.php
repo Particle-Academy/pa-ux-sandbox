@@ -59,6 +59,16 @@ class RegistrySource
      */
     public function scanLive(): array
     {
+        // `all()` and `companions()`, NEVER `everything()` or `definitionFor()`.
+        // The first two are HIDDEN-filtered; the others are not, and this method
+        // compiles `registry.json` — the file `npx fancy-cli add` and the MCP both
+        // read, which are an invitation to install. A hidden slug reaching either
+        // is a 404 with our name on it, so the filtering has to happen HERE and
+        // cannot be deferred to a caller.
+        //
+        // PackageStatusTest pins this by reading the source, because with HIDDEN
+        // empty the filtered and unfiltered lists are identical and no behavioural
+        // test can tell which one was used.
         $items = [];
         foreach (PackageRegistry::all() as $pkg) {
             foreach ($this->itemsForPackage($pkg) as $item) {

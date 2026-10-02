@@ -119,10 +119,29 @@ it('keeps a hidden package out of the compiled registry a consumer installs from
     $scanLive = substr($source, (int) strpos($source, 'public function scanLive'));
     $scanLive = substr($scanLive, 0, (int) strpos($scanLive, 'return $this->ensureUniqueNames'));
 
-    expect($scanLive)->toContain('PackageRegistry::all()');
-    expect($scanLive)->toContain('PackageRegistry::companions()');
-    expect($scanLive)->not->toContain('everything()');
-    expect($scanLive)->not->toContain('definitionFor(');
+    // STRIP COMMENTS BEFORE MATCHING. A "this must not appear" guard over source
+    // text matches a MENTION, not a call — so the comment explaining *why*
+    // `everything()` is deliberately absent here would have failed this test. The
+    // guard would have punished exactly the note that stops the next person
+    // "fixing" the thing it protects, and the only way to keep the rule was to
+    // leave it unexplained.
+    //
+    // Raised by the MOIC team, who hit it in their own system-temp-path guard and
+    // had to word around it. Offered rather than asked, and worth taking: a guard
+    // that forbids documenting itself is a guard that gets deleted.
+    $code = (string) preg_replace(['~/\*.*?\*/~s', '~//[^\n]*~'], '', $scanLive);
+
+    expect($code)->toContain('PackageRegistry::all()');
+    expect($code)->toContain('PackageRegistry::companions()');
+    expect($code)->not->toContain('everything()');
+    expect($code)->not->toContain('definitionFor(');
+
+    // And prove the stripping actually discriminates, rather than just passing.
+    // A guard nobody has watched distinguish the two cases is a guard that might
+    // be stripping everything, or nothing.
+    $stripped = (string) preg_replace(['~/\*.*?\*/~s', '~//[^\n]*~'], '', "// never call everything() here\n\$x = all();");
+    expect($stripped)->not->toContain('everything()');   // a mention is ignored
+    expect($stripped)->toContain('all()');               // a real call is not
 
     $registry = (string) file_get_contents(dirname(__DIR__, 3).'/app/Support/PackageRegistry.php');
     expect($registry)->toContain('return self::visible(self::allRows());');

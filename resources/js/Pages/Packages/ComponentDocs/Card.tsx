@@ -270,7 +270,7 @@ export const cardDoc: ComponentDoc = {
         /* ── surface detail ───────────────────────────────────────────────── */
         {
             name: "highlight",
-            description: "A faint hairline inside the top edge, so a tinted or elevated surface reads as lit from above. White at 70% in light mode and 10% in dark, which is why it survives both. Off by default — deliberately unlike Flux, because turning a decorative hairline on by default would change every existing card.",
+            description: "A faint hairline inside the top edge, so a tinted or elevated surface reads as lit from above. White at 70% in light mode and 10% in dark, which is why it survives both. Off by default, because turning a decorative hairline on for everyone would change the look of every card already in use.",
             render: () => (
                 <div className="grid w-full gap-3 sm:grid-cols-2">
                     <Card variant="elevated"><Text size="sm">without highlight</Text></Card>

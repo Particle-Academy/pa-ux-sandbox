@@ -986,21 +986,58 @@ function FauxClientDemo() {
     );
 }
 
+/*
+ * The Preview tab is the first thing a visitor sees, and this was three
+ * near-identical boxes showing three of Card's FIVE variants — no media, no
+ * bleed, no sizes, nothing that says why you would reach for this over a div.
+ *
+ * It now opens with the composition Card actually exists for (media + titlebar
+ * with actions + body + anchored footer) beside the full variant range, so the
+ * range is visible before anyone opens the Examples tab.
+ */
 function CardDemo() {
     return (
-        <div className="grid gap-3 sm:grid-cols-3">
-            <Card variant="outlined">
-                <Card.Header>Outlined</Card.Header>
-                <Card.Body><Text size="sm">Standard border, white background.</Text></Card.Body>
+        <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,18rem)]">
+            <Card padding="none" interactive>
+                <Card.Media
+                    src="/showcase-assets/fancy-ui-logo.jpg"
+                    alt=""
+                    ratio="21/9"
+                    topRight={<Badge size="sm" color="green" variant="soft">shipped</Badge>}
+                />
+                <Card.Header
+                    heading="react-fancy"
+                    description="The core component library."
+                    actions={<Badge size="sm" variant="soft">v5</Badge>}
+                />
+                <Card.Body>
+                    <Text size="sm">
+                        Media, a titlebar that lays itself out, and a footer that stays anchored —
+                        without a wrapper div in sight.
+                    </Text>
+                </Card.Body>
+                <Card.Footer>
+                    <div className="flex items-center justify-between gap-3">
+                        <Text size="xs" className="!text-zinc-500">MIT</Text>
+                        <Button variant="ghost">Read the docs</Button>
+                    </div>
+                </Card.Footer>
             </Card>
-            <Card variant="elevated">
-                <Card.Header>Elevated</Card.Header>
-                <Card.Body><Text size="sm">Soft shadow, no heavy border.</Text></Card.Body>
-            </Card>
-            <Card variant="flat">
-                <Card.Header>Flat</Card.Header>
-                <Card.Body><Text size="sm">Recessed surface for grouping.</Text></Card.Body>
-            </Card>
+
+            <div className="grid gap-2 content-start">
+                {([
+                    ["outlined", "border, no tint"],
+                    ["elevated", "lifted off the page"],
+                    ["muted", "secondary panels"],
+                    ["soft", "the faintest grouping"],
+                    ["flat", "inside another surface"],
+                ] as const).map(([variant, note]) => (
+                    <Card key={variant} variant={variant} size="xs">
+                        <Text size="sm" weight="semibold">{variant}</Text>
+                        <Text size="xs" className="!text-zinc-500">{note}</Text>
+                    </Card>
+                ))}
+            </div>
         </div>
     );
 }

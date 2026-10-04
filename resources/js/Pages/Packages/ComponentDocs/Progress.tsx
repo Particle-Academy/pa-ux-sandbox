@@ -95,6 +95,46 @@ export const progressDoc: ComponentDoc = {
             code: `<Progress indeterminate />
 <Progress indeterminate variant="circular" />`,
         },
+        {
+            name: "strokeWidth",
+            description:
+                "Ring thickness in px, circular only. Derived from the diameter when unset, which is right until you put a large ring beside small text and the default reads heavy.",
+            render: () => (
+                <div className="flex flex-wrap items-center gap-6">
+                    <Progress variant="circular" value={65} size={64} strokeWidth={4} />
+                    <Progress variant="circular" value={65} size={64} />
+                    <Progress variant="circular" value={65} size={64} strokeWidth={12} />
+                </div>
+            ),
+            code: `<Progress variant="circular" value={65} size={64} strokeWidth={4} />
+<Progress variant="circular" value={65} size={64} strokeWidth={12} />`,
+        },
+        {
+            name: "trackClassName and fillClassName",
+            description:
+                "Style the two parts by name rather than by shape. The alternative a caller reaches for is an arbitrary-variant selector like [&>div>div]:bg-red-500, which hard-codes this component's DOM into their app and breaks SILENTLY — still rendering, just unstyled — the first time the component gains a wrapper.",
+            render: () => (
+                <div className="w-full space-y-4">
+                    <Progress
+                        value={70}
+                        trackClassName="bg-amber-100 dark:bg-amber-950"
+                        fillClassName="bg-amber-500"
+                    />
+                    <Progress
+                        variant="circular"
+                        value={70}
+                        size={64}
+                        trackClassName="text-zinc-200 dark:text-zinc-700"
+                        fillClassName="text-emerald-500"
+                    />
+                </div>
+            ),
+            code: `<Progress
+    value={70}
+    trackClassName="bg-amber-100"
+    fillClassName="bg-amber-500"
+/>`,
+        },
     ],
     props: [
         { name: "value", type: `number`, default: `0`, description: "Current progress value. Ignored when `indeterminate` is true." },
@@ -105,5 +145,8 @@ export const progressDoc: ComponentDoc = {
         { name: "indeterminate", type: `boolean`, default: `false`, description: "Animated sweep — for unknown durations." },
         { name: "showValue", type: `boolean`, default: `false`, description: "Overlay the percentage (`value / max * 100`)." },
         { name: "className", type: `string`, default: "—", description: "Extra classes on the root wrapper." },
+        { name: "strokeWidth", type: `number`, default: "derived from the diameter", description: "Ring thickness in px. Circular only." },
+        { name: "trackClassName", type: `string`, default: "—", description: "The unfilled track. Named, so you never have to select on this component's DOM shape." },
+        { name: "fillClassName", type: `string`, default: "—", description: "The filled portion — the bar's fill, or the ring's value circle." },
     ],
 };

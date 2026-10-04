@@ -120,6 +120,44 @@ export const treeNavDoc: ComponentDoc = {
     }}
 />`,
         },
+        {
+            name: "dragCursor",
+            description:
+                "Whether the row shows the open-hand grab cursor on hover. Defaults to \"none\", because in a tree whose rows are primarily navigation an always-on grab cursor wrongly implies move-first intent — the user reads every row as a thing to drag rather than a thing to open. Opt into \"grab\" when the row genuinely IS a drag handle and reordering is the primary interaction.",
+            render: () => (
+                <div className="grid w-full gap-6 sm:grid-cols-2">
+                    <div>
+                        <p className="mb-2 text-xs font-medium text-zinc-500">
+                            dragCursor="none" — the default
+                        </p>
+                        <TreeNav
+                            draggable
+                            nodes={[
+                                { id: "src", label: "src", children: [{ id: "app", label: "App.tsx" }] },
+                            ]}
+                        />
+                    </div>
+                    <div>
+                        <p className="mb-2 text-xs font-medium text-zinc-500">
+                            dragCursor="grab" — reordering is the point
+                        </p>
+                        <TreeNav
+                            draggable
+                            dragCursor="grab"
+                            nodes={[
+                                { id: "a", label: "Section one" },
+                                { id: "b", label: "Section two" },
+                            ]}
+                        />
+                    </div>
+                </div>
+            ),
+            code: `{/* A navigation tree that also permits reordering. */}
+<TreeNav nodes={nodes} draggable />
+
+{/* A list whose whole purpose is ordering. */}
+<TreeNav nodes={sections} draggable dragCursor="grab" />`,
+        },
     ],
     props: [
         { name: "nodes", type: `TreeNodeData[]`, default: "—", description: "The tree data. Each node has `id`, `label`, optionally `type`, `ext`, `children`, `icon`, `disabled`." },
@@ -137,5 +175,8 @@ export const treeNavDoc: ComponentDoc = {
         { name: "indentSize", type: `number`, default: `16`, description: "Pixel indent per nesting level." },
         { name: "showIcons", type: `boolean`, default: `true`, description: "Show file / folder icons." },
         { name: "className", type: `string`, default: "—", description: "Extra classes on the root wrapper." },
+        { name: "dragCursor", type: `"grab" | "none"`, default: `"none"`, description: "Show the grab cursor on hover. Opt in only where the row genuinely is a drag handle." },
+        { name: "TreeNav.Node — node", type: `TreeNodeData`, default: "—", description: "The row renderer, exposed for custom trees.", required: true },
+        { name: "TreeNav.Node — depth", type: `number`, default: "—", description: "Indentation level. Supplied by the parent — you only pass it when rendering nodes yourself.", required: true },
     ],
 };

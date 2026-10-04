@@ -71,6 +71,30 @@ export const timelineDoc: ComponentDoc = {
     </Timeline.Item>
 </Timeline>`,
         },
+        {
+            name: "orientation is deprecated — use variant",
+            description:
+                "orientation predates variant and still works: \"vertical\" maps to \"stacked\" and \"horizontal\" to \"horizontal\". It is kept so existing code keeps rendering, not because it is the way to do this. New code should pass variant, which carries the layouts orientation cannot name.",
+            render: () => (
+                <div className="w-full space-y-6">
+                    <div>
+                        <p className="mb-2 text-xs font-medium text-zinc-500">
+                            orientation="vertical" — same as variant="stacked"
+                        </p>
+                        <Timeline orientation="vertical">
+                            <Timeline.Item date="09:12">Opened</Timeline.Item>
+                            <Timeline.Item date="11:40">Reviewed</Timeline.Item>
+                            <Timeline.Item date="14:05">Merged</Timeline.Item>
+                        </Timeline>
+                    </div>
+                </div>
+            ),
+            code: `{/* Deprecated — kept so existing code keeps rendering. */}
+<Timeline orientation="vertical">…</Timeline>
+
+{/* Prefer: */}
+<Timeline variant="stacked">…</Timeline>`,
+        },
     ],
     props: [
         { name: "events", type: `TimelineEvent[]`, default: "—", description: "Data-driven events. Each: `{ date, title, description?, emoji?, icon?, color?, active? }`." },
@@ -80,6 +104,7 @@ export const timelineDoc: ComponentDoc = {
         { name: "description", type: `ReactNode`, default: "—", description: "Description rendered below the heading." },
         { name: "animated", type: `boolean`, default: `true`, description: "Scroll-reveal animation as the timeline enters the viewport." },
         { name: "className", type: `string`, default: "—", description: "Extra classes on the root wrapper." },
+        { name: "orientation", type: `"vertical" | "horizontal"`, default: "—", description: "**Deprecated** — use `variant`. Maps `vertical`→`stacked`, `horizontal`→`horizontal`." },
     ],
     notes: (
         <p className="text-xs text-zinc-600 dark:text-zinc-300">

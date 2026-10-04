@@ -294,6 +294,67 @@ export const buttonDoc: ComponentDoc = {
   anthropic
 </Button>`,
         },
+        {
+            name: "Link buttons — target and rel",
+            description:
+                "With href the button renders an anchor, and only then do target and rel apply. Any button opening a new tab wants rel=\"noopener\" — without it the opened page gets a window.opener handle back to yours, which is a real hole and not a lint preference.",
+            render: () => (
+                <div className="flex flex-wrap items-center gap-3">
+                    <Button href="https://particle.academy" target="_blank" rel="noopener noreferrer">
+                        Open in a new tab
+                    </Button>
+                    <Button href="/packages" color="zinc">
+                        Same tab
+                    </Button>
+                </div>
+            ),
+            code: `{/* rel="noopener" is not optional when target="_blank". */}
+<Button href="https://example.com" target="_blank" rel="noopener noreferrer">
+    Open in a new tab
+</Button>`,
+        },
+        {
+            name: "responsive — label hides, button stays",
+            description:
+                "Collapses to the icon on small screens while the label stays in the accessible tree, so the control never becomes an unlabelled square to a screen reader. Narrow this page to watch the text go. For a different breakpoint, target data-react-fancy-button-label yourself.",
+            render: () => (
+                <div className="flex flex-wrap items-center gap-3">
+                    <Button icon="plus" responsive>
+                        New document
+                    </Button>
+                    <Button icon="arrow-down-tray" color="zinc" responsive>
+                        Download
+                    </Button>
+                </div>
+            ),
+            code: `<Button icon="plus" responsive>New document</Button>
+
+{/* Your own breakpoint, via the label's stable handle: */}
+<Button
+    icon="plus"
+    className="[&_[data-react-fancy-button-label]]:hidden lg:[&_[data-react-fancy-button-label]]:inline"
+>
+    New document
+</Button>`,
+        },
+        {
+            name: "labelClassName",
+            description:
+                "Extra classes on the label wrapper rather than the button — for alignment, truncation, or hiding the text at a breakpoint of your own. Putting truncate on the button instead clips the icon too.",
+            render: () => (
+                <div className="flex w-56 flex-col gap-3">
+                    <Button icon="document" labelClassName="truncate">
+                        A document title far too long for this button
+                    </Button>
+                    <Button icon="document" color="zinc" labelClassName="w-full text-left">
+                        Left-aligned label
+                    </Button>
+                </div>
+            ),
+            code: `<Button icon="document" labelClassName="truncate">
+    A document title far too long for this button
+</Button>`,
+        },
     ],
 
     props: [
@@ -440,6 +501,10 @@ export const buttonDoc: ComponentDoc = {
             default: "—",
             description: "Standard React click handler. Works on both `<button>` and `<a>` renders.",
         },
+        { name: "target", type: `string`, default: "—", description: "Anchor `target`. Only applies in `href` (anchor) mode." },
+        { name: "rel", type: `string`, default: "—", description: "Anchor `rel`. Pair `noopener noreferrer` with `target=\"_blank\"`." },
+        { name: "responsive", type: `boolean`, default: `false`, description: "Hide the label on small screens, keeping it in the accessible tree." },
+        { name: "labelClassName", type: `string`, default: "—", description: "Extra classes for the label wrapper — alignment, truncation, responsive hiding." },
     ],
 
     notes: (

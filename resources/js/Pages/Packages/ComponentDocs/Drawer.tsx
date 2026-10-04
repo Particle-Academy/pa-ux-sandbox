@@ -151,6 +151,28 @@ export const drawerDoc: ComponentDoc = {
     </Drawer>
 </Drawer.Container>`,
         },
+        {
+            name: "Drawer.Header — closable",
+            description:
+                "The close button is on by default. Turn it off for a drawer the user must resolve rather than dismiss — an unsaved-changes prompt, a required step. Do that only when something else in the drawer closes it, or you have built a trap.",
+            render: () => (
+                <div className="w-full rounded-lg border border-zinc-200 p-4 dark:border-zinc-800">
+                    <Drawer.Header closable={false}>
+                        <Heading as="h3" size="md">Finish setting up</Heading>
+                    </Drawer.Header>
+                    <Text size="sm" className="mt-2">
+                        No close button — so give the user another way out.
+                    </Text>
+                    <Button className="mt-3" size="sm">Save and close</Button>
+                </div>
+            ),
+            code: `<Drawer.Header closable={false}>
+    <Heading as="h3">Finish setting up</Heading>
+</Drawer.Header>
+
+{/* Something else MUST close it. */}
+<Button onClick={close}>Save and close</Button>`,
+        },
     ],
     props: [
         { name: "open", type: `boolean`, default: "—", description: "Controlled open state.", required: true },
@@ -163,6 +185,7 @@ export const drawerDoc: ComponentDoc = {
         { name: "dismissOnEscape", type: `boolean`, default: `true`, description: "Escape calls `onClose`." },
         { name: "children", type: `ReactNode`, default: "—", description: "Compound parts: `Drawer.Header`, `Drawer.Body`, `Drawer.Footer`." },
         { name: "className", type: `string`, default: "—", description: "Extra classes on the drawer panel." },
+        { name: "Drawer.Header — closable", type: `boolean`, default: `true`, description: "Show the close button. Turn it off only when something else in the drawer closes it." },
     ],
     notes: (
         <div className="space-y-2 text-xs text-zinc-600 dark:text-zinc-300">

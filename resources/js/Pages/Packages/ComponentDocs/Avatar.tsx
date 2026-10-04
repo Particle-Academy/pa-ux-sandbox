@@ -85,6 +85,22 @@ export const avatarDoc: ComponentDoc = {
     <Avatar fallback="+4" className="ring-2 ring-white" />
 </div>`,
         },
+        {
+            name: "glow",
+            description:
+                "A pulsing halo, for the moment something happened to this person rather than for their standing state. true is a neutral violet; \"xp\" tints green and \"achievement\" amber, so a gamification layer can say which kind of event it was without inventing its own ring. The pulse respects prefers-reduced-motion — the steady ring stays, the motion drops.",
+            render: () => (
+                <div className="flex flex-wrap items-center gap-6">
+                    <Avatar fallback="AC" glow />
+                    <Avatar fallback="AD" glow="xp" />
+                    <Avatar fallback="TR" glow="achievement" />
+                    <Avatar fallback="LP" />
+                </div>
+            ),
+            code: `<Avatar fallback="AC" glow />
+<Avatar fallback="AD" glow="xp" />
+<Avatar fallback="TR" glow="achievement" />`,
+        },
     ],
     props: [
         { name: "src", type: `string`, default: "—", description: "Image URL. When missing or fails to load, `fallback` is shown." },
@@ -93,5 +109,6 @@ export const avatarDoc: ComponentDoc = {
         { name: "size", type: `"xs" | "sm" | "md" | "lg" | "xl"`, default: `"md"`, description: "Avatar diameter." },
         { name: "status", type: `"online" | "offline" | "busy" | "away"`, default: "—", description: "Presence indicator dot." },
         { name: "className", type: `string`, default: "—", description: "Extra classes on the root span." },
+        { name: "glow", type: `boolean | "xp" | "achievement"`, default: `false`, description: "Pulsing halo. `xp` tints green, `achievement` amber. Pulse respects `prefers-reduced-motion`." },
     ],
 };

@@ -271,6 +271,72 @@ const inputFamilyDoc: ComponentDoc = {
     <ColorPicker value={color} onChange={setColor} />
 </Field>`,
         },
+        {
+            name: "labelHidden",
+            description:
+                "Keeps the label in the accessible tree and takes it off the screen. For a control whose options already say what it does — a filter toolbar's segmented switches, say — where a visible label is noise but an unnamed control is a bug. Without this the only choices were an unnamed control or a label the design does not have, and the silent one is the one that ships.",
+            render: () => (
+                <div className="flex w-full flex-wrap items-center gap-4">
+                    <Field label="Search documents" labelHidden>
+                        <Input placeholder="Search…" />
+                    </Field>
+                    <Field label="Sort direction" labelHidden>
+                        <MultiSwitch
+                            value="asc"
+                            list={[
+                                { value: "asc", label: "Ascending" },
+                                { value: "desc", label: "Descending" },
+                            ]}
+                        />
+                    </Field>
+                </div>
+            ),
+            code: `{/* Named for a screen reader, invisible on screen. */}
+<Field label="Search documents" labelHidden>
+    <Input placeholder="Search…" />
+</Field>`,
+        },
+        {
+            name: "dirty",
+            description:
+                "Marks a field whose value has been changed and not yet saved — the affordance an autosaving form needs so “nothing happened” and “saved already” do not look identical.",
+            render: () => (
+                <div className="w-full max-w-sm space-y-4">
+                    <Field label="Project name">
+                        <Input value="Untouched" onChange={() => {}} />
+                    </Field>
+                    <Field label="Project name">
+                        <Input value="Edited, not saved" onChange={() => {}} dirty />
+                    </Field>
+                </div>
+            ),
+            code: `<Input value={value} onChange={setValue} dirty={value !== saved} />`,
+        },
+        {
+            name: "Affix position",
+            description:
+                "prefixPosition and suffixPosition decide whether an affix sits inside the control's border or outside it. Inside reads as part of the value — a currency symbol, a unit. Outside reads as a separate control or label — a domain suffix, an action.",
+            render: () => (
+                <div className="w-full max-w-sm space-y-4">
+                    <Field label="Amount">
+                        <Input value="24.00" onChange={() => {}} prefix="£" prefixPosition="inside" />
+                    </Field>
+                    <Field label="Subdomain">
+                        <Input
+                            value="acme"
+                            onChange={() => {}}
+                            suffix=".particle.academy"
+                            suffixPosition="outside"
+                        />
+                    </Field>
+                </div>
+            ),
+            code: `{/* Part of the value. */}
+<Input prefix="£" prefixPosition="inside" />
+
+{/* Beside the value. */}
+<Input suffix=".particle.academy" suffixPosition="outside" />`,
+        },
     ],
     props: [
         { name: "Input", type: "—", default: "—", description: "Single-line text. `value` / `onValueChange`, plus `type`, `leading`, `trailing`." },
@@ -284,6 +350,10 @@ const inputFamilyDoc: ComponentDoc = {
         { name: "Slider", type: "—", default: "—", description: "Single or range numeric. `value` / `onValueChange`, `min`, `max`, `step`. `range` switches to two-thumb mode." },
         { name: "DatePicker", type: "—", default: "—", description: "Calendar-anchored date input with `single` and `range` modes." },
         { name: "Field", type: "—", default: "—", description: "Labeling shell — `label`, `description`, `error`, `required`, `htmlFor`, `size` + arbitrary children." },
+        { name: "labelHidden", type: `boolean`, default: `false`, description: "Keep the label for assistive tech, hide it on screen." },
+        { name: "dirty", type: `boolean`, default: `false`, description: "Mark a field changed but not yet saved." },
+        { name: "prefixPosition", type: `"inside" | "outside"`, default: `"inside"`, description: "Whether the prefix sits inside the control's border." },
+        { name: "suffixPosition", type: `"inside" | "outside"`, default: `"inside"`, description: "Whether the suffix sits inside the control's border." },
     ],
     notes: (
         <p className="text-xs text-zinc-600 dark:text-zinc-300">

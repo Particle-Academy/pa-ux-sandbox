@@ -101,7 +101,19 @@ function docsCoverageProps(string $source): array
  */
 function docsCoverageParts(string $source, string $component): array
 {
-    if (! preg_match('/Object\.assign\(\s*\w+\s*,\s*\{(.*?)\}\s*\)/ms', $source, $match)) {
+    /*
+     * Anchored on `export const <Component> = Object.assign(`, not on the first
+     * `Object.assign` in the file.
+     *
+     * `Editor` has two: a private `ToolbarWithSeparator` that attaches
+     * `Separator` to the toolbar, and then the component's own. Matching the
+     * first reported the part as `Editor.Separator` — a path that does not
+     * exist, since the real one is `Editor.Toolbar.Separator`. The page
+     * demonstrated it correctly and the check called it missing, which is the
+     * worse direction for a ratchet to be wrong in: it asks someone to document
+     * a thing that is already documented, under a name that would be incorrect.
+     */
+    if (! preg_match('/export\s+const\s+'.preg_quote($component, '/').'\s*=\s*Object\.assign\(\s*\w+\s*,\s*\{(.*?)\}\s*\)/ms', $source, $match)) {
         return [];
     }
 

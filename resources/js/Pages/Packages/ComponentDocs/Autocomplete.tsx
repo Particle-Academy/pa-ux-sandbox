@@ -93,6 +93,25 @@ const onSearch = useDebounce(async (query) => {
             ),
             code: `<Autocomplete options={fruits} disabled />`,
         },
+        {
+            name: "mode — edit against view",
+            description:
+                "\"edit\" (the default) renders the control; \"view\" renders the value as plain text. One prop turns a form into its own read-only summary, so a detail page and its edit form are the same markup rather than two that drift. Inside a <Form> the mode comes from context, and an explicit prop here wins.",
+            render: () => (
+                <div className="grid w-full gap-4 sm:grid-cols-2">
+                    <div>
+                        <p className="mb-1 text-xs font-medium text-zinc-500">mode="edit"</p>
+                        <Autocomplete value="Berlin" options={[{ value: "Berlin", label: "Berlin" }, { value: "Bern", label: "Bern" }, { value: "Bergen", label: "Bergen" }]} mode="edit" />
+                    </div>
+                    <div>
+                        <p className="mb-1 text-xs font-medium text-zinc-500">mode="view"</p>
+                        <Autocomplete value="Berlin" options={[{ value: "Berlin", label: "Berlin" }, { value: "Bern", label: "Bern" }, { value: "Bergen", label: "Bergen" }]} mode="view" />
+                    </div>
+                </div>
+            ),
+            code: `{/* The same markup reads as a form or as a summary. */}
+<Autocomplete value={value} onChange={setValue} mode={editing ? "edit" : "view"} />`,
+        },
     ],
     props: [
         { name: "options", type: `AutocompleteOption[]`, default: "—", description: "Options list — `{ value, label, disabled? }`." },
@@ -105,5 +124,6 @@ const onSearch = useDebounce(async (query) => {
         { name: "emptyMessage", type: `ReactNode`, default: `"No results"`, description: "Message when there are no matching options." },
         { name: "disabled", type: `boolean`, default: `false`, description: "Disable the input." },
         { name: "className", type: `string`, default: "—", description: "Extra classes on the input wrapper." },
+        { name: "mode", type: `"edit" | "view"`, default: `"edit"`, description: "`edit` renders the control, `view` renders the value as text. Falls back to `<Form>` context." },
     ],
 };

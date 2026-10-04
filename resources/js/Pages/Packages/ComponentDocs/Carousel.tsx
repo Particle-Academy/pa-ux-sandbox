@@ -105,6 +105,57 @@ export const carouselDoc: ComponentDoc = {
     <Carousel.Controls />
 </Carousel>`,
         },
+        {
+            name: "Control labels",
+            description:
+                "prevLabel and nextLabel replace the arrow controls' content — and, because they are the controls' accessible names, translating them is the difference between “Previous slide” and an unlabelled button in every non-English locale.",
+            render: () => (
+                <Carousel className="w-full">
+                    <Carousel.Panels>
+                        {["One", "Two", "Three"].map((label) => (
+                            <Carousel.Slide key={label}>
+                                <div className="flex h-32 items-center justify-center rounded-lg bg-zinc-100 text-sm dark:bg-zinc-800">
+                                    {label}
+                                </div>
+                            </Carousel.Slide>
+                        ))}
+                    </Carousel.Panels>
+                    <Carousel.Controls prevLabel="Zurück" nextLabel="Weiter" />
+                </Carousel>
+            ),
+            code: `<Carousel.Controls prevLabel={t("previous")} nextLabel={t("next")} />`,
+        },
+        {
+            name: "transition",
+            description:
+                "How panels change. “none” cuts straight to the next one, “fade” cross-fades. Prefer none where the panels are text a reader is mid-sentence in, and fade where they are images.",
+            render: () => (
+                <div className="w-full space-y-6">
+                    {(["none", "fade"] as const).map((transition) => (
+                        <div key={transition}>
+                            <p className="mb-1 text-xs font-medium text-zinc-500">
+                                transition="{transition}"
+                            </p>
+                            <Carousel>
+                                <Carousel.Panels transition={transition}>
+                                    {["A", "B", "C"].map((label) => (
+                                        <Carousel.Slide key={label}>
+                                            <div className="flex h-24 items-center justify-center rounded-lg bg-violet-100 text-sm dark:bg-violet-900/40">
+                                                {label}
+                                            </div>
+                                        </Carousel.Slide>
+                                    ))}
+                                </Carousel.Panels>
+                                <Carousel.Controls />
+                            </Carousel>
+                        </div>
+                    ))}
+                </div>
+            ),
+            code: `<Carousel.Panels transition="fade">
+    <Carousel.Slide>…</Carousel.Slide>
+</Carousel.Panels>`,
+        },
     ],
     props: [
         { name: "children", type: `ReactNode`, default: "—", description: "Compound parts — `Carousel.Panels`, `Carousel.Slide`, `Carousel.Controls`, `Carousel.Steps`." },
@@ -118,5 +169,8 @@ export const carouselDoc: ComponentDoc = {
         { name: "onFinish", type: `() => void`, default: "—", description: "Wizard only — fires when the user clicks finish on the last slide." },
         { name: "headless", type: `boolean`, default: `false`, description: "Disable default styling on `Carousel.Slide`. Use when wrapping the slide in your own container." },
         { name: "className", type: `string`, default: "—", description: "Extra classes on the root wrapper." },
+        { name: "Carousel.Controls — prevLabel", type: `ReactNode`, default: "—", description: "Content and accessible name of the previous control." },
+        { name: "Carousel.Controls — nextLabel", type: `ReactNode`, default: "—", description: "Content and accessible name of the next control." },
+        { name: "Carousel.Panels — transition", type: `"none" | "fade"`, default: `"none"`, description: "How panels change." },
     ],
 };

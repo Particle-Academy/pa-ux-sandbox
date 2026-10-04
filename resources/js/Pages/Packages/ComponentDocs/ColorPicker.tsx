@@ -71,6 +71,25 @@ export const colorPickerDoc: ComponentDoc = {
             ),
             code: `<ColorPicker value={color} onChange={setColor} disabled />`,
         },
+        {
+            name: "mode — edit against view",
+            description:
+                "\"edit\" (the default) renders the control; \"view\" renders the value as plain text. One prop turns a form into its own read-only summary, so a detail page and its edit form are the same markup rather than two that drift. Inside a <Form> the mode comes from context, and an explicit prop here wins.",
+            render: () => (
+                <div className="grid w-full gap-4 sm:grid-cols-2">
+                    <div>
+                        <p className="mb-1 text-xs font-medium text-zinc-500">mode="edit"</p>
+                        <ColorPicker value="#7c3aed" mode="edit" />
+                    </div>
+                    <div>
+                        <p className="mb-1 text-xs font-medium text-zinc-500">mode="view"</p>
+                        <ColorPicker value="#7c3aed" mode="view" />
+                    </div>
+                </div>
+            ),
+            code: `{/* The same markup reads as a form or as a summary. */}
+<ColorPicker value={value} onChange={setValue} mode={editing ? "edit" : "view"} />`,
+        },
     ],
     props: [
         { name: "value", type: `string`, default: "—", description: "Controlled hex value (`\"#8b5cf6\"`). Use with `onChange`." },
@@ -81,5 +100,6 @@ export const colorPickerDoc: ComponentDoc = {
         { name: "variant", type: `"outline" | "filled"`, default: `"outline"`, description: "Outline for forms, filled for canvas toolbars." },
         { name: "disabled", type: `boolean`, default: `false`, description: "Disable the input." },
         { name: "className", type: `string`, default: "—", description: "Extra classes on the root wrapper." },
+        { name: "mode", type: `"edit" | "view"`, default: `"edit"`, description: "`edit` renders the control, `view` renders the value as text. Falls back to `<Form>` context." },
     ],
 };

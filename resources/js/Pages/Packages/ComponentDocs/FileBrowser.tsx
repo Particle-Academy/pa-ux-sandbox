@@ -256,6 +256,64 @@ socket.on("fs-chunk", (chunk: FileSnapshotNode[]) => {
     className="h-64"
 />`,
         },
+        {
+            name: "Labels on the sub-components",
+            description:
+                "FileBrowser.PathBar, .Toolbar and .Tree each carry the one string that names them. placeholder is the editable path input; filterPlaceholder is the name filter; ariaLabel is the tree's accessible name, and it defaults to “Files” — fine for one browser on a page and ambiguous the moment there are two.",
+            render: () => (
+                <FileBrowser provider={fakeProvider} className="h-72 w-full">
+                    <FileBrowser.PathBar placeholder="Type a path…" />
+                    <FileBrowser.Toolbar filterPlaceholder="Filter these files…" />
+                    <FileBrowser.Tree ariaLabel="Project files" />
+                </FileBrowser>
+            ),
+            code: `<FileBrowser provider={provider}>
+    <FileBrowser.PathBar placeholder="Type a path…" />
+    <FileBrowser.Toolbar filterPlaceholder="Filter these files…" />
+    {/* Name the tree when more than one browser is on the page. */}
+    <FileBrowser.Tree ariaLabel="Project files" />
+</FileBrowser>`,
+        },
+        {
+            name: "onCreateFolder",
+            description:
+                "Opting in adds the new-folder affordance; leaving it off means there is none. You are handed the parent path and a name already validated against what is in that directory. Reject the promise to surface a message on the form; in provider mode a RESOLVED promise reloads the directory, which is how the new folder appears without you refetching.",
+            render: () => (
+                <FileBrowser
+                    provider={fakeProvider}
+                    className="h-72 w-full"
+                    onCreateFolder={async ({ parentPath, name }) => {
+                        if (name.startsWith(".")) {
+                            throw new Error("Hidden folders are not allowed here.");
+                        }
+                        console.info("[FileBrowser] create", parentPath, name);
+                    }}
+                />
+            ),
+            code: `<FileBrowser
+    provider={provider}
+    onCreateFolder={async ({ parentPath, name }) => {
+        // Reject to show a message on the form.
+        await api.createFolder(parentPath, name);
+        // Resolving reloads the directory, so the folder appears.
+    }}
+/>`,
+        },
+        {
+            name: "FileBrowser.Node — rendering rows yourself",
+            description:
+                "The row renderer, exposed so a custom tree can reuse it rather than reimplement selection, icons and indentation. Most apps compose .PathBar / .Toolbar / .Tree and never reach for it; it is listed because a part you can replace is only replaceable if its existence is written down.",
+            render: () => (
+                <div className="w-full rounded-lg border border-dashed border-zinc-300 p-4 text-sm text-zinc-600 dark:border-zinc-700 dark:text-zinc-300">
+                    Nothing to render — a bare node outside a tree has no context to read. The
+                    shape is in the code below.
+                </div>
+            ),
+            code: `{/* Inside your own tree, driven by the browser's context. */}
+{nodes.map((node) => (
+    <FileBrowser.Node key={node.path} node={node} />
+))}`,
+        },
     ],
     props: [
         { name: "provider", type: `FileBrowserProvider`, default: "—", description: "Async data source — `loadChildren(path) => Promise<FileEntry[]>`, called lazily per folder; never an eager walk." },
@@ -282,6 +340,11 @@ socket.on("fs-chunk", (chunk: FileSnapshotNode[]) => {
         { name: "showIcons", type: `boolean`, default: `true`, description: "Show file / folder icons." },
         { name: "className", type: `string`, default: "—", description: "Extra classes on the outer shell." },
         { name: "children", type: `ReactNode`, default: "PathBar + Toolbar + Tree", description: "Custom compound layout — rearrange or omit `FileBrowser.PathBar` / `FileBrowser.Toolbar` / `FileBrowser.Tree`." },
+        { name: "onCreateFolder", type: `(input: { parentPath, name }) => void | Promise<void>`, default: "—", description: "Opt in to the new-folder affordance. Reject to show an error; resolving reloads the directory." },
+        { name: "FileBrowser.PathBar — placeholder", type: `string`, default: "—", description: "Placeholder for the editable path input." },
+        { name: "FileBrowser.Toolbar — filterPlaceholder", type: `string`, default: `"Filter"`, description: "Placeholder for the name filter input." },
+        { name: "FileBrowser.Tree — ariaLabel", type: `string`, default: `"Files"`, description: "Accessible name for the tree. Set it when a page has more than one browser." },
+        { name: "FileBrowser.Node", type: `component`, default: "—", description: "The row renderer, exposed for custom trees." },
     ],
     notes: (
         <div className="space-y-2 text-xs text-zinc-600 dark:text-zinc-300">

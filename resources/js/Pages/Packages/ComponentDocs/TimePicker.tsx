@@ -51,6 +51,25 @@ export const timePickerDoc: ComponentDoc = {
             ),
             code: `<TimePicker value={time} onChange={setTime} disabled />`,
         },
+        {
+            name: "mode — edit against view",
+            description:
+                "\"edit\" (the default) renders the control; \"view\" renders the value as plain text. One prop turns a form into its own read-only summary, so a detail page and its edit form are the same markup rather than two that drift. Inside a <Form> the mode comes from context, and an explicit prop here wins.",
+            render: () => (
+                <div className="grid w-full gap-4 sm:grid-cols-2">
+                    <div>
+                        <p className="mb-1 text-xs font-medium text-zinc-500">mode="edit"</p>
+                        <TimePicker value="09:30" mode="edit" />
+                    </div>
+                    <div>
+                        <p className="mb-1 text-xs font-medium text-zinc-500">mode="view"</p>
+                        <TimePicker value="09:30" mode="view" />
+                    </div>
+                </div>
+            ),
+            code: `{/* The same markup reads as a form or as a summary. */}
+<TimePicker value={value} onChange={setValue} mode={editing ? "edit" : "view"} />`,
+        },
     ],
     props: [
         { name: "value", type: `string`, default: "—", description: "Controlled `HH:mm` string (24-hour, even when `format=\"12h\"`)." },
@@ -60,5 +79,6 @@ export const timePickerDoc: ComponentDoc = {
         { name: "minuteStep", type: `number`, default: `1`, description: "Minute increment — set to 15 / 30 for scheduling UIs." },
         { name: "disabled", type: `boolean`, default: `false`, description: "Disable the input." },
         { name: "className", type: `string`, default: "—", description: "Extra classes on the root wrapper." },
+        { name: "mode", type: `"edit" | "view"`, default: `"edit"`, description: "`edit` renders the control, `view` renders the value as text. Falls back to `<Form>` context." },
     ],
 };

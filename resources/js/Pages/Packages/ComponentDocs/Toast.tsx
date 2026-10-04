@@ -135,11 +135,32 @@ toast({ title: "FYI", variant: "info" });`,
     <App />
 </Toast.Provider>`,
         },
+        {
+            name: "Toast.Item — building your own viewport",
+            description:
+                "The provider renders the stack for you, so most apps never touch this. If you render your own viewport, each item takes data (the toast record) and onDismiss (called with its id). They are listed here because a surface you can replace is only replaceable if its contract is written down.",
+            render: () => (
+                <div className="w-full rounded-lg border border-dashed border-zinc-300 p-4 text-sm text-zinc-600 dark:border-zinc-700 dark:text-zinc-300">
+                    Nothing to render — a second live toast viewport on this page would fight the
+                    real one. The contract is in the code below.
+                </div>
+            ),
+            code: `{/* Your own viewport, driven by the same records. */}
+{toasts.map((toast) => (
+    <Toast.Item
+        key={toast.id}
+        data={toast}
+        onDismiss={(id) => dismiss(id)}
+    />
+))}`,
+        },
     ],
     props: [
         { name: "children", type: `ReactNode`, default: "—", description: "App tree. Mount the provider near the root." },
         { name: "position", type: `"top-right" | "top-left" | "bottom-right" | "bottom-left"`, default: `"bottom-right"`, description: "Where the toast stack anchors on screen." },
         { name: "maxToasts", type: `number`, default: `5`, description: "Maximum simultaneous toasts. Older ones drop off." },
+        { name: "Toast.Item — data", type: `ToastData`, default: "—", description: "The toast record. Only needed when you render your own viewport.", required: true },
+        { name: "Toast.Item — onDismiss", type: `(id: string) => void`, default: "—", description: "Called with the toast's id when it is dismissed.", required: true },
     ],
     notes: (
         <div className="space-y-1 text-xs text-zinc-600 dark:text-zinc-300">

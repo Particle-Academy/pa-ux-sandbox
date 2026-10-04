@@ -69,6 +69,26 @@ export const brandDoc: ComponentDoc = {
     </Card.Body>
 </Card>`,
         },
+        {
+            name: "Brand.Mark — glyph",
+            description:
+                "What sits in the square: a letter, an initial, an icon node. It is a node rather than a string so a real logo mark drops in without a second prop for it.",
+            render: () => (
+                <div className="flex flex-wrap items-center gap-6">
+                    <Brand.Mark glyph="F" />
+                    <Brand.Mark glyph="PA" />
+                    <Brand.Mark
+                        glyph={
+                            <svg viewBox="0 0 16 16" className="h-4 w-4" aria-hidden="true">
+                                <path d="M8 1l2 5h5l-4 3 1.5 5L8 11l-4.5 3L5 9 1 6h5z" fill="currentColor" />
+                            </svg>
+                        }
+                    />
+                </div>
+            ),
+            code: `<Brand.Mark glyph="F" />
+<Brand.Mark glyph={<Logo className="h-4 w-4" />} />`,
+        },
     ],
     props: [
         { name: "logo", type: `ReactNode`, default: "—", description: "Logo element. Any ReactNode — img, SVG, styled div." },
@@ -76,5 +96,6 @@ export const brandDoc: ComponentDoc = {
         { name: "tagline", type: `string`, default: "—", description: "Subtext under the name. Use for short product positioning." },
         { name: "size", type: `"sm" | "md" | "lg"`, default: `"md"`, description: "Overall scale. Affects logo box, name size, and tagline size together." },
         { name: "className", type: `string`, default: "—", description: "Extra classes on the root wrapper." },
+        { name: "Brand.Mark — glyph", type: `ReactNode`, default: "—", description: "What sits in the square — a letter, an initial, an icon." },
     ],
 };

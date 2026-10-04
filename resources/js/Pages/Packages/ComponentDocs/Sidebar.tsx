@@ -110,6 +110,26 @@ export const sidebarDoc: ComponentDoc = {
     …
 </Sidebar>`,
         },
+        {
+            name: "embedded",
+            description:
+                "Drops the sidebar's own outer chrome — the border and background it draws when it owns the edge of the page — for when it sits inside a panel that already has them. Chrome only: collapsing still works, and a collapsed rail keeps its fixed narrow width. Without it every host rediscovers the same override utilities, which then rot the next time the base classes change.",
+            render: () => (
+                <div className="w-full overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800">
+                    <Sidebar embedded>
+                        <Sidebar.Item icon="home" active>
+                            Overview
+                        </Sidebar.Item>
+                        <Sidebar.Item icon="document">Documents</Sidebar.Item>
+                        <Sidebar.Item icon="cog-6-tooth">Settings</Sidebar.Item>
+                    </Sidebar>
+                </div>
+            ),
+            code: `{/* The panel already draws the border — do not draw a second one. */}
+<div className="rounded-xl border">
+    <Sidebar embedded>…</Sidebar>
+</div>`,
+        },
     ],
     props: [
         { name: "children", type: `ReactNode`, default: "—", description: "Sidebar items — `Sidebar.Item`, `Sidebar.Group`, `Sidebar.Submenu`, `Sidebar.Toggle`." },
@@ -118,6 +138,7 @@ export const sidebarDoc: ComponentDoc = {
         { name: "onCollapsedChange", type: `(collapsed: boolean) => void`, default: "—", description: "Called when the user collapses / expands via `Sidebar.Toggle`." },
         { name: "collapseMode", type: `"icons" | "letters"`, default: `"icons"`, description: "When collapsed: show icons (fallback to first 3 letters) or always show letters." },
         { name: "className", type: `string`, default: "—", description: "Extra classes on the root aside element." },
+        { name: "embedded", type: `boolean`, default: `false`, description: "Drop the sidebar's own border and background, for use inside a panel that has them. Chrome only." },
     ],
     notes: (
         <p className="text-xs text-zinc-600 dark:text-zinc-300">

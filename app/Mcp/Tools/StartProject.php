@@ -43,7 +43,7 @@ class StartProject extends Tool
                 '1. (optional) Design direction: `gallery_list_styles` → `gallery_get_blueprint`.',
                 '2. Find UI: `list_components` / `search_components`.',
                 '3. Install a component: `install_instructions` (npm path + the `npx fancy-cli@latest add` vendor-source path).',
-                '4. Full-app templates: the Starter Kits — see `starter_kits` below for the list and the exact command. They are DOWNLOADS, not registry entries; `npx fancy-cli add` does not fetch one.',
+                '4. Full-app templates: the Starter Kits — see `starter_kits` below for the list and the exact command. They are DOWNLOADS, not registry entries; `npx fancy-cli@latest add` does not fetch one.',
             ],
             'starter_kits' => $this->starterKits(),
             'docs' => 'https://ui.particle.academy/docs/installation',
@@ -53,7 +53,7 @@ class StartProject extends Tool
     /**
      * The starter kits, each with the command that actually fetches it.
      *
-     * A kit is a zip download, NOT a registry entry — so `npx fancy-cli add` can
+     * A kit is a zip download, NOT a registry entry — so `npx fancy-cli@latest add` can
      * never fetch one, and the slug is not guessable from the kit's name
      * ("Realtime Chat" lives at `fancy-query`).
      *

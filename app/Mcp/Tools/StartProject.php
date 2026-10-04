@@ -2,6 +2,7 @@
 
 namespace App\Mcp\Tools;
 
+use App\Http\Controllers\Showcase\StarterKitController;
 use App\Support\PackageFamily;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Mcp\Request;
@@ -42,10 +43,48 @@ class StartProject extends Tool
                 '1. (optional) Design direction: `gallery_list_styles` → `gallery_get_blueprint`.',
                 '2. Find UI: `list_components` / `search_components`.',
                 '3. Install a component: `install_instructions` (npm path + the `npx fancy-cli@latest add` vendor-source path).',
-                '4. Full-app templates: the Starter Kits at https://ui.particle.academy/starter-kits (e.g. Shop-n-Sub = catalog + FMS, vendored as `npx fancy-cli@latest add catalog-fms`).',
+                '4. Full-app templates: the Starter Kits — see `starter_kits` below for the list and the exact command. They are DOWNLOADS, not registry entries; `npx fancy-cli add` does not fetch one.',
             ],
+            'starter_kits' => $this->starterKits(),
             'docs' => 'https://ui.particle.academy/docs/installation',
         ]);
+    }
+
+    /**
+     * The starter kits, each with the command that actually fetches it.
+     *
+     * A kit is a zip download, NOT a registry entry — so `npx fancy-cli add` can
+     * never fetch one, and the slug is not guessable from the kit's name
+     * ("Realtime Chat" lives at `fancy-query`).
+     *
+     * Both facts are here because omitting them cost a consumer a build. The Prism
+     * estate was told to start from a Fancy starter kit, read step 4's only worked
+     * example — Shop-n-Sub "vendored as `npx fancy-cli@latest add catalog-fms`" —
+     * and generalised it to the kit it wanted. `catalog-fms` is the component block
+     * Shop-n-Sub uses, not the kit. So the one example taught a route that works for
+     * no kit at all: `realtime-chat` was not found, `fancy-query` resolved as the npm
+     * package, and the agent reported "required Fancy starter unavailable" and
+     * hand-assembled the app instead. The kit was live the whole time.
+     *
+     * Read from `StarterKitController::kits()` rather than listed here, so this
+     * cannot drift from the page it describes.
+     *
+     * @return array{how: string, kits: list<array{name: string, slug: string, command: string, about: string}>}
+     */
+    private function starterKits(): array
+    {
+        return [
+            'how' => 'Each kit is a runnable Vite + React + Fancy project, downloaded as a zip. Run its `command`, then `npm install && npm run dev`. There is no CLI or npm route to a kit.',
+            'kits' => array_map(fn (array $kit): array => [
+                'name' => $kit['name'],
+                'slug' => $kit['slug'],
+                'command' => sprintf(
+                    'curl -L https://ui.particle.academy/starter-kits/%s/download.zip -o %s.zip && unzip %s.zip && cd %s-starter && npm install && npm run dev',
+                    $kit['slug'], $kit['slug'], $kit['slug'], $kit['slug'],
+                ),
+                'about' => $kit['blurb'],
+            ], StarterKitController::kits()),
+        ];
     }
 
     /** Map a free-text backend to one of php | node | other (or '' for "show all"). */
@@ -88,6 +127,7 @@ class StartProject extends Tool
                 'composer require particle-academy/laravel-catalog particle-academy/laravel-fms   # only the server packages you need',
                 '# Wire <FancyAppRoot> + setupFancyApp — see /docs/installation',
             ],
+            'starter_kits' => $this->starterKits(),
             'docs' => 'https://ui.particle.academy/docs/installation',
         ];
     }
@@ -121,6 +161,7 @@ class StartProject extends Tool
                 'npm install @particle-academy/react-fancy',
                 'npm install @particle-academy/fancy-catalog @particle-academy/fancy-features   # only the server-side mirrors you need',
             ],
+            'starter_kits' => $this->starterKits(),
             'docs' => 'https://ui.particle.academy/docs/installation',
         ];
     }
@@ -155,6 +196,7 @@ class StartProject extends Tool
                 'pip install fancy-catalog fancy-features   # only the mirrors you need',
                 'npm create vite@latest my-app -- --template react-ts && npm install @particle-academy/react-fancy',
             ],
+            'starter_kits' => $this->starterKits(),
             'docs' => 'https://ui.particle.academy/docs/installation',
         ];
     }
@@ -168,6 +210,7 @@ class StartProject extends Tool
             'ui' => 'The Fancy UI React kit is framework-agnostic (plain React 19 + Tailwind v4). Serve it from any backend that can host a JS frontend — a Vite SPA, an inertia-style adapter for your framework, or an embedded bundle. The components + agent bridges work unchanged.',
             'server_side_today' => 'Server-side capabilities (catalog, feature gating, xlsx/pptx, analytics, well-known files) ship as PHP + Node mirrors today, with the framework-free cores also on PyPI for Python. Until a native mirror for your language lands, run the Node (`-js`) packages from a small JS sidecar service, or call them over HTTP/RPC from your app — the contracts are stable and JSON-friendly.',
             'roadmap' => 'Native mirrors for more modern languages are on the roadmap. Each capability is defined by a language-agnostic contract, so the per-language packages stay behavior-identical. Want your language prioritized? Open an issue at github.com/Particle-Academy on the relevant package.',
+            'starter_kits' => $this->starterKits(),
             'docs' => 'https://ui.particle.academy/docs/installation',
         ];
     }

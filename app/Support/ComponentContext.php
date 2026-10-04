@@ -19,7 +19,7 @@ class ComponentContext
     private const ENTRIES = [
         'react-fancy/card' => [
             'why' => 'Every dashboard, settings panel, and inbox row needs a container that establishes visual hierarchy without redoing border, shadow, padding, and dark-mode tokens from scratch. Inline divs accumulate Tailwind class-soup, drift from page to page, and break the moment a designer touches the theme.',
-            'what' => '<code>Card</code> is a controlled-by-default Tailwind v4 surface with three variants (outlined, elevated, flat), four padding sizes, and named subcomponents — <code>Card.Header</code>, <code>Card.Body</code>, <code>Card.Footer</code> — so layouts stay declarative. Every variant respects the theme&apos;s zinc + dark-mode tokens automatically.',
+            'what' => '<code>Card</code> is a Tailwind v4 surface with five variants (outlined, elevated, muted, soft, flat), four sizes that scale padding and radius together, three ways to separate its sections (rules, nothing, or tinted bands), and named subcomponents — <code>Card.Header</code>, <code>Card.Body</code>, <code>Card.Footer</code>, <code>Card.Media</code> and <code>Card.Bleed</code>, the last of which reaches past the card&apos;s padding so an image or a table meets its edge. Every variant respects the theme&apos;s zinc + dark-mode tokens automatically.',
             'how' => 'Import from <code>@particle-academy/react-fancy</code>, drop in <code>&lt;Card variant="elevated"&gt;</code>, and place <code>Card.Header</code> / <code>Card.Body</code> / <code>Card.Footer</code> inside. For agent-driven layouts: pass content as children — no special hooks needed, the surface is fully static.',
         ],
 

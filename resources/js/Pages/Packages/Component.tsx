@@ -218,9 +218,17 @@ function ExamplesPanel({ doc }: { doc: ComponentDoc }) {
             {doc.intro && (
                 <Card>
                     <Card.Body>
-                        <Text size="sm" className="!text-zinc-700 dark:!text-zinc-200 [&_code]:rounded [&_code]:bg-zinc-100 [&_code]:px-1 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-xs dark:[&_code]:bg-zinc-800">
+                        {/*
+                          * A div, NOT <Text>. Text renders a <p>, and every docs file
+                          * writes its intro as block markup — so that nested a <p> in a
+                          * <p> on all 113 pages, which the HTML parser repairs by closing
+                          * the outer one. The repair looks right and makes the server and
+                          * client trees differ, so React logged a hydration error on every
+                          * component page. The type classes are carried here instead.
+                          */}
+                        <div className="text-sm font-normal text-zinc-700 dark:text-zinc-200 space-y-3 [&_code]:rounded [&_code]:bg-zinc-100 [&_code]:px-1 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-xs dark:[&_code]:bg-zinc-800">
                             {doc.intro}
-                        </Text>
+                        </div>
                     </Card.Body>
                 </Card>
             )}

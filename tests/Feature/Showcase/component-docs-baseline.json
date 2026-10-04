@@ -21,25 +21,5 @@
         "TreeNav": 3,
         "inputs": 4
     },
-    "noDocs": [
-        "AudioViewer",
-        "CodeView",
-        "Container",
-        "Eyebrow",
-        "Grid",
-        "ImageViewer",
-        "IndexList",
-        "JsonEditor",
-        "Kbd",
-        "Marquee",
-        "MediaViewer",
-        "PdfViewer",
-        "PullQuote",
-        "Section",
-        "Stat",
-        "StatList",
-        "StickyNote",
-        "TimeGrid",
-        "VideoViewer"
-    ]
+    "noDocs": []
 }

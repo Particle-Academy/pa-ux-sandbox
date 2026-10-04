@@ -12,6 +12,23 @@ import { artBoardNoteDoc } from "./ArtBoardNote";
 import { autocompleteDoc } from "./Autocomplete";
 import { avatarDoc } from "./Avatar";
 import { badgeDoc } from "./Badge";
+import { sectionDoc } from "./Section";
+import { indexListDoc } from "./IndexList";
+import { codeViewDoc } from "./CodeView";
+import { stickyNoteDoc } from "./StickyNote";
+import { timeGridDoc } from "./TimeGrid";
+import { jsonEditorDoc } from "./JsonEditor";
+import { audioViewerDoc } from "./AudioViewer";
+import { imageViewerDoc } from "./ImageViewer";
+import { videoViewerDoc } from "./VideoViewer";
+import { pdfViewerDoc } from "./PdfViewer";
+import { mediaViewerDoc } from "./MediaViewer";
+import { eyebrowDoc } from "./Eyebrow";
+import { kbdDoc } from "./Kbd";
+import { pullQuoteDoc } from "./PullQuote";
+import { statDoc } from "./Stat";
+import { statListDoc } from "./StatList";
+import { marqueeDoc } from "./Marquee";
 import { brandDoc } from "./Brand";
 import { breadcrumbsDoc } from "./Breadcrumbs";
 import { calendarDoc } from "./Calendar";
@@ -25,6 +42,7 @@ import { codeEditorDoc } from "./CodeEditor";
 import { colorPickerDoc } from "./ColorPicker";
 import { commandDoc } from "./Command";
 import { composerDoc } from "./Composer";
+import { containerDoc } from "./Container";
 import { contentRendererDoc } from "./ContentRenderer";
 import { contextMenuDoc } from "./ContextMenu";
 import { createEmptyWorkbookDoc } from "./CreateEmptyWorkbook";
@@ -55,6 +73,7 @@ import { fancyMapDoc } from "./FancyMap";
 import { fileBrowserDoc } from "./FileBrowser";
 import { fileUploadDoc } from "./FileUpload";
 import { flowEditorDoc } from "./FlowEditor";
+import { gridDoc } from "./Grid";
 import { headingDoc } from "./Heading";
 import { holySheetAgentDoc } from "./HolySheetAgent";
 import { iconDoc } from "./Icon";
@@ -145,6 +164,25 @@ export const DOCS: Record<string, ComponentDoc> = {
     "react-fancy/calendar": calendarDoc,
     "react-fancy/callout": calloutDoc,
     "react-fancy/card": cardDoc,
+    "react-fancy/container": containerDoc,
+    "react-fancy/grid": gridDoc,
+    "react-fancy/section": sectionDoc,
+    "react-fancy/index-list": indexListDoc,
+    "react-fancy/code-view": codeViewDoc,
+    "react-fancy/sticky-note": stickyNoteDoc,
+    "react-fancy/time-grid": timeGridDoc,
+    "react-fancy/json-editor": jsonEditorDoc,
+    "react-fancy/audio-viewer": audioViewerDoc,
+    "react-fancy/image-viewer": imageViewerDoc,
+    "react-fancy/video-viewer": videoViewerDoc,
+    "react-fancy/pdf-viewer": pdfViewerDoc,
+    "react-fancy/media-viewer": mediaViewerDoc,
+    "react-fancy/eyebrow": eyebrowDoc,
+    "react-fancy/kbd": kbdDoc,
+    "react-fancy/pull-quote": pullQuoteDoc,
+    "react-fancy/stat": statDoc,
+    "react-fancy/stat-list": statListDoc,
+    "react-fancy/marquee": marqueeDoc,
     "react-fancy/faux-client": fauxClientDoc,
     "react-fancy/carousel": carouselDoc,
     "react-fancy/chart": chartDoc,

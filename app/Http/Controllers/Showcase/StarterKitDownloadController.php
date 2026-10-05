@@ -160,12 +160,26 @@ MD;
                 'preview' => 'vite preview',
                 'typecheck' => 'tsc -b',
             ],
+            /*
+             * The base three come from THIS APP, like the per-kit extras.
+             *
+             * They were hardcoded, and `@particle-academy/react-fancy` sat at
+             * `^4.11.0` while the kit it shipped inside declared 5.x — so every
+             * downloaded starter kit installed a react-fancy a whole MAJOR
+             * behind, for every kit, not just the ones with extra dependencies.
+             *
+             * Missed entirely by the first version of
+             * `StarterKitDependenciesAreCurrentTest`, which checked
+             * `extraDependencies` through reflection and never read the
+             * package.json a consumer receives. A helper can be right while the
+             * artifact is wrong.
+             */
             'dependencies' => array_merge(
-                [
-                    '@particle-academy/react-fancy' => '^4.11.0',
-                    'react' => '^19.0.0',
-                    'react-dom' => '^19.0.0',
-                ],
+                $this->requiredVersions([
+                    '@particle-academy/react-fancy',
+                    'react',
+                    'react-dom',
+                ]),
                 $this->extraDependencies($kit['slug']),
             ),
             'devDependencies' => [
@@ -183,43 +197,80 @@ MD;
     }
 
     /**
-     * Every package a kit's `Kit.tsx` imports (beyond the always-on
-     * react-fancy + react) must be listed here, or the downloaded zip won't
-     * `npm install` — including packages that would resolve by hoisting
-     * (lucide-react, echarts): pnpm/yarn users get no such luck. Versions
-     * track the showcase's package.json; on 0.x carets that matters, because
-     * `^0.N` never advances to `0.N+1` — a stale pin here ships users an old
-     * (or vulnerable: fancy-echarts <5 pulled the pre-GHSA-fgmj-fm8m-jvvx
-     * echarts 5.x) release forever.
+     * Extra dependencies a kit needs beyond react-fancy, with the versions THIS
+     * APP installs.
+     *
+     * Read from the showcase's own `package.json` rather than written here, and
+     * that is the whole point. The versions used to be hand-maintained, under a
+     * comment that correctly predicted the cost: a caret on a `0.x` pins the
+     * MINOR, so `^0.5.3` never advances to `0.79.2` and a stale pin ships users
+     * an old — or vulnerable — release forever.
+     *
+     * The warning was right and nothing enforced it. By 2026-10-04 all six had
+     * drifted, `fancy-flow` by 74 minor versions, so every downloaded kit was a
+     * runnable project built on releases from long before the page offering it.
+     *
+     * The showcase is dogfooded — a rule requires it to take every first-party
+     * release in the same session — so sourcing from it makes a kit current by
+     * construction instead of by remembering. `StarterKitDependenciesAreCurrentTest`
+     * fails if the two ever disagree.
      *
      * @return array<string, string>
      */
     private function extraDependencies(string $slug): array
     {
-        return match ($slug) {
-            'fancy-query' => [
-                '@particle-academy/fancy-query' => '^0.5.0',
-                '@tanstack/react-query' => '^5.101.0',
-            ],
-            'react-fancy' => [
-                '@particle-academy/fancy-echarts' => '^5.0.0',
-                'echarts' => '^6.1.0',
-                'lucide-react' => '^0.511.0',
-            ],
-            'fancy-flow' => [
-                '@particle-academy/fancy-flow' => '^0.5.3',
-                '@xyflow/react' => '^12.10.2',
-            ],
-            'fancy-whiteboard' => ['@particle-academy/fancy-whiteboard' => '^0.2.1'],
-            'fancy-code' => ['@particle-academy/fancy-code' => '^0.8.0'],
-            'fancy-sheets' => ['@particle-academy/fancy-sheets' => '^0.9.0'],
-            'fancy-echarts' => [
-                '@particle-academy/fancy-echarts' => '^5.0.0',
-                'echarts' => '^6.1.0',
-                'lucide-react' => '^0.511.0',
-            ],
+        $names = match ($slug) {
+            'fancy-query' => ['@particle-academy/fancy-query', '@tanstack/react-query'],
+            'react-fancy' => ['@particle-academy/fancy-echarts', 'echarts', 'lucide-react'],
+            'fancy-flow' => ['@particle-academy/fancy-flow', '@xyflow/react'],
+            'fancy-whiteboard' => ['@particle-academy/fancy-whiteboard'],
+            'fancy-code' => ['@particle-academy/fancy-code'],
+            'fancy-sheets' => ['@particle-academy/fancy-sheets'],
+            'fancy-echarts' => ['@particle-academy/fancy-echarts', 'echarts', 'lucide-react'],
             default => [],
         };
+
+        return $this->requiredVersions($names);
+    }
+
+    /**
+     * Look each package up in this app's own dependencies.
+     *
+     * Loud, not lenient. Emitting a dependency without a version would produce a
+     * package.json npm cannot resolve, and omitting it silently would ship a kit
+     * whose imports have nothing behind them — both discovered by the person who
+     * downloaded it rather than by us.
+     *
+     * @param  list<string>  $names
+     * @return array<string, string>
+     */
+    private function requiredVersions(array $names): array
+    {
+        $installed = $this->installedVersions();
+        $versions = [];
+
+        foreach ($names as $name) {
+            if (! isset($installed[$name])) {
+                abort(500, "A starter kit needs $name, which this app does not install.");
+            }
+
+            $versions[$name] = $installed[$name];
+        }
+
+        return $versions;
+    }
+
+    /**
+     * This app's own dependency versions.
+     *
+     * @return array<string, string>
+     */
+    private function installedVersions(): array
+    {
+        /** @var array{dependencies?: array<string, string>} $manifest */
+        $manifest = json_decode((string) File::get(base_path('package.json')), true, 512, JSON_THROW_ON_ERROR);
+
+        return $manifest['dependencies'] ?? [];
     }
 
     private function viteConfig(bool $withAtAlias = false): string

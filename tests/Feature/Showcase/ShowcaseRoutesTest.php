@@ -141,9 +141,30 @@ it('bundles every imported package into the download zip', function (array $kit)
         $pkgJson['devDependencies'] ?? [],
     ));
 
-    // react-fancy must be current-major, never the long-stale ^3.
-    expect($pkgJson['dependencies']['@particle-academy/react-fancy'] ?? '')
-        ->toStartWith('^4');
+    /*
+     * react-fancy must match what THIS APP installs — not a major written here.
+     *
+     * This assertion used to read `->toStartWith('^4')`, under the comment
+     * "must be current-major, never the long-stale ^3". So a previous stale-kit
+     * incident was fixed by hardcoding the next literal, and the guard then held
+     * the kits at 4 for as long as 4 was written here: by 2026-10-04 the app was
+     * on 5.33.0 and every downloaded kit still installed react-fancy 4, with
+     * this check green the entire time.
+     *
+     * A check written against a literal stops being protection the moment the
+     * right answer moves, and quietly becomes the thing enforcing the staleness.
+     * Comparing against the app cannot freeze, because the app is kept current by
+     * the dogfood rule.
+     */
+    $appVersion = json_decode(
+        (string) file_get_contents(base_path('package.json')),
+        true,
+        512,
+        JSON_THROW_ON_ERROR
+    )['dependencies']['@particle-academy/react-fancy'] ?? '';
+
+    expect($appVersion)->not->toBe('', 'the showcase does not install react-fancy; nothing to compare against');
+    expect($pkgJson['dependencies']['@particle-academy/react-fancy'] ?? '')->toBe($appVersion);
 
     // Every @particle-academy/* the kit imports must be a declared dependency.
     preg_match_all('#@particle-academy/[a-z0-9-]+#', $kitSrc, $m);

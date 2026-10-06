@@ -31,14 +31,14 @@ jobs:
     name: Type-check + build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # Third-party dependency allowlist. Cheap, and failing here is cheap --
       # the same check gates the release, so a PR that adds an unapproved or
       # abandoned dependency finds out now rather than at tag time.
       # The allowlist is FETCHED, never vendored: one source, no copies to drift.
       - name: Fetch the third-party allowlist
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: Particle-Academy/.github
           path: .third-party-allowlist
@@ -69,7 +69,7 @@ jobs:
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
 
       - name: Check out fancy-connector-core ${{ steps.connector_core.outputs.tag }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: Particle-Academy/fancy-connector-core
           ref: ${{ steps.connector_core.outputs.tag }}
@@ -81,7 +81,7 @@ jobs:
           node .fancy-connector-core/scripts/vendor.mjs --target resources/flow-nodes/_connector --check
           node -e "require('node:fs').rmSync('.fancy-connector-core',{recursive:true,force:true})"
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: "22"
 
@@ -171,7 +171,7 @@ jobs:
       # Passing the real build across rather than rebuilding it: one build, and
       # the tests run against the assets that were actually just verified.
       - name: Upload build
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: build
           path: public/build
@@ -185,10 +185,10 @@ jobs:
     # wall-clock than the wait.
     needs: frontend
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Download build
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: build
           path: public/build
@@ -213,7 +213,7 @@ jobs:
       # A second install rather than passing node_modules from the other job:
       # the artifact would be hundreds of megabytes to upload and download,
       # which costs more than installing it again.
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: "22"
 

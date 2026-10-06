@@ -20,7 +20,7 @@ jobs:
     name: Running the latest of everything
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # Third-party dependency allowlist. This job INSTALLS -- composer install
       # and npm ci below -- so it needs the same gate ci.yml carries, and it did
@@ -31,7 +31,7 @@ jobs:
       #
       # The allowlist is FETCHED, never vendored: one source, no copies to drift.
       - name: Fetch the third-party allowlist
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: Particle-Academy/.github
           path: .third-party-allowlist
@@ -51,7 +51,7 @@ jobs:
           coverage: none
           extensions: mbstring, sqlite3, pdo_sqlite
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: "22"
 
@@ -125,7 +125,7 @@ jobs:
           echo "tag=$tag" >> "$GITHUB_OUTPUT"
 
       - name: Check out fancy-connector-core ${{ steps.connector_core.outputs.tag }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: Particle-Academy/fancy-connector-core
           ref: ${{ steps.connector_core.outputs.tag }}

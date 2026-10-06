@@ -107,8 +107,8 @@ export const gridDoc: ComponentDoc = {
             ),
             code: `<Grid cols={2} responsive={false}>
     <Icon name="bolt" />
-    <Icon name="cube" />
-    <Icon name="globe-alt" />
+    <Icon name="box" />
+    <Icon name="globe" />
     <Icon name="sparkles" />
 </Grid>`,
         },

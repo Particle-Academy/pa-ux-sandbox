@@ -4048,16 +4048,16 @@
         },
         {
             "name": "particle-academy/dark-slide",
-            "version": "v0.10.4",
+            "version": "v0.11.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/dark-slide.git",
-                "reference": "9044b68e7c434d1e8a13007970273e8f9d5df976"
+                "reference": "423309d25e2f42365651c51845396f26f379cdc3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/dark-slide/zipball/9044b68e7c434d1e8a13007970273e8f9d5df976",
-                "reference": "9044b68e7c434d1e8a13007970273e8f9d5df976",
+                "url": "https://api.github.com/repos/Particle-Academy/dark-slide/zipball/423309d25e2f42365651c51845396f26f379cdc3",
+                "reference": "423309d25e2f42365651c51845396f26f379cdc3",
                 "shasum": ""
             },
             "require": {
@@ -4117,7 +4117,7 @@
                 "issues": "https://github.com/Particle-Academy/dark-slide/issues",
                 "source": "https://github.com/Particle-Academy/dark-slide"
             },
-            "time": "2026-09-17T01:32:40+00:00"
+            "time": "2026-10-07T19:53:14+00:00"
         },
         {
             "name": "particle-academy/fancy-cms",

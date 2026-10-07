@@ -8,9 +8,10 @@ uses(TestCase::class);
 /*
  * A test's result must not depend on whether a Vite dev server is running.
  *
- * `public/hot` is written by `npm run dev` and deleted when it shuts down
- * cleanly -- so a dev server that was killed, crashed, or is simply still open
- * in another terminal leaves the file behind. Laravel's `Vite::isRunningHot()`
+ * `public/hot` is written by `npm run dev` and removed when it shuts down
+ * cleanly, so the file is present for as long as a dev server is RUNNING -- the
+ * normal state of a dev machine, not an edge case -- and it also outlives one
+ * that was killed or crashed. Laravel's `Vite::isRunningHot()`
  * is just `is_file()` on that path, and plenty of production code branches on
  * it. `App\Ssr\TimeoutHttpGateway::dispatch()` is the one that bit:
  *
@@ -21,7 +22,8 @@ uses(TestCase::class);
  * instead of 13733. `SsrRenderingTest` fakes 13733, the fake does not match, the
  * unmatched call returns an empty body, the gateway reads no JSON and falls back
  * to client rendering -- and five SSR tests plus both `AssetSchemeTest` cases
- * fail. Seven reds, all from a file nobody remembers writing.
+ * fail. Seven reds, from a file whose presence means nothing more than that
+ * someone is working on the front end right now.
  *
  * That is worse than it sounds, because of WHICH tests they are.
  * `SsrRenderingTest` exists because SSR can stop working while every page still

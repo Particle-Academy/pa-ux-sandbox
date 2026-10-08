@@ -191,6 +191,17 @@ BEFORE IT CAN SHIP: three registry names that do not exist yet (npm scoped, Pack
             'repo' => 'Particle-Academy/fancy-trading-connect-php',
             'why' => 'The same, for a Laravel backend.',
         ],
+        'fancy-support' => [
+            'name' => 'fancy-support',
+            'repo' => 'Particle-Academy/fancy-support',
+            'why' => 'A BOLT-ON HELPDESK -- tickets, threads, queues, canned answers -- for an app that already has users, auth and a UI, rather than a standalone support product. Decided 2026-10-08 and registered here the same hour, before a line exists, which is the whole point of this list.
+
+NOT SPECCED YET, deliberately. Nothing below is a commitment: no language split, no package count, no surface. The owner`s words were "we will spec it later", so anyone reading this should treat the scope as OPEN and write the spec rather than infer one from this paragraph. What is decided is that it exists and that it is a bolt-on.
+
+The one thing worth recording now is the SHAPE OF THE DECISION still to be made, because it is the same fork every server capability in the kit has faced: a matched PHP + Node pair behind one React surface (holy-sheet / dark-slide / laravel-catalog), or PHP-only. A helpdesk is mostly storage + state machine + notification, so the pair question is real rather than ceremonial, and it is cheaper to answer in the spec than to retrofit.
+
+Both registry names read as unclaimed on 2026-10-08 -- `@particle-academy/fancy-support` on npm and `particle-academy/fancy-support` on Packagist both 404. RE-CHECK AT SPEC TIME: a 404 today says nothing about the day you tag, and the first publish of a name that does not exist yet is an OWNER action either way (npm cannot claim a name by OIDC).',
+        ],
     ];
 
     /**

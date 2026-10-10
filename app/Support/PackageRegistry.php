@@ -24,6 +24,22 @@ class PackageRegistry
      * someone to `composer require` something that 404s.
      */
     public const HIDDEN = [
+        // `fancy-pty` -- BUILT and PUSHED, never published.
+        //
+        // Working on four platforms, measured by the live suite on real CI
+        // runners (win32-x64, linux-x64, linux-arm64, darwin-arm64): real
+        // shells, resize, kill, zero orphans, and <= 0.046 MB / 0.000 handles
+        // retained per exited pty against a 0.5 MB / 1.0 handle bar.
+        //
+        // Hidden because THE NPM NAME DOES NOT EXIST YET. The first publish of
+        // a new name is a one-time authenticated step only the owner can
+        // perform (see .ai/knowledge/publishing.md), so a public entry here
+        // would offer `npm install @particle-academy/fancy-pty` for a name that
+        // 404s -- the exact mistake `fancy-trading-ui` made from this list.
+        //
+        // REMOVE THIS SLUG once the name resolves on the registry.
+        'fancy-pty',
+
         // `fancy-inertia-server` -- BUILT and PUSHED (0.1.0), not on PyPI.
         //
         // PyPI needs a PENDING PUBLISHER configured BEFORE the first publish and
@@ -139,43 +155,6 @@ class PackageRegistry
      * @var array<string, array{name: string, repo: string, why: string}>
      */
     public const PLANNED = [
-        'fancy-pty' => [
-            'name' => 'fancy-pty',
-            'repo' => 'Particle-Academy/fancy-pty',
-            'why' => 'A ZERO-DEPENDENCY pseudo-terminal for Node, to replace `node-pty` underneath fancy-term-host. Owner decision 2026-10-10: "WE NEED TO ROLL OUR OWN. DO NOT USE 3RD PARTY". NOT YET STARTED beyond a feasibility spike -- registered first per the rule, so it cannot become a decided-but-invisible package.
-
-WHY IT EXISTS, measured rather than argued. On 2026-10-06 the machine ran OUT OF COMMIT MEMORY: 194.6 GB of a 196.2 GB commit limit, and a supervised process died with "The paging file is too small for this operation to complete". The holder was Genie`s pty-host -- fancy-term-host 0.5.0 on `node-pty` 1.1.0 -- at 88,346 MB private bytes, 78,996 handles and 7,209 threads for ~41 LIVE terminals, against 7,158 spawns and 7,116 exits in its log. That is ~12 MB of commit, ~1 thread and ~11 handles RETAINED PER EXITED PTY. The owner chose to reboot the machine. Filed as Renaissance-Analytics/genie#805.
-
-That leak is in third-party native code we cannot fix, reached through a package WE publish, so every consumer of fancy-term-host inherits it and we carry the blame with none of the remedy. It also sits directly against the Genie 2.0 constraint (Fancy and Prism only, no third-party libraries), which is the ruling the owner was restating.
-
-A PER-PTY CHILD PROCESS CANNOT LEAK INTO THE HOST -- that is the architectural point, not a hope. The 88 GB accumulated inside one long-lived node process; when a separate helper exits, the OS reclaims its commit, threads and handles whether or not our code is tidy.
-
-SPIKE RESULT, 2026-10-10, sandbox/fancy-pty-spike. Windows pseudoconsole is an IN-BOX kernel32 API, so this needs no redistributable at all: `CreatePseudoConsole`, `ResizePseudoConsole`, `InitializeProcThreadAttributeList`, `UpdateProcThreadAttribute(PROC_THREAD_ATTRIBUTE_PSEUDOCONSOLE)` and `CreateProcessW` all succeeded from Rust std with hand-written `extern "system"` declarations and NO crates -- no Cargo.toml, 235 KB static binary, `-C target-feature=+crt-static` so it runs on a bare Windows with no VC++ redistributable (the exact thing that makes every .node addon fail on a clean machine). A real cmd.exe attached to the pseudoconsole and its VT output came back down the pipe.
-
-CHILD STDIO -- SOLVED 2026-10-10, and it was the one blocker the rest depended on. It is a single flag: `STARTF_USESTDHANDLES` with all three std handles set to NULL. Omitting the flag does NOT mean "no opinion", it means "propagate the parent`s"; setting it with NULL is the only way to say "the child has none, fill them in from its console", and csrss then hands the child the pseudoconsole`s own handles. Proof is the SIZE: the child`s screen buffer reads back 100x40, the dimensions the spike resized the pseudoconsole to, which an inherited handle cannot fake, with stdin/stdout/stderr all `type=CHAR` and `GetConsoleMode` succeeding. The full cmd.exe oracle then passes (7006652 in the stream, banner no longer leaking to the parent`s stdout), and `FANCY_PTY_STDIO=legacy-inherit` reproduces the failure at exit 1, so the fix has a control that goes red.
-
-THE MISDIAGNOSIS IS RECORDED ON PURPOSE, because it was confident and it was mine. The symptom -- shell reads EOF, banner lands on the parent`s stdout -- was attributed to the parent having no console of its own (`GetConsoleWindow()` returns 0 under MSYS), concluding that a pseudoconsole cannot attach to the child of a console-less parent and that THIS is why node-pty ships a console-attached agent (`OpenConsole.exe`). Wrong, and the error was reasoning from a third party`s workaround as though it were evidence about the API. Replacing cmd.exe with a child that REPORTS (`probe.rs`: its own std handle types, console mode, HWND visibility, screen-buffer size) answered it in one run -- the child`s console HWND was non-null, so the pseudoconsole had attached perfectly well, while its stdout was `type=DISK`, handle 0xc, the parent`s redirected log file. cmd.exe was the wrong instrument: it reports failure by doing nothing. CONSEQUENCE FOR THE DESIGN: no console-attached agent process is needed, so there is no second executable to orphan -- the 31-stuck-`OpenConsole.exe` failure mode cannot occur because that process does not exist. The alternative that also worked, clearing our own std handles across the spawn with `SetStdHandle(NULL)`, is REJECTED: it is process-global and would race concurrent spawns and log writes, and the flag needs no mutation at all.
-
-The #4 check is already green at the spike level and was measured, not assumed: the child`s console HWND is non-null but `IsWindowVisible` is false. A ConPTY child ALWAYS has a non-null console HWND -- conhost creates a window and never shows it -- so non-null is not the #4 failure, VISIBLE is. The probe`s first version called non-null a failure and invented a bug for a minute.
-
-SECOND HARD PART, fixed in the spike: EOF on the read pipe arrives only when `ClosePseudoConsole` runs, so a read-until-EOF loop on the thread that is supposed to close it deadlocks -- the spike hung for two minutes. Correct order is reader thread, wait for the child, `ClosePseudoConsole`, then join.
-
-SHAPE: a tiny native HELPER EXECUTABLE plus pure-JS Node code, NOT a native addon. No N-API, no node-gyp, no node-addon-api, no Electron ABI, no rebuild, no prebuilds, no asarUnpack-the-native-module dance -- a plain exe has no ABI coupling to Node or Electron, so the ENTIRE class of packaging failure this estate fought on 2026-10-10 (a peer electron-builder never packed; a rebuild needing Python+MSVC; a host-arch conpty.dll reported as ok) stops being expressible. Cross-compiling arm64 is a target flag, which also closes the arch hole in the afterPack hook rather than patching it.
-
-SCOPE: spawn with cwd/env/argv, read, write, resize, kill (job object on Windows, process group on POSIX), exit reporting. Windows via ConPTY; macOS and Linux via posix_openpt/grantpt/unlockpt/ptsname plus fork/setsid/ioctl(TIOCSCTTY). Explicitly NOT a terminal emulator -- fancy-term already owns rendering.
-
-THE CONSUMER SURFACE, confirmed by `claude · tynn` 2026-10-10. Genie 2 runs its terminals INSIDE Genie.exe`s main process -- `src/main/fancy-term-port.ts` wraps fancy-term-host`s `inProcessBackend` / `configureInProcessBackend` / `createSnapshotStore` behind their own `PtyPort` (four verbs open/write/resize/kill, two subscriptions data/exit). There is NO separate pty-host there and none planned, which sharpens the argument rather than weakening it: the #805 leak would accumulate in the APP process. fancy-pty plugs in underneath the in-process backend and changes nothing for them so long as those six calls keep their meaning.
-
-ONE HARD PLACEMENT CONSTRAINT, and it rules out the obvious implementation. The helper executable MUST resolve IN PLACE under the install dir (`resources/app.asar.unpacked`), never extracted to a temp path on first use -- which is the usual way a package ships a binary. Genie`s upgrade teardown kills and NAMES everything running from the install dir (`orphansUnder` plus a by-path process lister), which is what stops a stuck helper jamming an update the way 31 orphaned `OpenConsole.exe` processes once did. A helper living in temp is invisible to that scan.
-
-ACCEPTANCE ALREADY EXISTS ON THEIR SIDE: `vm-windows-verify.ps1` drives the no-stray-console / kill-path / 36-37-38-on-an-installed-app checks unchanged, and tynn has built the leak check -- `npm run verify:leak` (`test/live/terminal-leak.live.ts`) -- asserting threads, handles and private bytes against live terminals. The leak measured rather than inferred, which is the check whose absence let 88 GB accumulate over four days while 7,158 spawns and 7,116 exits sat in the log.
-
-THE BAR, measured by `claude · tynn` 2026-10-10 and set by the incident rather than by whoever builds the replacement. Per exited pty: threads <= 0.1, handles <= 1.0, private bytes <= 0.5 MB -- chosen so #805`s numbers (~1 thread, ~11 handles, ~12 MB) fail by 10x and a tidy engine passes with headroom. Baselined against the CURRENT engine first, deliberately: a leak check that has only ever been green against a known-good build is one to distrust. On Linux (Ubuntu 24.04 WSL2, Node 22.23.3, fancy-term-host 0.9.0 over node-pty 1.x, in-process through genie2`s TerminalHost) node-pty gives everything back -- 120/120 exits, 0.000 threads, 0.00 handles, -0.08 MB retained -- with a positive control proving the gauges see ptys at all (20 live = +20 threads, +20 handles). So THE LINUX RUN CANNOT GO RED, and that is a fact about the check, not a clean bill of health for node-pty: #805 was ConPTY on WINDOWS, and the Windows run is the one fancy-pty must clear. It is queued behind the updater proof in tynn`s Windows VM.
-
-JS SIDE MUST BE ESM, with an `exports.import` condition -- measured by tynn the same day, not a style preference. Genie 2`s built ESM main bundle leaves packages external, and Node refused `import { autoUpdater } from "electron-updater"` outright at load because it is CJS with getter-defined exports. A CJS fancy-pty would be reachable only through its default export from that bundle.
-
-BEFORE IT CAN SHIP: the TOOLCHAIN is itself an approval question under the third-party rule -- Rust std with zero crates versus C against only the platform SDK -- and the owner has not been asked yet. An npm name that does not exist, so the first publish needs him. And the #4 regression must be re-proved absent, not assumed: no stray console window under a windowless detached host, and a kill path that neither flashes a console nor crashes with "AttachConsole failed", which is why fancy-term-host moved to node-pty`s bundled conpty.dll in 0.2.1/0.2.3 in the first place.',
-        ],
         'fancy-expr' => [
             'name' => 'fancy-expr',
             'repo' => 'Particle-Academy/fancy-expr',
@@ -435,6 +414,7 @@ Both registry names read as unclaimed on 2026-10-08 -- `@particle-academy/fancy-
         // NOT validated, which makes hiding a way to bank a latent failure.
         // That publish happened on 2026-08-27 and the field is now validated.
         'fancy-trading-ui' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#22c55e'],
+        'fancy-pty' => ['group' => 'backends', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#0ea5e9'],
         // Onboarding.
         'fancy-walkthrough' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#6366f1'],
         // Python backends -- each the third runtime of an existing pair.
@@ -1004,6 +984,14 @@ Both registry names read as unclaimed on 2026-10-08 -- `@particle-academy/fancy-
                 'tagline' => 'Headless Node terminal backend for fancy-term — owns the PTYs (node-pty peer) and the T1/T2/T3 persistence engine (snapshot+replay, retained PTYs, detached pty-host) behind four injected ports. No UI.',
                 'npm' => '@particle-academy/fancy-term-host',
                 'repo' => 'Particle-Academy/fancy-term-host',
+                'language' => 'TypeScript',
+            ],
+            [
+                'slug' => 'fancy-pty',
+                'name' => '@particle-academy/fancy-pty',
+                'tagline' => 'ZERO-DEPENDENCY pseudo-terminal for Node -- a tiny native helper EXECUTABLE plus pure JS, replacing `node-pty` underneath fancy-term-host. No native addon, so no node-gyp, no Electron ABI rebuild and no prebuild resolution. One helper process per pty, which is why an exited terminal cannot retain memory, threads or handles in the host.',
+                'npm' => '@particle-academy/fancy-pty',
+                'repo' => 'Particle-Academy/fancy-pty',
                 'language' => 'TypeScript',
             ],
             [

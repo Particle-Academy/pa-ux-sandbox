@@ -781,10 +781,10 @@ function WellKnownFiles() {
  */
 const TerminalSession = clientOnly(async () => {
     const { Terminal } = await import("@particle-academy/fancy-term");
-    // NOT a fancy-term stylesheet -- it exports "." only. This is xterm's own
-    // CSS, and it is REQUIRED: without it xterm's character-measurement helper
-    // (a long run of "w") renders as visible text over the output.
-    await import("@xterm/xterm/css/xterm.css");
+    // REQUIRED: without it xterm's character-measurement helper (a long run
+    // of "w") renders as visible text over the output. fancy-term 0.6.1 exports
+    // it, so this no longer reaches into xterm directly.
+    await import("@particle-academy/fancy-term/styles.css");
 
     const OUTPUT = [
         "\u001b[35mFancy Term\u001b[0m — a Human+ terminal.",

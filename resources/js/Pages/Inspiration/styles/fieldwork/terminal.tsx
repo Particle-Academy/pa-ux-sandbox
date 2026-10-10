@@ -1,5 +1,5 @@
 import "./terminal.css";
-import "@xterm/xterm/css/xterm.css";
+import "@particle-academy/fancy-term/styles.css";
 
 import { Link } from "@inertiajs/react";
 import { useEffect, useMemo, useRef, useState } from "react";

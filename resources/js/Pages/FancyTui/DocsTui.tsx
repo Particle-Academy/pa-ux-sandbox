@@ -1,7 +1,8 @@
 import { Terminal } from "@particle-academy/fancy-term";
 // Required by fancy-term: without it xterm's character-measurement helper (a
-// long run of "w") renders as visible text over the output.
-import "@xterm/xterm/css/xterm.css";
+// long run of "w") renders as visible text over the output. Loaded from
+// fancy-term rather than from xterm (0.6.0 added the subpath).
+import "@particle-academy/fancy-term/styles.css";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { ComponentRef } from "react";
 

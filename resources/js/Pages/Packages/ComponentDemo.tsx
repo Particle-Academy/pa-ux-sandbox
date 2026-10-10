@@ -145,7 +145,7 @@ import {
 } from "@particle-academy/fancy-x-files-ui";
 import "@particle-academy/fancy-code/styles.css";
 import { Terminal, type TerminalHandle, BUILTIN_SHELLS, type ShellProfile } from "@particle-academy/fancy-term";
-import "@xterm/xterm/css/xterm.css";
+import "@particle-academy/fancy-term/styles.css";
 import { Board, StickyNote, CursorLayer, Shape, Connector, Drawing } from "@particle-academy/fancy-whiteboard";
 import "@particle-academy/fancy-whiteboard/styles.css";
 import { ArtBoard, ArtPiece, type ArtBoardValue } from "@particle-academy/fancy-artboard";

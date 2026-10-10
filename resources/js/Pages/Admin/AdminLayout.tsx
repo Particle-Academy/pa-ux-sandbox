@@ -10,6 +10,7 @@ const THEME_LABEL = {
 } as const;
 import { PlayerAvatar, type PlayerIdentityData } from "../../components/PlayerIdentity";
 import "../../../css/admin.css";
+import { PaletteHint } from "@/components/ModifierKey";
 
 type AdminAuth = { user: { name: string; github_username: string | null; avatar_url: string | null; identity: PlayerIdentityData; is_admin?: boolean } | null };
 type AdminShared = { auth: AdminAuth; pending?: number };
@@ -187,7 +188,7 @@ export function AdminLayout({ children }: { children: ReactNode }) {
                     >
                         <Icon name="search" size="sm" />
                         <span>Search…</span>
-                        <span className="kbd">⌘K</span>
+                        <PaletteHint />
                     </div>
                     <button
                         className="btn btn-ghost"

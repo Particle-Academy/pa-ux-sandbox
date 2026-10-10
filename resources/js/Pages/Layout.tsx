@@ -30,6 +30,7 @@ import {
 } from "@particle-academy/fancy-inertia";
 import { FancyInertiaPwa } from "@particle-academy/fancy-inertia/pwa";
 import { CoBrowsePresence } from "@particle-academy/agent-integrations";
+import { PaletteHint } from "@/components/ModifierKey";
 import { WalkthroughTarget } from "@particle-academy/fancy-walkthrough";
 import { SiteWalkthrough, TakeTheTourButton } from "../components/SiteWalkthrough";
 import { cycleTheme } from "../showcase-theme";
@@ -197,7 +198,7 @@ export function Layout({
                             style={{ height: 34, padding: "0 12px" }}
                             aria-label="Search"
                         >
-                            <span className="kbd">⌘K</span>
+                            <PaletteHint />
                         </button>
                         </WalkthroughTarget>
 

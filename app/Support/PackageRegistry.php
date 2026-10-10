@@ -139,6 +139,27 @@ class PackageRegistry
      * @var array<string, array{name: string, repo: string, why: string}>
      */
     public const PLANNED = [
+        'fancy-pty' => [
+            'name' => 'fancy-pty',
+            'repo' => 'Particle-Academy/fancy-pty',
+            'why' => 'A ZERO-DEPENDENCY pseudo-terminal for Node, to replace `node-pty` underneath fancy-term-host. Owner decision 2026-10-10: "WE NEED TO ROLL OUR OWN. DO NOT USE 3RD PARTY". NOT YET STARTED beyond a feasibility spike -- registered first per the rule, so it cannot become a decided-but-invisible package.
+
+WHY IT EXISTS, measured rather than argued. On 2026-10-06 the machine ran OUT OF COMMIT MEMORY: 194.6 GB of a 196.2 GB commit limit, and a supervised process died with "The paging file is too small for this operation to complete". The holder was Genie`s pty-host -- fancy-term-host 0.5.0 on `node-pty` 1.1.0 -- at 88,346 MB private bytes, 78,996 handles and 7,209 threads for ~41 LIVE terminals, against 7,158 spawns and 7,116 exits in its log. That is ~12 MB of commit, ~1 thread and ~11 handles RETAINED PER EXITED PTY. The owner chose to reboot the machine. Filed as Renaissance-Analytics/genie#805.
+
+That leak is in third-party native code we cannot fix, reached through a package WE publish, so every consumer of fancy-term-host inherits it and we carry the blame with none of the remedy. It also sits directly against the Genie 2.0 constraint (Fancy and Prism only, no third-party libraries), which is the ruling the owner was restating.
+
+A PER-PTY CHILD PROCESS CANNOT LEAK INTO THE HOST -- that is the architectural point, not a hope. The 88 GB accumulated inside one long-lived node process; when a separate helper exits, the OS reclaims its commit, threads and handles whether or not our code is tidy.
+
+SPIKE RESULT, 2026-10-10, sandbox/fancy-pty-spike. Windows pseudoconsole is an IN-BOX kernel32 API, so this needs no redistributable at all: `CreatePseudoConsole`, `ResizePseudoConsole`, `InitializeProcThreadAttributeList`, `UpdateProcThreadAttribute(PROC_THREAD_ATTRIBUTE_PSEUDOCONSOLE)` and `CreateProcessW` all succeeded from Rust std with hand-written `extern "system"` declarations and NO crates -- no Cargo.toml, 235 KB static binary, `-C target-feature=+crt-static` so it runs on a bare Windows with no VC++ redistributable (the exact thing that makes every .node addon fail on a clean machine). A real cmd.exe attached to the pseudoconsole and its VT output came back down the pipe.
+
+WHAT THE SPIKE ALSO PROVED IS HARD, and it is the part to respect: the child must get the PSEUDOCONSOLE as its stdio, and under a parent with no console of its own (`GetConsoleWindow()` returned 0 under MSYS) it inherits the PARENT`s handles instead, so the shell read EOF from the wrong pipe and executed nothing. This is precisely why node-pty ships a separate console-attached agent (`OpenConsole.exe`), and it is the first real design question rather than a detail. A second one is already known: EOF on the read pipe arrives only when `ClosePseudoConsole` runs, so a read-until-EOF loop on the thread that is supposed to close it deadlocks -- the spike hung for two minutes before it was restructured onto a reader thread.
+
+SHAPE: a tiny native HELPER EXECUTABLE plus pure-JS Node code, NOT a native addon. No N-API, no node-gyp, no node-addon-api, no Electron ABI, no rebuild, no prebuilds, no asarUnpack-the-native-module dance -- a plain exe has no ABI coupling to Node or Electron, so the ENTIRE class of packaging failure this estate fought on 2026-10-10 (a peer electron-builder never packed; a rebuild needing Python+MSVC; a host-arch conpty.dll reported as ok) stops being expressible. Cross-compiling arm64 is a target flag, which also closes the arch hole in the afterPack hook rather than patching it.
+
+SCOPE: spawn with cwd/env/argv, read, write, resize, kill (job object on Windows, process group on POSIX), exit reporting. Windows via ConPTY; macOS and Linux via posix_openpt/grantpt/unlockpt/ptsname plus fork/setsid/ioctl(TIOCSCTTY). Explicitly NOT a terminal emulator -- fancy-term already owns rendering.
+
+BEFORE IT CAN SHIP: the TOOLCHAIN is itself an approval question under the third-party rule -- Rust std with zero crates versus C against only the platform SDK -- and the owner has not been asked yet. An npm name that does not exist, so the first publish needs him. And the #4 regression must be re-proved absent, not assumed: no stray console window under a windowless detached host, and a kill path that neither flashes a console nor crashes with "AttachConsole failed", which is why fancy-term-host moved to node-pty`s bundled conpty.dll in 0.2.1/0.2.3 in the first place.',
+        ],
         'fancy-expr' => [
             'name' => 'fancy-expr',
             'repo' => 'Particle-Academy/fancy-expr',

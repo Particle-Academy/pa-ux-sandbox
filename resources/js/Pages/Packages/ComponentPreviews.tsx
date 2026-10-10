@@ -7,7 +7,7 @@
  * component (or a faithful visual stub when stateful/complex) — never
  * just text-only pills.
  */
-import { useState, type ComponentType, type ReactNode } from "react";
+import { useMemo, useState, type ComponentType, type ReactNode } from "react";
 import { type TimelineDoc } from "@particle-academy/fancy-motion";
 import { SAMPLE_CODE_VIEW, SAMPLE_IMG, SAMPLE_PDF, SAMPLE_AUDIO, SAMPLE_AUDIO_TITLE, SAMPLE_POSTER } from "./showcase-fixtures";
 // The listing page renders these tiles directly, while the full demos live in
@@ -113,7 +113,7 @@ import {
     GIT_STATUS,
     GIT_TREE,
 } from "./gitFixtures";
-import { AudioViewer, Avatar, Badge, Breadcrumbs, Button, Calendar, Callout, Card, CodeView, ColorPicker, Container, ContentRenderer, ContextMenu, Drawer, Emoji, Eyebrow, FauxClient, FileBrowser, Grid, Heading, ImageViewer, IndexList, JsonEditor, Kanban, Kbd, Marquee, MediaViewer, MoodMeter, OtpInput, Pagination, PdfViewer, Pillbox, Profile, Progress, PullQuote, Section, Skeleton, Stat, StatList, StickyNote, Switch, Tabs, Text, TimeGrid, TimePicker, Timeline, Tooltip, VideoViewer } from "@particle-academy/react-fancy";
+import { ActivityLight, AudioViewer, Avatar, Badge, Breadcrumbs, Button, Calendar, Callout, Card, CodeView, ColorPicker, Container, ContentRenderer, ContextMenu, Drawer, Emoji, Eyebrow, FauxClient, FileBrowser, Grid, Heading, ImageViewer, IndexList, JsonEditor, Kanban, Kbd, Marquee, MediaViewer, MoodMeter, OtpInput, Pagination, PdfViewer, Pillbox, Profile, Progress, PullQuote, Section, Skeleton, Stat, StatList, StickyNote, Switch, Tabs, Text, TimeGrid, TimePicker, Timeline, Tooltip, VideoViewer, VirtualList } from "@particle-academy/react-fancy";
 import { Checkbox, CheckboxGroup, DatePicker, Field, Input, MultiSwitch, RadioGroup, Select, Slider, Textarea } from "@particle-academy/react-fancy";
 import { FileViewer } from "@particle-academy/fancy-code";
 import { EChart } from "@particle-academy/fancy-echarts";
@@ -640,6 +640,26 @@ const PREVIEWS: Record<string, PreviewFn> = {
                 <li className="px-3 py-1.5 text-zinc-600 dark:text-zinc-300">Callout</li>
                 <li className="px-3 py-1.5 text-zinc-600 dark:text-zinc-300">Card</li>
             </ul>
+        </div>
+    ),
+
+    // Deliberately shows all four levels AND both kinds of nothing: the
+    // `quiet` row has a measured `count: 0` (renders "0"), while the `unseen`
+    // row has `count: null` (renders no number at all). Those two must look
+    // different, and a tile that only showed healthy counts would hide it.
+    "react-fancy/activity-light": () => (
+        <div className="flex w-full max-w-[18rem] flex-col gap-1.5 text-[11px]">
+            {([
+                { label: "Genie and Tynn", level: "live", direction: "both", count: 12 },
+                { label: "Genie and Weaver", level: "recent", direction: "in", count: 3 },
+                { label: "Genie and Prism", level: "quiet", direction: "out", count: 0 },
+                { label: "Genie and Civi", level: "unseen", count: null },
+            ] as const).map((edge) => (
+                <div key={edge.label} className="flex items-center justify-between gap-2">
+                    <span className="truncate text-zinc-500 dark:text-zinc-400">{edge.label}</span>
+                    <ActivityLight {...edge} />
+                </div>
+            ))}
         </div>
     ),
 
@@ -1548,6 +1568,30 @@ const PREVIEWS: Record<string, PreviewFn> = {
             </div>
         </div>
     ),
+
+    // 20,000 rows, and the tile stays responsive because only the visible
+    // window is in the DOM. Scroll it: the rows are real.
+    "react-fancy/virtual-list": () => {
+        const items = useMemo(
+            () => Array.from({ length: 20_000 }, (_, i) => ({ id: `e-${i}`, n: i + 1 })),
+            [],
+        );
+
+        return (
+            <VirtualList
+                className="w-full max-w-[18rem] rounded-md border border-zinc-200 dark:border-zinc-700"
+                height={150}
+                estimateRowHeight={22}
+                items={items}
+                renderRow={(row) => (
+                    <div className="flex items-baseline gap-2 border-b border-zinc-100 px-2 py-1 text-[11px] last:border-b-0 dark:border-zinc-800">
+                        <span className="font-mono text-[10px] tabular-nums text-zinc-400">{row.n}</span>
+                        <span className="truncate text-zinc-700 dark:text-zinc-200">event {row.n} committed</span>
+                    </div>
+                )}
+            />
+        );
+    },
 
     "react-fancy/table": () => (
         <div className="w-full max-w-[18rem] overflow-hidden rounded-md border border-zinc-200 text-xs dark:border-zinc-700">

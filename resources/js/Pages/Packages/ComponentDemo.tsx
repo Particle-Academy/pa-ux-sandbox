@@ -110,6 +110,10 @@ import {
     AccordionPanelTrigger,
     AccordionPanelContent,
     type TreeNodeData,
+    VirtualList,
+    ActivityLight,
+    type ActivityLevel,
+    type ActivityDirection,
 } from "@particle-academy/react-fancy";
 import { CodeEditor, MarkdownEditor, FileViewer} from "@particle-academy/fancy-code";
 import {
@@ -452,6 +456,8 @@ const REGISTRY: Record<string, DemoFn> = {
     "react-fancy/stat": StatDemo,
     "react-fancy/stat-list": StatListDemo,
     "react-fancy/index-list": IndexListDemo,
+    "react-fancy/virtual-list": VirtualListDemo,
+    "react-fancy/activity-light": ActivityLightDemo,
     "react-fancy/time-grid": TimeGridDemo,
     "react-fancy/code-view": CodeViewDemo,
     "react-fancy/accordion-panel": AccordionPanelDemo,
@@ -665,6 +671,135 @@ function StatListDemo() {
                 { value: "21", label: "Agent bridges" },
             ]}
         />
+    );
+}
+
+function VirtualListDemo() {
+    // 30,000 rows, every seventh one a wrapping message, so the heights are
+    // genuinely mixed rather than uniform-with-a-big-number.
+    const items = useMemo(
+        () =>
+            Array.from({ length: 30_000 }, (_, i) => ({
+                id: `e-${i}`,
+                n: i + 1,
+                wraps: i % 7 === 0,
+            })),
+        [],
+    );
+    const [following, setFollowing] = useState(false);
+    const [unseen, setUnseen] = useState(0);
+    const [at, setAt] = useState<string | null>(null);
+
+    return (
+        <DemoNote
+            outOfBox="The windowing, the measured variable row heights, scrollToId, and tail-follow that breaks on an upward gesture."
+            demo="The row content, the jump buttons and the pill — the pill is deliberately the consumer's to render, from onUnseenChange."
+        >
+            <div className="space-y-3">
+                <div className="flex flex-wrap items-center gap-2 text-xs">
+                    <Button onClick={() => setAt("e-24999")}>Jump to 25,000</Button>
+                    <Button onClick={() => setAt("e-0")}>Jump to the top</Button>
+                    <Button onClick={() => setFollowing((f) => !f)}>
+                        {following ? "Stop following" : "Follow the tail"}
+                    </Button>
+                    {!following && unseen > 0 && (
+                        <Button onClick={() => setFollowing(true)}>
+                            {"↓"} {unseen} new
+                        </Button>
+                    )}
+                </div>
+
+                <VirtualList
+                    className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700"
+                    height={260}
+                    estimateRowHeight={28}
+                    items={items}
+                    followTail={following}
+                    onFollowChange={setFollowing}
+                    onUnseenChange={setUnseen}
+                    scrollToId={at}
+                    renderRow={(row) =>
+                        row.wraps ? (
+                            <div className="border-b border-zinc-100 px-3 py-2 dark:border-zinc-800">
+                                <div className="text-[11px] font-medium text-sky-600 dark:text-sky-400">
+                                    message #{row.n}
+                                </div>
+                                <p className="m-0 text-sm text-zinc-700 dark:text-zinc-200">
+                                    This row wraps, so its height depends on the container width and
+                                    where the words break — which is why the list measures rather
+                                    than predicts.
+                                </p>
+                            </div>
+                        ) : (
+                            <div className="flex items-baseline gap-3 border-b border-zinc-100 px-3 py-1 dark:border-zinc-800">
+                                <span className="font-mono text-[11px] tabular-nums text-zinc-400">
+                                    {row.n}
+                                </span>
+                                <span className="truncate text-sm text-zinc-700 dark:text-zinc-200">
+                                    event {row.n} committed
+                                </span>
+                            </div>
+                        )
+                    }
+                />
+
+                <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                    30,000 rows, a few dozen in the DOM. Follow the tail, then scroll up one
+                    wheel click: following stops at once, even though you are still at the
+                    bottom.
+                </p>
+            </div>
+        </DemoNote>
+    );
+}
+
+/** One row per edge. Typed explicitly so the rows that legitimately omit
+ *  `direction` do not narrow the array into a union that lacks the field. */
+type DemoEdge = {
+    peer: string;
+    level: ActivityLevel | null;
+    direction?: ActivityDirection;
+    count: number | null;
+};
+
+function ActivityLightDemo() {
+    const edges: DemoEdge[] = [
+        { peer: "tynn", level: "live", direction: "both", count: 12 },
+        { peer: "weaver", level: "recent", direction: "out", count: 3 },
+        { peer: "prism", level: "quiet", direction: "in", count: 0 },
+        { peer: "civi", level: "unseen", count: null },
+        { peer: "an unknown peer", level: null, count: null },
+    ];
+
+    return (
+        <DemoNote
+            outOfBox="The recency ramp, the direction glyph, and the null semantics — level null renders nothing, count null renders no number, count 0 renders 0."
+            demo="The peer names and the row layout."
+        >
+            <div className="max-w-sm rounded-lg border border-zinc-200 p-3 dark:border-zinc-700">
+                {edges.map((edge) => (
+                    <div
+                        key={edge.peer}
+                        className="flex items-center justify-between gap-4 border-b border-zinc-100 py-1.5 last:border-b-0 dark:border-zinc-800"
+                    >
+                        <span className="text-sm text-zinc-500 dark:text-zinc-400">
+                            claude &middot; {edge.peer}
+                        </span>
+                        <ActivityLight
+                            level={edge.level}
+                            direction={edge.direction}
+                            count={edge.count}
+                            label={`Genie and ${edge.peer}`}
+                        />
+                    </div>
+                ))}
+                <p className="mt-2 mb-0 text-xs text-zinc-400">
+                    The last row has an ActivityLight in it. You cannot see it, which is the
+                    point: its recency is unobservable, and a grey dot would claim otherwise.
+                    The prism row shows a measured <code>0</code>, which is a fact and renders.
+                </p>
+            </div>
+        </DemoNote>
     );
 }
 

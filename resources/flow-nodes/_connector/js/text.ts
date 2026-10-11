@@ -133,12 +133,26 @@ export function sliceByteRange(text: string, range: ByteRange): string {
  * because the offsets are what people get wrong; it does not own the provider's
  * schema, because that is the provider's.
  */
+// CodeQL js/polynomial-redos, HIGH: `/[.,;:!?)\]}'"]+$/` is unanchored at the
+// start, so V8 retries the trailing run from every position inside it —
+// quadratic in the length of that run, and `text` is arbitrary post/message
+// content, not an operator-typed value. A backward scan is linear by
+// construction: each step only ever decrements `end`.
+const TRAILING_PUNCTUATION = new Set([".", ",", ";", ":", "!", "?", ")", "]", "}", "'", '"']);
+
+function trimTrailingPunctuation(raw: string): string {
+  let end = raw.length;
+  while (end > 0 && TRAILING_PUNCTUATION.has(raw[end - 1]!)) end -= 1;
+
+  return raw.slice(0, end);
+}
+
 export function linkRanges(text: string): Array<ByteRange & { url: string }> {
   const found: Array<ByteRange & { url: string }> = [];
 
   for (const match of text.matchAll(/https?:\/\/[^\s]+/g)) {
     if (match.index === undefined) continue;
-    const url = match[0].replace(/[.,;:!?)\]}'"]+$/, "");
+    const url = trimTrailingPunctuation(match[0]);
     found.push({ ...byteRangeOf(text, match.index, url), url });
   }
 

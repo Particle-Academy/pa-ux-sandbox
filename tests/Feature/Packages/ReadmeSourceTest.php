@@ -54,9 +54,33 @@ it('reports no README rather than inventing one', function () {
 });
 
 it('compiles exactly the packages production cannot read any other way', function () {
-    $this->artisan('readmes:build')->assertSuccessful();
+    // `readmes:build` writes the COMMITTED artifact in place, so this test has
+    // to put it back. Not merely for tidiness: leaving the rebuild on disk
+    // silently disarms CompiledArtifactsAreCurrentTest, which reads the file
+    // from DISK as its "committed" side and then rebuilds and compares. With a
+    // fresh build already sitting there it compares a rebuild to a rebuild and
+    // passes whatever state the committed artifact is in.
+    //
+    // That was not theoretical. Measured against a deliberately stale artifact:
+    // the guard alone FAILED ("readmes.json is STALE"), and the same guard in
+    // one invocation after this test PASSED. `Packages/` sorts before
+    // `Showcase/`, so the full suite took the passing path -- the staleness
+    // guard asserted nothing in the run that matters, and the only reason to
+    // doubt it was the dirty working tree it left behind.
+    $committed = File::exists(ReadmeSource::compiledPath())
+        ? File::get(ReadmeSource::compiledPath())
+        : null;
 
-    $compiled = json_decode(File::get(ReadmeSource::compiledPath()), true)['readmes'] ?? [];
+    try {
+        $this->artisan('readmes:build')->assertSuccessful();
+
+        $compiled = json_decode(File::get(ReadmeSource::compiledPath()), true)['readmes'] ?? [];
+    } finally {
+        $committed === null
+            ? File::delete(ReadmeSource::compiledPath())
+            : File::put(ReadmeSource::compiledPath(), $committed);
+    }
+
     $readmes = new ReadmeSource;
 
     // Non-empty: a build that quietly produced an empty artifact would look

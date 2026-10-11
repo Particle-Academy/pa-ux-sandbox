@@ -59,6 +59,25 @@ class PackageRegistry
         // person to rely on it left a shipped package invisible for weeks.
         'fancy-schema',
 
+        // `fancy-ws` -- BUILT and PUSHED (0.1.0), not on npm.
+        //
+        // The npm name did not exist on 2026-10-11 (a 404 on
+        // registry.npmjs.org), and OIDC attaches to a package that already
+        // exists -- it cannot claim a new name. So the FIRST publish is an
+        // owner action and the package is real, green and consumable from git
+        // until it happens:
+        //
+        //     npm install github:Particle-Academy/fancy-ws
+        //
+        // Hidden rather than listed because a public entry would offer
+        // `npm install @particle-academy/fancy-ws` for a name that 404s --
+        // exactly the mistake `fancy-trading-ui` made from this list.
+        //
+        // REMOVE THIS SLUG when registry.npmjs.org serves a version. Read it
+        // off the REGISTRY, not `npm view`, which is cached and was a full
+        // version behind for minutes after a successful publish.
+        'fancy-ws',
+
         // The two removals behind this list are the lesson worth keeping.
         //
         // `fancy-walkthrough` was removed 2026-09-29, the day it published.
@@ -399,6 +418,7 @@ Both registry names read as unclaimed on 2026-10-08 -- `@particle-academy/fancy-
         // That publish happened on 2026-08-27 and the field is now validated.
         'fancy-trading-ui' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#22c55e'],
         'fancy-pty' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#0ea5e9'],
+        'fancy-ws' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#0284c7'],
         // Onboarding.
         'fancy-walkthrough' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#6366f1'],
         // Python backends -- each the third runtime of an existing pair.
@@ -976,6 +996,14 @@ Both registry names read as unclaimed on 2026-10-08 -- `@particle-academy/fancy-
                 'tagline' => 'ZERO-DEPENDENCY pseudo-terminal for Node -- a tiny native helper EXECUTABLE plus pure JS, replacing `node-pty` underneath fancy-term-host. No native addon, so no node-gyp, no Electron ABI rebuild and no prebuild resolution. One helper process per pty, which is why an exited terminal cannot retain memory, threads or handles in the host.',
                 'npm' => '@particle-academy/fancy-pty',
                 'repo' => 'Particle-Academy/fancy-pty',
+                'language' => 'TypeScript',
+            ],
+            [
+                'slug' => 'fancy-ws',
+                'name' => '@particle-academy/fancy-ws',
+                'tagline' => 'ZERO-DEPENDENCY WebSocket SERVER for Node — RFC 6455 framing over node:http\'s `upgrade` event, on node:http/net/crypto/events and nothing else. Node 22 ships a WebSocket CLIENT (the `WebSocket` global, from undici) and no server; this is the other half. `verify` runs BEFORE the 101, so a refused handshake is a plain HTTP 401/403 rather than an accept-then-close that hands an unauthenticated peer a live frame parser.',
+                'npm' => '@particle-academy/fancy-ws',
+                'repo' => 'Particle-Academy/fancy-ws',
                 'language' => 'TypeScript',
             ],
             [

@@ -111,6 +111,7 @@ import {
     AccordionPanelContent,
     type TreeNodeData,
     VirtualList,
+    QrCode,
     ActivityLight,
     type ActivityLevel,
     type ActivityDirection,
@@ -458,6 +459,7 @@ const REGISTRY: Record<string, DemoFn> = {
     "react-fancy/index-list": IndexListDemo,
     "react-fancy/virtual-list": VirtualListDemo,
     "react-fancy/activity-light": ActivityLightDemo,
+    "react-fancy/qr-code": QrCodeDemo,
     "react-fancy/time-grid": TimeGridDemo,
     "react-fancy/code-view": CodeViewDemo,
     "react-fancy/accordion-panel": AccordionPanelDemo,
@@ -761,6 +763,91 @@ type DemoEdge = {
     direction?: ActivityDirection;
     count: number | null;
 };
+
+function QrCodeDemo() {
+    const [pin, setPin] = useState("482913");
+    const [level, setLevel] = useState<"L" | "M" | "Q" | "H">("M");
+    const [onDark, setOnDark] = useState(true);
+    const [opaque, setOpaque] = useState(true);
+    const [encodePin, setEncodePin] = useState(false);
+
+    const host = "alphar.tail1234.ts.net:7421";
+    const value = encodePin ? pin : `https://${host}/pair#${pin}`;
+
+    return (
+        <DemoNote
+            outOfBox="The whole encoder — versions 1-40, L/M/Q/H, and numeric / alphanumeric / byte mode chosen automatically. Switch 'encode the PIN only' and watch the symbol shrink: six digits are numeric mode, which packs three digits into ten bits where the URL spends twenty-four per character."
+            demo="The pairing-panel layout, and the toggles. Turn OFF 'opaque background' while 'dark panel' is on to see the failure that no screenshot review catches: the default transparent background inherits the surface, the symbol renders dark-on-dark, and a scanner refuses it."
+        >
+            <div className="space-y-3">
+                <div className="flex flex-wrap items-center gap-3 text-[12px]">
+                    <label className="flex items-center gap-1.5">
+                        <span className="text-zinc-500 dark:text-zinc-400">PIN</span>
+                        <input
+                            value={pin}
+                            onChange={(e) => setPin(e.target.value.replace(/\D/g, "").slice(0, 8))}
+                            className="w-24 rounded border border-zinc-300 px-2 py-1 font-mono tracking-widest dark:border-zinc-700 dark:bg-zinc-900"
+                            aria-label="Pairing PIN"
+                        />
+                    </label>
+                    <label className="flex items-center gap-1.5">
+                        <span className="text-zinc-500 dark:text-zinc-400">Error correction</span>
+                        <select
+                            value={level}
+                            onChange={(e) => setLevel(e.target.value as "L" | "M" | "Q" | "H")}
+                            className="rounded border border-zinc-300 px-2 py-1 dark:border-zinc-700 dark:bg-zinc-900"
+                            aria-label="Error correction level"
+                        >
+                            {(["L", "M", "Q", "H"] as const).map((l) => (
+                                <option key={l} value={l}>
+                                    {l}
+                                </option>
+                            ))}
+                        </select>
+                    </label>
+                    <label className="flex items-center gap-1.5">
+                        <input type="checkbox" checked={encodePin} onChange={(e) => setEncodePin(e.target.checked)} />
+                        <span className="text-zinc-500 dark:text-zinc-400">encode the PIN only</span>
+                    </label>
+                    <label className="flex items-center gap-1.5">
+                        <input type="checkbox" checked={onDark} onChange={(e) => setOnDark(e.target.checked)} />
+                        <span className="text-zinc-500 dark:text-zinc-400">dark panel</span>
+                    </label>
+                    <label className="flex items-center gap-1.5">
+                        <input type="checkbox" checked={opaque} onChange={(e) => setOpaque(e.target.checked)} />
+                        <span className="text-zinc-500 dark:text-zinc-400">opaque background</span>
+                    </label>
+                </div>
+
+                <div
+                    className={
+                        onDark
+                            ? "flex flex-col items-center gap-2 rounded-xl bg-zinc-900 p-5 text-zinc-300"
+                            : "flex flex-col items-center gap-2 rounded-xl border border-zinc-200 bg-white p-5 text-zinc-600 dark:border-zinc-700"
+                    }
+                >
+                    <QrCode
+                        value={value}
+                        size={176}
+                        errorCorrection={level}
+                        label="Pair this device"
+                        foreground={opaque ? "#0b0b0c" : undefined}
+                        background={opaque ? "#ffffff" : undefined}
+                    />
+                    {/* The value stays readable as text: a QR code is unusable to
+                        anyone who cannot point a second device at the screen. */}
+                    <code className="text-[11px]">{host}/pair</code>
+                    <span className="font-mono text-base tracking-[0.3em]">{pin}</span>
+                    {!opaque && onDark && (
+                        <span className="text-[11px] text-amber-400">
+                            dark-on-dark — most scanners will refuse this
+                        </span>
+                    )}
+                </div>
+            </div>
+        </DemoNote>
+    );
+}
 
 function ActivityLightDemo() {
     const edges: DemoEdge[] = [

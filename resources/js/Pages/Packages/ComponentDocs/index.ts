@@ -16,6 +16,7 @@ import { sectionDoc } from "./Section";
 import { indexListDoc } from "./IndexList";
 import { virtualListDoc } from "./VirtualList";
 import { activityLightDoc } from "./ActivityLight";
+import { qrCodeDoc } from "./QrCode";
 import { codeViewDoc } from "./CodeView";
 import { stickyNoteDoc } from "./StickyNote";
 import { timeGridDoc } from "./TimeGrid";
@@ -172,6 +173,7 @@ export const DOCS: Record<string, ComponentDoc> = {
     "react-fancy/index-list": indexListDoc,
     "react-fancy/virtual-list": virtualListDoc,
     "react-fancy/activity-light": activityLightDoc,
+    "react-fancy/qr-code": qrCodeDoc,
     "react-fancy/code-view": codeViewDoc,
     "react-fancy/sticky-note": stickyNoteDoc,
     "react-fancy/time-grid": timeGridDoc,

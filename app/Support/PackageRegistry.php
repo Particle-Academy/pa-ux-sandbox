@@ -59,25 +59,6 @@ class PackageRegistry
         // person to rely on it left a shipped package invisible for weeks.
         'fancy-schema',
 
-        // `fancy-ws` -- BUILT and PUSHED (0.1.0), not on npm.
-        //
-        // The npm name did not exist on 2026-10-11 (a 404 on
-        // registry.npmjs.org), and OIDC attaches to a package that already
-        // exists -- it cannot claim a new name. So the FIRST publish is an
-        // owner action and the package is real, green and consumable from git
-        // until it happens:
-        //
-        //     npm install github:Particle-Academy/fancy-ws
-        //
-        // Hidden rather than listed because a public entry would offer
-        // `npm install @particle-academy/fancy-ws` for a name that 404s --
-        // exactly the mistake `fancy-trading-ui` made from this list.
-        //
-        // REMOVE THIS SLUG when registry.npmjs.org serves a version. Read it
-        // off the REGISTRY, not `npm view`, which is cached and was a full
-        // version behind for minutes after a successful publish.
-        'fancy-ws',
-
         // The two removals behind this list are the lesson worth keeping.
         //
         // `fancy-walkthrough` was removed 2026-09-29, the day it published.
@@ -1411,6 +1392,7 @@ Both registry names read as unclaimed on 2026-10-08 -- `@particle-academy/fancy-
             ['slug' => 'button', 'name' => 'Button', 'blurb' => 'The workhorse button — colors, states, icons, emoji, avatar, badge, loading. (formerly Action)'],
             ['slug' => 'autocomplete', 'name' => 'Autocomplete'],
             ['slug' => 'activity-light', 'name' => 'ActivityLight', 'blurb' => 'Activity on an edge between two parties - recency ramp, direction and an optional count.'],
+            ['slug' => 'qr-code', 'name' => 'QrCode', 'blurb' => 'A QR code as an SVG, dependency-free - versions 1-40, L/M/Q/H, numeric/alphanumeric/byte selected automatically.'],
             ['slug' => 'avatar', 'name' => 'Avatar'],
             ['slug' => 'badge', 'name' => 'Badge'],
             ['slug' => 'brand', 'name' => 'Brand'],

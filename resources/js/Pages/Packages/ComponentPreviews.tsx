@@ -113,7 +113,7 @@ import {
     GIT_STATUS,
     GIT_TREE,
 } from "./gitFixtures";
-import { ActivityLight, AudioViewer, Avatar, Badge, Breadcrumbs, Button, Calendar, Callout, Card, CodeView, ColorPicker, Container, ContentRenderer, ContextMenu, Drawer, Emoji, Eyebrow, FauxClient, FileBrowser, Grid, Heading, ImageViewer, IndexList, JsonEditor, Kanban, Kbd, Marquee, MediaViewer, MoodMeter, OtpInput, Pagination, PdfViewer, Pillbox, Profile, Progress, PullQuote, Section, Skeleton, Stat, StatList, StickyNote, Switch, Tabs, Text, TimeGrid, TimePicker, Timeline, Tooltip, VideoViewer, VirtualList } from "@particle-academy/react-fancy";
+import { ActivityLight, AudioViewer, Avatar, Badge, Breadcrumbs, Button, Calendar, Callout, Card, CodeView, ColorPicker, Container, ContentRenderer, ContextMenu, Drawer, Emoji, Eyebrow, FauxClient, FileBrowser, Grid, Heading, ImageViewer, IndexList, JsonEditor, Kanban, Kbd, Marquee, MediaViewer, MoodMeter, OtpInput, Pagination, PdfViewer, Pillbox, Profile, Progress, PullQuote, QrCode, Section, Skeleton, Stat, StatList, StickyNote, Switch, Tabs, Text, TimeGrid, TimePicker, Timeline, Tooltip, VideoViewer, VirtualList } from "@particle-academy/react-fancy";
 import { Checkbox, CheckboxGroup, DatePicker, Field, Input, MultiSwitch, RadioGroup, Select, Slider, Textarea } from "@particle-academy/react-fancy";
 import { FileViewer } from "@particle-academy/fancy-code";
 import { EChart } from "@particle-academy/fancy-echarts";
@@ -660,6 +660,27 @@ const PREVIEWS: Record<string, PreviewFn> = {
                     <ActivityLight {...edge} />
                 </div>
             ))}
+        </div>
+    ),
+
+    // A real pairing panel rather than a lone symbol, because the lone symbol
+    // is the version that teaches the wrong thing. `background` is set
+    // explicitly: the default is transparent, which on a dark tile renders
+    // dark-on-dark and will not scan — and the PIN and host sit beside it,
+    // because a QR code is unreadable to anyone who cannot point a second
+    // device at the screen.
+    "react-fancy/qr-code": () => (
+        <div className="flex flex-col items-center gap-2">
+            <QrCode
+                value="https://alphar.tail1234.ts.net:7421/pair#482913"
+                size={104}
+                label="Pair this device"
+                foreground="#0b0b0c"
+                background="#ffffff"
+            />
+            <span className="font-mono text-[11px] tracking-[0.25em] text-zinc-500 dark:text-zinc-400">
+                482913
+            </span>
         </div>
     ),
 

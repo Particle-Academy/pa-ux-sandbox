@@ -771,7 +771,7 @@ function QrCodeDemo() {
     const [opaque, setOpaque] = useState(true);
     const [encodePin, setEncodePin] = useState(false);
 
-    const host = "alphar.tail1234.ts.net:7421";
+    const host = "device.example.com";
     const value = encodePin ? pin : `https://${host}/pair#${pin}`;
 
     return (

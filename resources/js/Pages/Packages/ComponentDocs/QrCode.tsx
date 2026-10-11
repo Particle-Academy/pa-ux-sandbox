@@ -24,7 +24,7 @@ export const qrCodeDoc: ComponentDoc = {
             render: () => (
                 <div>
                     <QrCode
-                        value="https://alphar.tail1234.ts.net:7421/pair#482913"
+                        value="https://device.example.com/pair#482913"
                         size={192}
                         label="Pair this device"
                     />
@@ -32,7 +32,7 @@ export const qrCodeDoc: ComponentDoc = {
                 </div>
             ),
             code: `<QrCode
-    value="https://alphar.tail1234.ts.net:7421/pair#482913"
+    value="https://device.example.com/pair#482913"
     size={192}
     label="Pair this device"
 />`,
@@ -49,7 +49,7 @@ export const qrCodeDoc: ComponentDoc = {
                     </div>
                     <div>
                         <QrCode
-                            value="https://alphar.tail1234.ts.net:7421/pair#482913"
+                            value="https://device.example.com/pair#482913"
                             size={160}
                             label="Pairing URL"
                         />
@@ -198,13 +198,13 @@ export const qrCodeDoc: ComponentDoc = {
             render: () => (
                 <div className="flex flex-col items-center gap-3 rounded-xl border border-zinc-200 bg-white p-6 dark:border-zinc-800">
                     <QrCode
-                        value="https://alphar.tail1234.ts.net:7421/pair#482913"
+                        value="https://device.example.com/pair#482913"
                         size={168}
                         label="Pair this device"
                         foreground="#0b0b0c"
                         background="#ffffff"
                     />
-                    <code className="text-xs text-zinc-600">alphar.tail1234.ts.net:7421/pair</code>
+                    <code className="text-xs text-zinc-600">device.example.com/pair</code>
                     <span className="font-mono text-lg tracking-[0.3em] text-zinc-900">482913</span>
                 </div>
             ),

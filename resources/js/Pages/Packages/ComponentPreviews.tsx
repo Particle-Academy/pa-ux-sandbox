@@ -672,7 +672,7 @@ const PREVIEWS: Record<string, PreviewFn> = {
     "react-fancy/qr-code": () => (
         <div className="flex flex-col items-center gap-2">
             <QrCode
-                value="https://alphar.tail1234.ts.net:7421/pair#482913"
+                value="https://device.example.com/pair#482913"
                 size={104}
                 label="Pair this device"
                 foreground="#0b0b0c"

@@ -764,32 +764,84 @@ type DemoEdge = {
     count: number | null;
 };
 
-function QrCodeDemo() {
-    const [pin, setPin] = useState("482913");
-    const [level, setLevel] = useState<"L" | "M" | "Q" | "H">("M");
-    const [onDark, setOnDark] = useState(true);
-    const [opaque, setOpaque] = useState(true);
-    const [encodePin, setEncodePin] = useState(false);
+/** The payloads a QR code actually carries. Only one of them is a link. */
+const QR_PAYLOADS = [
+    {
+        key: "serial",
+        name: "Asset tag",
+        value: "SN-4829-13",
+        label: "Asset tag for pump 14",
+        note: "An identifier read off a label in a plant room with no signal. Uppercase and digits, so ALPHANUMERIC mode — 5½ bits a character.",
+    },
+    {
+        key: "numeric",
+        name: "Order reference",
+        value: "4829134829",
+        label: "Order reference",
+        note: "Digits only, so NUMERIC mode packs three of them into ten bits — a third the size of the same value as text, and the largest modules of any payload here.",
+    },
+    {
+        key: "wifi",
+        name: "WiFi credentials",
+        value: "WIFI:T:WPA;S:Guest;P:hunter2;;",
+        label: "Join the guest WiFi",
+        note: "Phone cameras recognise this and offer “Join network”. Escape \\ ; , and : inside the SSID or password with a backslash. Nothing here touches a server.",
+    },
+    {
+        key: "contact",
+        name: "Contact card",
+        value: "MECARD:N:Okafor,Ada;TEL:+15550100;EMAIL:ada@example.com;;",
+        label: "Ada Okafor's contact card",
+        note: "MeCard — shorter than vCard and widely recognised. Mixed case, so BYTE mode, which is why this is the biggest symbol in the list.",
+    },
+    {
+        key: "tel",
+        name: "Phone number",
+        value: "tel:+15550100",
+        label: "Call the service desk",
+        note: "A URI scheme is just a string. No special support needed, and nothing to configure.",
+    },
+    {
+        key: "url",
+        name: "A link",
+        value: "https://example.com/menu",
+        label: "Today's menu",
+        note: "One payload among many, not the default. It is the only one in this list that needs a network to be useful.",
+    },
+] as const;
 
-    const host = "device.example.com";
-    const value = encodePin ? pin : `https://${host}/pair#${pin}`;
+function QrCodeDemo() {
+    const [payload, setPayload] = useState<string>("serial");
+    const [level, setLevel] = useState<"L" | "M" | "Q" | "H">("M");
+    const [onDark, setOnDark] = useState(false);
+    const [opaque, setOpaque] = useState(true);
+
+    const chosen = QR_PAYLOADS.find((p) => p.key === payload) ?? QR_PAYLOADS[0];
 
     return (
         <DemoNote
-            outOfBox="The whole encoder — versions 1-40, L/M/Q/H, and numeric / alphanumeric / byte mode chosen automatically. Switch 'encode the PIN only' and watch the symbol shrink: six digits are numeric mode, which packs three digits into ten bits where the URL spends twenty-four per character."
-            demo="The pairing-panel layout, and the toggles. Turn OFF 'opaque background' while 'dark panel' is on to see the failure that no screenshot review catches: the default transparent background inherits the surface, the symbol renders dark-on-dark, and a scanner refuses it."
+            outOfBox="The whole encoder — versions 1-40, L/M/Q/H, and numeric / alphanumeric / byte mode chosen automatically. Switch payloads and watch the symbol resize: `value` is ANY STRING, and most of what belongs in a QR code is not a web address. The digits-only payload is the smallest symbol here; the mixed-case contact card is the largest."
+            demo="The payload list and the toggles. Turn ON 'dark panel' and OFF 'opaque background' to see the failure no screenshot review catches: the default transparent background inherits the surface, the symbol renders dark-on-dark, and a scanner refuses it."
         >
             <div className="space-y-3">
+                <div className="flex flex-wrap gap-1.5">
+                    {QR_PAYLOADS.map((p) => (
+                        <button
+                            key={p.key}
+                            type="button"
+                            onClick={() => setPayload(p.key)}
+                            className={
+                                p.key === payload
+                                    ? "rounded-md bg-zinc-900 px-2.5 py-1 text-[11px] font-medium text-white dark:bg-zinc-100 dark:text-zinc-900"
+                                    : "rounded-md border border-zinc-300 px-2.5 py-1 text-[11px] text-zinc-600 hover:border-zinc-400 dark:border-zinc-700 dark:text-zinc-300"
+                            }
+                        >
+                            {p.name}
+                        </button>
+                    ))}
+                </div>
+
                 <div className="flex flex-wrap items-center gap-3 text-[12px]">
-                    <label className="flex items-center gap-1.5">
-                        <span className="text-zinc-500 dark:text-zinc-400">PIN</span>
-                        <input
-                            value={pin}
-                            onChange={(e) => setPin(e.target.value.replace(/\D/g, "").slice(0, 8))}
-                            className="w-24 rounded border border-zinc-300 px-2 py-1 font-mono tracking-widest dark:border-zinc-700 dark:bg-zinc-900"
-                            aria-label="Pairing PIN"
-                        />
-                    </label>
                     <label className="flex items-center gap-1.5">
                         <span className="text-zinc-500 dark:text-zinc-400">Error correction</span>
                         <select
@@ -804,10 +856,6 @@ function QrCodeDemo() {
                                 </option>
                             ))}
                         </select>
-                    </label>
-                    <label className="flex items-center gap-1.5">
-                        <input type="checkbox" checked={encodePin} onChange={(e) => setEncodePin(e.target.checked)} />
-                        <span className="text-zinc-500 dark:text-zinc-400">encode the PIN only</span>
                     </label>
                     <label className="flex items-center gap-1.5">
                         <input type="checkbox" checked={onDark} onChange={(e) => setOnDark(e.target.checked)} />
@@ -827,27 +875,30 @@ function QrCodeDemo() {
                     }
                 >
                     <QrCode
-                        value={value}
+                        value={chosen.value}
                         size={176}
                         errorCorrection={level}
-                        label="Pair this device"
+                        label={chosen.label}
                         foreground={opaque ? "#0b0b0c" : undefined}
                         background={opaque ? "#ffffff" : undefined}
                     />
-                    {/* The value stays readable as text: a QR code is unusable to
-                        anyone who cannot point a second device at the screen. */}
-                    <code className="text-[11px]">{host}/pair</code>
-                    <span className="font-mono text-base tracking-[0.3em]">{pin}</span>
+                    {/* The value stays selectable: a QR code is unusable to anyone
+                        who cannot point a second device at the screen. */}
+                    <code className="max-w-full select-all break-all text-center text-[11px]">{chosen.value}</code>
                     {!opaque && onDark && (
                         <span className="text-[11px] text-amber-400">
                             dark-on-dark — most scanners will refuse this
                         </span>
                     )}
                 </div>
+
+                <p className="text-[12px] leading-relaxed text-zinc-500 dark:text-zinc-400">{chosen.note}</p>
             </div>
         </DemoNote>
     );
 }
+
+
 
 function ActivityLightDemo() {
     const edges: DemoEdge[] = [

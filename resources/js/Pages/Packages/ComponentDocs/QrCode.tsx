@@ -14,54 +14,71 @@ export const qrCodeDoc: ComponentDoc = {
             It is one <code>&lt;path&gt;</code> on a module-unit <code>viewBox</code>, so{" "}
             <code>size</code> scales it with no resampling and it prints at the printer's
             resolution rather than the screen's.
+            {" "}
+            <strong>
+                <code>value</code> is any string — this is not a link component.
+            </strong>{" "}
+            A QR code is a byte container, and most of what belongs in one is not a web address:
+            an asset or serial number, a lot code, a ticket id, a WiFi credential block, a
+            contact card, a <code>tel:</code> or <code>geo:</code> URI, plain text. Those are
+            the cases where the format earns its place, because they need no network at all.
         </p>
     ),
     examples: [
         {
-            name: "A pairing URL",
+            name: "value is any string — this is not a link component",
             description:
-                "value and a required label. The label names the DESTINATION, not the artefact — \"QR code\" tells a screen-reader user only that an image they cannot use is present.",
+                "A QR code is a byte container, and most of what belongs in one is not a web address. These are the cases where the format earns its place: nothing here needs a network, because the scanner reads the value and that IS the payload. A link is one payload among them. label names what the code is FOR — \"QR code\" tells a screen-reader user only that an image they cannot use is present.",
             render: () => (
-                <div>
-                    <QrCode
-                        value="https://device.example.com/pair#482913"
-                        size={192}
-                        label="Pair this device"
-                    />
-                    <Caption>byte mode, error correction M</Caption>
+                <div className="flex flex-wrap items-start justify-center gap-6">
+                    {[
+                        { v: "SN-4829-13", l: "Asset tag for pump 14", c: "an asset serial — alphanumeric" },
+                        { v: "4829134829", l: "Order reference", c: "digits only — numeric" },
+                        { v: "WIFI:T:WPA;S:Guest;P:hunter2;;", l: "Join the guest WiFi", c: "WiFi credentials" },
+                        { v: "tel:+15550100", l: "Call the service desk", c: "a tel: URI" },
+                        { v: "https://example.com/menu", l: "Today's menu", c: "a link — one of many" },
+                    ].map((p) => (
+                        <div key={p.v} className="w-[132px]">
+                            <QrCode value={p.v} size={132} label={p.l} background="#ffffff" foreground="#0b0b0c" />
+                            <Caption>{p.c}</Caption>
+                        </div>
+                    ))}
                 </div>
             ),
-            code: `<QrCode
-    value="https://device.example.com/pair#482913"
-    size={192}
-    label="Pair this device"
-/>`,
+            code: `// Any string. Nothing inspects or validates it.
+<QrCode value="SN-4829-13" label="Asset tag for pump 14" />
+<QrCode value="4829134829" label="Order reference" />
+<QrCode value="WIFI:T:WPA;S:Guest;P:hunter2;;" label="Join the guest WiFi" />
+<QrCode value="tel:+15550100" label="Call the service desk" />
+
+// A link is ONE payload, not the default case.
+<QrCode value="https://example.com/menu" label="Today's menu" />`,
         },
         {
-            name: "A PIN is denser than a URL",
+            name: "Mode selection, and why uppercase matters",
             description:
-                "Mode selection is automatic and it matters. Numeric mode packs three digits into ten bits where byte mode spends twenty-four, so a six-digit PIN is a version 1 symbol — 21 modules, the largest modules and the easiest read. Both of these render at 160px; only the module size differs.",
+                "Automatic, and it decides how scannable the result is at a given pixel size. Numeric mode packs three digits into ten bits; alphanumeric covers 0-9 A-Z and $%*+-./: at 5½ bits; everything else is byte mode at 8. So LOWER-CASING AN IDENTIFIER PUSHES IT INTO BYTE MODE and makes the symbol bigger for the same information — if you control the format of a code you are printing, uppercase it. All four render at 150px; only the module size differs.",
             render: () => (
-                <div className="flex flex-wrap items-start justify-center gap-8">
-                    <div>
-                        <QrCode value="482913" size={160} label="Pairing PIN" />
-                        <Caption>“482913” — numeric, version 1, 21 modules</Caption>
-                    </div>
-                    <div>
-                        <QrCode
-                            value="https://device.example.com/pair#482913"
-                            size={160}
-                            label="Pairing URL"
-                        />
-                        <Caption>the full URL — byte mode, 29 modules</Caption>
-                    </div>
+                <div className="flex flex-wrap items-start justify-center gap-6">
+                    {[
+                        { v: "4829134829", c: "numeric" },
+                        { v: "SN-4829-13", c: "alphanumeric (uppercase)" },
+                        { v: "sn-4829-13", c: "byte — same value, lower case" },
+                        { v: "MECARD:N:Okafor,Ada;TEL:+15550100;;", c: "byte — mixed case" },
+                    ].map((p) => (
+                        <div key={p.v} className="w-[150px]">
+                            <QrCode value={p.v} size={150} label={`Example: ${p.c}`} background="#ffffff" foreground="#0b0b0c" />
+                            <Caption>{p.c}</Caption>
+                        </div>
+                    ))}
                 </div>
             ),
-            code: `// Numeric mode: 21 modules at version 1 — the easiest possible read.
-<QrCode value="482913" size={160} label="Pairing PIN" />
+            code: `<QrCode value="4829134829" label="Order reference" />   // numeric,      3⅓ bits/char
+<QrCode value="SN-4829-13" label="Asset tag" />         // alphanumeric, 5½ bits/char
+<QrCode value="sn-4829-13" label="Asset tag" />         // byte,         8 bits/char
 
-// The same pixel width, but byte mode needs more, smaller modules.
-<QrCode value={pairUrl} size={160} label="Pairing URL" />`,
+// Capacity at the largest symbol (version 40, level L):
+// 7,089 digits / 4,296 alphanumeric / 2,953 bytes.`,
         },
         {
             name: "On a dark surface, set BOTH colours",
@@ -194,24 +211,24 @@ export const qrCodeDoc: ComponentDoc = {
         {
             name: "It is an image of a value, not the value",
             description:
-                "A QR code is unusable to anyone who cannot point a second device at the screen — every screen-reader user, and anyone whose phone is the device displaying it. label gives it an accessible name, but an aria-label cannot carry a URL someone is expected to type. Show the value as text too.",
+                "A QR code is unusable to anyone who cannot point a second device at the screen — every screen-reader user, and anyone whose phone is the device displaying it. label gives it an accessible name, but an aria-label cannot carry a serial number or a WiFi password someone is expected to read off. Show the value as selectable text too.",
             render: () => (
                 <div className="flex flex-col items-center gap-3 rounded-xl border border-zinc-200 bg-white p-6 dark:border-zinc-800">
                     <QrCode
-                        value="https://device.example.com/pair#482913"
+                        value="SN-4829-13"
                         size={168}
-                        label="Pair this device"
+                        label="Asset tag for pump 14"
                         foreground="#0b0b0c"
                         background="#ffffff"
                     />
-                    <code className="text-xs text-zinc-600">device.example.com/pair</code>
-                    <span className="font-mono text-lg tracking-[0.3em] text-zinc-900">482913</span>
+                    <span className="select-all font-mono text-lg tracking-[0.2em] text-zinc-900">SN-4829-13</span>
+                    <span className="text-xs text-zinc-500">Pump 14 · condensate return</span>
                 </div>
             ),
             code: `<div className="flex flex-col items-center gap-3">
-    <QrCode value={pairUrl} label="Pair this device" foreground="#0b0b0c" background="#ffffff" />
-    <code>{pairHost}</code>
-    <span className="font-mono tracking-widest">{pin}</span>
+    <QrCode value={serial} label={\`Asset tag for \${asset.name}\`} foreground="#0b0b0c" background="#ffffff" />
+    <span className="select-all font-mono tracking-widest">{serial}</span>
+    <span className="text-xs">{asset.description}</span>
 </div>`,
         },
     ],
@@ -220,14 +237,14 @@ export const qrCodeDoc: ComponentDoc = {
             name: "value",
             type: "string",
             description:
-                "What the code carries. An empty string renders a valid empty symbol rather than throwing, so a controlled surface can render before its value arrives.",
+                "ANY string -- an identifier, a credential block, a URI, arbitrary text. Nothing inspects or validates it. An empty string renders a valid empty symbol rather than throwing.",
             required: true,
         },
         {
             name: "label",
             type: "string",
             description:
-                "Accessible name. Describe the destination (\"Pair this device\"), not the artefact (\"QR code\").",
+                "Accessible name. Describe what the code is FOR (\"Asset tag for pump 14\"), not the artefact (\"QR code\").",
             required: true,
         },
         { name: "size", type: "number", default: "192", description: "Rendered width and height in pixels." },

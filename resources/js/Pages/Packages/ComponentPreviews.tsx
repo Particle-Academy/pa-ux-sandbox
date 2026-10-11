@@ -663,23 +663,26 @@ const PREVIEWS: Record<string, PreviewFn> = {
         </div>
     ),
 
-    // A real pairing panel rather than a lone symbol, because the lone symbol
-    // is the version that teaches the wrong thing. `background` is set
-    // explicitly: the default is transparent, which on a dark tile renders
-    // dark-on-dark and will not scan — and the PIN and host sit beside it,
-    // because a QR code is unreadable to anyone who cannot point a second
-    // device at the screen.
+    // An ASSET LABEL, not a link. The tile is the first thing anyone sees of
+    // this component, so it decides what they think it is for -- and `value`
+    // takes any string. A URL tile would teach a link component and nobody
+    // would reach for it to print a serial number.
+    //
+    // `background` is set explicitly because the default is transparent, which
+    // on a dark tile renders dark-on-dark and will not scan; and the serial
+    // sits beside it as selectable text, because a QR code is unreadable to
+    // anyone who cannot point a second device at the screen.
     "react-fancy/qr-code": () => (
         <div className="flex flex-col items-center gap-2">
             <QrCode
-                value="https://device.example.com/pair#482913"
+                value="SN-4829-13"
                 size={104}
-                label="Pair this device"
+                label="Asset tag for pump 14"
                 foreground="#0b0b0c"
                 background="#ffffff"
             />
-            <span className="font-mono text-[11px] tracking-[0.25em] text-zinc-500 dark:text-zinc-400">
-                482913
+            <span className="select-all font-mono text-[11px] tracking-[0.18em] text-zinc-500 dark:text-zinc-400">
+                SN-4829-13
             </span>
         </div>
     ),

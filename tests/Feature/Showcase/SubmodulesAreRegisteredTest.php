@@ -121,8 +121,23 @@ function publishedDistribution(string $repoPath): ?string
     }
 
     $pyproject = $repoPath.'/pyproject.toml';
-    if (is_file($pyproject) && preg_match('/^name\s*=\s*"([^"]+)"/m', (string) file_get_contents($pyproject), $m) === 1) {
-        return $m[1];
+    if (is_file($pyproject)) {
+        $toml = (string) file_get_contents($pyproject);
+
+        // Python's equivalent of `private: true`. PyPI REFUSES an upload
+        // carrying this classifier, so it is a real safeguard and not just a
+        // hint to this test. Without this branch the two other ecosystems had
+        // a declarative way to say "publishes nothing" and Python did not, so
+        // any repo with a pyproject was read as publishing — which is how a
+        // deliberately unpublished local toolkit in the envelope failed a
+        // registry check it was never meant to be subject to.
+        if (preg_match('/["\']Private\s*::\s*Do Not Upload["\']/i', $toml) === 1) {
+            return null;
+        }
+
+        if (preg_match('/^name\s*=\s*"([^"]+)"/m', $toml, $m) === 1) {
+            return $m[1];
+        }
     }
 
     return null;
@@ -181,4 +196,47 @@ it('registers every submodule that publishes a package', function () {
         'because a package missing from the registry looks exactly like one that was',
         'never built.',
     ]));
+})->group('envelope');
+
+/*
+ * The escape hatches themselves, asserted directly.
+ *
+ * `publishedDistribution` is the whole discriminator: get it wrong in the
+ * permissive direction and this file demands a registry entry for something
+ * that is deliberately not part of the kit; get it wrong in the strict
+ * direction and a real package goes unregistered while the suite stays green.
+ * Both ways round are checked here, against manifests written for the purpose,
+ * because the envelope's own submodules cannot exercise a case none of them
+ * currently has.
+ */
+it('reads each ecosystem\'s declarative not-published marker', function () {
+    $root = sys_get_temp_dir().'/submodule-marker-'.bin2hex(random_bytes(6));
+
+    $write = function (string $name, string $file, string $body) use ($root): string {
+        $dir = $root.'/'.$name;
+        mkdir($dir, 0777, true);
+        file_put_contents($dir.'/'.$file, $body);
+
+        return $dir;
+    };
+
+    // Publishes: a plain manifest in each of the three ecosystems.
+    expect(publishedDistribution($write('npm-pub', 'package.json', '{"name":"@scope/thing"}')))
+        ->toBe('@scope/thing');
+    expect(publishedDistribution($write('php-pub', 'composer.json', '{"name":"vendor/thing"}')))
+        ->toBe('vendor/thing');
+    expect(publishedDistribution($write('py-pub', 'pyproject.toml', "[project]\nname = \"thing\"\n")))
+        ->toBe('thing');
+
+    // Publishes nothing: each ecosystem's own way of saying so.
+    expect(publishedDistribution($write('npm-priv', 'package.json', '{"name":"x","private":true}')))
+        ->toBeNull();
+    expect(publishedDistribution($write('php-app', 'composer.json', '{"name":"x/y","type":"project"}')))
+        ->toBeNull();
+    expect(publishedDistribution($write('py-priv', 'pyproject.toml',
+        "[project]\nname = \"thing\"\nclassifiers = [\"Private :: Do Not Upload\"]\n")))
+        ->toBeNull();
+
+    // A repo with no manifest at all publishes nothing.
+    expect(publishedDistribution($write('bare', 'README.md', '# nothing here')))->toBeNull();
 })->group('envelope');

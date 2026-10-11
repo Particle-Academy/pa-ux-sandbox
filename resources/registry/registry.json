@@ -1,5 +1,5 @@
 {
-    "count": 328,
+    "count": 329,
     "items": [
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
@@ -3076,6 +3076,17 @@
             "title": "fancy-pixel",
             "description": "Embeddable Showcase verification badge + liveness/collection beacon \u2014 Badge / Mark / Beacon styles, placed or floating, Shadow-DOM isolated. Drops in via a <script> tag or mountPixel().",
             "package": "fancy-pixel",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "fancy-pty",
+            "type": "registry:ui",
+            "title": "@particle-academy/fancy-pty",
+            "description": "ZERO-DEPENDENCY pseudo-terminal for Node -- a tiny native helper EXECUTABLE plus pure JS, replacing `node-pty` underneath fancy-term-host. No native addon, so no node-gyp, no Electron ABI rebuild and no prebuild resolution. One helper process per pty, which is why an exited terminal cannot retain memory, threads or handles in the host.",
+            "package": "fancy-pty",
             "dependencies": [],
             "registryDependencies": [],
             "files": []

@@ -24,22 +24,6 @@ class PackageRegistry
      * someone to `composer require` something that 404s.
      */
     public const HIDDEN = [
-        // `fancy-pty` -- BUILT and PUSHED, never published.
-        //
-        // Working on four platforms, measured by the live suite on real CI
-        // runners (win32-x64, linux-x64, linux-arm64, darwin-arm64): real
-        // shells, resize, kill, zero orphans, and <= 0.046 MB / 0.000 handles
-        // retained per exited pty against a 0.5 MB / 1.0 handle bar.
-        //
-        // Hidden because THE NPM NAME DOES NOT EXIST YET. The first publish of
-        // a new name is a one-time authenticated step only the owner can
-        // perform (see .ai/knowledge/publishing.md), so a public entry here
-        // would offer `npm install @particle-academy/fancy-pty` for a name that
-        // 404s -- the exact mistake `fancy-trading-ui` made from this list.
-        //
-        // REMOVE THIS SLUG once the name resolves on the registry.
-        'fancy-pty',
-
         // `fancy-inertia-server` -- BUILT and PUSHED (0.1.0), not on PyPI.
         //
         // PyPI needs a PENDING PUBLISHER configured BEFORE the first publish and
@@ -414,7 +398,7 @@ Both registry names read as unclaimed on 2026-10-08 -- `@particle-academy/fancy-
         // NOT validated, which makes hiding a way to bank a latent failure.
         // That publish happened on 2026-08-27 and the field is now validated.
         'fancy-trading-ui' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#22c55e'],
-        'fancy-pty' => ['group' => 'backends', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#0ea5e9'],
+        'fancy-pty' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#0ea5e9'],
         // Onboarding.
         'fancy-walkthrough' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#6366f1'],
         // Python backends -- each the third runtime of an existing pair.

@@ -13,7 +13,7 @@ export const composerDoc: ComponentDoc = {
     examples: [
         {
             name: "Default",
-            description: "`onSubmit` fires on ⌘/Ctrl+Enter or the send button.",
+            description: "`onSubmit` fires on Enter or the send button; Shift+Enter is a newline. The composer clears itself after a send.",
             render: () => (
                 <div className="w-full max-w-md">
                     <Composer placeholder="Write a message…" onSubmit={() => {}} />
@@ -24,10 +24,7 @@ export const composerDoc: ComponentDoc = {
 <Composer
     value={message}
     onChange={setMessage}
-    onSubmit={(text) => {
-        sendMessage(text);
-        setMessage("");
-    }}
+    onSubmit={(text) => sendMessage(text)}
     placeholder="Write a message…"
 />`,
         },
@@ -85,6 +82,76 @@ export const composerDoc: ComponentDoc = {
 <Composer pasteThreshold={500} />`,
         },
         {
+            name: "pastePlacement=\"inline\" — the pill sits where you pasted",
+            description:
+                "With inline placement the pill goes INTO the message, at the caret. A text pill gets a line to itself; click it and its full text replaces it, right there. With pasteImages, a pasted image becomes an inline pill too — hover it for a thumbnail. Backspace deletes a pill like a character. A send expands every text pill where it sits, marks each image as [Pasted image N], and hands the images to onSubmit's second argument. Paste a long passage or a screenshot below.",
+            render: () => {
+                function Inline() {
+                    const [sent, setSent] = useState<string | null>(null);
+
+                    return (
+                        <div className="w-full space-y-2">
+                            <Composer
+                                pasteThreshold={120}
+                                pastePlacement="inline"
+                                pasteImages
+                                previewChars={30}
+                                placeholder="Type, then paste a long passage or an image…"
+                                onSubmit={(text, { images }) =>
+                                    setSent(images.length ? `${text}  (+ ${images.length} image(s))` : text)
+                                }
+                            />
+                            {sent !== null && (
+                                <pre className="max-h-40 overflow-auto whitespace-pre-wrap break-all rounded-md bg-zinc-100 p-2 text-xs dark:bg-zinc-800">
+                                    {sent}
+                                </pre>
+                            )}
+                        </div>
+                    );
+                }
+
+                return <Inline />;
+            },
+            code: `<Composer
+    pasteThreshold={500}
+    pastePlacement="inline"
+    pasteImages
+    previewChars={30}
+    onSubmit={(text, { images }) => send(text, images)}
+/>`,
+        },
+        {
+            name: "Restyling the pills and their popover",
+            description:
+                "classNames merges onto the defaults — pill, textPill, imagePill, preview (the hover popover), remove and input — so a restyle can be one class or a whole new look. renderPastePreview replaces what the popover shows.",
+            render: () => (
+                <Composer
+                    className="w-full"
+                    pasteThreshold={120}
+                    pastePlacement="inline"
+                    placeholder="Paste more than 120 characters here…"
+                    classNames={{
+                        textPill: "bg-violet-100 text-violet-700 hover:bg-violet-200 dark:bg-violet-500/20 dark:text-violet-200",
+                        preview: "bg-violet-950 text-violet-50",
+                    }}
+                    renderPastePreview={(p) =>
+                        p.kind === "text" ? `${p.paste.text.length} characters held` : p.image.label
+                    }
+                />
+            ),
+            code: `<Composer
+    pasteThreshold={500}
+    pastePlacement="inline"
+    classNames={{
+        textPill: "bg-violet-100 text-violet-700",
+        preview: "bg-violet-950 text-violet-50",
+    }}
+    renderPastePreview={(p) =>
+        p.kind === "text" ? \`\${p.paste.text.length} characters held\` : p.image.label
+    }
+/>`,
+        },
+        {
             name: "Controlled held pastes",
             description:
                 "heldPastes and onHeldPastesChange hand the list to you. Controllable rather than internal because the component contract forbids internal-only state for anything an agent might read or write — an agent driving this surface has to be able to SEE that a paste is attached, and to attach one itself.",
@@ -135,12 +202,19 @@ setHeld([...held, { id, text }]);`,
         { name: "value", type: `string`, default: "—", description: "Controlled value. Use with `onChange`." },
         { name: "defaultValue", type: `string`, default: "—", description: "Initial value (uncontrolled)." },
         { name: "onChange", type: `(value: string) => void`, default: "—", description: "Called on every keystroke." },
-        { name: "onSubmit", type: `(value: string) => void`, default: "—", description: "Called on ⌘/Ctrl+Enter or the send button. Clear the input yourself afterward." },
+        { name: "onSubmit", type: `(value: string, extras: { images: HeldImage[] }) => void`, default: "—", description: "Called on Enter or the send button; the composer then clears itself. Pills are expanded — never a marker. `images` is only ever non-empty with `pasteImages`." },
         { name: "placeholder", type: `string`, default: "—", description: "Placeholder text." },
         { name: "actions", type: `ReactNode`, default: "—", description: "Element(s) rendered on the trailing edge — usually `Button` buttons." },
         { name: "disabled", type: `boolean`, default: `false`, description: "Disable the textarea + send button." },
         { name: "className", type: `string`, default: "—", description: "Extra classes on the root wrapper." },
         { name: "pasteThreshold", type: `number`, default: "— (no default, on purpose)", description: "Hold a paste of at least this many characters as a pill. Omit and paste behaves normally." },
+        { name: "pastePlacement", type: `"above" | "inline"`, default: `"above"`, description: "Where a pill goes: a row above the input, or IN the message at the caret. Inline, `value` carries a `pasteMarker(id)` per pill." },
+        { name: "pasteImages", type: `boolean`, default: `false`, description: "Hold a pasted image as an inline pill (inline only). Turning it on is a promise to read `onSubmit`'s second argument." },
+        { name: "previewChars", type: `number`, default: `20`, description: "Characters of a held paste shown at each end of the hover preview." },
+        { name: "classNames", type: `{ pill?, textPill?, imagePill?, preview?, remove?, input? }`, default: "—", description: "Classes merged onto the pills, the hover popover, the × and the input." },
+        { name: "renderPastePreview", type: `(p: ComposerPastePreview) => ReactNode`, default: "—", description: "Replace what the hover popover shows." },
+        { name: "heldImages", type: `HeldImage[]`, default: "—", description: "Controlled list of held images." },
+        { name: "onHeldImagesChange", type: `(images: HeldImage[]) => void`, default: "—", description: "Called when the held image list changes." },
         { name: "heldPastes", type: `HeldPaste[]`, default: "—", description: "Controlled list of held pastes, so an agent can read and write what is attached." },
         { name: "onHeldPastesChange", type: `(pastes: HeldPaste[]) => void`, default: "—", description: "Called when the held list changes." },
     ],

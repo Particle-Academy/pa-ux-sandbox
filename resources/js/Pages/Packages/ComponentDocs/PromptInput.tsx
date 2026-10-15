@@ -119,6 +119,66 @@ export const promptInputDoc: ComponentDoc = {
     }
 />`,
         },
+        {
+            name: "Inline paste pills",
+            description:
+                "With pasteThreshold, a big paste becomes a pill IN the message where you pasted it, on a line of its own; click it and its full text comes back right there, hover for the first and last previewChars. With pasteImages, a pasted screenshot sits in the sentence as Pasted image N and still reaches onSubmit as an attachment with its File. onSubmit gets the text with every pill expanded where it sat. Ctrl/⌘+Enter still sends, plain Enter is a newline, and / and @ still work. pasteClassNames and renderPastePreview restyle the pills and their popover.",
+            render: () => (
+                <div className="w-full max-w-xl">
+                    <PromptInput
+                        budgetTokens={200000}
+                        pasteThreshold={200}
+                        pasteImages
+                        previewChars={30}
+                        pasteClassNames={{ textPill: "bg-violet-100 text-violet-700 hover:bg-violet-200 dark:bg-violet-500/20 dark:text-violet-200 dark:hover:bg-violet-500/30" }}
+                        renderPastePreview={(p) =>
+                            p.kind === "text" ? `${p.paste.text.slice(0, 60)} …` : p.image.label
+                        }
+                        placeholder="Type, then paste a long passage or a screenshot…"
+                        onSubmit={() => {}}
+                    />
+                </div>
+            ),
+            code: `<PromptInput
+    budgetTokens={200_000}
+    pasteThreshold={500}
+    pasteImages
+    previewChars={30}
+    pasteClassNames={{ textPill: "bg-violet-100 text-violet-700" }}
+    renderPastePreview={(p) => (p.kind === "text" ? p.paste.text.slice(0, 60) : p.image.label)}
+    onSubmit={(text, attachments) => send(text, attachments)}
+/>`,
+        },
+        {
+            name: "A quieter footer",
+            description:
+                "attachButton and sendButton set to icon trade the labels for icons, and the send shortcut moves into the send button's tooltip. usedTokens is your REAL usage (an agent's context, say) and the meter adds the draft to it. meter near-limit keeps the meter out of sight until usage passes meterShowAt, muted until meterWarnAt, then in the warning colour. This one sits at 92% so you can see it; meter hidden removes it entirely.",
+            render: () => (
+                <div className="w-full max-w-xl">
+                    <PromptInput
+                        budgetTokens={200000}
+                        usedTokens={184000}
+                        meter="near-limit"
+                        meterShowAt={0.75}
+                        meterWarnAt={0.9}
+                        attachButton="icon"
+                        sendButton="icon"
+                        placeholder="Ask anything…"
+                        onSubmit={() => {}}
+                    />
+                </div>
+            ),
+            code: `<PromptInput
+    budgetTokens={200_000}
+    usedTokens={agent.contextTokens}
+    meter="near-limit"
+    meterShowAt={0.75}
+    meterWarnAt={0.9}
+    attachButton="icon"
+    sendButton="icon"
+    onSubmit={send}
+/>`,
+        },
     ],
     props: [
         { name: "budgetTokens", type: `number`, default: "—", description: "Token budget shown by the meter. Required." },
@@ -132,5 +192,16 @@ export const promptInputDoc: ComponentDoc = {
         { name: "mentionColor", type: `Record<string, string>`, default: "—", description: "Map mention `kind` to a CSS color used by the chip." },
         { name: "maxHeight", type: `number`, default: `280`, description: "Max textarea height in px before scrolling." },
         { name: "aboveInput", type: `ReactNode`, default: "—", description: "Rendered inside the rounded shell, above the textarea — usually a `ChatDrawer`." },
+        { name: "pasteThreshold", type: `number`, default: "— (off)", description: "Hold a paste of at least this many characters as a pill IN the message, where it was pasted. Swaps the textarea for an inline editor; `/`, `@` and Ctrl/⌘+Enter keep working." },
+        { name: "pasteImages", type: `boolean`, default: `false`, description: "A pasted image becomes an inline `Pasted image N` pill and reaches `onSubmit`'s attachments with its File. Off: a pasted image is an ordinary attachment chip." },
+        { name: "previewChars", type: `number`, default: `20`, description: "Characters of a held paste shown at each end of the hover preview." },
+        { name: "renderPastePreview", type: `(p: ComposerPastePreview) => ReactNode`, default: "—", description: "Replace what a pill's hover popover shows." },
+        { name: "pasteClassNames", type: `{ pill?, textPill?, imagePill?, preview?, input? }`, default: "—", description: "Classes merged onto the pills, their popover and the inline editor." },
+        { name: "attachButton", type: `"label" | "icon"`, default: `"label"`, description: "`icon`: paperclip only, with an accessible name and a tooltip." },
+        { name: "sendButton", type: `"label" | "icon"`, default: `"label"`, description: "`icon`: a compact send button whose tooltip carries the shortcut, replacing the inline hint." },
+        { name: "usedTokens", type: `number`, default: "—", description: "Tokens already used — your real value. The meter shows it plus the draft's estimate." },
+        { name: "meter", type: `"always" | "near-limit" | "hidden"`, default: `"always"`, description: "`near-limit`: hidden until `meterShowAt`, muted until `meterWarnAt`, warning colour past it." },
+        { name: "meterShowAt", type: `number`, default: `0.75`, description: "Fraction of the budget at which a `near-limit` meter appears." },
+        { name: "meterWarnAt", type: `number`, default: `0.9`, description: "Fraction of the budget past which a `near-limit` meter turns the warning colour." },
     ],
 };

@@ -27,6 +27,49 @@ function CommandDemo() {
     );
 }
 
+const WORKSPACES = ["fancy", "tynn", "moic", "prism"];
+const ACTIONS = ["Open settings", "New terminal", "Toggle theme"];
+
+/**
+ * A palette that filters for itself: "w> " narrows to workspaces, anything else
+ * searches actions. The built-in filter would hide every item, because no item's
+ * text contains "w> ".
+ */
+function PrefixPaletteDemo() {
+    const [open, setOpen] = useState(false);
+    const [query, setQuery] = useState("");
+    const workspaceMode = query.startsWith("w> ");
+    const term = (workspaceMode ? query.slice(3) : query).toLowerCase();
+    const shown = (workspaceMode ? WORKSPACES : ACTIONS).filter((x) => x.toLowerCase().includes(term));
+
+    return (
+        <>
+            <Button onClick={() => setOpen(true)} iconTrailing="search">
+                Open a prefix palette
+            </Button>
+            <Command
+                open={open}
+                onClose={() => setOpen(false)}
+                shouldFilter={false}
+                query={query}
+                onQueryChange={setQuery}
+            >
+                <Command.Input placeholder='Search actions, or "w> " for workspaces…' />
+                <Command.List>
+                    <Command.Group heading={workspaceMode ? "Workspaces" : "Actions"}>
+                        {shown.map((x) => (
+                            <Command.Item key={x} onSelect={() => setOpen(false)}>
+                                {x}
+                            </Command.Item>
+                        ))}
+                    </Command.Group>
+                    {shown.length === 0 && <Command.Empty>No matches.</Command.Empty>}
+                </Command.List>
+            </Command>
+        </>
+    );
+}
+
 export const commandDoc: ComponentDoc = {
     intro: (
         <p>
@@ -60,12 +103,32 @@ useHotkey("mod+k", () => setOpen(true));
     </Command.List>
 </Command>`,
         },
+        {
+            name: "shouldFilter={false} — your own matching",
+            description:
+                "Turn off the built-in filter when the palette matches for itself, for example type-ahead prefixes where w> narrows to workspaces. Every Command.Item you render shows; you decide which to render. query and onQueryChange hand you the search text. The input, keyboard navigation and Escape work as usual. Try typing w> mo.",
+            render: () => <PrefixPaletteDemo />,
+            code: `const [query, setQuery] = useState("");
+const workspaceMode = query.startsWith("w> ");
+const term = workspaceMode ? query.slice(3) : query;
+const shown = (workspaceMode ? workspaces : actions).filter((x) => x.includes(term));
+
+<Command open={open} onClose={close} shouldFilter={false} query={query} onQueryChange={setQuery}>
+    <Command.Input />
+    <Command.List>
+        {shown.map((x) => <Command.Item key={x} onSelect={() => run(x)}>{x}</Command.Item>)}
+    </Command.List>
+</Command>`,
+        },
     ],
     props: [
         { name: "open", type: `boolean`, default: "—", description: "Controlled open state. Required." },
         { name: "onClose", type: `() => void`, default: "—", description: "Called when Escape or backdrop click dismisses the palette. Required." },
         { name: "children", type: `ReactNode`, default: "—", description: "Should contain a `Command.Input` and a `Command.List`." },
         { name: "className", type: `string`, default: "—", description: "Extra classes on the palette panel." },
+        { name: "shouldFilter", type: `boolean`, default: `true`, description: "`false` turns off the built-in filter: every item renders and you decide which to render. Same name as cmdk's." },
+        { name: "query", type: `string`, default: "—", description: "The search text, if you want to own it — which filtering yourself needs." },
+        { name: "onQueryChange", type: `(query: string) => void`, default: "—", description: "Called as the search text changes." },
     ],
     notes: (
         <div className="space-y-1 text-xs text-zinc-600 dark:text-zinc-300">

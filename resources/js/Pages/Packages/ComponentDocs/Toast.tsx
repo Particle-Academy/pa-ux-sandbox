@@ -1,6 +1,69 @@
+import { useState } from "react";
 import type { ComponentDoc } from "./types";
 import type { ToastPosition } from "@particle-academy/react-fancy";
 import { Button, Toast, useToast } from "@particle-academy/react-fancy";
+
+interface DemoRequest {
+    id: string;
+    title: string;
+    detail: string;
+}
+
+const DEMO_REQUESTS: DemoRequest[] = [
+    { id: "pg", title: "Add a Postgres", detail: "An agent wants Postgres 17 with pgvector." },
+    { id: "site", title: "Add a site", detail: "Serve repos/px-ui-sandbox at web.fancy." },
+    { id: "queue", title: "Start a process", detail: "php artisan queue:work" },
+    { id: "redis", title: "Add Redis", detail: "Redis 7, shared across workspaces." },
+    { id: "mail", title: "Add Mailpit", detail: "SMTP plus a web inbox." },
+];
+
+/** Allow and Deny resolve the front request; Later leaves it in the stack. */
+function StackDemo() {
+    const [requests, setRequests] = useState(DEMO_REQUESTS);
+    const [front, setFront] = useState(0);
+    const resolve = (id: string) => setRequests((all) => all.filter((r) => r.id !== id));
+
+    if (requests.length === 0) {
+        return (
+            <Button size="sm" onClick={() => setRequests(DEMO_REQUESTS)}>
+                All resolved. Bring them back
+            </Button>
+        );
+    }
+
+    return (
+        <Toast.Stack
+            items={requests}
+            getKey={(r) => r.id}
+            depth={2}
+            offset={8}
+            scaleStep={0.05}
+            frontIndex={front}
+            onFrontIndexChange={setFront}
+            position="inline"
+            label="Approval requests"
+            cardClassName="w-80"
+            className="w-80"
+            renderItem={(r, { isFront }) => (
+                <div className="space-y-2">
+                    <p className="text-sm font-medium">{r.title}</p>
+                    <p className="text-xs text-zinc-500 dark:text-zinc-400">{r.detail}</p>
+                    <div className="flex gap-2">
+                        <Button size="sm" color="violet" disabled={!isFront} onClick={() => resolve(r.id)}>
+                            Allow
+                        </Button>
+                        <Button size="sm" variant="ghost" onClick={() => resolve(r.id)}>
+                            Deny
+                        </Button>
+                        <Button size="sm" variant="ghost" onClick={() => setFront((i) => i + 1)}>
+                            Later
+                        </Button>
+                    </div>
+                </div>
+            )}
+        />
+    );
+}
 
 /**
  * Every corner the provider supports, typed against the package's own union so
@@ -154,6 +217,35 @@ toast({ title: "FYI", variant: "info" });`,
     />
 ))}`,
         },
+        {
+            name: "Toast.Stack — requests you walk through",
+            description:
+                "A controlled stack for things a person must act on, like an agent asking to add a database. It is a view of YOUR list: no timer, no limit, so nothing ever expires or drops. depth cards peek out behind the front one (offset px higher, scaleStep smaller) and anything beyond shows as +N. Hover and scroll to walk through them, or focus the stack and use the arrow keys; it wraps at both ends. renderItem renders any actions you like. Resolve the front request and the next comes forward. Here position is inline; by default it sits in a screen corner.",
+            render: () => <StackDemo />,
+            code: `const [requests, setRequests] = useState(pendingApprovals);
+const [front, setFront] = useState(0);
+const resolve = (id) => setRequests((all) => all.filter((r) => r.id !== id));
+
+<Toast.Stack
+    items={requests}
+    getKey={(r) => r.id}
+    depth={2}
+    offset={8}
+    scaleStep={0.05}
+    frontIndex={front}
+    onFrontIndexChange={setFront}
+    position="bottom-right"
+    label="Approval requests"
+    cardClassName="w-80"
+    renderItem={(r, { isFront }) => (
+        <div>
+            <p>{r.title}</p>
+            <Button size="sm" disabled={!isFront} onClick={() => approve(r)}>Allow</Button>
+            <Button size="sm" variant="ghost" onClick={() => resolve(r.id)}>Deny</Button>
+        </div>
+    )}
+/>`,
+        },
     ],
     props: [
         { name: "children", type: `ReactNode`, default: "—", description: "App tree. Mount the provider near the root." },
@@ -161,6 +253,19 @@ toast({ title: "FYI", variant: "info" });`,
         { name: "maxToasts", type: `number`, default: `5`, description: "Maximum simultaneous toasts. Older ones drop off." },
         { name: "Toast.Item — data", type: `ToastData`, default: "—", description: "The toast record. Only needed when you render your own viewport.", required: true },
         { name: "Toast.Item — onDismiss", type: `(id: string) => void`, default: "—", description: "Called with the toast's id when it is dismissed.", required: true },
+        { name: "Toast.Stack — items", type: `T[]`, default: "—", description: "Everything to show. The stack owns none of it: no timer, no limit; an item leaves only when you remove it.", required: true },
+        { name: "Toast.Stack — renderItem", type: `(item, { index, isFront }) => ReactNode`, default: "—", description: "One card's content, actions included. Only the front card is interactive.", required: true },
+        { name: "Toast.Stack — getKey", type: `(item, index) => string`, default: "`item.id`, then the index", description: "A stable key per item." },
+        { name: "Toast.Stack — depth", type: `number`, default: `2`, description: "Cards shown behind the front one. The rest count as +N." },
+        { name: "Toast.Stack — offset", type: `number`, default: `8`, description: "Pixels each card behind peeks out above the one in front." },
+        { name: "Toast.Stack — scaleStep", type: `number`, default: `0.05`, description: "How much smaller each card behind is." },
+        { name: "Toast.Stack — frontIndex", type: `number`, default: "—", description: "Which item is in front, if you own it. Wraps; clamped when the list shrinks." },
+        { name: "Toast.Stack — defaultFrontIndex", type: `number`, default: `0`, description: "Initial front item when uncontrolled." },
+        { name: "Toast.Stack — onFrontIndexChange", type: `(index: number) => void`, default: "—", description: "Called when the wheel or arrow keys move the front." },
+        { name: "Toast.Stack — position", type: `ToastPosition | "inline"`, default: `"bottom-right"`, description: "A screen corner, or inline where it is placed." },
+        { name: "Toast.Stack — label", type: `string`, default: `"Notifications"`, description: "The stack's accessible name." },
+        { name: "Toast.Stack — cardClassName", type: `string`, default: "—", description: "Classes merged onto each card's shell." },
+        { name: "Toast.Stack — className", type: `string`, default: "—", description: "Classes merged onto the stack." },
     ],
     notes: (
         <div className="space-y-1 text-xs text-zinc-600 dark:text-zinc-300">

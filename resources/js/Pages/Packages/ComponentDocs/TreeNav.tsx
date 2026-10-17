@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { ComponentDoc } from "./types";
 import { TreeNav } from "@particle-academy/react-fancy";
 
@@ -23,6 +24,49 @@ const fileTree = [
     { id: "package.json", label: "package.json", type: "file" as const, ext: "json" },
     { id: "README.md", label: "README.md", type: "file" as const, ext: "md" },
 ];
+
+type DemoNode = { id: string; label: string; type: "file" | "folder"; ext?: string; children?: DemoNode[] };
+
+/** About 5,000 nodes, 6 levels deep — the size of a real repository listing. */
+function bigTree(): DemoNode[] {
+    let count = 0;
+    const level = (depth: number, prefix: string): DemoNode[] => {
+        const out: DemoNode[] = [];
+        for (let f = 0; f < (depth < 5 ? 4 : 0) && count < 5000; f++) {
+            count++;
+            const id = `${prefix}dir${f}`;
+            out.push({ id, label: `dir${f}`, type: "folder", children: level(depth + 1, `${id}/`) });
+        }
+        for (let i = 0; i < 4 && count < 5000; i++) {
+            count++;
+            out.push({ id: `${prefix}file${i}.ts`, label: `file${i}.ts`, type: "file", ext: "ts" });
+        }
+        return out;
+    };
+    return level(0, "");
+}
+
+function VirtualTreeDemo() {
+    // Built on first render, not at module load, so the docs page stays cheap.
+    const [nodes] = useState(bigTree);
+    const [selected, setSelected] = useState<string>();
+    return (
+        <div className="w-full max-w-sm space-y-2">
+            <div className="rounded-md border border-zinc-200 dark:border-zinc-700">
+                <TreeNav
+                    nodes={nodes}
+                    defaultExpandAll
+                    virtualize
+                    height={320}
+                    rowHeight={26}
+                    selectedId={selected}
+                    onSelect={(id) => setSelected(id)}
+                />
+            </div>
+            <p className="text-xs text-zinc-500">Selected: {selected ?? "nothing yet"}</p>
+        </div>
+    );
+}
 
 export const treeNavDoc: ComponentDoc = {
     intro: (
@@ -158,6 +202,20 @@ export const treeNavDoc: ComponentDoc = {
 {/* A list whose whole purpose is ordering. */}
 <TreeNav nodes={sections} draggable dragCursor="grab" />`,
         },
+        {
+            name: "virtualize — thousands of rows",
+            description:
+                "This tree has about 5,000 nodes, six levels deep, every folder expanded. With virtualize only the rows in view are rendered (a few dozen, not 5,000), so it mounts and scrolls instantly. height sizes the viewport; rowHeight seeds the row estimate. Selection, expansion, context menus and drag-and-drop work exactly as in the nested tree. Even without virtualize, a click re-renders only the rows it changes, so large nested trees stay responsive.",
+            render: () => <VirtualTreeDemo />,
+            code: `<TreeNav
+    nodes={repositoryListing}
+    virtualize
+    height={600}
+    rowHeight={26}
+    selectedId={selected}
+    onSelect={(id) => setSelected(id)}
+/>`,
+        },
     ],
     props: [
         { name: "nodes", type: `TreeNodeData[]`, default: "—", description: "The tree data. Each node has `id`, `label`, optionally `type`, `ext`, `children`, `icon`, `disabled`." },
@@ -176,6 +234,9 @@ export const treeNavDoc: ComponentDoc = {
         { name: "showIcons", type: `boolean`, default: `true`, description: "Show file / folder icons." },
         { name: "className", type: `string`, default: "—", description: "Extra classes on the root wrapper." },
         { name: "dragCursor", type: `"grab" | "none"`, default: `"none"`, description: "Show the grab cursor on hover. Opt in only where the row genuinely is a drag handle." },
+        { name: "virtualize", type: `boolean`, default: `false`, description: "Render only the rows in view — for trees with thousands of expanded nodes. Rows are flat in the DOM, indented by padding." },
+        { name: "height", type: `number | string`, default: `400`, description: "Viewport height when `virtualize` is on." },
+        { name: "rowHeight", type: `number`, default: `26`, description: "Estimated row height in px when `virtualize` is on; real heights replace it as rows render." },
         { name: "TreeNav.Node — node", type: `TreeNodeData`, default: "—", description: "The row renderer, exposed for custom trees.", required: true },
         { name: "TreeNav.Node — depth", type: `number`, default: "—", description: "Indentation level. Supplied by the parent — you only pass it when rendering nodes yourself.", required: true },
     ],

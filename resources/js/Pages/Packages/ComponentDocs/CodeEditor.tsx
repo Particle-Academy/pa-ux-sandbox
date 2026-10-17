@@ -30,6 +30,42 @@ function CodeEditorDemo() {
     );
 }
 
+const longSource = Array.from({ length: 120 }, (_, i) => `export const step${i + 1} = run(${i + 1});`).join(
+    String.fromCharCode(10),
+);
+
+/** Jump between lines: each target is scrolled to the middle and banded. */
+function LandOnLineDemo() {
+    const [line, setLine] = useState(80);
+    return (
+        <div className="w-full max-w-2xl space-y-2">
+            <div className="flex gap-2 text-xs">
+                {[12, 47, 80, 115].map((n) => (
+                    <button
+                        key={n}
+                        type="button"
+                        onClick={() => setLine(n)}
+                        className={`rounded px-2 py-1 ${n === line ? "bg-violet-600 text-white" : "bg-zinc-100 dark:bg-zinc-800"}`}
+                    >
+                        line {n}
+                    </button>
+                ))}
+            </div>
+            <CodeEditor
+                value={longSource}
+                language="javascript"
+                readOnly
+                maxHeight={260}
+                cursorLine={line}
+                cursorColumn={1}
+                highlightLines={[line]}
+            >
+                <CodeEditor.Panel />
+            </CodeEditor>
+        </div>
+    );
+}
+
 export const codeEditorDoc: ComponentDoc = {
     intro: (
         <p>
@@ -129,6 +165,18 @@ const [code, setCode] = useState(\`function hello() {
                         <CodeEditor.Panel />
                     </CodeEditor>`,
         },
+        {
+            name: "Land on a line",
+            description:
+                "cursorLine scrolls a line to the middle of the view and puts the caret on it, on mount and whenever it changes. highlightLines bands any lines you list and bolds their gutter numbers. Together they are how a viewer opens a file at a search hit or a stack-trace line. FileViewer does both from one prop: line.",
+            render: () => <LandOnLineDemo />,
+            code: `<CodeEditor value={source} readOnly cursorLine={line} highlightLines={[line]}>
+    <CodeEditor.Panel />
+</CodeEditor>
+
+{/* FileViewer: one prop does both. */}
+<FileViewer filename="app.ts" value={source} line={line} />`,
+        },
     ],
     props: [
         { name: "value", type: `string`, default: "—", description: "Controlled value. Use with `onChange`." },
@@ -144,6 +192,9 @@ const [code, setCode] = useState(\`function hello() {
         { name: "placeholder", type: `string`, default: "—", description: "Placeholder shown when empty." },
         { name: "minHeight", type: `number`, default: "—", description: "Minimum editor height in px." },
         { name: "maxHeight", type: `number`, default: "—", description: "Maximum editor height in px (scrolls beyond)." },
+        { name: "cursorLine", type: `number`, default: "—", description: "1-based line to scroll to the middle and put the caret on — on mount and whenever it changes. Does not steal focus." },
+        { name: "cursorColumn", type: `number`, default: `1`, description: "Column for `cursorLine`." },
+        { name: "highlightLines", type: `number[]`, default: "—", description: "Lines to band, with bold gutter numbers. Lines outside the document are ignored." },
         { name: "className", type: `string`, default: "—", description: "Extra classes on the root wrapper." },
     ],
     notes: (

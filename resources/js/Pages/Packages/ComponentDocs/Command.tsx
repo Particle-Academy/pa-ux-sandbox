@@ -134,7 +134,8 @@ const shown = (workspaceMode ? workspaces : actions).filter((x) => x.includes(te
         <div className="space-y-1 text-xs text-zinc-600 dark:text-zinc-300">
             <p><strong>Item props:</strong> <code>onSelect</code>, <code>value</code> (used for filter matching when children isn't a string).</p>
             <p><strong>Group props:</strong> <code>heading</code> renders a small uppercase section label.</p>
-            <p><strong>Empty:</strong> shows when no items match the current query.</p>
+            <p><strong>Empty:</strong> always renders what you give it — it does not count the visible items itself. Render it only when your results are empty, as the shouldFilter example does.</p>
+            <p><strong>Keyboard:</strong> focus stays in the input. Up/Down move the active item (announced via <code>aria-activedescendant</code>); Enter picks it, or the first visible item when none is active.</p>
         </div>
     ),
 };

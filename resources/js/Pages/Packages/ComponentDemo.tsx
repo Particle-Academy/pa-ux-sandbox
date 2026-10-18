@@ -3816,7 +3816,8 @@ function FancyTerminalDemo() {
 
     const banner = (id: string) =>
         "\x1b[38;5;141mFancy Term\x1b[0m \x1b[38;5;245m— a Human+ terminal.\x1b[0m\r\n" +
-        "Pick a shell above, type (it echoes), or let an agent drive it.\r\n\r\n" +
+        "Pick a shell above, type (it echoes), or let an agent drive it.\r\n" +
+        "Links are clickable: https://ui.particle.academy/packages/fancy-term\r\n\r\n" +
         promptFor(id);
 
     // Local echo — a real terminal relies on its PTY to echo; the demo does it here.
@@ -3879,6 +3880,12 @@ function FancyTerminalDemo() {
                     initialOutput={banner(shell)}
                     onData={onData}
                     onPaste={onPaste}
+                    // Clickable URLs: fancy-term underlines them and reports the
+                    // click; opening is the host's call. Here: note it, then open.
+                    onLinkActivate={(url) => {
+                        term.current?.write("\r\n# host received link: " + url + "\r\n" + promptFor(shell));
+                        window.open(url, "_blank", "noopener,noreferrer");
+                    }}
                     shells={shells}
                     activeShell={shell}
                     onShellChange={onShellChange}

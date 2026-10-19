@@ -289,6 +289,7 @@ const REGISTRY: Record<string, DemoFn> = {
     "react-fancy/mood-meter": MoodMeterDemo,
     "react-fancy/prompt-input": PromptInputDemo,
     "react-fancy/composer": ComposerDemo,
+    "react-fancy/paste-pills": PastePillsDemo,
     "react-fancy/chat-drawer": ChatDrawerDemo,
     // Content
     "react-fancy/timeline": TimelineDemo,
@@ -1695,6 +1696,23 @@ function EmojiSelectDemo() {
         <div className="flex items-center gap-3">
             <EmojiSelect value={v} onChange={setV} />
             <span className="text-2xl">{v}</span>
+        </div>
+    );
+}
+
+function PastePillsDemo() {
+    const [value, setValue] = useState("");
+    return (
+        <div className="w-full max-w-md space-y-2">
+            <Input
+                name="demo"
+                value={value}
+                onValueChange={setValue}
+                pasteThreshold={120}
+                pasteImages
+                placeholder="Paste a long passage or a screenshot"
+            />
+            <Composer pastePlacement="inline" pasteThreshold={120} pasteImages placeholder="The same pill, in a Composer" />
         </div>
     );
 }

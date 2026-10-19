@@ -63,6 +63,27 @@ class RegistryItem
         );
     }
 
+    /**
+     * Clone this item with a different file list.
+     *
+     * @param  list<array<string, mixed>>  $files
+     */
+    public function withFiles(array $files): self
+    {
+        return new self(
+            name: $this->name,
+            title: $this->title,
+            description: $this->description,
+            package: $this->package,
+            files: $files,
+            dependencies: $this->dependencies,
+            registryDependencies: $this->registryDependencies,
+            type: $this->type,
+            since: $this->since,
+            until: $this->until,
+        );
+    }
+
     /** Clone this item with a different registry name (used to de-collide). */
     public function withName(string $name): self
     {

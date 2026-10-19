@@ -1,5 +1,6 @@
+import { useState } from "react";
 import type { ComponentDoc } from "./types";
-import { Checkbox, CheckboxGroup, ColorPicker, DatePicker, Field, Input, MultiSwitch, RadioGroup, Select, Slider, Switch, Textarea } from "@particle-academy/react-fancy";
+import { Button, Checkbox, CheckboxGroup, ColorPicker, DatePicker, Field, Input, MultiSwitch, RadioGroup, Select, Slider, Switch, Textarea } from "@particle-academy/react-fancy";
 
 const inputFamilyDoc: ComponentDoc = {
     intro: (
@@ -62,6 +63,29 @@ const inputFamilyDoc: ComponentDoc = {
             ),
             code: `<Input label="Domain" leading="https://" value={url} onValueChange={setUrl} />
 <Input label="Amount" trailing="USD" type="number" value={amount} onValueChange={setAmount} />`,
+        },
+        {
+            name: "Paste pills",
+            description:
+                "pasteThreshold holds a long paste as a pill in the field, the same pill Composer and PromptInput show, from the same PastePills code. Click it to put the text back; hover for the first and last previewChars. pasteImages holds a pasted screenshot as a pill too, and puts the file in a hidden file input in the same form, named pasteFilesName (default {name}_files[]). A plain form submit posts the text with every pill expanded, plus the files. Paste below and submit to see what the form posts. pasteClassNames and renderPastePreview restyle the pills; heldPastes / onHeldPastesChange and heldImages / onHeldImagesChange hand you the held lists.",
+            render: () => <PastePillsForm />,
+            code: `<form method="post" action="/ask" encType="multipart/form-data">
+    <Input
+        name="question"
+        label="Question"
+        pasteThreshold={500}
+        pasteImages
+        pasteFilesName="screenshots[]"
+        previewChars={30}
+        pasteClassNames={{ textPill: "bg-violet-100 text-violet-700" }}
+        renderPastePreview={(p) => (p.kind === "text" ? p.paste.text.slice(0, 60) : p.image.label)}
+        heldPastes={held}
+        onHeldPastesChange={setHeld}
+        heldImages={images}
+        onHeldImagesChange={setImages}
+    />
+</form>
+{/* posts question = the text with each pill expanded, screenshots[] = the pasted files */}`,
         },
         {
             name: "Textarea",
@@ -384,7 +408,41 @@ function componentDoc(
 }
 
 export const fieldDoc = componentDoc("Field", "provides the shared accessible label, description and validation shell.", ["Field (wrapping another control)"]);
-export const inputDoc = componentDoc("Input", "is the controlled single-line text primitive.", ["Input", "Error state", "Affixes"]);
+export const inputDoc = componentDoc("Input", "is the controlled single-line text primitive.", ["Input", "Error state", "Affixes", "Paste pills"]);
+
+/** A real form, so the example shows what a native submit posts rather than describing it. */
+function PastePillsForm() {
+    const [posted, setPosted] = useState<string | null>(null);
+
+    return (
+        <form
+            className="w-full max-w-md space-y-3"
+            onSubmit={(e) => {
+                e.preventDefault();
+                const data = new FormData(e.currentTarget);
+                const question = String(data.get("question") ?? "");
+                const files = data.getAll("screenshots[]").filter((f): f is File => f instanceof File && f.size > 0);
+                setPosted(
+                    `question: ${question.length} characters\n${question.slice(0, 160)}${question.length > 160 ? " …" : ""}\nscreenshots[]: ${files.length === 0 ? "none" : files.map((f) => `${f.name} (${f.size} bytes)`).join(", ")}`,
+                );
+            }}
+        >
+            <Input
+                name="question"
+                label="Question"
+                placeholder="Paste a long passage or a screenshot…"
+                pasteThreshold={200}
+                pasteImages
+                pasteFilesName="screenshots[]"
+                previewChars={30}
+            />
+            <Button type="submit" size="sm" color="violet">Submit the form</Button>
+            {posted !== null && (
+                <pre className="whitespace-pre-wrap break-all rounded-md bg-zinc-50 p-2 text-xs text-zinc-600 dark:bg-zinc-900 dark:text-zinc-300">{posted}</pre>
+            )}
+        </form>
+    );
+}
 export const textareaDoc = componentDoc("Textarea", "is the controlled multi-line text primitive with optional auto-resize.", ["Textarea"]);
 export const selectDoc = componentDoc("Select", "provides native and searchable listbox selection.", ["Select"]);
 export const checkboxDoc = componentDoc("Checkbox", "represents one controlled boolean choice.", ["Checkbox & CheckboxGroup"]);

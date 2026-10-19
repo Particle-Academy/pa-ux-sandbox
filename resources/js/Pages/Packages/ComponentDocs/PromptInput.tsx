@@ -147,7 +147,10 @@ export const promptInputDoc: ComponentDoc = {
     pasteClassNames={{ textPill: "bg-violet-100 text-violet-700" }}
     renderPastePreview={(p) => (p.kind === "text" ? p.paste.text.slice(0, 60) : p.image.label)}
     onSubmit={(text, attachments) => send(text, attachments)}
-/>`,
+/>
+
+{/* Inside a <form>, pasteFilesName also posts the pasted images: */}
+<PromptInput pasteImages pasteFilesName="screenshots[]" onSubmit={send} />`,
         },
         {
             name: "A quieter footer",
@@ -194,6 +197,7 @@ export const promptInputDoc: ComponentDoc = {
         { name: "aboveInput", type: `ReactNode`, default: "—", description: "Rendered inside the rounded shell, above the textarea — usually a `ChatDrawer`." },
         { name: "pasteThreshold", type: `number`, default: "— (off)", description: "Hold a paste of at least this many characters as a pill IN the message, where it was pasted. Swaps the textarea for an inline editor; `/`, `@` and Ctrl/⌘+Enter keep working." },
         { name: "pasteImages", type: `boolean`, default: `false`, description: "A pasted image becomes an inline `Pasted image N` pill and reaches `onSubmit`'s attachments with its File. Off: a pasted image is an ordinary attachment chip." },
+        { name: "pasteFilesName", type: `string`, default: "—", description: "Post pasted images with an enclosing `<form>` under this name: a hidden `<input type=\"file\" multiple>` holds the images still in the message. Needs `pasteImages`." },
         { name: "previewChars", type: `number`, default: `20`, description: "Characters of a held paste shown at each end of the hover preview." },
         { name: "renderPastePreview", type: `(p: ComposerPastePreview) => ReactNode`, default: "—", description: "Replace what a pill's hover popover shows." },
         { name: "pasteClassNames", type: `{ pill?, textPill?, imagePill?, preview?, input? }`, default: "—", description: "Classes merged onto the pills, their popover and the inline editor." },

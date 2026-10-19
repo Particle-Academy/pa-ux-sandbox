@@ -220,10 +220,9 @@ class RegistrySource
         $items = [];
         $hasNpmPointer = false;
         foreach ($pkg['components'] ?? [] as $component) {
-            // Some public components live inside a shared source tree whose
-            // relative imports only work as one bundle. They remain fully
-            // discoverable and installable from the published package, while
-            // the family-level entry owns the copy-source path.
+            // `vendor => false` keeps a component install-only. The inputs family
+            // was, because their shared files (`inputs.utils`, `mode/`) did not
+            // survive vendoring; `vendorOutOfTreeImports` ships those now.
             $item = ($component['vendor'] ?? true)
                 ? $this->buildItem($pkg, $component, $pkgDir)
                 : null;
@@ -250,7 +249,62 @@ class RegistrySource
             $items[] = $this->packageLevelItem($pkg);
         }
 
-        return $items;
+        return $this->withoutDependencyFiles($items);
+    }
+
+    /**
+     * Drop from each item the files one of its registry dependencies ships.
+     *
+     * An import into another component carries that file along, because the
+     * dependency's own bundle need not contain it. Where it DOES, the copy is
+     * dead weight in the payload: `composer` carried every `paste-pills` file as
+     * well as depending on `paste-pills`. Only files under a dependency's OWN
+     * folder are dropped, and an item never drops its own, so a dependency cycle
+     * cannot remove a file from both sides.
+     *
+     * @param  list<RegistryItem>  $items
+     * @return list<RegistryItem>
+     */
+    private function withoutDependencyFiles(array $items): array
+    {
+        $byName = [];
+        foreach ($items as $item) {
+            $byName[$item->name] = $item;
+        }
+        $ownFolder = static fn (RegistryItem $i): ?string => $i->files === []
+            ? null
+            : implode('/', array_slice(explode('/', (string) $i->files[0]['target']), 0, 3)).'/';
+
+        return array_map(function (RegistryItem $item) use ($byName, $ownFolder): RegistryItem {
+            $shipped = [];
+            $seen = [$item->name => true];
+            $queue = $item->registryDependencies;
+            while ($queue !== []) {
+                $name = array_shift($queue);
+                if (isset($seen[$name]) || ! isset($byName[$name])) {
+                    continue;
+                }
+                $seen[$name] = true;
+                $dep = $byName[$name];
+                $folder = $ownFolder($dep);
+                foreach ($dep->files as $f) {
+                    if ($folder !== null && str_starts_with((string) $f['target'], $folder)) {
+                        $shipped[(string) $f['target']] = true;
+                    }
+                }
+                array_push($queue, ...$dep->registryDependencies);
+            }
+            if ($shipped === []) {
+                return $item;
+            }
+            $own = $ownFolder($item);
+            $files = array_values(array_filter(
+                $item->files,
+                static fn (array $f): bool => ! isset($shipped[(string) $f['target']]) || ($own !== null && str_starts_with((string) $f['target'], $own)),
+            ));
+
+            return count($files) === count($item->files) ? $item : $item->withFiles($files);
+        }, $items);
     }
 
     /**
@@ -370,8 +424,10 @@ class RegistrySource
 
         $root = $source['kind'] === 'dir' ? $source['path'] : dirname($source['path']);
         $files = $this->followRelativeImports($files, $root, (string) $component['slug']);
+        [$files, $registryDeps] = $this->vendorOutOfTreeImports($files, $root, $pkgDir, $pkg, (string) $component['slug']);
 
         $imports = $this->parseImports($files);
+        $imports['registry'] = $registryDeps;
         $description = $component['blurb'] ?: $this->fallbackDescription($pkg, $component);
 
         return new RegistryItem(
@@ -612,6 +668,191 @@ class RegistrySource
         }
 
         return array_values($byPath);
+    }
+
+    /**
+     * Make every `../` import resolve where the CLI writes the files.
+     *
+     * `npx fancy-cli add` copies files verbatim to `<components>/<slug>/…`, which
+     * is not where they sat in the package, so an import leaving the component's
+     * folder pointed at nothing: every react-fancy item imported `../../utils/cn`
+     * and `../../hooks/…`, which no item shipped, and `../Tooltip` where the CLI
+     * writes `tooltip/`. 601 such imports when this was written, and the registry
+     * served every one with a 200. Each import is resolved on disk and goes one of
+     * three ways:
+     *
+     *  - **inside the component's own tree** (`inputs/Input` → `../mode`): the
+     *    file joins the bundle at the same relative place, so the import stands;
+     *  - **another component**: becomes a registry dependency, and the import is
+     *    rewritten to the folder the CLI gives it (its kebab slug);
+     *  - **shared package code** (`src/utils`, `src/hooks`, …): shipped as
+     *    `lib/<path under src>`, beside the components, and the import rewritten
+     *    to it. Every item carries its own copy in the payload; on disk there is
+     *    one, because the CLI does not overwrite a file that exists. `lib/`
+     *    mirrors `src/`, so one lib file importing another needs no rewrite.
+     *
+     * @param  list<array{path: string, content: string, type: string, target: string}>  $files
+     * @param  array<string, mixed>  $pkg
+     * @return array{0: list<array{path: string, content: string, type: string, target: string}>, 1: list<string>}
+     */
+    private function vendorOutOfTreeImports(array $files, string $root, string $pkgDir, array $pkg, string $slug): array
+    {
+        $norm = static fn (string $p): string => rtrim(str_replace('\\', '/', $p), '/');
+        $realRoot = realpath($root);
+        $realSrc = realpath("$pkgDir/src");
+        if ($realRoot === false || $realSrc === false) {
+            return [$files, $this->parseImports($files)['registry']];
+        }
+        $root = $norm($realRoot);
+        $src = $norm($realSrc);
+        $ownPrefix = "components/fancy/$slug/";
+        $libPrefix = 'components/fancy/lib/';
+        $itemRoots = $this->itemRoots($pkg, $pkgDir);
+
+        $byPath = [];
+        $sources = [];
+        foreach ($files as $f) {
+            $byPath[$f['path']] = $f;
+            $sources[$f['path']] = $root.'/'.substr($f['path'], strlen($ownPrefix));
+        }
+        $deps = [];
+        $queue = array_keys($byPath);
+        $guard = 0;
+
+        while ($queue !== [] && $guard++ < 2000) {
+            $path = array_shift($queue);
+            $sourceDir = dirname($sources[$path]);
+            $bundleDir = dirname($path);
+
+            $content = preg_replace_callback(
+                // `./` too: a file brought in here has its own siblings, and
+                // `followRelativeImports` only walked the component's tree.
+                '/((?:from|import\s*\()\s*)([\'"])(\.\.?\/[^\'"]+)\2/',
+                function (array $m) use ($sourceDir, $bundleDir, $root, $src, $ownPrefix, $libPrefix, $slug, $pkg, $itemRoots, &$byPath, &$sources, &$queue, &$deps, $norm): string {
+                    $resolved = $this->resolveModule($sourceDir, $m[3]);
+                    if ($resolved === null) {
+                        return $m[0];
+                    }
+                    $resolved = $norm($resolved);
+
+                    if (str_starts_with($resolved, "$root/")) {
+                        $target = $ownPrefix.substr($resolved, strlen("$root/"));
+                    } elseif (($owner = $this->owningRoot($resolved, $itemRoots)) !== null) {
+                        // Another component with an item of its own: depend on it,
+                        // and point at the folder the CLI gives it.
+                        [$ownerDir, $ownerSlug] = $owner;
+                        if ($ownerSlug !== $slug) {
+                            $deps[] = $this->componentRegistryName($pkg, ['slug' => $ownerSlug]);
+                        }
+                        $target = "components/fancy/$ownerSlug/".substr($resolved, strlen("$ownerDir/"));
+                    } elseif (str_starts_with($resolved, "$src/")) {
+                        $target = $libPrefix.substr($resolved, strlen("$src/"));
+                    } else {
+                        return $m[0];
+                    }
+
+                    // Ship the file at that target even when it belongs to a
+                    // dependency: an item's bundle need not contain every file
+                    // another imports from it (`inputs` never carried `mode/`), and
+                    // the copy is the same bytes the dependency would write, since
+                    // it is computed from the same source and the same target.
+                    if (! isset($byPath[$target])) {
+                        $byPath[$target] = [
+                            'path' => $target,
+                            'content' => SourceText::lf((string) file_get_contents($resolved)),
+                            'type' => str_starts_with($target, $libPrefix) ? 'registry:lib' : 'registry:ui',
+                            'target' => $target,
+                        ];
+                        $sources[$target] = $resolved;
+                        $queue[] = $target;
+                    }
+
+                    return $m[1].$m[2].$this->relativeSpecifier($bundleDir, $target).$m[2];
+                },
+                $byPath[$path]['content'],
+            ) ?? $byPath[$path]['content'];
+
+            $byPath[$path]['content'] = $content;
+        }
+
+        return [array_values($byPath), array_values(array_unique($deps))];
+    }
+
+    /** @var array<string, array<string, string>> folder => slug, per package dir */
+    private array $itemRootCache = [];
+
+    /**
+     * Every vendorable component folder in a package, mapped to its slug: the
+     * folder the CLI writes that component into is `components/fancy/<slug>`, and
+     * the slug is not always the folder's kebab case (`ArtBoard` is `artboard`).
+     *
+     * @param  array<string, mixed>  $pkg
+     * @return array<string, string>
+     */
+    private function itemRoots(array $pkg, string $pkgDir): array
+    {
+        if (isset($this->itemRootCache[$pkgDir])) {
+            return $this->itemRootCache[$pkgDir];
+        }
+
+        $roots = [];
+        foreach ($pkg['components'] ?? [] as $component) {
+            if (! ($component['vendor'] ?? true)) {
+                continue;
+            }
+            $source = $this->locateComponentSource($pkgDir, (string) $component['name'], (string) $component['slug']);
+            if ($source === null || $source['kind'] !== 'dir') {
+                continue;
+            }
+            $real = realpath($source['path']);
+            if ($real !== false) {
+                $roots[rtrim(str_replace('\\', '/', $real), '/')] ??= (string) $component['slug'];
+            }
+        }
+
+        // Longest first, so a nested component folder wins over its parent.
+        uksort($roots, static fn (string $a, string $b): int => strlen($b) <=> strlen($a));
+
+        return $this->itemRootCache[$pkgDir] = $roots;
+    }
+
+    /**
+     * The component folder that contains `$file`, with its slug.
+     *
+     * @param  array<string, string>  $roots
+     * @return array{0: string, 1: string}|null
+     */
+    private function owningRoot(string $file, array $roots): ?array
+    {
+        foreach ($roots as $dir => $slug) {
+            if (str_starts_with($file, "$dir/")) {
+                return [$dir, $slug];
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * The import specifier from a bundle directory to a bundle file: relative,
+     * without its extension, and a directory's `index` named by the directory,
+     * as the source wrote it.
+     */
+    private function relativeSpecifier(string $fromDir, string $toFile): string
+    {
+        $to = preg_replace('/\.(tsx|ts|jsx|js)$/', '', $toFile) ?? $toFile;
+        $to = preg_replace('#/index$#', '', $to) ?? $to;
+
+        $from = explode('/', trim($fromDir, '/'));
+        $target = explode('/', trim($to, '/'));
+        while ($from !== [] && $target !== [] && $from[0] === $target[0]) {
+            array_shift($from);
+            array_shift($target);
+        }
+
+        $up = str_repeat('../', count($from));
+
+        return ($up === '' ? './' : $up).implode('/', $target);
     }
 
     /**

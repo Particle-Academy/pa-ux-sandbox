@@ -1145,6 +1145,14 @@ const PREVIEWS: Record<string, PreviewFn> = {
         </div>
     ),
 
+    "react-fancy/paste-pills": () => (
+        <div className="flex w-full max-w-[18rem] items-center gap-1 rounded-lg border border-zinc-200 bg-white px-2 py-1.5 text-xs text-zinc-700 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-200">
+            <span>Summarise</span>
+            <span className="rounded-full border border-zinc-200 bg-zinc-50 px-2 py-0.5 text-[10px] dark:border-zinc-700 dark:bg-zinc-800">Pasted text · 4,812 characters</span>
+            <span className="rounded-full border border-zinc-200 bg-zinc-50 px-2 py-0.5 text-[10px] dark:border-zinc-700 dark:bg-zinc-800">Pasted image 1</span>
+        </div>
+    ),
+
     "react-fancy/composer": () => (
         <div className="w-full max-w-[18rem] rounded-md border border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-900">
             <div className="px-3 py-2 text-xs text-zinc-700 dark:text-zinc-200">

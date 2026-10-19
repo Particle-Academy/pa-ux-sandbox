@@ -87,6 +87,71 @@ it('vendors every sibling module its own files import', function () {
     expect($offenders)->toBe([], "these registry items vendor source that cannot compile:\n  ".implode("\n  ", array_slice($offenders, 0, 20)));
 });
 
+/*
+ * The import that leaves the component's own folder.
+ *
+ * The check above follows `./` imports only, and for two years that left the rest
+ * unchecked: every react-fancy item imported `../../utils/cn` and
+ * `../../hooks/...`, which no item shipped, and `../Tooltip` where the CLI writes
+ * `tooltip/`. `npx fancy-cli add composer` copied eleven files that could not
+ * build, and the registry served it with a 200.
+ *
+ * What a consumer gets is the item's files plus its registry dependencies',
+ * transitively, each at its TARGET. So that is the set an import must land in,
+ * compared case-sensitively, because a consumer's CI runs on Linux.
+ */
+it('vendors whatever its files import from outside their own folder', function () {
+    $items = [];
+    foreach (app(RegistrySource::class)->all() as $item) {
+        $items[$item->name] = $item;
+    }
+
+    $installed = function (string $name) use ($items): array {
+        $seen = [];
+        $queue = [$name];
+        $targets = [];
+        while ($queue !== []) {
+            $next = array_shift($queue);
+            if (isset($seen[$next]) || ! isset($items[$next])) {
+                continue;
+            }
+            $seen[$next] = true;
+            foreach ($items[$next]->files as $f) {
+                $targets[] = (string) ($f['target'] ?? $f['path']);
+            }
+            array_push($queue, ...$items[$next]->registryDependencies);
+        }
+
+        return $targets;
+    };
+
+    $offenders = [];
+    $checked = 0;
+
+    foreach ($items as $item) {
+        if ($item->files === []) {
+            continue;
+        }
+        $targets = $installed($item->name);
+
+        foreach ($item->files as $file) {
+            $base = dirname((string) ($file['target'] ?? $file['path']));
+            preg_match_all('/(?:from|import\s*\()\s*[\'"](\.\.\/[^\'"]+)[\'"]/', (string) ($file['content'] ?? ''), $m);
+
+            foreach ($m[1] ?? [] as $import) {
+                $checked++;
+                if (! bundleResolves($base, $import, $targets)) {
+                    $offenders[] = "{$item->name}: {$file['path']} imports {$import}";
+                }
+            }
+        }
+    }
+
+    // Not vacuous: the kit is full of these imports.
+    expect($checked)->toBeGreaterThan(100);
+    expect($offenders)->toBe([], count($offenders)." imports a vendored copy cannot resolve:\n  ".implode("\n  ", array_slice($offenders, 0, 30)));
+});
+
 it('gives every item at least one file or a package to install instead', function () {
     // Not every item vendors source. When the builder cannot locate a
     // component's files it degrades to an install pointer — which is fine, and

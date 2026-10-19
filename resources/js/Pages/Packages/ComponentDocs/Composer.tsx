@@ -217,5 +217,6 @@ setHeld([...held, { id, text }]);`,
         { name: "onHeldImagesChange", type: `(images: HeldImage[]) => void`, default: "—", description: "Called when the held image list changes." },
         { name: "heldPastes", type: `HeldPaste[]`, default: "—", description: "Controlled list of held pastes, so an agent can read and write what is attached." },
         { name: "onHeldPastesChange", type: `(pastes: HeldPaste[]) => void`, default: "—", description: "Called when the held list changes." },
+        { name: "pasteFilesName", type: `string`, default: "—", description: "Post pasted images with an enclosing `<form>` under this name: a hidden `<input type=\"file\" multiple>` holds the images still in the message, and a deleted pill takes its file with it. Needs `pasteImages`." },
     ],
 };

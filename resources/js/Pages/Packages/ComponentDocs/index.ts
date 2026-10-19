@@ -104,6 +104,7 @@ import { moodMeterDoc } from "./MoodMeter";
 import { navbarDoc } from "./Navbar";
 import { otpInputDoc } from "./OtpInput";
 import { paginationDoc } from "./Pagination";
+import { pastePillsDoc } from "./PastePills";
 import { pillboxDoc } from "./Pillbox";
 import { popoverDoc } from "./Popover";
 import { portalDoc } from "./Portal";
@@ -228,6 +229,7 @@ export const DOCS: Record<string, ComponentDoc> = {
     "react-fancy/navbar": navbarDoc,
     "react-fancy/otp-input": otpInputDoc,
     "react-fancy/pagination": paginationDoc,
+    "react-fancy/paste-pills": pastePillsDoc,
     "react-fancy/pillbox": pillboxDoc,
     "react-fancy/popover": popoverDoc,
     "react-fancy/portal": portalDoc,

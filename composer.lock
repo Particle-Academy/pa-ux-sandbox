@@ -4048,16 +4048,16 @@
         },
         {
             "name": "particle-academy/dark-slide",
-            "version": "v0.15.0",
+            "version": "v0.16.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/dark-slide.git",
-                "reference": "c20cf6561a11d879f16c0a3b2512452d8de84dc2"
+                "reference": "723f2f10a373a67a4e984ac4266cae9c979fbbc8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/dark-slide/zipball/c20cf6561a11d879f16c0a3b2512452d8de84dc2",
-                "reference": "c20cf6561a11d879f16c0a3b2512452d8de84dc2",
+                "url": "https://api.github.com/repos/Particle-Academy/dark-slide/zipball/723f2f10a373a67a4e984ac4266cae9c979fbbc8",
+                "reference": "723f2f10a373a67a4e984ac4266cae9c979fbbc8",
                 "shasum": ""
             },
             "require": {
@@ -4118,7 +4118,7 @@
                 "issues": "https://github.com/Particle-Academy/dark-slide/issues",
                 "source": "https://github.com/Particle-Academy/dark-slide"
             },
-            "time": "2026-10-19T06:32:42+00:00"
+            "time": "2026-10-19T08:08:30+00:00"
         },
         {
             "name": "particle-academy/fancy-cms",
@@ -4534,16 +4534,16 @@
         },
         {
             "name": "particle-academy/holy-sheet",
-            "version": "v2.6.0",
+            "version": "v2.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/holy-sheet.git",
-                "reference": "bbc896fab179e0d1ca41417488b0b75c775bb99a"
+                "reference": "40a80dce71a3d37366b593f241e75b38ca4b415b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/holy-sheet/zipball/bbc896fab179e0d1ca41417488b0b75c775bb99a",
-                "reference": "bbc896fab179e0d1ca41417488b0b75c775bb99a",
+                "url": "https://api.github.com/repos/Particle-Academy/holy-sheet/zipball/40a80dce71a3d37366b593f241e75b38ca4b415b",
+                "reference": "40a80dce71a3d37366b593f241e75b38ca4b415b",
                 "shasum": ""
             },
             "require": {
@@ -4602,7 +4602,7 @@
                 "issues": "https://github.com/Particle-Academy/holy-sheet/issues",
                 "source": "https://github.com/Particle-Academy/holy-sheet"
             },
-            "time": "2026-10-19T07:04:16+00:00"
+            "time": "2026-10-19T08:28:58+00:00"
         },
         {
             "name": "particle-academy/laravel-catalog",

@@ -56,9 +56,9 @@ export const slideViewerDoc: ComponentDoc = {
     examples: [
         {
             name: "Default",
-            description: "Pass a deck — `<SlideViewer>` does the rest. Keyboard: ←/→/Space/Esc/B/F/1-9.",
+            description: "Pass a deck — `<SlideViewer>` does the rest. It sits in react-fancy's FauxClient frame: hover it for zoom (magnifies the slide, which then scrolls) and full screen. Click the left third to go back and anywhere else to go forward, or use the arrows that appear on hover. Keyboard: ←/→/Space/Esc/B/F/1-9. frame={false} gives the bare viewer; frameProps reaches the frame.",
             render: () => (
-                <div className="h-64 w-full overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-800">
+                <div className="h-64 w-full">
                     <SlideViewer deck={tinyDeck} hideChrome={false} />
                 </div>
             ),
@@ -107,6 +107,8 @@ import "@particle-academy/fancy-slides/styles.css";
         { name: "hideChrome", type: `boolean`, default: `false`, description: "Hide the slide counter chip in the bottom-right." },
         { name: "renderElement", type: `(element, slideWidthPx) => ReactNode | undefined`, default: "—", description: "Custom renderer for chart / code / table / embed (or custom element types)." },
         { name: "className", type: `string`, default: "—", description: "Extra classes on the viewer wrapper." },
+        { name: "frame", type: `boolean`, default: `true`, description: "Show the deck in react-fancy's FauxClient device frame with zoom and full screen. `false` for the bare viewer." },
+        { name: "frameProps", type: `Partial<FauxClientProps>`, default: "—", description: "Passed to the frame: `variant`, a controlled `zoom`, `onFullscreenChange`, …" },
     ],
     notes: (
         <div className="space-y-1 text-xs text-zinc-600 dark:text-zinc-300">

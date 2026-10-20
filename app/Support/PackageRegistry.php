@@ -59,19 +59,6 @@ class PackageRegistry
         // person to rely on it left a shipped package invisible for weeks.
         'fancy-schema',
 
-        // `fancy-docs` -- BUILT and PUSHED (0.1.0), not on npm.
-        //
-        // The docx member of the file viewers (DocViewer, DocFileView). The npm
-        // name `@particle-academy/fancy-docs` does not exist yet and OIDC cannot
-        // claim a new one: the first publish is the owner's, a throwaway `0.0.0`,
-        // then a Trusted Publisher, then CI ships v0.1.0. Offering `npm install`
-        // for a name that 404s is the mistake `fancy-trading-ui` made here.
-        //
-        // REMOVE THIS SLUG when `npm view @particle-academy/fancy-docs version`
-        // returns 0.1.0 or later -- and re-check it, because the trading-ui
-        // note below is what happens when nobody does.
-        'fancy-docs',
-
         // The two removals behind this list are the lesson worth keeping.
         //
         // `fancy-walkthrough` was removed 2026-09-29, the day it published.

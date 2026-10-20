@@ -116,7 +116,8 @@ import {
     type ActivityLevel,
     type ActivityDirection,
 } from "@particle-academy/react-fancy";
-import { CodeEditor, MarkdownEditor, FileViewer} from "@particle-academy/fancy-code";
+import { CodeEditor, MarkdownEditor, FileViewer, registerOfficeViewer } from "@particle-academy/fancy-code";
+import { DocViewer, DocFileView } from "@particle-academy/fancy-docs";
 import {
     DownlineTree as MlmDownlineTree,
     CommissionStatement as MlmCommissionStatement,
@@ -331,6 +332,8 @@ const REGISTRY: Record<string, DemoFn> = {
 
     // ── fancy-sheets
     "fancy-sheets/sheet-workbook": SheetWorkbookDemo,
+    "fancy-docs/doc-viewer": DocViewerDemo,
+    "fancy-docs/doc-file-view": DocFileViewDemo,
     "fancy-sheets/create-empty-workbook": EmptyWorkbookDemo,
 
     // ── fancy-code
@@ -3756,6 +3759,57 @@ function buildSheetsSeed() {
         },
     };
     return { ...wb, sheets: [sales, notes] };
+}
+
+
+/** A small report in last-word's Doc model: what its reader returns for a real .docx. */
+const SAMPLE_DOC = {
+    page: {
+        margins: { top: 54, right: 54, bottom: 54, left: 54 },
+        header: { left: "Ledger Sync", right: "Internal" },
+        footer: { center: "Page {page} of {pages}" },
+    },
+    blocks: [
+        { type: "heading", level: 1, runs: [{ text: "Q3 revenue review", color: "#1F3A5F" }] },
+        { type: "paragraph", runs: [{ text: "EMEA delivered " }, { text: "48.5%", bold: true }, { text: " of revenue, up 6.2 points." }] },
+        {
+            type: "paragraph",
+            shading: "#EEF4FF",
+            borders: { left: { style: "single", width: 3, color: "#2F5BEA" } },
+            runs: [{ text: "Decision: ", bold: true, color: "#1F3A5F" }, { text: "move two account managers to EMEA by 1 Nov." }],
+        },
+        {
+            type: "table",
+            widths: [60, 40],
+            rows: [
+                { header: true, cells: [
+                    { shading: "#1F3A5F", blocks: [{ type: "paragraph", runs: [{ text: "Region", color: "#FFFFFF" }] }] },
+                    { shading: "#1F3A5F", blocks: [{ type: "paragraph", align: "right", runs: [{ text: "Revenue", color: "#FFFFFF" }] }] },
+                ] },
+                { cells: [{ blocks: [{ type: "paragraph", runs: [{ text: "EMEA" }] }] }, { blocks: [{ type: "paragraph", align: "right", runs: [{ text: "$2,100,000" }] }] }] },
+                { cells: [{ blocks: [{ type: "paragraph", runs: [{ text: "North" }] }] }, { blocks: [{ type: "paragraph", align: "right", runs: [{ text: "$1,250,000" }] }] }] },
+            ],
+        },
+    ],
+};
+
+function DocViewerDemo() {
+    return (
+        <div className="h-[28rem] w-full">
+            <DocViewer doc={SAMPLE_DOC as never} />
+        </div>
+    );
+}
+
+// The one-line setup an app does once, so FileViewer opens .docx files.
+registerOfficeViewer("docx", DocFileView);
+
+function DocFileViewDemo() {
+    return (
+        <div className="h-[28rem] w-full">
+            <FileViewer filename="q3-review.docx" document={SAMPLE_DOC} style={{ height: "100%" }} />
+        </div>
+    );
 }
 
 function SheetWorkbookDemo() {

@@ -2304,6 +2304,32 @@ const PREVIEWS: Record<string, PreviewFn> = {
         </div>
     )),
 
+    // ─── fancy-docs ───────────────────────────────────────────────────────
+
+    "fancy-docs/doc-viewer": () => (
+        <div className="w-full max-w-[16rem] rounded-md bg-zinc-200 p-2 dark:bg-zinc-800">
+            <div className="space-y-1 bg-white p-2 text-[7px] text-zinc-700 shadow">
+                <div className="flex justify-between text-[6px] text-zinc-400"><span>Ledger Sync</span><span>Internal</span></div>
+                <div className="text-[10px] font-bold text-[#1F3A5F]">Q3 revenue review</div>
+                <div className="border-l-2 border-[#2F5BEA] bg-[#EEF4FF] px-1"><b>Decision:</b> move two AMs to EMEA</div>
+                <div className="grid grid-cols-2"><span className="bg-[#1F3A5F] px-1 text-white">Region</span><span className="bg-[#1F3A5F] px-1 text-right text-white">Revenue</span><span className="px-1">EMEA</span><span className="px-1 text-right">$2,100,000</span></div>
+                <div className="text-center text-[6px] text-zinc-400">Page 1 of 1</div>
+            </div>
+        </div>
+    ),
+
+    "fancy-docs/doc-file-view": () => (
+        <div className="w-full max-w-[16rem] rounded-md bg-zinc-200 p-2 dark:bg-zinc-800">
+            <div className="space-y-1 bg-white p-2 text-[7px] text-zinc-700 shadow">
+                <div className="flex justify-between text-[6px] text-zinc-400"><span>Ledger Sync</span><span>Internal</span></div>
+                <div className="text-[10px] font-bold text-[#1F3A5F]">Q3 revenue review</div>
+                <div className="border-l-2 border-[#2F5BEA] bg-[#EEF4FF] px-1"><b>Decision:</b> move two AMs to EMEA</div>
+                <div className="grid grid-cols-2"><span className="bg-[#1F3A5F] px-1 text-white">Region</span><span className="bg-[#1F3A5F] px-1 text-right text-white">Revenue</span><span className="px-1">EMEA</span><span className="px-1 text-right">$2,100,000</span></div>
+                <div className="text-center text-[6px] text-zinc-400">Page 1 of 1</div>
+            </div>
+        </div>
+    ),
+
     // ─── fancy-sheets ─────────────────────────────────────────────────────
 
     "fancy-sheets/sheet-workbook": heavy("SheetWorkbookTile", () => (

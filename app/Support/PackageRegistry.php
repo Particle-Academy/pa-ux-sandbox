@@ -59,6 +59,19 @@ class PackageRegistry
         // person to rely on it left a shipped package invisible for weeks.
         'fancy-schema',
 
+        // `fancy-docs` -- BUILT and PUSHED (0.1.0), not on npm.
+        //
+        // The docx member of the file viewers (DocViewer, DocFileView). The npm
+        // name `@particle-academy/fancy-docs` does not exist yet and OIDC cannot
+        // claim a new one: the first publish is the owner's, a throwaway `0.0.0`,
+        // then a Trusted Publisher, then CI ships v0.1.0. Offering `npm install`
+        // for a name that 404s is the mistake `fancy-trading-ui` made here.
+        //
+        // REMOVE THIS SLUG when `npm view @particle-academy/fancy-docs version`
+        // returns 0.1.0 or later -- and re-check it, because the trading-ui
+        // note below is what happens when nobody does.
+        'fancy-docs',
+
         // The two removals behind this list are the lesson worth keeping.
         //
         // `fancy-walkthrough` was removed 2026-09-29, the day it published.
@@ -139,11 +152,6 @@ class PackageRegistry
      * @var array<string, array{name: string, repo: string, why: string}>
      */
     public const PLANNED = [
-        'fancy-docs' => [
-            'name' => '@particle-academy/fancy-docs',
-            'repo' => 'Particle-Academy/fancy-docs',
-            'why' => 'The docx member of the file viewers: a React viewer that renders a last-word Doc the way Word does (run, paragraph, table and cell styling, header-row fills, right-aligned numbers, callout shading and borders, heading colours, header and footer bands), in react-fancy`s FauxClient frame with zoom and full screen like fancy-slides` SlideViewer. Owner decision 2026-10-19: a NEW package, pairing with last-word the way fancy-slides pairs with dark-slide and fancy-sheets with holy-sheet, so the headless writer stays free of React. NOT YET STARTED -- registered first per the rule. Asked for by moic (last-word-js#2, filed by wishborn), whose preview went through a third-party docx converter that flattened every style the last-word guide makes required; the lab hand-renders the same blocks in DocumentPreview, which breaks the Fancy Exclusive rule. Input is the Doc JSON a reader produces (PHP last-word server-side is the approved path; the owner ruled consumers read with the PHP package, not last-word-js). npm name verified free 2026-10-19, so the first publish needs the owner.',
-        ],
         'fancy-expr' => [
             'name' => 'fancy-expr',
             'repo' => 'Particle-Academy/fancy-expr',
@@ -273,6 +281,7 @@ Both registry names read as unclaimed on 2026-10-08 -- `@particle-academy/fancy-
         'fancy-artboard' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#6366f1'],
         'fancy-flow' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#0ea5e9'],
         'fancy-sheets' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#10b981'],
+        'fancy-docs' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#2563eb'],
         'fancy-slides' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#f43f5e'],
         'fancy-code' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#a78bfa'],
         'fancy-term' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#22c55e'],
@@ -460,6 +469,7 @@ Both registry names read as unclaimed on 2026-10-08 -- `@particle-academy/fancy-
             self::fancyArtboard(),
             self::fancyFlow(),
             self::fancySheets(),
+            self::fancyDocs(),
             self::fancySlides(),
             self::fancyCode(),
             self::catalogFms(),
@@ -1616,6 +1626,23 @@ Both registry names read as unclaimed on 2026-10-08 -- `@particle-academy/fancy-
             'components' => [
                 ['slug' => 'sheet-workbook', 'name' => 'SheetWorkbook', 'blurb' => 'Root workbook component.'],
                 ['slug' => 'create-empty-workbook', 'name' => 'createEmptyWorkbook', 'blurb' => 'Workbook factory.'],
+            ],
+        ];
+    }
+
+    /** @return array<string, mixed> */
+    private static function fancyDocs(): array
+    {
+        return [
+            'slug' => 'fancy-docs',
+            'name' => '@particle-academy/fancy-docs',
+            'tagline' => 'A last-word document (docx) rendered the way Word renders it -- pages, running header and footer, run and paragraph styling, tables with fills, borders and spans -- in the FauxClient frame with zoom and full screen. The docx member of the file viewers.',
+            'npm' => '@particle-academy/fancy-docs',
+            'repo' => 'Particle-Academy/fancy-docs',
+            'language' => 'TypeScript',
+            'components' => [
+                ['slug' => 'doc-viewer', 'name' => 'DocViewer', 'blurb' => 'A last-word Doc as Word renders it, framed.'],
+                ['slug' => 'doc-file-view', 'name' => 'DocFileView', 'blurb' => 'The docx viewer for fancy-code FileViewer (registerOfficeViewer).'],
             ],
         ];
     }

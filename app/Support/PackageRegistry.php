@@ -139,6 +139,11 @@ class PackageRegistry
      * @var array<string, array{name: string, repo: string, why: string}>
      */
     public const PLANNED = [
+        'fancy-docs' => [
+            'name' => '@particle-academy/fancy-docs',
+            'repo' => 'Particle-Academy/fancy-docs',
+            'why' => 'The docx member of the file viewers: a React viewer that renders a last-word Doc the way Word does (run, paragraph, table and cell styling, header-row fills, right-aligned numbers, callout shading and borders, heading colours, header and footer bands), in react-fancy`s FauxClient frame with zoom and full screen like fancy-slides` SlideViewer. Owner decision 2026-10-19: a NEW package, pairing with last-word the way fancy-slides pairs with dark-slide and fancy-sheets with holy-sheet, so the headless writer stays free of React. NOT YET STARTED -- registered first per the rule. Asked for by moic (last-word-js#2, filed by wishborn), whose preview went through a third-party docx converter that flattened every style the last-word guide makes required; the lab hand-renders the same blocks in DocumentPreview, which breaks the Fancy Exclusive rule. Input is the Doc JSON a reader produces (PHP last-word server-side is the approved path; the owner ruled consumers read with the PHP package, not last-word-js). npm name verified free 2026-10-19, so the first publish needs the owner.',
+        ],
         'fancy-expr' => [
             'name' => 'fancy-expr',
             'repo' => 'Particle-Academy/fancy-expr',

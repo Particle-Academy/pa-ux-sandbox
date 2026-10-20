@@ -43,6 +43,19 @@ export const imageViewerDoc: ComponentDoc = {
             code: `<ImageViewer src="/shots/artboard.png" alt="ArtBoard" />`,
         },
         {
+            name: "In the file-viewer frame",
+            description:
+                "frame puts the image in react-fancy's FauxClient frame, as every file viewer is: hover for zoom and full screen. The frame's zoom bar drives the image's own pan/zoom and replaces its boxed bar; frameProps reaches the frame.",
+            render: () => (
+                <Box>
+                    <ImageViewer src={SHOT} alt="fancy-artboard showcase screenshot" frame frameProps={{ variant: "device" }} />
+                </Box>
+            ),
+            code: `<div className="h-80">
+    <ImageViewer src="/shots/artboard.png" alt="ArtBoard" frame frameProps={{ variant: "device" }} />
+</div>`,
+        },
+        {
             name: "fit",
             description:
                 "How the image sits at zoom 1. contain fits the whole thing, cover fills and crops, none shows it at natural size so you pan to see the rest.",
@@ -238,6 +251,8 @@ setViewport({ panX: -320, panY: -180, zoom: 4 });`,
         { name: "onError", type: `() => void`, default: "—", description: "Fired when the image fails to load." },
         { name: "className", type: `string`, default: "—", description: "Additional classes for the container." },
         { name: "style", type: `CSSProperties`, default: "—", description: "Inline styles — usually a height, since the viewer fills its box." },
+        { name: "frame", type: `boolean`, default: `false`, description: "Show the image in the FauxClient frame: zoom and full screen, revealed on hover." },
+        { name: "frameProps", type: `Partial<FauxClientProps>`, default: "—", description: "Passed to the frame: `variant`, `onFullscreenChange`, …" },
     ],
     notes: (
         <ul>

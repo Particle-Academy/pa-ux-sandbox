@@ -29,6 +29,19 @@ export const pdfViewerDoc: ComponentDoc = {
 </div>`,
         },
         {
+            name: "In the file-viewer frame",
+            description:
+                "frame puts the PDF in react-fancy's FauxClient frame with its title in the address bar; hover the bar for full screen. Zoom stays on the browser's PDF toolbar, which knows the page size. frameProps reaches the frame.",
+            render: () => (
+                <div className="h-96 w-full">
+                    <PdfViewer src={SAMPLE} title="sample.pdf" style={{ height: "100%" }} frame frameProps={{ onFullscreenChange: () => {} }} />
+                </div>
+            ),
+            code: `<div className="h-96">
+    <PdfViewer src="/docs/invoice.pdf" title="invoice.pdf" style={{ height: "100%" }} frame />
+</div>`,
+        },
+        {
             name: "With a title",
             description:
                 "title is the accessible name of the embedded document, which is what a screen reader announces when focus enters the frame. The default, \"PDF document\", tells a listener nothing about which one.",
@@ -95,6 +108,8 @@ useEffect(() => {
         { name: "src", type: `string`, default: "—", description: "PDF source — an `http(s):`, `data:` or `blob:` URL.", required: true },
         { name: "title", type: `string`, default: `"PDF document"`, description: "Accessible title for the embedded document." },
         { name: "className", type: `string`, default: "—", description: "Additional classes for the container." },
+        { name: "frame", type: `boolean`, default: `false`, description: "Show the PDF in the FauxClient frame, title in the bar, full screen on hover." },
+        { name: "frameProps", type: `Partial<FauxClientProps>`, default: "—", description: "Passed to the frame: `variant`, `onFullscreenChange`, …" },
         { name: "style", type: `CSSProperties`, default: "—", description: "Inline styles — in practice, the height." },
     ],
     notes: (

@@ -87,7 +87,13 @@ const STEPS: WalkthroughStep[] = [
 ];
 
 function TourRunner({ autoStart }: { autoStart: boolean }) {
-    const { start } = useWalkthrough();
+    const { start, step } = useWalkthrough();
+
+    // A tour already running when the frame fires was RESUMED: fancy-walkthrough
+    // 0.3 restores saved progress on mount. Starting it again put a visitor who
+    // reloaded mid-tour back on step 1.
+    const stepRef = useRef(step);
+    stepRef.current = step;
 
     // `start` is read through a ref and is NOT a dependency. Both halves matter:
     //
@@ -109,7 +115,9 @@ function TourRunner({ autoStart }: { autoStart: boolean }) {
         if (!autoStart) return;
         // One frame, so the nav has mounted and registered its targets. A step
         // whose target is missing would otherwise render centred and then jump.
-        const id = window.requestAnimationFrame(() => startRef.current());
+        const id = window.requestAnimationFrame(() => {
+            if (stepRef.current === null) startRef.current();
+        });
         return () => window.cancelAnimationFrame(id);
     }, [autoStart]);
 

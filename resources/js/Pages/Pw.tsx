@@ -13,11 +13,9 @@ import {
     Text,
     Tooltip,
 } from "@particle-academy/react-fancy";
-// Imported as components rather than via <Icon name="x" />. The brand pack
-// registers its X mark under the key "x", which is ALSO a lucide icon (the close
-// glyph) — and an addendum only fills gaps, so the base set wins and
-// <Icon name="x" /> silently renders a close cross instead of the X logo.
-// Importing the mark directly is unambiguous.
+// Imported as components rather than via <Icon name>. Importing the mark
+// directly is unambiguous and needs no registration. (By name the X logo is
+// "x-twitter" since fancy-brand-icons 0.3.0; bare "x" is lucide's close glyph.)
 import { XIcon, LinkedinIcon } from "@particle-academy/fancy-brand-icons";
 import { ServerSeo } from "@/lib/ServerSeo";
 import { Copy, Check, RefreshCw, Share2, Mail, Link2 } from "lucide-react";

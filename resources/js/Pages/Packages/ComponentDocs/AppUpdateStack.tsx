@@ -38,7 +38,15 @@ export const RELEASE_FEATURES: AppUpdateFeature[] = [
 /** A simulated deploy: detected on the first tick, every time it is remounted. */
 const SIMULATED = { check: () => true, interval: 400, pollOnFocus: false } as const;
 
-export function AppUpdateStackExample({ features }: { features?: AppUpdateFeature[] }) {
+export function AppUpdateStackExample({
+    features,
+    previousLabel,
+    nextLabel,
+}: {
+    features?: AppUpdateFeature[];
+    previousLabel?: string;
+    nextLabel?: string;
+}) {
     const { toast } = useToast();
     const [run, setRun] = useState(0);
 
@@ -48,6 +56,8 @@ export function AppUpdateStackExample({ features }: { features?: AppUpdateFeatur
                 key={run}
                 {...SIMULATED}
                 features={features}
+                previousLabel={previousLabel}
+                nextLabel={nextLabel}
                 position="inline"
                 onRefresh={() =>
                     toast({
@@ -96,9 +106,10 @@ export const appUpdateStackDoc: ComponentDoc = {
             <p>
                 The &quot;a new version is available&quot; notice that can say what is new. When a
                 release has a message, its feature cards stack behind each other (react-fancy&apos;s{" "}
-                <code>Toast.Stack</code>; scroll or use the arrow keys), each with a close button and a{" "}
-                <strong>Refresh to get the latest</strong> action. A hotfix with no message gets the
-                plain notice.
+                <code>Toast.Stack</code>), each with a close button and a{" "}
+                <strong>Refresh to get the latest</strong> action. <strong>Previous</strong> and{" "}
+                <strong>Next</strong> walk the cards and stop at the ends; scrolling over the stack and
+                the arrow keys walk them too. A hotfix with no message gets the plain notice.
             </p>
             <p>
                 It is <code>fancy-app-update</code>&apos;s <code>AppUpdateStack</code> with
@@ -139,6 +150,21 @@ export const appUpdateStackDoc: ComponentDoc = {
 
 // or fetch the new build's notes when the update lands:
 <AppUpdateStack features={() => fetch("/whats-new").then((r) => r.json())} />`,
+        },
+        {
+            name: "Previous / Next, with your own words",
+            description:
+                "With two or more cards, each carries Previous and Next beside its count (fancy-app-update 0.5.0+). They stop at the ends: Previous is disabled on the first card and Next on the last. The wheel and the arrow keys move the same card. `previousLabel` / `nextLabel` change the words, like `refreshLabel` and `closeLabel`.",
+            render: () => <AppUpdateStackExample features={RELEASE_FEATURES.slice(1)} previousLabel="Back" nextLabel="Onward" />,
+            code: `import { AppUpdateStack } from "@particle-academy/fancy-inertia/stack";
+
+<AppUpdateStack
+    features={features}
+    previousLabel="Back"   // default "Previous"
+    nextLabel="Onward"     // default "Next"
+    refreshLabel="Reload now"
+    closeLabel="Hide"
+/>`,
         },
         {
             name: "Mount it once, from setupFancyApp",
@@ -185,12 +211,14 @@ function Prompt() {
         { name: "description", type: "ReactNode", default: '"A new version is ready."', description: "The plain notice's body." },
         { name: "refreshLabel", type: "ReactNode", default: '"Refresh to get the latest"', description: "The refresh button." },
         { name: "closeLabel", type: "string", default: '"Close"', description: "The close button's accessible name." },
+        { name: "previousLabel", type: "string", default: '"Previous"', description: "The button back to the previous card. Shown with two or more cards; disabled on the first." },
+        { name: "nextLabel", type: "string", default: '"Next"', description: "The button on to the next card. Shown with two or more cards; disabled on the last." },
         { name: "color", type: "ButtonColor", default: '"violet"', description: "Colour of the refresh button." },
         { name: "position", type: "corner | top | bottom | inline", default: '"bottom-right"', description: "A screen position, or inline where it is placed." },
         { name: "depth", type: "number", default: "2", description: "How many cards show behind the front one." },
         { name: "onRefresh", type: "() => void", default: "hard reload", description: "Customize the refresh action." },
         { name: "onDismiss", type: "() => void", default: "—", description: "Called when the person closes the notice." },
-        { name: "renderFeature", type: "(feature, state) => ReactNode", default: "—", description: "Replace a card's content; the close and refresh controls stay." },
+        { name: "renderFeature", type: "(feature, state) => ReactNode", default: "—", description: "Replace a card's content; the close, refresh and Previous / Next controls stay." },
         { name: "render", type: "({ features, refresh, dismiss }) => ReactNode", default: "—", description: "Replace the whole notice." },
         { name: "check", type: "() => boolean | Promise<boolean>", default: "Inertia 409", description: "Your own detector, replacing the Inertia default." },
         { name: "interval", type: "number", default: "60_000", description: "Poll cadence in ms." },

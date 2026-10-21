@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Support\PackageRegistry;
 use App\Support\Registry\RegistrySource;
 use App\Support\XpAwarder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 
 /**
  * Endpoints the front-end pings to credit demo interactions + agent
@@ -35,8 +35,18 @@ class XpController extends Controller
         // buckets and the hour cooldown bounded nothing. An unknown slug is
         // also meaningless on its own terms: there is no such demo to interact
         // with, so there was never anything to credit.
+        //
+        // The demo page sends `package/component` (DemoInteractionTracker in
+        // Packages/Component.tsx), so that is accepted when it names a real
+        // component page -- the same lookup the page itself resolves through.
+        // Accepting only bare registry names made every real award a 422 from
+        // 2026-08-24 until 2026-10-21.
         $data = $request->validate([
-            'demo' => ['required', 'string', 'max:80', Rule::in($this->demoSlugs())],
+            'demo' => ['required', 'string', 'max:120', function (string $attribute, mixed $value, \Closure $fail): void {
+                if (! is_string($value) || ! $this->isKnownDemo($value)) {
+                    $fail('The selected demo is invalid.');
+                }
+            }],
             'kind' => 'sometimes|string|in:interaction,first-use,completion',
         ]);
 
@@ -57,6 +67,28 @@ class XpController extends Controller
         );
 
         return response()->json(['awarded' => $awarded, 'amount' => $awarded ? $amount : 0]);
+    }
+
+    /**
+     * A demo id is either a component page (`package/component`, what the page
+     * sends) or a bare registry item name. Both are closed sets.
+     */
+    private function isKnownDemo(string $demo): bool
+    {
+        if (str_contains($demo, '/')) {
+            $parts = explode('/', $demo);
+            if (count($parts) !== 2) {
+                return false;
+            }
+
+            [$package, $component] = $parts;
+            $pkg = PackageRegistry::find($package);
+
+            return $pkg !== null
+                && collect($pkg['components'] ?? [])->contains('slug', $component);
+        }
+
+        return in_array($demo, $this->demoSlugs(), true);
     }
 
     /**

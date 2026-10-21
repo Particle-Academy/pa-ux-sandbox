@@ -91,6 +91,40 @@ it('throttles same (demo, kind) within the hour', function () {
     expect($user->getProfile()->fresh()->getXpFor('tinkerer-xp'))->toBe(3);
 });
 
+/*
+ * The component page sends `package/component` (Packages/Component.tsx,
+ * DemoInteractionTracker), never a bare registry name. From 2026-08-24 the
+ * endpoint accepted only bare names, so every real award was a 422 for two
+ * months while the tests above, posting `accordion`, stayed green. These post
+ * what the page actually sends.
+ */
+it('awards tinkerer-xp for the package/component id the demo page sends', function () {
+    $user = User::factory()->create();
+    $this->actingAs($user);
+
+    $this->postJson('/api/xp/demo', ['demo' => 'react-fancy/accordion', 'kind' => 'first-use'])
+        ->assertOk()
+        ->assertJson(['awarded' => true, 'amount' => 15]);
+
+    $this->postJson('/api/xp/demo', ['demo' => 'fancy-inertia/app-update-stack', 'kind' => 'first-use'])
+        ->assertOk()
+        ->assertJson(['awarded' => true, 'amount' => 15]);
+
+    expect($user->getProfile()->fresh()->getXpFor('tinkerer-xp'))->toBe(30);
+});
+
+it('still rejects a demo id that names no page, so the throttle key stays a closed set', function () {
+    $user = User::factory()->create();
+    $this->actingAs($user);
+
+    $this->postJson('/api/xp/demo', ['demo' => 'react-fancy/no-such-component'])->assertUnprocessable();
+    $this->postJson('/api/xp/demo', ['demo' => 'no-such-package/accordion'])->assertUnprocessable();
+    $this->postJson('/api/xp/demo', ['demo' => 'react-fancy/accordion/extra'])->assertUnprocessable();
+    $this->postJson('/api/xp/demo', ['demo' => 'made-up-'.str_repeat('x', 20)])->assertUnprocessable();
+
+    expect($user->getProfile()->fresh()->getXpFor('tinkerer-xp'))->toBe(0);
+});
+
 it('rejects /api/xp/demo for guests', function () {
     $this->postJson('/api/xp/demo', ['demo' => 'accordion'])->assertStatus(401);
 });

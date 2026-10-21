@@ -17,7 +17,9 @@ import type { ReactNode } from "react";
  * `walkthrough:first-value`, and watch `abandoned`'s step id for where people
  * stop.
  */
-const SEEN_KEY = "fancy:site-tour:v1";
+/** Set once the tour has run or been skipped. The "What's new" notice waits for it (lib/whats-new.tsx). */
+export const SITE_TOUR_SEEN_KEY = "fancy:site-tour:v1";
+const SEEN_KEY = SITE_TOUR_SEEN_KEY;
 
 const STEPS: WalkthroughStep[] = [
     {

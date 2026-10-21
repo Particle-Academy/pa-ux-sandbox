@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 import { router } from "@inertiajs/react";
 import { WhatsNew, type WhatsNewGroup } from "@particle-academy/fancy-inertia/whats-new";
+import { SITE_TOUR_SEEN_KEY } from "../components/SiteWalkthrough";
 
 /**
  * The showcase's "What's new" notice: fancy-whats-new, dogfooded for new
@@ -16,6 +17,12 @@ import { WhatsNew, type WhatsNewGroup } from "@particle-academy/fancy-inertia/wh
  * The provider sits ABOVE Inertia's <App>, where usePage() throws, so who is
  * signed in comes from the page JSON on first load and from every navigation
  * after it. The header's "What's new" button calls `show()`.
+ *
+ * It WAITS FOR THE SITE TOUR (owner, 2026-10-21). On a brand-new visitor's
+ * first load the tour and this notice used to appear together. Until the tour
+ * has run or been skipped, its "seen" key is unset, and the automatic notice is
+ * not mounted at all, so it shows on a later load. The header button still opens
+ * it, because `open` mounts it.
  */
 
 const SEEN_URL = "/me/seen-notices";
@@ -70,8 +77,17 @@ export function ShowcaseWhatsNew({ children }: { children: ReactNode }) {
     // `undefined` until mounted: the notice renders nothing on the server, and
     // waits to know who is signed in before it reads any store.
     const [account, setAccount] = useState<string | null | undefined>(undefined);
+    // Read once, on mount: a tour finished during this visit leaves the notice
+    // for the next load rather than following the tour straight away.
+    const [tourSeen, setTourSeen] = useState(false);
 
     useEffect(() => {
+        try {
+            setTourSeen(Boolean(window.localStorage.getItem(SITE_TOUR_SEEN_KEY)));
+        } catch {
+            // Storage disabled: the tour cannot run either, so nothing to wait for.
+            setTourSeen(true);
+        }
         setAccount(accountFromPage(initialPage()));
 
         return router.on("navigate", (event) => {
@@ -84,7 +100,7 @@ export function ShowcaseWhatsNew({ children }: { children: ReactNode }) {
     return (
         <WhatsNewContext.Provider value={api}>
             {children}
-            {account !== undefined && (
+            {account !== undefined && (tourSeen || open) && (
                 <WhatsNew
                     load={loadWhatsNew}
                     seenUrl={account ? SEEN_URL : null}

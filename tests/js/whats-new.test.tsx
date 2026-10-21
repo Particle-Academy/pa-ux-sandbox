@@ -27,6 +27,7 @@ import {
     loadWhatsNew,
     useShowcaseWhatsNew,
 } from "../../resources/js/lib/whats-new";
+import { SITE_TOUR_SEEN_KEY } from "../../resources/js/components/SiteWalkthrough";
 
 /*
  * The showcase dogfoods fancy-whats-new: one notice, mounted in the provider
@@ -40,8 +41,14 @@ afterEach(() => {
     document.body.innerHTML = "";
     rendered.length = 0;
     navigateListeners.length = 0;
+    localStorage.clear();
     vi.unstubAllGlobals();
 });
+
+/** A returning visitor: the site tour has already run or been skipped. */
+function tourAlreadySeen() {
+    localStorage.setItem(SITE_TOUR_SEEN_KEY, "2026-10-21T00:00:00.000Z");
+}
 
 describe("loadWhatsNew", () => {
     it("asks for the groups newer than the cursor", async () => {
@@ -102,7 +109,34 @@ function mountWithPage(page: unknown) {
 }
 
 describe("ShowcaseWhatsNew", () => {
+    /*
+     * Owner, 2026-10-21: on a brand-new visitor's first load the site tour and
+     * this notice both appeared at once. The notice now waits for the tour. It
+     * stays off until the tour has run or been skipped (the tour's own "seen"
+     * key), so it shows on a later load. The header button still opens it.
+     */
+    it("stays off on a first visit, while the site tour runs", async () => {
+        const mounted = mountWithPage({ props: { auth: { user: null } } });
+        await act(async () => mounted.render());
+
+        expect(rendered).toHaveLength(0);
+
+        await act(async () => mounted.root.unmount());
+    });
+
+    it("still opens from the header button during the tour visit", async () => {
+        const mounted = mountWithPage({ props: { auth: { user: null } } });
+        await act(async () => mounted.render());
+        expect(rendered).toHaveLength(0);
+
+        await act(async () => mounted.api().show());
+        expect(rendered.at(-1)).toMatchObject({ open: true, load: loadWhatsNew });
+
+        await act(async () => mounted.root.unmount());
+    });
+
     it("uses localStorage for a guest and the account route once signed in", async () => {
+        tourAlreadySeen();
         const mounted = mountWithPage({ props: { auth: { user: null } } });
         await act(async () => mounted.render());
 
@@ -118,6 +152,7 @@ describe("ShowcaseWhatsNew", () => {
     });
 
     it("reads a signed-in first page from the page JSON", async () => {
+        tourAlreadySeen();
         const mounted = mountWithPage({ props: { auth: { user: { name: "Ada" } } } });
         await act(async () => mounted.render());
 
@@ -127,6 +162,7 @@ describe("ShowcaseWhatsNew", () => {
     });
 
     it("opens the notice from the header button's show()", async () => {
+        tourAlreadySeen();
         const mounted = mountWithPage({ props: { auth: { user: null } } });
         await act(async () => mounted.render());
         expect(rendered.at(-1)!.open).toBe(false);

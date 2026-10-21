@@ -139,6 +139,23 @@ class PackageRegistry
      * @var array<string, array{name: string, repo: string, why: string}>
      */
     public const PLANNED = [
+        'fancy-whats-new' => [
+            'name' => '@particle-academy/fancy-whats-new',
+            'repo' => 'Particle-Academy/fancy-whats-new',
+            'why' => 'A "what`s new since you were last here" notice: release feature cards shown on the FIRST LOAD AFTER a refresh or login, never before it. Owner decision 2026-10-21, split out of fancy-app-update, which goes back to its one job: detect a new build and show the plain refresh notice. NOT YET STARTED, registered first per the rule.
+
+WHY IT EXISTS. fancy-app-update 0.3-0.6 put feature cards on the refresh notice itself, which describes features the open page does not have yet. It covered only the one build that landed mid-session, and it remembered nothing about what a person had already seen.
+
+SHAPE (owner answers, 2026-10-21; MOIC`s owner`s answers folded in as options):
+- `releases={(since) => [{ version, date, features }]}` returns releases newer than the last version seen, newest first. `since` is null on a first visit.
+- Last seen is remembered in the browser by default. `storage={{ load, save }}` takes any store, and a ready-made per-account server store comes for fancy-inertia/Laravel (MOIC`s users span devices).
+- `missed="all" | "latest"`: "all" (the default, owner) stacks every missed release, labelled by version; MOIC sets "latest".
+- `firstVisit="latest" | "none" | "all"`, default "latest": the latest release once.
+- `open` / `onOpenChange` power a What`s New menu item, and `history={(before) => release | null}` pages back through older releases on demand.
+- The cards are fancy-app-update 0.6`s: prev/next links, the scroll hint, imageDark, built on react-fancy Toast.Stack.
+
+CONSUMERS: MOIC (an endpoint parsing its CHANGELOG.md, with opt-in `<!-- feature-notice -->` sections), and the showcase.',
+        ],
         'fancy-expr' => [
             'name' => 'fancy-expr',
             'repo' => 'Particle-Academy/fancy-expr',

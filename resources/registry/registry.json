@@ -1,5 +1,5 @@
 {
-    "count": 333,
+    "count": 335,
     "items": [
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
@@ -266,6 +266,17 @@
                     "target": "components/fancy/lib/validate.ts"
                 }
             ]
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "app-update-stack",
+            "type": "registry:ui",
+            "title": "AppUpdateStack",
+            "description": "Stacked \"new version available\" notice with feature cards, Inertia detection by default.",
+            "package": "fancy-inertia",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
@@ -4488,6 +4499,17 @@
             "title": "@particle-academy/fancy-heuristics-js",
             "description": "Browser collector for Fancy Heuristics \u2014 clicks, scroll, time-on-page, and mouse-movement focus heatmaps for humans and agents; sendBeacon batching. Headless.",
             "package": "fancy-heuristics-js",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "fancy-inertia",
+            "type": "registry:ui",
+            "title": "fancy-inertia",
+            "description": "Inertia.js bridge \u2014 schema-driven pages, useFancyForm(), SSR boundaries. Works with ANY Inertia backend (zero Laravel/PHP runtime deps), not just Laravel.",
+            "package": "fancy-inertia",
             "dependencies": [],
             "registryDependencies": [],
             "files": []

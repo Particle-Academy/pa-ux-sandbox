@@ -2106,6 +2106,9 @@ Both registry names read as unclaimed on 2026-10-08 -- `@particle-academy/fancy-
             'components' => [
                 ['slug' => 'fancy-app-root', 'name' => 'FancyAppRoot', 'blurb' => 'Inertia app root.'],
                 ['slug' => 'use-fancy-form', 'name' => 'useFancyForm', 'blurb' => 'Form hook.'],
+                // Install-only: it wraps fancy-app-update's stack, so there is no
+                // self-contained source to vendor.
+                ['slug' => 'app-update-stack', 'name' => 'AppUpdateStack', 'blurb' => 'Stacked "new version available" notice with feature cards, Inertia detection by default.', 'vendor' => false],
             ],
         ];
     }

@@ -72,6 +72,7 @@ import { fancySlidesShapeElementDoc } from "./FancySlidesShapeElement";
 import { presenterViewDoc } from "./PresenterView";
 import { slideViewerDoc } from "./SlideViewer";
 import { fancyAppRootDoc } from "./FancyAppRoot";
+import { appUpdateStackDoc } from "./AppUpdateStack";
 import { fancyMapDoc } from "./FancyMap";
 import { fileBrowserDoc } from "./FileBrowser";
 import { fileUploadDoc } from "./FileUpload";
@@ -323,6 +324,7 @@ export const DOCS: Record<string, ComponentDoc> = {
     // fancy-inertia
     "fancy-inertia/fancy-app-root": fancyAppRootDoc,
     "fancy-inertia/use-fancy-form": useFancyFormDoc,
+    "fancy-inertia/app-update-stack": appUpdateStackDoc,
 };
 
 export function getComponentDoc(pkg: string, slug: string): ComponentDoc | null {

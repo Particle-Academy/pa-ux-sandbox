@@ -27,6 +27,7 @@ import { Screen, ScreenSystem } from "@particle-academy/fancy-screens";
 // exactly why these tiles can render the real thing.
 import { FeatureGate, PlanFeaturesEditor, PricingTable } from "../../components/fancy/catalog-fms";
 import { clientOnly } from "../../lib/clientOnly";
+import { AppUpdateStackExample, RELEASE_FEATURES } from "./ComponentDocs/AppUpdateStack";
 import {
     Board,
     Connector,
@@ -2239,6 +2240,12 @@ const PREVIEWS: Record<string, PreviewFn> = {
             <div className="flex items-center gap-2 rounded border border-violet-300 bg-violet-50 px-2 py-1 text-violet-900 dark:border-violet-700 dark:bg-violet-500/15 dark:text-violet-100">
                 <Check size={10} /> ECharts modules
             </div>
+        </div>
+    ),
+
+    "fancy-inertia/app-update-stack": () => (
+        <div className="w-full max-w-[18rem]">
+            <AppUpdateStackExample features={RELEASE_FEATURES.slice(0, 2)} />
         </div>
     ),
 

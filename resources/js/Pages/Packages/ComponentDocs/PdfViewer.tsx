@@ -3,18 +3,54 @@ import { PdfViewer } from "@particle-academy/react-fancy";
 
 const SAMPLE = "/showcase-assets/file-viewer/sample.pdf";
 
+// Demo page images. In an app these come from the server, rendered behind its
+// own auth -- the raw PDF never reaches the browser.
+const PAGES = { count: 4, url: (page: number) => `/showcase-assets/file-viewer/pages/${page}.png` };
+
 export const pdfViewerDoc: ComponentDoc = {
     intro: (
         <p>
-            A PDF embedded through the browser&rsquo;s own viewer. Four props and no
-            rendering engine — deliberately. Shipping a JS PDF renderer would add megabytes
-            to every consumer&rsquo;s bundle to reproduce something every target browser
-            already does well, and would then owe its own security updates. If you need
-            page-level control — annotations, text extraction, a custom toolbar — that is a
-            different component and a real dependency decision, not a prop on this one.
+            Two ways to show a PDF. With <code>src</code>, the browser&rsquo;s own viewer
+            renders the file -- its toolbar, its download and print buttons. With{" "}
+            <code>pages</code>, your server renders each page to an image behind your own
+            auth and the viewer only shows those: the PDF itself never reaches the browser,
+            and a <code>policy</code> and <code>watermark</code> apply. No PDF engine ships in
+            the browser either way.
         </p>
     ),
     examples: [
+        {
+            name: "Secure page images",
+            description:
+                "pages gives a count and a url(page, scale) for each page image -- served by your app behind its auth, so the PDF is never downloadable. policy turns off download, print and copy and blurs on tab-away (screenshot: \"deter\"); watermark tiles the viewer's name over each page. Page and zoom are controllable: defaultPage, defaultZoom, onPageChange, onZoomChange.",
+            render: () => (
+                <div className="h-[32rem] w-full">
+                    <PdfViewer
+                        pages={PAGES}
+                        title="Contract (page images)"
+                        defaultPage={1}
+                        defaultZoom={1}
+                        onPageChange={() => {}}
+                        onZoomChange={() => {}}
+                        policy={{ download: false, print: false, copy: false, screenshot: "deter" }}
+                        watermark={{ text: "Viewed by ada@example.com", opacity: 0.12 }}
+                        style={{ height: "100%" }}
+                        frame
+                    />
+                </div>
+            ),
+            code: `<PdfViewer
+    pages={{ count: doc.pageCount, url: (page, scale) => route("docs.page", { doc, page, scale }) }}
+    defaultPage={1}
+    onPageChange={(page) => track(page)}
+    defaultZoom={1}
+    onZoomChange={(zoom) => remember(zoom)}
+    policy={{ download: false, print: false, copy: false, screenshot: "deter" }}
+    watermark={{ text: \`Viewed by \${user.email}\`, opacity: 0.12 }}
+    style={{ height: "100%" }}
+    frame
+/>`,
+        },
         {
             name: "Default",
             description:
@@ -105,7 +141,14 @@ useEffect(() => {
         },
     ],
     props: [
-        { name: "src", type: `string`, default: "—", description: "PDF source — an `http(s):`, `data:` or `blob:` URL.", required: true },
+        { name: "src", type: `string`, default: "—", description: "PDF source — an `http(s):`, `data:` or `blob:` URL. Ignored (and never exposed) when `pages` is set." },
+        { name: "pages", type: `{ count: number; url: (page, scale) => string; aspectRatio?: number }`, default: "—", description: "Page images served by your app. The viewer never requests a PDF; `scale` is zoom × device pixel ratio, rounded to 1, 1.5, 2, 3 or 4." },
+        { name: "policy", type: `{ download?; print?; copy?: boolean; screenshot?: "allow" | "deter" }`, default: "all allowed", description: "Deterrents only: a web page cannot prevent screenshots, and real download protection is never serving the PDF. Page-image mode only." },
+        { name: "watermark", type: `{ text: string; opacity?; angle?; density?: number }`, default: "—", description: "A tiled overlay drawn in the browser. Burn it into the images server-side when it has to hold." },
+        { name: "defaultPage", type: `number`, default: `1`, description: "Initial page (1-based), uncontrolled." },
+        { name: "onPageChange", type: `(page: number) => void`, default: "—", description: "Called as the current page changes; pair with `page` to control it." },
+        { name: "defaultZoom", type: `number`, default: `1`, description: "Initial zoom; 1 fits the width, 0.25 to 4." },
+        { name: "onZoomChange", type: `(zoom: number) => void`, default: "—", description: "Called as the zoom changes; pair with `zoom` to control it." },
         { name: "title", type: `string`, default: `"PDF document"`, description: "Accessible title for the embedded document." },
         { name: "className", type: `string`, default: "—", description: "Additional classes for the container." },
         { name: "frame", type: `boolean`, default: `false`, description: "Show the PDF in the FauxClient frame, title in the bar, full screen on hover." },

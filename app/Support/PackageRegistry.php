@@ -159,25 +159,6 @@ OUT OF SCOPE: form submission (owner), signatures, JavaScript execution, encrypt
 
 Packagist name `particle-academy/fine-print` 404 on repo.packagist.org/p2 on 2026-10-21 (control last-word 200). First version needs a tag, then an owner submit.',
         ],
-        'fancy-whats-new' => [
-            'name' => '@particle-academy/fancy-whats-new',
-            'repo' => 'Particle-Academy/fancy-whats-new',
-            'why' => 'GENERAL-PURPOSE "show these once, stacked, then remember they were seen" notice. On the FIRST LOAD AFTER a refresh or login, it shows the groups of cards newer than what this person last saw. Not only for release notes: auto notices after an app update, welcome messages, new post content on a social site, whatever needs that UX (owner scope, 2026-10-21; it overrides the earlier release-only shape). Split out of fancy-app-update, which goes back to its one job: detect a new build and show the plain refresh notice. BUILT 2026-10-21 (0.1.0, green, ready to tag); waiting on the npm bootstrap.
-
-WHY IT EXISTS. fancy-app-update 0.3-0.6 put feature cards on the refresh notice itself, which describes features the open page does not have yet. It covered only the one build that landed mid-session, and it remembered nothing about what a person had already seen.
-
-SHAPE:
-- `load={(since) => [{ id, label?, date?, cards }]}` returns groups newer than the last-seen cursor, newest first. The cursor is a version, a post id, a timestamp. `since` is null on a first visit. Groups with no cards are skipped.
-- Cards are fancy-app-update`s card shape (title, description, image, imageDark, imageAlt, id) plus one optional link, `action: { label, href }`.
-- Last seen is remembered in the browser by default. `storage={{ load, save }}` takes any store; fancy-inertia ships `createHttpStorage({ url })` for a per-account cursor (MOIC`s users span devices).
-- `missed="all" | "latest"`: "all" (the default) stacks every newer group, each card labelled with its group; MOIC sets "latest".
-- `firstVisit="latest" | "none" | "all"`, default "latest".
-- Seen is recorded on show, in a visible tab, as the newest cursor shown.
-- `open` / `onOpenChange` let a button show the current cards on demand. That is the whole on-demand feature: no menu, no history.
-- The cards are fancy-app-update 0.7`s `FeatureCards` (./cards), imported rather than copied.
-
-CONSUMERS: MOIC (an endpoint parsing its CHANGELOG.md, with opt-in `<!-- feature-notice -->` sections), and the showcase (new package releases and major feature updates).',
-        ],
         'fancy-expr' => [
             'name' => 'fancy-expr',
             'repo' => 'Particle-Academy/fancy-expr',
@@ -297,6 +278,7 @@ Both registry names read as unclaimed on 2026-10-08 -- `@particle-academy/fancy-
         'fancy-inertia' => ['group' => 'core', 'ecosystem' => 'ts', 'kind' => 'bridge', 'accent' => '#6366f1'],
         'fancy-query' => ['group' => 'core', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#10b981'],
         'fancy-app-update' => ['group' => 'core', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#f59e0b'],
+        'fancy-whats-new' => ['group' => 'platform', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#f59e0b'],
         'fancy-seo' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#0ea5e9'],
 
         // ── The Human+ surfaces ──────────────────────────────────────────────
@@ -522,6 +504,7 @@ Both registry names read as unclaimed on 2026-10-08 -- `@particle-academy/fancy-
             self::agentIntegrations(),
             self::fancyInertia(),
             self::fancyPwa(),
+            self::fancyWhatsNew(),
             self::fancyMotion(),
             self::fancyDevtools(),
             self::fancyCmsUi(),
@@ -2164,6 +2147,25 @@ Both registry names read as unclaimed on 2026-10-08 -- `@particle-academy/fancy-
             'language' => 'TypeScript',
             'components' => [
                 ['slug' => 'pwa', 'name' => 'PWA layer', 'blurb' => 'SW-free hooks + banners (useOnline / OfflineBanner / InstallBanner / useInstallPrompt) plus the fancyPwa() Vite plugin and /sw toolkit.'],
+            ],
+        ];
+    }
+
+    /** @return array<string, mixed> */
+    private static function fancyWhatsNew(): array
+    {
+        return [
+            'slug' => 'fancy-whats-new',
+            'name' => 'fancy-whats-new',
+            'tagline' => 'Show these once, stacked, then remember they were seen: on the first load after a refresh or login, the groups of cards newer than what each person last saw (release notes, a welcome, new posts). localStorage or any store; a button re-opens the current cards.',
+            'npm' => '@particle-academy/fancy-whats-new',
+            'repo' => 'Particle-Academy/fancy-whats-new',
+            'language' => 'TypeScript',
+            'components' => [
+                // Install-only: its cards are fancy-app-update's FeatureCards,
+                // imported rather than copied, so there is no self-contained
+                // source to vendor.
+                ['slug' => 'whats-new', 'name' => 'WhatsNew', 'blurb' => 'Groups of cards newer than what this person last saw, shown once and stacked; a button re-opens the current cards.', 'vendor' => false],
             ],
         ];
     }

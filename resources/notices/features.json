@@ -1,0 +1,18 @@
+[
+    {
+        "id": "secure-pdf-viewer",
+        "label": "New feature",
+        "date": "2026-10-21T15:50:30Z",
+        "cards": [
+            {
+                "id": "secure-pdf-viewer",
+                "title": "PdfViewer: show a PDF without sending the file",
+                "description": "react-fancy 5.54.0 adds a page-image mode to PdfViewer. Your server renders each page to an image behind its own auth, and the viewer shows only those images. An optional policy deters download, print, copy and screenshots, and a watermark tiles text over every page.",
+                "action": {
+                    "label": "See the PdfViewer",
+                    "href": "/packages/react-fancy/pdf-viewer"
+                }
+            }
+        ]
+    }
+]

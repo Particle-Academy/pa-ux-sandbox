@@ -28,6 +28,7 @@ import { Screen, ScreenSystem } from "@particle-academy/fancy-screens";
 import { FeatureGate, PlanFeaturesEditor, PricingTable } from "../../components/fancy/catalog-fms";
 import { clientOnly } from "../../lib/clientOnly";
 import { AppUpdateStackExample, RELEASE_FEATURES } from "./ComponentDocs/AppUpdateStack";
+import { WhatsNewExample, RELEASES as WHATS_NEW_RELEASES } from "./ComponentDocs/WhatsNew";
 import {
     Board,
     Connector,
@@ -2246,6 +2247,12 @@ const PREVIEWS: Record<string, PreviewFn> = {
     "fancy-inertia/app-update-stack": () => (
         <div className="w-full max-w-[18rem]">
             <AppUpdateStackExample features={RELEASE_FEATURES.slice(0, 2)} />
+        </div>
+    ),
+
+    "fancy-whats-new/whats-new": () => (
+        <div className="w-full max-w-[18rem]">
+            <WhatsNewExample groups={WHATS_NEW_RELEASES} seen="1.3.0" />
         </div>
     ),
 

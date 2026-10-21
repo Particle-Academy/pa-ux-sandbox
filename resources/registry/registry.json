@@ -1,5 +1,5 @@
 {
-    "count": 335,
+    "count": 337,
     "items": [
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
@@ -4675,6 +4675,17 @@
             "title": "@particle-academy/fancy-walkthrough",
             "description": "Guided walkthroughs that onboard a user THROUGH the real interface -- self-registering targets, a spotlight over the visible part of the target that survives scroll, overflow and resize, steps that advance when the person actually does the thing, and first-value activation events built in. The first-party replacement for intro.js-style tours.",
             "package": "fancy-walkthrough",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "fancy-whats-new",
+            "type": "registry:ui",
+            "title": "fancy-whats-new",
+            "description": "Show these once, stacked, then remember they were seen: on the first load after a refresh or login, the groups of cards newer than what each person last saw (release notes, a welcome, new posts). localStorage or any store; a button re-opens the current cards.",
+            "package": "fancy-whats-new",
             "dependencies": [],
             "registryDependencies": [],
             "files": []
@@ -12527,6 +12538,17 @@
                     "target": "components/fancy/lib/utils/cn.ts"
                 }
             ]
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "whats-new",
+            "type": "registry:ui",
+            "title": "WhatsNew",
+            "description": "Groups of cards newer than what this person last saw, shown once and stacked; a button re-opens the current cards.",
+            "package": "fancy-whats-new",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",

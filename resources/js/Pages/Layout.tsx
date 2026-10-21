@@ -42,6 +42,7 @@ const THEME_LABEL = {
 } as const;
 import { CommandPalette } from "./CommandPalette";
 import { useCoBrowse } from "../agent/CoBrowseProvider";
+import { useShowcaseWhatsNew } from "../lib/whats-new";
 import { type CosmeticSlots } from "../lib/cosmetics";
 import { PlayerIdentityRow, type PlayerIdentityData } from "../components/PlayerIdentity";
 import { ActiveUsersOverlay } from "../components/ActiveUsersOverlay";
@@ -207,6 +208,8 @@ export function Layout({
                         <WalkthroughTarget id="nav-cobrowse">
                             <CoBrowseControl />
                         </WalkthroughTarget>
+
+                        <WhatsNewButton />
 
                         <WalkthroughTarget id="nav-theme">
                         <Tooltip content={THEME_LABEL[preference]}>
@@ -600,6 +603,30 @@ export function Layout({
  * fancy-inertia's <FancyTransitionProvider> (persisted to localStorage), so
  * choosing one here re-scopes every subsequent navigation across the showcase.
  */
+/**
+ * Re-opens the site's "What's new" notice (fancy-whats-new, mounted once in the
+ * provider tree) with the newest cards, whether or not they were seen.
+ */
+function WhatsNewButton() {
+    const { show } = useShowcaseWhatsNew();
+
+    return (
+        <Tooltip content="What's new">
+            <Button
+                variant="ghost"
+                size="md"
+                icon="megaphone"
+                onClick={show}
+                aria-label="What's new"
+                data-co-handle="whats-new"
+                // The header's own control look, on the kit's Button.
+                className="btn btn-ghost"
+                style={{ height: 34, padding: "0 10px" }}
+            />
+        </Tooltip>
+    );
+}
+
 function TransitionSwitcher() {
     const { transition, setTransition, transitions } = useFancyTransition();
     return (

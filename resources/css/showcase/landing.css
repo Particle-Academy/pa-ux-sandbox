@@ -1165,6 +1165,14 @@ section.ticker { padding: 0; background: var(--bg-1); }
 
   /* The bar carries the nav now. */
   .nav-burger { display: none; }
+
+  /* The site's "What's new" notice (resources/js/lib/whats-new.tsx) sits in the
+     bottom-right corner; lift it clear of the bar. `!important` because the
+     corner's offset is an inline style from the package's position preset.
+     `className` lands INSIDE the fixed root, hence `:has()` to reach the root. */
+  [data-fancy-whats-new-stack]:has(.showcase-whats-new) {
+    bottom: calc(58px + 12px + env(safe-area-inset-bottom)) !important;
+  }
 }
 
 /* ── reduced motion ───────────────────────────────────────────────────── */

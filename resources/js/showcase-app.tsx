@@ -8,6 +8,7 @@ import { FancyDataRoot } from "@particle-academy/fancy-query";
 import { registerAll as registerEChartsAll, registerBuiltinThemes } from "@particle-academy/fancy-echarts";
 import { registerBrandIcons } from "@particle-academy/fancy-brand-icons";
 import { CoBrowseProvider } from "./agent/CoBrowseProvider";
+import { ShowcaseWhatsNew } from "./lib/whats-new";
 import { getEcho } from "./lib/echo";
 import "./showcase-theme";
 import "@particle-academy/react-fancy/styles.css";
@@ -59,7 +60,9 @@ const providers = (outlet: ReactNode): ReactNode => (
         <ScreenSystem>
             <FancyDataRoot echo={getEcho()}>
                 <SeoProvider value={seoDefaults}>
-                    <CoBrowseProvider>{outlet}</CoBrowseProvider>
+                    <CoBrowseProvider>
+                        <ShowcaseWhatsNew>{outlet}</ShowcaseWhatsNew>
+                    </CoBrowseProvider>
                 </SeoProvider>
             </FancyDataRoot>
         </ScreenSystem>

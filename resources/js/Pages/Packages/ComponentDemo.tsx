@@ -203,6 +203,7 @@ import "@particle-academy/fancy-slides/styles.css";
 import { Editor as CmsEditor, CmsPage, CmsRegion, type PageDoc } from "@particle-academy/fancy-cms-ui";
 import { PptxExportControl } from "./PptxExportControl";
 import { AppUpdateStackDemo } from "./ComponentDocs/AppUpdateStack";
+import { WhatsNewDemo } from "./ComponentDocs/WhatsNew";
 import {
     CANONICAL_SLIDE,
     CANONICAL_DECK,
@@ -404,6 +405,9 @@ const REGISTRY: Record<string, DemoFn> = {
     "fancy-inertia/fancy-app-root": FancyAppRootDemo,
     "fancy-inertia/use-fancy-form": UseFancyFormDemo,
     "fancy-inertia/app-update-stack": AppUpdateStackDemo,
+
+    // ── fancy-whats-new
+    "fancy-whats-new/whats-new": WhatsNewDemo,
 
     // ── fancy-mlm-ui
     "fancy-mlm-ui/downline-tree": MlmDownlineTreeDemo,

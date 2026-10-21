@@ -49,6 +49,7 @@ use App\Http\Controllers\Showcase\ShowcaseSubmissionController;
 use App\Http\Controllers\Showcase\StarterKitController;
 use App\Http\Controllers\Showcase\StarterKitDownloadController;
 use App\Http\Controllers\Showcase\VoteController;
+use App\Http\Controllers\Showcase\WhatsNewController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\UseCaseController;
 use App\Http\Controllers\Webhooks\GitHubWebhookController;
@@ -343,6 +344,17 @@ Route::middleware('auth')->group(function (): void {
         ->name('learn.attempt.start');
     Route::post('/learn/attempts/{attempt}/submit', [LearnController::class, 'submitAttempt'])
         ->name('learn.attempt.submit');
+});
+
+// ─── What's new (fancy-whats-new, dogfooded) ─────────────────────────
+// The groups newer than ?since= (package releases + curated feature notices),
+// read from committed files. Public: guests keep their cursor in localStorage.
+Route::get('/whats-new', [WhatsNewController::class, 'index'])->name('whats-new');
+
+// A signed-in person's last-seen cursor, for fancy-inertia's createHttpStorage.
+Route::middleware('auth')->group(function (): void {
+    Route::get('/me/seen-notices', [WhatsNewController::class, 'seen'])->name('whats-new.seen');
+    Route::put('/me/seen-notices', [WhatsNewController::class, 'updateSeen'])->name('whats-new.seen.update');
 });
 
 // ─── Docs hub ────────────────────────────────────────────────────────

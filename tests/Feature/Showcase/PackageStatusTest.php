@@ -52,6 +52,20 @@ it('lists published fancy devtools as built and public', function () {
         ->and(PackageRegistry::find('fancy-devtools'))->not->toBeNull();
 });
 
+it('lists published fancy-whats-new as built and public, with its component', function () {
+    $built = collect(PackageRegistry::everything())->firstWhere('slug', 'fancy-whats-new');
+
+    expect(PackageRegistry::PLANNED)->not->toHaveKey('fancy-whats-new')
+        ->and(PackageRegistry::HIDDEN)->not->toContain('fancy-whats-new')
+        ->and($built)->toMatchArray([
+            'name' => 'fancy-whats-new',
+            'npm' => '@particle-academy/fancy-whats-new',
+            'repo' => 'Particle-Academy/fancy-whats-new',
+        ])
+        ->and(collect($built['components'])->pluck('name')->all())->toBe(['WhatsNew'])
+        ->and(PackageRegistry::find('fancy-whats-new'))->not->toBeNull();
+});
+
 it('keeps planned packages off every public surface', function () {
     // They cannot be installed. Announcing one is worse than saying nothing —
     // the same reason HIDDEN exists.

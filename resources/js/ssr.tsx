@@ -8,6 +8,7 @@ import { FancyDataRoot } from "@particle-academy/fancy-query";
 import { registerAll as registerEChartsAll, registerBuiltinThemes } from "@particle-academy/fancy-echarts";
 import { registerBrandIcons } from "@particle-academy/fancy-brand-icons";
 import { CoBrowseProvider } from "./agent/CoBrowseProvider";
+import { ShowcaseWhatsNew } from "./lib/whats-new";
 
 // MUST mirror resources/js/showcase-app.tsx EXACTLY. These are pure, SSR-safe
 // registrations (icon defs, echarts modules + themes) that change what
@@ -47,7 +48,9 @@ const providers = (outlet: ReactNode): ReactNode => (
         <ScreenSystem>
             <FancyDataRoot echo={null}>
                 <SeoProvider value={seoDefaults}>
-                    <CoBrowseProvider>{outlet}</CoBrowseProvider>
+                    <CoBrowseProvider>
+                        <ShowcaseWhatsNew>{outlet}</ShowcaseWhatsNew>
+                    </CoBrowseProvider>
                 </SeoProvider>
             </FancyDataRoot>
         </ScreenSystem>

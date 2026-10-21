@@ -42,10 +42,12 @@ export function AppUpdateStackExample({
     features,
     previousLabel,
     nextLabel,
+    scrollHint,
 }: {
     features?: AppUpdateFeature[];
     previousLabel?: string;
     nextLabel?: string;
+    scrollHint?: boolean | string;
 }) {
     const { toast } = useToast();
     const [run, setRun] = useState(0);
@@ -58,6 +60,7 @@ export function AppUpdateStackExample({
                 features={features}
                 previousLabel={previousLabel}
                 nextLabel={nextLabel}
+                scrollHint={scrollHint}
                 position="inline"
                 onRefresh={() =>
                     toast({
@@ -70,6 +73,30 @@ export function AppUpdateStackExample({
             <Button size="sm" variant="ghost" icon="refresh-cw" onClick={() => setRun((n) => n + 1)}>
                 Simulate another deploy
             </Button>
+        </div>
+    );
+}
+
+/** Never detects: the on-demand view is shown only because the menu asked. */
+const NEVER = { check: () => false, interval: 60_000, pollOnFocus: false } as const;
+
+/** A "What's New" menu item that re-opens the latest cards (fancy-app-update 0.6.0+). */
+export function WhatsNewExample({ dismissLabel }: { dismissLabel?: string }) {
+    const [open, setOpen] = useState(false);
+
+    return (
+        <div className="w-full max-w-sm space-y-3" data-demo="app-update-whats-new">
+            <Button size="sm" variant="ghost" icon="sparkles" onClick={() => setOpen(true)} disabled={open}>
+                What&apos;s New
+            </Button>
+            <AppUpdateStack
+                {...NEVER}
+                open={open}
+                onOpenChange={setOpen}
+                features={RELEASE_FEATURES}
+                dismissLabel={dismissLabel}
+                position="inline"
+            />
         </div>
     );
 }
@@ -95,6 +122,12 @@ export function AppUpdateStackDemo() {
                     </Text>
                     <AppUpdateStackExample features={RELEASE_FEATURES} />
                 </div>
+                <div className="space-y-2">
+                    <Text size="xs" className="!font-semibold !uppercase !tracking-wide !text-zinc-500">
+                        What&apos;s New, on demand
+                    </Text>
+                    <WhatsNewExample />
+                </div>
             </div>
         </div>
     );
@@ -107,9 +140,15 @@ export const appUpdateStackDoc: ComponentDoc = {
                 The &quot;a new version is available&quot; notice that can say what is new. When a
                 release has a message, its feature cards stack behind each other (react-fancy&apos;s{" "}
                 <code>Toast.Stack</code>), each with a close button and a{" "}
-                <strong>Refresh to get the latest</strong> action. <strong>Previous</strong> and{" "}
-                <strong>Next</strong> walk the cards and stop at the ends; scrolling over the stack and
-                the arrow keys walk them too. A hotfix with no message gets the plain notice.
+                <strong>Refresh to get the latest</strong> action. The <em>prev</em> and <em>next</em>{" "}
+                links walk the cards and stop at the ends; scrolling over the stack and the arrow keys
+                walk them too, and a faint <em>scroll</em> hint says so when the mouse arrives. A hotfix
+                with no message gets the plain notice.
+            </p>
+            <p>
+                <code>open</code> shows the cards on demand, for a &quot;What&apos;s New&quot; menu item.
+                With no update pending there is nothing to reload, so the cards offer{" "}
+                <em>got it</em> instead of the refresh.
             </p>
             <p>
                 It is <code>fancy-app-update</code>&apos;s <code>AppUpdateStack</code> with
@@ -152,19 +191,50 @@ export const appUpdateStackDoc: ComponentDoc = {
 <AppUpdateStack features={() => fetch("/whats-new").then((r) => r.json())} />`,
         },
         {
-            name: "Previous / Next, with your own words",
+            name: "prev / next and the scroll hint, with your own words",
             description:
-                "With two or more cards, each carries Previous and Next beside its count (fancy-app-update 0.5.0+). They stop at the ends: Previous is disabled on the first card and Next on the last. The wheel and the arrow keys move the same card. `previousLabel` / `nextLabel` change the words, like `refreshLabel` and `closeLabel`.",
-            render: () => <AppUpdateStackExample features={RELEASE_FEATURES.slice(1)} previousLabel="Back" nextLabel="Onward" />,
+                "With two or more cards, each carries quiet prev and next links beside its count (fancy-app-update 0.6.0+; buttons underneath, so Tab and Enter work). They stop at the ends. The wheel and the arrow keys move the same card, and a faint hint fades in over the card when the mouse arrives, then fades out on its own. `previousLabel` / `nextLabel` change the link words; `scrollHint` takes a string for the hint's words, or `false` to turn it off.",
+            render: () => (
+                <AppUpdateStackExample
+                    features={RELEASE_FEATURES.slice(1)}
+                    previousLabel="back"
+                    nextLabel="onward"
+                    scrollHint="scroll to browse"
+                />
+            ),
             code: `import { AppUpdateStack } from "@particle-academy/fancy-inertia/stack";
 
 <AppUpdateStack
     features={features}
-    previousLabel="Back"   // default "Previous"
-    nextLabel="Onward"     // default "Next"
+    previousLabel="back"            // default "prev"
+    nextLabel="onward"              // default "next"
+    scrollHint="scroll to browse"   // default "scroll"; false turns it off
     refreshLabel="Reload now"
     closeLabel="Hide"
 />`,
+        },
+        {
+            name: "What's New: open it from a menu",
+            description:
+                "`open` shows the cards whether or not an update was detected. With no update pending there is nothing to reload, so the cards offer `dismissLabel` (default \"got it\") instead of the refresh; with one pending they keep the refresh. Closing calls `onOpenChange(false)`, and each opening starts at the first card. Opened with no cards, it shows nothing.",
+            render: () => <WhatsNewExample />,
+            code: `import { useState } from "react";
+import { AppUpdateStack } from "@particle-academy/fancy-inertia/stack";
+
+function WhatsNew() {
+    const [open, setOpen] = useState(false);
+    return (
+        <>
+            <MenuItem onClick={() => setOpen(true)}>What's New</MenuItem>
+            <AppUpdateStack
+                open={open}
+                onOpenChange={setOpen}
+                features={() => fetch("/whats-new/latest").then((r) => r.json())}
+                dismissLabel="got it"   // the default
+            />
+        </>
+    );
+}`,
         },
         {
             name: "Mount it once, from setupFancyApp",
@@ -211,14 +281,18 @@ function Prompt() {
         { name: "description", type: "ReactNode", default: '"A new version is ready."', description: "The plain notice's body." },
         { name: "refreshLabel", type: "ReactNode", default: '"Refresh to get the latest"', description: "The refresh button." },
         { name: "closeLabel", type: "string", default: '"Close"', description: "The close button's accessible name." },
-        { name: "previousLabel", type: "string", default: '"Previous"', description: "The button back to the previous card. Shown with two or more cards; disabled on the first." },
-        { name: "nextLabel", type: "string", default: '"Next"', description: "The button on to the next card. Shown with two or more cards; disabled on the last." },
+        { name: "previousLabel", type: "string", default: '"prev"', description: "The link back to the previous card. Shown with two or more cards; disabled on the first." },
+        { name: "nextLabel", type: "string", default: '"next"', description: "The link on to the next card. Shown with two or more cards; disabled on the last." },
+        { name: "scrollHint", type: "boolean | string", default: '"scroll"', description: "The hint that fades in over the card when the mouse arrives (two or more cards). A string replaces its words; false turns it off." },
+        { name: "open", type: "boolean", default: "—", description: "Show the cards on demand (a What's New view), whether or not an update was detected." },
+        { name: "onOpenChange", type: "(open: boolean) => void", default: "—", description: "Called with false when the person closes an on-demand view." },
+        { name: "dismissLabel", type: "ReactNode", default: '"got it"', description: "Replaces the refresh action when opened on demand with no update pending." },
         { name: "color", type: "ButtonColor", default: '"violet"', description: "Colour of the refresh button." },
         { name: "position", type: "corner | top | bottom | inline", default: '"bottom-right"', description: "A screen position, or inline where it is placed." },
         { name: "depth", type: "number", default: "2", description: "How many cards show behind the front one." },
         { name: "onRefresh", type: "() => void", default: "hard reload", description: "Customize the refresh action." },
         { name: "onDismiss", type: "() => void", default: "—", description: "Called when the person closes the notice." },
-        { name: "renderFeature", type: "(feature, state) => ReactNode", default: "—", description: "Replace a card's content; the close, refresh and Previous / Next controls stay." },
+        { name: "renderFeature", type: "(feature, state) => ReactNode", default: "—", description: "Replace a card's content; the close, refresh / dismiss and prev / next controls stay." },
         { name: "render", type: "({ features, refresh, dismiss }) => ReactNode", default: "—", description: "Replace the whole notice." },
         { name: "check", type: "() => boolean | Promise<boolean>", default: "Inertia 409", description: "Your own detector, replacing the Inertia default." },
         { name: "interval", type: "number", default: "60_000", description: "Poll cadence in ms." },

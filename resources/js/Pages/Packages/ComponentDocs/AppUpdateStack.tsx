@@ -18,6 +18,8 @@ export const RELEASE_FEATURES: AppUpdateFeature[] = [
         title: "Spreadsheets, in the page",
         description: "Multi-sheet workbooks with formulas, editable by people and agents.",
         image: "/showcase-shots/fancy-sheets.png",
+        // Shown instead of `image` in dark mode (fancy-app-update 0.4.0+).
+        imageDark: "/showcase-shots/fancy-sheets-dark.png",
         imageAlt: "A fancy-sheets workbook",
     },
     {
@@ -28,6 +30,9 @@ export const RELEASE_FEATURES: AppUpdateFeature[] = [
         imageAlt: "A fancy-echarts dashboard",
     },
     { id: "search", title: "Faster search", description: "Results as you type, across every page." },
+    // A fourth card, so the stack has more than its default depth of 2 behind
+    // the front one and shows the "+N" count badge.
+    { id: "export", title: "Exports to PDF", description: "Any page, one click, print-ready." },
 ];
 
 /** A simulated deploy: detected on the first tick, every time it is remounted. */
@@ -115,7 +120,7 @@ export const appUpdateStackDoc: ComponentDoc = {
         {
             name: "Release: feature cards with images",
             description:
-                "Each card can carry an image, shown full width as its header. Pass the cards, or a loader that runs once, when the update is detected.",
+                "Each card can carry an image, shown full width as its header, and an `imageDark` shown instead in dark mode (the `.dark` class, CSS-only). Pass the cards, or a loader that runs once, when the update is detected.",
             render: () => <AppUpdateStackExample features={RELEASE_FEATURES} />,
             code: `import { AppUpdateStack } from "@particle-academy/fancy-inertia/stack";
 
@@ -125,6 +130,7 @@ export const appUpdateStackDoc: ComponentDoc = {
             title: "Spreadsheets, in the page",
             description: "Multi-sheet workbooks with formulas.",
             image: "/whats-new/sheets.png",
+            imageDark: "/whats-new/sheets-dark.png", // shown in dark mode
             imageAlt: "A workbook",
         },
         { title: "Faster search" },

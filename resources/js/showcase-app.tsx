@@ -23,8 +23,9 @@ registerEChartsAll();
 registerBuiltinThemes();
 
 // Layer the brand-icon pack (GitHub, X, Slack, Stripe, …) on top of the active
-// icon set as an addendum, so bare <Icon name="github" /> resolves the brand
-// mark site-wide without a set= query. Additive — base icons still win.
+// icon set as an addendum, so the Icon name "github-logo" resolves the brand
+// mark site-wide without a set= query. Since fancy-brand-icons 0.4.0 every mark
+// is registered only as `<brand>-logo`; a bare "github" is the base set's glyph.
 registerBrandIcons();
 
 // Site-wide SEO defaults for the client <Seo> layer. Mirrors the

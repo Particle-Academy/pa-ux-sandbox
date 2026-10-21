@@ -11,7 +11,7 @@ import { CoBrowseProvider } from "./agent/CoBrowseProvider";
 
 // MUST mirror resources/js/showcase-app.tsx EXACTLY. These are pure, SSR-safe
 // registrations (icon defs, echarts modules + themes) that change what
-// components RENDER — e.g. <Icon name="github"> resolves the brand mark only
+// components RENDER — e.g. the Icon name "github-logo" resolves the brand mark only
 // after registerBrandIcons(). Calling them on the client but NOT here made the
 // server render different icon SVGs than the client → React #418 hydration
 // mismatch (the <span> inside a react-fancy <Button icon>). Register on both.

@@ -208,14 +208,15 @@ function ShareKit({ link }: { link: string }) {
     const enc = encodeURIComponent;
     const oneLine = `${SHARE_HEADLINE} ${link}`;
 
-    // Brand marks (x-twitter, linkedin) come from fancy-brand-icons; the rest are
-    // lucide. NOT bare "x" — that is lucide's close icon.
+    // Brand marks (x-logo, linkedin-logo) come from fancy-brand-icons; the rest are
+    // lucide. Since fancy-brand-icons 0.4.0 every mark is "<brand>-logo"; bare
+    // "x" and "linkedin" are lucide glyphs (or nothing).
     const channels: { key: string; label: string; icon?: string; brand?: string; href: string; className: string }[] = [
         { key: "whatsapp", label: "WhatsApp", icon: "message-circle", href: `https://wa.me/?text=${enc(oneLine)}`, className: "hover:border-green-500/50 hover:text-green-600" },
         { key: "sms", label: "Text", icon: "message-square", href: `sms:?&body=${enc(oneLine)}`, className: "hover:border-teal-500/50 hover:text-teal-600" },
         { key: "email", label: "Email", icon: "mail", href: `mailto:?subject=${enc("Thought you'd like this")}&body=${enc(`${SHARE_HEADLINE}\n\n${link}`)}`, className: "hover:border-amber-500/50 hover:text-amber-600" },
-        { key: "x", label: "X", brand: "x-twitter", href: `https://twitter.com/intent/tweet?text=${enc(SHARE_HEADLINE)}&url=${enc(link)}`, className: "hover:border-[var(--fg-1)] hover:text-[var(--fg-1)]" },
-        { key: "linkedin", label: "LinkedIn", brand: "linkedin", href: `https://www.linkedin.com/sharing/share-offsite/?url=${enc(link)}`, className: "hover:border-blue-500/50 hover:text-blue-600" },
+        { key: "x", label: "X", brand: "x-logo", href: `https://twitter.com/intent/tweet?text=${enc(SHARE_HEADLINE)}&url=${enc(link)}`, className: "hover:border-[var(--fg-1)] hover:text-[var(--fg-1)]" },
+        { key: "linkedin", label: "LinkedIn", brand: "linkedin-logo", href: `https://www.linkedin.com/sharing/share-offsite/?url=${enc(link)}`, className: "hover:border-blue-500/50 hover:text-blue-600" },
     ];
 
     const [copiedIdx, setCopiedIdx] = useState<number | null>(null);

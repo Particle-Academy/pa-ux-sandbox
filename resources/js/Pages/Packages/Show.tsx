@@ -337,7 +337,7 @@ function MetaLinks({ pkg }: { pkg: Pkg }) {
     const links: Array<{ label: string; href: string; icon: string; external: boolean }> = [];
     if (pkg.showcase) links.push({ label: "Live sandbox", href: pkg.showcase, icon: "play", external: false });
     if (pkg.repo) links.push({ label: "README", href: `https://github.com/${pkg.repo}#readme`, icon: "book-open", external: true });
-    if (pkg.repo) links.push({ label: "GitHub", href: `https://github.com/${pkg.repo}`, icon: "github", external: true });
+    if (pkg.repo) links.push({ label: "GitHub", href: `https://github.com/${pkg.repo}`, icon: "github-logo", external: true });
     if (pkg.npm) links.push({ label: "npm", href: `https://www.npmjs.com/package/${pkg.npm}`, icon: "package", external: true });
     if (pkg.composer) links.push({ label: "Packagist", href: `https://packagist.org/packages/${pkg.composer}`, icon: "package", external: true });
     if (pkg.pypi) links.push({ label: "PyPI", href: `https://pypi.org/project/${pkg.pypi}`, icon: "package", external: true });

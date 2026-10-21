@@ -839,7 +839,7 @@ Both registry names read as unclaimed on 2026-10-08 -- `@particle-academy/fancy-
             [
                 'slug' => 'fancy-brand-icons',
                 'name' => '@particle-academy/fancy-brand-icons',
-                'tagline' => 'Brand-icon addendum for react-fancy — your logos + curated CC0 third-party marks (GitHub, X, Slack, Stripe, …) layered on top of any active icon set, so bare <Icon name="github"/> resolves the brand mark. Zero runtime deps; tree-shakeable.',
+                'tagline' => 'Brand-icon addendum for react-fancy — your logos + curated CC0 third-party marks (GitHub, X, Slack, Stripe, …) layered on top of any active icon set, each registered as `<brand>-logo` (<Icon name="github-logo"/>), so a bare name stays the base icon set glyph. Zero runtime deps; tree-shakeable.',
                 'npm' => '@particle-academy/fancy-brand-icons',
                 'repo' => 'Particle-Academy/fancy-brand-icons',
                 'language' => 'TypeScript',

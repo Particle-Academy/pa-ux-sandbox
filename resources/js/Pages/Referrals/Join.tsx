@@ -58,7 +58,7 @@ export default function ReferralsJoin({ inviter }: Props) {
                                     See your referral network
                                 </Button>
                             ) : (
-                                <Button color="violet" href="/auth/github" icon="github">
+                                <Button color="violet" href="/auth/github" icon="github-logo">
                                     Sign in with GitHub
                                 </Button>
                             )}

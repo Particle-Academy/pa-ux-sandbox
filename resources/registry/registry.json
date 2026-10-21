@@ -4167,7 +4167,7 @@
             "name": "fancy-brand-icons",
             "type": "registry:ui",
             "title": "@particle-academy/fancy-brand-icons",
-            "description": "Brand-icon addendum for react-fancy \u2014 your logos + curated CC0 third-party marks (GitHub, X, Slack, Stripe, \u2026) layered on top of any active icon set, so bare <Icon name=\"github\"/> resolves the brand mark. Zero runtime deps; tree-shakeable.",
+            "description": "Brand-icon addendum for react-fancy \u2014 your logos + curated CC0 third-party marks (GitHub, X, Slack, Stripe, \u2026) layered on top of any active icon set, each registered as `<brand>-logo` (<Icon name=\"github-logo\"/>), so a bare name stays the base icon set glyph. Zero runtime deps; tree-shakeable.",
             "package": "fancy-brand-icons",
             "dependencies": [],
             "registryDependencies": [],

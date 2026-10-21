@@ -37,7 +37,10 @@ export const chartDoc: ComponentDoc = {
             ),
             code: `<Chart.Sparkline data={[12, 15, 14, 18, 22, 19, 25, 28, 32]} width={120} height={32} />
 <Chart.Sparkline data={[40, 38, 41, 32, 28, 22, 20, 15]} color="#ef4444" />
-<Chart.Sparkline data={[10, 12, 18, 22, 30, 28, 35, 42]} color="#22c55e" />`,
+<Chart.Sparkline data={[10, 12, 18, 22, 30, 28, 35, 42]} color="#22c55e" />
+
+// Scale from zero (react-fancy 5.51.0+): activity per minute, never idle
+<Chart.Sparkline data={perMinute} min={0} />`,
         },
         {
             name: "Bar",
@@ -116,7 +119,7 @@ export const chartDoc: ComponentDoc = {
         },
     ],
     props: [
-        { name: "Chart.Sparkline", type: "—", default: "—", description: "Tiny inline chart. Props: `data: number[]`, `width`, `height`, `color`." },
+        { name: "Chart.Sparkline", type: "—", default: "—", description: "Tiny inline chart. Props: `data: number[]`, `width`, `height`, `color`, `min`. `min` (since 5.51.0) is the value the bottom edge stands for; default is the data's own minimum. `min={0}` scales from zero like `Chart.Line` / `Chart.Bar`, so a busy-but-quiet point does not sit on the floor." },
         { name: "Chart.Bar", type: "—", default: "—", description: "Categorical bars. Props: `data: { label, value, color? }[]`, `height`, `showValues`." },
         { name: "Chart.HorizontalBar", type: "—", default: "—", description: "Same data shape as `Chart.Bar`, rotated 90°." },
         { name: "Chart.StackedBar", type: "—", default: "—", description: "Multi-series bars. Props: `labels`, `series`, plus common chart options." },

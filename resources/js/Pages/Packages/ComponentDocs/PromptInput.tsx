@@ -198,7 +198,7 @@ export const promptInputDoc: ComponentDoc = {
         { name: "pasteThreshold", type: `number`, default: "— (off)", description: "Hold a paste of at least this many characters as a pill IN the message, where it was pasted. Swaps the textarea for an inline editor; `/`, `@` and Ctrl/⌘+Enter keep working." },
         { name: "pasteImages", type: `boolean`, default: `false`, description: "A pasted image becomes an inline `Pasted image N` pill and reaches `onSubmit`'s attachments with its File. Off: a pasted image is an ordinary attachment chip." },
         { name: "pasteFilesName", type: `string`, default: "—", description: "Post pasted images with an enclosing `<form>` under this name: a hidden `<input type=\"file\" multiple>` holds the images still in the message. Needs `pasteImages`." },
-        { name: "previewChars", type: `number`, default: `20`, description: "Characters of a held paste shown at each end of the hover preview." },
+        { name: "previewChars", type: `number`, default: `20`, description: "Characters of a held paste shown at each end of the preview popover (opens on hover or focus)." },
         { name: "renderPastePreview", type: `(p: ComposerPastePreview) => ReactNode`, default: "—", description: "Replace what a pill's hover popover shows." },
         { name: "pasteClassNames", type: `{ pill?, textPill?, imagePill?, preview?, input? }`, default: "—", description: "Classes merged onto the pills, their popover and the inline editor." },
         { name: "attachButton", type: `"label" | "icon"`, default: `"label"`, description: "`icon`: paperclip only, with an accessible name and a tooltip." },

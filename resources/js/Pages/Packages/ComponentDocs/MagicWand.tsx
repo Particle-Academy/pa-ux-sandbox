@@ -51,7 +51,7 @@ export const magicWandDoc: ComponentDoc = {
             run: async (selection) => {
                 const res = await fetch("/api/rewrite", {
                     method: "POST",
-                    body: JSON.stringify({ text: selection.text }),
+                    body: JSON.stringify({ text: selection }),
                 });
                 const { rewritten } = await res.json();
                 return rewritten;
@@ -60,18 +60,18 @@ export const magicWandDoc: ComponentDoc = {
         {
             id: "shorten",
             label: "Shorten",
-            run: async (selection) => callLLM(\`Make this shorter:\\n\${selection.text}\`),
+            run: async (selection) => callLLM(\`Make this shorter:\\n\${selection}\`),
         },
     ]}
 />`,
         },
         {
-            name: "Inline appearance",
-            description: "`appearance=\"inline\"` pins the wand under the textarea instead of floating beside the selection.",
+            name: "Pill appearance",
+            description: "`appearance=\"pill\"` is the compact form: each action shows only the first letter of its label, and the character count is dropped.",
             render: () => (
                 <div className="w-full max-w-md">
                     <MagicWand
-                        value="Selecting text shows an inline action row beneath the textarea."
+                        value="Select some of this text to see the compact pill wand."
                         onValueChange={() => {}}
                         appearance="pill"
                         rows={4}
@@ -91,10 +91,11 @@ export const magicWandDoc: ComponentDoc = {
         },
     ],
     props: [
-        { name: "value", type: `string`, default: "—", description: "Controlled textarea value. Required." },
+        { name: "value", type: `string`, default: "—", description: "Controlled value, of the built-in textarea or of `target`. Required." },
         { name: "onValueChange", type: `(value: string) => void`, default: "—", description: "Called on every edit. Required." },
         { name: "actions", type: `MagicWandAction[]`, default: "—", description: "List of wand actions. Each is `{ id, label, run(selection) => Promise<string> }`." },
-        { name: "appearance", type: `"floating" | "inline"`, default: `"floating"`, description: "Floating beside the selection or pinned below the textarea." },
+        { name: "target", type: `RefObject<HTMLTextAreaElement | HTMLInputElement> | MagicWandTargetAdapter`, default: "—", description: "Since 5.51.0. Act on a field or editor the host renders: MagicWand then renders no textarea, only the wand, floated over the selection. A ref to your textarea / input works as is (`<MagicWand target={ref} value={text} onValueChange={setText} … />`); for a code editor or contenteditable pass a read-only adapter `{ element, getSelection: () => ({ start, end }) | null, getSelectionRect? }`, offsets into `value`. The write still goes through `onValueChange`." },
+        { name: "appearance", type: `"floating" | "pill"`, default: `"floating"`, description: "`floating` shows full labels and the selection's character count; `pill` is compact, first letter only." },
         { name: "autoHide", type: `boolean`, default: `true`, description: "Auto-hide the floating wand on click-away / scroll." },
         { name: "rows", type: `number`, default: `6`, description: "Initial textarea rows." },
         { name: "placeholder", type: `string`, default: "—", description: "Textarea placeholder." },

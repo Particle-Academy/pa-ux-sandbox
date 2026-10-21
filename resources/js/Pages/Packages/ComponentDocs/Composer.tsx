@@ -84,7 +84,7 @@ export const composerDoc: ComponentDoc = {
         {
             name: "pastePlacement=\"inline\" — the pill sits where you pasted",
             description:
-                "With inline placement the pill goes INTO the message, at the caret. A text pill gets a line to itself; click it and its full text replaces it, right there. With pasteImages, a pasted image becomes an inline pill too — hover it for a thumbnail. Backspace deletes a pill like a character. A send expands every text pill where it sits, marks each image as [Pasted image N], and hands the images to onSubmit's second argument. Paste a long passage or a screenshot below.",
+                "With inline placement the pill goes INTO the message, at the caret. A text pill gets a line to itself; click it and its full text replaces it, right there. With pasteImages, a pasted image becomes an inline pill too — hover or focus it for a thumbnail in a popover. Backspace deletes a pill like a character. A send expands every text pill where it sits, marks each image as [Pasted image N], and hands the images to onSubmit's second argument. Paste a long passage or a screenshot below.",
             render: () => {
                 function Inline() {
                     const [sent, setSent] = useState<string | null>(null);
@@ -210,7 +210,7 @@ setHeld([...held, { id, text }]);`,
         { name: "pasteThreshold", type: `number`, default: "— (no default, on purpose)", description: "Hold a paste of at least this many characters as a pill. Omit and paste behaves normally." },
         { name: "pastePlacement", type: `"above" | "inline"`, default: `"above"`, description: "Where a pill goes: a row above the input, or IN the message at the caret. Inline, `value` carries a `pasteMarker(id)` per pill." },
         { name: "pasteImages", type: `boolean`, default: `false`, description: "Hold a pasted image as an inline pill (inline only). Turning it on is a promise to read `onSubmit`'s second argument." },
-        { name: "previewChars", type: `number`, default: `20`, description: "Characters of a held paste shown at each end of the hover preview." },
+        { name: "previewChars", type: `number`, default: `20`, description: "Characters of a held paste shown at each end of the preview popover (opens on hover or focus)." },
         { name: "classNames", type: `{ pill?, textPill?, imagePill?, preview?, remove?, input? }`, default: "—", description: "Classes merged onto the pills, the hover popover, the × and the input." },
         { name: "renderPastePreview", type: `(p: ComposerPastePreview) => ReactNode`, default: "—", description: "Replace what the hover popover shows." },
         { name: "heldImages", type: `HeldImage[]`, default: "—", description: "Controlled list of held images." },

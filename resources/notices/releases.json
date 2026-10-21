@@ -112,11 +112,18 @@
         "prism-ts": "0.3.0",
         "prism-workspace": "0.2.0",
         "prism-workspace-ts": "0.2.0",
-        "react-fancy": "5.54.1",
+        "react-fancy": "5.54.2",
         "teachers-aid": "0.2.0",
         "teachers-aid-ui": "0.3.0"
     },
     "releases": [
+        {
+            "slug": "react-fancy",
+            "registry": "npm",
+            "version": "5.54.2",
+            "published_at": "2026-10-21T19:53:19Z",
+            "first": false
+        },
         {
             "slug": "fancy-inertia",
             "registry": "npm",

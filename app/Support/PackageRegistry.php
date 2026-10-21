@@ -142,19 +142,21 @@ class PackageRegistry
         'fancy-whats-new' => [
             'name' => '@particle-academy/fancy-whats-new',
             'repo' => 'Particle-Academy/fancy-whats-new',
-            'why' => 'A "what`s new since you were last here" notice: release feature cards shown on the FIRST LOAD AFTER a refresh or login, never before it. Owner decision 2026-10-21, split out of fancy-app-update, which goes back to its one job: detect a new build and show the plain refresh notice. NOT YET STARTED, registered first per the rule.
+            'why' => 'GENERAL-PURPOSE "show these once, stacked, then remember they were seen" notice. On the FIRST LOAD AFTER a refresh or login, it shows the groups of cards newer than what this person last saw. Not only for release notes: auto notices after an app update, welcome messages, new post content on a social site, whatever needs that UX (owner scope, 2026-10-21; it overrides the earlier release-only shape). Split out of fancy-app-update, which goes back to its one job: detect a new build and show the plain refresh notice. BUILT 2026-10-21 (0.1.0, green, ready to tag); waiting on the npm bootstrap.
 
 WHY IT EXISTS. fancy-app-update 0.3-0.6 put feature cards on the refresh notice itself, which describes features the open page does not have yet. It covered only the one build that landed mid-session, and it remembered nothing about what a person had already seen.
 
-SHAPE (owner answers, 2026-10-21; MOIC`s owner`s answers folded in as options):
-- `releases={(since) => [{ version, date, features }]}` returns releases newer than the last version seen, newest first. `since` is null on a first visit.
-- Last seen is remembered in the browser by default. `storage={{ load, save }}` takes any store, and a ready-made per-account server store comes for fancy-inertia/Laravel (MOIC`s users span devices).
-- `missed="all" | "latest"`: "all" (the default, owner) stacks every missed release, labelled by version; MOIC sets "latest".
-- `firstVisit="latest" | "none" | "all"`, default "latest": the latest release once.
-- `open` / `onOpenChange` power a What`s New menu item, and `history={(before) => release | null}` pages back through older releases on demand.
-- The cards are fancy-app-update 0.6`s: prev/next links, the scroll hint, imageDark, built on react-fancy Toast.Stack.
+SHAPE:
+- `load={(since) => [{ id, label?, date?, cards }]}` returns groups newer than the last-seen cursor, newest first. The cursor is a version, a post id, a timestamp. `since` is null on a first visit. Groups with no cards are skipped.
+- Cards are fancy-app-update`s card shape (title, description, image, imageDark, imageAlt, id) plus one optional link, `action: { label, href }`.
+- Last seen is remembered in the browser by default. `storage={{ load, save }}` takes any store; fancy-inertia ships `createHttpStorage({ url })` for a per-account cursor (MOIC`s users span devices).
+- `missed="all" | "latest"`: "all" (the default) stacks every newer group, each card labelled with its group; MOIC sets "latest".
+- `firstVisit="latest" | "none" | "all"`, default "latest".
+- Seen is recorded on show, in a visible tab, as the newest cursor shown.
+- `open` / `onOpenChange` let a button show the current cards on demand. That is the whole on-demand feature: no menu, no history.
+- The cards are fancy-app-update 0.7`s `FeatureCards` (./cards), imported rather than copied.
 
-CONSUMERS: MOIC (an endpoint parsing its CHANGELOG.md, with opt-in `<!-- feature-notice -->` sections), and the showcase.',
+CONSUMERS: MOIC (an endpoint parsing its CHANGELOG.md, with opt-in `<!-- feature-notice -->` sections), and the showcase (new package releases and major feature updates).',
         ],
         'fancy-expr' => [
             'name' => 'fancy-expr',

@@ -139,6 +139,19 @@ class PackageRegistry
      * @var array<string, array{name: string, repo: string, why: string}>
      */
     public const PLANNED = [
+        'fancy-live' => [
+            'name' => 'particle-academy/fancy-live',
+            'repo' => 'Particle-Academy/fancy-live',
+            'why' => 'First-party realtime publishing for Fancy apps, decided 2026-10-23 by the owner: "fancy should be the supplier for this kind of stuff. We support laravel but should not depend on it unless it\'s a laravel specific package". NOT YET STARTED -- registered first per the rule.
+
+WHY IT EXISTS. fancy-query\'s live layer (useFancyEchoInvalidation, useFancyStream) consumes a Pusher-protocol socket through an EchoLike interface, and today the only way to feed it is laravel-echo + pusher-js + pusher/pusher-php-server. pusher-js depends on tweetnacl, last released 2023-04-12, which fails the 3-month freshness bar; and the PHP side pins a Laravel app to a vendor SDK for what is one HMAC-signed HTTP POST.
+
+SCOPE. A framework-agnostic PHP publisher for the Pusher HTTP API (trigger an event on one or more channels, HMAC-SHA256 auth, private/presence channel auth signatures for /broadcasting/auth), with an OPTIONAL Laravel broadcaster adapter so `broadcast()` works unchanged. Zero third-party runtime code. The matching BROWSER client ships inside fancy-query (a Pusher-protocol socket that satisfies its existing EchoLike interface), so fancy-query works with no laravel-echo or pusher-js at all.
+
+FIRST CONSUMER. flabs\' website-builder agent: the server-held page document broadcasts each applied op to the human co-browsing it (.ai/plans/website-builder-agent.md). Target server: Genie\'s WebSockets engine (Sockudo, Pusher protocol).
+
+BEFORE IT CAN SHIP: the Packagist name is unclaimed (verified free 2026-10-23), so the first publish needs the owner\'s one-time Packagist submit after the first tag.',
+        ],
         'fancy-expr' => [
             'name' => 'fancy-expr',
             'repo' => 'Particle-Academy/fancy-expr',

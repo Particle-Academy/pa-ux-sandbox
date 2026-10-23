@@ -77,7 +77,7 @@
         "fancy-x-files": "0.2.0",
         "fancy-x-files-js": "0.2.0",
         "fancy-x-files-ui": "0.2.0",
-        "fine-print": "0.1.0",
+        "fine-print": "0.2.0",
         "holy-sheet": "2.9.1",
         "holy-sheet-js": "2.10.1",
         "holy-sheet-py": "0.9.1",
@@ -118,6 +118,13 @@
         "teachers-aid-ui": "0.3.0"
     },
     "releases": [
+        {
+            "slug": "fine-print",
+            "registry": "composer",
+            "version": "0.2.0",
+            "published_at": "2026-10-23T09:24:13Z",
+            "first": false
+        },
         {
             "slug": "react-fancy",
             "registry": "npm",

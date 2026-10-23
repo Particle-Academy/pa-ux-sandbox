@@ -4534,16 +4534,16 @@
         },
         {
             "name": "particle-academy/fine-print",
-            "version": "v0.2.0",
+            "version": "v0.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/fine-print.git",
-                "reference": "06d7ffed56ca245b9eb28a87d2f1fd092e4ae4aa"
+                "reference": "e58b44bd01a7e43a0e9c62c0860be8bf24a9acb5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/fine-print/zipball/06d7ffed56ca245b9eb28a87d2f1fd092e4ae4aa",
-                "reference": "06d7ffed56ca245b9eb28a87d2f1fd092e4ae4aa",
+                "url": "https://api.github.com/repos/Particle-Academy/fine-print/zipball/e58b44bd01a7e43a0e9c62c0860be8bf24a9acb5",
+                "reference": "e58b44bd01a7e43a0e9c62c0860be8bf24a9acb5",
                 "shasum": ""
             },
             "require": {
@@ -4598,7 +4598,7 @@
                 "issues": "https://github.com/Particle-Academy/fine-print/issues",
                 "source": "https://github.com/Particle-Academy/fine-print"
             },
-            "time": "2026-10-23T09:24:13+00:00"
+            "time": "2026-10-23T10:45:59+00:00"
         },
         {
             "name": "particle-academy/holy-sheet",

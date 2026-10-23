@@ -113,11 +113,18 @@
         "prism-ts": "0.3.0",
         "prism-workspace": "0.2.0",
         "prism-workspace-ts": "0.2.0",
-        "react-fancy": "5.58.0",
+        "react-fancy": "5.59.0",
         "teachers-aid": "0.2.0",
         "teachers-aid-ui": "0.3.0"
     },
     "releases": [
+        {
+            "slug": "react-fancy",
+            "registry": "npm",
+            "version": "5.59.0",
+            "published_at": "2026-10-23T08:35:12Z",
+            "first": false
+        },
         {
             "slug": "fine-print",
             "registry": "composer",

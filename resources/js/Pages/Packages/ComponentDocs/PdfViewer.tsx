@@ -1,5 +1,6 @@
+import { useState } from "react";
 import type { ComponentDoc } from "./types";
-import { PdfViewer } from "@particle-academy/react-fancy";
+import { Badge, PdfViewer } from "@particle-academy/react-fancy";
 
 const SAMPLE = "/showcase-assets/file-viewer/sample.pdf";
 
@@ -49,6 +50,49 @@ export const pdfViewerDoc: ComponentDoc = {
     watermark={{ text: \`Viewed by \${user.email}\`, opacity: 0.12 }}
     style={{ height: "100%" }}
     frame
+/>`,
+        },
+        {
+            name: "A page that fails to load",
+            description:
+                "When the server refuses a page image (an incomplete render, a file too large, a revoked file), that page says so and offers Retry; the rest of the document still shows. Retry asks for the same url again, so a signed URL stays valid. onPageError reports each failure, and renderPageError replaces the message. Page 3 here points at an image that does not exist.",
+            render: () => {
+                function Failing() {
+                    const [failures, setFailures] = useState<number[]>([]);
+                    const pages = {
+                        count: 4,
+                        url: (page: number) =>
+                            page === 3 ? "/showcase-assets/file-viewer/pages/missing-3.png" : `/showcase-assets/file-viewer/pages/${page}.png`,
+                    };
+                    return (
+                        <div className="flex h-[32rem] w-full flex-col gap-2">
+                            <div className="flex gap-2">
+                                <Badge color={failures.length ? "rose" : "zinc"}>
+                                    {failures.length ? `failed: page ${[...new Set(failures)].join(", ")}` : "no failures yet"}
+                                </Badge>
+                            </div>
+                            <div className="min-h-0 flex-1">
+                                <PdfViewer
+                                    pages={pages}
+                                    title="Contract (one page missing)"
+                                    defaultPage={3}
+                                    onPageError={(page) => setFailures((f) => [...f, page])}
+                                    style={{ height: "100%" }}
+                                />
+                            </div>
+                        </div>
+                    );
+                }
+
+                return <Failing />;
+            },
+            code: `<PdfViewer
+    pages={{ count, url: (page, scale) => route("docs.page", { doc, page, scale }) }}
+    onPageError={(page, { scale, url }) => report("pdf page failed", { page, scale })}
+    // optional: your own message, inside the same page box
+    renderPageError={({ page, retry }) => (
+        <Button size="sm" onClick={retry}>Page {page} is still being prepared. Try again</Button>
+    )}
 />`,
         },
         {
@@ -145,6 +189,8 @@ useEffect(() => {
         { name: "pages", type: `{ count: number; url: (page, scale) => string; aspectRatio?: number }`, default: "—", description: "Page images served by your app. The viewer never requests a PDF; `scale` is zoom × device pixel ratio, rounded to 1, 1.5, 2, 3 or 4." },
         { name: "policy", type: `{ download?; print?; copy?: boolean; screenshot?: "allow" | "deter" }`, default: "all allowed", description: "Deterrents only: a web page cannot prevent screenshots, and real download protection is never serving the PDF. Page-image mode only." },
         { name: "watermark", type: `{ text: string; opacity?; angle?; density?: number }`, default: "—", description: "A tiled overlay drawn in the browser. Burn it into the images server-side when it has to hold." },
+        { name: "onPageError", type: `(page: number, info: { scale; url }) => void`, default: "—", description: "A page image failed to load. An `<img>` cannot see the HTTP status, so 422, 413 and 404 arrive alike. Page-image mode only." },
+        { name: "renderPageError", type: `(ctx: { page; scale; url; retry }) => ReactNode`, default: "the message + Retry", description: "What a failed page shows, inside its own box at its size. `retry()` asks for the same url again." },
         { name: "defaultPage", type: `number`, default: `1`, description: "Initial page (1-based), uncontrolled." },
         { name: "onPageChange", type: `(page: number) => void`, default: "—", description: "Called as the current page changes; pair with `page` to control it." },
         { name: "defaultZoom", type: `number`, default: `1`, description: "Initial zoom; 1 fits the width, 0.25 to 4." },

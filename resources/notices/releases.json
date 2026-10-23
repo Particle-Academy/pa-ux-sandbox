@@ -112,11 +112,39 @@
         "prism-ts": "0.3.0",
         "prism-workspace": "0.2.0",
         "prism-workspace-ts": "0.2.0",
-        "react-fancy": "5.54.2",
+        "react-fancy": "5.58.0",
         "teachers-aid": "0.2.0",
         "teachers-aid-ui": "0.3.0"
     },
     "releases": [
+        {
+            "slug": "react-fancy",
+            "registry": "npm",
+            "version": "5.58.0",
+            "published_at": "2026-10-22T22:43:23Z",
+            "first": false
+        },
+        {
+            "slug": "react-fancy",
+            "registry": "npm",
+            "version": "5.57.0",
+            "published_at": "2026-10-22T22:38:18Z",
+            "first": false
+        },
+        {
+            "slug": "react-fancy",
+            "registry": "npm",
+            "version": "5.56.0",
+            "published_at": "2026-10-21T21:09:32Z",
+            "first": false
+        },
+        {
+            "slug": "react-fancy",
+            "registry": "npm",
+            "version": "5.55.0",
+            "published_at": "2026-10-21T21:01:47Z",
+            "first": false
+        },
         {
             "slug": "react-fancy",
             "registry": "npm",
@@ -4084,20 +4112,6 @@
             "registry": "npm",
             "version": "5.25.0",
             "published_at": "2026-08-24T00:14:18Z",
-            "first": false
-        },
-        {
-            "slug": "prism",
-            "registry": "composer",
-            "version": "0.113.0",
-            "published_at": "2026-08-23T17:34:49Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-flow",
-            "registry": "npm",
-            "version": "0.48.1",
-            "published_at": "2026-08-23T02:04:07Z",
             "first": false
         }
     ]

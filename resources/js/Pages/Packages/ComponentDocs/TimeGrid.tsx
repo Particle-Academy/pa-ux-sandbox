@@ -1,9 +1,44 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import type { ComponentDoc } from "./types";
-import { TimeGrid } from "@particle-academy/react-fancy";
+import {
+    Badge,
+    MultiSwitch,
+    TimeGrid,
+    type TimeGridCell,
+    type TimeGridCoord,
+    type TimeGridDisabledRange,
+    type TimeGridSelection,
+    type TimeGridSelectionShape,
+} from "@particle-academy/react-fancy";
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const HOURS = Array.from({ length: 24 }, (_, h) => String(h));
+
+/** A booking week in half-hour slots: the typed examples' data. */
+const WEEK = ["Mon", "Tue", "Wed", "Thu", "Fri"];
+const SLOTS = Array.from({ length: 20 }, (_, i) => {
+    const m = 8 * 60 + i * 30;
+    return `${String(Math.floor(m / 60)).padStart(2, "0")}:${m % 60 === 0 ? "00" : "30"}`;
+});
+
+const BOOKING_STATES = {
+    open: { tone: "emerald" as const, label: "Open" },
+    closed: { label: "Closed" },
+    booked: { tone: "rose" as const, label: "Booked" },
+};
+const BOOKING_MARKS = { promo: { tone: "amber" as const, label: "Promo price" } };
+
+function bookingWeek(): TimeGridCell[][] {
+    return WEEK.map((day, r) =>
+        SLOTS.map((slot, c): TimeGridCell => {
+            if (c < 2 || c > 17) return { state: "closed", meta: { day, slot } };
+            if ((r === 1 && c >= 6 && c <= 8) || (r === 3 && c >= 11 && c <= 12)) {
+                return { state: "booked", disabled: true, reasons: ["Already booked"], meta: { day, slot } };
+            }
+            return { state: "open", marks: c >= 14 && c <= 15 ? ["promo"] : undefined, meta: { day, slot } };
+        }),
+    );
+}
 
 function empty(rows: number, cols: number): boolean[][] {
     return Array.from({ length: rows }, () => Array.from({ length: cols }, () => false));
@@ -313,6 +348,158 @@ export const timeGridDoc: ComponentDoc = {
     sparseColLabels={false}
 />`,
         },
+        {
+            name: "Typed cells and range selection",
+            description:
+                "Pass cells with states (and optional marks) and the grid renders your own vocabulary instead of on/off. Drag, or use Shift+arrows, to select: a rectangle is the same window across days, a linear run goes in reading order and crosses the end of a row. Booked slots are disabled, and disabledRange decides what a range that crosses one does.",
+            render: () => {
+                function Booking() {
+                    const cells = useMemo(() => bookingWeek(), []);
+                    const [shape, setShape] = useState<TimeGridSelectionShape>("rectangle");
+                    const [policy, setPolicy] = useState<TimeGridDisabledRange>("clamp");
+                    const [selection, setSelection] = useState<TimeGridSelection | null>(null);
+                    const [picked, setPicked] = useState(0);
+                    const [committed, setCommitted] = useState<string | null>(null);
+                    const [blocked, setBlocked] = useState(0);
+                    const [hover, setHover] = useState<string | null>(null);
+
+                    return (
+                        <div className="flex w-full flex-col gap-3">
+                            <div className="flex flex-wrap items-center gap-3">
+                                <MultiSwitch
+                                    size="sm"
+                                    list={[
+                                        { value: "rectangle", label: "Rectangle" },
+                                        { value: "linear", label: "Linear" },
+                                    ]}
+                                    value={shape}
+                                    onValueChange={(v) => {
+                                        setShape(v as TimeGridSelectionShape);
+                                        setSelection(null);
+                                    }}
+                                />
+                                <MultiSwitch
+                                    size="sm"
+                                    list={["clamp", "refuse", "span"]}
+                                    value={policy}
+                                    onValueChange={(v) => setPolicy(v as TimeGridDisabledRange)}
+                                />
+                            </div>
+                            <div className="w-full overflow-x-auto">
+                                <TimeGrid
+                                    rows={WEEK}
+                                    cols={SLOTS}
+                                    cells={cells}
+                                    states={BOOKING_STATES}
+                                    marks={BOOKING_MARKS}
+                                    selectionShape={shape}
+                                    selection={selection}
+                                    onSelectionChange={(next, got) => {
+                                        setSelection(next);
+                                        setPicked(got.length);
+                                    }}
+                                    onSelectionCommit={(_, got) => setCommitted(`${got.length} slots`)}
+                                    disabledRange={policy}
+                                    onBlockedSelect={(cellsBlocked) => setBlocked(cellsBlocked.length)}
+                                    onCellHover={(cell, at: TimeGridCoord | null) =>
+                                        setHover(cell && at ? `${WEEK[at.r]} ${SLOTS[at.c]}: ${BOOKING_STATES[cell.state as keyof typeof BOOKING_STATES]?.label ?? cell.state}` : null)
+                                    }
+                                    cellWidth={22}
+                                    sparseColLabels
+                                    aria-label="Booking week"
+                                />
+                            </div>
+                            <div className="flex flex-wrap gap-2 text-sm">
+                                <Badge color="zinc">{picked} selected</Badge>
+                                {committed && <Badge color="emerald">committed {committed}</Badge>}
+                                {blocked > 0 && <Badge color="rose">{blocked} blocked</Badge>}
+                                {hover && <Badge color="sky">{hover}</Badge>}
+                            </div>
+                        </div>
+                    );
+                }
+
+                return <Booking />;
+            },
+            code: `const states = {
+    open: { tone: "emerald", label: "Open" },
+    closed: { label: "Closed" },
+    booked: { tone: "rose", label: "Booked" },
+};
+const marks = { promo: { tone: "amber", label: "Promo price" } };
+// cells[r][c] = { state, disabled?, reasons?, marks?, meta? }
+
+const [selection, setSelection] = useState<TimeGridSelection | null>(null);
+
+<TimeGrid
+    rows={days}
+    cols={slots}
+    cells={cells}
+    states={states}
+    marks={marks}
+    selectionShape="rectangle"          // or "linear"
+    selection={selection}
+    onSelectionChange={(next, cells) => setSelection(next)}
+    onSelectionCommit={(sel, cells) => save(cells.map((c) => c.meta))}
+    disabledRange="clamp"               // "refuse" | "span"
+    onBlockedSelect={(blocked) => warn(blocked)}
+    onCellHover={(cell, at) => showDetail(cell, at)}
+    aria-label="Booking week"
+/>`,
+        },
+        {
+            name: "Column windowing",
+            description:
+                "A month of 6-minute slots is 31 × 240 = 7,440 cells. windowColumns renders only the columns in view, plus overscan, and it is on by default above 500 columns. Scroll sideways: cell ids, selection and callbacks still cover every cell, because they come from cells rather than the DOM.",
+            render: () => {
+                function Month() {
+                    const rows = useMemo(() => Array.from({ length: 31 }, (_, i) => `Day ${i + 1}`), []);
+                    const cols = useMemo(
+                        () => Array.from({ length: 240 }, (_, i) => `${String(Math.floor(i / 10)).padStart(2, "0")}:${String((i % 10) * 6).padStart(2, "0")}`),
+                        [],
+                    );
+                    const cells = useMemo(
+                        () =>
+                            rows.map((_, r) =>
+                                cols.map((__, c): TimeGridCell => {
+                                    const k = (r * 7 + c) % 40;
+                                    return k < 8 ? { state: "closed" } : k < 11 ? { state: "booked", disabled: true, reasons: ["Booked"] } : { state: "open" };
+                                }),
+                            ),
+                        [rows, cols],
+                    );
+                    const [selection, setSelection] = useState<TimeGridSelection | null>(null);
+
+                    return (
+                        <div className="w-full max-w-2xl">
+                            <TimeGrid
+                                rows={rows}
+                                cols={cols}
+                                cells={cells}
+                                states={BOOKING_STATES}
+                                selectionShape="linear"
+                                selection={selection}
+                                onSelectionChange={setSelection}
+                                cellWidth={6}
+                                cellHeight={12}
+                                windowColumns
+                                aria-label="A month of 6-minute slots"
+                            />
+                        </div>
+                    );
+                }
+
+                return <Month />;
+            },
+            code: `<TimeGrid
+    rows={days}          // 31
+    cols={slots}         // 240 six-minute slots
+    cells={cells}
+    states={states}
+    windowColumns        // default: on above 500 columns
+    cellWidth={6}
+/>`,
+        },
     ],
     props: [
         { name: "rows", type: `string[]`, default: "—", description: "Row labels, one per row in `value`.", required: true },
@@ -327,6 +514,18 @@ export const timeGridDoc: ComponentDoc = {
         { name: "ariaCell", type: `(r: number, c: number, on: boolean) => string`, default: "`rows[r] cols[c] on|off`", description: "Accessible label per cell." },
         { name: "cellId", type: `(r: number, c: number) => string`, default: "`` `${row}:${col}` ``", description: "Stable per-cell handle, emitted as `data-react-fancy-timegrid-cell`." },
         { name: "className", type: `string`, default: "—", description: "Classes on the outer scroll container." },
+        { name: "cells", type: `TimeGridCell[][]`, default: "—", description: "Typed grid: `{ state, disabled?, reasons?, marks?, meta? }` per cell, rows × cols. When given, `value`/`onChange` are ignored and `states` is required. `meta` is handed back untouched in every callback." },
+        { name: "states", type: `Record<string, { tone?, label?, className? }>`, default: "—", description: "Your state vocabulary: id → tone, screen-reader label and extra classes. Without a tone a state draws the neutral surface." },
+        { name: "marks", type: `Record<string, { tone?, icon?, label? }>`, default: "—", description: "Non-exclusive overlays drawn on top of a cell's state: a tone dot or an icon node." },
+        { name: "selectionShape", type: `"rectangle" | "linear"`, default: `"rectangle"`, description: "What a drag or Shift+arrow produces: the same window across rows, or one run in reading order that crosses row ends." },
+        { name: "selection", type: `TimeGridSelection | null`, default: "—", description: "Controlled selection; `null` is none. Omit for uncontrolled." },
+        { name: "onSelectionChange", type: `(next, cells: TimeGridCell[]) => void`, default: "—", description: "Every change. `cells` arrive in selection order (row-major), including columns a windowed grid has not rendered." },
+        { name: "onSelectionCommit", type: `(selection, cells) => void`, default: "—", description: "A drag ended, or Enter was pressed." },
+        { name: "disabledRange", type: `"clamp" | "refuse" | "span"`, default: `"clamp"`, description: "A range that crosses a disabled cell: cut it on the anchor's side, refuse it, or keep it whole." },
+        { name: "onBlockedSelect", type: `(blocked: { r, c, reasons? }[]) => void`, default: "—", description: "Fires when disabled cells clipped or refused a selection." },
+        { name: "onCellHover", type: `(cell, at) => void`, default: "—", description: "Hover for your own detail panel; `null, null` when the pointer leaves." },
+        { name: "windowColumns", type: `boolean`, default: "on above 500 columns", description: "Typed grid: render only the columns in view plus overscan. Keyboard focus and an out-of-view `selection` scroll into view." },
+        { name: "aria-label", type: `string`, default: "—", description: "Accessible name of the typed grid." },
     ],
     notes: (
         <ul>

@@ -234,6 +234,36 @@ const inputFamilyDoc: ComponentDoc = {
 />`,
         },
         {
+            name: "MultiSwitch colours",
+            description:
+                "Give an option a `color` and, while it is selected, the thumb and the border take it: a green Assign against a red Unassign. Light hues get dark label text. An option without one keeps the default blue.",
+            render: () => (
+                <div className="w-full max-w-sm space-y-3">
+                    <MultiSwitch
+                        label="Shift"
+                        list={[
+                            { value: "assign", label: "Assign", color: "green" },
+                            { value: "unassign", label: "Unassign", color: "red" },
+                            { value: "hold", label: "Hold", color: "amber" },
+                            { value: "skip", label: "Skip" },
+                        ]}
+                        defaultValue="assign"
+                    />
+                </div>
+            ),
+            code: `<MultiSwitch
+    label="Shift"
+    list={[
+        { value: "assign", label: "Assign", color: "green" },
+        { value: "unassign", label: "Unassign", color: "red" },
+        { value: "hold", label: "Hold", color: "amber" },
+        { value: "skip", label: "Skip" },          // default blue
+    ]}
+    value={action}
+    onValueChange={setAction}
+/>`,
+        },
+        {
             name: "Slider",
             description: "Numeric range. Defaults to single-value mode; opt into `range` for two thumbs.",
             render: () => (
@@ -450,5 +480,5 @@ export const checkboxGroupDoc = componentDoc("CheckboxGroup", "manages a control
 export const radioGroupDoc = componentDoc("RadioGroup", "manages one selected value from an accessible option group.", ["RadioGroup"]);
 export const switchDoc = componentDoc("Switch", "is the controlled on/off toggle control.", ["Switch & MultiSwitch"]);
 export const sliderDoc = componentDoc("Slider", "supports both single-value and two-thumb range selection.", ["Slider"]);
-export const multiSwitchDoc = componentDoc("MultiSwitch", "is the segmented toggle for one value among several options.", ["Switch & MultiSwitch"]);
+export const multiSwitchDoc = componentDoc("MultiSwitch", "is the segmented toggle for one value among several options.", ["Switch & MultiSwitch", "MultiSwitch colours"]);
 export const datePickerDoc = componentDoc("DatePicker", "supports controlled single dates, date-times and date ranges.", ["DatePicker"]);

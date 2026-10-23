@@ -1,5 +1,5 @@
 {
-    "count": 337,
+    "count": 338,
     "items": [
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
@@ -5128,6 +5128,17 @@
                     "target": "components/fancy/lib/themes/registry.ts"
                 }
             ]
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "fine-print",
+            "type": "registry:ui",
+            "title": "particle-academy/fine-print",
+            "description": "Pure-PHP PDF reader, writer and page renderer for agents, with guarded reads, active-content reporting and bounded input handling. Optional Laravel routes serve private watermarked PNG pages behind the app's own authorisation.",
+            "package": "fine-print",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",

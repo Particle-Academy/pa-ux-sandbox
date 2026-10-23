@@ -139,26 +139,6 @@ class PackageRegistry
      * @var array<string, array{name: string, repo: string, why: string}>
      */
     public const PLANNED = [
-        'fine-print' => [
-            'name' => 'particle-academy/fine-print',
-            'repo' => 'Particle-Academy/fine-print',
-            'why' => 'A first-party PDF READER, WRITER and (later) RENDERER in pure PHP, the fourth agentic-document package beside holy-sheet (xlsx), dark-slide (pptx) and last-word (docx). Registered 2026-10-21 before a line exists. Plan: .ai/plans/fine-print.md in the envelope.
-
-OWNER RULING (2026-10-21), verbatim: "we need to roll our own, this is a front end and back end functionality. And the viewer needs to (optionally) prevent downloads, screenshots and printing. (we will intentionally NOT support pdf form submission right now and our server side needs to be aware of script injection from 3rd party js in the pdf). The server side needs a package like holy-sheet so agents can read and build pdf`s (with security measures in place as a layer between the file and the agents read so prompt injection can be caught, flagged and discarded if needed)".
-
-WHY IT EXISTS. MOIC (priority consumer) filed react-fancy#36 for a secure PDF viewer. The VIEWER is react-fancy`s half. This is the SERVER half: pageCount(pdf), render(pdf, page, scale) to PNG, a burned-in tiled watermark, and a Laravel helper that serves page images behind the app`s own auth, cached by (file version, page, scale), with bounded memory and time and a clean refusal of bad files. The owner ruled out every third-party PDF library and binary (GD, Imagick, Ghostscript, poppler, MuPDF, smalot/pdfparser, FPDF, TCPDF, dompdf); only PHP`s bundled zlib, mbstring, json and ctype.
-
-PHASES, smallest dependable first:
-- P1 reader + security layer: parser (xref tables + streams, incremental updates, object streams, Flate/LZW/ASCII85/ASCIIHex/RunLength), text extraction with ToUnicode, metadata/outline/page sizes, ACTIVE-CONTENT detection (JS, OpenAction, AA, Launch, URI, SubmitForm, ImportData, EmbeddedFile, RichMedia, XFA, AcroForm; reported, never executed or followed), an AGENT-READ GUARD (prompt-injection, hidden/white text, zero-width/bidi, off-page text; policies flag/redact/discard, each finding located), hostile-input limits.
-- P2 writer: JSON document model aligned with last-word, standard-14 fonts then embedded TrueType, agent guide + lint.
-- P3 renderer: pure-PHP rasteriser to PNG (zlib-only encoder). Slow by nature, so cached.
-- P4 Laravel serving: auth-gated page-image route, (version, page, scale) cache, watermark, limits.
-- P5 JS/Python ports, only when a consumer needs them.
-
-OUT OF SCOPE: form submission (owner), signatures, JavaScript execution, encryption beyond detect-and-refuse.
-
-Packagist name `particle-academy/fine-print` 404 on repo.packagist.org/p2 on 2026-10-21 (control last-word 200). First version needs a tag, then an owner submit.',
-        ],
         'fancy-expr' => [
             'name' => 'fancy-expr',
             'repo' => 'Particle-Academy/fancy-expr',
@@ -342,6 +322,7 @@ Both registry names read as unclaimed on 2026-10-08 -- `@particle-academy/fancy-
         'holy-sheet' => ['group' => 'documents', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#10b981'],
         'dark-slide' => ['group' => 'documents', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#8b5cf6'],
         'last-word' => ['group' => 'documents', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#2563eb'],
+        'fine-print' => ['group' => 'documents', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#e11d48'],
         'fancy-heuristics' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#8b5cf6'],
         'fancy-x-files' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#64748b'],
         'fancy-cms' => ['group' => 'surfaces', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#0ea5e9'],
@@ -590,6 +571,15 @@ Both registry names read as unclaimed on 2026-10-08 -- `@particle-academy/fancy-
                 'composer' => 'particle-academy/last-word',
                 'repo' => 'Particle-Academy/last-word',
                 'packagist' => 'particle-academy/last-word',
+                'language' => 'PHP',
+            ],
+            [
+                'slug' => 'fine-print',
+                'name' => 'particle-academy/fine-print',
+                'tagline' => 'Pure-PHP PDF reader, writer and page renderer for agents, with guarded reads, active-content reporting and bounded input handling. Optional Laravel routes serve private watermarked PNG pages behind the app\'s own authorisation.',
+                'composer' => 'particle-academy/fine-print',
+                'repo' => 'Particle-Academy/fine-print',
+                'packagist' => 'particle-academy/fine-print',
                 'language' => 'PHP',
             ],
             [

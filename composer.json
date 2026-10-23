@@ -25,6 +25,7 @@
         "particle-academy/fancy-mlm": ">=0.3.0 <2.0",
         "particle-academy/fancy-seo": ">=0.5.0 <2.0",
         "particle-academy/fancy-x-files": ">=0.2.0 <2.0",
+        "particle-academy/fine-print": ">=0.1 <2.0",
         "particle-academy/holy-sheet": "^2.0.1",
         "particle-academy/laravel-catalog": ">=0.13.0 <2.0",
         "particle-academy/laravel-courses": ">=0.2.0 <2.0",

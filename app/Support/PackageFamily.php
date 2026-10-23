@@ -316,6 +316,20 @@ final class PackageFamily
             ]],
         ],
         [
+            'slug' => 'fine-print',
+            'name' => 'FinePrint',
+            'tagline' => 'Pure-PHP PDF reader, writer and renderer with guarded agent reads and optional private, watermarked Laravel page images.',
+            'group' => 'documents',
+            'kind' => 'headless',
+            'sections' => [[
+                'label' => 'Reader / writer / renderer',
+                'capability' => 'PDF reading, writing and page rendering with guarded reads',
+                'members' => [
+                    ['language' => 'PHP', 'slug' => 'fine-print'],
+                ],
+            ]],
+        ],
+        [
             'slug' => 'laravel-catalog',
             'name' => 'Fancy Catalog',
             'tagline' => 'Headless Stripe catalog — products / prices / plans + checkout — adapter-based with an injected Stripe client.',

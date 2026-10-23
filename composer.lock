@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5a8253e5d76b679bbf174d541e1406e7",
+    "content-hash": "ad96e32dab619ad291509bde10bda7fd",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -4533,6 +4533,74 @@
             "time": "2026-08-07T15:22:43+00:00"
         },
         {
+            "name": "particle-academy/fine-print",
+            "version": "v0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Particle-Academy/fine-print.git",
+                "reference": "12d80502dfd6e297810a2cb34a22dba11b050b63"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Particle-Academy/fine-print/zipball/12d80502dfd6e297810a2cb34a22dba11b050b63",
+                "reference": "12d80502dfd6e297810a2cb34a22dba11b050b63",
+                "shasum": ""
+            },
+            "require": {
+                "ext-ctype": "*",
+                "ext-json": "*",
+                "ext-mbstring": "*",
+                "ext-zlib": "*",
+                "php": "^8.4"
+            },
+            "require-dev": {
+                "illuminate/cache": "^13.0",
+                "illuminate/events": "^13.0",
+                "illuminate/http": "^13.0",
+                "illuminate/routing": "^13.0",
+                "pestphp/pest": "^3.0|^4.0"
+            },
+            "suggest": {
+                "illuminate/cache": "Only needed for the optional Laravel page-image helper; core reading, writing and rendering need no framework.",
+                "illuminate/routing": "Only needed for the optional Laravel page-image route helper (Laravel 13)."
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "FinePrint\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Particle Academy",
+                    "homepage": "https://github.com/Particle-Academy"
+                }
+            ],
+            "description": "First-party PDF reader, writer and renderer for agentic docs, in pure PHP with zero runtime dependencies. Writes PDF 1.7 from the last-word JSON document model and never writes active content. Parses PDFs, extracts text in reading order, reports active content without executing it, and guards agent reads against prompt injection. Renders vector paths, TrueType text, sampled images and baseline JPEG to PNG. Hostile-input limits refuse bombs, cycles and oversized images cleanly; unsupported content is reported.",
+            "homepage": "https://github.com/Particle-Academy/fine-print",
+            "keywords": [
+                "agentic",
+                "ai",
+                "document",
+                "particle-academy",
+                "pdf",
+                "pdf-parser",
+                "pdf-renderer",
+                "prompt-injection",
+                "security",
+                "text-extraction"
+            ],
+            "support": {
+                "issues": "https://github.com/Particle-Academy/fine-print/issues",
+                "source": "https://github.com/Particle-Academy/fine-print"
+            },
+            "time": "2026-10-23T05:17:52+00:00"
+        },
+        {
             "name": "particle-academy/holy-sheet",
             "version": "v2.9.1",
             "source": {
@@ -7396,16 +7464,16 @@
         },
         {
             "name": "symfony/http-foundation",
-            "version": "v8.1.5",
+            "version": "v8.1.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/http-foundation.git",
-                "reference": "ee16f97e95cfa011a742714d7c8c8f70fe7423f4"
+                "reference": "7850897fb8659f98491b03be79ac48600bdaf9ab"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/http-foundation/zipball/ee16f97e95cfa011a742714d7c8c8f70fe7423f4",
-                "reference": "ee16f97e95cfa011a742714d7c8c8f70fe7423f4",
+                "url": "https://api.github.com/repos/symfony/http-foundation/zipball/7850897fb8659f98491b03be79ac48600bdaf9ab",
+                "reference": "7850897fb8659f98491b03be79ac48600bdaf9ab",
                 "shasum": ""
             },
             "require": {
@@ -7453,7 +7521,7 @@
             "description": "Defines an object-oriented layer for the HTTP specification",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/http-foundation/tree/v8.1.5"
+                "source": "https://github.com/symfony/http-foundation/tree/v8.1.9"
             },
             "funding": [
                 {
@@ -7473,7 +7541,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-08-20T09:59:12+00:00"
+            "time": "2026-10-08T16:57:43+00:00"
         },
         {
             "name": "symfony/http-kernel",
@@ -9332,16 +9400,16 @@
         },
         {
             "name": "symfony/yaml",
-            "version": "v8.1.0",
+            "version": "v8.1.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/yaml.git",
-                "reference": "efb42bd2c6f4f3ccfd4683583449938b5fc146b0"
+                "reference": "6107ee26a25215c3df3af0a3315e56bb4fd0b7db"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/yaml/zipball/efb42bd2c6f4f3ccfd4683583449938b5fc146b0",
-                "reference": "efb42bd2c6f4f3ccfd4683583449938b5fc146b0",
+                "url": "https://api.github.com/repos/symfony/yaml/zipball/6107ee26a25215c3df3af0a3315e56bb4fd0b7db",
+                "reference": "6107ee26a25215c3df3af0a3315e56bb4fd0b7db",
                 "shasum": ""
             },
             "require": {
@@ -9384,7 +9452,7 @@
             "description": "Loads and dumps YAML files",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/yaml/tree/v8.1.0"
+                "source": "https://github.com/symfony/yaml/tree/v8.1.9"
             },
             "funding": [
                 {
@@ -9404,7 +9472,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-05-29T05:06:50+00:00"
+            "time": "2026-10-12T12:37:13+00:00"
         },
         {
             "name": "thecodingmachine/safe",

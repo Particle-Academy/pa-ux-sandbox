@@ -1,14 +1,30 @@
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { createElement, type ReactNode } from 'react';
+
+const { seoCalls, sharedSeo } = vi.hoisted(() => ({
+    seoCalls: [] as Record<string, unknown>[],
+    sharedSeo: {
+        title: 'The server owns this preview title',
+        description: 'The server preview description',
+        canonical: 'https://fancy.example/inspiration/fieldwork/swiss',
+        image: 'https://fancy.example/preview.png',
+        type: 'website',
+        robots: 'noindex, nofollow',
+    },
+}));
 
 vi.mock('../../resources/js/Pages/Layout', () => ({
     Layout: ({ children }: { children: ReactNode }) => createElement('div', null,
         createElement('header', { 'data-showcase-layout': '' }), children,
         createElement('footer', { 'data-showcase-layout': '' })),
 }));
-vi.mock('@inertiajs/react', () => ({ Head: () => null, Link: 'a' }));
-vi.mock('@particle-academy/fancy-inertia/seo', () => ({ Seo: () => null }));
+vi.mock('@inertiajs/react', () => ({
+    Head: () => null, Link: 'a', usePage: () => ({ props: { seo: sharedSeo } }),
+}));
+vi.mock('@particle-academy/fancy-inertia/seo', () => ({
+    Seo: (props: Record<string, unknown>) => { seoCalls.push(props); return null; },
+}));
 vi.mock('../../resources/js/Pages/Inspiration/styles', () => ({
     STYLE_COMPONENTS: { fieldwork: { swiss: () => createElement('main', { 'data-style-content': '' }, 'Actual style') } },
 }));
@@ -22,6 +38,18 @@ const props = {
 } as unknown as Parameters<typeof InspirationShow>[0];
 
 describe('gallery preview chrome', () => {
+    beforeEach(() => { seoCalls.length = 0; });
+
+    it('replays the server-owned preview head without inventing page values', () => {
+        renderToStaticMarkup(createElement(InspirationShow, { ...props, framed: false }));
+        expect(seoCalls).toHaveLength(1);
+        expect(seoCalls[0]).toMatchObject({
+            title: sharedSeo.title, description: sharedSeo.description,
+            canonical: sharedSeo.canonical, image: sharedSeo.image,
+            type: 'website', noindex: true,
+        });
+    });
+
     it('renders only the style when frameless', () => {
         const html = renderToStaticMarkup(createElement(InspirationShow, { ...props, framed: false }));
         expect(html).toContain('data-style-content');

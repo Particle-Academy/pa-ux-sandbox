@@ -83,6 +83,11 @@ it('serves a noindex frameless preview without advertising another SEO page', fu
             ->where('style.id', 'swiss'));
 
     $html = $response->getContent();
+    preg_match('#<title[^>]*>(.*?)</title>#s', $html, $title);
+    preg_match('#<script data-page="app" type="application/json">(.*?)</script>#s', $html, $page);
+    $seo = json_decode($page[1] ?? '{}', true, flags: JSON_THROW_ON_ERROR)['props']['seo'] ?? null;
+    expect($seo)->not->toBeNull();
+    expect($seo['title'])->toBe(html_entity_decode(trim($title[1] ?? ''), ENT_QUOTES));
     expect($html)->toMatch('/<meta[^>]+name="robots"[^>]+content="noindex[^" ]*/');
     expect($html)->not->toContain('application/ld+json');
     expect($this->get('/sitemap.xml')->assertOk()->getContent())->not->toContain('frame=0');

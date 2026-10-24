@@ -1,5 +1,5 @@
 import { Head, Link } from "@inertiajs/react";
-import { Seo } from "@particle-academy/fancy-inertia/seo";
+import { ServerSeo } from "../../lib/ServerSeo";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { ArrowLeft, Check, ChevronLeft, ChevronRight, Copy, Info, Layers, Plus, X } from "lucide-react";
 import { Layout } from "../Layout";
@@ -35,7 +35,7 @@ export default function InspirationShow({
 
     const content = StyleComponent ? <StyleComponent style={style} /> : <Placeholder collection={collection} style={style} />;
     if (!framed) {
-        return <><Seo title={`${style.name} · ${collection.name} (preview) · Fancy UI`} noindex />{content}</>;
+        return <><ServerSeo />{content}</>;
     }
 
     return (

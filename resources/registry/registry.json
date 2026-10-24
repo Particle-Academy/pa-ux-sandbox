@@ -1,5 +1,5 @@
 {
-    "count": 340,
+    "count": 341,
     "items": [
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
@@ -4534,6 +4534,17 @@
             "title": "fancy-inertia",
             "description": "Inertia.js bridge \u2014 schema-driven pages, useFancyForm(), SSR boundaries. Works with ANY Inertia backend (zero Laravel/PHP runtime deps), not just Laravel.",
             "package": "fancy-inertia",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "fancy-live",
+            "type": "registry:ui",
+            "title": "particle-academy/fancy-live",
+            "description": "First-party realtime publishing: Pusher-protocol HTTP publish and private/presence channel authorization with zero runtime dependencies, plus an optional Laravel broadcaster. The browser half is fancy-query/socket. Pre-1.0.",
+            "package": "fancy-live",
             "dependencies": [],
             "registryDependencies": [],
             "files": []

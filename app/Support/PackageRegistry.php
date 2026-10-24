@@ -43,21 +43,6 @@ class PackageRegistry
         // taken exactly" and not "may I create it".
         'fancy-inertia-server',
 
-        // `fancy-live` -- BUILT (repo created 2026-10-23), not yet on Packagist.
-        //
-        // Moved out of PLANNED when its source was built and reviewed. A new
-        // Packagist name needs the owner's one-time submit AFTER the first tag,
-        // and the first tag waits on its own Pest suite (owner approved Pest
-        // 2026-10-23). Offering `composer require` for a name that 404s is the
-        // `fancy-trading-ui` mistake.
-        //
-        // REMOVE THIS SLUG when
-        // https://repo.packagist.org/p2/particle-academy/fancy-live.json lists a
-        // version -- the p2 endpoint, not the packagist.org page -- and run
-        // `php artisan readmes:build` in the same commit: hidden packages are
-        // skipped by it, so its README is not in readmes.json until then.
-        'fancy-live',
-
         // `fancy-schema` -- BUILT and TAGGED (v0.2.0), not installable.
         //
         // The npm name `@particle-academy/fancy-schema` does not exist yet, and

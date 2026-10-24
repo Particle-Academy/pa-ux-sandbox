@@ -4724,16 +4724,16 @@
         },
         {
             "name": "particle-academy/laravel-courses",
-            "version": "v0.2.0",
+            "version": "v0.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/laravel-courses.git",
-                "reference": "3dbb3e3d4a39064a1aa471ccd311c18fe2ace70c"
+                "reference": "7a2babbf6fe8f0236ae01afed108603b9bd7b643"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/laravel-courses/zipball/3dbb3e3d4a39064a1aa471ccd311c18fe2ace70c",
-                "reference": "3dbb3e3d4a39064a1aa471ccd311c18fe2ace70c",
+                "url": "https://api.github.com/repos/Particle-Academy/laravel-courses/zipball/7a2babbf6fe8f0236ae01afed108603b9bd7b643",
+                "reference": "7a2babbf6fe8f0236ae01afed108603b9bd7b643",
                 "shasum": ""
             },
             "require": {
@@ -4771,9 +4771,9 @@
             "description": "Laravel package for selling and serving educational curriculums, courses, tests, and certificates.",
             "support": {
                 "issues": "https://github.com/Particle-Academy/laravel-courses/issues",
-                "source": "https://github.com/Particle-Academy/laravel-courses/tree/v0.2.0"
+                "source": "https://github.com/Particle-Academy/laravel-courses/tree/v0.3.0"
             },
-            "time": "2026-08-07T15:05:38+00:00"
+            "time": "2026-10-24T16:15:38+00:00"
         },
         {
             "name": "particle-academy/laravel-fms",

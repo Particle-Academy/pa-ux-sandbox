@@ -18,8 +18,8 @@
         "fancy-catalog-py": "0.2.0",
         "fancy-cf-relay": "0.2.0",
         "fancy-cli": "0.8.3",
-        "fancy-cms": "0.3.0",
-        "fancy-cms-ui": "0.7.1",
+        "fancy-cms": "0.5.0",
+        "fancy-cms-ui": "0.9.0",
         "fancy-code": "0.15.0",
         "fancy-conformance": "0.34.0",
         "fancy-connector-core": "0.10.1",
@@ -92,7 +92,8 @@
         "last-word-py": "0.6.0",
         "mcp-relay-client": "0.3.0",
         "prism": "0.133.1",
-        "prism-browser": "0.1.2",
+        "prism-acp-ts": "0.24.1",
+        "prism-browser": "0.2.0",
         "prism-browser-py": "0.1.1",
         "prism-browser-ts": "0.2.1",
         "prism-harness": "0.13.0",
@@ -113,11 +114,67 @@
         "prism-ts": "0.3.0",
         "prism-workspace": "0.2.0",
         "prism-workspace-ts": "0.2.0",
-        "react-fancy": "5.59.0",
+        "react-fancy": "5.60.0",
         "teachers-aid": "0.2.0",
         "teachers-aid-ui": "0.3.0"
     },
     "releases": [
+        {
+            "slug": "react-fancy",
+            "registry": "npm",
+            "version": "5.60.0",
+            "published_at": "2026-10-23T21:45:26Z",
+            "first": false
+        },
+        {
+            "slug": "fancy-cms-ui",
+            "registry": "npm",
+            "version": "0.9.0",
+            "published_at": "2026-10-23T21:37:37Z",
+            "first": false
+        },
+        {
+            "slug": "fancy-cms",
+            "registry": "composer",
+            "version": "0.5.0",
+            "published_at": "2026-10-23T21:30:46Z",
+            "first": false
+        },
+        {
+            "slug": "prism-acp-ts",
+            "registry": "npm",
+            "version": "0.24.1",
+            "published_at": "2026-10-23T21:14:29Z",
+            "first": false
+        },
+        {
+            "slug": "fancy-cms-ui",
+            "registry": "npm",
+            "version": "0.8.0",
+            "published_at": "2026-10-23T21:07:22Z",
+            "first": false
+        },
+        {
+            "slug": "prism-browser",
+            "registry": "composer",
+            "version": "0.2.0",
+            "published_at": "2026-10-23T21:04:32Z",
+            "first": false
+        },
+        {
+            "slug": "fancy-cms",
+            "registry": "composer",
+            "version": "0.4.0",
+            "published_at": "2026-10-23T17:53:36Z",
+            "first": false
+        },
+        {
+            "slug": "prism-acp-ts",
+            "registry": "npm",
+            "version": "0.24.0",
+            "published_at": "2026-10-23T16:32:22Z",
+            "first": false
+        },
         {
             "slug": "fine-print",
             "registry": "composer",
@@ -147,6 +204,20 @@
             "first": true
         },
         {
+            "slug": "prism-acp-ts",
+            "registry": "npm",
+            "version": "0.23.2",
+            "published_at": "2026-10-23T04:46:51Z",
+            "first": false
+        },
+        {
+            "slug": "prism-acp-ts",
+            "registry": "npm",
+            "version": "0.23.1",
+            "published_at": "2026-10-22T22:44:42Z",
+            "first": false
+        },
+        {
             "slug": "react-fancy",
             "registry": "npm",
             "version": "5.58.0",
@@ -161,6 +232,13 @@
             "first": false
         },
         {
+            "slug": "prism-acp-ts",
+            "registry": "npm",
+            "version": "0.23.0",
+            "published_at": "2026-10-22T21:06:51Z",
+            "first": false
+        },
+        {
             "slug": "react-fancy",
             "registry": "npm",
             "version": "5.56.0",
@@ -172,6 +250,13 @@
             "registry": "npm",
             "version": "5.55.0",
             "published_at": "2026-10-21T21:01:47Z",
+            "first": false
+        },
+        {
+            "slug": "prism-acp-ts",
+            "registry": "npm",
+            "version": "0.22.0",
+            "published_at": "2026-10-21T20:54:15Z",
             "first": false
         },
         {
@@ -343,6 +428,13 @@
             "first": false
         },
         {
+            "slug": "prism-acp-ts",
+            "registry": "npm",
+            "version": "0.21.1",
+            "published_at": "2026-10-21T00:05:44Z",
+            "first": false
+        },
+        {
             "slug": "fancy-pty",
             "registry": "npm",
             "version": "0.2.0",
@@ -350,10 +442,24 @@
             "first": false
         },
         {
+            "slug": "prism-acp-ts",
+            "registry": "npm",
+            "version": "0.21.0",
+            "published_at": "2026-10-20T23:54:49Z",
+            "first": false
+        },
+        {
             "slug": "fancy-term-host",
             "registry": "npm",
             "version": "0.11.0",
             "published_at": "2026-10-20T23:51:22Z",
+            "first": false
+        },
+        {
+            "slug": "prism-acp-ts",
+            "registry": "npm",
+            "version": "0.20.0",
+            "published_at": "2026-10-20T21:42:36Z",
             "first": false
         },
         {
@@ -529,6 +635,13 @@
             "registry": "npm",
             "version": "5.45.0",
             "published_at": "2026-10-19T21:21:55Z",
+            "first": false
+        },
+        {
+            "slug": "prism-acp-ts",
+            "registry": "npm",
+            "version": "0.19.0",
+            "published_at": "2026-10-19T21:05:09Z",
             "first": false
         },
         {
@@ -959,6 +1072,20 @@
             "first": false
         },
         {
+            "slug": "prism-acp-ts",
+            "registry": "npm",
+            "version": "0.18.0",
+            "published_at": "2026-10-18T04:55:15Z",
+            "first": false
+        },
+        {
+            "slug": "prism-acp-ts",
+            "registry": "npm",
+            "version": "0.17.0",
+            "published_at": "2026-10-18T01:37:11Z",
+            "first": false
+        },
+        {
             "slug": "prism-browser",
             "registry": "composer",
             "version": "0.1.2",
@@ -984,6 +1111,13 @@
             "registry": "composer",
             "version": "0.1.1",
             "published_at": "2026-10-18T00:53:18Z",
+            "first": false
+        },
+        {
+            "slug": "prism-acp-ts",
+            "registry": "npm",
+            "version": "0.16.0",
+            "published_at": "2026-10-17T23:49:16Z",
             "first": false
         },
         {
@@ -1036,6 +1170,13 @@
             "first": false
         },
         {
+            "slug": "prism-acp-ts",
+            "registry": "npm",
+            "version": "0.15.0",
+            "published_at": "2026-10-16T22:56:39Z",
+            "first": false
+        },
+        {
             "slug": "prism-harness-ts",
             "registry": "npm",
             "version": "0.7.0",
@@ -1057,6 +1198,20 @@
             "first": false
         },
         {
+            "slug": "prism-acp-ts",
+            "registry": "npm",
+            "version": "0.14.0",
+            "published_at": "2026-10-15T16:48:01Z",
+            "first": false
+        },
+        {
+            "slug": "prism-acp-ts",
+            "registry": "npm",
+            "version": "0.13.0",
+            "published_at": "2026-10-15T15:23:33Z",
+            "first": false
+        },
+        {
             "slug": "fancy-pty",
             "registry": "npm",
             "version": "0.1.4",
@@ -1068,6 +1223,41 @@
             "registry": "npm",
             "version": "5.38.0",
             "published_at": "2026-10-15T02:08:58Z",
+            "first": false
+        },
+        {
+            "slug": "prism-acp-ts",
+            "registry": "npm",
+            "version": "0.12.0",
+            "published_at": "2026-10-14T16:29:18Z",
+            "first": false
+        },
+        {
+            "slug": "prism-acp-ts",
+            "registry": "npm",
+            "version": "0.11.0",
+            "published_at": "2026-10-13T20:20:44Z",
+            "first": false
+        },
+        {
+            "slug": "prism-acp-ts",
+            "registry": "npm",
+            "version": "0.10.0",
+            "published_at": "2026-10-13T15:36:04Z",
+            "first": false
+        },
+        {
+            "slug": "prism-acp-ts",
+            "registry": "npm",
+            "version": "0.9.0",
+            "published_at": "2026-10-13T14:23:31Z",
+            "first": false
+        },
+        {
+            "slug": "prism-acp-ts",
+            "registry": "npm",
+            "version": "0.8.0",
+            "published_at": "2026-10-13T14:12:33Z",
             "first": false
         },
         {
@@ -1103,6 +1293,13 @@
             "registry": "npm",
             "version": "0.10.0",
             "published_at": "2026-10-11T20:42:15Z",
+            "first": false
+        },
+        {
+            "slug": "prism-acp-ts",
+            "registry": "npm",
+            "version": "0.7.0",
+            "published_at": "2026-10-11T20:30:26Z",
             "first": false
         },
         {
@@ -1176,6 +1373,13 @@
             "first": true
         },
         {
+            "slug": "prism-acp-ts",
+            "registry": "npm",
+            "version": "0.6.2",
+            "published_at": "2026-10-10T23:18:17Z",
+            "first": false
+        },
+        {
             "slug": "fancy-term-host",
             "registry": "npm",
             "version": "0.9.0",
@@ -1239,6 +1443,62 @@
             "first": false
         },
         {
+            "slug": "prism-acp-ts",
+            "registry": "npm",
+            "version": "0.6.1",
+            "published_at": "2026-10-08T21:41:11Z",
+            "first": false
+        },
+        {
+            "slug": "prism-acp-ts",
+            "registry": "npm",
+            "version": "0.6.0",
+            "published_at": "2026-10-08T19:34:35Z",
+            "first": false
+        },
+        {
+            "slug": "prism-acp-ts",
+            "registry": "npm",
+            "version": "0.5.4",
+            "published_at": "2026-10-08T06:08:02Z",
+            "first": false
+        },
+        {
+            "slug": "prism-acp-ts",
+            "registry": "npm",
+            "version": "0.5.3",
+            "published_at": "2026-10-08T05:55:20Z",
+            "first": false
+        },
+        {
+            "slug": "prism-acp-ts",
+            "registry": "npm",
+            "version": "0.5.2",
+            "published_at": "2026-10-08T05:28:29Z",
+            "first": false
+        },
+        {
+            "slug": "prism-acp-ts",
+            "registry": "npm",
+            "version": "0.5.1",
+            "published_at": "2026-10-08T04:29:41Z",
+            "first": false
+        },
+        {
+            "slug": "prism-acp-ts",
+            "registry": "npm",
+            "version": "0.5.0",
+            "published_at": "2026-10-08T03:39:57Z",
+            "first": false
+        },
+        {
+            "slug": "prism-acp-ts",
+            "registry": "npm",
+            "version": "0.4.1",
+            "published_at": "2026-10-08T02:05:54Z",
+            "first": false
+        },
+        {
             "slug": "fancy-term-host",
             "registry": "npm",
             "version": "0.7.0",
@@ -1278,6 +1538,13 @@
             "registry": "composer",
             "version": "0.14.0",
             "published_at": "2026-10-08T00:28:18Z",
+            "first": false
+        },
+        {
+            "slug": "prism-acp-ts",
+            "registry": "npm",
+            "version": "0.4.0",
+            "published_at": "2026-10-08T00:22:21Z",
             "first": false
         },
         {
@@ -1334,6 +1601,13 @@
             "registry": "composer",
             "version": "0.12.0",
             "published_at": "2026-10-07T20:42:29Z",
+            "first": false
+        },
+        {
+            "slug": "prism-acp-ts",
+            "registry": "npm",
+            "version": "0.3.0",
+            "published_at": "2026-10-07T20:20:49Z",
             "first": false
         },
         {
@@ -1428,6 +1702,13 @@
             "first": false
         },
         {
+            "slug": "prism-acp-ts",
+            "registry": "npm",
+            "version": "0.2.0",
+            "published_at": "2026-10-07T19:16:53Z",
+            "first": false
+        },
+        {
             "slug": "prism-memory-ts",
             "registry": "npm",
             "version": "0.2.0",
@@ -1454,6 +1735,13 @@
             "version": "0.33.0",
             "published_at": "2026-10-06T18:07:35Z",
             "first": false
+        },
+        {
+            "slug": "prism-acp-ts",
+            "registry": "npm",
+            "version": "0.1.0",
+            "published_at": "2026-10-06T05:42:03Z",
+            "first": true
         },
         {
             "slug": "fancy-flow",
@@ -4064,62 +4352,6 @@
             "registry": "npm",
             "version": "0.9.0",
             "published_at": "2026-08-25T06:12:01Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-flow",
-            "registry": "npm",
-            "version": "0.50.0",
-            "published_at": "2026-08-24T20:56:35Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-flow-py",
-            "registry": "pypi",
-            "version": "0.3.0",
-            "published_at": "2026-08-24T20:56:27Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-flow-php",
-            "registry": "composer",
-            "version": "0.24.0",
-            "published_at": "2026-08-24T20:55:44Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-flow-php",
-            "registry": "composer",
-            "version": "0.23.0",
-            "published_at": "2026-08-24T19:32:34Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-flow-php",
-            "registry": "composer",
-            "version": "0.22.0",
-            "published_at": "2026-08-24T19:06:07Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-flow-py",
-            "registry": "pypi",
-            "version": "0.2.0",
-            "published_at": "2026-08-24T16:12:26Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-flow-php",
-            "registry": "composer",
-            "version": "0.21.0",
-            "published_at": "2026-08-24T16:05:52Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-flow",
-            "registry": "npm",
-            "version": "0.49.0",
-            "published_at": "2026-08-24T15:18:00Z",
             "first": false
         }
     ]

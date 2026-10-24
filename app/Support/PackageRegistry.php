@@ -309,6 +309,7 @@ Both registry names read as unclaimed on 2026-10-08 -- `@particle-academy/fancy-
         // Headless TS ports / collectors / tooling.
         'prism-ts' => ['group' => 'platform', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#a855f7'],
         'prism-py' => ['group' => 'platform', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#a855f7'],
+        'prism-acp-ts' => ['group' => 'platform', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#a855f7'],
         'prism-browser-ts' => ['group' => 'platform', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#a855f7'],
         'prism-browser-py' => ['group' => 'platform', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#a855f7'],
         'prism-harness-ts' => ['group' => 'platform', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#a855f7'],
@@ -875,6 +876,14 @@ Both registry names read as unclaimed on 2026-10-08 -- `@particle-academy/fancy-
                 'tagline' => 'Node/TS port of prism -- Unified text / structured / streaming across providers, with per-run spend attribution.',
                 'npm' => '@particle-academy/prism',
                 'repo' => 'Particle-Academy/prism-ts',
+                'language' => 'TypeScript',
+            ],
+            [
+                'slug' => 'prism-acp-ts',
+                'name' => '@particle-academy/prism-acp',
+                'tagline' => 'Agent Client Protocol for Prism -- speak ACP to a coding-agent CLI the user has already authenticated (Claude, Codex). No API key, no third-party adapter.',
+                'npm' => '@particle-academy/prism-acp',
+                'repo' => 'Particle-Academy/prism-acp-ts',
                 'language' => 'TypeScript',
             ],
             [
@@ -1492,6 +1501,7 @@ Both registry names read as unclaimed on 2026-10-08 -- `@particle-academy/fancy-
             ['slug' => 'progress', 'name' => 'Progress'],
             ['slug' => 'prompt-input', 'name' => 'PromptInput'],
             ['slug' => 'reason-tag', 'name' => 'ReasonTag'],
+            ['slug' => 'resizable-panels', 'name' => 'ResizablePanels', 'blurb' => 'Two panels with an accessible, draggable separator: a percentage split, keyboard steps, and a commit event to persist the size.'],
             ['slug' => 'separator', 'name' => 'Separator'],
             ['slug' => 'sidebar', 'name' => 'Sidebar'],
             ['slug' => 'skeleton', 'name' => 'Skeleton'],

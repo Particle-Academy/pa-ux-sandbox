@@ -119,6 +119,59 @@ it('resolves the distribution for the LANGUAGE asked for, not a guess', function
     expect($result['using'][0]['latest'])->toBe('2.1.0');
 });
 
+it('resolves a Python port that is its own registry entry, by its PyPI name', function () {
+    // Reported by a consumer (Maipa, 2026-10-23): fancy-flow's Python port is a
+    // separate entry (`fancy-flow-py`) that publishes to PyPI as `fancy-flow`.
+    // Asked for `fancy-flow` as Python, the tool matched the TypeScript entry by
+    // slug and answered "publishes nothing for python", which is false.
+    Http::fake([
+        'pypi.org/pypi/fancy-flow/json' => Http::response(['info' => ['name' => 'fancy-flow', 'version' => '0.29.0'], 'releases' => ['0.29.0' => [[]]]], 200),
+        'pypi.org/*' => Http::response([], 404),
+        'registry.npmjs.org/*' => Http::response([], 404),
+        'repo.packagist.org/*' => Http::response([], 404),
+    ]);
+
+    $result = checkVersions(['lang' => 'python', 'packages' => ['fancy-flow']]);
+
+    expect($result['using'])->toHaveCount(1);
+    expect($result['using'][0]['status'])->not->toBe('no-distribution');
+    expect($result['using'][0]['package'])->toBe('fancy-flow');
+    expect($result['using'][0]['slug'])->toBe('fancy-flow-py');
+});
+
+it('still resolves a slug for the language whose entry it is', function () {
+    fakeRegistries(npm: [
+        '@particle-academy/fancy-flow' => npmDoc('@particle-academy/fancy-flow', '0.70.0'),
+    ]);
+
+    $result = checkVersions(['lang' => 'node', 'packages' => ['fancy-flow']]);
+
+    expect($result['using'][0]['slug'])->toBe('fancy-flow');
+    expect($result['using'][0]['package'])->toBe('@particle-academy/fancy-flow');
+});
+
+it('does not report an OPTIONAL peer as missing', function () {
+    // Reported by a consumer (Maipa, 2026-10-23). A peer marked optional in
+    // peerDependenciesMeta is one the package works without; listing it under
+    // `add` told the caller to install it.
+    $doc = npmDoc('@particle-academy/fancy-inertia', '0.14.0', peers: [
+        '@particle-academy/react-fancy' => '>=5 <6',
+        '@particle-academy/fancy-echarts' => '>=6 <7',
+    ]);
+    $doc['versions']['0.14.0']['peerDependenciesMeta'] = ['@particle-academy/fancy-echarts' => ['optional' => true]];
+    fakeRegistries(npm: [
+        '@particle-academy/fancy-inertia' => $doc,
+        '@particle-academy/react-fancy' => npmDoc('@particle-academy/react-fancy', '5.59.0'),
+        '@particle-academy/fancy-echarts' => npmDoc('@particle-academy/fancy-echarts', '6.4.0'),
+    ]);
+
+    $result = checkVersions(['lang' => 'node', 'packages' => ['fancy-inertia']]);
+    $added = array_column($result['add'], 'slug');
+
+    expect($added)->toContain('react-fancy');
+    expect($added)->not->toContain('fancy-echarts');
+});
+
 it('says whether the version the caller already has is behind', function () {
     fakeRegistries(npm: [
         '@particle-academy/react-fancy' => npmDoc('@particle-academy/react-fancy', '5.26.0'),

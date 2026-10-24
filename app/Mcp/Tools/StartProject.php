@@ -140,7 +140,9 @@ class StartProject extends Tool
             'pick_when' => "You're on a JS stack or don't want Laravel. react-fancy is plain React; you bring your own data layer.",
             'fancy_core' => [
                 '@particle-academy/react-fancy — UI primitives',
-                'your own data layer — fetch / server actions / tRPC / TanStack Query. NOTE: fancy-inertia + fancy-query need INERTIA, not Laravel — they have zero PHP/Laravel runtime deps, so use them with any Inertia server adapter (Adonis, Rails, …); skip them only if you are not using Inertia.',
+                'your own data layer — fetch / server actions / tRPC / TanStack Query.',
+                '@particle-academy/fancy-query — server-state on TanStack Query, and it needs NO Inertia: its root (FancyDataRoot, useFancyQuery, useFancyMutation, useFancyStream, live contracts) is backend-independent. Only its `/inertia` entry (page-prop hydration) needs @inertiajs/react, an optional peer.',
+                '@particle-academy/fancy-inertia — only if you use Inertia. It needs an Inertia SERVER adapter, not Laravel (zero PHP/Laravel runtime deps), so it works with Adonis, Rails and others.',
             ],
             'server_packages' => [
                 'catalog (Stripe products/prices/checkout)' => '@particle-academy/fancy-catalog',
@@ -176,7 +178,9 @@ class StartProject extends Tool
             'pick_when' => 'Your server is Python. The framework-free cores ship natively on PyPI, so you do not need a JS sidecar for them.',
             'fancy_core' => [
                 '@particle-academy/react-fancy — UI primitives. Plain React 19 + Tailwind v4; serve it from a Vite SPA or any bundle your app can host.',
-                'your own data layer — fetch / HTMX / an Inertia adapter. fancy-inertia + fancy-query need INERTIA, not Laravel, so they work with a Python Inertia adapter.',
+                'your own data layer — fetch / HTMX / an Inertia adapter.',
+                '@particle-academy/fancy-query — server-state on TanStack Query, and it needs NO Inertia: its root (FancyDataRoot, useFancyQuery, useFancyMutation, useFancyStream) works against any HTTP API your Python app serves. Only its `/inertia` entry needs @inertiajs/react, an optional peer.',
+                '@particle-academy/fancy-inertia — only if you use Inertia, with a Python Inertia server adapter. Fancy does not publish one on PyPI today.',
             ],
             'server_packages' => [
                 'workflow graphs (engine + durable runs)' => 'fancy-flow',

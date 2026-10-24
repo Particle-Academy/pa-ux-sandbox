@@ -91,3 +91,18 @@ it('stops telling Python users their only option is a JS sidecar', function () {
     expect($other['label'])->not->toContain('Python,');
     expect($other['pick_when'])->toContain('Python');
 });
+
+it('never tells a non-Laravel backend that fancy-query needs Inertia', function () {
+    // Reported by a consumer (Maipa, 2026-10-23): the Python and Node guides said
+    // "fancy-inertia + fancy-query need INERTIA". fancy-query's root is
+    // backend-independent; only its /inertia hydration entry needs Inertia, as an
+    // optional peer. Telling a Python app it needs an Inertia adapter for
+    // server-state sent it looking for a host it does not need.
+    foreach (['python', 'node'] as $backend) {
+        $guide = json_encode(callPrivate($backend), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+
+        expect($guide)->not->toContain('fancy-inertia + fancy-query need INERTIA');
+        expect($guide)->toContain('fancy-query');
+        expect($guide)->toContain('needs NO Inertia');
+    }
+});

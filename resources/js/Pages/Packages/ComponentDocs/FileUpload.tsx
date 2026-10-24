@@ -31,11 +31,11 @@ export const fileUploadDoc: ComponentDoc = {
         },
         {
             name: "Multiple + accept",
-            description: "Allow multiple files and restrict by mime type or extension.",
+            description: "Allow multiple files and restrict by mime type or extension. With custom children, `browseLabel` sets the accessible name of the zone's keyboard browse button (default \"Browse files\").",
             render: () => (
                 <div className="w-full max-w-md">
                     <FileUpload multiple accept="image/*" maxFiles={5} onChange={() => {}}>
-                        <FileUpload.Dropzone>
+                        <FileUpload.Dropzone browseLabel="Browse images">
                             <div className="text-center">
                                 <Text size="sm" weight="semibold">Drop images here</Text>
                                 <Text size="xs" className="mt-1 !text-zinc-500">PNG, JPG, GIF · up to 5 files</Text>
@@ -51,7 +51,8 @@ export const fileUploadDoc: ComponentDoc = {
     maxFiles={5}
     onChange={setFiles}
 >
-    <FileUpload.Dropzone>
+    {/* Custom children: browseLabel names the keyboard browse button. */}
+    <FileUpload.Dropzone browseLabel="Browse images">
         <div>Drop images here</div>
     </FileUpload.Dropzone>
     <FileUpload.List thumbnail />
@@ -103,7 +104,8 @@ export const fileUploadDoc: ComponentDoc = {
     notes: (
         <p className="text-xs text-zinc-600 dark:text-zinc-300">
             <strong>Children:</strong> <code>FileUpload.Dropzone</code> accepts arbitrary children
-            (override the default empty message). <code>FileUpload.List</code> has a
+            (override the default empty message) and a <code>browseLabel</code> prop naming its
+            keyboard-reachable browse button. <code>FileUpload.List</code> has a
             <code>thumbnail</code> prop that shows image previews for image files.
         </p>
     ),

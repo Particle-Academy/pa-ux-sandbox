@@ -127,7 +127,7 @@ class CheckVersions extends Tool
                 continue;
             }
 
-            $pkg = $this->findPackage($name);
+            $pkg = $this->findPackage($name, $registry);
 
             if ($pkg === null) {
                 $unrecognised[] = $input;
@@ -351,10 +351,30 @@ class CheckVersions extends Tool
         return array_values(array_unique($slugs));
     }
 
-    /** @return array<string, mixed>|null */
-    private function findPackage(string $name): ?array
+    /**
+     * The registry entry a caller means by `$name`.
+     *
+     * A port can be its own entry whose distribution name is the ORIGINAL
+     * package's name in its language: fancy-flow's Python port is the
+     * `fancy-flow-py` entry, published to PyPI as `fancy-flow`. So when the
+     * caller names a language, an entry whose distribution FOR THAT LANGUAGE is
+     * `$name` wins over a slug match; only then do slugs and other
+     * distributions decide.
+     *
+     * @return array<string, mixed>|null
+     */
+    private function findPackage(string $name, ?string $registry = null): ?array
     {
         $name = trim($name);
+        $key = $registry === null ? null : (self::DISTRIBUTION_KEY[$registry] ?? null);
+
+        if ($key !== null) {
+            foreach (PackageRegistry::everything() as $pkg) {
+                if (($pkg[$key] ?? null) === $name) {
+                    return $pkg;
+                }
+            }
+        }
 
         foreach (PackageRegistry::everything() as $pkg) {
             if ($pkg['slug'] === $name) {

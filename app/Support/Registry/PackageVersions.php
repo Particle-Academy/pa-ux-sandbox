@@ -128,9 +128,18 @@ final class PackageVersions
         // Peers count. A first-party sibling declared as a peer is one the
         // consumer must install THEMSELVES — precisely the dependency that goes
         // missing from a manifest and is never noticed.
+        //
+        // Except an OPTIONAL peer (`peerDependenciesMeta[name].optional`): the
+        // package works without it, so reporting it as missing tells the caller
+        // to install something they do not need.
+        $meta = is_array($release['peerDependenciesMeta'] ?? null) ? $release['peerDependenciesMeta'] : [];
+        $peers = array_filter(
+            array_keys(is_array($release['peerDependencies'] ?? null) ? $release['peerDependencies'] : []),
+            static fn ($peer): bool => ! (is_array($meta[$peer] ?? null) && ($meta[$peer]['optional'] ?? false) === true),
+        );
         $requires = array_merge(
             array_keys(is_array($release['dependencies'] ?? null) ? $release['dependencies'] : []),
-            array_keys(is_array($release['peerDependencies'] ?? null) ? $release['peerDependencies'] : []),
+            $peers,
         );
 
         return [

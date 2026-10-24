@@ -69,6 +69,7 @@ import {
     Portal,
     Profile,
     Progress,
+    ResizablePanels,
     PromptInput,
     ReasonTag,
     Separator,
@@ -242,6 +243,7 @@ const REGISTRY: Record<string, DemoFn> = {
     "react-fancy/emoji": EmojiDemo,
     "react-fancy/skeleton": SkeletonDemo,
     "react-fancy/progress": ProgressDemo,
+    "react-fancy/resizable-panels": ResizablePanelsDemo,
     "react-fancy/reason-tag": ReasonTagDemo,
     // Card / container
     "react-fancy/card": CardDemo,
@@ -1384,6 +1386,25 @@ function SkeletonDemo() {
             <Skeleton className="h-3 w-2/3" />
             <Skeleton className="h-3 w-1/2" />
             <Skeleton className="h-20 w-full" />
+        </div>
+    );
+}
+
+function ResizablePanelsDemo() {
+    const [size, setSize] = useState(35);
+    return (
+        <div className="w-full max-w-xl space-y-2">
+            <div className="h-48">
+                <ResizablePanels value={size} onValueChange={setSize}>
+                    <Card className="h-full">
+                        <Text size="sm" weight="semibold">Sidebar</Text>
+                    </Card>
+                    <Card className="h-full">
+                        <Text size="sm" weight="semibold">Content</Text>
+                    </Card>
+                </ResizablePanels>
+            </div>
+            <Text size="xs" className="!text-zinc-500">Primary panel: {Math.round(size)}%</Text>
         </div>
     );
 }

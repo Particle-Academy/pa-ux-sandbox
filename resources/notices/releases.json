@@ -60,7 +60,7 @@
         "fancy-pixel": "0.3.0",
         "fancy-pty": "0.2.0",
         "fancy-pwa": "0.2.0",
-        "fancy-query": "0.8.0",
+        "fancy-query": "0.9.0",
         "fancy-screens": "0.7.1",
         "fancy-seo": "0.6.0",
         "fancy-sheets": "0.12.0",
@@ -119,6 +119,13 @@
         "teachers-aid-ui": "0.3.0"
     },
     "releases": [
+        {
+            "slug": "fancy-query",
+            "registry": "npm",
+            "version": "0.9.0",
+            "published_at": "2026-10-24T02:06:01Z",
+            "first": false
+        },
         {
             "slug": "react-fancy",
             "registry": "npm",

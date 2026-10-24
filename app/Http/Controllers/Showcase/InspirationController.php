@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Showcase;
 use App\Http\Controllers\Controller;
 use App\Support\GalleryRegistry;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -50,7 +51,7 @@ class InspirationController extends Controller
         abort(404);
     }
 
-    public function show(string $collection, string $style): Response
+    public function show(Request $request, string $collection, string $style): Response
     {
         $entry = GalleryRegistry::find($collection, $style);
         abort_if($entry === null, 404);
@@ -59,6 +60,7 @@ class InspirationController extends Controller
         unset($meta['styles']);
 
         return Inertia::render('Inspiration/Show', [
+            'framed' => $request->query('frame') !== '0',
             'collection' => $meta,
             'style' => $entry,
             // Ordered full list so the demo-frame can render "style N of 20" +

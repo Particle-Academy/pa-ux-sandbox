@@ -74,6 +74,31 @@ it('serves the Swiss style — the first built gallery page', function () {
         );
 });
 
+it('serves a noindex frameless preview without advertising another SEO page', function () {
+    $response = $this->get('/inspiration/fieldwork/swiss?frame=0')
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->component('Inspiration/Show')
+            ->where('framed', false)
+            ->where('style.id', 'swiss'));
+
+    $html = $response->getContent();
+    expect($html)->toMatch('/<meta[^>]+name="robots"[^>]+content="noindex[^" ]*/');
+    expect($html)->not->toContain('application/ld+json');
+    expect($this->get('/sitemap.xml')->assertOk()->getContent())->not->toContain('frame=0');
+    expect($this->get('/llms.txt')->assertOk()->getContent())->not->toContain('frame=0');
+});
+
+it('keeps the default frame unless the exact preview value is requested', function (string $query) {
+    $this->get('/inspiration/fieldwork/swiss'.$query)
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page->where('framed', true));
+})->with(['', '?frame=1', '?frame=false', '?frame[]=0']);
+
+it('keeps unknown preview styles as not found', function () {
+    $this->get('/inspiration/fieldwork/does-not-exist?frame=0')->assertNotFound();
+});
+
 it('301-redirects legacy pre-collection style urls to their collection', function (string $id, string $collection) {
     $this->get("/inspiration/{$id}")
         ->assertMovedPermanently()

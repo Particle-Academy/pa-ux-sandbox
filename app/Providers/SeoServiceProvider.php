@@ -379,6 +379,10 @@ class SeoServiceProvider extends ServiceProvider
             return $seo === [] ? PageSeo::meta('inspiration', 'index') : $seo;
         }
 
+        if (request()->query('frame') === '0') {
+            return [...$seo, 'noindex' => true, 'jsonLd' => null];
+        }
+
         $meta = GalleryRegistry::collection($collection);
         $found = GalleryRegistry::find($collection, $style);
 

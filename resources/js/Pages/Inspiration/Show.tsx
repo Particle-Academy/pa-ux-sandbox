@@ -1,4 +1,5 @@
 import { Head, Link } from "@inertiajs/react";
+import { Seo } from "@particle-academy/fancy-inertia/seo";
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { ArrowLeft, Check, ChevronLeft, ChevronRight, Copy, Info, Layers, Plus, X } from "lucide-react";
 import { Layout } from "../Layout";
@@ -20,21 +21,28 @@ export default function InspirationShow({
     collection,
     style,
     styles,
+    framed = true,
 }: {
     collection: Collection;
     style: Style;
     styles: Style[];
+    framed?: boolean;
 }) {
     const StyleComponent = STYLE_COMPONENTS[collection.id]?.[style.id];
     const idx = styles.findIndex((s) => s.id === style.id);
     const prev = styles.length ? styles[(idx - 1 + styles.length) % styles.length] : undefined;
     const next = styles.length ? styles[(idx + 1) % styles.length] : undefined;
 
+    const content = StyleComponent ? <StyleComponent style={style} /> : <Placeholder collection={collection} style={style} />;
+    if (!framed) {
+        return <><Seo title={`${style.name} · ${collection.name} (preview) · Fancy UI`} noindex />{content}</>;
+    }
+
     return (
         <Layout>
             <Head title={`${style.name} · ${collection.name} (demo) · Inspiration · Fancy UI`} />
             <GalleryFrame collection={collection} style={style} total={styles.length} prev={prev} next={next} />
-            {StyleComponent ? <StyleComponent style={style} /> : <Placeholder collection={collection} style={style} />}
+            {content}
         </Layout>
     );
 }

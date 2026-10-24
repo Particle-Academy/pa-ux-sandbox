@@ -1,7 +1,7 @@
 {
     "window_days": 60,
     "latest": {
-        "agent-integrations": "0.47.1",
+        "agent-integrations": "0.48.0",
         "classroom": "0.7.0",
         "dark-slide": "0.21.0",
         "dark-slide-js": "0.19.0",
@@ -84,7 +84,7 @@
         "holy-sheet-py": "0.9.1",
         "job-board": "0.5.0",
         "laravel-catalog": "0.13.0",
-        "laravel-courses": "0.2.0",
+        "laravel-courses": "0.3.0",
         "laravel-fms": "0.12.0",
         "laravel-fun-lab": "0.6.0",
         "laravel-jobs": "0.5.0",
@@ -111,8 +111,8 @@
         "prism-opentelemetry-ts": "0.6.0",
         "prism-perplexity": "0.3.0",
         "prism-perplexity-ts": "0.2.0",
-        "prism-py": "0.4.0",
-        "prism-ts": "0.4.0",
+        "prism-py": "0.5.0",
+        "prism-ts": "0.5.0",
         "prism-workspace": "0.2.0",
         "prism-workspace-ts": "0.2.0",
         "react-fancy": "5.60.0",
@@ -120,6 +120,34 @@
         "teachers-aid-ui": "0.3.0"
     },
     "releases": [
+        {
+            "slug": "agent-integrations",
+            "registry": "npm",
+            "version": "0.48.0",
+            "published_at": "2026-10-24T20:06:53Z",
+            "first": false
+        },
+        {
+            "slug": "prism-ts",
+            "registry": "npm",
+            "version": "0.5.0",
+            "published_at": "2026-10-24T17:36:53Z",
+            "first": false
+        },
+        {
+            "slug": "prism-py",
+            "registry": "pypi",
+            "version": "0.5.0",
+            "published_at": "2026-10-24T17:36:14Z",
+            "first": false
+        },
+        {
+            "slug": "laravel-courses",
+            "registry": "composer",
+            "version": "0.3.0",
+            "published_at": "2026-10-24T16:15:38Z",
+            "first": false
+        },
         {
             "slug": "fancy-cms-ui",
             "registry": "npm",
@@ -4333,69 +4361,6 @@
             "version": "0.1.0",
             "published_at": "2026-08-25T21:37:37Z",
             "first": true
-        },
-        {
-            "slug": "fancy-flow",
-            "registry": "npm",
-            "version": "0.54.0",
-            "published_at": "2026-08-25T19:05:46Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-flow",
-            "registry": "npm",
-            "version": "0.53.0",
-            "published_at": "2026-08-25T18:50:04Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-flow-py",
-            "registry": "pypi",
-            "version": "0.5.0",
-            "published_at": "2026-08-25T18:39:44Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-flow-php",
-            "registry": "composer",
-            "version": "0.26.0",
-            "published_at": "2026-08-25T18:37:33Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-flow",
-            "registry": "npm",
-            "version": "0.52.0",
-            "published_at": "2026-08-25T18:27:54Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-conformance",
-            "registry": "npm",
-            "version": "0.12.0",
-            "published_at": "2026-08-25T18:12:23Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-conformance",
-            "registry": "npm",
-            "version": "0.11.1",
-            "published_at": "2026-08-25T17:03:42Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-conformance",
-            "registry": "npm",
-            "version": "0.11.0",
-            "published_at": "2026-08-25T16:35:01Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-conformance",
-            "registry": "npm",
-            "version": "0.10.0",
-            "published_at": "2026-08-25T16:26:21Z",
-            "first": false
         }
     ]
 }

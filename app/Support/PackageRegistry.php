@@ -43,6 +43,21 @@ class PackageRegistry
         // taken exactly" and not "may I create it".
         'fancy-inertia-server',
 
+        // `fancy-live` -- BUILT (repo created 2026-10-23), not yet on Packagist.
+        //
+        // Moved out of PLANNED when its source was built and reviewed. A new
+        // Packagist name needs the owner's one-time submit AFTER the first tag,
+        // and the first tag waits on its own Pest suite (owner approved Pest
+        // 2026-10-23). Offering `composer require` for a name that 404s is the
+        // `fancy-trading-ui` mistake.
+        //
+        // REMOVE THIS SLUG when
+        // https://repo.packagist.org/p2/particle-academy/fancy-live.json lists a
+        // version -- the p2 endpoint, not the packagist.org page -- and run
+        // `php artisan readmes:build` in the same commit: hidden packages are
+        // skipped by it, so its README is not in readmes.json until then.
+        'fancy-live',
+
         // `fancy-schema` -- BUILT and TAGGED (v0.2.0), not installable.
         //
         // The npm name `@particle-academy/fancy-schema` does not exist yet, and
@@ -139,19 +154,6 @@ class PackageRegistry
      * @var array<string, array{name: string, repo: string, why: string}>
      */
     public const PLANNED = [
-        'fancy-live' => [
-            'name' => 'particle-academy/fancy-live',
-            'repo' => 'Particle-Academy/fancy-live',
-            'why' => 'First-party realtime publishing for Fancy apps, decided 2026-10-23 by the owner: "fancy should be the supplier for this kind of stuff. We support laravel but should not depend on it unless it\'s a laravel specific package". NOT YET STARTED -- registered first per the rule.
-
-WHY IT EXISTS. fancy-query\'s live layer (useFancyEchoInvalidation, useFancyStream) consumes a Pusher-protocol socket through an EchoLike interface, and today the only way to feed it is laravel-echo + pusher-js + pusher/pusher-php-server. pusher-js depends on tweetnacl, last released 2023-04-12, which fails the 3-month freshness bar; and the PHP side pins a Laravel app to a vendor SDK for what is one HMAC-signed HTTP POST.
-
-SCOPE. A framework-agnostic PHP publisher for the Pusher HTTP API (trigger an event on one or more channels, HMAC-SHA256 auth, private/presence channel auth signatures for /broadcasting/auth), with an OPTIONAL Laravel broadcaster adapter so `broadcast()` works unchanged. Zero third-party runtime code. The matching BROWSER client ships inside fancy-query (a Pusher-protocol socket that satisfies its existing EchoLike interface), so fancy-query works with no laravel-echo or pusher-js at all.
-
-FIRST CONSUMER. flabs\' website-builder agent: the server-held page document broadcasts each applied op to the human co-browsing it (.ai/plans/website-builder-agent.md). Target server: Genie\'s WebSockets engine (Sockudo, Pusher protocol).
-
-BEFORE IT CAN SHIP: the Packagist name is unclaimed (verified free 2026-10-23), so the first publish needs the owner\'s one-time Packagist submit after the first tag.',
-        ],
         'fancy-expr' => [
             'name' => 'fancy-expr',
             'repo' => 'Particle-Academy/fancy-expr',
@@ -340,6 +342,7 @@ Both registry names read as unclaimed on 2026-10-08 -- `@particle-academy/fancy-
         'fancy-heuristics' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#8b5cf6'],
         'fancy-x-files' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#64748b'],
         'fancy-cms' => ['group' => 'surfaces', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#0ea5e9'],
+        'fancy-live' => ['group' => 'integration', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#10b981'],
         'laravel-catalog' => ['group' => 'commerce', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#0ea5e9'],
         'laravel-fms' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#f59e0b'],
         'laravel-fun-lab' => ['group' => 'commerce', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#f43f5e'],
@@ -786,6 +789,15 @@ Both registry names read as unclaimed on 2026-10-08 -- `@particle-academy/fancy-
                 'composer' => 'particle-academy/fancy-cms',
                 'repo' => 'Particle-Academy/fancy-cms',
                 'packagist' => 'particle-academy/fancy-cms',
+                'language' => 'PHP',
+            ],
+            [
+                'slug' => 'fancy-live',
+                'name' => 'particle-academy/fancy-live',
+                'tagline' => 'First-party realtime publishing: Pusher-protocol HTTP publish and private/presence channel authorization with zero runtime dependencies, plus an optional Laravel broadcaster. The browser half is fancy-query/socket. Pre-1.0.',
+                'composer' => 'particle-academy/fancy-live',
+                'repo' => 'Particle-Academy/fancy-live',
+                'packagist' => 'particle-academy/fancy-live',
                 'language' => 'PHP',
             ],
             [

@@ -1,5 +1,6 @@
 <?php
 
+use App\Support\PackageRegistry;
 use Tests\TestCase;
 
 uses(TestCase::class);
@@ -52,4 +53,19 @@ it('does not attach a README for a package that has live component demos', funct
             ->component('Packages/Show')
             ->where('readmeHtml', null)
         );
+});
+
+it('classifies every registered package validly, hidden ones included', function () {
+    // The /packages assertions above only see VISIBLE packages, so a hidden
+    // entry could carry an invalid group until the day it was un-hidden --
+    // which is how `integration` reached fancy-live and fancy-inertia-server.
+    $meta = (new ReflectionClassConstant(PackageRegistry::class, 'META'))->getValue();
+
+    $invalid = collect($meta)
+        ->reject(fn (array $m) => in_array($m['group'], ['core', 'surfaces', 'documents', 'commerce', 'platform', 'tooling'], true)
+            && in_array($m['ecosystem'], ['ts', 'php', 'py', 'polyglot'], true)
+            && in_array($m['kind'], ['ui', 'bridge', 'headless', 'block'], true))
+        ->keys()->values()->all();
+
+    expect($invalid)->toBe([]);
 });

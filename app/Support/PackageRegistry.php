@@ -327,7 +327,7 @@ Both registry names read as unclaimed on 2026-10-08 -- `@particle-academy/fancy-
         'fancy-heuristics' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#8b5cf6'],
         'fancy-x-files' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#64748b'],
         'fancy-cms' => ['group' => 'surfaces', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#0ea5e9'],
-        'fancy-live' => ['group' => 'integration', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#10b981'],
+        'fancy-live' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#10b981'],
         'laravel-catalog' => ['group' => 'commerce', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#0ea5e9'],
         'laravel-fms' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#f59e0b'],
         'laravel-fun-lab' => ['group' => 'commerce', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#f43f5e'],
@@ -409,7 +409,7 @@ Both registry names read as unclaimed on 2026-10-08 -- `@particle-academy/fancy-
         'fancy-walkthrough' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#6366f1'],
         // Python backends -- each the third runtime of an existing pair.
         'fancy-flow-py' => ['group' => 'surfaces', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#0ea5e9'],
-        'fancy-inertia-server' => ['group' => 'integration', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#0ea5e9'],
+        'fancy-inertia-server' => ['group' => 'platform', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#0ea5e9'],
         'fancy-features-py' => ['group' => 'platform', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#f59e0b'],
         'fancy-catalog-py' => ['group' => 'commerce', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#0ea5e9'],
         'holy-sheet-py' => ['group' => 'documents', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#16a34a'],

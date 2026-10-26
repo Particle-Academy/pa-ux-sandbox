@@ -18,8 +18,8 @@
         "fancy-catalog-py": "0.2.0",
         "fancy-cf-relay": "0.2.0",
         "fancy-cli": "0.8.3",
-        "fancy-cms": "0.6.0",
-        "fancy-cms-ui": "0.11.0",
+        "fancy-cms": "0.7.1",
+        "fancy-cms-ui": "0.12.1",
         "fancy-code": "0.15.0",
         "fancy-conformance": "0.34.0",
         "fancy-connector-core": "0.10.1",
@@ -93,8 +93,8 @@
         "last-word-py": "0.6.0",
         "mcp-relay-client": "0.3.0",
         "prism": "0.137.0",
-        "prism-acp-ts": "0.26.0",
-        "prism-browser": "0.2.0",
+        "prism-acp-ts": "0.28.0",
+        "prism-browser": "0.3.0",
         "prism-browser-py": "0.1.1",
         "prism-browser-ts": "0.2.1",
         "prism-harness": "0.17.0",
@@ -120,6 +120,55 @@
         "teachers-aid-ui": "0.3.0"
     },
     "releases": [
+        {
+            "slug": "fancy-cms-ui",
+            "registry": "npm",
+            "version": "0.12.1",
+            "published_at": "2026-10-26T06:03:44Z",
+            "first": false
+        },
+        {
+            "slug": "prism-acp-ts",
+            "registry": "npm",
+            "version": "0.28.0",
+            "published_at": "2026-10-26T06:01:50Z",
+            "first": false
+        },
+        {
+            "slug": "fancy-cms",
+            "registry": "composer",
+            "version": "0.7.1",
+            "published_at": "2026-10-26T05:51:09Z",
+            "first": false
+        },
+        {
+            "slug": "prism-browser",
+            "registry": "composer",
+            "version": "0.3.0",
+            "published_at": "2026-10-26T05:33:11Z",
+            "first": false
+        },
+        {
+            "slug": "prism-acp-ts",
+            "registry": "npm",
+            "version": "0.27.0",
+            "published_at": "2026-10-26T05:00:07Z",
+            "first": false
+        },
+        {
+            "slug": "fancy-cms-ui",
+            "registry": "npm",
+            "version": "0.12.0",
+            "published_at": "2026-10-26T04:58:03Z",
+            "first": false
+        },
+        {
+            "slug": "fancy-cms",
+            "registry": "composer",
+            "version": "0.7.0",
+            "published_at": "2026-10-26T04:53:44Z",
+            "first": false
+        },
         {
             "slug": "fancy-slides",
             "registry": "npm",
@@ -4039,48 +4088,6 @@
             "version": "0.1.0",
             "published_at": "2026-08-27T16:58:55Z",
             "first": true
-        },
-        {
-            "slug": "fancy-flow-py",
-            "registry": "pypi",
-            "version": "0.16.1",
-            "published_at": "2026-08-27T03:40:05Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-flow-py",
-            "registry": "pypi",
-            "version": "0.16.0",
-            "published_at": "2026-08-27T03:33:43Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-flow",
-            "registry": "npm",
-            "version": "0.64.0",
-            "published_at": "2026-08-27T03:31:03Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-flow-php",
-            "registry": "composer",
-            "version": "0.48.1",
-            "published_at": "2026-08-27T03:25:18Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-flow-mcp",
-            "registry": "composer",
-            "version": "0.4.0",
-            "published_at": "2026-08-27T03:22:57Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-flow-php",
-            "registry": "composer",
-            "version": "0.48.0",
-            "published_at": "2026-08-27T03:20:18Z",
-            "first": false
         }
     ]
 }

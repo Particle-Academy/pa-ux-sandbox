@@ -18,8 +18,8 @@
         "fancy-catalog-py": "0.2.0",
         "fancy-cf-relay": "0.2.0",
         "fancy-cli": "0.8.3",
-        "fancy-cms": "0.7.1",
-        "fancy-cms-ui": "0.12.1",
+        "fancy-cms": "0.8.0",
+        "fancy-cms-ui": "0.13.0",
         "fancy-code": "0.15.0",
         "fancy-conformance": "0.34.0",
         "fancy-connector-core": "0.10.1",
@@ -94,7 +94,7 @@
         "mcp-relay-client": "0.3.0",
         "prism": "0.137.0",
         "prism-acp-ts": "0.28.0",
-        "prism-browser": "0.3.0",
+        "prism-browser": "0.4.0",
         "prism-browser-py": "0.1.1",
         "prism-browser-ts": "0.2.1",
         "prism-harness": "0.17.0",
@@ -120,6 +120,27 @@
         "teachers-aid-ui": "0.3.0"
     },
     "releases": [
+        {
+            "slug": "fancy-cms-ui",
+            "registry": "npm",
+            "version": "0.13.0",
+            "published_at": "2026-10-26T17:38:21Z",
+            "first": false
+        },
+        {
+            "slug": "prism-browser",
+            "registry": "composer",
+            "version": "0.4.0",
+            "published_at": "2026-10-26T17:31:50Z",
+            "first": false
+        },
+        {
+            "slug": "fancy-cms",
+            "registry": "composer",
+            "version": "0.8.0",
+            "published_at": "2026-10-26T17:31:30Z",
+            "first": false
+        },
         {
             "slug": "react-fancy",
             "registry": "npm",
@@ -4186,13 +4207,6 @@
             "version": "0.65.0",
             "published_at": "2026-08-27T19:16:21Z",
             "first": false
-        },
-        {
-            "slug": "fancy-trading-ui",
-            "registry": "npm",
-            "version": "0.1.0",
-            "published_at": "2026-08-27T16:58:55Z",
-            "first": true
         }
     ]
 }

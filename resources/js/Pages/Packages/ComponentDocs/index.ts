@@ -77,6 +77,7 @@ import { whatsNewDoc } from "./WhatsNew";
 import { fancyMapDoc } from "./FancyMap";
 import { fileBrowserDoc } from "./FileBrowser";
 import { fileUploadDoc } from "./FileUpload";
+import { fullScreenDoc } from "./FullScreen";
 import { flowEditorDoc } from "./FlowEditor";
 import { gridDoc } from "./Grid";
 import { headingDoc } from "./Heading";
@@ -209,6 +210,7 @@ export const DOCS: Record<string, ComponentDoc> = {
     "react-fancy/emoji-select": emojiSelectDoc,
     "react-fancy/file-browser": fileBrowserDoc,
     "react-fancy/file-upload": fileUploadDoc,
+    "react-fancy/full-screen": fullScreenDoc,
     "react-fancy/heading": headingDoc,
     "react-fancy/icon": iconDoc,
     "react-fancy/input-tag": inputTagDoc,

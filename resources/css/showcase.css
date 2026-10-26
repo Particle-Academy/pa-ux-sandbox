@@ -111,8 +111,12 @@ pre {
   to   { opacity: 1; transform: none; }
 }
 
+/* `backwards`, not `both`: a held end frame keeps an identity transform on the
+   element (Chrome interpolates to `none` as translateY(0)), which makes it the
+   containing block for every position:fixed descendant. A FullScreen inside a
+   Tabs panel then filled the panel instead of the viewport. */
 .fancy-fade-in {
-  animation: fancy-fade-in var(--dur-base) var(--ease-out) both;
+  animation: fancy-fade-in var(--dur-base) var(--ease-out) backwards;
 }
 
 /* Cosmetics: display-name colours (purchased via the coin shop).

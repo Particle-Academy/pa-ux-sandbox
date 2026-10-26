@@ -1451,6 +1451,7 @@ Both registry names read as unclaimed on 2026-10-08 -- `@particle-academy/fancy-
             ['slug' => 'faux-client', 'name' => 'FauxClient', 'blurb' => 'Browser / device / window chrome rendering real, interactive UI inside (with scale-to-fit).'],
             ['slug' => 'file-browser', 'name' => 'FileBrowser', 'blurb' => 'Remote-capable file/folder browser + directory picker — lazy async provider or streamed JSON snapshots, controlled selection, breadcrumb + editable path, ARIA tree keyboard nav.'],
             ['slug' => 'file-upload', 'name' => 'FileUpload'],
+            ['slug' => 'full-screen', 'name' => 'FullScreen', 'blurb' => 'Controlled full-screen surface: viewport overlay by default, optional native Fullscreen API, Escape exits with focus and scroll restored.'],
             ['slug' => 'grid', 'name' => 'Grid', 'blurb' => 'Modular responsive grid.'],
             ['slug' => 'heading', 'name' => 'Heading'],
             ['slug' => 'icon', 'name' => 'Icon'],

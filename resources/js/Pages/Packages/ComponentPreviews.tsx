@@ -115,7 +115,7 @@ import {
     GIT_STATUS,
     GIT_TREE,
 } from "./gitFixtures";
-import { ActivityLight, AudioViewer, Avatar, Badge, Breadcrumbs, Button, Calendar, Callout, Card, CodeView, ColorPicker, Container, ContentRenderer, ContextMenu, Drawer, Emoji, Eyebrow, FauxClient, FileBrowser, Grid, Heading, ImageViewer, IndexList, JsonEditor, Kanban, Kbd, Marquee, MediaViewer, MoodMeter, OtpInput, Pagination, PdfViewer, Pillbox, Profile, Progress, PullQuote, QrCode, ResizablePanels, Section, Skeleton, Stat, StatList, StickyNote, Switch, Tabs, Text, TimeGrid, TimePicker, Timeline, Tooltip, VideoViewer, VirtualList } from "@particle-academy/react-fancy";
+import { ActivityLight, AudioViewer, Avatar, Badge, Breadcrumbs, Button, Calendar, Callout, Card, CodeView, ColorPicker, Container, ContentRenderer, ContextMenu, Drawer, Emoji, Eyebrow, FauxClient, FileBrowser, FullScreen, Grid, Heading, ImageViewer, IndexList, JsonEditor, Kanban, Kbd, Marquee, MediaViewer, MoodMeter, OtpInput, Pagination, PdfViewer, Pillbox, Profile, Progress, PullQuote, QrCode, ResizablePanels, Section, Skeleton, Stat, StatList, StickyNote, Switch, Tabs, Text, TimeGrid, TimePicker, Timeline, Tooltip, VideoViewer, VirtualList } from "@particle-academy/react-fancy";
 import { Checkbox, CheckboxGroup, DatePicker, Field, Input, MultiSwitch, RadioGroup, Select, Slider, Textarea } from "@particle-academy/react-fancy";
 import { FileViewer } from "@particle-academy/fancy-code";
 import { EChart } from "@particle-academy/fancy-echarts";
@@ -738,6 +738,15 @@ const PREVIEWS: Record<string, PreviewFn> = {
                 Third
             </Section>
         </div>
+    ),
+    "react-fancy/full-screen": () => (
+        <FullScreen className="w-full max-w-[16rem] rounded-lg border border-zinc-200 bg-white p-3 dark:border-zinc-700 dark:bg-zinc-900">
+            <div className="flex items-center justify-between">
+                <span className="text-xs font-medium text-zinc-700 dark:text-zinc-200">Quarterly report</span>
+                <FullScreen.Toggle />
+            </div>
+            <div className="mt-2 h-10 rounded bg-violet-100 dark:bg-violet-500/20" />
+        </FullScreen>
     ),
     "react-fancy/grid": () => (
         <Grid cols={3} gap="sm" className="w-full max-w-[18rem]">

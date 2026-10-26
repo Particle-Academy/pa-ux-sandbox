@@ -21,6 +21,31 @@ function EditorViewEditDemo() {
     );
 }
 
+function EditorFullScreenDemo() {
+    const [fullScreen, setFullScreen] = useState(false);
+    const [value, setValue] = useState(
+        "## Long-form notes\n\nPress the maximize button in the toolbar to write without the page around you. **Escape** brings you back, with the caret where you left it.",
+    );
+    return (
+        <div className="w-full max-w-md">
+            <div className="mb-2 flex items-center justify-end">
+                <Badge color="violet" variant="soft">{`fullScreen={${fullScreen}}`}</Badge>
+            </div>
+            <Editor
+                value={value}
+                onChange={setValue}
+                outputFormat="markdown"
+                fullScreen={fullScreen}
+                onFullScreenChange={setFullScreen}
+                className="bg-white dark:bg-zinc-900"
+            >
+                <Editor.Toolbar showFullScreenToggle />
+                <Editor.Content />
+            </Editor>
+        </div>
+    );
+}
+
 export const editorDoc: ComponentDoc = {
     intro: (
         <p>
@@ -251,6 +276,32 @@ const [value, setValue] = useState("## Field notes…");
             code: `{/* You know what your column holds — do not make the editor guess. */}
 <Editor value={post.body} onChange={save} valueFormat="markdown" />`,
         },
+        {
+            name: "Full screen",
+            description:
+                "`showFullScreenToggle` adds a maximize button to the default toolbar. The editor takes over the viewport in place, so the caret, undo history and content survive. Escape exits and focus returns. Control it with `fullScreen` + `onFullScreenChange`, or start it with `defaultFullScreen`. `fullScreenMode=\"native\"` also asks the browser for real full screen and falls back to the overlay if that is refused.",
+            render: () => <EditorFullScreenDemo />,
+            code: `const [fullScreen, setFullScreen] = useState(false);
+
+<Editor
+    value={notes}
+    onChange={setNotes}
+    fullScreen={fullScreen}
+    onFullScreenChange={setFullScreen}
+    fullScreenMode="overlay"
+>
+    <Editor.Toolbar showFullScreenToggle />
+    <Editor.Content />
+</Editor>
+
+{/* A custom toolbar composes the toggle itself, with any Lucide icons. */}
+<Editor defaultValue={notes} defaultFullScreen={false}>
+    <Editor.Toolbar>
+        <Editor.FullScreenToggle enterIcon="expand" exitIcon="shrink" />
+    </Editor.Toolbar>
+    <Editor.Content />
+</Editor>`,
+        },
     ],
     props: [
         { name: "children", type: `ReactNode`, default: "—", description: "Compound parts — `Editor.Toolbar` + `Editor.Content`." },
@@ -273,6 +324,13 @@ const [value, setValue] = useState("## Field notes…");
         { name: "Editor.SourceToggle — title", type: `string`, default: `"Source"`, description: "Accessible title in rich-text mode (click → source)." },
         { name: "Editor.SourceToggle — activeTitle", type: `string`, default: `"Rich text"`, description: "Accessible title in source mode (click → rich text)." },
         { name: "Editor.Toolbar.Separator", type: `component`, default: "—", description: "Group divider for a custom toolbar — a component, not a border class." },
+        { name: "fullScreen", type: `boolean`, default: "—", description: "Controlled full-screen flag. Pair with `onFullScreenChange`." },
+        { name: "defaultFullScreen", type: `boolean`, default: `false`, description: "Initial full-screen state (uncontrolled)." },
+        { name: "onFullScreenChange", type: `(fullScreen: boolean) => void`, default: "—", description: "Requested state, from the toggle, Escape, `useEditor().setFullScreen` or the browser's own exit." },
+        { name: "fullScreenMode", type: `"overlay" | "native"`, default: `"overlay"`, description: "`overlay` covers the viewport and is never refused. `native` also calls the browser Fullscreen API, falling back to the overlay." },
+        { name: "Editor.Toolbar — showFullScreenToggle", type: `boolean`, default: `false`, description: "Full-screen toggle at the end of the default toolbar. Ignored when you supply your own children." },
+        { name: "Editor.FullScreenToggle — enterIcon", type: `string`, default: `"maximize-2"`, description: "Lucide icon shown while not full screen." },
+        { name: "Editor.FullScreenToggle — exitIcon", type: `string`, default: `"minimize-2"`, description: "Lucide icon shown while full screen." },
     ],
     notes: (
         <p className="text-xs text-zinc-600 dark:text-zinc-300">

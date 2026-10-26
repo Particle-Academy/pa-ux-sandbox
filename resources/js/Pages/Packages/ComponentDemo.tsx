@@ -116,6 +116,7 @@ import {
     ActivityLight,
     type ActivityLevel,
     type ActivityDirection,
+    FullScreen,
 } from "@particle-academy/react-fancy";
 import { CodeEditor, MarkdownEditor, FileViewer, registerOfficeViewer } from "@particle-academy/fancy-code";
 import { DocViewer, DocFileView } from "@particle-academy/fancy-docs";
@@ -461,6 +462,7 @@ const REGISTRY: Record<string, DemoFn> = {
     "fancy-motion/timeline-dock": TimelineDockDemo,
     "fancy-code/file-viewer": FileViewerDemo,
     "react-fancy/grid": GridDemo,
+    "react-fancy/full-screen": FullScreenDemo,
     "react-fancy/container": ContainerDemo,
     "react-fancy/section": SectionDemo,
     "react-fancy/kbd": KbdDemo,
@@ -521,6 +523,30 @@ export function ComponentDemo({ slug, name, pkg }: { slug: string; name: string;
 // page is where someone decides whether to use the thing. Advertising a
 // component and then showing a dashed box on its own page costs a reader their
 // time and tells them the component is unfinished.
+
+function FullScreenDemo() {
+    const [fullScreen, setFullScreen] = useState(false);
+    return (
+        <DemoNote
+            outOfBox="The surface, its toggle, Escape to exit, the body scroll lock, and focus and scroll restored on exit."
+            demo="The badge only echoes the controlled flag so you can watch onFullScreenChange fire."
+        >
+            <FullScreen
+                fullScreen={fullScreen}
+                onFullScreenChange={setFullScreen}
+                className="rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-700 dark:bg-zinc-900"
+            >
+                <div className="flex items-center justify-between gap-2">
+                    <Badge color="violet" variant="soft">{`fullScreen={${fullScreen}}`}</Badge>
+                    <FullScreen.Toggle />
+                </div>
+                <p className="mt-3 text-sm text-zinc-600 dark:text-zinc-300">
+                    Press the toggle to take over the viewport, then press Escape to come back.
+                </p>
+            </FullScreen>
+        </DemoNote>
+    );
+}
 
 function GridDemo() {
     const [cols, setCols] = useState<2 | 3 | 4 | 6>(3);

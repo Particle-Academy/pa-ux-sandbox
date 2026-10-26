@@ -64,8 +64,8 @@
         "fancy-query": "0.9.0",
         "fancy-screens": "0.7.1",
         "fancy-seo": "0.6.0",
-        "fancy-sheets": "0.12.0",
-        "fancy-slides": "0.24.0",
+        "fancy-sheets": "0.13.0",
+        "fancy-slides": "0.25.0",
         "fancy-term": "0.8.0",
         "fancy-term-host": "0.11.1",
         "fancy-trading-js": "0.2.1",
@@ -115,11 +115,32 @@
         "prism-ts": "0.5.0",
         "prism-workspace": "0.3.0",
         "prism-workspace-ts": "0.2.0",
-        "react-fancy": "5.61.1",
+        "react-fancy": "5.62.0",
         "teachers-aid": "0.3.0",
         "teachers-aid-ui": "0.3.0"
     },
     "releases": [
+        {
+            "slug": "react-fancy",
+            "registry": "npm",
+            "version": "5.62.0",
+            "published_at": "2026-10-26T10:05:42Z",
+            "first": false
+        },
+        {
+            "slug": "fancy-sheets",
+            "registry": "npm",
+            "version": "0.13.0",
+            "published_at": "2026-10-26T09:57:21Z",
+            "first": false
+        },
+        {
+            "slug": "fancy-slides",
+            "registry": "npm",
+            "version": "0.25.0",
+            "published_at": "2026-10-26T09:51:19Z",
+            "first": false
+        },
         {
             "slug": "react-fancy",
             "registry": "npm",

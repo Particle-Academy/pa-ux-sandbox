@@ -4048,16 +4048,16 @@
         },
         {
             "name": "particle-academy/dark-slide",
-            "version": "v0.21.0",
+            "version": "v0.21.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/dark-slide.git",
-                "reference": "6db50d91552caa5945abf1e649dc0ef944979878"
+                "reference": "dadee1edf987c912bece2e16a54224ae99859aa0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/dark-slide/zipball/6db50d91552caa5945abf1e649dc0ef944979878",
-                "reference": "6db50d91552caa5945abf1e649dc0ef944979878",
+                "url": "https://api.github.com/repos/Particle-Academy/dark-slide/zipball/dadee1edf987c912bece2e16a54224ae99859aa0",
+                "reference": "dadee1edf987c912bece2e16a54224ae99859aa0",
                 "shasum": ""
             },
             "require": {
@@ -4118,7 +4118,7 @@
                 "issues": "https://github.com/Particle-Academy/dark-slide/issues",
                 "source": "https://github.com/Particle-Academy/dark-slide"
             },
-            "time": "2026-10-19T15:57:12+00:00"
+            "time": "2026-10-26T12:57:48+00:00"
         },
         {
             "name": "particle-academy/fancy-cms",
@@ -4602,16 +4602,16 @@
         },
         {
             "name": "particle-academy/holy-sheet",
-            "version": "v2.9.1",
+            "version": "v2.9.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/holy-sheet.git",
-                "reference": "9964b966ff0d037c4edff66503f31eccd77832c9"
+                "reference": "2bd52937a75fd3172b50b596895ece286f418b0c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/holy-sheet/zipball/9964b966ff0d037c4edff66503f31eccd77832c9",
-                "reference": "9964b966ff0d037c4edff66503f31eccd77832c9",
+                "url": "https://api.github.com/repos/Particle-Academy/holy-sheet/zipball/2bd52937a75fd3172b50b596895ece286f418b0c",
+                "reference": "2bd52937a75fd3172b50b596895ece286f418b0c",
                 "shasum": ""
             },
             "require": {
@@ -4670,7 +4670,7 @@
                 "issues": "https://github.com/Particle-Academy/holy-sheet/issues",
                 "source": "https://github.com/Particle-Academy/holy-sheet"
             },
-            "time": "2026-10-19T11:55:36+00:00"
+            "time": "2026-10-26T12:13:17+00:00"
         },
         {
             "name": "particle-academy/laravel-catalog",
@@ -4911,16 +4911,16 @@
         },
         {
             "name": "particle-academy/last-word",
-            "version": "v0.10.0",
+            "version": "v0.10.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/last-word.git",
-                "reference": "475a815a63f8b2e12e76d5b33bfd57ff74ce5c8a"
+                "reference": "375f61bd8791c14f9598868dcb54a339c2278afe"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/last-word/zipball/475a815a63f8b2e12e76d5b33bfd57ff74ce5c8a",
-                "reference": "475a815a63f8b2e12e76d5b33bfd57ff74ce5c8a",
+                "url": "https://api.github.com/repos/Particle-Academy/last-word/zipball/375f61bd8791c14f9598868dcb54a339c2278afe",
+                "reference": "375f61bd8791c14f9598868dcb54a339c2278afe",
                 "shasum": ""
             },
             "require": {
@@ -4966,7 +4966,7 @@
                 "issues": "https://github.com/Particle-Academy/last-word/issues",
                 "source": "https://github.com/Particle-Academy/last-word"
             },
-            "time": "2026-10-20T18:12:25+00:00"
+            "time": "2026-10-26T12:58:24+00:00"
         },
         {
             "name": "phpoption/phpoption",

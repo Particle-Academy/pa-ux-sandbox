@@ -39,7 +39,10 @@ function EditorFullScreenDemo() {
                 onFullScreenChange={setFullScreen}
                 className="bg-white dark:bg-zinc-900"
             >
-                <Editor.Toolbar showFullScreenToggle />
+                <Editor.Toolbar
+                    showFullScreenToggle
+                    toolbarExtra={<Badge color="emerald" variant="soft">Saved</Badge>}
+                />
                 <Editor.Content />
             </Editor>
         </div>
@@ -290,7 +293,8 @@ const [value, setValue] = useState("## Field notes…");
     onFullScreenChange={setFullScreen}
     fullScreenMode="overlay"
 >
-    <Editor.Toolbar showFullScreenToggle />
+    {/* toolbarExtra keeps a host's Save / Cancel in the toolbar, even in full screen */}
+    <Editor.Toolbar showFullScreenToggle toolbarExtra={<Button onClick={save}>Save</Button>} />
     <Editor.Content />
 </Editor>
 
@@ -329,6 +333,7 @@ const [value, setValue] = useState("## Field notes…");
         { name: "onFullScreenChange", type: `(fullScreen: boolean) => void`, default: "—", description: "Requested state, from the toggle, Escape, `useEditor().setFullScreen` or the browser's own exit." },
         { name: "fullScreenMode", type: `"overlay" | "native"`, default: `"overlay"`, description: "`overlay` covers the viewport and is never refused. `native` also calls the browser Fullscreen API, falling back to the overlay." },
         { name: "Editor.Toolbar — showFullScreenToggle", type: `boolean`, default: `false`, description: "Full-screen toggle at the end of the default toolbar. Ignored when you supply your own children." },
+        { name: "Editor.Toolbar — toolbarExtra", type: `ReactNode`, default: "—", description: "Host content (e.g. Save / Cancel) inside the default toolbar, before the full-screen toggle. Stays reachable in full screen. Ignored when you supply your own children." },
         { name: "Editor.FullScreenToggle — enterIcon", type: `string`, default: `"maximize-2"`, description: "Lucide icon shown while not full screen." },
         { name: "Editor.FullScreenToggle — exitIcon", type: `string`, default: `"minimize-2"`, description: "Lucide icon shown while full screen." },
     ],

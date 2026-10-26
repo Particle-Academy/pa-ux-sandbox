@@ -1558,10 +1558,10 @@ const PREVIEWS: Record<string, PreviewFn> = {
             ]}
             columns={2}
             className="w-full max-w-[16rem]"
+            gap="sm"
+            cellClassName="!p-1.5"
             renderItem={(item) => (
-                <div className="rounded border border-zinc-200 bg-white px-2 py-1.5 text-[11px] font-medium text-zinc-700 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-200">
-                    {item.label}
-                </div>
+                <span className="text-[11px] font-medium text-zinc-700 dark:text-zinc-200">{item.label}</span>
             )}
         />
     ),

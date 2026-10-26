@@ -15,21 +15,18 @@ const FIELDS: Field[] = [
     { id: "probability", label: "Probability", value: "60%" },
 ];
 
-function Cell({ item, picked }: { item: Field; picked: boolean }) {
+// Bare content: the grid's cell already draws the border, surface, padding and
+// the picked-up / drop-target states. Wrapping this in another bordered box
+// gives a frame inside a frame.
+function Cell({ item }: { item: Field }) {
     return (
-        <div
-            className={`rounded-lg border px-3 py-2 ${
-                picked
-                    ? "border-violet-400 bg-violet-50 dark:border-violet-500 dark:bg-violet-500/10"
-                    : "border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-900"
-            }`}
-        >
+        <>
             <p className="text-[11px] uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
                 {item.label}
                 {item.locked ? " · pinned" : ""}
             </p>
             <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">{item.value}</p>
-        </div>
+        </>
     );
 }
 
@@ -45,7 +42,7 @@ function FieldOrderDemo() {
                 gap="sm"
                 label="Deal field order"
                 getItemLabel={(f) => f.label}
-                renderItem={(item, state) => <Cell item={item} picked={state.pickedUp || state.dragging} />}
+                renderItem={(item) => <Cell item={item} />}
             />
             <Text size="sm" className="!text-zinc-500">
                 Drag a cell, or focus one and press Space, then the arrow keys, then Space. Escape cancels.
@@ -80,7 +77,13 @@ export const reorderableGridDoc: ComponentDoc = {
     gap="sm"
     label="Deal field order"
     getItemLabel={(f) => f.label}
-    renderItem={(field, state) => <FieldCell field={field} active={state.pickedUp} />}
+    // The cell is already framed: return bare content.
+    renderItem={(field) => (
+        <>
+            <p className="text-xs text-zinc-500">{field.label}</p>
+            <p className="font-medium">{field.value}</p>
+        </>
+    )}
 />`,
         },
         {
@@ -91,6 +94,7 @@ export const reorderableGridDoc: ComponentDoc = {
                 <ReorderableGrid
                     items={FIELDS.slice(1, 5)}
                     defaultValue={["close", "stage", "owner", "source"]}
+                    unstyled
                     columns={2}
                     renderItem={(item, state) => (
                         <div className="flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-3 py-2 dark:border-zinc-700 dark:bg-zinc-900">
@@ -106,6 +110,7 @@ export const reorderableGridDoc: ComponentDoc = {
             code: `<ReorderableGrid
     items={fields}
     defaultValue={savedOrder}
+    unstyled // this example draws its own cell
     columns={2}
     renderItem={(field, state) => (
         <div>
@@ -134,14 +139,14 @@ setOrder(moveItem(order, 0, 5));`,
         { name: "value", type: `string[]`, default: "—", description: "Controlled order, as ids. Unknown ids are ignored and new items are appended." },
         { name: "defaultValue", type: `string[]`, default: "items order", description: "Initial order when uncontrolled." },
         { name: "onReorder", type: `(ids: string[]) => void`, default: "—", description: "The full new order, once per committed move." },
-        { name: "renderItem", type: `(item, state) => ReactNode`, default: "—", description: "Draws a cell. `state` has position, row, column, pickedUp, dragging, dropTarget, locked and handleProps." },
+        { name: "renderItem", type: `(item, state) => ReactNode`, default: "—", description: "Cell CONTENT. The cell is already framed, so return bare content (no border of your own). `state` has position, row, column, pickedUp, dragging, dropTarget, locked and handleProps." },
         { name: "columns", type: `number`, default: `2`, description: "Columns, 1-12. Placement is row-major, and Up/Down move one row." },
         { name: "gap", type: `"none" | "sm" | "md" | "lg"`, default: `"sm"`, description: "Space between cells." },
         { name: "disabled", type: `boolean`, default: `false`, description: "Turns off pointer and keyboard reordering." },
         { name: "label", type: `string`, default: "—", description: "Accessible name of the grid." },
         { name: "getItemLabel", type: `(item) => string`, default: "the id", description: "The name read out in announcements." },
         { name: "labels", type: `Partial<ReorderableGridLabels>`, default: "English", description: "Override instructions and every aria-live announcement, for i18n." },
-        { name: "unstyled", type: `boolean`, default: `false`, description: "Drop the default cell styling." },
+        { name: "unstyled", type: `boolean`, default: `false`, description: "Drop the default cell frame (border, surface, padding) when you draw the cell yourself. Drag, keyboard and announcements are unchanged." },
         { name: "cellClassName", type: `string`, default: "—", description: "Classes on every cell wrapper." },
     ],
     notes: (

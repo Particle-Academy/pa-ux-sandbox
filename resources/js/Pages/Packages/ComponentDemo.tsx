@@ -1442,13 +1442,11 @@ function ReorderableGridDemo() {
                     columns={3}
                     label="Field order"
                     getItemLabel={(f) => f.label}
-                    renderItem={(f, state) => (
-                        <div
-                            className={`rounded-lg border px-3 py-2 ${state.pickedUp ? "border-violet-400 bg-violet-50 dark:bg-violet-500/10" : "border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-900"}`}
-                        >
+                    renderItem={(f) => (
+                        <>
                             <p className="text-[11px] uppercase tracking-wide text-zinc-500 dark:text-zinc-400">{f.label}</p>
                             <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">{f.value}</p>
-                        </div>
+                        </>
                     )}
                 />
                 <Badge color="violet" variant="soft">{order.join(", ")}</Badge>

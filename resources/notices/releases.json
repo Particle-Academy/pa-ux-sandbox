@@ -65,7 +65,7 @@
         "fancy-screens": "0.7.1",
         "fancy-seo": "0.6.0",
         "fancy-sheets": "0.12.0",
-        "fancy-slides": "0.22.0",
+        "fancy-slides": "0.23.0",
         "fancy-term": "0.8.0",
         "fancy-term-host": "0.11.1",
         "fancy-trading-js": "0.2.1",
@@ -92,16 +92,16 @@
         "last-word-js": "0.10.0",
         "last-word-py": "0.6.0",
         "mcp-relay-client": "0.3.0",
-        "prism": "0.135.0",
-        "prism-acp-ts": "0.25.2",
+        "prism": "0.137.0",
+        "prism-acp-ts": "0.26.0",
         "prism-browser": "0.2.0",
         "prism-browser-py": "0.1.1",
         "prism-browser-ts": "0.2.1",
         "prism-harness": "0.17.0",
         "prism-harness-py": "0.2.1",
         "prism-harness-ts": "0.7.0",
-        "prism-human-plus": "0.4.0",
-        "prism-human-plus-ts": "0.3.0",
+        "prism-human-plus": "0.5.0",
+        "prism-human-plus-ts": "0.4.0",
         "prism-mcp": "0.2.0",
         "prism-mcp-ts": "0.3.0",
         "prism-memory": "0.3.0",
@@ -113,13 +113,76 @@
         "prism-perplexity-ts": "0.2.0",
         "prism-py": "0.5.0",
         "prism-ts": "0.5.0",
-        "prism-workspace": "0.2.0",
+        "prism-workspace": "0.3.0",
         "prism-workspace-ts": "0.2.0",
-        "react-fancy": "5.60.0",
-        "teachers-aid": "0.2.0",
+        "react-fancy": "5.60.1",
+        "teachers-aid": "0.3.0",
         "teachers-aid-ui": "0.3.0"
     },
     "releases": [
+        {
+            "slug": "fancy-slides",
+            "registry": "npm",
+            "version": "0.23.0",
+            "published_at": "2026-10-26T03:03:25Z",
+            "first": false
+        },
+        {
+            "slug": "prism",
+            "registry": "composer",
+            "version": "0.137.0",
+            "published_at": "2026-10-26T03:00:45Z",
+            "first": false
+        },
+        {
+            "slug": "react-fancy",
+            "registry": "npm",
+            "version": "5.60.1",
+            "published_at": "2026-10-26T02:58:50Z",
+            "first": false
+        },
+        {
+            "slug": "prism-acp-ts",
+            "registry": "npm",
+            "version": "0.26.0",
+            "published_at": "2026-10-26T02:41:17Z",
+            "first": false
+        },
+        {
+            "slug": "prism-human-plus-ts",
+            "registry": "npm",
+            "version": "0.4.0",
+            "published_at": "2026-10-26T02:28:22Z",
+            "first": false
+        },
+        {
+            "slug": "prism-workspace",
+            "registry": "composer",
+            "version": "0.3.0",
+            "published_at": "2026-10-25T22:05:58Z",
+            "first": false
+        },
+        {
+            "slug": "prism-human-plus",
+            "registry": "composer",
+            "version": "0.5.0",
+            "published_at": "2026-10-25T22:03:10Z",
+            "first": false
+        },
+        {
+            "slug": "prism",
+            "registry": "composer",
+            "version": "0.136.0",
+            "published_at": "2026-10-25T21:46:34Z",
+            "first": false
+        },
+        {
+            "slug": "teachers-aid",
+            "registry": "composer",
+            "version": "0.3.0",
+            "published_at": "2026-10-25T03:48:39Z",
+            "first": false
+        },
         {
             "slug": "agent-integrations",
             "registry": "npm",
@@ -4018,349 +4081,6 @@
             "version": "0.48.0",
             "published_at": "2026-08-27T03:20:18Z",
             "first": false
-        },
-        {
-            "slug": "agent-integrations",
-            "registry": "npm",
-            "version": "0.44.0",
-            "published_at": "2026-08-27T02:14:23Z",
-            "first": false
-        },
-        {
-            "slug": "agent-integrations",
-            "registry": "npm",
-            "version": "0.43.0",
-            "published_at": "2026-08-27T01:57:34Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-flow-php",
-            "registry": "composer",
-            "version": "0.47.0",
-            "published_at": "2026-08-27T01:17:33Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-flow-mcp",
-            "registry": "composer",
-            "version": "0.3.1",
-            "published_at": "2026-08-27T01:04:07Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-flow-php",
-            "registry": "composer",
-            "version": "0.46.0",
-            "published_at": "2026-08-27T01:02:46Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-flow-php",
-            "registry": "composer",
-            "version": "0.45.0",
-            "published_at": "2026-08-26T23:38:03Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-flow-py",
-            "registry": "pypi",
-            "version": "0.15.0",
-            "published_at": "2026-08-26T22:44:26Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-flow-php",
-            "registry": "composer",
-            "version": "0.44.0",
-            "published_at": "2026-08-26T22:41:43Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-flow",
-            "registry": "npm",
-            "version": "0.63.0",
-            "published_at": "2026-08-26T22:37:27Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-flow-mcp",
-            "registry": "composer",
-            "version": "0.3.0",
-            "published_at": "2026-08-26T22:33:09Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-flow-php",
-            "registry": "composer",
-            "version": "0.43.0",
-            "published_at": "2026-08-26T22:31:33Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-flow-php",
-            "registry": "composer",
-            "version": "0.42.0",
-            "published_at": "2026-08-26T22:09:54Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-flow-php",
-            "registry": "composer",
-            "version": "0.41.0",
-            "published_at": "2026-08-26T19:50:15Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-conformance",
-            "registry": "npm",
-            "version": "0.20.0",
-            "published_at": "2026-08-26T19:48:18Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-flow-php",
-            "registry": "composer",
-            "version": "0.40.0",
-            "published_at": "2026-08-26T19:44:55Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-flow-php",
-            "registry": "composer",
-            "version": "0.39.0",
-            "published_at": "2026-08-26T19:39:01Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-flow-py",
-            "registry": "pypi",
-            "version": "0.11.0",
-            "published_at": "2026-08-26T19:30:14Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-flow",
-            "registry": "npm",
-            "version": "0.59.0",
-            "published_at": "2026-08-26T19:28:13Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-conformance",
-            "registry": "npm",
-            "version": "0.19.0",
-            "published_at": "2026-08-26T19:24:11Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-flow-py",
-            "registry": "pypi",
-            "version": "0.10.0",
-            "published_at": "2026-08-26T19:19:19Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-flow",
-            "registry": "npm",
-            "version": "0.58.0",
-            "published_at": "2026-08-26T19:17:20Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-flow-php",
-            "registry": "composer",
-            "version": "0.38.0",
-            "published_at": "2026-08-26T19:12:01Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-flow-php",
-            "registry": "composer",
-            "version": "0.36.0",
-            "published_at": "2026-08-26T19:08:47Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-flow-py",
-            "registry": "pypi",
-            "version": "0.9.0",
-            "published_at": "2026-08-26T19:00:45Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-flow",
-            "registry": "npm",
-            "version": "0.57.0",
-            "published_at": "2026-08-26T18:58:53Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-flow-php",
-            "registry": "composer",
-            "version": "0.35.0",
-            "published_at": "2026-08-26T18:58:09Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-flow-php",
-            "registry": "composer",
-            "version": "0.34.0",
-            "published_at": "2026-08-26T18:54:27Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-flow-py",
-            "registry": "pypi",
-            "version": "0.8.0",
-            "published_at": "2026-08-26T18:32:07Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-flow-php",
-            "registry": "composer",
-            "version": "0.33.0",
-            "published_at": "2026-08-26T18:30:57Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-conformance",
-            "registry": "npm",
-            "version": "0.18.0",
-            "published_at": "2026-08-26T04:30:01Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-conformance",
-            "registry": "npm",
-            "version": "0.17.0",
-            "published_at": "2026-08-26T03:37:49Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-conformance",
-            "registry": "npm",
-            "version": "0.16.0",
-            "published_at": "2026-08-26T03:10:11Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-flow-php",
-            "registry": "composer",
-            "version": "0.32.0",
-            "published_at": "2026-08-26T03:01:09Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-conformance",
-            "registry": "npm",
-            "version": "0.15.0",
-            "published_at": "2026-08-26T02:52:46Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-conformance",
-            "registry": "npm",
-            "version": "0.14.0",
-            "published_at": "2026-08-26T02:46:58Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-flow",
-            "registry": "npm",
-            "version": "0.56.0",
-            "published_at": "2026-08-26T02:30:24Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-flow-py",
-            "registry": "pypi",
-            "version": "0.7.0",
-            "published_at": "2026-08-26T02:29:38Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-flow-php",
-            "registry": "composer",
-            "version": "0.31.0",
-            "published_at": "2026-08-26T02:27:50Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-flow-php",
-            "registry": "composer",
-            "version": "0.30.0",
-            "published_at": "2026-08-26T00:09:54Z",
-            "first": false
-        },
-        {
-            "slug": "prism-workspace",
-            "registry": "composer",
-            "version": "0.1.0",
-            "published_at": "2026-08-25T23:41:03Z",
-            "first": true
-        },
-        {
-            "slug": "fancy-flow-py",
-            "registry": "pypi",
-            "version": "0.6.1",
-            "published_at": "2026-08-25T23:34:27Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-flow-php",
-            "registry": "composer",
-            "version": "0.29.0",
-            "published_at": "2026-08-25T23:31:21Z",
-            "first": false
-        },
-        {
-            "slug": "prism-mcp",
-            "registry": "composer",
-            "version": "0.1.0",
-            "published_at": "2026-08-25T23:28:13Z",
-            "first": true
-        },
-        {
-            "slug": "fancy-flow-py",
-            "registry": "pypi",
-            "version": "0.6.0",
-            "published_at": "2026-08-25T23:08:32Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-flow",
-            "registry": "npm",
-            "version": "0.55.0",
-            "published_at": "2026-08-25T23:08:00Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-flow-php",
-            "registry": "composer",
-            "version": "0.28.0",
-            "published_at": "2026-08-25T23:01:48Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-conformance",
-            "registry": "npm",
-            "version": "0.13.0",
-            "published_at": "2026-08-25T22:54:31Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-flow-php",
-            "registry": "composer",
-            "version": "0.27.0",
-            "published_at": "2026-08-25T22:45:13Z",
-            "first": false
-        },
-        {
-            "slug": "prism-memory",
-            "registry": "composer",
-            "version": "0.1.0",
-            "published_at": "2026-08-25T21:37:37Z",
-            "first": true
         }
     ]
 }

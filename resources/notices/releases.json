@@ -115,11 +115,18 @@
         "prism-ts": "0.5.0",
         "prism-workspace": "0.3.0",
         "prism-workspace-ts": "0.2.0",
-        "react-fancy": "5.63.0",
+        "react-fancy": "5.64.0",
         "teachers-aid": "0.3.0",
         "teachers-aid-ui": "0.3.0"
     },
     "releases": [
+        {
+            "slug": "react-fancy",
+            "registry": "npm",
+            "version": "5.64.0",
+            "published_at": "2026-10-26T13:52:25Z",
+            "first": false
+        },
         {
             "slug": "last-word-js",
             "registry": "npm",

@@ -1499,6 +1499,7 @@ Both registry names read as unclaimed on 2026-10-08 -- `@particle-academy/fancy-
             ['slug' => 'progress', 'name' => 'Progress'],
             ['slug' => 'prompt-input', 'name' => 'PromptInput'],
             ['slug' => 'reason-tag', 'name' => 'ReasonTag'],
+            ['slug' => 'reorderable-grid', 'name' => 'ReorderableGrid', 'blurb' => 'Reorder grid cells in place by pointer or keyboard: controlled id order, row-major columns, locked cells, aria-live announcements and an agent-friendly moveItem().'],
             ['slug' => 'resizable-panels', 'name' => 'ResizablePanels', 'blurb' => 'Two panels with an accessible, draggable separator: a percentage split, keyboard steps, and a commit event to persist the size.'],
             ['slug' => 'separator', 'name' => 'Separator'],
             ['slug' => 'sidebar', 'name' => 'Sidebar'],

@@ -114,6 +114,7 @@ import { portalDoc } from "./Portal";
 import { profileDoc } from "./Profile";
 import { progressDoc } from "./Progress";
 import { resizablePanelsDoc } from "./ResizablePanels";
+import { reorderableGridDoc } from "./ReorderableGrid";
 import { promptInputDoc } from "./PromptInput";
 import { pwaDoc } from "./Pwa";
 import { reasonTagDoc } from "./ReasonTag";
@@ -241,6 +242,7 @@ export const DOCS: Record<string, ComponentDoc> = {
     "react-fancy/profile": profileDoc,
     "react-fancy/progress": progressDoc,
     "react-fancy/resizable-panels": resizablePanelsDoc,
+    "react-fancy/reorderable-grid": reorderableGridDoc,
     "react-fancy/prompt-input": promptInputDoc,
     "react-fancy/reason-tag": reasonTagDoc,
     "react-fancy/separator": separatorDoc,

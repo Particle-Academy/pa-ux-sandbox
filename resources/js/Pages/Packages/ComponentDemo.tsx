@@ -117,6 +117,7 @@ import {
     type ActivityLevel,
     type ActivityDirection,
     FullScreen,
+    ReorderableGrid,
 } from "@particle-academy/react-fancy";
 import { CodeEditor, MarkdownEditor, FileViewer, registerOfficeViewer } from "@particle-academy/fancy-code";
 import { DocViewer, DocFileView } from "@particle-academy/fancy-docs";
@@ -245,6 +246,7 @@ const REGISTRY: Record<string, DemoFn> = {
     "react-fancy/skeleton": SkeletonDemo,
     "react-fancy/progress": ProgressDemo,
     "react-fancy/resizable-panels": ResizablePanelsDemo,
+    "react-fancy/reorderable-grid": ReorderableGridDemo,
     "react-fancy/reason-tag": ReasonTagDemo,
     // Card / container
     "react-fancy/card": CardDemo,
@@ -1413,6 +1415,45 @@ function SkeletonDemo() {
             <Skeleton className="h-3 w-1/2" />
             <Skeleton className="h-20 w-full" />
         </div>
+    );
+}
+
+const REORDER_FIELDS = [
+    { id: "amount", label: "Amount", value: "$48,000" },
+    { id: "stage", label: "Stage", value: "Proposal" },
+    { id: "owner", label: "Owner", value: "R. Alvarez" },
+    { id: "close", label: "Close date", value: "Dec 12" },
+    { id: "source", label: "Source", value: "Referral" },
+    { id: "region", label: "Region", value: "EMEA" },
+];
+
+function ReorderableGridDemo() {
+    const [order, setOrder] = useState<string[]>(REORDER_FIELDS.map((f) => f.id));
+    return (
+        <DemoNote
+            outOfBox="Pointer drag with a live preview, keyboard pick-up / arrows / drop / Escape, and spoken announcements."
+            demo="The badge echoes the controlled order so you can watch onReorder fire once per move."
+        >
+            <div className="space-y-3">
+                <ReorderableGrid
+                    items={REORDER_FIELDS}
+                    value={order}
+                    onReorder={setOrder}
+                    columns={3}
+                    label="Field order"
+                    getItemLabel={(f) => f.label}
+                    renderItem={(f, state) => (
+                        <div
+                            className={`rounded-lg border px-3 py-2 ${state.pickedUp ? "border-violet-400 bg-violet-50 dark:bg-violet-500/10" : "border-zinc-200 bg-white dark:border-zinc-700 dark:bg-zinc-900"}`}
+                        >
+                            <p className="text-[11px] uppercase tracking-wide text-zinc-500 dark:text-zinc-400">{f.label}</p>
+                            <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100">{f.value}</p>
+                        </div>
+                    )}
+                />
+                <Badge color="violet" variant="soft">{order.join(", ")}</Badge>
+            </div>
+        </DemoNote>
     );
 }
 

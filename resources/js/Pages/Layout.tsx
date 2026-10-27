@@ -319,9 +319,9 @@ export function Layout({
                                 </Dropdown>
                             </>
                         ) : (
-                            <a className="btn btn-primary" style={{ height: 34, padding: "0 14px" }} href="/auth/github">
-                                <span className="gh-mark" />
-                                <span>Sign in</span>
+                            <a className="btn btn-primary nav-signin" href="/auth/github" aria-label="Sign in with GitHub">
+                                <span className="gh-mark" aria-hidden="true" />
+                                <span className="nav-signin-label">Sign in</span>
                             </a>
                         )}
                     </div>

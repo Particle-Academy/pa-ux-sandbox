@@ -47,7 +47,7 @@ describe("the main nav is reachable at every width", () => {
     });
 
     it("swaps links for the burger at the breakpoint where they would overflow", () => {
-        const block = mediaBlock(1180);
+        const block = mediaBlock(1279);
 
         expect(block).toMatch(/\.nav-links \{ display: none; \}/);
         expect(block).toMatch(/\.nav-burger \{ display: inline-flex/);
@@ -75,11 +75,23 @@ describe("the main nav is reachable at every width", () => {
 
     it("keeps the burger between phone and desktop, where a bar has no ergonomics", () => {
         // The bar is a thumb-reach pattern. A tablet has the width for a drawer
-        // and not the grip for a bar, so 640–1180 keeps the burger.
-        const block = mediaBlock(1180);
+        // and not the grip for a bar, so 640–1279 keeps the burger.
+        const block = mediaBlock(1279);
 
         expect(block).toMatch(/\.nav-burger \{ display: inline-flex/);
         expect(block).not.toMatch(/site-bottom-nav/);
+    });
+
+    it("only shows the inline links where the header container is wide enough to hold them", () => {
+        // The header row (brand + links + actions) needs ~1254px. It used to sit
+        // in a 1200px container with the links shown down to 1180px, so the
+        // actions overflowed at every desktop width and "Sign in" was clipped at
+        // 1280. The burger must take over exactly below the container width.
+        const inner = /\.nav-inner \{[^}]*max-width: (\d+)px;/.exec(css);
+        expect(inner).not.toBeNull();
+        const width = Number(inner![1]);
+        expect(width).toBeGreaterThanOrEqual(1260);
+        expect(mediaBlock(width - 1)).toMatch(/\.nav-links \{ display: none; \}/);
     });
 
     it("routes bottom-bar destinations through Inertia, not full page loads", () => {

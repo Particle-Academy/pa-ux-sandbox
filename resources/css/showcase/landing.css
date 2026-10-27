@@ -27,7 +27,10 @@
   border-bottom: 1px solid var(--border-1);
 }
 .nav-inner {
-  max-width: 1200px;
+  /* The header row (brand + links + actions + gaps + padding) needs ~1254px,
+     wider than the 1200px page container, so the header gets its own width.
+     Below that the links collapse into the burger (see the 1279px rule). */
+  max-width: 1280px;
   margin: 0 auto;
   padding: 12px 22px;
   display: flex; align-items: center; gap: 16px;
@@ -66,6 +69,7 @@
 .nav-link:hover { background: var(--bg-1); color: var(--fg-1); }
 .nav-spacer { flex: 1; }
 .nav-actions { display: flex; align-items: center; gap: 8px; }
+.nav-signin { height: 34px; padding: 0 14px; }
 
 /* Live active-users stream — each activity posts a pill (the user's avatar +
    what they just did) that rises up from just above the floating Fancy Pixel
@@ -1010,6 +1014,11 @@ section.ticker { padding: 0; background: var(--bg-1); }
   }
   .nav-actions { gap: 6px; }
   .nav-inner { padding: 12px 14px; }
+  /* Sign-in goes icon-only: its label is the aria-label, and the bottom bar
+     carries a full "Sign in" item too. This removed the last 20px of overflow
+     at 375px (the row ended at 395px). */
+  .nav-signin { padding: 0; width: 34px; justify-content: center; }
+  .nav-signin-label { display: none; }
   /* Let the version chip drop so the brand stays compact next to the actions. */
   .nav-brand .ver { display: none; }
 }
@@ -1021,7 +1030,7 @@ section.ticker { padding: 0; background: var(--bg-1); }
    window under 1180px rather than only on phones. */
 .nav-burger { display: none; }
 
-@media (max-width: 1180px) {
+@media (max-width: 1279px) {
   .nav-links { display: none; }
   .nav-burger { display: inline-flex; align-items: center; }
 }

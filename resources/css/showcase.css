@@ -30,6 +30,9 @@
 /* Features: the header dropdown, /features and the micro-site kit. */
 @import "./showcase/features.css";
 
+/* /learn: the course grid, grouped like the Features menu. */
+@import "./showcase/learn.css";
+
 /* Hand-authored CSS overrides shipped by each consumed package. */
 @import "@particle-academy/react-fancy/styles.css";
 @import "@particle-academy/fancy-code/styles.css";

@@ -1,9 +1,14 @@
 import type { ReactNode } from "react";
-import { Badge, Heading, Icon, Text } from "@particle-academy/react-fancy";
-import type { FeatureNav } from "./types";
+import { Link } from "@inertiajs/react";
+import { Badge, Button, Heading, Icon, Text } from "@particle-academy/react-fancy";
+import type { FeatureCourse, FeatureNav } from "./types";
 
 /**
  * The micro-site's opening: icon, name, a lede and the languages it ships in.
+ *
+ * When the Feature's course is published in the curriculum, the hero adds a
+ * "Learn <Feature>" action after the page's own. The server sends `course` as
+ * null whenever `/learn/{slug}` would not answer, so the link cannot 404.
  * Type and colour come from the Feature's identity (features.css), so the same
  * hero reads differently on every site without a prop for it.
  *
@@ -19,7 +24,7 @@ export function FeatureHero({
     actions,
     children,
 }: {
-    feature: FeatureNav;
+    feature: FeatureNav & { course?: FeatureCourse | null };
     eyebrow?: ReactNode;
     title?: ReactNode;
     lede?: ReactNode;
@@ -54,7 +59,22 @@ export function FeatureHero({
                         ))}
                     </div>
                 )}
-                {actions && <div className="feature-hero__actions">{actions}</div>}
+                {(actions || feature.course) && (
+                    <div className="feature-hero__actions">
+                        {actions}
+                        {feature.course && (
+                            <Button
+                                href={feature.course.href}
+                                as={Link}
+                                variant="ghost"
+                                icon="graduation-cap"
+                                data-feature-learn={feature.course.slug}
+                            >
+                                Learn {feature.name}
+                            </Button>
+                        )}
+                    </div>
+                )}
                 {children}
             </div>
         </header>

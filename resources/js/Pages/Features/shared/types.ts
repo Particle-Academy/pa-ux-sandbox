@@ -50,9 +50,21 @@ export type FeatureBridge = {
     tools: string;
 };
 
+/**
+ * The Feature's course in the curriculum, as a link. Null whenever the course
+ * is not published and listed, so a page never links to a 404.
+ */
+export type FeatureCourse = {
+    slug: string;
+    title: string;
+    /** `/learn/{slug}`. */
+    href: string;
+};
+
 /** The `feature` prop every `/features/{slug}` page receives. */
 export type ResolvedFeature = FeatureNav & {
     component: string;
+    course: FeatureCourse | null;
     theme: FeatureTheme;
     bridges: FeatureBridge[];
     members: FeatureMember[];

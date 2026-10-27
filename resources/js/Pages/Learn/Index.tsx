@@ -39,8 +39,12 @@ export default function LearnIndex({
             <Head title={`${curriculum.title} — Curriculum`} />
 
             <div className="mx-auto max-w-4xl" data-learn-index="">
+                {/* Grouped like the Features menu by learn.css: Fancy Core as
+                    "Start here", the Feature courses in nav order, then the
+                    capstone. The order itself comes from the server. */}
                 <CurriculumOverview
                     curriculum={curriculum}
+                    classNames={{ grid: "learn-course-grid" }}
                     courseProgress={courseProgress}
                     onEnroll={enrolled ? undefined : handleEnroll}
                     onOpenCourse={(course: Course) => router.visit(`/learn/${course.slug}`)}

@@ -1,5 +1,107 @@
 import type { ComponentDoc } from "./types";
-import { PromptInput, Text } from "@particle-academy/react-fancy";
+import { useRef, useState } from "react";
+import {
+    Button,
+    PromptInput,
+    Text,
+    promptDataUrlToFile,
+    promptFileToDataUrl,
+} from "@particle-academy/react-fancy";
+import type { PromptDraft, PromptDraftFile, PromptInputHandle } from "@particle-academy/react-fancy";
+
+function ControlledTextDemo() {
+    const [text, setText] = useState("Summarise the last three commits");
+
+    return (
+        <div className="flex w-full max-w-md flex-col gap-4">
+            <div>
+                <div className="mb-1 text-[11px] uppercase tracking-wider text-zinc-400">
+                    value + onChange (controlled)
+                </div>
+                <PromptInput budgetTokens={8000} value={text} onChange={setText} onSubmit={() => {}} />
+                <div className="mt-2 flex flex-wrap items-center gap-2">
+                    <Button size="sm" variant="ghost" onClick={() => setText("Draft a release note for 5.65.0")}>
+                        Set from outside
+                    </Button>
+                    <Button size="sm" variant="ghost" onClick={() => setText("")}>
+                        Clear from outside
+                    </Button>
+                    <Text size="xs" className="ml-auto !text-zinc-500">
+                        host sees {text.length} chars
+                    </Text>
+                </div>
+            </div>
+            <div>
+                <div className="mb-1 text-[11px] uppercase tracking-wider text-zinc-400">
+                    defaultValue (uncontrolled)
+                </div>
+                <PromptInput budgetTokens={8000} defaultValue="Start from this text" onSubmit={() => {}} />
+            </div>
+        </div>
+    );
+}
+
+const SAVED_DRAFT: PromptDraft = { v: 1, text: "Pick up where you left off", pills: [], attachments: [] };
+
+/** Keep each attached file inline, as a data: URL. A real host may upload it and return a key. */
+function persistInline(file: File): Promise<string> {
+    return promptFileToDataUrl(file);
+}
+
+function restoreInline(entry: PromptDraftFile): File | undefined {
+    return entry.ref ? promptDataUrlToFile(entry.ref, entry.name, entry.type) : undefined;
+}
+
+/** Shorten data: URLs so the JSON stays readable. */
+function shortRefs(key: string, value: unknown): unknown {
+    return key === "ref" && typeof value === "string" && value.length > 48 ? value.slice(0, 48) + "…" : value;
+}
+
+function DraftDemo() {
+    const composer = useRef<PromptInputHandle>(null);
+    const [saved, setSaved] = useState<PromptDraft>(SAVED_DRAFT);
+    const [mount, setMount] = useState(0);
+
+    return (
+        <div className="flex w-full max-w-xl flex-col gap-2">
+            <PromptInput
+                key={mount}
+                ref={composer}
+                budgetTokens={200000}
+                pasteThreshold={200}
+                pasteImages
+                defaultDraft={saved}
+                onDraftChange={setSaved}
+                persistAttachment={persistInline}
+                restoreAttachment={restoreInline}
+                placeholder="Type, paste or attach, then remount…"
+                onSubmit={() => {}}
+            />
+            <div className="flex flex-wrap items-center gap-2">
+                <Button size="sm" variant="ghost" onClick={() => setMount((n) => n + 1)}>
+                    Remount from the saved draft
+                </Button>
+                <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() =>
+                        composer.current?.setDraft({
+                            v: 1,
+                            text: "Set by setDraft. Focus did not move.",
+                            pills: [],
+                            attachments: [],
+                        })
+                    }
+                >
+                    Replace with setDraft
+                </Button>
+            </div>
+            <pre className="max-h-48 overflow-auto rounded-md bg-zinc-50 p-2 text-[11px] leading-relaxed text-zinc-600 dark:bg-zinc-900 dark:text-zinc-300">
+                {JSON.stringify(saved, shortRefs, 2)}
+            </pre>
+        </div>
+    );
+}
 
 export const promptInputDoc: ComponentDoc = {
     intro: (
@@ -182,6 +284,46 @@ export const promptInputDoc: ComponentDoc = {
     onSubmit={send}
 />`,
         },
+        {
+            name: "Controlled text",
+            description:
+                "value and onChange make the text the host's state, so it can be read, set or cleared from outside. onChange fires when the person edits, and with an empty string after a send. defaultValue sets the starting text and leaves the composer in charge after that. With paste pills on, value carries a pasteMarker(id) for each pill, the same as Composer's value.",
+            render: () => <ControlledTextDemo />,
+            code: `const [text, setText] = useState("");
+
+<PromptInput budgetTokens={8000} value={text} onChange={setText} onSubmit={send} />
+
+// Uncontrolled, with a starting text:
+<PromptInput budgetTokens={8000} defaultValue="Start from this text" onSubmit={send} />`,
+        },
+        {
+            name: "Save and restore a draft",
+            description:
+                "A PromptDraft is plain JSON: { v: 1, text, pills, attachments }. onDraftChange gets the whole draft whenever the person changes any part of it, so the host can save it anywhere; defaultDraft starts a new composer from it. The file bytes are not in the draft. persistAttachment stores each attached or pasted file and returns a handle that becomes the entry's ref; restoreAttachment gets the File back from that ref. This demo keeps the bytes inline with promptFileToDataUrl and promptDataUrlToFile. Attach or paste an image, then remount: the chip comes back with its file. The setDraft button uses the ref handle. It does not move focus and does not fire onDraftChange, so the saved JSON below does not change until you type again.",
+            render: () => <DraftDemo />,
+            code: `const composer = useRef<PromptInputHandle>(null);
+const saved = JSON.parse(localStorage.getItem("draft") ?? "null") ?? undefined;
+
+<PromptInput
+    ref={composer}
+    budgetTokens={200_000}
+    pasteImages
+    defaultDraft={saved}
+    onDraftChange={(draft) => localStorage.setItem("draft", JSON.stringify(draft))}
+    // The draft carries a handle, not the bytes. Inline data: URLs are the
+    // simplest option. For large files, upload them and return the key.
+    persistAttachment={(file) => promptFileToDataUrl(file)}
+    restoreAttachment={(entry) =>
+        entry.ref ? promptDataUrlToFile(entry.ref, entry.name, entry.type) : undefined
+    }
+    onSubmit={send}
+/>
+
+// Restore later. Does not call onChange / onDraftChange, does not take focus:
+composer.current?.setDraft(savedDraft);
+// ...unless you ask it to:
+composer.current?.setDraft(savedDraft, { focus: true });`,
+        },
     ],
     props: [
         { name: "budgetTokens", type: `number`, default: "—", description: "Token budget shown by the meter. Required." },
@@ -207,5 +349,21 @@ export const promptInputDoc: ComponentDoc = {
         { name: "meter", type: `"always" | "near-limit" | "hidden"`, default: `"always"`, description: "`near-limit`: hidden until `meterShowAt`, muted until `meterWarnAt`, warning colour past it." },
         { name: "meterShowAt", type: `number`, default: `0.75`, description: "Fraction of the budget at which a `near-limit` meter appears." },
         { name: "meterWarnAt", type: `number`, default: `0.9`, description: "Fraction of the budget past which a `near-limit` meter turns the warning colour." },
+        { name: "value", type: `string`, default: "—", description: "The text, controlled. With paste pills on it carries a `pasteMarker(id)` per pill. Use `draft` to control pills and attachments too." },
+        { name: "defaultValue", type: `string`, default: "—", description: "The starting text, uncontrolled. Ignored when `value` or `draft` is given." },
+        { name: "onChange", type: `(value: string) => void`, default: "—", description: "Called with the new text when the person edits it, and with `\"\"` after a send. Not called by `setDraft`." },
+        { name: "draft", type: `PromptDraft`, default: "—", description: "The whole draft, controlled: text, paste pills and attachments, as JSON. Wins over `value`." },
+        { name: "defaultDraft", type: `PromptDraft`, default: "—", description: "The starting draft, uncontrolled. Wins over `defaultValue`." },
+        { name: "onDraftChange", type: `(draft: PromptDraft) => void`, default: "—", description: "Called with the whole draft on any change the person makes, and when `persistAttachment` resolves a `ref`. Not called by `setDraft`." },
+        { name: "persistAttachment", type: `(file, entry) => string | undefined | Promise<…>`, default: "—", description: "Store an attached or pasted file and return a handle; it becomes the entry's `ref`. Omit it and a draft carries file metadata only." },
+        { name: "restoreAttachment", type: `(entry) => File | undefined | Promise<…>`, default: "—", description: "Get a File back for a restored entry. Return `undefined` and the chip still shows; `onSubmit` gets its `ref` and no `file`." },
     ],
+    notes: (
+        <p>
+            A <code>ref</code> resolves to a <code>PromptInputHandle</code>: <code>getDraft()</code>,{" "}
+            <code>setDraft(draft, {"{ focus?: false }"})</code> and <code>focus()</code>. A draft whose{" "}
+            <code>v</code> is unknown is refused with a console warning. Each attachment chip carries a
+            stable <code>data-react-fancy-prompt-input-attachment="&lt;id&gt;"</code> handle.
+        </p>
+    ),
 };

@@ -79,7 +79,7 @@
         "fancy-x-files": "0.2.0",
         "fancy-x-files-js": "0.2.0",
         "fancy-x-files-ui": "0.2.0",
-        "fine-print": "0.2.1",
+        "fine-print": "0.3.0",
         "holy-sheet": "2.9.2",
         "holy-sheet-js": "2.10.2",
         "holy-sheet-py": "0.9.1",
@@ -93,7 +93,7 @@
         "last-word-js": "0.10.1",
         "last-word-py": "0.6.0",
         "mcp-relay-client": "0.3.0",
-        "prism": "0.137.0",
+        "prism": "0.138.0",
         "prism-acp-ts": "0.32.0",
         "prism-browser": "0.4.0",
         "prism-browser-py": "0.1.1",
@@ -116,11 +116,32 @@
         "prism-ts": "0.5.0",
         "prism-workspace": "0.3.0",
         "prism-workspace-ts": "0.2.0",
-        "react-fancy": "5.64.1",
+        "react-fancy": "5.65.0",
         "teachers-aid": "0.3.0",
         "teachers-aid-ui": "0.3.0"
     },
     "releases": [
+        {
+            "slug": "fine-print",
+            "registry": "composer",
+            "version": "0.3.0",
+            "published_at": "2026-10-27T06:23:14Z",
+            "first": false
+        },
+        {
+            "slug": "react-fancy",
+            "registry": "npm",
+            "version": "5.65.0",
+            "published_at": "2026-10-27T05:58:47Z",
+            "first": false
+        },
+        {
+            "slug": "prism",
+            "registry": "composer",
+            "version": "0.138.0",
+            "published_at": "2026-10-27T05:55:03Z",
+            "first": false
+        },
         {
             "slug": "charlotte",
             "registry": "composer",

@@ -1,0 +1,91 @@
+/* /features/3d — page-scoped identity, keyed on [data-feature="3d"] (set by
+   FeatureIdentity), so nothing here reaches another page. */
+
+/* Hero: deep space in dark mode, a lit studio in light; a perspective floor. */
+[data-feature="3d"] .feature-hero {
+  position: relative;
+  overflow: hidden;
+  flex-wrap: wrap;
+  background:
+    linear-gradient(180deg, transparent 55%, color-mix(in oklch, var(--feature-accent) 10%, transparent)),
+    radial-gradient(70% 90% at 85% 10%, color-mix(in oklch, var(--feature-accent) 22%, transparent), transparent 70%),
+    var(--feature-surface);
+}
+[data-feature="3d"] .feature-hero__glyph {
+  transform: perspective(200px) rotateX(12deg) rotateY(-18deg);
+  box-shadow: 6px 8px 0 color-mix(in oklch, var(--feature-accent) 22%, transparent);
+}
+[data-feature="3d"] .feature-hero__main { flex: 1 1 320px; }
+[data-feature="3d"] .feature-display { letter-spacing: -0.025em; }
+
+.threed-hero__stack {
+  position: relative;
+  display: grid;
+  margin-top: 36px;
+  perspective: 900px;
+  max-width: 340px;
+}
+.threed-hero__layer {
+  grid-area: 1 / 1;
+  display: flex; flex-direction: column; gap: 2px;
+  background: color-mix(in oklch, var(--feature-surface) 85%, var(--bg-0));
+  border-color: color-mix(in oklch, var(--feature-accent) 40%, var(--border-1));
+  transform-origin: 50% 100%;
+  transform: rotateX(48deg) rotateZ(-8deg) translateZ(calc(var(--layer, 0) * 34px));
+  box-shadow: 0 14px 24px -18px color-mix(in oklch, var(--feature-accent) 60%, transparent);
+  animation: threed-float 7s ease-in-out infinite;
+  animation-delay: calc(var(--layer, 0) * -1.2s);
+}
+.threed-hero__layer:nth-child(1) { --layer: 2; }
+.threed-hero__layer:nth-child(2) { --layer: 1; }
+.threed-hero__layer:nth-child(3) { --layer: 0; }
+.threed-hero__stack { padding-bottom: 70px; }
+
+@keyframes threed-float {
+  0%, 100% { transform: rotateX(48deg) rotateZ(-8deg) translateZ(calc(var(--layer, 0) * 34px)); }
+  50% { transform: rotateX(48deg) rotateZ(-4deg) translateZ(calc(var(--layer, 0) * 34px + 8px)); }
+}
+
+/* Respect the reader: no drifting layers when motion is reduced. */
+@media (prefers-reduced-motion: reduce) {
+  .threed-hero__layer { animation: none; }
+}
+
+/* Demo */
+.threed-demo { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.threed-demo__controls { display: flex; flex-direction: column; gap: 8px; }
+.threed-demo__controls [role="radiogroup"] button,
+.threed-demo__controls [role="radio"] { min-height: 44px; }
+.threed-demo__stage {
+  position: relative;
+  height: 440px;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid color-mix(in oklch, var(--feature-accent) 30%, var(--border-1));
+  background: color-mix(in oklch, var(--feature-surface) 70%, var(--bg-0));
+}
+.threed-demo__stage[data-threed-stage="babylon"],
+.threed-demo__stage[data-threed-stage="three"] { background: #0d0a1a; }
+.threed-canvas, .threed-stage { width: 100%; height: 100%; }
+.threed-node { width: 240px; }
+.threed-node--chart { width: 300px; }
+.threed-demo__skeleton { width: 100%; height: 440px; border-radius: 14px; }
+
+.threed-demo__edit {
+  display: grid; gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  align-items: end;
+}
+.threed-demo__edit select, .threed-demo__edit input { min-height: 44px; }
+.threed-demo__reset button { min-height: 44px; }
+.threed-demo__json { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+
+/* Keyboard: a focus ring in the Feature's own accent, never removed. */
+[data-feature="3d"] .threed-demo :focus-visible {
+  outline: 2px solid var(--feature-accent);
+  outline-offset: 2px;
+}
+
+@media (max-width: 640px) {
+  .threed-demo__stage, .threed-demo__skeleton { height: 360px; }
+}

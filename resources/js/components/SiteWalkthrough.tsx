@@ -126,6 +126,18 @@ function TourRunner({ autoStart }: { autoStart: boolean }) {
     return null;
 }
 
+/**
+ * Whether the first-visit tour may open by itself on this path.
+ *
+ * Not on the Features area (`/features` and `/features/{slug}`): those pages
+ * are live demos, and a tour card opening over them blocked the first clicks a
+ * visitor came to make. The tour is not marked seen there, so it still runs on
+ * the first visit to any other page, and `Take the tour` works everywhere.
+ */
+export function isTourAutoStartRoute(pathname: string): boolean {
+    return !/^\/features(\/|$)/.test(pathname);
+}
+
 export function SiteWalkthrough({ children }: { children: ReactNode }) {
     const [autoStart, setAutoStart] = useState(false);
 
@@ -135,6 +147,7 @@ export function SiteWalkthrough({ children }: { children: ReactNode }) {
     useEffect(() => {
         try {
             if (window.localStorage.getItem(SEEN_KEY)) return;
+            if (!isTourAutoStartRoute(window.location.pathname)) return;
             setAutoStart(true);
         } catch {
             // Private mode / storage disabled. Not running the tour is the right

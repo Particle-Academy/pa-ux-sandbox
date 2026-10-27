@@ -565,7 +565,7 @@ export function Layout({
                         </div>
 
                         <div>
-                            <h5>Packages</h5>
+                            <h2 className="footer__heading">Packages</h2>
                             <ul>
                                 <li><Link href="/packages">All packages</Link></li>
                                 <li><Link href="/starter-kits">Starter kits</Link></li>
@@ -576,7 +576,7 @@ export function Layout({
 
                         {features.length > 0 && (
                             <div>
-                                <h5>Features</h5>
+                                <h2 className="footer__heading">Features</h2>
                                 <ul>
                                     {features.map((feature) => (
                                         <li key={feature.slug}>
@@ -588,7 +588,7 @@ export function Layout({
                         )}
 
                         <div>
-                            <h5>Learn</h5>
+                            <h2 className="footer__heading">Learn</h2>
                             <ul>
                                 <li><Link href="/docs">Docs</Link></li>
                                 <li><Link href="/docs/tanstack">TanStack</Link></li>
@@ -601,7 +601,7 @@ export function Layout({
                         </div>
 
                         <div>
-                            <h5>Connect</h5>
+                            <h2 className="footer__heading">Connect</h2>
                             <ul>
                                 <li>
                                     <a href="https://github.com/particle-academy" target="_blank" rel="noopener noreferrer">

@@ -1,0 +1,144 @@
+/* /features/ecommerce: a storefront identity. The hero reads as a till
+   receipt (perforated edge, dashed rules, tabular figures); plan cards read as
+   price tags. Scoped to this Feature's wrapper; colours come from the
+   --feature-* tokens features.css resolves, so dark mode is a token swap plus
+   the few surfaces below. */
+
+[data-feature="ecommerce"] {
+  --ecom-rule: color-mix(in oklch, var(--feature-accent) 38%, var(--border-1));
+  --ecom-paper: color-mix(in oklch, var(--feature-surface) 70%, var(--bg-0));
+}
+
+/* Hero: a receipt with a torn, perforated bottom edge. */
+[data-feature="ecommerce"] .ecom-site .feature-hero {
+  position: relative;
+  border-style: solid;
+  border-bottom-style: dashed;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  background:
+    repeating-linear-gradient(0deg, transparent 0 27px, color-mix(in oklch, var(--feature-accent) 7%, transparent) 27px 28px),
+    radial-gradient(110% 120% at 100% 0%, color-mix(in oklch, var(--feature-accent) 20%, transparent), transparent 60%),
+    var(--ecom-paper);
+}
+[data-feature="ecommerce"] .ecom-site .feature-hero::after {
+  content: "";
+  position: absolute; left: 12px; right: 12px; bottom: -7px; height: 12px;
+  background: radial-gradient(circle at 6px 6px, var(--bg-0) 5px, transparent 5.5px) 0 0 / 16px 12px repeat-x;
+  pointer-events: none;
+}
+[data-feature="ecommerce"] .ecom-site .feature-hero__glyph {
+  border-radius: 999px 999px 999px 4px;
+  transform: rotate(-8deg);
+}
+[data-feature="ecommerce"] .ecom-site .feature-display { letter-spacing: -0.03em; }
+.ecom-receipt {
+  margin-top: 14px; padding-top: 12px;
+  border-top: 1px dashed var(--ecom-rule);
+  font-variant-numeric: tabular-nums;
+  max-width: 28rem;
+}
+
+.ecom-tap { min-height: 44px; }
+.ecom-anchor { scroll-margin-top: 88px; }
+
+/* Demo layout */
+.ecom-store, .ecom-mlm, .ecom-account { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.ecom-account { margin-top: 8px; padding-top: 20px; border-top: 1px dashed var(--ecom-rule); }
+.ecom-store__bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+.ecom-toggle { display: inline-flex; flex-wrap: wrap; gap: 6px; }
+
+/* Plan cards: price tags. */
+.ecom-plan { position: relative; height: 100%; border-color: var(--ecom-rule); }
+.ecom-plan > * { height: 100%; display: flex; flex-direction: column; gap: 10px; }
+.ecom-plan[data-current] {
+  border-color: var(--feature-accent);
+  box-shadow: 0 0 0 1px var(--feature-accent), 0 10px 30px -18px var(--feature-accent);
+}
+.ecom-plan__head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+.ecom-plan__price { margin: 0; display: flex; align-items: baseline; gap: 6px; padding-bottom: 10px; border-bottom: 1px dashed var(--ecom-rule); }
+.ecom-plan__amount {
+  font-family: var(--feature-font); font-size: 34px; font-weight: 700; line-height: 1;
+  font-variant-numeric: tabular-nums; letter-spacing: -0.03em; color: var(--fg-1);
+}
+.ecom-plan__per { font-size: 14px; color: var(--fg-2); }
+.ecom-plan__grants { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; font-size: 14px; color: var(--fg-2); flex: 1; }
+.ecom-plan__grants li { display: flex; align-items: center; gap: 8px; }
+.ecom-plan__grants li[data-on] { color: var(--fg-1); }
+.ecom-plan__grants li[data-on] svg { color: var(--feature-accent); }
+.ecom-plan__choose { width: 100%; justify-content: center; }
+
+.ecom-note { font-size: 14px; }
+
+/* Tables scroll inside themselves on a narrow screen, never the page. */
+.ecom-table { max-width: 100%; overflow-x: auto; }
+.ecom-table table { min-width: 520px; font-size: 14px; }
+.ecom-num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.ecom-feature-name { font-weight: 600; color: var(--fg-1); }
+
+.ecom-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.ecom-log {
+  list-style: none; margin: 0; padding: 12px 14px;
+  display: flex; flex-direction: column; gap: 6px;
+  border-radius: 10px; border: 1px dashed var(--ecom-rule);
+  background: var(--ecom-paper);
+  font-family: var(--font-mono); font-size: 14px; color: var(--fg-1);
+}
+.ecom-log li { display: flex; align-items: flex-start; gap: 8px; overflow-wrap: anywhere; }
+.ecom-log li svg { flex: none; margin-top: 2px; }
+.ecom-log li[data-tone="ok"] svg { color: var(--feature-accent); }
+.ecom-log li[data-tone="denied"] svg { color: #dc2626; }
+.ecom-log__empty { color: var(--fg-2); }
+
+/* Referrals */
+.ecom-mlm__grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 20px; align-items: start; }
+.ecom-mlm__tree {
+  border: 1px solid var(--ecom-rule); border-radius: 12px; padding: 10px;
+  background: var(--ecom-paper); min-width: 0; overflow-x: auto;
+}
+.ecom-mlm__tree [data-mlm-member] { min-height: 44px; font-size: 14px; }
+.ecom-mlm__side { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.ecom-mlm__who { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+@media (max-width: 900px) {
+  .ecom-mlm__grid { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* Dark: the paper darkens with the surface; the perforation punches the page. */
+.dark [data-feature="ecommerce"],
+[data-theme="dark"] [data-feature="ecommerce"] {
+  --ecom-paper: color-mix(in oklch, var(--feature-surface) 85%, var(--bg-0));
+  --ecom-rule: color-mix(in oklch, var(--feature-accent) 30%, var(--border-1));
+}
+.dark [data-feature="ecommerce"] .ecom-log li[data-tone="denied"] svg,
+[data-theme="dark"] [data-feature="ecommerce"] .ecom-log li[data-tone="denied"] svg { color: #f87171; }
+
+/* The receipt totals: StatList laid out as a till line, at a readable size. */
+[data-feature="ecommerce"] .ecom-stats {
+  flex-direction: row; flex-wrap: wrap; gap: 6px 22px;
+  font-size: 14px; color: var(--fg-2);
+}
+[data-feature="ecommerce"] .ecom-stats b {
+  font-family: var(--feature-font); font-size: 22px; font-weight: 700; color: var(--feature-ink);
+}
+
+/* DownlineTree's expand / collapse control, at a 44px tap target. */
+.ecom-mlm__tree .fancy-mlm-tree__toggle { min-width: 44px; min-height: 44px; display: inline-grid; place-items: center; }
+
+/* The shared hero stacks at 640px but keeps align-items: flex-start, which
+   lets its text column size to content and run past a 375px screen. Stretch
+   it here; reported for the shared kit. */
+@media (max-width: 640px) {
+  [data-feature="ecommerce"] .feature-hero__main { align-self: stretch; }
+}
+
+/* "Decided by": the explain() source, readable at 14px. */
+.ecom-source { font-family: var(--font-mono); font-size: 14px; color: var(--fg-1); overflow-wrap: anywhere; }
+
+/* fancy-mlm-ui ships compact type; in this demo every label is 14px. */
+.ecom-mlm [data-fancy-mlm],
+.ecom-mlm [data-fancy-mlm] * { font-size: 14px; }
+
+@media (max-width: 640px) {
+  [data-feature="ecommerce"] .ecom-site h1.feature-display { font-size: 30px; overflow-wrap: anywhere; }
+}

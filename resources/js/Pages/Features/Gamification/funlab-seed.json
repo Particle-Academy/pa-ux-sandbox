@@ -1,0 +1,45 @@
+{
+    "metrics": [
+        { "slug": "build-xp", "name": "Build XP", "icon": "hammer" },
+        { "slug": "review-xp", "name": "Review XP", "icon": "eye" },
+        { "slug": "docs-xp", "name": "Docs XP", "icon": "book-open" }
+    ],
+    "levels": [
+        { "level": 1, "xp": 0, "name": "Novice" },
+        { "level": 2, "xp": 100, "name": "Apprentice" },
+        { "level": 3, "xp": 250, "name": "Adept" },
+        { "level": 4, "xp": 500, "name": "Expert" },
+        { "level": 5, "xp": 900, "name": "Master" }
+    ],
+    "achievements": [
+        { "slug": "shipped-it", "name": "Shipped it", "description": "Reach Apprentice in Build XP.", "icon": "rocket", "metric": "build-xp", "level": 2 },
+        { "slug": "second-pair-of-eyes", "name": "Second pair of eyes", "description": "Reach Apprentice in Review XP.", "icon": "scan-eye", "metric": "review-xp", "level": 2 },
+        { "slug": "wrote-it-down", "name": "Wrote it down", "description": "Reach Apprentice in Docs XP.", "icon": "pen-line", "metric": "docs-xp", "level": 2 },
+        { "slug": "build-expert", "name": "Build expert", "description": "Reach Expert in Build XP.", "icon": "award", "metric": "build-xp", "level": 4 }
+    ],
+    "actions": [
+        { "id": "ship", "label": "Ship a component", "metric": "build-xp", "amount": 60, "icon": "package-check" },
+        { "id": "review", "label": "Review a pull request", "metric": "review-xp", "amount": 40, "icon": "git-pull-request" },
+        { "id": "docs", "label": "Fix a docs page", "metric": "docs-xp", "amount": 30, "icon": "file-pen" }
+    ],
+    "you": "you",
+    "players": [
+        { "id": "you", "name": "You", "xp": { "build-xp": 60, "review-xp": 80 } },
+        { "id": "mara", "name": "Mara", "xp": { "build-xp": 520, "review-xp": 140, "docs-xp": 90 } },
+        { "id": "teo", "name": "Teo", "xp": { "build-xp": 260, "review-xp": 300, "docs-xp": 40 } },
+        { "id": "iris", "name": "Iris", "xp": { "build-xp": 120, "review-xp": 60, "docs-xp": 310 } },
+        { "id": "sol", "name": "Sol", "xp": { "build-xp": 30, "review-xp": 20, "docs-xp": 10 } }
+    ],
+    "parity": {
+        "seeded": {
+            "you": { "total": 140, "levels": { "build-xp": 1, "review-xp": 1, "docs-xp": 1 }, "achievements": [] },
+            "mara": { "total": 750, "levels": { "build-xp": 4, "review-xp": 2, "docs-xp": 1 }, "achievements": ["build-expert", "second-pair-of-eyes", "shipped-it"] },
+            "teo": { "total": 600, "levels": { "build-xp": 3, "review-xp": 3, "docs-xp": 1 }, "achievements": ["second-pair-of-eyes", "shipped-it"] },
+            "iris": { "total": 490, "levels": { "build-xp": 2, "review-xp": 1, "docs-xp": 3 }, "achievements": ["shipped-it", "wrote-it-down"] },
+            "sol": { "total": 60, "levels": { "build-xp": 1, "review-xp": 1, "docs-xp": 1 }, "achievements": [] }
+        },
+        "leaderboardByXp": ["mara", "teo", "iris", "you", "sol"],
+        "script": ["ship", "ship", "review"],
+        "afterScript": { "total": 300, "levels": { "build-xp": 2, "review-xp": 2, "docs-xp": 1 }, "achievements": ["second-pair-of-eyes", "shipped-it"] }
+    }
+}

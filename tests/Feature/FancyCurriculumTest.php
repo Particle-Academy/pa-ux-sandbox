@@ -40,7 +40,7 @@ class FancyCurriculumTest extends TestCase
         $curriculum = Curriculum::where('slug', Content::CURRICULUM_SLUG)->firstOrFail();
 
         $this->assertTrue((bool) $curriculum->is_published);
-        $this->assertCount(7, $curriculum->courses);
+        $this->assertCount(count(Content::courses()), $curriculum->courses);
 
         foreach ($curriculum->courses as $course) {
             $this->assertTrue((bool) $course->is_published, "{$course->slug} is not published");

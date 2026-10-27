@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Showcase;
 
 use App\Http\Controllers\Controller;
+use App\Support\Curriculum\ListedCourses;
 use App\Support\FeatureSites;
 use App\Support\Registry\PackageVersions;
 use Illuminate\Http\RedirectResponse;
@@ -47,6 +48,10 @@ class FeatureSiteController extends Controller
     {
         $feature = FeatureSites::resolved($slug);
         abort_if($feature === null, 404);
+
+        // The Feature names its course by slug; the link exists only while the
+        // course is published in the curriculum, so it cannot point at a 404.
+        $feature['course'] = ListedCourses::find((string) $feature['course']);
 
         return Inertia::render((string) $feature['component'], [
             'feature' => $feature,

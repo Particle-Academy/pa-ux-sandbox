@@ -83,6 +83,16 @@ class BuildFancyCurriculum extends Command
                     ],
                 );
 
+            // Course ids by the slug they carried BEFORE this build, read once up
+            // front. A lesson's `formerly` names its old course by slug, and a
+            // renamed course no longer answers to that slug once it is renamed
+            // below — so resolving old slugs lazily would lose every lesson that
+            // was waiting to move out of it.
+            $formerCourseIds = $dry ? [] : Course::query()
+                ->whereIn('slug', Content::referencedCourseSlugs())
+                ->pluck('id', 'slug')
+                ->all();
+
             foreach (Content::courses() as $index => $spec) {
                 $counts['courses']++;
 
@@ -92,22 +102,24 @@ class BuildFancyCurriculum extends Command
                     continue;
                 }
 
-                $course = Course::updateOrCreate(
-                    ['slug' => $spec['slug']],
-                    [
-                        'title' => $spec['title'],
-                        'description' => $spec['description'],
-                        'estimated_minutes' => $spec['estimated_minutes'] ?? null,
-                        'sort_order' => $index,
-                        'is_published' => true,
-                    ],
-                );
+                $course = $this->courseFor($spec);
+                $course->fill([
+                    'slug' => $spec['slug'],
+                    'title' => $spec['title'],
+                    'description' => $spec['description'],
+                    'estimated_minutes' => $spec['estimated_minutes'] ?? null,
+                    'sort_order' => $index,
+                    'is_published' => true,
+                ])->save();
 
                 $curriculum->courses()->syncWithoutDetaching([
                     $course->id => ['sort_order' => $index, 'is_required' => true],
                 ]);
+                // syncWithoutDetaching leaves an existing pivot row's columns
+                // alone, so a course that changed position keeps its old one.
+                $curriculum->courses()->updateExistingPivot($course->id, ['sort_order' => $index, 'is_required' => true]);
 
-                $this->authorModules($course, $spec['modules'] ?? [], $counts);
+                $this->authorModules($course, $spec['modules'] ?? [], $formerCourseIds, $counts);
                 $this->authorTest($course, $spec['test'] ?? null, $counts);
 
                 $this->components->twoColumnDetail(
@@ -117,16 +129,69 @@ class BuildFancyCurriculum extends Command
             }
 
             if ($dry) {
+                foreach (Content::archived() as $slug) {
+                    $this->line("  would archive course: {$slug}");
+                }
+
                 throw new DryRunComplete;
             }
+
+            $this->archive($curriculum);
         });
     }
 
     /**
+     * The row a course spec reconciles onto: its own slug, else the slug it
+     * was `formerly` published under. Renaming in place keeps the course's id,
+     * so its test, its attempts and every lesson completion stay attached.
+     *
+     * @param  array<string,mixed>  $spec
+     */
+    private function courseFor(array $spec): Course
+    {
+        $course = Course::query()->where('slug', $spec['slug'])->first();
+
+        if ($course === null && isset($spec['formerly'])) {
+            $course = Course::query()->where('slug', $spec['formerly'])->first();
+            if ($course !== null) {
+                $this->components->warn("  renamed course {$spec['formerly']} -> {$spec['slug']}");
+            }
+        }
+
+        return $course ?? new Course;
+    }
+
+    /**
+     * Retire the courses that are no longer taught.
+     *
+     * NEVER deleted. A course delete cascades to its lessons and tests, and
+     * from there to lesson completions and test attempts — the learner's own
+     * record. Archiving unpublishes the course and takes it out of the
+     * curriculum, which removes it from /learn, from the sitemap and from the
+     * curriculum's progress arithmetic, and leaves every row a learner owns
+     * where it was.
+     */
+    private function archive(Curriculum $curriculum): void
+    {
+        $archived = Course::query()->whereIn('slug', Content::archived())->get();
+
+        foreach ($archived as $course) {
+            $wasListed = $curriculum->courses()->whereKey($course->id)->exists();
+
+            if ($course->is_published || $wasListed) {
+                $course->forceFill(['is_published' => false])->save();
+                $curriculum->courses()->detach($course->id);
+                $this->components->warn("  archived course {$course->slug} (unpublished, unlisted; learner rows kept)");
+            }
+        }
+    }
+
+    /**
      * @param  array<int,array<string,mixed>>  $modules
+     * @param  array<string,int>  $formerCourseIds
      * @param  array<string,int>  $counts
      */
-    private function authorModules(Course $course, array $modules, array &$counts): void
+    private function authorModules(Course $course, array $modules, array $formerCourseIds, array &$counts): void
     {
         // Lesson sort_order is sequential ACROSS the whole course, not restarted
         // per module. classroom's CoursePlayer renders one flat lesson list
@@ -134,6 +199,8 @@ class BuildFancyCurriculum extends Command
         // orders 0,1,0,1 and the sidebar interleaved two modules' worth of
         // lessons into an arbitrary sequence.
         $lessonOrder = 0;
+        $authoredModuleIds = [];
+        $authoredLessonIds = [];
 
         foreach ($modules as $mIndex => $mSpec) {
             $counts['modules']++;
@@ -142,11 +209,14 @@ class BuildFancyCurriculum extends Command
                 ['course_id' => $course->id, 'slug' => $mSpec['slug']],
                 ['title' => $mSpec['title'], 'sort_order' => $mIndex],
             );
+            $authoredModuleIds[] = $module->id;
 
             foreach ($mSpec['lessons'] ?? [] as $lSpec) {
                 $counts['lessons']++;
 
-                Lesson::updateOrCreate(
+                $this->moveLessonIn($course, $lSpec, $formerCourseIds);
+
+                $lesson = Lesson::updateOrCreate(
                     ['course_id' => $course->id, 'slug' => $lSpec['slug']],
                     [
                         'module_id' => $module->id,
@@ -162,8 +232,71 @@ class BuildFancyCurriculum extends Command
                         'sort_order' => $lessonOrder++,
                     ],
                 );
+                $authoredLessonIds[] = $lesson->id;
             }
         }
+
+        // A lesson in a LIVE course that nothing authors any more would still
+        // count toward progress and still render. It is never deleted — that
+        // would cascade to completions — so it is reported, and a test fails on
+        // it. The fix is a `formerly` on the lesson that replaces it.
+        $stale = $course->lessons()->whereNotIn('id', $authoredLessonIds)->pluck('slug');
+        foreach ($stale as $slug) {
+            $this->components->error("  {$course->slug} carries an unauthored lesson: {$slug}. Give its replacement `formerly`.");
+        }
+
+        // Modules no spec names and that hold nothing: the shells a moved or
+        // renamed lesson leaves behind. Safe to drop — a module owns no learner
+        // data — but only when truly empty, because a module-level test
+        // cascades on delete and takes its attempts with it.
+        $empty = $course->modules()
+            ->whereNotIn('id', $authoredModuleIds)
+            ->whereDoesntHave('lessons')
+            ->whereDoesntHave('tests')
+            ->get();
+        foreach ($empty as $module) {
+            $module->delete();
+            $this->components->warn("  removed empty module {$course->slug}/{$module->slug}");
+        }
+    }
+
+    /**
+     * Re-parent a lesson that moved here from another course (or was renamed),
+     * keeping its row and therefore its id.
+     *
+     * Lesson completions point at a lesson ID. Authoring the moved lesson as a
+     * new row would leave every learner who had finished it with a completion
+     * on a lesson nobody can reach, and the same lesson unfinished in its new
+     * home. Moving the row carries the completion with it.
+     *
+     * Idempotent: once the lesson is at its new key there is nothing to move.
+     *
+     * @param  array<string,mixed>  $lSpec
+     * @param  array<string,int>  $formerCourseIds
+     */
+    private function moveLessonIn(Course $course, array $lSpec, array $formerCourseIds): void
+    {
+        if (! isset($lSpec['formerly'])) {
+            return;
+        }
+
+        if (Lesson::query()->where('course_id', $course->id)->where('slug', $lSpec['slug'])->exists()) {
+            return;
+        }
+
+        [$fromCourseSlug, $fromLessonSlug] = $lSpec['formerly'];
+        $fromCourseId = $formerCourseIds[$fromCourseSlug] ?? null;
+        if ($fromCourseId === null) {
+            return;
+        }
+
+        $lesson = Lesson::query()->where('course_id', $fromCourseId)->where('slug', $fromLessonSlug)->first();
+        if ($lesson === null) {
+            return;
+        }
+
+        $lesson->forceFill(['course_id' => $course->id, 'slug' => $lSpec['slug']])->save();
+        $this->components->warn("  moved lesson {$fromCourseSlug}/{$fromLessonSlug} -> {$course->slug}/{$lSpec['slug']} (completions kept)");
     }
 
     /**
@@ -243,6 +376,12 @@ class BuildFancyCurriculum extends Command
 
         $counts['tests']++;
 
+        // A renamed check keeps its row, so attempts already made on it stay
+        // attempts on it.
+        if (isset($spec['formerly']) && ! Test::query()->where('slug', $spec['slug'])->exists()) {
+            Test::query()->where('slug', $spec['formerly'])->update(['slug' => $spec['slug']]);
+        }
+
         $test = Test::updateOrCreate(
             ['slug' => $spec['slug']],
             [
@@ -282,20 +421,26 @@ class BuildFancyCurriculum extends Command
                 ],
             );
 
-            // Options are replaced wholesale rather than reconciled: they have no
-            // natural key beyond their label, and a half-updated option set is a
-            // silently mis-graded question.
             $authoredIds[] = $question->id;
 
-            $question->options()->delete();
-
+            // Options are keyed by POSITION, like questions, and every column is
+            // rewritten inside the build's transaction — so a set is never
+            // half-updated. They used to be deleted and re-created on every
+            // run, which gave each option a new id per deploy: a learner's
+            // stored answer (`{"option_id": 42}`) then pointed at a row that no
+            // longer existed, and two consecutive builds never produced the
+            // same database.
+            $authoredOptionIds = [];
             foreach ($qSpec['options'] ?? [] as $oIndex => $oSpec) {
-                $question->options()->create([
-                    'label' => self::plain($oSpec['label']),
-                    'is_correct' => $oSpec['is_correct'],
-                    'sort_order' => $oIndex,
-                ]);
+                $authoredOptionIds[] = $question->options()->updateOrCreate(
+                    ['sort_order' => $oIndex],
+                    [
+                        'label' => self::plain($oSpec['label']),
+                        'is_correct' => $oSpec['is_correct'],
+                    ],
+                )->id;
             }
+            $question->options()->whereNotIn('id', $authoredOptionIds)->delete();
         }
 
         // Prune by ID, not by position. A count- or sort_order-based filter
@@ -303,8 +448,19 @@ class BuildFancyCurriculum extends Command
         // a SECOND row at the same sort_order as a live question, so both
         // rendered and neither looked out of range. Anything on this test that
         // was not just authored is an orphan, by definition.
+        //
+        // But a question somebody has ANSWERED is learner history: deleting it
+        // cascades to their attempt answers. The build refuses rather than
+        // destroy it, and the transaction rolls back. Keep the question count of
+        // an answered test at least what it was, and reword in place.
         $orphans = $test->questions()->whereNotIn('id', $authoredIds)->get();
         foreach ($orphans as $orphan) {
+            if ($orphan->answers()->exists()) {
+                throw new \RuntimeException(
+                    "Refusing to delete question #{$orphan->id} on {$test->slug}: learners have answered it. "
+                    .'Keep the test at least as long as it was and edit questions in place.',
+                );
+            }
             $orphan->options()->delete();
             $orphan->delete();
         }

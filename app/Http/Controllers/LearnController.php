@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 
 use App\Support\Curriculum\FancyCurriculumContent as Content;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -70,8 +71,15 @@ class LearnController extends Controller
         ]);
     }
 
-    public function course(Request $request, string $slug): Response
+    public function course(Request $request, string $slug): Response|RedirectResponse
     {
+        // A retired course 301s to /learn and a renamed one to its new slug,
+        // so a bookmark or an old share lands somewhere rather than on a 404.
+        $redirect = Content::redirectFor($slug);
+        if ($redirect !== null) {
+            return redirect()->to($redirect, 301);
+        }
+
         $curriculum = Curriculum::where('slug', Content::CURRICULUM_SLUG)->firstOrFail();
 
         $course = $curriculum->courses()

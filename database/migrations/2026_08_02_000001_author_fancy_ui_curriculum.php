@@ -2,12 +2,9 @@
 
 declare(strict_types=1);
 
-use App\Support\Curriculum\FancyCurriculumContent as Content;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schema;
-use ParticleAcademy\LaravelCourses\Models\Course;
-use ParticleAcademy\LaravelCourses\Models\Curriculum;
 
 /**
  * Author the Fancy UI Curriculum as part of deployment.
@@ -37,22 +34,14 @@ return new class extends Migration
         Artisan::call('fancy:build-curriculum');
     }
 
-    public function down(): void
-    {
-        if (! Schema::hasTable('curriculums')) {
-            return;
-        }
-
-        // Content only. Enrollments and certificates are learner records and are
-        // never destroyed by a content rollback.
-        Course::query()
-            ->whereIn('slug', collect(Content::courses())->pluck('slug'))
-            ->get()
-            ->each
-            ->delete();
-
-        Curriculum::query()
-            ->where('slug', Content::CURRICULUM_SLUG)
-            ->delete();
-    }
+    /**
+     * Deliberately nothing.
+     *
+     * This used to delete the courses and the curriculum, under a comment
+     * saying learner records survive. They do not: a course delete cascades to
+     * its lessons and tests, and from there to every lesson completion and test
+     * attempt; deleting the curriculum cascades its pivot rows. A rollback of a
+     * content migration must not be able to erase what learners did.
+     */
+    public function down(): void {}
 };

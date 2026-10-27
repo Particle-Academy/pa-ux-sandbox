@@ -39,12 +39,15 @@ final class FeatureSites
      * of that {@see PackageFamily}, so a mirror added to a family joins its
      * Feature with no edit here. `bridges` lists the agent-integrations bridges
      * a micro-site's "How it fits" names — empty where the Feature has no
-     * Human+ surface of its own.
+     * Human+ surface of its own. `course` is the slug of the Feature's course
+     * in the curriculum (FancyCurriculumContent); the page links to it only
+     * while that course is published and listed.
      *
-     * @var array<string, array{name: string, tagline: string, icon: string, component: string, theme: array{accent: string, accentDark: string, surface: string, surfaceDark: string, font: string}, members: list<string>, bridges: list<array{name: string, import: string, tools: string}>}>
+     * @var array<string, array{course: string, name: string, tagline: string, icon: string, component: string, theme: array{accent: string, accentDark: string, surface: string, surfaceDark: string, font: string}, members: list<string>, bridges: list<array{name: string, import: string, tools: string}>}>
      */
     private const SITES = [
         'flow' => [
+            'course' => 'fancy-flow',
             'name' => 'Flow',
             'tagline' => 'Workflow graphs humans and agents build together, run by one engine in TypeScript, PHP and Python.',
             'icon' => 'workflow',
@@ -54,6 +57,7 @@ final class FeatureSites
             'bridges' => [['name' => 'registerFlowBridge', 'import' => '@particle-academy/agent-integrations/bridges/flow', 'tools' => 'flow_*']],
         ],
         'tui' => [
+            'course' => 'fancy-tui',
             'name' => 'TUI',
             'tagline' => 'Ink components for terminal apps that an agent can drive over MCP.',
             'icon' => 'square-terminal',
@@ -63,6 +67,7 @@ final class FeatureSites
             'bridges' => [['name' => 'registerTuiBridge', 'import' => '@particle-academy/agent-integrations/bridges/tui', 'tools' => 'tui_*']],
         ],
         'cms' => [
+            'course' => 'fancy-cms',
             'name' => 'CMS',
             'tagline' => 'A WYSIWYG page editor in React on a Laravel content backend.',
             'icon' => 'layout-template',
@@ -72,6 +77,7 @@ final class FeatureSites
             'bridges' => [['name' => 'registerCmsBridge', 'import' => '@particle-academy/agent-integrations/bridges/cms', 'tools' => 'set_style / set_layout / …']],
         ],
         'documents' => [
+            'course' => 'fancy-documents',
             'name' => 'Documents',
             'tagline' => 'xlsx, pptx and docx writers and readers for PHP, Node and Python, plus PDF for PHP.',
             'icon' => 'file-text',
@@ -81,6 +87,7 @@ final class FeatureSites
             'bridges' => [],
         ],
         'git' => [
+            'course' => 'fancy-git',
             'name' => 'Git',
             'tagline' => 'Provider-neutral Git for PHP and Node, with GitHub, GitLab and Bitbucket adapters and a React UI.',
             'icon' => 'git-branch',
@@ -90,6 +97,7 @@ final class FeatureSites
             'bridges' => [['name' => 'registerGitBridge', 'import' => '@particle-academy/agent-integrations/bridges/git', 'tools' => 'git_*']],
         ],
         '3d' => [
+            'course' => 'fancy-3d',
             'name' => '3D',
             'tagline' => 'Engine-agnostic 3D scenes, rendered in the DOM or through Babylon.js or three.js.',
             'icon' => 'box',
@@ -99,6 +107,7 @@ final class FeatureSites
             'bridges' => [['name' => 'registerSceneBridge', 'import' => '@particle-academy/agent-integrations/bridges/scene', 'tools' => 'scene_*']],
         ],
         'ecommerce' => [
+            'course' => 'fancy-ecommerce',
             'name' => 'Ecommerce',
             'tagline' => 'Stripe catalog and checkout, plan and metered feature gating, and multi-level referrals.',
             'icon' => 'shopping-cart',
@@ -111,6 +120,7 @@ final class FeatureSites
             ],
         ],
         'gamification' => [
+            'course' => 'fancy-gamification',
             'name' => 'Gamification',
             'tagline' => 'XP, achievements, prizes and leaderboards for Laravel apps.',
             'icon' => 'trophy',
@@ -150,7 +160,7 @@ final class FeatureSites
     /**
      * Every Feature, in nav order, with its member SLUGS (unresolved).
      *
-     * @return list<array{slug: string, name: string, tagline: string, icon: string, href: string, component: string, theme: array{accent: string, accentDark: string, surface: string, surfaceDark: string, font: string}, memberSlugs: list<string>, bridges: list<array{name: string, import: string, tools: string}>}>
+     * @return list<array{slug: string, name: string, tagline: string, icon: string, href: string, component: string, theme: array{accent: string, accentDark: string, surface: string, surfaceDark: string, font: string}, memberSlugs: list<string>, bridges: list<array{name: string, import: string, tools: string}>, course: string}>
      */
     public static function all(): array
     {
@@ -160,7 +170,7 @@ final class FeatureSites
     /**
      * One Feature with its member slugs, or null.
      *
-     * @return array{slug: string, name: string, tagline: string, icon: string, href: string, component: string, theme: array{accent: string, accentDark: string, surface: string, surfaceDark: string, font: string}, memberSlugs: list<string>, bridges: list<array{name: string, import: string, tools: string}>}|null
+     * @return array{slug: string, name: string, tagline: string, icon: string, href: string, component: string, theme: array{accent: string, accentDark: string, surface: string, surfaceDark: string, font: string}, memberSlugs: list<string>, bridges: list<array{name: string, import: string, tools: string}>, course: string}|null
      */
     public static function find(string $slug): ?array
     {
@@ -179,6 +189,7 @@ final class FeatureSites
             'theme' => $site['theme'],
             'memberSlugs' => self::memberSlugs($site),
             'bridges' => $site['bridges'],
+            'course' => $site['course'],
         ];
     }
 

@@ -139,6 +139,11 @@ class PackageRegistry
      * @var array<string, array{name: string, repo: string, why: string}>
      */
     public const PLANNED = [
+        'change-council' => [
+            'name' => 'particle-academy/change-council',
+            'repo' => 'Particle-Academy/change-council',
+            'why' => 'A CI-integrated, 2-round CONSUMER-AGENT VOTING LEDGER for MAJOR package changes. Owner ask 2026-10-27; rulings in q_5e39ab76. Covers third-party majors, schema and contract changes, deprecations, removed public APIs, raised floors, BREAKING entries, and Prism`s classes. Round 1 petitions the consumer agents for conflicts; round 2 proposes a new approach when round 1 finds breaking concerns. Votes are tracked per agent, and the owner reviews every Change in the LAB UI. A lite Laravel package for each lab site, plus a versioned feed for civi`s Overwatch. CI only detects and records; agents send the petitions, and Genie`s sender field authenticates votes. The release gate is a signed decision record. Silence is a per-consumer policy. Non-whitelisted requests and GitHub issues always go to HITL first. Fancy builds it, Prism adopts it. Design: .ai/plans/change-council.md. NOT YET STARTED; registered first. Packagist/npm/GitHub names checked 404 on 2026-10-27.',
+        ],
         'charlotte-ui' => [
             'name' => '@particle-academy/charlotte-ui',
             'repo' => 'Particle-Academy/charlotte-ui',

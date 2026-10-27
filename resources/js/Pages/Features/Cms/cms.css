@@ -1,0 +1,102 @@
+/* /features/cms — an editorial "proof sheet".
+   Scoped to .cms-site inside the Feature wrapper; reads the Feature's
+   --feature-accent / --feature-surface / --feature-font (features.css), so
+   dark mode is the same swap the kit already makes. */
+
+.cms-site { display: flex; flex-direction: column; gap: 48px; }
+
+/* ── Hero: a ruled masthead with crop marks ─────────────── */
+.cms-site .feature-hero {
+  position: relative;
+  border-radius: 4px;
+  border-width: 1px 1px 4px;
+  border-style: solid;
+  border-color: color-mix(in oklch, var(--feature-accent) 35%, var(--border-1));
+  border-bottom-color: var(--feature-accent);
+  background:
+    repeating-linear-gradient(0deg, transparent 0 27px, color-mix(in oklch, var(--feature-accent) 7%, transparent) 27px 28px),
+    var(--feature-surface);
+}
+/* Printer's crop marks in the four corners. Decorative only. */
+.cms-site .feature-hero::before,
+.cms-site .feature-hero::after {
+  content: "";
+  position: absolute;
+  width: 18px; height: 18px;
+  pointer-events: none;
+  border-color: var(--feature-accent);
+  border-style: solid;
+}
+.cms-site .feature-hero::before { top: 10px; right: 10px; border-width: 1px 1px 0 0; }
+.cms-site .feature-hero::after { bottom: 14px; left: 10px; border-width: 0 0 1px 1px; }
+.cms-site .feature-hero__glyph { border-radius: 4px; }
+.cms-site .feature-hero h1 {
+  font-style: italic;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+.cms-site .feature-hero__eyebrow {
+  font-family: var(--feature-font);
+  font-style: italic;
+  text-transform: none;
+  letter-spacing: 0.02em;
+  font-size: 15px;
+}
+.cms-site .feature-hero h1 { font-size: clamp(34px, 9vw, 60px); }
+.cms-site .feature-hero__actions a { min-height: 44px; }
+.cms-site__beta { margin-top: 10px; max-width: 62ch; }
+
+/* Anchor target clears the sticky site header. */
+.cms-site__anchor { scroll-margin-top: 88px; }
+
+/* ── Demo ───────────────────────────────────────────────── */
+.cms-demo { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.cms-demo__bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; }
+.cms-demo__tabs button { min-height: 44px; }
+.cms-demo__bar > button { min-height: 44px; }
+.cms-demo__stats { gap: 10px; }
+/* Stat's caption is 12px by default; the page floor is 14px. */
+.cms-demo__stats > * > :last-child { font-size: 14px; }
+
+/* The editor is three panes wide; on a narrow screen it scrolls inside its own
+   box rather than pushing the page sideways. */
+.cms-demo__editor {
+  height: 600px;
+  overflow: auto;
+  border: 1px solid color-mix(in oklch, var(--feature-accent) 25%, var(--border-1));
+  border-radius: 6px;
+}
+.cms-demo__editor[hidden] { display: none; }
+.cms-demo__editor > * { min-width: 760px; height: 100%; }
+.cms-demo .fancy-cms-editor { --fcms-accent: var(--feature-accent); --fcms-drop: var(--feature-accent); }
+
+.cms-demo__published,
+.cms-demo__json {
+  border: 1px solid color-mix(in oklch, var(--feature-accent) 25%, var(--border-1));
+  border-radius: 6px;
+  max-height: 600px;
+  overflow: auto;
+}
+/* A published page is the page's own design, so it keeps its own light paper
+   in either site theme; the frame around it is what follows the theme. */
+.cms-demo__published { background: #ffffff; color: #1c1917; }
+.cms-demo__published img { display: block; max-width: 100%; height: auto; }
+
+/* ── Guides ─────────────────────────────────────────────── */
+.cms-guides__link { display: block; height: 100%; text-decoration: none; color: inherit; border-radius: 12px; }
+.cms-guides__link:focus-visible { outline: 2px solid var(--feature-accent); outline-offset: 2px; }
+.cms-guides__card { height: 100%; border-left: 3px solid var(--feature-accent); }
+.cms-guides__meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 8px; }
+
+/* Tour cards and CTA: square proof corners, an accent rule. */
+.cms-site .feature-tour__card { border-top: 2px solid color-mix(in oklch, var(--feature-accent) 55%, transparent); border-radius: 6px; }
+.cms-site .feature-cta { border-radius: 4px; border-left: 4px solid var(--feature-accent); }
+
+@media (max-width: 640px) {
+  .cms-demo__editor { height: 520px; }
+  .cms-site .feature-hero::before, .cms-site .feature-hero::after { display: none; }
+}
+
+/* The kit sets code at 12.5px; this page keeps every line at 14px or more. */
+.cms-site .feature-code { font-size: 14px; }

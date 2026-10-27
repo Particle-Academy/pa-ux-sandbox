@@ -1,0 +1,93 @@
+/* /features/documents — a document "dossier".
+   Scoped to .docs-site inside the Feature wrapper; colours read the Feature's
+   --feature-accent / --feature-surface, so dark mode is the kit's own swap.
+   The four family tabs carry their file type's conventional colour. */
+
+.docs-site { display: flex; flex-direction: column; gap: 48px; }
+.docs-site__anchor { scroll-margin-top: 88px; }
+
+/* ── Hero: a folder, with the file tabs along its top edge ───────────── */
+.docs-site .feature-hero {
+  border-radius: 6px 22px 6px 6px;
+  border-top: 6px solid var(--feature-accent);
+  background:
+    linear-gradient(180deg, color-mix(in oklch, var(--feature-accent) 10%, transparent), transparent 55%),
+    var(--feature-surface);
+}
+.docs-site .feature-hero__glyph { border-radius: 4px 12px 4px 4px; }
+.docs-site .feature-hero h1 { letter-spacing: -0.015em; line-height: 1.08; font-size: clamp(34px, 9vw, 60px); }
+.docs-site .feature-hero__actions a { min-height: 44px; }
+.docs-site .feature-hero__eyebrow { letter-spacing: 0.14em; font-size: 14px; }
+
+.docs-tabs {
+  list-style: none; margin: 14px 0 0; padding: 0;
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px;
+  max-width: 640px;
+}
+.docs-tab {
+  --tone: var(--feature-accent);
+  display: flex; flex-direction: column; gap: 2px;
+  padding: 10px 12px 12px;
+  border: 1px solid color-mix(in oklch, var(--tone) 40%, var(--border-1));
+  border-top: 4px solid var(--tone);
+  border-radius: 4px 12px 4px 4px;
+  background: color-mix(in oklch, var(--tone) 7%, var(--bg-0));
+}
+.docs-tab[data-tone="sheet"] { --tone: #15803d; }
+.docs-tab[data-tone="slide"] { --tone: #c2410c; }
+.docs-tab[data-tone="word"] { --tone: #1d4ed8; }
+.docs-tab[data-tone="print"] { --tone: #b91c1c; }
+.dark .docs-tab[data-tone="sheet"], [data-theme="dark"] .docs-tab[data-tone="sheet"] { --tone: #4ade80; }
+.dark .docs-tab[data-tone="slide"], [data-theme="dark"] .docs-tab[data-tone="slide"] { --tone: #fb923c; }
+.dark .docs-tab[data-tone="word"], [data-theme="dark"] .docs-tab[data-tone="word"] { --tone: #60a5fa; }
+.dark .docs-tab[data-tone="print"], [data-theme="dark"] .docs-tab[data-tone="print"] { --tone: #f87171; }
+.docs-tab__ext {
+  font-family: var(--font-mono); font-size: 14px; font-weight: 700;
+  color: color-mix(in oklch, var(--tone) 80%, var(--fg-1));
+}
+.docs-tab__name { font-family: var(--feature-font); font-size: 15px; color: var(--fg-1); }
+@media (max-width: 640px) {
+  .docs-tabs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* ── Demo ───────────────────────────────────────────────── */
+.docs-demo { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+.docs-demo__formats button { min-height: 44px; }
+.docs-demo button { min-height: 44px; }
+.docs-demo__grid { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 18px; }
+@media (max-width: 900px) {
+  .docs-demo__grid { grid-template-columns: minmax(0, 1fr); }
+}
+.docs-demo__pane { display: flex; flex-direction: column; gap: 10px; min-width: 0; align-items: stretch; }
+.docs-demo__pane > button { align-self: flex-start; }
+.docs-demo__label { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+.docs-demo__editor {
+  min-width: 0;
+  border: 1px solid color-mix(in oklch, var(--feature-accent) 25%, var(--border-1));
+  border-radius: 6px;
+  overflow: hidden;
+}
+.docs-demo__caption { font-family: var(--font-mono); margin-bottom: 4px; }
+.docs-demo__pre {
+  margin: 0;
+  font-family: var(--font-mono); font-size: 13px; line-height: 1.5;
+  color: var(--fg-1);
+  white-space: pre-wrap; overflow-wrap: anywhere;
+}
+.docs-demo__problems { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; font-size: 14px; }
+.docs-demo__result { border-left: 3px solid var(--feature-accent); }
+
+.docs-bridge {
+  display: flex; flex-direction: column; gap: 10px;
+  padding-top: 16px;
+  border-top: 1px dashed color-mix(in oklch, var(--feature-accent) 35%, var(--border-1));
+}
+/* landing.css pads every bare <section> 96px; this one is inside the demo. */
+section.docs-bridge { padding: 16px 0 0; }
+.docs-bridge__actions { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.docs-site .feature-tour__card { border-radius: 4px 12px 4px 4px; }
+.docs-site .feature-cta { border-radius: 6px 22px 6px 6px; border-top: 4px solid var(--feature-accent); }
+
+/* The kit sets code at 12.5px; this page keeps every line at 14px or more. */
+.docs-site .feature-code { font-size: 14px; }

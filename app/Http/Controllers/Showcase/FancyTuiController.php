@@ -6,11 +6,13 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
-use Inertia\Inertia;
-use Inertia\Response;
 
 /**
- * The /fancy-tui showcase page plus the render proxy its live terminal browses.
+ * The render proxy the fancy-tui showcase's live terminal browses.
+ *
+ * The page itself is the TUI Feature micro-site (/features/tui, rendered by
+ * {@see FeatureSiteController}); /fancy-tui 301s there. The session endpoints
+ * stay at /fancy-tui/session because only the page moved.
  *
  * The TUI is the whole fancy-tui showcase as ONE live Ink app per viewer,
  * rendered by a localhost Node service (Ink needs Node). The browser starts a
@@ -19,11 +21,6 @@ use Inertia\Response;
  */
 class FancyTuiController extends Controller
 {
-    public function index(): Response
-    {
-        return Inertia::render('FancyTui/Index');
-    }
-
     /**
      * Start / feed / end the live session (POST) — the whole TUI.
      *

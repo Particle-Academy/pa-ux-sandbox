@@ -789,7 +789,7 @@ section.ticker { padding: 0; background: var(--bg-1); }
   background: var(--bg-1);
 }
 .footer-grid {
-  display: grid; grid-template-columns: 1.4fr repeat(3, 1fr);
+  display: grid; grid-template-columns: 1.4fr repeat(4, 1fr);
   gap: 32px;
 }
 @media (max-width: 720px) { .footer-grid { grid-template-columns: 1fr 1fr; } }

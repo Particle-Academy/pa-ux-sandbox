@@ -1,10 +1,12 @@
-import { ReactNode, useEffect, useState } from "react";
+import { Fragment, ReactNode, useEffect, useState } from "react";
 import { Link, router, usePage } from "@inertiajs/react";
 import {
     Button,
     Callout,
     Dropdown,
+    Icon,
     MobileMenu,
+    Text,
     Tooltip,
     useTheme,
 } from "@particle-academy/react-fancy";
@@ -19,11 +21,13 @@ import {
     X,
     BookOpen,
     Boxes,
-    Workflow,
+    Blocks,
     MoreHorizontal,
     UserRound,
     LogIn,
 } from "lucide-react";
+import { FeaturesMenu } from "./Features/shared/FeaturesMenu";
+import type { FeatureNav } from "./Features/shared/types";
 import {
     useFancyTransition,
     FANCY_TRANSITION_LABELS,
@@ -78,19 +82,24 @@ type AuthUser = {
 // admins. It is deliberately NOT the model's `is_admin` flag and is a separate
 // prop from `user`; it's a UI hint only — access is enforced server-side.
 type Auth = { user: AuthUser | null; admin?: { url: string } | null };
-type SharedProps = { flash: Flash; auth: Auth; csrfToken: string };
+// `features` is App\Support\FeatureSites::nav(), shared on every response so
+// the dropdown, the mobile flyout and the footer read one server-side list.
+type SharedProps = { flash: Flash; auth: Auth; csrfToken: string; features?: FeatureNav[] };
 
+// Flow and TUI are no longer top-level: they live in the Features dropdown
+// (rendered right after Packages) with the other platforms.
 const NAV_ITEMS: Array<{ to: string; label: string; match: string }> = [
     { to: "/docs", label: "Docs", match: "docs" },
     { to: "/learn", label: "Learn", match: "learn" },
     { to: "/packages", label: "Packages", match: "packages" },
-    { to: "/fancy-tui", label: "TUI", match: "fancy-tui" },
-    { to: "/flow", label: "Flow", match: "flow" },
     { to: "/use-cases", label: "Use Cases", match: "use-cases" },
     { to: "/inspiration", label: "Inspiration", match: "inspiration" },
     { to: "/showcase", label: "Showcase", match: "showcase" },
     { to: "/leaderboard", label: "Leaderboard", match: "leaderboard" },
 ];
+
+/** Where the Features dropdown sits among NAV_ITEMS: after this item. */
+const FEATURES_AFTER = "packages";
 
 export function Layout({
     children,
@@ -110,6 +119,8 @@ export function Layout({
     const adminLink = props.auth?.admin ?? null;
     const flash = props.flash ?? {};
     const path = url.replace(/^\/+/, "").split("?")[0];
+    const features = props.features ?? [];
+    const featuresActive = path === "features" || path.startsWith("features/");
 
     // Pro Analytics lives behind the `analytics-suite` Pro feature. The link
     // lives in the user menu (below) for Pro users to keep the main nav lean;
@@ -151,7 +162,8 @@ export function Layout({
                         {navItems.map((item) => {
                             const active = path === item.match || path.startsWith(item.match + "/");
                             return (
-                                <WalkthroughTarget key={item.to} id={`nav-${item.match}`}>
+                                <Fragment key={item.to}>
+                                <WalkthroughTarget id={`nav-${item.match}`}>
                                 <Link
                                     href={item.to}
                                     className="nav-link"
@@ -165,6 +177,12 @@ export function Layout({
                                     {item.label}
                                 </Link>
                                 </WalkthroughTarget>
+                                {item.match === FEATURES_AFTER && features.length > 0 && (
+                                    <WalkthroughTarget id="nav-features">
+                                        <FeaturesMenu features={features} active={featuresActive} />
+                                    </WalkthroughTarget>
+                                )}
+                                </Fragment>
                             );
                         })}
                     </div>
@@ -331,6 +349,30 @@ export function Layout({
                         </MobileMenu.Item>
                     ))}
 
+                    {/* The Features dropdown's items, as their own section: the
+                        same shared list, so the two cannot disagree. */}
+                    {features.length > 0 && (
+                        <>
+                            <Text as="div" size="xs" weight="semibold" color="muted" className="mobile-nav-section">
+                                Features
+                            </Text>
+                            {features.map((feature) => (
+                                <MobileMenu.Item
+                                    key={feature.slug}
+                                    as={Link}
+                                    href={feature.href}
+                                    icon={<Icon name={feature.icon} size="sm" />}
+                                    active={path === `features/${feature.slug}`}
+                                >
+                                    {feature.name}
+                                </MobileMenu.Item>
+                            ))}
+                            <MobileMenu.Item as={Link} href="/features" active={path === "features"}>
+                                All features
+                            </MobileMenu.Item>
+                        </>
+                    )}
+
                     {/* The affordances the header drops on phones, kept reachable
                         rather than lost: the org link, and sign-in for a signed-out
                         visitor (the avatar menu already covers signed-in). */}
@@ -370,11 +412,11 @@ export function Layout({
                     </MobileMenu.Item>
                     <MobileMenu.Item
                         as={Link}
-                        href="/flow"
-                        icon={<Workflow size={18} />}
-                        active={path === "flow" || path.startsWith("flow/")}
+                        href="/features"
+                        icon={<Blocks size={18} />}
+                        active={featuresActive}
                     >
-                        Flow
+                        Features
                     </MobileMenu.Item>
                     <MobileMenu.Item
                         icon={<MoreHorizontal size={18} />}
@@ -531,6 +573,19 @@ export function Layout({
                                 <li><Link href="/agent-playground">Agent Playground</Link></li>
                             </ul>
                         </div>
+
+                        {features.length > 0 && (
+                            <div>
+                                <h5>Features</h5>
+                                <ul>
+                                    {features.map((feature) => (
+                                        <li key={feature.slug}>
+                                            <Link href={feature.href}>{feature.name}</Link>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
 
                         <div>
                             <h5>Learn</h5>

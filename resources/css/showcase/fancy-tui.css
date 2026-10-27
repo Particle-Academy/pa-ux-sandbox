@@ -1,4 +1,4 @@
-/* Fancy TUI showcase (/fancy-tui).
+/* Fancy TUI showcase (/features/tui).
 
    Lives here — bundled into showcase.css — rather than being imported from the
    page component. A page-level `import "./fancy-tui.css"` makes Vite emit a

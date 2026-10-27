@@ -34,6 +34,7 @@ use App\Http\Controllers\Showcase\DocsController;
 use App\Http\Controllers\Showcase\DreamingController;
 use App\Http\Controllers\Showcase\FancifiedBadgeController;
 use App\Http\Controllers\Showcase\FancyTuiController;
+use App\Http\Controllers\Showcase\FeatureSiteController;
 use App\Http\Controllers\Showcase\GalleryController;
 use App\Http\Controllers\Showcase\HomeController;
 use App\Http\Controllers\Showcase\InspirationController;
@@ -57,6 +58,7 @@ use App\Http\Controllers\WhiteboardAgentController;
 use App\Http\Middleware\TrackPackageBrowsing;
 use App\Mcp\Servers\FancyUiRegistry;
 use App\Models\ShowcaseSubmission;
+use App\Support\FeatureSites;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -79,7 +81,7 @@ Route::get('/og/join/{username}.png', [OgImageController::class, 'join'])
 // Every other page's own card, keyed the way App\Support\Seo\PageSeo keys it.
 // The key may hold one slash (`fieldwork/swiss`, `react-fancy/button`, `0.4/theming`).
 Route::get('/og/{kind}/{key}.png', [OgImageController::class, 'page'])
-    ->where('kind', 'pages|families|docs|docs-archive|components|use-cases|starter-kits|inspiration|learn')
+    ->where('kind', 'pages|families|features|docs|docs-archive|components|use-cases|starter-kits|inspiration|learn')
     ->where('key', '[A-Za-z0-9._\-]+(/[A-Za-z0-9._\-]+)?')
     ->name('og.page');
 
@@ -262,17 +264,26 @@ Route::get('/api/leaderboard/contributors', [LeaderboardController::class, 'cont
 // external agent generates Fancy UI screens + data and drives the full kit
 // over MCP. No auth, no DB writes; the page owns an in-browser MicroMcpServer.
 Route::get('/agent-playground', fn () => Inertia::render('AgentPlayground'))->name('agent-playground');
-Route::get('/fancy-tui', [FancyTuiController::class, 'index'])->name('fancy-tui.index');
+
+// ─── Features ──────────────────────────────────────────────────────────
+// The platforms in the kit, each with its own micro-site. One list:
+// App\Support\FeatureSites (nav, index, pages and SEO all read it). An unknown
+// slug never matches, so it 404s. Plan: .ai/plans/features-microsites.md.
+Route::get('/features', [FeatureSiteController::class, 'index'])->name('features.index');
+Route::get('/features/{slug}', [FeatureSiteController::class, 'show'])
+    ->whereIn('slug', FeatureSites::slugs())
+    ->name('features.show');
+// The old top-level pages moved under Features. 301 with the query string, so
+// links and search ranking carry over. Only the PAGES moved: the TUI session
+// API below stays at /fancy-tui/session.
+Route::get('/flow', [FeatureSiteController::class, 'legacy'])->defaults('feature', 'flow')->name('flow.legacy');
+Route::get('/fancy-tui', [FeatureSiteController::class, 'legacy'])->defaults('feature', 'tui')->name('fancy-tui.legacy');
 
 // /pw — a standalone password generator. Shell-less by design: no site header,
 // no nav, no footer, and the only Fancy branding is the Pixel badge the root
 // Blade view already injects on every page. Entirely client-side — this handler
 // passes no props and does no work, because the generator never talks to it.
 Route::get('/pw', fn () => Inertia::render('Pw'))->name('pw');
-
-// Fancy Flow showcase — the live <FlowEditor> (swimlanes, undo/redo, auto-layout,
-// headless engine) + why the fancy-flow package family matters.
-Route::get('/flow', fn () => Inertia::render('Flow/Index'))->name('flow.index');
 
 // The whole TUI is one live session: start/feed/end a persistent Ink app, and
 // long-poll its frames. `session` carries a keystroke per request (generous

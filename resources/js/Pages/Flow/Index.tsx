@@ -1,5 +1,3 @@
-import { ServerSeo } from "@/lib/ServerSeo";
-import { Badge, Breadcrumbs } from "@particle-academy/react-fancy";
 import { Link } from "@inertiajs/react";
 import {
     Bot,
@@ -12,11 +10,9 @@ import {
     StickyNote,
     Undo2,
     Wand2,
-    Workflow,
 } from "lucide-react";
 import type { ReactNode } from "react";
 import { clientOnly } from "../../lib/clientOnly";
-import { Layout } from "../Layout";
 // The cohort demo runs on fancy-flow/engine — zero React Flow, zero DOM — so it
 // renders on the server like the rest of the page.
 import TriggerCohortDemo from "./TriggerCohortDemo";
@@ -87,38 +83,19 @@ const HIGHLIGHTS: Highlight[] = [
     },
 ];
 
-export default function FlowIndex() {
+/**
+ * The Flow showcase content: the live editor, the trigger-cohort demo, the
+ * highlights and the next steps. It renders inside the Flow Feature
+ * micro-site (`Pages/Features/Flow/Index.tsx`, at /features/flow), which owns
+ * the shell, the hero and the head. /flow 301s there.
+ *
+ * Phase B redesigns the micro-site and grows from this.
+ */
+export function FlowShowcase() {
     return (
-        <Layout>
-            <ServerSeo />
-            <Breadcrumbs>
-                <Breadcrumbs.Item href="/packages">Packages</Breadcrumbs.Item>
-                <Breadcrumbs.Item>fancy-flow</Breadcrumbs.Item>
-            </Breadcrumbs>
-
-            <main className="pkg-page">
-                {/* Same hero the package pages use, so this reads as part of the showcase. */}
-                <header className="pkg-hero">
-                    <span className="pkg-glyph pkg-hero__glyph"><Workflow size={22} /></span>
-                    <div className="pkg-hero__main">
-                        <h1 className="pkg-hero__name">fancy-flow</h1>
-                        <div className="pkg-hero__id">@particle-academy/fancy-flow</div>
-                        <p className="pkg-hero__tagline">
-                            A schema-driven workflow editor + runner where humans and agents build on the
-                            same canvas. Swimlanes, undo/redo, auto-layout, validated wiring, a zero-React
-                            engine — and an MCP bridge so an agent drives the exact surface you see.
-                        </p>
-                        <div className="pkg-hero__meta">
-                            <span className="pkg-eco" data-eco="ts">TypeScript</span>
-                            <span className="pkg-kind">Workflow canvas</span>
-                            <Badge color="green">MCP ready</Badge>
-                            <Badge color="blue">v{__FANCY_FLOW_VERSION__}</Badge>
-                        </div>
-                    </div>
-                </header>
-
+            <div className="pkg-page">
                 {/* The live editor — the whole point. */}
-                <section className="mt-8">
+                <section>
                     <div className="mb-3 flex items-baseline justify-between gap-3">
                         <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-100">Try it live</h2>
                         <p className="text-sm text-zinc-500 dark:text-zinc-400">
@@ -182,7 +159,6 @@ export default function FlowIndex() {
                         Drive it with an agent →
                     </Link>
                 </section>
-            </main>
-        </Layout>
+            </div>
     );
 }

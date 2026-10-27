@@ -24,8 +24,11 @@
 /* Site-wide agent co-browsing chrome (nav trigger, presence bar, confirm). */
 @import "./showcase/co-browse.css";
 
-/* Fancy TUI showcase (/fancy-tui). */
+/* Fancy TUI showcase (/features/tui). */
 @import "./showcase/fancy-tui.css";
+
+/* Features: the header dropdown, /features and the micro-site kit. */
+@import "./showcase/features.css";
 
 /* Hand-authored CSS overrides shipped by each consumed package. */
 @import "@particle-academy/react-fancy/styles.css";

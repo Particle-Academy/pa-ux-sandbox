@@ -158,7 +158,7 @@ export default function PackagesComponent({ package: pkg, component, usage, cont
                                             <Text size="xs" className="!text-zinc-500">
                                                 A real Ink render, captured by fancy-tui&apos;s own showcase harness. For a
                                                 TUI you can drive, open{" "}
-                                                <Link href="/fancy-tui" className="underline">
+                                                <Link href="/features/tui" className="underline">
                                                     the live terminal docs
                                                 </Link>
                                                 .

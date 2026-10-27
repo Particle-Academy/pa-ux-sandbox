@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Services\PlayerProfile;
+use App\Support\FeatureSites;
 use App\Support\PlayerIdentity;
 use App\Support\SelfSite;
 use FancySeo\Facades\FancySeo;
@@ -96,6 +97,10 @@ class HandleInertiaRequests extends Middleware
                     'robots' => $seo->robots,
                 ];
             },
+            // The Features dropdown, the mobile flyout's Features section and the
+            // footer column all read this — App\Support\FeatureSites is the one
+            // list, so the nav cannot drift from the pages it links to.
+            'features' => fn (): array => FeatureSites::nav(),
         ];
     }
 }

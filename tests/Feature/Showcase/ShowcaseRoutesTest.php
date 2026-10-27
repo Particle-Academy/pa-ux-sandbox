@@ -21,10 +21,13 @@ it('renders the agent playground', function () {
 });
 
 it('renders the Fancy TUI dual-surface showcase', function () {
-    $response = $this->get('/fancy-tui');
+    // The page moved under Features; the old URL 301s to it.
+    $this->get('/fancy-tui')->assertStatus(301)->assertRedirect('/features/tui');
+
+    $response = $this->get('/features/tui');
 
     $response->assertOk();
-    $response->assertSee('"component":"FancyTui\\/Index"', escape: false);
+    $response->assertSee('"component":"Features\\/Tui\\/Index"', escape: false);
 });
 
 it('renders the packages index', function () {

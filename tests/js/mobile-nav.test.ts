@@ -90,7 +90,10 @@ describe("the main nav is reachable at every width", () => {
 
         expect(bar).toMatch(/as=\{Link\}\s+href="\/docs"/);
         expect(bar).toMatch(/as=\{Link\}\s+href="\/packages"/);
-        expect(bar).toMatch(/as=\{Link\}\s+href="\/flow"/);
+        // Flow moved under Features (/features/flow); the bar's third slot is
+        // the Features index, and /flow is only a 301 now.
+        expect(bar).toMatch(/as=\{Link\}\s+href="\/features"/);
+        expect(bar).not.toMatch(/href="\/flow"/);
     });
 
     it("gives the profile menu a button, since the header avatar is unreachable", () => {
@@ -108,6 +111,13 @@ describe("the main nav is reachable at every width", () => {
         // later; mapping the same array cannot.
         expect(layout).toContain("MobileMenu.Flyout");
         expect(layout).toMatch(/navItems\.map\(\(item\) => \(\s*<MobileMenu\.Item/);
+    });
+
+    it("gives the flyout a Features section from the same shared list as the dropdown", () => {
+        const flyout = layout.slice(layout.indexOf("MobileMenu.Flyout"), layout.indexOf("site-bottom-nav"));
+
+        expect(flyout).toMatch(/features\.map\(\(feature\) => \(\s*<MobileMenu\.Item/);
+        expect(flyout).toContain('href="/features"');
     });
 
     it("closes the flyout on navigation", () => {

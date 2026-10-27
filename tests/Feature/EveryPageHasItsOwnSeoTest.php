@@ -4,6 +4,7 @@ use App\Http\Controllers\Showcase\StarterKitController;
 use App\Support\Curriculum\FancyCurriculumContent;
 use App\Support\Docs\DocsArchive;
 use App\Support\Docs\DocsRegistry;
+use App\Support\FeatureSites;
 use App\Support\GalleryRegistry;
 use App\Support\PackageFamily;
 use App\Support\PackageRegistry;
@@ -33,10 +34,14 @@ uses(TestCase::class);
 /** @return list<string> */
 function everyPublicPage(): array
 {
-    $urls = ['/', '/packages', '/docs', '/use-cases', '/starter-kits', '/inspiration', '/agent-playground', '/dreaming', '/dreaming/archived', '/showcase', '/leaderboard', '/shop', '/flow', '/fancy-tui', '/learn', '/pw', '/subscriptions', '/products'];
+    $urls = ['/', '/packages', '/docs', '/use-cases', '/starter-kits', '/inspiration', '/agent-playground', '/dreaming', '/dreaming/archived', '/showcase', '/leaderboard', '/shop', '/features', '/learn', '/pw', '/subscriptions', '/products'];
 
     foreach (PackageFamily::all() as $family) {
         $urls[] = '/packages/family/'.$family['slug'];
+    }
+    // /flow and /fancy-tui 301 to two of these, so they are crawled here instead.
+    foreach (FeatureSites::slugs() as $slug) {
+        $urls[] = '/features/'.$slug;
     }
     foreach (array_merge(PackageRegistry::all(), PackageRegistry::companions()) as $pkg) {
         $urls[] = '/packages/'.$pkg['slug'];
@@ -193,7 +198,9 @@ it('draws a real card for every kind of page', function () {
         '/og/learn/'.FancyCurriculumContent::courses()[0]['slug'].'.png',
         '/og/learn/index.png',
         '/og/inspiration/index.png',
-        '/og/pages/flow.index.png',
+        '/og/pages/packages.index.png',
+        '/og/features/index.png',
+        '/og/features/flow.png',
         '/og/components/react-fancy/button.png',
         '/og/packages/holy-sheet.png',
     ];
@@ -209,4 +216,5 @@ it('draws a real card for every kind of page', function () {
     // A key that names nothing is a 404, not a blank card.
     $this->get('/og/families/not-a-family.png')->assertNotFound();
     $this->get('/og/pages/not.a.route.png')->assertNotFound();
+    $this->get('/og/features/not-a-feature.png')->assertNotFound();
 });

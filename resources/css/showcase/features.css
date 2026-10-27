@@ -1,0 +1,163 @@
+/* Features: the header dropdown, the /features index and the micro-site kit
+   (resources/js/Pages/Features/shared). Consumes tokens.css.
+
+   A Feature's identity arrives as four custom properties on ONE wrapper
+   (FeatureIdentity): --feature-accent-light/-dark and --feature-surface-light/
+   -dark, from App\Support\FeatureSites. Everything below reads the resolved
+   --feature-accent / --feature-surface / --feature-font, so dark mode is a
+   swap here and never a prop. */
+
+.feature-site {
+  --feature-accent: var(--feature-accent-light, var(--accent));
+  --feature-surface: var(--feature-surface-light, var(--bg-1));
+  --feature-font: var(--font-sans);
+  --feature-ink: color-mix(in oklch, var(--feature-accent) 78%, var(--fg-1));
+}
+.dark .feature-site,
+[data-theme="dark"] .feature-site,
+.feature-site.dark,
+.feature-site[data-theme="dark"] {
+  --feature-accent: var(--feature-accent-dark, var(--accent));
+  --feature-surface: var(--feature-surface-dark, var(--bg-1));
+  --feature-ink: color-mix(in oklch, var(--feature-accent) 85%, var(--fg-1));
+}
+.feature-site[data-feature-font="display"] { --feature-font: var(--font-display); }
+.feature-site[data-feature-font="mono"] { --feature-font: var(--font-mono); }
+/* System serif stacks only: no new typeface is loaded for an identity. */
+.feature-site[data-feature-font="serif"] { --feature-font: ui-serif, "Iowan Old Style", Georgia, "Times New Roman", serif; }
+
+.feature-site .feature-display { font-family: var(--feature-font); letter-spacing: -0.01em; }
+.feature-site[data-feature-font="mono"] .feature-display { letter-spacing: -0.02em; }
+
+.feature-crumbs { margin-bottom: 20px; }
+.feature-body { display: flex; flex-direction: column; gap: 48px; }
+
+/* ── Hero ─────────────────────────────────────────────── */
+.feature-hero {
+  display: flex; gap: 20px; align-items: flex-start;
+  padding: 36px 32px;
+  border-radius: 20px;
+  border: 1px solid color-mix(in oklch, var(--feature-accent) 28%, var(--border-1));
+  background:
+    radial-gradient(120% 140% at 0% 0%, color-mix(in oklch, var(--feature-accent) 18%, transparent), transparent 60%),
+    var(--feature-surface);
+}
+.feature-hero__glyph {
+  flex: none; display: grid; place-items: center;
+  width: 56px; height: 56px; border-radius: 16px;
+  color: var(--feature-accent);
+  background: color-mix(in oklch, var(--feature-accent) 14%, var(--bg-0));
+  border: 1px solid color-mix(in oklch, var(--feature-accent) 30%, transparent);
+}
+.feature-hero__main { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.feature-hero__eyebrow { color: var(--feature-ink); text-transform: uppercase; letter-spacing: 0.08em; }
+.feature-hero__lede { max-width: 62ch; }
+.feature-hero__meta, .feature-hero__actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+@media (max-width: 640px) {
+  .feature-hero { flex-direction: column; padding: 24px 18px; }
+}
+
+/* ── Sections ─────────────────────────────────────────── */
+.feature-section { display: flex; flex-direction: column; gap: 12px; }
+/* landing.css pads every bare <section> 96px and rules `section + section`.
+   The kit uses <section> for landmarks, not that rhythm: reclaim it, the same
+   way packages.css does for its groups. Spacing comes from .feature-body. */
+section.feature-section { padding: 0; }
+section.feature-section + section.feature-section { border-top: 0; }
+.feature-section__intro { max-width: 70ch; }
+.feature-section__grid { margin-top: 4px; }
+.feature-link { color: var(--feature-ink); text-decoration: none; font-weight: 500; }
+.feature-link:hover { text-decoration: underline; }
+.feature-code {
+  font-family: var(--font-mono); font-size: 12.5px;
+  color: var(--fg-1);
+  overflow-wrap: anywhere;
+}
+.feature-code__sigil { color: var(--fg-3); user-select: none; }
+
+/* DemoFrame: borders and labels only. No overflow clip, no transform, so a
+   live canvas or terminal inside behaves as it does on its own. */
+.feature-demo { border-color: color-mix(in oklch, var(--feature-accent) 30%, var(--border-1)); }
+.feature-demo__bar { display: flex; align-items: center; gap: 10px; }
+.feature-demo__bar > :last-child { margin-left: auto; }
+.feature-demo__dots { display: inline-flex; gap: 5px; }
+.feature-demo__dots span { width: 9px; height: 9px; border-radius: 999px; background: color-mix(in oklch, var(--feature-accent) 35%, var(--border-1)); }
+
+/* FeatureTour + HowItFits */
+.feature-tour__head { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.feature-tour__icon {
+  display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 8px;
+  color: var(--feature-accent);
+  background: color-mix(in oklch, var(--feature-accent) 12%, transparent);
+}
+.feature-fits__list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; font-size: 14px; }
+.feature-fits__bridge { margin-top: 4px; }
+.feature-fits__bridges { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.feature-fits__bridges li { display: flex; flex-direction: column; gap: 2px; }
+
+/* InstallSteps */
+.feature-steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.feature-steps__item { display: flex; gap: 12px; align-items: flex-start; }
+.feature-steps__n {
+  flex: none; display: grid; place-items: center; width: 26px; height: 26px; margin-top: 10px;
+  border-radius: 999px; font-size: 12px; font-weight: 700;
+  color: var(--feature-accent);
+  border: 1px solid color-mix(in oklch, var(--feature-accent) 40%, transparent);
+}
+.feature-steps__card { flex: 1; min-width: 0; }
+.feature-steps__meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 6px; }
+.feature-steps__cmd { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+
+/* PackagesGrid */
+.feature-package { display: block; text-decoration: none; color: inherit; height: 100%; }
+.feature-package__card { height: 100%; }
+.feature-package__head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 6px; }
+.feature-package__name { color: var(--feature-ink); overflow-wrap: anywhere; }
+.feature-package__tagline { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+
+/* FeatureCta */
+.feature-cta {
+  background:
+    linear-gradient(120deg, color-mix(in oklch, var(--feature-accent) 14%, transparent), transparent 70%),
+    var(--feature-surface);
+  border-color: color-mix(in oklch, var(--feature-accent) 28%, var(--border-1));
+}
+.feature-cta__body { margin-top: 6px; max-width: 62ch; }
+.feature-cta__actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+
+/* Phase A placeholders, until each micro-site's Phase B lands. */
+.feature-todo {
+  border: 1px dashed color-mix(in oklch, var(--feature-accent) 45%, var(--border-1));
+  border-radius: 12px; padding: 18px;
+  color: var(--fg-2); font-size: 14px;
+}
+
+/* ── /features index ──────────────────────────────────── */
+.features-index__hero { display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
+.features-index__card { display: block; height: 100%; text-decoration: none; color: inherit; }
+.features-index__card .feature-hero__glyph { width: 40px; height: 40px; border-radius: 12px; }
+.features-index__card-inner { height: 100%; background: var(--feature-surface); border-color: color-mix(in oklch, var(--feature-accent) 24%, var(--border-1)); }
+.features-index__card-head { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+.features-index__meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+
+/* ── Header dropdown ──────────────────────────────────── */
+.nav-link--menu {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: transparent; border: 0; font: inherit; font-size: 13px;
+}
+.nav-link--menu[data-active] { background: var(--bg-1); color: var(--fg-1); }
+.nav-link--menu[aria-expanded="true"], [aria-expanded="true"] > .nav-link--menu { background: var(--bg-1); color: var(--fg-1); }
+.features-menu { width: min(24rem, calc(100vw - 24px)); }
+.features-menu__item { align-items: flex-start; }
+.features-menu__row { display: flex; gap: 10px; align-items: flex-start; }
+.features-menu__icon {
+  flex: none; display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 8px;
+  color: var(--accent); background: color-mix(in oklch, var(--accent) 12%, transparent);
+}
+.features-menu__text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.features-menu__name { font-weight: 600; color: var(--fg-1); }
+.features-menu__tagline { font-size: 12px; line-height: 1.35; color: var(--fg-2); white-space: normal; }
+.features-menu__all { font-weight: 600; color: var(--accent); }
+
+/* Mobile flyout: the Features section label. */
+.mobile-nav-section { padding: 12px 12px 4px; }

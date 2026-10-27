@@ -6,6 +6,7 @@ use App\Http\Controllers\Showcase\StarterKitController;
 use App\Support\Curriculum\FancyCurriculumContent;
 use App\Support\Docs\DocsArchive;
 use App\Support\Docs\DocsRegistry;
+use App\Support\FeatureSites;
 use App\Support\GalleryRegistry;
 use App\Support\PackageFamily;
 use App\Support\PackageRegistry;
@@ -81,16 +82,6 @@ final class PageSeo
             'title' => 'Use cases — what you can build with Fancy UI',
             'description' => 'Blueprints and how-tos for the apps people actually build: subscription SaaS, e-commerce, online courses, referral networks, dashboards and real-estate portals — each with live component previews and real code.',
         ],
-        'flow.index' => [
-            'eyebrow' => 'fancy-flow',
-            'title' => 'Fancy Flow — the workflow editor and engine — Fancy UI',
-            'description' => 'The live fancy-flow editor — swimlanes, undo and redo, auto-layout — over the headless engine that runs the same graphs with zero React on a server, a worker or a CLI.',
-        ],
-        'fancy-tui.index' => [
-            'eyebrow' => 'fancy-tui',
-            'title' => 'fancy-tui — a live terminal app — Fancy UI',
-            'description' => 'The fancy-tui showcase as one live Ink terminal app, streamed to your browser: Human+ terminal components with controlled inputs, scrollback-safe conversations and MCP workflows.',
-        ],
         'pw' => [
             'eyebrow' => 'Tool',
             'title' => 'Password generator — Fancy UI',
@@ -124,6 +115,7 @@ final class PageSeo
         return match ($kind) {
             'pages' => self::page($key),
             'families' => self::family($key),
+            'features' => self::feature($key),
             'docs' => self::doc($key),
             'docs-archive' => self::archivedDoc($key),
             'components' => self::component($key),
@@ -194,6 +186,41 @@ final class PageSeo
             'Package family · '.implode(' · ', $languages),
             (string) $family['name'],
             (string) $family['tagline'],
+        );
+    }
+
+    /**
+     * The Features index (`index`) or one Feature's micro-site (`flow`, `3d`, …).
+     * Named from {@see FeatureSites}, the same list the nav and the pages read,
+     * with the member packages taken from the registry.
+     *
+     * @return array{title: string, description: string, card: array{eyebrow: ?string, title: string, subtitle: string}}|null
+     */
+    private static function feature(string $key): ?array
+    {
+        if ($key === 'index') {
+            $names = array_column(FeatureSites::all(), 'name');
+
+            return self::shape(
+                'Features — the platforms in the kit — Fancy UI',
+                'The parts of the Fancy UI kit that are whole platforms rather than single components, each with its own site: '.KitFacts::sentence($names).'.',
+                'Features',
+                'Features',
+                'The platforms in the kit: '.KitFacts::sentence($names).'.',
+            );
+        }
+
+        $feature = FeatureSites::find($key);
+        if ($feature === null) {
+            return null;
+        }
+
+        return self::shape(
+            "{$feature['name']} — Features — Fancy UI",
+            "{$feature['tagline']} Packages: ".KitFacts::sentence($feature['memberSlugs']).'.',
+            'Feature',
+            (string) $feature['name'],
+            (string) $feature['tagline'],
         );
     }
 

@@ -303,7 +303,7 @@ TSX,
                     'code' => 'npm install @particle-academy/fancy-term',
                 ],
             ],
-            'link' => '/fancy-tui',
+            'link' => '/features/tui',
             'link_label' => 'See the TUI components',
         ];
     }
@@ -429,7 +429,7 @@ PHP,
                     'code' => 'composer require particle-academy/fancy-flow-php',
                 ],
             ],
-            'link' => '/flow',
+            'link' => '/features/flow',
             'link_label' => 'Open the Flow gallery',
         ];
     }

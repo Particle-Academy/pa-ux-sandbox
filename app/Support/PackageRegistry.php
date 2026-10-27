@@ -1620,7 +1620,7 @@ Both registry names read as unclaimed on 2026-10-08 -- `@particle-academy/fancy-
             'npm' => '@particle-academy/fancy-flow',
             'repo' => 'Particle-Academy/fancy-flow',
             'language' => 'TypeScript',
-            'showcase' => '/flow',
+            'showcase' => '/features/flow',
             'components' => [
                 ['slug' => 'flow-editor', 'name' => 'FlowEditor', 'blurb' => 'Main editor canvas.'],
                 // Blurbs render as PLAIN TEXT on the package page — no markdown.
@@ -1762,7 +1762,7 @@ Both registry names read as unclaimed on 2026-10-08 -- `@particle-academy/fancy-
             'npm' => '@particle-academy/fancy-tui',
             'repo' => 'Particle-Academy/fancy-tui',
             'language' => 'TypeScript',
-            'showcase' => '/fancy-tui',
+            'showcase' => '/features/tui',
             'registry_prefix' => 'tui-',
             'pairs' => ['agent-integrations', 'fancy-term'],
             'components' => [

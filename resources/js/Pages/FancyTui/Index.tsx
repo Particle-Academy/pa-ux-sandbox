@@ -1,10 +1,9 @@
 import { ServerSeo } from "@/lib/ServerSeo";
-import { Badge, Breadcrumbs, Button } from "@particle-academy/react-fancy";
+import { Badge, Button } from "@particle-academy/react-fancy";
 import { Check, Code2, Copy, LayoutPanelTop, Monitor, TerminalSquare } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { clientOnly } from "../../lib/clientOnly";
 import { ComponentGallery } from "./ComponentGallery";
-import { Layout } from "../Layout";
 
 type Surface = "html" | "console";
 type Demo = {
@@ -75,7 +74,16 @@ render(
     },
 ];
 
-export default function FancyTuiIndex() {
+/**
+ * The fancy-tui showcase: the HTML workbench, the component gallery and the
+ * full-screen console. It renders inside the TUI Feature micro-site
+ * (`Pages/Features/Tui/Index.tsx`, at /features/tui); /fancy-tui 301s there.
+ *
+ * `frame` wraps the HTML view in the page's shell. The console view is
+ * deliberately NOT framed: it takes the whole viewport, no site chrome, so it
+ * reads as a terminal application rather than an embedded widget.
+ */
+export function FancyTuiShowcase({ frame }: { frame: (content: ReactNode) => ReactNode }) {
     const [surface, setSurface] = useState<Surface>("html");
     const [selectedId, setSelectedId] = useState(demos[0].id);
     const [copied, setCopied] = useState(false);
@@ -100,34 +108,8 @@ export default function FancyTuiIndex() {
         );
     }
 
-    return (
-        <Layout>
-            <ServerSeo />
-            <Breadcrumbs>
-                <Breadcrumbs.Item href="/packages">Packages</Breadcrumbs.Item>
-                <Breadcrumbs.Item>fancy-tui</Breadcrumbs.Item>
-            </Breadcrumbs>
-
-            <main className="ftui-page">
-                {/* Same hero the package pages use, so this reads as part of the
-                    showcase rather than a separate microsite. */}
-                <header className="pkg-hero">
-                    <span className="pkg-glyph pkg-hero__glyph"><TerminalSquare size={22} /></span>
-                    <div className="pkg-hero__main">
-                        <h1 className="pkg-hero__name">fancy-tui</h1>
-                        <div className="pkg-hero__id">@particle-academy/fancy-tui</div>
-                        <p className="pkg-hero__tagline">
-                            One component vocabulary, browser and terminal. Browse the same layouts, agent
-                            workflows, and Human+ patterns as semantic HTML or a real ANSI console.
-                        </p>
-                        <div className="pkg-hero__meta">
-                            <span className="pkg-eco" data-eco="ts">TypeScript</span>
-                            <span className="pkg-kind">Terminal UI</span>
-                            <Badge color="green">MCP ready</Badge>
-                        </div>
-                    </div>
-                </header>
-
+    return frame(
+            <div className="ftui-page">
                 <section className="ftui-workbench">
                     <aside className="ftui-sidebar" aria-label="Fancy TUI examples">
                         <div className="ftui-sidebar__brand"><span>F</span><div><b>Fancy TUI</b><small>docs + sandbox</small></div></div>
@@ -159,8 +141,7 @@ export default function FancyTuiIndex() {
                 </section>
 
                 <ComponentGallery />
-            </main>
-        </Layout>
+            </div>,
     );
 }
 

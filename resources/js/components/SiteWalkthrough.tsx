@@ -57,10 +57,10 @@ const STEPS: WalkthroughStep[] = [
         placement: "bottom",
     },
     {
-        id: "flow",
-        target: "nav-flow",
-        title: "Flow",
-        body: "Build a workflow on a canvas and run it. The same graph runs on four runtimes — TypeScript, PHP, Python and Rust.",
+        id: "features",
+        target: "nav-features",
+        title: "Features",
+        body: "The parts of the kit that are whole platforms rather than single components — workflows, terminal apps, documents, commerce and more — each with its own site.",
         placement: "bottom",
     },
     {

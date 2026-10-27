@@ -6,6 +6,7 @@ use App\Http\Controllers\Showcase\StarterKitController;
 use App\Models\User;
 use App\Support\Curriculum\FancyCurriculumContent;
 use App\Support\Docs\DocsRegistry;
+use App\Support\FeatureSites;
 use App\Support\GalleryRegistry;
 use App\Support\PackageFamily;
 use App\Support\PackageRegistry;
@@ -111,7 +112,7 @@ class SeoServiceProvider extends ServiceProvider
         // draws its share card. A page with no resolver unfurls as the whole
         // site: the family pages, the starter kits, the courses and the flow
         // editor all did, with the site's default card, until this listed them.
-        foreach (['packages.index', 'agent-playground', 'dreaming.index', 'dreaming.archived', 'leaderboard', 'showcase.showcase.index', 'shop.index', 'flow.index', 'fancy-tui.index', 'pw', 'subscriptions.index', 'products.index'] as $route) {
+        foreach (['packages.index', 'agent-playground', 'dreaming.index', 'dreaming.archived', 'leaderboard', 'showcase.showcase.index', 'shop.index', 'pw', 'subscriptions.index', 'products.index'] as $route) {
             FancySeo::route($route, fn (): array => PageSeo::meta('pages', $route));
         }
         FancySeo::route('docs.index', fn (): array => PageSeo::meta('pages', 'docs.index', ['type' => 'article']));
@@ -130,6 +131,8 @@ class SeoServiceProvider extends ServiceProvider
         FancySeo::route('inspiration.show', fn (array $params): array => $this->inspirationSeo((string) ($params['collection'] ?? ''), (string) ($params['style'] ?? ''), $base));
         FancySeo::route('packages.show', fn (array $params): array => $this->packageSeo($params['package'] ?? null, $base));
         FancySeo::route('packages.family', fn (array $params): array => $this->familySeo((string) ($params['family'] ?? ''), $base));
+        FancySeo::route('features.index', fn (): array => PageSeo::meta('features', 'index', ['canonical' => $base.'/features']));
+        FancySeo::route('features.show', fn (array $params): array => $this->featureSeo((string) ($params['slug'] ?? ''), $base));
         FancySeo::route('packages.component', fn (array $params): array => $this->componentSeo((string) ($params['package'] ?? ''), (string) ($params['component'] ?? ''), $base));
         FancySeo::route('docs.show', fn (array $params): array => $this->docSeo((string) ($params['slug'] ?? 'introduction'), $base));
         FancySeo::route('docs.versioned', fn (array $params): array => $this->archivedDocSeo((string) ($params['version'] ?? ''), (string) ($params['slug'] ?? 'introduction'), $base));
@@ -325,6 +328,31 @@ class SeoServiceProvider extends ServiceProvider
     }
 
     /**
+     * One Feature's micro-site. Its own canonical, so the 301'd /flow and
+     * /fancy-tui never compete with the URL they moved to.
+     *
+     * @return array<string,mixed>
+     */
+    private function featureSeo(string $slug, string $base): array
+    {
+        $feature = FeatureSites::find($slug);
+        if ($feature === null) {
+            return [];
+        }
+        $url = $base.$feature['href'];
+
+        return PageSeo::meta('features', $slug, [
+            'canonical' => $url,
+            'jsonLd' => [
+                JsonLd::breadcrumbList([
+                    ['name' => 'Features', 'url' => $base.'/features'],
+                    ['name' => $feature['name'], 'url' => $url],
+                ]),
+            ],
+        ]);
+    }
+
+    /**
      * The same starter kit, authored as a CMS document. It is a comparison of
      * the JSX page, so it says so in its title and points at that page.
      *
@@ -485,8 +513,7 @@ class SeoServiceProvider extends ServiceProvider
                 ->add('dreaming', '0.6', 'weekly')
                 ->add('showcase', '0.6', 'weekly')
                 ->add('leaderboard', '0.5', 'daily')
-                ->add('flow', '0.7', 'weekly')
-                ->add('fancy-tui', '0.6', 'weekly')
+                ->add('features', '0.8', 'weekly')
                 ->add('learn', '0.7', 'weekly');
 
             // Pages that existed and were listed nowhere. The family pages matter
@@ -494,6 +521,10 @@ class SeoServiceProvider extends ServiceProvider
             // page IS where those packages are, and no crawler was told.
             foreach (PackageFamily::all() as $family) {
                 $map->add('packages/family/'.$family['slug'], '0.85', 'weekly');
+            }
+            // /flow and /fancy-tui 301 here; the Features are the URLs to index.
+            foreach (FeatureSites::slugs() as $slug) {
+                $map->add('features/'.$slug, '0.8', 'weekly');
             }
             foreach (StarterKitController::kits() as $kit) {
                 $map->add('starter-kits/'.$kit['slug'], '0.6', 'monthly');
@@ -580,6 +611,7 @@ class SeoServiceProvider extends ServiceProvider
             $out[] = '## Key pages';
             $out[] = '';
             $out[] = "- [Packages]({$base}/packages): the full suite index.";
+            $out[] = "- [Features]({$base}/features): the platforms in the kit (".KitFacts::sentence(array_column(FeatureSites::all(), 'name')).'), each with its own site.';
             $out[] = "- [Docs]({$base}/docs): installation, the Human+ UX contract, MCP bridges.";
             $out[] = "- [Agent Playground]({$base}/agent-playground): connect your own agent over MCP and watch it drive the UI live.";
             $out[] = "- [Starter Kits]({$base}/starter-kits): production-ready apps built on the kit.";

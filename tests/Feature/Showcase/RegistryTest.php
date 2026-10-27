@@ -12,7 +12,7 @@ it('discovers Fancy TUI as a package and npm registry surface', function () {
 
     expect($package)->not->toBeNull()
         ->and($package['npm'])->toBe('@particle-academy/fancy-tui')
-        ->and($package['showcase'])->toBe('/fancy-tui')
+        ->and($package['showcase'])->toBe('/features/tui')
         ->and($package['components'])->toHaveCount(52);
 
     $this->get('/packages/fancy-tui')->assertOk();

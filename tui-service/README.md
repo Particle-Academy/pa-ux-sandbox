@@ -69,7 +69,7 @@ Then point Laravel at it:
 TUI_SERVICE_URL=http://127.0.0.1:8790
 ```
 
-With `TUI_SERVICE_URL` unset, `/fancy-tui` degrades to the HTML docs — the
+With `TUI_SERVICE_URL` unset, `/features/tui` degrades to the HTML docs — the
 terminal view shows a clean "not available here" notice rather than a dead
 screen.
 

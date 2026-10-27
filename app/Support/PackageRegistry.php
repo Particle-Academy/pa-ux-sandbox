@@ -139,6 +139,26 @@ class PackageRegistry
      * @var array<string, array{name: string, repo: string, why: string}>
      */
     public const PLANNED = [
+        'charlotte' => [
+            'name' => 'particle-academy/charlotte',
+            'repo' => 'Particle-Academy/charlotte',
+            'why' => 'Charlotte, a headless WEBSITE-BUILDER AGENT KIT so developers can build site-builder agents into their own apps. Owner decisions 2026-10-27 (q_63d11535, q_27e5e938). It productizes what the fancy-labs website lab proved: the page-editing tools over a fancy-cms PageSession, a versioned guide, a structured brief with code-derived fact and page checks, and the review bar. Built on prism-harness, and works with ANY prism provider. Cost telemetry is an optional Prism courtesy that nothing depends on. It edits DRAFTS only: nothing publishes on a change, and autonomy is a dev setting (full, or approve on save). The PHP core comes first; the other languages follow once it works perfectly. Pest for tests. Design: .ai/plans/charlotte.md in the envelope. NOT YET STARTED; registered first per the rule. Composer name verified free 2026-10-26.',
+        ],
+        'charlotte-ui' => [
+            'name' => '@particle-academy/charlotte-ui',
+            'repo' => 'Particle-Academy/charlotte-ui',
+            'why' => 'The React half of Charlotte. Headless hooks over a transport-agnostic event contract (long-poll first, because Cloudflare kills SSE), so apps can build their OWN chat. It also ships unstyled-capable primitives and an OPTIONAL, fully functional side panel that builds pages live with the user beside the fancy-cms-ui editor, with staged changes on a draft. Satisfies the Human+ component contract. Needs a ChatThread/ChatMessage primitive in react-fancy first, under the Fancy Exclusive rule. NOT YET STARTED. npm name verified free 2026-10-26.',
+        ],
+        'charlotte-js' => [
+            'name' => '@particle-academy/charlotte',
+            'repo' => 'Particle-Academy/charlotte-js',
+            'why' => 'Node/TypeScript core twin of Charlotte. Owner 2026-10-27: build Charlotte for all supported languages AFTER the PHP core works perfectly. It will sit on the TypeScript prism-harness and follow the same event contract and fixtures as the PHP core. NOT YET STARTED, and deliberately sequenced after PHP. npm name verified free 2026-10-26.',
+        ],
+        'charlotte-py' => [
+            'name' => 'charlotte',
+            'repo' => 'Particle-Academy/charlotte-py',
+            'why' => 'Python core twin of Charlotte, under the same owner ruling: all supported languages after PHP works perfectly. NOT YET STARTED, sequenced after PHP. Check whether a Python prism-harness exists before starting, and confirm the PyPI name is free then.',
+        ],
         'fancy-expr' => [
             'name' => 'fancy-expr',
             'repo' => 'Particle-Academy/fancy-expr',

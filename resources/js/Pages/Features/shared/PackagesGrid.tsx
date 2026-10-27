@@ -39,11 +39,11 @@ export function PackagesGrid({
                                         <Text as="span" weight="semibold" className="feature-package__name">
                                             {member.name}
                                         </Text>
-                                        <Badge variant="soft" size="sm">
+                                        <Badge variant="soft">
                                             {member.language}
                                         </Badge>
                                         {version && (
-                                            <Badge color="blue" variant="soft" size="sm">
+                                            <Badge color="blue" variant="soft">
                                                 v{version}
                                             </Badge>
                                         )}

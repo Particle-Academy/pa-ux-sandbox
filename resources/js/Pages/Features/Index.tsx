@@ -44,11 +44,11 @@ export default function FeaturesIndex({ sites }: { sites: FeatureSiteCard[] }) {
                                         {site.tagline}
                                     </Text>
                                     <div className="features-index__meta">
-                                        <Badge variant="soft" size="sm">
+                                        <Badge variant="soft">
                                             {site.memberCount} {site.memberCount === 1 ? "package" : "packages"}
                                         </Badge>
                                         {site.languages.map((language) => (
-                                            <Badge key={language} variant="outline" size="sm">
+                                            <Badge key={language} variant="outline">
                                                 {language}
                                             </Badge>
                                         ))}

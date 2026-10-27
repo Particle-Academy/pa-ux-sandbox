@@ -48,7 +48,7 @@ export function FeatureHero({
                 {languages.length > 0 && (
                     <div className="feature-hero__meta">
                         {languages.map((language) => (
-                            <Badge key={language} variant="outline" size="sm">
+                            <Badge key={language} variant="outline">
                                 {language}
                             </Badge>
                         ))}

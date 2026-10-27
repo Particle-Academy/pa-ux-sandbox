@@ -66,11 +66,11 @@ function InstallCommand({ member, version }: { member: FeatureMember; version: s
                 <Text as="span" size="sm" weight="semibold">
                     {member.name}
                 </Text>
-                <Badge variant="soft" size="sm">
+                <Badge variant="soft">
                     {member.language}
                 </Badge>
                 {version && (
-                    <Badge color="blue" variant="soft" size="sm">
+                    <Badge color="blue" variant="soft">
                         v{version}
                     </Badge>
                 )}
@@ -84,7 +84,7 @@ function InstallCommand({ member, version }: { member: FeatureMember; version: s
                 </code>
                 <Button
                     variant="ghost"
-                    size="sm"
+                    className="feature-steps__copy"
                     icon={copied ? "check" : "copy"}
                     onClick={copy}
                     aria-label={`Copy: ${command}`}

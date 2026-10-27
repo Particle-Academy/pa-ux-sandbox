@@ -37,7 +37,7 @@ export function DemoFrame({
                     <Text as="span" size="sm" weight="semibold">
                         {label}
                     </Text>
-                    <Badge color="green" variant="soft" size="sm" dot>
+                    <Badge color="green" variant="soft" dot>
                         {status}
                     </Badge>
                 </Card.Header>

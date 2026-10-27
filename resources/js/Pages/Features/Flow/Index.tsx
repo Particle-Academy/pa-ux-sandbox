@@ -14,7 +14,6 @@ import { InstallSteps } from "../shared/InstallSteps";
 import { PackagesGrid } from "../shared/PackagesGrid";
 import type { FeatureMember, FeaturePageProps } from "../shared/types";
 import { NodeMarketplace } from "./NodeMarketplace";
-import "./flow.css";
 
 // The editor mounts React Flow (xyflow), which is browser-only: defer it to the
 // client like every other live canvas surface on the showcase.

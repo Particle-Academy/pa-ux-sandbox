@@ -139,9 +139,3 @@
   font-family: var(--feature-font); font-size: 26px; font-weight: 800; color: var(--feature-ink);
   font-variant-numeric: tabular-nums;
 }
-
-/* See ecommerce.css: the shared hero's text column must stretch when stacked. */
-@media (max-width: 640px) {
-  [data-feature="gamification"] .feature-hero__main { align-self: stretch; }
-  [data-feature="gamification"] .gam-site h1.feature-display { font-size: 30px; overflow-wrap: anywhere; }
-}

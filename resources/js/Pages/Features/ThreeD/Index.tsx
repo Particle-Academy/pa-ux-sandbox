@@ -9,7 +9,6 @@ import { HowItFits } from "../shared/HowItFits";
 import { InstallSteps } from "../shared/InstallSteps";
 import { PackagesGrid } from "../shared/PackagesGrid";
 import type { FeaturePageProps } from "../shared/types";
-import "./threed.css";
 
 /**
  * /features/3d — one Scene, any renderer.

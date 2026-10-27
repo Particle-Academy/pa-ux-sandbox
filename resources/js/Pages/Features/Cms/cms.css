@@ -44,7 +44,6 @@
   font-size: 15px;
 }
 .cms-site .feature-hero h1 { font-size: clamp(34px, 9vw, 60px); }
-.cms-site .feature-hero__actions a { min-height: 44px; }
 .cms-site__beta { margin-top: 10px; max-width: 62ch; }
 
 /* Anchor target clears the sticky site header. */
@@ -97,6 +96,3 @@
   .cms-demo__editor { height: 520px; }
   .cms-site .feature-hero::before, .cms-site .feature-hero::after { display: none; }
 }
-
-/* The kit sets code at 12.5px; this page keeps every line at 14px or more. */
-.cms-site .feature-code { font-size: 14px; }

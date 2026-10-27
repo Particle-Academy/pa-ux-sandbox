@@ -47,7 +47,7 @@ export function HowItFits({
                 {languages.map((language) => (
                     <Card key={language} variant="muted" data-language={language}>
                         <Card.Header>
-                            <Badge variant="outline" size="sm">
+                            <Badge variant="outline">
                                 {language}
                             </Badge>
                         </Card.Header>
@@ -86,7 +86,7 @@ export function HowItFits({
                                     <code className="feature-code">
                                         {`import { ${bridge.name} } from "${bridge.import}";`}
                                     </code>
-                                    <Text as="span" size="xs" color="muted">
+                                    <Text as="span" size="sm" color="muted">
                                         tools: {bridge.tools}
                                     </Text>
                                 </li>

@@ -170,34 +170,15 @@
 }
 .flow-market__cmd > button { min-height: 44px; flex: none; }
 
-/* Legibility floor: nothing on this page under 14px. The kit's code and step
-   numbers are smaller by default; this page raises them in its own scope. */
-[data-feature="flow"] .feature-code,
-[data-feature="flow"] .feature-code__sigil,
-[data-feature="flow"] .feature-steps__n,
+/* Legibility floor: nothing on this page under 14px (the shared kit holds its
+   own pieces to the same floor in features.css). */
 [data-feature="flow"] .flow-cohort__n,
 [data-feature="flow"] .flow-code { font-size: 14px; }
-[data-feature="flow"] .feature-steps__n { width: 28px; height: 28px; }
-
-/* The shared kit's small labels and controls, raised to the 14px / 44px floor
-   inside this page only (reported upstream as a kit-wide change). */
-[data-feature="flow"] .feature-hero__meta > span,
-[data-feature="flow"] .feature-demo__bar > span:last-child,
-[data-feature="flow"] .feature-steps__meta > span,
-[data-feature="flow"] .feature-package__head > span,
-[data-feature="flow"] .feature-fits__bridges span,
-[data-feature="flow"] [data-language] .feature-fits__list,
-[data-feature="flow"] [data-language] > div > span,
-[data-feature="flow"] .feature-steps__cmd > button { font-size: 14px; }
-[data-feature="flow"] .feature-steps__cmd > button { min-height: 44px; }
-[data-feature="flow"] .feature-fits__list { gap: 0; }
-[data-feature="flow"] .feature-fits__list a { display: inline-flex; align-items: center; min-height: 44px; }
-[data-feature="flow"] .feature-hero__actions > *,
-[data-feature="flow"] .feature-cta__actions > * { min-height: 44px; }
 
 /* react-fancy's solid colour buttons put white text on a -500 (dark: -600)
-   fill, which is under 4.5:1 for sky and violet. Deepen the fill in this
-   page's scope so the label clears AA (reported upstream). */
+   fill, which is under 4.5:1 for sky and violet. Deepen the fill for this
+   page's own buttons (the editor's sky toggles, FlowStudio's violet close) so
+   the label clears AA (reported upstream). The FeatureCta sets its own fill. */
 [data-feature="flow"] button.bg-sky-500, [data-feature="flow"] a.bg-sky-500 { background-color: #0369a1; border-color: #075985; }
 [data-feature="flow"] button.bg-sky-500:hover, [data-feature="flow"] a.bg-sky-500:hover { background-color: #075985; }
 [data-feature="flow"] .bg-violet-500 { background-color: #6d28d9; border-color: #5b21b6; }

@@ -16,7 +16,6 @@
 }
 .docs-site .feature-hero__glyph { border-radius: 4px 12px 4px 4px; }
 .docs-site .feature-hero h1 { letter-spacing: -0.015em; line-height: 1.08; font-size: clamp(34px, 9vw, 60px); }
-.docs-site .feature-hero__actions a { min-height: 44px; }
 .docs-site .feature-hero__eyebrow { letter-spacing: 0.14em; font-size: 14px; }
 
 .docs-tabs {
@@ -88,6 +87,3 @@ section.docs-bridge { padding: 16px 0 0; }
 
 .docs-site .feature-tour__card { border-radius: 4px 12px 4px 4px; }
 .docs-site .feature-cta { border-radius: 6px 22px 6px 6px; border-top: 4px solid var(--feature-accent); }
-
-/* The kit sets code at 12.5px; this page keeps every line at 14px or more. */
-.docs-site .feature-code { font-size: 14px; }

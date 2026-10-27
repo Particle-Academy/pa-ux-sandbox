@@ -125,20 +125,9 @@
 /* DownlineTree's expand / collapse control, at a 44px tap target. */
 .ecom-mlm__tree .fancy-mlm-tree__toggle { min-width: 44px; min-height: 44px; display: inline-grid; place-items: center; }
 
-/* The shared hero stacks at 640px but keeps align-items: flex-start, which
-   lets its text column size to content and run past a 375px screen. Stretch
-   it here; reported for the shared kit. */
-@media (max-width: 640px) {
-  [data-feature="ecommerce"] .feature-hero__main { align-self: stretch; }
-}
-
 /* "Decided by": the explain() source, readable at 14px. */
 .ecom-source { font-family: var(--font-mono); font-size: 14px; color: var(--fg-1); overflow-wrap: anywhere; }
 
 /* fancy-mlm-ui ships compact type; in this demo every label is 14px. */
 .ecom-mlm [data-fancy-mlm],
 .ecom-mlm [data-fancy-mlm] * { font-size: 14px; }
-
-@media (max-width: 640px) {
-  [data-feature="ecommerce"] .ecom-site h1.feature-display { font-size: 30px; overflow-wrap: anywhere; }
-}

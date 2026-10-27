@@ -9,7 +9,6 @@ import {
     WorkingTree,
     type CommitDraft,
 } from "@particle-academy/fancy-git-ui";
-import "@particle-academy/fancy-git-ui/styles.css";
 import type { CreateReviewInput } from "@particle-academy/fancy-git";
 import { MicroMcpServer, attachInProcess, registerGitBridge, type InProcessTransport } from "@particle-academy/agent-integrations";
 import { Badge, Button, Callout, Card, CodeView, Heading, Tabs, Text } from "@particle-academy/react-fancy";

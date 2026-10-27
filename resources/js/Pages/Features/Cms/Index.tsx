@@ -13,7 +13,6 @@ import { PackagesGrid } from "../shared/PackagesGrid";
 import type { FeaturePageProps } from "../shared/types";
 import { CMS_GUIDES, CMS_TOUR } from "./content";
 import { CART_PAGE, CMS_ICONS, imageResolver } from "./seed";
-import "./cms.css";
 
 /**
  * /features/cms: the CMS micro-site.

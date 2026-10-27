@@ -11,7 +11,6 @@ import { PackagesGrid } from "../shared/PackagesGrid";
 import type { FeaturePageProps } from "../shared/types";
 import { ReferralDemo } from "./ReferralDemo";
 import { StorefrontDemo } from "./StorefrontDemo";
-import "./ecommerce.css";
 
 /**
  * /features/ecommerce: plans, gating and referrals as one storefront story.

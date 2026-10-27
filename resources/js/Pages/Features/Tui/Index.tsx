@@ -12,7 +12,6 @@ import { HowItFits } from "../shared/HowItFits";
 import { InstallSteps } from "../shared/InstallSteps";
 import { PackagesGrid } from "../shared/PackagesGrid";
 import type { FeaturePageProps } from "../shared/types";
-import "./tui.css";
 
 /**
  * What fancy-tui does. Each claim is checked against the installed package

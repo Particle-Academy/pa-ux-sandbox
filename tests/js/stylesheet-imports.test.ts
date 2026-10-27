@@ -41,6 +41,7 @@ const GLOBAL = new Set([
     "@particle-academy/fancy-code",
     "@particle-academy/fancy-flow",
     "@particle-academy/fancy-mlm-ui",
+    "@particle-academy/fancy-git-ui",
 ]);
 
 function sourceFiles(dir: string): string[] {

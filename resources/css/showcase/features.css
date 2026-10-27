@@ -30,6 +30,12 @@
 .feature-site[data-feature-font="mono"] .feature-display { letter-spacing: -0.02em; }
 
 .feature-crumbs { margin-bottom: 20px; }
+/* Every kit link and button is a 44px tap target (WCAG 2.5.5). */
+.feature-crumbs a,
+.feature-fits__list a,
+.feature-steps__copy,
+.feature-hero__actions > *,
+.feature-cta__actions > * { display: inline-flex; align-items: center; min-height: 44px; }
 .feature-body { display: flex; flex-direction: column; gap: 48px; }
 
 /* ── Hero ─────────────────────────────────────────────── */
@@ -55,6 +61,10 @@
 .feature-hero__meta, .feature-hero__actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
 @media (max-width: 640px) {
   .feature-hero { flex-direction: column; padding: 24px 18px; }
+  /* Stacked, the column must take the hero's width: under the hero's
+     align-items: flex-start it sizes to its content and runs past a 375 screen. */
+  .feature-hero__main { align-self: stretch; }
+  .feature-hero h1.feature-display { font-size: 30px; line-height: 1.15; overflow-wrap: anywhere; }
 }
 
 /* ── Sections ─────────────────────────────────────────── */
@@ -69,7 +79,7 @@ section.feature-section + section.feature-section { border-top: 0; }
 .feature-link { color: var(--feature-ink); text-decoration: none; font-weight: 500; }
 .feature-link:hover { text-decoration: underline; }
 .feature-code {
-  font-family: var(--font-mono); font-size: 12.5px;
+  font-family: var(--font-mono); font-size: 14px;
   color: var(--fg-1);
   overflow-wrap: anywhere;
 }
@@ -90,7 +100,7 @@ section.feature-section + section.feature-section { border-top: 0; }
   color: var(--feature-accent);
   background: color-mix(in oklch, var(--feature-accent) 12%, transparent);
 }
-.feature-fits__list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; font-size: 14px; }
+.feature-fits__list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0; font-size: 14px; }
 .feature-fits__bridge { margin-top: 4px; }
 .feature-fits__bridges { list-style: none; margin: 10px 0 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
 .feature-fits__bridges li { display: flex; flex-direction: column; gap: 2px; }
@@ -99,8 +109,8 @@ section.feature-section + section.feature-section { border-top: 0; }
 .feature-steps { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
 .feature-steps__item { display: flex; gap: 12px; align-items: flex-start; }
 .feature-steps__n {
-  flex: none; display: grid; place-items: center; width: 26px; height: 26px; margin-top: 10px;
-  border-radius: 999px; font-size: 12px; font-weight: 700;
+  flex: none; display: grid; place-items: center; width: 28px; height: 28px; margin-top: 10px;
+  border-radius: 999px; font-size: 14px; font-weight: 700;
   color: var(--feature-accent);
   border: 1px solid color-mix(in oklch, var(--feature-accent) 40%, transparent);
 }
@@ -123,6 +133,26 @@ section.feature-section + section.feature-section { border-top: 0; }
   border-color: color-mix(in oklch, var(--feature-accent) 28%, var(--border-1));
 }
 .feature-cta__body { margin-top: 6px; max-width: 62ch; }
+/* The primary button is react-fancy's `brand` colour, which reads these three
+   variables, so it takes the Feature's accent rather than a fixed violet.
+   A raw -600 accent under white text fails AA for sky, green, orange, emerald
+   and amber, so light mode deepens the fill (sRGB mix with black: the lowest
+   ratio across the eight accents is 5.27:1, hover 6.57:1). Dark mode's accents
+   are -400s, too light for white, so it keeps the accent and takes dark ink
+   (lowest 7.21:1, hover 5.91:1). Measured in the browser, not just here. */
+.feature-cta {
+  --color-brand: color-mix(in srgb, var(--feature-accent) 75%, black);
+  --color-brand-hover: color-mix(in srgb, var(--feature-accent) 65%, black);
+  --color-brand-contrast: #ffffff;
+}
+.dark .feature-site .feature-cta,
+[data-theme="dark"] .feature-site .feature-cta,
+.feature-site.dark .feature-cta,
+.feature-site[data-theme="dark"] .feature-cta {
+  --color-brand: var(--feature-accent);
+  --color-brand-hover: color-mix(in srgb, var(--feature-accent) 90%, black);
+  --color-brand-contrast: #0b0b10;
+}
 .feature-cta__actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
 
 /* Phase A placeholders, until each micro-site's Phase B lands. */
@@ -156,7 +186,7 @@ section.feature-section + section.feature-section { border-top: 0; }
 }
 .features-menu__text { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
 .features-menu__name { font-weight: 600; color: var(--fg-1); }
-.features-menu__tagline { font-size: 12px; line-height: 1.35; color: var(--fg-2); white-space: normal; }
+.features-menu__tagline { font-size: 14px; line-height: 1.35; color: var(--fg-2); white-space: normal; }
 .features-menu__all { font-weight: 600; color: var(--accent); }
 
 /* Mobile flyout: the Features section label. */

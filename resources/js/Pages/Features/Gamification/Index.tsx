@@ -10,7 +10,6 @@ import { InstallSteps } from "../shared/InstallSteps";
 import { PackagesGrid } from "../shared/PackagesGrid";
 import type { FeaturePageProps } from "../shared/types";
 import { ArcadeDemo } from "./ArcadeDemo";
-import "./gamification.css";
 
 /**
  * /features/gamification: laravel-fun-lab, shown only as it ships today.

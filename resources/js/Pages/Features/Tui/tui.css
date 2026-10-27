@@ -167,41 +167,19 @@
 [data-feature="tui"] .ftui-gallery__grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 27rem), 1fr)); }
 
 /* Legibility floor: nothing on this page under 14px. */
-[data-feature="tui"] .feature-code,
-[data-feature="tui"] .feature-code__sigil,
-[data-feature="tui"] .feature-steps__n,
 [data-feature="tui"] .ftui-gallery__group h3,
 [data-feature="tui"] .ftui-card__head h4 { font-size: 14px; }
-[data-feature="tui"] .feature-steps__n { width: 28px; height: 28px; }
-
-/* The shared kit's small labels and controls, raised to the 14px / 44px floor
-   inside this page only (reported upstream as a kit-wide change). */
-[data-feature="tui"] .feature-hero__meta > span,
-[data-feature="tui"] .feature-demo__bar > span:last-child,
-[data-feature="tui"] .feature-steps__meta > span,
-[data-feature="tui"] .feature-package__head > span,
-[data-feature="tui"] .feature-fits__bridges span,
-[data-feature="tui"] [data-language] .feature-fits__list,
-[data-feature="tui"] [data-language] > div > span,
-[data-feature="tui"] .feature-steps__cmd > button { font-size: 14px; }
-[data-feature="tui"] .feature-steps__cmd > button { min-height: 44px; }
-[data-feature="tui"] .feature-fits__list { gap: 0; }
-[data-feature="tui"] .feature-fits__list a { display: inline-flex; align-items: center; min-height: 44px; }
 [data-feature="tui"] .ftui-gallery__filters > button,
 [data-feature="tui"] .ftui-card__toggle,
 [data-feature="tui"] .tui-workbench__item,
 [data-feature="tui"] .tui-launch kbd { font-size: 14px; }
 [data-feature="tui"] .ftui-gallery__filters > button span { font: inherit; color: inherit; }
-[data-feature="tui"] .feature-hero__actions > *,
-[data-feature="tui"] .feature-cta__actions > * { min-height: 44px; }
 
 /* react-fancy's solid colour buttons put white text on a -500 (dark: -600)
-   fill, under 4.5:1 for green and violet. Deepen it in this page's scope so
-   the label clears AA (reported upstream). */
+   fill, under 4.5:1 for green. Deepen it for this page's own green buttons
+   so the label clears AA (reported upstream). The FeatureCta sets its own fill. */
 [data-feature="tui"] .bg-green-500 { background-color: #15803d; border-color: #166534; }
 [data-feature="tui"] .bg-green-500:hover { background-color: #166534; }
-[data-feature="tui"] .bg-violet-500 { background-color: #6d28d9; border-color: #5b21b6; }
-[data-feature="tui"] .bg-violet-500:hover { background-color: #5b21b6; }
 [data-feature="tui"] .tui-workbench__item[aria-current="true"] {
   background: color-mix(in oklch, var(--feature-accent) 16%, var(--bg-0));
   color: var(--fg-1);

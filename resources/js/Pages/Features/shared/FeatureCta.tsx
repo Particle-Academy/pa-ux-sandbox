@@ -36,7 +36,7 @@ export function FeatureCta({
                         </Text>
                     )}
                     <div className="feature-cta__actions">
-                        <CtaButton action={primary} color="violet" />
+                        <CtaButton action={primary} primary />
                         {secondary && <CtaButton action={secondary} />}
                     </div>
                 </Card.Body>
@@ -45,17 +45,17 @@ export function FeatureCta({
     );
 }
 
-function CtaButton({ action, color }: { action: FeatureCtaAction; color?: "violet" }) {
+function CtaButton({ action, primary = false }: { action: FeatureCtaAction; primary?: boolean }) {
     if (action.external) {
         return (
-            <Button href={action.href} target="_blank" rel="noopener noreferrer" iconTrailing={action.icon ?? "arrow-up-right"} color={color} variant={color ? "default" : "ghost"}>
+            <Button href={action.href} target="_blank" rel="noopener noreferrer" iconTrailing={action.icon ?? "arrow-up-right"} color={primary ? "brand" : undefined} variant={primary ? "default" : "ghost"} data-feature-cta={primary ? "primary" : "secondary"}>
                 {action.label}
             </Button>
         );
     }
 
     return (
-        <Button href={action.href} as={Link} iconTrailing={action.icon ?? "arrow-right"} color={color} variant={color ? "default" : "ghost"}>
+        <Button href={action.href} as={Link} iconTrailing={action.icon ?? "arrow-right"} color={primary ? "brand" : undefined} variant={primary ? "default" : "ghost"} data-feature-cta={primary ? "primary" : "secondary"}>
             {action.label}
         </Button>
     );

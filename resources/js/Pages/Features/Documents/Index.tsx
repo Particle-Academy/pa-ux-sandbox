@@ -23,7 +23,6 @@ import {
     type DocFormat,
 } from "./generate";
 import { DOCX_SEED, MARKDOWN_SEED, PPTX_SEED, pretty } from "./seeds";
-import "./documents.css";
 
 /**
  * /features/documents: the Documents micro-site.

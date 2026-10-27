@@ -9,7 +9,6 @@ import { HowItFits } from "../shared/HowItFits";
 import { InstallSteps } from "../shared/InstallSteps";
 import { PackagesGrid } from "../shared/PackagesGrid";
 import type { FeaturePageProps } from "../shared/types";
-import "./git.css";
 
 /**
  * /features/git — Git as a surface a person and an agent share.

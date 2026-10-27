@@ -1,11 +1,8 @@
-import { ServerSeo } from "@/lib/ServerSeo";
-import { Badge, Button } from "@particle-academy/react-fancy";
-import { Check, Code2, Copy, LayoutPanelTop, Monitor, TerminalSquare } from "lucide-react";
-import { useMemo, useState, type ReactNode } from "react";
+import { Badge, Button, Heading, Text } from "@particle-academy/react-fancy";
+import { Check, LayoutPanelTop } from "lucide-react";
+import { useMemo, useState } from "react";
 import { clientOnly } from "../../lib/clientOnly";
-import { ComponentGallery } from "./ComponentGallery";
 
-type Surface = "html" | "console";
 type Demo = {
     id: string;
     group: "Start here" | "Components" | "Human+";
@@ -15,13 +12,18 @@ type Demo = {
 };
 
 /**
- * "View as console" doesn't swap a preview pane — it hands the whole viewport
- * to a terminal application. xterm is browser-only, so the TUI is deferred to
- * the client the same way every other terminal surface on this page is.
+ * The live console. It does not swap a preview pane: it hands the whole
+ * viewport to a terminal application, outside the site shell. xterm is
+ * browser-only, so the TUI is deferred to the client the same way every other
+ * terminal surface on the page is.
  */
-const DocsTui = clientOnly(
+export const DocsTuiLive = clientOnly(
     () => import("./DocsTui"),
-    () => <div className="ftui-takeover ftui-takeover--loading">Starting the Fancy Docs TUI…</div>,
+    () => (
+        <div className="ftui-takeover ftui-takeover--loading" role="status">
+            Starting the Fancy Docs TUI…
+        </div>
+    ),
 );
 
 const demos: Demo[] = [
@@ -74,21 +76,18 @@ render(
     },
 ];
 
+const GROUPS = ["Start here", "Components", "Human+"] as const;
+
 /**
- * The fancy-tui showcase: the HTML workbench, the component gallery and the
- * full-screen console. It renders inside the TUI Feature micro-site
- * (`Pages/Features/Tui/Index.tsx`, at /features/tui); /fancy-tui 301s there.
- *
- * `frame` wraps the HTML view in the page's shell. The console view is
- * deliberately NOT framed: it takes the whole viewport, no site chrome, so it
- * reads as a terminal application rather than an embedded widget.
+ * The fancy-tui workbench: pick an example, read it as semantic HTML beside
+ * its React / Ink source, or hand the screen to the live console. It renders
+ * inside the TUI Feature micro-site (`Pages/Features/Tui/Index.tsx`, at
+ * /features/tui), which owns the shell and the full-screen console switch.
  */
-export function FancyTuiShowcase({ frame }: { frame: (content: ReactNode) => ReactNode }) {
-    const [surface, setSurface] = useState<Surface>("html");
+export function TuiWorkbench({ onOpenConsole }: { onOpenConsole: () => void }) {
     const [selectedId, setSelectedId] = useState(demos[0].id);
     const [copied, setCopied] = useState(false);
     const selected = useMemo(() => demos.find((demo) => demo.id === selectedId) ?? demos[0], [selectedId]);
-    const groups = ["Start here", "Components", "Human+"] as const;
 
     const copySource = async () => {
         await navigator.clipboard.writeText(selected.source);
@@ -96,52 +95,85 @@ export function FancyTuiShowcase({ frame }: { frame: (content: ReactNode) => Rea
         window.setTimeout(() => setCopied(false), 1_500);
     };
 
-    // The console surface takes the whole screen — no site chrome, no Layout —
-    // so it reads as a terminal application rather than an embedded widget.
-    // `q` (or Escape at the root) inside the TUI brings the HTML view back.
-    if (surface === "console") {
-        return (
-            <>
-                <ServerSeo />
-                <DocsTui onExit={() => setSurface("html")} />
-            </>
-        );
-    }
-
-    return frame(
-            <div className="ftui-page">
-                <section className="ftui-workbench">
-                    <aside className="ftui-sidebar" aria-label="Fancy TUI examples">
-                        <div className="ftui-sidebar__brand"><span>F</span><div><b>Fancy TUI</b><small>docs + sandbox</small></div></div>
-                        {groups.map((group) => <div className="ftui-nav-group" key={group}>
-                            <strong>{group}</strong>
-                            {demos.filter((demo) => demo.group === group).map((demo) => <button key={demo.id} className={selected.id === demo.id ? "is-active" : ""} onClick={() => setSelectedId(demo.id)}>{demo.title}</button>)}
-                        </div>)}
-                        <div className="ftui-sidebar__meta"><Badge color="green">MCP ready</Badge><span>Ink 7 · React 19</span></div>
-                    </aside>
-
-                    <div className="ftui-content">
-                        <div className="ftui-toolbar">
-                            <div><span className="ftui-dot" /><b>{selected.title}</b><span className="ftui-path">examples/{selected.id}.tsx</span></div>
-                            <div className="ftui-switch" role="group" aria-label="Preview surface">
-                                <button className={surface === "html" ? "is-active" : ""} onClick={() => setSurface("html")}><Monitor size={14} /> View as HTML</button>
-                                <button title="Browse every fancy-tui component as a live, full-screen terminal app" onClick={() => setSurface("console")}><TerminalSquare size={14} /> View as console</button>
-                            </div>
-                        </div>
-
-                        <div className="ftui-doc-heading"><div><Badge color={selected.group === "Human+" ? "violet" : "blue"}>{selected.group}</Badge><h2>{selected.title}</h2><p>{selected.summary}</p></div><Button variant="ghost" onClick={() => void copySource()}>{copied ? <Check size={14} /> : <Copy size={14} />}{copied ? "Copied" : "Copy example"}</Button></div>
-
-                        <div className="ftui-preview ftui-preview--html">
-                            <div className="ftui-preview__bar"><span /><span /><span /><b>HTML preview</b></div>
-                            <HtmlSurface demo={selected} />
-                        </div>
-
-                        <div className="ftui-source"><div><Code2 size={15} /><b>React / Ink</b><button onClick={() => void copySource()}>{copied ? "Copied" : "Copy"}</button></div><pre><code>{selected.source}</code></pre></div>
+    return (
+        <div className="ftui-workbench tui-workbench">
+            <nav className="ftui-sidebar tui-workbench__nav" aria-label="Fancy TUI examples">
+                {GROUPS.map((group) => (
+                    <div className="tui-workbench__group" key={group}>
+                        <Text as="div" size="sm" weight="bold" className="tui-workbench__group-label">
+                            {group}
+                        </Text>
+                        {demos
+                            .filter((demo) => demo.group === group)
+                            .map((demo) => (
+                                <Button
+                                    key={demo.id}
+                                    variant="ghost"
+                                    active={selected.id === demo.id}
+                                    aria-current={selected.id === demo.id ? "true" : undefined}
+                                    data-demo={demo.id}
+                                    className="tui-workbench__item"
+                                    onClick={() => setSelectedId(demo.id)}
+                                >
+                                    {demo.title}
+                                </Button>
+                            ))}
                     </div>
-                </section>
+                ))}
+            </nav>
 
-                <ComponentGallery />
-            </div>,
+            <div className="ftui-content tui-workbench__main">
+                <div className="tui-workbench__toolbar">
+                    <code className="tui-workbench__path">
+                        <span aria-hidden className="tui-workbench__caret">
+                            ❯
+                        </span>{" "}
+                        examples/{selected.id}.tsx
+                    </code>
+                    <Button color="green" icon="square-terminal" onClick={onOpenConsole} data-action="open-console">
+                        View as console
+                    </Button>
+                </div>
+
+                <div className="tui-workbench__heading">
+                    <div>
+                        <Badge color={selected.group === "Human+" ? "violet" : "green"} variant="soft" size="md">
+                            {selected.group}
+                        </Badge>
+                        <Heading as="h2" size="md" weight="semibold">
+                            {selected.title}
+                        </Heading>
+                        <Text as="p" size="sm" color="muted">
+                            {selected.summary}
+                        </Text>
+                    </div>
+                </div>
+
+                <div className="ftui-preview ftui-preview--html">
+                    <div className="ftui-preview__bar">
+                        <span />
+                        <span />
+                        <span />
+                        <b>HTML preview</b>
+                    </div>
+                    <HtmlSurface demo={selected} />
+                </div>
+
+                <div className="tui-workbench__source">
+                    <div className="tui-workbench__source-bar">
+                        <Text as="span" size="sm" weight="semibold">
+                            React / Ink
+                        </Text>
+                        <Button variant="ghost" icon={copied ? "check" : "copy"} onClick={() => void copySource()}>
+                            {copied ? "Copied" : "Copy example"}
+                        </Button>
+                    </div>
+                    <pre>
+                        <code>{selected.source}</code>
+                    </pre>
+                </div>
+            </div>
+        </div>
     );
 }
 

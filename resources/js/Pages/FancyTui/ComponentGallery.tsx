@@ -1,4 +1,4 @@
-import { Badge } from "@particle-academy/react-fancy";
+import { Badge, Button, Icon, Input } from "@particle-academy/react-fancy";
 import previews from "@particle-academy/fancy-tui/showcase/previews.json";
 import { useMemo, useState } from "react";
 import { clientOnly } from "../../lib/clientOnly";
@@ -62,28 +62,37 @@ export function ComponentGallery() {
                         so what you see is exactly what your terminal draws.
                     </p>
                 </div>
-                <input
+                <Input
                     className="ftui-gallery__search"
                     type="search"
                     value={query}
                     placeholder="Filter components…"
-                    aria-label="Filter components"
-                    onChange={(e) => setQuery(e.target.value)}
+                    label="Filter components"
+                    labelHidden
+                    leading={<Icon name="search" size="sm" />}
+                    onValueChange={setQuery}
                 />
             </header>
 
             <div className="ftui-gallery__filters" role="group" aria-label="Filter by group">
-                <button className={activeGroup === null ? "is-active" : ""} onClick={() => setActiveGroup(null)}>
-                    All <span>{components.length}</span>
-                </button>
+                <Button
+                    variant={activeGroup === null ? "default" : "ghost"}
+                    color={activeGroup === null ? "green" : undefined}
+                    aria-pressed={activeGroup === null}
+                    onClick={() => setActiveGroup(null)}
+                >
+                    All ({components.length})
+                </Button>
                 {groups.map((group) => (
-                    <button
+                    <Button
                         key={group}
-                        className={activeGroup === group ? "is-active" : ""}
+                        variant={activeGroup === group ? "default" : "ghost"}
+                        color={activeGroup === group ? "green" : undefined}
+                        aria-pressed={activeGroup === group}
                         onClick={() => setActiveGroup(group === activeGroup ? null : group)}
                     >
-                        {group} <span>{components.filter((c) => c.group === group).length}</span>
-                    </button>
+                        {group} ({components.filter((c) => c.group === group).length})
+                    </Button>
                 ))}
             </div>
 
@@ -114,14 +123,16 @@ function ComponentCard({ component }: { component: CapturedComponent }) {
             <header className="ftui-card__head">
                 <h4>{component.name}</h4>
                 <div>
-                    <Badge color="violet">{component.group}</Badge>
-                    <button
+                    <Badge color="green" variant="soft" size="md">{component.group}</Badge>
+                    <Button
+                        variant="ghost"
                         className="ftui-card__toggle"
                         onClick={() => setShowSource((v) => !v)}
-                        aria-expanded={showSource}
+                        aria-pressed={showSource}
+                        aria-label={`${showSource ? "Show preview of" : "Show code for"} ${component.name}`}
                     >
                         {showSource ? "Preview" : "Code"}
-                    </button>
+                    </Button>
                 </div>
             </header>
 

@@ -1,0 +1,57 @@
+{
+    "plan": {
+        "metric": "referral-bonus",
+        "tree": "unilevel",
+        "levelFactors": [1.0, 0.5, 0.25],
+        "tiers": { "bronze": 1.0, "silver": 1.25, "gold": 1.5 },
+        "compression": true
+    },
+    "ranks": [
+        { "tier": "bronze", "teamSize": 0 },
+        { "tier": "silver", "teamSize": 2 },
+        { "tier": "gold", "teamSize": 6 },
+        { "tier": "diamond", "teamSize": 10 }
+    ],
+    "members": [
+        { "id": "you", "label": "You", "tier": "gold" },
+        { "id": "ada", "sponsorId": "you", "placementId": "you", "label": "Ada", "tier": "silver" },
+        { "id": "bo", "sponsorId": "you", "placementId": "you", "label": "Bo", "tier": "bronze" },
+        { "id": "cy", "sponsorId": "ada", "placementId": "ada", "label": "Cy", "tier": "bronze" },
+        { "id": "di", "sponsorId": "you", "placementId": "ada", "label": "Di", "tier": "bronze" },
+        { "id": "eve", "sponsorId": "ada", "placementId": "bo", "label": "Eve", "tier": "bronze", "active": false },
+        { "id": "fin", "sponsorId": "eve", "placementId": "bo", "label": "Fin", "tier": "bronze" },
+        { "id": "gus", "sponsorId": "cy", "placementId": "cy", "label": "Gus", "tier": "bronze" }
+    ],
+    "orders": [
+        {
+            "id": "o1", "memberId": "ada", "plan": "Team", "points": 100, "status": "paid",
+            "rewards": [{ "recipient": "you", "level": 1, "tier": "gold", "amount": 150 }]
+        },
+        {
+            "id": "o2", "memberId": "cy", "plan": "Starter", "points": 80, "status": "paid",
+            "rewards": [
+                { "recipient": "ada", "level": 1, "tier": "silver", "amount": 100 },
+                { "recipient": "you", "level": 2, "tier": "gold", "amount": 60 }
+            ]
+        },
+        {
+            "id": "o3", "memberId": "di", "plan": "Starter", "points": 40, "status": "paid",
+            "rewards": [{ "recipient": "you", "level": 1, "tier": "gold", "amount": 60 }]
+        },
+        {
+            "id": "o4", "memberId": "fin", "plan": "Studio", "points": 120, "status": "pending",
+            "rewards": [
+                { "recipient": "ada", "level": 1, "tier": "silver", "amount": 150 },
+                { "recipient": "you", "level": 2, "tier": "gold", "amount": 90 }
+            ]
+        },
+        {
+            "id": "o5", "memberId": "gus", "plan": "Team", "points": 60, "status": "pending",
+            "rewards": [
+                { "recipient": "cy", "level": 1, "tier": "bronze", "amount": 60 },
+                { "recipient": "ada", "level": 2, "tier": "silver", "amount": 37.5 },
+                { "recipient": "you", "level": 3, "tier": "gold", "amount": 22.5 }
+            ]
+        }
+    ]
+}

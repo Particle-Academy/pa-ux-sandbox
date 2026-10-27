@@ -2,6 +2,7 @@
     "window_days": 60,
     "latest": {
         "agent-integrations": "0.48.0",
+        "charlotte": "0.1.0",
         "classroom": "0.7.0",
         "dark-slide": "0.21.1",
         "dark-slide-js": "0.19.1",
@@ -120,6 +121,13 @@
         "teachers-aid-ui": "0.3.0"
     },
     "releases": [
+        {
+            "slug": "charlotte",
+            "registry": "composer",
+            "version": "0.1.0",
+            "published_at": "2026-10-27T03:54:35Z",
+            "first": true
+        },
         {
             "slug": "react-fancy",
             "registry": "npm",

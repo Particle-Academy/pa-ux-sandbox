@@ -37,7 +37,8 @@ it('serves the CMS page with its feature props', function () {
 
     expect($page['component'] ?? null)->toBe('Features/Cms/Index')
         ->and($page['props']['feature']['slug'] ?? null)->toBe('cms')
-        ->and(array_column($page['props']['feature']['members'] ?? [], 'slug'))->toBe(['fancy-cms', 'fancy-cms-ui'])
+        // charlotte joined on 2026-10-27, when v0.1.0 became installable from Packagist.
+        ->and(array_column($page['props']['feature']['members'] ?? [], 'slug'))->toBe(['fancy-cms', 'fancy-cms-ui', 'charlotte'])
         ->and($page['props']['feature']['theme']['font'] ?? null)->toBe('serif')
         ->and(array_column($page['props']['feature']['bridges'] ?? [], 'name'))->toContain('registerCmsBridge');
 });
@@ -73,6 +74,10 @@ it('renders every kit section from feature data, not typed copies', function () 
 it('says fancy-cms is early release and announces nothing uninstallable', function () {
     $source = cmsFeatureSource();
 
+    // The page source names no package by hand. Charlotte reaches the page only
+    // through feature data, which resolves through PackageRegistry, so it shows
+    // only once it is installable. Its unbuilt siblings (charlotte-ui/-js/-py)
+    // are still PLANNED and must never be named here.
     expect($source)->toMatch('/early[- ]release/i')
-        ->and($source)->not->toMatch('/Charlotte/i');
+        ->and($source)->not->toMatch('/charlotte-(ui|js|py)/i');
 });

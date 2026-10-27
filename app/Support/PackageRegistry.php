@@ -139,11 +139,6 @@ class PackageRegistry
      * @var array<string, array{name: string, repo: string, why: string}>
      */
     public const PLANNED = [
-        'charlotte' => [
-            'name' => 'particle-academy/charlotte',
-            'repo' => 'Particle-Academy/charlotte',
-            'why' => 'Charlotte, a headless WEBSITE-BUILDER AGENT KIT so developers can build site-builder agents into their own apps. Owner decisions 2026-10-27 (q_63d11535, q_27e5e938). It productizes what the fancy-labs website lab proved: the page-editing tools over a fancy-cms PageSession, a versioned guide, a structured brief with code-derived fact and page checks, and the review bar. Built on prism-harness, and works with ANY prism provider. Cost telemetry is an optional Prism courtesy that nothing depends on. It edits DRAFTS only: nothing publishes on a change, and autonomy is a dev setting (full, or approve on save). The PHP core comes first; the other languages follow once it works perfectly. Pest for tests. Design: .ai/plans/charlotte.md in the envelope. NOT YET STARTED; registered first per the rule. Composer name verified free 2026-10-26.',
-        ],
         'charlotte-ui' => [
             'name' => '@particle-academy/charlotte-ui',
             'repo' => 'Particle-Academy/charlotte-ui',
@@ -347,6 +342,7 @@ Both registry names read as unclaimed on 2026-10-08 -- `@particle-academy/fancy-
         'fancy-heuristics' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#8b5cf6'],
         'fancy-x-files' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#64748b'],
         'fancy-cms' => ['group' => 'surfaces', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#0ea5e9'],
+        'charlotte' => ['group' => 'surfaces', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#0ea5e9'],
         'fancy-live' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#10b981'],
         'laravel-catalog' => ['group' => 'commerce', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#0ea5e9'],
         'laravel-fms' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#f59e0b'],
@@ -794,6 +790,15 @@ Both registry names read as unclaimed on 2026-10-08 -- `@particle-academy/fancy-
                 'composer' => 'particle-academy/fancy-cms',
                 'repo' => 'Particle-Academy/fancy-cms',
                 'packagist' => 'particle-academy/fancy-cms',
+                'language' => 'PHP',
+            ],
+            [
+                'slug' => 'charlotte',
+                'name' => 'particle-academy/charlotte',
+                'tagline' => 'Charlotte: a headless website-builder agent kit for Laravel on prism-harness and fancy-cms. Agents edit DRAFTS (nothing publishes on a change), autonomy is your setting (full, or approve on save), invented and missing facts are caught in code, and an ordered event log long-polls behind any proxy, so you can build your own chat. Any Prism provider; cost telemetry optional. Pre-1.0.',
+                'composer' => 'particle-academy/charlotte',
+                'repo' => 'Particle-Academy/charlotte',
+                'packagist' => 'particle-academy/charlotte',
                 'language' => 'PHP',
             ],
             [

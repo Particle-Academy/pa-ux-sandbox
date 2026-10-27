@@ -1,5 +1,5 @@
 {
-    "count": 343,
+    "count": 344,
     "items": [
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
@@ -1397,6 +1397,17 @@
                     "target": "components/fancy/lib/types.ts"
                 }
             ]
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "charlotte",
+            "type": "registry:ui",
+            "title": "particle-academy/charlotte",
+            "description": "Charlotte: a headless website-builder agent kit for Laravel on prism-harness and fancy-cms. Agents edit DRAFTS (nothing publishes on a change), autonomy is your setting (full, or approve on save), invented and missing facts are caught in code, and an ordered event log long-polls behind any proxy, so you can build your own chat. Any Prism provider; cost telemetry optional. Pre-1.0.",
+            "package": "charlotte",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",

@@ -68,7 +68,7 @@ final class FeatureSites
             'icon' => 'layout-template',
             'component' => 'Features/Cms/Index',
             'theme' => ['accent' => '#e11d48', 'accentDark' => '#fb7185', 'surface' => '#fff1f2', 'surfaceDark' => '#1d0a10', 'font' => 'serif'],
-            'members' => ['fancy-cms', 'fancy-cms-ui'],
+            'members' => ['fancy-cms', 'fancy-cms-ui', 'charlotte'],
             'bridges' => [['name' => 'registerCmsBridge', 'import' => '@particle-academy/agent-integrations/bridges/cms', 'tools' => 'set_style / set_layout / …']],
         ],
         'documents' => [

@@ -1,0 +1,76 @@
+/* /features/git — page-scoped identity. Everything is keyed on
+   [data-feature="git"], the attribute FeatureIdentity sets, so nothing here
+   reaches another page. Colours come from the shared --feature-* tokens. */
+
+/* Hero: a terminal pane. Mono type, a ruled "log" texture and branch lanes. */
+[data-feature="git"] .feature-hero {
+  background:
+    repeating-linear-gradient(
+      180deg,
+      transparent 0 27px,
+      color-mix(in oklch, var(--feature-accent) 9%, transparent) 27px 28px
+    ),
+    radial-gradient(90% 120% at 100% 0%, color-mix(in oklch, var(--feature-accent) 16%, transparent), transparent 65%),
+    var(--feature-surface);
+  border-left: 4px solid var(--feature-accent);
+}
+[data-feature="git"] .feature-hero__glyph { border-radius: 10px; }
+[data-feature="git"] .feature-hero__eyebrow {
+  font-family: var(--font-mono);
+  text-transform: none;
+  letter-spacing: 0;
+}
+[data-feature="git"] .feature-hero__lede { font-size: 16px; }
+
+.git-hero__lanes {
+  display: flex; flex-direction: column; gap: 8px;
+  margin-top: 14px; padding-left: 14px;
+  border-left: 2px solid color-mix(in oklch, var(--feature-accent) 55%, transparent);
+  font-family: var(--font-mono);
+}
+.git-hero__lane { position: relative; display: flex; align-items: center; min-height: 24px; }
+.git-hero__lane::before {
+  content: ""; position: absolute; left: -20px; width: 10px; height: 10px; border-radius: 999px;
+  background: var(--feature-surface);
+  border: 2px solid var(--feature-accent);
+}
+.git-hero__lane--branch { padding-left: 22px; }
+.git-hero__lane--branch::after {
+  content: ""; position: absolute; left: -6px; width: 22px; height: 2px;
+  background: color-mix(in oklch, var(--feature-accent) 55%, transparent);
+}
+.git-hero__lane--review { padding-left: 22px; }
+.git-hero__lane--review::before { border-style: dashed; }
+
+/* Demo: the surfaces on the left, the agent on the right. */
+.git-bench {
+  display: grid; gap: 16px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 340px);
+  align-items: start;
+}
+.git-bench__main { min-width: 0; display: flex; flex-direction: column; gap: 12px; }
+.git-bench__head { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; font-family: var(--font-mono); }
+.git-bench__stack { display: flex; flex-direction: column; gap: 14px; padding-top: 12px; min-width: 0; }
+.git-bench__stack [data-git-diff] { overflow-x: auto; max-width: 100%; }
+.git-bench__agent { border-color: color-mix(in oklch, var(--feature-accent) 35%, var(--border-1)); min-width: 0; }
+.git-bench__calls { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.git-bench__calls button { min-height: 44px; }
+.git-bench__result { margin-top: 12px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.git-bench__mono { font-family: var(--font-mono); overflow-wrap: anywhere; }
+.git-bench__subhead { margin-top: 16px; margin-bottom: 8px; }
+.git-bench__queue, .git-bench__log { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.git-bench__log { margin-top: 12px; gap: 4px; font-family: var(--font-mono); }
+.git-bench__proposal { display: flex; flex-direction: column; gap: 8px; }
+.git-bench__proposal-actions { display: flex; gap: 8px; }
+.git-bench__proposal-actions button { min-height: 44px; }
+.git-bench__tool-list { display: flex; flex-wrap: wrap; gap: 6px; font-family: var(--font-mono); }
+.git-bench__tools { margin-top: 4px; }
+
+.git-bench--loading { min-height: 520px; }
+.git-bench__skeleton { height: 520px; border-radius: 12px; }
+.git-bench__skeleton--side { height: 360px; }
+
+@media (max-width: 960px) {
+  .git-bench { grid-template-columns: minmax(0, 1fr); }
+  .git-bench__skeleton--side { display: none; }
+}

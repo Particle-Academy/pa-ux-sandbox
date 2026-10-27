@@ -4,9 +4,9 @@
         "agent-integrations": "0.48.0",
         "charlotte": "0.1.0",
         "classroom": "0.7.0",
-        "dark-slide": "0.21.1",
-        "dark-slide-js": "0.19.1",
-        "dark-slide-py": "0.14.0",
+        "dark-slide": "0.22.0",
+        "dark-slide-js": "0.20.0",
+        "dark-slide-py": "0.15.0",
         "docs-mcp": "0.2.0",
         "fancy-3d": "0.5.0",
         "fancy-3d-babylon": "0.2.0",
@@ -22,7 +22,7 @@
         "fancy-cms": "0.8.1",
         "fancy-cms-ui": "0.13.1",
         "fancy-code": "0.15.0",
-        "fancy-conformance": "0.34.0",
+        "fancy-conformance": "0.35.0",
         "fancy-connector-core": "0.10.1",
         "fancy-devtools": "0.1.0",
         "fancy-diff": "0.5.1",
@@ -80,18 +80,18 @@
         "fancy-x-files-js": "0.2.0",
         "fancy-x-files-ui": "0.2.0",
         "fine-print": "0.3.0",
-        "holy-sheet": "2.9.2",
-        "holy-sheet-js": "2.10.2",
-        "holy-sheet-py": "0.9.1",
+        "holy-sheet": "2.10.0",
+        "holy-sheet-js": "2.11.0",
+        "holy-sheet-py": "0.10.0",
         "job-board": "0.5.0",
         "laravel-catalog": "0.13.0",
         "laravel-courses": "0.3.0",
         "laravel-fms": "0.12.0",
         "laravel-fun-lab": "0.6.0",
         "laravel-jobs": "0.5.0",
-        "last-word": "0.10.1",
-        "last-word-js": "0.10.1",
-        "last-word-py": "0.6.0",
+        "last-word": "0.11.0",
+        "last-word-js": "0.11.0",
+        "last-word-py": "0.7.0",
         "mcp-relay-client": "0.3.0",
         "prism": "0.138.0",
         "prism-acp-ts": "0.32.0",
@@ -121,6 +121,76 @@
         "teachers-aid-ui": "0.3.0"
     },
     "releases": [
+        {
+            "slug": "holy-sheet-py",
+            "registry": "pypi",
+            "version": "0.10.0",
+            "published_at": "2026-10-27T07:30:26Z",
+            "first": false
+        },
+        {
+            "slug": "dark-slide-py",
+            "registry": "pypi",
+            "version": "0.15.0",
+            "published_at": "2026-10-27T07:28:44Z",
+            "first": false
+        },
+        {
+            "slug": "holy-sheet-js",
+            "registry": "npm",
+            "version": "2.11.0",
+            "published_at": "2026-10-27T07:28:20Z",
+            "first": false
+        },
+        {
+            "slug": "dark-slide-js",
+            "registry": "npm",
+            "version": "0.20.0",
+            "published_at": "2026-10-27T07:25:50Z",
+            "first": false
+        },
+        {
+            "slug": "fancy-conformance",
+            "registry": "npm",
+            "version": "0.35.0",
+            "published_at": "2026-10-27T07:23:31Z",
+            "first": false
+        },
+        {
+            "slug": "last-word-py",
+            "registry": "pypi",
+            "version": "0.7.0",
+            "published_at": "2026-10-27T07:23:24Z",
+            "first": false
+        },
+        {
+            "slug": "last-word-js",
+            "registry": "npm",
+            "version": "0.11.0",
+            "published_at": "2026-10-27T07:19:17Z",
+            "first": false
+        },
+        {
+            "slug": "holy-sheet",
+            "registry": "composer",
+            "version": "2.10.0",
+            "published_at": "2026-10-27T07:12:21Z",
+            "first": false
+        },
+        {
+            "slug": "dark-slide",
+            "registry": "composer",
+            "version": "0.22.0",
+            "published_at": "2026-10-27T07:12:19Z",
+            "first": false
+        },
+        {
+            "slug": "last-word",
+            "registry": "composer",
+            "version": "0.11.0",
+            "published_at": "2026-10-27T07:12:16Z",
+            "first": false
+        },
         {
             "slug": "fine-print",
             "registry": "composer",

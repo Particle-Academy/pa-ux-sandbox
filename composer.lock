@@ -4048,16 +4048,16 @@
         },
         {
             "name": "particle-academy/dark-slide",
-            "version": "v0.21.1",
+            "version": "v0.22.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/dark-slide.git",
-                "reference": "dadee1edf987c912bece2e16a54224ae99859aa0"
+                "reference": "1903fdd2b2da3378d8a88816c17f99dd80914b3b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/dark-slide/zipball/dadee1edf987c912bece2e16a54224ae99859aa0",
-                "reference": "dadee1edf987c912bece2e16a54224ae99859aa0",
+                "url": "https://api.github.com/repos/Particle-Academy/dark-slide/zipball/1903fdd2b2da3378d8a88816c17f99dd80914b3b",
+                "reference": "1903fdd2b2da3378d8a88816c17f99dd80914b3b",
                 "shasum": ""
             },
             "require": {
@@ -4075,6 +4075,9 @@
             "suggest": {
                 "illuminate/support": "Only needed when using the optional Laravel service provider, facade, or artisan command. Compatible with 10.x through 13.x. The core DarkSlide\\Agent + writer require zero framework."
             },
+            "bin": [
+                "bin/dark-slide"
+            ],
             "type": "library",
             "extra": {
                 "laravel": {
@@ -4118,7 +4121,7 @@
                 "issues": "https://github.com/Particle-Academy/dark-slide/issues",
                 "source": "https://github.com/Particle-Academy/dark-slide"
             },
-            "time": "2026-10-26T12:57:48+00:00"
+            "time": "2026-10-27T07:12:19+00:00"
         },
         {
             "name": "particle-academy/fancy-cms",
@@ -4534,16 +4537,16 @@
         },
         {
             "name": "particle-academy/fine-print",
-            "version": "v0.2.1",
+            "version": "v0.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/fine-print.git",
-                "reference": "e58b44bd01a7e43a0e9c62c0860be8bf24a9acb5"
+                "reference": "9342a9847591daf538e3eaabb59ca3624d2d2343"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/fine-print/zipball/e58b44bd01a7e43a0e9c62c0860be8bf24a9acb5",
-                "reference": "e58b44bd01a7e43a0e9c62c0860be8bf24a9acb5",
+                "url": "https://api.github.com/repos/Particle-Academy/fine-print/zipball/9342a9847591daf538e3eaabb59ca3624d2d2343",
+                "reference": "9342a9847591daf538e3eaabb59ca3624d2d2343",
                 "shasum": ""
             },
             "require": {
@@ -4598,20 +4601,20 @@
                 "issues": "https://github.com/Particle-Academy/fine-print/issues",
                 "source": "https://github.com/Particle-Academy/fine-print"
             },
-            "time": "2026-10-23T10:45:59+00:00"
+            "time": "2026-10-27T06:23:14+00:00"
         },
         {
             "name": "particle-academy/holy-sheet",
-            "version": "v2.9.2",
+            "version": "v2.10.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/holy-sheet.git",
-                "reference": "2bd52937a75fd3172b50b596895ece286f418b0c"
+                "reference": "86bf6c5abac058aff4af153617c6aad01a2527d0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/holy-sheet/zipball/2bd52937a75fd3172b50b596895ece286f418b0c",
-                "reference": "2bd52937a75fd3172b50b596895ece286f418b0c",
+                "url": "https://api.github.com/repos/Particle-Academy/holy-sheet/zipball/86bf6c5abac058aff4af153617c6aad01a2527d0",
+                "reference": "86bf6c5abac058aff4af153617c6aad01a2527d0",
                 "shasum": ""
             },
             "require": {
@@ -4626,6 +4629,9 @@
             "suggest": {
                 "illuminate/support": "Only needed when using the optional Laravel service provider, facade, or artisan command. Compatible with 10.x through 13.x. The core HolySheet\\Agent + writer require zero framework."
             },
+            "bin": [
+                "bin/holy-sheet"
+            ],
             "type": "library",
             "extra": {
                 "laravel": {
@@ -4670,7 +4676,7 @@
                 "issues": "https://github.com/Particle-Academy/holy-sheet/issues",
                 "source": "https://github.com/Particle-Academy/holy-sheet"
             },
-            "time": "2026-10-26T12:13:17+00:00"
+            "time": "2026-10-27T07:12:21+00:00"
         },
         {
             "name": "particle-academy/laravel-catalog",
@@ -4911,16 +4917,16 @@
         },
         {
             "name": "particle-academy/last-word",
-            "version": "v0.10.1",
+            "version": "v0.11.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/last-word.git",
-                "reference": "375f61bd8791c14f9598868dcb54a339c2278afe"
+                "reference": "ac95f23e0595b15cf4ccb13cd97d805d0855c095"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/last-word/zipball/375f61bd8791c14f9598868dcb54a339c2278afe",
-                "reference": "375f61bd8791c14f9598868dcb54a339c2278afe",
+                "url": "https://api.github.com/repos/Particle-Academy/last-word/zipball/ac95f23e0595b15cf4ccb13cd97d805d0855c095",
+                "reference": "ac95f23e0595b15cf4ccb13cd97d805d0855c095",
                 "shasum": ""
             },
             "require": {
@@ -4933,6 +4939,9 @@
                 "particle-academy/fancy-conformance": "^0.22.0",
                 "pestphp/pest": "^3.0|^4.0"
             },
+            "bin": [
+                "bin/last-word"
+            ],
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -4966,7 +4975,7 @@
                 "issues": "https://github.com/Particle-Academy/last-word/issues",
                 "source": "https://github.com/Particle-Academy/last-word"
             },
-            "time": "2026-10-26T12:58:24+00:00"
+            "time": "2026-10-27T07:12:16+00:00"
         },
         {
             "name": "phpoption/phpoption",

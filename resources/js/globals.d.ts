@@ -8,6 +8,9 @@ declare const __REACT_FANCY_VERSION__: string;
 /** Version of the installed `@particle-academy/fancy-flow`, read at build time (the /flow hero). */
 declare const __FANCY_FLOW_VERSION__: string;
 
+/** How many node kinds ship inside the installed `@particle-academy/fancy-flow`, counted at build time (the /flow marketplace caption). */
+declare const __FANCY_FLOW_CORE_KINDS__: number;
+
 /**
  * The kit version — the set of package releases that shipped together, e.g.
  * `"0.4"`. Read from `kit.json`, the same file `config/kit.php` reads. Note it

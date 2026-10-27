@@ -7,10 +7,12 @@ import type { FeatureTourItem } from "../shared/FeatureTour";
  */
 export const DOCUMENTS_TOUR: FeatureTourItem[] = [
     {
-        // holy-sheet/src/Agent.php, dark-slide/src/Agent.php, last-word-js dist Agent, fine-print/src/Agent.php
+        // holy-sheet/src/Agent.php, dark-slide/src/Agent.php, last-word-js dist Agent, fine-print/src/Agent.php.
+        // describe differs: last-word + dark-slide describe(doc): string; holy-sheet describe(path)
+        // reads a file (holy-sheet-js agent.ts too); fine-print 0.3.0 has no describe.
         icon: "braces",
         title: "One Agent, plain JSON in",
-        body: "Each format is a JSON document an agent can emit, and each package exposes the same static Agent: validate and validateAndRepair, describe, a schema to register as a tool, guide() for what a professional file looks like, and toBytes. Sheets, decks and PDFs add lint().",
+        body: "Each format is a JSON document an agent can emit, and each package exposes a static Agent: validate and validateAndRepair, a schema to register as a tool, guide() for what a professional file looks like, and toBytes. Last Word and Dark Slide describe() a document as text; Holy Sheet's describe() reads a file back into its schema instead, and FinePrint has no describe. Sheets, decks and PDFs add lint().",
     },
     {
         // PackageFamily: holy-sheet / dark-slide / last-word each have PHP, Node and Python members; dark-slide-js README parity note

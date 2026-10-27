@@ -166,7 +166,7 @@ Namespace: `LaravelCatalog\`
 
 Namespace: `ParticleAcademy\Fms\`
 
-Feature access control with multiple strategies checked in order: Gates/Policies -> Feature Registry -> Config -> Database. Supports boolean and resource (metered) feature types.
+Feature access control with strategies checked in order: app-registered pre-strategies (first non-null verdict wins) -> Gate/Policy (final when one is defined) -> Feature Registry, Feature Groups and Config (OR'd: any one enabling it turns it on) -> a database *extension hook* that declines by default (`FeatureManager` docblock, laravel-fms 0.12.0; nothing resolves from the database out of the box since 0.11.0). Supports boolean and resource (metered) feature types.
 
 ### Demo App (root)
 
@@ -694,11 +694,11 @@ if ($subscription) {
 
 ## Laravel Feature Management System (FMS)
 
-This package provides flexible feature access control and management for Laravel applications. FMS supports multiple access control strategies: Gates/Policies, config-based, registry-based, and database lookups. It supports both boolean (on/off) and resource (metered) features.
+This package provides flexible feature access control and management for Laravel applications. FMS supports multiple access control strategies: pre-strategies, Gates/Policies, registry-based, feature groups and config-based. It supports both boolean (on/off) and resource (metered) features.
 
 ### Features
 
-- **Multiple Access Control Strategies**: Gates/Policies, config files, feature registry, or database lookups
+- **Multiple Access Control Strategies**: pre-strategies, Gates/Policies, feature registry, feature groups, or config files
 - **Boolean & Resource Features**: Support for simple on/off features and metered resource features
 - **Middleware Protection**: Protect routes based on feature access
 - **Facade & Helpers**: Clean API via facade and global helper functions
@@ -843,10 +843,14 @@ app(FmsFeatureRegistry::class)->register('custom-feature', [
 
 FMS checks features in this order:
 
-1. **Gates/Policies** - If a Gate exists with the feature name, it's checked first
+0. **Pre-strategies** - App-registered callbacks (`registerPreStrategy()`) that run before Gate; the first non-null verdict wins
+1. **Gates/Policies** - If a Gate exists with the feature name, its verdict is final (allow or deny)
 2. **Feature Registry** - Checks registered features via `FmsFeatureRegistry`
-3. **Config File** - Checks `config/fms.features.{feature}`
-4. **Database** - If `FeatureUsage` model exists, checks database (extensible)
+3. **Feature Groups** - Any enabled group containing the feature turns it on
+4. **Config File** - Checks `config/fms.features.{feature}`
+5. **Database extension hook** - `checkDatabaseFeature()` is a subclass hook that always declines in this package; nothing resolves from the database out of the box
+
+Steps 2-4 are OR'd: any one that enables the feature turns it on.
 
 ### Resource Features
 

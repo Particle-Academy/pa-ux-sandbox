@@ -88,7 +88,7 @@ npx fancy-cli@latest list
 
 ## Workflow nodes — `add node` / `list nodes` / `search nodes`
 
-A [fancy-flow](/packages/fancy-flow) graph runs on node **kinds**. The engine ships 27 builtins that need no install; the rest come from the node marketplace, and the CLI copies each one's source into your project.
+A [fancy-flow](/packages/fancy-flow) graph runs on node **kinds**. The engine ships its core kinds built in, and they need no install; the rest come from the node marketplace, and the CLI copies each one's source into your project.
 
 ```bash
 # Find one by concept before you hand-roll a step in app code.

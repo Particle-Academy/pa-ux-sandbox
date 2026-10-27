@@ -104,12 +104,13 @@ approval", "route with an llm"). The expensive failure is not "could not install
 it" — it is not knowing a node existed and writing a worse version inline.
 
 Two places a node can come from, and they are NOT the same:
-1. fancy-flow's CORE builtins ship with the engine — 27 kinds, and they need NO
+1. fancy-flow's CORE builtins ship with the engine, and they need NO
    installation: manual_trigger, webhook_trigger, schedule_trigger, user_input,
    rich_user_input, human_approval, branch, switch_case, merge, for_each, wait,
    transform, variable, memory_store, data_store, llm_call, llm_router (alias
    llm_branch), tool_use, embed_search, api_request, webhook_out, notify, log,
-   subflow, lane, note, output. Check these FIRST; `search_nodes` does not list
+   subflow, lane, note, output, terminal_lane, terminal_run, terminal_send,
+   terminal_await. Check these FIRST; `search_nodes` does not list
    them. NOTE: there is no `http` kind — the HTTP node is `api_request`.
 2. The MARKETPLACE, which is what `list_nodes` / `search_nodes` / `get_node` /
    `node_install_instructions` cover. A marketplace node is VENDORED SOURCE:

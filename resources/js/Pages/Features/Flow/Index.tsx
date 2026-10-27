@@ -239,7 +239,7 @@ export default function FlowFeature({ feature, versions }: FeaturePageProps) {
                         id="flow-marketplace"
                         label="The node marketplace"
                         status="Live registry"
-                        caption="Read live from /r/nodes/index.json, the index the CLI installs from. The 27 core kinds ship inside fancy-flow and are not listed: there is nothing to install."
+                        caption={`Read live from /r/nodes/index.json, the index the CLI installs from. The ${__FANCY_FLOW_CORE_KINDS__} core kinds ship inside fancy-flow ${__FANCY_FLOW_VERSION__} and are not listed: there is nothing to install.`}
                     >
                         <NodeMarketplace />
                     </DemoFrame>

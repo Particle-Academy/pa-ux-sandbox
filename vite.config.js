@@ -1,5 +1,6 @@
 import { fileURLToPath } from 'node:url';
 import { readFileSync } from 'node:fs';
+import { createRequire } from 'node:module';
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
 import tailwindcss from '@tailwindcss/vite';
@@ -73,6 +74,18 @@ const fancyFlowVersion = JSON.parse(
     readFileSync(fileURLToPath(new URL('./node_modules/@particle-academy/fancy-flow/package.json', import.meta.url)), 'utf8'),
 ).version;
 
+// How many node kinds ship inside fancy-flow. The /flow page typed "27" and was
+// still saying it at fancy-flow 0.81.0, which ships 31 (the terminal kinds were
+// never counted). Read from the installed engine: at config time nothing else has
+// registered a kind, so listNodeKinds() is exactly the builtins. The page itself
+// cannot count them, because the showcase registers its own kind (ui_effect) on
+// the client. CoreNodeKindCountIsNotTypedTest guards the typed number coming back.
+const fancyFlowCoreKinds = createRequire(import.meta.url)('@particle-academy/fancy-flow/engine').listNodeKinds().length;
+
+if (!Number.isInteger(fancyFlowCoreKinds) || fancyFlowCoreKinds < 1) {
+    throw new Error(`fancy-flow reported ${fancyFlowCoreKinds} core node kinds; refusing to build a page that says so.`);
+}
+
 // The KIT version — the set of package releases that shipped together, which no
 // single package's version can tell you. Same file `config/kit.php` reads, so
 // the number the chrome shows and the number the server serves cannot disagree.
@@ -84,6 +97,7 @@ export default defineConfig({
     define: {
         __REACT_FANCY_VERSION__: JSON.stringify(reactFancyVersion),
         __FANCY_FLOW_VERSION__: JSON.stringify(fancyFlowVersion),
+        __FANCY_FLOW_CORE_KINDS__: JSON.stringify(fancyFlowCoreKinds),
         __KIT_VERSION__: JSON.stringify(kitVersion),
     },
     plugins: [

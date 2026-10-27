@@ -189,6 +189,16 @@ SECURITY is part of the design rather than a follow-up: no code execution, no in
 
 ROLLOUT: fancy-expr limits, then template/* fixtures in fancy-conformance BEFORE code, then the PHP leg with fine-print and last-word profiles, then the laravel-courses migration, then the TS and Python legs with the holy-sheet and dark-slide profiles. Owner condition: dogfooded in our labs and tested with at least 90% parity on template use. NOT YET STARTED; registered first. npm `@particle-academy/fancy-template`, Packagist `particle-academy/fancy-template` and PyPI `fancy-template` all 404 on 2026-10-27 (against 200 controls); the first publish of each is an owner action.',
         ],
+        'fine-print-js' => [
+            'name' => '@particle-academy/fine-print',
+            'repo' => 'Particle-Academy/fine-print-js',
+            'why' => 'Node/TypeScript port of fine-print (PDF): writer, reader with the security layer, and page renderer. Owner ruled "full ports" on 2026-10-27. The trigger: fancy-template\'s TS leg can already produce fine-print documents that nothing outside PHP can render, and the planned cross-format export layer needs "export to PDF when fine-print is installed" in every language. Zero runtime dependencies, like the PHP original. Held to the PHP package by shared fancy-conformance tables, as holy-sheet-js is. The writer ships first. Plan: .ai/plans/fine-print-ports.md. NOT YET STARTED; registered first.',
+        ],
+        'fine-print-py' => [
+            'name' => 'fancy-fine-print',
+            'repo' => 'Particle-Academy/fine-print-py',
+            'why' => 'Python port of fine-print (PDF): writer, reader with the security layer, and page renderer. Owner ruled "full ports" on 2026-10-27; same trigger and plan as fine-print-js (.ai/plans/fine-print-ports.md). Stdlib only (zlib, struct), held to the PHP package by shared fancy-conformance tables, and published as `fancy-fine-print` like the other Python siblings. The writer ships first. NOT YET STARTED; registered first.',
+        ],
         'fancy-connector-core-py' => [
             'name' => 'fancy-connector-core',
             'repo' => 'Particle-Academy/fancy-connector-core-py',

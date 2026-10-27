@@ -744,28 +744,25 @@ export default function FlowStudio() {
   const active = useMemo(() => EXAMPLES.find((e) => e.id === activeId) ?? EXAMPLES[0], [activeId]);
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-wrap gap-2">
+    <div className="flow-studio">
+      <div className="flow-studio__picker" role="group" aria-label="Example flows">
         {EXAMPLES.map((e) => {
           const on = e.id === activeId;
           return (
-            <button
+            <Button
               key={e.id}
-              type="button"
+              variant={on ? "default" : "ghost"}
+              color={on ? "sky" : undefined}
+              aria-pressed={on}
+              data-example={e.id}
               onClick={() => setActiveId(e.id)}
-              className={[
-                "rounded-lg border px-3 py-1.5 text-sm font-medium transition",
-                on
-                  ? "border-sky-500 bg-sky-50 text-sky-700 dark:border-sky-400 dark:bg-sky-500/10 dark:text-sky-300"
-                  : "border-zinc-200 text-zinc-600 hover:bg-zinc-50 dark:border-zinc-800 dark:text-zinc-400 dark:hover:bg-zinc-900",
-              ].join(" ")}
             >
               {e.label}
-            </button>
+            </Button>
           );
         })}
       </div>
-      <p className="text-sm text-zinc-500 dark:text-zinc-400">{active.blurb}</p>
+      <Text as="p" size="sm" color="muted">{active.blurb}</Text>
       {/* Remount per example so each editor gets a fresh, independent graph. */}
       <div key={active.id}>{active.render()}</div>
     </div>

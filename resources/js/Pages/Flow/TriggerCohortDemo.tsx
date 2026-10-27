@@ -5,8 +5,8 @@ import {
     type ExecutorRegistry,
     type FlowGraph,
 } from "@particle-academy/fancy-flow/engine";
-import { Badge } from "@particle-academy/react-fancy";
-import { CircleCheckBig, ShieldCheck, ShieldOff, SkipForward, TriangleAlert } from "lucide-react";
+import { Badge, Button, Callout, Text } from "@particle-academy/react-fancy";
+import { CircleCheckBig, SkipForward, TriangleAlert } from "lucide-react";
 
 /**
  * Trigger collision, run live.
@@ -121,132 +121,108 @@ export default function TriggerCohortDemo() {
     const guarded = policy === "serial-guarded";
 
     return (
-        <div className="rounded-xl border border-zinc-200 bg-white/60 p-5 dark:border-zinc-800 dark:bg-zinc-900/40">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-                <div className="inline-flex overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-800">
+        <div className="flow-cohort">
+            <div className="flow-cohort__bar">
+                <div className="flow-cohort__policy" role="group" aria-label="Cohort policy">
                     {(
                         [
-                            ["serial-guarded", "Guarded", <ShieldCheck key="g" size={14} />],
-                            ["serial", "Unguarded", <ShieldOff key="u" size={14} />],
+                            ["serial-guarded", "Guarded", "shield-check"],
+                            ["serial", "Unguarded", "shield-off"],
                         ] as const
                     ).map(([value, label, icon]) => (
-                        <button
+                        <Button
                             key={value}
-                            type="button"
+                            icon={icon}
+                            variant={policy === value ? "default" : "ghost"}
+                            color={policy === value ? "sky" : undefined}
+                            aria-pressed={policy === value}
+                            data-policy={value}
                             onClick={() => setPolicy(value)}
-                            className={[
-                                "inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium transition",
-                                policy === value
-                                    ? "bg-sky-50 text-sky-700 dark:bg-sky-500/10 dark:text-sky-300"
-                                    : "text-zinc-500 hover:bg-zinc-50 dark:text-zinc-400 dark:hover:bg-zinc-900",
-                            ].join(" ")}
                         >
-                            {icon}
                             {label}
-                        </button>
+                        </Button>
                     ))}
                 </div>
 
-                <div className="flex items-center gap-3">
-                    <span className="text-sm text-zinc-500 dark:text-zinc-400">
-                        Deal #41 —{" "}
+                <div className="flow-cohort__fire">
+                    <Text as="span" size="sm" color="muted" aria-live="polite">
+                        Deal #41:{" "}
                         {dealAlive ? (
-                            <span className="text-emerald-600 dark:text-emerald-400">in the database</span>
+                            <Badge color="emerald" variant="soft" size="md">in the database</Badge>
                         ) : (
-                            <span className="text-rose-600 dark:text-rose-400">deleted</span>
+                            <Badge color="rose" variant="soft" size="md">deleted</Badge>
                         )}
-                    </span>
-                    <button
-                        type="button"
-                        onClick={run}
-                        disabled={running}
-                        className="rounded-lg bg-sky-600 px-4 py-1.5 text-sm font-semibold text-white transition hover:bg-sky-500 disabled:opacity-50"
-                    >
+                    </Text>
+                    <Button color="sky" icon="zap" onClick={run} disabled={running} data-action="fire-trigger">
                         {running ? "Running…" : "Fire the trigger"}
-                    </button>
+                    </Button>
                 </div>
             </div>
 
-            <p className="mt-4 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+            <Text as="p" size="sm" color="muted" className="flow-cohort__explain">
                 {guarded ? (
                     <>
-                        <strong className="text-zinc-800 dark:text-zinc-200">Guarded.</strong> Same three
-                        workflows, same order — the only difference is that the guard,{" "}
-                        <code className="text-xs">deals.has(41)</code>, is re-checked immediately before
-                        each one starts. Not at dispatch: the hazard is what changed in between.
+                        <strong>Guarded.</strong> Same three workflows, same order. The only difference is
+                        that the guard, <code className="feature-code">deals.has(41)</code>, is re-checked
+                        immediately before each one starts. Not at dispatch: the hazard is what changed in
+                        between.
                     </>
                 ) : (
                     <>
-                        <strong className="text-zinc-800 dark:text-zinc-200">Unguarded.</strong> Ordered,
-                        but nothing asks whether the deal is still there — what a loop over{" "}
-                        <code className="text-xs">runFlow</code> gives you, minus the arbitrary ordering it
-                        would also throw in. Watch what the third one sends.
+                        <strong>Unguarded.</strong> Ordered, but nothing asks whether the deal is still
+                        there. That is what a loop over <code className="feature-code">runFlow</code> gives
+                        you, minus the arbitrary ordering it would also throw in. Watch what the third one
+                        sends.
                     </>
                 )}
-            </p>
+            </Text>
 
-            <ol className="mt-4 space-y-2">
+            <ol className="flow-cohort__rows">
                 {WORKFLOWS.map((w, i) => {
                     const row = rows[i];
                     return (
-                        <li
-                            key={w.name}
-                            className="flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-lg border border-zinc-200 bg-white px-3 py-2.5 dark:border-zinc-800 dark:bg-zinc-950/40"
-                        >
-                            <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-zinc-100 text-xs font-semibold text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">
+                        <li key={w.name} className="flow-cohort__row" data-row-status={row.silent ? "silent" : row.status}>
+                            <span className="flow-cohort__n" aria-hidden>
                                 {i + 1}
                             </span>
-                            <span className="w-32 shrink-0 text-sm font-semibold text-zinc-900 dark:text-zinc-100">
+                            <Text as="span" size="sm" weight="semibold" className="flow-cohort__name">
                                 {w.name}
-                            </span>
-                            <span className="shrink-0 font-mono text-[11px] text-zinc-400 dark:text-zinc-500">
-                                {w.steps.join(" → ")}
-                            </span>
+                            </Text>
+                            <code className="feature-code flow-cohort__steps">{w.steps.join(" → ")}</code>
 
-                            {row.status === "waiting" && (
-                                <Badge color="zinc">waiting</Badge>
-                            )}
+                            {row.status === "waiting" && <Badge color="zinc" size="md">waiting</Badge>}
                             {row.status === "skipped" && (
-                                <Badge color="amber">
-                                    <SkipForward size={11} /> skipped
+                                <Badge color="amber" size="md">
+                                    <SkipForward size={11} aria-hidden /> skipped
                                 </Badge>
                             )}
                             {row.status === "ran" && !row.silent && (
-                                <Badge color="green">
-                                    <CircleCheckBig size={11} /> ok
+                                <Badge color="green" size="md">
+                                    <CircleCheckBig size={11} aria-hidden /> ok
                                 </Badge>
                             )}
                             {row.status === "ran" && row.silent && (
-                                <Badge color="red">
-                                    <TriangleAlert size={11} /> ok — but wrong
+                                <Badge color="red" size="md">
+                                    <TriangleAlert size={11} aria-hidden /> ok, but wrong
                                 </Badge>
                             )}
 
-                            <span
-                                className={[
-                                    "min-w-0 flex-1 text-sm",
-                                    row.silent
-                                        ? "text-rose-600 dark:text-rose-400"
-                                        : row.status === "skipped"
-                                          ? "text-amber-700 dark:text-amber-400"
-                                          : "text-zinc-600 dark:text-zinc-400",
-                                ].join(" ")}
-                            >
+                            <Text as="span" size="sm" className="flow-cohort__detail">
                                 {row.detail}
-                            </span>
+                            </Text>
                         </li>
                     );
                 })}
             </ol>
 
             {rows.some((r) => r.silent) && (
-                <p className="mt-3 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700 dark:border-rose-900/60 dark:bg-rose-950/30 dark:text-rose-300">
+                <Callout color="rose" icon={<TriangleAlert size={16} aria-hidden />}>
                     That run <strong>succeeded</strong>. Nothing threw, nothing was logged, and the customer
                     got an email about “undefined”. Switch to Guarded and fire it again.
-                </p>
+                </Callout>
             )}
 
-            <pre className="mt-4 overflow-x-auto rounded-lg bg-zinc-950 p-4 text-[12px] leading-relaxed text-zinc-300">
+            <pre className="flow-code">
                 <code>{`import { runCohort } from "@particle-academy/fancy-flow/engine";
 
 await runCohort([enrich, archive, notify], executors, undefined, {
@@ -255,13 +231,13 @@ await runCohort([enrich, archive, notify], executors, undefined, {
 });`}</code>
             </pre>
 
-            <p className="mt-3 text-sm text-zinc-500 dark:text-zinc-400">
-                On a queue it's the same contract, made durable:{" "}
-                <code className="text-xs">FancyFlow::dispatchCohort()</code> in{" "}
-                <code className="text-xs">fancy-flow-php</code> enqueues only the head, hands the cohort on
-                as each run settles, and records a skipped run's reason on the run itself. A run parked on a
-                human approval holds the cohort until someone decides.
-            </p>
+            <Text as="p" size="sm" color="muted">
+                On a queue it is the same contract, made durable:{" "}
+                <code className="feature-code">FancyFlow::dispatchCohort()</code> in{" "}
+                <code className="feature-code">fancy-flow-php</code> enqueues only the head, hands the cohort
+                on as each run settles, and records a skipped run's reason on the run itself. A run parked on
+                a human approval holds the cohort until someone decides.
+            </Text>
         </div>
     );
 }

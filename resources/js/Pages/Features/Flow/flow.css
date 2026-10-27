@@ -1,0 +1,204 @@
+/* /features/flow: the Flow micro-site's own identity.
+
+   The idea is the canvas itself. A blueprint grid under the hero, sky wiring,
+   and a schematic of one graph fanned out to the runtimes that execute it.
+   Everything reads the Feature tokens (--feature-accent / --feature-surface /
+   --feature-ink, from features.css), so dark mode is the token swap, plus a
+   grid that glows instead of inks. Scoped to [data-feature="flow"]. */
+
+[data-feature="flow"] {
+  --flow-grid: color-mix(in oklch, var(--feature-accent) 16%, transparent);
+  --flow-wire: color-mix(in oklch, var(--feature-accent) 55%, var(--border-1));
+  --flow-node-bg: var(--bg-0);
+}
+.dark [data-feature="flow"],
+[data-theme="dark"] [data-feature="flow"] {
+  --flow-grid: color-mix(in oklch, var(--feature-accent) 13%, transparent);
+  --flow-node-bg: color-mix(in oklch, var(--feature-surface) 70%, black);
+}
+
+.flow-site { display: flex; flex-direction: column; gap: 48px; min-width: 0; }
+.flow-anchor { scroll-margin-top: 88px; }
+
+/* ── Hero: a blueprint, not a gradient ─────────────────── */
+[data-feature="flow"] .feature-hero {
+  background:
+    radial-gradient(circle at 1px 1px, var(--flow-grid) 1.2px, transparent 1.6px) 0 0 / 22px 22px,
+    linear-gradient(160deg, color-mix(in oklch, var(--feature-accent) 10%, transparent), transparent 55%),
+    var(--feature-surface);
+  border-style: solid;
+}
+[data-feature="flow"] .feature-hero__glyph {
+  border-radius: 14px;
+  border-style: dashed;
+}
+[data-feature="flow"] .feature-display { letter-spacing: -0.025em; }
+.flow-hero__meta { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* The schematic: source node, then a bus that wires to each runtime. */
+.flow-schematic {
+  margin: 12px 0 0;
+  display: grid;
+  grid-template-columns: minmax(0, auto) minmax(0, 1fr);
+  align-items: center;
+  gap: 0;
+  max-width: 640px;
+}
+.flow-schematic__source,
+.flow-schematic__node {
+  display: flex; flex-direction: column; gap: 2px;
+  padding: 10px 14px;
+  min-height: 44px;
+  border-radius: 10px;
+  background: var(--flow-node-bg);
+  border: 1.5px solid var(--flow-wire);
+  box-shadow: 0 1px 0 color-mix(in oklch, var(--feature-accent) 20%, transparent);
+}
+.flow-schematic__source {
+  position: relative;
+  border-color: var(--feature-accent);
+  margin-right: 28px;
+}
+/* The source's output port and the wire leaving it. */
+.flow-schematic__source::after {
+  content: ""; position: absolute; top: 50%; right: -29px;
+  width: 28px; border-top: 1.5px solid var(--flow-wire);
+}
+.flow-schematic__targets {
+  list-style: none; margin: 0; padding: 0 0 0 20px;
+  display: flex; flex-direction: column; gap: 8px;
+  border-left: 1.5px solid var(--flow-wire);
+}
+.flow-schematic__target { position: relative; }
+.flow-schematic__target::before {
+  content: ""; position: absolute; top: 50%; left: -20px;
+  width: 20px; border-top: 1.5px solid var(--flow-wire);
+}
+.flow-schematic__node { text-decoration: none; color: inherit; transition: border-color 120ms ease, transform 120ms ease; }
+.flow-schematic__node:hover { border-color: var(--feature-accent); }
+.flow-schematic__node:focus-visible { outline: 2px solid var(--feature-accent); outline-offset: 2px; }
+.flow-schematic__node > :first-child { color: var(--feature-ink); }
+@media (max-width: 560px) {
+  .flow-schematic { grid-template-columns: minmax(0, 1fr); }
+  .flow-schematic__source { margin: 0 0 18px; }
+  .flow-schematic__source::after { top: auto; bottom: -19px; right: auto; left: 22px; width: 0; height: 18px; border-top: 0; border-left: 1.5px solid var(--flow-wire); }
+  .flow-schematic__targets { margin-left: 22px; }
+}
+
+/* Section headings carry a port marker, like a node title. */
+[data-feature="flow"] .feature-section > h2.feature-display {
+  display: flex; align-items: center; gap: 10px;
+}
+[data-feature="flow"] .feature-section > h2.feature-display::before {
+  content: ""; flex: none; width: 10px; height: 10px; border-radius: 999px;
+  border: 2px solid var(--feature-accent);
+  background: var(--feature-surface);
+}
+
+/* DemoFrame: the bar reads as a node header on the canvas. */
+[data-feature="flow"] .feature-demo__bar {
+  background:
+    radial-gradient(circle at 1px 1px, var(--flow-grid) 1px, transparent 1.4px) 0 0 / 14px 14px,
+    var(--feature-surface);
+}
+[data-feature="flow"] .feature-tour__icon { border-radius: 999px; }
+
+/* ── The editor demo ───────────────────────────────────── */
+.flow-studio { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.flow-studio__picker { display: flex; flex-wrap: wrap; gap: 8px; }
+.flow-studio__picker > button { min-height: 44px; }
+.flow-studio__loading {
+  display: grid; place-items: center; height: 540px;
+  border-radius: 12px; border: 1px dashed var(--flow-wire);
+  color: var(--fg-2); font-size: 14px;
+}
+
+/* ── The cohort demo ───────────────────────────────────── */
+.flow-cohort { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.flow-cohort__bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+.flow-cohort__policy, .flow-cohort__fire { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.flow-cohort__policy > button, .flow-cohort__fire > button { min-height: 44px; }
+.flow-cohort__explain { max-width: 75ch; }
+.flow-cohort__explain strong { color: var(--fg-1); }
+.flow-cohort__rows { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.flow-cohort__row {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px;
+  padding: 10px 12px; border-radius: 10px;
+  border: 1px solid var(--border-1);
+  background: var(--flow-node-bg);
+  border-left: 3px solid var(--flow-wire);
+}
+.flow-cohort__row[data-row-status="skipped"] { border-left-color: var(--warning, #d97706); }
+.flow-cohort__row[data-row-status="ran"] { border-left-color: var(--success, #16a34a); }
+.flow-cohort__row[data-row-status="silent"] { border-left-color: var(--danger, #e11d48); }
+.flow-cohort__n {
+  display: grid; place-items: center; width: 28px; height: 28px; flex: none;
+  border-radius: 999px; font-size: 12px; font-weight: 700;
+  color: var(--feature-ink); border: 1.5px solid var(--flow-wire);
+}
+.flow-cohort__name { width: 8rem; flex: none; }
+.flow-cohort__steps { flex: none; color: var(--fg-2); }
+.flow-cohort__detail { flex: 1 1 16rem; min-width: 0; }
+.flow-cohort__row[data-row-status="silent"] .flow-cohort__detail { color: var(--danger-fg, #be123c); }
+.dark .flow-cohort__row[data-row-status="silent"] .flow-cohort__detail,
+[data-theme="dark"] .flow-cohort__row[data-row-status="silent"] .flow-cohort__detail { color: #fda4af; }
+
+.flow-code {
+  margin: 0; padding: 14px 16px; overflow-x: auto;
+  border-radius: 10px; font-size: 13px; line-height: 1.6;
+  background: #0b1220; color: #dbe7f3;
+  border: 1px solid color-mix(in oklch, var(--feature-accent) 35%, transparent);
+}
+
+/* ── The node marketplace ──────────────────────────────── */
+.flow-market { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.flow-market__tools { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.flow-market__search { flex: 1 1 16rem; min-width: 0; }
+.flow-market__filters { display: flex; flex-wrap: wrap; gap: 6px; }
+.flow-market__filters > button { min-height: 44px; text-transform: capitalize; }
+.flow-market__grid {
+  display: grid; gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+}
+.flow-market__card { display: flex; flex-direction: column; gap: 8px; min-width: 0; background: var(--flow-node-bg); }
+.flow-market__head { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.flow-market__desc { flex: 1; }
+.flow-market__runtimes { display: flex; flex-wrap: wrap; gap: 6px; }
+.flow-market__cmd {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  padding-top: 8px; border-top: 1px dashed var(--border-1);
+}
+.flow-market__cmd > button { min-height: 44px; flex: none; }
+
+/* Legibility floor: nothing on this page under 14px. The kit's code and step
+   numbers are smaller by default; this page raises them in its own scope. */
+[data-feature="flow"] .feature-code,
+[data-feature="flow"] .feature-code__sigil,
+[data-feature="flow"] .feature-steps__n,
+[data-feature="flow"] .flow-cohort__n,
+[data-feature="flow"] .flow-code { font-size: 14px; }
+[data-feature="flow"] .feature-steps__n { width: 28px; height: 28px; }
+
+/* The shared kit's small labels and controls, raised to the 14px / 44px floor
+   inside this page only (reported upstream as a kit-wide change). */
+[data-feature="flow"] .feature-hero__meta > span,
+[data-feature="flow"] .feature-demo__bar > span:last-child,
+[data-feature="flow"] .feature-steps__meta > span,
+[data-feature="flow"] .feature-package__head > span,
+[data-feature="flow"] .feature-fits__bridges span,
+[data-feature="flow"] [data-language] .feature-fits__list,
+[data-feature="flow"] [data-language] > div > span,
+[data-feature="flow"] .feature-steps__cmd > button { font-size: 14px; }
+[data-feature="flow"] .feature-steps__cmd > button { min-height: 44px; }
+[data-feature="flow"] .feature-fits__list { gap: 0; }
+[data-feature="flow"] .feature-fits__list a { display: inline-flex; align-items: center; min-height: 44px; }
+[data-feature="flow"] .feature-hero__actions > *,
+[data-feature="flow"] .feature-cta__actions > * { min-height: 44px; }
+
+/* react-fancy's solid colour buttons put white text on a -500 (dark: -600)
+   fill, which is under 4.5:1 for sky and violet. Deepen the fill in this
+   page's scope so the label clears AA (reported upstream). */
+[data-feature="flow"] button.bg-sky-500, [data-feature="flow"] a.bg-sky-500 { background-color: #0369a1; border-color: #075985; }
+[data-feature="flow"] button.bg-sky-500:hover, [data-feature="flow"] a.bg-sky-500:hover { background-color: #075985; }
+[data-feature="flow"] .bg-violet-500 { background-color: #6d28d9; border-color: #5b21b6; }
+[data-feature="flow"] .bg-violet-500:hover { background-color: #5b21b6; }

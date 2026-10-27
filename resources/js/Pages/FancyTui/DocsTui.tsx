@@ -1,4 +1,5 @@
 import { Terminal } from "@particle-academy/fancy-term";
+import { Button, Kbd } from "@particle-academy/react-fancy";
 // Required by fancy-term: without it xterm's character-measurement helper (a
 // long run of "w") renders as visible text over the output. Loaded from
 // fancy-term rather than from xterm (0.6.0 added the subpath).
@@ -249,9 +250,9 @@ export default function DocsTui({ onExit }: { onExit: () => void }) {
                     <i />
                 </span>
                 <b>fancy-tui — live components in your terminal</b>
-                <button type="button" className="ftui-takeover__exit" onClick={onExit}>
-                    Exit <kbd>q</kbd>
-                </button>
+                <Button variant="ghost" className="ftui-takeover__exit" onClick={onExit} data-action="exit-console">
+                    Exit <Kbd size="sm">q</Kbd>
+                </Button>
             </div>
             <div className="ftui-takeover__screen">
                 {unavailable ? (
@@ -261,7 +262,9 @@ export default function DocsTui({ onExit }: { onExit: () => void }) {
                             Run the docs terminal service and set <code>TUI_SERVICE_URL</code>, or browse
                             the HTML docs.
                         </p>
-                        <button type="button" onClick={onExit}>Back to HTML docs</button>
+                        <Button color="green" onClick={onExit}>
+                            Back to the HTML page
+                        </Button>
                     </div>
                 ) : (
                     <Terminal

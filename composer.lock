@@ -4122,16 +4122,16 @@
         },
         {
             "name": "particle-academy/fancy-cms",
-            "version": "v0.8.0",
+            "version": "v0.8.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/fancy-cms.git",
-                "reference": "2b26401d2afbbd0d5cb91a647a50ffcf71bdd2f3"
+                "reference": "bca02e087d3100324bbdb2de7c225f3a78309296"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/fancy-cms/zipball/2b26401d2afbbd0d5cb91a647a50ffcf71bdd2f3",
-                "reference": "2b26401d2afbbd0d5cb91a647a50ffcf71bdd2f3",
+                "url": "https://api.github.com/repos/Particle-Academy/fancy-cms/zipball/bca02e087d3100324bbdb2de7c225f3a78309296",
+                "reference": "bca02e087d3100324bbdb2de7c225f3a78309296",
                 "shasum": ""
             },
             "require": {
@@ -4169,9 +4169,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Particle-Academy/fancy-cms/issues",
-                "source": "https://github.com/Particle-Academy/fancy-cms/tree/v0.8.0"
+                "source": "https://github.com/Particle-Academy/fancy-cms/tree/v0.8.1"
             },
-            "time": "2026-10-26T17:31:30+00:00"
+            "time": "2026-10-27T01:48:23+00:00"
         },
         {
             "name": "particle-academy/fancy-flow-php",

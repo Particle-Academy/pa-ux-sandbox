@@ -176,6 +176,19 @@ SCOPE: paths, literals, `&& || !`, comparisons, ternary, object and array litera
 
 BEFORE IT CAN SHIP: three registry names that do not exist yet (npm scoped, Packagist, PyPI), so the first publish of each needs the owner -- npm cannot be claimed by OIDC, Packagist needs a one-time submit AFTER the first tag, PyPI needs a pending publisher BEFORE it. Run `.claude/skills/ship-it/preflight.py` and hand over the numbered steps rather than improvising them.',
         ],
+        'fancy-template' => [
+            'name' => 'fancy-template',
+            'repo' => 'Particle-Academy/fancy-template',
+            'why' => 'DOCUMENT TEMPLATES for every document writer: fine-print (PDF), last-word (docx), dark-slide (pptx) and holy-sheet (xlsx). Owner: "we need to build template support in all of our document writers". Design APPROVED 2026-10-27: .ai/plans/document-writer-templates.md. Triggered by laravel-courses moving certificates from dompdf to fine-print, which cannot draw HTML.
+
+ONE POLYGLOT REPO (TypeScript, PHP, Python), laid out like fancy-expr, with a normative SPEC.md. Its only dependency is fancy-expr, which is first-party. The writers do NOT depend on it: it emits their plain JSON, so each writer stays zero-dependency. Per-writer profiles live here as data, pinned to writer schema versions. It is not fancy-doc-commons (TS-only tree/op concerns) and not fancy-expr (whose scope rules out loops).
+
+THE MODEL. An envelope { fancyTemplate: 1, writer, variables, document }. Variables are a JSON Schema subset validated in-package in every language. `{{ path | filter }}` tokens appear only inside string values. Structure comes from JSON directives ($each / $as / $if), never text syntax. Missing data is loud at three layers (inspect, validateData, render-time TemplateError) and there is no silent-empty mode. The same API ships in every language: inspect, validateData, render, preview. Office and LibreOffice template formats (.dotx/.potx/.xltx/.ott/.otp/.ots) are read by the writers, with a byte-preserving template:convert; macro variants are refused.
+
+SECURITY is part of the design rather than a follow-up: no code execution, no includes, forbidden fields (image src, links, holy-sheet formula, chart option, fonts), holy-sheet string results always written as values so user data can never become a formula, and hard bounds with stable error codes. PREREQUISITE: fancy-expr needs input-length and nesting-depth limits first, because its recursive-descent parser can overflow the stack on hostile input.
+
+ROLLOUT: fancy-expr limits, then template/* fixtures in fancy-conformance BEFORE code, then the PHP leg with fine-print and last-word profiles, then the laravel-courses migration, then the TS and Python legs with the holy-sheet and dark-slide profiles. Owner condition: dogfooded in our labs and tested with at least 90% parity on template use. NOT YET STARTED; registered first. npm `@particle-academy/fancy-template`, Packagist `particle-academy/fancy-template` and PyPI `fancy-template` all 404 on 2026-10-27 (against 200 controls); the first publish of each is an owner action.',
+        ],
         'fancy-connector-core-py' => [
             'name' => 'fancy-connector-core',
             'repo' => 'Particle-Academy/fancy-connector-core-py',

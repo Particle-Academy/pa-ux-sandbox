@@ -247,6 +247,16 @@ The one thing worth recording now is the SHAPE OF THE DECISION still to be made,
 
 Both registry names read as unclaimed on 2026-10-08 -- `@particle-academy/fancy-support` on npm and `particle-academy/fancy-support` on Packagist both 404. RE-CHECK AT SPEC TIME: a 404 today says nothing about the day you tag, and the first publish of a name that does not exist yet is an OWNER action either way (npm cannot claim a name by OIDC).',
         ],
+        'fancy-formula' => [
+            'name' => 'fancy-formula',
+            'repo' => 'Particle-Academy/fancy-formula',
+            'registries' => ['packagist' => 'particle-academy/fancy-formula', 'npm' => '@particle-academy/fancy-formula', 'pypi' => 'fancy-formula'],
+            'why' => 'A DETERMINISTIC SPREADSHEET-FORMULA ENGINE with Google Sheets semantics, so an agent never does arithmetic in the model. Requested by MOIC (a pricing agent that must stop doing quote maths in the model); Prism wraps it as the opt-in harness tool `doMath`. Owner confirmed 2026-10-28.
+
+Formulas are code; inputs are always typed VALUES, never formula text. Every output carries a trace (inputs read, and for lookups the matched row -- quote footnotes). Save-time checks (parse, unknown names, cycles, types) run before anything evaluates. No eval, no I/O, external functions refused unless the host registers a provider, NOW/RAND only through a host clock or seed, and hard limits that fail with a typed code instead of hanging.
+
+PHP first, one polyglot repo in the fancy-expr layout; TS and Python follow on shared fancy-conformance tables captured from real Google Sheets. holy-sheet`s FormulaLinter delegates to it from 0.2. Design: .ai/plans/fancy-formula.md. All three registry names and the GitHub repo 404 on 2026-10-28.',
+        ],
         'agent-guard' => [
             'name' => 'agent-guard',
             'repo' => 'Particle-Academy/agent-guard',

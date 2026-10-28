@@ -381,7 +381,8 @@ final class PackageFamily
         // matched only words that happened to be in a tagline: "llm harness"
         // missed prism-harness. Each section's `capability` is what an agent
         // types when it needs the package; PrismFamilyListingTest pins the
-        // queries. PHP only: the TypeScript ports on npm are not registered.
+        // queries. Every published port sits in its capability's section beside the
+        // PHP original (Python + TS ports added 2026-09-21 and 2026-10-27).
         [
             'slug' => 'prism',
             'name' => 'Prism',
@@ -412,7 +413,23 @@ final class PackageFamily
                     'capability' => 'MCP client: remote MCP tools as Prism tools, across a visible trust boundary',
                     'members' => [
                         ['language' => 'PHP', 'slug' => 'prism-mcp'],
+                        ['language' => 'Python', 'slug' => 'prism-mcp-py'],
                         ['language' => 'Node / TypeScript', 'slug' => 'prism-mcp-ts'],
+                    ],
+                ],
+                [
+                    'label' => 'Coding-agent CLIs',
+                    'capability' => 'Agent Client Protocol: drive an already-authenticated Claude or Codex CLI, no API key',
+                    'members' => [
+                        ['language' => 'PHP', 'slug' => 'prism-acp'],
+                        ['language' => 'Node / TypeScript', 'slug' => 'prism-acp-ts'],
+                    ],
+                ],
+                [
+                    'label' => 'MCP server',
+                    'capability' => 'MCP server: serve Prism tools to any MCP client, transport-independent',
+                    'members' => [
+                        ['language' => 'Node / TypeScript', 'slug' => 'prism-mcp-server-ts'],
                     ],
                 ],
                 [
@@ -438,6 +455,7 @@ final class PackageFamily
                     'capability' => 'Agent sandbox: a session-scoped filesystem behind a path guard',
                     'members' => [
                         ['language' => 'PHP', 'slug' => 'prism-workspace'],
+                        ['language' => 'Python', 'slug' => 'prism-workspace-py'],
                         ['language' => 'Node / TypeScript', 'slug' => 'prism-workspace-ts'],
                     ],
                 ],
@@ -446,6 +464,7 @@ final class PackageFamily
                     'capability' => 'Human+ presence: agent sessions joining live Fancy surfaces over MCP relay',
                     'members' => [
                         ['language' => 'PHP', 'slug' => 'prism-human-plus'],
+                        ['language' => 'Python', 'slug' => 'prism-human-plus-py'],
                         ['language' => 'Node / TypeScript', 'slug' => 'prism-human-plus-ts'],
                     ],
                 ],
@@ -454,6 +473,7 @@ final class PackageFamily
                     'capability' => 'LLM tracing: OpenTelemetry GenAI spans for agent runs',
                     'members' => [
                         ['language' => 'PHP', 'slug' => 'prism-opentelemetry'],
+                        ['language' => 'Python', 'slug' => 'prism-opentelemetry-py'],
                         ['language' => 'Node / TypeScript', 'slug' => 'prism-opentelemetry-ts'],
                     ],
                 ],
@@ -462,6 +482,7 @@ final class PackageFamily
                     'capability' => 'Perplexity search, embeddings and async deep research',
                     'members' => [
                         ['language' => 'PHP', 'slug' => 'prism-perplexity'],
+                        ['language' => 'Python', 'slug' => 'prism-perplexity-py'],
                         ['language' => 'Node / TypeScript', 'slug' => 'prism-perplexity-ts'],
                     ],
                 ],

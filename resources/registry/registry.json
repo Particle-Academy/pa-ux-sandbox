@@ -1,5 +1,5 @@
 {
-    "count": 344,
+    "count": 354,
     "items": [
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
@@ -1397,6 +1397,17 @@
                     "target": "components/fancy/lib/types.ts"
                 }
             ]
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "change-council",
+            "type": "registry:ui",
+            "title": "particle-academy/change-council",
+            "description": "A consumer-agent voting ledger for major package changes: a zero-dependency change detector for CI and pre-push, and a Laravel ledger with two voting rounds, per-consumer silence policy, a hash-chained audit log and signed decision records.",
+            "package": "change-council",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
@@ -4479,6 +4490,17 @@
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "fancy-expr",
+            "type": "registry:ui",
+            "title": "@particle-academy/fancy-expr",
+            "description": "A sandboxed expression evaluator: one grammar, three runtimes, asserted against a shared conformance table. Paths, literals, logic, comparisons, ternaries and object/array literals -- no eval, no host reach, no calls. A malformed expression throws; an absent path is null, and keeping those apart is the point.",
+            "package": "fancy-expr",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
             "name": "fancy-features-js",
             "type": "registry:ui",
             "title": "@particle-academy/fancy-features",
@@ -4814,6 +4836,17 @@
             "title": "fancy-sheets",
             "description": "Full spreadsheet with formulas, multi-sheet workbooks, clipboard, CSV import/export.",
             "package": "fancy-sheets",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "fancy-template",
+            "type": "registry:ui",
+            "title": "@particle-academy/fancy-template",
+            "description": "Document templates for the Fancy document writers: a writer document with {{ tokens }} and JSON directives, plus a declaration of the data it needs. inspect() at save time, validateData() before render, render() to plain writer JSON. No code execution, no includes, bounded everywhere.",
+            "package": "fancy-template",
             "dependencies": [],
             "registryDependencies": [],
             "files": []
@@ -8617,6 +8650,17 @@
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "prism-acp",
+            "type": "registry:ui",
+            "title": "particle-academy/prism-acp",
+            "description": "Agent Client Protocol for Prism in PHP -- drive the Claude and Codex CLIs the user has already authenticated, on a subscription or an app API key, with no third-party runtime dependencies. Pre-release (alpha).",
+            "package": "prism-acp",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
             "name": "prism-acp-ts",
             "type": "registry:ui",
             "title": "@particle-academy/prism-acp",
@@ -8705,6 +8749,17 @@
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "prism-human-plus-py",
+            "type": "registry:ui",
+            "title": "prism-ai-human-plus",
+            "description": "Python port of prism-human-plus -- Human+ participant presence -- an agent session joins live Fancy surfaces, across a trust boundary.",
+            "package": "prism-human-plus-py",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
             "name": "prism-human-plus-ts",
             "type": "registry:ui",
             "title": "@particle-academy/prism-human-plus",
@@ -8721,6 +8776,28 @@
             "title": "particle-academy/prism-mcp",
             "description": "Model Context Protocol for Prism -- consume remote MCP tools as ordinary Prism tools, across a trust boundary you can see. The boundary is the point: a remote tool is not quietly indistinguishable from a local one.",
             "package": "prism-mcp",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "prism-mcp-py",
+            "type": "registry:ui",
+            "title": "prism-ai-mcp",
+            "description": "Python port of prism-mcp -- Model Context Protocol -- consume remote MCP tools as ordinary Prism tools.",
+            "package": "prism-mcp-py",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "prism-mcp-server-ts",
+            "type": "registry:ui",
+            "title": "@particle-academy/prism-mcp-server",
+            "description": "Transport-independent MCP tool serving for the Prism ecosystem -- expose Prism tools to any MCP client, over whichever transport the host already runs.",
+            "package": "prism-mcp-server-ts",
             "dependencies": [],
             "registryDependencies": [],
             "files": []
@@ -8782,6 +8859,17 @@
         },
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "prism-opentelemetry-py",
+            "type": "registry:ui",
+            "title": "prism-ai-opentelemetry",
+            "description": "Python port of prism-opentelemetry -- OpenTelemetry bridge -- Prism telemetry as GenAI-convention spans.",
+            "package": "prism-opentelemetry-py",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
             "name": "prism-opentelemetry-ts",
             "type": "registry:ui",
             "title": "@particle-academy/prism-opentelemetry",
@@ -8798,6 +8886,17 @@
             "title": "particle-academy/prism-perplexity",
             "description": "The rest of the Perplexity API for Prism -- embeddings, direct search, and async deep research beyond the Agent API chat surface.",
             "package": "prism-perplexity",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "prism-perplexity-py",
+            "type": "registry:ui",
+            "title": "prism-ai-perplexity",
+            "description": "Python port of prism-perplexity -- The rest of the Perplexity API -- search, embeddings and the Agent API.",
+            "package": "prism-perplexity-py",
             "dependencies": [],
             "registryDependencies": [],
             "files": []
@@ -8842,6 +8941,17 @@
             "title": "particle-academy/prism-workspace",
             "description": "Sandboxed, session-scoped agent workspaces for Laravel -- a scoped Storage disk behind a path guard, shipped with the adversarial corpus that proves the boundary holds. Where an agent gets somewhere to write without getting everywhere to write.",
             "package": "prism-workspace",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "prism-workspace-py",
+            "type": "registry:ui",
+            "title": "prism-ai-workspace",
+            "description": "Python port of prism-workspace -- Sandboxed, session-scoped agent workspaces behind a path guard.",
+            "package": "prism-workspace-py",
             "dependencies": [],
             "registryDependencies": [],
             "files": []

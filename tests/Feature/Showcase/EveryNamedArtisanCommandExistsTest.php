@@ -73,7 +73,12 @@ function namedArtisanCommands(): array
     // assertion below passed by checking nothing. The vacuity guard is the only
     // reason that surfaced as a failure instead of a green tick, which is the
     // entire argument for having one.
-    $skip = ['vendor', 'node_modules', '.git', 'storage', 'public/build', 'bootstrap/cache'];
+    // `resources/registry/readmes.json` is OTHER packages' READMEs, compiled
+    // verbatim. A command one of them names belongs to that package and exists
+    // in an app that installs it -- `council:detect` is change-council's -- so
+    // it is not advice this app gives, and this app not registering it is not a
+    // defect. Every file this app authors is still swept.
+    $skip = ['vendor', 'node_modules', '.git', 'storage', 'public/build', 'bootstrap/cache', 'resources/registry/readmes.json'];
     $exts = ['php', 'md', 'yml', 'yaml', 'json', 'ts', 'tsx', 'js', 'mjs', 'sh', 'blade'];
 
     $found = [];

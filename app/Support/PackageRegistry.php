@@ -104,6 +104,23 @@ class PackageRegistry
     ];
 
     /**
+     * Why a HIDDEN slug stays hidden AFTER it is published, keyed by slug.
+     *
+     * A hidden package that 404s needs no entry here: hiding an uninstallable
+     * package is the ordinary use of {@see HIDDEN}. A hidden package that is
+     * LIVE is the `fancy-trading-ui` failure -- a shipped package invisible to
+     * every surface -- unless somebody decided it on purpose, and this is where
+     * that decision is written down. `kit:catalog-drift` fails any HIDDEN slug
+     * that is published without a reason here, and any Prism manifest entry
+     * marked `catalog: hidden` that has no HIDDEN slug and reason to match.
+     *
+     * Empty is the good state.
+     *
+     * @var array<string, string>
+     */
+    public const HIDDEN_REASONS = [];
+
+    /**
      * Packages that are DECIDED but do not exist yet.
      *
      * ## Why this list exists
@@ -136,107 +153,92 @@ class PackageRegistry
      * not `registry.json`, not the MCP. They are a development-status record, and
      * announcing something that cannot be installed is worse than saying nothing.
      *
-     * @var array<string, array{name: string, repo: string, why: string}>
+     * `registries` names every registry + package name the entry will publish
+     * under (`npm`, `packagist`, `pypi`, `crates`). It is what lets
+     * `kit:catalog-drift` ask whether a planned package has quietly shipped --
+     * and whether its name already belongs to somebody else. `name` alone could
+     * not answer either: `fancy-flow` is our PyPI package AND the planned Rust
+     * crate, so a name with no registry is ambiguous by construction.
+     *
+     * @var array<string, array{name: string, repo: string, registries: array<string,string>, why: string}>
      */
     public const PLANNED = [
-        'change-council' => [
-            'name' => 'particle-academy/change-council',
-            'repo' => 'Particle-Academy/change-council',
-            'why' => 'A CI-integrated, 2-round CONSUMER-AGENT VOTING LEDGER for MAJOR package changes. Owner ask 2026-10-27; rulings in q_5e39ab76. Covers third-party majors, schema and contract changes, deprecations, removed public APIs, raised floors, BREAKING entries, and Prism`s classes. Round 1 petitions the consumer agents for conflicts; round 2 proposes a new approach when round 1 finds breaking concerns. Votes are tracked per agent, and the owner reviews every Change in the LAB UI. A lite Laravel package for each lab site, plus a versioned feed for civi`s Overwatch. CI only detects and records; agents send the petitions, and Genie`s sender field authenticates votes. The release gate is a signed decision record. Silence is a per-consumer policy. Non-whitelisted requests and GitHub issues always go to HITL first. Fancy builds it, Prism adopts it. Design: .ai/plans/change-council.md. NOT YET STARTED; registered first. Packagist/npm/GitHub names checked 404 on 2026-10-27.',
-        ],
         'charlotte-ui' => [
             'name' => '@particle-academy/charlotte-ui',
             'repo' => 'Particle-Academy/charlotte-ui',
+            'registries' => ['npm' => '@particle-academy/charlotte-ui'],
             'why' => 'The React half of Charlotte. Headless hooks over a transport-agnostic event contract (long-poll first, because Cloudflare kills SSE), so apps can build their OWN chat. It also ships unstyled-capable primitives and an OPTIONAL, fully functional side panel that builds pages live with the user beside the fancy-cms-ui editor, with staged changes on a draft. Satisfies the Human+ component contract. Needs a ChatThread/ChatMessage primitive in react-fancy first, under the Fancy Exclusive rule. NOT YET STARTED. npm name verified free 2026-10-26.',
         ],
         'charlotte-js' => [
             'name' => '@particle-academy/charlotte',
             'repo' => 'Particle-Academy/charlotte-js',
+            'registries' => ['npm' => '@particle-academy/charlotte'],
             'why' => 'Node/TypeScript core twin of Charlotte. Owner 2026-10-27: build Charlotte for all supported languages AFTER the PHP core works perfectly. It will sit on the TypeScript prism-harness and follow the same event contract and fixtures as the PHP core. NOT YET STARTED, and deliberately sequenced after PHP. npm name verified free 2026-10-26.',
         ],
         'charlotte-py' => [
-            'name' => 'charlotte',
+            'name' => 'fancy-charlotte',
             'repo' => 'Particle-Academy/charlotte-py',
-            'why' => 'Python core twin of Charlotte, under the same owner ruling: all supported languages after PHP works perfectly. NOT YET STARTED, sequenced after PHP. Check whether a Python prism-harness exists before starting, and confirm the PyPI name is free then.',
-        ],
-        'fancy-expr' => [
-            'name' => 'fancy-expr',
-            'repo' => 'Particle-Academy/fancy-expr',
-            'why' => 'A small, sandboxed EXPRESSION EVALUATOR with one grammar and three implementations (TypeScript, PHP, Python), shipped from one repo the way fancy-conformance is. Owner decision 2026-08-25: hand-written parser rather than a third-party library per language. NOT YET STARTED -- registered first per the rule, so it cannot become a decided-but-invisible package.
-
-WHY IT EXISTS. fancy-flow`s `{{ }}` resolves dot-paths ONLY. Anything else -- `&&`, `||`, a ternary, a comparison, an object literal -- returns null, and null is also what a real-but-absent path returns. Nothing downstream can tell the two apart, so one root cause wore three faces: `transform` emitted the null and the run went green, interpolation printed it as an empty string, and `branch` ROUTED on it (`truthy(null)` is false, so a condition the engine could not evaluate silently took the false road on every run). A consumer lost a production Op to exactly that -- both branches always false, the run reporting completed, no error or log line anywhere. Reproduced on current source in BOTH the PHP and TypeScript runtimes 2026-08-25; it is not a stale-version problem.
-
-WHY A SEPARATE REPO, against the owner`s own test -- "only if this actually replaces a 3rd party repo that would otherwise be used". It does. Without a first-party evaluator the reach is for `symfony/expression-language` (v8.1.1, live) in PHP, `expr-eval` (2.0.2) in TypeScript, `simpleeval` (1.0.7) in Python. All three are real, current, and the standard answer.
-
-AND THAT IS PRECISELY THE ARGUMENT AGAINST USING THEM. Those three libraries do not agree with each other on operator semantics, coercion or truthiness. Adopting them would ship three subtly different languages under one syntax -- manufacturing the exact divergence fancy-conformance exists to catch, on a surface where we would own neither side and so could not fix it. One grammar written three times against a shared fixture table is the only version of this that can be held to a contract.
-
-WHO ELSE BENEFITS (the second half of the owner`s test): any package needing user-authored conditions with no `eval`. laravel-fms feature `enabled` / `limit` predicates, x-files rules, connector mapping, and anything embedding fancy-flow. Sandboxed by construction -- no host property access, no calls, no assignment -- which is what makes it safe to hand a value authored by an agent or an end user.
-
-SCOPE: paths, literals, `&& || !`, comparisons, ternary, object and array literals. Deliberately NOT a programming language: no user functions, no loops, no assignment.
-
-BEFORE IT CAN SHIP: three registry names that do not exist yet (npm scoped, Packagist, PyPI), so the first publish of each needs the owner -- npm cannot be claimed by OIDC, Packagist needs a one-time submit AFTER the first tag, PyPI needs a pending publisher BEFORE it. Run `.claude/skills/ship-it/preflight.py` and hand over the numbered steps rather than improvising them.',
-        ],
-        'fancy-template' => [
-            'name' => 'fancy-template',
-            'repo' => 'Particle-Academy/fancy-template',
-            'why' => 'DOCUMENT TEMPLATES for every document writer: fine-print (PDF), last-word (docx), dark-slide (pptx) and holy-sheet (xlsx). Owner: "we need to build template support in all of our document writers". Design APPROVED 2026-10-27: .ai/plans/document-writer-templates.md. Triggered by laravel-courses moving certificates from dompdf to fine-print, which cannot draw HTML.
-
-ONE POLYGLOT REPO (TypeScript, PHP, Python), laid out like fancy-expr, with a normative SPEC.md. Its only dependency is fancy-expr, which is first-party. The writers do NOT depend on it: it emits their plain JSON, so each writer stays zero-dependency. Per-writer profiles live here as data, pinned to writer schema versions. It is not fancy-doc-commons (TS-only tree/op concerns) and not fancy-expr (whose scope rules out loops).
-
-THE MODEL. An envelope { fancyTemplate: 1, writer, variables, document }. Variables are a JSON Schema subset validated in-package in every language. `{{ path | filter }}` tokens appear only inside string values. Structure comes from JSON directives ($each / $as / $if), never text syntax. Missing data is loud at three layers (inspect, validateData, render-time TemplateError) and there is no silent-empty mode. The same API ships in every language: inspect, validateData, render, preview. Office and LibreOffice template formats (.dotx/.potx/.xltx/.ott/.otp/.ots) are read by the writers, with a byte-preserving template:convert; macro variants are refused.
-
-SECURITY is part of the design rather than a follow-up: no code execution, no includes, forbidden fields (image src, links, holy-sheet formula, chart option, fonts), holy-sheet string results always written as values so user data can never become a formula, and hard bounds with stable error codes. PREREQUISITE: fancy-expr needs input-length and nesting-depth limits first, because its recursive-descent parser can overflow the stack on hostile input.
-
-ROLLOUT: fancy-expr limits, then template/* fixtures in fancy-conformance BEFORE code, then the PHP leg with fine-print and last-word profiles, then the laravel-courses migration, then the TS and Python legs with the holy-sheet and dark-slide profiles. Owner condition: dogfooded in our labs and tested with at least 90% parity on template use. NOT YET STARTED; registered first. npm `@particle-academy/fancy-template`, Packagist `particle-academy/fancy-template` and PyPI `fancy-template` all 404 on 2026-10-27 (against 200 controls); the first publish of each is an owner action.',
+            'registries' => ['pypi' => 'fancy-charlotte'],
+            'why' => 'Python core twin of Charlotte, under the same owner ruling: all supported languages after PHP works perfectly. NOT YET STARTED, sequenced after PHP. Check whether a Python prism-harness exists before starting. NAMED `fancy-charlotte`, like the other Python siblings (fancy-holy-sheet, fancy-flow): this entry originally planned the bare PyPI name `charlotte`, which is TAKEN by an unrelated project (author Jack King, github.com/Jack-Kingdom/charlotte, 17 releases, 0.2.4). The 2026-10-27 catalog audit found the collision; `fancy-charlotte` answered 404 on PyPI the same day. Re-check at publish time: a 404 says the exact name is free, not that PyPI will accept it.',
         ],
         'fine-print-js' => [
             'name' => '@particle-academy/fine-print',
             'repo' => 'Particle-Academy/fine-print-js',
+            'registries' => ['npm' => '@particle-academy/fine-print'],
             'why' => 'Node/TypeScript port of fine-print (PDF): writer, reader with the security layer, and page renderer. Owner ruled "full ports" on 2026-10-27. The trigger: fancy-template\'s TS leg can already produce fine-print documents that nothing outside PHP can render, and the planned cross-format export layer needs "export to PDF when fine-print is installed" in every language. Zero runtime dependencies, like the PHP original. Held to the PHP package by shared fancy-conformance tables, as holy-sheet-js is. The writer ships first. Plan: .ai/plans/fine-print-ports.md. NOT YET STARTED; registered first.',
         ],
         'fine-print-py' => [
             'name' => 'fancy-fine-print',
             'repo' => 'Particle-Academy/fine-print-py',
+            'registries' => ['pypi' => 'fancy-fine-print'],
             'why' => 'Python port of fine-print (PDF): writer, reader with the security layer, and page renderer. Owner ruled "full ports" on 2026-10-27; same trigger and plan as fine-print-js (.ai/plans/fine-print-ports.md). Stdlib only (zlib, struct), held to the PHP package by shared fancy-conformance tables, and published as `fancy-fine-print` like the other Python siblings. The writer ships first. NOT YET STARTED; registered first.',
         ],
         'fancy-connector-core-py' => [
             'name' => 'fancy-connector-core',
             'repo' => 'Particle-Academy/fancy-connector-core-py',
+            'registries' => ['pypi' => 'fancy-connector-core'],
             'why' => 'Python twin of the connector runtime -- the third after TS and PHP. Today every generated fancy-<provider> package carries its own urllib + hmac shim, which is the copy-cannot-be-upgraded problem the connector pivot exists to kill, reproduced once per provider. Seed exists: Weaver`s template/embed/py/_fake.py + _runtime.py, already proven byte-identical against the PHP and TS fakers by a suite that spawns all three. BUILT BY WEAVER, per the owner ruling of 2026-08-23 that Weaver owns everything connector-related in every language the kit supports -- do not build a connector runtime in parallel with it. Weaver is also the ONLY consumer: this entry once implied the Impactium chain wanted it, which was wrong (zero Python across all eight of their repos, and they declined), so build it to fit the generator rather than a hypothetical third party. PyPI name verified free 2026-08-23.',
         ],
         'fancy-json-rs' => [
             'name' => 'fancy-json',
             'repo' => 'Particle-Academy/fancy-json-rs',
+            'registries' => ['crates' => 'fancy-json'],
             'why' => 'A lightweight, zero-dependency JSON parser + serializer in Rust, split out of fancy-flow-rs as its own crate on the owner\'s decision (2026-08-23). Rust has no JSON in its standard library -- the one thing PHP and Python ports get free -- so own it rather than depend on it. BUILT AND GREEN (53 tests); publish AUTHORISED but GATED. The original entry named the Impactium chain as the consumer -- that was WRONG, and the correction is kept rather than deleted because it is the useful part: they verified serde_json in exactly three crates, ALL host-side tooling, none in the deterministic state machine, and f64/f32 absent from the entire chain source, so our exact-integer/float split is a guarantee nobody there can violate. The property that would actually earn adoption is BYTE-DETERMINISM ACROSS TARGETS AND VERSIONS -- two runs must parse and re-serialise identical bytes identically, number formatting and key ordering included, because a non-determinism there is a chain halt rather than a bug. It must be tested AND STATED before the tag, since it constrains the serialiser permanently. Objects already use Vec<(String, Value)> plus a BTreeMap index rather than a HashMap, so the worst hazard -- per-process randomised key order -- is avoided by construction. The owner also holds that Impactium should avoid third-party where we can help it, so the small-audit-surface goal stands ALONGSIDE determinism, not instead of it. no_std + alloc, exact-integer/float split so money-shaped numbers never touch f64. Crate name `fancy-json` verified free on crates.io 2026-08-23 (a UA-less request 403s -- send a User-Agent and keep a known-published control, or every name looks taken).',
         ],
         'fancy-flow-rs' => [
             'name' => 'fancy-flow',
             'repo' => 'Particle-Academy/fancy-flow-rs',
+            'registries' => ['crates' => 'fancy-flow'],
             'why' => 'Rust runtime twin of the fancy-flow engine -- the fourth language after TS, PHP and Python. BUILT AND GREEN (74 tests, 0 ignored, one first-party dependency), asserted against the same fancy-conformance tables -- 104 shared cases across FIVE tables -- so parity is a test result rather than a claim. Gained the graph-connectivity refusal on 2026-08-27, matching PHP 0.48.1 / TS 0.64 / Python 0.16. HELD UNPUBLISHED INDEFINITELY by owner decision 2026-08-23, recorded here so it does not read as work in flight: it was started for a blockchain consumer needing the engine in-process, and that consumer then could not confirm the requirement -- their dynamic-workflow layer is designed but not built. Their words: "There is no committed requirement today, and I do not want a crate tagged against a guess I made." A crates.io name can never be unpublished, so it waits here until a consumer commits. NOT abandoned and NOT to be deleted -- it stays compiling, and its dependency re-points to the published fancy-json once that ships. Crate name `fancy-flow` verified free on crates.io 2026-08-23 (a UA-less request 403s -- send a User-Agent or every name looks taken).',
         ],
         'fancy-trading-php' => [
             'name' => 'particle-academy/fancy-trading-php',
             'repo' => 'Particle-Academy/fancy-trading-php',
+            'registries' => ['packagist' => 'particle-academy/fancy-trading-php'],
             'why' => 'The domain core in PHP, asserted against the same fancy-conformance table as the TS one.',
         ],
         'fancy-trading-py' => [
             'name' => 'fancy-trading',
             'repo' => 'Particle-Academy/fancy-trading-py',
+            'registries' => ['pypi' => 'fancy-trading'],
             'why' => 'The domain core in Python. Quants live in Python; it is the runtime they reach for.',
         ],
         'fancy-trading-connect-js' => [
             'name' => '@particle-academy/fancy-trading-connect',
             'repo' => 'Particle-Academy/fancy-trading-connect-js',
+            'registries' => ['npm' => '@particle-academy/fancy-trading-connect'],
             'why' => 'Venue sessions: book sync, private-state reconciliation, the fake/sandbox/live rule, per-venue adapters.',
         ],
         'fancy-trading-connect-php' => [
             'name' => 'particle-academy/fancy-trading-connect-php',
             'repo' => 'Particle-Academy/fancy-trading-connect-php',
+            'registries' => ['packagist' => 'particle-academy/fancy-trading-connect-php'],
             'why' => 'The same, for a Laravel backend.',
         ],
         'fancy-support' => [
             'name' => 'fancy-support',
             'repo' => 'Particle-Academy/fancy-support',
+            'registries' => ['npm' => '@particle-academy/fancy-support', 'packagist' => 'particle-academy/fancy-support'],
             'why' => 'A BOLT-ON HELPDESK -- tickets, threads, queues, canned answers -- for an app that already has users, auth and a UI, rather than a standalone support product. Decided 2026-10-08 and registered here the same hour, before a line exists, which is the whole point of this list.
 
 NOT SPECCED YET, deliberately. Nothing below is a commitment: no language split, no package count, no surface. The owner`s words were "we will spec it later", so anyone reading this should treat the scope as OPEN and write the spec rather than infer one from this paragraph. What is decided is that it exists and that it is a bolt-on.
@@ -351,6 +353,12 @@ Both registry names read as unclaimed on 2026-10-08 -- `@particle-academy/fancy-
         'prism-opentelemetry-ts' => ['group' => 'platform', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#a855f7'],
         'prism-perplexity-ts' => ['group' => 'platform', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#a855f7'],
         'prism-workspace-ts' => ['group' => 'platform', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#a855f7'],
+        'prism-mcp-server-ts' => ['group' => 'platform', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#a855f7'],
+        'prism-human-plus-py' => ['group' => 'platform', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#a855f7'],
+        'prism-mcp-py' => ['group' => 'platform', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#a855f7'],
+        'prism-opentelemetry-py' => ['group' => 'platform', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#a855f7'],
+        'prism-perplexity-py' => ['group' => 'platform', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#a855f7'],
+        'prism-workspace-py' => ['group' => 'platform', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#a855f7'],
         'holy-sheet-js' => ['group' => 'documents', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#16a34a'],
         'dark-slide-js' => ['group' => 'documents', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#dc2626'],
         'last-word-js' => ['group' => 'documents', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#2563eb'],
@@ -427,6 +435,12 @@ Both registry names read as unclaimed on 2026-10-08 -- `@particle-academy/fancy-
         'prism-workspace' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#a855f7'],
         'prism-memory' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#a855f7'],
         'prism-browser' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#a855f7'],
+        'prism-acp' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#a855f7'],
+        // Published and registered nowhere until the 2026-10-27 catalog audit;
+        // each moved here from PLANNED, which still described them as unstarted.
+        'fancy-expr' => ['group' => 'tooling', 'ecosystem' => 'polyglot', 'kind' => 'headless', 'accent' => '#0ea5e9'],
+        'fancy-template' => ['group' => 'documents', 'ecosystem' => 'polyglot', 'kind' => 'headless', 'accent' => '#2563eb'],
+        'change-council' => ['group' => 'tooling', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#14b8a6'],
         // Polyglot single-file client.
         'mcp-relay-client' => ['group' => 'tooling', 'ecosystem' => 'polyglot', 'kind' => 'headless', 'accent' => '#22c55e'],
         // Cross-language conformance fixtures -- parity as a test result.
@@ -917,9 +931,12 @@ Both registry names read as unclaimed on 2026-10-08 -- `@particle-academy/fancy-
             // npm without listing the TS package at all, so the ports stay
             // absent from /packages, kit:status and every MCP search.
             //
-            // Nine TS ports, all published. Four Python ports: the other five
-            // declare a name in pyproject.toml and 404 on PyPI, and announcing
-            // something that cannot be installed is worse than saying nothing.
+            // Nine TS ports, all published. Four Python ports were listed while
+            // the other five 404'd on PyPI; those five then published and stayed
+            // unlisted, with this comment still saying they did not exist, until
+            // the 2026-10-27 catalog audit. `kit:catalog-drift` now asks PyPI
+            // nightly instead of trusting a sentence. Plus prism-mcp-server-ts, a
+            // TS-only satellite with no PHP or Python twin yet.
             [
                 'slug' => 'prism-ts',
                 'name' => '@particle-academy/prism',
@@ -1001,6 +1018,14 @@ Both registry names read as unclaimed on 2026-10-08 -- `@particle-academy/fancy-
                 'language' => 'TypeScript',
             ],
             [
+                'slug' => 'prism-mcp-server-ts',
+                'name' => '@particle-academy/prism-mcp-server',
+                'tagline' => 'Transport-independent MCP tool serving for the Prism ecosystem -- expose Prism tools to any MCP client, over whichever transport the host already runs.',
+                'npm' => '@particle-academy/prism-mcp-server',
+                'repo' => 'Particle-Academy/prism-mcp-server-ts',
+                'language' => 'TypeScript',
+            ],
+            [
                 'slug' => 'prism-py',
                 'name' => 'prism-ai-core',
                 'tagline' => 'Python port of prism -- Unified text / structured / streaming across providers, with per-run spend attribution.',
@@ -1030,6 +1055,46 @@ Both registry names read as unclaimed on 2026-10-08 -- `@particle-academy/fancy-
                 'tagline' => 'Python port of prism-memory -- Persistent context and semantic recall -- vector storage, remember / recall.',
                 'pypi' => 'prism-ai-memory',
                 'repo' => 'Particle-Academy/prism-memory-py',
+                'language' => 'Python',
+            ],
+            [
+                'slug' => 'prism-human-plus-py',
+                'name' => 'prism-ai-human-plus',
+                'tagline' => 'Python port of prism-human-plus -- Human+ participant presence -- an agent session joins live Fancy surfaces, across a trust boundary.',
+                'pypi' => 'prism-ai-human-plus',
+                'repo' => 'Particle-Academy/prism-human-plus-py',
+                'language' => 'Python',
+            ],
+            [
+                'slug' => 'prism-mcp-py',
+                'name' => 'prism-ai-mcp',
+                'tagline' => 'Python port of prism-mcp -- Model Context Protocol -- consume remote MCP tools as ordinary Prism tools.',
+                'pypi' => 'prism-ai-mcp',
+                'repo' => 'Particle-Academy/prism-mcp-py',
+                'language' => 'Python',
+            ],
+            [
+                'slug' => 'prism-opentelemetry-py',
+                'name' => 'prism-ai-opentelemetry',
+                'tagline' => 'Python port of prism-opentelemetry -- OpenTelemetry bridge -- Prism telemetry as GenAI-convention spans.',
+                'pypi' => 'prism-ai-opentelemetry',
+                'repo' => 'Particle-Academy/prism-opentelemetry-py',
+                'language' => 'Python',
+            ],
+            [
+                'slug' => 'prism-perplexity-py',
+                'name' => 'prism-ai-perplexity',
+                'tagline' => 'Python port of prism-perplexity -- The rest of the Perplexity API -- search, embeddings and the Agent API.',
+                'pypi' => 'prism-ai-perplexity',
+                'repo' => 'Particle-Academy/prism-perplexity-py',
+                'language' => 'Python',
+            ],
+            [
+                'slug' => 'prism-workspace-py',
+                'name' => 'prism-ai-workspace',
+                'tagline' => 'Python port of prism-workspace -- Sandboxed, session-scoped agent workspaces behind a path guard.',
+                'pypi' => 'prism-ai-workspace',
+                'repo' => 'Particle-Academy/prism-workspace-py',
                 'language' => 'Python',
             ],
             [
@@ -1380,6 +1445,47 @@ Both registry names read as unclaimed on 2026-10-08 -- `@particle-academy/fancy-
                 'composer' => 'particle-academy/prism-browser',
                 'repo' => 'Particle-Academy/prism-browser',
                 'packagist' => 'particle-academy/prism-browser',
+                'language' => 'PHP',
+            ],
+            // The PHP half of prism-acp-ts, which had been registered alone.
+            [
+                'slug' => 'prism-acp',
+                'name' => 'particle-academy/prism-acp',
+                'tagline' => 'Agent Client Protocol for Prism in PHP -- drive the Claude and Codex CLIs the user has already authenticated, on a subscription or an app API key, with no third-party runtime dependencies. Pre-release (alpha).',
+                'composer' => 'particle-academy/prism-acp',
+                'repo' => 'Particle-Academy/prism-acp',
+                'packagist' => 'particle-academy/prism-acp',
+                'language' => 'PHP',
+            ],
+            // Three packages registered as PLANNED -- "NOT YET STARTED" -- that
+            // had in fact shipped. Found by the 2026-10-27 catalog audit, which
+            // is the drift `kit:catalog-drift` now fails on every night.
+            [
+                'slug' => 'fancy-expr',
+                'name' => '@particle-academy/fancy-expr',
+                'tagline' => 'A sandboxed expression evaluator: one grammar, three runtimes, asserted against a shared conformance table. Paths, literals, logic, comparisons, ternaries and object/array literals -- no eval, no host reach, no calls. A malformed expression throws; an absent path is null, and keeping those apart is the point.',
+                'npm' => '@particle-academy/fancy-expr',
+                'composer' => 'particle-academy/fancy-expr',
+                'repo' => 'Particle-Academy/fancy-expr',
+                'language' => 'Polyglot',
+            ],
+            [
+                'slug' => 'fancy-template',
+                'name' => '@particle-academy/fancy-template',
+                'tagline' => 'Document templates for the Fancy document writers: a writer document with {{ tokens }} and JSON directives, plus a declaration of the data it needs. inspect() at save time, validateData() before render, render() to plain writer JSON. No code execution, no includes, bounded everywhere.',
+                'npm' => '@particle-academy/fancy-template',
+                'composer' => 'particle-academy/fancy-template',
+                'pypi' => 'fancy-template',
+                'repo' => 'Particle-Academy/fancy-template',
+                'language' => 'Polyglot',
+            ],
+            [
+                'slug' => 'change-council',
+                'name' => 'particle-academy/change-council',
+                'tagline' => 'A consumer-agent voting ledger for major package changes: a zero-dependency change detector for CI and pre-push, and a Laravel ledger with two voting rounds, per-consumer silence policy, a hash-chained audit log and signed decision records.',
+                'composer' => 'particle-academy/change-council',
+                'repo' => 'Particle-Academy/change-council',
+                'packagist' => 'particle-academy/change-council',
                 'language' => 'PHP',
             ],
         ]);

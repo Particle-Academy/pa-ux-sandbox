@@ -42,14 +42,31 @@ class PackageContext
             'how' => '<code>npm install @particle-academy/prism</code>. Same shapes in and out as the PHP twin; the reasoning behind the capability is on <a href="/packages/prism">that page</a>.',
         ],
 
-        // Not a port: prism-acp has no PHP twin, so the port template above
-        // does not fit. Written from the repo's own README
-        // (Particle-Academy/prism-acp-ts), which this registry cannot compile
-        // because the repo is not a submodule of this envelope.
+        // Not written from the port template: prism-acp-ts shipped FIRST, and
+        // the PHP package (particle-academy/prism-acp) followed it. Written from
+        // the repo's own README (Particle-Academy/prism-acp-ts), which this
+        // registry cannot compile because the repo is not a submodule of this
+        // envelope.
         'prism-acp-ts' => [
             'why' => 'A provider API client needs an API key and bills per token. A user who pays for a subscription already has working credentials -- in the coding-agent CLI&apos;s own store, not in any protocol -- and the way to use them is to run the CLI they belong to. So this package spawns the agent binary and translates, rather than reimplementing the agent against an HTTP API the user has no key for. In subscription mode (the default) it never reads a credential, never holds one, and never puts one on a wire.',
             'what' => 'Speaks the <a href="https://agentclientprotocol.com" target="_blank" rel="noopener noreferrer">Agent Client Protocol</a> to a coding-agent CLI the user has already authenticated: Claude through <code>stream-json</code>, Codex through <code>codex app-server</code>. A client -- an editor, a terminal UI, an orchestrator -- gets structured state instead of guessing it from bytes on a pseudo-terminal: session state, streaming assistant output with thought content separable, tool calls with status, token usage and cost. <strong>Zero runtime dependencies.</strong> The spawned CLI&apos;s environment is built allow-list-first and withholds credentials such as <code>ANTHROPIC_API_KEY</code> that would otherwise outrank the CLI&apos;s own login. <strong>Early:</strong> <code>initialize</code>, <code>session/new</code>, <code>session/load</code>, <code>session/prompt</code> and <code>session/cancel</code> work over a pipe; <code>session/set_mode</code> and the client-side <code>fs/*</code> and <code>terminal/*</code> calls do not yet, and the surface will change.',
             'how' => '<code>npm install @particle-academy/prism-acp</code>. It drives the agent CLI already on the machine, so the user&apos;s existing subscription login is the authentication -- no API key to supply and no adapter program to install. An app that bills per token instead can hand the drivers an API key. Full protocol coverage, driver capabilities and the session-resume rules are in the <a href="https://github.com/Particle-Academy/prism-acp-ts" target="_blank" rel="noopener noreferrer">README</a>.',
+        ],
+
+        // The PHP half of the ACP pair, registered 2026-10-27 after the catalog
+        // audit found it on Packagist. Described from its Packagist entry and
+        // the TS twin; the repo is not a submodule of this envelope.
+        'prism-acp' => [
+            'why' => 'The same reason as <a href="/packages/prism-acp-ts">its TypeScript twin</a>: a user who pays for a Claude or Codex subscription already has working credentials, in the CLI&apos;s own store, and the way to use them is to run the CLI they belong to. A Laravel app should not need a Node sidecar to do that.',
+            'what' => 'The <a href="https://agentclientprotocol.com" target="_blank" rel="noopener noreferrer">Agent Client Protocol</a> for the Claude and Codex CLIs, from PHP -- on the user&apos;s subscription or on an app API key -- with no third-party runtime dependencies. <strong>Pre-release:</strong> published as an alpha, with a Windows preview, so expect the surface to move.',
+            'how' => '<code>composer require particle-academy/prism-acp</code> (an alpha, so your project needs a matching <code>minimum-stability</code> or an explicit <code>@alpha</code> constraint). The protocol coverage and driver rules are in the <a href="https://github.com/Particle-Academy/prism-acp" target="_blank" rel="noopener noreferrer">README</a>.',
+        ],
+
+        // A TS-only satellite: no PHP or Python twin exists yet.
+        'prism-mcp-server-ts' => [
+            'why' => '<a href="/packages/prism-mcp">prism-mcp</a> lets a Prism agent CONSUME remote MCP tools. The other direction -- offering Prism tools to an MCP client -- should not mean writing a server per transport, so the serving logic is kept separate from whichever transport the host already runs.',
+            'what' => 'Transport-independent MCP tool serving for the Prism ecosystem: Prism tools exposed to any MCP client, over the transport the host chooses.',
+            'how' => '<code>npm install @particle-academy/prism-mcp-server</code>. Details in the <a href="https://github.com/Particle-Academy/prism-mcp-server-ts" target="_blank" rel="noopener noreferrer">README</a>.',
         ],
 
         'prism-py' => [
@@ -100,10 +117,22 @@ class PackageContext
             'how' => '<code>npm install @particle-academy/prism-mcp</code>. Same shapes in and out as the PHP twin; the reasoning behind the capability is on <a href="/packages/prism-mcp">that page</a>.',
         ],
 
+        'prism-mcp-py' => [
+            'why' => 'The contract is the same in every runtime; only the host differs. A team on Node or Python should not have to reimplement the Model Context Protocol client: remote MCP tools consumed as ordinary tools, across a visible trust boundary, or route through a PHP service to reach it, because the capability happens to have been written in Laravel first. This is that port -- the same behaviour, held to the same shared fixtures rather than to a README that claims parity.',
+            'what' => 'Python port of <a href="/packages/prism-mcp">prism-mcp</a> -- the Model Context Protocol client: remote MCP tools consumed as ordinary tools, across a visible trust boundary.',
+            'how' => '<code>pip install prism-ai-mcp</code> (or <code>uv add prism-ai-mcp</code>). Published as <code>prism-ai-mcp</code>, not as the repo name -- the PyPI namespace is global, so the Prism ports carry a <code>prism-ai-</code> prefix.',
+        ],
+
         'prism-workspace-ts' => [
             'why' => 'The contract is the same in every runtime; only the host differs. A team on Node or Python should not have to reimplement sandboxed, session-scoped agent workspaces -- a scoped disk behind a path guard, or route through a PHP service to reach it, because the capability happens to have been written in Laravel first. This is that port -- the same behaviour, held to the same shared fixtures rather than to a README that claims parity.',
             'what' => 'Node / TypeScript port of <a href="/packages/prism-workspace">prism-workspace</a> -- sandboxed, session-scoped agent workspaces -- a scoped disk behind a path guard.',
             'how' => '<code>npm install @particle-academy/prism-workspace</code>. Same shapes in and out as the PHP twin; the reasoning behind the capability is on <a href="/packages/prism-workspace">that page</a>.',
+        ],
+
+        'prism-workspace-py' => [
+            'why' => 'The contract is the same in every runtime; only the host differs. A team on Node or Python should not have to reimplement sandboxed, session-scoped agent workspaces -- a scoped disk behind a path guard, or route through a PHP service to reach it, because the capability happens to have been written in Laravel first. This is that port -- the same behaviour, held to the same shared fixtures rather than to a README that claims parity.',
+            'what' => 'Python port of <a href="/packages/prism-workspace">prism-workspace</a> -- sandboxed, session-scoped agent workspaces -- a scoped disk behind a path guard.',
+            'how' => '<code>pip install prism-ai-workspace</code> (or <code>uv add prism-ai-workspace</code>). Published as <code>prism-ai-workspace</code>, not as the repo name -- the PyPI namespace is global, so the Prism ports carry a <code>prism-ai-</code> prefix.',
         ],
 
         'prism-human-plus-ts' => [
@@ -112,16 +141,34 @@ class PackageContext
             'how' => '<code>npm install @particle-academy/prism-human-plus</code>. Same shapes in and out as the PHP twin; the reasoning behind the capability is on <a href="/packages/prism-human-plus">that page</a>.',
         ],
 
+        'prism-human-plus-py' => [
+            'why' => 'The contract is the same in every runtime; only the host differs. A team on Node or Python should not have to reimplement Human+ participant presence: an agent session joins live Fancy surfaces as a participant rather than scraping them, or route through a PHP service to reach it, because the capability happens to have been written in Laravel first. This is that port -- the same behaviour, held to the same shared fixtures rather than to a README that claims parity.',
+            'what' => 'Python port of <a href="/packages/prism-human-plus">prism-human-plus</a> -- Human+ participant presence: an agent session joins live Fancy surfaces as a participant rather than scraping them.',
+            'how' => '<code>pip install prism-ai-human-plus</code> (or <code>uv add prism-ai-human-plus</code>). Published as <code>prism-ai-human-plus</code>, not as the repo name -- the PyPI namespace is global, so the Prism ports carry a <code>prism-ai-</code> prefix.',
+        ],
+
         'prism-opentelemetry-ts' => [
             'why' => 'The contract is the same in every runtime; only the host differs. A team on Node or Python should not have to reimplement the OpenTelemetry bridge -- telemetry events as GenAI-convention spans, or route through a PHP service to reach it, because the capability happens to have been written in Laravel first. This is that port -- the same behaviour, held to the same shared fixtures rather than to a README that claims parity.',
             'what' => 'Node / TypeScript port of <a href="/packages/prism-opentelemetry">prism-opentelemetry</a> -- the OpenTelemetry bridge -- telemetry events as GenAI-convention spans.',
             'how' => '<code>npm install @particle-academy/prism-opentelemetry</code>. Same shapes in and out as the PHP twin; the reasoning behind the capability is on <a href="/packages/prism-opentelemetry">that page</a>.',
         ],
 
+        'prism-opentelemetry-py' => [
+            'why' => 'The contract is the same in every runtime; only the host differs. A team on Node or Python should not have to reimplement the OpenTelemetry bridge -- telemetry events as GenAI-convention spans, or route through a PHP service to reach it, because the capability happens to have been written in Laravel first. This is that port -- the same behaviour, held to the same shared fixtures rather than to a README that claims parity.',
+            'what' => 'Python port of <a href="/packages/prism-opentelemetry">prism-opentelemetry</a> -- the OpenTelemetry bridge -- telemetry events as GenAI-convention spans.',
+            'how' => '<code>pip install prism-ai-opentelemetry</code> (or <code>uv add prism-ai-opentelemetry</code>). Published as <code>prism-ai-opentelemetry</code>, not as the repo name -- the PyPI namespace is global, so the Prism ports carry a <code>prism-ai-</code> prefix.',
+        ],
+
         'prism-perplexity-ts' => [
             'why' => 'The contract is the same in every runtime; only the host differs. A team on Node or Python should not have to reimplement the rest of the Perplexity API -- embeddings, direct search and async deep research, or route through a PHP service to reach it, because the capability happens to have been written in Laravel first. This is that port -- the same behaviour, held to the same shared fixtures rather than to a README that claims parity.',
             'what' => 'Node / TypeScript port of <a href="/packages/prism-perplexity">prism-perplexity</a> -- the rest of the Perplexity API -- embeddings, direct search and async deep research.',
             'how' => '<code>npm install @particle-academy/prism-perplexity</code>. Same shapes in and out as the PHP twin; the reasoning behind the capability is on <a href="/packages/prism-perplexity">that page</a>.',
+        ],
+
+        'prism-perplexity-py' => [
+            'why' => 'The contract is the same in every runtime; only the host differs. A team on Node or Python should not have to reimplement the rest of the Perplexity API -- embeddings, direct search and async deep research, or route through a PHP service to reach it, because the capability happens to have been written in Laravel first. This is that port -- the same behaviour, held to the same shared fixtures rather than to a README that claims parity.',
+            'what' => 'Python port of <a href="/packages/prism-perplexity">prism-perplexity</a> -- the rest of the Perplexity API -- embeddings, direct search and async deep research.',
+            'how' => '<code>pip install prism-ai-perplexity</code> (or <code>uv add prism-ai-perplexity</code>). Published as <code>prism-ai-perplexity</code>, not as the repo name -- the PyPI namespace is global, so the Prism ports carry a <code>prism-ai-</code> prefix.',
         ],
 
         'prism-harness' => [

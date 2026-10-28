@@ -54,6 +54,9 @@ final class PrismFamilyIsCompleteTest extends TestCase
         'prism-workspace',
         'prism-memory',
         'prism-browser',
+        // Published v0.1.0-alpha.5 and absent from here until the 2026-10-27
+        // catalog audit -- the tenth, and this test did still pass.
+        'prism-acp',
     ];
 
     public function test_every_published_prism_package_is_registered(): void

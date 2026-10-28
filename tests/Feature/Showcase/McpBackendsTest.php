@@ -65,15 +65,17 @@ it('carries Python through the shared mirror table', function () {
     // there shows up in both or in neither.
     $withPython = collect(PackageFamily::mcpPairs())->filter(fn (array $p) => ($p['python'] ?? null) !== null);
 
-    // Ten, not six: the four published Prism Python ports joined on 2026-09-21
-    // (prism-ai-core / -browser / -harness / -memory). The other five Prism
-    // capabilities declare a name in pyproject.toml and 404 on PyPI, so they
-    // are deliberately absent rather than counted.
+    // Fifteen: the four published Prism Python ports joined on 2026-09-21
+    // (prism-ai-core / -browser / -harness / -memory), and the other five
+    // (-human-plus / -mcp / -opentelemetry / -perplexity / -workspace) on
+    // 2026-10-27. Those five had shipped weeks earlier while this comment still
+    // said they 404'd; the catalog audit found them, and `kit:catalog-drift`
+    // now asks PyPI nightly instead.
     //
     // A bare number rots, and that is the point here -- adding a mirror has to
     // be a deliberate edit in two places rather than a count that silently
     // drifts. Derive it from mcpPairs() and this asserts nothing.
-    expect($withPython)->toHaveCount(10);
+    expect($withPython)->toHaveCount(15);
 });
 
 it('names the framework-coupled gap instead of implying full parity', function () {

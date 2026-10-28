@@ -37,6 +37,10 @@ const PRISM_MEMBERS = [
     'prism-opentelemetry-ts', 'prism-perplexity-ts', 'prism-workspace-ts',
     'prism-memory-ts', 'prism-browser-ts',
     'prism-py', 'prism-harness-py', 'prism-memory-py', 'prism-browser-py',
+    // Registered 2026-10-27 after the catalog audit found them published.
+    'prism-acp', 'prism-acp-ts', 'prism-mcp-server-ts',
+    'prism-human-plus-py', 'prism-mcp-py', 'prism-opentelemetry-py',
+    'prism-perplexity-py', 'prism-workspace-py',
 ];
 
 function prismBackendSearch(string $query): array

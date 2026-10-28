@@ -121,11 +121,13 @@ jobs:
       # Both installs: the check reads what is ACTUALLY installed, not what the
       # constraints intended — they disagree exactly when this matters.
       - name: Install dependencies
+        id: install
         run: |
           composer install --prefer-dist --no-interaction --no-progress
           npm ci --no-audit --no-fund
 
       - name: Prepare environment
+        id: prepare
         run: |
           cp .env.example .env
           php artisan key:generate
@@ -199,3 +201,23 @@ jobs:
         run: |
           node .fancy-connector-core/scripts/vendor.mjs --target resources/flow-nodes/_connector --check
           node -e "require('node:fs').rmSync('.fancy-connector-core',{recursive:true,force:true})"
+
+      # Is everything we publish in the catalogue, and is everything in the
+      # catalogue published?
+      #
+      # The 2026-10-27 catalog audit found ten live packages registered nowhere
+      # -- invisible to /packages, the MCP and kit:status -- three of them still
+      # described in PLANNED as unstarted, and a planned PyPI name owned by a
+      # stranger. kit:status could not see any of it: it asks the registries
+      # about what PackageRegistry lists, never what EXISTS. This asks npm (the
+      # maintainer search, which found all 130 where scope search missed one),
+      # Packagist's vendor listing, PyPI and prism-parity's manifest. A failed
+      # lookup FAILS rather than counting as fine.
+      #
+      # Last, and run whatever the steps above decided: it is independent of
+      # them, so a behind package must not hide drift, and drift must not stop
+      # the checks above from running. Gated on the environment being ready, so
+      # a broken install reports once rather than twice.
+      - name: Catalogue matches the registries
+        if: ${{ !cancelled() && steps.install.outcome == 'success' && steps.prepare.outcome == 'success' }}
+        run: php artisan kit:catalog-drift

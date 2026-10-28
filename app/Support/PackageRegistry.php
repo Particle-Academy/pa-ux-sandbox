@@ -247,6 +247,16 @@ The one thing worth recording now is the SHAPE OF THE DECISION still to be made,
 
 Both registry names read as unclaimed on 2026-10-08 -- `@particle-academy/fancy-support` on npm and `particle-academy/fancy-support` on Packagist both 404. RE-CHECK AT SPEC TIME: a 404 today says nothing about the day you tag, and the first publish of a name that does not exist yet is an OWNER action either way (npm cannot claim a name by OIDC).',
         ],
+        'agent-guard' => [
+            'name' => 'agent-guard',
+            'repo' => 'Particle-Academy/agent-guard',
+            'registries' => ['packagist' => 'particle-academy/agent-guard'],
+            'why' => 'A STANDALONE PROMPT-INJECTION DEFENCE for any harness agent that reads text it did not author: Triage (fancy-support), Charlotte, and MOIC`s own admin chat. Decided by the owner 2026-10-27 (fancy-support plan, D23), because MOIC asked for the defence without having to install the support agent.
+
+Four parts: untrusted content is fenced as data, never instructions; a redaction guard runs on every customer-written string (fine-print`s AgentReadGuard); each agent mode gets a declarative tool list (a reply mode cannot read internal notes); and output is checked before a human sees a draft.
+
+PHP first, depending only on fine-print`s guard. TS/Python twins follow the guard`s own conformance data and are not registered yet. `particle-academy/agent-guard` on Packagist and `@particle-academy/agent-guard` on npm both 404 on 2026-10-27.',
+        ],
     ];
 
     /**

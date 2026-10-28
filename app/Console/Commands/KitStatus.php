@@ -155,7 +155,11 @@ final class KitStatus extends Command
         if ($name = $pkg['npm'] ?? null) {
             return [$name, $this->fromNpm($name)];
         }
-        if ($name = $pkg['composer'] ?? null) {
+        // `packagist` alone is a real Packagist name: an app template (the
+        // Laravel starter kit) carries it without `composer`, because every
+        // install surface turns `composer` into `composer require`. Reading only
+        // `composer` reported that live package UNPUBLISHED.
+        if ($name = $pkg['composer'] ?? $pkg['packagist'] ?? null) {
             return [$name, $this->fromPackagist($name)];
         }
         if ($name = $pkg['pypi'] ?? null) {

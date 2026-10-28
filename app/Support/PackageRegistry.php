@@ -315,6 +315,11 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
         'fancy-app-update' => ['group' => 'core', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#f59e0b'],
         'fancy-whats-new' => ['group' => 'platform', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#f59e0b'],
         'fancy-seo' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#0ea5e9'],
+        // An APP TEMPLATE, not a library: Fancy Core already wired into a fresh
+        // Laravel app. "Start here" is literally what it is for, so it lists
+        // under core. `headless` because it has no component previews to tile;
+        // `php` because Packagist distributes it, via `laravel new --using=`.
+        'fancy-starter-kit' => ['group' => 'core', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#f43f5e'],
 
         // ── The Human+ surfaces ──────────────────────────────────────────────
         // agent-integrations lists under Human+ (it carries the "Core of Human+"
@@ -1496,6 +1501,23 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
                 'composer' => 'particle-academy/change-council',
                 'repo' => 'Particle-Academy/change-council',
                 'packagist' => 'particle-academy/change-council',
+                'language' => 'PHP',
+            ],
+            // On Packagist since v1.0.0 and registered nowhere until
+            // `kit:catalog-drift` named it (2026-10-27). It is an app template,
+            // so it carries `packagist` and deliberately NOT `composer`: every
+            // install surface turns a `composer` field into `composer require`,
+            // which would install a whole Laravel skeleton into someone's app.
+            // `download` is the real command, and surfaces use it verbatim.
+            // `docs` points at the existing guide rather than restating it.
+            [
+                'slug' => 'fancy-starter-kit',
+                'name' => 'particle-academy/fancy-starter-kit',
+                'tagline' => 'The Laravel starter kit: a new Laravel 13 + Inertia + React 19 + Tailwind v4 app with Fancy Core (react-fancy, fancy-inertia, fancy-query) already wired and Fortify auth pages built from Fancy UI. One `laravel new --using=` command; the result is your app, not a dependency.',
+                'packagist' => 'particle-academy/fancy-starter-kit',
+                'download' => 'laravel new my-app --using=particle-academy/fancy-starter-kit',
+                'docs' => '/docs/starter-kit',
+                'repo' => 'Particle-Academy/fancy-starter-kit',
                 'language' => 'PHP',
             ],
         ]);

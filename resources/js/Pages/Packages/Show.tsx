@@ -46,8 +46,12 @@ type Pkg = {
     language: string;
     npm?: string | null;
     composer?: string | null;
+    /** A Packagist name with no `composer require` meaning (an app template). */
+    packagist?: string | null;
     pypi?: string | null;
     download?: string | null;
+    /** An in-house guide for this package, e.g. `/docs/starter-kit`. */
+    docs?: string | null;
     /** Vendorable-block install command, e.g. `npx fancy-cli@latest add catalog-fms`. */
     cli?: string | null;
     repo?: string;
@@ -289,7 +293,9 @@ function InstallCard({ pkg, eco }: { pkg: Pkg; eco: Eco }) {
         tabs.push({ id: "pip", cmd: `pip install ${pkg.pypi}` });
         tabs.push({ id: "uv", cmd: `uv add ${pkg.pypi}` });
     }
-    if (pkg.download) tabs.push({ id: "curl", cmd: pkg.download });
+    // Labelled by the command it runs: `curl` for mcp-relay-client, `laravel`
+    // for the starter kit. A fixed "curl" label misnamed every other command.
+    if (pkg.download) tabs.push({ id: pkg.download.split(" ")[0] || "install", cmd: pkg.download });
     if (eco === "polyglot" && pkg.npm && !pkg.download) {
         tabs.push({ id: "npx", cmd: `npx ${pkg.npm}` });
     }
@@ -336,10 +342,12 @@ function InstallCard({ pkg, eco }: { pkg: Pkg; eco: Eco }) {
 function MetaLinks({ pkg }: { pkg: Pkg }) {
     const links: Array<{ label: string; href: string; icon: string; external: boolean }> = [];
     if (pkg.showcase) links.push({ label: "Live sandbox", href: pkg.showcase, icon: "play", external: false });
+    if (pkg.docs) links.push({ label: "Guide", href: pkg.docs, icon: "book-open", external: false });
     if (pkg.repo) links.push({ label: "README", href: `https://github.com/${pkg.repo}#readme`, icon: "book-open", external: true });
     if (pkg.repo) links.push({ label: "GitHub", href: `https://github.com/${pkg.repo}`, icon: "github-logo", external: true });
     if (pkg.npm) links.push({ label: "npm", href: `https://www.npmjs.com/package/${pkg.npm}`, icon: "package", external: true });
-    if (pkg.composer) links.push({ label: "Packagist", href: `https://packagist.org/packages/${pkg.composer}`, icon: "package", external: true });
+    const packagist = pkg.composer ?? pkg.packagist;
+    if (packagist) links.push({ label: "Packagist", href: `https://packagist.org/packages/${packagist}`, icon: "package", external: true });
     if (pkg.pypi) links.push({ label: "PyPI", href: `https://pypi.org/project/${pkg.pypi}`, icon: "package", external: true });
     if (pkg.repo) links.push({ label: "Issues", href: `https://github.com/${pkg.repo}/issues`, icon: "circle-dot", external: true });
     if (pkg.cli) links.push({ label: "Registry JSON", href: `/r/${pkg.slug}.json`, icon: "braces", external: true });

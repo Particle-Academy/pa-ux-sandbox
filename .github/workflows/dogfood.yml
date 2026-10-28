@@ -135,6 +135,17 @@ jobs:
       - name: Check
         run: php artisan kit:dogfood
 
+      # The same question about the Laravel STARTER KIT, read from its committed
+      # lockfiles on GitHub main. A fresh `laravel new --using=` installs from
+      # those, so a stale kit hands every new user an old release -- and nothing
+      # checked it: on 2026-10-27 the kit was six react-fancy releases behind a
+      # rule that already said "same session". `if: always()` because the two
+      # are independent; the showcase being behind must not hide the kit being
+      # behind. A failed lookup FAILS the step, never counts as current.
+      - name: Starter kit lockfiles are current
+        if: ${{ always() && steps.prepare.outcome == 'success' }}
+        run: php artisan kit:dogfood-starter-kit
+
       # Does the LIVE endpoint serve every tool this server declares?
       #
       # `search-backend-packages` was committed 2026-08-22, merged, deployed,

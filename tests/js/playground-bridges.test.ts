@@ -80,6 +80,40 @@ describe("registerPlaygroundBridges", () => {
         expect(own.listTools().some((t) => t.name.startsWith("screens_"))).toBe(true);
     });
 
+    it("re-registers on the SAME server after a remount (agent-integrations 0.51)", () => {
+        // 0.51 refuses a tool name held by a different registrant. A page
+        // remount disposes and re-registers on the one server, and the undo
+        // tools are deliberately NOT withdrawn on dispose, so the second
+        // registerUndoTools meets names that are still held. That must be the
+        // same owner, not a collision, or navigating back to the playground
+        // throws.
+        const store = createPlaygroundStore();
+        const server = makeServer();
+
+        const dispose = registerPlaygroundBridges(server, store, PLAYGROUND_AGENT);
+        const before = server.listTools().map((t) => t.name).sort();
+        dispose();
+
+        expect(() => registerPlaygroundBridges(server, store, PLAYGROUND_AGENT)).not.toThrow();
+        expect(server.listTools().map((t) => t.name).sort()).toEqual(before);
+    });
+
+    it("is refused by a different registrant, so the remount test above can fail", () => {
+        // Proves the instrument: under 0.51 a foreign owner taking a playground
+        // tool name throws. Without this, "does not throw" above could be
+        // passing against a server that never refuses anything.
+        const server = makeServer();
+        registerPlaygroundBridges(server, createPlaygroundStore(), PLAYGROUND_AGENT);
+
+        expect(() =>
+            server.registerTool(
+                { name: "screens_list_kinds", description: "impostor", inputSchema: { type: "object" } },
+                async () => ({ content: [] }),
+                { owner: "someone-else" },
+            ),
+        ).toThrow();
+    });
+
     it("drives the shared store from either server", () => {
         const store = createPlaygroundStore();
         const own = makeServer();

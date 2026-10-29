@@ -70,7 +70,7 @@ registerWhiteboardBridge(server, {
         { name: "info", type: `ServerInfo`, default: "—", description: "Server identity — `{ name, version }`. Surfaces in the agent's `initialize` response." },
         { name: "capabilities", type: `ServerCapabilities`, default: `{ tools: { listChanged: true } }`, description: "MCP capability flags." },
         { name: "instructions", type: `string`, default: "—", description: "Free-text instructions surfaced to clients during `initialize`. A great place to tell the agent what your app is and which tools to use first." },
-        { name: ".registerTool()", type: `(tool, handler) => void`, default: "—", description: "Register a tool. Inherited from `ToolRegistry`." },
+        { name: ".registerTool()", type: `(tool, handler, options?: { owner?: string; replace?: boolean }) => void`, default: "—", description: "Register a tool. Inherited from `ToolRegistry`. Since 0.51 a name already held by a different registrant throws instead of being silently replaced; pass `{ owner }` so your own re-registrations are recognised, or `{ replace: true }` to overwrite on purpose." },
         { name: ".attach()", type: `(transport) => () => void`, default: "—", description: "Attach a transport. Returns a dispose function." },
         { name: ".detach()", type: `(transport) => void`, default: "—", description: "Detach a specific transport." },
     ],

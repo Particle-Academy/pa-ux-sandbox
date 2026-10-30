@@ -1,7 +1,7 @@
 {
     "window_days": 60,
     "latest": {
-        "agent-integrations": "0.52.0",
+        "agent-integrations": "0.53.0",
         "change-council": "0.2.2",
         "charlotte": "0.3.0",
         "classroom": "0.7.0",
@@ -126,11 +126,25 @@
         "prism-workspace": "0.3.0",
         "prism-workspace-py": "0.1.0",
         "prism-workspace-ts": "0.2.0",
-        "react-fancy": "5.71.1",
+        "react-fancy": "5.71.2",
         "teachers-aid": "0.3.0",
         "teachers-aid-ui": "0.3.0"
     },
     "releases": [
+        {
+            "slug": "react-fancy",
+            "registry": "npm",
+            "version": "5.71.2",
+            "published_at": "2026-10-30T23:17:33Z",
+            "first": false
+        },
+        {
+            "slug": "agent-integrations",
+            "registry": "npm",
+            "version": "0.53.0",
+            "published_at": "2026-10-30T22:48:57Z",
+            "first": false
+        },
         {
             "slug": "agent-integrations",
             "registry": "npm",

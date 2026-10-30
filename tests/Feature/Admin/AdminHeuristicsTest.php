@@ -2,6 +2,7 @@
 
 use App\Models\User;
 use Database\Seeders\FunLabSeeder;
+use FancyHeuristics\Contracts\HostResolver;
 use FancyHeuristics\Models\HeuristicsEvent;
 use FancyHeuristics\Models\HeuristicsSite;
 use Illuminate\Support\Facades\Http;
@@ -108,6 +109,20 @@ it('runs the verify action and reports the result', function () {
     Http::fake([
         '*' => Http::response('<html><body data-fancy-badge>Powered by Fancy UI</body></html>', 200),
     ]);
+
+    // fancy-heuristics 0.5.0 resolves the host BEFORE fetching and refuses any
+    // non-public address (SSRF fix). `demo-site.test` resolves nowhere, so the
+    // fake above was never reached. Resolve it to a public address, the seam
+    // the package's changelog names for this; 93.184.216.34 is the address the
+    // package's own SSRF suite treats as public.
+    app()->instance(HostResolver::class, new class implements HostResolver
+    {
+        /** @return list<string> */
+        public function resolve(string $host): array
+        {
+            return $host === 'demo-site.test' ? ['93.184.216.34'] : [];
+        }
+    });
 
     $this->actingAs($admin)
         ->post("/admin/heuristics/{$site->site_key}/verify")

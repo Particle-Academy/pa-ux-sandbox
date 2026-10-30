@@ -86,3 +86,33 @@ it('advertises the complete authoring schema through PHP discovery', function ()
         ->and(collect($attribute->configSchema)->keyBy('key')->get('maxSources')['default'])->toBe(8)
         ->and(collect($attribute->configSchema)->keyBy('key')->get('includeContext')['default'])->toBeTrue();
 });
+
+it('never forwards a legacy `metadata` config field to the host, and runs without error', function () {
+    // Perplexity's Agent API dropped `metadata`, and prism 0.141.0 rejects it
+    // before the call (Particle-Academy/prism#103). A saved graph that still
+    // carries the field must run, and must not leak it into the request.
+    $requests = [];
+    $host = new class($requests) implements DeepResearchHost
+    {
+        public function __construct(private array &$requests) {}
+
+        public function research(array $request): array
+        {
+            $this->requests[] = $request;
+
+            return ['answer' => 'ok', 'citations' => []];
+        }
+    };
+
+    $result = (new DeepResearchExecutor($host))->execute(deepResearchContext([
+        'query' => 'Legacy graph',
+        'metadata' => ['source' => 'saved-graph'],
+    ]));
+
+    expect($result['answer'])->toBe('ok')
+        ->and($requests)->toHaveCount(1)
+        ->and($requests[0])->not->toHaveKey('metadata')
+        ->and(array_keys($requests[0]))->toBe([
+            'query', 'instructions', 'context', 'depth', 'maxSources', 'provider', 'model', 'credential',
+        ]);
+});

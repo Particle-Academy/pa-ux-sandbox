@@ -97,6 +97,41 @@ it('fails rather than writing a partial artifact when a registry does not answer
     expect(is_file($out))->toBeFalse();
 });
 
+/*
+ * prism-acp is registered and on Packagist with ONLY pre-releases
+ * (v0.1.0-alpha.1..5). That is an answer, not a failed lookup: there is no
+ * stable release to announce, exactly like the 404 branch. Treating it as a
+ * failure stopped notices:build writing anything at all for the whole kit.
+ */
+it('skips a package that has only pre-releases, like an unpublished one', function () {
+    Http::preventStrayRequests();
+    Http::fake(['repo.packagist.org/*' => Http::response(['packages' => ['particle-academy/prism-acp' => [
+        ['version' => 'v0.1.0-alpha.2', 'time' => '2026-10-20T10:00:00+00:00'],
+        ['version' => 'v0.1.0-alpha.1', 'time' => '2026-10-10T10:00:00+00:00'],
+    ]]])]);
+
+    $out = storage_path('framework/testing/releases-'.uniqid().'.json');
+
+    $this->artisan('notices:build', ['--output' => $out, '--only' => 'prism-acp'])->assertSuccessful();
+
+    $artifact = json_decode((string) file_get_contents($out), true);
+    @unlink($out);
+
+    expect($artifact['latest'])->not->toHaveKey('prism-acp')
+        ->and($artifact['releases'])->toBe([]);
+});
+
+it('still fails when a registry answers with no versions at all', function () {
+    Http::preventStrayRequests();
+    Http::fake(['repo.packagist.org/*' => Http::response(['packages' => ['particle-academy/prism-acp' => []]])]);
+
+    $out = storage_path('framework/testing/releases-'.uniqid().'.json');
+
+    $this->artisan('notices:build', ['--output' => $out, '--only' => 'prism-acp'])->assertFailed();
+
+    expect(is_file($out))->toBeFalse();
+});
+
 it('ships a curated notice file the feed can read', function () {
     $notices = json_decode(File::get(resource_path('notices/features.json')), true, 512, JSON_THROW_ON_ERROR);
 

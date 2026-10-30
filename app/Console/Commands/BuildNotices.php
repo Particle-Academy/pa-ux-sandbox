@@ -97,7 +97,13 @@ final class BuildNotices extends Command
                 continue;
             }
 
-            [$newest, $times] = $this->versions($registry, $name, $response->json());
+            [$newest, $times, $listed] = $this->versions($registry, $name, $response->json());
+            if ($newest === null && $listed > 0) {
+                // Versions exist but none is a release (prism-acp: alphas only).
+                // That is an answer, not a failed lookup: like the 404 above,
+                // there is nothing stable to announce yet.
+                continue;
+            }
             if ($newest === null) {
                 $failed[] = "{$slug}: {$registry} gave no latest version";
 
@@ -170,7 +176,7 @@ final class BuildNotices extends Command
      * The latest version, and every version's publish time.
      *
      * @param  array<string, mixed>  $body
-     * @return array{0: ?string, 1: array<string, CarbonImmutable>}
+     * @return array{0: ?string, 1: array<string, CarbonImmutable>, 2: int} 2 = versions listed, stable or not
      */
     private function versions(string $registry, string $name, array $body): array
     {
@@ -209,7 +215,7 @@ final class BuildNotices extends Command
             }
         }
 
-        return [is_string($latest) ? ltrim($latest, 'v') : null, $times];
+        return [is_string($latest) ? ltrim($latest, 'v') : null, $times, count($raw)];
     }
 
     /**

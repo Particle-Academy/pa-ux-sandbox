@@ -1,5 +1,6 @@
 <?php
 
+use App\Support\PackageContext;
 use App\Support\PackageRegistry;
 use Tests\TestCase;
 
@@ -34,6 +35,16 @@ it('does not offer the npm or PyPI legs, which are not published yet', function 
     expect(PackageRegistry::findAny('fancy-formula'))
         ->not->toHaveKey('npm')
         ->not->toHaveKey('pypi');
+});
+
+it('gives fancy-formula curated page context that says only PHP is installable', function () {
+    $context = PackageContext::find('fancy-formula');
+
+    expect($context)->not->toBeNull()
+        ->and($context['how'])->toContain('composer require particle-academy/fancy-formula')
+        // The npm and PyPI names do not exist yet; the page must not offer them.
+        ->and($context['how'])->not->toContain('npm install')
+        ->and($context['why'].$context['what'])->toContain('trace');
 });
 
 it('gives fancy-formula a package page with its README', function () {

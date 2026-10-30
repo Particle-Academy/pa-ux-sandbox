@@ -53,6 +53,16 @@ class PackageContext
             'how' => '<code>npm install @particle-academy/prism-acp</code>. It drives the agent CLI already on the machine, so the user&apos;s existing subscription login is the authentication -- no API key to supply and no adapter program to install. An app that bills per token instead can hand the drivers an API key. Full protocol coverage, driver capabilities and the session-resume rules are in the <a href="https://github.com/Particle-Academy/prism-acp-ts" target="_blank" rel="noopener noreferrer">README</a>.',
         ],
 
+        // Released 0.1.0 (PHP only) and moved out of PLANNED the same week.
+        // Written from the repo's README and SPEC.md. The `how` names ONLY
+        // composer: the npm and PyPI legs are designed but not published, and
+        // a page that offered `npm install` would hand readers a 404.
+        'fancy-formula' => [
+            'why' => 'A pricing agent should not do quote maths in the model. It should hand a formula and typed inputs to something deterministic, get the number back, and get back <em>why</em>: &quot;120 units falls in the 100-499 break, so the unit price is $9.75&quot;. Requested by MOIC for exactly that, and wrapped by Prism as the opt-in harness tool <code>doMath</code>. A general spreadsheet library was ruled out because none has Google Sheets semantics, a static check step, a trace of which lookup row matched, or hard budgets.',
+            'what' => 'A spreadsheet-formula engine with <strong>Google Sheets semantics</strong>, captured against real Google Sheets rather than inferred. Formulas are code; inputs are always typed <em>values</em> and never reach the parser. Every result carries a trace of the inputs it read and, for lookups, the matched row. <code>check()</code> runs the save-time static analysis (parse, unknown names, cycles, types) before anything evaluates. Three outcomes never collapse into one another: a malformed formula throws with a stable code, a spreadsheet error such as <code>#N/A</code> is a value, and a broken limit aborts the run with no partial results. No eval, no I/O, external functions refused unless the host registers a provider, and <code>NOW</code> / <code>RAND</code> only through a host clock or seed.',
+            'how' => '<code>composer require particle-academy/fancy-formula</code> (PHP 8.4+, no runtime dependencies). Build an <code>Engine</code>, optionally with <code>Options</code> for limits, a fixed clock, a seed and a function policy, then <code>check()</code> a request at save time and <code>evaluate()</code> it with typed inputs. <strong>PHP only for now:</strong> the TypeScript and Python legs follow on the same fancy-conformance tables and are not yet published. The request, report and trace shapes are frozen JSON Schemas in the <a href="https://github.com/Particle-Academy/fancy-formula" target="_blank" rel="noopener noreferrer">repo</a>.',
+        ],
+
         // The PHP half of the ACP pair, registered 2026-10-27 after the catalog
         // audit found it on Packagist. Described from its Packagist entry and
         // the TS twin; the repo is not a submodule of this envelope.

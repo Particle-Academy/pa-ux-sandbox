@@ -1,9 +1,9 @@
 {
     "window_days": 60,
     "latest": {
-        "agent-integrations": "0.51.0",
-        "change-council": "0.2.1",
-        "charlotte": "0.1.0",
+        "agent-integrations": "0.52.0",
+        "change-council": "0.2.2",
+        "charlotte": "0.3.0",
         "classroom": "0.7.0",
         "dark-slide": "0.22.1",
         "dark-slide-js": "0.20.1",
@@ -71,7 +71,7 @@
         "fancy-sheets": "0.13.0",
         "fancy-slides": "0.25.0",
         "fancy-template": "0.3.0",
-        "fancy-term": "0.8.0",
+        "fancy-term": "0.8.1",
         "fancy-term-host": "0.11.1",
         "fancy-trading-js": "0.2.1",
         "fancy-trading-ui": "0.1.0",
@@ -97,7 +97,7 @@
         "last-word-js": "0.11.0",
         "last-word-py": "0.7.0",
         "mcp-relay-client": "0.3.0",
-        "prism": "0.140.0",
+        "prism": "0.141.0",
         "prism-acp-ts": "0.33.2",
         "prism-browser": "0.4.1",
         "prism-browser-py": "0.1.1",
@@ -126,11 +126,60 @@
         "prism-workspace": "0.3.0",
         "prism-workspace-py": "0.1.0",
         "prism-workspace-ts": "0.2.0",
-        "react-fancy": "5.71.0",
+        "react-fancy": "5.71.1",
         "teachers-aid": "0.3.0",
         "teachers-aid-ui": "0.3.0"
     },
     "releases": [
+        {
+            "slug": "agent-integrations",
+            "registry": "npm",
+            "version": "0.52.0",
+            "published_at": "2026-10-30T22:26:38Z",
+            "first": false
+        },
+        {
+            "slug": "react-fancy",
+            "registry": "npm",
+            "version": "5.71.1",
+            "published_at": "2026-10-30T20:34:10Z",
+            "first": false
+        },
+        {
+            "slug": "prism",
+            "registry": "composer",
+            "version": "0.141.0",
+            "published_at": "2026-10-30T20:30:39Z",
+            "first": false
+        },
+        {
+            "slug": "change-council",
+            "registry": "composer",
+            "version": "0.2.2",
+            "published_at": "2026-10-30T20:18:31Z",
+            "first": false
+        },
+        {
+            "slug": "charlotte",
+            "registry": "composer",
+            "version": "0.3.0",
+            "published_at": "2026-10-30T20:07:32Z",
+            "first": false
+        },
+        {
+            "slug": "charlotte",
+            "registry": "composer",
+            "version": "0.2.0",
+            "published_at": "2026-10-30T19:30:27Z",
+            "first": false
+        },
+        {
+            "slug": "fancy-term",
+            "registry": "npm",
+            "version": "0.8.1",
+            "published_at": "2026-10-30T14:43:12Z",
+            "first": false
+        },
         {
             "slug": "prism-py",
             "registry": "pypi",
@@ -4854,20 +4903,6 @@
             "registry": "composer",
             "version": "0.115.1",
             "published_at": "2026-09-02T02:42:01Z",
-            "first": false
-        },
-        {
-            "slug": "prism-harness",
-            "registry": "composer",
-            "version": "0.2.1",
-            "published_at": "2026-08-31T18:34:40Z",
-            "first": false
-        },
-        {
-            "slug": "prism-harness",
-            "registry": "composer",
-            "version": "0.2.0",
-            "published_at": "2026-08-31T14:46:12Z",
             "first": false
         }
     ]

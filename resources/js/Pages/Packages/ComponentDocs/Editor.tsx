@@ -49,6 +49,41 @@ function EditorFullScreenDemo() {
     );
 }
 
+function EditorCopyDemo() {
+    const [copyOn, setCopyOn] = useState(true);
+    const [routed, setRouted] = useState<string | null>(null);
+    const [last, setLast] = useState<string | null>(null);
+    const [value, setValue] = useState(
+        "## Release note\n\nUpgrade with one command:\n\n```bash\nnpm update @particle-academy/react-fancy\n```\n\n| Line | Status |\n|---|---|\n| 0.5 | active |\n| 0.4 | bug fixes |",
+    );
+
+    return (
+        <div className="w-full max-w-md">
+            <div className="mb-2 flex items-center justify-between">
+                <Switch checked={copyOn} onCheckedChange={setCopyOn} label="copyButtons" />
+                <Badge color="violet" variant="soft">mode="view"</Badge>
+            </div>
+            <Editor
+                value={value}
+                onChange={setValue}
+                outputFormat="markdown"
+                mode="view"
+                copyButtons={copyOn}
+                clipboardWriter={(payload) => {
+                    setRouted(payload.text);
+                    return true;
+                }}
+                onCopy={(e) => setLast(`${e.kind} #${e.index} ${e.ok ? "copied" : "failed"}`)}
+            >
+                <Editor.Content />
+            </Editor>
+            <Text size="xs" className="mt-2 !text-zinc-500">
+                {last === null ? "Copy the command or the table." : `onCopy: ${last}. clipboardWriter received ${routed?.length ?? 0} characters.`}
+            </Text>
+        </div>
+    );
+}
+
 export const editorDoc: ComponentDoc = {
     intro: (
         <p>
@@ -306,6 +341,21 @@ const [value, setValue] = useState("## Field notes…");
     <Editor.Content />
 </Editor>`,
         },
+        {
+            name: "View mode copy buttons: copyButtons, clipboardWriter, onCopy",
+            description:
+                "In view mode the editor renders through ContentRenderer, so code blocks and tables get copy buttons. Editor forwards the same three props: copyButtons turns them off (here with the switch), clipboardWriter routes the copy through the host (a sandboxed window), and onCopy observes each one. They have no effect in edit mode.",
+            render: () => <EditorCopyDemo />,
+            code: `<Editor
+    value={notes}
+    mode="view"
+    copyButtons={{ table: false }}
+    clipboardWriter={(payload) => window.electron.clipboard.write(payload)}
+    onCopy={(e) => analytics.track("copy", { kind: e.kind, ok: e.ok })}
+>
+    <Editor.Content />
+</Editor>`,
+        },
     ],
     props: [
         { name: "children", type: `ReactNode`, default: "—", description: "Compound parts — `Editor.Toolbar` + `Editor.Content`." },
@@ -321,6 +371,9 @@ const [value, setValue] = useState("## Field notes…");
         { name: "placeholder", type: `string`, default: "—", description: "Placeholder shown when the editor is empty." },
         { name: "extensions", type: `RenderExtension[]`, default: "—", description: "Per-instance render extensions. Merged with globally registered ones." },
         { name: "unsafe", type: `boolean`, default: `false`, description: "Skip sanitization of the initial value. Only use for fully trusted content." },
+        { name: "copyButtons", type: `boolean | { code?: boolean; table?: boolean }`, default: `true`, description: "View mode only: copy buttons on code blocks and tables, forwarded to `ContentRenderer`." },
+        { name: "clipboardWriter", type: `ContentClipboardWriter`, default: "ClipboardItem, then writeText", description: "View mode only: your own clipboard write, for a sandboxed window." },
+        { name: "onCopy", type: `(event: ContentCopyEvent) => void`, default: "—", description: "View mode only: reports every copy attempt." },
         { name: "className", type: `string`, default: "—", description: "Extra classes on the root wrapper." },
         { name: "Editor.Toolbar — showSourceToggle", type: `boolean`, default: `true`, description: "Source toggle on the default toolbar. Ignored when you supply your own children." },
         { name: "Editor.Content — sourceClassName", type: `string`, default: "—", description: "Classes for the raw-source textarea shown in source mode." },

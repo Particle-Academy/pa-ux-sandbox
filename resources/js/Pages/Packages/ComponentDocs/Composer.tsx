@@ -1,6 +1,58 @@
 import { useState } from "react";
 import type { ComponentDoc } from "./types";
-import { Button, Composer } from "@particle-academy/react-fancy";
+import { Button, Composer, Field, Switch, Text } from "@particle-academy/react-fancy";
+import type { SubmitResult } from "@particle-academy/react-fancy";
+
+/**
+ * Acknowledged send, end to end. The send takes a second, like a server; the
+ * switches make the server refuse or make the agent "still answering".
+ */
+function AcknowledgedSendDemo() {
+    const [refuse, setRefuse] = useState(false);
+    const [answering, setAnswering] = useState(false);
+    const [error, setError] = useState<string | undefined>();
+    const [sent, setSent] = useState<string[]>([]);
+
+    const send = (text: string): Promise<SubmitResult> =>
+        new Promise((resolve) => {
+            setError(undefined);
+            window.setTimeout(() => {
+                if (refuse) {
+                    resolve({ ok: false, error: "The server refused the message. Your draft is still here." });
+                    return;
+                }
+                setSent((s) => [text, ...s].slice(0, 3));
+                resolve();
+            }, 1000);
+        });
+
+    return (
+        <div className="w-full max-w-md space-y-3">
+            <div className="flex flex-wrap gap-4">
+                <Switch label="Server refuses the send" checked={refuse} onCheckedChange={setRefuse} />
+                <Switch label="Agent is still answering" checked={answering} onCheckedChange={setAnswering} />
+            </div>
+            <Field
+                label="Message to support"
+                htmlFor="composer-doc-message"
+                description="Click this label: inputId gives the text field an id, so it focuses."
+                error={error}
+            >
+                <Composer
+                    inputId="composer-doc-message"
+                    name="message"
+                    placeholder="Write a message, then send…"
+                    sendDisabled={answering}
+                    onSubmit={send}
+                    onSubmitError={(e) => setError(String(e))}
+                />
+            </Field>
+            <Text size="xs" className="!text-zinc-500">
+                {sent.length === 0 ? "Nothing acknowledged yet." : `Acknowledged: ${sent.join(" / ")}`}
+            </Text>
+        </div>
+    );
+}
 
 export const composerDoc: ComponentDoc = {
     intro: (
@@ -66,6 +118,23 @@ export const composerDoc: ComponentDoc = {
                 </div>
             ),
             code: `<Composer value={text} onChange={setText} disabled />`,
+        },
+        {
+            name: "Acknowledged send: the draft stays until the server says yes",
+            description:
+                "Return a Promise from onSubmit and the draft stays while it is pending: the send button is disabled and aria-busy, a second send is refused, and the text stays editable. Resolve and it clears. Resolve { ok: false, error } (or reject) and everything is kept and onSubmitError is called. sendDisabled blocks only the send, for while an agent is still answering. inputId names the text field, so a Field label can point at it.",
+            render: () => <AcknowledgedSendDemo />,
+            code: `<Field label="Message to support" htmlFor="message" error={error}>
+    <Composer
+        inputId="message"
+        sendDisabled={agentIsAnswering}
+        onSubmit={async (text) => {
+            const res = await api.send(text);
+            if (!res.ok) return { ok: false, error: res.error };
+        }}
+        onSubmitError={(e) => setError(String(e))}
+    />
+</Field>`,
         },
         {
             name: "pasteThreshold — holding a large paste",
@@ -202,10 +271,14 @@ setHeld([...held, { id, text }]);`,
         { name: "value", type: `string`, default: "—", description: "Controlled value. Use with `onChange`." },
         { name: "defaultValue", type: `string`, default: "—", description: "Initial value (uncontrolled)." },
         { name: "onChange", type: `(value: string) => void`, default: "—", description: "Called on every keystroke." },
-        { name: "onSubmit", type: `(value: string, extras: { images: HeldImage[] }) => void`, default: "—", description: "Called on Enter or the send button; the composer then clears itself. Pills are expanded — never a marker. `images` is only ever non-empty with `pasteImages`." },
+        { name: "onSubmit", type: `(value, extras: { images }) => void | Promise<void | SubmitRejection>`, default: "—", description: "Called on Enter or the send button. Pills are expanded — never a marker. Return nothing and it clears at once; return a Promise and it clears only when that resolves. `images` is only ever non-empty with `pasteImages`." },
         { name: "placeholder", type: `string`, default: "—", description: "Placeholder text." },
         { name: "actions", type: `ReactNode`, default: "—", description: "Element(s) rendered on the trailing edge — usually `Button` buttons." },
         { name: "disabled", type: `boolean`, default: `false`, description: "Disable the textarea + send button." },
+        { name: "sendDisabled", type: `boolean`, default: `false`, description: "Disable only the send; the text stays editable. For while an agent is still answering." },
+        { name: "onSubmitError", type: `(error: unknown) => void`, default: "—", description: "An async `onSubmit` rejected or resolved `{ ok: false, error }`. The draft is kept, and the failure is also announced in a hidden `role=\"alert\"`." },
+        { name: "inputId", type: `string`, default: "—", description: "The text field's `id`, in textarea or inline-pill mode, so a label can point at it." },
+        { name: "name", type: `string`, default: "—", description: "Form name for the text. With inline pills it sits on a hidden input carrying the expanded text." },
         { name: "className", type: `string`, default: "—", description: "Extra classes on the root wrapper." },
         { name: "pasteThreshold", type: `number`, default: "— (no default, on purpose)", description: "Hold a paste of at least this many characters as a pill. Omit and paste behaves normally." },
         { name: "pastePlacement", type: `"above" | "inline"`, default: `"above"`, description: "Where a pill goes: a row above the input, or IN the message at the caret. Inline, `value` carries a `pasteMarker(id)` per pill." },

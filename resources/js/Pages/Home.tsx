@@ -585,7 +585,7 @@ const FLAT = CATALOG.flatMap((g) => g.items);
 // links to its full interactive demo on the package page.
 const MORE = [
     "Accordion", "AccordionPanel", "Autocomplete", "Brand", "Calendar", "Carousel", "Chart",
-    "ChatDrawer", "ColorPicker", "Command", "Composer", "ContentRenderer", "ContextMenu",
+    "ChatDrawer", "ChatThread", "ColorPicker", "Command", "Composer", "ContentRenderer", "ContextMenu",
     "DatePicker", "Dropdown", "Editor", "Emoji", "EmojiSelect", "FileUpload", "Heading", "Icon",
     "InputTag", "Kanban", "MagicWand", "Menu", "MobileMenu", "Modal", "MoodMeter", "Navbar",
     "Popover", "Portal", "PromptInput", "ReasonTag", "Sidebar", "Text", "TimeGrid", "TimePicker",

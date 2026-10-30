@@ -41,6 +41,7 @@ import { fauxClientDoc } from "./FauxClient";
 import { carouselDoc } from "./Carousel";
 import { chartDoc } from "./Chart";
 import { chatDrawerDoc } from "./ChatDrawer";
+import { chatThreadDoc } from "./ChatThread";
 import { codeEditorDoc } from "./CodeEditor";
 import { colorPickerDoc } from "./ColorPicker";
 import { commandDoc } from "./Command";
@@ -199,6 +200,7 @@ export const DOCS: Record<string, ComponentDoc> = {
     "react-fancy/carousel": carouselDoc,
     "react-fancy/chart": chartDoc,
     "react-fancy/chat-drawer": chatDrawerDoc,
+    "react-fancy/chat-thread": chatThreadDoc,
     "react-fancy/color-picker": colorPickerDoc,
     "react-fancy/command": commandDoc,
     "react-fancy/composer": composerDoc,

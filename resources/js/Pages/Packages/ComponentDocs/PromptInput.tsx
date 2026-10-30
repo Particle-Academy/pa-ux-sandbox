@@ -2,12 +2,14 @@ import type { ComponentDoc } from "./types";
 import { useRef, useState } from "react";
 import {
     Button,
+    Field,
     PromptInput,
+    Switch,
     Text,
     promptDataUrlToFile,
     promptFileToDataUrl,
 } from "@particle-academy/react-fancy";
-import type { PromptDraft, PromptDraftFile, PromptInputHandle } from "@particle-academy/react-fancy";
+import type { PromptDraft, PromptDraftFile, PromptInputHandle, SubmitResult } from "@particle-academy/react-fancy";
 
 function ControlledTextDemo() {
     const [text, setText] = useState("Summarise the last three commits");
@@ -44,6 +46,50 @@ function ControlledTextDemo() {
 const SAVED_DRAFT: PromptDraft = { v: 1, text: "Pick up where you left off", pills: [], attachments: [] };
 
 /** Keep each attached file inline, as a data: URL. A real host may upload it and return a key. */
+/** The three send controls, driven by switches, against a one-second "server". */
+function AcknowledgedSendDemo() {
+    const [refuse, setRefuse] = useState(false);
+    const [answering, setAnswering] = useState(false);
+    const [locked, setLocked] = useState(false);
+    const [error, setError] = useState<string | undefined>();
+    const [sent, setSent] = useState<string | null>(null);
+
+    return (
+        <div className="flex w-full max-w-md flex-col gap-3">
+            <div className="flex flex-wrap gap-4">
+                <Switch label="Server refuses" checked={refuse} onCheckedChange={setRefuse} />
+                <Switch label="Agent is answering" checked={answering} onCheckedChange={setAnswering} />
+                <Switch label="Signed out (disabled)" checked={locked} onCheckedChange={setLocked} />
+            </div>
+            <Field label="Ask the agent" htmlFor="prompt-doc-input" error={error}>
+                <PromptInput
+                    budgetTokens={8000}
+                    inputId="prompt-doc-input"
+                    disabled={locked}
+                    sendDisabled={answering}
+                    onSubmit={(text): Promise<SubmitResult> =>
+                        new Promise((resolve) => {
+                            setError(undefined);
+                            window.setTimeout(() => {
+                                if (refuse) {
+                                    resolve({ ok: false, error: "Refused by the server; the draft is kept." });
+                                    return;
+                                }
+                                setSent(text);
+                                resolve();
+                            }, 1000);
+                        })
+                    }
+                    onSubmitError={(e) => setError(String(e))}
+                />
+            </Field>
+            <Text size="xs" className="!text-zinc-500">
+                {sent === null ? "Nothing acknowledged yet." : `Acknowledged: ${sent}`}
+            </Text>
+        </div>
+    );
+}
+
 function persistInline(file: File): Promise<string> {
     return promptFileToDataUrl(file);
 }
@@ -297,6 +343,25 @@ export const promptInputDoc: ComponentDoc = {
 <PromptInput budgetTokens={8000} defaultValue="Start from this text" onSubmit={send} />`,
         },
         {
+            name: "Acknowledged send, sendDisabled and disabled",
+            description:
+                "Return a Promise from onSubmit and the draft (text, pills and attachments) stays while it is pending; resolve and it clears, resolve { ok: false, error } and it is kept and onSubmitError is called. sendDisabled blocks only the send while an agent is still answering: you can keep writing. disabled turns off everything: the text, attaching, dropping and the send. inputId names the textarea so a Field label can point at it. Send with ⌘/Ctrl+Enter.",
+            render: () => <AcknowledgedSendDemo />,
+            code: `<Field label="Ask the agent" htmlFor="prompt" error={error}>
+    <PromptInput
+        budgetTokens={8000}
+        inputId="prompt"
+        disabled={!signedIn}
+        sendDisabled={agentIsAnswering}
+        onSubmit={async (text, attachments) => {
+            const res = await api.ask(text, attachments);
+            if (!res.ok) return { ok: false, error: res.error };
+        }}
+        onSubmitError={(e) => setError(String(e))}
+    />
+</Field>`,
+        },
+        {
             name: "Save and restore a draft",
             description:
                 "A PromptDraft is plain JSON: { v: 1, text, pills, attachments }. onDraftChange gets the whole draft whenever the person changes any part of it, so the host can save it anywhere; defaultDraft starts a new composer from it. The file bytes are not in the draft. persistAttachment stores each attached or pasted file and returns a handle that becomes the entry's ref; restoreAttachment gets the File back from that ref. This demo keeps the bytes inline with promptFileToDataUrl and promptDataUrlToFile. Attach or paste an image, then remount: the chip comes back with its file. The setDraft button uses the ref handle. It does not move focus and does not fire onDraftChange, so the saved JSON below does not change until you type again.",
@@ -327,7 +392,11 @@ composer.current?.setDraft(savedDraft, { focus: true });`,
     ],
     props: [
         { name: "budgetTokens", type: `number`, default: "—", description: "Token budget shown by the meter. Required." },
-        { name: "onSubmit", type: `(text, attachments) => void`, default: "—", description: "Called on ⌘/Ctrl+Enter or the send button. Required." },
+        { name: "onSubmit", type: `(text, attachments) => void | Promise<void | SubmitRejection>`, default: "—", description: "Called on ⌘/Ctrl+Enter or the send button. Required. Return a Promise to keep the draft until it resolves." },
+        { name: "onSubmitError", type: `(error: unknown) => void`, default: "—", description: "An async `onSubmit` rejected or resolved `{ ok: false, error }`. The whole draft is kept; the failure is also announced in a hidden `role=\"alert\"`." },
+        { name: "sendDisabled", type: `boolean`, default: `false`, description: "Disable only the send; the text stays editable." },
+        { name: "disabled", type: `boolean`, default: `false`, description: "Disable the text, the inline editor, attaching, dropping and the send." },
+        { name: "inputId", type: `string`, default: "—", description: "The text field's `id`, in either mode. `id` still names the root." },
         { name: "commands", type: `PromptCmd[]`, default: "—", description: "Slash-command list. Names must start with `/`." },
         { name: "mentions", type: `PromptMention[]`, default: "—", description: "`@`-mention sources — agents, files, people. Each has `{ id, label, kind }`." },
         { name: "showHint", type: `boolean`, default: `true`, description: "Show the submit-shortcut hint near the send button." },

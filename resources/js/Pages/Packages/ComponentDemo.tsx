@@ -28,6 +28,7 @@ import {
     Carousel,
     Chart,
     ChatDrawer,
+    ChatThread,
     ColorPicker,
     Command,
     Composer,
@@ -119,6 +120,7 @@ import {
     FullScreen,
     ReorderableGrid,
 } from "@particle-academy/react-fancy";
+import type { ChatMessageData } from "@particle-academy/react-fancy";
 import { CodeEditor, MarkdownEditor, FileViewer, registerOfficeViewer } from "@particle-academy/fancy-code";
 import { DocViewer, DocFileView } from "@particle-academy/fancy-docs";
 import {
@@ -299,6 +301,7 @@ const REGISTRY: Record<string, DemoFn> = {
     "react-fancy/composer": ComposerDemo,
     "react-fancy/paste-pills": PastePillsDemo,
     "react-fancy/chat-drawer": ChatDrawerDemo,
+    "react-fancy/chat-thread": ChatThreadDemo,
     // Content
     "react-fancy/timeline": TimelineDemo,
     "react-fancy/table": TableDemo,
@@ -2566,6 +2569,41 @@ function MoodMeterDemo() {
                 <div>confidence: {(v.confidence * 100).toFixed(0)}%</div>
             </div>
         </div>
+    );
+}
+
+function ChatThreadDemo() {
+    const [messages, setMessages] = useState<ChatMessageData[]>([
+        { id: "1", role: "user", content: "Can you refund the second charge?", createdAt: Date.UTC(2026, 9, 27, 9, 0) },
+        {
+            id: "2",
+            role: "agent",
+            content: "Here is a reply for you to approve.",
+            createdAt: Date.UTC(2026, 9, 27, 9, 1),
+            proposal: { id: "card", title: "Drafted reply" },
+        },
+    ]);
+    const decide = (state: "accepted" | "rejected") =>
+        setMessages((all) => all.map((m) => (m.proposal ? { ...m, proposal: { ...m.proposal, state } } : m)));
+
+    return (
+        <ChatThread
+            className="h-80 w-full max-w-lg rounded-xl border border-zinc-200 dark:border-zinc-700"
+            messages={messages}
+            formatTime={(d) => d.toISOString().slice(11, 16) + " UTC"}
+            onProposalAccept={() => decide("accepted")}
+            onProposalReject={() => decide("rejected")}
+            composer={
+                <div className="border-t border-zinc-200 p-3 dark:border-zinc-700">
+                    <Composer
+                        placeholder="Reply…"
+                        onSubmit={(text) =>
+                            setMessages((m) => [...m, { id: String(m.length + 1), role: "user", content: text, createdAt: Date.UTC(2026, 9, 27, 9, m.length) }])
+                        }
+                    />
+                </div>
+            }
+        />
     );
 }
 

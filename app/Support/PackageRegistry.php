@@ -1643,6 +1643,7 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
             ['slug' => 'carousel', 'name' => 'Carousel'],
             ['slug' => 'chart', 'name' => 'Chart'],
             ['slug' => 'chat-drawer', 'name' => 'ChatDrawer'],
+            ['slug' => 'chat-thread', 'name' => 'ChatThread', 'blurb' => 'Controlled message list for agent and support chat: sanitised markdown messages, approval cards an agent proposes and a human decides, internal notes, and a log that follows new messages only while you are at the bottom.'],
             ['slug' => 'code-view', 'name' => 'CodeView', 'blurb' => 'Lightweight syntax-highlighted source view (HTML highlighted; fills height). Powers the Editor Source toggle.'],
             ['slug' => 'color-picker', 'name' => 'ColorPicker'],
             ['slug' => 'command', 'name' => 'Command'],

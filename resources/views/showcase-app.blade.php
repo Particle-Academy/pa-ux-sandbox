@@ -13,7 +13,7 @@
          blocked. This upgrades it transparently. --}}
     <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
 
-    {{-- Runtime broadcasting driver. The client gates Laravel Echo on this (see
+    {{-- Runtime broadcasting driver. The client gates its realtime socket on this (see
          resources/js/lib/echo.ts) so prod — which runs no Reverb daemon
          (BROADCAST=null) but still ships the VITE_REVERB_* build keys — never
          opens a doomed websocket and spams the console. --}}

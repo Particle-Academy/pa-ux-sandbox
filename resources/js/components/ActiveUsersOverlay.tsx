@@ -141,9 +141,13 @@ export function ActiveUsersOverlay() {
     useFancyStream<ActiveUserRow[]>(["active-users"], {
         channel: "active-users",
         fetchInitial: async () => [],
-        events: ["active-user.updated"],
+        // Leading dot: ActiveUserActivity sets broadcastAs('active-user.updated'),
+        // which goes over the wire verbatim. Without the dot the client prefixes
+        // the App.Events namespace and the listener never matches (it did not,
+        // for as long as this ran on laravel-echo — the poll below did the work).
+        events: [".active-user.updated"],
         onEvent: (event, payload) => {
-            if (event === "active-user.updated") ingest(payload as ActiveUserRow);
+            if (event === ".active-user.updated") ingest(payload as ActiveUserRow);
         },
         streaming: false,
         flushSync: true,

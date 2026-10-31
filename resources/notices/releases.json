@@ -1,8 +1,8 @@
 {
     "window_days": 60,
     "latest": {
-        "agent-integrations": "0.53.0",
-        "change-council": "0.2.2",
+        "agent-integrations": "0.54.0",
+        "change-council": "0.3.0",
         "charlotte": "0.3.0",
         "classroom": "0.7.0",
         "dark-slide": "0.22.1",
@@ -97,12 +97,12 @@
         "last-word-js": "0.11.0",
         "last-word-py": "0.7.0",
         "mcp-relay-client": "0.3.0",
-        "prism": "0.143.0",
+        "prism": "0.144.0",
         "prism-acp-ts": "0.33.2",
         "prism-browser": "0.4.1",
         "prism-browser-py": "0.1.1",
         "prism-browser-ts": "0.2.1",
-        "prism-harness": "0.21.0",
+        "prism-harness": "0.22.0",
         "prism-harness-py": "0.4.2",
         "prism-harness-ts": "0.9.2",
         "prism-human-plus": "0.5.1",
@@ -110,7 +110,7 @@
         "prism-human-plus-ts": "0.4.0",
         "prism-mcp": "0.2.0",
         "prism-mcp-py": "0.2.1",
-        "prism-mcp-server-ts": "0.4.0",
+        "prism-mcp-server-ts": "0.5.0",
         "prism-mcp-ts": "0.3.0",
         "prism-memory": "0.3.0",
         "prism-memory-py": "0.1.0",
@@ -131,6 +131,48 @@
         "teachers-aid-ui": "0.3.0"
     },
     "releases": [
+        {
+            "slug": "agent-integrations",
+            "registry": "npm",
+            "version": "0.54.0",
+            "published_at": "2026-10-31T20:11:07Z",
+            "first": false
+        },
+        {
+            "slug": "prism-harness",
+            "registry": "composer",
+            "version": "0.22.0",
+            "published_at": "2026-10-31T16:21:07Z",
+            "first": false
+        },
+        {
+            "slug": "change-council",
+            "registry": "composer",
+            "version": "0.3.0",
+            "published_at": "2026-10-31T16:14:19Z",
+            "first": false
+        },
+        {
+            "slug": "prism",
+            "registry": "composer",
+            "version": "0.144.0",
+            "published_at": "2026-10-31T11:34:49Z",
+            "first": false
+        },
+        {
+            "slug": "prism-harness",
+            "registry": "composer",
+            "version": "0.21.1",
+            "published_at": "2026-10-31T07:55:50Z",
+            "first": false
+        },
+        {
+            "slug": "prism-mcp-server-ts",
+            "registry": "npm",
+            "version": "0.5.0",
+            "published_at": "2026-10-31T06:56:19Z",
+            "first": false
+        },
         {
             "slug": "fancy-query",
             "registry": "npm",

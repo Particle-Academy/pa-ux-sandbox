@@ -65,7 +65,7 @@
         "fancy-pixel": "0.3.0",
         "fancy-pty": "0.2.0",
         "fancy-pwa": "0.2.0",
-        "fancy-query": "0.9.0",
+        "fancy-query": "0.9.1",
         "fancy-screens": "0.7.1",
         "fancy-seo": "0.6.0",
         "fancy-sheets": "0.13.0",
@@ -97,12 +97,12 @@
         "last-word-js": "0.11.0",
         "last-word-py": "0.7.0",
         "mcp-relay-client": "0.3.0",
-        "prism": "0.141.0",
+        "prism": "0.143.0",
         "prism-acp-ts": "0.33.2",
         "prism-browser": "0.4.1",
         "prism-browser-py": "0.1.1",
         "prism-browser-ts": "0.2.1",
-        "prism-harness": "0.20.1",
+        "prism-harness": "0.21.0",
         "prism-harness-py": "0.4.2",
         "prism-harness-ts": "0.9.2",
         "prism-human-plus": "0.5.1",
@@ -110,7 +110,7 @@
         "prism-human-plus-ts": "0.4.0",
         "prism-mcp": "0.2.0",
         "prism-mcp-py": "0.2.1",
-        "prism-mcp-server-ts": "0.3.1",
+        "prism-mcp-server-ts": "0.4.0",
         "prism-mcp-ts": "0.3.0",
         "prism-memory": "0.3.0",
         "prism-memory-py": "0.1.0",
@@ -131,6 +131,41 @@
         "teachers-aid-ui": "0.3.0"
     },
     "releases": [
+        {
+            "slug": "fancy-query",
+            "registry": "npm",
+            "version": "0.9.1",
+            "published_at": "2026-10-31T06:49:47Z",
+            "first": false
+        },
+        {
+            "slug": "prism-harness",
+            "registry": "composer",
+            "version": "0.21.0",
+            "published_at": "2026-10-31T06:05:44Z",
+            "first": false
+        },
+        {
+            "slug": "prism-mcp-server-ts",
+            "registry": "npm",
+            "version": "0.4.0",
+            "published_at": "2026-10-31T03:29:54Z",
+            "first": false
+        },
+        {
+            "slug": "prism",
+            "registry": "composer",
+            "version": "0.143.0",
+            "published_at": "2026-10-31T01:02:09Z",
+            "first": false
+        },
+        {
+            "slug": "prism",
+            "registry": "composer",
+            "version": "0.142.0",
+            "published_at": "2026-10-31T00:10:18Z",
+            "first": false
+        },
         {
             "slug": "react-fancy",
             "registry": "npm",

@@ -1,7 +1,7 @@
 {
     "window_days": 60,
     "latest": {
-        "agent-integrations": "0.54.1",
+        "agent-integrations": "0.55.0",
         "change-council": "0.3.0",
         "charlotte": "0.3.0",
         "classroom": "0.7.0",
@@ -97,7 +97,7 @@
         "last-word-js": "0.11.0",
         "last-word-py": "0.7.0",
         "mcp-relay-client": "0.3.0",
-        "prism": "0.144.0",
+        "prism": "0.144.1",
         "prism-acp-ts": "0.33.2",
         "prism-browser": "0.4.1",
         "prism-browser-py": "0.1.1",
@@ -134,8 +134,22 @@
         {
             "slug": "agent-integrations",
             "registry": "npm",
+            "version": "0.55.0",
+            "published_at": "2026-11-01T05:22:07Z",
+            "first": false
+        },
+        {
+            "slug": "agent-integrations",
+            "registry": "npm",
             "version": "0.54.1",
             "published_at": "2026-11-01T05:09:12Z",
+            "first": false
+        },
+        {
+            "slug": "prism",
+            "registry": "composer",
+            "version": "0.144.1",
+            "published_at": "2026-11-01T05:03:49Z",
             "first": false
         },
         {

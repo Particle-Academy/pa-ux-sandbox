@@ -23,7 +23,7 @@
         "fancy-cms": "0.8.1",
         "fancy-cms-ui": "0.13.1",
         "fancy-code": "0.15.0",
-        "fancy-conformance": "0.42.0",
+        "fancy-conformance": "0.43.0",
         "fancy-connector-core": "0.11.0",
         "fancy-devtools": "0.1.0",
         "fancy-diff": "0.5.1",
@@ -34,11 +34,11 @@
         "fancy-features-js": "0.5.0",
         "fancy-features-py": "0.2.0",
         "fancy-file-commons": "0.3.0",
-        "fancy-flow": "0.82.0",
+        "fancy-flow": "0.82.1",
         "fancy-flow-mcp": "0.5.0",
         "fancy-flow-mcp-js": "0.2.0",
-        "fancy-flow-php": "0.65.0",
-        "fancy-flow-py": "0.30.0",
+        "fancy-flow-php": "0.65.1",
+        "fancy-flow-py": "0.30.1",
         "fancy-formula": "0.1.0",
         "fancy-git": "0.3.1",
         "fancy-git-bitbucket-js": "0.2.0",
@@ -95,7 +95,7 @@
         "laravel-jobs": "0.5.0",
         "last-word": "0.16.0",
         "last-word-js": "0.13.0",
-        "last-word-py": "0.8.0",
+        "last-word-py": "0.9.0",
         "last-word-ui": "0.2.0",
         "mcp-relay-client": "0.3.0",
         "prism": "0.144.1",
@@ -133,10 +133,45 @@
     },
     "releases": [
         {
+            "slug": "fancy-conformance",
+            "registry": "npm",
+            "version": "0.43.0",
+            "published_at": "2026-11-01T09:41:26Z",
+            "first": false
+        },
+        {
+            "slug": "fancy-flow-py",
+            "registry": "pypi",
+            "version": "0.30.1",
+            "published_at": "2026-11-01T09:40:51Z",
+            "first": false
+        },
+        {
+            "slug": "fancy-flow",
+            "registry": "npm",
+            "version": "0.82.1",
+            "published_at": "2026-11-01T09:39:25Z",
+            "first": false
+        },
+        {
+            "slug": "fancy-flow-php",
+            "registry": "composer",
+            "version": "0.65.1",
+            "published_at": "2026-11-01T09:32:26Z",
+            "first": false
+        },
+        {
             "slug": "last-word-js",
             "registry": "npm",
             "version": "0.13.0",
             "published_at": "2026-11-01T09:11:12Z",
+            "first": false
+        },
+        {
+            "slug": "last-word-py",
+            "registry": "pypi",
+            "version": "0.9.0",
+            "published_at": "2026-11-01T09:08:09Z",
             "first": false
         },
         {

@@ -93,12 +93,12 @@
         "laravel-fms": "0.12.0",
         "laravel-fun-lab": "0.6.0",
         "laravel-jobs": "0.5.0",
-        "last-word": "0.16.0",
+        "last-word": "0.17.0",
         "last-word-js": "0.13.0",
         "last-word-py": "0.9.0",
-        "last-word-ui": "0.2.0",
+        "last-word-ui": "0.3.0",
         "mcp-relay-client": "0.3.0",
-        "prism": "0.144.1",
+        "prism": "0.144.2",
         "prism-acp-ts": "0.33.2",
         "prism-browser": "0.4.1",
         "prism-browser-py": "0.1.1",
@@ -133,6 +133,20 @@
     },
     "releases": [
         {
+            "slug": "last-word-ui",
+            "registry": "npm",
+            "version": "0.3.0",
+            "published_at": "2026-11-01T18:02:42Z",
+            "first": false
+        },
+        {
+            "slug": "last-word",
+            "registry": "composer",
+            "version": "0.17.0",
+            "published_at": "2026-11-01T17:58:45Z",
+            "first": false
+        },
+        {
             "slug": "react-fancy",
             "registry": "npm",
             "version": "5.72.0",
@@ -144,6 +158,13 @@
             "registry": "npm",
             "version": "5.71.3",
             "published_at": "2026-11-01T10:14:22Z",
+            "first": false
+        },
+        {
+            "slug": "prism",
+            "registry": "composer",
+            "version": "0.144.2",
+            "published_at": "2026-11-01T09:42:34Z",
             "first": false
         },
         {

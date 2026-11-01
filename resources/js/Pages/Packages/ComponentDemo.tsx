@@ -123,6 +123,9 @@ import {
 import type { ChatMessageData } from "@particle-academy/react-fancy";
 import { CodeEditor, MarkdownEditor, FileViewer, registerOfficeViewer } from "@particle-academy/fancy-code";
 import { DocViewer, DocFileView } from "@particle-academy/fancy-docs";
+// fancy-docs exports a DocViewer too, hence the alias.
+import { DocViewer as LwDocViewer, type DocViewerLayout as LwDocViewerLayout } from "@particle-academy/last-word-ui";
+import { lastWordSampleDoc, type LwPaper } from "./lastWordUiFixtures";
 import {
     DownlineTree as MlmDownlineTree,
     CommissionStatement as MlmCommissionStatement,
@@ -443,6 +446,7 @@ const REGISTRY: Record<string, DemoFn> = {
     "fancy-3d-three/fancy-3d-three-engine": ThreeEngineDemo,
     "fancy-passkeys-ui/passkey-manager": PasskeyManagerDemo,
     "fancy-passkeys-ui/passkey-sign-in": PasskeySignInDemo,
+    "last-word-ui/doc-viewer": LastWordDocViewerDemo,
     "fancy-echarts/echart-3d": EChart3DDemo,
     "fancy-echarts/echart-graphic": EChartGraphicDemo,
     "fancy-3d/scene": SceneDemo,
@@ -4879,6 +4883,72 @@ function DarkSlideSyntaxHighlighterRegistryDemo() {
                 ]}
             />
         </div>
+    );
+}
+
+// ─── last-word-ui ────────────────────────────────────────────────────────────
+// A paged, read-only view of a last-word Doc. The doc is built ONCE per paper
+// size and the reference kept: footnote numbering is keyed by run identity, so
+// rebuilding it every render would re-lay out for nothing.
+
+const LW_DOCS: Record<LwPaper, ReturnType<typeof lastWordSampleDoc>> = {
+    letter: lastWordSampleDoc("letter"),
+    a4: lastWordSampleDoc("a4"),
+};
+
+type LwZoom = "fit" | "0.5" | "0.75" | "1";
+
+function LastWordDocViewerDemo() {
+    const [paper, setPaper] = useState<LwPaper>("letter");
+    const [zoom, setZoom] = useState<LwZoom>("fit");
+    const [layout, setLayout] = useState<LwDocViewerLayout | null>(null);
+    return (
+        <DemoNote
+            outOfBox="DocViewer takes the JSON a last-word reader returns (PHP, JS or Python) and draws it as the pages it prints on: paper size and margins from the doc, breaks by measured content height, a letterhead header and a running footer with live {page} / {pages}, tables that split between rows and repeat their header row, and footnotes numbered in document order at the foot of the page that holds the mark. The default width fit scales whole pages down and never reflows. onLayout reports pages and scale as JSON; pages, blocks and footnotes carry stable data-page / data-block / data-footnote handles."
+            demo="The paper and zoom switches are demo scaffolding over the fit, scale and doc props. The statement is a fixture; the letterhead logo is an embedded PNG, because the viewer never fetches a remote image from a document."
+        >
+            <div className="space-y-3">
+                <div className="flex flex-wrap items-end gap-4">
+                    <MultiSwitch
+                        label="Paper"
+                        list={[
+                            { value: "letter", label: "Letter" },
+                            { value: "a4", label: "A4" },
+                        ]}
+                        value={paper}
+                        onValueChange={(v) => setPaper(v as LwPaper)}
+                    />
+                    <MultiSwitch
+                        label="Zoom"
+                        list={[
+                            { value: "fit", label: "Fit width" },
+                            { value: "0.5", label: "50%" },
+                            { value: "0.75", label: "75%" },
+                            { value: "1", label: "100%" },
+                        ]}
+                        value={zoom}
+                        onValueChange={(v) => setZoom(v as LwZoom)}
+                    />
+                    {layout && (
+                        <div className="flex flex-wrap gap-1.5 pb-1" data-lw-demo-layout="">
+                            <Badge color="blue" variant="soft">{layout.pages} pages</Badge>
+                            <Badge color="zinc" variant="soft">
+                                {layout.pageWidth} x {layout.pageHeight} pt
+                            </Badge>
+                            <Badge color="zinc" variant="soft">{Math.round(layout.scale * 100)}%</Badge>
+                        </div>
+                    )}
+                </div>
+                <div className="max-h-[44rem] overflow-auto rounded-lg border border-zinc-200 bg-zinc-100 p-4 dark:border-zinc-800 dark:bg-zinc-900">
+                    <LwDocViewer
+                        doc={LW_DOCS[paper]}
+                        fit="width"
+                        scale={zoom === "fit" ? undefined : Number(zoom)}
+                        onLayout={setLayout}
+                    />
+                </div>
+            </div>
+        </DemoNote>
     );
 }
 

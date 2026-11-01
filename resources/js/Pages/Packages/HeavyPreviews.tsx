@@ -9,6 +9,8 @@ import { Stage as ThreeStage, Monitor as ThreeMonitor } from "@particle-academy/
 import { createEmptyWorkbook } from "@particle-academy/fancy-sheets";
 import { PasskeyManager, PasskeySignIn } from "@particle-academy/fancy-passkeys-ui";
 import "@particle-academy/fancy-passkeys-ui/styles.css";
+import { DocViewer as LwDocViewer } from "@particle-academy/last-word-ui";
+import { lastWordTileDoc } from "./lastWordUiFixtures";
 import "@particle-academy/fancy-flow/styles.css";
 import "@particle-academy/fancy-sheets/styles.css";
 
@@ -193,6 +195,21 @@ export function PasskeySignInTile() {
                 onChange={() => {}}
                 onAuthenticate={async () => {}}
             />
+        </div>
+    );
+}
+
+/**
+ * last-word-ui measures every block in a hidden copy before it can place a
+ * page break, so it has nothing to show from a server render. Deferred with
+ * the rest; the tile is one page (letterhead, a short table, the footer)
+ * scaled to the tile width.
+ */
+export function LastWordDocViewerTile() {
+    const [doc] = useState(lastWordTileDoc);
+    return (
+        <div className="h-36 w-full max-w-[14rem] overflow-hidden rounded-md border border-zinc-200 bg-zinc-100 p-1.5 dark:border-zinc-800 dark:bg-zinc-900">
+            <LwDocViewer doc={doc} gap={6} />
         </div>
     );
 }

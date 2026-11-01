@@ -96,6 +96,7 @@
         "last-word": "0.15.0",
         "last-word-js": "0.12.0",
         "last-word-py": "0.8.0",
+        "last-word-ui": "0.1.1",
         "mcp-relay-client": "0.3.0",
         "prism": "0.144.1",
         "prism-acp-ts": "0.33.2",
@@ -131,6 +132,20 @@
         "teachers-aid-ui": "0.3.0"
     },
     "releases": [
+        {
+            "slug": "last-word-ui",
+            "registry": "npm",
+            "version": "0.1.1",
+            "published_at": "2026-11-01T07:41:13Z",
+            "first": false
+        },
+        {
+            "slug": "last-word-ui",
+            "registry": "npm",
+            "version": "0.1.0",
+            "published_at": "2026-11-01T07:23:54Z",
+            "first": true
+        },
         {
             "slug": "last-word-py",
             "registry": "pypi",
@@ -5037,13 +5052,6 @@
             "version": "0.50.0",
             "published_at": "2026-09-04T03:06:47Z",
             "first": false
-        },
-        {
-            "slug": "prism-human-plus",
-            "registry": "composer",
-            "version": "0.1.0",
-            "published_at": "2026-09-02T07:25:33Z",
-            "first": true
         }
     ]
 }

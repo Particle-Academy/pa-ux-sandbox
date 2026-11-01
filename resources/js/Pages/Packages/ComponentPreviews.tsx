@@ -1004,6 +1004,13 @@ const PREVIEWS: Record<string, PreviewFn> = {
             Sign in with a passkey
         </div>
     )),
+    // DocViewer lays pages out from measured heights, so the server has
+    // nothing to draw; the real one-page tile swaps in after hydration.
+    "last-word-ui/doc-viewer": heavy("LastWordDocViewerTile", () => (
+        <div className="grid h-36 w-full max-w-[14rem] place-items-center rounded-md border border-zinc-200 text-[11px] text-zinc-500 dark:border-zinc-800">
+            Statement of account, page 1 of 1
+        </div>
+    )),
     "react-fancy/badge": () => (
         <div className="flex flex-wrap items-center justify-center gap-1.5">
             <Badge color="violet">new</Badge>

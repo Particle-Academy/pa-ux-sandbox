@@ -330,25 +330,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/facebook-lead-ads-ui",
-          "version": "0.1.3",
+          "version": "0.1.4",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/facebook-lead-ads-js",
-          "version": "0.1.3",
+          "version": "0.1.4",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/facebook-lead-ads-php",
-          "version": "0.1.3",
+          "version": "0.1.4",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-facebook-lead-ads",
-          "version": "0.1.3",
+          "version": "0.1.4",
           "registry": "pypi",
           "installFirst": false
         }
@@ -1865,25 +1865,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/hubspot-ui",
-          "version": "0.3.4",
+          "version": "0.4.0",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/hubspot-js",
-          "version": "0.3.4",
+          "version": "0.4.0",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/hubspot-php",
-          "version": "0.3.4",
+          "version": "0.4.0",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-hubspot",
-          "version": "0.3.4",
+          "version": "0.4.0",
           "registry": "pypi",
           "installFirst": false
         }
@@ -1892,7 +1892,16 @@
         "kind": "oauth2",
         "authorize": "bearer",
         "scopes": [
-          "crm.objects.contacts.write"
+          "crm.objects.contacts.read",
+          "crm.objects.contacts.write",
+          "crm.objects.companies.read",
+          "crm.objects.companies.write",
+          "crm.objects.deals.read",
+          "crm.objects.deals.write",
+          "crm.objects.owners.read",
+          "crm.schemas.contacts.read",
+          "crm.schemas.companies.read",
+          "crm.schemas.deals.read"
         ],
         "capabilities": null,
         "refreshTokenRotates": false,
@@ -1957,6 +1966,66 @@
       "needsWebhookEndpoint": false,
       "operations": [
         {
+          "operation": "company_create",
+          "kind": "@particle-academy/hubspot_company_create",
+          "kindAlias": "hubspot_company_create",
+          "role": "action",
+          "title": "Create company",
+          "summary": "create a company",
+          "docs": "https://developers.hubspot.com/docs/reference/api/crm/objects/companies",
+          "method": "POST",
+          "path": "/crm/v3/objects/companies",
+          "sideEffects": "unsafe-to-replay"
+        },
+        {
+          "operation": "company_get",
+          "kind": "@particle-academy/hubspot_company_get",
+          "kindAlias": "hubspot_company_get",
+          "role": "action",
+          "title": "Get company",
+          "summary": "get a company",
+          "docs": "https://developers.hubspot.com/docs/reference/api/crm/objects/companies",
+          "method": "GET",
+          "path": "/crm/v3/objects/companies/{companyId}",
+          "sideEffects": "none"
+        },
+        {
+          "operation": "company_list",
+          "kind": "@particle-academy/hubspot_company_list",
+          "kindAlias": "hubspot_company_list",
+          "role": "action",
+          "title": "List companies",
+          "summary": "list companies",
+          "docs": "https://developers.hubspot.com/docs/reference/api/crm/objects/companies",
+          "method": "GET",
+          "path": "/crm/v3/objects/companies",
+          "sideEffects": "none"
+        },
+        {
+          "operation": "company_search",
+          "kind": "@particle-academy/hubspot_company_search",
+          "kindAlias": "hubspot_company_search",
+          "role": "action",
+          "title": "Search companies",
+          "summary": "search companies",
+          "docs": "https://developers.hubspot.com/docs/reference/api/crm/objects/companies",
+          "method": "POST",
+          "path": "/crm/v3/objects/companies/search",
+          "sideEffects": "none"
+        },
+        {
+          "operation": "company_update",
+          "kind": "@particle-academy/hubspot_company_update",
+          "kindAlias": "hubspot_company_update",
+          "role": "action",
+          "title": "Update company",
+          "summary": "update a company",
+          "docs": "https://developers.hubspot.com/docs/reference/api/crm/objects/companies",
+          "method": "PATCH",
+          "path": "/crm/v3/objects/companies/{companyId}",
+          "sideEffects": "idempotent"
+        },
+        {
           "operation": "contact_create",
           "kind": "@particle-academy/hubspot_contact_create",
           "kindAlias": "hubspot_contact_create",
@@ -1967,6 +2036,150 @@
           "method": "POST",
           "path": "/crm/v3/objects/contacts",
           "sideEffects": "unsafe-to-replay"
+        },
+        {
+          "operation": "contact_get",
+          "kind": "@particle-academy/hubspot_contact_get",
+          "kindAlias": "hubspot_contact_get",
+          "role": "action",
+          "title": "Get contact",
+          "summary": "get a contact",
+          "docs": "https://developers.hubspot.com/docs/reference/api/crm/objects/contacts",
+          "method": "GET",
+          "path": "/crm/v3/objects/contacts/{contactId}",
+          "sideEffects": "none"
+        },
+        {
+          "operation": "contact_list",
+          "kind": "@particle-academy/hubspot_contact_list",
+          "kindAlias": "hubspot_contact_list",
+          "role": "action",
+          "title": "List contacts",
+          "summary": "list contacts",
+          "docs": "https://developers.hubspot.com/docs/reference/api/crm/objects/contacts",
+          "method": "GET",
+          "path": "/crm/v3/objects/contacts",
+          "sideEffects": "none"
+        },
+        {
+          "operation": "contact_search",
+          "kind": "@particle-academy/hubspot_contact_search",
+          "kindAlias": "hubspot_contact_search",
+          "role": "action",
+          "title": "Search contacts",
+          "summary": "search contacts",
+          "docs": "https://developers.hubspot.com/docs/reference/api/crm/objects/contacts",
+          "method": "POST",
+          "path": "/crm/v3/objects/contacts/search",
+          "sideEffects": "none"
+        },
+        {
+          "operation": "contact_update",
+          "kind": "@particle-academy/hubspot_contact_update",
+          "kindAlias": "hubspot_contact_update",
+          "role": "action",
+          "title": "Update contact",
+          "summary": "update a contact",
+          "docs": "https://developers.hubspot.com/docs/reference/api/crm/objects/contacts",
+          "method": "PATCH",
+          "path": "/crm/v3/objects/contacts/{contactId}",
+          "sideEffects": "idempotent"
+        },
+        {
+          "operation": "deal_create",
+          "kind": "@particle-academy/hubspot_deal_create",
+          "kindAlias": "hubspot_deal_create",
+          "role": "action",
+          "title": "Create deal",
+          "summary": "create a deal",
+          "docs": "https://developers.hubspot.com/docs/reference/api/crm/objects/deals",
+          "method": "POST",
+          "path": "/crm/v3/objects/deals",
+          "sideEffects": "unsafe-to-replay"
+        },
+        {
+          "operation": "deal_get",
+          "kind": "@particle-academy/hubspot_deal_get",
+          "kindAlias": "hubspot_deal_get",
+          "role": "action",
+          "title": "Get deal",
+          "summary": "get a deal",
+          "docs": "https://developers.hubspot.com/docs/reference/api/crm/objects/deals",
+          "method": "GET",
+          "path": "/crm/v3/objects/deals/{dealId}",
+          "sideEffects": "none"
+        },
+        {
+          "operation": "deal_list",
+          "kind": "@particle-academy/hubspot_deal_list",
+          "kindAlias": "hubspot_deal_list",
+          "role": "action",
+          "title": "List deals",
+          "summary": "list deals",
+          "docs": "https://developers.hubspot.com/docs/reference/api/crm/objects/deals",
+          "method": "GET",
+          "path": "/crm/v3/objects/deals",
+          "sideEffects": "none"
+        },
+        {
+          "operation": "deal_search",
+          "kind": "@particle-academy/hubspot_deal_search",
+          "kindAlias": "hubspot_deal_search",
+          "role": "action",
+          "title": "Search deals",
+          "summary": "search deals",
+          "docs": "https://developers.hubspot.com/docs/reference/api/crm/objects/deals",
+          "method": "POST",
+          "path": "/crm/v3/objects/deals/search",
+          "sideEffects": "none"
+        },
+        {
+          "operation": "deal_update",
+          "kind": "@particle-academy/hubspot_deal_update",
+          "kindAlias": "hubspot_deal_update",
+          "role": "action",
+          "title": "Update deal",
+          "summary": "update a deal",
+          "docs": "https://developers.hubspot.com/docs/reference/api/crm/objects/deals",
+          "method": "PATCH",
+          "path": "/crm/v3/objects/deals/{dealId}",
+          "sideEffects": "idempotent"
+        },
+        {
+          "operation": "owner_list",
+          "kind": "@particle-academy/hubspot_owner_list",
+          "kindAlias": "hubspot_owner_list",
+          "role": "action",
+          "title": "List owners",
+          "summary": "list owners",
+          "docs": "https://developers.hubspot.com/docs/reference/api/crm/owners",
+          "method": "GET",
+          "path": "/crm/v3/owners",
+          "sideEffects": "none"
+        },
+        {
+          "operation": "pipeline_list",
+          "kind": "@particle-academy/hubspot_pipeline_list",
+          "kindAlias": "hubspot_pipeline_list",
+          "role": "action",
+          "title": "List deal pipelines",
+          "summary": "list deal pipelines",
+          "docs": "https://developers.hubspot.com/docs/reference/api/crm/pipelines",
+          "method": "GET",
+          "path": "/crm/v3/pipelines/deals",
+          "sideEffects": "none"
+        },
+        {
+          "operation": "property_list",
+          "kind": "@particle-academy/hubspot_property_list",
+          "kindAlias": "hubspot_property_list",
+          "role": "action",
+          "title": "List property definitions",
+          "summary": "list property definitions",
+          "docs": "https://developers.hubspot.com/docs/reference/api/crm/properties",
+          "method": "GET",
+          "path": "/crm/v3/properties/{objectType}",
+          "sideEffects": "none"
         }
       ]
     },
@@ -2780,25 +2993,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/slack-ui",
-          "version": "0.1.3",
+          "version": "0.2.1",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/slack-js",
-          "version": "0.1.3",
+          "version": "0.2.1",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/slack-php",
-          "version": "0.1.3",
+          "version": "0.2.1",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-slack",
-          "version": "0.1.3",
+          "version": "0.2.1",
           "registry": "pypi",
           "installFirst": false
         }
@@ -2807,7 +3020,9 @@
         "kind": "oauth2",
         "authorize": "bearer",
         "scopes": [
-          "chat:write"
+          "chat:write",
+          "users:read",
+          "users:read.email"
         ],
         "capabilities": null,
         "refreshTokenRotates": true,
@@ -2850,6 +3065,14 @@
             "secret": true,
             "optional": false,
             "help": "The workspace installation's single-use refresh token. Persist Slack's replacement after every refresh."
+          },
+          {
+            "key": "signingSecret",
+            "label": "Signing secret",
+            "scope": "provider",
+            "secret": true,
+            "optional": true,
+            "help": "The Slack app's signing secret, from Basic Information. One value for the whole app, not per workspace. Required only by the block_actions trigger."
           }
         ]
       },
@@ -2869,7 +3092,7 @@
       "idempotencyMaxLength": null,
       "idempotencyNote": null,
       "apiVersion": null,
-      "needsWebhookEndpoint": false,
+      "needsWebhookEndpoint": true,
       "operations": [
         {
           "operation": "message_post",
@@ -2882,6 +3105,46 @@
           "method": "POST",
           "path": "/api/chat.postMessage",
           "sideEffects": "unsafe-to-replay"
+        },
+        {
+          "operation": "message_update",
+          "kind": "@particle-academy/slack_message_update",
+          "kindAlias": "slack_message_update",
+          "role": "action",
+          "title": "Slack message update",
+          "summary": "update a Slack message",
+          "docs": "https://docs.slack.dev/reference/methods/chat.update",
+          "method": "POST",
+          "path": "/api/chat.update",
+          "sideEffects": "idempotent"
+        },
+        {
+          "operation": "user_lookup_by_email",
+          "kind": "@particle-academy/slack_user_lookup_by_email",
+          "kindAlias": "slack_user_lookup_by_email",
+          "role": "action",
+          "title": "Slack user lookup by email",
+          "summary": "look up a Slack user by email",
+          "docs": "https://docs.slack.dev/reference/methods/users.lookupByEmail",
+          "method": "GET",
+          "path": "/api/users.lookupByEmail",
+          "sideEffects": "none"
+        },
+        {
+          "operation": "block_actions",
+          "kind": "@particle-academy/slack_block_actions",
+          "kindAlias": "slack_block_actions",
+          "role": "trigger",
+          "title": "Slack button click",
+          "summary": "a click in a Slack message",
+          "docs": "https://docs.slack.dev/interactivity/handling-user-interaction",
+          "method": null,
+          "path": null,
+          "delivery": "webhook",
+          "setup": "In the Slack app's Interactivity & Shortcuts settings, turn interactivity on and set the Request URL to the route your host mounts for this trigger, then put the app's signing secret (Basic Information) on the connection as `signingSecret`. Slack shows the user an error unless the request is answered with a 200 within 3 seconds, so the host must acknowledge FIRST and run the graph after.",
+          "verification": "hmac",
+          "handshake": null,
+          "subscription": null
         }
       ]
     },
@@ -2988,25 +3251,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/stripe-ui",
-          "version": "0.3.5",
+          "version": "0.3.6",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/stripe-js",
-          "version": "0.3.5",
+          "version": "0.3.6",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/stripe-php",
-          "version": "0.3.5",
+          "version": "0.3.6",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-stripe",
-          "version": "0.3.5",
+          "version": "0.3.6",
           "registry": "pypi",
           "installFirst": false
         }

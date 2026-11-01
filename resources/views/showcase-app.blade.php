@@ -19,11 +19,11 @@
          opens a doomed websocket and spams the console. --}}
     <meta name="broadcasting-driver" content="{{ config('broadcasting.default') }}">
 
-    {{-- Geist / Geist Mono web fonts. Loaded here (not via a CSS @import) so they
-         fetch in parallel and don't block CSS parsing. --}}
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap">
+    {{-- Geist / Geist Mono are SELF-HOSTED, same origin (resources/fonts/geist/,
+         @font-face in resources/css/showcase.css). Preload only the sans face the
+         first screen paints in; `crossorigin` is required even same-origin, since
+         fonts fetch in CORS mode and a preload without it downloads twice. --}}
+    <link rel="preload" href="{{ Vite::asset('resources/fonts/geist/Geist-Variable.woff2') }}" as="font" type="font/woff2" crossorigin>
 
     {{-- Server-rendered SEO baseline (the single server-side head source). Title
          / meta / canonical / OG / Twitter / JSON-LD + the /llms.txt discovery

@@ -57,6 +57,29 @@
 @import "../js/Pages/Features/Ecommerce/ecommerce.css";
 @import "../js/Pages/Features/Gamification/gamification.css";
 
+/* Geist + Geist Mono, SELF-HOSTED (the kit's typography policy,
+   resources/docs/typography.md): Vercel's v1.9.0 variable woff2 faces, bytes
+   unmodified, provenance + sha256 in resources/fonts/geist/NOTICE.md. Vite
+   emits them as hashed same-origin assets; the root layout preloads the sans
+   face. One variable file per family covers every weight the site uses
+   (300 to 900). The --font-sans / --font-mono tokens that name these families
+   live in ./showcase/tokens.css. */
+@font-face {
+  font-family: "Geist";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('../fonts/geist/Geist-Variable.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: "Geist Mono";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('../fonts/geist/GeistMono-Variable.woff2') format('woff2');
+}
+
 /* Belt-and-braces: be explicit about which local source files Tailwind
    should scan. The auto-content-scan handles most things, but is finicky
    with Inertia pages loaded via import.meta.glob. */

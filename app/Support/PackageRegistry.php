@@ -163,12 +163,6 @@ class PackageRegistry
      * @var array<string, array{name: string, repo: string, registries: array<string,string>, why: string}>
      */
     public const PLANNED = [
-        'last-word-ui' => [
-            'name' => '@particle-academy/last-word-ui',
-            'repo' => 'Particle-Academy/last-word-ui',
-            'registries' => ['npm' => '@particle-academy/last-word-ui'],
-            'why' => 'A read-only, paged React viewer for a last-word Doc that draws it as the pages it prints on. It covers paper size and orientation, automatic breaks by content height, header and footer bands at Word\'s distances with live {page}/{pages}, footnotes at the page foot, and tables, shading and images as read. It scales to fit a narrow panel and never reflows. Built from react-fancy primitives (Fancy Exclusive). Its input is a Doc, so last-word-js stays React-free. Owner 2026-11-01: "new last-word-ui" (last-word-js#2). Consumer: MOIC. Depends on last-word footnotes and the reader page geometry (in progress). npm name verified free 2026-11-01.',
-        ],
         'charlotte-ui' => [
             'name' => '@particle-academy/charlotte-ui',
             'repo' => 'Particle-Academy/charlotte-ui',
@@ -383,6 +377,7 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
         'holy-sheet-js' => ['group' => 'documents', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#16a34a'],
         'dark-slide-js' => ['group' => 'documents', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#dc2626'],
         'last-word-js' => ['group' => 'documents', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#2563eb'],
+        'last-word-ui' => ['group' => 'documents', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#2563eb'],
         'fancy-heuristics-js' => ['group' => 'platform', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#0ea5e9'],
         'fancy-term-host' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#10b981'],
         'fancy-file-commons' => ['group' => 'documents', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#eab308'],
@@ -554,6 +549,7 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
             self::fancyEcharts(),
             self::fancyMlmUi(),
             self::fancyPasskeysUi(),
+            self::lastWordUi(),
             self::laravelCourses(),
             self::classroom(),
             self::teachersAid(),
@@ -2195,6 +2191,23 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
                 ['slug' => 'passkey-sign-in', 'name' => 'PasskeySignIn', 'blurb' => 'Controlled sign-in surface — discoverable (usernameless) by default, username-first with conditional-UI autofill on request. A dismissed prompt reads as "cancelled", not as an error.'],
                 ['slug' => 'passkey-manager', 'name' => 'PasskeyManager', 'blurb' => 'Controlled list of a user\'s passkeys with rename and revoke. Rows are handled by credential ID, revoke stages for human confirmation, and the last-passkey lockout is spelled out rather than implied.'],
                 ['slug' => 'passkey-status', 'name' => 'PasskeyStatus', 'blurb' => 'Read-only "can this browser do passkeys?" indicator — support, a built-in authenticator, and autofill sign-in.'],
+            ],
+        ];
+    }
+
+    /** @return array<string, mixed> */
+    private static function lastWordUi(): array
+    {
+        return [
+            'slug' => 'last-word-ui',
+            'name' => 'last-word-ui',
+            'tagline' => 'A read-only, paged React viewer for a last-word Doc that draws it as the pages it prints on: paper size and orientation, automatic breaks by content height, header and footer bands at Word\'s distances with live {page}/{pages}, footnotes at the foot of their page, and tables split by row with the header repeated. It scales to fit a narrow panel and never reflows. Pairs with particle-academy/last-word (PHP) or @particle-academy/last-word (Node).',
+            'npm' => '@particle-academy/last-word-ui',
+            'repo' => 'Particle-Academy/last-word-ui',
+            'language' => 'TypeScript',
+            'pairs' => ['last-word', 'last-word-js'],
+            'components' => [
+                ['slug' => 'doc-viewer', 'name' => 'DocViewer', 'blurb' => 'Paged, read-only preview of a last-word Doc. Takes the JSON a last-word reader returns, paginates by measured height, and scales whole pages to fit. Stable data-page / data-block / data-footnote handles; links, images and colours from the document are sanitised.'],
             ],
         ];
     }

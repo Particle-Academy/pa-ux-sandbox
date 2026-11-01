@@ -125,6 +125,7 @@ function operationCarriedFields(): array
         'setup' => 'inside the nested `trigger` block, where it is a STRING',
         'subscription' => 'inside the nested `trigger` block',
         'verification' => 'inside the nested `trigger` block — hmac / shared-token / null',
+        'route' => 'inside the nested `trigger` block — the key a host routes a VERIFIED delivery by',
     ];
 }
 

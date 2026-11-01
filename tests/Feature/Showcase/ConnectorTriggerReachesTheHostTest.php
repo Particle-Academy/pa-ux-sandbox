@@ -108,15 +108,49 @@ it('states a considered null for every trigger fact the index does not carry', f
     $trigger = $entries->firstWhere('role', 'trigger');
 
     expect(array_keys($trigger['trigger']))->toBe([
-        'delivery', 'setup', 'verification', 'handshake', 'subscription',
+        'delivery', 'setup', 'verification', 'handshake', 'subscription', 'route',
     ]);
     expect($trigger['trigger']['handshake'])->toBeNull();
     expect($trigger['trigger']['subscription'])->toBeNull();
+    expect($trigger['trigger']['route'])->toBeNull();
 
     // An action is not a trigger, and says so rather than going quiet.
     $action = $entries->firstWhere('role', 'action');
     expect($action)->toHaveKey('trigger');
     expect($action['trigger'])->toBeNull();
+});
+
+it('carries a declared routing rule, the key a host may route a verified delivery by', function () {
+    // Weaver added `route` for hubspot 0.5.0's crm_event at MOIC's request: an
+    // app-wide webhook's only routing key is in the payload, and it is safe ONLY
+    // after verification and only when mapped to a connection minted at install.
+    // A host that never receives the declaration routes by guesswork.
+    $entries = triggerEntries([
+        'delivery' => 'webhook',
+        'verification' => 'hmac',
+        'route' => ['by' => 'portalId', 'path' => '[].portalId', 'note' => 'not carried'],
+    ]);
+
+    expect($entries->firstWhere('role', 'trigger')['trigger']['route'])->toBe([
+        'by' => 'portalId',
+        'path' => '[].portalId',
+    ]);
+});
+
+it('serves hubspot crm_event\'s routing rule on the public endpoint, exactly as Weaver emitted it', function () {
+    // weaver.agi b700a9d (sha256 5c45e5b7...): the first trigger to declare one.
+    $item = collect($this->getJson('/r/connectors/index.json')->assertOk()->json('items'))
+        ->firstWhere('kind', '@particle-academy/hubspot_crm_event_trigger');
+
+    expect($item)->not->toBeNull('hubspot crm_event is not served; the case this pins is gone');
+    expect($item['trigger']['verification'])->toBe('hmac');
+    expect($item['trigger']['route'])->toBe(['by' => 'portalId', 'path' => '[].portalId']);
+});
+
+it('drops a malformed routing rule rather than serving half of one', function () {
+    $entries = triggerEntries(['route' => ['by' => 'portalId']]);
+
+    expect($entries->firstWhere('role', 'trigger')['trigger']['route'])->toBeNull();
 });
 
 it('keeps only the renewal facts a host acts on from a subscription block', function () {

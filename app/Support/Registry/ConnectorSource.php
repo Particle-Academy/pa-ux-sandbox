@@ -226,6 +226,7 @@ class ConnectorSource
     {
         $string = fn (string $key): ?string => is_string($operation[$key] ?? null) ? $operation[$key] : null;
         $subscription = is_array($operation['subscription'] ?? null) ? $operation['subscription'] : null;
+        $route = is_array($operation['route'] ?? null) ? $operation['route'] : null;
 
         return [
             'delivery' => $string('delivery'),
@@ -242,6 +243,14 @@ class ConnectorSource
                 'renewBeforeSeconds' => is_int($subscription['renewBeforeSeconds'] ?? null) ? $subscription['renewBeforeSeconds'] : null,
                 'renewable' => is_bool($subscription['renewable'] ?? null) ? $subscription['renewable'] : null,
             ],
+
+            // The routing rule (hubspot 0.5.0+): the payload key a host may route
+            // a delivery by, and where it sits. Safe only AFTER verification and
+            // only when mapped to a connection minted at install; an unmapped key
+            // is dropped. Half a rule is worse than none, so both parts or null.
+            'route' => is_string($route['by'] ?? null) && is_string($route['path'] ?? null)
+                ? ['by' => $route['by'], 'path' => $route['path']]
+                : null,
         ];
     }
 

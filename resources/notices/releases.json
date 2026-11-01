@@ -94,7 +94,7 @@
         "laravel-fun-lab": "0.6.0",
         "laravel-jobs": "0.5.0",
         "last-word": "0.16.0",
-        "last-word-js": "0.12.0",
+        "last-word-js": "0.13.0",
         "last-word-py": "0.8.0",
         "last-word-ui": "0.2.0",
         "mcp-relay-client": "0.3.0",
@@ -132,6 +132,13 @@
         "teachers-aid-ui": "0.3.0"
     },
     "releases": [
+        {
+            "slug": "last-word-js",
+            "registry": "npm",
+            "version": "0.13.0",
+            "published_at": "2026-11-01T09:11:12Z",
+            "first": false
+        },
         {
             "slug": "last-word-ui",
             "registry": "npm",

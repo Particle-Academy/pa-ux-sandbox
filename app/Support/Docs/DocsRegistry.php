@@ -25,6 +25,7 @@ class DocsRegistry
                 ['slug' => 'installation', 'title' => 'Installation', 'description' => 'Add Fancy UI to a React or Laravel app.'],
                 ['slug' => 'starter-kit', 'title' => 'Laravel starter kit', 'description' => 'Scaffold a fresh Laravel + Inertia + React app with Fancy UI and Fortify auth preinstalled — one `laravel new --using=` command.'],
                 ['slug' => 'theming', 'title' => 'Theming', 'description' => 'Tailwind v4 design tokens, dark mode, custom palettes.'],
+                ['slug' => 'typography', 'title' => 'Typography', 'description' => 'Fonts in a Fancy app: self-hosted and same-origin, custom and Google Fonts on Laravel + Vite + Tailwind v4, licensing, and fonts for deterministic layout.'],
             ],
         ],
         [

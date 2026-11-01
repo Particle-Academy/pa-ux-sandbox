@@ -19,6 +19,7 @@ use App\Mcp\Tools\SearchComponents;
 use App\Mcp\Tools\SearchNodes;
 use App\Mcp\Tools\ShowcaseProjectStatus;
 use App\Mcp\Tools\StartProject;
+use App\Mcp\Tools\TypographyGuide;
 use App\Mcp\Tools\UpgradeKit;
 use App\Support\Registry\RegistrySource;
 use App\Support\Seo\KitFacts;
@@ -85,6 +86,11 @@ Workflow:
 3. If you need the actual source code (e.g. to inline into an answer or to
    write files directly), call `get_component` to fetch the full registry
    bundle.
+
+Choosing or adding fonts? Call `typography-guide` before you paste a font
+<link>. Fancy apps self-host fonts on their own origin and never hot-link a
+font CDN; the guide covers the default stacks, custom and Google Fonts on
+Laravel + Vite + Tailwind v4, licensing, and fonts for deterministic layout.
 
 For the DESIGN phase of a new project or a redesign — before picking components —
 use `gallery_list_styles` to browse the Inspiration Gallery — three collections,
@@ -202,6 +208,7 @@ TXT;
     protected array $tools = [
         StartProject::class,
         UpgradeKit::class,
+        TypographyGuide::class,
         CheckVersions::class,
         ListComponents::class,
         SearchComponents::class,

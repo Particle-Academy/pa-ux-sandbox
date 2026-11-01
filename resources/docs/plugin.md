@@ -28,7 +28,7 @@ Approve the `fancy-ui` MCP server when prompted, then run `/mcp` to confirm it's
 
 ### The registry MCP server
 
-Each plugin registers the hosted registry endpoint at `https://ui.particle.academy/mcp` (streamable HTTP, `"type": "http"`, no API key) with the correct transport. It exposes fourteen tools so the agent works from the **live registry** instead of guessing component names or install commands — the core four being:
+Each plugin registers the hosted registry endpoint at `https://ui.particle.academy/mcp` (streamable HTTP, `"type": "http"`, no API key) with the correct transport. It exposes the tools listed on the [MCP servers](/docs/mcp) page so the agent works from the **live registry** instead of guessing component names or install commands — the core four being:
 
 | Tool | Input | Output |
 |---|---|---|

@@ -9,7 +9,7 @@ If you're an IDE user installing components, you want the **Install-MCP**. If yo
 
 ## Install-MCP — for IDE agents
 
-The Install-MCP server is a hosted streamable-HTTP MCP endpoint that any MCP-capable client can connect to. No API key. It exposes fourteen tools, in five groups:
+The Install-MCP server is a hosted streamable-HTTP MCP endpoint that any MCP-capable client can connect to. No API key. It exposes these tools:
 
 | Tool | Input | Output |
 |---|---|---|
@@ -22,6 +22,7 @@ The Install-MCP server is a hosted streamable-HTTP MCP endpoint that any MCP-cap
 | `gallery-get-blueprint` | `{ style }` | One style's design recipe: tokens, layout, restyled-component palette. |
 | `check-versions` | `{ packages, lang }` | The Fancy packages a project uses -> the latest version of each, **plus any first-party dependency missing from the list**. Covers prism and marketplace nodes. |
 | `upgrade-kit` | `{ from? }` | Moving an app to a newer kit line: why the release exists, what breaks, the ordered commands. |
+| `typography-guide` | `{ topic? }` | Choosing or adding fonts: the self-host policy, default stacks, custom and Google Fonts on Laravel + Vite + Tailwind v4, licensing, deterministic layout. The same content as [Typography](/docs/typography). |
 | `search-backend-packages` | `{ query?, stack? }` | A server-side package for a capability, filtered to the stack you are already on. |
 | `list-connector-services` | (none) | Which vendor services have connector nodes, by domain, with trigger + action counts. |
 | `list-nodes` / `search-nodes` | (none) / `{ query }` | The **fancy-flow workflow-node marketplace**. Nodes are vendored source, not packages. |

@@ -163,6 +163,12 @@ class PackageRegistry
      * @var array<string, array{name: string, repo: string, registries: array<string,string>, why: string}>
      */
     public const PLANNED = [
+        'last-word-ui' => [
+            'name' => '@particle-academy/last-word-ui',
+            'repo' => 'Particle-Academy/last-word-ui',
+            'registries' => ['npm' => '@particle-academy/last-word-ui'],
+            'why' => 'A read-only, paged React viewer for a last-word Doc that draws it as the pages it prints on. It covers paper size and orientation, automatic breaks by content height, header and footer bands at Word\'s distances with live {page}/{pages}, footnotes at the page foot, and tables, shading and images as read. It scales to fit a narrow panel and never reflows. Built from react-fancy primitives (Fancy Exclusive). Its input is a Doc, so last-word-js stays React-free. Owner 2026-11-01: "new last-word-ui" (last-word-js#2). Consumer: MOIC. Depends on last-word footnotes and the reader page geometry (in progress). npm name verified free 2026-11-01.',
+        ],
         'charlotte-ui' => [
             'name' => '@particle-academy/charlotte-ui',
             'repo' => 'Particle-Academy/charlotte-ui',

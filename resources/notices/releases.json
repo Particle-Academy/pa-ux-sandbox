@@ -23,7 +23,7 @@
         "fancy-cms": "0.8.1",
         "fancy-cms-ui": "0.13.1",
         "fancy-code": "0.15.0",
-        "fancy-conformance": "0.39.0",
+        "fancy-conformance": "0.40.0",
         "fancy-connector-core": "0.11.0",
         "fancy-devtools": "0.1.0",
         "fancy-diff": "0.5.1",
@@ -93,9 +93,9 @@
         "laravel-fms": "0.12.0",
         "laravel-fun-lab": "0.6.0",
         "laravel-jobs": "0.5.0",
-        "last-word": "0.14.0",
-        "last-word-js": "0.11.0",
-        "last-word-py": "0.7.0",
+        "last-word": "0.15.0",
+        "last-word-js": "0.12.0",
+        "last-word-py": "0.8.0",
         "mcp-relay-client": "0.3.0",
         "prism": "0.144.1",
         "prism-acp-ts": "0.33.2",
@@ -131,6 +131,34 @@
         "teachers-aid-ui": "0.3.0"
     },
     "releases": [
+        {
+            "slug": "last-word-py",
+            "registry": "pypi",
+            "version": "0.8.0",
+            "published_at": "2026-11-01T06:57:56Z",
+            "first": false
+        },
+        {
+            "slug": "last-word-js",
+            "registry": "npm",
+            "version": "0.12.0",
+            "published_at": "2026-11-01T06:55:44Z",
+            "first": false
+        },
+        {
+            "slug": "fancy-conformance",
+            "registry": "npm",
+            "version": "0.40.0",
+            "published_at": "2026-11-01T06:30:22Z",
+            "first": false
+        },
+        {
+            "slug": "last-word",
+            "registry": "composer",
+            "version": "0.15.0",
+            "published_at": "2026-11-01T06:20:42Z",
+            "first": false
+        },
         {
             "slug": "agent-integrations",
             "registry": "npm",

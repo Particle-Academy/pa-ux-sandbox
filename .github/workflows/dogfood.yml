@@ -34,7 +34,7 @@ jobs:
         uses: actions/checkout@v7
         with:
           repository: Particle-Academy/.github
-          ref: b3b5e499c78467bd1e98d80af23a6b4861489ac5
+          ref: 03de033984603690b9d1ef142899179775d28b22
           path: .third-party-allowlist
           persist-credentials: false
 
@@ -61,11 +61,11 @@ jobs:
           DYLD_LIBRARY_PATH: ''
           PIN_ROOT: .third-party-allowlist
           PIN_DIR: .third-party-allowlist/third-party
-          PIN_SHA: b3b5e499c78467bd1e98d80af23a6b4861489ac5
+          PIN_SHA: 03de033984603690b9d1ef142899179775d28b22
           PIN_SHA256: |
-            4b94acfac87136b0942123b9f227919d7e2e3d67863bcdceba32c9a73f765db0  check.mjs
+            4000858467c20cda5ab9af2a9cc3b7eff92a9633ed27a87e2e11837556b3f847  check.mjs
             1547306d567749d7410040cae2bfb9a648902de95c3378f6c5af54245c896e11  gate-graph.mjs
-            b9423fcbc59c06b38862841f7111817cf586a3f5e7bcaf34349f26f7515b782d  allowlist.json
+            720d6d7393e943c599dab248511b8e89f29d51993c31cfaf7bda9292638b74e3  allowlist.json
         run: |
           node -e '
           const fs = require("node:fs");

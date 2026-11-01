@@ -2,7 +2,7 @@
     "window_days": 60,
     "latest": {
         "agent-integrations": "0.55.1",
-        "change-council": "0.3.0",
+        "change-council": "0.4.0",
         "charlotte": "0.3.0",
         "classroom": "0.7.0",
         "dark-slide": "0.22.1",
@@ -12,7 +12,7 @@
         "fancy-3d": "0.5.0",
         "fancy-3d-babylon": "0.2.0",
         "fancy-3d-three": "0.2.0",
-        "fancy-app-update": "0.7.0",
+        "fancy-app-update": "0.7.1",
         "fancy-artboard": "0.5.0",
         "fancy-auto-common": "0.2.0",
         "fancy-brand-icons": "0.4.0",
@@ -22,13 +22,13 @@
         "fancy-cli": "0.8.3",
         "fancy-cms": "0.8.1",
         "fancy-cms-ui": "0.13.1",
-        "fancy-code": "0.15.0",
+        "fancy-code": "0.15.1",
         "fancy-conformance": "0.43.0",
         "fancy-connector-core": "0.11.0",
-        "fancy-devtools": "0.1.0",
+        "fancy-devtools": "0.1.1",
         "fancy-diff": "0.5.1",
         "fancy-doc-commons": "0.4.0",
-        "fancy-docs": "0.2.0",
+        "fancy-docs": "0.2.1",
         "fancy-echarts": "6.1.0",
         "fancy-expr": "0.2.0",
         "fancy-features-js": "0.5.0",
@@ -52,7 +52,7 @@
         "fancy-grid": "0.3.0",
         "fancy-heuristics": "0.5.0",
         "fancy-heuristics-js": "0.3.0",
-        "fancy-inertia": "0.14.0",
+        "fancy-inertia": "0.14.1",
         "fancy-live": "0.1.0",
         "fancy-map": "0.2.1",
         "fancy-mlm": "0.3.0",
@@ -68,16 +68,16 @@
         "fancy-query": "0.9.1",
         "fancy-screens": "0.7.1",
         "fancy-seo": "0.6.0",
-        "fancy-sheets": "0.13.0",
-        "fancy-slides": "0.25.0",
+        "fancy-sheets": "0.13.1",
+        "fancy-slides": "0.25.1",
         "fancy-template": "0.3.0",
         "fancy-term": "0.8.1",
         "fancy-term-host": "0.11.1",
         "fancy-trading-js": "0.2.1",
         "fancy-trading-ui": "0.1.0",
         "fancy-tui": "0.11.0",
-        "fancy-walkthrough": "0.4.0",
-        "fancy-whats-new": "0.1.0",
+        "fancy-walkthrough": "0.4.1",
+        "fancy-whats-new": "0.1.1",
         "fancy-whiteboard": "0.5.1",
         "fancy-ws": "0.1.1",
         "fancy-x-files": "0.2.0",
@@ -89,7 +89,7 @@
         "holy-sheet-py": "0.10.3",
         "job-board": "0.5.0",
         "laravel-catalog": "0.13.0",
-        "laravel-courses": "0.3.0",
+        "laravel-courses": "0.4.0",
         "laravel-fms": "0.12.0",
         "laravel-fun-lab": "0.6.0",
         "laravel-jobs": "0.5.0",
@@ -122,16 +122,114 @@
         "prism-perplexity": "0.3.0",
         "prism-perplexity-py": "0.1.0",
         "prism-perplexity-ts": "0.2.0",
-        "prism-py": "0.5.1",
-        "prism-ts": "0.5.1",
+        "prism-py": "0.6.0",
+        "prism-ts": "0.6.0",
         "prism-workspace": "0.3.0",
         "prism-workspace-py": "0.1.0",
         "prism-workspace-ts": "0.2.0",
-        "react-fancy": "5.72.0",
+        "react-fancy": "6.0.0",
         "teachers-aid": "0.3.0",
         "teachers-aid-ui": "0.3.0"
     },
     "releases": [
+        {
+            "slug": "prism-ts",
+            "registry": "npm",
+            "version": "0.6.0",
+            "published_at": "2026-11-01T19:42:53Z",
+            "first": false
+        },
+        {
+            "slug": "prism-py",
+            "registry": "pypi",
+            "version": "0.6.0",
+            "published_at": "2026-11-01T19:38:40Z",
+            "first": false
+        },
+        {
+            "slug": "fancy-walkthrough",
+            "registry": "npm",
+            "version": "0.4.1",
+            "published_at": "2026-11-01T19:12:47Z",
+            "first": false
+        },
+        {
+            "slug": "fancy-sheets",
+            "registry": "npm",
+            "version": "0.13.1",
+            "published_at": "2026-11-01T19:08:35Z",
+            "first": false
+        },
+        {
+            "slug": "fancy-docs",
+            "registry": "npm",
+            "version": "0.2.1",
+            "published_at": "2026-11-01T19:05:12Z",
+            "first": false
+        },
+        {
+            "slug": "fancy-devtools",
+            "registry": "npm",
+            "version": "0.1.1",
+            "published_at": "2026-11-01T19:01:04Z",
+            "first": false
+        },
+        {
+            "slug": "fancy-slides",
+            "registry": "npm",
+            "version": "0.25.1",
+            "published_at": "2026-11-01T18:57:50Z",
+            "first": false
+        },
+        {
+            "slug": "fancy-code",
+            "registry": "npm",
+            "version": "0.15.1",
+            "published_at": "2026-11-01T18:53:51Z",
+            "first": false
+        },
+        {
+            "slug": "fancy-inertia",
+            "registry": "npm",
+            "version": "0.14.1",
+            "published_at": "2026-11-01T18:50:21Z",
+            "first": false
+        },
+        {
+            "slug": "fancy-whats-new",
+            "registry": "npm",
+            "version": "0.1.1",
+            "published_at": "2026-11-01T18:46:53Z",
+            "first": false
+        },
+        {
+            "slug": "fancy-app-update",
+            "registry": "npm",
+            "version": "0.7.1",
+            "published_at": "2026-11-01T18:43:32Z",
+            "first": false
+        },
+        {
+            "slug": "laravel-courses",
+            "registry": "composer",
+            "version": "0.4.0",
+            "published_at": "2026-11-01T18:38:24Z",
+            "first": false
+        },
+        {
+            "slug": "change-council",
+            "registry": "composer",
+            "version": "0.4.0",
+            "published_at": "2026-11-01T18:33:20Z",
+            "first": false
+        },
+        {
+            "slug": "react-fancy",
+            "registry": "npm",
+            "version": "6.0.0",
+            "published_at": "2026-11-01T18:24:33Z",
+            "first": false
+        },
         {
             "slug": "last-word-ui",
             "registry": "npm",

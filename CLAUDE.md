@@ -99,7 +99,7 @@ vendor/bin/pint           # Format all files
 
 ## This app owns the kit version
 
-The **kit version** (currently `0.4`) is the set of package releases that
+The **kit version** (read it from `kit.json`) is the set of package releases that
 shipped and were *tested together* — as distinct from any one package's version,
 which moves on its own schedule. Packages sitting on different numbers is not
 drift and is not something to fix; the kit tag is the coordination mechanism.

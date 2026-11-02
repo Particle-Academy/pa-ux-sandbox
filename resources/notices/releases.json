@@ -34,7 +34,7 @@
         "fancy-features-js": "0.5.0",
         "fancy-features-py": "0.2.0",
         "fancy-file-commons": "0.5.0",
-        "fancy-flow": "0.83.0",
+        "fancy-flow": "0.84.0",
         "fancy-flow-mcp": "0.5.0",
         "fancy-flow-mcp-js": "0.2.0",
         "fancy-flow-php": "0.65.1",
@@ -99,6 +99,7 @@
         "last-word-ui": "0.3.0",
         "mcp-relay-client": "0.3.0",
         "prism": "0.146.0",
+        "prism-acp": "0.1.1",
         "prism-acp-ts": "0.33.2",
         "prism-browser": "0.4.1",
         "prism-browser-py": "0.1.1",
@@ -132,6 +133,27 @@
         "teachers-aid-ui": "0.3.0"
     },
     "releases": [
+        {
+            "slug": "fancy-flow",
+            "registry": "npm",
+            "version": "0.84.0",
+            "published_at": "2026-11-02T22:50:32Z",
+            "first": false
+        },
+        {
+            "slug": "prism-acp",
+            "registry": "composer",
+            "version": "0.1.1",
+            "published_at": "2026-11-02T22:09:58Z",
+            "first": false
+        },
+        {
+            "slug": "prism-acp",
+            "registry": "composer",
+            "version": "0.1.0",
+            "published_at": "2026-11-02T21:51:02Z",
+            "first": true
+        },
         {
             "slug": "fancy-flow",
             "registry": "npm",

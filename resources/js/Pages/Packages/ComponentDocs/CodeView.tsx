@@ -8,6 +8,36 @@ const HTML = `<section class="hero">
   <button type="button" data-action="start">Start</button>
 </section>`;
 
+const SHELL = `# run the suite, then build
+php artisan test --compact
+npm run build -- --mode production
+export LOG_LEVEL="debug" && npm run dev`;
+
+const ENV = `# Database
+DB_CONNECTION=sqlite
+DB_DATABASE="\${APP_ROOT}/database/app.sqlite"
+CACHE_STORE=redis # shared with the queue`;
+
+const TYPESCRIPT = `type Package = { name: string; installs: number };
+
+export function top(packages: Package[], limit = 5): Package[] {
+    return [...packages].sort((a, b) => b.installs - a.installs).slice(0, limit);
+}`;
+
+const JSON_SNIPPET = `{
+  "name": "react-fancy",
+  "installs": 1280,
+  "tags": ["react", "tailwind"],
+  "stable": true
+}`;
+
+const PHP = `<?php
+
+$packages = Package::query()
+    ->orderByDesc('installs')
+    ->limit(5)
+    ->pluck('name');`;
+
 const SQL = `select p.name, count(*) as installs
 from packages p
 join installs i on i.package_id = p.id
@@ -18,12 +48,13 @@ export const codeViewDoc: ComponentDoc = {
     intro: (
         <p>
             A small source surface — read-only or editable — for the cases where a full code
-            editor is too much. It ships <strong>one grammar</strong>:{" "}
-            <code>"html"</code>, from <code>fancy-file-commons</code>. Everything else,
-            including <code>"markdown"</code> and <code>"plaintext"</code>, renders
-            un-highlighted and that is deliberate — bundling a highlighter into a core
-            primitive would put it in every consumer&rsquo;s tree. For real language support
-            reach for <code>fancy-code</code>&rsquo;s <code>CodeEditor</code>.
+            editor is too much. It highlights TypeScript, JavaScript, JSON, PHP, Python, Go,
+            Markdown, shell, dotenv and HTML, using the small hand-written grammars shared from{" "}
+            <code>fancy-file-commons</code> (the same ones <code>fancy-code</code>&rsquo;s editor
+            uses, so a snippet colours the same in both). Any other language, and the default{" "}
+            <code>"plaintext"</code>, renders un-highlighted. For a gutter, folding, multiple
+            files or language servers reach for <code>fancy-code</code>&rsquo;s{" "}
+            <code>CodeEditor</code>.
         </p>
     ),
     examples: [
@@ -39,9 +70,35 @@ export const codeViewDoc: ComponentDoc = {
             code: `<CodeView value={snippet} />`,
         },
         {
+            name: "Highlighted languages",
+            description:
+                "Shell, .env, TypeScript, JSON and PHP, read-only. `language` is case-insensitive and takes the short aliases too (`sh`, `bash`, `env`, `ts`, `tsx`).",
+            render: () => (
+                <div className="w-full space-y-3" data-demo="code-view-languages">
+                    {[
+                        ["bash", SHELL],
+                        ["env", ENV],
+                        ["typescript", TYPESCRIPT],
+                        ["json", JSON_SNIPPET],
+                        ["php", PHP],
+                    ].map(([language, source]) => (
+                        <div key={language} data-demo-language={language}>
+                            <p className="mb-1 text-xs font-medium text-zinc-500">language="{language}"</p>
+                            <CodeView value={source} language={language} minHeight={60} />
+                        </div>
+                    ))}
+                </div>
+            ),
+            code: `<CodeView value={script} language="bash" />
+<CodeView value={dotenv} language="env" />
+<CodeView value={source} language="typescript" />
+<CodeView value={manifest} language="json" />
+<CodeView value={source} language="php" />`,
+        },
+        {
             name: "HTML highlighting",
             description:
-                "The one grammar that ships. Compare it with the same markup declared as plaintext below — the difference is the whole of what language does here.",
+                "Compare highlighted markup with the same markup declared as plaintext below — the difference is the whole of what language does here.",
             render: () => (
                 <div className="w-full space-y-3">
                     <div>
@@ -177,7 +234,7 @@ export const codeViewDoc: ComponentDoc = {
     props: [
         { name: "value", type: `string`, default: "—", description: "Source text. Controlled.", required: true },
         { name: "onChange", type: `(value: string) => void`, default: "—", description: "Called on edit. Omit for a read-only view." },
-        { name: "language", type: `"html" | "markdown" | "plaintext" | string`, default: `"plaintext"`, description: "Grammar id. Only `html` is highlighted; everything else renders plain." },
+        { name: "language", type: `CodeLanguage | string`, default: `"plaintext"`, description: "Case-insensitive grammar id: `ts` / `tsx` / `js` / `jsx`, `json`, `php`, `py`, `go`, `md`, `sh` / `bash` / `zsh` / `shell`, `env` / `dotenv`, `html` / `htm` / `xml` / `xhtml`. Anything else renders plain." },
         { name: "readOnly", type: `boolean`, default: `false`, description: "Block editing even when `onChange` is passed." },
         { name: "placeholder", type: `string`, default: "—", description: "Shown when the value is empty." },
         { name: "minHeight", type: `number`, default: `120`, description: "Minimum height in px before the view grows with content." },
@@ -187,10 +244,10 @@ export const codeViewDoc: ComponentDoc = {
     notes: (
         <ul>
             <li>
-                <strong>Only HTML is highlighted.</strong> Passing{" "}
-                <code>language="typescript"</code> is not an error and not a no-op to be
-                surprised by — it renders readable, un-highlighted source. If you need the
-                colours, that is a different component and a real dependency.
+                <strong>An unknown language is not an error.</strong> Passing{" "}
+                <code>language="sql"</code> (no grammar ships for it) renders readable,
+                un-highlighted source, as the read-only example above does. Highlighting only
+                adds colour spans; the text and its escaping are unchanged.
             </li>
             <li>
                 Fully controlled: the view keeps no copy of <code>value</code>. An edit that

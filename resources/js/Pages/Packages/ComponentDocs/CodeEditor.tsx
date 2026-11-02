@@ -19,6 +19,18 @@ const samplePy = `def fib(n):
 print(fib(10))
 `;
 
+const sampleShell = `# build and ship
+npm ci --prefer-offline
+export NODE_ENV="production"
+npm run build && npm publish --provenance
+`;
+
+const sampleEnv = `# Application
+APP_URL=https://app.example.com
+APP_DEBUG=false
+MAIL_FROM_NAME="\${APP_NAME}" # interpolated
+`;
+
 function CodeEditorDemo() {
     const [value, setValue] = useState(sampleJs);
     return (
@@ -126,6 +138,27 @@ const [code, setCode] = useState(\`function hello() {
             code: `<CodeEditor value={snippet} language="typescript" readOnly>
                         <CodeEditor.Panel />
                     </CodeEditor>`,
+        },
+        {
+            name: "Shell and .env",
+            description: "`language=\"shell\"` (aliases `sh`, `bash`, `zsh`) and `language=\"dotenv\"` (alias `env`) are built in, and `FileViewer` picks them for `.sh` files, shell rc files and `.env` / `.env.*`.",
+            render: () => (
+                <div className="w-full max-w-2xl space-y-3" data-demo="code-editor-shell-env">
+                    <CodeEditor value={sampleShell} language="shell" readOnly>
+                        <CodeEditor.Panel />
+                    </CodeEditor>
+                    <CodeEditor value={sampleEnv} language="dotenv" readOnly>
+                        <CodeEditor.Panel />
+                    </CodeEditor>
+                </div>
+            ),
+            code: `<CodeEditor value={script} language="shell" readOnly>
+    <CodeEditor.Panel />
+</CodeEditor>
+
+<CodeEditor value={dotenv} language="dotenv" readOnly>
+    <CodeEditor.Panel />
+</CodeEditor>`,
         },
         {
             name: "Themes + line numbers",

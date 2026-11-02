@@ -5732,20 +5732,61 @@ function TimelineDockDemo() {
 
 // ── @particle-academy/fancy-code ───────────────────────────────────────────
 
+const FILE_VIEWER_DEPLOY_SH = `#!/usr/bin/env bash
+# deploy: install, migrate, build
+set -euo pipefail
+composer install --no-dev --optimize-autoloader
+php artisan migrate --force
+echo "Deployed to \${APP_URL:-production}" && npm run build`;
+
+const FILE_VIEWER_ENV = `# Application
+APP_NAME="Fancy App"
+APP_URL=https://app.example.com
+APP_DEBUG=false
+
+export QUEUE_CONNECTION=database # jobs run in the database queue
+MAIL_FROM_NAME="\${APP_NAME}"`;
+
+const FILE_VIEWER_FILES: Record<string, string> = {
+    "Button.tsx": SAMPLE_TSX,
+    "deploy.sh": FILE_VIEWER_DEPLOY_SH,
+    ".env": FILE_VIEWER_ENV,
+};
+
 function FileViewerDemo() {
     const [lineNumbers, setLineNumbers] = useState(true);
+    const [filename, setFilename] = useState("Button.tsx");
     return (
         <DemoNote
-            outOfBox="Language detection from the filename, syntax highlighting and the gutter."
-            demo="One sample file and the gutter toggle."
+            outOfBox="Language detection from the filename (including shell scripts and .env files), syntax highlighting and the gutter."
+            demo="Three sample files and the gutter toggle."
         >
             <div className="max-w-2xl space-y-3">
-                <label className="flex items-center gap-2 text-xs text-zinc-500">
-                    <Checkbox checked={lineNumbers} onCheckedChange={setLineNumbers} />
-                    line numbers
-                </label>
+                <div className="flex flex-wrap items-center gap-2" data-demo="file-viewer-files">
+                    {Object.keys(FILE_VIEWER_FILES).map((name) => (
+                        <Button
+                            key={name}
+                            size="sm"
+                            variant={name === filename ? undefined : "ghost"}
+                            data-file={name}
+                            onClick={() => setFilename(name)}
+                        >
+                            {name}
+                        </Button>
+                    ))}
+                    <label className="ml-auto flex items-center gap-2 text-xs text-zinc-500">
+                        <Checkbox checked={lineNumbers} onCheckedChange={setLineNumbers} />
+                        line numbers
+                    </label>
+                </div>
                 <div className="h-72 overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
-                    <FileViewer filename="Button.tsx" value={SAMPLE_TSX} readOnly lineNumbers={lineNumbers} />
+                    <FileViewer
+                        key={filename}
+                        filename={filename}
+                        value={FILE_VIEWER_FILES[filename]}
+                        readOnly
+                        lineNumbers={lineNumbers}
+                    />
                 </div>
             </div>
         </DemoNote>

@@ -34,7 +34,7 @@
         "fancy-features-js": "0.5.0",
         "fancy-features-py": "0.2.0",
         "fancy-file-commons": "0.5.0",
-        "fancy-flow": "0.82.1",
+        "fancy-flow": "0.83.0",
         "fancy-flow-mcp": "0.5.0",
         "fancy-flow-mcp-js": "0.2.0",
         "fancy-flow-php": "0.65.1",
@@ -63,7 +63,7 @@
         "fancy-passkeys-js": "0.2.1",
         "fancy-passkeys-ui": "0.2.1",
         "fancy-pixel": "0.3.0",
-        "fancy-pty": "0.2.0",
+        "fancy-pty": "0.2.1",
         "fancy-pwa": "0.2.0",
         "fancy-query": "0.9.1",
         "fancy-screens": "0.7.1",
@@ -98,12 +98,12 @@
         "last-word-py": "0.9.0",
         "last-word-ui": "0.3.0",
         "mcp-relay-client": "0.3.0",
-        "prism": "0.145.1",
+        "prism": "0.146.0",
         "prism-acp-ts": "0.33.2",
         "prism-browser": "0.4.1",
         "prism-browser-py": "0.1.1",
         "prism-browser-ts": "0.2.1",
-        "prism-harness": "0.22.1",
+        "prism-harness": "0.22.2",
         "prism-harness-py": "0.4.2",
         "prism-harness-ts": "0.9.2",
         "prism-human-plus": "0.5.1",
@@ -116,7 +116,7 @@
         "prism-memory": "0.4.0",
         "prism-memory-py": "0.1.0",
         "prism-memory-ts": "0.2.0",
-        "prism-opentelemetry": "0.5.2",
+        "prism-opentelemetry": "0.6.0",
         "prism-opentelemetry-py": "0.3.1",
         "prism-opentelemetry-ts": "0.6.0",
         "prism-perplexity": "0.3.0",
@@ -132,6 +132,48 @@
         "teachers-aid-ui": "0.3.0"
     },
     "releases": [
+        {
+            "slug": "fancy-flow",
+            "registry": "npm",
+            "version": "0.83.0",
+            "published_at": "2026-11-02T21:13:52Z",
+            "first": false
+        },
+        {
+            "slug": "fancy-flow",
+            "registry": "npm",
+            "version": "0.82.2",
+            "published_at": "2026-11-02T19:34:16Z",
+            "first": false
+        },
+        {
+            "slug": "fancy-pty",
+            "registry": "npm",
+            "version": "0.2.1",
+            "published_at": "2026-11-02T10:06:25Z",
+            "first": false
+        },
+        {
+            "slug": "prism",
+            "registry": "composer",
+            "version": "0.146.0",
+            "published_at": "2026-11-02T07:44:01Z",
+            "first": false
+        },
+        {
+            "slug": "prism-harness",
+            "registry": "composer",
+            "version": "0.22.2",
+            "published_at": "2026-11-02T07:00:45Z",
+            "first": false
+        },
+        {
+            "slug": "prism-opentelemetry",
+            "registry": "composer",
+            "version": "0.6.0",
+            "published_at": "2026-11-02T07:00:41Z",
+            "first": false
+        },
         {
             "slug": "react-fancy",
             "registry": "npm",

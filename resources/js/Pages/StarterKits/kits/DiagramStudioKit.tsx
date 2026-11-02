@@ -146,7 +146,8 @@ function CompositionPanel() {
                         radius: ["48%", "72%"],
                         center: ["50%", "52%"],
                         avoidLabelOverlap: true,
-                        itemStyle: { borderRadius: 6, borderColor: "var(--ff-bg, #fff)", borderWidth: 2 },
+                        padAngle: 1.5,
+                        itemStyle: { borderRadius: 6 },
                         label: { show: true, fontSize: 11, color: "#a1a1aa", formatter: "{b}\n{d}%" },
                         emphasis: { label: { show: true, fontSize: 13, fontWeight: 600, color: "#18181b" } },
                         data: [

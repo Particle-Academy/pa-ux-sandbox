@@ -115,7 +115,7 @@ import {
     GIT_STATUS,
     GIT_TREE,
 } from "./gitFixtures";
-import { ActivityLight, AudioViewer, Avatar, Badge, Breadcrumbs, Button, Calendar, Callout, Card, ChatThread, CodeView, ColorPicker, Container, ContentRenderer, ContextMenu, Drawer, Emoji, Eyebrow, FauxClient, FileBrowser, FullScreen, Grid, ReorderableGrid, Heading, ImageViewer, IndexList, JsonEditor, Kanban, Kbd, Marquee, MediaViewer, MoodMeter, OtpInput, Pagination, PdfViewer, Pillbox, Profile, Progress, PullQuote, QrCode, ResizablePanels, Section, Skeleton, Stat, StatList, StickyNote, Switch, Tabs, Text, TimeGrid, TimePicker, Timeline, Tooltip, VideoViewer, VirtualList } from "@particle-academy/react-fancy";
+import { ActivityLight, AudioViewer, Avatar, Badge, Breadcrumbs, Button, Calendar, Callout, Card, ChatThread, CodeView, ColorPicker, Container, ContentRenderer, ContextMenu, Drawer, Emoji, Eyebrow, FauxClient, FileBrowser, FullScreen, Grid, ReorderableGrid, Heading, ImageViewer, IndexList, JsonEditor, Kanban, Kbd, Marquee, MediaViewer, MoodMeter, OtpInput, Pagination, PdfViewer, Pillbox, Profile, Progress, PullQuote, QrCode, ResizablePanels, Section, Skeleton, Stat, Stepper, StatList, StickyNote, Switch, Tabs, Text, TimeGrid, TimePicker, Timeline, Tooltip, VideoViewer, VirtualList } from "@particle-academy/react-fancy";
 import { Checkbox, CheckboxGroup, DatePicker, Field, Input, MultiSwitch, RadioGroup, Select, Slider, Textarea } from "@particle-academy/react-fancy";
 import { FileViewer } from "@particle-academy/fancy-code";
 import { EChart } from "@particle-academy/fancy-echarts";
@@ -1658,6 +1658,16 @@ const PREVIEWS: Record<string, PreviewFn> = {
                 <Skeleton shape="circle" width={32} height={32} />
                 <Skeleton shape="text" width="50%" />
             </div>
+        </div>
+    ),
+
+    "react-fancy/stepper": () => (
+        <div className="w-full max-w-[18rem]">
+            <Stepper
+                current={1}
+                orientation="horizontal"
+                steps={[{ title: "Cart" }, { title: "Ship" }, { title: "Pay" }]}
+            />
         </div>
     ),
 

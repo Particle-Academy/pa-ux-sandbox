@@ -111,6 +111,31 @@ export const sidebarDoc: ComponentDoc = {
 </Sidebar>`,
         },
         {
+            name: "Attention dots + keyboard nav",
+            description:
+                "A collapsed rail shows only icons, so `dot` adds a small mark at the icon's corner that survives collapsing (`true` is red, or pass a Badge colour). `dotLabel` is read by screen readers, because a coloured dot alone says nothing, and `dotTooltip` shows those same words on hover and keyboard focus. `navLabel` wraps the items in a labelled `<nav>` landmark, and `keyboardNav` makes the rail one tab stop: click an item, then use ArrowUp / ArrowDown / Home / End.",
+            render: () => (
+                <div className="rounded-md border border-zinc-200 p-2 dark:border-zinc-800" data-demo="sidebar-dots">
+                    <Sidebar collapsed navLabel="Workspace" keyboardNav>
+                        <Sidebar.Item icon={<Icon name="home" />} href="#" active>Dashboard</Sidebar.Item>
+                        <Sidebar.Item icon={<Icon name="inbox" />} href="#" dot dotLabel="3 unread" dotTooltip>Inbox</Sidebar.Item>
+                        <Sidebar.Item icon={<Icon name="rocket" />} href="#" dot="amber" dotLabel="Needs review" dotTooltip>Launches</Sidebar.Item>
+                        <Sidebar.Item icon={<Icon name="cog" />} href="#">Settings</Sidebar.Item>
+                    </Sidebar>
+                </div>
+            ),
+            code: `<Sidebar collapsed navLabel="Workspace" keyboardNav>
+    <Sidebar.Item icon={<Icon name="home" />} href="/" active>Dashboard</Sidebar.Item>
+    <Sidebar.Item icon={<Icon name="inbox" />} href="/inbox" dot dotLabel="3 unread" dotTooltip>
+        Inbox
+    </Sidebar.Item>
+    <Sidebar.Item icon={<Icon name="rocket" />} href="/launches" dot="amber" dotLabel="Needs review" dotTooltip>
+        Launches
+    </Sidebar.Item>
+    <Sidebar.Item icon={<Icon name="cog" />} href="/settings">Settings</Sidebar.Item>
+</Sidebar>`,
+        },
+        {
             name: "embedded",
             description:
                 "Drops the sidebar's own outer chrome — the border and background it draws when it owns the edge of the page — for when it sits inside a panel that already has them. Chrome only: collapsing still works, and a collapsed rail keeps its fixed narrow width. Without it every host rediscovers the same override utilities, which then rot the next time the base classes change.",
@@ -139,11 +164,17 @@ export const sidebarDoc: ComponentDoc = {
         { name: "collapseMode", type: `"icons" | "letters"`, default: `"icons"`, description: "When collapsed: show icons (fallback to first 3 letters) or always show letters." },
         { name: "className", type: `string`, default: "—", description: "Extra classes on the root aside element." },
         { name: "embedded", type: `boolean`, default: `false`, description: "Drop the sidebar's own border and background, for use inside a panel that has them. Chrome only." },
+        { name: "navLabel", type: `string`, default: "—", description: "Wraps the items in `<nav aria-label>` so they form a navigation landmark." },
+        { name: "keyboardNav", type: `boolean`, default: `false`, description: "ArrowUp / ArrowDown / Home / End between items with a roving tabindex: the rail becomes one tab stop. Opt-in because it changes Tab order." },
     ],
     notes: (
         <p className="text-xs text-zinc-600 dark:text-zinc-300">
             <strong>Item props:</strong> <code>icon</code>, <code>active</code>,
-            <code>disabled</code>, <code>badge</code>, <code>href</code>, <code>onClick</code>.
+            <code>disabled</code>, <code>badge</code>, <code>href</code>, <code>onClick</code>,
+            <code>dot</code> (<code>true</code> or a Badge colour), <code>dotLabel</code> (screen-reader
+            text for the dot), <code>dotTooltip</code> (show <code>dotLabel</code> in a tooltip),
+            <code>badgeLabel</code> (screen-reader words for a bare count badge), and
+            <code>collapsedBadge</code> (show <code>badge</code> on the collapsed rail too).
             When the sidebar is collapsed and an item has no icon, the first 3 letters of the
             label are used.
         </p>

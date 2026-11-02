@@ -24,7 +24,7 @@
         "fancy-cms-ui": "0.13.1",
         "fancy-code": "0.15.1",
         "fancy-conformance": "0.43.0",
-        "fancy-connector-core": "0.11.0",
+        "fancy-connector-core": "0.13.0",
         "fancy-devtools": "0.1.1",
         "fancy-diff": "0.5.1",
         "fancy-doc-commons": "0.4.0",
@@ -98,12 +98,12 @@
         "last-word-py": "0.9.0",
         "last-word-ui": "0.3.0",
         "mcp-relay-client": "0.3.0",
-        "prism": "0.144.2",
+        "prism": "0.145.0",
         "prism-acp-ts": "0.33.2",
         "prism-browser": "0.4.1",
         "prism-browser-py": "0.1.1",
         "prism-browser-ts": "0.2.1",
-        "prism-harness": "0.22.0",
+        "prism-harness": "0.22.1",
         "prism-harness-py": "0.4.2",
         "prism-harness-ts": "0.9.2",
         "prism-human-plus": "0.5.1",
@@ -113,7 +113,7 @@
         "prism-mcp-py": "0.2.1",
         "prism-mcp-server-ts": "0.5.0",
         "prism-mcp-ts": "0.3.0",
-        "prism-memory": "0.3.0",
+        "prism-memory": "0.4.0",
         "prism-memory-py": "0.1.0",
         "prism-memory-ts": "0.2.0",
         "prism-opentelemetry": "0.5.2",
@@ -127,11 +127,74 @@
         "prism-workspace": "0.3.0",
         "prism-workspace-py": "0.1.0",
         "prism-workspace-ts": "0.2.0",
-        "react-fancy": "6.0.0",
+        "react-fancy": "6.3.0",
         "teachers-aid": "0.3.0",
         "teachers-aid-ui": "0.3.0"
     },
     "releases": [
+        {
+            "slug": "react-fancy",
+            "registry": "npm",
+            "version": "6.3.0",
+            "published_at": "2026-11-02T02:05:13Z",
+            "first": false
+        },
+        {
+            "slug": "react-fancy",
+            "registry": "npm",
+            "version": "6.2.0",
+            "published_at": "2026-11-02T01:41:04Z",
+            "first": false
+        },
+        {
+            "slug": "react-fancy",
+            "registry": "npm",
+            "version": "6.1.1",
+            "published_at": "2026-11-02T01:16:38Z",
+            "first": false
+        },
+        {
+            "slug": "react-fancy",
+            "registry": "npm",
+            "version": "6.1.0",
+            "published_at": "2026-11-02T00:57:05Z",
+            "first": false
+        },
+        {
+            "slug": "prism-harness",
+            "registry": "composer",
+            "version": "0.22.1",
+            "published_at": "2026-11-02T00:45:41Z",
+            "first": false
+        },
+        {
+            "slug": "prism",
+            "registry": "composer",
+            "version": "0.145.0",
+            "published_at": "2026-11-02T00:31:36Z",
+            "first": false
+        },
+        {
+            "slug": "fancy-connector-core",
+            "registry": "npm",
+            "version": "0.13.0",
+            "published_at": "2026-11-01T22:58:02Z",
+            "first": false
+        },
+        {
+            "slug": "fancy-connector-core",
+            "registry": "npm",
+            "version": "0.12.0",
+            "published_at": "2026-11-01T20:35:29Z",
+            "first": false
+        },
+        {
+            "slug": "prism-memory",
+            "registry": "composer",
+            "version": "0.4.0",
+            "published_at": "2026-11-01T20:32:31Z",
+            "first": false
+        },
         {
             "slug": "prism-ts",
             "registry": "npm",

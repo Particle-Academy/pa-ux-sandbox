@@ -1714,6 +1714,7 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
             ['slug' => 'separator', 'name' => 'Separator'],
             ['slug' => 'sidebar', 'name' => 'Sidebar'],
             ['slug' => 'skeleton', 'name' => 'Skeleton'],
+            ['slug' => 'stepper', 'name' => 'Stepper'],
             ['slug' => 'sticky-note', 'name' => 'StickyNote'],
             ['slug' => 'table', 'name' => 'Table'],
             ['slug' => 'virtual-list', 'name' => 'VirtualList', 'blurb' => 'Windowed list for tens of thousands of rows - measured variable heights, deep links by row id, tail-follow.'],

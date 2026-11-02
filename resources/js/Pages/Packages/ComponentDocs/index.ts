@@ -127,6 +127,7 @@ import { sharedWhiteboardDoc } from "./SharedWhiteboard";
 import { sheetWorkbookDoc } from "./SheetWorkbook";
 import { sidebarDoc } from "./Sidebar";
 import { skeletonDoc } from "./Skeleton";
+import { stepperDoc } from "./Stepper";
 import { tableDoc } from "./Table";
 import { tabsDoc } from "./Tabs";
 import { textDoc } from "./Text";
@@ -250,6 +251,7 @@ export const DOCS: Record<string, ComponentDoc> = {
     "react-fancy/separator": separatorDoc,
     "react-fancy/sidebar": sidebarDoc,
     "react-fancy/skeleton": skeletonDoc,
+    "react-fancy/stepper": stepperDoc,
     "react-fancy/table": tableDoc,
     "react-fancy/tabs": tabsDoc,
     "react-fancy/text": textDoc,

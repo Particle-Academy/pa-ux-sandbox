@@ -76,6 +76,7 @@ import {
     Separator,
     Sidebar,
     Skeleton,
+    Stepper,
     Table,
     Tabs,
     Text,
@@ -249,6 +250,7 @@ const REGISTRY: Record<string, DemoFn> = {
     "react-fancy/icon": IconDemo,
     "react-fancy/emoji": EmojiDemo,
     "react-fancy/skeleton": SkeletonDemo,
+    "react-fancy/stepper": StepperDemo,
     "react-fancy/progress": ProgressDemo,
     "react-fancy/resizable-panels": ResizablePanelsDemo,
     "react-fancy/reorderable-grid": ReorderableGridDemo,
@@ -1421,6 +1423,24 @@ function SkeletonDemo() {
             <Skeleton className="h-3 w-2/3" />
             <Skeleton className="h-3 w-1/2" />
             <Skeleton className="h-20 w-full" />
+        </div>
+    );
+}
+
+function StepperDemo() {
+    const [current, setCurrent] = useState(1);
+    return (
+        <div className="max-w-md">
+            <Stepper
+                clickable
+                current={current}
+                onChange={setCurrent}
+                steps={[
+                    { id: "install", title: "Install", description: "Add the package" },
+                    { id: "configure", title: "Configure", description: "Point Tailwind at the dist" },
+                    { id: "ship", title: "Ship", description: "Build and deploy" },
+                ]}
+            />
         </div>
     );
 }

@@ -7,6 +7,7 @@ import {
     Badge,
     Breadcrumbs,
     Card,
+    CodeBlock,
     Heading,
     Tabs,
     Text,
@@ -472,9 +473,9 @@ function InstallPanel({
                                 <Tabs.Tab value="yarn">yarn</Tabs.Tab>
                             </Tabs.List>
                             <Tabs.Panels>
-                                <Tabs.Panel value="npm"><CodeBlock cmd={`npm install ${pkg.npm}`} /></Tabs.Panel>
-                                <Tabs.Panel value="pnpm"><CodeBlock cmd={`pnpm add ${pkg.npm}`} /></Tabs.Panel>
-                                <Tabs.Panel value="yarn"><CodeBlock cmd={`yarn add ${pkg.npm}`} /></Tabs.Panel>
+                                <Tabs.Panel value="npm"><InstallCommand cmd={`npm install ${pkg.npm}`} /></Tabs.Panel>
+                                <Tabs.Panel value="pnpm"><InstallCommand cmd={`pnpm add ${pkg.npm}`} /></Tabs.Panel>
+                                <Tabs.Panel value="yarn"><InstallCommand cmd={`yarn add ${pkg.npm}`} /></Tabs.Panel>
                             </Tabs.Panels>
                         </Tabs>
                         <Text size="xs" className="mt-3 !text-zinc-500">
@@ -497,7 +498,7 @@ function InstallPanel({
                         </Text>
                     </Card.Header>
                     <Card.Body>
-                        <CodeBlock cmd={`composer require ${pkg.composer}`} />
+                        <InstallCommand cmd={`composer require ${pkg.composer}`} />
                     </Card.Body>
                 </Card>
             )}
@@ -513,7 +514,7 @@ function InstallPanel({
                         </div>
                     </Card.Header>
                     <Card.Body>
-                        <CodeBlock cmd={`npx fancy-cli@latest add ${component.slug}`} />
+                        <InstallCommand cmd={`npx fancy-cli@latest add ${component.slug}`} />
                         <Text size="xs" className="mt-2 !text-zinc-500">
                             Copies the component source into <code className="font-mono">src/components/fancy/{component.slug}/</code> so
                             you own it and can edit it directly. Use this path when you want to fork the design system. (CLI is on the
@@ -645,23 +646,7 @@ function DepsPanel({ npm, registry }: { npm: string[]; registry: string[] }) {
     );
 }
 
-function CodeBlock({ cmd }: { cmd: string }) {
-    const [copied, setCopied] = useState(false);
-    return (
-        <div className="flex items-center gap-3 rounded-md bg-zinc-950 px-3 py-2.5 font-mono text-xs text-zinc-100">
-            <span className="text-zinc-500">$</span>
-            <code className="flex-1">{cmd}</code>
-            <button
-                onClick={() =>
-                    navigator.clipboard.writeText(cmd).then(() => {
-                        setCopied(true);
-                        window.setTimeout(() => setCopied(false), 1200);
-                    })
-                }
-                className="rounded border border-zinc-700 px-2 py-0.5 text-[10px] font-medium text-zinc-300 hover:bg-zinc-800"
-            >
-                {copied ? "copied" : "copy"}
-            </button>
-        </div>
-    );
+/** An install command, on the kit's own CodeBlock (Fancy Exclusive). */
+function InstallCommand({ cmd }: { cmd: string }) {
+    return <CodeBlock code={cmd} language="bash" />;
 }

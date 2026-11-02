@@ -47,17 +47,22 @@ final class PackageVersions
     /**
      * Ask a registry about one distribution.
      *
+     * `$fresh` skips the cached answer (and refreshes it). A CHECK must pass it:
+     * the cache exists for pages, and a check that reads an hour-old "latest"
+     * compares against the release before the one that just shipped, so a
+     * consumer one release behind reads as current.
+     *
      * @param  'npm'|'composer'|'pypi'  $registry
      * @return array{status: 'ok'|'missing'|'unknown', version: ?string, requires: list<string>}
      */
-    public function lookup(string $registry, string $name): array
+    public function lookup(string $registry, string $name, bool $fresh = false): array
     {
         $key = "fancy:pkgversion:{$registry}:{$name}";
 
         // Only SUCCESSES are cached. Caching a failure would pin a transient
         // outage in front of every later caller for an hour, and the failure
         // modes here are exactly the ones that resolve themselves.
-        if (is_array($cached = Cache::get($key))) {
+        if (! $fresh && is_array($cached = Cache::get($key))) {
             return $cached;
         }
 

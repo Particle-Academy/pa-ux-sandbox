@@ -6,6 +6,7 @@ use App\Support\StarterKitDogfood;
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
@@ -114,6 +115,29 @@ it('passes when the committed lockfiles carry the latest of every first-party pa
         ->and($out)->toContain('2 first-party packages')
         ->and($out)->toContain('package-lock.json: 2')
         ->and($out)->toContain('composer.lock: 0');
+});
+
+it('asks the registry fresh, so a cached latest from before a release cannot pass a kit that is behind', function () {
+    // The site caches "latest" for an hour (PackageVersions::TTL_SECONDS). The
+    // check read through it, so for an hour after a release it compared the
+    // kit against the PREVIOUS version: a kit one release behind read as
+    // current. Seen 2026-11-01 in the other direction (falsely BEHIND twice
+    // across react-fancy 6.1.0 -> 6.3.0), which is the same stale read.
+    Cache::put('fancy:pkgversion:npm:@particle-academy/react-fancy', [
+        'status' => 'ok', 'version' => '5.65.0', 'requires' => [],
+    ], 3600);
+
+    skFake([
+        SK_NPM_LOCK => Http::response(skNpmLock([
+            'node_modules/@particle-academy/react-fancy' => '5.65.0',
+            'node_modules/@particle-academy/fancy-inertia' => '0.14.0',
+        ])),
+    ]);
+
+    [$code, $out] = skRun();
+
+    expect($code)->toBe(1)
+        ->and($out)->toContain('@particle-academy/react-fancy  5.65.0 -> 5.71.0');
 });
 
 it('fails on a first-party npm package that is behind, naming both versions', function () {

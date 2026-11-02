@@ -83,7 +83,9 @@ final class StarterKitDogfood
         $answers = [];
 
         foreach ($locked as $label => [$registry, $name, $version]) {
-            $answers[$registry.':'.$name] ??= $this->versions->lookup($registry, $name);
+            // fresh: this is a check, and run right after a release. A cached
+            // "latest" would compare the kit against the previous version.
+            $answers[$registry.':'.$name] ??= $this->versions->lookup($registry, $name, fresh: true);
             $answer = $answers[$registry.':'.$name];
 
             $installed[$label] = $version;

@@ -33,7 +33,7 @@
         "fancy-expr": "0.2.0",
         "fancy-features-js": "0.5.0",
         "fancy-features-py": "0.2.0",
-        "fancy-file-commons": "0.4.0",
+        "fancy-file-commons": "0.5.0",
         "fancy-flow": "0.82.1",
         "fancy-flow-mcp": "0.5.0",
         "fancy-flow-mcp-js": "0.2.0",
@@ -127,11 +127,25 @@
         "prism-workspace": "0.3.0",
         "prism-workspace-py": "0.1.0",
         "prism-workspace-ts": "0.2.0",
-        "react-fancy": "6.5.0",
+        "react-fancy": "6.6.0",
         "teachers-aid": "0.3.0",
         "teachers-aid-ui": "0.3.0"
     },
     "releases": [
+        {
+            "slug": "react-fancy",
+            "registry": "npm",
+            "version": "6.6.0",
+            "published_at": "2026-11-02T06:41:34Z",
+            "first": false
+        },
+        {
+            "slug": "fancy-file-commons",
+            "registry": "npm",
+            "version": "0.5.0",
+            "published_at": "2026-11-02T06:28:36Z",
+            "first": false
+        },
         {
             "slug": "react-fancy",
             "registry": "npm",

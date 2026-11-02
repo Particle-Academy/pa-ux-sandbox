@@ -36,7 +36,7 @@ const JSON_SNIPPET = `{
   "name": "acme/app",
   "private": true,
   "dependencies": {
-    "@particle-academy/react-fancy": "^6.5.0"
+    "@particle-academy/react-fancy": "^6.6.0"
   },
   "engines": { "node": ">=22" }
 }`;
@@ -55,7 +55,13 @@ final class SubscribeController
     }
 }`;
 
-const LONG = `<meta name="description" content="A long line that would normally scroll sideways, wrapped onto the next line instead so the whole of it can be read without a horizontal scrollbar.">`;
+const PHP_SNIPPET = `use Illuminate\\Support\\Facades\\Route;
+
+Route::get('/status', function () {
+    return ['ok' => true, 'checked_at' => now()->toIso8601String()];
+});`;
+
+const LONG =`<meta name="description" content="A long line that would normally scroll sideways, wrapped onto the next line instead so the whole of it can be read without a horizontal scrollbar.">`;
 
 export const codeBlockDoc: ComponentDoc = {
     intro: (
@@ -130,6 +136,20 @@ export const codeBlockDoc: ComponentDoc = {
             code: `<CodeBlock code={source} language="php" title="SubscribeController.php" />`,
         },
         {
+            name: "PHP snippet without <?php",
+            description: "A fragment with no open tag is still PHP: it highlights as PHP until a `?>` switches to HTML. Code that starts with `<?php` highlights exactly as above.",
+            render: () => (
+                <div className="w-full" data-demo="code-block-php-snippet">
+                    <CodeBlock code={PHP_SNIPPET} language="php" title="routes/web.php" />
+                </div>
+            ),
+            code: `<CodeBlock
+    language="php"
+    title="routes/web.php"
+    code={"use Illuminate\\\\Support\\\\Facades\\\\Route;\\n\\nRoute::get('/status', fn () => ['ok' => true]);"}
+/>`,
+        },
+        {
             name: "HTML",
             description: "`language=\"html\"` (or `htm`, `xml`, `xhtml`).",
             render: () => (
@@ -189,7 +209,10 @@ export const codeBlockDoc: ComponentDoc = {
             <code>data-react-fancy-code-block</code> with <code>data-language</code> and <code>data-wrap</code>,{" "}
             <code>data-react-fancy-code-block-copy</code> with <code>data-copy-state</code> (<code>idle</code> /{" "}
             <code>copied</code> / <code>failed</code>), and <code>data-react-fancy-code-block-line</code> per line
-            with line numbers on.
+            with line numbers on. Colours are CSS variables declared on the root (<code>--fc-&lt;slot&gt;-l</code> /{" "}
+            <code>--fc-&lt;slot&gt;-d</code>) and switch to the dark palette under <code>.dark</code> or{" "}
+            <code>[data-theme="dark"]</code>, so server-rendered HTML is already in the right theme and there is no
+            light flash before hydration. Recolour a slot by setting its variables in <code>style</code>.
         </Text>
     ),
 };

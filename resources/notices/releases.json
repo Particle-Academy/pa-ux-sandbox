@@ -98,7 +98,7 @@
         "last-word-py": "0.9.0",
         "last-word-ui": "0.3.0",
         "mcp-relay-client": "0.3.0",
-        "prism": "0.145.0",
+        "prism": "0.145.1",
         "prism-acp-ts": "0.33.2",
         "prism-browser": "0.4.1",
         "prism-browser-py": "0.1.1",
@@ -122,16 +122,44 @@
         "prism-perplexity": "0.3.0",
         "prism-perplexity-py": "0.1.0",
         "prism-perplexity-ts": "0.2.0",
-        "prism-py": "0.6.0",
-        "prism-ts": "0.6.0",
+        "prism-py": "0.7.0",
+        "prism-ts": "0.7.0",
         "prism-workspace": "0.3.0",
         "prism-workspace-py": "0.1.0",
         "prism-workspace-ts": "0.2.0",
-        "react-fancy": "6.3.0",
+        "react-fancy": "6.4.0",
         "teachers-aid": "0.3.0",
         "teachers-aid-ui": "0.3.0"
     },
     "releases": [
+        {
+            "slug": "react-fancy",
+            "registry": "npm",
+            "version": "6.4.0",
+            "published_at": "2026-11-02T04:28:53Z",
+            "first": false
+        },
+        {
+            "slug": "prism",
+            "registry": "composer",
+            "version": "0.145.1",
+            "published_at": "2026-11-02T04:20:28Z",
+            "first": false
+        },
+        {
+            "slug": "prism-ts",
+            "registry": "npm",
+            "version": "0.7.0",
+            "published_at": "2026-11-02T03:01:29Z",
+            "first": false
+        },
+        {
+            "slug": "prism-py",
+            "registry": "pypi",
+            "version": "0.7.0",
+            "published_at": "2026-11-02T03:00:33Z",
+            "first": false
+        },
         {
             "slug": "react-fancy",
             "registry": "npm",

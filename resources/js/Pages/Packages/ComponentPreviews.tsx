@@ -115,7 +115,7 @@ import {
     GIT_STATUS,
     GIT_TREE,
 } from "./gitFixtures";
-import { ActivityLight, AudioViewer, Avatar, Badge, Breadcrumbs, Button, Calendar, Callout, Card, ChatThread, CodeView, ColorPicker, Container, ContentRenderer, ContextMenu, Drawer, Emoji, Eyebrow, FauxClient, FileBrowser, FullScreen, Grid, ReorderableGrid, Heading, ImageViewer, IndexList, JsonEditor, Kanban, Kbd, Marquee, MediaViewer, MoodMeter, OtpInput, Pagination, PdfViewer, Pillbox, Profile, Progress, PullQuote, QrCode, ResizablePanels, Section, Skeleton, Stat, Stepper, StatList, StickyNote, Switch, Tabs, Text, TimeGrid, TimePicker, Timeline, Tooltip, VideoViewer, VirtualList } from "@particle-academy/react-fancy";
+import { ActivityLight, AudioViewer, Avatar, Badge, Breadcrumbs, Button, Calendar, Callout, Card, ChatThread, CodeBlock, CodeView, ColorPicker, Container, ContentRenderer, ContextMenu, Drawer, Emoji, Eyebrow, FauxClient, FileBrowser, FullScreen, Grid, ReorderableGrid, Heading, ImageViewer, IndexList, JsonEditor, Kanban, Kbd, Marquee, MediaViewer, MoodMeter, OtpInput, Pagination, PdfViewer, Pillbox, Profile, Progress, PullQuote, QrCode, ResizablePanels, Section, Skeleton, Stat, Stepper, StatList, StickyNote, Switch, Tabs, Text, TimeGrid, TimePicker, Timeline, Tooltip, VideoViewer, VirtualList } from "@particle-academy/react-fancy";
 import { Checkbox, CheckboxGroup, DatePicker, Field, Input, MultiSwitch, RadioGroup, Select, Slider, Textarea } from "@particle-academy/react-fancy";
 import { FileViewer } from "@particle-academy/fancy-code";
 import { EChart } from "@particle-academy/fancy-echarts";
@@ -804,6 +804,11 @@ const PREVIEWS: Record<string, PreviewFn> = {
             <span className="flex items-center gap-1.5">
                 <Kbd keys={["Shift", "?"]} /> help
             </span>
+        </div>
+    ),
+    "react-fancy/code-block": () => (
+        <div className="w-full max-w-[20rem] text-left">
+            <CodeBlock code={"npm install @particle-academy/react-fancy"} language="bash" title="Terminal" />
         </div>
     ),
     "react-fancy/code-view": () => (

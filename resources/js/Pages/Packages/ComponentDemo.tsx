@@ -99,6 +99,7 @@ import {
     StatList,
     IndexList,
     TimeGrid,
+    CodeBlock,
     CodeView,
     MediaViewer,
     ImageViewer,
@@ -486,6 +487,7 @@ const REGISTRY: Record<string, DemoFn> = {
     "react-fancy/activity-light": ActivityLightDemo,
     "react-fancy/qr-code": QrCodeDemo,
     "react-fancy/time-grid": TimeGridDemo,
+    "react-fancy/code-block": CodeBlockDemo,
     "react-fancy/code-view": CodeViewDemo,
     "react-fancy/accordion-panel": AccordionPanelDemo,
     "react-fancy/media-viewer": MediaViewerDemo,
@@ -1030,6 +1032,15 @@ function TimeGridDemo() {
                 </Text>
             </div>
         </DemoNote>
+    );
+}
+
+function CodeBlockDemo() {
+    return (
+        <div className="max-w-xl space-y-3">
+            <CodeBlock code="npm install @particle-academy/react-fancy" language="bash" />
+            <CodeBlock code={SAMPLE_CODE_VIEW} language="html" title="index.html" showLineNumbers />
+        </div>
     );
 }
 

@@ -55,7 +55,13 @@ php artisan readmes:build    # compile package READMEs      -> resources/registr
 php artisan tui:build        # compile fancy-tui ANSI frames -> resources/registry/tui-previews.json
 php artisan flow:build       # compile marketplace nodes    -> resources/registry/flow-nodes.json
 php artisan docs:snapshot    # freeze the docs for a kit cut -> resources/docs/{version}/
+php artisan notices:build    # release dates (registries) + one-line summaries (each repo's CHANGELOG.md) -> resources/notices/releases.json
 ```
+
+`notices:build` refuses to run with no sibling repos on disk, because a rebuild
+there would blank every summary. A release whose repo is absent, or whose
+changelog has no section for it, gets `summary: null` and its card says only the
+version; the command prints the count and the reason for each.
 
 `docs:snapshot` is the odd one out — it runs **once per kit cut**, not whenever
 its source changes. See "This app owns the kit version" below.

@@ -18,7 +18,9 @@ use Throwable;
  *   - `resources/notices/releases.json` -- one group per package release (a new
  *     package, or a new version of a listed one). Written by
  *     `php artisan notices:build`, which is the only thing that asks the
- *     registries for publish dates.
+ *     registries for publish dates. A release's `summary` is what its card says
+ *     changed. A new package keeps its tagline, because its first changelog entry
+ *     mostly says that it is new.
  *   - `resources/notices/features.json` -- curated "major feature" notices,
  *     written by hand: `{ id, label, date, cards }`.
  *
@@ -137,6 +139,7 @@ final class WhatsNewFeed
         $first = (bool) ($release['first'] ?? false);
         $version = $release['version'];
         $registry = self::REGISTRY_LABELS[$release['registry'] ?? ''] ?? 'its registry';
+        $summary = is_string($release['summary'] ?? null) && trim($release['summary']) !== '' ? $release['summary'] : null;
 
         return [
             'id' => $at->format('Y-m-d\TH:i:s\Z').'~release~'.$pkg['slug'].'@'.$version,
@@ -146,8 +149,8 @@ final class WhatsNewFeed
                 'id' => $pkg['slug'].'@'.$version,
                 'title' => $pkg['name'].' '.$version,
                 'description' => $first
-                    ? (string) ($pkg['tagline'] ?? "New on {$registry}.")
-                    : "Version {$version} is on {$registry}.",
+                    ? (string) ($pkg['tagline'] ?? $summary ?? "New on {$registry}.")
+                    : ($summary ?? "Version {$version} is on {$registry}."),
                 'action' => ['label' => 'View package', 'href' => '/packages/'.$pkg['slug']],
             ]],
         ];

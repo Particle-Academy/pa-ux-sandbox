@@ -2,6 +2,7 @@
 
 use App\Models\User;
 use App\Support\Notices\WhatsNewFeed;
+use App\Support\PackageRegistry;
 use Illuminate\Support\Facades\File;
 use Tests\TestCase;
 
@@ -89,6 +90,41 @@ it('describes a new package, a new version and a curated notice', function () {
     expect($notice['label'])->toBe('New feature')
         ->and($notice['cards'][0]['image'])->toBe('/showcase-assets/file-viewer/pages/1.png')
         ->and($notice['cards'][0]['action']['href'])->toBe('/packages/react-fancy/pdf-viewer');
+});
+
+/*
+ * The owner, 2026-11-03: say what changed. The line comes from the artifact,
+ * where it was derived from the release's own changelog. Without one the card
+ * states only what is known: the version and where it is.
+ */
+it('uses the release summary as the card description', function () {
+    whatsNewFixture([
+        ['summary' => 'Cancel button contrast'] + whatsNewRelease('react-fancy', '5.54.0', '2026-10-21T15:50:30Z'),
+    ]);
+
+    expect($this->getJson('/whats-new')->json('0.cards.0.description'))->toBe('Cancel button contrast');
+});
+
+it('says only the version when a release has no summary', function (array $extra) {
+    whatsNewFixture([$extra + whatsNewRelease('react-fancy', '5.54.0', '2026-10-21T15:50:30Z')]);
+
+    expect($this->getJson('/whats-new')->json('0.cards.0.description'))->toBe('Version 5.54.0 is on npm.');
+})->with([
+    'null' => [['summary' => null]],
+    'absent' => [[]],
+    'blank' => [['summary' => '   ']],
+    'not text' => [['summary' => ['x']]],
+]);
+
+it('keeps the tagline on a new package, whose changelog says only that it is new', function () {
+    whatsNewFixture([
+        ['summary' => 'First entry'] + whatsNewRelease('fancy-whats-new', '0.1.0', '2026-10-21T18:06:29Z', first: true),
+    ]);
+
+    $card = $this->getJson('/whats-new')->json('0.cards.0');
+
+    expect($card['description'])->not->toBe('First entry')
+        ->and($card['description'])->toBe(collect(PackageRegistry::companions())->merge(PackageRegistry::all())->firstWhere('slug', 'fancy-whats-new')['tagline']);
 });
 
 it('returns only the groups newer than since', function () {

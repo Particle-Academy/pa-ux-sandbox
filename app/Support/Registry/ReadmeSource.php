@@ -117,9 +117,11 @@ class ReadmeSource
      * siblings are its peers there; the flat and legacy nested layouts are kept
      * as fallbacks so this works in any checkout.
      *
+     * `$root` looks in that directory of repos instead (tests).
+     *
      * @param  array<string,mixed>  $pkg
      */
-    public function repoDir(string $slug, array $pkg = []): ?string
+    public function repoDir(string $slug, array $pkg = [], ?string $root = null): ?string
     {
         $names = [];
         if (is_string($pkg['repo'] ?? null) && $pkg['repo'] !== '') {
@@ -128,7 +130,11 @@ class ReadmeSource
         $names[] = $slug;
 
         foreach (array_unique($names) as $name) {
-            foreach ([dirname(base_path()).'/'.$name, base_path('packages/'.$name)] as $candidate) {
+            $candidates = $root !== null
+                ? [$root.'/'.$name]
+                : [dirname(base_path()).'/'.$name, base_path('packages/'.$name)];
+
+            foreach ($candidates as $candidate) {
                 if (is_dir($candidate)) {
                     return $candidate;
                 }

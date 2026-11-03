@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use App\Support\Notices\ChangelogSummary;
 use App\Support\PackageRegistry;
+use App\Support\Registry\ReadmeSource;
 use Carbon\CarbonImmutable;
 use Illuminate\Console\Command;
 use Illuminate\Http\Client\Pool;
@@ -31,6 +33,13 @@ use Throwable;
  *     first. Prereleases, `0.0.0` bootstrap placeholders and backports (a
  *     version lower than one published before it) are not news and are left
  *     out. `first` marks a package's first real version: a new package.
+ *     `summary` is the one line {@see ChangelogSummary} derives from that
+ *     version's section of the package's own CHANGELOG.md, or null.
+ *
+ * Changelogs are read from the sibling repos, so this runs in the `.agi`
+ * workspace, as `readmes:build` does. With no repos on disk it refuses, because
+ * a rebuild there would blank every summary. It prints how many releases got one
+ * and why the rest did not, since a repo that is missing here is only a null.
  *
  * A registry that does not answer FAILS the command and writes nothing. A
  * partial artifact would read as "no releases" for every package it missed.
@@ -40,19 +49,23 @@ final class BuildNotices extends Command
     protected $signature = 'notices:build
         {--output= : Write here instead of resources/notices/releases.json}
         {--now= : The time the window is measured back from (tests)}
-        {--only= : Comma-separated slugs to include (tests)}';
+        {--only= : Comma-separated slugs to include (tests)}
+        {--repos= : Read changelogs from this directory of repos instead of the siblings (tests)}';
 
     protected $description = 'Compile package releases (from npm / Packagist / PyPI publish times) into resources/notices/releases.json for the site\'s "What\'s new" notice.';
 
     private const WINDOW_DAYS = 60;
 
-    public function handle(): int
+    public function handle(ReadmeSource $readmes): int
     {
         $now = CarbonImmutable::parse($this->option('now') ?? 'now')->utc();
         $since = $now->subDays(self::WINDOW_DAYS);
         $only = array_filter(explode(',', (string) $this->option('only')));
 
+        $repos = $this->option('repos') ?: null;
+
         $packages = [];
+        $records = [];
         foreach ([...PackageRegistry::all(), ...PackageRegistry::companions()] as $pkg) {
             if ($only !== [] && ! in_array($pkg['slug'], $only, true)) {
                 continue;
@@ -61,7 +74,19 @@ final class BuildNotices extends Command
             $source = $this->source($pkg);
             if ($source !== null) {
                 $packages[$pkg['slug']] = $source;
+                $records[$pkg['slug']] = $pkg;
             }
+        }
+
+        $repoDirs = array_map(fn (array $pkg): ?string => $readmes->repoDir($pkg['slug'], $pkg, $repos), $records);
+
+        if (array_filter($repoDirs) === []) {
+            $this->error(
+                'No package repos found on disk, so every release would lose its summary. '
+                .'Run this in the .agi workspace where the sibling repos exist; nothing written.'
+            );
+
+            return self::FAILURE;
         }
 
         $responses = [];
@@ -79,6 +104,7 @@ final class BuildNotices extends Command
         $latest = [];
         $releases = [];
         $failed = [];
+        $missing = [];
 
         foreach ($packages as $slug => [$registry, $name]) {
             $response = $responses[$slug] ?? null;
@@ -113,12 +139,18 @@ final class BuildNotices extends Command
             $latest[$slug] = $newest;
             foreach ($this->news($times) as $version => [$at, $first]) {
                 if ($at->greaterThanOrEqualTo($since) && $at->lessThanOrEqualTo($now)) {
+                    [$summary, $why] = $this->summary($repoDirs[$slug], $version);
+                    if ($why !== null) {
+                        $missing[$why][] = "{$slug}@{$version}";
+                    }
+
                     $releases[] = [
                         'slug' => $slug,
                         'registry' => $registry,
                         'version' => $version,
                         'published_at' => $at->format('Y-m-d\TH:i:s\Z'),
                         'first' => $first,
+                        'summary' => $summary,
                     ];
                 }
             }
@@ -142,13 +174,56 @@ final class BuildNotices extends Command
             'window_days' => self::WINDOW_DAYS,
             'latest' => $latest,
             'releases' => $releases,
-        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)."\n");
+        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR)."\n");
 
         $this->info(count($packages).' packages asked, '.count($latest).' published, '
             .count($releases).' releases in the last '.self::WINDOW_DAYS." days -> {$path}");
+        $this->reportSummaries($releases, $missing);
         $this->line('Commit the artifact so the site\'s "What\'s new" notice includes them.');
 
         return self::SUCCESS;
+    }
+
+    /**
+     * The release's summary, or null and why there is none.
+     *
+     * @return array{0: ?string, 1: ?string} [summary, why it is missing]
+     */
+    private function summary(?string $repoDir, string $version): array
+    {
+        if ($repoDir === null) {
+            return [null, 'no repo on disk'];
+        }
+
+        $path = "{$repoDir}/CHANGELOG.md";
+        if (! is_file($path)) {
+            return [null, 'no CHANGELOG.md'];
+        }
+
+        $markdown = (string) file_get_contents($path);
+        $summary = ChangelogSummary::forVersion($markdown, $version);
+
+        if ($summary !== null) {
+            return [$summary, null];
+        }
+
+        return [null, ChangelogSummary::hasSection($markdown, $version) ? 'no usable entry' : 'no section for that version'];
+    }
+
+    /**
+     * @param  list<array<string, mixed>>  $releases
+     * @param  array<string, list<string>>  $missing  why => releases
+     */
+    private function reportSummaries(array $releases, array $missing): void
+    {
+        $with = count(array_filter($releases, fn (array $r): bool => $r['summary'] !== null));
+
+        $this->info("{$with} of ".count($releases).' releases have a summary.');
+
+        ksort($missing);
+        foreach ($missing as $why => $list) {
+            $this->warn('  '.$why.' ('.count($list).'): '.implode(', ', $list));
+        }
     }
 
     /**

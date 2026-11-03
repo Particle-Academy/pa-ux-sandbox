@@ -5660,8 +5660,7 @@
             "package": "fancy-flow",
             "dependencies": [
                 "@xyflow/react",
-                "@dagrejs/dagre",
-                "${edge.source}"
+                "@dagrejs/dagre"
             ],
             "registryDependencies": [],
             "files": [
@@ -6077,8 +6076,7 @@
             "package": "fancy-flow",
             "dependencies": [
                 "@xyflow/react",
-                "@dagrejs/dagre",
-                "${edge.source}"
+                "@dagrejs/dagre"
             ],
             "registryDependencies": [
                 "flow-editor"
@@ -7011,8 +7009,7 @@
             "description": "Create or edit a posting, employer side.",
             "package": "job-board",
             "dependencies": [
-                "@particle-academy/react-fancy",
-                "\n                        value={values.pay_min == null ? "
+                "@particle-academy/react-fancy"
             ],
             "registryDependencies": [],
             "files": [
@@ -10755,9 +10752,7 @@
             "package": "agent-integrations",
             "dependencies": [
                 "@particle-academy/fancy-whiteboard",
-                "],\n  notes: StickyNoteItem[],\n  shapes: ShapeItem[],\n): { x: number; y: number } | null {\n  if (typeof ref === ",
                 "@particle-academy/fancy-cf-relay",
-                ", ",
                 "@particle-academy/fancy-auto-common"
             ],
             "registryDependencies": [

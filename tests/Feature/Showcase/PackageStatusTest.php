@@ -131,7 +131,7 @@ it('keeps a hidden package out of the compiled registry a consumer installs from
     // `registry:build` compiles `RegistrySource::scanLive()`.
     $source = (string) file_get_contents(dirname(__DIR__, 3).'/app/Support/Registry/RegistrySource.php');
     $scanLive = substr($source, (int) strpos($source, 'public function scanLive'));
-    $scanLive = substr($scanLive, 0, (int) strpos($scanLive, 'return $this->ensureUniqueNames'));
+    $scanLive = substr($scanLive, 0, (int) strpos($scanLive, '$this->ensureUniqueNames'));
 
     // STRIP COMMENTS BEFORE MATCHING. A "this must not appear" guard over source
     // text matches a MENTION, not a call — so the comment explaining *why*

@@ -94,7 +94,11 @@ class RegistrySource
             $items[] = $block;
         }
 
-        return $this->ensureUniqueNames($items);
+        $items = $this->ensureUniqueNames($items);
+
+        self::assertDependenciesAreValid($items);
+
+        return $items;
     }
 
     /**
@@ -974,42 +978,63 @@ class RegistrySource
     }
 
     /**
-     * Remove block + line comments before import parsing so example imports in
-     * JSDoc don't register as real dependencies. URL-safe (won't eat `://`).
+     * What npm accepts as a package name: lower-case and URL-safe, optionally
+     * scoped, no leading dot or underscore, 214 characters at most. `D` matters:
+     * without it `$` also matches before a trailing newline.
      */
-    private function stripComments(string $code): string
+    public static function isValidPackageName(string $name): bool
     {
-        $code = preg_replace('#/\*[\s\S]*?\*/#', '', $code) ?? $code;
-        $code = preg_replace('#(?<!:)//[^\n]*#', '', $code) ?? $code;
-
-        return $code;
+        return strlen($name) <= 214
+            && ! in_array($name, ['node_modules', 'favicon.ico'], true)
+            && preg_match('/^(?:@[a-z0-9~-][a-z0-9._~-]*\/)?[a-z0-9~-][a-z0-9._~-]*$/D', $name) === 1;
     }
 
     /**
-     * Parse `import ... from "x"` and `import("x")` across all files.
-     * Bucket into npm deps (anything not starting with . / @/ / ~) and
-     * registry deps (sibling `../OtherComponent` references).
+     * Refuse any item listing a dependency that cannot be a package.
+     *
+     * `fancy-cli add` installs what this list says, so an entry that is not a
+     * package must never reach the artifact. It fails rather than filters: a
+     * filter would silently drop a real dependency whose import was merely
+     * unusual, and an item then installs and cannot build. To support one, handle
+     * it explicitly in {@see parseImports()}, as `node:` is.
+     *
+     * @param  list<RegistryItem>  $items
+     */
+    public static function assertDependenciesAreValid(array $items): void
+    {
+        $invalid = [];
+        foreach ($items as $item) {
+            foreach ($item->dependencies as $dependency) {
+                if (! self::isValidPackageName($dependency)) {
+                    $invalid[] = '  '.$item->name.': '.json_encode($dependency, JSON_UNESCAPED_SLASHES);
+                }
+            }
+        }
+
+        if ($invalid !== []) {
+            throw new RuntimeException(
+                "Registry items list dependencies that are not valid npm package names:\n".implode("\n", $invalid)
+            );
+        }
+    }
+
+    /**
+     * Collect the imports across all files. Bucket into npm deps (anything not
+     * starting with . / @/ / ~) and registry deps (sibling `../OtherComponent`
+     * references).
      *
      * @param  list<array<string, string>>  $files
      * @return array{npm: list<string>, registry: list<string>}
      */
-    private function parseImports(array $files): array
+    public function parseImports(array $files): array
     {
         $npm = [];
         $registry = [];
 
         foreach ($files as $file) {
-            // Strip comments first — JSDoc `@example` blocks routinely contain
-            // `import … from "other-package"` lines that are NOT real deps.
-            // (e.g. fancy-3d/canvas docs an `import … from "fancy-3d-babylon"`
-            // example, which must not make canvas depend on Babylon.)
-            preg_match_all(
-                '/(?:from|import\s*\()\s*["\']([^"\']+)["\']/m',
-                $this->stripComments($file['content']),
-                $matches,
-            );
-            foreach ($matches[1] as $spec) {
-                if (str_starts_with($spec, './') || str_starts_with($spec, '@/') || str_starts_with($spec, '~')) {
+            foreach (ImportScanner::specifiers($file['content'], $file['path']) as $spec) {
+                // `node:` is the runtime's own, and never something to install.
+                if ($spec === '.' || $spec === '..' || str_starts_with($spec, './') || str_starts_with($spec, '@/') || str_starts_with($spec, '~') || str_starts_with($spec, 'node:')) {
                     continue;
                 }
                 if (str_starts_with($spec, '../')) {

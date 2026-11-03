@@ -2,7 +2,7 @@
     "window_days": 60,
     "latest": {
         "agent-integrations": "0.55.1",
-        "change-council": "0.4.0",
+        "change-council": "0.4.1",
         "charlotte": "0.3.0",
         "classroom": "0.7.0",
         "dark-slide": "0.22.1",
@@ -40,14 +40,14 @@
         "fancy-flow-php": "0.65.1",
         "fancy-flow-py": "0.30.1",
         "fancy-formula": "0.1.0",
-        "fancy-git": "0.3.1",
+        "fancy-git": "0.4.0",
         "fancy-git-bitbucket-js": "0.2.0",
         "fancy-git-bitbucket-php": "0.2.0",
         "fancy-git-github-js": "0.3.0",
         "fancy-git-github-php": "0.3.1",
         "fancy-git-gitlab-js": "0.3.1",
         "fancy-git-gitlab-php": "0.3.0",
-        "fancy-git-js": "0.3.1",
+        "fancy-git-js": "0.3.2",
         "fancy-git-ui": "0.5.0",
         "fancy-grid": "0.3.0",
         "fancy-heuristics": "0.5.0",
@@ -63,7 +63,7 @@
         "fancy-passkeys-js": "0.2.1",
         "fancy-passkeys-ui": "0.2.1",
         "fancy-pixel": "0.3.0",
-        "fancy-pty": "0.2.1",
+        "fancy-pty": "0.4.0",
         "fancy-pwa": "0.2.0",
         "fancy-query": "0.9.1",
         "fancy-screens": "0.7.1",
@@ -72,7 +72,7 @@
         "fancy-slides": "0.25.1",
         "fancy-template": "0.3.0",
         "fancy-term": "0.8.1",
-        "fancy-term-host": "0.11.1",
+        "fancy-term-host": "0.12.0",
         "fancy-trading-js": "0.2.1",
         "fancy-trading-ui": "0.1.0",
         "fancy-tui": "0.11.0",
@@ -133,6 +133,48 @@
         "teachers-aid-ui": "0.3.0"
     },
     "releases": [
+        {
+            "slug": "fancy-pty",
+            "registry": "npm",
+            "version": "0.4.0",
+            "published_at": "2026-11-03T18:19:27Z",
+            "first": false
+        },
+        {
+            "slug": "fancy-git-js",
+            "registry": "npm",
+            "version": "0.3.2",
+            "published_at": "2026-11-03T16:23:19Z",
+            "first": false
+        },
+        {
+            "slug": "change-council",
+            "registry": "composer",
+            "version": "0.4.1",
+            "published_at": "2026-11-03T15:49:32Z",
+            "first": false
+        },
+        {
+            "slug": "fancy-git",
+            "registry": "composer",
+            "version": "0.4.0",
+            "published_at": "2026-11-03T15:49:30Z",
+            "first": false
+        },
+        {
+            "slug": "fancy-term-host",
+            "registry": "npm",
+            "version": "0.12.0",
+            "published_at": "2026-11-03T15:32:28Z",
+            "first": false
+        },
+        {
+            "slug": "fancy-pty",
+            "registry": "npm",
+            "version": "0.3.0",
+            "published_at": "2026-11-03T15:06:43Z",
+            "first": false
+        },
         {
             "slug": "fancy-flow",
             "registry": "npm",
@@ -5444,27 +5486,6 @@
             "registry": "composer",
             "version": "0.3.0",
             "published_at": "2026-09-04T22:53:45Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-trading-js",
-            "registry": "npm",
-            "version": "0.2.0",
-            "published_at": "2026-09-04T03:59:05Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-flow-py",
-            "registry": "pypi",
-            "version": "0.17.0",
-            "published_at": "2026-09-04T03:19:19Z",
-            "first": false
-        },
-        {
-            "slug": "fancy-flow-php",
-            "registry": "composer",
-            "version": "0.50.0",
-            "published_at": "2026-09-04T03:06:47Z",
             "first": false
         }
     ]

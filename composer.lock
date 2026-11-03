@@ -10542,16 +10542,16 @@
         },
         {
             "name": "particle-academy/fancy-git",
-            "version": "v0.3.1",
+            "version": "v0.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/fancy-git-php.git",
-                "reference": "8a6a08a272399a6fe11188f012f89168d56fc43d"
+                "reference": "2bb6b9d5382f1cb63a89f2460e9e5fcb685cbb7e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/fancy-git-php/zipball/8a6a08a272399a6fe11188f012f89168d56fc43d",
-                "reference": "8a6a08a272399a6fe11188f012f89168d56fc43d",
+                "url": "https://api.github.com/repos/Particle-Academy/fancy-git-php/zipball/2bb6b9d5382f1cb63a89f2460e9e5fcb685cbb7e",
+                "reference": "2bb6b9d5382f1cb63a89f2460e9e5fcb685cbb7e",
                 "shasum": ""
             },
             "require": {
@@ -10576,7 +10576,7 @@
                 "issues": "https://github.com/Particle-Academy/fancy-git-php/issues",
                 "source": "https://github.com/Particle-Academy/fancy-git-php"
             },
-            "time": "2026-09-14T03:52:42+00:00"
+            "time": "2026-11-03T15:49:30+00:00"
         },
         {
             "name": "pestphp/pest",

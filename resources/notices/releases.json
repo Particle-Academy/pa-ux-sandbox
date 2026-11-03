@@ -19,7 +19,7 @@
         "fancy-catalog-js": "0.6.1",
         "fancy-catalog-py": "0.2.0",
         "fancy-cf-relay": "0.2.0",
-        "fancy-cli": "0.8.3",
+        "fancy-cli": "0.9.0",
         "fancy-cms": "0.8.1",
         "fancy-cms-ui": "0.13.1",
         "fancy-code": "0.16.0",
@@ -133,6 +133,13 @@
         "teachers-aid-ui": "0.3.0"
     },
     "releases": [
+        {
+            "slug": "fancy-cli",
+            "registry": "npm",
+            "version": "0.9.0",
+            "published_at": "2026-11-03T18:53:43Z",
+            "first": false
+        },
         {
             "slug": "fancy-pty",
             "registry": "npm",

@@ -163,12 +163,6 @@ class PackageRegistry
      * @var array<string, array{name: string, repo: string, registries: array<string,string>, why: string}>
      */
     public const PLANNED = [
-        'charlotte-ui' => [
-            'name' => '@particle-academy/charlotte-ui',
-            'repo' => 'Particle-Academy/charlotte-ui',
-            'registries' => ['npm' => '@particle-academy/charlotte-ui'],
-            'why' => 'The React half of Charlotte. Headless hooks over a transport-agnostic event contract (long-poll first, because Cloudflare kills SSE), so apps can build their OWN chat. It also ships unstyled-capable primitives and an OPTIONAL, fully functional side panel that builds pages live with the user beside the fancy-cms-ui editor, with staged changes on a draft. Satisfies the Human+ component contract. Needs a ChatThread/ChatMessage primitive in react-fancy first, under the Fancy Exclusive rule. NOT YET STARTED. npm name verified free 2026-10-26.',
-        ],
         'charlotte-js' => [
             'name' => '@particle-academy/charlotte',
             'repo' => 'Particle-Academy/charlotte-js',
@@ -180,6 +174,12 @@ class PackageRegistry
             'repo' => 'Particle-Academy/charlotte-py',
             'registries' => ['pypi' => 'fancy-charlotte'],
             'why' => 'Python core twin of Charlotte, under the same owner ruling: all supported languages after PHP works perfectly. NOT YET STARTED, sequenced after PHP. Check whether a Python prism-harness exists before starting. NAMED `fancy-charlotte`, like the other Python siblings (fancy-holy-sheet, fancy-flow): this entry originally planned the bare PyPI name `charlotte`, which is TAKEN by an unrelated project (author Jack King, github.com/Jack-Kingdom/charlotte, 17 releases, 0.2.4). The 2026-10-27 catalog audit found the collision; `fancy-charlotte` answered 404 on PyPI the same day. Re-check at publish time: a 404 says the exact name is free, not that PyPI will accept it.',
+        ],
+        'agent-flo' => [
+            'name' => 'particle-academy/agent-flo',
+            'repo' => 'Particle-Academy/agent-flo',
+            'registries' => ['packagist' => 'particle-academy/agent-flo'],
+            'why' => 'Subagent that manages fancy-flow flows for any Laravel app on prism-harness: find, read, diagnose, triage, author, start and control, with host-owned flows and runs behind a store contract, configurable names, proposals by default, and run data treated as hostile. The repo exists with a test suite, but nothing is published or usable yet. Design: .ai/plans/flo.md and .ai/plans/agent-packages.md.',
         ],
         'fine-print-js' => [
             'name' => '@particle-academy/fine-print',
@@ -1611,7 +1611,7 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
      * @var list<string>
      */
     private const INLINE_EDIT_COMPONENTS = [
-        'inputs', 'autocomplete', 'color-picker', 'otp-input', 'time-picker', 'editor',
+        'inputs', 'number-field', 'autocomplete', 'color-picker', 'otp-input', 'time-picker', 'editor',
     ];
 
     private static function componentsForReactFancy(): array
@@ -1700,6 +1700,7 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
             ['slug' => 'modal', 'name' => 'Modal'],
             ['slug' => 'mood-meter', 'name' => 'MoodMeter'],
             ['slug' => 'navbar', 'name' => 'Navbar'],
+            ['slug' => 'number-field', 'name' => 'NumberField', 'blurb' => 'Numeric field with a number or null value: blank stays null, partial text never emits a wrong number, and the wheel does not change it.'],
             ['slug' => 'otp-input', 'name' => 'OtpInput'],
             ['slug' => 'pagination', 'name' => 'Pagination'],
             ['slug' => 'paste-pills', 'name' => 'PastePills', 'blurb' => 'The paste-pill core Composer, PromptInput and Input share: hold a long paste or a pasted image as a pill, and post pasted files with the form.'],

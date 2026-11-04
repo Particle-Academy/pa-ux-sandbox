@@ -1,13 +1,13 @@
 {
     "window_days": 60,
     "latest": {
-        "agent-integrations": "0.55.1",
+        "agent-integrations": "0.57.0",
         "change-council": "0.4.1",
         "charlotte": "0.3.0",
         "classroom": "0.7.0",
-        "dark-slide": "0.22.1",
-        "dark-slide-js": "0.20.1",
-        "dark-slide-py": "0.15.1",
+        "dark-slide": "0.22.2",
+        "dark-slide-js": "0.20.2",
+        "dark-slide-py": "0.15.2",
         "docs-mcp": "0.2.0",
         "fancy-3d": "0.5.0",
         "fancy-3d-babylon": "0.2.0",
@@ -23,21 +23,21 @@
         "fancy-cms": "0.8.1",
         "fancy-cms-ui": "0.13.1",
         "fancy-code": "0.16.0",
-        "fancy-conformance": "0.44.0",
+        "fancy-conformance": "0.46.0",
         "fancy-connector-core": "0.13.0",
         "fancy-devtools": "0.1.1",
         "fancy-diff": "0.5.1",
         "fancy-doc-commons": "0.4.0",
-        "fancy-docs": "0.3.0",
-        "fancy-echarts": "6.1.0",
+        "fancy-docs": "0.4.0",
+        "fancy-echarts": "6.2.0",
         "fancy-expr": "0.2.0",
         "fancy-features-js": "0.5.0",
         "fancy-features-py": "0.2.0",
         "fancy-file-commons": "0.5.0",
         "fancy-flow": "0.84.0",
-        "fancy-flow-mcp": "0.5.0",
+        "fancy-flow-mcp": "0.6.0",
         "fancy-flow-mcp-js": "0.2.0",
-        "fancy-flow-php": "0.65.1",
+        "fancy-flow-php": "0.66.0",
         "fancy-flow-py": "0.30.1",
         "fancy-formula": "0.1.0",
         "fancy-git": "0.4.1",
@@ -49,7 +49,7 @@
         "fancy-git-gitlab-php": "0.3.0",
         "fancy-git-js": "0.3.3",
         "fancy-git-ui": "0.5.0",
-        "fancy-grid": "0.3.0",
+        "fancy-grid": "0.4.1",
         "fancy-heuristics": "0.5.0",
         "fancy-heuristics-js": "0.3.0",
         "fancy-inertia": "0.14.1",
@@ -84,19 +84,19 @@
         "fancy-x-files-js": "0.2.0",
         "fancy-x-files-ui": "0.2.0",
         "fine-print": "0.6.1",
-        "holy-sheet": "2.11.3",
-        "holy-sheet-js": "2.11.3",
-        "holy-sheet-py": "0.10.3",
+        "holy-sheet": "2.11.4",
+        "holy-sheet-js": "2.11.4",
+        "holy-sheet-py": "0.10.4",
         "job-board": "0.5.0",
         "laravel-catalog": "0.13.0",
         "laravel-courses": "0.4.0",
         "laravel-fms": "0.12.0",
         "laravel-fun-lab": "0.6.0",
         "laravel-jobs": "0.5.0",
-        "last-word": "0.19.0",
-        "last-word-js": "0.15.0",
-        "last-word-py": "0.11.0",
-        "last-word-ui": "0.4.1",
+        "last-word": "0.20.1",
+        "last-word-js": "0.16.1",
+        "last-word-py": "0.12.1",
+        "last-word-ui": "0.5.0",
         "mcp-relay-client": "0.3.0",
         "prism": "0.146.0",
         "prism-acp": "0.1.1",
@@ -120,7 +120,7 @@
         "prism-opentelemetry": "0.6.0",
         "prism-opentelemetry-py": "0.3.1",
         "prism-opentelemetry-ts": "0.6.0",
-        "prism-perplexity": "0.3.0",
+        "prism-perplexity": "0.4.1",
         "prism-perplexity-py": "0.1.0",
         "prism-perplexity-ts": "0.2.0",
         "prism-py": "0.8.0",
@@ -128,11 +128,235 @@
         "prism-workspace": "0.3.0",
         "prism-workspace-py": "0.1.0",
         "prism-workspace-ts": "0.2.0",
-        "react-fancy": "6.6.1",
+        "react-fancy": "6.7.2",
         "teachers-aid": "0.3.0",
         "teachers-aid-ui": "0.3.0"
     },
     "releases": [
+        {
+            "slug": "prism-perplexity",
+            "registry": "composer",
+            "version": "0.4.1",
+            "published_at": "2026-11-04T22:16:07Z",
+            "first": false,
+            "summary": null
+        },
+        {
+            "slug": "dark-slide-py",
+            "registry": "pypi",
+            "version": "0.15.2",
+            "published_at": "2026-11-04T22:13:17Z",
+            "first": false,
+            "summary": "A package whose [Content_Types].xml carries a DOCTYPE is now refused"
+        },
+        {
+            "slug": "holy-sheet-py",
+            "registry": "pypi",
+            "version": "0.10.4",
+            "published_at": "2026-11-04T22:09:23Z",
+            "first": false,
+            "summary": "The reader's DOCTYPE refusal now holds for every part of an xlsx or ods"
+        },
+        {
+            "slug": "fancy-flow-mcp",
+            "registry": "composer",
+            "version": "0.6.0",
+            "published_at": "2026-11-04T22:06:13Z",
+            "first": false,
+            "summary": "The authoring core moved to fancy-flow-php"
+        },
+        {
+            "slug": "fancy-flow-php",
+            "registry": "composer",
+            "version": "0.66.0",
+            "published_at": "2026-11-04T22:02:30Z",
+            "first": false,
+            "summary": "A template naming a field its upstream step does not declare is now reported at import, with no run needed"
+        },
+        {
+            "slug": "fancy-conformance",
+            "registry": "npm",
+            "version": "0.46.0",
+            "published_at": "2026-11-04T22:02:09Z",
+            "first": false,
+            "summary": "flow/template-references, 25 rows: a {{ in.field }} naming a field its upstream step does not declare is found without…"
+        },
+        {
+            "slug": "dark-slide-js",
+            "registry": "npm",
+            "version": "0.20.2",
+            "published_at": "2026-11-04T22:01:07Z",
+            "first": false,
+            "summary": "The reader now refuses a DOCTYPE in every XML part of a pptx"
+        },
+        {
+            "slug": "react-fancy",
+            "registry": "npm",
+            "version": "6.7.2",
+            "published_at": "2026-11-04T21:53:44Z",
+            "first": false,
+            "summary": "PromptInput's / and @ menu keeps the highlighted row in view"
+        },
+        {
+            "slug": "dark-slide",
+            "registry": "composer",
+            "version": "0.22.2",
+            "published_at": "2026-11-04T21:52:35Z",
+            "first": false,
+            "summary": "The reader now refuses a DOCTYPE in every XML part of a pptx"
+        },
+        {
+            "slug": "holy-sheet-js",
+            "registry": "npm",
+            "version": "2.11.4",
+            "published_at": "2026-11-04T21:52:15Z",
+            "first": false,
+            "summary": "The reader now refuses a DOCTYPE in every XML part of an xlsx or ods"
+        },
+        {
+            "slug": "holy-sheet",
+            "registry": "composer",
+            "version": "2.11.4",
+            "published_at": "2026-11-04T21:42:03Z",
+            "first": false,
+            "summary": "The reader now refuses a DOCTYPE in every XML part of an xlsx or ods"
+        },
+        {
+            "slug": "last-word-py",
+            "registry": "pypi",
+            "version": "0.12.1",
+            "published_at": "2026-11-04T21:40:04Z",
+            "first": false,
+            "summary": "A chart's cached number is read in linear time"
+        },
+        {
+            "slug": "last-word-js",
+            "registry": "npm",
+            "version": "0.16.1",
+            "published_at": "2026-11-04T21:32:36Z",
+            "first": false,
+            "summary": "A chart's cached number is read in linear time"
+        },
+        {
+            "slug": "last-word",
+            "registry": "composer",
+            "version": "0.20.1",
+            "published_at": "2026-11-04T21:22:24Z",
+            "first": false,
+            "summary": "A chart's cached number is read in linear time"
+        },
+        {
+            "slug": "fancy-grid",
+            "registry": "npm",
+            "version": "0.4.1",
+            "published_at": "2026-11-04T21:22:11Z",
+            "first": false,
+            "summary": "A cell's number text is read in linear time"
+        },
+        {
+            "slug": "fancy-docs",
+            "registry": "npm",
+            "version": "0.4.0",
+            "published_at": "2026-11-04T19:56:42Z",
+            "first": false,
+            "summary": "Mixed page orientation"
+        },
+        {
+            "slug": "last-word-ui",
+            "registry": "npm",
+            "version": "0.5.0",
+            "published_at": "2026-11-04T19:51:01Z",
+            "first": false,
+            "summary": "Mixed page orientation"
+        },
+        {
+            "slug": "agent-integrations",
+            "registry": "npm",
+            "version": "0.57.0",
+            "published_at": "2026-11-04T19:49:12Z",
+            "first": false,
+            "summary": "Grid bridge: grid_set_column_visibility and grid_pin_columns"
+        },
+        {
+            "slug": "fancy-grid",
+            "registry": "npm",
+            "version": "0.4.0",
+            "published_at": "2026-11-04T19:48:38Z",
+            "first": false,
+            "summary": "Column visibility, pinning and grouped headers"
+        },
+        {
+            "slug": "last-word-py",
+            "registry": "pypi",
+            "version": "0.12.0",
+            "published_at": "2026-11-04T19:44:02Z",
+            "first": false,
+            "summary": "Mixed page orientation in .docx"
+        },
+        {
+            "slug": "last-word-js",
+            "registry": "npm",
+            "version": "0.16.0",
+            "published_at": "2026-11-04T19:38:51Z",
+            "first": false,
+            "summary": "The test suite no longer leaves its parity folders and LibreOffice profiles in the temp folder"
+        },
+        {
+            "slug": "last-word",
+            "registry": "composer",
+            "version": "0.20.0",
+            "published_at": "2026-11-04T19:28:59Z",
+            "first": false,
+            "summary": "Mixed page orientation in .docx"
+        },
+        {
+            "slug": "fancy-conformance",
+            "registry": "npm",
+            "version": "0.45.0",
+            "published_at": "2026-11-04T19:15:47Z",
+            "first": false,
+            "summary": "last-word/docx-constructs 0080-0092: mixed pages"
+        },
+        {
+            "slug": "prism-perplexity",
+            "registry": "composer",
+            "version": "0.4.0",
+            "published_at": "2026-11-04T18:58:33Z",
+            "first": false,
+            "summary": null
+        },
+        {
+            "slug": "react-fancy",
+            "registry": "npm",
+            "version": "6.7.1",
+            "published_at": "2026-11-04T18:56:06Z",
+            "first": false,
+            "summary": "NumberField reads a very long run of digits in linear time"
+        },
+        {
+            "slug": "react-fancy",
+            "registry": "npm",
+            "version": "6.7.0",
+            "published_at": "2026-11-04T18:38:21Z",
+            "first": false,
+            "summary": "FileUpload reports what it refuses: onReject(rejections)"
+        },
+        {
+            "slug": "agent-integrations",
+            "registry": "npm",
+            "version": "0.56.0",
+            "published_at": "2026-11-04T18:33:11Z",
+            "first": false,
+            "summary": "Charts bridge: readOnly: true registers no tool that can change what a chart draws"
+        },
+        {
+            "slug": "fancy-echarts",
+            "registry": "npm",
+            "version": "6.2.0",
+            "published_at": "2026-11-04T18:29:56Z",
+            "first": false,
+            "summary": "captureEChart(option, { backgroundColor, theme?, width?, height?, pixelRatio?, excludeComponents?"
+        },
         {
             "slug": "last-word-js",
             "registry": "npm",
@@ -6378,14 +6602,6 @@
             "registry": "composer",
             "version": "0.117.1",
             "published_at": "2026-09-05T22:55:02Z",
-            "first": false,
-            "summary": null
-        },
-        {
-            "slug": "prism",
-            "registry": "composer",
-            "version": "0.117.0",
-            "published_at": "2026-09-05T17:20:47Z",
             "first": false,
             "summary": null
         }

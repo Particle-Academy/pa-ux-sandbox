@@ -439,16 +439,16 @@ it('FAILS a registered PyPI name that belongs to somebody else', function () {
 });
 
 it('FAILS a PLANNED package that is already published', function () {
-    fakeDrift(['npm:@particle-academy/charlotte-ui' => 'published']);
+    fakeDrift(['npm:@particle-academy/charlotte' => 'published']);
 
     [$code, $report] = runDrift();
 
-    $finding = collect(driftFindings($report))->firstWhere('name', '@particle-academy/charlotte-ui');
+    $finding = collect(driftFindings($report))->firstWhere('name', '@particle-academy/charlotte');
 
     expect($code)->toBe(1)
         ->and($finding['class'])->toBe('planned-but-published')
         ->and($finding['check'])->toBe('planned-unpublished')
-        ->and($finding['slug'])->toBe('charlotte-ui');
+        ->and($finding['slug'])->toBe('charlotte-js');
 });
 
 it('FAILS a PLANNED PyPI name that a stranger already owns -- the charlotte collision', function () {

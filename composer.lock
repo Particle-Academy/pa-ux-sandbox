@@ -3749,16 +3749,16 @@
         },
         {
             "name": "particle-academy/dark-slide",
-            "version": "v0.22.1",
+            "version": "v0.22.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/dark-slide.git",
-                "reference": "fdb1b3a3c3abe19aeeb9351c1b1fb0655d68070b"
+                "reference": "ad2ac75231c48ed64ec5793fd3cdade5e3a1cb2b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/dark-slide/zipball/fdb1b3a3c3abe19aeeb9351c1b1fb0655d68070b",
-                "reference": "fdb1b3a3c3abe19aeeb9351c1b1fb0655d68070b",
+                "url": "https://api.github.com/repos/Particle-Academy/dark-slide/zipball/ad2ac75231c48ed64ec5793fd3cdade5e3a1cb2b",
+                "reference": "ad2ac75231c48ed64ec5793fd3cdade5e3a1cb2b",
                 "shasum": ""
             },
             "require": {
@@ -3822,7 +3822,7 @@
                 "issues": "https://github.com/Particle-Academy/dark-slide/issues",
                 "source": "https://github.com/Particle-Academy/dark-slide"
             },
-            "time": "2026-10-27T22:08:05+00:00"
+            "time": "2026-11-04T21:52:35+00:00"
         },
         {
             "name": "particle-academy/fancy-cms",
@@ -3936,16 +3936,16 @@
         },
         {
             "name": "particle-academy/fancy-flow-php",
-            "version": "v0.65.1",
+            "version": "v0.66.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/fancy-flow-php.git",
-                "reference": "4fc28f11922e57aa11f7684efb26c8cbac3852b2"
+                "reference": "7bf5a15d5ee01cf1b78fcfdc893ae56c999c2bb5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/fancy-flow-php/zipball/4fc28f11922e57aa11f7684efb26c8cbac3852b2",
-                "reference": "4fc28f11922e57aa11f7684efb26c8cbac3852b2",
+                "url": "https://api.github.com/repos/Particle-Academy/fancy-flow-php/zipball/7bf5a15d5ee01cf1b78fcfdc893ae56c999c2bb5",
+                "reference": "7bf5a15d5ee01cf1b78fcfdc893ae56c999c2bb5",
                 "shasum": ""
             },
             "require": {
@@ -4007,7 +4007,7 @@
                 "issues": "https://github.com/Particle-Academy/fancy-flow-php/issues",
                 "source": "https://github.com/Particle-Academy/fancy-flow-php"
             },
-            "time": "2026-11-01T09:32:26+00:00"
+            "time": "2026-11-04T22:02:30+00:00"
         },
         {
             "name": "particle-academy/fancy-heuristics",
@@ -4422,16 +4422,16 @@
         },
         {
             "name": "particle-academy/holy-sheet",
-            "version": "v2.11.3",
+            "version": "v2.11.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/holy-sheet.git",
-                "reference": "a90bdae6631d907ef44fd56d5248ae5803865a22"
+                "reference": "5bcce33aa53e36c7422e323e7c1120104f78fae0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/holy-sheet/zipball/a90bdae6631d907ef44fd56d5248ae5803865a22",
-                "reference": "a90bdae6631d907ef44fd56d5248ae5803865a22",
+                "url": "https://api.github.com/repos/Particle-Academy/holy-sheet/zipball/5bcce33aa53e36c7422e323e7c1120104f78fae0",
+                "reference": "5bcce33aa53e36c7422e323e7c1120104f78fae0",
                 "shasum": ""
             },
             "require": {
@@ -4494,7 +4494,7 @@
                 "issues": "https://github.com/Particle-Academy/holy-sheet/issues",
                 "source": "https://github.com/Particle-Academy/holy-sheet"
             },
-            "time": "2026-10-28T06:17:30+00:00"
+            "time": "2026-11-04T21:42:03+00:00"
         },
         {
             "name": "particle-academy/laravel-catalog",
@@ -4736,16 +4736,16 @@
         },
         {
             "name": "particle-academy/last-word",
-            "version": "v0.19.0",
+            "version": "v0.20.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/last-word.git",
-                "reference": "87723ce1ab71041523ebe29c71babd052084f8da"
+                "reference": "67fdac1a6d6226fa22bed90fe4e526600f21410c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/last-word/zipball/87723ce1ab71041523ebe29c71babd052084f8da",
-                "reference": "87723ce1ab71041523ebe29c71babd052084f8da",
+                "url": "https://api.github.com/repos/Particle-Academy/last-word/zipball/67fdac1a6d6226fa22bed90fe4e526600f21410c",
+                "reference": "67fdac1a6d6226fa22bed90fe4e526600f21410c",
                 "shasum": ""
             },
             "require": {
@@ -4755,7 +4755,7 @@
                 "php": "^8.4"
             },
             "require-dev": {
-                "particle-academy/fancy-conformance": "0.44.0",
+                "particle-academy/fancy-conformance": "0.45.0",
                 "pestphp/pest": "^3.0|^4.0"
             },
             "bin": [
@@ -4794,7 +4794,7 @@
                 "issues": "https://github.com/Particle-Academy/last-word/issues",
                 "source": "https://github.com/Particle-Academy/last-word"
             },
-            "time": "2026-11-04T16:46:37+00:00"
+            "time": "2026-11-04T21:22:24+00:00"
         },
         {
             "name": "phpoption/phpoption",

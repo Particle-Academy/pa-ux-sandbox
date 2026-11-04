@@ -63,6 +63,7 @@ import {
     Modal,
     MoodMeter,
     Navbar,
+    NumberField,
     OtpInput,
     Pagination,
     Pillbox,
@@ -284,6 +285,7 @@ const REGISTRY: Record<string, DemoFn> = {
     // Inputs / pickers
     "react-fancy/field": FieldDemo,
     "react-fancy/input": InputDemo,
+    "react-fancy/number-field": NumberFieldDemo,
     "react-fancy/textarea": TextareaDemo,
     "react-fancy/select": SelectDemo,
     "react-fancy/checkbox": CheckboxDemo,
@@ -2403,6 +2405,17 @@ function InputDemo() {
     const [value, setValue] = useState("agent@particle.academy");
 
     return <Input label="Email" type="email" value={value} onValueChange={setValue} leading="@" />;
+}
+
+function NumberFieldDemo() {
+    const [value, setValue] = useState<number | null>(null);
+
+    return (
+        <div className="space-y-2">
+            <NumberField label="Quantity" value={value} onValueChange={setValue} min={0} step={1} />
+            <Text size="xs" className="!text-zinc-500 font-mono">value: {JSON.stringify(value)}</Text>
+        </div>
+    );
 }
 
 function TextareaDemo() {

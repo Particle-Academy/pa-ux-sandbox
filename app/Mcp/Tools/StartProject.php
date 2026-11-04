@@ -121,7 +121,9 @@ class StartProject extends Tool
                 'docx writer/reader (+ markdown bridges)' => 'particle-academy/last-word',
             ],
             'scaffold' => [
-                'laravel new my-app   # (or composer create-project laravel/laravel my-app)',
+                'laravel new my-app --using=particle-academy/fancy-starter-kit   # START HERE for a new app. Already includes react-fancy, fancy-inertia, fancy-query, fancy-echarts, fancy-pwa and fancy-screens, wired with SSR, Fortify auth (register / login / profile / password) and a Pest suite.',
+                '# Prism (the AI layer) is NOT included in the starter kit: composer require particle-academy/prism when you need it.',
+                '# Adding Fancy to an EXISTING app instead? Do it by hand:',
                 'composer require inertiajs/inertia-laravel',
                 'npm install @particle-academy/react-fancy @particle-academy/fancy-inertia @particle-academy/fancy-query',
                 'composer require particle-academy/laravel-catalog particle-academy/laravel-fms   # only the server packages you need',

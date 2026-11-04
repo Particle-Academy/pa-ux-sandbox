@@ -116,7 +116,7 @@ import {
     GIT_TREE,
 } from "./gitFixtures";
 import { ActivityLight, AudioViewer, Avatar, Badge, Breadcrumbs, Button, Calendar, Callout, Card, ChatThread, CodeBlock, CodeView, ColorPicker, Container, ContentRenderer, ContextMenu, Drawer, Emoji, Eyebrow, FauxClient, FileBrowser, FullScreen, Grid, ReorderableGrid, Heading, ImageViewer, IndexList, JsonEditor, Kanban, Kbd, Marquee, MediaViewer, MoodMeter, OtpInput, Pagination, PdfViewer, Pillbox, Profile, Progress, PullQuote, QrCode, ResizablePanels, Section, Skeleton, Stat, Stepper, StatList, StickyNote, Switch, Tabs, Text, TimeGrid, TimePicker, Timeline, Tooltip, VideoViewer, VirtualList } from "@particle-academy/react-fancy";
-import { Checkbox, CheckboxGroup, DatePicker, Field, Input, MultiSwitch, RadioGroup, Select, Slider, Textarea } from "@particle-academy/react-fancy";
+import { Checkbox, CheckboxGroup, DatePicker, Field, Input, MultiSwitch, NumberField, RadioGroup, Select, Slider, Textarea } from "@particle-academy/react-fancy";
 import { FileViewer } from "@particle-academy/fancy-code";
 import { EChart } from "@particle-academy/fancy-echarts";
 import { ArtBoard, ArtPiece } from "@particle-academy/fancy-artboard";
@@ -1325,6 +1325,10 @@ const PREVIEWS: Record<string, PreviewFn> = {
 
     "react-fancy/input": () => (
         <Input size="sm" label="Email" type="email" defaultValue="agent@fancy.dev" />
+    ),
+
+    "react-fancy/number-field": () => (
+        <NumberField size="sm" label="Quantity" defaultValue={3} min={0} step={1} />
     ),
 
     "react-fancy/textarea": () => (

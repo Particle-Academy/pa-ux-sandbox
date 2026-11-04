@@ -76,8 +76,9 @@ it('says fancy-cms is early release and announces nothing uninstallable', functi
 
     // The page source names no package by hand. Charlotte reaches the page only
     // through feature data, which resolves through PackageRegistry, so it shows
-    // only once it is installable. Its unbuilt siblings (charlotte-ui/-js/-py)
-    // are still PLANNED and must never be named here.
+    // only once it is installable. Its unbuilt siblings (charlotte-js/-py) are
+    // still PLANNED and must never be named here. The owner ruled Charlotte has
+    // no UI, so charlotte-ui is not a package and must not be named either.
     expect($source)->toMatch('/early[- ]release/i')
         ->and($source)->not->toMatch('/charlotte-(ui|js|py)/i');
 });

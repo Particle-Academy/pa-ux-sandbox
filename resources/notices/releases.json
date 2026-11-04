@@ -83,7 +83,7 @@
         "fancy-x-files": "0.2.0",
         "fancy-x-files-js": "0.2.0",
         "fancy-x-files-ui": "0.2.0",
-        "fine-print": "0.6.0",
+        "fine-print": "0.6.1",
         "holy-sheet": "2.11.3",
         "holy-sheet-js": "2.11.3",
         "holy-sheet-py": "0.10.3",
@@ -93,10 +93,10 @@
         "laravel-fms": "0.12.0",
         "laravel-fun-lab": "0.6.0",
         "laravel-jobs": "0.5.0",
-        "last-word": "0.18.0",
-        "last-word-js": "0.14.0",
-        "last-word-py": "0.10.0",
-        "last-word-ui": "0.4.0",
+        "last-word": "0.19.0",
+        "last-word-js": "0.15.0",
+        "last-word-py": "0.11.0",
+        "last-word-ui": "0.4.1",
         "mcp-relay-client": "0.3.0",
         "prism": "0.146.0",
         "prism-acp": "0.1.1",
@@ -133,6 +133,46 @@
         "teachers-aid-ui": "0.3.0"
     },
     "releases": [
+        {
+            "slug": "last-word-js",
+            "registry": "npm",
+            "version": "0.15.0",
+            "published_at": "2026-11-04T16:56:06Z",
+            "first": false,
+            "summary": "Schema.MAX_COL_SPAN (1000), also the maximum of colSpan in jsonSchema()"
+        },
+        {
+            "slug": "last-word-ui",
+            "registry": "npm",
+            "version": "0.4.1",
+            "published_at": "2026-11-04T16:54:06Z",
+            "first": false,
+            "summary": "A table cell's column span had no upper limit here either, so a very small document could cost a browser tab far more…"
+        },
+        {
+            "slug": "last-word-py",
+            "registry": "pypi",
+            "version": "0.11.0",
+            "published_at": "2026-11-04T16:52:21Z",
+            "first": false,
+            "summary": "Schema.MAX_COL_SPAN (1000), also the maximum of colSpan in json_schema(), and Schema.col_span(), the clamp the reader…"
+        },
+        {
+            "slug": "fine-print",
+            "registry": "composer",
+            "version": "0.6.1",
+            "published_at": "2026-11-04T16:46:48Z",
+            "first": false,
+            "summary": "A span past the limit said colSpan must be an integer of 1 or more, which it was"
+        },
+        {
+            "slug": "last-word",
+            "registry": "composer",
+            "version": "0.19.0",
+            "published_at": "2026-11-04T16:46:37Z",
+            "first": false,
+            "summary": "Schema::MAX_COL_SPAN (1000), also the maximum of colSpan in jsonSchema()"
+        },
         {
             "slug": "react-fancy",
             "registry": "npm",
@@ -6346,54 +6386,6 @@
             "registry": "composer",
             "version": "0.117.0",
             "published_at": "2026-09-05T17:20:47Z",
-            "first": false,
-            "summary": null
-        },
-        {
-            "slug": "prism-memory",
-            "registry": "composer",
-            "version": "0.2.0",
-            "published_at": "2026-09-05T07:42:55Z",
-            "first": false,
-            "summary": null
-        },
-        {
-            "slug": "prism-browser",
-            "registry": "composer",
-            "version": "0.1.0",
-            "published_at": "2026-09-05T06:50:14Z",
-            "first": true,
-            "summary": null
-        },
-        {
-            "slug": "prism-workspace",
-            "registry": "composer",
-            "version": "0.2.0",
-            "published_at": "2026-09-05T06:50:05Z",
-            "first": false,
-            "summary": null
-        },
-        {
-            "slug": "prism-opentelemetry",
-            "registry": "composer",
-            "version": "0.2.0",
-            "published_at": "2026-09-05T06:50:00Z",
-            "first": false,
-            "summary": null
-        },
-        {
-            "slug": "prism-mcp",
-            "registry": "composer",
-            "version": "0.2.0",
-            "published_at": "2026-09-05T06:49:49Z",
-            "first": false,
-            "summary": null
-        },
-        {
-            "slug": "prism",
-            "registry": "composer",
-            "version": "0.116.0",
-            "published_at": "2026-09-05T06:41:52Z",
             "first": false,
             "summary": null
         }

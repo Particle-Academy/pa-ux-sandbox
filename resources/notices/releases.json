@@ -23,12 +23,12 @@
         "fancy-cms": "0.8.1",
         "fancy-cms-ui": "0.13.1",
         "fancy-code": "0.16.0",
-        "fancy-conformance": "0.43.0",
+        "fancy-conformance": "0.44.0",
         "fancy-connector-core": "0.13.0",
         "fancy-devtools": "0.1.1",
         "fancy-diff": "0.5.1",
         "fancy-doc-commons": "0.4.0",
-        "fancy-docs": "0.2.1",
+        "fancy-docs": "0.3.0",
         "fancy-echarts": "6.1.0",
         "fancy-expr": "0.2.0",
         "fancy-features-js": "0.5.0",
@@ -70,7 +70,7 @@
         "fancy-seo": "0.6.0",
         "fancy-sheets": "0.13.1",
         "fancy-slides": "0.25.1",
-        "fancy-template": "0.3.0",
+        "fancy-template": "0.4.0",
         "fancy-term": "0.8.1",
         "fancy-term-host": "0.13.0",
         "fancy-trading-js": "0.2.1",
@@ -83,7 +83,7 @@
         "fancy-x-files": "0.2.0",
         "fancy-x-files-js": "0.2.0",
         "fancy-x-files-ui": "0.2.0",
-        "fine-print": "0.5.0",
+        "fine-print": "0.6.0",
         "holy-sheet": "2.11.3",
         "holy-sheet-js": "2.11.3",
         "holy-sheet-py": "0.10.3",
@@ -93,14 +93,14 @@
         "laravel-fms": "0.12.0",
         "laravel-fun-lab": "0.6.0",
         "laravel-jobs": "0.5.0",
-        "last-word": "0.17.0",
-        "last-word-js": "0.13.0",
-        "last-word-py": "0.9.0",
-        "last-word-ui": "0.3.0",
+        "last-word": "0.18.0",
+        "last-word-js": "0.14.0",
+        "last-word-py": "0.10.0",
+        "last-word-ui": "0.4.0",
         "mcp-relay-client": "0.3.0",
         "prism": "0.146.0",
         "prism-acp": "0.1.1",
-        "prism-acp-ts": "0.33.2",
+        "prism-acp-ts": "0.36.0",
         "prism-browser": "0.4.1",
         "prism-browser-py": "0.1.1",
         "prism-browser-ts": "0.2.1",
@@ -123,16 +123,128 @@
         "prism-perplexity": "0.3.0",
         "prism-perplexity-py": "0.1.0",
         "prism-perplexity-ts": "0.2.0",
-        "prism-py": "0.7.0",
-        "prism-ts": "0.7.0",
+        "prism-py": "0.8.0",
+        "prism-ts": "0.8.0",
         "prism-workspace": "0.3.0",
         "prism-workspace-py": "0.1.0",
         "prism-workspace-ts": "0.2.0",
-        "react-fancy": "6.6.0",
+        "react-fancy": "6.6.1",
         "teachers-aid": "0.3.0",
         "teachers-aid-ui": "0.3.0"
     },
     "releases": [
+        {
+            "slug": "react-fancy",
+            "registry": "npm",
+            "version": "6.6.1",
+            "published_at": "2026-11-04T06:00:30Z",
+            "first": false,
+            "summary": "VirtualList no longer pauses followTail by itself when its viewport grows"
+        },
+        {
+            "slug": "fancy-template",
+            "registry": "npm",
+            "version": "0.4.0",
+            "published_at": "2026-11-04T05:57:19Z",
+            "first": false,
+            "summary": "profiles/fine-print.json allows tokens in the first and even band slots, and in bands on a pageBreak.page, following…"
+        },
+        {
+            "slug": "last-word-ui",
+            "registry": "npm",
+            "version": "0.4.0",
+            "published_at": "2026-11-04T05:47:37Z",
+            "first": false,
+            "summary": "A visible notice when a document asks for mixed page layout"
+        },
+        {
+            "slug": "fancy-docs",
+            "registry": "npm",
+            "version": "0.3.0",
+            "published_at": "2026-11-04T05:47:32Z",
+            "first": false,
+            "summary": "A visible notice when a document asks for mixed page layout"
+        },
+        {
+            "slug": "last-word-js",
+            "registry": "npm",
+            "version": "0.14.0",
+            "published_at": "2026-11-04T05:42:17Z",
+            "first": false,
+            "summary": "BREAKING: pageBreak.orientation, pageBreak.margins, .size, .header, .footer, .firstHeader, .firstFooter, .evenHeader…"
+        },
+        {
+            "slug": "fine-print",
+            "registry": "composer",
+            "version": "0.6.0",
+            "published_at": "2026-11-04T05:41:28Z",
+            "first": false,
+            "summary": "maxRatio now defaults to 1,500:1, up from 500:1"
+        },
+        {
+            "slug": "last-word-py",
+            "registry": "pypi",
+            "version": "0.10.0",
+            "published_at": "2026-11-04T05:39:43Z",
+            "first": false,
+            "summary": "BREAKING: pageBreak.orientation, pageBreak.margins, .size, .header, .footer, .firstHeader, .firstFooter, .evenHeader…"
+        },
+        {
+            "slug": "last-word",
+            "registry": "composer",
+            "version": "0.18.0",
+            "published_at": "2026-11-04T05:37:59Z",
+            "first": false,
+            "summary": "BREAKING: pageBreak.orientation, pageBreak.margins, .size, .header, .footer, .firstHeader, .firstFooter, .evenHeader…"
+        },
+        {
+            "slug": "fancy-conformance",
+            "registry": "npm",
+            "version": "0.44.0",
+            "published_at": "2026-11-04T04:42:13Z",
+            "first": false,
+            "summary": "doc-model/page-refusal: (mixed page orientation, stage 1): pageBreak.page, the near-miss keys and sections as messages…"
+        },
+        {
+            "slug": "prism-acp-ts",
+            "registry": "npm",
+            "version": "0.36.0",
+            "published_at": "2026-11-04T04:00:00Z",
+            "first": false,
+            "summary": null
+        },
+        {
+            "slug": "prism-acp-ts",
+            "registry": "npm",
+            "version": "0.35.0",
+            "published_at": "2026-11-04T01:26:31Z",
+            "first": false,
+            "summary": null
+        },
+        {
+            "slug": "prism-acp-ts",
+            "registry": "npm",
+            "version": "0.34.0",
+            "published_at": "2026-11-03T23:23:23Z",
+            "first": false,
+            "summary": null
+        },
+        {
+            "slug": "prism-ts",
+            "registry": "npm",
+            "version": "0.8.0",
+            "published_at": "2026-11-03T22:14:58Z",
+            "first": false,
+            "summary": null
+        },
+        {
+            "slug": "prism-py",
+            "registry": "pypi",
+            "version": "0.8.0",
+            "published_at": "2026-11-03T22:13:22Z",
+            "first": false,
+            "summary": null
+        },
         {
             "slug": "fancy-term-host",
             "registry": "npm",
@@ -6282,14 +6394,6 @@
             "registry": "composer",
             "version": "0.116.0",
             "published_at": "2026-09-05T06:41:52Z",
-            "first": false,
-            "summary": null
-        },
-        {
-            "slug": "prism-harness",
-            "registry": "composer",
-            "version": "0.3.0",
-            "published_at": "2026-09-04T22:53:45Z",
             "first": false,
             "summary": null
         }

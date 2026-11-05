@@ -66,6 +66,7 @@ it('returns only the requested section for each topic', function (string $topic,
     'custom' => ['custom', 'font-display: swap'],
     'tailwind' => ['tailwind', '@theme'],
     'google-fonts' => ['google-fonts', 'github.com/google/fonts'],
+    'scripts' => ['scripts', 'Noto Sans Hanifi Rohingya'],
     'licensing' => ['licensing', 'NOTICE'],
     'deterministic' => ['deterministic', 'Carlito'],
     'packages' => ['packages', 'fontResolver'],
@@ -74,6 +75,30 @@ it('returns only the requested section for each topic', function (string $topic,
 it('accepts loose spellings of a topic', function () {
     expect(typographyGuide(['topic' => 'Google Fonts'])['sections'][0]['topic'])->toBe('google-fonts');
     expect(typographyGuide(['topic' => 'google_fonts'])['sections'][0]['topic'])->toBe('google-fonts');
+});
+
+it('finds the non-Latin scripts section under the names people use for it', function (string $spelling) {
+    expect(typographyGuide(['topic' => $spelling])['sections'][0]['topic'])->toBe('scripts');
+})->with(['scripts', 'non-latin', 'Non Latin', 'rtl', 'right-to-left', 'script']);
+
+it('covers each script the non-Latin section promises, by its verified family name', function () {
+    $section = typographyGuide(['topic' => 'scripts'])['sections'][0]['markdown'];
+
+    // Family names exactly as google/fonts METADATA.pb spells them.
+    foreach (['Noto Sans Myanmar', 'Noto Serif Myanmar', 'Noto Sans Hanifi Rohingya', 'Noto Sans Devanagari', 'Noto Naskh Arabic', 'Noto Sans Arabic'] as $family) {
+        expect($section)->toContain($family);
+    }
+
+    // The tags a page needs: script subtags where the registry has no default.
+    expect($section)
+        ->toContain('lang="rhg-Rohg"')
+        ->toContain('lang="ksw-Mymr"')
+        ->toContain('dir="rtl"')
+        ->toContain('@font-face')
+        ->toContain('@theme')
+        ->toContain('unicode-range')
+        ->toContain('1.4.12')
+        ->toContain('1.4.8');
 });
 
 it('refuses an unknown topic and names the valid ones', function () {

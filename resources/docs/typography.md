@@ -2,7 +2,7 @@
 
 How to handle fonts in a Fancy UI app: the default stacks, adding a custom or web font, Google Fonts, licensing, and what to do when layout has to come out identical on every machine.
 
-Agents get the same guide from the install-MCP: call the `typography-guide` tool, optionally with a `topic` (`policy`, `defaults`, `custom`, `tailwind`, `google-fonts`, `licensing`, `deterministic`, `packages`). Both read this page, so they cannot disagree.
+Agents get the same guide from the install-MCP: call the `typography-guide` tool, optionally with a `topic` (`policy`, `defaults`, `custom`, `tailwind`, `google-fonts`, `scripts`, `licensing`, `deterministic`, `packages`). Both read this page, so they cannot disagree.
 
 <!-- topic: policy -->
 ## The policy: self-host, serve from your own origin
@@ -168,6 +168,105 @@ fonts: [google('Inter', { weights: [400, 600], subsets: ['latin'] })],
 ```
 
 with `@fonts` in the layout. The trade-offs: the build needs network access, the licence file is not downloaded for you (keep it in the repo yourself), and Google can update a family between two builds. Where exact metrics matter, commit the files and use `local()` instead.
+
+<!-- topic: scripts -->
+## Non-Latin scripts: Myanmar, Karen, Hanifi Rohingya, Devanagari, Arabic
+
+A Latin font with good coverage is not enough for these scripts. Each one needs a family made for it, a `lang` that names it, and more vertical room than Latin. Get any of the three wrong and the text still renders, just badly: stacked marks collide, a fallback font with different shaping takes over, or a screen reader reads Burmese with English rules.
+
+**1. Pick a family per script.** The Noto families below are all in the [google/fonts](https://github.com/google/fonts) repository under `ofl/`, so they are SIL Open Font License 1.1. Names are exactly as each family's `METADATA.pb` spells them; use them verbatim in `font-family`.
+
+| Script | Used for | Sans | Serif or alternative |
+|---|---|---|---|
+| Myanmar | Burmese, Karen (S'gaw, Pwo), Shan, Mon | `Noto Sans Myanmar` | `Noto Serif Myanmar` |
+| Hanifi Rohingya | Rohingya | `Noto Sans Hanifi Rohingya` | none in google/fonts |
+| Devanagari | Hindi, Marathi, Nepali | `Noto Sans Devanagari` | `Noto Serif Devanagari` |
+| Arabic | Arabic, Urdu, Persian | `Noto Sans Arabic` | `Noto Naskh Arabic` (the traditional book style), `Noto Kufi Arabic` |
+
+- **Karen is written in the Myanmar script**, so it uses the Myanmar family. `Noto Sans Myanmar` maps the Karen letters (U+1061 to U+1064 for S'gaw Karen, U+1065 to U+106D for Western Pwo Karen) and the Myanmar Extended-A and Extended-B blocks, with `mym2` shaping. It does **not** yet map Myanmar Extended-C (U+116D0 to U+116E3, new in Unicode 16), which holds the Pao and **Eastern Pwo Karen digits**. If your content uses those, test with real text before you ship; a missing glyph falls back to whatever font the visitor has.
+- **Hanifi Rohingya** is right-to-left and joins its letters, like Arabic. `Noto Sans Hanifi Rohingya` maps the letters and the script's own digits (U+10D00 to U+10D39) and the Arabic punctuation Rohingya borrows (comma U+060C, semicolon U+061B, question mark U+061F, full stop U+06D4, tatweel U+0640).
+- **Fallback stacks go most specific first**, then a Latin family for the Latin runs every page has (numbers, product names, URLs), then the system:
+
+```css
+--font-myanmar: 'Noto Sans Myanmar', 'Noto Sans', ui-sans-serif, system-ui, sans-serif;
+--font-rohingya: 'Noto Sans Hanifi Rohingya', 'Noto Sans', ui-sans-serif, system-ui, sans-serif;
+--font-devanagari: 'Noto Sans Devanagari', 'Noto Sans', ui-sans-serif, system-ui, sans-serif;
+--font-arabic: 'Noto Naskh Arabic', 'Noto Sans', ui-sans-serif, system-ui, sans-serif;
+```
+
+  The browser picks a font per character, so a mixed Burmese and Latin line takes Burmese glyphs from the first family and Latin from the next. One family per script keeps each script's shaping in one font.
+
+**2. Self-host, like every font here.** Same policy as above: the files live in your app and are served from your own origin, never from a font CDN. The google/fonts files are variable TTFs (`NotoSansMyanmar[wdth,wght].ttf`, `NotoSansHanifiRohingya[wght].ttf`, `NotoSansDevanagari[wdth,wght].ttf`, `NotoNaskhArabic[wght].ttf`); convert them to woff2 (see subsetting below). Keep `OFL.txt` and a NOTICE beside each family. The `OFL.txt` shipped with Noto Sans Myanmar, Noto Sans Hanifi Rohingya, Noto Sans Devanagari and Noto Naskh Arabic declares no Reserved Font Name, so a converted or subset file of those may keep its name; check the header of any other family before you rename or keep.
+
+**Subsetting complex scripts needs care.** These scripts are shaped: the font substitutes and positions glyphs through its `GSUB` and `GPOS` tables, and many of the glyphs it draws have no code point of their own (conjuncts, stacked medials, joining forms). A subset that drops those tables or those glyphs renders the letters but not the text.
+
+- With `pyftsubset`, keep every layout feature (`--layout-features='*'`) and keep the script whole; do not cut a script down to "the letters I use".
+- If you split files by `unicode-range`, split **between** scripts, never inside one. Keep the joiners (U+200C ZWNJ, U+200D ZWJ) and the dotted circle (U+25CC, used to display a mark on its own) in every file of a shaped script. A cluster whose characters land in two files is shaped by neither.
+- After subsetting, look at real sentences in a browser, not a character chart. A chart passes while a stacked syllable breaks.
+
+**3. Declare the faces and wire them into Tailwind v4.** One `@font-face` per file, restricted to its script with `unicode-range`, then a theme variable per stack (routes 2a and 2b in the custom-font section work the same way):
+
+```css
+@font-face {
+    font-family: 'Noto Sans Myanmar';
+    font-style: normal;
+    font-weight: 100 900;
+    font-display: swap;
+    src: url('../fonts/noto-sans-myanmar/NotoSansMyanmar.woff2') format('woff2');
+    unicode-range: U+1000-109F, U+A9E0-A9FF, U+AA60-AA7F, U+200B-200D, U+25CC;
+}
+
+@font-face {
+    font-family: 'Noto Sans Hanifi Rohingya';
+    font-style: normal;
+    font-weight: 400 700;
+    font-display: swap;
+    src: url('../fonts/noto-sans-hanifi-rohingya/NotoSansHanifiRohingya.woff2') format('woff2');
+    unicode-range: U+10D00-10D3F, U+060C, U+061B, U+061F, U+0640, U+06D4, U+200C-200D, U+25CC;
+}
+
+@theme {
+    --font-myanmar: 'Noto Sans Myanmar', 'Noto Sans', ui-sans-serif, system-ui, sans-serif;
+    --font-rohingya: 'Noto Sans Hanifi Rohingya', 'Noto Sans', ui-sans-serif, system-ui, sans-serif;
+}
+
+:lang(my), :lang(ksw), :lang(pwo), :lang(kjp) { font-family: var(--font-myanmar); }
+:lang(rhg-Rohg) { font-family: var(--font-rohingya); }
+```
+
+`font-weight` in each rule must match the weight range the file really has. These two are read from the files' `fvar` axes (Myanmar 100 to 900, Hanifi Rohingya 400 to 700); check any other file the same way rather than copying the numbers. `:lang()` selectors follow the `lang` attribute (next step), so a page can switch script per element without a class on every node. For a whole-site language, set `--font-sans` itself, and react-fancy follows (it reads `--font-sans`).
+
+**4. Put `lang` and `dir` on the right elements.**
+
+- On `<html>`, the page's main language and direction: `<html lang="my">`, `<html lang="ar" dir="rtl">`, `<html lang="rhg-Rohg" dir="rtl">`.
+- Use the script subtag where the language has no default script. In the IANA subtag registry `my` defaults to Myanmar script and `hi` to Devanagari, but **Rohingya (`rhg`) and the Karen languages have no default**, so write `lang="rhg-Rohg"` and `lang="ksw-Mymr"` (S'gaw Karen), `pwo-Mymr` (Western Pwo), `kjp-Mymr` (Eastern Pwo). Screen readers choose a voice and pronunciation from `lang`, and browsers choose fonts and line-breaking rules from it.
+- On any element whose language differs from the page's, its own `lang`, and a `dir` when the direction differs too: `<span lang="my">...</span>` inside an English page, `<p lang="en" dir="ltr">` inside a Rohingya one. WCAG 3.1.2 (Language of Parts) asks for exactly this.
+- For text you did not write (names, user input, search results) whose direction you cannot know, use `dir="auto"`, or `<bdi>`, so it cannot reorder the punctuation around it.
+- react-fancy follows `dir` from the nearest ancestor, so `dir` on `<html>` mirrors every component. Its right-to-left notes are in the react-fancy `STYLE.md`.
+
+**5. Give tall scripts more line height.** These fonts reserve more vertical room than Latin, measured from the files' own metrics (ascent plus descent, as a multiple of the font size): Noto Sans 1.36, Noto Sans Hanifi Rohingya 1.36, Noto Naskh Arabic 1.70, and **Noto Sans Myanmar 2.18**. Noto Sans Devanagari reports 1.30 for line layout but declares 1.91 as its clipping extent (`usWinAscent` plus `usWinDescent`), because stacked conjuncts and marks reach well above and below the line. So:
+
+- Use a **line height of at least 1.5 for every script** (WCAG 1.4.8, below), and more where the marks stack: start Myanmar near **2.2** and Devanagari and Arabic around **1.8**, then adjust by reading real paragraphs.
+- Watch single-line boxes. `truncate`, `overflow-hidden` and fixed heights clip the marks that reach outside a tight line box: a Burmese medial below, a Devanagari vowel sign above.
+- In Tailwind v4, `text-sm` and its siblings set `line-height: var(--tw-leading, var(--text-sm--line-height))`, so you can raise the default for one language without touching any component:
+
+```css
+:lang(my), :lang(ksw), :lang(pwo), :lang(kjp) {
+    --text-xs--line-height: 2.2;
+    --text-sm--line-height: 2.2;
+    --text-base--line-height: 2.2;
+    --text-lg--line-height: 2.2;
+}
+```
+
+An explicit `leading-*` utility still wins, as it should.
+
+**6. AAA concerns.**
+
+- **WCAG 1.4.12 Text Spacing (AA)** says nothing may break when a user sets line height to 1.5 times the font size, paragraph spacing to 2 times, letter spacing to 0.12 times and word spacing to 0.16 times. Its own exception covers scripts that do not use a property: Arabic and Hanifi Rohingya letters join, so letter spacing does not apply to them the way it does to Latin. Test with those overrides applied, in each script you ship.
+- **WCAG 1.4.8 Visual Presentation (AAA)** asks for line spacing of at least space-and-a-half within paragraphs, paragraph spacing at least 1.5 times the line spacing, lines no longer than 80 characters (40 for CJK), **no justified text**, and text that resizes to 200 percent without horizontal scrolling. For right-to-left pages "not justified" means aligned to the start, the right: use `text-start`, never `text-justify`, and never `text-left`.
+- **Do not track joined scripts.** `tracking-*` (letter spacing) pulls joined Arabic and Rohingya letters apart and breaks their connections. Keep `tracking-*` for Latin labels; react-fancy's uppercase labels use it.
+- **Size.** At the same `font-size` Burmese and Devanagari often read smaller than Latin. Check legibility at your body size with someone who reads the script, and raise the size for that language if they find it small, rather than relying on zoom.
 
 <!-- topic: licensing -->
 ## Licences and approval

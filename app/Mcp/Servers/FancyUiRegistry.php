@@ -90,7 +90,8 @@ Workflow:
 Choosing or adding fonts? Call `typography-guide` before you paste a font
 <link>. Fancy apps self-host fonts on their own origin and never hot-link a
 font CDN; the guide covers the default stacks, custom and Google Fonts on
-Laravel + Vite + Tailwind v4, licensing, and fonts for deterministic layout.
+Laravel + Vite + Tailwind v4, non-Latin scripts (Myanmar, Karen, Hanifi
+Rohingya, Devanagari, Arabic), licensing, and fonts for deterministic layout.
 
 For the DESIGN phase of a new project or a redesign — before picking components —
 use `gallery_list_styles` to browse the Inspiration Gallery — three collections,

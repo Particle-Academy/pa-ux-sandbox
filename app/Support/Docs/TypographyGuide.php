@@ -84,6 +84,11 @@ class TypographyGuide
             'default' => 'defaults',
             'determinism' => 'deterministic',
             'package' => 'packages',
+            'script' => 'scripts',
+            'non-latin' => 'scripts',
+            'non-latin-scripts' => 'scripts',
+            'rtl' => 'scripts',
+            'right-to-left' => 'scripts',
         ];
 
         $slug = $aliases[$slug] ?? $slug;

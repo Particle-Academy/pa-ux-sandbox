@@ -9,7 +9,7 @@ use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Attributes\Description;
 use Laravel\Mcp\Server\Tool;
 
-#[Description('Choosing or adding fonts in a Fancy UI app — call this before adding a custom font, a web font or a Google Font, or when text must lay out identically on every machine. Returns the kit\'s font policy (self-hosted, same origin, never hot-linked from a CDN, and why), the default stacks react-fancy and Tailwind v4 use, step-by-step setup for Laravel + Vite + Tailwind v4 with snippets, how to self-host Google Fonts, licensing, deterministic layout, and the font hooks in Fancy packages. Pass `topic` for one section, or omit it for the whole guide.')]
+#[Description('Choosing or adding fonts in a Fancy UI app — call this before adding a custom font, a web font or a Google Font, or when text must lay out identically on every machine. Returns the kit\'s font policy (self-hosted, same origin, never hot-linked from a CDN, and why), the default stacks react-fancy and Tailwind v4 use, step-by-step setup for Laravel + Vite + Tailwind v4 with snippets, how to self-host Google Fonts, non-Latin scripts (Myanmar and Karen, Hanifi Rohingya, Devanagari, Arabic: families, subsetting, lang and dir, line height, WCAG text spacing), licensing, deterministic layout, and the font hooks in Fancy packages. Pass `topic` for one section, or omit it for the whole guide.')]
 class TypographyGuide extends Tool
 {
     public function handle(Request $request): Response
@@ -45,7 +45,7 @@ class TypographyGuide extends Tool
     {
         return [
             'topic' => $schema->string()
-                ->description('Optional. One section of the guide: policy, defaults, custom, tailwind, google-fonts, licensing, deterministic or packages. Omit for the whole guide.'),
+                ->description('Optional. One section of the guide: policy, defaults, custom, tailwind, google-fonts, scripts, licensing, deterministic or packages. Omit for the whole guide.'),
         ];
     }
 }

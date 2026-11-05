@@ -1867,25 +1867,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/hubspot-ui",
-          "version": "0.5.0",
+          "version": "0.6.0",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/hubspot-js",
-          "version": "0.5.0",
+          "version": "0.6.0",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/hubspot-php",
-          "version": "0.5.0",
+          "version": "0.6.0",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-hubspot",
-          "version": "0.5.0",
+          "version": "0.6.0",
           "registry": "pypi",
           "installFirst": false
         }
@@ -2659,25 +2659,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/monday-ui",
-          "version": "0.3.4",
+          "version": "0.3.5",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/monday-js",
-          "version": "0.3.4",
+          "version": "0.3.5",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/monday-php",
-          "version": "0.3.4",
+          "version": "0.3.5",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-monday",
-          "version": "0.3.4",
+          "version": "0.3.5",
           "registry": "pypi",
           "installFirst": false
         }
@@ -2866,25 +2866,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/resend-ui",
-          "version": "0.4.0",
+          "version": "0.4.1",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/resend-js",
-          "version": "0.4.0",
+          "version": "0.4.1",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/resend-php",
-          "version": "0.4.0",
+          "version": "0.4.1",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-resend",
-          "version": "0.4.0",
+          "version": "0.4.1",
           "registry": "pypi",
           "installFirst": false
         }
@@ -3276,25 +3276,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/stripe-ui",
-          "version": "0.3.6",
+          "version": "0.3.7",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/stripe-js",
-          "version": "0.3.6",
+          "version": "0.3.7",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/stripe-php",
-          "version": "0.3.6",
+          "version": "0.3.7",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-stripe",
-          "version": "0.3.6",
+          "version": "0.3.7",
           "registry": "pypi",
           "installFirst": false
         }

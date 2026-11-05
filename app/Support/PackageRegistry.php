@@ -181,6 +181,12 @@ class PackageRegistry
             'registries' => ['packagist' => 'particle-academy/agent-flo'],
             'why' => 'Subagent that manages fancy-flow flows for any Laravel app on prism-harness: find, read, diagnose, triage, author, start and control, with host-owned flows and runs behind a store contract, configurable names, proposals by default, and run data treated as hostile. The repo exists with a test suite, but nothing is published or usable yet. Design: .ai/plans/flo.md and .ai/plans/agent-packages.md.',
         ],
+        'fancy-qr' => [
+            'name' => 'particle-academy/fancy-qr',
+            'repo' => 'Particle-Academy/fancy-qr',
+            'registries' => ['packagist' => 'particle-academy/fancy-qr'],
+            'why' => 'QR codes generated on the server, as SVG and PNG, with zero dependencies: a PHP port of react-fancy\'s own QrCode encoder, so both sides agree byte for byte. A printable PDF goes through fine-print. Owner decided 2026-11-04. NOT YET STARTED.',
+        ],
         'fine-print-js' => [
             'name' => '@particle-academy/fine-print',
             'repo' => 'Particle-Academy/fine-print-js',

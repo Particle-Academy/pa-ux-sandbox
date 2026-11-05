@@ -502,7 +502,7 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
         // provider by Weaver and listed through connectors.json, not here; the
         // vendored `fancy-connectors` catalogue was never published and was
         // retired on 2026-09-14.
-        'fancy-connector-core' => ['group' => 'platform', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#f97316'],
+        'fancy-connector-core' => ['group' => 'platform', 'ecosystem' => 'polyglot', 'kind' => 'headless', 'accent' => '#f97316'],
         // Trading.
         'fancy-trading-js' => ['group' => 'commerce', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#22c55e'],
         // `kind` was 'react', which is not one of ui|bridge|headless|block.
@@ -1268,7 +1268,7 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
                 'npm' => '@particle-academy/fancy-connector-core',
                 'composer' => 'particle-academy/fancy-connector-core',
                 'repo' => 'Particle-Academy/fancy-connector-core',
-                'language' => 'TypeScript',
+                'language' => 'Polyglot',
             ],
             [
                 'slug' => 'fancy-trading-js',

@@ -116,7 +116,7 @@ import {
     GIT_TREE,
 } from "./gitFixtures";
 import { ActivityLight, AudioViewer, Avatar, Badge, Breadcrumbs, Button, Calendar, Callout, Card, ChatThread, CodeBlock, CodeView, ColorPicker, Container, ContentRenderer, ContextMenu, Drawer, Emoji, Eyebrow, FauxClient, FileBrowser, FullScreen, Grid, ReorderableGrid, Heading, ImageViewer, IndexList, JsonEditor, Kanban, Kbd, Marquee, MediaViewer, MoodMeter, OtpInput, Pagination, PdfViewer, Pillbox, Profile, Progress, PullQuote, QrCode, ResizablePanels, Section, Skeleton, Stat, Stepper, StatList, StickyNote, Switch, Tabs, Text, TimeGrid, TimePicker, Timeline, Tooltip, VideoViewer, VirtualList } from "@particle-academy/react-fancy";
-import { Checkbox, CheckboxGroup, DatePicker, Field, Input, MultiSwitch, NumberField, RadioGroup, Select, Slider, Textarea } from "@particle-academy/react-fancy";
+import { Checkbox, CheckboxGroup, DatePicker, Field, Input, MultiSwitch, NumberField, PhoneInput, RadioGroup, Select, Slider, Textarea } from "@particle-academy/react-fancy";
 import { FileViewer } from "@particle-academy/fancy-code";
 import { EChart } from "@particle-academy/fancy-echarts";
 import { ArtBoard, ArtPiece } from "@particle-academy/fancy-artboard";
@@ -440,6 +440,17 @@ const PREVIEWS: Record<string, PreviewFn> = {
             <RankProgress tier="gold" nextTier="diamond" value={7} target={12} unit="team members" />
         </div>
     ),
+    // Client-only, and NOT because it needs a browser: fancy-mlm-ui 0.4.0's
+    // ReferralStats puts a raw <tfoot> inside react-fancy's <Table>, which only
+    // places Table.Head / Table.Body inside its <table>. The server HTML then
+    // has the <tfoot> after </table>, the parser re-homes it, and hydration
+    // fails with React #418 for the whole page. Back to a plain tile once the
+    // package renders its footer inside the table.
+    "fancy-mlm-ui/referral-stats": heavy("ReferralStatsTile", () => (
+        <div className="grid h-28 w-full max-w-[20rem] place-items-center rounded-md border border-zinc-200 text-[11px] text-zinc-500 dark:border-zinc-800">
+            Signups per referral code
+        </div>
+    )),
 
     // ─── catalog-fms (block) ─────────────────────────────────────────────────
     "catalog-fms/pricing-table": () => (
@@ -1329,6 +1340,13 @@ const PREVIEWS: Record<string, PreviewFn> = {
 
     "react-fancy/number-field": () => (
         <NumberField size="sm" label="Quantity" defaultValue={3} min={0} step={1} />
+    ),
+
+    // locale pinned: country names come from Intl.DisplayNames, and the tile is server-rendered.
+    "react-fancy/phone-input": () => (
+        <div className="w-full max-w-[16rem]">
+            <PhoneInput label="Mobile number" locale="en" defaultCountry="MM" defaultValue="+95945123456" />
+        </div>
     ),
 
     "react-fancy/textarea": () => (

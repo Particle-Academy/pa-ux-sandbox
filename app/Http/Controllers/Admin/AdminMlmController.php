@@ -108,27 +108,36 @@ class AdminMlmController extends Controller
             'active' => ['required', 'boolean'],
         ]);
 
-        // Throws a sponsor_id / placement_id validation error on a cyclic assignment.
+        // Throws a sponsor_id / placement_id validation error on a cyclic
+        // assignment, or on moving a sponsor that is already set (permanent
+        // since fancy-mlm 0.4.0).
         $program->updateMember($member, $data);
 
         return back()->with('success', 'Member updated — the tree re-shaped.');
     }
 
-    /** Splice-delete a member: their downline re-attaches to their own upline. */
+    /**
+     * Delete a member who sponsored nobody; their placement children
+     * re-attach to their own placement. A member with recruits is refused
+     * with a validation error, because a sponsor is permanent.
+     */
     public function destroyMember(MlmProgram $program, Member $member): RedirectResponse
     {
         $program->deleteMember($member);
 
-        return back()->with('success', 'Member removed — their downline was re-attached to their upline.');
+        return back()->with('success', 'Member removed — any placement children were re-attached to their upline.');
     }
 
-    /** Delete every demo-seeded member (splicing any real children back in). */
+    /** Delete the demo-seeded members, keeping any that sit in a real member's sponsor upline. */
     public function purgeDemoMembers(MlmProgram $program): RedirectResponse
     {
-        $removed = $program->purgeDemo();
+        ['deleted' => $deleted, 'kept' => $kept] = $program->purgeDemo();
 
-        return back()->with('success', $removed > 0
-            ? "Removed {$removed} demo member(s) — real members were re-attached where needed."
-            : 'No demo members to remove.');
+        $message = $deleted > 0 ? "Removed {$deleted} demo member(s)." : 'No demo members to remove.';
+        if ($kept > 0) {
+            $message .= " Kept {$kept} that a real member was referred through — a sponsor is permanent.";
+        }
+
+        return back()->with('success', $message);
     }
 }

@@ -11,6 +11,7 @@ import { PasskeyManager, PasskeySignIn } from "@particle-academy/fancy-passkeys-
 import "@particle-academy/fancy-passkeys-ui/styles.css";
 import { DocViewer as LwDocViewer } from "@particle-academy/last-word-ui";
 import { lastWordTileDoc } from "./lastWordUiFixtures";
+import { ReferralStats } from "@particle-academy/fancy-mlm-ui";
 import "@particle-academy/fancy-flow/styles.css";
 import "@particle-academy/fancy-sheets/styles.css";
 
@@ -210,6 +211,27 @@ export function LastWordDocViewerTile() {
     return (
         <div className="h-36 w-full max-w-[14rem] overflow-hidden rounded-md border border-zinc-200 bg-zinc-100 p-1.5 dark:border-zinc-800 dark:bg-zinc-900">
             <LwDocViewer doc={doc} gap={6} />
+        </div>
+    );
+}
+
+/**
+ * fancy-mlm-ui 0.4.0's ReferralStats renders its totals <tfoot> outside the
+ * <table> on the server (react-fancy's Table only nests Table.Head and
+ * Table.Body), which breaks hydration of the whole listing page. Deferred
+ * until the package keeps its footer inside the table.
+ */
+export function ReferralStatsTile() {
+    return (
+        <div className="w-full max-w-[20rem] text-[10px]">
+            <ReferralStats
+                groupBy="code"
+                rows={[
+                    { key: "SPRING-FLYER", scans: 48, uniqueSessions: 41, signups: 9, conversionRate: 9 / 41 },
+                    { key: "PODCAST", scans: 22, uniqueSessions: 20, signups: 7, conversionRate: 7 / 20 },
+                    { key: "STORE-QR", scans: 15, uniqueSessions: 14, signups: 2, conversionRate: 2 / 14 },
+                ]}
+            />
         </div>
     );
 }

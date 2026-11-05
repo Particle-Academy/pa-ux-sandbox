@@ -66,16 +66,23 @@ function StackDemo() {
 }
 
 /**
- * Every corner the provider supports, typed against the package's own union so
- * this list cannot drift: adding a fifth position to `ToastPosition` without
- * adding it here is a type error, not a quietly incomplete example.
+ * Every position the provider supports. The `satisfies Record<ToastPosition, …>`
+ * makes this exhaustive: a position added to the package's union without being
+ * added here is a type error, not a quietly incomplete example. (A plain
+ * `ToastPosition[]` only checks that each entry is valid, which is how this
+ * list once stayed at four after react-fancy 6.9.0 added the logical four.)
  */
-const TOAST_POSITIONS: readonly ToastPosition[] = [
-    "top-left",
-    "top-right",
-    "bottom-left",
-    "bottom-right",
-] as const;
+const TOAST_POSITION_SET = {
+    "top-start": true,
+    "top-end": true,
+    "bottom-start": true,
+    "bottom-end": true,
+    "top-left": true,
+    "top-right": true,
+    "bottom-left": true,
+    "bottom-right": true,
+} as const satisfies Record<ToastPosition, true>;
+const TOAST_POSITIONS = Object.keys(TOAST_POSITION_SET) as ToastPosition[];
 
 function ToastDemo({ variant, label }: { variant?: "default" | "success" | "error" | "warning" | "info"; label: string }) {
     const { toast } = useToast();
@@ -249,7 +256,7 @@ const resolve = (id) => setRequests((all) => all.filter((r) => r.id !== id));
     ],
     props: [
         { name: "children", type: `ReactNode`, default: "—", description: "App tree. Mount the provider near the root." },
-        { name: "position", type: `"top-right" | "top-left" | "bottom-right" | "bottom-left"`, default: `"bottom-right"`, description: "Where the toast stack anchors on screen." },
+        { name: "position", type: `ToastPosition`, default: `"bottom-end"`, description: "Where the toast stack anchors on screen. `top-start` / `top-end` / `bottom-start` / `bottom-end` are logical: `end` is the right in LTR and the left under `dir=\"rtl\"`. `top-left` / `top-right` / `bottom-left` / `bottom-right` stay physical." },
         { name: "maxToasts", type: `number`, default: `5`, description: "Maximum simultaneous toasts. Older ones drop off." },
         { name: "Toast.Item — data", type: `ToastData`, default: "—", description: "The toast record. Only needed when you render your own viewport.", required: true },
         { name: "Toast.Item — onDismiss", type: `(id: string) => void`, default: "—", description: "Called with the toast's id when it is dismissed.", required: true },
@@ -262,7 +269,7 @@ const resolve = (id) => setRequests((all) => all.filter((r) => r.id !== id));
         { name: "Toast.Stack — frontIndex", type: `number`, default: "—", description: "Which item is in front, if you own it. Wraps; clamped when the list shrinks." },
         { name: "Toast.Stack — defaultFrontIndex", type: `number`, default: `0`, description: "Initial front item when uncontrolled." },
         { name: "Toast.Stack — onFrontIndexChange", type: `(index: number) => void`, default: "—", description: "Called when the wheel or arrow keys move the front." },
-        { name: "Toast.Stack — position", type: `ToastPosition | "inline"`, default: `"bottom-right"`, description: "A screen corner, or inline where it is placed." },
+        { name: "Toast.Stack — position", type: `ToastPosition | "inline"`, default: `"bottom-end"`, description: "A screen corner (logical or physical, as for the provider), or inline where it is placed." },
         { name: "Toast.Stack — label", type: `string`, default: `"Notifications"`, description: "The stack's accessible name." },
         { name: "Toast.Stack — cardClassName", type: `string`, default: "—", description: "Classes merged onto each card's shell." },
         { name: "Toast.Stack — className", type: `string`, default: "—", description: "Classes merged onto the stack." },

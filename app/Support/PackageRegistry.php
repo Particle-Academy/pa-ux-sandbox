@@ -181,11 +181,35 @@ class PackageRegistry
             'registries' => ['packagist' => 'particle-academy/agent-flo'],
             'why' => 'Subagent that manages fancy-flow flows for any Laravel app on prism-harness: find, read, diagnose, triage, author, start and control, with host-owned flows and runs behind a store contract, configurable names, proposals by default, and run data treated as hostile. The repo exists with a test suite, but nothing is published or usable yet. Design: .ai/plans/flo.md and .ai/plans/agent-packages.md.',
         ],
-        'fancy-qr' => [
-            'name' => 'particle-academy/fancy-qr',
-            'repo' => 'Particle-Academy/fancy-qr',
-            'registries' => ['packagist' => 'particle-academy/fancy-qr'],
-            'why' => 'QR codes generated on the server, as SVG and PNG, with zero dependencies: a PHP port of react-fancy\'s own QrCode encoder, so both sides agree byte for byte. A printable PDF goes through fine-print. Owner decided 2026-11-04. NOT YET STARTED.',
+        'fancy-compliance' => [
+            'name' => 'particle-academy/fancy-compliance',
+            'repo' => 'Particle-Academy/fancy-compliance',
+            'registries' => ['packagist' => 'particle-academy/fancy-compliance'],
+            'why' => 'Consent for Laravel apps: categories, a consent ledger per user and per guest, withdrawal, and a server gate other packages check before collecting. Banner first; GDPR export and erasure come later. Owner decided 2026-11-05. NOT YET STARTED.',
+        ],
+        'fancy-compliance-ui' => [
+            'name' => '@particle-academy/fancy-compliance-ui',
+            'repo' => 'Particle-Academy/fancy-compliance-ui',
+            'registries' => ['npm' => '@particle-academy/fancy-compliance-ui'],
+            'why' => 'React consent banner and preferences built from react-fancy: categories, withdrawal, scripts blocked until consent, AAA and RTL. Pairs with fancy-compliance. Owner decided 2026-11-05. NOT YET STARTED.',
+        ],
+        'fancy-translations' => [
+            'name' => 'particle-academy/fancy-translations',
+            'repo' => 'Particle-Academy/fancy-translations',
+            'registries' => ['packagist' => 'particle-academy/fancy-translations'],
+            'why' => 'Crowd-sourced translation corrections for Laravel: members propose fixes to UI strings in their language, speakers vote, acceptance at a configurable threshold, history, and export to lang files and JSON. Owner decided 2026-11-05. NOT YET STARTED.',
+        ],
+        'fancy-translations-ui' => [
+            'name' => '@particle-academy/fancy-translations-ui',
+            'repo' => 'Particle-Academy/fancy-translations-ui',
+            'registries' => ['npm' => '@particle-academy/fancy-translations-ui'],
+            'why' => 'React surfaces for fancy-translations: propose a correction, the voting queue per language, string context, progress to the threshold, history. Owner decided 2026-11-05. NOT YET STARTED.',
+        ],
+        'fancy-fun-lab-ui' => [
+            'name' => '@particle-academy/fancy-fun-lab-ui',
+            'repo' => 'Particle-Academy/fancy-fun-lab-ui',
+            'registries' => ['npm' => '@particle-academy/fancy-fun-lab-ui'],
+            'why' => 'React surfaces for laravel-fun-lab: profiles, leaderboards per gamed metric, XP and achievement widgets, built from react-fancy. Owner decided 2026-11-05. NOT YET STARTED.',
         ],
         'fine-print-js' => [
             'name' => '@particle-academy/fine-print',
@@ -397,6 +421,7 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
         'dark-slide' => ['group' => 'documents', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#8b5cf6'],
         'last-word' => ['group' => 'documents', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#2563eb'],
         'fine-print' => ['group' => 'documents', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#e11d48'],
+        'fancy-qr' => ['group' => 'documents', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#0f172a'],
         'fancy-heuristics' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#8b5cf6'],
         'fancy-x-files' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#64748b'],
         'fancy-cms' => ['group' => 'surfaces', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#0ea5e9'],
@@ -667,6 +692,15 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
                 'composer' => 'particle-academy/fine-print',
                 'repo' => 'Particle-Academy/fine-print',
                 'packagist' => 'particle-academy/fine-print',
+                'language' => 'PHP',
+            ],
+            [
+                'slug' => 'fancy-qr',
+                'name' => 'particle-academy/fancy-qr',
+                'tagline' => 'QR codes on the server, as SVG and PNG, in pure PHP with zero runtime dependencies. A port of react-fancy\'s own QrCode encoder, so the server and the browser draw the same symbol for the same input; a printable page goes through fine-print.',
+                'composer' => 'particle-academy/fancy-qr',
+                'repo' => 'Particle-Academy/fancy-qr',
+                'packagist' => 'particle-academy/fancy-qr',
                 'language' => 'PHP',
             ],
             [
@@ -1640,7 +1674,7 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
             ['slug' => 'button', 'name' => 'Button', 'blurb' => 'The workhorse button — colors, states, icons, emoji, avatar, badge, loading. (formerly Action)'],
             ['slug' => 'autocomplete', 'name' => 'Autocomplete'],
             ['slug' => 'activity-light', 'name' => 'ActivityLight', 'blurb' => 'Activity on an edge between two parties - recency ramp, direction and an optional count.'],
-            ['slug' => 'qr-code', 'name' => 'QrCode', 'blurb' => 'A QR code as an SVG, dependency-free - versions 1-40, L/M/Q/H, numeric/alphanumeric/byte selected automatically.'],
+            ['slug' => 'qr-code', 'name' => 'QrCode', 'blurb' => 'A QR code as an SVG, dependency-free - versions 1-40, L/M/Q/H, numeric/alphanumeric/byte selected automatically. QrCodePanel adds download (SVG, PNG), share and print; qrCodeSvg / qrCodePng write the files without rendering.'],
             ['slug' => 'avatar', 'name' => 'Avatar'],
             ['slug' => 'badge', 'name' => 'Badge'],
             ['slug' => 'brand', 'name' => 'Brand'],
@@ -1707,6 +1741,7 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
             ['slug' => 'mood-meter', 'name' => 'MoodMeter'],
             ['slug' => 'navbar', 'name' => 'Navbar'],
             ['slug' => 'number-field', 'name' => 'NumberField', 'blurb' => 'Numeric field with a number or null value: blank stays null, partial text never emits a wrong number, and the wheel does not change it.'],
+            ['slug' => 'phone-input', 'name' => 'PhoneInput', 'blurb' => 'Country picker and number producing E.164 or null, with a length plausibility check; the number stays left-to-right in RTL. Validate on the server.'],
             ['slug' => 'otp-input', 'name' => 'OtpInput'],
             ['slug' => 'pagination', 'name' => 'Pagination'],
             ['slug' => 'paste-pills', 'name' => 'PastePills', 'blurb' => 'The paste-pill core Composer, PromptInput and Input share: hold a long paste or a pasted image as a pill, and post pasted files with the form.'],
@@ -2172,7 +2207,7 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
         return [
             'slug' => 'fancy-mlm-ui',
             'name' => 'fancy-mlm-ui',
-            'tagline' => 'React surfaces for the fancy-mlm referral engine — a controlled DownlineTree (unilevel / binary / matrix), a CommissionStatement ledger, and RankProgress toward the next tier. Pairs with particle-academy/fancy-mlm (PHP) or @particle-academy/fancy-mlm (Node).',
+            'tagline' => 'React surfaces for the fancy-mlm referral engine — a controlled DownlineTree (unilevel / binary / matrix), a CommissionStatement ledger, RankProgress toward the next tier, and ReferralStats for referral-code conversion. Pairs with particle-academy/fancy-mlm (PHP) or @particle-academy/fancy-mlm (Node).',
             'npm' => '@particle-academy/fancy-mlm-ui',
             'repo' => 'Particle-Academy/fancy-mlm-ui',
             'language' => 'TypeScript',
@@ -2181,6 +2216,7 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
                 ['slug' => 'downline-tree', 'name' => 'DownlineTree', 'blurb' => 'Controlled network tree — collapsible nodes, per-member tier/volume, selection + onChange. Renders unilevel, binary, and matrix shapes from a flat member list.'],
                 ['slug' => 'commission-statement', 'name' => 'CommissionStatement', 'blurb' => 'Per-period earnings ledger — level, source member, tier multiplier, and amount per row, with a paid/pending status and totals.'],
                 ['slug' => 'rank-progress', 'name' => 'RankProgress', 'blurb' => 'Progress toward the next rank/tier — current volume vs threshold, with the requirement gap.'],
+                ['slug' => 'referral-stats', 'name' => 'ReferralStats', 'blurb' => 'Referral scans, unique visitors, signups and conversion per code, scope or member — a bar chart of one metric over a table of all four, fed the engines\' stats() rows as-is. Fully controlled, with data-mlm-* handles.'],
             ],
         ];
     }

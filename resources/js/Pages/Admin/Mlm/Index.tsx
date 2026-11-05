@@ -89,6 +89,7 @@ function MemberEditor({
     // Self + own subtree can't be a parent — that would loop the tree.
     const excluded = useMemo(() => descendantsOf(member.id, members), [member.id, members]);
     const parentOptions = members.filter((m) => m.id !== member.id && !excluded.has(m.id));
+    const sponsorLocked = member.sponsorId !== null;
 
     const f = useForm<{
         sponsor_id: string | null;
@@ -111,16 +112,25 @@ function MemberEditor({
         <form onSubmit={save} className="grid gap-3 rounded-xl border border-teal-500/40 bg-teal-500/5 p-4 sm:grid-cols-2 lg:grid-cols-4">
             <label className="text-xs font-medium text-[var(--fg-2)]">
                 Sponsor (referring member)
+                {/* A sponsor is permanent once set (fancy-mlm 0.4.0): it can be
+                    chosen for a network root, never moved afterwards. */}
                 <select
                     className={selectClass}
                     value={f.data.sponsor_id ?? ""}
+                    disabled={sponsorLocked}
+                    aria-describedby={sponsorLocked ? `sponsor-locked-${member.id}` : undefined}
                     onChange={(e) => f.setData("sponsor_id", e.target.value || null)}
                 >
                     <option value="">— none (network root)</option>
-                    {parentOptions.map((m) => (
+                    {(sponsorLocked ? members.filter((m) => m.id === member.sponsorId) : parentOptions).map((m) => (
                         <option key={m.id} value={m.id}>{m.label}</option>
                     ))}
                 </select>
+                {sponsorLocked && (
+                    <span id={`sponsor-locked-${member.id}`} className="mt-1 block text-xs text-[var(--fg-3)]">
+                        Permanent — who referred a member never changes.
+                    </span>
+                )}
                 <FieldError message={f.errors.sponsor_id} />
             </label>
 
@@ -286,15 +296,24 @@ function MembersSection({
     const labelOf = (id: string | null) =>
         id === null ? "—" : (members.find((m) => m.id === id)?.label ?? `#${id}`);
 
+    const [destroyError, setDestroyError] = useState<string | null>(null);
+    // A member who referred anyone can't be removed: their recruits' sponsor
+    // is permanent (fancy-mlm 0.4.0) and would point at nothing.
+    const recruitsOf = (id: string) => members.filter((m) => m.sponsorId === id).length;
+
     const purgeDemo = () => {
-        if (window.confirm("Delete ALL demo-seeded members? Real members sponsored by a demo member are re-attached to the nearest surviving upline.")) {
+        if (window.confirm("Delete the demo-seeded members? Any demo member a real member was referred through is kept, because a sponsor is permanent.")) {
             router.post("/admin/mlm/members/purge-demo", {}, { preserveScroll: true });
         }
     };
 
     const destroy = (m: AdminMember) => {
-        if (window.confirm(`Remove ${m.label} from the network? Their downline re-attaches to their own upline.`)) {
-            router.delete(`/admin/mlm/members/${m.id}`, { preserveScroll: true });
+        if (window.confirm(`Remove ${m.label} from the network? Anyone placed under them re-attaches to their own placement.`)) {
+            setDestroyError(null);
+            router.delete(`/admin/mlm/members/${m.id}`, {
+                preserveScroll: true,
+                onError: (errors) => setDestroyError(errors.member ?? "That member could not be removed."),
+            });
         }
     };
 
@@ -313,9 +332,10 @@ function MembersSection({
                     )}
                 </div>
                 <Text className="text-sm text-[var(--fg-3)]">
-                    The live network. Re-point a member's sponsor or placement, adjust their tier, or enroll an
-                    existing user — the preview above re-shapes instantly.
+                    The live network. Re-point a member's placement, adjust their tier, or enroll an existing
+                    user — the preview above re-shapes instantly. A sponsor is set once and is permanent after that.
                 </Text>
+                <FieldError message={destroyError ?? undefined} />
             </Card.Header>
             <Card.Body>
                 {members.length === 0 ? (
@@ -369,7 +389,19 @@ function MembersSection({
                                                 >
                                                     <Icon name="pencil" className="mr-1 h-3.5 w-3.5" /> Edit
                                                 </Button>
-                                                <Button type="button" variant="ghost" size="sm" onClick={() => destroy(m)}>
+                                                <Button
+                                                    type="button"
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    disabled={recruitsOf(m.id) > 0}
+                                                    aria-label={
+                                                        recruitsOf(m.id) > 0
+                                                            ? `${m.label} referred ${recruitsOf(m.id)} and cannot be removed; deactivate them instead`
+                                                            : `Remove ${m.label}`
+                                                    }
+                                                    title={recruitsOf(m.id) > 0 ? "Referred someone: a sponsor is permanent. Deactivate instead." : undefined}
+                                                    onClick={() => destroy(m)}
+                                                >
                                                     <Icon name="trash-2" className="h-3.5 w-3.5 text-rose-500" />
                                                 </Button>
                                             </div>

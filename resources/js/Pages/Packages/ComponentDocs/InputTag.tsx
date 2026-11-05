@@ -62,7 +62,7 @@ const triggers = {
         { name: "adapter", type: `InputTagAdapter`, default: "—", description: "Reads + writes the underlying input surface. Ships with adapters for `textarea` and `Composer`." },
         { name: "triggers", type: `Record<string, InputTagTrigger>`, default: "—", description: "Map from trigger character (`@`, `#`, `/`) to its search + pick implementation." },
         { name: "maxItems", type: `number`, default: `8`, description: "Max rows shown in the popover." },
-        { name: "placement", type: `"bottom-left" | "bottom-right" | "top-left" | "top-right"`, default: `"bottom-left"`, description: "Where the popover anchors relative to the surface." },
+        { name: "placement", type: `"bottom-start" | "bottom-end" | "top-start" | "top-end" | "bottom-left" | "bottom-right" | "top-left" | "top-right"`, default: `"bottom-start"`, description: "Where the popover anchors relative to the surface. The -start / -end values follow the picker's writing direction; the -left / -right values are physical." },
         { name: "className", type: `string`, default: "—", description: "Extra classes on the popover container." },
         { name: "style", type: `CSSProperties`, default: "—", description: "Inline styles on the popover container." },
         { name: "onPick", type: `(info: { triggerChar, query, item }) => void`, default: "—", description: "Called whenever any trigger picks an item — handy for analytics." },

@@ -155,7 +155,7 @@ export const statListDoc: ComponentDoc = {
     ],
     props: [
         { name: "items", type: `StatListItem[]`, default: "—", description: "The figures. `{ value, label, key? }` — data rather than children.", required: true },
-        { name: "align", type: `"left" | "right"`, default: `"right"`, description: "Which edge the stack aligns to." },
+        { name: "align", type: `"start" | "end" | "left" | "right"`, default: `"end"`, description: "Which edge the stack aligns to. start / end follow the writing direction; left / right are physical." },
         { name: "...rest", type: `HTMLAttributes<HTMLDivElement>`, default: "—", description: "All standard div attributes." },
     ],
     notes: (

@@ -221,18 +221,33 @@ class MlmProgram
     }
 
     /**
-     * Re-organize an existing member: sponsor, placement, tier, active. Rejects
-     * a sponsor/placement that is the member themselves or sits in their own
-     * downline — re-pointing INTO your own subtree would loop the reward walk.
+     * Re-organize an existing member: placement, tier, active, and the sponsor
+     * ONCE. Since fancy-mlm 0.4.0 `sponsor_id` is permanent (a model guard plus
+     * a database trigger): it may go from null to a member, and never changes
+     * after that. So a member with a sponsor keeps it, and an edit that tries
+     * to move or clear it is a validation error rather than a 500 from the
+     * trigger. The showcase has no correction tool; the package's audited
+     * `Mlm::correctSponsor()` is the route for a real app that needs one.
+     *
+     * Also rejects a sponsor/placement that is the member themselves or sits in
+     * their own downline — re-pointing INTO your own subtree would loop the
+     * reward walk.
      *
      * @param  array<string, mixed>  $attrs
      *
-     * @throws ValidationException when the assignment would create a cycle
+     * @throws ValidationException when the assignment would create a cycle or move a set sponsor
      */
     public function updateMember(Member $member, array $attrs): Member
     {
         $sponsorId = isset($attrs['sponsor_id']) ? (int) $attrs['sponsor_id'] : null;
         $placementId = isset($attrs['placement_id']) ? (int) $attrs['placement_id'] : null;
+
+        $currentSponsorId = $member->sponsor_id !== null ? (int) $member->sponsor_id : null;
+        if ($currentSponsorId !== null && $sponsorId !== $currentSponsorId) {
+            throw ValidationException::withMessages([
+                'sponsor_id' => 'A sponsor is permanent once set — this member was referred by someone, and that record does not change.',
+            ]);
+        }
 
         if ($this->wouldCycle($member, $sponsorId, 'sponsor')) {
             throw ValidationException::withMessages([
@@ -269,42 +284,99 @@ class MlmProgram
     }
 
     /**
-     * Delete a member and SPLICE the chain: children's sponsor_id re-points to
-     * the deleted member's own sponsor, placement children to their placement
-     * (null when the deleted member was a root) — the subtree survives intact.
+     * Delete a member who sponsored nobody. Placement children SPLICE to the
+     * deleted member's own placement (null when it was a root), so the
+     * placement subtree survives intact.
+     *
+     * A member who sponsored someone cannot be deleted: their recruits'
+     * `sponsor_id` points at them and is permanent since fancy-mlm 0.4.0, so
+     * deleting them would leave a sponsor id pointing at nothing. Deactivate
+     * them instead.
+     *
+     * @throws ValidationException when the member sponsors anyone
      */
     public function deleteMember(Member $member): void
     {
+        $recruits = Member::query()->where('sponsor_id', $member->getKey())->count();
+        if ($recruits > 0) {
+            throw ValidationException::withMessages([
+                'member' => "This member sponsored {$recruits} ".($recruits === 1 ? 'person' : 'people').' and a sponsor is permanent, so they cannot be removed. Deactivate them instead.',
+            ]);
+        }
+
         DB::transaction(function () use ($member) {
-            Member::query()->where('sponsor_id', $member->getKey())->update(['sponsor_id' => $member->sponsor_id]);
             Member::query()->where('placement_id', $member->getKey())->update(['placement_id' => $member->placement_id]);
             $member->delete();
         });
     }
 
     /**
-     * Delete every demo-seeded member (meta.demo) with the same splice
-     * semantics — a REAL member sponsored by a demo row re-points to the
-     * nearest surviving ancestor. This is the production cleanup for an
-     * accidentally-run MlmNetworkSeeder.
+     * Delete the demo-seeded members (meta.demo) — the production cleanup for
+     * an accidentally-run MlmNetworkSeeder.
+     *
+     * A demo member in a REAL member's sponsor upline is KEPT: the real
+     * member's `sponsor_id` is permanent (fancy-mlm 0.4.0), so it cannot be
+     * re-pointed past the demo row, and deleting the row would leave it
+     * pointing at nothing. Every other demo member is deleted leaves-first,
+     * with placement children spliced as in deleteMember().
+     *
+     * @return array{deleted: int, kept: int}
      */
-    public function purgeDemo(): int
+    public function purgeDemo(): array
     {
-        $demoIds = Member::query()->get()
-            ->filter(fn (Member $m) => (bool) ($m->meta['demo'] ?? false))
-            ->map(fn (Member $m) => (int) $m->getKey())
-            ->values();
+        $all = Member::query()->get(['id', 'sponsor_id', 'placement_id', 'meta'])->keyBy('id');
+        $isDemo = fn (Member $m): bool => (bool) ($m->meta['demo'] ?? false);
 
-        DB::transaction(function () use ($demoIds) {
-            foreach ($demoIds as $id) {
-                $member = Member::query()->find($id);
-                if ($member !== null) {
+        // Every demo row in some real member's sponsor upline must stay.
+        $keep = [];
+        foreach ($all as $member) {
+            if ($isDemo($member)) {
+                continue;
+            }
+            $next = $member->sponsor_id;
+            $seen = [];
+            while ($next !== null && ! isset($seen[(int) $next])) {
+                $seen[(int) $next] = true;
+                $parent = $all->get((int) $next);
+                if ($parent === null) {
+                    break;
+                }
+                if ($isDemo($parent)) {
+                    $keep[(int) $parent->getKey()] = true;
+                }
+                $next = $parent->sponsor_id;
+            }
+        }
+
+        $doomed = $all->filter(fn (Member $m): bool => $isDemo($m) && ! isset($keep[(int) $m->getKey()]));
+
+        DB::transaction(function () use ($doomed) {
+            $remaining = $doomed->keys()->map(fn ($id) => (int) $id)->all();
+            // Leaves first: a doomed row is deletable once nothing still
+            // standing names it as sponsor.
+            while ($remaining !== []) {
+                $progressed = false;
+                foreach ($remaining as $i => $id) {
+                    $member = Member::query()->find($id);
+                    if ($member === null) {
+                        unset($remaining[$i]);
+
+                        continue;
+                    }
+                    if (Member::query()->where('sponsor_id', $id)->exists()) {
+                        continue;
+                    }
                     $this->deleteMember($member);
+                    unset($remaining[$i]);
+                    $progressed = true;
+                }
+                if (! $progressed) {
+                    break;
                 }
             }
         });
 
-        return $demoIds->count();
+        return ['deleted' => $doomed->count(), 'kept' => count($keep)];
     }
 
     /**

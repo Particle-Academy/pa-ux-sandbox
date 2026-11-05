@@ -1,9 +1,88 @@
+import { useState } from "react";
 import type { ComponentDoc } from "./types";
-import { QrCode } from "@particle-academy/react-fancy";
+import {
+    Badge,
+    Button,
+    Card,
+    QrCode,
+    QrCodePanel,
+    qrCodePng,
+    qrCodeSvg,
+    Text,
+    type QrCodeActionEvent,
+} from "@particle-academy/react-fancy";
 
 const Caption = ({ children }: { children: React.ReactNode }) => (
     <span className="mt-2 block text-center text-xs text-zinc-500 dark:text-zinc-400">{children}</span>
 );
+
+/** The panel with every action, and what `onAction` reported, as the JSON an agent would get. */
+function PanelDemo() {
+    const [events, setEvents] = useState<QrCodeActionEvent[]>([]);
+
+    return (
+        <div className="flex flex-wrap items-start justify-center gap-6">
+            <QrCodePanel
+                value="https://example.com/r/AbC123"
+                label="Your sign-up link"
+                showValue
+                fileName="sign-up-link"
+                onAction={(event) => setEvents((previous) => [event, ...previous].slice(0, 4))}
+            />
+            <Card className="w-full max-w-xs">
+                <Card.Body>
+                    <Text className="text-sm font-semibold">onAction</Text>
+                    {events.length === 0 ? (
+                        <Text className="mt-1 text-xs text-zinc-500 dark:text-zinc-400">
+                            Nothing yet. Use a button: each action reports how it ended.
+                        </Text>
+                    ) : (
+                        <ul className="mt-2 space-y-1" aria-label="Actions reported by onAction">
+                            {events.map((event, index) => (
+                                <li key={index} className="font-mono text-xs break-all">
+                                    {JSON.stringify(event)}
+                                </li>
+                            ))}
+                        </ul>
+                    )}
+                </Card.Body>
+            </Card>
+        </div>
+    );
+}
+
+/** `qrCodeSvg` / `qrCodePng` called directly: no panel, nothing rendered. */
+function FilesDemo() {
+    const [result, setResult] = useState<string | null>(null);
+    const value = "SN-4829-13";
+    const label = "Asset tag for pump 14";
+
+    const writeSvg = () => {
+        const svg = qrCodeSvg(value, { label });
+        setResult(`SVG: ${new Blob([svg]).size} bytes, starts "${svg.slice(0, 38)}…"`);
+    };
+
+    const writePng = async () => {
+        try {
+            const png = await qrCodePng(value, { label, scale: 8 });
+            setResult(`PNG: ${png.size} bytes, ${png.type}`);
+        } catch (error) {
+            setResult(`PNG failed: ${error instanceof Error ? error.message : String(error)}`);
+        }
+    };
+
+    return (
+        <div className="flex flex-col items-center gap-3">
+            <div className="flex flex-wrap justify-center gap-2">
+                <Button onClick={writeSvg}>qrCodeSvg()</Button>
+                <Button onClick={writePng}>qrCodePng()</Button>
+            </div>
+            <div role="status" aria-live="polite" className="min-h-6">
+                {result !== null && <Badge variant="soft">{result}</Badge>}
+            </div>
+        </div>
+    );
+}
 
 export const qrCodeDoc: ComponentDoc = {
     intro: (
@@ -231,6 +310,58 @@ export const qrCodeDoc: ComponentDoc = {
     <span className="text-xs">{asset.description}</span>
 </div>`,
         },
+        {
+            name: "QrCodePanel: download, share and print",
+            description:
+                "QrCodePanel composes <QrCode> with what a person does with one: download it as SVG or PNG, share it (the Web Share sheet, or a copy where there is none, when the button reads \"Copy link\"), and print a page holding only the code. Each action is a react-fancy Button with a visible label, 44px tall by default (WCAG 2.5.5 AAA), reachable with Tab and pressed with Enter or Space. What each did is announced in a polite status region, and reported to onAction as plain JSON. The tile is black on white in dark mode too, because a code needs a light surround to scan. showValue puts the value on screen as selectable text.",
+            render: () => <PanelDemo />,
+            code: `import { QrCodePanel } from "@particle-academy/react-fancy/qr-code";
+
+<QrCodePanel
+    value="https://example.com/r/AbC123"
+    label="Your sign-up link"   // names the group, the code, the file and the print page
+    showValue                   // the value as text: a code is an image of a value
+    fileName="sign-up-link"     // sign-up-link.svg / sign-up-link.png
+    onAction={(event) => log(event)}
+    // { action: "download-png", outcome: "done", fileName: "sign-up-link.png" }
+    // { action: "share", outcome: "done", via: "clipboard" }
+/>`,
+        },
+        {
+            name: "Fewer actions, and a value that should not be shown",
+            description:
+                "actions picks which buttons appear and in what order; [] renders none. showValue is off by default because not every value is meant to be read aloud or printed: this WiFi block carries a password. labels translates the button text and the announcements.",
+            render: () => (
+                <div className="flex justify-center">
+                    <QrCodePanel
+                        value="WIFI:T:WPA;S:Guest;P:hunter2;;"
+                        label="Join the guest WiFi"
+                        actions={["download-png", "print"]}
+                        fileName="guest-wifi"
+                        labels={{ downloadPng: "Save image", print: "Print card" }}
+                    />
+                </div>
+            ),
+            code: `<QrCodePanel
+    value={wifiBlock}
+    label="Join the guest WiFi"
+    actions={["download-png", "print"]}
+    labels={{ downloadPng: "Save image", print: "Print card" }}
+/>   // showValue stays off: the value carries a password`,
+        },
+        {
+            name: "The files without the panel: qrCodeSvg and qrCodePng",
+            description:
+                "The panel's file formats are plain functions, for a host or an agent that needs the file and not the UI. qrCodeSvg returns a standalone SVG document with a <title> and an accessible name; qrCodePng resolves to a PNG Blob drawn with Path2D from the same path data, at a whole number of pixels per module, so a CSP of img-src 'self' cannot block it. A file is always opaque: transparent becomes white and currentColor black, since a file has no page behind it. Both throw a RangeError for a value that cannot fit.",
+            render: () => <FilesDemo />,
+            code: `import { qrCodeSvg, qrCodePng } from "@particle-academy/react-fancy/qr-code";
+
+const svg = qrCodeSvg(serial, { label: "Asset tag for pump 14" });          // string
+const png = await qrCodePng(serial, { label: "Asset tag for pump 14", scale: 8 }); // Blob
+
+// On the server, particle-academy/fancy-qr writes the same SVG bytes:
+//   FancyQr\\QrCode::svg($serial, label: 'Asset tag for pump 14');`,
+        },
     ],
     props: [
         {
@@ -288,6 +419,28 @@ export const qrCodeDoc: ComponentDoc = {
             description:
                 "Force a symbol version 1–40, fixing the module count. Throws if the value does not fit.",
         },
+        { name: "QrCodePanel — value / label", type: "string", description: "As on QrCode. label also names the group, the SVG file's <title>, the print page and the share sheet.", required: true },
+        {
+            name: "QrCodePanel — actions",
+            type: 'readonly ("download-svg" | "download-png" | "share" | "print")[]',
+            default: "all four",
+            description: "Which buttons to show, in order. [] renders none.",
+        },
+        { name: "QrCodePanel — showValue", type: "boolean", default: "false", description: "The value as selectable text under the code and on the printed page. Off by default: a value can be a password." },
+        { name: "QrCodePanel — fileName", type: "string", default: '"qr-code"', description: "Download name without extension. Sanitised." },
+        { name: "QrCodePanel — foreground / background", type: "string", default: '"#000000" / "#ffffff"', description: "Pinned dark on light in both colour schemes, unlike a bare QrCode, because a code must be dark on light to scan." },
+        { name: "QrCodePanel — pngScale", type: "number", default: "10", description: "PNG pixels per module, a whole number." },
+        { name: "QrCodePanel — printSizeMm", type: "number", default: "50", description: "Printed width of the code in millimetres." },
+        { name: "QrCodePanel — shareTitle", type: "string", default: "label", description: "Title for the Web Share sheet." },
+        { name: "QrCodePanel — buttonSize", type: "Size", default: '"lg"', description: "Action button size. lg is 44px tall, WCAG 2.5.5's AAA target." },
+        { name: "QrCodePanel — labels", type: "Partial<QrCodePanelLabels>", default: "English", description: "Button text and announcements, for translation." },
+        {
+            name: "QrCodePanel — onAction",
+            type: "(event: QrCodeActionEvent) => void",
+            description: 'Once per action: { action, outcome: "done" | "cancelled" | "failed", via?, fileName?, error? }.',
+        },
+        { name: "qrCodeSvg(value, options)", type: "string", description: "A standalone SVG document. options: label (required), size, errorCorrection, mode, version, quietZone, foreground, background." },
+        { name: "qrCodePng(value, options)", type: "Promise<Blob>", description: "A PNG drawn with Path2D. options as qrCodeSvg plus scale (pixels per module, at most 8192px a side) and canvas." },
     ],
     notes: (
         <div className="space-y-3">
@@ -306,6 +459,22 @@ export const qrCodeDoc: ComponentDoc = {
                 link — a QR code is unreadable to anyone who cannot point a second device at the
                 screen, and an <code>aria-label</code> cannot carry a URL someone is expected to
                 type.
+            </p>
+            <p>
+                <strong>QrCodePanel</strong> is a <code>role="group"</code> named by{" "}
+                <code>label</code>. Every action is a native button in the tab order with a visible
+                text label and the kit's focus ring, and each outcome is announced through a polite{" "}
+                <code>role="status"</code>. Every part carries a{" "}
+                <code>data-react-fancy-qr-code-*</code> handle, so an agent reads and drives it by
+                handle rather than by guessing at markup. <code>QrCodePanel</code>,{" "}
+                <code>qrCodeSvg</code> and <code>qrCodePng</code> arrived in react-fancy 6.8.0 and
+                ship on the <code>./qr-code</code> subpath and the root.
+            </p>
+            <p>
+                <strong>On the server:</strong> <code>particle-academy/fancy-qr</code> is a PHP port
+                of this encoder with zero dependencies, so a code generated in PHP is the same symbol
+                as the one drawn here, and its SVG output is byte-identical to{" "}
+                <code>qrCodeSvg</code>.
             </p>
             <p>
                 <strong>Not supported:</strong> Kanji mode and structured append. Neither has a

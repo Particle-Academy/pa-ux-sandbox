@@ -66,6 +66,7 @@ import {
     NumberField,
     OtpInput,
     Pagination,
+    PhoneInput,
     Pillbox,
     Popover,
     Portal,
@@ -133,6 +134,11 @@ import {
     DownlineTree as MlmDownlineTree,
     CommissionStatement as MlmCommissionStatement,
     RankProgress as MlmRankProgress,
+    ReferralStats as MlmReferralStats,
+    type ReferralStatRow as MlmStatRow,
+    type ReferralStatsGroupBy as MlmStatsGroupBy,
+    type ReferralStatsMetric as MlmStatsMetric,
+    type ReferralStatsRange as MlmStatsRange,
     type DownlineMember as MlmMember,
     type DownlineEdge as MlmEdge,
     type CommissionRow as MlmCommissionRow,
@@ -286,6 +292,7 @@ const REGISTRY: Record<string, DemoFn> = {
     "react-fancy/field": FieldDemo,
     "react-fancy/input": InputDemo,
     "react-fancy/number-field": NumberFieldDemo,
+    "react-fancy/phone-input": PhoneInputDemo,
     "react-fancy/textarea": TextareaDemo,
     "react-fancy/select": SelectDemo,
     "react-fancy/checkbox": CheckboxDemo,
@@ -429,6 +436,7 @@ const REGISTRY: Record<string, DemoFn> = {
     "fancy-mlm-ui/downline-tree": MlmDownlineTreeDemo,
     "fancy-mlm-ui/commission-statement": MlmCommissionStatementDemo,
     "fancy-mlm-ui/rank-progress": MlmRankProgressDemo,
+    "fancy-mlm-ui/referral-stats": MlmReferralStatsDemo,
 
     // ── fancy-cms-ui
     "fancy-cms-ui/cms-editor": CmsEditorDemo,
@@ -2413,6 +2421,17 @@ function NumberFieldDemo() {
     return (
         <div className="space-y-2">
             <NumberField label="Quantity" value={value} onValueChange={setValue} min={0} step={1} />
+            <Text size="xs" className="!text-zinc-500 font-mono">value: {JSON.stringify(value)}</Text>
+        </div>
+    );
+}
+
+function PhoneInputDemo() {
+    const [value, setValue] = useState<string | null>(null);
+
+    return (
+        <div className="space-y-2">
+            <PhoneInput label="Mobile number" locale="en" defaultCountry="MM" value={value} onValueChange={setValue} />
             <Text size="xs" className="!text-zinc-500 font-mono">value: {JSON.stringify(value)}</Text>
         </div>
     );
@@ -5097,6 +5116,58 @@ function MlmCommissionStatementDemo() {
                 <Button size="sm" color="teal" onClick={simulate}>Simulate downline activity</Button>
                 <MlmCommissionStatement rows={rows} formatAmount={(n) => Math.round(n).toLocaleString() + " pts"} />
             </div>
+        </DemoNote>
+    );
+}
+
+/**
+ * Fixture rows in the exact shape fancy-mlm's `stats()` returns. Unique
+ * visitors in `totals` are fewer than the rows' sum on purpose: one visitor
+ * scanned more than one code, which is why the engine reports totals itself.
+ */
+const MLM_STATS_ROWS: Record<MlmStatsGroupBy, MlmStatRow[]> = {
+    code: [
+        { key: "SPRING-FLYER", label: "Spring flyer", scans: 48, uniqueSessions: 41, signups: 9, conversionRate: 9 / 41 },
+        { key: "PODCAST", label: "Podcast read", scans: 22, uniqueSessions: 20, signups: 7, conversionRate: 7 / 20 },
+        { key: "STORE-QR", label: "Counter QR", scans: 15, uniqueSessions: 14, signups: 2, conversionRate: 2 / 14 },
+    ],
+    scope: [
+        { key: "campaign:spring", label: "Spring campaign", scans: 63, uniqueSessions: 53, signups: 11, conversionRate: 11 / 53 },
+        { key: "channel:audio", label: "Audio", scans: 22, uniqueSessions: 20, signups: 7, conversionRate: 7 / 20 },
+    ],
+    member: [
+        { key: "m-ada", label: "Ada", scans: 51, uniqueSessions: 44, signups: 12, conversionRate: 12 / 44 },
+        { key: "m-bo", label: "Bo", scans: 34, uniqueSessions: 30, signups: 6, conversionRate: 6 / 30 },
+    ],
+};
+const MLM_STATS_TOTALS = { scans: 85, uniqueSessions: 71, signups: 18, conversionRate: 18 / 71 };
+
+function MlmReferralStatsDemo() {
+    const [groupBy, setGroupBy] = useState<MlmStatsGroupBy>("code");
+    const [metric, setMetric] = useState<MlmStatsMetric>("signups");
+    const [range, setRange] = useState<MlmStatsRange>({ from: "2026-10-01", to: "2026-11-01" });
+    const [selectedKey, setSelectedKey] = useState<string | null>(null);
+
+    return (
+        <DemoNote
+            outOfBox="ReferralStats plots one metric — scans, unique visitors, signups or conversion — as a bar chart over a table of all four, per code, scope or member. Every piece of state is a controlled prop (groupBy, metric, range, selectedKey) mirrored on the root as data-mlm-* attributes, and each cell carries data-mlm-stat-key + data-mlm-stat, so an agent reads the table without scraping it. Given the engine's totals it shows them; without, it sums only what can honestly be summed."
+            demo="Fixture rows in the shape fancy-mlm's stats() returns (PHP 0.4.0+, or the Node engine). Switching the grouping or the range would refetch in a real app; here the range is held in state and the rows are static."
+        >
+            <MlmReferralStats
+                rows={MLM_STATS_ROWS[groupBy]}
+                totals={MLM_STATS_TOTALS}
+                groupBy={groupBy}
+                onGroupByChange={(next) => {
+                    setGroupBy(next);
+                    setSelectedKey(null);
+                }}
+                metric={metric}
+                onMetricChange={setMetric}
+                range={range}
+                onRangeChange={setRange}
+                selectedKey={selectedKey}
+                onSelect={(key) => setSelectedKey(key)}
+            />
         </DemoNote>
     );
 }

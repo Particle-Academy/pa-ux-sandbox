@@ -55,9 +55,9 @@
         "fancy-inertia": "0.14.1",
         "fancy-live": "0.1.0",
         "fancy-map": "0.2.1",
-        "fancy-mlm": "0.3.0",
-        "fancy-mlm-js": "0.3.1",
-        "fancy-mlm-ui": "0.3.0",
+        "fancy-mlm": "0.5.0",
+        "fancy-mlm-js": "0.5.0",
+        "fancy-mlm-ui": "0.4.0",
         "fancy-motion": "0.2.0",
         "fancy-passkeys": "0.2.1",
         "fancy-passkeys-js": "0.2.1",
@@ -65,6 +65,7 @@
         "fancy-pixel": "0.3.0",
         "fancy-pty": "0.5.0",
         "fancy-pwa": "0.2.0",
+        "fancy-qr": "0.1.0",
         "fancy-query": "0.9.1",
         "fancy-screens": "0.7.1",
         "fancy-seo": "0.6.0",
@@ -100,7 +101,7 @@
         "mcp-relay-client": "0.3.0",
         "prism": "0.146.0",
         "prism-acp": "0.1.1",
-        "prism-acp-ts": "0.36.0",
+        "prism-acp-ts": "0.36.1",
         "prism-browser": "0.4.1",
         "prism-browser-py": "0.1.1",
         "prism-browser-ts": "0.2.1",
@@ -120,19 +121,123 @@
         "prism-opentelemetry": "0.6.0",
         "prism-opentelemetry-py": "0.3.1",
         "prism-opentelemetry-ts": "0.6.0",
-        "prism-perplexity": "0.4.1",
-        "prism-perplexity-py": "0.1.0",
-        "prism-perplexity-ts": "0.2.0",
+        "prism-perplexity": "0.4.2",
+        "prism-perplexity-py": "0.2.0",
+        "prism-perplexity-ts": "0.3.0",
         "prism-py": "0.8.0",
         "prism-ts": "0.8.0",
         "prism-workspace": "0.3.0",
         "prism-workspace-py": "0.1.0",
         "prism-workspace-ts": "0.2.0",
-        "react-fancy": "6.7.2",
+        "react-fancy": "6.10.0",
         "teachers-aid": "0.3.0",
         "teachers-aid-ui": "0.3.0"
     },
     "releases": [
+        {
+            "slug": "react-fancy",
+            "registry": "npm",
+            "version": "6.10.0",
+            "published_at": "2026-11-05T06:50:45Z",
+            "first": false,
+            "summary": "PhoneInput: a country picker and a number field whose value is an E.164 string or null, reported with detail (country…"
+        },
+        {
+            "slug": "react-fancy",
+            "registry": "npm",
+            "version": "6.9.0",
+            "published_at": "2026-11-05T05:28:26Z",
+            "first": false,
+            "summary": "A right-to-left section in STYLE.md"
+        },
+        {
+            "slug": "prism-acp-ts",
+            "registry": "npm",
+            "version": "0.36.1",
+            "published_at": "2026-11-05T05:19:19Z",
+            "first": false,
+            "summary": null
+        },
+        {
+            "slug": "react-fancy",
+            "registry": "npm",
+            "version": "6.8.0",
+            "published_at": "2026-11-05T03:11:56Z",
+            "first": false,
+            "summary": "QrCodePanel: download, share and print a QR code"
+        },
+        {
+            "slug": "fancy-qr",
+            "registry": "composer",
+            "version": "0.1.0",
+            "published_at": "2026-11-05T02:56:39Z",
+            "first": true,
+            "summary": "QR codes on the server, with zero runtime dependencies"
+        },
+        {
+            "slug": "fancy-mlm-js",
+            "registry": "npm",
+            "version": "0.5.0",
+            "published_at": "2026-11-05T02:37:11Z",
+            "first": false,
+            "summary": "An audited admin override for a sponsor set wrong: ReferralProgram.correctSponsor(memberId, toSponsorId, reason…"
+        },
+        {
+            "slug": "fancy-mlm",
+            "registry": "composer",
+            "version": "0.5.0",
+            "published_at": "2026-11-05T02:26:20Z",
+            "first": false,
+            "summary": "An audited admin override for a sponsor set wrong: Mlm::correctSponsor($memberId, $toSponsorId, $reason, $actorId)…"
+        },
+        {
+            "slug": "prism-perplexity-py",
+            "registry": "pypi",
+            "version": "0.2.0",
+            "published_at": "2026-11-05T02:03:46Z",
+            "first": false,
+            "summary": null
+        },
+        {
+            "slug": "prism-perplexity-ts",
+            "registry": "npm",
+            "version": "0.3.0",
+            "published_at": "2026-11-05T02:00:33Z",
+            "first": false,
+            "summary": null
+        },
+        {
+            "slug": "fancy-mlm-ui",
+            "registry": "npm",
+            "version": "0.4.0",
+            "published_at": "2026-11-05T01:57:31Z",
+            "first": false,
+            "summary": "ReferralStats: referral scans, unique visitors, signups and conversion per code, scope or member, as a react-fancy bar…"
+        },
+        {
+            "slug": "fancy-mlm-js",
+            "registry": "npm",
+            "version": "0.4.0",
+            "published_at": "2026-11-05T01:51:16Z",
+            "first": false,
+            "summary": "Referral codes, scan logging, attribution and stats"
+        },
+        {
+            "slug": "prism-perplexity",
+            "registry": "composer",
+            "version": "0.4.2",
+            "published_at": "2026-11-05T01:50:22Z",
+            "first": false,
+            "summary": null
+        },
+        {
+            "slug": "fancy-mlm",
+            "registry": "composer",
+            "version": "0.4.0",
+            "published_at": "2026-11-05T01:40:39Z",
+            "first": false,
+            "summary": "Referral codes, scan logging, attribution and stats"
+        },
         {
             "slug": "prism-perplexity",
             "registry": "composer",
@@ -6500,110 +6605,6 @@
             "published_at": "2026-09-06T09:18:33Z",
             "first": false,
             "summary": "/engine is React-free again"
-        },
-        {
-            "slug": "prism-workspace-ts",
-            "registry": "npm",
-            "version": "0.1.0",
-            "published_at": "2026-09-06T05:45:42Z",
-            "first": true,
-            "summary": null
-        },
-        {
-            "slug": "prism-human-plus-ts",
-            "registry": "npm",
-            "version": "0.1.0",
-            "published_at": "2026-09-06T05:44:15Z",
-            "first": true,
-            "summary": null
-        },
-        {
-            "slug": "prism-perplexity-ts",
-            "registry": "npm",
-            "version": "0.1.0",
-            "published_at": "2026-09-06T05:44:08Z",
-            "first": true,
-            "summary": null
-        },
-        {
-            "slug": "prism-mcp-ts",
-            "registry": "npm",
-            "version": "0.1.0",
-            "published_at": "2026-09-06T05:38:22Z",
-            "first": true,
-            "summary": null
-        },
-        {
-            "slug": "prism-ts",
-            "registry": "npm",
-            "version": "0.1.0",
-            "published_at": "2026-09-06T05:37:55Z",
-            "first": true,
-            "summary": null
-        },
-        {
-            "slug": "prism-memory-ts",
-            "registry": "npm",
-            "version": "0.1.0",
-            "published_at": "2026-09-06T05:36:45Z",
-            "first": true,
-            "summary": null
-        },
-        {
-            "slug": "prism-harness-ts",
-            "registry": "npm",
-            "version": "0.1.0",
-            "published_at": "2026-09-06T05:35:51Z",
-            "first": true,
-            "summary": null
-        },
-        {
-            "slug": "prism-opentelemetry-ts",
-            "registry": "npm",
-            "version": "0.1.0",
-            "published_at": "2026-09-06T05:35:51Z",
-            "first": true,
-            "summary": null
-        },
-        {
-            "slug": "prism-browser-ts",
-            "registry": "npm",
-            "version": "0.1.0",
-            "published_at": "2026-09-06T05:33:51Z",
-            "first": true,
-            "summary": null
-        },
-        {
-            "slug": "fancy-flow-php",
-            "registry": "composer",
-            "version": "0.51.0",
-            "published_at": "2026-09-06T03:18:57Z",
-            "first": false,
-            "summary": "parentId survives import and export"
-        },
-        {
-            "slug": "fancy-flow-py",
-            "registry": "pypi",
-            "version": "0.18.0",
-            "published_at": "2026-09-06T03:15:55Z",
-            "first": false,
-            "summary": "Terminal lanes — drive a running terminal, including an agent TUI, from a workflow"
-        },
-        {
-            "slug": "fancy-flow",
-            "registry": "npm",
-            "version": "0.66.0",
-            "published_at": "2026-09-06T03:14:54Z",
-            "first": false,
-            "summary": "NodePalette takes a kindFilter, so a host can offer a SUBSET of the vocabulary"
-        },
-        {
-            "slug": "prism",
-            "registry": "composer",
-            "version": "0.117.1",
-            "published_at": "2026-09-05T22:55:02Z",
-            "first": false,
-            "summary": null
         }
     ]
 }

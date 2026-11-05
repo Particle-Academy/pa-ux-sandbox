@@ -38,8 +38,8 @@ function SizeDemo({ side, size }: { side: DrawerSide; size: DrawerSize }) {
                 </Drawer.Header>
                 <Drawer.Body>
                     <Text size="sm">
-                        On a {side === "left" || side === "right" ? "horizontal" : "vertical"} edge,
-                        <code> size</code> sets the {side === "left" || side === "right" ? "width" : "height"}.
+                        On a {side === "top" || side === "bottom" ? "vertical" : "horizontal"} edge,
+                        <code> size</code> sets the {side === "top" || side === "bottom" ? "height" : "width"}.
                     </Text>
                 </Drawer.Body>
             </Drawer>
@@ -83,10 +83,13 @@ export const drawerDoc: ComponentDoc = {
     ),
     examples: [
         {
-            name: "Four sides",
-            description: "side takes left, right, top, or bottom. Default is right.",
+            name: "Sides",
+            description:
+                "side takes start, end, left, right, top, or bottom. Default is end. start and end are logical: end is the right edge in a left-to-right page and the left edge under dir=\"rtl\". left and right stay physical.",
             render: () => (
                 <div className="flex flex-wrap gap-2">
+                    <SideDemo side="start" />
+                    <SideDemo side="end" />
                     <SideDemo side="left" />
                     <SideDemo side="right" />
                     <SideDemo side="top" />
@@ -177,7 +180,7 @@ export const drawerDoc: ComponentDoc = {
     props: [
         { name: "open", type: `boolean`, default: "—", description: "Controlled open state.", required: true },
         { name: "onClose", type: `() => void`, default: "—", description: "Called on Escape, backdrop click, or the close button.", required: true },
-        { name: "side", type: `"left" | "right" | "top" | "bottom"`, default: `"right"`, description: "Edge the drawer anchors to and slides in from." },
+        { name: "side", type: `"start" | "end" | "left" | "right" | "top" | "bottom"`, default: `"end"`, description: "Edge the drawer anchors to and slides in from. start / end follow the writing direction; left / right are physical." },
         { name: "size", type: `"sm" | "md" | "lg" | "xl" | "full"`, default: `"md"`, description: "Extent along the drawer's own axis — width on left/right, height on top/bottom." },
         { name: "attach", type: `"viewport" | "container"`, default: `"viewport"`, description: "`viewport` portals and fixes to the screen; `container` stays inside the nearest positioned ancestor." },
         { name: "backdrop", type: `boolean`, default: `true`, description: "Render the scrim behind the panel." },

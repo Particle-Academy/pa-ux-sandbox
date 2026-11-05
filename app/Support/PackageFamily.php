@@ -330,6 +330,20 @@ final class PackageFamily
             ]],
         ],
         [
+            'slug' => 'fancy-qr',
+            'name' => 'Fancy QR',
+            'tagline' => 'QR codes on the server as SVG and PNG, zero dependencies, drawing the same symbol as react-fancy\'s QrCode for the same input.',
+            'group' => 'documents',
+            'kind' => 'headless',
+            'sections' => [[
+                'label' => 'Encoder',
+                'capability' => 'QR code encoding to SVG, PNG and a module matrix',
+                'members' => [
+                    ['language' => 'PHP', 'slug' => 'fancy-qr'],
+                ],
+            ]],
+        ],
+        [
             'slug' => 'laravel-catalog',
             'name' => 'Fancy Catalog',
             'tagline' => 'Headless Stripe catalog — products / prices / plans + checkout — adapter-based with an injected Stripe client.',

@@ -132,6 +132,7 @@ function MlmMemberEditor({ member, members, tierKeys }: { member: MlmMember; mem
     // Self + own subtree can't be a parent — that would loop the tree.
     const excluded = useMemo(() => descendantsOf(member.id, members), [member.id, members]);
     const parentOptions = members.filter((m) => m.id !== member.id && !excluded.has(m.id));
+    const sponsorLocked = member.sponsorId !== null;
     const parentList = (noneLabel: string) => [
         { value: "", label: noneLabel },
         ...parentOptions.map((m) => ({ value: m.id, label: m.label })),
@@ -152,11 +153,22 @@ function MlmMemberEditor({ member, members, tierKeys }: { member: MlmMember; mem
                 f.put(`/admin/mlm/members/${member.id}`, { preserveScroll: true });
             }}
         >
-            <Field label="Sponsor (referring member)" error={f.errors.sponsor_id}>
+            {/* A sponsor is permanent once set (fancy-mlm 0.4.0): chosen once
+                for a network root, never moved afterwards. */}
+            <Field
+                label="Sponsor (referring member)"
+                description={sponsorLocked ? "Permanent — who referred a member never changes." : undefined}
+                error={f.errors.sponsor_id}
+            >
                 <Select
                     value={f.data.sponsor_id ?? ""}
+                    disabled={sponsorLocked}
                     onValueChange={(v) => f.setData("sponsor_id", v || null)}
-                    list={parentList("— none (network root)")}
+                    list={
+                        sponsorLocked
+                            ? members.filter((m) => m.id === member.sponsorId).map((m) => ({ value: m.id, label: m.label }))
+                            : parentList("— none (network root)")
+                    }
                 />
             </Field>
             <Field label="Placement (binary / matrix slot)" error={f.errors.placement_id}>

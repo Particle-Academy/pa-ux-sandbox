@@ -209,6 +209,12 @@ class ComponentContext
             'how' => 'Compute <code>value</code>/<code>target</code> from your plan&apos;s thresholds (the sandbox derives them from downline size via <code>MlmProgram::rankProgress()</code>) and pass <code>tier</code>/<code>nextTier</code>/<code>unit</code>. Purely presentational &mdash; no internal state to fight.',
         ],
 
+        'fancy-mlm-ui/referral-stats' => [
+            'why' => 'A referral program has to show which codes and which members actually bring people in. Hand-rolled stats tables sum the wrong things: one visitor who scans three codes becomes three &quot;unique&quot; visitors, and the conversion rate built on that is fiction.',
+            'what' => '<code>ReferralStats</code> plots one metric (scans, unique visitors, signups or conversion) as a react-fancy bar chart over a table of all four, per code, scope or member. Every piece of state is a controlled prop (<code>groupBy</code>, <code>metric</code>, <code>range</code>, <code>selectedKey</code>), mirrored on the root as <code>data-mlm-*</code> attributes, and every cell carries <code>data-mlm-stat-key</code> + <code>data-mlm-stat</code>. Without engine <code>totals</code> it leaves unique visitors and conversion blank rather than summing them.',
+            'how' => 'Pass the rows <code>Mlm::stats()</code> (PHP, fancy-mlm 0.4.0+) or the Node engine&apos;s <code>stats()</code> returns, as-is, plus the ungrouped totals. Wire <code>onGroupByChange</code> / <code>onRangeChange</code> to refetch; the switches and the date picker only appear when you do.',
+        ],
+
         'fancy-x-files-ui/robots-editor' => [
             'why' => 'robots.txt is tiny and high-stakes: one mis-ordered Allow leaks an admin path to a single bot group, and no one notices until it&apos;s indexed. Hand-editing the file (or hand-rolling a form) has no guardrail for that class of mistake.',
             'what' => '<code>RobotsEditor</code> is a controlled rule builder &mdash; per-group User-agent / Allow / Disallow / Crawl-delay plus sitemap URLs &mdash; with the <code>protect()</code> safety rail: protected paths are pinned Disallow for EVERY group, rendered as red chips, stripped from Allow lists, and flagged by <code>validateRobots</code> if they ever sneak back.',

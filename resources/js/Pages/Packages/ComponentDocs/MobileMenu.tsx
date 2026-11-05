@@ -62,7 +62,7 @@ export const mobileMenuDoc: ComponentDoc = {
         },
         {
             name: "Flyout from the right",
-            description: "Set `side` to `\"right\"` for a right-anchored drawer.",
+            description: "Set `side` to `\"right\"` for a drawer on the physical right in either direction, or `\"end\"` for the inline end (the right in LTR, the left under `dir=\"rtl\"`). The default is `\"start\"`.",
             render: () => {
                 const [open, setOpen] = useState(false);
                 return (

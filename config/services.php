@@ -65,6 +65,13 @@ return [
         'redirect' => env('GITHUB_REDIRECT_URI') ?: rtrim((string) env('APP_URL'), '/').'/auth/github/callback',
         'api_token' => env('GITHUB_API_TOKEN'),
 
+        // `php artisan notices:build` only: a token lifts the GitHub API's 60
+        // unauthenticated requests an hour when it reads release notes. What it
+        // has fetched is kept in a gitignored cache, so a rebuild asks again only
+        // for what it has not got.
+        'notices_token' => env('GITHUB_TOKEN'),
+        'notices_cache' => storage_path('app/notices-github-cache.json'),
+
         // Webhook receiver (bug-hunter-xp). Set the same secret on the
         // org/repo webhook in GitHub. The org whose issues count, and the
         // labels that mark a bug as confirmed.

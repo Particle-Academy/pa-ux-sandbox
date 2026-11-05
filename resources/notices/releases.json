@@ -92,7 +92,7 @@
         "laravel-catalog": "0.13.0",
         "laravel-courses": "0.4.0",
         "laravel-fms": "0.12.0",
-        "laravel-fun-lab": "0.6.0",
+        "laravel-fun-lab": "0.7.0",
         "laravel-jobs": "0.5.0",
         "last-word": "0.20.1",
         "last-word-js": "0.16.1",
@@ -101,7 +101,7 @@
         "mcp-relay-client": "0.3.0",
         "prism": "0.146.0",
         "prism-acp": "0.1.1",
-        "prism-acp-ts": "0.36.1",
+        "prism-acp-ts": "0.37.0",
         "prism-browser": "0.4.1",
         "prism-browser-py": "0.1.1",
         "prism-browser-ts": "0.2.1",
@@ -124,16 +124,56 @@
         "prism-perplexity": "0.4.2",
         "prism-perplexity-py": "0.2.0",
         "prism-perplexity-ts": "0.3.0",
-        "prism-py": "0.8.0",
-        "prism-ts": "0.8.0",
+        "prism-py": "0.9.0",
+        "prism-ts": "0.9.0",
         "prism-workspace": "0.3.0",
         "prism-workspace-py": "0.1.0",
         "prism-workspace-ts": "0.2.0",
-        "react-fancy": "6.10.0",
+        "react-fancy": "6.11.0",
         "teachers-aid": "0.3.0",
         "teachers-aid-ui": "0.3.0"
     },
     "releases": [
+        {
+            "slug": "prism-py",
+            "registry": "pypi",
+            "version": "0.9.0",
+            "published_at": "2026-11-05T18:49:06Z",
+            "first": false,
+            "summary": "Honor OPENAI_API_FORMAT, canonical ANTHROPIC_BETA, and configured/environment default thinking budgets"
+        },
+        {
+            "slug": "prism-ts",
+            "registry": "npm",
+            "version": "0.9.0",
+            "published_at": "2026-11-05T18:45:45Z",
+            "first": false,
+            "summary": "Read canonical ANTHROPIC_BETA; consume legacy ANTHROPIC_BETA_FEATURES only when needed, with one value-free deprecation…"
+        },
+        {
+            "slug": "react-fancy",
+            "registry": "npm",
+            "version": "6.11.0",
+            "published_at": "2026-11-05T18:05:57Z",
+            "first": false,
+            "summary": "Modal.Header and Drawer.Header take closeLabel"
+        },
+        {
+            "slug": "prism-acp-ts",
+            "registry": "npm",
+            "version": "0.37.0",
+            "published_at": "2026-11-05T11:31:50Z",
+            "first": false,
+            "summary": "Breaking changes: Direct ClaudeDriver embedders' queued notices now end as cancelled when Stop is requested, rather…"
+        },
+        {
+            "slug": "laravel-fun-lab",
+            "registry": "composer",
+            "version": "0.7.0",
+            "published_at": "2026-11-05T07:14:04Z",
+            "first": false,
+            "summary": "A leaderboard per gamed metric"
+        },
         {
             "slug": "react-fancy",
             "registry": "npm",
@@ -156,7 +196,7 @@
             "version": "0.36.1",
             "published_at": "2026-11-05T05:19:19Z",
             "first": false,
-            "summary": null
+            "summary": "Frames large NDJSON lines in linear time"
         },
         {
             "slug": "react-fancy",
@@ -196,7 +236,7 @@
             "version": "0.2.0",
             "published_at": "2026-11-05T02:03:46Z",
             "first": false,
-            "summary": null
+            "summary": "Handles Perplexity's asynchronous cancel and reports why a run stopped early"
         },
         {
             "slug": "prism-perplexity-ts",
@@ -204,7 +244,7 @@
             "version": "0.3.0",
             "published_at": "2026-11-05T02:00:33Z",
             "first": false,
-            "summary": null
+            "summary": "Handles Perplexity's asynchronous cancel and reports why a run stopped early"
         },
         {
             "slug": "fancy-mlm-ui",
@@ -580,7 +620,7 @@
             "version": "0.36.0",
             "published_at": "2026-11-04T04:00:00Z",
             "first": false,
-            "summary": null
+            "summary": "Per-thread configuration on the Codex driver"
         },
         {
             "slug": "prism-acp-ts",
@@ -588,7 +628,7 @@
             "version": "0.35.0",
             "published_at": "2026-11-04T01:26:31Z",
             "first": false,
-            "summary": null
+            "summary": "Append a system prompt from a file, and load plugins, through the Claude driver"
         },
         {
             "slug": "prism-acp-ts",
@@ -596,7 +636,7 @@
             "version": "0.34.0",
             "published_at": "2026-11-03T23:23:23Z",
             "first": false,
-            "summary": null
+            "summary": "Choose which Claude settings sources load, and restrict MCP to the servers you supply"
         },
         {
             "slug": "prism-ts",
@@ -604,7 +644,7 @@
             "version": "0.8.0",
             "published_at": "2026-11-03T22:14:58Z",
             "first": false,
-            "summary": null
+            "summary": "A failed stream keeps the usage the provider had already reported"
         },
         {
             "slug": "prism-py",
@@ -612,7 +652,7 @@
             "version": "0.8.0",
             "published_at": "2026-11-03T22:13:22Z",
             "first": false,
-            "summary": null
+            "summary": "A failed stream keeps the usage the provider had already reported"
         },
         {
             "slug": "fancy-term-host",
@@ -756,7 +796,7 @@
             "version": "0.146.0",
             "published_at": "2026-11-02T07:44:01Z",
             "first": false,
-            "summary": null
+            "summary": "A failed stream keeps the usage the provider had already reported"
         },
         {
             "slug": "prism-harness",
@@ -828,7 +868,7 @@
             "version": "0.145.1",
             "published_at": "2026-11-02T04:20:28Z",
             "first": false,
-            "summary": null
+            "summary": "Image generation docs now show real examples"
         },
         {
             "slug": "prism-ts",
@@ -836,7 +876,7 @@
             "version": "0.7.0",
             "published_at": "2026-11-02T03:01:29Z",
             "first": false,
-            "summary": null
+            "summary": "Usage now reports cache writes by lifetime, so Anthropic cache costs can be priced correctly"
         },
         {
             "slug": "prism-py",
@@ -844,7 +884,7 @@
             "version": "0.7.0",
             "published_at": "2026-11-02T03:00:33Z",
             "first": false,
-            "summary": null
+            "summary": "Usage now reports cache writes by lifetime, so Anthropic cache costs can be priced correctly"
         },
         {
             "slug": "react-fancy",
@@ -892,7 +932,7 @@
             "version": "0.145.0",
             "published_at": "2026-11-02T00:31:36Z",
             "first": false,
-            "summary": null
+            "summary": "Usage now reports cache writes by lifetime, so Anthropic cache costs can be priced correctly"
         },
         {
             "slug": "fancy-connector-core",
@@ -924,7 +964,7 @@
             "version": "0.6.0",
             "published_at": "2026-11-01T19:42:53Z",
             "first": false,
-            "summary": null
+            "summary": "BREAKING CHANGE: Anthropic structured requests now use native JSON schema output by default"
         },
         {
             "slug": "prism-py",
@@ -932,7 +972,7 @@
             "version": "0.6.0",
             "published_at": "2026-11-01T19:38:40Z",
             "first": false,
-            "summary": null
+            "summary": "BREAKING CHANGE: Anthropic structured requests now use native JSON schema output by default"
         },
         {
             "slug": "fancy-walkthrough",
@@ -1068,7 +1108,7 @@
             "version": "0.144.2",
             "published_at": "2026-11-01T09:42:34Z",
             "first": false,
-            "summary": null
+            "summary": "Mistral no longer reports an exhausted quota it was never told about"
         },
         {
             "slug": "fancy-conformance",
@@ -1252,7 +1292,7 @@
             "version": "0.144.1",
             "published_at": "2026-11-01T05:03:49Z",
             "first": false,
-            "summary": null
+            "summary": "Mistral structured output on reasoning models, and Groq parallel tool-call streaming"
         },
         {
             "slug": "agent-integrations",
@@ -1284,7 +1324,7 @@
             "version": "0.144.0",
             "published_at": "2026-10-31T11:34:49Z",
             "first": false,
-            "summary": null
+            "summary": "Providers can declare the wire format of their projected payload"
         },
         {
             "slug": "prism-harness",
@@ -1300,7 +1340,7 @@
             "version": "0.5.0",
             "published_at": "2026-10-31T06:56:19Z",
             "first": false,
-            "summary": null
+            "summary": "Progress keepalives keep long tool calls alive past client idle limits"
         },
         {
             "slug": "fancy-query",
@@ -1324,7 +1364,7 @@
             "version": "0.4.0",
             "published_at": "2026-10-31T03:29:54Z",
             "first": false,
-            "summary": null
+            "summary": "Long-running tool calls stream over HTTP, with heartbeats and cancellation"
         },
         {
             "slug": "prism",
@@ -1332,7 +1372,7 @@
             "version": "0.143.0",
             "published_at": "2026-10-31T01:02:09Z",
             "first": false,
-            "summary": null
+            "summary": "Providers can project the exact request payload without sending it"
         },
         {
             "slug": "prism",
@@ -1340,7 +1380,7 @@
             "version": "0.142.0",
             "published_at": "2026-10-31T00:10:18Z",
             "first": false,
-            "summary": null
+            "summary": "An app-wide handler decides what the model is told when a tool fails"
         },
         {
             "slug": "react-fancy",
@@ -1380,7 +1420,7 @@
             "version": "0.141.0",
             "published_at": "2026-10-30T20:30:39Z",
             "first": false,
-            "summary": null
+            "summary": "Perplexity Agent API: current request schema and complete failure details"
         },
         {
             "slug": "change-council",
@@ -1420,7 +1460,7 @@
             "version": "0.5.1",
             "published_at": "2026-10-30T03:56:46Z",
             "first": false,
-            "summary": null
+            "summary": "OpenAI and Mistral embeddings decode base64 strictly"
         },
         {
             "slug": "prism-ts",
@@ -1428,7 +1468,7 @@
             "version": "0.5.1",
             "published_at": "2026-10-30T03:55:13Z",
             "first": false,
-            "summary": null
+            "summary": "OpenAI and Mistral embeddings decode base64 strictly"
         },
         {
             "slug": "prism-harness-py",
@@ -1436,7 +1476,7 @@
             "version": "0.4.2",
             "published_at": "2026-10-29T23:18:55Z",
             "first": false,
-            "summary": null
+            "summary": "FileSessionStore writes survive a concurrent reader on Windows"
         },
         {
             "slug": "prism-harness-ts",
@@ -1444,7 +1484,7 @@
             "version": "0.9.2",
             "published_at": "2026-10-29T23:16:48Z",
             "first": false,
-            "summary": null
+            "summary": "FileSessionStore writes survive a concurrent reader on Windows"
         },
         {
             "slug": "change-council",
@@ -1460,7 +1500,7 @@
             "version": "0.140.0",
             "published_at": "2026-10-29T17:54:55Z",
             "first": false,
-            "summary": null
+            "summary": "Concurrent tool calls work at the minimum serializer version"
         },
         {
             "slug": "prism-harness-py",
@@ -1468,7 +1508,7 @@
             "version": "0.4.1",
             "published_at": "2026-10-29T17:42:46Z",
             "first": false,
-            "summary": null
+            "summary": "narrow_requested_tools now applies to legacy sessions"
         },
         {
             "slug": "prism-harness-ts",
@@ -1476,7 +1516,7 @@
             "version": "0.9.1",
             "published_at": "2026-10-29T17:41:16Z",
             "first": false,
-            "summary": null
+            "summary": "narrowRequestedTools now applies to legacy sessions"
         },
         {
             "slug": "prism-harness-py",
@@ -1484,7 +1524,7 @@
             "version": "0.4.0",
             "published_at": "2026-10-29T14:59:02Z",
             "first": false,
-            "summary": null
+            "summary": "Agent-scoped harness and an owner-proof file lock"
         },
         {
             "slug": "prism-harness-ts",
@@ -1492,7 +1532,7 @@
             "version": "0.9.0",
             "published_at": "2026-10-29T14:57:14Z",
             "first": false,
-            "summary": null
+            "summary": "Agent-scoped harness, an owner-proof file lock, and a Session.lock that runs your callback once"
         },
         {
             "slug": "prism",
@@ -1500,7 +1540,7 @@
             "version": "0.139.0",
             "published_at": "2026-10-29T13:41:06Z",
             "first": false,
-            "summary": null
+            "summary": "Tool failures are visible in telemetry without content capture"
         },
         {
             "slug": "fancy-template",
@@ -1772,7 +1812,7 @@
             "version": "0.3.0",
             "published_at": "2026-10-27T22:06:27Z",
             "first": false,
-            "summary": null
+            "summary": "A failed model step is terminal"
         },
         {
             "slug": "prism-harness-ts",
@@ -1780,7 +1820,7 @@
             "version": "0.8.0",
             "published_at": "2026-10-27T22:04:39Z",
             "first": false,
-            "summary": null
+            "summary": "A failed model step is terminal"
         },
         {
             "slug": "prism-harness",
@@ -1828,7 +1868,7 @@
             "version": "0.33.2",
             "published_at": "2026-10-27T20:34:47Z",
             "first": false,
-            "summary": null
+            "summary": "Host mode reuses the user's existing subscription; credential privacy hardening"
         },
         {
             "slug": "react-fancy",
@@ -1844,7 +1884,7 @@
             "version": "0.33.1",
             "published_at": "2026-10-27T18:28:16Z",
             "first": false,
-            "summary": null
+            "summary": "Name the cause when the private configuration directory cannot be created"
         },
         {
             "slug": "prism-human-plus",
@@ -1884,7 +1924,7 @@
             "version": "0.33.0",
             "published_at": "2026-10-27T16:45:26Z",
             "first": false,
-            "summary": null
+            "summary": "Claude restricted to the app's own MCP tools, including under Windows AppContainer (LOCAL)"
         },
         {
             "slug": "fancy-conformance",
@@ -2028,7 +2068,7 @@
             "version": "0.138.0",
             "published_at": "2026-10-27T05:55:03Z",
             "first": false,
-            "summary": null
+            "summary": "Laravel MCP tools respect shouldRegister()"
         },
         {
             "slug": "charlotte",
@@ -2052,7 +2092,7 @@
             "version": "0.32.0",
             "published_at": "2026-10-27T02:56:17Z",
             "first": false,
-            "summary": null
+            "summary": "Codex nativeTools 'none': no plugin marketplace download at startup"
         },
         {
             "slug": "fancy-cms-ui",
@@ -2076,7 +2116,7 @@
             "version": "0.31.0",
             "published_at": "2026-10-27T01:34:15Z",
             "first": false,
-            "summary": null
+            "summary": "Codex resume: skip or label the history replay"
         },
         {
             "slug": "prism-acp-ts",
@@ -2084,7 +2124,7 @@
             "version": "0.30.0",
             "published_at": "2026-10-27T00:58:56Z",
             "first": false,
-            "summary": null
+            "summary": "Claude permission prompts fail closed, including inside Electron hosts"
         },
         {
             "slug": "prism-acp-ts",
@@ -2092,7 +2132,7 @@
             "version": "0.29.0",
             "published_at": "2026-10-26T23:41:15Z",
             "first": false,
-            "summary": null
+            "summary": "Codex without native tools: nativeTools 'none' (opt-in, measured)"
         },
         {
             "slug": "fancy-cms-ui",
@@ -2252,7 +2292,7 @@
             "version": "0.28.0",
             "published_at": "2026-10-26T06:01:50Z",
             "first": false,
-            "summary": null
+            "summary": "Launch providers inside a Windows AppContainer (opt-in local pipes)"
         },
         {
             "slug": "fancy-cms",
@@ -2276,7 +2316,7 @@
             "version": "0.27.0",
             "published_at": "2026-10-26T05:00:07Z",
             "first": false,
-            "summary": null
+            "summary": "Report each MCP server's status and callable tools"
         },
         {
             "slug": "fancy-cms-ui",
@@ -2308,7 +2348,7 @@
             "version": "0.137.0",
             "published_at": "2026-10-26T03:00:45Z",
             "first": false,
-            "summary": null
+            "summary": "Keep the Replicate API key away from output URLs, and finish the documentation"
         },
         {
             "slug": "react-fancy",
@@ -2324,7 +2364,7 @@
             "version": "0.26.0",
             "published_at": "2026-10-26T02:41:17Z",
             "first": false,
-            "summary": null
+            "summary": "Refresh Codex rate limits on demand"
         },
         {
             "slug": "prism-human-plus-ts",
@@ -2332,7 +2372,7 @@
             "version": "0.4.0",
             "published_at": "2026-10-26T02:28:22Z",
             "first": false,
-            "summary": null
+            "summary": "Reserve a confirmation verb behind every separator (G-130)"
         },
         {
             "slug": "prism-human-plus-py",
@@ -2340,7 +2380,7 @@
             "version": "0.2.0",
             "published_at": "2026-10-26T02:26:51Z",
             "first": false,
-            "summary": null
+            "summary": "Reserve a confirmation verb behind every separator (G-130)"
         },
         {
             "slug": "prism-workspace",
@@ -2364,7 +2404,7 @@
             "version": "0.136.0",
             "published_at": "2026-10-25T21:46:34Z",
             "first": false,
-            "summary": null
+            "summary": "Never run an approval-required tool while streaming on Azure"
         },
         {
             "slug": "teachers-aid",
@@ -2388,7 +2428,7 @@
             "version": "0.5.0",
             "published_at": "2026-10-24T17:36:53Z",
             "first": false,
-            "summary": null
+            "summary": "prism 0.5.0: an Anthropic stream that ends early is reported, not passed off as finished"
         },
         {
             "slug": "prism-py",
@@ -2396,7 +2436,7 @@
             "version": "0.5.0",
             "published_at": "2026-10-24T17:36:14Z",
             "first": false,
-            "summary": null
+            "summary": "prism 0.5.0: an Anthropic stream that ends early is reported, not passed off as finished"
         },
         {
             "slug": "laravel-courses",
@@ -2428,7 +2468,7 @@
             "version": "0.4.0",
             "published_at": "2026-10-24T15:49:47Z",
             "first": false,
-            "summary": null
+            "summary": "prism 0.4.0: replay provider state across turns"
         },
         {
             "slug": "prism-py",
@@ -2436,7 +2476,7 @@
             "version": "0.4.0",
             "published_at": "2026-10-24T15:49:07Z",
             "first": false,
-            "summary": null
+            "summary": "prism 0.4.0: replay provider state across turns"
         },
         {
             "slug": "prism-harness",
@@ -2452,7 +2492,7 @@
             "version": "0.135.0",
             "published_at": "2026-10-24T08:55:34Z",
             "first": false,
-            "summary": null
+            "summary": "Count the whole cost of an OpenRouter BYOK call"
         },
         {
             "slug": "prism-acp-ts",
@@ -2460,7 +2500,7 @@
             "version": "0.25.2",
             "published_at": "2026-10-24T07:07:14Z",
             "first": false,
-            "summary": null
+            "summary": "Private directories on Windows are private to the current user only (G-118)"
         },
         {
             "slug": "prism-harness",
@@ -2476,7 +2516,7 @@
             "version": "0.25.1",
             "published_at": "2026-10-24T05:15:13Z",
             "first": false,
-            "summary": null
+            "summary": "An API key can no longer leak through Claude's stderr (G-116)"
         },
         {
             "slug": "prism-harness",
@@ -2492,7 +2532,7 @@
             "version": "0.134.0",
             "published_at": "2026-10-24T04:54:44Z",
             "first": false,
-            "summary": null
+            "summary": "Report an Anthropic stream that ends early as an error, with unknown usage"
         },
         {
             "slug": "prism-harness",
@@ -2508,7 +2548,7 @@
             "version": "0.15.0",
             "published_at": "2026-10-24T03:39:33Z",
             "first": false,
-            "summary": null
+            "summary": "a host cost observer at every capped model call"
         },
         {
             "slug": "prism-acp-ts",
@@ -2516,7 +2556,7 @@
             "version": "0.25.0",
             "published_at": "2026-10-24T03:33:26Z",
             "first": false,
-            "summary": null
+            "summary": "Session MCP credentials are now the ones actually used, and they stay out of model-run shell commands (G-108)"
         },
         {
             "slug": "fancy-live",
@@ -2540,7 +2580,7 @@
             "version": "0.14.0",
             "published_at": "2026-10-24T02:12:28Z",
             "first": false,
-            "summary": null
+            "summary": "hard per-call cost budgets"
         },
         {
             "slug": "fancy-query",
@@ -2580,7 +2620,7 @@
             "version": "0.24.1",
             "published_at": "2026-10-23T21:14:29Z",
             "first": false,
-            "summary": null
+            "summary": "Codex driver fixes"
         },
         {
             "slug": "fancy-cms-ui",
@@ -2612,7 +2652,7 @@
             "version": "0.24.0",
             "published_at": "2026-10-23T16:32:22Z",
             "first": false,
-            "summary": null
+            "summary": "API-key mode"
         },
         {
             "slug": "fine-print",
@@ -2652,7 +2692,7 @@
             "version": "0.23.2",
             "published_at": "2026-10-23T04:46:51Z",
             "first": false,
-            "summary": null
+            "summary": "Fixes found by running every Claude capture, and hostile mutations of them"
         },
         {
             "slug": "prism-acp-ts",
@@ -2660,7 +2700,7 @@
             "version": "0.23.1",
             "published_at": "2026-10-22T22:44:42Z",
             "first": false,
-            "summary": null
+            "summary": "Codex: a graceful restart survives history replay, and startup errors keep their message"
         },
         {
             "slug": "react-fancy",
@@ -2684,7 +2724,7 @@
             "version": "0.23.0",
             "published_at": "2026-10-22T21:06:51Z",
             "first": false,
-            "summary": null
+            "summary": "Codex approval policy and sandbox options"
         },
         {
             "slug": "prism-mcp-server-ts",
@@ -2692,7 +2732,7 @@
             "version": "0.3.1",
             "published_at": "2026-10-22T17:22:15Z",
             "first": false,
-            "summary": null
+            "summary": "tools/list never sends a null field"
         },
         {
             "slug": "react-fancy",
@@ -2716,7 +2756,7 @@
             "version": "0.22.0",
             "published_at": "2026-10-21T20:54:15Z",
             "first": false,
-            "summary": null
+            "summary": "The models the account offers, from the provider, and switching a live session"
         },
         {
             "slug": "react-fancy",
@@ -2860,7 +2900,7 @@
             "version": "0.133.1",
             "published_at": "2026-10-21T02:53:42Z",
             "first": false,
-            "summary": null
+            "summary": "Restore StreamCollector, which v0.132.0 removed without notice"
         },
         {
             "slug": "fancy-app-update",
@@ -2892,7 +2932,7 @@
             "version": "0.133.0",
             "published_at": "2026-10-21T02:08:50Z",
             "first": false,
-            "summary": null
+            "summary": "Tools accept an object or array argument sent as a string of JSON"
         },
         {
             "slug": "fancy-inertia",
@@ -2916,7 +2956,7 @@
             "version": "0.21.1",
             "published_at": "2026-10-21T00:05:44Z",
             "first": false,
-            "summary": null
+            "summary": "Windows: Claude gets its settings and MCP config again"
         },
         {
             "slug": "fancy-pty",
@@ -2932,7 +2972,7 @@
             "version": "0.21.0",
             "published_at": "2026-10-20T23:54:49Z",
             "first": false,
-            "summary": null
+            "summary": "A provider's whole process tree ends with it"
         },
         {
             "slug": "fancy-term-host",
@@ -2948,7 +2988,7 @@
             "version": "0.20.0",
             "published_at": "2026-10-20T21:42:36Z",
             "first": false,
-            "summary": null
+            "summary": "A refusal can carry the client's own reason"
         },
         {
             "slug": "fancy-app-update",
@@ -3060,7 +3100,7 @@
             "version": "0.132.0",
             "published_at": "2026-10-20T03:40:38Z",
             "first": false,
-            "summary": null
+            "summary": "Level with upstream: the #1043 usage contract, and two media-fetch hardening fixes"
         },
         {
             "slug": "fancy-code",
@@ -3156,7 +3196,7 @@
             "version": "0.19.0",
             "published_at": "2026-10-19T21:05:09Z",
             "first": false,
-            "summary": null
+            "summary": "A built-in command is a turn that finished, and /compact is reported"
         },
         {
             "slug": "react-fancy",
@@ -3188,7 +3228,7 @@
             "version": "0.3.0",
             "published_at": "2026-10-19T16:28:26Z",
             "first": false,
-            "summary": null
+            "summary": "Per-request tool visibility: a tool can be hidden from a caller"
         },
         {
             "slug": "fancy-slides",
@@ -3612,7 +3652,7 @@
             "version": "0.3.0",
             "published_at": "2026-10-19T00:54:39Z",
             "first": false,
-            "summary": null
+            "summary": "BREAKING CHANGE: Media.fetch_public() now refuses an answer over 32 MiB"
         },
         {
             "slug": "dark-slide-py",
@@ -3660,7 +3700,7 @@
             "version": "0.18.0",
             "published_at": "2026-10-18T04:55:15Z",
             "first": false,
-            "summary": null
+            "summary": "A failed turn says why, structurally"
         },
         {
             "slug": "prism-acp-ts",
@@ -3668,7 +3708,7 @@
             "version": "0.17.0",
             "published_at": "2026-10-18T01:37:11Z",
             "first": false,
-            "summary": null
+            "summary": "A subagent's tool calls are announced, marked with their parent"
         },
         {
             "slug": "prism-browser",
@@ -3684,7 +3724,7 @@
             "version": "0.1.1",
             "published_at": "2026-10-18T01:04:51Z",
             "first": false,
-            "summary": null
+            "summary": "prism-ai-browser 0.1.1 — security fix"
         },
         {
             "slug": "prism-browser-ts",
@@ -3692,7 +3732,7 @@
             "version": "0.2.1",
             "published_at": "2026-10-18T01:00:27Z",
             "first": false,
-            "summary": null
+            "summary": "@particle-academy/prism-browser 0.2.1 — security fix"
         },
         {
             "slug": "prism-browser",
@@ -3708,7 +3748,7 @@
             "version": "0.16.0",
             "published_at": "2026-10-17T23:49:16Z",
             "first": false,
-            "summary": null
+            "summary": "Codex MCP tool approval (#18)"
         },
         {
             "slug": "fancy-code",
@@ -3772,7 +3812,7 @@
             "version": "0.15.0",
             "published_at": "2026-10-16T22:56:39Z",
             "first": false,
-            "summary": null
+            "summary": "usage_update used now means what ACP says it means: tokens currently"
         },
         {
             "slug": "prism-harness-ts",
@@ -3780,7 +3820,7 @@
             "version": "0.7.0",
             "published_at": "2026-10-15T21:30:38Z",
             "first": false,
-            "summary": null
+            "summary": "Threads are append-only logs, so recording a message costs its own size"
         },
         {
             "slug": "prism-mcp-server-ts",
@@ -3788,7 +3828,7 @@
             "version": "0.2.0",
             "published_at": "2026-10-15T20:33:23Z",
             "first": false,
-            "summary": null
+            "summary": "Serves the classic MCP handshake beside the stateless protocol, so"
         },
         {
             "slug": "react-fancy",
@@ -3812,7 +3852,7 @@
             "version": "0.2.1",
             "published_at": "2026-10-15T18:24:18Z",
             "first": false,
-            "summary": null
+            "summary": "prism-ai-mcp 0.2.1 — security fix"
         },
         {
             "slug": "prism-acp-ts",
@@ -3820,7 +3860,7 @@
             "version": "0.14.0",
             "published_at": "2026-10-15T16:48:01Z",
             "first": false,
-            "summary": null
+            "summary": "Turn cancel: session/cancel ends the turn and keeps the session (#16, #17)"
         },
         {
             "slug": "prism-acp-ts",
@@ -3828,7 +3868,7 @@
             "version": "0.13.0",
             "published_at": "2026-10-15T15:23:33Z",
             "first": false,
-            "summary": null
+            "summary": "A provider's large frame passes the cap; an unreadable frame is reported"
         },
         {
             "slug": "fancy-pty",
@@ -3852,7 +3892,7 @@
             "version": "0.12.0",
             "published_at": "2026-10-14T16:29:18Z",
             "first": false,
-            "summary": null
+            "summary": "Claude's background tasks reach the client (#10)"
         },
         {
             "slug": "prism-acp-ts",
@@ -3860,7 +3900,7 @@
             "version": "0.11.0",
             "published_at": "2026-10-13T20:20:44Z",
             "first": false,
-            "summary": null
+            "summary": "Prompts are content blocks (issue #4)"
         },
         {
             "slug": "prism-acp-ts",
@@ -3868,7 +3908,7 @@
             "version": "0.10.0",
             "published_at": "2026-10-13T15:36:04Z",
             "first": false,
-            "summary": null
+            "summary": "Claude can ask a person before a tool runs (issue #1)"
         },
         {
             "slug": "prism-acp-ts",
@@ -3876,7 +3916,7 @@
             "version": "0.9.0",
             "published_at": "2026-10-13T14:23:31Z",
             "first": false,
-            "summary": null
+            "summary": "Claude's used now counts the context it actually holds (issue #3)"
         },
         {
             "slug": "prism-acp-ts",
@@ -3884,7 +3924,7 @@
             "version": "0.8.0",
             "published_at": "2026-10-13T14:12:33Z",
             "first": false,
-            "summary": null
+            "summary": "Choose the model a session runs on, and learn which one it got (issue #5)"
         },
         {
             "slug": "holy-sheet-py",
@@ -3908,7 +3948,7 @@
             "version": "0.2.0",
             "published_at": "2026-10-11T23:41:49Z",
             "first": false,
-            "summary": null
+            "summary": "Breaking changes"
         },
         {
             "slug": "fancy-ws",
@@ -3948,7 +3988,7 @@
             "version": "0.7.0",
             "published_at": "2026-10-11T20:30:26Z",
             "first": false,
-            "summary": null
+            "summary": "Forward the client's session MCP servers to the provider"
         },
         {
             "slug": "react-fancy",
@@ -4036,7 +4076,7 @@
             "version": "0.6.2",
             "published_at": "2026-10-10T23:18:17Z",
             "first": false,
-            "summary": null
+            "summary": "Shape-guard provider CLI session ids at both trust boundaries in the Claude and"
         },
         {
             "slug": "fancy-term-host",
@@ -4116,7 +4156,7 @@
             "version": "0.6.1",
             "published_at": "2026-10-08T21:41:11Z",
             "first": false,
-            "summary": null
+            "summary": "Provider text this package presents as a label is stripped of terminal control sequences on both drivers"
         },
         {
             "slug": "prism-acp-ts",
@@ -4124,7 +4164,7 @@
             "version": "0.6.0",
             "published_at": "2026-10-08T19:34:35Z",
             "first": false,
-            "summary": null
+            "summary": "A Claude tool denial is no longer invisible, and a client can ask whether a driver raises permission requests at all"
         },
         {
             "slug": "prism-acp-ts",
@@ -4132,7 +4172,7 @@
             "version": "0.5.4",
             "published_at": "2026-10-08T06:08:02Z",
             "first": false,
-            "summary": null
+            "summary": "prism-acp 0.5.4 — Codex is now proven against a real child, not described as proven"
         },
         {
             "slug": "prism-acp-ts",
@@ -4140,7 +4180,7 @@
             "version": "0.5.3",
             "published_at": "2026-10-08T05:55:20Z",
             "first": false,
-            "summary": null
+            "summary": "prism-acp 0.5.3 — the Codex driver reported your prompt back to you twice"
         },
         {
             "slug": "prism-acp-ts",
@@ -4148,7 +4188,7 @@
             "version": "0.5.2",
             "published_at": "2026-10-08T05:28:29Z",
             "first": false,
-            "summary": null
+            "summary": "prism-acp 0.5.2 — three measured properties a client needs and could not infer"
         },
         {
             "slug": "prism-acp-ts",
@@ -4156,7 +4196,7 @@
             "version": "0.5.1",
             "published_at": "2026-10-08T04:29:41Z",
             "first": false,
-            "summary": null
+            "summary": "prism-acp 0.5.1 — the allow-list withholds more than credentials, and now says so"
         },
         {
             "slug": "prism-acp-ts",
@@ -4164,7 +4204,7 @@
             "version": "0.5.0",
             "published_at": "2026-10-08T03:39:57Z",
             "first": false,
-            "summary": null
+            "summary": "prism-acp 0.5.0 — a Codex driver, and approvals a human actually answers"
         },
         {
             "slug": "prism-acp-ts",
@@ -4172,7 +4212,7 @@
             "version": "0.4.1",
             "published_at": "2026-10-08T02:05:54Z",
             "first": false,
-            "summary": null
+            "summary": "prism-acp 0.4.1 - the session probe reads the store the CLI actually uses"
         },
         {
             "slug": "fancy-term-host",
@@ -4228,7 +4268,7 @@
             "version": "0.4.0",
             "published_at": "2026-10-08T00:22:21Z",
             "first": false,
-            "summary": null
+            "summary": "prism-acp 0.4.0 — refuse an unresumable session id at load, not a turn later"
         },
         {
             "slug": "fancy-flow",
@@ -4300,7 +4340,7 @@
             "version": "0.3.0",
             "published_at": "2026-10-07T20:20:49Z",
             "first": false,
-            "summary": null
+            "summary": "Resume actually works from a client"
         },
         {
             "slug": "dark-slide-js",
@@ -4348,7 +4388,7 @@
             "version": "0.2.0",
             "published_at": "2026-10-07T19:22:49Z",
             "first": false,
-            "summary": null
+            "summary": "Node 22 is the floor"
         },
         {
             "slug": "prism-workspace-ts",
@@ -4356,7 +4396,7 @@
             "version": "0.2.0",
             "published_at": "2026-10-07T19:20:12Z",
             "first": false,
-            "summary": null
+            "summary": "Node 22 is the floor"
         },
         {
             "slug": "prism-perplexity-ts",
@@ -4364,7 +4404,7 @@
             "version": "0.2.0",
             "published_at": "2026-10-07T19:20:05Z",
             "first": false,
-            "summary": null
+            "summary": "Node 22 is the floor"
         },
         {
             "slug": "prism-mcp-ts",
@@ -4372,7 +4412,7 @@
             "version": "0.3.0",
             "published_at": "2026-10-07T19:19:59Z",
             "first": false,
-            "summary": null
+            "summary": "Node 22 is the floor"
         },
         {
             "slug": "prism-ts",
@@ -4380,7 +4420,7 @@
             "version": "0.3.0",
             "published_at": "2026-10-07T19:18:41Z",
             "first": false,
-            "summary": null
+            "summary": "Node 22 is the floor"
         },
         {
             "slug": "prism-opentelemetry-ts",
@@ -4388,7 +4428,7 @@
             "version": "0.6.0",
             "published_at": "2026-10-07T19:18:29Z",
             "first": false,
-            "summary": null
+            "summary": "Node 22 is the floor"
         },
         {
             "slug": "prism-human-plus-ts",
@@ -4396,7 +4436,7 @@
             "version": "0.3.0",
             "published_at": "2026-10-07T19:17:56Z",
             "first": false,
-            "summary": null
+            "summary": "Node 22 is the floor"
         },
         {
             "slug": "prism-harness-ts",
@@ -4404,7 +4444,7 @@
             "version": "0.6.0",
             "published_at": "2026-10-07T19:17:18Z",
             "first": false,
-            "summary": null
+            "summary": "Node 22 is the floor"
         },
         {
             "slug": "prism-acp-ts",
@@ -4412,7 +4452,7 @@
             "version": "0.2.0",
             "published_at": "2026-10-07T19:16:53Z",
             "first": false,
-            "summary": null
+            "summary": "A typed rate-limit payload, and Node 22 is the floor"
         },
         {
             "slug": "prism-memory-ts",
@@ -4420,7 +4460,7 @@
             "version": "0.2.0",
             "published_at": "2026-10-07T19:16:45Z",
             "first": false,
-            "summary": null
+            "summary": "Node 22 is the floor"
         },
         {
             "slug": "prism-harness-py",
@@ -4428,7 +4468,7 @@
             "version": "0.2.1",
             "published_at": "2026-10-07T19:16:15Z",
             "first": false,
-            "summary": null
+            "summary": "Five README examples that could not run"
         },
         {
             "slug": "fancy-flow-php",
@@ -4508,7 +4548,7 @@
             "version": "0.13.0",
             "published_at": "2026-10-02T08:39:50Z",
             "first": false,
-            "summary": null
+            "summary": "one live conversation per address, enforced by the database"
         },
         {
             "slug": "laravel-jobs",
@@ -4604,7 +4644,7 @@
             "version": "0.131.0",
             "published_at": "2026-09-30T16:16:29Z",
             "first": false,
-            "summary": null
+            "summary": "A refusal is not an empty answer, and a base64 embedding is not a crash"
         },
         {
             "slug": "fancy-walkthrough",
@@ -4724,7 +4764,7 @@
             "version": "0.130.0",
             "published_at": "2026-09-24T21:44:15Z",
             "first": false,
-            "summary": null
+            "summary": "An unsuccessful Perplexity run says what happened, instead of throwing it away"
         },
         {
             "slug": "prism",
@@ -4732,7 +4772,7 @@
             "version": "0.129.0",
             "published_at": "2026-09-22T20:18:47Z",
             "first": false,
-            "summary": null
+            "summary": "Every Gemini and Vertex entry point caches the declared-stable prefix"
         },
         {
             "slug": "prism",
@@ -4740,7 +4780,7 @@
             "version": "0.128.0",
             "published_at": "2026-09-22T20:06:16Z",
             "first": false,
-            "summary": null
+            "summary": "Declare what is stable; each provider caches it in its own idiom"
         },
         {
             "slug": "prism",
@@ -4748,7 +4788,7 @@
             "version": "0.127.0",
             "published_at": "2026-09-22T19:25:41Z",
             "first": false,
-            "summary": null
+            "summary": "An opt-in guarded fetch, for a URL you did not choose"
         },
         {
             "slug": "prism",
@@ -4756,7 +4796,7 @@
             "version": "0.126.2",
             "published_at": "2026-09-22T19:06:32Z",
             "first": false,
-            "summary": null
+            "summary": "Ollama and Vertex streamed steps report what the step cost"
         },
         {
             "slug": "fancy-flow",
@@ -4788,7 +4828,7 @@
             "version": "0.126.1",
             "published_at": "2026-09-22T18:25:04Z",
             "first": false,
-            "summary": null
+            "summary": "A cache mark on a message is one breakpoint, on its final block"
         },
         {
             "slug": "fancy-conformance",
@@ -4804,7 +4844,7 @@
             "version": "0.126.0",
             "published_at": "2026-09-22T17:17:15Z",
             "first": false,
-            "summary": null
+            "summary": "Mark a message for one request without marking it forever; Z.ai usage on tool-call steps"
         },
         {
             "slug": "prism",
@@ -4812,7 +4852,7 @@
             "version": "0.125.1",
             "published_at": "2026-09-22T16:49:24Z",
             "first": false,
-            "summary": null
+            "summary": "A null content or results list no longer fails the whole generation"
         },
         {
             "slug": "fancy-flow-py",
@@ -4828,7 +4868,7 @@
             "version": "0.125.0",
             "published_at": "2026-09-22T16:21:02Z",
             "first": false,
-            "summary": null
+            "summary": "Streamed turns report every step's output, and each step its own usage"
         },
         {
             "slug": "fancy-flow",
@@ -4852,7 +4892,7 @@
             "version": "0.3.1",
             "published_at": "2026-09-22T05:38:12Z",
             "first": false,
-            "summary": null
+            "summary": "A long tool list no longer costs a span its usage and finish reason"
         },
         {
             "slug": "prism-opentelemetry-ts",
@@ -4860,7 +4900,7 @@
             "version": "0.5.1",
             "published_at": "2026-09-22T05:38:10Z",
             "first": false,
-            "summary": null
+            "summary": "A long tool list no longer costs a span its usage and finish reason"
         },
         {
             "slug": "prism-opentelemetry",
@@ -4876,7 +4916,7 @@
             "version": "0.5.0",
             "published_at": "2026-09-22T05:10:33Z",
             "first": false,
-            "summary": null
+            "summary": "The digest is computed here now, not just accepted"
         },
         {
             "slug": "prism-opentelemetry-py",
@@ -4884,7 +4924,7 @@
             "version": "0.3.0",
             "published_at": "2026-09-22T05:10:02Z",
             "first": false,
-            "summary": null
+            "summary": "The digest is computed here now, not just accepted"
         },
         {
             "slug": "prism-opentelemetry",
@@ -4900,7 +4940,7 @@
             "version": "0.124.1",
             "published_at": "2026-09-22T05:01:59Z",
             "first": false,
-            "summary": null
+            "summary": "The tool digest is reproducible outside PHP now"
         },
         {
             "slug": "prism-opentelemetry-ts",
@@ -4908,7 +4948,7 @@
             "version": "0.4.0",
             "published_at": "2026-09-22T04:41:13Z",
             "first": false,
-            "summary": null
+            "summary": "Spans now say which tools the model was offered"
         },
         {
             "slug": "prism-opentelemetry-py",
@@ -4916,7 +4956,7 @@
             "version": "0.2.0",
             "published_at": "2026-09-22T04:40:34Z",
             "first": false,
-            "summary": null
+            "summary": "Spans now say which tools the model was offered"
         },
         {
             "slug": "prism-opentelemetry",
@@ -4932,7 +4972,7 @@
             "version": "0.124.0",
             "published_at": "2026-09-22T04:06:26Z",
             "first": false,
-            "summary": null
+            "summary": "Telemetry listeners can see which tools a model was offered"
         },
         {
             "slug": "prism-perplexity-py",
@@ -4956,7 +4996,7 @@
             "version": "0.3.0",
             "published_at": "2026-09-22T03:45:07Z",
             "first": false,
-            "summary": null
+            "summary": "Cached prompt tokens are counted now, and the input count changed"
         },
         {
             "slug": "prism-mcp-py",
@@ -5012,7 +5052,7 @@
             "version": "0.2.1",
             "published_at": "2026-09-22T02:40:22Z",
             "first": false,
-            "summary": null
+            "summary": "Keep credentials out of a failed fetch's message"
         },
         {
             "slug": "prism-mcp-ts",
@@ -5020,7 +5060,7 @@
             "version": "0.2.0",
             "published_at": "2026-09-22T02:38:39Z",
             "first": false,
-            "summary": null
+            "summary": "The stateless 2026-07-28 revision, and per-result framing"
         },
         {
             "slug": "prism-harness",
@@ -5028,7 +5068,7 @@
             "version": "0.12.0",
             "published_at": "2026-09-21T17:06:06Z",
             "first": false,
-            "summary": null
+            "summary": "Structured turns"
         },
         {
             "slug": "prism",
@@ -5036,7 +5076,7 @@
             "version": "0.123.1",
             "published_at": "2026-09-21T17:06:05Z",
             "first": false,
-            "summary": null
+            "summary": "Keep credentials out of a failed fetch's message"
         },
         {
             "slug": "prism-human-plus",
@@ -5052,7 +5092,7 @@
             "version": "0.2.0",
             "published_at": "2026-09-21T04:30:23Z",
             "first": false,
-            "summary": null
+            "summary": "Two writers, and what changed since my last turn"
         },
         {
             "slug": "fancy-flow-php",
@@ -5068,7 +5108,7 @@
             "version": "0.2.0",
             "published_at": "2026-09-21T03:16:44Z",
             "first": false,
-            "summary": null
+            "summary": "Structured turns"
         },
         {
             "slug": "fancy-flow-php",
@@ -5084,7 +5124,7 @@
             "version": "0.5.0",
             "published_at": "2026-09-21T01:59:37Z",
             "first": false,
-            "summary": null
+            "summary": "Structured turns"
         },
         {
             "slug": "react-fancy",
@@ -5388,7 +5428,7 @@
             "version": "0.1.1",
             "published_at": "2026-09-15T08:09:46Z",
             "first": false,
-            "summary": null
+            "summary": "Security fix: a tool result can no longer close its own wrapper"
         },
         {
             "slug": "prism-browser-py",
@@ -5724,7 +5764,7 @@
             "version": "0.4.0",
             "published_at": "2026-09-14T17:43:26Z",
             "first": false,
-            "summary": null
+            "summary": "Runs stored in the reference's shape; approvals resume where they stopped"
         },
         {
             "slug": "last-word",
@@ -5756,7 +5796,7 @@
             "version": "0.11.1",
             "published_at": "2026-09-14T17:34:31Z",
             "first": false,
-            "summary": null
+            "summary": "An empty provider state is stored as a map"
         },
         {
             "slug": "holy-sheet-js",
@@ -5788,7 +5828,7 @@
             "version": "0.11.0",
             "published_at": "2026-09-14T17:16:19Z",
             "first": false,
-            "summary": null
+            "summary": "Approvals work through a real provider handler"
         },
         {
             "slug": "last-word",
@@ -5812,7 +5852,7 @@
             "version": "0.123.0",
             "published_at": "2026-09-14T16:56:16Z",
             "first": false,
-            "summary": null
+            "summary": "Tool approvals work through a real provider, and an approved call runs once"
         },
         {
             "slug": "fancy-flow",
@@ -5828,7 +5868,7 @@
             "version": "0.2.0",
             "published_at": "2026-09-14T16:24:11Z",
             "first": false,
-            "summary": null
+            "summary": "Anthropic thinking as the reference sends it; truncated answers returned"
         },
         {
             "slug": "prism-harness-ts",
@@ -5836,7 +5876,7 @@
             "version": "0.3.0",
             "published_at": "2026-09-14T16:19:07Z",
             "first": false,
-            "summary": null
+            "summary": "Each step records what the next one has to send back"
         },
         {
             "slug": "prism",
@@ -5844,7 +5884,7 @@
             "version": "0.122.0",
             "published_at": "2026-09-14T16:18:58Z",
             "first": false,
-            "summary": null
+            "summary": "Anthropic thinking options are sent, not dropped; text documents as text/plain"
         },
         {
             "slug": "prism-human-plus-ts",
@@ -5852,7 +5892,7 @@
             "version": "0.1.1",
             "published_at": "2026-09-14T16:17:48Z",
             "first": false,
-            "summary": null
+            "summary": "A relay URL's trailing slashes are stripped in linear time"
         },
         {
             "slug": "prism-opentelemetry-ts",
@@ -5860,7 +5900,7 @@
             "version": "0.2.0",
             "published_at": "2026-09-14T08:24:15Z",
             "first": false,
-            "summary": null
+            "summary": "Attachment bytes are withheld from captured content"
         },
         {
             "slug": "prism",
@@ -5868,7 +5908,7 @@
             "version": "0.121.0",
             "published_at": "2026-09-14T08:10:41Z",
             "first": false,
-            "summary": null
+            "summary": "Attachment bytes are withheld from captured telemetry"
         },
         {
             "slug": "prism-opentelemetry",
@@ -5884,7 +5924,7 @@
             "version": "0.2.0",
             "published_at": "2026-09-14T07:52:55Z",
             "first": false,
-            "summary": null
+            "summary": "Turns carry attachments; modes set provider options"
         },
         {
             "slug": "prism-harness",
@@ -5892,7 +5932,7 @@
             "version": "0.10.0",
             "published_at": "2026-09-14T07:43:53Z",
             "first": false,
-            "summary": null
+            "summary": "Turns carry attachments; modes set provider options"
         },
         {
             "slug": "prism-harness",
@@ -5900,7 +5940,7 @@
             "version": "0.9.1",
             "published_at": "2026-09-14T07:17:24Z",
             "first": false,
-            "summary": null
+            "summary": "Threads record each turn once"
         },
         {
             "slug": "react-fancy",
@@ -5956,7 +5996,7 @@
             "version": "0.9.0",
             "published_at": "2026-09-14T03:50:01Z",
             "first": false,
-            "summary": null
+            "summary": "Threads replay their attachments faithfully, on prism v0.120.0"
         },
         {
             "slug": "fancy-git-gitlab-js",
@@ -6004,7 +6044,7 @@
             "version": "0.120.0",
             "published_at": "2026-09-14T03:26:33Z",
             "first": false,
-            "summary": null
+            "summary": "Media is stored with its bytes and its kind, and without file paths"
         },
         {
             "slug": "fancy-flow",
@@ -6092,7 +6132,7 @@
             "version": "0.119.0",
             "published_at": "2026-09-14T02:17:24Z",
             "first": false,
-            "summary": null
+            "summary": "Media URLs are no longer fetched server-side — security fix, breaking change"
         },
         {
             "slug": "fancy-expr",
@@ -6364,7 +6404,7 @@
             "version": "0.8.2",
             "published_at": "2026-09-10T18:43:55Z",
             "first": false,
-            "summary": null
+            "summary": "Correct what refusing a referenced Audio actually stops"
         },
         {
             "slug": "prism",
@@ -6372,7 +6412,7 @@
             "version": "0.118.0",
             "published_at": "2026-09-10T18:41:42Z",
             "first": false,
-            "summary": null
+            "summary": "hasBase64() now answers the question its name asks"
         },
         {
             "slug": "prism-human-plus",
@@ -6388,7 +6428,7 @@
             "version": "0.8.1",
             "published_at": "2026-09-10T18:22:30Z",
             "first": false,
-            "summary": null
+            "summary": "Voice: referenced audio is refused, and the failure path is measured"
         },
         {
             "slug": "dark-slide-js",
@@ -6492,7 +6532,7 @@
             "version": "0.8.0",
             "published_at": "2026-09-10T02:37:49Z",
             "first": false,
-            "summary": null
+            "summary": "a scope can hold more than one conversation, and a turn can be spoken"
         },
         {
             "slug": "fancy-echarts",
@@ -6508,7 +6548,7 @@
             "version": "0.7.1",
             "published_at": "2026-09-09T16:13:41Z",
             "first": false,
-            "summary": null
+            "summary": "the release v0.7.0 never got"
         },
         {
             "slug": "fancy-flow",
@@ -6548,7 +6588,7 @@
             "version": "0.6.1",
             "published_at": "2026-09-09T02:34:11Z",
             "first": false,
-            "summary": null
+            "summary": "Correct the published config comment about what the summariser costs"
         },
         {
             "slug": "prism-harness",
@@ -6556,7 +6596,7 @@
             "version": "0.6.0",
             "published_at": "2026-09-09T02:32:16Z",
             "first": false,
-            "summary": null
+            "summary": "Enforce the summary word budget"
         },
         {
             "slug": "fancy-flow",
@@ -6580,7 +6620,7 @@
             "version": "0.5.0",
             "published_at": "2026-09-07T18:32:27Z",
             "first": false,
-            "summary": null
+            "summary": "a summarising compaction strategy"
         },
         {
             "slug": "prism-harness",
@@ -6588,7 +6628,7 @@
             "version": "0.4.0",
             "published_at": "2026-09-07T08:46:16Z",
             "first": false,
-            "summary": null
+            "summary": "a context window the harness does not decide for you"
         },
         {
             "slug": "prism",
@@ -6596,15 +6636,7 @@
             "version": "0.117.2",
             "published_at": "2026-09-07T03:22:08Z",
             "first": false,
-            "summary": null
-        },
-        {
-            "slug": "fancy-flow",
-            "registry": "npm",
-            "version": "0.66.1",
-            "published_at": "2026-09-06T09:18:33Z",
-            "first": false,
-            "summary": "/engine is React-free again"
+            "summary": "Anthropic context management is reachable, and reports what it did"
         }
     ]
 }

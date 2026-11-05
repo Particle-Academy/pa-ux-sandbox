@@ -34,13 +34,23 @@ final class ChangelogSummary
 {
     public const MAX_LENGTH = 120;
 
+    /**
+     * A changelog fetched from somewhere else is cut to this before it is parsed.
+     * Twice the largest one in the kit (react-fancy, about 230 KB, 2026-11-05):
+     * the sections a 60-day window asks for sit at the top.
+     */
+    public const MAX_CHANGELOG_BYTES = 512 * 1024;
+
     /** An entry longer than this is not read further: a summary comes from its start. */
     private const MAX_ENTRY_BYTES = 4000;
 
     private const STANDARD_SUBSECTION = '/^(added|changed|deprecated|removed|fixed|security|breaking)\b/i';
 
     /** Openers that talk about the upgrade rather than the change. */
-    private const CONSUMER_NOTE = '/^(what (you|a consumer|consumers) (must|need to|needs to|should|have to) do|what to do|nothing to\b|nothing in this release|(no |one )?consumer action|additive\b|pre-1\.0|a minor release|(the )?first release\b|initial release\b|no (api )?changes?\b|none$)/i';
+    private const CONSUMER_NOTE = '/^(what (you|a consumer|consumers) (must|need to|needs to|should|have to) do|what to do|nothing to\b|nothing in this release|(no |one )?consumer action|additive\b|pre-1\.0|a minor release|(the )?first release\b|initial release\b|no (api )?changes?\b|no breaking changes?\b|none$)/i';
+
+    /** The headings GitHub's generated release notes open with. */
+    private const GENERATED_NOTES = "/^(what['\u{2019}]s changed|full changelog\\b|new contributors\\b)/iu";
 
     /** The word before a period that does not end the sentence. */
     private const ABBREVIATION = '/(?:\b(?:e\.g|i\.e|vs|etc|cf|approx|incl|resp)|\b\p{Lu})\.$/iu';
@@ -74,6 +84,43 @@ final class ChangelogSummary
         }
 
         return null;
+    }
+
+    /**
+     * The summary in one line of release notes (a GitHub Release body's first
+     * line), or null. Same rules as a changelog entry: consumer notes are not a
+     * summary, markup becomes text, and the result is capped.
+     *
+     * A leading `v1.2.3 - ` is the version, not news, and GitHub's generated
+     * notes open with a heading (`## What's Changed`) that says nothing.
+     */
+    public static function forLine(string $line): ?string
+    {
+        $line = substr($line, 0, self::MAX_ENTRY_BYTES);
+        $line = trim(mb_scrub($line, 'UTF-8'));
+        $line = (string) preg_replace('/^#{1,6}\s+/', '', $line);
+        $line = (string) preg_replace('/^(?:[-*+]|\d+[.)])\s+/', '', $line);
+        $line = (string) preg_replace('/^v?\d+\.\d+\.\d+(?:\s*[:—–-]\s*|\s*$)/u', '', $line);
+
+        if (preg_match(self::GENERATED_NOTES, self::plain($line)) === 1) {
+            return null;
+        }
+
+        return self::summarize($line);
+    }
+
+    /**
+     * Whether a line of release notes is only the release's title: its version,
+     * alone or after one name (`# 0.6.0`, `prism-acp 0.24.1`,
+     * `@particle-academy/prism-harness v0.7.0`). A title says nothing about
+     * what changed, so the summary is the line after it.
+     */
+    public static function isReleaseTitle(string $line, string $version): bool
+    {
+        $line = substr($line, 0, self::MAX_ENTRY_BYTES);
+        $text = self::plain((string) preg_replace('/^#{1,6}\s+/', '', trim(mb_scrub($line, 'UTF-8'))));
+
+        return preg_match('/^(?:\S+\s+)?v?'.preg_quote($version, '/').'$/u', trim($text, " \t*_")) === 1;
     }
 
     /** Whether the changelog has a section for exactly `$version`, usable or not. */

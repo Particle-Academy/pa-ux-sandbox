@@ -59,9 +59,15 @@ php artisan notices:build    # release dates (registries) + one-line summaries (
 ```
 
 `notices:build` refuses to run with no sibling repos on disk, because a rebuild
-there would blank every summary. A release whose repo is absent, or whose
-changelog has no section for it, gets `summary: null` and its card says only the
-version; the command prints the count and the reason for each.
+there would blank every summary. A repo that is not on disk (the prism-* family
+lives in another estate, whose files this workspace never reads) is fetched from
+GitHub instead: its `CHANGELOG.md` at the release tag, then the first line of the
+GitHub Release at `v<version>`. Set `GITHUB_TOKEN` to lift the API's 60 requests
+an hour; answers are cached in the gitignored
+`storage/app/notices-github-cache.json`; `--no-remote` turns fetching off. A
+release with nothing usable gets `summary: null` and its card says only the
+version; the command prints the count, the source of each summary, and the
+reason for each miss. A failed fetch never fails the build.
 
 `docs:snapshot` is the odd one out — it runs **once per kit cut**, not whenever
 its source changes. See "This app owns the kit version" below.

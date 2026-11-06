@@ -125,6 +125,10 @@ import { Slide as FsSlide, defaultTheme as fsDefaultTheme } from "@particle-acad
 import "@particle-academy/fancy-slides/styles.css";
 import { DownlineTree, CommissionStatement, RankProgress } from "@particle-academy/fancy-mlm-ui";
 import "@particle-academy/fancy-mlm-ui/styles.css";
+import { ConsentBanner, ConsentGate, ConsentPreferencesTrigger, ConsentProvider } from "@particle-academy/fancy-compliance-ui";
+import { FunLabAchievementGrid, FunLabLeaderboard, FunLabLevelUp, FunLabProfileSummary, FunLabXpFeed } from "@particle-academy/fancy-fun-lab-ui";
+import "@particle-academy/fancy-fun-lab-ui/styles.css";
+import { CONSENT_UNDECIDED, consentAfter, FL_ACHIEVEMENTS, FL_EARNED, FL_ENTRIES, FL_FEED, FL_LEVEL_UP, FL_METRIC_PROGRESS, FL_NAMES, FL_PROFILE } from "./complianceFunLabFixtures";
 import {
     RobotsEditor,
     SecurityTxtEditor,
@@ -451,6 +455,59 @@ const PREVIEWS: Record<string, PreviewFn> = {
             Signups per referral code
         </div>
     )),
+
+    // ─── fancy-fun-lab-ui ────────────────────────────────────────────────────
+    "fancy-fun-lab-ui/fun-lab-achievement-grid": () => (
+        <div className="w-full max-w-[20rem] scale-90 text-left">
+            <FunLabAchievementGrid achievements={FL_ACHIEVEMENTS.slice(0, 4)} earned={FL_EARNED} cols={2} locale="en" />
+        </div>
+    ),
+    "fancy-fun-lab-ui/fun-lab-leaderboard": () => (
+        <div className="w-full max-w-[20rem] scale-90 text-left">
+            <FunLabLeaderboard entries={FL_ENTRIES.slice(0, 3)} names={FL_NAMES} currentProfileId={7} locale="en" />
+        </div>
+    ),
+    "fancy-fun-lab-ui/fun-lab-level-up": () => (
+        <div className="w-full max-w-[18rem] text-left">
+            <FunLabLevelUp event={FL_LEVEL_UP} celebrate={false} announce={false} locale="en" />
+        </div>
+    ),
+    "fancy-fun-lab-ui/fun-lab-profile-summary": () => (
+        <div className="w-full max-w-[20rem] scale-90 text-left">
+            <FunLabProfileSummary profile={FL_PROFILE} metrics={FL_METRIC_PROGRESS} locale="en" />
+        </div>
+    ),
+    "fancy-fun-lab-ui/fun-lab-xp-feed": () => (
+        <div className="w-full max-w-[18rem] text-left">
+            <FunLabXpFeed items={FL_FEED} announce={false} locale="en" />
+        </div>
+    ),
+
+    // ─── fancy-compliance-ui ─────────────────────────────────────────────────
+    // Static snapshots: a tile's provider never records anything.
+    "fancy-compliance-ui/consent-banner": () => (
+        <div className="w-full max-w-[22rem] scale-75 text-left">
+            <ConsentProvider value={CONSENT_UNDECIDED} onDecide={() => {}} onWithdraw={() => {}}>
+                <ConsentBanner className="static! z-auto! shadow-none! rounded-lg border" />
+            </ConsentProvider>
+        </div>
+    ),
+    "fancy-compliance-ui/consent-gate": () => (
+        <div className="w-full max-w-[18rem] text-left text-[12px]">
+            <ConsentProvider value={consentAfter([], "banner")} onDecide={() => {}} onWithdraw={() => {}}>
+                <ConsentGate category="analytics" fallback={<p className="rounded-md border border-dashed border-zinc-300 p-3 text-zinc-600 dark:border-zinc-700 dark:text-zinc-300">Analytics is off, so nothing here loads.</p>}>
+                    <p>Gated content</p>
+                </ConsentGate>
+            </ConsentProvider>
+        </div>
+    ),
+    "fancy-compliance-ui/consent-preferences": () => (
+        <div className="w-full max-w-[18rem] text-left">
+            <ConsentProvider value={consentAfter(["analytics"], "banner")} onDecide={() => {}} onWithdraw={() => {}}>
+                <ConsentPreferencesTrigger />
+            </ConsentProvider>
+        </div>
+    ),
 
     // ─── catalog-fms (block) ─────────────────────────────────────────────────
     "catalog-fms/pricing-table": () => (

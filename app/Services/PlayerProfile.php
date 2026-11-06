@@ -4,6 +4,9 @@ namespace App\Services;
 
 use App\Models\User;
 use App\Support\PlayerIdentity;
+use LaravelFunLab\Facades\LFL;
+use LaravelFunLab\Http\Resources\LeaderboardEntryResource;
+use LaravelFunLab\Models\GamedMetric;
 use LaravelFunLab\Models\MetricLevelGroup;
 use LaravelFunLab\Models\MetricLevelGroupLevel;
 use LaravelFunLab\Services\MetricLevelGroupService;
@@ -72,6 +75,7 @@ class PlayerProfile
 
         $achievements = $user->getAchievements()
             ->map(fn ($a) => [
+                'id' => $a->id,
                 'slug' => $a->slug,
                 'name' => $a->name ?? $a->slug,
                 'description' => $a->description,
@@ -100,6 +104,45 @@ class PlayerProfile
             'lifetimeEarned' => $user->getWallet()->lifetime_earned,
             'lifetimeSpent' => $user->getWallet()->lifetime_spent,
             'memberSince' => $user->created_at?->year,
+        ];
+    }
+
+    /**
+     * The top ten players, overall or on ONE gamed metric (laravel-fun-lab
+     * 0.7.0's per-metric leaderboard), in exactly the shape `GET
+     * /api/lfl/leaderboards/{type}` returns, plus display names keyed by
+     * profile id (the API carries ids only). Opted-out players are excluded,
+     * as on every board. An unknown metric falls back to the overall board.
+     *
+     * @return array{metric: ?string, entries: list<array<string, mixed>>, names: array<string, string>, viewerProfileId: int, metrics: list<array{slug: string, name: string}>}
+     */
+    public function metricBoard(User $user, ?string $metric): array
+    {
+        if ($metric !== null && GamedMetric::query()->where('slug', $metric)->doesntExist()) {
+            $metric = null;
+        }
+
+        $builder = LFL::leaderboard()->for(User::class)->by('xp')->excludeOptedOut();
+        if ($metric !== null) {
+            $builder->metric($metric);
+        }
+        $profiles = $builder->take(10);
+
+        $users = User::query()
+            ->whereIn('id', $profiles->pluck('awardable_id'))
+            ->get(['id', 'name', 'username'])
+            ->keyBy('id');
+
+        return [
+            'metric' => $metric,
+            'entries' => LeaderboardEntryResource::collection($profiles)->resolve(request()),
+            'names' => $profiles
+                ->mapWithKeys(fn ($p) => [(string) $p->id => (string) ($users->get($p->awardable_id)?->name ?? 'Player')])
+                ->all(),
+            'viewerProfileId' => (int) $user->getProfile()->id,
+            'metrics' => GamedMetric::query()->orderBy('name')->get(['slug', 'name'])
+                ->map(fn (GamedMetric $m): array => ['slug' => $m->slug, 'name' => $m->name])
+                ->all(),
         ];
     }
 

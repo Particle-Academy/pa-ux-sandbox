@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d13936381a1ef4a4419d634219ea83ea",
+    "content-hash": "b6ca2c5a7d81f272ce910fff2d4b0d6d",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -3878,6 +3878,88 @@
             "time": "2026-10-27T01:48:23+00:00"
         },
         {
+            "name": "particle-academy/fancy-compliance",
+            "version": "v0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Particle-Academy/fancy-compliance.git",
+                "reference": "cf9f7674c0c520b545f0a2bd8e8a3c299723e530"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Particle-Academy/fancy-compliance/zipball/cf9f7674c0c520b545f0a2bd8e8a3c299723e530",
+                "reference": "cf9f7674c0c520b545f0a2bd8e8a3c299723e530",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "illuminate/auth": "^13.0",
+                "illuminate/console": "^13.0",
+                "illuminate/contracts": "^13.0",
+                "illuminate/cookie": "^13.0",
+                "illuminate/database": "^13.0",
+                "illuminate/http": "^13.0",
+                "illuminate/routing": "^13.0",
+                "illuminate/support": "^13.0",
+                "illuminate/view": "^13.0",
+                "php": "^8.4"
+            },
+            "require-dev": {
+                "laravel/framework": "^13.30",
+                "pestphp/pest": "^5.0"
+            },
+            "suggest": {
+                "inertiajs/inertia-laravel": "Shares the current consent and the categories as an Inertia prop, so the UI renders without a fetch.",
+                "particle-academy/fancy-heuristics": "Can gate its collection on Consent::allows() once it adopts the ConsentGate contract."
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "Consent": "FancyCompliance\\Facades\\Consent"
+                    },
+                    "providers": [
+                        "FancyCompliance\\ComplianceServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "FancyCompliance\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Particle Academy",
+                    "homepage": "https://github.com/Particle-Academy"
+                }
+            ],
+            "description": "Consent for Laravel: host-defined categories, an append-only consent ledger per user and per guest, withdrawal, re-consent on a new policy version, and a server gate other packages check before collecting.",
+            "homepage": "https://github.com/Particle-Academy/fancy-compliance",
+            "keywords": [
+                "compliance",
+                "consent",
+                "cookie-banner",
+                "cookies",
+                "ePrivacy",
+                "fancy",
+                "gdpr",
+                "inertia",
+                "laravel",
+                "particle-academy",
+                "privacy"
+            ],
+            "support": {
+                "issues": "https://github.com/Particle-Academy/fancy-compliance/issues",
+                "source": "https://github.com/Particle-Academy/fancy-compliance"
+            },
+            "time": "2026-11-05T06:36:29+00:00"
+        },
+        {
             "name": "particle-academy/fancy-expr",
             "version": "v0.2.0",
             "source": {
@@ -4660,16 +4742,16 @@
         },
         {
             "name": "particle-academy/laravel-fun-lab",
-            "version": "v0.6.0",
+            "version": "v0.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/laravel-fun-lab.git",
-                "reference": "10585562f8679095f18bde749e40bac6c62af087"
+                "reference": "3b367e50619e40d6c36e9ddfe55dc182de438274"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/laravel-fun-lab/zipball/10585562f8679095f18bde749e40bac6c62af087",
-                "reference": "10585562f8679095f18bde749e40bac6c62af087",
+                "url": "https://api.github.com/repos/Particle-Academy/laravel-fun-lab/zipball/3b367e50619e40d6c36e9ddfe55dc182de438274",
+                "reference": "3b367e50619e40d6c36e9ddfe55dc182de438274",
                 "shasum": ""
             },
             "require": {
@@ -4730,9 +4812,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Particle-Academy/laravel-fun-lab/issues",
-                "source": "https://github.com/Particle-Academy/laravel-fun-lab/tree/v0.6.0"
+                "source": "https://github.com/Particle-Academy/laravel-fun-lab/tree/v0.7.0"
             },
-            "time": "2026-08-07T15:05:39+00:00"
+            "time": "2026-11-05T07:14:04+00:00"
         },
         {
             "name": "particle-academy/last-word",

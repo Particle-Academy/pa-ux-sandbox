@@ -145,6 +145,42 @@ import {
 } from "@particle-academy/fancy-mlm-ui";
 import "@particle-academy/fancy-mlm-ui/styles.css";
 import {
+    ConsentBanner,
+    ConsentGate,
+    ConsentPreferences,
+    ConsentPreferencesTrigger,
+    ConsentProvider,
+    useConsent,
+    type ConsentSnapshot,
+} from "@particle-academy/fancy-compliance-ui";
+import {
+    FunLabAchievementGrid,
+    FunLabLeaderboard,
+    FunLabLevelUp,
+    FunLabLiveRegionProvider,
+    FunLabProfileSummary,
+    FunLabXpFeed,
+    type FunLabAchievementFilter,
+    type FunLabFeedItem,
+    type FunLabLeaderboardBy,
+    type FunLabLeaderboardPeriod,
+    type FunLabLevelReached,
+} from "@particle-academy/fancy-fun-lab-ui";
+import "@particle-academy/fancy-fun-lab-ui/styles.css";
+import {
+    CONSENT_UNDECIDED,
+    consentAfter,
+    FL_ACHIEVEMENTS,
+    FL_EARNED,
+    FL_FEED,
+    FL_LEVEL_UP,
+    FL_METRICS,
+    FL_METRIC_PROGRESS,
+    FL_NAMES,
+    FL_PROFILE,
+    flEntriesFor,
+} from "./complianceFunLabFixtures";
+import {
     RobotsEditor as XfRobotsEditor,
     SecurityTxtEditor as XfSecurityTxtEditor,
     LlmsTxtEditor as XfLlmsTxtEditor,
@@ -437,6 +473,18 @@ const REGISTRY: Record<string, DemoFn> = {
     "fancy-mlm-ui/commission-statement": MlmCommissionStatementDemo,
     "fancy-mlm-ui/rank-progress": MlmRankProgressDemo,
     "fancy-mlm-ui/referral-stats": MlmReferralStatsDemo,
+
+    // ── fancy-fun-lab-ui
+    "fancy-fun-lab-ui/fun-lab-achievement-grid": FunLabAchievementGridDemo,
+    "fancy-fun-lab-ui/fun-lab-leaderboard": FunLabLeaderboardDemo,
+    "fancy-fun-lab-ui/fun-lab-level-up": FunLabLevelUpDemo,
+    "fancy-fun-lab-ui/fun-lab-profile-summary": FunLabProfileSummaryDemo,
+    "fancy-fun-lab-ui/fun-lab-xp-feed": FunLabXpFeedDemo,
+
+    // ── fancy-compliance-ui
+    "fancy-compliance-ui/consent-banner": ConsentBannerDemo,
+    "fancy-compliance-ui/consent-gate": ConsentGateDemo,
+    "fancy-compliance-ui/consent-preferences": ConsentPreferencesDemo,
 
     // ── fancy-cms-ui
     "fancy-cms-ui/cms-editor": CmsEditorDemo,
@@ -5168,6 +5216,216 @@ function MlmReferralStatsDemo() {
                 selectedKey={selectedKey}
                 onSelect={(key) => setSelectedKey(key)}
             />
+        </DemoNote>
+    );
+}
+
+// ─── fancy-fun-lab-ui ────────────────────────────────────────────────────────
+// Fixtures in the shapes laravel-fun-lab's REST API and broadcasts emit, so
+// each demo passes them straight in, as a host passes a response.
+
+function FunLabProfileSummaryDemo() {
+    const [selected, setSelected] = useState<string | null>("explorer-xp");
+    return (
+        <DemoNote
+            outOfBox="FunLabProfileSummary takes GET /me/profile's data as-is, plus one row per gamed metric. Progress is said in words beside every bar and as its aria-valuetext, numbers are isolated left-to-right under RTL, and the selected metric is a controlled prop mirrored as data-fancy-fun-lab-selected-metric."
+            demo="Metric names are buttons here because onSelectMetric is wired; without it they are plain text."
+        >
+            <FunLabProfileSummary
+                profile={FL_PROFILE}
+                metrics={FL_METRIC_PROGRESS}
+                selectedMetric={selected}
+                onSelectMetric={setSelected}
+                title="Your progress"
+                locale="en"
+            />
+        </DemoNote>
+    );
+}
+
+function FunLabLeaderboardDemo() {
+    const [by, setBy] = useState<FunLabLeaderboardBy>("xp");
+    const [metric, setMetric] = useState<string | null>(null);
+    const [period, setPeriod] = useState<FunLabLeaderboardPeriod>("all-time");
+    const [page, setPage] = useState(1);
+    return (
+        <DemoNote
+            outOfBox="FunLabLeaderboard renders one page of GET /leaderboards/{type}. by, metric, period and page are all controlled, and each control only appears when its handler is set. With laravel-fun-lab 0.7.0 a board can rank on ONE gamed metric (?metric=), and each entry then carries that metric's XP and level. The viewer's row says (You) and carries aria-current; every row has data-fancy-fun-lab-entry-id, -rank and -score."
+            demo="Two fixture pages stand in for the API; switching the metric re-ranks the same five people the way the server would."
+        >
+            <FunLabLeaderboard
+                entries={flEntriesFor(metric)}
+                by={by}
+                onByChange={(next) => {
+                    setBy(next);
+                    setPage(1);
+                }}
+                metric={metric}
+                metrics={FL_METRICS}
+                onMetricChange={(next) => {
+                    setMetric(next);
+                    setPage(1);
+                }}
+                period={period}
+                onPeriodChange={setPeriod}
+                page={page}
+                lastPage={2}
+                onPageChange={setPage}
+                names={FL_NAMES}
+                currentProfileId={7}
+                locale="en"
+            />
+        </DemoNote>
+    );
+}
+
+function FunLabAchievementGridDemo() {
+    const [filter, setFilter] = useState<FunLabAchievementFilter>("all");
+    return (
+        <DemoNote
+            outOfBox="FunLabAchievementGrid takes GET /achievements and the slugs a profile has earned. Each tile says Earned or Locked in words and carries data-fancy-fun-lab-achievement and -earned; the filter is controlled and shows only when onFilterChange is set."
+        >
+            <FunLabAchievementGrid achievements={FL_ACHIEVEMENTS} earned={FL_EARNED} filter={filter} onFilterChange={setFilter} locale="en" />
+        </DemoNote>
+    );
+}
+
+function FunLabXpFeedDemo() {
+    const [items, setItems] = useState<FunLabFeedItem[]>(FL_FEED);
+    const award = () =>
+        setItems((current) => [
+            {
+                id: `xp-${current.length + 1}`,
+                type: "xp.awarded",
+                profile_id: 7,
+                gamed_metric_id: 1,
+                gamed_metric_slug: "explorer-xp",
+                gamed_metric_name: "Explorer",
+                amount: 10,
+                total_xp: 1240 + 10 * current.length,
+                current_level: 4,
+                reason: "opened a demo",
+                occurred_at: new Date().toISOString(),
+            },
+            ...current,
+        ]);
+    return (
+        <DemoNote
+            outOfBox="FunLabXpFeed lists xp.awarded and metric.level-reached broadcasts, newest first, built with feedItemFromEcho + mergeFeed. New rows are spoken through one polite live region; anything within two seconds of the last announcement is held and spoken as one summary. Rows present on first render are never spoken."
+            demo="The button stands in for a broadcast. Press it several times quickly and a screen reader hears one summary, not a stream."
+        >
+            <div className="space-y-3">
+                <Button size="sm" onClick={award}>
+                    Award 10 XP
+                </Button>
+                <FunLabLiveRegionProvider>
+                    <FunLabXpFeed items={items} max={6} locale="en" />
+                </FunLabLiveRegionProvider>
+            </div>
+        </DemoNote>
+    );
+}
+
+function FunLabLevelUpDemo() {
+    const [event, setEvent] = useState<FunLabLevelReached | null>(FL_LEVEL_UP);
+    return (
+        <DemoNote
+            outOfBox="FunLabLevelUp shows a metric.level-reached payload: the level, its name and any achievement that level granted. It never takes focus, announces politely, and its celebration only runs under prefers-reduced-motion: no-preference."
+            demo="Dismiss clears the controlled event; the button brings it back."
+        >
+            <div className="space-y-3">
+                {event === null && (
+                    <Button size="sm" onClick={() => setEvent(FL_LEVEL_UP)}>
+                        Show the level-up again
+                    </Button>
+                )}
+                <FunLabLevelUp event={event} onDismiss={() => setEvent(null)} locale="en" />
+            </div>
+        </DemoNote>
+    );
+}
+
+// ─── fancy-compliance-ui ─────────────────────────────────────────────────────
+// Each demo runs its OWN ConsentProvider over local state and never posts to
+// /fancy-compliance: what someone clicks in a demo is not their consent to
+// this site. The site's real banner sits in the root layout.
+
+function DemoConsent({ children }: { children: ReactNode }) {
+    const [value, setValue] = useState<ConsentSnapshot>(CONSENT_UNDECIDED);
+    return (
+        <ConsentProvider
+            value={value}
+            onDecide={(d) => setValue(consentAfter(d.granted, d.source))}
+            onWithdraw={(w) => {
+                const granted = (value.consent?.granted ?? []).filter((k) => k !== "necessary" && w.categories !== null && !w.categories.includes(k));
+                setValue(consentAfter(granted, w.source));
+            }}
+        >
+            {children}
+            <DemoConsentStatus onReset={() => setValue(CONSENT_UNDECIDED)} />
+        </ConsentProvider>
+    );
+}
+
+function DemoConsentStatus({ onReset }: { onReset: () => void }) {
+    const { value } = useConsent();
+    return (
+        <div className="mt-3 flex flex-wrap items-center gap-2 text-[12px] text-zinc-600 dark:text-zinc-300" data-demo-consent-state={value.consent ? value.consent.granted.join(",") : "undecided"}>
+            <span>
+                {value.consent ? `Granted: ${value.consent.granted.join(", ")}. Refused: ${value.consent.refused.join(", ") || "nothing"}.` : "No decision yet."}
+            </span>
+            <Button size="sm" variant="ghost" onClick={onReset}>
+                Reset the demo
+            </Button>
+        </div>
+    );
+}
+
+function ConsentBannerDemo() {
+    return (
+        <DemoNote
+            outOfBox="ConsentBanner shows while needsConsent is true: on a first visit, and again after a policy version change. It is a labelled, non-modal region that never takes or traps focus. Accept all, Reject all and Customise are the same component, size and classes, so refusing is exactly as easy as accepting. Every button carries data-fancy-compliance-action."
+            demo="Pinned in place with a className here; on a page it is fixed to the bottom of the viewport, as this site's own banner is. Decisions stay in this demo."
+        >
+            <DemoConsent>
+                <ConsentBanner className="static! z-auto! shadow-none! rounded-lg border" />
+                <ConsentPreferences />
+            </DemoConsent>
+        </DemoNote>
+    );
+}
+
+function ConsentPreferencesDemo() {
+    return (
+        <DemoNote
+            outOfBox="ConsentPreferences is a real modal: focus moves in, Tab stays inside, Escape closes, and focus returns to whatever opened it. One switch per category with its description and purposes; nothing optional is pre-ticked, and turning a granted category off is recorded as a withdrawal. ConsentPreferencesTrigger opens it at any time, which is how a person withdraws."
+        >
+            <DemoConsent>
+                <ConsentPreferencesTrigger>Open the preferences</ConsentPreferencesTrigger>
+                <ConsentPreferences />
+            </DemoConsent>
+        </DemoNote>
+    );
+}
+
+function ConsentGateDemo() {
+    return (
+        <DemoNote
+            outOfBox="ConsentGate renders its children only while a category is allowed: never before a decision, never under an outdated policy, never for a category the server did not send. On withdrawal they unmount. For a script, useConsentScript inserts the tag only after consent, and on withdrawal either runs your cleanup or says a reload is needed, because removing a tag does not undo code that ran."
+            demo="The gated box stands in for an analytics widget."
+        >
+            <DemoConsent>
+                <div className="space-y-3">
+                    <ConsentPreferencesTrigger>Change analytics consent</ConsentPreferencesTrigger>
+                    <ConsentGate
+                        category="analytics"
+                        fallback={<p className="rounded-md border border-dashed border-zinc-300 p-3 text-[13px] text-zinc-600 dark:border-zinc-700 dark:text-zinc-300">Analytics is off, so nothing here loads.</p>}
+                    >
+                        <p className="rounded-md border border-emerald-300 bg-emerald-50 p-3 text-[13px] text-emerald-900 dark:border-emerald-700 dark:bg-emerald-950 dark:text-emerald-100">Analytics allowed: the gated content is mounted.</p>
+                    </ConsentGate>
+                </div>
+                <ConsentPreferences />
+            </DemoConsent>
         </DemoNote>
     );
 }

@@ -6,7 +6,7 @@ function ModalDemo({ size, label }: { size?: "sm" | "md" | "lg" | "xl" | "full";
     const [open, setOpen] = useState(false);
     return (
         <>
-            <Button onClick={() => setOpen(true)}>{label}</Button>
+            <Button onClick={() => setOpen(true)} data-modal-demo={size ?? "md"}>{label}</Button>
             <Modal open={open} onClose={() => setOpen(false)} size={size}>
                 <Modal.Header>
                     <Heading size="md">Modal · {size ?? "md"}</Heading>
@@ -23,6 +23,24 @@ function ModalDemo({ size, label }: { size?: "sm" | "md" | "lg" | "xl" | "full";
                         <Button color="violet" onClick={() => setOpen(false)}>OK</Button>
                     </div>
                 </Modal.Footer>
+            </Modal>
+        </>
+    );
+}
+
+/** A translated page: the icon-only close button needs a translated name too. */
+function LocalisedCloseDemo() {
+    const [open, setOpen] = useState(false);
+    return (
+        <>
+            <Button onClick={() => setOpen(true)}>Ouvrir la fenêtre</Button>
+            <Modal open={open} onClose={() => setOpen(false)}>
+                <Modal.Header closeLabel="Fermer">
+                    <Heading size="md">Confirmer</Heading>
+                </Modal.Header>
+                <Modal.Body>
+                    <Text size="sm">Le bouton de fermeture s&apos;annonce « Fermer », pas « Close ».</Text>
+                </Modal.Body>
             </Modal>
         </>
     );
@@ -77,6 +95,18 @@ export const modalDoc: ComponentDoc = {
 <Modal size="xl" open={open} onClose={onClose}>…</Modal>
 <Modal size="full" open={open} onClose={onClose}>…</Modal>`,
         },
+        {
+            name: "Modal.Header — closeLabel",
+            description:
+                "The close button is an icon, so its accessible name is a string: \"Close\" by default. Pass your locale's word with closeLabel, or a screen reader announces English in the middle of a translated page.",
+            render: () => <LocalisedCloseDemo />,
+            code: `<Modal open={open} onClose={() => setOpen(false)}>
+    <Modal.Header closeLabel="Fermer">
+        <Heading size="md">Confirmer</Heading>
+    </Modal.Header>
+    <Modal.Body>…</Modal.Body>
+</Modal>`,
+        },
     ],
     props: [
         { name: "open", type: `boolean`, default: "—", description: "Controlled open state. Required." },
@@ -84,6 +114,7 @@ export const modalDoc: ComponentDoc = {
         { name: "size", type: `"sm" | "md" | "lg" | "xl" | "full"`, default: `"md"`, description: "Modal width preset. `full` fills the viewport (good for app-like flows)." },
         { name: "children", type: `ReactNode`, default: "—", description: "Compound parts: `Modal.Header`, `Modal.Body`, `Modal.Footer`." },
         { name: "className", type: `string`, default: "—", description: "Extra classes on the modal panel." },
+        { name: "Modal.Header — closeLabel", type: `string`, default: `"Close"`, description: "Accessible name of the close button. Pass your locale's word." },
     ],
     notes: (
         <p className="text-xs text-zinc-600 dark:text-zinc-300">

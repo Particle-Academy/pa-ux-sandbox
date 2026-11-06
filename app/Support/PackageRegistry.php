@@ -181,18 +181,6 @@ class PackageRegistry
             'registries' => ['packagist' => 'particle-academy/agent-flo'],
             'why' => 'Subagent that manages fancy-flow flows for any Laravel app on prism-harness: find, read, diagnose, triage, author, start and control, with host-owned flows and runs behind a store contract, configurable names, proposals by default, and run data treated as hostile. The repo exists with a test suite, but nothing is published or usable yet. Design: .ai/plans/flo.md and .ai/plans/agent-packages.md.',
         ],
-        'fancy-compliance' => [
-            'name' => 'particle-academy/fancy-compliance',
-            'repo' => 'Particle-Academy/fancy-compliance',
-            'registries' => ['packagist' => 'particle-academy/fancy-compliance'],
-            'why' => 'Consent for Laravel apps: categories, a consent ledger per user and per guest, withdrawal, and a server gate other packages check before collecting. Banner first; GDPR export and erasure come later. Owner decided 2026-11-05. NOT YET STARTED.',
-        ],
-        'fancy-compliance-ui' => [
-            'name' => '@particle-academy/fancy-compliance-ui',
-            'repo' => 'Particle-Academy/fancy-compliance-ui',
-            'registries' => ['npm' => '@particle-academy/fancy-compliance-ui'],
-            'why' => 'React consent banner and preferences built from react-fancy: categories, withdrawal, scripts blocked until consent, AAA and RTL. Pairs with fancy-compliance. Owner decided 2026-11-05. NOT YET STARTED.',
-        ],
         'fancy-translations' => [
             'name' => 'particle-academy/fancy-translations',
             'repo' => 'Particle-Academy/fancy-translations',
@@ -204,12 +192,6 @@ class PackageRegistry
             'repo' => 'Particle-Academy/fancy-translations-ui',
             'registries' => ['npm' => '@particle-academy/fancy-translations-ui'],
             'why' => 'React surfaces for fancy-translations: propose a correction, the voting queue per language, string context, progress to the threshold, history. Owner decided 2026-11-05. NOT YET STARTED.',
-        ],
-        'fancy-fun-lab-ui' => [
-            'name' => '@particle-academy/fancy-fun-lab-ui',
-            'repo' => 'Particle-Academy/fancy-fun-lab-ui',
-            'registries' => ['npm' => '@particle-academy/fancy-fun-lab-ui'],
-            'why' => 'React surfaces for laravel-fun-lab: profiles, leaderboards per gamed metric, XP and achievement widgets, built from react-fancy. Owner decided 2026-11-05. NOT YET STARTED.',
         ],
         'fine-print-js' => [
             'name' => '@particle-academy/fine-print',
@@ -368,6 +350,11 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
         'fancy-pixel' => ['group' => 'platform', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#f97316'],
         'fancy-echarts' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#0ea5e9'],
         'fancy-mlm-ui' => ['group' => 'commerce', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#14b8a6'],
+        'fancy-fun-lab-ui' => ['group' => 'commerce', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#f43f5e'],
+        'fancy-compliance-ui' => ['group' => 'platform', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#0d9488'],
+        // Not installed here (no captcha surface to dogfood yet), so it lists as a
+        // companion with no component pages; still UI, so it keeps the ui kind.
+        'fancy-captcha-ui' => ['group' => 'platform', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#ea580c'],
         'fancy-git-ui' => ['group' => 'tooling', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#f97316'],
         'fancy-screens' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#8b5cf6'],
         'fancy-3d' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#6366f1'],
@@ -423,6 +410,8 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
         'fine-print' => ['group' => 'documents', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#e11d48'],
         'fancy-qr' => ['group' => 'documents', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#0f172a'],
         'fancy-heuristics' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#8b5cf6'],
+        'fancy-compliance' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#0d9488'],
+        'fancy-captcha' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#ea580c'],
         'fancy-x-files' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#64748b'],
         'fancy-cms' => ['group' => 'surfaces', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#0ea5e9'],
         'charlotte' => ['group' => 'surfaces', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#0ea5e9'],
@@ -579,6 +568,8 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
             self::fancyPixel(),
             self::fancyEcharts(),
             self::fancyMlmUi(),
+            self::fancyFunLabUi(),
+            self::fancyComplianceUi(),
             self::fancyPasskeysUi(),
             self::lastWordUi(),
             self::laravelCourses(),
@@ -737,6 +728,32 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
                 'repo' => 'Particle-Academy/laravel-fun-lab',
                 'packagist' => 'particle-academy/laravel-fun-lab',
                 'language' => 'PHP',
+            ],
+            [
+                'slug' => 'fancy-compliance',
+                'name' => 'particle-academy/fancy-compliance',
+                'tagline' => 'Consent for Laravel: host-defined categories, an append-only consent ledger per user and per guest (no IP address, no user agent), withdrawal, re-consent on a new policy version, and a server gate other packages check before they collect. Headless; pairs with @particle-academy/fancy-compliance-ui.',
+                'composer' => 'particle-academy/fancy-compliance',
+                'repo' => 'Particle-Academy/fancy-compliance',
+                'packagist' => 'particle-academy/fancy-compliance',
+                'language' => 'PHP',
+            ],
+            [
+                'slug' => 'fancy-captcha',
+                'name' => 'particle-academy/fancy-captcha',
+                'tagline' => 'Bot protection for Laravel forms behind one Verifier contract: a built-in mode (honeypot, signed render time, optional single-use proof-of-work) with no keys and no network, plus Turnstile, reCAPTCHA and hCaptcha drivers over plain HTTP, no SDKs. Fails closed once configured. Pairs with @particle-academy/fancy-captcha-ui.',
+                'composer' => 'particle-academy/fancy-captcha',
+                'repo' => 'Particle-Academy/fancy-captcha',
+                'packagist' => 'particle-academy/fancy-captcha',
+                'language' => 'PHP',
+            ],
+            [
+                'slug' => 'fancy-captcha-ui',
+                'name' => '@particle-academy/fancy-captcha-ui',
+                'tagline' => 'One React captcha component for every fancy-captcha driver, built from react-fancy: built-in mode by default, Turnstile, reCAPTCHA v2/v3 and hCaptcha scripts loaded lazily, proof-of-work in a Web Worker, single-use tokens reset on submit. Pairs with particle-academy/fancy-captcha.',
+                'npm' => '@particle-academy/fancy-captcha-ui',
+                'repo' => 'Particle-Academy/fancy-captcha-ui',
+                'language' => 'TypeScript',
             ],
             [
                 'slug' => 'fancy-mlm',
@@ -2217,6 +2234,48 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
                 ['slug' => 'commission-statement', 'name' => 'CommissionStatement', 'blurb' => 'Per-period earnings ledger — level, source member, tier multiplier, and amount per row, with a paid/pending status and totals.'],
                 ['slug' => 'rank-progress', 'name' => 'RankProgress', 'blurb' => 'Progress toward the next rank/tier — current volume vs threshold, with the requirement gap.'],
                 ['slug' => 'referral-stats', 'name' => 'ReferralStats', 'blurb' => 'Referral scans, unique visitors, signups and conversion per code, scope or member — a bar chart of one metric over a table of all four, fed the engines\' stats() rows as-is. Fully controlled, with data-mlm-* handles.'],
+            ],
+        ];
+    }
+
+    /** @return array<string,mixed> */
+    private static function fancyFunLabUi(): array
+    {
+        return [
+            'slug' => 'fancy-fun-lab-ui',
+            'name' => 'fancy-fun-lab-ui',
+            'tagline' => 'React surfaces for laravel-fun-lab, built from react-fancy: a profile summary with per-metric levels, a leaderboard by XP, achievements or prizes (overall or for one gamed metric, over a period), an achievement grid, a live XP feed and a level-up announcement. Controlled, fed the Fun Lab REST API\'s own shapes, with rate-limited polite announcements and RTL. Pairs with particle-academy/laravel-fun-lab.',
+            'npm' => '@particle-academy/fancy-fun-lab-ui',
+            'repo' => 'Particle-Academy/fancy-fun-lab-ui',
+            'language' => 'TypeScript',
+            'pairs' => ['laravel-fun-lab'],
+            'components' => [
+                ['slug' => 'fun-lab-achievement-grid', 'name' => 'FunLabAchievementGrid', 'blurb' => 'Earned and locked achievements as tiles, with a controlled earned / locked / all filter. Each tile says "Earned" or "Locked" in words, never by colour alone.'],
+                ['slug' => 'fun-lab-leaderboard', 'name' => 'FunLabLeaderboard', 'blurb' => 'A ranked table by XP, achievements or prizes, overall or for one gamed metric (laravel-fun-lab 0.7.0+), over a period, a page at a time. Every control is controlled; the viewer\'s row is marked "(You)" and aria-current.'],
+                ['slug' => 'fun-lab-level-up', 'name' => 'FunLabLevelUp', 'blurb' => 'A level-up announcement for a metric.level-reached broadcast: the level, its name and the achievements it granted. Takes no focus; the celebration runs only without reduced motion.'],
+                ['slug' => 'fun-lab-profile-summary', 'name' => 'FunLabProfileSummary', 'blurb' => 'Total XP, achievements and prizes, then each gamed metric\'s level and progress to the next, said in words beside every bar.'],
+                ['slug' => 'fun-lab-xp-feed', 'name' => 'FunLabXpFeed', 'blurb' => 'A running list of xp.awarded and metric.level-reached broadcasts, newest first, spoken through one polite live region that folds a burst into a single summary.'],
+            ],
+        ];
+    }
+
+    /** @return array<string,mixed> */
+    private static function fancyComplianceUi(): array
+    {
+        return [
+            'slug' => 'fancy-compliance-ui',
+            'name' => 'fancy-compliance-ui',
+            'tagline' => 'A consent banner, a preferences dialog and script gating for React, built from react-fancy. Reject is exactly as easy as accept, nothing is pre-ticked, withdrawal is one click from the footer, and a script that already ran is never claimed to be stopped. AAA, RTL, every string a translation key. Pairs with particle-academy/fancy-compliance.',
+            'npm' => '@particle-academy/fancy-compliance-ui',
+            'repo' => 'Particle-Academy/fancy-compliance-ui',
+            'language' => 'TypeScript',
+            'pairs' => ['fancy-compliance'],
+            'components' => [
+                // Install-only: every part reads ConsentProvider's context, so a
+                // copied banner without the provider and controller is no use.
+                ['slug' => 'consent-banner', 'name' => 'ConsentBanner', 'vendor' => false, 'blurb' => 'The first-visit banner: a labelled, non-modal region with Accept all, Reject all and Customise as the same component, size and classes. It shows on a first visit and after a policy version change.'],
+                ['slug' => 'consent-gate', 'name' => 'ConsentGate', 'vendor' => false, 'blurb' => 'Renders its children only while a category is allowed, and unmounts them on withdrawal. useConsentScript loads a script the same way and reports honestly when a withdrawn script needs a reload (ConsentReloadNotice).'],
+                ['slug' => 'consent-preferences', 'name' => 'ConsentPreferences', 'vendor' => false, 'blurb' => 'The preferences dialog: one switch per category with its description and purposes, nothing optional pre-ticked. Opened any time from ConsentPreferencesTrigger; turning a category off is recorded as a withdrawal.'],
             ],
         ];
     }

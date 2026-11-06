@@ -47,6 +47,51 @@ function SizeDemo({ side, size }: { side: DrawerSide; size: DrawerSize }) {
     );
 }
 
+/** A drawer with no close button, so something inside it must close it. */
+function UnclosableDemo() {
+    const [open, setOpen] = useState(true);
+    return (
+        <Drawer.Container className="h-56 w-full rounded-lg border border-zinc-200 dark:border-zinc-800">
+            <div className="p-4">
+                <Button size="sm" onClick={() => setOpen(true)} disabled={open}>
+                    Reopen
+                </Button>
+            </div>
+            <Drawer open={open} onClose={() => setOpen(false)} attach="container" side="bottom" size="sm">
+                <Drawer.Header closable={false}>
+                    <Heading as="h3" size="md">Finish setting up</Heading>
+                </Drawer.Header>
+                <Drawer.Body>
+                    <Text size="sm">No close button — so give the user another way out.</Text>
+                    <Button className="mt-3" size="sm" onClick={() => setOpen(false)}>
+                        Save and close
+                    </Button>
+                </Drawer.Body>
+            </Drawer>
+        </Drawer.Container>
+    );
+}
+
+/** A translated page: the icon-only close button needs a translated name too. */
+function LocalisedCloseDemo() {
+    const [open, setOpen] = useState(false);
+    return (
+        <>
+            <Button onClick={() => setOpen(true)}>Ouvrir les filtres</Button>
+            <Drawer open={open} onClose={() => setOpen(false)}>
+                <Drawer.Header closeLabel="Fermer">
+                    <Heading size="md">Filtres</Heading>
+                </Drawer.Header>
+                <Drawer.Body>
+                    <Text size="sm">
+                        Le bouton de fermeture s&apos;annonce « Fermer », pas « Close ».
+                    </Text>
+                </Drawer.Body>
+            </Drawer>
+        </>
+    );
+}
+
 /** The attached form — a drawer that stays inside its own box rather than the viewport. */
 function AttachedDemo() {
     const [open, setOpen] = useState(false);
@@ -158,23 +203,28 @@ export const drawerDoc: ComponentDoc = {
             name: "Drawer.Header — closable",
             description:
                 "The close button is on by default. Turn it off for a drawer the user must resolve rather than dismiss — an unsaved-changes prompt, a required step. Do that only when something else in the drawer closes it, or you have built a trap.",
-            render: () => (
-                <div className="w-full rounded-lg border border-zinc-200 p-4 dark:border-zinc-800">
-                    <Drawer.Header closable={false}>
-                        <Heading as="h3" size="md">Finish setting up</Heading>
-                    </Drawer.Header>
-                    <Text size="sm" className="mt-2">
-                        No close button — so give the user another way out.
-                    </Text>
-                    <Button className="mt-3" size="sm">Save and close</Button>
-                </div>
-            ),
+            // Inside a real (attached) Drawer: since react-fancy 6.11.0 the
+            // compound parts read the Drawer's context and throw outside one,
+            // which took the whole Examples tab down with this demo.
+            render: () => <UnclosableDemo />,
             code: `<Drawer.Header closable={false}>
     <Heading as="h3">Finish setting up</Heading>
 </Drawer.Header>
 
 {/* Something else MUST close it. */}
 <Button onClick={close}>Save and close</Button>`,
+        },
+        {
+            name: "Drawer.Header — closeLabel",
+            description:
+                "The close button is an icon, so its accessible name is a string: \"Close\" by default. Pass your locale's word with closeLabel, or a screen reader announces English in the middle of a translated page.",
+            render: () => <LocalisedCloseDemo />,
+            code: `<Drawer open={open} onClose={() => setOpen(false)}>
+    <Drawer.Header closeLabel="Fermer">
+        <Heading size="md">Filtres</Heading>
+    </Drawer.Header>
+    <Drawer.Body>…</Drawer.Body>
+</Drawer>`,
         },
     ],
     props: [
@@ -189,6 +239,7 @@ export const drawerDoc: ComponentDoc = {
         { name: "children", type: `ReactNode`, default: "—", description: "Compound parts: `Drawer.Header`, `Drawer.Body`, `Drawer.Footer`." },
         { name: "className", type: `string`, default: "—", description: "Extra classes on the drawer panel." },
         { name: "Drawer.Header — closable", type: `boolean`, default: `true`, description: "Show the close button. Turn it off only when something else in the drawer closes it." },
+        { name: "Drawer.Header — closeLabel", type: `string`, default: `"Close"`, description: "Accessible name of the close button. Pass your locale's word." },
     ],
     notes: (
         <div className="space-y-2 text-xs text-zinc-600 dark:text-zinc-300">

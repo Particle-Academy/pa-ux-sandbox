@@ -18,6 +18,9 @@ class ProfileController extends Controller
 
         return Inertia::render('Profile/Show', [
             'profile' => $profiles->full($user),
+            // fancy-fun-lab-ui's leaderboard: the top ten overall or on one
+            // gamed metric (?board=<slug>, partial-reloaded by the picker).
+            'metricBoard' => fn () => $profiles->metricBoard($user, $request->string('board')->toString() ?: null),
             // Username settings — powers the /join/{username} referral link.
             'username' => $user->username,
             'usernameSuggestion' => $user->username === null ? Usernames::suggestionFor($user) : null,

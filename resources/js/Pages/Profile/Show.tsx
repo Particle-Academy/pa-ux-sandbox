@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Head, Link, useForm } from "@inertiajs/react";
+import { Head, Link, router, useForm } from "@inertiajs/react";
+import { FunLabAchievementGrid, FunLabLeaderboard, type FunLabLeaderboardEntry, type FunLabMetric } from "@particle-academy/fancy-fun-lab-ui";
 import { Badge, Button, Card, Icon, Input, Progress } from "@particle-academy/react-fancy";
 import { Layout } from "../Layout";
 import { type CosmeticSlots } from "../../lib/cosmetics";
@@ -11,7 +12,7 @@ import {
 } from "../../components/PlayerIdentity";
 
 type Metric = { slug: string; name: string; icon: string | null; xp: number; level: number };
-type Achievement = { slug: string; name: string; description: string | null; icon: string | null };
+type Achievement = { id: number; slug: string; name: string; description: string | null; icon: string | null };
 type Prize = { slug: string; name: string; type: string | null };
 
 type ProfileData = {
@@ -41,13 +42,23 @@ type ProfileData = {
 const ACT_COLORS = ["#0ea5e9", "#10b981", "#8b5cf6", "#f59e0b", "#f43f5e", "#6366f1"];
 const ACT_ICONS = ["flame", "sparkles", "code", "award", "medal", "package"];
 
+/** PlayerProfile::metricBoard: one page of GET /api/lfl/leaderboards/{type}, plus names. */
+type MetricBoard = {
+    metric: string | null;
+    entries: FunLabLeaderboardEntry[];
+    names: Record<string, string>;
+    viewerProfileId: number;
+    metrics: FunLabMetric[];
+};
+
 type Props = {
     profile: ProfileData;
+    metricBoard: MetricBoard;
     username: string | null;
     usernameSuggestion: string | null;
 };
 
-export default function ProfileShow({ profile, username, usernameSuggestion }: Props) {
+export default function ProfileShow({ profile, metricBoard, username, usernameSuggestion }: Props) {
     const displayName = profile.identity.name;
     const optOutForm = useForm({});
     /** Staged confirm for opting OUT only — opting back in needs no gate. */
@@ -225,21 +236,40 @@ export default function ProfileShow({ profile, username, usernameSuggestion }: P
                                     None yet — keep exploring to earn your first.
                                 </p>
                             ) : (
-                                <div className="ach-grid">
-                                    {profile.achievements.map((a) => (
-                                        <div className="ach" key={a.slug} title={a.description ?? a.name}>
-                                            <span className="ach-medal earned">
-                                                <span className="ring" />
-                                                <Icon name="medal" className="h-6 w-6" />
-                                            </span>
-                                            <span className="ach-label">{a.name}</span>
-                                            <span className="ach-tier">Earned</span>
-                                        </div>
-                                    ))}
-                                </div>
+                                // fancy-fun-lab-ui. Earned only, as before: locked
+                                // ones are left for the Leaderboard page to tease.
+                                <FunLabAchievementGrid
+                                    achievements={profile.achievements}
+                                    earned={profile.achievements.map((a) => a.slug)}
+                                    cols={3}
+                                    locale="en"
+                                />
                             )}
                         </div>
                     </Card>
+                </div>
+
+                {/* ── Leaderboard, overall or for one activity ──────────── */}
+                {/* fancy-fun-lab-ui over laravel-fun-lab 0.7.0's per-metric
+                    board. The metric picker is controlled: a choice reloads
+                    only this prop (?board=<slug>), keeping scroll. */}
+                <div className="pf-fade" data-profile-board>
+                    <FunLabLeaderboard
+                        title="Leaderboard"
+                        entries={metricBoard.entries}
+                        metric={metricBoard.metric}
+                        metrics={metricBoard.metrics}
+                        onMetricChange={(metric) =>
+                            router.reload({
+                                only: ["metricBoard"],
+                                data: { board: metric ?? undefined },
+                                preserveScroll: true,
+                            } as Parameters<typeof router.reload>[0])
+                        }
+                        names={metricBoard.names}
+                        currentProfileId={metricBoard.viewerProfileId}
+                        locale="en"
+                    />
                 </div>
 
                 {/* ── Pro access ────────────────────────────────────────── */}

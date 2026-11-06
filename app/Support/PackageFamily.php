@@ -186,6 +186,63 @@ final class PackageFamily
             ],
         ],
         [
+            'slug' => 'fancy-compliance',
+            'name' => 'Fancy Compliance',
+            'tagline' => 'Consent as a drop-in capability: an append-only consent ledger and a server gate in Laravel, and a React banner, preferences dialog and script gating where refusing is exactly as easy as accepting.',
+            'group' => 'platform',
+            'kind' => 'headless',
+            'sections' => [
+                [
+                    'label' => 'Backend',
+                    'capability' => 'Consent ledger, withdrawal and a server-side consent gate',
+                    'members' => [['language' => 'PHP', 'slug' => 'fancy-compliance']],
+                ],
+                [
+                    'label' => 'React UI',
+                    'capability' => null,
+                    'members' => [['language' => 'React', 'slug' => 'fancy-compliance-ui']],
+                ],
+            ],
+        ],
+        [
+            'slug' => 'fancy-captcha',
+            'name' => 'Fancy Captcha',
+            'tagline' => 'Bot protection for forms: a Laravel verifier with a keyless built-in mode and Turnstile, reCAPTCHA and hCaptcha drivers, and one React component for all of them.',
+            'group' => 'platform',
+            'kind' => 'headless',
+            'sections' => [
+                [
+                    'label' => 'Backend',
+                    'capability' => 'Captcha verification (built-in, Turnstile, reCAPTCHA, hCaptcha)',
+                    'members' => [['language' => 'PHP', 'slug' => 'fancy-captcha']],
+                ],
+                [
+                    'label' => 'React UI',
+                    'capability' => null,
+                    'members' => [['language' => 'React', 'slug' => 'fancy-captcha-ui']],
+                ],
+            ],
+        ],
+        [
+            'slug' => 'laravel-fun-lab',
+            'name' => 'Fancy Fun Lab',
+            'tagline' => 'Gamification from your own analytics: XP per gamed metric, levels, achievements, prizes and leaderboards in Laravel, and React surfaces for profiles, per-metric boards and live level-ups.',
+            'group' => 'commerce',
+            'kind' => 'headless',
+            'sections' => [
+                [
+                    'label' => 'Engine',
+                    'capability' => 'Gamification: XP, levels, achievements, prizes and leaderboards',
+                    'members' => [['language' => 'PHP', 'slug' => 'laravel-fun-lab']],
+                ],
+                [
+                    'label' => 'React UI',
+                    'capability' => null,
+                    'members' => [['language' => 'React', 'slug' => 'fancy-fun-lab-ui']],
+                ],
+            ],
+        ],
+        [
             'slug' => 'fancy-x-files',
             'name' => 'Fancy X-Files',
             'tagline' => 'Well-known + agent-facing files from one declarative registry — robots.txt, security.txt, humans, llms, sitemap, AGENTS — with a leak-safe protect() guard, plus an admin UI to edit them.',

@@ -105,6 +105,10 @@ notes). These are READ-ONLY blueprints to re-implement and mix-and-match in the
 user's own project, not source to copy. Pairs with the `/design` skill in the
 fancy-ui plugins for Claude Code and Codex.
 
+Writing tests or setting up CI? The `/tdd` skill in the same plugins covers
+test-first with Pest and vitest, testing Fancy components by their stable
+handles, and a lite GitHub Actions workflow.
+
 WORKFLOW NODES — building a fancy-flow graph? Before you hand-roll a step in
 app code, call `search_nodes` with the concept ("upload to s3", "wait for
 approval", "route with an llm"). The expensive failure is not "could not install

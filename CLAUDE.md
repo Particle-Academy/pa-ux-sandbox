@@ -103,6 +103,16 @@ php artisan test --compact tests/Feature/Catalog/ProductCreationTest.php  # Sing
 
 Tests use Pest, SQLite in-memory, and `RefreshDatabase` (via `Tests\TestCase`).
 
+**The local dev database is Postgres, run by Genie**, which hands every process
+`DB_CONNECTION=pgsql`. `phpunit.xml` pins the suite to in-memory SQLite with both
+`<env force>` and `<server force>`. Laravel reads `$_SERVER` first, and `<env force>`
+alone does not reach it, so without the `<server>` lines a run with Genie's env lets
+`RefreshDatabase` rebuild the dev database. To run the suite on Postgres deliberately,
+against the separate `fancy_test` database, use `vendor/bin/pest -c phpunit.pg.xml`.
+`php artisan test --configuration` ignores a second config. On Postgres, a statement
+expected to fail inside `RefreshDatabase` aborts the whole transaction; wrap it in
+`DB::transaction` so it rolls back to a savepoint.
+
 ### Code Formatting
 ```bash
 vendor/bin/pint --dirty   # Format only changed files (run before finalizing)

@@ -5,6 +5,7 @@ use Database\Seeders\MlmNetworkSeeder;
 use FancyMlm\Laravel\Models\Member;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 uses(TestCase::class);
@@ -95,7 +96,9 @@ it('has the database trigger installed, so a raw update cannot move a sponsor ei
     $b = makeMember(['meta' => ['label' => 'B']]);
     $c = makeMember(['sponsor_id' => $b->getKey(), 'meta' => ['label' => 'C']]);
 
-    expect(fn () => Member::query()->whereKey($c->getKey())->update(['sponsor_id' => $a->getKey()]))
+    // Inside its own (nested, so savepointed) transaction: Postgres aborts the enclosing
+    // RefreshDatabase transaction on any error, so the read below would fail there without it.
+    expect(fn () => DB::transaction(fn () => Member::query()->whereKey($c->getKey())->update(['sponsor_id' => $a->getKey()])))
         ->toThrow(QueryException::class);
     expect((int) Member::query()->find($c->getKey())->sponsor_id)->toBe($b->getKey());
 });

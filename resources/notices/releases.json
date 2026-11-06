@@ -16,6 +16,8 @@
         "fancy-artboard": "0.5.0",
         "fancy-auto-common": "0.2.0",
         "fancy-brand-icons": "0.4.0",
+        "fancy-captcha": "0.1.0",
+        "fancy-captcha-ui": "0.1.0",
         "fancy-catalog-js": "0.6.1",
         "fancy-catalog-py": "0.2.0",
         "fancy-cf-relay": "0.2.0",
@@ -23,6 +25,8 @@
         "fancy-cms": "0.8.1",
         "fancy-cms-ui": "0.13.1",
         "fancy-code": "0.16.0",
+        "fancy-compliance": "0.1.0",
+        "fancy-compliance-ui": "0.1.0",
         "fancy-conformance": "0.46.0",
         "fancy-connector-core": "0.13.0",
         "fancy-devtools": "0.1.1",
@@ -40,6 +44,7 @@
         "fancy-flow-php": "0.66.0",
         "fancy-flow-py": "0.30.1",
         "fancy-formula": "0.1.0",
+        "fancy-fun-lab-ui": "0.1.0",
         "fancy-git": "0.4.1",
         "fancy-git-bitbucket-js": "0.2.0",
         "fancy-git-bitbucket-php": "0.2.0",
@@ -111,10 +116,10 @@
         "prism-human-plus": "0.5.1",
         "prism-human-plus-py": "0.2.0",
         "prism-human-plus-ts": "0.4.0",
-        "prism-mcp": "0.2.0",
-        "prism-mcp-py": "0.2.1",
-        "prism-mcp-server-ts": "0.5.0",
-        "prism-mcp-ts": "0.3.0",
+        "prism-mcp": "0.3.0",
+        "prism-mcp-py": "0.3.0",
+        "prism-mcp-server-ts": "0.6.0",
+        "prism-mcp-ts": "0.4.0",
         "prism-memory": "0.4.0",
         "prism-memory-py": "0.1.0",
         "prism-memory-ts": "0.2.0",
@@ -134,6 +139,70 @@
         "teachers-aid-ui": "0.3.0"
     },
     "releases": [
+        {
+            "slug": "fancy-captcha-ui",
+            "registry": "npm",
+            "version": "0.1.0",
+            "published_at": "2026-11-06T01:13:02Z",
+            "first": true,
+            "summary": "<Captcha>, one component for every provider"
+        },
+        {
+            "slug": "prism-mcp-server-ts",
+            "registry": "npm",
+            "version": "0.6.0",
+            "published_at": "2026-11-06T00:43:12Z",
+            "first": false,
+            "summary": "Breaking: re-exported TrustPolicy.allowing([]) now raises server_not_trusted; a ResultGuard you construct without…"
+        },
+        {
+            "slug": "prism-mcp-py",
+            "registry": "pypi",
+            "version": "0.3.0",
+            "published_at": "2026-11-05T22:42:40Z",
+            "first": false,
+            "summary": "Breaking: empty trust allowlists raise before discovery, with a distinct message from missing trust"
+        },
+        {
+            "slug": "prism-mcp-ts",
+            "registry": "npm",
+            "version": "0.4.0",
+            "published_at": "2026-11-05T22:38:44Z",
+            "first": false,
+            "summary": "Breaking: an explicit empty trust allowlist now raises before discovery, with a message distinct from missing trust"
+        },
+        {
+            "slug": "prism-mcp",
+            "registry": "composer",
+            "version": "0.3.0",
+            "published_at": "2026-11-05T22:32:13Z",
+            "first": false,
+            "summary": "Breaking: an explicitly present isError: null now reports tool failure"
+        },
+        {
+            "slug": "fancy-captcha",
+            "registry": "composer",
+            "version": "0.1.0",
+            "published_at": "2026-11-05T19:25:04Z",
+            "first": true,
+            "summary": "One Verifier contract with four drivers"
+        },
+        {
+            "slug": "fancy-fun-lab-ui",
+            "registry": "npm",
+            "version": "0.1.0",
+            "published_at": "2026-11-05T19:11:36Z",
+            "first": true,
+            "summary": "Every string is a JSON label"
+        },
+        {
+            "slug": "fancy-compliance-ui",
+            "registry": "npm",
+            "version": "0.1.0",
+            "published_at": "2026-11-05T19:09:33Z",
+            "first": true,
+            "summary": "ConsentProvider: controlled consent state (value, onDecide, onWithdraw), translations by key with English defaults…"
+        },
         {
             "slug": "prism-py",
             "registry": "pypi",
@@ -181,6 +250,14 @@
             "published_at": "2026-11-05T06:50:45Z",
             "first": false,
             "summary": "PhoneInput: a country picker and a number field whose value is an E.164 string or null, reported with detail (country…"
+        },
+        {
+            "slug": "fancy-compliance",
+            "registry": "composer",
+            "version": "0.1.0",
+            "published_at": "2026-11-05T06:36:29Z",
+            "first": true,
+            "summary": "Consent categories from config"
         },
         {
             "slug": "react-fancy",
@@ -268,7 +345,7 @@
             "version": "0.4.2",
             "published_at": "2026-11-05T01:50:22Z",
             "first": false,
-            "summary": null
+            "summary": "Refuses a cancel acknowledgement that names a different run"
         },
         {
             "slug": "fancy-mlm",
@@ -284,7 +361,7 @@
             "version": "0.4.1",
             "published_at": "2026-11-04T22:16:07Z",
             "first": false,
-            "summary": null
+            "summary": "Fixes cancel() against Perplexity's documented cancel response"
         },
         {
             "slug": "dark-slide-py",
@@ -468,7 +545,7 @@
             "version": "0.4.0",
             "published_at": "2026-11-04T18:58:33Z",
             "first": false,
-            "summary": null
+            "summary": "Fixes cancel() on Agent responses and reports why a run stopped early"
         },
         {
             "slug": "react-fancy",
@@ -756,7 +833,7 @@
             "version": "0.1.1",
             "published_at": "2026-11-02T22:09:58Z",
             "first": false,
-            "summary": null
+            "summary": "Fixed: the package version constant reported 0.1.0-alpha.5 in the 0.1.0 tag"
         },
         {
             "slug": "prism-acp",
@@ -764,7 +841,7 @@
             "version": "0.1.0",
             "published_at": "2026-11-02T21:51:02Z",
             "first": true,
-            "summary": null
+            "summary": "Verify dedicated API-key homes and every descendant's ownership, permissions and file type at admission and before…"
         },
         {
             "slug": "fancy-flow",
@@ -804,7 +881,7 @@
             "version": "0.22.2",
             "published_at": "2026-11-02T07:00:45Z",
             "first": false,
-            "summary": null
+            "summary": "Supports Prism core 0.146"
         },
         {
             "slug": "prism-opentelemetry",
@@ -812,7 +889,7 @@
             "version": "0.6.0",
             "published_at": "2026-11-02T07:00:41Z",
             "first": false,
-            "summary": null
+            "summary": "Spans close when a stream fails without an exception, and requires a patched Laravel"
         },
         {
             "slug": "react-fancy",
@@ -924,7 +1001,7 @@
             "version": "0.22.1",
             "published_at": "2026-11-02T00:45:41Z",
             "first": false,
-            "summary": null
+            "summary": "Supports Prism core 0.145"
         },
         {
             "slug": "prism",
@@ -956,7 +1033,7 @@
             "version": "0.4.0",
             "published_at": "2026-11-01T20:32:31Z",
             "first": false,
-            "summary": null
+            "summary": "Caller-supplied identity, configurable embedding routing, and pgvector in a separate schema"
         },
         {
             "slug": "prism-ts",
@@ -1308,7 +1385,7 @@
             "version": "0.22.0",
             "published_at": "2026-10-31T16:21:07Z",
             "first": false,
-            "summary": null
+            "summary": "Call budgets keep the image discount behind provider wrappers"
         },
         {
             "slug": "change-council",
@@ -1332,7 +1409,7 @@
             "version": "0.21.1",
             "published_at": "2026-10-31T07:55:50Z",
             "first": false,
-            "summary": null
+            "summary": "Call budgets count an inline image once"
         },
         {
             "slug": "prism-mcp-server-ts",
@@ -1356,7 +1433,7 @@
             "version": "0.21.0",
             "published_at": "2026-10-31T06:05:44Z",
             "first": false,
-            "summary": null
+            "summary": "Call budgets reserve against the request actually sent"
         },
         {
             "slug": "prism-mcp-server-ts",
@@ -1556,7 +1633,7 @@
             "version": "0.20.1",
             "published_at": "2026-10-29T08:30:20Z",
             "first": false,
-            "summary": null
+            "summary": "doMath uses the real fancy-formula engine automatically"
         },
         {
             "slug": "prism-harness",
@@ -1564,7 +1641,7 @@
             "version": "0.20.0",
             "published_at": "2026-10-29T08:04:01Z",
             "first": false,
-            "summary": null
+            "summary": "doMath preview: an optional spreadsheet-formula tool backed by fancy-formula"
         },
         {
             "slug": "fancy-formula",
@@ -1604,7 +1681,7 @@
             "version": "0.19.0",
             "published_at": "2026-10-29T03:28:46Z",
             "first": false,
-            "summary": null
+            "summary": "Agent-scoped harness: named namespaces, owned registries and effective tool inspection"
         },
         {
             "slug": "last-word",
@@ -1620,7 +1697,7 @@
             "version": "0.18.1",
             "published_at": "2026-10-28T21:53:05Z",
             "first": false,
-            "summary": null
+            "summary": "Refuse a call-only tool policy while tool authorization is disabled"
         },
         {
             "slug": "last-word",
@@ -1828,7 +1905,7 @@
             "version": "0.18.0",
             "published_at": "2026-10-27T21:56:27Z",
             "first": false,
-            "summary": null
+            "summary": "A failed provider step is terminal"
         },
         {
             "slug": "agent-integrations",
@@ -1892,7 +1969,7 @@
             "version": "0.5.1",
             "published_at": "2026-10-27T17:29:06Z",
             "first": false,
-            "summary": null
+            "summary": "Declare the runtime dependencies Human+ already used"
         },
         {
             "slug": "prism-browser",
@@ -1900,7 +1977,7 @@
             "version": "0.4.1",
             "published_at": "2026-10-27T17:24:48Z",
             "first": false,
-            "summary": null
+            "summary": "Declare the runtime dependencies Browser already used"
         },
         {
             "slug": "change-council",
@@ -2148,7 +2225,7 @@
             "version": "0.4.0",
             "published_at": "2026-10-26T17:31:50Z",
             "first": false,
-            "summary": null
+            "summary": "Refuse a page capture rendered in a fallback font"
         },
         {
             "slug": "fancy-cms",
@@ -2308,7 +2385,7 @@
             "version": "0.3.0",
             "published_at": "2026-10-26T05:33:11Z",
             "first": false,
-            "summary": null
+            "summary": "Refuse a page capture whose images did not load"
         },
         {
             "slug": "prism-acp-ts",
@@ -2388,7 +2465,7 @@
             "version": "0.3.0",
             "published_at": "2026-10-25T22:05:58Z",
             "first": false,
-            "summary": null
+            "summary": "Ask the Gate before listing the whole workspace"
         },
         {
             "slug": "prism-human-plus",
@@ -2396,7 +2473,7 @@
             "version": "0.5.0",
             "published_at": "2026-10-25T22:03:10Z",
             "first": false,
-            "summary": null
+            "summary": "Reserve a confirmation verb behind every separator (G-130)"
         },
         {
             "slug": "prism",
@@ -2484,7 +2561,7 @@
             "version": "0.17.0",
             "published_at": "2026-10-24T09:03:48Z",
             "first": false,
-            "summary": null
+            "summary": "OpenRouter capped calls trust only complete reported billing"
         },
         {
             "slug": "prism",
@@ -2508,7 +2585,7 @@
             "version": "0.16.1",
             "published_at": "2026-10-24T05:19:08Z",
             "first": false,
-            "summary": null
+            "summary": "a stream end with unknown usage is charged the reserved maximum"
         },
         {
             "slug": "prism-acp-ts",
@@ -2524,7 +2601,7 @@
             "version": "0.16.0",
             "published_at": "2026-10-24T04:59:33Z",
             "first": false,
-            "summary": null
+            "summary": "truncated streams are charged in full; abnormal ends report as failed"
         },
         {
             "slug": "prism",
@@ -2540,7 +2617,7 @@
             "version": "0.15.1",
             "published_at": "2026-10-24T04:41:34Z",
             "first": false,
-            "summary": null
+            "summary": "unknown or unfinished capped usage is charged the reserved maximum"
         },
         {
             "slug": "prism-harness",
@@ -2636,7 +2713,7 @@
             "version": "0.2.0",
             "published_at": "2026-10-23T21:04:32Z",
             "first": false,
-            "summary": null
+            "summary": "Page capture"
         },
         {
             "slug": "fancy-cms",
@@ -3716,7 +3793,7 @@
             "version": "0.1.2",
             "published_at": "2026-10-18T01:06:14Z",
             "first": false,
-            "summary": null
+            "summary": "security fix: shorthand IPv4 is an address"
         },
         {
             "slug": "prism-browser-py",
@@ -3740,7 +3817,7 @@
             "version": "0.1.1",
             "published_at": "2026-10-18T00:53:18Z",
             "first": false,
-            "summary": null
+            "summary": "security fix: refuse CGNAT and the IPv6 spellings of the metadata endpoint"
         },
         {
             "slug": "prism-acp-ts",
@@ -3844,7 +3921,7 @@
             "version": "0.2.0",
             "published_at": "2026-10-15T18:57:59Z",
             "first": false,
-            "summary": null
+            "summary": "Guarded media fetch: Media.fetch_public() fetches a URL you do not"
         },
         {
             "slug": "prism-mcp-py",
@@ -4908,7 +4985,7 @@
             "version": "0.5.2",
             "published_at": "2026-09-22T05:35:07Z",
             "first": false,
-            "summary": null
+            "summary": "A long tool list no longer costs a span its usage and finish reason"
         },
         {
             "slug": "prism-opentelemetry-ts",
@@ -4932,7 +5009,7 @@
             "version": "0.5.1",
             "published_at": "2026-09-22T05:07:01Z",
             "first": false,
-            "summary": null
+            "summary": "Require the prism whose tool digest a port can reproduce"
         },
         {
             "slug": "prism",
@@ -4964,7 +5041,7 @@
             "version": "0.5.0",
             "published_at": "2026-09-22T04:12:32Z",
             "first": false,
-            "summary": null
+            "summary": "Spans now say which tools the model was offered"
         },
         {
             "slug": "prism",
@@ -4980,7 +5057,7 @@
             "version": "0.1.0",
             "published_at": "2026-09-22T03:50:46Z",
             "first": true,
-            "summary": null
+            "summary": "prism-ai-perplexity is the Python port of"
         },
         {
             "slug": "prism-opentelemetry-py",
@@ -4988,7 +5065,7 @@
             "version": "0.1.0",
             "published_at": "2026-09-22T03:46:43Z",
             "first": true,
-            "summary": null
+            "summary": "prism-ai-opentelemetry is the Python port of"
         },
         {
             "slug": "prism-opentelemetry-ts",
@@ -5004,7 +5081,7 @@
             "version": "0.1.0",
             "published_at": "2026-09-22T03:24:04Z",
             "first": true,
-            "summary": null
+            "summary": "prism-ai-mcp is the Python port of particle-academy/prism-mcp — consuming"
         },
         {
             "slug": "prism-human-plus-py",
@@ -5012,7 +5089,7 @@
             "version": "0.1.0",
             "published_at": "2026-09-22T03:23:39Z",
             "first": true,
-            "summary": null
+            "summary": "prism-ai-human-plus is the Python port of"
         },
         {
             "slug": "prism-workspace-py",
@@ -5020,7 +5097,7 @@
             "version": "0.1.0",
             "published_at": "2026-09-22T03:21:44Z",
             "first": true,
-            "summary": null
+            "summary": "prism-ai-workspace is the Python port of"
         },
         {
             "slug": "prism-opentelemetry",
@@ -5028,7 +5105,7 @@
             "version": "0.4.0",
             "published_at": "2026-09-22T03:14:07Z",
             "first": false,
-            "summary": null
+            "summary": "Cached prompt tokens are counted now, and the input count changed"
         },
         {
             "slug": "prism-perplexity",
@@ -5036,7 +5113,7 @@
             "version": "0.3.0",
             "published_at": "2026-09-22T03:00:07Z",
             "first": false,
-            "summary": null
+            "summary": "The deep-research endpoint can outlive a 30-second timeout now"
         },
         {
             "slug": "prism-memory",
@@ -5044,7 +5121,7 @@
             "version": "0.3.0",
             "published_at": "2026-09-22T03:00:00Z",
             "first": false,
-            "summary": null
+            "summary": "pgvector, the harness pair, and a setting that was never applied"
         },
         {
             "slug": "prism-ts",
@@ -5084,7 +5161,7 @@
             "version": "0.4.0",
             "published_at": "2026-09-21T16:51:40Z",
             "first": false,
-            "summary": null
+            "summary": "What changed since my last turn"
         },
         {
             "slug": "prism-human-plus-ts",
@@ -5436,7 +5513,7 @@
             "version": "0.1.0",
             "published_at": "2026-09-15T07:34:52Z",
             "first": true,
-            "summary": null
+            "summary": "A policy-bounded browser surface for agents, for Python"
         },
         {
             "slug": "prism-memory-py",
@@ -5444,7 +5521,7 @@
             "version": "0.1.0",
             "published_at": "2026-09-15T07:33:08Z",
             "first": true,
-            "summary": null
+            "summary": "Persistent context, semantic recall and the vector-store contract, for Python"
         },
         {
             "slug": "prism-harness-py",
@@ -5452,7 +5529,7 @@
             "version": "0.1.0",
             "published_at": "2026-09-15T07:28:52Z",
             "first": true,
-            "summary": null
+            "summary": "Durable agent sessions for Python: threads, session state and store drivers"
         },
         {
             "slug": "fancy-connector-core",
@@ -5692,7 +5769,7 @@
             "version": "0.1.0",
             "published_at": "2026-09-14T18:33:38Z",
             "first": true,
-            "summary": null
+            "summary": "The Python port of Prism, a unified API layer over LLM providers"
         },
         {
             "slug": "holy-sheet",
@@ -5916,7 +5993,7 @@
             "version": "0.3.0",
             "published_at": "2026-09-14T08:10:41Z",
             "first": false,
-            "summary": null
+            "summary": "Attachment bytes are withheld from captured content"
         },
         {
             "slug": "prism-harness-ts",
@@ -6396,7 +6473,7 @@
             "version": "0.3.0",
             "published_at": "2026-09-11T03:02:00Z",
             "first": false,
-            "summary": null
+            "summary": "Two writers: a lost update is no longer silent"
         },
         {
             "slug": "prism-harness",
@@ -6420,7 +6497,7 @@
             "version": "0.2.0",
             "published_at": "2026-09-10T18:37:42Z",
             "first": false,
-            "summary": null
+            "summary": "A relay transport for hosts that cannot hold a stream open"
         },
         {
             "slug": "prism-harness",

@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Http\Middleware\GateSelfAnalytics;
 use App\Models\Setting;
 use App\Models\User;
 use App\Services\Entitlements;
@@ -23,7 +24,14 @@ class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        //
+        // Gate the showcase's OWN heuristics traffic on `analytics` consent (see
+        // GateSelfAnalytics). Set here, in register(), because fancy-heuristics
+        // reads this key when its boot() loads the routes; package providers
+        // register before app providers, so its defaults are already merged.
+        config()->set('heuristics.routes.middleware', [
+            ...(array) config('heuristics.routes.middleware', ['api']),
+            GateSelfAnalytics::class,
+        ]);
     }
 
     public function boot(): void

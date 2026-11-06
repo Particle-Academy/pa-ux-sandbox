@@ -133,7 +133,11 @@ it('exposes the latest screenshot on the site detail page', function () {
 it('upgrades an http tracker snippet to https on a secure request', function () {
     Setting::put('tracker_code', '<script data-site="abc" data-endpoint="http://showcase.test/heuristics"></script>');
 
-    $res = $this->get('https://localhost/');
+    // Printed only under analytics consent (fancy-compliance), so consent first.
+    $token = $this->postJson('https://localhost/fancy-compliance/consent', ['granted' => ['analytics'], 'source' => 'banner'])
+        ->getCookie('fancy_compliance_subject')->getValue();
+
+    $res = $this->withCookie('fancy_compliance_subject', $token)->get('https://localhost/');
     $res->assertOk();
     $res->assertSee('https://showcase.test/heuristics', false);
     $res->assertDontSee('http://showcase.test/heuristics', false);

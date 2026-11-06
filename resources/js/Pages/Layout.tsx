@@ -51,6 +51,16 @@ import { type CosmeticSlots } from "../lib/cosmetics";
 import { PlayerIdentityRow, type PlayerIdentityData } from "../components/PlayerIdentity";
 import { ActiveUsersOverlay } from "../components/ActiveUsersOverlay";
 import { AgentAnalyticsSink } from "../components/AgentAnalyticsSink";
+import { ShowcasePixel } from "../components/ShowcaseAnalytics";
+import {
+    ConsentBanner,
+    ConsentPreferences,
+    ConsentPreferencesTrigger,
+    ConsentProvider,
+    ConsentReloadNotice,
+    useConsentController,
+    type ConsentSnapshot,
+} from "@particle-academy/fancy-compliance-ui";
 
 type Flash = {
     auth_error?: string | null;
@@ -84,7 +94,7 @@ type AuthUser = {
 type Auth = { user: AuthUser | null; admin?: { url: string } | null };
 // `features` is App\Support\FeatureSites::nav(), shared on every response so
 // the dropdown, the mobile flyout and the footer read one server-side list.
-type SharedProps = { flash: Flash; auth: Auth; csrfToken: string; features?: FeatureNav[] };
+type SharedProps = { flash: Flash; auth: Auth; csrfToken: string; features?: FeatureNav[]; fancyCompliance: ConsentSnapshot };
 
 // Flow and TUI are no longer top-level: they live in the Features dropdown
 // (rendered right after Packages) with the other platforms.
@@ -142,8 +152,18 @@ export function Layout({
     // "system" preference, so the icon cannot go stale against the page.
     const { preference, resolved: theme } = useTheme();
 
+    // Consent (fancy-compliance + fancy-compliance-ui). The server shares the
+    // snapshot on every visit and the controller posts the person's own
+    // decisions to /fancy-compliance; nothing here decides for anyone. The
+    // banner sits first in the document so keyboard and screen-reader users
+    // meet it first; it is non-modal and never takes focus.
+    const consent = useConsentController(props.fancyCompliance);
+
     return (
-        <SiteWalkthrough>
+        <ConsentProvider {...consent}>
+        <ConsentBanner />
+        <ShowcasePixel />
+        <SiteWalkthrough holdAutoStart={consent.value.needsConsent}>
         <div className="min-h-screen flex flex-col">
             <header className="nav">
                 <div className="nav-inner">
@@ -628,7 +648,10 @@ export function Layout({
                             © Particle Academy · MIT
                             {" · "}
                             <TakeTheTourButton className="as-link" />
+                            {" · "}
+                            <ConsentPreferencesTrigger />
                         </span>
+                        <ConsentReloadNotice />
                         {/* The kit version links to what it supports — that page is the
                             only place the browser/PHP/Node floors are written down, and
                             the version chip is where someone looks for them. */}
@@ -650,6 +673,8 @@ export function Layout({
             />
         </div>
         </SiteWalkthrough>
+        <ConsentPreferences />
+        </ConsentProvider>
     );
 }
 

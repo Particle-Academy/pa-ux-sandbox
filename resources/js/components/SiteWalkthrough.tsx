@@ -138,13 +138,27 @@ export function isTourAutoStartRoute(pathname: string): boolean {
     return !/^\/features(\/|$)/.test(pathname);
 }
 
-export function SiteWalkthrough({ children }: { children: ReactNode }) {
+export function SiteWalkthrough({
+    children,
+    holdAutoStart = false,
+}: {
+    children: ReactNode;
+    /**
+     * Keep the first-visit tour from opening by itself while true. Layout holds
+     * it while the consent banner is up: both appear on a first visit, and the
+     * tour's spotlight covers the whole viewport, so a mouse user could not
+     * reach Reject all until they had dismissed a tour they never asked for.
+     * The tour opens once the person has decided.
+     */
+    holdAutoStart?: boolean;
+}) {
     const [autoStart, setAutoStart] = useState(false);
 
     // Read AFTER mount, never during render: the server has no localStorage, so
     // deciding this in the initial render would hydrate differently than it
     // rendered and React would discard the tree.
     useEffect(() => {
+        if (holdAutoStart) return;
         try {
             if (window.localStorage.getItem(SEEN_KEY)) return;
             if (!isTourAutoStartRoute(window.location.pathname)) return;
@@ -153,7 +167,7 @@ export function SiteWalkthrough({ children }: { children: ReactNode }) {
             // Private mode / storage disabled. Not running the tour is the right
             // failure: showing it on every page load would be worse than never.
         }
-    }, []);
+    }, [holdAutoStart]);
 
     const markSeen = useCallback(() => {
         try {

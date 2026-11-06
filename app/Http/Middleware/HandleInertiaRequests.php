@@ -78,6 +78,9 @@ class HandleInertiaRequests extends Middleware
                 'siteKey' => $key,
                 'endpoint' => SelfSite::endpoint(),
             ],
+            // The pasted Fancy Pixel, as mount options for the client, which
+            // mounts it only under `analytics` consent (ShowcaseAnalytics.tsx).
+            'selfPixel' => fn () => SelfSite::pixel(),
             // The head SeoServiceProvider resolved for this page, for the client
             // <ServerSeo> to replay after hydration and on SPA navigation. Pages
             // used to pass their own title and description to <Seo>, and the

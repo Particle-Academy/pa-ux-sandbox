@@ -64,10 +64,17 @@
 <body class="min-h-screen antialiased bg-white text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100">
     @inertia
 
-    {{-- Admin-pasted tracker / Fancy Pixel snippet (Admin → Settings). Raw by
-         design — a script embed set by a trusted admin, exactly like an external
-         site pasting our snippet into their own HTML. --}}
-    {!! $tracker ?? '' !!}
+    {{-- Admin-pasted tracker snippet (Admin → Settings), raw by design: a script
+         embed set by a trusted admin. Analytics, so only with `analytics` consent.
+         A Fancy Pixel snippet is never printed: the client mounts it under
+         consent and can stop it on withdrawal (SelfSite::pixel,
+         ShowcaseAnalytics.tsx). Anything else prints only on a page load that
+         already has consent, and keeps running until reload if withdrawn. --}}
+    @if (($tracker ?? '') !== '' && \App\Support\SelfSite::pixel() === null)
+        @consent('analytics')
+            {!! $tracker !!}
+        @endconsent
+    @endif
 
     {{-- No service worker is registered. The showcase is intentionally NOT a
          SW-PWA (it serves dynamic / SSR content). The /sw.js route still exists,

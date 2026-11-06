@@ -22,10 +22,20 @@ it('forbids non-admins from the settings page', function () {
     $this->actingAs($user)->get('/admin/settings')->assertForbidden();
 });
 
-it('injects the saved tracker snippet into the page', function () {
+it('injects the saved tracker snippet into the page once analytics consent is given', function () {
     Setting::put('tracker_code', '<script>window.__TRACKER_OK=1</script>');
 
+    // fancy-compliance: a tracker is analytics, so a visitor who has not
+    // decided (or refused) never receives it.
     $this->get('/')
+        ->assertOk()
+        ->assertDontSee('window.__TRACKER_OK=1', false);
+
+    $token = $this->postJson('/fancy-compliance/consent', ['granted' => ['analytics'], 'source' => 'banner'])
+        ->getCookie('fancy_compliance_subject')->getValue();
+
+    $this->withCookie('fancy_compliance_subject', $token)
+        ->get('/')
         ->assertOk()
         ->assertSee('window.__TRACKER_OK=1', false);
 });

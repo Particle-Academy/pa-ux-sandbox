@@ -194,14 +194,9 @@ Feature access control with strategies checked in order: app-registered pre-stra
 
 The root Laravel app has controllers in `app/Http/Controllers/Admin/` and `app/Http/Controllers/` that exercise both packages. Tests live in `tests/Feature/Catalog/` and `tests/Feature/Integration/`.
 
-### Holy Sheet AI agent demo (`/ai-sheets`)
+### Holy Sheet agent docs (no live demo)
 
-Live demo of holy-sheet's tool-use surface driven by the Laravel AI SDK (`laravel/ai`). Lives at:
-- `app/Ai/Agents/HolySheetAgent.php` — Anthropic-backed agent with system prompt + 3 tools
-- `app/Ai/Tools/{BuildSpreadsheetSchema, WriteSpreadsheet, DescribeSpreadsheet}.php` — wrap `HolySheet\Agent::fromArray`, `validateAndRepair`, `write`, `describe`
-- `resources/views/components/⚡ai-sheets.blade.php` — view at `Route::get('/ai-sheets', ...)`
-
-Generated xlsx artifacts land in `storage/app/public/ai-sheets/` and are served via the public disk (`php artisan storage:link` is required, run during setup). Requires `ANTHROPIC_API_KEY` in `.env`. The default AI provider is configured via `AI_DEFAULT_PROVIDER` (defaults to `anthropic`).
+There is **no `/ai-sheets` route and no `app/Ai/` directory** any more: the Livewire-based agent demo was deleted in `12c81244` ("drop fancy-flux + livewire-dependent app code"). holy-sheet's `Agent` API is documented on its component page, `resources/js/Pages/Packages/ComponentDocs/HolySheetAgent.tsx` (`/packages/holy-sheet/agent`). Check signatures there against `vendor/particle-academy/holy-sheet/src/Agent.php`, not against memory.
 
 ## Human+ UX — the contract for interactive surfaces
 

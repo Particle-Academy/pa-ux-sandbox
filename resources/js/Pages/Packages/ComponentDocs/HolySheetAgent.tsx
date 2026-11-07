@@ -69,25 +69,29 @@ return response($bytes, 200, [
         },
         {
             name: "Validate-and-repair (Laravel AI SDK)",
-            description: "When an agent emits a schema, `validateAndRepair()` returns the cleaned schema or a list of repairable issues — perfect for tool-use feedback loops.",
+            description: "When an agent emits a schema, `validateAndRepair()` returns the repaired schema, the original errors and the repairs it applied — perfect for tool-use feedback loops. Re-validate the repaired schema to know whether it is now writable.",
             render: () => (
                 <Text size="sm" className="!text-zinc-500">
-                    See <code>app/Ai/Tools/BuildSpreadsheetSchema.php</code> in this repo for the live example.
+                    Wrap it in a tool your agent calls, and hand the errors back as the tool result.
                 </Text>
             ),
             code: `// Inside a Laravel AI tool:
 $result = Agent::validateAndRepair($schemaFromAgent);
+// $result = ['schema' => [...], 'errors' => [...], 'repairs' => ['...']]
 
-if ($result['ok']) {
+$remaining = Agent::validate($result['schema']);
+
+if ($remaining === []) {
     return [
         'schema' => $result['schema'],
+        'repairs' => $result['repairs'],
         'sheets' => count($result['schema']['sheets']),
     ];
 }
 
 return [
     'error' => 'Schema invalid',
-    'errors' => $result['errors'],
+    'errors' => $remaining,
 ];`,
         },
     ],
@@ -95,16 +99,15 @@ return [
         { name: "Agent::validate($schema)", type: `(array) => list<error>`, default: "—", description: "Validate the schema. Returns an empty array on success or a list of `{ path, expected, got, value, hint }` errors." },
         { name: "Agent::write($schema, $path)", type: `(array, string) => array`, default: "—", description: "Write a workbook to disk. Throws `SchemaException` on validation failure. Returns `{ path, bytes, sheets }`." },
         { name: "Agent::toBytes($schema)", type: `(array) => string`, default: "—", description: "Return the workbook as a binary string (no temp file)." },
-        { name: "Agent::describe($schema)", type: `(array) => string`, default: "—", description: "Plain-text summary of the schema — useful as tool-use feedback for the agent." },
-        { name: "Agent::validateAndRepair($schema)", type: `(array) => array`, default: "—", description: "Validate + apply heuristic repairs. Returns `{ ok, schema, errors }`." },
+        { name: "Agent::describe($path, $options)", type: `(string $path, array $options = []) => array`, default: "—", description: "Read an existing .xlsx or .ods back to a Holy Sheet schema you can feed to `write()`. Options: `sheet` (one sheet by name), `limits`. Returns `{ error: 'not_found', path }` for a missing file." },
+        { name: "Agent::validateAndRepair($schema)", type: `(array) => array`, default: "—", description: "Validate + apply heuristic repairs. Returns `{ schema, errors, repairs }`." },
     ],
     notes: (
         <p className="text-xs text-zinc-600 dark:text-zinc-300">
-            <strong>Live demo:</strong> see <code>/ai-sheets</code> in this app for the
-            agentic flow — the Laravel AI SDK calls{" "}
-            <code>BuildSpreadsheetSchema</code>, <code>WriteSpreadsheet</code>, and{" "}
-            <code>DescribeSpreadsheet</code> tools, each of which wraps an{" "}
-            <code>Agent</code> method.
+            <strong>Tool use:</strong> <code>Agent::toolDefinition()</code> returns the
+            tool schema to register with your agent; give each tool one{" "}
+            <code>Agent</code> method to wrap (build with <code>validateAndRepair</code>,
+            save with <code>write</code>, read back with <code>describe</code>).
         </p>
     ),
 };

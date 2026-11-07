@@ -1775,6 +1775,7 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
             ['slug' => 'reorderable-grid', 'name' => 'ReorderableGrid', 'blurb' => 'Reorder grid cells in place by pointer or keyboard: controlled id order, row-major columns, locked cells, aria-live announcements and an agent-friendly moveItem().'],
             ['slug' => 'resizable-panels', 'name' => 'ResizablePanels', 'blurb' => 'Two panels with an accessible, draggable separator: a percentage split, keyboard steps, and a commit event to persist the size.'],
             ['slug' => 'separator', 'name' => 'Separator'],
+            ['slug' => 'setup-wizard', 'name' => 'SetupWizard', 'blurb' => 'Controlled, one-step-at-a-time setup guide for a third-party service: who does each step (You or Your agent), Open links, copy buttons, agent prompts, {{token}} filling and an optional live check.'],
             ['slug' => 'sidebar', 'name' => 'Sidebar'],
             ['slug' => 'skeleton', 'name' => 'Skeleton'],
             ['slug' => 'stepper', 'name' => 'Stepper'],

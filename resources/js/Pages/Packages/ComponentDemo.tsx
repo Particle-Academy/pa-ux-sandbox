@@ -13,6 +13,7 @@ import "@particle-academy/fancy-passkeys-ui/styles.css";
 import { ChatTranscript, MessageComposer, PlanReview, TeachersAidChat } from "@particle-academy/teachers-aid-ui";
 import { ApplicationList, ApplyForm, EmployerJobList, JobDetail, JobPostingForm } from "@particle-academy/job-board";
 import { CertificateView, CoursePlayer, CurriculumOverview, LessonView, QuestionRenderer, TestRunner, type AnswerValue} from "@particle-academy/classroom";
+import { EXAMPLE_PAY_STEPS, EXAMPLE_PAY_TOKENS, verifyExamplePay } from "./ComponentDocs/SetupWizard";
 import { SAMPLE_CODE_VIEW, SAMPLE_IMG, SAMPLE_PDF, SAMPLE_AUDIO, SAMPLE_AUDIO_TITLE, SAMPLE_POSTER, DELIVERY_ROUTE, DELIVERY_ROUTE_START } from "./showcase-fixtures";
 import {
     Accordion,
@@ -78,6 +79,8 @@ import {
     Separator,
     Sidebar,
     Skeleton,
+    SetupWizard,
+    type SetupWizardValue,
     Stepper,
     Table,
     Tabs,
@@ -295,6 +298,7 @@ const REGISTRY: Record<string, DemoFn> = {
     "react-fancy/emoji": EmojiDemo,
     "react-fancy/skeleton": SkeletonDemo,
     "react-fancy/stepper": StepperDemo,
+    "react-fancy/setup-wizard": SetupWizardDemo,
     "react-fancy/progress": ProgressDemo,
     "react-fancy/resizable-panels": ResizablePanelsDemo,
     "react-fancy/reorderable-grid": ReorderableGridDemo,
@@ -1493,6 +1497,28 @@ function SkeletonDemo() {
             <Skeleton className="h-3 w-1/2" />
             <Skeleton className="h-20 w-full" />
         </div>
+    );
+}
+
+function SetupWizardDemo() {
+    const [value, setValue] = useState<SetupWizardValue>({ current: 0, done: [] });
+    return (
+        <DemoNote
+            outOfBox="One step at a time, a You / Your agent badge on each, Open links, a Copy button for every value, a prompt for the agent step, {{token}} filling, and a live check at the end."
+            demo="The check resolves locally after a short pause; in an app it would call your server."
+        >
+            <div className="max-w-xl">
+                <SetupWizard
+                    id="setup-wizard-demo"
+                    steps={EXAMPLE_PAY_STEPS}
+                    value={value}
+                    onChange={setValue}
+                    tokens={EXAMPLE_PAY_TOKENS}
+                    verify={verifyExamplePay}
+                />
+                <Text size="xs" className="mt-2 font-mono !text-zinc-500">value: {JSON.stringify(value)}</Text>
+            </div>
+        </DemoNote>
     );
 }
 

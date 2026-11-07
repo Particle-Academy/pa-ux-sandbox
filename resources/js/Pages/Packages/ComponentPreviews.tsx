@@ -115,7 +115,7 @@ import {
     GIT_STATUS,
     GIT_TREE,
 } from "./gitFixtures";
-import { ActivityLight, AudioViewer, Avatar, Badge, Breadcrumbs, Button, Calendar, Callout, Card, ChatThread, CodeBlock, CodeView, ColorPicker, Container, ContentRenderer, ContextMenu, Drawer, Emoji, Eyebrow, FauxClient, FileBrowser, FullScreen, Grid, ReorderableGrid, Heading, ImageViewer, IndexList, JsonEditor, Kanban, Kbd, Marquee, MediaViewer, MoodMeter, OtpInput, Pagination, PdfViewer, Pillbox, Profile, Progress, PullQuote, QrCode, ResizablePanels, Section, Skeleton, Stat, Stepper, StatList, StickyNote, Switch, Tabs, Text, TimeGrid, TimePicker, Timeline, Tooltip, VideoViewer, VirtualList } from "@particle-academy/react-fancy";
+import { ActivityLight, AudioViewer, Avatar, Badge, Breadcrumbs, Button, Calendar, Callout, Card, ChatThread, CodeBlock, CodeView, ColorPicker, Container, ContentRenderer, ContextMenu, Drawer, Emoji, Eyebrow, FauxClient, FileBrowser, FullScreen, Grid, ReorderableGrid, Heading, ImageViewer, IndexList, JsonEditor, Kanban, Kbd, Marquee, MediaViewer, MoodMeter, OtpInput, Pagination, PdfViewer, Pillbox, Profile, Progress, PullQuote, QrCode, ResizablePanels, Section, SetupWizard, Skeleton, Stat, Stepper, StatList, StickyNote, Switch, Tabs, Text, TimeGrid, TimePicker, Timeline, Tooltip, VideoViewer, VirtualList } from "@particle-academy/react-fancy";
 import { Checkbox, CheckboxGroup, DatePicker, Field, Input, MultiSwitch, NumberField, PhoneInput, RadioGroup, Select, Slider, Textarea } from "@particle-academy/react-fancy";
 import { FileViewer } from "@particle-academy/fancy-code";
 import { EChart } from "@particle-academy/fancy-echarts";
@@ -1742,6 +1742,21 @@ const PREVIEWS: Record<string, PreviewFn> = {
                 <Skeleton shape="circle" width={32} height={32} />
                 <Skeleton shape="text" width="50%" />
             </div>
+        </div>
+    ),
+
+    "react-fancy/setup-wizard": () => (
+        <div className="w-full max-w-[18rem]">
+            <SetupWizard
+                id="setup-wizard-preview"
+                value={{ current: 1, done: [0] }}
+                onChange={() => {}}
+                tokens={{ appUrl: "https://app.example.com" }}
+                steps={[
+                    { id: "account", title: "Create an account", detail: "Sign up at Example Pay.", url: "https://dashboard.example.com/signup" },
+                    { id: "webhook", title: "Add the webhook", detail: "Paste this URL in Webhooks.", copy: [{ label: "Webhook URL", value: "{{appUrl}}/webhooks/pay" }], done: "it shows as Enabled" },
+                ]}
+            />
         </div>
     ),
 

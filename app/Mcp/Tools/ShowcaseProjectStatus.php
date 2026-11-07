@@ -86,6 +86,14 @@ class ShowcaseProjectStatus extends Tool
                 'badge_detected' => $scan['badge'] ?? null,
                 'usage_ratio' => $scan['usage_ratio'] ?? null,
             ],
+            // Separate from `verification`: has the user PROVED they own it?
+            // pixel_key / badge_key = this submission's own snippet is installed;
+            // github_owner = their GitHub login owns the repo namespace.
+            'ownership' => [
+                'verified' => $submission->isOwnershipVerified(),
+                'method' => $submission->ownership_method,
+                'verified_at' => $submission->ownership_verified_at?->toIso8601String(),
+            ],
             // The structured record of WHICH Fancy packages this project uses,
             // each linked to its page in the package registry when known.
             'packages' => $submission->packages ?? [],

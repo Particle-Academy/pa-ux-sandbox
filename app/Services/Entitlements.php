@@ -34,6 +34,7 @@ class Entitlements
         'pro-source-export',   // download a component's full source bundle
         'pro-bridge-tools',    // advanced agent bridge tools
         'analytics-suite',     // the Pro Analytics dashboard (live Fancy Heuristics)
+        'support-premium',     // premium support level; ALSO needs an eligible project (SupportEligibility)
     ];
 
     public function isProFeature(string $feature): bool

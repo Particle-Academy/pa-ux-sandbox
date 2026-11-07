@@ -8,6 +8,7 @@ use App\Services\Showcase\FancyPixelDetector;
 use App\Services\Showcase\NsfwHeuristicDetector;
 use App\Services\Showcase\RepoVerifier;
 use App\Services\Showcase\SafeUrlFetcher;
+use App\Services\Showcase\ShowcaseOwnership;
 use App\Services\Showcase\UnsafeUrlException;
 use App\Services\ShowcaseRewards;
 use Illuminate\Bus\Queueable;
@@ -26,7 +27,7 @@ class ScanShowcaseSubmission implements ShouldQueue
     {
         $result = match ($this->submission->kind) {
             'repo' => app(RepoVerifier::class)->verify($this->submission),
-            'website' => $this->scanWebsite($this->submission->url),
+            'website' => $this->scanWebsite($this->submission),
             default => ['verified' => false, 'reason' => 'unknown kind'],
         };
 
@@ -43,6 +44,11 @@ class ScanShowcaseSubmission implements ShouldQueue
             'packages' => $packages,
             'scanned_at' => now(),
         ]);
+
+        // Ownership is the stronger, separate fact: bound to THIS submission's
+        // site_key (or the submitter's GitHub namespace), never to "Fancy was
+        // found here". `status` above keeps deciding the public listing.
+        app(ShowcaseOwnership::class)->record($this->submission, $result['ownership'] ?? null);
 
         // Backfill the title/description from the page's <title> / meta / og tags
         // when the submitter left them blank — so a listing isn't just a bare URL.
@@ -101,8 +107,9 @@ class ScanShowcaseSubmission implements ShouldQueue
     }
 
     /** @return array<string, mixed> */
-    private function scanWebsite(string $url): array
+    private function scanWebsite(ShowcaseSubmission $submission): array
     {
+        $url = $submission->url;
         try {
             $resp = app(SafeUrlFetcher::class)->fetch($url);
         } catch (UnsafeUrlException $e) {
@@ -141,9 +148,10 @@ class ScanShowcaseSubmission implements ShouldQueue
         // on an SSR'd site whose HTML doesn't expose our package strings.
         $badge = $this->detectBadge($html);
         $packages = app(FancyPackageResolver::class)->extractFromText($html);
+        $ownership = app(ShowcaseOwnership::class)->forWebsite($submission, $html);
 
         if (empty($hits)) {
-            return ['verified' => false, 'reason' => 'no Fancy UI references in homepage HTML', 'badge' => $badge, 'nsfw_flag' => $nsfwFlag, 'packages' => $packages];
+            return ['verified' => false, 'reason' => 'no Fancy UI references in homepage HTML', 'badge' => $badge, 'nsfw_flag' => $nsfwFlag, 'packages' => $packages, 'ownership' => $ownership];
         }
 
         return [
@@ -154,6 +162,7 @@ class ScanShowcaseSubmission implements ShouldQueue
             'badge' => $badge,
             'nsfw_flag' => $nsfwFlag,
             'meta' => $meta,
+            'ownership' => $ownership,
         ];
     }
 

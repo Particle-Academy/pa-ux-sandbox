@@ -59,6 +59,7 @@ class ShowcaseSubmission extends Model
         'made_for_children' => 'boolean',
         'suspended_at' => 'datetime',
         'scanned_at' => 'datetime',
+        'ownership_verified_at' => 'datetime',
         'featured_until' => 'datetime',
         'rewarded_at' => 'datetime',
         'promotion_rewarded_at' => 'datetime',
@@ -103,6 +104,16 @@ class ShowcaseSubmission extends Model
     public function isSuspended(): bool
     {
         return $this->suspended_at !== null;
+    }
+
+    /**
+     * Has the submitter PROVED they control this project? Stronger than
+     * `status = verified`, which only means Fancy was found on it. Written only
+     * by ShowcaseOwnership (deliberately not fillable).
+     */
+    public function isOwnershipVerified(): bool
+    {
+        return $this->ownership_verified_at !== null && $this->ownership_method !== null;
     }
 
     /** Held out of the public listing pending NSFW review. */

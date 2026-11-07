@@ -337,3 +337,20 @@ it('uses the captured homepage screenshot as the showcase thumbnail', function (
             ->where('submissions.0.thumbnail_url', '/storage/heatmaps/acme/home.png')
         );
 });
+
+/*
+ * Regression: detectBadge's "foreign key, so look for a keyless mark too"
+ * branch used `!` as its regex delimiter around a pattern containing `(?!`.
+ * The pattern ended early, preg_match raised "Unknown modifier", and every
+ * README carrying ANOTHER site's badge key crashed the scan.
+ */
+it('does not crash on a README carrying another site\'s badge key', function () {
+    $appUrl = rtrim((string) config('app.url'), '/');
+    $verifier = app(RepoVerifier::class);
+
+    $foreignOnly = "[![Fancified]({$appUrl}/badge/fancified.svg?site=someoneelse1)](x)";
+    $foreignAndKeyless = $foreignOnly."\n[![Fancified]({$appUrl}/badge/fancified.svg)](x)";
+
+    expect($verifier->detectBadge($foreignOnly, 'mykey0000000'))->toBeFalse()
+        ->and($verifier->detectBadge($foreignAndKeyless, 'mykey0000000'))->toBeTrue();
+});

@@ -7,6 +7,7 @@ use App\Models\Setting;
 use App\Models\User;
 use App\Services\Entitlements;
 use App\Services\Mlm\MlmProgram;
+use App\Services\SupportEligibility;
 use App\Ssr\TimeoutHttpGateway;
 use FancyMlm\Plan\CompensationPlan;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -18,6 +19,7 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Inertia\Ssr\Gateway;
 use ParticleAcademy\Fms\Services\FeatureManager;
+use ParticleAcademy\Fms\Services\FmsFeatureRegistry;
 use ParticleAcademy\LaravelCourses\Contracts\AuthorizesCourseAdmin;
 
 class AppServiceProvider extends ServiceProvider
@@ -141,6 +143,12 @@ class AppServiceProvider extends ServiceProvider
         // default. This is the pay-OR-earn unlock that ties catalog + fms +
         // fun-lab together. FeatureManager is a singleton, so registering
         // here attaches to the same instance the FMS facade resolves.
+        //
+        // `support-eligibility` goes FIRST: `support-premium` is a Pro feature,
+        // but a Pro user without an ownership-proven project is refused (plan
+        // D5), and the first non-null pre-strategy verdict wins.
+        SupportEligibility::register(app(FeatureManager::class), app(FmsFeatureRegistry::class));
+
         app(FeatureManager::class)->registerPreStrategy(
             'pro-entitlement',
             function (string $feature, $user) {

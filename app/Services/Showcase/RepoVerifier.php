@@ -27,7 +27,10 @@ use Illuminate\Support\Facades\Log;
  */
 class RepoVerifier
 {
-    public function __construct(private readonly FancyPackageResolver $packages) {}
+    public function __construct(
+        private readonly FancyPackageResolver $packages,
+        private readonly ShowcaseOwnership $ownership,
+    ) {}
 
     /** Pass when >= this fraction of component files reference Fancy. */
     public const USAGE_THRESHOLD = 0.30;
@@ -44,9 +47,28 @@ class RepoVerifier
      *    'files_scanned' => int, 'fancy_files' => int, 'passed' => bool,
      *    'reason' => ?string, ...]
      *
+     * Every result also carries `ownership`: the ShowcaseOwnership method this
+     * scan proved (`badge_key` | `github_owner`) or null. It is reported on
+     * every path, including the failures, because the GitHub-owner proof needs
+     * no fetch and a keyed badge is readable even when the tree is not.
+     *
      * @return array<string, mixed>
      */
     public function verify(ShowcaseSubmission $submission): array
+    {
+        $readme = null;
+        $result = $this->verifyListing($submission, $readme);
+        $result['ownership'] = $this->ownership->forRepo($submission, $readme);
+
+        return $result;
+    }
+
+    /**
+     * The listing verdict (badge + usage). `$readme` is filled in once fetched.
+     *
+     * @return array<string, mixed>
+     */
+    private function verifyListing(ShowcaseSubmission $submission, ?string &$readme): array
     {
         $parsed = $this->parseOwnerRepo($submission->url);
         if ($parsed === null) {
@@ -181,7 +203,10 @@ class RepoVerifier
                 // The README references a Fancified badge for a DIFFERENT site;
                 // still accept the bare-mark presence only if a keyless badge
                 // URL also appears.
-                return (bool) preg_match('!/badge/fancified\.svg(?![?\w])!i', $readme);
+                // `~`, not `!`: this pattern contains `(?!`, and with `!` as the
+                // delimiter that ended the pattern early and threw on every
+                // README carrying another site's key.
+                return (bool) preg_match('~/badge/fancified\.svg(?![?\w])~i', $readme);
             }
         }
 

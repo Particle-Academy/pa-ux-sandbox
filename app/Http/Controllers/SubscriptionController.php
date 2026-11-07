@@ -52,6 +52,12 @@ class SubscriptionController extends Controller
             'description' => 'The extra themes for your showcase profile and your submissions.',
             'icon' => 'palette',
         ],
+        [
+            'key' => 'support-premium',
+            'name' => 'Premium support',
+            'description' => 'The priority queue and more open tickets, for projects you have proved you own in the showcase.',
+            'icon' => 'life-buoy',
+        ],
     ];
 
     public function index(Entitlements $entitlements): Response

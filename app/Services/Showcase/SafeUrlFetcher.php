@@ -194,14 +194,30 @@ class SafeUrlFetcher
      */
     protected function isBlockedIp(string $ip): bool
     {
-        // PHP's filter flags catch RFC1918, loopback, link-local (incl.
-        // 169.254.x — the cloud metadata range), and reserved blocks.
-        $public = filter_var(
-            $ip,
-            FILTER_VALIDATE_IP,
-            FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE,
-        );
+        $packed = @inet_pton($ip);
+        if ($packed === false) {
+            return true;
+        }
 
-        return $public === false;
+        if (strlen($packed) === 16) {
+            // Local-use NAT64 (64:ff9b:1::/48, RFC 8215): refuse outright.
+            if (str_starts_with($packed, "\x00\x64\xff\x9b\x00\x01")) {
+                return true;
+            }
+            // Well-known NAT64 (64:ff9b::/96, RFC 6052) carries an IPv4 in its last
+            // 32 bits and reaches it; judge it by that IPv4. FILTER_FLAG_GLOBAL_RANGE
+            // does not treat this prefix as special, so 64:ff9b::a9fe:a9fe would reach
+            // the cloud metadata address.
+            if (str_starts_with($packed, "\x00\x64\xff\x9b".str_repeat("\x00", 8))) {
+                return $this->isBlockedIp((string) inet_ntop(substr($packed, 12)));
+            }
+        }
+
+        // GLOBAL_RANGE (PHP 8.2+) refuses everything not globally routable: RFC1918,
+        // loopback, link-local (incl. 169.254.x, the cloud metadata range), reserved,
+        // CGNAT 100.64.0.0/10, IPv6 ULA fc00::/7 and link-local fe80::/10, IPv4-mapped
+        // ::ffff:0:0/96, 6to4 2002::/16 and Teredo 2001::/32. The old
+        // NO_PRIV_RANGE | NO_RES_RANGE pair let CGNAT, 6to4 and Teredo through.
+        return filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_GLOBAL_RANGE) === false;
     }
 }

@@ -72,10 +72,13 @@ it('carries Python through the shared mirror table', function () {
     // said they 404'd; the catalog audit found them, and `kit:catalog-drift`
     // now asks PyPI nightly instead.
     //
+    // Sixteen since 2026-11-07: fine-print-py (`fancy-fine-print` 0.1.0, the
+    // reader) joined the fine-print family the day it reached PyPI.
+    //
     // A bare number rots, and that is the point here -- adding a mirror has to
     // be a deliberate edit in two places rather than a count that silently
     // drifts. Derive it from mcpPairs() and this asserts nothing.
-    expect($withPython)->toHaveCount(15);
+    expect($withPython)->toHaveCount(16);
 });
 
 it('names the framework-coupled gap instead of implying full parity', function () {

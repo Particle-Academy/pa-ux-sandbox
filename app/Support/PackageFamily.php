@@ -383,6 +383,7 @@ final class PackageFamily
                 'capability' => 'PDF reading, writing and page rendering with guarded reads',
                 'members' => [
                     ['language' => 'PHP', 'slug' => 'fine-print'],
+                    ['language' => 'Python', 'slug' => 'fine-print-py'],
                 ],
             ]],
         ],

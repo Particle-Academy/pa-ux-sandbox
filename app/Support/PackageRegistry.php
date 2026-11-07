@@ -199,12 +199,6 @@ class PackageRegistry
             'registries' => ['npm' => '@particle-academy/fine-print'],
             'why' => 'Node/TypeScript port of fine-print (PDF): writer, reader with the security layer, and page renderer. Owner ruled "full ports" on 2026-10-27. The trigger: fancy-template\'s TS leg can already produce fine-print documents that nothing outside PHP can render, and the planned cross-format export layer needs "export to PDF when fine-print is installed" in every language. Zero runtime dependencies, like the PHP original. Held to the PHP package by shared fancy-conformance tables, as holy-sheet-js is. The writer ships first. Plan: .ai/plans/fine-print-ports.md. NOT YET STARTED; registered first.',
         ],
-        'fine-print-py' => [
-            'name' => 'fancy-fine-print',
-            'repo' => 'Particle-Academy/fine-print-py',
-            'registries' => ['pypi' => 'fancy-fine-print'],
-            'why' => 'Python port of fine-print (PDF): writer, reader with the security layer, and page renderer. Owner ruled "full ports" on 2026-10-27; same trigger and plan as fine-print-js (.ai/plans/fine-print-ports.md). Stdlib only (zlib, struct), held to the PHP package by shared fancy-conformance tables, and published as `fancy-fine-print` like the other Python siblings. The writer ships first. NOT YET STARTED; registered first.',
-        ],
         'fancy-connector-core-py' => [
             'name' => 'fancy-connector-core',
             'repo' => 'Particle-Academy/fancy-connector-core-py',
@@ -513,6 +507,7 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
         'holy-sheet-py' => ['group' => 'documents', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#16a34a'],
         'dark-slide-py' => ['group' => 'documents', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#dc2626'],
         'last-word-py' => ['group' => 'documents', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#2563eb'],
+        'fine-print-py' => ['group' => 'documents', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#e11d48'],
     ];
 
     /** Fallback classification for any slug missing from {@see META}. */
@@ -1365,6 +1360,14 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
                 'tagline' => 'Python port of last-word -- docx writer/reader for agentic documents, with markdown bridges. Headless; no UI.',
                 'pypi' => 'fancy-last-word',
                 'repo' => 'Particle-Academy/last-word-py',
+                'language' => 'Python',
+            ],
+            [
+                'slug' => 'fine-print-py',
+                'name' => 'fancy-fine-print',
+                'tagline' => 'Python port of fine-print\'s PDF reader -- text in reading order, per-word boxes and the guarded agent read, at parity with PHP fine-print 0.7.0. Reader only for now; the writer and renderer follow. Headless; no UI.',
+                'pypi' => 'fancy-fine-print',
+                'repo' => 'Particle-Academy/fine-print-py',
                 'language' => 'Python',
             ],
             // FOUND BY THE TEST THIS CHANGE ADDED, on its first run. Published

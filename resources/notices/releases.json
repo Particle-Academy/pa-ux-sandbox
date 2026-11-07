@@ -1,7 +1,7 @@
 {
     "window_days": 60,
     "latest": {
-        "agent-integrations": "0.57.0",
+        "agent-integrations": "0.58.0",
         "change-council": "0.4.1",
         "charlotte": "0.3.0",
         "classroom": "0.7.0",
@@ -25,10 +25,10 @@
         "fancy-cms": "0.8.1",
         "fancy-cms-ui": "0.13.1",
         "fancy-code": "0.16.0",
-        "fancy-compliance": "0.1.0",
-        "fancy-compliance-ui": "0.2.0",
+        "fancy-compliance": "0.1.2",
+        "fancy-compliance-ui": "0.2.1",
         "fancy-conformance": "0.46.0",
-        "fancy-connector-core": "0.13.0",
+        "fancy-connector-core": "0.14.0",
         "fancy-devtools": "0.1.1",
         "fancy-diff": "0.5.1",
         "fancy-doc-commons": "0.4.0",
@@ -90,9 +90,10 @@
         "fancy-x-files-js": "0.2.0",
         "fancy-x-files-ui": "0.2.0",
         "fine-print": "0.7.0",
-        "holy-sheet": "2.12.0",
-        "holy-sheet-js": "2.12.0",
-        "holy-sheet-py": "0.11.0",
+        "fine-print-py": "0.1.0",
+        "holy-sheet": "2.14.0",
+        "holy-sheet-js": "2.14.0",
+        "holy-sheet-py": "0.13.0",
         "job-board": "0.5.0",
         "laravel-catalog": "0.13.0",
         "laravel-courses": "0.4.0",
@@ -104,13 +105,13 @@
         "last-word-py": "0.12.1",
         "last-word-ui": "0.5.0",
         "mcp-relay-client": "0.3.0",
-        "prism": "0.146.0",
+        "prism": "0.147.0",
         "prism-acp": "0.1.1",
         "prism-acp-ts": "0.37.0",
         "prism-browser": "0.4.1",
         "prism-browser-py": "0.2.0",
         "prism-browser-ts": "0.3.0",
-        "prism-harness": "0.22.3",
+        "prism-harness": "0.23.1",
         "prism-harness-py": "0.5.1",
         "prism-harness-ts": "0.10.1",
         "prism-human-plus": "0.6.0",
@@ -134,11 +135,179 @@
         "prism-workspace": "0.3.0",
         "prism-workspace-py": "0.1.0",
         "prism-workspace-ts": "0.2.0",
-        "react-fancy": "6.11.0",
+        "react-fancy": "6.15.1",
         "teachers-aid": "0.3.0",
         "teachers-aid-ui": "0.3.0"
     },
     "releases": [
+        {
+            "slug": "react-fancy",
+            "registry": "npm",
+            "version": "6.15.1",
+            "published_at": "2026-11-07T21:31:39Z",
+            "first": false,
+            "summary": "Correction to 6.15.0: Checkbox, CheckboxGroup and RadioGroup did not darken"
+        },
+        {
+            "slug": "react-fancy",
+            "registry": "npm",
+            "version": "6.15.0",
+            "published_at": "2026-11-07T20:58:42Z",
+            "first": false,
+            "summary": "VISIBLE CHANGE: form-control outlines are darker, to meet WCAG 1.4.11 (3:1 non-text contrast)"
+        },
+        {
+            "slug": "holy-sheet",
+            "registry": "composer",
+            "version": "2.14.0",
+            "published_at": "2026-11-07T20:48:32Z",
+            "first": false,
+            "summary": "Every limit is configurable"
+        },
+        {
+            "slug": "holy-sheet-py",
+            "registry": "pypi",
+            "version": "0.13.0",
+            "published_at": "2026-11-07T20:38:19Z",
+            "first": false,
+            "summary": "Every limit is configurable"
+        },
+        {
+            "slug": "react-fancy",
+            "registry": "npm",
+            "version": "6.14.0",
+            "published_at": "2026-11-07T20:36:55Z",
+            "first": false,
+            "summary": "SetupWizard: a controlled, one-step-at-a-time guide for setting up a third-party service, for someone who has never…"
+        },
+        {
+            "slug": "holy-sheet-js",
+            "registry": "npm",
+            "version": "2.14.0",
+            "published_at": "2026-11-07T20:35:39Z",
+            "first": false,
+            "summary": "Every limit is configurable"
+        },
+        {
+            "slug": "fancy-compliance",
+            "registry": "composer",
+            "version": "0.1.2",
+            "published_at": "2026-11-07T20:10:32Z",
+            "first": false,
+            "summary": "The Inertia prop went missing again under Pest's in-process browser server"
+        },
+        {
+            "slug": "fancy-connector-core",
+            "registry": "npm",
+            "version": "0.14.0",
+            "published_at": "2026-11-07T20:01:01Z",
+            "first": false,
+            "summary": "readWithCursor / CursorRead::read: a read that resumes from a HOST-HELD cursor, and pages"
+        },
+        {
+            "slug": "fancy-compliance-ui",
+            "registry": "npm",
+            "version": "0.2.1",
+            "published_at": "2026-11-07T19:58:29Z",
+            "first": false,
+            "summary": "An agent could use the consent controls"
+        },
+        {
+            "slug": "agent-integrations",
+            "registry": "npm",
+            "version": "0.58.0",
+            "published_at": "2026-11-07T19:55:06Z",
+            "first": false,
+            "summary": "Off-limits areas: an agent can no longer use a page's consent controls"
+        },
+        {
+            "slug": "fancy-compliance",
+            "registry": "composer",
+            "version": "0.1.1",
+            "published_at": "2026-11-07T19:46:21Z",
+            "first": false,
+            "summary": "The Inertia prop is shared on every request, so Octane keeps it"
+        },
+        {
+            "slug": "react-fancy",
+            "registry": "npm",
+            "version": "6.13.0",
+            "published_at": "2026-11-07T19:16:43Z",
+            "first": false,
+            "summary": "Per-option lang and dir"
+        },
+        {
+            "slug": "fine-print-py",
+            "registry": "pypi",
+            "version": "0.1.0",
+            "published_at": "2026-11-07T18:32:00Z",
+            "first": true,
+            "summary": "read(data, *, policy, threshold, excerpts, limits, words) and read_unredacted(data, *, threshold, excerpts, limits…"
+        },
+        {
+            "slug": "holy-sheet-js",
+            "registry": "npm",
+            "version": "2.13.0",
+            "published_at": "2026-11-07T17:44:44Z",
+            "first": false,
+            "summary": "Read one sheet by name: Agent.read(bytes, { sheet: \"Contacts\" })"
+        },
+        {
+            "slug": "holy-sheet-py",
+            "registry": "pypi",
+            "version": "0.12.0",
+            "published_at": "2026-11-07T17:44:37Z",
+            "first": false,
+            "summary": "Read one sheet by name: read(data, sheet=\"Contacts\")"
+        },
+        {
+            "slug": "holy-sheet",
+            "registry": "composer",
+            "version": "2.13.0",
+            "published_at": "2026-11-07T17:39:27Z",
+            "first": false,
+            "summary": "Read one sheet by name: Agent::read($bytes, ['sheet' => 'Contacts'])"
+        },
+        {
+            "slug": "react-fancy",
+            "registry": "npm",
+            "version": "6.12.0",
+            "published_at": "2026-11-07T17:34:02Z",
+            "first": false,
+            "summary": "Secondary grey text follows the --fancy-text-* theme tokens across the kit"
+        },
+        {
+            "slug": "prism-harness",
+            "registry": "composer",
+            "version": "0.23.1",
+            "published_at": "2026-11-07T17:05:42Z",
+            "first": false,
+            "summary": "Accept Prism core 0.147, where streamed approvals are now recorded"
+        },
+        {
+            "slug": "react-fancy",
+            "registry": "npm",
+            "version": "6.11.1",
+            "published_at": "2026-11-07T17:01:39Z",
+            "first": false,
+            "summary": "FileUpload text follows the --fancy-text-* theme tokens"
+        },
+        {
+            "slug": "prism-harness",
+            "registry": "composer",
+            "version": "0.23.0",
+            "published_at": "2026-11-07T08:43:29Z",
+            "first": false,
+            "summary": "BREAKING: Fence synchronous run state and require owned writes from custom session stores"
+        },
+        {
+            "slug": "prism",
+            "registry": "composer",
+            "version": "0.147.0",
+            "published_at": "2026-11-07T07:17:19Z",
+            "first": false,
+            "summary": "List each provider's models, and keep pending approval requests in streamed responses"
+        },
         {
             "slug": "holy-sheet-js",
             "registry": "npm",
@@ -161,7 +330,7 @@
             "version": "0.5.1",
             "published_at": "2026-11-07T01:45:52Z",
             "first": false,
-            "summary": null
+            "summary": "Resume keeps the turn's tool list"
         },
         {
             "slug": "holy-sheet",
@@ -1177,7 +1346,7 @@
             "version": "0.13.0",
             "published_at": "2026-11-01T22:58:02Z",
             "first": false,
-            "summary": null
+            "summary": "verifyJwt / Jwt::verify: RS256 JWT verification against keys the HOST supplies"
         },
         {
             "slug": "fancy-connector-core",
@@ -1185,7 +1354,7 @@
             "version": "0.12.0",
             "published_at": "2026-11-01T20:35:29Z",
             "first": false,
-            "summary": null
+            "summary": "A signed REQUEST LINE and millisecond timestamps (HubSpot v3)"
         },
         {
             "slug": "prism-memory",
@@ -1873,7 +2042,7 @@
             "version": "0.11.0",
             "published_at": "2026-10-28T21:38:25Z",
             "first": false,
-            "summary": null
+            "summary": "decodeFormFieldJson / FormFieldJson::decode: the form-field-json payload transform"
         },
         {
             "slug": "holy-sheet-py",
@@ -6834,22 +7003,6 @@
             "published_at": "2026-09-09T02:32:16Z",
             "first": false,
             "summary": "Enforce the summary word budget"
-        },
-        {
-            "slug": "fancy-flow",
-            "registry": "npm",
-            "version": "0.66.3",
-            "published_at": "2026-09-08T19:15:58Z",
-            "first": false,
-            "summary": "unregisterNodeKind(name) — the supported way back to a builtin"
-        },
-        {
-            "slug": "fancy-flow",
-            "registry": "npm",
-            "version": "0.66.2",
-            "published_at": "2026-09-08T18:54:13Z",
-            "first": false,
-            "summary": "A host's replacement of a builtin kind survives builtin registration"
         }
     ]
 }

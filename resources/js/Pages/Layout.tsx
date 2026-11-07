@@ -157,11 +157,17 @@ export function Layout({
     // decisions to /fancy-compliance; nothing here decides for anyone. The
     // banner sits first in the document so keyboard and screen-reader users
     // meet it first; it is non-modal and never takes focus.
+    //
+    // A floating card in the bottom-START corner: every other fixed thing on
+    // the site lives bottom-right (react-fancy toasts, the Fancy Pixel and the
+    // active-user pills above it, the What's new notice, fancy-devtools in
+    // dev). On a phone the card spans the width, and landing.css lifts it
+    // clear of the bottom nav bar.
     const consent = useConsentController(props.fancyCompliance);
 
     return (
         <ConsentProvider {...consent}>
-        <ConsentBanner />
+        <ConsentBanner variant="card" position="bottom-start" />
         <ShowcasePixel />
         <SiteWalkthrough holdAutoStart={consent.value.needsConsent}>
         <div className="min-h-screen flex flex-col">

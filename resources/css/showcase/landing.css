@@ -1185,6 +1185,17 @@ section.ticker { padding: 0; background: var(--bg-1); }
   [data-fancy-whats-new-stack]:has(.showcase-whats-new) {
     bottom: calc(58px + 12px + env(safe-area-inset-bottom)) !important;
   }
+
+  /* The consent card (Layout.tsx, fancy-compliance-ui variant="card") spans the
+     width a 1rem margin in from the bottom on a phone, which is exactly where
+     this bar is; both are z-40 and the bar comes later, so it would cover the
+     card's actions. Lifted here rather than with a classNames utility so the
+     lift and the bar share ONE breakpoint: Tailwind's `max-sm` stops at 639px
+     while this query includes 640px. Unlayered, so it beats the package's
+     layered `bottom-4` without `!important`. */
+  [data-fancy-compliance="banner"][data-fancy-compliance-variant="card"] {
+    bottom: calc(58px + 1rem + env(safe-area-inset-bottom));
+  }
 }
 
 /* ── reduced motion ───────────────────────────────────────────────────── */

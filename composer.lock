@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5c571c2032500a8bc2694dca8e2f0f64",
+    "content-hash": "cd4aa2fc50a15ea41fed434fb39464ed",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -3879,16 +3879,16 @@
         },
         {
             "name": "particle-academy/fancy-compliance",
-            "version": "v0.1.0",
+            "version": "v0.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/fancy-compliance.git",
-                "reference": "cf9f7674c0c520b545f0a2bd8e8a3c299723e530"
+                "reference": "593a7b141d6beac23b09d5ddd4faee9f7be2cedf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/fancy-compliance/zipball/cf9f7674c0c520b545f0a2bd8e8a3c299723e530",
-                "reference": "cf9f7674c0c520b545f0a2bd8e8a3c299723e530",
+                "url": "https://api.github.com/repos/Particle-Academy/fancy-compliance/zipball/593a7b141d6beac23b09d5ddd4faee9f7be2cedf",
+                "reference": "593a7b141d6beac23b09d5ddd4faee9f7be2cedf",
                 "shasum": ""
             },
             "require": {
@@ -3957,7 +3957,7 @@
                 "issues": "https://github.com/Particle-Academy/fancy-compliance/issues",
                 "source": "https://github.com/Particle-Academy/fancy-compliance"
             },
-            "time": "2026-11-05T06:36:29+00:00"
+            "time": "2026-11-07T20:10:32+00:00"
         },
         {
             "name": "particle-academy/fancy-expr",
@@ -4504,16 +4504,16 @@
         },
         {
             "name": "particle-academy/holy-sheet",
-            "version": "v2.13.0",
+            "version": "v2.14.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/holy-sheet.git",
-                "reference": "7a7410088fa9e9e247ef9d6cc817de7eb7a20012"
+                "reference": "8d79c8b53c3da3c1682fdd68ec4dc6afc39291e3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/holy-sheet/zipball/7a7410088fa9e9e247ef9d6cc817de7eb7a20012",
-                "reference": "7a7410088fa9e9e247ef9d6cc817de7eb7a20012",
+                "url": "https://api.github.com/repos/Particle-Academy/holy-sheet/zipball/8d79c8b53c3da3c1682fdd68ec4dc6afc39291e3",
+                "reference": "8d79c8b53c3da3c1682fdd68ec4dc6afc39291e3",
                 "shasum": ""
             },
             "require": {
@@ -4576,7 +4576,7 @@
                 "issues": "https://github.com/Particle-Academy/holy-sheet/issues",
                 "source": "https://github.com/Particle-Academy/holy-sheet"
             },
-            "time": "2026-11-07T17:39:27+00:00"
+            "time": "2026-11-07T20:48:32+00:00"
         },
         {
             "name": "particle-academy/laravel-catalog",

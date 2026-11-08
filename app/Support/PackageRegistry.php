@@ -1753,6 +1753,7 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
             ['slug' => 'stat-list', 'name' => 'StatList', 'blurb' => 'Row of Stat items.'],
             ['slug' => 'video-viewer', 'name' => 'VideoViewer', 'blurb' => 'Native video controls with poster and fit.'],
             ['slug' => 'audio-viewer', 'name' => 'AudioViewer', 'blurb' => 'Themed card around the native audio player.'],
+            ['slug' => 'streaming-audio', 'name' => 'StreamingAudio', 'blurb' => 'Controlled player for server-hosted MP3s and Icecast / Shoutcast live streams on native audio: station picker, LIVE badge, reconnect with backoff, Media Session.'],
             ['slug' => 'pdf-viewer', 'name' => 'PdfViewer', 'blurb' => 'Inline PDF via <object> / <iframe> with a download fallback.'],
             ['slug' => 'drawer', 'name' => 'Drawer', 'blurb' => 'Panel that slides in from any edge — viewport-level, or attached inside a Card or layout pane.'],
             ['slug' => 'menu', 'name' => 'Menu'],

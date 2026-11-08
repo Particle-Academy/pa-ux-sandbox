@@ -115,9 +115,10 @@ import {
     GIT_STATUS,
     GIT_TREE,
 } from "./gitFixtures";
-import { ActivityLight, AudioViewer, Avatar, Badge, Breadcrumbs, Button, Calendar, Callout, Card, ChatThread, CodeBlock, CodeView, ColorPicker, Container, ContentRenderer, ContextMenu, Drawer, Emoji, Eyebrow, FauxClient, FileBrowser, FullScreen, Grid, ReorderableGrid, Heading, ImageViewer, IndexList, JsonEditor, Kanban, Kbd, Marquee, MediaViewer, MoodMeter, OtpInput, Pagination, PdfViewer, Pillbox, Profile, Progress, PullQuote, QrCode, ResizablePanels, Section, SetupWizard, Skeleton, Stat, Stepper, StatList, StickyNote, Switch, Tabs, Text, TimeGrid, TimePicker, Timeline, Tooltip, VideoViewer, VirtualList } from "@particle-academy/react-fancy";
+import { ActivityLight, AudioViewer, Avatar, Badge, Breadcrumbs, Button, Calendar, Callout, Card, ChatThread, CodeBlock, CodeView, ColorPicker, Container, ContentRenderer, ContextMenu, Drawer, Emoji, Eyebrow, FauxClient, FileBrowser, FullScreen, Grid, ReorderableGrid, Heading, ImageViewer, IndexList, JsonEditor, Kanban, Kbd, Marquee, MediaViewer, MoodMeter, OtpInput, Pagination, PdfViewer, Pillbox, Profile, Progress, PullQuote, QrCode, ResizablePanels, Section, SetupWizard, Skeleton, Stat, Stepper, StreamingAudio, StatList, StickyNote, Switch, Tabs, Text, TimeGrid, TimePicker, Timeline, Tooltip, VideoViewer, VirtualList } from "@particle-academy/react-fancy";
 import { Checkbox, CheckboxGroup, DatePicker, Field, Input, MultiSwitch, NumberField, PhoneInput, RadioGroup, Select, Slider, Textarea } from "@particle-academy/react-fancy";
 import { FileViewer } from "@particle-academy/fancy-code";
+import { DOC_STATIONS } from "./ComponentDocs/StreamingAudio";
 import { EChart } from "@particle-academy/fancy-echarts";
 import { ArtBoard, ArtPiece } from "@particle-academy/fancy-artboard";
 import "@particle-academy/fancy-artboard/styles.css";
@@ -1742,6 +1743,17 @@ const PREVIEWS: Record<string, PreviewFn> = {
                 <Skeleton shape="circle" width={32} height={32} />
                 <Skeleton shape="text" width="50%" />
             </div>
+        </div>
+    ),
+
+    "react-fancy/streaming-audio": () => (
+        <div className="w-full max-w-[18rem]">
+            <StreamingAudio
+                stations={DOC_STATIONS}
+                value={{ stationId: "riverwest", playing: false, volume: 0.8, muted: false }}
+                onChange={() => {}}
+                layout="compact"
+            />
         </div>
     ),
 

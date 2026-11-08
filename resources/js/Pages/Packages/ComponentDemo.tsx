@@ -14,6 +14,7 @@ import { ChatTranscript, MessageComposer, PlanReview, TeachersAidChat } from "@p
 import { ApplicationList, ApplyForm, EmployerJobList, JobDetail, JobPostingForm } from "@particle-academy/job-board";
 import { CertificateView, CoursePlayer, CurriculumOverview, LessonView, QuestionRenderer, TestRunner, type AnswerValue} from "@particle-academy/classroom";
 import { EXAMPLE_PAY_STEPS, EXAMPLE_PAY_TOKENS, verifyExamplePay } from "./ComponentDocs/SetupWizard";
+import { StreamingAudioExample } from "./ComponentDocs/StreamingAudio";
 import { SAMPLE_CODE_VIEW, SAMPLE_IMG, SAMPLE_PDF, SAMPLE_AUDIO, SAMPLE_AUDIO_TITLE, SAMPLE_POSTER, DELIVERY_ROUTE, DELIVERY_ROUTE_START } from "./showcase-fixtures";
 import {
     Accordion,
@@ -299,6 +300,7 @@ const REGISTRY: Record<string, DemoFn> = {
     "react-fancy/skeleton": SkeletonDemo,
     "react-fancy/stepper": StepperDemo,
     "react-fancy/setup-wizard": SetupWizardDemo,
+    "react-fancy/streaming-audio": StreamingAudioDemo,
     "react-fancy/progress": ProgressDemo,
     "react-fancy/resizable-panels": ResizablePanelsDemo,
     "react-fancy/reorderable-grid": ReorderableGridDemo,
@@ -1497,6 +1499,17 @@ function SkeletonDemo() {
             <Skeleton className="h-3 w-1/2" />
             <Skeleton className="h-20 w-full" />
         </div>
+    );
+}
+
+function StreamingAudioDemo() {
+    return (
+        <DemoNote
+            outOfBox="A station picker, play and pause, volume and mute, a LIVE badge for streams, and elapsed / duration with a seek bar for files. Controlled through value; nothing plays until value.playing is true."
+            demo="A Thunder in the Garden track served from this site, and Riverwest Radio live. The same player runs the radio under the header."
+        >
+            <StreamingAudioExample />
+        </DemoNote>
     );
 }
 

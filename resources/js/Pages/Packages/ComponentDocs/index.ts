@@ -131,6 +131,7 @@ import { sheetWorkbookDoc } from "./SheetWorkbook";
 import { sidebarDoc } from "./Sidebar";
 import { skeletonDoc } from "./Skeleton";
 import { setupWizardDoc } from "./SetupWizard";
+import { streamingAudioDoc } from "./StreamingAudio";
 import { stepperDoc } from "./Stepper";
 import { tableDoc } from "./Table";
 import { tabsDoc } from "./Tabs";
@@ -259,6 +260,7 @@ export const DOCS: Record<string, ComponentDoc> = {
     "react-fancy/sidebar": sidebarDoc,
     "react-fancy/skeleton": skeletonDoc,
     "react-fancy/setup-wizard": setupWizardDoc,
+    "react-fancy/streaming-audio": streamingAudioDoc,
     "react-fancy/stepper": stepperDoc,
     "react-fancy/table": tableDoc,
     "react-fancy/tabs": tabsDoc,

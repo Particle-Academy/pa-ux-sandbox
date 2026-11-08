@@ -33,6 +33,9 @@
 /* /learn: the course grid, grouped like the Features menu. */
 @import "./showcase/learn.css";
 
+/* The radio drawer under the header (resources/js/radio). */
+@import "./showcase/radio.css";
+
 /* Hand-authored CSS overrides shipped by each consumed package. */
 @import "@particle-academy/react-fancy/styles.css";
 @import "@particle-academy/fancy-code/styles.css";

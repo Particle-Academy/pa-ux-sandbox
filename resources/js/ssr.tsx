@@ -9,6 +9,7 @@ import { registerAll as registerEChartsAll, registerBuiltinThemes } from "@parti
 import { registerBrandIcons } from "@particle-academy/fancy-brand-icons";
 import { CoBrowseProvider } from "./agent/CoBrowseProvider";
 import { ShowcaseWhatsNew } from "./lib/whats-new";
+import { RadioProvider } from "./radio/RadioProvider";
 
 // MUST mirror resources/js/showcase-app.tsx EXACTLY. These are pure, SSR-safe
 // registrations (icon defs, echarts modules + themes) that change what
@@ -49,7 +50,9 @@ const providers = (outlet: ReactNode): ReactNode => (
             <FancyDataRoot echo={null}>
                 <SeoProvider value={seoDefaults}>
                     <CoBrowseProvider>
-                        <ShowcaseWhatsNew>{outlet}</ShowcaseWhatsNew>
+                        <RadioProvider>
+                            <ShowcaseWhatsNew>{outlet}</ShowcaseWhatsNew>
+                        </RadioProvider>
                     </CoBrowseProvider>
                 </SeoProvider>
             </FancyDataRoot>

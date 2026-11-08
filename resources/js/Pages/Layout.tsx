@@ -27,6 +27,7 @@ import {
     LogIn,
 } from "lucide-react";
 import { FeaturesMenu } from "./Features/shared/FeaturesMenu";
+import { RadioButton } from "../radio/RadioButton";
 import type { FeatureNav } from "./Features/shared/types";
 import {
     useFancyTransition,
@@ -252,6 +253,8 @@ export function Layout({
                         <WalkthroughTarget id="nav-cobrowse">
                             <CoBrowseControl />
                         </WalkthroughTarget>
+
+                        <RadioButton />
 
                         <WhatsNewButton />
 

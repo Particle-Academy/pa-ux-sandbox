@@ -27,6 +27,7 @@ use App\Http\Controllers\LastWordExportController;
 use App\Http\Controllers\LearnController;
 use App\Http\Controllers\OgImageController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\RadioAudioController;
 use App\Http\Controllers\ServiceWorkerController;
 use App\Http\Controllers\Showcase\AgentKeyController;
 use App\Http\Controllers\Showcase\ConnectorRegistryController;
@@ -59,6 +60,7 @@ use App\Http\Middleware\TrackPackageBrowsing;
 use App\Mcp\Servers\FancyUiRegistry;
 use App\Models\ShowcaseSubmission;
 use App\Support\FeatureSites;
+use App\Support\Radio\RadioTracks;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -273,6 +275,11 @@ Route::get('/features', [FeatureSiteController::class, 'index'])->name('features
 Route::get('/features/{slug}', [FeatureSiteController::class, 'show'])
     ->whereIn('slug', FeatureSites::slugs())
     ->name('features.show');
+// The showcase radio's own tracks (the drawer under the header). Served with
+// HTTP Range support so the player can seek; the files sit outside the web root.
+Route::get('/radio/{track}.mp3', RadioAudioController::class)
+    ->whereIn('track', RadioTracks::slugs())
+    ->name('radio.track');
 // The live captcha demo on /features/compliance. fancy-captcha's middleware is
 // the whole check: a refused submit comes back with a `captcha` error, a passed
 // one simply redirects back. Nothing posted is read or stored.

@@ -9,6 +9,7 @@ import { registerAll as registerEChartsAll, registerBuiltinThemes } from "@parti
 import { registerBrandIcons } from "@particle-academy/fancy-brand-icons";
 import { CoBrowseProvider } from "./agent/CoBrowseProvider";
 import { ShowcaseWhatsNew } from "./lib/whats-new";
+import { RadioProvider } from "./radio/RadioProvider";
 import { getEcho } from "./lib/echo";
 import "./showcase-theme";
 import "@particle-academy/react-fancy/styles.css";
@@ -61,7 +62,9 @@ const providers = (outlet: ReactNode): ReactNode => (
             <FancyDataRoot echo={getEcho()}>
                 <SeoProvider value={seoDefaults}>
                     <CoBrowseProvider>
-                        <ShowcaseWhatsNew>{outlet}</ShowcaseWhatsNew>
+                        <RadioProvider>
+                            <ShowcaseWhatsNew>{outlet}</ShowcaseWhatsNew>
+                        </RadioProvider>
                     </CoBrowseProvider>
                 </SeoProvider>
             </FancyDataRoot>

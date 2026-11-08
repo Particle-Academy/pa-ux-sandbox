@@ -1,0 +1,64 @@
+/* The showcase radio: a drawer that drops from under the sticky header.
+   Always in the DOM so its <audio> keeps playing; closed, it slides up out of
+   view, is hidden from the accessibility tree and is inert (RadioPanel). */
+
+.radio-panel {
+  position: fixed;
+  top: var(--radio-top, 58px);
+  inset-inline: 0;
+  z-index: 29; /* under the header (z 30), over the page */
+  display: flex;
+  justify-content: center;
+  padding: 0 12px;
+  pointer-events: none;
+}
+.radio-panel__card {
+  pointer-events: auto;
+  width: min(760px, 100%);
+  max-height: calc(100dvh - var(--radio-top, 58px) - 12px);
+  overflow-y: auto;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  box-shadow: 0 18px 40px -18px rgb(0 0 0 / 0.45);
+  transition: transform 220ms ease, opacity 220ms ease, visibility 0s linear 0s;
+}
+.radio-panel[data-open="false"] .radio-panel__card {
+  transform: translateY(-16px);
+  opacity: 0;
+  visibility: hidden;
+  transition: transform 180ms ease, opacity 180ms ease, visibility 0s linear 180ms;
+}
+@media (prefers-reduced-motion: reduce) {
+  .radio-panel__card, .radio-panel[data-open="false"] .radio-panel__card { transition: none; transform: none; }
+}
+
+.radio-panel__body { display: flex; flex-direction: column; gap: 16px; }
+.radio-panel__head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.radio-panel__head h2:focus { outline: none; }
+.radio-panel__head h2:focus-visible { outline: 2px solid var(--fancy-focus, #3b82f6); outline-offset: 2px; border-radius: 4px; }
+.radio-panel__meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.radio-tap { min-height: 44px; min-width: 44px; }
+
+.radio-stations { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; }
+.radio-station {
+  justify-content: flex-start !important;
+  gap: 12px;
+  min-height: 72px;
+  padding: 8px !important;
+  text-align: start;
+  border: 1px solid var(--border-1);
+  border-radius: 12px;
+}
+.radio-station[aria-pressed="true"] { border-color: var(--accent); background: color-mix(in oklch, var(--accent) 10%, transparent); }
+.radio-station__text { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.radio-station__name { font-weight: 600; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.radio-station__sub { font-size: 14px; color: var(--fg-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.radio-cover { display: block; flex: none; }
+.radio-cover img { display: block; width: 56px; height: 56px; border-radius: 8px; object-fit: cover; border: 1px solid var(--border-1); }
+
+.radio-toggle { position: relative; height: 34px; padding: 0 10px; }
+.radio-toggle__dot {
+  position: absolute; top: 6px; right: 6px; width: 7px; height: 7px; border-radius: 999px;
+  background: #ef4444; box-shadow: 0 0 0 2px var(--bg-0);
+}

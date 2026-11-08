@@ -275,6 +275,11 @@ Route::get('/features', [FeatureSiteController::class, 'index'])->name('features
 Route::get('/features/{slug}', [FeatureSiteController::class, 'show'])
     ->whereIn('slug', FeatureSites::slugs())
     ->name('features.show');
+// One connector's setup wizard, linked from each "Set up" on /features/connectors.
+// The connector must be in the served index (ConnectorCatalogue); others 404.
+Route::get('/features/connectors/{service}/setup', [FeatureSiteController::class, 'connectorSetup'])
+    ->where('service', '[a-z0-9]+(-[a-z0-9]+)*')
+    ->name('features.connectors.setup');
 // The showcase radio's own tracks (the drawer under the header). Served with
 // HTTP Range support so the player can seek; the files sit outside the web root.
 Route::get('/radio/{track}.mp3', RadioAudioController::class)

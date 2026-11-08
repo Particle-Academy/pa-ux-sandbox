@@ -15,9 +15,12 @@ import type { FeatureNav, FeatureTheme } from "./types";
  */
 export function FeatureShell({
     feature,
+    current,
     children,
 }: {
     feature: FeatureNav & { theme: FeatureTheme };
+    /** A page BELOW the Feature (a connector's setup wizard): the Feature becomes a link and this is the last crumb. */
+    current?: string;
     children: ReactNode;
 }) {
     return (
@@ -28,7 +31,16 @@ export function FeatureShell({
                     <Breadcrumbs.Item href="/features" as={Link}>
                         Features
                     </Breadcrumbs.Item>
-                    <Breadcrumbs.Item active>{feature.name}</Breadcrumbs.Item>
+                    {current === undefined ? (
+                        <Breadcrumbs.Item active>{feature.name}</Breadcrumbs.Item>
+                    ) : (
+                        <>
+                            <Breadcrumbs.Item href={feature.href} as={Link}>
+                                {feature.name}
+                            </Breadcrumbs.Item>
+                            <Breadcrumbs.Item active>{current}</Breadcrumbs.Item>
+                        </>
+                    )}
                 </Breadcrumbs>
                 <div className="feature-body">{children}</div>
             </FeatureIdentity>

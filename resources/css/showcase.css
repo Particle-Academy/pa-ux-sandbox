@@ -62,6 +62,7 @@
 @import "../js/Pages/Features/Gamification/gamification.css";
 @import "../js/Pages/Features/Compliance/compliance.css";
 @import "../js/Pages/Features/Accessibility/accessibility.css";
+@import "../js/Pages/Features/Connectors/connectors.css";
 
 /* Geist + Geist Mono, SELF-HOSTED (the kit's typography policy,
    resources/docs/typography.md): Vercel's v1.9.0 variable woff2 faces, bytes

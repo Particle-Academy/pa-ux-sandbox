@@ -8,6 +8,7 @@ use App\Support\FeatureSites;
 use App\Support\GalleryRegistry;
 use App\Support\PackageFamily;
 use App\Support\PackageRegistry;
+use App\Support\Registry\ConnectorCatalogue;
 use App\Support\UseCases\UseCaseContent;
 use Illuminate\Support\Facades\File;
 use Tests\TestCase;
@@ -42,6 +43,9 @@ function everyPublicPage(): array
     // /flow and /fancy-tui 301 to two of these, so they are crawled here instead.
     foreach (FeatureSites::slugs() as $slug) {
         $urls[] = '/features/'.$slug;
+    }
+    foreach (app(ConnectorCatalogue::class)->all() as $connector) {
+        $urls[] = $connector['setupHref'];
     }
     foreach (array_merge(PackageRegistry::all(), PackageRegistry::companions()) as $pkg) {
         $urls[] = '/packages/'.$pkg['slug'];

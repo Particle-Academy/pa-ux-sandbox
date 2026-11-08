@@ -10,6 +10,7 @@ use App\Support\FeatureSites;
 use App\Support\GalleryRegistry;
 use App\Support\PackageFamily;
 use App\Support\PackageRegistry;
+use App\Support\Registry\ConnectorCatalogue;
 use App\Support\UseCases\UseCaseContent;
 
 /**
@@ -207,6 +208,25 @@ final class PageSeo
                 'Features',
                 'Features',
                 'The platforms in the kit: '.KitFacts::sentence($names).'.',
+            );
+        }
+
+        // A connector's setup wizard: `connectors/<slug>`.
+        if (str_starts_with($key, 'connectors/')) {
+            $connector = app(ConnectorCatalogue::class)->find(substr($key, strlen('connectors/')));
+            if ($connector === null) {
+                return null;
+            }
+            $guide = $connector['setup'] === null
+                ? 'Its credential fields and links, from the connector catalogue; a step-by-step guide is coming.'
+                : count($connector['setup']).' steps, each saying whether you or your agent does it, with values and prompts to copy.';
+
+            return self::shape(
+                "Set up {$connector['title']} — Connectors — Fancy UI",
+                "Set up the {$connector['title']} connector in your app. {$guide}",
+                'Connector setup',
+                "Set up {$connector['title']}",
+                $guide,
             );
         }
 

@@ -1,0 +1,56 @@
+/* /features/connectors: a switchboard identity. A hero patched with a grid of
+   sockets, plug glyphs, and catalogue cards with a coloured socket edge.
+   Scoped to this Feature's wrapper; colours come from the --feature-* tokens,
+   so dark mode is a token swap plus the mixes below. */
+
+[data-feature="connectors"] {
+  --con-socket: color-mix(in oklch, var(--feature-accent) 16%, transparent);
+  --con-edge: color-mix(in oklch, var(--feature-accent) 40%, var(--border-1));
+}
+.dark [data-feature="connectors"],
+[data-theme="dark"] [data-feature="connectors"] {
+  --con-socket: color-mix(in oklch, var(--feature-accent) 12%, transparent);
+  --con-edge: color-mix(in oklch, var(--feature-accent) 30%, var(--border-1));
+}
+
+/* Hero: a field of sockets behind the copy. */
+[data-feature="connectors"] .con-site .feature-hero {
+  background:
+    radial-gradient(circle at 12px 12px, var(--con-socket) 3px, transparent 4px) 0 0 / 24px 24px,
+    radial-gradient(70% 90% at 100% 0%, color-mix(in oklch, var(--feature-accent) 16%, transparent), transparent 70%),
+    var(--feature-surface);
+}
+
+.con-anchor { scroll-margin-top: 88px; }
+.con-tap { min-height: 44px; }
+
+.con-faces { margin-top: 16px; }
+@media (max-width: 1023px) { .con-faces { --fancy-grid-cols: 2 !important; } }
+@media (max-width: 639px) { .con-faces { --fancy-grid-cols: 1 !important; } }
+.con-face { height: 100%; border-top: 3px solid var(--feature-accent); }
+.con-face__icon {
+  display: inline-grid; place-items: center; width: 32px; height: 32px; margin-bottom: 8px;
+  border-radius: 999px; color: var(--feature-accent); background: var(--con-socket);
+}
+.con-face__pkg { display: inline-block; margin-top: 8px; font-size: 12px; }
+
+.con-catalogue { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; }
+.con-filters { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 12px; }
+@media (max-width: 639px) { .con-filters { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 1023px) { .con-grid { --fancy-grid-cols: 2 !important; } }
+@media (max-width: 639px) { .con-grid { --fancy-grid-cols: 1 !important; } }
+.con-card { height: 100%; border-left: 3px solid var(--con-edge); }
+.con-card__head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.con-card__meta { margin-top: 2px; }
+.con-card__badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.con-card__ops { margin-top: 10px; color: var(--fg-2); }
+.con-card__actions { display: flex; align-items: center; gap: 10px; margin-top: 14px; }
+
+.con-setup__head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.con-setup__app { margin-top: 16px; }
+@media (max-width: 639px) { .con-setup__app { --fancy-grid-cols: 1 !important; } }
+.con-setup__wizard { margin-top: 12px; border-top: 3px solid var(--feature-accent); }
+.con-setup__links { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin: 8px 0 12px; }
+.con-setup__packages { margin-bottom: 12px; }
+@media (max-width: 639px) { .con-setup__packages { --fancy-grid-cols: 1 !important; } }
+.con-setup__pkg { word-break: break-all; }

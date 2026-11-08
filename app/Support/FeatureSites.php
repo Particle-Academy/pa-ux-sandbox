@@ -150,6 +150,20 @@ final class FeatureSites
             'members' => ['react-fancy'],
             'bridges' => [],
         ],
+        // The connectors themselves are not PackageRegistry rows: Weaver
+        // generates them per provider and they are listed from connectors.json
+        // ({@see Registry\ConnectorCatalogue}). The members here are the runtime
+        // every connector is built on and the engine that runs its nodes.
+        'connectors' => [
+            'course' => null,
+            'name' => 'Connectors',
+            'tagline' => 'One connector per service, for Laravel and PHP, Node, React and Python, that also runs as a fancy-flow node.',
+            'icon' => 'plug',
+            'component' => 'Features/Connectors/Index',
+            'theme' => ['accent' => '#c026d3', 'accentDark' => '#e879f9', 'surface' => '#fdf4ff', 'surfaceDark' => '#1a0a1c', 'font' => 'sans'],
+            'members' => ['fancy-connector-core', 'fancy-flow'],
+            'bridges' => [],
+        ],
     ];
 
     /** @return list<string> */

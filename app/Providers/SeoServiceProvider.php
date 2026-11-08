@@ -10,6 +10,7 @@ use App\Support\FeatureSites;
 use App\Support\GalleryRegistry;
 use App\Support\PackageFamily;
 use App\Support\PackageRegistry;
+use App\Support\Registry\ConnectorCatalogue;
 use App\Support\Seo\KitFacts;
 use App\Support\Seo\PageSeo;
 use App\Support\UseCases\UseCaseContent;
@@ -133,6 +134,7 @@ class SeoServiceProvider extends ServiceProvider
         FancySeo::route('packages.family', fn (array $params): array => $this->familySeo((string) ($params['family'] ?? ''), $base));
         FancySeo::route('features.index', fn (): array => PageSeo::meta('features', 'index', ['canonical' => $base.'/features']));
         FancySeo::route('features.show', fn (array $params): array => $this->featureSeo((string) ($params['slug'] ?? ''), $base));
+        FancySeo::route('features.connectors.setup', fn (array $params): array => $this->connectorSetupSeo((string) ($params['service'] ?? ''), $base));
         FancySeo::route('packages.component', fn (array $params): array => $this->componentSeo((string) ($params['package'] ?? ''), (string) ($params['component'] ?? ''), $base));
         FancySeo::route('docs.show', fn (array $params): array => $this->docSeo((string) ($params['slug'] ?? 'introduction'), $base));
         FancySeo::route('docs.versioned', fn (array $params): array => $this->archivedDocSeo((string) ($params['version'] ?? ''), (string) ($params['slug'] ?? 'introduction'), $base));
@@ -322,6 +324,31 @@ class SeoServiceProvider extends ServiceProvider
                 JsonLd::breadcrumbList([
                     ['name' => 'Packages', 'url' => $base.'/packages'],
                     ['name' => (string) $family['name'], 'url' => $url],
+                ]),
+            ],
+        ]);
+    }
+
+    /**
+     * One connector's setup wizard, under the Connectors Feature.
+     *
+     * @return array<string,mixed>
+     */
+    private function connectorSetupSeo(string $service, string $base): array
+    {
+        $connector = app(ConnectorCatalogue::class)->find($service);
+        if ($connector === null) {
+            return [];
+        }
+        $url = $base.$connector['setupHref'];
+
+        return PageSeo::meta('features', 'connectors/'.$connector['slug'], [
+            'canonical' => $url,
+            'jsonLd' => [
+                JsonLd::breadcrumbList([
+                    ['name' => 'Features', 'url' => $base.'/features'],
+                    ['name' => 'Connectors', 'url' => $base.'/features/connectors'],
+                    ['name' => 'Set up '.$connector['title'], 'url' => $url],
                 ]),
             ],
         ]);
@@ -525,6 +552,10 @@ class SeoServiceProvider extends ServiceProvider
             // /flow and /fancy-tui 301 here; the Features are the URLs to index.
             foreach (FeatureSites::slugs() as $slug) {
                 $map->add('features/'.$slug, '0.8', 'weekly');
+            }
+            // Every connector's setup wizard, from the served index.
+            foreach (app(ConnectorCatalogue::class)->slugs() as $connector) {
+                $map->add('features/connectors/'.$connector.'/setup', '0.6', 'weekly');
             }
             foreach (StarterKitController::kits() as $kit) {
                 $map->add('starter-kits/'.$kit['slug'], '0.6', 'monthly');

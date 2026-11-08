@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Showcase;
 use App\Http\Controllers\Controller;
 use App\Support\Curriculum\ListedCourses;
 use App\Support\FeatureSites;
+use App\Support\Registry\ConnectorCatalogue;
 use App\Support\Registry\PackageVersions;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -44,7 +45,7 @@ class FeatureSiteController extends Controller
         ]);
     }
 
-    public function show(string $slug, PackageVersions $versions): Response
+    public function show(string $slug, PackageVersions $versions, ConnectorCatalogue $connectors): Response
     {
         $feature = FeatureSites::resolved($slug);
         abort_if($feature === null, 404);
@@ -57,6 +58,28 @@ class FeatureSiteController extends Controller
         return Inertia::render((string) $feature['component'], [
             'feature' => $feature,
             'versions' => Inertia::defer(fn (): array => $this->versionsOf($feature['members'], $versions)),
+            // The Connectors page lists every connector the served index carries.
+            ...($slug === 'connectors' ? ['connectors' => $connectors->all()] : []),
+        ]);
+    }
+
+    /**
+     * `/features/connectors/{service}/setup`: one connector's setup steps in
+     * react-fancy's SetupWizard, or its credential fields and links when it
+     * has no steps yet. The steps are the index's own; none is written here.
+     */
+    public function connectorSetup(string $service, ConnectorCatalogue $connectors): Response
+    {
+        $connector = $connectors->find($service);
+        abort_if($connector === null, 404);
+
+        $feature = FeatureSites::resolved('connectors');
+        abort_if($feature === null, 404);
+        $feature['course'] = null;
+
+        return Inertia::render('Features/Connectors/Setup', [
+            'feature' => $feature,
+            'connector' => $connector,
         ]);
     }
 

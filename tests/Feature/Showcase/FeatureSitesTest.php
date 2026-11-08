@@ -17,7 +17,7 @@ uses(TestCase::class);
  * resolves in the registry, and that each page names itself for SEO.
  */
 
-const FEATURE_SLUGS = ['flow', 'tui', 'cms', 'documents', 'git', '3d', 'ecommerce', 'gamification', 'compliance', 'accessibility'];
+const FEATURE_SLUGS = ['flow', 'tui', 'cms', 'documents', 'git', '3d', 'ecommerce', 'gamification', 'compliance', 'accessibility', 'connectors'];
 
 /** The Inertia page object an initial (HTML) visit carries. */
 function inertiaPage(string $html): array

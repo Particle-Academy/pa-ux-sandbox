@@ -21,7 +21,7 @@ const pascal = (name: string) =>
 describe("Feature icons", () => {
     it("finds one icon per Feature", () => {
         const features = [...php.matchAll(/'component' => 'Features\/[A-Za-z]+\/Index'/g)].length;
-        expect(features).toBe(10);
+        expect(features).toBe(11);
         expect(names).toHaveLength(features);
     });
 

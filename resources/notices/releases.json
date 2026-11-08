@@ -28,7 +28,7 @@
         "fancy-compliance": "0.1.2",
         "fancy-compliance-ui": "0.3.0",
         "fancy-conformance": "0.46.0",
-        "fancy-connector-core": "0.14.0",
+        "fancy-connector-core": "0.15.1",
         "fancy-devtools": "0.1.1",
         "fancy-diff": "0.5.1",
         "fancy-doc-commons": "0.4.0",
@@ -55,8 +55,8 @@
         "fancy-git-js": "0.3.3",
         "fancy-git-ui": "0.5.0",
         "fancy-grid": "0.4.1",
-        "fancy-heuristics": "0.5.0",
-        "fancy-heuristics-js": "0.3.0",
+        "fancy-heuristics": "0.6.0",
+        "fancy-heuristics-js": "0.4.0",
         "fancy-inertia": "0.14.1",
         "fancy-live": "0.1.0",
         "fancy-map": "0.2.1",
@@ -67,7 +67,7 @@
         "fancy-passkeys": "0.2.1",
         "fancy-passkeys-js": "0.2.1",
         "fancy-passkeys-ui": "0.2.1",
-        "fancy-pixel": "0.3.0",
+        "fancy-pixel": "0.4.0",
         "fancy-pty": "0.5.0",
         "fancy-pwa": "0.2.0",
         "fancy-qr": "0.1.0",
@@ -105,15 +105,15 @@
         "last-word-py": "0.12.1",
         "last-word-ui": "0.5.0",
         "mcp-relay-client": "0.3.0",
-        "prism": "0.147.0",
+        "prism": "0.147.1",
         "prism-acp": "0.1.1",
-        "prism-acp-ts": "0.39.0",
+        "prism-acp-ts": "0.40.0",
         "prism-browser": "0.4.1",
         "prism-browser-py": "0.2.0",
         "prism-browser-ts": "0.3.0",
         "prism-harness": "0.23.1",
         "prism-harness-py": "0.5.1",
-        "prism-harness-ts": "0.10.1",
+        "prism-harness-ts": "0.10.3",
         "prism-human-plus": "0.6.0",
         "prism-human-plus-py": "0.3.0",
         "prism-human-plus-ts": "0.5.0",
@@ -135,11 +135,99 @@
         "prism-workspace": "0.3.0",
         "prism-workspace-py": "0.1.0",
         "prism-workspace-ts": "0.2.0",
-        "react-fancy": "6.18.1",
+        "react-fancy": "6.19.1",
         "teachers-aid": "0.3.0",
         "teachers-aid-ui": "0.3.0"
     },
     "releases": [
+        {
+            "slug": "prism-acp-ts",
+            "registry": "npm",
+            "version": "0.40.0",
+            "published_at": "2026-11-08T22:35:31Z",
+            "first": false,
+            "summary": "Observe native process cleanup through optional stop verdict callbacks"
+        },
+        {
+            "slug": "prism-harness-ts",
+            "registry": "npm",
+            "version": "0.10.3",
+            "published_at": "2026-11-08T21:58:31Z",
+            "first": false,
+            "summary": "Read Windows and macOS lock identity with asynchronous native queries, so a first lock or retry keeps the host event…"
+        },
+        {
+            "slug": "react-fancy",
+            "registry": "npm",
+            "version": "6.19.1",
+            "published_at": "2026-11-08T21:49:07Z",
+            "first": false,
+            "summary": "White text on a coloured fill now meets WCAG 1.4.3's 4.5:1 in both modes"
+        },
+        {
+            "slug": "fancy-pixel",
+            "registry": "npm",
+            "version": "0.4.0",
+            "published_at": "2026-11-08T21:49:03Z",
+            "first": false,
+            "summary": "BREAKING — consent is denied by default"
+        },
+        {
+            "slug": "fancy-heuristics-js",
+            "registry": "npm",
+            "version": "0.4.0",
+            "published_at": "2026-11-08T21:43:13Z",
+            "first": false,
+            "summary": "BREAKING — consent is denied by default"
+        },
+        {
+            "slug": "fancy-heuristics",
+            "registry": "composer",
+            "version": "0.6.0",
+            "published_at": "2026-11-08T21:15:24Z",
+            "first": false,
+            "summary": "Wire format v2"
+        },
+        {
+            "slug": "prism-harness-ts",
+            "registry": "npm",
+            "version": "0.10.2",
+            "published_at": "2026-11-08T21:00:24Z",
+            "first": false,
+            "summary": "Stream file-session log records instead of decoding the entire file as one string, so logs larger than the JavaScript…"
+        },
+        {
+            "slug": "react-fancy",
+            "registry": "npm",
+            "version": "6.19.0",
+            "published_at": "2026-11-08T20:33:41Z",
+            "first": false,
+            "summary": "--fancy-error / --fancy-error-dark: a theme token for validation text (council CC-fancy-0018)"
+        },
+        {
+            "slug": "prism",
+            "registry": "composer",
+            "version": "0.147.1",
+            "published_at": "2026-11-08T19:57:42Z",
+            "first": false,
+            "summary": "Keep one non-empty tool-call id through streamed tool calls in ten providers"
+        },
+        {
+            "slug": "fancy-connector-core",
+            "registry": "npm",
+            "version": "0.15.1",
+            "published_at": "2026-11-08T19:47:53Z",
+            "first": false,
+            "summary": null
+        },
+        {
+            "slug": "fancy-connector-core",
+            "registry": "npm",
+            "version": "0.15.0",
+            "published_at": "2026-11-08T19:40:21Z",
+            "first": false,
+            "summary": null
+        },
         {
             "slug": "react-fancy",
             "registry": "npm",

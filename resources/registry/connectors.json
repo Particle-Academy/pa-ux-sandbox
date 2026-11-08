@@ -3241,25 +3241,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/microsoft-teams-ui",
-          "version": "0.2.1",
+          "version": "0.2.2",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/microsoft-teams-js",
-          "version": "0.2.1",
+          "version": "0.2.2",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/microsoft-teams-php",
-          "version": "0.2.1",
+          "version": "0.2.2",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-microsoft-teams",
-          "version": "0.2.1",
+          "version": "0.2.2",
           "registry": "pypi",
           "installFirst": false
         }
@@ -3330,13 +3330,24 @@
       "setup": [
         {
           "title": "Register an app and add the OAuth redirect URL",
-          "detail": "In the Microsoft Entra admin center, App registrations, register (or reuse) an app and add {host.oauthRedirectUrl} under Authentication as a Web redirect URI. Record the Application (client) ID and create a client secret.",
-          "url": "https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-register-app"
+          "detail": "In the Microsoft Entra admin center, App registrations, register (or reuse) an app and add {{oauthRedirectUrl}} under Authentication as a Web redirect URI. Record the Application (client) ID and create a client secret.",
+          "url": "https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-register-app",
+          "fields": [
+            "clientId",
+            "clientSecret"
+          ],
+          "copy": [
+            {
+              "label": "Redirect URI (Web)",
+              "value": "{{oauthRedirectUrl}}"
+            }
+          ]
         },
         {
           "title": "Grant the app an application access policy naming the target user",
           "detail": "OAuth consent alone does not authorize meeting_create, meeting_get or transcript_list -- Microsoft Graph refuses every call with \"No application access policy found for this app\" until a tenant administrator runs New-CsApplicationAccessPolicy (with this app's client ID) and Grant-CsApplicationAccessPolicy naming the userId these operations will act on. Changes take up to 30 minutes to reach the Graph REST API.",
-          "url": "https://learn.microsoft.com/en-us/graph/cloud-communication-online-meeting-application-access-policy"
+          "url": "https://learn.microsoft.com/en-us/graph/cloud-communication-online-meeting-application-access-policy",
+          "done": "meeting_get answers instead of Graph refusing with \"No application access policy found for this app\" (allow up to 30 minutes after granting the policy)."
         }
       ],
       "environments": [
@@ -4286,31 +4297,31 @@
       "serviceTitle": "Twilio",
       "domain": "messaging",
       "docs": "https://www.twilio.com/docs/messaging/api/message-resource",
-      "summary": null,
+      "summary": "Send SMS with Twilio from a workflow or a Laravel app, and read a message's delivery status.",
       "repo": "Fancy-Friends/twilio",
       "status": "alpha",
       "packages": {
         "ui": {
           "name": "@particle-academy/twilio-ui",
-          "version": "0.1.1",
+          "version": "0.1.2",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/twilio-js",
-          "version": "0.1.1",
+          "version": "0.1.2",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/twilio-php",
-          "version": "0.1.1",
+          "version": "0.1.2",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-twilio",
-          "version": "0.1.1",
+          "version": "0.1.2",
           "registry": "pypi",
           "installFirst": false
         }
@@ -4366,7 +4377,49 @@
         "warning": "The KEY decides live-or-test, not the endpoint — the same host serves both. A live key pointed at a node marked “sandbox” reaches the real estate and SUCCEEDS. Nothing in the request distinguishes them, which is why the credential sits on the connection.",
         "note": "Twilio's test estate is selected by the CREDENTIALS, not the URL: a separate test Account SID and test Auth Token (Console -> API keys & tokens), against the same api.twilio.com. A live key on a node marked sandbox texts a real phone and is billed. With test credentials only message_send works -- every other resource, including message_get, answers 403 -- nothing is sent or charged, no status callback fires, and From must be Twilio's magic +15005550006 (+15005550004 as To returns 21610, the STOP case). Test credentials are the test Account SID and Auth Token, not an API key."
       },
-      "setup": null,
+      "setup": [
+        {
+          "title": "Find your Account SID",
+          "detail": "Sign in to the Twilio Console; the Account SID is on the Console home page. It is AC followed by 32 hex characters, and it is part of every URL this connector calls. A TRIAL account can only send to verified numbers (up to 5; your sign-up number is verified already), so upgrade before sending to anyone else.",
+          "url": "https://www.twilio.com/docs/usage/tutorials/how-to-use-your-free-trial-account",
+          "fields": [
+            "accountSid"
+          ]
+        },
+        {
+          "title": "Create a Standard API key for {{appName}}",
+          "detail": "Console: Settings, Account settings, API keys & auth tokens, then Create API key. Choose Standard: it reaches every API this connector uses, but not the Accounts or Keys resources, so it cannot create more keys if it leaks. Copy the key's SID into the username and its secret into the password, and store the secret immediately. Leave the region at the default unless your account uses another Twilio region: this connector calls api.twilio.com.",
+          "url": "https://www.twilio.com/docs/iam/api-keys/keys-in-console",
+          "copy": [
+            {
+              "label": "Friendly name",
+              "value": "{{appName}} ({{connector}})"
+            }
+          ],
+          "fields": [
+            "username",
+            "password"
+          ]
+        },
+        {
+          "title": "Give {{appName}} a sender",
+          "detail": "Either a Twilio phone number with SMS capability, or a Messaging Service (Console: Messaging, Services, Create Messaging Service, then add your numbers to its sender pool). message_send takes one of From or MessagingServiceSid; for Laravel notifications set TWILIO_FROM or TWILIO_MESSAGING_SERVICE_SID so a notification that names no sender still has one.",
+          "url": "https://www.twilio.com/docs/messaging/services"
+        },
+        {
+          "title": "Register for A2P 10DLC before texting US numbers",
+          "detail": "Anyone sending application SMS to the US from a 10-digit long code must register for A2P 10DLC, hobbyists included, and unregistered traffic incurs additional carrier fees. If the number only sends verification codes, Twilio Verify can be used instead of registering.",
+          "url": "https://www.twilio.com/docs/messaging/compliance/a2p-10dlc"
+        },
+        {
+          "title": "Send a test message and read it back",
+          "detail": "Send one SMS to a phone you can read, then read it back with message_get to see what Twilio did with it.",
+          "url": "https://www.twilio.com/docs/messaging/api/message-resource",
+          "actor": "agent",
+          "prompt": "Using {{appName}}'s {{connector}} connection, send one SMS with message_send to a phone the person can read (on a trial account, a verified number), then call message_get with the returned sid and report its status, error_code and error_message.",
+          "done": "message_get reports status sent or delivered with error_code null, and the person received the text."
+        }
+      ],
       "environments": [
         "fake",
         "sandbox",

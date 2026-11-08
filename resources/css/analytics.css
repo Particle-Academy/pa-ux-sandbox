@@ -105,6 +105,15 @@
   .an-table .num { text-align: right; font-family: var(--fa-mono); font-size: 12.5px; color: var(--fa-fg-1); }
   .an-table tr.hl:hover td { background: var(--fa-bg-1); }
 
+  /* react-fancy Table in the analytics cards: numbers right-aligned, cells
+     that show a label above its event name / route. */
+  .an-fancy-table { width: 100%; font-size: 13px; }
+  .an-fancy-table .num { text-align: right; font-family: var(--fa-mono); font-size: 12.5px; color: var(--fa-fg-1); white-space: nowrap; }
+  .an-fancy-table .mono, .an-cell .mono { font-family: var(--fa-mono); font-size: 11px; }
+  .an-cell { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+  .an-cell__title { font-size: 12.5px; color: var(--fa-fg-1); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 46ch; }
+  .an-cell__meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; color: var(--fa-fg-3); min-width: 0; }
+
   /* ── real-time ── */
   .rt-now { display: flex; align-items: center; gap: 14px; }
   .rt-pulse { width: 11px; height: 11px; border-radius: 999px; background: #10b981; position: relative; flex-shrink: 0; }

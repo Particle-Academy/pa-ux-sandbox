@@ -9,12 +9,17 @@ import {
     browserStorage,
     DEFAULT_APP_NAME,
     DEFAULT_APP_URL,
+    exampleUrls,
+    fillStepText,
     loadApp,
     loadProgress,
+    loadUrls,
     saveApp,
     saveProgress,
+    saveUrls,
     toWizardSteps,
     wizardTokens,
+    type WizardUrls,
 } from "./wizard";
 
 /**
@@ -26,21 +31,25 @@ import {
  * connector without steps gets a plain "coming soon" state with its credential
  * fields and links from the same catalogue, and no wizard.
  *
- * The Copy buttons fill in `{{appUrl}}`, `{{appName}}` and `{{connector}}`
- * from the two fields above the wizard. Progress is kept per connector in
- * localStorage, read after mount so the server render and the first client
- * render agree.
+ * The wizard fills the closed set of five tokens, `{{appUrl}}`, `{{appName}}`,
+ * `{{connector}}`, `{{webhookUrl}}` and `{{oauthRedirectUrl}}`, from the four
+ * fields above it. The two URL fields start as examples built from the app
+ * URL and are the person's to change: the routes are the host's own. Progress
+ * and the URLs are kept per connector in localStorage, read after mount so
+ * the server render and the first client render agree.
  */
 export default function ConnectorSetup({ feature, connector }: { feature: ResolvedFeature; connector: ConnectorCard }) {
     const steps = useMemo(() => toWizardSteps(connector.setup ?? []), [connector.setup]);
 
     const [app, setApp] = useState({ appUrl: DEFAULT_APP_URL, appName: DEFAULT_APP_NAME });
     const [progress, setProgress] = useState<SetupWizardValue>({ current: 0, done: [] });
+    const [urls, setUrls] = useState<WizardUrls>({ webhookUrl: null, oauthRedirectUrl: null });
     const [loaded, setLoaded] = useState(false);
 
     useEffect(() => {
         const storage = browserStorage();
         setApp(loadApp(storage));
+        setUrls(loadUrls(storage, connector.slug));
         setProgress(loadProgress(storage, connector.slug, steps.length));
         setLoaded(true);
     }, [connector.slug, steps.length]);
@@ -54,7 +63,14 @@ export default function ConnectorSetup({ feature, connector }: { feature: Resolv
         saveProgress(browserStorage(), connector.slug, next);
     };
 
-    const tokens = wizardTokens(app.appUrl, app.appName, connector.slug);
+    const onUrls = (next: WizardUrls) => {
+        setUrls(next);
+        saveUrls(browserStorage(), connector.slug, next);
+    };
+
+    // Until the person types one, each URL follows the app URL as an example.
+    const examples = exampleUrls(app.appUrl, connector.slug);
+    const tokens = wizardTokens(app.appUrl, app.appName, connector.slug, urls);
     const packages = Object.entries(connector.packages);
 
     return (
@@ -94,6 +110,24 @@ export default function ConnectorSetup({ feature, connector }: { feature: Resolv
                                 placeholder={DEFAULT_APP_NAME}
                                 data-co-handle="setup-app-name"
                             />
+                            <Input
+                                type="url"
+                                label="Webhook URL"
+                                description="Where the service posts events to your app. An example from your app URL; change it to your real route."
+                                value={urls.webhookUrl ?? examples.webhookUrl}
+                                onValueChange={(webhookUrl) => onUrls({ ...urls, webhookUrl })}
+                                placeholder={examples.webhookUrl}
+                                data-co-handle="setup-webhook-url"
+                            />
+                            <Input
+                                type="url"
+                                label="OAuth redirect URL"
+                                description="Where the service sends the person back after they approve. An example from your app URL; change it to your real route."
+                                value={urls.oauthRedirectUrl ?? examples.oauthRedirectUrl}
+                                onValueChange={(oauthRedirectUrl) => onUrls({ ...urls, oauthRedirectUrl })}
+                                placeholder={examples.oauthRedirectUrl}
+                                data-co-handle="setup-oauth-redirect-url"
+                            />
                         </Grid>
                         <Text as="p" size="sm" color="muted">
                             Every value you copy below is filled in for this app. Your progress is saved in this browser.
@@ -102,7 +136,7 @@ export default function ConnectorSetup({ feature, connector }: { feature: Resolv
                             <Card.Body>
                                 <SetupWizard
                                     id={`setup-${connector.slug}`}
-                                    steps={steps}
+                                    steps={fillStepText(steps, tokens)}
                                     value={progress}
                                     onChange={onProgress}
                                     tokens={tokens}

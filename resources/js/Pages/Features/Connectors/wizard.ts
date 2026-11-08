@@ -31,22 +31,117 @@ export function toWizardSteps(steps: ConnectorSetupStep[]): SetupWizardStep[] {
 }
 
 /**
- * The three tokens the plan names, and only those: `{{appUrl}}` (no trailing
- * slash, so `{{appUrl}}/callback` never doubles one), `{{appName}}` and
- * `{{connector}}` (the index slug). A blank field falls back to the default
- * rather than filling an empty string into a redirect URI.
+ * The closed set of five tokens (`.ai/plans/setup-wizards.md`, decided
+ * 2026-11-08). Nothing else is ever filled in: a step naming any other token
+ * shows it as written.
  */
-export function wizardTokens(appUrl: string, appName: string, connector: string): Record<string, string> {
-    const url = appUrl.trim().replace(/\/+$/, "");
+export const WIZARD_TOKENS = ["appUrl", "appName", "connector", "webhookUrl", "oauthRedirectUrl"] as const;
+export type WizardToken = (typeof WIZARD_TOKENS)[number];
+
+/** The two URLs the host supplies. `null` (or blank) means "use the example". */
+export type WizardUrls = { webhookUrl: string | null; oauthRedirectUrl: string | null };
+
+/**
+ * Trailing slashes off, in one linear pass. Not `/\/+$/`: that regex is
+ * quadratic on a long run of slashes followed by anything else.
+ */
+function trimSlashes(value: string): string {
+    let end = value.length;
+    while (end > 0 && value.charCodeAt(end - 1) === 47) end--;
+    return value.slice(0, end);
+}
+
+function appUrlOf(appUrl: string): string {
+    const url = trimSlashes(appUrl.trim());
+    return url === "" ? DEFAULT_APP_URL : url;
+}
+
+/**
+ * Example values for the two URL fields, built from the app URL. They are only
+ * examples: the routes are the host's own, so the person changes them to
+ * whatever their app really serves.
+ */
+export function exampleUrls(appUrl: string, connector: string): { webhookUrl: string; oauthRedirectUrl: string } {
+    const base = appUrlOf(appUrl);
 
     return {
-        appUrl: url === "" ? DEFAULT_APP_URL : url,
-        appName: appName.trim() === "" ? DEFAULT_APP_NAME : appName.trim(),
-        connector,
+        webhookUrl: `${base}/connectors/${connector}/webhooks`,
+        oauthRedirectUrl: `${base}/connectors/${connector}/oauth/callback`,
     };
 }
 
+/**
+ * The five tokens: `{{appUrl}}` (no trailing slash, so `{{appUrl}}/callback`
+ * never doubles one), `{{appName}}`, `{{connector}}` (the index slug), and the
+ * two URLs, as typed or else their example. A blank field falls back to the
+ * default rather than filling an empty string into a redirect URI.
+ */
+export function wizardTokens(appUrl: string, appName: string, connector: string, urls?: Partial<WizardUrls>): Record<WizardToken, string> {
+    const examples = exampleUrls(appUrl, connector);
+    const typed = (value: string | null | undefined, example: string) => {
+        const v = (value ?? "").trim();
+        return v === "" ? example : v;
+    };
+
+    return {
+        appUrl: appUrlOf(appUrl),
+        appName: appName.trim() === "" ? DEFAULT_APP_NAME : appName.trim(),
+        connector,
+        webhookUrl: typed(urls?.webhookUrl, examples.webhookUrl),
+        oauthRedirectUrl: typed(urls?.oauthRedirectUrl, examples.oauthRedirectUrl),
+    };
+}
+
+const TOKEN = /\{\{([A-Za-z]+)\}\}/g;
+
+/** Literal replacement of the five tokens; anything else stays as written. */
+function fillText(text: string, tokens: Record<WizardToken, string>): string {
+    return text.replace(TOKEN, (whole: string, name: string) =>
+        (WIZARD_TOKENS as readonly string[]).includes(name) ? tokens[name as WizardToken] : whole,
+    );
+}
+
+/**
+ * Fills the step `title` and `done` line. react-fancy 6.19.1's SetupWizard
+ * fills `detail`, `prompt` and copy values itself but shows a title (and the
+ * stepper label built from it) and `done` as written, so twilio's "Create a
+ * Standard API key for {{appName}}" reached the screen with the braces in it.
+ * The same closed set, the same literal replacement (a function replacer, so
+ * a value is never read as a pattern). Drop this once the wizard fills them.
+ */
+export function fillStepText(steps: SetupWizardStep[], tokens: Record<WizardToken, string>): SetupWizardStep[] {
+    return steps.map((step) => ({
+        ...step,
+        title: fillText(step.title, tokens),
+        ...(step.done ? { done: fillText(step.done, tokens) } : {}),
+    }));
+}
+
 export const progressKey = (connector: string) => `fancy:connector-setup:${connector}`;
+const urlsKey = (connector: string) => `${progressKey(connector)}:urls`;
+
+/** The two URLs for one connector, as the person last typed them; null where they have not. */
+export function loadUrls(storage: Pick<Storage, "getItem"> | null, connector: string): WizardUrls {
+    const none: WizardUrls = { webhookUrl: null, oauthRedirectUrl: null };
+    if (!storage) return none;
+    try {
+        const raw = JSON.parse(storage.getItem(urlsKey(connector)) ?? "null");
+        return {
+            webhookUrl: typeof raw?.webhookUrl === "string" ? raw.webhookUrl : null,
+            oauthRedirectUrl: typeof raw?.oauthRedirectUrl === "string" ? raw.oauthRedirectUrl : null,
+        };
+    } catch {
+        return none;
+    }
+}
+
+export function saveUrls(storage: Pick<Storage, "setItem"> | null, connector: string, urls: WizardUrls): void {
+    try {
+        storage?.setItem(urlsKey(connector), JSON.stringify(urls));
+    } catch {
+        // Private mode or a full quota: the URLs just aren't kept.
+    }
+}
 export const APP_KEY = "fancy:connector-setup:app";
 
 /**

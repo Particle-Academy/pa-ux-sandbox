@@ -472,13 +472,14 @@ class HeuristicsReport
 
     /**
      * Behavior section: top pages, entry pages, exit pages, top clicked
-     * elements — each scoped to the window + actor.
+     * elements and events by name, each scoped to the window + actor.
      *
      * @return array{
-     *     topPages: list<array{path: string, pageviews: int, sessions: int}>,
+     *     topPages: list<array{path: string, pageviews: int, sessions: int, title: string|null, route_pattern: string|null, route_name: string|null}>,
      *     entryPages: list<array{path: string, sessions: int}>,
      *     exitPages: list<array{path: string, sessions: int}>,
-     *     topElements: list<array{target_id: string, label: string|null, clicks: int}>
+     *     topElements: list<array<string, mixed>>,
+     *     eventNames: list<array{name: string, events: int, sessions: int}>
      * }
      */
     public function behavior(string $site, int $days, string $actor = 'all'): array
@@ -486,11 +487,128 @@ class HeuristicsReport
         $resolved = $this->resolveActor($actor);
 
         return [
-            'topPages' => Heuristics::topPages($site, $days, $resolved, 12),
+            'topPages' => $this->pages($site, $days, $resolved, 12),
             'entryPages' => Heuristics::entryPages($site, $days, $resolved, 8),
             'exitPages' => Heuristics::exitPages($site, $days, $resolved, 8),
-            'topElements' => Heuristics::topElements($site, $days, $resolved, 12),
+            'topElements' => $this->elements($site, $days, $resolved, 12),
+            'eventNames' => Heuristics::eventNames($site, $days, $resolved, 12),
         ];
+    }
+
+    /**
+     * Top pages with the title and route pattern fancy-heuristics 0.6 reports,
+     * plus the route NAME, which it does not: the latest one recorded for the
+     * path. A page stored before 0.6 has none of the three, and shows as it
+     * always did.
+     *
+     * @return list<array{path: string, pageviews: int, sessions: int, title: string|null, route_pattern: string|null, route_name: string|null}>
+     */
+    public function pages(string $site, int $days, ?string $actor, int $limit): array
+    {
+        $rows = Heuristics::topPages($site, $days, $actor, $limit);
+        if ($rows === []) {
+            return [];
+        }
+
+        $names = HeuristicsEvent::query()
+            ->where('site_key', $site)
+            ->where('kind', 'pageview')
+            ->whereNotNull('route_name')
+            ->whereIn('path', array_column($rows, 'path'))
+            ->where('occurred_at', '>=', now()->subDays($days))
+            ->selectRaw('path, route_name, MAX(occurred_at) as last_seen')
+            ->groupBy('path', 'route_name')
+            ->get()
+            ->sortBy(fn ($row) => (string) $row->last_seen)
+            ->mapWithKeys(fn ($row) => [(string) $row->path => (string) $row->route_name])
+            ->all();
+
+        return array_map(fn (array $row): array => [
+            ...$row,
+            'title' => $row['title'] ?? null,
+            'route_pattern' => $row['route_pattern'] ?? null,
+            'route_name' => $names[$row['path']] ?? null,
+        ], $rows);
+    }
+
+    /**
+     * The activated controls, each with its `<domain>.<verb>` event name.
+     *
+     * Human clicks come from `Heuristics::topElements()` (`ui.activate`; a row
+     * stored before 0.6 is `legacy` and keeps its stored label, with no event
+     * name). Agent activity is not a click since 0.6: it is kind `agent`,
+     * named `agent.tool` (the relay) or `agent.act` (the in-page sink), so the
+     * agent rows are read by kind here, alongside any agent CLICK stored
+     * before the upgrade, which still shows as legacy.
+     *
+     * @return list<array{
+     *     event: string|null, component: string|null, part: string|null, instance: string|null,
+     *     role: string|null, name: string|null, legacy: bool, target_id: string, label: string|null, clicks: int
+     * }>
+     */
+    public function elements(string $site, int $days, ?string $actor, int $limit): array
+    {
+        if ($actor !== 'agent') {
+            return array_map(fn (array $row): array => [
+                'event' => ($row['legacy'] ?? false) ? null : 'ui.activate',
+                'component' => $row['component'] ?? null,
+                'part' => $row['part'] ?? null,
+                'instance' => $row['instance'] ?? null,
+                'role' => $row['role'] ?? null,
+                'name' => $row['name'] ?? null,
+                'legacy' => (bool) ($row['legacy'] ?? false),
+                'target_id' => (string) ($row['target_id'] ?? ''),
+                'label' => $row['label'] ?? null,
+                'clicks' => (int) $row['clicks'],
+            ], Heuristics::topElements($site, $days, $actor, $limit));
+        }
+
+        $window = fn () => HeuristicsEvent::query()
+            ->where('site_key', $site)
+            ->where('actor', 'agent')
+            ->where('occurred_at', '>=', now()->subDays($days));
+
+        $current = $window()
+            ->where('kind', 'agent')
+            ->selectRaw('name, component, instance, target_name, target_id, label, COUNT(*) as hits')
+            ->groupBy('name', 'component', 'instance', 'target_name', 'target_id', 'label')
+            ->orderByDesc('hits')
+            ->limit($limit)
+            ->get()
+            ->map(fn ($row): array => [
+                'event' => $row->name !== null ? (string) $row->name : null,
+                'component' => $row->component !== null ? (string) $row->component : null,
+                'part' => null,
+                'instance' => $row->instance !== null ? (string) $row->instance : null,
+                'role' => null,
+                'name' => $row->target_name !== null ? (string) $row->target_name : null,
+                'legacy' => false,
+                'target_id' => (string) ($row->target_id ?? $row->instance ?? ''),
+                'label' => $row->target_name ?? $row->label ?? $row->target_id,
+                'clicks' => (int) $row->hits,
+            ]);
+
+        $legacy = $window()
+            ->where('kind', 'click')
+            ->selectRaw('target_id, label, COUNT(*) as hits')
+            ->groupBy('target_id', 'label')
+            ->orderByDesc('hits')
+            ->limit($limit)
+            ->get()
+            ->map(fn ($row): array => [
+                'event' => null,
+                'component' => null,
+                'part' => null,
+                'instance' => null,
+                'role' => null,
+                'name' => null,
+                'legacy' => true,
+                'target_id' => (string) ($row->target_id ?? ''),
+                'label' => $row->label !== null ? (string) $row->label : null,
+                'clicks' => (int) $row->hits,
+            ]);
+
+        return $current->concat($legacy)->sortByDesc('clicks')->take($limit)->values()->all();
     }
 
     /**
@@ -516,10 +634,10 @@ class HeuristicsReport
      * @return array{
      *     totals: array{human: int, agent: int, agentPct: float},
      *     metrics: array{human: array<string, float>, agent: array<string, float>},
-     *     humanElements: list<array{target_id: string, label: string|null, clicks: int}>,
-     *     agentElements: list<array{target_id: string, label: string|null, clicks: int}>,
-     *     humanPages: list<array{path: string, pageviews: int, sessions: int}>,
-     *     agentPages: list<array{path: string, pageviews: int, sessions: int}>
+     *     humanElements: list<array<string, mixed>>,
+     *     agentElements: list<array<string, mixed>>,
+     *     humanPages: list<array<string, mixed>>,
+     *     agentPages: list<array<string, mixed>>
      * }
      */
     public function agentAnalytics(string $site, int $days): array
@@ -541,10 +659,10 @@ class HeuristicsReport
                 'human' => $this->splitRow($human),
                 'agent' => $this->splitRow($agent),
             ],
-            'humanElements' => Heuristics::topElements($site, $days, 'human', 8),
-            'agentElements' => Heuristics::topElements($site, $days, 'agent', 8),
-            'humanPages' => Heuristics::topPages($site, $days, 'human', 8),
-            'agentPages' => Heuristics::topPages($site, $days, 'agent', 8),
+            'humanElements' => $this->elements($site, $days, 'human', 8),
+            'agentElements' => $this->elements($site, $days, 'agent', 8),
+            'humanPages' => $this->pages($site, $days, 'human', 8),
+            'agentPages' => $this->pages($site, $days, 'agent', 8),
         ];
     }
 }

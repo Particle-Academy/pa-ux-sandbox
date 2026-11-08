@@ -33,8 +33,8 @@ it('ingests a Fancy Pixel collect batch at the mounted endpoint', function () {
         'siteKey' => 'sitekey01',
         'sessionId' => 'session01',
         'events' => [
-            ['kind' => 'click', 'actor' => 'human', 'path' => '/pricing', 'ts' => 1717000000000, 'x' => 120, 'y' => 340, 'vw' => 1280, 'vh' => 800, 'targetId' => 'cta'],
-            ['kind' => 'scroll', 'actor' => 'human', 'path' => '/pricing', 'ts' => 1717000000100, 'scrollPct' => 62],
+            ['kind' => 'click', 'actor' => 'human', 'path' => '/pricing', 'ts' => now()->getTimestampMs(), 'x' => 120, 'y' => 340, 'vw' => 1280, 'vh' => 800, 'targetId' => 'cta'],
+            ['kind' => 'scroll', 'actor' => 'human', 'path' => '/pricing', 'ts' => now()->getTimestampMs() + 100, 'scrollPct' => 62],
         ],
     ]);
 

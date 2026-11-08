@@ -162,17 +162,40 @@ it('lists every setup page in the sitemap and names each one', function () {
     expect($html)->toContain('>Set up '.e($first['title']).' — Connectors — Fancy UI</title>');
 });
 
-it('renders the real SetupWizard with the three tokens and per-connector progress', function () {
+it('renders the real SetupWizard with the closed set of five tokens and per-connector progress', function () {
     $sources = connectorsSources();
 
     expect($sources['Setup.tsx'])->toContain('<SetupWizard')
         ->and($sources['Setup.tsx'])->toContain('from "@particle-academy/react-fancy"')
         ->and($sources['Setup.tsx'])->toContain('Setup guide coming soon')
         ->and($sources['Setup.tsx'])->toContain('label="Your app URL"')
+        ->and($sources['Setup.tsx'])->toContain('label="Webhook URL"')
+        ->and($sources['Setup.tsx'])->toContain('label="OAuth redirect URL"')
+        ->and($sources['Setup.tsx'])->toContain('data-co-handle="setup-webhook-url"')
+        ->and($sources['Setup.tsx'])->toContain('data-co-handle="setup-oauth-redirect-url"')
         ->and($sources['wizard.ts'])->toContain('DEFAULT_APP_URL = "https://app.example.com"')
-        ->and($sources['wizard.ts'])->toContain('appUrl:', 'appName:', 'connector,')
+        ->and($sources['wizard.ts'])->toContain('"appUrl", "appName", "connector", "webhookUrl", "oauthRedirectUrl"')
         ->and($sources['wizard.ts'])->toContain('fancy:connector-setup:${connector}')
         ->and(implode("\n", $sources))->not->toContain('TODO');
+});
+
+it('serves twilio\'s five real steps and microsoft-teams\' redirect URL from the shipped index', function () {
+    // Pinned against the shipped file (Weaver's index, sha256 cd24ddef...,
+    // byte-verified 2026-11-08): twilio 0.1.2 and microsoft-teams 0.2.2.
+    $twilio = connectorsPage($this, '/features/connectors/twilio/setup')['props']['connector'];
+
+    expect($twilio['setup'])->toHaveCount(5)
+        ->and($twilio['setup'][0]['fields'])->toBe(['accountSid'])
+        ->and($twilio['setup'][1]['copy'])->toBe([['label' => 'Friendly name', 'value' => '{{appName}} ({{connector}})']])
+        ->and($twilio['setup'][4]['actor'])->toBe('agent')
+        ->and($twilio['setup'][4]['prompt'])->toContain('message_get')
+        ->and($twilio['setup'][4]['done'])->toContain('error_code null');
+
+    $teams = connectorsPage($this, '/features/connectors/microsoft-teams/setup')['props']['connector'];
+
+    expect($teams['setup'][0]['copy'])->toBe([['label' => 'Redirect URI (Web)', 'value' => '{{oauthRedirectUrl}}']])
+        ->and($teams['setup'][0]['detail'])->toContain('{{oauthRedirectUrl}}')
+        ->and(json_encode($teams['setup']))->not->toContain('{host.');
 });
 
 it('makes the claims the owner asked for, and a Set up button per connector', function () {

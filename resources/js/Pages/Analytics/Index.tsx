@@ -6,7 +6,7 @@ import {
     Lock, LogIn, LogOut, Megaphone, MonitorSmartphone, MousePointerClick, PieChart, Radio,
     Route, Smartphone, Sparkles, Split, Star, Tag, TrendingUp, User,
 } from "lucide-react";
-import { useTheme } from "@particle-academy/react-fancy";
+import { Badge, Table, useTheme } from "@particle-academy/react-fancy";
 import { EChart } from "@particle-academy/fancy-echarts";
 import { Layout } from "../Layout";
 
@@ -28,9 +28,22 @@ type Breakdown = { value?: string; host?: string; sessions: number };
 type Acquisition = { referrer_hosts: Breakdown[]; utm_sources: Breakdown[]; utm_mediums: Breakdown[]; utm_campaigns: Breakdown[]; direct: number; referral: number; total: number } | null;
 type Audience = { devices: Breakdown[]; browsers: Breakdown[]; os: Breakdown[]; languages: Breakdown[]; total: number } | null;
 
-type Element = { target_id: string; label: string | null; clicks: number };
-type PageRow = { path: string; pageviews: number; sessions: number };
-type Behavior = { topPages: PageRow[]; entryPages: { path: string; sessions: number }[]; exitPages: { path: string; sessions: number }[]; topElements: Element[] } | null;
+/**
+ * An activated control (fancy-heuristics 0.6). `event` is its `<domain>.<verb>`
+ * name; `legacy` rows were stored before the upgrade and carry only the label
+ * they were stored with, often a whole container's text.
+ */
+type Element = {
+    event: string | null; component: string | null; part: string | null; instance: string | null;
+    role: string | null; name: string | null; legacy: boolean; target_id: string; label: string | null; clicks: number;
+};
+/** A page; title and route are null on a page stored before the upgrade. */
+type PageRow = { path: string; pageviews: number; sessions: number; title: string | null; route_pattern: string | null; route_name: string | null };
+type EventNameRow = { name: string; events: number; sessions: number };
+type Behavior = {
+    topPages: PageRow[]; entryPages: { path: string; sessions: number }[]; exitPages: { path: string; sessions: number }[];
+    topElements: Element[]; eventNames: EventNameRow[];
+} | null;
 
 type RealtimeSession = { session_id: string; actor: string; path: string | null; last_event_at: string | null };
 type Realtime = { active: number; window_seconds: number; sessions: RealtimeSession[] } | null;
@@ -493,25 +506,62 @@ function BehaviorSection({ data }: { data: NonNullable<Behavior> }) {
             <div className="grid-2">
                 <Cardlet title="Top pages" Icon={FileText}>
                     {data.topPages.length === 0 ? <EmptyMini icon={<FileText size={19} />} t="No pageviews yet" b="Page views appear here once captured." /> : (
-                        <table className="an-table">
-                            <thead><tr><th>Path</th><th style={{ textAlign: "right" }}>Views</th><th style={{ textAlign: "right" }}>Sessions</th></tr></thead>
-                            <tbody>{data.topPages.map((p) => (
-                                <tr key={p.path} className="hl"><td className="mono">{p.path}</td><td className="num">{p.pageviews.toLocaleString()}</td><td className="num">{p.sessions.toLocaleString()}</td></tr>
-                            ))}</tbody>
-                        </table>
+                        <Table className="an-fancy-table" data-analytics-table="pages">
+                            <Table.Head>
+                                <Table.Row>
+                                    <Table.Cell header>Page</Table.Cell>
+                                    <Table.Cell header className="num">Views</Table.Cell>
+                                    <Table.Cell header className="num">Sessions</Table.Cell>
+                                </Table.Row>
+                            </Table.Head>
+                            <Table.Body>{data.topPages.map((p) => (
+                                <Table.Row key={p.path} data-analytics-page={p.path}>
+                                    <Table.Cell><PageCell page={p} /></Table.Cell>
+                                    <Table.Cell className="num">{p.pageviews.toLocaleString()}</Table.Cell>
+                                    <Table.Cell className="num">{p.sessions.toLocaleString()}</Table.Cell>
+                                </Table.Row>
+                            ))}</Table.Body>
+                        </Table>
                     )}
                 </Cardlet>
                 <Cardlet title="Top clicked elements" Icon={MousePointerClick}>
                     {data.topElements.length === 0 ? <EmptyMini icon={<MousePointerClick size={19} />} t="No tracked clicks" b="Element clicks appear here once captured." /> : (
-                        <table className="an-table">
-                            <thead><tr><th>Element</th><th style={{ textAlign: "right" }}>Clicks</th></tr></thead>
-                            <tbody>{data.topElements.map((e) => (
-                                <tr key={e.target_id} className="hl">
-                                    <td><div style={{ fontSize: 12.5, color: "var(--fa-fg-1)" }}>{e.label ?? "—"}</div><div className="mono" style={{ fontSize: 11, color: "var(--fa-fg-4)" }}>{e.target_id}</div></td>
-                                    <td className="num">{e.clicks.toLocaleString()}</td>
-                                </tr>
-                            ))}</tbody>
-                        </table>
+                        <Table className="an-fancy-table" data-analytics-table="elements">
+                            <Table.Head>
+                                <Table.Row>
+                                    <Table.Cell header>Element</Table.Cell>
+                                    <Table.Cell header className="num">Clicks</Table.Cell>
+                                </Table.Row>
+                            </Table.Head>
+                            <Table.Body>{data.topElements.map((e) => (
+                                <Table.Row key={elementKey(e)} data-analytics-element={e.legacy ? "legacy" : (e.event ?? "")}>
+                                    <Table.Cell><ElementCell element={e} /></Table.Cell>
+                                    <Table.Cell className="num">{e.clicks.toLocaleString()}</Table.Cell>
+                                </Table.Row>
+                            ))}</Table.Body>
+                        </Table>
+                    )}
+                </Cardlet>
+            </div>
+            <div className="grid-2" style={{ marginTop: 14 }}>
+                <Cardlet title="Events by name" Icon={Tag}>
+                    {data.eventNames.length === 0 ? <EmptyMini icon={<Tag size={19} />} t="No named events yet" b="Events recorded since the analytics upgrade are named domain.verb." /> : (
+                        <Table className="an-fancy-table" data-analytics-table="event-names">
+                            <Table.Head>
+                                <Table.Row>
+                                    <Table.Cell header>Event</Table.Cell>
+                                    <Table.Cell header className="num">Events</Table.Cell>
+                                    <Table.Cell header className="num">Sessions</Table.Cell>
+                                </Table.Row>
+                            </Table.Head>
+                            <Table.Body>{data.eventNames.map((r) => (
+                                <Table.Row key={r.name} data-analytics-event={r.name}>
+                                    <Table.Cell><Badge size="sm" variant="soft" color="zinc" className="mono">{r.name}</Badge></Table.Cell>
+                                    <Table.Cell className="num">{r.events.toLocaleString()}</Table.Cell>
+                                    <Table.Cell className="num">{r.sessions.toLocaleString()}</Table.Cell>
+                                </Table.Row>
+                            ))}</Table.Body>
+                        </Table>
                     )}
                 </Cardlet>
             </div>
@@ -696,8 +746,8 @@ function ElementBars({ rows, color, ink }: { rows: Element[]; color: string; ink
     const top = Math.max(1, ...rows.map((r) => r.clicks));
     return (
         <div className="bd-list">{rows.map((e) => (
-            <div className="bd" key={e.target_id}>
-                <span className="bd-label"><span style={{ fontSize: 12.5, color: "var(--fa-fg-1)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{e.label ?? e.target_id}</span></span>
+            <div className="bd" key={elementKey(e)} data-analytics-element={e.legacy ? "legacy" : (e.event ?? "")}>
+                <span className="bd-label"><ElementCell element={e} compact /></span>
                 <span className="bd-val" style={{ color: ink }}>{e.clicks.toLocaleString()}</span>
                 <span className="bd-track"><span className="bd-fill" style={{ width: `${(e.clicks / top) * 100}%`, background: color }} /></span>
             </div>
@@ -711,11 +761,56 @@ function PageBars({ rows, color, ink }: { rows: PageRow[]; color: string; ink: s
     return (
         <div className="bd-list">{rows.map((p) => (
             <div className="bd" key={p.path}>
-                <span className="bd-label"><span className="host">{p.path}</span></span>
+                <span className="bd-label"><PageCell page={p} compact /></span>
                 <span className="bd-val" style={{ color: ink }}>{p.pageviews.toLocaleString()}</span>
                 <span className="bd-track"><span className="bd-fill" style={{ width: `${(p.pageviews / top) * 100}%`, background: color }} /></span>
             </div>
         ))}</div>
+    );
+}
+
+/** Group identity of an element row: the same control can appear as a new and a legacy row. */
+function elementKey(e: Element): string {
+    return [e.legacy ? "legacy" : "v2", e.event, e.component, e.part, e.instance, e.name, e.target_id, e.label].join("|");
+}
+
+/**
+ * One activated control: its own label, then its `<domain>.<verb>` event name
+ * and where it lives (component, part, instance). A legacy row shows the
+ * label it was stored with, marked so nobody reads a container's text as a
+ * button's name.
+ */
+function ElementCell({ element: e, compact }: { element: Element; compact?: boolean }) {
+    const label = e.label ?? e.name ?? (e.target_id || "—");
+    const where = [e.component && e.component !== "none" ? e.component : null, e.part, e.instance].filter(Boolean).join(" · ");
+
+    return (
+        <span className="an-cell" data-element-label={label}>
+            <span className="an-cell__title" title={label}>{label}</span>
+            <span className="an-cell__meta">
+                {e.legacy ? (
+                    <Badge size="sm" variant="outline" color="amber">legacy</Badge>
+                ) : e.event ? (
+                    <Badge size="sm" variant="soft" color="zinc" className="mono">{e.event}</Badge>
+                ) : null}
+                {!compact && where !== "" && <span className="mono">{where}</span>}
+                {!compact && e.legacy && e.target_id !== "" && <span className="mono">{e.target_id}</span>}
+            </span>
+        </span>
+    );
+}
+
+/** One page: its title (or its path, on a page stored before the upgrade), then path, route pattern and route name. */
+function PageCell({ page: p, compact }: { page: PageRow; compact?: boolean }) {
+    return (
+        <span className="an-cell" data-page-title={p.title ?? ""}>
+            <span className="an-cell__title" title={p.title ?? p.path}>{p.title ?? p.path}</span>
+            <span className="an-cell__meta">
+                {p.title !== null && <span className="mono">{p.path}</span>}
+                {!compact && p.route_pattern !== null && p.route_pattern !== p.path && <span className="mono">{p.route_pattern}</span>}
+                {!compact && p.route_name !== null && <Badge size="sm" variant="soft" color="zinc" className="mono">{p.route_name}</Badge>}
+            </span>
+        </span>
     );
 }
 

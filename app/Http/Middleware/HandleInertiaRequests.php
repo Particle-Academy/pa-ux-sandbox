@@ -81,6 +81,10 @@ class HandleInertiaRequests extends Middleware
             // The pasted Fancy Pixel, as mount options for the client, which
             // mounts it only under `analytics` consent (ShowcaseAnalytics.tsx).
             'selfPixel' => fn () => SelfSite::pixel(),
+            // This page's Laravel route, for the analytics collector's v2
+            // `route` field (fancy-heuristics-js 0.4): reports group by the
+            // pattern, so /packages/a and /packages/b are one page.
+            'analyticsRoute' => fn (): array => $this->analyticsRoute($request),
             // The head SeoServiceProvider resolved for this page, for the client
             // <ServerSeo> to replay after hydration and on SPA navigation. Pages
             // used to pass their own title and description to <Seo>, and the
@@ -104,6 +108,26 @@ class HandleInertiaRequests extends Middleware
             // footer column all read this — App\Support\FeatureSites is the one
             // list, so the nav cannot drift from the pages it links to.
             'features' => fn (): array => FeatureSites::nav(),
+        ];
+    }
+
+    /**
+     * The matched route's name and URI pattern, e.g. `docs.show` and
+     * `/docs/{slug}`. Either is null when there is none (an unnamed route, or
+     * a fallback).
+     *
+     * @return array{name: ?string, pattern: ?string}
+     */
+    private function analyticsRoute(Request $request): array
+    {
+        $route = $request->route();
+        if ($route === null) {
+            return ['name' => null, 'pattern' => null];
+        }
+
+        return [
+            'name' => $route->getName(),
+            'pattern' => '/'.ltrim($route->uri(), '/'),
         ];
     }
 }

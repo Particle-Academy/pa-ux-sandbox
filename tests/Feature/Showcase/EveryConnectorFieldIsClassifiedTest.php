@@ -126,6 +126,7 @@ function operationCarriedFields(): array
         'subscription' => 'inside the nested `trigger` block',
         'verification' => 'inside the nested `trigger` block — hmac / shared-token / null',
         'route' => 'inside the nested `trigger` block — the key a host routes a VERIFIED delivery by',
+        'cursor' => 'inside the nested `trigger` block — the host-held cursor a push-then-read trigger resumes from',
     ];
 }
 

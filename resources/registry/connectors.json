@@ -16,25 +16,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/amazon-ses-ui",
-          "version": "0.3.4",
+          "version": "0.4.1",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/amazon-ses-js",
-          "version": "0.3.4",
+          "version": "0.4.1",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/amazon-ses-php",
-          "version": "0.3.4",
+          "version": "0.4.1",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-amazon-ses",
-          "version": "0.3.4",
+          "version": "0.4.1",
           "registry": "pypi",
           "installFirst": false
         }
@@ -52,6 +52,11 @@
         "accessTokenCredential": null,
         "refreshTokenCredential": null,
         "accessTokenTtlSeconds": null,
+        "grant": null,
+        "authorizeParams": null,
+        "revoke": null,
+        "identity": null,
+        "restrictedScopes": null,
         "credentials": [
           {
             "key": "accessKeyId",
@@ -122,25 +127,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/buffer-ui",
-          "version": "0.1.3",
+          "version": "0.2.1",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/buffer-js",
-          "version": "0.1.3",
+          "version": "0.2.1",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/buffer-php",
-          "version": "0.1.3",
+          "version": "0.2.1",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-buffer",
-          "version": "0.1.3",
+          "version": "0.2.1",
           "registry": "pypi",
           "installFirst": false
         }
@@ -161,6 +166,11 @@
         "accessTokenCredential": "accessToken",
         "refreshTokenCredential": "refreshToken",
         "accessTokenTtlSeconds": 3600,
+        "grant": null,
+        "authorizeParams": null,
+        "revoke": null,
+        "identity": null,
+        "restrictedScopes": null,
         "credentials": [
           {
             "key": "clientId",
@@ -239,25 +249,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/discord-ui",
-          "version": "0.1.3",
+          "version": "0.2.1",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/discord-js",
-          "version": "0.1.3",
+          "version": "0.2.1",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/discord-php",
-          "version": "0.1.3",
+          "version": "0.2.1",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-discord",
-          "version": "0.1.3",
+          "version": "0.2.1",
           "registry": "pypi",
           "installFirst": false
         }
@@ -275,6 +285,11 @@
         "accessTokenCredential": null,
         "refreshTokenCredential": null,
         "accessTokenTtlSeconds": null,
+        "grant": null,
+        "authorizeParams": null,
+        "revoke": null,
+        "identity": null,
+        "restrictedScopes": null,
         "credentials": [
           {
             "key": "botToken",
@@ -330,25 +345,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/facebook-lead-ads-ui",
-          "version": "0.1.4",
+          "version": "0.2.1",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/facebook-lead-ads-js",
-          "version": "0.1.4",
+          "version": "0.2.1",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/facebook-lead-ads-php",
-          "version": "0.1.4",
+          "version": "0.2.1",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-facebook-lead-ads",
-          "version": "0.1.4",
+          "version": "0.2.1",
           "registry": "pypi",
           "installFirst": false
         }
@@ -372,6 +387,11 @@
         "accessTokenCredential": "pageAccessToken",
         "refreshTokenCredential": null,
         "accessTokenTtlSeconds": 5184000,
+        "grant": null,
+        "authorizeParams": null,
+        "revoke": null,
+        "identity": null,
+        "restrictedScopes": null,
         "credentials": [
           {
             "key": "clientId",
@@ -451,6 +471,7 @@
           "verification": "hmac",
           "handshake": null,
           "route": null,
+          "cursor": null,
           "subscription": null
         }
       ]
@@ -467,25 +488,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/facebook-pages-ui",
-          "version": "0.4.3",
+          "version": "0.5.1",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/facebook-pages-js",
-          "version": "0.4.3",
+          "version": "0.5.1",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/facebook-pages-php",
-          "version": "0.4.3",
+          "version": "0.5.1",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-facebook-pages",
-          "version": "0.4.3",
+          "version": "0.5.1",
           "registry": "pypi",
           "installFirst": false
         }
@@ -507,6 +528,11 @@
         "accessTokenCredential": "pageAccessToken",
         "refreshTokenCredential": null,
         "accessTokenTtlSeconds": 5184000,
+        "grant": null,
+        "authorizeParams": null,
+        "revoke": null,
+        "identity": null,
+        "restrictedScopes": null,
         "credentials": [
           {
             "key": "clientId",
@@ -585,25 +611,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/gmail-ui",
-          "version": "0.3.4",
+          "version": "0.5.1",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/gmail-js",
-          "version": "0.3.4",
+          "version": "0.5.1",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/gmail-php",
-          "version": "0.3.4",
+          "version": "0.5.1",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-gmail",
-          "version": "0.3.4",
+          "version": "0.5.1",
           "registry": "pypi",
           "installFirst": false
         }
@@ -623,6 +649,27 @@
         "accessTokenCredential": "accessToken",
         "refreshTokenCredential": "refreshToken",
         "accessTokenTtlSeconds": 3600,
+        "grant": "google",
+        "authorizeParams": {
+          "access_type": "offline",
+          "include_granted_scopes": "true"
+        },
+        "revoke": {
+          "url": "https://oauth2.googleapis.com/revoke",
+          "param": "token",
+          "scope": "grant"
+        },
+        "identity": {
+          "scope": "openid",
+          "claim": "sub",
+          "issuers": [
+            "https://accounts.google.com",
+            "accounts.google.com"
+          ],
+          "jwksUrl": "https://www.googleapis.com/oauth2/v3/certs",
+          "audienceCredential": "clientId"
+        },
+        "restrictedScopes": [],
         "credentials": [
           {
             "key": "clientId",
@@ -701,25 +748,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/gmail-inbox-ui",
-          "version": "0.1.0",
+          "version": "0.4.1",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/gmail-inbox-js",
-          "version": "0.1.0",
+          "version": "0.4.1",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/gmail-inbox-php",
-          "version": "0.1.0",
+          "version": "0.4.1",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-gmail-inbox",
-          "version": "0.1.0",
+          "version": "0.4.1",
           "registry": "pypi",
           "installFirst": false
         }
@@ -739,6 +786,29 @@
         "accessTokenCredential": "accessToken",
         "refreshTokenCredential": "refreshToken",
         "accessTokenTtlSeconds": 3600,
+        "grant": "google",
+        "authorizeParams": {
+          "access_type": "offline",
+          "include_granted_scopes": "true"
+        },
+        "revoke": {
+          "url": "https://oauth2.googleapis.com/revoke",
+          "param": "token",
+          "scope": "grant"
+        },
+        "identity": {
+          "scope": "openid",
+          "claim": "sub",
+          "issuers": [
+            "https://accounts.google.com",
+            "accounts.google.com"
+          ],
+          "jwksUrl": "https://www.googleapis.com/oauth2/v3/certs",
+          "audienceCredential": "clientId"
+        },
+        "restrictedScopes": [
+          "https://www.googleapis.com/auth/gmail.readonly"
+        ],
         "credentials": [
           {
             "key": "clientId",
@@ -746,7 +816,7 @@
             "scope": "provider",
             "secret": false,
             "optional": false,
-            "help": "A DIFFERENT OAuth app than `gmail`'s, from Google Cloud Console -> APIs & Services -> Credentials. This one requests a restricted scope and carries Google's annual CASA assessment; `gmail`'s does not. Do not reuse the same client for both."
+            "help": "From Google Cloud Console -> APIs & Services -> Credentials. ONE value for the whole installation. This connector requests a RESTRICTED scope, and Google verifies per OAuth client: sharing one client with the other Google connectors (one consent, one grant) puts every Google feature behind the annual CASA assessment; a separate client for this connector keeps it here alone, at the cost of a second consent. Your choice."
           },
           {
             "key": "clientSecret",
@@ -771,6 +841,22 @@
             "secret": true,
             "optional": false,
             "help": "Per connected Google account. Google issues one only when the consent request asks for offline access; without it the connection dies within the hour."
+          },
+          {
+            "key": "pushAudience",
+            "label": "Push audience",
+            "scope": "provider",
+            "secret": false,
+            "optional": true,
+            "help": "The audience set on the Pub/Sub PUSH subscription (normally the endpoint URL your host mounts for message_received). Every push's Google-signed token must name it; an unchecked audience accepts any token Google signs for anyone. Needed only for the message_received trigger."
+          },
+          {
+            "key": "pushServiceAccount",
+            "label": "Push service account",
+            "scope": "provider",
+            "secret": false,
+            "optional": true,
+            "help": "The service account the push subscription authenticates as (its email). Every push's token must be for exactly this account: a stranger's subscription aimed at your URL carries a token Google signed correctly, and only this check refuses it. Needed only for message_received."
           }
         ]
       },
@@ -789,8 +875,20 @@
       "idempotencyMaxLength": null,
       "idempotencyNote": null,
       "apiVersion": null,
-      "needsWebhookEndpoint": false,
+      "needsWebhookEndpoint": true,
       "operations": [
+        {
+          "operation": "history_list",
+          "kind": "@particle-academy/gmail_inbox_history_list",
+          "kindAlias": "gmail_inbox_history_list",
+          "role": "action",
+          "title": "List Gmail mailbox history",
+          "summary": "list mailbox history",
+          "docs": "https://developers.google.com/workspace/gmail/api/reference/rest/v1/users.history/list",
+          "method": "GET",
+          "path": "/gmail/v1/users/{userId}/history",
+          "sideEffects": "none"
+        },
         {
           "operation": "label_list",
           "kind": "@particle-academy/gmail_inbox_label_list",
@@ -802,6 +900,30 @@
           "method": "GET",
           "path": "/gmail/v1/users/{userId}/labels",
           "sideEffects": "none"
+        },
+        {
+          "operation": "mailbox_stop",
+          "kind": "@particle-academy/gmail_inbox_mailbox_stop",
+          "kindAlias": "gmail_inbox_mailbox_stop",
+          "role": "action",
+          "title": "Stop watching a Gmail mailbox",
+          "summary": "stop watching",
+          "docs": "https://developers.google.com/workspace/gmail/api/reference/rest/v1/users/stop",
+          "method": "POST",
+          "path": "/gmail/v1/users/{userId}/stop",
+          "sideEffects": "idempotent"
+        },
+        {
+          "operation": "mailbox_watch",
+          "kind": "@particle-academy/gmail_inbox_mailbox_watch",
+          "kindAlias": "gmail_inbox_mailbox_watch",
+          "role": "action",
+          "title": "Watch a Gmail mailbox",
+          "summary": "watch a mailbox",
+          "docs": "https://developers.google.com/workspace/gmail/api/reference/rest/v1/users/watch",
+          "method": "POST",
+          "path": "/gmail/v1/users/{userId}/watch",
+          "sideEffects": "idempotent"
         },
         {
           "operation": "message_get",
@@ -838,6 +960,38 @@
           "method": "GET",
           "path": "/gmail/v1/users/{userId}/threads/{id}",
           "sideEffects": "none"
+        },
+        {
+          "operation": "message_received",
+          "kind": "@particle-academy/gmail_inbox_message_received_trigger",
+          "kindAlias": "gmail_inbox_message_received_trigger",
+          "role": "trigger",
+          "title": "Gmail message received",
+          "summary": "new mail",
+          "docs": "https://developers.google.com/workspace/gmail/api/guides/push",
+          "method": null,
+          "path": null,
+          "delivery": "subscription",
+          "setup": "In YOUR app's Google Cloud project (the one owning the OAuth client): create a Pub/Sub topic, grant publish on it to gmail-api-push@system.gserviceaccount.com, and create a PUSH subscription to the route your host mounts for this trigger, with authentication on (a service account you choose; the endpoint URL as the audience). Put that audience and service account on the connection as pushAudience and pushServiceAccount, and fetch Google's signing keys for verification. Then call mailbox_watch with the topic for each mailbox and store its historyId as the trigger's cursor (startHistoryId); renew the watch daily. ONE topic serves every mailbox: route each push by its emailAddress, and only after the token verifies, to a mailbox you watched; drop an unmapped address with a 2xx. Persist cursor.next when a run succeeds. On cursor-expired or cursor-overflow, watch again for a fresh historyId FIRST, then list with message_list using the resyncQuery, and match it against the mail you already handled. This trigger never changes read state.",
+          "verification": "oidc-jwt",
+          "handshake": null,
+          "route": {
+            "by": "emailAddress",
+            "path": "data.emailAddress"
+          },
+          "cursor": {
+            "param": "startHistoryId",
+            "seedFrom": "historyId",
+            "advanceFrom": "historyId",
+            "maxPages": 20,
+            "expiredStatus": 404,
+            "resyncQuery": "newer_than:{resyncWindowDays}d"
+          },
+          "subscription": {
+            "ttlSeconds": 604800,
+            "renewBeforeSeconds": 86400,
+            "renewable": true
+          }
         }
       ]
     },
@@ -853,25 +1007,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/google-ads-ui",
-          "version": "0.1.3",
+          "version": "0.3.1",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/google-ads-js",
-          "version": "0.1.3",
+          "version": "0.3.1",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/google-ads-php",
-          "version": "0.1.3",
+          "version": "0.3.1",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-google-ads",
-          "version": "0.1.3",
+          "version": "0.3.1",
           "registry": "pypi",
           "installFirst": false
         }
@@ -891,6 +1045,27 @@
         "accessTokenCredential": "accessToken",
         "refreshTokenCredential": "refreshToken",
         "accessTokenTtlSeconds": 3600,
+        "grant": "google",
+        "authorizeParams": {
+          "access_type": "offline",
+          "include_granted_scopes": "true"
+        },
+        "revoke": {
+          "url": "https://oauth2.googleapis.com/revoke",
+          "param": "token",
+          "scope": "grant"
+        },
+        "identity": {
+          "scope": "openid",
+          "claim": "sub",
+          "issuers": [
+            "https://accounts.google.com",
+            "accounts.google.com"
+          ],
+          "jwksUrl": "https://www.googleapis.com/oauth2/v3/certs",
+          "audienceCredential": "clientId"
+        },
+        "restrictedScopes": [],
         "credentials": [
           {
             "key": "clientId",
@@ -986,25 +1161,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/google-analytics-ui",
-          "version": "0.3.4",
+          "version": "0.5.1",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/google-analytics-js",
-          "version": "0.3.4",
+          "version": "0.5.1",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/google-analytics-php",
-          "version": "0.3.4",
+          "version": "0.5.1",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-google-analytics",
-          "version": "0.3.4",
+          "version": "0.5.1",
           "registry": "pypi",
           "installFirst": false
         }
@@ -1024,6 +1199,27 @@
         "accessTokenCredential": "accessToken",
         "refreshTokenCredential": "refreshToken",
         "accessTokenTtlSeconds": 3600,
+        "grant": "google",
+        "authorizeParams": {
+          "access_type": "offline",
+          "include_granted_scopes": "true"
+        },
+        "revoke": {
+          "url": "https://oauth2.googleapis.com/revoke",
+          "param": "token",
+          "scope": "grant"
+        },
+        "identity": {
+          "scope": "openid",
+          "claim": "sub",
+          "issuers": [
+            "https://accounts.google.com",
+            "accounts.google.com"
+          ],
+          "jwksUrl": "https://www.googleapis.com/oauth2/v3/certs",
+          "audienceCredential": "clientId"
+        },
+        "restrictedScopes": [],
         "credentials": [
           {
             "key": "clientId",
@@ -1102,25 +1298,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/google-calendar-ui",
-          "version": "0.2.0",
+          "version": "0.4.1",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/google-calendar-js",
-          "version": "0.2.0",
+          "version": "0.4.1",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/google-calendar-php",
-          "version": "0.2.0",
+          "version": "0.4.1",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-google-calendar",
-          "version": "0.2.0",
+          "version": "0.4.1",
           "registry": "pypi",
           "installFirst": false
         }
@@ -1140,6 +1336,27 @@
         "accessTokenCredential": "accessToken",
         "refreshTokenCredential": "refreshToken",
         "accessTokenTtlSeconds": 3600,
+        "grant": "google",
+        "authorizeParams": {
+          "access_type": "offline",
+          "include_granted_scopes": "true"
+        },
+        "revoke": {
+          "url": "https://oauth2.googleapis.com/revoke",
+          "param": "token",
+          "scope": "grant"
+        },
+        "identity": {
+          "scope": "openid",
+          "claim": "sub",
+          "issuers": [
+            "https://accounts.google.com",
+            "accounts.google.com"
+          ],
+          "jwksUrl": "https://www.googleapis.com/oauth2/v3/certs",
+          "audienceCredential": "clientId"
+        },
+        "restrictedScopes": [],
         "credentials": [
           {
             "key": "clientId",
@@ -1299,6 +1516,7 @@
           "verification": "shared-token",
           "handshake": null,
           "route": null,
+          "cursor": null,
           "subscription": {
             "ttlSeconds": 604800,
             "renewBeforeSeconds": 86400,
@@ -1319,25 +1537,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/google-docs-ui",
-          "version": "0.4.0",
+          "version": "0.7.1",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/google-docs-js",
-          "version": "0.4.0",
+          "version": "0.7.1",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/google-docs-php",
-          "version": "0.4.0",
+          "version": "0.7.1",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-google-docs",
-          "version": "0.4.0",
+          "version": "0.7.1",
           "registry": "pypi",
           "installFirst": false
         }
@@ -1357,6 +1575,27 @@
         "accessTokenCredential": "accessToken",
         "refreshTokenCredential": "refreshToken",
         "accessTokenTtlSeconds": 3600,
+        "grant": "google",
+        "authorizeParams": {
+          "access_type": "offline",
+          "include_granted_scopes": "true"
+        },
+        "revoke": {
+          "url": "https://oauth2.googleapis.com/revoke",
+          "param": "token",
+          "scope": "grant"
+        },
+        "identity": {
+          "scope": "openid",
+          "claim": "sub",
+          "issuers": [
+            "https://accounts.google.com",
+            "accounts.google.com"
+          ],
+          "jwksUrl": "https://www.googleapis.com/oauth2/v3/certs",
+          "audienceCredential": "clientId"
+        },
+        "restrictedScopes": [],
         "credentials": [
           {
             "key": "clientId",
@@ -1410,6 +1649,18 @@
       "needsWebhookEndpoint": false,
       "operations": [
         {
+          "operation": "batch_update",
+          "kind": "@particle-academy/google_docs_batch_update",
+          "kindAlias": "google_docs_batch_update",
+          "role": "action",
+          "title": "Batch update a Google Doc",
+          "summary": "batch update a document",
+          "docs": "https://developers.google.com/workspace/docs/api/reference/rest/v1/documents/batchUpdate",
+          "method": "POST",
+          "path": "/v1/documents/{documentId}:batchUpdate",
+          "sideEffects": "unsafe-to-replay"
+        },
+        {
           "operation": "document_create",
           "kind": "@particle-academy/google_docs_document",
           "kindAlias": "google_docs_document",
@@ -1432,6 +1683,18 @@
           "method": "POST",
           "path": "/v1/documents/{documentId}:batchUpdate",
           "sideEffects": "unsafe-to-replay"
+        },
+        {
+          "operation": "text_replace",
+          "kind": "@particle-academy/google_docs_text_replace",
+          "kindAlias": "google_docs_text_replace",
+          "role": "action",
+          "title": "Replace text in a Google Doc",
+          "summary": "replace text",
+          "docs": "https://developers.google.com/workspace/docs/api/reference/rest/v1/documents/batchUpdate",
+          "method": "POST",
+          "path": "/v1/documents/{documentId}:batchUpdate",
+          "sideEffects": "unsafe-to-replay"
         }
       ]
     },
@@ -1447,25 +1710,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/google-drive-ui",
-          "version": "0.4.0",
+          "version": "0.6.1",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/google-drive-js",
-          "version": "0.4.0",
+          "version": "0.6.1",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/google-drive-php",
-          "version": "0.4.0",
+          "version": "0.6.1",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-google-drive",
-          "version": "0.4.0",
+          "version": "0.6.1",
           "registry": "pypi",
           "installFirst": false
         }
@@ -1485,6 +1748,27 @@
         "accessTokenCredential": "accessToken",
         "refreshTokenCredential": "refreshToken",
         "accessTokenTtlSeconds": 3600,
+        "grant": "google",
+        "authorizeParams": {
+          "access_type": "offline",
+          "include_granted_scopes": "true"
+        },
+        "revoke": {
+          "url": "https://oauth2.googleapis.com/revoke",
+          "param": "token",
+          "scope": "grant"
+        },
+        "identity": {
+          "scope": "openid",
+          "claim": "sub",
+          "issuers": [
+            "https://accounts.google.com",
+            "accounts.google.com"
+          ],
+          "jwksUrl": "https://www.googleapis.com/oauth2/v3/certs",
+          "audienceCredential": "clientId"
+        },
+        "restrictedScopes": [],
         "credentials": [
           {
             "key": "clientId",
@@ -1588,6 +1872,204 @@
       ]
     },
     {
+      "slug": "google-meet",
+      "service": "google_meet",
+      "serviceTitle": "Google Meet",
+      "domain": "messaging",
+      "docs": "https://developers.google.com/workspace/meet/api/guides/overview",
+      "summary": null,
+      "repo": "Fancy-Friends/google-meet",
+      "status": "alpha",
+      "packages": {
+        "ui": {
+          "name": "@particle-academy/google-meet-ui",
+          "version": "0.3.1",
+          "registry": "npm",
+          "installFirst": true
+        },
+        "js": {
+          "name": "@particle-academy/google-meet-js",
+          "version": "0.3.1",
+          "registry": "npm",
+          "installFirst": false
+        },
+        "php": {
+          "name": "particle-academy/google-meet-php",
+          "version": "0.3.1",
+          "registry": "packagist",
+          "installFirst": false
+        },
+        "py": {
+          "name": "fancy-google-meet",
+          "version": "0.3.1",
+          "registry": "pypi",
+          "installFirst": false
+        }
+      },
+      "auth": {
+        "kind": "oauth2",
+        "authorize": "bearer",
+        "scopes": [
+          "https://www.googleapis.com/auth/meetings.space.created",
+          "https://www.googleapis.com/auth/meetings.space.readonly"
+        ],
+        "capabilities": null,
+        "refreshTokenRotates": false,
+        "pkce": null,
+        "authorizeUrl": "https://accounts.google.com/o/oauth2/v2/auth",
+        "tokenUrl": "https://oauth2.googleapis.com/token",
+        "flow": "authorization_code",
+        "accessTokenCredential": "accessToken",
+        "refreshTokenCredential": "refreshToken",
+        "accessTokenTtlSeconds": 3600,
+        "grant": "google",
+        "authorizeParams": {
+          "access_type": "offline",
+          "include_granted_scopes": "true"
+        },
+        "revoke": {
+          "url": "https://oauth2.googleapis.com/revoke",
+          "param": "token",
+          "scope": "grant"
+        },
+        "identity": {
+          "scope": "openid",
+          "claim": "sub",
+          "issuers": [
+            "https://accounts.google.com",
+            "accounts.google.com"
+          ],
+          "jwksUrl": "https://www.googleapis.com/oauth2/v3/certs",
+          "audienceCredential": "clientId"
+        },
+        "restrictedScopes": [],
+        "credentials": [
+          {
+            "key": "clientId",
+            "label": "OAuth client ID",
+            "scope": "provider",
+            "secret": false,
+            "optional": false,
+            "help": "From the Google Cloud project you registered. One value for the whole installation -- the same app serves every connected Google account."
+          },
+          {
+            "key": "clientSecret",
+            "label": "OAuth client secret",
+            "scope": "provider",
+            "secret": true,
+            "optional": false,
+            "help": "From the same Google Cloud project. Used to exchange the code and to refresh; never sent with an API request."
+          },
+          {
+            "key": "accessToken",
+            "label": "Access token",
+            "scope": "account",
+            "secret": true,
+            "optional": false,
+            "help": "Obtained by the host's OAuth exchange, PER CONNECTED GOOGLE ACCOUNT. Expires after one hour -- a host that does not refresh will work for a while and then fail with no warning."
+          },
+          {
+            "key": "refreshToken",
+            "label": "Refresh token",
+            "scope": "account",
+            "secret": true,
+            "optional": true,
+            "help": "Also per account. Reusable -- Google does not rotate it on refresh."
+          }
+        ]
+      },
+      "sandbox": {
+        "kind": "unverified",
+        "selectable": false,
+        "warning": "NOBODY HAS CHECKED whether a test estate exists. Not the same as “no”. Treat every call as real.",
+        "note": "Google Meet has no test estate distinct from a real account, as far as this review found (2026-09-16) -- but it is UNVERIFIED, not confirmed. space_create makes a real, joinable meeting space. Use fake mode while building."
+      },
+      "setup": null,
+      "environments": [
+        "fake",
+        "live"
+      ],
+      "idempotency": null,
+      "idempotencyMaxLength": null,
+      "idempotencyNote": null,
+      "apiVersion": "v2",
+      "needsWebhookEndpoint": false,
+      "operations": [
+        {
+          "operation": "conference_record_list",
+          "kind": "@particle-academy/google_meet_conference_record_list",
+          "kindAlias": "google_meet_conference_record_list",
+          "role": "action",
+          "title": "List conference records",
+          "summary": "conference records",
+          "docs": "https://developers.google.com/workspace/meet/api/reference/rest/v2/conferenceRecords/list",
+          "method": "GET",
+          "path": "/conferenceRecords",
+          "sideEffects": "none"
+        },
+        {
+          "operation": "participant_list",
+          "kind": "@particle-academy/google_meet_participant_list",
+          "kindAlias": "google_meet_participant_list",
+          "role": "action",
+          "title": "List participants",
+          "summary": "a conference's participants",
+          "docs": "https://developers.google.com/workspace/meet/api/reference/rest/v2/conferenceRecords.participants/list",
+          "method": "GET",
+          "path": "/conferenceRecords/{conferenceRecordId}/participants",
+          "sideEffects": "none"
+        },
+        {
+          "operation": "space_create",
+          "kind": "@particle-academy/google_meet_space_create",
+          "kindAlias": "google_meet_space_create",
+          "role": "action",
+          "title": "Create meeting space",
+          "summary": "a Meet space",
+          "docs": "https://developers.google.com/workspace/meet/api/reference/rest/v2/spaces/create",
+          "method": "POST",
+          "path": "/spaces",
+          "sideEffects": "unsafe-to-replay"
+        },
+        {
+          "operation": "space_get",
+          "kind": "@particle-academy/google_meet_space_get",
+          "kindAlias": "google_meet_space_get",
+          "role": "action",
+          "title": "Get meeting space",
+          "summary": "a Meet space",
+          "docs": "https://developers.google.com/workspace/meet/api/reference/rest/v2/spaces/get",
+          "method": "GET",
+          "path": "/spaces/{spaceId}",
+          "sideEffects": "none"
+        },
+        {
+          "operation": "transcript_entry_list",
+          "kind": "@particle-academy/google_meet_transcript_entry_list",
+          "kindAlias": "google_meet_transcript_entry_list",
+          "role": "action",
+          "title": "List transcript entries",
+          "summary": "transcript entries",
+          "docs": "https://developers.google.com/workspace/meet/api/reference/rest/v2/conferenceRecords.transcripts.entries/list",
+          "method": "GET",
+          "path": "/conferenceRecords/{conferenceRecordId}/transcripts/{transcriptId}/entries",
+          "sideEffects": "none"
+        },
+        {
+          "operation": "transcript_list",
+          "kind": "@particle-academy/google_meet_transcript_list",
+          "kindAlias": "google_meet_transcript_list",
+          "role": "action",
+          "title": "List transcripts",
+          "summary": "a conference's transcripts",
+          "docs": "https://developers.google.com/workspace/meet/api/reference/rest/v2/conferenceRecords.transcripts/list",
+          "method": "GET",
+          "path": "/conferenceRecords/{conferenceRecordId}/transcripts",
+          "sideEffects": "none"
+        }
+      ]
+    },
+    {
       "slug": "google-sheets",
       "service": "google_sheets",
       "serviceTitle": "Google Sheets",
@@ -1599,25 +2081,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/google-sheets-ui",
-          "version": "0.4.0",
+          "version": "0.7.1",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/google-sheets-js",
-          "version": "0.4.0",
+          "version": "0.7.1",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/google-sheets-php",
-          "version": "0.4.0",
+          "version": "0.7.1",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-google-sheets",
-          "version": "0.4.0",
+          "version": "0.7.1",
           "registry": "pypi",
           "installFirst": false
         }
@@ -1637,6 +2119,27 @@
         "accessTokenCredential": "accessToken",
         "refreshTokenCredential": "refreshToken",
         "accessTokenTtlSeconds": 3600,
+        "grant": "google",
+        "authorizeParams": {
+          "access_type": "offline",
+          "include_granted_scopes": "true"
+        },
+        "revoke": {
+          "url": "https://oauth2.googleapis.com/revoke",
+          "param": "token",
+          "scope": "grant"
+        },
+        "identity": {
+          "scope": "openid",
+          "claim": "sub",
+          "issuers": [
+            "https://accounts.google.com",
+            "accounts.google.com"
+          ],
+          "jwksUrl": "https://www.googleapis.com/oauth2/v3/certs",
+          "audienceCredential": "clientId"
+        },
+        "restrictedScopes": [],
         "credentials": [
           {
             "key": "clientId",
@@ -1690,6 +2193,18 @@
       "needsWebhookEndpoint": false,
       "operations": [
         {
+          "operation": "batch_update",
+          "kind": "@particle-academy/google_sheets_batch_update",
+          "kindAlias": "google_sheets_batch_update",
+          "role": "action",
+          "title": "Batch update a Google Sheet",
+          "summary": "batch update a spreadsheet",
+          "docs": "https://developers.google.com/workspace/sheets/api/reference/rest/v4/spreadsheets/batchUpdate",
+          "method": "POST",
+          "path": "/v4/spreadsheets/{spreadsheetId}:batchUpdate",
+          "sideEffects": "unsafe-to-replay"
+        },
+        {
           "operation": "row_append",
           "kind": "@particle-academy/google_sheets_row",
           "kindAlias": "google_sheets_row",
@@ -1739,25 +2254,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/google-slides-ui",
-          "version": "0.4.0",
+          "version": "0.7.1",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/google-slides-js",
-          "version": "0.4.0",
+          "version": "0.7.1",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/google-slides-php",
-          "version": "0.4.0",
+          "version": "0.7.1",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-google-slides",
-          "version": "0.4.0",
+          "version": "0.7.1",
           "registry": "pypi",
           "installFirst": false
         }
@@ -1777,6 +2292,27 @@
         "accessTokenCredential": "accessToken",
         "refreshTokenCredential": "refreshToken",
         "accessTokenTtlSeconds": 3600,
+        "grant": "google",
+        "authorizeParams": {
+          "access_type": "offline",
+          "include_granted_scopes": "true"
+        },
+        "revoke": {
+          "url": "https://oauth2.googleapis.com/revoke",
+          "param": "token",
+          "scope": "grant"
+        },
+        "identity": {
+          "scope": "openid",
+          "claim": "sub",
+          "issuers": [
+            "https://accounts.google.com",
+            "accounts.google.com"
+          ],
+          "jwksUrl": "https://www.googleapis.com/oauth2/v3/certs",
+          "audienceCredential": "clientId"
+        },
+        "restrictedScopes": [],
         "credentials": [
           {
             "key": "clientId",
@@ -1830,6 +2366,18 @@
       "needsWebhookEndpoint": false,
       "operations": [
         {
+          "operation": "batch_update",
+          "kind": "@particle-academy/google_slides_batch_update",
+          "kindAlias": "google_slides_batch_update",
+          "role": "action",
+          "title": "Batch update a Google Slides presentation",
+          "summary": "batch update a presentation",
+          "docs": "https://developers.google.com/workspace/slides/api/reference/rest/v1/presentations/batchUpdate",
+          "method": "POST",
+          "path": "/v1/presentations/{presentationId}:batchUpdate",
+          "sideEffects": "unsafe-to-replay"
+        },
+        {
           "operation": "presentation_create",
           "kind": "@particle-academy/google_slides_presentation",
           "kindAlias": "google_slides_presentation",
@@ -1852,6 +2400,18 @@
           "method": "GET",
           "path": "/v1/presentations/{presentationId}",
           "sideEffects": "none"
+        },
+        {
+          "operation": "text_replace",
+          "kind": "@particle-academy/google_slides_text_replace",
+          "kindAlias": "google_slides_text_replace",
+          "role": "action",
+          "title": "Replace text in a Google Slides presentation",
+          "summary": "replace text",
+          "docs": "https://developers.google.com/workspace/slides/api/reference/rest/v1/presentations/batchUpdate",
+          "method": "POST",
+          "path": "/v1/presentations/{presentationId}:batchUpdate",
+          "sideEffects": "unsafe-to-replay"
         }
       ]
     },
@@ -1867,25 +2427,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/hubspot-ui",
-          "version": "0.6.0",
+          "version": "0.7.1",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/hubspot-js",
-          "version": "0.6.0",
+          "version": "0.7.1",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/hubspot-php",
-          "version": "0.6.0",
+          "version": "0.7.1",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-hubspot",
-          "version": "0.6.0",
+          "version": "0.7.1",
           "registry": "pypi",
           "installFirst": false
         }
@@ -1914,6 +2474,11 @@
         "accessTokenCredential": "accessToken",
         "refreshTokenCredential": "refreshToken",
         "accessTokenTtlSeconds": 1800,
+        "grant": null,
+        "authorizeParams": null,
+        "revoke": null,
+        "identity": null,
+        "restrictedScopes": null,
         "credentials": [
           {
             "key": "clientId",
@@ -2201,6 +2766,7 @@
             "by": "portalId",
             "path": "[].portalId"
           },
+          "cursor": null,
           "subscription": null
         }
       ]
@@ -2217,25 +2783,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/instagram-business-ui",
-          "version": "0.1.3",
+          "version": "0.2.1",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/instagram-business-js",
-          "version": "0.1.3",
+          "version": "0.2.1",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/instagram-business-php",
-          "version": "0.1.3",
+          "version": "0.2.1",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-instagram-business",
-          "version": "0.1.3",
+          "version": "0.2.1",
           "registry": "pypi",
           "installFirst": false
         }
@@ -2257,6 +2823,11 @@
         "accessTokenCredential": "accessToken",
         "refreshTokenCredential": null,
         "accessTokenTtlSeconds": 5184000,
+        "grant": null,
+        "authorizeParams": null,
+        "revoke": null,
+        "identity": null,
+        "restrictedScopes": null,
         "credentials": [
           {
             "key": "clientId",
@@ -2347,25 +2918,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/linkedin-ads-ui",
-          "version": "0.1.3",
+          "version": "0.2.1",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/linkedin-ads-js",
-          "version": "0.1.3",
+          "version": "0.2.1",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/linkedin-ads-php",
-          "version": "0.1.3",
+          "version": "0.2.1",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-linkedin-ads",
-          "version": "0.1.3",
+          "version": "0.2.1",
           "registry": "pypi",
           "installFirst": false
         }
@@ -2385,6 +2956,11 @@
         "accessTokenCredential": "accessToken",
         "refreshTokenCredential": "refreshToken",
         "accessTokenTtlSeconds": 5184000,
+        "grant": null,
+        "authorizeParams": null,
+        "revoke": null,
+        "identity": null,
+        "restrictedScopes": null,
         "credentials": [
           {
             "key": "clientId",
@@ -2464,25 +3040,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/microsoft-outlook-ui",
-          "version": "0.1.0",
+          "version": "0.2.1",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/microsoft-outlook-js",
-          "version": "0.1.0",
+          "version": "0.2.1",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/microsoft-outlook-php",
-          "version": "0.1.0",
+          "version": "0.2.1",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-microsoft-outlook",
-          "version": "0.1.0",
+          "version": "0.2.1",
           "registry": "pypi",
           "installFirst": false
         }
@@ -2503,6 +3079,11 @@
         "accessTokenCredential": "accessToken",
         "refreshTokenCredential": "refreshToken",
         "accessTokenTtlSeconds": 3600,
+        "grant": null,
+        "authorizeParams": null,
+        "revoke": null,
+        "identity": null,
+        "restrictedScopes": null,
         "credentials": [
           {
             "key": "clientId",
@@ -2639,11 +3220,171 @@
           "verification": "shared-token",
           "handshake": "validationToken",
           "route": null,
+          "cursor": null,
           "subscription": {
             "ttlSeconds": 604800,
             "renewBeforeSeconds": 3600,
             "renewable": true
           }
+        }
+      ]
+    },
+    {
+      "slug": "microsoft-teams",
+      "service": "microsoft_teams",
+      "serviceTitle": "Microsoft Teams",
+      "domain": "messaging",
+      "docs": "https://learn.microsoft.com/en-us/graph/api/resources/onlinemeeting",
+      "summary": "a Teams meeting or its transcripts, on behalf of a tenant user",
+      "repo": "Fancy-Friends/microsoft-teams",
+      "status": "alpha",
+      "packages": {
+        "ui": {
+          "name": "@particle-academy/microsoft-teams-ui",
+          "version": "0.2.1",
+          "registry": "npm",
+          "installFirst": true
+        },
+        "js": {
+          "name": "@particle-academy/microsoft-teams-js",
+          "version": "0.2.1",
+          "registry": "npm",
+          "installFirst": false
+        },
+        "php": {
+          "name": "particle-academy/microsoft-teams-php",
+          "version": "0.2.1",
+          "registry": "packagist",
+          "installFirst": false
+        },
+        "py": {
+          "name": "fancy-microsoft-teams",
+          "version": "0.2.1",
+          "registry": "pypi",
+          "installFirst": false
+        }
+      },
+      "auth": {
+        "kind": "oauth2",
+        "authorize": "bearer",
+        "scopes": [
+          "OnlineMeetings.ReadWrite.All",
+          "OnlineMeetingTranscript.Read.All",
+          "offline_access"
+        ],
+        "capabilities": null,
+        "refreshTokenRotates": false,
+        "pkce": null,
+        "authorizeUrl": "https://login.microsoftonline.com/common/oauth2/v2.0/authorize",
+        "tokenUrl": "https://login.microsoftonline.com/common/oauth2/v2.0/token",
+        "flow": "authorization_code",
+        "accessTokenCredential": "accessToken",
+        "refreshTokenCredential": "refreshToken",
+        "accessTokenTtlSeconds": 3600,
+        "grant": null,
+        "authorizeParams": null,
+        "revoke": null,
+        "identity": null,
+        "restrictedScopes": null,
+        "credentials": [
+          {
+            "key": "clientId",
+            "label": "Application (client) ID",
+            "scope": "provider",
+            "secret": false,
+            "optional": false,
+            "help": "From the Microsoft Entra admin center -> App registrations. ONE value for the whole installation, not per connected account."
+          },
+          {
+            "key": "clientSecret",
+            "label": "Client secret",
+            "scope": "provider",
+            "secret": true,
+            "optional": false,
+            "help": "A client secret of the same app registration. One value for the whole installation; Entra expires them, so record the expiry."
+          },
+          {
+            "key": "accessToken",
+            "label": "Access token",
+            "scope": "account",
+            "secret": true,
+            "optional": false,
+            "help": "Per connected Microsoft account, and it expires after about ONE HOUR. The host refreshes it with the refresh token."
+          },
+          {
+            "key": "refreshToken",
+            "label": "Refresh token",
+            "scope": "account",
+            "secret": true,
+            "optional": true,
+            "help": "Per connected Microsoft account; issued only when the consent request includes offline_access. Every refresh answers with a NEW one -- persist it."
+          }
+        ]
+      },
+      "sandbox": {
+        "kind": "separate-account",
+        "selectable": true,
+        "warning": "A test estate on the same host, reached with credentials from a separate test account somebody has to register first.",
+        "note": "Microsoft's test estate is a Microsoft 365 Developer Program sandbox: a separate E5 tenant with its own users and its own OAuth consent, on the SAME host -- the same fact microsoft-outlook already verified for Graph generally. Eligibility is limited (Visual Studio Professional/Enterprise, ISV Success / MAICPP partners, or Premier/Unified Support) and the tenant expires after 90 days of no development activity. Without one, every call reaches a real tenant."
+      },
+      "setup": [
+        {
+          "title": "Register an app and add the OAuth redirect URL",
+          "detail": "In the Microsoft Entra admin center, App registrations, register (or reuse) an app and add {host.oauthRedirectUrl} under Authentication as a Web redirect URI. Record the Application (client) ID and create a client secret.",
+          "url": "https://learn.microsoft.com/en-us/entra/identity-platform/quickstart-register-app"
+        },
+        {
+          "title": "Grant the app an application access policy naming the target user",
+          "detail": "OAuth consent alone does not authorize meeting_create, meeting_get or transcript_list -- Microsoft Graph refuses every call with \"No application access policy found for this app\" until a tenant administrator runs New-CsApplicationAccessPolicy (with this app's client ID) and Grant-CsApplicationAccessPolicy naming the userId these operations will act on. Changes take up to 30 minutes to reach the Graph REST API.",
+          "url": "https://learn.microsoft.com/en-us/graph/cloud-communication-online-meeting-application-access-policy"
+        }
+      ],
+      "environments": [
+        "fake",
+        "sandbox",
+        "live"
+      ],
+      "idempotency": null,
+      "idempotencyMaxLength": null,
+      "idempotencyNote": null,
+      "apiVersion": null,
+      "needsWebhookEndpoint": false,
+      "operations": [
+        {
+          "operation": "meeting_create",
+          "kind": "@particle-academy/microsoft_teams_meeting_create",
+          "kindAlias": "microsoft_teams_meeting_create",
+          "role": "action",
+          "title": "Create meeting",
+          "summary": "a Teams meeting",
+          "docs": "https://learn.microsoft.com/en-us/graph/api/application-post-onlinemeetings",
+          "method": "POST",
+          "path": "/v1.0/users/{userId}/onlineMeetings",
+          "sideEffects": "unsafe-to-replay"
+        },
+        {
+          "operation": "meeting_get",
+          "kind": "@particle-academy/microsoft_teams_meeting_get",
+          "kindAlias": "microsoft_teams_meeting_get",
+          "role": "action",
+          "title": "Get meeting",
+          "summary": "a Teams meeting",
+          "docs": "https://learn.microsoft.com/en-us/graph/api/onlinemeeting-get",
+          "method": "GET",
+          "path": "/v1.0/users/{userId}/onlineMeetings/{meetingId}",
+          "sideEffects": "none"
+        },
+        {
+          "operation": "transcript_list",
+          "kind": "@particle-academy/microsoft_teams_transcript_list",
+          "kindAlias": "microsoft_teams_transcript_list",
+          "role": "action",
+          "title": "List transcripts",
+          "summary": "a meeting's transcripts",
+          "docs": "https://learn.microsoft.com/en-us/graph/api/onlinemeeting-list-transcripts",
+          "method": "GET",
+          "path": "/v1.0/users/{userId}/onlineMeetings/{meetingId}/transcripts",
+          "sideEffects": "none"
         }
       ]
     },
@@ -2659,25 +3400,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/monday-ui",
-          "version": "0.3.5",
+          "version": "0.4.1",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/monday-js",
-          "version": "0.3.5",
+          "version": "0.4.1",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/monday-php",
-          "version": "0.3.5",
+          "version": "0.4.1",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-monday",
-          "version": "0.3.5",
+          "version": "0.4.1",
           "registry": "pypi",
           "installFirst": false
         }
@@ -2695,6 +3436,11 @@
         "accessTokenCredential": null,
         "refreshTokenCredential": null,
         "accessTokenTtlSeconds": null,
+        "grant": null,
+        "authorizeParams": null,
+        "revoke": null,
+        "identity": null,
+        "restrictedScopes": null,
         "credentials": [
           {
             "key": "apiToken",
@@ -2749,25 +3495,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/notion-ui",
-          "version": "0.1.3",
+          "version": "0.2.1",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/notion-js",
-          "version": "0.1.3",
+          "version": "0.2.1",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/notion-php",
-          "version": "0.1.3",
+          "version": "0.2.1",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-notion",
-          "version": "0.1.3",
+          "version": "0.2.1",
           "registry": "pypi",
           "installFirst": false
         }
@@ -2787,6 +3533,11 @@
         "accessTokenCredential": "accessToken",
         "refreshTokenCredential": "refreshToken",
         "accessTokenTtlSeconds": null,
+        "grant": null,
+        "authorizeParams": null,
+        "revoke": null,
+        "identity": null,
+        "restrictedScopes": null,
         "credentials": [
           {
             "key": "clientId",
@@ -2866,25 +3617,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/resend-ui",
-          "version": "0.4.1",
+          "version": "0.5.1",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/resend-js",
-          "version": "0.4.1",
+          "version": "0.5.1",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/resend-php",
-          "version": "0.4.1",
+          "version": "0.5.1",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-resend",
-          "version": "0.4.1",
+          "version": "0.5.1",
           "registry": "pypi",
           "installFirst": false
         }
@@ -2902,6 +3653,11 @@
         "accessTokenCredential": null,
         "refreshTokenCredential": null,
         "accessTokenTtlSeconds": null,
+        "grant": null,
+        "authorizeParams": null,
+        "revoke": null,
+        "identity": null,
+        "restrictedScopes": null,
         "credentials": [
           {
             "key": "apiKey",
@@ -3001,6 +3757,7 @@
           "verification": "hmac",
           "handshake": null,
           "route": null,
+          "cursor": null,
           "subscription": null
         }
       ]
@@ -3017,25 +3774,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/slack-ui",
-          "version": "0.2.1",
+          "version": "0.3.1",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/slack-js",
-          "version": "0.2.1",
+          "version": "0.3.1",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/slack-php",
-          "version": "0.2.1",
+          "version": "0.3.1",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-slack",
-          "version": "0.2.1",
+          "version": "0.3.1",
           "registry": "pypi",
           "installFirst": false
         }
@@ -3057,6 +3814,11 @@
         "accessTokenCredential": "accessToken",
         "refreshTokenCredential": "refreshToken",
         "accessTokenTtlSeconds": 43200,
+        "grant": null,
+        "authorizeParams": null,
+        "revoke": null,
+        "identity": null,
+        "restrictedScopes": null,
         "credentials": [
           {
             "key": "clientId",
@@ -3169,6 +3931,7 @@
           "verification": "hmac",
           "handshake": null,
           "route": null,
+          "cursor": null,
           "subscription": null
         }
       ]
@@ -3185,25 +3948,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/square-ui",
-          "version": "0.3.4",
+          "version": "0.4.1",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/square-js",
-          "version": "0.3.4",
+          "version": "0.4.1",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/square-php",
-          "version": "0.3.4",
+          "version": "0.4.1",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-square",
-          "version": "0.3.4",
+          "version": "0.4.1",
           "registry": "pypi",
           "installFirst": false
         }
@@ -3221,6 +3984,11 @@
         "accessTokenCredential": null,
         "refreshTokenCredential": null,
         "accessTokenTtlSeconds": null,
+        "grant": null,
+        "authorizeParams": null,
+        "revoke": null,
+        "identity": null,
+        "restrictedScopes": null,
         "credentials": [
           {
             "key": "accessToken",
@@ -3276,25 +4044,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/stripe-ui",
-          "version": "0.3.7",
+          "version": "0.4.1",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/stripe-js",
-          "version": "0.3.7",
+          "version": "0.4.1",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/stripe-php",
-          "version": "0.3.7",
+          "version": "0.4.1",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-stripe",
-          "version": "0.3.7",
+          "version": "0.4.1",
           "registry": "pypi",
           "installFirst": false
         }
@@ -3312,6 +4080,11 @@
         "accessTokenCredential": null,
         "refreshTokenCredential": null,
         "accessTokenTtlSeconds": null,
+        "grant": null,
+        "authorizeParams": null,
+        "revoke": null,
+        "identity": null,
+        "restrictedScopes": null,
         "credentials": [
           {
             "key": "secretKey",
@@ -3400,6 +4173,7 @@
           "verification": "hmac",
           "handshake": null,
           "route": null,
+          "cursor": null,
           "subscription": null
         }
       ]
@@ -3416,25 +4190,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/telegram-ui",
-          "version": "0.3.4",
+          "version": "0.4.1",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/telegram-js",
-          "version": "0.3.4",
+          "version": "0.4.1",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/telegram-php",
-          "version": "0.3.4",
+          "version": "0.4.1",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-telegram",
-          "version": "0.3.4",
+          "version": "0.4.1",
           "registry": "pypi",
           "installFirst": false
         }
@@ -3452,6 +4226,11 @@
         "accessTokenCredential": null,
         "refreshTokenCredential": null,
         "accessTokenTtlSeconds": null,
+        "grant": null,
+        "authorizeParams": null,
+        "revoke": null,
+        "identity": null,
+        "restrictedScopes": null,
         "credentials": [
           {
             "key": "botToken",
@@ -3496,7 +4275,132 @@
           "verification": null,
           "handshake": null,
           "route": null,
+          "cursor": null,
           "subscription": null
+        }
+      ]
+    },
+    {
+      "slug": "twilio",
+      "service": "twilio",
+      "serviceTitle": "Twilio",
+      "domain": "messaging",
+      "docs": "https://www.twilio.com/docs/messaging/api/message-resource",
+      "summary": null,
+      "repo": "Fancy-Friends/twilio",
+      "status": "alpha",
+      "packages": {
+        "ui": {
+          "name": "@particle-academy/twilio-ui",
+          "version": "0.1.1",
+          "registry": "npm",
+          "installFirst": true
+        },
+        "js": {
+          "name": "@particle-academy/twilio-js",
+          "version": "0.1.1",
+          "registry": "npm",
+          "installFirst": false
+        },
+        "php": {
+          "name": "particle-academy/twilio-php",
+          "version": "0.1.1",
+          "registry": "packagist",
+          "installFirst": false
+        },
+        "py": {
+          "name": "fancy-twilio",
+          "version": "0.1.1",
+          "registry": "pypi",
+          "installFirst": false
+        }
+      },
+      "auth": {
+        "kind": "api_key",
+        "authorize": "basic",
+        "scopes": null,
+        "capabilities": null,
+        "refreshTokenRotates": null,
+        "pkce": null,
+        "authorizeUrl": null,
+        "tokenUrl": null,
+        "flow": null,
+        "accessTokenCredential": null,
+        "refreshTokenCredential": null,
+        "accessTokenTtlSeconds": null,
+        "grant": null,
+        "authorizeParams": null,
+        "revoke": null,
+        "identity": null,
+        "restrictedScopes": null,
+        "credentials": [
+          {
+            "key": "accountSid",
+            "label": "Account SID",
+            "scope": "account",
+            "secret": false,
+            "optional": false,
+            "help": "AC followed by 32 hex characters, from the Twilio Console. It is part of every request URL."
+          },
+          {
+            "key": "username",
+            "label": "API key SID (or Account SID)",
+            "scope": "account",
+            "secret": false,
+            "optional": false,
+            "help": "An API key SID from the Twilio Console (API keys & tokens), recommended. Or the Account SID again, to authenticate with the Auth Token."
+          },
+          {
+            "key": "password",
+            "label": "API key secret (or Auth Token)",
+            "scope": "account",
+            "secret": true,
+            "optional": false,
+            "help": "The secret shown once when the API key was created, or the account's Auth Token. The Auth Token can do everything on the account; an API key can be revoked on its own."
+          }
+        ]
+      },
+      "sandbox": {
+        "kind": "credential",
+        "selectable": true,
+        "warning": "The KEY decides live-or-test, not the endpoint — the same host serves both. A live key pointed at a node marked “sandbox” reaches the real estate and SUCCEEDS. Nothing in the request distinguishes them, which is why the credential sits on the connection.",
+        "note": "Twilio's test estate is selected by the CREDENTIALS, not the URL: a separate test Account SID and test Auth Token (Console -> API keys & tokens), against the same api.twilio.com. A live key on a node marked sandbox texts a real phone and is billed. With test credentials only message_send works -- every other resource, including message_get, answers 403 -- nothing is sent or charged, no status callback fires, and From must be Twilio's magic +15005550006 (+15005550004 as To returns 21610, the STOP case). Test credentials are the test Account SID and Auth Token, not an API key."
+      },
+      "setup": null,
+      "environments": [
+        "fake",
+        "sandbox",
+        "live"
+      ],
+      "idempotency": null,
+      "idempotencyMaxLength": null,
+      "idempotencyNote": null,
+      "apiVersion": null,
+      "needsWebhookEndpoint": false,
+      "operations": [
+        {
+          "operation": "message_get",
+          "kind": "@particle-academy/twilio_message_get",
+          "kindAlias": "twilio_message_get",
+          "role": "action",
+          "title": "Twilio message",
+          "summary": "read a message",
+          "docs": "https://www.twilio.com/docs/messaging/api/message-resource#fetch-a-message-resource",
+          "method": "GET",
+          "path": "/2010-04-01/Accounts/{AccountSid}/Messages/{Sid}.json",
+          "sideEffects": "none"
+        },
+        {
+          "operation": "message_send",
+          "kind": "@particle-academy/twilio_message_send",
+          "kindAlias": "twilio_message_send",
+          "role": "action",
+          "title": "Send an SMS with Twilio",
+          "summary": "send an SMS",
+          "docs": "https://www.twilio.com/docs/messaging/api/message-resource#create-a-message-resource",
+          "method": "POST",
+          "path": "/2010-04-01/Accounts/{AccountSid}/Messages.json",
+          "sideEffects": "unsafe-to-replay"
         }
       ]
     },
@@ -3512,25 +4416,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/youtube-ui",
-          "version": "0.2.4",
+          "version": "0.4.1",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/youtube-js",
-          "version": "0.2.4",
+          "version": "0.4.1",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/youtube-php",
-          "version": "0.2.4",
+          "version": "0.4.1",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-youtube",
-          "version": "0.2.4",
+          "version": "0.4.1",
           "registry": "pypi",
           "installFirst": false
         }
@@ -3550,6 +4454,27 @@
         "accessTokenCredential": "accessToken",
         "refreshTokenCredential": "refreshToken",
         "accessTokenTtlSeconds": 3600,
+        "grant": "google",
+        "authorizeParams": {
+          "access_type": "offline",
+          "include_granted_scopes": "true"
+        },
+        "revoke": {
+          "url": "https://oauth2.googleapis.com/revoke",
+          "param": "token",
+          "scope": "grant"
+        },
+        "identity": {
+          "scope": "openid",
+          "claim": "sub",
+          "issuers": [
+            "https://accounts.google.com",
+            "accounts.google.com"
+          ],
+          "jwksUrl": "https://www.googleapis.com/oauth2/v3/certs",
+          "audienceCredential": "clientId"
+        },
+        "restrictedScopes": [],
         "credentials": [
           {
             "key": "clientId",
@@ -3628,25 +4553,25 @@
       "packages": {
         "ui": {
           "name": "@particle-academy/zoom-ui",
-          "version": "0.1.0",
+          "version": "0.2.1",
           "registry": "npm",
           "installFirst": true
         },
         "js": {
           "name": "@particle-academy/zoom-js",
-          "version": "0.1.0",
+          "version": "0.2.1",
           "registry": "npm",
           "installFirst": false
         },
         "php": {
           "name": "particle-academy/zoom-php",
-          "version": "0.1.0",
+          "version": "0.2.1",
           "registry": "packagist",
           "installFirst": false
         },
         "py": {
           "name": "fancy-zoom",
-          "version": "0.1.0",
+          "version": "0.2.1",
           "registry": "pypi",
           "installFirst": false
         }
@@ -3667,6 +4592,11 @@
         "accessTokenCredential": "accessToken",
         "refreshTokenCredential": "refreshToken",
         "accessTokenTtlSeconds": 3600,
+        "grant": null,
+        "authorizeParams": null,
+        "revoke": null,
+        "identity": null,
+        "restrictedScopes": null,
         "credentials": [
           {
             "key": "clientId",

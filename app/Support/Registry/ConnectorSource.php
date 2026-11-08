@@ -206,7 +206,97 @@ class ConnectorSource
             $out[$key] = $auth[$key] ?? null;
         }
 
-        return $out;
+        return [...$out, ...$this->grantFor($auth)];
+    }
+
+    /**
+     * The org-level connection facts: one consent grant shared by a family of
+     * connectors (google-* 0.6.0, `grant: "google"`).
+     *
+     * A host runs ONE OAuth client for the family, asks for each feature's
+     * scopes when it is first used (`authorizeParams`), revokes knowing it
+     * removes the person's whole grant (`revoke.scope: "grant"`), identifies the
+     * account by a stable claim rather than an email (`identity`), and knows
+     * which scopes put the whole client under Google's restricted-tier review
+     * (`restrictedScopes`). Every one changes what a host builds, so all five
+     * are carried, each typed, each null when undeclared.
+     *
+     * `restrictedScopes: []` is NOT null: it says "checked, and none is
+     * restricted", which is the answer a host planning a CASA assessment needs.
+     *
+     * @param  array<string,mixed>  $auth
+     * @return array{grant: ?string, authorizeParams: ?array<string,string>, revoke: ?array{url: string, param: ?string, scope: ?string}, identity: ?array{scope: ?string, claim: ?string, issuers: list<string>, jwksUrl: ?string, audienceCredential: ?string}, restrictedScopes: ?list<string>}
+     */
+    private function grantFor(array $auth): array
+    {
+        $string = fn (mixed $value): ?string => is_string($value) && $value !== '' ? $value : null;
+        $strings = fn (mixed $list): array => is_array($list)
+            ? array_values(array_filter($list, fn ($s) => is_string($s) && $s !== ''))
+            : [];
+
+        $params = null;
+        if (is_array($auth['authorizeParams'] ?? null)) {
+            $params = array_filter($auth['authorizeParams'], fn ($v, $k) => is_string($k) && is_string($v), ARRAY_FILTER_USE_BOTH);
+        }
+
+        $revoke = is_array($auth['revoke'] ?? null) && $string($auth['revoke']['url'] ?? null) !== null
+            ? [
+                'url' => $auth['revoke']['url'],
+                'param' => $string($auth['revoke']['param'] ?? null),
+                'scope' => $string($auth['revoke']['scope'] ?? null),
+            ]
+            : null;
+
+        $identity = is_array($auth['identity'] ?? null)
+            ? [
+                'scope' => $string($auth['identity']['scope'] ?? null),
+                'claim' => $string($auth['identity']['claim'] ?? null),
+                'issuers' => $strings($auth['identity']['issuers'] ?? null),
+                'jwksUrl' => $string($auth['identity']['jwksUrl'] ?? null),
+                'audienceCredential' => $string($auth['identity']['audienceCredential'] ?? null),
+            ]
+            : null;
+
+        return [
+            'grant' => $string($auth['grant'] ?? null),
+            'authorizeParams' => $params,
+            'revoke' => $revoke,
+            'identity' => $identity,
+            'restrictedScopes' => is_array($auth['restrictedScopes'] ?? null) ? $strings($auth['restrictedScopes']) : null,
+        ];
+    }
+
+    /**
+     * A trigger's host-held cursor (core 0.14.0 `readWithCursor`), or null.
+     *
+     * For Gmail's `history.list` after a push and Drive's `changes.list` after
+     * a channel notification: the delivery says only that something moved, and
+     * the HOST stores the cursor between runs. Without these facts a host does
+     * not know which parameter the cursor fills, where to read the next one, or
+     * that a 404 means "resync" rather than "broken".
+     *
+     * @param  array<string,mixed>  $operation
+     * @return array{param: string, seedFrom: ?string, advanceFrom: ?string, maxPages: ?int, expiredStatus: ?int, resyncQuery: ?string}|null
+     */
+    private function cursorFor(array $operation): ?array
+    {
+        $cursor = $operation['cursor'] ?? null;
+
+        if (! is_array($cursor) || ! is_string($cursor['param'] ?? null) || $cursor['param'] === '') {
+            return null;
+        }
+
+        $string = fn (string $key): ?string => is_string($cursor[$key] ?? null) && $cursor[$key] !== '' ? $cursor[$key] : null;
+        $int = fn (string $key): ?int => is_int($cursor[$key] ?? null) ? $cursor[$key] : null;
+
+        return [
+            'param' => $cursor['param'],
+            'seedFrom' => $string('seedFrom'),
+            'advanceFrom' => $string('advanceFrom'),
+            'maxPages' => $int('maxPages'),
+            'expiredStatus' => $int('expiredStatus'),
+            'resyncQuery' => $string('resyncQuery'),
+        ];
     }
 
     /**
@@ -251,6 +341,10 @@ class ConnectorSource
             'route' => is_string($route['by'] ?? null) && is_string($route['path'] ?? null)
                 ? ['by' => $route['by'], 'path' => $route['path']]
                 : null,
+
+            // The host-held cursor a push-then-read trigger resumes from, or
+            // null (checked, and this trigger keeps none). See cursorFor().
+            'cursor' => $this->cursorFor($operation),
         ];
     }
 
@@ -310,10 +404,57 @@ class ConnectorSource
                 'title' => $title,
                 'detail' => $detail,
                 'url' => is_string($url) && $url !== '' ? $url : null,
+                ...$this->wizardFieldsFor($step),
             ];
         }
 
         return $steps === [] ? null : $steps;
+    }
+
+    /**
+     * The setup-wizard half of a step (`fancy-connector-core` SetupStep):
+     * who does it, the prompt for an agent step, the values to copy, which
+     * credential fields it yields, and how the person knows it worked.
+     *
+     * The plan is `.ai/plans/setup-wizards.md`. Every key is emitted, null
+     * when the step does not carry it, and every value is type-checked: an
+     * `actor` outside the two the wizard knows is dropped rather than shown as
+     * a third kind of badge. `{{appUrl}}` and friends travel UNSUBSTITUTED,
+     * because only the consumer's wizard knows its own app.
+     *
+     * @param  array<string,mixed>  $step
+     * @return array{actor: ?string, prompt: ?string, copy: ?list<array{label: string, value: string}>, fields: ?list<string>, done: ?string}
+     */
+    private function wizardFieldsFor(array $step): array
+    {
+        $string = fn (string $key): ?string => is_string($step[$key] ?? null) && $step[$key] !== '' ? $step[$key] : null;
+
+        $copy = null;
+        if (is_array($step['copy'] ?? null)) {
+            $copy = [];
+            foreach ($step['copy'] as $row) {
+                if (is_array($row) && is_string($row['label'] ?? null) && is_string($row['value'] ?? null) && $row['label'] !== '' && $row['value'] !== '') {
+                    $copy[] = ['label' => $row['label'], 'value' => $row['value']];
+                }
+            }
+            $copy = $copy === [] ? null : $copy;
+        }
+
+        $fields = null;
+        if (is_array($step['fields'] ?? null)) {
+            $fields = array_values(array_filter($step['fields'], fn ($f) => is_string($f) && $f !== ''));
+            $fields = $fields === [] ? null : $fields;
+        }
+
+        $actor = $string('actor');
+
+        return [
+            'actor' => in_array($actor, ['person', 'agent'], true) ? $actor : null,
+            'prompt' => $string('prompt'),
+            'copy' => $copy,
+            'fields' => $fields,
+            'done' => $string('done'),
+        ];
     }
 
     private function entryFor(array $connector, array $operation): ?array

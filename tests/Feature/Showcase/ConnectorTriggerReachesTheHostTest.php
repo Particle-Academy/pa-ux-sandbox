@@ -108,11 +108,12 @@ it('states a considered null for every trigger fact the index does not carry', f
     $trigger = $entries->firstWhere('role', 'trigger');
 
     expect(array_keys($trigger['trigger']))->toBe([
-        'delivery', 'setup', 'verification', 'handshake', 'subscription', 'route',
+        'delivery', 'setup', 'verification', 'handshake', 'subscription', 'route', 'cursor',
     ]);
     expect($trigger['trigger']['handshake'])->toBeNull();
     expect($trigger['trigger']['subscription'])->toBeNull();
     expect($trigger['trigger']['route'])->toBeNull();
+    expect($trigger['trigger']['cursor'])->toBeNull();
 
     // An action is not a trigger, and says so rather than going quiet.
     $action = $entries->firstWhere('role', 'action');

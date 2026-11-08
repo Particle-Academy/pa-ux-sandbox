@@ -181,6 +181,12 @@ class PackageRegistry
             'registries' => ['packagist' => 'particle-academy/agent-flo'],
             'why' => 'Subagent that manages fancy-flow flows for any Laravel app on prism-harness: find, read, diagnose, triage, author, start and control, with host-owned flows and runs behind a store contract, configurable names, proposals by default, and run data treated as hostile. The repo exists with a test suite, but nothing is published or usable yet. Design: .ai/plans/flo.md and .ai/plans/agent-packages.md.',
         ],
+        'fancy-i18n' => [
+            'name' => '@particle-academy/fancy-i18n',
+            'repo' => 'Particle-Academy/fancy-i18n',
+            'registries' => ['npm' => '@particle-academy/fancy-i18n'],
+            'why' => 'Kit-wide runtime i18n: the label layer every Fancy UI component reads, with English defaults, fast enough to add no UI lag, and en/es/de/ru/zh built in. Owner approved the plan 2026-11-07: .ai/plans/kit-i18n.md. Its Languages section on /features/accessibility lands when 0.1 ships. NOT YET STARTED.',
+        ],
         'fancy-translations' => [
             'name' => 'particle-academy/fancy-translations',
             'repo' => 'Particle-Academy/fancy-translations',
@@ -346,8 +352,9 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
         'fancy-mlm-ui' => ['group' => 'commerce', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#14b8a6'],
         'fancy-fun-lab-ui' => ['group' => 'commerce', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#f43f5e'],
         'fancy-compliance-ui' => ['group' => 'platform', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#0d9488'],
-        // Not installed here (no captcha surface to dogfood yet), so it lists as a
-        // companion with no component pages; still UI, so it keeps the ui kind.
+        // Installed for the live demo on /features/compliance, but it ships one
+        // component and no component pages, so it lists as a companion; still
+        // UI, so it keeps the ui kind.
         'fancy-captcha-ui' => ['group' => 'platform', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#ea580c'],
         'fancy-git-ui' => ['group' => 'tooling', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#f97316'],
         'fancy-screens' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#8b5cf6'],

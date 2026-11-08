@@ -118,6 +118,18 @@ it('renders the Gamification micro-site on laravel-fun-lab', function () {
         ->and(array_column($page['props']['feature']['members'], 'slug'))->toContain('laravel-fun-lab');
 });
 
+it('lists the published React surfaces, fancy-fun-lab-ui, beside the engine', function () {
+    // It shipped on 2026-11-05 and was never added here: the Feature listed
+    // only the PHP engine. It now joins through the family, in family order.
+    $page = gamificationPage($this->get('/features/gamification')->assertOk()->getContent());
+    $members = collect($page['props']['feature']['members']);
+
+    expect($members->pluck('slug')->all())->toBe(['laravel-fun-lab', 'fancy-fun-lab-ui'])
+        ->and($members->firstWhere('slug', 'fancy-fun-lab-ui')['install'])->toBe('npm install @particle-academy/fancy-fun-lab-ui')
+        ->and($members->firstWhere('slug', 'fancy-fun-lab-ui')['language'])->toBe('React')
+        ->and($page['props']['feature']['languages'])->toBe(['PHP', 'React']);
+});
+
 it('ships no Phase A placeholder', function () {
     foreach (gamificationSources() as $file => $source) {
         // toContain() is variadic, so a message argument would be read as a

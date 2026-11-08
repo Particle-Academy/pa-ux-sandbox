@@ -100,7 +100,7 @@ export default function GamificationFeature({ feature, versions }: FeaturePagePr
             <HowItFits
                 members={feature.members}
                 bridges={feature.bridges}
-                intro="The engine is PHP. The surfaces are react-fancy primitives (Progress, Stat, StatList, Table, Avatar), so any React page can render a profile or a board from the facade's data."
+                intro="The engine is PHP. fancy-fun-lab-ui renders a profile summary, a leaderboard, an achievement grid, a live XP feed and a level-up announcement from the Fun Lab REST API's own shapes. The demo above is built from react-fancy primitives (Progress, StatList, Table), which any React page can also use directly."
             />
             <InstallSteps members={feature.members} versions={versions} />
             <PackagesGrid members={feature.members} versions={versions} />

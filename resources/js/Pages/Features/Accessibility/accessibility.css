@@ -1,0 +1,56 @@
+/* /features/accessibility: a classroom identity. A hero with a bold, high-
+   contrast rule and a grid of lesson badges, generous line height, and every
+   demo laid out so its live readout sits beside what it measures.
+   Scoped to this Feature's wrapper; colours come from the --feature-* tokens,
+   so dark mode is a token swap plus the surfaces below. */
+
+[data-feature="accessibility"] {
+  --a11y-panel: color-mix(in oklch, var(--feature-surface) 70%, var(--bg-0));
+  --a11y-edge: color-mix(in oklch, var(--feature-accent) 40%, var(--border-1));
+}
+.dark [data-feature="accessibility"],
+[data-theme="dark"] [data-feature="accessibility"] {
+  --a11y-panel: color-mix(in oklch, var(--feature-surface) 85%, var(--bg-0));
+  --a11y-edge: color-mix(in oklch, var(--feature-accent) 32%, var(--border-1));
+}
+
+/* Hero: a thick top rule and a soft corner light, nothing that lowers contrast behind text. */
+[data-feature="accessibility"] .a11y-site .feature-hero {
+  border-top: 6px solid var(--feature-accent);
+  background:
+    radial-gradient(70% 100% at 0% 100%, color-mix(in oklch, var(--feature-accent) 12%, transparent), transparent 70%),
+    var(--feature-surface);
+}
+[data-feature="accessibility"] .a11y-site .feature-hero__glyph { border-radius: 999px; }
+[data-feature="accessibility"] .a11y-site .feature-hero__lede { line-height: 1.65; }
+
+.a11y-tap { min-height: 44px; }
+[data-feature="accessibility"] .a11y-lesson { scroll-margin-top: 88px; display: flex; flex-direction: column; gap: 16px; }
+.a11y-criteria { display: flex; flex-wrap: wrap; gap: 8px; }
+.a11y-lesson__copy { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; line-height: 1.65; }
+.a11y-lesson__list { display: flex; flex-direction: column; gap: 10px; margin: 8px 0 0; padding-inline-start: 18px; list-style: disc; line-height: 1.6; }
+.a11y-lesson__list li::marker { color: var(--feature-accent); }
+
+.a11y-readout { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.a11y-table { overflow-x: auto; }
+
+.a11y-contrast { display: flex; flex-direction: column; gap: 20px; }
+.a11y-samples { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; align-items: end; padding: 16px; border-radius: 12px; border: 1px solid var(--a11y-edge); background: var(--bg-0); }
+@media (max-width: 800px) { .a11y-samples { grid-template-columns: minmax(0, 1fr); } }
+
+.a11y-focus { display: flex; flex-direction: column; gap: 16px; }
+.a11y-focus__row { display: flex; flex-wrap: wrap; gap: 8px; }
+.a11y-focus__row > * { min-height: 44px; }
+.a11y-focus__dialog { margin-top: 12px; }
+
+.a11y-language { display: flex; flex-direction: column; gap: 16px; }
+.a11y-language__field { max-width: 320px; }
+
+.a11y-targets { display: flex; flex-direction: column; gap: 20px; }
+.a11y-targets__row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+
+.a11y-otp { display: flex; flex-direction: column; gap: 16px; align-items: flex-start; }
+
+.a11y-live { display: flex; flex-direction: column; gap: 16px; }
+.a11y-live__heard { display: flex; flex-direction: column; gap: 8px; padding: 12px 16px; border-radius: 12px; border: 1px dashed var(--a11y-edge); background: var(--a11y-panel); font-family: var(--font-mono); }
+.a11y-live__list { display: flex; flex-direction: column; gap: 6px; margin: 0; padding-inline-start: 18px; }

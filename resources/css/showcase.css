@@ -57,6 +57,8 @@
 @import "../js/Pages/Features/ThreeD/threed.css";
 @import "../js/Pages/Features/Ecommerce/ecommerce.css";
 @import "../js/Pages/Features/Gamification/gamification.css";
+@import "../js/Pages/Features/Compliance/compliance.css";
+@import "../js/Pages/Features/Accessibility/accessibility.css";
 
 /* Geist + Geist Mono, SELF-HOSTED (the kit's typography policy,
    resources/docs/typography.md): Vercel's v1.9.0 variable woff2 faces, bytes
@@ -109,6 +111,7 @@
 @source '../../node_modules/@particle-academy/fancy-whiteboard/dist/**/*.{js,cjs,mjs}';
 @source '../../node_modules/@particle-academy/agent-integrations/dist/**/*.{js,cjs,mjs}';
 @source '../../node_modules/@particle-academy/fancy-compliance-ui/dist/**/*.{js,cjs,mjs}';
+@source '../../node_modules/@particle-academy/fancy-captcha-ui/dist/**/*.{js,cjs,mjs}';
 @source '../../node_modules/@particle-academy/fancy-fun-lab-ui/dist/**/*.{js,cjs,mjs}';
 
 /* Apply tokenized fonts globally. */

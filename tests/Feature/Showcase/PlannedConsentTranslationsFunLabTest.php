@@ -45,8 +45,8 @@ dataset('published-2026-11-05', [
 ]);
 
 it('lists both captcha halves as companions, the UI one with no component pages', function () {
-    // Not installed in the showcase: there is no captcha surface to dogfood yet,
-    // so fancy-captcha-ui has no demos to host and lists as an install row.
+    // Installed for the live demo on /features/compliance, but it ships one
+    // component and no component pages, so it lists as an install row.
     $companions = collect(PackageRegistry::companions());
     expect($companions->pluck('slug'))->toContain('fancy-captcha', 'fancy-captcha-ui');
     expect($companions->firstWhere('slug', 'fancy-captcha-ui')['npm'])->toBe('@particle-academy/fancy-captcha-ui')

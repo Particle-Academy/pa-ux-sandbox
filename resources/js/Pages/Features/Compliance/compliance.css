@@ -1,0 +1,94 @@
+/* /features/compliance: a document identity. A ruled, paper-like hero with a
+   seal in the corner, serif display type, and demos framed like forms.
+   Scoped to this Feature's wrapper; colours come from the --feature-* tokens,
+   so dark mode is a token swap plus the surfaces below. */
+
+[data-feature="compliance"] {
+  --cmp-rule: color-mix(in oklch, var(--feature-accent) 18%, transparent);
+  --cmp-panel: color-mix(in oklch, var(--feature-surface) 70%, var(--bg-0));
+  --cmp-edge: color-mix(in oklch, var(--feature-accent) 35%, var(--border-1));
+}
+.dark [data-feature="compliance"],
+[data-theme="dark"] [data-feature="compliance"] {
+  --cmp-rule: color-mix(in oklch, var(--feature-accent) 14%, transparent);
+  --cmp-panel: color-mix(in oklch, var(--feature-surface) 85%, var(--bg-0));
+  --cmp-edge: color-mix(in oklch, var(--feature-accent) 28%, var(--border-1));
+}
+
+/* Hero: lined paper with a margin rule, and a seal behind the glyph. */
+[data-feature="compliance"] .cmp-site .feature-hero {
+  border-left: 4px solid var(--feature-accent);
+  background:
+    repeating-linear-gradient(to bottom, transparent 0 31px, var(--cmp-rule) 31px 32px),
+    radial-gradient(60% 90% at 100% 0%, color-mix(in oklch, var(--feature-accent) 14%, transparent), transparent 70%),
+    var(--feature-surface);
+}
+[data-feature="compliance"] .cmp-site .feature-hero__glyph {
+  border-radius: 999px;
+  border-width: 2px;
+  border-style: double;
+  border-color: var(--feature-accent);
+}
+
+.cmp-tap { min-height: 44px; }
+.cmp-anchor { scroll-margin-top: 88px; }
+
+/* Consent demo */
+.cmp-consent { display: flex; flex-direction: column; gap: 20px; }
+.cmp-controls { display: flex; flex-wrap: wrap; gap: 16px 28px; align-items: flex-end; }
+.cmp-stage {
+  display: flex; flex-direction: column; gap: 12px;
+  padding: 20px; border-radius: 12px;
+  border: 1px dashed var(--cmp-edge);
+  background: var(--cmp-panel);
+  min-height: 120px;
+}
+.cmp-stage__empty { margin: auto 0; }
+.cmp-after { display: flex; flex-direction: column; gap: 12px; }
+.cmp-after__actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.cmp-after__actions > * { min-height: 44px; }
+
+/* Theme tokens: react-fancy's own variables, set on a wrapper. Both pairs keep
+   body text above 7:1 on the surface (stone-950 / stone-50 on stone-50 /
+   stone-900; teal-950 / teal-50 on teal-50 / teal-950). */
+.cmp-theme--stone {
+  --fancy-surface: var(--color-stone-50);        --fancy-surface-dark: var(--color-stone-900);
+  --fancy-border-strong: var(--color-stone-400); --fancy-border-strong-dark: var(--color-stone-600);
+  --fancy-text: var(--color-stone-950);          --fancy-text-dark: var(--color-stone-50);
+  --fancy-text-soft: var(--color-stone-800);     --fancy-text-soft-dark: var(--color-stone-200);
+}
+.cmp-theme--teal {
+  --fancy-surface: var(--color-teal-50);         --fancy-surface-dark: var(--color-teal-950);
+  --fancy-border-strong: var(--color-teal-600);  --fancy-border-strong-dark: var(--color-teal-400);
+  --fancy-text: var(--color-teal-950);           --fancy-text-dark: var(--color-teal-50);
+  --fancy-text-soft: var(--color-teal-900);      --fancy-text-soft-dark: var(--color-teal-100);
+}
+
+.cmp-ledger { display: flex; flex-direction: column; gap: 8px; }
+.cmp-ledger__head { display: flex; align-items: center; gap: 12px; }
+.cmp-ledger__table { overflow-x: auto; }
+.cmp-ledger__none { padding: 12px 0; }
+
+/* Agent fence demo: the page on the left, the agent's console on the right. */
+.cmp-fence { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+@media (max-width: 900px) { .cmp-fence { grid-template-columns: minmax(0, 1fr); } }
+.cmp-fence__page { display: flex; flex-direction: column; gap: 16px; padding: 16px; border-radius: 12px; border: 1px dashed var(--cmp-edge); background: var(--cmp-panel); }
+.cmp-fence__newsletter { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+.cmp-fence__newsletter > button { min-height: 44px; }
+.cmp-fence__agent { display: flex; flex-direction: column; gap: 12px; padding: 16px; border-radius: 12px; border: 1px solid var(--cmp-edge); font-family: var(--font-mono); }
+.cmp-fence__asks { display: flex; flex-wrap: wrap; gap: 8px; }
+.cmp-fence__asks > * { min-height: 44px; }
+.cmp-fence__log { display: flex; flex-direction: column; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.cmp-fence__log li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 10px; }
+
+/* Reserve-space demo */
+.cmp-reserve { display: flex; flex-direction: column; gap: 16px; }
+.cmp-reserve__actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.cmp-reserve__actions > * { min-height: 44px; }
+
+/* Captcha demo */
+.cmp-captcha { display: flex; flex-direction: column; gap: 16px; max-width: 640px; }
+.cmp-captcha__bar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.cmp-captcha__bar > button { min-height: 44px; }
+
+.cmp-note { border-left: 3px solid var(--feature-accent); }

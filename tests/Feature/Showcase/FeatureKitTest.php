@@ -76,7 +76,7 @@ it('loads every Feature stylesheet with the site CSS, never from the page chunk'
     $showcase = (string) file_get_contents(resource_path('css/showcase.css'));
     $sheets = featurePageStylesheets();
 
-    expect($sheets)->toHaveCount(8);
+    expect($sheets)->toHaveCount(count(FeatureSites::all()));
     foreach ($sheets as $sheet) {
         expect($showcase)->toContain('@import "../js/Pages/Features/'.$sheet.'";');
     }

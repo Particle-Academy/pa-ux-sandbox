@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "cd4aa2fc50a15ea41fed434fb39464ed",
+    "content-hash": "d56c67b5d0b6a6804ad75c2fddbc37db",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -3823,6 +3823,86 @@
                 "source": "https://github.com/Particle-Academy/dark-slide"
             },
             "time": "2026-11-04T21:52:35+00:00"
+        },
+        {
+            "name": "particle-academy/fancy-captcha",
+            "version": "v0.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Particle-Academy/fancy-captcha.git",
+                "reference": "9ebcf3a473f5760d274665d72183148a2b02be9a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Particle-Academy/fancy-captcha/zipball/9ebcf3a473f5760d274665d72183148a2b02be9a",
+                "reference": "9ebcf3a473f5760d274665d72183148a2b02be9a",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "illuminate/cache": "^13.0",
+                "illuminate/contracts": "^13.0",
+                "illuminate/http": "^13.0",
+                "illuminate/log": "^13.0",
+                "illuminate/routing": "^13.0",
+                "illuminate/support": "^13.0",
+                "illuminate/validation": "^13.0",
+                "php": "^8.4"
+            },
+            "require-dev": {
+                "laravel/framework": "^13.30",
+                "pestphp/pest": "^5.0"
+            },
+            "suggest": {
+                "inertiajs/inertia-laravel": "Shares the captcha props with every page as `fancyCaptcha`, so the UI renders without a fetch.",
+                "particle-academy/fancy-compliance": "Lets a third-party provider be gated behind a consent category, with the built-in checks as the fallback when it is refused."
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "Captcha": "FancyCaptcha\\Facades\\Captcha"
+                    },
+                    "providers": [
+                        "FancyCaptcha\\CaptchaServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "FancyCaptcha\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Particle Academy",
+                    "homepage": "https://github.com/Particle-Academy"
+                }
+            ],
+            "description": "Bot protection for Laravel forms: a built-in honeypot, signed form timing and optional proof-of-work, plus Cloudflare Turnstile, reCAPTCHA and hCaptcha drivers over plain HTTP. Fails closed, logs reasons without tokens, and ships a fake for host tests.",
+            "homepage": "https://github.com/Particle-Academy/fancy-captcha",
+            "keywords": [
+                "Honeypot",
+                "bot-protection",
+                "captcha",
+                "fancy",
+                "hcaptcha",
+                "laravel",
+                "particle-academy",
+                "proof-of-work",
+                "recaptcha",
+                "spam",
+                "turnstile"
+            ],
+            "support": {
+                "issues": "https://github.com/Particle-Academy/fancy-captcha/issues",
+                "source": "https://github.com/Particle-Academy/fancy-captcha"
+            },
+            "time": "2026-11-05T19:25:04+00:00"
         },
         {
             "name": "particle-academy/fancy-cms",

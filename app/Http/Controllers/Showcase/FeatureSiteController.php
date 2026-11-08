@@ -51,7 +51,8 @@ class FeatureSiteController extends Controller
 
         // The Feature names its course by slug; the link exists only while the
         // course is published in the curriculum, so it cannot point at a 404.
-        $feature['course'] = ListedCourses::find((string) $feature['course']);
+        // A Feature with no course (null) gets no link.
+        $feature['course'] = is_string($feature['course']) ? ListedCourses::find($feature['course']) : null;
 
         return Inertia::render((string) $feature['component'], [
             'feature' => $feature,

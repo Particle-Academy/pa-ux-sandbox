@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Support;
 
 /**
- * The eight Features: the parts of the kit that are whole platforms rather
+ * The Features: the parts of the kit that are whole platforms rather
  * than single components, each with its own micro-site at /features/{slug}.
  *
  * This is the ONE list. The nav dropdown reads it through the shared
@@ -40,10 +40,11 @@ final class FeatureSites
      * Feature with no edit here. `bridges` lists the agent-integrations bridges
      * a micro-site's "How it fits" names — empty where the Feature has no
      * Human+ surface of its own. `course` is the slug of the Feature's course
-     * in the curriculum (FancyCurriculumContent); the page links to it only
-     * while that course is published and listed.
+     * in the curriculum (FancyCurriculumContent), or null for a Feature that has
+     * no course yet; the page links to it only while that course is published
+     * and listed.
      *
-     * @var array<string, array{course: string, name: string, tagline: string, icon: string, component: string, theme: array{accent: string, accentDark: string, surface: string, surfaceDark: string, font: string}, members: list<string>, bridges: list<array{name: string, import: string, tools: string}>}>
+     * @var array<string, array{course: ?string, name: string, tagline: string, icon: string, component: string, theme: array{accent: string, accentDark: string, surface: string, surfaceDark: string, font: string}, members: list<string>, bridges: list<array{name: string, import: string, tools: string}>}>
      */
     private const SITES = [
         'flow' => [
@@ -122,11 +123,31 @@ final class FeatureSites
         'gamification' => [
             'course' => 'fancy-gamification',
             'name' => 'Gamification',
-            'tagline' => 'XP, achievements, prizes and leaderboards for Laravel apps.',
+            'tagline' => 'XP, achievements, prizes and leaderboards for Laravel apps, with React surfaces to show them.',
             'icon' => 'trophy',
             'component' => 'Features/Gamification/Index',
             'theme' => ['accent' => '#d97706', 'accentDark' => '#fbbf24', 'surface' => '#fffbeb', 'surfaceDark' => '#1a1204', 'font' => 'display'],
-            'members' => ['laravel-fun-lab'],
+            'members' => ['family:laravel-fun-lab'],
+            'bridges' => [],
+        ],
+        'compliance' => [
+            'course' => null,
+            'name' => 'Compliance',
+            'tagline' => 'Consent banners and preferences backed by an append-only consent record, and bot protection for forms.',
+            'icon' => 'shield-check',
+            'component' => 'Features/Compliance/Index',
+            'theme' => ['accent' => '#0d9488', 'accentDark' => '#2dd4bf', 'surface' => '#f0fdfa', 'surfaceDark' => '#041a17', 'font' => 'serif'],
+            'members' => ['family:fancy-compliance', 'family:fancy-captcha'],
+            'bridges' => [],
+        ],
+        'accessibility' => [
+            'course' => null,
+            'name' => 'Accessibility',
+            'tagline' => 'How Fancy UI meets WCAG: contrast, focus and keyboard, language and direction, target sizes and status messages.',
+            'icon' => 'accessibility',
+            'component' => 'Features/Accessibility/Index',
+            'theme' => ['accent' => '#4f46e5', 'accentDark' => '#818cf8', 'surface' => '#eef2ff', 'surfaceDark' => '#0d0f24', 'font' => 'sans'],
+            'members' => ['react-fancy'],
             'bridges' => [],
         ],
     ];
@@ -160,7 +181,7 @@ final class FeatureSites
     /**
      * Every Feature, in nav order, with its member SLUGS (unresolved).
      *
-     * @return list<array{slug: string, name: string, tagline: string, icon: string, href: string, component: string, theme: array{accent: string, accentDark: string, surface: string, surfaceDark: string, font: string}, memberSlugs: list<string>, bridges: list<array{name: string, import: string, tools: string}>, course: string}>
+     * @return list<array{slug: string, name: string, tagline: string, icon: string, href: string, component: string, theme: array{accent: string, accentDark: string, surface: string, surfaceDark: string, font: string}, memberSlugs: list<string>, bridges: list<array{name: string, import: string, tools: string}>, course: ?string}>
      */
     public static function all(): array
     {
@@ -170,7 +191,7 @@ final class FeatureSites
     /**
      * One Feature with its member slugs, or null.
      *
-     * @return array{slug: string, name: string, tagline: string, icon: string, href: string, component: string, theme: array{accent: string, accentDark: string, surface: string, surfaceDark: string, font: string}, memberSlugs: list<string>, bridges: list<array{name: string, import: string, tools: string}>, course: string}|null
+     * @return array{slug: string, name: string, tagline: string, icon: string, href: string, component: string, theme: array{accent: string, accentDark: string, surface: string, surfaceDark: string, font: string}, memberSlugs: list<string>, bridges: list<array{name: string, import: string, tools: string}>, course: ?string}|null
      */
     public static function find(string $slug): ?array
     {

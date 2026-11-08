@@ -10,14 +10,14 @@ uses(TestCase::class);
 /*
  * The Features dropdown and its micro-sites (.ai/plans/features-microsites.md).
  *
- * The eight Features are ONE server-side list (App\Support\FeatureSites), read
+ * The Features are ONE server-side list (App\Support\FeatureSites), read
  * by the nav through shared props, by the /features index and by each page.
  * These tests pin the contract the Phase B micro-sites build on: the slugs, the
  * order, the redirects from the old top-level pages, that every member package
  * resolves in the registry, and that each page names itself for SEO.
  */
 
-const FEATURE_SLUGS = ['flow', 'tui', 'cms', 'documents', 'git', '3d', 'ecommerce', 'gamification'];
+const FEATURE_SLUGS = ['flow', 'tui', 'cms', 'documents', 'git', '3d', 'ecommerce', 'gamification', 'compliance', 'accessibility'];
 
 /** The Inertia page object an initial (HTML) visit carries. */
 function inertiaPage(string $html): array
@@ -61,7 +61,7 @@ it('leaves the TUI session API where the live terminal calls it', function () {
         ->and(route('fancy-tui.session.stream', absolute: false))->toBe('/fancy-tui/session/stream');
 });
 
-it('shares the eight Features with every page, in order, for the nav', function (string $url) {
+it('shares every Feature with every page, in order, for the nav', function (string $url) {
     $features = inertiaPage($this->get($url)->assertOk()->getContent())['props']['features'] ?? null;
 
     expect($features)->toBeArray()
@@ -125,7 +125,7 @@ it('gives each Feature its own identity tokens', function () {
             ->and($feature['theme']['font'])->toBeIn(['sans', 'display', 'mono', 'serif']);
     }
 
-    expect(collect(FeatureSites::all())->pluck('theme.accent')->unique())->toHaveCount(8);
+    expect(collect(FeatureSites::all())->pluck('theme.accent')->unique())->toHaveCount(count(FEATURE_SLUGS));
 });
 
 it('names every Features page for search and share, with its own canonical', function (string $path) {

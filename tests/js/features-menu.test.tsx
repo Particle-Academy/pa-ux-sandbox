@@ -95,9 +95,41 @@ describe("the Features menu", () => {
         expect(document.activeElement).toBe(trigger);
     });
 
+    it("centres the panel in the viewport instead of hanging it off the trigger", async () => {
+        // The Dropdown writes its anchor-derived x as an inline `left`. The
+        // stylesheet must beat it, or a 1040px panel under a left-of-centre
+        // trigger runs out to the right edge (the bug this pins).
+        const style = document.createElement("style");
+        style.textContent = readFileSync(resolve(__dirname, "../../resources/css/showcase/features.css"), "utf8");
+        document.head.appendChild(style);
+        try {
+            const { menu } = await openMenu();
+            menu.style.left = "437px";
+            const computed = getComputedStyle(menu);
+            expect(computed.left).toBe("0px");
+            expect(computed.right).toBe("0px");
+            expect(computed.marginLeft).toBe("auto");
+            expect(computed.marginRight).toBe("auto");
+        } finally {
+            style.remove();
+        }
+    });
+
+    it("never lets the centred panel reach either viewport edge", () => {
+        // Centred with left/right 0 and auto margins, the gap each side is
+        // (viewport - width) / 2, and the width is min(1040, viewport - 24).
+        const css = readFileSync(resolve(__dirname, "../../resources/css/showcase/features.css"), "utf8");
+        expect(css).toMatch(/\.features-menu \{\s*width: min\(1040px, calc\(100vw - 24px\)\);[^}]*left: 0 !important; right: 0 !important; margin-left: auto; margin-right: auto;/);
+        for (const viewport of [320, 768, 1064, 1280, 1440, 2560]) {
+            const width = Math.min(1040, viewport - 24);
+            const gap = (viewport - width) / 2;
+            expect(gap).toBeGreaterThanOrEqual(12);
+        }
+    });
+
     it("sizes the panel wide but inside the viewport, at 1 / 2 / 4 columns", () => {
         const css = readFileSync(resolve(__dirname, "../../resources/css/showcase/features.css"), "utf8");
-        expect(css).toMatch(/\.features-menu \{ width: min\(1040px, calc\(100vw - 24px\)\)/);
+        expect(css).toMatch(/\.features-menu \{\s*width: min\(1040px, calc\(100vw - 24px\)\)/);
         expect(css).toMatch(/\.features-menu__grid \{ --fancy-grid-cols: 1 !important;/);
         expect(css).toMatch(/@media \(min-width: 768px\) \{ \.features-menu__grid \{ --fancy-grid-cols: 2 !important; \} \}/);
         expect(css).toMatch(/@media \(min-width: 1024px\) \{ \.features-menu__grid \{ --fancy-grid-cols: 4 !important; \} \}/);

@@ -177,9 +177,19 @@ section.feature-section + section.feature-section { border-top: 0; }
 }
 .nav-link--menu[data-active] { background: var(--bg-1); color: var(--fg-1); }
 .nav-link--menu[aria-expanded="true"], [aria-expanded="true"] > .nav-link--menu { background: var(--bg-1); color: var(--fg-1); }
-/* A wide panel: about 1040px, never wider than the viewport (the Dropdown
-   clamps its position to the viewport, so a panel that fits stays on screen). */
-.features-menu { width: min(1040px, calc(100vw - 24px)); padding: 8px; }
+/* A wide panel: about 1040px, never wider than the viewport less 12px a side.
+   CENTRED in the viewport, not hung off the trigger. The Dropdown is
+   position: fixed and writes its anchor-derived x as an inline `left`; a panel
+   this wide aligned to a trigger in the left half of the header ran out to the
+   right edge. `left: 0; right: 0` and auto side margins on a fixed box of known
+   width centres it, and the width cap keeps at least 12px clear on BOTH sides,
+   so it can never overflow either one. !important is what beats the inline
+   `left`; the vertical position (`top`, and the flip above the trigger) is
+   still the Dropdown's own. */
+.features-menu {
+  width: min(1040px, calc(100vw - 24px)); padding: 8px;
+  left: 0 !important; right: 0 !important; margin-left: auto; margin-right: auto;
+}
 /* react-fancy Grid publishes its column count as --fancy-grid-cols inline; the
    breakpoints override it here: 1, then 2 at md, 4 at lg. !important is what
    lets a stylesheet custom property beat an inline one. */

@@ -16,8 +16,10 @@ import type { FeatureNav } from "./types";
  * The list is the shared `features` prop (`App\Support\FeatureSites`), never a
  * second hand-typed copy.
  *
- * The panel is wide (`features.css`: up to 1040px, never past the viewport,
- * which the Dropdown's own positioning clamps to) and the items sit in
+ * The panel is wide (`features.css`: up to 1040px, at least 12px clear of
+ * either viewport edge) and CENTRED in the viewport rather than aligned to the
+ * trigger: the stylesheet overrides the Dropdown's inline `left`, and keeps its
+ * `top`. The items sit in
  * react-fancy's `Grid`: 1 column on small screens, 2 from md, 4 from lg. The
  * grid is layout only, so the items stay plain `menuitem`s in DOM order, read
  * row by row: the arrow keys and Tab walk the same order a reader does. "All

@@ -177,7 +177,17 @@ section.feature-section + section.feature-section { border-top: 0; }
 }
 .nav-link--menu[data-active] { background: var(--bg-1); color: var(--fg-1); }
 .nav-link--menu[aria-expanded="true"], [aria-expanded="true"] > .nav-link--menu { background: var(--bg-1); color: var(--fg-1); }
-.features-menu { width: min(24rem, calc(100vw - 24px)); }
+/* A wide panel: about 1040px, never wider than the viewport (the Dropdown
+   clamps its position to the viewport, so a panel that fits stays on screen). */
+.features-menu { width: min(1040px, calc(100vw - 24px)); padding: 8px; }
+/* react-fancy Grid publishes its column count as --fancy-grid-cols inline; the
+   breakpoints override it here: 1, then 2 at md, 4 at lg. !important is what
+   lets a stylesheet custom property beat an inline one. */
+.features-menu__grid { --fancy-grid-cols: 1 !important; --fancy-grid-gap: 4px !important; }
+@media (min-width: 768px) { .features-menu__grid { --fancy-grid-cols: 2 !important; } }
+@media (min-width: 1024px) { .features-menu__grid { --fancy-grid-cols: 4 !important; } }
+.features-menu__grid .features-menu__item { height: 100%; }
+.features-menu__footer { margin-top: 2px; }
 .features-menu__item { align-items: flex-start; }
 .features-menu__row { display: flex; gap: 10px; align-items: flex-start; }
 .features-menu__icon {

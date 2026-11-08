@@ -135,11 +135,19 @@
         "prism-workspace": "0.3.0",
         "prism-workspace-py": "0.1.0",
         "prism-workspace-ts": "0.2.0",
-        "react-fancy": "6.16.0",
+        "react-fancy": "6.17.0",
         "teachers-aid": "0.3.0",
         "teachers-aid-ui": "0.3.0"
     },
     "releases": [
+        {
+            "slug": "react-fancy",
+            "registry": "npm",
+            "version": "6.17.0",
+            "published_at": "2026-11-08T03:31:51Z",
+            "first": false,
+            "summary": "keepMounted on Drawer and Modal"
+        },
         {
             "slug": "prism-acp-ts",
             "registry": "npm",
@@ -7003,38 +7011,6 @@
             "published_at": "2026-09-09T04:47:30Z",
             "first": false,
             "summary": "applyKindSchemaOverlay(overlays) — a host's SERVER can now own a builtin's config schema, and the editor learns it"
-        },
-        {
-            "slug": "prism-harness",
-            "registry": "composer",
-            "version": "0.7.0",
-            "published_at": "2026-09-09T03:02:12Z",
-            "first": false,
-            "summary": null
-        },
-        {
-            "slug": "fancy-flow-mcp-js",
-            "registry": "npm",
-            "version": "0.1.0",
-            "published_at": "2026-09-09T03:00:20Z",
-            "first": true,
-            "summary": "The MCP server itself"
-        },
-        {
-            "slug": "prism-harness",
-            "registry": "composer",
-            "version": "0.6.1",
-            "published_at": "2026-09-09T02:34:11Z",
-            "first": false,
-            "summary": "Correct the published config comment about what the summariser costs"
-        },
-        {
-            "slug": "prism-harness",
-            "registry": "composer",
-            "version": "0.6.0",
-            "published_at": "2026-09-09T02:32:16Z",
-            "first": false,
-            "summary": "Enforce the summary word budget"
         }
     ]
 }

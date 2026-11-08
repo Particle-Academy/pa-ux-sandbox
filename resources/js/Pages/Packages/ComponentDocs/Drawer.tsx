@@ -1,6 +1,6 @@
 import type { ComponentDoc } from "./types";
 import { useState } from "react";
-import { Button, Drawer, Heading, Text } from "@particle-academy/react-fancy";
+import { Button, Drawer, Heading, Input, Text } from "@particle-academy/react-fancy";
 import type { DrawerSide, DrawerSize } from "@particle-academy/react-fancy";
 
 function SideDemo({ side }: { side: DrawerSide }) {
@@ -116,6 +116,29 @@ function AttachedDemo() {
     );
 }
 
+/** keepMounted: what was typed (or an <audio> that is playing) survives close and reopen. */
+function KeepMountedDemo() {
+    const [open, setOpen] = useState(false);
+    return (
+        <Drawer.Container className="h-64 rounded-xl border border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900/40">
+            <div className="flex h-full flex-col items-start gap-3 p-4">
+                <Text size="sm">
+                    Type a note, close the drawer, open it again: the note is still there, because the
+                    drawer's children never unmounted.
+                </Text>
+                <Button onClick={() => setOpen((o) => !o)}>{open ? "Close the note" : "Open the note"}</Button>
+            </div>
+
+            <Drawer open={open} onClose={() => setOpen(false)} attach="container" side="bottom" size="sm" keepMounted>
+                <Drawer.Header>Note</Drawer.Header>
+                <Drawer.Body>
+                    <Input aria-label="Note" placeholder="Anything" />
+                </Drawer.Body>
+            </Drawer>
+        </Drawer.Container>
+    );
+}
+
 export const drawerDoc: ComponentDoc = {
     intro: (
         <p>
@@ -200,6 +223,19 @@ export const drawerDoc: ComponentDoc = {
 </Drawer.Container>`,
         },
         {
+            name: "keepMounted",
+            description:
+                "By default a Drawer unmounts its children when it closes. keepMounted keeps them in the tree, hidden, inert and aria-hidden, so their state and DOM identity survive: a half-typed form, or an <audio> element that keeps playing (the showcase radio in the header is one). Focus trap, scroll lock and Escape still apply only while open.",
+            render: () => <KeepMountedDemo />,
+            code: `<Drawer open={open} onClose={close} keepMounted>
+    <Drawer.Header>Radio</Drawer.Header>
+    <Drawer.Body>
+        {/* Closing hides this; it does not stop it. */}
+        <StreamingAudio stations={stations} value={value} onChange={setValue} />
+    </Drawer.Body>
+</Drawer>`,
+        },
+        {
             name: "Drawer.Header — closable",
             description:
                 "The close button is on by default. Turn it off for a drawer the user must resolve rather than dismiss — an unsaved-changes prompt, a required step. Do that only when something else in the drawer closes it, or you have built a trap.",
@@ -236,6 +272,7 @@ export const drawerDoc: ComponentDoc = {
         { name: "backdrop", type: `boolean`, default: `true`, description: "Render the scrim behind the panel." },
         { name: "dismissOnBackdrop", type: `boolean`, default: `true`, description: "Clicking the scrim calls `onClose`." },
         { name: "dismissOnEscape", type: `boolean`, default: `true`, description: "Escape calls `onClose`." },
+        { name: "keepMounted", type: `boolean`, default: `false`, description: "Keep the children mounted while closed (hidden, inert, aria-hidden), so their state and DOM identity survive close and reopen." },
         { name: "children", type: `ReactNode`, default: "—", description: "Compound parts: `Drawer.Header`, `Drawer.Body`, `Drawer.Footer`." },
         { name: "className", type: `string`, default: "—", description: "Extra classes on the drawer panel." },
         { name: "Drawer.Header — closable", type: `boolean`, default: `true`, description: "Show the close button. Turn it off only when something else in the drawer closes it." },

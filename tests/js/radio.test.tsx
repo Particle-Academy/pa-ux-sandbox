@@ -56,22 +56,81 @@ async function render(name = "home") {
 
 const toggle = () => host.querySelector<HTMLButtonElement>("[data-radio-toggle]")!;
 const panel = () => host.querySelector<HTMLElement>("[data-radio-panel]")!;
+const frame = () => panel().closest<HTMLElement>("[data-react-fancy-drawer-frame]")!;
 
 describe("the radio drawer", () => {
+    it("is react-fancy's Drawer, attached under the header rather than portalled, and kept mounted while closed", async () => {
+        await render();
+        // The panel IS the Drawer's dialog element: no Card stand-in.
+        expect(panel().hasAttribute("data-react-fancy-drawer")).toBe(true);
+        expect(panel().dataset.side).toBe("top");
+        expect(panel().getAttribute("role")).toBe("dialog");
+        expect(panel().id).toBe("site-radio");
+        // container-attached: inside the app tree, in the fixed box that sits under the header.
+        expect(host.contains(panel())).toBe(true);
+        expect(panel().closest("[data-react-fancy-drawer-container]")?.classList.contains("radio-panel")).toBe(true);
+        expect(host.querySelector("[data-react-fancy-card]")).toBeNull();
+        // keepMounted: closed, the player is still in the tree.
+        expect(frame().hidden).toBe(true);
+        expect(panel().querySelector("audio")).not.toBeNull();
+    });
+
     it("starts closed, inert and hidden, and toggles open from the header button", async () => {
         await render();
         expect(toggle().getAttribute("aria-expanded")).toBe("false");
         expect(panel().dataset.open).toBe("false");
-        expect(panel().hasAttribute("inert")).toBe(true);
-        expect(panel().getAttribute("aria-hidden")).toBe("true");
+        expect(frame().hasAttribute("inert")).toBe(true);
+        expect(frame().getAttribute("aria-hidden")).toBe("true");
+        expect(frame().hidden).toBe(true);
 
         await act(async () => toggle().click());
         expect(toggle().getAttribute("aria-expanded")).toBe("true");
         expect(panel().dataset.open).toBe("true");
-        expect(panel().hasAttribute("inert")).toBe(false);
+        expect(frame().hasAttribute("inert")).toBe(false);
+        expect(frame().hidden).toBe(false);
+        expect(document.activeElement?.tagName).toBe("H2");
 
         await act(async () => document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" })));
         expect(panel().dataset.open).toBe("false");
+        expect(toggle().getAttribute("aria-expanded")).toBe("false");
+        expect(frame().hidden).toBe(true);
+        expect(document.activeElement).toBe(toggle());
+    });
+
+    it("closes from the Drawer's own close button", async () => {
+        await render();
+        await act(async () => toggle().click());
+        const close = panel().querySelector<HTMLButtonElement>("[data-react-fancy-drawer-close]")!;
+        expect(close.getAttribute("aria-label")).toBe("Close the radio");
+        await act(async () => close.click());
+        expect(panel().dataset.open).toBe("false");
+        expect(frame().hidden).toBe(true);
+    });
+
+    it("keeps the same <audio> element, still playing, across close and reopen", async () => {
+        const play = vi.spyOn(HTMLMediaElement.prototype, "play").mockImplementation(() => Promise.resolve());
+        const pause = vi.spyOn(HTMLMediaElement.prototype, "pause").mockImplementation(() => {});
+        await render();
+        await act(async () => toggle().click());
+        const audio = host.querySelector("audio");
+        expect(audio).not.toBeNull();
+        await act(async () => host.querySelector<HTMLElement>("[data-radio-station=locked-on]")!.click());
+        await act(async () => panel().querySelector<HTMLButtonElement>("[data-streaming-control=play]")!.click());
+        expect(toggle().dataset.radioPlaying).toBe("true");
+        const pausesBefore = pause.mock.calls.length;
+
+        await act(async () => toggle().click());
+        expect(frame().hidden).toBe(true);
+        expect(host.querySelector("audio")).toBe(audio);
+        expect(toggle().dataset.radioPlaying).toBe("true");
+        expect(pause.mock.calls.length).toBe(pausesBefore);
+
+        await act(async () => toggle().click());
+        expect(frame().hidden).toBe(false);
+        expect(host.querySelector("audio")).toBe(audio);
+        expect(host.querySelector<HTMLElement>("[data-react-fancy-streaming-audio]")!.dataset.streamingPlaying).toBe("true");
+        play.mockRestore();
+        pause.mockRestore();
     });
 
     it("lists Riverwest at 128k and HQ, then the three tracks, each with its own artwork", async () => {

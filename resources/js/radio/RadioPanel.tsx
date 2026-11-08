@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { Badge, Button, Card, Heading, Icon, StreamingAudio, Text } from "@particle-academy/react-fancy";
+import { Badge, Button, Drawer, Heading, Icon, StreamingAudio, Text } from "@particle-academy/react-fancy";
 import { fill, RADIO_LABELS, RADIO_PLAYER_LABELS } from "./labels";
 import { useRadio } from "./RadioProvider";
 import { findStation, RADIO_STATIONS, type RadioStation } from "./stations";
@@ -27,24 +27,31 @@ export function StationCover({ station, size }: { station: RadioStation; size: n
 }
 
 /**
- * The drawer under the site header. Always mounted (so the player inside it
- * keeps its <audio> element); closed, it is hidden, inert and out of the tab
- * order. Escape closes it and focus returns to the header button.
+ * The drawer under the site header: react-fancy's Drawer, `keepMounted` so the
+ * player inside it keeps its <audio> element (and keeps playing) while closed.
+ * Closed, the Drawer itself makes it hidden, inert and aria-hidden.
+ *
+ * It is attached to a container rather than the viewport: the container is a
+ * fixed box from the header's bottom edge to the bottom of the screen, so the
+ * drawer slides out from UNDER the header instead of covering it, and the page
+ * stays usable (no scrim, no scroll lock, no focus trap: it is a panel, not a
+ * modal). Escape and the close button are the Drawer's; focus goes to the
+ * heading on open and back to the header button on close.
  */
 export function RadioPanel() {
     const radio = useRadio();
-    const panel = useRef<HTMLDivElement>(null);
     const heading = useRef<HTMLHeadingElement>(null);
     const wasOpen = useRef(false);
     const open = radio?.open ?? false;
 
     // Sit directly under the header, whatever its height on this page.
     useEffect(() => {
-        if (!open || !panel.current) {
+        if (!open) {
             return;
         }
         const header = document.querySelector("header.nav");
-        const place = () => panel.current?.style.setProperty("--radio-top", `${Math.round(header?.getBoundingClientRect().bottom ?? 0)}px`);
+        const place = () =>
+            document.documentElement.style.setProperty("--radio-top", `${Math.round(header?.getBoundingClientRect().bottom ?? 0)}px`);
         place();
         window.addEventListener("resize", place);
         window.addEventListener("scroll", place, { passive: true });
@@ -63,19 +70,6 @@ export function RadioPanel() {
         wasOpen.current = open;
     }, [open]);
 
-    useEffect(() => {
-        if (!open) {
-            return;
-        }
-        const onKey = (event: KeyboardEvent) => {
-            if (event.key === "Escape") {
-                radio?.setOpen(false);
-            }
-        };
-        document.addEventListener("keydown", onKey);
-        return () => document.removeEventListener("keydown", onKey);
-    }, [open, radio]);
-
     if (!radio) {
         return null;
     }
@@ -85,26 +79,26 @@ export function RadioPanel() {
     const live = station?.kind === "live";
 
     return (
-        <div
-            ref={panel}
-            id={RADIO_PANEL_ID}
-            className="radio-panel"
-            data-radio-panel=""
-            data-open={open ? "true" : "false"}
-            role="region"
-            aria-label={RADIO_LABELS.title}
-            aria-hidden={open ? undefined : true}
-            inert={!open}
-        >
-            <Card variant="outlined" className="radio-panel__card">
-                <Card.Body className="radio-panel__body">
-                    <div className="radio-panel__head">
-                        <Heading as="h2" size="md" weight="semibold" ref={heading} tabIndex={-1}>
-                            {RADIO_LABELS.title}
-                        </Heading>
-                        <Button variant="ghost" icon="x" aria-label={RADIO_LABELS.close} onClick={() => radio.setOpen(false)} className="radio-tap" />
-                    </div>
-
+        <Drawer.Container className="radio-panel">
+            <Drawer
+                open={open}
+                onClose={() => radio.setOpen(false)}
+                side="top"
+                attach="container"
+                backdrop={false}
+                keepMounted
+                id={RADIO_PANEL_ID}
+                className="radio-drawer"
+                data-radio-panel=""
+                data-open={open ? "true" : "false"}
+                aria-label={RADIO_LABELS.title}
+            >
+                <Drawer.Header closeLabel={RADIO_LABELS.close} className="radio-drawer__head">
+                    <Heading as="h2" size="md" weight="semibold" ref={heading} tabIndex={-1}>
+                        {RADIO_LABELS.title}
+                    </Heading>
+                </Drawer.Header>
+                <Drawer.Body className="radio-panel__body">
                     <StreamingAudio
                         stations={RADIO_STATIONS}
                         value={value}
@@ -175,8 +169,8 @@ export function RadioPanel() {
                             );
                         })}
                     </div>
-                </Card.Body>
-            </Card>
-        </div>
+                </Drawer.Body>
+            </Drawer>
+        </Drawer.Container>
     );
 }

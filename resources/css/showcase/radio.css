@@ -1,41 +1,39 @@
-/* The showcase radio: a drawer that drops from under the sticky header.
-   Always in the DOM so its <audio> keeps playing; closed, it slides up out of
-   view, is hidden from the accessibility tree and is inert (RadioPanel). */
+/* The showcase radio: react-fancy's Drawer (side="top", attach="container",
+   keepMounted), dropping from under the sticky header. The Drawer keeps its
+   <audio> mounted while closed and makes the closed frame hidden + inert
+   itself (RadioPanel). These rules are unlayered, so they win over the
+   Drawer's own Tailwind utilities where they disagree. */
 
+/* The Drawer.Container: a fixed box from the header's bottom edge down. It
+   never takes clicks itself; only the open panel does. */
 .radio-panel {
   position: fixed;
   top: var(--radio-top, 58px);
   inset-inline: 0;
+  bottom: 0;
   z-index: 29; /* under the header (z 30), over the page */
-  display: flex;
-  justify-content: center;
-  padding: 0 12px;
   pointer-events: none;
 }
-.radio-panel__card {
-  pointer-events: auto;
-  width: min(760px, 100%);
-  max-height: calc(100dvh - var(--radio-top, 58px) - 12px);
-  overflow-y: auto;
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
+/* The Drawer panel: centred, as tall as its content, capped to the screen. */
+.radio-drawer {
+  inset-inline: 12px;
+  width: auto;
+  max-width: 760px;
+  margin-inline: auto;
+  height: auto;
+  max-height: calc(100% - 12px);
+  border-inline-width: 1px;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
   box-shadow: 0 18px 40px -18px rgb(0 0 0 / 0.45);
-  transition: transform 220ms ease, opacity 220ms ease, visibility 0s linear 0s;
-}
-.radio-panel[data-open="false"] .radio-panel__card {
-  transform: translateY(-16px);
-  opacity: 0;
-  visibility: hidden;
-  transition: transform 180ms ease, opacity 180ms ease, visibility 0s linear 180ms;
 }
 @media (prefers-reduced-motion: reduce) {
-  .radio-panel__card, .radio-panel[data-open="false"] .radio-panel__card { transition: none; transform: none; }
+  .radio-drawer { animation: none !important; }
 }
 
+.radio-drawer__head h2:focus { outline: none; }
+.radio-drawer__head h2:focus-visible { outline: 2px solid var(--fancy-focus, #3b82f6); outline-offset: 2px; border-radius: 4px; }
 .radio-panel__body { display: flex; flex-direction: column; gap: 16px; }
-.radio-panel__head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.radio-panel__head h2:focus { outline: none; }
-.radio-panel__head h2:focus-visible { outline: 2px solid var(--fancy-focus, #3b82f6); outline-offset: 2px; border-radius: 4px; }
 .radio-panel__meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
 .radio-tap { min-height: 44px; min-width: 44px; }
 

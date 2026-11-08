@@ -28,9 +28,9 @@ const INITIAL: StreamingAudioValue = { stationId: DEFAULT_STATION_ID, playing: f
  * The showcase radio, mounted ONCE in the app-level provider tree
  * (showcase-app.tsx and ssr.tsx), outside every Inertia page. Pages come and go
  * under it, so the <audio> element inside the panel survives navigation and
- * playback carries on. The panel is always mounted and only hidden when closed:
- * react-fancy's Drawer unmounts its children on close, which would stop the
- * audio, so the panel is built from the kit's Card instead.
+ * playback carries on. The panel is react-fancy's Drawer with `keepMounted`
+ * (6.17.0): closed, it stays in the tree hidden and inert, so the audio is
+ * never unmounted by closing the drawer either.
  *
  * The chosen station and the volume persist in localStorage. Playing never
  * does: nothing plays until the person presses play.

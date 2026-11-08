@@ -36,6 +36,49 @@ export const pillboxDoc: ComponentDoc = {
             code: `<Pillbox value={tags} onChange={setTags} maxItems={3} />`,
         },
         {
+            name: "Max length",
+            description:
+                "Cap each pill's length in characters. The input stops accepting characters past it, a longer value (pasted text included) is never added, and the count left is announced within 5 characters of the cap.",
+            render: () => (
+                <div className="w-full max-w-sm">
+                    <Pillbox defaultValue={["short"]} maxLength={12} onChange={() => {}} placeholder="Up to 12 characters…" />
+                </div>
+            ),
+            code: `<Pillbox value={tags} onChange={setTags} maxLength={12} />`,
+        },
+        {
+            name: "Translated labels",
+            description:
+                "Every word a screen reader hears: each pill's remove button, the add and remove announcements, and the characters-remaining count. `{tag}` and `{remaining}` are filled in.",
+            render: () => (
+                <div className="w-full max-w-sm">
+                    <Pillbox
+                        defaultValue={["rojo", "azul"]}
+                        maxLength={10}
+                        onChange={() => {}}
+                        placeholder="Añadir etiqueta…"
+                        labels={{
+                            remove: "Quitar {tag}",
+                            added: "Añadido {tag}",
+                            removed: "Quitado {tag}",
+                            remaining: "Quedan {remaining} caracteres",
+                        }}
+                    />
+                </div>
+            ),
+            code: `<Pillbox
+    value={tags}
+    onChange={setTags}
+    maxLength={10}
+    labels={{
+        remove: "Quitar {tag}",
+        added: "Añadido {tag}",
+        removed: "Quitado {tag}",
+        remaining: "Quedan {remaining} caracteres",
+    }}
+/>`,
+        },
+        {
             name: "Disabled",
             render: () => (
                 <div className="w-full max-w-sm">
@@ -51,6 +94,8 @@ export const pillboxDoc: ComponentDoc = {
         { name: "onChange", type: `(values: string[]) => void`, default: "—", description: "Called when tags are added / removed." },
         { name: "placeholder", type: `string`, default: "—", description: "Input placeholder shown when there are no pills." },
         { name: "maxItems", type: `number`, default: "—", description: "Cap total pills. The input is hidden once the cap is reached." },
+        { name: "maxLength", type: `number`, default: "—", description: "Longest pill, in characters (UTF-16 code units, as native `maxlength` counts). A longer value is never added. Unset means no cap." },
+        { name: "labels", type: `PillboxLabels`, default: "English", description: "`remove`, `added`, `removed` and `remaining`: the screen-reader words, for translation." },
         { name: "disabled", type: `boolean`, default: `false`, description: "Disable the input and the × buttons." },
         { name: "className", type: `string`, default: "—", description: "Extra classes on the root wrapper." },
     ],

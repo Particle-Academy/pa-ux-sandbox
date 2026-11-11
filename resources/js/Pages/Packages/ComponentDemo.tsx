@@ -4,7 +4,7 @@ import { babylonEngine } from "@particle-academy/fancy-3d-babylon/engine";
 import { FeatureGate, PricingTable, FeatureMatrix, PlanFeaturesEditor, type PlanFeatureValue} from "../../components/fancy/catalog-fms";
 // Shared with the package-grid tiles, so a component's demo and its thumbnail
 // cannot drift apart.
-import { CR_LESSON, CR_CURRICULUM, CR_QUESTION, CR_TEST, CR_COURSE, CR_ENROLLMENT, CR_ATTEMPT, JB_POSTING, JB_APPLICATION, TA_HISTORY, TA_PLAN, SAMPLE_TSX, PREVIEW_TIMELINE } from "./ComponentPreviews";
+import { CR_LESSON, CR_CURRICULUM, CR_QUESTION, CR_TEST, CR_COURSE, CR_ENROLLMENT, CR_ATTEMPT, JB_POSTING, JB_APPLICATION, TA_HISTORY, TA_PLAN, SAMPLE_TSX, PREVIEW_TIMELINE, MOTION_NODE_ATTR } from "./ComponentPreviews";
 import { type TimelineDoc } from "@particle-academy/fancy-motion";
 import { MotionStage, TimelineDock } from "@particle-academy/fancy-motion/react";
 import { InstallBanner, OfflineBanner } from "@particle-academy/fancy-pwa";
@@ -6063,22 +6063,34 @@ function PwaBannersDemo() {
 
 // ── @particle-academy/fancy-motion ─────────────────────────────────────────
 
+// MotionStage is a PAGE player: window scroll is the playhead, over a
+// `frames x 100vh` spacer whose content pins with `position: sticky`. So the
+// stage must not sit in a clipped box. `overflow: hidden` on any ancestor
+// becomes the sticky container, the pin stops pinning, and progress can only
+// reach about 0.14 while the box is on screen. That, plus the default
+// `[data-cms]` node attribute and empty snapshots, is why this card once never
+// moved.
 function MotionStageDemo() {
     return (
         <DemoNote
-            outOfBox="The stage, and the keyframe interpolation driving anything with a `data-motion` handle."
-            demo="A two-keyframe timeline and one card to move."
+            outOfBox="The stage, the scroll-to-playhead mapping and the keyframe interpolation, applied to every element carrying the node attribute (`data-cms` unless you pass `nodeAttr`)."
+            demo={'A three-keyframe timeline, one card, and `nodeAttr="data-motion"`. Scroll the page: the stage pins while the card moves.'}
         >
-            <div className="relative h-64 max-w-2xl overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
-                <MotionStage timeline={PREVIEW_TIMELINE}>
+            <MotionStage
+                timeline={PREVIEW_TIMELINE}
+                nodeAttr={MOTION_NODE_ATTR}
+                className="max-w-2xl rounded-md border border-zinc-200 dark:border-zinc-800"
+            >
+                <div className="relative h-full bg-gradient-to-br from-violet-50/60 to-transparent dark:from-violet-500/10">
+                    <p className="absolute right-6 top-24 text-xs text-zinc-500">Scroll the page to play the timeline</p>
                     <div
                         data-motion="card"
-                        className="absolute left-8 top-8 rounded-lg bg-violet-500 px-4 py-3 text-sm font-medium text-white shadow-lg"
+                        className="absolute left-8 top-24 rounded-lg bg-violet-500 px-4 py-3 text-sm font-medium text-white shadow-lg"
                     >
-                        Scroll the stage
+                        Scroll the page
                     </div>
-                </MotionStage>
-            </div>
+                </div>
+            </MotionStage>
         </DemoNote>
     );
 }

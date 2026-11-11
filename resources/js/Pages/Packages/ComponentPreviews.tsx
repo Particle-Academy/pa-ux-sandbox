@@ -73,13 +73,26 @@ const heavy = (name: HeavyTile, Fallback: PreviewFn): PreviewFn => {
 };
 
 /** A two-keyframe timeline — the shape TimelineDoc actually declares. */
+/**
+ * The attribute the motion examples tag their nodes with. MotionStage tweens
+ * `[data-cms]` unless told otherwise, so every stage that uses this attribute
+ * must pass it as `nodeAttr` — a mismatch animates nothing and logs nothing.
+ */
+export const MOTION_NODE_ATTR = "data-motion";
+
+/**
+ * Snapshots must name the node they move (`card`): an empty snapshot is a
+ * valid timeline that tweens nothing, which is how this example once shipped
+ * a card that never moved.
+ */
 export const PREVIEW_TIMELINE: TimelineDoc = {
     id: "preview",
     axis: "vertical",
-    frames: 3,
+    frames: 2,
     keyframes: [
-        { id: "k1", at: 0, mode: "snap" as const, snapshot: {} },
-        { id: "k2", at: 0.6, mode: "scroll" as const, snapshot: {} },
+        { id: "k1", at: 0, mode: "snap" as const, snapshot: { card: { x: 0, y: 0, rotate: 0, scale: 1, opacity: 1 } } },
+        { id: "k2", at: 0.5, mode: "scroll" as const, ease: "ease-in-out" as const, snapshot: { card: { x: 220, y: 140, rotate: -8, scale: 1.15, opacity: 1 } } },
+        { id: "k3", at: 1, mode: "scroll" as const, ease: "ease-out" as const, snapshot: { card: { x: 440, y: 40, rotate: 0, scale: 0.9, opacity: 0.6 } } },
     ],
 };
 
@@ -2870,7 +2883,7 @@ const PREVIEWS: Record<string, PreviewFn> = {
 
     "fancy-motion/motion-stage": () => (
         <div className="relative h-32 w-full max-w-[20rem] overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
-            <MotionStage timeline={PREVIEW_TIMELINE}>
+            <MotionStage timeline={PREVIEW_TIMELINE} nodeAttr={MOTION_NODE_ATTR}>
                 <div data-motion="card" className="absolute left-6 top-8 rounded-md bg-violet-500 px-3 py-2 text-[10px] text-white">
                     Tweened
                 </div>

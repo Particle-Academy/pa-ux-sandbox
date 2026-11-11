@@ -1732,6 +1732,7 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
             ['slug' => 'full-screen', 'name' => 'FullScreen', 'blurb' => 'Controlled full-screen surface: viewport overlay by default, optional native Fullscreen API, Escape exits with focus and scroll restored.'],
             ['slug' => 'grid', 'name' => 'Grid', 'blurb' => 'Modular responsive grid.'],
             ['slug' => 'heading', 'name' => 'Heading'],
+            ['slug' => 'hotkey-capture', 'name' => 'HotkeyCapture', 'blurb' => 'Records a keyboard shortcut as a normalised string; controlled, keycap display, Escape cancels, announced politely.'],
             ['slug' => 'icon', 'name' => 'Icon'],
             ['slug' => 'index-list', 'name' => 'IndexList', 'blurb' => 'Numbered index list for directories and tables of contents.'],
             ['slug' => 'input-tag', 'name' => 'InputTag'],

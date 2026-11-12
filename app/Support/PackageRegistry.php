@@ -293,6 +293,24 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
             'registries' => ['npm' => '@particle-academy/fancy-service-token'],
             'why' => 'Node leg of CC-fancy-0030: the verifier mirror, with a connect-style middleware that refuses before the body is read. node:crypto only (createHmac / timingSafeEqual). npm name 404 on 2026-11-12 (control @particle-academy/react-fancy resolved).',
         ],
+        'fancy-http-guard' => [
+            'name' => 'particle-academy/fancy-http-guard',
+            'repo' => 'Particle-Academy/fancy-http-guard',
+            'registries' => ['packagist' => 'particle-academy/fancy-http-guard'],
+            'why' => 'Laravel leg of CC-fancy-0031: request guards checked BEFORE the body is parsed (body size 413, list length and nesting depth, finite numbers only with a 422 naming the field, and the workbook rows x columns cap paired with holy-sheet reader limits), every limit per route and configurable, plus one error envelope with the request id on every response, and an HTTP-client normaliser. Contract and fixtures in fancy-conformance http/*. Design: .ai/plans/request-guards-and-error-envelope.md (owner approved 2026-11-12). Packagist name 404 on 2026-11-12.',
+        ],
+        'fancy-http-guard-py' => [
+            'name' => 'fancy-http-guard',
+            'repo' => 'Particle-Academy/fancy-http-guard-py',
+            'registries' => ['pypi' => 'fancy-http-guard'],
+            'why' => 'Python leg of CC-fancy-0031: pure ASGI middleware for Starlette and FastAPI that guards the raw body before FastAPI reads it, renders the one error envelope, and carries the request id. Zero runtime dependencies. PyPI name 404 on 2026-11-12; a 404 says the exact name is free, not that PyPI will accept it.',
+        ],
+        'fancy-http-errors' => [
+            'name' => '@particle-academy/fancy-http-errors',
+            'repo' => 'Particle-Academy/fancy-http-errors',
+            'registries' => ['npm' => '@particle-academy/fancy-http-errors'],
+            'why' => 'TS leg of CC-fancy-0031: turns ANY error response (the envelope, FastAPI detail and 422 lists, Laravel validation, an HTML proxy page) into one sentence for the UI, never echoing 5xx text. Zero runtime dependencies, no React. npm name 404 on 2026-11-12.',
+        ],
     ];
 
     /**

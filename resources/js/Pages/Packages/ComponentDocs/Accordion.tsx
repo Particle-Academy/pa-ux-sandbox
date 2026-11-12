@@ -1,5 +1,30 @@
+import { useState } from "react";
 import type { ComponentDoc } from "./types";
-import { Accordion, Text } from "@particle-academy/react-fancy";
+import { Accordion, Button, Text } from "@particle-academy/react-fancy";
+
+function ControlledAccordion() {
+    const [open, setOpen] = useState<string | null>("billing");
+
+    return (
+        <div className="w-full max-w-md space-y-3">
+            <div className="flex items-center gap-2">
+                <Button size="sm" variant="ghost" onClick={() => setOpen("profile")}>Open profile</Button>
+                <Button size="sm" variant="ghost" onClick={() => setOpen(null)}>Close all</Button>
+                <Text size="xs" className="ml-auto">value: {open === null ? "null" : `"${open}"`}</Text>
+            </div>
+            <Accordion type="single" value={open} onChange={setOpen}>
+                <Accordion.Item value="profile">
+                    <Accordion.Trigger>Profile</Accordion.Trigger>
+                    <Accordion.Content><Text size="sm">Name, avatar and time zone.</Text></Accordion.Content>
+                </Accordion.Item>
+                <Accordion.Item value="billing">
+                    <Accordion.Trigger>Billing</Accordion.Trigger>
+                    <Accordion.Content><Text size="sm">Plan, invoices and payment method.</Text></Accordion.Content>
+                </Accordion.Item>
+            </Accordion>
+        </div>
+    );
+}
 
 export const accordionDoc: ComponentDoc = {
     intro: (
@@ -76,10 +101,28 @@ export const accordionDoc: ComponentDoc = {
     <Accordion.Item value="c">…</Accordion.Item>
 </Accordion>`,
         },
+        {
+            name: "Controlled (value + onChange)",
+            description:
+                "The host owns which section is open, so an agent or another control can open one. With type=\"single\" the value is the open item's value or null; with type=\"multiple\" it is a string[]. defaultValue is the uncontrolled starting point in the same shape.",
+            render: () => <ControlledAccordion />,
+            code: `const [open, setOpen] = useState<string | null>("billing");
+
+<Accordion type="single" value={open} onChange={setOpen}>
+    <Accordion.Item value="profile">…</Accordion.Item>
+    <Accordion.Item value="billing">…</Accordion.Item>
+</Accordion>
+
+// Uncontrolled, multiple:
+<Accordion type="multiple" defaultValue={["a", "c"]}>…</Accordion>`,
+        },
     ],
     props: [
         { name: "type", type: `"single" | "multiple"`, default: `"single"`, description: "Allow only one open section at a time, or multiple independent ones." },
-        { name: "defaultOpen", type: `string[]`, default: `[]`, description: "Section `value`s that start open." },
+        { name: "value", type: `string | null | string[]`, default: "—", description: "Controlled open section(s): the open item's `value` or `null` in single mode, a `string[]` in multiple mode." },
+        { name: "defaultValue", type: `string | null | string[]`, default: "—", description: "Uncontrolled starting value, in the same shape as `value`." },
+        { name: "onChange", type: `(value) => void`, default: "—", description: "Called with the next value when a section opens or closes." },
+        { name: "defaultOpen", type: `string[]`, default: `[]`, description: "Section `value`s that start open. Still supported; `defaultValue` is the same idea in the controlled shape." },
         { name: "children", type: `ReactNode`, default: "—", description: "A list of `Accordion.Item` children." },
         { name: "className", type: `string`, default: "—", description: "Extra classes on the root wrapper." },
     ],

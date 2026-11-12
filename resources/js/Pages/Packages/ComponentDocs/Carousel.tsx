@@ -156,6 +156,36 @@ export const carouselDoc: ComponentDoc = {
     <Carousel.Slide>…</Carousel.Slide>
 </Carousel.Panels>`,
         },
+        {
+            name: "keepMounted and slide labels",
+            description:
+                "A directional carousel renders every slide, the inactive ones hidden and inert, so all of their text is in the server-rendered HTML. keepMounted={false} goes back to rendering only the active slide. labels names each slide group (“1 of 3”) and the default controls, for translation.",
+            render: () => (
+                <Carousel
+                    className="w-full"
+                    keepMounted={false}
+                    labels={{ previous: "Vorherige Folie", next: "Nächste Folie", slide: "Folie", slideOf: "{index} von {total}" }}
+                >
+                    <Carousel.Panels>
+                        {["Eins", "Zwei", "Drei"].map((label) => (
+                            <Carousel.Slide key={label}>
+                                <div className="flex h-24 items-center justify-center rounded-lg bg-zinc-100 text-sm dark:bg-zinc-800">
+                                    {label}
+                                </div>
+                            </Carousel.Slide>
+                        ))}
+                    </Carousel.Panels>
+                    <Carousel.Controls />
+                </Carousel>
+            ),
+            code: `<Carousel
+    keepMounted={false}
+    labels={{ previous: "Vorherige Folie", next: "Nächste Folie", slide: "Folie", slideOf: "{index} von {total}" }}
+>
+    <Carousel.Panels>…</Carousel.Panels>
+    <Carousel.Controls />
+</Carousel>`,
+        },
     ],
     props: [
         { name: "children", type: `ReactNode`, default: "—", description: "Compound parts — `Carousel.Panels`, `Carousel.Slide`, `Carousel.Controls`, `Carousel.Steps`." },
@@ -168,6 +198,8 @@ export const carouselDoc: ComponentDoc = {
         { name: "variant", type: `"directional" | "wizard"`, default: `"directional"`, description: "Direction-only or numbered-step UX." },
         { name: "onFinish", type: `() => void`, default: "—", description: "Wizard only — fires when the user clicks finish on the last slide." },
         { name: "headless", type: `boolean`, default: `false`, description: "Disable default styling on `Carousel.Slide`. Use when wrapping the slide in your own container." },
+        { name: "keepMounted", type: `boolean`, default: `true`, description: "Directional only: render every slide, inactive ones `hidden` + `inert`. `false` renders only the active slide." },
+        { name: "labels", type: `Partial<CarouselLabels>`, default: "English", description: "`previous`, `next`, `slide` (the slide's role description) and `slideOf` (`{index}` / `{total}`)." },
         { name: "className", type: `string`, default: "—", description: "Extra classes on the root wrapper." },
         { name: "Carousel.Controls — prevLabel", type: `ReactNode`, default: "—", description: "Content and accessible name of the previous control." },
         { name: "Carousel.Controls — nextLabel", type: `ReactNode`, default: "—", description: "Content and accessible name of the next control." },

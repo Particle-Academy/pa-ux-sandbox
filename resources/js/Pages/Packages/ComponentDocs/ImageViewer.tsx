@@ -56,6 +56,18 @@ export const imageViewerDoc: ComponentDoc = {
 </div>`,
         },
         {
+            name: "aspectRatio (no height needed)",
+            description:
+                "Where nothing gives the viewer a height, it keeps an intrinsic box: 4 / 3 until the image loads, then the image's natural aspect. aspectRatio fixes the box instead, as a number or a CSS ratio string, so the layout does not shift on load. An explicit height still wins.",
+            render: () => (
+                <div className="w-full max-w-md overflow-hidden rounded-md border border-zinc-200 dark:border-zinc-800">
+                    <ImageViewer src={SHOT} alt="fancy-artboard showcase screenshot" aspectRatio="16 / 9" />
+                </div>
+            ),
+            code: `<ImageViewer src="/shots/artboard.png" alt="ArtBoard" aspectRatio="16 / 9" />
+<ImageViewer src="/shots/square.png" alt="Square" aspectRatio={1} />`,
+        },
+        {
             name: "fit",
             description:
                 "How the image sits at zoom 1. contain fits the whole thing, cover fills and crops, none shows it at natural size so you pan to see the rest.",
@@ -251,6 +263,7 @@ setViewport({ panX: -320, panY: -180, zoom: 4 });`,
         { name: "onError", type: `() => void`, default: "—", description: "Fired when the image fails to load." },
         { name: "className", type: `string`, default: "—", description: "Additional classes for the container." },
         { name: "style", type: `CSSProperties`, default: "—", description: "Inline styles — usually a height, since the viewer fills its box." },
+        { name: "aspectRatio", type: `number | string`, default: "natural aspect (4 / 3 until loaded)", description: "The box's aspect ratio where its height is auto. Also reachable from `MediaViewer` through `imageProps`." },
         { name: "frame", type: `boolean`, default: `false`, description: "Show the image in the FauxClient frame: zoom and full screen, revealed on hover." },
         { name: "frameProps", type: `Partial<FauxClientProps>`, default: "—", description: "Passed to the frame: `variant`, `onFullscreenChange`, …" },
     ],

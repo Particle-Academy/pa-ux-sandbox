@@ -1,18 +1,18 @@
 {
     "window_days": 60,
     "latest": {
-        "agent-integrations": "0.58.0",
-        "change-council": "0.5.1",
+        "agent-integrations": "0.59.0",
+        "change-council": "0.7.2",
         "charlotte": "0.3.0",
         "classroom": "0.7.0",
-        "dark-slide": "0.22.2",
-        "dark-slide-js": "0.20.2",
-        "dark-slide-py": "0.15.2",
+        "dark-slide": "0.22.3",
+        "dark-slide-js": "0.20.3",
+        "dark-slide-py": "0.15.3",
         "docs-mcp": "0.2.0",
         "fancy-3d": "0.5.0",
         "fancy-3d-babylon": "0.2.0",
         "fancy-3d-three": "0.2.0",
-        "fancy-app-update": "0.7.1",
+        "fancy-app-update": "0.8.0",
         "fancy-artboard": "0.5.0",
         "fancy-auto-common": "0.2.0",
         "fancy-brand-icons": "0.4.0",
@@ -27,13 +27,13 @@
         "fancy-code": "0.16.0",
         "fancy-compliance": "0.1.2",
         "fancy-compliance-ui": "0.3.0",
-        "fancy-conformance": "0.46.0",
-        "fancy-connector-core": "0.15.1",
+        "fancy-conformance": "0.47.0",
+        "fancy-connector-core": "0.15.2",
         "fancy-devtools": "0.1.1",
         "fancy-diff": "0.5.1",
         "fancy-doc-commons": "0.4.0",
         "fancy-docs": "0.4.0",
-        "fancy-echarts": "6.2.0",
+        "fancy-echarts": "6.3.0",
         "fancy-expr": "0.2.0",
         "fancy-features-js": "0.5.0",
         "fancy-features-py": "0.2.0",
@@ -57,7 +57,7 @@
         "fancy-grid": "0.4.1",
         "fancy-heuristics": "0.6.0",
         "fancy-heuristics-js": "0.4.0",
-        "fancy-inertia": "0.14.1",
+        "fancy-inertia": "0.15.0",
         "fancy-live": "0.1.0",
         "fancy-map": "0.2.1",
         "fancy-mlm": "0.5.0",
@@ -89,25 +89,25 @@
         "fancy-x-files": "0.2.0",
         "fancy-x-files-js": "0.2.0",
         "fancy-x-files-ui": "0.2.0",
-        "fine-print": "0.7.0",
+        "fine-print": "0.7.1",
         "fine-print-py": "0.1.0",
-        "holy-sheet": "2.14.0",
-        "holy-sheet-js": "2.14.0",
-        "holy-sheet-py": "0.13.0",
+        "holy-sheet": "2.14.2",
+        "holy-sheet-js": "2.14.2",
+        "holy-sheet-py": "0.13.2",
         "job-board": "0.5.0",
         "laravel-catalog": "0.13.0",
         "laravel-courses": "0.4.0",
         "laravel-fms": "0.12.0",
         "laravel-fun-lab": "0.7.0",
         "laravel-jobs": "0.5.0",
-        "last-word": "0.20.1",
-        "last-word-js": "0.16.1",
-        "last-word-py": "0.12.1",
+        "last-word": "0.20.2",
+        "last-word-js": "0.16.2",
+        "last-word-py": "0.12.2",
         "last-word-ui": "0.5.0",
         "mcp-relay-client": "0.3.0",
-        "prism": "0.147.1",
+        "prism": "0.147.2",
         "prism-acp": "0.1.1",
-        "prism-acp-ts": "0.40.0",
+        "prism-acp-ts": "0.41.2",
         "prism-browser": "0.4.1",
         "prism-browser-py": "0.2.0",
         "prism-browser-ts": "0.3.0",
@@ -130,16 +130,264 @@
         "prism-perplexity": "0.4.2",
         "prism-perplexity-py": "0.2.0",
         "prism-perplexity-ts": "0.3.0",
-        "prism-py": "0.9.0",
-        "prism-ts": "0.9.0",
+        "prism-py": "0.9.1",
+        "prism-ts": "0.9.1",
         "prism-workspace": "0.3.0",
         "prism-workspace-py": "0.1.0",
         "prism-workspace-ts": "0.2.0",
-        "react-fancy": "6.19.1",
+        "react-fancy": "6.21.0",
         "teachers-aid": "0.3.0",
         "teachers-aid-ui": "0.3.0"
     },
     "releases": [
+        {
+            "slug": "fancy-app-update",
+            "registry": "npm",
+            "version": "0.8.0",
+            "published_at": "2026-11-12T06:23:22Z",
+            "first": false,
+            "summary": "pingUrl accepts an array of URLs"
+        },
+        {
+            "slug": "agent-integrations",
+            "registry": "npm",
+            "version": "0.59.0",
+            "published_at": "2026-11-12T06:21:26Z",
+            "first": false,
+            "summary": "registerContentReactionBridge(host, { adapter })"
+        },
+        {
+            "slug": "react-fancy",
+            "registry": "npm",
+            "version": "6.21.0",
+            "published_at": "2026-11-12T06:15:30Z",
+            "first": false,
+            "summary": "ContentReaction: emoji reactions on a comment, post or message, built to the component contract"
+        },
+        {
+            "slug": "change-council",
+            "registry": "composer",
+            "version": "0.7.2",
+            "published_at": "2026-11-12T05:30:34Z",
+            "first": false,
+            "summary": "The lab's \"N petition(s) are queued and not yet sent\" counted petitions that can never be sent"
+        },
+        {
+            "slug": "prism-acp-ts",
+            "registry": "npm",
+            "version": "0.41.2",
+            "published_at": "2026-11-12T04:34:53Z",
+            "first": false,
+            "summary": "Harden Claude permission rule argv while preserving caller rule boundaries"
+        },
+        {
+            "slug": "react-fancy",
+            "registry": "npm",
+            "version": "6.20.0",
+            "published_at": "2026-11-12T02:40:01Z",
+            "first": false,
+            "summary": "PromptInput submitKey"
+        },
+        {
+            "slug": "fancy-echarts",
+            "registry": "npm",
+            "version": "6.3.0",
+            "published_at": "2026-11-12T02:25:42Z",
+            "first": false,
+            "summary": "onRenderError(error) on EChart, EChart3D, EChartGraphic, every series shorthand and useECharts()"
+        },
+        {
+            "slug": "fancy-inertia",
+            "registry": "npm",
+            "version": "0.15.0",
+            "published_at": "2026-11-12T02:19:44Z",
+            "first": false,
+            "summary": "The SSR server no longer listens on every network interface"
+        },
+        {
+            "slug": "prism-ts",
+            "registry": "npm",
+            "version": "0.9.1",
+            "published_at": "2026-11-11T03:01:55Z",
+            "first": false,
+            "summary": "Fix strict tool schemas for OpenAI and Anthropic"
+        },
+        {
+            "slug": "prism-py",
+            "registry": "pypi",
+            "version": "0.9.1",
+            "published_at": "2026-11-11T02:59:35Z",
+            "first": false,
+            "summary": "Fix strict tool schemas for OpenAI and Anthropic"
+        },
+        {
+            "slug": "prism",
+            "registry": "composer",
+            "version": "0.147.2",
+            "published_at": "2026-11-11T01:16:45Z",
+            "first": false,
+            "summary": "Fix strict tool schemas for OpenAI-compatible providers and stream Perplexity responses as they arrive"
+        },
+        {
+            "slug": "holy-sheet-js",
+            "registry": "npm",
+            "version": "2.14.2",
+            "published_at": "2026-11-11T00:59:59Z",
+            "first": false,
+            "summary": "Agent.lint reads a formula with a leading = the way Agent.write does"
+        },
+        {
+            "slug": "holy-sheet-py",
+            "registry": "pypi",
+            "version": "0.13.2",
+            "published_at": "2026-11-11T00:55:37Z",
+            "first": false,
+            "summary": "lint reads a formula with a leading = the way write does"
+        },
+        {
+            "slug": "last-word-py",
+            "registry": "pypi",
+            "version": "0.12.2",
+            "published_at": "2026-11-11T00:51:25Z",
+            "first": false,
+            "summary": "The agent guide (guide()) covers the whole Agent surface"
+        },
+        {
+            "slug": "holy-sheet-py",
+            "registry": "pypi",
+            "version": "0.13.1",
+            "published_at": "2026-11-11T00:49:56Z",
+            "first": false,
+            "summary": "The agent guide (guide()) catches up with the PHP package's 2.10 to 2.14"
+        },
+        {
+            "slug": "dark-slide-py",
+            "registry": "pypi",
+            "version": "0.15.3",
+            "published_at": "2026-11-11T00:47:13Z",
+            "first": false,
+            "summary": "The agent guide (guide()) catches up with the PHP package's 0.20 to 0.22"
+        },
+        {
+            "slug": "last-word-js",
+            "registry": "npm",
+            "version": "0.16.2",
+            "published_at": "2026-11-11T00:38:58Z",
+            "first": false,
+            "summary": "The agent guide (Agent.guide()) covers the whole Agent surface"
+        },
+        {
+            "slug": "holy-sheet",
+            "registry": "composer",
+            "version": "2.14.2",
+            "published_at": "2026-11-11T00:32:53Z",
+            "first": false,
+            "summary": "lint reads a formula with a leading = the way write does"
+        },
+        {
+            "slug": "dark-slide-js",
+            "registry": "npm",
+            "version": "0.20.3",
+            "published_at": "2026-11-11T00:31:21Z",
+            "first": false,
+            "summary": "The agent guide (Agent.guide()) catches up with the PHP package's 0.20 to 0.22"
+        },
+        {
+            "slug": "holy-sheet-js",
+            "registry": "npm",
+            "version": "2.14.1",
+            "published_at": "2026-11-11T00:25:41Z",
+            "first": false,
+            "summary": "The agent guide (Agent.guide()) catches up with 2.10 to 2.14"
+        },
+        {
+            "slug": "fancy-conformance",
+            "registry": "npm",
+            "version": "0.47.0",
+            "published_at": "2026-11-11T00:14:34Z",
+            "first": false,
+            "summary": "fine-print/writer-model row 0057-guide carries the new guide hash"
+        },
+        {
+            "slug": "fine-print",
+            "registry": "composer",
+            "version": "0.7.1",
+            "published_at": "2026-11-11T00:02:29Z",
+            "first": false,
+            "summary": "The agent guide covers reading in full"
+        },
+        {
+            "slug": "dark-slide",
+            "registry": "composer",
+            "version": "0.22.3",
+            "published_at": "2026-11-10T23:55:05Z",
+            "first": false,
+            "summary": "The agent guide (Agent::guide()) catches up with 0.20 to 0.22"
+        },
+        {
+            "slug": "last-word",
+            "registry": "composer",
+            "version": "0.20.2",
+            "published_at": "2026-11-10T23:55:05Z",
+            "first": false,
+            "summary": "The agent guide (Agent::guide()) covers the whole Agent surface"
+        },
+        {
+            "slug": "holy-sheet",
+            "registry": "composer",
+            "version": "2.14.1",
+            "published_at": "2026-11-10T23:53:28Z",
+            "first": false,
+            "summary": "The agent guide (Agent::guide()) catches up with 2.10 to 2.14"
+        },
+        {
+            "slug": "change-council",
+            "registry": "composer",
+            "version": "0.7.1",
+            "published_at": "2026-11-10T23:50:20Z",
+            "first": false,
+            "summary": "The census first-party rule is host configuration, not Fancy's names"
+        },
+        {
+            "slug": "change-council",
+            "registry": "composer",
+            "version": "0.7.0",
+            "published_at": "2026-11-10T23:14:33Z",
+            "first": false,
+            "summary": "Council::resolveActorUsing(callable): (CC-fancy-0021)"
+        },
+        {
+            "slug": "prism-acp-ts",
+            "registry": "npm",
+            "version": "0.41.1",
+            "published_at": "2026-11-10T22:00:52Z",
+            "first": false,
+            "summary": "Ship both Windows supervisors signed by Renaissance Analytics through Azure Artifact Signing"
+        },
+        {
+            "slug": "fancy-connector-core",
+            "registry": "npm",
+            "version": "0.15.2",
+            "published_at": "2026-11-10T19:44:02Z",
+            "first": false,
+            "summary": "DeliveryRoute.path takes a LIST of paths as well as one"
+        },
+        {
+            "slug": "change-council",
+            "registry": "composer",
+            "version": "0.6.0",
+            "published_at": "2026-11-09T03:10:27Z",
+            "first": false,
+            "summary": "The census"
+        },
+        {
+            "slug": "prism-acp-ts",
+            "registry": "npm",
+            "version": "0.41.0",
+            "published_at": "2026-11-09T00:30:12Z",
+            "first": false,
+            "summary": "Ship a prebuilt, reproducible Windows supervisor instead of compiling one on the user's machine"
+        },
         {
             "slug": "prism-acp-ts",
             "registry": "npm",
@@ -218,7 +466,7 @@
             "version": "0.15.1",
             "published_at": "2026-11-08T19:47:53Z",
             "first": false,
-            "summary": null
+            "summary": "Two more setup tokens: {{webhookUrl}} and {{oauthRedirectUrl}}"
         },
         {
             "slug": "fancy-connector-core",
@@ -226,7 +474,7 @@
             "version": "0.15.0",
             "published_at": "2026-11-08T19:40:21Z",
             "first": false,
-            "summary": null
+            "summary": "SetupStep says who does each step and what it yields"
         },
         {
             "slug": "react-fancy",
@@ -6931,182 +7179,6 @@
             "published_at": "2026-09-13T15:18:53Z",
             "first": false,
             "summary": "flow/connector-runs specified \"canonical JSON\" without defining it"
-        },
-        {
-            "slug": "fancy-conformance",
-            "registry": "npm",
-            "version": "0.21.0",
-            "published_at": "2026-09-12T03:35:15Z",
-            "first": false,
-            "summary": "flow/connector-runs — a connector node inside a running graph"
-        },
-        {
-            "slug": "fancy-connector-core",
-            "registry": "npm",
-            "version": "0.4.0",
-            "published_at": "2026-09-12T03:25:35Z",
-            "first": false,
-            "summary": "An idempotency key was fitted to the catalogue CEILING, never to the provider's own limit"
-        },
-        {
-            "slug": "fancy-flow",
-            "registry": "npm",
-            "version": "0.69.0",
-            "published_at": "2026-09-12T01:45:14Z",
-            "first": false,
-            "summary": "Default executors for the five remaining deps-free builtins"
-        },
-        {
-            "slug": "fancy-flow-py",
-            "registry": "pypi",
-            "version": "0.19.0",
-            "published_at": "2026-09-12T01:23:56Z",
-            "first": false,
-            "summary": "load_installed_kinds() — a declared way for a node package to say it exists"
-        },
-        {
-            "slug": "prism-human-plus",
-            "registry": "composer",
-            "version": "0.3.0",
-            "published_at": "2026-09-11T03:02:00Z",
-            "first": false,
-            "summary": "Two writers: a lost update is no longer silent"
-        },
-        {
-            "slug": "prism-harness",
-            "registry": "composer",
-            "version": "0.8.2",
-            "published_at": "2026-09-10T18:43:55Z",
-            "first": false,
-            "summary": "Correct what refusing a referenced Audio actually stops"
-        },
-        {
-            "slug": "prism",
-            "registry": "composer",
-            "version": "0.118.0",
-            "published_at": "2026-09-10T18:41:42Z",
-            "first": false,
-            "summary": "hasBase64() now answers the question its name asks"
-        },
-        {
-            "slug": "prism-human-plus",
-            "registry": "composer",
-            "version": "0.2.0",
-            "published_at": "2026-09-10T18:37:42Z",
-            "first": false,
-            "summary": "A relay transport for hosts that cannot hold a stream open"
-        },
-        {
-            "slug": "prism-harness",
-            "registry": "composer",
-            "version": "0.8.1",
-            "published_at": "2026-09-10T18:22:30Z",
-            "first": false,
-            "summary": "Voice: referenced audio is refused, and the failure path is measured"
-        },
-        {
-            "slug": "dark-slide-js",
-            "registry": "npm",
-            "version": "0.7.1",
-            "published_at": "2026-09-10T05:15:35Z",
-            "first": false,
-            "summary": "version() reports the version this package actually ships as"
-        },
-        {
-            "slug": "last-word",
-            "registry": "composer",
-            "version": "0.4.1",
-            "published_at": "2026-09-10T05:13:53Z",
-            "first": false,
-            "summary": "version() reports the version this package actually ships as"
-        },
-        {
-            "slug": "holy-sheet-js",
-            "registry": "npm",
-            "version": "2.2.1",
-            "published_at": "2026-09-10T05:13:38Z",
-            "first": false,
-            "summary": "version() reports the version this package actually ships as"
-        },
-        {
-            "slug": "dark-slide",
-            "registry": "composer",
-            "version": "0.9.1",
-            "published_at": "2026-09-10T05:13:11Z",
-            "first": false,
-            "summary": "version() reports the version this package actually ships as"
-        },
-        {
-            "slug": "last-word-js",
-            "registry": "npm",
-            "version": "0.4.0",
-            "published_at": "2026-09-10T05:12:44Z",
-            "first": false,
-            "summary": "A premium-document composition suite"
-        },
-        {
-            "slug": "holy-sheet",
-            "registry": "composer",
-            "version": "2.1.1",
-            "published_at": "2026-09-10T05:12:28Z",
-            "first": false,
-            "summary": "version() reports the version this package actually ships as"
-        },
-        {
-            "slug": "dark-slide-py",
-            "registry": "pypi",
-            "version": "0.2.0",
-            "published_at": "2026-09-10T05:09:34Z",
-            "first": false,
-            "summary": "Per-cell table control"
-        },
-        {
-            "slug": "dark-slide-js",
-            "registry": "npm",
-            "version": "0.7.0",
-            "published_at": "2026-09-10T05:07:53Z",
-            "first": false,
-            "summary": "Per-cell table control"
-        },
-        {
-            "slug": "holy-sheet-js",
-            "registry": "npm",
-            "version": "2.2.0",
-            "published_at": "2026-09-10T05:06:04Z",
-            "first": false,
-            "summary": "A checksum test pinning holy-sheet.schema.json to its PHP twin"
-        },
-        {
-            "slug": "dark-slide",
-            "registry": "composer",
-            "version": "0.9.0",
-            "published_at": "2026-09-10T05:05:30Z",
-            "first": false,
-            "summary": "Per-cell table control"
-        },
-        {
-            "slug": "holy-sheet",
-            "registry": "composer",
-            "version": "2.1.0",
-            "published_at": "2026-09-10T05:03:59Z",
-            "first": false,
-            "summary": "composer verify:published — a check that the PUBLISHED package works, not just the source"
-        },
-        {
-            "slug": "last-word",
-            "registry": "composer",
-            "version": "0.4.0",
-            "published_at": "2026-09-10T03:37:55Z",
-            "first": false,
-            "summary": "Agent::read() now reads ODT and RTF, and NAMES a legacy .doc instead of failing obscurely"
-        },
-        {
-            "slug": "prism-harness",
-            "registry": "composer",
-            "version": "0.8.0",
-            "published_at": "2026-09-10T02:37:49Z",
-            "first": false,
-            "summary": "a scope can hold more than one conversation, and a turn can be spoken"
         }
     ]
 }

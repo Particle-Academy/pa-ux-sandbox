@@ -128,7 +128,7 @@ import {
     GIT_STATUS,
     GIT_TREE,
 } from "./gitFixtures";
-import { ActivityLight, AudioViewer, Avatar, Badge, Breadcrumbs, Button, Calendar, Callout, Card, ChatThread, CodeBlock, CodeView, ColorPicker, Container, ContentRenderer, ContextMenu, Drawer, Emoji, Eyebrow, FauxClient, FileBrowser, FullScreen, Grid, ReorderableGrid, Heading, ImageViewer, IndexList, JsonEditor, Kanban, Kbd, Marquee, MediaViewer, MoodMeter, OtpInput, Pagination, PdfViewer, Pillbox, Profile, Progress, PullQuote, QrCode, ResizablePanels, Section, SetupWizard, Skeleton, Stat, Stepper, StreamingAudio, StatList, StickyNote, Switch, Tabs, Text, TimeGrid, TimePicker, Timeline, Tooltip, VideoViewer, VirtualList } from "@particle-academy/react-fancy";
+import { ActivityLight, AudioViewer, Avatar, Badge, Breadcrumbs, Button, Calendar, Callout, Card, ChatThread, CodeBlock, CodeView, ColorPicker, Container, ContentReaction, ContentRenderer, ContextMenu, Drawer, Emoji, Eyebrow, FauxClient, FileBrowser, FullScreen, Grid, HotkeyCapture, ImagePill, ReorderableGrid, Heading, ImageViewer, IndexList, JsonEditor, Kanban, Kbd, Marquee, MediaViewer, MoodMeter, OtpInput, Pagination, PdfViewer, Pillbox, Profile, Progress, PullQuote, QrCode, ResizablePanels, Section, SetupWizard, Skeleton, Stat, Stepper, StreamingAudio, StatList, StickyNote, Switch, Tabs, Text, TimeGrid, TimePicker, Timeline, Tooltip, VideoViewer, VirtualList } from "@particle-academy/react-fancy";
 import { Checkbox, CheckboxGroup, DatePicker, Field, Input, MultiSwitch, NumberField, PhoneInput, RadioGroup, Select, Slider, Textarea } from "@particle-academy/react-fancy";
 import { FileViewer } from "@particle-academy/fancy-code";
 import { DOC_STATIONS } from "./ComponentDocs/StreamingAudio";
@@ -886,6 +886,26 @@ const PREVIEWS: Record<string, PreviewFn> = {
             <span className="flex items-center gap-1.5">
                 <Kbd keys={["Shift", "?"]} /> help
             </span>
+        </div>
+    ),
+    "react-fancy/hotkey-capture": () => (
+        <div className="flex items-center gap-2 text-[11px] text-zinc-500">
+            <span>Command palette</span>
+            <HotkeyCapture value="ctrl+shift+k" platform="generic" clearable={false} label="Command palette shortcut" size="xs" />
+        </div>
+    ),
+    "react-fancy/content-reaction": () => (
+        <Card className="w-full max-w-[16rem] p-3 text-left">
+            <Text size="xs">Shipped the release notes.</Text>
+            <div className="mt-2">
+                <ContentReaction value={["like"]} counts={{ like: 18, insightful: 7, love: 4 }} size="sm" />
+            </div>
+        </Card>
+    ),
+    "react-fancy/image-pill": () => (
+        <div className="flex flex-wrap items-center justify-center gap-2">
+            <ImagePill label="Pasted image 1" src={SAMPLE_IMG} />
+            <ImagePill label="chart.png" src={SAMPLE_IMG} />
         </div>
     ),
     "react-fancy/code-block": () => (

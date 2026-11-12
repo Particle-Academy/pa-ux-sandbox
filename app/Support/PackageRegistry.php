@@ -1725,6 +1725,7 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
             ['slug' => 'command', 'name' => 'Command'],
             ['slug' => 'composer', 'name' => 'Composer'],
             ['slug' => 'container', 'name' => 'Container', 'blurb' => 'Page shell with a max width and consistent gutters.'],
+            ['slug' => 'content-reaction', 'name' => 'ContentReaction', 'blurb' => 'Emoji reactions on a comment, post or message - controlled value, multi or single mode, aggregate counts, a portalled keyboard picker that never closes on mouse-leave.'],
             ['slug' => 'content-renderer', 'name' => 'ContentRenderer'],
             ['slug' => 'context-menu', 'name' => 'ContextMenu'],
             ['slug' => 'dropdown', 'name' => 'Dropdown'],
@@ -1761,6 +1762,7 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
             // Media viewers (react-fancy 4.9.0)
             ['slug' => 'media-viewer', 'name' => 'MediaViewer', 'blurb' => 'Picks the right viewer (image / video / audio / PDF) from a mime or src; download fallback. Exports resolveMediaType.'],
             ['slug' => 'image-viewer', 'name' => 'ImageViewer', 'blurb' => 'Fit-to-container image with zoom / pan and a transparency checkerboard.'],
+            ['slug' => 'image-pill', 'name' => 'ImagePill', 'blurb' => 'The composer\'s image attachment pill with a thumbnail preview on hover and keyboard focus - controlled open, src, file or a lazy loadThumbnail with loading and error states, so sent messages show the same pill.'],
             ['slug' => 'pull-quote', 'name' => 'PullQuote', 'blurb' => 'Editorial pull quote with optional attribution.'],
             ['slug' => 'section', 'name' => 'Section', 'blurb' => 'Vertical section rhythm with optional divider.'],
             ['slug' => 'stat', 'name' => 'Stat', 'blurb' => 'Single metric with label, value and delta.'],

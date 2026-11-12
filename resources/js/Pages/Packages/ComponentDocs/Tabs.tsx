@@ -116,20 +116,53 @@ export const tabsDoc: ComponentDoc = {
     </Tabs.List>
 </Tabs>`,
         },
+        {
+            name: "keepMounted",
+            description:
+                "Inactive panels stay mounted with `hidden`, so their text is in the server-rendered HTML and their state survives a switch. Off by default, because a panel can hold a heavy or size-dependent surface (a chart, a map) that should not mount while invisible. A Tabs.Panel can override it either way.",
+            render: () => (
+                <Tabs defaultTab="faq" keepMounted className="w-full">
+                    <Tabs.List>
+                        <Tabs.Tab value="faq">FAQ</Tabs.Tab>
+                        <Tabs.Tab value="chart">Chart</Tabs.Tab>
+                    </Tabs.List>
+                    <Tabs.Panels>
+                        <Tabs.Panel value="faq">
+                            <Text size="sm">Rendered on the server even while another tab is active.</Text>
+                        </Tabs.Panel>
+                        <Tabs.Panel value="chart" keepMounted={false}>
+                            <Text size="sm">Mounts only while active: the panel opts out.</Text>
+                        </Tabs.Panel>
+                    </Tabs.Panels>
+                </Tabs>
+            ),
+            code: `<Tabs defaultTab="faq" keepMounted>
+    <Tabs.List>
+        <Tabs.Tab value="faq">FAQ</Tabs.Tab>
+        <Tabs.Tab value="chart">Chart</Tabs.Tab>
+    </Tabs.List>
+    <Tabs.Panels>
+        <Tabs.Panel value="faq">…</Tabs.Panel>
+        <Tabs.Panel value="chart" keepMounted={false}><HeavyChart /></Tabs.Panel>
+    </Tabs.Panels>
+</Tabs>`,
+        },
     ],
     props: [
         { name: "defaultTab", type: `string`, default: "—", description: "Initial active tab `value`. Uncontrolled — use with no `activeTab`." },
         { name: "activeTab", type: `string`, default: "—", description: "Controlled active tab `value`. Use with `onTabChange`." },
         { name: "onTabChange", type: `(tab: string) => void`, default: "—", description: "Called when the active tab changes." },
         { name: "variant", type: `"underline" | "pills" | "boxed"`, default: `"underline"`, description: "Visual treatment of the tab list." },
+        { name: "keepMounted", type: `boolean`, default: `false`, description: "Keep inactive panels mounted with `hidden`. `Tabs.Panel` takes the same prop as a per-panel override." },
         { name: "children", type: `ReactNode`, default: "—", description: "Should contain a `Tabs.List` and a `Tabs.Panels`." },
         { name: "className", type: `string`, default: "—", description: "Extra classes on the root wrapper." },
     ],
     notes: (
         <p className="text-xs text-zinc-600 dark:text-zinc-300">
             <strong>Pairing values:</strong> each <code>Tabs.Tab</code> matches a
-            <code>Tabs.Panel</code> by its <code>value</code> prop. Only the active panel is
-            rendered to the DOM — keep that in mind if a panel holds expensive state.
+            <code>Tabs.Panel</code> by its <code>value</code> prop. By default only the active
+            panel is rendered to the DOM; set <code>keepMounted</code> to keep the others mounted
+            and hidden.
         </p>
     ),
 };

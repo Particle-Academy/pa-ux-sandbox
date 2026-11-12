@@ -1,8 +1,10 @@
 import type { ComponentDoc } from "./types";
 import { useRef, useState } from "react";
 import {
+    Badge,
     Button,
     Field,
+    HotkeyCapture,
     PromptInput,
     Switch,
     Text,
@@ -10,6 +12,26 @@ import {
     promptFileToDataUrl,
 } from "@particle-academy/react-fancy";
 import type { PromptDraft, PromptDraftFile, PromptInputHandle, SubmitResult } from "@particle-academy/react-fancy";
+
+function SubmitKeyDemo() {
+    const [submitKey, setSubmitKey] = useState("ctrl+shift+enter");
+    const [sent, setSent] = useState<string | null>(null);
+
+    return (
+        <div className="flex w-full max-w-xl flex-col gap-3">
+            <Field label="Send with">
+                <HotkeyCapture value={submitKey} onChange={(next) => setSubmitKey(next || "mod+enter")} label="Send shortcut" />
+            </Field>
+            <PromptInput
+                budgetTokens={8000}
+                submitKey={submitKey}
+                beforeSend={<Badge size="sm" variant="outline">claude-opus · plan mode</Badge>}
+                onSubmit={(text) => setSent(text)}
+            />
+            <Text size="xs">{sent === null ? "Nothing sent yet." : `Sent: ${sent}`}</Text>
+        </div>
+    );
+}
 
 function ControlledTextDemo() {
     const [text, setText] = useState("Summarise the last three commits");
@@ -244,6 +266,21 @@ export const promptInputDoc: ComponentDoc = {
 <PromptInput budgetTokens={8000} onSubmit={handleSubmit} platform="apple" showHint />`,
         },
         {
+            name: "Any send key, and a slot beside Send",
+            description:
+                "submitKey takes \"mod+enter\" (default), \"enter\" (Enter sends, Shift+Enter breaks the line), or any combination a person recorded with HotkeyCapture: exactly that combination sends, and an Enter that is not it breaks the line. The hint, placeholder and the icon send button's tooltip and accessible name all name it. beforeSend sits immediately left of Send, for a model name, a mode or a cost, and truncates rather than squeezing Send. Record a new shortcut below and try it.",
+            render: () => <SubmitKeyDemo />,
+            code: `const [submitKey, setSubmitKey] = useState("ctrl+shift+enter");
+
+<HotkeyCapture value={submitKey} onChange={setSubmitKey} label="Send shortcut" />
+<PromptInput
+    budgetTokens={8000}
+    submitKey={submitKey}           // "mod+enter" | "enter" | any recorded combo
+    beforeSend={<Badge size="sm" variant="outline">claude-opus · plan mode</Badge>}
+    onSubmit={send}
+/>`,
+        },
+        {
             name: "With ChatDrawer above",
             description: "Mount `ChatDrawer` in the `aboveInput` slot so it shares the same rounded panel.",
             render: () => (
@@ -400,6 +437,9 @@ composer.current?.setDraft(savedDraft, { focus: true });`,
         { name: "commands", type: `PromptCmd[]`, default: "—", description: "Slash-command list. Names must start with `/`." },
         { name: "mentions", type: `PromptMention[]`, default: "—", description: "`@`-mention sources — agents, files, people. Each has `{ id, label, kind }`." },
         { name: "showHint", type: `boolean`, default: `true`, description: "Show the submit-shortcut hint near the send button." },
+        { name: "submitKey", type: `"mod+enter" | "enter" | string`, default: `"mod+enter"`, description: "Which combination sends. Any `HotkeyCapture` string works; `mod` is the platform modifier." },
+        { name: "beforeSend", type: `ReactNode`, default: "—", description: "Slot immediately left of Send (model, mode, cost). Truncates; never moves Send. Handle: `data-react-fancy-prompt-input-before-send`." },
+        { name: "labels", type: `PromptInputLabels`, default: "English", description: "`send`, `sendTooltip`, `sendAriaLabel`, `shortcut`, `enterKey`, `hint` and `keys` (key cap names by modifier or key)." },
         { name: "platform", type: `"apple" | "generic"`, default: "detected after mount", description: "Which modifier the hint and the default placeholder NAME. The keys accepted are unaffected — `⌘/Ctrl+Enter` submits on every platform." },
         { name: "placeholder", type: `string`, default: "derived from the platform", description: "Textarea placeholder. Leave it unset and it names the modifier this platform actually has." },
         { name: "charsPerToken", type: `number`, default: `4`, description: "Rough chars-per-token used by the meter estimator." },

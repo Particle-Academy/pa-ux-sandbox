@@ -99,6 +99,9 @@ import {
     Container,
     Section,
     Kbd,
+    HotkeyCapture,
+    ContentReaction,
+    ImagePill,
     Eyebrow,
     PullQuote,
     Stat,
@@ -542,6 +545,9 @@ const REGISTRY: Record<string, DemoFn> = {
     "react-fancy/container": ContainerDemo,
     "react-fancy/section": SectionDemo,
     "react-fancy/kbd": KbdDemo,
+    "react-fancy/hotkey-capture": HotkeyCaptureDemo,
+    "react-fancy/content-reaction": ContentReactionDemo,
+    "react-fancy/image-pill": ImagePillDemo,
     "react-fancy/eyebrow": EyebrowDemo,
     "react-fancy/pull-quote": PullQuoteDemo,
     "react-fancy/stat": StatDemo,
@@ -735,6 +741,40 @@ function KbdDemo() {
                 </div>
             ))}
         </div>
+    );
+}
+
+function HotkeyCaptureDemo() {
+    const [combo, setCombo] = useState("ctrl+shift+k");
+    return (
+        <div className="w-full max-w-sm space-y-2 text-sm">
+            <HotkeyCapture value={combo} onChange={setCombo} label="Command palette shortcut" />
+            <div className="text-xs text-zinc-500">value: "{combo}"</div>
+        </div>
+    );
+}
+
+function ContentReactionDemo() {
+    const [value, setValue] = useState<string[]>(["like"]);
+    return (
+        <Card className="w-full max-w-md p-4">
+            <div className="text-sm">Shipped the release notes for 6.21.0.</div>
+            <div className="mt-3">
+                <ContentReaction value={value} onChange={setValue} />
+            </div>
+        </Card>
+    );
+}
+
+function ImagePillDemo() {
+    return (
+        <Card className="w-full max-w-md p-4">
+            <div className="text-sm">Here is the screenshot. Hover or Tab to the pills.</div>
+            <div className="mt-2 flex flex-wrap gap-2">
+                <ImagePill label="Pasted image 1" src={SAMPLE_IMG} />
+                <ImagePill label="chart.png" loadThumbnail={() => new Promise((resolve) => setTimeout(() => resolve(SAMPLE_IMG), 800))} />
+            </div>
+        </Card>
     );
 }
 

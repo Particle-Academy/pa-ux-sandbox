@@ -171,6 +171,17 @@ export const codeBlockDoc: ComponentDoc = {
             code: `<CodeBlock code={longLine} language="html" wrap />`,
         },
         {
+            name: "Region name (labels)",
+            description:
+                "The scrollable code is a focusable, named region, so a keyboard user can Tab to it and scroll. Its name defaults to a string title, otherwise “Code”; labels.region sets it, for translation or for a block with a non-string title.",
+            render: () => (
+                <div className="w-full max-w-md" data-demo="code-block-labels">
+                    <CodeBlock code={LONG} language="html" labels={{ region: "Beispiel-Markup" }} />
+                </div>
+            ),
+            code: `<CodeBlock code={markup} language="html" labels={{ region: "Beispiel-Markup" }} />`,
+        },
+        {
             name: "Beside CodeView",
             description: "The same grammars and palette as CodeView, so the two sit together in light and dark. CodeView overlays a textarea, even read-only; CodeBlock never does.",
             render: () => (
@@ -199,6 +210,7 @@ export const codeBlockDoc: ComponentDoc = {
         { name: "showLineNumbers", type: `boolean`, default: `false`, description: "Number each line in a gutter that is not part of the code text." },
         { name: "wrap", type: `boolean`, default: `false`, description: "Wrap long lines instead of scrolling horizontally." },
         { name: "copyLabels", type: `{ copy?, copied?, failed? }`, default: "English", description: "Words on the copy button, for translation." },
+        { name: "labels", type: `{ region? }`, default: "title, else \"Code\"", description: "Accessible name of the focusable scrollable code region." },
         { name: "onCopyCode", type: `(e: { text: string; ok: boolean }) => void`, default: "—", description: "Called after every copy attempt." },
     ],
     notes: (

@@ -275,6 +275,24 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
             'registries' => ['npm' => '@particle-academy/fancy-raster'],
             'why' => 'Our own tiled raster graphics engine, zero runtime dependencies: XYZ tiles, pan/zoom/inertia/pinch/keyboard, retina, markers and popups, a prioritised tile cache, and a 2D to 3D path (Canvas2D, own WebGL for tilt/globe, and a fancy-3d CanvasEngine + TileSource). Becomes fancy-map\'s default provider and replaces Leaflet, which fails the freshness rule (owner, 2026-11-12). Certified by the flabs "Maps & 3D" lab. Design: .ai/plans/fancy-raster-map-engine.md (owner approved 2026-11-12). Phase 0 in progress; nothing published. npm name `@particle-academy/fancy-raster` 404 on 2026-11-11 (control @particle-academy/fancy-3d resolved); re-check at bootstrap.',
         ],
+        'fancy-service-token' => [
+            'name' => 'particle-academy/fancy-service-token',
+            'repo' => 'Particle-Academy/fancy-service-token',
+            'registries' => ['packagist' => 'particle-academy/fancy-service-token'],
+            'why' => 'Service tokens between a Fancy app and its sidecar service, PHP leg: a Laravel signer that puts a short-lived HMAC-SHA256 token (audience, issuer, expiry, the caller`s request id, a nonce) on every outgoing request to a Python or Node sidecar, plus a framework-free verifier held to the same fixtures. Standard library only (hash_hmac / hash_equals), no JWT library. Approved as CC-fancy-0030 (2026-11-12). Built, nothing published. Packagist name 404 on 2026-11-12 (control particle-academy/fancy-captcha resolved).',
+        ],
+        'fancy-service-token-py' => [
+            'name' => 'fancy-service-token',
+            'repo' => 'Particle-Academy/fancy-service-token-py',
+            'registries' => ['pypi' => 'fancy-service-token'],
+            'why' => 'Python leg of CC-fancy-0030: a framework-free verifier plus ASGI middleware for Starlette and FastAPI that refuses a request BEFORE its body is read, with a named reason from a fixed enum, and exposes the verified request id to handlers and logs. Standard library only (hmac / compare_digest). PyPI `fancy-service-token`, `fancyservicetoken` and `fancy_service_token` all 404 on 2026-11-12 (control fancy-holy-sheet resolved); the form is the final authority.',
+        ],
+        'fancy-service-token-js' => [
+            'name' => '@particle-academy/fancy-service-token',
+            'repo' => 'Particle-Academy/fancy-service-token-js',
+            'registries' => ['npm' => '@particle-academy/fancy-service-token'],
+            'why' => 'Node leg of CC-fancy-0030: the verifier mirror, with a connect-style middleware that refuses before the body is read. node:crypto only (createHmac / timingSafeEqual). npm name 404 on 2026-11-12 (control @particle-academy/react-fancy resolved).',
+        ],
     ];
 
     /**

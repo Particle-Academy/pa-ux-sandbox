@@ -269,6 +269,12 @@ Four parts: untrusted content is fenced as data, never instructions; a redaction
 
 PHP first, depending only on fine-print`s guard. TS/Python twins follow the guard`s own conformance data and are not registered yet. `particle-academy/agent-guard` on Packagist and `@particle-academy/agent-guard` on npm both 404 on 2026-10-27.',
         ],
+        'fancy-raster' => [
+            'name' => '@particle-academy/fancy-raster',
+            'repo' => 'Particle-Academy/fancy-raster',
+            'registries' => ['npm' => '@particle-academy/fancy-raster'],
+            'why' => 'Our own tiled raster graphics engine, zero runtime dependencies: XYZ tiles, pan/zoom/inertia/pinch/keyboard, retina, markers and popups, a prioritised tile cache, and a 2D to 3D path (Canvas2D, own WebGL for tilt/globe, and a fancy-3d CanvasEngine + TileSource). Becomes fancy-map\'s default provider and replaces Leaflet, which fails the freshness rule (owner, 2026-11-12). Certified by the flabs "Maps & 3D" lab. Design: .ai/plans/fancy-raster-map-engine.md (owner approved 2026-11-12). Phase 0 in progress; nothing published. npm name `@particle-academy/fancy-raster` 404 on 2026-11-11 (control @particle-academy/fancy-3d resolved); re-check at bootstrap.',
+        ],
     ];
 
     /**

@@ -87,17 +87,13 @@ describe("fancy-motion MotionStage example", () => {
         expectItAnimates();
     });
 
-    it("the component page demo moves its card as the playhead scrubs", () => {
+    // The component page no longer mounts MotionStage. It plays WINDOW scroll
+    // over a `frames x 100vh` spacer, which made the Preview a tall, nearly
+    // empty column. The page shows a contained microsite driven by the same
+    // engine instead; tests/js/motion-demos.test.tsx covers that it animates.
+    it("the component page demo is a contained microsite, not a page-scroll stage", () => {
         act(() => root.render(createElement(ComponentDemo, { pkg: "fancy-motion", slug: "motion-stage", name: "MotionStage" })));
-        expectItAnimates();
-    });
-
-    it("the component page demo does not clip the stage, which would break its sticky pin", () => {
-        act(() => root.render(createElement(ComponentDemo, { pkg: "fancy-motion", slug: "motion-stage", name: "MotionStage" })));
-        const stage = host.querySelector("[data-fancy-motion-stage]");
-        expect(stage).not.toBeNull();
-        for (let el = stage!.parentElement; el && el !== host; el = el.parentElement) {
-            expect(el.className, "an ancestor of the stage clips it").not.toMatch(/\boverflow-(hidden|auto|scroll|clip)\b/);
-        }
+        expect(host.querySelector("[data-motion-site-scroller]")).not.toBeNull();
+        expect(host.querySelector("[data-fancy-motion-stage]")).toBeNull();
     });
 });

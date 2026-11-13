@@ -1198,6 +1198,20 @@ section.ticker { padding: 0; background: var(--bg-1); }
   }
 }
 
+/* The "What's new" notice and the Fancy Pixel badge (ShowcaseAnalytics.tsx,
+   `floating` mode) are both fixed 16px into the bottom-right corner, and the
+   badge (32px tall) is stacked higher, so it covered the notice's "got it"
+   button. Lift the notice clear of it, only when a badge is on the page.
+   Phones are left to the bottom-nav lift above (70px), which already clears
+   the badge's 48px; this selector is more specific, so letting it reach phones
+   would pull the notice back down onto the nav. `!important` for the same
+   reason as that rule: the corner offset is an inline style. */
+@media (min-width: 641px) {
+  body:has([data-fancy-badge]) [data-fancy-whats-new-stack]:has(.showcase-whats-new) {
+    bottom: calc(16px + 32px + 12px) !important;
+  }
+}
+
 /* ── reduced motion ───────────────────────────────────────────────────── */
 /* Appended at the END deliberately: these selectors are declared LATER in this
    file than the guard further up, so a rule placed there would lose the

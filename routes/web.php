@@ -285,12 +285,13 @@ Route::get('/features/connectors/{service}/setup', [FeatureSiteController::class
 Route::get('/radio/{track}.mp3', RadioAudioController::class)
     ->whereIn('track', RadioTracks::slugs())
     ->name('radio.track');
-// The live captcha demo on /features/compliance. fancy-captcha's middleware is
-// the whole check: a refused submit comes back with a `captcha` error, a passed
-// one simply redirects back. Nothing posted is read or stored.
-Route::post('/features/compliance/captcha', fn () => back())
+// The live captcha demo on /features/security (it moved from Compliance on
+// 2026-11-13). fancy-captcha's middleware is the whole check: a refused submit
+// comes back with a `captcha` error, a passed one simply redirects back.
+// Nothing posted is read or stored.
+Route::post('/features/security/captcha', fn () => back())
     ->middleware(['throttle:20,1', 'captcha:feature-demo'])
-    ->name('features.compliance.captcha');
+    ->name('features.security.captcha');
 // The old top-level pages moved under Features. 301 with the query string, so
 // links and search ranking carry over. Only the PAGES moved: the TUI session
 // API below stays at /fancy-tui/session.

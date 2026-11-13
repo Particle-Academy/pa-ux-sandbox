@@ -5,7 +5,7 @@ import { Captcha, captchaData, type CaptchaConfig, type CaptchaStatus } from "@p
 
 /** The route's middleware is `captcha:feature-demo`; the component's action must match it. */
 export const CAPTCHA_DEMO_ACTION = "feature-demo";
-export const CAPTCHA_DEMO_URL = "/features/compliance/captcha";
+export const CAPTCHA_DEMO_URL = "/features/security/captcha";
 
 type Outcome = { ok: true } | { ok: false; message: string };
 
@@ -34,8 +34,8 @@ export function CaptchaDemo() {
 
     return (
         <form
-            className="cmp-captcha"
-            data-cmp-demo="captcha"
+            className="sec-captcha"
+            data-sec-demo="captcha"
             onSubmit={(event) => {
                 event.preventDefault();
                 submit();
@@ -49,16 +49,16 @@ export function CaptchaDemo() {
                 minRows={3}
             />
 
-            <Captcha config={fancyCaptcha} form={form} action={CAPTCHA_DEMO_ACTION} onStatusChange={setStatus} id="cmp-captcha" />
+            <Captcha config={fancyCaptcha} form={form} action={CAPTCHA_DEMO_ACTION} onStatusChange={setStatus} id="sec-captcha" />
 
-            <div className="cmp-captcha__bar">
+            <div className="sec-captcha__bar">
                 <Button type="submit" icon="send" disabled={form.processing}>
                     Send
                 </Button>
                 <Text as="span" size="sm" color="muted">
                     Captcha status
                 </Text>
-                <Badge variant="outline" data-cmp-captcha-status={status}>
+                <Badge variant="outline" data-sec-captcha-status={status}>
                     {status}
                 </Badge>
                 <Badge variant="soft">{fancyCaptcha.provider}</Badge>

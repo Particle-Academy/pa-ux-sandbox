@@ -1,0 +1,41 @@
+/* /features/human-plus: two operators on one surface. The hero carries two
+   overlapping fields (a person's and an agent's), and the demo splits the
+   content from the agent's console. Scoped to [data-feature="human-plus"],
+   the attribute FeatureIdentity sets; colours come from the --feature-* tokens. */
+
+[data-feature="human-plus"] .feature-hero {
+  border-left: 4px solid var(--feature-accent);
+  background:
+    radial-gradient(55% 90% at 0% 100%, color-mix(in oklch, var(--feature-accent) 14%, transparent), transparent 70%),
+    radial-gradient(55% 90% at 100% 0%, color-mix(in oklch, var(--feature-accent) 20%, transparent), transparent 70%),
+    var(--feature-surface);
+}
+[data-feature="human-plus"] .feature-hero__glyph { border-radius: 999px; }
+
+.hp-tap { min-height: 44px; }
+.hp-anchor { scroll-margin-top: 88px; }
+
+/* Shared-control demo: the content on the left, the agent's console on the right. */
+.hp-shared { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+@media (max-width: 900px) { .hp-shared { grid-template-columns: minmax(0, 1fr); } }
+.hp-shared--loading { min-height: 220px; }
+.hp-shared__skeleton { height: 200px; border-radius: 12px; }
+.hp-shared__reactions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 12px; }
+.hp-shared__agent {
+  display: flex; flex-direction: column; gap: 12px;
+  padding: 16px; border-radius: 12px;
+  border: 1px dashed color-mix(in oklch, var(--feature-accent) 40%, var(--border-1));
+  font-family: var(--font-mono);
+}
+.hp-shared__head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.hp-shared__calls { display: flex; flex-wrap: wrap; gap: 8px; }
+.hp-shared__calls > * { min-height: 44px; }
+.hp-shared__decide { display: flex; gap: 8px; margin-top: 8px; }
+.hp-shared__decide > * { min-height: 44px; }
+.hp-shared__log { display: flex; flex-direction: column; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.hp-shared__log li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 10px; }
+
+/* On-The-Fly UI */
+.hp-fly { border-top: 3px solid var(--feature-accent); }
+.hp-fly__head { display: inline-flex; align-items: center; gap: 8px; }
+.hp-fly__links { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 16px; }

@@ -10,20 +10,19 @@ import { InstallSteps } from "../shared/InstallSteps";
 import { PackagesGrid } from "../shared/PackagesGrid";
 import type { FeaturePageProps } from "../shared/types";
 import { AgentFenceDemo } from "./AgentFenceDemo";
-import { CaptchaDemo } from "./CaptchaDemo";
 import { ConsentDemo } from "./ConsentDemo";
 import { ReserveSpaceDemo } from "./ReserveSpaceDemo";
 
 /**
- * /features/compliance: consent (fancy-compliance + fancy-compliance-ui) and
- * bot protection (fancy-captcha + fancy-captcha-ui), as they ship today.
+ * /features/compliance: consent (fancy-compliance + fancy-compliance-ui), as
+ * it ships today. Bot protection (fancy-captcha) moved to /features/security
+ * on 2026-11-13; this page links there.
  *
  * Every demo runs the real components. The consent demos keep their own state
  * and never post, because a choice made in a demo is not the visitor's
- * consent to this site; the site's real banner lives in the root layout. The
- * captcha demo posts to a real route behind fancy-captcha's middleware.
- * Claims are sourced from the package READMEs; ComplianceFeatureSiteTest
- * pins the ones a refactor could quietly break.
+ * consent to this site; the site's real banner lives in the root layout.
+ * Claims are sourced from the package READMEs; ComplianceFeatureTest pins the
+ * ones a refactor could quietly break.
  */
 export default function ComplianceFeature({ feature, versions }: FeaturePageProps) {
     return (
@@ -32,7 +31,7 @@ export default function ComplianceFeature({ feature, versions }: FeaturePageProp
                 <FeatureHero
                     feature={feature}
                     eyebrow="Feature · Consent and trust"
-                    lede="A consent banner and preferences dialog where refusing is exactly as easy as accepting, an append-only record of every decision, a server gate other code checks before it collects, and a captcha that needs no third party."
+                    lede="A consent banner and preferences dialog where refusing is exactly as easy as accepting, an append-only record of every decision, and a server gate other code checks before it collects."
                     languages={feature.languages}
                     actions={
                         <>
@@ -126,27 +125,6 @@ export default function ComplianceFeature({ feature, versions }: FeaturePageProp
                 <ReserveSpaceDemo />
             </DemoFrame>
 
-            <section id="captcha" className="feature-section cmp-anchor">
-                <Heading as="h2" size="lg" weight="semibold" className="feature-display">
-                    Bot protection for forms
-                </Heading>
-                <Text as="p" color="muted" className="feature-section__intro">
-                    fancy-captcha checks a form behind one Verifier contract. Its built-in mode needs no keys and no network: a
-                    honeypot, a signed render time and, when enabled, a single-use proof-of-work. Turnstile, reCAPTCHA and hCaptcha
-                    drivers talk plain HTTP with no SDK, and a configured provider fails closed. fancy-captcha-ui is one React
-                    component for all of them.
-                </Text>
-            </section>
-
-            <DemoFrame
-                id="compliance-captcha"
-                label="The built-in captcha, checked by the server"
-                status="Live · posts to the server"
-                caption="Send within three seconds of loading the page and the signed timing refuses it; wait, and it passes. The honeypot is hidden from keyboards and screen readers (aria-hidden, inert, tabindex -1). An agent may read the status attributes, and nothing lets it solve the check."
-            >
-                <CaptchaDemo />
-            </DemoFrame>
-
             <section className="feature-section">
                 <Card variant="outlined" className="cmp-note">
                     <Card.Body>
@@ -155,9 +133,28 @@ export default function ComplianceFeature({ feature, versions }: FeaturePageProp
                         </Heading>
                         <Text as="p" size="sm" color="muted">
                             fancy-compliance covers consent only: GDPR data export and erasure are not in it. It does not block a
-                            script you inject outside it, and rate limits and geo rules stay yours. Turnstile, reCAPTCHA and hCaptcha
-                            render their own widgets, with their own accessibility; the built-in mode is the one held to AAA.
+                            script you inject outside it, and rate limits and geo rules stay yours.
                         </Text>
+                    </Card.Body>
+                </Card>
+            </section>
+
+            <section id="captcha" className="feature-section cmp-anchor">
+                <Card variant="outlined" className="cmp-note" data-cmp-moved="captcha">
+                    <Card.Body>
+                        <Heading as="h3" size="sm" weight="semibold">
+                            Looking for bot protection?
+                        </Heading>
+                        <Text as="p" size="sm" color="muted">
+                            The captcha now lives with the kit's other security capabilities. It still works with consent:
+                            fancy-captcha-ui takes anything with allows(category), which useConsent() returns, to keep a
+                            third-party captcha behind consent.
+                        </Text>
+                        <div className="mt-3">
+                            <Button as={Link} href="/features/security#captcha" variant="ghost" iconTrailing="arrow-right" className="cmp-tap">
+                                Bot protection on the Security feature
+                            </Button>
+                        </div>
                     </Card.Body>
                 </Card>
             </section>
@@ -165,7 +162,7 @@ export default function ComplianceFeature({ feature, versions }: FeaturePageProp
             <HowItFits
                 members={feature.members}
                 bridges={feature.bridges}
-                intro="Each capability is a PHP package for Laravel and a React package built from react-fancy. The React halves do not depend on each other: fancy-captcha-ui takes anything with allows(category), which useConsent() returns, to keep a third-party captcha behind consent."
+                intro="Consent is a PHP package for Laravel and a React package built from react-fancy, which works with any backend that serves the same JSON."
             />
             <InstallSteps members={feature.members} versions={versions} />
             <PackagesGrid members={feature.members} versions={versions} />

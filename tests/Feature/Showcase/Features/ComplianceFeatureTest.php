@@ -2,20 +2,20 @@
 
 use App\Support\FeatureSites;
 use App\Support\PackageFamily;
-use App\Support\PackageRegistry;
-use FancyCaptcha\Facades\Captcha;
 use Tests\TestCase;
 
 uses(TestCase::class);
 
 /*
- * /features/compliance: consent (fancy-compliance + fancy-compliance-ui) and
- * bot protection (fancy-captcha + fancy-captcha-ui).
+ * /features/compliance: consent (fancy-compliance + fancy-compliance-ui).
+ * Bot protection moved to /features/security on 2026-11-13 (owner: "Features
+ * are about features, not just specific packages"); SecurityFeatureTest owns
+ * the captcha route and demo now.
  *
  * PHP cannot render the React page, so this pins what the server sends (the
- * members, through their families), the live captcha route behind the real
- * middleware, and the page source: real components, demos that never post a
- * consent decision, and each shipped capability the page promotes.
+ * members, through their families) and the page source: real components,
+ * demos that never post a consent decision, and each shipped capability the
+ * page promotes.
  */
 
 const COMPLIANCE_DIR = 'resources/js/Pages/Features/Compliance';
@@ -39,64 +39,38 @@ function complianceSources(): array
     return $files;
 }
 
-it('serves the Compliance page with both families, from the registry', function () {
+it('serves the Compliance page with the consent family, from the registry', function () {
     $page = compliancePage($this);
     $members = collect($page['props']['feature']['members'] ?? []);
 
     expect($page['component'] ?? null)->toBe('Features/Compliance/Index')
-        ->and($members->pluck('slug')->all())->toBe(['fancy-compliance', 'fancy-compliance-ui', 'fancy-captcha', 'fancy-captcha-ui'])
+        ->and($members->pluck('slug')->all())->toBe(['fancy-compliance', 'fancy-compliance-ui'])
         ->and($page['props']['feature']['languages'])->toBe(['PHP', 'React'])
-        ->and($page['props']['feature']['course'])->toBeNull()
-        ->and($members->firstWhere('slug', 'fancy-captcha')['install'])->toBe('composer require '.PackageRegistry::findAny('fancy-captcha')['composer']);
+        ->and($page['props']['feature']['course'])->toBeNull();
 });
 
-it('includes every consent or captcha family in the registry', function () {
+it('includes every consent family in the registry', function () {
     // The owner asked for a page "promoting all of our compliance based
     // packages": a new consent family must not be left off it silently.
     $families = collect(PackageFamily::all())->pluck('slug')
-        ->filter(fn (string $slug): bool => (bool) preg_match('/complian|consent|captcha/', $slug))
+        ->filter(fn (string $slug): bool => (bool) preg_match('/complian|consent/', $slug))
         ->values()->all();
 
     expect($families)->not->toBeEmpty();
     foreach ($families as $family) {
-        expect(FeatureSites::familyReferences())->toContain($family);
+        expect(FeatureSites::find('compliance')['memberSlugs'])->toContain(...PackageFamily::memberSlugsOf($family));
     }
 });
 
-it('shares the captcha props the demo renders from, with proof-of-work on', function () {
-    $page = compliancePage($this);
-    $captcha = $page['props']['fancyCaptcha'] ?? null;
-
-    expect($captcha)->toBeArray()
-        ->and($captcha['provider'])->toBe('builtin')
-        ->and($captcha['pow']['enabled'])->toBeTrue()
-        ->and($captcha['pow']['challengeUrl'])->toBe('/fancy-captcha/challenge')
-        ->and($captcha['started'])->toBeString()->not->toBe('');
-});
-
-it('refuses a demo submission that carries no captcha fields', function () {
-    $this->from('/features/compliance')
-        ->post('/features/compliance/captcha', ['message' => 'hello'])
-        ->assertRedirect('/features/compliance')
-        ->assertSessionHasErrors('captcha');
-});
-
-it('passes a demo submission the verifier accepts, under the demo action', function () {
-    $fake = Captcha::fake();
-
-    $this->from('/features/compliance')
-        ->post('/features/compliance/captcha', ['message' => 'hello'])
-        ->assertRedirect('/features/compliance')
-        ->assertSessionHasNoErrors();
-
-    $fake->assertVerified('feature-demo');
-});
-
-it('uses the same action in the component as on the route', function () {
-    $route = app('router')->getRoutes()->getByName('features.compliance.captcha');
-
-    expect($route->gatherMiddleware())->toContain('captcha:feature-demo')
-        ->and(complianceSources()['CaptchaDemo.tsx'])->toContain('CAPTCHA_DEMO_ACTION = "feature-demo"');
+it('hands bot protection to Security cleanly', function () {
+    // Moved, not duplicated: no captcha member, demo or route here, and the old
+    // #captcha anchor still lands somewhere useful.
+    expect(FeatureSites::find('compliance')['memberSlugs'])->not->toContain('fancy-captcha')
+        ->and(FeatureSites::find('compliance')['memberSlugs'])->not->toContain('fancy-captcha-ui')
+        ->and(complianceSources())->not->toHaveKey('CaptchaDemo.tsx')
+        ->and(app('router')->getRoutes()->getByName('features.compliance.captcha'))->toBeNull()
+        ->and(complianceSources()['Index.tsx'])->toContain('id="captcha"', 'href="/features/security#captcha"')
+        ->and(complianceSources()['compliance.css'])->not->toContain('captcha');
 });
 
 it('runs the real components and never posts a consent decision', function () {
@@ -104,9 +78,8 @@ it('runs the real components and never posts a consent decision', function () {
     $all = implode("\n", $sources);
 
     expect($all)->toContain('from "@particle-academy/fancy-compliance-ui"')
-        ->and($all)->toContain('from "@particle-academy/fancy-captcha-ui"')
         ->and($all)->toContain('from "@particle-academy/agent-integrations/dom-navigation"')
-        ->and($all)->toContain('<ConsentBanner', '<ConsentPreferences', '<ConsentPreferencesTrigger', '<ConsentGate', '<Captcha')
+        ->and($all)->toContain('<ConsentBanner', '<ConsentPreferences', '<ConsentPreferencesTrigger', '<ConsentGate')
         // A demo decision is not the visitor's consent to this site.
         ->and($all)->not->toContain('useConsentController')
         ->and($all)->not->toContain('/fancy-compliance/consent')
@@ -121,7 +94,7 @@ it('promotes each shipped capability the owner listed', function () {
         ->toContain('<DemoFrame', '<FeatureTour', '<HowItFits', '<InstallSteps', '<PackagesGrid', '<FeatureCta')
         ->toContain('Per-category consent', 'An append-only consent record', 'Withdrawal, and re-consent', 'Styled to your app')
         ->toContain('data-agent-off-limits="consent"', 'agent-integrations 0.58.0')
-        ->toContain('Bot protection for forms');
+        ->not->toContain('Bot protection for forms');
     // Variants and theme tokens are live controls, not only prose.
     expect($sources['ConsentDemo.tsx'])->toContain('"bar"', '"card"', '"corner"', 'cmp-theme--');
     expect($sources['compliance.css'])->toContain('--fancy-surface:', '--fancy-text:');

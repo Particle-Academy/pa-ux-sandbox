@@ -17,7 +17,33 @@ uses(TestCase::class);
  * resolves in the registry, and that each page names itself for SEO.
  */
 
-const FEATURE_SLUGS = ['flow', 'tui', 'cms', 'documents', 'git', '3d', 'ecommerce', 'gamification', 'compliance', 'accessibility', 'connectors'];
+const FEATURE_SLUGS = ['human-plus', 'flow', 'tui', 'cms', 'documents', 'git', '3d', 'ecommerce', 'gamification', 'compliance', 'security', 'accessibility', 'connectors'];
+
+it('lists Human+ first, because it is the suite headline capability', function () {
+    // SITES is in nav order; the dropdown, the index and the sitemap all read it.
+    expect(FeatureSites::slugs()[0])->toBe('human-plus')
+        ->and(FeatureSites::nav()[0]['href'])->toBe('/features/human-plus');
+});
+
+it('holds planned packages back until the registry resolves them', function () {
+    $pending = FeatureSites::whenPublished();
+    expect($pending)->not->toBeEmpty();
+
+    foreach ($pending as $feature => $slugs) {
+        $members = FeatureSites::find($feature)['memberSlugs'];
+
+        foreach ($slugs as $slug) {
+            $planned = array_key_exists($slug, PackageRegistry::PLANNED);
+            $resolves = PackageRegistry::findAny($slug) !== null;
+
+            // A typo would sit here forever, joining nothing.
+            expect($planned || $resolves)->toBeTrue("{$feature} waits for {$slug}, which is neither planned nor in the registry");
+
+            // Never advertised while planned; joins by itself once it resolves.
+            expect(in_array($slug, $members, true))->toBe($resolves, "{$feature}: {$slug} membership does not follow the registry");
+        }
+    }
+});
 
 /** The Inertia page object an initial (HTML) visit carries. */
 function inertiaPage(string $html): array

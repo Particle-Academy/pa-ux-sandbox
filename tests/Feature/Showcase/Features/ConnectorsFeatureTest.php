@@ -71,9 +71,11 @@ function connectorsSources(): array
     return $files;
 }
 
-it('is the eleventh Feature, last in the menu', function () {
-    expect(FeatureSites::slugs())->toHaveCount(11)
-        ->and(FeatureSites::slugs()[10])->toBe('connectors')
+it('is the last Feature in the menu', function () {
+    // Human+ (first) and Security joined on 2026-11-13; Connectors stays last.
+    expect(FeatureSites::slugs())->toHaveCount(13)
+        ->and(array_key_last(FeatureSites::slugs()))->toBe(12)
+        ->and(FeatureSites::slugs()[12])->toBe('connectors')
         ->and(array_column(FeatureSites::nav(), 'slug'))->toContain('connectors');
 });
 

@@ -44,9 +44,57 @@ final class FeatureSites
      * no course yet; the page links to it only while that course is published
      * and listed.
      *
-     * @var array<string, array{course: ?string, name: string, tagline: string, icon: string, component: string, theme: array{accent: string, accentDark: string, surface: string, surfaceDark: string, font: string}, members: list<string>, bridges: list<array{name: string, import: string, tools: string}>}>
+     * `whenPublished` (optional) names packages that belong to the Feature but
+     * are still in {@see PackageRegistry::PLANNED}. Each one joins the members
+     * by itself on the day it moves into the registry (when
+     * {@see PackageRegistry::findAny()} resolves it), and not before: a planned
+     * package is never advertised. `FeatureSitesTest` fails on a slug that is
+     * neither planned nor resolvable, so a typo cannot hide here for good.
+     *
+     * @var array<string, array{course: ?string, name: string, tagline: string, icon: string, component: string, theme: array{accent: string, accentDark: string, surface: string, surfaceDark: string, font: string}, members: list<string>, whenPublished?: list<string>, bridges: list<array{name: string, import: string, tools: string}>}>
      */
     private const SITES = [
+        // FIRST, because it is the suite's headline capability: humans and
+        // agents sharing one UI and trading control through MCP bridges
+        // (docs/human-plus-ux.md). `bridges` is every bridge subpath that
+        // @particle-academy/agent-integrations 0.59.0 exports, with the tool
+        // prefixes its v0.59.0 source registers. `HumanPlusFeatureTest` fails
+        // when the installed package exports a bridge this list lacks.
+        'human-plus' => [
+            'course' => null,
+            'name' => 'Human+',
+            'tagline' => 'Humans and agents share one UI and trade control through MCP bridges, with presence, undo and proposals a person confirms.',
+            'icon' => 'handshake',
+            'component' => 'Features/HumanPlus/Index',
+            'theme' => ['accent' => '#0891b2', 'accentDark' => '#22d3ee', 'surface' => '#ecfeff', 'surfaceDark' => '#06171b', 'font' => 'display'],
+            'members' => ['agent-integrations', 'fancy-auto-common', 'fancy-screens', 'fancy-diff', 'fancy-cf-relay', 'mcp-relay-client', 'fancy-devtools', 'fancy-pixel', 'fancy-cms', 'fancy-cms-ui', 'charlotte'],
+            'bridges' => [
+                ['name' => 'registerNavigationBridge', 'import' => '@particle-academy/agent-integrations/bridges/navigation', 'tools' => 'page_* / nav_*'],
+                ['name' => 'registerFormBridge', 'import' => '@particle-academy/agent-integrations/bridges/forms', 'tools' => 'form_*'],
+                ['name' => 'registerScreensBridge', 'import' => '@particle-academy/agent-integrations/bridges/screens', 'tools' => 'screens_*'],
+                ['name' => 'registerScreenDocBridge', 'import' => '@particle-academy/agent-integrations/bridges/screen-doc', 'tools' => 'screen_*'],
+                ['name' => 'registerDocBridge', 'import' => '@particle-academy/agent-integrations/bridges/doc', 'tools' => '<surface>_* (get_node / set_props / …)'],
+                ['name' => 'registerCmsBridge', 'import' => '@particle-academy/agent-integrations/bridges/cms', 'tools' => 'cms_*'],
+                ['name' => 'registerWhiteboardBridge', 'import' => '@particle-academy/agent-integrations/bridges/whiteboard', 'tools' => 'whiteboard_*'],
+                ['name' => 'registerArtboardBridge', 'import' => '@particle-academy/agent-integrations/bridges/artboard', 'tools' => 'artboard_*'],
+                ['name' => 'registerFlowBridge', 'import' => '@particle-academy/agent-integrations/bridges/flow', 'tools' => 'flow_*'],
+                ['name' => 'registerSheetsBridge', 'import' => '@particle-academy/agent-integrations/bridges/sheets', 'tools' => 'sheet_*'],
+                ['name' => 'registerGridBridge', 'import' => '@particle-academy/agent-integrations/bridges/grid', 'tools' => 'grid_*'],
+                ['name' => 'registerCodeBridge', 'import' => '@particle-academy/agent-integrations/bridges/code', 'tools' => 'code_*'],
+                ['name' => 'registerChartsBridge', 'import' => '@particle-academy/agent-integrations/bridges/charts', 'tools' => 'chart_*'],
+                ['name' => 'registerSlidesBridge', 'import' => '@particle-academy/agent-integrations/bridges/slides', 'tools' => 'deck_* / slide_* / element_*'],
+                ['name' => 'registerSceneBridge', 'import' => '@particle-academy/agent-integrations/bridges/scene', 'tools' => 'scene_*'],
+                ['name' => 'registerMapBridge', 'import' => '@particle-academy/agent-integrations/bridges/map', 'tools' => 'map_*'],
+                ['name' => 'registerFilesBridge', 'import' => '@particle-academy/agent-integrations/bridges/files', 'tools' => 'files_*'],
+                ['name' => 'registerTerminalBridge', 'import' => '@particle-academy/agent-integrations/bridges/terminal', 'tools' => 'terminal_*'],
+                ['name' => 'registerTuiBridge', 'import' => '@particle-academy/agent-integrations/bridges/tui', 'tools' => 'tui_* / human_plus_events_*'],
+                ['name' => 'registerGitBridge', 'import' => '@particle-academy/agent-integrations/bridges/git', 'tools' => 'git_*'],
+                ['name' => 'registerCatalogBridge', 'import' => '@particle-academy/agent-integrations/bridges/catalog', 'tools' => 'catalog_*'],
+                ['name' => 'registerFeaturesBridge', 'import' => '@particle-academy/agent-integrations/bridges/features', 'tools' => 'features_*'],
+                ['name' => 'registerPasskeyBridge', 'import' => '@particle-academy/agent-integrations/bridges/passkeys', 'tools' => 'passkey_*'],
+                ['name' => 'registerContentReactionBridge', 'import' => '@particle-academy/agent-integrations/bridges/content-reaction', 'tools' => 'reaction_*'],
+            ],
+        ],
         'flow' => [
             'course' => 'fancy-flow',
             'name' => 'Flow',
@@ -133,12 +181,32 @@ final class FeatureSites
         'compliance' => [
             'course' => null,
             'name' => 'Compliance',
-            'tagline' => 'Consent banners and preferences backed by an append-only consent record, and bot protection for forms.',
+            'tagline' => 'Consent banners and preferences backed by an append-only consent record, and a server gate other code checks before it collects.',
             'icon' => 'shield-check',
             'component' => 'Features/Compliance/Index',
             'theme' => ['accent' => '#0d9488', 'accentDark' => '#2dd4bf', 'surface' => '#f0fdfa', 'surfaceDark' => '#041a17', 'font' => 'serif'],
-            'members' => ['family:fancy-compliance', 'family:fancy-captcha'],
+            // Captcha moved to Security (owner, 2026-11-13: "Features are about
+            // features, not just specific packages").
+            'members' => ['family:fancy-compliance'],
             'bridges' => [],
+        ],
+        // Every security-shaped capability in the kit, across packages. Only
+        // published packages are members; the planned service tokens and
+        // request guards (CC-fancy-0030, CC-fancy-0031) wait in
+        // `whenPublished` and join on their own. Signing belongs under
+        // Documents when fancy-sign ships, not here.
+        'security' => [
+            'course' => null,
+            'name' => 'Security',
+            'tagline' => 'Passkey sign-in, bot protection without a third party, and a security.txt from one declarative registry.',
+            'icon' => 'lock-keyhole',
+            'component' => 'Features/Security/Index',
+            'theme' => ['accent' => '#dc2626', 'accentDark' => '#f87171', 'surface' => '#fef2f2', 'surfaceDark' => '#1c0808', 'font' => 'mono'],
+            'members' => ['family:fancy-passkeys', 'family:fancy-captcha', 'family:fancy-x-files'],
+            'whenPublished' => ['fancy-service-token', 'fancy-service-token-js', 'fancy-service-token-py', 'fancy-http-guard', 'fancy-http-guard-py', 'fancy-http-errors'],
+            'bridges' => [
+                ['name' => 'registerPasskeyBridge', 'import' => '@particle-academy/agent-integrations/bridges/passkeys', 'tools' => 'passkey_*'],
+            ],
         ],
         'accessibility' => [
             'course' => null,
@@ -335,7 +403,24 @@ final class FeatureSites
     }
 
     /**
-     * @param  array{members: list<string>}  $site
+     * Every `whenPublished` slug, by Feature, whether or not it has joined yet.
+     *
+     * @return array<string, list<string>>
+     */
+    public static function whenPublished(): array
+    {
+        $pending = [];
+        foreach (self::SITES as $slug => $site) {
+            if (($site['whenPublished'] ?? []) !== []) {
+                $pending[$slug] = $site['whenPublished'];
+            }
+        }
+
+        return $pending;
+    }
+
+    /**
+     * @param  array{members: list<string>, whenPublished?: list<string>}  $site
      * @return list<string>
      */
     private static function memberSlugs(array $site): array
@@ -345,6 +430,13 @@ final class FeatureSites
             if (str_starts_with($entry, 'family:')) {
                 array_push($slugs, ...PackageFamily::memberSlugsOf(substr($entry, strlen('family:'))));
             } else {
+                $slugs[] = $entry;
+            }
+        }
+
+        // A planned package joins the day the registry resolves it, never before.
+        foreach ($site['whenPublished'] ?? [] as $entry) {
+            if (PackageRegistry::findAny($entry) !== null) {
                 $slugs[] = $entry;
             }
         }

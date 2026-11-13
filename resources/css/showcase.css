@@ -46,12 +46,15 @@
 @import "@particle-academy/agent-integrations/styles.css";
 @import "@particle-academy/fancy-git-ui/styles.css";
 @import "@particle-academy/fancy-fun-lab-ui/styles.css";
+/* /features/security renders PasskeyManager; site CSS, so the page never paints unstyled. */
+@import "@particle-academy/fancy-passkeys-ui/styles.css";
 
 /* Each Feature micro-site's own identity (/features/{slug}). Loaded here, with
    the page stylesheet, never by `import "./x.css"` from the page component:
    that puts the CSS in the page's lazy chunk, so the page first paints with
    none of it (an unstyled flash on every visit). Each file scopes itself to
    its Feature's wrapper, and sits after the package styles it overrides. */
+@import "../js/Pages/Features/HumanPlus/human-plus.css";
 @import "../js/Pages/Features/Flow/flow.css";
 @import "../js/Pages/Features/Tui/tui.css";
 @import "../js/Pages/Features/Cms/cms.css";
@@ -61,6 +64,7 @@
 @import "../js/Pages/Features/Ecommerce/ecommerce.css";
 @import "../js/Pages/Features/Gamification/gamification.css";
 @import "../js/Pages/Features/Compliance/compliance.css";
+@import "../js/Pages/Features/Security/security.css";
 @import "../js/Pages/Features/Accessibility/accessibility.css";
 @import "../js/Pages/Features/Connectors/connectors.css";
 

@@ -86,9 +86,4 @@
 .cmp-reserve__actions { display: flex; flex-wrap: wrap; gap: 8px; }
 .cmp-reserve__actions > * { min-height: 44px; }
 
-/* Captcha demo */
-.cmp-captcha { display: flex; flex-direction: column; gap: 16px; max-width: 640px; }
-.cmp-captcha__bar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
-.cmp-captcha__bar > button { min-height: 44px; }
-
 .cmp-note { border-left: 3px solid var(--feature-accent); }

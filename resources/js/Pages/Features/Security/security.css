@@ -1,0 +1,41 @@
+/* /features/security: a vault identity. A hero ruled like a key's bitting,
+   mono display type, and demos framed with a hard edge. Scoped to
+   [data-feature="security"], the attribute FeatureIdentity sets; colours come
+   from the --feature-* tokens, so dark mode is a token swap. */
+
+[data-feature="security"] {
+  --sec-edge: color-mix(in oklch, var(--feature-accent) 35%, var(--border-1));
+  --sec-panel: color-mix(in oklch, var(--feature-surface) 70%, var(--bg-0));
+}
+.dark [data-feature="security"],
+[data-theme="dark"] [data-feature="security"] {
+  --sec-edge: color-mix(in oklch, var(--feature-accent) 28%, var(--border-1));
+  --sec-panel: color-mix(in oklch, var(--feature-surface) 85%, var(--bg-0));
+}
+
+[data-feature="security"] .feature-hero {
+  border-left: 4px solid var(--feature-accent);
+  background:
+    repeating-linear-gradient(90deg, transparent 0 22px, color-mix(in oklch, var(--feature-accent) 9%, transparent) 22px 24px),
+    radial-gradient(70% 110% at 100% 0%, color-mix(in oklch, var(--feature-accent) 15%, transparent), transparent 65%),
+    var(--feature-surface);
+}
+[data-feature="security"] .feature-hero__glyph { border-radius: 6px; }
+
+.sec-tap { min-height: 44px; }
+.sec-anchor { scroll-margin-top: 88px; }
+
+/* Passkey demo */
+.sec-passkeys {
+  display: flex; flex-direction: column; gap: 16px; max-width: 720px;
+  padding: 16px; border-radius: 12px;
+  border: 1px solid var(--sec-edge);
+  background: var(--sec-panel);
+}
+
+/* Captcha demo (moved from Compliance) */
+.sec-captcha { display: flex; flex-direction: column; gap: 16px; max-width: 640px; }
+.sec-captcha__bar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.sec-captcha__bar > button { min-height: 44px; }
+
+.sec-note { border-left: 3px solid var(--feature-accent); }

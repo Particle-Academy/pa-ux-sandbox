@@ -42,6 +42,8 @@ const GLOBAL = new Set([
     "@particle-academy/fancy-flow",
     "@particle-academy/fancy-mlm-ui",
     "@particle-academy/fancy-git-ui",
+    // resources/css/showcase.css, for /features/security's PasskeyManager.
+    "@particle-academy/fancy-passkeys-ui",
 ]);
 
 function sourceFiles(dir: string): string[] {

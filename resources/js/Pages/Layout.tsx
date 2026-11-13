@@ -47,7 +47,7 @@ const THEME_LABEL = {
 } as const;
 import { CommandPalette } from "./CommandPalette";
 import { useCoBrowse } from "../agent/CoBrowseProvider";
-import { useShowcaseWhatsNew } from "../lib/whats-new";
+import { useShowcaseWhatsNew, useWhatsNewConsentHold } from "../lib/whats-new";
 import { type CosmeticSlots } from "../lib/cosmetics";
 import { PlayerIdentityRow, type PlayerIdentityData } from "../components/PlayerIdentity";
 import { ActiveUsersOverlay } from "../components/ActiveUsersOverlay";
@@ -165,6 +165,9 @@ export function Layout({
     // dev). On a phone the card spans the width, and landing.css lifts it
     // clear of the bottom nav bar.
     const consent = useConsentController(props.fancyCompliance);
+    // The automatic "What's new" notice waits for this answer too: on a phone it
+    // would otherwise cover the card's buttons (lib/whats-new.tsx).
+    useWhatsNewConsentHold(consent.value.needsConsent);
 
     return (
         <ConsentProvider {...consent}>

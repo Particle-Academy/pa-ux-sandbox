@@ -1,5 +1,5 @@
 /** @vitest-environment jsdom */
-import { act } from "react";
+import { act, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
@@ -26,6 +26,7 @@ import {
     accountFromPage,
     loadWhatsNew,
     useShowcaseWhatsNew,
+    useWhatsNewConsentHold,
 } from "../../resources/js/lib/whats-new";
 import { SITE_TOUR_SEEN_KEY } from "../../resources/js/components/SiteWalkthrough";
 
@@ -172,6 +173,68 @@ describe("ShowcaseWhatsNew", () => {
 
         await act(async () => (rendered.at(-1)!.onOpenChange as (open: boolean) => void)(false));
         expect(rendered.at(-1)!.open).toBe(false);
+
+        await act(async () => mounted.root.unmount());
+    });
+});
+
+describe("ShowcaseWhatsNew and the consent card", () => {
+    /*
+     * At 375px both sit just above the bottom nav, and the notice covered the
+     * consent card's "Reject all". Consent must always be reachable, so the
+     * automatic notice waits until consent is answered, the same way the site
+     * tour does (SiteWalkthrough holdAutoStart). It is held, not mounted and
+     * hidden: fancy-whats-new records a notice as seen as soon as it shows.
+     */
+    const pending = { props: { auth: { user: null }, fancyCompliance: { needsConsent: true } } };
+    const answered = { props: { auth: { user: null }, fancyCompliance: { needsConsent: false } } };
+
+    it("holds the automatic notice while the first page still needs consent", async () => {
+        tourAlreadySeen();
+        const mounted = mountWithPage(pending);
+        await act(async () => mounted.render());
+
+        expect(rendered).toHaveLength(0);
+
+        await act(async () => mounted.root.unmount());
+    });
+
+    it("shows it once the layout reports consent answered", async () => {
+        tourAlreadySeen();
+        const mounted = mountWithPage(pending);
+        let setPending: (v: boolean) => void = () => {};
+        function Layout() {
+            const [needs, setNeeds] = useState(true);
+            setPending = setNeeds;
+            useWhatsNewConsentHold(needs);
+            return null;
+        }
+        await act(async () => mounted.root.render(<ShowcaseWhatsNew><Layout /></ShowcaseWhatsNew>));
+        expect(rendered).toHaveLength(0);
+
+        await act(async () => setPending(false));
+        expect(rendered.at(-1)).toMatchObject({ load: loadWhatsNew, open: false });
+
+        await act(async () => mounted.root.unmount());
+    });
+
+    it("does not hold when consent is already answered", async () => {
+        tourAlreadySeen();
+        const mounted = mountWithPage(answered);
+        await act(async () => mounted.render());
+
+        expect(rendered.length).toBeGreaterThan(0);
+
+        await act(async () => mounted.root.unmount());
+    });
+
+    it("still opens from the header button while consent is pending", async () => {
+        tourAlreadySeen();
+        const mounted = mountWithPage(pending);
+        await act(async () => mounted.render());
+
+        await act(async () => mounted.api().show());
+        expect(rendered.at(-1)).toMatchObject({ open: true });
 
         await act(async () => mounted.root.unmount());
     });

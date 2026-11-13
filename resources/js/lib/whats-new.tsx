@@ -23,6 +23,15 @@ import { SITE_TOUR_SEEN_KEY } from "../components/SiteWalkthrough";
  * has run or been skipped, its "seen" key is unset, and the automatic notice is
  * not mounted at all, so it shows on a later load. The header button still opens
  * it, because `open` mounts it.
+ *
+ * It WAITS FOR CONSENT, too. At 375px the notice and the consent card both sit
+ * just above the bottom nav, and the notice covered the card's "Reject all".
+ * Consent must always be reachable, so while it is unanswered the automatic
+ * notice is held, the same way SiteWalkthrough's `holdAutoStart` holds the
+ * tour. Held means NOT MOUNTED rather than hidden: fancy-whats-new records a
+ * notice as seen the moment it shows, so a hidden one would be lost. The first
+ * page's `fancyCompliance.needsConsent` sets the hold before Layout mounts;
+ * Layout then keeps it current through `useWhatsNewConsentHold`.
  */
 
 const SEEN_URL = "/me/seen-notices";
@@ -30,13 +39,30 @@ const SEEN_URL = "/me/seen-notices";
 interface ShowcaseWhatsNewApi {
     /** Show the current cards again (the header button). */
     show: () => void;
+    /** Hold the automatic notice while consent is unanswered (Layout). */
+    holdForConsent: (pending: boolean) => void;
 }
 
-const WhatsNewContext = createContext<ShowcaseWhatsNewApi>({ show: () => {} });
+const WhatsNewContext = createContext<ShowcaseWhatsNewApi>({ show: () => {}, holdForConsent: () => {} });
 
 /** The header button's handle on the site-wide notice. */
 export function useShowcaseWhatsNew(): ShowcaseWhatsNewApi {
     return useContext(WhatsNewContext);
+}
+
+/**
+ * Layout's half of the consent hold: pass `consent.value.needsConsent`. The
+ * consent provider lives inside Layout, below this notice's provider, so the
+ * answer is handed up rather than read.
+ */
+export function useWhatsNewConsentHold(pending: boolean): void {
+    const { holdForConsent } = useContext(WhatsNewContext);
+    useEffect(() => holdForConsent(pending), [holdForConsent, pending]);
+}
+
+/** Whether a page still needs consent, from its props. */
+export function consentPendingFromPage(page: unknown): boolean {
+    return (page as { props?: { fancyCompliance?: { needsConsent?: boolean } } } | null)?.props?.fancyCompliance?.needsConsent === true;
 }
 
 /** fancy-whats-new's `load(since)`: the groups newer than `since`, newest first. */
@@ -80,6 +106,8 @@ export function ShowcaseWhatsNew({ children }: { children: ReactNode }) {
     // Read once, on mount: a tour finished during this visit leaves the notice
     // for the next load rather than following the tour straight away.
     const [tourSeen, setTourSeen] = useState(false);
+    // Held until consent is answered; read from the first page, then from Layout.
+    const [consentPending, setConsentPending] = useState(false);
 
     useEffect(() => {
         try {
@@ -88,19 +116,21 @@ export function ShowcaseWhatsNew({ children }: { children: ReactNode }) {
             // Storage disabled: the tour cannot run either, so nothing to wait for.
             setTourSeen(true);
         }
-        setAccount(accountFromPage(initialPage()));
+        const first = initialPage();
+        setConsentPending(consentPendingFromPage(first));
+        setAccount(accountFromPage(first));
 
         return router.on("navigate", (event) => {
             setAccount(accountFromPage((event as CustomEvent<{ page: unknown }>).detail?.page));
         });
     }, []);
 
-    const api = useMemo<ShowcaseWhatsNewApi>(() => ({ show: () => setOpen(true) }), []);
+    const api = useMemo<ShowcaseWhatsNewApi>(() => ({ show: () => setOpen(true), holdForConsent: setConsentPending }), []);
 
     return (
         <WhatsNewContext.Provider value={api}>
             {children}
-            {account !== undefined && (tourSeen || open) && (
+            {account !== undefined && ((tourSeen && !consentPending) || open) && (
                 <WhatsNew
                     load={loadWhatsNew}
                     seenUrl={account ? SEEN_URL : null}

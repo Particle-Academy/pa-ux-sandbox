@@ -311,6 +311,41 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
             'registries' => ['npm' => '@particle-academy/fancy-http-errors'],
             'why' => 'TS leg of CC-fancy-0031: turns ANY error response (the envelope, FastAPI detail and 422 lists, Laravel validation, an HTML proxy page) into one sentence for the UI, never echoing 5xx text. Zero runtime dependencies, no React. npm name 404 on 2026-11-12.',
         ],
+        // CC-fancy-0036 -- e-signature. Owner approved 2026-11-13, eIDAS
+        // ADVANCED included. Design: .ai/plans/fancy-sign.md. Slugs are the
+        // ones the built packages will carry (the fancy-passkeys pattern:
+        // slug `fancy-sign`, repo `fancy-sign-php`), so moving an entry to
+        // META later cannot leave a stale planned twin behind.
+        'fancy-sign' => [
+            'name' => 'particle-academy/fancy-sign',
+            'repo' => 'Particle-Academy/fancy-sign-php',
+            'registries' => ['packagist' => 'particle-academy/fancy-sign'],
+            'why' => 'E-signature core, PHP leg of CC-fancy-0036 (owner approved 2026-11-13): envelopes, signature/initials/date fields, an auto-appended final signature page, admin per-page initials or signatures that never land on the final page, email one-time codes to view and to accept (no customer accounts), consent and intent capture, a per-envelope hash-chained audit trail (change-council scheme), engagement events (sent, opened, page viewed, signed, declined), an Ed25519-sealed completion record and certificate of completion, and a Laravel bridge. SES phase uses NO third-party code: standard-library hashing and sodium, fine-print for the PDF. Design: .ai/plans/fancy-sign.md. NOT YET STARTED; registered first. Packagist name 404 on 2026-11-13 (control particle-academy/fancy-captcha resolved).',
+        ],
+        'fancy-sign-js' => [
+            'name' => '@particle-academy/fancy-sign',
+            'repo' => 'Particle-Academy/fancy-sign-js',
+            'registries' => ['npm' => '@particle-academy/fancy-sign'],
+            'why' => 'Node twin of fancy-sign (CC-fancy-0036): the same core and wire contract, held to the PHP leg by fancy-conformance sign/* tables, node:crypto only. BLOCKED on the fine-print-js writer (planned above), which it needs to render the PDF. Design: .ai/plans/fancy-sign.md. NOT YET STARTED; registered first. npm name 404 on 2026-11-13 (control @particle-academy/fancy-passkeys resolved).',
+        ],
+        'fancy-sign-ui' => [
+            'name' => '@particle-academy/fancy-sign-ui',
+            'repo' => 'Particle-Academy/fancy-sign-ui',
+            'registries' => ['npm' => '@particle-academy/fancy-sign-ui'],
+            'why' => 'React surfaces for fancy-sign (CC-fancy-0036), built from react-fancy: field palette and envelope setup, the signer ceremony (code gate, consent, viewer with per-page view events, signature pad, sign or decline), envelope timeline, certificate of completion, and a verifier. The agent bridge (registerSignBridge, sign_*) goes in agent-integrations and is management-only: no tool signs, accepts consent or verifies a code. fancy-cms gets fancy-sign:* field islands so an agent can place fields. Design: .ai/plans/fancy-sign.md. NOT YET STARTED; registered first. npm name 404 on 2026-11-13.',
+        ],
+        'fancy-sign-pades' => [
+            'name' => 'particle-academy/fancy-sign-pades',
+            'repo' => 'Particle-Academy/fancy-sign-pades-php',
+            'registries' => ['packagist' => 'particle-academy/fancy-sign-pades'],
+            'why' => 'PAdES layer for fancy-sign, PHP (CC-fancy-0036 phases 2 and 3): an org seal as PAdES B-T/B-LT so any PDF reader detects changes, then per-signer eIDAS ADVANCED signatures through a trust service over the CSC API. Separate from fancy-sign so SES users never install third-party code. Its CMS library (tecnickcom/tc-lib-pdf-sign proposed), TSA, certificate and trust-service provider are APPROVAL REQUESTS in the plan, not decisions. Design: .ai/plans/fancy-sign.md. NOT YET STARTED; registered first. Packagist name 404 on 2026-11-13.',
+        ],
+        'fancy-sign-pades-js' => [
+            'name' => '@particle-academy/fancy-sign-pades',
+            'repo' => 'Particle-Academy/fancy-sign-pades-js',
+            'registries' => ['npm' => '@particle-academy/fancy-sign-pades'],
+            'why' => 'Node twin of fancy-sign-pades (CC-fancy-0036 phases 2 and 3). Its CMS/TSP library (pkijs proposed) is an APPROVAL REQUEST in the plan, not a decision. Design: .ai/plans/fancy-sign.md. NOT YET STARTED; registered first. npm name 404 on 2026-11-13.',
+        ],
     ];
 
     /**

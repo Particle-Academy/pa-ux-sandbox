@@ -346,6 +346,23 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
             'registries' => ['npm' => '@particle-academy/fancy-sign-pades'],
             'why' => 'Node twin of fancy-sign-pades (CC-fancy-0036 phases 2 and 3). Its CMS/TSP library (pkijs proposed) is an APPROVAL REQUEST in the plan, not a decision. Design: .ai/plans/fancy-sign.md. NOT YET STARTED; registered first. npm name 404 on 2026-11-13.',
         ],
+        // CC-fancy-0037 -- human co-work sessions. Owner named the pair
+        // fancy-cowork-php / fancy-cowork-js on 2026-11-13. Slugs follow the
+        // fancy-passkeys / fancy-sign pattern (PHP slug `fancy-cowork`, repo
+        // `fancy-cowork-php`), so moving an entry to META later cannot leave a
+        // stale planned twin behind.
+        'fancy-cowork' => [
+            'name' => 'particle-academy/fancy-cowork',
+            'repo' => 'Particle-Academy/fancy-cowork-php',
+            'registries' => ['packagist' => 'particle-academy/fancy-cowork'],
+            'why' => 'Generic human co-work sessions, PHP leg of CC-fancy-0037 (owner rulings 2026-11-13): one person driving another`s view, several sharing one space, a support rep activating an anonymous visitor`s request, editors on different pages of one document. Per-participant views with follow/drive relationships, intents over a server-routed or direct path, a host middleware pipeline with a minimum default set (authorise, rate limit, size, same-origin, masking, revision, audit), host-chosen consent including none. NO chat, and NO user, org or role models: identity, membership and authorisation come only from host resolvers and policies, and everything is denied until the host configures them. Design: .ai/plans/human-cobrowse-and-chat.md. NOT YET STARTED; registered first. Packagist name 404 on 2026-11-13 (control particle-academy/fancy-captcha resolved).',
+        ],
+        'fancy-cowork-js' => [
+            'name' => '@particle-academy/fancy-cowork',
+            'repo' => 'Particle-Academy/fancy-cowork-js',
+            'registries' => ['npm' => '@particle-academy/fancy-cowork'],
+            'why' => 'Node twin of fancy-cowork (CC-fancy-0037): the same host contracts, middleware pipeline and wire contract, held to the PHP leg by shared fancy-conformance fixtures, with a storage-adapter interface and no ORM. Client surfaces stay in agent-integrations. Design: .ai/plans/human-cobrowse-and-chat.md. NOT YET STARTED; registered first. npm name 404 on 2026-11-13 (control @particle-academy/fancy-passkeys resolved).',
+        ],
     ];
 
     /**

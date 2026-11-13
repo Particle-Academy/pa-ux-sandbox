@@ -1,6 +1,6 @@
 import type { ReactElement } from "react";
 import { Head } from "@inertiajs/react";
-import { CmsPage } from "@particle-academy/fancy-cms-ui/react";
+import { CmsPage, cmsHeadStyle } from "@particle-academy/fancy-cms-ui/react";
 import { Layout } from "../Layout";
 import { starterKitDoc } from "../../cms/starter-kit-seed";
 import { makeStarterKitRegistry } from "../../cms/starter-kit-registry";
@@ -55,9 +55,17 @@ export default function StarterKitsCmsShow({ kit }: { kit: Kit }) {
 
   return (
     <Layout>
-      <Head title={`${kit.name} · Starter Kit (CMS)`} />
+      {/*
+        The page's CMS stylesheet goes in the head, not the markup. Since
+        fancy-cms-ui 0.14.0 CmsPage no longer writes a <style> inside its own
+        <div> (invalid HTML), so a server-rendered page must put it here or the
+        first paint is unstyled until hydration. The browser reuses this element
+        rather than adding a second.
+      */}
+      <Head title={`${kit.name} · Starter Kit (CMS)`}>{cmsHeadStyle(starterKitDoc)}</Head>
 
       <CmsPage
+        includeStyles={false}
         doc={starterKitDoc}
         registry={makeStarterKitRegistry({
           installCommand,

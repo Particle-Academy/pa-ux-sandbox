@@ -102,6 +102,10 @@ import {
     HotkeyCapture,
     ContentReaction,
     ImagePill,
+    SkipLink,
+    NotificationBell,
+    NotificationInbox,
+    type NotificationItem,
     Eyebrow,
     PullQuote,
     Stat,
@@ -548,6 +552,9 @@ const REGISTRY: Record<string, DemoFn> = {
     "react-fancy/hotkey-capture": HotkeyCaptureDemo,
     "react-fancy/content-reaction": ContentReactionDemo,
     "react-fancy/image-pill": ImagePillDemo,
+    "react-fancy/skip-link": SkipLinkDemo,
+    "react-fancy/notification-bell": NotificationBellDemo,
+    "react-fancy/notification-inbox": NotificationInboxDemo,
     "react-fancy/eyebrow": EyebrowDemo,
     "react-fancy/pull-quote": PullQuoteDemo,
     "react-fancy/stat": StatDemo,
@@ -775,6 +782,72 @@ function ImagePillDemo() {
                 <ImagePill label="chart.png" loadThumbnail={() => new Promise((resolve) => setTimeout(() => resolve(SAMPLE_IMG), 800))} />
             </div>
         </Card>
+    );
+}
+
+function SkipLinkDemo() {
+    return (
+        <Card className="relative w-full max-w-md overflow-hidden p-4">
+            <SkipLink targetId="skip-link-demo-target" />
+            <div className="text-sm">Click here, then press Tab: the skip link appears. Enter moves focus past the nav.</div>
+            <nav aria-label="Demo navigation" className="mt-2 flex gap-3 text-sm underline">
+                <span>Home</span>
+                <span>Pricing</span>
+                <span>Docs</span>
+            </nav>
+            <section id="skip-link-demo-target" aria-label="Demo content" className="mt-3 rounded-md border border-dashed border-zinc-300 p-3 text-sm dark:border-zinc-700">
+                The content.
+            </section>
+        </Card>
+    );
+}
+
+/** Fixed, so the SSR render and the hydrated client agree on relative times. */
+const NOTIFICATIONS_NOW = Date.parse("2026-11-13T12:00:00Z");
+
+const DEMO_NOTIFICATIONS: NotificationItem[] = [
+    { id: "deploy", title: "Deploy finished", body: "px-ui-sandbox is live.", time: NOTIFICATIONS_NOW - 5 * 60_000, read: false },
+    { id: "mention", title: "Ada mentioned you", body: "Can you review the Security page?", time: NOTIFICATIONS_NOW - 2 * 3_600_000, read: false },
+    { id: "report", title: "Weekly report ready", time: NOTIFICATIONS_NOW - 26 * 3_600_000, read: true },
+];
+
+function NotificationBellDemo() {
+    const [items, setItems] = useState(DEMO_NOTIFICATIONS);
+    const unread = items.filter((i) => !i.read).length;
+    return (
+        <div className="flex items-center gap-3">
+            <Popover placement="bottom-start">
+                <Popover.Trigger>
+                    <NotificationBell count={unread} />
+                </Popover.Trigger>
+                <Popover.Content className="w-80 p-0">
+                    <NotificationInbox
+                        items={items}
+                        now={NOTIFICATIONS_NOW}
+                        locale="en"
+                        headingLevel={3}
+                        onMarkRead={(id) => setItems((xs) => xs.map((x) => (x.id === id ? { ...x, read: true } : x)))}
+                        onMarkAllRead={() => setItems((xs) => xs.map((x) => ({ ...x, read: true })))}
+                    />
+                </Popover.Content>
+            </Popover>
+            <span className="text-sm text-zinc-500 dark:text-zinc-400">Click the bell, then mark something read.</span>
+        </div>
+    );
+}
+
+function NotificationInboxDemo() {
+    const [items, setItems] = useState(DEMO_NOTIFICATIONS);
+    return (
+        <div className="w-full max-w-md">
+            <NotificationInbox
+                items={items}
+                now={NOTIFICATIONS_NOW}
+                locale="en"
+                onMarkRead={(id) => setItems((xs) => xs.map((x) => (x.id === id ? { ...x, read: true } : x)))}
+                onMarkAllRead={() => setItems((xs) => xs.map((x) => ({ ...x, read: true })))}
+            />
+        </div>
     );
 }
 

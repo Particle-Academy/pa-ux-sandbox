@@ -32,6 +32,9 @@ import { kbdDoc } from "./Kbd";
 import { hotkeyCaptureDoc } from "./HotkeyCapture";
 import { contentReactionDoc } from "./ContentReaction";
 import { imagePillDoc } from "./ImagePill";
+import { skipLinkDoc } from "./SkipLink";
+import { notificationBellDoc } from "./NotificationBell";
+import { notificationInboxDoc } from "./NotificationInbox";
 import { pullQuoteDoc } from "./PullQuote";
 import { statDoc } from "./Stat";
 import { statListDoc } from "./StatList";
@@ -205,6 +208,9 @@ export const DOCS: Record<string, ComponentDoc> = {
     "react-fancy/hotkey-capture": hotkeyCaptureDoc,
     "react-fancy/content-reaction": contentReactionDoc,
     "react-fancy/image-pill": imagePillDoc,
+    "react-fancy/skip-link": skipLinkDoc,
+    "react-fancy/notification-bell": notificationBellDoc,
+    "react-fancy/notification-inbox": notificationInboxDoc,
     "react-fancy/pull-quote": pullQuoteDoc,
     "react-fancy/stat": statDoc,
     "react-fancy/stat-list": statListDoc,

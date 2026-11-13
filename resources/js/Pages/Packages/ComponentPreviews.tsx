@@ -128,7 +128,7 @@ import {
     GIT_STATUS,
     GIT_TREE,
 } from "./gitFixtures";
-import { ActivityLight, AudioViewer, Avatar, Badge, Breadcrumbs, Button, Calendar, Callout, Card, ChatThread, CodeBlock, CodeView, ColorPicker, Container, ContentReaction, ContentRenderer, ContextMenu, Drawer, Emoji, Eyebrow, FauxClient, FileBrowser, FullScreen, Grid, HotkeyCapture, ImagePill, ReorderableGrid, Heading, ImageViewer, IndexList, JsonEditor, Kanban, Kbd, Marquee, MediaViewer, MoodMeter, OtpInput, Pagination, PdfViewer, Pillbox, Profile, Progress, PullQuote, QrCode, ResizablePanels, Section, SetupWizard, Skeleton, Stat, Stepper, StreamingAudio, StatList, StickyNote, Switch, Tabs, Text, TimeGrid, TimePicker, Timeline, Tooltip, VideoViewer, VirtualList } from "@particle-academy/react-fancy";
+import { ActivityLight, AudioViewer, Avatar, Badge, Breadcrumbs, Button, Calendar, Callout, Card, ChatThread, CodeBlock, CodeView, ColorPicker, Container, ContentReaction, ContentRenderer, ContextMenu, Drawer, Emoji, Eyebrow, FauxClient, FileBrowser, FullScreen, Grid, HotkeyCapture, ImagePill, NotificationBell, NotificationInbox, SkipLink, ReorderableGrid, Heading, ImageViewer, IndexList, JsonEditor, Kanban, Kbd, Marquee, MediaViewer, MoodMeter, OtpInput, Pagination, PdfViewer, Pillbox, Profile, Progress, PullQuote, QrCode, ResizablePanels, Section, SetupWizard, Skeleton, Stat, Stepper, StreamingAudio, StatList, StickyNote, Switch, Tabs, Text, TimeGrid, TimePicker, Timeline, Tooltip, VideoViewer, VirtualList } from "@particle-academy/react-fancy";
 import { Checkbox, CheckboxGroup, DatePicker, Field, Input, MultiSwitch, NumberField, PhoneInput, RadioGroup, Select, Slider, Textarea } from "@particle-academy/react-fancy";
 import { FileViewer } from "@particle-academy/fancy-code";
 import { DOC_STATIONS } from "./ComponentDocs/StreamingAudio";
@@ -175,6 +175,9 @@ import {
     CMS_DEMO_DOC,
     CMS_HERO_ID,
 } from "./showcase-fixtures";
+
+/** Fixed clock for the notification previews, so SSR and hydration agree on "5 minutes ago". */
+const PREVIEW_NOW = Date.parse("2026-11-13T12:00:00Z");
 import {
     Bell,
     Check,
@@ -906,6 +909,32 @@ const PREVIEWS: Record<string, PreviewFn> = {
         <div className="flex flex-wrap items-center justify-center gap-2">
             <ImagePill label="Pasted image 1" src={SAMPLE_IMG} />
             <ImagePill label="chart.png" src={SAMPLE_IMG} />
+        </div>
+    ),
+    // The skip link is hidden until focused; a static preview shows its focused
+    // look by passing the visible classes, so the card is not blank.
+    "react-fancy/skip-link": () => (
+        <div className="relative flex h-20 w-full max-w-[16rem] items-start rounded-md border border-dashed border-zinc-300 p-2 text-left dark:border-zinc-700">
+            <SkipLink targetId="preview-skip-target" className="!static !m-0 !h-auto !w-auto !overflow-visible !whitespace-normal ![clip:auto] ![clip-path:none] rounded-md border border-zinc-400 bg-white px-3 py-1.5 text-sm dark:border-zinc-500 dark:bg-zinc-900" />
+        </div>
+    ),
+    "react-fancy/notification-bell": () => (
+        <div className="flex items-center justify-center gap-3">
+            <NotificationBell count={3} />
+            <NotificationBell count={120} />
+        </div>
+    ),
+    "react-fancy/notification-inbox": () => (
+        <div className="w-full max-w-[18rem] text-left">
+            <NotificationInbox
+                items={[
+                    { id: "a", title: "Deploy finished", time: PREVIEW_NOW - 5 * 60_000, read: false },
+                    { id: "b", title: "Weekly report ready", time: PREVIEW_NOW - 26 * 3_600_000, read: true },
+                ]}
+                now={PREVIEW_NOW}
+                locale="en"
+                headingLevel={3}
+            />
         </div>
     ),
     "react-fancy/code-block": () => (

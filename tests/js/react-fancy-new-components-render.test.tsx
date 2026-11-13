@@ -7,7 +7,7 @@ import { ComponentDemo } from "../../resources/js/Pages/Packages/ComponentDemo";
 import { getComponentPreview } from "../../resources/js/Pages/Packages/ComponentPreviews";
 
 /**
- * The react-fancy 6.20 / 6.21 components render on every surface the site shows
+ * The react-fancy 6.20 to 6.24 components render on every surface the site shows
  * them on: each docs example, the interactive demo and the catalog preview.
  *
  * The PHP coverage tests only prove a page, a demo key and a preview key EXIST;
@@ -20,6 +20,10 @@ const COMPONENTS = [
     { slug: "content-reaction", name: "ContentReaction", handle: "[data-react-fancy-content-reaction]" },
     { slug: "image-pill", name: "ImagePill", handle: "[data-react-fancy-image-pill]" },
     { slug: "hotkey-capture", name: "HotkeyCapture", handle: "[data-react-fancy-hotkey-capture]" },
+    // react-fancy 6.22.0 / 6.24.0.
+    { slug: "skip-link", name: "SkipLink", handle: "[data-react-fancy-skip-link]" },
+    { slug: "notification-bell", name: "NotificationBell", handle: "[data-react-fancy-notification-bell]" },
+    { slug: "notification-inbox", name: "NotificationInbox", handle: "[data-react-fancy-notification-inbox]" },
 ];
 
 let host: HTMLDivElement;

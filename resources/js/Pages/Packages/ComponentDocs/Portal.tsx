@@ -41,10 +41,30 @@ export const portalDoc: ComponentDoc = {
     <Tooltip />
 </Portal>`,
         },
+        {
+            name: "Into a landmark",
+            description:
+                "portalContainer puts the popup inside an element such as <main>, so it is not page content loose in <body> outside every landmark. It wins over container and over a PortalContainerContext provider, which a host can put around its whole app to redirect every kit popup at once.",
+            render: () => (
+                <Text size="sm" className="!text-zinc-500">
+                    Pass the element itself, once it exists: a callback ref into state is the simplest way.
+                </Text>
+            ),
+            code: `const [main, setMain] = useState<HTMLElement | null>(null);
+
+<main ref={setMain}>
+    {main && (
+        <Portal portalContainer={main}>
+            <Toast />
+        </Portal>
+    )}
+</main>`,
+        },
     ],
     props: [
         { name: "children", type: `ReactNode`, default: "—", description: "Content to portal." },
-        { name: "container", type: `HTMLElement`, default: `document.body`, description: "Target DOM node. Falls back to body when omitted." },
+        { name: "portalContainer", type: `HTMLElement`, default: "—", description: "The element to portal into, such as a landmark. Wins over `container` and a `PortalContainerContext` provider." },
+        { name: "container", type: `HTMLElement`, default: `document.body`, description: "Target DOM node. Falls back to body when omitted. Same meaning as `portalContainer`, which wins." },
     ],
     notes: (
         <p className="text-xs text-zinc-600 dark:text-zinc-300">

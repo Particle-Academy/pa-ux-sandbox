@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e06303733f2e43ef48f6fbf59694f7b5",
+    "content-hash": "ab82303db567062ffb0bb603fcc3d1b4",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -3906,16 +3906,16 @@
         },
         {
             "name": "particle-academy/fancy-cms",
-            "version": "v0.8.1",
+            "version": "v0.9.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Particle-Academy/fancy-cms.git",
-                "reference": "bca02e087d3100324bbdb2de7c225f3a78309296"
+                "reference": "000e4867612867e9ce7406fe8b6f574e0f7630d8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Particle-Academy/fancy-cms/zipball/bca02e087d3100324bbdb2de7c225f3a78309296",
-                "reference": "bca02e087d3100324bbdb2de7c225f3a78309296",
+                "url": "https://api.github.com/repos/Particle-Academy/fancy-cms/zipball/000e4867612867e9ce7406fe8b6f574e0f7630d8",
+                "reference": "000e4867612867e9ce7406fe8b6f574e0f7630d8",
                 "shasum": ""
             },
             "require": {
@@ -3953,9 +3953,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Particle-Academy/fancy-cms/issues",
-                "source": "https://github.com/Particle-Academy/fancy-cms/tree/v0.8.1"
+                "source": "https://github.com/Particle-Academy/fancy-cms/tree/v0.9.1"
             },
-            "time": "2026-10-27T01:48:23+00:00"
+            "time": "2026-11-13T18:14:09+00:00"
         },
         {
             "name": "particle-academy/fancy-compliance",

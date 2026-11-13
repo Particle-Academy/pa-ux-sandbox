@@ -120,6 +120,34 @@ export const composerDoc: ComponentDoc = {
             code: `<Composer value={text} onChange={setText} disabled />`,
         },
         {
+            name: "Translated labels",
+            description:
+                "labels overrides every word the Composer draws or announces: the placeholder, the send button's text and accessible name, its text while a send is in flight, the failure announcements and the paste pills' words. Each key falls back to its English default on its own; an explicit placeholder prop still wins over labels.placeholder.",
+            render: () => (
+                <div className="w-full max-w-md">
+                    <Composer
+                        onSubmit={() => {}}
+                        labels={{
+                            placeholder: "Escribe un mensaje…",
+                            send: "Enviar",
+                            sending: "Enviando…",
+                            notSent: "Mensaje no enviado. Tu mensaje se ha conservado.",
+                        }}
+                    />
+                </div>
+            ),
+            code: `<Composer
+    onSubmit={send}
+    labels={{
+        placeholder: "Escribe un mensaje…",
+        send: "Enviar",
+        sending: "Enviando…",
+        notSent: "Mensaje no enviado. Tu mensaje se ha conservado.",
+        notSentDetail: "Mensaje no enviado: {error}",
+    }}
+/>`,
+        },
+        {
             name: "Acknowledged send: the draft stays until the server says yes",
             description:
                 "Return a Promise from onSubmit and the draft stays while it is pending: the send button is disabled and aria-busy, a second send is refused, and the text stays editable. Resolve and it clears. Resolve { ok: false, error } (or reject) and everything is kept and onSubmitError is called. sendDisabled blocks only the send, for while an agent is still answering. inputId names the text field, so a Field label can point at it.",
@@ -272,7 +300,8 @@ setHeld([...held, { id, text }]);`,
         { name: "defaultValue", type: `string`, default: "—", description: "Initial value (uncontrolled)." },
         { name: "onChange", type: `(value: string) => void`, default: "—", description: "Called on every keystroke." },
         { name: "onSubmit", type: `(value, extras: { images }) => void | Promise<void | SubmitRejection>`, default: "—", description: "Called on Enter or the send button. Pills are expanded — never a marker. Return nothing and it clears at once; return a Promise and it clears only when that resolves. `images` is only ever non-empty with `pasteImages`." },
-        { name: "placeholder", type: `string`, default: "—", description: "Placeholder text." },
+        { name: "placeholder", type: `string`, default: "—", description: "Placeholder text. Wins over `labels.placeholder`." },
+        { name: "labels", type: `ComposerLabels`, default: "English", description: "Every word drawn or announced: `placeholder`, `send`, `sendAriaLabel`, `sending`, `notSent`, `notSentDetail` and the paste-pill words. Each key falls back on its own." },
         { name: "actions", type: `ReactNode`, default: "—", description: "Element(s) rendered on the trailing edge — usually `Button` buttons." },
         { name: "disabled", type: `boolean`, default: `false`, description: "Disable the textarea + send button." },
         { name: "sendDisabled", type: `boolean`, default: `false`, description: "Disable only the send; the text stays editable. For while an agent is still answering." },

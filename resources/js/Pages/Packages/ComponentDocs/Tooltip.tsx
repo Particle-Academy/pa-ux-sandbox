@@ -95,9 +95,31 @@ export const tooltipDoc: ComponentDoc = {
     <Button>Command palette</Button>
 </Tooltip>`,
         },
+        {
+            name: "When the tooltip repeats the name",
+            description:
+                "While shown, the trigger's aria-describedby names the tooltip, so a screen reader reads it after the trigger's name. When the tooltip only repeats words the name already carries, set describe={false} so they are not read twice.",
+            render: () => (
+                <div className="flex items-center gap-2">
+                    <Tooltip content="Archive" describe={false}>
+                        <Button variant="ghost" aria-label="Archive">Archive</Button>
+                    </Tooltip>
+                    <Tooltip content="Moves the thread out of your inbox; nothing is deleted">
+                        <Button variant="ghost">Archive (described)</Button>
+                    </Tooltip>
+                </div>
+            ),
+            code: `<Tooltip content="Archive" describe={false}>
+    <Button aria-label="Archive" icon="archive" />
+</Tooltip>
+<Tooltip content="Moves the thread out of your inbox; nothing is deleted">
+    <Button>Archive</Button>
+</Tooltip>`,
+        },
     ],
     props: [
         { name: "children", type: `ReactElement`, default: "—", description: "The element to attach the tooltip to. Must be a single React element that forwards refs." },
+        { name: "describe", type: `boolean`, default: `true`, description: "Whether the trigger's `aria-describedby` names the tooltip while it is shown. Turn off only when the tooltip repeats the trigger's accessible name." },
         { name: "content", type: `ReactNode`, default: "—", description: "Tooltip content. Strings or JSX." },
         { name: "placement", type: `Placement`, default: `"top"`, description: "Preferred placement. Auto-flips on collision." },
         { name: "delay", type: `number`, default: `200`, description: "Milliseconds to wait before opening on hover-in." },

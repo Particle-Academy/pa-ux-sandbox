@@ -73,6 +73,29 @@ export const popoverDoc: ComponentDoc = {
 </Popover>`,
         },
         {
+            name: "A popover that is a menu",
+            description:
+                "The trigger's aria-haspopup is \"dialog\" by default, since 6.23.0 (it was \"true\", which screen readers announce as a menu). When the content really is a menu or a list of options, say so with haspopup=\"menu\" or \"listbox\", and give the content the matching role.",
+            render: () => (
+                <Popover haspopup="menu">
+                    <Popover.Trigger>
+                        <Button variant="ghost">Sort by</Button>
+                    </Popover.Trigger>
+                    <Popover.Content role="menu" className="flex w-44 flex-col p-1">
+                        <Button variant="ghost" size="sm" role="menuitem">Newest</Button>
+                        <Button variant="ghost" size="sm" role="menuitem">Oldest</Button>
+                    </Popover.Content>
+                </Popover>
+            ),
+            code: `<Popover haspopup="menu">
+    <Popover.Trigger><Button variant="ghost">Sort by</Button></Popover.Trigger>
+    <Popover.Content role="menu">
+        <Button variant="ghost" role="menuitem">Newest</Button>
+        <Button variant="ghost" role="menuitem">Oldest</Button>
+    </Popover.Content>
+</Popover>`,
+        },
+        {
             name: "Controlled",
             description: "Bind `open` + `onOpenChange` when other UI needs to drive the popover.",
             render: () => (
@@ -102,6 +125,7 @@ export const popoverDoc: ComponentDoc = {
         { name: "hover", type: `boolean`, default: `false`, description: "Open on hover instead of click." },
         { name: "hoverDelay", type: `number`, default: `200`, description: "Milliseconds to wait before opening on hover-in." },
         { name: "hoverCloseDelay", type: `number`, default: `300`, description: "Milliseconds to wait before closing on hover-out — keeps the popover navigable." },
+        { name: "haspopup", type: `"dialog" | "menu" | "listbox" | "tree" | "grid"`, default: `"dialog"`, description: "The trigger's `aria-haspopup`. Not set in `hover` mode, where activation opens nothing." },
         { name: "children", type: `ReactNode`, default: "—", description: "Should contain a `Popover.Trigger` and a `Popover.Content`." },
     ],
 };

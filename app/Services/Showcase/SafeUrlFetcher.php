@@ -3,6 +3,8 @@
 namespace App\Services\Showcase;
 
 use GuzzleHttp\Exception\ConnectException as GuzzleConnectException;
+use GuzzleHttp\Psr7\Uri;
+use GuzzleHttp\Psr7\UriResolver;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
@@ -17,7 +19,8 @@ use Illuminate\Support\Facades\Http;
  *     metadata IP ranges (blocks SSRF to internal services),
  *   - a short connect + request timeout,
  *   - a bounded response size,
- *   - a small redirect cap.
+ *   - a small redirect cap, with every hop followed here, validated and
+ *     pinned exactly like the first request.
  *
  * Returns the Illuminate HTTP Response on success, or throws
  * UnsafeUrlException when the URL is rejected before any request is made.
@@ -40,6 +43,16 @@ class SafeUrlFetcher
      * @var array{v4: int, v6: int, resolved_v6: int, first: 'IPv4'|'IPv6'|null}
      */
     protected array $dialled = ['v4' => 0, 'v6' => 0, 'resolved_v6' => 0, 'first' => null];
+
+    /**
+     * The statuses fetch() follows as a redirect when they carry a Location.
+     */
+    protected const REDIRECT_STATUSES = [301, 302, 303, 307, 308];
+
+    /**
+     * @var list<array{url: string, curl: array<int, mixed>}>
+     */
+    protected array $hops = [];
 
     public function __construct(
         protected int $timeout = 10,
@@ -64,33 +77,68 @@ class SafeUrlFetcher
      */
     public function fetch(string $url): Response
     {
+        $this->hops = [];
+        $current = $url;
+
+        for ($redirects = 0; ; $redirects++) {
+            $response = $this->fetchOneHop($current);
+
+            $location = $response->header('Location');
+            if (! in_array($response->status(), self::REDIRECT_STATUSES, true) || $location === '') {
+                return $response;
+            }
+
+            if ($redirects >= $this->maxRedirects) {
+                throw new FetchFailedException(
+                    "HTTP phase failed: too many redirects (more than {$this->maxRedirects}), last at {$current}.",
+                    'http',
+                    null,
+                );
+            }
+
+            // A relative Location is resolved against the URL that answered with it.
+            // The next hop is then checked, resolved and pinned from scratch.
+            $current = (string) UriResolver::resolve(new Uri($current), new Uri($location));
+        }
+    }
+
+    /**
+     * Every hop the last fetch made: the URL and the curl options it was pinned with.
+     *
+     * @return list<array{url: string, curl: array<int, mixed>}>
+     */
+    public function hops(): array
+    {
+        return $this->hops;
+    }
+
+    /**
+     * One request, never following a redirect. Redirects are followed by fetch(), so
+     * each hop is validated AND pinned: Guzzle's own redirect handling re-checked a
+     * new host in on_redirect but then let curl resolve it unpinned, after the check.
+     *
+     * @throws UnsafeUrlException
+     * @throws FetchFailedException
+     */
+    protected function fetchOneHop(string $url): Response
+    {
         $this->assertSafe($url);
 
-        // Built before the request so the failure message can name what was dialled.
+        // Pin the connection to the exact IPs validated in pinnedResolveOptions so a
+        // low-TTL record can't rebind to a private/metadata address between the check
+        // and the connect (DNS-rebinding TOCTOU). curl still sends the correct Host
+        // header + TLS SNI. Built before the request so a failure can name what was dialled.
         $curl = $this->pinnedResolveOptions($url);
+        $this->hops[] = ['url' => $url, 'curl' => $curl];
 
         try {
+            // No Referer is ever set, so none leaks across a hop.
             return Http::timeout($this->timeout)
                 ->connectTimeout($this->timeout)
                 ->withOptions([
-                    'allow_redirects' => [
-                        'max' => $this->maxRedirects,
-                        'strict' => true,
-                        'referer' => false,
-                        'protocols' => ['http', 'https'],
-                        // Re-validate the host each hop so a redirect can't
-                        // bounce us onto an internal address.
-                        'on_redirect' => function ($request, $response, $uri): void {
-                            $this->assertSafe((string) $uri);
-                        },
-                    ],
+                    'allow_redirects' => false,
                     'stream' => false,
                     'max' => $this->maxBytes,
-                    // Pin the connection to the exact IPs validated in
-                    // pinnedResolveOptions so a low-TTL record can't rebind to a
-                    // private/metadata address between the check and the connect
-                    // (DNS-rebinding TOCTOU). curl still sends the correct Host
-                    // header + TLS SNI.
                     'curl' => $curl,
                 ])
                 ->withHeaders(['User-Agent' => 'FancyUI-ShowcaseVerifier/1.0'])

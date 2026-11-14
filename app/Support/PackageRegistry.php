@@ -176,6 +176,12 @@ class PackageRegistry
      * @var array<string, array{name: string, repo: string, registries: array<string,string>, why: string}>
      */
     public const PLANNED = [
+        'fancy-sockets' => [
+            'name' => '@particle-academy/fancy-sockets',
+            'repo' => 'Particle-Academy/fancy-sockets',
+            'registries' => ['npm' => '@particle-academy/fancy-sockets'],
+            'why' => 'Pusher-protocol WebSockets server for Node (CC-fancy-0041, owner-approved 2026-11-14): one process hosting many apps that can be added, changed or removed at runtime, client events off by default and the presence sender stamped by the server, bounded limits, and a one-command test server for CI. Genie runs it in place of Sockudo, and the co-work lab benchmark runs on it. Plan: .ai/plans/fancy-sockets.md.',
+        ],
         'charlotte-js' => [
             'name' => '@particle-academy/charlotte',
             'repo' => 'Particle-Academy/charlotte-js',

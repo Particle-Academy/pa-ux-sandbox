@@ -2,10 +2,10 @@
 
 namespace App\Services\Showcase;
 
-use GuzzleHttp\Exception\ConnectException as GuzzleConnectException;
 use GuzzleHttp\Psr7\Uri;
 use GuzzleHttp\Psr7\UriResolver;
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\RequestException;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 
@@ -53,6 +53,11 @@ class SafeUrlFetcher
      * @var list<array{url: string, curl: array<int, mixed>}>
      */
     protected array $hops = [];
+
+    /**
+     * Set by the transfer callback when the current hop's body passed maxBytes.
+     */
+    protected bool $overCap = false;
 
     public function __construct(
         protected int $timeout = 10,
@@ -131,21 +136,92 @@ class SafeUrlFetcher
         $curl = $this->pinnedResolveOptions($url);
         $this->hops[] = ['url' => $url, 'curl' => $curl];
 
+        $this->overCap = false;
+
         try {
             // No Referer is ever set, so none leaks across a hop.
-            return Http::timeout($this->timeout)
+            $response = Http::timeout($this->timeout)
                 ->connectTimeout($this->timeout)
                 ->withOptions([
                     'allow_redirects' => false,
                     'stream' => false,
-                    'max' => $this->maxBytes,
-                    'curl' => $curl,
+                    'curl' => $curl + $this->sizeCapOptions(),
                 ])
                 ->withHeaders(['User-Agent' => 'FancyUI-ShowcaseVerifier/1.0'])
                 ->get($url);
-        } catch (ConnectionException $e) {
+        } catch (ConnectionException|RequestException $e) {
+            if ($this->overCap || $this->isFileSizeExceeded($e)) {
+                throw $this->tooLarge($url, $e);
+            }
+            if ($e instanceof RequestException) {
+                throw $e;
+            }
+
             throw $this->describeFailure($e, $url);
         }
+
+        // The last guard, for a handler that ran none of the curl options above
+        // (Http::fake, or a non-curl handler): never hand back an over-cap body.
+        if (strlen($response->body()) > $this->maxBytes) {
+            throw $this->tooLarge($url);
+        }
+
+        return $response;
+    }
+
+    /**
+     * curl options that cap the response at maxBytes, both refusing a declared
+     * Content-Length over the cap and aborting a body (chunked or not) the moment
+     * it passes it.
+     *
+     * Guzzle's own `progress` option cannot do this: its wrapper discards the
+     * callback's return value, and an exception thrown inside a curl callback does
+     * not stop the transfer (PHP aborts only on a non-zero return). So the transfer
+     * callback is set on curl directly and returns 1 to abort, and
+     * CURLOPT_MAXFILESIZE_LARGE backs it up inside curl itself.
+     *
+     * @return array<int, mixed>
+     */
+    protected function sizeCapOptions(): array
+    {
+        return [
+            CURLOPT_MAXFILESIZE_LARGE => $this->maxBytes,
+            CURLOPT_NOPROGRESS => false,
+            CURLOPT_XFERINFOFUNCTION => function ($handle, int $downloadTotal, int $downloaded): int {
+                if ($downloadTotal > $this->maxBytes || $downloaded > $this->maxBytes) {
+                    $this->overCap = true;
+
+                    return 1;
+                }
+
+                return 0;
+            },
+        ];
+    }
+
+    /**
+     * True when curl itself refused the body for its size (CURLE_FILESIZE_EXCEEDED).
+     */
+    protected function isFileSizeExceeded(\Throwable $e): bool
+    {
+        for ($cause = $e; $cause !== null; $cause = $cause->getPrevious()) {
+            $context = method_exists($cause, 'getHandlerContext') ? $cause->getHandlerContext() : [];
+            if (($context['errno'] ?? null) === CURLE_FILESIZE_EXCEEDED) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    protected function tooLarge(string $url, ?\Throwable $previous = null): FetchFailedException
+    {
+        return new FetchFailedException(
+            "HTTP phase failed: response too large (more than {$this->maxBytes} bytes) from {$url}.",
+            'http',
+            $this->dialled['first'],
+            $previous,
+        );
     }
 
     /**
@@ -301,7 +377,8 @@ class SafeUrlFetcher
     {
         $raw = $e->getMessage();
         $previous = $e->getPrevious();
-        $info = $previous instanceof GuzzleConnectException ? $previous->getHandlerContext() : [];
+        // Guzzle's ConnectException and RequestException both carry curl's info here.
+        $info = $previous !== null && method_exists($previous, 'getHandlerContext') ? $previous->getHandlerContext() : [];
 
         $phase = $this->phaseOf($raw, $info, str_starts_with(strtolower($url), 'https:'));
 

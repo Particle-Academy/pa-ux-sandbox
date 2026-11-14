@@ -143,10 +143,40 @@ function publishedDistribution(string $repoPath): ?string
     return null;
 }
 
+/**
+ * Whether a submodule directory publishing $distribution is in a registry.
+ *
+ * Built packages match on the SLUG, and also on the distribution name, because
+ * a repo and its package often disagree: `fancy-flow-py` publishes
+ * `fancy-flow`, `fancy-ui-cli` publishes `fancy-cli`.
+ *
+ * Planned packages match on the key and also on the repo's name. A planned key
+ * is the package the repo WILL publish (`fancy-sign` for repo
+ * `Particle-Academy/fancy-sign-php`), so the key alone never equals the
+ * directory. The comparison ignores case, because GitHub does.
+ *
+ * @param  list<array<string, mixed>>  $everything  PackageRegistry::everything()
+ * @param  list<array<string, mixed>>  $planned  PackageRegistry::planned()
+ */
+function submoduleIsRegistered(string $name, string $distribution, array $everything, array $planned): bool
+{
+    $known = array_merge(array_column($everything, 'slug'), array_column($planned, 'slug'));
+
+    return in_array($name, $known, true)
+        || collect($planned)->contains(
+            fn (array $pkg) => strcasecmp(basename((string) ($pkg['repo'] ?? '')), $name) === 0,
+        )
+        || collect($everything)->contains(
+            fn (array $pkg) => ($pkg['npm'] ?? null) === $distribution
+                || ($pkg['composer'] ?? null) === $distribution
+                || ($pkg['pypi'] ?? null) === $distribution
+                || ($pkg['name'] ?? null) === $distribution,
+        );
+}
+
 it('registers every submodule that publishes a package', function () {
-    $registered = array_column(PackageRegistry::everything(), 'slug');
-    $planned = array_column(PackageRegistry::planned(), 'slug');
-    $known = array_merge($registered, $planned);
+    $everything = PackageRegistry::everything();
+    $planned = PackageRegistry::planned();
 
     $unregistered = [];
     $checked = 0;
@@ -166,18 +196,7 @@ it('registers every submodule that publishes a package', function () {
 
         $checked++;
 
-        // Match on the SLUG, and also on the distribution name, because a repo
-        // and its package often disagree: `fancy-flow-py` publishes
-        // `fancy-flow`, `fancy-ui-cli` publishes `fancy-cli`.
-        $isKnown = in_array($name, $known, true)
-            || collect(PackageRegistry::everything())->contains(
-                fn (array $pkg) => ($pkg['npm'] ?? null) === $distribution
-                    || ($pkg['composer'] ?? null) === $distribution
-                    || ($pkg['pypi'] ?? null) === $distribution
-                    || ($pkg['name'] ?? null) === $distribution,
-            );
-
-        if (! $isKnown) {
+        if (! submoduleIsRegistered($name, $distribution, $everything, $planned)) {
             $unregistered[] = "{$name} (publishes {$distribution})";
         }
     }
@@ -197,6 +216,29 @@ it('registers every submodule that publishes a package', function () {
         'never built.',
     ]));
 })->group('envelope');
+
+/*
+ * A PLANNED entry is keyed by the package it WILL publish, not by its repo,
+ * by design: moving it to META later must not leave a stale planned twin
+ * behind. So `fancy-sign` (repo Particle-Academy/fancy-sign-php) has a key
+ * that never equals the directory `fancy-sign-php`, and matching planned
+ * entries by key alone reported a registered package as unregistered on the
+ * day its repo was created. A planned entry matches by its `repo` too.
+ */
+it('matches a planned entry by its repo as well as by its key', function () {
+    $planned = [
+        ['slug' => 'fancy-sign', 'name' => 'particle-academy/fancy-sign', 'repo' => 'Particle-Academy/fancy-sign-php'],
+        ['slug' => 'fancy-sign-js', 'name' => '@particle-academy/fancy-sign', 'repo' => 'Particle-Academy/fancy-sign-js'],
+    ];
+
+    // By repo: the directory is the repo's name, the key is the package's.
+    expect(submoduleIsRegistered('fancy-sign-php', 'particle-academy/fancy-sign', [], $planned))->toBeTrue();
+    // By key, as before.
+    expect(submoduleIsRegistered('fancy-sign-js', '@particle-academy/fancy-sign', [], $planned))->toBeTrue();
+    // Still discriminates: a repo nothing plans is not matched by a neighbour.
+    expect(submoduleIsRegistered('fancy-sign-py', 'fancy-sign', [], $planned))->toBeFalse();
+    expect(submoduleIsRegistered('other-sign-php', 'particle-academy/other-sign', [], $planned))->toBeFalse();
+});
 
 /*
  * The escape hatches themselves, asserted directly.

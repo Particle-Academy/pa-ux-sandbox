@@ -110,8 +110,9 @@ class ScanShowcaseSubmission implements ShouldQueue
     private function scanWebsite(ShowcaseSubmission $submission): array
     {
         $url = $submission->url;
+        $fetcher = app(SafeUrlFetcher::class);
         try {
-            $resp = app(SafeUrlFetcher::class)->fetch($url);
+            $resp = $fetcher->fetch($url);
         } catch (UnsafeUrlException $e) {
             return ['verified' => false, 'reason' => 'unsafe URL: '.$e->getMessage()];
         } catch (\Throwable $e) {
@@ -119,7 +120,7 @@ class ScanShowcaseSubmission implements ShouldQueue
         }
 
         if (! $resp->successful()) {
-            return ['verified' => false, 'reason' => 'HTTP '.$resp->status()];
+            return ['verified' => false, 'reason' => $fetcher->describeResponse($resp)];
         }
 
         $html = (string) $resp->body();

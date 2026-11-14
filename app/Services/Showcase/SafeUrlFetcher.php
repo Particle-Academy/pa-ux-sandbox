@@ -2,6 +2,8 @@
 
 namespace App\Services\Showcase;
 
+use GuzzleHttp\Exception\ConnectException as GuzzleConnectException;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 
@@ -31,6 +33,14 @@ class SafeUrlFetcher
      */
     protected static $resolver = null;
 
+    /**
+     * What the last pin dialled: counts per family, how many AAAA were resolved
+     * (dialled or not), and the family curl tries first.
+     *
+     * @var array{v4: int, v6: int, resolved_v6: int, first: 'IPv4'|'IPv6'|null}
+     */
+    protected array $dialled = ['v4' => 0, 'v6' => 0, 'resolved_v6' => 0, 'first' => null];
+
     public function __construct(
         protected int $timeout = 10,
         protected int $maxBytes = 2_000_000,
@@ -56,37 +66,70 @@ class SafeUrlFetcher
     {
         $this->assertSafe($url);
 
-        return Http::timeout($this->timeout)
-            ->connectTimeout($this->timeout)
-            ->withOptions([
-                'allow_redirects' => [
-                    'max' => $this->maxRedirects,
-                    'strict' => true,
-                    'referer' => false,
-                    'protocols' => ['http', 'https'],
-                    // Re-validate the host each hop so a redirect can't
-                    // bounce us onto an internal address.
-                    'on_redirect' => function ($request, $response, $uri): void {
-                        $this->assertSafe((string) $uri);
-                    },
-                ],
-                'stream' => false,
-                'max' => $this->maxBytes,
-                // Pin the connection to the exact IPs we validate below so a
-                // low-TTL record can't rebind to a private/metadata address
-                // between the check and the connect (DNS-rebinding TOCTOU).
-                // curl still sends the correct Host header + TLS SNI.
-                'curl' => $this->pinnedResolveOptions($url),
-            ])
-            ->withHeaders(['User-Agent' => 'FancyUI-ShowcaseVerifier/1.0'])
-            ->get($url);
+        // Built before the request so the failure message can name what was dialled.
+        $curl = $this->pinnedResolveOptions($url);
+
+        try {
+            return Http::timeout($this->timeout)
+                ->connectTimeout($this->timeout)
+                ->withOptions([
+                    'allow_redirects' => [
+                        'max' => $this->maxRedirects,
+                        'strict' => true,
+                        'referer' => false,
+                        'protocols' => ['http', 'https'],
+                        // Re-validate the host each hop so a redirect can't
+                        // bounce us onto an internal address.
+                        'on_redirect' => function ($request, $response, $uri): void {
+                            $this->assertSafe((string) $uri);
+                        },
+                    ],
+                    'stream' => false,
+                    'max' => $this->maxBytes,
+                    // Pin the connection to the exact IPs validated in
+                    // pinnedResolveOptions so a low-TTL record can't rebind to a
+                    // private/metadata address between the check and the connect
+                    // (DNS-rebinding TOCTOU). curl still sends the correct Host
+                    // header + TLS SNI.
+                    'curl' => $curl,
+                ])
+                ->withHeaders(['User-Agent' => 'FancyUI-ShowcaseVerifier/1.0'])
+                ->get($url);
+        } catch (ConnectionException $e) {
+            throw $this->describeFailure($e, $url);
+        }
     }
 
     /**
-     * Resolve the URL's host once, re-validate those exact addresses, and
-     * return a curl CURLOPT_RESOLVE map pinning host:port → validated IPs so the
+     * A one-line account of a non-2xx answer: the status, the phase, and the address
+     * family the answer came over.
+     */
+    public function describeResponse(Response $response): string
+    {
+        $ip = (string) ($response->handlerStats()['primary_ip'] ?? '');
+        $over = $ip !== '' ? 'over '.$this->familyOf($ip).' '.$ip : $this->dialledLabel();
+
+        return 'HTTP '.$response->status().' (HTTP phase'.($over !== '' ? ', '.$over : '').')';
+    }
+
+    /**
+     * Resolve the URL's host once, re-validate EVERY one of those addresses, and
+     * return the curl options pinning host:port to the validated IPs, so the
      * connection can't be rebound to an internal address after the check. A
      * literal-IP host needs no pin (it was validated in assertSafe).
+     *
+     * All addresses go in ONE CURLOPT_RESOLVE entry. libcurl keeps only the last
+     * entry it is given for a host:port ("old addresses discarded"), so one entry
+     * per address pinned a dual-stack site to its last AAAA alone. One entry keeps
+     * every address, and lets curl's happy-eyeballs race the second family when
+     * the first is slow.
+     *
+     * The order and families dialled follow `services.showcase_fetcher.ip_family`:
+     *   - prefer-ipv4 (default): IPv4 first, IPv6 kept as the fallback;
+     *   - ipv4-only: when the host has an A record, dial IPv4 alone;
+     *   - resolver-order: the order DNS returned.
+     * Whatever is dialled, every resolved address is validated first: an address
+     * left out of the pin can still refuse the host.
      *
      * @return array<int, mixed>
      *
@@ -94,24 +137,175 @@ class SafeUrlFetcher
      */
     protected function pinnedResolveOptions(string $url): array
     {
+        $this->dialled = ['v4' => 0, 'v6' => 0, 'resolved_v6' => 0, 'first' => null];
+
         $parts = parse_url($url);
         $host = $parts['host'] ?? '';
         if ($host === '' || filter_var($host, FILTER_VALIDATE_IP)) {
+            if ($host !== '') {
+                $this->recordDialled([$host], 0);
+            }
+
             return [];
         }
 
         $scheme = strtolower($parts['scheme'] ?? 'https');
         $port = $parts['port'] ?? ($scheme === 'https' ? 443 : 80);
 
-        $entries = [];
-        foreach ($this->resolve($host) as $ip) {
+        $ips = $this->resolve($host);
+        foreach ($ips as $ip) {
             if ($this->isBlockedIp($ip)) {
                 throw new UnsafeUrlException('The URL resolves to a private or reserved address.');
             }
-            $entries[] = "{$host}:{$port}:{$ip}";
         }
 
-        return $entries === [] ? [] : [CURLOPT_RESOLVE => $entries];
+        $v4 = array_values(array_filter($ips, fn (string $ip): bool => $this->familyOf($ip) === 'IPv4'));
+        $v6 = array_values(array_filter($ips, fn (string $ip): bool => $this->familyOf($ip) === 'IPv6'));
+
+        $options = [];
+        $mode = $this->ipFamilyMode();
+        if ($mode === 'ipv4-only' && $v4 !== []) {
+            $pinned = $v4;
+            $options[CURLOPT_IPRESOLVE] = CURL_IPRESOLVE_V4;
+        } elseif ($mode === 'resolver-order') {
+            $pinned = array_values($ips);
+        } else {
+            $pinned = [...$v4, ...$v6];
+        }
+
+        if ($pinned === []) {
+            return [];
+        }
+
+        $this->recordDialled($pinned, count($v6));
+
+        $addresses = array_map(
+            fn (string $ip): string => $this->familyOf($ip) === 'IPv6' ? "[{$ip}]" : $ip,
+            $pinned,
+        );
+
+        // Union, not spread: spreading an int-keyed array renumbers it, and curl
+        // option constants ARE int keys.
+        return [CURLOPT_RESOLVE => ["{$host}:{$port}:".implode(',', $addresses)]] + $options;
+    }
+
+    /**
+     * @param  list<string>  $pinned
+     */
+    protected function recordDialled(array $pinned, int $resolvedV6): void
+    {
+        $v4 = count(array_filter($pinned, fn (string $ip): bool => $this->familyOf($ip) === 'IPv4'));
+
+        $this->dialled = [
+            'v4' => $v4,
+            'v6' => count($pinned) - $v4,
+            'resolved_v6' => $resolvedV6,
+            'first' => $pinned === [] ? null : $this->familyOf($pinned[0]),
+        ];
+    }
+
+    /**
+     * The configured address-family policy, falling back to prefer-ipv4 for an
+     * unknown value so a typo in the env cannot switch pinning off.
+     */
+    protected function ipFamilyMode(): string
+    {
+        $mode = (string) config('services.showcase_fetcher.ip_family', 'prefer-ipv4');
+
+        return in_array($mode, ['prefer-ipv4', 'ipv4-only', 'resolver-order'], true) ? $mode : 'prefer-ipv4';
+    }
+
+    /**
+     * @return 'IPv4'|'IPv6'
+     */
+    protected function familyOf(string $ip): string
+    {
+        return str_contains($ip, ':') ? 'IPv6' : 'IPv4';
+    }
+
+    /**
+     * The family the last pin dialled, as a phrase: "over IPv4" when only one family
+     * was dialled, "IPv4 first, IPv6 fallback" when curl could race both. Empty when
+     * nothing was pinned.
+     */
+    protected function dialledLabel(): string
+    {
+        ['v4' => $v4, 'v6' => $v6, 'first' => $first] = $this->dialled;
+
+        if ($v4 > 0 && $v6 > 0) {
+            $second = $first === 'IPv4' ? 'IPv6' : 'IPv4';
+
+            return "{$first} first, {$second} fallback";
+        }
+
+        return match (true) {
+            $v4 > 0 => 'over IPv4',
+            $v6 > 0 => 'over IPv6',
+            default => '',
+        };
+    }
+
+    /**
+     * Turn a connection-level failure into one that says how far the request got
+     * and over which address family.
+     */
+    protected function describeFailure(ConnectionException $e, string $url): FetchFailedException
+    {
+        $raw = $e->getMessage();
+        $previous = $e->getPrevious();
+        $info = $previous instanceof GuzzleConnectException ? $previous->getHandlerContext() : [];
+
+        $phase = $this->phaseOf($raw, $info, str_starts_with(strtolower($url), 'https:'));
+
+        $ip = (string) ($info['primary_ip'] ?? '');
+        if ($ip !== '') {
+            $family = $this->familyOf($ip);
+            $over = "over {$family} {$ip}";
+        } else {
+            $over = $this->dialledLabel();
+            $family = match (true) {
+                $this->dialled['v4'] > 0 && $this->dialled['v6'] > 0 => 'IPv4+IPv6',
+                $this->dialled['v4'] > 0 => 'IPv4',
+                $this->dialled['v6'] > 0 => 'IPv6',
+                default => null,
+            };
+        }
+
+        $pinned = $this->dialled['v4'].' IPv4 + '.$this->dialled['v6'].' IPv6';
+        $skipped = $this->dialled['resolved_v6'] - $this->dialled['v6'];
+        if ($skipped > 0) {
+            $pinned .= " ({$skipped} IPv6 resolved, not dialled)";
+        }
+
+        $label = ['connect' => 'connect phase', 'tls' => 'TLS phase', 'http' => 'HTTP phase'][$phase];
+        $message = trim("{$label} failed {$over}").". Pinned {$pinned}. {$raw}";
+
+        return new FetchFailedException($message, $phase, $family, $e);
+    }
+
+    /**
+     * How far the request got. curl's own timings decide when the handler reported
+     * them (connect_time stays 0 until the TCP connection is up, appconnect_time
+     * until TLS is done); otherwise the cURL message does.
+     *
+     * @param  array<string, mixed>  $info
+     * @return 'connect'|'tls'|'http'
+     */
+    protected function phaseOf(string $message, array $info, bool $https): string
+    {
+        if (isset($info['connect_time'])) {
+            if ((float) $info['connect_time'] <= 0.0) {
+                return 'connect';
+            }
+
+            return $https && (float) ($info['appconnect_time'] ?? 0) <= 0.0 ? 'tls' : 'http';
+        }
+
+        return match (true) {
+            (bool) preg_match('/SSL|TLS|certificate/i', $message) => 'tls',
+            (bool) preg_match('/Operation timed out|Empty reply|Recv failure|transfer closed|Failure when receiving/i', $message) => 'http',
+            default => 'connect',
+        };
     }
 
     /**

@@ -80,6 +80,15 @@ return [
         'bug_labels' => ['bug', 'confirmed', 'confirmed-bug'],
     ],
 
+    // SafeUrlFetcher (showcase verification + scanning). Which validated address
+    // families it dials: prefer-ipv4 (IPv4 first, IPv6 as happy-eyeballs fallback),
+    // ipv4-only (IPv4 alone whenever the host has an A record; for a host whose
+    // IPv6 egress is broken), or resolver-order. Every resolved address is
+    // validated and pinned regardless.
+    'showcase_fetcher' => [
+        'ip_family' => env('SHOWCASE_FETCH_IP_FAMILY', 'prefer-ipv4'),
+    ],
+
     // The docs TUI render service — a localhost Node process (`npm run
     // tui-service`) that renders the real fancy-tui Ink app and browses the
     // real MCP. Unset in environments without it; the page degrades to HTML.

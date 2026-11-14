@@ -97,6 +97,45 @@ export const tableDoc: ComponentDoc = {
 </Table.Row>`,
         },
         {
+            name: "Footer rows with Table.Foot",
+            description:
+                "`Table.Foot` renders a `<tfoot>` for totals and summaries. It always lands after the body, inside the `<table>`, wherever you write it.",
+            render: () => (
+                <Table className="w-full">
+                    <Table.Head>
+                        <Table.Row>
+                            <Table.Cell header>Name</Table.Cell>
+                            <Table.Cell header>Value</Table.Cell>
+                        </Table.Row>
+                    </Table.Head>
+                    <Table.Body>
+                        {rows.map((row) => (
+                            <Table.Row key={row.id}>
+                                <Table.Cell>{row.name}</Table.Cell>
+                                <Table.Cell>${row.value.toLocaleString()}</Table.Cell>
+                            </Table.Row>
+                        ))}
+                    </Table.Body>
+                    <Table.Foot>
+                        <Table.Row>
+                            <Table.Cell header>Total</Table.Cell>
+                            <Table.Cell>${rows.reduce((sum, row) => sum + row.value, 0).toLocaleString()}</Table.Cell>
+                        </Table.Row>
+                    </Table.Foot>
+                </Table>
+            ),
+            code: `<Table>
+    <Table.Head>…</Table.Head>
+    <Table.Body>…</Table.Body>
+    <Table.Foot>
+        <Table.Row>
+            <Table.Cell header>Total</Table.Cell>
+            <Table.Cell>{formatMoney(total)}</Table.Cell>
+        </Table.Row>
+    </Table.Foot>
+</Table>`,
+        },
+        {
             name: "Expandable tray row",
             description: "Pass `tray` to a `Table.Row` to add an expandable drawer beneath that row.",
             render: () => (

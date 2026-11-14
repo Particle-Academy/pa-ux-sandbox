@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode, type UIEvent } from "react";
 import { sampleTimeline, toCss, type NodeState, type TimelineDoc } from "@particle-academy/fancy-motion";
-import { Reveal, TimelineDock } from "@particle-academy/fancy-motion/react";
+import { MotionStage, Reveal, TimelineDock } from "@particle-academy/fancy-motion/react";
 import {
     Avatar,
     Badge,
@@ -22,18 +22,19 @@ import {
  * MotionStage's preview used to be MotionStage itself: one card on a
  * `frames x 100vh` spacer, played by WINDOW scroll. The spacer is the only way
  * the installed MotionStage makes scroll distance, so the panel was a tall,
- * nearly empty column you had to scroll the whole page through. MotionStage
- * reads `window` scroll and sizes its pin to `100vh`, with no prop for a scroll
- * root or an external progress, so it cannot be contained in a box. What CAN be
- * contained is the rest of the package: `Reveal` (whose IntersectionObserver is
- * clipped by the scroll box, so a section reveals when it scrolls into the
- * box's view) and the pure engine MotionStage runs on (`sampleTimeline` +
- * `toCss`), fed here by the box's own scroll progress.
+ * nearly empty column you had to scroll the whole page through. The microsite
+ * below is built from `Reveal` (whose IntersectionObserver is clipped by the
+ * scroll box, so a section reveals when it scrolls into the box's view) and the
+ * pure engine MotionStage runs on (`sampleTimeline` + `toCss`), fed by the box's
+ * own scroll progress. It stays on the engine even with fancy-motion 0.3.0's
+ * `scrollContainer` / `progress`: MotionStage wraps its children in an
+ * `overflow: hidden` box (which would break the microsite's sticky header) and
+ * has no reduced-motion handling, which the microsite needs.
  *
  * TimelineDock's preview had no `onScrub`, so its Play button was disabled and
  * nothing moved. The dock is controlled: its `progress` and `onScrub` are the
- * playhead, and the stage beside it is sampled from the same timeline at the
- * same progress.
+ * playhead, and the stage beside it is a MotionStage driven by that same
+ * progress (0.3.0's host-owned playhead).
  */
 
 /** The attribute the animated nodes carry, matching ComponentPreviews' MOTION_NODE_ATTR. */
@@ -446,18 +447,16 @@ export function MotionDockDemo() {
     const [timeline, setTimeline] = useState<TimelineDoc>(DOCK_TIMELINE);
     const [progress, setProgress] = useState(0.6);
     const [selected, setSelected] = useState<string | null>(null);
-    const snap = useMemo(() => sampleTimeline(timeline, progress), [timeline, progress]);
-
     const selectKeyframe = (id: string | null) => {
         setSelected(id);
         const keyframe = id ? timeline.keyframes.find((k) => k.id === id) : undefined;
         if (keyframe) setProgress(keyframe.at);
     };
 
-    // Scrubbing and Play are the viewer's own action, so the stage follows them
-    // even under reduced motion: nothing here moves unless asked to.
-    const style = (id: string) => nodeStyle(snap[id], false);
-
+    // The stage is MotionStage with a host-owned playhead (fancy-motion 0.3.0
+    // `progress`): the dock's progress/onScrub drive it, so Play, dragging and
+    // keys all animate it. Scrubbing and Play are the viewer's own action, so the
+    // stage follows them even under reduced motion: nothing moves unless asked to.
     return (
         <div data-timeline-dock-demo="" className="grid items-start gap-4 lg:grid-cols-[18rem_minmax(0,1fr)]">
             <div
@@ -465,24 +464,26 @@ export function MotionDockDemo() {
                 data-progress={progress.toFixed(2)}
                 className="relative h-48 overflow-hidden rounded-xl border border-zinc-200 bg-gradient-to-br from-emerald-50 to-white p-5 dark:border-zinc-800 dark:from-emerald-500/10 dark:to-zinc-950"
             >
-                <span {...{ [NODE_ATTR]: "badge" }} style={style("badge")} className="inline-block">
-                    <Badge size="sm" color="emerald" variant="soft">
-                        New roast
-                    </Badge>
-                </span>
-                <div {...{ [NODE_ATTR]: "headline" }} style={style("headline")} className="mt-3">
-                    <Heading as="h3" size="xl" weight="bold" className="tracking-tight">
-                        Blackthorn is back.
-                    </Heading>
-                    <Text size="sm" color="muted" className="mt-1">
-                        Blueberry, jasmine, dark honey.
-                    </Text>
-                </div>
-                <div {...{ [NODE_ATTR]: "cta" }} style={style("cta")} className="mt-4 inline-block origin-left">
-                    <Button size="sm" color="emerald" iconTrailing="arrow-right">
-                        Add to my box
-                    </Button>
-                </div>
+                <MotionStage timeline={timeline} nodeAttr={NODE_ATTR} progress={progress} className="h-full">
+                    <span {...{ [NODE_ATTR]: "badge" }} className="inline-block">
+                        <Badge size="sm" color="emerald" variant="soft">
+                            New roast
+                        </Badge>
+                    </span>
+                    <div {...{ [NODE_ATTR]: "headline" }} className="mt-3">
+                        <Heading as="h3" size="xl" weight="bold" className="tracking-tight">
+                            Blackthorn is back.
+                        </Heading>
+                        <Text size="sm" color="muted" className="mt-1">
+                            Blueberry, jasmine, dark honey.
+                        </Text>
+                    </div>
+                    <div {...{ [NODE_ATTR]: "cta" }} className="mt-4 inline-block origin-left">
+                        <Button size="sm" color="emerald" iconTrailing="arrow-right">
+                            Add to my box
+                        </Button>
+                    </div>
+                </MotionStage>
             </div>
 
             <div className="min-w-0 space-y-2">

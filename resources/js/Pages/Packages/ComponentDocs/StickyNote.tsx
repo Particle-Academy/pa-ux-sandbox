@@ -158,6 +158,15 @@ export const stickyNoteDoc: ComponentDoc = {
             code: `<StickyNote id={\`note-\${note.id}\`} value={note.text} onChange={save} />`,
         },
         {
+            name: "An accessible name",
+            description:
+                "label names the editable text for a screen reader. The default is \"Sticky note\"; pass something that tells notes apart, or your locale's word.",
+            render: () => (
+                <StickyNote label="Retro note: blockers" defaultValue="Waiting on the API review." color="blue" width={200} />
+            ),
+            code: `<StickyNote label={\`Retro note: \${note.title}\`} value={note.text} onChange={save} />`,
+        },
+        {
             name: "Static children",
             description:
                 "children overrides the editable text entirely — for a note that holds markup rather than a string. It is the escape hatch, not the normal path: a note with children is no longer something an agent can write a value into.",
@@ -188,6 +197,7 @@ export const stickyNoteDoc: ComponentDoc = {
         { name: "editable", type: `boolean`, default: `true`, description: "Allow inline editing of the text." },
         { name: "autoFocus", type: `boolean`, default: `false`, description: "Focus the editable region, caret at end, when it becomes editable." },
         { name: "id", type: `string`, default: "—", description: "Stable handle, also emitted as the element `id`." },
+        { name: "label", type: `string`, default: `"Sticky note"`, description: "Accessible name of the editable text." },
         { name: "children", type: `ReactNode`, default: "—", description: "Static content. Overrides the editable text." },
         { name: "className", type: `string`, default: "—", description: "Additional classes." },
         { name: "style", type: `CSSProperties`, default: "—", description: "Inline styles." },

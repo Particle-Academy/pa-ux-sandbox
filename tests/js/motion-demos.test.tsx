@@ -145,6 +145,16 @@ describe("TimelineDock preview: the dock drives a stage", () => {
         expect(errors).toEqual([]);
     });
 
+    it("is a MotionStage on the dock's playhead, not a hand-sampled box", () => {
+        act(() => root.render(<MotionDockDemo />));
+
+        const stage = host.querySelector<HTMLElement>("[data-dock-stage] [data-fancy-motion-stage]");
+        expect(stage).not.toBeNull();
+        // Host-owned playhead: MotionStage reports the same progress and renders no spacer.
+        expect(stage!.getAttribute("data-progress")).toBe(host.querySelector("[data-dock-stage]")!.getAttribute("data-progress"));
+        expect(stage!.querySelector("[data-motion='headline']")).toBe(node("headline"));
+    });
+
     it("scrubbing moves the stage frame by frame", () => {
         act(() => root.render(<MotionDockDemo />));
         const track = host.querySelector<HTMLElement>("[data-fmo-track]")!;

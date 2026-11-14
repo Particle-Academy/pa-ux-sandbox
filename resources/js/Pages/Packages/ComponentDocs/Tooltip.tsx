@@ -116,6 +116,19 @@ export const tooltipDoc: ComponentDoc = {
     <Button>Archive</Button>
 </Tooltip>`,
         },
+        {
+            name: "Styling the trigger, not the bubble",
+            description:
+                "className styles the bubble. triggerClassName styles the child, joined in front of the child's own classes. A Popover.Trigger or Dropdown.Trigger wrapped around a Tooltip routes its className here, so the class reaches the button.",
+            render: () => (
+                <Tooltip content="Ring on the button, not the bubble" triggerClassName="ring-2 ring-violet-500">
+                    <Button variant="ghost">triggerClassName</Button>
+                </Tooltip>
+            ),
+            code: `<Tooltip content="Settings" triggerClassName="[-webkit-app-region:no-drag]">
+    <Button variant="ghost" icon="settings" aria-label="Settings" />
+</Tooltip>`,
+        },
     ],
     props: [
         { name: "children", type: `ReactElement`, default: "—", description: "The element to attach the tooltip to. Must be a single React element that forwards refs." },
@@ -125,6 +138,7 @@ export const tooltipDoc: ComponentDoc = {
         { name: "delay", type: `number`, default: `200`, description: "Milliseconds to wait before opening on hover-in." },
         { name: "offset", type: `number`, default: `6`, description: "Pixel gap between trigger and tooltip bubble." },
         { name: "className", type: `string`, default: "—", description: "Extra classes on the tooltip bubble." },
+        { name: "triggerClassName", type: `string`, default: "—", description: "Extra classes on the child (the trigger), joined in front of its own. `Popover.Trigger` / `Dropdown.Trigger` pass their `className` here." },
     ],
     notes: (
         <p className="text-xs text-zinc-600 dark:text-zinc-300">

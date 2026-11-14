@@ -63,6 +63,17 @@ export const colorPickerDoc: ComponentDoc = {
 <ColorPicker variant="filled" />`,
         },
         {
+            name: "An accessible name",
+            description:
+                "The colour input is the only control and the tab stop. label names it for a screen reader (default \"Color\"); an aria-label or aria-labelledby you pass reaches the input too, and wins.",
+            render: () => (
+                <div className="w-full max-w-xs">
+                    <ColorPicker defaultValue="#22c55e" label="Accent colour" onChange={() => {}} />
+                </div>
+            ),
+            code: `<ColorPicker value={accent} onChange={setAccent} label="Accent colour" />`,
+        },
+        {
             name: "Disabled",
             render: () => (
                 <div className="w-full max-w-xs">
@@ -99,6 +110,7 @@ export const colorPickerDoc: ComponentDoc = {
         { name: "size", type: `"sm" | "md" | "lg"`, default: `"md"`, description: "Visual size." },
         { name: "variant", type: `"outline" | "filled"`, default: `"outline"`, description: "Outline for forms, filled for canvas toolbars." },
         { name: "disabled", type: `boolean`, default: `false`, description: "Disable the input." },
+        { name: "label", type: `string`, default: `"Color"`, description: "Accessible name of the colour input. An `aria-label` / `aria-labelledby` you pass wins." },
         { name: "className", type: `string`, default: "—", description: "Extra classes on the root wrapper." },
         { name: "mode", type: `"edit" | "view"`, default: `"edit"`, description: "`edit` renders the control, `view` renders the value as text. Falls back to `<Form>` context." },
     ],

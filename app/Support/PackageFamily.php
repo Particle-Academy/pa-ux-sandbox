@@ -529,6 +529,14 @@ final class PackageFamily
                     ],
                 ],
                 [
+                    'label' => 'Long-term memory',
+                    'capability' => 'Knowledge graph: scoped long-term agent memory, trust-tracked cited facts and hybrid search across chats',
+                    'members' => [
+                        ['language' => 'PHP', 'slug' => 'prism-graph'],
+                        ['language' => 'Node / TypeScript', 'slug' => 'prism-graph-ts'],
+                    ],
+                ],
+                [
                     'label' => 'Browser',
                     'capability' => 'Web browsing for agents: guarded, policy-first browser automation',
                     'members' => [
@@ -543,14 +551,6 @@ final class PackageFamily
                     'members' => [
                         ['language' => 'PHP', 'slug' => 'prism-workspace'],
                         ['language' => 'Python', 'slug' => 'prism-workspace-py'],
-                [
-                    'label' => 'Long-term memory',
-                    'capability' => 'Knowledge graph: scoped long-term agent memory, trust-tracked cited facts and hybrid search across chats',
-                    'members' => [
-                        ['language' => 'PHP', 'slug' => 'prism-graph'],
-                        ['language' => 'Node / TypeScript', 'slug' => 'prism-graph-ts'],
-                    ],
-                ],
                         ['language' => 'Node / TypeScript', 'slug' => 'prism-workspace-ts'],
                     ],
                 ],

@@ -24,6 +24,20 @@ class ShowcaseSubmission extends Model
         'other' => 'Other',
     ];
 
+    /**
+     * Code hosts shared by many projects. A URL here is never one project's
+     * own site, so it is never an analytics property.
+     *
+     * @var list<string>
+     */
+    public const SHARED_REPO_HOSTS = [
+        'github.com',
+        'gitlab.com',
+        'bitbucket.org',
+        'codeberg.org',
+        'sourceforge.net',
+    ];
+
     protected $fillable = [
         'user_id',
         'site_key',
@@ -83,17 +97,46 @@ class ShowcaseSubmission extends Model
             $submission->site_key = $key;
         });
 
-        // Register the site with Fancy Heuristics so the Fancy Pixel's piped
+        // Register a WEBSITE with Fancy Heuristics so the Fancy Pixel's piped
         // interaction data (keyed by the same site_key) lands against a known
         // site — the host-side destination for the Analytics Suite. `visible`
         // starts false; the showcase's own per-kind verification gates the
-        // public listing.
+        // public listing. A repo carries no pixel, so it never becomes one
+        // (see isAnalyticsProperty).
         static::created(function (ShowcaseSubmission $submission): void {
+            if (! $submission->isAnalyticsProperty()) {
+                return;
+            }
+
             HeuristicsSite::firstOrCreate(
                 ['site_key' => $submission->site_key],
                 ['url' => $submission->url, 'visible' => false],
             );
         });
+    }
+
+    /**
+     * Can this project carry the Fancy Pixel, and so be an analytics site?
+     *
+     * Only a website can. A repo is verified by the static Fancified README
+     * badge, which collects nothing, and a URL on a shared code host
+     * (github.com and friends) is somebody else's site whatever kind it was
+     * submitted as: no Fancy collector runs there.
+     */
+    public function isAnalyticsProperty(): bool
+    {
+        if ($this->kind !== 'website') {
+            return false;
+        }
+
+        $host = parse_url((string) $this->url, PHP_URL_HOST);
+        if (! is_string($host) || $host === '') {
+            return false;
+        }
+
+        $host = strtolower((string) preg_replace('/^www[.]/i', '', $host));
+
+        return ! in_array($host, self::SHARED_REPO_HOSTS, true);
     }
 
     public function isFeatured(): bool

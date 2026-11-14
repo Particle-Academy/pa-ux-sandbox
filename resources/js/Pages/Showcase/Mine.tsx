@@ -29,6 +29,8 @@ type Submission = {
     description: string | null;
     status: "pending" | "verified" | "rejected";
     scanned_at: string | null;
+    /** Can this project carry the Fancy Pixel? False for repos: the badge reports nothing. */
+    analytics: boolean;
     stats: Stats;
 };
 
@@ -311,7 +313,8 @@ export default function MySubmissions({
                                         <StatusBadge status={s.status} />
                                     </div>
 
-                                    {/* Basic stats — free, owner-only */}
+                                    {/* Basic stats — free, owner-only. Websites only: a repo's badge reports nothing. */}
+                                    {s.analytics && (
                                     <div className="mt-4 rounded-lg bg-zinc-50 p-3 dark:bg-zinc-900/50">
                                         {hasActivity ? (
                                             <div className="flex flex-wrap gap-x-8 gap-y-3">
@@ -338,12 +341,12 @@ export default function MySubmissions({
                                             </div>
                                         ) : (
                                             <Text size="sm" className="!text-zinc-400">
-                                                No activity yet — stats appear once your{" "}
-                                                {s.kind === "repo" ? "badge" : "pixel"} starts
+                                                No activity yet — stats appear once your pixel starts
                                                 reporting.
                                             </Text>
                                         )}
                                     </div>
+                                    )}
 
                                     <div className="mt-4 flex flex-wrap items-center gap-2">
                                         <Button
@@ -355,15 +358,17 @@ export default function MySubmissions({
                                         >
                                             Manage
                                         </Button>
-                                        <Button
-                                            as={Link}
-                                            href={`/analytics?site=${encodeURIComponent(s.site_key)}`}
-                                            size="sm"
-                                            variant="ghost"
-                                            icon="trending-up"
-                                        >
-                                            Full analytics
-                                        </Button>
+                                        {s.analytics && (
+                                            <Button
+                                                as={Link}
+                                                href={`/analytics?site=${encodeURIComponent(s.site_key)}`}
+                                                size="sm"
+                                                variant="ghost"
+                                                icon="trending-up"
+                                            >
+                                                Full analytics
+                                            </Button>
+                                        )}
                                         {s.status === "verified" && (
                                             <Button
                                                 as={Link}

@@ -134,10 +134,11 @@ class AnalyticsController extends Controller
 
     /**
      * The sites this user is allowed to inspect: the site_keys of their OWN
-     * showcase submissions, plus the public showcase dogfood feed. Scoping to
-     * ownership is what stops one Pro user reading another's stats by guessing
-     * a `?site=` key (every submission auto-registers a HeuristicsSite, so an
-     * unscoped list would expose everyone's site).
+     * website submissions (the ones that can carry the pixel), plus the public
+     * showcase dogfood feed. Scoping to ownership is what stops one Pro user
+     * reading another's stats by guessing a `?site=` key (every website
+     * submission auto-registers a HeuristicsSite, so an unscoped list would
+     * expose everyone's site). Repos never appear: their badge collects nothing.
      *
      * @return list<array{site_key: string, url: string|null, visible: bool}>
      */
@@ -147,8 +148,13 @@ class AnalyticsController extends Controller
             ? ShowcaseSubmission::query()
                 ->where('user_id', $user->id)
                 ->whereNotNull('site_key')
+                ->where('kind', 'website')
                 ->orderByDesc('id')
-                ->get(['site_key', 'url', 'title'])
+                ->get(['site_key', 'kind', 'url', 'title'])
+                // Only projects that can carry the pixel. A repo (or a URL on
+                // a shared code host) collects nothing, so offering it here
+                // only produced a "github.com" entry with no data, ever.
+                ->filter(fn (ShowcaseSubmission $s): bool => $s->isAnalyticsProperty())
                 ->map(fn (ShowcaseSubmission $s): array => [
                     'site_key' => (string) $s->site_key,
                     'url' => $s->url,

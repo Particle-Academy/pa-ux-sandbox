@@ -85,3 +85,23 @@ it('reports zeroed stats for a submission with no activity yet', function () {
             ->where('submissions.0.stats.pageviews', 0)
         );
 });
+
+it('offers analytics only for a website, never for a repo', function () {
+    $me = User::factory()->create();
+    mkSubmission($me, 'mine-site');
+    mkSubmission($me, 'mine-repo', ['kind' => 'repo', 'url' => 'https://github.com/me/repo']);
+
+    // A repo carries the static badge, which reports nothing: no stat strip,
+    // and no link into the analytics suite.
+    $this->actingAs($me)
+        ->get('/showcase/mine')
+        ->assertOk()
+        ->assertInertia(fn ($page) => $page
+            ->where('submissions.0.site_key', 'mine-repo')
+            ->where('submissions.0.analytics', false)
+            ->where('submissions.0.stats', null)
+            ->where('submissions.1.site_key', 'mine-site')
+            ->where('submissions.1.analytics', true)
+            ->where('submissions.1.stats.totalEvents', 0)
+        );
+});

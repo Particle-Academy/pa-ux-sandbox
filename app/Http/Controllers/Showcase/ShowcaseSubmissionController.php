@@ -70,7 +70,10 @@ class ShowcaseSubmissionController extends Controller
             ->get()
             ->map(function (ShowcaseSubmission $submission) use ($report): array {
                 $data = $this->present($submission);
-                $data['stats'] = $submission->site_key
+                // Only a website carries the pixel. A repo's badge reports
+                // nothing, so it gets no stat strip and no analytics link.
+                $data['analytics'] = $submission->isAnalyticsProperty();
+                $data['stats'] = $data['analytics'] && $submission->site_key
                     ? $this->basicStats($report, (string) $submission->site_key)
                     : null;
 

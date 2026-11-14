@@ -135,6 +135,22 @@ final class FeatureSites
             'members' => ['family:holy-sheet', 'family:dark-slide', 'family:last-word', 'family:fine-print'],
             'bridges' => [],
         ],
+        // Every media component the kit ships (owner, 2026-11-14): react-fancy's
+        // viewers and StreamingAudio, and fancy-code's FileViewer. The channel
+        // components (a channel is one track, a playlist or a live stream) are
+        // built in react-fancy but unreleased, so the page says "coming" and
+        // the tagline names none of them. Plan: .ai/plans/media-channels.md.
+        // No bridge yet: registerMediaBridge is planned, not built.
+        'media' => [
+            'course' => null,
+            'name' => 'Media',
+            'tagline' => 'Image, video, audio and PDF viewers, a controlled player for MP3s and Icecast live streams, and a file viewer that picks the right one.',
+            'icon' => 'clapperboard',
+            'component' => 'Features/Media/Index',
+            'theme' => ['accent' => '#9333ea', 'accentDark' => '#c084fc', 'surface' => '#faf5ff', 'surfaceDark' => '#150a1f', 'font' => 'display'],
+            'members' => ['react-fancy', 'fancy-code'],
+            'bridges' => [],
+        ],
         'git' => [
             'course' => 'fancy-git',
             'name' => 'Git',

@@ -17,7 +17,7 @@ uses(TestCase::class);
  * resolves in the registry, and that each page names itself for SEO.
  */
 
-const FEATURE_SLUGS = ['human-plus', 'flow', 'tui', 'cms', 'documents', 'git', '3d', 'ecommerce', 'gamification', 'compliance', 'security', 'accessibility', 'connectors'];
+const FEATURE_SLUGS = ['human-plus', 'flow', 'tui', 'cms', 'documents', 'media', 'git', '3d', 'ecommerce', 'gamification', 'compliance', 'security', 'accessibility', 'connectors'];
 
 it('lists Human+ first, because it is the suite headline capability', function () {
     // SITES is in nav order; the dropdown, the index and the sitemap all read it.

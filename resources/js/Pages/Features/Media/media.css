@@ -1,0 +1,53 @@
+/* /features/media: a screening-room identity. A hero banded like a film
+   strip's sprocket holes, display type, and demos on a dim panel. Scoped to
+   [data-feature="media"], the attribute FeatureIdentity sets; colours come
+   from the --feature-* tokens, so dark mode is a token swap. */
+
+[data-feature="media"] {
+  --media-edge: color-mix(in oklch, var(--feature-accent) 30%, var(--border-1));
+  --media-panel: color-mix(in oklch, var(--feature-surface) 75%, var(--bg-0));
+}
+.dark [data-feature="media"],
+[data-theme="dark"] [data-feature="media"] {
+  --media-edge: color-mix(in oklch, var(--feature-accent) 26%, var(--border-1));
+  --media-panel: color-mix(in oklch, var(--feature-surface) 88%, var(--bg-0));
+}
+
+[data-feature="media"] .feature-hero {
+  background:
+    repeating-linear-gradient(90deg, transparent 0 18px, color-mix(in oklch, var(--feature-accent) 14%, transparent) 18px 30px) top / 100% 10px no-repeat,
+    repeating-linear-gradient(90deg, transparent 0 18px, color-mix(in oklch, var(--feature-accent) 14%, transparent) 18px 30px) bottom / 100% 10px no-repeat,
+    radial-gradient(80% 120% at 0% 100%, color-mix(in oklch, var(--feature-accent) 16%, transparent), transparent 65%),
+    var(--feature-surface);
+}
+[data-feature="media"] .feature-hero__glyph { border-radius: 999px; }
+
+.media-tap { min-height: 44px; }
+.media-anchor { scroll-margin-top: 88px; }
+
+/* Streaming player demo */
+.media-stations {
+  display: flex; flex-direction: column; gap: 12px; max-width: 760px;
+  padding: 16px; border-radius: 14px;
+  border: 1px solid var(--media-edge);
+  background: var(--media-panel);
+}
+.media-readout { font-family: var(--font-mono, ui-monospace, monospace); overflow-wrap: anywhere; }
+
+/* Viewers demo */
+.media-viewers { display: flex; flex-direction: column; gap: 12px; }
+.media-viewers__files { display: flex; flex-wrap: wrap; gap: 8px; }
+.media-viewers__stage {
+  height: 360px; overflow: hidden; border-radius: 12px;
+  border: 1px solid var(--media-edge);
+  background: var(--media-panel);
+}
+
+/* Channels: coming */
+.media-coming {
+  display: grid; gap: 12px; margin-top: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+}
+.media-coming__card { border-style: dashed; }
+.media-coming__name { font-family: var(--font-mono, ui-monospace, monospace); }
+.media-note { margin-top: 16px; border-left: 3px solid var(--feature-accent); }

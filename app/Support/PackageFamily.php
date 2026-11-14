@@ -186,6 +186,21 @@ final class PackageFamily
             ],
         ],
         [
+            'slug' => 'fancy-cowork',
+            'name' => 'Fancy Cowork',
+            'tagline' => 'Co-working sessions as a drop-in capability: people and agents share live UI through intents, never the DOM, under the host\'s own identity, membership and policy. A mirrored PHP + Node backend on one wire contract; the room hook, presence and cursors live in agent-integrations. No chat.',
+            'group' => 'platform',
+            'kind' => 'headless',
+            'sections' => [[
+                'label' => 'Backend',
+                'capability' => 'Co-work sessions, intent pipeline and channel auth',
+                'members' => [
+                    ['language' => 'PHP', 'slug' => 'fancy-cowork'],
+                    ['language' => 'Node / TypeScript', 'slug' => 'fancy-cowork-js'],
+                ],
+            ]],
+        ],
+        [
             'slug' => 'fancy-compliance',
             'name' => 'Fancy Compliance',
             'tagline' => 'Consent as a drop-in capability: an append-only consent ledger and a server gate in Laravel, and a React banner, preferences dialog and script gating where refusing is exactly as easy as accepting.',

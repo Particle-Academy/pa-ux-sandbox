@@ -59,6 +59,19 @@ class PackageRegistry
         // person to rely on it left a shipped package invisible for weeks.
         'fancy-schema',
 
+        // `fancy-cowork` + `fancy-cowork-js` -- CC-fancy-0037, BUILDING from
+        // 2026-11-14 (moved out of PLANNED the day the repos were created).
+        // Neither name exists on a registry: Packagist needs the owner's
+        // one-time submit and npm the owner's first publish, so listing them
+        // would offer `composer require particle-academy/fancy-cowork` and
+        // `npm install @particle-academy/fancy-cowork` for names that 404.
+        //
+        // REMOVE BOTH SLUGS when repo.packagist.org/p2/particle-academy/fancy-cowork.json
+        // and registry.npmjs.org/@particle-academy%2Ffancy-cowork each serve a
+        // version -- read from the registry, not `npm view`.
+        'fancy-cowork',
+        'fancy-cowork-js',
+
         // The two removals behind this list are the lesson worth keeping.
         //
         // `fancy-walkthrough` was removed 2026-09-29, the day it published.
@@ -346,23 +359,6 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
             'registries' => ['npm' => '@particle-academy/fancy-sign-pades'],
             'why' => 'Node twin of fancy-sign-pades (CC-fancy-0036 phases 2 and 3). Its CMS/TSP library (pkijs proposed) is an APPROVAL REQUEST in the plan, not a decision. Design: .ai/plans/fancy-sign.md. NOT YET STARTED; registered first. npm name 404 on 2026-11-13.',
         ],
-        // CC-fancy-0037 -- human co-work sessions. Owner named the pair
-        // fancy-cowork-php / fancy-cowork-js on 2026-11-13. Slugs follow the
-        // fancy-passkeys / fancy-sign pattern (PHP slug `fancy-cowork`, repo
-        // `fancy-cowork-php`), so moving an entry to META later cannot leave a
-        // stale planned twin behind.
-        'fancy-cowork' => [
-            'name' => 'particle-academy/fancy-cowork',
-            'repo' => 'Particle-Academy/fancy-cowork-php',
-            'registries' => ['packagist' => 'particle-academy/fancy-cowork'],
-            'why' => 'Generic human co-work sessions, PHP leg of CC-fancy-0037 (owner rulings 2026-11-13): one person driving another`s view, several sharing one space, a support rep activating an anonymous visitor`s request, editors on different pages of one document. Per-participant views with follow/drive relationships, intents over a server-routed or direct path, a host middleware pipeline with a minimum default set (authorise, rate limit, size, same-origin, masking, revision, audit), host-chosen consent including none. NO chat, and NO user, org or role models: identity, membership and authorisation come only from host resolvers and policies, and everything is denied until the host configures them. Design: .ai/plans/human-cobrowse-and-chat.md. NOT YET STARTED; registered first. Packagist name 404 on 2026-11-13 (control particle-academy/fancy-captcha resolved).',
-        ],
-        'fancy-cowork-js' => [
-            'name' => '@particle-academy/fancy-cowork',
-            'repo' => 'Particle-Academy/fancy-cowork-js',
-            'registries' => ['npm' => '@particle-academy/fancy-cowork'],
-            'why' => 'Node twin of fancy-cowork (CC-fancy-0037): the same host contracts, middleware pipeline and wire contract, held to the PHP leg by shared fancy-conformance fixtures, with a storage-adapter interface and no ORM. Client surfaces stay in agent-integrations. Design: .ai/plans/human-cobrowse-and-chat.md. NOT YET STARTED; registered first. npm name 404 on 2026-11-13 (control @particle-academy/fancy-passkeys resolved).',
-        ],
     ];
 
     /**
@@ -535,6 +531,8 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
         'fancy-passkeys' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#0891b2'],
         'fancy-passkeys-js' => ['group' => 'platform', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#0891b2'],
         'fancy-passkeys-ui' => ['group' => 'platform', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#0891b2'],
+        'fancy-cowork' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#0d9488'],
+        'fancy-cowork-js' => ['group' => 'platform', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#0d9488'],
         // Education — courses, certification, and the authoring agent. A META
         // entry is not optional: a slug missing from here falls through to the
         // fallback bucket and silently reads as a second-class "companion".
@@ -886,6 +884,25 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
                 'npm' => '@particle-academy/fancy-passkeys',
                 'repo' => 'Particle-Academy/fancy-passkeys-js',
                 'language' => 'TypeScript',
+            ],
+            [
+                'slug' => 'fancy-cowork',
+                'name' => 'particle-academy/fancy-cowork',
+                'tagline' => 'Generic human co-work sessions for Laravel: one person driving another\'s view, several sharing one space, a support rep activating an anonymous visitor\'s request, editors on different pages of one document. Per-participant views with follow and drive, a server intent pipeline with pluggable middleware and a minimal default set, channel auth and audit events. Identity, membership and permissions come only from host resolvers, and nothing is allowed until the host configures them. No chat. Headless; the client side is in agent-integrations.',
+                'composer' => 'particle-academy/fancy-cowork',
+                'repo' => 'Particle-Academy/fancy-cowork-php',
+                'packagist' => 'particle-academy/fancy-cowork',
+                'language' => 'PHP',
+                'pairs' => ['agent-integrations'],
+            ],
+            [
+                'slug' => 'fancy-cowork-js',
+                'name' => '@particle-academy/fancy-cowork',
+                'tagline' => 'Node/TS twin of particle-academy/fancy-cowork: the same host contracts, intent pipeline and wire contract, held to the PHP leg by shared fixtures, with a storage-adapter interface and no ORM. Default deny, no chat, zero runtime dependencies.',
+                'npm' => '@particle-academy/fancy-cowork',
+                'repo' => 'Particle-Academy/fancy-cowork-js',
+                'language' => 'TypeScript',
+                'pairs' => ['agent-integrations'],
             ],
             [
                 'slug' => 'fancy-git',

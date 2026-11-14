@@ -80,7 +80,7 @@
         "fancy-term": "0.8.1",
         "fancy-term-host": "0.13.0",
         "fancy-trading-js": "0.2.1",
-        "fancy-trading-ui": "0.1.0",
+        "fancy-trading-ui": "0.1.1",
         "fancy-tui": "0.11.0",
         "fancy-walkthrough": "0.4.1",
         "fancy-whats-new": "0.1.1",
@@ -111,6 +111,8 @@
         "prism-browser": "0.4.1",
         "prism-browser-py": "0.2.0",
         "prism-browser-ts": "0.3.0",
+        "prism-graph": "0.2.1",
+        "prism-graph-ts": "0.1.0",
         "prism-harness": "0.23.2",
         "prism-harness-py": "0.5.1",
         "prism-harness-ts": "0.10.3",
@@ -140,6 +142,38 @@
         "teachers-aid-ui": "0.3.1"
     },
     "releases": [
+        {
+            "slug": "prism-graph-ts",
+            "registry": "npm",
+            "version": "0.1.0",
+            "published_at": "2026-11-14T17:34:37Z",
+            "first": true,
+            "summary": "@particle-academy/prism-graph 0.1.0: the first release of the TypeScript port of particle-academy/prism-graph 0.2"
+        },
+        {
+            "slug": "prism-graph",
+            "registry": "composer",
+            "version": "0.2.1",
+            "published_at": "2026-11-14T08:13:07Z",
+            "first": false,
+            "summary": "prism-graph 0.2.1: security fix"
+        },
+        {
+            "slug": "prism-graph",
+            "registry": "composer",
+            "version": "0.2.0",
+            "published_at": "2026-11-14T07:50:09Z",
+            "first": false,
+            "summary": "prism-graph 0.2.0: long-term memory for AI agents"
+        },
+        {
+            "slug": "fancy-trading-ui",
+            "registry": "npm",
+            "version": "0.1.1",
+            "published_at": "2026-11-14T03:55:17Z",
+            "first": false,
+            "summary": "Releases need a lab-run certificate"
+        },
         {
             "slug": "react-fancy",
             "registry": "npm",
@@ -179,6 +213,14 @@
             "published_at": "2026-11-14T02:32:57Z",
             "first": false,
             "summary": "FunLabLeaderboard names can be links or custom content"
+        },
+        {
+            "slug": "prism-graph",
+            "registry": "composer",
+            "version": "0.1.0",
+            "published_at": "2026-11-14T01:38:17Z",
+            "first": true,
+            "summary": "prism-graph 0.1.0: first release"
         },
         {
             "slug": "fancy-mlm-ui",
@@ -6475,110 +6517,6 @@
             "published_at": "2026-09-15T22:42:53Z",
             "first": false,
             "summary": "FlowViewer takes zoomOnWheel"
-        },
-        {
-            "slug": "prism-mcp-ts",
-            "registry": "npm",
-            "version": "0.1.1",
-            "published_at": "2026-09-15T08:09:46Z",
-            "first": false,
-            "summary": "Security fix: a tool result can no longer close its own wrapper"
-        },
-        {
-            "slug": "prism-browser-py",
-            "registry": "pypi",
-            "version": "0.1.0",
-            "published_at": "2026-09-15T07:34:52Z",
-            "first": true,
-            "summary": "A policy-bounded browser surface for agents, for Python"
-        },
-        {
-            "slug": "prism-memory-py",
-            "registry": "pypi",
-            "version": "0.1.0",
-            "published_at": "2026-09-15T07:33:08Z",
-            "first": true,
-            "summary": "Persistent context, semantic recall and the vector-store contract, for Python"
-        },
-        {
-            "slug": "prism-harness-py",
-            "registry": "pypi",
-            "version": "0.1.0",
-            "published_at": "2026-09-15T07:28:52Z",
-            "first": true,
-            "summary": "Durable agent sessions for Python: threads, session state and store drivers"
-        },
-        {
-            "slug": "fancy-connector-core",
-            "registry": "npm",
-            "version": "0.8.1",
-            "published_at": "2026-09-15T06:08:07Z",
-            "first": false,
-            "summary": "verifyDelivery dispatches on a NAMED scheme kind and refuses one it does not know"
-        },
-        {
-            "slug": "fancy-connector-core",
-            "registry": "npm",
-            "version": "0.8.0",
-            "published_at": "2026-09-15T05:39:12Z",
-            "first": false,
-            "summary": "LeaseDeclaration: on TriggerDescriptor.lease (LeaseDeclaration.php with ExpiresAtUnit) — expiresAtFrom (a dotted path…"
-        },
-        {
-            "slug": "fancy-conformance",
-            "registry": "npm",
-            "version": "0.26.0",
-            "published_at": "2026-09-15T05:10:41Z",
-            "first": false,
-            "summary": null
-        },
-        {
-            "slug": "fancy-connector-core",
-            "registry": "npm",
-            "version": "0.7.0",
-            "published_at": "2026-09-15T04:57:12Z",
-            "first": false,
-            "summary": "SubscriptionLease: (src/lease.ts, SubscriptionLease.php with LeaseState and LeaseAction) — the duty a subscription…"
-        },
-        {
-            "slug": "fancy-flow-py",
-            "registry": "pypi",
-            "version": "0.23.1",
-            "published_at": "2026-09-15T04:04:20Z",
-            "first": false,
-            "summary": "Coordinator.run_to_completion() no longer stops a serial run of a large graph short"
-        },
-        {
-            "slug": "fancy-flow",
-            "registry": "npm",
-            "version": "0.73.0",
-            "published_at": "2026-09-15T03:53:44Z",
-            "first": false,
-            "summary": "BREAKING: a queued run now dispatches one node at a time"
-        },
-        {
-            "slug": "fancy-flow-py",
-            "registry": "pypi",
-            "version": "0.23.0",
-            "published_at": "2026-09-15T03:49:05Z",
-            "first": false,
-            "summary": "BREAKING: a queued run now dispatches one node at a time"
-        },
-        {
-            "slug": "fancy-conformance",
-            "registry": "npm",
-            "version": "0.25.0",
-            "published_at": "2026-09-15T03:37:52Z",
-            "first": false,
-            "summary": "flow/durable-dispatch: a queued run hands out one node at a time unless the host asks for more"
-        },
-        {
-            "slug": "fancy-flow-php",
-            "registry": "composer",
-            "version": "0.54.0",
-            "published_at": "2026-09-15T03:37:24Z",
-            "first": false,
-            "summary": "Nothing, if your graphs are chains or you already set max_concurrent: 1"
         }
     ]
 }

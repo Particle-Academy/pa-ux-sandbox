@@ -41,6 +41,8 @@ const PRISM_MEMBERS = [
     'prism-acp', 'prism-acp-ts', 'prism-mcp-server-ts',
     'prism-human-plus-py', 'prism-mcp-py', 'prism-opentelemetry-py',
     'prism-perplexity-py', 'prism-workspace-py',
+    // Registered 2026-11-14: Packagist v0.2.1 and npm 0.1.0.
+    'prism-graph', 'prism-graph-ts',
 ];
 
 function prismBackendSearch(string $query): array

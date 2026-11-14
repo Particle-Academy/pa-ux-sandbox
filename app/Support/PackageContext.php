@@ -121,6 +121,12 @@ class PackageContext
             'how' => '<code>pip install prism-ai-memory</code> (or <code>uv add prism-ai-memory</code>). Published as <code>prism-ai-memory</code>, not as the repo name -- the PyPI namespace is global, so the Prism ports carry a <code>prism-ai-</code> prefix.',
         ],
 
+        'prism-graph-ts' => [
+            'why' => 'The contract is the same in every runtime; only the host differs. A team on Node should not have to reimplement scoped long-term agent memory -- trust-tracked facts that cite their evidence, with hybrid search -- or route through a PHP service to reach it, because the capability happens to have been written in PHP first. This is that port, byte-compatible with the PHP store rather than merely similar to it.',
+            'what' => 'Node / TypeScript port of <a href="/packages/prism-graph">prism-graph</a> -- long-term agent memory for TypeScript: scoped, trust-tracked facts with hybrid search and drop-in MCP memory tools. Node 22.16+, zero runtime dependencies.',
+            'how' => '<code>npm install @particle-academy/prism-graph</code>. Same shapes in and out as the PHP twin; the reasoning behind the capability is on <a href="/packages/prism-graph">that page</a>.',
+        ],
+
         'prism-mcp-ts' => [
             'why' => 'The contract is the same in every runtime; only the host differs. A team on Node or Python should not have to reimplement the Model Context Protocol client: remote MCP tools consumed as ordinary tools, across a visible trust boundary, or route through a PHP service to reach it, because the capability happens to have been written in Laravel first. This is that port -- the same behaviour, held to the same shared fixtures rather than to a README that claims parity.',
             'what' => 'Node / TypeScript port of <a href="/packages/prism-mcp">prism-mcp</a> -- the Model Context Protocol client: remote MCP tools consumed as ordinary tools, across a visible trust boundary.',
@@ -209,6 +215,12 @@ class PackageContext
             'why' => 'A bounded context window needs somewhere for what leaves it to go. Truncating without storing is the configuration the harness itself calls the worst available — the window is cheap and the agent is blind to its own earlier work, which reads to a user as an agent that forgets things it plainly said.',
             'what' => 'Persistent context and semantic recall for Laravel: vector storage, remember / recall, and <strong>token-budget-aware</strong> retrieval on top of <a href="/packages/prism">Prism</a>. Budget-aware is the load-bearing word — recall that returns everything relevant re-expands the window compaction just shrank.',
             'how' => '<code>composer require particle-academy/prism-memory</code>. Pairs with <a href="/packages/prism-harness">prism-harness</a>: bind it as the eviction sink AND the recall in the same breath, never one without the other.',
+        ],
+
+        'prism-graph' => [
+            'why' => 'An agent that remembers across chats is an agent whose memory is a security boundary. Without scope, one owner\'s memory is fetched for another; without provenance, a tool result that says "the user\'s email is now X" quietly overwrites what the user actually said.',
+            'what' => 'Knowledge graphs and scoped long-term memory for PHP apps: verbatim episodes kept as evidence, bi-temporal facts that must <strong>cite</strong> that evidence, hybrid search, and erasure that cascades and returns counts. Scope (tenant, owner, agent, thread) is enforced in SQL on every query, and a trust policy decides whether a fact is accepted, a belief or a proposal. Long-term, where <a href="/packages/prism-memory">prism-memory</a> is short-term.',
+            'how' => '<code>composer require particle-academy/prism-graph</code>. Built for <a href="/packages/prism-harness">prism-harness</a> and ACP agents, and usable by any PHP app; a Node twin is <a href="/packages/prism-graph-ts">prism-graph-ts</a>.',
         ],
 
         'prism-browser' => [

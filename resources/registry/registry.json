@@ -1,5 +1,5 @@
 {
-    "count": 385,
+    "count": 387,
     "items": [
         {
             "$schema": "https://ui.particle.academy/schema/registry-item.json",
@@ -10747,6 +10747,28 @@
             "title": "@particle-academy/prism-browser",
             "description": "Node/TS port of prism-browser -- Guarded browser automation -- bounded observations and policy-first navigation.",
             "package": "prism-browser-ts",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "prism-graph",
+            "type": "registry:ui",
+            "title": "particle-academy/prism-graph",
+            "description": "Knowledge graphs and scoped long-term memory for PHP apps -- verbatim evidence with trust classes, cited bi-temporal facts, hybrid search and cascading erasure, scoped to tenant, owner, agent and thread in SQL on every query. Built for prism-harness and ACP agents; prism-memory is the short-term half.",
+            "package": "prism-graph",
+            "dependencies": [],
+            "registryDependencies": [],
+            "files": []
+        },
+        {
+            "$schema": "https://ui.particle.academy/schema/registry-item.json",
+            "name": "prism-graph-ts",
+            "type": "registry:ui",
+            "title": "@particle-academy/prism-graph",
+            "description": "Node/TS port of prism-graph -- Long-term agent memory for TypeScript: scoped, trust-tracked facts with hybrid search and drop-in MCP memory tools, byte-compatible with the PHP package. Zero runtime dependencies.",
+            "package": "prism-graph-ts",
             "dependencies": [],
             "registryDependencies": [],
             "files": []

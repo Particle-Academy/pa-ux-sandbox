@@ -473,6 +473,7 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
         'prism-browser-py' => ['group' => 'platform', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#a855f7'],
         'prism-harness-ts' => ['group' => 'platform', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#a855f7'],
         'prism-harness-py' => ['group' => 'platform', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#a855f7'],
+        'prism-graph-ts' => ['group' => 'platform', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#a855f7'],
         'prism-human-plus-ts' => ['group' => 'platform', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#a855f7'],
         'prism-mcp-ts' => ['group' => 'platform', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#a855f7'],
         'prism-memory-ts' => ['group' => 'platform', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#a855f7'],
@@ -563,6 +564,7 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
         'prism-mcp' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#a855f7'],
         'prism-opentelemetry' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#a855f7'],
         'prism-perplexity' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#a855f7'],
+        'prism-graph' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#a855f7'],
         'prism-workspace' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#a855f7'],
         'prism-memory' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#a855f7'],
         'prism-browser' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#a855f7'],
@@ -1184,6 +1186,17 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
                 'language' => 'TypeScript',
             ],
             [
+            // Registered 2026-11-14 at Prism's request, on npm 0.1.0. Node
+            // 22.16+, zero runtime dependencies, byte-compatible with the PHP
+            // prism-graph store.
+            [
+                'slug' => 'prism-graph-ts',
+                'name' => '@particle-academy/prism-graph',
+                'tagline' => 'Node/TS port of prism-graph -- Long-term agent memory for TypeScript: scoped, trust-tracked facts with hybrid search and drop-in MCP memory tools, byte-compatible with the PHP package. Zero runtime dependencies.',
+                'npm' => '@particle-academy/prism-graph',
+                'repo' => 'Particle-Academy/prism-graph-ts',
+                'language' => 'TypeScript',
+            ],
                 'slug' => 'prism-workspace-ts',
                 'name' => '@particle-academy/prism-workspace',
                 'tagline' => 'Node/TS port of prism-workspace -- Sandboxed, session-scoped agent workspaces behind a path guard.',
@@ -1637,6 +1650,18 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
                 'composer' => 'particle-academy/prism-acp',
                 'repo' => 'Particle-Academy/prism-acp',
                 'packagist' => 'particle-academy/prism-acp',
+            // Registered 2026-11-14 at Prism's request, on Packagist v0.2.1
+            // (it had shipped v0.1.0 to v0.2.1 unlisted). Long-term memory,
+            // where prism-memory is short-term: the two are different jobs.
+            [
+                'slug' => 'prism-graph',
+                'name' => 'particle-academy/prism-graph',
+                'tagline' => 'Knowledge graphs and scoped long-term memory for PHP apps -- verbatim evidence with trust classes, cited bi-temporal facts, hybrid search and cascading erasure, scoped to tenant, owner, agent and thread in SQL on every query. Built for prism-harness and ACP agents; prism-memory is the short-term half.',
+                'composer' => 'particle-academy/prism-graph',
+                'repo' => 'Particle-Academy/prism-graph',
+                'packagist' => 'particle-academy/prism-graph',
+                'language' => 'PHP',
+            ],
                 'language' => 'PHP',
             ],
             // Three packages registered as PLANNED -- "NOT YET STARTED" -- that

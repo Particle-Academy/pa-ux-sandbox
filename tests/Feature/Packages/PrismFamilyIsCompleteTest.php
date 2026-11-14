@@ -57,6 +57,9 @@ final class PrismFamilyIsCompleteTest extends TestCase
         // Published v0.1.0-alpha.5 and absent from here until the 2026-10-27
         // catalog audit -- the tenth, and this test did still pass.
         'prism-acp',
+        // v0.1.0 to v0.2.1 shipped unlisted; registered 2026-11-14 at Prism's
+        // request, verified against the packagist.org package API that day.
+        'prism-graph',
     ];
 
     public function test_every_published_prism_package_is_registered(): void

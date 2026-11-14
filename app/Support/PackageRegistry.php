@@ -72,6 +72,15 @@ class PackageRegistry
         'fancy-cowork',
         'fancy-cowork-js',
 
+        // `fancy-sockets` -- CC-fancy-0041, BUILT 2026-11-14 (moved out of
+        // PLANNED the day the repo was built). The npm name does not exist
+        // until the owner's first publish, so listing it would offer
+        // `npm install @particle-academy/fancy-sockets` for a name that 404s.
+        //
+        // REMOVE THIS SLUG when registry.npmjs.org/@particle-academy%2Ffancy-sockets
+        // serves a version -- read from the registry, not `npm view`.
+        'fancy-sockets',
+
         // The two removals behind this list are the lesson worth keeping.
         //
         // `fancy-walkthrough` was removed 2026-09-29, the day it published.
@@ -176,12 +185,6 @@ class PackageRegistry
      * @var array<string, array{name: string, repo: string, registries: array<string,string>, why: string}>
      */
     public const PLANNED = [
-        'fancy-sockets' => [
-            'name' => '@particle-academy/fancy-sockets',
-            'repo' => 'Particle-Academy/fancy-sockets',
-            'registries' => ['npm' => '@particle-academy/fancy-sockets'],
-            'why' => 'Pusher-protocol WebSockets server for Node (CC-fancy-0041, owner-approved 2026-11-14): one process hosting many apps that can be added, changed or removed at runtime, client events off by default and the presence sender stamped by the server, bounded limits, and a one-command test server for CI. Genie runs it in place of Sockudo, and the co-work lab benchmark runs on it. Plan: .ai/plans/fancy-sockets.md.',
-        ],
         'charlotte-js' => [
             'name' => '@particle-academy/charlotte',
             'repo' => 'Particle-Academy/charlotte-js',
@@ -604,6 +607,7 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
         'fancy-trading-ui' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#22c55e'],
         'fancy-pty' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#0ea5e9'],
         'fancy-ws' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#0284c7'],
+        'fancy-sockets' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#0284c7'],
         // Onboarding.
         'fancy-walkthrough' => ['group' => 'surfaces', 'ecosystem' => 'ts', 'kind' => 'ui', 'accent' => '#6366f1'],
         // Python backends -- each the third runtime of an existing pair.
@@ -1346,6 +1350,14 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
                 'tagline' => 'ZERO-DEPENDENCY WebSocket SERVER for Node — RFC 6455 framing over node:http\'s `upgrade` event, on node:http/net/crypto/events and nothing else. Node 22 ships a WebSocket CLIENT (the `WebSocket` global, from undici) and no server; this is the other half. `verify` runs BEFORE the 101, so a refused handshake is a plain HTTP 401/403 rather than an accept-then-close that hands an unauthenticated peer a live frame parser.',
                 'npm' => '@particle-academy/fancy-ws',
                 'repo' => 'Particle-Academy/fancy-ws',
+                'language' => 'TypeScript',
+            ],
+            [
+                'slug' => 'fancy-sockets',
+                'name' => '@particle-academy/fancy-sockets',
+                'tagline' => 'Pusher-protocol WebSockets SERVER for Node: one process hosts many apps, added, changed or removed at runtime without dropping anyone else. Works with pusher-js, Laravel Echo and Laravel\'s HTTP broadcaster. Client events are off by default, and on presence channels the server stamps the sender it authenticated. Every limit is a setting, refused with the protocol\'s codes. `npx fancy-sockets --app id:key:secret --port 0` or `startTestServer()` for CI, wss with a self-signed certificate built from node:crypto.',
+                'npm' => '@particle-academy/fancy-sockets',
+                'repo' => 'Particle-Academy/fancy-sockets',
                 'language' => 'TypeScript',
             ],
             [

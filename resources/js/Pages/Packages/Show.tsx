@@ -8,6 +8,8 @@ import { getComponentPreview, GenericPlaceholder } from "./ComponentPreviews";
 import { ContextCards } from "./ContextCards";
 import { PkgPreview } from "./PkgPreview";
 import { Prose } from "./Prose";
+import { DownloadStats } from "./Downloads";
+import type { Downloads } from "../../lib/downloads";
 import TuiFrame from "./TuiFrame";
 
 /**
@@ -106,8 +108,10 @@ export default function PackagesShow({
     context,
     readmeHtml = null,
     family = null,
+    downloads = null,
 }: {
     package: Pkg;
+    downloads?: Downloads;
     context: Context | null;
     readmeHtml?: string | null;
     family?: Family | null;
@@ -157,6 +161,8 @@ export default function PackagesShow({
                                 </span>
                             )}
                         </div>
+
+                        <DownloadStats downloads={downloads} className="pkg-hero__downloads" />
 
                         {family && (
                             <Link href={family.href} className="fam-strip">

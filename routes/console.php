@@ -1,5 +1,6 @@
 <?php
 
+use App\Support\DreamRegistry;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Schedule;
@@ -10,7 +11,7 @@ Artisan::command('inspire', function () {
 
 // Showcase upkeep.
 Artisan::command('showcase:auto-archive', function () {
-    $archived = \App\Support\DreamRegistry::autoArchive();
+    $archived = DreamRegistry::autoArchive();
     $this->info('Archived '.count($archived).' dreams: '.implode(', ', $archived));
 })->purpose('Auto-archive dreams whose net votes have gone negative.');
 
@@ -23,3 +24,9 @@ Schedule::command('showcase:auto-archive')->hourly();
 // by ScanShowcaseSubmission's own per-kind verification, so this updates the
 // HeuristicsSite flags without touching the listing.
 Schedule::command('heuristics:verify-pixels')->twiceDailyAt(4, 16, 30);
+
+// Public download counts (npm, Packagist, PyPI) for /packages, each package
+// page and the home page. A failed fetch keeps the last known counts.
+Schedule::command('packages:fetch-downloads')
+    ->dailyAt((string) config('package-downloads.schedule_at', '04:30'))
+    ->withoutOverlapping();

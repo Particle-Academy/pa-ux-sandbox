@@ -56,6 +56,7 @@ import {
     RectangleHorizontal,
 } from "lucide-react";
 import { Layout } from "./Layout";
+import { formatCount } from "@/lib/downloads";
 
 // ─── Props ───────────────────────────────────────────────────────────────────
 
@@ -87,6 +88,8 @@ type HomeProps = {
     /** Derived from the registry (App\Support\Seo\KitFacts), never typed. */
     languages: string[];
     registries: string[];
+    /** Every published package, npm + Packagist + PyPI, last month. Null until measured. */
+    downloads_this_month?: number | null;
 };
 
 /** "npm, Packagist or PyPI" — a list as prose, ending in `last`. */
@@ -119,7 +122,7 @@ export function langTag(language: string): { label: string; color: BadgeColor } 
     return { label: "typescript", color: "blue" };
 }
 
-export default function Home({ packages, companions, total_components, languages, registries }: HomeProps) {
+export default function Home({ packages, companions, total_components, languages, registries, downloads_this_month = null }: HomeProps) {
     return (
         <Toast.Provider position="bottom-right">
             <Layout bleed>
@@ -127,7 +130,7 @@ export default function Home({ packages, companions, total_components, languages
                     A raw <Head title> here would duplicate the fancy-seo Blade
                     baseline's <title> under SSR. */}
                 <ServerSeo />
-                <Hero packages={packages} companions={companions} languages={languages} />
+                <Hero packages={packages} companions={companions} languages={languages} downloads={downloads_this_month} />
                 <PackageTicker packages={packages} />
                 <Packages packages={packages} companions={companions} registries={registries} />
                 <HumanPlus />
@@ -142,7 +145,17 @@ export default function Home({ packages, companions, total_components, languages
 
 // ─── Hero ──────────────────────────────────────────────────────────────────
 
-function Hero({ packages, companions, languages }: { packages: PackageRow[]; companions: CompanionRow[]; languages: string[] }) {
+function Hero({
+    packages,
+    companions,
+    languages,
+    downloads = null,
+}: {
+    packages: PackageRow[];
+    companions: CompanionRow[];
+    languages: string[];
+    downloads?: number | null;
+}) {
     // The real size of the kit — the UI grid plus every companion package. The
     // hero used to say "N UI packages" off the grid alone, which undercounted
     // the ecosystem by more than half.
@@ -189,6 +202,13 @@ function Hero({ packages, companions, languages }: { packages: PackageRow[]; com
                         <span className="meta-item">
                             <Layers size={13} /> React 19 · PHP 8.4
                         </span>
+                        {/* Nothing until the first fetch lands: never a 0 that was not measured. */}
+                        {downloads !== null && (
+                            <Badge color="violet" data-kit-downloads="">
+                                <span title={downloads.toLocaleString("en-US")}>{formatCount(downloads)}</span>
+                                {" downloads this month"}
+                            </Badge>
+                        )}
                     </div>
                 </div>
 

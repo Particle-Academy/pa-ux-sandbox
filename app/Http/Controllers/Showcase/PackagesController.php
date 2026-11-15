@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Showcase;
 use App\Http\Controllers\Controller;
 use App\Models\GithubRepoStat;
 use App\Support\ComponentContext;
+use App\Support\Downloads\DownloadStats;
 use App\Support\PackageContext;
 use App\Support\PackageFamily;
 use App\Support\PackageRegistry;
@@ -23,6 +24,23 @@ class PackagesController extends Controller
         private readonly ReadmeSource $readmes,
         private readonly TuiPreviewSource $tuiPreviews,
     ) {}
+
+    /** @var array<string, array{monthly: int, total: ?int}>|null slug => download counts, loaded once per request */
+    private ?array $downloadMap = null;
+
+    /**
+     * Download counts for one or more slugs (summed), or null when none was
+     * measured: the page then shows nothing rather than a zero.
+     *
+     * @param  list<string>  $slugs
+     * @return array{monthly: int, total: ?int}|null
+     */
+    private function downloadsFor(array $slugs): ?array
+    {
+        $this->downloadMap ??= DownloadStats::map();
+
+        return DownloadStats::sumFromMap($this->downloadMap, $slugs);
+    }
 
     public function index(): Response
     {
@@ -137,6 +155,7 @@ class PackagesController extends Controller
             'kind' => $family['kind'],
             'components_count' => $components,
             'stars' => $starCount,
+            'downloads' => $this->downloadsFor($slugs),
             'npm' => null,
             'composer' => null,
             'download' => null,
@@ -177,6 +196,7 @@ class PackagesController extends Controller
             'kind' => $p['kind'],
             'components_count' => count($p['components'] ?? []),
             'stars' => isset($p['repo']) ? ($stars[strtolower((string) $p['repo'])] ?? null) : null,
+            'downloads' => $this->downloadsFor([(string) $p['slug']]),
             'npm' => $p['npm'] ?? null,
             'composer' => $p['composer'] ?? null,
             'download' => $p['download'] ?? null,
@@ -241,6 +261,7 @@ class PackagesController extends Controller
 
         return Inertia::render('Packages/Show', [
             'package' => $pkg,
+            'downloads' => $this->downloadsFor([(string) $pkg['slug']]),
             'context' => PackageContext::find($pkg['slug']),
             'readmeHtml' => $readmeHtml,
             // So a member page can point back at the product it belongs to.
@@ -306,6 +327,7 @@ class PackagesController extends Controller
                 'ui_count' => $uiCount,
                 'backend_count' => count($members) - $uiCount,
                 'previews' => array_sum(array_column($members, 'components_count')),
+                'downloads' => $this->downloadsFor(array_column($members, 'slug')),
             ],
             'context' => PackageContext::find($family['slug']),
             'readmeHtml' => $readmeHtml,
@@ -361,6 +383,7 @@ class PackagesController extends Controller
             'components_count' => count($rec['components'] ?? []),
             'href' => $this->memberKeepsOwnPage($rec) ? "/packages/{$m['slug']}" : null,
             'stars' => isset($rec['repo']) ? ($stars[strtolower((string) $rec['repo'])] ?? null) : null,
+            'downloads' => $this->downloadsFor([$m['slug']]),
             'repoUrl' => isset($rec['repo']) ? "https://github.com/{$rec['repo']}" : null,
             'npmUrl' => isset($rec['npm']) ? "https://www.npmjs.com/package/{$rec['npm']}" : null,
             'packagistUrl' => isset($rec['packagist']) ? "https://packagist.org/packages/{$rec['packagist']}" : null,

@@ -25,6 +25,8 @@ import {
     type Eco,
 } from "./basket";
 import { PkgPreview } from "./PkgPreview";
+import { DownloadsBadge } from "./Downloads";
+import type { Downloads } from "../../lib/downloads";
 
 /**
  * The /packages listing.
@@ -56,6 +58,8 @@ type Member = {
     components_count: number;
     href: string | null;
     accent: string;
+    /** Last month's downloads (+ all-time); null when never measured. */
+    downloads?: Downloads;
 };
 
 /**
@@ -80,6 +84,8 @@ type Pkg = {
     backend_count: number;
     components_count: number;
     stars: number | null;
+    /** Summed across a family's members; null when never measured. */
+    downloads: Downloads;
     npm: string | null;
     composer: string | null;
     pypi?: string | null;
@@ -488,6 +494,7 @@ function ListingCard({ pkg }: { pkg: Pkg }) {
                     </span>
                     <h3 className={`lcard__name${ui ? "" : " lcard__name--mono"}`}>{displayName(pkg)}</h3>
                     <span className="pkg-eco" data-eco={pkg.ecosystem}>{ECO_LABEL[pkg.ecosystem]}</span>
+                    <DownloadsBadge downloads={pkg.downloads} className="lcard__downloads" />
                     {isFamily && (
                         <span className="fam-count">{pkg.member_count} packages · one product</span>
                     )}

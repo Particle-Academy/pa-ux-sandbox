@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Showcase;
 
 use App\Http\Controllers\Controller;
+use App\Support\Downloads\DownloadStats;
 use App\Support\PackageRegistry;
 use App\Support\Seo\KitFacts;
 use Inertia\Inertia;
@@ -28,7 +29,7 @@ class HomeController extends Controller
      * component count. Exposed so the CMS demo (`/cms/home`) can re-author the
      * exact same page from the exact same data.
      *
-     * @return array{packages: array<int, array<string, mixed>>, companions: array<int, array<string, mixed>>, total_components: int, languages: list<string>, registries: list<string>}
+     * @return array{packages: array<int, array<string, mixed>>, companions: array<int, array<string, mixed>>, total_components: int, languages: list<string>, registries: list<string>, downloads_this_month: ?int}
      */
     public function props(): array
     {
@@ -85,6 +86,9 @@ class HomeController extends Controller
             // while six Python packages were published.
             'languages' => KitFacts::languages(),
             'registries' => KitFacts::registries(),
+            // npm + Packagist + PyPI, last month, every published package. Null
+            // until the first successful fetch, and the page then says nothing.
+            'downloads_this_month' => DownloadStats::kitMonthly(),
         ];
     }
 

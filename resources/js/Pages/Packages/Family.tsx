@@ -7,6 +7,8 @@ import { BASKETS, BasketTag, ECO_LABEL, Snippet, deScope, initials, type Basket,
 import { ContextCards } from "./ContextCards";
 import { PkgPreview } from "./PkgPreview";
 import { Prose } from "./Prose";
+import { DownloadStats, DownloadsBadge } from "./Downloads";
+import type { Downloads } from "../../lib/downloads";
 
 /**
  * A family page — several packages, one product.
@@ -36,6 +38,8 @@ type Member = {
     /** Set when this member keeps its own page (it ships components/demos). */
     href: string | null;
     stars: number | null;
+    /** Null when never measured. */
+    downloads?: Downloads;
     repoUrl: string | null;
     npmUrl: string | null;
     packagistUrl: string | null;
@@ -55,6 +59,8 @@ type Family = {
     ui_count: number;
     backend_count: number;
     previews: number;
+    /** Summed across the members; null when never measured. */
+    downloads?: Downloads;
 };
 type Context = { why: string; what: string; how: string };
 
@@ -115,6 +121,8 @@ export default function PackagesFamily({
                         <div className="pkg-hero__meta">
                             <BasketTag basket={family.basket} languages={family.languages} />
                         </div>
+
+                        <DownloadStats downloads={family.downloads} className="pkg-hero__downloads" />
 
                         <div className="start-card__cta">
                             {family.ui_count > 0 && flagship?.href ? (
@@ -312,6 +320,7 @@ function MemberRow({ member: m }: { member: Member }) {
                             {m.components_count === 1 ? "" : "s"}
                         </span>
                     )}
+                    <DownloadsBadge downloads={m.downloads} />
                 </div>
                 {m.tagline && <p className="mem-tag">{m.tagline}</p>}
                 {m.install && (

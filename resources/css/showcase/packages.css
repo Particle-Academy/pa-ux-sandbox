@@ -1076,3 +1076,7 @@ section.pkg-section-head + section.pkg-section-head {
 @media (prefers-reduced-motion: reduce) {
   .mp-caret { animation: none; }
 }
+
+/* Download counts (Downloads.tsx). Rendered only when measured. */
+.pkg-hero__downloads { margin-top: var(--space-4); }
+.lcard__downloads { font-variant-numeric: tabular-nums; }

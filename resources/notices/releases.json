@@ -1,7 +1,7 @@
 {
     "window_days": 60,
     "latest": {
-        "agent-integrations": "0.59.0",
+        "agent-integrations": "0.62.0",
         "change-council": "0.7.2",
         "charlotte": "0.3.0",
         "classroom": "0.7.0",
@@ -24,7 +24,7 @@
         "fancy-cli": "0.9.0",
         "fancy-cms": "0.9.1",
         "fancy-cms-ui": "0.14.1",
-        "fancy-code": "0.17.0",
+        "fancy-code": "0.17.1",
         "fancy-compliance": "0.1.2",
         "fancy-compliance-ui": "0.4.0",
         "fancy-conformance": "0.48.0",
@@ -71,7 +71,7 @@
         "fancy-pty": "0.5.0",
         "fancy-pwa": "0.2.0",
         "fancy-qr": "0.1.0",
-        "fancy-query": "0.9.1",
+        "fancy-query": "0.10.0",
         "fancy-screens": "0.7.1",
         "fancy-seo": "0.6.0",
         "fancy-sheets": "0.14.0",
@@ -85,7 +85,7 @@
         "fancy-walkthrough": "0.4.1",
         "fancy-whats-new": "0.1.1",
         "fancy-whiteboard": "0.5.2",
-        "fancy-ws": "0.1.1",
+        "fancy-ws": "0.2.0",
         "fancy-x-files": "0.2.0",
         "fancy-x-files-js": "0.2.0",
         "fancy-x-files-ui": "0.2.1",
@@ -100,20 +100,20 @@
         "laravel-fms": "0.12.0",
         "laravel-fun-lab": "0.7.0",
         "laravel-jobs": "0.5.0",
-        "last-word": "0.20.2",
-        "last-word-js": "0.16.2",
+        "last-word": "0.21.0",
+        "last-word-js": "0.17.0",
         "last-word-py": "0.12.2",
         "last-word-ui": "0.5.0",
         "mcp-relay-client": "0.3.0",
-        "prism": "0.147.2",
+        "prism": "0.148.0",
         "prism-acp": "0.1.1",
-        "prism-acp-ts": "0.41.2",
+        "prism-acp-ts": "0.42.0",
         "prism-browser": "0.4.1",
         "prism-browser-py": "0.2.0",
         "prism-browser-ts": "0.3.0",
-        "prism-graph": "0.2.1",
+        "prism-graph": "0.3.0",
         "prism-graph-ts": "0.1.0",
-        "prism-harness": "0.23.2",
+        "prism-harness": "0.24.0",
         "prism-harness-py": "0.5.1",
         "prism-harness-ts": "0.10.3",
         "prism-human-plus": "0.6.0",
@@ -121,7 +121,7 @@
         "prism-human-plus-ts": "0.5.0",
         "prism-mcp": "0.3.0",
         "prism-mcp-py": "0.3.0",
-        "prism-mcp-server-ts": "0.6.0",
+        "prism-mcp-server-ts": "0.7.0",
         "prism-mcp-ts": "0.4.0",
         "prism-memory": "0.4.0",
         "prism-memory-py": "0.1.0",
@@ -142,6 +142,110 @@
         "teachers-aid-ui": "0.3.1"
     },
     "releases": [
+        {
+            "slug": "agent-integrations",
+            "registry": "npm",
+            "version": "0.62.0",
+            "published_at": "2026-11-15T10:54:18Z",
+            "first": false,
+            "summary": "registerAgentChatBridge at ./bridges/agent-chat"
+        },
+        {
+            "slug": "fancy-ws",
+            "registry": "npm",
+            "version": "0.2.0",
+            "published_at": "2026-11-15T10:03:48Z",
+            "first": false,
+            "summary": "connection.bufferedAmount: the bytes queued for a peer and not yet handed to the OS, as the browser…"
+        },
+        {
+            "slug": "prism-graph",
+            "registry": "composer",
+            "version": "0.3.0",
+            "published_at": "2026-11-15T09:41:54Z",
+            "first": false,
+            "summary": "prism-graph 0.3.0: scoped, paginated listing of sources and chunks (G-282, contract g282.1)"
+        },
+        {
+            "slug": "fancy-code",
+            "registry": "npm",
+            "version": "0.17.1",
+            "published_at": "2026-11-15T05:41:19Z",
+            "first": false,
+            "summary": "A soft-wrapped line keeps one gutter number in <CodeEditor wordWrap>"
+        },
+        {
+            "slug": "prism-graph",
+            "registry": "composer",
+            "version": "0.2.2",
+            "published_at": "2026-11-15T03:21:51Z",
+            "first": false,
+            "summary": "prism-graph 0.2.2: load the sqlite-vec extension from configuration (G-281)"
+        },
+        {
+            "slug": "prism",
+            "registry": "composer",
+            "version": "0.148.0",
+            "published_at": "2026-11-15T01:38:25Z",
+            "first": false,
+            "summary": "Prism Server no longer returns exception messages to API callers (#150), and apps can decide how errors are rendered"
+        },
+        {
+            "slug": "prism-mcp-server-ts",
+            "registry": "npm",
+            "version": "0.7.0",
+            "published_at": "2026-11-15T00:26:40Z",
+            "first": false,
+            "summary": "ServerOptions.instructions: the server's natural-language guidance for a client's model"
+        },
+        {
+            "slug": "agent-integrations",
+            "registry": "npm",
+            "version": "0.61.0",
+            "published_at": "2026-11-14T23:25:12Z",
+            "first": false,
+            "summary": "Server-routed presence: presenceRouting: \"server\" | \"direct\" | \"auto\""
+        },
+        {
+            "slug": "prism-acp-ts",
+            "registry": "npm",
+            "version": "0.42.0",
+            "published_at": "2026-11-14T22:27:42Z",
+            "first": false,
+            "summary": "@particle-academy/prism-acp 0.42.0: a prompt Claude Code folds into a running turn now settles (G-266)"
+        },
+        {
+            "slug": "last-word-js",
+            "registry": "npm",
+            "version": "0.17.0",
+            "published_at": "2026-11-14T21:26:57Z",
+            "first": false,
+            "summary": "Named images (CC-fancy-0039), at parity with PHP particle-academy/last-word"
+        },
+        {
+            "slug": "fancy-query",
+            "registry": "npm",
+            "version": "0.10.0",
+            "published_at": "2026-11-14T21:00:26Z",
+            "first": false,
+            "summary": "Presence members and whispers on EchoChannelLike and fancy-query/socket"
+        },
+        {
+            "slug": "agent-integrations",
+            "registry": "npm",
+            "version": "0.60.0",
+            "published_at": "2026-11-14T20:56:30Z",
+            "first": false,
+            "summary": "Co-work sessions, client side"
+        },
+        {
+            "slug": "last-word",
+            "registry": "composer",
+            "version": "0.21.0",
+            "published_at": "2026-11-14T19:29:28Z",
+            "first": false,
+            "summary": "Named images (CC-fancy-0039)"
+        },
         {
             "slug": "prism-graph-ts",
             "registry": "npm",
@@ -205,6 +309,14 @@
             "published_at": "2026-11-14T02:36:58Z",
             "first": false,
             "summary": "Releases need a lab-run certificate"
+        },
+        {
+            "slug": "prism-harness",
+            "registry": "composer",
+            "version": "0.24.0",
+            "published_at": "2026-11-14T02:36:28Z",
+            "first": false,
+            "summary": "prism-harness 0.24.0: memory seams"
         },
         {
             "slug": "fancy-fun-lab-ui",
@@ -6381,142 +6493,6 @@
             "published_at": "2026-09-16T23:49:57Z",
             "first": false,
             "summary": "The for_each kind stopped describing something it does not do"
-        },
-        {
-            "slug": "fancy-flow-php",
-            "registry": "composer",
-            "version": "0.57.1",
-            "published_at": "2026-09-16T06:09:44Z",
-            "first": false,
-            "summary": "WorkflowRun::awaitingForm() no longer returns null for a gate inside a subflow"
-        },
-        {
-            "slug": "fancy-flow",
-            "registry": "npm",
-            "version": "0.77.0",
-            "published_at": "2026-09-16T04:28:46Z",
-            "first": false,
-            "summary": "A human gate inside a subflow can be answered again"
-        },
-        {
-            "slug": "fancy-flow-py",
-            "registry": "pypi",
-            "version": "0.26.0",
-            "published_at": "2026-09-16T04:27:17Z",
-            "first": false,
-            "summary": "A human gate inside a subflow can be answered again"
-        },
-        {
-            "slug": "fancy-flow-php",
-            "registry": "composer",
-            "version": "0.57.0",
-            "published_at": "2026-09-16T04:24:35Z",
-            "first": false,
-            "summary": "A human gate inside a subflow can be answered again"
-        },
-        {
-            "slug": "fancy-flow-py",
-            "registry": "pypi",
-            "version": "0.25.0",
-            "published_at": "2026-09-16T03:50:17Z",
-            "first": false,
-            "summary": "import_workflow() now READS a node's declared inputs / outputs, and export_workflow() writes them back"
-        },
-        {
-            "slug": "fancy-flow-php",
-            "registry": "composer",
-            "version": "0.56.0",
-            "published_at": "2026-09-16T03:48:04Z",
-            "first": false,
-            "summary": "Workflow::import() now READS a node's declared inputs / outputs, and export() writes them back"
-        },
-        {
-            "slug": "fancy-conformance",
-            "registry": "npm",
-            "version": "0.29.0",
-            "published_at": "2026-09-16T03:47:52Z",
-            "first": false,
-            "summary": "flow/graph-runs row 0003-branch-false-log: the lg node now carries an explicit \"outputs\": []"
-        },
-        {
-            "slug": "fancy-flow",
-            "registry": "npm",
-            "version": "0.76.0",
-            "published_at": "2026-09-16T03:47:19Z",
-            "first": false,
-            "summary": "outputs: [] means \"this node publishes nothing\""
-        },
-        {
-            "slug": "fancy-conformance",
-            "registry": "npm",
-            "version": "0.28.0",
-            "published_at": "2026-09-16T03:40:09Z",
-            "first": false,
-            "summary": "flow/graph-runs row 0003-branch-false-log: the o node no longer runs, and its output is gone from the golden"
-        },
-        {
-            "slug": "fancy-flow",
-            "registry": "npm",
-            "version": "0.75.0",
-            "published_at": "2026-09-16T02:50:00Z",
-            "first": false,
-            "summary": "A node can activate a CHOSEN SUBSET of its output ports"
-        },
-        {
-            "slug": "fancy-flow-php",
-            "registry": "composer",
-            "version": "0.55.0",
-            "published_at": "2026-09-16T02:44:37Z",
-            "first": false,
-            "summary": "A node can activate a CHOSEN SUBSET of its output ports"
-        },
-        {
-            "slug": "fancy-flow-py",
-            "registry": "pypi",
-            "version": "0.24.0",
-            "published_at": "2026-09-16T02:43:53Z",
-            "first": false,
-            "summary": "A node can activate a CHOSEN SUBSET of its output ports"
-        },
-        {
-            "slug": "fancy-conformance",
-            "registry": "npm",
-            "version": "0.27.0",
-            "published_at": "2026-09-16T02:42:44Z",
-            "first": false,
-            "summary": "flow/port-activation: 12 rows over the rule every fancy-flow runtime applies to an executor's return value"
-        },
-        {
-            "slug": "fancy-connector-core",
-            "registry": "npm",
-            "version": "0.10.0",
-            "published_at": "2026-09-16T02:28:07Z",
-            "first": false,
-            "summary": "parseInvite / Ical::parse"
-        },
-        {
-            "slug": "fancy-flow",
-            "registry": "npm",
-            "version": "0.74.1",
-            "published_at": "2026-09-15T23:12:53Z",
-            "first": false,
-            "summary": "Shift+wheel now actually zooms a canvas with zoomOnWheel={false}"
-        },
-        {
-            "slug": "fancy-connector-core",
-            "registry": "npm",
-            "version": "0.9.0",
-            "published_at": "2026-09-15T22:50:38Z",
-            "first": false,
-            "summary": "HmacScheme.secretEncoding (utf8 | base64) and secretPrefix"
-        },
-        {
-            "slug": "fancy-flow",
-            "registry": "npm",
-            "version": "0.74.0",
-            "published_at": "2026-09-15T22:42:53Z",
-            "first": false,
-            "summary": "FlowViewer takes zoomOnWheel"
         }
     ]
 }

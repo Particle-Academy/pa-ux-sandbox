@@ -103,7 +103,7 @@
         "last-word": "0.21.0",
         "last-word-js": "0.17.0",
         "last-word-py": "0.12.2",
-        "last-word-ui": "0.5.0",
+        "last-word-ui": "0.6.0",
         "mcp-relay-client": "0.3.0",
         "prism": "0.148.0",
         "prism-acp": "0.1.1",
@@ -142,6 +142,14 @@
         "teachers-aid-ui": "0.3.1"
     },
     "releases": [
+        {
+            "slug": "last-word-ui",
+            "registry": "npm",
+            "version": "0.6.0",
+            "published_at": "2026-11-15T12:24:44Z",
+            "first": false,
+            "summary": "Charts draw as charts"
+        },
         {
             "slug": "agent-integrations",
             "registry": "npm",

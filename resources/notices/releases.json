@@ -1,9 +1,9 @@
 {
     "window_days": 60,
     "latest": {
-        "agent-integrations": "0.62.0",
+        "agent-integrations": "0.65.0",
         "change-council": "0.7.2",
-        "charlotte": "0.3.0",
+        "charlotte": "0.4.0",
         "classroom": "0.7.0",
         "dark-slide": "0.22.3",
         "dark-slide-js": "0.20.3",
@@ -112,10 +112,10 @@
         "prism-browser-py": "0.2.0",
         "prism-browser-ts": "0.3.0",
         "prism-graph": "0.3.0",
-        "prism-graph-ts": "0.1.0",
-        "prism-harness": "0.24.0",
+        "prism-graph-ts": "0.2.0",
+        "prism-harness": "0.26.0",
         "prism-harness-py": "0.5.1",
-        "prism-harness-ts": "0.10.3",
+        "prism-harness-ts": "0.11.0",
         "prism-human-plus": "0.6.0",
         "prism-human-plus-py": "0.3.0",
         "prism-human-plus-ts": "0.5.0",
@@ -137,11 +137,91 @@
         "prism-workspace": "0.3.0",
         "prism-workspace-py": "0.1.0",
         "prism-workspace-ts": "0.2.0",
-        "react-fancy": "6.25.0",
+        "react-fancy": "6.26.0",
         "teachers-aid": "0.3.0",
         "teachers-aid-ui": "0.3.1"
     },
     "releases": [
+        {
+            "slug": "agent-integrations",
+            "registry": "npm",
+            "version": "0.65.0",
+            "published_at": "2026-11-16T00:26:09Z",
+            "first": false,
+            "summary": "Ranked control comes from the server"
+        },
+        {
+            "slug": "react-fancy",
+            "registry": "npm",
+            "version": "6.26.0",
+            "published_at": "2026-11-16T00:13:07Z",
+            "first": false,
+            "summary": "PromptInput Stop control: running, onStop, stopSlot, labels.stop"
+        },
+        {
+            "slug": "agent-integrations",
+            "registry": "npm",
+            "version": "0.64.1",
+            "published_at": "2026-11-15T23:12:24Z",
+            "first": false,
+            "summary": "A refusal with no onRefused is warned on the console"
+        },
+        {
+            "slug": "prism-harness-ts",
+            "registry": "npm",
+            "version": "0.11.0",
+            "published_at": "2026-11-15T22:40:24Z",
+            "first": false,
+            "summary": "AgentRuntime.streamSteps() yields tagged run steps (contract g282.1, byte-compatible with prism-harness PHP 0.25.0) and…"
+        },
+        {
+            "slug": "prism-harness",
+            "registry": "composer",
+            "version": "0.26.0",
+            "published_at": "2026-11-15T22:30:28Z",
+            "first": false,
+            "summary": "prism-harness 0.26.0: every streaming path holds the session lock (G-287, a security fix)"
+        },
+        {
+            "slug": "prism-harness",
+            "registry": "composer",
+            "version": "0.25.0",
+            "published_at": "2026-11-15T21:59:59Z",
+            "first": false,
+            "summary": "prism-harness 0.25.0: a run step stream for UIs, and streamed approvals (G-282 A, G-284; contract g282.1)"
+        },
+        {
+            "slug": "agent-integrations",
+            "registry": "npm",
+            "version": "0.64.0",
+            "published_at": "2026-11-15T21:57:26Z",
+            "first": false,
+            "summary": "One ref, one identity"
+        },
+        {
+            "slug": "prism-graph-ts",
+            "registry": "npm",
+            "version": "0.2.0",
+            "published_at": "2026-11-15T18:47:09Z",
+            "first": false,
+            "summary": "@particle-academy/prism-graph 0.2.0: scoped, paginated listing of sources and chunks (G-282, contract g282.1)"
+        },
+        {
+            "slug": "prism-harness",
+            "registry": "composer",
+            "version": "0.24.1",
+            "published_at": "2026-11-15T18:28:18Z",
+            "first": false,
+            "summary": "prism-harness 0.24.1: approved tools run again when compaction is on (#39)"
+        },
+        {
+            "slug": "agent-integrations",
+            "registry": "npm",
+            "version": "0.63.0",
+            "published_at": "2026-11-15T17:56:42Z",
+            "first": false,
+            "summary": "Ranked control across the whole session"
+        },
         {
             "slug": "last-word-ui",
             "registry": "npm",
@@ -165,6 +245,14 @@
             "published_at": "2026-11-15T10:03:48Z",
             "first": false,
             "summary": "connection.bufferedAmount: the bytes queued for a peer and not yet handed to the OS, as the browser…"
+        },
+        {
+            "slug": "charlotte",
+            "registry": "composer",
+            "version": "0.4.0",
+            "published_at": "2026-11-15T09:58:33Z",
+            "first": false,
+            "summary": "Every kit component as an island"
         },
         {
             "slug": "prism-graph",
@@ -6397,110 +6485,6 @@
             "published_at": "2026-09-17T20:55:53Z",
             "first": false,
             "summary": "A node inside a subflow that completed before a human gate is no longer re-executed when the parent resumes"
-        },
-        {
-            "slug": "dark-slide",
-            "registry": "composer",
-            "version": "0.10.4",
-            "published_at": "2026-09-17T01:32:40Z",
-            "first": false,
-            "summary": "The round-trip property is now stated over content"
-        },
-        {
-            "slug": "dark-slide-js",
-            "registry": "npm",
-            "version": "0.8.3",
-            "published_at": "2026-09-17T01:10:27Z",
-            "first": false,
-            "summary": "tests/fixtures/foreign-libreoffice.pptx — the first .pptx fixture this package has ever had"
-        },
-        {
-            "slug": "dark-slide-py",
-            "registry": "pypi",
-            "version": "0.3.3",
-            "published_at": "2026-09-17T01:08:46Z",
-            "first": false,
-            "summary": "tests/pptx/foreign-libreoffice.pptx — the first .pptx fixture this package has ever had"
-        },
-        {
-            "slug": "dark-slide",
-            "registry": "composer",
-            "version": "0.10.3",
-            "published_at": "2026-09-17T01:06:00Z",
-            "first": false,
-            "summary": "tests/fixtures/foreign-libreoffice.pptx — the first .pptx fixture this package has ever had"
-        },
-        {
-            "slug": "dark-slide-js",
-            "registry": "npm",
-            "version": "0.8.2",
-            "published_at": "2026-09-17T00:34:32Z",
-            "first": false,
-            "summary": "A deck's <dc:title> is outside the id, so renaming a deck does not change it"
-        },
-        {
-            "slug": "dark-slide-py",
-            "registry": "pypi",
-            "version": "0.3.2",
-            "published_at": "2026-09-17T00:32:36Z",
-            "first": false,
-            "summary": "A deck's <dc:title> is outside the id, so renaming a deck does not change it"
-        },
-        {
-            "slug": "dark-slide",
-            "registry": "composer",
-            "version": "0.10.2",
-            "published_at": "2026-09-17T00:30:10Z",
-            "first": false,
-            "summary": "A deck's <dc:title> is outside the id, so renaming a deck does not change it"
-        },
-        {
-            "slug": "dark-slide-py",
-            "registry": "pypi",
-            "version": "0.3.1",
-            "published_at": "2026-09-17T00:03:23Z",
-            "first": false,
-            "summary": "Generated import ids have a new shape"
-        },
-        {
-            "slug": "dark-slide-js",
-            "registry": "npm",
-            "version": "0.8.1",
-            "published_at": "2026-09-17T00:02:55Z",
-            "first": false,
-            "summary": "Generated import ids have a new shape"
-        },
-        {
-            "slug": "dark-slide",
-            "registry": "composer",
-            "version": "0.10.1",
-            "published_at": "2026-09-16T23:59:52Z",
-            "first": false,
-            "summary": "Generated import ids have a new shape"
-        },
-        {
-            "slug": "fancy-flow",
-            "registry": "npm",
-            "version": "0.77.1",
-            "published_at": "2026-09-16T23:55:06Z",
-            "first": false,
-            "summary": "The for_each kind stopped describing something it does not do"
-        },
-        {
-            "slug": "fancy-flow-py",
-            "registry": "pypi",
-            "version": "0.26.1",
-            "published_at": "2026-09-16T23:53:54Z",
-            "first": false,
-            "summary": "The for_each kind stopped describing something it does not do"
-        },
-        {
-            "slug": "fancy-flow-php",
-            "registry": "composer",
-            "version": "0.57.2",
-            "published_at": "2026-09-16T23:49:57Z",
-            "first": false,
-            "summary": "The for_each kind stopped describing something it does not do"
         }
     ]
 }

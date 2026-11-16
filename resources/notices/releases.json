@@ -172,7 +172,7 @@
             "version": "0.65.3",
             "published_at": "2026-11-16T07:20:55Z",
             "first": false,
-            "summary": null
+            "summary": "debug: true"
         },
         {
             "slug": "react-fancy",
@@ -188,7 +188,7 @@
             "version": "0.65.2",
             "published_at": "2026-11-16T06:39:29Z",
             "first": false,
-            "summary": null
+            "summary": "A hanging request can no longer stop a page applying anything"
         },
         {
             "slug": "fancy-cli",

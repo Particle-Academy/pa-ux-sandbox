@@ -7,17 +7,17 @@
                 {
                     "slug": "introduction",
                     "title": "Introduction",
-                    "description": "What Fancy Dev Kit is and the problem it solves."
+                    "description": "What Fancy UI is and the problem it solves."
                 },
                 {
                     "slug": "installation",
                     "title": "Installation",
-                    "description": "Add Fancy Dev Kit to a React or Laravel app."
+                    "description": "Add Fancy UI to a React or Laravel app."
                 },
                 {
                     "slug": "starter-kit",
                     "title": "Laravel starter kit",
-                    "description": "Scaffold a fresh Laravel + Inertia + React app with Fancy Dev Kit and Fortify auth preinstalled \u2014 one `laravel new --using=` command."
+                    "description": "Scaffold a fresh Laravel + Inertia + React app with Fancy UI and Fortify auth preinstalled \u2014 one `laravel new --using=` command."
                 },
                 {
                     "slug": "theming",
@@ -132,7 +132,7 @@
                 {
                     "slug": "changelog",
                     "title": "Changelog",
-                    "description": "Release notes across every Fancy Dev Kit package."
+                    "description": "Release notes across every Fancy UI package."
                 }
             ]
         }

@@ -4051,7 +4051,7 @@ function FancyDiffDemo() {
 // data-fancy-badge handle the showcase scanner — and an agent — reads.
 
 const PIXEL_STYLES: { style: PixelStyle; name: string; renders: string }[] = [
-    { style: "badge", name: "Badge", renders: '"Powered by Fancy UI" wordmark + glyph' },
+    { style: "badge", name: "Badge", renders: '"Powered by Fancy" wordmark + glyph' },
     { style: "mark", name: "Mark", renders: "Logo glyph only" },
     { style: "beacon", name: "Beacon", renders: "A small pulsing dot" },
 ];

@@ -55,7 +55,7 @@ A thin wrapper over <a href="https://tanstack.com/query/latest" target="_blank" 
 
 ## fancy-inertia → Inertia.js
 
-The bridge between <a href="https://inertiajs.com/" target="_blank" rel="noopener noreferrer">Inertia.js</a> and the Fancy Dev Kit for Laravel hosts: `<FancyAppRoot>` mounts app-shell providers above the Inertia outlet, `useFancyForm()` wires Inertia's `useForm()` into react-fancy inputs with server-validation errors, `<FancyClientOnly>` is the skip-SSR boundary, and `<FancyPageTransition>` adds CSS-driven enter/exit crossfades keyed on the Inertia page. See the [Page transitions](/docs/page-transitions) tutorial.
+The bridge between <a href="https://inertiajs.com/" target="_blank" rel="noopener noreferrer">Inertia.js</a> and the Fancy UI suite for Laravel hosts: `<FancyAppRoot>` mounts app-shell providers above the Inertia outlet, `useFancyForm()` wires Inertia's `useForm()` into react-fancy inputs with server-validation errors, `<FancyClientOnly>` is the skip-SSR boundary, and `<FancyPageTransition>` adds CSS-driven enter/exit crossfades keyed on the Inertia page. See the [Page transitions](/docs/page-transitions) tutorial.
 
 - **Package page →** [fancy-inertia](/packages/fancy-inertia)
 - **Engine docs →** <a href="https://inertiajs.com/" target="_blank" rel="noopener noreferrer">Inertia.js documentation</a>

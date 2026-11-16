@@ -4,7 +4,7 @@ If you've read [Human+ UX](/docs/human-plus-ux), this is where the philosophy be
 
 ## The stack we build on
 
-Fancy Dev Kit doesn't prescribe a backend, but the showcase you're reading — and these tutorials — assume the canonical **Fancy Core** stack:
+Fancy UI doesn't prescribe a backend, but the showcase you're reading — and these tutorials — assume the canonical **Fancy Core** stack:
 
 - **Laravel** for the server, routing, auth, and data.
 - **Inertia.js** ([`@particle-academy/fancy-inertia`](/docs/page-transitions)) as the React adapter — pages are server-routed, rendered client-side, no API layer to hand-write.

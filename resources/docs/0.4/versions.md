@@ -1,9 +1,9 @@
-Two version numbers exist in Fancy Dev Kit and they measure different things. Knowing which one someone means is most of understanding this page.
+Two version numbers exist in Fancy UI and they measure different things. Knowing which one someone means is most of understanding this page.
 
 - **A package version** — `react-fancy@4.19.1`, `fancy-flow@0.36.0`. Each package is released on its own schedule, and they are not expected to agree with each other.
 - **The kit version** — the one in the footer of this page, and in the table below. The set of package releases that shipped and were **tested together**. It is what this site is built from.
 
-So packages sitting on different numbers is not drift. The kit tag is what makes a coherent set out of them, and it is the number to quote when you say which Fancy Dev Kit you are on.
+So packages sitting on different numbers is not drift. The kit tag is what makes a coherent set out of them, and it is the number to quote when you say which Fancy UI you are on.
 
 ## Supported versions
 

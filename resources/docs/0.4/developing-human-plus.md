@@ -1,4 +1,4 @@
-[Designing for Human+](/docs/designing-human-plus) is the *why* and the *what*. This is the *how* — the contract every stateful Fancy Dev Kit component meets, expressed in code, and the steps to make a surface of your own inhabitable by an agent.
+[Designing for Human+](/docs/designing-human-plus) is the *why* and the *what*. This is the *how* — the contract every stateful Fancy UI component meets, expressed in code, and the steps to make a surface of your own inhabitable by an agent.
 
 ## The component contract
 

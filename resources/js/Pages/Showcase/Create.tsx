@@ -28,7 +28,7 @@ type Form = {
 };
 
 const STYLES: { value: Style; label: string; hint: string }[] = [
-    { value: "badge", label: "Badge", hint: "“Powered by Fancy UI” pill" },
+    { value: "badge", label: "Badge", hint: "“Powered by Fancy” pill" },
     { value: "mark", label: "Mark", hint: "compact logo mark" },
     { value: "beacon", label: "Beacon", hint: "minimal dot" },
 ];

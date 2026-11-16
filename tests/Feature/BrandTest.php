@@ -72,6 +72,13 @@ it('has no old brand left in the source the site is built from', function () {
             if ($file->getRealPath() === realpath(app_path('Support/Brand.php'))) {
                 continue; // records the rename itself
             }
+            // Frozen docs snapshots (resources/docs/<version>/) keep the name
+            // they shipped under. Owner ruling 2026-11-15 (q_4b32212d): the
+            // 0.4 docs say "Fancy UI" because that is what 0.4 was called, and
+            // a snapshot rewritten after the fact is no longer a snapshot.
+            if ($root === 'resources/docs' && preg_match('#^\d+\.\d+[/\\\\]#', $file->getRelativePathname()) === 1) {
+                continue;
+            }
             foreach (preg_split('/\R/', $file->getContents()) as $n => $line) {
                 if (preg_match(OLD_BRAND, $line) || str_contains($line, 'Fancy UI Kit')) {
                     $hits[] = $file->getRelativePathname().':'.($n + 1);

@@ -2646,7 +2646,7 @@ const PREVIEWS: Record<string, PreviewFn> = {
                     <span className="absolute inline-flex size-full animate-ping rounded-full bg-violet-400 opacity-75" />
                     <span className="relative inline-flex size-2 rounded-full bg-violet-500" />
                 </span>
-                <Sparkles size={12} /> Powered by Fancy UI
+                <Sparkles size={12} /> Powered by Fancy
             </div>
         </div>
     ),

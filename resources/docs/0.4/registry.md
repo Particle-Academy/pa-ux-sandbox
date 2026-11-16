@@ -1,4 +1,4 @@
-The Fancy Dev Kit registry is a **public, JSON-only HTTP contract** that lets anyone — humans, agents, third-party tooling — discover and download component source. The site you're reading runs it at `https://ui.particle.academy/r/` and the schema is intentionally compatible with shadcn's so adjacent tooling that already speaks the format works out of the box.
+The Fancy UI registry is a **public, JSON-only HTTP contract** that lets anyone — humans, agents, third-party tooling — discover and download component source. The site you're reading runs it at `https://ui.particle.academy/r/` and the schema is intentionally compatible with shadcn's so adjacent tooling that already speaks the format works out of the box.
 
 ## Endpoints
 
@@ -65,7 +65,7 @@ Each item carries enough to render in a list or run substring search against. Th
 | `type` | string | One of `registry:ui`, `registry:hook`, `registry:lib`, `registry:block`. |
 | `title` | string | The display name (TitleCase). |
 | `description` | string | One-line summary. |
-| `package` | string | Which Fancy Dev Kit package this component lives in. Informational; the bundle is self-contained. |
+| `package` | string | Which Fancy UI package this component lives in. Informational; the bundle is self-contained. |
 | `dependencies` | string[] | npm packages the component imports. Peer deps (react, react-dom, tailwindcss) are filtered out. |
 | `registryDependencies` | string[] | Other registry slugs this component imports from. Resolves recursively. |
 | `files` | object[] | The source files to write. |
@@ -143,7 +143,7 @@ npx fancy-cli@latest add card
 
 ### MCP
 
-Agents in any IDE that speaks the [Fancy Dev Kit MCP server](/docs/mcp) can browse and install components conversationally:
+Agents in any IDE that speaks the [Fancy UI MCP server](/docs/mcp) can browse and install components conversationally:
 
 > "Add the card and dropdown components to my project."
 
@@ -165,7 +165,7 @@ Any HTTP server that exposes `/r/index.json` + `/r/{slug}.json` in this schema i
 }
 ```
 
-You could host a private mirror that only has your internal company components, or one that overrides specific Fancy Dev Kit components with your team's forks. Mixing multiple registries (e.g. ours + yours) is on the CLI roadmap.
+You could host a private mirror that only has your internal company components, or one that overrides specific Fancy UI components with your team's forks. Mixing multiple registries (e.g. ours + yours) is on the CLI roadmap.
 
 ## What this is *not*
 

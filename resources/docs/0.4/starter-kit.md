@@ -1,6 +1,6 @@
-The fastest way to start a **new** Laravel app on Fancy Dev Kit. It's a real Laravel community starter kit — installed with `laravel new --using=` — so you get a complete, running app shell (Inertia + React 19 + Tailwind v4 + Fortify auth) with **Fancy Core already wired**, not a pile of snippets to assemble yourself.
+The fastest way to start a **new** Laravel app on Fancy UI. It's a real Laravel community starter kit — installed with `laravel new --using=` — so you get a complete, running app shell (Inertia + React 19 + Tailwind v4 + Fortify auth) with **Fancy Core already wired**, not a pile of snippets to assemble yourself.
 
-Use it for greenfield apps. To add Fancy Dev Kit to an app you **already** have, see [Installation](/docs/installation) instead.
+Use it for greenfield apps. To add Fancy UI to an app you **already** have, see [Installation](/docs/installation) instead.
 
 ## Create a new app
 
@@ -17,7 +17,7 @@ Open the URL Laravel prints and you land on a Fancy-branded welcome page with ju
 
 - **Laravel 13** (`type: project`) + **Inertia** + **React 19 + TypeScript + Tailwind v4 + Vite**
 - **Fancy Core** — [`react-fancy`](/packages/react-fancy), [`fancy-inertia`](/packages/fancy-inertia) (the `setupFancyApp` client entry), [`fancy-query`](/packages/fancy-query)
-- **Fortify auth, every page built on Fancy Dev Kit** — login, register, forgot / reset password, a protected dashboard, and profile / password settings, each rendered as an Inertia page from Fancy primitives
+- **Fortify auth, every page built on Fancy UI** — login, register, forgot / reset password, a protected dashboard, and profile / password settings, each rendered as an Inertia page from Fancy primitives
 - **A branded welcome page** whose cards link out to the docs, the [component browser](/packages), the [design gallery](/gallery), and "add a page" — your starting points
 
 ## Project structure

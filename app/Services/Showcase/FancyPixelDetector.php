@@ -20,7 +20,8 @@ namespace App\Services\Showcase;
  *   1. the `fancy-pixel` loader script (src contains `fancy-pixel`, or a
  *      script tag carries a `data-fancy-pixel` / `data-site` attribute),
  *   2. the runtime `data-fancy-badge` marker (present once the badge renders),
- *   3. the literal "Powered by Fancy UI" wordmark text.
+ *   3. the literal wordmark text: "Powered by Fancy" (current) or
+ *      "Powered by Fancy UI" (the name before 2026-11-15; still accepted).
  */
 class FancyPixelDetector
 {
@@ -43,7 +44,11 @@ class FancyPixelDetector
             return true;
         }
 
-        // 3. The literal wordmark.
-        return preg_match('/powered\s+by\s+fancy\s+ui/i', $html) === 1;
+        // 3. The literal wordmark, under either name. Until 2026-11-15 the
+        //    pixel said "Powered by Fancy UI"; since then "Powered by Fancy".
+        //    Sites still carrying the old text must keep verifying. The new
+        //    form must END at "Fancy", so "Powered by Fancy Feast" or
+        //    "Fancypants" is not mistaken for the badge.
+        return preg_match('/powered\s+by\s+fancy\s+ui|powered\s+by\s+fancy(?!-|\s*\w)/i', $html) === 1;
     }
 }

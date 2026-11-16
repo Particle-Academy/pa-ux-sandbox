@@ -1,4 +1,4 @@
-Fancy Dev Kit targets modern browsers. Nothing here is a policy we picked in the abstract — each number below is set by a specific thing the kit is built on, and this page says which, so you can tell what you'd have to give up to go lower.
+Fancy UI targets modern browsers. Nothing here is a policy we picked in the abstract — each number below is set by a specific thing the kit is built on, and this page says which, so you can tell what you'd have to give up to go lower.
 
 ## Supported browsers
 

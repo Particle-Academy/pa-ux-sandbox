@@ -1,4 +1,4 @@
-**Human+ UX** is the contract Fancy Dev Kit's *interactive* surfaces are held to. The suite is an ecosystem of 64 packages and roughly half of it is headless — document writers, catalogs, feature gating, engines — which render nothing and so have no UI to inhabit. But where a package **does** own a surface, that surface owes two design constraints, not one.
+**Human+ UX** is the contract Fancy UI's *interactive* surfaces are held to. The suite is an ecosystem of 64 packages and roughly half of it is headless — document writers, catalogs, feature gating, engines — which render nothing and so have no UI to inhabit. But where a package **does** own a surface, that surface owes two design constraints, not one.
 
 > **The full whitepaper** is at [`docs/human-plus-ux.md`](https://github.com/Particle-Academy/pa-ux-sandbox/blob/main/docs/human-plus-ux.md) in the sandbox repo. The summary below is the high-bandwidth version.
 
@@ -11,7 +11,7 @@ If a primitive only satisfies #1, it's a component library entry. If it satisfie
 
 ## The component contract
 
-Every stateful or interactive Fancy Dev Kit component must meet all of these:
+Every stateful or interactive Fancy UI component must meet all of these:
 
 - **Controlled state.** `value` + `onChange`. No internal-only state for anything an agent might want to read or write.
 - **Stable handles.** Each interactive element gets a stable identity (`id`, `data-*`, or a selector function in props). Agents should never have to guess DOM structure.
@@ -138,7 +138,7 @@ Pages emitted by an agent should still respect the contract. If the schema inclu
 
 ## Implications for designers and engineers
 
-If you're designing or building on top of Fancy Dev Kit, the framework changes how you think about a few things:
+If you're designing or building on top of Fancy UI, the framework changes how you think about a few things:
 
 - **Stop modeling "the user."** Model "the participant." Sometimes that participant is a human; sometimes it's an agent. The surface treats them the same.
 - **Controlled state isn't optional.** Anything an agent might want to read or write needs to live in props, not internal state. This is a small habit shift with big payoff.

@@ -13,6 +13,8 @@ const donutData = [
     { label: "Draft", value: 24, color: "#f59e0b" },
     { label: "Archived", value: 14, color: "#71717a" },
 ];
+const days = Array.from({ length: 30 }, (_, i) => `2026-11-${String(i + 1).padStart(2, "0")}`);
+const dailyData = days.map((label, i) => ({ label, value: 20 + ((i * 7) % 23) }));
 
 export const chartDoc: ComponentDoc = {
     intro: (
@@ -57,6 +59,33 @@ export const chartDoc: ComponentDoc = {
     ]}
     height={180}
     showValues
+/>`,
+        },
+        {
+            name: "Long x-axis",
+            description:
+                "Thirty daily bars. `xLabelInterval` picks which labels draw (a number shows every Nth; `\"auto\"`, the default, thins them so none overlap), and `xTickFormat` shortens the drawn tick (`\"date-short\"` gives `MM-DD`, or pass `(label, index) => string`). The tooltip and screen-reader labels keep the full date. Since react-fancy 6.26.1.",
+            render: () => (
+                <div className="flex flex-col gap-4">
+                    <Chart.Bar data={dailyData} height={180} xTickFormat="date-short" />
+                    <Chart.Line
+                        labels={days}
+                        series={[{ label: "Signups", data: dailyData.map((d) => d.value), color: "#8b5cf6" }]}
+                        height={180}
+                        xLabelInterval={7}
+                        xTickFormat={(label: string) => label.slice(8)}
+                    />
+                </div>
+            ),
+            code: `// labels are "2026-11-01" … "2026-11-30"
+<Chart.Bar data={daily} height={180} xTickFormat="date-short" />
+
+<Chart.Line
+    labels={days}
+    series={[{ label: "Signups", data: counts }]}
+    height={180}
+    xLabelInterval={7}
+    xTickFormat={(label) => label.slice(8)}
 />`,
         },
         {
@@ -131,7 +160,8 @@ export const chartDoc: ComponentDoc = {
     notes: (
         <p className="text-xs text-zinc-600 dark:text-zinc-300">
             <strong>Common props:</strong> <code>height</code>, <code>xAxis</code>, <code>yAxis</code>,
-            <code>grid</code>, <code>tooltip</code>, <code>animate</code>, <code>responsive</code>.
+            <code>grid</code>, <code>tooltip</code>, <code>animate</code>, <code>responsive</code>, and on
+            every chart with a category x-axis <code>xLabelInterval</code> and <code>xTickFormat</code>.
             For richer charts (3D, geo, large datasets), use <code>@particle-academy/fancy-echarts</code>.
         </p>
     ),

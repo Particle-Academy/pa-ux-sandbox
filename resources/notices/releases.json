@@ -1,7 +1,7 @@
 {
     "window_days": 60,
     "latest": {
-        "agent-integrations": "0.65.0",
+        "agent-integrations": "0.65.1",
         "change-council": "0.7.2",
         "charlotte": "0.4.0",
         "classroom": "0.7.0",
@@ -105,7 +105,7 @@
         "last-word-py": "0.12.2",
         "last-word-ui": "0.6.0",
         "mcp-relay-client": "0.3.0",
-        "prism": "0.148.0",
+        "prism": "0.148.1",
         "prism-acp": "0.1.1",
         "prism-acp-ts": "0.42.0",
         "prism-browser": "0.4.1",
@@ -137,11 +137,35 @@
         "prism-workspace": "0.3.0",
         "prism-workspace-py": "0.1.0",
         "prism-workspace-ts": "0.2.0",
-        "react-fancy": "6.26.0",
+        "react-fancy": "6.26.1",
         "teachers-aid": "0.3.0",
         "teachers-aid-ui": "0.3.1"
     },
     "releases": [
+        {
+            "slug": "agent-integrations",
+            "registry": "npm",
+            "version": "0.65.1",
+            "published_at": "2026-11-16T05:07:09Z",
+            "first": false,
+            "summary": "Rebranded the display name to Fancy Dev Kit (README and package description)"
+        },
+        {
+            "slug": "react-fancy",
+            "registry": "npm",
+            "version": "6.26.1",
+            "published_at": "2026-11-16T05:04:06Z",
+            "first": false,
+            "summary": "Installable from git"
+        },
+        {
+            "slug": "prism",
+            "registry": "composer",
+            "version": "0.148.1",
+            "published_at": "2026-11-16T01:43:54Z",
+            "first": false,
+            "summary": "Upstream prism-php/prism main is now folded into the fork (#152), so every upstream commit is in the fork's history"
+        },
         {
             "slug": "agent-integrations",
             "registry": "npm",

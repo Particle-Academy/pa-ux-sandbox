@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Support\Brand;
 use App\Support\OgCardRenderer;
 use App\Support\PackageRegistry;
 use App\Support\Seo\PageSeo;
@@ -28,7 +29,7 @@ class OgImageController extends Controller
     public function default(): Response
     {
         return $this->card('default', [
-            'title' => 'Fancy UI',
+            'title' => Brand::NAME,
             'subtitle' => 'Components for the surfaces where humans and agents work together.',
         ]);
     }
@@ -72,7 +73,7 @@ class OgImageController extends Controller
 
         return $this->card('join/'.$referrer->username, [
             'eyebrow' => 'Referral invite',
-            'title' => "{$referrer->name} invited you to Fancy UI",
+            'title' => "{$referrer->name} invited you to ".Brand::NAME,
             'subtitle' => 'Join their referral network and build with components made for humans and AI agents working together.',
             'avatarUrl' => $referrer->avatar_url,
         ]);
@@ -88,7 +89,9 @@ class OgImageController extends Controller
     protected function card(string $key, array $spec): Response
     {
         $disk = Storage::disk('public');
-        $hash = substr(sha1(OgCardRenderer::VERSION.'|'.json_encode($spec)), 0, 12);
+        // Brand::NAME is in the hash because the footer draws it: without it the
+        // 2026-11-15 rename left every cached card saying the old name.
+        $hash = substr(sha1(OgCardRenderer::VERSION.'|'.Brand::NAME.'|'.json_encode($spec)), 0, 12);
         $path = "og/{$key}-{$hash}.png";
 
         if (! $disk->exists($path)) {

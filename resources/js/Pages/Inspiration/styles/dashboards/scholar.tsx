@@ -262,7 +262,7 @@ export default function Scholar({ style }: { style: Style }) {
                 <div className="dbscholar-colophon">
                     <Text as="span" className="dbscholar-colophon__note">
                         Scholar — a fictional learning platform, for demonstration · Dashboard {style.num} /{" "}
-                        {style.name} · every surface is a restyled Fancy UI primitive
+                        {style.name} · every surface is a restyled {__BRAND_NAME__} primitive
                     </Text>
                     <Link href="/inspiration/dashboards" className="dbscholar-back">
                         Back to the gallery

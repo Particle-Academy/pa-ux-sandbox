@@ -24,7 +24,7 @@
             <span class="auth-mark grid h-10 w-10 place-items-center rounded-xl text-lg font-black text-zinc-950 shadow-lg">F</span>
             <span class="text-left">
                 <span class="block text-sm font-semibold leading-tight">Particle Academy</span>
-                <span class="block text-xs text-zinc-400">Fancy UI showcase</span>
+                <span class="block text-xs text-zinc-400">{{ \App\Support\Brand::NAME }} showcase</span>
             </span>
         </a>
 

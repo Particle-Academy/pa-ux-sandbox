@@ -120,7 +120,7 @@ it('serves personalized OG share meta on the invite page', function () {
     $html = $this->get('/join/ray')->assertOk()->getContent();
 
     expect($html)
-        ->toContain('property="og:title" content="Ray invited you to Fancy UI"')
+        ->toContain('property="og:title" content="Ray invited you to Fancy Dev Kit"')
         ->toContain('property="og:image" content="'.config('app.url').'/og/join/ray.png"')
         ->toContain('property="og:url" content="'.config('app.url').'/join/ray"')
         ->toContain('rel="canonical" href="'.config('app.url').'/join/ray"')
@@ -147,7 +147,7 @@ it('serves indexable meta to social card scrapers so the preview image renders',
     expect($html)
         ->not->toContain('noindex')
         // …while still carrying the full personalized card meta.
-        ->toContain('property="og:title" content="Ray invited you to Fancy UI"')
+        ->toContain('property="og:title" content="Ray invited you to Fancy Dev Kit"')
         ->toContain('property="og:image" content="'.config('app.url').'/og/join/ray.png"')
         ->toContain('name="twitter:card" content="summary_large_image"');
 });

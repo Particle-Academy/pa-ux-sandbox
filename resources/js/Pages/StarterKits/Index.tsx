@@ -217,13 +217,13 @@ export default function StarterKitsIndex({ kits }: { kits: Kit[] }) {
 
     return (
         <Layout>
-            <Head title="Starter Kits · Fancy UI" />
+            <Head title={"Starter Kits · " + __BRAND_NAME__} />
 
             <div className="flex flex-wrap items-end justify-between gap-4">
                 <div>
                     <Heading as="h1" size="xl" className="!text-zinc-900 dark:!text-zinc-100">Starter Kits</Heading>
                     <Text className="mt-2 max-w-2xl !text-zinc-600 dark:!text-zinc-300">
-                        Full-app demos built from Fancy UI pieces. Each is a vertical example you can clone, study, and
+                        Full-app demos built from {__BRAND_NAME__} pieces. Each is a vertical example you can clone, study, and
                         adapt — every kit is downloadable as a runnable Vite + React 19 + Tailwind v4 project.
                     </Text>
                 </div>

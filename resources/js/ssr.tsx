@@ -26,10 +26,10 @@ registerBrandIcons();
 // baseline already emits the canonical/OG/JSON-LD on the first byte, and the
 // client <Seo> auto-canonical kicks in after hydration.
 const seoDefaults = defineSeo({
-    siteName: "Fancy UI",
+    siteName: __BRAND_NAME__,
     // `%s`: see showcase-app.tsx — titles arrive complete from the server.
     titleTemplate: "%s",
-    defaultTitle: "Fancy UI",
+    defaultTitle: __BRAND_NAME__,
     defaultDescription: "Components for the surfaces where humans and agents work together.",
     defaultImage: "/showcase-assets/fancy-ui-logo.jpg",
     locale: "en_US",

@@ -3,13 +3,14 @@
 namespace App\Http\Controllers\Showcase;
 
 use App\Http\Controllers\Controller;
+use App\Support\Brand;
 use Illuminate\Support\Facades\File;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use ZipArchive;
 
 /**
  * Bundles a starter kit's source into a downloadable, runnable Vite + React +
- * Fancy UI project zip.
+ * Fancy Dev Kit project zip.
  *
  * Each kit's main React component lives at
  * resources/js/Pages/StarterKits/kits/{Name}.tsx in the showcase. We read it
@@ -99,12 +100,12 @@ class StarterKitDownloadController extends Controller
             ? '- The **catalog-fms** components are vendored into `src/components/fancy/catalog-fms/` — edit them freely (they only need `@particle-academy/react-fancy`).'
             : "- `@particle-academy/{$kit['pkg']}` — the headline package this kit is built on";
 
-        return <<<MD
-# {$kit['name']} — Fancy UI starter
+        return Brand::fill(<<<MD
+# {$kit['name']} — {brand} starter
 
 {$kit['blurb']}
 
-Built from the [Fancy UI](https://ui.particle.academy) component set. {$headline}
+Built from the [{brand}](https://ui.particle.academy) component set. {$headline}
 
 ## Quick start
 
@@ -143,7 +144,7 @@ download matches what you see at ui.particle.academy.
 ## License
 
 MIT — fork, ship, sell.
-MD;
+MD);
     }
 
     /** @param  array<string, string>  $kit */
@@ -373,21 +374,21 @@ MD;
     {
         $title = htmlspecialchars($kit['name'], ENT_QUOTES);
 
-        return <<<HTML
+        return Brand::fill(<<<HTML
         <!doctype html>
         <html lang="en" class="dark">
           <head>
             <meta charset="UTF-8" />
             <meta name="viewport" content="width=device-width, initial-scale=1.0" />
             <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%237c3aed'/%3E%3Ctext x='16' y='23' font-family='system-ui,sans-serif' font-size='19' font-weight='700' fill='white' text-anchor='middle'%3EF%3C/text%3E%3C/svg%3E" />
-            <title>{$title} · Fancy UI Starter</title>
+            <title>{$title} · {brand} Starter</title>
           </head>
           <body class="bg-zinc-50 text-zinc-900 antialiased dark:bg-zinc-950 dark:text-zinc-100">
             <div id="root"></div>
             <script type="module" src="/src/main.tsx"></script>
           </body>
         </html>
-        HTML;
+        HTML);
     }
 
     private function mainTsx(): string

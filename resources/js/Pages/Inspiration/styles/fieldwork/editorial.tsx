@@ -84,7 +84,7 @@ const LETTERS = [
 ];
 
 const FOOTNOTES = [
-    "Print run: an edition of one, set for the Fancy UI Inspiration Gallery.",
+    "Print run: an edition of one, set for the " + __BRAND_NAME__ + " Inspiration Gallery.",
     "Body set in the host serif; folios and standfirsts in Geist Mono.",
     "FIELDWORK is fictional — any resemblance to a studio you'd hire is intentional flattery.",
 ];

@@ -144,4 +144,4 @@ Point `registry` at any URL that follows the [registry contract](/docs/registry)
 
 - It's not a build tool. Once components are vendored they're just files in your codebase. You compile them with your existing bundler.
 - It's not a runtime dependency. You can delete `fancy.json` and uninstall the CLI; the vendored components keep working.
-- It's not the only way to use Fancy UI. The npm-install path remains a first-class citizen — see [Installation](/docs/installation).
+- It's not the only way to use Fancy Dev Kit. The npm-install path remains a first-class citizen — see [Installation](/docs/installation).

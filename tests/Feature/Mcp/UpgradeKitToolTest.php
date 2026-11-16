@@ -75,7 +75,7 @@ it('tells someone already on the current line that there is nothing to do', func
 it('accepts a v-prefixed or untidy version without falling over', function () {
     expect(upgradeGuide(['from' => 'v'.config('kit.version')])['title'])->toContain('Already on kit');
     // Unparseable input falls back to the full guide rather than erroring.
-    expect(upgradeGuide(['from' => 'garbage'])['title'])->toContain('Upgrade Fancy UI');
+    expect(upgradeGuide(['from' => 'garbage'])['title'])->toContain('Upgrade Fancy Dev Kit');
 });
 
 it('still gives the full guide to someone on an older line', function () {

@@ -42,7 +42,7 @@ export const accordionDoc: ComponentDoc = {
             render: () => (
                 <Accordion type="single" defaultOpen={["item-1"]} className="w-full max-w-md">
                     <Accordion.Item value="item-1">
-                        <Accordion.Trigger>What is Fancy UI?</Accordion.Trigger>
+                        <Accordion.Trigger>What is {__BRAND_NAME__}?</Accordion.Trigger>
                         <Accordion.Content>
                             <Text size="sm">A React + Blade component library built around the Human+ UX contract.</Text>
                         </Accordion.Content>
@@ -63,7 +63,7 @@ export const accordionDoc: ComponentDoc = {
             ),
             code: `<Accordion type="single" defaultOpen={["item-1"]}>
     <Accordion.Item value="item-1">
-        <Accordion.Trigger>What is Fancy UI?</Accordion.Trigger>
+        <Accordion.Trigger>What is ${__BRAND_NAME__}?</Accordion.Trigger>
         <Accordion.Content>
             <Text size="sm">A React + Blade component library…</Text>
         </Accordion.Content>

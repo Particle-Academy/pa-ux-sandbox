@@ -34,7 +34,7 @@ export default function ShopIndex({ items, balance, submissions, cosmeticSlots }
 
     return (
         <Layout>
-            <Head title="Coin Shop · Fancy UI" />
+            <Head title={"Coin Shop · " + __BRAND_NAME__} />
 
             <div className="flex flex-wrap items-end justify-between gap-4">
                 <div>

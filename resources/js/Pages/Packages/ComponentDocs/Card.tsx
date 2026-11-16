@@ -304,17 +304,17 @@ export const cardDoc: ComponentDoc = {
             render: () => (
                 <div className="grid w-full gap-3 sm:grid-cols-2">
                     <Card padding="none">
-                        <Card.Media src={MEDIA_SRC} alt="Fancy UI" ratio="4/3" loading="lazy" />
+                        <Card.Media src={MEDIA_SRC} alt={__BRAND_NAME__} ratio="4/3" loading="lazy" />
                         <div className="p-3"><Text size="xs">ratio="4/3"</Text></div>
                     </Card>
                     <Card padding="none">
-                        <Card.Media src={MEDIA_SRC} alt="Fancy UI" height={120} objectPosition="top" />
+                        <Card.Media src={MEDIA_SRC} alt={__BRAND_NAME__} height={120} objectPosition="top" />
                         <div className="p-3"><Text size="xs">height={"{120}"} · objectPosition="top"</Text></div>
                     </Card>
                 </div>
             ),
             code: `<Card padding="none">
-    <Card.Media src="/cover.jpg" alt="Fancy UI" ratio="4/3" loading="lazy" />
+    <Card.Media src="/cover.jpg" alt="${__BRAND_NAME__}" ratio="4/3" loading="lazy" />
 </Card>
 
 {/* a fixed height instead of a ratio, cropped from the top */}

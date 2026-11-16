@@ -2,6 +2,7 @@
 
 namespace App\Mcp\Tools;
 
+use App\Support\Brand;
 use App\Support\Docs\SupportPolicy;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Mcp\Request;
@@ -9,7 +10,7 @@ use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Attributes\Description;
 use Laravel\Mcp\Server\Tool;
 
-#[Description('Upgrade an app to a newer Fancy UI kit version — call this when a project is on an older kit line, when an install starts failing to resolve, or when asked "how do I update Fancy UI?". Returns WHY the release exists, exactly WHAT breaks, the ordered commands to run, and how to tell when it worked. Pass `from` (e.g. "0.4") to scope it to one hop.')]
+#[Description('Upgrade an app to a newer '.Brand::NAME.' version — call this when a project is on an older kit line, when an install starts failing to resolve, or when asked "how do I update '.Brand::NAME.'?". Returns WHY the release exists, exactly WHAT breaks, the ordered commands to run, and how to tell when it worked. Pass `from` (e.g. "0.4") to scope it to one hop.')]
 class UpgradeKit extends Tool
 {
     public function handle(Request $request): Response
@@ -29,7 +30,7 @@ class UpgradeKit extends Tool
         }
 
         return Response::json([
-            'title' => "Upgrade Fancy UI to kit {$current}",
+            'title' => 'Upgrade '.Brand::NAME." to kit {$current}",
             'read_this_first' => $this->headline(),
             'why' => $this->why(),
             'what_breaks' => $this->whatBreaks(),

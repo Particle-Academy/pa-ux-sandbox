@@ -6,7 +6,7 @@
 
 SEO has a 25-year head start and a clear object: the crawler. But a crawler is not your user. The metrics that actually decide whether your product works — task completion, time-to-first-action, rage-clicks, dead zones, and (increasingly) *agent* success rate — live on the other side of the page load. There was no single name for optimizing that surface. EUO is it.
 
-For Fancy UI the distinction is sharp because our apps are **inhabited by agents**. A conversion funnel that only counts human clicks is blind to half the activity. EUO treats agent interactions as first-class signal, not noise to filter out.
+For Fancy Dev Kit the distinction is sharp because our apps are **inhabited by agents**. A conversion funnel that only counts human clicks is blind to half the activity. EUO treats agent interactions as first-class signal, not noise to filter out.
 
 ## SEO vs EUO
 

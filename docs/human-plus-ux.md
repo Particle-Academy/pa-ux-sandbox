@@ -2,7 +2,7 @@
 
 **An architectural framework for UI built to be inhabited by both humans and agents.**
 
-Particle Academy · Fancy UI · 2026
+Particle Academy · Fancy Dev Kit · 2026
 
 ---
 
@@ -18,13 +18,13 @@ Both patterns leave value on the table. The first is brittle, slow, and expensiv
 
 **Human+ UX** is the alternative. It is the position that a modern application is a *shared environment* whose first-class participants are humans *and* agents — both reading from and writing to the same user interface, in real time, with no special privilege for either, trading control fluidly throughout a task.
 
-Fancy UI's interactive surfaces are built to that standard. The suite itself is broader — 64 packages, roughly half of them headless — but wherever it owns a UI, this is the bar that UI is held to.
+Fancy Dev Kit's interactive surfaces are built to that standard. The suite itself is broader — 64 packages, roughly half of them headless — but wherever it owns a UI, this is the bar that UI is held to.
 
 ---
 
 ## The two design constraints
 
-Every component in Fancy UI must satisfy two constraints. Not one. Both. If either is missing, the component does not belong in the library.
+Every component in Fancy Dev Kit must satisfy two constraints. Not one. Both. If either is missing, the component does not belong in the library.
 
 ### Constraint 1 — Authoring surface
 
@@ -68,13 +68,13 @@ It is also expensive, brittle, slow, and adversarial. Concretely:
 
 Human+ UX trades universality for fidelity. The Human+ agent only works in apps built with the Human+ contract — but inside such an app, it works orders of magnitude better.
 
-The bet Fancy UI is making is that the value of *first-class agent inhabitation in your own product* exceeds the value of *low-fidelity third-party agent operation*.
+The bet Fancy Dev Kit is making is that the value of *first-class agent inhabitation in your own product* exceeds the value of *low-fidelity third-party agent operation*.
 
 ---
 
 ## The component contract
 
-Every Fancy UI component meets the following. This list is the contract: a component that fails any item is not a Fancy UI component.
+Every Fancy Dev Kit component meets the following. This list is the contract: a component that fails any item is not a Fancy Dev Kit component.
 
 ### Controlled state
 
@@ -187,19 +187,19 @@ A `<ClassifierChip>` whose `onReclassify` writes back to the agent gives the use
 
 Human+ UX is not the right shape for every problem. It deliberately leaves four things off the table:
 
-1. **Universal third-party app control.** If the goal is *"let an agent operate any web app, including apps you don't own"*, Human+ UX is not for that. DOM puppeting is. Fancy UI is the position you take when *you own the app*.
+1. **Universal third-party app control.** If the goal is *"let an agent operate any web app, including apps you don't own"*, Human+ UX is not for that. DOM puppeting is. Fancy Dev Kit is the position you take when *you own the app*.
 
 2. **Replacement for accessibility.** Stable handles + observable activity overlap with ARIA but do not replace it. A Human+ app should still pass an accessibility audit; the contract makes that easier, not optional.
 
 3. **Replacement for authorization.** Bridges scope what an agent can do per surface, but authentication, RBAC, and audit-logging still live in the backend. The contract is about *legibility*, not *trust*.
 
-4. **A pretext for skipping good UI.** A component that is bridgeable but ugly is not done. The first constraint — that humans and agents can build *beautiful* applications — is not optional. Fancy UI's name is not ironic.
+4. **A pretext for skipping good UI.** A component that is bridgeable but ugly is not done. The first constraint — that humans and agents can build *beautiful* applications — is not optional. Fancy Dev Kit's name is not ironic.
 
 ---
 
-## How Fancy UI implements it
+## How Fancy Dev Kit implements it
 
-Fancy UI is a suite of small, independently released packages — 64 of them, 47
+Fancy Dev Kit is a suite of small, independently released packages — 64 of them, 47
 TypeScript and 16 PHP, each its own repository, pinned together by the envelope
 rather than living in a monorepo. Roughly half are headless: server capabilities,
 engines and tooling that render nothing. The table below covers the *interactive*
@@ -218,13 +218,13 @@ to:
 | **fancy-3d** | 3D scene authoring (Babylon adapter, DOM adapter) | Scenes are JSON; agents author rich 3D apps the same way they author HTML |
 | **agent-integrations** | The Human+ runtime — MicroMcpServer, bridges, presence, sharing | The glue that turns the above into a participatory environment |
 
-The dependency direction is one-way: surface packages depend on nothing agent-aware; `agent-integrations` depends on the surface packages and provides the bridges. This means *you can use any Fancy UI surface package without adopting the Human+ stack* — but the day you want to, the bridge is already written.
+The dependency direction is one-way: surface packages depend on nothing agent-aware; `agent-integrations` depends on the surface packages and provides the bridges. This means *you can use any Fancy Dev Kit surface package without adopting the Human+ stack* — but the day you want to, the bridge is already written.
 
 ---
 
 ## How to evaluate whether something is Human+-ready
 
-A short checklist. If any answer is "no", the component, demo, or package is not yet ready to ship as Fancy UI.
+A short checklist. If any answer is "no", the component, demo, or package is not yet ready to ship as Fancy Dev Kit.
 
 1. Can the agent *read* the component's relevant state without taking a screenshot? *(Controlled state.)*
 2. Can the agent address any interactive element by a stable id the user can also see in the DOM? *(Stable handles.)*
@@ -240,7 +240,7 @@ Seven yeses. Anything less, and we're not yet doing Human+ UX.
 
 ## What's next
 
-We are building Fancy UI in public on the [`Particle-Academy/pa-ux-sandbox`](https://github.com/Particle-Academy/pa-ux-sandbox) repository. Every package ships independently to npm or Packagist; the sandbox itself is the integration environment. The `dreaming` branch is the speculative scratchpad where new primitives are proposed before they earn their place in a package.
+We are building Fancy Dev Kit in public on the [`Particle-Academy/pa-ux-sandbox`](https://github.com/Particle-Academy/pa-ux-sandbox) repository. Every package ships independently to npm or Packagist; the sandbox itself is the integration environment. The `dreaming` branch is the speculative scratchpad where new primitives are proposed before they earn their place in a package.
 
 If you want to build an app where agents and humans share the same UI, we'd like to hear what you're building. Open an issue, or reach out at [particle.academy](https://particle.academy).
 

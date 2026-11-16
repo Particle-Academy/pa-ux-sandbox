@@ -1,8 +1,8 @@
-Fancy UI ships **two** different MCP servers and they solve different problems. Don't conflate them.
+Fancy Dev Kit ships **two** different MCP servers and they solve different problems. Don't conflate them.
 
 | Server | Lives in | What it does |
 |---|---|---|
-| **Install-MCP** | `https://ui.particle.academy/mcp` (hosted) | Lets agents browse, search, and install Fancy UI components into a codebase. The "DX for agents" surface. |
+| **Install-MCP** | `https://ui.particle.academy/mcp` (hosted) | Lets agents browse, search, and install Fancy Dev Kit components into a codebase. The "DX for agents" surface. |
 | **Runtime bridges** | `@particle-academy/agent-integrations` (in your app) | Lets agents *operate* a running app — drive whiteboards, sheets, code editors, scenes — via stable handles, not screen-scraping. The "UX for agents" surface. |
 
 If you're an IDE user installing components, you want the **Install-MCP**. If you're a developer building an app that an agent will inhabit, you want the **runtime bridges**.
@@ -95,7 +95,7 @@ On Cursor, VS Code, or any other MCP client — or if you'd rather wire it up by
 
 Once connected, you ask in natural language:
 
-> "Show me all Fancy UI components related to navigation."
+> "Show me all Fancy Dev Kit components related to navigation."
 
 The agent calls `search-components({ query: "navigation" })` and reports `navbar`, `breadcrumbs`, `sidebar`, `mobile-menu`, `tree-nav`.
 
@@ -167,4 +167,4 @@ A useful mental model: install-MCP is **about** components, runtime bridges are 
 
 ## Hosting your own install-MCP
 
-The Fancy UI install-MCP is hosted, but the protocol is open. If you ship your own [registry](/docs/registry), you can point an MCP server (any one — the reference impl is small) at it. The tools and shape stay the same.
+The Fancy Dev Kit install-MCP is hosted, but the protocol is open. If you ship your own [registry](/docs/registry), you can point an MCP server (any one — the reference impl is small) at it. The tools and shape stay the same.

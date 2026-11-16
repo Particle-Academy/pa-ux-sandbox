@@ -1,6 +1,6 @@
 # Typography
 
-How to handle fonts in a Fancy UI app: the default stacks, adding a custom or web font, Google Fonts, licensing, and what to do when layout has to come out identical on every machine.
+How to handle fonts in a Fancy Dev Kit app: the default stacks, adding a custom or web font, Google Fonts, licensing, and what to do when layout has to come out identical on every machine.
 
 Agents get the same guide from the install-MCP: call the `typography-guide` tool, optionally with a `topic` (`policy`, `defaults`, `custom`, `tailwind`, `google-fonts`, `scripts`, `licensing`, `deterministic`, `packages`). Both read this page, so they cannot disagree.
 

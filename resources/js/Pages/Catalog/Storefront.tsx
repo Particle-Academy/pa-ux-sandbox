@@ -11,7 +11,7 @@ import { PriceLine, type CatalogProduct } from "./parts";
 export default function CatalogStorefront({ products }: { products: CatalogProduct[] }) {
     return (
         <Layout>
-            <Head title="Catalog demo · Fancy UI" />
+            <Head title={"Catalog demo · " + __BRAND_NAME__} />
 
             <header className="max-w-2xl">
                 <Badge color="sky">laravel-catalog</Badge>

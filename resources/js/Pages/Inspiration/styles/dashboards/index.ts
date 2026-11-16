@@ -22,7 +22,7 @@ import Amplify from "./amplify";
 
 /**
  * The Dashboards collection's style-mounting registry — twenty fictional apps
- * (user-facing + admin), each a dashboard built to demonstrate the Fancy UI Kit
+ * (user-facing + admin), each a dashboard built to demonstrate the Fancy Dev Kit
  * (fancy-echarts EChart + Card + Table + Kanban + Timeline + Progress + …).
  * Same rules as the other collections: STATIC imports (Inertia SSR), each page
  * self-contained with its co-located ./{id}.css.

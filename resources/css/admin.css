@@ -1,4 +1,4 @@
-/* admin.css — shell scaffolding for the Fancy UI admin (Inertia + react-fancy).
+/* admin.css — shell scaffolding for the Fancy Dev Kit admin (Inertia + react-fancy).
    All color/spacing comes from the showcase semantic tokens (tokens.css), so
    light/dark parity is automatic. Loaded only on admin pages (imported by
    resources/js/Pages/Admin/AdminLayout.tsx). */

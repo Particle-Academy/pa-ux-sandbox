@@ -187,7 +187,7 @@ Route::get('/active-users', [ActiveUsersController::class, 'index'])->name('acti
 // route:cache stays intact. The contained PWA demo lives at /packages/fancy-pwa.
 Route::get('/sw.js', ServiceWorkerController::class)->name('sw');
 
-// ─── Fancy UI Showcase ─────────────────────────────────────────────────
+// ─── Fancy Dev Kit Showcase ─────────────────────────────────────────────────
 Route::get('/', HomeController::class)->name('home');
 
 // CMS demo: the WHOLE Home page rendered from a seeded fancy-cms document
@@ -263,7 +263,7 @@ Route::get('/leaderboard', LeaderboardController::class)->name('leaderboard');
 Route::get('/api/leaderboard/contributors', [LeaderboardController::class, 'contributors'])->name('leaderboard.contributors');
 
 // Agent Playground — anonymous, ephemeral MCP session where a visitor's own
-// external agent generates Fancy UI screens + data and drives the full kit
+// external agent generates Fancy Dev Kit screens + data and drives the full kit
 // over MCP. No auth, no DB writes; the page owns an in-browser MicroMcpServer.
 Route::get('/agent-playground', fn () => Inertia::render('AgentPlayground'))->name('agent-playground');
 
@@ -347,11 +347,11 @@ Route::get('/schema/{name}', [SchemaController::class, 'show'])
 
 // ─── Install-MCP server ──────────────────────────────────────────────
 // Hosted MCP endpoint so any MCP-capable IDE (Claude Code, Cursor, VS Code,
-// Codex) can browse, search, and install Fancy UI components conversationally.
+// Codex) can browse, search, and install Fancy Dev Kit components conversationally.
 // Tools: list_components, search_components, get_component, install_instructions.
 Mcp::web('/mcp', FancyUiRegistry::class);
 
-// ─── Fancy UI Curriculum ─────────────────────────────────────────────
+// ─── Fancy Dev Kit Curriculum ─────────────────────────────────────────────
 // The kit teaching itself, on laravel-courses + @particle-academy/classroom —
 // both installed from real registries, like any external consumer. The
 // catalogue is public; enrolling and earning a certificate need an account,

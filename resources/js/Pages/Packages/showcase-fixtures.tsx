@@ -1,7 +1,7 @@
 /**
  * Shared fixtures for the fancy-slides + dark-slide showcase components.
  *
- * The canonical deck is a real Fancy UI presentation — 6 slides about the
+ * The canonical deck is a real Fancy Dev Kit presentation — 6 slides about the
  * kit, using the screenshots in `public/showcase-shots/`. Both
  * `ComponentPreviews.tsx` (per-component mini tile on /packages/{slug}) and
  * `ComponentDemo.tsx` (full Preview tab on /packages/{slug}/{component})
@@ -14,7 +14,7 @@ import type { Deck, SlideData } from "@particle-academy/fancy-slides";
 import { defaultTheme } from "@particle-academy/fancy-slides";
 import type { PageDoc, PerBreakpoint, StyleProps } from "@particle-academy/fancy-cms-ui";
 
-// ── Real Fancy UI screenshots ─────────────────────────────────────────────
+// ── Real Fancy Dev Kit screenshots ─────────────────────────────────────────────
 //
 // Every screenshot is 1400×900 (~14:9, slightly taller than 16:9). Lives in
 // `public/showcase-shots/`, served at /showcase-shots/*.png.
@@ -38,7 +38,7 @@ const TITLE_SLIDE: SlideData = {
             id: "title",
             type: "text",
             x: 0.08, y: 0.4, w: 0.84, h: 0.18,
-            content: "Fancy UI Kit",
+            content: __BRAND_NAME__,
             format: "plain",
             style: { fontSize: 96, weight: "bold", align: "center", color: "#0f172a" },
         },
@@ -342,7 +342,7 @@ import "@particle-academy/fancy-slides/styles.css";
 
 export const CANONICAL_DECK: Deck = {
     id: "fancy-ui-pitch",
-    title: "Fancy UI Kit",
+    title: __BRAND_NAME__,
     theme: defaultTheme,
     slides: [TITLE_SLIDE, WHY_SLIDE, GALLERY_SLIDE, REACT_FANCY_SLIDE, AGENT_SLIDE, DATA_SLIDE, THANKS_SLIDE],
 };

@@ -5,7 +5,7 @@ namespace App\Support;
 /**
  * Registry of the Inspiration Gallery — the single source of truth for its
  * COLLECTIONS. Each collection is one fictional business designed twenty ways;
- * every page is built from the same restyled Fancy UI primitives.
+ * every page is built from the same restyled Fancy Dev Kit primitives.
  *
  *   fieldwork  — "FIELDWORK", a fictional creative-studio portfolio
  *                (20 styles, common → experimental)
@@ -34,7 +34,7 @@ namespace App\Support;
  *   swatch  — placeholder thumbnail color (hex or CSS gradient) shown while
  *             the real screenshot loads
  *   cuisine — (mom-n-pops only) the truck's cuisine chip
- *   surface — (mom-n-pops only) the woven-in Fancy UI surface chip
+ *   surface — (mom-n-pops only) the woven-in Fancy Dev Kit surface chip
  */
 class GalleryRegistry
 {
@@ -47,7 +47,7 @@ class GalleryRegistry
             'kicker' => 'style index',
             'title' => 'One portfolio, twenty ways to build it.',
             'subject' => 'a fictional creative studio',
-            'blurb' => 'FIELDWORK is a fictional studio — the same one-page site, designed twenty times, from quiet Swiss grids to agent-native surfaces. Every one is built from the same Fancy UI primitives, restyled: a design kit is really a box of primitives you can arrange for almost any use case. These are read-only blueprints to reference and remix — not starter code to fork.',
+            'blurb' => 'FIELDWORK is a fictional studio — the same one-page site, designed twenty times, from quiet Swiss grids to agent-native surfaces. Every one is built from the same '.Brand::NAME.' primitives, restyled: a design kit is really a box of primitives you can arrange for almost any use case. These are read-only blueprints to reference and remix — not starter code to fork.',
             'framing' => 'Fictional studio · the same site, 20 ways · read-only',
             'range' => 'common → experimental',
             'styles' => [
@@ -78,7 +78,7 @@ class GalleryRegistry
             'kicker' => 'truck index',
             'title' => 'One truck, twenty interfaces.',
             'subject' => 'a fictional family food truck',
-            'blurb' => 'Mom-n-Pops is a fictional Milwaukee family food truck — Rosa & Sal, est. 2026 — as twenty complete truck sites, each with its own cuisine and art direction. Where it earns its place, a Fancy UI surface is woven in: live order trackers, build-your-own configurators, a today\'s-catch board, a cook timeline, a reservations calendar, ⌘K ordering, agentic catering. Real sites first — read-only blueprints to reference and remix.',
+            'blurb' => 'Mom-n-Pops is a fictional Milwaukee family food truck — Rosa & Sal, est. 2026 — as twenty complete truck sites, each with its own cuisine and art direction. Where it earns its place, a '.Brand::NAME.' surface is woven in: live order trackers, build-your-own configurators, a today\'s-catch board, a cook timeline, a reservations calendar, ⌘K ordering, agentic catering. Real sites first — read-only blueprints to reference and remix.',
             'framing' => 'Fictional food truck · the same truck, 20 cuisines · read-only',
             'range' => 'storefront → data surface',
             'styles' => [
@@ -109,7 +109,7 @@ class GalleryRegistry
             'kicker' => 'app index',
             'title' => 'Twenty dashboards, twenty apps.',
             'subject' => 'twenty fictional apps',
-            'blurb' => 'Twenty dashboard designs on the Fancy UI Kit — a mix of user-facing and admin/operator surfaces, from fitness and budgeting to fleet ops, crypto, and hospital operations. Each is built from real Fancy components: every chart is a fancy-echarts EChart, KPI tiles are Cards, data grids are Tables, pipelines are Kanban boards. Read-only blueprints to reference and remix — not starter code to fork.',
+            'blurb' => 'Twenty dashboard designs on the '.Brand::NAME.' — a mix of user-facing and admin/operator surfaces, from fitness and budgeting to fleet ops, crypto, and hospital operations. Each is built from real Fancy components: every chart is a fancy-echarts EChart, KPI tiles are Cards, data grids are Tables, pipelines are Kanban boards. Read-only blueprints to reference and remix — not starter code to fork.',
             'framing' => 'Fictional apps · 20 dashboards · built from Fancy components · read-only',
             'range' => 'user-facing + admin',
             'styles' => [

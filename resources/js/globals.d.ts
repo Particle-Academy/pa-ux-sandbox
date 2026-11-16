@@ -17,3 +17,11 @@ declare const __FANCY_FLOW_CORE_KINDS__: number;
  * carries NO leading `v`; add one where you display it.
  */
 declare const __KIT_VERSION__: string;
+
+/**
+ * The kit's display name ("Fancy Dev Kit") and tagline ("for SaaSy Agents"),
+ * extracted at build time from `app/Support/Brand.php`, the one place they are
+ * typed. Never type the brand into a component.
+ */
+declare const __BRAND_NAME__: string;
+declare const __BRAND_TAGLINE__: string;

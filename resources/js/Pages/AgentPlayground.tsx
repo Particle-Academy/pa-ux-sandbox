@@ -14,7 +14,7 @@ import { KIND_MODULES, KIND_BY_NAME } from "./AgentPlayground/kinds";
 
 /**
  * Agent Playground — a user starts an MCP session, their own external agent
- * connects over the relay, and the agent generates Fancy UI Screens + data,
+ * connects over the relay, and the agent generates Fancy Dev Kit Screens + data,
  * driving the full kit (composition / artboard / whiteboard / chart / form /
  * sheet / flow / slides / code / scene) over MCP.
  *
@@ -32,7 +32,7 @@ import { KIND_MODULES, KIND_BY_NAME } from "./AgentPlayground/kinds";
 export default function AgentPlayground() {
   return (
     <Layout bleed>
-      <Head title="Agent Playground · Fancy UI" />
+      <Head title={"Agent Playground · " + __BRAND_NAME__} />
       <ScreenSystem>
         <PlaygroundInner />
       </ScreenSystem>
@@ -63,7 +63,7 @@ function PlaygroundInner() {
           Your agent. Our UI. <span className="gradient-text">Live.</span>
         </h1>
         <p className="lede" style={{ marginBottom: 0 }}>
-          Start a session, connect your own agent over MCP, and watch it author Fancy UI screens + live data —
+          Start a session, connect your own agent over MCP, and watch it author {__BRAND_NAME__} screens + live data —
           calling <code style={{ fontFamily: "var(--font-mono)" }}>screens_create</code> to spin up surfaces, then
           driving each one with its per-kind tools. No external agent? Use the in-page console below to drive the
           same surface.

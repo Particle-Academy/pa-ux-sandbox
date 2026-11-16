@@ -1,5 +1,5 @@
 /**
- * composition kind — a Fancy UI page authored as JSON.
+ * composition kind — a Fancy Dev Kit page authored as JSON.
  *
  * The agent emits a `ScreenSchema` (via `screens_update_content`, whose
  * `partial` we treat as `{ schema }`) and fancy-screens' `<Screen schema>`
@@ -51,7 +51,7 @@ export const compositionKind: KindModule = {
   kind: "composition",
   label: "Composition",
   description:
-    "A Fancy UI page rendered from agent-emitted JSON (ScreenSchema). Drive it with screens_update_content; partial = { schema }.",
+    "A " + __BRAND_NAME__ + " page rendered from agent-emitted JSON (ScreenSchema). Drive it with screens_update_content; partial = { schema }.",
   status: "wired",
   createState: (): CompositionState => ({ schema: SEED }),
   // Composition is steered through the screens bridge, not a per-kind bridge.

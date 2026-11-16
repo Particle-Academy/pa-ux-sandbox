@@ -21,7 +21,7 @@ export default function InspirationCollection({
 
     return (
         <Layout>
-            <Head title={`${collection.name} · Inspiration Gallery · Fancy UI`} />
+            <Head title={`${collection.name} · Inspiration Gallery · ${__BRAND_NAME__}`} />
 
             <div style={{ maxWidth: 1180, margin: "0 auto", paddingTop: 8 }}>
                 <nav

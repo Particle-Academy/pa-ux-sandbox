@@ -402,7 +402,7 @@ export default function Fleet({ style }: { style: Style }) {
 
                             <div className="dbfleet-colophon">
                                 Fleet — a fictional Milwaukee delivery depot, for demonstration · Dashboard {style.num} /{" "}
-                                {style.name} · every surface is a restyled Fancy UI primitive
+                                {style.name} · every surface is a restyled {__BRAND_NAME__} primitive
                             </div>
                         </div>
                     </div>

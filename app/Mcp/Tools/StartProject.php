@@ -3,6 +3,7 @@
 namespace App\Mcp\Tools;
 
 use App\Http\Controllers\Showcase\StarterKitController;
+use App\Support\Brand;
 use App\Support\PackageFamily;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Mcp\Request;
@@ -10,7 +11,7 @@ use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Attributes\Description;
 use Laravel\Mcp\Server\Tool;
 
-#[Description('Start a NEW Fancy UI project — call this FIRST, before picking components. The first decision is your BACKEND: PHP (Laravel + Inertia), Node / TypeScript, Python (FastAPI / Django / Flask), or another language (Go, Rails, .NET, …). The React UI is identical on every backend; only the server layer differs. Returns the recommended stack, the right server-side packages for your backend (each capability is mirrored per language), scaffold steps, and what to do next. Pass `backend` to focus the guide, or omit it for the full decision tree.')]
+#[Description('Start a NEW '.Brand::NAME.' project — call this FIRST, before picking components. The first decision is your BACKEND: PHP (Laravel + Inertia), Node / TypeScript, Python (FastAPI / Django / Flask), or another language (Go, Rails, .NET, …). The React UI is identical on every backend; only the server layer differs. Returns the recommended stack, the right server-side packages for your backend (each capability is mirrored per language), scaffold steps, and what to do next. Pass `backend` to focus the guide, or omit it for the full decision tree.')]
 class StartProject extends Tool
 {
     public function handle(Request $request): Response
@@ -25,7 +26,7 @@ class StartProject extends Tool
         ];
 
         return Response::json([
-            'title' => 'Start a Fancy UI project',
+            'title' => 'Start a '.Brand::NAME.' project',
             'first_decision' => 'Choose your BACKEND first — it decides which server-side packages you install. The React UI (react-fancy + the Human+ surfaces + the agent-integrations bridges) is the SAME on every backend; only the server layer changes.',
             'ui_is_universal' => [
                 'core_ui' => '@particle-academy/react-fancy — ~70 React 19 + Tailwind v4 primitives. Plain React; works under any backend.',
@@ -213,7 +214,7 @@ class StartProject extends Tool
         return [
             'label' => 'Another backend — Go, Ruby/Rails, .NET, Elixir, Rust, … (Python has its OWN path: pass backend="python")',
             'pick_when' => 'Your server is in a language other than PHP, Node or Python.',
-            'ui' => 'The Fancy UI React kit is framework-agnostic (plain React 19 + Tailwind v4). Serve it from any backend that can host a JS frontend — a Vite SPA, an inertia-style adapter for your framework, or an embedded bundle. The components + agent bridges work unchanged.',
+            'ui' => 'The '.Brand::NAME.' React kit is framework-agnostic (plain React 19 + Tailwind v4). Serve it from any backend that can host a JS frontend — a Vite SPA, an inertia-style adapter for your framework, or an embedded bundle. The components + agent bridges work unchanged.',
             'server_side_today' => 'Server-side capabilities (catalog, feature gating, xlsx/pptx, analytics, well-known files) ship as PHP + Node mirrors today, with the framework-free cores also on PyPI for Python. Until a native mirror for your language lands, run the Node (`-js`) packages from a small JS sidecar service, or call them over HTTP/RPC from your app — the contracts are stable and JSON-friendly.',
             'roadmap' => 'Native mirrors for more modern languages are on the roadmap. Each capability is defined by a language-agnostic contract, so the per-language packages stay behavior-identical. Want your language prioritized? Open an issue at github.com/Particle-Academy on the relevant package.',
             'starter_kits' => $this->starterKits(),

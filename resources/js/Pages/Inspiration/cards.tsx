@@ -161,7 +161,7 @@ export function CollectionHeading({ collection, link = false }: { collection: Co
             >
                 <div style={{ color: "var(--fg-1)" }}>{collection.count} styles</div>
                 <div>{collection.range}</div>
-                <div>Fancy UI Kit</div>
+                <div>{__BRAND_NAME__}</div>
             </div>
         </header>
     );
@@ -203,7 +203,7 @@ export function GalleryFooter({ collections }: { collections: Collection[] }) {
                 {collections.map((c) => `${c.name} — ${c.subject}`).join(" · ")} · for demonstration.
             </span>
             <span style={{ fontFamily: "var(--font-mono)", color: "var(--fg-4)" }}>
-                Built with the Fancy UI Kit
+                Built with the {__BRAND_NAME__}
             </span>
         </div>
     );

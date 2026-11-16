@@ -225,7 +225,7 @@ export const CR_LESSON = {
 };
 
 export const CR_CURRICULUM = {
-    id: 1, slug: "fancy-ui", title: "Fancy UI Curriculum",
+    id: 1, slug: "fancy-ui", title: __BRAND_NAME__ + " Curriculum",
     description: "From primitives to agent-driven surfaces.",
     sort_order: 1, is_published: true, metadata: null,
 };
@@ -647,7 +647,7 @@ const PREVIEWS: Record<string, PreviewFn> = {
         <div className="w-full max-w-[18rem] space-y-1.5 text-xs">
             <div className="rounded-md border border-zinc-200 dark:border-zinc-800">
                 <div className="flex items-center justify-between px-3 py-2 text-zinc-700 dark:text-zinc-200">
-                    <span className="font-medium">What is Fancy UI?</span>
+                    <span className="font-medium">What is {__BRAND_NAME__}?</span>
                     <ChevronDown size={14} className="text-zinc-400" />
                 </div>
                 <div className="border-t border-zinc-100 px-3 py-2 text-zinc-500 dark:border-zinc-800 dark:text-zinc-400">
@@ -1114,7 +1114,7 @@ const PREVIEWS: Record<string, PreviewFn> = {
         // rest is hooks and a Vite plugin, which a tile cannot show.
         <div className="w-full max-w-[18rem] space-y-2 text-left text-[11px]">
             <OfflineBanner color="amber">You are offline — changes will sync.</OfflineBanner>
-            <InstallBanner color="violet" title="Install Fancy UI" installLabel="Install" />
+            <InstallBanner color="violet" title={"Install " + __BRAND_NAME__} installLabel="Install" />
         </div>
     ),
     // PasskeyStatus is pure presentation over three booleans — no ceremony, no
@@ -1450,7 +1450,7 @@ const PREVIEWS: Record<string, PreviewFn> = {
 
     "react-fancy/field": () => (
         <Field label="Workspace" description="Visible to collaborators" htmlFor="field-preview">
-            <input id="field-preview" defaultValue="Fancy UI" className="w-full rounded-md border border-zinc-300 bg-transparent px-2 py-1.5 text-xs dark:border-zinc-700" />
+            <input id="field-preview" defaultValue={__BRAND_NAME__} className="w-full rounded-md border border-zinc-300 bg-transparent px-2 py-1.5 text-xs dark:border-zinc-700" />
         </Field>
     ),
 
@@ -2542,14 +2542,14 @@ const PREVIEWS: Record<string, PreviewFn> = {
     "fancy-code/markdown-editor": heavy("MarkdownEditorTile", () => (
         <div className="grid h-32 w-full max-w-[20rem] grid-cols-2 overflow-hidden rounded-md border border-zinc-200 text-[9px] dark:border-zinc-700">
             <div className="border-r border-zinc-200 bg-zinc-50 p-2 font-mono leading-relaxed text-zinc-600 dark:border-zinc-700 dark:bg-zinc-950 dark:text-zinc-400">
-                <div><span className="text-violet-500"># </span>Fancy UI</div>
+                <div><span className="text-violet-500"># </span>{__BRAND_NAME__}</div>
                 <div className="text-zinc-400">&nbsp;</div>
                 <div><span className="text-violet-500">**</span>Human+<span className="text-violet-500">**</span> UI.</div>
                 <div><span className="text-violet-500">- </span>terse</div>
                 <div><span className="text-violet-500">- </span>bridgeable</div>
             </div>
             <div className="bg-white p-2 leading-relaxed text-zinc-700 dark:bg-zinc-900 dark:text-zinc-200">
-                <div className="text-[11px] font-bold">Fancy UI</div>
+                <div className="text-[11px] font-bold">{__BRAND_NAME__}</div>
                 <div className="mt-1"><span className="font-bold">Human+</span> UI.</div>
                 <ul className="mt-0.5 list-disc pl-3 text-zinc-500">
                     <li>terse</li>

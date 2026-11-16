@@ -1,4 +1,4 @@
-Fancy UI is **Tailwind v4 native**. Every primitive consumes Tailwind utility classes directly and the design tokens live in your `@theme` block, not in a separate JSON file. This makes the theme readable, debuggable, and editable in one place.
+Fancy Dev Kit is **Tailwind v4 native**. Every primitive consumes Tailwind utility classes directly and the design tokens live in your `@theme` block, not in a separate JSON file. This makes the theme readable, debuggable, and editable in one place.
 
 ## Importing Tailwind
 
@@ -12,7 +12,7 @@ Note: this is the v4 syntax. **Don't use** the legacy `@tailwind base; @tailwind
 
 ## The default token set
 
-Fancy UI doesn't ship a custom token file — it uses Tailwind's defaults (zinc as the gray scale, violet as the brand accent) with no shadowing. That means:
+Fancy Dev Kit doesn't ship a custom token file — it uses Tailwind's defaults (zinc as the gray scale, violet as the brand accent) with no shadowing. That means:
 
 - Light mode neutrals: `zinc-50` → `zinc-950`
 - Dark mode neutrals: same scale, reversed
@@ -31,7 +31,7 @@ If you want to override these, define your own in a `@theme` block:
 }
 ```
 
-Every Fancy UI component that takes a `color` prop accepts one of: `zinc`, `red`, `orange`, `amber`, `emerald`, `sky`, `indigo`, `violet`, `rose`. If you want to add custom colors, register them in `@theme` *and* in the component's `color` prop union (or use `className` overrides for one-offs).
+Every Fancy Dev Kit component that takes a `color` prop accepts one of: `zinc`, `red`, `orange`, `amber`, `emerald`, `sky`, `indigo`, `violet`, `rose`. If you want to add custom colors, register them in `@theme` *and* in the component's `color` prop union (or use `className` overrides for one-offs).
 
 ## Semantic tokens
 

@@ -277,7 +277,7 @@ export default function Voyage({ style }: { style: Style }) {
                 {/* ── Demo colophon ───────────────────────────────────────────── */}
                 <div className="dbvoyage-foot">
                     Voyage — a fictional airline app, for demonstration · Dashboard {style.num} / {style.name} · every
-                    surface is a restyled Fancy UI primitive
+                    surface is a restyled {__BRAND_NAME__} primitive
                 </div>
             </div>
         </div>

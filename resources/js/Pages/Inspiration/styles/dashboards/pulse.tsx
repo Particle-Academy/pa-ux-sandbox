@@ -26,7 +26,7 @@ import type { Style } from "../../types";
  * single athlete's day — activity rings, streak + steps, an all-day heart-rate
  * curve, a weekly move-minutes chart, and a recent-workouts list.
  *
- * THE POINT of this page is to demonstrate the Fancy UI kit, so every surface
+ * THE POINT of this page is to demonstrate the Fancy Dev Kit, so every surface
  * is a restyled Fancy primitive wearing the Pulse look via scoped `dbpulse-`
  * CSS — no bespoke chart divs:
  *   • the three charts are fancy-echarts <EChart> (a nested-ring gauge, a
@@ -378,7 +378,7 @@ export default function Pulse({ style }: { style: Style }) {
                 {/* ── Colophon (gallery framing) ─────────────────────────────── */}
                 <div className="dbpulse-colophon">
                     Pulse — a fictional training dashboard, for demonstration · App {style.num} / {style.name} · every
-                    surface is a restyled Fancy UI primitive
+                    surface is a restyled {__BRAND_NAME__} primitive
                 </div>
             </div>
         </div>

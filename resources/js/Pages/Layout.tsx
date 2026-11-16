@@ -183,8 +183,8 @@ export function Layout({
                             Inertia's synchronous renderToString SSR that preload
                             lands in the #app body, but the client hoists it to
                             <head>, causing a hydration mismatch (#418). */}
-                        <img src="/showcase-assets/fancy-ui-logo.jpg" alt="Fancy UI Kit" className="mark" style={{ objectFit: "cover" }} loading="lazy" />
-                        <span>Fancy UI Kit</span>
+                        <img src="/showcase-assets/fancy-ui-logo.jpg" alt={__BRAND_NAME__} className="mark" style={{ objectFit: "cover" }} loading="lazy" />
+                        <span>{__BRAND_NAME__}</span>
                         <span className="ver">v{__KIT_VERSION__}</span>
                     </Link>
 
@@ -369,7 +369,7 @@ export function Layout({
                     open={navOpen}
                     onClose={() => setNavOpen(false)}
                     side="right"
-                    title="Fancy UI Kit"
+                    title={__BRAND_NAME__}
                 >
                     {navItems.map((item) => (
                         <MobileMenu.Item
@@ -587,8 +587,8 @@ export function Layout({
                             Inertia's synchronous renderToString SSR that preload
                             lands in the #app body, but the client hoists it to
                             <head>, causing a hydration mismatch (#418). */}
-                        <img src="/showcase-assets/fancy-ui-logo.jpg" alt="Fancy UI Kit" className="mark" style={{ objectFit: "cover" }} loading="lazy" />
-                                <span>Fancy UI Kit</span>
+                        <img src="/showcase-assets/fancy-ui-logo.jpg" alt={__BRAND_NAME__} className="mark" style={{ objectFit: "cover" }} loading="lazy" />
+                                <span>{__BRAND_NAME__}</span>
                             </div>
                             <p style={{ margin: 0, fontSize: 13, lineHeight: 1.6, color: "var(--fg-2)", maxWidth: 320 }}>
                                 UI primitives engineered for Human+ UX — applications where humans and
@@ -624,7 +624,7 @@ export function Layout({
                             <ul>
                                 <li><Link href="/docs">Docs</Link></li>
                                 <li><Link href="/docs/tanstack">TanStack</Link></li>
-                                <li><Link href="/learn">Fancy UI Curriculum</Link></li>
+                                <li><Link href="/learn">{__BRAND_NAME__} Curriculum</Link></li>
                                 <li><Link href="/dreaming">Dreaming</Link></li>
                                 <li><a href="/docs/human-plus-ux.md">Human+ whitepaper</a></li>
                                 <li><Link href="/docs/requirements">Minimum requirements</Link></li>
@@ -668,7 +668,7 @@ export function Layout({
                             only place the browser/PHP/Node floors are written down, and
                             the version chip is where someone looks for them. */}
                         <span className="right">
-                            fancy-ui · <Link href="/docs/requirements" title="Supported browsers and versions">v{__KIT_VERSION__}</Link> · react-fancy {__REACT_FANCY_VERSION__}
+                            {__BRAND_NAME__} · <Link href="/docs/requirements" title="Supported browsers and versions">v{__KIT_VERSION__}</Link> · react-fancy {__REACT_FANCY_VERSION__}
                         </span>
                     </div>
                 </div>
@@ -680,7 +680,7 @@ export function Layout({
                 reconnect) + an offline notice. The SW half is inert here — the
                 showcase registers no service worker — so detection is unchanged. */}
             <FancyInertiaPwa
-                updateTitle="Fancy UI just updated"
+                updateTitle={__BRAND_NAME__ + " just updated"}
                 updateDescription="Refresh to get the latest build."
             />
         </div>

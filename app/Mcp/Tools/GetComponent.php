@@ -2,6 +2,7 @@
 
 namespace App\Mcp\Tools;
 
+use App\Support\Brand;
 use App\Support\Registry\RegistrySource;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Mcp\Request;
@@ -9,7 +10,7 @@ use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Attributes\Description;
 use Laravel\Mcp\Server\Tool;
 
-#[Description('Fetch the full registry bundle for one Fancy UI component — every source file with its content, npm dependencies, and registry dependencies. Use this when you are about to install (write the files into the user\'s codebase) or when you need to inspect the source.')]
+#[Description('Fetch the full registry bundle for one '.Brand::NAME.' component — every source file with its content, npm dependencies, and registry dependencies. Use this when you are about to install (write the files into the user\'s codebase) or when you need to inspect the source.')]
 class GetComponent extends Tool
 {
     public function handle(Request $request, RegistrySource $registry): Response

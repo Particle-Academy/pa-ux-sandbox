@@ -7,7 +7,7 @@ uses(TestCase::class);
 
 /*
  * /features/accessibility: a page that teaches. Each lesson names its WCAG 2.2
- * criteria, says how Fancy UI meets them (each point tied to the react-fancy
+ * criteria, says how Fancy Dev Kit meets them (each point tied to the react-fancy
  * release it shipped in), and demos the real components.
  *
  * PHP cannot render the React page, so this pins the props, the lesson list,

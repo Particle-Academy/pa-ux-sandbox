@@ -18,7 +18,7 @@ export const badgeDoc: ComponentDoc = {
         },
         {
             name: "Colors",
-            description: "Seven preset colors keyed to the Fancy UI palette.",
+            description: "Seven preset colors keyed to the " + __BRAND_NAME__ + " palette.",
             render: () => (
                 <div className="flex flex-wrap items-center gap-2">
                     <Badge color="zinc">zinc</Badge>

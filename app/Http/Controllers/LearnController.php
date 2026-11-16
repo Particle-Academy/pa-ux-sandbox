@@ -20,7 +20,7 @@ use ParticleAcademy\LaravelCourses\Services\ProgressService;
 use ParticleAcademy\LaravelCourses\Services\ScoringService;
 
 /**
- * /learn — the Fancy UI Curriculum, rendered by @particle-academy/classroom.
+ * /learn — the Fancy Dev Kit Curriculum, rendered by @particle-academy/classroom.
  *
  * The pages mount `CurriculumOverview` and `CoursePlayer` from the package
  * rather than re-implementing a course UI. That is the entire point of the

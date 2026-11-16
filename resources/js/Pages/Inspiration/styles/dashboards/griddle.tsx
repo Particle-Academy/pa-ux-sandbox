@@ -452,7 +452,7 @@ export default function Griddle({ style }: { style: Style }) {
                         </Heading>
                         <Text as="p" size="xs" className="dbgriddle-colophon__note">
                             Dashboards — a fictional app, for demonstration · App {style.num} /{" "}
-                            {style.name} · every surface is a restyled Fancy UI primitive (Sidebar ·
+                            {style.name} · every surface is a restyled {__BRAND_NAME__} primitive (Sidebar ·
                             Navbar · Card · EChart · Table · Badge · Progress)
                         </Text>
                     </div>

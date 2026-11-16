@@ -122,11 +122,11 @@ export function usePlaygroundServer() {
     const server = new MicroMcpServer({
       info: { name: "agent-playground", version: "0.1.0" },
       instructions:
-        "Fancy UI Agent Playground. Start by calling screens_list_kinds to see the surface catalog " +
+        __BRAND_NAME__ + " Agent Playground. Start by calling screens_list_kinds to see the surface catalog " +
         "(composition / artboard / whiteboard / chart / form / sheet / flow / slides / code / scene). " +
         "Create screens with screens_create { id, kind }, switch with screens_navigate, then drive each " +
         "screen with its per-kind tools (artboard_*, whiteboard_*, chart_*, form_*, sheet_*, flow_*, deck_*, " +
-        "code_*, scene_*). A 'composition' screen renders agent-emitted Fancy UI JSON: call screens_update_content " +
+        "code_*, scene_*). A 'composition' screen renders agent-emitted " + __BRAND_NAME__ + " JSON: call screens_update_content " +
         "with { schema: { type, props, children } } to populate it. Undo with agent_undo / agent_redo / agent_history.",
     });
 

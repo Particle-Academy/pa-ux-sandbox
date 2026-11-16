@@ -19,7 +19,7 @@ import { TargetSizeDemo } from "./TargetSizeDemo";
 
 /**
  * /features/accessibility: a page that TEACHES. Each lesson states the
- * principle in plain words with its WCAG 2.2 criteria, then how Fancy UI meets
+ * principle in plain words with its WCAG 2.2 criteria, then how Fancy Dev Kit meets
  * it, then a live demo of the real components. Every "how" point names the
  * react-fancy release it shipped in, from react-fancy's CHANGELOG; every number
  * in a demo table is measured in the visitor's browser, never typed.
@@ -34,7 +34,7 @@ export default function AccessibilityFeature({ feature, versions }: FeaturePageP
                 <FeatureHero
                     feature={feature}
                     eyebrow="Feature · Accessibility"
-                    lede="What accessibility asks of an interface, in plain words, and how Fancy UI answers it in the components themselves, so an app built from them starts from accessible parts instead of retrofitting them."
+                    lede={"What accessibility asks of an interface, in plain words, and how " + __BRAND_NAME__ + " answers it in the components themselves, so an app built from them starts from accessible parts instead of retrofitting them."}
                     languages={feature.languages}
                     actions={
                         <>
@@ -260,7 +260,7 @@ export default function AccessibilityFeature({ feature, versions }: FeaturePageP
                 criteria={[]}
                 principle={
                     <p>
-                        Fancy UI lets AI agents act in an interface beside the person. Some actions must stay the person's own: a
+                        {__BRAND_NAME__} lets AI agents act in an interface beside the person. Some actions must stay the person's own: a
                         consent choice made by an agent is not consent, and an approval card does not change that, because the
                         click would still be the agent's.
                     </p>
@@ -281,7 +281,7 @@ export default function AccessibilityFeature({ feature, versions }: FeaturePageP
 
             <section id="languages" className="feature-section">
                 <Callout color="indigo" icon={<Icon name="languages" size="sm" />} data-a11y-coming="fancy-i18n">
-                    Translating every Fancy UI label is coming with fancy-i18n. This page gets a Languages lesson when it can be
+                    Translating every {__BRAND_NAME__} label is coming with fancy-i18n. This page gets a Languages lesson when it can be
                     installed.
                 </Callout>
             </section>
@@ -289,7 +289,7 @@ export default function AccessibilityFeature({ feature, versions }: FeaturePageP
             <HowItFits
                 members={feature.members}
                 bridges={feature.bridges}
-                intro="Accessibility is not a separate package: it is built into react-fancy, so every Fancy UI surface built on it inherits it, from the consent banner to the captcha."
+                intro={"Accessibility is not a separate package: it is built into react-fancy, so every " + __BRAND_NAME__ + " surface built on it inherits it, from the consent banner to the captcha."}
             />
             <InstallSteps members={feature.members} versions={versions} />
             <PackagesGrid members={feature.members} versions={versions} />

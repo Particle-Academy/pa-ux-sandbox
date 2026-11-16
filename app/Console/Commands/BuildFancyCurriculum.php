@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use App\Support\Brand;
 use App\Support\Curriculum\FancyCurriculumContent as Content;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
@@ -15,7 +16,7 @@ use ParticleAcademy\LaravelCourses\Models\Question;
 use ParticleAcademy\LaravelCourses\Models\Test;
 
 /**
- * Authors the Fancy UI Curriculum into laravel-courses.
+ * Authors the Fancy Dev Kit Curriculum into laravel-courses.
  *
  * Idempotent by slug, so it is safe on every deploy — the content in
  * FancyCurriculumContent is the source of truth and this only reconciles the
@@ -32,7 +33,7 @@ class BuildFancyCurriculum extends Command
                             {--fresh : Delete the curriculum and its courses first, then rebuild}
                             {--dry-run : Report what would change without writing}';
 
-    protected $description = 'Author (or reconcile) the Fancy UI Curriculum';
+    protected $description = 'Author (or reconcile) the '.Brand::NAME.' Curriculum';
 
     public function handle(): int
     {

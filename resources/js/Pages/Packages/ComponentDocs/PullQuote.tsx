@@ -28,12 +28,12 @@ export const pullQuoteDoc: ComponentDoc = {
             name: "With attribution",
             description: "Who said it, rendered inside a <cite>.",
             render: () => (
-                <PullQuote attribution="Fancy UI component contract">
+                <PullQuote attribution={__BRAND_NAME__ + " component contract"}>
                     Agents read and write component state via MCP bridges and stable handles —
                     not via Playwright or DOM scraping.
                 </PullQuote>
             ),
-            code: `<PullQuote attribution="Fancy UI component contract">
+            code: `<PullQuote attribution="${__BRAND_NAME__} component contract">
     Agents read and write component state via MCP bridges and stable handles.
 </PullQuote>`,
         },

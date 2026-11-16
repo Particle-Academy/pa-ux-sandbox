@@ -25,7 +25,7 @@ type AttemptRow = {
 type CertRow = { id: number; learner: string; code: string; issued_at: string | null };
 
 /**
- * /admin/curriculum — the operator view of the Fancy UI Curriculum.
+ * /admin/curriculum — the operator view of the Fancy Dev Kit Curriculum.
  *
  * Read-only by design. Lessons are authored in `FancyCurriculumContent` and
  * reconciled by `php artisan fancy:build-curriculum`; an edit surface here would
@@ -54,7 +54,7 @@ function AdminCurriculum({
         return (
             <>
                 <Head title="Curriculum — Admin" />
-                <PageHeader title="Curriculum" sub="The Fancy UI Curriculum" />
+                <PageHeader title="Curriculum" sub={"The " + __BRAND_NAME__ + " Curriculum"} />
                 <Card style={{ padding: 24 }}>
                     <Text size="sm">
                         No curriculum has been built yet. Run{" "}

@@ -401,7 +401,7 @@ export default function Vertex({ style }: { style: Style }) {
                 <footer className="dbvertex-foot">
                     <Text as="span" size="xs" className="dbvertex-foot__note">
                         Vertex — a fictional trading dashboard, for demonstration · App {style.num} / {style.name} ·
-                        every surface is a restyled Fancy UI primitive
+                        every surface is a restyled {__BRAND_NAME__} primitive
                     </Text>
                     <Link href="/inspiration/dashboards" className="dbvertex-foot__back">
                         Back to the gallery

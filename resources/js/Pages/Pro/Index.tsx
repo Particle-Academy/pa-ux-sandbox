@@ -61,7 +61,7 @@ export default function ProIndex({ plans, features, pro, subscriptions }: Props)
 
     return (
         <Layout>
-            <Head title="Go Pro · Fancy UI" />
+            <Head title={"Go Pro · " + __BRAND_NAME__} />
 
             {flash?.success && (
                 <Callout color="emerald" className="mb-6">
@@ -79,7 +79,7 @@ export default function ProIndex({ plans, features, pro, subscriptions }: Props)
                     Pro
                 </Badge>
                 <Heading as="h1" size="2xl" className="mt-3">
-                    Everything in Fancy UI is free. Pro is the analytics.
+                    Everything in {__BRAND_NAME__} is free. Pro is the analytics.
                 </Heading>
                 <Text className="mt-3 !text-zinc-600 dark:!text-zinc-400">
                     Every package, component, block, and starter kit stays free and MIT — Pro doesn&apos;t

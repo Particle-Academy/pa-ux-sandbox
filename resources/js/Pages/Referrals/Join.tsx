@@ -43,7 +43,7 @@ export default function ReferralsJoin({ inviter }: Props) {
                         </div>
 
                         <Heading as="h1" className="!text-3xl">
-                            <PlayerName player={inviter.identity} /> invited you to Fancy UI
+                            <PlayerName player={inviter.identity} /> invited you to {__BRAND_NAME__}
                         </Heading>
                         <Text className="mx-auto mt-3 max-w-md text-[var(--fg-2)]">
                             Sign in and you'll join{" "}
@@ -63,7 +63,7 @@ export default function ReferralsJoin({ inviter }: Props) {
                                 </Button>
                             )}
                             <Button variant="ghost" href="/" iconTrailing="arrow-right">
-                                Explore Fancy UI
+                                Explore {__BRAND_NAME__}
                             </Button>
                         </div>
 

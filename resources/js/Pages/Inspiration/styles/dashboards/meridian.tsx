@@ -381,7 +381,7 @@ export default function Meridian({ style }: { style: Style }) {
                 <footer className="dbmeridian-foot">
                     <Text as="span" size="xs" className="dbmeridian-foot__note">
                         Meridian — a fictional banking dashboard, for demonstration · App {style.num} / {style.name} ·
-                        every surface is a restyled Fancy UI primitive
+                        every surface is a restyled {__BRAND_NAME__} primitive
                     </Text>
                     <Link href="/inspiration/dashboards" className="dbmeridian-foot__back">
                         Back to the gallery

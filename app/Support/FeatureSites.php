@@ -230,7 +230,7 @@ final class FeatureSites
         'accessibility' => [
             'course' => null,
             'name' => 'Accessibility',
-            'tagline' => 'How Fancy UI meets WCAG: contrast, focus and keyboard, language and direction, target sizes and status messages.',
+            'tagline' => 'How '.Brand::NAME.' meets WCAG: contrast, focus and keyboard, language and direction, target sizes and status messages.',
             'icon' => 'accessibility',
             'component' => 'Features/Accessibility/Index',
             'theme' => ['accent' => '#4f46e5', 'accentDark' => '#818cf8', 'surface' => '#eef2ff', 'surfaceDark' => '#0d0f24', 'font' => 'sans'],

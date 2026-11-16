@@ -8,7 +8,7 @@ type CollectionWithStyles = Collection & { styles: Style[] };
 
 /**
  * The Inspiration Gallery landing — every collection, each a fictional
- * business designed twenty ways from the same restyled Fancy UI primitives
+ * business designed twenty ways from the same restyled Fancy Dev Kit primitives
  * (FIELDWORK the studio, Mom-n-Pops the food truck, more to come). Restrained,
  * Swiss-clean chrome; the bold range lives on the per-style pages.
  *
@@ -21,7 +21,7 @@ export default function InspirationIndex({ collections }: { collections: Collect
 
     return (
         <Layout>
-            <Head title="Inspiration Gallery · Fancy UI" />
+            <Head title={"Inspiration Gallery · " + __BRAND_NAME__} />
 
             <div style={{ maxWidth: 1180, margin: "0 auto", paddingTop: 8 }}>
                 <header
@@ -56,7 +56,7 @@ export default function InspirationIndex({ collections }: { collections: Collect
                             }}
                         >
                             Fictional businesses, each designed twenty ways — every page built from the
-                            same Fancy UI primitives, restyled. A design kit is really a box of primitives
+                            same {__BRAND_NAME__} primitives, restyled. A design kit is really a box of primitives
                             you can arrange for almost any use case. These are read-only blueprints to
                             reference and remix — not starter code to fork.
                         </p>

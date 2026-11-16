@@ -2,6 +2,7 @@
 
 namespace App\Mcp\Tools;
 
+use App\Support\Brand;
 use App\Support\PackageFamily;
 use App\Support\PackageRegistry;
 use App\Support\Registry\RegistrySource;
@@ -11,7 +12,7 @@ use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Attributes\Description;
 use Laravel\Mcp\Server\Tool;
 
-#[Description('Get install instructions for a Fancy UI component — both the npm-package path AND the vendor-the-source CLI path. Returns commands the agent can run (or instruct the user to run) plus the import line. Always prefer this over inventing install commands from memory.')]
+#[Description('Get install instructions for a '.Brand::NAME.' component — both the npm-package path AND the vendor-the-source CLI path. Returns commands the agent can run (or instruct the user to run) plus the import line. Always prefer this over inventing install commands from memory.')]
 class InstallInstructions extends Tool
 {
     public function handle(Request $request, RegistrySource $registry): Response

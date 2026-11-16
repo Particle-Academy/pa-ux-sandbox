@@ -1,14 +1,14 @@
-# Fancy UI Showcase — architectural plan
+# Fancy Dev Kit Showcase — architectural plan
 
 The `pa-ux-sandbox` repository is being repurposed from "dev sandbox" into
-the **public-facing Fancy UI showcase site**. This document is the running
+the **public-facing Fancy Dev Kit showcase site**. This document is the running
 plan; phases can run in parallel where they don't depend on each other.
 
 ## Goals
 
-1. **Showcase** every Fancy UI package with browsable demos for each
+1. **Showcase** every Fancy Dev Kit package with browsable demos for each
    component.
-2. Ship **Starter Kits** — full-app demos built from Fancy UI pieces.
+2. Ship **Starter Kits** — full-app demos built from Fancy Dev Kit pieces.
 3. **Dreaming section** — speculative components users can vote on (GitHub
    login required) with auto-archival of components that net negative.
 4. **Leaderboard** — contributors ranked by PRs merged across submodules +
@@ -30,7 +30,7 @@ Browsing is anonymous. **Every write action requires GitHub login.**
 /dreaming                            Active dreams, with voting (auth-only)
 /dreaming/archived                   Archived dreams (read-only, for posterity)
 /leaderboard                         Top contributors (PRs + votes)
-/showcase                            User-submitted sites/repos using Fancy UI
+/showcase                            User-submitted sites/repos using Fancy Dev Kit
 /showcase/submit                     Submission form (auth-only)
 /auth/github                         OAuth start
 /auth/github/callback                OAuth callback
@@ -93,7 +93,7 @@ Browsing is anonymous. **Every write action requires GitHub login.**
 - Configure the dreaming branch's `composer.json` + `package.json` to
   point each submodule at its own `dreaming` branch (where present)
 - The dreaming-branch deploy serves a parallel preview environment so
-  contributors can see in-flight work from every Fancy UI package
+  contributors can see in-flight work from every Fancy Dev Kit package
   together
 
 ## Required external setup (user must do)

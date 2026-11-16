@@ -1,6 +1,6 @@
-# TanStack in Fancy UI
+# TanStack in Fancy Dev Kit
 
-Fancy UI uses TanStack where it closes a real gap, and **never depends on it**.
+Fancy Dev Kit uses TanStack where it closes a real gap, and **never depends on it**.
 
 That distinction is the whole policy. Every TanStack package is an optional
 **peer**: nothing is bundled, no existing Fancy package gained a TanStack

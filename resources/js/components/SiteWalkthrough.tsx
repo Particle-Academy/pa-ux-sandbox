@@ -24,7 +24,7 @@ const SEEN_KEY = SITE_TOUR_SEEN_KEY;
 const STEPS: WalkthroughStep[] = [
     {
         id: "welcome",
-        title: "Welcome to the Fancy UI Kit",
+        title: "Welcome to the " + __BRAND_NAME__,
         // No package count here on purpose. The homepage derives its figure from
         // the live registry (`packages.length + companions.length`); typing one
         // into the tour would be a second copy that goes stale silently and

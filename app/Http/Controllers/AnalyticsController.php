@@ -6,6 +6,7 @@ use App\Models\ShowcaseSubmission;
 use App\Models\User;
 use App\Services\Entitlements;
 use App\Services\Heuristics\HeuristicsReport;
+use App\Support\Brand;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -174,7 +175,7 @@ class AnalyticsController extends Controller
             $owned[] = [
                 'site_key' => self::DEFAULT_SITE,
                 'url' => config('app.url'),
-                'label' => 'Fancy UI Showcase (dogfood)',
+                'label' => Brand::NAME.' Showcase (dogfood)',
                 'visible' => true,
             ];
         }

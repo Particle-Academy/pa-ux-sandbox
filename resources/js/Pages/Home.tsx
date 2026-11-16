@@ -167,7 +167,7 @@ function Hero({
                 <div>
                     <div className="eyebrow-row">
                         <span className="dot" />
-                        <span>v{__KIT_VERSION__} · {languages.join(" · ")}</span>
+                        <span>{__BRAND_NAME__} {__BRAND_TAGLINE__} · v{__KIT_VERSION__} · {languages.join(" · ")}</span>
                     </div>
                     <h1 className="display">
                         Build the app, <span className="gradient-text">not the plumbing.</span>
@@ -1275,7 +1275,7 @@ codex plugin add <span class="tok-s">fancy-ui@fancy-ui</span>
 // the registry MCP. Deliberately NOT the agent-driving pitch — this one just
 // gets an agent oriented so it looks things up instead of writing from memory.
 // Plain ASCII so it pastes cleanly into any client.
-export const agentPrompt = (packageCount: number, languages: string[]) => `Get to know the Fancy UI suite from Particle Academy before we build anything.
+export const agentPrompt = (packageCount: number, languages: string[]) => `Get to know the ${__BRAND_NAME__} from Particle Academy before we build anything.
 
 It is a kit of ${packageCount} small, independent packages for ${listSentence(languages)} — UI
 primitives, data grids, spreadsheets, workflow engines, whiteboards, xlsx/pptx/docx
@@ -1457,7 +1457,7 @@ export function QuickStart() {
 const EXPLORE = [
     { href: "/starter-kits", icon: Boxes, title: "Starter Kits", body: "Vertical demos — clone, study, adapt.", tag: "templates" },
     { href: "/dreaming", icon: Sparkles, title: "Dreaming", body: "Speculative components you can vote on.", tag: "speculative" },
-    { href: "/showcase", icon: Cpu, title: "Designer Showcase", body: "Sites and repos built with Fancy UI.", tag: "community" },
+    { href: "/showcase", icon: Cpu, title: "Designer Showcase", body: "Sites and repos built with " + __BRAND_NAME__ + ".", tag: "community" },
     { href: "/leaderboard", icon: ArrowRight, title: "Leaderboard", body: "Top contributors by merged PRs and votes.", tag: "live" },
 ] as const;
 

@@ -8,7 +8,7 @@ import "@particle-academy/fancy-devtools/styles.css";
 export const sandboxDevtoolsStore = createDevtoolsStore();
 
 sandboxDevtoolsStore.setEnvironment({
-    application: "Fancy UI Sandbox",
+    application: __BRAND_NAME__ + " Sandbox",
     kitVersion: __KIT_VERSION__,
     mode: import.meta.env.MODE,
 });

@@ -1,8 +1,8 @@
-Fancy UI ships in **two distribution modes** and you can mix them freely within the same project. Pick the one that fits each surface.
+Fancy Dev Kit ships in **two distribution modes** and you can mix them freely within the same project. Pick the one that fits each surface.
 
 ## Mode 1 — npm install (default fast path)
 
-The simplest way to use any Fancy UI package. You install the npm package, import the components you need, and ship.
+The simplest way to use any Fancy Dev Kit package. You install the npm package, import the components you need, and ship.
 
 ```bash
 npm install @particle-academy/react-fancy
@@ -37,7 +37,7 @@ This mode is the right call when:
 
 ## Mode 2 — `npx fancy-cli@latest add` (vendor the source)
 
-For teams that want to **own the code** and treat Fancy UI as a starting point they'll modify, the CLI fetches the component source from our [hosted registry](/docs/registry) and writes the files directly into the host project.
+For teams that want to **own the code** and treat Fancy Dev Kit as a starting point they'll modify, the CLI fetches the component source from our [hosted registry](/docs/registry) and writes the files directly into the host project.
 
 ```bash
 # One-time per project — writes fancy.json with your conventions.
@@ -60,7 +60,7 @@ The CLI is documented in full at [CLI reference](/docs/cli). The registry it con
 
 This mode is the right call when:
 
-- You're building a design system on top of Fancy UI and need to fork primitives.
+- You're building a design system on top of Fancy Dev Kit and need to fork primitives.
 - Your team treats third-party UI deps as a smell and prefers vendored source.
 - You want the option to drop or replace primitives without coordinating with our release cadence.
 
@@ -70,7 +70,7 @@ For most non-trivial apps, the right answer is **both**: keep the long tail on `
 
 ## Laravel apps with Inertia
 
-> **Starting a brand-new Laravel app?** Skip the manual wiring below — the [Laravel starter kit](/docs/starter-kit) scaffolds a full app shell (Inertia + React 19 + Tailwind v4 + Fortify auth) with Fancy Core already wired in one command: `laravel new my-app --using=particle-academy/fancy-starter-kit`. The steps here are for adding Fancy UI to an app you **already** have.
+> **Starting a brand-new Laravel app?** Skip the manual wiring below — the [Laravel starter kit](/docs/starter-kit) scaffolds a full app shell (Inertia + React 19 + Tailwind v4 + Fortify auth) with Fancy Core already wired in one command: `laravel new my-app --using=particle-academy/fancy-starter-kit`. The steps here are for adding Fancy Dev Kit to an app you **already** have.
 
 If you're building a Laravel app with Inertia and React, install the Inertia bridge too:
 

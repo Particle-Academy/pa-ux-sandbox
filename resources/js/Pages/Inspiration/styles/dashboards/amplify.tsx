@@ -380,7 +380,7 @@ export default function Amplify({ style }: { style: Style }) {
                     <footer className="dbamplify-foot">
                         <Text as="p" size="xs" className="dbamplify-foot__note">
                             Amplify — a fictional social-media console, for demonstration · App{" "}
-                            {style.num} / {style.name} · every surface is a restyled Fancy UI
+                            {style.num} / {style.name} · every surface is a restyled {__BRAND_NAME__}
                             primitive (Navbar · Tabs · Card · Avatar · Badge · Table · EChart)
                         </Text>
                         <Link href="/inspiration/dashboards" className="dbamplify-foot__back">

@@ -57,7 +57,7 @@ it('serves a humans.txt', function () {
     $this->get('/humans.txt')
         ->assertOk()
         ->assertSee('Particle Academy', false)
-        ->assertSee('Fancy UI', false);
+        ->assertSee('Fancy Dev Kit', false);
 });
 
 it('serves a dynamic sitemap.xml that lists pages but never protected paths', function () {

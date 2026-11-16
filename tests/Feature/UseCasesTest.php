@@ -342,7 +342,7 @@ it('replays the server head through <ServerSeo> rather than relying on the defau
     // And the server's head for a use case is its own, which is what gets replayed.
     $useCase = UseCaseContent::all()[0];
     expect($this->get('/use-cases/'.$useCase['slug'])->getContent())
-        ->toContain('<title inertia>'.e($useCase['title']).' — Use cases — Fancy UI</title>');
+        ->toContain('<title inertia>'.e($useCase['title']).' — Use cases — Fancy Dev Kit</title>');
 });
 
 /**

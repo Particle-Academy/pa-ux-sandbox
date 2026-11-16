@@ -2,6 +2,7 @@
 
 namespace App\Mcp\Tools;
 
+use App\Support\Brand;
 use App\Support\Registry\RegistrySource;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Str;
@@ -10,7 +11,7 @@ use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Attributes\Description;
 use Laravel\Mcp\Server\Tool;
 
-#[Description('Search Fancy UI components by substring across name, title, and description. Returns matching components with their slugs and one-line descriptions. Use this when the user mentions a UI concept ("calendar", "drag-and-drop", "data grid") and you need to find the right primitive.')]
+#[Description('Search '.Brand::NAME.' components by substring across name, title, and description. Returns matching components with their slugs and one-line descriptions. Use this when the user mentions a UI concept ("calendar", "drag-and-drop", "data grid") and you need to find the right primitive.')]
 class SearchComponents extends Tool
 {
     public function handle(Request $request, RegistrySource $registry): Response

@@ -18,11 +18,11 @@ uses(TestCase::class);
 /*
  * Every page says what it is, and no two pages say the same thing.
  *
- * A family page shared to Discord unfurled as "Fancy UI — Components for the
+ * A family page shared to Discord unfurled as "Fancy Dev Kit — Components for the
  * surfaces where humans and agents work together" with the site's default
  * card: it had no SEO of its own, and neither did the starter kits, the
  * courses, the flow editor, the storefront or every companion package page
- * ("Package — Fancy UI"). The docs pages had their own titles and all shared
+ * ("Package — Fancy Dev Kit"). The docs pages had their own titles and all shared
  * one card. Each of those was a page that stopped describing itself the moment
  * its link left the site.
  *
@@ -164,7 +164,7 @@ it('gives every public page its own title, description and share card', function
 it('hands the client the same head the server sent, so hydration changes nothing', function () {
     // The client <Seo> takes the head over after hydration. When pages passed
     // their own values, the browser showed a different title from the server's
-    // ("Fancy 3D — Fancy UI" over "Fancy 3D — package family — Fancy UI"), and a
+    // ("Fancy 3D — Fancy Dev Kit" over "Fancy 3D — package family — Fancy Dev Kit"), and a
     // crawler that runs JavaScript indexes the browser's version.
     foreach (['/', '/packages/family/'.PackageFamily::all()[0]['slug'], '/docs/plugin', '/packages/react-fancy/button', '/learn'] as $url) {
         $html = $this->get($url)->assertOk()->getContent();

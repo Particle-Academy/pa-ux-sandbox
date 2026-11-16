@@ -530,7 +530,7 @@ export default function Poke({ style }: { style: Style }) {
                 </div>
                 <div className="mppoke-footer-note">
                     Mom-n-Pops (Rosa &amp; Sal, est. 2026) is fictional — style {style.num} /{" "}
-                    {style.name} of the Fancy UI Inspiration Gallery.
+                    {style.name} of the {__BRAND_NAME__} Inspiration Gallery.
                 </div>
             </footer>
         </div>

@@ -343,7 +343,7 @@ export default function Helm({ style }: { style: Style }) {
             {/* Colophon — sits inside the board's flow (frame owns back-nav). */}
             <Text as="div" size="xs" className="dbhelm-colophon">
                 Helm — a fictional cloud NOC, for demonstration · Dashboard {style.num} / {style.name} · every
-                surface is a restyled Fancy UI primitive
+                surface is a restyled {__BRAND_NAME__} primitive
             </Text>
         </div>
     );

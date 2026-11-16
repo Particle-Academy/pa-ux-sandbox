@@ -2,6 +2,7 @@
 
 namespace App\Mcp\Tools;
 
+use App\Support\Brand;
 use App\Support\PackageFamily;
 use App\Support\Registry\RegistrySource;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
@@ -10,7 +11,7 @@ use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Attributes\Description;
 use Laravel\Mcp\Server\Tool;
 
-#[Description('List every component available in the Fancy UI registry, grouped by package FAMILY (the same product grouping the /packages page uses — Core, Surfaces, Documents, Commerce, Platform, Tooling). No arguments. Each entry carries slug, title, package, one-line description, and its `family`/`familyName`/`group` so a client can present the constellation rather than a flat repo list. Pair with `get_component` to fetch full source.')]
+#[Description('List every component available in the '.Brand::NAME.' registry, grouped by package FAMILY (the same product grouping the /packages page uses — Core, Surfaces, Documents, Commerce, Platform, Tooling). No arguments. Each entry carries slug, title, package, one-line description, and its `family`/`familyName`/`group` so a client can present the constellation rather than a flat repo list. Pair with `get_component` to fetch full source.')]
 class ListComponents extends Tool
 {
     public function handle(Request $request, RegistrySource $registry): Response

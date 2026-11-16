@@ -162,7 +162,7 @@ it('lists every setup page in the sitemap and names each one', function () {
     expect($sitemap)->toContain('/features/connectors/'.$first['slug'].'/setup');
 
     $html = $this->get($first['setupHref'])->assertOk()->getContent();
-    expect($html)->toContain('>Set up '.e($first['title']).' — Connectors — Fancy UI</title>');
+    expect($html)->toContain('>Set up '.e($first['title']).' — Connectors — Fancy Dev Kit</title>');
 });
 
 it('renders the real SetupWizard with the closed set of five tokens and per-connector progress', function () {

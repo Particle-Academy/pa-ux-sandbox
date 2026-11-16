@@ -69,7 +69,7 @@ export const homeDoc: PageDoc = {
     "pk-container": { id: "pk-container", type: "frame", parent: "sec-packages", order: "a", className: "container", props: {}, style: { base: {} } },
     "pk-eyebrow": { id: "pk-eyebrow", type: "richtext", parent: "pk-container", order: "a", className: "eyebrow-row", props: { html: "<span>The family</span>" }, style: { base: {} } },
     "pk-title": { id: "pk-title", type: "heading", parent: "pk-container", order: "b", className: "section-title", props: { content: { $bind: "packagesTitle" } }, style: { base: {} } },
-    "pk-sub": { id: "pk-sub", type: "text", parent: "pk-container", order: "c", className: "section-sub", props: { content: "Fancy UI is not a monolith. Each layer ships independently to npm and composes with the rest. Pick the ones you need — most apps reach for two or three." }, style: { base: {} } },
+    "pk-sub": { id: "pk-sub", type: "text", parent: "pk-container", order: "c", className: "section-sub", props: { content: __BRAND_NAME__ + " is not a monolith. Each layer ships independently to npm and composes with the rest. Pick the ones you need — most apps reach for two or three." }, style: { base: {} } },
     "pk-rep": { id: "pk-rep", type: "repeater", parent: "pk-container", order: "d", className: "pkg-grid", props: { items: { $bind: "packages" } }, style: { base: {} } },
     "pk-card": { id: "pk-card", type: "frame", parent: "pk-rep", order: "a", className: "pkg-card", props: {}, style: { base: {} } },
     "pk-head": { id: "pk-head", type: "frame", parent: "pk-card", order: "a", className: "pkg-head", props: {}, style: { base: {} } },

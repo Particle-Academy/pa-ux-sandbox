@@ -416,7 +416,7 @@ export default function Vitals({ style }: { style: Style }) {
                 <footer className="dbvitals-foot">
                     <Text as="span" size="xs" className="dbvitals-foot__note">
                         Vitals — a fictional hospital command board, for demonstration · App{" "}
-                        {style.num} / {style.name} · every surface is a restyled Fancy UI primitive
+                        {style.num} / {style.name} · every surface is a restyled {__BRAND_NAME__} primitive
                         (Navbar · Card · EChart · Table · Progress · Badge)
                     </Text>
                     <Link href="/inspiration/dashboards" className="dbvitals-foot__back">

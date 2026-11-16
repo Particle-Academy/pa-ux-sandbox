@@ -2,11 +2,12 @@
 
 namespace Database\Seeders;
 
+use App\Support\Brand;
 use Illuminate\Database\Seeder;
 use LaravelFunLab\Facades\LFL;
 
 /**
- * Seeds the Fancy UI showcase's gamification taxonomy.
+ * Seeds the Fancy Dev Kit showcase's gamification taxonomy.
  *
  * Nine XP buckets split into two tiers of engagement:
  *
@@ -20,7 +21,7 @@ use LaravelFunLab\Facades\LFL;
  *   off-site (creator / promoter activity, admin-mediated or crawler-verified)
  *     - bug-hunter-xp : filing or triaging bugs against particle-academy repos
  *     - contributor-xp: submitting new components for inclusion
- *     - projects-xp   : registering public projects built with Fancy UI
+ *     - projects-xp   : registering public projects built with Fancy Dev Kit
  *     - promotion-xp  : displaying a "Powered by Fancy" badge on a public URL
  *
  * They roll up via the `overall-engagement` group with weights tuned so
@@ -63,7 +64,7 @@ class FunLabSeeder extends Seeder
             // off-site / creator engagement
             ['slug' => 'bug-hunter-xp', 'name' => 'Bug Hunter XP', 'description' => 'Earned by filing or triaging confirmed bugs on particle-academy repos.', 'icon' => 'bug'],
             ['slug' => 'contributor-xp', 'name' => 'Contributor XP', 'description' => 'Earned by submitting new components that get accepted into the library.', 'icon' => 'git-merge'],
-            ['slug' => 'projects-xp', 'name' => 'Projects XP', 'description' => 'Earned by registering public projects built with Fancy UI.', 'icon' => 'rocket'],
+            ['slug' => 'projects-xp', 'name' => 'Projects XP', 'description' => 'Earned by registering public projects built with '.Brand::NAME.'.', 'icon' => 'rocket'],
             ['slug' => 'promotion-xp', 'name' => 'Promotion XP', 'description' => 'Earned when a "Powered by Fancy" badge is detected on your public URLs.', 'icon' => 'megaphone'],
 
             // fancy-mlm referral loop: `network-activity` is what a downline
@@ -172,7 +173,7 @@ class FunLabSeeder extends Seeder
             ['slug' => 'theme-explorer', 'name' => 'Theme Explorer', 'description' => 'Switched every theme filter on the dreaming gallery.', 'icon' => 'palette'],
             ['slug' => 'critic', 'name' => 'Critic', 'description' => 'Voted on at least 5 dreaming components.', 'icon' => 'thumbs-up'],
             ['slug' => 'first-pr', 'name' => 'First PR', 'description' => 'Opened your first pull request on a particle-academy repo.', 'icon' => 'git-pull-request'],
-            ['slug' => 'maintainer', 'name' => 'Maintainer', 'description' => 'Merged 25+ PRs across the Fancy UI suite.', 'icon' => 'shield-check'],
+            ['slug' => 'maintainer', 'name' => 'Maintainer', 'description' => 'Merged 25+ PRs across the '.Brand::NAME.'.', 'icon' => 'shield-check'],
 
             // off-site engagement
             ['slug' => 'first-bug', 'name' => 'First Bug', 'description' => 'Filed your first confirmed bug.', 'icon' => 'bug'],
@@ -181,8 +182,8 @@ class FunLabSeeder extends Seeder
             ['slug' => 'first-contribution', 'name' => 'First Contribution', 'description' => 'Submitted a new component that was accepted.', 'icon' => 'git-commit'],
             ['slug' => 'component-author', 'name' => 'Component Author', 'description' => 'Authored 3+ accepted components.', 'icon' => 'pen-tool'],
             ['slug' => 'library-builder', 'name' => 'Library Builder', 'description' => 'Authored 10+ accepted components.', 'icon' => 'library'],
-            ['slug' => 'first-project', 'name' => 'First Project', 'description' => 'Registered your first public project built with Fancy UI.', 'icon' => 'rocket'],
-            ['slug' => 'project-veteran', 'name' => 'Project Veteran', 'description' => 'Registered 5+ public projects built with Fancy UI.', 'icon' => 'medal'],
+            ['slug' => 'first-project', 'name' => 'First Project', 'description' => 'Registered your first public project built with '.Brand::NAME.'.', 'icon' => 'rocket'],
+            ['slug' => 'project-veteran', 'name' => 'Project Veteran', 'description' => 'Registered 5+ public projects built with '.Brand::NAME.'.', 'icon' => 'medal'],
             ['slug' => 'badge-bearer', 'name' => 'Badge Bearer', 'description' => 'Verified "Powered by Fancy" badge spotted on your project.', 'icon' => 'badge-check'],
             ['slug' => 'brand-ambassador', 'name' => 'Brand Ambassador', 'description' => '5+ active projects displaying the Fancy badge.', 'icon' => 'megaphone'],
 

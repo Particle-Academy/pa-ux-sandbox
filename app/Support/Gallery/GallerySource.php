@@ -2,6 +2,7 @@
 
 namespace App\Support\Gallery;
 
+use App\Support\Brand;
 use App\Support\GalleryRegistry;
 use Illuminate\Support\Facades\File;
 
@@ -23,7 +24,7 @@ class GallerySource
     /** Recipe fields owned by the blueprint file (metadata comes from the registry). */
     private const RECIPE_KEYS = ['thesis', 'tokens', 'layout', 'sections', 'palette', 'contentArchetype', 'remix'];
 
-    private const USAGE = 'Read-only design inspiration. Re-implement this recipe in your project with the Fancy UI kit — restyle the primitives, bring your own content. Not source to vendor; composable with other gallery blueprints.';
+    private const USAGE = 'Read-only design inspiration. Re-implement this recipe in your project with the '.Brand::NAME.' — restyle the primitives, bring your own content. Not source to vendor; composable with other gallery blueprints.';
 
     /**
      * The full catalog index — every collection's meta + every style's card.

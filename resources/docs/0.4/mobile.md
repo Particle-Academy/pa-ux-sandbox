@@ -1,4 +1,4 @@
-Fancy UI is responsive by construction — the components are Tailwind v4, so you size and rearrange them with the same breakpoint utilities you already know. This page covers the patterns that matter for an app shell on a phone: a collapsing nav, touch-friendly targets, and rendering client-only components without breaking SSR.
+Fancy Dev Kit is responsive by construction — the components are Tailwind v4, so you size and rearrange them with the same breakpoint utilities you already know. This page covers the patterns that matter for an app shell on a phone: a collapsing nav, touch-friendly targets, and rendering client-only components without breaking SSR.
 
 ## Breakpoints are just Tailwind
 

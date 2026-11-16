@@ -1,4 +1,4 @@
-There are **two Fancy UI plugins** — one for [Claude Code](https://docs.claude.com/en/docs/claude-code) and one for [Codex](https://developers.openai.com/codex) — and they do the same job: wire your agent into the Fancy UI kit in one step. Each bundles the hosted **registry MCP server** plus the **Fancy skills**, so the agent can browse, install, and *build with* the suite conversationally — without you hand-editing an `.mcp.json` or pasting in install commands.
+There are **two Fancy Dev Kit plugins** — one for [Claude Code](https://docs.claude.com/en/docs/claude-code) and one for [Codex](https://developers.openai.com/codex) — and they do the same job: wire your agent into the Fancy Dev Kit in one step. Each bundles the hosted **registry MCP server** plus the **Fancy skills**, so the agent can browse, install, and *build with* the suite conversationally — without you hand-editing an `.mcp.json` or pasting in install commands.
 
 It's the fastest on-ramp on either harness. (Building an app where an agent *operates* the running UI is a different surface — the runtime bridges in `agent-integrations`. The [MCP servers](/docs/mcp) page draws that line.)
 
@@ -18,7 +18,7 @@ codex plugin marketplace add Particle-Academy/fancy-ui-codex-plugin
 codex plugin add fancy-ui@fancy-ui
 ```
 
-Approve the `fancy-ui` MCP server when prompted, then run `/mcp` to confirm it's connected. That's it — the agent can now find and install any Fancy UI component, and the skills below activate automatically when they're relevant.
+Approve the `fancy-ui` MCP server when prompted, then run `/mcp` to confirm it's connected. That's it — the agent can now find and install any Fancy Dev Kit component, and the skills below activate automatically when they're relevant.
 
 - **Claude Code source:** <a href="https://github.com/Particle-Academy/fancy-ui-plugin" target="_blank" rel="noopener noreferrer">Particle-Academy/fancy-ui-plugin</a>
 - **Codex source:** <a href="https://github.com/Particle-Academy/fancy-ui-codex-plugin" target="_blank" rel="noopener noreferrer">Particle-Academy/fancy-ui-codex-plugin</a>

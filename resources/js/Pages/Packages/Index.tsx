@@ -217,13 +217,13 @@ export default function PackagesIndex({ packages }: { packages: Pkg[] }) {
 
     return (
         <Layout>
-            <Head title="Packages · Fancy UI" />
+            <Head title={"Packages · " + __BRAND_NAME__} />
 
             <header className="pkgs-head">
                 <div>
                     <Heading as="h1" size="2xl" className="pkgs-head__title">Packages</Heading>
                     <Text className="pkgs-head__sub">
-                        Every Fancy UI package — UI surfaces with a live preview, headless backends with a one-line
+                        Every {__BRAND_NAME__} package — UI surfaces with a live preview, headless backends with a one-line
                         install. Related packages are grouped as one family; each card opens its full page, with
                         per-component demos.
                     </Text>

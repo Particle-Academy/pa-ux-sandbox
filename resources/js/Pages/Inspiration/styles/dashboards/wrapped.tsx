@@ -438,7 +438,7 @@ export default function Wrapped({ style }: { style: Style }) {
                 <Separator className="dbwrapped-rule" />
                 <div className="dbwrapped-colophon">
                     Wrapped — a fictional listening recap, for demonstration · Dashboard {style.num} / {style.name} ·
-                    every surface is a restyled Fancy UI primitive
+                    every surface is a restyled {__BRAND_NAME__} primitive
                 </div>
             </div>
 

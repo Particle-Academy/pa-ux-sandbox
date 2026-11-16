@@ -1597,7 +1597,7 @@ function BrandDemo() {
     return (
         <Brand
             logo={<img src="/showcase-assets/fancy-ui-logo.jpg" alt="" className="h-7 w-7 rounded" />}
-            name="Fancy UI Kit"
+            name={__BRAND_NAME__}
             tagline="Particle Academy"
         />
     );
@@ -2603,7 +2603,7 @@ function FancyMapDemo() {
 function FieldDemo() {
     return (
         <Field label="Workspace name" description="Shown to everyone in this workspace." htmlFor="field-demo-name">
-            <Input id="field-demo-name" defaultValue="Fancy UI" labelHidden />
+            <Input id="field-demo-name" defaultValue={__BRAND_NAME__} labelHidden />
         </Field>
     );
 }
@@ -5638,7 +5638,7 @@ const XF_DEMO_HUMANS: XfHumansTxtModel = {
         { role: "Developer", name: "Ada Lovelace", contact: "@ada" },
         { role: "Design", name: "Bo Chen" },
     ],
-    site: "Standards: HTML5, Tailwind v4. Components: Fancy UI.",
+    site: "Standards: HTML5, Tailwind v4. Components: " + __BRAND_NAME__ + ".",
     thanks: ["react-fancy"],
 };
 const XF_DEMO_SITEMAP: XfSitemapModel = {
@@ -6167,7 +6167,7 @@ function PwaBannersDemo() {
         >
             <div className="max-w-md space-y-3">
                 <OfflineBanner color="amber">You are offline — changes will sync when you reconnect.</OfflineBanner>
-                <InstallBanner title="Install Fancy UI for offline access." />
+                <InstallBanner title={"Install " + __BRAND_NAME__ + " for offline access."} />
             </div>
         </DemoNote>
     );

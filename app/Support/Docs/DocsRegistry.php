@@ -2,6 +2,8 @@
 
 namespace App\Support\Docs;
 
+use App\Support\Brand;
+
 /**
  * Sidebar layout + page metadata for the /docs hub. Each page references a
  * markdown file under resources/docs/{slug}.md and a sidebar group it belongs to.
@@ -21,9 +23,9 @@ class DocsRegistry
         [
             'label' => 'Getting started',
             'pages' => [
-                ['slug' => 'introduction', 'title' => 'Introduction', 'description' => 'What Fancy UI is and the problem it solves.'],
-                ['slug' => 'installation', 'title' => 'Installation', 'description' => 'Add Fancy UI to a React or Laravel app.'],
-                ['slug' => 'starter-kit', 'title' => 'Laravel starter kit', 'description' => 'Scaffold a fresh Laravel + Inertia + React app with Fancy UI and Fortify auth preinstalled — one `laravel new --using=` command.'],
+                ['slug' => 'introduction', 'title' => 'Introduction', 'description' => 'What '.Brand::NAME.' is and the problem it solves.'],
+                ['slug' => 'installation', 'title' => 'Installation', 'description' => 'Add '.Brand::NAME.' to a React or Laravel app.'],
+                ['slug' => 'starter-kit', 'title' => 'Laravel starter kit', 'description' => 'Scaffold a fresh Laravel + Inertia + React app with '.Brand::NAME.' and Fortify auth preinstalled — one `laravel new --using=` command.'],
                 ['slug' => 'theming', 'title' => 'Theming', 'description' => 'Tailwind v4 design tokens, dark mode, custom palettes.'],
                 ['slug' => 'typography', 'title' => 'Typography', 'description' => 'Fonts in a Fancy app: self-hosted and same-origin, custom and Google Fonts on Laravel + Vite + Tailwind v4, licensing, and fonts for deterministic layout.'],
             ],
@@ -50,7 +52,7 @@ class DocsRegistry
         [
             'label' => 'TanStack',
             'pages' => [
-                ['slug' => 'tanstack', 'title' => 'TanStack in Fancy UI', 'description' => 'Where the suite adopts TanStack Query, Table and Virtual — always as optional peers, never as dependencies — plus the Live Contract that maps broadcast events to query keys, and what we deliberately did not adopt.'],
+                ['slug' => 'tanstack', 'title' => 'TanStack in '.Brand::NAME, 'description' => 'Where the suite adopts TanStack Query, Table and Virtual — always as optional peers, never as dependencies — plus the Live Contract that maps broadcast events to query keys, and what we deliberately did not adopt.'],
             ],
         ],
         [
@@ -73,7 +75,7 @@ class DocsRegistry
             'pages' => [
                 ['slug' => 'requirements', 'title' => 'Minimum requirements', 'description' => 'Supported browsers and versions, plus the PHP, Laravel and Node floors — and which layer of the stack sets each number.'],
                 ['slug' => 'versions', 'title' => 'Versions & support', 'description' => 'Kit versions vs package versions, how long each release line is supported, and what happens at end of life.'],
-                ['slug' => 'changelog', 'title' => 'Changelog', 'description' => 'Release notes across every Fancy UI package.'],
+                ['slug' => 'changelog', 'title' => 'Changelog', 'description' => 'Release notes across every '.Brand::NAME.' package.'],
             ],
         ],
     ];

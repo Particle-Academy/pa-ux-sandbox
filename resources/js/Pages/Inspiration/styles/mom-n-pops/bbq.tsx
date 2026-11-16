@@ -351,7 +351,7 @@ export default function Bbq({ style }: { style: Style }) {
                 <div className="mpbbq-shell">
                     <div className="mpbbq-footer__base">
                         Mom-n-Pops — a fictional Milwaukee food truck, for demonstration · Truck {style.num} /{" "}
-                        {style.name} · every interactive surface is a restyled Fancy UI primitive
+                        {style.name} · every interactive surface is a restyled {__BRAND_NAME__} primitive
                     </div>
                 </div>
             </footer>

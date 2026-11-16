@@ -131,7 +131,7 @@ function SubmissionCard({ s }: { s: Submission }) {
                     <div className="mt-auto flex items-center gap-2 pt-2.5">
                         {s.category_label && <Badge color="zinc">{s.category_label}</Badge>}
                         <span className="ml-auto inline-flex items-center gap-1 text-xs font-medium text-violet-600 dark:text-violet-400">
-                            <Icon name="sparkles" className="h-3.5 w-3.5" /> Fancy UI
+                            <Icon name="sparkles" className="h-3.5 w-3.5" /> {__BRAND_NAME__}
                         </span>
                     </div>
                 </div>
@@ -146,13 +146,13 @@ export default function ShowcaseIndex({ submissions }: { submissions: Submission
 
     return (
         <Layout>
-            <Head title="Designer Showcase · Fancy UI" />
+            <Head title={"Designer Showcase · " + __BRAND_NAME__} />
 
             <div className="flex flex-wrap items-end justify-between gap-3">
                 <div>
                     <Heading as="h1" size="xl">Designer Showcase</Heading>
                     <Text className="mt-2 max-w-3xl">
-                        Live sites and public repos built with Fancy UI
+                        Live sites and public repos built with {__BRAND_NAME__}
                         {submissions.length > 0 && <span className="text-zinc-400"> · {submissions.length} verified</span>}.
                     </Text>
                 </div>

@@ -9,7 +9,7 @@ import { STYLE_COMPONENTS } from "./styles";
 /**
  * Per-style shell. Each style renders its collection's FICTIONAL business
  * (FIELDWORK the studio, Mom-n-Pops the food truck) in a distinct visual
- * language using the full Fancy UI kit; within a collection they are the SAME
+ * language using the full Fancy Dev Kit; within a collection they are the SAME
  * site, redesigned, and are READ-ONLY design inspiration (not starter code).
  * The GalleryFrame (neutral site chrome, deliberately NOT the style's own
  * design) makes that obvious + lets you flip between styles. A style registers
@@ -40,7 +40,7 @@ export default function InspirationShow({
 
     return (
         <Layout>
-            <Head title={`${style.name} · ${collection.name} (demo) · Inspiration · Fancy UI`} />
+            <Head title={`${style.name} · ${collection.name} (demo) · Inspiration · ${__BRAND_NAME__}`} />
             <GalleryFrame collection={collection} style={style} total={styles.length} prev={prev} next={next} />
             {content}
         </Layout>
@@ -379,7 +379,7 @@ function GrabButton({ collection, style }: { collection: Collection; style: Styl
 
                     <div style={{ padding: 12 }}>
                         <p style={{ margin: "0 0 8px", fontSize: 12, lineHeight: 1.5, color: "var(--fg-3)" }}>
-                            Paste into your agent — it pulls the full design + components from the fancy-ui MCP and builds it with the Fancy UI kit.
+                            Paste into your agent — it pulls the full design + components from the fancy-ui MCP and builds it with the {__BRAND_NAME__}.
                         </p>
                         <pre
                             style={{
@@ -419,7 +419,7 @@ function GrabButton({ collection, style }: { collection: Collection; style: Styl
  * fancy-ui MCP server to fetch each design's full blueprint
  * (`gallery_get_blueprint`) plus the Fancy primitives it needs
  * (`search_components` / `get_component` / `install_instructions`), then rebuild
- * the look with the Fancy UI kit. That keeps the copied text short and always
+ * the look with the Fancy Dev Kit. That keeps the copied text short and always
  * pulls the live, authoritative recipe rather than a stale inline snapshot.
  */
 function assemblePrompt(bps: Array<Record<string, unknown>>): string {
@@ -435,10 +435,10 @@ const bpLiveUrl = (bp: Record<string, unknown>) =>
 function designBuildPrompt(bp: Record<string, unknown>): string {
     const name = bpField(bp, "name");
     const id = bpField(bp, "id");
-    const out: string[] = [`# Build this design with Fancy UI — ${name}`, ""];
+    const out: string[] = [`# Build this design with ${__BRAND_NAME__} — ${name}`, ""];
     if (bpField(bp, "thesis")) out.push(bpField(bp, "thesis"), "");
     out.push(
-        `Recreate the "${name}" design from the Fancy UI Inspiration Gallery in this project, built with the Fancy UI kit. Pull the real recipe and components from the **fancy-ui MCP server** — don't guess or hand-roll HTML:`,
+        `Recreate the "${name}" design from the ${__BRAND_NAME__} Inspiration Gallery in this project, built with the ${__BRAND_NAME__}. Pull the real recipe and components from the **fancy-ui MCP server** — don't guess or hand-roll HTML:`,
         "",
         `1. Get the full blueprint — design tokens, layout, per-section components, how each primitive is restyled, remix notes: call \`gallery_get_blueprint\` with style \`"${id}"\`.`,
         "2. For every Fancy primitive the blueprint names, pull it from the same MCP: `search_components` / `list_components` to find it, `get_component` for source, `install_instructions` for the exact install command + import line.",
@@ -451,9 +451,9 @@ function designBuildPrompt(bp: Record<string, unknown>): string {
 
 /** Several designs: direct the agent to fetch each blueprint from the MCP and fuse them into one direction. */
 function mixBuildPrompt(bps: Array<Record<string, unknown>>): string {
-    const out: string[] = [`# Blended design direction — build with Fancy UI (${bps.length} gallery blueprints)`, ""];
+    const out: string[] = [`# Blended design direction — build with ${__BRAND_NAME__} (${bps.length} gallery blueprints)`, ""];
     out.push(
-        `Blend these ${bps.length} Fancy UI Inspiration Gallery designs into ONE coherent direction for this project, built with the Fancy UI kit. Pull each recipe and the components from the **fancy-ui MCP server** — don't guess:`,
+        `Blend these ${bps.length} ${__BRAND_NAME__} Inspiration Gallery designs into ONE coherent direction for this project, built with the ${__BRAND_NAME__}. Pull each recipe and the components from the **fancy-ui MCP server** — don't guess:`,
         "",
         "1. Fetch each blueprint with `gallery_get_blueprint` and blend their design tokens, layouts, and restyled-component choices into one direction:",
     );

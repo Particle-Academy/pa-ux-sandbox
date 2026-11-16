@@ -16,7 +16,7 @@ export const navbarDoc: ComponentDoc = {
             description: "Brand on the left, nav links on the right.",
             render: () => (
                 <Navbar className="w-full rounded-md border border-zinc-200 dark:border-zinc-800">
-                    <Navbar.Brand>Fancy UI</Navbar.Brand>
+                    <Navbar.Brand>{__BRAND_NAME__}</Navbar.Brand>
                     <Navbar.Items>
                         <Navbar.Item href="#" active>Home</Navbar.Item>
                         <Navbar.Item href="#">Packages</Navbar.Item>
@@ -26,7 +26,7 @@ export const navbarDoc: ComponentDoc = {
                 </Navbar>
             ),
             code: `<Navbar>
-    <Navbar.Brand>Fancy UI</Navbar.Brand>
+    <Navbar.Brand>${__BRAND_NAME__}</Navbar.Brand>
     <Navbar.Items>
         <Navbar.Item href="/" active>Home</Navbar.Item>
         <Navbar.Item href="/packages">Packages</Navbar.Item>
@@ -40,7 +40,7 @@ export const navbarDoc: ComponentDoc = {
             description: "Drop any element after `Items` for sign-in buttons, user menu, etc.",
             render: () => (
                 <Navbar className="w-full rounded-md border border-zinc-200 dark:border-zinc-800">
-                    <Navbar.Brand>Fancy UI</Navbar.Brand>
+                    <Navbar.Brand>{__BRAND_NAME__}</Navbar.Brand>
                     <Navbar.Items>
                         <Navbar.Item href="#" active>Home</Navbar.Item>
                         <Navbar.Item href="#">Pricing</Navbar.Item>
@@ -52,7 +52,7 @@ export const navbarDoc: ComponentDoc = {
                 </Navbar>
             ),
             code: `<Navbar>
-    <Navbar.Brand>Fancy UI</Navbar.Brand>
+    <Navbar.Brand>${__BRAND_NAME__}</Navbar.Brand>
     <Navbar.Items>
         <Navbar.Item href="/" active>Home</Navbar.Item>
         <Navbar.Item href="/pricing">Pricing</Navbar.Item>

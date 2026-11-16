@@ -17,8 +17,8 @@ export type SharedSeo = {
  * The fancy-seo Blade baseline writes the head into the first byte, and `<Seo>`
  * takes it over after hydration and on SPA navigation. Every page used to pass
  * its OWN title and description here, so the two disagreed: a family page sent
- * "Fancy 3D — package family — Fancy UI" and the tab then said "Fancy 3D —
- * Fancy UI"; the home page flipped to "Fancy UI for React, Inertia, and
+ * "Fancy 3D — package family — Fancy Dev Kit" and the tab then said "Fancy 3D —
+ * Fancy Dev Kit"; the home page flipped to "Fancy Dev Kit for React, Inertia, and
  * Laravel", and the component pages restored "agent-bridgeable" after the
  * server had stopped saying it. A crawler that renders JavaScript indexes the
  * second version.
@@ -26,7 +26,7 @@ export type SharedSeo = {
  * So there is one source. The server shares what it resolved as the `seo` prop
  * (HandleInertiaRequests), and this replays it verbatim. The provider's
  * `titleTemplate` is `%s` for the same reason: the server's titles are already
- * complete, and templating them again would say "— Fancy UI — Fancy UI".
+ * complete, and templating them again would say "— Fancy Dev Kit — Fancy Dev Kit".
  */
 export function ServerSeo() {
     const { seo } = usePage<{ seo?: SharedSeo }>().props;

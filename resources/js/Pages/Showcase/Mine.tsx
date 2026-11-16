@@ -411,7 +411,7 @@ export default function MySubmissions({
                 <Text className="mt-2 max-w-2xl">
                     Mint a key and hand it to your AI agent. With your permission, it can
                     register your projects here, check verification, and rescan — via the
-                    showcase tools on the Fancy UI MCP server at{" "}
+                    showcase tools on the {__BRAND_NAME__} MCP server at{" "}
                     <code className="rounded bg-zinc-100 px-1 py-0.5 text-[13px] dark:bg-zinc-900">
                         ui.particle.academy/mcp
                     </code>

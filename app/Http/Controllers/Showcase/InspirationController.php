@@ -11,7 +11,7 @@ use Inertia\Response;
 
 /**
  * The Inspiration Gallery — fictional businesses, each designed twenty ways
- * with restyled Fancy UI primitives. /inspiration lands on every collection;
+ * with restyled Fancy Dev Kit primitives. /inspiration lands on every collection;
  * /inspiration/{collection} is one catalog; /inspiration/{collection}/{style}
  * mounts that style's bespoke page. Legacy pre-collection style URLs
  * (/inspiration/swiss) permanently redirect to their collection.

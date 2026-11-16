@@ -4,7 +4,7 @@
  * A `composition` screen renders agent-emitted JSON (`ScreenSchema`) through
  * fancy-screens' `<Screen schema>` mode. This module maps schema `type` names
  * to react-fancy (and fancy-artboard) components so an agent can author an
- * entire Fancy UI page as JSON via `screens_update_content`.
+ * entire Fancy Dev Kit page as JSON via `screens_update_content`.
  *
  * Call `ensureSchemaComponents()` once before any composition screen mounts.
  */

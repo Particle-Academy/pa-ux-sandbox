@@ -1,4 +1,4 @@
-A Fancy UI app is an Inertia + React SPA — by default the browser renders it *after* the JavaScript loads. That's great for humans, but a search crawler, a social-card scraper, or an LLM that fetches your URL sees an empty shell on the first byte. Fancy closes that gap with two pieces that work together: **server-side rendering** (real HTML in the first byte) and a **server-rendered SEO baseline** (complete `<title>`, meta, Open Graph, and structured data before any JS runs). The result is a site that's fully crawlable, shares with rich cards, and is legible to LLMs — without giving up the SPA experience.
+A Fancy Dev Kit app is an Inertia + React SPA — by default the browser renders it *after* the JavaScript loads. That's great for humans, but a search crawler, a social-card scraper, or an LLM that fetches your URL sees an empty shell on the first byte. Fancy closes that gap with two pieces that work together: **server-side rendering** (real HTML in the first byte) and a **server-rendered SEO baseline** (complete `<title>`, meta, Open Graph, and structured data before any JS runs). The result is a site that's fully crawlable, shares with rich cards, and is legible to LLMs — without giving up the SPA experience.
 
 Two packages provide it:
 
@@ -91,7 +91,7 @@ export default function PackagePage({ pkg }) {
   return (
     <>
       <Seo
-        title={`${pkg.name} — Fancy UI`}
+        title={`${pkg.name} — Fancy Dev Kit`}
         description={pkg.tagline}
         canonical={pkg.url}
         image={pkg.ogImage}
@@ -146,13 +146,13 @@ use FancySeo\Facades\FancySeo;
 use FancySeo\JsonLd;
 
 FancySeo::defaults([
-    'site_name' => 'Fancy UI',
+    'site_name' => 'Fancy Dev Kit',
     'image' => '/og/default.png',
-    'jsonLd' => [JsonLd::website('Fancy UI', url('/'))],
+    'jsonLd' => [JsonLd::website('Fancy Dev Kit', url('/'))],
 ]);
 
 FancySeo::route('packages.show', fn (array $p) => [
-    'title' => "{$p['package']} — Fancy UI",
+    'title' => "{$p['package']} — Fancy Dev Kit",
     'jsonLd' => [JsonLd::softwareSourceCode($p['package'], url("/packages/{$p['package']}"), "https://github.com/Particle-Academy/{$p['package']}")],
 ]);
 

@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Http\Controllers\Showcase\StarterKitController;
 use App\Models\User;
+use App\Support\Brand;
 use App\Support\Curriculum\FancyCurriculumContent;
 use App\Support\Docs\DocsRegistry;
 use App\Support\FeatureSites;
@@ -76,14 +77,14 @@ class SeoServiceProvider extends ServiceProvider
     {
         FancySeo::defaults([
             'jsonLd' => [
-                JsonLd::website('Fancy UI', $base.'/', self::TAGLINE),
+                JsonLd::website(Brand::NAME, $base.'/', self::TAGLINE),
                 JsonLd::organization(
                     'Particle Academy',
                     $base.'/',
                     $base.'/showcase-assets/fancy-ui-logo.jpg',
                     ['https://github.com/Particle-Academy'],
                 ),
-                JsonLd::softwareApplication('Fancy UI', $base.'/', [
+                JsonLd::softwareApplication(Brand::NAME, $base.'/', [
                     'applicationCategory' => 'DeveloperApplication',
                     'operatingSystem' => 'Web',
                     // The kit version from kit.json. This was a typed '0.2' that
@@ -103,7 +104,7 @@ class SeoServiceProvider extends ServiceProvider
         // capability ships for both PHP and Node" while six Python packages were
         // on PyPI and most PHP packages had no Node twin.
         FancySeo::route('home', fn (): array => [
-            'title' => 'Fancy UI — build the app, not the plumbing | '.implode(', ', KitFacts::languages()),
+            'title' => Brand::full().' — build the app, not the plumbing | '.implode(', ', KitFacts::languages()),
             'description' => KitFacts::packageCount().' small, independent packages for '.KitFacts::sentence(KitFacts::languages())
                 .': UI primitives, data grids, spreadsheets, workflow engines, xlsx/pptx/docx writers, Stripe catalogs, feature gating. '
                 .'Take one or take the stack — many server capabilities ship as matched PHP and Node packages.',
@@ -161,7 +162,7 @@ class SeoServiceProvider extends ServiceProvider
         $referrer = $username === null ? null : User::query()->where('username', $username)->first();
         if ($referrer === null) {
             // The route 302s home for unknown usernames — nothing renders this.
-            return ['title' => 'Join Fancy UI', 'noindex' => true];
+            return ['title' => 'Join '.Brand::NAME, 'noindex' => true];
         }
 
         // Social scrapers (X/Twitter, Facebook, LinkedIn, Slack, …) drop the
@@ -176,11 +177,11 @@ class SeoServiceProvider extends ServiceProvider
         $forCard = $this->isSocialCardScraper(request()->userAgent());
 
         return [
-            'title' => "{$referrer->name} invited you to Fancy UI",
-            'description' => "Join {$referrer->name}'s referral network and build with Fancy UI — components for the surfaces where humans and AI agents work together.",
+            'title' => "{$referrer->name} invited you to ".Brand::NAME,
+            'description' => "Join {$referrer->name}'s referral network and build with ".Brand::NAME.' — components for the surfaces where humans and AI agents work together.',
             'canonical' => "{$base}/join/{$referrer->username}",
             'image' => "/og/join/{$referrer->username}.png",
-            'imageAlt' => "{$referrer->name} invited you to Fancy UI",
+            'imageAlt' => "{$referrer->name} invited you to ".Brand::NAME,
             'noindex' => ! $forCard,
         ];
     }
@@ -219,7 +220,7 @@ class SeoServiceProvider extends ServiceProvider
         $useCase = UseCaseContent::find($slug);
 
         if ($useCase === null) {
-            return ['title' => 'Use cases — Fancy UI', 'type' => 'article'];
+            return ['title' => 'Use cases — '.Brand::NAME, 'type' => 'article'];
         }
 
         $title = (string) $useCase['title'];
@@ -260,7 +261,7 @@ class SeoServiceProvider extends ServiceProvider
     {
         $page = DocsRegistry::find($slug);
         if ($page === null) {
-            return ['title' => 'Docs — Fancy UI', 'type' => 'article'];
+            return ['title' => 'Docs — '.Brand::NAME, 'type' => 'article'];
         }
         $title = (string) $page['title'];
         $description = trim((string) ($page['description'] ?? ''));
@@ -269,7 +270,7 @@ class SeoServiceProvider extends ServiceProvider
         return PageSeo::meta('docs', $slug, [
             'type' => 'article',
             'jsonLd' => [
-                JsonLd::article("{$title} — Fancy UI", $url, array_filter([
+                JsonLd::article("{$title} — ".Brand::NAME, $url, array_filter([
                     'description' => $description ?: null,
                     'image' => $base.PageSeo::image('docs', $slug),
                 ])),
@@ -414,7 +415,7 @@ class SeoServiceProvider extends ServiceProvider
         $description = trim((string) $product->description);
 
         return [
-            'title' => "{$product->name} — demo storefront — Fancy UI",
+            'title' => "{$product->name} — demo storefront — ".Brand::NAME,
             'description' => $description !== ''
                 ? "{$description} A product on the laravel-catalog demo storefront."
                 : "{$product->name}, a product on the laravel-catalog demo storefront.",
@@ -458,7 +459,7 @@ class SeoServiceProvider extends ServiceProvider
      *
      * This used `PackageRegistry::find()`, which does not see the companion
      * packages, so all of them (holy-sheet, laravel-fms, the Python and Node
-     * twins) were titled "Package — Fancy UI" with the description "A Fancy UI
+     * twins) were titled "Package — Fancy Dev Kit" with the description "A Fancy Dev Kit
      * package." The page itself resolves them with `findAny()`; so does this.
      *
      * @return array<string,mixed>
@@ -467,7 +468,7 @@ class SeoServiceProvider extends ServiceProvider
     {
         $pkg = is_string($slug) ? PackageRegistry::findAny($slug) : null;
         if (! $pkg) {
-            return ['title' => 'Package — Fancy UI', 'description' => 'A Fancy UI package.'];
+            return ['title' => 'Package — '.Brand::NAME, 'description' => 'A '.Brand::NAME.' package.'];
         }
         $name = (string) ($pkg['name'] ?? $slug);
         $tagline = trim((string) ($pkg['tagline'] ?? ''));
@@ -490,13 +491,13 @@ class SeoServiceProvider extends ServiceProvider
         // AND the PyPI one), so the title carries the language when the name is
         // not unique to this slug.
         $sharesName = collect(KitFacts::packages())->where('name', $name)->count() > 1;
-        $title = $sharesName && ! empty($pkg['language']) ? "{$name} ({$pkg['language']}) — Fancy UI" : "{$name} — Fancy UI";
+        $title = $sharesName && ! empty($pkg['language']) ? "{$name} ({$pkg['language']}) — ".Brand::NAME : "{$name} — ".Brand::NAME;
 
         return [
             'title' => $title,
             // No blanket "bridgeable over MCP": it was stamped on holy-sheet and
             // laravel-fms, which render nothing and have no surface to bridge.
-            'description' => trim("{$tagline} Part of the Fancy UI suite."),
+            'description' => trim("{$tagline} Part of the ".Brand::NAME.'.'),
             'image' => "/og/packages/{$slug}.png",
             'imageAlt' => $title,
             'jsonLd' => $jsonLd,
@@ -613,12 +614,12 @@ class SeoServiceProvider extends ServiceProvider
 
         FancySeo::llms(function () use ($base, $v): string {
             $out = [];
-            $out[] = '# Fancy UI';
+            $out[] = '# '.Brand::full();
             $out[] = '';
             $out[] = '> An ecosystem of '.KitFacts::packageCount().' small, independent packages from Particle Academy for '.KitFacts::sentence(KitFacts::languages())
                 .': UI primitives and surfaces, plus headless engines, document writers, commerce, analytics and tooling. Interactive components are held to **Human+ UX**: humans and AI agents share the same UI surface, and agents drive it over MCP tool bridges with stable handles, never DOM scraping. Kit version '.$v.'.';
             $out[] = '';
-            $out[] = 'Fancy UI publishes to '.KitFacts::sentence(KitFacts::registries()).'. The showcase is a Laravel + Inertia + React app that consumes them like any external app would. Agents inhabit running apps through `@particle-academy/agent-integrations`, a per-session MCP server with a bridge for each interactive surface.';
+            $out[] = Brand::NAME.' publishes to '.KitFacts::sentence(KitFacts::registries()).'. The showcase is a Laravel + Inertia + React app that consumes them like any external app would. Agents inhabit running apps through `@particle-academy/agent-integrations`, a per-session MCP server with a bridge for each interactive surface.';
             $out[] = '';
             $out[] = '## Packages';
             $out[] = '';
@@ -656,13 +657,13 @@ class SeoServiceProvider extends ServiceProvider
 
         FancySeo::llms(function () use ($base, $v): string {
             $out = [];
-            $out[] = '# Fancy UI — full index';
+            $out[] = '# '.Brand::NAME.' — full index';
             $out[] = '';
             $out[] = "> Kit version {$v}. The complete package + component map plus the Human+ UX contract that every stateful or interactive component satisfies. Pure public metadata.";
             $out[] = '';
             $out[] = '## The Human+ UX contract';
             $out[] = '';
-            $out[] = 'Every stateful or interactive Fancy UI component meets all of:';
+            $out[] = 'Every stateful or interactive '.Brand::NAME.' component meets all of:';
             $out[] = '';
             $out[] = '- **Controlled state** — `value` + `onChange`; no internal-only state an agent might need to read or write.';
             $out[] = '- **Stable handles** — each interactive element has a stable identity (`id`, `data-*`, or a selector prop); agents never guess at the DOM.';

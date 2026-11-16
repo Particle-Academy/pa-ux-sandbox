@@ -531,7 +531,7 @@ function RepoGuide({
                             <span className="break-all text-violet-100">{badgeMarkdown}</span>
                         </div>
                     </div>
-                    <div className="text-zinc-500">A fancy app built with Fancy UI.</div>
+                    <div className="text-zinc-500">A fancy app built with {__BRAND_NAME__}.</div>
                     <div className="mt-1 text-zinc-600">## Getting started</div>
                 </div>
             </Step>

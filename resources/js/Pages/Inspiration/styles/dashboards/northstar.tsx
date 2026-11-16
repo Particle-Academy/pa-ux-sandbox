@@ -471,7 +471,7 @@ export default function Northstar({ style }: { style: Style }) {
                     </Heading>
                     <Text as="p" size="xs" className="dbnorthstar-colophon__note">
                         Dashboards — a fictional app, for demonstration · App {style.num} / {style.name} ·
-                        every surface is a restyled Fancy UI primitive (Navbar · Tabs · Card · Badge ·
+                        every surface is a restyled {__BRAND_NAME__} primitive (Navbar · Tabs · Card · Badge ·
                         EChart · Progress)
                     </Text>
                 </div>

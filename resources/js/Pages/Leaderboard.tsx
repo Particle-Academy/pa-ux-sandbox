@@ -96,7 +96,7 @@ export default function Leaderboard({ scope, snapshot, rows, players }: Props) {
 
     return (
         <Layout>
-            <Head title="Leaderboard · Fancy UI" />
+            <Head title={"Leaderboard · " + __BRAND_NAME__} />
 
             <div className="flex flex-wrap items-end justify-between gap-4">
                 <div>

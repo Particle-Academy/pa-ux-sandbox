@@ -325,10 +325,10 @@ export function CoBrowseProvider({ children }: { children: ReactNode }) {
         agent: { id: "agent", name: "Agent", color: "#a855f7" },
         relayBaseUrl: "/agent-relay",
         info: {
-            name: "Fancy UI — co-browse",
+            name: __BRAND_NAME__ + " — co-browse",
             version: "0.1.0",
             instructions:
-                "You are co-browsing the Fancy UI showcase with a watching human. Call page_describe first (and after every navigation) to get stable handles, then navigate/scroll/fill/click. Submits and destructive clicks are staged — the human confirms. You receive notifications/agent_activity (source:\"user\") when the human navigates, scrolls, or types.",
+                "You are co-browsing the " + __BRAND_NAME__ + " showcase with a watching human. Call page_describe first (and after every navigation) to get stable handles, then navigate/scroll/fill/click. Submits and destructive clicks are staged — the human confirms. You receive notifications/agent_activity (source:\"user\") when the human navigates, scrolls, or types.",
         },
         csrfToken: readCsrf,
     });

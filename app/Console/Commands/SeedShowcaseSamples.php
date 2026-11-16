@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\LeaderboardSnapshot;
 use App\Models\ShowcaseSubmission;
 use App\Models\User;
+use App\Support\Brand;
 use Illuminate\Console\Command;
 
 class SeedShowcaseSamples extends Command
@@ -44,14 +45,14 @@ class SeedShowcaseSamples extends Command
             [
                 'kind' => 'repo',
                 'url' => 'https://github.com/Particle-Academy/pa-ux-sandbox',
-                'title' => 'Fancy UI Showcase',
-                'description' => 'The sandbox you are looking at — Inertia + react-fancy + every Fancy UI surface, end to end.',
+                'title' => Brand::NAME.' Showcase',
+                'description' => 'The sandbox you are looking at — Inertia + react-fancy + every '.Brand::NAME.' surface, end to end.',
             ],
             [
                 'kind' => 'repo',
                 'url' => 'https://github.com/Particle-Academy/react-fancy',
                 'title' => 'react-fancy',
-                'description' => 'The flagship React component library — ~70 Tailwind v4 primitives, the foundation of every other Fancy UI surface.',
+                'description' => 'The flagship React component library — ~70 Tailwind v4 primitives, the foundation of every other '.Brand::NAME.' surface.',
             ],
             [
                 'kind' => 'repo',

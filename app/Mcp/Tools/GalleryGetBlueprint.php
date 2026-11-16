@@ -2,6 +2,7 @@
 
 namespace App\Mcp\Tools;
 
+use App\Support\Brand;
 use App\Support\Gallery\GallerySource;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Mcp\Request;
@@ -9,7 +10,7 @@ use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Attributes\Description;
 use Laravel\Mcp\Server\Tool;
 
-#[Description('Fetch one Inspiration Gallery style\'s full design BLUEPRINT — a recipe to re-create the look with the Fancy UI kit: design tokens (color/type/spacing/radii/motion), the layout, the per-section components, how each primitive is restyled, the content archetype, and remix notes. READ-ONLY inspiration, NOT source to vendor; it composes with other blueprints, so grab several and blend them into one direction. Style ids are unique across collections, so `style` alone is enough; pass `collection` ("fieldwork" or "mom-n-pops") to be explicit. Use `gallery_list_styles` for valid ids.')]
+#[Description('Fetch one Inspiration Gallery style\'s full design BLUEPRINT — a recipe to re-create the look with the '.Brand::NAME.': design tokens (color/type/spacing/radii/motion), the layout, the per-section components, how each primitive is restyled, the content archetype, and remix notes. READ-ONLY inspiration, NOT source to vendor; it composes with other blueprints, so grab several and blend them into one direction. Style ids are unique across collections, so `style` alone is enough; pass `collection` ("fieldwork" or "mom-n-pops") to be explicit. Use `gallery_list_styles` for valid ids.')]
 class GalleryGetBlueprint extends Tool
 {
     public function handle(Request $request, GallerySource $gallery): Response

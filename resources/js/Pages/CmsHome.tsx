@@ -33,7 +33,7 @@ type CmsHomeProps = {
 const EXPLORE_DATA = [
   { href: "/starter-kits", title: "Starter Kits", body: "Vertical demos — clone, study, adapt.", tag: "templates" },
   { href: "/dreaming", title: "Dreaming", body: "Speculative components you can vote on.", tag: "speculative" },
-  { href: "/showcase", title: "Designer Showcase", body: "Sites and repos built with Fancy UI.", tag: "community" },
+  { href: "/showcase", title: "Designer Showcase", body: "Sites and repos built with " + __BRAND_NAME__ + ".", tag: "community" },
   { href: "/leaderboard", title: "Leaderboard", body: "Top contributors by merged PRs and votes.", tag: "live" },
 ];
 
@@ -115,7 +115,7 @@ export default function CmsHome({ packages, companions, total_components, langua
   return (
     <Toast.Provider position="bottom-right">
       <Layout bleed>
-        <Head title="Fancy UI · CMS Home (edit demo)" />
+        <Head title={__BRAND_NAME__ + " · CMS Home (edit demo)"} />
         <EditablePage
           doc={homeDoc}
           registry={registry}
@@ -146,7 +146,7 @@ export default function CmsHome({ packages, companions, total_components, langua
             // "12 UI packages" — the same undercount `Home`'s Hero already
             // carries a comment about fixing. A number typed into a document is
             // a number nothing can keep true.
-            heroEyebrow: `<span class="dot"></span><span>v${__KIT_VERSION__} · ${languages.join(" · ")}</span>`,
+            heroEyebrow: `<span class="dot"></span><span>${__BRAND_NAME__} ${__BRAND_TAGLINE__} · v${__KIT_VERSION__} · ${languages.join(" · ")}</span>`,
             heroLede:
               `${packageCount} small packages covering the parts every real app needs and nobody wants to write twice ` +
               `— data grids, spreadsheets, workflow engines, xlsx/pptx/docx writers, Stripe catalogs, feature gating. ` +

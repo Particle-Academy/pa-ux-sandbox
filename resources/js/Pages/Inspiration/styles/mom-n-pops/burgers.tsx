@@ -359,7 +359,7 @@ export default function Burgers({ style }: { style: Style }) {
                 </div>
                 <div className="mpburgers-footer-note">
                     Mom-n-Pops is a fictional food truck, for demonstration · style{" "}
-                    {style.num} / {style.name} · built from restyled Fancy UI primitives
+                    {style.num} / {style.name} · built from restyled {__BRAND_NAME__} primitives
                 </div>
             </footer>
 

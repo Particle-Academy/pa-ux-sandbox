@@ -3,7 +3,7 @@
 namespace App\Support;
 
 /**
- * Registry of Fancy UI packages + their components. Drives /packages,
+ * Registry of Fancy Dev Kit packages + their components. Drives /packages,
  * /packages/{slug}, and /packages/{slug}/{component} routes.
  *
  * Future: scan each submodule's src/components/* at build time to keep
@@ -207,7 +207,7 @@ class PackageRegistry
             'name' => '@particle-academy/fancy-i18n',
             'repo' => 'Particle-Academy/fancy-i18n',
             'registries' => ['npm' => '@particle-academy/fancy-i18n'],
-            'why' => 'Kit-wide runtime i18n: the label layer every Fancy UI component reads, with English defaults, fast enough to add no UI lag, and en/es/de/ru/zh built in. Owner approved the plan 2026-11-07: .ai/plans/kit-i18n.md. Its Languages section on /features/accessibility lands when 0.1 ships. NOT YET STARTED.',
+            'why' => 'Kit-wide runtime i18n: the label layer every '.Brand::NAME.' component reads, with English defaults, fast enough to add no UI lag, and en/es/de/ru/zh built in. Owner approved the plan 2026-11-07: .ai/plans/kit-i18n.md. Its Languages section on /features/accessibility lands when 0.1 ships. NOT YET STARTED.',
         ],
         'fancy-translations' => [
             'name' => 'particle-academy/fancy-translations',
@@ -768,7 +768,7 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
 
     /**
      * The no-UI half of the catalog — headless deps developed alongside the
-     * Fancy UI kit. holy-sheet + dark-slide are the agentic document writers
+     * Fancy Dev Kit. holy-sheet + dark-slide are the agentic document writers
      * (xlsx / pptx); the laravel-* trio are composer deps the sandbox develops
      * against. None render a UI surface, so they live in a footnote section on
      * /packages rather than the main component grid; no per-package detail
@@ -1434,7 +1434,7 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
             [
                 'slug' => 'docs-mcp',
                 'name' => '@particle-academy/docs-mcp',
-                'tagline' => 'MCP docs server — serves the Fancy UI documentation to agents over MCP, so an assistant can answer questions and pull usage straight from the source.',
+                'tagline' => 'MCP docs server — serves the '.Brand::NAME.' documentation to agents over MCP, so an assistant can answer questions and pull usage straight from the source.',
                 'npm' => '@particle-academy/docs-mcp',
                 'repo' => 'Particle-Academy/docs-mcp',
                 'language' => 'TypeScript',
@@ -1786,7 +1786,7 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
             [
                 'slug' => 'fancy-starter-kit',
                 'name' => 'particle-academy/fancy-starter-kit',
-                'tagline' => 'The Laravel starter kit: a new Laravel 13 + Inertia + React 19 + Tailwind v4 app with Fancy Core (react-fancy, fancy-inertia, fancy-query) already wired and Fortify auth pages built from Fancy UI. One `laravel new --using=` command; the result is your app, not a dependency.',
+                'tagline' => 'The Laravel starter kit: a new Laravel 13 + Inertia + React 19 + Tailwind v4 app with Fancy Core (react-fancy, fancy-inertia, fancy-query) already wired and Fortify auth pages built from '.Brand::NAME.'. One `laravel new --using=` command; the result is your app, not a dependency.',
                 'packagist' => 'particle-academy/fancy-starter-kit',
                 'download' => 'laravel new my-app --using=particle-academy/fancy-starter-kit',
                 'docs' => '/docs/starter-kit',
@@ -2338,7 +2338,7 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
         return [
             'slug' => 'classroom',
             'name' => 'classroom',
-            'tagline' => 'The learner surface for laravel-courses: browse a curriculum, work through a course, sit a graded test, collect a certificate. This is what the Fancy UI Curriculum at /learn runs on.',
+            'tagline' => 'The learner surface for laravel-courses: browse a curriculum, work through a course, sit a graded test, collect a certificate. This is what the '.Brand::NAME.' Curriculum at /learn runs on.',
             'npm' => '@particle-academy/classroom',
             'repo' => 'Particle-Academy/classroom',
             'language' => 'TypeScript',

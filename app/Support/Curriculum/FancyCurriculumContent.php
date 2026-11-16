@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Support\Curriculum;
 
+use App\Support\Brand;
+
 /**
- * The Fancy UI Curriculum — content as data.
+ * The Fancy Dev Kit Curriculum — content as data.
  *
  * Structure follows the Features (App\Support\FeatureSites), rebuilt
  * 2026-10-27 on the owner's ask that the curriculum be "about the fancy
@@ -50,7 +52,7 @@ final class FancyCurriculumContent
     {
         return [
             'slug' => self::CURRICULUM_SLUG,
-            'title' => 'Fancy UI',
+            'title' => Brand::NAME,
             'description' => 'Start with Fancy Core, then take the course for each Feature you build with: Flow, TUI, CMS, Documents, Git, 3D, Ecommerce and Gamification. The Human+ capstone certifies.',
         ];
     }
@@ -2108,7 +2110,7 @@ MD,
             ],
             'test' => [
                 'slug' => 'human-plus-final',
-                'title' => 'Fancy UI — final certification',
+                'title' => Brand::NAME.' — final certification',
                 'passing_score' => 80,
                 'is_final' => true,
                 'questions' => [

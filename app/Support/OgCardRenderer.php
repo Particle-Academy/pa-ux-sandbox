@@ -15,7 +15,7 @@ use RuntimeException;
  *
  * Visual layout mirrors the old resources/views/og/card.blade.php: dark canvas,
  * purple + cyan radial glows, optional eyebrow, big title, muted subtitle, and
- * a brand footer (logo mark · Fancy UI · Human+ UX · site host).
+ * a brand footer (logo mark · Fancy Dev Kit · its tagline · site host).
  */
 class OgCardRenderer
 {
@@ -110,9 +110,9 @@ class OgCardRenderer
             $x += 52 + 18;
         }
         $baseline = $footerMid + 11;
-        imagettftext($img, $this->pt(30), 0, $x, $baseline, $title, $this->font('bold'), 'Fancy UI');
-        $x += $this->width('Fancy UI', $this->font('bold'), 30) + 16;
-        imagettftext($img, $this->pt(24), 0, $x, $baseline - 2, $faint, $this->font('regular'), '· Human+ UX');
+        imagettftext($img, $this->pt(30), 0, $x, $baseline, $title, $this->font('bold'), Brand::NAME);
+        $x += $this->width(Brand::NAME, $this->font('bold'), 30) + 16;
+        imagettftext($img, $this->pt(24), 0, $x, $baseline - 2, $faint, $this->font('regular'), '· '.Brand::TAGLINE);
 
         $host = $this->host();
         $hostW = $this->width($host, $this->font('mono'), 24);

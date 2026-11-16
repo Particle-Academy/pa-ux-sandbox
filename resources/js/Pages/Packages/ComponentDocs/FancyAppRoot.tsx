@@ -4,7 +4,7 @@ import { Text } from "@particle-academy/react-fancy";
 export const fancyAppRootDoc: ComponentDoc = {
     intro: (
         <p>
-            Composite top-level provider for the Fancy UI set under Inertia. Mounts once in
+            Composite top-level provider for the {__BRAND_NAME__} set under Inertia. Mounts once in
             your Inertia app entry — sets up the Toast provider, the{" "}
             <code>ScreenSystem</code>, and auto-registers ECharts modules + built-in themes.
             Survives Inertia page swaps, so toasts persist across navigations and the screen
@@ -39,7 +39,7 @@ createInertiaApp({
             description: "Disable the providers you don't need for a smaller bundle.",
             render: () => (
                 <Text size="sm" className="!text-zinc-500">
-                    Useful when you only use a subset of Fancy UI in your app shell.
+                    Useful when you only use a subset of {__BRAND_NAME__} in your app shell.
                 </Text>
             ),
             code: `<FancyAppRoot withScreens={false} withECharts={false}>

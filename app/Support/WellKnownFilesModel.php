@@ -74,10 +74,10 @@ class WellKnownFilesModel
             'humansTxt' => [
                 'team' => [
                     ['role' => 'Team', 'name' => 'Particle Academy'],
-                    ['role' => 'Site', 'name' => 'Fancy UI'],
+                    ['role' => 'Site', 'name' => Brand::NAME],
                     ['role' => 'Contact', 'name' => (string) config('x-files.security_contact')],
                 ],
-                'site' => 'Laravel + Inertia + React 19 + Tailwind v4 + the Fancy UI suite',
+                'site' => 'Laravel + Inertia + React 19 + Tailwind v4 + the '.Brand::NAME,
                 'thanks' => ['Humans and agents who share these surfaces'],
             ],
             // Dynamic-sitemap controls (read by App\Support\DynamicSitemap): no

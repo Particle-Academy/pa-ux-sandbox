@@ -10,7 +10,7 @@ export type Criterion = {
 
 /**
  * One lesson on the Accessibility page: the principle in plain words with its
- * WCAG criteria, then how Fancy UI meets it (each point checkable against a
+ * WCAG criteria, then how Fancy Dev Kit meets it (each point checkable against a
  * react-fancy release), then a live demo where one is possible.
  */
 export function Lesson({
@@ -36,7 +36,7 @@ export function Lesson({
             <div className="a11y-criteria">
                 {criteria.length === 0 && (
                     <Badge variant="outline" data-wcag="">
-                        Not a WCAG criterion: a Fancy UI rule
+                        Not a WCAG criterion: a {__BRAND_NAME__} rule
                     </Badge>
                 )}
                 {criteria.map((c) => (
@@ -59,7 +59,7 @@ export function Lesson({
                 <Card variant="outlined">
                     <Card.Body>
                         <Heading as="h3" size="sm" weight="semibold">
-                            How Fancy UI does it
+                            How {__BRAND_NAME__} does it
                         </Heading>
                         <ul className="a11y-lesson__list">
                             {fancy.map((point, i) => (

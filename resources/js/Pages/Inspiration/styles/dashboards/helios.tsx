@@ -376,7 +376,7 @@ export default function Helios({ style }: { style: Style }) {
                 <footer className="dbhelios-foot">
                     <Text as="span" size="xs" className="dbhelios-foot__note">
                         Helios — a fictional home-solar dashboard, for demonstration · App{" "}
-                        {style.num} / {style.name} · every surface is a restyled Fancy UI primitive
+                        {style.num} / {style.name} · every surface is a restyled {__BRAND_NAME__} primitive
                         (Navbar · Card · EChart · Badge · Heading · Text)
                     </Text>
                     <Link href="/inspiration/dashboards" className="dbhelios-foot__back">

@@ -22,7 +22,7 @@ export const timelineDoc: ComponentDoc = {
             name: "Stacked (default)",
             description: "Data-driven via the `events` prop.",
             render: () => (
-                <Timeline events={events} heading="Roadmap" description="Major milestones on the Fancy UI roadmap." />
+                <Timeline events={events} heading="Roadmap" description={"Major milestones on the " + __BRAND_NAME__ + " roadmap."} />
             ),
             code: `const events = [
     { date: "Jan 2024", title: "Project started", emoji: "🚀", color: "violet" },
@@ -34,7 +34,7 @@ export const timelineDoc: ComponentDoc = {
 <Timeline
     events={events}
     heading="Roadmap"
-    description="Major milestones on the Fancy UI roadmap."
+    description="Major milestones on the ${__BRAND_NAME__} roadmap."
 />`,
         },
         {

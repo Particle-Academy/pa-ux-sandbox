@@ -169,9 +169,9 @@ export default function ComplianceFeature({ feature, versions }: FeaturePageProp
 
             <FeatureCta
                 title="Put consent in your app"
-                body="Install both halves, define your categories, and render the banner once in your layout. Then read how Fancy UI handles accessibility, which the banner is held to."
+                body={"Install both halves, define your categories, and render the banner once in your layout. Then read how " + __BRAND_NAME__ + " handles accessibility, which the banner is held to."}
                 primary={{ label: "The fancy-compliance-ui package", href: "/packages/fancy-compliance-ui" }}
-                secondary={{ label: "Accessibility in Fancy UI", href: "/features/accessibility" }}
+                secondary={{ label: "Accessibility in " + __BRAND_NAME__, href: "/features/accessibility" }}
             />
         </FeatureShell>
     );

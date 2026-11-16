@@ -10,7 +10,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex">
-    <title>@yield('code') · @yield('title', 'Error') — Fancy UI</title>
+    <title>@yield('code') · @yield('title', 'Error') — {{ \App\Support\Brand::NAME }}</title>
     <meta name="theme-color" content="#8b5cf6">
     <script>
         // Match the showcase's theme bootstrap so the error page honors the
@@ -93,7 +93,7 @@
 </head>
 <body>
     <main class="card">
-        <span class="mark"><span class="glyph">✦</span> Fancy UI</span>
+        <span class="mark"><span class="glyph">✦</span> {{ \App\Support\Brand::NAME }}</span>
         <p class="code">@yield('code')</p>
         <h1>@yield('title', 'Something went wrong')</h1>
         <p>@yield('message', 'An unexpected error occurred. Please try again.')</p>

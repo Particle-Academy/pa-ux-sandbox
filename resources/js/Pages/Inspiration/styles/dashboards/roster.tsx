@@ -432,7 +432,7 @@ export default function Roster({ style }: { style: Style }) {
 
             <span className="dbroster-fineprint">
                 Roster — a fictional recruiting board, for demonstration · Dashboard {style.num} / {style.name} ·
-                every surface is a restyled Fancy UI primitive
+                every surface is a restyled {__BRAND_NAME__} primitive
             </span>
         </div>
     );

@@ -84,7 +84,7 @@ export default function AnalyticsIndex(props: Props) {
     if (!props.pro) {
         return (
             <Layout>
-                <Head title="Analytics · Fancy UI" />
+                <Head title={"Analytics · " + __BRAND_NAME__} />
                 <div className="fancy-analytics"><Upsell /></div>
             </Layout>
         );
@@ -95,7 +95,7 @@ export default function AnalyticsIndex(props: Props) {
 
     return (
         <Layout>
-            <Head title="Analytics · Fancy UI" />
+            <Head title={"Analytics · " + __BRAND_NAME__} />
             <div className="fancy-analytics">
                 <header className="an-head">
                     <p className="an-eyebrow">

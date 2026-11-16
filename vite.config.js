@@ -6,6 +6,7 @@ import laravel from 'laravel-vite-plugin';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import { tsrxReact } from '@tsrx/vite-plugin-react';
+import { readBrand } from './brand.config.mjs';
 
 const withSelectorShim = fileURLToPath(
     new URL('./resources/js/shims/use-sync-external-store-with-selector.js', import.meta.url),
@@ -93,8 +94,15 @@ const kitVersion = JSON.parse(
     readFileSync(fileURLToPath(new URL('./kit.json', import.meta.url)), 'utf8'),
 ).version;
 
+// The kit's display name + tagline, extracted from `app/Support/Brand.php` --
+// the one place they are typed -- so the header, the page titles and the OG
+// cards cannot name the kit differently.
+const brand = readBrand(fileURLToPath(new URL('./app/Support/Brand.php', import.meta.url)));
+
 export default defineConfig({
     define: {
+        __BRAND_NAME__: JSON.stringify(brand.name),
+        __BRAND_TAGLINE__: JSON.stringify(brand.tagline),
         __REACT_FANCY_VERSION__: JSON.stringify(reactFancyVersion),
         __FANCY_FLOW_VERSION__: JSON.stringify(fancyFlowVersion),
         __FANCY_FLOW_CORE_KINDS__: JSON.stringify(fancyFlowCoreKinds),

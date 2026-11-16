@@ -59,14 +59,14 @@ export default function LearnCourse({
 
     return (
         <Layout>
-            <Head title={`${course.title} — Fancy UI Curriculum`} />
+            <Head title={`${course.title} — ${__BRAND_NAME__} Curriculum`} />
 
             <div className="mx-auto max-w-4xl" data-learn-course={course.slug}>
                 <Link
                     href="/learn"
                     className="text-sm text-violet-600 hover:underline dark:text-violet-400"
                 >
-                    ← Fancy UI Curriculum
+                    ← {__BRAND_NAME__} Curriculum
                 </Link>
 
                 {enrollment ? (

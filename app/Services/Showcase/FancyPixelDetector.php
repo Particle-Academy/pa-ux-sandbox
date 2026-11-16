@@ -25,7 +25,7 @@ namespace App\Services\Showcase;
 class FancyPixelDetector
 {
     /**
-     * Detect a Fancy UI pixel in the given HTML.
+     * Detect a Fancy Dev Kit pixel in the given HTML.
      */
     public function detect(string $html): bool
     {

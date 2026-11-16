@@ -512,7 +512,7 @@ export default function Cadence({ style }: { style: Style }) {
 
             <div className="dbcadence-foot">
                 Cadence — a fictional email marketing console, for demonstration · Dashboard {style.num} /{" "}
-                {style.name} · every surface is a restyled Fancy UI primitive
+                {style.name} · every surface is a restyled {__BRAND_NAME__} primitive
             </div>
         </div>
     );

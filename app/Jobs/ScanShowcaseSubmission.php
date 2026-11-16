@@ -11,6 +11,7 @@ use App\Services\Showcase\SafeUrlFetcher;
 use App\Services\Showcase\ShowcaseOwnership;
 use App\Services\Showcase\UnsafeUrlException;
 use App\Services\ShowcaseRewards;
+use App\Support\Brand;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -152,7 +153,7 @@ class ScanShowcaseSubmission implements ShouldQueue
         $ownership = app(ShowcaseOwnership::class)->forWebsite($submission, $html);
 
         if (empty($hits)) {
-            return ['verified' => false, 'reason' => 'no Fancy UI references in homepage HTML', 'badge' => $badge, 'nsfw_flag' => $nsfwFlag, 'packages' => $packages, 'ownership' => $ownership];
+            return ['verified' => false, 'reason' => 'no '.Brand::NAME.' references in homepage HTML', 'badge' => $badge, 'nsfw_flag' => $nsfwFlag, 'packages' => $packages, 'ownership' => $ownership];
         }
 
         return [
@@ -168,7 +169,7 @@ class ScanShowcaseSubmission implements ShouldQueue
     }
 
     /**
-     * Detect a Fancy UI pixel in the page HTML. Delegates to the shared
+     * Detect a Fancy Dev Kit pixel in the page HTML. Delegates to the shared
      * FancyPixelDetector so this stays byte-identical to fancy-heuristics
      * HeuristicsPixelDetector::detect() and to the submission gate.
      *

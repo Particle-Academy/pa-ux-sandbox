@@ -18,7 +18,7 @@ type Archive = {
 export default function DreamingArchived({ archives }: { archives: Archive[] }) {
     return (
         <Layout>
-            <Head title="Archived dreams · Fancy UI" />
+            <Head title={"Archived dreams · " + __BRAND_NAME__} />
 
             <Heading as="h1" size="xl">Archived dreams</Heading>
             <Text className="mt-2 max-w-3xl">

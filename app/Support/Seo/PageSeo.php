@@ -3,6 +3,7 @@
 namespace App\Support\Seo;
 
 use App\Http\Controllers\Showcase\StarterKitController;
+use App\Support\Brand;
 use App\Support\Curriculum\FancyCurriculumContent;
 use App\Support\Docs\DocsArchive;
 use App\Support\Docs\DocsRegistry;
@@ -16,7 +17,7 @@ use App\Support\UseCases\UseCaseContent;
 /**
  * What each page IS, said once, for both its meta and its share card.
  *
- * A link to a family page unfurled as "Fancy UI — Components for the surfaces
+ * A link to a family page unfurled as "Fancy Dev Kit — Components for the surfaces
  * where humans and agents work together", with the site's default card: the
  * family had no SEO of its own, and neither did its starter kit, the courses,
  * the flow editor or the storefront. Every docs page had its own title and the
@@ -40,68 +41,68 @@ final class PageSeo
     private const PAGES = [
         'packages.index' => [
             'eyebrow' => 'Packages',
-            'title' => 'Packages — Fancy UI',
-            'description' => 'Every package in the Fancy UI suite, grouped into families: react-fancy, fancy-3d, fancy-slides, fancy-whiteboard, fancy-flow, fancy-sheets, fancy-echarts, fancy-code, fancy-screens, agent-integrations, and more.',
+            'title' => 'Packages — '.Brand::NAME,
+            'description' => 'Every package in the '.Brand::NAME.', grouped into families: react-fancy, fancy-3d, fancy-slides, fancy-whiteboard, fancy-flow, fancy-sheets, fancy-echarts, fancy-code, fancy-screens, agent-integrations, and more.',
         ],
         'docs.index' => [
             'eyebrow' => 'Docs',
-            'title' => 'Docs — Fancy UI',
-            'description' => 'Documentation for the Fancy UI suite — installation, the Human+ UX contract, MCP agent bridges, and per-package guides.',
+            'title' => 'Docs — '.Brand::NAME,
+            'description' => 'Documentation for the '.Brand::NAME.' — installation, the Human+ UX contract, MCP agent bridges, and per-package guides.',
         ],
         'agent-playground' => [
             'eyebrow' => 'Agent Playground',
-            'title' => 'Agent Playground — Fancy UI',
-            'description' => 'A live playground where you connect your own agent over MCP and watch it author Fancy UI screens and drive live data — humans and agents sharing one UI surface.',
+            'title' => 'Agent Playground — '.Brand::NAME,
+            'description' => 'A live playground where you connect your own agent over MCP and watch it author '.Brand::NAME.' screens and drive live data — humans and agents sharing one UI surface.',
         ],
         'dreaming.index' => [
             'eyebrow' => 'Dreaming',
-            'title' => 'Dreaming — Fancy UI',
-            'description' => 'Speculative, in-progress UI primitives on the Fancy UI dreaming branch — vote on what gets manifested into the kit.',
+            'title' => 'Dreaming — '.Brand::NAME,
+            'description' => 'Speculative, in-progress UI primitives on the '.Brand::NAME.' dreaming branch — vote on what gets manifested into the kit.',
         ],
         'dreaming.archived' => [
             'eyebrow' => 'Dreaming',
-            'title' => 'Archived dreams — Fancy UI',
-            'description' => 'Speculative UI primitives from the Fancy UI dreaming branch that were archived rather than manifested into the kit, kept for reference.',
+            'title' => 'Archived dreams — '.Brand::NAME,
+            'description' => 'Speculative UI primitives from the '.Brand::NAME.' dreaming branch that were archived rather than manifested into the kit, kept for reference.',
         ],
         'leaderboard' => [
             'eyebrow' => 'Community',
-            'title' => 'Leaderboard — Fancy UI',
-            'description' => 'The Fancy UI community leaderboard — XP, achievements, and prizes for building with the kit.',
+            'title' => 'Leaderboard — '.Brand::NAME,
+            'description' => 'The '.Brand::NAME.' community leaderboard — XP, achievements, and prizes for building with the kit.',
         ],
         'showcase.showcase.index' => [
             'eyebrow' => 'Showcase',
-            'title' => 'Showcase — Fancy UI',
-            'description' => 'Apps and experiments built with Fancy UI by the community.',
+            'title' => 'Showcase — '.Brand::NAME,
+            'description' => 'Apps and experiments built with '.Brand::NAME.' by the community.',
         ],
         'shop.index' => [
             'eyebrow' => 'Shop',
-            'title' => 'Shop — Fancy UI',
-            'description' => 'Cosmetics and perks for your Fancy UI profile.',
+            'title' => 'Shop — '.Brand::NAME,
+            'description' => 'Cosmetics and perks for your '.Brand::NAME.' profile.',
         ],
         'use-cases.index' => [
             'eyebrow' => 'Use cases',
-            'title' => 'Use cases — what you can build with Fancy UI',
+            'title' => 'Use cases — what you can build with '.Brand::NAME,
             'description' => 'Blueprints and how-tos for the apps people actually build: subscription SaaS, e-commerce, online courses, referral networks, dashboards and real-estate portals — each with live component previews and real code.',
         ],
         'pw' => [
             'eyebrow' => 'Tool',
-            'title' => 'Password generator — Fancy UI',
+            'title' => 'Password generator — '.Brand::NAME,
             'description' => 'A standalone password generator that runs entirely in your browser; the server never sees what it generates.',
         ],
         'subscriptions.index' => [
-            'eyebrow' => 'Fancy UI Pro',
-            'title' => 'Fancy UI Pro — plans and pricing',
-            'description' => 'Fancy UI Pro: behavioural analytics off the Fancy Pixel, including the human-versus-agent split, and full source export for components.',
+            'eyebrow' => Brand::NAME.' Pro',
+            'title' => Brand::NAME.' Pro — plans and pricing',
+            'description' => Brand::NAME.' Pro: behavioural analytics off the Fancy Pixel, including the human-versus-agent split, and full source export for components.',
         ],
         'products.index' => [
             'eyebrow' => 'laravel-catalog demo',
-            'title' => 'Demo storefront — laravel-catalog — Fancy UI',
+            'title' => 'Demo storefront — laravel-catalog — '.Brand::NAME,
             'description' => 'A demo storefront for particle-academy/laravel-catalog: Stripe products and prices, managed through the catalog facade and listed with their active prices.',
         ],
         'cms.home' => [
             'eyebrow' => 'fancy-cms demo',
-            'title' => 'The home page, authored as a CMS document — Fancy UI',
-            'description' => 'The Fancy UI home page rendered from a seeded fancy-cms Stages document instead of JSX, from the same data as the live page, so the two can be compared.',
+            'title' => 'The home page, authored as a CMS document — '.Brand::NAME,
+            'description' => 'The '.Brand::NAME.' home page rendered from a seeded fancy-cms Stages document instead of JSX, from the same data as the live page, so the two can be compared.',
         ],
     ];
 
@@ -182,7 +183,7 @@ final class PageSeo
         $languages = PackageFamily::languagesFor($slug);
 
         return self::shape(
-            "{$family['name']} — package family — Fancy UI",
+            "{$family['name']} — package family — ".Brand::NAME,
             trim("{$family['tagline']} The {$family['name']} family: ".KitFacts::sentence($members).'.'),
             'Package family · '.implode(' · ', $languages),
             (string) $family['name'],
@@ -203,8 +204,8 @@ final class PageSeo
             $names = array_column(FeatureSites::all(), 'name');
 
             return self::shape(
-                'Features — the platforms in the kit — Fancy UI',
-                'The parts of the Fancy UI kit that are whole platforms rather than single components, each with its own site: '.KitFacts::sentence($names).'.',
+                'Features — the platforms in the kit — '.Brand::NAME,
+                'The parts of the '.Brand::NAME.' that are whole platforms rather than single components, each with its own site: '.KitFacts::sentence($names).'.',
                 'Features',
                 'Features',
                 'The platforms in the kit: '.KitFacts::sentence($names).'.',
@@ -222,7 +223,7 @@ final class PageSeo
                 : count($connector['setup']).' steps, each saying whether you or your agent does it, with values and prompts to copy.';
 
             return self::shape(
-                "Set up {$connector['title']} — Connectors — Fancy UI",
+                "Set up {$connector['title']} — Connectors — ".Brand::NAME,
                 "Set up the {$connector['title']} connector in your app. {$guide}",
                 'Connector setup',
                 "Set up {$connector['title']}",
@@ -236,7 +237,7 @@ final class PageSeo
         }
 
         return self::shape(
-            "{$feature['name']} — Features — Fancy UI",
+            "{$feature['name']} — Features — ".Brand::NAME,
             "{$feature['tagline']} Packages: ".KitFacts::sentence($feature['memberSlugs']).'.',
             'Feature',
             (string) $feature['name'],
@@ -252,9 +253,9 @@ final class PageSeo
             return null;
         }
         $title = (string) $page['title'];
-        $description = trim((string) ($page['description'] ?? '')) ?: "{$title} — Fancy UI documentation.";
+        $description = trim((string) ($page['description'] ?? '')) ?: "{$title} — ".Brand::NAME.' documentation.';
 
-        return self::shape("{$title} — Docs — Fancy UI", $description, 'Docs', $title);
+        return self::shape("{$title} — Docs — ".Brand::NAME, $description, 'Docs', $title);
     }
 
     /**
@@ -270,10 +271,10 @@ final class PageSeo
             return null;
         }
         $title = (string) $page['title'];
-        $description = trim((string) ($page['description'] ?? '')) ?: "{$title} — Fancy UI documentation.";
+        $description = trim((string) ($page['description'] ?? '')) ?: "{$title} — ".Brand::NAME.' documentation.';
 
         return self::shape(
-            "{$title} — Docs {$version} — Fancy UI",
+            "{$title} — Docs {$version} — ".Brand::NAME,
             "Kit {$version} docs, frozen: {$description}",
             "Docs · kit {$version}",
             $title,
@@ -295,10 +296,10 @@ final class PageSeo
         $blurb = trim((string) ($component['blurb'] ?? ''));
 
         return self::shape(
-            "{$name} — {$pkgName} — Fancy UI",
+            "{$name} — {$pkgName} — ".Brand::NAME,
             // The component's name is in the sentence even when there is a blurb:
             // two components with no blurb must not share a description.
-            trim(($blurb !== '' ? "{$blurb} " : '')."{$name}, a {$pkgName} component in the Fancy UI suite."),
+            trim(($blurb !== '' ? "{$blurb} " : '')."{$name}, a {$pkgName} component in the ".Brand::NAME.'.'),
             $pkgName,
             $name,
             $blurb !== '' ? $blurb : "A {$pkgName} component.",
@@ -316,8 +317,8 @@ final class PageSeo
         $summary = trim((string) ($useCase['summary'] ?? ''));
 
         return self::shape(
-            "{$title} — Use cases — Fancy UI",
-            $summary !== '' ? $summary : "{$title} — built with the Fancy UI kit.",
+            "{$title} — Use cases — ".Brand::NAME,
+            $summary !== '' ? $summary : "{$title} — built with the ".Brand::NAME.'.',
             'Use case',
             $title,
         );
@@ -330,10 +331,10 @@ final class PageSeo
             // Named from the kits on the page. It promised "production-ready"
             // kits to "ship a Human+ UX app in minutes", which is not what the
             // page holds: working starting points, one per package.
-            $description = 'Starter apps built on Fancy UI, each a working starting point to clone: '
+            $description = 'Starter apps built on '.Brand::NAME.', each a working starting point to clone: '
                 .KitFacts::sentence(array_column(StarterKitController::kits(), 'name')).'.';
 
-            return self::shape('Starter Kits — Fancy UI', $description, 'Starter kits', 'Starter kits');
+            return self::shape('Starter Kits — '.Brand::NAME, $description, 'Starter kits', 'Starter kits');
         }
 
         $kit = collect(StarterKitController::kits())->firstWhere('slug', $slug);
@@ -342,8 +343,8 @@ final class PageSeo
         }
 
         return self::shape(
-            "{$kit['name']} — Starter kits — Fancy UI",
-            "{$kit['blurb']} A Fancy UI starter app on {$kit['pkg']}.",
+            "{$kit['name']} — Starter kits — ".Brand::NAME,
+            "{$kit['blurb']} A ".Brand::NAME." starter app on {$kit['pkg']}.",
             "Starter kit · {$kit['pkg']}",
             (string) $kit['name'],
             (string) $kit['blurb'],
@@ -365,10 +366,10 @@ final class PageSeo
                 static fn (array $c): string => "{$c['name']} ({$c['subject']}, {$c['count']} designs)",
                 GalleryRegistry::collections(),
             );
-            $description = 'Fictional subjects, each designed many ways from restyled Fancy UI primitives: '
-                .KitFacts::sentence($collections).'. Self-contained, forkable starting points built on the Fancy UI Kit.';
+            $description = 'Fictional subjects, each designed many ways from restyled '.Brand::NAME.' primitives: '
+                .KitFacts::sentence($collections).'. Self-contained, forkable starting points built on the '.Brand::NAME.'.';
 
-            return self::shape('Inspiration Gallery — Fancy UI', $description, 'Inspiration Gallery', 'Inspiration Gallery');
+            return self::shape('Inspiration Gallery — '.Brand::NAME, $description, 'Inspiration Gallery', 'Inspiration Gallery');
         }
 
         [$collectionId, $styleId] = array_pad(explode('/', $key, 2), 2, null);
@@ -379,8 +380,8 @@ final class PageSeo
 
         if ($styleId === null) {
             return self::shape(
-                "{$collection['name']} — Inspiration Gallery — Fancy UI",
-                "{$collection['name']} — {$collection['subject']}, designed {$collection['count']} ways with restyled Fancy UI primitives. {$collection['title']}",
+                "{$collection['name']} — Inspiration Gallery — ".Brand::NAME,
+                "{$collection['name']} — {$collection['subject']}, designed {$collection['count']} ways with restyled ".Brand::NAME." primitives. {$collection['title']}",
                 'Inspiration Gallery',
                 (string) $collection['name'],
                 "{$collection['subject']}, designed {$collection['count']} ways",
@@ -395,8 +396,8 @@ final class PageSeo
         $note = trim((string) $style['note']);
 
         return self::shape(
-            "{$name} — {$collection['name']} — Inspiration Gallery — Fancy UI",
-            trim("{$collection['name']}, designed as {$name}. {$note} A self-contained, forkable starting point built on the Fancy UI Kit."),
+            "{$name} — {$collection['name']} — Inspiration Gallery — ".Brand::NAME,
+            trim("{$collection['name']}, designed as {$name}. {$note} A self-contained, forkable starting point built on the ".Brand::NAME.'.'),
             "Inspiration · {$collection['name']}",
             $name,
             $note,
@@ -415,7 +416,7 @@ final class PageSeo
             $curriculum = FancyCurriculumContent::curriculum();
 
             return self::shape(
-                "Learn — the {$curriculum['title']} curriculum — Fancy UI",
+                "Learn — the {$curriculum['title']} curriculum — ".Brand::NAME,
                 (string) $curriculum['description'],
                 'Learn',
                 "The {$curriculum['title']} curriculum",
@@ -429,18 +430,18 @@ final class PageSeo
         }
 
         return self::shape(
-            "{$course['title']} — Learn — Fancy UI",
+            "{$course['title']} — Learn — ".Brand::NAME,
             (string) $course['description'],
-            'Course · Fancy UI curriculum',
+            'Course · '.Brand::NAME.' curriculum',
             (string) $course['title'],
             (string) $course['description'],
         );
     }
 
-    /** "Packages — Fancy UI" -> "Packages": the card already carries the brand. */
+    /** "Packages — Fancy Dev Kit" -> "Packages": the card already carries the brand. */
     private static function cardTitle(string $title): string
     {
-        return trim((string) preg_replace('/\s+—\s+Fancy UI$/u', '', $title));
+        return trim((string) preg_replace('/\s+—\s+'.preg_quote(Brand::NAME, '/').'$/u', '', $title));
     }
 
     /** @return array{title: string, description: string, card: array{eyebrow: ?string, title: string, subtitle: string}} */

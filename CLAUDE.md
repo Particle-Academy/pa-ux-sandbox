@@ -4,7 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is the **Fancy UI showcase site** — a Laravel 13 + Vite + React 19 + Inertia + Tailwind v4 app that consumes the Fancy UI package suite. It lives at `repos/px-ui-sandbox` inside the **`fancy.agi` envelope**, alongside every other repo in the suite. See [`../../AGENTS.md`](../../AGENTS.md) for envelope-wide rules; this file covers sandbox-specific guidance.
+This is the **Fancy Dev Kit showcase site** — a Laravel 13 + Vite + React 19 + Inertia + Tailwind v4 app that consumes the Fancy Dev Kit packages.
+
+**The kit's display name has ONE source: `App\Support\Brand`** (`NAME` = "Fancy Dev Kit", `TAGLINE` = "for SaaSy Agents"; renamed from "Fancy UI" on 2026-11-15). PHP reads `Brand::NAME`; the client reads `__BRAND_NAME__` / `__BRAND_TAGLINE__`, which `vite.config.js` and `vitest.config.ts` extract from that same file via `brand.config.mjs`. Never type the name into copy. `tests/Feature/BrandTest.php` fails if the old name reappears in a rendered page or in the source. Identifiers keep their names (`fancy-ui` MCP id, `FancyUiRegistry`, `fancy-cli`, package names, URLs), and so does the "Powered by Fancy UI" badge wordmark that customer sites embed. It lives at `repos/px-ui-sandbox` inside the **`fancy.agi` envelope**, alongside every other repo in the suite. See [`../../AGENTS.md`](../../AGENTS.md) for envelope-wide rules; this file covers sandbox-specific guidance.
 
 **No Composer path repos. No Vite source aliases. No Flux.** The envelope tracks each repo — this one included — as a **git submodule** pinned to a commit; after shipping a package you advance its pin from the envelope (`git submodule update --remote repos/<name>`). Don't confuse "no path repos" with "no submodules".
 

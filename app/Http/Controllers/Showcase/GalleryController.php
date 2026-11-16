@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Showcase;
 
 use App\Http\Controllers\Controller;
+use App\Support\Brand;
 use App\Support\Gallery\GallerySource;
 use Illuminate\Http\JsonResponse;
 
@@ -38,7 +39,7 @@ class GalleryController extends Controller
             'name' => 'fancy-ui-inspiration',
             'homepage' => 'https://ui.particle.academy/inspiration',
             'kind' => 'design-blueprints',
-            'usage' => 'Read-only design inspiration — recipes to re-implement (and mix-and-match) with the Fancy UI kit, not source to fork. Collections are fictional businesses, each designed twenty ways.',
+            'usage' => 'Read-only design inspiration — recipes to re-implement (and mix-and-match) with the '.Brand::NAME.', not source to fork. Collections are fictional businesses, each designed twenty ways.',
             'count' => count($index['styles']),
             'collections' => $index['collections'],
             'styles' => $index['styles'],

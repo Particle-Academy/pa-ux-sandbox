@@ -490,7 +490,7 @@ export default function Agentic({ style }: { style: Style }) {
                             <Tabs.Panel value="stack">
                                 <div className="ag-stack">
                                     {[
-                                        { k: "design", v: "tokenized systems · Tailwind v4 · Fancy UI primitives" },
+                                        { k: "design", v: "tokenized systems · Tailwind v4 · " + __BRAND_NAME__ + " primitives" },
                                         { k: "product", v: "React 19 · Inertia · controlled components + MCP bridges" },
                                         { k: "agents", v: "agent-integrations · presence · staged writes · undo" },
                                         { k: "delivery", v: "reviewable diffs · documented handoff · live working sessions" },

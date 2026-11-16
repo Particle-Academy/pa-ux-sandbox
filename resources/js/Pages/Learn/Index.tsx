@@ -4,7 +4,7 @@ import { Layout } from "../Layout";
 import { post } from "./api";
 
 /**
- * /learn — the Fancy UI Curriculum.
+ * /learn — the Fancy Dev Kit Curriculum.
  *
  * The surface is `CurriculumOverview` from `@particle-academy/classroom`,
  * installed from npm like any consumer would. Nothing here re-implements a

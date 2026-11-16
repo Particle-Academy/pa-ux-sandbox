@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Showcase;
 
 use App\Http\Controllers\Controller;
+use App\Support\Brand;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -42,9 +43,9 @@ class FancifiedBadgeController extends Controller
         // darker chip, a glossy top highlight, and the "Fancified" wordmark.
         // Pure static SVG (no scripts/animation) so GitHub's camo proxy renders
         // it inside README files.
-        return <<<SVG
-<svg xmlns="http://www.w3.org/2000/svg" width="128" height="28" role="img" aria-label="Fancified — built with Fancy UI">{$comment}
-  <title>Fancified · built with Fancy UI</title>
+        return Brand::fill(<<<SVG
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="28" role="img" aria-label="Fancified — built with {brand}">{$comment}
+  <title>Fancified · built with {brand}</title>
   <defs>
     <linearGradient id="fcdBg" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#6d28d9"/>
@@ -69,6 +70,6 @@ class FancifiedBadgeController extends Controller
   </g>
   <rect x=".5" y=".5" width="127" height="27" rx="6.5" fill="none" stroke="#ffffff" stroke-opacity=".22"/>
 </svg>
-SVG;
+SVG);
     }
 }

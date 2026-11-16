@@ -18,26 +18,26 @@ export const brandDoc: ComponentDoc = {
         {
             name: "Name only",
             description: "The most minimal form — just a name.",
-            render: () => <Brand name="Fancy UI" />,
-            code: `<Brand name="Fancy UI" />`,
+            render: () => <Brand name={__BRAND_NAME__} />,
+            code: `<Brand name="${__BRAND_NAME__}" />`,
         },
         {
             name: "With logo",
             description: "Logo accepts any ReactNode — an SVG, an img, or a styled div.",
-            render: () => <Brand logo={Logo} name="Fancy UI" />,
+            render: () => <Brand logo={Logo} name={__BRAND_NAME__} />,
             code: `const Logo = (
     <div className="grid size-9 place-items-center rounded-lg bg-gradient-to-br from-violet-500 to-sky-500 text-white">
         FX
     </div>
 );
 
-<Brand logo={Logo} name="Fancy UI" />`,
+<Brand logo={Logo} name="${__BRAND_NAME__}" />`,
         },
         {
             name: "With tagline",
             description: "Tagline sits under the name. Great for auth screens.",
-            render: () => <Brand logo={Logo} name="Fancy UI" tagline="Compose beautiful apps fast" />,
-            code: `<Brand logo={Logo} name="Fancy UI" tagline="Compose beautiful apps fast" />`,
+            render: () => <Brand logo={Logo} name={__BRAND_NAME__} tagline="Compose beautiful apps fast" />,
+            code: `<Brand logo={Logo} name="${__BRAND_NAME__}" tagline="Compose beautiful apps fast" />`,
         },
         {
             name: "Sizes",
@@ -59,13 +59,13 @@ export const brandDoc: ComponentDoc = {
             render: () => (
                 <Card className="w-full max-w-xs">
                     <Card.Body>
-                        <Brand logo={Logo} name="Fancy UI" tagline="Welcome back" />
+                        <Brand logo={Logo} name={__BRAND_NAME__} tagline="Welcome back" />
                     </Card.Body>
                 </Card>
             ),
             code: `<Card className="max-w-xs">
     <Card.Body>
-        <Brand logo={Logo} name="Fancy UI" tagline="Welcome back" />
+        <Brand logo={Logo} name="${__BRAND_NAME__}" tagline="Welcome back" />
     </Card.Body>
 </Card>`,
         },

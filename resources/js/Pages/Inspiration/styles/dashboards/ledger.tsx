@@ -361,7 +361,7 @@ export default function Ledger({ style }: { style: Style }) {
                 <div className="dbledger-foot">
                     <Text as="span" size="xs" className="dbledger-faint">
                         Ledger — a fictional budgeting app, for demonstration · Dashboard {style.num} / {style.name}{" "}
-                        · every panel is a restyled Fancy UI primitive
+                        · every panel is a restyled {__BRAND_NAME__} primitive
                     </Text>
                 </div>
             </div>

@@ -35,11 +35,11 @@ registerBrandIcons();
 // SeoServiceProvider) so per-page <Seo> stays terse and SPA navigation keeps
 // title/description in sync. `siteUrl` is window-guarded (SSR-safe).
 const seoDefaults = defineSeo({
-    siteName: "Fancy UI",
+    siteName: __BRAND_NAME__,
     // `%s`: every page replays the server's already-complete title through
-    // <ServerSeo>, so templating it again would say "— Fancy UI — Fancy UI".
+    // <ServerSeo>, so templating it again would say "— Fancy Dev Kit — Fancy Dev Kit".
     titleTemplate: "%s",
-    defaultTitle: "Fancy UI",
+    defaultTitle: __BRAND_NAME__,
     defaultDescription: "Components for the surfaces where humans and agents work together.",
     defaultImage: "/showcase-assets/fancy-ui-logo.jpg",
     locale: "en_US",

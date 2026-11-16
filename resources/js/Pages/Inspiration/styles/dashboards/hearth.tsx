@@ -384,7 +384,7 @@ export default function Hearth({ style }: { style: Style }) {
                 {/* ── Colophon ─────────────────────────────────────────────── */}
                 <div className="dbhearth-colophon">
                     Hearth — a fictional smart-home dashboard, for demonstration · App {style.num} / {style.name} ·
-                    every surface is a restyled Fancy UI primitive
+                    every surface is a restyled {__BRAND_NAME__} primitive
                 </div>
             </div>
         </div>

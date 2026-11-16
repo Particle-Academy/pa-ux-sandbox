@@ -1,10 +1,13 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { defineConfig } from "vitest/config";
+import { readBrand } from "./brand.config.mjs";
 
 const kitVersion = JSON.parse(
     readFileSync(fileURLToPath(new URL("./kit.json", import.meta.url)), "utf8"),
 ).version;
+
+const brand = readBrand(fileURLToPath(new URL("./app/Support/Brand.php", import.meta.url)));
 
 /**
  * JS-side unit tests. Deliberately a SEPARATE config from `vite.config.ts` —
@@ -18,6 +21,8 @@ const kitVersion = JSON.parse(
 export default defineConfig({
     define: {
         __KIT_VERSION__: JSON.stringify(kitVersion),
+        __BRAND_NAME__: JSON.stringify(brand.name),
+        __BRAND_TAGLINE__: JSON.stringify(brand.tagline),
     },
     test: {
         include: ["tests/js/**/*.test.ts", "tests/js/**/*.test.tsx"],

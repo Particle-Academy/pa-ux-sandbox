@@ -21,7 +21,7 @@ export default function FeaturesIndex({ sites }: { sites: FeatureSiteCard[] }) {
                     The platforms in the kit
                 </Heading>
                 <Text as="p" size="lg" color="muted" className="feature-section__intro">
-                    Most of Fancy UI is components you drop into an app. These are whole platforms: several packages,
+                    Most of {__BRAND_NAME__} is components you drop into an app. These are whole platforms: several packages,
                     often in more than one language, that ship one capability end to end.
                 </Text>
             </header>

@@ -31,7 +31,7 @@ it('serves an llms.txt in the llmstxt.org shape with the package index', functio
 
     $res->assertOk();
     expect($res->headers->get('Content-Type'))->toContain('text/markdown');
-    $res->assertSee('# Fancy UI', false);
+    $res->assertSee('# Fancy Dev Kit', false);
     $res->assertSee('## Packages', false);
     $res->assertSee('/packages/fancy-slides', false);
     $res->assertSee('Kit version '.KitFacts::kitVersion(), false);
@@ -66,7 +66,7 @@ it('gives a package page its own title + canonical', function () {
     $res->assertOk();
     $html = $res->getContent();
     expect($html)
-        ->toContain('<title inertia>fancy-slides — Fancy UI</title>')
+        ->toContain('<title inertia>fancy-slides — Fancy Dev Kit</title>')
         ->toContain('rel="canonical" href="'.config('app.url').'/packages/fancy-slides"');
 });
 
@@ -76,7 +76,7 @@ it('gives each docs page a unique title + Article/Breadcrumb JSON-LD', function 
     $res->assertOk();
     $html = $res->getContent();
     expect($html)
-        ->toContain('<title inertia>Human+ UX — Docs — Fancy UI</title>')
+        ->toContain('<title inertia>Human+ UX — Docs — Fancy Dev Kit</title>')
         ->toContain('"@type":"Article"')
         ->toContain('"@type":"BreadcrumbList"')
         ->toContain('rel="canonical" href="'.config('app.url').'/docs/human-plus-ux"');

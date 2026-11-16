@@ -403,7 +403,7 @@ export default function Still({ style }: { style: Style }) {
                 <footer className="dbstill-foot">
                     <Text as="span" size="xs" className="dbstill-foot__note">
                         Still — a fictional meditation dashboard, for demonstration · App{" "}
-                        {style.num} / {style.name} · every surface is a restyled Fancy UI
+                        {style.num} / {style.name} · every surface is a restyled {__BRAND_NAME__}
                         primitive
                     </Text>
                     <Link href="/inspiration/dashboards" className="dbstill-foot__back">

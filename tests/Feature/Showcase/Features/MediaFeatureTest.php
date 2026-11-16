@@ -11,18 +11,17 @@ uses(TestCase::class);
  * "a new Feature for Media that includes all of our media based goodies,
  * including the streaming media"). Plan: .ai/plans/media-channels.md.
  *
- * Only what SHIPS is demonstrated: react-fancy's viewers and StreamingAudio,
- * and fancy-code's FileViewer. The channel components (a channel is one
- * track, a playlist or a live stream) are built in react-fancy but not yet
- * released, so the page says "coming" and imports none of them. When they
- * ship, the sandbox dogfoods the release and the "coming" panel becomes the
- * live channel guide demo; this test is the guard until then.
+ * Demonstrated: react-fancy's viewers, StreamingAudio and, since 6.26.0, the
+ * channel components (a channel is one track, a playlist or a live stream),
+ * and fancy-code's FileViewer. Until 6.26.0 the channel section said "coming"
+ * and this test guarded that; it now guards the live channel guide, built from
+ * the showcase radio's own media and taking turns with the site radio.
  */
 
 const MEDIA_DIR = 'resources/js/Pages/Features/Media';
 
-/** The channel components that are not released yet. */
-const UNRELEASED_CHANNEL_COMPONENTS = ['ChannelPlayer', 'ChannelGuide', 'Playlist', 'MediaQueue', 'TrackItem', 'NowPlaying', 'LiveBadge', 'MediaEmbed'];
+/** The channel components the live guide is built from (react-fancy 6.26.0). */
+const MEDIA_GUIDE_COMPONENTS = ['ChannelGuide', 'ChannelPlayer', 'Playlist', 'MediaQueue'];
 
 function mediaPage(TestCase $test): array
 {
@@ -81,21 +80,59 @@ it('runs the shipped media components', function () {
         ->and($all)->not->toContain('TODO');
 });
 
-it('imports no unreleased channel component, and says channels are coming', function () {
+it('runs a live channel guide built from the channel components', function () {
     $sources = mediaSources();
     preg_match_all('#import\s*(?:type\s*)?\{([^}]*)\}\s*from\s*"@particle-academy/react-fancy[^"]*"#s', implode("\n", $sources), $imports);
     $imported = array_map('trim', explode(',', implode(',', $imports[1])));
 
-    expect($imports[1])->not->toBeEmpty();
-    foreach (UNRELEASED_CHANNEL_COMPONENTS as $component) {
-        expect($imported)->not->toContain($component)
-            ->and($imported)->not->toContain("type {$component}");
+    expect($sources)->toHaveKey('ChannelsDemo.tsx');
+    $demo = $sources['ChannelsDemo.tsx'];
+
+    foreach (MEDIA_GUIDE_COMPONENTS as $component) {
+        expect($imported)->toContain($component)
+            ->and($demo)->toContain("<{$component}");
     }
 
-    // The channel section exists, and is honest about it.
-    expect($sources['Index.tsx'])->toContain('id="channels"')
-        ->and($sources['Index.tsx'])->toMatch('/coming/i')
+    expect($demo)->toContain('data-media-demo="channels"')
+        ->and($sources['Index.tsx'])->toContain('id="channels"', '<ChannelsDemo />')
         ->and($sources['Index.tsx'])->toContain('single track', 'playlist', 'live stream');
+});
+
+it('no longer says channels are coming', function () {
+    $sources = mediaSources();
+
+    expect(implode("\n", $sources))->not->toContain('data-media-coming', 'COMING_COMPONENTS')
+        ->and($sources['Index.tsx'])->not->toMatch('/coming/i');
+});
+
+it('plays a single track, a three-track playlist and Riverwest live, all from the radio', function () {
+    $demo = mediaSources()['ChannelsDemo.tsx'];
+    $channels = (string) file_get_contents(resource_path('js/radio/channels.ts'));
+
+    // The channels are derived from the radio's station list, which names the
+    // only media this page may play; nothing here invents a URL.
+    expect($channels)->toContain('RADIO_STATIONS', 'kind: "track"', 'kind: "playlist"', 'kind: "live"', 'stationOrThrow("riverwest")')
+        ->and($channels)->not->toMatch('#https?://#')
+        ->and($demo)->toContain('SINGLE_TRACK_CHANNEL', 'PLAYLIST_CHANNEL', 'riverwestChannel(');
+
+    // The playlist is every self-hosted track the radio has: three today.
+    preg_match_all('#src: "/radio/[a-z0-9-]+\.mp3"#', (string) file_get_contents(resource_path('js/radio/stations.ts')), $tracks);
+    expect($tracks[0])->toHaveCount(3);
+});
+
+it('does not load the hls.js adapter: Riverwest is Icecast and plays natively', function () {
+    // hls.js is third-party and not approved for the showcase.
+    expect(implode("\n", mediaSources()))->not->toContain('react-fancy/channels/hls', 'hls.js');
+
+    $manifest = json_decode((string) file_get_contents(base_path('package.json')), true);
+    expect(array_keys(($manifest['dependencies'] ?? []) + ($manifest['devDependencies'] ?? [])))->not->toContain('hls.js');
+});
+
+it('takes turns with the site radio, and never starts playing itself', function () {
+    $demo = mediaSources()['ChannelsDemo.tsx'];
+
+    expect($demo)->toContain('useRadio()', 'r.setValue({ ...r.value, playing: false })', 'radioPlaying')
+        ->and($demo)->not->toMatch('/playing: true|autoPlay/');
 });
 
 it('imports only packages the showcase installs', function () {

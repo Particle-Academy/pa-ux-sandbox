@@ -1,4 +1,4 @@
-import { Badge, Button, Card, Heading, Text } from "@particle-academy/react-fancy";
+import { Button, Card, Heading, Text } from "@particle-academy/react-fancy";
 import { DemoFrame } from "../shared/DemoFrame";
 import { FeatureCta } from "../shared/FeatureCta";
 import { FeatureHero } from "../shared/FeatureHero";
@@ -8,6 +8,7 @@ import { HowItFits } from "../shared/HowItFits";
 import { InstallSteps } from "../shared/InstallSteps";
 import { PackagesGrid } from "../shared/PackagesGrid";
 import type { FeaturePageProps } from "../shared/types";
+import { ChannelsDemo } from "./ChannelsDemo";
 import { StationsDemo } from "./StationsDemo";
 import { ViewersDemo } from "./ViewersDemo";
 
@@ -15,26 +16,15 @@ import { ViewersDemo } from "./ViewersDemo";
  * /features/media: every media component the kit ships (owner, 2026-11-14).
  *
  * Members come from FeatureSites: react-fancy (ImageViewer, VideoViewer,
- * AudioViewer, PdfViewer, MediaViewer, StreamingAudio) and fancy-code
+ * AudioViewer, PdfViewer, MediaViewer, StreamingAudio, and the channel
+ * components ChannelGuide, ChannelPlayer, Playlist, MediaQueue, TrackItem,
+ * NowPlaying, LiveBadge and MediaEmbed from 6.26.0) and fancy-code
  * (FileViewer). Claims are sourced from those components' docs.
  *
- * Channels (one track, a playlist or a live stream, with a guide, playlist and
- * queue) are built in react-fancy but NOT released, so they are described under
- * "coming" and nothing here imports them. When react-fancy ships them, the
- * sandbox dogfoods the release and this section becomes the live channel guide.
- * MediaFeatureTest is the guard. Plan: .ai/plans/media-channels.md.
+ * The channel guide demo plays the showcase radio's own media (a single track,
+ * a three-track playlist and Riverwest Radio live), so this page names no media
+ * URL of its own. MediaFeatureTest is the guard. Plan: .ai/plans/media-channels.md.
  */
-
-const COMING_COMPONENTS: { name: string; body: string }[] = [
-    { name: "ChannelPlayer", body: "Plays the current channel: audio or video files, live streams, or an embed." },
-    { name: "ChannelGuide", body: "The list of channels, with what each one is and whether it is live." },
-    { name: "Playlist", body: "Reorder, add and remove tracks, shuffle and repeat, and the track playing now. Removals an agent proposes wait for your OK." },
-    { name: "MediaQueue", body: "What plays next, in shuffle order when shuffle is on." },
-    { name: "TrackItem", body: "One track row: artwork, title, artist and length." },
-    { name: "NowPlaying", body: "Artwork, title and artist of what is playing." },
-    { name: "LiveBadge", body: "Live, starting, offline or ended." },
-    { name: "MediaEmbed", body: "YouTube, Vimeo and Twitch embeds through a provider registry a host can add to. Nothing loads until play." },
-];
 
 export default function MediaFeature({ feature, versions }: FeaturePageProps) {
     return (
@@ -50,7 +40,7 @@ export default function MediaFeature({ feature, versions }: FeaturePageProps) {
                             Play a station
                         </Button>
                         <Button href="#channels" variant="ghost" iconTrailing="arrow-down" className="media-tap">
-                            Channels are coming
+                            Tune a channel
                         </Button>
                     </>
                 }
@@ -96,6 +86,11 @@ export default function MediaFeature({ feature, versions }: FeaturePageProps) {
                         body: "The station and what is on air go to the Media Session, so the phone's lock screen and the keyboard's media keys play and pause it.",
                     },
                     {
+                        icon: "list-music",
+                        title: "Channels and playlists",
+                        body: "A channel is one track, a playlist or a live stream. ChannelGuide, ChannelPlayer, Playlist and MediaQueue share one value. Playlist reorders with Move up and Move down buttons, so the keyboard can do it, and removals an agent proposes wait for a person to accept them.",
+                    },
+                    {
                         icon: "image",
                         title: "A viewer for every file",
                         body: "MediaViewer picks ImageViewer, VideoViewer, AudioViewer or PdfViewer from a file's type or its address, and shows a download card for anything else. ImageViewer fits, zooms with Ctrl or Command and the wheel, and pans.",
@@ -119,48 +114,41 @@ export default function MediaFeature({ feature, versions }: FeaturePageProps) {
 
             <section id="channels" className="feature-section media-anchor">
                 <Heading as="h2" size="lg" weight="semibold" className="feature-display">
-                    Channels{" "}
-                    <Badge color="violet" variant="soft" data-media-coming="">
-                        Coming
-                    </Badge>
+                    Channels
                 </Heading>
                 <Text as="p" color="muted" className="feature-section__intro">
-                    Coming in the next react-fancy release, and not installable yet. A channel is a single track, a playlist of
-                    tracks, or a live stream from any streaming service. One value holds the whole player, so the guide, the
-                    playlist and the queue stay in step, and an agent can drive them through the same value.
+                    A channel is a single track, a playlist of tracks, or a live stream from any streaming service. One value holds
+                    the whole player, so the guide, the player, the playlist and the queue stay in step, and an agent can drive them
+                    all through that same value.
                 </Text>
-                <div className="media-coming" data-media-coming-list="">
-                    {COMING_COMPONENTS.map((c) => (
-                        <Card key={c.name} variant="outlined" className="media-coming__card" data-media-coming-component={c.name}>
-                            <Card.Body>
-                                <Heading as="h3" size="sm" weight="semibold" className="media-coming__name">
-                                    {c.name}
-                                </Heading>
-                                <Text as="p" size="sm" color="muted">
-                                    {c.body}
-                                </Text>
-                            </Card.Body>
-                        </Card>
-                    ))}
-                </div>
-                <Card variant="outlined" className="media-note">
-                    <Card.Body>
-                        <Heading as="h3" size="sm" weight="semibold">
-                            Which streams will play
-                        </Heading>
-                        <Text as="p" size="sm" color="muted">
-                            Files, Icecast and Shoutcast play everywhere. HLS plays where the browser plays it natively, which is
-                            Safari and iOS. Other services come in through embeds or a source adapter your app registers. This page
-                            will show a live channel guide when the release ships.
-                        </Text>
-                    </Card.Body>
-                </Card>
             </section>
+
+            <DemoFrame
+                id="media-channels"
+                label="react-fancy ChannelGuide, ChannelPlayer, Playlist and MediaQueue"
+                status="Live · local state"
+                caption="Three channels: a single Thunder in the Garden track, a playlist of all three, and Riverwest Radio live. Reorder, remove or add tracks in the playlist, turn on shuffle and watch Up next follow. This player and the site radio take turns too."
+            >
+                <ChannelsDemo />
+            </DemoFrame>
+
+            <Card variant="outlined" className="media-note">
+                <Card.Body>
+                    <Heading as="h3" size="sm" weight="semibold">
+                        Which streams play
+                    </Heading>
+                    <Text as="p" size="sm" color="muted">
+                        Files, Icecast and Shoutcast play everywhere, on the browser's own media elements. HLS plays natively on
+                        Safari and iOS, and everywhere else once an app imports the opt-in hls.js adapter. YouTube, Vimeo and Twitch
+                        come in as embeds that load nothing until played, and an app can register its own providers.
+                    </Text>
+                </Card.Body>
+            </Card>
 
             <HowItFits
                 members={feature.members}
                 bridges={feature.bridges}
-                intro="The viewers and the player are react-fancy components; FileViewer in fancy-code builds on MediaViewer."
+                intro="The viewers, the player and the channel components are react-fancy components; FileViewer in fancy-code builds on MediaViewer."
             />
             <InstallSteps members={feature.members} versions={versions} />
             <PackagesGrid members={feature.members} versions={versions} />

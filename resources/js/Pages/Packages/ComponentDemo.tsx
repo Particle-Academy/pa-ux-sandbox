@@ -14,6 +14,14 @@ import { ApplicationList, ApplyForm, EmployerJobList, JobDetail, JobPostingForm 
 import { CertificateView, CoursePlayer, CurriculumOverview, LessonView, QuestionRenderer, TestRunner, type AnswerValue} from "@particle-academy/classroom";
 import { EXAMPLE_PAY_STEPS, EXAMPLE_PAY_TOKENS, verifyExamplePay } from "./ComponentDocs/SetupWizard";
 import { StreamingAudioExample } from "./ComponentDocs/StreamingAudio";
+import { ChannelPlayerExample } from "./ComponentDocs/ChannelPlayer";
+import { ChannelGuideExample } from "./ComponentDocs/ChannelGuide";
+import { PlaylistExample } from "./ComponentDocs/Playlist";
+import { MediaQueueExample } from "./ComponentDocs/MediaQueue";
+import { TrackItemExample } from "./ComponentDocs/TrackItem";
+import { NowPlayingExample } from "./ComponentDocs/NowPlaying";
+import { LiveBadgeExample } from "./ComponentDocs/LiveBadge";
+import { MediaEmbedExample } from "./ComponentDocs/MediaEmbed";
 import { SAMPLE_CODE_VIEW, SAMPLE_IMG, SAMPLE_PDF, SAMPLE_AUDIO, SAMPLE_AUDIO_TITLE, SAMPLE_POSTER, DELIVERY_ROUTE, DELIVERY_ROUTE_START } from "./showcase-fixtures";
 import {
     Accordion,
@@ -307,6 +315,14 @@ const REGISTRY: Record<string, DemoFn> = {
     "react-fancy/stepper": StepperDemo,
     "react-fancy/setup-wizard": SetupWizardDemo,
     "react-fancy/streaming-audio": StreamingAudioDemo,
+    "react-fancy/channel-player": ChannelPlayerDemo,
+    "react-fancy/channel-guide": ChannelGuideDemo,
+    "react-fancy/playlist": PlaylistDemo,
+    "react-fancy/media-queue": MediaQueueDemo,
+    "react-fancy/track-item": TrackItemDemo,
+    "react-fancy/now-playing": NowPlayingDemo,
+    "react-fancy/live-badge": LiveBadgeDemo,
+    "react-fancy/media-embed": MediaEmbedDemo,
     "react-fancy/progress": ProgressDemo,
     "react-fancy/resizable-panels": ResizablePanelsDemo,
     "react-fancy/reorderable-grid": ReorderableGridDemo,
@@ -1621,6 +1637,82 @@ function StreamingAudioDemo() {
             demo="A Thunder in the Garden track served from this site, and Riverwest Radio live. The same player runs the radio under the header."
         >
             <StreamingAudioExample />
+        </DemoNote>
+    );
+}
+
+function ChannelPlayerDemo() {
+    return (
+        <DemoNote
+            outOfBox="One player for a single track, a playlist or a live stream: previous / next, shuffle, repeat, seek, mute and volume on native audio or video, a LIVE badge and reconnects for streams. Controlled through one ChannelPlayerValue; nothing plays until value.playing is true."
+            demo="The site radio's own media: a Thunder in the Garden track, a playlist of all three, and Riverwest Radio live."
+        >
+            <ChannelPlayerExample />
+        </DemoNote>
+    );
+}
+
+function ChannelGuideDemo() {
+    return (
+        <DemoNote
+            outOfBox="The channel list, with each channel's kind, track count or live status. Selecting one tunes the shared value to it."
+            demo="The three channel kinds over the site radio's media."
+        >
+            <ChannelGuideExample />
+        </DemoNote>
+    );
+}
+
+function PlaylistDemo() {
+    return (
+        <DemoNote
+            outOfBox="Play any track, shuffle, repeat, reorder with Move up / Move down, remove, add from a library, and Accept / Reject for edits an agent proposed. The tracks come back through onTracksChange."
+            demo="Two Thunder in the Garden tracks, with the third offered from the library."
+        >
+            <PlaylistExample />
+        </DemoNote>
+    );
+}
+
+function MediaQueueDemo() {
+    return (
+        <DemoNote outOfBox="Up next in play order: it follows shuffle, wraps with repeat all, and jumps to a queued track." demo="The buttons above it stand in for a player.">
+            <MediaQueueExample />
+        </DemoNote>
+    );
+}
+
+function TrackItemDemo() {
+    return (
+        <DemoNote outOfBox="One track as a row: position, artwork, title, artist, duration, a now-playing mark and room for actions." demo="The star button is an action this demo adds.">
+            <TrackItemExample />
+        </DemoNote>
+    );
+}
+
+function NowPlayingDemo() {
+    return (
+        <DemoNote outOfBox="What is on: a track's artwork, title and artist, or a live channel's name, what is on air and its badge." demo="Riverwest's on-air text is made up here; the host supplies it.">
+            <NowPlayingExample />
+        </DemoNote>
+    );
+}
+
+function LiveBadgeDemo() {
+    return (
+        <DemoNote outOfBox="Live, starting, offline or ended, from a status the host supplies. The badge probes nothing.">
+            <LiveBadgeExample />
+        </DemoNote>
+    );
+}
+
+function MediaEmbedDemo() {
+    return (
+        <DemoNote
+            outOfBox="YouTube, Vimeo, Twitch or a provider you register, in a sandboxed iframe. It is a poster until played, so the provider gets no request before that."
+            demo="A provider registered for this demo embeds a file from this site, so nothing is loaded from a third party."
+        >
+            <MediaEmbedExample />
         </DemoNote>
     );
 }

@@ -127,6 +127,81 @@ function StreamingDemo() {
     );
 }
 
+const PILL_STREAM = [
+    "I changed ",
+    "[file:src/Button.tsx",
+    "|Button.tsx] and ",
+    "[file:src/Badge.tsx|Badge",
+    ".tsx]. Both now take a color.",
+];
+
+/** Cut at an unfinished pill: the last "[" with no "]" after it. */
+const holdBackPills = (text: string): number | null => {
+    const open = text.lastIndexOf("[");
+    return open !== -1 && text.indexOf("]", open) === -1 ? open : null;
+};
+
+/** Render each [file:path|label] pill as inline code naming the label. */
+const pillsToCode = (text: string): string => text.replace(/\[file:([^|\]]+)\|([^\]]+)\]/g, (_m, _path, label) => `\`${label}\``);
+
+function HoldBackDemo() {
+    const [chunks, setChunks] = useState(PILL_STREAM.length);
+    const timer = useRef<number | null>(null);
+
+    useEffect(() => () => {
+        if (timer.current !== null) window.clearInterval(timer.current);
+    }, []);
+
+    const start = () => {
+        if (timer.current !== null) window.clearInterval(timer.current);
+        setChunks(0);
+        timer.current = window.setInterval(() => {
+            setChunks((n) => {
+                if (n + 1 >= PILL_STREAM.length && timer.current !== null) {
+                    window.clearInterval(timer.current);
+                    timer.current = null;
+                }
+                return Math.min(n + 1, PILL_STREAM.length);
+            });
+        }, 900);
+    };
+
+    const value = PILL_STREAM.slice(0, chunks).join("");
+    const live = chunks < PILL_STREAM.length;
+
+    return (
+        <div className="w-full space-y-3">
+            <Button size="sm" color="zinc" onClick={start} disabled={live}>
+                {live ? `Streaming… ${chunks}/${PILL_STREAM.length}` : "Stream the reply"}
+            </Button>
+            <div className="grid gap-3 md:grid-cols-2">
+                <div>
+                    <Text size="xs" className="mb-1 !text-zinc-500">
+                        no hooks: half a pill flashes as raw text
+                    </Text>
+                    <div className="prose prose-sm min-h-16 dark:prose-invert">
+                        <ContentRenderer value={value} format="markdown" streaming={live} />
+                    </div>
+                </div>
+                <div>
+                    <Text size="xs" className="mb-1 !text-zinc-500">
+                        holdBack + transform: a pill appears only once it is whole
+                    </Text>
+                    <div className="prose prose-sm min-h-16 dark:prose-invert">
+                        <ContentRenderer
+                            value={value}
+                            format="markdown"
+                            streaming={live}
+                            holdBack={holdBackPills}
+                            transform={(text) => pillsToCode(text)}
+                        />
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
 const markdown = `# Welcome
 
 This is **markdown** with a [link](#) and \`inline code\`.
@@ -232,6 +307,23 @@ This is **markdown** with a [link](/) and \\\`inline code\\\`.\`;
 // Show an open block as it fills:
 <ContentRenderer value={soFar} format="markdown" streaming={isStreaming ? "progressive" : false} />`,
         },
+        {
+            name: "holdBack and transform: your own grammar, streamed",
+            description:
+                "The renderer knows fences and registered tags, not your pills. holdBack(text) returns where to cut a streaming value (or null); the renderer cuts there first, then applies its own fence and tag hold-back, so nothing past either cut shows. transform(text, { streaming }) rewrites the text before it renders, here turning [file:path|label] into inline code; its output is still sanitised unless unsafe.",
+            render: () => <HoldBackDemo />,
+            code: `<ContentRenderer
+    value={soFar}
+    format="markdown"
+    streaming={isStreaming}
+    // Cut at an unfinished pill: the last "[" with no "]" after it.
+    holdBack={(text) => {
+        const open = text.lastIndexOf("[");
+        return open !== -1 && text.indexOf("]", open) === -1 ? open : null;
+    }}
+    transform={(text, { streaming }) => resolvePills(text)}
+/>`,
+        },
     ],
     props: [
         { name: "value", type: `string`, default: "—", description: "Raw markdown / HTML to render. Required." },
@@ -243,6 +335,8 @@ This is **markdown** with a [link](/) and \\\`inline code\\\`.\`;
         { name: "onCopy", type: `(event: ContentCopyEvent) => void`, default: "—", description: "After every copy attempt: `{ kind, index, text, html, ok }`." },
         { name: "clipboardWriter", type: `(payload) => void | boolean | Promise<void | boolean>`, default: "ClipboardItem, then writeText", description: "Your own clipboard write. Throw, reject, return `false` or take over 5 s and the copy reports a failure." },
         { name: "streaming", type: `boolean | "progressive"`, default: `false`, description: "`true` holds back an unfinished trailing fence or registered tag; `\"progressive\"` shows it as it fills. The root carries `data-streaming`." },
+        { name: "holdBack", type: `(text: string) => number | null`, default: "—", description: "While `streaming`, where to cut for a grammar the renderer does not know (pills). Cut first, then the renderer's own hold-back; a cut outside `0..length-1` is ignored." },
+        { name: "transform", type: `(text: string, ctx: { streaming: boolean }) => string`, default: "—", description: "Rewrites the text before it renders, after `holdBack`. Output is still sanitised unless `unsafe`." },
         { name: "className", type: `string`, default: "—", description: "Extra classes on the root wrapper." },
     ],
     notes: (

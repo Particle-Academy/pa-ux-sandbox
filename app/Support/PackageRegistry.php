@@ -1952,6 +1952,16 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
             ['slug' => 'video-viewer', 'name' => 'VideoViewer', 'blurb' => 'Native video controls with poster and fit.'],
             ['slug' => 'audio-viewer', 'name' => 'AudioViewer', 'blurb' => 'Themed card around the native audio player.'],
             ['slug' => 'streaming-audio', 'name' => 'StreamingAudio', 'blurb' => 'Controlled player for server-hosted MP3s and Icecast / Shoutcast live streams on native audio: station picker, LIVE badge, reconnect with backoff, Media Session.'],
+            // Channels (react-fancy 6.26.0): a channel is one track, a playlist or
+            // a live stream, and one ChannelPlayerValue drives every part.
+            ['slug' => 'channel-player', 'name' => 'ChannelPlayer', 'blurb' => 'Controlled player for every channel kind - a single track, a playlist or a live stream - on native audio / video or a provider embed: shuffle, repeat, seek, reconnect with backoff, Media Session.'],
+            ['slug' => 'channel-guide', 'name' => 'ChannelGuide', 'blurb' => 'The channel list as rows or cards: each channel\'s kind, track count or live status, and aria-current on the one that is on.'],
+            ['slug' => 'playlist', 'name' => 'Playlist', 'blurb' => 'A channel\'s tracks: play, shuffle, repeat, keyboard reorder, remove and add from a library, with agent-proposed edits held for Accept / Reject.'],
+            ['slug' => 'media-queue', 'name' => 'MediaQueue', 'blurb' => 'Up next, in play order: follows the shuffle order, wraps with repeat all, and jumps to a queued track.'],
+            ['slug' => 'track-item', 'name' => 'TrackItem', 'blurb' => 'One track as a row - position, artwork, title, artist, duration, a now-playing mark and room for actions.'],
+            ['slug' => 'now-playing', 'name' => 'NowPlaying', 'blurb' => 'What is on: artwork, title and artist, or a live channel\'s name, what is on air and its badge.'],
+            ['slug' => 'live-badge', 'name' => 'LiveBadge', 'blurb' => 'Live, starting, offline or ended as a Badge, from a status the host supplies.'],
+            ['slug' => 'media-embed', 'name' => 'MediaEmbed', 'blurb' => 'YouTube, Vimeo, Twitch or a registered provider in a sandboxed iframe; a poster until played, so nothing loads from the provider before that.'],
             ['slug' => 'pdf-viewer', 'name' => 'PdfViewer', 'blurb' => 'Inline PDF via <object> / <iframe> with a download fallback.'],
             ['slug' => 'drawer', 'name' => 'Drawer', 'blurb' => 'Panel that slides in from any edge — viewport-level, or attached inside a Card or layout pane.'],
             ['slug' => 'menu', 'name' => 'Menu'],

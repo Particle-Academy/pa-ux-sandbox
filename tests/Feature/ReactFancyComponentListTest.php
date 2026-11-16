@@ -43,11 +43,15 @@ uses(TestCase::class);
  * `mode` and `icons` are not components at all: a context helper and an asset
  * barrel.
  *
+ * `channels/hls` (react-fancy 6.26.0) is not a component either: a side-effect
+ * import that registers an hls.js media adapter for ChannelPlayer, behind an
+ * optional hls.js peer. It is documented on the ChannelPlayer page.
+ *
  * Everything else must be listed. This is a short, argued list, not a bucket to
  * sweep new components into when this test goes red.
  */
 const IGNORED_SUBPATHS = [
-    'mode', 'icons', 'inputs',
+    'mode', 'icons', 'inputs', 'channels/hls',
 ];
 
 /** Registry entries with no matching subpath. There should be none. */

@@ -316,6 +316,34 @@ thread.current?.scrollToMessage("h1"); // false if not rendered`,
 />
 <ChatMessage message={followUp} grouped />`,
         },
+        {
+            name: "A message made of typed parts: body",
+            description:
+                "A host whose messages are typed parts (text, a tool row, a status) passes them as body. They render INSIDE the bubble, still under data-chat-content, in place of message.content. Header, author, time, status, attachments, actions, proposal and every handle are unchanged. The host owns its sanitising: body does not pass through ContentRenderer.",
+            render: () => (
+                <div className="w-full max-w-lg">
+                    <ChatMessage
+                        message={{ id: "parts", role: "assistant", author: { name: "Fancy agent" }, content: "", createdAt: at(5) }}
+                        formatTime={formatTime}
+                        body={
+                            <div className="flex flex-col gap-2">
+                                <Text size="sm">I ran the release preflight.</Text>
+                                <div className="flex items-center gap-2">
+                                    <Icon name="terminal" size="sm" />
+                                    <Text size="xs" className="font-mono">release-preflight.sh 6.26.0</Text>
+                                    <Badge size="sm" color="green">exit 0</Badge>
+                                </div>
+                                <Text size="sm">The changelog entry is in place, so the tag can go out.</Text>
+                            </div>
+                        }
+                    />
+                </div>
+            ),
+            code: `<ChatMessage
+    message={{ id: "m1", role: "assistant", content: "", createdAt: Date.now() }}
+    body={message.parts.map((part) => <Part key={part.id} part={part} />)}
+/>`,
+        },
     ],
     props: [
         { name: "messages", type: `ChatMessageData[]`, default: "—", description: "The messages, oldest first. Controlled: the thread renders exactly these.", required: true },
@@ -347,6 +375,7 @@ thread.current?.scrollToMessage("h1"); // false if not rendered`,
         { name: "ref", type: `Ref<ChatThreadHandle>`, default: "—", description: "`scrollToLatest()`, `scrollToMessage(id)` and `element`. Only the log scrolls." },
         { name: "ChatMessage — message", type: `ChatMessageData`, default: "—", description: "The one message to render." },
         { name: "ChatMessage — actions", type: `ReactNode`, default: "—", description: "The per-message actions slot." },
+        { name: "ChatMessage — body", type: `ReactNode`, default: "—", description: "Typed parts rendered inside the bubble, under `data-chat-content`, in place of `message.content`. Not passed through ContentRenderer: the host sanitises." },
         { name: "ChatMessage — grouped", type: `boolean`, default: `false`, description: "A continuation of the previous message's group: the header is omitted." },
     ],
     notes: (

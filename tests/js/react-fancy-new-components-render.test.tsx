@@ -24,6 +24,15 @@ const COMPONENTS = [
     { slug: "skip-link", name: "SkipLink", handle: "[data-react-fancy-skip-link]" },
     { slug: "notification-bell", name: "NotificationBell", handle: "[data-react-fancy-notification-bell]" },
     { slug: "notification-inbox", name: "NotificationInbox", handle: "[data-react-fancy-notification-inbox]" },
+    // react-fancy 6.26.0: the channel components.
+    { slug: "channel-player", name: "ChannelPlayer", handle: "[data-react-fancy-channel-player]" },
+    { slug: "channel-guide", name: "ChannelGuide", handle: "[data-react-fancy-channel-guide]" },
+    { slug: "playlist", name: "Playlist", handle: "[data-react-fancy-playlist]" },
+    { slug: "media-queue", name: "MediaQueue", handle: "[data-react-fancy-media-queue]" },
+    { slug: "track-item", name: "TrackItem", handle: "[data-react-fancy-track-item]" },
+    { slug: "now-playing", name: "NowPlaying", handle: "[data-react-fancy-now-playing]" },
+    { slug: "live-badge", name: "LiveBadge", handle: "[data-react-fancy-live-badge]" },
+    { slug: "media-embed", name: "MediaEmbed", handle: "[data-react-fancy-media-embed]" },
 ];
 
 let host: HTMLDivElement;

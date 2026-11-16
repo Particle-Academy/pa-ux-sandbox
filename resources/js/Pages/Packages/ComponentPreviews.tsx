@@ -132,6 +132,10 @@ import { ActivityLight, AudioViewer, Avatar, Badge, Breadcrumbs, Button, Calenda
 import { Checkbox, CheckboxGroup, DatePicker, Field, Input, MultiSwitch, NumberField, PhoneInput, RadioGroup, Select, Slider, Textarea } from "@particle-academy/react-fancy";
 import { FileViewer } from "@particle-academy/fancy-code";
 import { DOC_STATIONS } from "./ComponentDocs/StreamingAudio";
+import { ChannelGuide, ChannelPlayer, LiveBadge, MediaEmbed, MediaQueue, NowPlaying, Playlist, TrackItem } from "@particle-academy/react-fancy";
+import { PLAYLIST_CHANNEL, RADIO_CHANNELS, RADIO_TRACKS, riverwestChannel } from "../../radio/channels";
+import { tunedTo } from "./ComponentDocs/ChannelPlayer";
+import { SHOWCASE_POSTER, SHOWCASE_SOURCE } from "./ComponentDocs/MediaEmbed";
 import { EChart } from "@particle-academy/fancy-echarts";
 import { ArtBoard, ArtPiece } from "@particle-academy/fancy-artboard";
 import "@particle-academy/fancy-artboard/styles.css";
@@ -1805,6 +1809,59 @@ const PREVIEWS: Record<string, PreviewFn> = {
                 <Skeleton shape="circle" width={32} height={32} />
                 <Skeleton shape="text" width="50%" />
             </div>
+        </div>
+    ),
+
+    // Channels (react-fancy 6.26.0): the site radio's media, never playing.
+    "react-fancy/channel-player": () => (
+        <div className="w-full max-w-[18rem]">
+            <ChannelPlayer channels={RADIO_CHANNELS} value={tunedTo(PLAYLIST_CHANNEL)} onChange={() => {}} />
+        </div>
+    ),
+
+    "react-fancy/channel-guide": () => (
+        <div className="w-full max-w-[18rem]">
+            <ChannelGuide channels={RADIO_CHANNELS} value={tunedTo(PLAYLIST_CHANNEL)} onChange={() => {}} />
+        </div>
+    ),
+
+    "react-fancy/playlist": () => (
+        <div className="w-full max-w-[18rem]">
+            <Playlist channel={PLAYLIST_CHANNEL} value={tunedTo(PLAYLIST_CHANNEL)} onChange={() => {}} hideModes />
+        </div>
+    ),
+
+    "react-fancy/media-queue": () => (
+        <div className="w-full max-w-[18rem]">
+            <MediaQueue channel={PLAYLIST_CHANNEL} value={tunedTo(PLAYLIST_CHANNEL)} />
+        </div>
+    ),
+
+    "react-fancy/track-item": () => (
+        <div className="w-full max-w-[18rem] space-y-1">
+            {RADIO_TRACKS.slice(0, 2).map((track, i) => (
+                <TrackItem key={track.id} track={track} index={i + 1} active={i === 0} playing={i === 0} />
+            ))}
+        </div>
+    ),
+
+    "react-fancy/now-playing": () => (
+        <div className="w-full max-w-[18rem]">
+            <NowPlaying channel={riverwestChannel("Morning show")} />
+        </div>
+    ),
+
+    "react-fancy/live-badge": () => (
+        <div className="flex flex-wrap items-center gap-2">
+            <LiveBadge status="live" size="md" />
+            <LiveBadge status="starting" />
+            <LiveBadge status="offline" />
+        </div>
+    ),
+
+    "react-fancy/media-embed": () => (
+        <div className="w-full max-w-[18rem]">
+            <MediaEmbed source={SHOWCASE_SOURCE} playing={false} title="A diagram" poster={SHOWCASE_POSTER} />
         </div>
     ),
 

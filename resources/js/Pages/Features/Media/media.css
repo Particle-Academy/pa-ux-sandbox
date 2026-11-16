@@ -43,11 +43,16 @@
   background: var(--media-panel);
 }
 
-/* Channels: coming */
-.media-coming {
-  display: grid; gap: 12px; margin-top: 16px;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+/* Channels: the live guide */
+.media-channels {
+  display: grid; gap: 16px; align-items: start;
+  grid-template-columns: minmax(0, 1fr);
+  padding: 16px; border-radius: 14px;
+  border: 1px solid var(--media-edge);
+  background: var(--media-panel);
 }
-.media-coming__card { border-style: dashed; }
-.media-coming__name { font-family: var(--font-mono, ui-monospace, monospace); }
+@media (min-width: 900px) {
+  .media-channels { grid-template-columns: minmax(220px, 18rem) minmax(0, 1fr); }
+}
+.media-channels__main { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
 .media-note { margin-top: 16px; border-left: 3px solid var(--feature-accent); }

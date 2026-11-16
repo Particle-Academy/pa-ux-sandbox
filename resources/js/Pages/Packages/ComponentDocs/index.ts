@@ -138,6 +138,14 @@ import { sidebarDoc } from "./Sidebar";
 import { skeletonDoc } from "./Skeleton";
 import { setupWizardDoc } from "./SetupWizard";
 import { streamingAudioDoc } from "./StreamingAudio";
+import { channelPlayerDoc } from "./ChannelPlayer";
+import { channelGuideDoc } from "./ChannelGuide";
+import { playlistDoc } from "./Playlist";
+import { mediaQueueDoc } from "./MediaQueue";
+import { trackItemDoc } from "./TrackItem";
+import { nowPlayingDoc } from "./NowPlaying";
+import { liveBadgeDoc } from "./LiveBadge";
+import { mediaEmbedDoc } from "./MediaEmbed";
 import { stepperDoc } from "./Stepper";
 import { tableDoc } from "./Table";
 import { tabsDoc } from "./Tabs";
@@ -273,6 +281,15 @@ export const DOCS: Record<string, ComponentDoc> = {
     "react-fancy/skeleton": skeletonDoc,
     "react-fancy/setup-wizard": setupWizardDoc,
     "react-fancy/streaming-audio": streamingAudioDoc,
+    // Channels (react-fancy 6.26.0)
+    "react-fancy/channel-player": channelPlayerDoc,
+    "react-fancy/channel-guide": channelGuideDoc,
+    "react-fancy/playlist": playlistDoc,
+    "react-fancy/media-queue": mediaQueueDoc,
+    "react-fancy/track-item": trackItemDoc,
+    "react-fancy/now-playing": nowPlayingDoc,
+    "react-fancy/live-badge": liveBadgeDoc,
+    "react-fancy/media-embed": mediaEmbedDoc,
     "react-fancy/stepper": stepperDoc,
     "react-fancy/table": tableDoc,
     "react-fancy/tabs": tabsDoc,

@@ -171,6 +171,81 @@ function DraftDemo() {
     );
 }
 
+/** running + onStop: Send becomes Stop while a pretend agent turn runs; stopSlot swaps the control. */
+function StopDemo() {
+    const [running, setRunning] = useState(false);
+    const [custom, setCustom] = useState(false);
+    const [log, setLog] = useState<string[]>([]);
+    const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    const stop = () => {
+        if (timer.current) clearTimeout(timer.current);
+        setRunning(false);
+        setLog((l) => [...l, "stopped"]);
+    };
+
+    return (
+        <div className="flex w-full max-w-md flex-col gap-3">
+            <Switch checked={custom} onCheckedChange={setCustom} label="Use a stopSlot" />
+            <PromptInput
+                budgetTokens={8000}
+                running={running}
+                onStop={stop}
+                stopSlot={
+                    custom ? (
+                        <Button size="sm" color="red" onClick={stop}>
+                            Cancel turn
+                        </Button>
+                    ) : undefined
+                }
+                labels={{ stop: "Stop the agent" }}
+                onSubmit={(text) => {
+                    setLog((l) => [...l, `sent: ${text}`]);
+                    setRunning(true);
+                    if (timer.current) clearTimeout(timer.current);
+                    timer.current = setTimeout(() => {
+                        setRunning(false);
+                        setLog((l) => [...l, "turn finished"]);
+                    }, 6000);
+                }}
+            />
+            <Text size="xs">{log.length === 0 ? "Send something to start a six-second turn." : log.join(" · ")}</Text>
+        </div>
+    );
+}
+
+const THREADS = ["Release notes", "Bug triage"] as const;
+
+/** One composer, two threads: draft and draftKey swap together. */
+function DraftKeyDemo() {
+    const [thread, setThread] = useState<(typeof THREADS)[number]>("Release notes");
+    const [drafts, setDrafts] = useState<Record<string, PromptDraft>>({
+        "Release notes": { v: 1, text: "Summarise 6.26.0 for the changelog", pills: [], attachments: [] },
+        "Bug triage": { v: 1, text: "", pills: [], attachments: [] },
+    });
+
+    return (
+        <div className="flex w-full max-w-md flex-col gap-3">
+            <div className="flex gap-2">
+                {THREADS.map((t) => (
+                    <Button key={t} size="sm" variant={t === thread ? "default" : "ghost"} onClick={() => setThread(t)}>
+                        {t}
+                    </Button>
+                ))}
+            </div>
+            <PromptInput
+                budgetTokens={8000}
+                draftKey={thread}
+                draft={drafts[thread]}
+                onDraftChange={(d) => setDrafts((all) => ({ ...all, [thread]: d }))}
+                commands={[{ name: "/summarize", hint: "Summarize the thread" }]}
+                onSubmit={() => {}}
+            />
+            <Text size="xs">Open the / picker, then switch thread: the picker closes and each thread keeps its own draft.</Text>
+        </div>
+    );
+}
+
 export const promptInputDoc: ComponentDoc = {
     intro: (
         <p>
@@ -199,6 +274,31 @@ export const promptInputDoc: ComponentDoc = {
     onSubmit={(text, attachments) => sendMessage(text, attachments)}
     placeholder="Ask anything…"
     showHint
+/>`,
+        },
+        {
+            name: "Stop a running turn",
+            description:
+                "While `running` and `onStop` is set, Send becomes a Stop control (`data-react-fancy-prompt-input-stop`, accessible name `labels.stop`) and the root carries `data-running=\"true\"`. The send key still sends, so a host can queue or steer mid-turn. `stopSlot` replaces the default control inside the same handle. Without `onStop` nothing changes.",
+            render: () => <StopDemo />,
+            code: `<PromptInput
+    running={agentIsAnswering}
+    onStop={() => agent.cancel()}
+    stopSlot={<Button size="sm" color="red" onClick={() => agent.cancel()}>Cancel turn</Button>}
+    labels={{ stop: "Stop the agent" }}
+    onSubmit={send}
+/>`,
+        },
+        {
+            name: "One composer for many threads",
+            description:
+                "Swap `draft` and `draftKey` together. A new key closes an open `/` or `@` picker and lets go of a send still in flight, so it no longer shows as sending on the new draft, blocks its send or empties it. Omit `draftKey` for a single-thread composer.",
+            render: () => <DraftKeyDemo />,
+            code: `<PromptInput
+    draftKey={threadId}
+    draft={drafts[threadId]}
+    onDraftChange={(d) => saveDraft(threadId, d)}
+    onSubmit={send}
 />`,
         },
         {
@@ -446,6 +546,10 @@ composer.current?.setDraft(savedDraft, { focus: true });`,
         { name: "mentionColor", type: `Record<string, string>`, default: "—", description: "Map mention `kind` to a CSS color used by the chip." },
         { name: "maxHeight", type: `number`, default: `280`, description: "Max textarea height in px before scrolling." },
         { name: "aboveInput", type: `ReactNode`, default: "—", description: "Rendered inside the rounded shell, above the textarea — usually a `ChatDrawer`." },
+        { name: "running", type: `boolean`, default: `false`, description: "An agent turn the composer started is still working. With `onStop` set, Send becomes Stop and the root carries `data-running=\"true\"`." },
+        { name: "onStop", type: `() => void`, default: "—", description: "Called when Stop is pressed. Needed for Stop (or `stopSlot`) to appear." },
+        { name: "stopSlot", type: `ReactNode`, default: "—", description: "Replaces the default Stop control while `running`, inside `data-react-fancy-prompt-input-stop`. Wire its click yourself; `onStop` must still be set." },
+        { name: "draftKey", type: `string`, default: "—", description: "Whose draft is showing, for one composer serving many threads. Swap with `draft`; a new key closes pickers and drops a send in flight." },
         { name: "pasteThreshold", type: `number`, default: "— (off)", description: "Hold a paste of at least this many characters as a pill IN the message, where it was pasted. Swaps the textarea for an inline editor; `/`, `@` and Ctrl/⌘+Enter keep working." },
         { name: "pasteImages", type: `boolean`, default: `false`, description: "A pasted image becomes an inline `Pasted image N` pill and reaches `onSubmit`'s attachments with its File. Off: a pasted image is an ordinary attachment chip." },
         { name: "pasteFilesName", type: `string`, default: "—", description: "Post pasted images with an enclosing `<form>` under this name: a hidden `<input type=\"file\" multiple>` holds the images still in the message. Needs `pasteImages`." },

@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://ui.particle.academy/schema/registry-item.json",
-  "title": "Fancy UI registry item",
+  "title": "Fancy Dev Kit registry item",
   "description": "The document served at /r/{name}.json: one component's full source bundle, which `npx fancy-cli@latest add <name>` writes into a project. Reference: https://ui.particle.academy/docs/registry",
   "type": "object",
   "required": [

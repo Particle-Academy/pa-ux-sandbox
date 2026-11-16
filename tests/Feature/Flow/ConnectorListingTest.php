@@ -11,6 +11,8 @@ use Tests\TestCase;
 
 uses(TestCase::class);
 
+require_once __DIR__.'/../../Support/mcp.php';
+
 /**
  * The connector filter.
  *

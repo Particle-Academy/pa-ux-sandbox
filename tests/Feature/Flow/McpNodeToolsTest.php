@@ -7,7 +7,6 @@ use App\Mcp\Tools\SearchNodes;
 use App\Models\FlowNodePackage;
 use App\Support\Registry\FirstPartyNodeSource;
 use Laravel\Mcp\Request;
-use Laravel\Mcp\Response;
 use Tests\TestCase;
 
 uses(TestCase::class);
@@ -34,16 +33,7 @@ uses(TestCase::class);
  * These assert the tools against the artifact rather than a hardcoded count, so
  * they keep meaning something when nodes are added or removed.
  */
-/**
- * The tool's JSON body.
- *
- * `Response::content()` returns a single `Content\Text`, not an array, and it
- * json_encodes to `{}` — the payload is only reachable through `toArray()`.
- */
-function mcpBody(Response $response): array
-{
-    return json_decode($response->content()->toArray()['text'] ?? '{}', true) ?? [];
-}
+require_once __DIR__.'/../../Support/mcp.php';
 
 function firstPartyKinds(): array
 {

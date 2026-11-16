@@ -114,7 +114,13 @@ function publishedDistribution(string $repoPath): ?string
     if (is_file($composer)) {
         $json = json_decode((string) file_get_contents($composer), true);
         // A Laravel APP has a composer.json and publishes nothing; the marker is
-        // its type, which is `project` rather than `library`.
+        // its type, which is `project` rather than `library`. An ABANDONED package
+        // (Composer's own field: a replacement name, or `true`) publishes no more
+        // releases, so it needs no registry entry either.
+        $abandoned = $json['abandoned'] ?? false;
+        if (is_array($json) && ($abandoned === true || (is_string($abandoned) && $abandoned !== ''))) {
+            return null;
+        }
         if (is_array($json) && ($json['type'] ?? 'library') !== 'project' && is_string($json['name'] ?? null)) {
             return $json['name'];
         }
@@ -281,4 +287,15 @@ it('reads each ecosystem\'s declarative not-published marker', function () {
 
     // A repo with no manifest at all publishes nothing.
     expect(publishedDistribution($write('bare', 'README.md', '# nothing here')))->toBeNull();
+
+    // Composer's own `abandoned` marker: a package that publishes no more releases
+    // (fancy-chat-prism-php, merged into fancy-chat-php 0.2.0) needs no registry
+    // entry. Both forms Composer accepts: a replacement name, or `true`.
+    expect(publishedDistribution($write('php-abandoned', 'composer.json', '{"name":"vendor/old","abandoned":"vendor/new"}')))
+        ->toBeNull();
+    expect(publishedDistribution($write('php-abandoned-true', 'composer.json', '{"name":"vendor/old","abandoned":true}')))
+        ->toBeNull();
+    // ...but `abandoned: false`, or any other value, is still publishing.
+    expect(publishedDistribution($write('php-not-abandoned', 'composer.json', '{"name":"vendor/live","abandoned":false}')))
+        ->toBe('vendor/live');
 })->group('envelope');

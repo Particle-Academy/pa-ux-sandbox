@@ -111,8 +111,8 @@
         "prism-browser": "0.4.1",
         "prism-browser-py": "0.2.0",
         "prism-browser-ts": "0.3.0",
-        "prism-graph": "0.3.0",
-        "prism-graph-ts": "0.2.0",
+        "prism-graph": "0.4.0",
+        "prism-graph-ts": "0.3.0",
         "prism-harness": "0.26.0",
         "prism-harness-py": "0.5.1",
         "prism-harness-ts": "0.11.0",
@@ -137,11 +137,35 @@
         "prism-workspace": "0.3.0",
         "prism-workspace-py": "0.1.0",
         "prism-workspace-ts": "0.2.0",
-        "react-fancy": "6.27.0",
+        "react-fancy": "6.28.0",
         "teachers-aid": "0.3.0",
         "teachers-aid-ui": "0.3.1"
     },
     "releases": [
+        {
+            "slug": "react-fancy",
+            "registry": "npm",
+            "version": "6.28.0",
+            "published_at": "2026-11-16T17:55:58Z",
+            "first": false,
+            "summary": "PromptInput attachments"
+        },
+        {
+            "slug": "prism-graph-ts",
+            "registry": "npm",
+            "version": "0.3.0",
+            "published_at": "2026-11-16T16:22:48Z",
+            "first": false,
+            "summary": "ScopedGraph.getSource(sourceId) returns { contractVersion: \"g282.1\", item }: one source by id, in exactly the…"
+        },
+        {
+            "slug": "prism-graph",
+            "registry": "composer",
+            "version": "0.4.0",
+            "published_at": "2026-11-16T16:13:54Z",
+            "first": false,
+            "summary": "ScopedGraph::getSource(sourceId) returns {contractVersion: 'g282.1', item}: one source by id, in exactly the…"
+        },
         {
             "slug": "agent-integrations",
             "registry": "npm",

@@ -18,7 +18,7 @@ describe("sandbox Fancy Devtools integration", () => {
 
         expect(container.querySelector('[data-fancy-devtools="launcher"]')).not.toBeNull();
         expect(sandboxDevtoolsStore.getSnapshot().environment).toMatchObject({
-            application: "Fancy UI Sandbox",
+            application: `${__BRAND_NAME__} Sandbox`,
             kitVersion: __KIT_VERSION__,
         });
 

@@ -11,7 +11,25 @@ import {
     promptDataUrlToFile,
     promptFileToDataUrl,
 } from "@particle-academy/react-fancy";
-import type { PromptDraft, PromptDraftFile, PromptInputHandle, SubmitResult } from "@particle-academy/react-fancy";
+import type { PromptDraft, PromptDraftFile, PromptInputHandle, PromptTrigger, PromptTriggerItem, SubmitResult } from "@particle-academy/react-fancy";
+
+const ISSUES: PromptTriggerItem[] = [
+    { id: "142", label: "Login loop on Safari", description: "bug" },
+    { id: "157", label: "Export to CSV", description: "feature" },
+    { id: "163", label: "Slow search on large teams", description: "friction" },
+];
+
+/** A `#` picker over an async source, standing in for an issue tracker's search. */
+const ISSUE_TRIGGER: PromptTrigger = {
+    char: "#",
+    label: "Issues",
+    search: (query) =>
+        new Promise((resolve) => {
+            const q = query.toLowerCase();
+            setTimeout(() => resolve(ISSUES.filter((i) => i.id.startsWith(q) || i.label.toLowerCase().includes(q))), 150);
+        }),
+    serialize: (item) => `#${item.id}`,
+};
 
 function SubmitKeyDemo() {
     const [submitKey, setSubmitKey] = useState("ctrl+shift+enter");
@@ -338,6 +356,24 @@ export const promptInputDoc: ComponentDoc = {
 />`,
         },
         {
+            name: "Your own trigger characters",
+            description:
+                "`triggers` adds pickers beyond `/` and `@`: one per character, each with its own `search` (sync or async; an answer for an older query is dropped, and a source that throws shows nothing) and a `serialize` for the inserted text. Type `#` to pick an issue. A trigger for `@` or `/` takes that character over; `wordStart` (default true) opens it only at the start of a word. Since react-fancy 6.27.0.",
+            render: () => (
+                <div className="w-full max-w-md">
+                    <PromptInput budgetTokens={8000} onSubmit={() => {}} placeholder="Type # to reference an issue" triggers={[ISSUE_TRIGGER]} />
+                </div>
+            ),
+            code: `const issueTrigger: PromptTrigger = {
+    char: "#",
+    label: "Issues",
+    search: async (query) => (await fetch(\`/api/issues?q=\${query}\`)).json(),
+    serialize: (item) => \`#\${item.id}\`,
+};
+
+<PromptInput budgetTokens={8000} onSubmit={handleSubmit} triggers={[issueTrigger]} />`,
+        },
+        {
             name: "The hint names a key the reader HAS",
             description:
                 "Both branches render here on one machine, which is the point: `platform` is a prop rather than a global read, so the platform you are not sitting on is still reachable — by a test, by this page, and by an Electron host that knows the real platform better than `navigator` does. The hint shipped hardcoded to Command, so every Windows and Linux user was told to press a key their keyboard does not have. The keys themselves never changed: `⌘+Enter` and `Ctrl+Enter` both submit, everywhere.",
@@ -536,6 +572,7 @@ composer.current?.setDraft(savedDraft, { focus: true });`,
         { name: "inputId", type: `string`, default: "—", description: "The text field's `id`, in either mode. `id` still names the root." },
         { name: "commands", type: `PromptCmd[]`, default: "—", description: "Slash-command list. Names must start with `/`." },
         { name: "mentions", type: `PromptMention[]`, default: "—", description: "`@`-mention sources — agents, files, people. Each has `{ id, label, kind }`." },
+        { name: "triggers", type: `PromptTrigger[]`, default: "[]", description: "App-defined pickers, one per character: `{ char, label?, search(query) => items | Promise<items>, serialize?(item), wordStart? }`. Items are `{ id, label, description? }`. A trigger for `@` or `/` replaces the built-in picker. Since 6.27.0." },
         { name: "showHint", type: `boolean`, default: `true`, description: "Show the submit-shortcut hint near the send button." },
         { name: "submitKey", type: `"mod+enter" | "enter" | string`, default: `"mod+enter"`, description: "Which combination sends. Any `HotkeyCapture` string works; `mod` is the platform modifier." },
         { name: "beforeSend", type: `ReactNode`, default: "—", description: "Slot immediately left of Send (model, mode, cost). Truncates; never moves Send. Handle: `data-react-fancy-prompt-input-before-send`." },

@@ -1,7 +1,7 @@
 {
     "window_days": 60,
     "latest": {
-        "agent-integrations": "0.65.2",
+        "agent-integrations": "0.65.6",
         "change-council": "0.7.2",
         "charlotte": "0.4.0",
         "classroom": "0.7.0",
@@ -143,6 +143,38 @@
     },
     "releases": [
         {
+            "slug": "agent-integrations",
+            "registry": "npm",
+            "version": "0.65.6",
+            "published_at": "2026-11-16T08:50:23Z",
+            "first": false,
+            "summary": "A held person's own visit report waits quietly"
+        },
+        {
+            "slug": "agent-integrations",
+            "registry": "npm",
+            "version": "0.65.5",
+            "published_at": "2026-11-16T08:18:39Z",
+            "first": false,
+            "summary": "A received frame never waits on this page's own network calls"
+        },
+        {
+            "slug": "agent-integrations",
+            "registry": "npm",
+            "version": "0.65.4",
+            "published_at": "2026-11-16T07:49:03Z",
+            "first": false,
+            "summary": "debug traces are one self-contained string per line"
+        },
+        {
+            "slug": "agent-integrations",
+            "registry": "npm",
+            "version": "0.65.3",
+            "published_at": "2026-11-16T07:20:55Z",
+            "first": false,
+            "summary": null
+        },
+        {
             "slug": "react-fancy",
             "registry": "npm",
             "version": "6.27.0",
@@ -156,7 +188,7 @@
             "version": "0.65.2",
             "published_at": "2026-11-16T06:39:29Z",
             "first": false,
-            "summary": "A hanging request can no longer stop a page applying anything"
+            "summary": null
         },
         {
             "slug": "fancy-cli",

@@ -1080,3 +1080,10 @@ section.pkg-section-head + section.pkg-section-head {
 /* Download counts (Downloads.tsx). Rendered only when measured. */
 .pkg-hero__downloads { margin-top: var(--space-4); }
 .lcard__downloads { font-variant-numeric: tabular-nums; }
+
+/* The package at work (Show.tsx PackageScreenshot): a capture of a page on
+   this site, in react-fancy's ImageViewer browser frame. The viewer sizes to
+   its container, so the figure fixes the capture's 16:10 aspect. */
+.pkg-shot { margin-left: 0; margin-right: 0; }
+.pkg-shot > :first-child { aspect-ratio: 16 / 10; max-height: 560px; }
+.pkg-shot__caption { margin-top: var(--space-2); }

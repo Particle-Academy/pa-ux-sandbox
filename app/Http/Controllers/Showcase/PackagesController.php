@@ -9,6 +9,7 @@ use App\Support\Downloads\DownloadStats;
 use App\Support\PackageContext;
 use App\Support\PackageFamily;
 use App\Support\PackageRegistry;
+use App\Support\PackageScreenshots;
 use App\Support\Registry\ReadmeSource;
 use App\Support\Registry\RegistrySource;
 use App\Support\Registry\TuiPreviewSource;
@@ -264,6 +265,8 @@ class PackagesController extends Controller
             'downloads' => $this->downloadsFor([(string) $pkg['slug']]),
             'context' => PackageContext::find($pkg['slug']),
             'readmeHtml' => $readmeHtml,
+            // A real capture of the package at work on this site, or null.
+            'screenshot' => PackageScreenshots::for((string) $pkg['slug']),
             // So a member page can point back at the product it belongs to.
             'family' => $family === null ? null : [
                 'slug' => $family['slug'],

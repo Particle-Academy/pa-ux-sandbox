@@ -148,7 +148,8 @@ export default function PackagesComponent({ package: pkg, component, usage, cont
                         <Tabs.Panel value="preview">
                             {/* A canvas sizes to its CONTAINER, so the card's
                                 padding does not frame it -- it shrinks it. */}
-                            <Card className="mt-4" padding={fullBleed ? "none" : undefined}>
+                            {/* data-package-shot: what `packages:screenshots` crops to. */}
+                            <Card className="mt-4" padding={fullBleed ? "none" : undefined} data-package-shot>
                                 <Card.Body className={fullBleed ? "p-0" : undefined}>
                                     {component.frame ? (
                                         // A terminal component has no React demo to drive — the

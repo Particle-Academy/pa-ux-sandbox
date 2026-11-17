@@ -1,6 +1,6 @@
 import { Link } from "@inertiajs/react";
 import { ServerSeo } from "@/lib/ServerSeo";
-import { Breadcrumbs, Button, Card, Heading, Icon, Text } from "@particle-academy/react-fancy";
+import { Breadcrumbs, Button, Card, Heading, Icon, ImageViewer, Text } from "@particle-academy/react-fancy";
 import { useState, type CSSProperties } from "react";
 import { Layout } from "../Layout";
 import { BASKETS, BasketTag, ECO_LABEL, basketOfKind, initials, type Eco } from "./basket";
@@ -74,6 +74,8 @@ type Pkg = {
 
 type Context = { why: string; what: string; how: string };
 type Family = { slug: string; name: string; href: string; member_count: number };
+/** A real capture of the package at work on this site (PackageScreenshots). */
+type Screenshot = { src: string; alt: string; from: string };
 
 /**
  * The MCP tool prefixes each agent-bridgeable surface exposes (mirrors the
@@ -109,12 +111,14 @@ export default function PackagesShow({
     readmeHtml = null,
     family = null,
     downloads = null,
+    screenshot = null,
 }: {
     package: Pkg;
     downloads?: Downloads;
     context: Context | null;
     readmeHtml?: string | null;
     family?: Family | null;
+    screenshot?: Screenshot | null;
 }) {
     const accent = pkg.accent ?? "#8b5cf6";
     const eco = pkg.ecosystem ?? (pkg.language === "PHP" ? "php" : "ts");
@@ -215,6 +219,8 @@ export default function PackagesShow({
                         {mcpTools && <McpProof tools={mcpTools} components={components} />}
                     </div>
                 </div>
+
+                {screenshot && <PackageScreenshot shot={screenshot} />}
 
                 {/* ── Why / What / How ─────────────────────────────────────── */}
                 {context && (
@@ -596,6 +602,37 @@ function NextBar({ pkg, basket, family }: { pkg: Pkg; basket: "ui" | "backend"; 
                 <Button as={Link} href="/packages" variant="ghost" icon="arrow-left">All packages</Button>
             </div>
         </div>
+    );
+}
+
+/**
+ * The package at work: a capture of one of this site's own pages, taken by
+ * `php artisan packages:screenshots`. Rendered through react-fancy's
+ * ImageViewer in a browser frame whose address bar names the page it came
+ * from; the caption links to the live version.
+ */
+function PackageScreenshot({ shot }: { shot: Screenshot }) {
+    return (
+        <figure className="pkg-shot mt-10" data-package-screenshot>
+            <ImageViewer
+                src={shot.src}
+                alt={shot.alt}
+                fit="contain"
+                zoomable={false}
+                pannable={false}
+                controls={false}
+                frame
+                frameProps={{ variant: "browser", url: shot.from }}
+            />
+            <figcaption className="pkg-shot__caption">
+                <Text as="span" size="xs" color="muted">
+                    {shot.alt}.{" "}
+                    <Link href={shot.from} className="underline">
+                        See it live
+                    </Link>
+                </Text>
+            </figcaption>
+        </figure>
     );
 }
 

@@ -40,4 +40,11 @@ return [
     'npm_binary' => env('SCREENSHOTS_NPM_BINARY'),
     'chrome_path' => env('SCREENSHOTS_CHROME_PATH'),
     'no_sandbox' => (bool) env('SCREENSHOTS_NO_SANDBOX', false),
+
+    /*
+    | Where `php artisan packages:screenshots` writes the package-page captures
+    | (App\Support\PackageScreenshots). Committed, so production serves them
+    | without a browser.
+    */
+    'package_shots_dir' => public_path('package-shots'),
 ];

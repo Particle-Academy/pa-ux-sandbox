@@ -13,9 +13,11 @@ uses(TestCase::class);
  *
  * @param  array<string, string>  $headers
  */
-function geoPost(array $headers): void
+function geoPost(array $headers, string $peer = '172.64.10.20'): void
 {
-    test()->withServerVariables(['REMOTE_ADDR' => '203.0.113.9'])->postJson('/mcp', [
+    // 172.64.10.20 is inside Cloudflare's 172.64.0.0/13: the headers below are
+    // believed only from a Cloudflare edge.
+    test()->withServerVariables(['REMOTE_ADDR' => $peer])->postJson('/mcp', [
         'jsonrpc' => '2.0',
         'id' => 1,
         'method' => 'tools/list',
@@ -55,10 +57,35 @@ it('stores no location without the headers', function () {
     expect($row->country)->toBeNull()->and($row->latitude)->toBeNull();
 });
 
+it('ignores spoofed location headers sent straight to the origin', function () {
+    geoPost([
+        'CF-IPCountry' => 'DE',
+        'cf-ipcity' => 'Berlin',
+        'cf-iplatitude' => '52.5',
+        'cf-iplongitude' => '13.4',
+    ], peer: '203.0.113.9');
+
+    $row = McpRequest::query()->sole();
+    expect($row->country)->toBeNull()
+        ->and($row->city)->toBeNull()
+        ->and($row->latitude)->toBeNull();
+});
+
+it('reads no location from a non-Cloudflare peer even without the middleware', function () {
+    // Defence in depth: VisitorLocation checks the peer itself, so a code path
+    // that skips the global middleware still cannot be fed a forged location.
+    $request = Request::create('/mcp', 'POST', server: [
+        'REMOTE_ADDR' => '203.0.113.9',
+        'HTTP_CF_IPCOUNTRY' => 'DE',
+    ]);
+
+    expect(VisitorLocation::fromRequest($request)['country'])->toBeNull();
+});
+
 it('rejects malformed or out-of-range location headers', function (array $headers, ?string $country, ?float $lat) {
     $location = VisitorLocation::fromRequest(Request::create('/mcp', 'POST', server: collect($headers)
         ->mapWithKeys(fn ($v, $k) => ['HTTP_'.strtoupper(str_replace('-', '_', $k)) => $v])
-        ->all()));
+        ->all() + ['REMOTE_ADDR' => '172.64.10.20']));
 
     expect($location['country'])->toBe($country)
         ->and($location['latitude'])->toBe($lat);

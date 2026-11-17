@@ -58,6 +58,7 @@ use App\Http\Controllers\UseCaseController;
 use App\Http\Controllers\Webhooks\GitHubWebhookController;
 use App\Http\Controllers\WhiteboardAgentController;
 use App\Http\Middleware\RecordMcpUsage;
+use App\Http\Middleware\StreamSafeHeaders;
 use App\Http\Middleware\TrackPackageBrowsing;
 use App\Mcp\Servers\FancyUiRegistry;
 use App\Models\ShowcaseSubmission;
@@ -318,7 +319,7 @@ Route::post('/fancy-tui/session', [FancyTuiController::class, 'session'])
     ->middleware('throttle:240,1')
     ->name('fancy-tui.session');
 Route::get('/fancy-tui/session/stream', [FancyTuiController::class, 'sessionStream'])
-    ->middleware('throttle:600,1')
+    ->middleware(['throttle:600,1', StreamSafeHeaders::class])
     ->name('fancy-tui.session.stream');
 
 Route::get('/shop', [ShopController::class, 'index'])->name('shop.index');
@@ -357,7 +358,9 @@ Route::get('/schema/{name}', [SchemaController::class, 'show'])
 // Tools: list_components, search_components, get_component, install_instructions.
 // Usage is recorded for /admin/mcp after the response is sent; see
 // App\Http\Middleware\RecordMcpUsage and config/mcp-stats.php.
-Mcp::web('/mcp', FancyUiRegistry::class)->middleware(RecordMcpUsage::class);
+// StreamSafeHeaders: a tool may answer as text/event-stream, which Cloudflare
+// and nginx must pass through unbuffered.
+Mcp::web('/mcp', FancyUiRegistry::class)->middleware([RecordMcpUsage::class, StreamSafeHeaders::class]);
 
 // ─── Fancy Dev Kit Curriculum ─────────────────────────────────────────────
 // The kit teaching itself, on laravel-courses + @particle-academy/classroom —
@@ -584,8 +587,10 @@ foreach (['agent-relay', 'whiteboard-share'] as $relayPrefix) {
     Route::post("/{$relayPrefix}/{session}/unregister", [AgentRelayController::class, 'unregister']);
     Route::post("/{$relayPrefix}/{session}/inbox", [AgentRelayController::class, 'inbox']);
     Route::post("/{$relayPrefix}/{session}/outbox", [AgentRelayController::class, 'outbox']);
-    Route::get("/{$relayPrefix}/{session}/events", [AgentRelayController::class, 'events']);
+    Route::get("/{$relayPrefix}/{session}/events", [AgentRelayController::class, 'events'])
+        ->middleware(StreamSafeHeaders::class);
     // CDN/Cloudflare-safe receive leg (bounded long-poll) — survives an HTTP/3
     // edge that resets SSE. Client: @particle-academy/fancy-cf-relay.
-    Route::get("/{$relayPrefix}/{session}/poll", [AgentRelayController::class, 'poll']);
+    Route::get("/{$relayPrefix}/{session}/poll", [AgentRelayController::class, 'poll'])
+        ->middleware(StreamSafeHeaders::class);
 }

@@ -4,6 +4,7 @@ use App\Http\Middleware\EnsureUserNotSuspended;
 use App\Http\Middleware\ForceCanonicalScheme;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\TrackActiveUser;
+use App\Http\Middleware\TrustCloudflare;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -17,14 +18,18 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        // Behind Forge's load balancer / TLS-terminating nginx, honor the
-        // X-Forwarded-* headers so Laravel sees the real https scheme + host
-        // (otherwise generated URLs are http:// → mixed-content blocks).
-        $middleware->trustProxies(at: '*', headers: Request::HEADER_X_FORWARDED_FOR
-            | Request::HEADER_X_FORWARDED_HOST
-            | Request::HEADER_X_FORWARDED_PORT
-            | Request::HEADER_X_FORWARDED_PROTO
-            | Request::HEADER_X_FORWARDED_AWS_ELB);
+        // Behind Cloudflare's proxy. The trusted proxies are Cloudflare's
+        // published ranges plus loopback (config/trustedproxy.php), never `*`:
+        // trusting everyone let any caller choose the IP every rate limiter
+        // keyed on. Only the client address and scheme are taken from them.
+        // Cloudflare passes a client's own X-Forwarded-Host / -Port through
+        // untouched, so trusting those would let a visitor pick the host.
+        // TrustCloudflare runs first so `ip()` is the visitor's
+        // CF-Connecting-IP from a Cloudflare edge, and every CF-* header from
+        // anyone else is dropped.
+        $middleware->prepend(TrustCloudflare::class);
+        $middleware->trustProxies(headers: Request::HEADER_X_FORWARDED_FOR
+            | Request::HEADER_X_FORWARDED_PROTO);
 
         // External MCP clients hit these routes with bearer tokens, not
         // session cookies — exempt them from CSRF.

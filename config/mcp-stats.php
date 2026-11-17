@@ -249,10 +249,11 @@ return [
          * the city and coordinates need the Managed Transform "Add visitor
          * location headers".
          *
-         * Off-Cloudflare, a client could send these headers itself. Every
-         * value is validated (two-letter code, numeric coordinates in range,
-         * bounded city), so the worst a forger gets is a wrong point on an
-         * admin-only map. Turn this off if the origin is reachable directly.
+         * They are read only when the request came from one of Cloudflare's
+         * published ranges (config/trustedproxy.php); from any other peer they
+         * are stripped and ignored, so a client reaching the origin directly
+         * cannot place itself on the map. Every value is also validated
+         * (two-letter code, numeric coordinates in range, bounded city).
          */
         'cloudflare_headers' => (bool) env('MCP_STATS_CLOUDFLARE_GEO', true),
     ],

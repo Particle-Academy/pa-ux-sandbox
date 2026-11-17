@@ -46,6 +46,28 @@ class AgentRelayController extends Controller
 
     private const POLL_INTERVAL_MS = 200;
 
+    /**
+     * The longest a long-poll may park. Well under Cloudflare's 100-second
+     * origin timeout (a 524 past it), and it bounds the FPM worker a parked
+     * request holds. fancy-cf-relay asks for 20 s by default.
+     */
+    public const MAX_POLL_WAIT_MS = 25000;
+
+    /**
+     * Seconds between SSE keepalive comments. Cloudflare drops an origin
+     * connection that sends nothing for 100 s, so an idle stream must speak
+     * well inside that.
+     */
+    public const SSE_KEEPALIVE_SECONDS = 15;
+
+    /**
+     * The park window for a requested `wait`, clamped to 0..MAX_POLL_WAIT_MS.
+     */
+    public static function parkWindowMs(int $requested): int
+    {
+        return max(0, min($requested, self::MAX_POLL_WAIT_MS));
+    }
+
     /** Inbound frames from external MCP clients → forwarded to all browser subscribers. */
     public function inbox(Request $request, string $session): JsonResponse
     {
@@ -154,7 +176,7 @@ class AgentRelayController extends Controller
             return response()->stream(
                 fn () => print "event: error\ndata: invalid_token\n\n",
                 401,
-                ['content-type' => 'text/event-stream'],
+                ['content-type' => 'text/event-stream', 'cache-control' => 'no-cache, no-transform', 'x-accel-buffering' => 'no'],
             );
         }
 
@@ -214,7 +236,7 @@ class AgentRelayController extends Controller
                 if (! empty($frames)) {
                     $this->flush();
                 }
-                if ((time() - $lastBeat) >= 15) {
+                if ((time() - $lastBeat) >= self::SSE_KEEPALIVE_SECONDS) {
                     echo ": keepalive\n\n";
                     $this->flush();
                     $lastBeat = time();
@@ -281,7 +303,7 @@ class AgentRelayController extends Controller
         // ever RAISED to cover the park + headroom — never lowered: shrinking an
         // unlimited budget (CLI/tests, where set_time_limit persists across the
         // whole process) fataled the test suite five seconds after the first poll.
-        $waitMs = max(0, min((int) $request->query('wait', 20000), 25000));
+        $waitMs = self::parkWindowMs((int) $request->query('wait', 20000));
         $needed = (int) ceil($waitMs / 1000) + 5;
         $current = (int) ini_get('max_execution_time');
         if ($current !== 0 && $current < $needed) {

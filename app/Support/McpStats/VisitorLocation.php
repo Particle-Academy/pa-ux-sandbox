@@ -2,6 +2,7 @@
 
 namespace App\Support\McpStats;
 
+use App\Support\CloudflareNetwork;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -13,8 +14,12 @@ use Illuminate\Support\Str;
  *   cf-ipcity, cf-iplatitude,       need the Managed Transform
  *   cf-iplongitude                  "Add visitor location headers"
  *
- * Everything is validated, because off-Cloudflare a client can send these
- * headers itself. Coordinates are rounded to one decimal (about 10 km), and
+ * Believed only when the request's TCP peer is a Cloudflare edge
+ * ({@see CloudflareNetwork}): a client that reaches the origin directly can
+ * send these headers itself. TrustCloudflare already strips them from such a
+ * request; the check here holds even on a path that skips that middleware.
+ * Everything is still validated, because Cloudflare relays what it is given
+ * for some of them. Coordinates are rounded to one decimal (about 10 km), and
  * are kept only when both are present and in range.
  */
 final class VisitorLocation
@@ -32,7 +37,7 @@ final class VisitorLocation
     {
         $none = ['country' => null, 'city' => null, 'latitude' => null, 'longitude' => null];
 
-        if (! config('mcp-stats.geo.cloudflare_headers', true)) {
+        if (! config('mcp-stats.geo.cloudflare_headers', true) || ! CloudflareNetwork::isFromCloudflare($request)) {
             return $none;
         }
 

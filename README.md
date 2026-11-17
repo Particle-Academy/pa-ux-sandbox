@@ -6,6 +6,12 @@ A Laravel 13 + Vite + React 19 + Inertia + Tailwind v4 app that consumes the Fan
 
 > Dogfooding our own repo badge: this project wears the **Fancified** shield — the same mark the Showcase asks of submitted repos (paste it in your README and power ≥30% of your views with Fancy Dev Kit to get listed). The live, per-site version is served from `/badge/fancified.svg?site=<key>`.
 
+<!-- fancy-agents-note:start -->
+> **Fancy MCP server.** This site hosts the Fancy MCP catalog server at
+> `https://ui.particle.academy/mcp` (streamable HTTP, no API key; MCP id `fancy-ui`). An agent
+> can look up every listed Fancy package there, with install commands and docs.
+<!-- fancy-agents-note:end -->
+
 ## Packages
 
 PHP packages (Packagist):

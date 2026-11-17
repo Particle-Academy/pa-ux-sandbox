@@ -81,6 +81,20 @@ class PackageRegistry
         // serves a version -- read from the registry, not `npm view`.
         'fancy-sockets',
 
+        // `fancy-fun-lab-js` and `fancy-fun-lab-py` -- the Node and Python twins
+        // of laravel-fun-lab, BUILT 2026-11-17 (moved out of PLANNED the day
+        // they passed all 67 fun-lab/* rows). Neither name exists on a registry:
+        // npm needs the owner's first publish and PyPI the owner's pending
+        // publisher, so listing them would offer `npm install
+        // @particle-academy/fancy-fun-lab` and `pip install fancy-fun-lab` for
+        // names that 404.
+        //
+        // REMOVE EACH SLUG when registry.npmjs.org/@particle-academy%2Ffancy-fun-lab
+        // and pypi.org/pypi/fancy-fun-lab/json respectively serve a version --
+        // read from the registry, not `npm view`.
+        'fancy-fun-lab-js',
+        'fancy-fun-lab-py',
+
         // The two removals behind this list are the lesson worth keeping.
         //
         // `fancy-walkthrough` was removed 2026-09-29, the day it published.
@@ -392,18 +406,6 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
             'registries' => ['packagist' => 'particle-academy/fancy-chat-php'],
             'why' => 'Laravel agent chat on Prism Harness (CC-fancy-0042): HarnessBackend runs each turn on a Harness session (RunStep g282.1, streamed approvals, host-resolved attachments), served as an append-only thread log with atomic seq, SSE plus long-poll with resumable replay, decision endpoints that accept human actors only, the turn machine, staged writes and typed approval, passing the same fixtures as fancy-chat-js. Optional KnowledgeBridge on prism-graph. Absorbed fancy-chat-prism-php in 0.2.0. Design: .ai/plans/agent-chat-on-prism.md.',
         ],
-        'fancy-fun-lab-js' => [
-            'name' => '@particle-academy/fancy-fun-lab',
-            'repo' => 'Particle-Academy/fancy-fun-lab-js',
-            'registries' => ['npm' => '@particle-academy/fancy-fun-lab'],
-            'why' => 'Node/TypeScript twin of laravel-fun-lab, the gamification engine (canon gap 2.4a: the only server capability with no Node pair). Engine core to parity: catalog setup, XP awards, metric and weighted group levels, achievements, prizes, leaderboards, event log and analytics, plus the PHP resource JSON shapes so fancy-fun-lab-ui runs on a Node backend. Zero runtime deps; a store contract with in-memory and node:sqlite adapters. Held to the PHP engine by the fun-lab/* fixture suites in fancy-conformance. Owner approved 2026-11-17 (q_571dafd9, q_a2d27647). Design: .ai/plans/fun-lab-twins.md. npm name free 2026-11-16; the first publish is the owner\'s.',
-        ],
-        'fancy-fun-lab-py' => [
-            'name' => 'fancy-fun-lab',
-            'repo' => 'Particle-Academy/fancy-fun-lab-py',
-            'registries' => ['pypi' => 'fancy-fun-lab'],
-            'why' => 'Python twin of laravel-fun-lab, under the same owner approval as fancy-fun-lab-js and the same fun-lab/* fixture suites. Zero runtime deps; a store contract with in-memory and stdlib sqlite3 adapters. Design: .ai/plans/fun-lab-twins.md. PyPI name fancy-fun-lab and the variants fancyfunlab, fancy_fun_lab, funlab, fun-lab, fun_lab answered 404 on 2026-11-16; the form is the final authority. Bootstrap by pending publisher (owner) on an unprotected pypi environment (agent).',
-        ],
     ];
 
     /**
@@ -556,6 +558,7 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
         'laravel-catalog' => ['group' => 'commerce', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#0ea5e9'],
         'laravel-fms' => ['group' => 'platform', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#f59e0b'],
         'laravel-fun-lab' => ['group' => 'commerce', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#f43f5e'],
+        'fancy-fun-lab-js' => ['group' => 'commerce', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#f43f5e'],
         'fancy-mlm' => ['group' => 'commerce', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#14b8a6'],
         'fancy-mlm-js' => ['group' => 'commerce', 'ecosystem' => 'ts', 'kind' => 'headless', 'accent' => '#14b8a6'],
         'fancy-git' => ['group' => 'tooling', 'ecosystem' => 'php', 'kind' => 'headless', 'accent' => '#f97316'],
@@ -650,6 +653,7 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
         'fancy-flow-py' => ['group' => 'surfaces', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#0ea5e9'],
         'fancy-inertia-server' => ['group' => 'platform', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#0ea5e9'],
         'fancy-features-py' => ['group' => 'platform', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#f59e0b'],
+        'fancy-fun-lab-py' => ['group' => 'commerce', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#f43f5e'],
         'fancy-catalog-py' => ['group' => 'commerce', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#0ea5e9'],
         'holy-sheet-py' => ['group' => 'documents', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#16a34a'],
         'dark-slide-py' => ['group' => 'documents', 'ecosystem' => 'py', 'kind' => 'headless', 'accent' => '#dc2626'],
@@ -870,6 +874,24 @@ PHP first, depending only on fine-print`s guard. TS/Python twins follow the guar
                 'repo' => 'Particle-Academy/laravel-fun-lab',
                 'packagist' => 'particle-academy/laravel-fun-lab',
                 'language' => 'PHP',
+            ],
+            [
+                'slug' => 'fancy-fun-lab-js',
+                'name' => '@particle-academy/fancy-fun-lab',
+                'tagline' => 'Node/TS twin of laravel-fun-lab: XP to gamed metrics, levels and weighted level groups, achievements, prizes with inventory, leaderboards and an event log with analytics, held to the PHP engine by the shared fun-lab/* tables. In-memory and node:sqlite stores (the Laravel table layout), zero runtime dependencies.',
+                'npm' => '@particle-academy/fancy-fun-lab',
+                'repo' => 'Particle-Academy/fancy-fun-lab-js',
+                'language' => 'TypeScript',
+                'pairs' => ['fancy-fun-lab-ui'],
+            ],
+            [
+                'slug' => 'fancy-fun-lab-py',
+                'name' => 'fancy-fun-lab',
+                'tagline' => 'Python twin of laravel-fun-lab: the same gamification engine and the same fun-lab/* tables, on an in-memory store or the standard library\'s sqlite3 in the Laravel table layout. Zero runtime dependencies.',
+                'pypi' => 'fancy-fun-lab',
+                'repo' => 'Particle-Academy/fancy-fun-lab-py',
+                'language' => 'Python',
+                'pairs' => ['fancy-fun-lab-ui'],
             ],
             [
                 'slug' => 'fancy-compliance',

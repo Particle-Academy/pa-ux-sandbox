@@ -10,10 +10,8 @@ use App\Services\Mlm\MlmProgram;
 use App\Services\SupportEligibility;
 use App\Ssr\TimeoutHttpGateway;
 use FancyMlm\Plan\CompensationPlan;
-use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
@@ -122,14 +120,6 @@ class AppServiceProvider extends ServiceProvider
                 $tracker = str_replace('http://', 'https://', $tracker);
             }
             $view->with('tracker', $tracker);
-        });
-
-        // Login throttle — keyed by email + IP so a single attacker IP
-        // can't drain the budget for legitimate users on the same email.
-        RateLimiter::for('login', function (Request $request): Limit {
-            $key = strtolower((string) $request->input('email')).'|'.$request->ip();
-
-            return Limit::perMinute(5)->by($key);
         });
 
         // Coin minting listeners are auto-discovered via their handle()

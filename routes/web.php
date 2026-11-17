@@ -89,10 +89,14 @@ Route::get('/og/{kind}/{key}.png', [OgImageController::class, 'page'])
     ->where('key', '[A-Za-z0-9._\-]+(/[A-Za-z0-9._\-]+)?')
     ->name('og.page');
 
-// Authentication routes
+// Authentication routes. GitHub is the ONLY way to sign in or register
+// (owner ruling): /login renders a page with one GitHub button, and there is no
+// password login, sign-up, or password reset. The explicit 404 on POST /login
+// exists so a password submission reads as "nothing here", not as a 405 that
+// advertises a route. tests/Feature/Auth/GitHubOnlyAuthTest.php guards this.
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:login');
+    Route::post('/login', fn () => abort(404));
 
     // Local-only one-click dev login. The route is not even registered in
     // production, and DevLoginController aborts unless the server is `local`

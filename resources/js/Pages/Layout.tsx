@@ -466,7 +466,7 @@ export function Layout({
                             Profile
                         </MobileMenu.Item>
                     ) : (
-                        <MobileMenu.Item as={Link} href="/auth/github" icon={<LogIn size={18} />}>
+                        <MobileMenu.Item href="/auth/github" icon={<LogIn size={18} />}>
                             Sign in
                         </MobileMenu.Item>
                     )}

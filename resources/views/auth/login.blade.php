@@ -42,7 +42,8 @@
                 </div>
             @endif
 
-            {{-- Primary: GitHub OAuth — the real path for showcase members. --}}
+            {{-- GitHub is the ONLY way to sign in or register (owner ruling). No
+                 password form belongs on this page; GitHubOnlyAuthTest fails if one returns. --}}
             <a href="{{ route('auth.github') }}"
                class="mt-6 flex w-full items-center justify-center gap-3 rounded-lg bg-zinc-100 px-4 py-2.5 text-sm font-semibold text-zinc-900 transition hover:bg-white">
                 <svg viewBox="0 0 16 16" width="18" height="18" fill="currentColor" aria-hidden="true">
@@ -50,37 +51,6 @@
                 </svg>
                 Continue with GitHub
             </a>
-
-            <div class="my-6 flex items-center gap-3 text-xs text-zinc-500">
-                <span class="h-px flex-1 bg-zinc-800"></span>
-                or sign in with email
-                <span class="h-px flex-1 bg-zinc-800"></span>
-            </div>
-
-            {{-- Secondary: email/password (admin + manually-created accounts). --}}
-            <form method="POST" action="{{ route('login') }}" id="loginForm" class="space-y-4">
-                @csrf
-                <div>
-                    <label for="email" class="mb-1.5 block text-sm font-medium text-zinc-300">Email</label>
-                    <input type="email" name="email" id="email" value="{{ old('email') }}" required autofocus
-                           class="w-full rounded-lg border border-zinc-700 bg-zinc-950/60 px-3 py-2 text-sm text-zinc-100 placeholder-zinc-500 outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-500/30"
-                           placeholder="you@example.com">
-                </div>
-                <div>
-                    <label for="password" class="mb-1.5 block text-sm font-medium text-zinc-300">Password</label>
-                    <input type="password" name="password" id="password" required
-                           class="w-full rounded-lg border border-zinc-700 bg-zinc-950/60 px-3 py-2 text-sm text-zinc-100 placeholder-zinc-500 outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-500/30"
-                           placeholder="••••••••">
-                </div>
-                <label class="flex items-center gap-2 text-sm text-zinc-400">
-                    <input type="checkbox" name="remember" class="rounded border-zinc-600 bg-zinc-950 text-violet-500 focus:ring-violet-500/30">
-                    Remember me
-                </label>
-                <button type="submit"
-                        class="w-full rounded-lg bg-violet-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-violet-500">
-                    Sign in
-                </button>
-            </form>
 
             {{--
                 Dev quick-login. Server-rendered only when the app runs in `local`
